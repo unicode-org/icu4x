@@ -1,3 +1,5 @@
+# Property; Value; Numeric value; optional long name (for ICU-only values)
+
 bc; L; 0
 bc; R; 1
 bc; EN; 2
@@ -362,28 +364,28 @@ sc; Tfng; 60
 sc; Xpeo; 61
 sc; Bali; 62
 sc; Batk; 63
-sc; Blis; 64
+sc; Blis; 64; Blis_Symbols
 sc; Brah; 65
 sc; Cham; 66
-sc; Cirt; 67
-sc; Cyrs; 68
-sc; Egyd; 69
-sc; Egyh; 70
-sc; Egyp; 71
-sc; Geok; 72
-sc; Hans; 73
-sc; Hant; 74
+sc; Cirt; 67; Cirth
+sc; Cyrs; 68; Old_Church_Slavonic_Cyrillic
+sc; Egyd; 69; Demotic_Egyptian
+sc; Egyh; 70; Hieratic_Egyptian
+sc; Egyp; 71; Egyptian_Hieroglyphs
+sc; Geok; 72; Khutsuri
+sc; Hans; 73; Simplified_Han
+sc; Hant; 74; Traditional_Han
 sc; Hmng; 75
 sc; Hung; 76
-sc; Inds; 77
+sc; Inds; 77; Harappan_Indus
 sc; Java; 78
 sc; Kali; 79
-sc; Latf; 80
-sc; Latg; 81
+sc; Latf; 80; Latin_Fraktur
+sc; Latg; 81; Latin_Gaelic
 sc; Lepc; 82
 sc; Lina; 83
 sc; Mand; 84
-sc; Maya; 85
+sc; Maya; 85; Mayan_Hieroglyphs
 sc; Mero; 86
 sc; Nkoo; 87
 sc; Orkh; 88
@@ -391,19 +393,19 @@ sc; Perm; 89
 sc; Phag; 90
 sc; Phnx; 91
 sc; Plrd; 92
-sc; Roro; 93
-sc; Sara; 94
-sc; Syre; 95
-sc; Syrj; 96
-sc; Syrn; 97
-sc; Teng; 98
+sc; Roro; 93; Rongorongo
+sc; Sara; 94; Sarati
+sc; Syre; 95; Estrangelo_Syriac
+sc; Syrj; 96; Western_Syriac
+sc; Syrn; 97; Eastern_Syriac
+sc; Teng; 98; Tengwar
 sc; Vaii; 99
-sc; Visp; 100
+sc; Visp; 100; Visible_Speech
 sc; Xsux; 101
-sc; Zxxx; 102
+sc; Zxxx; 102; Unwritten_Languages
 sc; Zzzz; 103
 sc; Cari; 104
-sc; Jpan; 105
+sc; Jpan; 105; Japanese
 sc; Lana; 106
 sc; Lyci; 107
 sc; Lydi; 108
@@ -412,32 +414,32 @@ sc; Rjng; 110
 sc; Saur; 111
 sc; Sgnw; 112
 sc; Sund; 113
-sc; Moon; 114
+sc; Moon; 114; Moon
 sc; Mtei; 115
 sc; Armi; 116
 sc; Avst; 117
 sc; Cakm; 118
-sc; Kore; 119
+sc; Kore; 119; Korean
 sc; Kthi; 120
 sc; Mani; 121
 sc; Phli; 122
 sc; Phlp; 123
-sc; Phlv; 124
+sc; Phlv; 124; Book_Pahlavi
 sc; Prti; 125
 sc; Samr; 126
 sc; Tavt; 127
-sc; Zmth; 128
-sc; Zsym; 129
+sc; Zmth; 128; Mathematical_Notation
+sc; Zsym; 129; Symbols
 sc; Bamu; 130
 sc; Lisu; 131
-sc; Nkgb; 132
+sc; Nkgb; 132; Nakhi_Geba
 sc; Sarb; 133
 sc; Bass; 134
 sc; Dupl; 135
 sc; Elba; 136
 sc; Gran; 137
-sc; Kpel; 138
-sc; Loma; 139
+sc; Kpel; 138; Kpelle
+sc; Loma; 139; Loma
 sc; Mend; 140
 sc; Merc; 141
 sc; Narb; 142
@@ -445,15 +447,15 @@ sc; Nbat; 143
 sc; Palm; 144
 sc; Sind; 145
 sc; Wara; 146
-sc; Afak; 147
-sc; Jurc; 148
+sc; Afak; 147; Afaka
+sc; Jurc; 148; Jurchen
 sc; Mroo; 149
 sc; Nshu; 150
 sc; Shrd; 151
 sc; Sora; 152
 sc; Takr; 153
 sc; Tang; 154
-sc; Wole; 155
+sc; Wole; 155; Woleai
 sc; Hluw; 156
 sc; Khoj; 157
 sc; Tirh; 158
@@ -470,9 +472,9 @@ sc; Bhks; 168
 sc; Marc; 169
 sc; Newa; 170
 sc; Osge; 171
-sc; Hanb; 172
-sc; Jamo; 173
-sc; Zsye; 174
+sc; Hanb; 172; Han_With_Bopomofo
+sc; Jamo; 173; Jamo
+sc; Zsye; 174; Symbols_Emoji
 sc; Gonm; 175
 sc; Soyo; 176
 sc; Zanb; 177
@@ -498,7 +500,7 @@ sc; Toto; 196
 sc; Vith; 197
 sc; Kawi; 198
 sc; Nagm; 199
-sc; Aran; 200
+sc; Aran; 200; Arabic_Nastaliq
 sc; Gara; 201
 sc; Gukh; 202
 sc; Krai; 203
@@ -510,7 +512,7 @@ sc; Berf; 208
 sc; Sidt; 209
 sc; Tayo; 210
 sc; Tols; 211
-sc; Hntl; 212
+sc; Hntl; 212; Traditional_Han_With_Latin
 
 SB; XX; 0
 SB; AT; 1

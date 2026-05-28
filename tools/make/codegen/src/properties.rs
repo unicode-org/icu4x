@@ -44,6 +44,8 @@ impl Prop {
     fn is_icu4c_only_value(&self, discriminant: u32) -> bool {
         self.name == "Script"
             && [
+                // 200 (`Aran`) *should* be in here, but at some point we erroneously added it, so it
+                // looks like a Unicode value now.
                 64, 67, 68, 69, 70, 72, 73, 74, 77, 80, 81, 85, 93, 94, 95, 96, 97, 98, 100, 102,
                 105, 114, 119, 124, 128, 129, 132, 138, 139, 147, 148, 155, 172, 173, 174, 212,
             ]
@@ -58,7 +60,7 @@ impl Prop {
         long_name
             .replace('_', "")
             .replace("Ethiopic", "Ethiopian")
-            .replace("Aran", "Nastaliq")
+            .replace("ArabicNastaliq", "Nastaliq")
             .replace("LVSyllable", "LeadingVowelSyllable")
             .replace("LVTSyllable", "LeadingVowelTrailingSyllable")
     }
@@ -137,7 +139,11 @@ static VARIANTS: LazyLock<BTreeMap<&str, BTreeMap<u32, (&str, &str)>>> = LazyLoc
         let prop = parts.next().unwrap();
         let short_name = parts.next().unwrap();
         let discriminant = parts.next().unwrap().parse::<u32>().unwrap();
-        let long_name = names[prop].get(short_name).copied().unwrap_or(short_name);
+        let long_name = names[prop]
+            .get(short_name)
+            .copied()
+            .or(parts.next())
+            .expect(short_name);
         discriminants
             .entry(prop)
             .or_default()

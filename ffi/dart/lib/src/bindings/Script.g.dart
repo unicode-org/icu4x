@@ -113,6 +113,8 @@ enum Script {
   taiLe,
   /// See the [Rust documentation for `Ugaritic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Ugaritic) for more information.
   ugaritic,
+  /// See the [Rust documentation for `KatakanaOrHiragana`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.KatakanaOrHiragana) for more information.
+  katakanaOrHiragana,
   /// See the [Rust documentation for `Buginese`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Buginese) for more information.
   buginese,
   /// See the [Rust documentation for `Glagolitic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Glagolitic) for more information.
@@ -131,26 +133,50 @@ enum Script {
   balinese,
   /// See the [Rust documentation for `Batak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Batak) for more information.
   batak,
+  /// See the [Rust documentation for `BlisSymbols`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.BlisSymbols) for more information.
+  blisSymbols,
   /// See the [Rust documentation for `Brahmi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Brahmi) for more information.
   brahmi,
   /// See the [Rust documentation for `Cham`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Cham) for more information.
   cham,
+  /// See the [Rust documentation for `Cirth`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Cirth) for more information.
+  cirth,
+  /// See the [Rust documentation for `OldChurchSlavonicCyrillic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.OldChurchSlavonicCyrillic) for more information.
+  oldChurchSlavonicCyrillic,
+  /// See the [Rust documentation for `DemoticEgyptian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.DemoticEgyptian) for more information.
+  demoticEgyptian,
+  /// See the [Rust documentation for `HieraticEgyptian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.HieraticEgyptian) for more information.
+  hieraticEgyptian,
   /// See the [Rust documentation for `EgyptianHieroglyphs`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.EgyptianHieroglyphs) for more information.
   egyptianHieroglyphs,
+  /// See the [Rust documentation for `Khutsuri`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Khutsuri) for more information.
+  khutsuri,
+  /// See the [Rust documentation for `SimplifiedHan`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.SimplifiedHan) for more information.
+  simplifiedHan,
+  /// See the [Rust documentation for `TraditionalHan`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.TraditionalHan) for more information.
+  traditionalHan,
   /// See the [Rust documentation for `PahawhHmong`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.PahawhHmong) for more information.
   pahawhHmong,
   /// See the [Rust documentation for `OldHungarian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.OldHungarian) for more information.
   oldHungarian,
+  /// See the [Rust documentation for `HarappanIndus`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.HarappanIndus) for more information.
+  harappanIndus,
   /// See the [Rust documentation for `Javanese`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Javanese) for more information.
   javanese,
   /// See the [Rust documentation for `KayahLi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.KayahLi) for more information.
   kayahLi,
+  /// See the [Rust documentation for `LatinFraktur`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.LatinFraktur) for more information.
+  latinFraktur,
+  /// See the [Rust documentation for `LatinGaelic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.LatinGaelic) for more information.
+  latinGaelic,
   /// See the [Rust documentation for `Lepcha`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Lepcha) for more information.
   lepcha,
   /// See the [Rust documentation for `LinearA`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.LinearA) for more information.
   linearA,
   /// See the [Rust documentation for `Mandaic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Mandaic) for more information.
   mandaic,
+  /// See the [Rust documentation for `MayanHieroglyphs`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MayanHieroglyphs) for more information.
+  mayanHieroglyphs,
   /// See the [Rust documentation for `MeroiticHieroglyphs`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MeroiticHieroglyphs) for more information.
   meroiticHieroglyphs,
   /// See the [Rust documentation for `Nko`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Nko) for more information.
@@ -165,14 +191,32 @@ enum Script {
   phoenician,
   /// See the [Rust documentation for `Miao`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Miao) for more information.
   miao,
+  /// See the [Rust documentation for `Rongorongo`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Rongorongo) for more information.
+  rongorongo,
+  /// See the [Rust documentation for `Sarati`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Sarati) for more information.
+  sarati,
+  /// See the [Rust documentation for `EstrangeloSyriac`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.EstrangeloSyriac) for more information.
+  estrangeloSyriac,
+  /// See the [Rust documentation for `WesternSyriac`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.WesternSyriac) for more information.
+  westernSyriac,
+  /// See the [Rust documentation for `EasternSyriac`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.EasternSyriac) for more information.
+  easternSyriac,
+  /// See the [Rust documentation for `Tengwar`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Tengwar) for more information.
+  tengwar,
   /// See the [Rust documentation for `Vai`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Vai) for more information.
   vai,
+  /// See the [Rust documentation for `VisibleSpeech`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.VisibleSpeech) for more information.
+  visibleSpeech,
   /// See the [Rust documentation for `Cuneiform`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Cuneiform) for more information.
   cuneiform,
+  /// See the [Rust documentation for `UnwrittenLanguages`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.UnwrittenLanguages) for more information.
+  unwrittenLanguages,
   /// See the [Rust documentation for `Unknown`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Unknown) for more information.
   unknown,
   /// See the [Rust documentation for `Carian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Carian) for more information.
   carian,
+  /// See the [Rust documentation for `Japanese`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Japanese) for more information.
+  japanese,
   /// See the [Rust documentation for `TaiTham`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.TaiTham) for more information.
   taiTham,
   /// See the [Rust documentation for `Lycian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Lycian) for more information.
@@ -189,6 +233,8 @@ enum Script {
   signWriting,
   /// See the [Rust documentation for `Sundanese`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Sundanese) for more information.
   sundanese,
+  /// See the [Rust documentation for `Moon`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Moon) for more information.
+  moon,
   /// See the [Rust documentation for `MeeteiMayek`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MeeteiMayek) for more information.
   meeteiMayek,
   /// See the [Rust documentation for `ImperialAramaic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.ImperialAramaic) for more information.
@@ -197,6 +243,8 @@ enum Script {
   avestan,
   /// See the [Rust documentation for `Chakma`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Chakma) for more information.
   chakma,
+  /// See the [Rust documentation for `Korean`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Korean) for more information.
+  korean,
   /// See the [Rust documentation for `Kaithi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Kaithi) for more information.
   kaithi,
   /// See the [Rust documentation for `Manichaean`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Manichaean) for more information.
@@ -205,16 +253,24 @@ enum Script {
   inscriptionalPahlavi,
   /// See the [Rust documentation for `PsalterPahlavi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.PsalterPahlavi) for more information.
   psalterPahlavi,
+  /// See the [Rust documentation for `BookPahlavi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.BookPahlavi) for more information.
+  bookPahlavi,
   /// See the [Rust documentation for `InscriptionalParthian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.InscriptionalParthian) for more information.
   inscriptionalParthian,
   /// See the [Rust documentation for `Samaritan`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Samaritan) for more information.
   samaritan,
   /// See the [Rust documentation for `TaiViet`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.TaiViet) for more information.
   taiViet,
+  /// See the [Rust documentation for `MathematicalNotation`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MathematicalNotation) for more information.
+  mathematicalNotation,
+  /// See the [Rust documentation for `Symbols`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Symbols) for more information.
+  symbols,
   /// See the [Rust documentation for `Bamum`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Bamum) for more information.
   bamum,
   /// See the [Rust documentation for `Lisu`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Lisu) for more information.
   lisu,
+  /// See the [Rust documentation for `NakhiGeba`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.NakhiGeba) for more information.
+  nakhiGeba,
   /// See the [Rust documentation for `OldSouthArabian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.OldSouthArabian) for more information.
   oldSouthArabian,
   /// See the [Rust documentation for `BassaVah`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.BassaVah) for more information.
@@ -225,6 +281,10 @@ enum Script {
   elbasan,
   /// See the [Rust documentation for `Grantha`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Grantha) for more information.
   grantha,
+  /// See the [Rust documentation for `Kpelle`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Kpelle) for more information.
+  kpelle,
+  /// See the [Rust documentation for `Loma`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Loma) for more information.
+  loma,
   /// See the [Rust documentation for `MendeKikakui`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MendeKikakui) for more information.
   mendeKikakui,
   /// See the [Rust documentation for `MeroiticCursive`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MeroiticCursive) for more information.
@@ -239,6 +299,10 @@ enum Script {
   khudawadi,
   /// See the [Rust documentation for `WarangCiti`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.WarangCiti) for more information.
   warangCiti,
+  /// See the [Rust documentation for `Afaka`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Afaka) for more information.
+  afaka,
+  /// See the [Rust documentation for `Jurchen`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Jurchen) for more information.
+  jurchen,
   /// See the [Rust documentation for `Mro`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Mro) for more information.
   mro,
   /// See the [Rust documentation for `Nushu`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Nushu) for more information.
@@ -251,6 +315,8 @@ enum Script {
   takri,
   /// See the [Rust documentation for `Tangut`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Tangut) for more information.
   tangut,
+  /// See the [Rust documentation for `Woleai`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Woleai) for more information.
+  woleai,
   /// See the [Rust documentation for `AnatolianHieroglyphs`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.AnatolianHieroglyphs) for more information.
   anatolianHieroglyphs,
   /// See the [Rust documentation for `Khojki`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Khojki) for more information.
@@ -283,6 +349,12 @@ enum Script {
   newa,
   /// See the [Rust documentation for `Osage`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Osage) for more information.
   osage,
+  /// See the [Rust documentation for `HanWithBopomofo`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.HanWithBopomofo) for more information.
+  hanWithBopomofo,
+  /// See the [Rust documentation for `Jamo`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Jamo) for more information.
+  jamo,
+  /// See the [Rust documentation for `SymbolsEmoji`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.SymbolsEmoji) for more information.
+  symbolsEmoji,
   /// See the [Rust documentation for `MasaramGondi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MasaramGondi) for more information.
   masaramGondi,
   /// See the [Rust documentation for `Soyombo`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Soyombo) for more information.
@@ -357,6 +429,8 @@ enum Script {
   taiYo,
   /// See the [Rust documentation for `TolongSiki`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.TolongSiki) for more information.
   tolongSiki,
+  /// See the [Rust documentation for `TraditionalHanWithLatin`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.TraditionalHanWithLatin) for more information.
+  traditionalHanWithLatin,
   /// See the [Rust documentation for `Chisoi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Chisoi) for more information.
   chisoi;
 
@@ -470,6 +544,8 @@ enum Script {
         return 52;
       case ugaritic:
         return 53;
+      case katakanaOrHiragana:
+        return 54;
       case buginese:
         return 55;
       case glagolitic:
@@ -488,26 +564,50 @@ enum Script {
         return 62;
       case batak:
         return 63;
+      case blisSymbols:
+        return 64;
       case brahmi:
         return 65;
       case cham:
         return 66;
+      case cirth:
+        return 67;
+      case oldChurchSlavonicCyrillic:
+        return 68;
+      case demoticEgyptian:
+        return 69;
+      case hieraticEgyptian:
+        return 70;
       case egyptianHieroglyphs:
         return 71;
+      case khutsuri:
+        return 72;
+      case simplifiedHan:
+        return 73;
+      case traditionalHan:
+        return 74;
       case pahawhHmong:
         return 75;
       case oldHungarian:
         return 76;
+      case harappanIndus:
+        return 77;
       case javanese:
         return 78;
       case kayahLi:
         return 79;
+      case latinFraktur:
+        return 80;
+      case latinGaelic:
+        return 81;
       case lepcha:
         return 82;
       case linearA:
         return 83;
       case mandaic:
         return 84;
+      case mayanHieroglyphs:
+        return 85;
       case meroiticHieroglyphs:
         return 86;
       case nko:
@@ -522,14 +622,32 @@ enum Script {
         return 91;
       case miao:
         return 92;
+      case rongorongo:
+        return 93;
+      case sarati:
+        return 94;
+      case estrangeloSyriac:
+        return 95;
+      case westernSyriac:
+        return 96;
+      case easternSyriac:
+        return 97;
+      case tengwar:
+        return 98;
       case vai:
         return 99;
+      case visibleSpeech:
+        return 100;
       case cuneiform:
         return 101;
+      case unwrittenLanguages:
+        return 102;
       case unknown:
         return 103;
       case carian:
         return 104;
+      case japanese:
+        return 105;
       case taiTham:
         return 106;
       case lycian:
@@ -546,6 +664,8 @@ enum Script {
         return 112;
       case sundanese:
         return 113;
+      case moon:
+        return 114;
       case meeteiMayek:
         return 115;
       case imperialAramaic:
@@ -554,6 +674,8 @@ enum Script {
         return 117;
       case chakma:
         return 118;
+      case korean:
+        return 119;
       case kaithi:
         return 120;
       case manichaean:
@@ -562,16 +684,24 @@ enum Script {
         return 122;
       case psalterPahlavi:
         return 123;
+      case bookPahlavi:
+        return 124;
       case inscriptionalParthian:
         return 125;
       case samaritan:
         return 126;
       case taiViet:
         return 127;
+      case mathematicalNotation:
+        return 128;
+      case symbols:
+        return 129;
       case bamum:
         return 130;
       case lisu:
         return 131;
+      case nakhiGeba:
+        return 132;
       case oldSouthArabian:
         return 133;
       case bassaVah:
@@ -582,6 +712,10 @@ enum Script {
         return 136;
       case grantha:
         return 137;
+      case kpelle:
+        return 138;
+      case loma:
+        return 139;
       case mendeKikakui:
         return 140;
       case meroiticCursive:
@@ -596,6 +730,10 @@ enum Script {
         return 145;
       case warangCiti:
         return 146;
+      case afaka:
+        return 147;
+      case jurchen:
+        return 148;
       case mro:
         return 149;
       case nushu:
@@ -608,6 +746,8 @@ enum Script {
         return 153;
       case tangut:
         return 154;
+      case woleai:
+        return 155;
       case anatolianHieroglyphs:
         return 156;
       case khojki:
@@ -640,6 +780,12 @@ enum Script {
         return 170;
       case osage:
         return 171;
+      case hanWithBopomofo:
+        return 172;
+      case jamo:
+        return 173;
+      case symbolsEmoji:
+        return 174;
       case masaramGondi:
         return 175;
       case soyombo:
@@ -714,6 +860,8 @@ enum Script {
         return 210;
       case tolongSiki:
         return 211;
+      case traditionalHanWithLatin:
+        return 212;
       case chisoi:
         return 254;
     }

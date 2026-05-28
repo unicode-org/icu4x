@@ -71,6 +71,7 @@ enum class Script(val inner: Int) {
     Shavian(51),
     TaiLe(52),
     Ugaritic(53),
+    KatakanaOrHiragana(54),
     Buginese(55),
     Glagolitic(56),
     Kharoshthi(57),
@@ -80,16 +81,28 @@ enum class Script(val inner: Int) {
     OldPersian(61),
     Balinese(62),
     Batak(63),
+    BlisSymbols(64),
     Brahmi(65),
     Cham(66),
+    Cirth(67),
+    OldChurchSlavonicCyrillic(68),
+    DemoticEgyptian(69),
+    HieraticEgyptian(70),
     EgyptianHieroglyphs(71),
+    Khutsuri(72),
+    SimplifiedHan(73),
+    TraditionalHan(74),
     PahawhHmong(75),
     OldHungarian(76),
+    HarappanIndus(77),
     Javanese(78),
     KayahLi(79),
+    LatinFraktur(80),
+    LatinGaelic(81),
     Lepcha(82),
     LinearA(83),
     Mandaic(84),
+    MayanHieroglyphs(85),
     MeroiticHieroglyphs(86),
     Nko(87),
     OldTurkic(88),
@@ -97,10 +110,19 @@ enum class Script(val inner: Int) {
     PhagsPa(90),
     Phoenician(91),
     Miao(92),
+    Rongorongo(93),
+    Sarati(94),
+    EstrangeloSyriac(95),
+    WesternSyriac(96),
+    EasternSyriac(97),
+    Tengwar(98),
     Vai(99),
+    VisibleSpeech(100),
     Cuneiform(101),
+    UnwrittenLanguages(102),
     Unknown(103),
     Carian(104),
+    Japanese(105),
     TaiTham(106),
     Lycian(107),
     Lydian(108),
@@ -109,24 +131,32 @@ enum class Script(val inner: Int) {
     Saurashtra(111),
     SignWriting(112),
     Sundanese(113),
+    Moon(114),
     MeeteiMayek(115),
     ImperialAramaic(116),
     Avestan(117),
     Chakma(118),
+    Korean(119),
     Kaithi(120),
     Manichaean(121),
     InscriptionalPahlavi(122),
     PsalterPahlavi(123),
+    BookPahlavi(124),
     InscriptionalParthian(125),
     Samaritan(126),
     TaiViet(127),
+    MathematicalNotation(128),
+    Symbols(129),
     Bamum(130),
     Lisu(131),
+    NakhiGeba(132),
     OldSouthArabian(133),
     BassaVah(134),
     Duployan(135),
     Elbasan(136),
     Grantha(137),
+    Kpelle(138),
+    Loma(139),
     MendeKikakui(140),
     MeroiticCursive(141),
     OldNorthArabian(142),
@@ -134,12 +164,15 @@ enum class Script(val inner: Int) {
     Palmyrene(144),
     Khudawadi(145),
     WarangCiti(146),
+    Afaka(147),
+    Jurchen(148),
     Mro(149),
     Nushu(150),
     Sharada(151),
     SoraSompeng(152),
     Takri(153),
     Tangut(154),
+    Woleai(155),
     AnatolianHieroglyphs(156),
     Khojki(157),
     Tirhuta(158),
@@ -156,6 +189,9 @@ enum class Script(val inner: Int) {
     Marchen(169),
     Newa(170),
     Osage(171),
+    HanWithBopomofo(172),
+    Jamo(173),
+    SymbolsEmoji(174),
     MasaramGondi(175),
     Soyombo(176),
     ZanabazarSquare(177),
@@ -193,6 +229,7 @@ enum class Script(val inner: Int) {
     Sidetic(209),
     TaiYo(210),
     TolongSiki(211),
+    TraditionalHanWithLatin(212),
     Chisoi(254);
 
     fun toNative(): Int {
@@ -259,6 +296,7 @@ enum class Script(val inner: Int) {
                 51 -> Shavian
                 52 -> TaiLe
                 53 -> Ugaritic
+                54 -> KatakanaOrHiragana
                 55 -> Buginese
                 56 -> Glagolitic
                 57 -> Kharoshthi
@@ -268,16 +306,28 @@ enum class Script(val inner: Int) {
                 61 -> OldPersian
                 62 -> Balinese
                 63 -> Batak
+                64 -> BlisSymbols
                 65 -> Brahmi
                 66 -> Cham
+                67 -> Cirth
+                68 -> OldChurchSlavonicCyrillic
+                69 -> DemoticEgyptian
+                70 -> HieraticEgyptian
                 71 -> EgyptianHieroglyphs
+                72 -> Khutsuri
+                73 -> SimplifiedHan
+                74 -> TraditionalHan
                 75 -> PahawhHmong
                 76 -> OldHungarian
+                77 -> HarappanIndus
                 78 -> Javanese
                 79 -> KayahLi
+                80 -> LatinFraktur
+                81 -> LatinGaelic
                 82 -> Lepcha
                 83 -> LinearA
                 84 -> Mandaic
+                85 -> MayanHieroglyphs
                 86 -> MeroiticHieroglyphs
                 87 -> Nko
                 88 -> OldTurkic
@@ -285,10 +335,19 @@ enum class Script(val inner: Int) {
                 90 -> PhagsPa
                 91 -> Phoenician
                 92 -> Miao
+                93 -> Rongorongo
+                94 -> Sarati
+                95 -> EstrangeloSyriac
+                96 -> WesternSyriac
+                97 -> EasternSyriac
+                98 -> Tengwar
                 99 -> Vai
+                100 -> VisibleSpeech
                 101 -> Cuneiform
+                102 -> UnwrittenLanguages
                 103 -> Unknown
                 104 -> Carian
+                105 -> Japanese
                 106 -> TaiTham
                 107 -> Lycian
                 108 -> Lydian
@@ -297,24 +356,32 @@ enum class Script(val inner: Int) {
                 111 -> Saurashtra
                 112 -> SignWriting
                 113 -> Sundanese
+                114 -> Moon
                 115 -> MeeteiMayek
                 116 -> ImperialAramaic
                 117 -> Avestan
                 118 -> Chakma
+                119 -> Korean
                 120 -> Kaithi
                 121 -> Manichaean
                 122 -> InscriptionalPahlavi
                 123 -> PsalterPahlavi
+                124 -> BookPahlavi
                 125 -> InscriptionalParthian
                 126 -> Samaritan
                 127 -> TaiViet
+                128 -> MathematicalNotation
+                129 -> Symbols
                 130 -> Bamum
                 131 -> Lisu
+                132 -> NakhiGeba
                 133 -> OldSouthArabian
                 134 -> BassaVah
                 135 -> Duployan
                 136 -> Elbasan
                 137 -> Grantha
+                138 -> Kpelle
+                139 -> Loma
                 140 -> MendeKikakui
                 141 -> MeroiticCursive
                 142 -> OldNorthArabian
@@ -322,12 +389,15 @@ enum class Script(val inner: Int) {
                 144 -> Palmyrene
                 145 -> Khudawadi
                 146 -> WarangCiti
+                147 -> Afaka
+                148 -> Jurchen
                 149 -> Mro
                 150 -> Nushu
                 151 -> Sharada
                 152 -> SoraSompeng
                 153 -> Takri
                 154 -> Tangut
+                155 -> Woleai
                 156 -> AnatolianHieroglyphs
                 157 -> Khojki
                 158 -> Tirhuta
@@ -344,6 +414,9 @@ enum class Script(val inner: Int) {
                 169 -> Marchen
                 170 -> Newa
                 171 -> Osage
+                172 -> HanWithBopomofo
+                173 -> Jamo
+                174 -> SymbolsEmoji
                 175 -> MasaramGondi
                 176 -> Soyombo
                 177 -> ZanabazarSquare
@@ -381,6 +454,7 @@ enum class Script(val inner: Int) {
                 209 -> Sidetic
                 210 -> TaiYo
                 211 -> TolongSiki
+                212 -> TraditionalHanWithLatin
                 254 -> Chisoi
                 else -> throw RuntimeException("Failed to find variant ${native} of type Script")
             }

@@ -233,6 +233,10 @@ export class Script {
      */
     static Ugaritic : Script;
     /**
+     * See the [Rust documentation for `KatakanaOrHiragana`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.KatakanaOrHiragana) for more information.
+     */
+    static KatakanaOrHiragana : Script;
+    /**
      * See the [Rust documentation for `Buginese`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Buginese) for more information.
      */
     static Buginese : Script;
@@ -269,6 +273,10 @@ export class Script {
      */
     static Batak : Script;
     /**
+     * See the [Rust documentation for `BlisSymbols`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.BlisSymbols) for more information.
+     */
+    static BlisSymbols : Script;
+    /**
      * See the [Rust documentation for `Brahmi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Brahmi) for more information.
      */
     static Brahmi : Script;
@@ -277,9 +285,37 @@ export class Script {
      */
     static Cham : Script;
     /**
+     * See the [Rust documentation for `Cirth`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Cirth) for more information.
+     */
+    static Cirth : Script;
+    /**
+     * See the [Rust documentation for `OldChurchSlavonicCyrillic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.OldChurchSlavonicCyrillic) for more information.
+     */
+    static OldChurchSlavonicCyrillic : Script;
+    /**
+     * See the [Rust documentation for `DemoticEgyptian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.DemoticEgyptian) for more information.
+     */
+    static DemoticEgyptian : Script;
+    /**
+     * See the [Rust documentation for `HieraticEgyptian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.HieraticEgyptian) for more information.
+     */
+    static HieraticEgyptian : Script;
+    /**
      * See the [Rust documentation for `EgyptianHieroglyphs`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.EgyptianHieroglyphs) for more information.
      */
     static EgyptianHieroglyphs : Script;
+    /**
+     * See the [Rust documentation for `Khutsuri`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Khutsuri) for more information.
+     */
+    static Khutsuri : Script;
+    /**
+     * See the [Rust documentation for `SimplifiedHan`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.SimplifiedHan) for more information.
+     */
+    static SimplifiedHan : Script;
+    /**
+     * See the [Rust documentation for `TraditionalHan`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.TraditionalHan) for more information.
+     */
+    static TraditionalHan : Script;
     /**
      * See the [Rust documentation for `PahawhHmong`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.PahawhHmong) for more information.
      */
@@ -289,6 +325,10 @@ export class Script {
      */
     static OldHungarian : Script;
     /**
+     * See the [Rust documentation for `HarappanIndus`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.HarappanIndus) for more information.
+     */
+    static HarappanIndus : Script;
+    /**
      * See the [Rust documentation for `Javanese`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Javanese) for more information.
      */
     static Javanese : Script;
@@ -296,6 +336,14 @@ export class Script {
      * See the [Rust documentation for `KayahLi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.KayahLi) for more information.
      */
     static KayahLi : Script;
+    /**
+     * See the [Rust documentation for `LatinFraktur`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.LatinFraktur) for more information.
+     */
+    static LatinFraktur : Script;
+    /**
+     * See the [Rust documentation for `LatinGaelic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.LatinGaelic) for more information.
+     */
+    static LatinGaelic : Script;
     /**
      * See the [Rust documentation for `Lepcha`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Lepcha) for more information.
      */
@@ -308,6 +356,10 @@ export class Script {
      * See the [Rust documentation for `Mandaic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Mandaic) for more information.
      */
     static Mandaic : Script;
+    /**
+     * See the [Rust documentation for `MayanHieroglyphs`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MayanHieroglyphs) for more information.
+     */
+    static MayanHieroglyphs : Script;
     /**
      * See the [Rust documentation for `MeroiticHieroglyphs`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MeroiticHieroglyphs) for more information.
      */
@@ -337,13 +389,45 @@ export class Script {
      */
     static Miao : Script;
     /**
+     * See the [Rust documentation for `Rongorongo`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Rongorongo) for more information.
+     */
+    static Rongorongo : Script;
+    /**
+     * See the [Rust documentation for `Sarati`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Sarati) for more information.
+     */
+    static Sarati : Script;
+    /**
+     * See the [Rust documentation for `EstrangeloSyriac`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.EstrangeloSyriac) for more information.
+     */
+    static EstrangeloSyriac : Script;
+    /**
+     * See the [Rust documentation for `WesternSyriac`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.WesternSyriac) for more information.
+     */
+    static WesternSyriac : Script;
+    /**
+     * See the [Rust documentation for `EasternSyriac`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.EasternSyriac) for more information.
+     */
+    static EasternSyriac : Script;
+    /**
+     * See the [Rust documentation for `Tengwar`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Tengwar) for more information.
+     */
+    static Tengwar : Script;
+    /**
      * See the [Rust documentation for `Vai`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Vai) for more information.
      */
     static Vai : Script;
     /**
+     * See the [Rust documentation for `VisibleSpeech`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.VisibleSpeech) for more information.
+     */
+    static VisibleSpeech : Script;
+    /**
      * See the [Rust documentation for `Cuneiform`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Cuneiform) for more information.
      */
     static Cuneiform : Script;
+    /**
+     * See the [Rust documentation for `UnwrittenLanguages`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.UnwrittenLanguages) for more information.
+     */
+    static UnwrittenLanguages : Script;
     /**
      * See the [Rust documentation for `Unknown`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Unknown) for more information.
      */
@@ -352,6 +436,10 @@ export class Script {
      * See the [Rust documentation for `Carian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Carian) for more information.
      */
     static Carian : Script;
+    /**
+     * See the [Rust documentation for `Japanese`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Japanese) for more information.
+     */
+    static Japanese : Script;
     /**
      * See the [Rust documentation for `TaiTham`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.TaiTham) for more information.
      */
@@ -385,6 +473,10 @@ export class Script {
      */
     static Sundanese : Script;
     /**
+     * See the [Rust documentation for `Moon`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Moon) for more information.
+     */
+    static Moon : Script;
+    /**
      * See the [Rust documentation for `MeeteiMayek`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MeeteiMayek) for more information.
      */
     static MeeteiMayek : Script;
@@ -400,6 +492,10 @@ export class Script {
      * See the [Rust documentation for `Chakma`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Chakma) for more information.
      */
     static Chakma : Script;
+    /**
+     * See the [Rust documentation for `Korean`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Korean) for more information.
+     */
+    static Korean : Script;
     /**
      * See the [Rust documentation for `Kaithi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Kaithi) for more information.
      */
@@ -417,6 +513,10 @@ export class Script {
      */
     static PsalterPahlavi : Script;
     /**
+     * See the [Rust documentation for `BookPahlavi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.BookPahlavi) for more information.
+     */
+    static BookPahlavi : Script;
+    /**
      * See the [Rust documentation for `InscriptionalParthian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.InscriptionalParthian) for more information.
      */
     static InscriptionalParthian : Script;
@@ -429,6 +529,14 @@ export class Script {
      */
     static TaiViet : Script;
     /**
+     * See the [Rust documentation for `MathematicalNotation`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MathematicalNotation) for more information.
+     */
+    static MathematicalNotation : Script;
+    /**
+     * See the [Rust documentation for `Symbols`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Symbols) for more information.
+     */
+    static Symbols : Script;
+    /**
      * See the [Rust documentation for `Bamum`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Bamum) for more information.
      */
     static Bamum : Script;
@@ -436,6 +544,10 @@ export class Script {
      * See the [Rust documentation for `Lisu`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Lisu) for more information.
      */
     static Lisu : Script;
+    /**
+     * See the [Rust documentation for `NakhiGeba`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.NakhiGeba) for more information.
+     */
+    static NakhiGeba : Script;
     /**
      * See the [Rust documentation for `OldSouthArabian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.OldSouthArabian) for more information.
      */
@@ -456,6 +568,14 @@ export class Script {
      * See the [Rust documentation for `Grantha`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Grantha) for more information.
      */
     static Grantha : Script;
+    /**
+     * See the [Rust documentation for `Kpelle`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Kpelle) for more information.
+     */
+    static Kpelle : Script;
+    /**
+     * See the [Rust documentation for `Loma`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Loma) for more information.
+     */
+    static Loma : Script;
     /**
      * See the [Rust documentation for `MendeKikakui`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MendeKikakui) for more information.
      */
@@ -485,6 +605,14 @@ export class Script {
      */
     static WarangCiti : Script;
     /**
+     * See the [Rust documentation for `Afaka`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Afaka) for more information.
+     */
+    static Afaka : Script;
+    /**
+     * See the [Rust documentation for `Jurchen`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Jurchen) for more information.
+     */
+    static Jurchen : Script;
+    /**
      * See the [Rust documentation for `Mro`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Mro) for more information.
      */
     static Mro : Script;
@@ -508,6 +636,10 @@ export class Script {
      * See the [Rust documentation for `Tangut`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Tangut) for more information.
      */
     static Tangut : Script;
+    /**
+     * See the [Rust documentation for `Woleai`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Woleai) for more information.
+     */
+    static Woleai : Script;
     /**
      * See the [Rust documentation for `AnatolianHieroglyphs`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.AnatolianHieroglyphs) for more information.
      */
@@ -572,6 +704,18 @@ export class Script {
      * See the [Rust documentation for `Osage`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Osage) for more information.
      */
     static Osage : Script;
+    /**
+     * See the [Rust documentation for `HanWithBopomofo`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.HanWithBopomofo) for more information.
+     */
+    static HanWithBopomofo : Script;
+    /**
+     * See the [Rust documentation for `Jamo`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Jamo) for more information.
+     */
+    static Jamo : Script;
+    /**
+     * See the [Rust documentation for `SymbolsEmoji`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.SymbolsEmoji) for more information.
+     */
+    static SymbolsEmoji : Script;
     /**
      * See the [Rust documentation for `MasaramGondi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MasaramGondi) for more information.
      */
@@ -720,6 +864,10 @@ export class Script {
      * See the [Rust documentation for `TolongSiki`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.TolongSiki) for more information.
      */
     static TolongSiki : Script;
+    /**
+     * See the [Rust documentation for `TraditionalHanWithLatin`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.TraditionalHanWithLatin) for more information.
+     */
+    static TraditionalHanWithLatin : Script;
     /**
      * See the [Rust documentation for `Chisoi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Chisoi) for more information.
      */

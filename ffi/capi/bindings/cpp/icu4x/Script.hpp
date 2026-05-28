@@ -98,6 +98,7 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_Shavian:
         case icu4x::capi::Script_TaiLe:
         case icu4x::capi::Script_Ugaritic:
+        case icu4x::capi::Script_KatakanaOrHiragana:
         case icu4x::capi::Script_Buginese:
         case icu4x::capi::Script_Glagolitic:
         case icu4x::capi::Script_Kharoshthi:
@@ -107,16 +108,28 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_OldPersian:
         case icu4x::capi::Script_Balinese:
         case icu4x::capi::Script_Batak:
+        case icu4x::capi::Script_BlisSymbols:
         case icu4x::capi::Script_Brahmi:
         case icu4x::capi::Script_Cham:
+        case icu4x::capi::Script_Cirth:
+        case icu4x::capi::Script_OldChurchSlavonicCyrillic:
+        case icu4x::capi::Script_DemoticEgyptian:
+        case icu4x::capi::Script_HieraticEgyptian:
         case icu4x::capi::Script_EgyptianHieroglyphs:
+        case icu4x::capi::Script_Khutsuri:
+        case icu4x::capi::Script_SimplifiedHan:
+        case icu4x::capi::Script_TraditionalHan:
         case icu4x::capi::Script_PahawhHmong:
         case icu4x::capi::Script_OldHungarian:
+        case icu4x::capi::Script_HarappanIndus:
         case icu4x::capi::Script_Javanese:
         case icu4x::capi::Script_KayahLi:
+        case icu4x::capi::Script_LatinFraktur:
+        case icu4x::capi::Script_LatinGaelic:
         case icu4x::capi::Script_Lepcha:
         case icu4x::capi::Script_LinearA:
         case icu4x::capi::Script_Mandaic:
+        case icu4x::capi::Script_MayanHieroglyphs:
         case icu4x::capi::Script_MeroiticHieroglyphs:
         case icu4x::capi::Script_Nko:
         case icu4x::capi::Script_OldTurkic:
@@ -124,10 +137,19 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_PhagsPa:
         case icu4x::capi::Script_Phoenician:
         case icu4x::capi::Script_Miao:
+        case icu4x::capi::Script_Rongorongo:
+        case icu4x::capi::Script_Sarati:
+        case icu4x::capi::Script_EstrangeloSyriac:
+        case icu4x::capi::Script_WesternSyriac:
+        case icu4x::capi::Script_EasternSyriac:
+        case icu4x::capi::Script_Tengwar:
         case icu4x::capi::Script_Vai:
+        case icu4x::capi::Script_VisibleSpeech:
         case icu4x::capi::Script_Cuneiform:
+        case icu4x::capi::Script_UnwrittenLanguages:
         case icu4x::capi::Script_Unknown:
         case icu4x::capi::Script_Carian:
+        case icu4x::capi::Script_Japanese:
         case icu4x::capi::Script_TaiTham:
         case icu4x::capi::Script_Lycian:
         case icu4x::capi::Script_Lydian:
@@ -136,24 +158,32 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_Saurashtra:
         case icu4x::capi::Script_SignWriting:
         case icu4x::capi::Script_Sundanese:
+        case icu4x::capi::Script_Moon:
         case icu4x::capi::Script_MeeteiMayek:
         case icu4x::capi::Script_ImperialAramaic:
         case icu4x::capi::Script_Avestan:
         case icu4x::capi::Script_Chakma:
+        case icu4x::capi::Script_Korean:
         case icu4x::capi::Script_Kaithi:
         case icu4x::capi::Script_Manichaean:
         case icu4x::capi::Script_InscriptionalPahlavi:
         case icu4x::capi::Script_PsalterPahlavi:
+        case icu4x::capi::Script_BookPahlavi:
         case icu4x::capi::Script_InscriptionalParthian:
         case icu4x::capi::Script_Samaritan:
         case icu4x::capi::Script_TaiViet:
+        case icu4x::capi::Script_MathematicalNotation:
+        case icu4x::capi::Script_Symbols:
         case icu4x::capi::Script_Bamum:
         case icu4x::capi::Script_Lisu:
+        case icu4x::capi::Script_NakhiGeba:
         case icu4x::capi::Script_OldSouthArabian:
         case icu4x::capi::Script_BassaVah:
         case icu4x::capi::Script_Duployan:
         case icu4x::capi::Script_Elbasan:
         case icu4x::capi::Script_Grantha:
+        case icu4x::capi::Script_Kpelle:
+        case icu4x::capi::Script_Loma:
         case icu4x::capi::Script_MendeKikakui:
         case icu4x::capi::Script_MeroiticCursive:
         case icu4x::capi::Script_OldNorthArabian:
@@ -161,12 +191,15 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_Palmyrene:
         case icu4x::capi::Script_Khudawadi:
         case icu4x::capi::Script_WarangCiti:
+        case icu4x::capi::Script_Afaka:
+        case icu4x::capi::Script_Jurchen:
         case icu4x::capi::Script_Mro:
         case icu4x::capi::Script_Nushu:
         case icu4x::capi::Script_Sharada:
         case icu4x::capi::Script_SoraSompeng:
         case icu4x::capi::Script_Takri:
         case icu4x::capi::Script_Tangut:
+        case icu4x::capi::Script_Woleai:
         case icu4x::capi::Script_AnatolianHieroglyphs:
         case icu4x::capi::Script_Khojki:
         case icu4x::capi::Script_Tirhuta:
@@ -183,6 +216,9 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_Marchen:
         case icu4x::capi::Script_Newa:
         case icu4x::capi::Script_Osage:
+        case icu4x::capi::Script_HanWithBopomofo:
+        case icu4x::capi::Script_Jamo:
+        case icu4x::capi::Script_SymbolsEmoji:
         case icu4x::capi::Script_MasaramGondi:
         case icu4x::capi::Script_Soyombo:
         case icu4x::capi::Script_ZanabazarSquare:
@@ -220,6 +256,7 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_Sidetic:
         case icu4x::capi::Script_TaiYo:
         case icu4x::capi::Script_TolongSiki:
+        case icu4x::capi::Script_TraditionalHanWithLatin:
         case icu4x::capi::Script_Chisoi:
             return static_cast<icu4x::Script::Value>(c_enum);
         default:

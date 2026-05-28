@@ -21,7 +21,6 @@ pub mod ffi {
     #[non_exhaustive]
     pub enum {{prop.name.to_upper_camel_case()}} {
         {%- for (discriminant, (short_name, long_name)) in prop.variants() %}
-        {%- if !prop.is_icu4c_only_value(*discriminant) && prop.transform_long(long_name) != "KatakanaOrHiragana" %}
         #[diplomat::rust_link(
             icu::properties::props::{{prop.name.to_upper_camel_case()}}::{{prop.transform_long(long_name)}},
             {{ prop.ffi_variant_kind() }}
@@ -30,7 +29,6 @@ pub mod ffi {
         #[diplomat::attr(auto, default)]
         {%- endif %}
         {{prop.transform_long(long_name)}} = {{discriminant}},
-        {%- endif %}
         {%- endfor %}
     }
 
@@ -86,9 +84,7 @@ pub mod ffi {
         pub fn from_integer_value(other: {{ prop.int_type() }}) -> Option<Self> {
             Some(match other {
                 {%- for (discriminant, (_, long_name)) in prop.variants() %}
-                {%- if !prop.is_icu4c_only_value(*discriminant) && prop.transform_long(long_name) != "KatakanaOrHiragana" %}
                 {{ discriminant }} => Self::{{prop.transform_long(long_name)}},
-                {%- endif %}
                 {%- endfor %}
                 _ => return None,
             })

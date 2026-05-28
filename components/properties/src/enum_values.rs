@@ -2308,26 +2308,62 @@ impl Script {
     pub const Balinese: Self = Self(62);
     /// `Batk`
     pub const Batak: Self = Self(63);
+    #[doc(hidden)]
+    /// `Blis`
+    pub const BlisSymbols: Self = Self(64);
     /// `Brah`
     pub const Brahmi: Self = Self(65);
     /// `Cham`
     pub const Cham: Self = Self(66);
+    #[doc(hidden)]
+    /// `Cirt`
+    pub const Cirth: Self = Self(67);
+    #[doc(hidden)]
+    /// `Cyrs`
+    pub const OldChurchSlavonicCyrillic: Self = Self(68);
+    #[doc(hidden)]
+    /// `Egyd`
+    pub const DemoticEgyptian: Self = Self(69);
+    #[doc(hidden)]
+    /// `Egyh`
+    pub const HieraticEgyptian: Self = Self(70);
     /// `Egyp`
     pub const EgyptianHieroglyphs: Self = Self(71);
+    #[doc(hidden)]
+    /// `Geok`
+    pub const Khutsuri: Self = Self(72);
+    #[doc(hidden)]
+    /// `Hans`
+    pub const SimplifiedHan: Self = Self(73);
+    #[doc(hidden)]
+    /// `Hant`
+    pub const TraditionalHan: Self = Self(74);
     /// `Hmng`
     pub const PahawhHmong: Self = Self(75);
     /// `Hung`
     pub const OldHungarian: Self = Self(76);
+    #[doc(hidden)]
+    /// `Inds`
+    pub const HarappanIndus: Self = Self(77);
     /// `Java`
     pub const Javanese: Self = Self(78);
     /// `Kali`
     pub const KayahLi: Self = Self(79);
+    #[doc(hidden)]
+    /// `Latf`
+    pub const LatinFraktur: Self = Self(80);
+    #[doc(hidden)]
+    /// `Latg`
+    pub const LatinGaelic: Self = Self(81);
     /// `Lepc`
     pub const Lepcha: Self = Self(82);
     /// `Lina`
     pub const LinearA: Self = Self(83);
     /// `Mand`
     pub const Mandaic: Self = Self(84);
+    #[doc(hidden)]
+    /// `Maya`
+    pub const MayanHieroglyphs: Self = Self(85);
     /// `Mero`
     pub const MeroiticHieroglyphs: Self = Self(86);
     /// `Nkoo`
@@ -2342,14 +2378,41 @@ impl Script {
     pub const Phoenician: Self = Self(91);
     /// `Plrd`
     pub const Miao: Self = Self(92);
+    #[doc(hidden)]
+    /// `Roro`
+    pub const Rongorongo: Self = Self(93);
+    #[doc(hidden)]
+    /// `Sara`
+    pub const Sarati: Self = Self(94);
+    #[doc(hidden)]
+    /// `Syre`
+    pub const EstrangeloSyriac: Self = Self(95);
+    #[doc(hidden)]
+    /// `Syrj`
+    pub const WesternSyriac: Self = Self(96);
+    #[doc(hidden)]
+    /// `Syrn`
+    pub const EasternSyriac: Self = Self(97);
+    #[doc(hidden)]
+    /// `Teng`
+    pub const Tengwar: Self = Self(98);
     /// `Vaii`
     pub const Vai: Self = Self(99);
+    #[doc(hidden)]
+    /// `Visp`
+    pub const VisibleSpeech: Self = Self(100);
     /// `Xsux`
     pub const Cuneiform: Self = Self(101);
+    #[doc(hidden)]
+    /// `Zxxx`
+    pub const UnwrittenLanguages: Self = Self(102);
     /// `Zzzz`
     pub const Unknown: Self = Self(103);
     /// `Cari`
     pub const Carian: Self = Self(104);
+    #[doc(hidden)]
+    /// `Jpan`
+    pub const Japanese: Self = Self(105);
     /// `Lana`
     pub const TaiTham: Self = Self(106);
     /// `Lyci`
@@ -2366,6 +2429,9 @@ impl Script {
     pub const SignWriting: Self = Self(112);
     /// `Sund`
     pub const Sundanese: Self = Self(113);
+    #[doc(hidden)]
+    /// `Moon`
+    pub const Moon: Self = Self(114);
     /// `Mtei`
     pub const MeeteiMayek: Self = Self(115);
     /// `Armi`
@@ -2374,6 +2440,9 @@ impl Script {
     pub const Avestan: Self = Self(117);
     /// `Cakm`
     pub const Chakma: Self = Self(118);
+    #[doc(hidden)]
+    /// `Kore`
+    pub const Korean: Self = Self(119);
     /// `Kthi`
     pub const Kaithi: Self = Self(120);
     /// `Mani`
@@ -2382,16 +2451,28 @@ impl Script {
     pub const InscriptionalPahlavi: Self = Self(122);
     /// `Phlp`
     pub const PsalterPahlavi: Self = Self(123);
+    #[doc(hidden)]
+    /// `Phlv`
+    pub const BookPahlavi: Self = Self(124);
     /// `Prti`
     pub const InscriptionalParthian: Self = Self(125);
     /// `Samr`
     pub const Samaritan: Self = Self(126);
     /// `Tavt`
     pub const TaiViet: Self = Self(127);
+    #[doc(hidden)]
+    /// `Zmth`
+    pub const MathematicalNotation: Self = Self(128);
+    #[doc(hidden)]
+    /// `Zsym`
+    pub const Symbols: Self = Self(129);
     /// `Bamu`
     pub const Bamum: Self = Self(130);
     /// `Lisu`
     pub const Lisu: Self = Self(131);
+    #[doc(hidden)]
+    /// `Nkgb`
+    pub const NakhiGeba: Self = Self(132);
     /// `Sarb`
     pub const OldSouthArabian: Self = Self(133);
     /// `Bass`
@@ -2402,6 +2483,12 @@ impl Script {
     pub const Elbasan: Self = Self(136);
     /// `Gran`
     pub const Grantha: Self = Self(137);
+    #[doc(hidden)]
+    /// `Kpel`
+    pub const Kpelle: Self = Self(138);
+    #[doc(hidden)]
+    /// `Loma`
+    pub const Loma: Self = Self(139);
     /// `Mend`
     pub const MendeKikakui: Self = Self(140);
     /// `Merc`
@@ -2416,6 +2503,12 @@ impl Script {
     pub const Khudawadi: Self = Self(145);
     /// `Wara`
     pub const WarangCiti: Self = Self(146);
+    #[doc(hidden)]
+    /// `Afak`
+    pub const Afaka: Self = Self(147);
+    #[doc(hidden)]
+    /// `Jurc`
+    pub const Jurchen: Self = Self(148);
     /// `Mroo`
     pub const Mro: Self = Self(149);
     /// `Nshu`
@@ -2428,6 +2521,9 @@ impl Script {
     pub const Takri: Self = Self(153);
     /// `Tang`
     pub const Tangut: Self = Self(154);
+    #[doc(hidden)]
+    /// `Wole`
+    pub const Woleai: Self = Self(155);
     /// `Hluw`
     pub const AnatolianHieroglyphs: Self = Self(156);
     /// `Khoj`
@@ -2460,6 +2556,15 @@ impl Script {
     pub const Newa: Self = Self(170);
     /// `Osge`
     pub const Osage: Self = Self(171);
+    #[doc(hidden)]
+    /// `Hanb`
+    pub const HanWithBopomofo: Self = Self(172);
+    #[doc(hidden)]
+    /// `Jamo`
+    pub const Jamo: Self = Self(173);
+    #[doc(hidden)]
+    /// `Zsye`
+    pub const SymbolsEmoji: Self = Self(174);
     /// `Gonm`
     pub const MasaramGondi: Self = Self(175);
     /// `Soyo`
@@ -2534,6 +2639,9 @@ impl Script {
     pub const TaiYo: Self = Self(210);
     /// `Tols`
     pub const TolongSiki: Self = Self(211);
+    #[doc(hidden)]
+    /// `Hntl`
+    pub const TraditionalHanWithLatin: Self = Self(212);
 }
 
 #[cfg(feature = "datagen")]
@@ -2605,16 +2713,28 @@ impl databake::Bake for Script {
             Self::OldPersian => databake::quote!(icu_properties::props::Script::OldPersian),
             Self::Balinese => databake::quote!(icu_properties::props::Script::Balinese),
             Self::Batak => databake::quote!(icu_properties::props::Script::Batak),
+            Self::BlisSymbols => databake::quote!(icu_properties::props::Script::BlisSymbols),
             Self::Brahmi => databake::quote!(icu_properties::props::Script::Brahmi),
             Self::Cham => databake::quote!(icu_properties::props::Script::Cham),
+            Self::Cirth => databake::quote!(icu_properties::props::Script::Cirth),
+            Self::OldChurchSlavonicCyrillic => databake::quote!(icu_properties::props::Script::OldChurchSlavonicCyrillic),
+            Self::DemoticEgyptian => databake::quote!(icu_properties::props::Script::DemoticEgyptian),
+            Self::HieraticEgyptian => databake::quote!(icu_properties::props::Script::HieraticEgyptian),
             Self::EgyptianHieroglyphs => databake::quote!(icu_properties::props::Script::EgyptianHieroglyphs),
+            Self::Khutsuri => databake::quote!(icu_properties::props::Script::Khutsuri),
+            Self::SimplifiedHan => databake::quote!(icu_properties::props::Script::SimplifiedHan),
+            Self::TraditionalHan => databake::quote!(icu_properties::props::Script::TraditionalHan),
             Self::PahawhHmong => databake::quote!(icu_properties::props::Script::PahawhHmong),
             Self::OldHungarian => databake::quote!(icu_properties::props::Script::OldHungarian),
+            Self::HarappanIndus => databake::quote!(icu_properties::props::Script::HarappanIndus),
             Self::Javanese => databake::quote!(icu_properties::props::Script::Javanese),
             Self::KayahLi => databake::quote!(icu_properties::props::Script::KayahLi),
+            Self::LatinFraktur => databake::quote!(icu_properties::props::Script::LatinFraktur),
+            Self::LatinGaelic => databake::quote!(icu_properties::props::Script::LatinGaelic),
             Self::Lepcha => databake::quote!(icu_properties::props::Script::Lepcha),
             Self::LinearA => databake::quote!(icu_properties::props::Script::LinearA),
             Self::Mandaic => databake::quote!(icu_properties::props::Script::Mandaic),
+            Self::MayanHieroglyphs => databake::quote!(icu_properties::props::Script::MayanHieroglyphs),
             Self::MeroiticHieroglyphs => databake::quote!(icu_properties::props::Script::MeroiticHieroglyphs),
             Self::Nko => databake::quote!(icu_properties::props::Script::Nko),
             Self::OldTurkic => databake::quote!(icu_properties::props::Script::OldTurkic),
@@ -2622,10 +2742,19 @@ impl databake::Bake for Script {
             Self::PhagsPa => databake::quote!(icu_properties::props::Script::PhagsPa),
             Self::Phoenician => databake::quote!(icu_properties::props::Script::Phoenician),
             Self::Miao => databake::quote!(icu_properties::props::Script::Miao),
+            Self::Rongorongo => databake::quote!(icu_properties::props::Script::Rongorongo),
+            Self::Sarati => databake::quote!(icu_properties::props::Script::Sarati),
+            Self::EstrangeloSyriac => databake::quote!(icu_properties::props::Script::EstrangeloSyriac),
+            Self::WesternSyriac => databake::quote!(icu_properties::props::Script::WesternSyriac),
+            Self::EasternSyriac => databake::quote!(icu_properties::props::Script::EasternSyriac),
+            Self::Tengwar => databake::quote!(icu_properties::props::Script::Tengwar),
             Self::Vai => databake::quote!(icu_properties::props::Script::Vai),
+            Self::VisibleSpeech => databake::quote!(icu_properties::props::Script::VisibleSpeech),
             Self::Cuneiform => databake::quote!(icu_properties::props::Script::Cuneiform),
+            Self::UnwrittenLanguages => databake::quote!(icu_properties::props::Script::UnwrittenLanguages),
             Self::Unknown => databake::quote!(icu_properties::props::Script::Unknown),
             Self::Carian => databake::quote!(icu_properties::props::Script::Carian),
+            Self::Japanese => databake::quote!(icu_properties::props::Script::Japanese),
             Self::TaiTham => databake::quote!(icu_properties::props::Script::TaiTham),
             Self::Lycian => databake::quote!(icu_properties::props::Script::Lycian),
             Self::Lydian => databake::quote!(icu_properties::props::Script::Lydian),
@@ -2634,24 +2763,32 @@ impl databake::Bake for Script {
             Self::Saurashtra => databake::quote!(icu_properties::props::Script::Saurashtra),
             Self::SignWriting => databake::quote!(icu_properties::props::Script::SignWriting),
             Self::Sundanese => databake::quote!(icu_properties::props::Script::Sundanese),
+            Self::Moon => databake::quote!(icu_properties::props::Script::Moon),
             Self::MeeteiMayek => databake::quote!(icu_properties::props::Script::MeeteiMayek),
             Self::ImperialAramaic => databake::quote!(icu_properties::props::Script::ImperialAramaic),
             Self::Avestan => databake::quote!(icu_properties::props::Script::Avestan),
             Self::Chakma => databake::quote!(icu_properties::props::Script::Chakma),
+            Self::Korean => databake::quote!(icu_properties::props::Script::Korean),
             Self::Kaithi => databake::quote!(icu_properties::props::Script::Kaithi),
             Self::Manichaean => databake::quote!(icu_properties::props::Script::Manichaean),
             Self::InscriptionalPahlavi => databake::quote!(icu_properties::props::Script::InscriptionalPahlavi),
             Self::PsalterPahlavi => databake::quote!(icu_properties::props::Script::PsalterPahlavi),
+            Self::BookPahlavi => databake::quote!(icu_properties::props::Script::BookPahlavi),
             Self::InscriptionalParthian => databake::quote!(icu_properties::props::Script::InscriptionalParthian),
             Self::Samaritan => databake::quote!(icu_properties::props::Script::Samaritan),
             Self::TaiViet => databake::quote!(icu_properties::props::Script::TaiViet),
+            Self::MathematicalNotation => databake::quote!(icu_properties::props::Script::MathematicalNotation),
+            Self::Symbols => databake::quote!(icu_properties::props::Script::Symbols),
             Self::Bamum => databake::quote!(icu_properties::props::Script::Bamum),
             Self::Lisu => databake::quote!(icu_properties::props::Script::Lisu),
+            Self::NakhiGeba => databake::quote!(icu_properties::props::Script::NakhiGeba),
             Self::OldSouthArabian => databake::quote!(icu_properties::props::Script::OldSouthArabian),
             Self::BassaVah => databake::quote!(icu_properties::props::Script::BassaVah),
             Self::Duployan => databake::quote!(icu_properties::props::Script::Duployan),
             Self::Elbasan => databake::quote!(icu_properties::props::Script::Elbasan),
             Self::Grantha => databake::quote!(icu_properties::props::Script::Grantha),
+            Self::Kpelle => databake::quote!(icu_properties::props::Script::Kpelle),
+            Self::Loma => databake::quote!(icu_properties::props::Script::Loma),
             Self::MendeKikakui => databake::quote!(icu_properties::props::Script::MendeKikakui),
             Self::MeroiticCursive => databake::quote!(icu_properties::props::Script::MeroiticCursive),
             Self::OldNorthArabian => databake::quote!(icu_properties::props::Script::OldNorthArabian),
@@ -2659,12 +2796,15 @@ impl databake::Bake for Script {
             Self::Palmyrene => databake::quote!(icu_properties::props::Script::Palmyrene),
             Self::Khudawadi => databake::quote!(icu_properties::props::Script::Khudawadi),
             Self::WarangCiti => databake::quote!(icu_properties::props::Script::WarangCiti),
+            Self::Afaka => databake::quote!(icu_properties::props::Script::Afaka),
+            Self::Jurchen => databake::quote!(icu_properties::props::Script::Jurchen),
             Self::Mro => databake::quote!(icu_properties::props::Script::Mro),
             Self::Nushu => databake::quote!(icu_properties::props::Script::Nushu),
             Self::Sharada => databake::quote!(icu_properties::props::Script::Sharada),
             Self::SoraSompeng => databake::quote!(icu_properties::props::Script::SoraSompeng),
             Self::Takri => databake::quote!(icu_properties::props::Script::Takri),
             Self::Tangut => databake::quote!(icu_properties::props::Script::Tangut),
+            Self::Woleai => databake::quote!(icu_properties::props::Script::Woleai),
             Self::AnatolianHieroglyphs => databake::quote!(icu_properties::props::Script::AnatolianHieroglyphs),
             Self::Khojki => databake::quote!(icu_properties::props::Script::Khojki),
             Self::Tirhuta => databake::quote!(icu_properties::props::Script::Tirhuta),
@@ -2681,6 +2821,9 @@ impl databake::Bake for Script {
             Self::Marchen => databake::quote!(icu_properties::props::Script::Marchen),
             Self::Newa => databake::quote!(icu_properties::props::Script::Newa),
             Self::Osage => databake::quote!(icu_properties::props::Script::Osage),
+            Self::HanWithBopomofo => databake::quote!(icu_properties::props::Script::HanWithBopomofo),
+            Self::Jamo => databake::quote!(icu_properties::props::Script::Jamo),
+            Self::SymbolsEmoji => databake::quote!(icu_properties::props::Script::SymbolsEmoji),
             Self::MasaramGondi => databake::quote!(icu_properties::props::Script::MasaramGondi),
             Self::Soyombo => databake::quote!(icu_properties::props::Script::Soyombo),
             Self::ZanabazarSquare => databake::quote!(icu_properties::props::Script::ZanabazarSquare),
@@ -2718,6 +2861,7 @@ impl databake::Bake for Script {
             Self::Sidetic => databake::quote!(icu_properties::props::Script::Sidetic),
             Self::TaiYo => databake::quote!(icu_properties::props::Script::TaiYo),
             Self::TolongSiki => databake::quote!(icu_properties::props::Script::TolongSiki),
+            Self::TraditionalHanWithLatin => databake::quote!(icu_properties::props::Script::TraditionalHanWithLatin),
             Self(v) => databake::quote!(icu_properties::props::Script(#v)),
         }
     }
@@ -2981,28 +3125,28 @@ impl Script {
             ("Xpeo", Self::OldPersian),
             ("Bali", Self::Balinese),
             ("Batk", Self::Batak),
-            ("Blis", Self(64)),
+            ("Blis", Self::BlisSymbols),
             ("Brah", Self::Brahmi),
             ("Cham", Self::Cham),
-            ("Cirt", Self(67)),
-            ("Cyrs", Self(68)),
-            ("Egyd", Self(69)),
-            ("Egyh", Self(70)),
+            ("Cirt", Self::Cirth),
+            ("Cyrs", Self::OldChurchSlavonicCyrillic),
+            ("Egyd", Self::DemoticEgyptian),
+            ("Egyh", Self::HieraticEgyptian),
             ("Egyp", Self::EgyptianHieroglyphs),
-            ("Geok", Self(72)),
-            ("Hans", Self(73)),
-            ("Hant", Self(74)),
+            ("Geok", Self::Khutsuri),
+            ("Hans", Self::SimplifiedHan),
+            ("Hant", Self::TraditionalHan),
             ("Hmng", Self::PahawhHmong),
             ("Hung", Self::OldHungarian),
-            ("Inds", Self(77)),
+            ("Inds", Self::HarappanIndus),
             ("Java", Self::Javanese),
             ("Kali", Self::KayahLi),
-            ("Latf", Self(80)),
-            ("Latg", Self(81)),
+            ("Latf", Self::LatinFraktur),
+            ("Latg", Self::LatinGaelic),
             ("Lepc", Self::Lepcha),
             ("Lina", Self::LinearA),
             ("Mand", Self::Mandaic),
-            ("Maya", Self(85)),
+            ("Maya", Self::MayanHieroglyphs),
             ("Mero", Self::MeroiticHieroglyphs),
             ("Nkoo", Self::Nko),
             ("Orkh", Self::OldTurkic),
@@ -3010,19 +3154,19 @@ impl Script {
             ("Phag", Self::PhagsPa),
             ("Phnx", Self::Phoenician),
             ("Plrd", Self::Miao),
-            ("Roro", Self(93)),
-            ("Sara", Self(94)),
-            ("Syre", Self(95)),
-            ("Syrj", Self(96)),
-            ("Syrn", Self(97)),
-            ("Teng", Self(98)),
+            ("Roro", Self::Rongorongo),
+            ("Sara", Self::Sarati),
+            ("Syre", Self::EstrangeloSyriac),
+            ("Syrj", Self::WesternSyriac),
+            ("Syrn", Self::EasternSyriac),
+            ("Teng", Self::Tengwar),
             ("Vaii", Self::Vai),
-            ("Visp", Self(100)),
+            ("Visp", Self::VisibleSpeech),
             ("Xsux", Self::Cuneiform),
-            ("Zxxx", Self(102)),
+            ("Zxxx", Self::UnwrittenLanguages),
             ("Zzzz", Self::Unknown),
             ("Cari", Self::Carian),
-            ("Jpan", Self(105)),
+            ("Jpan", Self::Japanese),
             ("Lana", Self::TaiTham),
             ("Lyci", Self::Lycian),
             ("Lydi", Self::Lydian),
@@ -3031,32 +3175,32 @@ impl Script {
             ("Saur", Self::Saurashtra),
             ("Sgnw", Self::SignWriting),
             ("Sund", Self::Sundanese),
-            ("Moon", Self(114)),
+            ("Moon", Self::Moon),
             ("Mtei", Self::MeeteiMayek),
             ("Armi", Self::ImperialAramaic),
             ("Avst", Self::Avestan),
             ("Cakm", Self::Chakma),
-            ("Kore", Self(119)),
+            ("Kore", Self::Korean),
             ("Kthi", Self::Kaithi),
             ("Mani", Self::Manichaean),
             ("Phli", Self::InscriptionalPahlavi),
             ("Phlp", Self::PsalterPahlavi),
-            ("Phlv", Self(124)),
+            ("Phlv", Self::BookPahlavi),
             ("Prti", Self::InscriptionalParthian),
             ("Samr", Self::Samaritan),
             ("Tavt", Self::TaiViet),
-            ("Zmth", Self(128)),
-            ("Zsym", Self(129)),
+            ("Zmth", Self::MathematicalNotation),
+            ("Zsym", Self::Symbols),
             ("Bamu", Self::Bamum),
             ("Lisu", Self::Lisu),
-            ("Nkgb", Self(132)),
+            ("Nkgb", Self::NakhiGeba),
             ("Sarb", Self::OldSouthArabian),
             ("Bass", Self::BassaVah),
             ("Dupl", Self::Duployan),
             ("Elba", Self::Elbasan),
             ("Gran", Self::Grantha),
-            ("Kpel", Self(138)),
-            ("Loma", Self(139)),
+            ("Kpel", Self::Kpelle),
+            ("Loma", Self::Loma),
             ("Mend", Self::MendeKikakui),
             ("Merc", Self::MeroiticCursive),
             ("Narb", Self::OldNorthArabian),
@@ -3064,15 +3208,15 @@ impl Script {
             ("Palm", Self::Palmyrene),
             ("Sind", Self::Khudawadi),
             ("Wara", Self::WarangCiti),
-            ("Afak", Self(147)),
-            ("Jurc", Self(148)),
+            ("Afak", Self::Afaka),
+            ("Jurc", Self::Jurchen),
             ("Mroo", Self::Mro),
             ("Nshu", Self::Nushu),
             ("Shrd", Self::Sharada),
             ("Sora", Self::SoraSompeng),
             ("Takr", Self::Takri),
             ("Tang", Self::Tangut),
-            ("Wole", Self(155)),
+            ("Wole", Self::Woleai),
             ("Hluw", Self::AnatolianHieroglyphs),
             ("Khoj", Self::Khojki),
             ("Tirh", Self::Tirhuta),
@@ -3089,9 +3233,9 @@ impl Script {
             ("Marc", Self::Marchen),
             ("Newa", Self::Newa),
             ("Osge", Self::Osage),
-            ("Hanb", Self(172)),
-            ("Jamo", Self(173)),
-            ("Zsye", Self(174)),
+            ("Hanb", Self::HanWithBopomofo),
+            ("Jamo", Self::Jamo),
+            ("Zsye", Self::SymbolsEmoji),
             ("Gonm", Self::MasaramGondi),
             ("Soyo", Self::Soyombo),
             ("Zanb", Self::ZanabazarSquare),
@@ -3129,7 +3273,7 @@ impl Script {
             ("Sidt", Self::Sidetic),
             ("Tayo", Self::TaiYo),
             ("Tols", Self::TolongSiki),
-            ("Hntl", Self(212)),
+            ("Hntl", Self::TraditionalHanWithLatin),
         ].into_iter()
     }
 }

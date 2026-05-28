@@ -3187,6 +3187,11 @@ pub mod ffi {
         )]
         Ugaritic = 53,
         #[diplomat::rust_link(
+            icu::properties::props::Script::KatakanaOrHiragana,
+            AssociatedConstantInStruct
+        )]
+        KatakanaOrHiragana = 54,
+        #[diplomat::rust_link(
             icu::properties::props::Script::Buginese,
             AssociatedConstantInStruct
         )]
@@ -3232,6 +3237,11 @@ pub mod ffi {
         )]
         Batak = 63,
         #[diplomat::rust_link(
+            icu::properties::props::Script::BlisSymbols,
+            AssociatedConstantInStruct
+        )]
+        BlisSymbols = 64,
+        #[diplomat::rust_link(
             icu::properties::props::Script::Brahmi,
             AssociatedConstantInStruct
         )]
@@ -3242,10 +3252,45 @@ pub mod ffi {
         )]
         Cham = 66,
         #[diplomat::rust_link(
+            icu::properties::props::Script::Cirth,
+            AssociatedConstantInStruct
+        )]
+        Cirth = 67,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::OldChurchSlavonicCyrillic,
+            AssociatedConstantInStruct
+        )]
+        OldChurchSlavonicCyrillic = 68,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::DemoticEgyptian,
+            AssociatedConstantInStruct
+        )]
+        DemoticEgyptian = 69,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::HieraticEgyptian,
+            AssociatedConstantInStruct
+        )]
+        HieraticEgyptian = 70,
+        #[diplomat::rust_link(
             icu::properties::props::Script::EgyptianHieroglyphs,
             AssociatedConstantInStruct
         )]
         EgyptianHieroglyphs = 71,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Khutsuri,
+            AssociatedConstantInStruct
+        )]
+        Khutsuri = 72,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::SimplifiedHan,
+            AssociatedConstantInStruct
+        )]
+        SimplifiedHan = 73,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::TraditionalHan,
+            AssociatedConstantInStruct
+        )]
+        TraditionalHan = 74,
         #[diplomat::rust_link(
             icu::properties::props::Script::PahawhHmong,
             AssociatedConstantInStruct
@@ -3257,6 +3302,11 @@ pub mod ffi {
         )]
         OldHungarian = 76,
         #[diplomat::rust_link(
+            icu::properties::props::Script::HarappanIndus,
+            AssociatedConstantInStruct
+        )]
+        HarappanIndus = 77,
+        #[diplomat::rust_link(
             icu::properties::props::Script::Javanese,
             AssociatedConstantInStruct
         )]
@@ -3266,6 +3316,16 @@ pub mod ffi {
             AssociatedConstantInStruct
         )]
         KayahLi = 79,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::LatinFraktur,
+            AssociatedConstantInStruct
+        )]
+        LatinFraktur = 80,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::LatinGaelic,
+            AssociatedConstantInStruct
+        )]
+        LatinGaelic = 81,
         #[diplomat::rust_link(
             icu::properties::props::Script::Lepcha,
             AssociatedConstantInStruct
@@ -3281,6 +3341,11 @@ pub mod ffi {
             AssociatedConstantInStruct
         )]
         Mandaic = 84,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::MayanHieroglyphs,
+            AssociatedConstantInStruct
+        )]
+        MayanHieroglyphs = 85,
         #[diplomat::rust_link(
             icu::properties::props::Script::MeroiticHieroglyphs,
             AssociatedConstantInStruct
@@ -3317,15 +3382,55 @@ pub mod ffi {
         )]
         Miao = 92,
         #[diplomat::rust_link(
+            icu::properties::props::Script::Rongorongo,
+            AssociatedConstantInStruct
+        )]
+        Rongorongo = 93,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Sarati,
+            AssociatedConstantInStruct
+        )]
+        Sarati = 94,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::EstrangeloSyriac,
+            AssociatedConstantInStruct
+        )]
+        EstrangeloSyriac = 95,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::WesternSyriac,
+            AssociatedConstantInStruct
+        )]
+        WesternSyriac = 96,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::EasternSyriac,
+            AssociatedConstantInStruct
+        )]
+        EasternSyriac = 97,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Tengwar,
+            AssociatedConstantInStruct
+        )]
+        Tengwar = 98,
+        #[diplomat::rust_link(
             icu::properties::props::Script::Vai,
             AssociatedConstantInStruct
         )]
         Vai = 99,
         #[diplomat::rust_link(
+            icu::properties::props::Script::VisibleSpeech,
+            AssociatedConstantInStruct
+        )]
+        VisibleSpeech = 100,
+        #[diplomat::rust_link(
             icu::properties::props::Script::Cuneiform,
             AssociatedConstantInStruct
         )]
         Cuneiform = 101,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::UnwrittenLanguages,
+            AssociatedConstantInStruct
+        )]
+        UnwrittenLanguages = 102,
         #[diplomat::rust_link(
             icu::properties::props::Script::Unknown,
             AssociatedConstantInStruct
@@ -3337,6 +3442,11 @@ pub mod ffi {
             AssociatedConstantInStruct
         )]
         Carian = 104,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Japanese,
+            AssociatedConstantInStruct
+        )]
+        Japanese = 105,
         #[diplomat::rust_link(
             icu::properties::props::Script::TaiTham,
             AssociatedConstantInStruct
@@ -3378,6 +3488,11 @@ pub mod ffi {
         )]
         Sundanese = 113,
         #[diplomat::rust_link(
+            icu::properties::props::Script::Moon,
+            AssociatedConstantInStruct
+        )]
+        Moon = 114,
+        #[diplomat::rust_link(
             icu::properties::props::Script::MeeteiMayek,
             AssociatedConstantInStruct
         )]
@@ -3397,6 +3512,11 @@ pub mod ffi {
             AssociatedConstantInStruct
         )]
         Chakma = 118,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Korean,
+            AssociatedConstantInStruct
+        )]
+        Korean = 119,
         #[diplomat::rust_link(
             icu::properties::props::Script::Kaithi,
             AssociatedConstantInStruct
@@ -3418,6 +3538,11 @@ pub mod ffi {
         )]
         PsalterPahlavi = 123,
         #[diplomat::rust_link(
+            icu::properties::props::Script::BookPahlavi,
+            AssociatedConstantInStruct
+        )]
+        BookPahlavi = 124,
+        #[diplomat::rust_link(
             icu::properties::props::Script::InscriptionalParthian,
             AssociatedConstantInStruct
         )]
@@ -3433,6 +3558,16 @@ pub mod ffi {
         )]
         TaiViet = 127,
         #[diplomat::rust_link(
+            icu::properties::props::Script::MathematicalNotation,
+            AssociatedConstantInStruct
+        )]
+        MathematicalNotation = 128,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Symbols,
+            AssociatedConstantInStruct
+        )]
+        Symbols = 129,
+        #[diplomat::rust_link(
             icu::properties::props::Script::Bamum,
             AssociatedConstantInStruct
         )]
@@ -3442,6 +3577,11 @@ pub mod ffi {
             AssociatedConstantInStruct
         )]
         Lisu = 131,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::NakhiGeba,
+            AssociatedConstantInStruct
+        )]
+        NakhiGeba = 132,
         #[diplomat::rust_link(
             icu::properties::props::Script::OldSouthArabian,
             AssociatedConstantInStruct
@@ -3467,6 +3607,16 @@ pub mod ffi {
             AssociatedConstantInStruct
         )]
         Grantha = 137,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Kpelle,
+            AssociatedConstantInStruct
+        )]
+        Kpelle = 138,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Loma,
+            AssociatedConstantInStruct
+        )]
+        Loma = 139,
         #[diplomat::rust_link(
             icu::properties::props::Script::MendeKikakui,
             AssociatedConstantInStruct
@@ -3503,6 +3653,16 @@ pub mod ffi {
         )]
         WarangCiti = 146,
         #[diplomat::rust_link(
+            icu::properties::props::Script::Afaka,
+            AssociatedConstantInStruct
+        )]
+        Afaka = 147,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Jurchen,
+            AssociatedConstantInStruct
+        )]
+        Jurchen = 148,
+        #[diplomat::rust_link(
             icu::properties::props::Script::Mro,
             AssociatedConstantInStruct
         )]
@@ -3532,6 +3692,11 @@ pub mod ffi {
             AssociatedConstantInStruct
         )]
         Tangut = 154,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Woleai,
+            AssociatedConstantInStruct
+        )]
+        Woleai = 155,
         #[diplomat::rust_link(
             icu::properties::props::Script::AnatolianHieroglyphs,
             AssociatedConstantInStruct
@@ -3612,6 +3777,21 @@ pub mod ffi {
             AssociatedConstantInStruct
         )]
         Osage = 171,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::HanWithBopomofo,
+            AssociatedConstantInStruct
+        )]
+        HanWithBopomofo = 172,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Jamo,
+            AssociatedConstantInStruct
+        )]
+        Jamo = 173,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::SymbolsEmoji,
+            AssociatedConstantInStruct
+        )]
+        SymbolsEmoji = 174,
         #[diplomat::rust_link(
             icu::properties::props::Script::MasaramGondi,
             AssociatedConstantInStruct
@@ -3798,6 +3978,11 @@ pub mod ffi {
         )]
         TolongSiki = 211,
         #[diplomat::rust_link(
+            icu::properties::props::Script::TraditionalHanWithLatin,
+            AssociatedConstantInStruct
+        )]
+        TraditionalHanWithLatin = 212,
+        #[diplomat::rust_link(
             icu::properties::props::Script::Chisoi,
             AssociatedConstantInStruct
         )]
@@ -3909,6 +4094,7 @@ pub mod ffi {
                 51 => Self::Shavian,
                 52 => Self::TaiLe,
                 53 => Self::Ugaritic,
+                54 => Self::KatakanaOrHiragana,
                 55 => Self::Buginese,
                 56 => Self::Glagolitic,
                 57 => Self::Kharoshthi,
@@ -3918,16 +4104,28 @@ pub mod ffi {
                 61 => Self::OldPersian,
                 62 => Self::Balinese,
                 63 => Self::Batak,
+                64 => Self::BlisSymbols,
                 65 => Self::Brahmi,
                 66 => Self::Cham,
+                67 => Self::Cirth,
+                68 => Self::OldChurchSlavonicCyrillic,
+                69 => Self::DemoticEgyptian,
+                70 => Self::HieraticEgyptian,
                 71 => Self::EgyptianHieroglyphs,
+                72 => Self::Khutsuri,
+                73 => Self::SimplifiedHan,
+                74 => Self::TraditionalHan,
                 75 => Self::PahawhHmong,
                 76 => Self::OldHungarian,
+                77 => Self::HarappanIndus,
                 78 => Self::Javanese,
                 79 => Self::KayahLi,
+                80 => Self::LatinFraktur,
+                81 => Self::LatinGaelic,
                 82 => Self::Lepcha,
                 83 => Self::LinearA,
                 84 => Self::Mandaic,
+                85 => Self::MayanHieroglyphs,
                 86 => Self::MeroiticHieroglyphs,
                 87 => Self::Nko,
                 88 => Self::OldTurkic,
@@ -3935,10 +4133,19 @@ pub mod ffi {
                 90 => Self::PhagsPa,
                 91 => Self::Phoenician,
                 92 => Self::Miao,
+                93 => Self::Rongorongo,
+                94 => Self::Sarati,
+                95 => Self::EstrangeloSyriac,
+                96 => Self::WesternSyriac,
+                97 => Self::EasternSyriac,
+                98 => Self::Tengwar,
                 99 => Self::Vai,
+                100 => Self::VisibleSpeech,
                 101 => Self::Cuneiform,
+                102 => Self::UnwrittenLanguages,
                 103 => Self::Unknown,
                 104 => Self::Carian,
+                105 => Self::Japanese,
                 106 => Self::TaiTham,
                 107 => Self::Lycian,
                 108 => Self::Lydian,
@@ -3947,24 +4154,32 @@ pub mod ffi {
                 111 => Self::Saurashtra,
                 112 => Self::SignWriting,
                 113 => Self::Sundanese,
+                114 => Self::Moon,
                 115 => Self::MeeteiMayek,
                 116 => Self::ImperialAramaic,
                 117 => Self::Avestan,
                 118 => Self::Chakma,
+                119 => Self::Korean,
                 120 => Self::Kaithi,
                 121 => Self::Manichaean,
                 122 => Self::InscriptionalPahlavi,
                 123 => Self::PsalterPahlavi,
+                124 => Self::BookPahlavi,
                 125 => Self::InscriptionalParthian,
                 126 => Self::Samaritan,
                 127 => Self::TaiViet,
+                128 => Self::MathematicalNotation,
+                129 => Self::Symbols,
                 130 => Self::Bamum,
                 131 => Self::Lisu,
+                132 => Self::NakhiGeba,
                 133 => Self::OldSouthArabian,
                 134 => Self::BassaVah,
                 135 => Self::Duployan,
                 136 => Self::Elbasan,
                 137 => Self::Grantha,
+                138 => Self::Kpelle,
+                139 => Self::Loma,
                 140 => Self::MendeKikakui,
                 141 => Self::MeroiticCursive,
                 142 => Self::OldNorthArabian,
@@ -3972,12 +4187,15 @@ pub mod ffi {
                 144 => Self::Palmyrene,
                 145 => Self::Khudawadi,
                 146 => Self::WarangCiti,
+                147 => Self::Afaka,
+                148 => Self::Jurchen,
                 149 => Self::Mro,
                 150 => Self::Nushu,
                 151 => Self::Sharada,
                 152 => Self::SoraSompeng,
                 153 => Self::Takri,
                 154 => Self::Tangut,
+                155 => Self::Woleai,
                 156 => Self::AnatolianHieroglyphs,
                 157 => Self::Khojki,
                 158 => Self::Tirhuta,
@@ -3994,6 +4212,9 @@ pub mod ffi {
                 169 => Self::Marchen,
                 170 => Self::Newa,
                 171 => Self::Osage,
+                172 => Self::HanWithBopomofo,
+                173 => Self::Jamo,
+                174 => Self::SymbolsEmoji,
                 175 => Self::MasaramGondi,
                 176 => Self::Soyombo,
                 177 => Self::ZanabazarSquare,
@@ -4031,6 +4252,7 @@ pub mod ffi {
                 209 => Self::Sidetic,
                 210 => Self::TaiYo,
                 211 => Self::TolongSiki,
+                212 => Self::TraditionalHanWithLatin,
                 254 => Self::Chisoi,
                 _ => return None,
             })

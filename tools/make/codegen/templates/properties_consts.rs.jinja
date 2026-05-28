@@ -14,7 +14,10 @@ use crate::props::*;
 #[allow(non_upper_case_globals)]
 impl {{ prop.name.to_upper_camel_case() }} {
     {%- for (discriminant, (short_name, long_name)) in prop.variants() %}
-    {%- if (discriminant != 254 || long_name != "Chisoi") && !prop.is_icu4c_only_value(*discriminant) %}
+    {%- if (discriminant != 254 || long_name != "Chisoi") %}
+    {%- if prop.is_icu4c_only_value(*discriminant) %}
+    #[doc(hidden)]
+    {%- endif %}
     /// `{{short_name}}`
     pub const {{prop.transform_long(long_name)}}: Self = Self({{discriminant}});
     {%- endif %}
@@ -45,7 +48,7 @@ impl databake::Bake for {{ prop.name.to_upper_camel_case() }} {
         env.insert("icu_properties");
         match *self {
             {%- for (discriminant, (_, long_name)) in prop.variants() %}
-            {%- if (discriminant != 254 || long_name != "Chisoi") && !prop.is_icu4c_only_value(*discriminant) %}
+            {%- if (discriminant != 254 || long_name != "Chisoi") %}
             Self::{{prop.transform_long(long_name)}} => databake::quote!(icu_properties::props::{{ prop.name.to_upper_camel_case() }}::{{prop.transform_long(long_name)}}),
             {%- endif %}
             {%- endfor %}
@@ -86,11 +89,7 @@ impl {{ prop.name.to_upper_camel_case() }} {
         [
             {%- for (discriminant, (short_name, long_name)) in prop.variants() %}
             {%- if discriminant != 254 || long_name != "Chisoi" %}
-            {%- if prop.is_icu4c_only_value(*discriminant) %}
-            ("{{short_name}}", Self({{discriminant}})),
-            {%- else %}
             ("{{short_name}}", Self::{{prop.transform_long(long_name)}}),
-            {%- endif %}
             {%- endif %}
             {%- endfor %}
         ].into_iter()

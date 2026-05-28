@@ -73,6 +73,7 @@ namespace capi {
       Script_Shavian = 51,
       Script_TaiLe = 52,
       Script_Ugaritic = 53,
+      Script_KatakanaOrHiragana = 54,
       Script_Buginese = 55,
       Script_Glagolitic = 56,
       Script_Kharoshthi = 57,
@@ -82,16 +83,28 @@ namespace capi {
       Script_OldPersian = 61,
       Script_Balinese = 62,
       Script_Batak = 63,
+      Script_BlisSymbols = 64,
       Script_Brahmi = 65,
       Script_Cham = 66,
+      Script_Cirth = 67,
+      Script_OldChurchSlavonicCyrillic = 68,
+      Script_DemoticEgyptian = 69,
+      Script_HieraticEgyptian = 70,
       Script_EgyptianHieroglyphs = 71,
+      Script_Khutsuri = 72,
+      Script_SimplifiedHan = 73,
+      Script_TraditionalHan = 74,
       Script_PahawhHmong = 75,
       Script_OldHungarian = 76,
+      Script_HarappanIndus = 77,
       Script_Javanese = 78,
       Script_KayahLi = 79,
+      Script_LatinFraktur = 80,
+      Script_LatinGaelic = 81,
       Script_Lepcha = 82,
       Script_LinearA = 83,
       Script_Mandaic = 84,
+      Script_MayanHieroglyphs = 85,
       Script_MeroiticHieroglyphs = 86,
       Script_Nko = 87,
       Script_OldTurkic = 88,
@@ -99,10 +112,19 @@ namespace capi {
       Script_PhagsPa = 90,
       Script_Phoenician = 91,
       Script_Miao = 92,
+      Script_Rongorongo = 93,
+      Script_Sarati = 94,
+      Script_EstrangeloSyriac = 95,
+      Script_WesternSyriac = 96,
+      Script_EasternSyriac = 97,
+      Script_Tengwar = 98,
       Script_Vai = 99,
+      Script_VisibleSpeech = 100,
       Script_Cuneiform = 101,
+      Script_UnwrittenLanguages = 102,
       Script_Unknown = 103,
       Script_Carian = 104,
+      Script_Japanese = 105,
       Script_TaiTham = 106,
       Script_Lycian = 107,
       Script_Lydian = 108,
@@ -111,24 +133,32 @@ namespace capi {
       Script_Saurashtra = 111,
       Script_SignWriting = 112,
       Script_Sundanese = 113,
+      Script_Moon = 114,
       Script_MeeteiMayek = 115,
       Script_ImperialAramaic = 116,
       Script_Avestan = 117,
       Script_Chakma = 118,
+      Script_Korean = 119,
       Script_Kaithi = 120,
       Script_Manichaean = 121,
       Script_InscriptionalPahlavi = 122,
       Script_PsalterPahlavi = 123,
+      Script_BookPahlavi = 124,
       Script_InscriptionalParthian = 125,
       Script_Samaritan = 126,
       Script_TaiViet = 127,
+      Script_MathematicalNotation = 128,
+      Script_Symbols = 129,
       Script_Bamum = 130,
       Script_Lisu = 131,
+      Script_NakhiGeba = 132,
       Script_OldSouthArabian = 133,
       Script_BassaVah = 134,
       Script_Duployan = 135,
       Script_Elbasan = 136,
       Script_Grantha = 137,
+      Script_Kpelle = 138,
+      Script_Loma = 139,
       Script_MendeKikakui = 140,
       Script_MeroiticCursive = 141,
       Script_OldNorthArabian = 142,
@@ -136,12 +166,15 @@ namespace capi {
       Script_Palmyrene = 144,
       Script_Khudawadi = 145,
       Script_WarangCiti = 146,
+      Script_Afaka = 147,
+      Script_Jurchen = 148,
       Script_Mro = 149,
       Script_Nushu = 150,
       Script_Sharada = 151,
       Script_SoraSompeng = 152,
       Script_Takri = 153,
       Script_Tangut = 154,
+      Script_Woleai = 155,
       Script_AnatolianHieroglyphs = 156,
       Script_Khojki = 157,
       Script_Tirhuta = 158,
@@ -158,6 +191,9 @@ namespace capi {
       Script_Marchen = 169,
       Script_Newa = 170,
       Script_Osage = 171,
+      Script_HanWithBopomofo = 172,
+      Script_Jamo = 173,
+      Script_SymbolsEmoji = 174,
       Script_MasaramGondi = 175,
       Script_Soyombo = 176,
       Script_ZanabazarSquare = 177,
@@ -195,6 +231,7 @@ namespace capi {
       Script_Sidetic = 209,
       Script_TaiYo = 210,
       Script_TolongSiki = 211,
+      Script_TraditionalHanWithLatin = 212,
       Script_Chisoi = 254,
     };
 
@@ -426,6 +463,10 @@ public:
          */
         Ugaritic = 53,
         /**
+         * See the [Rust documentation for `KatakanaOrHiragana`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.KatakanaOrHiragana) for more information.
+         */
+        KatakanaOrHiragana = 54,
+        /**
          * See the [Rust documentation for `Buginese`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Buginese) for more information.
          */
         Buginese = 55,
@@ -462,6 +503,10 @@ public:
          */
         Batak = 63,
         /**
+         * See the [Rust documentation for `BlisSymbols`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.BlisSymbols) for more information.
+         */
+        BlisSymbols = 64,
+        /**
          * See the [Rust documentation for `Brahmi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Brahmi) for more information.
          */
         Brahmi = 65,
@@ -470,9 +515,37 @@ public:
          */
         Cham = 66,
         /**
+         * See the [Rust documentation for `Cirth`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Cirth) for more information.
+         */
+        Cirth = 67,
+        /**
+         * See the [Rust documentation for `OldChurchSlavonicCyrillic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.OldChurchSlavonicCyrillic) for more information.
+         */
+        OldChurchSlavonicCyrillic = 68,
+        /**
+         * See the [Rust documentation for `DemoticEgyptian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.DemoticEgyptian) for more information.
+         */
+        DemoticEgyptian = 69,
+        /**
+         * See the [Rust documentation for `HieraticEgyptian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.HieraticEgyptian) for more information.
+         */
+        HieraticEgyptian = 70,
+        /**
          * See the [Rust documentation for `EgyptianHieroglyphs`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.EgyptianHieroglyphs) for more information.
          */
         EgyptianHieroglyphs = 71,
+        /**
+         * See the [Rust documentation for `Khutsuri`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Khutsuri) for more information.
+         */
+        Khutsuri = 72,
+        /**
+         * See the [Rust documentation for `SimplifiedHan`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.SimplifiedHan) for more information.
+         */
+        SimplifiedHan = 73,
+        /**
+         * See the [Rust documentation for `TraditionalHan`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.TraditionalHan) for more information.
+         */
+        TraditionalHan = 74,
         /**
          * See the [Rust documentation for `PahawhHmong`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.PahawhHmong) for more information.
          */
@@ -482,6 +555,10 @@ public:
          */
         OldHungarian = 76,
         /**
+         * See the [Rust documentation for `HarappanIndus`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.HarappanIndus) for more information.
+         */
+        HarappanIndus = 77,
+        /**
          * See the [Rust documentation for `Javanese`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Javanese) for more information.
          */
         Javanese = 78,
@@ -489,6 +566,14 @@ public:
          * See the [Rust documentation for `KayahLi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.KayahLi) for more information.
          */
         KayahLi = 79,
+        /**
+         * See the [Rust documentation for `LatinFraktur`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.LatinFraktur) for more information.
+         */
+        LatinFraktur = 80,
+        /**
+         * See the [Rust documentation for `LatinGaelic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.LatinGaelic) for more information.
+         */
+        LatinGaelic = 81,
         /**
          * See the [Rust documentation for `Lepcha`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Lepcha) for more information.
          */
@@ -501,6 +586,10 @@ public:
          * See the [Rust documentation for `Mandaic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Mandaic) for more information.
          */
         Mandaic = 84,
+        /**
+         * See the [Rust documentation for `MayanHieroglyphs`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MayanHieroglyphs) for more information.
+         */
+        MayanHieroglyphs = 85,
         /**
          * See the [Rust documentation for `MeroiticHieroglyphs`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MeroiticHieroglyphs) for more information.
          */
@@ -530,13 +619,45 @@ public:
          */
         Miao = 92,
         /**
+         * See the [Rust documentation for `Rongorongo`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Rongorongo) for more information.
+         */
+        Rongorongo = 93,
+        /**
+         * See the [Rust documentation for `Sarati`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Sarati) for more information.
+         */
+        Sarati = 94,
+        /**
+         * See the [Rust documentation for `EstrangeloSyriac`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.EstrangeloSyriac) for more information.
+         */
+        EstrangeloSyriac = 95,
+        /**
+         * See the [Rust documentation for `WesternSyriac`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.WesternSyriac) for more information.
+         */
+        WesternSyriac = 96,
+        /**
+         * See the [Rust documentation for `EasternSyriac`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.EasternSyriac) for more information.
+         */
+        EasternSyriac = 97,
+        /**
+         * See the [Rust documentation for `Tengwar`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Tengwar) for more information.
+         */
+        Tengwar = 98,
+        /**
          * See the [Rust documentation for `Vai`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Vai) for more information.
          */
         Vai = 99,
         /**
+         * See the [Rust documentation for `VisibleSpeech`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.VisibleSpeech) for more information.
+         */
+        VisibleSpeech = 100,
+        /**
          * See the [Rust documentation for `Cuneiform`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Cuneiform) for more information.
          */
         Cuneiform = 101,
+        /**
+         * See the [Rust documentation for `UnwrittenLanguages`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.UnwrittenLanguages) for more information.
+         */
+        UnwrittenLanguages = 102,
         /**
          * See the [Rust documentation for `Unknown`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Unknown) for more information.
          */
@@ -545,6 +666,10 @@ public:
          * See the [Rust documentation for `Carian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Carian) for more information.
          */
         Carian = 104,
+        /**
+         * See the [Rust documentation for `Japanese`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Japanese) for more information.
+         */
+        Japanese = 105,
         /**
          * See the [Rust documentation for `TaiTham`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.TaiTham) for more information.
          */
@@ -578,6 +703,10 @@ public:
          */
         Sundanese = 113,
         /**
+         * See the [Rust documentation for `Moon`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Moon) for more information.
+         */
+        Moon = 114,
+        /**
          * See the [Rust documentation for `MeeteiMayek`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MeeteiMayek) for more information.
          */
         MeeteiMayek = 115,
@@ -593,6 +722,10 @@ public:
          * See the [Rust documentation for `Chakma`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Chakma) for more information.
          */
         Chakma = 118,
+        /**
+         * See the [Rust documentation for `Korean`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Korean) for more information.
+         */
+        Korean = 119,
         /**
          * See the [Rust documentation for `Kaithi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Kaithi) for more information.
          */
@@ -610,6 +743,10 @@ public:
          */
         PsalterPahlavi = 123,
         /**
+         * See the [Rust documentation for `BookPahlavi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.BookPahlavi) for more information.
+         */
+        BookPahlavi = 124,
+        /**
          * See the [Rust documentation for `InscriptionalParthian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.InscriptionalParthian) for more information.
          */
         InscriptionalParthian = 125,
@@ -622,6 +759,14 @@ public:
          */
         TaiViet = 127,
         /**
+         * See the [Rust documentation for `MathematicalNotation`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MathematicalNotation) for more information.
+         */
+        MathematicalNotation = 128,
+        /**
+         * See the [Rust documentation for `Symbols`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Symbols) for more information.
+         */
+        Symbols = 129,
+        /**
          * See the [Rust documentation for `Bamum`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Bamum) for more information.
          */
         Bamum = 130,
@@ -629,6 +774,10 @@ public:
          * See the [Rust documentation for `Lisu`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Lisu) for more information.
          */
         Lisu = 131,
+        /**
+         * See the [Rust documentation for `NakhiGeba`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.NakhiGeba) for more information.
+         */
+        NakhiGeba = 132,
         /**
          * See the [Rust documentation for `OldSouthArabian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.OldSouthArabian) for more information.
          */
@@ -649,6 +798,14 @@ public:
          * See the [Rust documentation for `Grantha`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Grantha) for more information.
          */
         Grantha = 137,
+        /**
+         * See the [Rust documentation for `Kpelle`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Kpelle) for more information.
+         */
+        Kpelle = 138,
+        /**
+         * See the [Rust documentation for `Loma`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Loma) for more information.
+         */
+        Loma = 139,
         /**
          * See the [Rust documentation for `MendeKikakui`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MendeKikakui) for more information.
          */
@@ -678,6 +835,14 @@ public:
          */
         WarangCiti = 146,
         /**
+         * See the [Rust documentation for `Afaka`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Afaka) for more information.
+         */
+        Afaka = 147,
+        /**
+         * See the [Rust documentation for `Jurchen`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Jurchen) for more information.
+         */
+        Jurchen = 148,
+        /**
          * See the [Rust documentation for `Mro`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Mro) for more information.
          */
         Mro = 149,
@@ -701,6 +866,10 @@ public:
          * See the [Rust documentation for `Tangut`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Tangut) for more information.
          */
         Tangut = 154,
+        /**
+         * See the [Rust documentation for `Woleai`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Woleai) for more information.
+         */
+        Woleai = 155,
         /**
          * See the [Rust documentation for `AnatolianHieroglyphs`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.AnatolianHieroglyphs) for more information.
          */
@@ -765,6 +934,18 @@ public:
          * See the [Rust documentation for `Osage`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Osage) for more information.
          */
         Osage = 171,
+        /**
+         * See the [Rust documentation for `HanWithBopomofo`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.HanWithBopomofo) for more information.
+         */
+        HanWithBopomofo = 172,
+        /**
+         * See the [Rust documentation for `Jamo`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Jamo) for more information.
+         */
+        Jamo = 173,
+        /**
+         * See the [Rust documentation for `SymbolsEmoji`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.SymbolsEmoji) for more information.
+         */
+        SymbolsEmoji = 174,
         /**
          * See the [Rust documentation for `MasaramGondi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MasaramGondi) for more information.
          */
@@ -913,6 +1094,10 @@ public:
          * See the [Rust documentation for `TolongSiki`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.TolongSiki) for more information.
          */
         TolongSiki = 211,
+        /**
+         * See the [Rust documentation for `TraditionalHanWithLatin`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.TraditionalHanWithLatin) for more information.
+         */
+        TraditionalHanWithLatin = 212,
         /**
          * See the [Rust documentation for `Chisoi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Chisoi) for more information.
          */

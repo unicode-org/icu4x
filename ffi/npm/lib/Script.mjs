@@ -65,6 +65,7 @@ export class Script {
         ["Shavian", 51],
         ["TaiLe", 52],
         ["Ugaritic", 53],
+        ["KatakanaOrHiragana", 54],
         ["Buginese", 55],
         ["Glagolitic", 56],
         ["Kharoshthi", 57],
@@ -74,16 +75,28 @@ export class Script {
         ["OldPersian", 61],
         ["Balinese", 62],
         ["Batak", 63],
+        ["BlisSymbols", 64],
         ["Brahmi", 65],
         ["Cham", 66],
+        ["Cirth", 67],
+        ["OldChurchSlavonicCyrillic", 68],
+        ["DemoticEgyptian", 69],
+        ["HieraticEgyptian", 70],
         ["EgyptianHieroglyphs", 71],
+        ["Khutsuri", 72],
+        ["SimplifiedHan", 73],
+        ["TraditionalHan", 74],
         ["PahawhHmong", 75],
         ["OldHungarian", 76],
+        ["HarappanIndus", 77],
         ["Javanese", 78],
         ["KayahLi", 79],
+        ["LatinFraktur", 80],
+        ["LatinGaelic", 81],
         ["Lepcha", 82],
         ["LinearA", 83],
         ["Mandaic", 84],
+        ["MayanHieroglyphs", 85],
         ["MeroiticHieroglyphs", 86],
         ["Nko", 87],
         ["OldTurkic", 88],
@@ -91,10 +104,19 @@ export class Script {
         ["PhagsPa", 90],
         ["Phoenician", 91],
         ["Miao", 92],
+        ["Rongorongo", 93],
+        ["Sarati", 94],
+        ["EstrangeloSyriac", 95],
+        ["WesternSyriac", 96],
+        ["EasternSyriac", 97],
+        ["Tengwar", 98],
         ["Vai", 99],
+        ["VisibleSpeech", 100],
         ["Cuneiform", 101],
+        ["UnwrittenLanguages", 102],
         ["Unknown", 103],
         ["Carian", 104],
+        ["Japanese", 105],
         ["TaiTham", 106],
         ["Lycian", 107],
         ["Lydian", 108],
@@ -103,24 +125,32 @@ export class Script {
         ["Saurashtra", 111],
         ["SignWriting", 112],
         ["Sundanese", 113],
+        ["Moon", 114],
         ["MeeteiMayek", 115],
         ["ImperialAramaic", 116],
         ["Avestan", 117],
         ["Chakma", 118],
+        ["Korean", 119],
         ["Kaithi", 120],
         ["Manichaean", 121],
         ["InscriptionalPahlavi", 122],
         ["PsalterPahlavi", 123],
+        ["BookPahlavi", 124],
         ["InscriptionalParthian", 125],
         ["Samaritan", 126],
         ["TaiViet", 127],
+        ["MathematicalNotation", 128],
+        ["Symbols", 129],
         ["Bamum", 130],
         ["Lisu", 131],
+        ["NakhiGeba", 132],
         ["OldSouthArabian", 133],
         ["BassaVah", 134],
         ["Duployan", 135],
         ["Elbasan", 136],
         ["Grantha", 137],
+        ["Kpelle", 138],
+        ["Loma", 139],
         ["MendeKikakui", 140],
         ["MeroiticCursive", 141],
         ["OldNorthArabian", 142],
@@ -128,12 +158,15 @@ export class Script {
         ["Palmyrene", 144],
         ["Khudawadi", 145],
         ["WarangCiti", 146],
+        ["Afaka", 147],
+        ["Jurchen", 148],
         ["Mro", 149],
         ["Nushu", 150],
         ["Sharada", 151],
         ["SoraSompeng", 152],
         ["Takri", 153],
         ["Tangut", 154],
+        ["Woleai", 155],
         ["AnatolianHieroglyphs", 156],
         ["Khojki", 157],
         ["Tirhuta", 158],
@@ -150,6 +183,9 @@ export class Script {
         ["Marchen", 169],
         ["Newa", 170],
         ["Osage", 171],
+        ["HanWithBopomofo", 172],
+        ["Jamo", 173],
+        ["SymbolsEmoji", 174],
         ["MasaramGondi", 175],
         ["Soyombo", 176],
         ["ZanabazarSquare", 177],
@@ -187,6 +223,7 @@ export class Script {
         ["Sidetic", 209],
         ["TaiYo", 210],
         ["TolongSiki", 211],
+        ["TraditionalHanWithLatin", 212],
         ["Chisoi", 254]
     ]);
 
@@ -291,6 +328,7 @@ export class Script {
         [51]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 51),
         [52]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 52),
         [53]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 53),
+        [54]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 54),
         [55]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 55),
         [56]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 56),
         [57]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 57),
@@ -300,16 +338,28 @@ export class Script {
         [61]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 61),
         [62]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 62),
         [63]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 63),
+        [64]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 64),
         [65]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 65),
         [66]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 66),
+        [67]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 67),
+        [68]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 68),
+        [69]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 69),
+        [70]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 70),
         [71]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 71),
+        [72]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 72),
+        [73]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 73),
+        [74]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 74),
         [75]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 75),
         [76]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 76),
+        [77]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 77),
         [78]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 78),
         [79]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 79),
+        [80]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 80),
+        [81]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 81),
         [82]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 82),
         [83]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 83),
         [84]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 84),
+        [85]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 85),
         [86]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 86),
         [87]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 87),
         [88]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 88),
@@ -317,10 +367,19 @@ export class Script {
         [90]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 90),
         [91]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 91),
         [92]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 92),
+        [93]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 93),
+        [94]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 94),
+        [95]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 95),
+        [96]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 96),
+        [97]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 97),
+        [98]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 98),
         [99]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 99),
+        [100]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 100),
         [101]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 101),
+        [102]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 102),
         [103]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 103),
         [104]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 104),
+        [105]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 105),
         [106]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 106),
         [107]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 107),
         [108]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 108),
@@ -329,24 +388,32 @@ export class Script {
         [111]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 111),
         [112]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 112),
         [113]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 113),
+        [114]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 114),
         [115]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 115),
         [116]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 116),
         [117]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 117),
         [118]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 118),
+        [119]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 119),
         [120]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 120),
         [121]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 121),
         [122]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 122),
         [123]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 123),
+        [124]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 124),
         [125]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 125),
         [126]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 126),
         [127]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 127),
+        [128]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 128),
+        [129]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 129),
         [130]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 130),
         [131]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 131),
+        [132]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 132),
         [133]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 133),
         [134]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 134),
         [135]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 135),
         [136]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 136),
         [137]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 137),
+        [138]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 138),
+        [139]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 139),
         [140]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 140),
         [141]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 141),
         [142]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 142),
@@ -354,12 +421,15 @@ export class Script {
         [144]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 144),
         [145]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 145),
         [146]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 146),
+        [147]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 147),
+        [148]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 148),
         [149]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 149),
         [150]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 150),
         [151]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 151),
         [152]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 152),
         [153]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 153),
         [154]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 154),
+        [155]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 155),
         [156]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 156),
         [157]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 157),
         [158]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 158),
@@ -376,6 +446,9 @@ export class Script {
         [169]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 169),
         [170]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 170),
         [171]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 171),
+        [172]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 172),
+        [173]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 173),
+        [174]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 174),
         [175]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 175),
         [176]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 176),
         [177]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 177),
@@ -413,6 +486,7 @@ export class Script {
         [209]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 209),
         [210]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 210),
         [211]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 211),
+        [212]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 212),
         [254]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 254),
     };
 
@@ -633,6 +707,10 @@ export class Script {
      */
     static Ugaritic = Script.#objectValues[53];
     /**
+     * See the [Rust documentation for `KatakanaOrHiragana`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.KatakanaOrHiragana) for more information.
+     */
+    static KatakanaOrHiragana = Script.#objectValues[54];
+    /**
      * See the [Rust documentation for `Buginese`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Buginese) for more information.
      */
     static Buginese = Script.#objectValues[55];
@@ -669,6 +747,10 @@ export class Script {
      */
     static Batak = Script.#objectValues[63];
     /**
+     * See the [Rust documentation for `BlisSymbols`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.BlisSymbols) for more information.
+     */
+    static BlisSymbols = Script.#objectValues[64];
+    /**
      * See the [Rust documentation for `Brahmi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Brahmi) for more information.
      */
     static Brahmi = Script.#objectValues[65];
@@ -677,9 +759,37 @@ export class Script {
      */
     static Cham = Script.#objectValues[66];
     /**
+     * See the [Rust documentation for `Cirth`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Cirth) for more information.
+     */
+    static Cirth = Script.#objectValues[67];
+    /**
+     * See the [Rust documentation for `OldChurchSlavonicCyrillic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.OldChurchSlavonicCyrillic) for more information.
+     */
+    static OldChurchSlavonicCyrillic = Script.#objectValues[68];
+    /**
+     * See the [Rust documentation for `DemoticEgyptian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.DemoticEgyptian) for more information.
+     */
+    static DemoticEgyptian = Script.#objectValues[69];
+    /**
+     * See the [Rust documentation for `HieraticEgyptian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.HieraticEgyptian) for more information.
+     */
+    static HieraticEgyptian = Script.#objectValues[70];
+    /**
      * See the [Rust documentation for `EgyptianHieroglyphs`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.EgyptianHieroglyphs) for more information.
      */
     static EgyptianHieroglyphs = Script.#objectValues[71];
+    /**
+     * See the [Rust documentation for `Khutsuri`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Khutsuri) for more information.
+     */
+    static Khutsuri = Script.#objectValues[72];
+    /**
+     * See the [Rust documentation for `SimplifiedHan`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.SimplifiedHan) for more information.
+     */
+    static SimplifiedHan = Script.#objectValues[73];
+    /**
+     * See the [Rust documentation for `TraditionalHan`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.TraditionalHan) for more information.
+     */
+    static TraditionalHan = Script.#objectValues[74];
     /**
      * See the [Rust documentation for `PahawhHmong`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.PahawhHmong) for more information.
      */
@@ -689,6 +799,10 @@ export class Script {
      */
     static OldHungarian = Script.#objectValues[76];
     /**
+     * See the [Rust documentation for `HarappanIndus`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.HarappanIndus) for more information.
+     */
+    static HarappanIndus = Script.#objectValues[77];
+    /**
      * See the [Rust documentation for `Javanese`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Javanese) for more information.
      */
     static Javanese = Script.#objectValues[78];
@@ -696,6 +810,14 @@ export class Script {
      * See the [Rust documentation for `KayahLi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.KayahLi) for more information.
      */
     static KayahLi = Script.#objectValues[79];
+    /**
+     * See the [Rust documentation for `LatinFraktur`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.LatinFraktur) for more information.
+     */
+    static LatinFraktur = Script.#objectValues[80];
+    /**
+     * See the [Rust documentation for `LatinGaelic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.LatinGaelic) for more information.
+     */
+    static LatinGaelic = Script.#objectValues[81];
     /**
      * See the [Rust documentation for `Lepcha`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Lepcha) for more information.
      */
@@ -708,6 +830,10 @@ export class Script {
      * See the [Rust documentation for `Mandaic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Mandaic) for more information.
      */
     static Mandaic = Script.#objectValues[84];
+    /**
+     * See the [Rust documentation for `MayanHieroglyphs`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MayanHieroglyphs) for more information.
+     */
+    static MayanHieroglyphs = Script.#objectValues[85];
     /**
      * See the [Rust documentation for `MeroiticHieroglyphs`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MeroiticHieroglyphs) for more information.
      */
@@ -737,13 +863,45 @@ export class Script {
      */
     static Miao = Script.#objectValues[92];
     /**
+     * See the [Rust documentation for `Rongorongo`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Rongorongo) for more information.
+     */
+    static Rongorongo = Script.#objectValues[93];
+    /**
+     * See the [Rust documentation for `Sarati`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Sarati) for more information.
+     */
+    static Sarati = Script.#objectValues[94];
+    /**
+     * See the [Rust documentation for `EstrangeloSyriac`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.EstrangeloSyriac) for more information.
+     */
+    static EstrangeloSyriac = Script.#objectValues[95];
+    /**
+     * See the [Rust documentation for `WesternSyriac`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.WesternSyriac) for more information.
+     */
+    static WesternSyriac = Script.#objectValues[96];
+    /**
+     * See the [Rust documentation for `EasternSyriac`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.EasternSyriac) for more information.
+     */
+    static EasternSyriac = Script.#objectValues[97];
+    /**
+     * See the [Rust documentation for `Tengwar`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Tengwar) for more information.
+     */
+    static Tengwar = Script.#objectValues[98];
+    /**
      * See the [Rust documentation for `Vai`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Vai) for more information.
      */
     static Vai = Script.#objectValues[99];
     /**
+     * See the [Rust documentation for `VisibleSpeech`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.VisibleSpeech) for more information.
+     */
+    static VisibleSpeech = Script.#objectValues[100];
+    /**
      * See the [Rust documentation for `Cuneiform`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Cuneiform) for more information.
      */
     static Cuneiform = Script.#objectValues[101];
+    /**
+     * See the [Rust documentation for `UnwrittenLanguages`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.UnwrittenLanguages) for more information.
+     */
+    static UnwrittenLanguages = Script.#objectValues[102];
     /**
      * See the [Rust documentation for `Unknown`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Unknown) for more information.
      */
@@ -752,6 +910,10 @@ export class Script {
      * See the [Rust documentation for `Carian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Carian) for more information.
      */
     static Carian = Script.#objectValues[104];
+    /**
+     * See the [Rust documentation for `Japanese`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Japanese) for more information.
+     */
+    static Japanese = Script.#objectValues[105];
     /**
      * See the [Rust documentation for `TaiTham`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.TaiTham) for more information.
      */
@@ -785,6 +947,10 @@ export class Script {
      */
     static Sundanese = Script.#objectValues[113];
     /**
+     * See the [Rust documentation for `Moon`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Moon) for more information.
+     */
+    static Moon = Script.#objectValues[114];
+    /**
      * See the [Rust documentation for `MeeteiMayek`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MeeteiMayek) for more information.
      */
     static MeeteiMayek = Script.#objectValues[115];
@@ -800,6 +966,10 @@ export class Script {
      * See the [Rust documentation for `Chakma`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Chakma) for more information.
      */
     static Chakma = Script.#objectValues[118];
+    /**
+     * See the [Rust documentation for `Korean`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Korean) for more information.
+     */
+    static Korean = Script.#objectValues[119];
     /**
      * See the [Rust documentation for `Kaithi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Kaithi) for more information.
      */
@@ -817,6 +987,10 @@ export class Script {
      */
     static PsalterPahlavi = Script.#objectValues[123];
     /**
+     * See the [Rust documentation for `BookPahlavi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.BookPahlavi) for more information.
+     */
+    static BookPahlavi = Script.#objectValues[124];
+    /**
      * See the [Rust documentation for `InscriptionalParthian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.InscriptionalParthian) for more information.
      */
     static InscriptionalParthian = Script.#objectValues[125];
@@ -829,6 +1003,14 @@ export class Script {
      */
     static TaiViet = Script.#objectValues[127];
     /**
+     * See the [Rust documentation for `MathematicalNotation`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MathematicalNotation) for more information.
+     */
+    static MathematicalNotation = Script.#objectValues[128];
+    /**
+     * See the [Rust documentation for `Symbols`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Symbols) for more information.
+     */
+    static Symbols = Script.#objectValues[129];
+    /**
      * See the [Rust documentation for `Bamum`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Bamum) for more information.
      */
     static Bamum = Script.#objectValues[130];
@@ -836,6 +1018,10 @@ export class Script {
      * See the [Rust documentation for `Lisu`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Lisu) for more information.
      */
     static Lisu = Script.#objectValues[131];
+    /**
+     * See the [Rust documentation for `NakhiGeba`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.NakhiGeba) for more information.
+     */
+    static NakhiGeba = Script.#objectValues[132];
     /**
      * See the [Rust documentation for `OldSouthArabian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.OldSouthArabian) for more information.
      */
@@ -856,6 +1042,14 @@ export class Script {
      * See the [Rust documentation for `Grantha`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Grantha) for more information.
      */
     static Grantha = Script.#objectValues[137];
+    /**
+     * See the [Rust documentation for `Kpelle`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Kpelle) for more information.
+     */
+    static Kpelle = Script.#objectValues[138];
+    /**
+     * See the [Rust documentation for `Loma`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Loma) for more information.
+     */
+    static Loma = Script.#objectValues[139];
     /**
      * See the [Rust documentation for `MendeKikakui`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MendeKikakui) for more information.
      */
@@ -885,6 +1079,14 @@ export class Script {
      */
     static WarangCiti = Script.#objectValues[146];
     /**
+     * See the [Rust documentation for `Afaka`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Afaka) for more information.
+     */
+    static Afaka = Script.#objectValues[147];
+    /**
+     * See the [Rust documentation for `Jurchen`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Jurchen) for more information.
+     */
+    static Jurchen = Script.#objectValues[148];
+    /**
      * See the [Rust documentation for `Mro`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Mro) for more information.
      */
     static Mro = Script.#objectValues[149];
@@ -908,6 +1110,10 @@ export class Script {
      * See the [Rust documentation for `Tangut`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Tangut) for more information.
      */
     static Tangut = Script.#objectValues[154];
+    /**
+     * See the [Rust documentation for `Woleai`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Woleai) for more information.
+     */
+    static Woleai = Script.#objectValues[155];
     /**
      * See the [Rust documentation for `AnatolianHieroglyphs`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.AnatolianHieroglyphs) for more information.
      */
@@ -972,6 +1178,18 @@ export class Script {
      * See the [Rust documentation for `Osage`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Osage) for more information.
      */
     static Osage = Script.#objectValues[171];
+    /**
+     * See the [Rust documentation for `HanWithBopomofo`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.HanWithBopomofo) for more information.
+     */
+    static HanWithBopomofo = Script.#objectValues[172];
+    /**
+     * See the [Rust documentation for `Jamo`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Jamo) for more information.
+     */
+    static Jamo = Script.#objectValues[173];
+    /**
+     * See the [Rust documentation for `SymbolsEmoji`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.SymbolsEmoji) for more information.
+     */
+    static SymbolsEmoji = Script.#objectValues[174];
     /**
      * See the [Rust documentation for `MasaramGondi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.MasaramGondi) for more information.
      */
@@ -1120,6 +1338,10 @@ export class Script {
      * See the [Rust documentation for `TolongSiki`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.TolongSiki) for more information.
      */
     static TolongSiki = Script.#objectValues[211];
+    /**
+     * See the [Rust documentation for `TraditionalHanWithLatin`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.TraditionalHanWithLatin) for more information.
+     */
+    static TraditionalHanWithLatin = Script.#objectValues[212];
     /**
      * See the [Rust documentation for `Chisoi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Chisoi) for more information.
      */
