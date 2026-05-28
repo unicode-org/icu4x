@@ -354,4 +354,11 @@ void main() {
       'Mi., 15.01.2025, 14:32:12 Mitteleuropäische Zeit',
     );
   });
+
+  test('ScriptExtension', () {
+    expect(
+      ScriptWithExtensions().hasScript('A'.runes.first, Script.latin),
+      true,
+    );
+  });
 }

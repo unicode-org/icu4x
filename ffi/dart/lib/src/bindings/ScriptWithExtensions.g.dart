@@ -50,16 +50,16 @@ final class ScriptWithExtensions implements ffi.Finalizable {
   /// Get the Script property value for a code point
   ///
   /// See the [Rust documentation for `get_script_val`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
-  int getScriptVal(Rune ch) {
-    final result = _icu4x_ScriptWithExtensions_get_script_val_mv1(_ffi, ch);
-    return result;
+  Script getScriptVal(Rune ch) {
+    final result = _icu4x_ScriptWithExtensions_get_script_val_mv2(_ffi, ch);
+    return Script.values.firstWhere((v) => v._ffi == result);
   }
 
   /// Check if the `Script_Extensions` property of the given code point covers the given script
   ///
   /// See the [Rust documentation for `has_script`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
-  bool hasScript(Rune ch, int script) {
-    final result = _icu4x_ScriptWithExtensions_has_script_mv1(_ffi, ch, script);
+  bool hasScript(Rune ch, Script script) {
+    final result = _icu4x_ScriptWithExtensions_has_script_mv2(_ffi, ch, script._ffi);
     return result;
   }
 
@@ -76,10 +76,10 @@ final class ScriptWithExtensions implements ffi.Finalizable {
   /// Get a list of ranges of code points that contain this script in their `Script_Extensions` values
   ///
   /// See the [Rust documentation for `get_script_extensions_ranges`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_ranges) for more information.
-  CodePointRangeIterator iterRangesForScript(int script) {
+  CodePointRangeIterator iterRangesForScript(Script script) {
     // This lifetime edge depends on lifetimes: 'a
     final aEdges = [this];
-    final result = _icu4x_ScriptWithExtensions_iter_ranges_for_script_mv1(_ffi, script);
+    final result = _icu4x_ScriptWithExtensions_iter_ranges_for_script_mv2(_ffi, script._ffi);
     return CodePointRangeIterator._fromFfi(result, [], aEdges);
   }
 
@@ -100,24 +100,24 @@ external ffi.Pointer<ffi.Opaque> _icu4x_ScriptWithExtensions_create_mv1();
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ScriptWithExtensions_create_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@_DiplomatFfiUse('icu4x_ScriptWithExtensions_get_script_val_mv1')
-@ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_ScriptWithExtensions_get_script_val_mv1')
+@_DiplomatFfiUse('icu4x_ScriptWithExtensions_get_script_val_mv2')
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_ScriptWithExtensions_get_script_val_mv2')
 // ignore: non_constant_identifier_names
-external int _icu4x_ScriptWithExtensions_get_script_val_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
+external int _icu4x_ScriptWithExtensions_get_script_val_mv2(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
-@_DiplomatFfiUse('icu4x_ScriptWithExtensions_has_script_mv1')
-@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint16)>(isLeaf: true, symbol: 'icu4x_ScriptWithExtensions_has_script_mv1')
+@_DiplomatFfiUse('icu4x_ScriptWithExtensions_has_script_mv2')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_ScriptWithExtensions_has_script_mv2')
 // ignore: non_constant_identifier_names
-external bool _icu4x_ScriptWithExtensions_has_script_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch, int script);
+external bool _icu4x_ScriptWithExtensions_has_script_mv2(ffi.Pointer<ffi.Opaque> self, Rune ch, int script);
 
 @_DiplomatFfiUse('icu4x_ScriptWithExtensions_as_borrowed_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ScriptWithExtensions_as_borrowed_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_ScriptWithExtensions_as_borrowed_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_ScriptWithExtensions_iter_ranges_for_script_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>(isLeaf: true, symbol: 'icu4x_ScriptWithExtensions_iter_ranges_for_script_mv1')
+@_DiplomatFfiUse('icu4x_ScriptWithExtensions_iter_ranges_for_script_mv2')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_ScriptWithExtensions_iter_ranges_for_script_mv2')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_ScriptWithExtensions_iter_ranges_for_script_mv1(ffi.Pointer<ffi.Opaque> self, int script);
+external ffi.Pointer<ffi.Opaque> _icu4x_ScriptWithExtensions_iter_ranges_for_script_mv2(ffi.Pointer<ffi.Opaque> self, int script);
 
 // dart format on
