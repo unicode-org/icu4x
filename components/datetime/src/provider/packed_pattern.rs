@@ -161,7 +161,7 @@ pub(crate) struct GenericUnpackedPatterns<T> {
     pub(super) elements: Vec<T>,
 }
 
-pub(crate) type UnpackedPatterns<'a> = GenericUnpackedPatterns<PluralElements<Pattern<'a>>>;
+
 
 #[repr(u8)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
@@ -228,8 +228,13 @@ pub(crate) enum VariantIndices {
     IndicesPerVariant([VariantPatternIndex; 6]),
 }
 
-impl<'a> GenericUnpackedPatterns<PluralElements<Pattern<'a>>> {
-    pub(super) fn build(&self) -> PackedPatterns<'static> {
+impl<T> GenericUnpackedPatterns<T> {
+    /// Generically builds a `GenericPackedPatterns` structure, using a caller-supplied
+    /// closure to pack the elements into a `VarZeroVec`.
+    pub fn build_generic<U: zerovec::ule::VarULE + ?Sized>(
+        &self,
+        pack_fn: impl FnOnce(&[T]) -> VarZeroVec<'static, U>,
+    ) -> GenericPackedPatterns<'static, U> {
         let mut header = 0u32;
         if self.has_explicit_medium {
             header |= constants::M_DIFFERS;
@@ -250,22 +255,28 @@ impl<'a> GenericUnpackedPatterns<PluralElements<Pattern<'a>>> {
                 }
             }
         }
-        let elements: Vec<PluralElements<(FourBitMetadata, &ZeroSlice<PatternItem>)>> = self
-            .elements
-            .iter()
-            .map(|plural_elements| {
-                plural_elements.as_ref().map(|pattern| {
-                    (
-                        pattern.metadata.to_four_bit_metadata(),
-                        pattern.items.as_slice(),
-                    )
-                })
-            })
-            .collect();
-        PackedPatterns {
-            header,
-            elements: elements.as_slice().into(),
-        }
+        let elements = pack_fn(&self.elements);
+        GenericPackedPatterns { header, elements }
+    }
+}
+
+impl<'a> GenericUnpackedPatterns<PluralElements<Pattern<'a>>> {
+    pub(super) fn build(&self) -> PackedPatterns<'static> {
+        self.build_generic(|elements| {
+            let elements: Vec<PluralElements<(FourBitMetadata, &ZeroSlice<PatternItem>)>> =
+                elements
+                    .iter()
+                    .map(|plural_elements| {
+                        plural_elements.as_ref().map(|pattern| {
+                            (
+                                pattern.metadata.to_four_bit_metadata(),
+                                pattern.items.as_slice(),
+                            )
+                        })
+                    })
+                    .collect();
+            elements.as_slice().into()
+        })
     }
 
     #[cfg(feature = "datagen")]
@@ -627,7 +638,7 @@ mod _serde {
                     .iter()
                     .map(|pattern| PluralElements::new(pattern.to_runtime_pattern()))
                     .collect();
-                let unpacked = UnpackedPatterns {
+                let unpacked = GenericUnpackedPatterns {
                     has_explicit_medium: human.has_explicit_medium,
                     has_explicit_short: human.has_explicit_short,
                     variant_indices,
@@ -654,7 +665,7 @@ mod _serde {
         {
             use serde::ser::Error as _;
             if serializer.is_human_readable() {
-                let unpacked = UnpackedPatterns::from_packed(self);
+                let unpacked = GenericUnpackedPatterns::from_packed(self);
                 let mut human = PackedPatternsHuman {
                     has_explicit_medium: unpacked.has_explicit_medium,
                     has_explicit_short: unpacked.has_explicit_short,
