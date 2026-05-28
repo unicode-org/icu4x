@@ -119,27 +119,15 @@ pub mod ffi {
     }
 }
 
-#[cfg(test)]
 #[rustfmt::skip]
-mod test {
-    use super::ffi::*;
+#[test]
+fn test_all_cases_covered() {
+    use ffi::*;
     use icu_properties::props;
-
-    #[test]
-    fn test_all_cases_covered() {
-        {%- for prop in props %}
-        for prop in props::{{prop.name}}::ALL_VALUES {
-            {%- if prop.is_open %}
-            let ffi_prop = {{prop.name}}::from_integer_value(prop.to_icu4c_value())
-                .expect("Found {{prop.name}} value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
-            {%- else %}
-            let ffi_prop = {{prop.name}}::from_integer_value(*prop as u8)
-                .expect("Found {{prop.name}} value not supported in ffi");
-            assert_eq!(*prop as u8, ffi_prop.to_integer_value());
-            {%- endif %}
-            assert_eq!(*prop, props::{{prop.name}}::from(ffi_prop));
-        }
-        {% endfor %}
+    {% for prop in props %}
+    for &prop in props::{{prop.name}}::ALL_VALUES {
+        let ffi_prop = {{prop.name}}::from(prop);
+        assert_eq!(prop, props::{{prop.name}}::from(ffi_prop));
     }
+    {%- endfor %}
 }

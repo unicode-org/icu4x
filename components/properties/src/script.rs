@@ -51,7 +51,7 @@ impl ScriptWithExt {
     pub const Unknown: ScriptWithExt = Self::single(Script::Unknown);
 
     pub const fn single(script: Script) -> Self {
-        Self(script.to_icu4c_value() & SCRIPT_X_SCRIPT_VAL)
+        Self(script.0 & SCRIPT_X_SCRIPT_VAL)
     }
 
     pub const fn new(script: Script, extensions: u16) -> Self {
