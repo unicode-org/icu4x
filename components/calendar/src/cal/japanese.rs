@@ -380,4 +380,26 @@ mod tests {
         single_test_era_range_roundtrip("ce", 1873, 5, 1, "meiji", 6);
         single_test_era_range_roundtrip("ce", 1874, 1, 1, "meiji", 7);
     }
+
+    #[test]
+    fn test_constructor_roundtrip() {
+        let rds = crate::tests::get_interesting_rds();
+        for rd in rds {
+            let date = Date::from_rata_die(rd, Japanese::new());
+            let reconstructed = Date::try_new_japanese_with_calendar(
+                date.era_year().era.as_str(),
+                date.era_year().year,
+                date.month().ordinal,
+                date.day_of_month().0,
+                Japanese::new(),
+            )
+            .unwrap();
+            assert_eq!(
+                reconstructed.to_rata_die(),
+                rd,
+                "Japanese failed for RD {:?}",
+                rd
+            );
+        }
+    }
 }

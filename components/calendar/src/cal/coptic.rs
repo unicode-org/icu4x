@@ -351,4 +351,24 @@ mod tests {
         let date = Date::try_from_fields(fields, options, Coptic).unwrap();
         assert_eq!(date.day_of_month().0, 6, "Day was successfully constrained");
     }
+
+    #[test]
+    fn test_constructor_roundtrip() {
+        let rds = crate::tests::get_interesting_rds();
+        for rd in rds {
+            let date = Date::from_rata_die(rd, Coptic);
+            let reconstructed = Date::try_new_coptic(
+                date.year().extended_year(),
+                date.month().ordinal,
+                date.day_of_month().0,
+            )
+            .unwrap();
+            assert_eq!(
+                reconstructed.to_rata_die(),
+                rd,
+                "Coptic failed for RD {:?}",
+                rd
+            );
+        }
+    }
 }

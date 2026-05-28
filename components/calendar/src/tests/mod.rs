@@ -16,7 +16,6 @@ use crate::types::Month;
 use crate::Date;
 use calendrical_calculations::rata_die::RataDie;
 
-
 macro_rules! test_all_cals {
     ($(#[$meta:meta])* fn $name:ident<C: Calendar + Copy>($cal:ident: C) $tt:tt) => {
         mod $name {
@@ -191,4 +190,3 @@ pub(crate) fn get_interesting_rds() -> Vec<RataDie> {
 
     rds
 }
-

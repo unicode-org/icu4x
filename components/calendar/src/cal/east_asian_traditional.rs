@@ -2119,4 +2119,44 @@ mod test {
         packed_roundtrip_single(RANDOM2, Some(5), 18 + 2);
         packed_roundtrip_single(RANDOM2, Some(12), 18 + 5);
     }
+
+    #[test]
+    fn test_chinese_constructor_roundtrip() {
+        let rds = crate::tests::get_interesting_rds();
+        for rd in rds {
+            let date = Date::from_rata_die(rd, ChineseTraditional::new());
+            let reconstructed = Date::try_new_chinese_traditional(
+                date.year().extended_year(),
+                date.month().to_input(),
+                date.day_of_month().0,
+            )
+            .unwrap();
+            assert_eq!(
+                reconstructed.to_rata_die(),
+                rd,
+                "Chinese Traditional failed for RD {:?}",
+                rd
+            );
+        }
+    }
+
+    #[test]
+    fn test_korean_constructor_roundtrip() {
+        let rds = crate::tests::get_interesting_rds();
+        for rd in rds {
+            let date = Date::from_rata_die(rd, KoreanTraditional::new());
+            let reconstructed = Date::try_new_korean_traditional(
+                date.year().extended_year(),
+                date.month().to_input(),
+                date.day_of_month().0,
+            )
+            .unwrap();
+            assert_eq!(
+                reconstructed.to_rata_die(),
+                rd,
+                "Korean Traditional failed for RD {:?}",
+                rd
+            );
+        }
+    }
 }

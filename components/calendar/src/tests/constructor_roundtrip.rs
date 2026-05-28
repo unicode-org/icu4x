@@ -4,7 +4,7 @@
 
 use crate::error::DateFromFieldsError;
 use crate::options::{DateFromFieldsOptions, Overflow};
-use crate::types::{DateFields, Month};
+use crate::types::DateFields;
 use crate::Calendar;
 use crate::Date;
 use calendrical_calculations::rata_die::RataDie;
@@ -78,10 +78,9 @@ fn try_from_fields_helper<C: Calendar + Copy>(
     Date::try_from_fields(fields, options, cal)
 }
 
-
 super::test_all_cals!(
     fn check_constructor_roundtrip<C: Calendar + Copy>(cal: C) {
-        let rds = super::get_interesting_rds();
+        let rds = crate::tests::get_interesting_rds();
 
         for rd in rds {
             let date = Date::from_rata_die(rd, cal);
@@ -220,4 +219,3 @@ super::test_all_cals!(
 // Note: Specific calendar constructors (like Date::try_new_iso, Date::try_new_gregorian, etc.)
 // are tested individually in their respective files under src/cal/ to ensure correct coverage
 // of their diverse signatures.
-

@@ -326,4 +326,24 @@ mod test {
             }
         }
     }
+
+    #[test]
+    fn test_constructor_roundtrip() {
+        let rds = crate::tests::get_interesting_rds();
+        for rd in rds {
+            let date = Date::from_rata_die(rd, Roc);
+            let reconstructed = Date::try_new_roc(
+                date.year().extended_year(),
+                date.month().ordinal,
+                date.day_of_month().0,
+            )
+            .unwrap();
+            assert_eq!(
+                reconstructed.to_rata_die(),
+                rd,
+                "Roc failed for RD {:?}",
+                rd
+            );
+        }
+    }
 }

@@ -620,4 +620,24 @@ mod tests {
         // https://www.hebcal.com/converter?hd=1&hm=Tishrei&hy=3760&h2g=1
         assert_eq!(dt.weekday(), Weekday::Saturday);
     }
+
+    #[test]
+    fn test_constructor_roundtrip() {
+        let rds = crate::tests::get_interesting_rds();
+        for rd in rds {
+            let date = Date::from_rata_die(rd, Hebrew);
+            let reconstructed = Date::try_new_hebrew_v2(
+                date.year().extended_year(),
+                date.month().to_input(),
+                date.day_of_month().0,
+            )
+            .unwrap();
+            assert_eq!(
+                reconstructed.to_rata_die(),
+                rd,
+                "Hebrew failed for RD {:?}",
+                rd
+            );
+        }
+    }
 }

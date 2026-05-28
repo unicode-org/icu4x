@@ -387,4 +387,24 @@ mod test {
         check(1461, 4, 12, 31); // leap year
         check(1462, 5, 1, 1);
     }
+
+    #[test]
+    fn test_constructor_roundtrip() {
+        let rds = crate::tests::get_interesting_rds();
+        for rd in rds {
+            let date = Date::from_rata_die(rd, Iso);
+            let reconstructed = Date::try_new_iso(
+                date.year().extended_year(),
+                date.month().ordinal,
+                date.day_of_month().0,
+            )
+            .unwrap();
+            assert_eq!(
+                reconstructed.to_rata_die(),
+                rd,
+                "ISO failed for RD {:?}",
+                rd
+            );
+        }
+    }
 }

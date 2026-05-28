@@ -413,4 +413,28 @@ mod test {
             1
         );
     }
+
+    #[test]
+    fn test_constructor_roundtrip() {
+        let rds = crate::tests::get_interesting_rds();
+        for rd in rds {
+            let date = Date::from_rata_die(
+                rd,
+                Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret),
+            );
+            let reconstructed = Date::try_new_ethiopian(
+                EthiopianEraStyle::AmeteMihret,
+                date.year().extended_year(),
+                date.month().ordinal,
+                date.day_of_month().0,
+            )
+            .unwrap();
+            assert_eq!(
+                reconstructed.to_rata_die(),
+                rd,
+                "Ethiopian failed for RD {:?}",
+                rd
+            );
+        }
+    }
 }
