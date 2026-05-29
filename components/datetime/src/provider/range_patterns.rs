@@ -25,6 +25,11 @@ pub enum DateGreatestDifferenceField {
     Era = 3,
 }
 
+impl DateGreatestDifferenceField {
+    /// The maximum value of a `DateGreatestDifferenceField`.
+    pub const MAX_VALUE: u8 = Self::Era as u8;
+}
+
 /// The time fields that can have a greatest difference.
 ///
 /// Ordered from smallest to largest field difference.
@@ -39,6 +44,11 @@ pub enum TimeGreatestDifferenceField {
     DayPeriodB = 2,
     /// Day Period (`a`)
     DayPeriodA = 3,
+}
+
+impl TimeGreatestDifferenceField {
+    /// The maximum value of a `TimeGreatestDifferenceField`.
+    pub const MAX_VALUE: u8 = Self::DayPeriodA as u8;
 }
 
 /// A bitset encoding which fields are present in the `GreatestDifference` pattern list.
@@ -107,10 +117,10 @@ pub struct PatternsByGreatestDifference<'data> {
     pub patterns: VarZeroVec<'data, PatternULE>,
 }
 
-/// Finds the smallest present bit index >= `requested` in `header` (limited to bits 0-3).
+/// Finds the smallest present bit index >= `requested` in `header` up to `max_value`.
 /// Returns `Some((found_bit_index, pattern_index))` or `None`.
-fn resolve_fallback(header: u8, requested: u8) -> Option<(u8, usize)> {
-    for i in requested..4 {
+fn resolve_fallback(header: u8, requested: u8, max_value: u8) -> Option<(u8, usize)> {
+    for i in requested..=max_value {
         if (header & (1 << i)) != 0 {
             let mask = (1 << i) - 1;
             let pattern_index = (header & mask).count_ones() as usize;
@@ -126,7 +136,11 @@ impl<'data> PatternsByGreatestDifference<'data> {
         &'a self,
         field: DateGreatestDifferenceField,
     ) -> Option<Pattern<'a>> {
-        let (_, pattern_index) = resolve_fallback(self.header.0, field as u8)?;
+        let (_, pattern_index) = resolve_fallback(
+            self.header.0,
+            field as u8,
+            DateGreatestDifferenceField::MAX_VALUE,
+        )?;
         self.patterns
             .get(pattern_index)
             .map(<Pattern as zerofrom::ZeroFrom<PatternULE>>::zero_from)
@@ -137,7 +151,11 @@ impl<'data> PatternsByGreatestDifference<'data> {
         &'a self,
         field: TimeGreatestDifferenceField,
     ) -> Option<Pattern<'a>> {
-        let (_, pattern_index) = resolve_fallback(self.header.0, field as u8)?;
+        let (_, pattern_index) = resolve_fallback(
+            self.header.0,
+            field as u8,
+            TimeGreatestDifferenceField::MAX_VALUE,
+        )?;
         self.patterns
             .get(pattern_index)
             .map(<Pattern as zerofrom::ZeroFrom<PatternULE>>::zero_from)
