@@ -1198,10 +1198,7 @@ impl Script {
     // Doesn't actually exist!
     #[doc(hidden)]
     #[allow(non_upper_case_globals)]
-    #[deprecated(
-        since = "2.3.0",
-        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
-    )]
+    #[deprecated]
     // Some high value that ICU4C will not use anytime soon
     pub const Chisoi: Script = Self(60_000);
 }
