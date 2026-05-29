@@ -4,8 +4,9 @@
 
 use crate::cldr_serde;
 use crate::displaynames::{
-    ALT_LONG_SUBSTRING, ALT_MENU_SUBSTRING, ALT_SHORT_SUBSTRING, ALT_SUBSTRING,
-    MENU_CORE_SUBSTRING, MENU_EXTENSION_SUBSTRING,
+    ALT_LONG_SUBSTRING, ALT_MENU_SUBSTRING, ALT_OFFICIAL_SUBSTRING, ALT_SECONDARY_SUBSTRING,
+    ALT_SHORT_SUBSTRING, ALT_SUBSTRING, ALT_VARIANT_SUBSTRING, MENU_CORE_SUBSTRING,
+    MENU_EXTENSION_SUBSTRING,
 };
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
@@ -95,6 +96,10 @@ impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayName
                 }
             } else if let Ok(lang) = key.parse::<Language>() {
                 names.insert(lang.to_tinystr(), value.as_ref());
+            } else if key.ends_with(ALT_VARIANT_SUBSTRING) || key.ends_with(ALT_SECONDARY_SUBSTRING) {
+                // TODO: Handle this with datagen alt flags. See issue #8012. I think sffc started implementing it for alt ascii in PR #7902
+            } else if key.ends_with(ALT_OFFICIAL_SUBSTRING) {
+                // TODO: Support alt=official for display names. See issue #8012
             } else if key.contains(ALT_SUBSTRING) {
                 log::warn!("Unknown alt variant for language: {}", key);
             }
