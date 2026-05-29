@@ -62,7 +62,7 @@ impl TryFrom<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNam
                     entry.1.as_str(),
                 );
             } else if entry.0.ends_with(ALT_SECONDARY_SUBSTRING) {
-                // TODO(#8012)
+                // TODO(#8012): Handle this with datagen alt flags.
             } else {
                 log::warn!("Unknown alt variant for variant: {}", entry.0);
             }
