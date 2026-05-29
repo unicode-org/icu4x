@@ -15,8 +15,7 @@ pub fn option_utf_16<'de, D: Deserializer<'de>>(
     let Some(bytes) = <Option<&[u8]>>::deserialize(deserializer)? else {
         return Ok(None);
     };
-    // Safety: all byte representations are valid u16s
-    unsafe { cast_bytes_to_slice(bytes) }
+    cast_bytes_to_u16_slice(bytes)
         .map(PotentialUtf16::from_slice)
         .map(Some)
 }
@@ -40,10 +39,7 @@ pub fn vec_utf_16<'de, D: Deserializer<'de>>(
         {
             let mut vec = Vec::with_capacity(seq.size_hint().unwrap_or_default());
             while let Some(bytes) = seq.next_element::<&[u8]>()? {
-                vec.push(PotentialUtf16::from_slice(
-                    // Safety: all byte representations are valid u16s
-                    unsafe { cast_bytes_to_slice(bytes) }?,
-                ));
+                vec.push(PotentialUtf16::from_slice(cast_bytes_to_u16_slice(bytes)?));
             }
             Ok(vec)
         }
@@ -59,8 +55,8 @@ pub fn option_i32<'de, D: Deserializer<'de>>(
     let Some(bytes) = <Option<&[u8]>>::deserialize(deserializer)? else {
         return Ok(None);
     };
-    // Safety: all byte representations are valid i32s
-    unsafe { cast_bytes_to_slice(bytes) }.map(Some)
+    let words = cast_bytes_to_u32_slice(bytes)?;
+    Ok(Some(cast_u32_to_i32_slice(words)))
 }
 
 /// TODO
@@ -70,8 +66,7 @@ pub fn option_u32<'de, D: Deserializer<'de>>(
     let Some(bytes) = <Option<&[u8]>>::deserialize(deserializer)? else {
         return Ok(None);
     };
-    // Safety: all byte representations are valid u32s
-    unsafe { cast_bytes_to_slice(bytes) }.map(Some)
+    cast_bytes_to_u32_slice(bytes).map(Some)
 }
 
 /// A layout-guaranteed pair of 32-bit signed integers.
@@ -95,11 +90,8 @@ pub struct I32Pair(pub i32, pub i32);
 /// TODO
 pub fn i32_tuple<'de, D: Deserializer<'de>>(deserializer: D) -> Result<&'de [I32Pair], D::Error> {
     let bytes = <&[u8]>::deserialize(deserializer)?;
-    // SAFETY:
-    // 1. `cast_bytes_to_slice` verifies that the byte slice is aligned to 4 bytes (the alignment of `I32Pair`) and the length is a multiple of 8 bytes (the size of `I32Pair`).
-    // 2. `I32Pair` uses `#[repr(C)]` to guarantee a stable layout without padding.
-    // 3. All bit patterns are valid for `i32` (plain-old-data), so the cast is sound.
-    unsafe { cast_bytes_to_slice(bytes) }
+    let words = cast_bytes_to_u32_slice(bytes)?;
+    cast_u32_to_i32_pair_slice(words)
 }
 
 /// TODO
@@ -109,34 +101,67 @@ pub fn option_i32_tuple<'de, D: Deserializer<'de>>(
     let Some(bytes) = <Option<&[u8]>>::deserialize(deserializer)? else {
         return Ok(None);
     };
-    // SAFETY:
-    // 1. `cast_bytes_to_slice` verifies that the byte slice is aligned to 4 bytes (the alignment of `I32Pair`) and the length is a multiple of 8 (the size of `I32Pair`).
-    // 2. `I32Pair` uses `#[repr(C)]` to guarantee a stable layout without padding.
-    // 3. All bit patterns are valid for `i32` (plain-old-data), so the cast is sound.
-    unsafe { cast_bytes_to_slice(bytes) }.map(Some)
+    let words = cast_bytes_to_u32_slice(bytes)?;
+    cast_u32_to_i32_pair_slice(words).map(Some)
 }
 
-/// Casts a slice of byte to a slice of T
+/// Casts a `&[u8]` slice to `&[u32]`.
 ///
 /// # Errors
 ///
-/// Errors if `T` is a Zero-Sized Type (ZST), or if the length or alignment of the byte slice is incorrect.
-///
-/// # Safety
-///
-/// Alignment and length are checked, however the caller has to guarantee that the byte representation is valid for type T.
-pub unsafe fn cast_bytes_to_slice<T, E: Error>(bytes: &[u8]) -> Result<&[T], E> {
-    if size_of::<T>() == 0
-        || bytes.as_ptr().align_offset(align_of::<T>()) != 0
-        || bytes.len() % size_of::<T>() != 0
-    {
+/// Errors if the slice is not 4-byte aligned, or if its length is not a multiple of 4.
+pub fn cast_bytes_to_u32_slice<E: Error>(bytes: &[u8]) -> Result<&[u32], E> {
+    if bytes.as_ptr().align_offset(align_of::<u32>()) != 0 || bytes.len() % size_of::<u32>() != 0 {
         return Err(E::custom("Wrong length or align"));
     }
-
-    // Safety: The check gurantees length and alignment
+    // SAFETY: The check above guarantees 4-byte alignment and size correctness,
+    // and all bit patterns are valid for u32.
     Ok(unsafe {
-        core::slice::from_raw_parts(bytes.as_ptr() as *const T, bytes.len() / size_of::<T>())
+        core::slice::from_raw_parts(bytes.as_ptr() as *const u32, bytes.len() / size_of::<u32>())
     })
+}
+
+/// Casts a `&[u8]` slice to `&[u16]`.
+///
+/// # Errors
+///
+/// Errors if the slice is not 2-byte aligned, or if its length is not a multiple of 2.
+pub fn cast_bytes_to_u16_slice<E: Error>(bytes: &[u8]) -> Result<&[u16], E> {
+    if bytes.as_ptr().align_offset(align_of::<u16>()) != 0 || bytes.len() % size_of::<u16>() != 0 {
+        return Err(E::custom("Wrong length or align"));
+    }
+    // SAFETY: The check above guarantees 2-byte alignment and size correctness,
+    // and all bit patterns are valid for u16.
+    Ok(unsafe {
+        core::slice::from_raw_parts(bytes.as_ptr() as *const u16, bytes.len() / size_of::<u16>())
+    })
+}
+
+/// Casts a `&[u32]` slice to `&[i32]`.
+///
+/// This cast is always safe because `u32` and `i32` have identical size and alignment,
+/// and all bit patterns are valid for both.
+pub fn cast_u32_to_i32_slice(words: &[u32]) -> &[i32] {
+    // SAFETY: u32 and i32 have identical size (4) and alignment (4),
+    // and all bit patterns are valid for both.
+    unsafe { core::slice::from_raw_parts(words.as_ptr() as *const i32, words.len()) }
+}
+
+/// Casts a `&[u32]` slice to `&[I32Pair]`.
+///
+/// # Errors
+///
+/// Errors if the length of `words` is not even.
+pub fn cast_u32_to_i32_pair_slice<E: Error>(words: &[u32]) -> Result<&[I32Pair], E> {
+    if words.len() % 2 != 0 {
+        return Err(E::custom("Wrong length"));
+    }
+    // SAFETY:
+    // 1. u32 and I32Pair have identical alignment (4 bytes), so alignment is guaranteed.
+    // 2. I32Pair is annotated with #[repr(C)] and has no padding.
+    // 3. Its fields are i32, which are plain-old-data (all bit patterns valid).
+    // 4. The size of I32Pair is exactly 8 bytes (two u32s), and the length check guarantees we do not read out of bounds.
+    Ok(unsafe { core::slice::from_raw_parts(words.as_ptr() as *const I32Pair, words.len() / 2) })
 }
 
 #[cfg(test)]
@@ -146,41 +171,48 @@ mod tests {
     type E = value::Error;
 
     #[test]
-    fn cast_aligned_correct_length() {
+    fn cast_bytes_to_u32_correct() {
         let data: [u32; 2] = [1, 2];
         let bytes: &[u8] =
             unsafe { core::slice::from_raw_parts(data.as_ptr() as *const u8, size_of_val(&data)) };
-        let result: Result<&[u32], E> = unsafe { cast_bytes_to_slice(bytes) };
+        let result: Result<&[u32], E> = cast_bytes_to_u32_slice(bytes);
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), &[1u32, 2]);
     }
 
     #[test]
-    fn cast_wrong_length_only() {
-        // 4-byte aligned but 5 bytes long (not a multiple of 4)
+    fn cast_bytes_to_u32_wrong_length() {
         let data: [u32; 2] = [1, 2];
         let bytes: &[u8] = unsafe { core::slice::from_raw_parts(data.as_ptr() as *const u8, 5) };
-        let result: Result<&[u32], E> = unsafe { cast_bytes_to_slice(bytes) };
-        assert!(result.is_err(), "wrong length alone must be rejected");
+        let result: Result<&[u32], E> = cast_bytes_to_u32_slice(bytes);
+        assert!(result.is_err());
     }
 
     #[test]
-    fn cast_wrong_alignment_only() {
-        // Correctly sized (4 bytes) but misaligned by 1
+    fn cast_bytes_to_u32_wrong_alignment() {
         let data: [u8; 8] = [0; 8];
-        // Find a u32-aligned start, then offset by 1
         let aligned_start = data.as_ptr().align_offset(align_of::<u32>());
         let misaligned = &data[aligned_start + 1..aligned_start + 5];
-        assert_eq!(misaligned.len(), 4); // correct length for one u32
-        assert_ne!(misaligned.as_ptr().align_offset(align_of::<u32>()), 0);
-        let result: Result<&[u32], E> = unsafe { cast_bytes_to_slice(misaligned) };
-        assert!(result.is_err(), "wrong alignment alone must be rejected");
+        assert_eq!(misaligned.len(), 4);
+        let result: Result<&[u32], E> = cast_bytes_to_u32_slice(misaligned);
+        assert!(result.is_err());
     }
 
     #[test]
-    fn cast_zst() {
-        let bytes: &[u8] = &[];
-        let result: Result<&[()], E> = unsafe { cast_bytes_to_slice(bytes) };
-        assert!(result.is_err(), "ZSTs must be rejected");
+    fn cast_u32_to_i32_pair_correct() {
+        let words: [u32; 4] = [1, 2, 3, 4];
+        let result: Result<&[I32Pair], E> = cast_u32_to_i32_pair_slice(&words);
+        assert!(result.is_ok());
+        let slice = result.unwrap();
+        assert_eq!(slice.len(), 2);
+        assert_eq!(slice[0], I32Pair(1, 2));
+        assert_eq!(slice[1], I32Pair(3, 4));
+    }
+
+    #[test]
+    fn cast_u32_to_i32_pair_wrong_length() {
+        let words: [u32; 3] = [1, 2, 3];
+        let result: Result<&[I32Pair], E> = cast_u32_to_i32_pair_slice(&words);
+        assert!(result.is_err());
     }
 }
