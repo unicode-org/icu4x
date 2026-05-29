@@ -75,26 +75,44 @@ pub fn option_u32<'de, D: Deserializer<'de>>(
 }
 
 /// A layout-guaranteed pair of 32-bit signed integers.
+///
+/// # Safety Layout Invariants
+///
+/// We apply `#[repr(C)]` to guarantee that this struct has a stable and defined layout matching the C ABI:
+/// 1. The fields are laid out sequentially in declaration order.
+/// 2. Since `i32` has size 4 and alignment 4, there is no padding between the first and second fields.
+/// 3. The total size of the struct is exactly 8 bytes, and the alignment matches the alignment of `i32` (4 bytes).
+///
+/// This ensures that casting a correctly aligned 4-byte raw byte slice of size `8 * N` to `&[I32Pair]` is fully sound and stable.
 #[repr(C)]
+#[allow(
+    clippy::exhaustive_structs,
+    reason = "Stable struct representing a specific C layout"
+)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct I32Pair(pub i32, pub i32);
 
 /// TODO
 pub fn i32_tuple<'de, D: Deserializer<'de>>(deserializer: D) -> Result<&'de [I32Pair], D::Error> {
     let bytes = <&[u8]>::deserialize(deserializer)?;
-    // Safety: all byte representations are valid I32Pair
+    // SAFETY:
+    // 1. `cast_bytes_to_slice` verifies that the byte slice is aligned to 4 bytes (the alignment of `I32Pair`) and the length is a multiple of 8 bytes (the size of `I32Pair`).
+    // 2. `I32Pair` uses `#[repr(C)]` to guarantee a stable layout without padding.
+    // 3. All bit patterns are valid for `i32` (plain-old-data), so the cast is sound.
     unsafe { cast_bytes_to_slice(bytes) }
 }
 
 /// TODO
-#[expect(clippy::type_complexity)] // serde...
 pub fn option_i32_tuple<'de, D: Deserializer<'de>>(
     deserializer: D,
 ) -> Result<Option<&'de [I32Pair]>, D::Error> {
     let Some(bytes) = <Option<&[u8]>>::deserialize(deserializer)? else {
         return Ok(None);
     };
-    // Safety: all byte representations are valid I32Pair
+    // SAFETY:
+    // 1. `cast_bytes_to_slice` verifies that the byte slice is aligned to 4 bytes (the alignment of `I32Pair`) and the length is a multiple of 8 (the size of `I32Pair`).
+    // 2. `I32Pair` uses `#[repr(C)]` to guarantee a stable layout without padding.
+    // 3. All bit patterns are valid for `i32` (plain-old-data), so the cast is sound.
     unsafe { cast_bytes_to_slice(bytes) }.map(Some)
 }
 
