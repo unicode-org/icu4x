@@ -6,6 +6,7 @@ use crate::cldr_serde;
 use crate::SourceDataProvider;
 use icu::calendar::AnyCalendarKind;
 use icu_provider::prelude::*;
+use std::collections::HashSet;
 
 mod available_formats;
 mod day_periods;
@@ -186,6 +187,37 @@ impl SourceDataProvider {
 
         Ok(resource)
     }
+}
+
+/// Iterates over all supported locales for a given calendar and generates
+/// `DataIdentifierCow` keys for all combinations of the provided fieldset attributes.
+///
+/// This is a shared helper used by both standard and range skeleton providers to
+/// generate the set of supported locales they can serve.
+///
+/// # Arguments
+/// * `provider` - The source data provider to load CLDR data from.
+/// * `calendar` - The calendar to load locales for (e.g., Gregorian, Buddhist). If `None`, uses "generic".
+/// * `fieldset_attributes` - A list of slices of data marker attributes to combine with each locale.
+pub(crate) fn iter_skeleton_supported_locales(
+    provider: &SourceDataProvider,
+    calendar: Option<DatagenCalendar>,
+    fieldset_attributes: &[&[&'static DataMarkerAttributes]],
+) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    let cldr_cal = calendar
+        .map(DatagenCalendar::cldr_name)
+        .unwrap_or("generic");
+    Ok(provider
+        .cldr()?
+        .dates(cldr_cal)
+        .list_locales()?
+        .flat_map(|locale| {
+            fieldset_attributes
+                .iter()
+                .flat_map(|list| list.iter())
+                .map(move |attrs| DataIdentifierCow::from_borrowed_and_owned(attrs, locale))
+        })
+        .collect())
 }
 
 #[cfg(test)]

@@ -370,34 +370,26 @@ impl SourceDataProvider {
     fn time_skeleton_supported_locales(
         &self,
     ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(self
-            .cldr()?
-            .dates("generic")
-            .list_locales()?
-            .flat_map(|locale| {
-                TimeFieldSet::ALL_DATA_MARKER_ATTRIBUTES
-                    .iter()
-                    .map(move |attrs| DataIdentifierCow::from_borrowed_and_owned(attrs, locale))
-            })
-            .collect())
+        super::iter_skeleton_supported_locales(
+            self,
+            None,
+            &[TimeFieldSet::ALL_DATA_MARKER_ATTRIBUTES],
+        )
     }
 
     fn date_skeleton_supported_locales(
         &self,
         calendar: DatagenCalendar,
     ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(self
-            .cldr()?
-            .dates(calendar.cldr_name())
-            .list_locales()?
-            .flat_map(|locale| {
-                DateFieldSet::ALL_DATA_MARKER_ATTRIBUTES
-                    .iter()
-                    .chain(CalendarPeriodFieldSet::ALL_DATA_MARKER_ATTRIBUTES.iter())
-                    .chain(DateAndTimeFieldSet::ALL_DATA_MARKER_ATTRIBUTES.iter())
-                    .map(move |attrs| DataIdentifierCow::from_borrowed_and_owned(attrs, locale))
-            })
-            .collect())
+        super::iter_skeleton_supported_locales(
+            self,
+            Some(calendar),
+            &[
+                DateFieldSet::ALL_DATA_MARKER_ATTRIBUTES,
+                CalendarPeriodFieldSet::ALL_DATA_MARKER_ATTRIBUTES,
+                DateAndTimeFieldSet::ALL_DATA_MARKER_ATTRIBUTES,
+            ],
+        )
     }
 }
 
