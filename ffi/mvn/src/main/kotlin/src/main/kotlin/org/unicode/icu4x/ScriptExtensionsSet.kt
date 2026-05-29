@@ -7,9 +7,9 @@ import com.sun.jna.Structure
 
 internal interface ScriptExtensionsSetLib: Library {
     fun icu4x_ScriptExtensionsSet_destroy_mv1(handle: Pointer)
-    fun icu4x_ScriptExtensionsSet_contains_mv1(handle: Pointer, script: FFIUint16): Byte
+    fun icu4x_ScriptExtensionsSet_contains_mv2(handle: Pointer, script: Int): Byte
     fun icu4x_ScriptExtensionsSet_count_mv1(handle: Pointer): FFISizet
-    fun icu4x_ScriptExtensionsSet_script_at_mv1(handle: Pointer, index: FFISizet): OptionFFIUint16
+    fun icu4x_ScriptExtensionsSet_script_at_mv2(handle: Pointer, index: FFISizet): OptionInt
 }
 /** An object that represents the `Script_Extensions` property for a single character
 *
@@ -48,9 +48,9 @@ class ScriptExtensionsSet internal constructor (
     *
     *See the [Rust documentation for `contains`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptExtensionsSet.html#method.contains) for more information.
     */
-    fun contains(script: UShort): Boolean {
+    fun contains(script: Script): Boolean {
         
-        val returnVal = lib.icu4x_ScriptExtensionsSet_contains_mv1(handle, FFIUint16(script));
+        val returnVal = lib.icu4x_ScriptExtensionsSet_contains_mv2(handle, script.toNative());
         return (returnVal > 0)
     }
     
@@ -68,10 +68,12 @@ class ScriptExtensionsSet internal constructor (
     *
     *See the [Rust documentation for `iter`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
     */
-    fun scriptAt(index: ULong): UShort? {
+    fun scriptAt(index: ULong): Script? {
         
-        val returnVal = lib.icu4x_ScriptExtensionsSet_script_at_mv1(handle, FFISizet(index));
-        return returnVal.option()?.toUShort()
+        val returnVal = lib.icu4x_ScriptExtensionsSet_script_at_mv2(handle, FFISizet(index));
+        
+        val intermediateOption = returnVal.option() ?: return null
+        return Script.fromNative(intermediateOption)
     }
 
 }

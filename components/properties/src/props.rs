@@ -78,7 +78,7 @@ macro_rules! create_const_array {
                     $(
                         Self::$i => databake::quote!(icu_properties::props::$enum_ty::$i),
                     )*
-                    Self(v) => databake::quote!(icu_properties::props::$enum_ty::from_icu4c_value(#v)),
+                    Self(v) => databake::quote!(icu_properties::props::$enum_ty(#v)),
                 }
             }
         }
@@ -197,10 +197,18 @@ pub struct BidiClass(pub(crate) u8);
 
 impl BidiClass {
     /// Returns an ICU4C `UBidiClass` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn to_icu4c_value(self) -> u8 {
         self.0
     }
     /// Constructor from an ICU4C `UBidiClass` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn from_icu4c_value(value: u8) -> Self {
         Self(value)
     }
@@ -297,10 +305,18 @@ pub struct NumericType(pub(crate) u8);
 
 impl NumericType {
     /// Returns an ICU4C `UNumericType` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn to_icu4c_value(self) -> u8 {
         self.0
     }
     /// Constructor from an ICU4C `UNumericType` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn from_icu4c_value(value: u8) -> Self {
         Self(value)
     }
@@ -932,10 +948,18 @@ pub struct Script(pub(crate) u16);
 
 impl Script {
     /// Returns an ICU4C `UScriptCode` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn to_icu4c_value(self) -> u16 {
         self.0
     }
     /// Constructor from an ICU4C `UScriptCode` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn from_icu4c_value(value: u16) -> Self {
         Self(value)
     }
@@ -1174,7 +1198,10 @@ impl Script {
     // Doesn't actually exist!
     #[doc(hidden)]
     #[allow(non_upper_case_globals)]
-    #[deprecated]
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     // Some high value that ICU4C will not use anytime soon
     pub const Chisoi: Script = Self(60_000);
 }
@@ -1237,10 +1264,18 @@ pub struct HangulSyllableType(pub(crate) u8);
 
 impl HangulSyllableType {
     /// Returns an ICU4C `UHangulSyllableType` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn to_icu4c_value(self) -> u8 {
         self.0
     }
     /// Constructor from an ICU4C `UHangulSyllableType` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn from_icu4c_value(value: u8) -> Self {
         Self(value)
     }
@@ -1304,10 +1339,18 @@ pub struct EastAsianWidth(pub(crate) u8);
 
 impl EastAsianWidth {
     /// Returns an ICU4C `UEastAsianWidth` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn to_icu4c_value(self) -> u8 {
         self.0
     }
     /// Constructor from an ICU4C `UEastAsianWidth` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn from_icu4c_value(value: u8) -> Self {
         Self(value)
     }
@@ -1369,10 +1412,18 @@ pub struct LineBreak(pub(crate) u8);
 
 impl LineBreak {
     /// Returns an ICU4C `ULineBreak` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn to_icu4c_value(self) -> u8 {
         self.0
     }
     /// Constructor from an ICU4C `ULineBreak` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn from_icu4c_value(value: u8) -> Self {
         Self(value)
     }
@@ -1480,10 +1531,18 @@ pub struct GraphemeClusterBreak(pub(crate) u8);
 
 impl GraphemeClusterBreak {
     /// Returns an ICU4C `UGraphemeClusterBreak` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn to_icu4c_value(self) -> u8 {
         self.0
     }
     /// Constructor from an ICU4C `UGraphemeClusterBreak` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn from_icu4c_value(value: u8) -> Self {
         Self(value)
     }
@@ -1560,10 +1619,18 @@ pub struct WordBreak(pub(crate) u8);
 
 impl WordBreak {
     /// Returns an ICU4C `UWordBreak` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn to_icu4c_value(self) -> u8 {
         self.0
     }
     /// Constructor from an ICU4C `UWordBreak` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn from_icu4c_value(value: u8) -> Self {
         Self(value)
     }
@@ -1645,10 +1712,18 @@ pub struct SentenceBreak(pub(crate) u8);
 
 impl SentenceBreak {
     /// Returns an ICU4C `USentenceBreak` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn to_icu4c_value(self) -> u8 {
         self.0
     }
     /// Constructor from an ICU4C `USentenceBreak` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn from_icu4c_value(value: u8) -> Self {
         Self(value)
     }
@@ -1692,10 +1767,7 @@ make_enumerated_property! {
 /// See UAX #15:
 /// <https://www.unicode.org/reports/tr15/>.
 ///
-/// See `icu::normalizer::properties::CanonicalCombiningClassMap` for the API
-/// to look up the `Canonical_Combining_Class` property by scalar value.
-///
-/// **Note:** See `icu::normalizer::CanonicalCombiningClassMap` for the preferred API
+/// **Note:** See `icu::normalizer::properties::CanonicalCombiningClassMap` for the preferred API
 /// to look up the `Canonical_Combining_Class` property by scalar value.
 ///
 /// # Example
@@ -1721,15 +1793,22 @@ make_enumerated_property! {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
-pub struct CanonicalCombiningClass(pub(crate) u8);
+pub struct CanonicalCombiningClass(pub u8);
 
 impl CanonicalCombiningClass {
     /// Returns an ICU4C `UCanonicalCombiningClass` value.
-    // TODO: this is also the UCD numeric value, so the API should be renamed to reflect that.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn to_icu4c_value(self) -> u8 {
         self.0
     }
     /// Constructor from an ICU4C `UCanonicalCombiningClass` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn from_icu4c_value(value: u8) -> Self {
         Self(value)
     }
@@ -1847,10 +1926,18 @@ pub struct IndicConjunctBreak(pub(crate) u8);
 
 impl IndicConjunctBreak {
     /// Returns an ICU4C `UIndicConjunctBreak` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn to_icu4c_value(self) -> u8 {
         self.0
     }
     /// Constructor from an ICU4C `UIndicConjunctBreak` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn from_icu4c_value(value: u8) -> Self {
         Self(value)
     }
@@ -1905,10 +1992,18 @@ pub struct IndicSyllabicCategory(pub(crate) u8);
 
 impl IndicSyllabicCategory {
     /// Returns an ICU4C `UIndicSyllabicCategory` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn to_icu4c_value(self) -> u8 {
         self.0
     }
     /// Constructor from an ICU4C `UIndicSyllabicCategory` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn from_icu4c_value(value: u8) -> Self {
         Self(value)
     }
@@ -1995,10 +2090,18 @@ pub struct JoiningGroup(pub(crate) u8);
 
 impl JoiningGroup {
     /// Returns an ICU4C `UJoiningType` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn to_icu4c_value(self) -> u8 {
         self.0
     }
     /// Constructor from an ICU4C `UJoiningType` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn from_icu4c_value(value: u8) -> Self {
         Self(value)
     }
@@ -2156,10 +2259,18 @@ pub struct JoiningType(pub(crate) u8);
 
 impl JoiningType {
     /// Returns an ICU4C `UJoiningType` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn to_icu4c_value(self) -> u8 {
         self.0
     }
     /// Constructor from an ICU4C `UJoiningType` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn from_icu4c_value(value: u8) -> Self {
         Self(value)
     }
@@ -2225,10 +2336,18 @@ pub struct VerticalOrientation(pub(crate) u8);
 
 impl VerticalOrientation {
     /// Returns an ICU4C `UVerticalOrientation` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn to_icu4c_value(self) -> u8 {
         self.0
     }
     /// Constructor from an ICU4C `UVerticalOrientation` value.
+    #[deprecated(
+        since = "2.3.0",
+        note = "please comment on https://github.com/unicode-org/icu4x/issues/6067 if you need this"
+    )]
     pub const fn from_icu4c_value(value: u8) -> Self {
         Self(value)
     }

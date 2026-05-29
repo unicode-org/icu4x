@@ -630,33 +630,6 @@ final class _ResultTimeZoneAndCanonicalFfiVoid extends ffi.Struct {
   }
 }
 
-final class _ResultUint16VoidUnion extends ffi.Union {
-  @ffi.Uint16()
-  external int ok;
-
-}
-
-final class _ResultUint16Void extends ffi.Struct {
-  external _ResultUint16VoidUnion union;
-
-  @ffi.Bool()
-  external bool isOk;
-
-  // ignore: unused_element
-  factory _ResultUint16Void.ok(int val) {
-    final struct = ffi.Struct.create<_ResultUint16Void>();
-    struct.isOk = true;
-    struct.union.ok = val;
-    return struct;
-  }
-  // ignore: unused_element
-  factory _ResultUint16Void.err() {
-    final struct = ffi.Struct.create<_ResultUint16Void>();
-    struct.isOk = false;
-    return struct;
-  }
-}
-
 final class _ResultUint32VoidUnion extends ffi.Union {
   @ffi.Uint32()
   external Rune ok;

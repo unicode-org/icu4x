@@ -114,6 +114,8 @@ icu_provider::data_marker!(
     SegmenterBreakLineOverrideV2,
     "segmenter/break/line/override/v2",
     RuleBreakDataOverride<'static>,
+    #[cfg(feature = "datagen")]
+    expose_baked_consts = true,
 );
 
 icu_provider::data_marker!(

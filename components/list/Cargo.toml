@@ -37,6 +37,8 @@ postcard = { workspace = true, features = ["use-std"] }
 rmp-serde = { workspace = true }
 serde_json = { workspace = true }
 
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+criterion = { workspace = true }
 
 [features]
 default = ["compiled_data"]
@@ -45,6 +47,11 @@ serde_human = ["serde", "regex-automata/dfa-build", "regex-automata/syntax", "al
 datagen = ["serde", "dep:databake", "regex-automata/dfa-build", "regex-automata/syntax", "zerovec/databake", "alloc", "serde_human", "icu_provider/export"]
 compiled_data = ["dep:icu_list_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
 alloc = ["zerovec/alloc", "icu_provider/alloc", "serde?/alloc"]
+
+[[bench]]
+name = "list"
+harness = false
+required-features = ["compiled_data"]
 
 [lints]
 workspace = true

@@ -6,7 +6,7 @@ use super::RuleBreakIterator;
 use crate::complex::{ComplexPayloads, ComplexPayloadsBorrowed};
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::iterator_helpers::derive_usize_iterator_with_type;
-use crate::line::{LineBreakOptions, ResolvedLineBreakOptions};
+use crate::line::{LineBreakOptions, LineBreakStrictness};
 #[cfg(feature = "compiled_data")]
 use crate::provider::Baked;
 #[cfg(feature = "lstm")]
@@ -165,7 +165,6 @@ derive_usize_iterator_with_type!(LineBreakIterator, 'data);
 /// ```
 #[derive(Debug)]
 pub struct LineSegmenter {
-    options: ResolvedLineBreakOptions,
     payload: DataPayload<SegmenterBreakLineV2>,
     tailoring: Option<DataPayload<SegmenterBreakLineOverrideV2>>,
     complex: ComplexPayloads,
@@ -176,7 +175,6 @@ pub struct LineSegmenter {
 /// See [`LineSegmenter`] for examples.
 #[derive(Clone, Debug, Copy)]
 pub struct LineSegmenterBorrowed<'data> {
-    options: ResolvedLineBreakOptions,
     data: &'data SegmenterStateMachine<'data>,
     tailoring: Option<&'data RuleBreakDataOverride<'data>>,
     complex: ComplexPayloadsBorrowed<'data>,
@@ -327,10 +325,28 @@ impl LineSegmenter {
     pub const fn new_for_non_complex_scripts(
         options: LineBreakOptions,
     ) -> LineSegmenterBorrowed<'static> {
+        let options = options.resolve();
         LineSegmenterBorrowed {
-            options: options.resolve(),
             data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V2,
-            tailoring: None,
+            tailoring: match (options.ja_zh, options.strictness) {
+                (true, LineBreakStrictness::Loose) => {
+                    Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_LOOSE_CJ)
+                }
+                (false, LineBreakStrictness::Loose) => {
+                    Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_LOOSE)
+                }
+                (true, LineBreakStrictness::Normal) => {
+                    Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_NORMAL_CJ)
+                }
+                (false, LineBreakStrictness::Normal) => {
+                    Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_NORMAL)
+                }
+                (true, LineBreakStrictness::Strict) => {
+                    Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_CJ)
+                }
+                (false, LineBreakStrictness::Strict) => None,
+                (_, LineBreakStrictness::Anywhere) => unimplemented!(),
+            },
             complex: ComplexPayloadsBorrowed::new(),
         }
     }
@@ -356,23 +372,36 @@ impl LineSegmenter {
             + DataProvider<SegmenterBreakLineOverrideV2>
             + ?Sized,
     {
-        let tailoring = if let Some(locale) = options.content_locale {
-            provider
-                .load(DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(&DataLocale::from(locale)),
-                    metadata: {
-                        let mut metadata = DataRequestMetadata::default();
-                        metadata.silent = true;
-                        metadata
-                    },
-                })
-                .allow_identifier_not_found()?
-                .map(|r| r.payload)
-        } else {
-            None
-        };
+        let options = options.resolve();
+
+        let tailoring = match (options.ja_zh, options.strictness) {
+            (true, LineBreakStrictness::Loose) => {
+                const { Some(DataMarkerAttributes::from_str_or_panic("loose_cj")) }
+            }
+            (false, LineBreakStrictness::Loose) => {
+                const { Some(DataMarkerAttributes::from_str_or_panic("loose")) }
+            }
+            (true, LineBreakStrictness::Normal) => {
+                const { Some(DataMarkerAttributes::from_str_or_panic("normal_cj")) }
+            }
+            (false, LineBreakStrictness::Normal) => {
+                const { Some(DataMarkerAttributes::from_str_or_panic("normal")) }
+            }
+            (true, LineBreakStrictness::Strict) => {
+                const { Some(DataMarkerAttributes::from_str_or_panic("cj")) }
+            }
+            _ => None,
+        }
+        .map(|a| {
+            provider.load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes(a),
+                metadata: Default::default(),
+            })
+        })
+        .transpose()?
+        .map(|d| d.payload);
+
         Ok(Self {
-            options: options.resolve(),
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new(provider)?,
             tailoring,
@@ -444,7 +473,6 @@ impl LineSegmenter {
     /// Most useful methods for segmentation are on this type.
     pub fn as_borrowed(&self) -> LineSegmenterBorrowed<'_> {
         LineSegmenterBorrowed {
-            options: self.options,
             data: self.payload.get(),
             tailoring: self.tailoring.as_ref().map(|d| d.get()),
             complex: self.complex.as_borrowed(),
@@ -493,7 +521,6 @@ impl LineSegmenterBorrowed<'static> {
             payload: DataPayload::from_static_ref(self.data),
             tailoring: self.tailoring.map(DataPayload::from_static_ref),
             complex: self.complex.static_to_owned(),
-            options: self.options,
         }
     }
 }

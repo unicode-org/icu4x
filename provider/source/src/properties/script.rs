@@ -304,10 +304,6 @@ mod tests {
         assert!(swe.has_script32(0xFDF2, Script::Arabic)); // main Script value
         assert!(!swe.has_script32(0xFDF2, Script::Syriac));
         assert!(swe.has_script32(0xFDF2, Script::Thaana));
-
-        // The ICU4J comment for this test says:
-        // An unguarded implementation might go into an infinite loop.
-        assert!(!swe.has_script32(0x0640, Script::from_icu4c_value(0xAFFE)));
     }
 
     #[test]

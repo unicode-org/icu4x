@@ -36,7 +36,6 @@ public:
 
   /**
    * Get the Script property value for a code point
-   * Get the Script property value for a code point
    *
    * See the [Rust documentation for `get_script_val`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
    */

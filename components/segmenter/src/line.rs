@@ -171,9 +171,9 @@ impl LineBreakOptions<'_> {
 
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct ResolvedLineBreakOptions {
-    strictness: LineBreakStrictness,
-    word_option: LineBreakWordOption,
-    ja_zh: bool,
+    pub(crate) strictness: LineBreakStrictness,
+    pub(crate) word_option: LineBreakWordOption,
+    pub(crate) ja_zh: bool,
 }
 
 impl LineBreakOptions<'_> {

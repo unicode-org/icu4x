@@ -1,0 +1,14 @@
+# -----
+# normal:
+\p{lb=CJ} ; [あ]
+# =====
+# zh & ja tailorings:
+# -----
+# strict:
+# These should probably be mapped to wide characters, but that is a behaviour change.
+[\u201d] ; [\}]
+[\u201c] ; [\{]
+# -----
+# normal:
+# A couple of things out of NS.
+[〜 ゠]   ; [{EAST_ASIAN_UNCLASSIFIED}]

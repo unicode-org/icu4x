@@ -31,8 +31,8 @@ final class ScriptExtensionsSet implements ffi.Finalizable {
   /// Check if the `Script_Extensions` property of the given code point covers the given script
   ///
   /// See the [Rust documentation for `contains`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptExtensionsSet.html#method.contains) for more information.
-  bool contains(int script) {
-    final result = _icu4x_ScriptExtensionsSet_contains_mv1(_ffi, script);
+  bool contains(Script script) {
+    final result = _icu4x_ScriptExtensionsSet_contains_mv2(_ffi, script._ffi);
     return result;
   }
 
@@ -47,12 +47,12 @@ final class ScriptExtensionsSet implements ffi.Finalizable {
   /// Get script at index
   ///
   /// See the [Rust documentation for `iter`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
-  int? scriptAt(int index) {
-    final result = _icu4x_ScriptExtensionsSet_script_at_mv1(_ffi, index);
+  Script? scriptAt(int index) {
+    final result = _icu4x_ScriptExtensionsSet_script_at_mv2(_ffi, index);
     if (!result.isOk) {
       return null;
     }
-    return result.union.ok;
+    return Script.values.firstWhere((v) => v._ffi == result.union.ok);
   }
 
 }
@@ -62,19 +62,19 @@ final class ScriptExtensionsSet implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _icu4x_ScriptExtensionsSet_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@_DiplomatFfiUse('icu4x_ScriptExtensionsSet_contains_mv1')
-@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>(isLeaf: true, symbol: 'icu4x_ScriptExtensionsSet_contains_mv1')
+@_DiplomatFfiUse('icu4x_ScriptExtensionsSet_contains_mv2')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_ScriptExtensionsSet_contains_mv2')
 // ignore: non_constant_identifier_names
-external bool _icu4x_ScriptExtensionsSet_contains_mv1(ffi.Pointer<ffi.Opaque> self, int script);
+external bool _icu4x_ScriptExtensionsSet_contains_mv2(ffi.Pointer<ffi.Opaque> self, int script);
 
 @_DiplomatFfiUse('icu4x_ScriptExtensionsSet_count_mv1')
 @ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ScriptExtensionsSet_count_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_ScriptExtensionsSet_count_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_ScriptExtensionsSet_script_at_mv1')
-@ffi.Native<_ResultUint16Void Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_ScriptExtensionsSet_script_at_mv1')
+@_DiplomatFfiUse('icu4x_ScriptExtensionsSet_script_at_mv2')
+@ffi.Native<_ResultInt32Void Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_ScriptExtensionsSet_script_at_mv2')
 // ignore: non_constant_identifier_names
-external _ResultUint16Void _icu4x_ScriptExtensionsSet_script_at_mv1(ffi.Pointer<ffi.Opaque> self, int index);
+external _ResultInt32Void _icu4x_ScriptExtensionsSet_script_at_mv2(ffi.Pointer<ffi.Opaque> self, int index);
 
 // dart format on

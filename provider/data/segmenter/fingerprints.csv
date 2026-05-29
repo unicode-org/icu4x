@@ -1,7 +1,14 @@
 segmenter/break/grapheme/cluster/v1, <singleton>, 10452B, 10346B, 648dd52b775f2e5d
 segmenter/break/grapheme/cluster/v2, <singleton>, 12418B, 12308B, 8f6898afca86f4f3
+segmenter/break/line/override/v2, <lookup>, 63B, 5 identifiers
+segmenter/break/line/override/v2, <total>, 5096B, 4800B, 5 unique payloads
+segmenter/break/line/override/v2, und/cj, 512B, 452B, a50d6ec49fc8301
+segmenter/break/line/override/v2, und/loose, 1104B, 1045B, a87f1a386b275465
+segmenter/break/line/override/v2, und/loose_cj, 1544B, 1485B, 124e89ca35e86476
+segmenter/break/line/override/v2, und/normal, 920B, 861B, 9d8ed8209290d213
+segmenter/break/line/override/v2, und/normal_cj, 1016B, 957B, a1163c11890ad275
 segmenter/break/line/v1, <singleton>, 19860B, 19755B, 1abae346855fbab9
-segmenter/break/line/v2, <singleton>, 28756B, 28648B, c3a2cb7dd5b25587
+segmenter/break/line/v2, <singleton>, 35012B, 34905B, e4c91786e70c4825
 segmenter/break/sentence/override/v1, <lookup>, 35B, 1 identifiers
 segmenter/break/sentence/override/v1, <total>, 332B, 273B, 1 unique payloads
 segmenter/break/sentence/override/v1, el, 332B, 273B, 745d858a06d47385

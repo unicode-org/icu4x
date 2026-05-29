@@ -1,0 +1,9 @@
+# -----
+# normal:
+\p{lb=CJ} ; [あ]
+# -----
+# loose:
+# Iteration marks out of NS.
+[\u3005 \u303B \u309D \u309E \u30FD \u30FE] ; [{EAST_ASIAN_UNCLASSIFIED}]
+# Allow breaking inseparables
+[:lb=IN:] ; [{EAST_ASIAN_UNCLASSIFIED}]

@@ -7,10 +7,10 @@ import com.sun.jna.Structure
 
 internal interface ScriptWithExtensionsBorrowedLib: Library {
     fun icu4x_ScriptWithExtensionsBorrowed_destroy_mv1(handle: Pointer)
-    fun icu4x_ScriptWithExtensionsBorrowed_get_script_val_mv1(handle: Pointer, ch: Int): FFIUint16
+    fun icu4x_ScriptWithExtensionsBorrowed_get_script_val_mv2(handle: Pointer, ch: Int): Int
     fun icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_val_mv1(handle: Pointer, ch: Int): Pointer
-    fun icu4x_ScriptWithExtensionsBorrowed_has_script_mv1(handle: Pointer, ch: Int, script: FFIUint16): Byte
-    fun icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_set_mv1(handle: Pointer, script: FFIUint16): Pointer
+    fun icu4x_ScriptWithExtensionsBorrowed_has_script_mv2(handle: Pointer, ch: Int, script: Int): Byte
+    fun icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_set_mv2(handle: Pointer, script: Int): Pointer
 }
 /** A slightly faster `ScriptWithExtensions` object
 *
@@ -46,14 +46,13 @@ class ScriptWithExtensionsBorrowed internal constructor (
     }
     
     /** Get the Script property value for a code point
-    *Get the Script property value for a code point
     *
     *See the [Rust documentation for `get_script_val`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
     */
-    fun getScriptVal(ch: Int): UShort {
+    fun getScriptVal(ch: Int): Script {
         
-        val returnVal = lib.icu4x_ScriptWithExtensionsBorrowed_get_script_val_mv1(handle, ch);
-        return (returnVal.toUShort())
+        val returnVal = lib.icu4x_ScriptWithExtensionsBorrowed_get_script_val_mv2(handle, ch);
+        return (Script.fromNative(returnVal))
     }
     
     /** Get the Script property value for a code point
@@ -75,9 +74,9 @@ class ScriptWithExtensionsBorrowed internal constructor (
     *
     *See the [Rust documentation for `has_script`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
     */
-    fun hasScript(ch: Int, script: UShort): Boolean {
+    fun hasScript(ch: Int, script: Script): Boolean {
         
-        val returnVal = lib.icu4x_ScriptWithExtensionsBorrowed_has_script_mv1(handle, ch, FFIUint16(script));
+        val returnVal = lib.icu4x_ScriptWithExtensionsBorrowed_has_script_mv2(handle, ch, script.toNative());
         return (returnVal > 0)
     }
     
@@ -86,9 +85,9 @@ class ScriptWithExtensionsBorrowed internal constructor (
     *
     *See the [Rust documentation for `get_script_extensions_set`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_set) for more information.
     */
-    fun getScriptExtensionsSet(script: UShort): CodePointSetData {
+    fun getScriptExtensionsSet(script: Script): CodePointSetData {
         
-        val returnVal = lib.icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_set_mv1(handle, FFIUint16(script));
+        val returnVal = lib.icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_set_mv2(handle, script.toNative());
         val selfEdges: List<Any> = listOf()
         val handle = returnVal 
         val returnOpaque = CodePointSetData(handle, selfEdges, true)

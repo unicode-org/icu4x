@@ -83,20 +83,6 @@ type Trie<'trie> = CodePointTrie<'trie, u32>;
 #[cfg(icu4x_unstable_fast_trie_only)]
 type Trie<'trie> = FastCodePointTrie<'trie, u32>;
 
-// We don't depend on icu_properties to minimize deps, but we want to be able
-// to ensure we're using the right CCC values
-macro_rules! ccc {
-    ($name:ident, $num:expr) => {
-        const {
-            #[cfg(feature = "icu_properties")]
-            if icu_properties::props::CanonicalCombiningClass::$name.to_icu4c_value() != $num {
-                panic!("icu_normalizer has incorrect ccc values")
-            }
-            CanonicalCombiningClass::from_icu4c_value($num)
-        }
-    };
-}
-
 #[cfg(feature = "harfbuzz_traits")]
 mod harfbuzz;
 pub mod properties;
@@ -174,20 +160,16 @@ fn likely(b: bool) -> bool {
 // It should not be exposed to users.
 #[cfg(not(feature = "icu_properties"))]
 #[derive(Copy, Clone, Eq, PartialEq, PartialOrd, Ord)]
-struct CanonicalCombiningClass(pub(crate) u8);
+struct CanonicalCombiningClass(u8);
 
 #[cfg(not(feature = "icu_properties"))]
+#[allow(non_upper_case_globals)]
 impl CanonicalCombiningClass {
-    const fn from_icu4c_value(v: u8) -> Self {
-        Self(v)
-    }
-    const fn to_icu4c_value(self) -> u8 {
-        self.0
-    }
+    // See https://www.unicode.org/reports/tr44/#Canonical_Combining_Class_Values
+    const NotReordered: Self = Self(0);
+    const Above: Self = Self(230);
+    const KanaVoicing: Self = Self(8);
 }
-
-const CCC_NOT_REORDERED: CanonicalCombiningClass = ccc!(NotReordered, 0);
-const CCC_ABOVE: CanonicalCombiningClass = ccc!(Above, 230);
 
 /// Treatment of the ignorable marker (0xFFFFFFFF) in data.
 #[derive(Debug, PartialEq, Eq)]
@@ -259,9 +241,9 @@ fn decomposition_starts_with_non_starter(trie_value: u32) -> bool {
 /// See trie-value-format.md
 fn ccc_from_trie_value(trie_value: u32) -> CanonicalCombiningClass {
     if trie_value_has_ccc(trie_value) {
-        CanonicalCombiningClass::from_icu4c_value(trie_value as u8)
+        CanonicalCombiningClass(trie_value as u8)
     } else {
-        CCC_NOT_REORDERED
+        CanonicalCombiningClass::NotReordered
     }
 }
 
@@ -502,7 +484,7 @@ struct CharacterAndClass(u32);
 
 impl CharacterAndClass {
     pub fn new(c: char, ccc: CanonicalCombiningClass) -> Self {
-        CharacterAndClass(u32::from(c) | (u32::from(ccc.to_icu4c_value()) << 24))
+        CharacterAndClass(u32::from(c) | (u32::from(ccc.0) << 24))
     }
     pub fn new_with_placeholder(c: char) -> Self {
         CharacterAndClass(u32::from(c) | ((0xFF) << 24))
@@ -522,7 +504,7 @@ impl CharacterAndClass {
     }
     /// This method must exist for Pernosco to apply its special rendering.
     pub fn ccc(&self) -> CanonicalCombiningClass {
-        CanonicalCombiningClass::from_icu4c_value((self.0 >> 24) as u8)
+        CanonicalCombiningClass((self.0 >> 24) as u8)
     }
 
     pub fn character_and_ccc(&self) -> (char, CanonicalCombiningClass) {
@@ -533,8 +515,7 @@ impl CharacterAndClass {
             return;
         }
         let scalar = self.0 & 0xFFFFFF;
-        self.0 =
-            ((ccc_from_trie_value(trie.get32_u32(scalar)).to_icu4c_value() as u32) << 24) | scalar;
+        self.0 = ((ccc_from_trie_value(trie.get32_u32(scalar)).0 as u32) << 24) | scalar;
     }
 }
 
@@ -943,47 +924,55 @@ where
                 let mapped = match ch_and_trie_val.character {
                     '\u{0340}' => {
                         // COMBINING GRAVE TONE MARK
-                        CharacterAndClass::new('\u{0300}', CCC_ABOVE)
+                        CharacterAndClass::new('\u{0300}', CanonicalCombiningClass::Above)
                     }
                     '\u{0341}' => {
                         // COMBINING ACUTE TONE MARK
-                        CharacterAndClass::new('\u{0301}', CCC_ABOVE)
+                        CharacterAndClass::new('\u{0301}', CanonicalCombiningClass::Above)
                     }
                     '\u{0343}' => {
                         // COMBINING GREEK KORONIS
-                        CharacterAndClass::new('\u{0313}', CCC_ABOVE)
+                        CharacterAndClass::new('\u{0313}', CanonicalCombiningClass::Above)
                     }
                     '\u{0344}' => {
                         // COMBINING GREEK DIALYTIKA TONOS
-                        self.buffer
-                            .push(CharacterAndClass::new('\u{0308}', CCC_ABOVE));
-                        CharacterAndClass::new('\u{0301}', CCC_ABOVE)
+                        self.buffer.push(CharacterAndClass::new(
+                            '\u{0308}',
+                            CanonicalCombiningClass::Above,
+                        ));
+                        CharacterAndClass::new('\u{0301}', CanonicalCombiningClass::Above)
                     }
                     '\u{0F73}' => {
                         // TIBETAN VOWEL SIGN II
-                        self.buffer
-                            .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
-                        CharacterAndClass::new('\u{0F72}', ccc!(CCC130, 130))
+                        self.buffer.push(CharacterAndClass::new(
+                            '\u{0F71}',
+                            CanonicalCombiningClass(129),
+                        ));
+                        CharacterAndClass::new('\u{0F72}', CanonicalCombiningClass(130))
                     }
                     '\u{0F75}' => {
                         // TIBETAN VOWEL SIGN UU
-                        self.buffer
-                            .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
-                        CharacterAndClass::new('\u{0F74}', ccc!(CCC132, 132))
+                        self.buffer.push(CharacterAndClass::new(
+                            '\u{0F71}',
+                            CanonicalCombiningClass(129),
+                        ));
+                        CharacterAndClass::new('\u{0F74}', CanonicalCombiningClass(132))
                     }
                     '\u{0F81}' => {
                         // TIBETAN VOWEL SIGN REVERSED II
-                        self.buffer
-                            .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
-                        CharacterAndClass::new('\u{0F80}', ccc!(CCC130, 130))
+                        self.buffer.push(CharacterAndClass::new(
+                            '\u{0F71}',
+                            CanonicalCombiningClass(129),
+                        ));
+                        CharacterAndClass::new('\u{0F80}', CanonicalCombiningClass(130))
                     }
                     '\u{FF9E}' => {
                         // HALFWIDTH KATAKANA VOICED SOUND MARK
-                        CharacterAndClass::new('\u{3099}', ccc!(KanaVoicing, 8))
+                        CharacterAndClass::new('\u{3099}', CanonicalCombiningClass::KanaVoicing)
                     }
                     '\u{FF9F}' => {
                         // HALFWIDTH KATAKANA VOICED SOUND MARK
-                        CharacterAndClass::new('\u{309A}', ccc!(KanaVoicing, 8))
+                        CharacterAndClass::new('\u{309A}', CanonicalCombiningClass::KanaVoicing)
                     }
                     _ => {
                         // GIGO case
@@ -1105,7 +1094,7 @@ where
                         self.decomposition.buffer.clear();
                         self.decomposition.buffer_pos = 0;
                     }
-                    if ccc == CCC_NOT_REORDERED {
+                    if ccc == CanonicalCombiningClass::NotReordered {
                         // Previous decomposition contains a starter. This must
                         // now become the `unprocessed_starter` for it to have
                         // a chance to compose with the upcoming characters.
@@ -1197,7 +1186,7 @@ where
                         .drain(0..self.decomposition.buffer_pos);
                 }
                 self.decomposition.buffer_pos = 0;
-                if most_recent_skipped_ccc == CCC_NOT_REORDERED {
+                if most_recent_skipped_ccc == CanonicalCombiningClass::NotReordered {
                     // We failed to compose a starter. Discontiguous match not allowed.
                     // We leave the starter in `buffer` for `next()` to find.
                     return Some(starter);
@@ -1209,7 +1198,7 @@ where
                     .get(i)
                     .map(|c| c.character_and_ccc())
                 {
-                    if ccc == CCC_NOT_REORDERED {
+                    if ccc == CanonicalCombiningClass::NotReordered {
                         // Discontiguous match not allowed.
                         return Some(starter);
                     }
@@ -1348,7 +1337,7 @@ macro_rules! composing_normalize_to {
                             continue;
                         }
                         let mut most_recent_skipped_ccc = ccc;
-                        if most_recent_skipped_ccc == CCC_NOT_REORDERED {
+                        if most_recent_skipped_ccc == CanonicalCombiningClass::NotReordered {
                             // We failed to compose a starter. Discontiguous match not allowed.
                             // Write the current `starter` we've been composing, make the unmatched
                             // starter in the buffer the new `starter` (we know it's been decomposed)
@@ -1373,7 +1362,7 @@ macro_rules! composing_normalize_to {
                             .get(i)
                             .map(|c| c.character_and_ccc())
                         {
-                            if ccc == CCC_NOT_REORDERED {
+                            if ccc == CanonicalCombiningClass::NotReordered {
                                 // Discontiguous match not allowed.
                                 $sink.write_char(starter)?;
                                 for cc in $composition.decomposition.buffer.drain(..i) {
