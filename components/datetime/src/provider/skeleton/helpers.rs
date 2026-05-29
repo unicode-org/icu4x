@@ -421,42 +421,42 @@ fn apply_subseconds(pattern: &mut runtime::Pattern, subseconds: Option<Subsecond
     }
 }
 
-/// A partial implementation of the [UTS 35 skeleton matching algorithm](https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons).
-///
-/// The following is implemented:
-///
-///  * Compute a score based on the best possible match for the given fields.
-///  * Select the skeleton with highest score.
-///  * Modify the resulting pattern to have fields of the same length. For example requesting
-///    a skeleton "yMMMMd" can have a best match of ["yMMMd", "d MMM y"]. This pattern should
-///    then be modified to use the requested length to produce a pattern "d MMMM y".
-///    However, fields should not be changed from numeric to text.
-///
-/// The following is not implemented:
-///
-///  * 2.6.2.2 Missing Skeleton Fields
-///    - TODO(#586) - Using the CLDR appendItems field. Note: There is not agreement yet on how
-///      much of this step to implement. See the issue for more information.
-///
-/// # Panics
-///
-/// Panics if `prefer_matched_pattern` is set to true in a non-datagen mode.
+/// A match result returned by [`find_best_skeleton`].
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-pub fn get_best_available_format_pattern<'data>(
-    skeletons: &BTreeMap<reference::Skeleton, PluralElements<runtime::Pattern<'data>>>,
-    fields: &[Field],
-    prefer_matched_pattern: bool,
-) -> BestSkeleton<PluralElements<runtime::Pattern<'data>>> {
-    let mut closest_format_pattern = None;
-    let mut closest_distance: u32 = u32::MAX;
-    let mut closest_missing_fields = 0;
+#[derive(Debug, Clone, Copy)]
+pub struct SkeletonMatch<'a, T> {
+    /// The skeleton that was matched.
+    pub skeleton: &'a reference::Skeleton,
+    /// The value mapped to this skeleton (e.g., a pattern).
+    pub value: &'a T,
+    /// The match distance score. Lower is better. A distance of 0 is an exact match.
+    pub distance: u32,
+    /// The number of requested fields that were not present in the matched skeleton.
+    pub missing_fields: usize,
+}
 
-    for (skeleton, pattern) in skeletons.iter() {
+/// Finds the best matching skeleton from a map of skeletons.
+///
+/// This performs the matching phase of the UTS 35 skeleton matching algorithm.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+pub fn find_best_skeleton<'a, T>(
+    skeletons: &'a BTreeMap<reference::Skeleton, T>,
+    fields: &[Field],
+) -> Option<SkeletonMatch<'a, T>> {
+    let mut closest_match = None;
+    let mut closest_distance: u32 = u32::MAX;
+
+    for (skeleton, value) in skeletons.iter() {
         debug_assert!(
             skeleton.fields_len() <= MAX_SKELETON_FIELDS as usize,
             "The distance mechanism assumes skeletons are less than MAX_SKELETON_FIELDS in length."
@@ -531,16 +531,56 @@ pub fn get_best_available_format_pattern<'data>(
         }
 
         if distance < closest_distance {
-            closest_format_pattern = Some(pattern);
             closest_distance = distance;
-            closest_missing_fields = missing_fields;
+            closest_match = Some(SkeletonMatch {
+                skeleton,
+                value,
+                distance,
+                missing_fields,
+            });
         }
     }
 
+    closest_match
+}
+
+/// A partial implementation of the [UTS 35 skeleton matching algorithm](https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons).
+///
+/// The following is implemented:
+///
+///  * Compute a score based on the best possible match for the given fields.
+///  * Select the skeleton with highest score.
+///  * Modify the resulting pattern to have fields of the same length. For example requesting
+///    a skeleton "yMMMMd" can have a best match of ["yMMMd", "d MMM y"]. This pattern should
+///    then be modified to use the requested length to produce a pattern "d MMMM y".
+///    However, fields should not be changed from numeric to text.
+///
+/// The following is not implemented:
+///
+///  * 2.6.2.2 Missing Skeleton Fields
+///    - TODO(#586) - Using the CLDR appendItems field. Note: There is not agreement yet on how
+///      much of this step to implement. See the issue for more information.
+///
+/// # Panics
+///
+/// Panics if `prefer_matched_pattern` is set to true in a non-datagen mode.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+pub fn get_best_available_format_pattern<'data>(
+    skeletons: &BTreeMap<reference::Skeleton, PluralElements<runtime::Pattern<'data>>>,
+    fields: &[Field],
+    prefer_matched_pattern: bool,
+) -> BestSkeleton<PluralElements<runtime::Pattern<'data>>> {
+    let matched = find_best_skeleton(skeletons, fields);
+    let closest_distance = matched.as_ref().map(|m| m.distance).unwrap_or(u32::MAX);
+    let closest_missing_fields = matched.as_ref().map(|m| m.missing_fields).unwrap_or(0);
+
     if !prefer_matched_pattern && closest_distance >= TEXT_VS_NUMERIC_DISTANCE {
         if let [field] = fields {
-            // A single field was requested and the best pattern either includes extra fields or can't be adjusted to match
-            // (e.g. text vs numeric). We return the field instead of the matched pattern.
             return BestSkeleton::AllFieldsMatch(
                 PluralElements::new(runtime::Pattern::from(vec![PatternItem::Field(*field)])),
                 SkeletonQuality(closest_distance),
@@ -548,15 +588,15 @@ pub fn get_best_available_format_pattern<'data>(
         }
     }
 
-    let mut closest_format_pattern = if let Some(pattern) = closest_format_pattern {
-        pattern.clone()
-    } else {
+    let Some(matched) = matched else {
         return BestSkeleton::NoMatch;
     };
 
     if closest_missing_fields == fields.len() {
         return BestSkeleton::NoMatch;
     }
+
+    let mut closest_format_pattern = matched.value.clone();
 
     if closest_distance == NO_DISTANCE {
         return BestSkeleton::AllFieldsMatch(
