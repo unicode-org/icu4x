@@ -95,6 +95,8 @@ impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayName
                 }
             } else if let Ok(lang) = key.parse::<Language>() {
                 names.insert(lang.to_tinystr(), value.as_ref());
+            } else if key.contains(ALT_SUBSTRING) {
+                log::warn!("Unknown alt variant for language: {}", key);
             }
         }
         Self {

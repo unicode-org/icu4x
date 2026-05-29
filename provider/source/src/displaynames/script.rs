@@ -63,6 +63,8 @@ impl TryFrom<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames
                     Script::try_from_str(entry.0)?.to_tinystr(),
                     entry.1.as_str(),
                 );
+            } else {
+                log::warn!("Unknown alt variant for script: {}", entry.0);
             }
         }
         Ok(Self {
