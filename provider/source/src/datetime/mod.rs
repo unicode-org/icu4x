@@ -5,8 +5,10 @@
 use crate::cldr_serde;
 use crate::SourceDataProvider;
 use icu::calendar::AnyCalendarKind;
+use icu::datetime::provider::skeleton::reference::Skeleton;
+use icu::datetime::provider::skeleton::SkeletonError;
 use icu_provider::prelude::*;
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
 
 mod available_formats;
 mod day_periods;
@@ -218,6 +220,59 @@ pub(crate) fn iter_skeleton_supported_locales(
                 .map(move |attrs| DataIdentifierCow::from_borrowed_and_owned(attrs, locale))
         })
         .collect())
+}
+
+/// Parses a collection of raw CLDR skeleton strings and their associated values into a `BTreeMap`.
+///
+/// Skeletons that fail to parse via [`Skeleton::try_from`] are silently ignored.
+/// If a duplicate skeleton is encountered after normalization (e.g. due to 'E' vs 'c' forms),
+/// it will overwrite the previous value and log a warning.
+///
+/// # Example Input
+/// This function is designed to parse maps like:
+/// ```json
+/// {
+///   "yMd": "y/M/d",
+///   "yMMMMd": "y MMMM d",
+///   "invalid_skeleton": "pattern"
+/// }
+/// ```
+/// For `"yMd"`, it parses it into a `Skeleton` and calls `map_fn` with it and `"y/M/d"`.
+/// `"invalid_skeleton"` will be skipped.
+///
+/// # Arguments
+/// * `raw_patterns` - An iterator over `(skeleton_string, value)` pairs.
+/// * `map_fn` - A closure that maps the parsed `Skeleton` and the raw value into the desired result type `R`.
+pub(crate) fn parse_cldr_skeletons<'a, K, V: 'a, R, I, F>(
+    raw_patterns: I,
+    mut map_fn: F,
+) -> BTreeMap<Skeleton, R>
+where
+    K: AsRef<str> + 'a,
+    I: IntoIterator<Item = (&'a K, &'a V)>,
+    F: FnMut(&Skeleton, &'a V) -> Option<R>,
+{
+    let mut result = BTreeMap::new();
+    for (skeleton_str, value) in raw_patterns {
+        let skeleton = match Skeleton::try_from(skeleton_str.as_ref()) {
+            Ok(s) => s,
+            Err(SkeletonError::SymbolUnimplemented(_)) => continue,
+            Err(SkeletonError::SkeletonHasVariant) => continue,
+            Err(err) => panic!(
+                "Unexpected skeleton error while parsing skeleton {} {err}",
+                skeleton_str.as_ref()
+            ),
+        };
+        if let Some(mapped) = map_fn(&skeleton, value) {
+            if let Some(_old) = result.insert(skeleton.clone(), mapped) {
+                log::warn!(
+                    "Duplicate skeleton found after normalization: {}. This might happen if CLDR has both 'E' and 'c' forms.",
+                    skeleton
+                );
+            }
+        }
+    }
+    result
 }
 
 #[cfg(test)]

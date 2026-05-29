@@ -5,10 +5,9 @@
 use crate::cldr_serde;
 use icu::datetime::provider::pattern::runtime::Pattern;
 use icu::datetime::provider::skeleton::reference::Skeleton;
-use icu::datetime::provider::skeleton::*;
 use icu::plurals::{PluralCategory, PluralElements};
+
 use std::collections::BTreeMap;
-use std::convert::TryFrom;
 
 impl cldr_serde::ca::AvailableFormats {
     pub fn parse_skeletons(&self) -> BTreeMap<Skeleton, PluralElements<Pattern<'static>>> {
@@ -29,17 +28,7 @@ impl cldr_serde::ca::AvailableFormats {
         }
 
         // TODO(#308): Support numbering system variations. We currently throw them away.
-        let mut result = BTreeMap::new();
-        for (skeleton_str, patterns) in patterns.iter() {
-            let skeleton = match Skeleton::try_from(skeleton_str.as_str()) {
-                Ok(s) => s,
-                Err(SkeletonError::SymbolUnimplemented(_)) => continue,
-                Err(SkeletonError::SkeletonHasVariant) => continue,
-                Err(err) => panic!(
-                    "Unexpected skeleton error while parsing skeleton {skeleton_str:?} {err}"
-                ),
-            };
-
+        super::parse_cldr_skeletons(&patterns, |_skeleton, patterns| {
             let patterns = PluralElements::new(&patterns[&PluralCategory::Other])
                 .with_zero_value(patterns.get(&PluralCategory::Zero))
                 .with_one_value(patterns.get(&PluralCategory::One))
@@ -47,24 +36,17 @@ impl cldr_serde::ca::AvailableFormats {
                 .with_few_value(patterns.get(&PluralCategory::Few))
                 .with_many_value(patterns.get(&PluralCategory::Many))
                 .map(|s| s.parse().expect(s));
-
-            // CLDR seems to be moving away from `c` in `availableFormats` skeleta.
-            // We don't expect to see both `E` and `c` for the same skeleton, but if we do,
-            // we warn and prefer the one that appeared later in the map (arbitrary).
-            if let Some(_old) = result.insert(skeleton.clone(), patterns) {
-                log::warn!(
-                    "Duplicate skeleton found after normalization: {}. This might happen if CLDR has both 'E' and 'c' forms.",
-                    skeleton
-                );
-            }
-        }
-        result
+            Some(patterns)
+        })
     }
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
+    use icu::datetime::provider::skeleton::{
+        get_best_available_format_pattern, BestSkeleton, SkeletonError,
+    };
 
     use core::convert::TryFrom;
     use core::str::FromStr;
