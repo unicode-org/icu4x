@@ -18,6 +18,7 @@ use std::collections::{BTreeMap, HashSet};
 mod available_formats;
 mod day_periods;
 mod names;
+mod range_patterns;
 mod semantic_skeletons;
 mod week_data;
 

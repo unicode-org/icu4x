@@ -313,7 +313,7 @@ impl SourceDataProvider {
 }
 
 /// An internal function that checks if the attributes contain a field.
-fn check_for_field(attributes: &DataMarkerAttributes, field: &str) -> bool {
+pub(crate) fn check_for_field(attributes: &DataMarkerAttributes, field: &str) -> bool {
     let f0 = field.as_bytes().first().unwrap();
     let f1 = field.as_bytes().get(1);
     let mut it = attributes.as_bytes().iter().peekable();
@@ -340,7 +340,10 @@ fn check_for_field(attributes: &DataMarkerAttributes, field: &str) -> bool {
     false
 }
 
-fn preferred_hour_cycle(other: &cldr_serde::ca::Dates, locale: &DataLocale) -> CoarseHourCycle {
+pub(crate) fn preferred_hour_cycle(
+    other: &cldr_serde::ca::Dates,
+    locale: &DataLocale,
+) -> CoarseHourCycle {
     let mut preferred_hour_cycle: Option<CoarseHourCycle> = None;
     for s in [
         &other.time_skeletons.full,
@@ -401,7 +404,7 @@ impl From<&cldr_serde::ca::DateTimeFormatsVariant> for GenericLengthPatterns<'_>
 }
 
 /// Convert from a semantic time field set to classical component options for calculating the pattern.
-fn gen_time_components(
+pub(crate) fn gen_time_components(
     _: Length,
     attributes: &DataMarkerAttributes,
     _: &cldr_serde::ca::Dates,
@@ -427,7 +430,7 @@ fn gen_time_components(
 }
 
 /// Convert from a semantic date field set to classical component options for calculating the pattern.
-fn gen_date_components(
+pub(crate) fn gen_date_components(
     length: Length,
     attributes: &DataMarkerAttributes,
     data: &cldr_serde::ca::Dates,

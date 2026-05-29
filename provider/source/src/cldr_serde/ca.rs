@@ -244,6 +244,14 @@ impl DateTimeFormatsVariant {
 pub(crate) struct AvailableFormats(pub(crate) HashMap<String, String>);
 
 #[derive(PartialEq, Clone, Debug, Deserialize)]
+pub(crate) struct IntervalFormats {
+    #[serde(rename = "intervalFormatFallback")]
+    pub(crate) fallback: String,
+    #[serde(flatten)]
+    pub(crate) patterns: HashMap<String, HashMap<String, String>>,
+}
+
+#[derive(PartialEq, Clone, Debug, Deserialize)]
 pub(crate) struct CyclicNameSets {
     pub(crate) years: Option<Contexts<BTreeMap<u8, String>>>,
 }
@@ -276,6 +284,8 @@ pub(crate) struct Dates {
     pub(crate) datetime_formats: DateTimeFormats,
     #[serde(rename = "dateTimeFormats-atTime")]
     pub(crate) datetime_formats_at_time: DateTimeFormatsVariant,
+    #[serde(rename = "intervalFormats")]
+    pub(crate) interval_formats: Option<IntervalFormats>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
