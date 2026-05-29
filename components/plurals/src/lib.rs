@@ -854,28 +854,44 @@ where
     T: zerofrom::ZeroFrom<'a, C>,
 {
     fn zero_from(other: &'a PluralElementsInner<C>) -> Self {
+        other.as_ref().map(|x| zerofrom::ZeroFrom::zero_from(x))
+    }
+}
+
+impl<T> PluralElementsInner<T> {
+    /// Converts from `&PluralElementsInner<T>` to `PluralElementsInner<&T>`.
+    pub fn as_ref(&self) -> PluralElementsInner<&T> {
         PluralElementsInner {
-            zero: other
-                .zero
-                .as_ref()
-                .map(|x| zerofrom::ZeroFrom::zero_from(x)),
-            one: other.one.as_ref().map(|x| zerofrom::ZeroFrom::zero_from(x)),
-            two: other.two.as_ref().map(|x| zerofrom::ZeroFrom::zero_from(x)),
-            few: other.few.as_ref().map(|x| zerofrom::ZeroFrom::zero_from(x)),
-            many: other
-                .many
-                .as_ref()
-                .map(|x| zerofrom::ZeroFrom::zero_from(x)),
-            other: zerofrom::ZeroFrom::zero_from(&other.other),
-            explicit_zero: other
-                .explicit_zero
-                .as_ref()
-                .map(|x| zerofrom::ZeroFrom::zero_from(x)),
-            explicit_one: other
-                .explicit_one
-                .as_ref()
-                .map(|x| zerofrom::ZeroFrom::zero_from(x)),
+            other: &self.other,
+            zero: self.zero.as_ref(),
+            one: self.one.as_ref(),
+            two: self.two.as_ref(),
+            few: self.few.as_ref(),
+            many: self.many.as_ref(),
+            explicit_zero: self.explicit_zero.as_ref(),
+            explicit_one: self.explicit_one.as_ref(),
         }
+    }
+
+    pub fn map<B, F: FnMut(T) -> B>(self, mut f: F) -> PluralElementsInner<B> {
+        let Ok(x) = self.try_map(move |x| Ok::<B, Infallible>(f(x)));
+        x
+    }
+
+    pub fn try_map<B, E, F: FnMut(T) -> Result<B, E>>(
+        self,
+        mut f: F,
+    ) -> Result<PluralElementsInner<B>, E> {
+        Ok(PluralElementsInner {
+            other: f(self.other)?,
+            zero: self.zero.map(&mut f).transpose()?,
+            one: self.one.map(&mut f).transpose()?,
+            two: self.two.map(&mut f).transpose()?,
+            few: self.few.map(&mut f).transpose()?,
+            many: self.many.map(&mut f).transpose()?,
+            explicit_zero: self.explicit_zero.map(&mut f).transpose()?,
+            explicit_one: self.explicit_one.map(&mut f).transpose()?,
+        })
     }
 }
 
@@ -884,7 +900,7 @@ where
     T: zerofrom::ZeroFrom<'a, C>,
 {
     fn zero_from(other: &'a PluralElements<C>) -> Self {
-        PluralElements(zerofrom::ZeroFrom::zero_from(&other.0))
+        other.as_ref().map(|x| zerofrom::ZeroFrom::zero_from(x))
     }
 }
 
@@ -985,28 +1001,14 @@ impl<T> PluralElements<T> {
     /// assert_eq!(*y.other(), 22);
     /// assert_eq!(*y.one(), 30);
     /// ```
-    pub fn map<B, F: FnMut(T) -> B>(self, mut f: F) -> PluralElements<B> {
-        let Ok(x) = self.try_map(move |x| Ok::<B, Infallible>(f(x)));
-        x
+    pub fn map<B, F: FnMut(T) -> B>(self, f: F) -> PluralElements<B> {
+        PluralElements(self.0.map(f))
     }
 
     /// Applies a function `f` to convert all values to another type,
     /// propagating a possible error.
-    pub fn try_map<B, E, F: FnMut(T) -> Result<B, E>>(
-        self,
-        mut f: F,
-    ) -> Result<PluralElements<B>, E> {
-        let plural_elements = PluralElements(PluralElementsInner {
-            other: f(self.0.other)?,
-            zero: self.0.zero.map(&mut f).transpose()?,
-            one: self.0.one.map(&mut f).transpose()?,
-            two: self.0.two.map(&mut f).transpose()?,
-            few: self.0.few.map(&mut f).transpose()?,
-            many: self.0.many.map(&mut f).transpose()?,
-            explicit_zero: self.0.explicit_zero.map(&mut f).transpose()?,
-            explicit_one: self.0.explicit_one.map(&mut f).transpose()?,
-        });
-        Ok(plural_elements)
+    pub fn try_map<B, E, F: FnMut(T) -> Result<B, E>>(self, f: F) -> Result<PluralElements<B>, E> {
+        self.0.try_map(f).map(PluralElements)
     }
 
     /// Immutably applies a function `f` to each value.
@@ -1072,16 +1074,7 @@ impl<T> PluralElements<T> {
 
     /// Converts from `&PluralElements<T>` to `PluralElements<&T>`.
     pub fn as_ref(&self) -> PluralElements<&T> {
-        PluralElements(PluralElementsInner {
-            other: &self.0.other,
-            zero: self.0.zero.as_ref(),
-            one: self.0.one.as_ref(),
-            two: self.0.two.as_ref(),
-            few: self.0.few.as_ref(),
-            many: self.0.many.as_ref(),
-            explicit_zero: self.0.explicit_zero.as_ref(),
-            explicit_one: self.0.explicit_one.as_ref(),
-        })
+        PluralElements(self.0.as_ref())
     }
 }
 
