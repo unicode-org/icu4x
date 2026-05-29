@@ -66,7 +66,7 @@ impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames
                 || region.ends_with(ALT_CHAGOS_SUBSTRING)
                 || region.ends_with(ALT_BIOT_SUBSTRING)
             {
-                // TODO: Handle this with datagen alt flags. See issue #8012. I think sffc started implementing it for alt ascii in PR #7902
+                // TODO(#8012)
             } else {
                 log::warn!("Unknown alt variant for region: {}", region);
             }

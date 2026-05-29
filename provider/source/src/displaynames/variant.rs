@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
-use crate::displaynames::{ALT_SHORT_SUBSTRING, ALT_SUBSTRING};
+use crate::displaynames::{ALT_SECONDARY_SUBSTRING, ALT_SHORT_SUBSTRING, ALT_SUBSTRING};
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use core::convert::TryFrom;
@@ -61,6 +61,8 @@ impl TryFrom<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNam
                     Variant::try_from_str(entry.0)?.to_tinystr(),
                     entry.1.as_str(),
                 );
+            } else if entry.0.ends_with(ALT_SECONDARY_SUBSTRING) {
+                // TODO(#8012)
             } else {
                 log::warn!("Unknown alt variant for variant: {}", entry.0);
             }

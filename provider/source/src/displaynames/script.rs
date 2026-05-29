@@ -66,10 +66,12 @@ impl TryFrom<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames
                     Script::try_from_str(entry.0)?.to_tinystr(),
                     entry.1.as_str(),
                 );
-            } else if entry.0.ends_with(ALT_VARIANT_SUBSTRING) || entry.0.ends_with(ALT_SECONDARY_SUBSTRING) {
-                // TODO: Handle this with datagen alt flags. See issue #8012. I think sffc started implementing it for alt ascii in PR #7902
+            } else if entry.0.ends_with(ALT_VARIANT_SUBSTRING)
+                || entry.0.ends_with(ALT_SECONDARY_SUBSTRING)
+            {
+                // TODO(#8012)
             } else if entry.0.ends_with(ALT_STANDALONE_SUBSTRING) {
-                // TODO: Support standalone display names. See issue #8011
+                // TODO(#8011)
             } else {
                 log::warn!("Unknown alt variant for script: {}", entry.0);
             }

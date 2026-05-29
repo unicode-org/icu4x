@@ -96,10 +96,11 @@ impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayName
                 }
             } else if let Ok(lang) = key.parse::<Language>() {
                 names.insert(lang.to_tinystr(), value.as_ref());
-            } else if key.ends_with(ALT_VARIANT_SUBSTRING) || key.ends_with(ALT_SECONDARY_SUBSTRING) {
-                // TODO: Handle this with datagen alt flags. See issue #8012. I think sffc started implementing it for alt ascii in PR #7902
+            } else if key.ends_with(ALT_VARIANT_SUBSTRING) || key.ends_with(ALT_SECONDARY_SUBSTRING)
+            {
+                // TODO(#8012)
             } else if key.ends_with(ALT_OFFICIAL_SUBSTRING) {
-                // TODO: Support alt=official for display names. See issue #8012
+                // TODO(#8012)
             } else if key.contains(ALT_SUBSTRING) {
                 log::warn!("Unknown alt variant for language: {}", key);
             }
