@@ -66,7 +66,7 @@ impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames
                 || region.ends_with(ALT_CHAGOS_SUBSTRING)
                 || region.ends_with(ALT_BIOT_SUBSTRING)
             {
-                // TODO(#8012)
+                // TODO(#8012): Handle this with datagen alt flags.
             } else {
                 log::warn!("Unknown alt variant for region: {}", region);
             }

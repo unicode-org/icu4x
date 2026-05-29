@@ -69,9 +69,9 @@ impl TryFrom<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames
             } else if entry.0.ends_with(ALT_VARIANT_SUBSTRING)
                 || entry.0.ends_with(ALT_SECONDARY_SUBSTRING)
             {
-                // TODO(#8012)
+                // TODO(#8012): Handle this with datagen alt flags.
             } else if entry.0.ends_with(ALT_STANDALONE_SUBSTRING) {
-                // TODO(#8011)
+                // TODO(#8011): Support standalone display names.
             } else {
                 log::warn!("Unknown alt variant for script: {}", entry.0);
             }
