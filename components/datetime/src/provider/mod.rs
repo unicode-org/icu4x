@@ -22,6 +22,7 @@ pub mod fields;
 pub mod names;
 pub mod packed_pattern;
 pub mod pattern;
+pub mod range_patterns;
 pub mod semantic_skeletons;
 #[cfg(feature = "datagen")]
 pub mod skeleton;
