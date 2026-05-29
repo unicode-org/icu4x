@@ -20,7 +20,7 @@ use zerovec::ule::NichedOption;
 
 impl SourceDataProvider {
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-    pub(super) fn build_enumerated_prop<T: EnumeratedProperty>(
+    pub(super) fn build_enumerated_prop<T: EnumeratedProperty + Debug>(
         &self,
         short_name_to_t: BTreeMap<&'static str, T>,
     ) -> Result<CodePointTrie<'static, T>, DataError> {
@@ -30,12 +30,6 @@ impl SourceDataProvider {
         self.validate_property_name(name, short_name)?;
 
         let names_to_short_names = self.enumerated_prop_names(short_name)?;
-
-        let mut builder = icu_codepointtrie_builder::CodePointTrieBuilder::new(
-            T::default(),
-            T::default(),
-            self.trie_type().into(),
-        );
 
         let file = match name {
             "Indic_Conjunct_Break" => "ucd/DerivedCoreProperties.txt".into(),
@@ -63,7 +57,45 @@ impl SourceDataProvider {
             ),
         };
 
-        for line in self.unicode()?.read_to_string(&file)?.lines() {
+        let read_to_string = self.unicode()?.read_to_string(&file)?;
+
+        let ucd_default = read_to_string
+            .lines()
+            .find_map(|l| {
+                let mut fields = l.strip_prefix("# @missing: 0000..10FFFF; ")?.split(';').map(str::trim);
+                if &file == "ucd/DerivedCoreProperties.txt" {
+                    // This is a file containing multiple properties, so we need to check
+                    // the second column for the property name
+                    if fields.next().unwrap() != short_name {
+                        return None;
+                    }
+                }
+                let value = fields.next().unwrap();
+                let value = names_to_short_names
+                    .get(value)
+                    .expect("file should only use names from PropertyValueAliases.txt")
+                    .0;
+                Some(*short_name_to_t.get(value).expect(value))
+            })
+            .unwrap_or_else(|| {
+                if short_name == "gc" {
+                    // General_Category is complete, so we don't need a default
+                    T::try_from_u32(0).ok().unwrap()
+                } else {
+                    panic!("No default value found for property: {}", short_name);
+                }
+            });
+
+
+        assert_eq!(ucd_default, T::default());
+
+        let mut builder = icu_codepointtrie_builder::CodePointTrieBuilder::new(
+            T::default(),
+            T::default(),
+            self.trie_type().into(),
+        );
+
+        for line in read_to_string.lines() {
             let line = line.strip_prefix("# @missing: ").unwrap_or(line);
             let line = line.split('#').next().unwrap().trim();
             if line.is_empty() {
