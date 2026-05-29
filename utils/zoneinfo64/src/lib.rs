@@ -58,6 +58,7 @@ use alloc::vec::Vec;
 use calendrical_calculations::rata_die::RataDie;
 use core::fmt::Debug;
 use potential_utf::PotentialUtf16;
+use resb::binary::helpers::I32Pair;
 use resb::binary::BinaryDeserializerError;
 
 use icu_locale_core::subtags::Region;
@@ -115,18 +116,18 @@ enum TzZone<'a> {
 #[derive(Clone)]
 struct TzZoneData<'a> {
     /// Transitions before the epoch of `i32::MIN`
-    trans_pre32: &'a [(i32, i32)],
+    trans_pre32: &'a [I32Pair],
     /// Transitions with epoch values that can fit in an i32
     trans: &'a [i32],
     /// Transitions after the epoch of `i32::MAX`
-    trans_post32: &'a [(i32, i32)],
+    trans_post32: &'a [I32Pair],
     /// Map to offset from transitions. Treat [`trans_pre32`, trans, `trans_post32`]
     /// as a single array and use its corresponding index into this to get the index
     /// in `type_offsets`. The index in `type_offsets` is the *new* offset after the
     /// matching transition
     type_map: &'a [u8],
     /// Offsets. First entry is standard time, second entry is offset from standard time (if any)
-    type_offsets: &'a [(i32, i32)],
+    type_offsets: &'a [I32Pair],
     /// An index into the Rules table,
     /// its `standard_offset_seconds`, and its starting year.
     final_rule_offset_year: Option<(u32, i32, i32)>,
@@ -148,24 +149,24 @@ impl Debug for TzZoneData<'_> {
         }
 
         write!(f, "transitions/offsets: [")?;
-        let (std, rule) = self.type_offsets[0];
+        let I32Pair(std, rule) = self.type_offsets[0];
         write!(f, "{:?}, ", (std as f64 / 3600.0, rule as f64 / 3600.0))?;
         let mut i = 0;
-        for &(hi, lo) in self.trans_pre32 {
+        for &I32Pair(hi, lo) in self.trans_pre32 {
             dbg_timestamp(f, ((hi as u32 as u64) << 32 | (lo as u32 as u64)) as i64)?;
-            let (std, rule) = self.type_offsets[self.type_map[i] as usize];
+            let I32Pair(std, rule) = self.type_offsets[self.type_map[i] as usize];
             write!(f, "{:?}, ", (std as f64 / 3600.0, rule as f64 / 3600.0))?;
             i += 1;
         }
         for &t in self.trans {
             dbg_timestamp(f, t as i64)?;
-            let (std, rule) = self.type_offsets[self.type_map[i] as usize];
+            let I32Pair(std, rule) = self.type_offsets[self.type_map[i] as usize];
             write!(f, "{:?}, ", (std as f64 / 3600.0, rule as f64 / 3600.0))?;
             i += 1;
         }
-        for &(hi, lo) in self.trans_post32 {
+        for &I32Pair(hi, lo) in self.trans_post32 {
             dbg_timestamp(f, ((hi as u32 as u64) << 32 | (lo as u32 as u64)) as i64)?;
-            let (std, rule) = self.type_offsets[self.type_map[i] as usize];
+            let I32Pair(std, rule) = self.type_offsets[self.type_map[i] as usize];
             write!(f, "{:?}, ", (std as f64 / 3600.0, rule as f64 / 3600.0))?;
             i += 1;
         }
@@ -350,7 +351,7 @@ impl<'a> TzZoneData<'a> {
     fn prev_transition_offset_idx(&self, seconds_since_epoch: i64) -> isize {
         if seconds_since_epoch < i32::MIN as i64 {
             self.trans_pre32
-                .binary_search(&(
+                .binary_search(&I32Pair(
                     (seconds_since_epoch >> 32) as i32,
                     (seconds_since_epoch & 0xFFFFFFFF) as i32,
                 ))
@@ -370,7 +371,7 @@ impl<'a> TzZoneData<'a> {
                 + self.trans.len() as isize
                 + self
                     .trans_post32
-                    .binary_search(&(
+                    .binary_search(&I32Pair(
                         (seconds_since_epoch >> 32) as i32,
                         (seconds_since_epoch & 0xFFFFFFFF) as i32,
                     ))
@@ -394,7 +395,7 @@ impl<'a> TzZoneData<'a> {
         // before first transition don't use `type_map`, just the first entry in `type_offsets`
         if idx < 0 || self.type_map.is_empty() {
             #[expect(clippy::unwrap_used)] // type_offsets non-empty by invariant
-            let &(standard, rule_additional) = self.type_offsets.first().unwrap();
+            let &I32Pair(standard, rule_additional) = self.type_offsets.first().unwrap();
             return Transition {
                 since: i64::MIN,
                 offset: UtcOffset(standard + rule_additional),
@@ -410,16 +411,17 @@ impl<'a> TzZoneData<'a> {
 
         #[expect(clippy::indexing_slicing)]
         // type_map has length sum(trans*), and type_map values are validated to be valid indices in type_offsets
-        let (standard, rule_additional) = self.type_offsets[self.type_map[idx] as usize];
+        let I32Pair(standard, rule_additional) = self.type_offsets[self.type_map[idx] as usize];
 
         #[expect(clippy::indexing_slicing)] // by guards or invariant
         let since = if idx < self.trans_pre32.len() {
-            let (hi, lo) = self.trans_pre32[idx];
+            let I32Pair(hi, lo) = self.trans_pre32[idx];
             ((hi as u32 as u64) << 32 | (lo as u32 as u64)) as i64
         } else if idx - self.trans_pre32.len() < self.trans.len() {
             self.trans[idx - self.trans_pre32.len()] as i64
         } else {
-            let (hi, lo) = self.trans_post32[idx - self.trans_pre32.len() - self.trans.len()];
+            let I32Pair(hi, lo) =
+                self.trans_post32[idx - self.trans_pre32.len() - self.trans.len()];
             ((hi as u32 as u64) << 32 | (lo as u32 as u64)) as i64
         };
 

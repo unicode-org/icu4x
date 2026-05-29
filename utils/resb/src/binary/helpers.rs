@@ -74,12 +74,15 @@ pub fn option_u32<'de, D: Deserializer<'de>>(
     unsafe { cast_bytes_to_slice(bytes) }.map(Some)
 }
 
+/// A layout-guaranteed pair of 32-bit signed integers.
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct I32Pair(pub i32, pub i32);
+
 /// TODO
-pub fn i32_tuple<'de, D: Deserializer<'de>>(
-    deserializer: D,
-) -> Result<&'de [(i32, i32)], D::Error> {
+pub fn i32_tuple<'de, D: Deserializer<'de>>(deserializer: D) -> Result<&'de [I32Pair], D::Error> {
     let bytes = <&[u8]>::deserialize(deserializer)?;
-    // Safety: all byte representations are valid (i32, i32)
+    // Safety: all byte representations are valid I32Pair
     unsafe { cast_bytes_to_slice(bytes) }
 }
 
@@ -87,11 +90,11 @@ pub fn i32_tuple<'de, D: Deserializer<'de>>(
 #[expect(clippy::type_complexity)] // serde...
 pub fn option_i32_tuple<'de, D: Deserializer<'de>>(
     deserializer: D,
-) -> Result<Option<&'de [(i32, i32)]>, D::Error> {
+) -> Result<Option<&'de [I32Pair]>, D::Error> {
     let Some(bytes) = <Option<&[u8]>>::deserialize(deserializer)? else {
         return Ok(None);
     };
-    // Safety: all byte representations are valid (i32, i32)
+    // Safety: all byte representations are valid I32Pair
     unsafe { cast_bytes_to_slice(bytes) }.map(Some)
 }
 

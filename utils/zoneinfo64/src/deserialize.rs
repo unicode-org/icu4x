@@ -6,6 +6,7 @@ use crate::*;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::marker::PhantomData;
+use resb::binary::helpers::I32Pair;
 use resb::binary::BinaryDeserializerError;
 use serde::de::*;
 use serde::Deserialize;
@@ -180,7 +181,7 @@ impl<'de: 'a, 'a> Deserialize<'de> for TzZoneRaw<'a> {
 #[serde(rename_all = "camelCase")]
 pub struct TzZoneDataRaw<'a> {
     #[serde(borrow, deserialize_with = "resb::binary::helpers::i32_tuple")]
-    type_offsets: &'a [(i32, i32)],
+    type_offsets: &'a [I32Pair],
     #[serde(
         borrow,
         default,
@@ -192,13 +193,13 @@ pub struct TzZoneDataRaw<'a> {
         default,
         deserialize_with = "resb::binary::helpers::option_i32_tuple"
     )]
-    trans_pre32: Option<&'a [(i32, i32)]>,
+    trans_pre32: Option<&'a [I32Pair]>,
     #[serde(
         borrow,
         default,
         deserialize_with = "resb::binary::helpers::option_i32_tuple"
     )]
-    trans_post32: Option<&'a [(i32, i32)]>,
+    trans_post32: Option<&'a [I32Pair]>,
     type_map: Option<&'a [u8]>,
     #[serde(
         borrow,
