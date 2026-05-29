@@ -3831,6 +3831,7 @@ make_emoji_set! {
 }
 
 #[test]
+#[allow(deprecated)]
 fn test_to_icu4c_value() {
     // Validate discriminants against PropertyDiscriminants.txt, which is shared with ICU4C.
     for line in include_str!("../tests/data/PropertyDiscriminants.txt").lines() {
@@ -3924,7 +3925,7 @@ fn test_numeric_value() {
     for &value in CanonicalCombiningClass::ALL_VALUES {
         assert_eq!(
             crate::names::PropertyParser::<CanonicalCombiningClass>::new()
-                .get_strict(&value.to_icu4c_value().to_string()),
+                .get_strict(&value.0.to_string()),
             Some(value),
             "{value:?}"
         );
