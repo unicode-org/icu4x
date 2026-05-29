@@ -335,7 +335,7 @@ pub struct GenericPackedPatternsBuilder<T> {
     pub variant1: Option<GenericLengthElements<T>>,
 }
 
-impl<T: PartialEq + Clone> GenericPackedPatternsBuilder<T> {
+impl<T: PartialEq> GenericPackedPatternsBuilder<T> {
     fn simplify(&mut self) {
         if self.variant0.as_ref() == Some(&self.standard) {
             self.variant0 = None;
@@ -345,24 +345,25 @@ impl<T: PartialEq + Clone> GenericPackedPatternsBuilder<T> {
         }
     }
 
-    /// Runs the table deduplication and packing algorithm,
-    /// returning a `GenericUnpackedPatterns<T>`.
-    pub(crate) fn build_unpacked(mut self) -> GenericUnpackedPatterns<T> {
+    pub(crate) fn build_unpacked<'b, U>(&'b mut self) -> GenericUnpackedPatterns<U>
+    where
+        U: zerofrom::ZeroFrom<'b, T> + PartialEq<T>,
+    {
         self.simplify();
 
         // Initialize the elements vector with the standard patterns.
         let mut elements = Vec::new();
         let mut has_explicit_medium = false;
         let mut has_explicit_short = false;
-        elements.push(self.standard.long.clone());
+        elements.push(zerofrom::ZeroFrom::zero_from(&self.standard.long));
         let mut s_offset = 0;
         if self.standard.medium != self.standard.long {
-            elements.push(self.standard.medium.clone());
+            elements.push(zerofrom::ZeroFrom::zero_from(&self.standard.medium));
             has_explicit_medium = true;
             s_offset += 1;
         }
         if self.standard.short != self.standard.medium {
-            elements.push(self.standard.short.clone());
+            elements.push(zerofrom::ZeroFrom::zero_from(&self.standard.short));
             has_explicit_short = true;
             s_offset += 1;
         }
@@ -395,7 +396,7 @@ impl<T: PartialEq + Clone> GenericPackedPatternsBuilder<T> {
                     *chunk = match elements.iter().position(|p| p == *pattern) {
                         Some(i) => i as u32 + 1,
                         None => {
-                            elements.push((*pattern).clone());
+                            elements.push(zerofrom::ZeroFrom::zero_from(*pattern));
                             elements.len() as u32
                         }
                     }
@@ -412,12 +413,9 @@ impl<T: PartialEq + Clone> GenericPackedPatternsBuilder<T> {
         } else {
             // one pattern per table cell
             elements.truncate(s_offset + 1);
-            elements.extend(
-                variant_patterns
-                    .into_iter()
-                    .zip(fallbacks.iter())
-                    .map(|(pattern, fallback)| pattern.unwrap_or(fallback).clone()),
-            );
+            elements.extend(variant_patterns.into_iter().zip(fallbacks.iter()).map(
+                |(pattern, fallback)| zerofrom::ZeroFrom::zero_from(pattern.unwrap_or(fallback)),
+            ));
             VariantIndices::OnePatternPerVariant
         };
 
@@ -433,7 +431,9 @@ impl<T: PartialEq + Clone> GenericPackedPatternsBuilder<T> {
 impl<'a> GenericPackedPatternsBuilder<PluralElements<Pattern<'a>>> {
     /// Builds a packed pattern representation from the builder.
     pub fn build(self) -> PackedPatterns<'static> {
-        let unpacked = self.build_unpacked();
+        let mut builder = self;
+        let unpacked: GenericUnpackedPatterns<PluralElements<Pattern<'_>>> =
+            builder.build_unpacked();
         unpacked.build()
     }
 }
