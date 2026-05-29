@@ -849,6 +849,45 @@ pub(crate) struct PluralElementsInner<T> {
     explicit_one: Option<T>,
 }
 
+impl<'a, T, C> zerofrom::ZeroFrom<'a, PluralElementsInner<C>> for PluralElementsInner<T>
+where
+    T: zerofrom::ZeroFrom<'a, C>,
+{
+    fn zero_from(other: &'a PluralElementsInner<C>) -> Self {
+        PluralElementsInner {
+            zero: other
+                .zero
+                .as_ref()
+                .map(|x| zerofrom::ZeroFrom::zero_from(x)),
+            one: other.one.as_ref().map(|x| zerofrom::ZeroFrom::zero_from(x)),
+            two: other.two.as_ref().map(|x| zerofrom::ZeroFrom::zero_from(x)),
+            few: other.few.as_ref().map(|x| zerofrom::ZeroFrom::zero_from(x)),
+            many: other
+                .many
+                .as_ref()
+                .map(|x| zerofrom::ZeroFrom::zero_from(x)),
+            other: zerofrom::ZeroFrom::zero_from(&other.other),
+            explicit_zero: other
+                .explicit_zero
+                .as_ref()
+                .map(|x| zerofrom::ZeroFrom::zero_from(x)),
+            explicit_one: other
+                .explicit_one
+                .as_ref()
+                .map(|x| zerofrom::ZeroFrom::zero_from(x)),
+        }
+    }
+}
+
+impl<'a, T, C> zerofrom::ZeroFrom<'a, PluralElements<C>> for PluralElements<T>
+where
+    T: zerofrom::ZeroFrom<'a, C>,
+{
+    fn zero_from(other: &'a PluralElements<C>) -> Self {
+        PluralElements(zerofrom::ZeroFrom::zero_from(&other.0))
+    }
+}
+
 impl<T> PluralElements<T> {
     /// Creates a new [`PluralElements`] with the given default value.
     pub fn new(other: T) -> Self {
