@@ -10,6 +10,8 @@ pub(crate) mod variant;
 pub(crate) const ALT_SUBSTRING: &str = "-alt-";
 pub(crate) const ALT_SHORT_SUBSTRING: &str = "-alt-short";
 pub(crate) const ALT_LONG_SUBSTRING: &str = "-alt-long";
+/// Alternate name for territory code `IO` (British Indian Ocean Territory) mapping to "Chagos Archipelago".
+pub(crate) const ALT_CHAGOS_SUBSTRING: &str = "-alt-chagos";
 pub(crate) const MENU_SUBSTRING: &str = "-menu-";
 pub(crate) const MENU_CORE_SUBSTRING: &str = "-menu-core";
 pub(crate) const MENU_EXTENSION_SUBSTRING: &str = "-menu-extension";

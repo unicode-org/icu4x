@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
-use crate::displaynames::{ALT_SHORT_SUBSTRING, ALT_SUBSTRING};
+use crate::displaynames::{ALT_CHAGOS_SUBSTRING, ALT_SHORT_SUBSTRING, ALT_SUBSTRING};
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use core::convert::TryFrom;
@@ -59,6 +59,12 @@ impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames
                 short_names.insert(Region::try_from_str(region)?.to_tinystr(), value.as_str());
             } else if !region.contains(ALT_SUBSTRING) {
                 names.insert(Region::try_from_str(region)?.to_tinystr(), value.as_str());
+            } else if region.ends_with("-alt-variant") {
+                // TODO: Handle this with datagen alt flags. See issue #1225. I think sffc started implementing it for alt ascii in PR #7902
+            } else if region.ends_with(ALT_CHAGOS_SUBSTRING) {
+                // Ignore alt-chagos as requested
+            } else {
+                log::warn!("Unknown alt variant for region: {}", region);
             }
         }
         Ok(Self {
