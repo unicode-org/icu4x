@@ -63,26 +63,26 @@ where
     }
 }
 
-/// A localized display name for a single script.
+/// A localized display name for a single script, owned version.
 ///
 /// # Example
 ///
 /// ```
-/// use icu::experimental::displaynames::single::ScriptDisplayName;
+/// use icu::experimental::displaynames::single::ScriptDisplayNameOwned;
 /// use icu::locale::{locale, subtags::script};
 /// use writeable::assert_writeable_eq;
 ///
-/// let display_name = ScriptDisplayName::try_new(locale!("en").into(), script!("Xsux"))
+/// let display_name = ScriptDisplayNameOwned::try_new(locale!("en").into(), script!("Xsux"))
 ///     .expect("Data should load successfully");
 ///
 /// assert_writeable_eq!(display_name, "Sumero-Akkadian Cuneiform");
 /// ```
 #[derive(Debug)]
-pub struct ScriptDisplayName {
+pub struct ScriptDisplayNameOwned {
     payload: DataPayload<LocaleNamesScriptLongV1>,
 }
 
-impl ScriptDisplayName {
+impl ScriptDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
         /// Loads the long script display name for a given script and locale using compiled data.
@@ -114,7 +114,7 @@ impl ScriptDisplayName {
         ///
         /// ```
         /// use icu::experimental::displaynames::{
-        ///     DisplayNamesPreferences, single::ScriptDisplayName,
+        ///     DisplayNamesPreferences, single::ScriptDisplayNameOwned,
         /// };
         /// use icu::locale::{locale, subtags::script};
         /// use writeable::assert_writeable_eq;
@@ -122,12 +122,12 @@ impl ScriptDisplayName {
         /// let prefs: DisplayNamesPreferences = locale!("en-US").into();
         ///
         /// // "Xsux" has a short display name in en-US
-        /// let display_name_short = ScriptDisplayName::try_new_short(prefs, script!("Xsux"))
+        /// let display_name_short = ScriptDisplayNameOwned::try_new_short(prefs, script!("Xsux"))
         ///     .expect("Data should load successfully");
         /// assert_writeable_eq!(display_name_short, "S-A Cuneiform");
         ///
         /// // "Deva" does not have a short display name, so it falls back to the long display name
-        /// let display_name_long = ScriptDisplayName::try_new_short(prefs, script!("Deva"))
+        /// let display_name_long = ScriptDisplayNameOwned::try_new_short(prefs, script!("Deva"))
         ///     .expect("Data should load successfully");
         /// assert_writeable_eq!(display_name_long, "Devanagari");
         /// ```
@@ -155,17 +155,24 @@ impl ScriptDisplayName {
         )
         .map(|payload| Self { payload })
     }
+
+    /// Returns a borrowed version of this display name.
+    pub fn as_borrowed(&self) -> ScriptDisplayName<'_> {
+        ScriptDisplayName {
+            value: self.payload.get(),
+        }
+    }
 }
 
-impl writeable::Writeable for ScriptDisplayName {
+impl writeable::Writeable for ScriptDisplayNameOwned {
     #[inline]
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        sink.write_str(self.payload.get())
+        self.as_borrowed().write_to(sink)
     }
 
     #[inline]
     fn writeable_length_hint(&self) -> writeable::LengthHint {
-        writeable::LengthHint::exact(self.payload.get().len())
+        self.as_borrowed().writeable_length_hint()
     }
 
     #[inline]
@@ -174,28 +181,53 @@ impl writeable::Writeable for ScriptDisplayName {
     }
 }
 
-writeable::impl_display_with_writeable!(ScriptDisplayName);
+writeable::impl_display_with_writeable!(ScriptDisplayNameOwned);
 
-/// A localized display name for a single region.
+/// A localized display name for a single script.
+#[derive(Debug, Clone, Copy)]
+pub struct ScriptDisplayName<'a> {
+    value: &'a str,
+}
+
+impl<'a> writeable::Writeable for ScriptDisplayName<'a> {
+    #[inline]
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+        sink.write_str(self.value)
+    }
+
+    #[inline]
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
+        writeable::LengthHint::exact(self.value.len())
+    }
+
+    #[inline]
+    fn writeable_borrow(&self) -> Option<&str> {
+        Some(self.value)
+    }
+}
+
+writeable::impl_display_with_writeable!(ScriptDisplayName<'_>);
+
+/// A localized display name for a single region, owned version.
 ///
 /// # Example
 ///
 /// ```
-/// use icu::experimental::displaynames::single::RegionDisplayName;
+/// use icu::experimental::displaynames::single::RegionDisplayNameOwned;
 /// use icu::locale::{locale, subtags::region};
 /// use writeable::assert_writeable_eq;
 ///
-/// let display_name = RegionDisplayName::try_new(locale!("en").into(), region!("US"))
+/// let display_name = RegionDisplayNameOwned::try_new(locale!("en").into(), region!("US"))
 ///     .expect("Data should load successfully");
 ///
 /// assert_writeable_eq!(display_name, "United States");
 /// ```
 #[derive(Debug)]
-pub struct RegionDisplayName {
+pub struct RegionDisplayNameOwned {
     payload: DataPayload<LocaleNamesRegionLongV1>,
 }
 
-impl RegionDisplayName {
+impl RegionDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
         /// Loads the long region display name for a given region and locale using compiled data.
@@ -227,7 +259,7 @@ impl RegionDisplayName {
         ///
         /// ```
         /// use icu::experimental::displaynames::{
-        ///     DisplayNamesPreferences, single::RegionDisplayName,
+        ///     DisplayNamesPreferences, single::RegionDisplayNameOwned,
         /// };
         /// use icu::locale::{locale, subtags::region};
         /// use writeable::assert_writeable_eq;
@@ -235,12 +267,12 @@ impl RegionDisplayName {
         /// let prefs: DisplayNamesPreferences = locale!("en-US").into();
         ///
         /// // "US" has a short display name in en-US
-        /// let display_name_short = RegionDisplayName::try_new_short(prefs, region!("US"))
+        /// let display_name_short = RegionDisplayNameOwned::try_new_short(prefs, region!("US"))
         ///     .expect("Data should load successfully");
         /// assert_writeable_eq!(display_name_short, "US");
         ///
         /// // "FR" does not have a short display name, so it falls back to the long display name
-        /// let display_name_long = RegionDisplayName::try_new_short(prefs, region!("FR"))
+        /// let display_name_long = RegionDisplayNameOwned::try_new_short(prefs, region!("FR"))
         ///     .expect("Data should load successfully");
         /// assert_writeable_eq!(display_name_long, "France");
         /// ```
@@ -268,17 +300,24 @@ impl RegionDisplayName {
         )
         .map(|payload| Self { payload })
     }
+
+    /// Returns a borrowed version of this display name.
+    pub fn as_borrowed(&self) -> RegionDisplayName<'_> {
+        RegionDisplayName {
+            value: self.payload.get(),
+        }
+    }
 }
 
-impl writeable::Writeable for RegionDisplayName {
+impl writeable::Writeable for RegionDisplayNameOwned {
     #[inline]
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        sink.write_str(self.payload.get())
+        self.as_borrowed().write_to(sink)
     }
 
     #[inline]
     fn writeable_length_hint(&self) -> writeable::LengthHint {
-        writeable::LengthHint::exact(self.payload.get().len())
+        self.as_borrowed().writeable_length_hint()
     }
 
     #[inline]
@@ -287,4 +326,29 @@ impl writeable::Writeable for RegionDisplayName {
     }
 }
 
-writeable::impl_display_with_writeable!(RegionDisplayName);
+writeable::impl_display_with_writeable!(RegionDisplayNameOwned);
+
+/// A localized display name for a single region.
+#[derive(Debug, Clone, Copy)]
+pub struct RegionDisplayName<'a> {
+    value: &'a str,
+}
+
+impl<'a> writeable::Writeable for RegionDisplayName<'a> {
+    #[inline]
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+        sink.write_str(self.value)
+    }
+
+    #[inline]
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
+        writeable::LengthHint::exact(self.value.len())
+    }
+
+    #[inline]
+    fn writeable_borrow(&self) -> Option<&str> {
+        Some(self.value)
+    }
+}
+
+writeable::impl_display_with_writeable!(RegionDisplayName<'_>);

@@ -22,7 +22,7 @@
 //!
 //! ```
 //! use icu::experimental::displaynames::multi::RegionDisplayNames;
-//! use icu::experimental::displaynames::single::RegionDisplayName;
+//! use icu::experimental::displaynames::single::RegionDisplayNameOwned;
 //! use icu::experimental::displaynames::DisplayNamesOptions;
 //! use icu::locale::{locale, subtags::region};
 //! use writeable::assert_writeable_eq;
@@ -35,8 +35,8 @@
 //! assert_writeable_eq!(multi.of(region!("GB")).unwrap(), "United Kingdom");
 //!
 //! // Single: Load only the region(s) we need.
-//! let us = RegionDisplayName::try_new(locale, region!("US")).unwrap();
-//! let gb = RegionDisplayName::try_new(locale, region!("GB")).unwrap();
+//! let us = RegionDisplayNameOwned::try_new(locale, region!("US")).unwrap();
+//! let gb = RegionDisplayNameOwned::try_new(locale, region!("GB")).unwrap();
 //! assert_writeable_eq!(us, "United States");
 //! assert_writeable_eq!(gb, "United Kingdom");
 //! ```
@@ -79,7 +79,9 @@ pub mod single {
     //! See [the parent module](mod@super) for a comparison of single and multi.
     use super::singular;
     pub use singular::RegionDisplayName;
+    pub use singular::RegionDisplayNameOwned;
     pub use singular::ScriptDisplayName;
+    pub use singular::ScriptDisplayNameOwned;
 }
 
 pub use displaynames::DisplayNamesPreferences;
