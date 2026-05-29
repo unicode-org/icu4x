@@ -119,6 +119,7 @@ pub struct UnsignedDecimal {
 impl UnsignedDecimal {
     /// The number 1.
     pub const ONE: Self = Self {
+        // SAFETY: The requested length (1) is less than or equal to the array capacity (8).
         digits: unsafe { SmallVec::from_const_with_len_unchecked([1; 8], 1) },
         magnitude: 0,
         upper_magnitude: 0,
