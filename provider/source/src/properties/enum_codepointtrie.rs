@@ -62,7 +62,10 @@ impl SourceDataProvider {
         let ucd_default = read_to_string
             .lines()
             .find_map(|l| {
-                let mut fields = l.strip_prefix("# @missing: 0000..10FFFF; ")?.split(';').map(str::trim);
+                let mut fields = l
+                    .strip_prefix("# @missing: 0000..10FFFF; ")?
+                    .split(';')
+                    .map(str::trim);
                 if &file == "ucd/DerivedCoreProperties.txt" {
                     // This is a file containing multiple properties, so we need to check
                     // the second column for the property name
@@ -85,7 +88,6 @@ impl SourceDataProvider {
                     panic!("No default value found for property: {}", short_name);
                 }
             });
-
 
         assert_eq!(ucd_default, T::default());
 
