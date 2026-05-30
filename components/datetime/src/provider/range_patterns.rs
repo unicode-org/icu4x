@@ -160,6 +160,62 @@ impl<'data> PatternsByGreatestDifference<'data> {
             .get(pattern_index)
             .map(<Pattern as zerofrom::ZeroFrom<PatternULE>>::zero_from)
     }
+
+    /// Construct from an iterator of (`bit_index`, pattern).
+    /// The `bit_index` must be <= 3.
+    /// The iterator will be sorted by `bit_index`.
+    #[cfg(feature = "datagen")]
+    fn try_from_unsorted_iter<I>(iter: I) -> Result<Self, &'static str>
+    where
+        I: IntoIterator<Item = (u8, Pattern<'data>)>,
+    {
+        use alloc::vec::Vec;
+        let mut parsed: Vec<(u8, Pattern<'data>)> = iter.into_iter().collect();
+        if parsed.is_empty() {
+            return Err("PatternsByGreatestDifference cannot be empty");
+        }
+        for (bit, _) in parsed.iter() {
+            if *bit > 3 {
+                return Err("GreatestDifference bit index must be 0, 1, 2, or 3");
+            }
+        }
+        parsed.sort_by_key(|(bit, _)| *bit);
+
+        let mut header_val = 0u8;
+        let mut patterns = Vec::new();
+        for (bit, pattern) in parsed {
+            if (header_val & (1 << bit)) != 0 {
+                return Err("Duplicate greatest difference field");
+            }
+            header_val |= 1 << bit;
+            patterns.push(pattern);
+        }
+
+        let varzerovec = VarZeroVec::from(patterns.as_slice());
+
+        Ok(Self {
+            header: GreatestDifferenceHeader::new(header_val),
+            patterns: varzerovec,
+        })
+    }
+
+    /// Construct from an iterator of (`DateGreatestDifferenceField`, pattern).
+    #[cfg(feature = "datagen")]
+    pub fn try_from_date_patterns<I>(iter: I) -> Result<Self, &'static str>
+    where
+        I: IntoIterator<Item = (DateGreatestDifferenceField, Pattern<'data>)>,
+    {
+        Self::try_from_unsorted_iter(iter.into_iter().map(|(f, p)| (f as u8, p)))
+    }
+
+    /// Construct from an iterator of (`TimeGreatestDifferenceField`, pattern).
+    #[cfg(feature = "datagen")]
+    pub fn try_from_time_patterns<I>(iter: I) -> Result<Self, &'static str>
+    where
+        I: IntoIterator<Item = (TimeGreatestDifferenceField, Pattern<'data>)>,
+    {
+        Self::try_from_unsorted_iter(iter.into_iter().map(|(f, p)| (f as u8, p)))
+    }
 }
 
 /// The main data structure for packed range/interval patterns.
@@ -224,5 +280,54 @@ mod tests {
         );
         // Era difference should return None (since Era is absent and no larger field is present).
         assert_eq!(pgd.get_date_pattern(DateGreatestDifferenceField::Era), None);
+    }
+
+    #[test]
+    #[cfg(feature = "datagen")]
+    fn test_try_from_patterns() {
+        let pattern_d = "d"
+            .parse::<reference::Pattern>()
+            .unwrap()
+            .to_runtime_pattern();
+        let pattern_y = "y"
+            .parse::<reference::Pattern>()
+            .unwrap()
+            .to_runtime_pattern();
+
+        // Valid date patterns (unsorted input)
+        let pgd = PatternsByGreatestDifference::try_from_date_patterns(vec![
+            (DateGreatestDifferenceField::Year, pattern_y.clone()),
+            (DateGreatestDifferenceField::Day, pattern_d.clone()),
+        ])
+        .unwrap();
+
+        assert_eq!(pgd.header.0, 1 | 4);
+        assert_eq!(pgd.patterns.len(), 2);
+        assert_eq!(
+            pgd.patterns
+                .get(0)
+                .map(<Pattern as zerofrom::ZeroFrom<PatternULE>>::zero_from),
+            Some(pattern_d.clone())
+        );
+        assert_eq!(
+            pgd.patterns
+                .get(1)
+                .map(<Pattern as zerofrom::ZeroFrom<PatternULE>>::zero_from),
+            Some(pattern_y.clone())
+        );
+
+        // Duplicate
+        let err = PatternsByGreatestDifference::try_from_date_patterns(vec![
+            (DateGreatestDifferenceField::Day, pattern_d.clone()),
+            (DateGreatestDifferenceField::Day, pattern_d.clone()),
+        ]);
+        assert!(err.is_err());
+
+        // Empty
+        let err = PatternsByGreatestDifference::try_from_date_patterns(Vec::<(
+            DateGreatestDifferenceField,
+            Pattern,
+        )>::new());
+        assert!(err.is_err());
     }
 }
