@@ -44,5 +44,14 @@ transparent!(
     }
 );
 
+// TODO: This should compile but it doesn't
+// transparent!(
+//     #[repr(transparent)]
+//     pub(crate) struct Box(str);
+//     impl Box {
+//         fn zero_from_transparent_box(Box<str>) -> Box<Self>;
+//     }
+// );
+
 #[test]
 fn test() {}
