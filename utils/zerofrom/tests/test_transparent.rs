@@ -9,19 +9,38 @@ transparent!(
     /// hello world
     #[derive(Debug)]
     pub(crate) struct Foo([u8; 3]);
-    impl ZeroFrom<&[u8; 3]> for &Foo;
-    impl {
-        @ref
-        /// Cast a transparent ref!
-        #[inline]
-        fn from_transparent_ref(&[u8; 3]) -> &Self;
-        @slice
-        /// Cast a transparent slice!
-        pub fn from_transparent_slice(&[[u8; 3]]) -> &[Self];
-        @box
-        /// Cast a transparent box!
-        #[cfg(feature = "alloc")]
-        fn from_transparent_box(Box<[u8; 3]>) -> Box<Self>;
+    impl Foo {
+        fn zero_from_transparent_ref(&[u8; 3]) -> &Self;
+        fn zero_from_transparent_slice(&[[u8; 3]]) -> &[Self];
+    }
+    #[cfg(feature = "alloc")]
+    impl Foo {
+        fn zero_from_transparent_box(Box<[u8; 3]>) -> Box<Self>;
+    }
+);
+
+// Check more permutations:
+
+transparent!(
+    #[repr(transparent)]
+    pub(crate) struct NoFns(str);
+    impl NoFns {
+    }
+);
+
+transparent!(
+    #[repr(transparent)]
+    pub(crate) struct Ref(str);
+    impl Ref {
+        fn zero_from_transparent_ref(&str) -> &Self;
+    }
+);
+
+transparent!(
+    #[repr(transparent)]
+    pub(crate) struct Slice(u32);
+    impl Slice {
+        fn zero_from_transparent_slice(&[u32]) -> &[Self];
     }
 );
 

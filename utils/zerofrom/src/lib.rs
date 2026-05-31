@@ -39,6 +39,7 @@ pub use crate::zero_from::ZeroFrom;
 #[doc(hidden)] // for macros
 pub mod internal {
     pub use crate::zf_transparent::cast_transparent_box;
+    pub use crate::zf_transparent::cast_transparent_rc;
     pub use alloc::boxed::Box;
     pub use alloc::rc::Rc;
 }
