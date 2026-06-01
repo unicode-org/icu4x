@@ -877,9 +877,9 @@ impl HangulSyllableType {
     /// `T`
     pub const TrailingJamo: Self = Self(3);
     /// `LV`
-    pub const LeadingVowelSyllable: Self = Self(4);
+    pub const LVSyllable: Self = Self(4);
     /// `LVT`
-    pub const LeadingVowelTrailingSyllable: Self = Self(5);
+    pub const LVTSyllable: Self = Self(5);
 }
 
 #[cfg(feature = "datagen")]
@@ -891,8 +891,8 @@ impl databake::Bake for HangulSyllableType {
             Self::LeadingJamo => databake::quote!(icu_properties::props::HangulSyllableType::LeadingJamo),
             Self::VowelJamo => databake::quote!(icu_properties::props::HangulSyllableType::VowelJamo),
             Self::TrailingJamo => databake::quote!(icu_properties::props::HangulSyllableType::TrailingJamo),
-            Self::LeadingVowelSyllable => databake::quote!(icu_properties::props::HangulSyllableType::LeadingVowelSyllable),
-            Self::LeadingVowelTrailingSyllable => databake::quote!(icu_properties::props::HangulSyllableType::LeadingVowelTrailingSyllable),
+            Self::LVSyllable => databake::quote!(icu_properties::props::HangulSyllableType::LVSyllable),
+            Self::LVTSyllable => databake::quote!(icu_properties::props::HangulSyllableType::LVTSyllable),
             Self(v) => databake::quote!(icu_properties::props::HangulSyllableType(#v)),
         }
     }
@@ -913,8 +913,8 @@ impl HangulSyllableType {
         Self::LeadingJamo,
         Self::VowelJamo,
         Self::TrailingJamo,
-        Self::LeadingVowelSyllable,
-        Self::LeadingVowelTrailingSyllable,
+        Self::LVSyllable,
+        Self::LVTSyllable,
     ];
 
     #[cfg(feature = "datagen")]
@@ -925,8 +925,8 @@ impl HangulSyllableType {
             ("L", Self::LeadingJamo),
             ("V", Self::VowelJamo),
             ("T", Self::TrailingJamo),
-            ("LV", Self::LeadingVowelSyllable),
-            ("LVT", Self::LeadingVowelTrailingSyllable),
+            ("LV", Self::LVSyllable),
+            ("LVT", Self::LVTSyllable),
         ].into_iter()
     }
 }
@@ -2203,7 +2203,7 @@ impl Script {
     /// `Deva`
     pub const Devanagari: Self = Self(10);
     /// `Ethi`
-    pub const Ethiopian: Self = Self(11);
+    pub const Ethiopic: Self = Self(11);
     /// `Geor`
     pub const Georgian: Self = Self(12);
     /// `Goth`
@@ -2616,7 +2616,7 @@ impl Script {
     /// `Nagm`
     pub const NagMundari: Self = Self(199);
     /// `Aran`
-    pub const Nastaliq: Self = Self(200);
+    pub const ArabicNastaliq: Self = Self(200);
     /// `Gara`
     pub const Garay: Self = Self(201);
     /// `Gukh`
@@ -2660,7 +2660,7 @@ impl databake::Bake for Script {
             Self::Cyrillic => databake::quote!(icu_properties::props::Script::Cyrillic),
             Self::Deseret => databake::quote!(icu_properties::props::Script::Deseret),
             Self::Devanagari => databake::quote!(icu_properties::props::Script::Devanagari),
-            Self::Ethiopian => databake::quote!(icu_properties::props::Script::Ethiopian),
+            Self::Ethiopic => databake::quote!(icu_properties::props::Script::Ethiopic),
             Self::Georgian => databake::quote!(icu_properties::props::Script::Georgian),
             Self::Gothic => databake::quote!(icu_properties::props::Script::Gothic),
             Self::Greek => databake::quote!(icu_properties::props::Script::Greek),
@@ -2849,7 +2849,7 @@ impl databake::Bake for Script {
             Self::Vithkuqi => databake::quote!(icu_properties::props::Script::Vithkuqi),
             Self::Kawi => databake::quote!(icu_properties::props::Script::Kawi),
             Self::NagMundari => databake::quote!(icu_properties::props::Script::NagMundari),
-            Self::Nastaliq => databake::quote!(icu_properties::props::Script::Nastaliq),
+            Self::ArabicNastaliq => databake::quote!(icu_properties::props::Script::ArabicNastaliq),
             Self::Garay => databake::quote!(icu_properties::props::Script::Garay),
             Self::GurungKhema => databake::quote!(icu_properties::props::Script::GurungKhema),
             Self::KiratRai => databake::quote!(icu_properties::props::Script::KiratRai),
@@ -2889,7 +2889,7 @@ impl Script {
         Self::Cyrillic,
         Self::Deseret,
         Self::Devanagari,
-        Self::Ethiopian,
+        Self::Ethiopic,
         Self::Georgian,
         Self::Gothic,
         Self::Greek,
@@ -3043,7 +3043,7 @@ impl Script {
         Self::Vithkuqi,
         Self::Kawi,
         Self::NagMundari,
-        Self::Nastaliq,
+        Self::ArabicNastaliq,
         Self::Garay,
         Self::GurungKhema,
         Self::KiratRai,
@@ -3072,7 +3072,7 @@ impl Script {
             ("Cyrl", Self::Cyrillic),
             ("Dsrt", Self::Deseret),
             ("Deva", Self::Devanagari),
-            ("Ethi", Self::Ethiopian),
+            ("Ethi", Self::Ethiopic),
             ("Geor", Self::Georgian),
             ("Goth", Self::Gothic),
             ("Grek", Self::Greek),
@@ -3261,7 +3261,7 @@ impl Script {
             ("Vith", Self::Vithkuqi),
             ("Kawi", Self::Kawi),
             ("Nagm", Self::NagMundari),
-            ("Aran", Self::Nastaliq),
+            ("Aran", Self::ArabicNastaliq),
             ("Gara", Self::Garay),
             ("Gukh", Self::GurungKhema),
             ("Krai", Self::KiratRai),

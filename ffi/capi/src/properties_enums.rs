@@ -1190,12 +1190,12 @@ pub mod ffi {
         )]
         TrailingJamo = 3,
         #[diplomat::rust_link(
-            icu::properties::props::HangulSyllableType::LeadingVowelSyllable,
+            icu::properties::props::HangulSyllableType::LVSyllable,
             AssociatedConstantInStruct
         )]
         LeadingVowelSyllable = 4,
         #[diplomat::rust_link(
-            icu::properties::props::HangulSyllableType::LeadingVowelTrailingSyllable,
+            icu::properties::props::HangulSyllableType::LVTSyllable,
             AssociatedConstantInStruct
         )]
         LeadingVowelTrailingSyllable = 5,
@@ -2972,7 +2972,7 @@ pub mod ffi {
         )]
         Devanagari = 10,
         #[diplomat::rust_link(
-            icu::properties::props::Script::Ethiopian,
+            icu::properties::props::Script::Ethiopic,
             AssociatedConstantInStruct
         )]
         Ethiopian = 11,
@@ -3918,7 +3918,7 @@ pub mod ffi {
         )]
         NagMundari = 199,
         #[diplomat::rust_link(
-            icu::properties::props::Script::Nastaliq,
+            icu::properties::props::Script::ArabicNastaliq,
             AssociatedConstantInStruct
         )]
         Nastaliq = 200,

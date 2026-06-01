@@ -45,7 +45,7 @@ impl Prop {
         self.name == "Script"
             && [
                 // 200 (`Aran`) *should* be in here, but at some point we erroneously added it, so it
-                // looks like a Unicode value now.
+                // looks like a Unicode value now (https://github.com/unicode-org/icu4x/issues/4425).
                 64, 67, 68, 69, 70, 72, 73, 74, 77, 80, 81, 85, 93, 94, 95, 96, 97, 98, 100, 102,
                 105, 114, 119, 124, 128, 129, 132, 138, 139, 147, 148, 155, 172, 173, 174, 212,
             ]
@@ -57,8 +57,12 @@ impl Prop {
     }
 
     fn transform_long(&self, long_name: &str) -> String {
-        long_name
-            .replace('_', "")
+        long_name.replace('_', "")
+    }
+
+    fn transform_long_ffi(&self, long_name: &str) -> String {
+        self.transform_long(long_name)
+            // Unfortunately we're stuck with these non-canonical names on FFI
             .replace("Ethiopic", "Ethiopian")
             .replace("ArabicNastaliq", "Nastaliq")
             .replace("LVSyllable", "LeadingVowelSyllable")

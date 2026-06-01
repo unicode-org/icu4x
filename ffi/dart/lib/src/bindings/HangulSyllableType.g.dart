@@ -13,9 +13,9 @@ enum HangulSyllableType {
   vowelJamo,
   /// See the [Rust documentation for `TrailingJamo`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.TrailingJamo) for more information.
   trailingJamo,
-  /// See the [Rust documentation for `LeadingVowelSyllable`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingVowelSyllable) for more information.
+  /// See the [Rust documentation for `LVSyllable`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LVSyllable) for more information.
   leadingVowelSyllable,
-  /// See the [Rust documentation for `LeadingVowelTrailingSyllable`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingVowelTrailingSyllable) for more information.
+  /// See the [Rust documentation for `LVTSyllable`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LVTSyllable) for more information.
   leadingVowelTrailingSyllable;
 
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.2.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.

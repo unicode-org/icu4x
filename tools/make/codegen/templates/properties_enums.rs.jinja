@@ -28,7 +28,7 @@ pub mod ffi {
         {%- if prop.default == discriminant %}
         #[diplomat::attr(auto, default)]
         {%- endif %}
-        {{prop.transform_long(long_name)}} = {{discriminant}},
+        {{prop.transform_long_ffi(long_name)}} = {{discriminant}},
         {%- endfor %}
     }
 
@@ -84,7 +84,7 @@ pub mod ffi {
         pub fn from_integer_value(other: {{ prop.int_type() }}) -> Option<Self> {
             Some(match other {
                 {%- for (discriminant, (_, long_name)) in prop.variants() %}
-                {{ discriminant }} => Self::{{prop.transform_long(long_name)}},
+                {{ discriminant }} => Self::{{prop.transform_long_ffi(long_name)}},
                 {%- endfor %}
                 _ => return None,
             })

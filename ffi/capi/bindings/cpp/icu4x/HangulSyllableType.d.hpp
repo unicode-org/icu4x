@@ -55,11 +55,11 @@ public:
          */
         TrailingJamo = 3,
         /**
-         * See the [Rust documentation for `LeadingVowelSyllable`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingVowelSyllable) for more information.
+         * See the [Rust documentation for `LVSyllable`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LVSyllable) for more information.
          */
         LeadingVowelSyllable = 4,
         /**
-         * See the [Rust documentation for `LeadingVowelTrailingSyllable`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingVowelTrailingSyllable) for more information.
+         * See the [Rust documentation for `LVTSyllable`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LVTSyllable) for more information.
          */
         LeadingVowelTrailingSyllable = 5,
     };

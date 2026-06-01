@@ -27,7 +27,7 @@ enum Script {
   deseret,
   /// See the [Rust documentation for `Devanagari`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Devanagari) for more information.
   devanagari,
-  /// See the [Rust documentation for `Ethiopian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Ethiopian) for more information.
+  /// See the [Rust documentation for `Ethiopic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Ethiopic) for more information.
   ethiopian,
   /// See the [Rust documentation for `Georgian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Georgian) for more information.
   georgian,
@@ -405,7 +405,7 @@ enum Script {
   kawi,
   /// See the [Rust documentation for `NagMundari`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.NagMundari) for more information.
   nagMundari,
-  /// See the [Rust documentation for `Nastaliq`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Nastaliq) for more information.
+  /// See the [Rust documentation for `ArabicNastaliq`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.ArabicNastaliq) for more information.
   nastaliq,
   /// See the [Rust documentation for `Garay`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Garay) for more information.
   garay,

@@ -535,7 +535,7 @@ export class Script {
      */
     static Devanagari = Script.#objectValues[10];
     /**
-     * See the [Rust documentation for `Ethiopian`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Ethiopian) for more information.
+     * See the [Rust documentation for `Ethiopic`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Ethiopic) for more information.
      */
     static Ethiopian = Script.#objectValues[11];
     /**
@@ -1291,7 +1291,7 @@ export class Script {
      */
     static NagMundari = Script.#objectValues[199];
     /**
-     * See the [Rust documentation for `Nastaliq`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Nastaliq) for more information.
+     * See the [Rust documentation for `ArabicNastaliq`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.ArabicNastaliq) for more information.
      */
     static Nastaliq = Script.#objectValues[200];
     /**

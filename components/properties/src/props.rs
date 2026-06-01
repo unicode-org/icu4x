@@ -621,6 +621,14 @@ impl Script {
     pub const fn from_icu4c_value(value: u16) -> Self {
         Self(value)
     }
+    /// Deprecated: non-canonical spelling
+    #[deprecated(since = "2.3.0", note = "use Script::Ethiopic instead")]
+    #[allow(non_upper_case_globals)]
+    pub const Ethiopian: Self = Self::Ethiopic;
+    /// Deprecated: non-canonical spelling
+    #[deprecated(since = "2.3.0", note = "use Script::ArabicNastaliq instead")]
+    #[allow(non_upper_case_globals)]
+    pub const Nastaliq: Self = Self::ArabicNastaliq;
 }
 
 impl Default for Script {
@@ -711,6 +719,14 @@ impl HangulSyllableType {
     pub const fn from_icu4c_value(value: u8) -> Self {
         Self(value)
     }
+    /// Deprecated: non-canonical spelling
+    #[deprecated(since = "2.3.0", note = "use HangulSyllableType::LVSyllable instead")]
+    #[allow(non_upper_case_globals)]
+    pub const LeadingVowelSyllable: Self = Self::LVSyllable;
+    /// Deprecated: non-canonical spelling
+    #[deprecated(since = "2.3.0", note = "use HangulSyllableType::LVTSyllable instead")]
+    #[allow(non_upper_case_globals)]
+    pub const LeadingVowelTrailingSyllable: Self = Self::LVTSyllable;
 }
 
 impl Default for HangulSyllableType {
