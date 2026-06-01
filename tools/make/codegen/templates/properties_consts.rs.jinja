@@ -4,21 +4,23 @@
 
 // {{ crate::properties::GENERATED_BY }}
 
+#![allow(missing_docs)] // only documented if long and short name differ
+#![allow(non_upper_case_globals)] // use camel casing to look like enum variants
+
 use crate::props::*;
 
 {%- for prop in props %}
 
 {%- if prop.is_open() %}
 
-#[allow(missing_docs)] // These constants don't need individual documentation.
-#[allow(non_upper_case_globals)]
 impl {{ prop.name.to_upper_camel_case() }} {
     {%- for (discriminant, (short_name, long_name)) in prop.variants() %}
     {%- if (discriminant != 254 || long_name != "Chisoi") %}
-    {%- if prop.is_icu4c_only_value(*discriminant) %}
-    #[doc(hidden)]
-    {%- endif %}
+    {%- if prop.is_icu4c_only_value(*discriminant) && prop.name == "Script" %}
+    /// `{{short_name}}` (ISO 15924)
+    {%- else if short_name != long_name %}
     /// `{{short_name}}`
+    {%- endif %}
     pub const {{prop.transform_long(long_name)}}: Self = Self({{discriminant}});
     {%- endif %}
     {%- endfor %}
@@ -77,7 +79,7 @@ impl {{ prop.name.to_upper_camel_case() }} {
     #[deprecated]
     pub const ALL_VALUES: &'static [Self] = &[
         {%- for (discriminant, (short_name, long_name)) in prop.variants() %}
-        {%- if (discriminant != 254 || long_name != "Chisoi") && !prop.is_icu4c_only_value(*discriminant) %}
+        {%- if (discriminant != 254 || long_name != "Chisoi") %}
         Self::{{prop.transform_long(long_name)}},
         {%- endif %}
         {%- endfor %}

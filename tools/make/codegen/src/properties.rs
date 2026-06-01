@@ -26,30 +26,14 @@ impl Prop {
         }
     }
 
-    fn variants(&self) -> Vec<(u32, (&'static str, &'static str))> {
-        if self.name == "Script" {
-            VARIANTS[self.short_name]
-                .iter()
-                .map(|(&d, &v)| (d, v))
-                .chain([(254, ("Chisoi", "Chisoi"))])
-                .collect()
-        } else {
-            VARIANTS[self.short_name]
-                .iter()
-                .map(|(&d, &v)| (d, v))
-                .collect()
-        }
+    fn variants(&self) -> impl Iterator<Item = (u32, (&'static str, &'static str))> {
+        VARIANTS[self.short_name]
+            .iter()
+            .map(|(&d, &(short, long, _))| (d, (short, long)))
     }
 
     fn is_icu4c_only_value(&self, discriminant: u32) -> bool {
-        self.name == "Script"
-            && [
-                // 200 (`Aran`) *should* be in here, but at some point we erroneously added it, so it
-                // looks like a Unicode value now (https://github.com/unicode-org/icu4x/issues/4425).
-                64, 67, 68, 69, 70, 72, 73, 74, 77, 80, 81, 85, 93, 94, 95, 96, 97, 98, 100, 102,
-                105, 114, 119, 124, 128, 129, 132, 138, 139, 147, 148, 155, 172, 173, 174, 212,
-            ]
-            .contains(&discriminant)
+        VARIANTS[self.short_name][&discriminant].2
     }
 
     fn is_open(&self) -> bool {
@@ -103,59 +87,66 @@ impl Prop {
 }
 
 #[allow(clippy::type_complexity)]
-static VARIANTS: LazyLock<BTreeMap<&str, BTreeMap<u32, (&str, &str)>>> = LazyLock::new(|| {
-    let mut discriminants = BTreeMap::<_, BTreeMap<_, _>>::new();
-    let mut names = BTreeMap::<_, BTreeMap<_, _>>::new();
+static VARIANTS: LazyLock<BTreeMap<&str, BTreeMap<u32, (&str, &str, bool)>>> =
+    LazyLock::new(|| {
+        let mut discriminants = BTreeMap::<_, BTreeMap<_, _>>::new();
+        let mut names = BTreeMap::<_, BTreeMap<_, _>>::new();
 
-    for line in
-        include_str!("../../../../provider/source/tests/data/unicode/ucd/PropertyValueAliases.txt")
-            .lines()
-    {
-        let line = line.split('#').next().unwrap().trim();
-        if line.is_empty() {
-            continue;
+        for line in include_str!(
+            "../../../../provider/source/tests/data/unicode/ucd/PropertyValueAliases.txt"
+        )
+        .lines()
+        {
+            let line = line.split('#').next().unwrap().trim();
+            if line.is_empty() {
+                continue;
+            }
+            let mut parts = line.split(';').map(str::trim).peekable();
+            let prop = parts.next().unwrap();
+            let discriminant = parts
+                .next_if(|d| d.parse::<u32>().is_ok())
+                .map(|d| d.parse::<u32>().unwrap());
+            let short_name = parts.next().unwrap();
+            let long_name = parts.next().unwrap();
+            names.entry(prop).or_default().insert(short_name, long_name);
+            if let Some(discriminant) = discriminant {
+                discriminants
+                    .entry(prop)
+                    .or_default()
+                    .insert(discriminant, (short_name, long_name, false));
+            }
         }
-        let mut parts = line.split(';').map(str::trim).peekable();
-        let prop = parts.next().unwrap();
-        let discriminant = parts
-            .next_if(|d| d.parse::<u32>().is_ok())
-            .map(|d| d.parse::<u32>().unwrap());
-        let short_name = parts.next().unwrap();
-        let long_name = parts.next().unwrap();
-        names.entry(prop).or_default().insert(short_name, long_name);
-        if let Some(discriminant) = discriminant {
+
+        for line in
+            include_str!("../../../../components/properties/tests/data/PropertyDiscriminants.txt")
+                .lines()
+        {
+            let line = line.split('#').next().unwrap().trim();
+            if line.is_empty() {
+                continue;
+            }
+            let mut parts = line.split(';').map(str::trim);
+            let prop = parts.next().unwrap();
+            let short_name = parts.next().unwrap();
+            let discriminant = parts.next().unwrap().parse::<u32>().unwrap();
+            let mut is_icu4c_only_value = false;
+            let long_name = names[prop].get(short_name).copied().unwrap_or_else(|| {
+                is_icu4c_only_value = true;
+                parts.next().expect(short_name)
+            });
             discriminants
                 .entry(prop)
                 .or_default()
-                .insert(discriminant, (short_name, long_name));
+                .insert(discriminant, (short_name, long_name, is_icu4c_only_value));
         }
-    }
 
-    for line in
-        include_str!("../../../../components/properties/tests/data/PropertyDiscriminants.txt")
-            .lines()
-    {
-        let line = line.split('#').next().unwrap().trim();
-        if line.is_empty() {
-            continue;
-        }
-        let mut parts = line.split(';').map(str::trim);
-        let prop = parts.next().unwrap();
-        let short_name = parts.next().unwrap();
-        let discriminant = parts.next().unwrap().parse::<u32>().unwrap();
-        let long_name = names[prop]
-            .get(short_name)
-            .copied()
-            .or(parts.next())
-            .expect(short_name);
         discriminants
-            .entry(prop)
-            .or_default()
-            .insert(discriminant, (short_name, long_name));
-    }
+            .get_mut("sc")
+            .unwrap()
+            .insert(254, ("Chisoi", "Chisoi", true));
 
-    discriminants
-});
+        discriminants
+    });
 
 pub fn main() {
     let props = &[

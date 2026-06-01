@@ -582,12 +582,18 @@ impl From<GeneralCategoryGroup> for u32 {
 /// Each character is assigned a single Script, but characters that are used in
 /// a particular subset of scripts will be in more than one `Script_Extensions` set.
 /// For example, `DEVANAGARI DIGIT NINE` has `Script=Devanagari`, but is also in the
-/// `Script_Extensions` set for Dogra, Kaithi, and Mahajani. If you are trying to
+/// `Script_Extensions` set for `Dogra`, `Kaithi`, and `Mahajani`. If you are trying to
 /// determine whether a code point belongs to a certain script, you should use
 /// [`ScriptWithExtensionsBorrowed::has_script`].
 ///
 /// For more information, see UAX #24: <https://www.unicode.org/reports/tr24/>.
-/// See `UScriptCode` in ICU4C.
+///
+/// Additional constants are provided for ISO 15924 script codes, even if these are not encoded in
+/// Unicode. For example, `Han` is a Unicode script (corresponding to the ISO 15924 code `Hani`),
+/// but ISO 15924 also defines `Hans` and `Hant` for simplified and traditional Han.
+///
+/// Such constants are documented as non-Unicode constants, and are not returned as the `Script`
+/// property for any code point.
 ///
 /// # Example
 ///
