@@ -581,6 +581,8 @@ pub fn get_best_available_format_pattern<'data>(
 
     if !prefer_matched_pattern && closest_distance >= TEXT_VS_NUMERIC_DISTANCE {
         if let [field] = fields {
+            // A single field was requested and the best pattern either includes extra fields or can't be adjusted to match
+            // (e.g. text vs numeric). We return the field instead of the matched pattern.
             return BestSkeleton::AllFieldsMatch(
                 PluralElements::new(runtime::Pattern::from(vec![PatternItem::Field(*field)])),
                 SkeletonQuality(closest_distance),
