@@ -264,6 +264,9 @@ where
             ),
         };
         if let Some(mapped) = map_fn(&skeleton, value) {
+            // CLDR seems to be moving away from `c` in `availableFormats` skeleta.
+            // We don't expect to see both `E` and `c` for the same skeleton, but if we do,
+            // we warn and prefer the one that appeared later in the map (arbitrary).
             if let Some(_old) = result.insert(skeleton.clone(), mapped) {
                 log::warn!(
                     "Duplicate skeleton found after normalization: {}. This might happen if CLDR has both 'E' and 'c' forms.",
