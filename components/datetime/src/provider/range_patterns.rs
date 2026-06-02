@@ -12,7 +12,7 @@ use zerovec::VarZeroVec;
 /// The date fields that can have a greatest difference.
 ///
 /// Ordered from smallest to largest field difference.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(u8)]
 pub enum DateGreatestDifferenceField {
     /// Day (`d`)
@@ -33,7 +33,7 @@ impl DateGreatestDifferenceField {
 /// The time fields that can have a greatest difference.
 ///
 /// Ordered from smallest to largest field difference.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(u8)]
 pub enum TimeGreatestDifferenceField {
     /// Minute (`m`)
@@ -161,34 +161,36 @@ impl<'data> PatternsByGreatestDifference<'data> {
             .map(<Pattern as zerofrom::ZeroFrom<PatternULE>>::zero_from)
     }
 
-    /// Construct from an iterator of (`bit_index`, pattern).
+    /// Construct from a strictly sorted iterator of (`bit_index`, pattern).
     /// The `bit_index` must be <= 3.
-    /// The iterator will be sorted by `bit_index`.
     #[cfg(feature = "datagen")]
-    fn try_from_unsorted_iter<I>(iter: I) -> Result<Self, &'static str>
+    fn try_from_sorted<I>(iter: I) -> Result<Self, &'static str>
     where
         I: IntoIterator<Item = (u8, Pattern<'data>)>,
     {
         use alloc::vec::Vec;
-        let mut parsed: Vec<(u8, Pattern<'data>)> = iter.into_iter().collect();
-        if parsed.is_empty() {
-            return Err("PatternsByGreatestDifference cannot be empty");
-        }
-        for (bit, _) in parsed.iter() {
-            if *bit > 3 {
-                return Err("GreatestDifference bit index must be 0, 1, 2, or 3");
-            }
-        }
-        parsed.sort_by_key(|(bit, _)| *bit);
-
         let mut header_val = 0u8;
         let mut patterns = Vec::new();
-        for (bit, pattern) in parsed {
-            if (header_val & (1 << bit)) != 0 {
-                return Err("Duplicate greatest difference field");
+        let mut last_bit = None;
+
+        for (bit, pattern) in iter {
+            if bit > 3 {
+                return Err("GreatestDifference bit index must be 0, 1, 2, or 3");
             }
+            if let Some(last) = last_bit {
+                if bit <= last {
+                    return Err(
+                        "Iterator must be strictly sorted by bit index and have no duplicates",
+                    );
+                }
+            }
+            last_bit = Some(bit);
             header_val |= 1 << bit;
             patterns.push(pattern);
+        }
+
+        if patterns.is_empty() {
+            return Err("PatternsByGreatestDifference cannot be empty");
         }
 
         let varzerovec = VarZeroVec::from(patterns.as_slice());
@@ -199,22 +201,20 @@ impl<'data> PatternsByGreatestDifference<'data> {
         })
     }
 
-    /// Construct from an iterator of (`DateGreatestDifferenceField`, pattern).
+    /// Construct from a `BTreeMap` of (`DateGreatestDifferenceField`, pattern).
     #[cfg(feature = "datagen")]
-    pub fn try_from_date_patterns<I>(iter: I) -> Result<Self, &'static str>
-    where
-        I: IntoIterator<Item = (DateGreatestDifferenceField, Pattern<'data>)>,
-    {
-        Self::try_from_unsorted_iter(iter.into_iter().map(|(f, p)| (f as u8, p)))
+    pub fn try_from_date_patterns(
+        map: alloc::collections::BTreeMap<DateGreatestDifferenceField, Pattern<'data>>,
+    ) -> Result<Self, &'static str> {
+        Self::try_from_sorted(map.into_iter().map(|(f, p)| (f as u8, p)))
     }
 
-    /// Construct from an iterator of (`TimeGreatestDifferenceField`, pattern).
+    /// Construct from a `BTreeMap` of (`TimeGreatestDifferenceField`, pattern).
     #[cfg(feature = "datagen")]
-    pub fn try_from_time_patterns<I>(iter: I) -> Result<Self, &'static str>
-    where
-        I: IntoIterator<Item = (TimeGreatestDifferenceField, Pattern<'data>)>,
-    {
-        Self::try_from_unsorted_iter(iter.into_iter().map(|(f, p)| (f as u8, p)))
+    pub fn try_from_time_patterns(
+        map: alloc::collections::BTreeMap<TimeGreatestDifferenceField, Pattern<'data>>,
+    ) -> Result<Self, &'static str> {
+        Self::try_from_sorted(map.into_iter().map(|(f, p)| (f as u8, p)))
     }
 }
 
@@ -294,11 +294,19 @@ mod tests {
             .unwrap()
             .to_runtime_pattern();
 
-        // Valid date patterns (unsorted input)
-        let pgd = PatternsByGreatestDifference::try_from_date_patterns(vec![
-            (DateGreatestDifferenceField::Year, pattern_y.clone()),
-            (DateGreatestDifferenceField::Day, pattern_d.clone()),
-        ])
+        // Valid date patterns
+        let pgd = PatternsByGreatestDifference::try_from_date_patterns(
+            alloc::collections::BTreeMap::from([
+                (
+                    DateGreatestDifferenceField::Day,
+                    zerofrom::ZeroFrom::zero_from(&pattern_d),
+                ),
+                (
+                    DateGreatestDifferenceField::Year,
+                    zerofrom::ZeroFrom::zero_from(&pattern_y),
+                ),
+            ]),
+        )
         .unwrap();
 
         assert_eq!(pgd.header.0, 1 | 4);
@@ -316,18 +324,32 @@ mod tests {
             Some(pattern_y.clone())
         );
 
-        // Duplicate
-        let err = PatternsByGreatestDifference::try_from_date_patterns(vec![
-            (DateGreatestDifferenceField::Day, pattern_d.clone()),
-            (DateGreatestDifferenceField::Day, pattern_d.clone()),
-        ]);
-        assert!(err.is_err());
+        // Unsorted input in BTreeMap::from is automatically sorted
+        let pgd2 = PatternsByGreatestDifference::try_from_date_patterns(
+            alloc::collections::BTreeMap::from([
+                (
+                    DateGreatestDifferenceField::Year,
+                    zerofrom::ZeroFrom::zero_from(&pattern_y),
+                ),
+                (
+                    DateGreatestDifferenceField::Day,
+                    zerofrom::ZeroFrom::zero_from(&pattern_d),
+                ),
+            ]),
+        )
+        .unwrap();
+        assert_eq!(pgd2.header.0, 1 | 4);
+        assert_eq!(
+            pgd2.patterns
+                .get(0)
+                .map(<Pattern as zerofrom::ZeroFrom<PatternULE>>::zero_from),
+            Some(pattern_d.clone())
+        );
 
         // Empty
-        let err = PatternsByGreatestDifference::try_from_date_patterns(Vec::<(
-            DateGreatestDifferenceField,
-            Pattern,
-        )>::new());
+        let err = PatternsByGreatestDifference::try_from_date_patterns(
+            alloc::collections::BTreeMap::new(),
+        );
         assert!(err.is_err());
     }
 }
