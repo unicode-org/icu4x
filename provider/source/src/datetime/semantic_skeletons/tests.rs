@@ -220,6 +220,7 @@ fn test_en_overlap_patterns() {
 #[cfg(feature = "networking")]
 mod date_skeleton_consistency_tests {
     use super::*;
+    use crate::datetime::available_formats::AsciiPreferences;
     use crate::datetime::DatagenCalendar;
     use crate::CoverageLevel;
     use icu::datetime::provider::fields;
@@ -395,7 +396,10 @@ mod date_skeleton_consistency_tests {
         let mut num_problems = 0;
         let data = provider.get_dates_resource(locale, Some(cal)).unwrap();
         let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats_at_time);
-        let skeleton_patterns = data.datetime_formats.available_formats.parse_skeletons();
+        let skeleton_patterns = data
+            .datetime_formats
+            .available_formats
+            .parse_skeletons(AsciiPreferences::Default);
         let skeleton_pattern_set = data
             .datetime_formats
             .available_formats

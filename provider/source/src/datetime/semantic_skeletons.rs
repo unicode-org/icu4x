@@ -3,8 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::DatagenCalendar;
+use crate::datetime::available_formats::AsciiPreferences;
 use crate::debug_provider::DebugProvider;
-use crate::{cldr_serde, IterableDataProviderCached, SourceDataProvider};
+use crate::{cldr_serde, AltVariantKind, IterableDataProviderCached, SourceDataProvider};
 use icu::datetime::fieldsets::enums::*;
 use icu::datetime::options::Length;
 use icu::datetime::pattern::{ErrorField, FixedCalendarDateTimeNames};
@@ -190,7 +191,13 @@ impl SourceDataProvider {
 
         // Note: We default to atTime here (See https://github.com/unicode-org/conformance/issues/469)
         let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats_at_time);
-        let skeleton_patterns = data.datetime_formats.available_formats.parse_skeletons();
+        let skeleton_patterns = data.datetime_formats.available_formats.parse_skeletons(
+            if self.alt_variants.contains(&AltVariantKind::DatetimeAscii) {
+                AsciiPreferences::PreferAscii
+            } else {
+                AsciiPreferences::Default
+            },
+        );
 
         fn enforce_consistent_field_lengths(
             trio: &mut VariantPatterns,
@@ -452,6 +459,7 @@ fn preferred_hour_cycle(other: &cldr_serde::ca::Dates, locale: &DataLocale) -> C
 impl From<&cldr_serde::ca::DateTimeFormatsVariant> for GenericLengthPatterns<'_> {
     fn from(other: &cldr_serde::ca::DateTimeFormatsVariant) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
+        // TODO AGENT: support alt ascii
         Self {
             full: other
                 .standard
