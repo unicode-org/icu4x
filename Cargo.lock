@@ -1537,7 +1537,6 @@ dependencies = [
  "serde",
  "serde_json",
  "toml",
- "utf8_iter",
  "yoke",
  "zerofrom",
  "zerovec",
