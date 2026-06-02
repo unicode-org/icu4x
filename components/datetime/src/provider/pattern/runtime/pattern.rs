@@ -5,6 +5,7 @@
 #![allow(clippy::exhaustive_structs)] // part of data struct and internal API
 
 use super::super::{reference, PatternError, PatternItem, TimeGranularity};
+use crate::provider::fields::{self, Field, FieldSymbol};
 use alloc::vec::Vec;
 use core::str::FromStr;
 use icu_plurals::provider::FourBitMetadata;
@@ -60,10 +61,17 @@ pub struct PatternMetadata(u8);
 
 impl PatternMetadata {
     pub(crate) const DEFAULT: PatternMetadata = Self::from_time_granularity(TimeGranularity::None);
+    const TIME_GRANULARITY_MASK: u8 = 0x07;
+    const PREFER_KEEP_MINUTES_MASK: u8 = 0x08;
 
     #[inline]
     pub(crate) fn time_granularity(self) -> TimeGranularity {
-        TimeGranularity::from_ordinal(self.0)
+        TimeGranularity::from_ordinal(self.0 & !Self::PREFER_KEEP_MINUTES_MASK)
+    }
+
+    #[inline]
+    pub(crate) fn prefer_keep_minutes(self) -> bool {
+        (self.0 & Self::PREFER_KEEP_MINUTES_MASK) != 0
     }
 
     pub(crate) fn from_items(items: &[PatternItem]) -> Self {
@@ -71,9 +79,30 @@ impl PatternMetadata {
     }
 
     pub(crate) fn from_iter_items(iter_items: impl Iterator<Item = PatternItem>) -> Self {
-        let time_granularity: TimeGranularity =
-            iter_items.map(Into::into).max().unwrap_or_default();
-        Self::from_time_granularity(time_granularity)
+        let mut time_granularity = TimeGranularity::None;
+        let mut prefer_keep_minutes = false;
+
+        for item in iter_items {
+            let item_granularity = TimeGranularity::from(item);
+            if item_granularity > time_granularity {
+                time_granularity = item_granularity;
+            }
+            if !prefer_keep_minutes {
+                if let PatternItem::Field(Field {
+                    symbol: FieldSymbol::Hour(fields::Hour::H23),
+                    ..
+                }) = item
+                {
+                    prefer_keep_minutes = true;
+                }
+            }
+        }
+
+        let mut result = Self::from_time_granularity(time_granularity);
+        if prefer_keep_minutes {
+            result.0 |= Self::PREFER_KEEP_MINUTES_MASK;
+        }
+        result
     }
 
     /// Merges the metadata from a date pattern and a time pattern into one.
@@ -92,19 +121,38 @@ impl PatternMetadata {
         Self(time_granularity.ordinal())
     }
 
+    /// Sets the `prefer_keep_minutes` flag.
+    #[inline]
+    pub const fn with_prefer_keep_minutes(self, prefer_keep_minutes: bool) -> Self {
+        if prefer_keep_minutes {
+            Self(self.0 | Self::PREFER_KEEP_MINUTES_MASK)
+        } else {
+            Self(self.0 & !Self::PREFER_KEEP_MINUTES_MASK)
+        }
+    }
+
     #[cfg(feature = "datagen")]
     #[inline]
     pub(crate) fn set_time_granularity(&mut self, time_granularity: TimeGranularity) {
+        let prefer_keep_minutes = self.prefer_keep_minutes();
         self.0 = time_granularity.ordinal();
+        if prefer_keep_minutes {
+            self.0 |= Self::PREFER_KEEP_MINUTES_MASK;
+        }
     }
 
     pub(crate) fn to_four_bit_metadata(self) -> FourBitMetadata {
-        #[expect(clippy::unwrap_used)] // valid values for self.0 are 0, 1, 2, 3, or 4
+        #[expect(clippy::unwrap_used)] // valid values for self.0 are 0-15
         FourBitMetadata::try_from_byte(self.0).unwrap()
     }
 
     pub(crate) fn from_u8(other: u8) -> Self {
-        Self(TimeGranularity::from_ordinal(other).ordinal())
+        let granularity = TimeGranularity::from_ordinal(other & !Self::PREFER_KEEP_MINUTES_MASK);
+        let mut result = Self::from_time_granularity(granularity);
+        if (other & Self::PREFER_KEEP_MINUTES_MASK) != 0 {
+            result.0 |= Self::PREFER_KEEP_MINUTES_MASK;
+        }
+        result
     }
 }
 
@@ -171,9 +219,20 @@ impl FromIterator<PatternItem> for Pattern<'_> {
 
 impl From<&reference::Pattern> for Pattern<'_> {
     fn from(input: &reference::Pattern) -> Self {
+        let mut metadata = PatternMetadata::from_time_granularity(input.time_granularity);
+        for item in &input.items {
+            if let PatternItem::Field(Field {
+                symbol: FieldSymbol::Hour(fields::Hour::H23),
+                ..
+            }) = item
+            {
+                metadata = metadata.with_prefer_keep_minutes(true);
+                break;
+            }
+        }
         Self {
             items: ZeroVec::alloc_from_slice(&input.items),
-            metadata: PatternMetadata::from_time_granularity(input.time_granularity),
+            metadata,
         }
     }
 }
@@ -210,8 +269,16 @@ impl databake::Bake for PatternMetadata {
     fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
         ctx.insert("icu_datetime");
         let time_granularity = databake::Bake::bake(&self.time_granularity(), ctx);
-        databake::quote! {
-            icu_datetime::provider::pattern::runtime::PatternMetadata::from_time_granularity(#time_granularity)
+        let prefer_keep_minutes = self.prefer_keep_minutes();
+        if prefer_keep_minutes {
+            databake::quote! {
+                icu_datetime::provider::pattern::runtime::PatternMetadata::from_time_granularity(#time_granularity)
+                    .with_prefer_keep_minutes(true)
+            }
+        } else {
+            databake::quote! {
+                icu_datetime::provider::pattern::runtime::PatternMetadata::from_time_granularity(#time_granularity)
+            }
         }
     }
 }
@@ -233,5 +300,29 @@ fn databake() {
             crate::provider::pattern::TimeGranularity::Hours
         ),
         icu_datetime,
+    );
+}
+
+#[test]
+fn test_prefer_keep_minutes() {
+    use crate::provider::fields::FieldLength;
+    let items_h23 = [PatternItem::Field(Field {
+        symbol: FieldSymbol::Hour(fields::Hour::H23),
+        length: FieldLength::Two,
+    })];
+    let metadata_h23 = PatternMetadata::from_items(&items_h23);
+    assert!(
+        metadata_h23.prefer_keep_minutes(),
+        "H23 should set prefer_keep_minutes"
+    );
+
+    let items_h12 = [PatternItem::Field(Field {
+        symbol: FieldSymbol::Hour(fields::Hour::H12),
+        length: FieldLength::Two,
+    })];
+    let metadata_h12 = PatternMetadata::from_items(&items_h12);
+    assert!(
+        !metadata_h12.prefer_keep_minutes(),
+        "H12 should NOT set prefer_keep_minutes"
     );
 }
