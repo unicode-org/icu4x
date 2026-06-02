@@ -241,9 +241,9 @@ where
 {
     /// Generically builds a `GenericPackedPatterns` structure, using a caller-supplied
     /// closure to pack the elements into a `VarZeroVec`.
-    fn build<U: VarULE + ?Sized>(&self) -> GenericPackedPatterns<'static, U>
+    fn build<U>(&self) -> GenericPackedPatterns<'static, U>
     where
-        U: PackedPatternsBuilderHelper<Unpacked<'a> = T>,
+        U: PackedPatternsBuilderHelper<Unpacked<'a> = T> + VarULE + ?Sized,
     {
         let mut header = 0u32;
         if self.has_explicit_medium {
@@ -269,9 +269,10 @@ where
         GenericPackedPatterns { header, elements }
     }
 
-    fn from_packed<U: VarULE + ?Sized>(packed: &'a GenericPackedPatterns<'a, U>) -> Self
+    #[cfg(feature = "datagen")]
+    fn from_packed<U>(packed: &'a GenericPackedPatterns<'a, U>) -> Self
     where
-        U: PackedPatternsBuilderHelper<Unpacked<'a> = T>,
+        U: PackedPatternsBuilderHelper<Unpacked<'a> = T> + VarULE + ?Sized,
     {
         U::unpack(packed)
     }
