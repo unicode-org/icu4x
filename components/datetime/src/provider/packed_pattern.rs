@@ -628,6 +628,7 @@ mod _serde {
     trait PackedPatternsSerdeHelper: PackedPatternsBuilderHelper {
         type Human;
         fn human_to_unpacked_element<'a>(human: &'a Self::Human) -> Self::Unpacked<'a>;
+        #[cfg(feature = "datagen")]
         fn unpacked_element_to_human<S: serde::Serializer>(
             element: Self::Unpacked<'_>,
         ) -> Result<Self::Human, S::Error>;
@@ -639,6 +640,7 @@ mod _serde {
             let runtime_pattern = human.to_runtime_pattern();
             PluralElements::new(runtime_pattern)
         }
+        #[cfg(feature = "datagen")]
         fn unpacked_element_to_human<S: serde::Serializer>(
             element: Self::Unpacked<'_>,
         ) -> Result<Self::Human, S::Error> {
