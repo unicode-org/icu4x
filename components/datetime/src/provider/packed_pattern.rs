@@ -15,7 +15,7 @@ use icu_plurals::{
     PluralElements,
 };
 use icu_provider::prelude::*;
-use zerovec::{VarZeroVec, ZeroSlice};
+use zerovec::{ule::VarULE, VarZeroVec, ZeroSlice};
 
 /// A field of [`PackedPatternsBuilder`].
 pub type LengthPluralElements<T> = GenericLengthElements<PluralElements<T>>;
@@ -103,7 +103,7 @@ size_test!(PackedPatterns, packed_skeleton_data_size, 32);
 #[derive(Debug, PartialEq, Eq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::packed_pattern))]
-pub struct GenericPackedPatterns<'data, T: zerovec::ule::VarULE + ?Sized> {
+pub struct GenericPackedPatterns<'data, T: VarULE + ?Sized> {
     /// An encoding of which standard/variant cell corresponds to which entry
     /// in the patterns table. See class docs.
     pub header: u32,
@@ -112,7 +112,7 @@ pub struct GenericPackedPatterns<'data, T: zerovec::ule::VarULE + ?Sized> {
     pub elements: VarZeroVec<'data, T>,
 }
 
-impl<'data, T: zerovec::ule::VarULE + ?Sized> Clone for GenericPackedPatterns<'data, T> {
+impl<'data, T: VarULE + ?Sized> Clone for GenericPackedPatterns<'data, T> {
     fn clone(&self) -> Self {
         Self {
             header: self.header,
@@ -226,13 +226,25 @@ pub(crate) enum VariantIndices {
     IndicesPerVariant([VariantPatternIndex; 6]),
 }
 
-impl<T> GenericUnpackedPatterns<T> {
+trait PackedPatternsBuilderHelper: VarULE {
+    type Unpacked<'a>;
+    fn pack(unpacked: &[Self::Unpacked<'_>]) -> VarZeroVec<'static, Self>;
+    #[cfg(feature = "datagen")]
+    fn unpack<'a>(
+        packed: &'a GenericPackedPatterns<Self>,
+    ) -> GenericUnpackedPatterns<Self::Unpacked<'a>>;
+}
+
+impl<'a, T> GenericUnpackedPatterns<T>
+where
+    T: 'a,
+{
     /// Generically builds a `GenericPackedPatterns` structure, using a caller-supplied
     /// closure to pack the elements into a `VarZeroVec`.
-    pub fn build_generic<U: zerovec::ule::VarULE + ?Sized>(
-        &self,
-        pack_fn: impl FnOnce(&[T]) -> VarZeroVec<'static, U>,
-    ) -> GenericPackedPatterns<'static, U> {
+    fn build<U: VarULE + ?Sized>(&self) -> GenericPackedPatterns<'static, U>
+    where
+        U: PackedPatternsBuilderHelper<Unpacked<'a> = T>,
+    {
         let mut header = 0u32;
         if self.has_explicit_medium {
             header |= constants::M_DIFFERS;
@@ -253,32 +265,39 @@ impl<T> GenericUnpackedPatterns<T> {
                 }
             }
         }
-        let elements = pack_fn(&self.elements);
+        let elements = U::pack(&self.elements);
         GenericPackedPatterns { header, elements }
+    }
+
+    fn from_packed<U: VarULE + ?Sized>(packed: &'a GenericPackedPatterns<'a, U>) -> Self
+    where
+        U: PackedPatternsBuilderHelper<Unpacked<'a> = T>,
+    {
+        U::unpack(packed)
     }
 }
 
-impl<'a> GenericUnpackedPatterns<PluralElements<Pattern<'a>>> {
-    pub(super) fn build(&self) -> PackedPatterns<'static> {
-        self.build_generic(|elements| {
-            let elements: Vec<PluralElements<(FourBitMetadata, &ZeroSlice<PatternItem>)>> =
-                elements
-                    .iter()
-                    .map(|plural_elements| {
-                        plural_elements.as_ref().map(|pattern| {
-                            (
-                                pattern.metadata.to_four_bit_metadata(),
-                                pattern.items.as_slice(),
-                            )
-                        })
-                    })
-                    .collect();
-            elements.as_slice().into()
-        })
+impl PackedPatternsBuilderHelper for PluralElementsPackedULE<ZeroSlice<PatternItem>> {
+    type Unpacked<'a> = PluralElements<Pattern<'a>>;
+    fn pack(elements: &[Self::Unpacked<'_>]) -> VarZeroVec<'static, Self> {
+        let elements: Vec<PluralElements<(FourBitMetadata, &ZeroSlice<PatternItem>)>> = elements
+            .iter()
+            .map(|plural_elements| {
+                plural_elements.as_ref().map(|pattern| {
+                    (
+                        pattern.metadata.to_four_bit_metadata(),
+                        pattern.items.as_slice(),
+                    )
+                })
+            })
+            .collect();
+        elements.as_slice().into()
     }
 
     #[cfg(feature = "datagen")]
-    pub(super) fn from_packed(packed: &'a PackedPatterns<'_>) -> Self {
+    fn unpack<'a>(
+        packed: &'a GenericPackedPatterns<Self>,
+    ) -> GenericUnpackedPatterns<Self::Unpacked<'a>> {
         let variant_indices = if (packed.header & constants::Q_BIT) != 0 {
             VariantIndices::OnePatternPerVariant
         } else {
@@ -304,7 +323,7 @@ impl<'a> GenericUnpackedPatterns<PluralElements<Pattern<'a>>> {
                 })
             })
             .collect();
-        Self {
+        GenericUnpackedPatterns {
             has_explicit_medium: (packed.header & constants::M_DIFFERS) != 0,
             has_explicit_short: (packed.header & constants::S_DIFFERS) != 0,
             variant_indices,
@@ -448,7 +467,7 @@ pub(crate) enum PackedSkeletonVariant {
     Variant1,
 }
 
-impl<'data, T: zerovec::ule::VarULE + ?Sized> GenericPackedPatterns<'data, T> {
+impl<'data, T: VarULE + ?Sized> GenericPackedPatterns<'data, T> {
     pub(crate) fn get_element(&self, length: Length, variant: PackedSkeletonVariant) -> Option<&T> {
         use Length::*;
         use PackedSkeletonVariant::*;
@@ -566,20 +585,21 @@ impl<'data> GenericPackedPatterns<'data, PluralElementsPackedULE<ZeroSlice<Patte
 mod _serde {
     use super::*;
     use crate::provider::pattern::reference;
-    use zerovec::VarZeroSlice;
+    use zerovec::{ule::VarULE, VarZeroSlice};
 
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-    struct PackedPatternsMachine<'data> {
+    struct GenericPackedPatternsMachine<'data, T: VarULE + ?Sized> {
         pub header: u32,
         #[serde(borrow)]
-        pub elements: &'data VarZeroSlice<PluralElementsPackedULE<ZeroSlice<PatternItem>>>,
+        #[serde(bound(deserialize = ""))]
+        pub elements: &'data VarZeroSlice<T>,
     }
 
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
     #[derive(Default)]
-    struct PackedPatternsHuman {
+    struct GenericPackedPatternsHuman<T> {
         #[cfg_attr(
             feature = "serde",
             serde(default, skip_serializing_if = "core::ops::Not::not")
@@ -600,21 +620,49 @@ mod _serde {
             serde(default, skip_serializing_if = "Option::is_none")
         )]
         pub(super) variant_pattern_indices: Option<[u32; 6]>,
-        pub(super) elements: Vec<reference::Pattern>,
+        pub(super) elements: Vec<T>,
     }
 
-    impl<'de, 'data> serde::Deserialize<'de>
-        for GenericPackedPatterns<'data, PluralElementsPackedULE<ZeroSlice<PatternItem>>>
+    /// Should be implemented on the Machine generic. Associates the Human type.
+    trait PackedPatternsSerdeHelper: PackedPatternsBuilderHelper {
+        type Human;
+        fn human_to_unpacked_element<'a>(human: &'a Self::Human) -> Self::Unpacked<'a>;
+        fn unpacked_element_to_human<S: serde::Serializer>(
+            element: Self::Unpacked<'_>,
+        ) -> Result<Self::Human, S::Error>;
+    }
+
+    impl PackedPatternsSerdeHelper for PluralElementsPackedULE<ZeroSlice<PatternItem>> {
+        type Human = reference::Pattern;
+        fn human_to_unpacked_element<'a>(human: &'a Self::Human) -> Self::Unpacked<'a> {
+            let runtime_pattern = human.to_runtime_pattern();
+            PluralElements::new(runtime_pattern)
+        }
+        fn unpacked_element_to_human<S: serde::Serializer>(
+            element: Self::Unpacked<'_>,
+        ) -> Result<Self::Human, S::Error> {
+            let runtime_pattern = element.try_into_other().ok_or_else(|| {
+                <S::Error as serde::ser::Error>::custom("cannot yet serialize plural patterns")
+            })?;
+            Ok(reference::Pattern::from(&runtime_pattern))
+        }
+    }
+
+    #[allow(private_bounds)] // https://github.com/rust-lang/rust/issues/139158
+    impl<'de, 'data, T> GenericPackedPatterns<'data, T>
     where
         'de: 'data,
+        T: VarULE + PackedPatternsSerdeHelper + ?Sized,
+        T::Human: serde::Deserialize<'de>,
     {
-        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        fn deserialize_impl<D>(deserializer: D) -> Result<Self, D::Error>
         where
             D: serde::Deserializer<'de>,
         {
             use serde::de::Error as _;
             if deserializer.is_human_readable() {
-                let human = <PackedPatternsHuman>::deserialize(deserializer)?;
+                let human: GenericPackedPatternsHuman<T::Human> =
+                    serde::Deserialize::deserialize(deserializer)?;
                 let variant_indices = match (
                     human.has_one_pattern_per_variant,
                     human.variant_pattern_indices,
@@ -634,7 +682,7 @@ mod _serde {
                 let elements = human
                     .elements
                     .iter()
-                    .map(|pattern| PluralElements::new(pattern.to_runtime_pattern()))
+                    .map(T::human_to_unpacked_element)
                     .collect();
                 let unpacked = GenericUnpackedPatterns {
                     has_explicit_medium: human.has_explicit_medium,
@@ -644,7 +692,8 @@ mod _serde {
                 };
                 Ok(unpacked.build())
             } else {
-                let machine = <PackedPatternsMachine>::deserialize(deserializer)?;
+                let machine: GenericPackedPatternsMachine<T> =
+                    serde::Deserialize::deserialize(deserializer)?;
                 Ok(Self {
                     header: machine.header,
                     elements: machine.elements.as_varzerovec(),
@@ -653,18 +702,33 @@ mod _serde {
         }
     }
 
-    #[cfg(feature = "datagen")]
-    impl serde::Serialize
-        for GenericPackedPatterns<'_, PluralElementsPackedULE<ZeroSlice<PatternItem>>>
+    impl<'de, 'data> serde::Deserialize<'de>
+        for GenericPackedPatterns<'data, PluralElementsPackedULE<ZeroSlice<PatternItem>>>
+    where
+        'de: 'data,
     {
-        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: serde::Deserializer<'de>,
+        {
+            Self::deserialize_impl(deserializer)
+        }
+    }
+
+    #[allow(private_bounds)] // https://github.com/rust-lang/rust/issues/139158
+    #[cfg(feature = "datagen")]
+    impl<T> GenericPackedPatterns<'_, T>
+    where
+        T: VarULE + PackedPatternsSerdeHelper + serde::Serialize + ?Sized,
+        T::Human: serde::Serialize + Default,
+    {
+        fn serialize_impl<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where
             S: serde::Serializer,
         {
-            use serde::ser::Error as _;
             if serializer.is_human_readable() {
                 let unpacked = GenericUnpackedPatterns::from_packed(self);
-                let mut human = PackedPatternsHuman {
+                let mut human = GenericPackedPatternsHuman::<T::Human> {
                     has_explicit_medium: unpacked.has_explicit_medium,
                     has_explicit_short: unpacked.has_explicit_short,
                     ..Default::default()
@@ -680,19 +744,30 @@ mod _serde {
                 }
                 human.elements = Vec::with_capacity(unpacked.elements.len());
                 for pattern_elements in unpacked.elements.into_iter() {
-                    let pattern = pattern_elements
-                        .try_into_other()
-                        .ok_or_else(|| S::Error::custom("cannot yet serialize plural patterns"))?;
-                    human.elements.push(reference::Pattern::from(&pattern));
+                    human
+                        .elements
+                        .push(T::unpacked_element_to_human::<S>(pattern_elements)?);
                 }
-                human.serialize(serializer)
+                serde::Serialize::serialize(&human, serializer)
             } else {
-                let machine = PackedPatternsMachine {
+                let machine = GenericPackedPatternsMachine::<T> {
                     header: self.header,
-                    elements: &self.elements,
+                    elements: self.elements.as_slice(),
                 };
-                machine.serialize(serializer)
+                serde::Serialize::serialize(&machine, serializer)
             }
+        }
+    }
+
+    #[cfg(feature = "datagen")]
+    impl serde::Serialize
+        for GenericPackedPatterns<'_, PluralElementsPackedULE<ZeroSlice<PatternItem>>>
+    {
+        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: serde::Serializer,
+        {
+            self.serialize_impl(serializer)
         }
     }
 }
