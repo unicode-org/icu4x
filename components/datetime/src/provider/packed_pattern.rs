@@ -121,6 +121,25 @@ impl<'data, T: VarULE + ?Sized> Clone for GenericPackedPatterns<'data, T> {
     }
 }
 
+impl<'data, T: VarULE + ?Sized> GenericPackedPatterns<'data, T> {
+    /// Returns the variant indices for this packed pattern.
+    #[cfg(feature = "datagen")]
+    pub(crate) fn variant_indices(&self) -> VariantIndices {
+        if (self.header & constants::Q_BIT) != 0 {
+            VariantIndices::OnePatternPerVariant
+        } else {
+            VariantIndices::IndicesPerVariant([
+                VariantPatternIndex::from_header_with_shift(self.header, 3),
+                VariantPatternIndex::from_header_with_shift(self.header, 6),
+                VariantPatternIndex::from_header_with_shift(self.header, 9),
+                VariantPatternIndex::from_header_with_shift(self.header, 12),
+                VariantPatternIndex::from_header_with_shift(self.header, 15),
+                VariantPatternIndex::from_header_with_shift(self.header, 18),
+            ])
+        }
+    }
+}
+
 /// The main data structure for packed datetime patterns.
 ///
 /// For detailed information, see [`GenericPackedPatterns`].
@@ -299,18 +318,7 @@ impl PackedPatternsBuilderHelper for PluralElementsPackedULE<ZeroSlice<PatternIt
     fn unpack<'a>(
         packed: &'a GenericPackedPatterns<Self>,
     ) -> GenericUnpackedPatterns<Self::Unpacked<'a>> {
-        let variant_indices = if (packed.header & constants::Q_BIT) != 0 {
-            VariantIndices::OnePatternPerVariant
-        } else {
-            VariantIndices::IndicesPerVariant([
-                VariantPatternIndex::from_header_with_shift(packed.header, 3),
-                VariantPatternIndex::from_header_with_shift(packed.header, 6),
-                VariantPatternIndex::from_header_with_shift(packed.header, 9),
-                VariantPatternIndex::from_header_with_shift(packed.header, 12),
-                VariantPatternIndex::from_header_with_shift(packed.header, 15),
-                VariantPatternIndex::from_header_with_shift(packed.header, 18),
-            ])
-        };
+        let variant_indices = packed.variant_indices();
         let elements = packed
             .elements
             .iter()
