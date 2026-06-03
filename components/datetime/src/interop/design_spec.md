@@ -42,7 +42,7 @@ graph TD
     end
 ```
 
-1.  **`icu_datetime::interop` (Rust)**: Contains `DateTimeFormatterOptions` (the catchall options bag) and the resolution logic to map these options to ICU4C-compatible arguments (skeletons, patterns, or styles), without calling ICU4C.
+1.  **`icu_datetime::interop` (Rust)**: Contains `DateTimeFormatterOptions` (the catchall options bag) and the resolution logic to map these options to ICU4C-compatible arguments (skeletons or styles), without calling ICU4C.
 2.  **`icu_capi` (Rust/FFI)**: Exposes the options bag and the resolution function to C/C++ using Diplomat.
 3.  **`ffi/icu4c_interop` (C/C++ Header-only)**: The integration point for clients. It includes `icu_capi` headers and system ICU4C headers (`unicode/udat.h`). It contains the logic to switch between backends and call `libicui18n.so` or `libicu_capi.so` accordingly.
 
@@ -50,7 +50,7 @@ graph TD
 
 ## 3. The Catchall Options Bag
 
-We define a single, comprehensive options struct in `icu_datetime::interop`:
+We define a single, comprehensive options struct in `icu_datetime::interop`. Note that raw LDML patterns are excluded from this options bag to maintain backend symmetry (as ICU4X does not support arbitrary patterns at runtime; see Section 9).
 
 ```rust
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
@@ -58,9 +58,6 @@ pub struct DateTimeFormatterOptions {
     // ==========================================
     // 1. Classical / ICU4C Overrides
     // ==========================================
-    /// A raw LDML pattern (e.g., "yyyy-MM-dd HH:mm:ss").
-    pub pattern: Option<String>,
-
     /// A classical skeleton string (e.g., "yMdHms").
     pub skeleton: Option<String>,
 
@@ -168,7 +165,6 @@ pub enum InteropDateFormatStyle {
 
 pub struct Icu4cResolvedArgs {
     pub skeleton: Option<String>,
-    pub pattern: Option<String>,
     pub date_style: InteropDateFormatStyle,
     pub time_style: InteropDateFormatStyle,
 }
@@ -177,10 +173,9 @@ pub struct Icu4cResolvedArgs {
 /// Does NOT call ICU4C.
 pub fn resolve_icu4c_args(options: &DateTimeFormatterOptions) -> Icu4cResolvedArgs {
     // Resolution logic following precedence:
-    // 1. If pattern is set -> return pattern, styles = None
-    // 2. If skeleton is set -> return skeleton, styles = None
-    // 3. If styles are set -> return styles, skeleton/pattern = None
-    // 4. If individual fields are set -> construct skeleton, return skeleton, styles = None
+    // 1. If skeleton is set -> return skeleton, styles = None
+    // 2. If styles are set -> return styles, skeleton = None
+    // 3. If individual fields are set -> construct skeleton, return skeleton, styles = None
 }
 ```
 
@@ -266,9 +261,6 @@ pub mod ffi {
         pub fn skeleton(&self, writeable: &mut diplomat_runtime::DiplomatWriteable) -> DiplomatResult<(), ()> {
              // writes self.inner.skeleton to writeable
         }
-        pub fn pattern(&self, writeable: &mut diplomat_runtime::DiplomatWriteable) -> DiplomatResult<(), ()> {
-             // writes self.inner.pattern to writeable
-        }
         pub fn date_style(&self) -> i32 { self.inner.date_style as i32 }
         pub fn time_style(&self) -> i32 { self.inner.time_style as i32 }
     }
@@ -315,15 +307,12 @@ public:
             
             // 2. Extract resolved args
             std::string skeleton = get_skeleton(resolved);
-            std::string pattern = get_pattern(resolved);
             UDateFormatStyle date_style = (UDateFormatStyle)icu4x_interop_resolved_args_date_style(resolved);
             UDateFormatStyle time_style = (UDateFormatStyle)icu4x_interop_resolved_args_time_style(resolved);
             
             // 3. Initialize ICU4C
             UErrorCode status = U_ZERO_ERROR;
-            if (!pattern.empty()) {
-                icu4c_formatter_ = udat_open(UDAT_PATTERN, UDAT_PATTERN, locale.c_str(), nullptr, 0, (const UChar*)pattern.c_str(), pattern.length(), &status);
-            } else if (!skeleton.empty()) {
+            if (!skeleton.empty()) {
                 // Use udatpg to get best pattern, then udat_open
                 UDateTimePatternGenerator* pg = udatpg_open(locale.c_str(), &status);
                 // ... udatpg_getBestPattern ...
@@ -381,11 +370,11 @@ private:
 
 ---
 
-## 9. Future Work: Raw Pattern Support in ICU4X
+## 9. Future Work: Raw Pattern Support
 
-Currently, the ICU4X `DateTimeFormatter` is designed around semantic skeletons and pre-compiled data, and does not support formatting arbitrary raw pattern strings at runtime. Supporting raw patterns in the ICU4X backend of the interop layer is a known challenge and is deferred to future work.
+Currently, the ICU4X `DateTimeFormatter` is designed around semantic skeletons and pre-compiled data, and does not support formatting arbitrary raw pattern strings at runtime. To maintain symmetry across backends in the interop layer, raw pattern support (e.g., `pattern: Option<String>`) has been excluded from the unified `DateTimeFormatterOptions` bag.
 
-The following options will be investigated:
+Future work will investigate how to support raw patterns. This is challenging because it requires ICU4X to support arbitrary patterns. The following options will be evaluated:
 
 1.  **On-the-fly Pattern Compilation**: Allow ICU4X to compile raw patterns at runtime. This would involve parsing the pattern string into a `Pattern` struct and then converting it to a `PackedPattern`, which requires memory allocation.
 2.  **Polymorphic Formatter API**: Modify the interop API to return an enum or interface that can represent either a `DateTimeFormatter` (skeleton-based) or a `DateTimePatternFormatter` (pattern-based, if a separate pattern formatter is introduced in ICU4X).
