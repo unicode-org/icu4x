@@ -187,7 +187,7 @@ To handle overlap and ensure consistent output across backends, the interop laye
 
 ### 5.1. ICU4C Backend Mapping
 
-ICU4C is dynamic and maps naturally to skeletons and styles.
+ICU4C is dynamic and maps naturally to skeletons and styles. The mapping from semantic options to classical skeletons is based on [UTS 35: Unicode Technical Standard #35 (Part 4: Dates)](https://unicode.org/reports/tr35/tr35-dates.html).
 
 #### Individual Fields (ECMA/ICU4X) to Skeleton:
 When individual fields are used, a skeleton string is constructed using the following symbol mapping:
