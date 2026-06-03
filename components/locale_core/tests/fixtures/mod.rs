@@ -100,9 +100,7 @@ impl TryFrom<LocaleExtensions> for Extensions {
         let mut other: Vec<other::Other> = input
             .other
             .iter()
-            .map(|v| {
-                other::Other::try_from_str(v).expect("Failed to parse Other extension")
-            })
+            .map(|v| other::Other::try_from_str(v).expect("Failed to parse Other extension"))
             .collect();
         other.sort();
         ext.other = other;
