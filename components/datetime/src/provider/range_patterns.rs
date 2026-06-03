@@ -4,7 +4,9 @@
 
 //! Data structures for packed range patterns.
 
-use crate::provider::packed_pattern::GenericPackedPatterns;
+use crate::provider::packed_pattern::{
+    GenericPackedPatterns, GenericUnpackedPatterns, PackedPatternsBuilderHelper,
+};
 use crate::provider::pattern::runtime::{Pattern, PatternULE};
 use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
@@ -28,6 +30,18 @@ pub enum DateGreatestDifferenceField {
 impl DateGreatestDifferenceField {
     /// The maximum value of a `DateGreatestDifferenceField`.
     pub const MAX_VALUE: u8 = Self::Era as u8;
+
+    /// Parses a symbol into a `DateGreatestDifferenceField`.
+    #[cfg(feature = "datagen")]
+    pub fn from_symbol(symbol: &str) -> Option<Self> {
+        match symbol {
+            "d" => Some(Self::Day),
+            "M" => Some(Self::Month),
+            "y" => Some(Self::Year),
+            "G" => Some(Self::Era),
+            _ => None,
+        }
+    }
 }
 
 /// The time fields that can have a greatest difference.
@@ -49,6 +63,18 @@ pub enum TimeGreatestDifferenceField {
 impl TimeGreatestDifferenceField {
     /// The maximum value of a `TimeGreatestDifferenceField`.
     pub const MAX_VALUE: u8 = Self::DayPeriodA as u8;
+
+    /// Parses a symbol into a `TimeGreatestDifferenceField`.
+    #[cfg(feature = "datagen")]
+    pub fn from_symbol(symbol: &str) -> Option<Self> {
+        match symbol {
+            "m" => Some(Self::Minute),
+            "h" | "H" => Some(Self::Hour),
+            "B" => Some(Self::DayPeriodB),
+            "a" => Some(Self::DayPeriodA),
+            _ => None,
+        }
+    }
 }
 
 /// A bitset encoding which fields are present in the `GreatestDifference` pattern list.
@@ -73,7 +99,7 @@ impl TimeGreatestDifferenceField {
 ///
 /// This sparse representation allows quickly finding the pattern corresponding to a
 /// differing field by counting the number of set bits before it.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
 #[zerovec::make_ule(GreatestDifferenceHeaderULE)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
@@ -99,7 +125,7 @@ impl GreatestDifferenceHeader {
 }
 
 /// A list of patterns that represent the greatest difference format for a given skeleton.
-#[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
@@ -218,12 +244,127 @@ impl<'data> PatternsByGreatestDifference<'data> {
     }
 }
 
+impl PackedPatternsBuilderHelper for PatternsByGreatestDifferenceULE {
+    type Unpacked<'a> = PatternsByGreatestDifference<'a>;
+    fn pack(elements: &[Self::Unpacked<'_>]) -> VarZeroVec<'static, Self> {
+        VarZeroVec::from(elements)
+    }
+
+    #[cfg(feature = "datagen")]
+    fn unpack<'a>(
+        packed: &'a GenericPackedPatterns<Self>,
+    ) -> GenericUnpackedPatterns<Self::Unpacked<'a>> {
+        use crate::provider::packed_pattern::constants;
+        let variant_indices = packed.variant_indices();
+        let elements = packed
+            .elements
+            .iter()
+            .map(|pgd_ule| {
+                <PatternsByGreatestDifference<'a> as zerofrom::ZeroFrom<
+                    PatternsByGreatestDifferenceULE,
+                >>::zero_from(pgd_ule)
+            })
+            .collect();
+        GenericUnpackedPatterns {
+            has_explicit_medium: (packed.header & constants::M_DIFFERS) != 0,
+            has_explicit_short: (packed.header & constants::S_DIFFERS) != 0,
+            variant_indices,
+            elements,
+        }
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl<'a>
+    crate::provider::packed_pattern::GenericPackedPatternsBuilder<PatternsByGreatestDifference<'a>>
+{
+    /// Builds a packed range pattern representation from the builder.
+    pub fn build(self) -> PackedRangePatterns<'static> {
+        let mut builder = self;
+        let unpacked = builder.build_unpacked();
+        unpacked.build::<PatternsByGreatestDifferenceULE>()
+    }
+}
+
 /// The main data structure for packed range/interval patterns.
 pub type PackedRangePatterns<'data> = GenericPackedPatterns<'data, PatternsByGreatestDifferenceULE>;
 
 icu_provider::data_struct!(
     PackedRangePatterns<'_>,
     #[cfg(feature = "datagen")]
+);
+
+icu_provider::data_marker!(
+    /// `DatetimePatternsRangeGlueV1`
+    DatetimePatternsRangeGlueV1,
+    crate::provider::semantic_skeletons::GluePattern<'static>
+);
+
+icu_provider::data_marker!(
+    /// `DatetimePatternsRangeTimeV1`
+    DatetimePatternsRangeTimeV1,
+    PackedRangePatterns<'static>
+);
+
+icu_provider::data_marker!(
+    /// `DatetimePatternsRangeDateBuddhistV1`
+    DatetimePatternsRangeDateBuddhistV1,
+    PackedRangePatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsRangeDateChineseV1`
+    DatetimePatternsRangeDateChineseV1,
+    PackedRangePatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsRangeDateCopticV1`
+    DatetimePatternsRangeDateCopticV1,
+    PackedRangePatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsRangeDateDangiV1`
+    DatetimePatternsRangeDateDangiV1,
+    PackedRangePatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsRangeDateEthiopianV1`
+    DatetimePatternsRangeDateEthiopianV1,
+    PackedRangePatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsRangeDateGregorianV1`
+    DatetimePatternsRangeDateGregorianV1,
+    PackedRangePatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsRangeDateHebrewV1`
+    DatetimePatternsRangeDateHebrewV1,
+    PackedRangePatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsRangeDateIndianV1`
+    DatetimePatternsRangeDateIndianV1,
+    PackedRangePatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsRangeDateHijriV1`
+    DatetimePatternsRangeDateHijriV1,
+    PackedRangePatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsRangeDateJapaneseV1`
+    DatetimePatternsRangeDateJapaneseV1,
+    PackedRangePatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsRangeDatePersianV1`
+    DatetimePatternsRangeDatePersianV1,
+    PackedRangePatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DatetimePatternsRangeDateRocV1`
+    DatetimePatternsRangeDateRocV1,
+    PackedRangePatterns<'static>
 );
 
 #[cfg(test)]
@@ -354,5 +495,76 @@ mod tests {
             alloc::collections::BTreeMap::new(),
         );
         assert!(err.is_err());
+    }
+}
+
+#[cfg(feature = "serde")]
+mod _serde {
+    use super::*;
+    use crate::provider::packed_pattern::_serde::PackedPatternsSerdeHelper;
+    use serde::Deserialize;
+    use serde::Serialize;
+
+    #[derive(Debug, Clone, Default)]
+    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+    pub struct PatternsByGreatestDifferenceHuman {
+        pub header: GreatestDifferenceHeader,
+        pub patterns: alloc::vec::Vec<crate::provider::pattern::reference::Pattern>,
+    }
+
+    impl PackedPatternsSerdeHelper for PatternsByGreatestDifferenceULE {
+        type Human = PatternsByGreatestDifferenceHuman;
+
+        fn human_to_unpacked_element<'a>(human: &'a Self::Human) -> Self::Unpacked<'a> {
+            let patterns: alloc::vec::Vec<Pattern<'a>> = human
+                .patterns
+                .iter()
+                .map(|p| p.to_runtime_pattern())
+                .collect();
+            PatternsByGreatestDifference {
+                header: human.header,
+                patterns: VarZeroVec::from(&patterns),
+            }
+        }
+
+        #[cfg(feature = "datagen")]
+        fn unpacked_element_to_human<S: serde::Serializer>(
+            element: Self::Unpacked<'_>,
+        ) -> Result<Self::Human, S::Error> {
+            let patterns = element
+                .patterns
+                .iter()
+                .map(|p| {
+                    let runtime_pattern = <Pattern as zerofrom::ZeroFrom<PatternULE>>::zero_from(p);
+                    crate::provider::pattern::reference::Pattern::from(&runtime_pattern)
+                })
+                .collect();
+            Ok(PatternsByGreatestDifferenceHuman {
+                header: element.header,
+                patterns,
+            })
+        }
+    }
+
+    impl<'de, 'data> Deserialize<'de> for PackedRangePatterns<'data>
+    where
+        'de: 'data,
+    {
+        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: serde::Deserializer<'de>,
+        {
+            GenericPackedPatterns::deserialize_impl(deserializer)
+        }
+    }
+
+    #[cfg(feature = "datagen")]
+    impl Serialize for PackedRangePatterns<'_> {
+        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: serde::Serializer,
+        {
+            self.serialize_impl(serializer)
+        }
     }
 }
