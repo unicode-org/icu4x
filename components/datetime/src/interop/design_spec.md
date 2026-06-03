@@ -189,23 +189,43 @@ To handle overlap and ensure consistent output across backends, the interop laye
 
 ICU4C is dynamic and maps naturally to skeletons and styles. The mapping from semantic options to classical skeletons is based on [UTS 35: Unicode Technical Standard #35 (Part 4: Dates)](https://unicode.org/reports/tr35/tr35-dates.html).
 
-#### Individual Fields (ECMA/ICU4X) to Skeleton:
-When individual fields are used, a skeleton string is constructed using the following symbol mapping:
+#### 5.1.1. Basic Field Mapping
 
-| Field Option | Value | Skeleton Symbol |
-|---|---|---|
-| `weekday` | `Narrow` / `Short` / `Long` | `EEEEE` / `E` / `EEEE` |
-| `era` | `Narrow` / `Short` / `Long` | `GGGGG` / `G` / `GGGG` |
-| `year` | `Numeric` / `TwoDigit` | `y` / `yy` |
-| `month` | `Numeric` / `TwoDigit` / `Narrow` / `Short` / `Long` | `M` / `MM` / `MMMMM` / `MMM` / `MMMM` |
-| `day` | `Numeric` / `TwoDigit` | `d` / `dd` |
-| `hour` | `Numeric` / `TwoDigit` | `j` / `jj` (or `h`/`H` based on `hour_cycle`) |
-| `minute` | `Numeric` / `TwoDigit` | `m` / `mm` |
-| `second` | `Numeric` / `TwoDigit` | `s` / `ss` |
-| `fractional_second_digits` | `N` (1..9) | `S` repeated `N` times |
-| `time_zone_name` | `Short` / `Long` | `z` / `zzzz` |
-| | `ShortOffset` / `LongOffset` | `O` / `OOOO` |
-| | `ShortGeneric` / `LongGeneric` | `v` / `vvvv` |
+To convert from semantic fields to standard skeleton symbols, follow the mapping table below (adapted from UTS 35):
+
+| Semantic Field | Standalone? | Option / Casing | Long | Medium | Short | Notes |
+|---|---|---|---|---|---|---|
+| **Year** | N/A | N/A | `y` | `y` | `y` | Default from locale's `datetimeSkeleton` |
+| **Month** | No | N/A | `MMMM` | `MMM` | `M` / `MM` | `MM` if 2-digit requested |
+| | Yes | N/A | `LLLL` | `LLL` | `L` / `LL` | Standalone context |
+| **Day** | N/A | N/A | `d` | `d` | `d` / `dd` | `dd` if alignment is `Column` |
+| **Weekday**| No | N/A | `EEEE` | `EEE` | `EEE` | |
+| | Yes | N/A | `EEEE` | `EEE` | `EEEEE` | Standalone short maps to narrow |
+| **Time** | N/A | unset | `C` | `C` | `C` | Locale default hour cycle |
+| | N/A | 12h (H11/H12) | `h` | `h` | `h` / `hh` | `hh` if 2-digit requested |
+| | N/A | 24h (H23/H24) | `H` | `H` | `H` / `HH` | `HH` if 2-digit requested |
+| **Zone** | No | Generic | `v` | `v` | `v` | Non-standalone generic |
+| | Yes | Generic | `vvvv` | `vvvv` | `v` | Standalone generic |
+| | No | Specific | `z` | `z` | `z` | Non-standalone specific |
+| | Yes | Specific | `zzzz` | `zzzz` | `z` | Standalone specific |
+| | N/A | Location | `VVVV` | `VVVV` | `VVVV` | |
+| | N/A | Offset | `OOOO` | `OOOO` | `O` | Long offset uses `OOOO` |
+
+#### 5.1.2. Time Precision Skeleton Variations
+
+Apply the following adjustments to the skeleton based on the requested time precision:
+- **Hour**: No change (uses the hour symbol resolved above).
+- **Minute**: Append `m` (or `mm` if 2-digit requested).
+- **MinuteOptional**: Append `m` if the input time has a non-zero minute.
+- **Second**: Append `m` and `s` (or `ss` if 2-digit requested).
+- **FractionalSecond**: Append `m`, `s`, and `N` occurrences of `S` (where `N` is `fractional_second_digits`).
+
+#### 5.1.3. Year Style Skeleton Variations
+
+Apply the following adjustments to the year/era symbols in the skeleton:
+- **Auto**: Use the year/era fields from the locale's default skeleton (e.g., `y`, `yy`, `yG`).
+- **Full**: Force 4-digit year by replacing `yy` with `y` (or `yyyy` if explicit).
+- **WithEra**: Force era display by replacing `yy` with `y` and appending `G` (or `GGGG` for long, `GGGGG` for narrow) if no era symbol is present.
 
 Symbols are concatenated in UTS 35 canonical order.
 
