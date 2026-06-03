@@ -115,6 +115,7 @@ pub(crate) struct RuleBreakIterator<'data, 's, Y: RuleBreakType, T: Tailoring> {
     data: &'data SegmenterStateMachine<'data>,
     tailoring: T,
     cache: VecDeque<usize>,
+    ignore_complex_until: usize,
     lookahead_positions: Vec<Option<Y::IterAttr<'s>>>,
     remaining_input: Y::IterAttr<'s>,
     last_accepting_status: u8,
@@ -133,6 +134,7 @@ impl<'data, 's, Y: RuleBreakType, T: Tailoring> RuleBreakIterator<'data, 's, Y, 
             tailoring,
             complex: None,
             cache: VecDeque::from_iter([0]),
+            ignore_complex_until: usize::MAX,
             lookahead_positions: alloc::vec![None; data.num_lookaheads],
             last_accepting_status: 0,
         }
@@ -150,7 +152,6 @@ impl<'data, 's, Y: RuleBreakType, T: Tailoring> RuleBreakIterator<'data, 's, Y, 
         Y: RuleBreakTypeWithComplex,
     {
         Self {
-            remaining_input: input,
             data,
             tailoring,
             complex: Some(ComplexHandling {
@@ -160,8 +161,10 @@ impl<'data, 's, Y: RuleBreakType, T: Tailoring> RuleBreakIterator<'data, 's, Y, 
                 handler: Y::handle,
             }),
             cache: VecDeque::from_iter([0]),
+            ignore_complex_until: Y::offset(&input),
             lookahead_positions: alloc::vec![None; data.num_lookaheads],
             last_accepting_status: 0,
+            remaining_input: input,
         }
     }
 }
@@ -203,7 +206,11 @@ impl<'s, Y: RuleBreakType, T: Tailoring> Iterator for RuleBreakIterator<'_, 's, 
                 (SegmenterStateMachine::EOT_CLASS, false)
             };
 
-            if Y::CAN_CONTAIN_SA && self.cache.is_empty() && is_complex {
+            if Y::CAN_CONTAIN_SA
+                && self.cache.is_empty()
+                && is_complex
+                && Y::offset(&iter) >= self.ignore_complex_until
+            {
                 #[allow(clippy::unwrap_used)] // is_complex implies self.complex is Some
                 let complex = self.complex.as_ref().unwrap();
 
@@ -236,6 +243,10 @@ impl<'s, Y: RuleBreakType, T: Tailoring> Iterator for RuleBreakIterator<'_, 's, 
                 // ignore the break point at the end – it might not be one and we'll run the state
                 // machine from the penultimate break point to figure that out
                 self.cache.pop_back();
+
+                // Don't reenter the complex path when restarting from the penumltiate break point.
+                // This might produce complex breaks that hadn't been produced before.
+                self.ignore_complex_until = Y::offset(&past_complex);
 
                 if let Some(&last_break) = self.cache.back() {
                     let mut at_last_break = iter.clone();
