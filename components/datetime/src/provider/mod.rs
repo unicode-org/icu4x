@@ -104,6 +104,35 @@ const _: () = {
     impl_datetime_patterns_date_japanese_v1!(Baked);
     impl_datetime_patterns_date_persian_v1!(Baked);
     impl_datetime_patterns_date_roc_v1!(Baked);
+
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_glue_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_time_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_buddhist_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_chinese_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_coptic_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_dangi_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_ethiopian_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_gregorian_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_hebrew_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_indian_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_hijri_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_japanese_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_persian_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_roc_v1!(Baked);
 };
 
 #[cfg(feature = "compiled_data")]
