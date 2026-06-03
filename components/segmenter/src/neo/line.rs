@@ -6,15 +6,12 @@ use super::RuleBreakIterator;
 use crate::complex::{ComplexPayloads, ComplexPayloadsBorrowed};
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::iterator_helpers::derive_usize_iterator_with_type;
-use crate::line::{LineBreakOptions, LineBreakStrictness};
+use crate::line::{LineBreakOptions, LineBreakStrictness, LineBreakWordOption};
 #[cfg(feature = "compiled_data")]
 use crate::provider::Baked;
 #[cfg(feature = "lstm")]
 use crate::provider::SegmenterLstmAutoV1;
-use crate::provider::{
-    RuleBreakDataOverride, SegmenterBreakGraphemeClusterV1, SegmenterBreakLineOverrideV2,
-    SegmenterBreakLineV2, SegmenterDictionaryExtendedV1, SegmenterStateMachine,
-};
+use crate::provider::*;
 use crate::scaffold::{Latin1, PotentiallyIllFormedUtf8, RuleBreakType, Utf16, Utf8};
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
@@ -219,6 +216,7 @@ impl LineSegmenter {
             + DataProvider<SegmenterBreakLineOverrideV2>
             + DataProvider<SegmenterLstmAutoV1>
             + DataProvider<SegmenterBreakGraphemeClusterV1>
+            + DataProvider<SegmenterBreakGraphemeClusterV2>
             + ?Sized,
     {
         Self::try_new_lstm_unstable(provider, options)
@@ -265,6 +263,7 @@ impl LineSegmenter {
             + DataProvider<SegmenterBreakLineOverrideV2>
             + DataProvider<SegmenterLstmAutoV1>
             + DataProvider<SegmenterBreakGraphemeClusterV1>
+            + DataProvider<SegmenterBreakGraphemeClusterV2>
             + ?Sized,
     {
         let mut s = Self::try_new_for_non_complex_scripts_unstable(provider, options)?;
@@ -308,6 +307,7 @@ impl LineSegmenter {
             + DataProvider<SegmenterDictionaryExtendedV1>
             + DataProvider<SegmenterBreakLineOverrideV2>
             + DataProvider<SegmenterBreakGraphemeClusterV1>
+            + DataProvider<SegmenterBreakGraphemeClusterV2>
             + ?Sized,
     {
         let mut s = Self::try_new_for_non_complex_scripts_unstable(provider, options)?;
@@ -328,24 +328,32 @@ impl LineSegmenter {
         let options = options.resolve();
         LineSegmenterBorrowed {
             data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V2,
-            tailoring: match (options.ja_zh, options.strictness) {
-                (true, LineBreakStrictness::Loose) => {
+            tailoring: match (options.ja_zh, options.strictness, options.word_option) {
+                (true, LineBreakStrictness::Loose, LineBreakWordOption::Normal) => {
                     Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_LOOSE_CJ)
                 }
-                (false, LineBreakStrictness::Loose) => {
+                (false, LineBreakStrictness::Loose, LineBreakWordOption::Normal) => {
                     Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_LOOSE)
                 }
-                (true, LineBreakStrictness::Normal) => {
+                (true, LineBreakStrictness::Normal, LineBreakWordOption::Normal) => {
                     Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_NORMAL_CJ)
                 }
-                (false, LineBreakStrictness::Normal) => {
+                (false, LineBreakStrictness::Normal, LineBreakWordOption::Normal) => {
                     Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_NORMAL)
                 }
-                (true, LineBreakStrictness::Strict) => {
+                (true, LineBreakStrictness::Strict, LineBreakWordOption::Normal) => {
                     Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_CJ)
                 }
-                (false, LineBreakStrictness::Strict) => None,
-                (_, LineBreakStrictness::Anywhere) => unimplemented!(),
+                (false, LineBreakStrictness::Strict, LineBreakWordOption::Normal) => None,
+                (_, LineBreakStrictness::Anywhere, _) => {
+                    // Return a line segmenter that is actually a grapheme cluster segmenter.
+                    return LineSegmenterBorrowed {
+                        data: Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V2,
+                        tailoring: None,
+                        complex: ComplexPayloadsBorrowed::new(),
+                    };
+                }
+                _ => unimplemented!(),
             },
             complex: ComplexPayloadsBorrowed::new(),
         }
@@ -369,28 +377,42 @@ impl LineSegmenter {
     where
         D: DataProvider<SegmenterBreakLineV2>
             + DataProvider<SegmenterBreakGraphemeClusterV1>
+            + DataProvider<SegmenterBreakGraphemeClusterV2>
             + DataProvider<SegmenterBreakLineOverrideV2>
             + ?Sized,
     {
         let options = options.resolve();
 
-        let tailoring = match (options.ja_zh, options.strictness) {
-            (true, LineBreakStrictness::Loose) => {
+        let tailoring = match (options.ja_zh, options.strictness, options.word_option) {
+            (true, LineBreakStrictness::Loose, LineBreakWordOption::Normal) => {
                 const { Some(DataMarkerAttributes::from_str_or_panic("loose_cj")) }
             }
-            (false, LineBreakStrictness::Loose) => {
+            (false, LineBreakStrictness::Loose, LineBreakWordOption::Normal) => {
                 const { Some(DataMarkerAttributes::from_str_or_panic("loose")) }
             }
-            (true, LineBreakStrictness::Normal) => {
+            (true, LineBreakStrictness::Normal, LineBreakWordOption::Normal) => {
                 const { Some(DataMarkerAttributes::from_str_or_panic("normal_cj")) }
             }
-            (false, LineBreakStrictness::Normal) => {
+            (false, LineBreakStrictness::Normal, LineBreakWordOption::Normal) => {
                 const { Some(DataMarkerAttributes::from_str_or_panic("normal")) }
             }
-            (true, LineBreakStrictness::Strict) => {
+            (true, LineBreakStrictness::Strict, LineBreakWordOption::Normal) => {
                 const { Some(DataMarkerAttributes::from_str_or_panic("cj")) }
             }
-            _ => None,
+            (_, LineBreakStrictness::Anywhere, _) => {
+                // Return a line segmenter that is actually a grapheme cluster segmenter.
+                return Ok(Self {
+                    payload: DataProvider::<SegmenterBreakGraphemeClusterV2>::load(
+                        provider,
+                        Default::default(),
+                    )?
+                    .payload
+                    .cast(),
+                    tailoring: None,
+                    complex: ComplexPayloads::try_new(provider)?,
+                });
+            }
+            _ => unimplemented!(),
         }
         .map(|a| {
             provider.load(DataRequest {

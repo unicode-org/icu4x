@@ -176,3 +176,94 @@ fn linebreak_loose() {
     loose("aa‐", false, &["aa‐"]);
     loose("aa–", false, &["aa–"]);
 }
+
+#[test]
+fn linebreak_anywhere() {
+    anywhere(
+        "الخيل والليل",
+        false,
+        &["ا", "ل", "خ", "ي", "ل", " ", "و", "ا", "ل", "ل", "ي", "ل"],
+    );
+
+    // css/css-text/line-break/line-break-anywhere-001.html
+    anywhere(
+        "aa-a.a)a,a) a aa\u{2060}aa･a",
+        true,
+        &[
+            "a", "a", "-", "a", ".", "a", ")", "a", ",", "a", ")", " ", "a", " ", "a", "a",
+            "\u{2060}", "a", "a", "･", "a",
+        ],
+    );
+
+    // css/css-text/line-break/line-break-anywhere-002.html
+    anywhere(
+        "no hyphenation",
+        false,
+        &[
+            "n", "o", " ", "h", "y", "p", "h", "e", "n", "a", "t", "i", "o", "n",
+        ],
+    );
+
+    // css/css-text/line-break/line-break-anywhere-003.html
+    anywhere("latin", false, &["l", "a", "t", "i", "n"]);
+
+    // css/css-text/line-break/line-break-anywhere-004.html
+    anywhere("XX XXX", false, &["X", "X", " ", "X", "X", "X"]);
+
+    // css/css-text/line-break/line-break-anywhere-005.html
+    anywhere("X X", false, &["X", " ", "X"]);
+
+    // css/css-text/line-break/line-break-anywhere-006.html
+    anywhere(
+        "XXXX XXXX",
+        false,
+        &["X", "X", "X", "X", " ", "X", "X", "X", "X"],
+    );
+
+    // css/css-text/line-break/line-break-anywhere-007.html
+    anywhere("X XX...", true, &["X", " ", "X", "X", ".", ".", "."]);
+
+    // css/css-text/line-break/line-break-anywhere-008.html
+    anywhere("X XX...", true, &["X", " ", "X", "X", ".", ".", "."]);
+
+    // css/css-text/line-break/line-break-anywhere-009.html
+    anywhere("X X", true, &["X", " ", "X"]);
+
+    // css/css-text/line-break/line-break-anywhere-010.html
+    anywhere(
+        "XXXX XXXX",
+        true,
+        &["X", "X", "X", "X", " ", "X", "X", "X", "X"],
+    );
+
+    // css/css-text/line-break/line-break-anywhere-011.html
+    anywhere("XX///", true, &["X", "X", "/", "/", "/"]);
+
+    // css/css-text/line-break/line-break-anywhere-012.html
+    anywhere(r#"X XX\\\"#, true, &["X", " ", "X", "X", "\\", "\\", "\\"]);
+
+    // css/css-text/line-break/line-break-anywhere-013.html
+    anywhere("XXX/X", true, &["X", "X", "X", "/", "X"]);
+
+    // css/css-text/line-break/line-break-anywhere-014.html
+    anywhere(r#"XXX\X"#, false, &["X", "X", "X", "\\", "X"]);
+
+    // css/css-text/line-break/line-break-anywhere-015.html
+    anywhere(r#"XXX\X"#, false, &["X", "X", "X", "\\", "X"]);
+
+    // css/css-text/line-break/line-break-anywhere-016.html
+    anywhere("XXX/X", false, &["X", "X", "X", "/", "X"]);
+
+    // css/css-text/line-break/line-break-anywhere-017.html
+    anywhere("XXXX X", false, &["X", "X", "X", "X", " ", "X"]);
+
+    // line-break-anywhere-overrides-uax-behavior-001.htm
+    anywhere("XX\u{2060}XX", false, &["X", "X", "\u{2060}", "X", "X"]);
+
+    // line-break-anywhere-overrides-uax-behavior-004.htm
+    anywhere(
+        "..\u{200B}...X",
+        false,
+        &[".", ".", "\u{200B}", ".", ".", ".", "X"],
+    );
+}
