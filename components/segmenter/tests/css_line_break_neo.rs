@@ -3,36 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locale_core::{langid, LanguageIdentifier};
-use icu_segmenter::neo::LineSegmenter;
+use icu_segmenter::neo::*;
 use icu_segmenter::options::LineBreakOptions;
 use icu_segmenter::options::LineBreakStrictness;
 use icu_segmenter::options::LineBreakWordOption;
-use itertools::Itertools;
 
-#[track_caller]
-fn check_with_options(s: &str, expected: &[&str], options: LineBreakOptions) {
-    let segmenter = LineSegmenter::new_dictionary(options);
-
-    let segments = segmenter
-        .segment_str(s)
-        .tuple_windows()
-        .map(|(a, b)| &s[a..b])
-        .collect::<Vec<_>>();
-    assert_eq!(segments, expected, "{s}");
-
-    let utf16: Vec<u16> = s.encode_utf16().collect();
-    let expected = expected
-        .iter()
-        .copied()
-        .map(|s| s.encode_utf16().collect::<Vec<_>>())
-        .collect::<Vec<_>>();
-    let iter = segmenter
-        .segment_utf16(&utf16)
-        .tuple_windows()
-        .map(|(a, b)| &utf16[a..b])
-        .collect::<Vec<_>>();
-    assert_eq!(iter, expected, "{s}");
-}
+include!("helpers.rs.raw");
 
 static JA: LanguageIdentifier = langid!("ja");
 
@@ -42,7 +18,7 @@ fn strict(s: &str, ja_zh: bool, expected: &[&str]) {
     options.strictness = Some(LineBreakStrictness::Strict);
     options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
-    check_with_options(s, expected, options);
+    check_line(s, expected, LineSegmenter::new_dictionary(options));
 }
 
 #[track_caller]
@@ -51,7 +27,7 @@ fn normal(s: &str, ja_zh: bool, expected: &[&str]) {
     options.strictness = Some(LineBreakStrictness::Normal);
     options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
-    check_with_options(s, expected, options);
+    check_line(s, expected, LineSegmenter::new_dictionary(options));
 }
 
 #[track_caller]
@@ -60,7 +36,16 @@ fn loose(s: &str, ja_zh: bool, expected: &[&str]) {
     options.strictness = Some(LineBreakStrictness::Loose);
     options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
-    check_with_options(s, expected, options);
+    check_line(s, expected, LineSegmenter::new_dictionary(options));
+}
+
+#[track_caller]
+fn anywhere(s: &str, ja_zh: bool, expected: &[&str]) {
+    let mut options = LineBreakOptions::default();
+    options.strictness = Some(LineBreakStrictness::Anywhere);
+    options.word_option = Some(LineBreakWordOption::Normal);
+    options.content_locale = ja_zh.then_some(&JA);
+    check_line(s, expected, LineSegmenter::new_dictionary(options));
 }
 
 #[test]

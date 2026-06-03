@@ -2,57 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_segmenter::*;
 use icu_segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
-use icu_segmenter::{LineSegmenterBorrowed, WordSegmenterBorrowed};
-use itertools::Itertools;
+
+include!("helpers.rs.raw");
 
 // Additional word segmenter tests with complex string.
-
-#[track_caller]
-fn test_word(segmenter: WordSegmenterBorrowed, s: &str, expected: &[&str]) {
-    let segments = segmenter
-        .segment_str(s)
-        .tuple_windows()
-        .map(|(a, b)| &s[a..b])
-        .collect::<Vec<_>>();
-    assert_eq!(segments, expected);
-
-    let utf16: Vec<u16> = s.encode_utf16().collect();
-    let expected = expected
-        .iter()
-        .copied()
-        .map(|s| s.encode_utf16().collect::<Vec<_>>())
-        .collect::<Vec<_>>();
-    let iter = segmenter
-        .segment_utf16(&utf16)
-        .tuple_windows()
-        .map(|(a, b)| &utf16[a..b])
-        .collect::<Vec<_>>();
-    assert_eq!(iter, expected);
-}
-
-#[track_caller]
-fn test_line(segmenter: LineSegmenterBorrowed, s: &str, expected: &[&str]) {
-    let segments = segmenter
-        .segment_str(s)
-        .tuple_windows()
-        .map(|(a, b)| &s[a..b])
-        .collect::<Vec<_>>();
-    assert_eq!(segments, expected);
-
-    let utf16: Vec<u16> = s.encode_utf16().collect();
-    let expected = expected
-        .iter()
-        .copied()
-        .map(|s| s.encode_utf16().collect::<Vec<_>>())
-        .collect::<Vec<_>>();
-    let iter = segmenter
-        .segment_utf16(&utf16)
-        .tuple_windows()
-        .map(|(a, b)| &utf16[a..b])
-        .collect::<Vec<_>>();
-    assert_eq!(iter, expected);
-}
 
 #[test]
 fn word_break_th() {
@@ -64,13 +19,13 @@ fn word_break_th() {
         let s = "ภาษาไทยภาษาไทย";
         let expected = ["ภาษา", "ไทย", "ภาษา", "ไทย"];
 
-        test_word(segmenter, s, &expected);
+        check_word(s, &expected, segmenter);
 
         // Combine non-Thai and Thai.
         let s = "aภาษาไทยภาษาไทยb";
         let expected = ["a", "ภาษา", "ไทย", "ภาษา", "ไทย", "b"];
 
-        test_word(segmenter, s, &expected);
+        check_word(s, &expected, segmenter);
     }
 }
 
@@ -80,7 +35,7 @@ fn word_break_my() {
 
     let s = "မြန်မာစာမြန်မာစာမြန်မာစာ";
     let expected = ["မြန်မာစာ", "မြန်မာစာ", "မြန်မာ", "စာ"];
-    test_word(segmenter, s, &expected);
+    check_word(s, &expected, segmenter);
 }
 
 #[test]
@@ -91,7 +46,7 @@ fn word_break_hiragana() {
     ] {
         let s = "うなぎうなじ";
         let expected = ["うなぎ", "うなじ"];
-        test_word(segmenter, s, &expected);
+        check_word(s, &expected, segmenter);
     }
 }
 
@@ -103,7 +58,7 @@ fn word_break_mixed_han() {
     ] {
         let s = "Welcome龟山岛龟山岛Welcome";
         let expected = ["Welcome", "龟山岛", "龟山岛", "Welcome"];
-        test_word(segmenter, s, &expected);
+        check_word(s, &expected, segmenter);
     }
 }
 
@@ -113,11 +68,7 @@ fn word_line_th_wikipedia_auto() {
 
     let text = "แพนด้าแดง (อังกฤษ: Red panda, Shining cat; จีน: 小熊貓; พินอิน: Xiǎo xióngmāo) สัตว์เลี้ยงลูกด้วยนมชนิดหนึ่ง มีชื่อวิทยาศาสตร์ว่า Ailurus fulgens";
 
-    let segmenter_word_auto = WordSegmenter::new_auto(Default::default());
-    let segmenter_line_auto = LineSegmenter::new_auto(Default::default());
-
-    test_word(
-        segmenter_word_auto,
+    check_word(
         text,
         &[
             "แพน",
@@ -172,9 +123,10 @@ fn word_line_th_wikipedia_auto() {
             " ",
             "fulgens",
         ],
+        WordSegmenter::new_auto(Default::default()),
     );
-    test_line(
-        segmenter_line_auto,
+
+    check_line(
         text,
         &[
             "แพน",
@@ -214,5 +166,6 @@ fn word_line_th_wikipedia_auto() {
             "Ailurus ",
             "fulgens",
         ],
+        LineSegmenter::new_auto(Default::default()),
     );
 }

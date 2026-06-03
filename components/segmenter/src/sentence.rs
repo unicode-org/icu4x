@@ -331,7 +331,6 @@ impl SentenceSegmenterBorrowed<'static> {
     }
 }
 
-#[cfg(all(test, feature = "serde"))]
 #[test]
 fn empty_string() {
     let segmenter = SentenceSegmenter::new(Default::default());

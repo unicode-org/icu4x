@@ -5,33 +5,9 @@
 use icu_segmenter::options::LineBreakOptions;
 use icu_segmenter::options::LineBreakStrictness;
 use icu_segmenter::options::LineBreakWordOption;
-use icu_segmenter::LineSegmenter;
-use itertools::Itertools;
+use icu_segmenter::*;
 
-#[track_caller]
-fn check_with_options(s: &str, expected: &[&str], options: LineBreakOptions) {
-    let segmenter = LineSegmenter::new_dictionary(options);
-
-    let segments = segmenter
-        .segment_str(s)
-        .tuple_windows()
-        .map(|(a, b)| &s[a..b])
-        .collect::<Vec<_>>();
-    assert_eq!(segments, expected, "{s}");
-
-    let utf16: Vec<u16> = s.encode_utf16().collect();
-    let expected = expected
-        .iter()
-        .copied()
-        .map(|s| s.encode_utf16().collect::<Vec<_>>())
-        .collect::<Vec<_>>();
-    let iter = segmenter
-        .segment_utf16(&utf16)
-        .tuple_windows()
-        .map(|(a, b)| &utf16[a..b])
-        .collect::<Vec<_>>();
-    assert_eq!(iter, expected, "{s}");
-}
+include!("helpers.rs.raw");
 
 #[track_caller]
 fn break_all(s: &str, expected: &[&str]) {
@@ -39,7 +15,7 @@ fn break_all(s: &str, expected: &[&str]) {
     options.strictness = Some(LineBreakStrictness::Strict);
     options.word_option = Some(LineBreakWordOption::BreakAll);
     options.content_locale = None;
-    check_with_options(s, expected, options);
+    check_line(s, expected, LineSegmenter::new_dictionary(options));
 }
 
 #[track_caller]
@@ -48,7 +24,7 @@ fn keep_all(s: &str, expected: &[&str]) {
     options.strictness = Some(LineBreakStrictness::Strict);
     options.word_option = Some(LineBreakWordOption::KeepAll);
     options.content_locale = None;
-    check_with_options(s, expected, options);
+    check_line(s, expected, LineSegmenter::new_dictionary(options));
 }
 
 #[track_caller]
@@ -57,7 +33,7 @@ fn normal(s: &str, expected: &[&str]) {
     options.strictness = Some(LineBreakStrictness::Strict);
     options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = None;
-    check_with_options(s, expected, options);
+    check_line(s, expected, LineSegmenter::new_dictionary(options));
 }
 
 #[test]
@@ -138,17 +114,13 @@ fn wordbreak_keepall() {
 
     // failed test. JL, JV and JT
     keep_all("애기판다", &["애기판다"]);
-}
 
-#[test]
-#[cfg(feature = "lstm")]
-fn wordbreak_keepall_lstm() {
     // from css/css-text/word-break/word-break-keep-all-003.html
     keep_all("และและ", &["และ", "และ"]);
 }
 
 #[test]
-fn wordbreak_normal() {
+fn wordbreak_normal_th() {
     // from css/css-text/word-break/word-break-normal-th-000.html
     normal("ภาษาไทยภาษาไทย", &["ภาษา", "ไทย", "ภาษา", "ไทย"]);
 }
