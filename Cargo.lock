@@ -4245,7 +4245,7 @@ dependencies = [
 
 [[package]]
 name = "yoke"
-version = "0.8.2"
+version = "0.8.3"
 dependencies = [
  "bincode",
  "postcard",
