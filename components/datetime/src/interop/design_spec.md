@@ -95,10 +95,13 @@ The resolution function outputs a struct containing:
 ### 4.2. Precedence Rules
 
 The resolution logic follows this order of precedence:
+
 1.  **Skeleton**: If `skeleton` is set, it is returned. Styles are set to `None`.
 2.  **Styles**: If `date_style` or `time_style` is set, they are returned. The skeleton is set to `None`. Individual field options are ignored.
 3.  **Individual Fields**: If neither skeletons nor styles are set:
-    *   A skeleton is constructed from the individual fields (ECMA-style options take precedence over ICU4X-style options if both are present).
+    *   **ECMA-style Fields (Field Options to Skeleton)**: If ECMA options (`year`, `month`, `day`, etc.) are present, they are mapped to standard UTS 35 skeleton symbols. This is a direct **one-to-one mapping** (e.g., `year: Numeric` -> `y`, `month: Long` -> `MMMM`, `day: TwoDigit` -> `dd`). These mapped symbols are then concatenated in UTS 35 canonical order to form the resolved classical skeleton.
+    *   **ICU4X-style Fields (Semantic Skeleton to Classical Skeleton)**: If no ECMA options are present, but ICU4X builder-style options (`date_fields`, `time_precision`, `zone_style`, etc.) are present, they are treated as an ICU4X semantic skeleton. This semantic skeleton is mapped to a classical skeleton according to the detailed rules described in **Section 5.1 (ICU4C Backend Mapping)** (which handles standalone vs formatting, time precision variations, and year style variations).
+    *   **Conflict Resolution**: If both ECMA-style and ICU4X-style options are present, the ECMA-style options take precedence.
     *   Styles are set to `None`.
 
 ---
