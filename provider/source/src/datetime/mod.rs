@@ -280,7 +280,7 @@ where
 
 #[cfg(test)]
 mod test {
-    use crate::datetime::available_formats::AsciiPreferences;
+    use crate::datetime::available_formats::DatetimeAsciiPreference;
 
     use super::*;
     use icu::{
@@ -295,7 +295,7 @@ mod test {
             .unwrap()
             .datetime_formats
             .available_formats
-            .parse_skeletons(AsciiPreferences::Default);
+            .parse_skeletons(DatetimeAsciiPreference::Default);
 
         assert_eq!(
             Some(&PluralElements::new(

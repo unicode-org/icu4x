@@ -13,17 +13,17 @@ use std::collections::btree_map::Entry;
 use std::collections::BTreeMap;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub(crate) enum AsciiPreferences {
+pub(crate) enum DatetimeAsciiPreference {
     PreferAscii,
     Default,
 }
 
 impl SourceDataProvider {
-    pub(crate) fn ascii_preferences(&self) -> AsciiPreferences {
+    pub(crate) fn datetime_ascii_preference(&self) -> DatetimeAsciiPreference {
         if self.alt_variants.contains(&AltVariantKind::DatetimeAscii) {
-            AsciiPreferences::PreferAscii
+            DatetimeAsciiPreference::PreferAscii
         } else {
-            AsciiPreferences::Default
+            DatetimeAsciiPreference::Default
         }
     }
 }
@@ -31,7 +31,7 @@ impl SourceDataProvider {
 impl cldr_serde::ca::AvailableFormats {
     pub fn parse_skeletons(
         &self,
-        ascii_preferences: AsciiPreferences,
+        datetime_ascii_preference: DatetimeAsciiPreference,
     ) -> BTreeMap<Skeleton, PluralElements<Pattern<'static>>> {
         let mut patterns: BTreeMap<String, BTreeMap<PluralCategory, String>> = BTreeMap::new();
 
@@ -42,7 +42,7 @@ impl cldr_serde::ca::AvailableFormats {
                 Some(stripped) => (stripped, true),
                 None => (skeleton_str.as_str(), false),
             };
-            if ascii_preferences == AsciiPreferences::Default && is_alt_ascii {
+            if datetime_ascii_preference == DatetimeAsciiPreference::Default && is_alt_ascii {
                 continue;
             }
 
@@ -116,7 +116,7 @@ mod test {
             .unwrap();
         data.datetime_formats
             .available_formats
-            .parse_skeletons(AsciiPreferences::Default)
+            .parse_skeletons(DatetimeAsciiPreference::Default)
     }
 
     /// This is an initial smoke test to verify the skeleton machinery is working. For more in-depth
@@ -452,11 +452,11 @@ mod test {
         let skeletons_no_alt = data
             .datetime_formats
             .available_formats
-            .parse_skeletons(AsciiPreferences::Default);
+            .parse_skeletons(DatetimeAsciiPreference::Default);
         let skeletons_alt = data
             .datetime_formats
             .available_formats
-            .parse_skeletons(AsciiPreferences::PreferAscii);
+            .parse_skeletons(DatetimeAsciiPreference::PreferAscii);
 
         let h_skeleton = Skeleton::try_from("h").unwrap();
 

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::DatagenCalendar;
-use crate::datetime::available_formats::AsciiPreferences;
+use crate::datetime::available_formats::DatetimeAsciiPreference;
 use crate::debug_provider::DebugProvider;
 use crate::{cldr_serde, AltVariantKind, IterableDataProviderCached, SourceDataProvider};
 use icu::datetime::fieldsets::enums::*;
@@ -190,12 +190,14 @@ impl SourceDataProvider {
         let data = self.get_dates_resource(locale, calendar)?;
 
         // Note: We default to atTime here (See https://github.com/unicode-org/conformance/issues/469)
-        let length_combinations_v1 =
-            convert_length_patterns(&data.datetime_formats_at_time, self.ascii_preferences());
+        let length_combinations_v1 = convert_length_patterns(
+            &data.datetime_formats_at_time,
+            self.datetime_ascii_preference(),
+        );
         let skeleton_patterns = data
             .datetime_formats
             .available_formats
-            .parse_skeletons(self.ascii_preferences());
+            .parse_skeletons(self.datetime_ascii_preference());
 
         fn enforce_consistent_field_lengths(
             trio: &mut VariantPatterns,
@@ -456,12 +458,12 @@ fn preferred_hour_cycle(other: &cldr_serde::ca::Dates, locale: &DataLocale) -> C
 
 pub(crate) fn convert_length_patterns<'data>(
     other: &'data cldr_serde::ca::DateTimeFormatsVariant,
-    ascii_preferences: AsciiPreferences,
+    datetime_ascii_preference: DatetimeAsciiPreference,
 ) -> GenericLengthPatterns<'data> {
     let choose_pattern =
         |std: &'data cldr_serde::ca::LengthPattern,
          alt: &'data Option<cldr_serde::ca::LengthPattern>| {
-            if ascii_preferences == AsciiPreferences::PreferAscii {
+            if datetime_ascii_preference == DatetimeAsciiPreference::PreferAscii {
                 alt.as_ref().unwrap_or(std)
             } else {
                 std
