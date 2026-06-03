@@ -190,21 +190,12 @@ impl SourceDataProvider {
         let data = self.get_dates_resource(locale, calendar)?;
 
         // Note: We default to atTime here (See https://github.com/unicode-org/conformance/issues/469)
-        let length_combinations_v1 = convert_length_patterns(
-            &data.datetime_formats_at_time,
-            if self.alt_variants.contains(&AltVariantKind::DatetimeAscii) {
-                AsciiPreferences::PreferAscii
-            } else {
-                AsciiPreferences::Default
-            },
-        );
-        let skeleton_patterns = data.datetime_formats.available_formats.parse_skeletons(
-            if self.alt_variants.contains(&AltVariantKind::DatetimeAscii) {
-                AsciiPreferences::PreferAscii
-            } else {
-                AsciiPreferences::Default
-            },
-        );
+        let length_combinations_v1 =
+            convert_length_patterns(&data.datetime_formats_at_time, self.ascii_preferences());
+        let skeleton_patterns = data
+            .datetime_formats
+            .available_formats
+            .parse_skeletons(self.ascii_preferences());
 
         fn enforce_consistent_field_lengths(
             trio: &mut VariantPatterns,

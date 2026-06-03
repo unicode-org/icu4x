@@ -7,6 +7,8 @@ use icu::datetime::provider::pattern::runtime::Pattern;
 use icu::datetime::provider::skeleton::reference::Skeleton;
 use icu::plurals::{PluralCategory, PluralElements};
 
+use crate::AltVariantKind;
+use crate::SourceDataProvider;
 use std::collections::btree_map::Entry;
 use std::collections::BTreeMap;
 
@@ -14,6 +16,16 @@ use std::collections::BTreeMap;
 pub(crate) enum AsciiPreferences {
     PreferAscii,
     Default,
+}
+
+impl SourceDataProvider {
+    pub(crate) fn ascii_preferences(&self) -> AsciiPreferences {
+        if self.alt_variants.contains(&AltVariantKind::DatetimeAscii) {
+            AsciiPreferences::PreferAscii
+        } else {
+            AsciiPreferences::Default
+        }
+    }
 }
 
 impl cldr_serde::ca::AvailableFormats {
