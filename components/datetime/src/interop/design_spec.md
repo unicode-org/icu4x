@@ -50,134 +50,56 @@ graph TD
 
 ## 3. The Catchall Options Bag
 
-We define a single, comprehensive options struct in `icu_datetime::interop`. Note that raw LDML patterns are excluded from this options bag to maintain backend symmetry (as ICU4X does not support arbitrary patterns at runtime; see Section 9).
+Instead of separate option structures, a single unified `DateTimeFormatterOptions` struct is exposed. Note that raw LDML patterns are excluded from this options bag to maintain backend symmetry (as ICU4X does not support arbitrary patterns at runtime; see Section 9).
 
-```rust
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
-pub struct DateTimeFormatterOptions {
-    // ==========================================
-    // 1. Classical / ICU4C Overrides
-    // ==========================================
-    /// A classical skeleton string (e.g., "yMdHms").
-    pub skeleton: Option<String>,
+### 3.1. Options Table
 
-    // ==========================================
-    // 2. High-level Styles (ECMA & ICU4C)
-    // ==========================================
-    pub date_style: Option<DateTimeStyle>,
-    pub time_style: Option<DateTimeStyle>,
+The options bag supports the following fields:
 
-    // ==========================================
-    // 3. ICU4X Builder-style Fields
-    // ==========================================
-    pub date_fields: Option<DateFields>,
-    pub time_precision: Option<TimePrecision>,
-    pub zone_style: Option<ZoneStyle>,
-    pub alignment: Option<Alignment>,
-    pub year_style: Option<YearStyle>,
-
-    // ==========================================
-    // 4. ECMA-402 Fine-Grained Field Options
-    // ==========================================
-    pub weekday: Option<WeekdayStyle>,
-    pub era: Option<EraStyle>,
-    pub year: Option<YearStyleOption>,
-    pub month: Option<MonthStyle>,
-    pub day: Option<DayStyle>,
-    pub day_period: Option<DayPeriodStyle>,
-    pub hour: Option<HourStyle>,
-    pub minute: Option<MinuteStyle>,
-    pub second: Option<SecondStyle>,
-    pub fractional_second_digits: Option<u8>, // 1..9
-    pub time_zone_name: Option<TimeZoneNameStyle>,
-
-    // ==========================================
-    // 5. Global Preferences
-    // ==========================================
-    pub hour_cycle: Option<HourCycle>,
-}
-```
-
-### 3.1. Supporting Enums
-
-```rust
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub enum DateTimeStyle {
-    Full,
-    Long,
-    Medium,
-    Short,
-}
-
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub enum WeekdayStyle { Narrow, Short, Long }
-
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub enum EraStyle { Narrow, Short, Long }
-
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub enum YearStyleOption { Numeric, TwoDigit }
-
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub enum MonthStyle { Numeric, TwoDigit, Narrow, Short, Long }
-
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub enum DayStyle { Numeric, TwoDigit }
-
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub enum DayPeriodStyle { Narrow, Short, Long }
-
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub enum HourStyle { Numeric, TwoDigit }
-
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub enum MinuteStyle { Numeric, TwoDigit }
-
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub enum SecondStyle { Numeric, TwoDigit }
-
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub enum TimeZoneNameStyle {
-    Short,
-    Long,
-    ShortOffset,
-    LongOffset,
-    ShortGeneric,
-    LongGeneric,
-}
-```
+| Category | Option Name | Type / Values | Description |
+|---|---|---|---|
+| **ICU4C Overrides** | `skeleton` | String (Optional) | Classical skeleton (e.g., `yMdHms`). If set, individual fields are ignored. |
+| **High-level Styles** | `date_style` | `Full`, `Long`, `Medium`, `Short` (Optional) | Pre-defined style for the date part. |
+| | `time_style` | `Full`, `Long`, `Medium`, `Short` (Optional) | Pre-defined style for the time part. |
+| **ICU4X Fields** | `date_fields` | `DateFields` Enum (Optional) | ICU4X pre-defined date field combinations (YMD, MD, etc.). |
+| | `time_precision`| `TimePrecision` Enum (Optional) | ICU4X time precision (Hour, Minute, Second, Subsecond, etc.). |
+| | `zone_style` | `ZoneStyle` Enum (Optional) | ICU4X timezone style (SpecificLong, LocalizedOffset, etc.). |
+| | `alignment` | `Alignment` Enum (Optional) | ICU4X Column/Auto alignment. |
+| | `year_style` | `YearStyle` Enum (Optional) | ICU4X Year style (WithEra, NoEra, etc.). |
+| **ECMA Field Styles** | `weekday` | `Narrow`, `Short`, `Long` (Optional) | Weekday display style. |
+| | `era` | `Narrow`, `Short`, `Long` (Optional) | Era display style. |
+| | `year` | `Numeric`, `TwoDigit` (Optional) | Year display style. |
+| | `month` | `Numeric`, `TwoDigit`, `Narrow`, `Short`, `Long` (Optional) | Month display style. |
+| | `day` | `Numeric`, `TwoDigit` (Optional) | Day display style. |
+| | `day_period` | `Narrow`, `Short`, `Long` (Optional) | AM/PM display style. |
+| | `hour` | `Numeric`, `TwoDigit` (Optional) | Hour display style. |
+| | `minute` | `Numeric`, `TwoDigit` (Optional) | Minute display style. |
+| | `second` | `Numeric`, `TwoDigit` (Optional) | Second display style. |
+| | `fractional_second_digits` | 1..9 (Optional) | Number of fractional second digits. |
+| | `time_zone_name` | `Short`, `Long`, `ShortOffset`, `LongOffset`, `ShortGeneric`, `LongGeneric` (Optional) | Timezone display style. |
+| **Preferences** | `hour_cycle` | `HourCycle` Enum (Optional) | Hour cycle override (H11, H12, H23, H24). |
 
 ---
 
 ## 4. Rust Resolution Layer (`icu_datetime::interop`)
 
-This module is responsible for translating the options bag into concrete arguments that ICU4C can understand.
+This module translates the catchall options bag into resolved parameters for ICU4C, without invoking ICU4C.
 
-```rust
-#[repr(i32)]
-pub enum InteropDateFormatStyle {
-    None = -1,
-    Full = 0,
-    Long = 1,
-    Medium = 2,
-    Short = 3,
-}
+### 4.1. Resolved Output
 
-pub struct Icu4cResolvedArgs {
-    pub skeleton: Option<String>,
-    pub date_style: InteropDateFormatStyle,
-    pub time_style: InteropDateFormatStyle,
-}
+The resolution function outputs a struct containing:
+-   `skeleton`: Resolved classical skeleton string (Optional).
+-   `date_style`: Resolved date style enum (`Full`, `Long`, `Medium`, `Short`, or `None`).
+-   `time_style`: Resolved time style enum (`Full`, `Long`, `Medium`, `Short`, or `None`).
 
-/// Resolves the catchall options bag into ICU4C arguments.
-/// Does NOT call ICU4C.
-pub fn resolve_icu4c_args(options: &DateTimeFormatterOptions) -> Icu4cResolvedArgs {
-    // Resolution logic following precedence:
-    // 1. If skeleton is set -> return skeleton, styles = None
-    // 2. If styles are set -> return styles, skeleton = None
-    // 3. If individual fields are set -> construct skeleton, return skeleton, styles = None
-}
-```
+### 4.2. Precedence Rules
+
+The resolution logic follows this order of precedence:
+1.  **Skeleton**: If `skeleton` is set, it is returned. Styles are set to `None`.
+2.  **Styles**: If `date_style` or `time_style` is set, they are returned. The skeleton is set to `None`. Individual field options are ignored.
+3.  **Individual Fields**: If neither skeletons nor styles are set:
+    *   A skeleton is constructed from the individual fields (ECMA-style options take precedence over ICU4X-style options if both are present).
+    *   Styles are set to `None`.
 
 ---
 
@@ -261,123 +183,44 @@ ICU4X is static/data-efficient. Mapping arbitrary options to ICU4X requires reso
 
 ## 6. FFI Export Layer (`icu_capi`)
 
-Using Diplomat, we expose the options bag and the resolution function.
+Using Diplomat, the interop layer exposes the following C-compatible interface:
 
-```rust
-// ffi/capi/src/interop.rs (conceptual Diplomat bridge)
-#[diplomat::bridge]
-pub mod ffi {
-    use crate::locale::ffi::ICU4XLocale;
-    
-    // Diplomat-compatible version of DateTimeFormatterOptions
-    pub struct ICU4XDateTimeFormatterOptions { ... }
-
-    #[diplomat::opaque]
-    pub struct ICU4CIteropResolvedArgs {
-        pub(crate) inner: icu_datetime::interop::Icu4cResolvedArgs,
-    }
-
-    impl ICU4CIteropResolvedArgs {
-        pub fn skeleton(&self, writeable: &mut diplomat_runtime::DiplomatWriteable) -> DiplomatResult<(), ()> {
-             // writes self.inner.skeleton to writeable
-        }
-        pub fn date_style(&self) -> i32 { self.inner.date_style as i32 }
-        pub fn time_style(&self) -> i32 { self.inner.time_style as i32 }
-    }
-
-    pub fn resolve_icu4c_args(options: &ICU4XDateTimeFormatterOptions) -> Box<ICU4CIteropResolvedArgs> {
-        Box::new(ICU4CIteropResolvedArgs {
-            inner: icu_datetime::interop::resolve_icu4c_args(&options.into())
-        })
-    }
-}
-```
+-   **`ICU4XDateTimeFormatterOptions` Struct**: A C-compatible version of the catchall options bag.
+-   **`ICU4CIteropResolvedArgs` Opaque Type**: Wraps the resolved ICU4C arguments.
+    *   Exposes a method to write the resolved `skeleton` into a `DiplomatWriteable`.
+    *   Exposes methods to get the resolved `date_style` and `time_style` as integers.
+-   **`resolve_icu4c_args` Function**: Accepts `ICU4XDateTimeFormatterOptions` and returns `Box<ICU4CIteropResolvedArgs>`.
 
 ---
 
 ## 7. C/C++ Header-only Interop Layer (`ffi/icu4c_interop`)
 
-This layer is distributed as C++ headers that clients include. It handles the dynamic switching and calls the respective libraries.
+A C++ wrapper (e.g., `icu_interop::DateTimeFormatter`) is provided as a header-only library. It manages the switching logic and calls the appropriate underlying library.
 
-### Conceptual C++ API:
+### 7.1. Initialization Flow
 
-```cpp
-#pragma once
-#include "icu_capi.h" // ICU4X C API
-#include <unicode/udat.h> // ICU4C C API
-#include <string>
+1.  **Switch Backend**: The class constructor accepts a `Backend` enum (`ICU4X` or `ICU4C`).
+2.  **ICU4X Path**:
+    *   Directly calls `icu_capi`'s `icu4x_datetime_formatter_create` using the provided options bag.
+3.  **ICU4C Path**:
+    *   Calls FFI `resolve_icu4c_args` to get resolved skeleton and styles.
+    *   If a resolved `skeleton` is present:
+        *   Opens a pattern generator using `udatpg_open`.
+        *   Retrieves the best pattern for the skeleton using `udatpg_getBestPattern`.
+        *   Opens the formatter using `udat_open` with the resolved pattern.
+        *   Closes the generator using `udatpg_close`.
+    *   Else (styles are present):
+        *   Opens the formatter using `udat_open` with the resolved date and time styles.
 
-namespace icu_interop {
+### 7.2. Formatting Flow
 
-enum class Backend {
-    ICU4X,
-    ICU4C
-};
-
-class DateTimeFormatter {
-public:
-    DateTimeFormatter(const std::string& locale, const ICU4XDateTimeFormatterOptions& options, Backend backend) 
-        : backend_(backend) {
-        if (backend_ == Backend::ICU4X) {
-            // Initialize ICU4X formatter using icu_capi
-            icu4x_formatter_ = icu4x_datetime_formatter_create(locale.c_str(), &options);
-        } else {
-            // 1. Call ICU4X CAPI to resolve arguments
-            auto resolved = icu4x_interop_resolve_icu4c_args(&options);
-            
-            // 2. Extract resolved args
-            std::string skeleton = get_skeleton(resolved);
-            UDateFormatStyle date_style = (UDateFormatStyle)icu4x_interop_resolved_args_date_style(resolved);
-            UDateFormatStyle time_style = (UDateFormatStyle)icu4x_interop_resolved_args_time_style(resolved);
-            
-            // 3. Initialize ICU4C
-            UErrorCode status = U_ZERO_ERROR;
-            if (!skeleton.empty()) {
-                // Use udatpg to get best pattern, then udat_open
-                UDateTimePatternGenerator* pg = udatpg_open(locale.c_str(), &status);
-                // ... udatpg_getBestPattern ...
-                // ... udat_open ...
-                udatpg_close(pg);
-            } else {
-                icu4c_formatter_ = udat_open(time_style, date_style, locale.c_str(), nullptr, 0, nullptr, 0, &status);
-            }
-            icu4x_interop_resolved_args_destroy(resolved);
-        }
-    }
-
-    ~DateTimeFormatter() {
-        if (icu4x_formatter_) icu4x_datetime_formatter_destroy(icu4x_formatter_);
-        if (icu4c_formatter_) udat_close(icu4c_formatter_);
-    }
-
-    std::string format(const ICU4XDateTime& datetime) {
-        if (backend_ == Backend::ICU4X) {
-            // Format using ICU4X CAPI
-            return icu4x_datetime_formatter_format(icu4x_formatter_, &datetime);
-        } else {
-            // 1. Convert ICU4X datetime input to UDate (milliseconds)
-            UDate udate = convert_to_udate(datetime);
-            // 2. Format using ICU4C
-            UErrorCode status = U_ZERO_ERROR;
-            UChar result[64];
-            udat_format(icu4c_formatter_, udate, result, 64, nullptr, &status);
-            return convert_to_std_string(result);
-        }
-    }
-
-private:
-    Backend backend_;
-    ICU4XDateTimeFormatter* icu4x_formatter_ = nullptr;
-    UDateFormat* icu4c_formatter_ = nullptr;
-    
-    UDate convert_to_udate(const ICU4XDateTime& datetime) {
-        // Implementation uses icu_capi getters to extract year, month, day, etc.
-        // and calculates epoch milliseconds.
-    }
-};
-
-} // namespace icu_interop
-```
+1.  **ICU4X Path**:
+    *   Calls `icu_capi`'s formatting function with the ICU4X formatter and input.
+2.  **ICU4C Path**:
+    *   Extracts datetime fields (year, month, day, hour, minute, second) from the ICU4X input object using `icu_capi` getters.
+    *   Converts the fields to a `UDate` (epoch milliseconds) or sets them on a `UCalendar`.
+    *   Calls ICU4C's `udat_format` with the `UDate` or `UCalendar`.
+    *   Converts the resulting `UChar` buffer to a C++ `std::string`.
 
 ---
 
