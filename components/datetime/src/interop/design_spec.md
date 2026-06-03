@@ -101,7 +101,54 @@ pub struct DateTimeFormatterOptions {
 }
 ```
 
-*(Refer to previous design version for supporting enums definition).*
+### 3.1. Supporting Enums
+
+```rust
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum DateTimeStyle {
+    Full,
+    Long,
+    Medium,
+    Short,
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum WeekdayStyle { Narrow, Short, Long }
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum EraStyle { Narrow, Short, Long }
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum YearStyleOption { Numeric, TwoDigit }
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum MonthStyle { Numeric, TwoDigit, Narrow, Short, Long }
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum DayStyle { Numeric, TwoDigit }
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum DayPeriodStyle { Narrow, Short, Long }
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum HourStyle { Numeric, TwoDigit }
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum MinuteStyle { Numeric, TwoDigit }
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum SecondStyle { Numeric, TwoDigit }
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum TimeZoneNameStyle {
+    Short,
+    Long,
+    ShortOffset,
+    LongOffset,
+    ShortGeneric,
+    LongGeneric,
+}
+```
 
 ---
 
@@ -129,6 +176,7 @@ pub struct Icu4cResolvedArgs {
 /// Resolves the catchall options bag into ICU4C arguments.
 /// Does NOT call ICU4C.
 pub fn resolve_icu4c_args(options: &DateTimeFormatterOptions) -> Icu4cResolvedArgs {
+    // Resolution logic following precedence:
     // 1. If pattern is set -> return pattern, styles = None
     // 2. If skeleton is set -> return skeleton, styles = None
     // 3. If styles are set -> return styles, skeleton/pattern = None
@@ -136,11 +184,67 @@ pub fn resolve_icu4c_args(options: &DateTimeFormatterOptions) -> Icu4cResolvedAr
 }
 ```
 
-*Precedence and mapping rules from options to skeletons remain as defined in Section 5 of the previous design.*
+---
+
+## 5. Backend Mapping Specifications
+
+To handle overlap and ensure consistent output across backends, the interop layer defines strict mapping rules.
+
+### 5.1. ICU4C Backend Mapping
+
+ICU4C is dynamic and maps naturally to skeletons and styles.
+
+#### Individual Fields (ECMA/ICU4X) to Skeleton:
+When individual fields are used, a skeleton string is constructed using the following symbol mapping:
+
+| Field Option | Value | Skeleton Symbol |
+|---|---|---|
+| `weekday` | `Narrow` / `Short` / `Long` | `EEEEE` / `E` / `EEEE` |
+| `era` | `Narrow` / `Short` / `Long` | `GGGGG` / `G` / `GGGG` |
+| `year` | `Numeric` / `TwoDigit` | `y` / `yy` |
+| `month` | `Numeric` / `TwoDigit` / `Narrow` / `Short` / `Long` | `M` / `MM` / `MMMMM` / `MMM` / `MMMM` |
+| `day` | `Numeric` / `TwoDigit` | `d` / `dd` |
+| `hour` | `Numeric` / `TwoDigit` | `j` / `jj` (or `h`/`H` based on `hour_cycle`) |
+| `minute` | `Numeric` / `TwoDigit` | `m` / `mm` |
+| `second` | `Numeric` / `TwoDigit` | `s` / `ss` |
+| `fractional_second_digits` | `N` (1..9) | `S` repeated `N` times |
+| `time_zone_name` | `Short` / `Long` | `z` / `zzzz` |
+| | `ShortOffset` / `LongOffset` | `O` / `OOOO` |
+| | `ShortGeneric` / `LongGeneric` | `v` / `vvvv` |
+
+Symbols are concatenated in UTS 35 canonical order.
+
+### 5.2. ICU4X Backend Mapping
+
+ICU4X is static/data-efficient. Mapping arbitrary options to ICU4X requires resolving them to a `CompositeFieldSet`.
+
+#### Styles:
+- `date_style` / `time_style` -> Map to `Length` and `DateFields::YMD` / `TimePrecision::Second` or similar default fieldsets.
+  - e.g., `date_style: Long` -> `DateFieldSet::YMD(YMD::long())`.
+
+#### Individual Fields (ECMA) to `CompositeFieldSet`:
+1.  **Determine `DateFields`**:
+    *   If `year`, `month`, `day` are present -> `DateFields::YMD`
+    *   If `month`, `day` are present -> `DateFields::MD`
+    *   If only `year` -> `DateFields::Y`
+    *   If only `month` -> `DateFields::M`
+    *   If `weekday` is present with date -> `DateFields::YMDE` or `DateFields::MDE` or `DateFields::DE` (depending on other fields).
+2.  **Determine `TimePrecision`**:
+    *   If `hour`, `minute`, `second` -> `TimePrecision::Second` (or `Subsecond` if fractional seconds are set).
+    *   If `hour`, `minute` -> `TimePrecision::Minute`.
+    *   If only `hour` -> `TimePrecision::Hour`.
+3.  **Determine `Length` / Field Styles**:
+    Since ICU4X applies a single `Length` to the entire fieldset, mixed styles (e.g., short year, long month) must be resolved to a single "best fit" `Length`:
+    *   If any field uses `Long` (wide), use `Length::Long`.
+    *   Else if any field uses `Short` (abbreviated) or `Medium`, use `Length::Medium`.
+    *   Else if all fields are `Numeric` / `TwoDigit`, use `Length::Short`.
+4.  **Determine `YearStyle`**:
+    *   If `era` is requested -> `YearStyle::WithEra`.
+    *   Else -> `YearStyle::Auto`.
 
 ---
 
-## 5. FFI Export Layer (`icu_capi`)
+## 6. FFI Export Layer (`icu_capi`)
 
 Using Diplomat, we expose the options bag and the resolution function.
 
@@ -179,7 +283,7 @@ pub mod ffi {
 
 ---
 
-## 6. C/C++ Header-only Interop Layer (`ffi/icu4c_interop`)
+## 7. C/C++ Header-only Interop Layer (`ffi/icu4c_interop`)
 
 This layer is distributed as C++ headers that clients include. It handles the dynamic switching and calls the respective libraries.
 
@@ -268,9 +372,21 @@ private:
 
 ---
 
-## 7. Key Benefits of this Architecture
+## 8. Key Benefits of this Architecture
 
 1.  **Dependency Isolation**: The Rust `icu_datetime` crate remains 100% pure Rust and does not need to link with `libicui18n.so`. This keeps Rust builds fast and simple.
 2.  **Single Source of Truth for Options**: The complex logic of mapping ECMA-402 and ICU4X options to skeletons is written once in Rust, ensuring consistent behavior.
 3.  **Flexible Linkage**: C++ clients can choose to link only ICU4X, only ICU4C, or both, as the switching logic is header-only and resolved at the C++ compile/link stage.
 4.  **Zero-Cost Switching**: In production, if a client decides to compile only with ICU4X, the C++ compiler can optimize away the ICU4C branches.
+
+---
+
+## 9. Future Work: Raw Pattern Support in ICU4X
+
+Currently, the ICU4X `DateTimeFormatter` is designed around semantic skeletons and pre-compiled data, and does not support formatting arbitrary raw pattern strings at runtime. Supporting raw patterns in the ICU4X backend of the interop layer is a known challenge and is deferred to future work.
+
+The following options will be investigated:
+
+1.  **On-the-fly Pattern Compilation**: Allow ICU4X to compile raw patterns at runtime. This would involve parsing the pattern string into a `Pattern` struct and then converting it to a `PackedPattern`, which requires memory allocation.
+2.  **Polymorphic Formatter API**: Modify the interop API to return an enum or interface that can represent either a `DateTimeFormatter` (skeleton-based) or a `DateTimePatternFormatter` (pattern-based, if a separate pattern formatter is introduced in ICU4X).
+3.  **Segregated Pattern Interop**: Keep the skeleton-based interop and pattern-based interop separate. Pattern-based interop could be moved to a separate header/module entirely, allowing clients who don't need raw patterns to avoid the overhead of pattern parsing code.
