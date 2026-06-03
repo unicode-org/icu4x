@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::DatagenCalendar;
+use super::{DatagenCalendar, Trio};
 use crate::debug_provider::DebugProvider;
 use crate::{IterableDataProviderCached, SourceDataProvider, cldr_serde};
 use icu::datetime::fieldsets::enums::*;
@@ -24,27 +24,7 @@ mod tests;
 
 type VariantPatternsElement<'a> = PatternsWithDistance<PluralElements<runtime::Pattern<'a>>>;
 
-/// A set of patterns that may be used in the same formatter depending on input variations.
-#[derive(Debug)]
-struct VariantPatterns<'a> {
-    standard: VariantPatternsElement<'a>,
-    variant0: Option<VariantPatternsElement<'a>>,
-    variant1: Option<VariantPatternsElement<'a>>,
-}
-
-impl<'a> VariantPatterns<'a> {
-    pub fn iter_in_quality_order_mut(
-        &mut self,
-    ) -> impl Iterator<Item = &mut VariantPatternsElement<'a>> + '_ {
-        let mut list = [
-            Some(&mut self.standard),
-            self.variant0.as_mut(),
-            self.variant1.as_mut(),
-        ];
-        list.sort_by_key(|variant| variant.as_ref().map(|v| v.distance));
-        list.into_iter().flatten()
-    }
-}
+type VariantPatterns<'a> = Trio<VariantPatternsElement<'a>>;
 
 /// Some patterns associated with a [`SkeletonQuality`].
 #[derive(Debug)]
@@ -198,7 +178,7 @@ impl SourceDataProvider {
         ) {
             let mut names =
                 FixedCalendarDateTimeNames::<()>::new_without_number_formatting(Default::default());
-            for variant in trio.iter_in_quality_order_mut() {
+            for variant in trio.iter_in_quality_order_mut(|v| v.distance) {
                 variant.inner.for_each_mut(|pattern| {
                     enforce_consistent_field_length(&mut names, pattern, |prev, req| {
                         log_fn(prev, req, variant.distance);
@@ -287,7 +267,7 @@ impl SourceDataProvider {
                     Length::Short => &data.date_formats.short,
                     _ => unreachable!(),
                 };
-                for variant in variant_patterns.iter_in_quality_order_mut() {
+                for variant in variant_patterns.iter_in_quality_order_mut(|v| v.distance) {
                     variant.inner.for_each_mut(|p| {
                         crate::datetime::names::apply_numeric_overrides(lp, p);
                     });
@@ -607,3 +587,4 @@ impl_datetime_skeleton_datagen!(DatetimePatternsDateHijriV1, DatagenCalendar::Hi
 impl_datetime_skeleton_datagen!(DatetimePatternsDateJapaneseV1, DatagenCalendar::Japanese);
 impl_datetime_skeleton_datagen!(DatetimePatternsDatePersianV1, DatagenCalendar::Persian);
 impl_datetime_skeleton_datagen!(DatetimePatternsDateRocV1, DatagenCalendar::Roc);
+

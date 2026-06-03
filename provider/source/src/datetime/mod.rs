@@ -278,6 +278,31 @@ where
     result
 }
 
+/// A generic structure holding a standard pattern and two optional variants.
+/// See `GenericPackedPatterns` for more details on variants.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct Trio<T> {
+    pub standard: T,
+    pub variant0: Option<T>,
+    pub variant1: Option<T>,
+}
+
+impl<T> Trio<T> {
+    /// Returns an iterator over mutable references in quality order (based on a key function).
+    pub fn iter_in_quality_order_mut<K: Ord>(
+        &mut self,
+        mut key_fn: impl FnMut(&T) -> K,
+    ) -> impl Iterator<Item = &mut T> {
+        let mut list = [
+            Some(&mut self.standard),
+            self.variant0.as_mut(),
+            self.variant1.as_mut(),
+        ];
+        list.sort_by_key(|variant| variant.as_ref().map(|v| key_fn(*v)));
+        list.into_iter().flatten()
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -318,3 +343,4 @@ mod test {
         );
     }
 }
+
