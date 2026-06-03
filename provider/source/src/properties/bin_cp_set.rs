@@ -7,7 +7,7 @@ use icu::casemap::options::TitlecaseOptions;
 use icu::collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
 use icu::locale::LanguageIdentifier;
 use icu::properties::props::BinaryProperty;
-use icu::properties::{provider::*, CodePointMapData};
+use icu::properties::{CodePointMapData, provider::*};
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
@@ -26,11 +26,7 @@ impl SourceDataProvider {
                 let mut fields = l.split(';').map(str::trim);
                 let sn = fields.next()?;
                 let n = fields.next()?;
-                if n == name {
-                    Some(sn)
-                } else {
-                    None
-                }
+                if n == name { Some(sn) } else { None }
             });
 
         if let Some(sn) = sn {
@@ -576,7 +572,7 @@ impl_posix_property!(
 
 #[test]
 fn test_basic() {
-    use icu::properties::{props::WhiteSpace, CodePointSetData};
+    use icu::properties::{CodePointSetData, props::WhiteSpace};
 
     let provider = SourceDataProvider::new_testing();
 

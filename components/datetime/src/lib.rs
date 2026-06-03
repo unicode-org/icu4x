@@ -174,12 +174,12 @@ pub mod input {
     pub mod unstable_third_party;
 
     pub use icu_calendar::Date;
-    pub use icu_time::zone::UtcOffset;
     pub use icu_time::DateTime;
     pub use icu_time::Time;
     pub use icu_time::TimeZone;
     pub use icu_time::TimeZoneInfo;
     pub use icu_time::ZonedDateTime;
+    pub use icu_time::zone::UtcOffset;
 
     #[cfg(feature = "unstable")]
     pub use icu_time::ZonedTime;

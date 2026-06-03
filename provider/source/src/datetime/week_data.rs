@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cldr_serde::{
-    self,
-    week_data::{Territory, DEFAULT_TERRITORY},
-};
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use crate::cldr_serde::{
+    self,
+    week_data::{DEFAULT_TERRITORY, Territory},
+};
 use icu::calendar::provider::{CalendarWeekV1, WeekData, WeekdaySet};
 use icu_provider::prelude::*;
 use std::collections::HashSet;

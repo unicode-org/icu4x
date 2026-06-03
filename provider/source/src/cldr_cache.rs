@@ -4,20 +4,20 @@
 
 #![allow(dead_code)] // features
 
+use crate::CoverageLevel;
 use crate::cldr_serde::eras::EraData;
 use crate::datetime::DatagenCalendar;
 use crate::source::{AbstractFs, SerdeCache};
-use crate::CoverageLevel;
+use icu::locale::LanguageIdentifier;
+use icu::locale::LocaleExpander;
 use icu::locale::provider::{
     LocaleLikelySubtagsExtendedV1, LocaleLikelySubtagsLanguageV1, LocaleLikelySubtagsScriptRegionV1,
 };
 use icu::locale::subtags::Language;
 #[cfg(feature = "unstable")]
 use icu::locale::subtags::Region;
-use icu::locale::LanguageIdentifier;
-use icu::locale::LocaleExpander;
-use icu_provider::prelude::*;
 use icu_provider::DataError;
+use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 use std::fmt::Debug;

@@ -4,13 +4,13 @@
 
 use super::DatagenCalendar;
 use crate::debug_provider::DebugProvider;
-use crate::{cldr_serde, IterableDataProviderCached, SourceDataProvider};
+use crate::{IterableDataProviderCached, SourceDataProvider, cldr_serde};
 use icu::datetime::fieldsets::enums::*;
 use icu::datetime::options::Length;
 use icu::datetime::pattern::{ErrorField, FixedCalendarDateTimeNames};
 use icu::datetime::provider::fields::components;
 use icu::datetime::provider::packed_pattern::*;
-use icu::datetime::provider::pattern::{reference, runtime, CoarseHourCycle};
+use icu::datetime::provider::pattern::{CoarseHourCycle, reference, runtime};
 use icu::datetime::provider::semantic_skeletons::*;
 use icu::datetime::provider::skeleton::reference::Skeleton;
 use icu::datetime::provider::skeleton::*;
@@ -111,7 +111,7 @@ fn select_pattern<'data>(
     preferred_hour_cycle: CoarseHourCycle,
     length_patterns: &GenericLengthPatterns<'data>,
 ) -> PatternsWithDistance<PluralElements<runtime::Pattern<'data>>> {
-    use icu::datetime::provider::pattern::{runtime, PatternItem};
+    use icu::datetime::provider::pattern::{PatternItem, runtime};
     use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 
     let default_hour_cycle = match preferred_hour_cycle {
@@ -439,7 +439,9 @@ fn preferred_hour_cycle(other: &cldr_serde::ca::Dates, locale: &DataLocale) -> C
 
         if let Some(preferred_hour_cycle) = preferred_hour_cycle {
             if hour_cycle != preferred_hour_cycle {
-                log::warn!("{locale:?} contained a mix of coarse hour cycle types ({hour_cycle:?}, {preferred_hour_cycle:?})");
+                log::warn!(
+                    "{locale:?} contained a mix of coarse hour cycle types ({hour_cycle:?}, {preferred_hour_cycle:?})"
+                );
             }
         } else {
             preferred_hour_cycle = Some(hour_cycle);

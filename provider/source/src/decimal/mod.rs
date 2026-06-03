@@ -4,8 +4,8 @@
 
 use std::collections::HashSet;
 
-use crate::cldr_serde;
 use crate::SourceDataProvider;
+use crate::cldr_serde;
 use icu_locale_core::locale;
 use icu_provider::prelude::*;
 

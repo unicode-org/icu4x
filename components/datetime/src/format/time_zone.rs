@@ -12,8 +12,8 @@ use fixed_decimal::{Decimal, Sign};
 use icu_decimal::DecimalFormatter;
 use icu_time::provider::MetazoneMembershipKind;
 use icu_time::{
-    zone::{TimeZoneVariant, UtcOffset},
     TimeZone,
+    zone::{TimeZoneVariant, UtcOffset},
 };
 use writeable::Writeable;
 

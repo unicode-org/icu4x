@@ -359,11 +359,7 @@ impl RuleBreakType for Utf16 {
     const CAN_CONTAIN_SA: bool = true;
 
     fn char_len(ch: Self::CharType) -> usize {
-        if ch >= 0x10000 {
-            2
-        } else {
-            1
-        }
+        if ch >= 0x10000 { 2 } else { 1 }
     }
 
     fn offset<'s>(iter: &Self::IterAttr<'s>) -> usize {

@@ -7,8 +7,8 @@ use core::{
     ops::{Bound::*, RangeBounds},
 };
 use potential_utf::PotentialCodePoint;
-use zerovec::ule::AsULE;
 use zerovec::ZeroVec;
+use zerovec::ule::AsULE;
 
 /// Returns whether the vector is sorted ascending non inclusive, of even length,
 /// and within the bounds of `0x0 -> 0x10FFFF + 1` inclusive.
@@ -44,7 +44,7 @@ where
 
 #[cfg(test)]
 mod tests {
-    use super::{deconstruct_range, is_valid_zv, PotentialCodePoint};
+    use super::{PotentialCodePoint, deconstruct_range, is_valid_zv};
     use core::char;
     use zerovec::ZeroVec;
 

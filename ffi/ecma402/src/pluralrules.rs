@@ -8,8 +8,8 @@ use icu::plurals as ipr;
 
 pub(crate) mod internal {
     use core::str::FromStr;
-    use ecma402_traits::pluralrules::options::Type;
     use ecma402_traits::pluralrules::Options;
+    use ecma402_traits::pluralrules::options::Type;
     use fixed_decimal::Decimal;
     use icu::plurals::{PluralCategory, PluralOperands, PluralRuleType};
     use std::cmp::{max, min};

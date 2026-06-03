@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cldr_serde;
-use crate::cldr_serde::numbers::NumberPatternItem;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use crate::cldr_serde;
+use crate::cldr_serde::numbers::NumberPatternItem;
 
 use std::borrow::Cow;
 use std::collections::BTreeMap;
@@ -17,8 +17,8 @@ use icu::plurals::PluralElements;
 use icu_pattern::DoublePlaceholderKey;
 use icu_pattern::DoublePlaceholderPattern;
 use icu_pattern::PatternItemCow;
-use icu_provider::prelude::*;
 use icu_provider::DataProvider;
+use icu_provider::prelude::*;
 use itertools::Itertools;
 
 impl DataProvider<ShortCurrencyCompactV1> for SourceDataProvider {
@@ -197,11 +197,7 @@ impl IterableDataProviderCached<ShortCurrencyCompactV1> for SourceDataProvider {
                 .and_then(|patterns| patterns.compact_short.as_ref())
                 .is_some()
         });
-        if let Some(e) = err {
-            Err(e)
-        } else {
-            Ok(r)
-        }
+        if let Some(e) = err { Err(e) } else { Ok(r) }
     }
 }
 

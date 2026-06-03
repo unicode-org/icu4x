@@ -4,7 +4,7 @@
 
 #[cfg(feature = "datagen")]
 use super::runtime;
-use super::{reference, PatternItem};
+use super::{PatternItem, reference};
 use crate::provider::fields;
 #[cfg(feature = "datagen")]
 use crate::provider::{

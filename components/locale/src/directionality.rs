@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::provider::*;
 use crate::LocaleExpander;
-use icu_locale_core::subtags::Script;
+use crate::provider::*;
 use icu_locale_core::LanguageIdentifier;
+use icu_locale_core::subtags::Script;
 use icu_provider::prelude::*;
 
 /// Represents the direction of a script.

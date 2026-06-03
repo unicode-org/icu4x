@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::SourceDataProvider;
 use crate::cldr_serde;
 use crate::cldr_serde::units::data::DurationUnits;
-use crate::SourceDataProvider;
 use icu_provider::prelude::*;
 
 #[cfg(feature = "unstable")]

@@ -5,7 +5,7 @@
 use super::{GenericPatternItem, PatternItem};
 use crate::provider::fields;
 use core::convert::TryFrom;
-use zerovec::ule::{AsULE, UleError, ULE};
+use zerovec::ule::{AsULE, ULE, UleError};
 
 /// `PatternItemULE` is a type optimized for efficient storing and
 /// deserialization of `FixedCalendarDateTimeFormatter` `PatternItem` elements using

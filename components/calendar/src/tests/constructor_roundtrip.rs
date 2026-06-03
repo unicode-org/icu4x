@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::Calendar;
+use crate::Date;
 use crate::error::DateFromFieldsError;
 use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::types::DateFields;
-use crate::Calendar;
-use crate::Date;
 use calendrical_calculations::rata_die::RataDie;
 
 // We could use the `bitflags` crate here, but we are using raw constants

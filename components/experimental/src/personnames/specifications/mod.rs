@@ -9,8 +9,8 @@ pub use derive_locale::likely_person_name_locale;
 pub use derive_missing_initials::derive_missing_initials;
 pub use derive_missing_surname::derive_missing_surname;
 pub use derive_name_order::name_order_derive;
-pub use pattern_regex_selector::to_person_name_pattern;
 pub use pattern_regex_selector::PersonNamePattern;
+pub use pattern_regex_selector::to_person_name_pattern;
 pub use space_replacement::space_replacement;
 
 mod applicable_pattern;

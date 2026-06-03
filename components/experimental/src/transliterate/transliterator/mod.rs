@@ -16,8 +16,8 @@ use alloc::string::{String, ToString};
 use alloc::vec::Vec;
 use core::fmt::Debug;
 use core::ops::Range;
-use icu_casemap::provider::CaseMapV1;
 use icu_casemap::CaseMapper;
+use icu_casemap::provider::CaseMapV1;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_locale::LanguageIdentifier;
@@ -28,8 +28,8 @@ use icu_provider::prelude::*;
 use litemap::LiteMap;
 use replaceable::*;
 use zerofrom::ZeroFrom;
-use zerovec::vecs::Index32;
 use zerovec::VarZeroSlice;
+use zerovec::vecs::Index32;
 
 type Filter<'a> = CodePointInversionList<'a>;
 

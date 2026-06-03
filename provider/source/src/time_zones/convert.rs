@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{MetazoneInfo, MzMembership};
-use crate::cldr_serde;
 use crate::SourceDataProvider;
+use crate::cldr_serde;
 use cldr_serde::time_zones::time_zone_names::*;
 use core::cmp::Ordering;
 use icu::datetime::provider::time_zones::*;
@@ -17,10 +17,10 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use zerotrie::ZeroTrieSimpleAscii;
-use zerovec::ule::vartuple::VarTuple;
-use zerovec::ule::NichedOption;
 use zerovec::VarZeroVec;
 use zerovec::ZeroVec;
+use zerovec::ule::NichedOption;
+use zerovec::ule::vartuple::VarTuple;
 
 impl DataProvider<TimezoneNamesEssentialsV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<TimezoneNamesEssentialsV1>, DataError> {

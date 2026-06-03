@@ -9,18 +9,18 @@
     allow(dead_code, unused_imports)
 )]
 
-use crate::source::{include_files, UnicodeCache};
 #[cfg(feature = "unstable")]
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use crate::source::{UnicodeCache, include_files};
 #[cfg(feature = "unstable")]
 use icu::collections::codepointinvlist::CodePointInversionList;
 use icu::properties::{
+    CodePointMapData, CodePointMapDataBorrowed, CodePointSetData,
     props::{
         EastAsianWidth, GeneralCategory, GraphemeClusterBreak, IndicConjunctBreak, LineBreak,
         Script, SentenceBreak, WordBreak,
     },
-    CodePointMapData, CodePointMapDataBorrowed, CodePointSetData,
 };
 use icu::segmenter::options::WordType;
 use icu::segmenter::provider::*;
@@ -100,7 +100,7 @@ fn generate_rule_break_data(
     rules_file: &str,
     trie_type: crate::TrieType,
 ) -> Result<RuleBreakData<'static>, DataError> {
-    use icu::properties::{props::ExtendedPictographic, PropertyParser};
+    use icu::properties::{PropertyParser, props::ExtendedPictographic};
     use icu_codepointtrie_builder::CodePointTrieBuilder;
 
     let segmenter =

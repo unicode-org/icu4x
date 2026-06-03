@@ -114,11 +114,11 @@ use provider::NormalizerNfcV1;
 use provider::NormalizerNfdTablesV1;
 use provider::NormalizerNfkdTablesV1;
 use smallvec::SmallVec;
-#[cfg(feature = "utf16_iter")]
-use utf16_iter::Utf16CharsEx;
 #[cfg(feature = "utf8_iter")]
 use utf8_iter::Utf8CharsEx;
-use zerovec::{zeroslice, ZeroSlice};
+#[cfg(feature = "utf16_iter")]
+use utf16_iter::Utf16CharsEx;
+use zerovec::{ZeroSlice, zeroslice};
 
 // The optimizations in the area where `likely` is used
 // are extremely brittle. `likely` is useful in the typed-trie

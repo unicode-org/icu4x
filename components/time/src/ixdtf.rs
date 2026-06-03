@@ -3,22 +3,22 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[cfg(feature = "unstable")]
-use crate::zone::ZoneNameTimestamp;
-#[cfg(feature = "unstable")]
 use crate::ZonedTime;
+#[cfg(feature = "unstable")]
+use crate::zone::ZoneNameTimestamp;
 use crate::{
-    zone::{iana::IanaParserBorrowed, models, InvalidOffsetError, UtcOffset},
     DateTime, Time, TimeZoneInfo, ZonedDateTime,
+    zone::{InvalidOffsetError, UtcOffset, iana::IanaParserBorrowed, models},
 };
 use core::str::FromStr;
 use icu_calendar::{AnyCalendarKind, AsCalendar, Date, DateError, Iso, RangeError};
 use ixdtf::{
+    ParseError as Rfc9557ParseError,
     encoding::Utf8,
     parsers::IxdtfParser,
     records::{
         IxdtfParseRecord, TimeZoneAnnotation, TimeZoneRecord, UtcOffsetRecord, UtcOffsetRecordOrZ,
     },
-    ParseError as Rfc9557ParseError,
 };
 
 /// The error type for parsing RFC 9557 strings.

@@ -4,8 +4,8 @@
 
 use icu_calendar::Gregorian;
 
-use crate::zone::UtcOffset;
 use crate::ZonedDateTime;
+use crate::zone::UtcOffset;
 use crate::{DateTime, Hour, Minute, Nanosecond, Second, Time};
 
 impl From<time::Time> for Time {

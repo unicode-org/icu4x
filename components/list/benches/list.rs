@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{Criterion, black_box, criterion_group, criterion_main};
 use icu_list::{
-    options::{ListFormatterOptions, ListLength},
     ListFormatter,
+    options::{ListFormatterOptions, ListLength},
 };
 use icu_locale::locale;
 use writeable::Writeable;

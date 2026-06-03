@@ -4,8 +4,8 @@
 
 use crate::datapath::marker_to_path;
 use crate::manifest::Manifest;
-use icu_provider::prelude::*;
 use icu_provider::DynamicDryDataProvider;
+use icu_provider::prelude::*;
 use std::fmt::Debug;
 use std::fmt::Write;
 use std::fs;

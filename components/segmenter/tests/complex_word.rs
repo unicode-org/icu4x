@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_segmenter::*;
-use icu_segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
+use icu_segmenter::{WordSegmenter, options::WordBreakInvariantOptions};
 
 include!("helpers.rs.raw");
 

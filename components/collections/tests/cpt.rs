@@ -294,7 +294,10 @@ fn test_check_ranges_get_ranges<T: TrieValue + Into<u32>>(
         }
 
         let cpm_range = trie_ranges.next();
-        assert!(cpm_range.is_some(), "CodePointTrie iter_ranges() produces fewer ranges than the check_ranges field in testdata has");
+        assert!(
+            cpm_range.is_some(),
+            "CodePointTrie iter_ranges() produces fewer ranges than the check_ranges field in testdata has"
+        );
         let cpm_range = cpm_range.unwrap();
         let cpmr_start = cpm_range.range.start();
         let cpmr_end = cpm_range.range.end();
@@ -307,7 +310,10 @@ fn test_check_ranges_get_ranges<T: TrieValue + Into<u32>>(
         range_start = range_limit;
     }
 
-    assert!(trie_ranges.next().is_none(), "CodePointTrie iter_ranges() produces more ranges than the check_ranges field in testdata has");
+    assert!(
+        trie_ranges.next().is_none(),
+        "CodePointTrie iter_ranges() produces more ranges than the check_ranges field in testdata has"
+    );
 }
 
 /// Run above tests that verify the validity of [`CodePointTrie`] methods

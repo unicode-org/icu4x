@@ -12,18 +12,17 @@
 use alloc::collections::VecDeque;
 use alloc::vec::Vec;
 
-use crate::elements::CharacterAndClassAndTrieValue;
-use crate::elements::CollationElement32;
-use crate::elements::Tag;
 use crate::elements::BACKWARD_COMBINING_MARKER;
 use crate::elements::CE_BUFFER_SIZE;
+use crate::elements::CharacterAndClassAndTrieValue;
+use crate::elements::CollationElement32;
 use crate::elements::FALLBACK_CE32;
 use crate::elements::NON_ROUND_TRIP_MARKER;
+use crate::elements::Tag;
 use crate::elements::{
-    char_from_u32, CollationElement, CollationElements, NonPrimary, FFFD_CE32,
-    HANGUL_SYLLABLE_MARKER, HIGH_ZEROS_MASK, LOW_ZEROS_MASK, NO_CE, NO_CE_PRIMARY,
-    NO_CE_QUATERNARY, NO_CE_SECONDARY, NO_CE_TERTIARY, OPTIMIZED_DIACRITICS_MAX_COUNT,
-    QUATERNARY_MASK,
+    CollationElement, CollationElements, FFFD_CE32, HANGUL_SYLLABLE_MARKER, HIGH_ZEROS_MASK,
+    LOW_ZEROS_MASK, NO_CE, NO_CE_PRIMARY, NO_CE_QUATERNARY, NO_CE_SECONDARY, NO_CE_TERTIARY,
+    NonPrimary, OPTIMIZED_DIACRITICS_MAX_COUNT, QUATERNARY_MASK, char_from_u32,
 };
 use crate::options::CollatorOptionsBitField;
 use crate::options::{AlternateHandling, CollatorOptions, ResolvedCollatorOptions, Strength};
@@ -43,16 +42,16 @@ use crate::provider::CollationSpecialPrimariesV1;
 use crate::provider::CollationTailoringV1;
 use core::cmp::Ordering;
 use core::convert::Infallible;
+use icu_normalizer::DecomposingNormalizerBorrowed;
+use icu_normalizer::Decomposition;
 use icu_normalizer::provider::DecompositionData;
 use icu_normalizer::provider::DecompositionTables;
 use icu_normalizer::provider::NormalizerNfdDataV1;
 use icu_normalizer::provider::NormalizerNfdTablesV1;
-use icu_normalizer::DecomposingNormalizerBorrowed;
-use icu_normalizer::Decomposition;
 use icu_provider::prelude::*;
 use smallvec::SmallVec;
-use utf16_iter::Utf16CharsEx;
 use utf8_iter::Utf8CharsEx;
+use utf16_iter::Utf16CharsEx;
 
 // Special sort key bytes for all levels.
 const LEVEL_SEPARATOR_BYTE: u8 = 1;

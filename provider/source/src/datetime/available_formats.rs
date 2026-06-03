@@ -45,7 +45,7 @@ impl cldr_serde::ca::AvailableFormats {
 mod test {
     use super::*;
     use icu::datetime::provider::skeleton::{
-        get_best_available_format_pattern, BestSkeleton, SkeletonError,
+        BestSkeleton, SkeletonError, get_best_available_format_pattern,
     };
 
     use core::convert::TryFrom;
@@ -60,8 +60,8 @@ mod test {
     use icu::locale::preferences::extensions::unicode::keywords::HourCycle;
     use std::collections::BTreeMap;
 
-    use crate::datetime::DatagenCalendar;
     use crate::SourceDataProvider;
+    use crate::datetime::DatagenCalendar;
 
     fn get_data_payload() -> BTreeMap<Skeleton, PluralElements<Pattern<'static>>> {
         let locale = locale!("en").into();

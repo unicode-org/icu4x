@@ -13,17 +13,17 @@ use core::{iter::Peekable, str::CharIndices};
 use crate::props::IndicConjunctBreak;
 use crate::script::ScriptWithExtensions;
 use crate::{
+    CodePointMapData,
     props::{
         CanonicalCombiningClass, EastAsianWidth, EnumeratedProperty, GeneralCategory,
         GeneralCategoryGroup, GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
     },
-    CodePointMapData,
 };
 use crate::{
-    props::{PatternWhiteSpace, XidContinue, XidStart},
     CodePointSetData,
+    props::{PatternWhiteSpace, XidContinue, XidStart},
 };
-use crate::{provider::*, PropertyParser};
+use crate::{PropertyParser, provider::*};
 use icu_collections::{
     codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder},
     codepointinvliststringlist::CodePointInversionListAndStringList,
@@ -63,8 +63,8 @@ pub enum ParseErrorKind {
     /// The provided escape sequence is not a valid Unicode code point or represents too many code points.
     InvalidEscape,
 }
-use zerovec::VarZeroVec;
 use ParseErrorKind as PEK;
+use zerovec::VarZeroVec;
 
 impl ParseErrorKind {
     fn with_offset(self, offset: usize) -> ParseError {

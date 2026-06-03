@@ -42,11 +42,11 @@
 use clap::{Parser, ValueEnum};
 use displaydoc::Display;
 use eyre::WrapErr;
+use icu_provider::DataError;
 use icu_provider::export::ExportableProvider;
 use icu_provider::hello_world::HelloWorldV1;
-use icu_provider::DataError;
-use icu_provider_export::prelude::*;
 use icu_provider_export::ExportMetadata;
+use icu_provider_export::prelude::*;
 #[cfg(feature = "provider")]
 use icu_provider_source::SourceDataProvider;
 use regex::Regex;
@@ -391,9 +391,13 @@ fn run(cli: Cli) -> eyre::Result<()> {
             [x] if x == "none" => Default::default(),
             [x] if x == "all" => {
                 #[cfg(feature = "unstable")]
-                log::info!("The icu4x-datagen crate has been built with the `unstable` feature, so `--markers all` includes unstable markers");
+                log::info!(
+                    "The icu4x-datagen crate has been built with the `unstable` feature, so `--markers all` includes unstable markers"
+                );
                 #[cfg(not(feature = "unstable"))]
-                log::info!("The icu4x-datagen crate has been built without the `unstable` feature, so `--markers all` does not include unstable markers");
+                log::info!(
+                    "The icu4x-datagen crate has been built without the `unstable` feature, so `--markers all` does not include unstable markers"
+                );
                 all_markers()
             }
             markers => markers
@@ -443,7 +447,9 @@ fn run(cli: Cli) -> eyre::Result<()> {
                 "ICU data is required for this invocation, set --icuexport-root or --icuexport-tag"
             );
         } else if SourceDataProvider::is_missing_segmenter_lstm_error(e) {
-            eyre::bail!("Segmentation LSTM data is required for this invocation, set --segmenter-lstm-root or --segmenter-lstm-tag");
+            eyre::bail!(
+                "Segmentation LSTM data is required for this invocation, set --segmenter-lstm-root or --segmenter-lstm-tag"
+            );
         } else if SourceDataProvider::is_missing_ucd_error(e) {
             eyre::bail!("UCD data is required for this invocation, set --ucd-root or --ucd-tag");
         } else if SourceDataProvider::is_missing_tzdb_error(e) {
@@ -459,7 +465,10 @@ fn run(cli: Cli) -> eyre::Result<()> {
         () if markers == [HelloWorldV1::INFO] => {
             // Just do naive fallback instead of pulling in compiled data or something. We only use this code path to debug
             // providers, so we don't need 100% correct fallback.
-            (Box::new(icu_provider::hello_world::HelloWorldProvider), LocaleFallbacker::new_without_data())
+            (
+                Box::new(icu_provider::hello_world::HelloWorldProvider),
+                LocaleFallbacker::new_without_data(),
+            )
         }
         () if markers.contains(&HelloWorldV1::INFO) => {
             eyre::bail!("HelloWorldV1 is only allowed as the only marker")
@@ -471,7 +480,7 @@ fn run(cli: Cli) -> eyre::Result<()> {
             )?;
             let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider)?;
             (Box::new(ReexportableBlobDataProvider(provider)), fallbacker)
-        },
+        }
 
         #[cfg(all(not(feature = "provider"), feature = "blob_input"))]
         () => eyre::bail!("--input-blob is required without the `provider` Cargo feature"),
@@ -482,9 +491,7 @@ fn run(cli: Cli) -> eyre::Result<()> {
 
             p = p.with_collation_root_han(match cli.collation_root_han {
                 CollationRootHan::Unihan => icu_provider_source::CollationRootHan::Unihan,
-                CollationRootHan::Implicit => {
-                    icu_provider_source::CollationRootHan::Implicit
-                }
+                CollationRootHan::Implicit => icu_provider_source::CollationRootHan::Implicit,
             });
 
             if cli.trie_type == TrieType::Fast {
@@ -504,9 +511,7 @@ fn run(cli: Cli) -> eyre::Result<()> {
             p = match (cli.icuexport_root, cli.icuexport_tag.as_str()) {
                 (Some(path), _) => p.with_icuexport(&path)?,
                 #[cfg(feature = "networking")]
-                (_, "latest") => {
-                    p.with_icuexport_for_tag(SourceDataProvider::TESTED_ICUEXPORT_TAG)
-                }
+                (_, "latest") => p.with_icuexport_for_tag(SourceDataProvider::TESTED_ICUEXPORT_TAG),
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_icuexport_for_tag(tag),
                 #[cfg(not(feature = "networking"))]
@@ -544,9 +549,7 @@ fn run(cli: Cli) -> eyre::Result<()> {
             p = match (cli.tzdb_root, cli.tzdb_tag.as_str()) {
                 (Some(path), _) => p.with_tzdb(&path)?,
                 #[cfg(feature = "networking")]
-                (_, "latest") => {
-                    p.with_tzdb_for_tag(SourceDataProvider::TESTED_TZDB_TAG)
-                }
+                (_, "latest") => p.with_tzdb_for_tag(SourceDataProvider::TESTED_TZDB_TAG),
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_tzdb_for_tag(tag),
                 #[cfg(not(feature = "networking"))]
@@ -581,12 +584,15 @@ fn run(cli: Cli) -> eyre::Result<()> {
                 ));
             }
 
-            let fallbacker = LocaleFallbacker::try_new_unstable(&p).or_else(missing_data_message)?;
+            let fallbacker =
+                LocaleFallbacker::try_new_unstable(&p).or_else(missing_data_message)?;
             (Box::new(p), fallbacker)
         }
 
         #[cfg(not(any(feature = "provider", feature = "blob_input")))]
-        () => eyre::bail!("Only the `HelloWorld marker is supported without Cargo features `blob_input` or `provider`"),
+        () => eyre::bail!(
+            "Only the `HelloWorld marker is supported without Cargo features `blob_input` or `provider`"
+        ),
     };
 
     let locale_families = match preprocessed_locales {
@@ -604,16 +610,17 @@ fn run(cli: Cli) -> eyre::Result<()> {
 
     let deduplication_strategy = match cli.deduplication {
         Some(Deduplication::Maximal) => DeduplicationStrategy::Maximal,
-        Some(Deduplication::RetainBaseLanguages) => {
-            DeduplicationStrategy::RetainBaseLanguages
-        }
+        Some(Deduplication::RetainBaseLanguages) => DeduplicationStrategy::RetainBaseLanguages,
         Some(Deduplication::None) => DeduplicationStrategy::None,
         None => match cli.format {
             Format::Fs | Format::Blob => DeduplicationStrategy::None,
-            Format::Baked if cli.no_internal_fallback && cli.deduplication.is_none() =>
-                eyre::bail!("--no-internal-fallback requires an explicit --deduplication value. Baked exporter would default to maximal deduplication, which might not be intended"),
+            Format::Baked if cli.no_internal_fallback && cli.deduplication.is_none() => {
+                eyre::bail!(
+                    "--no-internal-fallback requires an explicit --deduplication value. Baked exporter would default to maximal deduplication, which might not be intended"
+                )
+            }
             Format::Baked => DeduplicationStrategy::Maximal,
-        }
+        },
     };
 
     let mut driver = ExportDriver::new(locale_families, deduplication_strategy.into(), fallbacker);

@@ -4,10 +4,10 @@
 
 use super::time_zone::{FormatTimeZone, FormatTimeZoneError, Iso8601Format, TimeZoneFormatterUnit};
 use crate::error::ErrorField;
-use crate::format::{numeric_override, DateTimeInputUnchecked};
+use crate::format::{DateTimeInputUnchecked, numeric_override};
 use crate::provider::fields::{self, FieldLength, FieldSymbol, Second, Year};
-use crate::provider::pattern::runtime::PatternMetadata;
 use crate::provider::pattern::PatternItem;
+use crate::provider::pattern::runtime::PatternMetadata;
 use crate::unchecked::MissingInputFieldKind;
 use crate::{parts, pattern::*};
 
@@ -391,11 +391,7 @@ where
                 fields::Hour::H11 => h % 12,
                 fields::Hour::H12 => {
                     let v = h % 12;
-                    if v == 0 {
-                        12
-                    } else {
-                        v
-                    }
+                    if v == 0 { 12 } else { v }
                 }
                 fields::Hour::H23 => h,
             };

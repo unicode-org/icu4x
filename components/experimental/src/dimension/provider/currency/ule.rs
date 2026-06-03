@@ -4,7 +4,7 @@
 
 use zerovec::{
     maps::ZeroMapKV,
-    ule::{AsULE, UleError, ULE},
+    ule::{AsULE, ULE, UleError},
 };
 
 use crate::dimension::provider::currency::essentials::{
@@ -73,12 +73,14 @@ impl AsULE for CurrencyPatternConfig {
         }
 
         // For short_placeholder_value
-        let [short_most_significant_byte, short_least_significant_byte_ule] =
-            match self.short_placeholder_value {
-                Some(PlaceholderValue::Index(index)) => index.to_be_bytes(),
-                Some(PlaceholderValue::ISO) => USE_ISO_CODE.to_be_bytes(),
-                None => NO_PLACEHOLDER.to_be_bytes(),
-            };
+        let [
+            short_most_significant_byte,
+            short_least_significant_byte_ule,
+        ] = match self.short_placeholder_value {
+            Some(PlaceholderValue::Index(index)) => index.to_be_bytes(),
+            Some(PlaceholderValue::ISO) => USE_ISO_CODE.to_be_bytes(),
+            None => NO_PLACEHOLDER.to_be_bytes(),
+        };
         if short_most_significant_byte & 0b1111_1000 != 0 {
             panic!(
                 "short_placeholder_value is too large {short_most_significant_byte}, {short_least_significant_byte_ule}"
@@ -87,12 +89,14 @@ impl AsULE for CurrencyPatternConfig {
         first_byte_ule |= short_most_significant_byte << INDEX_SHORT_SHIFT;
 
         // For narrow_placeholder_value
-        let [narrow_most_significant_byte, narrow_least_significant_byte_ule] =
-            match self.narrow_placeholder_value {
-                Some(PlaceholderValue::Index(index)) => index.to_be_bytes(),
-                Some(PlaceholderValue::ISO) => USE_ISO_CODE.to_be_bytes(),
-                None => NO_PLACEHOLDER.to_be_bytes(),
-            };
+        let [
+            narrow_most_significant_byte,
+            narrow_least_significant_byte_ule,
+        ] = match self.narrow_placeholder_value {
+            Some(PlaceholderValue::Index(index)) => index.to_be_bytes(),
+            Some(PlaceholderValue::ISO) => USE_ISO_CODE.to_be_bytes(),
+            None => NO_PLACEHOLDER.to_be_bytes(),
+        };
         if narrow_most_significant_byte & 0b1111_1000 != 0 {
             panic!(
                 "narrow_placeholder_value is too large {narrow_most_significant_byte}, {narrow_least_significant_byte_ule}"

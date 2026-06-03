@@ -10,7 +10,7 @@ use alloc::string::ToString;
 use core::fmt::{self, Display, Formatter};
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_locale_core::Locale;
-use zerovec::{vecs::Index32, VarZeroVec};
+use zerovec::{VarZeroVec, vecs::Index32};
 
 type Result<T> = core::result::Result<T, CompileError>;
 

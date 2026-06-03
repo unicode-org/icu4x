@@ -27,7 +27,7 @@ use icu_properties::props::CanonicalCombiningClass;
 use smallvec::SmallVec;
 use zerovec::ule::AsULE;
 use zerovec::ule::RawBytesULE;
-use zerovec::{zeroslice, ZeroSlice};
+use zerovec::{ZeroSlice, zeroslice};
 
 use crate::provider::CollationData;
 
@@ -203,7 +203,7 @@ const CONTRACT_HAS_STARTER: u32 = 0x800;
 // constants named NO_CE* : End of input. Only used in runtime code, not stored in data.
 pub(crate) const NO_CE: CollationElement = CollationElement::default();
 pub(crate) const NO_CE_PRIMARY: u32 = 1; // not a left-adjusted weight
-                                         // const NO_CE_NON_PRIMARY: NonPrimary = NonPrimary::default();
+// const NO_CE_NON_PRIMARY: NonPrimary = NonPrimary::default();
 pub(crate) const NO_CE_SECONDARY: u16 = 0x0100;
 pub(crate) const NO_CE_TERTIARY: u16 = 0x0100;
 pub(crate) const NO_CE_QUATERNARY: u16 = 0x0100;
@@ -1564,7 +1564,10 @@ where
                             let diacritic_index =
                                 (combining as usize).wrapping_sub(COMBINING_DIACRITICS_BASE);
                             if let Some(secondary) = self.diacritics.get(diacritic_index) {
-                                debug_assert_ne!(combining, '\u{0344}', "Should never have COMBINING GREEK DIALYTIKA TONOS here, since it should have decomposed further.");
+                                debug_assert_ne!(
+                                    combining, '\u{0344}',
+                                    "Should never have COMBINING GREEK DIALYTIKA TONOS here, since it should have decomposed further."
+                                );
                                 if let Some(ce) = ce32.to_ce_simple_or_long_primary() {
                                     let ce_for_combining =
                                         CollationElement::new_from_secondary(secondary);

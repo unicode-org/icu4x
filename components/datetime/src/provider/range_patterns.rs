@@ -253,15 +253,18 @@ mod tests {
             patterns: varzerovec,
         };
 
-        assert!(pgd
-            .header
-            .is_date_field_present(DateGreatestDifferenceField::Day));
-        assert!(!pgd
-            .header
-            .is_date_field_present(DateGreatestDifferenceField::Month));
-        assert!(pgd
-            .header
-            .is_date_field_present(DateGreatestDifferenceField::Year));
+        assert!(
+            pgd.header
+                .is_date_field_present(DateGreatestDifferenceField::Day)
+        );
+        assert!(
+            !pgd.header
+                .is_date_field_present(DateGreatestDifferenceField::Month)
+        );
+        assert!(
+            pgd.header
+                .is_date_field_present(DateGreatestDifferenceField::Year)
+        );
 
         // Day difference should return Day pattern.
         assert_eq!(

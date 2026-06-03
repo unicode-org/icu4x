@@ -60,9 +60,9 @@ pub mod unicode;
 use core::cmp::Ordering;
 
 use other::Other;
-use private::{Private, PRIVATE_EXT_CHAR};
-use transform::{Transform, TRANSFORM_EXT_CHAR};
-use unicode::{Unicode, UNICODE_EXT_CHAR};
+use private::{PRIVATE_EXT_CHAR, Private};
+use transform::{TRANSFORM_EXT_CHAR, Transform};
+use unicode::{UNICODE_EXT_CHAR, Unicode};
 
 #[cfg(feature = "alloc")]
 use alloc::vec::Vec;

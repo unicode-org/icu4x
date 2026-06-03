@@ -5,10 +5,10 @@
 use std::marker::PhantomData;
 
 use icu::locale::LanguageIdentifier;
+use serde::Deserialize;
 use serde::de::Error;
 use serde::de::MapAccess;
 use serde::de::Visitor;
-use serde::Deserialize;
 
 /// Deserializer for the top layers of most CLDR JSON locale resources.
 ///

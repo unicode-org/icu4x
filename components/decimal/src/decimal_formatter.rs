@@ -6,13 +6,13 @@ use super::Cow;
 use core::fmt::Write;
 use writeable::Part;
 
+use crate::DecimalFormatterPreferences;
 use crate::grouper;
 use crate::input::Decimal;
 use crate::options::*;
 use crate::parts;
 use crate::provider::*;
 use crate::size_test_macro::size_test;
-use crate::DecimalFormatterPreferences;
 #[cfg(feature = "alloc")]
 use alloc::string::String;
 use fixed_decimal::{Sign, UnsignedDecimal};

@@ -6,7 +6,7 @@
 
 use crate::complex::ComplexPayloadsBorrowed;
 use crate::provider::{Acceptance, Class, RuleBreakDataOverride, SegmenterStateMachine};
-use crate::scaffold::{PotentiallyIllFormedUtf8, RuleBreakType, Utf16, Utf8};
+use crate::scaffold::{PotentiallyIllFormedUtf8, RuleBreakType, Utf8, Utf16};
 use alloc::collections::VecDeque;
 use alloc::vec::Vec;
 

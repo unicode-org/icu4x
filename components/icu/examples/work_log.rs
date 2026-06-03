@@ -10,7 +10,7 @@ icu_benchmark_macros::instrument!();
 use icu_benchmark_macros::println;
 
 use icu::calendar::Date;
-use icu::datetime::{fieldsets::YMDT, FixedCalendarDateTimeFormatter};
+use icu::datetime::{FixedCalendarDateTimeFormatter, fieldsets::YMDT};
 use icu::locale::locale;
 use icu::time::{DateTime, Time};
 

@@ -2,16 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use crate::cldr_serde;
 
 use std::collections::HashSet;
 
 use icu::experimental::dimension::provider::currency::patterns::*;
 use icu::plurals::PluralElements;
-use icu_provider::prelude::*;
 use icu_provider::DataProvider;
+use icu_provider::prelude::*;
 
 impl DataProvider<CurrencyPatternsDataV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CurrencyPatternsDataV1>, DataError> {

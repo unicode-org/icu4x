@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::internals::{CaseMapLocale, FoldOptions, FullCaseWriteable, StringAndWriteable};
-use crate::provider::data::MappingKind;
 use crate::provider::CaseMap;
 use crate::provider::CaseMapV1;
+use crate::provider::data::MappingKind;
 use crate::set::ClosureSink;
 use crate::titlecase::{LeadingAdjustment, TitlecaseOptions, TrailingCase};
 use alloc::borrow::Cow;

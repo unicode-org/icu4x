@@ -8,11 +8,11 @@ use icu_provider::prelude::*;
 use zerovec::vecs::{VarZeroSliceIter, ZeroSliceIter};
 
 use crate::{
-    provider::iana::{
-        IanaNames, IanaToBcp47Map, TimezoneIdentifiersIanaCoreV1,
-        TimezoneIdentifiersIanaExtendedV1, NON_REGION_CITY_PREFIX,
-    },
     TimeZone,
+    provider::iana::{
+        IanaNames, IanaToBcp47Map, NON_REGION_CITY_PREFIX, TimezoneIdentifiersIanaCoreV1,
+        TimezoneIdentifiersIanaExtendedV1,
+    },
 };
 
 /// A parser for parsing an IANA time zone ID to a [`TimeZone`] type.

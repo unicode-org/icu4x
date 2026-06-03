@@ -3,11 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::fmt::{self, Display, Write};
-use ecma402_traits::listformat::{
-    options::{Style, Type},
-    Options,
-};
 use ecma402_traits::Locale;
+use ecma402_traits::listformat::{
+    Options,
+    options::{Style, Type},
+};
 use writeable::Writeable;
 
 #[derive(Debug)]

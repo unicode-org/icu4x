@@ -8,7 +8,7 @@
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/pluralRanges.json>
 
 use icu::locale::LanguageIdentifier;
-use serde::{de::Visitor, Deserialize};
+use serde::{Deserialize, de::Visitor};
 use std::collections::HashMap;
 
 #[derive(PartialEq, PartialOrd, Ord, Eq, Hash, Debug)]
@@ -28,7 +28,8 @@ impl<'de> Deserialize<'de> for PluralRange {
             type Value = PluralRange;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-                write!(formatter,
+                write!(
+                    formatter,
                     "a plural range rule of the form pluralRange-start-<plural category>-end-<plural category>",
                 )
             }

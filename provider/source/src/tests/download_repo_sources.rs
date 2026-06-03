@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::source::{AbstractFs, UnicodeCache};
 use crate::SourceDataProvider;
-use icu::locale::{langid, LanguageIdentifier};
+use crate::source::{AbstractFs, UnicodeCache};
+use icu::locale::{LanguageIdentifier, langid};
 use icu_provider::DataError;
 use std::collections::BTreeSet;
 use std::fs::File;
@@ -179,7 +179,13 @@ fn download_repo_sources() {
     tzdb_files.remove("Makefile");
     tzdb_files.remove("ziguard.awk");
 
-    let [cldr_files, icuexport_files, lstm_files, unicode_files, tzdb_files] = [
+    let [
+        cldr_files,
+        icuexport_files,
+        lstm_files,
+        unicode_files,
+        tzdb_files,
+    ] = [
         cldr_files,
         icuexport_files,
         lstm_files,

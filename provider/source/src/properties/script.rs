@@ -218,13 +218,15 @@ mod tests {
             Some(Script::Inherited)
         );
 
-        assert!(swe
-            .get_script_extensions_val32(0x11303) // GRANTHA SIGN VISARGA
-            .contains(&Script::Grantha));
+        assert!(
+            swe.get_script_extensions_val32(0x11303) // GRANTHA SIGN VISARGA
+                .contains(&Script::Grantha)
+        );
 
-        assert!(!swe
-            .get_script_extensions_val32(0x11303) // GRANTHA SIGN VISARGA
-            .contains(&Script::Common));
+        assert!(
+            !swe.get_script_extensions_val32(0x11303) // GRANTHA SIGN VISARGA
+                .contains(&Script::Common)
+        );
 
         // // Invalid code point
         assert_eq!(

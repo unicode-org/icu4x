@@ -70,11 +70,7 @@ impl Prop {
     }
 
     fn ffi_kind(&self) -> &'static str {
-        if self.is_open() {
-            "Struct"
-        } else {
-            "Enum"
-        }
+        if self.is_open() { "Struct" } else { "Enum" }
     }
 
     fn ffi_variant_kind(&self) -> &'static str {

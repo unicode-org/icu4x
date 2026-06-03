@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{DataLocaleFamilyAnnotations, DeduplicationStrategy, ExportDriver, ExportMetadata};
-use icu_locale::fallback::LocaleFallbackIterator;
 use icu_locale::LocaleFallbacker;
+use icu_locale::fallback::LocaleFallbackIterator;
 use icu_provider::export::*;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
@@ -201,7 +201,7 @@ impl ExportDriver {
                                 (a, b) => Ok(a.or(b)),
                             }
                         })?;
-            } else if responses.iter().any(|r| r.1 .0.metadata.checksum.is_some()) {
+            } else if responses.iter().any(|r| r.1.0.metadata.checksum.is_some()) {
                 log::warn!("{marker:?} returns a checksum, but it's not configured to");
             }
 

@@ -94,7 +94,7 @@
 //! );
 //! ```
 
-use crate::fieldsets::{self, enums::*, Combo};
+use crate::fieldsets::{self, Combo, enums::*};
 use crate::options::*;
 
 /// An enumeration over all possible date and calendar period field sets
@@ -543,7 +543,7 @@ impl FieldSetBuilder {
         let date_field_set = match self.build_date_or_calendar_period_without_checking_options()? {
             DateOrCalendarPeriodFieldSet::Date(fs) => fs,
             DateOrCalendarPeriodFieldSet::CalendarPeriod(_) => {
-                return Err(BuilderError::InvalidDateFields)
+                return Err(BuilderError::InvalidDateFields);
             }
         };
         self.check_options_consumed()?;
@@ -755,7 +755,7 @@ impl FieldSetBuilder {
             }
             DateFields::E => DateAndTimeFieldSet::ET(fieldsets::ET::take_from_builder(&mut self)),
             DateFields::M | DateFields::YM | DateFields::Y => {
-                return Err(BuilderError::InvalidDateFields)
+                return Err(BuilderError::InvalidDateFields);
             }
         };
         self.check_options_consumed()?;

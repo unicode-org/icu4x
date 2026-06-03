@@ -4,8 +4,8 @@
 
 use crate::provider::*;
 
-use icu_locale_core::subtags::{Language, Region, Script};
 use icu_locale_core::LanguageIdentifier;
+use icu_locale_core::subtags::{Language, Region, Script};
 use icu_provider::prelude::*;
 
 use crate::TransformResult;

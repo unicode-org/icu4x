@@ -2,13 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cldr_serde;
 use crate::SourceDataProvider;
+use crate::cldr_serde;
 use core::cmp::Ordering;
 use icu::locale::provider::*;
 use icu::locale::{
-    subtags::{self, language},
     LanguageIdentifier,
+    subtags::{self, language},
 };
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
@@ -134,7 +134,9 @@ impl From<&cldr_serde::aliases::Resource> for Aliases<'_> {
         }
 
         if !language.is_empty() {
-            panic!("Aliases contain a non-special-cased rule. Remove this check if that is intended behaviour.")
+            panic!(
+                "Aliases contain a non-special-cased rule. Remove this check if that is intended behaviour."
+            )
         }
 
         for (from, to) in other.supplemental.metadata.alias.script_aliases.iter() {
@@ -306,12 +308,13 @@ fn test_basic() {
         "he"
     );
 
-    assert!(data
-        .payload
-        .get()
-        .language_len3
-        .get(&language!("iw").to_tinystr().to_unvalidated())
-        .is_none());
+    assert!(
+        data.payload
+            .get()
+            .language_len3
+            .get(&language!("iw").to_tinystr().to_unvalidated())
+            .is_none()
+    );
 
     assert_eq!(
         data.payload.get().script.iter().next().unwrap(),

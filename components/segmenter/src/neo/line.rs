@@ -12,7 +12,7 @@ use crate::provider::Baked;
 #[cfg(feature = "lstm")]
 use crate::provider::SegmenterLstmAutoV1;
 use crate::provider::*;
-use crate::scaffold::{Latin1, PotentiallyIllFormedUtf8, RuleBreakType, Utf16, Utf8};
+use crate::scaffold::{Latin1, PotentiallyIllFormedUtf8, RuleBreakType, Utf8, Utf16};
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 

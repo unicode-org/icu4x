@@ -12,7 +12,7 @@ use core::{char, ops::RangeBounds, ops::RangeInclusive};
 use potential_utf::PotentialCodePoint;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
-use zerovec::{ule::AsULE, zerovec, ZeroVec};
+use zerovec::{ZeroVec, ule::AsULE, zerovec};
 
 use super::InvalidSetError;
 use crate::codepointinvlist::utils::{deconstruct_range, is_valid_zv};

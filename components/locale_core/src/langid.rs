@@ -6,9 +6,9 @@ use core::cmp::Ordering;
 #[cfg(feature = "alloc")]
 use core::str::FromStr;
 
+use crate::ParseError;
 use crate::parser;
 use crate::subtags;
-use crate::ParseError;
 #[cfg(feature = "alloc")]
 use alloc::borrow::Cow;
 

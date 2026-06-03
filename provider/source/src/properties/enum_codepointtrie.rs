@@ -607,7 +607,7 @@ mod tests {
     // the ICU CodePointTrie that ICU4X is reading from.
     #[test]
     fn test_general_category() {
-        use icu::properties::{props::GeneralCategory, CodePointMapData};
+        use icu::properties::{CodePointMapData, props::GeneralCategory};
         let provider = SourceDataProvider::new_testing();
 
         let trie = CodePointMapData::<GeneralCategory>::try_new_unstable(&provider).unwrap();
@@ -619,7 +619,7 @@ mod tests {
 
     #[test]
     fn test_script() {
-        use icu::properties::{props::Script, CodePointMapData};
+        use icu::properties::{CodePointMapData, props::Script};
         let provider = SourceDataProvider::new_testing();
 
         let trie = CodePointMapData::<Script>::try_new_unstable(&provider).unwrap();

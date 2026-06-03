@@ -12,8 +12,8 @@ mod extrema;
 mod month;
 mod not_enough_fields;
 
-use crate::types::Month;
 use crate::Date;
+use crate::types::Month;
 use calendrical_calculations::rata_die::RataDie;
 
 macro_rules! test_all_cals {

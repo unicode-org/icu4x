@@ -7,8 +7,8 @@ use alloc::vec::Vec;
 use core::ops::Range;
 #[allow(unused_imports)]
 use core_maths::*;
-use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
+use zerovec::ule::AsULE;
 
 /// A `D`-dimensional, heap-allocated matrix.
 ///

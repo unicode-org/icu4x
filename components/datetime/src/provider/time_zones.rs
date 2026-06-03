@@ -7,7 +7,7 @@
 use alloc::borrow::Cow;
 use icu_pattern::{DoublePlaceholderPattern, SinglePlaceholderPattern};
 use icu_provider::prelude::*;
-use icu_time::{zone::TimeZoneVariant, TimeZone};
+use icu_time::{TimeZone, zone::TimeZoneVariant};
 use zerovec::{ZeroMap, ZeroVec};
 
 pub use icu_time::provider::MetazoneId;
@@ -289,8 +289,8 @@ icu_provider::data_struct!(
 pub(crate) mod legacy {
     use super::*;
     use icu_time::zone::ZoneNameTimestamp;
-    use zerovec::ule::NichedOption;
     use zerovec::ZeroMap2d;
+    use zerovec::ule::NichedOption;
 
     icu_provider::data_marker!(
         /// `TimezoneMetazonePeriodsV1`
@@ -333,8 +333,8 @@ pub(crate) mod legacy {
         use icu_time::provider::Timestamp24;
         use icu_time::provider::TimezonePeriods;
         use zerotrie::ZeroTrieSimpleAscii;
-        use zerovec::ule::vartuple::VarTuple;
         use zerovec::ule::AsULE;
+        use zerovec::ule::vartuple::VarTuple;
         use zerovec::vecs::VarZeroVecOwned;
 
         let DataResponse::<TimezoneMetazonePeriodsV1> {

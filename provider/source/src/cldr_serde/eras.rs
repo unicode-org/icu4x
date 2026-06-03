@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu::calendar::provider::EraStartDate;
-use serde::{de::Error, Deserialize, Deserializer};
+use serde::{Deserialize, Deserializer, de::Error};
 use std::{borrow::Cow, collections::BTreeMap};
 
 // cldr-core/supplemental/calendarData.json

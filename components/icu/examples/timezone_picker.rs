@@ -4,7 +4,7 @@
 
 use std::collections::BTreeMap;
 
-use icu::datetime::{fieldsets, NoCalendarFormatter};
+use icu::datetime::{NoCalendarFormatter, fieldsets};
 use icu::locale::locale;
 use icu::time::zone::ZoneNameTimestamp;
 use icu_time::zone::UtcOffset;

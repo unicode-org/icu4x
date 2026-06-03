@@ -220,10 +220,10 @@ fn test_en_overlap_patterns() {
 #[cfg(feature = "networking")]
 mod date_skeleton_consistency_tests {
     use super::*;
-    use crate::datetime::DatagenCalendar;
     use crate::CoverageLevel;
+    use crate::datetime::DatagenCalendar;
     use icu::datetime::provider::fields;
-    use icu::datetime::provider::pattern::{reference, runtime, CoarseHourCycle};
+    use icu::datetime::provider::pattern::{CoarseHourCycle, reference, runtime};
     use icu::datetime::provider::skeleton::reference::Skeleton;
     use std::collections::BTreeMap;
 
@@ -263,9 +263,9 @@ mod date_skeleton_consistency_tests {
         pattern: &mut reference::Pattern,
         strategy: PatternCanonicalizationStrategy,
     ) {
+        use PatternCanonicalizationStrategy::*;
         use icu::datetime::provider::fields::{Field, FieldLength, FieldSymbol};
         use icu::datetime::provider::pattern::PatternItem;
-        use PatternCanonicalizationStrategy::*;
 
         let mut items = core::mem::take(pattern).into_items();
         items.retain_mut(|item| {

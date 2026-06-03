@@ -2,16 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::IterableDataProviderCached;
+use crate::SourceDataProvider;
 use crate::cldr_serde;
 use crate::displaynames::{
     ALT_SECONDARY_SUBSTRING, ALT_SHORT_SUBSTRING, ALT_STANDALONE_SUBSTRING, ALT_SUBSTRING,
     ALT_VARIANT_SUBSTRING,
 };
-use crate::IterableDataProviderCached;
-use crate::SourceDataProvider;
 use core::convert::TryFrom;
 use icu::experimental::displaynames::provider::*;
-use icu::locale::{subtags::Script, ParseError};
+use icu::locale::{ParseError, subtags::Script};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use zerovec::VarZeroCow;

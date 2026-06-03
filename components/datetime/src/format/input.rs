@@ -9,12 +9,12 @@ use crate::scaffold::*;
 use icu_calendar::types::{DayOfYear, RataDie};
 use icu_calendar::{AsCalendar, Calendar};
 use icu_time::scaffold::IntoOption;
-use icu_time::zone::models::{AtTime, Base};
 use icu_time::zone::ZoneNameTimestamp;
+use icu_time::zone::models::{AtTime, Base};
 use icu_time::{Hour, Minute, Nanosecond, Second, TimeZoneInfo};
 
 use icu_calendar::Date;
-use icu_time::{zone::UtcOffset, Time, TimeZone};
+use icu_time::{Time, TimeZone, zone::UtcOffset};
 
 // TODO(#2630) fix up imports to directly import from icu_calendar
 pub(crate) use icu_calendar::types::{DayOfMonth, MonthInfo, Weekday, YearInfo};

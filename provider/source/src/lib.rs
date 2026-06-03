@@ -33,8 +33,8 @@
 use cldr_cache::CldrCache;
 use elsa::sync::FrozenMap;
 use icu::calendar::{Date, Iso};
-use icu::time::zone::UtcOffset;
 use icu::time::Time;
+use icu::time::zone::UtcOffset;
 use icu_provider::prelude::*;
 use source::{AbstractFs, SerdeCache, TzdbCache, UnicodeCache};
 use std::collections::{BTreeSet, HashSet};
@@ -253,10 +253,12 @@ impl SourceDataProvider {
     #[cfg(feature = "networking")]
     pub fn with_cldr_for_tag(self, tag: &str) -> Self {
         Self {
-                cldr_paths: Some(Arc::new(CldrCache::new(AbstractFs::new_zip_from_url(format!(
+            cldr_paths: Some(Arc::new(CldrCache::new(AbstractFs::new_zip_from_url(
+                format!(
                     "https://github.com/unicode-org/cldr-json/releases/download/{tag}/cldr-{tag}-json-full.zip",
-                ))))),
-                ..self
+                ),
+            )))),
+            ..self
         }
     }
 
@@ -294,9 +296,11 @@ impl SourceDataProvider {
     #[cfg(feature = "networking")]
     pub fn with_segmenter_lstm_for_tag(self, tag: &str) -> Self {
         Self {
-            segmenter_lstm_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_zip_from_url(format!(
-                "https://github.com/unicode-org/lstm_word_segmentation/releases/download/{tag}/models.zip"
-            ))))),
+            segmenter_lstm_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_zip_from_url(
+                format!(
+                    "https://github.com/unicode-org/lstm_word_segmentation/releases/download/{tag}/models.zip"
+                ),
+            )))),
             ..self
         }
     }
@@ -511,18 +515,22 @@ fn test_check_req() {
     }
 
     let provider = SourceDataProvider::new_testing();
-    assert!(provider
-        .check_req::<HelloWorldV1>(DataRequest {
-            id: DataIdentifierBorrowed::for_locale(&langid!("fi").into()),
-            ..Default::default()
-        })
-        .is_ok());
-    assert!(provider
-        .check_req::<HelloWorldV1>(DataRequest {
-            id: DataIdentifierBorrowed::for_locale(&langid!("arc").into()),
-            ..Default::default()
-        })
-        .is_err());
+    assert!(
+        provider
+            .check_req::<HelloWorldV1>(DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&langid!("fi").into()),
+                ..Default::default()
+            })
+            .is_ok()
+    );
+    assert!(
+        provider
+            .check_req::<HelloWorldV1>(DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&langid!("arc").into()),
+                ..Default::default()
+            })
+            .is_err()
+    );
 }
 
 trait IterableDataProviderCached<M: DataMarker>: DataProvider<M> {

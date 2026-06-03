@@ -4,7 +4,7 @@
 
 #![allow(dead_code)]
 
-use icu_segmenter::provider::{radical::UnihanRadicalsData, Baked};
+use icu_segmenter::provider::{Baked, radical::UnihanRadicalsData};
 use std::collections::HashMap;
 
 static MODEL_FOR_TEST: &str = include_str!("model.json");

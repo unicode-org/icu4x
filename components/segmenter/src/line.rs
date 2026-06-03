@@ -10,8 +10,8 @@ use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::char;
-use icu_locale_core::subtags::{language, Language};
 use icu_locale_core::LanguageIdentifier;
+use icu_locale_core::subtags::{Language, language};
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 

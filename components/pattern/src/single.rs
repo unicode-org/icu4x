@@ -6,11 +6,11 @@
 
 use core::convert::Infallible;
 use core::{cmp::Ordering, str::FromStr};
-use writeable::adapters::WriteableAsTryWriteableInfallible;
 use writeable::Writeable;
+use writeable::adapters::WriteableAsTryWriteableInfallible;
 
-use crate::common::*;
 use crate::Error;
+use crate::common::*;
 
 #[cfg(feature = "alloc")]
 use alloc::{boxed::Box, string::String};

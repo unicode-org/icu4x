@@ -10,12 +10,12 @@ use crate::duration::options::FieldStyle;
 use super::format::FormattedDuration;
 use super::options::BaseStyle;
 use super::validated_options::Unit;
-use super::{provider, Duration};
+use super::{Duration, provider};
 
 pub use super::validated_options::ValidatedDurationFormatterOptions;
 use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV1};
 use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
-use icu_list::{options::ListLength, ListFormatter, ListFormatterPreferences};
+use icu_list::{ListFormatter, ListFormatterPreferences, options::ListLength};
 use icu_locale_core::preferences::{
     define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
 };
