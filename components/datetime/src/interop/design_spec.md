@@ -56,28 +56,28 @@ Instead of separate option structures, a single unified `DateTimeFormatterOption
 
 The options bag supports the following fields:
 
-| Category | Option Name | Type / Values | Description |
-|---|---|---|---|
-| **ICU4C Overrides** | `skeleton` | String (Optional) | Classical skeleton (e.g., `yMdHms`). If set, individual fields are ignored. |
-| **High-level Styles** | `date_style` | `Full`, `Long`, `Medium`, `Short` (Optional) | Pre-defined style for the date part. |
-| | `time_style` | `Full`, `Long`, `Medium`, `Short` (Optional) | Pre-defined style for the time part. |
-| **ICU4X Fields** | `date_fields` | `DateFields` Enum (Optional) | ICU4X pre-defined date field combinations (YMD, MD, etc.). |
-| | `time_precision`| `TimePrecision` Enum (Optional) | ICU4X time precision (Hour, Minute, Second, Subsecond, etc.). |
-| | `zone_style` | `ZoneStyle` Enum (Optional) | ICU4X timezone style (SpecificLong, LocalizedOffset, etc.). |
-| | `alignment` | `Alignment` Enum (Optional) | ICU4X Column/Auto alignment. |
-| | `year_style` | `YearStyle` Enum (Optional) | ICU4X Year style (WithEra, NoEra, etc.). |
-| **ECMA Field Styles** | `weekday` | `Narrow`, `Short`, `Long` (Optional) | Weekday display style. |
-| | `era` | `Narrow`, `Short`, `Long` (Optional) | Era display style. |
-| | `year` | `Numeric`, `TwoDigit` (Optional) | Year display style. |
-| | `month` | `Numeric`, `TwoDigit`, `Narrow`, `Short`, `Long` (Optional) | Month display style. |
-| | `day` | `Numeric`, `TwoDigit` (Optional) | Day display style. |
-| | `day_period` | `Narrow`, `Short`, `Long` (Optional) | AM/PM display style. |
-| | `hour` | `Numeric`, `TwoDigit` (Optional) | Hour display style. |
-| | `minute` | `Numeric`, `TwoDigit` (Optional) | Minute display style. |
-| | `second` | `Numeric`, `TwoDigit` (Optional) | Second display style. |
-| | `fractional_second_digits` | 1..9 (Optional) | Number of fractional second digits. |
-| | `time_zone_name` | `Short`, `Long`, `ShortOffset`, `LongOffset`, `ShortGeneric`, `LongGeneric` (Optional) | Timezone display style. |
-| **Preferences** | `hour_cycle` | `HourCycle` Enum (Optional) | Hour cycle override (H11, H12, H23, H24). |
+| Option Name | Type / Values | Description |
+|---|---|---|
+| `skeleton` | String | **ICU4C Override**: Classical skeleton (e.g., `yMdHms`). If set, individual fields are ignored. |
+| `date_style` | `Full`, `Long`, `Medium`, `Short` | **High-level Style**: Pre-defined style for the date part (ECMA/ICU4C). |
+| `time_style` | `Full`, `Long`, `Medium`, `Short` | **High-level Style**: Pre-defined style for the time part (ECMA/ICU4C). |
+| `date_fields` | [`DateFields`](https://docs.rs/icu_datetime/latest/icu_datetime/fieldsets/builder/enum.DateFields.html) | **ICU4X Field**: Pre-defined date field combinations (YMD, MD, etc.). |
+| `time_precision`| [`TimePrecision`](https://docs.rs/icu_datetime/latest/icu_datetime/options/enum.TimePrecision.html) | **ICU4X Field**: Time precision (Hour, Minute, Second, Subsecond, etc.). |
+| `zone_style` | [`ZoneStyle`](https://docs.rs/icu_datetime/latest/icu_datetime/fieldsets/builder/enum.ZoneStyle.html) | **ICU4X Field**: Timezone style (SpecificLong, LocalizedOffset, etc.). |
+| `alignment` | [`Alignment`](https://docs.rs/icu_datetime/latest/icu_datetime/options/enum.Alignment.html) | **ICU4X Option**: Column/Auto alignment. |
+| `year_style` | [`YearStyle`](https://docs.rs/icu_datetime/latest/icu_datetime/options/enum.YearStyle.html) | **ICU4X Option**: Year style (WithEra, NoEra, etc.). |
+| `weekday` | `Narrow`, `Short`, `Long` | **ECMA Field Style**: Weekday display style. |
+| `era` | `Narrow`, `Short`, `Long` | **ECMA Field Style**: Era display style. |
+| `year` | `Numeric`, `TwoDigit` | **ECMA Field Style**: Year display style. |
+| `month` | `Numeric`, `TwoDigit`, `Narrow`, `Short`, `Long` | **ECMA Field Style**: Month display style. |
+| `day` | `Numeric`, `TwoDigit` | **ECMA Field Style**: Day display style. |
+| `day_period` | `Narrow`, `Short`, `Long` | **ECMA Field Style**: AM/PM display style. |
+| `hour` | `Numeric`, `TwoDigit` | **ECMA Field Style**: Hour display style. |
+| `minute` | `Numeric`, `TwoDigit` | **ECMA Field Style**: Minute display style. |
+| `second` | `Numeric`, `TwoDigit` | **ECMA Field Style**: Second display style. |
+| `fractional_second_digits` | 1..9 | **ECMA Field Style**: Number of fractional second digits. |
+| `time_zone_name` | `Short`, `Long`, `ShortOffset`, `LongOffset`, `ShortGeneric`, `LongGeneric` | **ECMA Field Style**: Timezone display style. |
+| `hour_cycle` | [`HourCycle`](https://docs.rs/icu_datetime/latest/icu_datetime/preferences/enum.HourCycle.html) | **Preference**: Hour cycle override (H11, H12, H23, H24). |
 
 ---
 
