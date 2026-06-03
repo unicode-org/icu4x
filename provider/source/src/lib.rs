@@ -438,10 +438,14 @@ impl SourceDataProvider {
         }
     }
 
-    /// AGENT TODO: DOCS
-    pub fn with_alt_variants(self, variants: impl Iterator<Item = AltVariantKind>) -> Self {
-        todo!() // AGENT TODO
-        // AGENT TODO: Add this to the CLI as a repeated flag --alt-variant datetime-ascii
+    /// Set the [`AltVariantKind`]s to enable when generating data.
+    ///
+    /// This allows enabling alternative data variants, such as `alt="ascii"` for datetime patterns.
+    pub fn with_alt_variants(self, variants: impl IntoIterator<Item = AltVariantKind>) -> Self {
+        Self {
+            alt_variants: variants.into_iter().collect(),
+            ..self
+        }
     }
 
     /// Set the timezone horizon from a UTC date.

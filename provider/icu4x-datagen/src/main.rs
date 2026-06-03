@@ -241,6 +241,11 @@ struct Cli {
     #[cfg(feature = "provider")]
     collation_root_han: CollationRootHan,
 
+    #[arg(long = "alt-variant", value_enum, num_args = 1..)]
+    #[arg(help = "Which alt variants to enable.")]
+    #[cfg(feature = "provider")]
+    alt_variants: Vec<AltVariantKind>,
+
     #[arg(long, value_enum, num_args = 1..)]
     #[arg(
         help = "Which less-common collation tables to include. 'search-all' includes all search tables."
@@ -336,6 +341,12 @@ enum TrieType {
 enum CollationRootHan {
     Unihan,
     Implicit,
+}
+
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
+// Mirrors icu_provider_source::AltVariantKind
+enum AltVariantKind {
+    DatetimeAscii,
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
@@ -486,6 +497,10 @@ fn run(cli: Cli) -> eyre::Result<()> {
                     icu_provider_source::CollationRootHan::Implicit
                 }
             });
+
+            p = p.with_alt_variants(cli.alt_variants.iter().copied().map(|v| match v {
+                AltVariantKind::DatetimeAscii => icu_provider_source::AltVariantKind::DatetimeAscii,
+            }));
 
             if cli.trie_type == TrieType::Fast {
                 p = p.with_fast_tries();

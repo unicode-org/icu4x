@@ -26,14 +26,17 @@ impl cldr_serde::ca::AvailableFormats {
         // The CLDR keys for available_formats can have duplicate skeletons with either
         // an additional variant, or with multiple variants for different plurals.
         for (skeleton_str, pattern_str) in self.0.iter() {
-            let is_alt_ascii = skeleton_str.contains("-alt-ascii");
+            let (skeleton_str, is_alt_ascii) = match skeleton_str.strip_suffix("-alt-ascii") {
+                Some(stripped) => (stripped, true),
+                None => (skeleton_str.as_str(), false),
+            };
             if ascii_preferences == AsciiPreferences::Default && is_alt_ascii {
                 continue;
             }
 
             let (skeleton, plural_category) = match skeleton_str.split_once("-count-") {
                 Some((s, v)) => (s, PluralCategory::get_for_cldr_string(v).unwrap()),
-                None => (skeleton_str.as_ref(), PluralCategory::Other),
+                None => (skeleton_str, PluralCategory::Other),
             };
 
             match patterns

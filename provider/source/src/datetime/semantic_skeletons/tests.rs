@@ -173,6 +173,45 @@ fn test_en_hour_patterns() {
 }
 
 #[test]
+fn test_en_hour_patterns_alt_ascii() {
+    use icu::locale::locale;
+
+    let provider = SourceDataProvider::new_testing()
+        .with_alt_variants(std::iter::once(AltVariantKind::DatetimeAscii));
+    let payload: DataPayload<DatetimePatternsTimeV1> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("j"),
+                &locale!("en").into(),
+            ),
+            metadata: Default::default(),
+        })
+        .unwrap()
+        .payload;
+
+    let json_str = serde_json::to_string_pretty(payload.get()).unwrap();
+
+    assert_eq!(
+        json_str,
+        r#"{
+  "variant_pattern_indices": [
+    2,
+    2,
+    2,
+    3,
+    3,
+    3
+  ],
+  "elements": [
+    "h a",
+    "h:mm a",
+    "h:mm:ss a"
+  ]
+}"#
+    );
+}
+
+#[test]
 fn test_en_overlap_patterns() {
     use icu::locale::locale;
 
