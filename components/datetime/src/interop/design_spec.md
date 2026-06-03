@@ -65,7 +65,7 @@ pub struct DateTimeFormatterOptions {
     pub skeleton: Option<String>,
 
     // ==========================================
-    // 2. High-level Styles (ECMA & ICU4X)
+    // 2. High-level Styles (ECMA & ICU4C)
     // ==========================================
     pub date_style: Option<DateTimeStyle>,
     pub time_style: Option<DateTimeStyle>,
