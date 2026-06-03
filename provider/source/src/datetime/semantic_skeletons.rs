@@ -190,7 +190,14 @@ impl SourceDataProvider {
         let data = self.get_dates_resource(locale, calendar)?;
 
         // Note: We default to atTime here (See https://github.com/unicode-org/conformance/issues/469)
-        let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats_at_time);
+        let length_combinations_v1 = convert_length_patterns(
+            &data.datetime_formats_at_time,
+            if self.alt_variants.contains(&AltVariantKind::DatetimeAscii) {
+                AsciiPreferences::PreferAscii
+            } else {
+                AsciiPreferences::Default
+            },
+        );
         let skeleton_patterns = data.datetime_formats.available_formats.parse_skeletons(
             if self.alt_variants.contains(&AltVariantKind::DatetimeAscii) {
                 AsciiPreferences::PreferAscii
@@ -456,36 +463,37 @@ fn preferred_hour_cycle(other: &cldr_serde::ca::Dates, locale: &DataLocale) -> C
     preferred_hour_cycle.expect("Could not find a preferred hour cycle.")
 }
 
-impl From<&cldr_serde::ca::DateTimeFormatsVariant> for GenericLengthPatterns<'_> {
-    fn from(other: &cldr_serde::ca::DateTimeFormatsVariant) -> Self {
-        // TODO(#308): Support numbering system variations. We currently throw them away.
-        // TODO AGENT: support alt ascii
-        Self {
-            full: other
-                .standard
-                .full
-                .get_pattern()
-                .parse()
-                .expect("Failed to parse pattern"),
-            long: other
-                .standard
-                .long
-                .get_pattern()
-                .parse()
-                .expect("Failed to parse pattern"),
-            medium: other
-                .standard
-                .medium
-                .get_pattern()
-                .parse()
-                .expect("Failed to parse pattern"),
-            short: other
-                .standard
-                .short
-                .get_pattern()
-                .parse()
-                .expect("Failed to parse pattern"),
-        }
+pub(crate) fn convert_length_patterns<'data>(
+    other: &'data cldr_serde::ca::DateTimeFormatsVariant,
+    ascii_preferences: AsciiPreferences,
+) -> GenericLengthPatterns<'data> {
+    let choose_pattern =
+        |std: &'data cldr_serde::ca::LengthPattern,
+         alt: &'data Option<cldr_serde::ca::LengthPattern>| {
+            if ascii_preferences == AsciiPreferences::PreferAscii {
+                alt.as_ref().unwrap_or(std)
+            } else {
+                std
+            }
+        };
+
+    GenericLengthPatterns {
+        full: choose_pattern(&other.standard.full, &other.standard.full_alt_ascii)
+            .get_pattern()
+            .parse()
+            .expect("Failed to parse pattern"),
+        long: choose_pattern(&other.standard.long, &other.standard.long_alt_ascii)
+            .get_pattern()
+            .parse()
+            .expect("Failed to parse pattern"),
+        medium: choose_pattern(&other.standard.medium, &other.standard.medium_alt_ascii)
+            .get_pattern()
+            .parse()
+            .expect("Failed to parse pattern"),
+        short: choose_pattern(&other.standard.short, &other.standard.short_alt_ascii)
+            .get_pattern()
+            .parse()
+            .expect("Failed to parse pattern"),
     }
 }
 

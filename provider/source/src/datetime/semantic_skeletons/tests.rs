@@ -434,7 +434,17 @@ mod date_skeleton_consistency_tests {
     ) -> usize {
         let mut num_problems = 0;
         let data = provider.get_dates_resource(locale, Some(cal)).unwrap();
-        let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats_at_time);
+        let length_combinations_v1 = convert_length_patterns(
+            &data.datetime_formats_at_time,
+            if provider
+                .alt_variants
+                .contains(&AltVariantKind::DatetimeAscii)
+            {
+                AsciiPreferences::PreferAscii
+            } else {
+                AsciiPreferences::Default
+            },
+        );
         let skeleton_patterns = data
             .datetime_formats
             .available_formats
