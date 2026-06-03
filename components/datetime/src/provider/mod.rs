@@ -173,4 +173,32 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     semantic_skeletons::DatetimePatternsDateJapaneseV1::INFO,
     semantic_skeletons::DatetimePatternsDatePersianV1::INFO,
     semantic_skeletons::DatetimePatternsDateRocV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeGlueV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeTimeV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDateBuddhistV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDateChineseV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDateCopticV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDateDangiV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDateEthiopianV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDateGregorianV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDateHebrewV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDateIndianV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDateHijriV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDateJapaneseV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDatePersianV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDateRocV1::INFO,
 ];

@@ -54,7 +54,6 @@ impl<T> Trio<T> {
         }
     }
 }
-
 /// Some patterns associated with a [`SkeletonQuality`].
 #[derive(Debug, Clone, PartialEq)]
 struct PatternsWithDistance<T> {
@@ -497,7 +496,7 @@ impl From<&cldr_serde::ca::DateTimeFormatsVariant> for GenericLengthPatterns<'_>
 }
 
 /// Convert from a semantic time field set to classical component options for calculating the pattern.
-fn gen_time_components(
+pub(crate) fn gen_time_components(
     _: Length,
     attributes: &DataMarkerAttributes,
     _: &cldr_serde::ca::Dates,
@@ -523,7 +522,7 @@ fn gen_time_components(
 }
 
 /// Convert from a semantic date field set to classical component options for calculating the pattern.
-fn gen_date_components(
+pub(crate) fn gen_date_components(
     length: Length,
     attributes: &DataMarkerAttributes,
     data: &cldr_serde::ca::Dates,
