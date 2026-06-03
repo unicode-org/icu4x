@@ -334,11 +334,14 @@ mod date_skeleton_consistency_tests {
         // TODO: Use a Skeleton here in order to retain 'E' vs 'c'
         let parsed_skeleton: reference::Pattern = info.skeleton.parse().unwrap();
         let components = components::Bag::from(&parsed_skeleton);
-        let selected_pattern = select_pattern(
+        let context = SemanticSkeletonsContext {
+            skeleton_patterns: data.skeleton_patterns.clone(),
+            length_combinations_v1: data.length_combinations_v1.clone(),
+        };
+        let selected_pattern = select_pattern::<PatternsWithDistance<_>>(
+            &context,
             components,
-            data.skeleton_patterns,
             data.preferred_hour_cycle,
-            data.length_combinations_v1,
         )
         .into_inner()
         .try_into_other()

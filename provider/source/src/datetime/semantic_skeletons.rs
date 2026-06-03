@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{DatagenCalendar, Trio, select_pattern_generic};
+use super::{DatagenCalendar, Trio, PackedPatternItem, select_pattern};
 use crate::debug_provider::DebugProvider;
 use crate::{IterableDataProviderCached, SourceDataProvider, cldr_serde};
 use icu::datetime::fieldsets::enums::*;
@@ -85,51 +85,56 @@ fn enforce_consistent_field_length(
     }
 }
 
-fn select_pattern<'data>(
-    bag: components::Bag,
-    skeletons: &BTreeMap<Skeleton, PluralElements<runtime::Pattern<'data>>>,
-    preferred_hour_cycle: CoarseHourCycle,
-    length_patterns: &GenericLengthPatterns<'data>,
-) -> PatternsWithDistance<PluralElements<runtime::Pattern<'data>>> {
-    select_pattern_generic(
-        bag,
-        preferred_hour_cycle,
-        |_, fields| match create_best_pattern_for_fields(
-            skeletons,
-            length_patterns,
+pub(crate) struct SemanticSkeletonsContext<'a> {
+    skeleton_patterns: BTreeMap<Skeleton, PluralElements<runtime::Pattern<'a>>>,
+    length_combinations_v1: GenericLengthPatterns<'a>,
+}
+
+impl<'a> PackedPatternItem for PatternsWithDistance<PluralElements<runtime::Pattern<'a>>> {
+    type MatchFieldsContext = SemanticSkeletonsContext<'a>;
+
+    fn match_fields(
+        context: &Self::MatchFieldsContext,
+        components_bag: &components::Bag,
+        _hour_cycle: HourCycle,
+        fields: &[Field],
+    ) -> Self {
+        use icu::datetime::provider::pattern::{runtime, PatternItem};
+        match create_best_pattern_for_fields(
+            &context.skeleton_patterns,
+            &context.length_combinations_v1,
             fields,
-            &bag,
+            components_bag,
             false,
         ) {
             BestSkeleton::AllFieldsMatch(p, distance) => {
-                Some(PatternsWithDistance { inner: p, distance })
+                PatternsWithDistance { inner: p, distance }
             }
             BestSkeleton::MissingOrExtraFields(p, distance) => {
-                Some(PatternsWithDistance { inner: p, distance })
+                PatternsWithDistance { inner: p, distance }
             }
-            BestSkeleton::NoMatch => None,
-        },
-        |_, fields| {
-            use icu::datetime::provider::pattern::{runtime, PatternItem};
-            // Build a last-resort pattern that contains all of the requested fields.
-            // This is NOT in the CLDR standard! Better would be:
-            // - Use Append Items?
-            // - Fall back to the format from the Gregorian or Generic calendar?
-            // - Bubble up an error of some sort?
-            // See issue: <https://github.com/unicode-org/icu4x/issues/586>
-            let pattern_items = fields
-                .iter()
-                .flat_map(|&field| [PatternItem::Literal(' '), PatternItem::Field(field)])
-                .skip(1)
-                .collect::<Vec<_>>();
-            let pattern = runtime::Pattern::from(pattern_items);
-            PatternsWithDistance {
-                inner: PluralElements::new(pattern),
-                distance: SkeletonQuality::worst(),
+            BestSkeleton::NoMatch => {
+                // Build a last-resort pattern that contains all of the requested fields.
+                // This is NOT in the CLDR standard! Better would be:
+                // - Use Append Items?
+                // - Fall back to the format from the Gregorian or Generic calendar?
+                // - Bubble up an error of some sort?
+                // See issue: <https://github.com/unicode-org/icu4x/issues/586>
+                let pattern_items = fields
+                    .iter()
+                    .flat_map(|&field| [PatternItem::Literal(' '), PatternItem::Field(field)])
+                    .skip(1)
+                    .collect::<Vec<_>>();
+                let pattern = runtime::Pattern::from(pattern_items);
+                PatternsWithDistance {
+                    inner: PluralElements::new(pattern),
+                    distance: SkeletonQuality::worst(),
+                }
             }
-        },
-    )
+        }
+    }
 }
+
 
 impl SourceDataProvider {
     fn load_datetime_skeletons_key<M>(
@@ -178,6 +183,11 @@ impl SourceDataProvider {
         let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats_at_time);
         let skeleton_patterns = data.datetime_formats.available_formats.parse_skeletons();
 
+        let context = SemanticSkeletonsContext {
+            skeleton_patterns,
+            length_combinations_v1,
+        };
+
         fn enforce_consistent_field_lengths(
             trio: &mut VariantPatterns,
             mut log_fn: impl FnMut(ErrorField, ErrorField, SkeletonQuality),
@@ -199,10 +209,9 @@ impl SourceDataProvider {
                 let preferred_hour_cycle = preferred_hour_cycle(data, locale);
                 // TODO: Use a Skeleton here in order to retain 'E' vs 'c'
                 let pattern = select_pattern(
+                    &context,
                     components,
-                    &skeleton_patterns,
                     preferred_hour_cycle,
-                    &length_combinations_v1,
                 );
 
                 let mut variant_patterns = match components {
@@ -221,16 +230,14 @@ impl SourceDataProvider {
                         VariantPatterns {
                             standard: pattern,
                             variant0: Some(select_pattern(
+                                &context,
                                 components_with_full_year,
-                                &skeleton_patterns,
                                 preferred_hour_cycle,
-                                &length_combinations_v1,
                             )),
                             variant1: Some(select_pattern(
+                                &context,
                                 components_with_era,
-                                &skeleton_patterns,
                                 preferred_hour_cycle,
-                                &length_combinations_v1,
                             )),
                         }
                     }
@@ -243,16 +250,14 @@ impl SourceDataProvider {
                         VariantPatterns {
                             standard: pattern,
                             variant0: Some(select_pattern(
+                                &context,
                                 components_with_minute,
-                                &skeleton_patterns,
                                 preferred_hour_cycle,
-                                &length_combinations_v1,
                             )),
                             variant1: Some(select_pattern(
+                                &context,
                                 components_with_second,
-                                &skeleton_patterns,
                                 preferred_hour_cycle,
-                                &length_combinations_v1,
                             )),
                         }
                     }

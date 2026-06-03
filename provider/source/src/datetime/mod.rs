@@ -10,6 +10,7 @@ use icu::datetime::provider::skeleton::reference::Skeleton;
 use icu::datetime::provider::fields::{components, Field};
 use icu::datetime::provider::pattern::CoarseHourCycle;
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
+
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 
@@ -306,29 +307,34 @@ impl<T> Trio<T> {
     }
 }
 
+pub(crate) trait PackedPatternItem: Sized {
+    /// The context required to match fields for this pattern item.
+    type MatchFieldsContext;
+
+    /// Attempts to find a matching pattern for the given fields in the context.
+    ///
+    /// Generates a reasonable fallback if it can't find one.
+    fn match_fields(
+        context: &Self::MatchFieldsContext,
+        components_bag: &components::Bag,
+        hour_cycle: HourCycle,
+        fields: &[Field],
+    ) -> Self;
+}
+
+
 /// A generic helper to resolve a pattern from a components bag, handling hour cycle and fallback.
-///
-/// # Arguments
-/// * `bag` - The components bag to resolve.
-/// * `preferred_hour_cycle` - The preferred hour cycle.
-/// * `match_fn` - A callback to match a pattern from CLDR data using the resolved hour cycle and fields.
-/// * `fallback_fn` - A callback to generate a fallback pattern if the match fails.
-pub(crate) fn select_pattern_generic<T>(
-    bag: components::Bag,
+pub(crate) fn select_pattern<T: PackedPatternItem>(
+    context: &T::MatchFieldsContext,
+    components_bag: components::Bag,
     preferred_hour_cycle: CoarseHourCycle,
-    mut match_fn: impl FnMut(HourCycle, &[Field]) -> Option<T>,
-    fallback_fn: impl FnOnce(HourCycle, &[Field]) -> T,
 ) -> T {
     let default_hour_cycle = match preferred_hour_cycle {
         CoarseHourCycle::H11H12 => HourCycle::H12,
         CoarseHourCycle::H23 => HourCycle::H23,
     };
-    let fields = bag.to_vec_fields(default_hour_cycle);
-    if let Some(pattern) = match_fn(default_hour_cycle, &fields) {
-        pattern
-    } else {
-        fallback_fn(default_hour_cycle, &fields)
-    }
+    let fields = components_bag.to_vec_fields(default_hour_cycle);
+    T::match_fields(context, &components_bag, default_hour_cycle, &fields)
 }
 
 #[cfg(test)]
