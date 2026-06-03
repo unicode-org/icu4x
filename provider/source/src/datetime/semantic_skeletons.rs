@@ -5,7 +5,7 @@
 use super::DatagenCalendar;
 use crate::datetime::available_formats::DatetimeAsciiPreference;
 use crate::debug_provider::DebugProvider;
-use crate::{cldr_serde, AltVariantKind, IterableDataProviderCached, SourceDataProvider};
+use crate::{cldr_serde, IterableDataProviderCached, SourceDataProvider};
 use icu::datetime::fieldsets::enums::*;
 use icu::datetime::options::Length;
 use icu::datetime::pattern::{ErrorField, FixedCalendarDateTimeNames};
