@@ -7,6 +7,9 @@ use crate::cldr_serde;
 use icu::calendar::AnyCalendarKind;
 use icu::datetime::provider::skeleton::SkeletonError;
 use icu::datetime::provider::skeleton::reference::Skeleton;
+use icu::datetime::provider::fields::{components, Field};
+use icu::datetime::provider::pattern::CoarseHourCycle;
+use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 
@@ -300,6 +303,31 @@ impl<T> Trio<T> {
         ];
         list.sort_by_key(|variant| variant.as_ref().map(|v| key_fn(*v)));
         list.into_iter().flatten()
+    }
+}
+
+/// A generic helper to resolve a pattern from a components bag, handling hour cycle and fallback.
+///
+/// # Arguments
+/// * `bag` - The components bag to resolve.
+/// * `preferred_hour_cycle` - The preferred hour cycle.
+/// * `match_fn` - A callback to match a pattern from CLDR data using the resolved hour cycle and fields.
+/// * `fallback_fn` - A callback to generate a fallback pattern if the match fails.
+pub(crate) fn select_pattern_generic<T>(
+    bag: components::Bag,
+    preferred_hour_cycle: CoarseHourCycle,
+    mut match_fn: impl FnMut(HourCycle, &[Field]) -> Option<T>,
+    fallback_fn: impl FnOnce(HourCycle, &[Field]) -> T,
+) -> T {
+    let default_hour_cycle = match preferred_hour_cycle {
+        CoarseHourCycle::H11H12 => HourCycle::H12,
+        CoarseHourCycle::H23 => HourCycle::H23,
+    };
+    let fields = bag.to_vec_fields(default_hour_cycle);
+    if let Some(pattern) = match_fn(default_hour_cycle, &fields) {
+        pattern
+    } else {
+        fallback_fn(default_hour_cycle, &fields)
     }
 }
 

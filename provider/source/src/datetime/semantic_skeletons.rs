@@ -2,13 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{DatagenCalendar, Trio};
+use super::{DatagenCalendar, Trio, select_pattern_generic};
 use crate::debug_provider::DebugProvider;
 use crate::{IterableDataProviderCached, SourceDataProvider, cldr_serde};
 use icu::datetime::fieldsets::enums::*;
 use icu::datetime::options::Length;
 use icu::datetime::pattern::{ErrorField, FixedCalendarDateTimeNames};
-use icu::datetime::provider::fields::components;
+use icu::datetime::provider::fields::{components, Field};
 use icu::datetime::provider::packed_pattern::*;
 use icu::datetime::provider::pattern::{CoarseHourCycle, reference, runtime};
 use icu::datetime::provider::semantic_skeletons::*;
@@ -91,20 +91,26 @@ fn select_pattern<'data>(
     preferred_hour_cycle: CoarseHourCycle,
     length_patterns: &GenericLengthPatterns<'data>,
 ) -> PatternsWithDistance<PluralElements<runtime::Pattern<'data>>> {
-    use icu::datetime::provider::pattern::{PatternItem, runtime};
-    use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
-
-    let default_hour_cycle = match preferred_hour_cycle {
-        CoarseHourCycle::H11H12 => HourCycle::H12,
-        CoarseHourCycle::H23 => HourCycle::H23,
-    };
-    let fields = bag.to_vec_fields(default_hour_cycle);
-    match create_best_pattern_for_fields(skeletons, length_patterns, &fields, &bag, false) {
-        BestSkeleton::AllFieldsMatch(p, distance) => PatternsWithDistance { inner: p, distance },
-        BestSkeleton::MissingOrExtraFields(p, distance) => {
-            PatternsWithDistance { inner: p, distance }
-        }
-        BestSkeleton::NoMatch => {
+    select_pattern_generic(
+        bag,
+        preferred_hour_cycle,
+        |_, fields| match create_best_pattern_for_fields(
+            skeletons,
+            length_patterns,
+            fields,
+            &bag,
+            false,
+        ) {
+            BestSkeleton::AllFieldsMatch(p, distance) => {
+                Some(PatternsWithDistance { inner: p, distance })
+            }
+            BestSkeleton::MissingOrExtraFields(p, distance) => {
+                Some(PatternsWithDistance { inner: p, distance })
+            }
+            BestSkeleton::NoMatch => None,
+        },
+        |_, fields| {
+            use icu::datetime::provider::pattern::{runtime, PatternItem};
             // Build a last-resort pattern that contains all of the requested fields.
             // This is NOT in the CLDR standard! Better would be:
             // - Use Append Items?
@@ -112,8 +118,8 @@ fn select_pattern<'data>(
             // - Bubble up an error of some sort?
             // See issue: <https://github.com/unicode-org/icu4x/issues/586>
             let pattern_items = fields
-                .into_iter()
-                .flat_map(|field| [PatternItem::Literal(' '), PatternItem::Field(field)])
+                .iter()
+                .flat_map(|&field| [PatternItem::Literal(' '), PatternItem::Field(field)])
                 .skip(1)
                 .collect::<Vec<_>>();
             let pattern = runtime::Pattern::from(pattern_items);
@@ -121,8 +127,8 @@ fn select_pattern<'data>(
                 inner: PluralElements::new(pattern),
                 distance: SkeletonQuality::worst(),
             }
-        }
-    }
+        },
+    )
 }
 
 impl SourceDataProvider {
@@ -587,4 +593,5 @@ impl_datetime_skeleton_datagen!(DatetimePatternsDateHijriV1, DatagenCalendar::Hi
 impl_datetime_skeleton_datagen!(DatetimePatternsDateJapaneseV1, DatagenCalendar::Japanese);
 impl_datetime_skeleton_datagen!(DatetimePatternsDatePersianV1, DatagenCalendar::Persian);
 impl_datetime_skeleton_datagen!(DatetimePatternsDateRocV1, DatagenCalendar::Roc);
+
 
