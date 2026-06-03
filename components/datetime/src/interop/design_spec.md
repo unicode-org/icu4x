@@ -28,17 +28,17 @@ The interop layer is split across three boundaries to maintain strict dependency
 
 ```mermaid
 graph TD
-    Client[C/C++ Client Code] --> InteropCPP[ffi/icu4c_interop Header-only C++]
+    Client["C/C++ Client Code"] --> InteropCPP["ffi/icu4c_interop Header-only C++"]
     
-    subgraph Rust Boundary (No ICU4C dependency)
-        InteropCPP --> |Calls FFI| CAPI[icu_capi C API]
-        CAPI --> |Exposes| InteropRust[icu_datetime::interop]
+    subgraph rust["Rust Boundary (No ICU4C dependency)"]
+        InteropCPP --> |Calls FFI| CAPI["icu_capi C API"]
+        CAPI --> |Exposes| InteropRust["icu_datetime::interop"]
         InteropRust --> |Resolves Options| Options[DateTimeFormatterOptions]
     end
 
-    subgraph C/C++ Linkage Boundary
-        InteropCPP --> |Links| CAPI_SO[libicu_capi.so ICU4X]
-        InteropCPP --> |Links| ICU4C_SO[libicui18n.so ICU4C]
+    subgraph linkage["C/C++ Linkage Boundary"]
+        InteropCPP --> |Links| CAPI_SO["libicu_capi.so (ICU4X)"]
+        InteropCPP --> |Links| ICU4C_SO["libicui18n.so (ICU4C)"]
     end
 ```
 
