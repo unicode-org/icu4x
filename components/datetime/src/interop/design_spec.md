@@ -126,29 +126,7 @@ The resolved standard symbols are concatenated in UTS 35 canonical order to form
 
 ICU4X is static/data-efficient. Mapping arbitrary options to ICU4X requires resolving them to a `CompositeFieldSet`.
 
-#### Styles:
-- `date_style` / `time_style` -> Map to `Length` and `DateFields::YMD` / `TimePrecision::Second` or similar default fieldsets.
-  - e.g., `date_style: Long` -> `DateFieldSet::YMD(YMD::long())`.
-
-#### Individual Fields (ECMA) to `CompositeFieldSet`:
-1.  **Determine `DateFields`**:
-    *   If `year`, `month`, `day` are present -> `DateFields::YMD`
-    *   If `month`, `day` are present -> `DateFields::MD`
-    *   If only `year` -> `DateFields::Y`
-    *   If only `month` -> `DateFields::M`
-    *   If `weekday` is present with date -> `DateFields::YMDE` or `DateFields::MDE` or `DateFields::DE` (depending on other fields).
-2.  **Determine `TimePrecision`**:
-    *   If `hour`, `minute`, `second` -> `TimePrecision::Second` (or `Subsecond` if fractional seconds are set).
-    *   If `hour`, `minute` -> `TimePrecision::Minute`.
-    *   If only `hour` -> `TimePrecision::Hour`.
-3.  **Determine `Length` / Field Styles**:
-    Since ICU4X applies a single `Length` to the entire fieldset, mixed styles (e.g., short year, long month) must be resolved to a single "best fit" `Length`:
-    *   If any field uses `Long` (wide), use `Length::Long`.
-    *   Else if any field uses `Short` (abbreviated) or `Medium`, use `Length::Medium`.
-    *   Else if all fields are `Numeric` / `TwoDigit`, use `Length::Short`.
-4.  **Determine `YearStyle`**:
-    *   If `era` is requested -> `YearStyle::WithEra`.
-    *   Else -> `YearStyle::Auto`.
+Due to the static nature of ICU4X, this mapping involves a non-trivial resolution algorithm to find the "best fit" static fieldset and options. This algorithm is detailed in [ICU4X Backend Mapping Algorithm](icu4x_mapping.md).
 
 ---
 
