@@ -384,6 +384,7 @@ rust.trivial_numeric_casts = "deny"
 rust.unexpected_cfgs = { level = "warn", check-cfg = [
     'cfg(icu4c_enable_renaming)',
     'cfg(needs_alloc_error_handler)',
+    'cfg(icu4x_nightly_tests)',
     'cfg(icu4x_run_size_tests)',
     'cfg(icu4x_unstable_fast_trie_only)',
 ] }

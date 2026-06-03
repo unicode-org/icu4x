@@ -336,6 +336,7 @@ if not eq ${ci_toolchain} "pinned-stable"
     if starts_with "${ci_toolchain}" "nightly"
         # This affects tasks that can only be built on nightly
         appendfile ${env_file} "PINNED_CI_NIGHTLY=${ci_toolchain}\n"
+        appendfile ${env_file} "RUSTFLAGS=--cfg=icu4x_nightly_tests\n"
     end
 else
     echo "forced-toolchain environment not required"
