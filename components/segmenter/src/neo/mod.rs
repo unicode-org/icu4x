@@ -4,7 +4,7 @@
 
 //! Experimental reimplementations
 
-use crate::provider::{Acceptance, Class, RuleBreakDataOverride, SegmenterStateMachine};
+use crate::provider::{Acceptance, Class, SegmenterStateMachine, SegmenterStateMachineOverride};
 use crate::scaffold::RuleBreakType;
 use alloc::collections::VecDeque;
 use alloc::vec::Vec;
@@ -29,10 +29,10 @@ impl Tailoring for () {
     }
 }
 
-impl Tailoring for Option<&'_ RuleBreakDataOverride<'_>> {
+impl Tailoring for Option<&'_ SegmenterStateMachineOverride<'_>> {
     fn class(&self, data: &CodePointTrie<Class>, cp: u32) -> Class {
         if let Some(tailoring) = self {
-            let c = tailoring.property_table_override.get32(cp);
+            let c = tailoring.classes.get32(cp);
             if c != SegmenterStateMachine::NO_CLASS {
                 return c;
             }

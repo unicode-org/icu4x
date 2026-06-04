@@ -28,7 +28,13 @@ use utf8_iter::Utf8CharIndices;
 /// For examples of use, see [`SentenceSegmenter`].
 #[derive(Debug)]
 pub struct SentenceBreakIterator<'data, 's, Y: RuleBreakType>(
-    RuleBreakIterator<'data, 's, Y, Option<&'data RuleBreakDataOverride<'data>>, NoComplexHandler>,
+    RuleBreakIterator<
+        'data,
+        's,
+        Y,
+        Option<&'data SegmenterStateMachineOverride<'data>>,
+        NoComplexHandler,
+    >,
 );
 
 derive_usize_iterator_with_type!(SentenceBreakIterator, 'data);
@@ -117,7 +123,7 @@ pub struct SentenceSegmenter {
 #[derive(Clone, Debug, Copy)]
 pub struct SentenceSegmenterBorrowed<'data> {
     data: &'data SegmenterStateMachine<'data>,
-    tailoring: Option<&'data RuleBreakDataOverride<'data>>,
+    tailoring: Option<&'data SegmenterStateMachineOverride<'data>>,
 }
 
 impl SentenceSegmenter {

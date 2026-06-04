@@ -31,7 +31,13 @@ use utf8_iter::Utf8CharIndices;
 /// For examples of use, see [`LineSegmenter`].
 #[derive(Debug)]
 pub struct LineBreakIterator<'data, 's, Y: RuleBreakType>(
-    RuleBreakIterator<'data, 's, Y, Option<&'data RuleBreakDataOverride<'data>>, ComplexLine<Y>>,
+    RuleBreakIterator<
+        'data,
+        's,
+        Y,
+        Option<&'data SegmenterStateMachineOverride<'data>>,
+        ComplexLine<Y>,
+    >,
 );
 
 derive_usize_iterator_with_type!(LineBreakIterator, 'data);
@@ -174,7 +180,7 @@ pub struct LineSegmenter {
 #[derive(Clone, Debug, Copy)]
 pub struct LineSegmenterBorrowed<'data> {
     data: &'data SegmenterStateMachine<'data>,
-    tailoring: Option<&'data RuleBreakDataOverride<'data>>,
+    tailoring: Option<&'data SegmenterStateMachineOverride<'data>>,
     complex: ComplexPayloadsBorrowed<'data>,
 }
 

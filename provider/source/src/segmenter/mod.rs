@@ -1212,7 +1212,7 @@ impl<'a> ParsedNfa<'a> {
         &self,
         provider: &SourceDataProvider,
         tailorings: &str,
-    ) -> Result<icu::collections::codepointtrie::CodePointTrie<'static, Class>, DataError> {
+    ) -> Result<SegmenterStateMachineOverride<'static>, DataError> {
         let mut builder = icu_codepointtrie_builder::CodePointTrieBuilder::new(
             SegmenterStateMachine::NO_CLASS,
             SegmenterStateMachine::NO_CLASS,
@@ -1265,7 +1265,9 @@ impl<'a> ParsedNfa<'a> {
             }
         }
 
-        Ok(builder.build())
+        Ok(SegmenterStateMachineOverride {
+            classes: builder.build(),
+        })
     }
 }
 
@@ -1329,9 +1331,7 @@ impl DataProvider<SegmenterBreakLineOverrideV2> for SourceDataProvider {
 
             Ok(DataResponse {
                 metadata: Default::default(),
-                payload: DataPayload::from_owned(RuleBreakDataOverride {
-                    property_table_override,
-                }),
+                payload: DataPayload::from_owned(property_table_override),
             })
         }
     }
@@ -1384,9 +1384,7 @@ impl DataProvider<SegmenterBreakSentenceOverrideV2> for SourceDataProvider {
 
             Ok(DataResponse {
                 metadata: Default::default(),
-                payload: DataPayload::from_owned(RuleBreakDataOverride {
-                    property_table_override,
-                }),
+                payload: DataPayload::from_owned(property_table_override),
             })
         }
     }
