@@ -148,7 +148,7 @@ Only implement the mapping from ECMA-402 to ICU4X, and defer the ICU4C mapping t
 
 **Reasons for Rejection:**
 1.  **Shared Definitions**: The mapping logic for both backends is closely related and benefits from sharing the same options bag definitions.
-2.  **Missing Upstream Features**: Semantic skeletons (needed for robust ECMA mapping) are not yet implemented in ICU4C.
+2.  **Reusing Rust Implementations**: ICU4X already has a robust implementation of semantic skeletons in Rust. If we deferred ICU4C resolution to a C++ project (such as ICU4C itself), we would have to re-implement semantic skeleton support in C++ to achieve the same level of resolution detail. Keeping it in the Rust interop layer allows us to reuse the ICU4X Rust implementation.
 3.  **Project Scope**: The primary motivation for this interop layer is to facilitate easy migration to ICU4X, which is firmly in scope for the ICU4X project.
 
 ### 3.4. Omit C++ Header Glue Code
