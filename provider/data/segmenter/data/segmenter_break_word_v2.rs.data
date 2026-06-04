@@ -16,9 +16,9 @@
 #[macro_export]
 macro_rules! __impl_segmenter_break_word_v2 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl $provider {
             #[doc(hidden)]
             pub const SINGLETON_SEGMENTER_BREAK_WORD_V2: &'static <icu::segmenter::provider::SegmenterBreakWordV2 as icu_provider::DynamicDataMarker>::DataStruct = &icu::segmenter::provider::SegmenterStateMachine {
@@ -31,7 +31,7 @@ macro_rules! __impl_segmenter_break_word_v2 {
                 num_lookaheads: 0usize,
             };
         }
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl icu_provider::DataProvider<icu::segmenter::provider::SegmenterBreakWordV2> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::segmenter::provider::SegmenterBreakWordV2>, icu_provider::DataError> {
                 if req.id.locale.is_unknown() {
@@ -44,7 +44,7 @@ macro_rules! __impl_segmenter_break_word_v2 {
     };
     ($ provider : ty , ITER) => {
         __impl_segmenter_break_word_v2!($provider);
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl icu_provider::IterableDataProvider<icu::segmenter::provider::SegmenterBreakWordV2> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok([Default::default()].into_iter().collect())
@@ -53,7 +53,7 @@ macro_rules! __impl_segmenter_break_word_v2 {
     };
     ($ provider : ty , DRY) => {
         __impl_segmenter_break_word_v2!($provider);
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl icu_provider::DryDataProvider<icu::segmenter::provider::SegmenterBreakWordV2> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 if req.id.locale.is_unknown() {
@@ -66,7 +66,7 @@ macro_rules! __impl_segmenter_break_word_v2 {
     };
     ($ provider : ty , DRY , ITER) => {
         __impl_segmenter_break_word_v2!($provider);
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl icu_provider::DryDataProvider<icu::segmenter::provider::SegmenterBreakWordV2> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 if req.id.locale.is_unknown() {
@@ -76,7 +76,7 @@ macro_rules! __impl_segmenter_break_word_v2 {
                 }
             }
         }
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl icu_provider::IterableDataProvider<icu::segmenter::provider::SegmenterBreakWordV2> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok([Default::default()].into_iter().collect())
