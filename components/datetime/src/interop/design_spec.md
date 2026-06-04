@@ -27,7 +27,7 @@ To address these challenges, this document proposes a **Datetime Interop Layer**
 ### 1.2. Design Goals and Benefits
 
 *   **Strict Dependency Isolation**: The Rust `icu_datetime` crate must remain 100% pure Rust. It must not link against or depend on ICU4C (`libicu`). This keeps the Rust toolchain simple and avoids cross-compilation complications.
-*   **Single Source of Truth**: The complex resolution logic that maps ECMA-402 and ICU4X options to formatting skeletons is implemented solely in Rust. This ensures identical formatting behavior regardless of the active backend.
+*   **Single Source of Truth**: The complex resolution logic that maps the unified options to backend-specific targets (classical skeletons for ICU4C and fieldsets/lengths for ICU4X) is implemented solely in Rust. This ensures identical formatting behavior regardless of the active backend.
 *   **Header-Only C++ Switching**: The logic to select and invoke the active backend is implemented as a header-only C++ library. This gives C++ clients maximum flexibility in how they link the libraries.
 *   **Zero-Cost Abstraction**: When compile-time selection is used, the unused backend branch should be entirely optimized away by the C++ compiler, resulting in no code size or runtime overhead.
 
@@ -131,7 +131,7 @@ The mechanism for selecting the backend (ICU4X vs. ICU4C) in the C++ layer remai
 Do not provide an interop layer in ICU; instead, let third-party wrapper libraries (such as those in browser engines or runtime environments) implement the options resolution and backend switching logic.
 
 **Reasons for Rejection:**
-1.  **Complexity of i18n Logic**: Options resolution (especially mapping ECMA-402 to skeletons) involves complex internationalization logic, calendar calculations, and data-driven mapping.
+1.  **Complexity of Mapping Logic**: Options resolution (especially mapping ECMA-402 options to ICU4X semantic skeletons/fieldsets) is non-trivial and involves complex mapping rules.
 2.  **Library Responsibility**: This logic is best suited for an i18n library like ICU to ensure correctness and maintainability, rather than forcing every client environment to re-implement it.
 
 ### 3.2. Release as a Standalone C++ Library
