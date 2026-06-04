@@ -156,24 +156,14 @@ A C++ wrapper (e.g., `icu_interop::DateTimeFormatter`) is provided as a header-o
 2.  **ICU4X Path**:
     *   Calls `ffi::DateTimeFormatter::create_from_interop_options` using the provided options bag to obtain a `ffi::DateTimeFormatter`.
 3.  **ICU4C Path**:
-    *   Calls `ffi::resolve_icu4c_args` to get resolved skeleton and styles.
-    *   If a resolved `skeleton` is present:
-        *   Opens a pattern generator using `udatpg_open`.
-        *   Retrieves the best pattern for the skeleton using `udatpg_getBestPattern`.
-        *   Opens the formatter using `udat_open` with the resolved pattern.
-        *   Closes the generator using `udatpg_close`.
-    *   Else (styles are present):
-        *   Opens the formatter using `udat_open` with the resolved date and time styles.
+    *   Calls `ffi::resolve_icu4c_args` to get the resolved skeleton or styles, which are then used to construct the ICU4C `UDateFormat` formatter.
 
 ### 7.2. Formatting Flow
 
 1.  **ICU4X Path**:
     *   Calls the formatting function on `ffi::DateTimeFormatter` with the input.
 2.  **ICU4C Path**:
-    *   Extracts datetime fields (year, month, day, hour, minute, second) from the FFI input object (e.g., `ffi::DateTime`) using FFI getters.
-    *   Converts the fields to a `UDate` (epoch milliseconds) or sets them on a `UCalendar`.
-    *   Calls ICU4C's `udat_format` with the `UDate` or `UCalendar`.
-    *   Converts the resulting `UChar` buffer to a C++ `std::string`.
+    *   Converts the FFI input object (e.g., `ffi::DateTime`) to the appropriate ICU4C type (e.g., `UDate` or `UCalendar`) and formats it using the ICU4C formatter.
 
 ---
 
