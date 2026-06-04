@@ -132,15 +132,15 @@ A C++ wrapper (e.g., `icu_interop::DateTimeFormatter`) is provided as a header-o
 
 ## 6. Input Data Type Mapping
 
-A key challenge in the interop layer is handling different input date-time representation types:
-*   **ICU4C** historically uses `UDate` (double, milliseconds since epoch) or `UCalendar` objects.
-*   **ICU4X** uses structured types like `Date`, `DateTime`, and `ZonedDateTime` which separate calendar arithmetic from formatting.
+A key difference between ICU4C and ICU4X is how they handle time zones and input representation:
+*   **ICU4C** historically accepts `UDate` (double, milliseconds since epoch) and performs time zone conversions internally using its own copy of the Time Zone Database (TZDB).
+*   **ICU4X** defers time zone database conversions to third-party libraries. Its formatters expect pre-resolved, structured "Temporal-like" types (such as `Date`, `DateTime`, and `ZonedDateTime`) where calendar arithmetic and time zone offsets have already been applied.
 
-To address this, the `ffi/icu4c_interop` C++ layer must:
-1.  **Define a Unified Input Interface**: Provide overloaded `format` methods or a unified C++ wrapper type (e.g., `icu_interop::DateTime`) that can represent date-time fields.
-2.  **Conversion Path**:
-    *   *ICU4X Path*: If the input is `UDate`, it must be converted to an ICU4X `DateTime` (requiring timezone resolution, possibly using ICU4X `TimeZoneInfo`).
-    *   *ICU4C Path*: If the input is an ICU4X-structured type, it must be converted to `UDate` or fields must be set on a `UCalendar` before calling `udat_format`.
+To maintain backend symmetry and leverage ICU4X's modern design, the interop layer will **only accept ICU4X input types** (or thin C++ wrappers around them).
+
+### 6.1. Conversion Path
+*   **ICU4X Path**: Direct pass-through of ICU4X structured types to the ICU4X formatter.
+*   **ICU4C Path**: The C++ interop layer must convert the structured ICU4X input types into ICU4C-compatible representations (e.g., extracting the fields to populate a `UCalendar`, or calculating a local `UDate` if necessary) before calling `udat_format`.
 
 ---
 
