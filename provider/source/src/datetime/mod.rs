@@ -14,6 +14,9 @@ use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
+use zerovec::ule::VarULE;
+use icu::datetime::provider::packed_pattern::GenericPackedPatterns;
+use icu::datetime::pattern::FixedCalendarDateTimeNames;
 
 mod available_formats;
 mod day_periods;
@@ -308,6 +311,7 @@ impl<T> Trio<T> {
     }
 }
 
+
 /// Transposes a length-major structure of pattern trios into a variant-major builder structure.
 ///
 /// Converts `GenericLengthElements<Trio<T>>` (patterns grouped by length, containing standard/variants)
@@ -347,9 +351,15 @@ pub(crate) fn transpose<T>(
     }
 }
 
-pub(crate) trait PackedPatternItem: Sized {
+pub(crate) trait PackedPatternItem: Sized + Clone {
     /// The context required to match fields for this pattern item.
     type MatchFieldsContext;
+    /// The final item type after finalization (e.g. stripping distance).
+    type FinalItem: PartialEq;
+    /// The ULE type for packing.
+    type Ule: VarULE + ?Sized + 'static;
+    /// The distance type used to sort patterns by match quality.
+    type MatchQuality: Ord;
 
     /// Attempts to find a matching pattern for the given fields in the context.
     ///
@@ -359,8 +369,35 @@ pub(crate) trait PackedPatternItem: Sized {
         components_bag: &components::Bag,
         hour_cycle: HourCycle,
         fields: &[Field],
-    ) -> Self;
+     ) -> Self;
+ 
+    /// Returns the match quality (distance) of this pattern item.
+    fn match_quality(&self) -> Self::MatchQuality;
+
+    /// Finalizes the item (e.g., converts from a internal representation to the provider one).
+    fn finalize_item(self) -> Self::FinalItem;
+
+    /// Builds the packed structure from the builder.
+    fn build_packed(
+        builder: GenericPackedPatternsBuilder<Self::FinalItem>,
+    ) -> GenericPackedPatterns<'static, Self::Ule>;
+
+    /// Applies numeric overrides to the pattern items.
+    fn apply_numeric_overrides(&mut self, lp: &cldr_serde::ca::LengthPattern);
+
+    /// Enforces consistent field lengths in the patterns.
+    ///
+    /// This is only needed for date patterns which have some bugs in CLDR. It
+    /// can be removed when CLDR bugs are fixed, or replaced with a pure non-mutating warning.
+    fn enforce_consistency(
+        &mut self,
+        names: &mut FixedCalendarDateTimeNames<()>,
+        locale: &DataLocale,
+        calendar: Option<DatagenCalendar>,
+        attributes: &DataMarkerAttributes,
+    );
 }
+
 
 
 /// A generic helper to resolve a pattern from a components bag, handling hour cycle and fallback.
