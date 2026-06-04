@@ -1,7 +1,10 @@
 # Design Doc: Datetime Interop Layer (ICU4X / ICU4C / ECMA)
 
-## Status: Draft
+## Status: Draft (Names and locations are subject to bikeshedding)
 **Author:** AI Agent (Gemini) working with @sffc
+
+> [!NOTE]
+> All names, FFI paths, C++ class structures, and Rust module locations proposed in this document are tentative and subject to revision (bikeshedding) during implementation.
 
 ---
 
@@ -69,11 +72,11 @@ The module exposes the following key components:
 -   **`Icu4cResolvedArgs` (Struct)**:
     *   An intermediate structure that holds the resolved arguments required to initialize an ICU4C formatter (skeleton, date style, and time style) after precedence rules have been applied.
     *   *Details are documented in [Options and Resolution Config](options_config.md#21-resolved-output-rust-struct).*
--   **`resolve_icu4c_args` (Function)**:
-    *   The function that maps the raw `DateTimeFormatterOptions` into the `Icu4cResolvedArgs` structure, applying the precedence rules.
+-   **`resolve_icu4c_args` (Function/Method)**:
+    *   The logic that maps the raw `DateTimeFormatterOptions` into the `Icu4cResolvedArgs` structure, applying the precedence rules. This may be implemented as a standalone function or as a method on `DateTimeFormatterOptions` or `Icu4cResolvedArgs`.
     *   *Algorithm details are documented in [Options and Resolution Config](options_config.md#22-precedence-rules).*
--   **`map_to_fieldset` (Function)**:
-    *   The function that maps the `DateTimeFormatterOptions` to the ICU4X `CompositeFieldSet`, selecting the correct pre-compiled data representation.
+-   **`map_to_fieldset` (Function/Method)**:
+    *   The logic that maps the `DateTimeFormatterOptions` to the ICU4X `CompositeFieldSet`, selecting the correct pre-compiled data representation. This may be implemented as a standalone function or as a method on `DateTimeFormatterOptions`.
     *   *Algorithm details are documented in [Options and Resolution Config](options_config.md#3-icu4x-backend-mapping-fieldsets).*
 
 ---
