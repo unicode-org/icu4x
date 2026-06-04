@@ -81,52 +81,52 @@ The options bag supports the following fields:
 
 ---
 
-## 4. Rust Resolution Layer (`icu_datetime::interop`)
+## 4. ICU4C Backend Mapping (Skeletons & Styles)
 
-This module translates the catchall options bag into resolved parameters for ICU4C, without invoking ICU4C.
+To support ICU4C, the unified `DateTimeFormatterOptions` must be resolved to ICU4C-compatible arguments (skeletons or styles). This resolution logic runs in Rust (in the `icu_datetime::interop` module) and does not invoke ICU4C directly.
 
 ### 4.1. Resolved Output
 
-The resolution function outputs a struct containing:
--   `skeleton`: Resolved classical skeleton string (Optional).
--   `date_style`: Resolved date style enum (`Full`, `Long`, `Medium`, `Short`, or `None`).
--   `time_style`: Resolved time style enum (`Full`, `Long`, `Medium`, `Short`, or `None`).
+The resolution function outputs the following parameters:
+-   **Skeleton**: A resolved classical skeleton string (e.g., `yMdHms`), or `None`.
+-   **Date Style**: A resolved date style enum (`Full`, `Long`, `Medium`, `Short`, or `None`).
+-   **Time Style**: A resolved time style enum (`Full`, `Long`, `Medium`, `Short`, or `None`).
 
 ### 4.2. Precedence Rules
 
 The resolution logic follows this order of precedence:
 
-1.  **Skeleton**: If `skeleton` is set, it is returned. Styles are set to `None`.
+1.  **Skeleton**: If `skeleton` is set in the options, it is returned as the resolved skeleton. Styles are set to `None`.
 2.  **Styles**: If `date_style` or `time_style` is set, they are returned. The skeleton is set to `None`. Individual field options are ignored.
 3.  **Individual Fields**: If neither skeletons nor styles are set:
-    *   **ECMA-style Fields (Field Options to Skeleton)**: If ECMA options (`year`, `month`, `day`, etc.) are present, they are mapped to standard UTS 35 skeleton symbols. This is a direct **one-to-one mapping** (e.g., `year: Numeric` -> `y`, `month: Long` -> `MMMM`, `day: TwoDigit` -> `dd`). These mapped symbols are then concatenated in UTS 35 canonical order to form the resolved classical skeleton.
-    *   **ICU4X-style Fields (Semantic Skeleton to Classical Skeleton)**: If no ECMA options are present, but ICU4X builder-style options (`date_fields`, `time_precision`, `zone_style`, etc.) are present, they are treated as an ICU4X semantic skeleton. This semantic skeleton is mapped to a classical skeleton according to the detailed rules described in **Section 5.1 (ICU4C Backend Mapping)** (which handles standalone vs formatting, time precision variations, and year style variations).
+    *   **ECMA-style Fields**: If ECMA options (`year`, `month`, `day`, etc.) are present, they are mapped to standard UTS 35 skeleton symbols. This is a direct **one-to-one mapping** (e.g., `year: Numeric` -> `y`, `month: Long` -> `MMMM`, `day: TwoDigit` -> `dd`). These mapped symbols are concatenated in UTS 35 canonical order to form the resolved classical skeleton.
+    *   **ICU4X-style Fields**: If no ECMA options are present, but ICU4X builder-style options (`date_fields`, `time_precision`, `zone_style`, etc.) are present, they are treated as an ICU4X semantic skeleton. This semantic skeleton is mapped to standard skeleton symbols according to the UTS 35 rules cited below.
     *   **Conflict Resolution**: If both ECMA-style and ICU4X-style options are present, the ECMA-style options take precedence.
     *   Styles are set to `None`.
 
----
+### 4.3. UTS 35 Mapping Details
 
-## 5. Backend Mapping Specifications
+When mapping semantic options to classical skeletons, the interop layer strictly follows the [UTS 35: Unicode Technical Standard #35 (Part 4: Dates)](https://unicode.org/reports/tr35/tr35-dates.html) specification:
 
-To handle overlap and ensure consistent output across backends, the interop layer defines strict mapping rules.
-
-### 5.1. ICU4C Backend Mapping
-
-ICU4C is dynamic and maps naturally to skeletons and styles. The mapping from semantic options to classical skeletons is based on [UTS 35: Unicode Technical Standard #35 (Part 4: Dates)](https://unicode.org/reports/tr35/tr35-dates.html).
-
-Rather than duplicating the mapping rules here, the interop layer strictly follows the UTS 35 specification:
-
--   **Basic Field Mapping**: The mapping from semantic fields (Year, Month, Day, Weekday, Time, Zone) to standard skeleton symbols follows the table in [UTS 35: Mapping to Standard Skeletons](https://unicode.org/reports/tr35/tr35-dates.html#Mapping_to_Standard_Skeletons). This includes handling standalone vs. formatting contexts (e.g., `LLLL` vs. `MMMM` for month) and basic timezone styles.
--   **Time Precision Variations**: Adjustments to the skeleton for different time precisions (Hour, Minute, Second, FractionalSecond) follow the rules in [UTS 35: Time Precision Skeleton Variations](https://unicode.org/reports/tr35/tr35-dates.html#Semantic_Time_Precision_Skeleton_Variations).
--   **Year Style Variations**: Adjustments for year styles (Auto, Full, WithEra) follow the rules in [UTS 35: Year Style Skeleton Variations](https://unicode.org/reports/tr35/tr35-dates.html#Semantic_Year_Style_Skeleton_Variations).
+-   **Basic Field Mapping**: Follows [UTS 35: Mapping to Standard Skeletons](https://unicode.org/reports/tr35/tr35-dates.html#Mapping_to_Standard_Skeletons) (handles standalone vs. formatting contexts like `LLLL` vs. `MMMM` for month).
+-   **Time Precision Variations**: Follows [UTS 35: Time Precision Skeleton Variations](https://unicode.org/reports/tr35/tr35-dates.html#Semantic_Time_Precision_Skeleton_Variations).
+-   **Year Style Variations**: Follows [UTS 35: Year Style Skeleton Variations](https://unicode.org/reports/tr35/tr35-dates.html#Semantic_Year_Style_Skeleton_Variations).
 
 The resolved standard symbols are concatenated in UTS 35 canonical order to form the final classical skeleton.
 
-### 5.2. ICU4X Backend Mapping
+---
 
-ICU4X is static/data-efficient. Mapping arbitrary options to ICU4X requires resolving them to a `CompositeFieldSet`.
+## 5. ICU4X Backend Mapping (FieldSets)
 
-Due to the static nature of ICU4X, this mapping involves a non-trivial resolution algorithm to find the "best fit" static fieldset and options. This algorithm is detailed in [ICU4X Backend Mapping Algorithm](icu4x_mapping.md).
+ICU4X is static/data-efficient. To construct an ICU4X formatter, the unified `DateTimeFormatterOptions` must be resolved to a `CompositeFieldSet`.
+
+### 5.1. Target Output
+
+The mapping resolves the options bag to a `CompositeFieldSet`, which is a dynamic enum covering all supported combinations of date, time, and timezone fieldsets in ICU4X.
+
+### 5.2. Resolution Algorithm
+
+Due to the static nature of ICU4X, this mapping involves a non-trivial resolution algorithm to find the "best fit" static fieldset and options (e.g., merging individual field styles into a single global `Length`). This algorithm is detailed in [ICU4X Backend Mapping Algorithm](icu4x_mapping.md).
 
 ---
 
