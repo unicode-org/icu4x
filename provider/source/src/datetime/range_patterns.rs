@@ -4,9 +4,9 @@
 
 use super::semantic_skeletons::{gen_date_components, gen_time_components};
 use super::{DatagenCalendar, PackedPatternItem};
-use crate::{cldr_serde, IterableDataProviderCached, SourceDataProvider};
+use crate::{IterableDataProviderCached, SourceDataProvider, cldr_serde};
 use icu::datetime::fieldsets::enums::*;
-use icu::datetime::provider::fields::{self, components, Field};
+use icu::datetime::provider::fields::{self, Field, components};
 use icu::datetime::provider::packed_pattern::{
     GenericPackedPatterns, GenericPackedPatternsBuilder,
 };
@@ -29,7 +29,10 @@ pub(crate) enum ComponentsType {
 impl<'a> PackedPatternItem for PatternsByGreatestDifference<'a> {
     type MatchFieldsContext = BTreeMap<Skeleton, PatternsByGreatestDifference<'a>>;
     type FinalItem = PatternsByGreatestDifference<'a>;
-    type BuilderItem<'b> = PatternsByGreatestDifference<'b> where Self: 'b;
+    type BuilderItem<'b>
+        = PatternsByGreatestDifference<'b>
+    where
+        Self: 'b;
     type Ule = PatternsByGreatestDifferenceULE;
     type MatchQuality = ();
 
@@ -45,10 +48,12 @@ impl<'a> PackedPatternItem for PatternsByGreatestDifference<'a> {
     ) -> Self {
         let matched = match_range_skeleton(context, fields);
         // Fall back to placeholder PGD that triggers fallback to glue pattern in runtime
-        matched.map(|(_, pgd)| pgd.clone()).unwrap_or(PatternsByGreatestDifference {
-            header: GreatestDifferenceHeader::new(0),
-            patterns: zerovec::VarZeroVec::new(),
-        })
+        matched
+            .map(|(_, pgd)| pgd.clone())
+            .unwrap_or(PatternsByGreatestDifference {
+                header: GreatestDifferenceHeader::new(0),
+                patterns: zerovec::VarZeroVec::new(),
+            })
     }
 
     fn finalize_item(self) -> Self::FinalItem {

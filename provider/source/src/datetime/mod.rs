@@ -12,7 +12,6 @@ use icu::datetime::provider::packed_pattern::{
 use icu::datetime::provider::pattern::CoarseHourCycle;
 use icu::datetime::provider::skeleton::SkeletonError;
 use icu::datetime::provider::skeleton::reference::Skeleton;
-
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 
 use icu::datetime::pattern::FixedCalendarDateTimeNames;
