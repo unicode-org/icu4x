@@ -92,12 +92,12 @@ The options bag supports the following fields:
 
 To support ICU4C, the unified `DateTimeFormatterOptions` must be resolved to ICU4C-compatible arguments (skeletons or styles). This resolution logic runs in Rust (in the `icu_datetime::interop` module) and does not invoke ICU4C directly.
 
-### 4.1. Resolved Output
+### 4.1. Resolved Output (Rust Struct)
 
-The resolution function outputs the following parameters:
--   **Skeleton**: A resolved classical skeleton string (e.g., `yMdHms`), or `None`.
--   **Date Style**: A resolved date style enum (`Full`, `Long`, `Medium`, `Short`, or `None`).
--   **Time Style**: A resolved time style enum (`Full`, `Long`, `Medium`, `Short`, or `None`).
+The resolution logic in `icu_datetime::interop` returns a Rust struct `Icu4cResolvedArgs` containing:
+-   `skeleton`: `Option<String>` (resolved classical skeleton).
+-   `date_style`: `Option<Style>` (resolved date style).
+-   `time_style`: `Option<Style>` (resolved time style).
 
 ### 4.2. Precedence Rules
 
@@ -141,9 +141,9 @@ Due to the static nature of ICU4X, this mapping involves a non-trivial resolutio
 
 Using Diplomat, the interop layer exposes the following C-compatible interface:
 
--   **`ffi::DateTimeFormatterOptions` Struct**: A C-compatible version of the catchall options bag.
--   **`ffi::Icu4cResolvedArgs` Opaque Type**: Wraps the resolved ICU4C arguments.
-    *   Exposes a constructor `resolve` that accepts `ffi::DateTimeFormatterOptions` and returns `Box<ffi::Icu4cResolvedArgs>`.
+-   **`ffi::DateTimeFormatterOptions` Struct**: A C-compatible version of the catchall options bag, mapping to Rust's `icu_datetime::interop::DateTimeFormatterOptions`.
+-   **`ffi::Icu4cResolvedArgs` Opaque Type**: A thin wrapper around Rust's `icu_datetime::interop::Icu4cResolvedArgs`.
+    *   Exposes a constructor `resolve` that accepts `ffi::DateTimeFormatterOptions`, calls the Rust resolution logic, and returns the wrapped `ffi::Icu4cResolvedArgs`.
     *   Exposes a method to write the resolved `skeleton` into a `DiplomatWriteable`.
     *   Exposes methods to get the resolved `date_style` and `time_style` as integers.
 -   **`ffi::DateTimeFormatter` Constructor**: A new constructor `create_from_interop_options` is added to the existing `ffi::DateTimeFormatter` in `icu_capi`. It accepts `ffi::DateTimeFormatterOptions`, resolves it to a `CompositeFieldSet` internally, and returns a `Box<ffi::DateTimeFormatter>`.
