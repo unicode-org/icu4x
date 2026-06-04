@@ -68,16 +68,12 @@ The module exposes the following key components:
 
 -   **`DateTimeFormatterOptions` (Struct)**:
     *   The unified catchall options bag that aggregates options from ECMA-402, ICU4X, and ICU4C. All fields are optional.
-    *   *Details of fields are documented in [Options and Resolution Config](options_config.md#1-the-catchall-options-bag).*
+    *   Exposes a method (e.g., `to_fieldset`) that resolves the options to an ICU4X `CompositeFieldSet`.
+    *   *Details of fields and the mapping algorithm are documented in [Options and Resolution Config](options_config.md#1-the-catchall-options-bag).*
 -   **`Icu4cResolvedArgs` (Struct)**:
     *   An intermediate structure that holds the resolved arguments required to initialize an ICU4C formatter (skeleton, date style, and time style) after precedence rules have been applied.
-    *   *Details are documented in [Options and Resolution Config](options_config.md#21-resolved-output-rust-struct).*
--   **`resolve_icu4c_args` (Function/Method)**:
-    *   The logic that maps the raw `DateTimeFormatterOptions` into the `Icu4cResolvedArgs` structure, applying the precedence rules. This may be implemented as a standalone function or as a method on `DateTimeFormatterOptions` or `Icu4cResolvedArgs`.
-    *   *Algorithm details are documented in [Options and Resolution Config](options_config.md#22-precedence-rules).*
--   **`map_to_fieldset` (Function/Method)**:
-    *   The logic that maps the `DateTimeFormatterOptions` to the ICU4X `CompositeFieldSet`, selecting the correct pre-compiled data representation. This may be implemented as a standalone function or as a method on `DateTimeFormatterOptions`.
-    *   *Algorithm details are documented in [Options and Resolution Config](options_config.md#3-icu4x-backend-mapping-fieldsets).*
+    *   Exposes a constructor (e.g., `resolve`) that accepts `DateTimeFormatterOptions` and returns `Icu4cResolvedArgs`.
+    *   *Details and the resolution algorithm are documented in [Options and Resolution Config](options_config.md#21-resolved-output-rust-struct).*
 
 ---
 
