@@ -10,7 +10,7 @@
 
 ## 1. Background and Motivation
 
-ICU4X provides a modern, modular, and lightweight internationalization library in Rust. However, during transition phases or in environments where system-provided libraries are preferred, clients may want to choose between ICU4X and ICU4C at compile-time or runtime.
+ICU4X provides a modern, modular, and lightweight internationalization library in Rust. ICU4C is the established C/C++ internationalization library. During transition phases, or in environments where system-provided libraries are preferred, clients may want to choose between ICU4X (Rust) and ICU4C (C/C++) at compile-time or runtime.
 
 Furthermore, clients targeting web environments often need to align with **ECMA-402 (Intl.DateTimeFormat)** options.
 
@@ -20,7 +20,7 @@ The design aims to:
 - Define a unified options bag covering ICU4X, ICU4C, and ECMA-402 options.
 - Keep the Rust codebase (`icu_datetime`) free of ICU4C dependencies.
 - Perform argument resolving (mapping options to ICU4C skeletons/styles) in Rust.
-- Export these helpers via `icu_capi` (using Diplomat).
+- Export these helpers via `icu_capi` using **Diplomat** (ICU4X's FFI binding generation tool).
 - Implement the actual switching and ICU4C calls in a header-only C/C++ layer (`ffi/icu4c_interop`).
 
 ### 1.1. Key Benefits
@@ -79,7 +79,7 @@ The module exposes the following key components:
 
 -   **`DateTimeFormatterOptions` (Struct)**:
     *   The unified catchall options bag that aggregates options from ECMA-402, ICU4X, and ICU4C. All fields are optional.
-    *   Exposes a method (e.g., `to_fieldset`) that resolves the options to an ICU4X `CompositeFieldSet`.
+    *   Exposes a method (e.g., `to_fieldset`) that resolves the options to an ICU4X `CompositeFieldSet` (ICU4X's internal representation of selected date/time fields and their display widths).
     *   *Details of fields and the mapping algorithm are documented in [Options and Resolution Config](options_config.md#1-the-catchall-options-bag).*
 -   **`Icu4cResolvedArgs` (Struct)**:
     *   An intermediate structure that holds the resolved arguments required to initialize an ICU4C formatter (skeleton, date style, and time style) after precedence rules have been applied.
@@ -95,7 +95,7 @@ Using Diplomat, the interop layer exposes the following C-compatible interface:
 -   **`ffi::DateTimeFormatterOptions` Struct**: A C-compatible version of the catchall options bag, mapping to Rust's `icu_datetime::interop::DateTimeFormatterOptions`.
 -   **`ffi::Icu4cResolvedArgs` Opaque Type**: A thin wrapper around Rust's `icu_datetime::interop::Icu4cResolvedArgs`.
     *   Exposes a constructor `resolve` that accepts `ffi::DateTimeFormatterOptions`, calls the Rust resolution logic, and returns the wrapped `ffi::Icu4cResolvedArgs`.
-    *   Exposes a method to write the resolved `skeleton` into a `DiplomatWriteable`.
+    *   Exposes a method to write the resolved `skeleton` into a `DiplomatWriteable` (a C-compatible string buffer).
     *   Exposes methods to get the resolved `date_style` and `time_style` as integers.
 -   **`ffi::DateTimeFormatter` Constructor**: A new constructor `create_from_interop_options` is added to the existing `ffi::DateTimeFormatter` in `icu_capi`. It accepts `ffi::DateTimeFormatterOptions`, resolves it to a `CompositeFieldSet` internally, and returns a `Box<ffi::DateTimeFormatter>`.
 
