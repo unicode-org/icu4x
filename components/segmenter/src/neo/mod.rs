@@ -115,7 +115,6 @@ pub(crate) struct RuleBreakIterator<'data, 's, Y: RuleBreakType, T: Tailoring> {
     data: &'data SegmenterStateMachine<'data>,
     tailoring: T,
     cache: VecDeque<usize>,
-    ignore_complex_until: usize,
     lookahead_positions: Vec<Option<Y::IterAttr<'s>>>,
     remaining_input: Y::IterAttr<'s>,
     last_accepting_status: u8,
@@ -134,7 +133,6 @@ impl<'data, 's, Y: RuleBreakType, T: Tailoring> RuleBreakIterator<'data, 's, Y, 
             tailoring,
             complex: None,
             cache: VecDeque::from_iter([0]),
-            ignore_complex_until: usize::MAX,
             lookahead_positions: alloc::vec![None; data.num_lookaheads],
             last_accepting_status: 0,
         }
@@ -161,7 +159,6 @@ impl<'data, 's, Y: RuleBreakType, T: Tailoring> RuleBreakIterator<'data, 's, Y, 
                 handler: Y::handle,
             }),
             cache: VecDeque::from_iter([0]),
-            ignore_complex_until: Y::offset(&input),
             lookahead_positions: alloc::vec![None; data.num_lookaheads],
             last_accepting_status: 0,
             remaining_input: input,
@@ -190,7 +187,7 @@ impl<'s, Y: RuleBreakType, T: Tailoring> Iterator for RuleBreakIterator<'_, 's, 
         let mut last_accepting_status = 0;
         self.lookahead_positions.fill(None);
 
-        let mut last_complex_break = None;
+        let mut last_complex_cp = None;
 
         (self.remaining_input, self.last_accepting_status) = loop {
             let (class, is_complex) = if let Some((_, next)) = iter.clone().peekable().next() {
@@ -206,15 +203,13 @@ impl<'s, Y: RuleBreakType, T: Tailoring> Iterator for RuleBreakIterator<'_, 's, 
                 (SegmenterStateMachine::EOT_CLASS, false)
             };
 
-            if Y::CAN_CONTAIN_SA
-                && self.cache.is_empty()
-                && is_complex
-                && Y::offset(&iter) >= self.ignore_complex_until
+            if Y::CAN_CONTAIN_SA && self.cache.is_empty() && is_complex && last_complex_cp.is_none()
             {
                 #[allow(clippy::unwrap_used)] // is_complex implies self.complex is Some
                 let complex = self.complex.as_ref().unwrap();
 
                 let mut past_complex = iter.clone();
+                let mut last_complex = past_complex.clone();
                 past_complex.next();
                 while past_complex
                     .clone()
@@ -223,46 +218,34 @@ impl<'s, Y: RuleBreakType, T: Tailoring> Iterator for RuleBreakIterator<'_, 's, 
                     .is_some()
                 {
                     past_complex.next();
+                    last_complex.next();
                 }
 
-                let results = (complex.handler)(&complex.data, &iter, &past_complex);
+                // A complex segment of length 1 doesn't need special handling.
+                if Y::offset(&last_complex) != Y::offset(&iter) {
+                    let results = (complex.handler)(&complex.data, &iter, &past_complex);
 
-                let offset = Y::offset(&iter);
-                self.cache = results.into_iter().map(|i| i + offset).collect();
+                    let offset = Y::offset(&iter);
+                    self.cache = results.into_iter().map(|i| i + offset).collect();
 
-                if complex.break_at_boundaries {
-                    self.remaining_input = past_complex;
-                    self.last_accepting_status = complex.break_status;
-                    return if offset == 0 {
-                        self.cache.pop_front()
+                    if complex.break_at_boundaries {
+                        self.remaining_input = past_complex;
+                        self.last_accepting_status = complex.break_status;
+                        return if offset == 0 {
+                            self.cache.pop_front()
+                        } else {
+                            Some(offset)
+                        };
                     } else {
-                        Some(offset)
-                    };
-                }
+                        // ignore the break point at the end – it might not be one and we'll run the state
+                        // machine from the last complex character to figure that out
+                        self.cache.pop_back();
 
-                // ignore the break point at the end – it might not be one and we'll run the state
-                // machine from the penultimate break point to figure that out
-                self.cache.pop_back();
-
-                // Don't reenter the complex path when restarting from the penumltiate break point.
-                // This might produce complex breaks that hadn't been produced before.
-                self.ignore_complex_until = Y::offset(&past_complex);
-
-                if let Some(&last_break) = self.cache.back() {
-                    let mut at_last_break = iter.clone();
-                    while at_last_break
-                        .clone()
-                        .peekable()
-                        .next_if(|&(i, _)| i < last_break)
-                        .is_some()
-                    {
-                        at_last_break.next();
+                        last_complex_cp = Some((last_complex, complex.break_status));
+                        // keep running the state machine to let it determine whether the start of the complex
+                        // segment is a break
                     }
-                    last_complex_break = Some((at_last_break, complex.break_status));
                 }
-
-                // keep running the state machine to let it determine whether the start of the complex
-                // segment is a break
             }
 
             iter.next();
@@ -310,12 +293,14 @@ impl<'s, Y: RuleBreakType, T: Tailoring> Iterator for RuleBreakIterator<'_, 's, 
         let break_index = Y::offset(&self.remaining_input);
 
         // We encountered complex text and populated the cache
-        if let Some((last_complex_break, status)) = last_complex_break {
-            self.remaining_input = last_complex_break;
-            // return the complex break if it's before the break we calculated using the state machine
-            if self.cache.front().is_some_and(|&i| i <= break_index) {
-                self.last_accepting_status = status;
-                return self.cache.pop_front();
+        if let Some((last_complex_cp, complex_status)) = last_complex_cp {
+            if let Some(&first_complex_break) = self.cache.front() {
+                self.remaining_input = last_complex_cp;
+                // return the complex break if it's before the break we calculated using the state machine
+                if first_complex_break < break_index {
+                    self.last_accepting_status = complex_status;
+                    return self.cache.pop_front();
+                }
             }
         }
 
