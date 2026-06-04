@@ -57,7 +57,23 @@ graph TD
 
 ## 3. Main Rust Crate Components (`icu_datetime::interop`)
 
-The details of the unified options bag (`DateTimeFormatterOptions`) and the mapping algorithms for both ICU4C and ICU4X backends are detailed in [Options and Resolution Config](options_config.md).
+This module in the `icu_datetime` crate contains the core Rust structures and logic for the interop layer, serving as the bridge between the catchall configuration and the backend-specific formatters.
+
+### 3.1. Module Layout and Types
+
+-   **`DateTimeFormatterOptions` (Struct)**:
+    *   The unified catchall options bag. It aggregates all options from ECMA-402, ICU4X, and ICU4C.
+    *   It is defined as a plain Rust struct where all fields are optional.
+    *   *Details of fields are documented in [Options and Resolution Config](options_config.md#1-the-catchall-options-bag).*
+-   **`Icu4cResolvedArgs` (Struct)**:
+    *   An intermediate structure that holds the resolved arguments required to initialize an ICU4C formatter (skeleton, date style, and time style) after precedence rules have been applied.
+    *   *Details are documented in [Options and Resolution Config](options_config.md#21-resolved-output-rust-struct).*
+-   **ICU4C Resolution Logic**:
+    *   The logic that maps the raw `DateTimeFormatterOptions` into the `Icu4cResolvedArgs` structure. This contains the precedence logic (e.g., skeletons overriding styles, styles overriding individual fields).
+    *   *Algorithm details are documented in [Options and Resolution Config](options_config.md#22-precedence-rules).*
+-   **ICU4X Resolution Logic**:
+    *   The logic that maps the `DateTimeFormatterOptions` to the ICU4X `CompositeFieldSet`. This is used to select the correct pre-compiled data representation for the ICU4X formatter.
+    *   *Algorithm details are documented in [Options and Resolution Config](options_config.md#3-icu4x-backend-mapping-fieldsets).*
 
 ---
 
