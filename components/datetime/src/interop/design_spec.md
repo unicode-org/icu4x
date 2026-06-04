@@ -144,7 +144,15 @@ To address this, the `ffi/icu4c_interop` C++ layer must:
 
 ---
 
-## 7. Future Work: Raw Pattern Support
+## 7. Error Handling
+
+Since both ICU4X and ICU4C initialization can fail (e.g., due to missing locale data or invalid options), the C++ interop layer must propagate these errors:
+*   **Initialization Failures**: The C++ constructor or initialization method should return a status indicator (e.g., a boolean or an error code) reflecting whether the underlying backend formatter was successfully created.
+*   **FFI Error Propagation**: Errors returned from the Rust FFI (via Diplomat's result wrappers) should be mapped to the C++ interface, avoiding throwing C++ exceptions to ensure compatibility with environments where exceptions are disabled.
+
+---
+
+## 8. Future Work: Raw Pattern Support
 
 Currently, the ICU4X `DateTimeFormatter` is designed around semantic skeletons and pre-compiled data, and does not support formatting arbitrary raw pattern strings at runtime. To maintain symmetry across backends in the interop layer, raw pattern support (e.g., `pattern: Option<String>`) has been excluded from the unified `DateTimeFormatterOptions` bag.
 
