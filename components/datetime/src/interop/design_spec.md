@@ -1,10 +1,10 @@
 # Design Doc: Datetime Interop Layer (ICU4X / ICU4C / ECMA)
 
-## Status: Draft (Names and locations are subject to bikeshedding)
+## Status: Draft
 **Author:** AI Agent (Gemini) working with @sffc
 
 > [!NOTE]
-> All names, FFI paths, C++ class structures, and Rust module locations proposed in this document are tentative and subject to revision (bikeshedding) during implementation.
+> All names, FFI paths, C++ class structures, and Rust module locations proposed in this document are tentative and subject to revision during implementation.
 
 ---
 
@@ -16,13 +16,6 @@ Furthermore, clients targeting web environments often need to align with **ECMA-
 
 This document specifies a **Datetime Interop Layer** based on a **catchall options bag** and a **decoupled architecture** that avoids linking ICU4C into the Rust codebase.
 
-The design aims to:
-- Define a unified options bag covering ICU4X, ICU4C, and ECMA-402 options.
-- Keep the Rust codebase (`icu_datetime`) free of ICU4C dependencies.
-- Perform argument resolving (mapping options to ICU4C skeletons/styles) in Rust.
-- Export these helpers via `icu_capi` using **Diplomat** (ICU4X's FFI binding generation tool).
-- Implement the actual switching and ICU4C calls in a header-only C/C++ layer (`ffi/icu4c_interop`).
-
 ### 1.1. Key Benefits
 
 *   **Dependency Isolation**: The Rust `icu_datetime` crate remains 100% pure Rust and does not need to link with `libicui18n.so`. This keeps Rust builds fast and simple.
@@ -32,7 +25,7 @@ The design aims to:
 
 ---
 
-## 2. Architecture Overview
+## 2. Proposed Architecture
 
 The interop layer is split across three boundaries to maintain strict dependency separation:
 
@@ -63,103 +56,75 @@ graph TD
     InteropCPP -->|ICU4C: Format| ICU4C_C
 ```
 
-1.  **`icu_datetime::interop` (Rust)**: Contains `DateTimeFormatterOptions` (the catchall options bag) and the resolution logic to map these options to ICU4C-compatible arguments (skeletons or styles), without calling ICU4C.
-2.  **`icu_capi` (Rust/FFI)**: Exposes the options bag and the resolution function to C/C++ using Diplomat.
-3.  **`ffi/icu4c_interop` (C/C++ Header-only)**: The integration point for clients. It includes `icu_capi` headers and system ICU4C headers (`unicode/udat.h`). It contains the logic to switch between backends and call `libicui18n.so` or `libicu_capi.so` accordingly.
+### 2.1. Unified Options Bag and ICU4C Options
 
----
+Instead of backend-specific configuration structures, the interop layer exposes a single, unified `DateTimeFormatterOptions` struct (the "catchall options bag"). This struct aggregates options from ECMA-402, ICU4X, and ICU4C.
 
-## 3. Main Rust Crate Components (`icu_datetime::interop`)
+To support the ICU4C backend, this unified options bag must be resolved to ICU4C-compatible arguments: `Icu4cResolvedArgs` (containing an optional skeleton, date style, and time style). This resolution logic follows a strict order of precedence:
 
-This module in the `icu_datetime` crate contains the core Rust structures and logic for the interop layer, serving as the bridge between the catchall configuration and the backend-specific formatters.
-
-### 3.1. Module Layout and Types
-
-The module exposes the following key components:
-
--   **`DateTimeFormatterOptions` (Struct)**:
-    *   The unified catchall options bag that aggregates options from ECMA-402, ICU4X, and ICU4C. All fields are optional.
-    *   Exposes a method (e.g., `to_fieldset`) that resolves the options to an ICU4X `CompositeFieldSet` (ICU4X's internal representation of selected date/time fields and their display widths).
-    *   *Details of fields and the mapping algorithm are documented in [Options and Resolution Config](options_config.md#1-the-catchall-options-bag).*
--   **`Icu4cResolvedArgs` (Struct)**:
-    *   An intermediate structure that holds the resolved arguments required to initialize an ICU4C formatter (skeleton, date style, and time style) after precedence rules have been applied.
-    *   Exposes a constructor (e.g., `resolve`) that accepts `DateTimeFormatterOptions` and returns `Icu4cResolvedArgs`.
-    *   *Details and the resolution algorithm are documented in [Options and Resolution Config](options_config.md#21-resolved-output-rust-struct).*
-
-### 3.2. Option Resolution Precedence (Summary)
-
-The resolution logic maps the unified options to backend-specific targets. It follows a strict order of precedence to resolve conflicts:
-1.  **Explicit Skeleton**: If `skeleton` is set, it overrides everything else (used directly for ICU4C).
+1.  **Explicit Skeleton**: If `skeleton` is set, it overrides everything else and is used directly for ICU4C.
 2.  **High-Level Styles**: If `date_style` or `time_style` are set, they override individual field options.
-3.  **Individual Fields**: If neither skeletons nor styles are set, individual field options (ECMA-402 or ICU4X-specific) are used. ECMA-style options take precedence over ICU4X-specific options if both are present.
+3.  **Individual Fields**: If neither skeletons nor styles are set, individual field options (ECMA-402 or ICU4X-specific) are mapped to UTS 35 skeleton symbols. ECMA-style options take precedence over ICU4X-specific options if both are present.
 
----
+### 2.2. Three Sections of Code
 
-## 4. FFI Export Crate (`icu_capi`)
+The implementation is divided into three distinct layers:
 
-Using Diplomat, the interop layer exposes the following C-compatible interface:
+#### 2.2.1. Rust (`icu_datetime::interop`)
 
--   **`ffi::DateTimeFormatterOptions` Struct**: A C-compatible version of the catchall options bag, mapping to Rust's `icu_datetime::interop::DateTimeFormatterOptions`.
--   **`ffi::Icu4cResolvedArgs` Opaque Type**: A thin wrapper around Rust's `icu_datetime::interop::Icu4cResolvedArgs`.
-    *   Exposes a constructor `resolve` that accepts `ffi::DateTimeFormatterOptions`, calls the Rust resolution logic, and returns the wrapped `ffi::Icu4cResolvedArgs`.
-    *   Exposes a method to write the resolved `skeleton` into a `DiplomatWriteable` (a C-compatible string buffer).
-    *   Exposes methods to get the resolved `date_style` and `time_style` as integers.
--   **`ffi::DateTimeFormatter` Constructor**: A new constructor `create_from_interop_options` is added to the existing `ffi::DateTimeFormatter` in `icu_capi`. It accepts `ffi::DateTimeFormatterOptions`, resolves it to a `CompositeFieldSet` internally, and returns a `Box<ffi::DateTimeFormatter>`.
+This module in the `icu_datetime` crate contains the core Rust structures and logic for the interop layer, serving as the bridge between the catchall configuration and the backend-specific formatters. It exposes:
+*   **`DateTimeFormatterOptions`**: The catchall options bag.
+*   **`Icu4cResolvedArgs`**: The resolved arguments for ICU4C.
+*   **Resolution Logic**: Methods to resolve `DateTimeFormatterOptions` to either `Icu4cResolvedArgs` (for ICU4C) or `CompositeFieldSet` (for ICU4X).
 
----
+#### 2.2.2. FFI (`icu_capi`)
 
-## 5. Header-only C++ Integration Layer (`ffi/icu4c_interop`)
+Using **Diplomat** (ICU4X's FFI binding generation tool), the interop layer exposes C-compatible interfaces for the Rust components:
+*   **`ffi::DateTimeFormatterOptions`**: C-compatible version of the options bag.
+*   **`ffi::Icu4cResolvedArgs`**: Opaque wrapper around the resolved arguments. Exposes methods to extract the resolved skeleton (writing to `DiplomatWriteable`, a C-compatible string buffer) and styles.
+*   **`ffi::DateTimeFormatter` Constructor**: A new constructor `create_from_interop_options` that accepts `ffi::DateTimeFormatterOptions` and returns a formatted helper.
+
+#### 2.2.3. C++ Headers (`ffi/icu4c_interop`)
 
 A C++ wrapper (e.g., `icu_interop::DateTimeFormatter`) is provided as a header-only library. It manages the switching logic and calls the appropriate underlying library.
+*   **Initialization**: Resolves options via FFI (if using ICU4C) and constructs the appropriate backend formatter.
+*   **Formatting**: Delegates the formatting call to either the ICU4X FFI or the ICU4C C API.
 
-### 5.1. Initialization Flow
-
-1.  **Switch Backend**: The mechanism for selecting the backend (ICU4X vs. ICU4C) is an open question. Possible approaches include:
-    *   **Runtime Selection**: The constructor accepts a `Backend` enum. This allows dynamic switching but may retain code size overhead for both backends.
-    *   **Compile-time Macro**: Selected via preprocessor definitions (e.g., `-DICU_INTEROP_BACKEND_ICU4X`), guaranteeing zero overhead for the unused backend.
-    *   **Template Parameter**: The class is templated on the backend (e.g., `DateTimeFormatter<Backend::ICU4X>`).
-2.  **ICU4X Path**:
-    *   Calls `ffi::DateTimeFormatter::create_from_interop_options` using the provided options bag to obtain a `ffi::DateTimeFormatter`.
-3.  **ICU4C Path**:
-    *   Calls `ffi::Icu4cResolvedArgs::resolve` using the provided options bag to get the resolved skeleton or styles, which are then used to construct the ICU4C `UDateFormat` formatter.
-
-### 5.2. Formatting Flow
-
-1.  **ICU4X Path**:
-    *   Calls the formatting function on `ffi::DateTimeFormatter` with the input.
-2.  **ICU4C Path**:
-    *   Converts the FFI input object (e.g., `ffi::DateTime`) to the appropriate ICU4C type (e.g., `UDate` or `UCalendar`) and formats it using the ICU4C formatter.
-
-## 6. Input Data Type Mapping
+### 2.3. Input Types for Formatting
 
 A key difference between ICU4C and ICU4X is how they handle time zones and input representation:
 *   **ICU4C** historically accepts `UDate` (double, milliseconds since epoch) and performs time zone conversions internally using its own copy of the Time Zone Database (TZDB).
 *   **ICU4X** defers time zone database conversions to third-party libraries. Its formatters expect pre-resolved, structured "Temporal-like" types (such as `Date`, `DateTime`, and `ZonedDateTime`) where calendar arithmetic and time zone offsets have already been applied.
 
 To maintain backend symmetry and leverage ICU4X's modern design, the interop layer will **only accept ICU4X input types** (or thin C++ wrappers around them).
-
-### 6.1. Conversion Path
 *   **ICU4X Path**: Direct pass-through of ICU4X structured types to the ICU4X formatter.
 *   **ICU4C Path**: The C++ interop layer must convert the structured ICU4X input types into ICU4C-compatible representations (e.g., extracting the fields to populate a `UCalendar`, or calculating a local `UDate` if necessary) before calling `udat_format`.
 
----
-
-## 7. Error Handling
+### 2.4. Error Handling
 
 To remain consistent with the rest of the ICU4X C++ SDK, the interop layer will follow **ICU4X FFI conventions** for error handling:
-
 *   **No Exceptions**: The C++ interop layer will not throw exceptions, ensuring compatibility with systems where exceptions are disabled.
-*   **Use of `diplomat::result`**: Fallible operations (such as formatter construction) will return `icu4x::diplomat::result<T, E>`. This is a variant-like type containing either the successfully constructed object (`Ok<T>`) or an error type (`Err<E>`).
+*   **Use of `diplomat::result`**: Fallible operations (such as formatter construction) will return `icu4x::diplomat::result<T, E>`, a variant-like type containing either `Ok<T>` or `Err<E>`.
 *   **Error Types**: The error type `E` will be aligned with ICU4X error types (e.g., `icu4x::DateTimeFormatterLoadError`), mapping both ICU4X and ICU4C internal errors into this common enum where possible.
 
 ---
 
-## 8. Future Work: Raw Pattern Support
+## 3. Alternatives Considered
+
+### 3.1. Backend Selection Mechanism
+
+The mechanism for selecting the backend (ICU4X vs. ICU4C) in the C++ layer remains open. The following alternatives are considered:
+1.  **Compile-time Macro**: Selected via preprocessor definitions (e.g., `-DICU_INTEROP_BACKEND_ICU4X`). This guarantees zero overhead for the unused backend as the compiler can optimize it out. (Recommended for production).
+2.  **Template Parameter**: The formatter class is templated on the backend (e.g., `DateTimeFormatter<Backend::ICU4X>`). This allows mixing backends in the same binary but increases template instantiation overhead.
+3.  **Runtime Selection**: The constructor accepts a `Backend` enum. This allows dynamic switching but retains code size overhead for both backends in the binary.
+
+---
+
+## 4. Future Work: Raw Pattern Support
 
 Currently, the ICU4X `DateTimeFormatter` is designed around semantic skeletons and pre-compiled data, and does not support formatting arbitrary raw pattern strings at runtime. To maintain symmetry across backends in the interop layer, raw pattern support (e.g., `pattern: Option<String>`) has been excluded from the unified `DateTimeFormatterOptions` bag.
 
-Future work will investigate how to support raw patterns. This is challenging because it requires ICU4X to support arbitrary patterns. The following options will be evaluated:
-
+Future work will investigate how to support raw patterns. The following options will be evaluated:
 1.  **On-the-fly Pattern Compilation**: Allow ICU4X to compile raw patterns at runtime. This would involve parsing the pattern string into a `Pattern` struct and then converting it to a `PackedPattern`, which requires memory allocation.
-2.  **Polymorphic Formatter API**: Modify the interop API to return an enum or interface that can represent either a `DateTimeFormatter` (skeleton-based) or a `DateTimePatternFormatter` (pattern-based, if a separate pattern formatter is introduced in ICU4X).
-3.  **Segregated Pattern Interop**: Keep the skeleton-based interop and pattern-based interop separate. Pattern-based interop could be moved to a separate header/module entirely, allowing clients who don't need raw patterns to avoid the overhead of pattern parsing code.
+2.  **Polymorphic Formatter API**: Modify the interop API to return an enum or interface that can represent either a `DateTimeFormatter` (skeleton-based) or a `DateTimePatternFormatter` (pattern-based).
+3.  **Segregated Pattern Interop**: Keep the skeleton-based interop and pattern-based interop separate, possibly in a separate header/module.
