@@ -9,6 +9,7 @@ use icu::datetime::provider::skeleton::SkeletonError;
 use icu::datetime::provider::skeleton::reference::Skeleton;
 use icu::datetime::provider::fields::{components, Field};
 use icu::datetime::provider::pattern::CoarseHourCycle;
+use icu::datetime::provider::packed_pattern::{GenericLengthElements, GenericPackedPatternsBuilder};
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 
 use icu_provider::prelude::*;
@@ -304,6 +305,45 @@ impl<T> Trio<T> {
         ];
         list.sort_by_key(|variant| variant.as_ref().map(|v| key_fn(*v)));
         list.into_iter().flatten()
+    }
+}
+
+/// Transposes a length-major structure of pattern trios into a variant-major builder structure.
+///
+/// Converts `GenericLengthElements<Trio<T>>` (patterns grouped by length, containing standard/variants)
+/// into `GenericPackedPatternsBuilder<T>` (patterns grouped by standard/variants, containing lengths).
+///
+/// # Panics
+/// Panics if `variant0` or `variant1` is present in the `long` length but missing in `medium` or `short`.
+pub(crate) fn transpose<T>(
+    group: GenericLengthElements<Trio<T>>,
+) -> GenericPackedPatternsBuilder<T> {
+    let variant0 = if group.long.variant0.is_some() {
+        Some(GenericLengthElements {
+            long: group.long.variant0.unwrap(),
+            medium: group.medium.variant0.unwrap(),
+            short: group.short.variant0.unwrap(),
+        })
+    } else {
+        None
+    };
+    let variant1 = if group.long.variant1.is_some() {
+        Some(GenericLengthElements {
+            long: group.long.variant1.unwrap(),
+            medium: group.medium.variant1.unwrap(),
+            short: group.short.variant1.unwrap(),
+        })
+    } else {
+        None
+    };
+    GenericPackedPatternsBuilder {
+        standard: GenericLengthElements {
+            long: group.long.standard,
+            medium: group.medium.standard,
+            short: group.short.standard,
+        },
+        variant0,
+        variant1,
     }
 }
 

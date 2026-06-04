@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{DatagenCalendar, Trio, PackedPatternItem, select_pattern};
+use super::{DatagenCalendar, Trio, PackedPatternItem, select_pattern, transpose};
 use crate::debug_provider::DebugProvider;
 use crate::{IterableDataProviderCached, SourceDataProvider, cldr_serde};
 use icu::datetime::fieldsets::enums::*;
@@ -27,7 +27,7 @@ type VariantPatternsElement<'a> = PatternsWithDistance<PluralElements<runtime::P
 type VariantPatterns<'a> = Trio<VariantPatternsElement<'a>>;
 
 /// Some patterns associated with a [`SkeletonQuality`].
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 struct PatternsWithDistance<T> {
     inner: T,
     distance: SkeletonQuality,
@@ -283,6 +283,12 @@ impl SourceDataProvider {
                         crate::datetime::names::apply_numeric_overrides(lp, p);
                     });
                 }
+                if variant_patterns.variant0.is_none() {
+                    variant_patterns.variant0 = Some(variant_patterns.standard.clone());
+                }
+                if variant_patterns.variant1.is_none() {
+                    variant_patterns.variant1 = Some(variant_patterns.standard.clone());
+                }
                 variant_patterns
             })
             .map(|mut trio| {
@@ -302,60 +308,14 @@ impl SourceDataProvider {
                 trio
             });
 
-        let builder = PackedPatternsBuilder {
-            standard: LengthPluralElements {
-                long: long.standard.inner().as_ref().map(runtime::Pattern::as_ref),
-                medium: medium
-                    .standard
-                    .inner()
-                    .as_ref()
-                    .map(runtime::Pattern::as_ref),
-                short: short
-                    .standard
-                    .inner()
-                    .as_ref()
-                    .map(runtime::Pattern::as_ref),
-            },
-            variant0: Some(LengthPluralElements {
-                long: long.variant0.map(|x| x.into_inner()).unwrap_or_else(|| {
-                    long.standard.inner().as_ref().map(runtime::Pattern::as_ref)
-                }),
-                medium: medium.variant0.map(|x| x.into_inner()).unwrap_or_else(|| {
-                    medium
-                        .standard
-                        .inner()
-                        .as_ref()
-                        .map(runtime::Pattern::as_ref)
-                }),
-                short: short.variant0.map(|x| x.into_inner()).unwrap_or_else(|| {
-                    short
-                        .standard
-                        .inner()
-                        .as_ref()
-                        .map(runtime::Pattern::as_ref)
-                }),
-            }),
-            variant1: Some(LengthPluralElements {
-                long: long.variant1.map(|x| x.into_inner()).unwrap_or_else(|| {
-                    long.standard.inner().as_ref().map(runtime::Pattern::as_ref)
-                }),
-                medium: medium.variant1.map(|x| x.into_inner()).unwrap_or_else(|| {
-                    medium
-                        .standard
-                        .inner()
-                        .as_ref()
-                        .map(runtime::Pattern::as_ref)
-                }),
-                short: short.variant1.map(|x| x.into_inner()).unwrap_or_else(|| {
-                    short
-                        .standard
-                        .inner()
-                        .as_ref()
-                        .map(runtime::Pattern::as_ref)
-                }),
-            }),
+        let trios = GenericLengthElements { long, medium, short };
+        let builder = transpose(trios);
+        let final_builder = GenericPackedPatternsBuilder {
+            standard: map_length(builder.standard, |x| x.into_inner()),
+            variant0: builder.variant0.map(|v| map_length(v, |x| x.into_inner())),
+            variant1: builder.variant1.map(|v| map_length(v, |x| x.into_inner())),
         };
-        Ok(builder.build())
+        Ok(final_builder.build())
     }
 
     fn time_skeleton_supported_locales(
@@ -599,4 +559,13 @@ impl_datetime_skeleton_datagen!(DatetimePatternsDateJapaneseV1, DatagenCalendar:
 impl_datetime_skeleton_datagen!(DatetimePatternsDatePersianV1, DatagenCalendar::Persian);
 impl_datetime_skeleton_datagen!(DatetimePatternsDateRocV1, DatagenCalendar::Roc);
 
-
+fn map_length<T, U>(
+    group: GenericLengthElements<T>,
+    mut f: impl FnMut(T) -> U,
+) -> GenericLengthElements<U> {
+    GenericLengthElements {
+        long: f(group.long),
+        medium: f(group.medium),
+        short: f(group.short),
+    }
+}
