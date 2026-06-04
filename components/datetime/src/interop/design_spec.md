@@ -154,7 +154,7 @@ A C++ wrapper (e.g., `icu_interop::DateTimeFormatter`) is provided as a header-o
     *   **Compile-time Macro**: Selected via preprocessor definitions (e.g., `-DICU_INTEROP_BACKEND_ICU4X`), guaranteeing zero overhead for the unused backend.
     *   **Template Parameter**: The class is templated on the backend (e.g., `DateTimeFormatter<Backend::ICU4X>`).
 2.  **ICU4X Path**:
-    *   Calls `ffi::DateTimeFormatter::create_from_interop_options` using the provided options bag to obtain a wrapped `ffi::DateTimeFormatter`.
+    *   Calls `ffi::DateTimeFormatter::create_from_interop_options` using the provided options bag to obtain a `ffi::DateTimeFormatter`.
 3.  **ICU4C Path**:
     *   Calls `ffi::resolve_icu4c_args` to get resolved skeleton and styles.
     *   If a resolved `skeleton` is present:
