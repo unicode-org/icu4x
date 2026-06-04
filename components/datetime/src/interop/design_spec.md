@@ -55,13 +55,14 @@ graph TD
         ICU4C_C["ICU4C (udat.h)"]
     end
 
-    InteropCPP -->|ICU4X: Create & Format| CAPI_FT
+    %% ICU4X Flow
+    InteropCPP -->|"[ICU4X Path] Create & Format"| CAPI_FT
     CAPI_FT --> ICU4X_Rust
 
-    InteropCPP -->|ICU4C: Resolve Options| CAPI_Interop
+    %% ICU4C Flow
+    InteropCPP -->|"[ICU4C Path] Step 1: Resolve Options"| CAPI_Interop
     CAPI_Interop --> Rust_Interop
-
-    InteropCPP -->|ICU4C: Format| ICU4C_C
+    InteropCPP -->|"[ICU4C Path] Step 2: Format (using resolved options)"| ICU4C_C
 ```
 
 ### 2.1. Unified Options Bag and Backend Resolution
