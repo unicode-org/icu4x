@@ -38,18 +38,29 @@ The interop layer is split across three boundaries to maintain strict dependency
 
 ```mermaid
 graph TD
-    Client["C/C++ Client Code"] --> InteropCPP["ffi/icu4c_interop Header-only C++"]
-    
-    subgraph rust["Rust Boundary (No ICU4C dependency)"]
-        InteropCPP --> |Calls FFI| CAPI["icu_capi C API"]
-        CAPI --> |Exposes| InteropRust["icu_datetime::interop"]
-        InteropRust --> |Resolves Options| Options[DateTimeFormatterOptions]
+    Client["C/C++ Client"] --> InteropCPP["ffi/icu4c_interop (C++)"]
+
+    subgraph FFI ["FFI Boundary (icu_capi)"]
+        CAPI_FT["DateTimeFormatter FFI"]
+        CAPI_Interop["Icu4cResolvedArgs FFI"]
     end
 
-    subgraph linkage["C/C++ Linkage Boundary"]
-        InteropCPP --> |Links| CAPI_SO["libicu_capi.so (ICU4X)"]
-        InteropCPP --> |Links| ICU4C_SO["libicui18n.so (ICU4C)"]
+    subgraph Rust ["Rust Library (icu_datetime)"]
+        ICU4X_Rust["DateTimeFormatter (Rust)"]
+        Rust_Interop["icu_datetime::interop"]
     end
+
+    subgraph ICU4C_Lib ["ICU4C Library"]
+        ICU4C_C["ICU4C (udat.h)"]
+    end
+
+    InteropCPP -->|ICU4X: Create & Format| CAPI_FT
+    CAPI_FT --> ICU4X_Rust
+
+    InteropCPP -->|ICU4C: Resolve Options| CAPI_Interop
+    CAPI_Interop --> Rust_Interop
+
+    InteropCPP -->|ICU4C: Format| ICU4C_C
 ```
 
 1.  **`icu_datetime::interop` (Rust)**: Contains `DateTimeFormatterOptions` (the catchall options bag) and the resolution logic to map these options to ICU4C-compatible arguments (skeletons or styles), without calling ICU4C.
