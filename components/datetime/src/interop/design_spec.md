@@ -127,41 +127,54 @@ The mechanism for selecting the backend (ICU4X vs. ICU4C) in the C++ layer remai
 ## 3. Alternatives Considered
 
 ### 3.1. Defer to Third-Parties
-*   **Alternative**: Do not provide an interop layer in ICU; instead, let third-party wrapper libraries (such as those in browser engines or runtime environments) implement the options resolution and backend switching logic.
-*   **Reason for Rejection**:
-    1.  **Complexity of i18n Logic**: Options resolution (especially mapping ECMA-402 to skeletons) involves complex internationalization logic, calendar calculations, and data-driven mapping.
-    2.  **Library Responsibility**: This logic is best suited for an i18n library like ICU to ensure correctness and maintainability, rather than forcing every client environment to re-implement it.
+
+Do not provide an interop layer in ICU; instead, let third-party wrapper libraries (such as those in browser engines or runtime environments) implement the options resolution and backend switching logic.
+
+**Reasons for Rejection:**
+1.  **Complexity of i18n Logic**: Options resolution (especially mapping ECMA-402 to skeletons) involves complex internationalization logic, calendar calculations, and data-driven mapping.
+2.  **Library Responsibility**: This logic is best suited for an i18n library like ICU to ensure correctness and maintainability, rather than forcing every client environment to re-implement it.
 
 ### 3.2. Release as a Standalone C++ Library
-*   **Alternative**: Release the interop layer as a brand new, standalone C++ library (e.g., `libicu402`).
-*   **Reason for Rejection**:
-    1.  **Process Overhead**: Introducing a new library increases release, versioning, and distribution overhead.
-    2.  **Maintenance Cohesion**: It is easier for clients to consume and for maintainers to track this logic if it is distributed alongside the existing ICU4C or ICU4X codebases.
+
+Release the interop layer as a brand new, standalone C++ library (e.g., `libicu402`).
+
+**Reasons for Rejection:**
+1.  **Process Overhead**: Introducing a new library increases release, versioning, and distribution overhead.
+2.  **Maintenance Cohesion**: It is easier for clients to consume and for maintainers to track this logic if it is distributed alongside the existing ICU4C or ICU4X codebases.
 
 ### 3.3. Offer Only ECMA-to-ICU4X Interop
-*   **Alternative**: Only implement the mapping from ECMA-402 to ICU4X, and defer the ICU4C mapping to a separate project (e.g., directly inside ICU4C).
-*   **Reason for Rejection**:
-    1.  **Shared Definitions**: The mapping logic for both backends is closely related and benefits from sharing the same options bag definitions.
-    2.  **Missing Upstream Features**: Semantic skeletons (needed for robust ECMA mapping) are not yet implemented in ICU4C.
-    3.  **Project Scope**: The primary motivation for this interop layer is to facilitate easy migration to ICU4X, which is firmly in scope for the ICU4X project.
+
+Only implement the mapping from ECMA-402 to ICU4X, and defer the ICU4C mapping to a separate project (e.g., directly inside ICU4C).
+
+**Reasons for Rejection:**
+1.  **Shared Definitions**: The mapping logic for both backends is closely related and benefits from sharing the same options bag definitions.
+2.  **Missing Upstream Features**: Semantic skeletons (needed for robust ECMA mapping) are not yet implemented in ICU4C.
+3.  **Project Scope**: The primary motivation for this interop layer is to facilitate easy migration to ICU4X, which is firmly in scope for the ICU4X project.
 
 ### 3.4. Omit C++ Header Glue Code
-*   **Alternative**: Only implement the Rust library and FFI exports, leaving the C++ switching and integration code to the client.
-*   **Reason for Rejection**:
-    1.  **Testability**: Without the C++ header glue code, we cannot easily write integration tests to verify that the options resolution and backend switching function correctly in a C++ environment.
-    2.  **Out-of-the-Box Solution**: Providing the C++ layer ensures a complete, end-to-end verified solution for C++ clients.
 
-### 3.5. Duplicate Resolution Logic in C++
-*   **Alternative**: Implement the ECMA-to-ICU4C resolution in C++ (using ICU4C APIs if possible) and ECMA-to-ICU4X in Rust.
-*   **Reason for Rejection**: While this would allow C++ clients using only the ICU4C backend to avoid linking the ICU4X FFI library entirely, it goes against the core design philosophy of the ICU4X project:
-    1.  **Rust-First Business Logic**: We want to implement as much logic as possible in Rust, where it is safer, more maintainable, and easier to test. Resolving high-level options to backend-specific targets (even to ICU4C skeletons) is complex i18n business logic that belongs in Rust. C++ should be treated strictly as an integration/FFI layer without such logic.
-    2.  **Consistent Option Interpretation**: Although the target outputs are different (skeletons for ICU4C, fieldsets for ICU4X), they process the same input options. Keeping both resolution paths in Rust makes it easier to ensure that input options, precedence rules, and defaults are interpreted consistently across both backends, avoiding semantic drift in how options are resolved.
+Only implement the Rust library and FFI exports, leaving the C++ switching and integration code to the client.
+
+**Reasons for Rejection:**
+1.  **Testability**: Without the C++ header glue code, we cannot easily write integration tests to verify that the options resolution and backend switching function correctly in a C++ environment.
+2.  **Out-of-the-Box Solution**: Providing the C++ layer ensures a complete, end-to-end verified solution for C++ clients.
+
+### 3.5. Implement ICU4C Resolution in C++
+
+Implement the ECMA-to-ICU4C resolution logic directly in C++ (using ICU4C APIs if possible), while only implementing the ECMA-to-ICU4X resolution in Rust.
+
+**Reasons for Rejection:**
+While this would allow C++ clients using only the ICU4C backend to avoid linking the ICU4X FFI library entirely, it goes against the core design philosophy of the ICU4X project:
+1.  **Rust-First Business Logic**: We want to implement as much logic as possible in Rust, where it is safer, more maintainable, and easier to test. Resolving high-level options to backend-specific targets (even to ICU4C skeletons) is complex i18n business logic that belongs in Rust. C++ should be treated strictly as an integration/FFI layer without such logic.
+2.  **Consistent Option Interpretation**: Although the target outputs are different (skeletons for ICU4C, fieldsets for ICU4X), they process the same input options. Keeping both resolution paths in Rust makes it easier to ensure that input options, precedence rules, and defaults are interpreted consistently across both backends, avoiding semantic drift in how options are resolved.
 
 ### 3.6. Link ICU4C into Rust
-*   **Alternative**: Link ICU4C into the Rust `icu_datetime` crate and perform the backend switching entirely within Rust.
-*   **Reason for Rejection**:
-    1.  **Dependency Bloat**: It would force all Rust users of `icu_datetime` to link against ICU4C, significantly increasing build times and binary size.
-    2.  **Portability Restrictions**: Linking ICU4C increases complexity, especially for targets where ICU4C is not easily available or supported (e.g., WebAssembly).
+
+Link ICU4C into the Rust `icu_datetime` crate and perform the backend switching entirely within Rust.
+
+**Reasons for Rejection:**
+1.  **Dependency Bloat**: It would force all Rust users of `icu_datetime` to link against ICU4C, significantly increasing build times and binary size.
+2.  **Portability Restrictions**: Linking ICU4C increases complexity, especially for targets where ICU4C is not easily available or supported (e.g., WebAssembly).
 
 ---
 
