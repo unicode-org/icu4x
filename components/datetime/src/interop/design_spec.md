@@ -134,12 +134,12 @@ Due to the static nature of ICU4X, this mapping involves a non-trivial resolutio
 
 Using Diplomat, the interop layer exposes the following C-compatible interface:
 
--   **`ICU4XDateTimeFormatterOptions` Struct**: A C-compatible version of the catchall options bag.
--   **`ICU4CIteropResolvedArgs` Opaque Type**: Wraps the resolved ICU4C arguments.
+-   **`ffi::DateTimeFormatterOptions` Struct**: A C-compatible version of the catchall options bag.
+-   **`ffi::Icu4cResolvedArgs` Opaque Type**: Wraps the resolved ICU4C arguments.
     *   Exposes a method to write the resolved `skeleton` into a `DiplomatWriteable`.
     *   Exposes methods to get the resolved `date_style` and `time_style` as integers.
--   **`resolve_icu4c_args` Function**: Accepts `ICU4XDateTimeFormatterOptions` and returns `Box<ICU4CIteropResolvedArgs>`.
--   **`ICU4XDateTimeFormatter` Constructor**: A new constructor `create_from_interop_options` is added to the existing `ICU4XDateTimeFormatter` in `icu_capi`. It accepts `ICU4XDateTimeFormatterOptions`, resolves it to a `CompositeFieldSet` internally, and returns a `Box<ICU4XDateTimeFormatter>`.
+-   **`ffi::resolve_icu4c_args` Function**: Accepts `ffi::DateTimeFormatterOptions` and returns `Box<ffi::Icu4cResolvedArgs>`.
+-   **`ffi::DateTimeFormatter` Constructor**: A new constructor `create_from_interop_options` is added to the existing `ffi::DateTimeFormatter` in `icu_capi`. It accepts `ffi::DateTimeFormatterOptions`, resolves it to a `CompositeFieldSet` internally, and returns a `Box<ffi::DateTimeFormatter>`.
 
 ---
 
@@ -154,9 +154,9 @@ A C++ wrapper (e.g., `icu_interop::DateTimeFormatter`) is provided as a header-o
     *   **Compile-time Macro**: Selected via preprocessor definitions (e.g., `-DICU_INTEROP_BACKEND_ICU4X`), guaranteeing zero overhead for the unused backend.
     *   **Template Parameter**: The class is templated on the backend (e.g., `DateTimeFormatter<Backend::ICU4X>`).
 2.  **ICU4X Path**:
-    *   Calls `icu_capi`'s `icu4x_datetime_formatter_create_from_interop_options` using the provided options bag to obtain a wrapped `ICU4XDateTimeFormatter`.
+    *   Calls `ffi::DateTimeFormatter::create_from_interop_options` using the provided options bag to obtain a wrapped `ffi::DateTimeFormatter`.
 3.  **ICU4C Path**:
-    *   Calls FFI `resolve_icu4c_args` to get resolved skeleton and styles.
+    *   Calls `ffi::resolve_icu4c_args` to get resolved skeleton and styles.
     *   If a resolved `skeleton` is present:
         *   Opens a pattern generator using `udatpg_open`.
         *   Retrieves the best pattern for the skeleton using `udatpg_getBestPattern`.
@@ -168,9 +168,9 @@ A C++ wrapper (e.g., `icu_interop::DateTimeFormatter`) is provided as a header-o
 ### 7.2. Formatting Flow
 
 1.  **ICU4X Path**:
-    *   Calls `icu_capi`'s formatting function with the ICU4X formatter and input.
+    *   Calls the formatting function on `ffi::DateTimeFormatter` with the input.
 2.  **ICU4C Path**:
-    *   Extracts datetime fields (year, month, day, hour, minute, second) from the ICU4X input object using `icu_capi` getters.
+    *   Extracts datetime fields (year, month, day, hour, minute, second) from the FFI input object (e.g., `ffi::DateTime`) using FFI getters.
     *   Converts the fields to a `UDate` (epoch milliseconds) or sets them on a `UCalendar`.
     *   Calls ICU4C's `udat_format` with the `UDate` or `UCalendar`.
     *   Converts the resulting `UChar` buffer to a C++ `std::string`.
