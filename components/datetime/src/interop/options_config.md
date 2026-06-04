@@ -101,7 +101,7 @@ When individual field options (like `year`, `month`, `hour`) are provided instea
     *   If only `hour` is present: `TimePrecision::Hour`.
 
 3.  **Determine `Length` / Field Styles**:
-    Since ICU4X applies a single `Length` to the entire fieldset, mixed styles (e.g., short year with a long month) must be resolved to a single "best fit" `Length`:
+    Since ICU4X applies a single `Length` to the entire fieldset, mixed styles (e.g., short year with a long month) must be resolved to a single "best fit" `Length` (note that there is ongoing work to add features like field-specific length hints to semantic skeletons to better support mixed styles in the future):
     *   If any field uses `Long` (wide): `Length::Long`.
     *   Else if any field uses `Short` (abbreviated) or `Medium`: `Length::Medium`.
     *   Else if all fields are `Numeric` or `TwoDigit`: `Length::Short`.
