@@ -107,20 +107,16 @@ To remain consistent with the rest of the ICU4X C++ SDK, the interop layer will 
 *   **Use of `diplomat::result`**: Fallible operations (such as formatter construction) will return `icu4x::diplomat::result<T, E>`, a variant-like type containing either `Ok<T>` or `Err<E>`.
 *   **Error Types**: The error type `E` will be aligned with ICU4X error types (e.g., `icu4x::DateTimeFormatterLoadError`), mapping both ICU4X and ICU4C internal errors into this common enum where possible.
 
----
+### 2.5. Backend Selection Mechanism
 
-## 3. Alternatives Considered
-
-### 3.1. Backend Selection Mechanism
-
-The mechanism for selecting the backend (ICU4X vs. ICU4C) in the C++ layer remains open. The following alternatives are considered:
+The mechanism for selecting the backend (ICU4X vs. ICU4C) in the C++ layer remains open. The following options are considered:
 1.  **Compile-time Macro**: Selected via preprocessor definitions (e.g., `-DICU_INTEROP_BACKEND_ICU4X`). This guarantees zero overhead for the unused backend as the compiler can optimize it out. (Recommended for production).
 2.  **Template Parameter**: The formatter class is templated on the backend (e.g., `DateTimeFormatter<Backend::ICU4X>`). This allows mixing backends in the same binary but increases template instantiation overhead.
 3.  **Runtime Selection**: The constructor accepts a `Backend` enum. This allows dynamic switching but retains code size overhead for both backends in the binary.
 
 ---
 
-## 4. Future Work: Raw Pattern Support
+## 3. Future Work: Raw Pattern Support
 
 Currently, the ICU4X `DateTimeFormatter` is designed around semantic skeletons and pre-compiled data, and does not support formatting arbitrary raw pattern strings at runtime. To maintain symmetry across backends in the interop layer, raw pattern support (e.g., `pattern: Option<String>`) has been excluded from the unified `DateTimeFormatterOptions` bag.
 
