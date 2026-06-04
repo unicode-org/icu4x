@@ -20,6 +20,13 @@ The design aims to:
 - Export these helpers via `icu_capi` (using Diplomat).
 - Implement the actual switching and ICU4C calls in a header-only C/C++ layer (`ffi/icu4c_interop`).
 
+### 1.1. Key Benefits
+
+*   **Dependency Isolation**: The Rust `icu_datetime` crate remains 100% pure Rust and does not need to link with `libicui18n.so`. This keeps Rust builds fast and simple.
+*   **Single Source of Truth for Options**: The complex logic of mapping ECMA-402 and ICU4X options to skeletons is written once in Rust, ensuring consistent behavior.
+*   **Flexible Linkage**: C++ clients can choose to link only ICU4X, only ICU4C, or both, as the switching logic is header-only and resolved at the C++ compile/link stage.
+*   **Zero-Cost Switching**: In production, if a client decides to compile only with ICU4X, the C++ compiler can optimize away the ICU4C branches.
+
 ---
 
 ## 2. Architecture Overview
@@ -167,16 +174,7 @@ A C++ wrapper (e.g., `icu_interop::DateTimeFormatter`) is provided as a header-o
 
 ---
 
-## 8. Key Benefits of this Architecture
-
-1.  **Dependency Isolation**: The Rust `icu_datetime` crate remains 100% pure Rust and does not need to link with `libicui18n.so`. This keeps Rust builds fast and simple.
-2.  **Single Source of Truth for Options**: The complex logic of mapping ECMA-402 and ICU4X options to skeletons is written once in Rust, ensuring consistent behavior.
-3.  **Flexible Linkage**: C++ clients can choose to link only ICU4X, only ICU4C, or both, as the switching logic is header-only and resolved at the C++ compile/link stage.
-4.  **Zero-Cost Switching**: In production, if a client decides to compile only with ICU4X, the C++ compiler can optimize away the ICU4C branches.
-
----
-
-## 9. Future Work: Raw Pattern Support
+## 8. Future Work: Raw Pattern Support
 
 Currently, the ICU4X `DateTimeFormatter` is designed around semantic skeletons and pre-compiled data, and does not support formatting arbitrary raw pattern strings at runtime. To maintain symmetry across backends in the interop layer, raw pattern support (e.g., `pattern: Option<String>`) has been excluded from the unified `DateTimeFormatterOptions` bag.
 
