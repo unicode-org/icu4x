@@ -4,9 +4,9 @@
 
 //! Data structures for packed range patterns.
 
-use crate::provider::packed_pattern::{
-    GenericPackedPatterns, GenericUnpackedPatterns, PackedPatternsBuilderHelper,
-};
+#[cfg(feature = "datagen")]
+use crate::provider::packed_pattern::GenericUnpackedPatterns;
+use crate::provider::packed_pattern::{GenericPackedPatterns, PackedPatternsBuilderHelper};
 use crate::provider::pattern::runtime::{Pattern, PatternULE};
 use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
@@ -502,21 +502,23 @@ mod tests {
 mod _serde {
     use super::*;
     use crate::provider::packed_pattern::_serde::PackedPatternsSerdeHelper;
+    use alloc::vec::Vec;
     use serde::Deserialize;
+    #[cfg(feature = "datagen")]
     use serde::Serialize;
 
-    #[derive(Debug, Clone, Default)]
-    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+    #[derive(Debug, Clone, Default, Deserialize)]
+    #[cfg_attr(feature = "datagen", derive(Serialize))]
     pub struct PatternsByGreatestDifferenceHuman {
         pub header: GreatestDifferenceHeader,
-        pub patterns: alloc::vec::Vec<crate::provider::pattern::reference::Pattern>,
+        pub patterns: Vec<crate::provider::pattern::reference::Pattern>,
     }
 
     impl PackedPatternsSerdeHelper for PatternsByGreatestDifferenceULE {
         type Human = PatternsByGreatestDifferenceHuman;
 
         fn human_to_unpacked_element<'a>(human: &'a Self::Human) -> Self::Unpacked<'a> {
-            let patterns: alloc::vec::Vec<Pattern<'a>> = human
+            let patterns: Vec<Pattern<'a>> = human
                 .patterns
                 .iter()
                 .map(|p| p.to_runtime_pattern())
