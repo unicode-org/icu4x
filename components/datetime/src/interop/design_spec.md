@@ -58,9 +58,9 @@ graph TD
 
 ### 2.1. Unified Options Bag and ICU4C Options
 
-Instead of backend-specific configuration structures, the interop layer exposes a single, unified `DateTimeFormatterOptions` struct (the "catchall options bag"). This struct aggregates options from ECMA-402, ICU4X, and ICU4C.
+Instead of backend-specific configuration structures, the interop layer exposes a single, unified `DateTimeFormatterOptions` struct (the "catchall options bag"). This struct aggregates options from ECMA-402, ICU4X, and ICU4C. (See [Options and Resolution Config](options_config.md#1-the-catchall-options-bag) for details on supported fields).
 
-To support the ICU4C backend, this unified options bag must be resolved to ICU4C-compatible arguments: `Icu4cResolvedArgs` (containing an optional skeleton, date style, and time style). This resolution logic follows a strict order of precedence:
+To support the ICU4C backend, this unified options bag must be resolved to ICU4C-compatible arguments: `Icu4cResolvedArgs` (containing an optional skeleton, date style, and time style). (See [Options and Resolution Config](options_config.md#21-resolved-output-rust-struct) for the resolution algorithm). This resolution logic follows a strict order of precedence:
 
 1.  **Explicit Skeleton**: If `skeleton` is set, it overrides everything else and is used directly for ICU4C.
 2.  **High-Level Styles**: If `date_style` or `time_style` are set, they override individual field options.
