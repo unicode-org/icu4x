@@ -143,9 +143,9 @@ Using Diplomat, the interop layer exposes the following C-compatible interface:
 
 -   **`ffi::DateTimeFormatterOptions` Struct**: A C-compatible version of the catchall options bag.
 -   **`ffi::Icu4cResolvedArgs` Opaque Type**: Wraps the resolved ICU4C arguments.
+    *   Exposes a constructor `resolve` that accepts `ffi::DateTimeFormatterOptions` and returns `Box<ffi::Icu4cResolvedArgs>`.
     *   Exposes a method to write the resolved `skeleton` into a `DiplomatWriteable`.
     *   Exposes methods to get the resolved `date_style` and `time_style` as integers.
--   **`ffi::resolve_icu4c_args` Function**: Accepts `ffi::DateTimeFormatterOptions` and returns `Box<ffi::Icu4cResolvedArgs>`.
 -   **`ffi::DateTimeFormatter` Constructor**: A new constructor `create_from_interop_options` is added to the existing `ffi::DateTimeFormatter` in `icu_capi`. It accepts `ffi::DateTimeFormatterOptions`, resolves it to a `CompositeFieldSet` internally, and returns a `Box<ffi::DateTimeFormatter>`.
 
 ---
@@ -163,7 +163,7 @@ A C++ wrapper (e.g., `icu_interop::DateTimeFormatter`) is provided as a header-o
 2.  **ICU4X Path**:
     *   Calls `ffi::DateTimeFormatter::create_from_interop_options` using the provided options bag to obtain a `ffi::DateTimeFormatter`.
 3.  **ICU4C Path**:
-    *   Calls `ffi::resolve_icu4c_args` to get the resolved skeleton or styles, which are then used to construct the ICU4C `UDateFormat` formatter.
+    *   Calls `ffi::Icu4cResolvedArgs::resolve` using the provided options bag to get the resolved skeleton or styles, which are then used to construct the ICU4C `UDateFormat` formatter.
 
 ### 7.2. Formatting Flow
 
