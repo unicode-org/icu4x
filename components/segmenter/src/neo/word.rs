@@ -2,16 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::{ComplexHandler, RuleBreakIterator, RuleBreakType};
 use crate::complex::*;
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::iterator_helpers::derive_usize_iterator_with_type;
-use crate::neo::RuleBreakIterator;
 use crate::provider::*;
 use crate::rule_segmenter::*;
 #[cfg(feature = "compiled_data")]
 use crate::word::WordBreakInvariantOptions;
 use crate::word::WordBreakOptions;
 use crate::word::WordType;
+use core::marker::PhantomData;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
@@ -28,7 +29,9 @@ use utf8_iter::Utf8CharIndices;
 ///
 /// For examples of use, see [`WordSegmenter`].
 #[derive(Debug)]
-pub struct WordBreakIterator<'data, 's, Y: RuleBreakType>(RuleBreakIterator<'data, 's, Y, ()>);
+pub struct WordBreakIterator<'data, 's, Y: RuleBreakType>(
+    RuleBreakIterator<'data, 's, Y, (), ComplexWord<Y>>,
+);
 
 derive_usize_iterator_with_type!(WordBreakIterator, 'data);
 
@@ -488,18 +491,40 @@ impl WordSegmenter {
     }
 }
 
+#[derive(Debug)]
+struct ComplexWord<Y>(PhantomData<Y>);
+
+impl<Y: RuleBreakType> ComplexHandler<Y> for ComplexWord<Y> {
+    const BREAK_AT_BOUNDARIES: bool = true;
+    const BREAK_STATUS: u8 = WordType::Letter as u8;
+
+    type Data<'s> = Y::ComplexData<'s>;
+
+    #[inline(always)]
+    fn is_complex(data: &Self::Data<'_>, iter: &Y::IterAttr<'_>) -> bool {
+        Y::is_complex(data, iter)
+    }
+
+    #[inline(always)]
+    fn handle<'s>(
+        data: &Self::Data<'_>,
+        complex: &<Y as RuleBreakType>::IterAttr<'s>,
+        past_complex: &<Y as RuleBreakType>::IterAttr<'s>,
+    ) -> impl Iterator<Item = usize> + use<'s, Y> {
+        Y::handle_complex(data, complex, past_complex)
+    }
+}
+
 impl<'data> WordSegmenterBorrowed<'data> {
     /// Creates a word break iterator for an `str` (a UTF-8 string).
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_str<'s>(self, input: &'s str) -> WordBreakIterator<'data, 's, Utf8> {
-        WordBreakIterator(RuleBreakIterator::new_with_complex(
+        WordBreakIterator(RuleBreakIterator::new(
             input.char_indices(),
             self.data,
             (),
-            self.complex,
-            true,
-            WordType::Letter as u8,
+            Some(self.complex),
         ))
     }
 
@@ -512,13 +537,11 @@ impl<'data> WordSegmenterBorrowed<'data> {
         self,
         input: &'s [u8],
     ) -> WordBreakIterator<'data, 's, PotentiallyIllFormedUtf8> {
-        WordBreakIterator(RuleBreakIterator::new_with_complex(
+        WordBreakIterator(RuleBreakIterator::new(
             Utf8CharIndices::new(input),
             self.data,
             (),
-            self.complex,
-            true,
-            WordType::Letter as u8,
+            Some(self.complex),
         ))
     }
 
@@ -526,10 +549,11 @@ impl<'data> WordSegmenterBorrowed<'data> {
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_latin1<'s>(self, input: &'s [u8]) -> WordBreakIterator<'data, 's, Latin1> {
-        WordBreakIterator(RuleBreakIterator::new_non_complex(
+        WordBreakIterator(RuleBreakIterator::new(
             Latin1Indices::new(input),
             self.data,
             (),
+            None,
         ))
     }
 
@@ -537,13 +561,11 @@ impl<'data> WordSegmenterBorrowed<'data> {
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_utf16<'s>(self, input: &'s [u16]) -> WordBreakIterator<'data, 's, Utf16> {
-        WordBreakIterator(RuleBreakIterator::new_with_complex(
+        WordBreakIterator(RuleBreakIterator::new(
             Utf16Indices::new(input),
             self.data,
             (),
-            self.complex,
-            true,
-            WordType::Letter as u8,
+            Some(self.complex),
         ))
     }
 }

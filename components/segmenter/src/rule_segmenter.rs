@@ -30,9 +30,27 @@ pub trait RuleBreakType: crate::private::Sealed + Sized {
     fn char_len(ch: Self::CharType) -> usize;
 
     #[doc(hidden)]
+    #[cfg(feature = "unstable")]
+    type ComplexData<'data>: core::fmt::Debug;
+
+    #[doc(hidden)]
+    #[cfg(feature = "unstable")]
+    fn is_complex(data: &Self::ComplexData<'_>, iter: &Self::IterAttr<'_>) -> bool;
+
+    #[doc(hidden)]
+    #[cfg(feature = "unstable")]
+    fn handle_complex<'s>(
+        data: &Self::ComplexData<'_>,
+        complex: &Self::IterAttr<'s>,
+        past_complex: &Self::IterAttr<'s>,
+    ) -> impl Iterator<Item = usize> + use<'s, Self>;
+
+    #[doc(hidden)]
+    #[cfg(feature = "unstable")]
     fn offset<'s>(iter: &Self::IterAttr<'s>) -> usize;
 
     #[doc(hidden)]
+    #[cfg(feature = "unstable")]
     fn is_empty<'s>(iter: &Self::IterAttr<'s>) -> bool;
 }
 
@@ -280,14 +298,41 @@ impl RuleBreakType for Utf8 {
 
     const CAN_CONTAIN_SA: bool = true;
 
+    #[cfg(feature = "unstable")]
+    type ComplexData<'data> = ComplexPayloadsBorrowed<'data>;
+
+    #[cfg(feature = "unstable")]
+    fn is_complex(data: &Self::ComplexData<'_>, iter: &Self::IterAttr<'_>) -> bool {
+        iter.as_str()
+            .chars()
+            .next()
+            .is_some_and(|c| data.handles(c.into()))
+    }
+
+    #[cfg(feature = "unstable")]
+    fn handle_complex<'s>(
+        data: &Self::ComplexData<'_>,
+        complex: &Self::IterAttr<'s>,
+        past_complex: &Self::IterAttr<'s>,
+    ) -> impl Iterator<Item = usize> + use<'s> {
+        let complex_offset = complex.offset();
+        #[allow(clippy::indexing_slicing)] // valid offset
+        let complex = &complex.as_str()[..(past_complex.offset() - complex_offset)];
+        data.complex_language_segment_str(complex)
+            .into_iter()
+            .map(move |i| i + complex_offset)
+    }
+
     fn char_len(ch: Self::CharType) -> usize {
         ch.len_utf8()
     }
 
+    #[cfg(feature = "unstable")]
     fn offset<'s>(iter: &Self::IterAttr<'s>) -> usize {
         iter.offset()
     }
 
+    #[cfg(feature = "unstable")]
     fn is_empty<'s>(iter: &Self::IterAttr<'s>) -> bool {
         iter.as_str().is_empty()
     }
@@ -306,14 +351,44 @@ impl RuleBreakType for PotentiallyIllFormedUtf8 {
 
     const CAN_CONTAIN_SA: bool = true;
 
+    #[cfg(feature = "unstable")]
+    type ComplexData<'data> = ComplexPayloadsBorrowed<'data>;
+
+    #[cfg(feature = "unstable")]
+    fn is_complex(data: &Self::ComplexData<'_>, iter: &Self::IterAttr<'_>) -> bool {
+        iter.clone()
+            .next()
+            .is_some_and(|(_, c)| data.handles(c.into()))
+    }
+
+    #[cfg(feature = "unstable")]
+    fn handle_complex<'s>(
+        data: &Self::ComplexData<'_>,
+        complex: &Self::IterAttr<'s>,
+        past_complex: &Self::IterAttr<'s>,
+    ) -> impl Iterator<Item = usize> + use<'s> {
+        let offset = complex.offset();
+        #[allow(clippy::indexing_slicing)] // valid offset
+        let complex = &complex.as_slice()[..(past_complex.offset() - offset)];
+        if let Ok(complex) = core::str::from_utf8(complex) {
+            data.complex_language_segment_str(complex)
+        } else {
+            alloc::vec![complex.len()]
+        }
+        .into_iter()
+        .map(move |i| i + offset)
+    }
+
     fn char_len(ch: Self::CharType) -> usize {
         ch.len_utf8()
     }
 
+    #[cfg(feature = "unstable")]
     fn offset<'s>(iter: &Self::IterAttr<'s>) -> usize {
         iter.offset()
     }
 
+    #[cfg(feature = "unstable")]
     fn is_empty<'s>(iter: &Self::IterAttr<'s>) -> bool {
         iter.as_slice().is_empty()
     }
@@ -332,14 +407,35 @@ impl RuleBreakType for Latin1 {
 
     const CAN_CONTAIN_SA: bool = false;
 
+    #[cfg(feature = "unstable")]
+    type ComplexData<'data> = core::convert::Infallible;
+
+    #[cfg(feature = "unstable")]
+    fn is_complex(&data: &Self::ComplexData<'_>, _iter: &Self::IterAttr<'_>) -> bool {
+        match data {}
+    }
+
+    #[cfg(feature = "unstable")]
+    fn handle_complex<'s>(
+        &data: &Self::ComplexData<'_>,
+        _complex: &Self::IterAttr<'s>,
+        _past_complex: &Self::IterAttr<'s>,
+    ) -> impl Iterator<Item = usize> + use<'s> {
+        match data {}
+        #[allow(unreachable_code)] // ! does not impl Iterator
+        core::iter::empty()
+    }
+
     fn char_len(_ch: Self::CharType) -> usize {
         unreachable!()
     }
 
+    #[cfg(feature = "unstable")]
     fn offset<'s>(iter: &Self::IterAttr<'s>) -> usize {
         iter.offset()
     }
 
+    #[cfg(feature = "unstable")]
     fn is_empty<'s>(iter: &Self::IterAttr<'s>) -> bool {
         iter.as_slice().is_empty()
     }
@@ -358,14 +454,38 @@ impl RuleBreakType for Utf16 {
 
     const CAN_CONTAIN_SA: bool = true;
 
+    #[cfg(feature = "unstable")]
+    type ComplexData<'data> = ComplexPayloadsBorrowed<'data>;
+
+    #[cfg(feature = "unstable")]
+    fn is_complex(data: &Self::ComplexData<'_>, iter: &Self::IterAttr<'_>) -> bool {
+        iter.clone().next().is_some_and(|(_, c)| data.handles(c))
+    }
+
+    #[cfg(feature = "unstable")]
+    fn handle_complex<'s>(
+        data: &Self::ComplexData<'_>,
+        complex: &Self::IterAttr<'s>,
+        past_complex: &Self::IterAttr<'s>,
+    ) -> impl Iterator<Item = usize> + use<'s> {
+        let complex_offset = complex.offset();
+        #[allow(clippy::indexing_slicing)] // valid offset
+        let complex = &complex.as_slice()[..(past_complex.offset() - complex_offset)];
+        data.complex_language_segment_utf16(complex)
+            .into_iter()
+            .map(move |i| i + complex_offset)
+    }
+
     fn char_len(ch: Self::CharType) -> usize {
         if ch >= 0x10000 { 2 } else { 1 }
     }
 
+    #[cfg(feature = "unstable")]
     fn offset<'s>(iter: &Self::IterAttr<'s>) -> usize {
         iter.offset()
     }
 
+    #[cfg(feature = "unstable")]
     fn is_empty<'s>(iter: &Self::IterAttr<'s>) -> bool {
         iter.as_slice().is_empty()
     }

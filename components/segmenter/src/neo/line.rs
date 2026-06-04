@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::RuleBreakIterator;
+use super::*;
 use crate::complex::{ComplexPayloads, ComplexPayloadsBorrowed};
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::iterator_helpers::derive_usize_iterator_with_type;
@@ -13,6 +13,7 @@ use crate::provider::Baked;
 use crate::provider::SegmenterLstmAutoV1;
 use crate::provider::*;
 use crate::scaffold::{Latin1, PotentiallyIllFormedUtf8, RuleBreakType, Utf8, Utf16};
+use core::marker::PhantomData;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
@@ -30,7 +31,7 @@ use utf8_iter::Utf8CharIndices;
 /// For examples of use, see [`LineSegmenter`].
 #[derive(Debug)]
 pub struct LineBreakIterator<'data, 's, Y: RuleBreakType>(
-    RuleBreakIterator<'data, 's, Y, Option<&'data RuleBreakDataOverride<'data>>>,
+    RuleBreakIterator<'data, 's, Y, Option<&'data RuleBreakDataOverride<'data>>, ComplexLine<Y>>,
 );
 
 derive_usize_iterator_with_type!(LineBreakIterator, 'data);
@@ -547,6 +548,29 @@ impl LineSegmenterBorrowed<'static> {
     }
 }
 
+#[derive(Debug)]
+struct ComplexLine<Y>(PhantomData<Y>);
+
+impl<Y: RuleBreakType> ComplexHandler<Y> for ComplexLine<Y> {
+    const BREAK_AT_BOUNDARIES: bool = false;
+    const BREAK_STATUS: u8 = false as u8;
+    type Data<'s> = Y::ComplexData<'s>;
+
+    #[inline(always)]
+    fn is_complex(data: &Self::Data<'_>, iter: &Y::IterAttr<'_>) -> bool {
+        Y::is_complex(data, iter)
+    }
+
+    #[inline(always)]
+    fn handle<'s>(
+        data: &Self::Data<'_>,
+        complex: &<Y as RuleBreakType>::IterAttr<'s>,
+        past_complex: &<Y as RuleBreakType>::IterAttr<'s>,
+    ) -> impl Iterator<Item = usize> + use<'s, Y> {
+        Y::handle_complex(data, complex, past_complex)
+    }
+}
+
 impl<'data> LineSegmenterBorrowed<'data> {
     #[doc(hidden)]
     pub fn with_options(self, _options: LineBreakOptions) -> Self {
@@ -557,13 +581,11 @@ impl<'data> LineSegmenterBorrowed<'data> {
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_str<'s>(self, input: &'s str) -> LineBreakIterator<'data, 's, Utf8> {
-        LineBreakIterator(RuleBreakIterator::new_with_complex(
+        LineBreakIterator(RuleBreakIterator::new(
             input.char_indices(),
             self.data,
             self.tailoring,
-            self.complex,
-            false,
-            false as u8,
+            Some(self.complex),
         ))
     }
     /// Creates a line break iterator for a potentially ill-formed UTF8 string
@@ -575,23 +597,22 @@ impl<'data> LineSegmenterBorrowed<'data> {
         self,
         input: &'s [u8],
     ) -> LineBreakIterator<'data, 's, PotentiallyIllFormedUtf8> {
-        LineBreakIterator(RuleBreakIterator::new_with_complex(
+        LineBreakIterator(RuleBreakIterator::new(
             Utf8CharIndices::new(input),
             self.data,
             self.tailoring,
-            self.complex,
-            false,
-            false as u8,
+            Some(self.complex),
         ))
     }
     /// Creates a line break iterator for a Latin-1 (8-bit) string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_latin1<'s>(self, input: &'s [u8]) -> LineBreakIterator<'data, 's, Latin1> {
-        LineBreakIterator(RuleBreakIterator::new_non_complex(
+        LineBreakIterator(RuleBreakIterator::new(
             Latin1Indices::new(input),
             self.data,
             self.tailoring,
+            None,
         ))
     }
 
@@ -599,13 +620,11 @@ impl<'data> LineSegmenterBorrowed<'data> {
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_utf16<'s>(self, input: &'s [u16]) -> LineBreakIterator<'data, 's, Utf16> {
-        LineBreakIterator(RuleBreakIterator::new_with_complex(
+        LineBreakIterator(RuleBreakIterator::new(
             Utf16Indices::new(input),
             self.data,
             self.tailoring,
-            self.complex,
-            false,
-            false as u8,
+            Some(self.complex),
         ))
     }
 }
