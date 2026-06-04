@@ -146,9 +146,11 @@ To maintain backend symmetry and leverage ICU4X's modern design, the interop lay
 
 ## 7. Error Handling
 
-Since both ICU4X and ICU4C initialization can fail (e.g., due to missing locale data or invalid options), the C++ interop layer must propagate these errors:
-*   **Initialization Failures**: The C++ constructor or initialization method should return a status indicator (e.g., a boolean or an error code) reflecting whether the underlying backend formatter was successfully created.
-*   **FFI Error Propagation**: Errors returned from the Rust FFI (via Diplomat's result wrappers) should be mapped to the C++ interface, avoiding throwing C++ exceptions to ensure compatibility with environments where exceptions are disabled.
+To remain consistent with the rest of the ICU4X C++ SDK, the interop layer will follow **ICU4X FFI conventions** for error handling:
+
+*   **No Exceptions**: The C++ interop layer will not throw exceptions, ensuring compatibility with systems where exceptions are disabled.
+*   **Use of `diplomat::result`**: Fallible operations (such as formatter construction) will return `icu4x::diplomat::result<T, E>`. This is a variant-like type containing either the successfully constructed object (`Ok<T>`) or an error type (`Err<E>`).
+*   **Error Types**: The error type `E` will be aligned with ICU4X error types (e.g., `icu4x::DateTimeFormatterLoadError`), mapping both ICU4X and ICU4C internal errors into this common enum where possible.
 
 ---
 
