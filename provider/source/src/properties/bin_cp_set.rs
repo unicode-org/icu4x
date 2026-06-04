@@ -29,12 +29,12 @@ impl SourceDataProvider {
                 if n == name { Some(sn) } else { None }
             });
 
-        if let Some(sn) = sn {
-            if sn != short_name {
-                return Err(DataError::custom("Property name mismatch")
-                    .with_display_context(name)
-                    .with_debug_context(&(sn, short_name)));
-            }
+        if let Some(sn) = sn
+            && sn != short_name
+        {
+            return Err(DataError::custom("Property name mismatch")
+                .with_display_context(name)
+                .with_debug_context(&(sn, short_name)));
         }
 
         Ok(())

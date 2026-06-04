@@ -536,15 +536,15 @@ where
 
         match parts.specials {
             Some(specials) => {
-                if op.is_exactly_zero() {
-                    if let Some(value) = get_special(specials, PluralElementsKeys::ExplicitZero) {
-                        return value;
-                    }
+                if op.is_exactly_zero()
+                    && let Some(value) = get_special(specials, PluralElementsKeys::ExplicitZero)
+                {
+                    return value;
                 }
-                if op.is_exactly_one() {
-                    if let Some(value) = get_special(specials, PluralElementsKeys::ExplicitOne) {
-                        return value;
-                    }
+                if op.is_exactly_one()
+                    && let Some(value) = get_special(specials, PluralElementsKeys::ExplicitOne)
+                {
+                    return value;
                 }
                 match category {
                     PluralCategory::Zero => Some(PluralElementsKeys::Zero),

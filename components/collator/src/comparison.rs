@@ -233,10 +233,10 @@ fn split_prefix_latin1<'a, 'b>(left: &'a [u8], right: &'b [u8]) -> (&'a [u8], &'
         .zip(right.iter())
         .take_while(|(l, r)| l == r)
         .count();
-    if let Some((head, left_tail)) = left.split_at_checked(i) {
-        if let Some(right_tail) = right.get(i..) {
-            return (head, left_tail, right_tail);
-        }
+    if let Some((head, left_tail)) = left.split_at_checked(i)
+        && let Some(right_tail) = right.get(i..)
+    {
+        return (head, left_tail, right_tail);
     }
     (&[], left, right)
 }
@@ -258,10 +258,10 @@ fn split_prefix_latin1_utf16<'a, 'b>(
         .zip(right.iter())
         .take_while(|(l, r)| u16::from(**l) == **r)
         .count();
-    if let Some((head, left_tail)) = left.split_at_checked(i) {
-        if let Some(right_tail) = right.get(i..) {
-            return (head, left_tail, right_tail);
-        }
+    if let Some((head, left_tail)) = left.split_at_checked(i)
+        && let Some(right_tail) = right.get(i..)
+    {
+        return (head, left_tail, right_tail);
     }
     (&[], left, right)
 }
@@ -282,16 +282,16 @@ fn split_prefix_u16<'a, 'b>(
         .zip(right.iter())
         .take_while(|(l, r)| l == r)
         .count();
-    if i != 0 {
-        if let Some(&last) = left.get(i.wrapping_sub(1)) {
-            if in_inclusive_range16(last, 0xD800, 0xDBFF) {
-                i -= 1;
-            }
-            if let Some((head, left_tail)) = left.split_at_checked(i) {
-                if let Some(right_tail) = right.get(i..) {
-                    return (head, left_tail, right_tail);
-                }
-            }
+    if i != 0
+        && let Some(&last) = left.get(i.wrapping_sub(1))
+    {
+        if in_inclusive_range16(last, 0xD800, 0xDBFF) {
+            i -= 1;
+        }
+        if let Some((head, left_tail)) = left.split_at_checked(i)
+            && let Some(right_tail) = right.get(i..)
+        {
+            return (head, left_tail, right_tail);
         }
     }
     (&[], left, right)
@@ -318,24 +318,24 @@ fn split_prefix_u8<'a, 'b>(left: &'a [u8], right: &'b [u8]) -> (&'a [u8], &'a [u
         // First, left and right differ, but since they
         // are the same afterwards, one of them needs checking
         // only once.
-        if let Some(right_first) = right.get(i) {
-            if (right_first & 0b1100_0000) == 0b1000_0000 {
-                i -= 1;
-            }
+        if let Some(right_first) = right.get(i)
+            && (right_first & 0b1100_0000) == 0b1000_0000
+        {
+            i -= 1;
         }
         while i != 0 {
-            if let Some(left_first) = left.get(i) {
-                if (left_first & 0b1100_0000) == 0b1000_0000 {
-                    i -= 1;
-                    continue;
-                }
+            if let Some(left_first) = left.get(i)
+                && (left_first & 0b1100_0000) == 0b1000_0000
+            {
+                i -= 1;
+                continue;
             }
             break;
         }
-        if let Some((head, left_tail)) = left.split_at_checked(i) {
-            if let Some(right_tail) = right.get(i..) {
-                return (head, left_tail, right_tail);
-            }
+        if let Some((head, left_tail)) = left.split_at_checked(i)
+            && let Some(right_tail) = right.get(i..)
+        {
+            return (head, left_tail, right_tail);
         }
     }
     (&[], left, right)
@@ -372,21 +372,21 @@ fn split_prefix<'a, 'b>(left: &'a str, right: &'b str) -> (&'a str, &'a str, &'b
         // Therefore, it's sufficient to examine only one of
         // the sides.
         loop {
-            if let Some(left_first) = left_bytes.get(i) {
-                if (left_first & 0b1100_0000) == 0b1000_0000 {
-                    i -= 1;
-                    continue;
-                }
+            if let Some(left_first) = left_bytes.get(i)
+                && (left_first & 0b1100_0000) == 0b1000_0000
+            {
+                i -= 1;
+                continue;
             }
             break;
         }
         // The methods below perform useless UTF-8 boundary checks,
         // since we just checked. However, avoiding `unsafe` to
         // make this code easier to audit.
-        if let Some((head, left_tail)) = left.split_at_checked(i) {
-            if let Some(right_tail) = right.get(i..) {
-                return (head, left_tail, right_tail);
-            }
+        if let Some((head, left_tail)) = left.split_at_checked(i)
+            && let Some(right_tail) = right.get(i..)
+        {
+            return (head, left_tail, right_tail);
         }
     }
     ("", left, right)
@@ -503,10 +503,10 @@ impl LocaleSpecificDataHolder {
             None
         };
 
-        if let Some(reordering) = &reordering {
-            if reordering.get().reorder_table.len() != 256 {
-                return Err(DataError::custom("invalid").with_marker(CollationReorderingV1::INFO));
-            }
+        if let Some(reordering) = &reordering
+            && reordering.get().reorder_table.len() != 256
+        {
+            return Err(DataError::custom("invalid").with_marker(CollationReorderingV1::INFO));
         }
 
         let tailored_diacritics = metadata.tailored_diacritics();
@@ -2005,20 +2005,20 @@ impl<'a> CollatorBorrowed<'a> {
                         // The backwards secondary level compares secondary weights backwards
                         // within segments separated by the merge separator (U+FFFE).
                         let secs = &mut secondaries.buf;
-                        if let Some(last) = secs.len().checked_sub(1) {
-                            if sec_segment_start < last {
-                                let mut q = sec_segment_start;
-                                let mut r = last;
+                        if let Some(last) = secs.len().checked_sub(1)
+                            && sec_segment_start < last
+                        {
+                            let mut q = sec_segment_start;
+                            let mut r = last;
 
-                                // these indices start at valid values and we stop when they cross
-                                #[expect(clippy::indexing_slicing)]
-                                while q < r {
-                                    let b = secs[q];
-                                    secs[q] = secs[r];
-                                    q += 1;
-                                    secs[r] = b;
-                                    r -= 1;
-                                }
+                            // these indices start at valid values and we stop when they cross
+                            #[expect(clippy::indexing_slicing)]
+                            while q < r {
+                                let b = secs[q];
+                                secs[q] = secs[r];
+                                q += 1;
+                                secs[r] = b;
+                                r -= 1;
                             }
                         }
                         let b = if p == NO_CE_PRIMARY {

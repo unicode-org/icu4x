@@ -415,15 +415,15 @@ impl Locale {
         if !subtag_matches!(subtags::Language, iter, self.id.language) {
             return false;
         }
-        if let Some(ref script) = self.id.script {
-            if !subtag_matches!(subtags::Script, iter, *script) {
-                return false;
-            }
+        if let Some(ref script) = self.id.script
+            && !subtag_matches!(subtags::Script, iter, *script)
+        {
+            return false;
         }
-        if let Some(ref region) = self.id.region {
-            if !subtag_matches!(subtags::Region, iter, *region) {
-                return false;
-            }
+        if let Some(ref region) = self.id.region
+            && !subtag_matches!(subtags::Region, iter, *region)
+        {
+            return false;
         }
         for variant in self.id.variants.iter() {
             if !subtag_matches!(subtags::Variant, iter, *variant) {

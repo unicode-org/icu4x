@@ -380,15 +380,15 @@ impl LocaleExpander {
         }
 
         if !langid.language.is_unknown() {
-            if let Some(region) = langid.region {
-                if let Some(script) = data.get_lr(langid.language, region) {
-                    return update_langid(Language::UNKNOWN, Some(script), None, langid);
-                }
+            if let Some(region) = langid.region
+                && let Some(script) = data.get_lr(langid.language, region)
+            {
+                return update_langid(Language::UNKNOWN, Some(script), None, langid);
             }
-            if let Some(script) = langid.script {
-                if let Some(region) = data.get_ls(langid.language, script) {
-                    return update_langid(Language::UNKNOWN, None, Some(region), langid);
-                }
+            if let Some(script) = langid.script
+                && let Some(region) = data.get_ls(langid.language, script)
+            {
+                return update_langid(Language::UNKNOWN, None, Some(region), langid);
             }
             if let Some((script, region)) = data.get_l(langid.language) {
                 return update_langid(Language::UNKNOWN, Some(script), Some(region), langid);
@@ -397,19 +397,19 @@ impl LocaleExpander {
             return TransformResult::Unmodified;
         }
         if let Some(script) = langid.script {
-            if let Some(region) = langid.region {
-                if let Some(language) = data.get_sr(script, region) {
-                    return update_langid(language, None, None, langid);
-                }
+            if let Some(region) = langid.region
+                && let Some(language) = data.get_sr(script, region)
+            {
+                return update_langid(language, None, None, langid);
             }
             if let Some((language, region)) = data.get_s(script) {
                 return update_langid(language, None, Some(region), langid);
             }
         }
-        if let Some(region) = langid.region {
-            if let Some((language, script)) = data.get_r(region) {
-                return update_langid(language, Some(script), None, langid);
-            }
+        if let Some(region) = langid.region
+            && let Some((language, script)) = data.get_r(region)
+        {
+            return update_langid(language, Some(script), None, langid);
         }
 
         // We failed to find anything in the und-SR, und-S, or und-R tables,

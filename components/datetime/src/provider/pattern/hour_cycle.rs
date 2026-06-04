@@ -71,29 +71,29 @@ impl CoarseHourCycle {
         mut pattern: reference::Pattern,
     ) -> Option<reference::Pattern> {
         for item in pattern.items_mut() {
-            if let PatternItem::Field(fields::Field { symbol, length: _ }) = item {
-                if let fields::FieldSymbol::Hour(pattern_hour) = symbol {
-                    if match self {
-                        CoarseHourCycle::H11H12 => match pattern_hour {
-                            fields::Hour::H11 | fields::Hour::H12 => true,
-                            fields::Hour::H23 => false,
-                        },
-                        CoarseHourCycle::H23 => match pattern_hour {
-                            fields::Hour::H11 | fields::Hour::H12 => false,
-                            fields::Hour::H23 => true,
-                        },
-                    } {
-                        // The preference hour cycle matches the pattern, bail out early and
-                        // return the current pattern.
-                        return Some(pattern_str.into());
-                    } else {
-                        // Mutate the pattern with the new symbol, so that it can be matched against.
-                        *symbol = fields::FieldSymbol::Hour(match self {
-                            CoarseHourCycle::H11H12 => fields::Hour::H12,
-                            CoarseHourCycle::H23 => fields::Hour::H23,
-                        });
-                        break;
-                    }
+            if let PatternItem::Field(fields::Field { symbol, length: _ }) = item
+                && let fields::FieldSymbol::Hour(pattern_hour) = symbol
+            {
+                if match self {
+                    CoarseHourCycle::H11H12 => match pattern_hour {
+                        fields::Hour::H11 | fields::Hour::H12 => true,
+                        fields::Hour::H23 => false,
+                    },
+                    CoarseHourCycle::H23 => match pattern_hour {
+                        fields::Hour::H11 | fields::Hour::H12 => false,
+                        fields::Hour::H23 => true,
+                    },
+                } {
+                    // The preference hour cycle matches the pattern, bail out early and
+                    // return the current pattern.
+                    return Some(pattern_str.into());
+                } else {
+                    // Mutate the pattern with the new symbol, so that it can be matched against.
+                    *symbol = fields::FieldSymbol::Hour(match self {
+                        CoarseHourCycle::H11H12 => fields::Hour::H12,
+                        CoarseHourCycle::H23 => fields::Hour::H23,
+                    });
+                    break;
                 }
             }
         }

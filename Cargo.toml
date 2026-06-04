@@ -107,7 +107,7 @@ exclude = [
 
 [workspace.package]
 version = "2.2.0"
-rust-version = "1.86"
+rust-version = "1.88"
 authors = ["The ICU4X Project Developers"]
 edition = "2024"
 repository = "https://github.com/unicode-org/icu4x"

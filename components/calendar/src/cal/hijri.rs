@@ -836,10 +836,10 @@ fn computer_reference_years() {
                 .extended_year;
             let y_30 = compute_hijri_reference_year(month, 30, rules).map(|y| y.extended_year);
 
-            if let Some(y_30) = y_30 {
-                if y_29 != y_30 {
-                    println!("({month}, 30..) => {y_30},")
-                }
+            if let Some(y_30) = y_30
+                && y_29 != y_30
+            {
+                println!("({month}, 30..) => {y_30},")
             }
             if month == 11 {
                 let y_1 = compute_hijri_reference_year(month, 1, rules)

@@ -126,13 +126,13 @@ impl DataProvider<ShortCurrencyCompactV1> for SourceDataProvider {
                 })?;
 
                 pattern.try_for_each(|pattern| {
-                    if let Some(number_of_0s) = pattern.0 {
-                        if number_of_0s != other_number_of_0s {
-                            return Err(DataError::custom("Inconsistent placeholders within")
-                                .with_debug_context(&log10_type)
-                                .with_debug_context(&other_number_of_0s)
-                                .with_debug_context(&number_of_0s));
-                        }
+                    if let Some(number_of_0s) = pattern.0
+                        && number_of_0s != other_number_of_0s
+                    {
+                        return Err(DataError::custom("Inconsistent placeholders within")
+                            .with_debug_context(&log10_type)
+                            .with_debug_context(&other_number_of_0s)
+                            .with_debug_context(&number_of_0s));
                     }
                     Ok(())
                 })?;

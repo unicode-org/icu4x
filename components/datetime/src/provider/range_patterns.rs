@@ -177,12 +177,10 @@ impl<'data> PatternsByGreatestDifference<'data> {
             if bit > 3 {
                 return Err("GreatestDifference bit index must be 0, 1, 2, or 3");
             }
-            if let Some(last) = last_bit {
-                if bit <= last {
-                    return Err(
-                        "Iterator must be strictly sorted by bit index and have no duplicates",
-                    );
-                }
+            if let Some(last) = last_bit
+                && bit <= last
+            {
+                return Err("Iterator must be strictly sorted by bit index and have no duplicates");
             }
             last_bit = Some(bit);
             header_val |= 1 << bit;

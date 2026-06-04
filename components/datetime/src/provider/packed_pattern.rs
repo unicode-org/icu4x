@@ -411,14 +411,14 @@ impl<T: PartialEq> GenericPackedPatternsBuilder<T> {
             .zip(fallbacks.iter())
             .zip(chunks.iter_mut())
         {
-            if let Some(pattern) = pattern {
-                if pattern != fallback {
-                    *chunk = match elements.iter().position(|p| p == *pattern) {
-                        Some(i) => i as u32 + 1,
-                        None => {
-                            elements.push(zerofrom::ZeroFrom::zero_from(*pattern));
-                            elements.len() as u32
-                        }
+            if let Some(pattern) = pattern
+                && pattern != fallback
+            {
+                *chunk = match elements.iter().position(|p| p == *pattern) {
+                    Some(i) => i as u32 + 1,
+                    None => {
+                        elements.push(zerofrom::ZeroFrom::zero_from(*pattern));
+                        elements.len() as u32
                     }
                 }
             }

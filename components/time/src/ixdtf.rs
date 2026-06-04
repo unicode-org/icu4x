@@ -245,10 +245,10 @@ impl<'a> Intermediate<'a> {
             return Err(ParseError::MismatchedTimeZoneFields);
         };
         if self.is_z {
-            if let Some(offset) = self.offset {
-                if offset != UtcOffsetRecord::zero() {
-                    return Err(ParseError::RequiresCalculation);
-                }
+            if let Some(offset) = self.offset
+                && offset != UtcOffsetRecord::zero()
+            {
+                return Err(ParseError::RequiresCalculation);
             }
             return Ok(UtcOffset::zero());
         }

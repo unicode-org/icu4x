@@ -777,19 +777,19 @@ impl<'a> ItemsAndOptions<'a> {
                     {
                         field.length = FieldLength::Two;
                     }
-                    if let Some(hour_cycle) = self.hour_cycle {
-                        if let FieldSymbol::Hour(_) = field.symbol {
-                            field.symbol = FieldSymbol::Hour(hour_cycle);
-                        }
+                    if let Some(hour_cycle) = self.hour_cycle
+                        && let FieldSymbol::Hour(_) = field.symbol
+                    {
+                        field.symbol = FieldSymbol::Hour(hour_cycle);
                     }
-                    if let Some(subsecond_digits) = self.subsecond_digits {
-                        if matches!(
+                    if let Some(subsecond_digits) = self.subsecond_digits
+                        && matches!(
                             field.symbol,
                             FieldSymbol::Second(fields::Second::Second)
                                 | FieldSymbol::DecimalSecond(_)
-                        ) {
-                            field.symbol = FieldSymbol::from_subsecond_digits(subsecond_digits);
-                        }
+                        )
+                    {
+                        field.symbol = FieldSymbol::from_subsecond_digits(subsecond_digits);
                     }
                 }
                 _ => (),

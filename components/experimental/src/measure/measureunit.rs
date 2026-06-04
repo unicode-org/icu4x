@@ -90,7 +90,7 @@ impl MeasureUnit {
             let mut zeros_count = 0;
 
             for (divisor, zeros) in [(100_000_000, 8), (10_000, 4), (100, 2), (10, 1)] {
-                while n % divisor == 0 {
+                while n.is_multiple_of(divisor) {
                     n /= divisor;
                     zeros_count += zeros;
                 }

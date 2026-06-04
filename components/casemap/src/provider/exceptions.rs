@@ -308,10 +308,10 @@ impl ExceptionULE {
     }
 
     pub(crate) fn add_full_and_closure_mappings<S: ClosureSink>(&self, set: &mut S) {
-        if let Some(full) = self.get_fullmappings_slot_for_kind(MappingKind::Fold) {
-            if !full.is_empty() {
-                set.add_string(full);
-            }
+        if let Some(full) = self.get_fullmappings_slot_for_kind(MappingKind::Fold)
+            && !full.is_empty()
+        {
+            set.add_string(full);
         };
         if let Some(closure) = self.get_closure_slot() {
             for c in closure.chars() {

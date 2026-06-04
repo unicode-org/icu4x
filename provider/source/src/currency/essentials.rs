@@ -191,19 +191,19 @@ fn extract_currency_essentials<'data>(
         });
 
         // Ensure that short_placeholder_value and narrow_placeholder_value do not exceed MAX_PLACEHOLDER_INDEX.
-        if let Some(PlaceholderValue::Index(index)) = short_placeholder_value {
-            if index > MAX_PLACEHOLDER_INDEX {
-                return Err(DataError::custom(
-                    "short_placeholder_value exceeded MAX_PLACEHOLDER_INDEX",
-                ));
-            }
+        if let Some(PlaceholderValue::Index(index)) = short_placeholder_value
+            && index > MAX_PLACEHOLDER_INDEX
+        {
+            return Err(DataError::custom(
+                "short_placeholder_value exceeded MAX_PLACEHOLDER_INDEX",
+            ));
         }
-        if let Some(PlaceholderValue::Index(index)) = narrow_placeholder_value {
-            if index > MAX_PLACEHOLDER_INDEX {
-                return Err(DataError::custom(
-                    "narrow_placeholder_value exceeded MAX_PLACEHOLDER_INDEX",
-                ));
-            }
+        if let Some(PlaceholderValue::Index(index)) = narrow_placeholder_value
+            && index > MAX_PLACEHOLDER_INDEX
+        {
+            return Err(DataError::custom(
+                "narrow_placeholder_value exceeded MAX_PLACEHOLDER_INDEX",
+            ));
         }
 
         let determine_pattern_selection =

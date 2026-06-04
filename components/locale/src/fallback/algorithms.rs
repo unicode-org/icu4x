@@ -10,16 +10,14 @@ use super::*;
 impl LocaleFallbackerWithConfig<'_> {
     pub(crate) fn normalize(&self, locale: &mut DataLocale, default_script: &mut Option<Script>) {
         // 0. If there is an invalid or trivial "sd" subtag, drop it
-        if let Some(subdivision) = locale.subdivision.take() {
-            if let Some(region) = locale.region {
-                if subdivision
-                    .as_str()
-                    .starts_with(region.to_tinystr().to_ascii_lowercase().as_str())
-                    && !subdivision.as_str().ends_with("zzzz")
-                {
-                    locale.subdivision = Some(subdivision);
-                }
-            }
+        if let Some(subdivision) = locale.subdivision.take()
+            && let Some(region) = locale.region
+            && subdivision
+                .as_str()
+                .starts_with(region.to_tinystr().to_ascii_lowercase().as_str())
+            && !subdivision.as_str().ends_with("zzzz")
+        {
+            locale.subdivision = Some(subdivision);
         }
         let language = locale.language;
         // 1. Populate the region (required for region fallback only)

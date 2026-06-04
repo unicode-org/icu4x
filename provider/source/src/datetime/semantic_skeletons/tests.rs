@@ -115,15 +115,14 @@ fn test_hebr_override() {
     for element in elements.iter() {
         let (_metadata, items) = element.get_default();
         for item in items.iter() {
-            if let PatternItem::Field(field) = item {
-                if let FieldSymbol::Year(_) = field.symbol {
-                    if matches!(
-                        field.length,
-                        FieldLength::NumericOverride(FieldNumericOverrides::Jpnyear)
-                    ) {
-                        found_jpan = true;
-                    }
-                }
+            if let PatternItem::Field(field) = item
+                && let FieldSymbol::Year(_) = field.symbol
+                && matches!(
+                    field.length,
+                    FieldLength::NumericOverride(FieldNumericOverrides::Jpnyear)
+                )
+            {
+                found_jpan = true;
             }
         }
     }
