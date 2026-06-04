@@ -56,11 +56,15 @@ graph TD
     InteropCPP -->|ICU4C: Format| ICU4C_C
 ```
 
-### 2.1. Unified Options Bag and ICU4C Options
+### 2.1. Unified Options Bag and Backend Resolution
 
 Instead of backend-specific configuration structures, the interop layer exposes a single, unified `DateTimeFormatterOptions` struct (the "catchall options bag"). This struct aggregates options from ECMA-402, ICU4X, and ICU4C. (See [Options and Resolution Config](options_config.md#1-the-catchall-options-bag) for details on supported fields).
 
-To support the ICU4C backend, this unified options bag must be resolved to ICU4C-compatible arguments: `Icu4cResolvedArgs` (containing an optional skeleton, date style, and time style). The resolution logic follows a strict order of precedence (detailed in [Options and Resolution Config](options_config.md#22-precedence-rules)) to map these options to backend-specific targets.
+To construct a formatter, this unified options bag must be resolved to backend-specific arguments:
+*   **For ICU4X**: It is resolved to a combination of fieldsets and styles (see [ICU4X Backend Mapping](options_config.md#3-icu4x-backend-mapping-fieldsets)).
+*   **For ICU4C**: It is resolved to a skeleton or pre-defined styles (see [ICU4C Backend Mapping](options_config.md#2-icu4c-backend-mapping-skeletons--styles)).
+
+The resolution logic follows a strict order of precedence (detailed in [Precedence Rules](options_config.md#22-precedence-rules)) to map these options to backend-specific targets.
 
 ### 2.2. Three Sections of Code
 
