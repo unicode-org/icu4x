@@ -61,18 +61,19 @@ This module in the `icu_datetime` crate contains the core Rust structures and lo
 
 ### 3.1. Module Layout and Types
 
+The module exposes the following key components:
+
 -   **`DateTimeFormatterOptions` (Struct)**:
-    *   The unified catchall options bag. It aggregates all options from ECMA-402, ICU4X, and ICU4C.
-    *   It is defined as a plain Rust struct where all fields are optional.
+    *   The unified catchall options bag that aggregates options from ECMA-402, ICU4X, and ICU4C. All fields are optional.
     *   *Details of fields are documented in [Options and Resolution Config](options_config.md#1-the-catchall-options-bag).*
 -   **`Icu4cResolvedArgs` (Struct)**:
     *   An intermediate structure that holds the resolved arguments required to initialize an ICU4C formatter (skeleton, date style, and time style) after precedence rules have been applied.
     *   *Details are documented in [Options and Resolution Config](options_config.md#21-resolved-output-rust-struct).*
--   **ICU4C Resolution Logic**:
-    *   The logic that maps the raw `DateTimeFormatterOptions` into the `Icu4cResolvedArgs` structure. This contains the precedence logic (e.g., skeletons overriding styles, styles overriding individual fields).
+-   **`resolve_icu4c_args` (Function)**:
+    *   The function that maps the raw `DateTimeFormatterOptions` into the `Icu4cResolvedArgs` structure, applying the precedence rules.
     *   *Algorithm details are documented in [Options and Resolution Config](options_config.md#22-precedence-rules).*
--   **ICU4X Resolution Logic**:
-    *   The logic that maps the `DateTimeFormatterOptions` to the ICU4X `CompositeFieldSet`. This is used to select the correct pre-compiled data representation for the ICU4X formatter.
+-   **`map_to_fieldset` (Function)**:
+    *   The function that maps the `DateTimeFormatterOptions` to the ICU4X `CompositeFieldSet`, selecting the correct pre-compiled data representation.
     *   *Algorithm details are documented in [Options and Resolution Config](options_config.md#3-icu4x-backend-mapping-fieldsets).*
 
 ---
