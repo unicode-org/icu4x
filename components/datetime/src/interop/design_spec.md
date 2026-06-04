@@ -139,6 +139,7 @@ Using Diplomat, the interop layer exposes the following C-compatible interface:
     *   Exposes a method to write the resolved `skeleton` into a `DiplomatWriteable`.
     *   Exposes methods to get the resolved `date_style` and `time_style` as integers.
 -   **`resolve_icu4c_args` Function**: Accepts `ICU4XDateTimeFormatterOptions` and returns `Box<ICU4CIteropResolvedArgs>`.
+-   **`ICU4XDateTimeFormatter` Constructor**: A new constructor `create_from_interop_options` is added to the existing `ICU4XDateTimeFormatter` in `icu_capi`. It accepts `ICU4XDateTimeFormatterOptions`, resolves it to a `CompositeFieldSet` internally, and returns a `Box<ICU4XDateTimeFormatter>`.
 
 ---
 
@@ -148,9 +149,12 @@ A C++ wrapper (e.g., `icu_interop::DateTimeFormatter`) is provided as a header-o
 
 ### 7.1. Initialization Flow
 
-1.  **Switch Backend**: The class constructor accepts a `Backend` enum (`ICU4X` or `ICU4C`).
+1.  **Switch Backend**: The mechanism for selecting the backend (ICU4X vs. ICU4C) is an open question. Possible approaches include:
+    *   **Runtime Selection**: The constructor accepts a `Backend` enum. This allows dynamic switching but may retain code size overhead for both backends.
+    *   **Compile-time Macro**: Selected via preprocessor definitions (e.g., `-DICU_INTEROP_BACKEND_ICU4X`), guaranteeing zero overhead for the unused backend.
+    *   **Template Parameter**: The class is templated on the backend (e.g., `DateTimeFormatter<Backend::ICU4X>`).
 2.  **ICU4X Path**:
-    *   Directly calls `icu_capi`'s `icu4x_datetime_formatter_create` using the provided options bag.
+    *   Calls `icu_capi`'s `icu4x_datetime_formatter_create_from_interop_options` using the provided options bag to obtain a wrapped `ICU4XDateTimeFormatter`.
 3.  **ICU4C Path**:
     *   Calls FFI `resolve_icu4c_args` to get resolved skeleton and styles.
     *   If a resolved `skeleton` is present:
