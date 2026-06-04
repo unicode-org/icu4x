@@ -82,7 +82,7 @@ This module in the `icu_datetime` crate contains the core Rust structures and lo
 Using **Diplomat** (ICU4X's FFI binding generation tool), the interop layer exposes C-compatible interfaces for the Rust components:
 *   **`ffi::DateTimeFormatterOptions`**: C-compatible version of the options bag.
 *   **`ffi::Icu4cResolvedArgs`**: Opaque wrapper around the resolved arguments. Exposes methods to extract the resolved skeleton (writing to `DiplomatWriteable`, a C-compatible string buffer) and styles.
-*   **`ffi::DateTimeFormatter` Constructor**: A new constructor `create_from_interop_options` that accepts `ffi::DateTimeFormatterOptions` and returns a formatted helper.
+*   **`ffi::DateTimeFormatter` Constructor**: A new constructor `create_from_interop_options` that accepts `ffi::DateTimeFormatterOptions` and returns a `Box<ffi::DateTimeFormatter>`.
 
 #### 2.2.3. C++ Headers (`ffi/icu4c_interop`)
 
