@@ -55,13 +55,13 @@ graph TD
 
 ---
 
-## 3. Options and Mapping Configuration
+## 3. Main Rust Crate Components (`icu_datetime::interop`)
 
 The details of the unified options bag (`DateTimeFormatterOptions`) and the mapping algorithms for both ICU4C and ICU4X backends are detailed in [Options and Resolution Config](options_config.md).
 
 ---
 
-## 4. FFI Export Layer (`icu_capi`)
+## 4. FFI Export Crate (`icu_capi`)
 
 Using Diplomat, the interop layer exposes the following C-compatible interface:
 
@@ -74,7 +74,7 @@ Using Diplomat, the interop layer exposes the following C-compatible interface:
 
 ---
 
-## 5. C/C++ Header-only Interop Layer (`ffi/icu4c_interop`)
+## 5. Header-only C++ Integration Layer (`ffi/icu4c_interop`)
 
 A C++ wrapper (e.g., `icu_interop::DateTimeFormatter`) is provided as a header-only library. It manages the switching logic and calls the appropriate underlying library.
 
