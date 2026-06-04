@@ -86,6 +86,13 @@ The module exposes the following key components:
     *   Exposes a constructor (e.g., `resolve`) that accepts `DateTimeFormatterOptions` and returns `Icu4cResolvedArgs`.
     *   *Details and the resolution algorithm are documented in [Options and Resolution Config](options_config.md#21-resolved-output-rust-struct).*
 
+### 3.2. Option Resolution Precedence (Summary)
+
+The resolution logic maps the unified options to backend-specific targets. It follows a strict order of precedence to resolve conflicts:
+1.  **Explicit Skeleton**: If `skeleton` is set, it overrides everything else (used directly for ICU4C).
+2.  **High-Level Styles**: If `date_style` or `time_style` are set, they override individual field options.
+3.  **Individual Fields**: If neither skeletons nor styles are set, individual field options (ECMA-402 or ICU4X-specific) are used. ECMA-style options take precedence over ICU4X-specific options if both are present.
+
 ---
 
 ## 4. FFI Export Crate (`icu_capi`)
@@ -123,9 +130,21 @@ A C++ wrapper (e.g., `icu_interop::DateTimeFormatter`) is provided as a header-o
 2.  **ICU4C Path**:
     *   Converts the FFI input object (e.g., `ffi::DateTime`) to the appropriate ICU4C type (e.g., `UDate` or `UCalendar`) and formats it using the ICU4C formatter.
 
+## 6. Input Data Type Mapping
+
+A key challenge in the interop layer is handling different input date-time representation types:
+*   **ICU4C** historically uses `UDate` (double, milliseconds since epoch) or `UCalendar` objects.
+*   **ICU4X** uses structured types like `Date`, `DateTime`, and `ZonedDateTime` which separate calendar arithmetic from formatting.
+
+To address this, the `ffi/icu4c_interop` C++ layer must:
+1.  **Define a Unified Input Interface**: Provide overloaded `format` methods or a unified C++ wrapper type (e.g., `icu_interop::DateTime`) that can represent date-time fields.
+2.  **Conversion Path**:
+    *   *ICU4X Path*: If the input is `UDate`, it must be converted to an ICU4X `DateTime` (requiring timezone resolution, possibly using ICU4X `TimeZoneInfo`).
+    *   *ICU4C Path*: If the input is an ICU4X-structured type, it must be converted to `UDate` or fields must be set on a `UCalendar` before calling `udat_format`.
+
 ---
 
-## 6. Future Work: Raw Pattern Support
+## 7. Future Work: Raw Pattern Support
 
 Currently, the ICU4X `DateTimeFormatter` is designed around semantic skeletons and pre-compiled data, and does not support formatting arbitrary raw pattern strings at runtime. To maintain symmetry across backends in the interop layer, raw pattern support (e.g., `pattern: Option<String>`) has been excluded from the unified `DateTimeFormatterOptions` bag.
 
