@@ -10,18 +10,26 @@
 
 ## 1. Background and Motivation
 
-ICU4X provides a modern, modular, and lightweight internationalization library in Rust. ICU4C is the established C/C++ internationalization library. During transition phases, or in environments where system-provided libraries are preferred, clients may want to choose between ICU4X (Rust) and ICU4C (C/C++) at compile-time or runtime.
+As internationalization requirements evolve, projects are increasingly looking to adopt **ICU4X**, a modern, modular, and lightweight i18n library written in Rust. However, many existing codebases are deeply integrated with **ICU4C**, the industry-standard C/C++ library, or rely on system-provided ICU4C libraries to minimize binary size.
 
-Furthermore, clients targeting web environments often need to align with **ECMA-402 (Intl.DateTimeFormat)** options.
+During this transition phase, clients require the flexibility to choose between ICU4X and ICU4C backends. This choice may need to be made at compile-time (to optimize binary size) or at runtime (to adapt to different environment capabilities).
 
-This document specifies a **Datetime Interop Layer** based on a **catchall options bag** and a **decoupled architecture** that avoids linking ICU4C into the Rust codebase.
+Furthermore, applications targeting web platforms must align their formatting options with the **ECMA-402 (Intl.DateTimeFormat)** standard. Mapping these high-level ECMA-402 options to the low-level inputs required by ICU4X and ICU4C is complex and error-prone.
 
-### 1.1. Key Benefits
+To address these challenges, this document proposes a **Datetime Interop Layer**. This layer introduces a **unified catchall options bag** and a **decoupled architecture** that allows clients to switch between backends without forcing a dependency on ICU4C within the Rust codebase.
 
-*   **Dependency Isolation**: The Rust `icu_datetime` crate remains 100% pure Rust and does not need to link with `libicui18n.so`. This keeps Rust builds fast and simple.
-*   **Single Source of Truth for Options**: The complex logic of mapping ECMA-402 and ICU4X options to skeletons is written once in Rust, ensuring consistent behavior.
-*   **Flexible Linkage**: C++ clients can choose to link only ICU4X, only ICU4C, or both, as the switching logic is header-only and resolved at the C++ compile/link stage.
-*   **Zero-Cost Switching**: In production, if a client decides to compile only with ICU4X, the C++ compiler can optimize away the ICU4C branches.
+### 1.1. Target Use Cases
+
+*   **Gradual Migration**: Allowing large C++ applications to gradually migrate from ICU4C to ICU4X by switching backends incrementally.
+*   **Resource-Constrained Environments**: Enabling compile-time selection of ICU4C when a system ICU is available, or ICU4X when self-contained deployment is preferred.
+*   **Web/JavaScript Runtimes**: Providing a consistent mapping from ECMA-402 options to whichever backend is active.
+
+### 1.2. Design Goals and Benefits
+
+*   **Strict Dependency Isolation**: The Rust `icu_datetime` crate must remain 100% pure Rust. It must not link against or depend on ICU4C (`libicu`). This keeps the Rust toolchain simple and avoids cross-compilation complications.
+*   **Single Source of Truth**: The complex resolution logic that maps ECMA-402 and ICU4X options to formatting skeletons is implemented solely in Rust. This ensures identical formatting behavior regardless of the active backend.
+*   **Header-Only C++ Switching**: The logic to select and invoke the active backend is implemented as a header-only C++ library. This gives C++ clients maximum flexibility in how they link the libraries.
+*   **Zero-Cost Abstraction**: When compile-time selection is used, the unused backend branch should be entirely optimized away by the C++ compiler, resulting in no code size or runtime overhead.
 
 ---
 
