@@ -12,6 +12,9 @@
 #[cfg(feature = "unstable")]
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+#[cfg(feature = "unstable")]
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+use crate::source::AbstractFs;
 use crate::source::{UnicodeCache, include_files};
 #[cfg(feature = "unstable")]
 use icu::collections::codepointinvlist::CodePointInversionList;
@@ -866,7 +869,7 @@ implement_override!(SegmenterBreakWordOverrideV1, "word.toml", []);
 implement_override!(SegmenterBreakSentenceOverrideV1, "sentence.toml", ["el"]);
 
 #[cfg(feature = "unstable")]
-fn neo_sources() -> crate::source::AbstractFs {
+fn neo_sources() -> AbstractFs {
     include_files!(
         "../../data/segmenter/neo/";
         "GraphemeClusterBreakClasses.txt",
@@ -905,13 +908,11 @@ impl DataProvider<SegmenterBreakLineV2> for SourceDataProvider {
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         {
-            let data = ParsedNfa::parse_nfa_files(
-                self,
-                &neo_sources().read_to_string("LineBreakClasses.txt")?,
-                &neo_sources().read_to_string("LineBreakStates.txt")?,
-                &neo_sources().read_to_string("LineBreakTransitions.txt")?,
-            )?
-            .build(|s| if s == "Mandatory" { 1 } else { 0 });
+            let data = self
+                .build_segmenter(&neo_sources(), "LineBreak", |s| {
+                    if s == "Mandatory" { 1 } else { 0 }
+                })?
+                .0;
 
             Ok(DataResponse {
                 metadata: Default::default(),
@@ -934,17 +935,14 @@ impl DataProvider<SegmenterBreakWordV2> for SourceDataProvider {
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         {
-            let data = ParsedNfa::parse_nfa_files(
-                self,
-                &neo_sources().read_to_string("WordBreakClasses.txt")?,
-                &neo_sources().read_to_string("WordBreakStates.txt")?,
-                &neo_sources().read_to_string("WordBreakTransitions.txt")?,
-            )?
-            .build(|s| match s {
-                "Letter" => WordType::Letter,
-                "Number" => WordType::Number,
-                _ => WordType::None,
-            } as u8);
+            let data = self
+                .build_segmenter(&neo_sources(), "WordBreak", |s| match s {
+                    "Letter" => WordType::Letter,
+                    "Number" => WordType::Number,
+                    _ => WordType::None,
+                } as u8)?
+                .0;
+
             Ok(DataResponse {
                 metadata: Default::default(),
                 payload: DataPayload::from_owned(data),
@@ -966,13 +964,12 @@ impl DataProvider<SegmenterBreakSentenceV2> for SourceDataProvider {
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         {
-            let data = ParsedNfa::parse_nfa_files(
-                self,
-                &neo_sources().read_to_string("SentenceBreakClasses.txt")?,
-                &neo_sources().read_to_string("SentenceBreakStates.txt")?,
-                &neo_sources().read_to_string("SentenceBreakTransitions.txt")?,
-            )?
-            .build(|s| if s == "EOL" { 1 } else { 0 });
+            let data = self
+                .build_segmenter(&neo_sources(), "SentenceBreak", |s| {
+                    if s == "EOL" { 1 } else { 0 }
+                })?
+                .0;
+
             Ok(DataResponse {
                 metadata: Default::default(),
                 payload: DataPayload::from_owned(data),
@@ -997,16 +994,13 @@ impl DataProvider<SegmenterBreakGraphemeClusterV2> for SourceDataProvider {
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         {
-            let data = ParsedNfa::parse_nfa_files(
-                self,
-                &neo_sources().read_to_string("GraphemeClusterBreakClasses.txt")?,
-                &neo_sources().read_to_string("GraphemeClusterBreakStates.txt")?,
-                &neo_sources().read_to_string("GraphemeClusterBreakTransitions.txt")?,
-            )?
-            .build(|s| match s {
-                "" => 0,
-                s => unreachable!("{s}"),
-            });
+            let data = self
+                .build_segmenter(&neo_sources(), "GraphemeClusterBreak", |s| match s {
+                    "" => 0,
+                    s => unreachable!("{s}"),
+                })?
+                .0;
+
             Ok(DataResponse {
                 metadata: Default::default(),
                 payload: DataPayload::from_owned(data),
@@ -1017,26 +1011,21 @@ impl DataProvider<SegmenterBreakGraphemeClusterV2> for SourceDataProvider {
 
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 #[cfg(feature = "unstable")]
-struct ParsedNfa<'a> {
-    classes: BTreeMap<&'a str, CodePointInversionList<'static>>,
-    magic_classes: BTreeMap<String, &'a str>,
-    states: BTreeMap<&'a str, (&'a str, Option<&'a str>, &'a str)>,
-    transitions: BTreeMap<(&'a str, &'a str), &'a str>,
-    class_lookup: BTreeMap<&'a str, u8>,
-    state_lookup: BTreeMap<&'a str, u8>,
-    lookahead_lookup: BTreeMap<&'a str, u8>,
-}
-
-#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-#[cfg(feature = "unstable")]
-impl<'a> ParsedNfa<'a> {
-    fn parse_nfa_files(
-        provider: &SourceDataProvider,
-        classes: &'a str,
-        states: &'a str,
-        transitions: &'a str,
-    ) -> Result<Self, DataError> {
+impl SourceDataProvider {
+    fn build_segmenter(
+        &self,
+        sources: &AbstractFs,
+        prefix: &str,
+        status_lookup: fn(&str) -> u8,
+    ) -> Result<
+        (
+            SegmenterStateMachine<'static>,
+            BTreeMap<String, SegmenterStateMachineOverride<'static>>,
+        ),
+        DataError,
+    > {
         let mut magic_classes = BTreeMap::new();
+        let classes = sources.read_to_string(&format!("{prefix}Classes.txt"))?;
         let classes = classes
             .lines()
             .map(|l| l.split('#').next().unwrap().trim())
@@ -1046,7 +1035,7 @@ impl<'a> ParsedNfa<'a> {
                 let class = iter.next().unwrap().trim();
                 let unicode_set = iter.next().unwrap().trim();
 
-                let set = icu::properties::unicodeset_parse::parse_unstable(unicode_set, provider)
+                let set = icu::properties::unicodeset_parse::parse_unstable(unicode_set, self)
                     .map_err(|e| {
                         DataError::custom("unicodeset parse")
                             .with_display_context(&e.fmt_with_source(unicode_set))
@@ -1061,6 +1050,7 @@ impl<'a> ParsedNfa<'a> {
             .collect::<Result<BTreeMap<_, _>, DataError>>()?;
         let eot_class = magic_classes.remove("eot").unwrap_or("eot");
 
+        let states = sources.read_to_string(&format!("{prefix}States.txt"))?;
         let states = states
             .lines()
             .map(|l| l.split('#').next().unwrap().trim())
@@ -1077,6 +1067,8 @@ impl<'a> ParsedNfa<'a> {
                 )
             })
             .collect::<BTreeMap<_, _>>();
+
+        let transitions = sources.read_to_string(&format!("{prefix}Transitions.txt"))?;
         let transitions = transitions
             .lines()
             .map(|l| l.split('#').next().unwrap().trim())
@@ -1117,36 +1109,92 @@ impl<'a> ParsedNfa<'a> {
             .map(|(i, lookahead)| (*lookahead, Lookahead::try_from(i).unwrap()))
             .collect::<BTreeMap<_, _>>();
 
-        Ok(Self {
-            classes,
-            magic_classes,
-            states,
-            transitions,
-            class_lookup,
-            state_lookup,
-            lookahead_lookup,
-        })
-    }
+        let mut tailorings = BTreeMap::new();
 
-    fn build(&self, status_lookup: fn(&str) -> u8) -> SegmenterStateMachine<'static> {
+        for tailoring in sources.list(&format!("{prefix}Tailoring_"))? {
+            let tailoring = tailoring.strip_suffix(".txt").unwrap();
+
+            let mut builder = CodePointTrieBuilder::new(
+                SegmenterStateMachine::NO_CLASS,
+                SegmenterStateMachine::NO_CLASS,
+                TrieType::Small,
+            );
+
+            for line in sources
+                .read_to_string(&format!("{prefix}Tailoring_{tailoring}.txt"))?
+                .lines()
+                .map(|l| l.split('#').next().unwrap().trim())
+                .filter(|l| !l.is_empty())
+            {
+                let mut iter = line.split(';');
+                let unicode_set = iter.next().unwrap().trim();
+                let target = iter.next().unwrap().trim();
+
+                let set = icu::properties::unicodeset_parse::parse_unstable(unicode_set, self)
+                    .map_err(|e| {
+                        DataError::custom("unicodeset parse")
+                            .with_display_context(&e.fmt_with_source(unicode_set))
+                    })?
+                    .0;
+
+                let target = icu::properties::unicodeset_parse::parse_unstable(target, self)
+                    .map_err(|e| {
+                        DataError::custom("unicodeset parse")
+                            .with_display_context(&e.fmt_with_source(unicode_set))
+                    })?
+                    .0;
+
+                let (target_class, target_set) = if target.has_strings() {
+                    let target = target.strings().iter().next().unwrap();
+                    let magic = magic_classes.get(target).expect(target);
+                    (magic, classes.get(magic).unwrap())
+                } else {
+                    let target = target.code_points().iter_chars().next().unwrap();
+                    classes
+                        .iter()
+                        .find(|(_, set)| set.contains(target))
+                        .unwrap()
+                };
+
+                let target_class = class_lookup[*target_class];
+
+                for range in set.code_points().iter_ranges() {
+                    for cp in range {
+                        if !target_set.contains32(cp) {
+                            builder.set_value(cp, target_class);
+                        }
+                    }
+                }
+            }
+
+            let classes_trie = builder.build();
+
+            // The tailoring remaps all complex code points
+            let ignore_complex = CodePointMapData::try_new_unstable(self)?
+                .as_borrowed()
+                .get_set_for_value(LineBreak::ComplexContext)
+                .as_borrowed()
+                .iter_ranges()
+                .flatten()
+                .all(|cp| classes_trie.get32(cp) != SegmenterStateMachine::NO_CLASS);
+
+            tailorings.insert(
+                String::from(tailoring),
+                SegmenterStateMachineOverride {
+                    classes: classes_trie,
+                    ignore_complex,
+                },
+            );
+        }
+
         use icu::collections::codepointinvlist::CodePointInversionListBuilder;
         use icu::collections::codepointtrie::TrieType;
         use icu_codepointtrie_builder::CodePointTrieBuilder;
 
-        let ParsedNfa {
-            classes,
-            states,
-            transitions,
-            class_lookup,
-            state_lookup,
-            lookahead_lookup,
-            ..
-        } = self;
-
         let mut builder = CodePointTrieBuilder::new(0, 0, TrieType::Fast);
         let mut missing_codepoints = CodePointInversionListBuilder::new();
         missing_codepoints.add_set(&CodePointInversionList::all());
-        for (&class, set) in classes {
+        for (&class, set) in &classes {
             for range in set.iter_ranges() {
                 missing_codepoints.remove_range32(range.clone());
                 builder.set_range_value(range.clone(), class_lookup[class]);
@@ -1198,86 +1246,15 @@ impl<'a> ParsedNfa<'a> {
             })
             .collect();
 
-        SegmenterStateMachine {
-            transitions,
-            classes,
-            states,
-            num_lookaheads: lookahead_lookup.len(),
-        }
-    }
-
-    fn tailoring(
-        &self,
-        provider: &SourceDataProvider,
-        tailorings: &str,
-    ) -> Result<SegmenterStateMachineOverride<'static>, DataError> {
-        let mut builder = icu_codepointtrie_builder::CodePointTrieBuilder::new(
-            SegmenterStateMachine::NO_CLASS,
-            SegmenterStateMachine::NO_CLASS,
-            icu::collections::codepointtrie::TrieType::Small,
-        );
-
-        for line in tailorings
-            .lines()
-            .map(|l| l.split('#').next().unwrap().trim())
-            .filter(|l| !l.is_empty())
-        {
-            let mut iter = line.split(';');
-            let unicode_set = iter.next().unwrap().trim();
-            let target = iter.next().unwrap().trim();
-
-            let set = icu::properties::unicodeset_parse::parse_unstable(unicode_set, provider)
-                .map_err(|e| {
-                    DataError::custom("unicodeset parse")
-                        .with_display_context(&e.fmt_with_source(unicode_set))
-                })?
-                .0;
-
-            let target = icu::properties::unicodeset_parse::parse_unstable(target, provider)
-                .map_err(|e| {
-                    DataError::custom("unicodeset parse")
-                        .with_display_context(&e.fmt_with_source(unicode_set))
-                })?
-                .0;
-
-            let (target_class, target_set) = if target.has_strings() {
-                let target = target.strings().iter().next().unwrap();
-                let magic = self.magic_classes.get(target).expect(target);
-                (magic, self.classes.get(magic).unwrap())
-            } else {
-                let target = target.code_points().iter_chars().next().unwrap();
-                self.classes
-                    .iter()
-                    .find(|(_, set)| set.contains(target))
-                    .unwrap()
-            };
-
-            let target_class = self.class_lookup[*target_class];
-
-            for range in set.code_points().iter_ranges() {
-                for cp in range {
-                    if !target_set.contains32(cp) {
-                        builder.set_value(cp, target_class);
-                    }
-                }
-            }
-        }
-
-        let classes = builder.build();
-
-        // The tailoring remaps all complex code points
-        let ignore_complex = CodePointMapData::try_new_unstable(provider)?
-            .as_borrowed()
-            .get_set_for_value(LineBreak::ComplexContext)
-            .as_borrowed()
-            .iter_ranges()
-            .flatten()
-            .all(|cp| classes.get32(cp) != SegmenterStateMachine::NO_CLASS);
-
-        Ok(SegmenterStateMachineOverride {
-            ignore_complex,
-            classes,
-        })
+        Ok((
+            SegmenterStateMachine {
+                transitions,
+                classes,
+                states,
+                num_lookaheads: lookahead_lookup.len(),
+            },
+            tailorings,
+        ))
     }
 }
 
@@ -1325,19 +1302,13 @@ impl DataProvider<SegmenterBreakLineOverrideV2> for SourceDataProvider {
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         {
-            let property_table_override = ParsedNfa::parse_nfa_files(
-                self,
-                &neo_sources().read_to_string("LineBreakClasses.txt")?,
-                &neo_sources().read_to_string("LineBreakStates.txt")?,
-                &neo_sources().read_to_string("LineBreakTransitions.txt")?,
-            )?
-            .tailoring(
-                self,
-                &neo_sources().read_to_string(&format!(
-                    "LineBreakTailoring_{}.txt",
-                    req.id.marker_attributes.as_str()
-                ))?,
-            )?;
+            let property_table_override = self
+                .build_segmenter(&neo_sources(), "LineBreak", |s| {
+                    if s == "Mandatory" { 1 } else { 0 }
+                })?
+                .1
+                .remove(req.id.marker_attributes.as_str())
+                .unwrap();
 
             Ok(DataResponse {
                 metadata: Default::default(),
@@ -1380,17 +1351,13 @@ impl DataProvider<SegmenterBreakSentenceOverrideV2> for SourceDataProvider {
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         {
-            let property_table_override = ParsedNfa::parse_nfa_files(
-                self,
-                &neo_sources().read_to_string("SentenceBreakClasses.txt")?,
-                &neo_sources().read_to_string("SentenceBreakStates.txt")?,
-                &neo_sources().read_to_string("SentenceBreakTransitions.txt")?,
-            )?
-            .tailoring(
-                self,
-                &neo_sources()
-                    .read_to_string(&format!("SentenceBreakTailoring_{}.txt", req.id.locale))?,
-            )?;
+            let property_table_override = self
+                .build_segmenter(&neo_sources(), "SentenceBreak", |s| {
+                    if s == "EOL" { 1 } else { 0 }
+                })?
+                .1
+                .remove(&req.id.locale.to_string())
+                .unwrap();
 
             Ok(DataResponse {
                 metadata: Default::default(),
