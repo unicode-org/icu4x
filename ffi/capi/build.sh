@@ -1,4 +1,4 @@
-NIGHTLY="${PINNED_CI_NIGHTLY:=nightly-2025-09-27}"
+NIGHTLY="${PINNED_CI_NIGHTLY:=nightly-2026-06-01}"
 
 case $TARGET in
     "riscv64-linux-android" | "riscv64gc-unknown-linux-gnu" | "wasm32-unknown-unknown") 

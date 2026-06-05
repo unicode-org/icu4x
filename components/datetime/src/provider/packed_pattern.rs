@@ -121,6 +121,25 @@ impl<'data, T: VarULE + ?Sized> Clone for GenericPackedPatterns<'data, T> {
     }
 }
 
+impl<'data, T: VarULE + ?Sized> GenericPackedPatterns<'data, T> {
+    /// Returns the variant indices for this packed pattern.
+    #[cfg(feature = "datagen")]
+    pub(crate) fn variant_indices(&self) -> VariantIndices {
+        if (self.header & constants::Q_BIT) != 0 {
+            VariantIndices::OnePatternPerVariant
+        } else {
+            VariantIndices::IndicesPerVariant([
+                VariantPatternIndex::from_header_with_shift(self.header, 3),
+                VariantPatternIndex::from_header_with_shift(self.header, 6),
+                VariantPatternIndex::from_header_with_shift(self.header, 9),
+                VariantPatternIndex::from_header_with_shift(self.header, 12),
+                VariantPatternIndex::from_header_with_shift(self.header, 15),
+                VariantPatternIndex::from_header_with_shift(self.header, 18),
+            ])
+        }
+    }
+}
+
 /// The main data structure for packed datetime patterns.
 ///
 /// For detailed information, see [`GenericPackedPatterns`].
@@ -134,23 +153,23 @@ icu_provider::data_struct!(
 
 pub(crate) type ErasedPackedPatterns = icu_provider::marker::ErasedMarker<PackedPatterns<'static>>;
 
-mod constants {
+pub(crate) mod constants {
     /// Value when standard long, medium, and short are all the same
-    pub(super) const LMS: u32 = 0;
+    pub(crate) const LMS: u32 = 0;
     /// Value when standard medium is the same as short but not long
-    pub(super) const L_MS: u32 = 1;
+    pub(crate) const L_MS: u32 = 1;
     /// Value when standard medium is the same as long but not short
-    pub(super) const LM_S: u32 = 2;
+    pub(crate) const LM_S: u32 = 2;
     /// Bit that indicates that standard medium differs from standard long
-    pub(super) const M_DIFFERS: u32 = 0x1;
+    pub(crate) const M_DIFFERS: u32 = 0x1;
     /// Bit that indicates that standard short differs from standard medium
-    pub(super) const S_DIFFERS: u32 = 0x2;
+    pub(crate) const S_DIFFERS: u32 = 0x2;
     /// Bitmask over all LMS values
-    pub(super) const LMS_MASK: u32 = 0x3;
+    pub(crate) const LMS_MASK: u32 = 0x3;
     /// Bit that indicates whether there are per-cell chunks
-    pub(super) const Q_BIT: u32 = 0x4;
+    pub(crate) const Q_BIT: u32 = 0x4;
     /// A mask applied to individual chunks (the largest possible chunk)
-    pub(super) const CHUNK_MASK: u32 = 0x7;
+    pub(crate) const CHUNK_MASK: u32 = 0x7;
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -226,7 +245,7 @@ pub(crate) enum VariantIndices {
     IndicesPerVariant([VariantPatternIndex; 6]),
 }
 
-trait PackedPatternsBuilderHelper: VarULE {
+pub(crate) trait PackedPatternsBuilderHelper: VarULE {
     type Unpacked<'a>;
     fn pack(unpacked: &[Self::Unpacked<'_>]) -> VarZeroVec<'static, Self>;
     #[cfg(feature = "datagen")]
@@ -241,7 +260,7 @@ where
 {
     /// Generically builds a `GenericPackedPatterns` structure, using a caller-supplied
     /// closure to pack the elements into a `VarZeroVec`.
-    fn build<U>(&self) -> GenericPackedPatterns<'static, U>
+    pub(crate) fn build<U>(&self) -> GenericPackedPatterns<'static, U>
     where
         U: PackedPatternsBuilderHelper<Unpacked<'a> = T> + VarULE + ?Sized,
     {
@@ -299,18 +318,7 @@ impl PackedPatternsBuilderHelper for PluralElementsPackedULE<ZeroSlice<PatternIt
     fn unpack<'a>(
         packed: &'a GenericPackedPatterns<Self>,
     ) -> GenericUnpackedPatterns<Self::Unpacked<'a>> {
-        let variant_indices = if (packed.header & constants::Q_BIT) != 0 {
-            VariantIndices::OnePatternPerVariant
-        } else {
-            VariantIndices::IndicesPerVariant([
-                VariantPatternIndex::from_header_with_shift(packed.header, 3),
-                VariantPatternIndex::from_header_with_shift(packed.header, 6),
-                VariantPatternIndex::from_header_with_shift(packed.header, 9),
-                VariantPatternIndex::from_header_with_shift(packed.header, 12),
-                VariantPatternIndex::from_header_with_shift(packed.header, 15),
-                VariantPatternIndex::from_header_with_shift(packed.header, 18),
-            ])
-        };
+        let variant_indices = packed.variant_indices();
         let elements = packed
             .elements
             .iter()
@@ -583,7 +591,7 @@ impl<'data> GenericPackedPatterns<'data, PluralElementsPackedULE<ZeroSlice<Patte
 }
 
 #[cfg(feature = "serde")]
-mod _serde {
+pub(crate) mod _serde {
     use super::*;
     use crate::provider::pattern::reference;
     use zerovec::{VarZeroSlice, ule::VarULE};
@@ -625,7 +633,7 @@ mod _serde {
     }
 
     /// Should be implemented on the Machine generic. Associates the Human type.
-    trait PackedPatternsSerdeHelper: PackedPatternsBuilderHelper {
+    pub(crate) trait PackedPatternsSerdeHelper: PackedPatternsBuilderHelper {
         type Human;
         fn human_to_unpacked_element<'a>(human: &'a Self::Human) -> Self::Unpacked<'a>;
         #[cfg(feature = "datagen")]
@@ -658,7 +666,7 @@ mod _serde {
         T: VarULE + PackedPatternsSerdeHelper + ?Sized,
         T::Human: serde::Deserialize<'de>,
     {
-        fn deserialize_impl<D>(deserializer: D) -> Result<Self, D::Error>
+        pub(crate) fn deserialize_impl<D>(deserializer: D) -> Result<Self, D::Error>
         where
             D: serde::Deserializer<'de>,
         {
@@ -725,7 +733,7 @@ mod _serde {
         T: VarULE + PackedPatternsSerdeHelper + serde::Serialize + ?Sized,
         T::Human: serde::Serialize + Default,
     {
-        fn serialize_impl<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        pub(crate) fn serialize_impl<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where
             S: serde::Serializer,
         {

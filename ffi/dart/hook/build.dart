@@ -212,7 +212,7 @@ final class CheckoutMode extends BuildMode {
     final isNoStd = _isNoStdTarget(rustTarget);
 
     final nightly =
-        Platform.environment['PINNED_CI_NIGHTLY'] ?? 'nightly-2025-09-27';
+        Platform.environment['PINNED_CI_NIGHTLY'] ?? 'nightly-2026-06-01';
 
     if (buildStatic || isNoStd) {
       await runProcess('rustup', [
