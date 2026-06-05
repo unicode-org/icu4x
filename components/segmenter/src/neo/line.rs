@@ -360,6 +360,12 @@ impl LineSegmenter {
                         complex: ComplexPayloadsBorrowed::new(),
                     };
                 }
+                (false, LineBreakStrictness::Strict, LineBreakWordOption::BreakAll) => {
+                    Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_WORD_BREAKALL)
+                }
+                (false, LineBreakStrictness::Strict, LineBreakWordOption::KeepAll) => {
+                    Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_WORD_KEEPALL)
+                }
                 _ => unimplemented!(),
             },
             complex: ComplexPayloadsBorrowed::new(),
@@ -418,6 +424,12 @@ impl LineSegmenter {
                     tailoring: None,
                     complex: ComplexPayloads::try_new(provider)?,
                 });
+            }
+            (false, LineBreakStrictness::Strict, LineBreakWordOption::BreakAll) => {
+                const { Some(DataMarkerAttributes::from_str_or_panic("word_breakall")) }
+            }
+            (false, LineBreakStrictness::Strict, LineBreakWordOption::KeepAll) => {
+                const { Some(DataMarkerAttributes::from_str_or_panic("word_keepall")) }
             }
             _ => unimplemented!(),
         }
@@ -591,7 +603,10 @@ impl<'data> LineSegmenterBorrowed<'data> {
             input.char_indices(),
             self.data,
             self.tailoring,
-            Some(self.complex),
+            self.tailoring
+                .map(|t| !t.ignore_complex)
+                .unwrap_or(true)
+                .then_some(self.complex),
         ))
     }
     /// Creates a line break iterator for a potentially ill-formed UTF8 string
@@ -607,7 +622,10 @@ impl<'data> LineSegmenterBorrowed<'data> {
             Utf8CharIndices::new(input),
             self.data,
             self.tailoring,
-            Some(self.complex),
+            self.tailoring
+                .map(|t| !t.ignore_complex)
+                .unwrap_or(true)
+                .then_some(self.complex),
         ))
     }
     /// Creates a line break iterator for a Latin-1 (8-bit) string.
@@ -630,7 +648,10 @@ impl<'data> LineSegmenterBorrowed<'data> {
             Utf16Indices::new(input),
             self.data,
             self.tailoring,
-            Some(self.complex),
+            self.tailoring
+                .map(|t| !t.ignore_complex)
+                .unwrap_or(true)
+                .then_some(self.complex),
         ))
     }
 }

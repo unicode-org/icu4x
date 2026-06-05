@@ -643,5 +643,6 @@
       255,
       255
     ]
-  }
+  },
+  "ignore_complex": false
 }

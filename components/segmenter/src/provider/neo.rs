@@ -88,6 +88,9 @@ pub struct SegmenterStateMachineOverride<'data> {
     /// The class mapping overlay.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub classes: CodePointTrie<'data, u8>,
+
+    /// Whether to suppress SA handling.
+    pub ignore_complex: bool,
 }
 
 icu_provider::data_struct!(

@@ -877,6 +877,8 @@ fn neo_sources() -> crate::source::AbstractFs {
         "LineBreakTailoring_loose_cj.txt",
         "LineBreakTailoring_loose.txt",
         "LineBreakTailoring_normal_cj.txt",
+        "LineBreakTailoring_word_keepall.txt",
+        "LineBreakTailoring_word_breakall.txt",
         "LineBreakTailoring_normal.txt",
         "LineBreakStates.txt",
         "LineBreakTransitions.txt",
@@ -1265,8 +1267,20 @@ impl<'a> ParsedNfa<'a> {
             }
         }
 
+        let classes = builder.build();
+
+        // The tailoring remaps all complex code points
+        let ignore_complex = CodePointMapData::try_new_unstable(provider)?
+            .as_borrowed()
+            .get_set_for_value(LineBreak::ComplexContext)
+            .as_borrowed()
+            .iter_ranges()
+            .flatten()
+            .all(|cp| classes.get32(cp) != SegmenterStateMachine::NO_CLASS);
+
         Ok(SegmenterStateMachineOverride {
-            classes: builder.build(),
+            ignore_complex,
+            classes,
         })
     }
 }
