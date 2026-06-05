@@ -17,6 +17,7 @@ use crate::SourceDataProvider;
 use crate::source::AbstractFs;
 #[cfg(feature = "unstable")]
 use crate::source::Cache;
+#[cfg(feature = "unstable")]
 use crate::source::include_files;
 #[cfg(feature = "unstable")]
 use icu::collections::codepointinvlist::CodePointInversionList;
