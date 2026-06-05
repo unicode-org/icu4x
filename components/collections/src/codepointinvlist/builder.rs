@@ -47,8 +47,8 @@ impl CodePointInversionListBuilder {
         let end_res = self.intervals.binary_search(&end);
         let mut start_ind = start_res.unwrap_or_else(|x| x);
         let mut end_ind = end_res.unwrap_or_else(|x| x);
-        let start_pos_check = (start_ind % 2 == 0) == add;
-        let end_pos_check = (end_ind % 2 == 0) == add;
+        let start_pos_check = start_ind.is_multiple_of(2) == add;
+        let end_pos_check = end_ind.is_multiple_of(2) == add;
         let start_eq_end = start_ind == end_ind;
 
         #[expect(clippy::indexing_slicing)] // all indices are binary search results

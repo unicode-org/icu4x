@@ -135,31 +135,31 @@ impl ParseError {
             return format!("{source}← error: unexpected end of input");
         }
         let mut s = String::new();
-        if let Some(offset) = offset {
-            if offset < source.len() {
-                // offset points to any byte of the last character we want to display.
-                // in the case of ASCII, this is easy - we just display bytes [..=offset].
-                // however, if the last character is more than one byte in UTF-8
-                // we cannot use ..=offset, because that would potentially include only partial
-                // bytes of last character in our string. hence we must find the start of the
-                // following character and use that as the (exclusive) end of our string.
+        if let Some(offset) = offset
+            && offset < source.len()
+        {
+            // offset points to any byte of the last character we want to display.
+            // in the case of ASCII, this is easy - we just display bytes [..=offset].
+            // however, if the last character is more than one byte in UTF-8
+            // we cannot use ..=offset, because that would potentially include only partial
+            // bytes of last character in our string. hence we must find the start of the
+            // following character and use that as the (exclusive) end of our string.
 
-                // offset points into the last character we want to include, hence the start of the
-                // first character we want to exclude is at least offset + 1.
-                let mut exclusive_end = offset + 1;
-                // TODO: replace this loop with str::ceil_char_boundary once stable
-                for _ in 0..3 {
-                    // is_char_boundary returns true at the latest once exclusive_end == source.len()
-                    if source.is_char_boundary(exclusive_end) {
-                        break;
-                    }
-                    exclusive_end += 1;
+            // offset points into the last character we want to include, hence the start of the
+            // first character we want to exclude is at least offset + 1.
+            let mut exclusive_end = offset + 1;
+            // TODO: replace this loop with str::ceil_char_boundary once stable
+            for _ in 0..3 {
+                // is_char_boundary returns true at the latest once exclusive_end == source.len()
+                if source.is_char_boundary(exclusive_end) {
+                    break;
                 }
-
-                // exclusive_end is at most source.len() due to str::is_char_boundary and at least 0 by type
-                s.push_str(&source[..exclusive_end]);
-                s.push_str("← ");
+                exclusive_end += 1;
             }
+
+            // exclusive_end is at most source.len() due to str::is_char_boundary and at least 0 by type
+            s.push_str(&source[..exclusive_end]);
+            s.push_str("← ");
         }
         s.push_str("error: ");
         match kind {

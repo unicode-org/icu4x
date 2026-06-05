@@ -15,10 +15,10 @@ fn test_langid_fixtures(tests: Vec<fixtures::LocaleTest>) {
     for test in tests {
         match test.output {
             fixtures::LocaleInfo::String(s) => {
-                if let fixtures::LocaleInfo::Object(o) = &test.input {
-                    if o.field_type == "Locale" {
-                        continue;
-                    }
+                if let fixtures::LocaleInfo::Object(o) = &test.input
+                    && o.field_type == "Locale"
+                {
+                    continue;
                 }
                 let input: LanguageIdentifier = test.input.try_into().expect("Parsing failed.");
                 assert_writeable_eq!(input, s);

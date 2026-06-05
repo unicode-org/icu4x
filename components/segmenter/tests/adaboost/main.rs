@@ -52,26 +52,27 @@ impl<'a> Predictor<'a> {
             let mut score: i16 = 4;
 
             let rad4 = get_radical(self.radicals, c);
-            if rad4 != 0 {
-                if let Some(map) = self.model.get("RSRID") {
-                    let key = format!("{}:{}", c_prev, rad4);
-                    score += map.get(&key).copied().unwrap_or(0);
-                }
+            if rad4 != 0
+                && let Some(map) = self.model.get("RSRID")
+            {
+                let key = format!("{}:{}", c_prev, rad4);
+                score += map.get(&key).copied().unwrap_or(0);
             }
 
             let rad3 = get_radical(self.radicals, c_prev);
-            if rad3 != 0 {
-                if let Some(map) = self.model.get("LSRID") {
-                    let key = format!("{}:{}", rad3, c);
-                    score += map.get(&key).copied().unwrap_or(0);
-                }
+            if rad3 != 0
+                && let Some(map) = self.model.get("LSRID")
+            {
+                let key = format!("{}:{}", rad3, c);
+                score += map.get(&key).copied().unwrap_or(0);
             }
 
-            if rad3 != 0 && rad4 != 0 {
-                if let Some(map) = self.model.get("RAD") {
-                    let key = format!("{}:{}", rad3, rad4);
-                    score += map.get(&key).copied().unwrap_or(0);
-                }
+            if rad3 != 0
+                && rad4 != 0
+                && let Some(map) = self.model.get("RAD")
+            {
+                let key = format!("{}:{}", rad3, rad4);
+                score += map.get(&key).copied().unwrap_or(0);
             }
 
             if let Some(map) = self.model.get("BW2") {
@@ -79,11 +80,11 @@ impl<'a> Predictor<'a> {
                 score += map.get(&key).copied().unwrap_or(0);
             }
 
-            if i > 1 {
-                if let Some(map) = self.model.get("UW2") {
-                    let key = chars[i - 2].to_string();
-                    score += map.get(&key).copied().unwrap_or(0);
-                }
+            if i > 1
+                && let Some(map) = self.model.get("UW2")
+            {
+                let key = chars[i - 2].to_string();
+                score += map.get(&key).copied().unwrap_or(0);
             }
 
             if let Some(map) = self.model.get("UW3") {
@@ -96,11 +97,11 @@ impl<'a> Predictor<'a> {
                 score += map.get(&key).copied().unwrap_or(0);
             }
 
-            if i + 1 < chars.len() {
-                if let Some(map) = self.model.get("UW5") {
-                    let key = chars[i + 1].to_string();
-                    score += map.get(&key).copied().unwrap_or(0);
-                }
+            if i + 1 < chars.len()
+                && let Some(map) = self.model.get("UW5")
+            {
+                let key = chars[i + 1].to_string();
+                score += map.get(&key).copied().unwrap_or(0);
             }
 
             mask.push(score);
@@ -123,39 +124,39 @@ impl<'a> Predictor<'a> {
 
             let mut score: i16 = -3755;
 
-            if i > 2 {
-                if let Some(map) = self.model.get("TW1") {
-                    let key: String = chars[i - 3..=i - 1].iter().collect();
-                    score += map.get(&key).copied().unwrap_or(0) << 1;
-                }
+            if i > 2
+                && let Some(map) = self.model.get("TW1")
+            {
+                let key: String = chars[i - 3..=i - 1].iter().collect();
+                score += map.get(&key).copied().unwrap_or(0) << 1;
             }
 
-            if i > 1 {
-                if let Some(map) = self.model.get("TW2") {
-                    let key: String = chars[i - 2..=i].iter().collect();
-                    score += map.get(&key).copied().unwrap_or(0) << 1;
-                }
+            if i > 1
+                && let Some(map) = self.model.get("TW2")
+            {
+                let key: String = chars[i - 2..=i].iter().collect();
+                score += map.get(&key).copied().unwrap_or(0) << 1;
             }
 
-            if i + 1 < chars.len() {
-                if let Some(map) = self.model.get("TW3") {
-                    let key: String = chars[i - 1..=i + 1].iter().collect();
-                    score += map.get(&key).copied().unwrap_or(0) << 1;
-                }
+            if i + 1 < chars.len()
+                && let Some(map) = self.model.get("TW3")
+            {
+                let key: String = chars[i - 1..=i + 1].iter().collect();
+                score += map.get(&key).copied().unwrap_or(0) << 1;
             }
 
-            if i + 2 < chars.len() {
-                if let Some(map) = self.model.get("TW4") {
-                    let key: String = chars[i..=i + 2].iter().collect();
-                    score += map.get(&key).copied().unwrap_or(0) << 1;
-                }
+            if i + 2 < chars.len()
+                && let Some(map) = self.model.get("TW4")
+            {
+                let key: String = chars[i..=i + 2].iter().collect();
+                score += map.get(&key).copied().unwrap_or(0) << 1;
             }
 
-            if i > 1 {
-                if let Some(map) = self.model.get("BW1") {
-                    let key: String = chars[i - 2..=i - 1].iter().collect();
-                    score += map.get(&key).copied().unwrap_or(0) << 1;
-                }
+            if i > 1
+                && let Some(map) = self.model.get("BW1")
+            {
+                let key: String = chars[i - 2..=i - 1].iter().collect();
+                score += map.get(&key).copied().unwrap_or(0) << 1;
             }
 
             if let Some(map) = self.model.get("BW2") {
@@ -163,25 +164,25 @@ impl<'a> Predictor<'a> {
                 score += map.get(&key).copied().unwrap_or(0) << 1;
             }
 
-            if i + 1 < chars.len() {
-                if let Some(map) = self.model.get("BW3") {
-                    let key: String = chars[i..=i + 1].iter().collect();
-                    score += map.get(&key).copied().unwrap_or(0) << 1;
-                }
+            if i + 1 < chars.len()
+                && let Some(map) = self.model.get("BW3")
+            {
+                let key: String = chars[i..=i + 1].iter().collect();
+                score += map.get(&key).copied().unwrap_or(0) << 1;
             }
 
-            if i > 2 {
-                if let Some(map) = self.model.get("UW1") {
-                    let key = chars[i - 3].to_string();
-                    score += map.get(&key).copied().unwrap_or(0) << 1;
-                }
+            if i > 2
+                && let Some(map) = self.model.get("UW1")
+            {
+                let key = chars[i - 3].to_string();
+                score += map.get(&key).copied().unwrap_or(0) << 1;
             }
 
-            if i > 1 {
-                if let Some(map) = self.model.get("UW2") {
-                    let key = chars[i - 2].to_string();
-                    score += map.get(&key).copied().unwrap_or(0) << 1;
-                }
+            if i > 1
+                && let Some(map) = self.model.get("UW2")
+            {
+                let key = chars[i - 2].to_string();
+                score += map.get(&key).copied().unwrap_or(0) << 1;
             }
 
             if let Some(map) = self.model.get("UW3") {
@@ -194,18 +195,18 @@ impl<'a> Predictor<'a> {
                 score += map.get(&key).copied().unwrap_or(0) << 1;
             }
 
-            if i + 1 < chars.len() {
-                if let Some(map) = self.model.get("UW5") {
-                    let key = chars[i + 1].to_string();
-                    score += map.get(&key).copied().unwrap_or(0) << 1;
-                }
+            if i + 1 < chars.len()
+                && let Some(map) = self.model.get("UW5")
+            {
+                let key = chars[i + 1].to_string();
+                score += map.get(&key).copied().unwrap_or(0) << 1;
             }
 
-            if i + 2 < chars.len() {
-                if let Some(map) = self.model.get("UW6") {
-                    let key = chars[i + 2].to_string();
-                    score += map.get(&key).copied().unwrap_or(0) << 1;
-                }
+            if i + 2 < chars.len()
+                && let Some(map) = self.model.get("UW6")
+            {
+                let key = chars[i + 2].to_string();
+                score += map.get(&key).copied().unwrap_or(0) << 1;
             }
 
             mask.push(score);

@@ -976,32 +976,32 @@ where
 
         // Ensure the last item is a starter (unless)
         // iter exhausted.
-        if let Some(last) = self.upcoming.last() {
-            if last.decomposition_starts_with_non_starter() {
-                // Not using `while let` to be able to set `iter_exhausted`
-                loop {
-                    if let Some(ch) = self.iter_next() {
-                        let starter = !ch.decomposition_starts_with_non_starter();
-                        self.upcoming.push(ch);
-                        if starter {
-                            break;
-                        }
-                    } else {
-                        #[cfg(debug_assertions)]
-                        {
-                            self.iter_exhausted = true;
-                        }
+        if let Some(last) = self.upcoming.last()
+            && last.decomposition_starts_with_non_starter()
+        {
+            // Not using `while let` to be able to set `iter_exhausted`
+            loop {
+                if let Some(ch) = self.iter_next() {
+                    let starter = !ch.decomposition_starts_with_non_starter();
+                    self.upcoming.push(ch);
+                    if starter {
                         break;
                     }
+                } else {
+                    #[cfg(debug_assertions)]
+                    {
+                        self.iter_exhausted = true;
+                    }
+                    break;
                 }
             }
         }
 
         let mut starts_with_starter = false;
-        if let Some(first) = self.upcoming.first() {
-            if !first.decomposition_starts_with_non_starter() {
-                starts_with_starter = true;
-            }
+        if let Some(first) = self.upcoming.first()
+            && !first.decomposition_starts_with_non_starter()
+        {
+            starts_with_starter = true;
         }
         if !starts_with_starter {
             self.upcoming.insert(
@@ -1592,14 +1592,13 @@ where
                                             }
                                         }
                                         TrieResult::Intermediate(trie_ce32) => {
-                                            if !ce32.at_least_one_suffix_contains_starter() {
-                                                if let Some(ce) =
+                                            if !ce32.at_least_one_suffix_contains_starter()
+                                                && let Some(ce) =
                                                     CollationElement32::new(trie_ce32 as u32)
                                                         .to_ce_simple_or_long_primary()
-                                                {
-                                                    self.mark_prefix_unmatchable();
-                                                    return ce;
-                                                }
+                                            {
+                                                self.mark_prefix_unmatchable();
+                                                return ce;
                                             }
                                         }
                                         TrieResult::FinalValue(trie_ce32) => {
@@ -1630,11 +1629,11 @@ where
                             data = self.root;
                             ce32 = data.ce32_for_char(c);
                         }
-                        if self.is_next_decomposition_starts_with_starter() {
-                            if let Some(ce) = ce32.to_ce_simple_or_long_primary() {
-                                self.prefix_push(c);
-                                return ce;
-                            }
+                        if self.is_next_decomposition_starts_with_starter()
+                            && let Some(ce) = ce32.to_ce_simple_or_long_primary()
+                        {
+                            self.prefix_push(c);
+                            return ce;
                         }
                     } else {
                         debug_assert!(low_zeros);
@@ -2291,22 +2290,20 @@ where
                         let diacritic_index = (c as usize).wrapping_sub(COMBINING_DIACRITICS_BASE);
                         if let Some(secondary) = self.diacritics.get(diacritic_index) {
                             // TODO(#2006): unlikely annotation
-                            if c == '\u{0307}' && self.lithuanian_dot_above {
-                                if let Some(next_c) =
+                            if c == '\u{0307}'
+                                && self.lithuanian_dot_above
+                                && let Some(next_c) =
                                     combining_characters.get(i + 1).map(|c| c.character())
-                                {
-                                    if next_c == '\u{0300}'
-                                        || next_c == '\u{0301}'
-                                        || next_c == '\u{0303}'
-                                    {
-                                        // Lithuanian contracts COMBINING DOT ABOVE with three other diacritics of the
-                                        // same combining class such that the COMBINING DOT ABOVE is ignored for
-                                        // collation. Since the combining class is the same, it's valid to simply
-                                        // look at the next character in `combining_characters`.
-                                        i += 1;
-                                        continue 'combining;
-                                    }
-                                }
+                                && (next_c == '\u{0300}'
+                                    || next_c == '\u{0301}'
+                                    || next_c == '\u{0303}')
+                            {
+                                // Lithuanian contracts COMBINING DOT ABOVE with three other diacritics of the
+                                // same combining class such that the COMBINING DOT ABOVE is ignored for
+                                // collation. Since the combining class is the same, it's valid to simply
+                                // look at the next character in `combining_characters`.
+                                i += 1;
+                                continue 'combining;
                             }
                             self.pending
                                 .push(CollationElement::new_from_secondary(secondary));

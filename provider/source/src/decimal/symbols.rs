@@ -67,8 +67,8 @@ impl DataProvider<DecimalSymbolsV1> for SourceDataProvider {
         }
         .build();
 
-        if let Some(n) = negative.as_ref() {
-            if (
+        if let Some(n) = negative.as_ref()
+            && (
                 positive.max_fraction_digits,
                 positive.min_fraction_digits,
                 positive.primary_grouping,
@@ -78,10 +78,10 @@ impl DataProvider<DecimalSymbolsV1> for SourceDataProvider {
                 n.min_fraction_digits,
                 n.primary_grouping,
                 n.secondary_grouping,
-            ) {
-                return Err(DataError::custom("positive/negative groupings don't match")
-                    .with_req(DecimalSymbolsV1::INFO, req));
-            }
+            )
+        {
+            return Err(DataError::custom("positive/negative groupings don't match")
+                .with_req(DecimalSymbolsV1::INFO, req));
         }
 
         let grouping_sizes = GroupingSizes {

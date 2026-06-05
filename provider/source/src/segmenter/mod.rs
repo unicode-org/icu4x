@@ -669,19 +669,19 @@ fn generate_rule_break_data(
 
     // State machine alias
     for p in &segmenter.tables {
-        if let Some(left) = &p.left {
-            if let Some(right) = &p.right {
-                let right_index = get_index_from_name(&properties_names, right).unwrap();
-                let left_index = get_index_from_name(&properties_names, left).unwrap();
+        if let Some(left) = &p.left
+            && let Some(right) = &p.right
+        {
+            let right_index = get_index_from_name(&properties_names, right).unwrap();
+            let left_index = get_index_from_name(&properties_names, left).unwrap();
 
-                let index = properties_names.iter().position(|n| n.eq(&p.name)).unwrap();
-                break_state_table[left_index * properties_names.len() + right_index] =
-                    Some(if p.interm_break_state.is_some() {
-                        BreakState::Intermediate(index.try_into().unwrap())
-                    } else {
-                        BreakState::Index(index.try_into().unwrap())
-                    })
-            }
+            let index = properties_names.iter().position(|n| n.eq(&p.name)).unwrap();
+            break_state_table[left_index * properties_names.len() + right_index] =
+                Some(if p.interm_break_state.is_some() {
+                    BreakState::Intermediate(index.try_into().unwrap())
+                } else {
+                    BreakState::Index(index.try_into().unwrap())
+                })
         }
     }
 

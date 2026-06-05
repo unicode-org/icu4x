@@ -77,12 +77,12 @@ impl<Symbols> Contexts<Symbols> {
     /// I.e. missing `standalone`s fall back to `format`, missing `short` falls back to
     /// `abbr`.
     pub(crate) fn get_symbols(&self, context: Context, length: Length) -> &Symbols {
-        if context == Context::Standalone {
-            if let Some(sym) = self.get_symbols_exact(context, length) {
-                return sym;
-            }
-            // fall back to format
+        if context == Context::Standalone
+            && let Some(sym) = self.get_symbols_exact(context, length)
+        {
+            return sym;
         }
+        // fall back to format
 
         if let Some(sym) = self.get_symbols_exact(Context::Format, length) {
             return sym;

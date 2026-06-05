@@ -367,26 +367,23 @@ fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
 ///  For example the "d MMM y" pattern will be changed to "d MMMM y" given fields ["y", "MMMM", "d"].
 fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut runtime::Pattern) {
     runtime::helpers::maybe_replace(pattern, |item| {
-        if let PatternItem::Field(pattern_field) = item {
-            if let Some(requested_field) = fields
+        if let PatternItem::Field(pattern_field) = item
+            && let Some(requested_field) = fields
                 .iter()
                 .find(|field| field.symbol.skeleton_cmp(pattern_field.symbol).is_eq())
-            {
-                if requested_field.length != pattern_field.length
-                    && requested_field.get_length_type() == pattern_field.get_length_type()
-                {
-                    let length = requested_field.length;
-                    let length = if requested_field.symbol.is_at_least_abbreviated() {
-                        length.numeric_to_abbr()
-                    } else {
-                        length
-                    };
-                    return Some(PatternItem::Field(Field {
-                        length,
-                        ..*pattern_field
-                    }));
-                }
-            }
+            && requested_field.length != pattern_field.length
+            && requested_field.get_length_type() == pattern_field.get_length_type()
+        {
+            let length = requested_field.length;
+            let length = if requested_field.symbol.is_at_least_abbreviated() {
+                length.numeric_to_abbr()
+            } else {
+                length
+            };
+            return Some(PatternItem::Field(Field {
+                length,
+                ..*pattern_field
+            }));
         }
         None
     })
@@ -579,15 +576,16 @@ pub fn get_best_available_format_pattern<'data>(
     let closest_distance = matched.as_ref().map(|m| m.distance).unwrap_or(u32::MAX);
     let closest_missing_fields = matched.as_ref().map(|m| m.missing_fields).unwrap_or(0);
 
-    if !prefer_matched_pattern && closest_distance >= TEXT_VS_NUMERIC_DISTANCE {
-        if let [field] = fields {
-            // A single field was requested and the best pattern either includes extra fields or can't be adjusted to match
-            // (e.g. text vs numeric). We return the field instead of the matched pattern.
-            return BestSkeleton::AllFieldsMatch(
-                PluralElements::new(runtime::Pattern::from(vec![PatternItem::Field(*field)])),
-                SkeletonQuality(closest_distance),
-            );
-        }
+    if !prefer_matched_pattern
+        && closest_distance >= TEXT_VS_NUMERIC_DISTANCE
+        && let [field] = fields
+    {
+        // A single field was requested and the best pattern either includes extra fields or can't be adjusted to match
+        // (e.g. text vs numeric). We return the field instead of the matched pattern.
+        return BestSkeleton::AllFieldsMatch(
+            PluralElements::new(runtime::Pattern::from(vec![PatternItem::Field(*field)])),
+            SkeletonQuality(closest_distance),
+        );
     }
 
     let Some(matched) = matched else {

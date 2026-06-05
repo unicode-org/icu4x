@@ -9,7 +9,7 @@ ICU_CAPI := $(shell cargo metadata --format-version 1 | jq '.packages[] | select
 HEADERS := ${ICU_CAPI}/bindings/js
 ALL_HEADERS := $(wildcard ${HEADERS}/*)
 
-LLVM_COMPATIBLE_NIGHTLY ?= "nightly-2025-02-17"
+LLVM_COMPATIBLE_NIGHTLY = "nightly-2025-07-01"
 
 $(ALL_HEADERS):
 

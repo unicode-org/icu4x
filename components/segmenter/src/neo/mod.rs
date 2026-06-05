@@ -240,10 +240,10 @@ impl<'s, Y: RuleBreakType, T: Tailoring, C: ComplexHandler<Y>> Iterator
                 }
             }
 
-            if let Some(lookahead) = lookahead {
-                if let Some(p) = self.lookahead_positions.get_mut(usize::from(lookahead)) {
-                    *p = Some(iter.clone())
-                }
+            if let Some(lookahead) = lookahead
+                && let Some(p) = self.lookahead_positions.get_mut(usize::from(lookahead))
+            {
+                *p = Some(iter.clone())
             }
         };
 

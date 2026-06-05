@@ -438,13 +438,12 @@ impl FormatTimeZone for GenericLocationFormat {
             data_payloads.mz_periods,
             input.zone_offset,
             input.zone_name_timestamp,
-        ) {
-            if let Some((os, _)) = mz_periods.get(time_zone_id, timestamp) {
-                if offset != os.standard && Some(offset) != os.daylight {
-                    return Ok(Err(FormatTimeZoneError::Fallback));
-                };
-            }
-        }
+        ) && let Some((os, _)) = mz_periods.get(time_zone_id, timestamp)
+            && offset != os.standard
+            && Some(offset) != os.daylight
+        {
+            return Ok(Err(FormatTimeZoneError::Fallback));
+        };
 
         let Some(location) = locations
             .locations

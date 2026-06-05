@@ -45,7 +45,7 @@ pub struct CurrencyPatternConfigULE([u8; 3]);
 //  6. CurrencyPatternConfigULE byte equality is semantic equality.
 unsafe impl ULE for CurrencyPatternConfigULE {
     fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
-        if bytes.len() % 3 != 0 {
+        if !bytes.len().is_multiple_of(3) {
             return Err(UleError::length::<Self>(bytes.len()));
         }
 

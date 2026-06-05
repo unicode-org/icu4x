@@ -373,11 +373,11 @@ impl CanonicalDecompositionBorrowed<'_> {
                     // i.e. logical len isn't 2
                     break;
                 }
-                if let Some(first) = tables.scalars16.get(offset) {
-                    if let Some(second) = tables.scalars16.get(offset + 1) {
-                        // Two BMP starters
-                        return Decomposed::Expansion(char_from_u16(first), char_from_u16(second));
-                    }
+                if let Some(first) = tables.scalars16.get(offset)
+                    && let Some(second) = tables.scalars16.get(offset + 1)
+                {
+                    // Two BMP starters
+                    return Decomposed::Expansion(char_from_u16(first), char_from_u16(second));
                 }
                 // GIGO case
                 debug_assert!(false);
@@ -420,10 +420,10 @@ impl CanonicalDecompositionBorrowed<'_> {
         // Decomposition into two non-BMP characters
         // Low is offset into a table plus one to keep it non-zero.
         let offset = usize::from(trail_or_complex - 1);
-        if let Some(first) = non_recursive.scalars24.get(offset) {
-            if let Some(second) = non_recursive.scalars24.get(offset + 1) {
-                return Decomposed::Expansion(first, second);
-            }
+        if let Some(first) = non_recursive.scalars24.get(offset)
+            && let Some(second) = non_recursive.scalars24.get(offset + 1)
+        {
+            return Decomposed::Expansion(first, second);
         }
         // GIGO case
         debug_assert!(false);

@@ -464,10 +464,10 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 let extended_year =
                     calendar.extended_year_from_era_year_unchecked(era, era_year)?;
                 let year = calendar.year_info_from_extended(extended_year);
-                if let Some(extended_year) = fields.extended_year {
-                    if calendar.extended_from_year_info(year) != extended_year {
-                        return Err(DateFromFieldsError::InconsistentYear);
-                    }
+                if let Some(extended_year) = fields.extended_year
+                    && calendar.extended_from_year_info(year) != extended_year
+                {
+                    return Err(DateFromFieldsError::InconsistentYear);
                 }
                 year
             }
@@ -478,10 +478,10 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         let month = match (fields.month_code, fields.month) {
             (_, Some(month)) => {
                 let computed_month = calendar.ordinal_from_month(year, month, overflow)?;
-                if let Some(ordinal_month) = fields.ordinal_month {
-                    if computed_month != ordinal_month {
-                        return Err(DateFromFieldsError::InconsistentMonth);
-                    }
+                if let Some(ordinal_month) = fields.ordinal_month
+                    && computed_month != ordinal_month
+                {
+                    return Err(DateFromFieldsError::InconsistentMonth);
                 }
                 computed_month
             }
@@ -491,10 +491,10 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                     None => Month::try_from_utf8(month_code)?,
                 };
                 let computed_month = calendar.ordinal_from_month(year, validated, overflow)?;
-                if let Some(ordinal_month) = fields.ordinal_month {
-                    if computed_month != ordinal_month {
-                        return Err(DateFromFieldsError::InconsistentMonth);
-                    }
+                if let Some(ordinal_month) = fields.ordinal_month
+                    && computed_month != ordinal_month
+                {
+                    return Err(DateFromFieldsError::InconsistentMonth);
                 }
                 computed_month
             }

@@ -18,9 +18,9 @@
 #[macro_export]
 macro_rules! __impl_segmenter_break_line_override_v2 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl $provider {
             pub const SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_CJ: &<icu::segmenter::provider::SegmenterBreakLineOverrideV2 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct = &icu::segmenter::provider::RuleBreakDataOverride {
                 property_table_override: unsafe {
@@ -54,7 +54,7 @@ macro_rules! __impl_segmenter_break_line_override_v2 {
             };
             const DATA_SEGMENTER_BREAK_LINE_OVERRIDE_V2: icu_provider::baked::zerotrie::DataRef<icu::segmenter::provider::SegmenterBreakLineOverrideV2> = unsafe { icu_provider::baked::zerotrie::DataRef::from_trie_and_refs_unchecked(icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"und\x1E\xC3cln\x02\x0Bj\x80oose\x81_cj\x82ormal\x83_cj\x84" }, &[Self::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_CJ, Self::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_LOOSE, Self::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_LOOSE_CJ, Self::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_NORMAL, Self::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_NORMAL_CJ]) };
         }
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl icu_provider::DataProvider<icu::segmenter::provider::SegmenterBreakLineOverrideV2> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::segmenter::provider::SegmenterBreakLineOverrideV2>, icu_provider::DataError> {
                 let mut req = req;
@@ -67,7 +67,7 @@ macro_rules! __impl_segmenter_break_line_override_v2 {
     };
     ($ provider : ty , ITER) => {
         __impl_segmenter_break_line_override_v2!($provider);
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl icu_provider::IterableDataProvider<icu::segmenter::provider::SegmenterBreakLineOverrideV2> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider::baked::DataStore::iter(&Self::DATA_SEGMENTER_BREAK_LINE_OVERRIDE_V2).collect())

@@ -199,13 +199,13 @@ impl Transform {
         let mut tlang = None;
         let mut tfields = LiteMap::new();
 
-        if let Some(subtag) = iter.peek() {
-            if subtags::Language::try_from_utf8(subtag).is_ok() {
-                tlang = Some(parse_language_identifier_from_iter(
-                    iter,
-                    ParserMode::Partial,
-                )?);
-            }
+        if let Some(subtag) = iter.peek()
+            && subtags::Language::try_from_utf8(subtag).is_ok()
+        {
+            tlang = Some(parse_language_identifier_from_iter(
+                iter,
+                ParserMode::Partial,
+            )?);
         }
 
         let mut current_tkey = None;

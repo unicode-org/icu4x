@@ -142,18 +142,17 @@ impl<A: AsCalendar> Date<A> {
     ) -> Result<IsoDateInner, ParseError> {
         let date_record = ixdtf_record.date.ok_or(ParseError::MissingFields)?;
 
-        if let Some(ixdtf_calendar) = ixdtf_record.calendar {
-            if let Some(expected_calendar) = calendar {
-                if ixdtf_calendar != expected_calendar.as_str().as_bytes() {
-                    return Err(ParseError::MismatchedCalendar(
-                        expected_calendar,
-                        icu_locale_core::extensions::unicode::Value::try_from_utf8(ixdtf_calendar)
-                            .ok()
-                            .and_then(|v| CalendarAlgorithm::try_from(&v).ok())
-                            .ok_or(ParseError::UnknownCalendar)?,
-                    ));
-                }
-            }
+        if let Some(ixdtf_calendar) = ixdtf_record.calendar
+            && let Some(expected_calendar) = calendar
+            && ixdtf_calendar != expected_calendar.as_str().as_bytes()
+        {
+            return Err(ParseError::MismatchedCalendar(
+                expected_calendar,
+                icu_locale_core::extensions::unicode::Value::try_from_utf8(ixdtf_calendar)
+                    .ok()
+                    .and_then(|v| CalendarAlgorithm::try_from(&v).ok())
+                    .ok_or(ParseError::UnknownCalendar)?,
+            ));
         }
 
         // `date_record` is in `VALID_RD_RANGE` by `ixdtf` invariants

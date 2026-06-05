@@ -225,20 +225,20 @@ impl<'data> CollationData<'data> {
         })
     }
     pub(crate) fn get_ce32s(&'data self, index: usize, len: usize) -> &'data ZeroSlice<u32> {
-        if len > 0 {
-            if let Some(slice) = self.ce32s.get_subslice(index..index + len) {
-                return slice;
-            }
+        if len > 0
+            && let Some(slice) = self.ce32s.get_subslice(index..index + len)
+        {
+            return slice;
         }
         // GIGO case
         debug_assert!(false);
         SINGLE_U32
     }
     pub(crate) fn get_ces(&'data self, index: usize, len: usize) -> &'data ZeroSlice<u64> {
-        if len > 0 {
-            if let Some(slice) = self.ces.get_subslice(index..index + len) {
-                return slice;
-            }
+        if len > 0
+            && let Some(slice) = self.ces.get_subslice(index..index + len)
+        {
+            return slice;
         }
         // GIGO case
         debug_assert!(false);

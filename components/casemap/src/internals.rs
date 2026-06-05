@@ -132,10 +132,10 @@ impl<'data> CaseMap<'data> {
         } else {
             let idx = data.exception_index();
             let exception = self.exceptions.get(idx);
-            if data.is_relevant_to(kind) {
-                if let Some(simple) = exception.get_simple_case_slot_for(c) {
-                    return simple;
-                }
+            if data.is_relevant_to(kind)
+                && let Some(simple) = exception.get_simple_case_slot_for(c)
+            {
+                return simple;
             }
             exception.slot_char_for_kind(kind).unwrap_or(c)
         }
@@ -265,19 +265,16 @@ impl<'data> CaseMap<'data> {
                     // the now-unaccented adjacent vowels from a digraph/diphthong.
                     // Use a precomposed dialytika if the accent was precomposed, and a combining dialytika
                     // if the accent was combining, so as to map NFD to NFD and NFC to NFC.
-                    if !diacritics.dialytika && (vowel == GreekVowel::Ι || vowel == GreekVowel::Υ)
+                    if !diacritics.dialytika
+                        && (vowel == GreekVowel::Ι || vowel == GreekVowel::Υ)
+                        && let Some(preceding_vowel) = context.preceding_greek_vowel_diacritics()
+                        && !preceding_vowel.combining.dialytika
+                        && !preceding_vowel.precomposed.dialytika
                     {
-                        if let Some(preceding_vowel) = context.preceding_greek_vowel_diacritics() {
-                            if !preceding_vowel.combining.dialytika
-                                && !preceding_vowel.precomposed.dialytika
-                            {
-                                if preceding_vowel.combining.accented {
-                                    diacritics.dialytika = true;
-                                } else {
-                                    precomposed_diacritics.dialytika =
-                                        preceding_vowel.precomposed.accented;
-                                }
-                            }
+                        if preceding_vowel.combining.accented {
+                            diacritics.dialytika = true;
+                        } else {
+                            precomposed_diacritics.dialytika = preceding_vowel.precomposed.accented;
                         }
                     }
                     // Write the base of the uppercased combining character sequence.
@@ -355,32 +352,32 @@ impl<'data> CaseMap<'data> {
         } else {
             let idx = data.exception_index();
             let exception = self.exceptions.get(idx);
-            if exception.bits.has_conditional_special() {
-                if let Some(special) = match kind {
+            if exception.bits.has_conditional_special()
+                && let Some(special) = match kind {
                     MappingKind::Lower => {
                         self.full_lower_special_case::<IS_TITLE_CONTEXT>(c, context, locale)
                     }
                     MappingKind::Fold => self.full_fold_special_case(c, context, locale),
                     MappingKind::Upper | MappingKind::Title => self
                         .full_upper_or_title_special_case::<IS_TITLE_CONTEXT>(c, context, locale),
-                } {
-                    return special.write_to(sink);
                 }
+            {
+                return special.write_to(sink);
             }
-            if let Some(mapped_string) = exception.get_fullmappings_slot_for_kind(kind) {
-                if !mapped_string.is_empty() {
-                    return sink.write_str(mapped_string);
-                }
+            if let Some(mapped_string) = exception.get_fullmappings_slot_for_kind(kind)
+                && !mapped_string.is_empty()
+            {
+                return sink.write_str(mapped_string);
             }
 
             if kind == MappingKind::Fold && exception.bits.no_simple_case_folding() {
                 return sink.write_char(c);
             }
 
-            if data.is_relevant_to(kind) {
-                if let Some(simple) = exception.get_simple_case_slot_for(c) {
-                    return sink.write_char(simple);
-                }
+            if data.is_relevant_to(kind)
+                && let Some(simple) = exception.get_simple_case_slot_for(c)
+            {
+                return sink.write_char(simple);
             }
 
             if let Some(slot_char) = exception.slot_char_for_kind(kind) {

@@ -14,9 +14,7 @@ struct TestContentIterator<LineIterator>(LineIterator);
 
 struct TestData {
     original_line: String,
-    utf8_vec: Vec<char>,
-    utf16_vec: Vec<u16>,
-    latin1_vec: Vec<u8>,
+    chars: Vec<char>,
     break_result_utf8: Vec<usize>,
     break_result_utf16: Vec<usize>,
     break_result_latin1: Option<Vec<usize>>,
@@ -49,50 +47,43 @@ where
             let mut r = line.split('#');
             let r = r.next();
             let v = r.unwrap().split_ascii_whitespace();
-            let mut char_break: Vec<_> = Vec::new();
-            let mut u8_break: Vec<_> = Vec::new();
-            let mut u16_break: Vec<_> = Vec::new();
-            let mut char_vec: Vec<_> = Vec::new();
-            let mut u8_vec: Vec<_> = Vec::new();
-            let mut u16_vec: Vec<_> = Vec::new();
+            let mut chars = Vec::new();
+            let mut break_result_utf8 = Vec::new();
+            let mut break_result_utf16 = Vec::new();
+            let mut break_result_latin1 = Vec::new();
 
-            let mut char_len = 0;
-            let mut u8_len = 0;
+            let mut utf8_len = 0;
             let mut u16_len = 0;
 
             let mut ascii_only = true;
             for (count, item) in v.enumerate() {
                 if count % 2 == 1 {
                     let ch = char::from_u32(u32::from_str_radix(item, 16).unwrap()).unwrap();
-                    char_vec.push(ch);
-                    char_len += ch.len_utf8();
+                    chars.push(ch);
+
+                    utf8_len += ch.len_utf8();
+                    u16_len += 1 + (ch as u32 > 0xFFFF) as usize;
 
                     if ch as u32 >= 0x100 {
                         ascii_only = false;
-                    } else {
-                        u8_vec.push(ch as u8);
-                        u8_len += 1;
                     }
-
-                    let mut u16_buf = [0; 2];
-                    let ch_u16 = ch.encode_utf16(&mut u16_buf);
-                    u16_vec.extend_from_slice(ch_u16);
-                    u16_len += ch_u16.len();
                 } else if item != "\u{00d7}" {
                     assert_eq!(item, "\u{00f7}");
-                    char_break.push(char_len);
-                    u8_break.push(u8_len);
-                    u16_break.push(u16_len);
+                    break_result_utf8.push(utf8_len);
+                    break_result_utf16.push(u16_len);
+                    break_result_latin1.push(chars.len());
                 }
             }
             return Some(Self::Item {
                 original_line: line,
-                utf8_vec: char_vec,
-                utf16_vec: u16_vec,
-                latin1_vec: u8_vec,
-                break_result_utf8: char_break,
-                break_result_utf16: u16_break,
-                break_result_latin1: if ascii_only { Some(u8_break) } else { None },
+                chars,
+                break_result_utf8,
+                break_result_utf16,
+                break_result_latin1: if ascii_only {
+                    Some(break_result_latin1)
+                } else {
+                    None
+                },
             });
         }
     }
@@ -106,7 +97,7 @@ fn line_break_test(file: &'static str) {
     );
     let segmenter = LineSegmenter::new_for_non_complex_scripts(Default::default());
     for (i, mut test) in test_iter.enumerate() {
-        let s: String = test.utf8_vec.into_iter().collect();
+        let s: String = test.chars.into_iter().collect();
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
         // NOTE: For consistency with ICU4C and other Segmenters, we return a breakpoint at
@@ -156,8 +147,9 @@ fn line_break_test(file: &'static str) {
             panic!()
         }
 
-        let iter = segmenter.segment_utf16(&test.utf16_vec);
-        let result: Vec<usize> = iter.collect();
+        let result: Vec<usize> = segmenter
+            .segment_utf16(&s.encode_utf16().collect::<Vec<u16>>())
+            .collect();
         if test.break_result_utf16.first() != Some(&0) {
             test.break_result_utf16.insert(0, 0);
         }
@@ -169,11 +161,12 @@ fn line_break_test(file: &'static str) {
 
         // Test data is Latin-1 character only, it can run for Latin-1 segmenter test.
         if let Some(mut break_result_latin1) = test.break_result_latin1 {
-            let iter = segmenter.segment_latin1(&test.latin1_vec);
+            let result: Vec<usize> = segmenter
+                .segment_latin1(s.chars().map(|c| c as u8).collect::<Vec<_>>().as_slice())
+                .collect();
             if break_result_latin1.first() != Some(&0) {
                 break_result_latin1.insert(0, 0);
             }
-            let result: Vec<usize> = iter.collect();
             assert_eq!(
                 result, break_result_latin1,
                 "Latin1: {}",
@@ -202,7 +195,7 @@ fn word_break_test(file: &'static str) {
     let test_iter = TestContentIterator::new(file);
     let segmenter = WordSegmenter::new_for_non_complex_scripts(Default::default());
     for (i, test) in test_iter.enumerate() {
-        let s: String = test.utf8_vec.into_iter().collect();
+        let s: String = test.chars.into_iter().collect();
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
         if result != test.break_result_utf8 {
@@ -241,8 +234,9 @@ fn word_break_test(file: &'static str) {
             panic!()
         }
 
-        let iter = segmenter.segment_utf16(&test.utf16_vec);
-        let result: Vec<usize> = iter.collect();
+        let result: Vec<usize> = segmenter
+            .segment_utf16(&s.encode_utf16().collect::<Vec<u16>>())
+            .collect();
         assert_eq!(
             result, test.break_result_utf16,
             "UTF16: {}",
@@ -251,8 +245,9 @@ fn word_break_test(file: &'static str) {
 
         // Test data is Latin-1 character only, it can run for Latin-1 segmenter test.
         if let Some(break_result_latin1) = test.break_result_latin1 {
-            let iter = segmenter.segment_latin1(&test.latin1_vec);
-            let result: Vec<usize> = iter.collect();
+            let result: Vec<usize> = segmenter
+                .segment_latin1(s.chars().map(|c| c as u8).collect::<Vec<_>>().as_slice())
+                .collect();
             assert_eq!(
                 result, break_result_latin1,
                 "Latin1: {}",
@@ -281,7 +276,7 @@ fn grapheme_break_test(file: &'static str) {
     let test_iter = TestContentIterator::new(file);
     let segmenter = GraphemeClusterSegmenter::new();
     for (i, test) in test_iter.enumerate() {
-        let s: String = test.utf8_vec.into_iter().collect();
+        let s: String = test.chars.into_iter().collect();
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
         if result != test.break_result_utf8 {
@@ -320,8 +315,9 @@ fn grapheme_break_test(file: &'static str) {
             panic!()
         }
 
-        let iter = segmenter.segment_utf16(&test.utf16_vec);
-        let result: Vec<usize> = iter.collect();
+        let result: Vec<usize> = segmenter
+            .segment_utf16(&s.encode_utf16().collect::<Vec<u16>>())
+            .collect();
         assert_eq!(
             result, test.break_result_utf16,
             "UTF16: {}",
@@ -330,8 +326,9 @@ fn grapheme_break_test(file: &'static str) {
 
         // Test data is Latin-1 character only, it can run for Latin-1 segmenter test.
         if let Some(break_result_latin1) = test.break_result_latin1 {
-            let iter = segmenter.segment_latin1(&test.latin1_vec);
-            let result: Vec<usize> = iter.collect();
+            let result: Vec<usize> = segmenter
+                .segment_latin1(s.chars().map(|c| c as u8).collect::<Vec<_>>().as_slice())
+                .collect();
             assert_eq!(
                 result, break_result_latin1,
                 "Latin1: {}",
@@ -360,7 +357,7 @@ fn sentence_break_test(file: &'static str) {
     let test_iter = TestContentIterator::new(file);
     let segmenter = SentenceSegmenter::new(Default::default());
     for (i, test) in test_iter.enumerate() {
-        let s: String = test.utf8_vec.into_iter().collect();
+        let s: String = test.chars.into_iter().collect();
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
         if result != test.break_result_utf8 {
@@ -399,8 +396,9 @@ fn sentence_break_test(file: &'static str) {
             panic!()
         }
 
-        let iter = segmenter.segment_utf16(&test.utf16_vec);
-        let result: Vec<usize> = iter.collect();
+        let result: Vec<usize> = segmenter
+            .segment_utf16(&s.encode_utf16().collect::<Vec<u16>>())
+            .collect();
         assert_eq!(
             result, test.break_result_utf16,
             "UTF16: {}",
@@ -409,8 +407,9 @@ fn sentence_break_test(file: &'static str) {
 
         // Test data is Latin-1 character only, it can run for Latin-1 segmenter test.
         if let Some(break_result_latin1) = test.break_result_latin1 {
-            let iter = segmenter.segment_latin1(&test.latin1_vec);
-            let result: Vec<usize> = iter.collect();
+            let result: Vec<usize> = segmenter
+                .segment_latin1(s.chars().map(|c| c as u8).collect::<Vec<_>>().as_slice())
+                .collect();
             assert_eq!(
                 result, break_result_latin1,
                 "Latin1: {}",

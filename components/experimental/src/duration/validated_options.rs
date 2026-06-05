@@ -207,10 +207,10 @@ impl ValidatedDurationFormatterOptions {
 
         // section 1.2.1
         // 27. Set durationFormat.[[FractionalDigits]] to ? GetNumberOption(options, "fractionalDigits", 0, 9, undefined).
-        if let FractionalDigits::Fixed(i) = builder.fractional_digits {
-            if i > 9 {
-                return Err(DurationFormatterOptionsError::FractionalDigitsOutOfRange);
-            }
+        if let FractionalDigits::Fixed(i) = builder.fractional_digits
+            && i > 9
+        {
+            return Err(DurationFormatterOptionsError::FractionalDigitsOutOfRange);
         }
 
         Ok(builder.try_into().unwrap())
