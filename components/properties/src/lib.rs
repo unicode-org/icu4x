@@ -86,6 +86,8 @@ pub use names::{
 };
 mod runtime;
 
+#[rustfmt::skip]
+mod enum_values;
 // NOTE: The Pernosco debugger has special knowledge
 // of the `CanonicalCombiningClass` struct inside the `props`
 // module. Please do not change the crate-module-qualified
@@ -93,8 +95,6 @@ mod runtime;
 pub mod props;
 pub mod provider;
 pub mod script;
-#[rustfmt::skip]
-mod enum_values;
 
 mod bidi;
 mod trievalue;
