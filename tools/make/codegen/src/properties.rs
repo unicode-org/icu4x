@@ -26,26 +26,34 @@ impl Prop {
         }
     }
 
-    fn variants(&self) -> impl Iterator<Item = (u32, (&'static str, &'static str))> {
+    fn variants(
+        &self,
+    ) -> impl Iterator<Item = (u32, (&'static str, &'static str, &[&'static str]))> {
         VARIANTS[self.short_name]
             .iter()
-            .map(|(&d, &(short, long, _))| (d, (short, long)))
+            .map(|(&d, &(short, long, ref aliases, _))| (d, (short, long, aliases.as_slice())))
     }
 
     fn is_icu4c_only_value(&self, discriminant: u32) -> bool {
-        VARIANTS[self.short_name][&discriminant].2
+        VARIANTS[self.short_name][&discriminant].3
     }
 
     fn is_open(&self) -> bool {
         !matches!(self.name, "General_Category")
     }
 
-    fn transform_long(&self, long_name: &str) -> String {
-        long_name.replace('_', "")
+    fn transform_ident(&self, long_name: &str) -> String {
+        // This produces canonical Rust enum variant identifiers. It does not lead to collisions
+        // as UAX#44 guarantees uniqueness under loose matching, which ignores case and underscores.
+        long_name
+            .replace('_', "")
+            .char_indices()
+            .map(|(i, c)| if i == 0 { c.to_ascii_uppercase() } else { c })
+            .collect()
     }
 
-    fn transform_long_ffi(&self, long_name: &str) -> String {
-        self.transform_long(long_name)
+    fn transform_ident_ffi(&self, long_name: &str) -> String {
+        self.transform_ident(long_name)
             // Unfortunately we're stuck with these non-canonical names on FFI
             .replace("Ethiopic", "Ethiopian")
             .replace("ArabicNastaliq", "Nastaliq")
@@ -83,7 +91,7 @@ impl Prop {
 }
 
 #[allow(clippy::type_complexity)]
-static VARIANTS: LazyLock<BTreeMap<&str, BTreeMap<u32, (&str, &str, bool)>>> =
+static VARIANTS: LazyLock<BTreeMap<&str, BTreeMap<u32, (&str, &str, Vec<&str>, bool)>>> =
     LazyLock::new(|| {
         let mut discriminants = BTreeMap::<_, BTreeMap<_, _>>::new();
         let mut names = BTreeMap::<_, BTreeMap<_, _>>::new();
@@ -104,13 +112,17 @@ static VARIANTS: LazyLock<BTreeMap<&str, BTreeMap<u32, (&str, &str, bool)>>> =
                 .map(|d| d.parse::<u32>().unwrap());
             let short_name = parts.next().unwrap();
             let long_name = parts.next().unwrap();
-            names.entry(prop).or_default().insert(short_name, long_name);
+            let aliases = parts.collect::<Vec<_>>();
             if let Some(discriminant) = discriminant {
-                discriminants
-                    .entry(prop)
-                    .or_default()
-                    .insert(discriminant, (short_name, long_name, false));
+                discriminants.entry(prop).or_default().insert(
+                    discriminant,
+                    (short_name, long_name, aliases.clone(), false),
+                );
             }
+            names
+                .entry(prop)
+                .or_default()
+                .insert(short_name, (long_name, aliases));
         }
 
         for line in
@@ -126,20 +138,21 @@ static VARIANTS: LazyLock<BTreeMap<&str, BTreeMap<u32, (&str, &str, bool)>>> =
             let short_name = parts.next().unwrap();
             let discriminant = parts.next().unwrap().parse::<u32>().unwrap();
             let mut is_icu4c_only_value = false;
-            let long_name = names[prop].get(short_name).copied().unwrap_or_else(|| {
+            let (long_name, aliases) = names[prop].get(short_name).cloned().unwrap_or_else(|| {
                 is_icu4c_only_value = true;
-                parts.next().expect(short_name)
+                let long_name = parts.next().expect(short_name);
+                (long_name, Vec::new())
             });
-            discriminants
-                .entry(prop)
-                .or_default()
-                .insert(discriminant, (short_name, long_name, is_icu4c_only_value));
+            discriminants.entry(prop).or_default().insert(
+                discriminant,
+                (short_name, long_name, aliases, is_icu4c_only_value),
+            );
         }
 
         discriminants
             .get_mut("sc")
             .unwrap()
-            .insert(254, ("Chisoi", "Chisoi", true));
+            .insert(254, ("Chisoi", "Chisoi", Vec::new(), true));
 
         discriminants
     });
