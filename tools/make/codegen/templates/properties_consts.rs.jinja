@@ -47,7 +47,6 @@ impl {{ prop.name.to_upper_camel_case() }} {
 #[allow(missing_docs)] // These variants don't need individual documentation.
 pub enum {{ prop.name.to_upper_camel_case() }} {
     {%- for (discriminant, (short_name, long_name, _)) in prop.variants() %}
-    /// `{{short_name}}`
     {{prop.transform_ident(long_name)}} = {{discriminant}},
     {%- endfor %}
 }

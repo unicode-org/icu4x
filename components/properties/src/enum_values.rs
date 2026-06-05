@@ -517,65 +517,35 @@ impl EastAsianWidth {
 #[repr(u8)]
 #[allow(missing_docs)] // These variants don't need individual documentation.
 pub enum GeneralCategory {
-    /// `Cn`
     Unassigned = 0,
-    /// `Lu`
     UppercaseLetter = 1,
-    /// `Ll`
     LowercaseLetter = 2,
-    /// `Lt`
     TitlecaseLetter = 3,
-    /// `Lm`
     ModifierLetter = 4,
-    /// `Lo`
     OtherLetter = 5,
-    /// `Mn`
     NonspacingMark = 6,
-    /// `Me`
     EnclosingMark = 7,
-    /// `Mc`
     SpacingMark = 8,
-    /// `Nd`
     DecimalNumber = 9,
-    /// `Nl`
     LetterNumber = 10,
-    /// `No`
     OtherNumber = 11,
-    /// `Zs`
     SpaceSeparator = 12,
-    /// `Zl`
     LineSeparator = 13,
-    /// `Zp`
     ParagraphSeparator = 14,
-    /// `Cc`
     Control = 15,
-    /// `Cf`
     Format = 16,
-    /// `Co`
     PrivateUse = 17,
-    /// `Cs`
     Surrogate = 18,
-    /// `Pd`
     DashPunctuation = 19,
-    /// `Ps`
     OpenPunctuation = 20,
-    /// `Pe`
     ClosePunctuation = 21,
-    /// `Pc`
     ConnectorPunctuation = 22,
-    /// `Po`
     OtherPunctuation = 23,
-    /// `Sm`
     MathSymbol = 24,
-    /// `Sc`
     CurrencySymbol = 25,
-    /// `Sk`
     ModifierSymbol = 26,
-    /// `So`
     OtherSymbol = 27,
-    /// `Pi`
     InitialPunctuation = 28,
-    /// `Pf`
     FinalPunctuation = 29,
 }
 
