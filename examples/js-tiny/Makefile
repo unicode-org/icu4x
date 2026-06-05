@@ -9,7 +9,7 @@ ICU_CAPI := $(shell cargo metadata --format-version 1 | jq '.packages[] | select
 HEADERS := ${ICU_CAPI}/bindings/js
 ALL_HEADERS := $(wildcard ${HEADERS}/*)
 
-LLVM_COMPATIBLE_NIGHTLY = "nightly-2026-01-01"
+LLVM_COMPATIBLE_NIGHTLY = "nightly-2025-07-01"
 
 $(ALL_HEADERS):
 
@@ -45,9 +45,9 @@ target/wasm32-unknown-unknown/release/icu_capi.wasm: FORCE
 	# -Z build-std-features=panic_immediate_abort: older version of -Cpanic=immediate-abort,
 	#   with the side-effect of disabling other optional std features that cause bloat. See:
 	#   <https://github.com/rust-lang/rust/issues/147257>
-	RUSTFLAGS="-Zunstable-options -Cpanic=immediate-abort -Copt-level=s -C link-arg=-zstack-size=${WASM_STACK_SIZE} -Clinker-plugin-lto -Ccodegen-units=1 -C linker=${BASEDIR}/ld.py -C linker-flavor=wasm-ld -Clto -Cembed-bitcode -Zwasm-c-abi=spec" \
+	RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-arg=-zstack-size=${WASM_STACK_SIZE} -Clinker-plugin-lto -Ccodegen-units=1 -C linker=${BASEDIR}/ld.py -C linker-flavor=wasm-ld -Clto -Cembed-bitcode -Zwasm-c-abi=spec" \
 	cargo +${LLVM_COMPATIBLE_NIGHTLY} rustc \
-		-Z build-std=std,panic_abort \
+		-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort \
 		--target wasm32-unknown-unknown \
 		-p icu_capi \
 		--crate-type cdylib \
