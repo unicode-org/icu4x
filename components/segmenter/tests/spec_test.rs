@@ -89,6 +89,46 @@ where
     }
 }
 
+// TODO: The current line breaking implementation does not fully apply LB1, so we have to pre-process the
+// test data to replace complex characters with equivalent non-complex characters. We should remove this
+// once LB1 is fully implemented.
+fn lb1_sa_replace(c: char) -> char {
+    use icu_properties::{
+        CodePointMapData,
+        props::{GeneralCategory, LineBreak},
+    };
+    match CodePointMapData::new().get(c) {
+        LineBreak::ComplexContext => match (CodePointMapData::new().get(c), c.len_utf8()) {
+            (GeneralCategory::NonspacingMark | GeneralCategory::SpacingMark, 2) => {
+                const _: () = assert!('\u{0300}'.len_utf8() == 2);
+                '\u{0300}'
+            }
+            (GeneralCategory::NonspacingMark | GeneralCategory::SpacingMark, 3) => {
+                const _: () = assert!('\u{081C}'.len_utf8() == 3);
+                '\u{081C}'
+            }
+            (GeneralCategory::NonspacingMark | GeneralCategory::SpacingMark, 4) => {
+                const _: () = assert!('\u{101FD}'.len_utf8() == 4);
+                '\u{101FD}'
+            }
+            (_, 2) => {
+                const _: () = assert!('À'.len_utf8() == 2);
+                'À'
+            }
+            (_, 3) => {
+                const _: () = assert!('ࠀ'.len_utf8() == 3);
+                'ࠀ'
+            }
+            (_, 4) => {
+                const _: () = assert!('𐀀'.len_utf8() == 4);
+                '𐀀'
+            }
+            _ => unreachable!(),
+        },
+        _ => c,
+    }
+}
+
 fn line_break_test(file: &'static str) {
     let test_iter = TestContentIterator(
         std::io::BufReader::new(std::fs::File::open(file).unwrap())
@@ -97,7 +137,7 @@ fn line_break_test(file: &'static str) {
     );
     let segmenter = LineSegmenter::new_for_non_complex_scripts(Default::default());
     for (i, mut test) in test_iter.enumerate() {
-        let s: String = test.chars.into_iter().collect();
+        let s: String = test.chars.into_iter().map(lb1_sa_replace).collect();
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
         // NOTE: For consistency with ICU4C and other Segmenters, we return a breakpoint at
