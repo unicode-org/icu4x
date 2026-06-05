@@ -22,9 +22,9 @@ ALL_RUST_SRC = $(wildcard ../../../components/**/*.rs) $(wildcard ../../../provi
 $(ALL_HEADERS):
 
 GCC := gcc
-CLANG := clang-19
-LLD := lld-19
-LLVM_COMPATIBLE_NIGHTLY = "nightly-2025-02-17"
+CLANG := clang-21
+LLD := lld-21
+LLVM_COMPATIBLE_NIGHTLY = "nightly-2026-01-01"
 
 
 target/release/icu4x-datagen: $(ALL_RUST_SRC)
