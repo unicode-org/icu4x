@@ -1017,88 +1017,6 @@ impl DataProvider<SegmenterBreakGraphemeClusterV2> for SourceDataProvider {
 
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 #[cfg(feature = "unstable")]
-impl<'a> ParsedNfa<'a> {
-    fn build(&self, status_lookup: fn(&str) -> u8) -> SegmenterStateMachine<'static> {
-        use icu::collections::codepointinvlist::CodePointInversionListBuilder;
-        use icu::collections::codepointtrie::TrieType;
-        use icu_codepointtrie_builder::CodePointTrieBuilder;
-
-        let ParsedNfa {
-            classes,
-            states,
-            transitions,
-            class_lookup,
-            state_lookup,
-            lookahead_lookup,
-            ..
-        } = self;
-
-        let mut builder = CodePointTrieBuilder::new(0, 0, TrieType::Fast);
-        let mut missing_codepoints = CodePointInversionListBuilder::new();
-        missing_codepoints.add_set(&CodePointInversionList::all());
-        for (&class, set) in classes {
-            for range in set.iter_ranges() {
-                missing_codepoints.remove_range32(range.clone());
-                builder.set_range_value(range.clone(), class_lookup[class]);
-            }
-        }
-        let missing_codepoints = missing_codepoints.build();
-        assert!(missing_codepoints.is_empty(), "{missing_codepoints:?}");
-        let classes = builder.build();
-
-        let states = states
-            .iter()
-            .map(|(&state, &(accepting, lookahead, status))| {
-                let status = status_lookup(status);
-                // This bound comes from Acceptance::to_unaligned
-                assert!(status < 0b111);
-
-                let acceptance = match accepting {
-                    "Yes" => Acceptance::Accept(status),
-                    "No" => Acceptance::Continue,
-                    l => Acceptance::Conditional(lookahead_lookup[l], status),
-                };
-
-                (
-                    state_lookup[state],
-                    (acceptance, lookahead.as_ref().map(|l| lookahead_lookup[l])),
-                )
-            })
-            .collect::<BTreeMap<_, _>>()
-            .into_values()
-            .collect();
-
-        let transitions = transitions
-            .iter()
-            .map(|((state, class), next_state)| {
-                (
-                    usize::from(state_lookup[state])
-                        + state_lookup.len() * usize::from(class_lookup[class]),
-                    *state_lookup.get(next_state).expect(next_state),
-                )
-            })
-            .collect::<BTreeMap<_, _>>();
-
-        let transitions = (0..=*transitions.last_key_value().unwrap().0)
-            .map(|i| {
-                transitions
-                    .get(&i)
-                    .copied()
-                    .unwrap_or(SegmenterStateMachine::TRASH_STATE)
-            })
-            .collect();
-
-        SegmenterStateMachine {
-            transitions,
-            classes,
-            states,
-            num_lookaheads: lookahead_lookup.len(),
-        }
-    }
-}
-
-#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-#[cfg(feature = "unstable")]
 struct ParsedNfa<'a> {
     classes: BTreeMap<&'a str, CodePointInversionList<'static>>,
     magic_classes: BTreeMap<String, &'a str>,
@@ -1208,6 +1126,84 @@ impl<'a> ParsedNfa<'a> {
             state_lookup,
             lookahead_lookup,
         })
+    }
+
+    fn build(&self, status_lookup: fn(&str) -> u8) -> SegmenterStateMachine<'static> {
+        use icu::collections::codepointinvlist::CodePointInversionListBuilder;
+        use icu::collections::codepointtrie::TrieType;
+        use icu_codepointtrie_builder::CodePointTrieBuilder;
+
+        let ParsedNfa {
+            classes,
+            states,
+            transitions,
+            class_lookup,
+            state_lookup,
+            lookahead_lookup,
+            ..
+        } = self;
+
+        let mut builder = CodePointTrieBuilder::new(0, 0, TrieType::Fast);
+        let mut missing_codepoints = CodePointInversionListBuilder::new();
+        missing_codepoints.add_set(&CodePointInversionList::all());
+        for (&class, set) in classes {
+            for range in set.iter_ranges() {
+                missing_codepoints.remove_range32(range.clone());
+                builder.set_range_value(range.clone(), class_lookup[class]);
+            }
+        }
+        let missing_codepoints = missing_codepoints.build();
+        assert!(missing_codepoints.is_empty(), "{missing_codepoints:?}");
+        let classes = builder.build();
+
+        let states = states
+            .iter()
+            .map(|(&state, &(accepting, lookahead, status))| {
+                let status = status_lookup(status);
+                // This bound comes from Acceptance::to_unaligned
+                assert!(status < 0b111);
+
+                let acceptance = match accepting {
+                    "Yes" => Acceptance::Accept(status),
+                    "No" => Acceptance::Continue,
+                    l => Acceptance::Conditional(lookahead_lookup[l], status),
+                };
+
+                (
+                    state_lookup[state],
+                    (acceptance, lookahead.as_ref().map(|l| lookahead_lookup[l])),
+                )
+            })
+            .collect::<BTreeMap<_, _>>()
+            .into_values()
+            .collect();
+
+        let transitions = transitions
+            .iter()
+            .map(|((state, class), next_state)| {
+                (
+                    usize::from(state_lookup[state])
+                        + state_lookup.len() * usize::from(class_lookup[class]),
+                    *state_lookup.get(next_state).expect(next_state),
+                )
+            })
+            .collect::<BTreeMap<_, _>>();
+
+        let transitions = (0..=*transitions.last_key_value().unwrap().0)
+            .map(|i| {
+                transitions
+                    .get(&i)
+                    .copied()
+                    .unwrap_or(SegmenterStateMachine::TRASH_STATE)
+            })
+            .collect();
+
+        SegmenterStateMachine {
+            transitions,
+            classes,
+            states,
+            num_lookaheads: lookahead_lookup.len(),
+        }
     }
 
     fn tailoring(
