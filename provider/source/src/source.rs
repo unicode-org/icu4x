@@ -20,6 +20,8 @@ use std::sync::OnceLock;
 use std::sync::RwLock;
 use zip::ZipArchive;
 
+pub(crate) type Cache<T> = OnceLock<Result<T, DataError>>;
+
 pub(crate) struct SerdeCache {
     pub(crate) root: AbstractFs,
     cache: FrozenMap<String, Box<dyn Any + Send + Sync>>,
@@ -528,6 +530,10 @@ pub(crate) struct UnicodeCache {
     // CPT building is a big bottleneck, so we don't want to build the same one twice.
     #[allow(dead_code)]
     pub(crate) cpt_cache: FrozenMap<&'static str, Box<dyn Any + Send + Sync>>,
+
+    #[cfg(feature = "unstable")]
+    #[allow(dead_code)]
+    pub(crate) segmenter_cache: crate::segmenter::NeoSegmenters,
 }
 
 impl UnicodeCache {
@@ -548,8 +554,10 @@ impl UnicodeCache {
             ucd_zip: Some(ucd_zip),
             unihan_zip: Some(unihan_zip),
             uts_35_zip: Some(uts_35_zip),
-            file_cache: FrozenMap::new(),
-            cpt_cache: FrozenMap::new(),
+            file_cache: Default::default(),
+            cpt_cache: Default::default(),
+            #[cfg(feature = "unstable")]
+            segmenter_cache: Default::default(),
         }
     }
 
@@ -559,8 +567,10 @@ impl UnicodeCache {
             ucd_zip: None,
             unihan_zip: None,
             uts_35_zip: None,
-            file_cache: FrozenMap::new(),
-            cpt_cache: FrozenMap::new(),
+            file_cache: Default::default(),
+            cpt_cache: Default::default(),
+            #[cfg(feature = "unstable")]
+            segmenter_cache: Default::default(),
         }
     }
 

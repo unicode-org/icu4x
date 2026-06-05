@@ -15,6 +15,8 @@ use crate::SourceDataProvider;
 #[cfg(feature = "unstable")]
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 use crate::source::AbstractFs;
+#[cfg(feature = "unstable")]
+use crate::source::Cache;
 use crate::source::{UnicodeCache, include_files};
 #[cfg(feature = "unstable")]
 use icu::collections::codepointinvlist::CodePointInversionList;
@@ -869,6 +871,7 @@ implement_override!(SegmenterBreakWordOverrideV1, "word.toml", []);
 implement_override!(SegmenterBreakSentenceOverrideV1, "sentence.toml", ["el"]);
 
 #[cfg(feature = "unstable")]
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 fn neo_sources() -> AbstractFs {
     include_files!(
         "../../data/segmenter/neo/";
@@ -896,122 +899,78 @@ fn neo_sources() -> AbstractFs {
 }
 
 #[cfg(feature = "unstable")]
-impl DataProvider<SegmenterBreakLineV2> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterBreakLineV2>, DataError> {
-        self.check_req::<SegmenterBreakLineV2>(req)?;
+type TailoredSegmenter = (
+    SegmenterStateMachine<'static>,
+    BTreeMap<String, SegmenterStateMachineOverride<'static>>,
+);
 
-        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-        return Err(DataError::custom(
-            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
-        )
-        .with_req(SegmenterBreakLineV2::INFO, req));
-
-        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-        {
-            let data = self
-                .build_segmenter(&neo_sources(), "LineBreak", |s| {
-                    if s == "Mandatory" { 1 } else { 0 }
-                })?
-                .0;
-
-            Ok(DataResponse {
-                metadata: Default::default(),
-                payload: DataPayload::from_owned(data),
-            })
-        }
-    }
+#[cfg(feature = "unstable")]
+#[derive(Debug, Default)]
+pub(crate) struct NeoSegmenters {
+    line: Cache<TailoredSegmenter>,
+    word: Cache<TailoredSegmenter>,
+    sentence: Cache<TailoredSegmenter>,
+    grapheme_cluster: Cache<TailoredSegmenter>,
 }
 
 #[cfg(feature = "unstable")]
-impl DataProvider<SegmenterBreakWordV2> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterBreakWordV2>, DataError> {
-        self.check_req::<SegmenterBreakWordV2>(req)?;
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+impl SourceDataProvider {
+    fn line_segmenter(&self) -> Result<&TailoredSegmenter, DataError> {
+        self.unicode()?
+            .segmenter_cache
+            .line
+            .get_or_init(|| {
+                self.build_segmenter(&neo_sources(), "LineBreak", |s| {
+                    if s == "Mandatory" { 1 } else { 0 }
+                })
+            })
+            .as_ref()
+            .map_err(|&e| e)
+    }
 
-        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-        return Err(DataError::custom(
-            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
-        )
-        .with_req(SegmenterBreakWordV2::INFO, req));
-
-        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-        {
-            let data = self
-                .build_segmenter(&neo_sources(), "WordBreak", |s| match s {
+    fn word_segmenter(&self) -> Result<&TailoredSegmenter, DataError> {
+        self.unicode()?
+            .segmenter_cache
+            .word
+            .get_or_init(|| {
+                self.build_segmenter(&neo_sources(), "WordBreak", |s| match s {
                     "Letter" => WordType::Letter,
                     "Number" => WordType::Number,
                     _ => WordType::None,
-                } as u8)?
-                .0;
-
-            Ok(DataResponse {
-                metadata: Default::default(),
-                payload: DataPayload::from_owned(data),
+                } as u8)
             })
-        }
+            .as_ref()
+            .map_err(|&e| e)
     }
-}
 
-#[cfg(feature = "unstable")]
-impl DataProvider<SegmenterBreakSentenceV2> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterBreakSentenceV2>, DataError> {
-        self.check_req::<SegmenterBreakSentenceV2>(req)?;
-
-        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-        return Err(DataError::custom(
-            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
-        )
-        .with_req(SegmenterBreakSentenceV2::INFO, req));
-
-        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-        {
-            let data = self
-                .build_segmenter(&neo_sources(), "SentenceBreak", |s| {
+    fn sentence_segmenter(&self) -> Result<&TailoredSegmenter, DataError> {
+        self.unicode()?
+            .segmenter_cache
+            .sentence
+            .get_or_init(|| {
+                self.build_segmenter(&neo_sources(), "SentenceBreak", |s| {
                     if s == "EOL" { 1 } else { 0 }
-                })?
-                .0;
-
-            Ok(DataResponse {
-                metadata: Default::default(),
-                payload: DataPayload::from_owned(data),
+                })
             })
-        }
+            .as_ref()
+            .map_err(|&e| e)
     }
-}
 
-#[cfg(feature = "unstable")]
-impl DataProvider<SegmenterBreakGraphemeClusterV2> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<SegmenterBreakGraphemeClusterV2>, DataError> {
-        self.check_req::<SegmenterBreakGraphemeClusterV2>(req)?;
-
-        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-        return Err(DataError::custom(
-            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
-        )
-        .with_req(SegmenterBreakGraphemeClusterV2::INFO, req));
-
-        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-        {
-            let data = self
-                .build_segmenter(&neo_sources(), "GraphemeClusterBreak", |s| match s {
+    fn grapheme_cluster_segmenter(&self) -> Result<&TailoredSegmenter, DataError> {
+        self.unicode()?
+            .segmenter_cache
+            .grapheme_cluster
+            .get_or_init(|| {
+                self.build_segmenter(&neo_sources(), "GraphemeClusterBreak", |s| match s {
                     "" => 0,
                     s => unreachable!("{s}"),
-                })?
-                .0;
-
-            Ok(DataResponse {
-                metadata: Default::default(),
-                payload: DataPayload::from_owned(data),
+                })
             })
-        }
+            .as_ref()
+            .map_err(|&e| e)
     }
-}
 
-#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-#[cfg(feature = "unstable")]
-impl SourceDataProvider {
     fn build_segmenter(
         &self,
         sources: &AbstractFs,
@@ -1259,6 +1218,85 @@ impl SourceDataProvider {
 }
 
 #[cfg(feature = "unstable")]
+impl DataProvider<SegmenterBreakLineV2> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterBreakLineV2>, DataError> {
+        self.check_req::<SegmenterBreakLineV2>(req)?;
+
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
+        )
+        .with_req(SegmenterBreakLineV2::INFO, req));
+
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(self.line_segmenter()?.0.clone()),
+        })
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl DataProvider<SegmenterBreakWordV2> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterBreakWordV2>, DataError> {
+        self.check_req::<SegmenterBreakWordV2>(req)?;
+
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
+        )
+        .with_req(SegmenterBreakWordV2::INFO, req));
+
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(self.word_segmenter()?.0.clone()),
+        })
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl DataProvider<SegmenterBreakSentenceV2> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterBreakSentenceV2>, DataError> {
+        self.check_req::<SegmenterBreakSentenceV2>(req)?;
+
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
+        )
+        .with_req(SegmenterBreakSentenceV2::INFO, req));
+
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(self.sentence_segmenter()?.0.clone()),
+        })
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl DataProvider<SegmenterBreakGraphemeClusterV2> for SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<SegmenterBreakGraphemeClusterV2>, DataError> {
+        self.check_req::<SegmenterBreakGraphemeClusterV2>(req)?;
+
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
+        )
+        .with_req(SegmenterBreakGraphemeClusterV2::INFO, req));
+
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(self.grapheme_cluster_segmenter()?.0.clone()),
+        })
+    }
+}
+
+#[cfg(feature = "unstable")]
 impl IterableDataProviderCached<SegmenterBreakLineV2> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok([Default::default()].into_iter().collect())
@@ -1301,35 +1339,37 @@ impl DataProvider<SegmenterBreakLineOverrideV2> for SourceDataProvider {
         .with_req(SegmenterBreakLineOverrideV2::INFO, req));
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-        {
-            let property_table_override = self
-                .build_segmenter(&neo_sources(), "LineBreak", |s| {
-                    if s == "Mandatory" { 1 } else { 0 }
-                })?
-                .1
-                .remove(req.id.marker_attributes.as_str())
-                .unwrap();
-
-            Ok(DataResponse {
-                metadata: Default::default(),
-                payload: DataPayload::from_owned(property_table_override),
-            })
-        }
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(
+                self.line_segmenter()?
+                    .1
+                    .get(req.id.marker_attributes.as_str())
+                    .ok_or_else(|| {
+                        DataErrorKind::IdentifierNotFound
+                            .with_req(SegmenterBreakLineOverrideV2::INFO, req)
+                    })?
+                    .clone(),
+            ),
+        })
     }
 }
 
 #[cfg(feature = "unstable")]
 impl IterableDataProviderCached<SegmenterBreakLineOverrideV2> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(neo_sources()
-            .list("LineBreakTailoring_")?
-            .map(|mut s| {
-                DataMarkerAttributes::try_from_string({
-                    s.truncate(s.len() - 4);
-                    s
-                })
-                .unwrap()
-            })
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
+        )
+        .with_marker(SegmenterBreakLineOverrideV2::INFO));
+
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        Ok(self
+            .line_segmenter()?
+            .1
+            .keys()
+            .map(|s| DataMarkerAttributes::try_from_string(s.clone()).unwrap())
             .map(DataIdentifierCow::from_marker_attributes_owned)
             .collect())
     }
@@ -1350,30 +1390,38 @@ impl DataProvider<SegmenterBreakSentenceOverrideV2> for SourceDataProvider {
         .with_req(SegmenterBreakSentenceOverrideV2::INFO, req));
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-        {
-            let property_table_override = self
-                .build_segmenter(&neo_sources(), "SentenceBreak", |s| {
-                    if s == "EOL" { 1 } else { 0 }
-                })?
-                .1
-                .remove(&req.id.locale.to_string())
-                .unwrap();
-
-            Ok(DataResponse {
-                metadata: Default::default(),
-                payload: DataPayload::from_owned(property_table_override),
-            })
-        }
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(
+                self.sentence_segmenter()?
+                    .1
+                    .get(&req.id.locale.to_string())
+                    .ok_or_else(|| {
+                        DataErrorKind::IdentifierNotFound
+                            .with_req(SegmenterBreakSentenceOverrideV2::INFO, req)
+                    })?
+                    .clone(),
+            ),
+        })
     }
 }
 
 #[cfg(feature = "unstable")]
 impl IterableDataProviderCached<SegmenterBreakSentenceOverrideV2> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(neo_sources()
-            .list("SentenceBreakTailoring_")?
-            .map(|s| icu::locale::Locale::try_from_str(s.strip_suffix(".txt").unwrap()).unwrap())
-            .map(|l| DataIdentifierCow::from_locale(l.into()))
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
+        )
+        .with_marker(SegmenterBreakSentenceOverrideV2::INFO));
+
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        Ok(self
+            .sentence_segmenter()?
+            .1
+            .keys()
+            .map(|s| icu::locale::Locale::try_from_str(s).unwrap().into())
+            .map(DataIdentifierCow::from_locale)
             .collect())
     }
 }
