@@ -262,8 +262,7 @@ impl ComplexPayloads {
                 .map(DataPayload::cast)
                 .map(DictOrLstm::Lstm);
             if self.my.is_none() {
-                DataError::custom("No segmentation model for language")
-                    .with_display_context("my");
+                DataError::custom("No segmentation model for language").with_display_context("my");
             }
         }
         if self.km.is_none() {
@@ -271,8 +270,7 @@ impl ComplexPayloads {
                 .map(DataPayload::cast)
                 .map(DictOrLstm::Lstm);
             if self.km.is_none() {
-                DataError::custom("No segmentation model for language")
-                    .with_display_context("km");
+                DataError::custom("No segmentation model for language").with_display_context("km");
             }
         }
         if self.lo.is_none() {
@@ -280,8 +278,7 @@ impl ComplexPayloads {
                 .map(DataPayload::cast)
                 .map(DictOrLstm::Lstm);
             if self.lo.is_none() {
-                DataError::custom("No segmentation model for language")
-                    .with_display_context("lo");
+                DataError::custom("No segmentation model for language").with_display_context("lo");
             }
         }
         if self.th.is_none() {
@@ -289,8 +286,7 @@ impl ComplexPayloads {
                 .map(DataPayload::cast)
                 .map(DictOrLstm::Lstm);
             if self.th.is_none() {
-                DataError::custom("No segmentation model for language")
-                    .with_display_context("th");
+                DataError::custom("No segmentation model for language").with_display_context("th");
             }
         }
         Ok(())
@@ -320,8 +316,7 @@ impl ComplexPayloads {
                 .map(DataPayload::cast)
                 .map(DictOrLstm::Dict);
             if self.my.is_none() {
-                DataError::custom("No segmentation model for language")
-                    .with_display_context("my");
+                DataError::custom("No segmentation model for language").with_display_context("my");
             }
         }
         if self.km.is_none() {
@@ -329,8 +324,7 @@ impl ComplexPayloads {
                 .map(DataPayload::cast)
                 .map(DictOrLstm::Dict);
             if self.km.is_none() {
-                DataError::custom("No segmentation model for language")
-                    .with_display_context("km");
+                DataError::custom("No segmentation model for language").with_display_context("km");
             }
         }
         if self.lo.is_none() {
@@ -338,8 +332,7 @@ impl ComplexPayloads {
                 .map(DataPayload::cast)
                 .map(DictOrLstm::Dict);
             if self.lo.is_none() {
-                DataError::custom("No segmentation model for language")
-                    .with_display_context("lo");
+                DataError::custom("No segmentation model for language").with_display_context("lo");
             }
         }
         if self.th.is_none() {
@@ -347,8 +340,7 @@ impl ComplexPayloads {
                 .map(DataPayload::cast)
                 .map(DictOrLstm::Dict);
             if self.th.is_none() {
-                DataError::custom("No segmentation model for language")
-                    .with_display_context("th");
+                DataError::custom("No segmentation model for language").with_display_context("th");
             }
         }
         Ok(())
