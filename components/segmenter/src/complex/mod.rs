@@ -85,28 +85,12 @@ const CJ_DICT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("
 
 impl<'data> ComplexPayloadsBorrowed<'data> {
     fn select(&self, language: Language) -> Option<DictOrLstmBorrowed<'data>> {
-        const ERR: DataError = DataError::custom("No segmentation model for language");
         match language {
-            Language::Burmese => self.my.or_else(|| {
-                ERR.with_display_context("my");
-                None
-            }),
-            Language::Khmer => self.km.or_else(|| {
-                ERR.with_display_context("km");
-                None
-            }),
-            Language::Lao => self.lo.or_else(|| {
-                ERR.with_display_context("lo");
-                None
-            }),
-            Language::Thai => self.th.or_else(|| {
-                ERR.with_display_context("th");
-                None
-            }),
-            Language::ChineseOrJapanese => self.ja.map(DictOrLstmBorrowed::Dict).or_else(|| {
-                ERR.with_display_context("ja");
-                None
-            }),
+            Language::Burmese => self.my,
+            Language::Khmer => self.km,
+            Language::Lao => self.lo,
+            Language::Thai => self.th,
+            Language::ChineseOrJapanese => self.ja.map(DictOrLstmBorrowed::Dict),
             Language::Unknown => None,
         }
     }
@@ -277,21 +261,37 @@ impl ComplexPayloads {
             self.my = try_load::<SegmenterLstmAutoV1, D>(provider, MY_LSTM)?
                 .map(DataPayload::cast)
                 .map(DictOrLstm::Lstm);
+            if self.my.is_none() {
+                DataError::custom("No segmentation model for language")
+                    .with_display_context("my");
+            }
         }
         if self.km.is_none() {
             self.km = try_load::<SegmenterLstmAutoV1, D>(provider, KM_LSTM)?
                 .map(DataPayload::cast)
                 .map(DictOrLstm::Lstm);
+            if self.km.is_none() {
+                DataError::custom("No segmentation model for language")
+                    .with_display_context("km");
+            }
         }
         if self.lo.is_none() {
             self.lo = try_load::<SegmenterLstmAutoV1, D>(provider, LO_LSTM)?
                 .map(DataPayload::cast)
                 .map(DictOrLstm::Lstm);
+            if self.lo.is_none() {
+                DataError::custom("No segmentation model for language")
+                    .with_display_context("lo");
+            }
         }
         if self.th.is_none() {
             self.th = try_load::<SegmenterLstmAutoV1, D>(provider, TH_LSTM)?
                 .map(DataPayload::cast)
                 .map(DictOrLstm::Lstm);
+            if self.th.is_none() {
+                DataError::custom("No segmentation model for language")
+                    .with_display_context("th");
+            }
         }
         Ok(())
     }
@@ -302,6 +302,9 @@ impl ComplexPayloads {
     {
         self.ja =
             try_load::<SegmenterDictionaryAutoV1, D>(provider, CJ_DICT)?.map(DataPayload::cast);
+        if self.ja.is_none() {
+            DataError::custom("No segmentation model for language").with_display_context("ja");
+        }
         Ok(())
     }
 
@@ -316,21 +319,37 @@ impl ComplexPayloads {
             self.my = try_load::<SegmenterDictionaryExtendedV1, _>(provider, MY_DICT)?
                 .map(DataPayload::cast)
                 .map(DictOrLstm::Dict);
+            if self.my.is_none() {
+                DataError::custom("No segmentation model for language")
+                    .with_display_context("my");
+            }
         }
         if self.km.is_none() {
             self.km = try_load::<SegmenterDictionaryExtendedV1, _>(provider, KM_DICT)?
                 .map(DataPayload::cast)
                 .map(DictOrLstm::Dict);
+            if self.km.is_none() {
+                DataError::custom("No segmentation model for language")
+                    .with_display_context("km");
+            }
         }
         if self.lo.is_none() {
             self.lo = try_load::<SegmenterDictionaryExtendedV1, _>(provider, LO_DICT)?
                 .map(DataPayload::cast)
                 .map(DictOrLstm::Dict);
+            if self.lo.is_none() {
+                DataError::custom("No segmentation model for language")
+                    .with_display_context("lo");
+            }
         }
         if self.th.is_none() {
             self.th = try_load::<SegmenterDictionaryExtendedV1, _>(provider, TH_DICT)?
                 .map(DataPayload::cast)
                 .map(DictOrLstm::Dict);
+            if self.th.is_none() {
+                DataError::custom("No segmentation model for language")
+                    .with_display_context("th");
+            }
         }
         Ok(())
     }
