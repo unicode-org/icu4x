@@ -195,13 +195,27 @@ fn extract_currency_essentials<'data>(
         let short_placeholder_value = currency_pattern
             .short
             .as_ref()
-            .map(|p| intern_placeholder(p.as_str(), iso, &mut placeholders, &mut placeholders_checker_map))
+            .map(|p| {
+                intern_placeholder(
+                    p.as_str(),
+                    iso,
+                    &mut placeholders,
+                    &mut placeholders_checker_map,
+                )
+            })
             .transpose()?;
 
         let narrow_placeholder_value = currency_pattern
             .narrow
             .as_ref()
-            .map(|p| intern_placeholder(p.as_str(), iso, &mut placeholders, &mut placeholders_checker_map))
+            .map(|p| {
+                intern_placeholder(
+                    p.as_str(),
+                    iso,
+                    &mut placeholders,
+                    &mut placeholders_checker_map,
+                )
+            })
             .transpose()?;
 
         let determine_pattern_selection =
