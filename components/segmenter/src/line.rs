@@ -1296,20 +1296,12 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                         }
 
                         if left_prop_pre_lb9 == RuleBreakData::LINE_PROPERTY_SP
-                            && (prop == RuleBreakData::LINE_PROPERTY_HH || prop == RuleBreakData::LINE_PROPERTY_HY)
-                            // Skip if the current state has sticky "× Any" semantics for AL,
-                            // i.e., LB14 (OP_SP) or LB15a (QU_SP). For those, LB14/LB15a
-                            // override LB20a and no break should be emitted before HY/HH.
-                            && !matches!(
-                                self.data.get_break_state_from_table(index, RuleBreakData::LINE_PROPERTY_AL),
-                                BreakState::Keep
-                            )
+                            && (prop == RuleBreakData::LINE_PROPERTY_HH
+                                || prop == RuleBreakData::LINE_PROPERTY_HY)
                         {
                             // LB20a - (BK | CR | LF | NL | SP | ZW | CB) / (HY | HH) x (AL | HL)
                             // The leading SP context is preserved by intermediate states like
-                            // CL_CP_SP (LB16) and B2_SP (LB17). If the next char is AL/HL/AI/XX,
-                            // emit the break before HY/HH and skip ahead so the break before
-                            // AL/HL is suppressed.
+                            // CL_CP_SP (LB16) and B2_SP (LB17).
                             if let Some((_, next_char)) = self.peek_iter_until_no_combining_mark() {
                                 let next_prop = self.get_linebreak_property(next_char);
                                 if matches!(
@@ -1323,6 +1315,25 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                                         | RuleBreakData::LINE_PROPERTY_XX
                                         | RuleBreakData::LINE_PROPERTY_XX_EXTPICT
                                 ) {
+                                    // If the current state has sticky "× Any" semantics for AL,
+                                    // i.e., LB14 (OP_SP) or LB15a (QU_SP), the break before
+                                    // HY/HH is already suppressed by that rule. LB20a still
+                                    // forbids the break between HY/HH and the following AL/HL,
+                                    // so advance past HY/HH (and any combining marks) and resume
+                                    // with the AL/HL as the left context, emitting no break.
+                                    if matches!(
+                                        self.data.get_break_state_from_table(
+                                            index,
+                                            RuleBreakData::LINE_PROPERTY_AL
+                                        ),
+                                        BreakState::Keep
+                                    ) {
+                                        self.advance_iter();
+                                        self.skip_combining_mark();
+                                        continue 'a;
+                                    }
+                                    // Otherwise emit the break before HY/HH and skip ahead so the
+                                    // break before AL/HL is suppressed.
                                     let result = self.get_current_position();
                                     self.advance_iter();
                                     return result;
