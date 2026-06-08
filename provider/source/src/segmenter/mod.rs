@@ -877,6 +877,8 @@ fn neo_sources() -> crate::source::AbstractFs {
         "LineBreakTailoring_loose_cj.txt",
         "LineBreakTailoring_loose.txt",
         "LineBreakTailoring_normal_cj.txt",
+        "LineBreakTailoring_word_keepall.txt",
+        "LineBreakTailoring_word_breakall.txt",
         "LineBreakTailoring_normal.txt",
         "LineBreakStates.txt",
         "LineBreakTransitions.txt",
@@ -1212,7 +1214,7 @@ impl<'a> ParsedNfa<'a> {
         &self,
         provider: &SourceDataProvider,
         tailorings: &str,
-    ) -> Result<icu::collections::codepointtrie::CodePointTrie<'static, Class>, DataError> {
+    ) -> Result<SegmenterStateMachineOverride<'static>, DataError> {
         let mut builder = icu_codepointtrie_builder::CodePointTrieBuilder::new(
             SegmenterStateMachine::NO_CLASS,
             SegmenterStateMachine::NO_CLASS,
@@ -1265,7 +1267,21 @@ impl<'a> ParsedNfa<'a> {
             }
         }
 
-        Ok(builder.build())
+        let classes = builder.build();
+
+        // The tailoring remaps all complex code points
+        let ignore_complex = CodePointMapData::try_new_unstable(provider)?
+            .as_borrowed()
+            .get_set_for_value(LineBreak::ComplexContext)
+            .as_borrowed()
+            .iter_ranges()
+            .flatten()
+            .all(|cp| classes.get32(cp) != SegmenterStateMachine::NO_CLASS);
+
+        Ok(SegmenterStateMachineOverride {
+            ignore_complex,
+            classes,
+        })
     }
 }
 
@@ -1329,9 +1345,7 @@ impl DataProvider<SegmenterBreakLineOverrideV2> for SourceDataProvider {
 
             Ok(DataResponse {
                 metadata: Default::default(),
-                payload: DataPayload::from_owned(RuleBreakDataOverride {
-                    property_table_override,
-                }),
+                payload: DataPayload::from_owned(property_table_override),
             })
         }
     }
@@ -1384,9 +1398,7 @@ impl DataProvider<SegmenterBreakSentenceOverrideV2> for SourceDataProvider {
 
             Ok(DataResponse {
                 metadata: Default::default(),
-                payload: DataPayload::from_owned(RuleBreakDataOverride {
-                    property_table_override,
-                }),
+                payload: DataPayload::from_owned(property_table_override),
             })
         }
     }

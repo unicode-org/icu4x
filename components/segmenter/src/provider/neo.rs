@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::RuleBreakDataOverride;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
 use zerovec::ZeroVec;
@@ -77,6 +76,28 @@ impl SegmenterStateMachine<'_> {
     pub const NO_CLASS: Class = 255;
 }
 
+/// A tailoring for [`SegmenterStateMachine`].
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize,databake::Bake),
+    databake(path = icu_segmenter::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct SegmenterStateMachineOverride<'data> {
+    /// The class mapping overlay.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub classes: CodePointTrie<'data, u8>,
+
+    /// Whether to suppress SA handling.
+    pub ignore_complex: bool,
+}
+
+icu_provider::data_struct!(
+    SegmenterStateMachineOverride<'_>,
+    #[cfg(feature = "datagen")]
+);
+
 icu_provider::data_marker!(
     /// `SegmenterBreakLineV2`
     SegmenterBreakLineV2,
@@ -113,7 +134,7 @@ icu_provider::data_marker!(
     /// `SegmenterBreakLineOverrideV2`
     SegmenterBreakLineOverrideV2,
     "segmenter/break/line/override/v2",
-    RuleBreakDataOverride<'static>,
+    SegmenterStateMachineOverride<'static>,
     #[cfg(feature = "datagen")]
     expose_baked_consts = true,
 );
@@ -122,5 +143,5 @@ icu_provider::data_marker!(
     /// `SegmenterBreakSentenceOverrideV2`
     SegmenterBreakSentenceOverrideV2,
     "segmenter/break/sentence/override/v2",
-    RuleBreakDataOverride<'static>,
+    SegmenterStateMachineOverride<'static>,
 );

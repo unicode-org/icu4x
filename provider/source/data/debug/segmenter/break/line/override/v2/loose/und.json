@@ -1,5 +1,5 @@
 {
-  "property_table_override": {
+  "classes": {
     "header": {
       "high_start": 111104,
       "shifted12_high_start": 28,
@@ -688,5 +688,6 @@
       255,
       255
     ]
-  }
+  },
+  "ignore_complex": false
 }

@@ -5,7 +5,7 @@
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
 /// * 35B for the lookup data structure (1 data identifiers)
-/// * 332B[^1] for the actual data (1 unique structs)
+/// * 340B[^1] for the actual data (1 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 ///
@@ -24,11 +24,12 @@ macro_rules! __impl_segmenter_break_sentence_override_v2 {
         impl $provider {
             const DATA_SEGMENTER_BREAK_SENTENCE_OVERRIDE_V2: icu_provider::baked::zerotrie::Data<icu::segmenter::provider::SegmenterBreakSentenceOverrideV2> = {
                 const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"el\x80" };
-                const VALUES: &'static [<icu::segmenter::provider::SegmenterBreakSentenceOverrideV2 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct] = &[icu::segmenter::provider::RuleBreakDataOverride {
-                    property_table_override: unsafe {
+                const VALUES: &'static [<icu::segmenter::provider::SegmenterBreakSentenceOverrideV2 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct] = &[icu::segmenter::provider::SegmenterStateMachineOverride {
+                    classes: unsafe {
                         #[allow(unused_unsafe)]
                         icu::collections::codepointtrie::CodePointTrie::from_parts_unstable_unchecked_v1(icu::collections::codepointtrie::CodePointTrieHeader { high_start: 1024u32, shifted12_high_start: 1u16, index3_null_offset: 32767u16, data_null_offset: 64u32, null_value: 255u32, trie_type: icu::collections::codepointtrie::TrieType::Small }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0B\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\n\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\n\xFF\xFF\xFF") }, 255u8)
                     },
+                    ignore_complex: false,
                 }];
                 unsafe { icu_provider::baked::zerotrie::Data::from_trie_and_values_unchecked(TRIE, VALUES) }
             };
