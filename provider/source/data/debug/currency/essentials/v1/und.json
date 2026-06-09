@@ -907,7 +907,7 @@
       "Placeholder": "Place0"
     }
   ],
-  "accounting_pattern": [
+  "accounting_positive_pattern": [
     {
       "Placeholder": "Place1"
     },
@@ -918,7 +918,35 @@
       "Placeholder": "Place0"
     }
   ],
-  "accounting_alpha_next_to_number_pattern": [
+  "accounting_negative_pattern": [
+    {
+      "Literal": "-"
+    },
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Literal": " "
+    },
+    {
+      "Placeholder": "Place0"
+    }
+  ],
+  "accounting_alpha_next_to_number_positive_pattern": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Literal": " "
+    },
+    {
+      "Placeholder": "Place0"
+    }
+  ],
+  "accounting_alpha_next_to_number_negative_pattern": [
+    {
+      "Literal": "-"
+    },
     {
       "Placeholder": "Place1"
     },

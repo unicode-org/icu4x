@@ -81,12 +81,7 @@ pub struct CurrencyEssentials<'data> {
     )]
     pub standard_alpha_next_to_number_pattern: Cow<'data, DoublePlaceholderPattern>,
 
-    // TODO(#4677): Implement the pattern to accept the signed negative and signed positive patterns.
-    /// The accounting currency pattern used for formatting.
-    ///
-    /// This pattern uses two placeholders:
-    /// - `0`: The numeric currency value.
-    /// - `1`: The currency symbol (`¤`).
+    /// The positive accounting currency pattern used for formatting.
     #[cfg_attr(
         feature = "serde",
         serde(
@@ -94,14 +89,9 @@ pub struct CurrencyEssentials<'data> {
             deserialize_with = "icu_pattern::deserialize_borrowed_cow::<DoublePlaceholder, _>"
         )
     )]
-    pub accounting_pattern: Cow<'data, DoublePlaceholderPattern>,
+    pub accounting_positive_pattern: Cow<'data, DoublePlaceholderPattern>,
 
-    // TODO(#4677): Implement the pattern to accept the signed negative and signed positive patterns.
-    /// The `accounting_alpha_next_to_number` currency pattern used for formatting.
-    ///
-    /// This pattern uses two placeholders:
-    /// - `0`: The numeric currency value.
-    /// - `1`: The currency symbol (`¤`).
+    /// The negative accounting currency pattern used for formatting.
     #[cfg_attr(
         feature = "serde",
         serde(
@@ -109,7 +99,27 @@ pub struct CurrencyEssentials<'data> {
             deserialize_with = "icu_pattern::deserialize_borrowed_cow::<DoublePlaceholder, _>"
         )
     )]
-    pub accounting_alpha_next_to_number_pattern: Cow<'data, DoublePlaceholderPattern>,
+    pub accounting_negative_pattern: Cow<'data, DoublePlaceholderPattern>,
+
+    /// The positive `accounting_alpha_next_to_number` currency pattern used for formatting.
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            borrow,
+            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<DoublePlaceholder, _>"
+        )
+    )]
+    pub accounting_alpha_next_to_number_positive_pattern: Cow<'data, DoublePlaceholderPattern>,
+
+    /// The negative `accounting_alpha_next_to_number` currency pattern used for formatting.
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            borrow,
+            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<DoublePlaceholder, _>"
+        )
+    )]
+    pub accounting_alpha_next_to_number_negative_pattern: Cow<'data, DoublePlaceholderPattern>,
 
     /// A list of placeholders (strings), such as currency symbols, referenced by index.
     ///
@@ -213,20 +223,29 @@ impl<'a> CurrencyEssentials<'a> {
     }
 
     /// Returns the formatted currency name/symbol,
-    /// the accounting currency pattern for the given width and currency,
+    /// the positive and negative accounting currency patterns for the given width and currency,
     /// and the pattern selection.
-    pub(crate) fn name_and_accounting_pattern(
+    pub(crate) fn name_and_accounting_patterns(
         &'a self,
         width: Width,
         currency: &'a CurrencyCode,
-    ) -> (&'a str, &'a DoublePlaceholderPattern, PatternSelection) {
+    ) -> (
+        &'a str,
+        &'a DoublePlaceholderPattern,
+        &'a DoublePlaceholderPattern,
+        PatternSelection,
+    ) {
         let (currency_symbol, _, pattern_selection) = self.name_and_pattern(width, currency);
-        let pattern = match pattern_selection {
-            PatternSelection::Standard => &*self.accounting_pattern,
-            PatternSelection::StandardAlphaNextToNumber => {
-                &*self.accounting_alpha_next_to_number_pattern
-            }
+        let (pos, neg) = match pattern_selection {
+            PatternSelection::Standard => (
+                &*self.accounting_positive_pattern,
+                &*self.accounting_negative_pattern,
+            ),
+            PatternSelection::StandardAlphaNextToNumber => (
+                &*self.accounting_alpha_next_to_number_positive_pattern,
+                &*self.accounting_alpha_next_to_number_negative_pattern,
+            ),
         };
-        (currency_symbol, pattern, pattern_selection)
+        (currency_symbol, pos, neg, pattern_selection)
     }
 }
