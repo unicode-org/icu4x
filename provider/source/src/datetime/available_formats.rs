@@ -461,11 +461,11 @@ mod test {
             .to_string();
 
         assert!(
-            !pattern_no_alt.chars().all(|c| c.is_ascii()),
+            !pattern_no_alt.is_ascii(),
             "Default pattern should contain non-ASCII"
         );
         assert!(
-            pattern_alt.chars().all(|c| c.is_ascii()),
+            pattern_alt.is_ascii(),
             "Alt-ASCII pattern should be all ASCII"
         );
     }
