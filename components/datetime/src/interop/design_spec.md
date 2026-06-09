@@ -26,7 +26,7 @@ To address these challenges, this document proposes a **Datetime Interop Layer**
 
 ### 1.2. Design Goals
 
-*   **Strict Dependency Isolation**: The Rust `icu_datetime` crate must remain 100% pure Rust. It must not (statically or dynamically) link against ICU4C (`libicu`). This keeps the Rust toolchain simple and avoids cross-compilation complications.
+*   **Strict Dependency Isolation**: The Rust `icu_datetime` crate must remain 100% pure Rust. It must not (statically or dynamically) link against ICU4C (`libicu`). This keeps the Rust toolchain simple, avoids cross-compilation complications, and ensures that no system dependencies are introduced into the dependency tree (even optionally), which would complicate lockfiles and testing.
 *   **Single Source of Truth**: The complex resolution logic that maps the unified options to backend-specific targets (classical skeletons for ICU4C and fieldsets/lengths for ICU4X) is implemented solely in Rust. This ensures identical formatting behavior regardless of the active backend.
 *   **Header-Only C++ Switching**: The logic to select and invoke the active backend is implemented as a header-only C++ library. This gives C++ clients maximum flexibility in how they link the libraries.
 *   **Zero-Cost Abstraction**: When compile-time selection is used, the unused backend branch should be entirely optimized away by the C++ compiler, resulting in no code size or runtime overhead.
@@ -114,7 +114,7 @@ To maintain backend symmetry and leverage ICU4X's modern design, the interop lay
 To remain consistent with the rest of the ICU4X C++ SDK, the interop layer will follow **ICU4X FFI conventions** for error handling:
 *   **No Exceptions**: The C++ interop layer will not throw exceptions, ensuring compatibility with systems where exceptions are disabled.
 *   **Use of `diplomat::result`**: Fallible operations (such as formatter construction) will return `icu4x::diplomat::result<T, E>`, a variant-like type containing either `Ok<T>` or `Err<E>`.
-*   **Error Types**: A new error type `E` (e.g., `icu_interop::DateTimeFormatterError`) will be defined in this C++ interop library. It will align with ICU4X error types (e.g., `icu4x::DateTimeFormatterLoadError`) and map both ICU4X and ICU4C internal errors into this common C++ enum where possible.
+*   **Error Types**: A new C++ enum `icu_interop::DateTimeFormatterError` will be defined to represent errors from both backends.
 
 ### 2.5. Backend Selection Mechanism
 
@@ -176,6 +176,7 @@ Link ICU4C into the Rust `icu_datetime` crate and perform the backend switching 
 **Reasons for Rejection:**
 1.  **Dependency Bloat**: It would force all Rust users of `icu_datetime` to link against ICU4C, significantly increasing build times and binary size.
 2.  **Portability Restrictions**: Linking ICU4C increases complexity, especially for targets where ICU4C is not easily available or supported (e.g., WebAssembly, or certain iOS/macOS sandboxed environments where linking system libraries is restricted).
+3.  **Dependency Tree Contamination**: Even if ICU4C were linked optionally behind a Cargo feature, it would still enter the dependency tree. Because ICU4X runs tests with `--all-features`, this would force ICU4C to be present during testing, and it would contaminate cargo lockfiles for all users.
 
 ---
 

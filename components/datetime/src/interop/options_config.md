@@ -45,8 +45,8 @@ To support ICU4C, the unified `DateTimeFormatterOptions` must be resolved to ICU
 
 The resolution logic in `icu_datetime::interop` returns a Rust struct `Icu4cResolvedArgs` containing:
 -   `skeleton`: `Option<String>` (resolved classical skeleton).
--   `date_style`: `Option<Style>` (resolved date style, using the ICU4X `Style` enum: `Full`, `Long`, `Medium`, `Short`).
--   `time_style`: `Option<Style>` (resolved time style, using the ICU4X `Style` enum).
+-   `date_style`: `Option<Style>` (resolved date style; `Style` is an enum with variants `Full`, `Long`, `Medium`, `Short`).
+-   `time_style`: `Option<Style>` (resolved time style; `Style` is an enum with variants `Full`, `Long`, `Medium`, `Short`).
 
 ### 2.2. Precedence Rules
 
