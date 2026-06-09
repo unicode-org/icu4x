@@ -273,6 +273,9 @@ fn extract_currency_essentials<'data>(
             }
         };
 
+    // TODO: The currency pattern does not necessarily match standard decimal formatting.
+    // We should parse the numeric block (#,##0.00) for custom grouping sizes or numbering system overrides
+    // rather than collapsing it entirely into Place0.
     fn create_positive_pattern<'data>(
         pattern: &NumberPattern,
     ) -> Result<Cow<'data, DoublePlaceholderPattern>, DataError> {
