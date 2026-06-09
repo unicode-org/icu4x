@@ -5,18 +5,20 @@
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 use icu::calendar::AnyCalendarKind;
+use icu::datetime::provider::fields::{Field, components};
+use icu::datetime::provider::packed_pattern::{
+    GenericLengthElements, GenericPackedPatternsBuilder,
+};
+use icu::datetime::provider::pattern::CoarseHourCycle;
 use icu::datetime::provider::skeleton::SkeletonError;
 use icu::datetime::provider::skeleton::reference::Skeleton;
-use icu::datetime::provider::fields::{components, Field};
-use icu::datetime::provider::pattern::CoarseHourCycle;
-use icu::datetime::provider::packed_pattern::{GenericLengthElements, GenericPackedPatternsBuilder};
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 
+use icu::datetime::pattern::FixedCalendarDateTimeNames;
+use icu::datetime::provider::packed_pattern::GenericPackedPatterns;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use zerovec::ule::VarULE;
-use icu::datetime::provider::packed_pattern::GenericPackedPatterns;
-use icu::datetime::pattern::FixedCalendarDateTimeNames;
 
 mod available_formats;
 mod day_periods;
@@ -311,7 +313,6 @@ impl<T> Trio<T> {
     }
 }
 
-
 /// Transposes a length-major structure of pattern trios into a variant-major builder structure.
 ///
 /// Converts `GenericLengthElements<Trio<T>>` (patterns grouped by length, containing standard/variants)
@@ -322,18 +323,18 @@ impl<T> Trio<T> {
 pub(crate) fn transpose<T>(
     group: GenericLengthElements<Trio<T>>,
 ) -> GenericPackedPatternsBuilder<T> {
-    let variant0 = if group.long.variant0.is_some() {
+    let variant0 = if let Some(long) = group.long.variant0 {
         Some(GenericLengthElements {
-            long: group.long.variant0.unwrap(),
+            long,
             medium: group.medium.variant0.unwrap(),
             short: group.short.variant0.unwrap(),
         })
     } else {
         None
     };
-    let variant1 = if group.long.variant1.is_some() {
+    let variant1 = if let Some(long) = group.long.variant1 {
         Some(GenericLengthElements {
-            long: group.long.variant1.unwrap(),
+            long,
             medium: group.medium.variant1.unwrap(),
             short: group.short.variant1.unwrap(),
         })
@@ -369,8 +370,8 @@ pub(crate) trait PackedPatternItem: Sized + Clone {
         components_bag: &components::Bag,
         hour_cycle: HourCycle,
         fields: &[Field],
-     ) -> Self;
- 
+    ) -> Self;
+
     /// Returns the match quality (distance) of this pattern item.
     fn match_quality(&self) -> Self::MatchQuality;
 
@@ -397,8 +398,6 @@ pub(crate) trait PackedPatternItem: Sized + Clone {
         attributes: &DataMarkerAttributes,
     );
 }
-
-
 
 /// A generic helper to resolve a pattern from a components bag, handling hour cycle and fallback.
 pub(crate) fn select_pattern<T: PackedPatternItem>(
@@ -454,4 +453,3 @@ mod test {
         );
     }
 }
-

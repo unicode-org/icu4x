@@ -2,13 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{DatagenCalendar, Trio, PackedPatternItem, select_pattern, transpose};
+use super::{DatagenCalendar, PackedPatternItem, Trio, select_pattern, transpose};
 use crate::debug_provider::DebugProvider;
 use crate::{IterableDataProviderCached, SourceDataProvider, cldr_serde};
 use icu::datetime::fieldsets::enums::*;
 use icu::datetime::options::Length;
 use icu::datetime::pattern::{ErrorField, FixedCalendarDateTimeNames};
-use icu::datetime::provider::fields::{components, Field};
+use icu::datetime::provider::fields::{Field, components};
 use icu::datetime::provider::packed_pattern::*;
 use icu::datetime::provider::pattern::{CoarseHourCycle, reference, runtime};
 use icu::datetime::provider::semantic_skeletons::*;
@@ -21,7 +21,6 @@ use std::collections::{BTreeMap, HashSet};
 
 #[cfg(test)]
 mod tests;
-
 
 /// Some patterns associated with a [`SkeletonQuality`].
 #[derive(Debug, Clone, PartialEq)]
@@ -87,7 +86,9 @@ pub(crate) struct SemanticSkeletonsContext<'a> {
 impl<'a> PackedPatternItem for PatternsWithDistance<PluralElements<runtime::Pattern<'a>>> {
     type MatchFieldsContext = SemanticSkeletonsContext<'a>;
     type FinalItem = PluralElements<runtime::Pattern<'a>>;
-    type Ule = icu::plurals::provider::PluralElementsPackedULE<zerovec::ZeroSlice<icu::datetime::provider::pattern::PatternItem>>;
+    type Ule = icu::plurals::provider::PluralElementsPackedULE<
+        zerovec::ZeroSlice<icu::datetime::provider::pattern::PatternItem>,
+    >;
     type MatchQuality = SkeletonQuality;
 
     fn match_quality(&self) -> Self::MatchQuality {
@@ -100,7 +101,7 @@ impl<'a> PackedPatternItem for PatternsWithDistance<PluralElements<runtime::Patt
         _hour_cycle: HourCycle,
         fields: &[Field],
     ) -> Self {
-        use icu::datetime::provider::pattern::{runtime, PatternItem};
+        use icu::datetime::provider::pattern::{PatternItem, runtime};
         match create_best_pattern_for_fields(
             &context.skeleton_patterns,
             &context.length_combinations_v1,
@@ -177,7 +178,6 @@ impl<'a> PackedPatternItem for PatternsWithDistance<PluralElements<runtime::Patt
     }
 }
 
-
 impl SourceDataProvider {
     fn load_datetime_skeletons_key<'data, M>(
         &'data self,
@@ -196,13 +196,16 @@ impl SourceDataProvider {
         self.check_req::<M>(req)?;
         // let neo_components = from_id_str(req.id.marker_attributes)
         //     .expect("Skeleton data provider called with unknown skeleton");
-        let packed_skeleton_data = self.make_packed_skeleton_data::<PatternsWithDistance<PluralElements<runtime::Pattern<'data>>>>(
+        let packed_skeleton_data = self.make_packed_skeleton_data::<PatternsWithDistance<
+            PluralElements<runtime::Pattern<'data>>,
+        >>(
             req.id.locale,
             calendar,
             req.id.marker_attributes,
             |data| {
                 // Note: We default to atTime here (See https://github.com/unicode-org/conformance/issues/469)
-                let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats_at_time);
+                let length_combinations_v1 =
+                    GenericLengthPatterns::from(&data.datetime_formats_at_time);
                 let skeleton_patterns = data.datetime_formats.available_formats.parse_skeletons();
                 SemanticSkeletonsContext {
                     skeleton_patterns,
@@ -318,21 +321,30 @@ impl SourceDataProvider {
                 variant_patterns
             })
             .map(|mut trio| {
-                let mut names =
-                    FixedCalendarDateTimeNames::<()>::new_without_number_formatting(Default::default());
+                let mut names = FixedCalendarDateTimeNames::<()>::new_without_number_formatting(
+                    Default::default(),
+                );
                 for variant in trio.iter_in_quality_order_mut(|v| v.match_quality()) {
                     variant.enforce_consistency(&mut names, locale, calendar, attributes);
                 }
                 trio
             });
 
-        let trios = GenericLengthElements { long, medium, short };
+        let trios = GenericLengthElements {
+            long,
+            medium,
+            short,
+        };
         let builder = transpose(trios);
 
         let final_builder = GenericPackedPatternsBuilder {
             standard: map_length(builder.standard, |x| x.finalize_item()),
-            variant0: builder.variant0.map(|v| map_length(v, |x| x.finalize_item())),
-            variant1: builder.variant1.map(|v| map_length(v, |x| x.finalize_item())),
+            variant0: builder
+                .variant0
+                .map(|v| map_length(v, |x| x.finalize_item())),
+            variant1: builder
+                .variant1
+                .map(|v| map_length(v, |x| x.finalize_item())),
         };
 
         Ok(T::build_packed(final_builder))
@@ -392,7 +404,10 @@ fn check_for_field(attributes: &DataMarkerAttributes, field: &str) -> bool {
     false
 }
 
-pub(crate) fn preferred_hour_cycle(other: &cldr_serde::ca::Dates, locale: &DataLocale) -> CoarseHourCycle {
+pub(crate) fn preferred_hour_cycle(
+    other: &cldr_serde::ca::Dates,
+    locale: &DataLocale,
+) -> CoarseHourCycle {
     let mut preferred_hour_cycle: Option<CoarseHourCycle> = None;
     for s in [
         &other.time_skeletons.full,
