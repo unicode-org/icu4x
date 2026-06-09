@@ -10,13 +10,18 @@
 
 ## 1. Background and Motivation
 
-As internationalization requirements evolve, projects are increasingly looking to adopt **ICU4X**, a modern, modular, and lightweight i18n library written in Rust. However, many existing codebases are deeply integrated with **ICU4C**, the industry-standard C/C++ library, or rely on system-provided ICU4C libraries to minimize binary size.
+As internationalization requirements evolve, major projects are increasingly looking to adopt **ICU4X**, a modern, modular, and lightweight i18n library written in Rust. However, many existing codebases are deeply integrated with **ICU4C**, the industry-standard C/C++ library, or rely on system-provided ICU4C libraries to minimize binary size.
 
 During this transition phase, clients require the flexibility to choose between ICU4X and ICU4C backends. This choice may need to be made at compile-time (to optimize binary size) or at runtime (to adapt to different environment capabilities).
 
-Furthermore, applications targeting web platforms must align their formatting options with the **ECMA-402 (Intl.DateTimeFormat)** standard. Mapping these high-level ECMA-402 options to the low-level inputs required by ICU4X and ICU4C is complex and error-prone.
+Specifically, this interop layer is designed to support the needs of key clients:
+*   **Chromium**: Requires a gradual ICU4C-to-ICU4X migration path for its **ECMA-402 (Intl.DateTimeFormat)** implementation and other i18n components.
+*   **Firefox (Gecko/SpiderMonkey)**: Has similar migration requirements to Chromium, transitioning from ICU4C to ICU4X for its ECMA-402 implementation.
+*   **Boa**: A JavaScript engine written in Rust that requires robust ECMA-402 options parsing and resolution to backends.
 
-To address these challenges, this document proposes a **Datetime Interop Layer**. This layer introduces a **unified catchall options bag** and a **decoupled architecture** that allows clients to switch between backends without forcing a dependency on ICU4C within the Rust codebase.
+To support these clients, the proposed **Datetime Interop Layer** introduces a **unified catchall options bag** that explicitly includes ECMA-402 options alongside ICU4X and ICU4C options. All of these target clients require ECMA options. Furthermore, ECMA-402 options are conceptually classical-skeleton-like, meaning the business logic required to map ECMA-402 options to ICU4X semantic skeletons (fieldsets/lengths) is highly similar to the logic required to map ICU4C classical skeletons to ICU4X semantic skeletons. Housing them in a single unified bag allows us to reuse this complex "classical-to-semantic" mapping logic efficiently in Rust, ensuring identical behavior across backends.
+
+This decoupled architecture allows C++ clients to switch between backends at the edge (via a lightweight C++ wrapper) without forcing a dependency on ICU4C within the core Rust codebase.
 
 ### 1.1. Target Use Cases
 
