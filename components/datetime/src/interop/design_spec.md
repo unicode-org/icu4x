@@ -95,7 +95,7 @@ Using **Diplomat** (ICU4X's FFI binding generation tool), the interop layer expo
 
 #### 2.2.3. C++ Headers (Proposed path: `ffi/icu4c_interop`)
 
-A C++ wrapper (e.g., `icu_interop::DateTimeFormatter`) is provided as a header-only library within the ICU4X repository (proposed at `ffi/icu4c_interop`). It manages the switching logic and calls the appropriate underlying library.
+A C++ wrapper (e.g., `icu_interop::DateTimeFormatter`) is provided as a header-only library. This wrapper is planned to be distributed exclusively within the ICU4X repository (proposed at `ffi/icu4c_interop`) or perhaps as an artifact in the ICU4X release, rather than as a separate, independently distributed library. It manages the switching logic and calls the appropriate underlying library.
 *   **Initialization**: Resolves options via FFI (if using ICU4C, it calls the Rust FFI to resolve options, then passes the resolved skeleton to the ICU4C C API) and constructs the appropriate backend formatter.
 *   **Formatting**: Delegates the formatting call to either the ICU4X FFI or the ICU4C C API.
 
@@ -140,7 +140,7 @@ Do not provide an interop layer in ICU; instead, let third-party wrapper librari
 Release the interop layer as a brand new, standalone C++ library in a separate repository (e.g., `github.com/unicode-org/libicu402`) with its own release cycle.
 
 **Reasons for Rejection:**
-1.  **Process Overhead**: Introducing a new standalone project/repository increases release, versioning, and distribution overhead. The proposed `icu4c_interop` is instead a new component *within* the existing ICU4X repository, leveraging its existing release infrastructure.
+1.  **Process Overhead**: Introducing a new standalone project/repository increases release, versioning, and distribution overhead. The proposed `icu4c_interop` is instead a new component *within* the existing ICU4X repository, leveraging its existing release infrastructure. It will be distributed only within the ICU4X repo or as a release artifact of ICU4X, not as a separate library.
 2.  **Maintenance Cohesion**: It is easier for clients to consume and for maintainers to track this logic if it is distributed alongside the existing ICU4C or ICU4X codebases.
 
 ### 3.3. Offer Only ECMA-to-ICU4X Interop
