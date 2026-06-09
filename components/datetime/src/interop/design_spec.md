@@ -93,6 +93,9 @@ Using **Diplomat** (ICU4X's FFI binding generation tool), the interop layer expo
 *   **`ffi::Icu4cResolvedArgs`**: Opaque wrapper around the resolved arguments. Exposes methods to extract the resolved skeleton (writing to `DiplomatWriteable`, a C-compatible string buffer) and styles.
 *   **`ffi::DateTimeFormatter` Constructor**: A new constructor `create_from_interop_options` that accepts `ffi::DateTimeFormatterOptions` and returns a `Box<ffi::DateTimeFormatter>`.
 
+> [!NOTE]
+> To maintain strict dependency isolation, FFI interfaces cannot return native ICU4C types directly, as this would force the Rust FFI crate to depend on ICU4C headers at compile time. Instead, resolved arguments are returned as opaque types or C-compatible primitives, which the C++ wrapper then maps to ICU4C APIs.
+
 #### 2.2.3. C++ Headers (Proposed path: `ffi/icu4c_interop`)
 
 A C++ wrapper (e.g., `icu_interop::DateTimeFormatter`) is provided as a header-only library. This wrapper is planned to be distributed exclusively within the ICU4X repository (proposed at `ffi/icu4c_interop`) or perhaps as an artifact in the ICU4X release, rather than as a separate, independently distributed library. It manages the switching logic and calls the appropriate underlying library.
