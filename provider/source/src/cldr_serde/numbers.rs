@@ -314,6 +314,12 @@ pub(crate) struct CurrencyFormattingPatterns {
     #[serde(rename = "standard-alphaNextToNumber")]
     pub(crate) standard_alpha_next_to_number: Option<NumberPattern>,
 
+    #[serde(rename = "accounting")]
+    pub(crate) accounting: Option<NumberPattern>,
+
+    #[serde(rename = "accounting-alphaNextToNumber")]
+    pub(crate) accounting_alpha_next_to_number: Option<NumberPattern>,
+
     #[serde(rename = "unitPattern-count-0")]
     pub(crate) pattern_explicit_zero: Option<PatternString<DoublePlaceholder>>,
 

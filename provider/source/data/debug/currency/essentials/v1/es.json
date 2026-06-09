@@ -883,6 +883,28 @@
       "Placeholder": "Place1"
     }
   ],
+  "accounting_pattern": [
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": " "
+    },
+    {
+      "Placeholder": "Place1"
+    }
+  ],
+  "accounting_alpha_next_to_number_pattern": [
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": " "
+    },
+    {
+      "Placeholder": "Place1"
+    }
+  ],
   "placeholders": [
     "؋",
     "֏",

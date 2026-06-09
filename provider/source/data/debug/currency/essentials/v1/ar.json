@@ -1063,6 +1063,31 @@
       "Placeholder": "Place1"
     }
   ],
+  "accounting_pattern": [
+    {
+      "Literal": "؜"
+    },
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Placeholder": "Place1"
+    }
+  ],
+  "accounting_alpha_next_to_number_pattern": [
+    {
+      "Literal": "؜"
+    },
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": " "
+    },
+    {
+      "Placeholder": "Place1"
+    }
+  ],
   "placeholders": [
     "د.إ.‏",
     "؋",

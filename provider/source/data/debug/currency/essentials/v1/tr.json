@@ -922,6 +922,25 @@
       "Placeholder": "Place0"
     }
   ],
+  "accounting_pattern": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Placeholder": "Place0"
+    }
+  ],
+  "accounting_alpha_next_to_number_pattern": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Literal": " "
+    },
+    {
+      "Placeholder": "Place0"
+    }
+  ],
   "placeholders": [
     "؋",
     "֏",

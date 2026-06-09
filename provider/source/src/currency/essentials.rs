@@ -152,6 +152,11 @@ fn extract_currency_essentials<'data>(
         .standard_alpha_next_to_number
         .as_ref()
         .unwrap_or(standard);
+    let accounting = currency_formats.accounting.as_ref().unwrap_or(standard);
+    let accounting_alpha_next_to_number = currency_formats
+        .accounting_alpha_next_to_number
+        .as_ref()
+        .unwrap_or(accounting);
 
     let mut currency_patterns_map =
         BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>::new();
@@ -297,6 +302,8 @@ fn extract_currency_essentials<'data>(
         pattern_config_map: ZeroMap::from_iter(currency_patterns_map.iter()),
         standard_pattern: create_pattern(standard)?,
         standard_alpha_next_to_number_pattern: create_pattern(standard_alpha_next_to_number)?,
+        accounting_pattern: create_pattern(accounting)?,
+        accounting_alpha_next_to_number_pattern: create_pattern(accounting_alpha_next_to_number)?,
         placeholders: VarZeroVec::from(&placeholders),
         default_pattern_config,
     })
@@ -362,6 +369,13 @@ fn test_basic() {
     assert_writeable_eq!(
         en_payload
             .standard_alpha_next_to_number_pattern
+            .interpolate((3, "$")),
+        "$\u{a0}3"
+    );
+    assert_writeable_eq!(en_payload.accounting_pattern.interpolate((3, "$")), "$3");
+    assert_writeable_eq!(
+        en_payload
+            .accounting_alpha_next_to_number_pattern
             .interpolate((3, "$")),
         "$\u{a0}3"
     );
