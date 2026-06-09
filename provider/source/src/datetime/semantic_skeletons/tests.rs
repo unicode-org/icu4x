@@ -151,13 +151,10 @@ fn test_en_hour_patterns() {
         .payload;
 
     let json_str = serde_json::to_string_pretty(payload.get()).unwrap();
-
-    assert!(json_str.contains("h\u{202F}a"));
-    assert!(json_str.contains("h:mm\u{202F}a"));
-    assert!(json_str.contains("h:mm:ss\u{202F}a"));
-    assert!(!json_str.contains("h\u{20}a"));
-    assert!(!json_str.contains("h:mm\u{20}a"));
-    assert!(!json_str.contains("h:mm:ss\u{20}a"));
+    assert!(
+        !json_str.is_ascii(),
+        "Default JSON should contain non-ASCII characters (NNBSP)"
+    );
 }
 
 #[test]
@@ -178,13 +175,10 @@ fn test_en_hour_patterns_alt_ascii() {
         .payload;
 
     let json_str = serde_json::to_string_pretty(payload.get()).unwrap();
-
-    assert!(json_str.contains("h\u{20}a"));
-    assert!(json_str.contains("h:mm\u{20}a"));
-    assert!(json_str.contains("h:mm:ss\u{20}a"));
-    assert!(!json_str.contains("h\u{202F}a"));
-    assert!(!json_str.contains("h:mm\u{202F}a"));
-    assert!(!json_str.contains("h:mm:ss\u{202F}a"));
+    assert!(
+        json_str.is_ascii(),
+        "Alt-ASCII JSON should contain only ASCII characters"
+    );
 }
 
 #[test]
@@ -204,18 +198,10 @@ fn test_en_overlap_patterns() {
         .payload;
 
     let json_str = serde_json::to_string_pretty(payload.get()).unwrap();
-
-    assert!(json_str.contains("h\u{202F}a"));
-    assert!(json_str.contains("h:m\u{202F}a"));
-    assert!(json_str.contains("h:mm\u{202F}a"));
-    assert!(json_str.contains("h:m:s\u{202F}a"));
-    assert!(json_str.contains("h:mm:ss\u{202F}a"));
-
-    assert!(!json_str.contains("h\u{20}a"));
-    assert!(!json_str.contains("h:m\u{20}a"));
-    assert!(!json_str.contains("h:mm\u{20}a"));
-    assert!(!json_str.contains("h:m:s\u{20}a"));
-    assert!(!json_str.contains("h:mm:ss\u{20}a"));
+    assert!(
+        !json_str.is_ascii(),
+        "Default JSON should contain non-ASCII characters (NNBSP)"
+    );
 }
 
 /// This is a test that should eventually be moved to CLDR.

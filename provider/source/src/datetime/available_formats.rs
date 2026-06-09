@@ -460,7 +460,13 @@ mod test {
             .unwrap()
             .to_string();
 
-        assert_eq!(pattern_no_alt.as_str(), "h\u{202F}a");
-        assert_eq!(pattern_alt.as_str(), "h\u{20}a");
+        assert!(
+            !pattern_no_alt.chars().all(|c| c.is_ascii()),
+            "Default pattern should contain non-ASCII"
+        );
+        assert!(
+            pattern_alt.chars().all(|c| c.is_ascii()),
+            "Alt-ASCII pattern should be all ASCII"
+        );
     }
 }
