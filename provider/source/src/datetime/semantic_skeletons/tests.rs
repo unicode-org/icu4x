@@ -407,7 +407,7 @@ mod date_skeleton_consistency_tests {
         let skeleton_patterns = data
             .datetime_formats
             .available_formats
-            .parse_skeletons(DatetimeAsciiPreference::Default);
+            .parse_skeletons(provider.datetime_ascii_preference());
         let skeleton_pattern_set = data
             .datetime_formats
             .available_formats
