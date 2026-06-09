@@ -115,11 +115,11 @@ pub enum PatternSelection {
 #[derive(Copy, Debug, Clone, PartialEq, PartialOrd, Eq, Ord)]
 #[repr(u16)]
 pub enum PlaceholderValue {
-    /// The index of the place holder in the place holders list.
+    /// The index of the placeholder in the placeholders list.
     /// NOTE: the maximum value is `MAX_PLACEHOLDER_INDEX` which is 2045 (`0b0111_1111_1101`).
     Index(u16),
 
-    /// The place holder is the iso code.
+    /// The placeholder is the ISO code.
     ISO,
 }
 
@@ -134,18 +134,19 @@ pub struct CurrencyPatternConfig {
     /// Indicates which pattern to use for narrow currency formatting.
     pub narrow_pattern_selection: PatternSelection,
 
-    /// The index of the short pattern place holder in the place holders list.
-    /// If the value is `None`, this means that the short pattern does not have a place holder.
+    /// The placeholder value for short currency formatting.
+    /// If the value is `None`, this means that the short pattern does not have a placeholder.
     pub short_placeholder_value: Option<PlaceholderValue>,
 
-    /// The index of the narrow pattern place holder in the place holders list.
-    /// If the value is `None`, this means that the narrow pattern does not have a place holder.
+    /// The placeholder value for narrow currency formatting.
+    /// If the value is `None`, this means that the narrow pattern does not have a placeholder.
     pub narrow_placeholder_value: Option<PlaceholderValue>,
 }
 
 impl<'a> CurrencyEssentials<'a> {
-    // Returns the currency placeholder value for the currency,
-    // and the currency pattern for the given width and currency
+    /// Returns the formatted currency name/symbol,
+    /// the currency pattern for the given width and currency,
+    /// and the pattern selection.
     pub(crate) fn name_and_pattern(
         &'a self,
         width: Width,
@@ -156,12 +157,12 @@ impl<'a> CurrencyEssentials<'a> {
             .get_copied(&currency.0.to_unvalidated())
             .unwrap_or(self.default_pattern_config);
 
-        let placeholder_index = match width {
+        let placeholder_val = match width {
             Width::Short => config.short_placeholder_value,
             Width::Narrow => config.narrow_placeholder_value,
         };
 
-        let currency = match placeholder_index {
+        let currency = match placeholder_val {
             Some(PlaceholderValue::Index(index)) => self.placeholders.get(index.into()),
             Some(PlaceholderValue::ISO) | None => None,
         }

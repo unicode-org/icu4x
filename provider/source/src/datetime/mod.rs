@@ -5,15 +5,26 @@
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 use icu::calendar::AnyCalendarKind;
+use icu::datetime::provider::fields::{Field, components};
+use icu::datetime::provider::packed_pattern::{
+    GenericLengthElements, GenericPackedPatternsBuilder,
+};
+use icu::datetime::provider::pattern::CoarseHourCycle;
 use icu::datetime::provider::skeleton::SkeletonError;
 use icu::datetime::provider::skeleton::reference::Skeleton;
+use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
+
+use icu::datetime::pattern::FixedCalendarDateTimeNames;
+use icu::datetime::provider::packed_pattern::GenericPackedPatterns;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
+use zerovec::ule::VarULE;
 
 mod available_formats;
 mod day_periods;
 mod names;
 mod semantic_skeletons;
+use semantic_skeletons::Trio;
 mod week_data;
 
 /// These are the calendars that datetime needs names for. They are roughly the
@@ -276,6 +287,143 @@ where
         }
     }
     result
+}
+
+/// Transposes a length-major structure of pattern trios into a variant-major builder structure,
+/// performing fallback using `to_builder_item` to avoid cloning.
+///
+/// Converts `GenericLengthElements<Trio<T::FinalItem>>` (patterns grouped by length, containing standard/variants)
+/// into `GenericPackedPatternsBuilder<T::BuilderItem<'b>>` (patterns grouped by standard/variants, containing lengths).
+pub(crate) fn transpose_with_fallback<'b, T: PackedPatternItem>(
+    group: &'b GenericLengthElements<Trio<T::FinalItem>>,
+) -> GenericPackedPatternsBuilder<T::BuilderItem<'b>> {
+    let variant0 = if group.long.variant0.is_some()
+        || group.medium.variant0.is_some()
+        || group.short.variant0.is_some()
+    {
+        Some(GenericLengthElements {
+            long: T::to_builder_item(group.long.variant0.as_ref().unwrap_or(&group.long.standard)),
+            medium: T::to_builder_item(
+                group
+                    .medium
+                    .variant0
+                    .as_ref()
+                    .unwrap_or(&group.medium.standard),
+            ),
+            short: T::to_builder_item(
+                group
+                    .short
+                    .variant0
+                    .as_ref()
+                    .unwrap_or(&group.short.standard),
+            ),
+        })
+    } else {
+        None
+    };
+    let variant1 = if group.long.variant1.is_some()
+        || group.medium.variant1.is_some()
+        || group.short.variant1.is_some()
+    {
+        Some(GenericLengthElements {
+            long: T::to_builder_item(group.long.variant1.as_ref().unwrap_or(&group.long.standard)),
+            medium: T::to_builder_item(
+                group
+                    .medium
+                    .variant1
+                    .as_ref()
+                    .unwrap_or(&group.medium.standard),
+            ),
+            short: T::to_builder_item(
+                group
+                    .short
+                    .variant1
+                    .as_ref()
+                    .unwrap_or(&group.short.standard),
+            ),
+        })
+    } else {
+        None
+    };
+    GenericPackedPatternsBuilder {
+        standard: GenericLengthElements {
+            long: T::to_builder_item(&group.long.standard),
+            medium: T::to_builder_item(&group.medium.standard),
+            short: T::to_builder_item(&group.short.standard),
+        },
+        variant0,
+        variant1,
+    }
+}
+
+pub(crate) trait PackedPatternItem: Sized {
+    /// The context required to match fields for this pattern item.
+    type MatchFieldsContext;
+    /// The final item type after finalization (e.g. stripping distance).
+    type FinalItem: PartialEq;
+    /// The borrowed item type used for building the packed structure.
+    type BuilderItem<'a>: PartialEq
+    where
+        Self: 'a;
+    /// The ULE type for packing.
+    type Ule: VarULE + ?Sized + 'static;
+    /// The distance type used to sort patterns by match quality.
+    type MatchQuality: Ord;
+
+    /// Attempts to find a matching pattern for the given fields in the context.
+    ///
+    /// Generates a reasonable fallback if it can't find one.
+    fn match_fields(
+        context: &Self::MatchFieldsContext,
+        components_bag: &components::Bag,
+        hour_cycle: HourCycle,
+        fields: &[Field],
+    ) -> Self;
+
+    /// Returns the match quality (distance) of this pattern item.
+    fn match_quality(&self) -> Self::MatchQuality;
+
+    /// Finalizes the item (e.g., converts from a internal representation to the provider one).
+    fn finalize_item(self) -> Self::FinalItem;
+
+    /// Converts a reference to the final item into the borrowed builder item.
+    fn to_builder_item<'b>(item: &'b Self::FinalItem) -> Self::BuilderItem<'b>;
+
+    /// Builds the packed structure from the builder.
+    fn build_packed<'b>(
+        builder: GenericPackedPatternsBuilder<Self::BuilderItem<'b>>,
+    ) -> GenericPackedPatterns<'static, Self::Ule>
+    where
+        Self: 'b;
+
+    /// Applies numeric overrides to the pattern items.
+    fn apply_numeric_overrides(&mut self, lp: &cldr_serde::ca::LengthPattern);
+
+    /// Enforces consistent field lengths in the patterns.
+    ///
+    /// This is only needed for date patterns which have some bugs in CLDR. It
+    /// can be removed when CLDR bugs are fixed, or replaced with a pure non-mutating warning.
+    fn enforce_consistency(
+        &mut self,
+        names: &mut FixedCalendarDateTimeNames<()>,
+        locale: &DataLocale,
+        calendar: Option<DatagenCalendar>,
+        attributes: &DataMarkerAttributes,
+    );
+}
+
+/// A generic helper to resolve a pattern from a components bag, handling hour cycle and fallback.
+pub(crate) fn select_pattern<T: PackedPatternItem>(
+    context: &T::MatchFieldsContext,
+    components_bag: components::Bag,
+    preferred_hour_cycle: CoarseHourCycle,
+) -> T {
+    let default_hour_cycle = match preferred_hour_cycle {
+        CoarseHourCycle::H11H12 => HourCycle::H12,
+        CoarseHourCycle::H23 => HourCycle::H23,
+    };
+    let fields = components_bag.to_vec_fields(default_hour_cycle);
+    T::match_fields(context, &components_bag, default_hour_cycle, &fields)
 }
 
 #[cfg(test)]

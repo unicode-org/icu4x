@@ -35,7 +35,7 @@ use icu_provider::prelude::*;
 /// For example:
 ///    if the pattern is ¤#,##0.00 and the symbol is EGP,
 ///    this means the return value will be `PatternSelection::StandardAlphaNextToNumber`
-///    because the character closes to the number is a letter.
+///    because the character closest to the number is a letter.
 /// NOTE:
 ///   `placeholder_value` must not be empty.
 fn currency_pattern_selection(
@@ -44,7 +44,7 @@ fn currency_pattern_selection(
     placeholder_value: &str,
 ) -> Result<PatternSelection, DataError> {
     if placeholder_value.is_empty() {
-        return Err(DataError::custom("Place holder value must not be empty"));
+        return Err(DataError::custom("Placeholder value must not be empty"));
     }
 
     // TODO(#6064): Handle the negative sub pattern.
@@ -160,51 +160,63 @@ fn extract_currency_essentials<'data>(
     let mut currency_patterns_standard_next_to_num =
         BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>::new();
     let mut placeholders = Vec::<&str>::new();
-    // A map to check if the place holder is already in the placeholders vector.
+    // A map to check if the placeholder is already in the placeholders vector.
     let mut placeholders_checker_map = HashMap::<&str, u16>::new();
 
+    /// Deduplicates and stores currency placeholder strings (e.g., "$", "US$").
+    ///
+    /// - If the placeholder matches the 3-letter ISO code exactly, returns `PlaceholderValue::ISO`.
+    /// - If the placeholder already exists in `placeholders`, returns its existing index (`PlaceholderValue::Index`).
+    /// - Otherwise, appends the new placeholder to `placeholders` and returns its new index.
+    fn intern_placeholder<'a>(
+        placeholder: &'a str,
+        iso: &str,
+        placeholders: &mut Vec<&'a str>,
+        placeholders_checker_map: &mut HashMap<&'a str, u16>,
+    ) -> Result<PlaceholderValue, DataError> {
+        if let Some(&index) = placeholders_checker_map.get(placeholder) {
+            Ok(PlaceholderValue::Index(index))
+        } else if placeholder == iso {
+            Ok(PlaceholderValue::ISO)
+        } else {
+            let index = placeholders.len() as u16;
+            if index > MAX_PLACEHOLDER_INDEX {
+                return Err(DataError::custom(
+                    "placeholder value exceeded MAX_PLACEHOLDER_INDEX",
+                ));
+            }
+            placeholders.push(placeholder);
+            placeholders_checker_map.insert(placeholder, index);
+            Ok(PlaceholderValue::Index(index))
+        }
+    }
+
     for (iso, currency_pattern) in currencies {
-        let short_placeholder_value = currency_pattern.short.as_ref().map(|short_placeholder| {
-            if let Some(&index) = placeholders_checker_map.get(short_placeholder.as_str()) {
-                PlaceholderValue::Index(index)
-            } else if short_placeholder == iso {
-                PlaceholderValue::ISO
-            } else {
-                let index = placeholders.len() as u16;
-                placeholders.push(short_placeholder.as_str());
-                placeholders_checker_map.insert(short_placeholder.as_str(), index);
-                PlaceholderValue::Index(index)
-            }
-        });
+        let short_placeholder_value = currency_pattern
+            .short
+            .as_ref()
+            .map(|p| {
+                intern_placeholder(
+                    p.as_str(),
+                    iso,
+                    &mut placeholders,
+                    &mut placeholders_checker_map,
+                )
+            })
+            .transpose()?;
 
-        let narrow_placeholder_value = currency_pattern.narrow.as_ref().map(|narrow_placeholder| {
-            if let Some(&index) = placeholders_checker_map.get(narrow_placeholder.as_str()) {
-                PlaceholderValue::Index(index)
-            } else if narrow_placeholder == iso {
-                PlaceholderValue::ISO
-            } else {
-                let index = placeholders.len() as u16;
-                placeholders.push(narrow_placeholder.as_ref());
-                placeholders_checker_map.insert(narrow_placeholder.as_str(), index);
-                PlaceholderValue::Index(index)
-            }
-        });
-
-        // Ensure that short_placeholder_value and narrow_placeholder_value do not exceed MAX_PLACEHOLDER_INDEX.
-        if let Some(PlaceholderValue::Index(index)) = short_placeholder_value
-            && index > MAX_PLACEHOLDER_INDEX
-        {
-            return Err(DataError::custom(
-                "short_placeholder_value exceeded MAX_PLACEHOLDER_INDEX",
-            ));
-        }
-        if let Some(PlaceholderValue::Index(index)) = narrow_placeholder_value
-            && index > MAX_PLACEHOLDER_INDEX
-        {
-            return Err(DataError::custom(
-                "narrow_placeholder_value exceeded MAX_PLACEHOLDER_INDEX",
-            ));
-        }
+        let narrow_placeholder_value = currency_pattern
+            .narrow
+            .as_ref()
+            .map(|p| {
+                intern_placeholder(
+                    p.as_str(),
+                    iso,
+                    &mut placeholders,
+                    &mut placeholders_checker_map,
+                )
+            })
+            .transpose()?;
 
         let determine_pattern_selection =
             |placeholder_index: Option<PlaceholderValue>| -> Result<PatternSelection, DataError> {
