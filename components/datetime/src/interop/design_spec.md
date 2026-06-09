@@ -26,7 +26,7 @@ To address these challenges, this document proposes a **Datetime Interop Layer**
 
 ### 1.2. Design Goals
 
-*   **Strict Dependency Isolation**: The Rust `icu_datetime` crate must remain 100% pure Rust. It must not (statically or dynamically) link against ICU4C (`libicu`). This keeps the Rust toolchain simple, avoids cross-compilation complications, and ensures that no system dependencies are introduced into the dependency tree (even optionally), which would complicate lockfiles and testing.
+*   **Strict Dependency Isolation**: The Rust `icu_datetime` crate must remain 100% pure Rust. It must not (statically or dynamically) link against ICU4C (`libicu`). This keeps the Rust toolchain simple, avoids cross-compilation complications, and ensures that no system dependencies are introduced into the dependency tree (even optionally). Crucially, this avoids forcing the Rust toolchain to manage system-dependent ICU4C ABI compatibility, versioned namespaces (e.g., `icu77::` vs `icu::`), and architecture-specific linking, keeping the Rust side entirely portable.
 *   **Single Source of Truth**: The complex resolution logic that maps the unified options to backend-specific targets (classical skeletons for ICU4C and fieldsets/lengths for ICU4X) is implemented solely in Rust. This ensures identical formatting behavior regardless of the active backend.
 *   **Header-Only C++ Switching**: The logic to select and invoke the active backend is implemented as a header-only C++ library. This gives C++ clients maximum flexibility in how they link the libraries.
 *   **Zero-Cost Abstraction**: When compile-time selection is used, the unused backend branch should be entirely optimized away by the C++ compiler, resulting in no code size or runtime overhead.
@@ -185,6 +185,7 @@ Link ICU4C into the Rust `icu_datetime` crate and perform the backend switching 
 1.  **Dependency Bloat**: It would force all Rust users of `icu_datetime` to link against ICU4C, significantly increasing build times and binary size.
 2.  **Portability Restrictions**: Linking ICU4C increases complexity, especially for targets where ICU4C is not easily available or supported (e.g., WebAssembly, or certain iOS/macOS sandboxed environments where linking system libraries is restricted).
 3.  **Dependency Tree Contamination**: Even if ICU4C were linked optionally behind a Cargo feature, it would still enter the dependency tree. Because ICU4X runs tests with `--all-features`, this would force ICU4C to be present during testing, and it would contaminate cargo lockfiles for all users.
+4.  **ABI and Namespacing Complexity**: ICU4C installations are highly system-dependent and often use versioned namespaces (e.g., `icu77::`) to avoid conflicts. Linking ICU4C directly into Rust would force the Rust build system to resolve these complex ABI and namespacing variations. Keeping the ICU4C dependency strictly in the C++ wrapper allows the client's native C++ compiler to handle these system-specific details, as the C++ wrapper is compiled directly against the client's target ICU4C headers.
 
 ### 3.7. Support More Than Two Backends (Multi-Backend Extensibility)
 
