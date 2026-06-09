@@ -159,7 +159,7 @@ pub mod options {
 /// Largely-internal scaffolding types (You should very rarely need to reference these directly)
 pub mod scaffold {
     // TODO: These should have never been public
-    pub use crate::rule_segmenter::{Latin1, PotentiallyIllFormedUtf8, RuleBreakType, Utf16, Utf8};
+    pub use crate::rule_segmenter::{Latin1, PotentiallyIllFormedUtf8, RuleBreakType, Utf8, Utf16};
 
     // TODO: This should have never been public
     /// A trait allowing for [`WordBreakIterator`](crate::iterators::WordBreakIterator) to be generalized to multiple

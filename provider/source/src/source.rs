@@ -363,7 +363,7 @@ impl AbstractFs {
             Self::Http(url) => {
                 return Err(
                     DataError::custom("Cannot list HTTP directories").with_display_context(url)
-                )
+                );
             }
             Self::Memory(map) => map
                 .keys()

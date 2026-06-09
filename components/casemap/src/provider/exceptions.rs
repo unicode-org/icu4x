@@ -19,8 +19,8 @@ use core::fmt;
 #[cfg(any(feature = "serde", feature = "datagen"))]
 use core::ops::Range;
 use core::ptr;
-use zerovec::ule::AsULE;
 use zerovec::VarZeroVec;
+use zerovec::ule::AsULE;
 
 const SURROGATES_START: u32 = 0xD800;
 const SURROGATES_LEN: u32 = 0xDFFF - SURROGATES_START + 1;
@@ -308,10 +308,10 @@ impl ExceptionULE {
     }
 
     pub(crate) fn add_full_and_closure_mappings<S: ClosureSink>(&self, set: &mut S) {
-        if let Some(full) = self.get_fullmappings_slot_for_kind(MappingKind::Fold) {
-            if !full.is_empty() {
-                set.add_string(full);
-            }
+        if let Some(full) = self.get_fullmappings_slot_for_kind(MappingKind::Fold)
+            && !full.is_empty()
+        {
+            set.add_string(full);
         };
         if let Some(closure) = self.get_closure_slot() {
             for c in closure.chars() {

@@ -20,14 +20,14 @@ use icu_provider::prelude::*;
 pub use crate::provider::Baked;
 
 icu_provider::data_marker!(
-    /// `CurrencyDisplaynameV1`
+    /// Currency display name data.
     CurrencyDisplaynameV1,
     CurrencyDisplayname<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "currency",
 );
 
-/// Currency Extended  data struct.
+/// Currency display name data struct.
 #[derive(Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]

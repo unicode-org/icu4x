@@ -12,8 +12,8 @@ use icu::plurals::PluralElements;
 use icu_pattern::{DoublePlaceholder, PatternString};
 use icu_provider::DataError;
 use itertools::Itertools;
-use serde::de::{Deserializer, Error, MapAccess, Unexpected, Visitor};
 use serde::Deserialize;
+use serde::de::{Deserializer, Error, MapAccess, Unexpected, Visitor};
 use std::borrow::Cow;
 use std::collections::{BTreeMap, HashMap};
 

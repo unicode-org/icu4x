@@ -8,6 +8,10 @@ Several crates have had patch releases in the 2.2 stream:
 - Components
     - (2.2.1) `icu_calendar`
         - Fix extended year calculations in Gregorian-like and Coptic-like calendars (unicode-org#7849)
+- Utils
+    - (0.8.3) `yoke`
+        - Fix soundness of Send/Sync impls on CartableOptionPointer (unicode-org#8029)
+        - Update to 2024 edition where possible (unicode-org#7878)
 
 ## icu4x 2.2
 

@@ -8,8 +8,8 @@ use ndarray::{Array, Array1, Array2, Array3, ArrayBase, Dim, Dimension, OwnedRep
 use serde::Deserialize;
 use std::collections::HashMap;
 use std::fmt::Debug;
-use zerovec::ule::AsULE;
 use zerovec::ZeroVec;
+use zerovec::ule::AsULE;
 
 mod helper;
 use helper::*;

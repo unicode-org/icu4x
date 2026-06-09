@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::AsCalendar;
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD};
 use crate::error::{
     DateAddError, DateError, DateFromFieldsError, DateNewError, EcmaReferenceYearError,
@@ -9,8 +10,7 @@ use crate::error::{
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
-use crate::AsCalendar;
-use crate::{types, Calendar, Date};
+use crate::{Calendar, Date, types};
 use calendrical_calculations::chinese_based;
 use calendrical_calculations::rata_die::RataDie;
 use core::cmp::Ordering;
@@ -1454,7 +1454,10 @@ mod test {
             }
             let rd = date.to_rata_die().to_i64_date();
             let expected = case.expected;
-            assert_eq!(rd, expected, "RD from Chinese failed, with expected: {expected} and calculated: {rd}, for test case: {case:?}");
+            assert_eq!(
+                rd, expected,
+                "RD from Chinese failed, with expected: {expected} and calculated: {rd}, for test case: {case:?}"
+            );
         }
     }
 
@@ -1469,7 +1472,10 @@ mod test {
 
             let chinese = Date::from_rata_die(rata_die, ChineseTraditional::new());
             let result = chinese.to_rata_die();
-            assert_eq!(result, rata_die, "Failed roundtrip RD -> Chinese -> RD for RD: {rata_die:?}, with calculated: {result:?} from Chinese date:\n{chinese:?}");
+            assert_eq!(
+                result, rata_die,
+                "Failed roundtrip RD -> Chinese -> RD for RD: {rata_die:?}, with calculated: {result:?} from Chinese date:\n{chinese:?}"
+            );
 
             rd += 7043;
             iters += 1;
@@ -1744,7 +1750,10 @@ mod test {
             let iso = Date::try_new_iso(year, month, day).unwrap();
             let chinese = iso.to_calendar(ChineseTraditional::new());
             let result = chinese.to_calendar(Iso);
-            assert_eq!(iso, result, "ISO to Chinese roundtrip failed!\nIso: {iso:?}\nChinese: {chinese:?}\nResult: {result:?}");
+            assert_eq!(
+                iso, result,
+                "ISO to Chinese roundtrip failed!\nIso: {iso:?}\nChinese: {chinese:?}\nResult: {result:?}"
+            );
         }
     }
 
@@ -1863,7 +1872,7 @@ mod test {
     #[test]
     #[ignore] // slow, network
     fn test_against_hong_kong_observatory_data() {
-        use crate::{cal::Gregorian, Date};
+        use crate::{Date, cal::Gregorian};
 
         let mut related_iso = 1900;
         let mut lunar_month = Month::new(11);
@@ -1934,7 +1943,7 @@ mod test {
     #[test]
     #[ignore] // network
     fn test_against_kasi_data() {
-        use crate::{cal::Gregorian, Date};
+        use crate::{Date, cal::Gregorian};
 
         // TODO: query KASI directly
         let uri = "https://gist.githubusercontent.com/Manishearth/d8c94a7df22a9eacefc4472a5805322e/raw/e1ea3b0aa52428686bb3a9cd0f262878515e16c1/resolved.json";

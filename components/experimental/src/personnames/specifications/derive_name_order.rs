@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locale::fallback::LocaleFallbackerBorrowed;
-use icu_locale_core::subtags::Language;
 use icu_locale_core::Locale;
+use icu_locale_core::subtags::Language;
 use writeable::Writeable;
 use zerovec::VarZeroVec;
 

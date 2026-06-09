@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use icu_datetime::{fieldsets, DateTimeFormatter, FixedCalendarDateTimeFormatter};
+use criterion::{Criterion, black_box, criterion_group, criterion_main};
+use icu_datetime::{DateTimeFormatter, FixedCalendarDateTimeFormatter, fieldsets};
 
 use icu_calendar::Gregorian;
-use icu_locale_core::{locale, Locale};
+use icu_locale_core::{Locale, locale};
 use icu_time::zone::{IanaParser, ZoneNameTimestamp};
 use icu_time::{DateTime, TimeZoneInfo, ZonedDateTime};
 use writeable::Writeable;

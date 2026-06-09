@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{
-    super::{reference, PatternError},
     super::{GenericPatternItem, PatternItem},
+    super::{PatternError, reference},
     Pattern,
 };
 use alloc::vec::Vec;

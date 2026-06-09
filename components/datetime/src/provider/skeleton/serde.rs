@@ -11,8 +11,8 @@ pub mod reference {
     use super::super::reference::Skeleton;
     use super::*;
 
-    use ::serde::{ser, Serialize};
-    use serde::{de, Deserialize, Deserializer};
+    use ::serde::{Serialize, ser};
+    use serde::{Deserialize, Deserializer, de};
     /// This is an implementation of the serde deserialization visitor pattern.
     pub(super) struct DeserializeSkeletonUTS35String;
 
@@ -75,8 +75,8 @@ pub mod runtime {
     use super::super::runtime::Skeleton;
     use super::*;
 
-    use ::serde::{ser, Serialize};
-    use serde::{de, Deserialize, Deserializer};
+    use ::serde::{Serialize, ser};
+    use serde::{Deserialize, Deserializer, de};
     use zerovec::ZeroVec;
     /// This is an implementation of the serde deserialization visitor pattern.
     struct DeserializeSkeletonUTS35String;

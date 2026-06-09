@@ -12,12 +12,12 @@ use icu_provider::prelude::*;
 use icu_decimal::provider::CompactPatterns;
 
 icu_provider::data_marker!(
-    /// `ShortCurrencyCompactV1`
+    /// Compact currency formatting patterns (short).
     ShortCurrencyCompactV1,
     ShortCurrencyCompact<'static>
 );
 
-/// Currency Compact  data struct.
+/// Compact currency data struct containing standard and alpha-next-to-number patterns.
 #[derive(Debug, Clone, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]

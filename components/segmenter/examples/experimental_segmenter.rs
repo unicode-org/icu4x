@@ -13,7 +13,7 @@ mod cnn;
 
 use adaboost::Predictor;
 use cnn::{CnnSegmenter, RawCnnData};
-use icu_segmenter::{options::WordBreakOptions, WordSegmenter, WordSegmenterBorrowed};
+use icu_segmenter::{WordSegmenter, WordSegmenterBorrowed, options::WordBreakOptions};
 use std::time::Instant;
 
 const REPETITIONS: usize = 1000;

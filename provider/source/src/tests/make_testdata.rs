@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceDataProvider;
-use icu::locale::{langid, LanguageIdentifier};
+use icu::locale::{LanguageIdentifier, langid};
 use icu_provider::dynutil::UpcastDataPayload;
 use icu_provider::export::*;
 use icu_provider::prelude::*;
@@ -168,8 +168,8 @@ impl DataExporter for ZeroCopyCheckExporter {
         payload_before: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         use postcard::{
-            ser_flavors::{AllocVec, Flavor},
             Serializer,
+            ser_flavors::{AllocVec, Flavor},
         };
         let mut serializer = Serializer {
             output: AllocVec::new(),
@@ -229,7 +229,9 @@ impl DataExporter for ZeroCopyCheckExporter {
 
         if deallocated != allocated {
             if !EXPECTED_VIOLATIONS.contains(&marker) {
-                eprintln!("Zerocopy violation {marker:?} {id:?}: {allocated}B allocated, {deallocated}B deallocated");
+                eprintln!(
+                    "Zerocopy violation {marker:?} {id:?}: {allocated}B allocated, {deallocated}B deallocated"
+                );
             }
             self.zero_copy_violations
                 .lock()
@@ -237,7 +239,9 @@ impl DataExporter for ZeroCopyCheckExporter {
                 .insert(marker);
         } else if allocated > 0 {
             if !EXPECTED_TRANSIENT_VIOLATIONS.contains(&marker) {
-                eprintln!("Transient zerocopy violation {marker:?} {id:?}: {allocated}B allocated/deallocated");
+                eprintln!(
+                    "Transient zerocopy violation {marker:?} {id:?}: {allocated}B allocated/deallocated"
+                );
             }
             self.zero_copy_transient_violations
                 .lock()
@@ -273,7 +277,9 @@ impl DataExporter for ZeroCopyCheckExporter {
             .copied()
             .collect::<Vec<_>>();
 
-        assert!(transient_violations == EXPECTED_TRANSIENT_VIOLATIONS && violations == EXPECTED_VIOLATIONS,
+        assert!(
+            transient_violations == EXPECTED_TRANSIENT_VIOLATIONS
+                && violations == EXPECTED_VIOLATIONS,
             "Expected violations list does not match found violations!\n\
             If the new list is smaller, please update EXPECTED_VIOLATIONS in make-testdata.rs\n\
             If it is bigger and that was unexpected, please make sure the marker remains zero-copy, or ask ICU4X team members if it is okay \

@@ -13,10 +13,10 @@ use icu_provider::prelude::*;
 use icu_time::Hour;
 #[cfg(feature = "serde")]
 use potential_utf::PotentialUtf8;
-use zerovec::ule::vartuple::VarTupleULE;
 use zerovec::VarZeroVec;
+use zerovec::ule::vartuple::VarTupleULE;
 #[cfg(feature = "serde")]
-use zerovec::{ule::tuplevar::Tuple2VarULE, VarZeroCow, VarZeroSlice};
+use zerovec::{VarZeroCow, VarZeroSlice, ule::tuplevar::Tuple2VarULE};
 
 icu_provider::data_marker!(
     /// `DatetimeNamesYearBuddhistV1`

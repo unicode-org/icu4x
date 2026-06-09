@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{options::*, Duration, DurationFormatter};
+use super::{Duration, DurationFormatter, options::*};
 
 use super::validated_options::Unit;
 use core::fmt;
@@ -11,7 +11,7 @@ use either::Either;
 use fixed_decimal::{Decimal, SignDisplay, UnsignedDecimal};
 use icu_decimal::FormattedDecimal;
 use smallvec::SmallVec;
-use writeable::{adapters::WithPart, PartsWrite, Writeable};
+use writeable::{PartsWrite, Writeable, adapters::WithPart};
 
 macro_rules! create_unit_parts {
     ($($part:ident, $unit:expr),*) => {
@@ -517,8 +517,8 @@ impl FormattedDuration<'_> {
                                 formatted_value.absolute.pad_end(-i);
                             }
                         } // d. Perform ! CreateDataPropertyOrThrow(nfOpts, "maximumFractionDigits", maximumFractionDigits).
-                          // e. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumFractionDigits", minimumFractionDigits).
-                          // f. Perform ! CreateDataPropertyOrThrow(nfOpts, "roundingMode", "trunc").
+                        // e. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumFractionDigits", minimumFractionDigits).
+                        // f. Perform ! CreateDataPropertyOrThrow(nfOpts, "roundingMode", "trunc").
 
                         // g. Set numericUnitFound to true.
                         numeric_unit_found = true;
@@ -621,7 +621,7 @@ mod tests {
     use writeable::assert_writeable_parts_eq;
 
     use super::*;
-    use crate::duration::{formatter::ValidatedDurationFormatterOptions, DurationSign};
+    use crate::duration::{DurationSign, formatter::ValidatedDurationFormatterOptions};
 
     #[test]
     fn test_digital_formatter() {

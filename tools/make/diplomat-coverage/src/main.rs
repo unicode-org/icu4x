@@ -343,7 +343,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                             Some(In::Enum(tr)) | Some(In::Struct(tr)) | Some(In::Type(tr))
                                 if check_ignored_assoc_item(item_name, tr) =>
                             {
-                                return
+                                return;
                             }
                             Some(In::Enum(_)) => ast::DocType::FnInEnum,
                             Some(In::Trait) => ast::DocType::FnInTrait,

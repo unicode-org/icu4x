@@ -2,13 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cldr_serde;
 use crate::SourceDataProvider;
+use crate::cldr_serde;
 use core::cmp::Ordering;
 use icu::locale::provider::*;
 use icu::locale::{
-    subtags::{self, language},
     LanguageIdentifier,
+    subtags::{self, language},
 };
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
@@ -94,47 +94,49 @@ impl From<&cldr_serde::aliases::Resource> for Aliases<'_> {
         // into a set of BCP47 LegacyRules. This implementation discards these.
         // Step 3. Discard all rules where the type is an invalid languageId
         for (from, to) in other.supplemental.metadata.alias.language_aliases.iter() {
-            if let Ok(langid) = from.parse::<LanguageIdentifier>() {
-                if let Ok(replacement) = to.replacement.parse::<LanguageIdentifier>() {
-                    match (
-                        langid.language,
-                        langid.script,
-                        langid.region,
-                        !langid.variants.is_empty(),
-                    ) {
-                        // Anything that has a variant needs to be parsed at runtime, so we isolate
-                        // these in their own map.
-                        (_, None, None, true) => language_variants.push((langid, replacement)),
-                        // <language> -> <language identifier>
-                        (lang, None, None, false) if !lang.is_unknown() => {
-                            // Relatively few aliases exist for two character language identifiers,
-                            // so we store them separately to not slow down canonicalization of
-                            // common identifiers.
-                            let lang = langid.language.to_tinystr();
-                            if lang.len() == 2 {
-                                language_len2.insert(lang.resize(), to.replacement.as_str());
-                            } else {
-                                language_len3.insert(lang, to.replacement.as_str());
-                            }
+            if let Ok(langid) = from.parse::<LanguageIdentifier>()
+                && let Ok(replacement) = to.replacement.parse::<LanguageIdentifier>()
+            {
+                match (
+                    langid.language,
+                    langid.script,
+                    langid.region,
+                    !langid.variants.is_empty(),
+                ) {
+                    // Anything that has a variant needs to be parsed at runtime, so we isolate
+                    // these in their own map.
+                    (_, None, None, true) => language_variants.push((langid, replacement)),
+                    // <language> -> <language identifier>
+                    (lang, None, None, false) if !lang.is_unknown() => {
+                        // Relatively few aliases exist for two character language identifiers,
+                        // so we store them separately to not slow down canonicalization of
+                        // common identifiers.
+                        let lang = langid.language.to_tinystr();
+                        if lang.len() == 2 {
+                            language_len2.insert(lang.resize(), to.replacement.as_str());
+                        } else {
+                            language_len3.insert(lang, to.replacement.as_str());
                         }
-                        // sgn-<region> -> <language>
-                        (language, None, Some(region), false)
-                            if language == language!("sgn")
-                                && !replacement.language.is_unknown()
-                                && replacement.script.is_none()
-                                && replacement.region.is_none()
-                                && replacement.variants.is_empty() =>
-                        {
-                            sgn_region.insert(region.to_tinystr(), replacement.language);
-                        }
-                        _ => language.push((langid, replacement)),
                     }
+                    // sgn-<region> -> <language>
+                    (language, None, Some(region), false)
+                        if language == language!("sgn")
+                            && !replacement.language.is_unknown()
+                            && replacement.script.is_none()
+                            && replacement.region.is_none()
+                            && replacement.variants.is_empty() =>
+                    {
+                        sgn_region.insert(region.to_tinystr(), replacement.language);
+                    }
+                    _ => language.push((langid, replacement)),
                 }
             }
         }
 
         if !language.is_empty() {
-            panic!("Aliases contain a non-special-cased rule. Remove this check if that is intended behaviour.")
+            panic!(
+                "Aliases contain a non-special-cased rule. Remove this check if that is intended behaviour."
+            )
         }
 
         for (from, to) in other.supplemental.metadata.alias.script_aliases.iter() {
@@ -306,12 +308,13 @@ fn test_basic() {
         "he"
     );
 
-    assert!(data
-        .payload
-        .get()
-        .language_len3
-        .get(&language!("iw").to_tinystr().to_unvalidated())
-        .is_none());
+    assert!(
+        data.payload
+            .get()
+            .language_len3
+            .get(&language!("iw").to_tinystr().to_unvalidated())
+            .is_none()
+    );
 
     assert_eq!(
         data.payload.get().script.iter().next().unwrap(),

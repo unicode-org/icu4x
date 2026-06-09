@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locale_core::subtags::script;
-use icu_locale_core::{subtags, Locale};
+use icu_locale_core::{Locale, subtags};
 use icu_properties::props::Script;
-use icu_properties::{script::ScriptWithExtensionsBorrowed, PropertyNamesShortBorrowed};
+use icu_properties::{PropertyNamesShortBorrowed, script::ScriptWithExtensionsBorrowed};
 
 use crate::personnames::api::NameFieldKind::{Given, Surname};
 use crate::personnames::api::{NameFieldKind, PersonName, PersonNamesFormatterError};

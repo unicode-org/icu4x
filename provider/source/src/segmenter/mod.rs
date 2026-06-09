@@ -9,18 +9,18 @@
     allow(dead_code, unused_imports)
 )]
 
-use crate::source::{include_files, UnicodeCache};
 #[cfg(feature = "unstable")]
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use crate::source::{UnicodeCache, include_files};
 #[cfg(feature = "unstable")]
 use icu::collections::codepointinvlist::CodePointInversionList;
 use icu::properties::{
+    CodePointMapData, CodePointMapDataBorrowed, CodePointSetData,
     props::{
         EastAsianWidth, GeneralCategory, GraphemeClusterBreak, IndicConjunctBreak, LineBreak,
         Script, SentenceBreak, WordBreak,
     },
-    CodePointMapData, CodePointMapDataBorrowed, CodePointSetData,
 };
 use icu::segmenter::options::WordType;
 use icu::segmenter::provider::*;
@@ -100,7 +100,7 @@ fn generate_rule_break_data(
     rules_file: &str,
     trie_type: crate::TrieType,
 ) -> Result<RuleBreakData<'static>, DataError> {
-    use icu::properties::{props::ExtendedPictographic, PropertyParser};
+    use icu::properties::{PropertyParser, props::ExtendedPictographic};
     use icu_codepointtrie_builder::CodePointTrieBuilder;
 
     let segmenter =
@@ -669,19 +669,19 @@ fn generate_rule_break_data(
 
     // State machine alias
     for p in &segmenter.tables {
-        if let Some(left) = &p.left {
-            if let Some(right) = &p.right {
-                let right_index = get_index_from_name(&properties_names, right).unwrap();
-                let left_index = get_index_from_name(&properties_names, left).unwrap();
+        if let Some(left) = &p.left
+            && let Some(right) = &p.right
+        {
+            let right_index = get_index_from_name(&properties_names, right).unwrap();
+            let left_index = get_index_from_name(&properties_names, left).unwrap();
 
-                let index = properties_names.iter().position(|n| n.eq(&p.name)).unwrap();
-                break_state_table[left_index * properties_names.len() + right_index] =
-                    Some(if p.interm_break_state.is_some() {
-                        BreakState::Intermediate(index.try_into().unwrap())
-                    } else {
-                        BreakState::Index(index.try_into().unwrap())
-                    })
-            }
+            let index = properties_names.iter().position(|n| n.eq(&p.name)).unwrap();
+            break_state_table[left_index * properties_names.len() + right_index] =
+                Some(if p.interm_break_state.is_some() {
+                    BreakState::Intermediate(index.try_into().unwrap())
+                } else {
+                    BreakState::Index(index.try_into().unwrap())
+                })
         }
     }
 
@@ -877,6 +877,8 @@ fn neo_sources() -> crate::source::AbstractFs {
         "LineBreakTailoring_loose_cj.txt",
         "LineBreakTailoring_loose.txt",
         "LineBreakTailoring_normal_cj.txt",
+        "LineBreakTailoring_word_keepall.txt",
+        "LineBreakTailoring_word_breakall.txt",
         "LineBreakTailoring_normal.txt",
         "LineBreakStates.txt",
         "LineBreakTransitions.txt",
@@ -1212,7 +1214,7 @@ impl<'a> ParsedNfa<'a> {
         &self,
         provider: &SourceDataProvider,
         tailorings: &str,
-    ) -> Result<icu::collections::codepointtrie::CodePointTrie<'static, Class>, DataError> {
+    ) -> Result<SegmenterStateMachineOverride<'static>, DataError> {
         let mut builder = icu_codepointtrie_builder::CodePointTrieBuilder::new(
             SegmenterStateMachine::NO_CLASS,
             SegmenterStateMachine::NO_CLASS,
@@ -1265,7 +1267,21 @@ impl<'a> ParsedNfa<'a> {
             }
         }
 
-        Ok(builder.build())
+        let classes = builder.build();
+
+        // The tailoring remaps all complex code points
+        let ignore_complex = CodePointMapData::try_new_unstable(provider)?
+            .as_borrowed()
+            .get_set_for_value(LineBreak::ComplexContext)
+            .as_borrowed()
+            .iter_ranges()
+            .flatten()
+            .all(|cp| classes.get32(cp) != SegmenterStateMachine::NO_CLASS);
+
+        Ok(SegmenterStateMachineOverride {
+            ignore_complex,
+            classes,
+        })
     }
 }
 
@@ -1329,9 +1345,7 @@ impl DataProvider<SegmenterBreakLineOverrideV2> for SourceDataProvider {
 
             Ok(DataResponse {
                 metadata: Default::default(),
-                payload: DataPayload::from_owned(RuleBreakDataOverride {
-                    property_table_override,
-                }),
+                payload: DataPayload::from_owned(property_table_override),
             })
         }
     }
@@ -1384,9 +1398,7 @@ impl DataProvider<SegmenterBreakSentenceOverrideV2> for SourceDataProvider {
 
             Ok(DataResponse {
                 metadata: Default::default(),
-                payload: DataPayload::from_owned(RuleBreakDataOverride {
-                    property_table_override,
-                }),
+                payload: DataPayload::from_owned(property_table_override),
             })
         }
     }

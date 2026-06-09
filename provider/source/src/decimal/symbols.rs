@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cldr_serde;
-use crate::decimal::decimal_pattern::DecimalSubPattern;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use crate::cldr_serde;
+use crate::decimal::decimal_pattern::DecimalSubPattern;
 use icu::decimal::provider::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -67,8 +67,8 @@ impl DataProvider<DecimalSymbolsV1> for SourceDataProvider {
         }
         .build();
 
-        if let Some(n) = negative.as_ref() {
-            if (
+        if let Some(n) = negative.as_ref()
+            && (
                 positive.max_fraction_digits,
                 positive.min_fraction_digits,
                 positive.primary_grouping,
@@ -78,10 +78,10 @@ impl DataProvider<DecimalSymbolsV1> for SourceDataProvider {
                 n.min_fraction_digits,
                 n.primary_grouping,
                 n.secondary_grouping,
-            ) {
-                return Err(DataError::custom("positive/negative groupings don't match")
-                    .with_req(DecimalSymbolsV1::INFO, req));
-            }
+            )
+        {
+            return Err(DataError::custom("positive/negative groupings don't match")
+                .with_req(DecimalSymbolsV1::INFO, req));
         }
 
         let grouping_sizes = GroupingSizes {

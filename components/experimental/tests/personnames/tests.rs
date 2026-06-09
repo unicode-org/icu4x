@@ -4,12 +4,12 @@
 
 extern crate alloc;
 
+use PersonNamesFormatterError::ParseError;
+use icu_experimental::personnames::PersonNamesFormatter;
 use icu_experimental::personnames::api::*;
 use icu_experimental::personnames::provided_struct::DefaultPersonName;
-use icu_experimental::personnames::PersonNamesFormatter;
 use icu_locale_core::locale;
 use litemap::LiteMap;
-use PersonNamesFormatterError::ParseError;
 
 struct TestingProvider;
 
@@ -256,8 +256,8 @@ fn test_space_replacement_spec_formatting_locale_ja() -> Result<(), PersonNamesF
 }
 
 #[test]
-fn test_space_replacement_spec_formatting_locale_ja_jpan_script(
-) -> Result<(), PersonNamesFormatterError> {
+fn test_space_replacement_spec_formatting_locale_ja_jpan_script()
+-> Result<(), PersonNamesFormatterError> {
     let mut person_data: LiteMap<NameField, String> = LiteMap::new();
     person_data.insert(
         NameField {
@@ -299,8 +299,8 @@ fn test_space_replacement_spec_formatting_locale_ja_jpan_script(
 }
 
 #[test]
-fn test_space_replacement_spec_formatting_locale_ja_compatible(
-) -> Result<(), PersonNamesFormatterError> {
+fn test_space_replacement_spec_formatting_locale_ja_compatible()
+-> Result<(), PersonNamesFormatterError> {
     let mut person_data: LiteMap<NameField, String> = LiteMap::new();
     person_data.insert(
         NameField {
@@ -342,8 +342,8 @@ fn test_space_replacement_spec_formatting_locale_ja_compatible(
 }
 
 #[test]
-fn test_space_replacement_spec_formatting_locale_de_compatible(
-) -> Result<(), PersonNamesFormatterError> {
+fn test_space_replacement_spec_formatting_locale_de_compatible()
+-> Result<(), PersonNamesFormatterError> {
     let mut person_data: LiteMap<NameField, String> = LiteMap::new();
     person_data.insert(
         NameField {
@@ -385,8 +385,8 @@ fn test_space_replacement_spec_formatting_locale_de_compatible(
 }
 
 #[test]
-fn test_space_replacement_spec_formatting_locale_de_jpan_script(
-) -> Result<(), PersonNamesFormatterError> {
+fn test_space_replacement_spec_formatting_locale_de_jpan_script()
+-> Result<(), PersonNamesFormatterError> {
     let mut person_data: LiteMap<NameField, String> = LiteMap::new();
     person_data.insert(
         NameField {
@@ -430,8 +430,8 @@ fn test_space_replacement_spec_formatting_locale_de_jpan_script(
 }
 
 #[test]
-fn test_space_replacement_spec_formatting_locale_und_latn_jp(
-) -> Result<(), PersonNamesFormatterError> {
+fn test_space_replacement_spec_formatting_locale_und_latn_jp()
+-> Result<(), PersonNamesFormatterError> {
     let mut person_data: LiteMap<NameField, String> = LiteMap::new();
     person_data.insert(
         NameField {

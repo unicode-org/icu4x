@@ -10,8 +10,8 @@ use alloc::borrow::Cow;
 use alloc::string::String;
 use icu_locale_core::preferences::define_preferences;
 use icu_locale_core::{
-    subtags::Language, subtags::Region, subtags::Script, subtags::Variant, LanguageIdentifier,
-    Locale,
+    LanguageIdentifier, Locale, subtags::Language, subtags::Region, subtags::Script,
+    subtags::Variant,
 };
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
@@ -406,22 +406,22 @@ impl LocaleDisplayNamesFormatter {
                 }
             }
 
-            if ldn.is_none() {
-                if let Some(region) = locale.id.region {
-                    let data = self.locale_data.get();
-                    let id = LanguageIdentifier::from((locale.id.language, None, Some(region)));
-                    let cmp = |uvstr: &PotentialUtf8| id.strict_cmp(uvstr).reverse();
-                    if let Some(x) = match self.options.style {
-                        Some(Style::Short) => data.short_names.get_by(cmp),
-                        Some(Style::Long) => data.long_names.get_by(cmp),
-                        Some(Style::Menu) => data.menu_names.get_by(cmp),
-                        _ => None,
-                    }
-                    .or_else(|| data.names.get_by(cmp))
-                    {
-                        ldn = Some(x);
-                        region_qs = None;
-                    }
+            if ldn.is_none()
+                && let Some(region) = locale.id.region
+            {
+                let data = self.locale_data.get();
+                let id = LanguageIdentifier::from((locale.id.language, None, Some(region)));
+                let cmp = |uvstr: &PotentialUtf8| id.strict_cmp(uvstr).reverse();
+                if let Some(x) = match self.options.style {
+                    Some(Style::Short) => data.short_names.get_by(cmp),
+                    Some(Style::Long) => data.long_names.get_by(cmp),
+                    Some(Style::Menu) => data.menu_names.get_by(cmp),
+                    _ => None,
+                }
+                .or_else(|| data.names.get_by(cmp))
+                {
+                    ldn = Some(x);
+                    region_qs = None;
                 }
             }
         }

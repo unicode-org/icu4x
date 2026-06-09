@@ -116,15 +116,14 @@ fn test_hebr_override() {
     for element in elements.iter() {
         let (_metadata, items) = element.get_default();
         for item in items.iter() {
-            if let PatternItem::Field(field) = item {
-                if let FieldSymbol::Year(_) = field.symbol {
-                    if matches!(
-                        field.length,
-                        FieldLength::NumericOverride(FieldNumericOverrides::Jpnyear)
-                    ) {
-                        found_jpan = true;
-                    }
-                }
+            if let PatternItem::Field(field) = item
+                && let FieldSymbol::Year(_) = field.symbol
+                && matches!(
+                    field.length,
+                    FieldLength::NumericOverride(FieldNumericOverrides::Jpnyear)
+                )
+            {
+                found_jpan = true;
             }
         }
     }
@@ -225,11 +224,11 @@ fn test_en_overlap_patterns() {
 #[cfg(feature = "networking")]
 mod date_skeleton_consistency_tests {
     use super::*;
-    use crate::datetime::available_formats::DatetimeAsciiPreference;
-    use crate::datetime::DatagenCalendar;
+
     use crate::CoverageLevel;
+    use crate::datetime::DatagenCalendar;
     use icu::datetime::provider::fields;
-    use icu::datetime::provider::pattern::{reference, runtime, CoarseHourCycle};
+    use icu::datetime::provider::pattern::{CoarseHourCycle, reference, runtime};
     use icu::datetime::provider::skeleton::reference::Skeleton;
     use std::collections::BTreeMap;
 
@@ -269,9 +268,9 @@ mod date_skeleton_consistency_tests {
         pattern: &mut reference::Pattern,
         strategy: PatternCanonicalizationStrategy,
     ) {
+        use PatternCanonicalizationStrategy::*;
         use icu::datetime::provider::fields::{Field, FieldLength, FieldSymbol};
         use icu::datetime::provider::pattern::PatternItem;
-        use PatternCanonicalizationStrategy::*;
 
         let mut items = core::mem::take(pattern).into_items();
         items.retain_mut(|item| {

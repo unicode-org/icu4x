@@ -153,7 +153,7 @@ Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to eac
 <br/>
  
  - `ci-job-test-c`: Runs all C/C++ FFI tests; mostly important if you're changing the FFI interface.
-     + Requires `clang-19` and `lld-19` with the `gold` plugin (APT packages `llvm-19` and `lld-19`).
+     + Requires `clang-20` and `lld-20` with the `gold` plugin (APT packages `llvm-20` and `lld-20`).
  - `ci-job-test-js`: Runs all JS/WASM/Node FFI tests; mostly important if you're changing the FFI interface.
      + Requires Node.js version 16.18.0. This may not the one offered by the package manager; get it from the NodeJS website or `nvm`.
  - `ci-job-nostd`: Builds ICU4X for a `#[no_std]` target to verify that it's compatible.

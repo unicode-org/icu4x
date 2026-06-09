@@ -21,19 +21,19 @@
 use icu_collections::char16trie::Char16TrieIterator;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
-use zerovec::ule::AsULE;
 use zerovec::ZeroVec;
-use zerovec::{zeroslice, ZeroSlice};
+use zerovec::ule::AsULE;
+use zerovec::{ZeroSlice, zeroslice};
 
 use crate::elements::CollationElement;
 use crate::elements::CollationElement32;
-use crate::elements::Tag;
 use crate::elements::EMPTY_U16;
 use crate::elements::FFFD_CE;
+use crate::elements::FFFD_CE_VALUE;
 use crate::elements::FFFD_CE32;
 use crate::elements::FFFD_CE32_VALUE;
-use crate::elements::FFFD_CE_VALUE;
 use crate::elements::NO_CE_PRIMARY;
+use crate::elements::Tag;
 use crate::preferences::CollationCaseFirst;
 
 use crate::options::MaxVariable;
@@ -225,20 +225,20 @@ impl<'data> CollationData<'data> {
         })
     }
     pub(crate) fn get_ce32s(&'data self, index: usize, len: usize) -> &'data ZeroSlice<u32> {
-        if len > 0 {
-            if let Some(slice) = self.ce32s.get_subslice(index..index + len) {
-                return slice;
-            }
+        if len > 0
+            && let Some(slice) = self.ce32s.get_subslice(index..index + len)
+        {
+            return slice;
         }
         // GIGO case
         debug_assert!(false);
         SINGLE_U32
     }
     pub(crate) fn get_ces(&'data self, index: usize, len: usize) -> &'data ZeroSlice<u64> {
-        if len > 0 {
-            if let Some(slice) = self.ces.get_subslice(index..index + len) {
-                return slice;
-            }
+        if len > 0
+            && let Some(slice) = self.ces.get_subslice(index..index + len)
+        {
+            return slice;
         }
         // GIGO case
         debug_assert!(false);

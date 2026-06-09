@@ -62,7 +62,11 @@ fn test_cldr_unit_tests() {
         assert!(
             diff_ratio <= Ratio::new(BigInt::from(1), BigInt::from(1000000)),
             "Failed test: Category: {:?}, Input Unit: {:?}, Output Unit: {:?}, Result: {:?}, Expected Result: {:?}",
-            test.category, test.input_unit, test.output_unit, result, test.result
+            test.category,
+            test.input_unit,
+            test.output_unit,
+            result,
+            test.result
         );
 
         let test_result_f64 = test
@@ -74,7 +78,11 @@ fn test_cldr_unit_tests() {
         assert!(
             diff_ratio_f64 <= 0.000001,
             "Failed test: Category: {:?}, Input Unit: {:?}, Output Unit: {:?}, Result: {:?}, Expected Result: {:?}",
-            test.category, test.input_unit, test.output_unit, result_f64, test_result_f64
+            test.category,
+            test.input_unit,
+            test.output_unit,
+            result_f64,
+            test_result_f64
         );
     }
 }

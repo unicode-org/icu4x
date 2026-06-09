@@ -10,7 +10,7 @@ use crate::error::{
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
-use crate::{types, Calendar, Date, RangeError};
+use crate::{Calendar, Date, RangeError, types};
 use ::tinystr::tinystr;
 use calendrical_calculations::rata_die::RataDie;
 
@@ -155,11 +155,7 @@ impl Calendar for Persian {
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        if self.is_in_leap_year(date) {
-            366
-        } else {
-            365
-        }
+        if self.is_in_leap_year(date) { 366 } else { 365 }
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {

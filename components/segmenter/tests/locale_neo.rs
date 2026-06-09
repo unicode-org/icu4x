@@ -3,74 +3,46 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locale_core::langid;
-use icu_segmenter::neo::{SentenceSegmenter, WordSegmenter};
+use icu_segmenter::neo::*;
 use icu_segmenter::options::{SentenceBreakOptions, WordBreakOptions};
-use itertools::Itertools;
+
+include!("helpers.rs.raw");
 
 // Additional segmenter tests with locale.
 
 #[test]
 fn word_break_with_locale() {
-    // MidLetter is different because U+0x3A isn't MidLetter on Swedish.
-    let s = "hello:world";
-    let mut options_sv = WordBreakOptions::default();
-    let langid = langid!("sv");
-    options_sv.content_locale = Some(&langid);
-    let segmenter = WordSegmenter::try_new_auto(options_sv).expect("Loading should succeed!");
-    let segments = segmenter
-        .as_borrowed()
-        .segment_str(s)
-        .tuple_windows()
-        .map(|(a, b)| &s[a..b])
-        .collect::<Vec<_>>();
-    assert_eq!(segments, &["hello:world"], "word segmenter with Swedish");
+    let mut options = WordBreakOptions::default();
 
-    let mut options_en = WordBreakOptions::default();
+    let langid = langid!("sv");
+    options.content_locale = Some(&langid);
+    let segmenter = WordSegmenter::try_new_auto(options).unwrap();
+
+    check_word("hello:world", &["hello:world"], segmenter.as_borrowed());
+
     let langid = langid!("en");
-    options_en.content_locale = Some(&langid);
-    let segmenter = WordSegmenter::try_new_auto(options_en).expect("Loading should succeed!");
-    let segments = segmenter
-        .as_borrowed()
-        .segment_str(s)
-        .tuple_windows()
-        .map(|(a, b)| &s[a..b])
-        .collect::<Vec<_>>();
-    assert_eq!(segments, &["hello:world"], "word segmenter with English");
+    options.content_locale = Some(&langid);
+    let segmenter = WordSegmenter::try_new_auto(options).unwrap();
+
+    check_word("hello:world", &["hello:world"], segmenter.as_borrowed());
 }
 
 #[test]
 fn sentence_break_with_locale() {
     // SB11 is different because U+0x3B is STerm on Greek.
-    let s = "hello; world";
-    let mut options_el = SentenceBreakOptions::default();
+    let mut options = SentenceBreakOptions::default();
+
     let langid = langid!("el");
-    options_el.content_locale = Some(&langid);
-    let segmenter = SentenceSegmenter::try_new(options_el).expect("Loading should succeed!");
-    let segments = segmenter
-        .as_borrowed()
-        .segment_str(s)
-        .tuple_windows()
-        .map(|(a, b)| &s[a..b])
-        .collect::<Vec<_>>();
-    assert_eq!(
-        segments,
+    options.content_locale = Some(&langid);
+    let segmenter = SentenceSegmenter::try_new(options).unwrap();
+    check_sentence(
+        "hello; world",
         &["hello; ", "world"],
-        "sentence segmenter with Greek"
+        segmenter.as_borrowed(),
     );
 
-    let mut options_en = SentenceBreakOptions::default();
     let langid = langid!("en");
-    options_en.content_locale = Some(&langid);
-    let segmenter = SentenceSegmenter::try_new(options_en).expect("Loading should succeed!");
-    let segments = segmenter
-        .as_borrowed()
-        .segment_str(s)
-        .tuple_windows()
-        .map(|(a, b)| &s[a..b])
-        .collect::<Vec<_>>();
-    assert_eq!(
-        segments,
-        &["hello; world"],
-        "sentence segmenter with English"
-    );
+    options.content_locale = Some(&langid);
+    let segmenter = SentenceSegmenter::try_new(options).unwrap();
+    check_sentence("hello; world", &["hello; world"], segmenter.as_borrowed());
 }

@@ -38,7 +38,7 @@ impl Manifest {
                 bf => {
                     return Err(DataErrorKind::Deserialize
                         .with_str_context("Format not supported by FsDataProvider")
-                        .with_debug_context(&bf))
+                        .with_debug_context(&bf));
                 }
             },
         })

@@ -15,8 +15,8 @@ use zerovec::{VarZeroVec, ZeroMap};
 use icu_pattern::DoublePlaceholder;
 use icu_pattern::DoublePlaceholderPattern;
 
-use crate::dimension::currency::options::Width;
 use crate::dimension::currency::CurrencyCode;
+use crate::dimension::currency::options::Width;
 
 #[cfg(feature = "compiled_data")]
 /// Baked data

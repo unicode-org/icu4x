@@ -811,7 +811,6 @@ where
     }
 }
 
-#[cfg(all(test, feature = "serde"))]
 #[test]
 fn empty_string() {
     let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());

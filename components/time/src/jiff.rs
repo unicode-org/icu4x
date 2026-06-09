@@ -4,11 +4,11 @@
 
 use icu_calendar::Gregorian;
 
-#[cfg(feature = "compiled_data")]
-use crate::zone::models::{AtTime, Base};
 use crate::zone::UtcOffset;
 #[cfg(feature = "compiled_data")]
 use crate::zone::ZoneNameTimestamp;
+#[cfg(feature = "compiled_data")]
+use crate::zone::models::{AtTime, Base};
 use crate::{DateTime, Hour, Minute, Nanosecond, Second, Time};
 #[cfg(feature = "compiled_data")]
 use crate::{TimeZone, TimeZoneInfo, ZonedDateTime};

@@ -17,16 +17,16 @@
 #[macro_export]
 macro_rules! __impl_collation_metadata_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl $provider {
             pub const COLLATION_METADATA_V1_UND: &<icu::collator::provider::CollationMetadataV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct = &icu::collator::provider::CollationMetadata { bits: 1u32 };
             pub const COLLATION_METADATA_V1_UND_EMOJI: &<icu::collator::provider::CollationMetadataV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct = &icu::collator::provider::CollationMetadata { bits: 9u32 };
             pub const COLLATION_METADATA_V1_UND_EOR: &<icu::collator::provider::CollationMetadataV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct = Self::COLLATION_METADATA_V1_UND_EMOJI;
             const DATA_COLLATION_METADATA_V1: icu_provider::baked::zerotrie::DataRef<icu::collator::provider::CollationMetadataV1> = unsafe { icu_provider::baked::zerotrie::DataRef::from_trie_and_refs_unchecked(icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"und\x80\x1Ee\xC2mo\x04oji\x81r\x81" }, &[Self::COLLATION_METADATA_V1_UND, Self::COLLATION_METADATA_V1_UND_EMOJI]) };
         }
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl icu_provider::DataProvider<icu::collator::provider::CollationMetadataV1> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::collator::provider::CollationMetadataV1>, icu_provider::DataError> {
                 let mut req = req;
@@ -39,7 +39,7 @@ macro_rules! __impl_collation_metadata_v1 {
     };
     ($ provider : ty , ITER) => {
         __impl_collation_metadata_v1!($provider);
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl icu_provider::IterableDataProvider<icu::collator::provider::CollationMetadataV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider::baked::DataStore::iter(&Self::DATA_COLLATION_METADATA_V1).collect())

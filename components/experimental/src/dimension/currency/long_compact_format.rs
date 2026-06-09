@@ -8,8 +8,8 @@ mod tests {
     use tinystr::*;
     use writeable::assert_writeable_eq;
 
-    use crate::dimension::currency::long_compact_formatter::LongCompactCurrencyFormatter;
     use crate::dimension::currency::CurrencyCode;
+    use crate::dimension::currency::long_compact_formatter::LongCompactCurrencyFormatter;
 
     #[test]
     pub fn test_en_us() {

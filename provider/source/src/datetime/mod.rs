@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cldr_serde;
 use crate::SourceDataProvider;
+use crate::cldr_serde;
 use icu::calendar::AnyCalendarKind;
-use icu::datetime::provider::skeleton::reference::Skeleton;
 use icu::datetime::provider::skeleton::SkeletonError;
+use icu::datetime::provider::skeleton::reference::Skeleton;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 

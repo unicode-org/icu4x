@@ -8,15 +8,15 @@ use crate::measure::category::CategorizedMeasureUnit;
 use crate::measure::category::MeasureUnitCategory;
 use core::marker::PhantomData;
 use fixed_decimal::Decimal;
-use icu_decimal::options::DecimalFormatterOptions;
 use icu_decimal::DecimalFormatter;
 use icu_decimal::DecimalFormatterPreferences;
+use icu_decimal::options::DecimalFormatterOptions;
 use icu_locale::DataLocale;
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_plurals::PluralRules;
 use icu_plurals::PluralRulesPreferences;
-use icu_provider::marker::DataMarkerExt;
 use icu_provider::DataError;
+use icu_provider::marker::DataMarkerExt;
 use icu_provider::{
     DataIdentifierBorrowed, DataMarkerAttributes, DataPayload, DataProvider, DataRequest,
 };

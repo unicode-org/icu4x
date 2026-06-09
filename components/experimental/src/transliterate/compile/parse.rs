@@ -638,10 +638,10 @@ where
     }
 
     fn try_parse_basic_id(&mut self) -> Result<Option<BasicId>> {
-        if let Some(c) = self.peek_char() {
-            if self.xid_start.contains(c) {
-                return Ok(Some(self.parse_basic_id()?));
-            }
+        if let Some(c) = self.peek_char()
+            && self.xid_start.contains(c)
+        {
+            return Ok(Some(self.parse_basic_id()?));
         }
         Ok(None)
     }

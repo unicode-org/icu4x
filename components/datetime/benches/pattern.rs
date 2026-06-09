@@ -5,7 +5,7 @@
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub(crate) struct PatternsFixture(pub(crate) Vec<String>);
 
-use criterion::{criterion_group, criterion_main, Criterion};
+use criterion::{Criterion, criterion_group, criterion_main};
 
 use icu_datetime::provider::pattern::reference::Pattern;
 

@@ -9,10 +9,10 @@
 //! the options for the collator.
 
 use crate::{
+    CollatorPreferences,
     elements::{CASE_MASK, TERTIARY_MASK},
     preferences::{CollationCaseFirst, CollationNumericOrdering},
     provider::CollationMetadata,
-    CollatorPreferences,
 };
 
 /// The collation strength that indicates how many levels to compare. The primary

@@ -52,8 +52,8 @@ mod offset;
 pub mod windows;
 mod zone_name_timestamp;
 
-use icu_calendar::types::RataDie;
 use icu_calendar::AsCalendar;
+use icu_calendar::types::RataDie;
 #[cfg(feature = "compiled_data")]
 use icu_locale_core::subtags::Region;
 #[doc(inline)]
@@ -72,13 +72,13 @@ pub use windows::{WindowsParser, WindowsParserBorrowed};
 
 pub use zone_name_timestamp::ZoneNameTimestamp;
 
-use crate::scaffold::IntoOption;
 use crate::DateTime;
 use crate::Time;
+use crate::scaffold::IntoOption;
 use core::fmt;
 use core::ops::Deref;
 use icu_calendar::Iso;
-use icu_locale_core::subtags::{subtag, Subtag};
+use icu_locale_core::subtags::{Subtag, subtag};
 use icu_provider::prelude::yoke;
 use zerovec::ule::{AsULE, ULE};
 

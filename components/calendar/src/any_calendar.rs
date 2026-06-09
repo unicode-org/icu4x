@@ -859,9 +859,9 @@ impl<C: IntoAnyCalendar> Date<C> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::Ref;
     use crate::error::DateNewError;
     use crate::types::{Month, YearInput};
-    use crate::Ref;
 
     #[track_caller]
     fn single_test_roundtrip(

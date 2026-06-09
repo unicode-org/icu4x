@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::Calendar;
+use crate::Date;
 use crate::error::DateFromFieldsError;
 use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::types::DateFields;
-use crate::Calendar;
-use crate::Date;
 use calendrical_calculations::rata_die::RataDie;
 
 // We could use the `bitflags` crate here, but we are using raw constants
@@ -36,15 +36,15 @@ fn try_from_fields_helper<C: Calendar + Copy>(
     }
 
     let era_bytes = date.year().era().map(|ey| ey.era);
-    if flags & ERA != 0 {
-        if let Some(ref eb) = era_bytes {
-            fields.era = Some(eb.as_bytes());
-        }
+    if flags & ERA != 0
+        && let Some(ref eb) = era_bytes
+    {
+        fields.era = Some(eb.as_bytes());
     }
-    if flags & ERA_YEAR != 0 {
-        if let Some(ey) = date.year().era() {
-            fields.era_year = Some(ey.year);
-        }
+    if flags & ERA_YEAR != 0
+        && let Some(ey) = date.year().era()
+    {
+        fields.era_year = Some(ey.year);
     }
 
     let month_input = date.month().to_input();
@@ -63,16 +63,16 @@ fn try_from_fields_helper<C: Calendar + Copy>(
         fields.day = Some(date.day_of_month().0);
     }
 
-    if flags & MAKE_INCONSISTENT_YEAR != 0 {
-        if let Some(ref mut y) = fields.extended_year {
-            *y += 1;
-        }
+    if flags & MAKE_INCONSISTENT_YEAR != 0
+        && let Some(ref mut y) = fields.extended_year
+    {
+        *y += 1;
     }
 
-    if flags & MAKE_INCONSISTENT_MONTH != 0 {
-        if let Some(ref mut m) = fields.ordinal_month {
-            *m = if *m == 1 { 2 } else { 1 };
-        }
+    if flags & MAKE_INCONSISTENT_MONTH != 0
+        && let Some(ref mut m) = fields.ordinal_month
+    {
+        *m = if *m == 1 { 2 } else { 1 };
     }
 
     Date::try_from_fields(fields, options, cal)

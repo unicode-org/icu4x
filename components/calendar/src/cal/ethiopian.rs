@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cal::coptic::{CopticDateInner, CopticYear};
 use crate::cal::Coptic;
+use crate::cal::coptic::{CopticDateInner, CopticYear};
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver};
 use crate::error::{
     DateAddError, DateFromFieldsError, DateNewError, EcmaReferenceYearError, UnknownEraError,
@@ -11,7 +11,7 @@ use crate::error::{
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
-use crate::{types, Calendar, Date, RangeError};
+use crate::{Calendar, Date, RangeError, types};
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
@@ -182,7 +182,7 @@ impl Calendar for Ethiopian {
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        date.0 .0.to_rata_die()
+        date.0.0.to_rata_die()
     }
 
     fn has_cheap_iso_conversion(&self) -> bool {
@@ -227,7 +227,7 @@ impl Calendar for Ethiopian {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let coptic_year = date.0 .0.year();
+        let coptic_year = date.0.0.year();
         let extended_year = coptic_year.to_ethiopian_year(self.0);
 
         if self.0 == EthiopianEraStyle::AmeteAlem || extended_year <= 0 {

@@ -7,6 +7,7 @@ use super::{
     GetNameForEraError, GetNameForMonthError, GetNameForWeekdayError, MonthPlaceholderValue,
     PatternLoadError, UnsupportedCalendarError,
 };
+use crate::FixedCalendarDateTimeFormatter;
 use crate::error::ErrorField;
 use crate::fieldsets::enums::{CompositeDateTimeFieldSet, CompositeFieldSet};
 use crate::provider::fields::{self, FieldLength, FieldSymbol};
@@ -15,17 +16,16 @@ use crate::provider::pattern::PatternItem;
 use crate::provider::semantic_skeletons::marker_attrs;
 use crate::provider::time_zones::tz;
 use crate::size_test_macro::size_test;
-use crate::FixedCalendarDateTimeFormatter;
-use crate::{external_loaders::*, DateTimeFormatterPreferences};
-use crate::{scaffold::*, DateTimeFormatter, DateTimeFormatterLoadError};
+use crate::{DateTimeFormatter, DateTimeFormatterLoadError, scaffold::*};
+use crate::{DateTimeFormatterPreferences, external_loaders::*};
 use core::fmt;
 use core::marker::PhantomData;
-use icu_calendar::types::{EraYear, LeapStatus, MonthInfo};
 use icu_calendar::AnyCalendar;
+use icu_calendar::types::{EraYear, LeapStatus, MonthInfo};
+use icu_decimal::DecimalFormatter;
 use icu_decimal::options::DecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
 use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV1};
-use icu_decimal::DecimalFormatter;
 use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
 
@@ -2759,10 +2759,10 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
 impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet>
 where
     FSet::DayPeriodNames: NamesContainer<
-        DayPeriodNamesV1,
-        DayPeriodNameLength,
-        Container = DataPayloadWithVariables<DayPeriodNamesV1, DayPeriodNameLength>,
-    >,
+            DayPeriodNamesV1,
+            DayPeriodNameLength,
+            Container = DataPayloadWithVariables<DayPeriodNamesV1, DayPeriodNameLength>,
+        >,
 {
     /// Gets the "AM" day period symbol for the specified length if the data is loaded.
     ///

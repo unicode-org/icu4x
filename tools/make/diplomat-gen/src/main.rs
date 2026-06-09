@@ -6,8 +6,8 @@ use std::collections::HashMap;
 use std::path::Path;
 
 use cargo_metadata::{CargoOpt, MetadataCommand};
-use diplomat_tool::config::Config;
 use diplomat_tool::DocsUrlGenerator;
+use diplomat_tool::config::Config;
 
 fn main() -> std::io::Result<()> {
     let root = Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../"));

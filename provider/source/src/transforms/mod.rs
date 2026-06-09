@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::cldr_serde::transforms;
 use super::CldrCache;
+use super::cldr_serde::transforms;
 use crate::SourceDataProvider;
-use icu::experimental::transliterate::provider::*;
 use icu::experimental::transliterate::RuleCollection;
+use icu::experimental::transliterate::provider::*;
 use icu::locale::Locale;
 use icu_provider::prelude::*;
 use itertools::Itertools;

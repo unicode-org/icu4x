@@ -6,9 +6,9 @@ use core::cmp::Ordering;
 #[cfg(feature = "alloc")]
 use core::str::FromStr;
 
+use crate::ParseError;
 use crate::parser;
 use crate::subtags;
-use crate::ParseError;
 #[cfg(feature = "alloc")]
 use alloc::borrow::Cow;
 
@@ -407,15 +407,15 @@ impl LanguageIdentifier {
         if !subtag_matches!(subtags::Language, iter, self.language) {
             return false;
         }
-        if let Some(ref script) = self.script {
-            if !subtag_matches!(subtags::Script, iter, *script) {
-                return false;
-            }
+        if let Some(ref script) = self.script
+            && !subtag_matches!(subtags::Script, iter, *script)
+        {
+            return false;
         }
-        if let Some(ref region) = self.region {
-            if !subtag_matches!(subtags::Region, iter, *region) {
-                return false;
-            }
+        if let Some(ref region) = self.region
+            && !subtag_matches!(subtags::Region, iter, *region)
+        {
+            return false;
         }
         for variant in self.variants.iter() {
             if !subtag_matches!(subtags::Variant, iter, *variant) {

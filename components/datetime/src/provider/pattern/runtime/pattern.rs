@@ -4,7 +4,7 @@
 
 #![allow(clippy::exhaustive_structs)] // part of data struct and internal API
 
-use super::super::{reference, PatternError, PatternItem, TimeGranularity};
+use super::super::{PatternError, PatternItem, TimeGranularity, reference};
 use alloc::vec::Vec;
 use core::str::FromStr;
 use icu_plurals::provider::FourBitMetadata;

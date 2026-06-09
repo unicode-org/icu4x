@@ -5,10 +5,10 @@
 use super::Attribute;
 
 #[cfg(feature = "alloc")]
+use crate::ParseError;
+#[cfg(feature = "alloc")]
 use crate::parser::SubtagIterator;
 use crate::shortvec::ShortBoxSlice;
-#[cfg(feature = "alloc")]
-use crate::ParseError;
 #[cfg(feature = "alloc")]
 use alloc::vec::Vec;
 use core::ops::Deref;

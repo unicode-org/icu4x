@@ -553,9 +553,10 @@ impl<const KEY_FINISHED: bool> Utf8Matcher<Reverse> for RepMatcher<'_, '_, KEY_F
 
     fn consume(&mut self, len: usize) -> bool {
         if len <= self.ante_cursor() {
-            assert!(self
-                .remaining_ante_slice()
-                .is_char_boundary(self.ante_cursor() - len));
+            assert!(
+                self.remaining_ante_slice()
+                    .is_char_boundary(self.ante_cursor() - len)
+            );
             // SAFETY: `len` is guaranteed to be a valid UTF-8 length reverse-starting at `ante_cursor()`.
             self.ante_match_len += len;
             true

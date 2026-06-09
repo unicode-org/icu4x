@@ -4,7 +4,7 @@
 
 use crate::parser::*;
 use crate::subtags::Subtag;
-use crate::{extensions, subtags, LanguageIdentifier};
+use crate::{LanguageIdentifier, extensions, subtags};
 #[cfg(feature = "alloc")]
 use alloc::borrow::Cow;
 use core::cmp::Ordering;
@@ -415,15 +415,15 @@ impl Locale {
         if !subtag_matches!(subtags::Language, iter, self.id.language) {
             return false;
         }
-        if let Some(ref script) = self.id.script {
-            if !subtag_matches!(subtags::Script, iter, *script) {
-                return false;
-            }
+        if let Some(ref script) = self.id.script
+            && !subtag_matches!(subtags::Script, iter, *script)
+        {
+            return false;
         }
-        if let Some(ref region) = self.id.region {
-            if !subtag_matches!(subtags::Region, iter, *region) {
-                return false;
-            }
+        if let Some(ref region) = self.id.region
+            && !subtag_matches!(subtags::Region, iter, *region)
+        {
+            return false;
         }
         for variant in self.id.variants.iter() {
             if !subtag_matches!(subtags::Variant, iter, *variant) {

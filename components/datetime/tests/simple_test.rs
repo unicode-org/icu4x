@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_calendar::Date;
 use icu_calendar::cal::{ChineseTraditional, Hebrew};
 use icu_calendar::types::Month;
-use icu_calendar::Date;
 use icu_datetime::fieldsets;
 use icu_datetime::fieldsets::enums::{
     CompositeDateTimeFieldSet, DateAndTimeFieldSet, DateFieldSet,
@@ -14,7 +14,7 @@ use icu_datetime::pattern::{DateTimePattern, FixedCalendarDateTimeNames};
 use icu_datetime::{
     DateTimeFormatter, DateTimeFormatterPreferences, FixedCalendarDateTimeFormatter,
 };
-use icu_locale_core::{locale, Locale};
+use icu_locale_core::{Locale, locale};
 use writeable::assert_writeable_eq;
 
 const EXPECTED_DATETIME: &[&str] = &[

@@ -14,7 +14,7 @@ use core::ops::RangeInclusive;
 #[cfg(feature = "alloc")]
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_provider::prelude::*;
-use zerovec::{ule::AsULE, ZeroSlice};
+use zerovec::{ZeroSlice, ule::AsULE};
 
 #[cfg(feature = "harfbuzz_traits")]
 pub use crate::harfbuzz::{HarfbuzzScriptData, HarfbuzzScriptDataBorrowed};

@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cldr_serde;
-use crate::cldr_serde::time_zones::meta_zones::UsesMetazone;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use crate::cldr_serde;
+use crate::cldr_serde::time_zones::meta_zones::UsesMetazone;
 use core::cmp::Ordering;
 use core::hash::Hash;
 use core::hash::Hasher;

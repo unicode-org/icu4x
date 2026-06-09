@@ -4,22 +4,22 @@
 
 //! Datetime formatting without static checking of invariants.
 
-use crate::format::datetime::try_write_pattern_items;
+use crate::DateTimeFormatter;
+use crate::FixedCalendarDateTimeFormatter;
 pub use crate::format::DateTimeInputUnchecked;
+use crate::format::datetime::try_write_pattern_items;
 use crate::pattern::*;
 use crate::raw::neo::*;
 use crate::scaffold::*;
-use crate::DateTimeFormatter;
-use crate::FixedCalendarDateTimeFormatter;
 use core::fmt;
 use icu_calendar::types::MonthCode;
 use tinystr::TinyStr16;
 use writeable::TryWriteable;
 
 #[cfg(doc)]
-use crate::fieldsets::enums::CompositeFieldSet;
-#[cfg(doc)]
 use crate::FormattedDateTime;
+#[cfg(doc)]
+use crate::fieldsets::enums::CompositeFieldSet;
 #[cfg(doc)]
 use icu_calendar::types::CyclicYear;
 #[cfg(doc)]

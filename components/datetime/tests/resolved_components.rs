@@ -4,10 +4,10 @@
 
 use icu_calendar::{Date, Gregorian};
 use icu_datetime::{
+    FixedCalendarDateTimeFormatter,
     fieldsets::{self, enums::*},
     options::{Alignment, SubsecondDigits, TimePrecision, YearStyle},
     provider::fields::components,
-    FixedCalendarDateTimeFormatter,
 };
 use icu_locale_core::Locale;
 use icu_locale_core::{locale, preferences::extensions::unicode::keywords::HourCycle};

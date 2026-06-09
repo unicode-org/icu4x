@@ -4,9 +4,9 @@
 
 use core::str::FromStr;
 
-use writeable::{impl_display_with_writeable, Writeable};
+use writeable::{Writeable, impl_display_with_writeable};
 
-use crate::provider::pattern::{runtime, PatternError, PatternItem};
+use crate::provider::pattern::{PatternError, PatternItem, runtime};
 use crate::size_test_macro::size_test;
 
 size_test!(DateTimePattern, date_time_pattern_size, 32);

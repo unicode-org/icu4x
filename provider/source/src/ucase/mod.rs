@@ -7,8 +7,8 @@
 
 use crate::SourceDataProvider;
 use icu::casemap::provider::{CaseMap, CaseMapUnfold, CaseMapUnfoldV1, CaseMapV1};
-use icu::collections::codepointtrie::toml::CodePointDataSlice;
 use icu::collections::codepointtrie::CodePointTrieHeader;
+use icu::collections::codepointtrie::toml::CodePointDataSlice;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;

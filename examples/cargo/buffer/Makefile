@@ -4,7 +4,7 @@
 
 export CARGO_TARGET_DIR ?= target
 
-PINNED_CI_NIGHTLY = "nightly-2025-09-27"
+PINNED_CI_NIGHTLY = "nightly-2026-06-01"
 
 ifeq ($(OS),Windows_NT)
 	BINARY_EXT = .exe

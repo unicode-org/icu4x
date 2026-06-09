@@ -7,8 +7,8 @@ use core::ops::Range;
 use core_maths::*;
 use std::vec;
 use std::vec::Vec;
-use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
+use zerovec::ule::AsULE;
 
 /// A `D`-dimensional, heap-allocated matrix.
 ///

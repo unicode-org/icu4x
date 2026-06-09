@@ -11,6 +11,19 @@
 //! want access to the raw canonical composition operation e.g. for use in a
 //! glyph-availability-guided custom normalizer.
 
+use crate::BACKWARD_COMBINING_MARKER;
+use crate::CanonicalCombiningClass;
+use crate::FDFA_MARKER;
+use crate::HANGUL_L_BASE;
+use crate::HANGUL_N_COUNT;
+use crate::HANGUL_S_BASE;
+use crate::HANGUL_S_COUNT;
+use crate::HANGUL_T_BASE;
+use crate::HANGUL_T_COUNT;
+use crate::HANGUL_V_BASE;
+use crate::HIGH_ZEROS_MASK;
+use crate::LOW_ZEROS_MASK;
+use crate::NON_ROUND_TRIP_MARKER;
 use crate::char_from_u16;
 use crate::char_from_u32;
 use crate::in_inclusive_range;
@@ -23,19 +36,6 @@ use crate::provider::NormalizerNfdDataV1;
 use crate::provider::NormalizerNfdSupplementV1;
 use crate::provider::NormalizerNfdTablesV1;
 use crate::trie_value_has_ccc;
-use crate::CanonicalCombiningClass;
-use crate::BACKWARD_COMBINING_MARKER;
-use crate::FDFA_MARKER;
-use crate::HANGUL_L_BASE;
-use crate::HANGUL_N_COUNT;
-use crate::HANGUL_S_BASE;
-use crate::HANGUL_S_COUNT;
-use crate::HANGUL_T_BASE;
-use crate::HANGUL_T_COUNT;
-use crate::HANGUL_V_BASE;
-use crate::HIGH_ZEROS_MASK;
-use crate::LOW_ZEROS_MASK;
-use crate::NON_ROUND_TRIP_MARKER;
 use icu_provider::prelude::*;
 
 /// Borrowed version of the raw canonical composition operation.
@@ -373,11 +373,11 @@ impl CanonicalDecompositionBorrowed<'_> {
                     // i.e. logical len isn't 2
                     break;
                 }
-                if let Some(first) = tables.scalars16.get(offset) {
-                    if let Some(second) = tables.scalars16.get(offset + 1) {
-                        // Two BMP starters
-                        return Decomposed::Expansion(char_from_u16(first), char_from_u16(second));
-                    }
+                if let Some(first) = tables.scalars16.get(offset)
+                    && let Some(second) = tables.scalars16.get(offset + 1)
+                {
+                    // Two BMP starters
+                    return Decomposed::Expansion(char_from_u16(first), char_from_u16(second));
                 }
                 // GIGO case
                 debug_assert!(false);
@@ -420,10 +420,10 @@ impl CanonicalDecompositionBorrowed<'_> {
         // Decomposition into two non-BMP characters
         // Low is offset into a table plus one to keep it non-zero.
         let offset = usize::from(trail_or_complex - 1);
-        if let Some(first) = non_recursive.scalars24.get(offset) {
-            if let Some(second) = non_recursive.scalars24.get(offset + 1) {
-                return Decomposed::Expansion(first, second);
-            }
+        if let Some(first) = non_recursive.scalars24.get(offset)
+            && let Some(second) = non_recursive.scalars24.get(offset + 1)
+        {
+            return Decomposed::Expansion(first, second);
         }
         // GIGO case
         debug_assert!(false);

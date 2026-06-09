@@ -12,18 +12,17 @@
 use alloc::collections::VecDeque;
 use alloc::vec::Vec;
 
-use crate::elements::CharacterAndClassAndTrieValue;
-use crate::elements::CollationElement32;
-use crate::elements::Tag;
 use crate::elements::BACKWARD_COMBINING_MARKER;
 use crate::elements::CE_BUFFER_SIZE;
+use crate::elements::CharacterAndClassAndTrieValue;
+use crate::elements::CollationElement32;
 use crate::elements::FALLBACK_CE32;
 use crate::elements::NON_ROUND_TRIP_MARKER;
+use crate::elements::Tag;
 use crate::elements::{
-    char_from_u32, CollationElement, CollationElements, NonPrimary, FFFD_CE32,
-    HANGUL_SYLLABLE_MARKER, HIGH_ZEROS_MASK, LOW_ZEROS_MASK, NO_CE, NO_CE_PRIMARY,
-    NO_CE_QUATERNARY, NO_CE_SECONDARY, NO_CE_TERTIARY, OPTIMIZED_DIACRITICS_MAX_COUNT,
-    QUATERNARY_MASK,
+    CollationElement, CollationElements, FFFD_CE32, HANGUL_SYLLABLE_MARKER, HIGH_ZEROS_MASK,
+    LOW_ZEROS_MASK, NO_CE, NO_CE_PRIMARY, NO_CE_QUATERNARY, NO_CE_SECONDARY, NO_CE_TERTIARY,
+    NonPrimary, OPTIMIZED_DIACRITICS_MAX_COUNT, QUATERNARY_MASK, char_from_u32,
 };
 use crate::options::CollatorOptionsBitField;
 use crate::options::{AlternateHandling, CollatorOptions, ResolvedCollatorOptions, Strength};
@@ -43,16 +42,16 @@ use crate::provider::CollationSpecialPrimariesV1;
 use crate::provider::CollationTailoringV1;
 use core::cmp::Ordering;
 use core::convert::Infallible;
+use icu_normalizer::DecomposingNormalizerBorrowed;
+use icu_normalizer::Decomposition;
 use icu_normalizer::provider::DecompositionData;
 use icu_normalizer::provider::DecompositionTables;
 use icu_normalizer::provider::NormalizerNfdDataV1;
 use icu_normalizer::provider::NormalizerNfdTablesV1;
-use icu_normalizer::DecomposingNormalizerBorrowed;
-use icu_normalizer::Decomposition;
 use icu_provider::prelude::*;
 use smallvec::SmallVec;
-use utf16_iter::Utf16CharsEx;
 use utf8_iter::Utf8CharsEx;
+use utf16_iter::Utf16CharsEx;
 
 // Special sort key bytes for all levels.
 const LEVEL_SEPARATOR_BYTE: u8 = 1;
@@ -160,6 +159,27 @@ const SLOPE_START_POS_3: i32 = SLOPE_START_POS_2 + SLOPE_LEAD_2;
 const SLOPE_START_NEG_2: i32 = SLOPE_MIDDLE + SLOPE_REACH_NEG_1;
 const SLOPE_START_NEG_3: i32 = SLOPE_START_NEG_2 - SLOPE_LEAD_2;
 
+trait Reorder: Copy {
+    fn reorder(self, p: u32) -> u32;
+}
+
+#[derive(Clone, Copy)]
+struct NoReorder;
+
+impl Reorder for NoReorder {
+    #[inline(always)]
+    fn reorder(self, p: u32) -> u32 {
+        p
+    }
+}
+
+impl Reorder for &CollationReordering<'_> {
+    #[inline(always)]
+    fn reorder(self, p: u32) -> u32 {
+        CollationReordering::reorder(self, p)
+    }
+}
+
 struct AnyQuaternaryAccumulator(u32);
 
 impl AnyQuaternaryAccumulator {
@@ -213,10 +233,10 @@ fn split_prefix_latin1<'a, 'b>(left: &'a [u8], right: &'b [u8]) -> (&'a [u8], &'
         .zip(right.iter())
         .take_while(|(l, r)| l == r)
         .count();
-    if let Some((head, left_tail)) = left.split_at_checked(i) {
-        if let Some(right_tail) = right.get(i..) {
-            return (head, left_tail, right_tail);
-        }
+    if let Some((head, left_tail)) = left.split_at_checked(i)
+        && let Some(right_tail) = right.get(i..)
+    {
+        return (head, left_tail, right_tail);
     }
     (&[], left, right)
 }
@@ -238,10 +258,10 @@ fn split_prefix_latin1_utf16<'a, 'b>(
         .zip(right.iter())
         .take_while(|(l, r)| u16::from(**l) == **r)
         .count();
-    if let Some((head, left_tail)) = left.split_at_checked(i) {
-        if let Some(right_tail) = right.get(i..) {
-            return (head, left_tail, right_tail);
-        }
+    if let Some((head, left_tail)) = left.split_at_checked(i)
+        && let Some(right_tail) = right.get(i..)
+    {
+        return (head, left_tail, right_tail);
     }
     (&[], left, right)
 }
@@ -262,16 +282,16 @@ fn split_prefix_u16<'a, 'b>(
         .zip(right.iter())
         .take_while(|(l, r)| l == r)
         .count();
-    if i != 0 {
-        if let Some(&last) = left.get(i.wrapping_sub(1)) {
-            if in_inclusive_range16(last, 0xD800, 0xDBFF) {
-                i -= 1;
-            }
-            if let Some((head, left_tail)) = left.split_at_checked(i) {
-                if let Some(right_tail) = right.get(i..) {
-                    return (head, left_tail, right_tail);
-                }
-            }
+    if i != 0
+        && let Some(&last) = left.get(i.wrapping_sub(1))
+    {
+        if in_inclusive_range16(last, 0xD800, 0xDBFF) {
+            i -= 1;
+        }
+        if let Some((head, left_tail)) = left.split_at_checked(i)
+            && let Some(right_tail) = right.get(i..)
+        {
+            return (head, left_tail, right_tail);
         }
     }
     (&[], left, right)
@@ -298,24 +318,24 @@ fn split_prefix_u8<'a, 'b>(left: &'a [u8], right: &'b [u8]) -> (&'a [u8], &'a [u
         // First, left and right differ, but since they
         // are the same afterwards, one of them needs checking
         // only once.
-        if let Some(right_first) = right.get(i) {
-            if (right_first & 0b1100_0000) == 0b1000_0000 {
-                i -= 1;
-            }
+        if let Some(right_first) = right.get(i)
+            && (right_first & 0b1100_0000) == 0b1000_0000
+        {
+            i -= 1;
         }
         while i != 0 {
-            if let Some(left_first) = left.get(i) {
-                if (left_first & 0b1100_0000) == 0b1000_0000 {
-                    i -= 1;
-                    continue;
-                }
+            if let Some(left_first) = left.get(i)
+                && (left_first & 0b1100_0000) == 0b1000_0000
+            {
+                i -= 1;
+                continue;
             }
             break;
         }
-        if let Some((head, left_tail)) = left.split_at_checked(i) {
-            if let Some(right_tail) = right.get(i..) {
-                return (head, left_tail, right_tail);
-            }
+        if let Some((head, left_tail)) = left.split_at_checked(i)
+            && let Some(right_tail) = right.get(i..)
+        {
+            return (head, left_tail, right_tail);
         }
     }
     (&[], left, right)
@@ -352,21 +372,21 @@ fn split_prefix<'a, 'b>(left: &'a str, right: &'b str) -> (&'a str, &'a str, &'b
         // Therefore, it's sufficient to examine only one of
         // the sides.
         loop {
-            if let Some(left_first) = left_bytes.get(i) {
-                if (left_first & 0b1100_0000) == 0b1000_0000 {
-                    i -= 1;
-                    continue;
-                }
+            if let Some(left_first) = left_bytes.get(i)
+                && (left_first & 0b1100_0000) == 0b1000_0000
+            {
+                i -= 1;
+                continue;
             }
             break;
         }
         // The methods below perform useless UTF-8 boundary checks,
         // since we just checked. However, avoiding `unsafe` to
         // make this code easier to audit.
-        if let Some((head, left_tail)) = left.split_at_checked(i) {
-            if let Some(right_tail) = right.get(i..) {
-                return (head, left_tail, right_tail);
-            }
+        if let Some((head, left_tail)) = left.split_at_checked(i)
+            && let Some(right_tail) = right.get(i..)
+        {
+            return (head, left_tail, right_tail);
         }
     }
     ("", left, right)
@@ -483,10 +503,10 @@ impl LocaleSpecificDataHolder {
             None
         };
 
-        if let Some(reordering) = &reordering {
-            if reordering.get().reorder_table.len() != 256 {
-                return Err(DataError::custom("invalid").with_marker(CollationReorderingV1::INFO));
-            }
+        if let Some(reordering) = &reordering
+            && reordering.get().reorder_table.len() != 256
+        {
+            return Err(DataError::custom("invalid").with_marker(CollationReorderingV1::INFO));
         }
 
         let tailored_diacritics = metadata.tailored_diacritics();
@@ -1779,7 +1799,10 @@ impl<'a> CollatorBorrowed<'a> {
         };
 
         let mut state = S::State::default();
-        self.write_sort_key_up_to_quaternary(iter, sink, &mut state)?;
+        match self.reordering {
+            Some(r) => self.write_sort_key_up_to_quaternary(iter, sink, &mut state, r)?,
+            None => self.write_sort_key_up_to_quaternary(iter, sink, &mut state, NoReorder)?,
+        }
 
         if let Some(iter) = identical {
             let nfd =
@@ -1797,15 +1820,17 @@ impl<'a> CollatorBorrowed<'a> {
     ///
     /// Optionally write the case level.  Separate levels with the `LEVEL_SEPARATOR_BYTE`, but
     /// do not write a terminating zero as with a C string.
-    fn write_sort_key_up_to_quaternary<I, S>(
+    fn write_sort_key_up_to_quaternary<I, S, R>(
         &self,
         iter: I,
         sink: &mut S,
         state: &mut S::State,
+        reorder: R,
     ) -> Result<(), S::Error>
     where
         I: Iterator<Item = char>,
         S: CollationKeySink + ?Sized,
+        R: Reorder,
     {
         // This algorithm comes from `CollationKeys::writeSortKeyUpToQuaternary` in ICU4C.
         let levels = self.sort_key_levels();
@@ -1858,9 +1883,7 @@ impl<'a> CollatorBorrowed<'a> {
 
                 loop {
                     if levels & QUATERNARY_LEVEL_FLAG != 0 {
-                        if let Some(reordering) = &self.reordering {
-                            p = reordering.reorder(p);
-                        }
+                        p = reorder.reorder(p);
                         if (p >> 24) as u8 >= QUAT_SHIFTED_LIMIT_BYTE {
                             // Prevent shifted primary lead bytes from overlapping with the
                             // common compression range.
@@ -1887,9 +1910,7 @@ impl<'a> CollatorBorrowed<'a> {
             if p > NO_CE_PRIMARY && levels & PRIMARY_LEVEL_FLAG != 0 {
                 // Test the un-reordered primary for compressibility.
                 let is_compressible = self.special_primaries.is_compressible((p >> 24) as _);
-                if let Some(reordering) = &self.reordering {
-                    p = reordering.reorder(p);
-                }
+                p = reorder.reorder(p);
                 let p1 = (p >> 24) as u8;
                 if !is_compressible || p1 != (prev_reordered_primary >> 24) as u8 {
                     if prev_reordered_primary != 0 {
@@ -1984,20 +2005,20 @@ impl<'a> CollatorBorrowed<'a> {
                         // The backwards secondary level compares secondary weights backwards
                         // within segments separated by the merge separator (U+FFFE).
                         let secs = &mut secondaries.buf;
-                        if let Some(last) = secs.len().checked_sub(1) {
-                            if sec_segment_start < last {
-                                let mut q = sec_segment_start;
-                                let mut r = last;
+                        if let Some(last) = secs.len().checked_sub(1)
+                            && sec_segment_start < last
+                        {
+                            let mut q = sec_segment_start;
+                            let mut r = last;
 
-                                // these indices start at valid values and we stop when they cross
-                                #[expect(clippy::indexing_slicing)]
-                                while q < r {
-                                    let b = secs[q];
-                                    secs[q] = secs[r];
-                                    q += 1;
-                                    secs[r] = b;
-                                    r -= 1;
-                                }
+                            // these indices start at valid values and we stop when they cross
+                            #[expect(clippy::indexing_slicing)]
+                            while q < r {
+                                let b = secs[q];
+                                secs[q] = secs[r];
+                                q += 1;
+                                secs[r] = b;
+                                r -= 1;
                             }
                         }
                         let b = if p == NO_CE_PRIMARY {
