@@ -9,7 +9,6 @@ use icu::plurals::{PluralCategory, PluralElements};
 
 use crate::AltVariantKind;
 use crate::SourceDataProvider;
-use std::collections::btree_map::Entry;
 use std::collections::BTreeMap;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -51,24 +50,10 @@ impl cldr_serde::ca::AvailableFormats {
                 None => (skeleton_str, PluralCategory::Other),
             };
 
-            match patterns
+            patterns
                 .entry(skeleton.to_string())
                 .or_default()
-                .entry(plural_category)
-            {
-                Entry::Vacant(e) => {
-                    e.insert(pattern_str.to_string());
-                }
-                Entry::Occupied(mut e) if is_alt_ascii => {
-                    // When `use_alt_ascii` is true, we want `alt-ascii` variants to take precedence
-                    // over standard patterns. Since `self.0.iter()` iterates over a HashMap in a
-                    // non-deterministic order, an ASCII variant might be processed before or after
-                    // a standard pattern. We only overwrite existing entries if the current pattern
-                    // being processed is the `alt-ascii` variant.
-                    e.insert(pattern_str.to_string());
-                }
-                Entry::Occupied(_) => {}
-            }
+                .insert(plural_category, pattern_str.to_string());
         }
 
         // TODO(#308): Support numbering system variations. We currently throw them away.

@@ -249,7 +249,7 @@ impl DateTimeFormatsVariant {
 }
 
 #[derive(PartialEq, Clone, Debug, Deserialize)]
-pub(crate) struct AvailableFormats(pub(crate) HashMap<String, String>);
+pub(crate) struct AvailableFormats(pub(crate) BTreeMap<String, String>);
 
 #[derive(PartialEq, Clone, Debug, Deserialize)]
 pub(crate) struct CyclicNameSets {
