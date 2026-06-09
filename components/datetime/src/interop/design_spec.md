@@ -108,9 +108,11 @@ A key difference between ICU4C and ICU4X is how they handle time zones and input
 *   **ICU4C** historically accepts `UDate` (double, milliseconds since epoch) and performs time zone conversions internally using its own copy of the Time Zone Database (TZDB).
 *   **ICU4X** defers time zone database conversions to third-party libraries. Its formatters expect pre-resolved, structured "Temporal-like" types (such as `Date`, `DateTime`, and `ZonedDateTime`) where calendar arithmetic and time zone offsets have already been applied.
 
-To maintain backend symmetry and leverage ICU4X's modern design, the interop layer will **only accept ICU4X input types** (or thin C++ wrappers around them).
+To maintain backend symmetry and leverage ICU4X's modern design, the interop layer will **only accept self-contained ICU4X input types** (such as `Date` and `DateTime`) that do not require external timezone database dependencies.
 *   **ICU4X Path**: Direct pass-through of ICU4X structured types to the ICU4X formatter.
-*   **ICU4C Path**: The C++ interop layer must convert the structured ICU4X input types into ICU4C-compatible representations (e.g., extracting the fields to populate a `UCalendar`, or calculating a local `UDate` if necessary) before calling `udat_format`.
+*   **ICU4C Path**: The C++ interop layer must convert the structured ICU4X input types into ICU4C-compatible representations (e.g., extracting the fields to populate a `UCalendar` or calculating a local `UDate`) before calling `udat_format`.
+
+Full timezone-aware formatting (accepting epoch timestamps and timezone IDs) is deferred to future work (see [Section 4.2](#42-time-zone-aware-formatting-and-epoch-inputs)).
 
 ### 2.4. Error Handling
 
@@ -195,7 +197,9 @@ Design the interop layer as a general-purpose, pluggable interface that can supp
 
 ---
 
-## 4. Future Work: Raw Pattern Support
+## 4. Future Work
+
+### 4.1. Raw Pattern Support
 
 While ICU4X supports formatting with arbitrary raw patterns (e.g., via `DateTimePatternFormatter` in Rust), this capability is not currently exposed over FFI (`icu_capi`). To maintain symmetry across backends in this interop layer, and because there are no plans to add FFI support for raw patterns at this time, raw pattern support (e.g., `pattern: Option<String>`) has been excluded from the unified `DateTimeFormatterOptions` bag.
 
@@ -203,3 +207,14 @@ Future work will investigate how to support raw patterns. The following options 
 1.  **On-the-fly Pattern Compilation**: Allow ICU4X to compile raw patterns at runtime. This would involve parsing the pattern string into a `Pattern` struct and then converting it to a `PackedPattern`, which requires memory allocation.
 2.  **Polymorphic Formatter API**: Modify the interop API to return an enum or interface that can represent either a `DateTimeFormatter` (skeleton-based) or a `DateTimePatternFormatter` (pattern-based).
 3.  **Segregated Pattern Interop**: Keep the skeleton-based interop and pattern-based interop separate, possibly in a separate header/module.
+
+### 4.2. Time Zone-Aware Formatting and Epoch Inputs
+
+A major difference between the backends is timezone handling: ICU4C accepts epoch milliseconds (`UDate`) and performs timezone offset resolution internally using its own TZDB, while ICU4X expects pre-resolved structured types (like `ZonedDateTime`) and delegates timezone database lookups to the caller. This is straightforward for Rust clients who can easily pull in libraries like **`jiff`**, but it is highly complex for C++ clients working over FFI.
+
+To maintain dependency isolation and avoid linking a timezone database (TZDB) provider into the FFI by default, the interop layer will **initially only support minimal, self-contained input types** that work in both ICU4C and ICU4X without external dependencies (such as local `DateTime` or pre-resolved offsets).
+
+Future work will investigate how to support full timezone-aware formatting and epoch-based inputs. The following options will be evaluated:
+1.  **C++ Side Resolution**: Leverage C++ platform APIs or C++ i18n libraries to resolve epoch time and timezone ID to fields before passing them to the interop layer.
+2.  **Optional Timezone Provider FFI**: Expose helper APIs in `icu_capi` that perform timezone resolution on the Rust side (potentially leveraging Rust libraries like **`jiff`** for timezone offset resolution and TZDB access), but keep them behind an optional cargo feature or separate module to avoid forcing a TZDB dependency on all clients.
+3.  **C++ Wrapper Helpers**: Implement timezone resolution helpers directly in the C++ wrapper, using ICU4C's timezone engine when the ICU4C backend is active, and a pluggable C++ timezone provider when the ICU4X backend is active.
