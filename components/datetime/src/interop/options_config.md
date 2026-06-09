@@ -6,7 +6,7 @@ This document describes the unified `DateTimeFormatterOptions` (the catchall opt
 
 ## 1. The Catchall Options Bag
 
-Instead of separate option structures, a single unified `DateTimeFormatterOptions` struct is exposed. Note that raw LDML patterns are excluded from this options bag to maintain backend symmetry (as ICU4X does not support arbitrary patterns at runtime; see [design_spec.md](design_spec.md#8-future-work-raw-pattern-support)).
+Instead of separate option structures, a single unified `DateTimeFormatterOptions` struct is exposed. Note that raw LDML patterns are excluded from this options bag because they are not exposed over the ICU4X FFI, and there are no plans to add them to this interop layer (see [design_spec.md](design_spec.md#4-future-work-raw-pattern-support)).
 
 ### 1.1. Options Table
 

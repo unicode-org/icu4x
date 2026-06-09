@@ -182,7 +182,7 @@ Link ICU4C into the Rust `icu_datetime` crate and perform the backend switching 
 
 ## 4. Future Work: Raw Pattern Support
 
-Currently, the core ICU4X `DateTimeFormatter` is designed around semantic skeletons and pre-compiled data, and does not support formatting arbitrary raw pattern strings at runtime (although there is internal/experimental support for patterns, it is not fully exposed or optimized for arbitrary runtime patterns over FFI). To maintain symmetry across backends in the interop layer, raw pattern support (e.g., `pattern: Option<String>`) has been excluded from the unified `DateTimeFormatterOptions` bag.
+While ICU4X supports formatting with arbitrary raw patterns (e.g., via `DateTimePatternFormatter` in Rust), this capability is not currently exposed over FFI (`icu_capi`). To maintain symmetry across backends in this interop layer, and because there are no plans to add FFI support for raw patterns at this time, raw pattern support (e.g., `pattern: Option<String>`) has been excluded from the unified `DateTimeFormatterOptions` bag.
 
 Future work will investigate how to support raw patterns. The following options will be evaluated:
 1.  **On-the-fly Pattern Compilation**: Allow ICU4X to compile raw patterns at runtime. This would involve parsing the pattern string into a `Pattern` struct and then converting it to a `PackedPattern`, which requires memory allocation.
