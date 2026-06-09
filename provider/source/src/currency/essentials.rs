@@ -147,6 +147,10 @@ fn extract_currency_essentials<'data>(
         .get("latn")
         .ok_or_else(|| DataError::custom("Could not find the standard pattern"))?;
 
+    // According to UTS #35 (https://unicode.org/reports/tr35/tr35-numbers.html#Currency_Formats),
+    // pattern variants fall back to their base style hierarchy:
+    // - standard-alphaNextToNumber falls back to standard.
+    // - accounting-alphaNextToNumber falls back to accounting (which falls back to standard).
     let standard = &currency_formats.standard;
     let standard_alpha_next_to_number = currency_formats
         .standard_alpha_next_to_number
