@@ -24,6 +24,7 @@ mod available_formats;
 mod day_periods;
 mod names;
 mod semantic_skeletons;
+use semantic_skeletons::Trio;
 mod week_data;
 
 /// These are the calendars that datetime needs names for. They are roughly the
@@ -286,39 +287,6 @@ where
         }
     }
     result
-}
-
-/// A generic structure holding a standard pattern and two optional variants.
-/// See `GenericPackedPatterns` for more details on variants.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub(crate) struct Trio<T> {
-    pub standard: T,
-    pub variant0: Option<T>,
-    pub variant1: Option<T>,
-}
-
-impl<T> Trio<T> {
-    /// Returns an iterator over mutable references in quality order (based on a key function).
-    pub fn iter_in_quality_order_mut<K: Ord>(
-        &mut self,
-        mut key_fn: impl FnMut(&T) -> K,
-    ) -> impl Iterator<Item = &mut T> {
-        let mut list = [
-            Some(&mut self.standard),
-            self.variant0.as_mut(),
-            self.variant1.as_mut(),
-        ];
-        list.sort_by_key(|variant| variant.as_ref().map(|v| key_fn(*v)));
-        list.into_iter().flatten()
-    }
-
-    pub fn map<U>(self, mut f: impl FnMut(T) -> U) -> Trio<U> {
-        Trio {
-            standard: f(self.standard),
-            variant0: self.variant0.map(&mut f),
-            variant1: self.variant1.map(&mut f),
-        }
-    }
 }
 
 /// Transposes a length-major structure of pattern trios into a variant-major builder structure,
