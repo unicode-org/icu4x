@@ -178,6 +178,15 @@ Link ICU4C into the Rust `icu_datetime` crate and perform the backend switching 
 2.  **Portability Restrictions**: Linking ICU4C increases complexity, especially for targets where ICU4C is not easily available or supported (e.g., WebAssembly, or certain iOS/macOS sandboxed environments where linking system libraries is restricted).
 3.  **Dependency Tree Contamination**: Even if ICU4C were linked optionally behind a Cargo feature, it would still enter the dependency tree. Because ICU4X runs tests with `--all-features`, this would force ICU4C to be present during testing, and it would contaminate cargo lockfiles for all users.
 
+### 3.7. Support More Than Two Backends (Multi-Backend Extensibility)
+
+Design the interop layer as a general-purpose, pluggable interface that can support arbitrary future backends (e.g., WebAssembly, native iOS/macOS platform formatters, or other i18n libraries).
+
+**Reasons for Rejection:**
+1.  **Scope Creep**: The primary, explicit goal of this interop layer is to facilitate a smooth migration from ICU4C to ICU4X for C++ clients. Designing for arbitrary future backends introduces significant upfront complexity and abstraction overhead. We are not intending this to scope-creep to support arbitrary backends as suggested during review.
+2.  **Targeted Design**: A general-purpose interface would require a "least common denominator" design, which would prevent us from optimizing the interop layer specifically for the ICU4C-to-ICU4X transition (such as sharing the Rust-based options resolution logic and mapping structured ICU4X types to ICU4C).
+3.  **No Immediate Need**: There are no immediate plans or requirements to support backends other than ICU4C and ICU4X in this layer. Supporting other environments (like WebAssembly or platform-specific APIs) is better handled by dedicated wrappers or direct integrations rather than overloading this migration tool.
+
 ---
 
 ## 4. Future Work: Raw Pattern Support
