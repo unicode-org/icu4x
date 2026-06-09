@@ -45,8 +45,8 @@ To support ICU4C, the unified `DateTimeFormatterOptions` must be resolved to ICU
 
 The resolution logic in `icu_datetime::interop` returns a Rust struct `Icu4cResolvedArgs` containing:
 -   `skeleton`: `Option<String>` (resolved classical skeleton).
--   `date_style`: `Option<Style>` (resolved date style).
--   `time_style`: `Option<Style>` (resolved time style).
+-   `date_style`: `Option<Style>` (resolved date style, using the ICU4X `Style` enum: `Full`, `Long`, `Medium`, `Short`).
+-   `time_style`: `Option<Style>` (resolved time style, using the ICU4X `Style` enum).
 
 ### 2.2. Precedence Rules
 
@@ -68,7 +68,7 @@ When mapping semantic options to classical skeletons, the interop layer strictly
 -   **Time Precision Variations**: Follows [UTS 35: Time Precision Skeleton Variations](https://unicode.org/reports/tr35/tr35-dates.html#Semantic_Time_Precision_Skeleton_Variations).
 -   **Year Style Variations**: Follows [UTS 35: Year Style Skeleton Variations](https://unicode.org/reports/tr35/tr35-dates.html#Semantic_Year_Style_Skeleton_Variations).
 
-The resolved standard symbols are concatenated in UTS 35 canonical order to form the final classical skeleton.
+The resolved standard symbols are concatenated in [UTS 35 canonical order](https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table) to form the final classical skeleton.
 
 ---
 
@@ -93,7 +93,7 @@ When individual field options (like `year`, `month`, `hour`) are provided instea
     *   If `month` and `day` are present: `DateFields::MD`
     *   If only `year` is present: `DateFields::Y`
     *   If only `month` is present: `DateFields::M`
-    *   If `weekday` is present with a date: `DateFields::YMDE`, `DateFields::MDE`, or `DateFields::DE` (depending on which other date fields are present).
+    *   If `weekday` is present with a date field: `DateFields::YMDE`, `DateFields::MDE`, or `DateFields::DE` (depending on which other date fields are present).
 
 2.  **Determine `TimePrecision`**:
     *   If `hour`, `minute`, and `second` are present: `TimePrecision::Second` (or `Subsecond` if `fractional_second_digits` is set).
@@ -101,10 +101,10 @@ When individual field options (like `year`, `month`, `hour`) are provided instea
     *   If only `hour` is present: `TimePrecision::Hour`.
 
 3.  **Determine `Length` / Field Styles**:
-    Since ICU4X applies a single `Length` to the entire fieldset, mixed styles (e.g., short year with a long month) must be resolved to a single "best fit" `Length` (note that there is ongoing work to add features like field-specific length hints to semantic skeletons to better support mixed styles in the future):
-    *   If any field uses `Long` (wide): `Length::Long`.
-    *   Else if any field uses `Short` (abbreviated) or `Medium`: `Length::Medium`.
-    *   Else if all fields are `Numeric` or `TwoDigit`: `Length::Short`.
+    Since ICU4X applies a single `Length` to the entire fieldset, mixed styles (e.g., short year with a long month) must be resolved to a single "best fit" `Length` (note that there is ongoing work to add features like field-specific length hints to semantic skeletons to better support mixed styles in the future). The resolution logic checks the following conditions in order:
+    *   If any field uses `Long` (corresponding to ECMA "long" / ICU4X "wide"): `Length::Long`.
+    *   Else if any field uses `Short` (corresponding to ECMA "short" / ICU4X "abbreviated") or `Medium`: `Length::Medium`.
+    *   Else (all remaining fields are `Numeric` or `TwoDigit`): `Length::Short`.
 
 4.  **Determine `YearStyle`**:
     *   If `era` is requested: `YearStyle::WithEra`.
