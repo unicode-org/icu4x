@@ -329,12 +329,13 @@ fn extract_currency_essentials<'data>(
                 _ => None,
             });
 
-            let negative_items = std::iter::once(PatternItemCow::Literal(Cow::Borrowed("-")))
-                .chain(positive_items);
+            let negative_items =
+                std::iter::once(PatternItemCow::Literal(Cow::Borrowed("-"))).chain(positive_items);
 
             DoublePlaceholderPattern::try_from_items(negative_items)
                 .map_err(|e| {
-                    DataError::custom("Could not parse fallback negative pattern").with_display_context(&e)
+                    DataError::custom("Could not parse fallback negative pattern")
+                        .with_display_context(&e)
                 })
                 .map(Cow::Owned)
         }
@@ -343,11 +344,17 @@ fn extract_currency_essentials<'data>(
     Ok(CurrencyEssentials {
         pattern_config_map: ZeroMap::from_iter(currency_patterns_map.iter()),
         standard_pattern: create_positive_pattern(standard)?,
-        standard_alpha_next_to_number_pattern: create_positive_pattern(standard_alpha_next_to_number)?,
+        standard_alpha_next_to_number_pattern: create_positive_pattern(
+            standard_alpha_next_to_number,
+        )?,
         accounting_positive_pattern: create_positive_pattern(accounting)?,
         accounting_negative_pattern: create_negative_pattern(accounting)?,
-        accounting_alpha_next_to_number_positive_pattern: create_positive_pattern(accounting_alpha_next_to_number)?,
-        accounting_alpha_next_to_number_negative_pattern: create_negative_pattern(accounting_alpha_next_to_number)?,
+        accounting_alpha_next_to_number_positive_pattern: create_positive_pattern(
+            accounting_alpha_next_to_number,
+        )?,
+        accounting_alpha_next_to_number_negative_pattern: create_negative_pattern(
+            accounting_alpha_next_to_number,
+        )?,
         placeholders: VarZeroVec::from(&placeholders),
         default_pattern_config,
     })

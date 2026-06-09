@@ -225,6 +225,7 @@ impl<'a> CurrencyEssentials<'a> {
     /// Returns the formatted currency name/symbol,
     /// the positive and negative accounting currency patterns for the given width and currency,
     /// and the pattern selection.
+    #[allow(dead_code)] // TODO: Remove once hooked up to runtime formatter
     pub(crate) fn name_and_accounting_patterns(
         &'a self,
         width: Width,
