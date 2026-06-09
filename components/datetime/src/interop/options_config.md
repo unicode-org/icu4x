@@ -8,13 +8,24 @@ This document describes the unified `DateTimeFormatterOptions` (the catchall opt
 
 Instead of separate option structures, a single unified `DateTimeFormatterOptions` struct is exposed. Note that raw LDML patterns are excluded from this options bag because they are not exposed over the ICU4X FFI, and there are no plans to add them to this interop layer (see [design_spec.md](design_spec.md#4-future-work-raw-pattern-support)).
 
-### 1.1. Options Table
+### 1.1. Best-Effort Unified Mapping Philosophy
+
+The options bag is truly unified: **neither backend ignores any of the options**. The Rust resolution layer accepts whatever options are provided in the bag and maps them in a **best-effort** manner to the active backend.
+
+However, due to the different native capabilities of the backends, some options are mapped more "transparently" (with higher fidelity) to one backend than the other:
+*   **ICU4C-Native Options** (like `skeleton`): These map directly and transparently when the ICU4C backend is active. When the ICU4X backend is active, the resolution layer performs a best-effort mapping (e.g., parsing the classical skeleton to extract fields and widths to construct an ICU4X `CompositeFieldSet` and `Length`).
+*   **ICU4X-Native Options** (like `date_fields`, `time_precision`, `alignment`, `year_style`): These map directly and transparently to ICU4X. When the ICU4C backend is active, they are mapped to classical skeletons using UTS 35 rules as a best-effort fallback.
+*   **Unified ECMA-402 Options** (e.g., `year`, `month`, `day`, `hour`, `weekday`): These are high-level options that require mapping for **both** backends (to skeletons for ICU4C, and to fieldsets/lengths for ICU4X). Due to the flexibility of ICU4C skeletons, they currently map with slightly higher fidelity to the ICU4C backend than to the ICU4X backend.
+
+This design ensures that clients can use a single options bag, and the interop layer will always produce the most consistent and correct formatting possible for the active backend, without silently dropping configuration.
+
+### 1.2. Options Table
 
 The options bag supports the following fields:
 
 | Option Name | Type / Values | Description |
 |---|---|---|
-| `skeleton` | String | **ICU4C Override**: Classical skeleton (e.g., `yMdHms`). If set, individual fields are ignored. |
+| `skeleton` | String | **ICU4C-Native Option**: Classical skeleton (e.g., `yMdHms`). Maps transparently to ICU4C (overriding individual fields). Mapped in a best-effort manner to fieldsets/lengths for ICU4X. |
 | `date_style` | `Full`, `Long`, `Medium`, `Short` | **High-level Style**: Pre-defined style for the date part (ECMA/ICU4C). |
 | `time_style` | `Full`, `Long`, `Medium`, `Short` | **High-level Style**: Pre-defined style for the time part (ECMA/ICU4C). |
 | `date_fields` | [`DateFields`](https://docs.rs/icu_datetime/latest/icu_datetime/fieldsets/builder/enum.DateFields.html) | **ICU4X Field**: Pre-defined date field combinations (YMD, MD, etc.). |
@@ -105,6 +116,9 @@ When individual field options (like `year`, `month`, `hour`) are provided instea
     *   If any field uses `Long` (corresponding to ECMA "long" / ICU4X "wide"): `Length::Long`.
     *   Else if any field uses `Short` (corresponding to ECMA "short" / ICU4X "abbreviated") or `Medium`: `Length::Medium`.
     *   Else (all remaining fields are `Numeric` or `TwoDigit`): `Length::Short`.
+
+> [!NOTE]
+> **Behavior Symmetry**: Because ICU4X applies a single `Length` to the entire fieldset, mixed ECMA styles will resolve to a single "best fit" `Length` for ICU4X, whereas the ICU4C backend will natively support the mixed styles via classical skeletons (e.g., `yMMMM`). We do not artificially restrict ICU4C's fidelity to match ICU4X; both backends perform a best-effort resolution based on their native capabilities, meaning ECMA options currently map with slightly higher fidelity to ICU4C. Note that there is ongoing work in CLDR to increase the fidelity of semantic skeletons (such as adding field-specific length hints), which will eventually allow ICU4X to support these mixed styles with equal fidelity.
 
 4.  **Determine `YearStyle`**:
     *   If `era` is requested: `YearStyle::WithEra`.
