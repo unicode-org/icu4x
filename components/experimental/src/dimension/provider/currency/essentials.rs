@@ -221,32 +221,4 @@ impl<'a> CurrencyEssentials<'a> {
 
         (currency, pattern, pattern_selection)
     }
-
-    /// Returns the formatted currency name/symbol,
-    /// the positive and negative accounting currency patterns for the given width and currency,
-    /// and the pattern selection.
-    #[allow(dead_code)] // TODO: Remove once hooked up to runtime formatter
-    pub(crate) fn name_and_accounting_patterns(
-        &'a self,
-        width: Width,
-        currency: &'a CurrencyCode,
-    ) -> (
-        &'a str,
-        &'a DoublePlaceholderPattern,
-        &'a DoublePlaceholderPattern,
-        PatternSelection,
-    ) {
-        let (currency_symbol, _, pattern_selection) = self.name_and_pattern(width, currency);
-        let (pos, neg) = match pattern_selection {
-            PatternSelection::Standard => (
-                &*self.accounting_positive_pattern,
-                &*self.accounting_negative_pattern,
-            ),
-            PatternSelection::StandardAlphaNextToNumber => (
-                &*self.accounting_alpha_next_to_number_positive_pattern,
-                &*self.accounting_alpha_next_to_number_negative_pattern,
-            ),
-        };
-        (currency_symbol, pos, neg, pattern_selection)
-    }
 }
