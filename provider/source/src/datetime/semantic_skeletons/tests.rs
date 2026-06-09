@@ -5,6 +5,7 @@
 use super::*;
 use crate::AltVariantKind;
 use crate::SourceDataProvider;
+use icu::datetime::fieldsets::enums::TimeFieldSet;
 
 #[test]
 fn test_check_for_field() {
@@ -139,22 +140,31 @@ fn test_en_hour_patterns() {
     use icu::locale::locale;
 
     let provider = SourceDataProvider::new_testing();
-    let payload: DataPayload<DatetimePatternsTimeV1> = provider
-        .load(DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("j"),
-                &locale!("en").into(),
-            ),
-            metadata: Default::default(),
-        })
-        .unwrap()
-        .payload;
+    for &attributes in TimeFieldSet::ALL_DATA_MARKER_ATTRIBUTES {
+        let payload: DataPayload<DatetimePatternsTimeV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    attributes,
+                    &locale!("en").into(),
+                ),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .payload;
 
-    let json_str = serde_json::to_string_pretty(payload.get()).unwrap();
-    assert!(
-        !json_str.is_ascii(),
-        "Default JSON should contain non-ASCII characters (NNBSP)"
-    );
+        let json_str = serde_json::to_string_pretty(payload.get()).unwrap();
+        if attributes == DataMarkerAttributes::from_str_or_panic("h0") {
+            assert!(
+                json_str.is_ascii(),
+                "Default 24-hour JSON (h0) should be ASCII"
+            );
+        } else {
+            assert!(
+                !json_str.is_ascii(),
+                "Default 12-hour/Preferred JSON ({attributes:?}) should contain non-ASCII characters (NNBSP)"
+            );
+        }
+    }
 }
 
 #[test]
@@ -163,22 +173,24 @@ fn test_en_hour_patterns_alt_ascii() {
 
     let provider = SourceDataProvider::new_testing()
         .with_alt_variants(std::iter::once(AltVariantKind::DatetimeAscii));
-    let payload: DataPayload<DatetimePatternsTimeV1> = provider
-        .load(DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("j"),
-                &locale!("en").into(),
-            ),
-            metadata: Default::default(),
-        })
-        .unwrap()
-        .payload;
+    for &attributes in TimeFieldSet::ALL_DATA_MARKER_ATTRIBUTES {
+        let payload: DataPayload<DatetimePatternsTimeV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    attributes,
+                    &locale!("en").into(),
+                ),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .payload;
 
-    let json_str = serde_json::to_string_pretty(payload.get()).unwrap();
-    assert!(
-        json_str.is_ascii(),
-        "Alt-ASCII JSON should contain only ASCII characters"
-    );
+        let json_str = serde_json::to_string_pretty(payload.get()).unwrap();
+        assert!(
+            json_str.is_ascii(),
+            "Alt-ASCII JSON for attributes {attributes:?} should contain only ASCII characters"
+        );
+    }
 }
 
 #[test]
