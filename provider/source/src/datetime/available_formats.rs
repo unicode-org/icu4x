@@ -475,7 +475,7 @@ mod test {
             .unwrap()
             .to_string();
 
-        assert_eq!(pattern_no_alt.as_str(), "h a");
-        assert_eq!(pattern_alt.as_str(), "h a");
+        assert_eq!(pattern_no_alt.as_str(), "h\u{202F}a");
+        assert_eq!(pattern_alt.as_str(), "h\u{20}a");
     }
 }

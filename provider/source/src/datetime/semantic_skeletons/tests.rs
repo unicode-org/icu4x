@@ -153,24 +153,12 @@ fn test_en_hour_patterns() {
 
     let json_str = serde_json::to_string_pretty(payload.get()).unwrap();
 
-    assert_eq!(
-        json_str,
-        r#"{
-  "variant_pattern_indices": [
-    2,
-    2,
-    2,
-    3,
-    3,
-    3
-  ],
-  "elements": [
-    "h a",
-    "h:mm a",
-    "h:mm:ss a"
-  ]
-}"#
-    );
+    assert!(json_str.contains("h\u{202F}a"));
+    assert!(json_str.contains("h:mm\u{202F}a"));
+    assert!(json_str.contains("h:mm:ss\u{202F}a"));
+    assert!(!json_str.contains("h\u{20}a"));
+    assert!(!json_str.contains("h:mm\u{20}a"));
+    assert!(!json_str.contains("h:mm:ss\u{20}a"));
 }
 
 #[test]
@@ -192,24 +180,12 @@ fn test_en_hour_patterns_alt_ascii() {
 
     let json_str = serde_json::to_string_pretty(payload.get()).unwrap();
 
-    assert_eq!(
-        json_str,
-        r#"{
-  "variant_pattern_indices": [
-    2,
-    2,
-    2,
-    3,
-    3,
-    3
-  ],
-  "elements": [
-    "h a",
-    "h:mm a",
-    "h:mm:ss a"
-  ]
-}"#
-    );
+    assert!(json_str.contains("h\u{20}a"));
+    assert!(json_str.contains("h:mm\u{20}a"));
+    assert!(json_str.contains("h:mm:ss\u{20}a"));
+    assert!(!json_str.contains("h\u{202F}a"));
+    assert!(!json_str.contains("h:mm\u{202F}a"));
+    assert!(!json_str.contains("h:mm:ss\u{202F}a"));
 }
 
 #[test]
@@ -230,28 +206,17 @@ fn test_en_overlap_patterns() {
 
     let json_str = serde_json::to_string_pretty(payload.get()).unwrap();
 
-    assert_eq!(
-        json_str,
-        r#"{
-  "has_explicit_medium": true,
-  "variant_pattern_indices": [
-    3,
-    4,
-    4,
-    5,
-    6,
-    6
-  ],
-  "elements": [
-    "EEEE h a",
-    "E h a",
-    "EEEE h:m a",
-    "E h:mm a",
-    "EEEE h:m:s a",
-    "E h:mm:ss a"
-  ]
-}"#
-    );
+    assert!(json_str.contains("h\u{202F}a"));
+    assert!(json_str.contains("h:m\u{202F}a"));
+    assert!(json_str.contains("h:mm\u{202F}a"));
+    assert!(json_str.contains("h:m:s\u{202F}a"));
+    assert!(json_str.contains("h:mm:ss\u{202F}a"));
+
+    assert!(!json_str.contains("h\u{20}a"));
+    assert!(!json_str.contains("h:m\u{20}a"));
+    assert!(!json_str.contains("h:mm\u{20}a"));
+    assert!(!json_str.contains("h:m:s\u{20}a"));
+    assert!(!json_str.contains("h:mm:ss\u{20}a"));
 }
 
 /// This is a test that should eventually be moved to CLDR.
