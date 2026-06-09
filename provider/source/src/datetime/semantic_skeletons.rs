@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{DatagenCalendar, PackedPatternItem, Trio, select_pattern, transpose};
+use super::{DatagenCalendar, PackedPatternItem, Trio, select_pattern, transpose_with_fallback};
 use crate::debug_provider::DebugProvider;
 use crate::{IterableDataProviderCached, SourceDataProvider, cldr_serde};
 use icu::datetime::fieldsets::enums::*;
@@ -86,6 +86,10 @@ pub(crate) struct SemanticSkeletonsContext<'a> {
 impl<'a> PackedPatternItem for PatternsWithDistance<PluralElements<runtime::Pattern<'a>>> {
     type MatchFieldsContext = SemanticSkeletonsContext<'a>;
     type FinalItem = PluralElements<runtime::Pattern<'a>>;
+    type BuilderItem<'b>
+        = PluralElements<runtime::Pattern<'b>>
+    where
+        Self: 'b;
     type Ule = icu::plurals::provider::PluralElementsPackedULE<
         zerovec::ZeroSlice<icu::datetime::provider::pattern::PatternItem>,
     >;
@@ -140,9 +144,16 @@ impl<'a> PackedPatternItem for PatternsWithDistance<PluralElements<runtime::Patt
         self.into_inner()
     }
 
-    fn build_packed(
-        builder: GenericPackedPatternsBuilder<Self::FinalItem>,
-    ) -> GenericPackedPatterns<'static, Self::Ule> {
+    fn to_builder_item<'b>(item: &'b Self::FinalItem) -> Self::BuilderItem<'b> {
+        item.as_ref().map(runtime::Pattern::as_ref)
+    }
+
+    fn build_packed<'b>(
+        builder: GenericPackedPatternsBuilder<Self::BuilderItem<'b>>,
+    ) -> GenericPackedPatterns<'static, Self::Ule>
+    where
+        Self: 'b,
+    {
         builder.build()
     }
 
@@ -259,7 +270,7 @@ impl SourceDataProvider {
                         let mut components_with_era = components_with_full_year;
                         components_with_era.era = Some(components::Text::Short);
                         Trio {
-                            standard: standard.clone(),
+                            standard,
                             variant0: Some(select_pattern::<T>(
                                 &context,
                                 components_with_full_year,
@@ -279,7 +290,7 @@ impl SourceDataProvider {
                         components_with_second.minute = Some(components::Numeric::Numeric);
                         components_with_second.second = Some(components::Numeric::Numeric);
                         Trio {
-                            standard: standard.clone(),
+                            standard,
                             variant0: Some(select_pattern::<T>(
                                 &context,
                                 components_with_minute,
@@ -312,12 +323,6 @@ impl SourceDataProvider {
                 for variant in variant_patterns.iter_in_quality_order_mut(|v| v.match_quality()) {
                     variant.apply_numeric_overrides(lp);
                 }
-                if variant_patterns.variant0.is_none() {
-                    variant_patterns.variant0 = Some(variant_patterns.standard.clone());
-                }
-                if variant_patterns.variant1.is_none() {
-                    variant_patterns.variant1 = Some(variant_patterns.standard.clone());
-                }
                 variant_patterns
             })
             .map(|mut trio| {
@@ -331,25 +336,14 @@ impl SourceDataProvider {
             });
 
         let trios = GenericLengthElements {
-            long,
-            medium,
-            short,
+            long: long.map(|x| x.finalize_item()),
+            medium: medium.map(|x| x.finalize_item()),
+            short: short.map(|x| x.finalize_item()),
         };
-        let builder = transpose(trios);
+        let builder = transpose_with_fallback::<T>(&trios);
 
-        let final_builder = GenericPackedPatternsBuilder {
-            standard: map_length(builder.standard, |x| x.finalize_item()),
-            variant0: builder
-                .variant0
-                .map(|v| map_length(v, |x| x.finalize_item())),
-            variant1: builder
-                .variant1
-                .map(|v| map_length(v, |x| x.finalize_item())),
-        };
-
-        Ok(T::build_packed(final_builder))
+        Ok(T::build_packed(builder))
     }
-
     fn time_skeleton_supported_locales(
         &self,
     ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
@@ -593,14 +587,3 @@ impl_datetime_skeleton_datagen!(DatetimePatternsDateHijriV1, DatagenCalendar::Hi
 impl_datetime_skeleton_datagen!(DatetimePatternsDateJapaneseV1, DatagenCalendar::Japanese);
 impl_datetime_skeleton_datagen!(DatetimePatternsDatePersianV1, DatagenCalendar::Persian);
 impl_datetime_skeleton_datagen!(DatetimePatternsDateRocV1, DatagenCalendar::Roc);
-
-fn map_length<T, U>(
-    group: GenericLengthElements<T>,
-    mut f: impl FnMut(T) -> U,
-) -> GenericLengthElements<U> {
-    GenericLengthElements {
-        long: f(group.long),
-        medium: f(group.medium),
-        short: f(group.short),
-    }
-}

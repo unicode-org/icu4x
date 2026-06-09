@@ -311,52 +311,92 @@ impl<T> Trio<T> {
         list.sort_by_key(|variant| variant.as_ref().map(|v| key_fn(*v)));
         list.into_iter().flatten()
     }
+
+    pub fn map<U>(self, mut f: impl FnMut(T) -> U) -> Trio<U> {
+        Trio {
+            standard: f(self.standard),
+            variant0: self.variant0.map(&mut f),
+            variant1: self.variant1.map(&mut f),
+        }
+    }
 }
 
-/// Transposes a length-major structure of pattern trios into a variant-major builder structure.
+/// Transposes a length-major structure of pattern trios into a variant-major builder structure,
+/// performing fallback using `to_builder_item` to avoid cloning.
 ///
-/// Converts `GenericLengthElements<Trio<T>>` (patterns grouped by length, containing standard/variants)
-/// into `GenericPackedPatternsBuilder<T>` (patterns grouped by standard/variants, containing lengths).
-///
-/// # Panics
-/// Panics if `variant0` or `variant1` is present in the `long` length but missing in `medium` or `short`.
-pub(crate) fn transpose<T>(
-    group: GenericLengthElements<Trio<T>>,
-) -> GenericPackedPatternsBuilder<T> {
-    let variant0 = if let Some(long) = group.long.variant0 {
+/// Converts `GenericLengthElements<Trio<T::FinalItem>>` (patterns grouped by length, containing standard/variants)
+/// into `GenericPackedPatternsBuilder<T::BuilderItem<'b>>` (patterns grouped by standard/variants, containing lengths).
+pub(crate) fn transpose_with_fallback<'b, T: PackedPatternItem>(
+    group: &'b GenericLengthElements<Trio<T::FinalItem>>,
+) -> GenericPackedPatternsBuilder<T::BuilderItem<'b>> {
+    let variant0 = if group.long.variant0.is_some()
+        || group.medium.variant0.is_some()
+        || group.short.variant0.is_some()
+    {
         Some(GenericLengthElements {
-            long,
-            medium: group.medium.variant0.unwrap(),
-            short: group.short.variant0.unwrap(),
+            long: T::to_builder_item(group.long.variant0.as_ref().unwrap_or(&group.long.standard)),
+            medium: T::to_builder_item(
+                group
+                    .medium
+                    .variant0
+                    .as_ref()
+                    .unwrap_or(&group.medium.standard),
+            ),
+            short: T::to_builder_item(
+                group
+                    .short
+                    .variant0
+                    .as_ref()
+                    .unwrap_or(&group.short.standard),
+            ),
         })
     } else {
         None
     };
-    let variant1 = if let Some(long) = group.long.variant1 {
+    let variant1 = if group.long.variant1.is_some()
+        || group.medium.variant1.is_some()
+        || group.short.variant1.is_some()
+    {
         Some(GenericLengthElements {
-            long,
-            medium: group.medium.variant1.unwrap(),
-            short: group.short.variant1.unwrap(),
+            long: T::to_builder_item(group.long.variant1.as_ref().unwrap_or(&group.long.standard)),
+            medium: T::to_builder_item(
+                group
+                    .medium
+                    .variant1
+                    .as_ref()
+                    .unwrap_or(&group.medium.standard),
+            ),
+            short: T::to_builder_item(
+                group
+                    .short
+                    .variant1
+                    .as_ref()
+                    .unwrap_or(&group.short.standard),
+            ),
         })
     } else {
         None
     };
     GenericPackedPatternsBuilder {
         standard: GenericLengthElements {
-            long: group.long.standard,
-            medium: group.medium.standard,
-            short: group.short.standard,
+            long: T::to_builder_item(&group.long.standard),
+            medium: T::to_builder_item(&group.medium.standard),
+            short: T::to_builder_item(&group.short.standard),
         },
         variant0,
         variant1,
     }
 }
 
-pub(crate) trait PackedPatternItem: Sized + Clone {
+pub(crate) trait PackedPatternItem: Sized {
     /// The context required to match fields for this pattern item.
     type MatchFieldsContext;
     /// The final item type after finalization (e.g. stripping distance).
     type FinalItem: PartialEq;
+    /// The borrowed item type used for building the packed structure.
+    type BuilderItem<'a>: PartialEq
+    where
+        Self: 'a;
     /// The ULE type for packing.
     type Ule: VarULE + ?Sized + 'static;
     /// The distance type used to sort patterns by match quality.
@@ -378,10 +418,15 @@ pub(crate) trait PackedPatternItem: Sized + Clone {
     /// Finalizes the item (e.g., converts from a internal representation to the provider one).
     fn finalize_item(self) -> Self::FinalItem;
 
+    /// Converts a reference to the final item into the borrowed builder item.
+    fn to_builder_item<'b>(item: &'b Self::FinalItem) -> Self::BuilderItem<'b>;
+
     /// Builds the packed structure from the builder.
-    fn build_packed(
-        builder: GenericPackedPatternsBuilder<Self::FinalItem>,
-    ) -> GenericPackedPatterns<'static, Self::Ule>;
+    fn build_packed<'b>(
+        builder: GenericPackedPatternsBuilder<Self::BuilderItem<'b>>,
+    ) -> GenericPackedPatterns<'static, Self::Ule>
+    where
+        Self: 'b;
 
     /// Applies numeric overrides to the pattern items.
     fn apply_numeric_overrides(&mut self, lp: &cldr_serde::ca::LengthPattern);
