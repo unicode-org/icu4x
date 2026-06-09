@@ -162,12 +162,15 @@ Only implement the Rust library and FFI exports, leaving the C++ switching and i
 
 ### 3.5. Implement ICU4C Resolution in C++
 
-Implement the ECMA-to-ICU4C resolution logic directly in C++ (using ICU4C APIs if possible), while only implementing the ECMA-to-ICU4X resolution in Rust.
+Implement the options resolution logic (e.g., mapping unified options to classical skeletons for ICU4C) directly in C++ (either in the header-only wrapper or as a compiled C++ artifact), avoiding the Rust FFI for the ICU4C path.
 
 **Reasons for Rejection:**
-While this would allow C++ clients using only the ICU4C backend to avoid linking the ICU4X FFI library entirely, it goes against the core design philosophy of the ICU4X project:
-1.  **Rust-First Business Logic**: We want to implement as much logic as possible in Rust, where it is safer, more maintainable, and easier to test. Resolving high-level options to backend-specific targets (even to ICU4C skeletons) is complex i18n business logic that belongs in Rust. C++ should be treated strictly as an integration/FFI layer without such logic.
-2.  **Consistent Option Interpretation**: Although the target outputs are different (skeletons for ICU4C, fieldsets for ICU4X), they process the same input options. Keeping both resolution paths in Rust makes it easier to ensure that input options, precedence rules, and defaults are interpreted consistently across both backends, avoiding semantic drift in how options are resolved.
+While this would allow C++ clients using only the ICU4C backend to avoid linking the ICU4X Rust FFI library entirely, it is rejected for the following reasons:
+1.  **Code Reuse**: We already have a robust, tested implementation of the resolution logic (such as mapping semantic skeletons to classical skeletons) written in Rust within the ICU4X project. Implementing this in C++ would require a complete rewrite of this complex business logic. (Note: If ICU4C adds native support for semantic skeletons in the future, the interop layer can be updated to leverage that natively).
+2.  **Minimal Header-Only Logic**: The C++ wrapper is designed to be a lightweight, header-only library to ensure easy integration. We want to avoid putting a significant amount of complex i18n business logic (like options mapping and precedence resolution) into header-only C++ code, as it is harder to maintain, test, and optimize.
+3.  **Distribution and Binary Cohesion**: If this complex mapping logic were to be compiled into a binary (like a DLL or shared library) rather than being header-only, it makes far more sense to include it in the existing `icu_capi` Rust library. Creating a brand new, separate C++ DLL/shared library just to house the interop mapping logic would introduce significant packaging and distribution overhead for clients.
+4.  **Consistent Option Interpretation**: Keeping both resolution paths (for ICU4C and ICU4X) in Rust ensures that input options, precedence rules, and defaults are interpreted identically, preventing semantic drift between the two backends.
+5.  **Rust Safety and Maintainability**: Implementing complex i18n business logic in Rust leverages the language's safety guarantees and modern testing infrastructure, making it easier to maintain and verify than a C++ implementation.
 
 ### 3.6. Link ICU4C into Rust
 
