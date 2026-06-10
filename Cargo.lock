@@ -1617,6 +1617,7 @@ version = "2.2.0"
 name = "icu_experimental"
 version = "0.5.0"
 dependencies = [
+ "core_maths",
  "criterion",
  "databake",
  "displaydoc",
