@@ -94,7 +94,6 @@ pub use __make_provider as make_provider;
 /// This macro requires the following crates:
 /// * `alloc`
 /// * `icu`
-/// * `icu_pattern`
 /// * `icu_provider`
 /// * `icu_provider/baked`
 /// * `zerovec`

@@ -6,13 +6,10 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use alloc::borrow::Cow;
 use icu_provider::prelude::*;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::{VarZeroVec, ZeroMap};
 
-#[cfg(feature = "serde")]
-use icu_pattern::DoublePlaceholder;
 use icu_pattern::DoublePlaceholderPattern;
 
 use crate::dimension::currency::CurrencyCode;
