@@ -279,15 +279,17 @@ impl LanguageDisplayNames {
     /// Returns the display name of a language.
     pub fn of(&self, language: Language) -> Option<&str> {
         let data = self.language_data.get();
-        match self.options.style {
-            Some(Style::Short) => data
-                .short_names
-                .get(&language.to_tinystr().to_unvalidated()),
-            Some(Style::Long) => data.long_names.get(&language.to_tinystr().to_unvalidated()),
-            Some(Style::Menu) => data.menu_names.get(&language.to_tinystr().to_unvalidated()),
-            _ => None,
+        let key = language.to_tinystr().to_unvalidated();
+        if self.options.language_display == LanguageDisplay::Menu {
+            data.menu_names.get(&key)
+        } else {
+            match self.options.style {
+                Some(Style::Short) => data.short_names.get(&key),
+                Some(Style::Long) => data.long_names.get(&key),
+                _ => None,
+            }
         }
-        .or_else(|| data.names.get(&language.to_tinystr().to_unvalidated()))
+        .or_else(|| data.names.get(&key))
         // TODO: Respect options.fallback
     }
 }
@@ -396,7 +398,6 @@ impl LocaleDisplayNamesFormatter {
                 if let Some(x) = match self.options.style {
                     Some(Style::Short) => data.short_names.get_by(cmp),
                     Some(Style::Long) => data.long_names.get_by(cmp),
-                    Some(Style::Menu) => data.menu_names.get_by(cmp),
                     _ => None,
                 }
                 .or_else(|| data.names.get_by(cmp))
@@ -415,7 +416,6 @@ impl LocaleDisplayNamesFormatter {
                 if let Some(x) = match self.options.style {
                     Some(Style::Short) => data.short_names.get_by(cmp),
                     Some(Style::Long) => data.long_names.get_by(cmp),
-                    Some(Style::Menu) => data.menu_names.get_by(cmp),
                     _ => None,
                 }
                 .or_else(|| data.names.get_by(cmp))
@@ -430,11 +430,14 @@ impl LocaleDisplayNamesFormatter {
             .or_else(|| {
                 let data = self.language_data.get();
                 let key = locale.id.language.to_tinystr().to_unvalidated();
-                match self.options.style {
-                    Some(Style::Short) => data.short_names.get(&key),
-                    Some(Style::Long) => data.long_names.get(&key),
-                    Some(Style::Menu) => data.menu_names.get(&key),
-                    _ => None,
+                if self.options.language_display == LanguageDisplay::Menu {
+                    data.menu_names.get(&key)
+                } else {
+                    match self.options.style {
+                        Some(Style::Short) => data.short_names.get(&key),
+                        Some(Style::Long) => data.long_names.get(&key),
+                        _ => None,
+                    }
                 }
                 .or_else(|| data.names.get(&key))
             })

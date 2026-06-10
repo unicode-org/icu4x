@@ -20,6 +20,8 @@ classDiagram
     class LanguageDisplayNameOwned~M~ {
         -lid: LanguageIdentifier
         -options: DisplayNamesOptions
+        +try_new(prefs, options, lid) Self
+        +try_new_menu(prefs, options, lid) Self
         +as_borrowed(&self) LanguageDisplayName
     }
     class LanguageDisplayName {
@@ -30,6 +32,7 @@ classDiagram
 
     class RegionDisplayNameOwned {
         -subtag: Region
+        +try_new(prefs, subtag) Self
         +as_borrowed(&self) RegionDisplayName
     }
     class RegionDisplayName {
@@ -40,6 +43,7 @@ classDiagram
 
     class ScriptDisplayNameOwned {
         -subtag: Script
+        +try_new(prefs, subtag) Self
         +as_borrowed(&self) ScriptDisplayName
     }
     class ScriptDisplayName {
@@ -50,6 +54,7 @@ classDiagram
 
     class VariantDisplayNameOwned {
         -subtag: Variant
+        +try_new(prefs, subtag) Self
         +as_borrowed(&self) VariantDisplayName
     }
     class VariantDisplayName {
@@ -59,14 +64,22 @@ classDiagram
     VariantDisplayName ..|> Writeable : implements
 ```
 
-## Formatters
+## Formatters & Constructors
 
-The module provides the following formatters, each with a borrowed version and an `Owned` version that holds the data lifetime:
+The module provides the following formatters, each with a borrowed version and an `Owned` version that holds the data lifetime. 
+
+### Constructors and Value-Passing
+All owned constructors take their target subtag or `LanguageIdentifier` **by value** because the owned struct needs to store the identifier for fallback purposes, and copying/moving these identifiers is highly efficient in ICU4X (using `TinyStr` under the hood).
 
 *   **`LanguageDisplayName` / `LanguageDisplayNameOwned<M>`**: Formats a full `LanguageIdentifier` (language, script, region, and variants) into a localized string. It is generic over the display model (Standard/Dialect vs. Menu).
+    *   `LanguageDisplayNameOwned::try_new(prefs, options, lid)`: Constructor for `Standard` and `Dialect` display styles. Takes `LanguageIdentifier` by value.
+    *   `LanguageMenuDisplayNameOwned::try_new_menu(prefs, options, lid)`: Constructor for `Menu` display style. Takes `LanguageIdentifier` by value.
 *   **`RegionDisplayName` / `RegionDisplayNameOwned`**: Formats a single `Region` subtag (e.g., `US` -> "United States").
+    *   `RegionDisplayNameOwned::try_new(prefs, subtag)`: Constructor. Takes `Region` by value.
 *   **`ScriptDisplayName` / `ScriptDisplayNameOwned`**: Formats a single `Script` subtag (e.g., `Latn` -> "Latin").
+    *   `ScriptDisplayNameOwned::try_new(prefs, subtag)`: Constructor. Takes `Script` by value.
 *   **`VariantDisplayName` / `VariantDisplayNameOwned`**: Formats a single `Variant` subtag (e.g., `valencia` -> "Valencian").
+    *   `VariantDisplayNameOwned::try_new(prefs, subtag)`: Constructor. Takes `Variant` by value.
 
 ---
 
@@ -78,32 +91,29 @@ The `single` module uses the following data markers. Because it loads names for 
 These markers contain the localized name for a specific subtag. They are indexed by the **locale** of the translation (e.g., `en`) and a **marker attribute** containing the BCP-47 subtag string (e.g., `US`, `Latn`, `zh`).
 
 *   **`LocaleNamesLanguageLongV1` / `LocaleNamesLanguageShortV1`**:
-    *   *Data Struct*: `VarZeroCow<'static, str>`
     *   *Attribute*: Language subtag (e.g., `en`, `zh`).
-    *   *Description*: Localized long/short names for languages.
+    *   *Description*: Contains a single string representing the localized long or short name for the language.
 *   **`LocaleNamesScriptLongV1` / `LocaleNamesScriptShortV1`**:
-    *   *Data Struct*: `VarZeroCow<'static, str>`
     *   *Attribute*: Script subtag (e.g., `Latn`, `Hant`).
-    *   *Description*: Localized long/short names for scripts.
+    *   *Description*: Contains a single string representing the localized long or short name for the script.
 *   **`LocaleNamesRegionLongV1` / `LocaleNamesRegionShortV1`**:
-    *   *Data Struct*: `VarZeroCow<'static, str>`
     *   *Attribute*: Region subtag (e.g., `US`, `FR`, `001`).
-    *   *Description*: Localized long/short names for regions.
+    *   *Description*: Contains a single string representing the localized long or short name for the region.
 *   **`LocaleNamesVariantLongV1`**:
-    *   *Data Struct*: `VarZeroCow<'static, str>`
     *   *Attribute*: Variant subtag (e.g., `valencia`).
-    *   *Description*: Localized names for variants.
+    *   *Description*: Contains a single string representing the localized name for the variant.
 *   **`LocaleNamesLanguageMenuLongV1`**:
-    *   *Data Struct*: `VarZeroCow<'static, MenuNamePartsULE>`
     *   *Attribute*: Language subtag (e.g., `zh`).
-    *   *Description*: Localized menu name parts (core and extension) for hierarchical menus.
+    *   *Description*: Contains the split "core" and "extension" parts of the localized menu name (used for hierarchical dropdowns).
 
 ### 2. Formatting Patterns (Indexed by Locale Only)
 These markers contain the patterns used to combine subtags. They are indexed by the **locale** only, as the patterns apply to all formatting operations for that language.
 
 *   **`LocaleDisplayPatternV1`**:
-    *   *Data Struct*: `LocaleDisplayPattern`
-    *   *Description*: Contains the `localePattern` (e.g., `"{0} ({1})"`) and `localeSeparator` (e.g., `"{0}, {1}"`) used to construct the final display name.
+    *   *Attribute*: None (indexed by locale only).
+    *   *Contains*:
+        *   `localePattern`: The pattern used to combine the base language name with qualifiers (e.g., `"{0} ({1})"`).
+        *   `localeSeparator`: The separator used to join multiple qualifiers (e.g., `"{0}, {1}"`).
 
 ---
 
@@ -119,7 +129,7 @@ The `single` module adheres to general ICU4X design principles to support `no_st
 
 ### Generic Owned Type with Shared Borrowed Type
 
-To support both standard formatting and the specialized `Style::Menu` (which requires `LocaleNamesLanguageMenuLongV1` wrapping `MenuNameParts` instead of `str`), we use a single generic owned type `LanguageDisplayNameOwned<M>` that delegates its language payload type to a model trait, inspired by the `Model` generic in `TimeZoneInfo`.
+To support both standard formatting and the specialized `LanguageDisplay::Menu` (which requires `LocaleNamesLanguageMenuLongV1` wrapping `MenuNameParts` instead of `str`), we use a single generic owned type `LanguageDisplayNameOwned<M>` that delegates its language payload type to a model trait, inspired by the `Model` generic in `TimeZoneInfo`.
 
 #### 1. The Model Trait and Implementations
 We define a `LanguageDisplayNameModel` trait with an associated type `LanguagePayload`. 
@@ -170,15 +180,18 @@ We load `LocaleDisplayPatternV1` which contains pre-parsed `DoublePlaceholderPat
 *   **`localeSeparator`**: Joins multiple qualifiers (e.g., `"{0}, {1}"`).
 
 ### 2. Dialect vs. Standard Handling (UTS #35 §3.1)
-*   **Dialect Style**: The formatter first attempts to load a specific dialect name matching the identifier (e.g., `en-GB` -> "British English").
-*   **Standard Style**: The formatter bypasses dialect lookup and constructs the name from the base language and qualifiers (e.g., `en-GB` -> "English (United Kingdom)").
-*   If a dialect name is requested but not available in CLDR, it automatically falls back to the Standard construction.
+We support three language display modes via `LanguageDisplay` (matching ECMA-402):
+*   **`LanguageDisplay::Dialect`**: The formatter first attempts to load a specific dialect name matching the identifier (e.g., `en-GB` -> "British English"). If not found, it falls back to `Standard`.
+*   **`LanguageDisplay::Standard`**: The formatter bypasses dialect lookup and constructs the name from the base language and qualifiers (e.g., `en-GB` -> "English (United Kingdom)").
+*   **`LanguageDisplay::Menu`**: The formatter loads menu-optimized names.
 
 ### 3. Variant Names (UTS #35 §3.15)
 Localized variant names are loaded individually and appended to the qualifiers list, joined by the `localeSeparator`.
 
-### 4. Menu Style Support (UTS #35 §3.1)
-We support `Style::Menu` using `LocaleNamesLanguageMenuLongV1` (which contains `MenuNameParts` with `core` and `extension` fields) for dropdown menus. The `core` part is displayed as the main language name, and the `extension` is joined with other qualifiers.
+### 4. Menu Style Support (UTS #35 §3.1 & CLDR-19336)
+We support `LanguageDisplay::Menu` using `LocaleNamesLanguageMenuLongV1` (which contains `MenuNameParts` with `core` and `extension` fields) for dropdown menus. The `core` part is displayed as the main language name, and the `extension` is joined with other qualifiers.
+
+As per [CLDR-19336](https://unicode-org.atlassian.net/browse/CLDR-19336), some languages in CLDR have an `alt="menu"` name. During datagen/loading, if an `alt="menu"` name is present, we construct the `MenuNameParts` payload using that string as the `core` part, with an empty `extension` part.
 
 ---
 
