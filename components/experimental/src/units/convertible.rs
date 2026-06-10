@@ -21,7 +21,7 @@ pub trait Convertible: Clone {
     /// Converts a [`Ratio<BigInt>`] to the implementing type.
     fn from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self>;
 
-    /// Converts a [`Ratio<BigInt>`] to the associated [`Rate`] type.
+    /// Converts a [`Ratio<BigInt>`] to the associated [`Self::Rate`] type.
     fn rate_from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self::Rate>;
 
     /// Returns the reciprocal of the implementing type.
