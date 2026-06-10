@@ -115,7 +115,7 @@ where
     N: Convertible,
 {
     /// The conversion rate between the input and output units.
-    pub(crate) conversion_rate: N,
+    pub(crate) conversion_rate: N::Rate,
 }
 
 impl<N> ProportionalConverter<N>
@@ -124,6 +124,6 @@ where
 {
     /// Converts the given value from the input unit to the output unit.
     pub fn convert(&self, value: &N) -> N {
-        value.mul_refs(&self.conversion_rate)
+        value.mul_rate(&self.conversion_rate)
     }
 }

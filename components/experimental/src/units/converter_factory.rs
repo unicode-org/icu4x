@@ -331,7 +331,7 @@ impl ConverterFactory {
             return None;
         }
 
-        let conversion_rate = T::from_ratio_bigint(conversion_rate.get_ratio())?;
+        let conversion_rate = T::rate_from_ratio_bigint(conversion_rate.get_ratio())?;
         let proportional = ProportionalConverter { conversion_rate };
 
         if is_reciprocal {
