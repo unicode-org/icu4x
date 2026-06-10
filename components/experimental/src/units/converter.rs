@@ -23,10 +23,10 @@ use crate::units::convertible::Convertible;
 /// let factory = ConverterFactory::new();
 /// let meter = MeasureUnit::try_from_str("meter").unwrap();
 /// let foot = MeasureUnit::try_from_str("foot").unwrap();
-/// let converter = factory.converter::<f64>(&meter, &foot).unwrap();
 ///
 /// // 10 meters is approximately 32.8084 feet.
 /// // We use approximate comparison due to floating-point precision.
+/// let converter = factory.converter::<f64>(&meter, &foot).unwrap();
 /// assert!((converter.convert(&10.0) - 32.8084).abs() < 1e-4);
 /// ```
 #[derive(Debug, Clone)]
@@ -49,9 +49,9 @@ where
     /// let factory = ConverterFactory::new();
     /// let celsius = MeasureUnit::try_from_str("celsius").unwrap();
     /// let fahrenheit = MeasureUnit::try_from_str("fahrenheit").unwrap();
-    /// let converter = factory.converter::<f64>(&celsius, &fahrenheit).unwrap();
     ///
     /// // 0°C is exactly 32°F.
+    /// let converter = factory.converter::<f64>(&celsius, &fahrenheit).unwrap();
     /// assert!((converter.convert(&0.0) - 32.0).abs() < 1e-9);
     /// // 100°C is exactly 212°F.
     /// assert!((converter.convert(&100.0) - 212.0).abs() < 1e-9);
