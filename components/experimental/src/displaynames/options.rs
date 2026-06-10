@@ -43,6 +43,7 @@ pub enum Style {
     Narrow,
     Short,
     Long,
+    Menu,
 }
 
 /// An enum for fallback return when the system does not have the
@@ -66,6 +67,4 @@ pub enum LanguageDisplay {
     #[default]
     Dialect,
     Standard,
-    Menu,
 }
-

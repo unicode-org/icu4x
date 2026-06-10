@@ -119,17 +119,17 @@ fn test_single_language_display_name() {
 }
 
 #[cfg(any())]
-// TODO(#7825): Enable this test once LanguageDisplayNameOwned supports LanguageDisplay::Menu.
+// TODO(#7825): Enable this test once LanguageDisplayNameOwned supports Style::Menu.
 #[test]
 fn test_single_language_display_name_menu() {
     use icu_experimental::displaynames::single::LanguageDisplayNameOwned;
-    use icu_experimental::displaynames::{DisplayNamesOptions, LanguageDisplay};
+    use icu_experimental::displaynames::{DisplayNamesOptions, Style};
     use icu_locale_core::{locale, langid};
     use writeable::assert_writeable_eq;
 
     let locale = locale!("en-001");
     let mut options: DisplayNamesOptions = Default::default();
-    options.language_display = LanguageDisplay::Menu;
+    options.style = Some(Style::Menu);
 
     // This should format "zh-Hant-HK" to "Chinese (Traditional, Hong Kong)" in "en-001" using Style::Menu
     let lang_id = langid!("zh-Hant-HK");
