@@ -70,6 +70,43 @@ The module provides the following formatters, each with a borrowed version and a
 
 ---
 
+## Data Markers & Indexing
+
+The `single` module uses the following data markers. Because it loads names for specific subtags at runtime, it utilizes a two-level indexing strategy combining the target **locale** (for translation) and **marker attributes** (for the subtag).
+
+### 1. Subtag Display Names (Indexed by Locale + Marker Attribute)
+These markers contain the localized name for a specific subtag. They are indexed by the **locale** of the translation (e.g., `en`) and a **marker attribute** containing the BCP-47 subtag string (e.g., `US`, `Latn`, `zh`).
+
+*   **`LocaleNamesLanguageLongV1` / `LocaleNamesLanguageShortV1`**:
+    *   *Data Struct*: `VarZeroCow<'static, str>`
+    *   *Attribute*: Language subtag (e.g., `en`, `zh`).
+    *   *Description*: Localized long/short names for languages.
+*   **`LocaleNamesScriptLongV1` / `LocaleNamesScriptShortV1`**:
+    *   *Data Struct*: `VarZeroCow<'static, str>`
+    *   *Attribute*: Script subtag (e.g., `Latn`, `Hant`).
+    *   *Description*: Localized long/short names for scripts.
+*   **`LocaleNamesRegionLongV1` / `LocaleNamesRegionShortV1`**:
+    *   *Data Struct*: `VarZeroCow<'static, str>`
+    *   *Attribute*: Region subtag (e.g., `US`, `FR`, `001`).
+    *   *Description*: Localized long/short names for regions.
+*   **`LocaleNamesVariantLongV1`**:
+    *   *Data Struct*: `VarZeroCow<'static, str>`
+    *   *Attribute*: Variant subtag (e.g., `valencia`).
+    *   *Description*: Localized names for variants.
+*   **`LocaleNamesLanguageMenuLongV1`**:
+    *   *Data Struct*: `VarZeroCow<'static, MenuNamePartsULE>`
+    *   *Attribute*: Language subtag (e.g., `zh`).
+    *   *Description*: Localized menu name parts (core and extension) for hierarchical menus.
+
+### 2. Formatting Patterns (Indexed by Locale Only)
+These markers contain the patterns used to combine subtags. They are indexed by the **locale** only, as the patterns apply to all formatting operations for that language.
+
+*   **`LocaleDisplayPatternV1`**:
+    *   *Data Struct*: `LocaleDisplayPattern`
+    *   *Description*: Contains the `localePattern` (e.g., `"{0} ({1})"`) and `localeSeparator` (e.g., `"{0}, {1}"`) used to construct the final display name.
+
+---
+
 ## Architecture & Design
 
 The `single` module adheres to general ICU4X design principles to support `no_std` environments and minimize resource usage:
@@ -110,7 +147,7 @@ This struct holds only cheap, borrowed references:
 *   `base_name`: The resolved base language name (or "core" part for menu style) as a `&'a str`.
 *   `menu_extension`: The optional menu extension part as an `Option<&'a str>`.
 *   `script_name` and `region_name`: Optional resolved names as `Option<&'a str>`.
-*   `variants`: A borrowed slice of variant payloads (`&'a [DataPayload<ErasedDisplayNameMarker>]`).
+*   `variants`: A borrowed slice of variant payloads (`&'a [DataPayload<ErasedDisplayNameMarker>]`). We borrow the payloads directly rather than extracting a dereferenced list of `&'a str`s to avoid heap allocation during `as_borrowed()`. While a dereferenced list would be cleaner, this zero-allocation design is preferred and acceptable since variants are rarely present and not on a hot path.
 *   `locale_pattern` and `locale_separator`: Borrowed patterns from the pattern payload.
 
 #### 4. Resolution in `as_borrowed()`
