@@ -13,6 +13,22 @@ use crate::units::convertible::Convertible;
 /// NOTE:
 ///     This converter does not support conversions between mixed units,
 ///     for example, from "meter" to "foot-and-inch".
+///
+/// # Examples
+///
+/// ```
+/// use icu_experimental::units::converter_factory::ConverterFactory;
+/// use icu_experimental::measure::measureunit::MeasureUnit;
+///
+/// let factory = ConverterFactory::new();
+/// let meter = MeasureUnit::try_from_str("meter").unwrap();
+/// let foot = MeasureUnit::try_from_str("foot").unwrap();
+/// let converter = factory.converter::<f64>(&meter, &foot).unwrap();
+///
+/// // 10 meters is approximately 32.8084 feet.
+/// // We use approximate comparison due to floating-point precision.
+/// assert!((converter.convert(&10.0) - 32.8084).abs() < 1e-4);
+/// ```
 #[derive(Debug, Clone)]
 pub struct UnitsConverter<N>(pub(crate) UnitsConverterInner<N>)
 where
@@ -23,6 +39,23 @@ where
     N: Convertible,
 {
     /// Converts the given value from the input unit to the output unit.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_experimental::units::converter_factory::ConverterFactory;
+    /// use icu_experimental::measure::measureunit::MeasureUnit;
+    ///
+    /// let factory = ConverterFactory::new();
+    /// let celsius = MeasureUnit::try_from_str("celsius").unwrap();
+    /// let fahrenheit = MeasureUnit::try_from_str("fahrenheit").unwrap();
+    /// let converter = factory.converter::<f64>(&celsius, &fahrenheit).unwrap();
+    ///
+    /// // 0°C is exactly 32°F.
+    /// assert!((converter.convert(&0.0) - 32.0).abs() < 1e-9);
+    /// // 100°C is exactly 212°F.
+    /// assert!((converter.convert(&100.0) - 212.0).abs() < 1e-9);
+    /// ```
     pub fn convert(&self, value: &N) -> N {
         self.0.convert(value)
     }

@@ -23,6 +23,34 @@ use zerovec::ZeroSlice;
 
 use super::convertible::Convertible;
 /// `ConverterFactory` is responsible for creating converters.
+///
+/// # Examples
+///
+/// Demonstrating how to use a single factory to create different types of converters:
+///
+/// ```
+/// use icu_experimental::units::converter_factory::ConverterFactory;
+/// use icu_experimental::measure::measureunit::MeasureUnit;
+///
+/// let factory = ConverterFactory::new();
+///
+/// // 1. Create a proportional converter (meters to feet)
+/// let meter = MeasureUnit::try_from_str("meter").unwrap();
+/// let foot = MeasureUnit::try_from_str("foot").unwrap();
+/// let meters_to_feet = factory.converter::<f64>(&meter, &foot).unwrap();
+///
+/// // 10 meters is approximately 32.8084 feet.
+/// // We use approximate comparison due to floating-point precision.
+/// assert!((meters_to_feet.convert(&10.0) - 32.8084).abs() < 1e-4);
+///
+/// // 2. Create an offset converter (Celsius to Fahrenheit) from the same factory
+/// let celsius = MeasureUnit::try_from_str("celsius").unwrap();
+/// let fahrenheit = MeasureUnit::try_from_str("fahrenheit").unwrap();
+/// let celsius_to_fahrenheit = factory.converter::<f64>(&celsius, &fahrenheit).unwrap();
+///
+/// // 0°C is exactly 32°F.
+/// assert!((celsius_to_fahrenheit.convert(&0.0) - 32.0).abs() < 1e-9);
+/// ```
 #[derive(Debug)]
 pub struct ConverterFactory {
     /// Contains the necessary data for the conversion factory.
@@ -283,6 +311,21 @@ impl ConverterFactory {
     /// NOTE:
     ///    This converter does not support conversions between mixed units,
     ///    such as, from "meter" to "foot-and-inch".
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_experimental::units::converter_factory::ConverterFactory;
+    /// use icu_experimental::measure::measureunit::MeasureUnit;
+    ///
+    /// let factory = ConverterFactory::new();
+    /// let meter = MeasureUnit::try_from_str("meter").unwrap();
+    /// let foot = MeasureUnit::try_from_str("foot").unwrap();
+    /// let converter = factory.converter::<f64>(&meter, &foot).unwrap();
+    ///
+    /// // 2 meters is approximately 6.56168 feet.
+    /// assert!((converter.convert(&2.0) - 6.56168).abs() < 1e-5);
+    /// ```
     pub fn converter<T: Convertible>(
         &self,
         input_unit: &MeasureUnit,
