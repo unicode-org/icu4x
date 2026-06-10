@@ -6,6 +6,9 @@ use num_bigint::BigInt;
 use num_rational::Ratio;
 use num_traits::ToPrimitive;
 
+#[allow(unused_imports)]
+use core_maths::*;
+
 // TODO: add Mul & Add for references to avoid cloning.
 /// A trait for types that can be converted between two units.
 pub trait Convertible: Clone {
