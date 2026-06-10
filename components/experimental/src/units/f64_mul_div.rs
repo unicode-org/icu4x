@@ -25,17 +25,21 @@ use core_maths::*;
 /// [this post by Waldemar Horwat](https://github.com/tc39/proposal-amount/issues/115).
 #[inline]
 pub(super) fn f64_mul_div(a: f64, num: f64, den: f64) -> f64 {
-    let hi = a * num;
-    let err = a.mul_add(num, -hi);
-    let res = hi / den;
-    let rem = res.mul_add(-den, hi) + err;
-    let b = res + (rem / den);
+    let double_rounded = a * num / den;
 
-    if b.is_infinite() || b.is_nan() {
-        // Fallback to simple multiplication if FMA fails due to overflow/NaN
-        a * (num / den)
+    // The multiplication error is the difference of the rounded multiplication
+    // and the multiplication evaluated in full precision (FMA)
+    let multiplication_error = a.mul_add(num, -(a * num));
+
+    // The total error is the difference between the rounded multiplication+division
+    // and the multiplication evaluated in full precision, plus the multiplication
+    // error divided by the denominator, all evaluated in times-den-space. 
+    let total_error = (double_rounded.mul_add(-den, a * num) + multiplication_error) / den;
+    
+    if total_error.is_finite() {
+        double_rounded + total_error
     } else {
-        b
+        a * (num / den)
     }
 }
 
