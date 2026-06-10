@@ -334,7 +334,7 @@ impl DataProvider<DatetimePatternsRangeGlueV1> for SourceDataProvider {
             .interval_formats
             .as_ref()
             .map(|c| c.fallback.as_str())
-            .unwrap_or("{0} – {1}");
+            .ok_or_else(|| DataError::custom("Missing intervalFormats in Gregorian"))?;
 
         let pattern = GenericPattern::from_str(fallback_str).map_err(|e| {
             DataError::custom("Failed to parse fallback glue pattern").with_display_context(&e)
