@@ -35,6 +35,7 @@ icu_provider::data_marker!(
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency::essentials))]
+// TODO: Pack these 8 distinct index fields into a single 32-bit integer bitfield (3 bits per index) to minimize stack size.
 pub struct PatternIndices {
     pub standard: u8,
     pub standard_negative: Option<u8>,
@@ -175,7 +176,10 @@ impl<'a> CurrencyEssentials<'a> {
     pub fn standard_pattern(&self) -> &DoublePlaceholderPattern {
         self.patterns
             .get(self.indices.standard as usize)
-            .unwrap_or_else(|| self.patterns.get(0).unwrap())
+            .or_else(|| self.patterns.get(0))
+            .unwrap_or(DoublePlaceholderPattern::from_ref_store_unchecked(
+                "\u{3}\u{2}",
+            ))
     }
 
     /// Returns the standard negative pattern if specified.
