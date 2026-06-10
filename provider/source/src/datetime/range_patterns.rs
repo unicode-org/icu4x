@@ -247,7 +247,7 @@ impl SourceDataProvider {
     ) -> Result<PackedRangePatterns<'static>, DataError> {
         let data = self.get_dates_resource(locale, calendar)?;
         let (date_range_patterns, time_range_patterns) =
-            parse_interval_patterns(data.interval_formats.as_ref());
+            parse_interval_patterns(data.datetime_formats.interval_formats.as_ref());
         let skeletons = if components_type == ComponentsType::Time {
             time_range_patterns
         } else {
@@ -307,6 +307,7 @@ impl DataProvider<DatetimePatternsRangeGlueV1> for SourceDataProvider {
         let data = self.get_dates_resource(req.id.locale, Some(DatagenCalendar::Gregorian))?;
 
         let fallback_str = data
+            .datetime_formats
             .interval_formats
             .as_ref()
             .map(|c| c.fallback.as_str())

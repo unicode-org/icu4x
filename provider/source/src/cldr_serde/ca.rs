@@ -195,6 +195,8 @@ pub(crate) struct DateTimeFormats {
     pub(crate) available_formats: AvailableFormats,
     #[serde(rename = "appendItems")]
     pub(crate) append_items: AppendItems,
+    #[serde(rename = "intervalFormats")]
+    pub(crate) interval_formats: Option<IntervalFormats>,
 }
 
 #[derive(PartialEq, Debug, Deserialize, Clone)]
@@ -284,8 +286,6 @@ pub(crate) struct Dates {
     pub(crate) datetime_formats: DateTimeFormats,
     #[serde(rename = "dateTimeFormats-atTime")]
     pub(crate) datetime_formats_at_time: DateTimeFormatsVariant,
-    #[serde(rename = "intervalFormats")]
-    pub(crate) interval_formats: Option<IntervalFormats>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
