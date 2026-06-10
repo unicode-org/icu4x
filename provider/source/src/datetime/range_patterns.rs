@@ -162,19 +162,13 @@ fn parse_pgd_generic(
     // Sort by field value
     parsed.sort_by_key(|(f, _)| *f);
 
-    // Construct header
-    let mut header_val = 0u8;
-    for (f, _) in parsed.iter() {
-        header_val |= 1 << *f;
+    match PatternsByGreatestDifference::try_from_sorted(parsed) {
+        Ok(pgd) => Some(pgd),
+        Err(e) => {
+            log::warn!("Failed to construct PatternsByGreatestDifference for {log_desc}: {e}");
+            None
+        }
     }
-
-    let patterns: Vec<Pattern<'static>> = parsed.into_iter().map(|(_, p)| p).collect();
-    let varzerovec = zerovec::VarZeroVec::from(patterns.as_slice());
-
-    Some(PatternsByGreatestDifference {
-        header: GreatestDifferenceHeader::new(header_val),
-        patterns: varzerovec,
-    })
 }
 
 /// Parses date-related patterns by greatest difference from CLDR raw data.

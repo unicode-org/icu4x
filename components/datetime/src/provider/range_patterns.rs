@@ -190,7 +190,7 @@ impl<'data> PatternsByGreatestDifference<'data> {
     /// Construct from a strictly sorted iterator of (`bit_index`, pattern).
     /// The `bit_index` must be <= 3.
     #[cfg(feature = "datagen")]
-    fn try_from_sorted<I>(iter: I) -> Result<Self, &'static str>
+    pub fn try_from_sorted<I>(iter: I) -> Result<Self, &'static str>
     where
         I: IntoIterator<Item = (u8, Pattern<'data>)>,
     {
