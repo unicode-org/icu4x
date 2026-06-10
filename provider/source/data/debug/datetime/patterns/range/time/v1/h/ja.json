@@ -1,0 +1,27 @@
+{
+  "variant_pattern_indices": [
+    2,
+    2,
+    2,
+    2,
+    2,
+    2
+  ],
+  "elements": [
+    {
+      "header": 10,
+      "patterns": [
+        "aK時～K時",
+        "aK時～aK時"
+      ]
+    },
+    {
+      "header": 11,
+      "patterns": [
+        "aK時mm分～K時mm分",
+        "aK時mm分～K時mm分",
+        "aK時mm分～aK時mm分"
+      ]
+    }
+  ]
+}

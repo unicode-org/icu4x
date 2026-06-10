@@ -1,0 +1,27 @@
+{
+  "has_explicit_short": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "elements": [
+    {
+      "header": 3,
+      "patterns": [
+        "M月d日(E)～d日(E)",
+        "M月d日(E)～M月d日(E)"
+      ]
+    },
+    {
+      "header": 3,
+      "patterns": [
+        "MM/dd(E)～MM/dd(E)",
+        "MM/dd(E)～MM/dd(E)"
+      ]
+    }
+  ]
+}

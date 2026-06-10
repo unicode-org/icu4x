@@ -1,4 +1,5 @@
 {
+  "has_explicit_short": true,
   "variant_pattern_indices": [
     0,
     0,
@@ -9,8 +10,18 @@
   ],
   "elements": [
     {
-      "header": 0,
-      "patterns": []
+      "header": 3,
+      "patterns": [
+        "MMM d–d",
+        "MMM d – MMM d"
+      ]
+    },
+    {
+      "header": 3,
+      "patterns": [
+        "MM-dd – MM-dd",
+        "MM-dd – MM-dd"
+      ]
     }
   ]
 }

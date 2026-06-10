@@ -1,0 +1,29 @@
+{
+  "has_explicit_medium": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "elements": [
+    {
+      "header": 14,
+      "patterns": [
+        "MMM – MMM y G",
+        "MMM y – MMM y G",
+        "MMM y G – MMM y G"
+      ]
+    },
+    {
+      "header": 14,
+      "patterns": [
+        "MM-y – MM-y GGGG",
+        "MM-y – MM-y GGGG",
+        "MM-y GGGG – MM-y GGGG"
+      ]
+    }
+  ]
+}

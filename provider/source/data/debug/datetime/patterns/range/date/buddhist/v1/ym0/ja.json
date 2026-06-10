@@ -1,0 +1,29 @@
+{
+  "has_explicit_medium": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "elements": [
+    {
+      "header": 14,
+      "patterns": [
+        "Gy年M月～M月",
+        "Gy年M月～y年M月",
+        "Gy年M月～Gy年M月"
+      ]
+    },
+    {
+      "header": 14,
+      "patterns": [
+        "GGGGGy/MM～y/MM",
+        "GGGGGy/MM～y/MM",
+        "GGGGGy/MM～GGGGGy/MM"
+      ]
+    }
+  ]
+}

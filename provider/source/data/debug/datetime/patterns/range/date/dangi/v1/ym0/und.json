@@ -1,4 +1,6 @@
 {
+  "has_explicit_medium": true,
+  "has_explicit_short": true,
   "variant_pattern_indices": [
     0,
     0,
@@ -9,8 +11,25 @@
   ],
   "elements": [
     {
-      "header": 0,
-      "patterns": []
+      "header": 6,
+      "patterns": [
+        "U MMMM–MMMM",
+        "U MMMM – U MMMM"
+      ]
+    },
+    {
+      "header": 6,
+      "patterns": [
+        "U MMM–MMM",
+        "U MMM – U MMM"
+      ]
+    },
+    {
+      "header": 6,
+      "patterns": [
+        "y-MM – y-MM",
+        "y-MM – y-MM"
+      ]
     }
   ]
 }

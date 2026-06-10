@@ -1,0 +1,25 @@
+{
+  "variant_pattern_indices": [
+    2,
+    2,
+    2,
+    2,
+    2,
+    2
+  ],
+  "elements": [
+    {
+      "header": 2,
+      "patterns": [
+        "H時～H時"
+      ]
+    },
+    {
+      "header": 3,
+      "patterns": [
+        "H時mm分～H時mm分",
+        "H時mm分～H時mm分"
+      ]
+    }
+  ]
+}

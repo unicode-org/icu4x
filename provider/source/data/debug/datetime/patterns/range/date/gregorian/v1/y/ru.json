@@ -1,0 +1,25 @@
+{
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    2,
+    2,
+    2
+  ],
+  "elements": [
+    {
+      "header": 4,
+      "patterns": [
+        "y–y"
+      ]
+    },
+    {
+      "header": 12,
+      "patterns": [
+        "y–y гг. G",
+        "y г. G – y г. G"
+      ]
+    }
+  ]
+}

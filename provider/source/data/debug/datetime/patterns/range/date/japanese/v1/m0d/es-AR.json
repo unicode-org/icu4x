@@ -1,0 +1,27 @@
+{
+  "has_explicit_medium": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "elements": [
+    {
+      "header": 3,
+      "patterns": [
+        "d–d 'de' MMM",
+        "d 'de' MMM–d 'de' MMM"
+      ]
+    },
+    {
+      "header": 3,
+      "patterns": [
+        "d/M–d/M",
+        "d/M–d/M"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "has_explicit_short": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "elements": [
+    {
+      "header": 15,
+      "patterns": [
+        "E d à E d MMM y G",
+        "E d MMM à E d MMM y G",
+        "E d MMM y à E d MMM y G",
+        "E d MMM y G à E d MMM y G"
+      ]
+    },
+    {
+      "header": 15,
+      "patterns": [
+        "E d à E d/M/y G",
+        "E d/M à E d/M/y G",
+        "E d/M/y à E d/M/y G",
+        "E d/M/y G à E d/M/y G"
+      ]
+    }
+  ]
+}

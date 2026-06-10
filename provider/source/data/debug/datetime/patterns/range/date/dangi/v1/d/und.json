@@ -9,8 +9,10 @@
   ],
   "elements": [
     {
-      "header": 0,
-      "patterns": []
+      "header": 1,
+      "patterns": [
+        "d–d"
+      ]
     }
   ]
 }

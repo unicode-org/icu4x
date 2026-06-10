@@ -9,8 +9,11 @@
   ],
   "elements": [
     {
-      "header": 0,
-      "patterns": []
+      "header": 12,
+      "patterns": [
+        "G y–y",
+        "G y – G y"
+      ]
     }
   ]
 }

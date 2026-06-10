@@ -1,0 +1,47 @@
+{
+  "has_explicit_medium": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    3,
+    4,
+    4
+  ],
+  "elements": [
+    {
+      "header": 7,
+      "patterns": [
+        "y年M月d日(E)～d日(E)",
+        "y年M月d日(E)～M月d日(E)",
+        "y年M月d日(E)～y年M月d日(E)"
+      ]
+    },
+    {
+      "header": 7,
+      "patterns": [
+        "y/MM/dd(E)～y/MM/dd(E)",
+        "y/MM/dd(E)～y/MM/dd(E)",
+        "y/MM/dd(E)～y/MM/dd(E)"
+      ]
+    },
+    {
+      "header": 15,
+      "patterns": [
+        "Gy年M月d日(E)～d日(E)",
+        "Gy年M月d日(E)～M月d日(E)",
+        "Gy年M月d日(E)～y年M月d日(E)",
+        "Gy年M月d日(E)～Gy年M月d日(E)"
+      ]
+    },
+    {
+      "header": 15,
+      "patterns": [
+        "Gy/MM/dd(E)～y/MM/dd(E)",
+        "Gy/MM/dd(E)～y/MM/dd(E)",
+        "Gy/MM/dd(E)～y/MM/dd(E)",
+        "Gy/MM/dd(E)～Gy/MM/dd(E)"
+      ]
+    }
+  ]
+}

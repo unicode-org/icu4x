@@ -1,0 +1,32 @@
+{
+  "has_explicit_medium": true,
+  "has_explicit_short": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "elements": [
+    {
+      "header": 2,
+      "patterns": [
+        "MMMM～MMMM"
+      ]
+    },
+    {
+      "header": 2,
+      "patterns": [
+        "MMM～MMM"
+      ]
+    },
+    {
+      "header": 2,
+      "patterns": [
+        "M月～M月"
+      ]
+    }
+  ]
+}

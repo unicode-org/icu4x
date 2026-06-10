@@ -1,0 +1,25 @@
+{
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    2,
+    2,
+    2
+  ],
+  "elements": [
+    {
+      "header": 4,
+      "patterns": [
+        "y年～y年"
+      ]
+    },
+    {
+      "header": 12,
+      "patterns": [
+        "Gy年～y年",
+        "Gy年～Gy年"
+      ]
+    }
+  ]
+}
