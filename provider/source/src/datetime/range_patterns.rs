@@ -4,7 +4,9 @@
 
 use super::semantic_skeletons::{gen_date_components, gen_time_components};
 use super::{DatagenCalendar, PackedPatternItem};
-use crate::{IterableDataProviderCached, SourceDataProvider, cldr_serde};
+use crate::{
+    IterableDataProviderCached, SourceDataProvider, cldr_serde, debug_provider::DebugProvider,
+};
 use icu::datetime::fieldsets::enums::*;
 use icu::datetime::provider::fields::{self, Field, components};
 use icu::datetime::provider::packed_pattern::{
@@ -85,12 +87,38 @@ impl<'a> PackedPatternItem for PatternsByGreatestDifference<'a> {
 
     fn enforce_consistency(
         &mut self,
-        _names: &mut icu::datetime::pattern::FixedCalendarDateTimeNames<()>,
-        _locale: &DataLocale,
-        _calendar: Option<DatagenCalendar>,
-        _attributes: &DataMarkerAttributes,
+        names: &mut icu::datetime::pattern::FixedCalendarDateTimeNames<()>,
+        locale: &DataLocale,
+        calendar: Option<DatagenCalendar>,
+        attributes: &DataMarkerAttributes,
     ) {
-        // Not needed for range patterns. Range patterns do not have consistency issues.
+        use icu::datetime::pattern::{DateTimePattern, PatternLoadError};
+        use icu::datetime::provider::fields::Field;
+
+        for pattern in self.patterns.iter() {
+            let runtime_pattern = Pattern::zero_from(pattern);
+            let dt_pattern = DateTimePattern::from(runtime_pattern);
+            if let Err(e) = names.load_for_pattern(&DebugProvider, &dt_pattern) {
+                match e {
+                    PatternLoadError::ConflictingField {
+                        field: requested_field,
+                        previous_field,
+                    } => {
+                        let requested_field = Field::from(requested_field);
+                        let previous_field = Field::from(previous_field);
+                        let attributes = attributes.as_str();
+                        let calendar = calendar.map(|c| c.cldr_name()).unwrap_or("generic");
+                        log::warn!(
+                            "{calendar}/{locale}/{attributes}: conflicting field in range pattern: {previous_field} <=> {field}",
+                            field = requested_field
+                        );
+                    }
+                    _ => {
+                        // Ignore other errors
+                    }
+                }
+            }
+        }
     }
 }
 
