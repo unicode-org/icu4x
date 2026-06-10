@@ -5,6 +5,22 @@
 #[allow(unused_imports)]
 use core_maths::*;
 
+/// Computes `(a * num) / den` with higher precision using Fused Multiply-Add (FMA).
+///
+/// This function implements an algorithm that reduces rounding errors in floating-point
+/// division by utilizing `f64::mul_add` to compute the remainder of the multiplication
+/// and incorporate it into the division.
+///
+/// This is particularly useful for unit conversion where the conversion rate is represented
+/// as a rational fraction `num / den`, and we want to compute `a * (num / den)` more accurately
+/// than the naive calculation.
+///
+/// For more details and the mathematical justification, see
+/// [Waldemar's comment](https://github.com/tc39/proposal-amount/issues/115).
+///
+/// # Fallback
+/// If the FMA calculation results in an infinite value or NaN (e.g., due to overflow
+/// in intermediate steps), it falls back to the naive `a * (num / den)`.
 #[inline]
 pub(super) fn f64_mul_div(a: f64, num: f64, den: f64) -> f64 {
     let hi = a * num;
