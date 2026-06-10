@@ -159,10 +159,7 @@ fn parse_pgd_generic(
         return None;
     }
 
-    // Sort by field value
-    parsed.sort_by_key(|(f, _)| *f);
-
-    match PatternsByGreatestDifference::try_from_sorted(parsed) {
+    match PatternsByGreatestDifference::try_from_patterns(parsed) {
         Ok(pgd) => Some(pgd),
         Err(e) => {
             log::warn!("Failed to construct PatternsByGreatestDifference for {log_desc}: {e}");

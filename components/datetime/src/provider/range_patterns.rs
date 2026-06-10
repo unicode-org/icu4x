@@ -125,6 +125,18 @@ impl GreatestDifferenceHeader {
 }
 
 /// A list of patterns that represent the greatest difference format for a given skeleton.
+///
+/// ### Fallback Behavior
+/// At runtime, if a pattern for a specific greatest difference field is requested but not present
+/// in this struct, the resolver will fall back to the next larger present field (e.g., Day -> Month
+/// -> Year -> Era).
+///
+/// ### Datagen Deduplication
+/// To minimize data size, datagen leverages this fallback behavior to omit redundant patterns.
+/// If a smaller field (e.g., Day) has the exact same pattern as a larger field (e.g., Month),
+/// the smaller field is marked as absent in the header and its pattern is omitted. At runtime,
+/// requesting the smaller field will correctly fall back to the larger field and retrieve the
+/// identical pattern.
 #[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
@@ -187,37 +199,63 @@ impl<'data> PatternsByGreatestDifference<'data> {
             .map(<Pattern as zerofrom::ZeroFrom<PatternULE>>::zero_from)
     }
 
-    /// Construct from a strictly sorted iterator of (`bit_index`, pattern).
+    /// Construct from an iterator of (`bit_index`, pattern).
+    ///
     /// The `bit_index` must be <= 3.
+    ///
+    /// This function automatically sorts the inputs by `bit_index` and performs
+    /// fallback-based deduplication: if a pattern for a smaller field is identical
+    /// to the pattern for the next larger present field, the smaller field's pattern
+    /// is omitted, as it will naturally fall back to the larger field at runtime.
     #[cfg(feature = "datagen")]
-    pub fn try_from_sorted<I>(iter: I) -> Result<Self, &'static str>
+    pub fn try_from_patterns<I>(iter: I) -> Result<Self, &'static str>
     where
         I: IntoIterator<Item = (u8, Pattern<'data>)>,
     {
         use alloc::vec::Vec;
-        let mut header_val = 0u8;
-        let mut patterns = Vec::new();
-        let mut last_bit = None;
 
-        for (bit, pattern) in iter {
-            if bit > 3 {
-                return Err("GreatestDifference bit index must be 0, 1, 2, or 3");
-            }
-            if let Some(last) = last_bit
-                && bit <= last
-            {
-                return Err("Iterator must be strictly sorted by bit index and have no duplicates");
-            }
-            last_bit = Some(bit);
-            header_val |= 1 << bit;
-            patterns.push(pattern);
-        }
+        // 1. Collect and sort the input.
+        let mut original_input = iter.into_iter().collect::<Vec<_>>();
+        original_input.sort_by_key(|(bit, _)| *bit);
 
-        if patterns.is_empty() {
+        if original_input.is_empty() {
             return Err("PatternsByGreatestDifference cannot be empty");
         }
 
-        let varzerovec = VarZeroVec::from(patterns.as_slice());
+        // Validate bit range and check for duplicates.
+        let mut prev_bit = None;
+        for &(bit, _) in original_input.iter() {
+            if bit > 3 {
+                return Err("GreatestDifference bit index must be 0, 1, 2, or 3");
+            }
+            if prev_bit == Some(bit) {
+                return Err("Duplicate greatest difference fields are not allowed");
+            }
+            prev_bit = Some(bit);
+        }
+
+        // 2. Deduplicate patterns using a simple one-pass filter.
+        // We iterate from smallest to largest field. We keep a pattern only if
+        // it is different from the next present pattern. The last pattern is always kept.
+        // This leverages the fallback behavior in `resolve_fallback`.
+        let mut minimized_patterns = Vec::new();
+        let mut header_val = 0u8;
+
+        let mut it = original_input.into_iter().peekable();
+        while let Some((bit, pattern)) = it.next() {
+            let keep = if let Some((_, next_pattern)) = it.peek() {
+                &pattern != next_pattern
+            } else {
+                true // Always keep the last element
+            };
+
+            if keep {
+                header_val |= 1 << bit;
+                minimized_patterns.push(pattern);
+            }
+        }
+
+        let varzerovec = VarZeroVec::from(minimized_patterns.as_slice());
 
         Ok(Self {
             header: GreatestDifferenceHeader::new(header_val),
@@ -225,20 +263,22 @@ impl<'data> PatternsByGreatestDifference<'data> {
         })
     }
 
-    /// Construct from a `BTreeMap` of (`DateGreatestDifferenceField`, pattern).
+    /// Construct from an iterator of (`DateGreatestDifferenceField`, pattern).
     #[cfg(feature = "datagen")]
-    pub fn try_from_date_patterns(
-        map: alloc::collections::BTreeMap<DateGreatestDifferenceField, Pattern<'data>>,
-    ) -> Result<Self, &'static str> {
-        Self::try_from_sorted(map.into_iter().map(|(f, p)| (f as u8, p)))
+    pub fn try_from_date_patterns<I>(iter: I) -> Result<Self, &'static str>
+    where
+        I: IntoIterator<Item = (DateGreatestDifferenceField, Pattern<'data>)>,
+    {
+        Self::try_from_patterns(iter.into_iter().map(|(f, p)| (f as u8, p)))
     }
 
-    /// Construct from a `BTreeMap` of (`TimeGreatestDifferenceField`, pattern).
+    /// Construct from an iterator of (`TimeGreatestDifferenceField`, pattern).
     #[cfg(feature = "datagen")]
-    pub fn try_from_time_patterns(
-        map: alloc::collections::BTreeMap<TimeGreatestDifferenceField, Pattern<'data>>,
-    ) -> Result<Self, &'static str> {
-        Self::try_from_sorted(map.into_iter().map(|(f, p)| (f as u8, p)))
+    pub fn try_from_time_patterns<I>(iter: I) -> Result<Self, &'static str>
+    where
+        I: IntoIterator<Item = (TimeGreatestDifferenceField, Pattern<'data>)>,
+    {
+        Self::try_from_patterns(iter.into_iter().map(|(f, p)| (f as u8, p)))
     }
 }
 
@@ -566,5 +606,67 @@ mod _serde {
         {
             self.serialize_impl(serializer)
         }
+    }
+}
+
+#[cfg(test)]
+mod try_from_patterns_tests {
+    use super::*;
+    use crate::provider::pattern::runtime::Pattern;
+    use core::str::FromStr;
+
+    fn get_pattern<'a>(pgd: &'a PatternsByGreatestDifference<'_>, idx: usize) -> Pattern<'a> {
+        let ule = pgd.patterns.get(idx).unwrap();
+        <Pattern as zerofrom::ZeroFrom<PatternULE>>::zero_from(ule)
+    }
+
+    #[test]
+    fn test_try_from_patterns_dedup() {
+        let pat_a = Pattern::from_str("y").unwrap();
+        let pat_b = Pattern::from_str("m").unwrap();
+
+        // 1. All different -> no dedup
+        let input = vec![(0, pat_a.clone()), (1, pat_b.clone()), (2, pat_a.clone())];
+        let pgd = PatternsByGreatestDifference::try_from_patterns(input).unwrap();
+        assert_eq!(pgd.header.0, 0b111); // Day, Month, Year present
+        assert_eq!(pgd.patterns.len(), 3);
+        assert_eq!(get_pattern(&pgd, 0), pat_a);
+        assert_eq!(get_pattern(&pgd, 1), pat_b);
+        assert_eq!(get_pattern(&pgd, 2), pat_a);
+
+        // 2. All identical -> dedup to 1 (at the largest field, Year)
+        let input = vec![(0, pat_a.clone()), (1, pat_a.clone()), (2, pat_a.clone())];
+        let pgd = PatternsByGreatestDifference::try_from_patterns(input).unwrap();
+        assert_eq!(pgd.header.0, 0b100); // Only Year (2) present
+        assert_eq!(pgd.patterns.len(), 1);
+        assert_eq!(get_pattern(&pgd, 0), pat_a);
+
+        // 3. Day and Month identical, Year different -> dedup Day to Month
+        let input = vec![(0, pat_a.clone()), (1, pat_a.clone()), (2, pat_b.clone())];
+        let pgd = PatternsByGreatestDifference::try_from_patterns(input).unwrap();
+        assert_eq!(pgd.header.0, 0b110); // Month (1) and Year (2) present
+        assert_eq!(pgd.patterns.len(), 2);
+        assert_eq!(get_pattern(&pgd, 0), pat_a);
+        assert_eq!(get_pattern(&pgd, 1), pat_b);
+
+        // 4. Day and Year identical, Month different -> no dedup (since Month is in between and different)
+        let input = vec![(0, pat_a.clone()), (1, pat_b.clone()), (2, pat_a.clone())];
+        let pgd = PatternsByGreatestDifference::try_from_patterns(input).unwrap();
+        assert_eq!(pgd.header.0, 0b111); // All present
+        assert_eq!(pgd.patterns.len(), 3);
+
+        // 5. Unsorted input -> should be sorted and deduped correctly
+        let input = vec![(2, pat_a.clone()), (0, pat_a.clone()), (1, pat_a.clone())];
+        let pgd = PatternsByGreatestDifference::try_from_patterns(input).unwrap();
+        assert_eq!(pgd.header.0, 0b100); // Only Year (2) present
+        assert_eq!(pgd.patterns.len(), 1);
+
+        // 6. Duplicate keys -> error
+        let input = vec![(0, pat_a.clone()), (0, pat_b.clone())];
+        assert!(PatternsByGreatestDifference::try_from_patterns(input).is_err());
+
+        // 7. Out of bound keys -> error
+        let input = vec![(4, pat_a.clone())];
+        assert!(PatternsByGreatestDifference::try_from_patterns(input).is_err());
     }
 }
