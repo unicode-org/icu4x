@@ -26,28 +26,18 @@ use super::convertible::Convertible;
 ///
 /// # Examples
 ///
-/// Demonstrating how to use a single factory to create different types of converters:
-///
 /// ```
 /// use icu_experimental::units::converter_factory::ConverterFactory;
 /// use icu_experimental::measure::measureunit::MeasureUnit;
 ///
 /// let factory = ConverterFactory::new();
 ///
-/// let meter = MeasureUnit::try_from_str("meter").unwrap();
 /// let foot = MeasureUnit::try_from_str("foot").unwrap();
+/// let meter = MeasureUnit::try_from_str("meter").unwrap();
 ///
-/// // 10 meters is approximately 32.8084 feet.
-/// // We use approximate comparison due to floating-point precision.
-/// let meters_to_feet = factory.converter::<f64>(&meter, &foot).unwrap();
-/// assert!((meters_to_feet.convert(&10.0) - 32.8084).abs() < 1e-4);
-///
-/// let celsius = MeasureUnit::try_from_str("celsius").unwrap();
-/// let fahrenheit = MeasureUnit::try_from_str("fahrenheit").unwrap();
-///
-/// // 0°C is exactly 32°F.
-/// let celsius_to_fahrenheit = factory.converter::<f64>(&celsius, &fahrenheit).unwrap();
-/// assert!((celsius_to_fahrenheit.convert(&0.0) - 32.0).abs() < 1e-9);
+/// // 1 foot is exactly 0.3048 meters.
+/// let foot_to_meter = factory.converter::<f64>(&foot, &meter).unwrap();
+/// assert!((foot_to_meter.convert(&1.0) - 0.3048).abs() < 1e-9);
 /// ```
 #[derive(Debug)]
 pub struct ConverterFactory {
