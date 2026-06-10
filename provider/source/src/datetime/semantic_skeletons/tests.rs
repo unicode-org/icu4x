@@ -136,60 +136,35 @@ fn test_hebr_override() {
 }
 
 #[test]
-fn test_en_hour_patterns() {
-    use icu::locale::locale;
-
-    let provider = SourceDataProvider::new_testing();
-    for &attributes in TimeFieldSet::ALL_DATA_MARKER_ATTRIBUTES {
-        let payload: DataPayload<DatetimePatternsTimeV1> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    attributes,
-                    &locale!("en").into(),
-                ),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .payload;
-
-        let json_str = serde_json::to_string_pretty(payload.get()).unwrap();
-        if attributes == DataMarkerAttributes::from_str_or_panic("h0") {
-            assert!(
-                json_str.is_ascii(),
-                "Default 24-hour JSON (h0) should be ASCII"
-            );
-        } else {
-            assert!(
-                !json_str.is_ascii(),
-                "Default 12-hour/Preferred JSON ({attributes:?}) should contain non-ASCII characters (NNBSP)"
-            );
-        }
-    }
-}
-
-#[test]
 fn test_en_hour_patterns_alt_ascii() {
     use icu::locale::locale;
 
-    let provider = SourceDataProvider::new_testing()
+    let provider = SourceDataProvider::new_testing();
+    let provider_ascii = provider
+        .clone()
         .with_alt_variants(std::iter::once(AltVariantKind::DatetimeAscii));
+    let locale = locale!("en").into();
     for &attributes in TimeFieldSet::ALL_DATA_MARKER_ATTRIBUTES {
-        let payload: DataPayload<DatetimePatternsTimeV1> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    attributes,
-                    &locale!("en").into(),
-                ),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .payload;
+        let req = DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
+            metadata: Default::default(),
+        };
+        let payload: DataPayload<DatetimePatternsTimeV1> = provider.load(req).unwrap().payload;
+        let payload_ascii: DataPayload<DatetimePatternsTimeV1> =
+            provider_ascii.load(req).unwrap().payload;
 
         let json_str = serde_json::to_string_pretty(payload.get()).unwrap();
+        let json_str_ascii = serde_json::to_string_pretty(payload_ascii.get()).unwrap();
         assert!(
-            json_str.is_ascii(),
+            json_str_ascii.is_ascii(),
             "Alt-ASCII JSON for attributes {attributes:?} should contain only ASCII characters"
         );
+        if attributes != DataMarkerAttributes::from_str_or_panic("h0") {
+            assert_ne!(
+                json_str_ascii, json_str,
+                "Alt-ASCII should produce a different result"
+            );
+        }
     }
 }
 
@@ -210,9 +185,28 @@ fn test_en_overlap_patterns() {
         .payload;
 
     let json_str = serde_json::to_string_pretty(payload.get()).unwrap();
-    assert!(
-        !json_str.is_ascii(),
-        "Default JSON should contain non-ASCII characters (NNBSP)"
+
+    assert_eq!(
+        json_str,
+        r#"{
+  "has_explicit_medium": true,
+  "variant_pattern_indices": [
+    3,
+    4,
+    4,
+    5,
+    6,
+    6
+  ],
+  "elements": [
+    "EEEE h a",
+    "E h a",
+    "EEEE h:m a",
+    "E h:mm a",
+    "EEEE h:m:s a",
+    "E h:mm:ss a"
+  ]
+}"#
     );
 }
 
