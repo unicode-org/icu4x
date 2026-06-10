@@ -34,6 +34,21 @@ icu_provider::data_marker!(
     CurrencyEssentials<'static>
 );
 
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency::essentials))]
+pub struct PatternIndices {
+    pub standard: u8,
+    pub standard_negative: Option<u8>,
+    pub standard_alpha_next_to_number: u8,
+    pub standard_alpha_next_to_number_negative: Option<u8>,
+    pub accounting_positive: u8,
+    pub accounting_negative: Option<u8>,
+    pub accounting_alpha_next_to_number_positive: u8,
+    pub accounting_alpha_next_to_number_negative: Option<u8>,
+}
+
 /// This type contains all of the essential data for currency formatting.
 ///
 /// <div class="stab unstable">
@@ -51,75 +66,12 @@ pub struct CurrencyEssentials<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub pattern_config_map: ZeroMap<'data, UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>,
 
-    // TODO(#4677): Implement the pattern to accept the signed negative and signed positive patterns.
-    /// The standard currency pattern used for formatting.
-    ///
-    /// This pattern uses two placeholders:
-    /// - `0`: The numeric currency value.
-    /// - `1`: The currency symbol (`¤`).
-    #[cfg_attr(
-        feature = "serde",
-        serde(
-            borrow,
-            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<DoublePlaceholder, _>"
-        )
-    )]
-    pub standard_pattern: Cow<'data, DoublePlaceholderPattern>,
+    /// A packed list of distinct currency patterns referenced by [`PatternIndices`].
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub patterns: VarZeroVec<'data, DoublePlaceholderPattern>,
 
-    // TODO(#4677): Implement the pattern to accept the signed negative and signed positive patterns.
-    /// The `standard_alpha_next_to_number` currency pattern used for formatting.
-    ///
-    /// This pattern uses two placeholders:
-    /// - `0`: The numeric currency value.
-    /// - `1`: The currency symbol (`¤`).
-    #[cfg_attr(
-        feature = "serde",
-        serde(
-            borrow,
-            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<DoublePlaceholder, _>"
-        )
-    )]
-    pub standard_alpha_next_to_number_pattern: Cow<'data, DoublePlaceholderPattern>,
-
-    /// The positive accounting currency pattern used for formatting.
-    #[cfg_attr(
-        feature = "serde",
-        serde(
-            borrow,
-            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<DoublePlaceholder, _>"
-        )
-    )]
-    pub accounting_positive_pattern: Cow<'data, DoublePlaceholderPattern>,
-
-    /// The negative accounting currency pattern used for formatting.
-    #[cfg_attr(
-        feature = "serde",
-        serde(
-            borrow,
-            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<DoublePlaceholder, _>"
-        )
-    )]
-    pub accounting_negative_pattern: Cow<'data, DoublePlaceholderPattern>,
-
-    /// The positive `accounting_alpha_next_to_number` currency pattern used for formatting.
-    #[cfg_attr(
-        feature = "serde",
-        serde(
-            borrow,
-            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<DoublePlaceholder, _>"
-        )
-    )]
-    pub accounting_alpha_next_to_number_positive_pattern: Cow<'data, DoublePlaceholderPattern>,
-
-    /// The negative `accounting_alpha_next_to_number` currency pattern used for formatting.
-    #[cfg_attr(
-        feature = "serde",
-        serde(
-            borrow,
-            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<DoublePlaceholder, _>"
-        )
-    )]
-    pub accounting_alpha_next_to_number_negative_pattern: Cow<'data, DoublePlaceholderPattern>,
+    /// Indices into `patterns` for each formatting variant.
+    pub indices: PatternIndices,
 
     /// A list of placeholders (strings), such as currency symbols, referenced by index.
     ///
@@ -213,12 +165,74 @@ impl<'a> CurrencyEssentials<'a> {
         };
 
         let pattern = match pattern_selection {
-            PatternSelection::Standard => &*self.standard_pattern,
+            PatternSelection::Standard => self.standard_pattern(),
             PatternSelection::StandardAlphaNextToNumber => {
-                &*self.standard_alpha_next_to_number_pattern
+                self.standard_alpha_next_to_number_pattern()
             }
         };
 
         (currency, pattern, pattern_selection)
+    }
+
+    /// Returns the standard pattern.
+    pub fn standard_pattern(&self) -> &DoublePlaceholderPattern {
+        self.patterns
+            .get(self.indices.standard as usize)
+            .unwrap_or_else(|| self.patterns.get(0).unwrap())
+    }
+
+    /// Returns the standard negative pattern if specified.
+    pub fn standard_negative_pattern(&self) -> Option<&DoublePlaceholderPattern> {
+        self.indices
+            .standard_negative
+            .and_then(|idx| self.patterns.get(idx as usize))
+    }
+
+    /// Returns the `standard_alpha_next_to_number` pattern, falling back to `standard_pattern` if not present.
+    pub fn standard_alpha_next_to_number_pattern(&self) -> &DoublePlaceholderPattern {
+        self.patterns
+            .get(self.indices.standard_alpha_next_to_number as usize)
+            .unwrap_or_else(|| self.standard_pattern())
+    }
+
+    /// Returns the `standard_alpha_next_to_number` negative pattern if specified, falling back to standard negative.
+    pub fn standard_alpha_next_to_number_negative_pattern(
+        &self,
+    ) -> Option<&DoublePlaceholderPattern> {
+        self.indices
+            .standard_alpha_next_to_number_negative
+            .and_then(|idx| self.patterns.get(idx as usize))
+            .or_else(|| self.standard_negative_pattern())
+    }
+
+    /// Returns the positive accounting pattern, falling back to `standard_pattern` if not present.
+    pub fn accounting_positive_pattern(&self) -> &DoublePlaceholderPattern {
+        self.patterns
+            .get(self.indices.accounting_positive as usize)
+            .unwrap_or_else(|| self.standard_pattern())
+    }
+
+    /// Returns the negative accounting pattern if present.
+    pub fn accounting_negative_pattern(&self) -> Option<&DoublePlaceholderPattern> {
+        self.indices
+            .accounting_negative
+            .and_then(|idx| self.patterns.get(idx as usize))
+    }
+
+    /// Returns the positive `accounting_alpha_next_to_number` pattern, falling back to accounting or standard.
+    pub fn accounting_alpha_next_to_number_positive_pattern(&self) -> &DoublePlaceholderPattern {
+        self.patterns
+            .get(self.indices.accounting_alpha_next_to_number_positive as usize)
+            .unwrap_or_else(|| self.accounting_positive_pattern())
+    }
+
+    /// Returns the negative `accounting_alpha_next_to_number` pattern, falling back to `accounting_negative_pattern`.
+    pub fn accounting_alpha_next_to_number_negative_pattern(
+        &self,
+    ) -> Option<&DoublePlaceholderPattern> {
+        self.indices
+            .accounting_alpha_next_to_number_negative
+            .and_then(|idx| self.patterns.get(idx as usize))
+            .or_else(|| self.accounting_negative_pattern())
     }
 }
