@@ -9,6 +9,7 @@ use displaydoc::Display;
 pub mod converter;
 pub mod converter_factory;
 pub mod convertible;
+mod f64_mul_div;
 pub mod provider;
 pub mod ratio;
 
