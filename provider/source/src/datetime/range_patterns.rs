@@ -12,6 +12,8 @@ use icu::datetime::provider::fields::{self, Field, components};
 use icu::datetime::provider::packed_pattern::{
     GenericPackedPatterns, GenericPackedPatternsBuilder,
 };
+use icu::datetime::provider::pattern::PatternItem;
+use icu::datetime::provider::pattern::reference;
 use icu::datetime::provider::pattern::runtime::{GenericPattern, Pattern};
 use icu::datetime::provider::range_patterns::*;
 use icu::datetime::provider::semantic_skeletons::GluePattern;
@@ -133,12 +135,86 @@ fn skeleton_has_time_fields(skeleton: &Skeleton) -> bool {
     })
 }
 
+/// Extracts the glue string from a CLDR fallback pattern (e.g. "{0} – {1}").
+///
+/// Returns `None` if the pattern is invalid or if `{0}` and `{1}` are not at the ends
+/// of the string (e.g. if there is a prefix or suffix).
+fn extract_glue(fallback_str: &str) -> Option<&str> {
+    let pos0 = fallback_str.find("{0}")?;
+    let pos1 = fallback_str.find("{1}")?;
+
+    if pos0 < pos1 {
+        // Enforce that {0} and {1} are at the very ends of the pattern (no prefix/suffix).
+        // e.g. "{0} - {1}" is valid, but "before {0} - {1}" is not.
+        if pos0 != 0 || pos1 + 3 != fallback_str.len() {
+            return None;
+        }
+        Some(&fallback_str[pos0 + 3..pos1])
+    } else {
+        // Enforce that {1} and {0} are at the very ends of the pattern (no prefix/suffix).
+        if pos1 != 0 || pos0 + 3 != fallback_str.len() {
+            return None;
+        }
+        Some(&fallback_str[pos1 + 3..pos0])
+    }
+}
+
+/// Decomposes a CLDR range pattern into sub-patterns based on the fallback glue.
+///
+/// If the pattern is symmetric (i.e. it can be split by the fallback glue and both sides
+/// are identical), it returns `RangePatternInfo::Symmetric`. Otherwise, it returns
+/// `RangePatternInfo::FullRange` containing the entire pattern.
+fn decompose_pattern(
+    pattern_str: &str,
+    fallback_glue_items: Option<&[PatternItem]>,
+) -> RangePatternInfo<'static> {
+    let ref_pat = match reference::Pattern::from_str(pattern_str) {
+        Ok(p) => p,
+        Err(_) => {
+            return RangePatternInfo::FullRange(Pattern::default());
+        }
+    };
+
+    let runtime_pat = Pattern::from(&ref_pat);
+
+    if let Some(glue_items) = fallback_glue_items {
+        let items = ref_pat.into_items();
+        if let Some(idx) = find_subslice(&items, glue_items) {
+            let left_items = items[..idx].to_vec();
+            let right_items = items[idx + glue_items.len()..].to_vec();
+
+            let left_ref = reference::Pattern::from(left_items);
+            let right_ref = reference::Pattern::from(right_items);
+
+            let left = Pattern::from(&left_ref);
+            let right = Pattern::from(&right_ref);
+
+            if left == right {
+                return RangePatternInfo::Symmetric(left);
+            }
+        }
+    }
+
+    RangePatternInfo::FullRange(runtime_pat)
+}
+
+/// Finds the starting index of a subslice `glue_items` within `items`.
+fn find_subslice(items: &[PatternItem], glue_items: &[PatternItem]) -> Option<usize> {
+    if glue_items.is_empty() {
+        return None;
+    }
+    items
+        .windows(glue_items.len())
+        .position(|window| window == glue_items)
+}
+
 /// Helper to parse patterns by greatest difference from CLDR raw data.
 ///
 /// Takes a mapping closure to convert field strings to their u8 representation,
 /// and a description for logging.
 fn parse_pgd_generic(
     field_patterns: &HashMap<String, String>,
+    fallback_glue_items: Option<&[PatternItem]>,
     map_fn: impl Fn(&str) -> Option<u8>,
     log_desc: &str,
 ) -> Option<PatternsByGreatestDifference<'static>> {
@@ -147,14 +223,8 @@ fn parse_pgd_generic(
         let Some(field_u8) = map_fn(field_str.as_str()) else {
             continue;
         };
-        let pattern = match Pattern::from_str(pattern_str) {
-            Ok(p) => p,
-            Err(err) => {
-                log::warn!("Failed to parse {log_desc} range pattern '{pattern_str}': {err:?}");
-                continue;
-            }
-        };
-        parsed.push((field_u8, pattern));
+        let info = decompose_pattern(pattern_str, fallback_glue_items);
+        parsed.push((field_u8, info));
     }
 
     if parsed.is_empty() {
@@ -176,9 +246,11 @@ fn parse_pgd_generic(
 /// Returns `None` if no date fields are found or parsed successfully.
 fn parse_date_pgd(
     field_patterns: &HashMap<String, String>,
+    fallback_glue_items: Option<&[PatternItem]>,
 ) -> Option<PatternsByGreatestDifference<'static>> {
     parse_pgd_generic(
         field_patterns,
+        fallback_glue_items,
         |field_str| DateGreatestDifferenceField::from_symbol(field_str).map(|f| f as u8),
         "date",
     )
@@ -190,9 +262,11 @@ fn parse_date_pgd(
 /// Returns `None` if no time fields are found or parsed successfully.
 fn parse_time_pgd(
     field_patterns: &HashMap<String, String>,
+    fallback_glue_items: Option<&[PatternItem]>,
 ) -> Option<PatternsByGreatestDifference<'static>> {
     parse_pgd_generic(
         field_patterns,
+        fallback_glue_items,
         |field_str| TimeGreatestDifferenceField::from_symbol(field_str).map(|f| f as u8),
         "time",
     )
@@ -215,13 +289,19 @@ fn parse_interval_patterns(
         return (BTreeMap::new(), BTreeMap::new());
     };
 
+    let fallback_str = interval_formats.fallback.as_str();
+    let glue = extract_glue(fallback_str);
+    let glue_items: Option<Vec<PatternItem>> =
+        glue.map(|g| g.chars().map(PatternItem::Literal).collect());
+    let glue_items_ref = glue_items.as_deref();
+
     let parsed =
         super::parse_cldr_skeletons(&interval_formats.patterns, |skeleton, field_patterns| {
             let is_time = skeleton_has_time_fields(skeleton);
             if is_time {
-                parse_time_pgd(field_patterns).map(ParsedPattern::Time)
+                parse_time_pgd(field_patterns, glue_items_ref).map(ParsedPattern::Time)
             } else {
-                parse_date_pgd(field_patterns).map(ParsedPattern::Date)
+                parse_date_pgd(field_patterns, glue_items_ref).map(ParsedPattern::Date)
             }
         });
 
