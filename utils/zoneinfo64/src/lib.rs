@@ -787,7 +787,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "chrono")]
     fn test_against_chrono() {
         use chrono::Offset;
         use chrono::TimeZone;
