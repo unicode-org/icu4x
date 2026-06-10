@@ -102,9 +102,9 @@ fn test_concatenate() {
 // TODO(#7825): Enable this test once LanguageDisplayNameOwned is implemented.
 #[test]
 fn test_single_language_display_name() {
-    use icu_experimental::displaynames::single::LanguageDisplayNameOwned;
     use icu_experimental::displaynames::DisplayNamesOptions;
-    use icu_locale_core::{locale, langid};
+    use icu_experimental::displaynames::single::LanguageDisplayNameOwned;
+    use icu_locale_core::{langid, locale};
     use writeable::assert_writeable_eq;
 
     let locale = locale!("en-001");
@@ -124,7 +124,7 @@ fn test_single_language_display_name() {
 fn test_single_language_display_name_menu() {
     use icu_experimental::displaynames::single::LanguageDisplayNameOwned;
     use icu_experimental::displaynames::{DisplayNamesOptions, Style};
-    use icu_locale_core::{locale, langid};
+    use icu_locale_core::{langid, locale};
     use writeable::assert_writeable_eq;
 
     let locale = locale!("en-001");
@@ -138,6 +138,3 @@ fn test_single_language_display_name_menu() {
 
     assert_writeable_eq!(lang_name, "Chinese (Traditional, Hong Kong)");
 }
-
-
-
