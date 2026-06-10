@@ -1,4 +1,4 @@
-# Class name ; Class definition in UnicodeSet notation
+# Symbol name ; Symbol definition in UnicodeSet notation
 BK|NL|eot ; [[\p{Line_Break=Mandatory_Break}] [\p{Line_Break=Next_Line}] [[{eot}]]]
 CM ; [\p{Line_Break=Combining_Mark}]
 BAmEastAsian ; [\p{Line_Break=Break_After}-[\p{ea=F}\p{ea=W}\p{ea=H}]]

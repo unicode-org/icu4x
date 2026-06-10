@@ -1,4 +1,4 @@
-# From state ; class name ; to state
+# From state ; symbol ; to state
 START ; BK|NL|eot ; BK
 START ; CM ; CM
 START ; BAmEastAsian ; BAmEastAsian

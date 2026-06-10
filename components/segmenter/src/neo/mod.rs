@@ -4,7 +4,7 @@
 
 //! Experimental reimplementations
 
-use crate::provider::{Acceptance, Class, SegmenterStateMachine, SegmenterStateMachineOverride};
+use crate::provider::{Acceptance, SegmenterStateMachine, SegmenterStateMachineOverride, Symbol};
 use crate::scaffold::RuleBreakType;
 use alloc::collections::VecDeque;
 use alloc::vec::Vec;
@@ -20,20 +20,20 @@ mod word;
 pub use word::*;
 
 pub(crate) trait Tailoring {
-    fn class(&self, data: &CodePointTrie<Class>, cp: u32) -> Class;
+    fn symbol(&self, data: &CodePointTrie<Symbol>, cp: u32) -> Symbol;
 }
 
 impl Tailoring for () {
-    fn class(&self, data: &CodePointTrie<Class>, cp: u32) -> Class {
+    fn symbol(&self, data: &CodePointTrie<Symbol>, cp: u32) -> Symbol {
         data.get32(cp)
     }
 }
 
 impl Tailoring for Option<&'_ SegmenterStateMachineOverride<'_>> {
-    fn class(&self, data: &CodePointTrie<Class>, cp: u32) -> Class {
+    fn symbol(&self, data: &CodePointTrie<Symbol>, cp: u32) -> Symbol {
         if let Some(tailoring) = self {
-            let c = tailoring.classes.get32(cp);
-            if c != SegmenterStateMachine::NO_CLASS {
+            let c = tailoring.symbols.get32(cp);
+            if c != SegmenterStateMachine::NO_SYMBOL {
                 return c;
             }
         }
@@ -152,10 +152,10 @@ impl<'s, Y: RuleBreakType, T: Tailoring, C: ComplexHandler<Y>> Iterator
         let mut complex_state = None;
 
         (self.remaining_input, self.last_accepting_status) = loop {
-            let class = if let Some((_, next)) = iter.clone().peekable().next() {
-                self.tailoring.class(&self.data.classes, next.into())
+            let symbol = if let Some((_, next)) = iter.clone().peekable().next() {
+                self.tailoring.symbol(&self.data.symbols, next.into())
             } else {
-                SegmenterStateMachine::EOT_CLASS
+                SegmenterStateMachine::EOT_SYMBOL
             };
 
             // Enter complex handling if:
@@ -210,7 +210,7 @@ impl<'s, Y: RuleBreakType, T: Tailoring, C: ComplexHandler<Y>> Iterator
             if let Some(next_state) = self
                 .data
                 .transitions
-                .get(usize::from(state) + usize::from(class) * self.data.states.len())
+                .get(usize::from(state) + usize::from(symbol) * self.data.states.len())
                 .filter(|&s| s != SegmenterStateMachine::TRASH_STATE)
             {
                 state = next_state;

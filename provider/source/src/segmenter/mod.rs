@@ -875,25 +875,25 @@ implement_override!(SegmenterBreakSentenceOverrideV1, "sentence.toml", ["el"]);
 fn neo_sources() -> AbstractFs {
     include_files!(
         "../../data/segmenter/neo/";
-        "GraphemeClusterBreakClasses.txt",
         "GraphemeClusterBreakStates.txt",
+        "GraphemeClusterBreakSymbols.txt",
         "GraphemeClusterBreakTransitions.txt",
-        "LineBreakClasses.txt",
+        "LineBreakStates.txt",
+        "LineBreakSymbols.txt",
         "LineBreakTailoring_cj.txt",
         "LineBreakTailoring_loose_cj.txt",
         "LineBreakTailoring_loose.txt",
         "LineBreakTailoring_normal_cj.txt",
-        "LineBreakTailoring_word_keepall.txt",
-        "LineBreakTailoring_word_breakall.txt",
         "LineBreakTailoring_normal.txt",
-        "LineBreakStates.txt",
+        "LineBreakTailoring_word_breakall.txt",
+        "LineBreakTailoring_word_keepall.txt",
         "LineBreakTransitions.txt",
-        "SentenceBreakClasses.txt",
-        "SentenceBreakTailoring_el.txt",
         "SentenceBreakStates.txt",
+        "SentenceBreakSymbols.txt",
+        "SentenceBreakTailoring_el.txt",
         "SentenceBreakTransitions.txt",
-        "WordBreakClasses.txt",
         "WordBreakStates.txt",
+        "WordBreakSymbols.txt",
         "WordBreakTransitions.txt",
     )
 }
@@ -983,15 +983,15 @@ impl SourceDataProvider {
         ),
         DataError,
     > {
-        let mut magic_classes = BTreeMap::new();
-        let classes = sources.read_to_string(&format!("{prefix}Classes.txt"))?;
-        let classes = classes
+        let mut magic_symbols = BTreeMap::new();
+        let symbols = sources.read_to_string(&format!("{prefix}Symbols.txt"))?;
+        let symbols = symbols
             .lines()
             .map(|l| l.split('#').next().unwrap().trim())
             .filter(|l| !l.is_empty())
             .map(|line| {
                 let mut iter = line.split(';');
-                let class = iter.next().unwrap().trim();
+                let symbol = iter.next().unwrap().trim();
                 let unicode_set = iter.next().unwrap().trim();
 
                 let set = icu::properties::unicodeset_parse::parse_unstable(unicode_set, self)
@@ -1001,13 +1001,13 @@ impl SourceDataProvider {
                     })?
                     .0;
                 for string in set.strings().iter() {
-                    assert_eq!(magic_classes.insert(String::from(string), class), None);
+                    assert_eq!(magic_symbols.insert(String::from(string), symbol), None);
                 }
                 let set = set.code_points().clone();
-                Ok((class, set))
+                Ok((symbol, set))
             })
             .collect::<Result<BTreeMap<_, _>, DataError>>()?;
-        let eot_class = magic_classes.remove("eot").unwrap_or("eot");
+        let eot_symbol = magic_symbols.remove("eot").unwrap_or("eot");
 
         let states = sources.read_to_string(&format!("{prefix}States.txt"))?;
         let states = states
@@ -1035,9 +1035,9 @@ impl SourceDataProvider {
             .map(|line| {
                 let mut iter = line.split(';');
                 let state = iter.next().unwrap().trim();
-                let class = iter.next().unwrap().trim();
+                let symbol = iter.next().unwrap().trim();
                 let next_state = iter.next().unwrap().trim();
-                ((state, class), next_state)
+                ((state, symbol), next_state)
             })
             .collect::<BTreeMap<_, _>>();
 
@@ -1046,12 +1046,12 @@ impl SourceDataProvider {
             .flat_map(|(_, &(_, lookahead, _))| lookahead)
             .collect::<BTreeSet<_>>();
 
-        // Reserve two classes for EOT and NO_CLASS
-        assert!(classes.len() < usize::from(Class::MAX) - 2);
-        let class_lookup = core::iter::once(eot_class)
-            .chain(classes.keys().filter(|&&s| s != eot_class).copied())
+        // Reserve two symbols for EOT_SYMBOL and NO_SYMBOL
+        assert!(symbols.len() < usize::from(Symbol::MAX) - 2);
+        let symbol_lookup = core::iter::once(eot_symbol)
+            .chain(symbols.keys().filter(|&&s| s != eot_symbol).copied())
             .enumerate()
-            .map(|(i, class)| (class, Class::try_from(i).unwrap()))
+            .map(|(i, symbol)| (symbol, Symbol::try_from(i).unwrap()))
             .collect::<BTreeMap<_, _>>();
 
         // Reserve two states for START and TRASH
@@ -1074,8 +1074,8 @@ impl SourceDataProvider {
             let tailoring = tailoring.strip_suffix(".txt").unwrap();
 
             let mut builder = CodePointTrieBuilder::new(
-                SegmenterStateMachine::NO_CLASS,
-                SegmenterStateMachine::NO_CLASS,
+                SegmenterStateMachine::NO_SYMBOL,
+                SegmenterStateMachine::NO_SYMBOL,
                 TrieType::Small,
             );
 
@@ -1103,30 +1103,30 @@ impl SourceDataProvider {
                     })?
                     .0;
 
-                let (target_class, target_set) = if target.has_strings() {
+                let (target_symbol, target_set) = if target.has_strings() {
                     let target = target.strings().iter().next().unwrap();
-                    let magic = magic_classes.get(target).expect(target);
-                    (magic, classes.get(magic).unwrap())
+                    let magic = magic_symbols.get(target).expect(target);
+                    (magic, symbols.get(magic).unwrap())
                 } else {
                     let target = target.code_points().iter_chars().next().unwrap();
-                    classes
+                    symbols
                         .iter()
                         .find(|(_, set)| set.contains(target))
                         .unwrap()
                 };
 
-                let target_class = class_lookup[*target_class];
+                let target_symbol = symbol_lookup[*target_symbol];
 
                 for range in set.code_points().iter_ranges() {
                     for cp in range {
                         if !target_set.contains32(cp) {
-                            builder.set_value(cp, target_class);
+                            builder.set_value(cp, target_symbol);
                         }
                     }
                 }
             }
 
-            let classes_trie = builder.build();
+            let symbols_trie = builder.build();
 
             // The tailoring remaps all complex code points
             let ignore_complex = CodePointMapData::try_new_unstable(self)?
@@ -1135,12 +1135,12 @@ impl SourceDataProvider {
                 .as_borrowed()
                 .iter_ranges()
                 .flatten()
-                .all(|cp| classes_trie.get32(cp) != SegmenterStateMachine::NO_CLASS);
+                .all(|cp| symbols_trie.get32(cp) != SegmenterStateMachine::NO_SYMBOL);
 
             tailorings.insert(
                 String::from(tailoring),
                 SegmenterStateMachineOverride {
-                    classes: classes_trie,
+                    symbols: symbols_trie,
                     ignore_complex,
                 },
             );
@@ -1153,15 +1153,15 @@ impl SourceDataProvider {
         let mut builder = CodePointTrieBuilder::new(0, 0, TrieType::Fast);
         let mut missing_codepoints = CodePointInversionListBuilder::new();
         missing_codepoints.add_set(&CodePointInversionList::all());
-        for (&class, set) in &classes {
+        for (&symbol, set) in &symbols {
             for range in set.iter_ranges() {
                 missing_codepoints.remove_range32(range.clone());
-                builder.set_range_value(range.clone(), class_lookup[class]);
+                builder.set_range_value(range.clone(), symbol_lookup[symbol]);
             }
         }
         let missing_codepoints = missing_codepoints.build();
         assert!(missing_codepoints.is_empty(), "{missing_codepoints:?}");
-        let classes = builder.build();
+        let symbols = builder.build();
 
         let states = states
             .iter()
@@ -1187,10 +1187,10 @@ impl SourceDataProvider {
 
         let transitions = transitions
             .iter()
-            .map(|((state, class), next_state)| {
+            .map(|((state, symbol), next_state)| {
                 (
                     usize::from(state_lookup[state])
-                        + state_lookup.len() * usize::from(class_lookup[class]),
+                        + state_lookup.len() * usize::from(symbol_lookup[symbol]),
                     *state_lookup.get(next_state).expect(next_state),
                 )
             })
@@ -1208,7 +1208,7 @@ impl SourceDataProvider {
         Ok((
             SegmenterStateMachine {
                 transitions,
-                classes,
+                symbols,
                 states,
                 num_lookaheads: lookahead_lookup.len(),
             },

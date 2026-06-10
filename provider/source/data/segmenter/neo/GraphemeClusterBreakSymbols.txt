@@ -1,4 +1,4 @@
-# Class name ; Class definition in UnicodeSet notation
+# Symbol name ; Symbol definition in UnicodeSet notation
 Control ; [\p{Grapheme_Cluster_Break=Control}]
 LF ; [\p{Grapheme_Cluster_Break=LF}]
 CR ; [\p{Grapheme_Cluster_Break=CR}]

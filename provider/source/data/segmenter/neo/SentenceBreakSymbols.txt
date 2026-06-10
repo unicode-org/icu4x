@@ -1,4 +1,4 @@
-# Class name ; Class definition in UnicodeSet notation
+# Symbol name ; Symbol definition in UnicodeSet notation
 eot ; [{eot}]
 XX ; [\p{Sentence_Break=Other}]
 Sp ; [\p{Sentence_Break=Sp}]
