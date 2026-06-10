@@ -98,25 +98,20 @@ impl<'a> PackedPatternItem for PatternsByGreatestDifference<'a> {
         for pattern in self.patterns.iter() {
             let runtime_pattern = Pattern::zero_from(pattern);
             let dt_pattern = DateTimePattern::from(runtime_pattern);
-            if let Err(e) = names.load_for_pattern(&DebugProvider, &dt_pattern) {
-                match e {
-                    PatternLoadError::ConflictingField {
-                        field: requested_field,
-                        previous_field,
-                    } => {
-                        let requested_field = Field::from(requested_field);
-                        let previous_field = Field::from(previous_field);
-                        let attributes = attributes.as_str();
-                        let calendar = calendar.map(|c| c.cldr_name()).unwrap_or("generic");
-                        log::warn!(
-                            "{calendar}/{locale}/{attributes}: conflicting field in range pattern: {previous_field} <=> {field}",
-                            field = requested_field
-                        );
-                    }
-                    _ => {
-                        // Ignore other errors
-                    }
-                }
+            if let Err(e) = names.load_for_pattern(&DebugProvider, &dt_pattern)
+                && let PatternLoadError::ConflictingField {
+                    field: requested_field,
+                    previous_field,
+                } = e
+            {
+                let requested_field = Field::from(requested_field);
+                let previous_field = Field::from(previous_field);
+                let attributes = attributes.as_str();
+                let calendar = calendar.map(|c| c.cldr_name()).unwrap_or("generic");
+                log::warn!(
+                    "{calendar}/{locale}/{attributes}: conflicting field in range pattern: {previous_field} <=> {field}",
+                    field = requested_field
+                );
             }
         }
     }

@@ -54,6 +54,7 @@ impl<T> Trio<T> {
         }
     }
 }
+
 /// Some patterns associated with a [`SkeletonQuality`].
 #[derive(Debug, Clone, PartialEq)]
 struct PatternsWithDistance<T> {
