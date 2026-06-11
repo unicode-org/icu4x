@@ -3,7 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::grapheme::GraphemeClusterSegmenterBorrowed;
+use crate::indices::Utf16Indices;
 use crate::provider::*;
+use crate::scaffold::{RuleBreakType, Utf8, Utf16};
 use alloc::vec::Vec;
 use core::char::{REPLACEMENT_CHARACTER, decode_utf16};
 use potential_utf::PotentialUtf8;
@@ -13,40 +15,21 @@ mod matrix;
 use matrix::*;
 
 // A word break iterator using LSTM model. Input string have to be same language.
-
-pub(super) struct LstmSegmenterIterator<'s, 'data> {
-    input: &'s str,
-    pos_utf8: usize,
+#[allow(clippy::type_complexity)]
+pub(super) struct LstmSegmenterIterator<'s, 'data, R: RuleBreakType> {
     bies: BiesIterator<'data>,
+    chars: R::IterAttr<'s>,
 }
 
-impl Iterator for LstmSegmenterIterator<'_, '_> {
+impl<R: RuleBreakType> Iterator for LstmSegmenterIterator<'_, '_, R> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
             let is_e = self.bies.next()?;
-            self.pos_utf8 += self.input[self.pos_utf8..].chars().next()?.len_utf8();
-            if is_e || self.bies.len() == 0 {
-                return Some(self.pos_utf8);
-            }
-        }
-    }
-}
-
-pub(super) struct LstmSegmenterIteratorUtf16<'data> {
-    bies: BiesIterator<'data>,
-    pos: usize,
-}
-
-impl Iterator for LstmSegmenterIteratorUtf16<'_> {
-    type Item = usize;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        loop {
-            self.pos += 1;
-            if self.bies.next()? || self.bies.len() == 0 {
-                return Some(self.pos);
+            let (idx, ch) = self.chars.next()?;
+            if is_e || self.bies.input_seq.len() == 0 {
+                return Some(idx + R::char_len(ch));
             }
         }
     }
@@ -97,94 +80,21 @@ impl<'data> LstmSegmenterBorrowed<'data> {
     }
 
     /// Create an LSTM based break iterator for an `str` (a UTF-8 string).
-    pub(super) fn segment_str<'s>(self, input: &'s str) -> LstmSegmenterIterator<'s, 'data> {
-        let input_seq = if let Some(grapheme) = self.grapheme {
-            grapheme
-                .segment_str(input)
-                .collect::<Vec<usize>>()
-                .windows(2)
-                .map(|chunk| {
-                    let range = if let [first, second, ..] = chunk {
-                        *first..*second
-                    } else {
-                        unreachable!()
-                    };
-                    let grapheme_cluster = if let Some(grapheme_cluster) = input.get(range) {
-                        grapheme_cluster
-                    } else {
-                        return self.dic.len() as u16;
-                    };
-
-                    self.dic
-                        .get_copied(PotentialUtf8::from_str(grapheme_cluster))
-                        .unwrap_or_else(|| self.dic.len() as u16)
-                })
-                .collect()
-        } else {
-            input
-                .chars()
-                .map(|c| {
-                    self.dic
-                        .get_copied(PotentialUtf8::from_str(c.encode_utf8(&mut [0; 4])))
-                        .unwrap_or_else(|| self.dic.len() as u16)
-                })
-                .collect()
-        };
+    pub(super) fn segment_str<'s>(self, input: &'s str) -> LstmSegmenterIterator<'s, 'data, Utf8> {
         LstmSegmenterIterator {
-            input,
-            pos_utf8: 0,
-            bies: BiesIterator::new(self, input_seq),
+            bies: BiesIterator::from_str(self, input),
+            chars: input.char_indices(),
         }
     }
 
     /// Create an LSTM based break iterator for a UTF-16 string.
-    pub(super) fn segment_utf16(self, input: &[u16]) -> LstmSegmenterIteratorUtf16<'data> {
-        let input_seq = if let Some(grapheme) = self.grapheme {
-            grapheme
-                .segment_utf16(input)
-                .collect::<Vec<usize>>()
-                .windows(2)
-                .map(|chunk| {
-                    let range = if let [first, second, ..] = chunk {
-                        *first..*second
-                    } else {
-                        unreachable!()
-                    };
-                    let grapheme_cluster = if let Some(grapheme_cluster) = input.get(range) {
-                        grapheme_cluster
-                    } else {
-                        return self.dic.len() as u16;
-                    };
-
-                    self.dic
-                        .get_copied_by(|key| {
-                            key.as_bytes().iter().copied().cmp(
-                                decode_utf16(grapheme_cluster.iter().copied()).flat_map(|c| {
-                                    let mut buf = [0; 4];
-                                    let len = c
-                                        .unwrap_or(REPLACEMENT_CHARACTER)
-                                        .encode_utf8(&mut buf)
-                                        .len();
-                                    buf.into_iter().take(len)
-                                }),
-                            )
-                        })
-                        .unwrap_or_else(|| self.dic.len() as u16)
-                })
-                .collect()
-        } else {
-            decode_utf16(input.iter().copied())
-                .map(|c| c.unwrap_or(REPLACEMENT_CHARACTER))
-                .map(|c| {
-                    self.dic
-                        .get_copied(PotentialUtf8::from_str(c.encode_utf8(&mut [0; 4])))
-                        .unwrap_or_else(|| self.dic.len() as u16)
-                })
-                .collect()
-        };
-        LstmSegmenterIteratorUtf16 {
-            bies: BiesIterator::new(self, input_seq),
-            pos: 0,
+    pub(super) fn segment_utf16<'s>(
+        self,
+        input: &'s [u16],
+    ) -> LstmSegmenterIterator<'s, 'data, Utf16> {
+        LstmSegmenterIterator {
+            bies: BiesIterator::from_utf16(self, input),
+            chars: Utf16Indices::new(input),
         }
     }
 }
@@ -198,9 +108,97 @@ struct BiesIterator<'data> {
 }
 
 impl<'data> BiesIterator<'data> {
+    fn from_str(segmenter: LstmSegmenterBorrowed<'data>, input: &str) -> Self {
+        let input_seq = if let Some(grapheme) = segmenter.grapheme {
+            grapheme
+                .segment_str(input)
+                .collect::<Vec<usize>>()
+                .windows(2)
+                .map(|chunk| {
+                    let range = if let [first, second, ..] = chunk {
+                        *first..*second
+                    } else {
+                        unreachable!()
+                    };
+                    let grapheme_cluster = if let Some(grapheme_cluster) = input.get(range) {
+                        grapheme_cluster
+                    } else {
+                        return segmenter.dic.len() as u16;
+                    };
+
+                    segmenter
+                        .dic
+                        .get_copied(PotentialUtf8::from_str(grapheme_cluster))
+                        .unwrap_or_else(|| segmenter.dic.len() as u16)
+                })
+                .collect()
+        } else {
+            input
+                .chars()
+                .map(|c| {
+                    segmenter
+                        .dic
+                        .get_copied(PotentialUtf8::from_str(c.encode_utf8(&mut [0; 4])))
+                        .unwrap_or_else(|| segmenter.dic.len() as u16)
+                })
+                .collect()
+        };
+        Self::from_input_seq(segmenter, input_seq)
+    }
+
+    fn from_utf16(segmenter: LstmSegmenterBorrowed<'data>, input: &[u16]) -> Self {
+        let input_seq = if let Some(grapheme) = segmenter.grapheme {
+            grapheme
+                .segment_utf16(input)
+                .collect::<Vec<usize>>()
+                .windows(2)
+                .map(|chunk| {
+                    let range = if let [first, second, ..] = chunk {
+                        *first..*second
+                    } else {
+                        unreachable!()
+                    };
+                    let grapheme_cluster = if let Some(grapheme_cluster) = input.get(range) {
+                        grapheme_cluster
+                    } else {
+                        return segmenter.dic.len() as u16;
+                    };
+
+                    segmenter
+                        .dic
+                        .get_copied_by(|key| {
+                            key.as_bytes().iter().copied().cmp(
+                                decode_utf16(grapheme_cluster.iter().copied()).flat_map(|c| {
+                                    let mut buf = [0; 4];
+                                    let len = c
+                                        .unwrap_or(REPLACEMENT_CHARACTER)
+                                        .encode_utf8(&mut buf)
+                                        .len();
+                                    buf.into_iter().take(len)
+                                }),
+                            )
+                        })
+                        .unwrap_or_else(|| segmenter.dic.len() as u16)
+                })
+                .collect()
+        } else {
+            decode_utf16(input.iter().copied())
+                .map(|c| c.unwrap_or(REPLACEMENT_CHARACTER))
+                .map(|c| {
+                    segmenter
+                        .dic
+                        .get_copied(PotentialUtf8::from_str(c.encode_utf8(&mut [0; 4])))
+                        .unwrap_or_else(|| segmenter.dic.len() as u16)
+                })
+                .collect()
+        };
+
+        Self::from_input_seq(segmenter, input_seq)
+    }
+
     // input_seq is a sequence of id numbers that represents grapheme clusters or code points in the input line. These ids are used later
     // in the embedding layer of the model.
-    fn new(segmenter: LstmSegmenterBorrowed<'data>, input_seq: Vec<u16>) -> Self {
+    fn from_input_seq(segmenter: LstmSegmenterBorrowed<'data>, input_seq: Vec<u16>) -> Self {
         let hunits = segmenter.fw_u.dim().1;
 
         // Backward LSTM
@@ -228,12 +226,6 @@ impl<'data> BiesIterator<'data> {
             curr_fw: MatrixOwned::<1>::new_zero([hunits]),
             segmenter,
         }
-    }
-}
-
-impl ExactSizeIterator for BiesIterator<'_> {
-    fn len(&self) -> usize {
-        self.input_seq.len()
     }
 }
 
@@ -373,9 +365,7 @@ mod tests {
 
         // Testing
         for test_case in &test_text.data.testcases {
-            let lstm_output = lstm
-                .segment_str(&test_case.unseg)
-                .bies
+            let lstm_output = BiesIterator::from_str(lstm, &test_case.unseg)
                 .map(|is_e| if is_e { 'e' } else { '?' })
                 .collect::<String>();
             println!("Test case      : {}", test_case.unseg);
