@@ -71,7 +71,6 @@ The bag does not carry:
 
 - hour cycle preference, including the current `components::Bag::hour_cycle` field
 - numbering system preference
-- alignment preference
 - year style preference
 - other formatter-level knobs that belong to `FieldSetBuilder`
 
@@ -176,7 +175,7 @@ Several bag details do not map one-for-one into builder options:
 
 - Narrow month and weekday widths may collapse into a broader `Length` choice.
 - Exact year width may need to be expressed through `YearStyle` plus the selected fieldset family.
-- Numeric padding can become a builder-wide alignment hint rather than a field-specific property.
+- Field-specific 2-digit (padded) width choices in the bag (such as two-digit year, month, or day) map to a builder-wide `Alignment::Column` preference, signaling that numeric padding is desired for column alignment.
 - Minute-only or second-only bags may need to be promoted to a normal time fieldset with the closest
   `TimePrecision`.
 - Day period requests do not currently have a clean dynamic fieldset equivalent and need documented
@@ -187,7 +186,6 @@ Several bag details do not map one-for-one into builder options:
 Some builder settings have no corresponding bag state and should generally remain unset unless a
 clear field-level signal exists:
 
-- `Alignment`
 - `YearStyle`
 - `TimePrecision::MinuteOptional`
 - any future builder options that are not field-presence or field-width information
@@ -206,7 +204,7 @@ options, while the bag stores field-level choices.
 
 - A single builder `Length` value has to be expanded into concrete field widths.
 - `YearStyle` must be turned into a representative year/era shape.
-- `Alignment::Column` may imply numeric widths, but it is not itself a bag field.
+- `Alignment::Column` in the builder implies that numeric fields in the reconstructed bag should prefer 2-digit (padded) widths (e.g., `yy`, `MM`, `dd`) to preserve the alignment intent.
 - `TimePrecision::MinuteOptional` must become a static field bag, probably hour+minute, losing the
   input-dependent optionality.
 - Builder defaults may need to be materialized into explicit bag values.
