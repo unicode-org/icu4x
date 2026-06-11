@@ -10,7 +10,6 @@ use alloc::collections::VecDeque;
 use alloc::vec::Vec;
 
 mod line;
-use icu_collections::codepointtrie::CodePointTrie;
 pub use line::*;
 mod grapheme;
 pub use grapheme::*;
@@ -20,25 +19,36 @@ mod word;
 pub use word::*;
 
 pub(crate) trait Tailoring {
-    fn symbol(&self, data: &CodePointTrie<Symbol>, cp: u32) -> Symbol;
+    fn symbol(&self, data: &SegmenterStateMachine, cp: u32) -> Symbol;
 }
 
 impl Tailoring for () {
-    fn symbol(&self, data: &CodePointTrie<Symbol>, cp: u32) -> Symbol {
-        data.get32(cp)
+    fn symbol(&self, data: &SegmenterStateMachine, cp: u32) -> Symbol {
+        let pseudo_symbol = data.symbols.get32(cp);
+        if pseudo_symbol < data.num_symbols {
+            pseudo_symbol
+        } else {
+            data.pseudo_symbol_map
+                .get((pseudo_symbol - data.num_symbols) as usize)
+                .unwrap_or(pseudo_symbol)
+        }
     }
 }
 
 impl Tailoring for Option<&'_ SegmenterStateMachineOverride<'_>> {
-    fn symbol(&self, data: &CodePointTrie<Symbol>, cp: u32) -> Symbol {
-        if let Some(tailoring) = self {
-            let c = tailoring.symbols.get32(cp);
-            if c != SegmenterStateMachine::NO_SYMBOL {
-                return c;
+    fn symbol(&self, data: &SegmenterStateMachine, cp: u32) -> Symbol {
+        let pseudo_symbol = data.symbols.get32(cp);
+        if pseudo_symbol < data.num_symbols {
+            pseudo_symbol
+        } else {
+            if let Some(tailoring) = self {
+                &tailoring.pseudo_symbol_map
+            } else {
+                &data.pseudo_symbol_map
             }
+            .get((pseudo_symbol - data.num_symbols) as usize)
+            .unwrap_or(pseudo_symbol)
         }
-
-        data.get32(cp)
     }
 }
 
@@ -153,7 +163,7 @@ impl<'s, Y: RuleBreakType, T: Tailoring, C: ComplexHandler<Y>> Iterator
 
         (self.remaining_input, self.last_accepting_status) = loop {
             let symbol = if let Some((_, next)) = iter.clone().peekable().next() {
-                self.tailoring.symbol(&self.data.symbols, next.into())
+                self.tailoring.symbol(self.data, next.into())
             } else {
                 SegmenterStateMachine::EOT_SYMBOL
             };

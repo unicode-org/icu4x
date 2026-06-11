@@ -45,17 +45,25 @@ impl zerovec::ule::AsULE for Acceptance {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
 pub struct SegmenterStateMachine<'data> {
-    // A map from Unicode scalar values to their DFA symbol.
+    /// A map from Unicode scalar values to their DFA symbol.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub symbols: CodePointTrie<'data, Symbol>,
-    // A dense map of DFA states.
+    /// A dense map of DFA states.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub states: ZeroVec<'data, (Acceptance, Option<Lookahead>)>,
-    // A dense map of DFA transitions, indexed by symbol * states.len() + state
+    /// A dense map of DFA transitions, indexed by `symbol * states.len() + state`
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub transitions: ZeroVec<'data, State>,
-    // The number of lookaheads, used to size the lookahead_positions vector.
+    /// The number of lookaheads, used to size the `lookahead_positions` vector.
     pub num_lookaheads: usize,
+    /// The number of symbols. If the `symbols` trie returns a value larger than this,
+    /// it is a pseudo symbol and needs to be looked up in `pseudo_symbol_map`.
+    pub num_symbols: u8,
+    /// The map from pseudo symbols (symbols `c` where `c > num_symbols`) to their actual symbol values.
+    ///
+    /// Dense linear map, indexed by `c - num_symbols`.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub pseudo_symbol_map: ZeroVec<'data, Symbol>,
 }
 
 icu_provider::data_struct!(
@@ -85,9 +93,9 @@ impl SegmenterStateMachine<'_> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct SegmenterStateMachineOverride<'data> {
-    /// The symbol mapping overlay.
+    /// See [`SegmenterStateMachine::pseudo_symbol_map`].
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub symbols: CodePointTrie<'data, u8>,
+    pub pseudo_symbol_map: ZeroVec<'data, Symbol>,
 
     /// Whether to suppress SA handling.
     pub ignore_complex: bool,

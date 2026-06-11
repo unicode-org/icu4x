@@ -10102,5 +10102,7 @@
     14,
     14
   ],
-  "num_lookaheads": 1
+  "num_lookaheads": 1,
+  "num_symbols": 19,
+  "pseudo_symbol_map": []
 }

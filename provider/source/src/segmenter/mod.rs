@@ -30,6 +30,8 @@ use icu::properties::{
 use icu::segmenter::options::WordType;
 use icu::segmenter::provider::*;
 use icu_provider::prelude::*;
+#[cfg(feature = "unstable")]
+use std::borrow::Cow;
 use std::collections::HashSet;
 #[cfg(feature = "unstable")]
 use std::collections::{BTreeMap, BTreeSet};
@@ -985,7 +987,7 @@ impl SourceDataProvider {
     > {
         let mut magic_symbols = BTreeMap::new();
         let symbols = sources.read_to_string(&format!("{prefix}Symbols.txt"))?;
-        let symbols = symbols
+        let mut symbols = symbols
             .lines()
             .map(|l| l.split('#').next().unwrap().trim())
             .filter(|l| !l.is_empty())
@@ -1004,7 +1006,7 @@ impl SourceDataProvider {
                     assert_eq!(magic_symbols.insert(String::from(string), symbol), None);
                 }
                 let set = set.code_points().clone();
-                Ok((symbol, set))
+                Ok((Cow::Borrowed(symbol), set))
             })
             .collect::<Result<BTreeMap<_, _>, DataError>>()?;
         let eot_symbol = magic_symbols.remove("eot").unwrap_or("eot");
@@ -1046,38 +1048,12 @@ impl SourceDataProvider {
             .flat_map(|(_, &(_, lookahead, _))| lookahead)
             .collect::<BTreeSet<_>>();
 
-        // Reserve two symbols for EOT_SYMBOL and NO_SYMBOL
-        assert!(symbols.len() < usize::from(Symbol::MAX) - 2);
-        let symbol_lookup = core::iter::once(eot_symbol)
-            .chain(symbols.keys().filter(|&&s| s != eot_symbol).copied())
-            .enumerate()
-            .map(|(i, symbol)| (symbol, Symbol::try_from(i).unwrap()))
-            .collect::<BTreeMap<_, _>>();
-
-        // Reserve two states for START and TRASH
-        assert!(states.len() < usize::from(State::MAX) - 2);
-        let state_lookup = core::iter::once("START")
-            .chain(states.keys().filter(|&&s| s != "START").copied())
-            .enumerate()
-            .map(|(i, state)| (state, State::try_from(i).unwrap()))
-            .collect::<BTreeMap<_, _>>();
-        assert!(lookaheads.len() < 0b11111);
-        let lookahead_lookup = lookaheads
-            .iter()
-            .enumerate()
-            .map(|(i, lookahead)| (*lookahead, Lookahead::try_from(i).unwrap()))
-            .collect::<BTreeMap<_, _>>();
-
         let mut tailorings = BTreeMap::new();
 
         for tailoring in sources.list(&format!("{prefix}Tailoring_"))? {
             let tailoring = tailoring.strip_suffix(".txt").unwrap();
 
-            let mut builder = CodePointTrieBuilder::new(
-                SegmenterStateMachine::NO_SYMBOL,
-                SegmenterStateMachine::NO_SYMBOL,
-                TrieType::Small,
-            );
+            let mut overrides = BTreeMap::<Cow<'static, str>, BTreeSet<char>>::new();
 
             for line in sources
                 .read_to_string(&format!("{prefix}Tailoring_{tailoring}.txt"))?
@@ -1103,48 +1079,109 @@ impl SourceDataProvider {
                     })?
                     .0;
 
-                let (target_symbol, target_set) = if target.has_strings() {
+                let target_symbol = if target.has_strings() {
                     let target = target.strings().iter().next().unwrap();
-                    let magic = magic_symbols.get(target).expect(target);
-                    (magic, symbols.get(magic).unwrap())
+                    let magic = *magic_symbols.get(target).expect(target);
+                    &Cow::Borrowed(magic)
                 } else {
                     let target = target.code_points().iter_chars().next().unwrap();
                     symbols
                         .iter()
                         .find(|(_, set)| set.contains(target))
                         .unwrap()
+                        .0
                 };
 
-                let target_symbol = symbol_lookup[*target_symbol];
-
-                for range in set.code_points().iter_ranges() {
-                    for cp in range {
-                        if !target_set.contains32(cp) {
-                            builder.set_value(cp, target_symbol);
-                        }
-                    }
+                for c in set.code_points().iter_chars() {
+                    overrides
+                        .entry(target_symbol.clone())
+                        .or_default()
+                        .insert(c);
                 }
             }
 
-            let symbols_trie = builder.build();
-
-            // The tailoring remaps all complex code points
-            let ignore_complex = CodePointMapData::try_new_unstable(self)?
-                .as_borrowed()
-                .get_set_for_value(LineBreak::ComplexContext)
-                .as_borrowed()
-                .iter_ranges()
-                .flatten()
-                .all(|cp| symbols_trie.get32(cp) != SegmenterStateMachine::NO_SYMBOL);
-
             tailorings.insert(
                 String::from(tailoring),
-                SegmenterStateMachineOverride {
-                    symbols: symbols_trie,
-                    ignore_complex,
-                },
+                overrides
+                    .into_iter()
+                    .map(|(k, v)| {
+                        let mut builder = CodePointInversionListBuilder::new();
+                        v.into_iter().for_each(|c| builder.add_char(c));
+                        (k, builder.build())
+                    })
+                    .collect::<BTreeMap<_, CodePointInversionList>>(),
             );
         }
+
+        let mut pseudo_symbol_map = BTreeMap::<String, String>::new();
+
+        // Intersect the symbols with all tailorings' overrides.
+        for (tailoring, overrides) in tailorings.clone() {
+            for (rule, set) in overrides {
+                for (symbol, set2) in symbols.clone().into_iter().collect::<Vec<_>>() {
+                    if set.iter_chars().any(|c| set2.contains(c)) {
+                        // Overlapping sets. We need to create a new pseudo-symbol.
+                        let pseudo_symbol = format!("{symbol}_{tailoring}_{rule}");
+                        // Add the intersection as a new symbol.
+                        symbols.insert(Cow::Owned(pseudo_symbol.clone()), {
+                            let mut builder = CodePointInversionListBuilder::new();
+                            builder.add_set(&set);
+                            for r in set2.iter_ranges_complemented() {
+                                builder.remove_range32(r);
+                            }
+                            builder.build()
+                        });
+                        pseudo_symbol_map.insert(pseudo_symbol, {
+                            let mut s = &*symbol;
+                            while let Some(x) = pseudo_symbol_map.get(s) {
+                                s = x.as_str();
+                            }
+                            s.to_string()
+                        });
+                        // Remove the intersection from the root symbol.
+                        symbols.insert(symbol, {
+                            let mut builder = CodePointInversionListBuilder::new();
+                            builder.add_set(&set2);
+                            builder.remove_set(&set);
+                            builder.build()
+                        });
+                    }
+                }
+            }
+        }
+
+        // Reserve two symbols for EOT_SYMBOL and NO_SYMBOL
+        assert!(symbols.len() < usize::from(Symbol::MAX) - 2);
+        let symbol_lookup = core::iter::once(eot_symbol)
+            .chain(
+                symbols
+                    .keys()
+                    .filter(|&s| s != eot_symbol && !pseudo_symbol_map.contains_key(s.as_ref()))
+                    .map(|s| s.as_ref()),
+            )
+            // Give pseudo symbols the last symbol codes.
+            .chain(pseudo_symbol_map.keys().map(|k| k.as_str()))
+            .enumerate()
+            .map(|(i, symbol)| (symbol, Symbol::try_from(i).unwrap()))
+            .collect::<BTreeMap<_, _>>();
+        let pseudo_symbol_map = pseudo_symbol_map
+            .iter()
+            .map(|(k, v)| (symbol_lookup[k.as_str()], symbol_lookup[v.as_str()]))
+            .collect::<BTreeMap<_, _>>();
+
+        // Reserve two states for START and TRASH
+        assert!(states.len() < usize::from(State::MAX) - 2);
+        let state_lookup = core::iter::once("START")
+            .chain(states.keys().filter(|&&s| s != "START").copied())
+            .enumerate()
+            .map(|(i, state)| (state, State::try_from(i).unwrap()))
+            .collect::<BTreeMap<_, _>>();
+        assert!(lookaheads.len() < 0b11111);
+        let lookahead_lookup = lookaheads
+            .iter()
+            .enumerate()
+            .map(|(i, lookahead)| (*lookahead, Lookahead::try_from(i).unwrap()))
+            .collect::<BTreeMap<_, _>>();
 
         use icu::collections::codepointinvlist::CodePointInversionListBuilder;
         use icu::collections::codepointtrie::TrieType;
@@ -1153,15 +1190,38 @@ impl SourceDataProvider {
         let mut builder = CodePointTrieBuilder::new(0, 0, TrieType::Fast);
         let mut missing_codepoints = CodePointInversionListBuilder::new();
         missing_codepoints.add_set(&CodePointInversionList::all());
-        for (&symbol, set) in &symbols {
+        for (symbol, set) in &symbols {
             for range in set.iter_ranges() {
                 missing_codepoints.remove_range32(range.clone());
-                builder.set_range_value(range.clone(), symbol_lookup[symbol]);
+                builder.set_range_value(range.clone(), symbol_lookup[&**symbol]);
             }
         }
         let missing_codepoints = missing_codepoints.build();
         assert!(missing_codepoints.is_empty(), "{missing_codepoints:?}");
         let symbols = builder.build();
+
+        let tailorings = tailorings
+            .into_iter()
+            .map(|(tailoring, overrides)| {
+                let mut tailored_pseudo_symbol_map = BTreeMap::<u8, u8>::new();
+
+                for (target_symbol, set) in overrides {
+                    let target_symbol = symbol_lookup[&*target_symbol];
+                    // The set might cover multiple pseudo symbols
+                    for c in set.iter_chars() {
+                        let pseudo_symbol = symbols.get(c);
+                        let prev = tailored_pseudo_symbol_map.insert(pseudo_symbol, target_symbol);
+                        // we fragmented the symbols sufficiently above
+                        assert!(
+                            prev.is_none_or(|p| p == target_symbol),
+                            "{prev:?} {target_symbol} {tailoring} {pseudo_symbol} {c:?}"
+                        );
+                    }
+                }
+
+                (tailoring, tailored_pseudo_symbol_map)
+            })
+            .collect::<BTreeMap<_, _>>();
 
         let states = states
             .iter()
@@ -1205,15 +1265,39 @@ impl SourceDataProvider {
             })
             .collect();
 
-        Ok((
-            SegmenterStateMachine {
-                transitions,
-                symbols,
-                states,
-                num_lookaheads: lookahead_lookup.len(),
-            },
-            tailorings,
-        ))
+        let segmenter_state_machine = SegmenterStateMachine {
+            transitions,
+            symbols,
+            states,
+            num_lookaheads: lookahead_lookup.len(),
+            num_symbols: (symbol_lookup.len() - pseudo_symbol_map.len()) as u8,
+            pseudo_symbol_map: pseudo_symbol_map.values().copied().collect(),
+        };
+
+        let tailorings = tailorings
+            .into_iter()
+            .map(|(tailoring, tailored_pseudo_symbol_map)| {
+                let pseudo_symbol_map = pseudo_symbol_map
+                    .iter()
+                    .map(|(&pseudo_symbol, &root_symbol)| {
+                        tailored_pseudo_symbol_map
+                            .get(&pseudo_symbol)
+                            .copied()
+                            .unwrap_or(root_symbol)
+                    })
+                    .collect();
+                // TODO
+                let ignore_complex = tailoring == "word_breakall";
+                (
+                    tailoring,
+                    SegmenterStateMachineOverride {
+                        pseudo_symbol_map,
+                        ignore_complex,
+                    },
+                )
+            })
+            .collect();
+        Ok((segmenter_state_machine, tailorings))
     }
 }
 

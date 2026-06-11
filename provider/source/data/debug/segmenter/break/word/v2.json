@@ -14319,5 +14319,7 @@
     26,
     26
   ],
-  "num_lookaheads": 0
+  "num_lookaheads": 0,
+  "num_symbols": 21,
+  "pseudo_symbol_map": []
 }
