@@ -1265,11 +1265,18 @@ impl SourceDataProvider {
             })
             .collect();
 
-        let num_symbols = (symbol_lookup.len() - pseudo_symbol_map.len()) as u8;
+        let sa_set = CodePointMapData::<LineBreak>::try_new_unstable(self)?
+            .as_borrowed()
+            .get_set_for_value(LineBreak::ComplexContext)
+            .to_code_point_inversion_list();
 
         let tailorings = tailorings
             .into_iter()
             .map(|(tailoring, tailored_pseudo_symbol_map)| {
+                let ignore_complex = sa_set
+                    .iter_chars()
+                    .all(|c| tailored_pseudo_symbol_map.contains_key(&symbols.get(c)));
+
                 let pseudo_symbol_map = pseudo_symbol_map
                     .iter()
                     .map(|(&pseudo_symbol, &root_symbol)| {
@@ -1279,17 +1286,6 @@ impl SourceDataProvider {
                             .unwrap_or(root_symbol)
                     })
                     .collect::<zerovec::ZeroVec<_>>();
-
-                let al_symbol = symbols.get('A');
-                let sa_symbol = symbols.get('ภ');
-                let ignore_complex = al_symbol
-                    .checked_sub(num_symbols)
-                    .map(|i| pseudo_symbol_map.get(i as usize).unwrap())
-                    .unwrap_or(al_symbol)
-                    == sa_symbol
-                        .checked_sub(num_symbols)
-                        .map(|i| pseudo_symbol_map.get(i as usize).unwrap())
-                        .unwrap_or(sa_symbol);
                 (
                     tailoring,
                     SegmenterStateMachineOverride {
@@ -1306,7 +1302,7 @@ impl SourceDataProvider {
                 symbols,
                 states,
                 num_lookaheads: lookahead_lookup.len(),
-                num_symbols,
+                num_symbols: (symbol_lookup.len() - pseudo_symbol_map.len()) as u8,
                 pseudo_symbol_map: pseudo_symbol_map.values().copied().collect(),
             },
             tailorings,
