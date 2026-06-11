@@ -16,6 +16,7 @@ use icu_provider::prelude::*;
 use writeable::Writeable;
 
 use super::{CurrencyCode, options::CurrencyFormatterOptions};
+use icu_pattern::DoublePlaceholderPattern;
 
 extern crate alloc;
 
@@ -100,12 +101,16 @@ impl CompactCurrencyFormatter {
 
         let essential_locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
 
-        let essential = crate::provider::Baked
+        let essential: DataPayload<CurrencyEssentialsV1> = crate::provider::Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&essential_locale),
                 ..Default::default()
             })?
             .payload;
+
+        if essential.get().standard_pattern().is_none() {
+            return Err(DataError::custom("missing standard pattern"));
+        }
 
         let decimal_formatter = DecimalFormatter::try_new((&prefs).into(), Default::default())?;
 
@@ -178,12 +183,16 @@ impl CompactCurrencyFormatter {
             })?
             .payload;
 
-        let essential = provider
+        let essential: DataPayload<CurrencyEssentialsV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })?
             .payload;
+
+        if essential.get().standard_pattern().is_none() {
+            return Err(DataError::custom("missing standard pattern"));
+        }
 
         Ok(Self {
             _short_currency_compact: short_currency_compact,
@@ -220,6 +229,8 @@ impl CompactCurrencyFormatter {
             .essential
             .get()
             .name_and_pattern(self.options.width, currency_code);
+
+        let pattern = pattern.unwrap_or_else(|| <&DoublePlaceholderPattern>::default());
 
         // TODO: The current behavior is the behavior when there is no compact currency pattern found.
         // Therefore, in the next PR, we will add the code to handle using the compact currency patterns.

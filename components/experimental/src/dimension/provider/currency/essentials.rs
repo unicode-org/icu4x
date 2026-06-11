@@ -140,7 +140,11 @@ impl<'a> CurrencyEssentials<'a> {
         &'a self,
         width: Width,
         currency: &'a CurrencyCode,
-    ) -> (&'a str, &'a DoublePlaceholderPattern, PatternSelection) {
+    ) -> (
+        &'a str,
+        Option<&'a DoublePlaceholderPattern>,
+        PatternSelection,
+    ) {
         let config = self
             .pattern_config_map
             .get_copied(&currency.0.to_unvalidated())
@@ -173,13 +177,10 @@ impl<'a> CurrencyEssentials<'a> {
     }
 
     /// Returns the standard pattern.
-    pub fn standard_pattern(&self) -> &DoublePlaceholderPattern {
+    pub fn standard_pattern(&self) -> Option<&DoublePlaceholderPattern> {
         self.patterns
             .get(self.indices.standard as usize)
             .or_else(|| self.patterns.get(0))
-            .unwrap_or(DoublePlaceholderPattern::from_ref_store_unchecked(
-                "\u{3}\u{2}",
-            ))
     }
 
     /// Returns the standard negative pattern if specified.
@@ -190,10 +191,10 @@ impl<'a> CurrencyEssentials<'a> {
     }
 
     /// Returns the `standard_alpha_next_to_number` pattern, falling back to `standard_pattern` if not present.
-    pub fn standard_alpha_next_to_number_pattern(&self) -> &DoublePlaceholderPattern {
+    pub fn standard_alpha_next_to_number_pattern(&self) -> Option<&DoublePlaceholderPattern> {
         self.patterns
             .get(self.indices.standard_alpha_next_to_number as usize)
-            .unwrap_or_else(|| self.standard_pattern())
+            .or_else(|| self.standard_pattern())
     }
 
     /// Returns the `standard_alpha_next_to_number` negative pattern if specified, falling back to standard negative.
@@ -207,10 +208,10 @@ impl<'a> CurrencyEssentials<'a> {
     }
 
     /// Returns the positive accounting pattern, falling back to `standard_pattern` if not present.
-    pub fn accounting_positive_pattern(&self) -> &DoublePlaceholderPattern {
+    pub fn accounting_positive_pattern(&self) -> Option<&DoublePlaceholderPattern> {
         self.patterns
             .get(self.indices.accounting_positive as usize)
-            .unwrap_or_else(|| self.standard_pattern())
+            .or_else(|| self.standard_pattern())
     }
 
     /// Returns the negative accounting pattern if present.
@@ -221,10 +222,12 @@ impl<'a> CurrencyEssentials<'a> {
     }
 
     /// Returns the positive `accounting_alpha_next_to_number` pattern, falling back to accounting or standard.
-    pub fn accounting_alpha_next_to_number_positive_pattern(&self) -> &DoublePlaceholderPattern {
+    pub fn accounting_alpha_next_to_number_positive_pattern(
+        &self,
+    ) -> Option<&DoublePlaceholderPattern> {
         self.patterns
             .get(self.indices.accounting_alpha_next_to_number_positive as usize)
-            .unwrap_or_else(|| self.accounting_positive_pattern())
+            .or_else(|| self.accounting_positive_pattern())
     }
 
     /// Returns the negative `accounting_alpha_next_to_number` pattern, falling back to `accounting_negative_pattern`.
