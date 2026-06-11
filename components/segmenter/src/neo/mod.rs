@@ -4,7 +4,7 @@
 
 //! Experimental reimplementations
 
-use crate::provider::{Acceptance, SegmenterStateMachine, SegmenterStateMachineOverride, Symbol};
+use crate::provider::{Acceptance, SegmenterStateMachine, SegmenterStateMachineOverride};
 use crate::scaffold::RuleBreakType;
 use alloc::collections::VecDeque;
 use alloc::vec::Vec;
@@ -17,40 +17,6 @@ mod sentence;
 pub use sentence::*;
 mod word;
 pub use word::*;
-
-pub(crate) trait Tailoring {
-    fn symbol(&self, data: &SegmenterStateMachine, cp: u32) -> Symbol;
-}
-
-impl Tailoring for () {
-    fn symbol(&self, data: &SegmenterStateMachine, cp: u32) -> Symbol {
-        let pseudo_symbol = data.symbols.get32(cp);
-        if pseudo_symbol < data.num_symbols {
-            pseudo_symbol
-        } else {
-            data.pseudo_symbol_map
-                .get((pseudo_symbol - data.num_symbols) as usize)
-                .unwrap_or(pseudo_symbol)
-        }
-    }
-}
-
-impl Tailoring for Option<&'_ SegmenterStateMachineOverride<'_>> {
-    fn symbol(&self, data: &SegmenterStateMachine, cp: u32) -> Symbol {
-        let pseudo_symbol = data.symbols.get32(cp);
-        if pseudo_symbol < data.num_symbols {
-            pseudo_symbol
-        } else {
-            if let Some(tailoring) = self {
-                &tailoring.pseudo_symbol_map
-            } else {
-                &data.pseudo_symbol_map
-            }
-            .get((pseudo_symbol - data.num_symbols) as usize)
-            .unwrap_or(pseudo_symbol)
-        }
-    }
-}
 
 pub(crate) trait ComplexHandler<Y: RuleBreakType> {
     const BREAK_STATUS: u8;
@@ -100,10 +66,9 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for NoComplexHandler {
 ///
 /// For examples of use, see [`LineSegmenter`].
 #[derive(Debug)]
-pub(crate) struct RuleBreakIterator<'data, 's, Y: RuleBreakType, T: Tailoring, C: ComplexHandler<Y>>
-{
+pub(crate) struct RuleBreakIterator<'data, 's, Y: RuleBreakType, C: ComplexHandler<Y>> {
     data: &'data SegmenterStateMachine<'data>,
-    tailoring: T,
+    pseudo_symbol_map: &'data zerovec::ZeroVec<'data, u8>,
     cache: VecDeque<usize>,
     lookahead_positions: Vec<Option<Y::IterAttr<'s>>>,
     remaining_input: Y::IterAttr<'s>,
@@ -111,13 +76,11 @@ pub(crate) struct RuleBreakIterator<'data, 's, Y: RuleBreakType, T: Tailoring, C
     complex: Option<C::Data<'data>>,
 }
 
-impl<'data, 's, Y: RuleBreakType, T: Tailoring, C: ComplexHandler<Y>>
-    RuleBreakIterator<'data, 's, Y, T, C>
-{
+impl<'data, 's, Y: RuleBreakType, C: ComplexHandler<Y>> RuleBreakIterator<'data, 's, Y, C> {
     pub(crate) fn new(
         input: Y::IterAttr<'s>,
         data: &'data SegmenterStateMachine<'data>,
-        tailoring: T,
+        tailoring: Option<&'data SegmenterStateMachineOverride<'data>>,
         complex: Option<C::Data<'data>>,
     ) -> Self
     where
@@ -126,7 +89,9 @@ impl<'data, 's, Y: RuleBreakType, T: Tailoring, C: ComplexHandler<Y>>
     {
         Self {
             data,
-            tailoring,
+            pseudo_symbol_map: tailoring
+                .map(|t| &t.pseudo_symbol_map)
+                .unwrap_or(&data.pseudo_symbol_map),
             complex,
             cache: VecDeque::from_iter([0]),
             lookahead_positions: alloc::vec![None; data.num_lookaheads],
@@ -136,9 +101,7 @@ impl<'data, 's, Y: RuleBreakType, T: Tailoring, C: ComplexHandler<Y>>
     }
 }
 
-impl<'s, Y: RuleBreakType, T: Tailoring, C: ComplexHandler<Y>> Iterator
-    for RuleBreakIterator<'_, 's, Y, T, C>
-{
+impl<'s, Y: RuleBreakType, C: ComplexHandler<Y>> Iterator for RuleBreakIterator<'_, 's, Y, C> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -163,7 +126,14 @@ impl<'s, Y: RuleBreakType, T: Tailoring, C: ComplexHandler<Y>> Iterator
 
         (self.remaining_input, self.last_accepting_status) = loop {
             let symbol = if let Some((_, next)) = iter.clone().peekable().next() {
-                self.tailoring.symbol(self.data, next.into())
+                let pseudo_symbol = self.data.symbols.get32(next.into());
+                if let Some(i) = pseudo_symbol.checked_sub(self.data.num_symbols) {
+                    self.pseudo_symbol_map
+                        .get(i as usize)
+                        .unwrap_or(pseudo_symbol)
+                } else {
+                    pseudo_symbol
+                }
             } else {
                 SegmenterStateMachine::EOT_SYMBOL
             };

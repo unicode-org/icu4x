@@ -30,7 +30,7 @@ use utf8_iter::Utf8CharIndices;
 /// For examples of use, see [`WordSegmenter`].
 #[derive(Debug)]
 pub struct WordBreakIterator<'data, 's, Y: RuleBreakType>(
-    RuleBreakIterator<'data, 's, Y, (), ComplexWord<Y>>,
+    RuleBreakIterator<'data, 's, Y, ComplexWord<Y>>,
 );
 
 derive_usize_iterator_with_type!(WordBreakIterator, 'data);
@@ -523,7 +523,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
         WordBreakIterator(RuleBreakIterator::new(
             input.char_indices(),
             self.data,
-            (),
+            None,
             Some(self.complex),
         ))
     }
@@ -540,7 +540,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
         WordBreakIterator(RuleBreakIterator::new(
             Utf8CharIndices::new(input),
             self.data,
-            (),
+            None,
             Some(self.complex),
         ))
     }
@@ -552,7 +552,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
         WordBreakIterator(RuleBreakIterator::new(
             Latin1Indices::new(input),
             self.data,
-            (),
+            None,
             None,
         ))
     }
@@ -564,7 +564,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
         WordBreakIterator(RuleBreakIterator::new(
             Utf16Indices::new(input),
             self.data,
-            (),
+            None,
             Some(self.complex),
         ))
     }

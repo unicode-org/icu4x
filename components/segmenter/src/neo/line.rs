@@ -35,7 +35,6 @@ pub struct LineBreakIterator<'data, 's, Y: RuleBreakType>(
         'data,
         's,
         Y,
-        Option<&'data SegmenterStateMachineOverride<'data>>,
         ComplexLine<Y>,
     >,
 );
