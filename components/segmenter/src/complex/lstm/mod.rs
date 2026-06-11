@@ -17,7 +17,7 @@ use matrix::*;
 pub(super) struct LstmSegmenterIterator<'s, 'data> {
     input: &'s str,
     pos_utf8: usize,
-    bies: BiesIterator<'s, 'data>,
+    bies: BiesIterator<'data>,
 }
 
 impl Iterator for LstmSegmenterIterator<'_, '_> {
@@ -34,12 +34,12 @@ impl Iterator for LstmSegmenterIterator<'_, '_> {
     }
 }
 
-pub(super) struct LstmSegmenterIteratorUtf16<'s, 'data> {
-    bies: BiesIterator<'s, 'data>,
+pub(super) struct LstmSegmenterIteratorUtf16<'data> {
+    bies: BiesIterator<'data>,
     pos: usize,
 }
 
-impl Iterator for LstmSegmenterIteratorUtf16<'_, '_> {
+impl Iterator for LstmSegmenterIteratorUtf16<'_> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -52,7 +52,8 @@ impl Iterator for LstmSegmenterIteratorUtf16<'_, '_> {
     }
 }
 
-pub(super) struct LstmSegmenter<'data> {
+#[derive(Clone, Copy)]
+pub(super) struct LstmSegmenterBorrowed<'data> {
     dic: ZeroMapBorrowed<'data, PotentialUtf8, u16>,
     embedding: MatrixZero<'data, 2>,
     fw_w: MatrixZero<'data, 3>,
@@ -67,7 +68,7 @@ pub(super) struct LstmSegmenter<'data> {
     grapheme: Option<GraphemeClusterSegmenterBorrowed<'data>>,
 }
 
-impl<'data> LstmSegmenter<'data> {
+impl<'data> LstmSegmenterBorrowed<'data> {
     /// Returns `Err` if grapheme data is required but not present
     pub(super) fn new(
         lstm: &'data LstmData<'data>,
@@ -96,7 +97,7 @@ impl<'data> LstmSegmenter<'data> {
     }
 
     /// Create an LSTM based break iterator for an `str` (a UTF-8 string).
-    pub(super) fn segment_str<'a>(&'a self, input: &'a str) -> LstmSegmenterIterator<'a, 'data> {
+    pub(super) fn segment_str<'s>(self, input: &'s str) -> LstmSegmenterIterator<'s, 'data> {
         let input_seq = if let Some(grapheme) = self.grapheme {
             grapheme
                 .segment_str(input)
@@ -137,10 +138,7 @@ impl<'data> LstmSegmenter<'data> {
     }
 
     /// Create an LSTM based break iterator for a UTF-16 string.
-    pub(super) fn segment_utf16<'a>(
-        &'a self,
-        input: &[u16],
-    ) -> LstmSegmenterIteratorUtf16<'a, 'data> {
+    pub(super) fn segment_utf16(self, input: &[u16]) -> LstmSegmenterIteratorUtf16<'data> {
         let input_seq = if let Some(grapheme) = self.grapheme {
             grapheme
                 .segment_utf16(input)
@@ -191,18 +189,18 @@ impl<'data> LstmSegmenter<'data> {
     }
 }
 
-struct BiesIterator<'l, 'data> {
-    segmenter: &'l LstmSegmenter<'data>,
+struct BiesIterator<'data> {
+    segmenter: LstmSegmenterBorrowed<'data>,
     input_seq: core::iter::Enumerate<alloc::vec::IntoIter<u16>>,
     h_bw: MatrixOwned<2>,
     curr_fw: MatrixOwned<1>,
     c_fw: MatrixOwned<1>,
 }
 
-impl<'l, 'data> BiesIterator<'l, 'data> {
+impl<'data> BiesIterator<'data> {
     // input_seq is a sequence of id numbers that represents grapheme clusters or code points in the input line. These ids are used later
     // in the embedding layer of the model.
-    fn new(segmenter: &'l LstmSegmenter<'data>, input_seq: Vec<u16>) -> Self {
+    fn new(segmenter: LstmSegmenterBorrowed<'data>, input_seq: Vec<u16>) -> Self {
         let hunits = segmenter.fw_u.dim().1;
 
         // Backward LSTM
@@ -233,13 +231,13 @@ impl<'l, 'data> BiesIterator<'l, 'data> {
     }
 }
 
-impl ExactSizeIterator for BiesIterator<'_, '_> {
+impl ExactSizeIterator for BiesIterator<'_> {
     fn len(&self) -> usize {
         self.input_seq.len()
     }
 }
 
-impl Iterator for BiesIterator<'_, '_> {
+impl Iterator for BiesIterator<'_> {
     type Item = bool;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -360,7 +358,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap();
-        let lstm = LstmSegmenter::new(lstm.payload.get(), GraphemeClusterSegmenter::new());
+        let lstm = LstmSegmenterBorrowed::new(lstm.payload.get(), GraphemeClusterSegmenter::new());
 
         // Importing the test data
         let test_text_data = serde_json::from_str(if lstm.grapheme.is_some() {

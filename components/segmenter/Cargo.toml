@@ -29,6 +29,7 @@ icu_provider = { workspace = true }
 utf8_iter = { workspace = true }
 zerovec = { workspace = true, features = ["alloc", "yoke"] }
 smallvec = { workspace = true } # alloc
+either = { workspace = true }
 
 databake = { workspace = true, optional = true, features = ["derive"] }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }

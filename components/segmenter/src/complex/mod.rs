@@ -4,7 +4,7 @@
 
 use crate::provider::*;
 use crate::{GraphemeClusterSegmenter, GraphemeClusterSegmenterBorrowed};
-use alloc::vec::Vec;
+use either::Either;
 use icu_provider::prelude::*;
 
 mod dictionary;
@@ -123,50 +123,57 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
         }
     }
 
-    pub(crate) fn complex_language_segment_str(&self, input: &str) -> Vec<usize> {
-        let mut result = Vec::new();
-        let mut offset = 0;
-        for (slice, lang) in LanguageIterator::new(input) {
+    pub(crate) fn complex_language_segment_str<'s>(
+        self,
+        input: &'s str,
+        start_offset: usize,
+    ) -> impl Iterator<Item = usize> + use<'s, 'data> {
+        LanguageIterator::new(input, start_offset).flat_map(move |(offset, slice, lang)| {
             match self.select(lang) {
                 Some(DictOrLstmBorrowed::Dict(dict)) => {
-                    let seg = DictionarySegmenter::new(dict, self.grapheme);
-                    result.extend(seg.segment_str(slice).map(|n| offset + n));
+                    let breaks =
+                        DictionarySegmenterBorrowed::new(dict, self.grapheme).segment_str(slice);
+                    #[cfg(not(feature = "lstm"))]
+                    return Either::Left(breaks);
+                    #[cfg(feature = "lstm")]
+                    Either::Left(Either::Left(breaks))
                 }
                 #[cfg(feature = "lstm")]
                 Some(DictOrLstmBorrowed::Lstm(lstm)) => {
-                    let seg = LstmSegmenter::new(lstm, self.grapheme);
-                    result.extend(seg.segment_str(slice).map(|n| offset + n));
+                    let breaks = LstmSegmenterBorrowed::new(lstm, self.grapheme).segment_str(slice);
+                    Either::Left(Either::Right(breaks))
                 }
-                None => {
-                    result.push(offset + slice.len());
-                }
+                None => Either::Right(core::iter::once(slice.len())),
             }
-            offset += slice.len();
-        }
-        result
+            .map(move |i| i + offset)
+        })
     }
     /// Return UTF-16 segment offset array using dictionary or lstm segmenter.
-    pub(crate) fn complex_language_segment_utf16(&self, input: &[u16]) -> Vec<usize> {
-        let mut result = Vec::new();
-        let mut offset = 0;
-        for (slice, lang) in LanguageIteratorUtf16::new(input) {
+    pub(crate) fn complex_language_segment_utf16<'s>(
+        self,
+        input: &'s [u16],
+        start_offset: usize,
+    ) -> impl Iterator<Item = usize> + use<'data, 's> {
+        LanguageIteratorUtf16::new(input, start_offset).flat_map(move |(offset, slice, lang)| {
             match self.select(lang) {
                 Some(DictOrLstmBorrowed::Dict(dict)) => {
-                    let seg = DictionarySegmenter::new(dict, self.grapheme);
-                    result.extend(seg.segment_utf16(slice).map(|n| offset + n));
+                    let breaks =
+                        DictionarySegmenterBorrowed::new(dict, self.grapheme).segment_utf16(slice);
+                    #[cfg(not(feature = "lstm"))]
+                    return Either::Left(breaks);
+                    #[cfg(feature = "lstm")]
+                    Either::Left(Either::Left(breaks))
                 }
                 #[cfg(feature = "lstm")]
                 Some(DictOrLstmBorrowed::Lstm(lstm)) => {
-                    let seg = LstmSegmenter::new(lstm, self.grapheme);
-                    result.extend(seg.segment_utf16(slice).map(|n| offset + n));
+                    let breaks =
+                        LstmSegmenterBorrowed::new(lstm, self.grapheme).segment_utf16(slice);
+                    Either::Left(Either::Right(breaks))
                 }
-                None => {
-                    result.push(offset + slice.len());
-                }
+                None => Either::Right(core::iter::once(slice.len())),
             }
-            offset += slice.len();
-        }
-        result
+            .map(move |i| i + offset)
+        })
     }
 }
 impl ComplexPayloadsBorrowed<'static> {
@@ -402,15 +409,25 @@ mod tests {
         dict.with_southeast_asian_dictionaries();
 
         assert_eq!(
-            lstm.complex_language_segment_str(TEST_STR),
+            lstm.complex_language_segment_str(TEST_STR, 0)
+                .collect::<Vec<_>>(),
             [12, 21, 33, 42]
         );
-        assert_eq!(lstm.complex_language_segment_utf16(&utf16), [4, 7, 11, 14]);
+        assert_eq!(
+            lstm.complex_language_segment_utf16(&utf16, 0)
+                .collect::<Vec<_>>(),
+            [4, 7, 11, 14]
+        );
 
         assert_eq!(
-            dict.complex_language_segment_str(TEST_STR),
-            [12, 21, 33, 42]
+            dict.complex_language_segment_str(TEST_STR, 10)
+                .collect::<Vec<_>>(),
+            [12, 21, 33, 42].map(|i| i + 10)
         );
-        assert_eq!(dict.complex_language_segment_utf16(&utf16), [4, 7, 11, 14]);
+        assert_eq!(
+            dict.complex_language_segment_utf16(&utf16, 0)
+                .collect::<Vec<_>>(),
+            [4, 7, 11, 14]
+        );
     }
 }

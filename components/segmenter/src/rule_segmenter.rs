@@ -39,11 +39,11 @@ pub trait RuleBreakType: crate::private::Sealed + Sized {
 
     #[doc(hidden)]
     #[cfg(feature = "unstable")]
-    fn handle_complex<'s>(
-        data: &Self::ComplexData<'_>,
+    fn handle_complex<'s, 'data>(
+        data: &Self::ComplexData<'data>,
         complex: &Self::IterAttr<'s>,
         past_complex: &Self::IterAttr<'s>,
-    ) -> impl Iterator<Item = usize> + use<'s, Self>;
+    ) -> impl Iterator<Item = usize> + use<'s, 'data, Self>;
 
     #[doc(hidden)]
     #[cfg(feature = "unstable")]
@@ -310,17 +310,15 @@ impl RuleBreakType for Utf8 {
     }
 
     #[cfg(feature = "unstable")]
-    fn handle_complex<'s>(
-        data: &Self::ComplexData<'_>,
+    fn handle_complex<'s, 'data>(
+        data: &Self::ComplexData<'data>,
         complex: &Self::IterAttr<'s>,
         past_complex: &Self::IterAttr<'s>,
-    ) -> impl Iterator<Item = usize> + use<'s> {
+    ) -> impl Iterator<Item = usize> + use<'s, 'data> {
         let complex_offset = complex.offset();
         #[allow(clippy::indexing_slicing)] // valid offset
         let complex = &complex.as_str()[..(past_complex.offset() - complex_offset)];
-        data.complex_language_segment_str(complex)
-            .into_iter()
-            .map(move |i| i + complex_offset)
+        data.complex_language_segment_str(complex, complex_offset)
     }
 
     fn char_len(ch: Self::CharType) -> usize {
@@ -362,21 +360,19 @@ impl RuleBreakType for PotentiallyIllFormedUtf8 {
     }
 
     #[cfg(feature = "unstable")]
-    fn handle_complex<'s>(
-        data: &Self::ComplexData<'_>,
+    fn handle_complex<'s, 'data>(
+        data: &Self::ComplexData<'data>,
         complex: &Self::IterAttr<'s>,
         past_complex: &Self::IterAttr<'s>,
-    ) -> impl Iterator<Item = usize> + use<'s> {
+    ) -> impl Iterator<Item = usize> + use<'s, 'data> {
         let offset = complex.offset();
         #[allow(clippy::indexing_slicing)] // valid offset
         let complex = &complex.as_slice()[..(past_complex.offset() - offset)];
         if let Ok(complex) = core::str::from_utf8(complex) {
-            data.complex_language_segment_str(complex)
+            data.complex_language_segment_str(complex, offset)
         } else {
-            alloc::vec![complex.len()]
+            data.complex_language_segment_str("", complex.len())
         }
-        .into_iter()
-        .map(move |i| i + offset)
     }
 
     fn char_len(ch: Self::CharType) -> usize {
@@ -416,11 +412,11 @@ impl RuleBreakType for Latin1 {
     }
 
     #[cfg(feature = "unstable")]
-    fn handle_complex<'s>(
-        &data: &Self::ComplexData<'_>,
+    fn handle_complex<'s, 'data>(
+        &data: &Self::ComplexData<'data>,
         _complex: &Self::IterAttr<'s>,
         _past_complex: &Self::IterAttr<'s>,
-    ) -> impl Iterator<Item = usize> + use<'s> {
+    ) -> impl Iterator<Item = usize> + use<'s, 'data> {
         match data {}
         #[allow(unreachable_code)] // ! does not impl Iterator
         core::iter::empty()
@@ -463,17 +459,15 @@ impl RuleBreakType for Utf16 {
     }
 
     #[cfg(feature = "unstable")]
-    fn handle_complex<'s>(
-        data: &Self::ComplexData<'_>,
+    fn handle_complex<'s, 'data>(
+        data: &Self::ComplexData<'data>,
         complex: &Self::IterAttr<'s>,
         past_complex: &Self::IterAttr<'s>,
-    ) -> impl Iterator<Item = usize> + use<'s> {
+    ) -> impl Iterator<Item = usize> + use<'s, 'data> {
         let complex_offset = complex.offset();
         #[allow(clippy::indexing_slicing)] // valid offset
         let complex = &complex.as_slice()[..(past_complex.offset() - complex_offset)];
-        data.complex_language_segment_utf16(complex)
-            .into_iter()
-            .map(move |i| i + complex_offset)
+        data.complex_language_segment_utf16(complex, complex_offset)
     }
 
     fn char_len(ch: Self::CharType) -> usize {

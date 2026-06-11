@@ -72,47 +72,58 @@ pub(super) fn get_language(codepoint: u32) -> Language {
 /// given string.
 pub(super) struct LanguageIterator<'s> {
     rest: &'s str,
+    offset: usize,
 }
 
 impl<'s> LanguageIterator<'s> {
-    pub(super) fn new(input: &'s str) -> Self {
-        Self { rest: input }
+    pub(super) fn new(input: &'s str, offset: usize) -> Self {
+        Self {
+            rest: input,
+            offset,
+        }
     }
 }
 
 impl<'s> Iterator for LanguageIterator<'s> {
-    type Item = (&'s str, Language);
+    type Item = (usize, &'s str, Language);
 
     fn next(&mut self) -> Option<Self::Item> {
         let mut indices = self.rest.char_indices();
         let lang = get_language(indices.next()?.1 as u32);
-        match indices.find(|&(_, ch)| get_language(ch as u32) != lang) {
+        let slice = match indices.find(|&(_, ch)| get_language(ch as u32) != lang) {
             Some((i, _)) => {
                 let (result, rest) = self.rest.split_at(i);
                 self.rest = rest;
-                Some((result, lang))
+                result
             }
-            None => Some((core::mem::take(&mut self.rest), lang)),
-        }
+            None => core::mem::take(&mut self.rest),
+        };
+        let offset = self.offset;
+        self.offset += slice.len();
+        Some((offset, slice, lang))
     }
 }
 
 pub(super) struct LanguageIteratorUtf16<'s> {
     rest: &'s [u16],
+    offset: usize,
 }
 
 impl<'s> LanguageIteratorUtf16<'s> {
-    pub(super) fn new(input: &'s [u16]) -> Self {
-        Self { rest: input }
+    pub(super) fn new(input: &'s [u16], offset: usize) -> Self {
+        Self {
+            rest: input,
+            offset,
+        }
     }
 }
 
 impl<'s> Iterator for LanguageIteratorUtf16<'s> {
-    type Item = (&'s [u16], Language);
+    type Item = (usize, &'s [u16], Language);
 
     fn next(&mut self) -> Option<Self::Item> {
         let lang = get_language(*self.rest.first()? as u32);
-        match self
+        let slice = match self
             .rest
             .iter()
             .position(|&ch| get_language(ch as u32) != lang)
@@ -120,10 +131,13 @@ impl<'s> Iterator for LanguageIteratorUtf16<'s> {
             Some(i) => {
                 let (result, rest) = self.rest.split_at(i);
                 self.rest = rest;
-                Some((result, lang))
+                result
             }
-            None => Some((core::mem::take(&mut self.rest), lang)),
-        }
+            None => core::mem::take(&mut self.rest),
+        };
+        let offset = self.offset;
+        self.offset += slice.len();
+        Some((offset, slice, lang))
     }
 }
 
@@ -135,16 +149,16 @@ mod tests {
     fn test_thai_only() {
         let s = "ภาษาไทยภาษาไทย";
         let utf16: Vec<u16> = s.encode_utf16().collect();
-        let mut iter = LanguageIteratorUtf16::new(&utf16);
+        let mut iter = LanguageIteratorUtf16::new(&utf16, 0);
         assert_eq!(
             iter.next(),
-            Some((utf16.as_slice(), Language::Thai)),
+            Some((0, utf16.as_slice(), Language::Thai)),
             "Thai language only with UTF-16"
         );
-        let mut iter = LanguageIterator::new(s);
+        let mut iter = LanguageIterator::new(s, 0);
         assert_eq!(
             iter.next(),
-            Some((s, Language::Thai)),
+            Some((0, s, Language::Thai)),
             "Thai language only with UTF-8"
         );
         assert_eq!(iter.next(), None, "Iterator for UTF-8 is finished");
@@ -159,28 +173,32 @@ mod tests {
         let thai_utf16: Vec<u16> = TEST_STR_THAI.encode_utf16().collect();
         let burmese_utf16: Vec<u16> = TEST_STR_BURMESE.encode_utf16().collect();
 
-        let mut iter = LanguageIteratorUtf16::new(&utf16);
+        let mut iter = LanguageIteratorUtf16::new(&utf16, 0);
         assert_eq!(
             iter.next(),
-            Some((thai_utf16.as_slice(), Language::Thai)),
+            Some((0, thai_utf16.as_slice(), Language::Thai)),
             "Thai language with UTF-16 at first"
         );
         assert_eq!(
             iter.next(),
-            Some((burmese_utf16.as_slice(), Language::Burmese)),
+            Some((
+                thai_utf16.len(),
+                burmese_utf16.as_slice(),
+                Language::Burmese
+            )),
             "Burmese language with UTF-16 at second"
         );
         assert_eq!(iter.next(), None, "Iterator for UTF-16 is finished");
 
-        let mut iter = LanguageIterator::new(&s);
+        let mut iter = LanguageIterator::new(&s, 0);
         assert_eq!(
             iter.next(),
-            Some((TEST_STR_THAI, Language::Thai)),
+            Some((0, TEST_STR_THAI, Language::Thai)),
             "Thai language with UTF-8 at first"
         );
         assert_eq!(
             iter.next(),
-            Some((TEST_STR_BURMESE, Language::Burmese)),
+            Some((TEST_STR_THAI.len(), TEST_STR_BURMESE, Language::Burmese)),
             "Burmese language with UTF-8 at second"
         );
         assert_eq!(iter.next(), None, "Iterator for UTF-8 is finished");

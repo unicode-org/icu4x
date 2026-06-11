@@ -2003,6 +2003,7 @@ dependencies = [
  "core_maths",
  "criterion",
  "databake",
+ "either",
  "icu",
  "icu_benchmark_macros",
  "icu_collections",

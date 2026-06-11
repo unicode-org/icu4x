@@ -733,7 +733,11 @@ where
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
     #[expect(clippy::unwrap_used)] // iter.complex present for word segmenter
-    let breaks = iter.complex.unwrap().complex_language_segment_str(&s);
+    let breaks = iter
+        .complex
+        .unwrap()
+        .complex_language_segment_str(&s, 0)
+        .collect();
     iter.result_cache = breaks;
     let first_pos = *iter.result_cache.first()?;
     let mut i = left_codepoint.len_utf8();
@@ -786,7 +790,11 @@ where
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
     #[expect(clippy::unwrap_used)] // iter.complex present for word segmenter
-    let breaks = iter.complex.unwrap().complex_language_segment_utf16(&s);
+    let breaks = iter
+        .complex
+        .unwrap()
+        .complex_language_segment_utf16(&s, 0)
+        .collect();
     iter.result_cache = breaks;
     // result_cache vector is utf-16 index that is in BMP.
     let first_pos = *iter.result_cache.first()?;

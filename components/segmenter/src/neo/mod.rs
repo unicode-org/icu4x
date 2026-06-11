@@ -48,11 +48,11 @@ pub(crate) trait ComplexHandler<Y: RuleBreakType> {
     type Data<'s>: core::fmt::Debug;
 
     fn is_complex(data: &Self::Data<'_>, iter: &Y::IterAttr<'_>) -> bool;
-    fn handle<'s>(
-        _: &Self::Data<'_>,
+    fn handle<'s, 'data>(
+        _: &Self::Data<'data>,
         _: &Y::IterAttr<'s>,
         _: &Y::IterAttr<'s>,
-    ) -> impl Iterator<Item = usize> + use<'s, Self, Y>;
+    ) -> impl Iterator<Item = usize> + use<'s, 'data, Self, Y>;
 }
 
 #[derive(Debug)]
@@ -67,11 +67,11 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for NoComplexHandler {
         match data {}
     }
 
-    fn handle<'s>(
-        &data: &Self::Data<'_>,
+    fn handle<'s, 'data>(
+        &data: &Self::Data<'data>,
         _: &<Y as RuleBreakType>::IterAttr<'s>,
         _: &<Y as RuleBreakType>::IterAttr<'s>,
-    ) -> impl Iterator<Item = usize> + use<'s, Y> {
+    ) -> impl Iterator<Item = usize> + use<'s, 'data, Y> {
         match data {}
         #[allow(unreachable_code)] // ! does not impl Iterator
         core::iter::empty()
