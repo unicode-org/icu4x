@@ -6,8 +6,7 @@
 
 use crate::provider::{Acceptance, SegmenterStateMachine, SegmenterStateMachineOverride, Symbol};
 use crate::scaffold::RuleBreakType;
-use alloc::collections::VecDeque;
-use alloc::vec::Vec;
+use smallvec::SmallVec;
 
 mod line;
 use icu_collections::codepointtrie::CodePointTrie;
@@ -45,6 +44,7 @@ impl Tailoring for Option<&'_ SegmenterStateMachineOverride<'_>> {
 pub(crate) trait ComplexHandler<Y: RuleBreakType> {
     const BREAK_STATUS: u8;
     const BREAK_AT_BOUNDARIES: bool;
+    type Cache: smallvec::Array<Item = usize>;
     type Data<'s>: core::fmt::Debug;
 
     fn is_complex(data: &Self::Data<'_>, iter: &Y::IterAttr<'_>) -> bool;
@@ -60,6 +60,7 @@ struct NoComplexHandler;
 impl<Y: RuleBreakType> ComplexHandler<Y> for NoComplexHandler {
     const BREAK_STATUS: u8 = 0;
     const BREAK_AT_BOUNDARIES: bool = false;
+    type Cache = [usize; 1];
     type Data<'s> = core::convert::Infallible;
 
     fn is_complex(&data: &Self::Data<'_>, _iter: &Y::IterAttr<'_>) -> bool {
@@ -94,11 +95,26 @@ pub(crate) struct RuleBreakIterator<'data, 's, Y: RuleBreakType, T: Tailoring, C
 {
     data: &'data SegmenterStateMachine<'data>,
     tailoring: T,
-    cache: VecDeque<usize>,
-    lookahead_positions: Vec<Option<Y::IterAttr<'s>>>,
+    // We use `IntoIter` so that we can pop from the front in O(1) time.
+    cache: smallvec::IntoIter<C::Cache>,
+    lookahead_positions: SmallVec<[Option<Y::IterAttr<'s>>; 1]>,
     remaining_input: Y::IterAttr<'s>,
     last_accepting_status: u8,
     complex: Option<C::Data<'data>>,
+}
+
+#[test]
+fn test_lookahead_positions_stays_on_stack() {
+    use crate::provider::Baked;
+
+    for &SegmenterStateMachine { num_lookaheads, .. } in [
+        Baked::SINGLETON_SEGMENTER_BREAK_LINE_V2,
+        Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V2,
+        Baked::SINGLETON_SEGMENTER_BREAK_SENTENCE_V2,
+        Baked::SINGLETON_SEGMENTER_BREAK_WORD_V2,
+    ] {
+        assert!(num_lookaheads <= 1, "{num_lookaheads}");
+    }
 }
 
 impl<'data, 's, Y: RuleBreakType, T: Tailoring, C: ComplexHandler<Y>>
@@ -118,8 +134,8 @@ impl<'data, 's, Y: RuleBreakType, T: Tailoring, C: ComplexHandler<Y>>
             data,
             tailoring,
             complex,
-            cache: VecDeque::from_iter([0]),
-            lookahead_positions: alloc::vec![None; data.num_lookaheads],
+            cache: SmallVec::from_elem(0, 1).into_iter(),
+            lookahead_positions: SmallVec::from_elem(None, data.num_lookaheads),
             last_accepting_status: 0,
             remaining_input: input,
         }
@@ -132,7 +148,7 @@ impl<'s, Y: RuleBreakType, T: Tailoring, C: ComplexHandler<Y>> Iterator
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if let Some(i) = self.cache.pop_front() {
+        if let Some(i) = self.cache.next() {
             return Some(i);
         }
 
@@ -179,7 +195,9 @@ impl<'s, Y: RuleBreakType, T: Tailoring, C: ComplexHandler<Y>> Iterator
 
                 // A complex segment of length 1 doesn't need special handling.
                 if Y::offset(&last_complex) != offset {
-                    self.cache = C::handle(complex, &iter, &past_complex).collect();
+                    self.cache = C::handle(complex, &iter, &past_complex)
+                        .collect::<SmallVec<_>>()
+                        .into_iter();
 
                     if C::BREAK_AT_BOUNDARIES {
                         // `self.cache` contains a break point at the end of the run, but not at the start.
@@ -188,7 +206,7 @@ impl<'s, Y: RuleBreakType, T: Tailoring, C: ComplexHandler<Y>> Iterator
                         self.remaining_input = past_complex;
                         self.last_accepting_status = C::BREAK_STATUS;
                         return if offset == 0 {
-                            self.cache.pop_front()
+                            self.cache.next()
                         } else {
                             Some(offset)
                         };
@@ -197,7 +215,7 @@ impl<'s, Y: RuleBreakType, T: Tailoring, C: ComplexHandler<Y>> Iterator
                         // of the last complex code point of the run. We'll later restart the state machine
                         // from this code point, in order to correctly break after it (the state machine will
                         // treat it as Alphabetic).
-                        self.cache.pop_back();
+                        self.cache.next_back();
                         complex_state = Some(last_complex);
 
                         // We keep running the state machine to figure out if there's a break point at the start.
@@ -250,16 +268,14 @@ impl<'s, Y: RuleBreakType, T: Tailoring, C: ComplexHandler<Y>> Iterator
         let break_index = Y::offset(&self.remaining_input);
 
         // We encountered complex text and populated the cache
-        if let Some(&first_complex_break) = self.cache.front() {
-            if let Some(last_complex_cp) = complex_state {
-                self.remaining_input = last_complex_cp;
-                // return the complex break if it's before the break we calculated using the state machine
-                if first_complex_break < break_index {
-                    self.last_accepting_status = C::BREAK_STATUS;
-                    return self.cache.pop_front();
-                }
-            } else {
-                debug_assert!(false, "self.cache populated but no complex state");
+        if let Some(&first_complex_break) = self.cache.as_slice().first()
+            && let Some(last_complex_cp) = complex_state
+        {
+            self.remaining_input = last_complex_cp;
+            // return the complex break if it's before the break we calculated using the state machine
+            if first_complex_break < break_index {
+                self.last_accepting_status = C::BREAK_STATUS;
+                return self.cache.next();
             }
         }
 

@@ -2016,6 +2016,7 @@ dependencies = [
  "potential_utf",
  "serde",
  "serde_json",
+ "smallvec",
  "utf8_iter",
  "zerovec",
 ]

@@ -572,6 +572,7 @@ struct ComplexLine<Y>(PhantomData<Y>);
 impl<Y: RuleBreakType> ComplexHandler<Y> for ComplexLine<Y> {
     const BREAK_AT_BOUNDARIES: bool = false;
     const BREAK_STATUS: u8 = false as u8;
+    type Cache = [usize; 16];
     type Data<'s> = Y::ComplexData<'s>;
 
     #[inline(always)]

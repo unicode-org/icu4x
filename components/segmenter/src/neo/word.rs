@@ -496,6 +496,7 @@ struct ComplexWord<Y>(PhantomData<Y>);
 
 impl<Y: RuleBreakType> ComplexHandler<Y> for ComplexWord<Y> {
     const BREAK_AT_BOUNDARIES: bool = true;
+    type Cache = [usize; 16];
     const BREAK_STATUS: u8 = WordType::Letter as u8;
 
     type Data<'s> = Y::ComplexData<'s>;
