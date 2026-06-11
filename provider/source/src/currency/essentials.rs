@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::IterableDataProviderCached;
+use crate::SourceDataProvider;
 use crate::cldr_serde;
 use crate::cldr_serde::numbers::NumberPattern;
 use crate::cldr_serde::numbers::NumberPatternItem;
-use crate::IterableDataProviderCached;
-use crate::SourceDataProvider;
 
 use std::borrow::Cow;
 
@@ -24,8 +24,8 @@ use icu_pattern::DoublePlaceholderKey;
 use icu_pattern::PatternItemCow;
 
 use icu::experimental::dimension::provider::currency::ule::MAX_PLACEHOLDER_INDEX;
-use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
 use icu::properties::CodePointMapData;
+use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
 use icu_provider::DataProvider;
 
 use icu::experimental::dimension::provider::currency::essentials::*;
@@ -35,7 +35,7 @@ use icu_provider::prelude::*;
 /// For example:
 ///    if the pattern is ¤#,##0.00 and the symbol is EGP,
 ///    this means the return value will be `PatternSelection::StandardAlphaNextToNumber`
-///    because the character closes to the number is a letter.
+///    because the character closest to the number is a letter.
 /// NOTE:
 ///   `placeholder_value` must not be empty.
 fn currency_pattern_selection(
@@ -44,7 +44,7 @@ fn currency_pattern_selection(
     placeholder_value: &str,
 ) -> Result<PatternSelection, DataError> {
     if placeholder_value.is_empty() {
-        return Err(DataError::custom("Place holder value must not be empty"));
+        return Err(DataError::custom("Placeholder value must not be empty"));
     }
 
     // TODO(#6064): Handle the negative sub pattern.
@@ -147,11 +147,15 @@ fn extract_currency_essentials<'data>(
         .get("latn")
         .ok_or_else(|| DataError::custom("Could not find the standard pattern"))?;
 
+    // According to UTS #35 (https://unicode.org/reports/tr35/tr35-numbers.html#Currency_Formats),
+    // pattern variants fall back to their base style hierarchy:
+    // - standard-alphaNextToNumber falls back to standard.
+    // - accounting-alphaNextToNumber falls back to accounting (which falls back to standard).
+    // Fallback is handled at runtime by CurrencyEssentials getters to avoid duplicate data storage.
     let standard = &currency_formats.standard;
-    let standard_alpha_next_to_number = currency_formats
-        .standard_alpha_next_to_number
-        .as_ref()
-        .unwrap_or(standard);
+    let standard_alpha_next_to_number = currency_formats.standard_alpha_next_to_number.as_ref();
+    let accounting = currency_formats.accounting.as_ref();
+    let accounting_alpha_next_to_number = currency_formats.accounting_alpha_next_to_number.as_ref();
 
     let mut currency_patterns_map =
         BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>::new();
@@ -160,51 +164,63 @@ fn extract_currency_essentials<'data>(
     let mut currency_patterns_standard_next_to_num =
         BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>::new();
     let mut placeholders = Vec::<&str>::new();
-    // A map to check if the place holder is already in the placeholders vector.
+    // A map to check if the placeholder is already in the placeholders vector.
     let mut placeholders_checker_map = HashMap::<&str, u16>::new();
 
+    /// Deduplicates and stores currency placeholder strings (e.g., "$", "US$").
+    ///
+    /// - If the placeholder matches the 3-letter ISO code exactly, returns `PlaceholderValue::ISO`.
+    /// - If the placeholder already exists in `placeholders`, returns its existing index (`PlaceholderValue::Index`).
+    /// - Otherwise, appends the new placeholder to `placeholders` and returns its new index.
+    fn intern_placeholder<'a>(
+        placeholder: &'a str,
+        iso: &str,
+        placeholders: &mut Vec<&'a str>,
+        placeholders_checker_map: &mut HashMap<&'a str, u16>,
+    ) -> Result<PlaceholderValue, DataError> {
+        if let Some(&index) = placeholders_checker_map.get(placeholder) {
+            Ok(PlaceholderValue::Index(index))
+        } else if placeholder == iso {
+            Ok(PlaceholderValue::ISO)
+        } else {
+            let index = placeholders.len() as u16;
+            if index > MAX_PLACEHOLDER_INDEX {
+                return Err(DataError::custom(
+                    "placeholder value exceeded MAX_PLACEHOLDER_INDEX",
+                ));
+            }
+            placeholders.push(placeholder);
+            placeholders_checker_map.insert(placeholder, index);
+            Ok(PlaceholderValue::Index(index))
+        }
+    }
+
     for (iso, currency_pattern) in currencies {
-        let short_placeholder_value = currency_pattern.short.as_ref().map(|short_placeholder| {
-            if let Some(&index) = placeholders_checker_map.get(short_placeholder.as_str()) {
-                PlaceholderValue::Index(index)
-            } else if short_placeholder == iso {
-                PlaceholderValue::ISO
-            } else {
-                let index = placeholders.len() as u16;
-                placeholders.push(short_placeholder.as_str());
-                placeholders_checker_map.insert(short_placeholder.as_str(), index);
-                PlaceholderValue::Index(index)
-            }
-        });
+        let short_placeholder_value = currency_pattern
+            .short
+            .as_ref()
+            .map(|p| {
+                intern_placeholder(
+                    p.as_str(),
+                    iso,
+                    &mut placeholders,
+                    &mut placeholders_checker_map,
+                )
+            })
+            .transpose()?;
 
-        let narrow_placeholder_value = currency_pattern.narrow.as_ref().map(|narrow_placeholder| {
-            if let Some(&index) = placeholders_checker_map.get(narrow_placeholder.as_str()) {
-                PlaceholderValue::Index(index)
-            } else if narrow_placeholder == iso {
-                PlaceholderValue::ISO
-            } else {
-                let index = placeholders.len() as u16;
-                placeholders.push(narrow_placeholder.as_ref());
-                placeholders_checker_map.insert(narrow_placeholder.as_str(), index);
-                PlaceholderValue::Index(index)
-            }
-        });
-
-        // Ensure that short_placeholder_value and narrow_placeholder_value do not exceed MAX_PLACEHOLDER_INDEX.
-        if let Some(PlaceholderValue::Index(index)) = short_placeholder_value {
-            if index > MAX_PLACEHOLDER_INDEX {
-                return Err(DataError::custom(
-                    "short_placeholder_value exceeded MAX_PLACEHOLDER_INDEX",
-                ));
-            }
-        }
-        if let Some(PlaceholderValue::Index(index)) = narrow_placeholder_value {
-            if index > MAX_PLACEHOLDER_INDEX {
-                return Err(DataError::custom(
-                    "narrow_placeholder_value exceeded MAX_PLACEHOLDER_INDEX",
-                ));
-            }
-        }
+        let narrow_placeholder_value = currency_pattern
+            .narrow
+            .as_ref()
+            .map(|p| {
+                intern_placeholder(
+                    p.as_str(),
+                    iso,
+                    &mut placeholders,
+                    &mut placeholders_checker_map,
+                )
+            })
+            .transpose()?;
 
         let determine_pattern_selection =
             |placeholder_index: Option<PlaceholderValue>| -> Result<PatternSelection, DataError> {
@@ -268,14 +284,13 @@ fn extract_currency_essentials<'data>(
             }
         };
 
-    /// Create a `DoublePlaceholderPattern` from a string pattern.
-    fn create_pattern<'data>(
-        pattern: &NumberPattern,
-    ) -> Result<Cow<'data, DoublePlaceholderPattern>, DataError> {
-        // TODO(#4677): Handle the negative sub pattern.
-        // TODO: this is wrong - the currency pattern does not necessarily match the decimal pattern with a currency
-        // sign and some literals tacked on.
-        let pattern_items = pattern.positive.iter().flat_map(|item| match item {
+    // TODO: The currency pattern does not necessarily match standard decimal formatting.
+    // We should parse the numeric block (#,##0.00) for custom grouping sizes or numbering system overrides
+    // rather than collapsing it entirely into Place0.
+    fn convert_pattern_items<'a>(
+        items: &'a [NumberPatternItem],
+    ) -> impl Iterator<Item = PatternItemCow<'a, DoublePlaceholderKey>> + 'a {
+        items.iter().flat_map(|item| match item {
             NumberPatternItem::Currency => {
                 Some(PatternItemCow::Placeholder(DoublePlaceholderKey::Place1))
             }
@@ -284,19 +299,93 @@ fn extract_currency_essentials<'data>(
                 Some(PatternItemCow::Placeholder(DoublePlaceholderKey::Place0))
             }
             _ => None,
-        });
+        })
+    }
 
-        DoublePlaceholderPattern::try_from_items(pattern_items.into_iter())
+    fn create_positive_pattern<'data>(
+        pattern: &NumberPattern,
+    ) -> Result<Cow<'data, DoublePlaceholderPattern>, DataError> {
+        DoublePlaceholderPattern::try_from_items(convert_pattern_items(&pattern.positive))
             .map_err(|e| {
-                DataError::custom("Could not parse standard pattern").with_display_context(&e)
+                DataError::custom("Could not parse positive pattern").with_display_context(&e)
             })
             .map(Cow::Owned)
     }
 
+    fn create_negative_pattern<'data>(
+        pattern: &NumberPattern,
+    ) -> Result<Option<Cow<'data, DoublePlaceholderPattern>>, DataError> {
+        if let Some(negative_items) = &pattern.negative {
+            DoublePlaceholderPattern::try_from_items(convert_pattern_items(negative_items))
+                .map_err(|e| {
+                    DataError::custom("Could not parse negative pattern").with_display_context(&e)
+                })
+                .map(Cow::Owned)
+                .map(Some)
+        } else {
+            Ok(None)
+        }
+    }
+
+    let mut unique_patterns = Vec::<Box<DoublePlaceholderPattern>>::new();
+
+    let mut add_pattern = |opt_cow: Option<Cow<'data, DoublePlaceholderPattern>>| -> Option<u8> {
+        opt_cow.map(|cow| {
+            let pat: Box<DoublePlaceholderPattern> = cow.into_owned();
+            if let Some(idx) = unique_patterns.iter().position(|p| p == &pat) {
+                idx as u8
+            } else {
+                let idx = unique_patterns.len() as u8;
+                unique_patterns.push(pat);
+                idx
+            }
+        })
+    };
+
+    let standard_idx = add_pattern(Some(create_positive_pattern(standard)?)).unwrap();
+    let standard_neg_idx = add_pattern(create_negative_pattern(standard)?);
+    let standard_alpha_idx = add_pattern(
+        standard_alpha_next_to_number
+            .map(create_positive_pattern)
+            .transpose()?,
+    )
+    .unwrap_or(standard_idx);
+    let standard_alpha_neg_idx = match standard_alpha_next_to_number {
+        Some(p) => add_pattern(create_negative_pattern(p)?),
+        None => None,
+    };
+    let accounting_pos_idx =
+        add_pattern(accounting.map(create_positive_pattern).transpose()?).unwrap_or(standard_idx);
+    let accounting_neg_idx = match accounting {
+        Some(p) => add_pattern(create_negative_pattern(p)?),
+        None => None,
+    };
+    let accounting_alpha_pos_idx = add_pattern(
+        accounting_alpha_next_to_number
+            .map(create_positive_pattern)
+            .transpose()?,
+    )
+    .unwrap_or(accounting_pos_idx);
+    let accounting_alpha_neg_idx = match accounting_alpha_next_to_number {
+        Some(p) => add_pattern(create_negative_pattern(p)?),
+        None => None,
+    };
+
+    let indices = PatternIndices {
+        standard: standard_idx,
+        standard_negative: standard_neg_idx,
+        standard_alpha_next_to_number: standard_alpha_idx,
+        standard_alpha_next_to_number_negative: standard_alpha_neg_idx,
+        accounting_positive: accounting_pos_idx,
+        accounting_negative: accounting_neg_idx,
+        accounting_alpha_next_to_number_positive: accounting_alpha_pos_idx,
+        accounting_alpha_next_to_number_negative: accounting_alpha_neg_idx,
+    };
+
     Ok(CurrencyEssentials {
         pattern_config_map: ZeroMap::from_iter(currency_patterns_map.iter()),
-        standard_pattern: create_pattern(standard)?,
-        standard_alpha_next_to_number_pattern: create_pattern(standard_alpha_next_to_number)?,
+        patterns: VarZeroVec::from(&unique_patterns),
+        indices,
         placeholders: VarZeroVec::from(&placeholders),
         default_pattern_config,
     })
@@ -358,12 +447,44 @@ fn test_basic() {
 
     let en_payload = en.payload.get();
 
-    assert_writeable_eq!(en_payload.standard_pattern.interpolate((3, "$")), "$3");
+    assert_writeable_eq!(
+        en_payload.standard_pattern().unwrap().interpolate((3, "$")),
+        "$3"
+    );
     assert_writeable_eq!(
         en_payload
-            .standard_alpha_next_to_number_pattern
+            .standard_alpha_next_to_number_pattern()
+            .unwrap()
             .interpolate((3, "$")),
         "$\u{a0}3"
+    );
+    assert_writeable_eq!(
+        en_payload
+            .accounting_positive_pattern()
+            .unwrap()
+            .interpolate((3, "$")),
+        "$3"
+    );
+    assert_writeable_eq!(
+        en_payload
+            .accounting_negative_pattern()
+            .unwrap()
+            .interpolate((3, "$")),
+        "($3)"
+    );
+    assert_writeable_eq!(
+        en_payload
+            .accounting_alpha_next_to_number_positive_pattern()
+            .unwrap()
+            .interpolate((3, "$")),
+        "$\u{a0}3"
+    );
+    assert_writeable_eq!(
+        en_payload
+            .accounting_alpha_next_to_number_negative_pattern()
+            .unwrap()
+            .interpolate((3, "$")),
+        "($\u{a0}3)"
     );
 
     let (en_usd_short, en_usd_narrow) = get_placeholders_of_currency(
@@ -392,7 +513,10 @@ fn test_basic() {
 
     let ar_eg_payload = ar_eg.payload.get();
     assert_writeable_eq!(
-        ar_eg_payload.standard_pattern.interpolate((3, "$")),
+        ar_eg_payload
+            .standard_pattern()
+            .unwrap()
+            .interpolate((3, "$")),
         "\u{200f}3\u{a0}$"
     );
 

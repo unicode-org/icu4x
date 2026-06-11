@@ -330,7 +330,10 @@ impl BakedExporter {
         );
 
         if structs_count > 0 {
-            let _infallible = write!(&mut doc, "\n\n Using this implementation will embed the following data in the binary's data segment:\n ");
+            let _infallible = write!(
+                &mut doc,
+                "\n\n Using this implementation will embed the following data in the binary's data segment:\n "
+            );
 
             if marker.is_singleton {
                 let _infallible = write!(
@@ -338,8 +341,14 @@ impl BakedExporter {
                     "* {structs_total_size}B[^1] for the singleton data struct\n "
                 );
             } else {
-                let _infallible = write!(&mut doc, "* {lookup_struct_size}B for the lookup data structure ({identifiers_count} data identifiers)\n ");
-                let _infallible = write!(&mut doc, "* {structs_total_size}B[^1] for the actual data ({structs_count} unique structs)\n ");
+                let _infallible = write!(
+                    &mut doc,
+                    "* {lookup_struct_size}B for the lookup data structure ({identifiers_count} data identifiers)\n "
+                );
+                let _infallible = write!(
+                    &mut doc,
+                    "* {structs_total_size}B[^1] for the actual data ({structs_count} unique structs)\n "
+                );
             };
             let _infallible = write!(
                 &mut doc,

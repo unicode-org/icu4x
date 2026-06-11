@@ -316,7 +316,7 @@ impl Iterator for WeekdaySetIterator {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{types::DateDuration, types::Weekday, Date, RangeError};
+    use crate::{Date, RangeError, types::DateDuration, types::Weekday};
 
     static ISO_CALENDAR: WeekCalculator = WeekCalculator {
         first_weekday: Weekday::Monday,
@@ -657,8 +657,8 @@ fn test_weekdays_iter() {
 
 #[test]
 fn test_iso_weeks() {
-    use crate::types::IsoWeekOfYear;
     use crate::Date;
+    use crate::types::IsoWeekOfYear;
 
     #[expect(clippy::zero_prefixed_literal)]
     for ((y, m, d), (iso_year, week_number)) in [

@@ -32,7 +32,7 @@
 use crate::{
     options::SubsecondDigits,
     provider::fields::{self, Field, FieldLength, FieldSymbol},
-    provider::pattern::{reference, runtime::Pattern, PatternItem},
+    provider::pattern::{PatternItem, reference, runtime::Pattern},
 };
 
 use crate::pattern::DateTimePattern;

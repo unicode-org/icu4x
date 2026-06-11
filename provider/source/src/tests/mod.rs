@@ -12,9 +12,9 @@ mod make_testdata;
 
 include!("data.rs");
 
+use crate::SourceDataProvider;
 use crate::cldr_cache::CldrCache;
 use crate::source::{SerdeCache, TzdbCache, UnicodeCache};
-use crate::SourceDataProvider;
 use std::sync::{Arc, OnceLock};
 
 impl SourceDataProvider {

@@ -2,14 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::IterableDataProviderCached;
+use crate::SourceDataProvider;
 use crate::cldr_serde;
 use crate::displaynames::{
     ALT_LONG_SUBSTRING, ALT_MENU_SUBSTRING, ALT_OFFICIAL_SUBSTRING, ALT_SECONDARY_SUBSTRING,
     ALT_SHORT_SUBSTRING, ALT_SUBSTRING, ALT_VARIANT_SUBSTRING, MENU_CORE_SUBSTRING,
     MENU_EXTENSION_SUBSTRING,
 };
-use crate::IterableDataProviderCached;
-use crate::SourceDataProvider;
 
 use icu::experimental::displaynames::provider::*;
 use icu::locale::subtags::Language;

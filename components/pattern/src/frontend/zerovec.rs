@@ -6,9 +6,9 @@ use crate::{Pattern, PatternBackend};
 
 use alloc::boxed::Box;
 use zerovec::{
+    VarZeroSlice, VarZeroVec,
     maps::ZeroMapKV,
     ule::{UleError, VarULE},
-    VarZeroSlice, VarZeroVec,
 };
 
 impl<'a, B: PatternBackend> ZeroMapKV<'a> for Pattern<B>

@@ -13,9 +13,9 @@ use icu_casemap::provider::CaseMapV1;
 use icu_locale_core::Locale;
 use icu_normalizer::provider::*;
 use icu_properties::{
+    CodePointSetData,
     props::{PatternWhiteSpace, XidContinue, XidStart},
     provider::*,
-    CodePointSetData,
 };
 use icu_provider::prelude::*;
 
@@ -663,7 +663,7 @@ mod tests {
     use crate::transliterate::provider as ds;
     use icu_locale_core::locale;
     use std::collections::HashSet;
-    use zerovec::{vecs::Index32, VarZeroVec};
+    use zerovec::{VarZeroVec, vecs::Index32};
 
     fn parse_set(source: &str) -> parse::UnicodeSet {
         icu_properties::unicodeset_parse::parse_unstable(source, &icu_properties::provider::Baked)

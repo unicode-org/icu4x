@@ -5,7 +5,7 @@
 use core::cmp::{Ord, PartialOrd};
 use core::fmt;
 use displaydoc::Display;
-use zerovec::ule::{AsULE, UleError, ULE};
+use zerovec::ule::{AsULE, ULE, UleError};
 
 /// An error relating to the length of a field within a date pattern.
 #[derive(Display, Debug, PartialEq, Copy, Clone)]

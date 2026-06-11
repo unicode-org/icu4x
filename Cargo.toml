@@ -107,7 +107,7 @@ exclude = [
 
 [workspace.package]
 version = "2.2.0"
-rust-version = "1.86"
+rust-version = "1.88"
 authors = ["The ICU4X Project Developers"]
 edition = "2024"
 repository = "https://github.com/unicode-org/icu4x"
@@ -145,7 +145,7 @@ icu_collator = { version = "~2.2.0", path = "components/collator", default-featu
 icu_collections = { version = "~2.2.0", path = "components/collections", default-features = false }
 icu_datetime = { version = "~2.2.0", path = "components/datetime", default-features = false }
 icu_decimal = { version = "~2.2.0", path = "components/decimal", default-features = false }
-icu_experimental = { version = "~0.5.0", path = "components/experimental", default-features = false }
+icu_experimental = { version = "~0.6.0-dev", path = "components/experimental", default-features = false }
 icu_list = { version = "~2.2.0", path = "components/list", default-features = false }
 icu_locale = { version = "~2.2.0", path = "components/locale", default-features = false }
 icu_normalizer = { version = "~2.2.0", path = "components/normalizer", default-features = false }
@@ -181,7 +181,7 @@ icu_plurals_data = { version = "~2.2.0", path = "provider/data/plurals", default
 icu_properties_data = { version = "~2.2.0", path = "provider/data/properties", default-features = false }
 icu_segmenter_data = { version = "~2.2.0", path = "provider/data/segmenter", default-features = false }
 icu_time_data = { version = "~2.2.0", path = "provider/data/time", default-features = false }
-icu_experimental_data = { version = "~0.5.0", path = "provider/data/experimental", default-features = false }
+icu_experimental_data = { version = "~0.6.0-dev", path = "provider/data/experimental", default-features = false }
 
 # Utils
 # Note: some of these versions are lower than the published version for more flexibility. They are marked,
@@ -201,7 +201,7 @@ resb = { version = "0.2.0-dev", path = "utils/resb", default-features = false }
 tzif = { version = "0.5.0", path = "utils/tzif", default-features = false }
 tinystr = { version = "0.8.3", path = "utils/tinystr", default-features = false }
 writeable = { version = "0.6.1", path = "utils/writeable", default-features = false } # Current version: 0.6.2
-yoke = { version = "0.8.2", path = "utils/yoke", default-features = false }
+yoke = { version = "0.8.3", path = "utils/yoke", default-features = false }
 yoke-derive = { version = "0.8.2", path = "utils/yoke/derive", default-features = false }
 zerofrom = { version = "0.1.6", path = "utils/zerofrom", default-features = false } # Current version: 0.1.8
 zerofrom-derive = { version = "0.1.6", path = "utils/zerofrom/derive", default-features = false } # Current version: 0.1.7
@@ -276,7 +276,7 @@ write16 = { version = "1.0.0", default-features = false }
 
 ## External Deps Group 2: Heavy Dev and Datagen deps. No default features.
 zip = { version = "2", default-features = false }
-tar = { version = "0.4.43", default-features = false }
+tar = { version = "0.4.46", default-features = false }
 flate2 = { version = "1.0.35", default-features = false }
 serde-aux = { version = "4.0.0", default-features = false }
 toml = { version = "0.8.0", default-features = false, features = ["parse"] }

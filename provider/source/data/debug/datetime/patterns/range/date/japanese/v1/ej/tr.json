@@ -1,0 +1,19 @@
+{
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "elements": [
+    {
+      "header": 3,
+      "patterns": [
+        "dd/MM E – dd/MM E",
+        "dd/MM E – dd/MM E"
+      ]
+    }
+  ]
+}

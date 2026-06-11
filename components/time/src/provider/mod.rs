@@ -566,8 +566,8 @@ impl TimezonePeriods<'_> {
         idx: usize,
         timestamp: ZoneNameTimestamp,
     ) -> Option<(u8, NichedOption<MetazoneId, 1>)> {
-        use zerovec::ule::vartuple::VarTupleULE;
         use zerovec::ule::AsULE;
+        use zerovec::ule::vartuple::VarTupleULE;
         let &VarTupleULE {
             sized: first,
             variable: ref rest,

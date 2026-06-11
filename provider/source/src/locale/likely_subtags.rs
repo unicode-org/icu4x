@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cldr_serde;
 use crate::CoverageLevel;
 use crate::SourceDataProvider;
+use crate::cldr_serde;
+use icu::locale::LanguageIdentifier;
 use icu::locale::provider::*;
 use icu::locale::subtags::{Language, Region, Script};
-use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use tinystr::TinyAsciiStr;

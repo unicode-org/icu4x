@@ -226,18 +226,20 @@ mod tests {
 
     #[test]
     fn test_overlap() {
-        assert!(DayPeriodRules::from_periods(
-            [
-                ((0, 12), "foo"),
-                ((12, 19), "bar"),
-                // Overlaps
-                ((18, 21), "baz"),
-                ((21, 24), "qux"),
-            ]
-            .into_iter()
-            .collect(),
-        )
-        .is_err());
+        assert!(
+            DayPeriodRules::from_periods(
+                [
+                    ((0, 12), "foo"),
+                    ((12, 19), "bar"),
+                    // Overlaps
+                    ((18, 21), "baz"),
+                    ((21, 24), "qux"),
+                ]
+                .into_iter()
+                .collect(),
+            )
+            .is_err()
+        );
     }
 
     #[test]

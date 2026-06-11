@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cldr_serde;
 use crate::SourceDataProvider;
+use crate::cldr_serde;
 
 use icu::locale::provider::*;
-use icu::locale::subtags::{script, Language, Region, Script};
+use icu::locale::subtags::{Language, Region, Script, script};
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use std::collections::{BTreeMap, HashSet};
@@ -67,7 +67,7 @@ impl From<&cldr_serde::parent_locales::Resource> for Parents<'static> {
 
 #[test]
 fn test_basic() {
-    use icu::locale::{langid, LanguageIdentifier};
+    use icu::locale::{LanguageIdentifier, langid};
 
     let provider = SourceDataProvider::new_testing();
 

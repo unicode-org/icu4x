@@ -861,28 +861,29 @@
       }
     }
   },
-  "standard_pattern": [
-    {
-      "Placeholder": "Place0"
-    },
-    {
-      "Literal": " "
-    },
-    {
-      "Placeholder": "Place1"
-    }
+  "patterns": [
+    [
+      {
+        "Placeholder": "Place0"
+      },
+      {
+        "Literal": " "
+      },
+      {
+        "Placeholder": "Place1"
+      }
+    ]
   ],
-  "standard_alpha_next_to_number_pattern": [
-    {
-      "Placeholder": "Place0"
-    },
-    {
-      "Literal": " "
-    },
-    {
-      "Placeholder": "Place1"
-    }
-  ],
+  "indices": {
+    "standard": 0,
+    "standard_negative": null,
+    "standard_alpha_next_to_number": 0,
+    "standard_alpha_next_to_number_negative": null,
+    "accounting_positive": 0,
+    "accounting_negative": null,
+    "accounting_alpha_next_to_number_positive": 0,
+    "accounting_alpha_next_to_number_negative": null
+  },
   "placeholders": [
     "؋",
     "֏",

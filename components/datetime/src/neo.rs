@@ -4,12 +4,13 @@
 
 //! High-level entrypoints for Neo [`DateTimeFormatter`]
 
+use crate::MismatchedCalendarError;
 use crate::error::DateTimeFormatterLoadError;
 use crate::external_loaders::*;
 use crate::fieldsets::builder::FieldSetBuilder;
 use crate::fieldsets::enums::CompositeFieldSet;
-use crate::format::datetime::try_write_pattern_items;
 use crate::format::DateTimeInputUnchecked;
+use crate::format::datetime::try_write_pattern_items;
 use crate::pattern::*;
 use crate::preferences::{CalendarAlgorithm, HourCycle, NumberingSystem};
 use crate::raw::neo::*;
@@ -19,14 +20,13 @@ use crate::scaffold::{
     InFixedCalendar, InSameCalendar, TimeMarkers, TypedDateDataMarkers, ZoneMarkers,
 };
 use crate::size_test_macro::size_test;
-use crate::MismatchedCalendarError;
 use core::fmt;
 use core::marker::PhantomData;
-use icu_calendar::{preferences::CalendarPreferences, AnyCalendar, IntoAnyCalendar};
+use icu_calendar::{AnyCalendar, IntoAnyCalendar, preferences::CalendarPreferences};
 use icu_decimal::DecimalFormatterPreferences;
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_provider::prelude::*;
-use writeable::{impl_display_with_writeable, Writeable};
+use writeable::{Writeable, impl_display_with_writeable};
 
 define_preferences!(
     /// The user locale preferences for datetime formatting.
@@ -360,7 +360,7 @@ where
                 return Err((
                     DateTimeFormatterLoadError::Names(e),
                     (names, names_metadata),
-                ))
+                ));
             }
         };
         Ok(Self {
@@ -565,7 +565,7 @@ where
                 return Err((
                     DateTimeFormatterLoadError::Data(e),
                     (calendar, names, names_metadata),
-                ))
+                ));
             }
         };
         let result = names.load_for_pattern(
@@ -599,7 +599,7 @@ where
                 return Err((
                     DateTimeFormatterLoadError::Names(e),
                     (calendar, names, names_metadata),
-                ))
+                ));
             }
         };
         Ok(Self {

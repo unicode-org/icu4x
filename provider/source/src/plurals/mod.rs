@@ -6,13 +6,13 @@
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 
-use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
-use icu::plurals::provider::rules::runtime::ast::Rule;
-use icu::plurals::provider::*;
+use crate::cldr_serde;
 #[cfg(feature = "unstable")]
 use icu::plurals::PluralCategory;
+use icu::plurals::provider::rules::runtime::ast::Rule;
+use icu::plurals::provider::*;
 use icu_provider::prelude::*;
 #[cfg(feature = "unstable")]
 use zerovec::ZeroMap;
@@ -254,42 +254,50 @@ fn test_ranges() {
             )),
         Some(RawPluralCategory::Few)
     );
-    assert!(plural_ranges
-        .payload
-        .get()
-        .ranges
-        .get_copied(&UnvalidatedPluralRange::from_range(
-            RawPluralCategory::Zero,
-            RawPluralCategory::One
-        ))
-        .is_none());
-    assert!(plural_ranges
-        .payload
-        .get()
-        .ranges
-        .get_copied(&UnvalidatedPluralRange::from_range(
-            RawPluralCategory::One,
-            RawPluralCategory::Zero
-        ))
-        .is_none());
+    assert!(
+        plural_ranges
+            .payload
+            .get()
+            .ranges
+            .get_copied(&UnvalidatedPluralRange::from_range(
+                RawPluralCategory::Zero,
+                RawPluralCategory::One
+            ))
+            .is_none()
+    );
+    assert!(
+        plural_ranges
+            .payload
+            .get()
+            .ranges
+            .get_copied(&UnvalidatedPluralRange::from_range(
+                RawPluralCategory::One,
+                RawPluralCategory::Zero
+            ))
+            .is_none()
+    );
 
     // tests that the space optimization succeeds
-    assert!(plural_ranges
-        .payload
-        .get()
-        .ranges
-        .get_copied(&UnvalidatedPluralRange::from_range(
-            RawPluralCategory::One,
-            RawPluralCategory::Other
-        ))
-        .is_none());
-    assert!(plural_ranges
-        .payload
-        .get()
-        .ranges
-        .get_copied(&UnvalidatedPluralRange::from_range(
-            RawPluralCategory::Few,
-            RawPluralCategory::Two
-        ))
-        .is_none());
+    assert!(
+        plural_ranges
+            .payload
+            .get()
+            .ranges
+            .get_copied(&UnvalidatedPluralRange::from_range(
+                RawPluralCategory::One,
+                RawPluralCategory::Other
+            ))
+            .is_none()
+    );
+    assert!(
+        plural_ranges
+            .payload
+            .get()
+            .ranges
+            .get_copied(&UnvalidatedPluralRange::from_range(
+                RawPluralCategory::Few,
+                RawPluralCategory::Two
+            ))
+            .is_none()
+    );
 }

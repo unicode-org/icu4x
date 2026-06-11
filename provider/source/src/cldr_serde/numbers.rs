@@ -12,8 +12,8 @@ use icu::plurals::PluralElements;
 use icu_pattern::{DoublePlaceholder, PatternString};
 use icu_provider::DataError;
 use itertools::Itertools;
-use serde::de::{Deserializer, Error, MapAccess, Unexpected, Visitor};
 use serde::Deserialize;
+use serde::de::{Deserializer, Error, MapAccess, Unexpected, Visitor};
 use std::borrow::Cow;
 use std::collections::{BTreeMap, HashMap};
 
@@ -313,6 +313,12 @@ pub(crate) struct CurrencyFormattingPatterns {
     /// Standard alphaNextToNumber pattern
     #[serde(rename = "standard-alphaNextToNumber")]
     pub(crate) standard_alpha_next_to_number: Option<NumberPattern>,
+
+    #[serde(rename = "accounting")]
+    pub(crate) accounting: Option<NumberPattern>,
+
+    #[serde(rename = "accounting-alphaNextToNumber")]
+    pub(crate) accounting_alpha_next_to_number: Option<NumberPattern>,
 
     #[serde(rename = "unitPattern-count-0")]
     pub(crate) pattern_explicit_zero: Option<PatternString<DoublePlaceholder>>,

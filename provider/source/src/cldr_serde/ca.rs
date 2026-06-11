@@ -77,12 +77,12 @@ impl<Symbols> Contexts<Symbols> {
     /// I.e. missing `standalone`s fall back to `format`, missing `short` falls back to
     /// `abbr`.
     pub(crate) fn get_symbols(&self, context: Context, length: Length) -> &Symbols {
-        if context == Context::Standalone {
-            if let Some(sym) = self.get_symbols_exact(context, length) {
-                return sym;
-            }
-            // fall back to format
+        if context == Context::Standalone
+            && let Some(sym) = self.get_symbols_exact(context, length)
+        {
+            return sym;
         }
+        // fall back to format
 
         if let Some(sym) = self.get_symbols_exact(Context::Format, length) {
             return sym;
@@ -203,6 +203,8 @@ pub(crate) struct DateTimeFormats {
     pub(crate) available_formats: AvailableFormats,
     #[serde(rename = "appendItems")]
     pub(crate) append_items: AppendItems,
+    #[serde(rename = "intervalFormats")]
+    pub(crate) interval_formats: Option<IntervalFormats>,
 }
 
 #[derive(PartialEq, Debug, Deserialize, Clone)]
@@ -249,7 +251,15 @@ impl DateTimeFormatsVariant {
 }
 
 #[derive(PartialEq, Clone, Debug, Deserialize)]
-pub(crate) struct AvailableFormats(pub(crate) HashMap<String, String>);
+pub(crate) struct AvailableFormats(pub(crate) BTreeMap<String, String>);
+
+#[derive(PartialEq, Clone, Debug, Deserialize)]
+pub(crate) struct IntervalFormats {
+    #[serde(rename = "intervalFormatFallback")]
+    pub(crate) fallback: String,
+    #[serde(flatten)]
+    pub(crate) patterns: HashMap<String, HashMap<String, String>>,
+}
 
 #[derive(PartialEq, Clone, Debug, Deserialize)]
 pub(crate) struct CyclicNameSets {

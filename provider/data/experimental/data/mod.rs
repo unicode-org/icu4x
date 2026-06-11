@@ -81,7 +81,7 @@ include!("narrow_year_relative_v1.rs.data");
 #[macro_export]
 macro_rules! __make_provider {
     ($ name : ty) => {
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl $name {
             #[allow(dead_code)]
             pub(crate) const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
@@ -94,7 +94,6 @@ pub use __make_provider as make_provider;
 /// This macro requires the following crates:
 /// * `alloc`
 /// * `icu`
-/// * `icu_pattern`
 /// * `icu_provider`
 /// * `icu_provider/baked`
 /// * `zerovec`

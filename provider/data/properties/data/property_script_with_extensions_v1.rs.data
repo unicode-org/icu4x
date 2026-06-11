@@ -16,9 +16,9 @@
 #[macro_export]
 macro_rules! __impl_property_script_with_extensions_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl $provider {
             #[doc(hidden)]
             pub const SINGLETON_PROPERTY_SCRIPT_WITH_EXTENSIONS_V1: &'static <icu::properties::provider::PropertyScriptWithExtensionsV1 as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::ScriptWithExtensionsProperty {
@@ -29,7 +29,7 @@ macro_rules! __impl_property_script_with_extensions_v1 {
                 extensions: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"z\0 \0.\x002\x006\0:\0J\0Z\0b\0l\0\x82\0\x8E\0\x98\0\xAA\0\xC0\0\xC4\0\xCA\0\xD2\0\xD8\0\xDC\0\xE0\0\xE6\0\xEE\0\xFA\0\x02\x01\x06\x01\x0C\x01\x12\x01 \x01\"\x01&\x01,\x01.\x012\x018\x01>\x01D\x01H\x01P\x01^\x01f\x01v\x01\x88\x01\x8C\x01\x94\x01\x9A\x01\xB8\x01\xD2\x01\xFC\x01*\x024\x02<\x02B\x02H\x02N\x02V\x02^\x02d\x02f\x02n\x02r\x02z\x02|\x02\x82\x02\x8C\x02\x92\x02\x98\x02\xA0\x02\xA4\x02\xB0\x02\xB4\x02\xBA\x02\xC0\x02\xC6\x02\xCA\x02\xD2\x02\xE8\x02\xEC\x02\xF4\x02\xF6\x02\xF8\x02\xFE\x02\0\x03\x06\x03\n\x03\x16\x03\x1E\x03$\x03(\x03,\x03:\x03<\x03B\x03F\x03J\x03X\x03h\x03r\x03t\x03\x84\x03\x96\x03\xA2\x03\xA6\x03\xAA\x03\xB0\x03\xB4\x03\xD4\x03\xF2\x03\x08\x04 \x04(\x04.\x044\x048\x04<\x04B\x04H\x04L\x04R\x04V\x04\\\x04b\x04\x07\0\x0C\0\r\0\x0E\0\x11\0\x19\x003\08\0Y\0h\0l\0u\0\x87\0\x88\0\xA0\0\xB3\0\x04\0\x08\0\n\0\x19\0&\0\x83\0\xC4\0\x05\0\x19\0\x19\0\x83\0\x19\0&\0\x06\0\x07\0\x08\0\x0E\0\x19\x004\0Y\0\xCD\0\x06\0\x08\0\x0E\0\x19\x004\0\xAB\0\xCD\0\xCE\0\x06\0\x08\0\x19\0<\0\x19\0\"\0&\08\0\xCD\0\x06\0\x07\0\x08\0\r\0\x0E\0\x19\0\"\0<\0\x9F\0\xAB\0\xCE\0\x07\0\r\0\x16\0\x19\08\0\x88\0\x08\0\x0E\0\x19\0<\0Y\0\x07\0\x13\0\x19\0\"\x004\0<\0Y\0\x87\0\xCE\0\x03\0\x08\0\r\0\x0E\0\x13\0\x19\0\"\x004\0<\0Y\0\x87\0\x19\0<\0\x19\0\"\0\x87\0\x06\0\x08\0\x19\0\xAB\0\x06\0\x19\x004\0\x19\0\xCD\0\x0B\0\x19\0\x08\0\x19\0\xCE\0\x0E\0\x19\0Y\0\xCE\0\x06\0\x16\0\x19\0\"\0<\0\x87\0\x06\0\x19\0\"\0\x87\0\x19\0\"\0\x19\0\"\0\xCD\0\x06\0\x19\0\"\0\x06\0\r\0\x19\0\"\0&\0\x9F\0\xCD\0\x0E\0\x19\0\xAB\0\x19\0\x9F\0\xCE\0\x19\0\x07\0\x0E\0\x0E\0\x07\0\x0E\0\x08\0\x08\0Y\0\x08\0\x08\08\0\x08\0\x19\0\x03\0\x03\0\x0C\08\0\x02\0\"\0%\0W\0\xB6\0\xC0\0\xC9\0\x02\0\x02\0\"\0%\0\x02\0\"\0%\0W\0\xA7\0\xB6\0\xC0\0\xC9\0\x02\0\"\0T\0y\0{\0\xA7\0\xB6\0\xB7\0\xC2\0\x02\0\"\0\x02\0\x02\0%\0\xC0\0\x02\0\x02\0\xB6\0\x04\0\n\0\x0F\0\x10\0\x15\0\x19\0\x1A\0\x1F\0#\0$\0\x89\0\x97\0\x9E\0\xAA\0\xBB\0\x04\0\n\0\x0F\0\x10\0\x15\0\x19\0\x1A\0\x1F\0#\0$\0\x89\0\x9E\0\xAA\0\x04\0\n\0\x0F\0\x10\0\x15\0\x1A\0\x1F\0!\0#\0$\0:\0\x89\0\x91\0\x99\0\x9E\0\xA0\0\xAF\0\xB2\0\xB3\0\xBB\0\xCC\0\x04\0\n\0\x0F\0\x10\0\x15\0\x1A\0\x1F\0!\0#\0$\x000\0:\0\x89\0\x91\0\x99\0\x9E\0\xA0\0\xAF\0\xB2\0\xB3\0\xBB\0\xCA\0\xCC\0\n\0\n\0x\0\xA0\0\xB2\0\x04\0\x04\0:\0v\0\x10\0\x10\0\xA4\0\x0F\0\x0F\0\x9D\0#\0#\0\x89\0\x15\0\x15\0\xBB\0\xCF\0\x1C\0\x1C\x004\0v\0\x0C\0\x19\08\0 \0*\0+\0,\0-\0\x1B\0Z\0\x04\0\n\0\x15\0\x89\0\n\0\n\0\x15\0\x89\0\x04\0\n\0$\0\x9E\0\xAA\0\x04\0\n\0$\0\n\0\x97\0\xAA\0\x04\0\n\0$\0\xAA\0\n\0\x97\0\n\0\x15\0\x1A\0\x1F\0#\0$\0\x04\0\n\0\n\0\x9E\0\xAA\0\n\0\xAA\0\xBB\0\x04\0\n\0\x97\0\n\0\xAA\0\x04\0\n\0\x97\0\xAA\0\x04\0\n\0\x15\0\x1A\0\x1F\0!\0$\0\x89\0\x9E\0\xBB\0\xCF\0\n\0\x89\0\n\0\x15\0\x89\0\xCF\0\x04\0\xBB\0\x08\0\x19\0\"\0\"\0\x19\0\x1B\0Z\0\x02\0\xA7\0\x0C\08\0L\0X\0h\0k\0\x0E\0L\0V\0h\0\n\0\x19\0\x89\0\x07\0\x19\0X\0u\0\x0C\0L\0h\0l\0u\0x\0~\0\x87\0\x02\0L\0\xA7\0\x08\08\0\x11\0\x9A\0\x05\0\x11\0\x12\0\x14\0\x16\0\x1B\0)\0\x05\0\x11\0\x12\0\x14\0\x16\0\x1B\0)\0Z\0\x05\0\x11\0\x12\0\x14\0\x16\0\x11\0\x05\0\x11\0\x12\0\x14\0\x16\0\x1B\0'\0)\0\x05\0\x11\0\x12\0\x14\0\x16\0\x1B\0'\0)\0\x83\0\x05\0\x11\0\x12\0\x14\0\x16\0)\0\x05\0\x11\0\x14\0\x16\0\x11\0\x14\0\x16\0\x11\0\x19\0\n\0\x0F\0\x10\0\x15\0\x1A\0x\0\x91\0\x97\0\x99\0\x9D\0\x9E\0\xA0\0\xA3\0\xB2\0\xBB\0\xCF\0\n\0\x0F\0\x10\0\x15\0x\0\x91\0\x97\0\x99\0\x9D\0\x9E\0\xA0\0\xA3\0\xB2\0\xBB\0\xCF\0\n\0\x0F\0\x10\0x\0\x91\0\x99\0\x9D\0\x9E\0\xA0\0\xA3\0\xB2\0\n\0\x0F\0\x10\0x\0\x91\0\x97\0\x99\0\x9D\0\x9E\0\xA0\0\xA3\0\xB2\0\n\0\x04\0\n\0\xCF\0\n\0\n\0#\0\x19\0\x1C\0O\x007\0N\0\x02\0W\0\x02\0\x02\0%\0/\x001\0\xC1\0/\x001\0/\x001\0S\0\x02\0\x07\0y\0y\0\xC2\0\x89\0#\0\x89\0#\0\x89\0") },
             };
         }
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl icu_provider::DataProvider<icu::properties::provider::PropertyScriptWithExtensionsV1> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::properties::provider::PropertyScriptWithExtensionsV1>, icu_provider::DataError> {
                 if req.id.locale.is_unknown() {
@@ -42,7 +42,7 @@ macro_rules! __impl_property_script_with_extensions_v1 {
     };
     ($ provider : ty , ITER) => {
         __impl_property_script_with_extensions_v1!($provider);
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl icu_provider::IterableDataProvider<icu::properties::provider::PropertyScriptWithExtensionsV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok([Default::default()].into_iter().collect())
@@ -51,7 +51,7 @@ macro_rules! __impl_property_script_with_extensions_v1 {
     };
     ($ provider : ty , DRY) => {
         __impl_property_script_with_extensions_v1!($provider);
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl icu_provider::DryDataProvider<icu::properties::provider::PropertyScriptWithExtensionsV1> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 if req.id.locale.is_unknown() {
@@ -64,7 +64,7 @@ macro_rules! __impl_property_script_with_extensions_v1 {
     };
     ($ provider : ty , DRY , ITER) => {
         __impl_property_script_with_extensions_v1!($provider);
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl icu_provider::DryDataProvider<icu::properties::provider::PropertyScriptWithExtensionsV1> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 if req.id.locale.is_unknown() {
@@ -74,7 +74,7 @@ macro_rules! __impl_property_script_with_extensions_v1 {
                 }
             }
         }
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl icu_provider::IterableDataProvider<icu::properties::provider::PropertyScriptWithExtensionsV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok([Default::default()].into_iter().collect())

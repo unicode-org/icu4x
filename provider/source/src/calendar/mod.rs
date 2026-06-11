@@ -12,9 +12,9 @@ fn test_calendar_resolution() {
     use icu::{
         calendar::preferences::{CalendarAlgorithm, CalendarPreferences},
         locale::{
+            LanguageIdentifier,
             extensions::unicode::Value,
             subtags::{Language, Region},
-            LanguageIdentifier,
         },
     };
 

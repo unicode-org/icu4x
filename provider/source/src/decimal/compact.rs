@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use crate::cldr_serde;
 use icu::decimal::provider::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;

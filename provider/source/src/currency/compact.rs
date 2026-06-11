@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cldr_serde;
-use crate::cldr_serde::numbers::NumberPatternItem;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use crate::cldr_serde;
+use crate::cldr_serde::numbers::NumberPatternItem;
 
 use std::borrow::Cow;
 use std::collections::BTreeMap;
@@ -17,8 +17,8 @@ use icu::plurals::PluralElements;
 use icu_pattern::DoublePlaceholderKey;
 use icu_pattern::DoublePlaceholderPattern;
 use icu_pattern::PatternItemCow;
-use icu_provider::prelude::*;
 use icu_provider::DataProvider;
+use icu_provider::prelude::*;
 use itertools::Itertools;
 
 impl DataProvider<ShortCurrencyCompactV1> for SourceDataProvider {
@@ -60,7 +60,7 @@ impl DataProvider<ShortCurrencyCompactV1> for SourceDataProvider {
             u8,
             (u8, PluralElements<Box<DoublePlaceholderPattern>>),
         > = BTreeMap::new();
-        let mut alpha_next_to_patterns: BTreeMap<
+        let mut alpha_next_to_number_patterns: BTreeMap<
             u8,
             (u8, PluralElements<Box<DoublePlaceholderPattern>>),
         > = BTreeMap::new();
@@ -68,7 +68,7 @@ impl DataProvider<ShortCurrencyCompactV1> for SourceDataProvider {
         for (target, source) in [
             (&mut standard_patterns, &compact_patterns.standard),
             (
-                &mut alpha_next_to_patterns,
+                &mut alpha_next_to_number_patterns,
                 &compact_patterns.alpha_next_to_number,
             ),
         ] {
@@ -105,7 +105,7 @@ impl DataProvider<ShortCurrencyCompactV1> for SourceDataProvider {
                         })
                         .dedup(),
                 )
-                .map_err(|e| DataError::custom("pattern").with_display_context(&e))?;
+                .map_err(|e| DataError::custom("Could not parse compact currency pattern").with_display_context(&e))?;
 
                 if log10_type < number_of_0s.unwrap_or_default() {
                     return Err(DataError::custom("pattern").with_display_context(&format!(
@@ -126,13 +126,13 @@ impl DataProvider<ShortCurrencyCompactV1> for SourceDataProvider {
                 })?;
 
                 pattern.try_for_each(|pattern| {
-                    if let Some(number_of_0s) = pattern.0 {
-                        if number_of_0s != other_number_of_0s {
-                            return Err(DataError::custom("Inconsistent placeholders within")
-                                .with_debug_context(&log10_type)
-                                .with_debug_context(&other_number_of_0s)
-                                .with_debug_context(&number_of_0s));
-                        }
+                    if let Some(number_of_0s) = pattern.0
+                        && number_of_0s != other_number_of_0s
+                    {
+                        return Err(DataError::custom("Inconsistent placeholders within")
+                            .with_debug_context(&log10_type)
+                            .with_debug_context(&other_number_of_0s)
+                            .with_debug_context(&number_of_0s));
                     }
                     Ok(())
                 })?;
@@ -146,10 +146,14 @@ impl DataProvider<ShortCurrencyCompactV1> for SourceDataProvider {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(ShortCurrencyCompact {
-                standard: CompactPatterns::new(standard_patterns, None)
-                    .map_err(|e| DataError::custom("pattern").with_display_context(&e))?,
-                alpha_next_to_number: CompactPatterns::new(alpha_next_to_patterns, None)
-                    .map_err(|e| DataError::custom("pattern").with_display_context(&e))?,
+                standard: CompactPatterns::new(standard_patterns, None).map_err(|e| {
+                    DataError::custom("Invalid standard compact patterns").with_display_context(&e)
+                })?,
+                alpha_next_to_number: CompactPatterns::new(alpha_next_to_number_patterns, None)
+                    .map_err(|e| {
+                        DataError::custom("Invalid alpha-next-to-number compact patterns")
+                            .with_display_context(&e)
+                    })?,
             }),
         })
     }
@@ -197,11 +201,7 @@ impl IterableDataProviderCached<ShortCurrencyCompactV1> for SourceDataProvider {
                 .and_then(|patterns| patterns.compact_short.as_ref())
                 .is_some()
         });
-        if let Some(e) = err {
-            Err(e)
-        } else {
-            Ok(r)
-        }
+        if let Some(e) = err { Err(e) } else { Ok(r) }
     }
 }
 

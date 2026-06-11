@@ -4,7 +4,7 @@
 
 mod fixtures;
 
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{Criterion, black_box, criterion_group, criterion_main};
 use fixed_decimal::Decimal;
 use icu_plurals::PluralOperands;
 

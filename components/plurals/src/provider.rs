@@ -25,14 +25,14 @@ use core::marker::PhantomData;
 use icu_provider::prelude::*;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
-use zerovec::ule::vartuple::VarTuple;
-use zerovec::ule::vartuple::VarTupleULE;
+use zerovec::VarZeroSlice;
 use zerovec::ule::AsULE;
 use zerovec::ule::EncodeAsVarULE;
+use zerovec::ule::ULE;
 use zerovec::ule::UleError;
 use zerovec::ule::VarULE;
-use zerovec::ule::ULE;
-use zerovec::VarZeroSlice;
+use zerovec::ule::vartuple::VarTuple;
+use zerovec::ule::vartuple::VarTupleULE;
 
 pub mod rules;
 
@@ -536,15 +536,15 @@ where
 
         match parts.specials {
             Some(specials) => {
-                if op.is_exactly_zero() {
-                    if let Some(value) = get_special(specials, PluralElementsKeys::ExplicitZero) {
-                        return value;
-                    }
+                if op.is_exactly_zero()
+                    && let Some(value) = get_special(specials, PluralElementsKeys::ExplicitZero)
+                {
+                    return value;
                 }
-                if op.is_exactly_one() {
-                    if let Some(value) = get_special(specials, PluralElementsKeys::ExplicitOne) {
-                        return value;
-                    }
+                if op.is_exactly_one()
+                    && let Some(value) = get_special(specials, PluralElementsKeys::ExplicitOne)
+                {
+                    return value;
                 }
                 match category {
                     PluralCategory::Zero => Some(PluralElementsKeys::Zero),
@@ -637,11 +637,7 @@ pub struct FourBitMetadata(u8);
 impl FourBitMetadata {
     /// Creates a [`FourBitMetadata`] if the given value fits in 4 bits.
     pub fn try_from_byte(byte: u8) -> Option<Self> {
-        if byte <= 0x0F {
-            Some(Self(byte))
-        } else {
-            None
-        }
+        if byte <= 0x0F { Some(Self(byte)) } else { None }
     }
 
     /// Creates a [`FourBitMetadata`] with a zero value.

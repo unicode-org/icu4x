@@ -4,9 +4,9 @@
 
 //! Scaffolding traits and impls for calendars.
 
+use crate::MismatchedCalendarError;
 use crate::provider::{names::*, packed_pattern::*, semantic_skeletons::*};
 use crate::scaffold::UnstableSealed;
-use crate::MismatchedCalendarError;
 use core::marker::PhantomData;
 use icu_calendar::cal;
 use icu_calendar::preferences::{CalendarAlgorithm, CalendarPreferences, HijriCalendarAlgorithm};
@@ -17,8 +17,8 @@ use icu_provider::prelude::*;
 #[cfg(feature = "unstable")]
 use icu_time::ZonedTime;
 use icu_time::{
-    zone::{models::TimeZoneModel, UtcOffset},
     DateTime, Time, TimeZoneInfo, ZonedDateTime,
+    zone::{UtcOffset, models::TimeZoneModel},
 };
 
 /// A calendar that can be found in CLDR.
@@ -359,7 +359,7 @@ fn test_calendar_fallback() {
         }
     }
 
-    use icu_locale_core::{locale, Locale};
+    use icu_locale_core::{Locale, locale};
     assert_eq!(
         FormattableAnyCalendar::try_new(locale!("en-TH-u-ca-iso8601").into()),
         FormattableAnyCalendar::try_new(locale!("und-u-ca-buddhist").into()),

@@ -316,7 +316,7 @@ impl ConvertCalendar for time::UtcOffset {
 
 #[test]
 fn time() {
-    use crate::{fieldsets, DateTimeFormatter};
+    use crate::{DateTimeFormatter, fieldsets};
     use icu_locale::locale;
     use writeable::assert_writeable_eq;
 
@@ -364,7 +364,7 @@ fn time() {
 
 #[test]
 fn time_fixed_calendar() {
-    use crate::{fieldsets, DateTimeFormatter, FixedCalendarDateTimeFormatter};
+    use crate::{DateTimeFormatter, FixedCalendarDateTimeFormatter, fieldsets};
     use icu_locale::locale;
     use writeable::assert_writeable_eq;
 
@@ -412,7 +412,7 @@ fn time_fixed_calendar() {
 
 #[test]
 fn time_no_calendar() {
-    use crate::{fieldsets, NoCalendarFormatter};
+    use crate::{NoCalendarFormatter, fieldsets};
     use icu_locale::locale;
     use writeable::assert_writeable_eq;
 

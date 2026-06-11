@@ -1,0 +1,70 @@
+// @generated
+/// Implement `DataProvider<DatetimePatternsRangeGlueV1>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+///
+/// Using this implementation will embed the following data in the binary's data segment:
+/// * 331B for the lookup data structure (73 data identifiers)
+/// * 618B[^1] for the actual data (15 unique structs)
+///
+/// [^1]: these numbers can be smaller in practice due to linker deduplication
+///
+/// This macro requires the following crates:
+/// * `icu`
+/// * `icu_provider`
+/// * `icu_provider/baked`
+/// * `zerovec`
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_datetime_patterns_range_glue_v1 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.88"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.88"]
+        impl $provider {
+            const DATA_DATETIME_PATTERNS_RANGE_GLUE_V1: icu_provider::baked::zerotrie::Data<icu::datetime::provider::range_patterns::DatetimePatternsRangeGlueV1> = {
+                const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xD7abcdefghijklmnoprstuvyz\t!$+CIKTZ\\vx\x87\x8D\x8F\x95\x97\xB5\xC7\xDC\xDF\xE8\xC3mrs\x01\x02\x80\x80\x80\xC7aeghlnu\x01\x02\x03\x05\x07\x08\x80\x80\x80o\x80o\x81\x80a\x80hr\x80\xC2ao\x01\x82i\x80\xC3lns\x01\x05\x83-CA\x84-\xC2AC\x02R\x85\xC2LO\x01\x85\x86\xC2ai\x01\x87\x84u\x80\xC3eiy\x01\x02\x80\x80\x80\xC2ei\x01\x88\x80a\x89\xC7akmnosy\x01\x02\x03\x04\x05\x0B\x80\x83\x83\x80\x8A-Deva\x80\x83o\x80\xC5ilnry\x01\x02\x03\x04\x8B\x83\x80\x80\x80\xC2eo\x01\x80\x84r\x80\xC2as\x01\x80\x80u\x80\xC7adilrvz\x03\n\x0B\x0C\r\x0E\x80h\x80\x80-Deva\x80\x80\x84\x80\x84l\x84\xC6aeghit\x01\x02\x03\x04\x05\x80\x80\x80\x80\x80\x80\xC5gknrz\x01\x02\x04\x05\x80\x80d\x8C\x80-Cyrl\x80mw\x8Due\x8E-Hans\x8Eh\x80-\xC2HS\x0Cans-\xC2HM\x02K\x84O\x84G\x8E" };
+                const VALUES: &'static [<icu::datetime::provider::range_patterns::DatetimePatternsRangeGlueV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct] = &[icu::datetime::provider::semantic_skeletons::GluePattern { pattern: icu::datetime::provider::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\0\0\0 \0 \x13\0\0 \x80\0\x01") } } }, icu::datetime::provider::semantic_skeletons::GluePattern { pattern: icu::datetime::provider::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\0\0 \t\0\0h\0\0a\0\0l\0\x02i\0 \t\x80\0\x01") } } }, icu::datetime::provider::semantic_skeletons::GluePattern { pattern: icu::datetime::provider::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\0\0\0-\x80\0\x01") } } }, icu::datetime::provider::semantic_skeletons::GluePattern { pattern: icu::datetime::provider::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\0\0\0 \0\0-\0\0 \x80\0\x01") } } }, icu::datetime::provider::semantic_skeletons::GluePattern { pattern: icu::datetime::provider::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\0\0 \x13\x80\0\x01") } } }, icu::datetime::provider::semantic_skeletons::GluePattern { pattern: icu::datetime::provider::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\0\0\0 \0\0a\0\0 \0\0e\0\0l\0\0 \x80\0\x01") } } }, icu::datetime::provider::semantic_skeletons::GluePattern { pattern: icu::datetime::provider::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\0\0\0 \0\0a\0\0l\0\0 \x80\0\x01") } } }, icu::datetime::provider::semantic_skeletons::GluePattern { pattern: icu::datetime::provider::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\0\0\0 \0\x06*\0\x06'\0\0 \x80\0\x01") } } }, icu::datetime::provider::semantic_skeletons::GluePattern { pattern: icu::datetime::provider::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\0\0\0 \0\0t\0\0i\0\0l\0\0 \x80\0\x01") } } }, icu::datetime::provider::semantic_skeletons::GluePattern { pattern: icu::datetime::provider::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\0\0\xFF^\x80\0\x01") } } }, icu::datetime::provider::semantic_skeletons::GluePattern { pattern: icu::datetime::provider::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\0\0\0 \0\0~\0\0 \x80\0\x01") } } }, icu::datetime::provider::semantic_skeletons::GluePattern { pattern: icu::datetime::provider::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\0\0\0 \0\0k\0\0i\0\0 \0\0t\0\0e\0\0 \x80\0\x01") } } }, icu::datetime::provider::semantic_skeletons::GluePattern { pattern: icu::datetime::provider::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\0\0 \t\0 \x13\0 \t\x80\0\x01") } } }, icu::datetime::provider::semantic_skeletons::GluePattern { pattern: icu::datetime::provider::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\0\0\0 \0\0m\0\0p\0\0a\0\0k\0\0h\0\0a\0\0 \x80\0\x01") } } }, icu::datetime::provider::semantic_skeletons::GluePattern { pattern: icu::datetime::provider::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\0\0\x81\xF3\x80\0\x01") } } }];
+                unsafe { icu_provider::baked::zerotrie::Data::from_trie_and_values_unchecked(TRIE, VALUES) }
+            };
+        }
+        #[clippy::msrv = "1.88"]
+        impl icu_provider::DataProvider<icu::datetime::provider::range_patterns::DatetimePatternsRangeGlueV1> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::range_patterns::DatetimePatternsRangeGlueV1>, icu_provider::DataError> {
+                let mut metadata = icu_provider::DataResponseMetadata::default();
+                let payload = if let Some(payload) = icu_provider::baked::DataStore::get(&Self::DATA_DATETIME_PATTERNS_RANGE_GLUE_V1, req.id, req.metadata.attributes_prefix_match) {
+                    payload
+                } else {
+                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::datetime::provider::range_patterns::DatetimePatternsRangeGlueV1 as icu_provider::DataMarker>::INFO.fallback_config);
+                    let mut fallback_iterator = FALLBACKER.fallback_for(req.id.locale.clone());
+                    loop {
+                        if let Some(payload) = icu_provider::baked::DataStore::get(&Self::DATA_DATETIME_PATTERNS_RANGE_GLUE_V1, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get()), req.metadata.attributes_prefix_match) {
+                            metadata.locale = Some(fallback_iterator.take());
+                            break payload;
+                        }
+                        if fallback_iterator.get().is_unknown() {
+                            return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::datetime::provider::range_patterns::DatetimePatternsRangeGlueV1 as icu_provider::DataMarker>::INFO, req));
+                        }
+                        fallback_iterator.step();
+                    }
+                };
+                Ok(icu_provider::DataResponse { payload, metadata })
+            }
+        }
+    };
+    ($ provider : ty , ITER) => {
+        __impl_datetime_patterns_range_glue_v1!($provider);
+        #[clippy::msrv = "1.88"]
+        impl icu_provider::IterableDataProvider<icu::datetime::provider::range_patterns::DatetimePatternsRangeGlueV1> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok(icu_provider::baked::DataStore::iter(&Self::DATA_DATETIME_PATTERNS_RANGE_GLUE_V1).collect())
+            }
+        }
+    };
+    ($ provider : ty , DRY) => {};
+    ($ provider : ty , DRY , ITER) => {
+        __impl_datetime_patterns_range_glue_v1!($provider, ITER);
+    };
+}
+#[doc(inline)]
+pub use __impl_datetime_patterns_range_glue_v1 as impl_datetime_patterns_range_glue_v1;

@@ -10,7 +10,7 @@ use crate::error::{
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
-use crate::{types, Calendar, Date, RangeError};
+use crate::{Calendar, Date, RangeError, types};
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
@@ -210,11 +210,7 @@ impl Calendar for Indian {
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        if self.is_in_leap_year(date) {
-            366
-        } else {
-            365
-        }
+        if self.is_in_leap_year(date) { 366 } else { 365 }
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
@@ -533,7 +529,11 @@ mod tests {
                 let indian_i = Date::from_rata_die(rd_i, Indian);
                 let indian_j = Date::from_rata_die(rd_j, Indian);
 
-                assert_eq!(i.cmp(&j), indian_i.cmp(&indian_j), "Directionality test failed for i: {i}, j: {j}, indian_i: {indian_i:?}, indian_j: {indian_j:?}");
+                assert_eq!(
+                    i.cmp(&j),
+                    indian_i.cmp(&indian_j),
+                    "Directionality test failed for i: {i}, j: {j}, indian_i: {indian_i:?}, indian_j: {indian_j:?}"
+                );
             }
         }
     }
@@ -546,7 +546,11 @@ mod tests {
                 let indian_i = Date::from_rata_die(RataDie::new(i), Indian);
                 let indian_j = Date::from_rata_die(RataDie::new(j), Indian);
 
-                assert_eq!(i.cmp(&j), indian_i.cmp(&indian_j), "Directionality test failed for i: {i}, j: {j}, indian_i: {indian_i:?}, indian_j: {indian_j:?}");
+                assert_eq!(
+                    i.cmp(&j),
+                    indian_i.cmp(&indian_j),
+                    "Directionality test failed for i: {i}, j: {j}, indian_i: {indian_i:?}, indian_j: {indian_j:?}"
+                );
             }
         }
     }

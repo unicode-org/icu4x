@@ -4,8 +4,8 @@
 
 use std::collections::HashSet;
 
-use crate::cldr_serde;
 use crate::SourceDataProvider;
+use crate::cldr_serde;
 use icu::locale::provider::*;
 
 use icu_provider::prelude::*;
@@ -56,42 +56,48 @@ fn test_basic() {
     let provider = SourceDataProvider::new_testing();
     let data: DataResponse<LocaleScriptDirectionV1> = provider.load(Default::default()).unwrap();
 
-    assert!(data
-        .payload
-        .get()
-        .rtl
-        .binary_search(&script!("Avst").to_tinystr().to_unvalidated())
-        .is_ok());
-    assert!(data
-        .payload
-        .get()
-        .ltr
-        .binary_search(&script!("Avst").to_tinystr().to_unvalidated())
-        .is_err());
+    assert!(
+        data.payload
+            .get()
+            .rtl
+            .binary_search(&script!("Avst").to_tinystr().to_unvalidated())
+            .is_ok()
+    );
+    assert!(
+        data.payload
+            .get()
+            .ltr
+            .binary_search(&script!("Avst").to_tinystr().to_unvalidated())
+            .is_err()
+    );
 
-    assert!(data
-        .payload
-        .get()
-        .ltr
-        .binary_search(&script!("Latn").to_tinystr().to_unvalidated())
-        .is_ok());
-    assert!(data
-        .payload
-        .get()
-        .rtl
-        .binary_search(&script!("Latn").to_tinystr().to_unvalidated())
-        .is_err());
+    assert!(
+        data.payload
+            .get()
+            .ltr
+            .binary_search(&script!("Latn").to_tinystr().to_unvalidated())
+            .is_ok()
+    );
+    assert!(
+        data.payload
+            .get()
+            .rtl
+            .binary_search(&script!("Latn").to_tinystr().to_unvalidated())
+            .is_err()
+    );
 
-    assert!(data
-        .payload
-        .get()
-        .ltr
-        .binary_search(&script!("Zzzz").to_tinystr().to_unvalidated())
-        .is_err());
-    assert!(data
-        .payload
-        .get()
-        .rtl
-        .binary_search(&script!("Zzzz").to_tinystr().to_unvalidated())
-        .is_err());
+    assert!(
+        data.payload
+            .get()
+            .ltr
+            .binary_search(&script!("Zzzz").to_tinystr().to_unvalidated())
+            .is_err()
+    );
+    assert!(
+        data.payload
+            .get()
+            .rtl
+            .binary_search(&script!("Zzzz").to_tinystr().to_unvalidated())
+            .is_err()
+    );
 }

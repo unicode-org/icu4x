@@ -7,8 +7,8 @@
 
 use icu::calendar::{Date, Gregorian};
 use icu::collections::codepointinvlist::CodePointInversionListBuilder;
-use icu::datetime::fieldsets::{self, YMDT};
 use icu::datetime::FixedCalendarDateTimeFormatter;
+use icu::datetime::fieldsets::{self, YMDT};
 use icu::locale::locale;
 use icu::plurals::{PluralCategory, PluralRules};
 use icu::time::TimeZoneInfo;

@@ -2,13 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::RuleBreakDataOverride;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
 use zerovec::ZeroVec;
 
 pub type State = u8;
-pub type Class = u8;
+pub type Symbol = u8;
 pub type Lookahead = u8;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -41,21 +40,21 @@ impl zerovec::ule::AsULE for Acceptance {
     }
 }
 
-#[derive(Debug, yoke::Yokeable, PartialEq)]
+#[derive(Debug, yoke::Yokeable, PartialEq, Clone)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
 pub struct SegmenterStateMachine<'data> {
-    // A map from Unicode scalar values to their segmentation classes
+    // A map from Unicode scalar values to their DFA symbol.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub classes: CodePointTrie<'data, Class>,
-    // A dense map of states
+    pub symbols: CodePointTrie<'data, Symbol>,
+    // A dense map of DFA states.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub states: ZeroVec<'data, (Acceptance, Option<Lookahead>)>,
-    // A dense map of transitions, indexed by class * states.len() + state
+    // A dense map of DFA transitions, indexed by symbol * states.len() + state
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub transitions: ZeroVec<'data, State>,
-    // The number of lookahead classes, used to size the lookahead_positions vector.
+    // The number of lookaheads, used to size the lookahead_positions vector.
     pub num_lookaheads: usize,
 }
 
@@ -70,12 +69,34 @@ impl SegmenterStateMachine<'_> {
     /// The trash state. As our transition matrix is dense, we need a state to represent "no transition".
     /// This state is non-accepting and loops to itself on all inputs.
     pub const TRASH_STATE: State = State::MAX;
-    /// The end-of-text class. This is a dummy class that only appears at the end of the input,
+    /// The end-of-text symbol. This is a dummy symbol that only appears at the end of the input,
     /// and allows the state machine to have special transitions on end-of-text.
-    pub const EOT_CLASS: Class = 0;
-    /// This is used as the absence of a class in overrides.
-    pub const NO_CLASS: Class = 255;
+    pub const EOT_SYMBOL: Symbol = 0;
+    /// This is used as the absence of a symbol in overrides.
+    pub const NO_SYMBOL: Symbol = 255;
 }
+
+/// A tailoring for [`SegmenterStateMachine`].
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize,databake::Bake),
+    databake(path = icu_segmenter::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct SegmenterStateMachineOverride<'data> {
+    /// The symbol mapping overlay.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub symbols: CodePointTrie<'data, u8>,
+
+    /// Whether to suppress SA handling.
+    pub ignore_complex: bool,
+}
+
+icu_provider::data_struct!(
+    SegmenterStateMachineOverride<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 icu_provider::data_marker!(
     /// `SegmenterBreakLineV2`
@@ -113,7 +134,7 @@ icu_provider::data_marker!(
     /// `SegmenterBreakLineOverrideV2`
     SegmenterBreakLineOverrideV2,
     "segmenter/break/line/override/v2",
-    RuleBreakDataOverride<'static>,
+    SegmenterStateMachineOverride<'static>,
     #[cfg(feature = "datagen")]
     expose_baked_consts = true,
 );
@@ -122,5 +143,5 @@ icu_provider::data_marker!(
     /// `SegmenterBreakSentenceOverrideV2`
     SegmenterBreakSentenceOverrideV2,
     "segmenter/break/sentence/override/v2",
-    RuleBreakDataOverride<'static>,
+    SegmenterStateMachineOverride<'static>,
 );

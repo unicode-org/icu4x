@@ -1,0 +1,26 @@
+{
+  "has_explicit_medium": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    1
+  ],
+  "elements": [
+    {
+      "header": 12,
+      "patterns": [
+        "G y–y",
+        "G y – G y"
+      ]
+    },
+    {
+      "header": 4,
+      "patterns": [
+        "y–y"
+      ]
+    }
+  ]
+}

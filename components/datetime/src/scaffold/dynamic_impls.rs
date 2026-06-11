@@ -9,8 +9,8 @@ use crate::provider::{names::*, semantic_skeletons::*, time_zones::tz};
 use icu_calendar::types::{DayOfMonth, DayOfYear, MonthInfo, RataDie, Weekday, YearInfo};
 use icu_provider::marker::NeverMarker;
 use icu_time::{
-    zone::{UtcOffset, ZoneNameTimestamp},
     Hour, Minute, Nanosecond, Second, TimeZone,
+    zone::{UtcOffset, ZoneNameTimestamp},
 };
 
 impl UnstableSealed for DateFieldSet {}

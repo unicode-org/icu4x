@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use clap::Parser;
-use serde_json::json;
+use serde_json::{Value, json};
 use std::io::prelude::*;
 use std::path::{Path, PathBuf};
 use std::process;
@@ -46,32 +46,42 @@ fn process_cli_args() -> ProcessedArgs {
     processed
 }
 
-fn parse_dhat_log(dhat_log: &[String]) -> (u64, u64, u64) {
-    assert_eq!(
-        dhat_log.len(),
-        4,
-        "Expected the dhat output to be 4 lines long."
-    );
-
-    (
-        extract_bytes_from_log_line("dhat: Total:", &dhat_log[0]),
-        extract_bytes_from_log_line("dhat: At t-gmax:", &dhat_log[1]),
-        extract_bytes_from_log_line("dhat: At t-end:", &dhat_log[2]),
-    )
+fn parse_dhat_json_file(path: &Path) -> (u64, u64, u64) {
+    let json = fs::read_to_string(path).unwrap_or_else(|err| {
+        panic!("Unable to read dhat JSON file {path:?}: {err:?}");
+    });
+    parse_dhat_json_str(&json)
 }
 
-fn extract_bytes_from_log_line(preamble: &str, text: &str) -> u64 {
-    let start = preamble.len();
-    let end = text
-        .find("bytes")
-        .expect("Unable to find the word \"bytes\" in the dhat output.");
+fn parse_dhat_json_str(json: &str) -> (u64, u64, u64) {
+    let json: Value = serde_json::from_str(json).expect("Unable to parse dhat JSON.");
+    assert_eq!(
+        json.get("dhatFileVersion").and_then(Value::as_u64),
+        Some(2),
+        "Unsupported dhat JSON file version."
+    );
+    assert_eq!(
+        json.get("mode").and_then(Value::as_str),
+        Some("rust-heap"),
+        "Expected dhat heap profiling JSON."
+    );
 
-    text.get(start..end)
-        .expect("Unable to get a substring.")
-        .trim()
-        .replace(',', "")
-        .parse::<u64>()
-        .expect("Unable to parse the byte amount")
+    let pps = json
+        .get("pps")
+        .and_then(Value::as_array)
+        .expect("Unable to read dhat program points.");
+
+    let sum_field = |field: &str| -> u64 {
+        pps.iter()
+            .map(|pp| {
+                pp.get(field)
+                    .and_then(Value::as_u64)
+                    .unwrap_or_else(|| panic!("Unable to read dhat field {field:?}."))
+            })
+            .sum()
+    };
+
+    (sum_field("tb"), sum_field("gb"), sum_field("eb"))
 }
 
 /// This file is intended to be run from CI to gather heap information, but it can also
@@ -83,7 +93,7 @@ fn extract_bytes_from_log_line(preamble: &str, text: &str) -> u64 {
 /// 2. Loop through each example and:
 ///    a. Create the directory for the benchmarks to go in.
 ///    b. Run `cargo run --example {example}` with the appropriate settings.
-///    c. Extract the dhat stderr, and process out the interesting bytes.
+///    c. Parse the dhat JSON, and process out the interesting bytes.
 ///    d. Add the output to an `ndjson` file.
 ///    e. Move the dhat-heap.json file to the benchmark folder.
 fn main() {
@@ -142,6 +152,13 @@ fn main() {
     }
 
     for ref example in examples {
+        let dhat_source = Path::new("dhat-heap.json");
+        if dhat_source.exists() {
+            fs::remove_file(dhat_source).unwrap_or_else(|err| {
+                panic!("Unable to remove stale dhat JSON file {dhat_source:?}: {err:?}");
+            });
+        }
+
         let mut benchmark_output = fs::OpenOptions::new()
             .read(true)
             .append(true)
@@ -168,17 +185,17 @@ fn main() {
                 process::exit(1);
             });
 
-        let stdout = run_example
+        let stderr = run_example
             .stderr
             .take()
             .expect("No stderr in the example.");
 
-        let dhat_log: Vec<_> = BufReader::new(stdout)
+        for line in BufReader::new(stderr)
             .lines()
             .map(|s| s.expect("Unable to read from stderr."))
-            .inspect(|s| println!("[memory] > {s}"))
-            .filter(|s| s.starts_with("dhat: "))
-            .collect();
+        {
+            println!("[memory] > {line}");
+        }
 
         let status = run_example
             .wait()
@@ -192,13 +209,13 @@ fn main() {
             process::exit(1);
         }
 
-        if dhat_log.is_empty() {
+        if !dhat_source.exists() {
             eprintln!(
                 "The {example:?} example needs to be instrumented with icu_benchmark_macros."
             );
             continue;
         }
-        let (total, gmax, end) = parse_dhat_log(&dhat_log);
+        let (total, gmax, end) = parse_dhat_json_file(dhat_source);
 
         let write_json = |bytes, label| {
             json!({
@@ -220,13 +237,6 @@ fn main() {
 
         let dhat_destination = benchmark_dir.join(format!("{example}-dhat-heap.json"));
 
-        let dhat_source = Path::new("dhat-heap.json");
-
-        assert!(
-            dhat_source.exists(),
-            "The dhat-heap.json file did not exist."
-        );
-
         fs::rename(dhat_source, &dhat_destination).expect("Unable to move the dhat-heap.json");
 
         println!("[memory] Memory log:  {benchmark_output_path:?}");
@@ -240,17 +250,22 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_byte_extraction() {
-        let log = [
-            "dhat: Total:     20,122 bytes in 129 blocks".to_owned(),
-            "dhat: At t-gmax: 9,328 bytes in 90 blocks".to_owned(),
-            "dhat: At t-end:  0 bytes in 0 blocks".to_owned(),
-            "dhat: The data in dhat-heap.json is viewable with dhat/dh_view.html".to_owned(),
-        ];
-        let (total, gmax, end) = parse_dhat_log(&log);
+    fn test_json_extraction() {
+        let json = r#"{
+"dhatFileVersion":2,
+"mode":"rust-heap",
+"pps":[
+{"tb":1000,"gb":1000,"eb":0},
+{"tb":600,"gb":400,"eb":0},
+{"tb":32,"gb":32,"eb":32},
+{"tb":10,"gb":0,"eb":0}
+]
+}"#;
 
-        assert_eq!(total, 20122);
-        assert_eq!(gmax, 9328);
-        assert_eq!(end, 0);
+        let (total, gmax, end) = parse_dhat_json_str(json);
+
+        assert_eq!(total, 1642);
+        assert_eq!(gmax, 1432);
+        assert_eq!(end, 32);
     }
 }

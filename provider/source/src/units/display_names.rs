@@ -2,13 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cldr_serde;
 use crate::SourceDataProvider;
+use crate::cldr_serde;
 use icu::experimental::dimension::provider::units::display_names::{
     UnitsDisplayNames, UnitsDisplayNamesV1,
 };
-use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
+use icu_provider::prelude::*;
 use std::collections::HashSet;
 
 impl DataProvider<UnitsDisplayNamesV1> for SourceDataProvider {
@@ -34,7 +34,7 @@ impl DataProvider<UnitsDisplayNamesV1> for SourceDataProvider {
             _ => {
                 return Err(DataErrorKind::InvalidRequest
                     .into_error()
-                    .with_debug_context(length))
+                    .with_debug_context(length));
             }
         }
         .categories
@@ -74,7 +74,7 @@ impl crate::IterableDataProviderCached<UnitsDisplayNamesV1> for SourceDataProvid
                     _ => {
                         return Err(DataErrorKind::IdentifierNotFound
                             .into_error()
-                            .with_debug_context(length))
+                            .with_debug_context(length));
                     }
                 };
 

@@ -3,10 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    zone::{TimeZoneVariant, UtcOffset, ZoneNameTimestamp},
     Hour, Minute, Nanosecond, Second, TimeZone,
+    zone::{TimeZoneVariant, UtcOffset, ZoneNameTimestamp},
 };
-use icu_calendar::{types::*, AnyCalendarKind};
+use icu_calendar::{AnyCalendarKind, types::*};
 
 /// Converts Self to an `Option<T>`, either `Some(T)` if able or `None`
 pub trait IntoOption<T> {

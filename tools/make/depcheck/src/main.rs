@@ -33,7 +33,9 @@ fn get_dep_list(package: &str, edge_kind: &str, extra_args: &str) -> Vec<DepSpec
     let output = cmd.output().expect("Failed to run `cargo tree`");
 
     if !output.status.success() {
-        eprintln!("Failed to run `cargo tree -p {package} -e {edge_kind} --no-default-features {extra_args}`:");
+        eprintln!(
+            "Failed to run `cargo tree -p {package} -e {edge_kind} --no-default-features {extra_args}`:"
+        );
         if let Ok(s) = str::from_utf8(&output.stderr) {
             eprintln!("{s}");
         }

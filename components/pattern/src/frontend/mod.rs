@@ -9,18 +9,18 @@ pub(crate) mod serde;
 #[cfg(feature = "zerovec")]
 mod zerovec;
 
-use crate::common::*;
 use crate::Error;
 #[cfg(feature = "alloc")]
 use crate::Parser;
 #[cfg(feature = "alloc")]
 use crate::ParserOptions;
+use crate::common::*;
 #[cfg(feature = "alloc")]
 use alloc::{borrow::ToOwned, boxed::Box, string::String};
 #[cfg(feature = "alloc")]
 use core::str::FromStr;
 use core::{convert::Infallible, fmt, marker::PhantomData};
-use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWriteable, Writeable};
+use writeable::{PartsWrite, TryWriteable, Writeable, adapters::TryWriteableInfallibleAsWriteable};
 
 /// A string pattern with placeholders.
 ///

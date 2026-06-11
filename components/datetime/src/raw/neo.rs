@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::DateTimeFormatterPreferences;
 use crate::fieldsets::builder;
 use crate::fieldsets::enums::{CompositeFieldSet, TimeFieldSet, ZoneFieldSet};
 use crate::format::DateTimeInputUnchecked;
@@ -9,20 +10,19 @@ use crate::options::*;
 use crate::pattern::DateTimePattern;
 use crate::provider::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::provider::pattern::{
-    runtime::{self, PatternMetadata},
     GenericPatternItem, PatternItem,
+    runtime::{self, PatternMetadata},
 };
 use crate::provider::{
     packed_pattern::{ErasedPackedPatterns, PackedSkeletonVariant},
-    semantic_skeletons::{marker_attrs, DatetimePatternsGlueV1, GluePattern},
+    semantic_skeletons::{DatetimePatternsGlueV1, GluePattern, marker_attrs},
 };
-use crate::DateTimeFormatterPreferences;
 use icu_calendar::types::YearAmbiguity;
-use icu_provider::prelude::*;
 use icu_provider::DataPayloadOr;
+use icu_provider::prelude::*;
 use marker_attrs::GlueType;
-use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
+use zerovec::ule::AsULE;
 
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct RawOptions {
@@ -777,19 +777,19 @@ impl<'a> ItemsAndOptions<'a> {
                     {
                         field.length = FieldLength::Two;
                     }
-                    if let Some(hour_cycle) = self.hour_cycle {
-                        if let FieldSymbol::Hour(_) = field.symbol {
-                            field.symbol = FieldSymbol::Hour(hour_cycle);
-                        }
+                    if let Some(hour_cycle) = self.hour_cycle
+                        && let FieldSymbol::Hour(_) = field.symbol
+                    {
+                        field.symbol = FieldSymbol::Hour(hour_cycle);
                     }
-                    if let Some(subsecond_digits) = self.subsecond_digits {
-                        if matches!(
+                    if let Some(subsecond_digits) = self.subsecond_digits
+                        && matches!(
                             field.symbol,
                             FieldSymbol::Second(fields::Second::Second)
                                 | FieldSymbol::DecimalSecond(_)
-                        ) {
-                            field.symbol = FieldSymbol::from_subsecond_digits(subsecond_digits);
-                        }
+                        )
+                    {
+                        field.symbol = FieldSymbol::from_subsecond_digits(subsecond_digits);
                     }
                 }
                 _ => (),

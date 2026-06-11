@@ -18,9 +18,9 @@
 #[macro_export]
 macro_rules! __impl_timezone_names_cities_override_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl $provider {
             const DATA_TIMEZONE_NAMES_CITIES_OVERRIDE_V1: icu_provider::baked::zerotrie::Data<icu::datetime::provider::time_zones::TimezoneNamesCitiesOverrideV1> = {
                 const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1zabcdefghijklmnopqrstuvwxyz\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x02\x02\x0E:Of\xA5\xC6\xD4\xEE\x06\tXm\x8D\xA5\xAC\xCB\xCE\xE4`\x80\xA1\xAE\xB1\xBA\xDF\xC4fksz\x01\x02\x05\x80\x81\x82t\x83\x84\xC8aeghlrsu\x08\t\x0C\x0E\x10\x13\x1A\x85l-Latn\x86\x87\x88c\x89o\x89o\x8A\x8Bx\x8C\x8D-Cyrl\x8Ea\x8F\xC5aesvy\x02\x05\x07\t\x90\0b\x90\x01\x90\x02\x90\x03\x90\x04\xC4aeos\x02\t\x0C\x90\x05\x90\x06-CH\x90\x07i\x90\x08b\x90\t\xC7elnostu\x02\x0C\x18\x1A-/\x90\n-polyton\x90\x0B-\xC20C\x0401\x90\x0CA\x90\r\x90\x0E\x90\x0F-\xC34MU\x04\x0719\x90\x10X\x90\x11S\x90\x12\x90\x13\x90\x14\xC5aiory\x07\x0C\x0E\x15\x90\x15-AF\x90\x16\x90\x17l\x90\x18\x90\x19\x90\x1A-CA\x90\x1B\x90\x1C\xC3adl\x04\x06\x90\x1Da\x8F\x90\x1E\x90\x1F\xC5airsu\x02\t\x0B\x0E\x90 -Latn\x90!\x90\"b\x90#\x90$\xC6adegst\x02\x04\x06\x08\n\x90%\x90&\x90'\x90(\x90)\x90*v\x90+\xC8egkosuxy\x03\x06\x0F\x19\"$=a\x90,p\x90-\x90.-Arab\x90/k\x900-Latn\x901\x902-Deva\x903\x904v\x905-\xC3DOT\x05\neva\x906rya\x907elu\x908\x909\xC5bimtv\x02\x05\x07\t\x90:j\x90;o\x8F\x90<\x90=\xC7aiknrst\x03\x05\x07\x0C\x0E\x10i\x90>\x90?\x90@\x90Ai\x90B\x90C\x90D\x90E\xC6delnos\x02\x04\x06\x08\ns\x8F\x90F\x90G\x90H\x90Io\x8F\xC2cm\x01\x8F\x90J\xC5clmst\x03\x05\x07\x0Em\x90K\x90Ls\x8F\x90M-PK\x90N\x90O-PT\x90Pu\x90Q\xC5amouw\x02\x04\x06\x0Bj\x89\x90R\x90S-UA\x90T\x8F\xCEacdhkloqrtuvwz\x05\n\x13\x16\x18\x1A\x1C\x1ELMOQ^\x90Uh\x90V\x90Wn\x90X\x90Y-Deva\x90Zn\x90[\x90\\\x90]\x90^\x90_\x90`-\xC5BCLMX\x03\x0B\x1B\x1EA\x90ayrl-ME\x90datn\x90e-\xC2BX\x03A\x90fK\x90gE\x90bK\x90c\x8F\x90h\x90i\x90j-\xC2CK\x03D\x90kE\x90ll\x8F\xC8giknorty\x02\x04\x06\x07\t\x0B\r\x90m\x90n\x90o\x8F\x90p\x90q\x90rv\x90s\xC5gknrz\x02\x04\x07\x0E\x90t\x90ud\x90v\x90w-IN\x90x\x90y-Cyrl\x90z\xC3eim\x03\x05c\x90{\x90|w\x8Fo\x90}\xC2hn\x02\x90~r\x90\x7F\xC3oru\x07\x15\x91\0-BJ\x91\x01l\x91\x02-\xC2CV\x03O\x91\x03E\x91\x03e\x91\x04-Hans\x91\x05\xC3ahu\x01\x0C\x8F-\xC2HM\x03K\x91\x06O\x91\x06\x91\x07" };
@@ -941,7 +941,7 @@ macro_rules! __impl_timezone_names_cities_override_v1 {
                 unsafe { icu_provider::baked::zerotrie::Data::from_trie_and_values_unchecked(TRIE, VALUES) }
             };
         }
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl icu_provider::DataProvider<icu::datetime::provider::time_zones::TimezoneNamesCitiesOverrideV1> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::time_zones::TimezoneNamesCitiesOverrideV1>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
@@ -967,7 +967,7 @@ macro_rules! __impl_timezone_names_cities_override_v1 {
     };
     ($ provider : ty , ITER) => {
         __impl_timezone_names_cities_override_v1!($provider);
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl icu_provider::IterableDataProvider<icu::datetime::provider::time_zones::TimezoneNamesCitiesOverrideV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider::baked::DataStore::iter(&Self::DATA_TIMEZONE_NAMES_CITIES_OVERRIDE_V1).collect())

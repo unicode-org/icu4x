@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::DatagenCalendar;
-use crate::cldr_serde::ca;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use crate::cldr_serde::ca;
 use icu::datetime::provider::pattern;
 
 use icu::datetime::provider::names::*;
@@ -598,11 +598,10 @@ pub(crate) fn apply_numeric_overrides(
             }
             // if we need to replace a specific symbol, filter
             // out everyone else
-            if let Some(symbol) = symbol_to_replace {
-                if symbol != field.symbol {
+            if let Some(symbol) = symbol_to_replace
+                && symbol != field.symbol {
                     return;
                 }
-            }
             field.length = FieldLength::NumericOverride(numeric);
         }
     })

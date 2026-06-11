@@ -5,9 +5,9 @@
 use alloc::string::String;
 use alloc::vec::Vec;
 use icu_locale::LocaleFallbacker;
+use icu_properties::PropertyNamesShort;
 use icu_properties::props::Script;
 use icu_properties::script::ScriptWithExtensions;
-use icu_properties::PropertyNamesShort;
 
 use super::api::{
     FormattingOrder, NameField, NameFieldKind, PersonName, PersonNamesFormatterError,

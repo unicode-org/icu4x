@@ -4,8 +4,8 @@
 
 use super::names::RawDateTimeNamesBorrowed;
 use super::pattern::DateTimePatternBorrowed;
-use crate::format::datetime::try_write_pattern_items;
 use crate::format::DateTimeInputUnchecked;
+use crate::format::datetime::try_write_pattern_items;
 use crate::pattern::FormattedDateTimePatternError;
 use crate::scaffold::*;
 use crate::scaffold::{
@@ -260,7 +260,7 @@ mod tests {
     use crate::provider::fields::Field;
 
     use super::super::*;
-    use icu_calendar::{cal::KoreanTraditional, Date, Gregorian};
+    use icu_calendar::{Date, Gregorian, cal::KoreanTraditional};
     use icu_locale_core::locale;
     use icu_time::{DateTime, Time};
     use writeable::assert_try_writeable_eq;
@@ -656,8 +656,8 @@ mod tests {
         use crate::provider::fields::{
             Day, Field, FieldLength, FieldNumericOverrides, FieldSymbol,
         };
-        use crate::provider::pattern::runtime::Pattern;
         use crate::provider::pattern::PatternItem;
+        use crate::provider::pattern::runtime::Pattern;
 
         let locale = icu_locale_core::locale!("he").into();
 
@@ -689,10 +689,10 @@ mod tests {
         use crate::provider::fields::{
             Field, FieldLength, FieldNumericOverrides, FieldSymbol, Month,
         };
-        use crate::provider::pattern::runtime::Pattern;
         use crate::provider::pattern::PatternItem;
-        use icu_calendar::cal::Gregorian;
+        use crate::provider::pattern::runtime::Pattern;
         use icu_calendar::Date;
+        use icu_calendar::cal::Gregorian;
 
         let items = vec![PatternItem::Field(Field {
             symbol: FieldSymbol::Month(Month::Format),

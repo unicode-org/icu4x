@@ -27,7 +27,7 @@ icu_provider::data_marker!(
     attributes_domain = "currency",
 );
 
-/// Currency Extended  data struct.
+/// Currency extended data struct.
 #[derive(Debug, Clone, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
@@ -38,9 +38,10 @@ pub struct CurrencyExtendedData<'data> {
     ///     - "US Dollars" when count is `zero`,
     ///     - "US Dollar" when count is `one`,
     ///     ... etc.
-    /// # NOTE
-    ///    Regards to the [Unicode Report TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Currencies),
-    ///    If no matching for specific count, the `other` count will be used.
+    ///
+    /// # Note
+    /// According to [Unicode TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Currencies),
+    /// if no match is found for a specific count, the `other` variant is used as a fallback.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub display_names: PluralElementsPackedCow<'data, str>,
 }

@@ -10,52 +10,52 @@
 use crate::props::*;
 
 impl BidiClass {
-    /// `L`
     pub const LeftToRight: Self = Self(0);
-    /// `R`
+    pub const L: Self = Self::LeftToRight;
     pub const RightToLeft: Self = Self(1);
-    /// `EN`
+    pub const R: Self = Self::RightToLeft;
     pub const EuropeanNumber: Self = Self(2);
-    /// `ES`
+    pub const EN: Self = Self::EuropeanNumber;
     pub const EuropeanSeparator: Self = Self(3);
-    /// `ET`
+    pub const ES: Self = Self::EuropeanSeparator;
     pub const EuropeanTerminator: Self = Self(4);
-    /// `AN`
+    pub const ET: Self = Self::EuropeanTerminator;
     pub const ArabicNumber: Self = Self(5);
-    /// `CS`
+    pub const AN: Self = Self::ArabicNumber;
     pub const CommonSeparator: Self = Self(6);
-    /// `B`
+    pub const CS: Self = Self::CommonSeparator;
     pub const ParagraphSeparator: Self = Self(7);
-    /// `S`
+    pub const B: Self = Self::ParagraphSeparator;
     pub const SegmentSeparator: Self = Self(8);
-    /// `WS`
+    pub const S: Self = Self::SegmentSeparator;
     pub const WhiteSpace: Self = Self(9);
-    /// `ON`
+    pub const WS: Self = Self::WhiteSpace;
     pub const OtherNeutral: Self = Self(10);
-    /// `LRE`
+    pub const ON: Self = Self::OtherNeutral;
     pub const LeftToRightEmbedding: Self = Self(11);
-    /// `LRO`
+    pub const LRE: Self = Self::LeftToRightEmbedding;
     pub const LeftToRightOverride: Self = Self(12);
-    /// `AL`
+    pub const LRO: Self = Self::LeftToRightOverride;
     pub const ArabicLetter: Self = Self(13);
-    /// `RLE`
+    pub const AL: Self = Self::ArabicLetter;
     pub const RightToLeftEmbedding: Self = Self(14);
-    /// `RLO`
+    pub const RLE: Self = Self::RightToLeftEmbedding;
     pub const RightToLeftOverride: Self = Self(15);
-    /// `PDF`
+    pub const RLO: Self = Self::RightToLeftOverride;
     pub const PopDirectionalFormat: Self = Self(16);
-    /// `NSM`
+    pub const PDF: Self = Self::PopDirectionalFormat;
     pub const NonspacingMark: Self = Self(17);
-    /// `BN`
+    pub const NSM: Self = Self::NonspacingMark;
     pub const BoundaryNeutral: Self = Self(18);
-    /// `FSI`
+    pub const BN: Self = Self::BoundaryNeutral;
     pub const FirstStrongIsolate: Self = Self(19);
-    /// `LRI`
+    pub const FSI: Self = Self::FirstStrongIsolate;
     pub const LeftToRightIsolate: Self = Self(20);
-    /// `RLI`
+    pub const LRI: Self = Self::LeftToRightIsolate;
     pub const RightToLeftIsolate: Self = Self(21);
-    /// `PDI`
+    pub const RLI: Self = Self::RightToLeftIsolate;
     pub const PopDirectionalIsolate: Self = Self(22);
+    pub const PDI: Self = Self::PopDirectionalIsolate;
 }
 
 #[cfg(feature = "datagen")]
@@ -159,18 +159,18 @@ impl BidiClass {
 }
 
 impl CanonicalCombiningClass {
-    /// `NR`
     pub const NotReordered: Self = Self(0);
-    /// `OV`
+    pub const NR: Self = Self::NotReordered;
     pub const Overlay: Self = Self(1);
-    /// `HANR`
+    pub const OV: Self = Self::Overlay;
     pub const HanReading: Self = Self(6);
-    /// `NK`
+    pub const HANR: Self = Self::HanReading;
     pub const Nukta: Self = Self(7);
-    /// `KV`
+    pub const NK: Self = Self::Nukta;
     pub const KanaVoicing: Self = Self(8);
-    /// `VR`
+    pub const KV: Self = Self::KanaVoicing;
     pub const Virama: Self = Self(9);
+    pub const VR: Self = Self::Virama;
     pub const CCC10: Self = Self(10);
     pub const CCC11: Self = Self(11);
     pub const CCC12: Self = Self(12);
@@ -208,36 +208,36 @@ impl CanonicalCombiningClass {
     pub const CCC130: Self = Self(130);
     pub const CCC132: Self = Self(132);
     pub const CCC133: Self = Self(133);
-    /// `ATBL`
     pub const AttachedBelowLeft: Self = Self(200);
-    /// `ATB`
+    pub const ATBL: Self = Self::AttachedBelowLeft;
     pub const AttachedBelow: Self = Self(202);
-    /// `ATA`
+    pub const ATB: Self = Self::AttachedBelow;
     pub const AttachedAbove: Self = Self(214);
-    /// `ATAR`
+    pub const ATA: Self = Self::AttachedAbove;
     pub const AttachedAboveRight: Self = Self(216);
-    /// `BL`
+    pub const ATAR: Self = Self::AttachedAboveRight;
     pub const BelowLeft: Self = Self(218);
-    /// `B`
+    pub const BL: Self = Self::BelowLeft;
     pub const Below: Self = Self(220);
-    /// `BR`
+    pub const B: Self = Self::Below;
     pub const BelowRight: Self = Self(222);
-    /// `L`
+    pub const BR: Self = Self::BelowRight;
     pub const Left: Self = Self(224);
-    /// `R`
+    pub const L: Self = Self::Left;
     pub const Right: Self = Self(226);
-    /// `AL`
+    pub const R: Self = Self::Right;
     pub const AboveLeft: Self = Self(228);
-    /// `A`
+    pub const AL: Self = Self::AboveLeft;
     pub const Above: Self = Self(230);
-    /// `AR`
+    pub const A: Self = Self::Above;
     pub const AboveRight: Self = Self(232);
-    /// `DB`
+    pub const AR: Self = Self::AboveRight;
     pub const DoubleBelow: Self = Self(233);
-    /// `DA`
+    pub const DB: Self = Self::DoubleBelow;
     pub const DoubleAbove: Self = Self(234);
-    /// `IS`
+    pub const DA: Self = Self::DoubleAbove;
     pub const IotaSubscript: Self = Self(240);
+    pub const IS: Self = Self::IotaSubscript;
 }
 
 #[cfg(feature = "datagen")]
@@ -446,18 +446,18 @@ impl CanonicalCombiningClass {
 }
 
 impl EastAsianWidth {
-    /// `N`
     pub const Neutral: Self = Self(0);
-    /// `A`
+    pub const N: Self = Self::Neutral;
     pub const Ambiguous: Self = Self(1);
-    /// `H`
+    pub const A: Self = Self::Ambiguous;
     pub const Halfwidth: Self = Self(2);
-    /// `F`
+    pub const H: Self = Self::Halfwidth;
     pub const Fullwidth: Self = Self(3);
-    /// `Na`
+    pub const F: Self = Self::Fullwidth;
     pub const Narrow: Self = Self(4);
-    /// `W`
+    pub const Na: Self = Self::Narrow;
     pub const Wide: Self = Self(5);
+    pub const W: Self = Self::Wide;
 }
 
 #[cfg(feature = "datagen")]
@@ -517,66 +517,71 @@ impl EastAsianWidth {
 #[repr(u8)]
 #[allow(missing_docs)] // These variants don't need individual documentation.
 pub enum GeneralCategory {
-    /// `Cn`
     Unassigned = 0,
-    /// `Lu`
     UppercaseLetter = 1,
-    /// `Ll`
     LowercaseLetter = 2,
-    /// `Lt`
     TitlecaseLetter = 3,
-    /// `Lm`
     ModifierLetter = 4,
-    /// `Lo`
     OtherLetter = 5,
-    /// `Mn`
     NonspacingMark = 6,
-    /// `Me`
     EnclosingMark = 7,
-    /// `Mc`
     SpacingMark = 8,
-    /// `Nd`
     DecimalNumber = 9,
-    /// `Nl`
     LetterNumber = 10,
-    /// `No`
     OtherNumber = 11,
-    /// `Zs`
     SpaceSeparator = 12,
-    /// `Zl`
     LineSeparator = 13,
-    /// `Zp`
     ParagraphSeparator = 14,
-    /// `Cc`
     Control = 15,
-    /// `Cf`
     Format = 16,
-    /// `Co`
     PrivateUse = 17,
-    /// `Cs`
     Surrogate = 18,
-    /// `Pd`
     DashPunctuation = 19,
-    /// `Ps`
     OpenPunctuation = 20,
-    /// `Pe`
     ClosePunctuation = 21,
-    /// `Pc`
     ConnectorPunctuation = 22,
-    /// `Po`
     OtherPunctuation = 23,
-    /// `Sm`
     MathSymbol = 24,
-    /// `Sc`
     CurrencySymbol = 25,
-    /// `Sk`
     ModifierSymbol = 26,
-    /// `So`
     OtherSymbol = 27,
-    /// `Pi`
     InitialPunctuation = 28,
-    /// `Pf`
     FinalPunctuation = 29,
+}
+
+impl GeneralCategory {
+    pub const Cn: Self = Self::Unassigned;
+    pub const Lu: Self = Self::UppercaseLetter;
+    pub const Ll: Self = Self::LowercaseLetter;
+    pub const Lt: Self = Self::TitlecaseLetter;
+    pub const Lm: Self = Self::ModifierLetter;
+    pub const Lo: Self = Self::OtherLetter;
+    pub const Mn: Self = Self::NonspacingMark;
+    pub const Me: Self = Self::EnclosingMark;
+    pub const Mc: Self = Self::SpacingMark;
+    pub const Nd: Self = Self::DecimalNumber;
+    pub const Digit: Self = Self::DecimalNumber;
+    pub const Nl: Self = Self::LetterNumber;
+    pub const No: Self = Self::OtherNumber;
+    pub const Zs: Self = Self::SpaceSeparator;
+    pub const Zl: Self = Self::LineSeparator;
+    pub const Zp: Self = Self::ParagraphSeparator;
+    pub const Cc: Self = Self::Control;
+    pub const Cntrl: Self = Self::Control;
+    pub const Cf: Self = Self::Format;
+    pub const Co: Self = Self::PrivateUse;
+    pub const Cs: Self = Self::Surrogate;
+    pub const Pd: Self = Self::DashPunctuation;
+    pub const Ps: Self = Self::OpenPunctuation;
+    pub const Pe: Self = Self::ClosePunctuation;
+    pub const Pc: Self = Self::ConnectorPunctuation;
+    pub const Po: Self = Self::OtherPunctuation;
+    pub const Sm: Self = Self::MathSymbol;
+    pub const Sc: Self = Self::CurrencySymbol;
+    pub const Sk: Self = Self::ModifierSymbol;
+    pub const So: Self = Self::OtherSymbol;
+    pub const Pi: Self = Self::InitialPunctuation;
+    pub const Pf: Self = Self::FinalPunctuation;
 }
 
 #[cfg(feature = "datagen")]
@@ -700,33 +705,33 @@ impl GeneralCategory {
 }
 
 impl GraphemeClusterBreak {
-    /// `XX`
     pub const Other: Self = Self(0);
-    /// `CN`
+    pub const XX: Self = Self::Other;
     pub const Control: Self = Self(1);
+    pub const CN: Self = Self::Control;
     pub const CR: Self = Self(2);
-    /// `EX`
     pub const Extend: Self = Self(3);
+    pub const EX: Self = Self::Extend;
     pub const L: Self = Self(4);
     pub const LF: Self = Self(5);
     pub const LV: Self = Self(6);
     pub const LVT: Self = Self(7);
     pub const T: Self = Self(8);
     pub const V: Self = Self(9);
-    /// `SM`
     pub const SpacingMark: Self = Self(10);
-    /// `PP`
+    pub const SM: Self = Self::SpacingMark;
     pub const Prepend: Self = Self(11);
-    /// `RI`
+    pub const PP: Self = Self::Prepend;
     pub const RegionalIndicator: Self = Self(12);
-    /// `EB`
+    pub const RI: Self = Self::RegionalIndicator;
     pub const EBase: Self = Self(13);
-    /// `EBG`
+    pub const EB: Self = Self::EBase;
     pub const EBaseGAZ: Self = Self(14);
-    /// `EM`
+    pub const EBG: Self = Self::EBaseGAZ;
     pub const EModifier: Self = Self(15);
-    /// `GAZ`
+    pub const EM: Self = Self::EModifier;
     pub const GlueAfterZwj: Self = Self(16);
+    pub const GAZ: Self = Self::GlueAfterZwj;
     pub const ZWJ: Self = Self(17);
 }
 
@@ -816,18 +821,18 @@ impl GraphemeClusterBreak {
 }
 
 impl HangulSyllableType {
-    /// `NA`
     pub const NotApplicable: Self = Self(0);
-    /// `L`
+    pub const NA: Self = Self::NotApplicable;
     pub const LeadingJamo: Self = Self(1);
-    /// `V`
+    pub const L: Self = Self::LeadingJamo;
     pub const VowelJamo: Self = Self(2);
-    /// `T`
+    pub const V: Self = Self::VowelJamo;
     pub const TrailingJamo: Self = Self(3);
-    /// `LV`
+    pub const T: Self = Self::TrailingJamo;
     pub const LVSyllable: Self = Self(4);
-    /// `LVT`
+    pub const LV: Self = Self::LVSyllable;
     pub const LVTSyllable: Self = Self(5);
+    pub const LVT: Self = Self::LVTSyllable;
 }
 
 #[cfg(feature = "datagen")]
@@ -1127,6 +1132,7 @@ impl JoiningGroup {
     pub const Gamal: Self = Self(12);
     pub const Hah: Self = Self(13);
     pub const TehMarbutaGoal: Self = Self(14);
+    pub const HamzaOnHehGoal: Self = Self::TehMarbutaGoal;
     pub const He: Self = Self(15);
     pub const Heh: Self = Self(16);
     pub const HehGoal: Self = Self(17);
@@ -1570,18 +1576,18 @@ impl JoiningGroup {
 }
 
 impl JoiningType {
-    /// `U`
     pub const NonJoining: Self = Self(0);
-    /// `C`
+    pub const U: Self = Self::NonJoining;
     pub const JoinCausing: Self = Self(1);
-    /// `D`
+    pub const C: Self = Self::JoinCausing;
     pub const DualJoining: Self = Self(2);
-    /// `L`
+    pub const D: Self = Self::DualJoining;
     pub const LeftJoining: Self = Self(3);
-    /// `R`
+    pub const L: Self = Self::LeftJoining;
     pub const RightJoining: Self = Self(4);
-    /// `T`
+    pub const R: Self = Self::RightJoining;
     pub const Transparent: Self = Self(5);
+    pub const T: Self = Self::Transparent;
 }
 
 #[cfg(feature = "datagen")]
@@ -1634,98 +1640,99 @@ impl JoiningType {
 }
 
 impl LineBreak {
-    /// `XX`
     pub const Unknown: Self = Self(0);
-    /// `AI`
+    pub const XX: Self = Self::Unknown;
     pub const Ambiguous: Self = Self(1);
-    /// `AL`
+    pub const AI: Self = Self::Ambiguous;
     pub const Alphabetic: Self = Self(2);
-    /// `B2`
+    pub const AL: Self = Self::Alphabetic;
     pub const BreakBoth: Self = Self(3);
-    /// `BA`
+    pub const B2: Self = Self::BreakBoth;
     pub const BreakAfter: Self = Self(4);
-    /// `BB`
+    pub const BA: Self = Self::BreakAfter;
     pub const BreakBefore: Self = Self(5);
-    /// `BK`
+    pub const BB: Self = Self::BreakBefore;
     pub const MandatoryBreak: Self = Self(6);
-    /// `CB`
+    pub const BK: Self = Self::MandatoryBreak;
     pub const ContingentBreak: Self = Self(7);
-    /// `CL`
+    pub const CB: Self = Self::ContingentBreak;
     pub const ClosePunctuation: Self = Self(8);
-    /// `CM`
+    pub const CL: Self = Self::ClosePunctuation;
     pub const CombiningMark: Self = Self(9);
-    /// `CR`
+    pub const CM: Self = Self::CombiningMark;
     pub const CarriageReturn: Self = Self(10);
-    /// `EX`
+    pub const CR: Self = Self::CarriageReturn;
     pub const Exclamation: Self = Self(11);
-    /// `GL`
+    pub const EX: Self = Self::Exclamation;
     pub const Glue: Self = Self(12);
-    /// `HY`
+    pub const GL: Self = Self::Glue;
     pub const Hyphen: Self = Self(13);
-    /// `ID`
+    pub const HY: Self = Self::Hyphen;
     pub const Ideographic: Self = Self(14);
-    /// `IN`
+    pub const ID: Self = Self::Ideographic;
     pub const Inseparable: Self = Self(15);
-    /// `IS`
+    pub const IN: Self = Self::Inseparable;
+    pub const Inseperable: Self = Self::Inseparable;
     pub const InfixNumeric: Self = Self(16);
-    /// `LF`
+    pub const IS: Self = Self::InfixNumeric;
     pub const LineFeed: Self = Self(17);
-    /// `NS`
+    pub const LF: Self = Self::LineFeed;
     pub const Nonstarter: Self = Self(18);
-    /// `NU`
+    pub const NS: Self = Self::Nonstarter;
     pub const Numeric: Self = Self(19);
-    /// `OP`
+    pub const NU: Self = Self::Numeric;
     pub const OpenPunctuation: Self = Self(20);
-    /// `PO`
+    pub const OP: Self = Self::OpenPunctuation;
     pub const PostfixNumeric: Self = Self(21);
-    /// `PR`
+    pub const PO: Self = Self::PostfixNumeric;
     pub const PrefixNumeric: Self = Self(22);
-    /// `QU`
+    pub const PR: Self = Self::PrefixNumeric;
     pub const Quotation: Self = Self(23);
-    /// `SA`
+    pub const QU: Self = Self::Quotation;
     pub const ComplexContext: Self = Self(24);
-    /// `SG`
+    pub const SA: Self = Self::ComplexContext;
     pub const Surrogate: Self = Self(25);
-    /// `SP`
+    pub const SG: Self = Self::Surrogate;
     pub const Space: Self = Self(26);
-    /// `SY`
+    pub const SP: Self = Self::Space;
     pub const BreakSymbols: Self = Self(27);
-    /// `ZW`
+    pub const SY: Self = Self::BreakSymbols;
     pub const ZWSpace: Self = Self(28);
-    /// `NL`
+    pub const ZW: Self = Self::ZWSpace;
     pub const NextLine: Self = Self(29);
-    /// `WJ`
+    pub const NL: Self = Self::NextLine;
     pub const WordJoiner: Self = Self(30);
+    pub const WJ: Self = Self::WordJoiner;
     pub const H2: Self = Self(31);
     pub const H3: Self = Self(32);
     pub const JL: Self = Self(33);
     pub const JT: Self = Self(34);
     pub const JV: Self = Self(35);
-    /// `CP`
     pub const CloseParenthesis: Self = Self(36);
-    /// `CJ`
+    pub const CP: Self = Self::CloseParenthesis;
     pub const ConditionalJapaneseStarter: Self = Self(37);
-    /// `HL`
+    pub const CJ: Self = Self::ConditionalJapaneseStarter;
     pub const HebrewLetter: Self = Self(38);
-    /// `RI`
+    pub const HL: Self = Self::HebrewLetter;
     pub const RegionalIndicator: Self = Self(39);
-    /// `EB`
+    pub const RI: Self = Self::RegionalIndicator;
     pub const EBase: Self = Self(40);
-    /// `EM`
+    pub const EB: Self = Self::EBase;
     pub const EModifier: Self = Self(41);
+    pub const EM: Self = Self::EModifier;
     pub const ZWJ: Self = Self(42);
-    /// `AK`
     pub const Aksara: Self = Self(43);
-    /// `AP`
+    pub const AK: Self = Self::Aksara;
     pub const AksaraPrebase: Self = Self(44);
-    /// `AS`
+    pub const AP: Self = Self::AksaraPrebase;
     pub const AksaraStart: Self = Self(45);
-    /// `VF`
+    pub const AS: Self = Self::AksaraStart;
     pub const ViramaFinal: Self = Self(46);
-    /// `VI`
+    pub const VF: Self = Self::ViramaFinal;
     pub const Virama: Self = Self(47);
-    /// `HH`
+    pub const VI: Self = Self::Virama;
     pub const UnambiguousHyphen: Self = Self(48);
+    pub const HH: Self = Self::UnambiguousHyphen;
 }
 
 #[cfg(feature = "datagen")]
@@ -1908,12 +1915,12 @@ impl LineBreak {
 
 impl NumericType {
     pub const None: Self = Self(0);
-    /// `De`
     pub const Decimal: Self = Self(1);
-    /// `Di`
+    pub const De: Self = Self::Decimal;
     pub const Digit: Self = Self(2);
-    /// `Nu`
+    pub const Di: Self = Self::Digit;
     pub const Numeric: Self = Self(3);
+    pub const Nu: Self = Self::Numeric;
 }
 
 #[cfg(feature = "datagen")]
@@ -1960,424 +1967,494 @@ impl NumericType {
 }
 
 impl Script {
-    /// `Zyyy`
     pub const Common: Self = Self(0);
-    /// `Zinh`
+    pub const Zyyy: Self = Self::Common;
     pub const Inherited: Self = Self(1);
-    /// `Arab`
+    pub const Zinh: Self = Self::Inherited;
+    pub const Qaai: Self = Self::Inherited;
     pub const Arabic: Self = Self(2);
-    /// `Armn`
+    pub const Arab: Self = Self::Arabic;
     pub const Armenian: Self = Self(3);
-    /// `Beng`
+    pub const Armn: Self = Self::Armenian;
     pub const Bengali: Self = Self(4);
-    /// `Bopo`
+    pub const Beng: Self = Self::Bengali;
     pub const Bopomofo: Self = Self(5);
-    /// `Cher`
+    pub const Bopo: Self = Self::Bopomofo;
     pub const Cherokee: Self = Self(6);
-    /// `Copt`
+    pub const Cher: Self = Self::Cherokee;
     pub const Coptic: Self = Self(7);
-    /// `Cyrl`
+    pub const Copt: Self = Self::Coptic;
+    pub const Qaac: Self = Self::Coptic;
     pub const Cyrillic: Self = Self(8);
-    /// `Dsrt`
+    pub const Cyrl: Self = Self::Cyrillic;
     pub const Deseret: Self = Self(9);
-    /// `Deva`
+    pub const Dsrt: Self = Self::Deseret;
     pub const Devanagari: Self = Self(10);
-    /// `Ethi`
+    pub const Deva: Self = Self::Devanagari;
     pub const Ethiopic: Self = Self(11);
-    /// `Geor`
+    pub const Ethi: Self = Self::Ethiopic;
     pub const Georgian: Self = Self(12);
-    /// `Goth`
+    pub const Geor: Self = Self::Georgian;
     pub const Gothic: Self = Self(13);
-    /// `Grek`
+    pub const Goth: Self = Self::Gothic;
     pub const Greek: Self = Self(14);
-    /// `Gujr`
+    pub const Grek: Self = Self::Greek;
     pub const Gujarati: Self = Self(15);
-    /// `Guru`
+    pub const Gujr: Self = Self::Gujarati;
     pub const Gurmukhi: Self = Self(16);
-    /// `Hani`
+    pub const Guru: Self = Self::Gurmukhi;
     pub const Han: Self = Self(17);
-    /// `Hang`
+    pub const Hani: Self = Self::Han;
     pub const Hangul: Self = Self(18);
-    /// `Hebr`
+    pub const Hang: Self = Self::Hangul;
     pub const Hebrew: Self = Self(19);
-    /// `Hira`
+    pub const Hebr: Self = Self::Hebrew;
     pub const Hiragana: Self = Self(20);
-    /// `Knda`
+    pub const Hira: Self = Self::Hiragana;
     pub const Kannada: Self = Self(21);
-    /// `Kana`
+    pub const Knda: Self = Self::Kannada;
     pub const Katakana: Self = Self(22);
-    /// `Khmr`
+    pub const Kana: Self = Self::Katakana;
     pub const Khmer: Self = Self(23);
-    /// `Laoo`
+    pub const Khmr: Self = Self::Khmer;
     pub const Lao: Self = Self(24);
-    /// `Latn`
+    pub const Laoo: Self = Self::Lao;
     pub const Latin: Self = Self(25);
-    /// `Mlym`
+    pub const Latn: Self = Self::Latin;
     pub const Malayalam: Self = Self(26);
-    /// `Mong`
+    pub const Mlym: Self = Self::Malayalam;
     pub const Mongolian: Self = Self(27);
-    /// `Mymr`
+    pub const Mong: Self = Self::Mongolian;
     pub const Myanmar: Self = Self(28);
-    /// `Ogam`
+    pub const Mymr: Self = Self::Myanmar;
     pub const Ogham: Self = Self(29);
-    /// `Ital`
+    pub const Ogam: Self = Self::Ogham;
     pub const OldItalic: Self = Self(30);
-    /// `Orya`
+    pub const Ital: Self = Self::OldItalic;
     pub const Oriya: Self = Self(31);
-    /// `Runr`
+    pub const Orya: Self = Self::Oriya;
     pub const Runic: Self = Self(32);
-    /// `Sinh`
+    pub const Runr: Self = Self::Runic;
     pub const Sinhala: Self = Self(33);
-    /// `Syrc`
+    pub const Sinh: Self = Self::Sinhala;
     pub const Syriac: Self = Self(34);
-    /// `Taml`
+    pub const Syrc: Self = Self::Syriac;
     pub const Tamil: Self = Self(35);
-    /// `Telu`
+    pub const Taml: Self = Self::Tamil;
     pub const Telugu: Self = Self(36);
-    /// `Thaa`
+    pub const Telu: Self = Self::Telugu;
     pub const Thaana: Self = Self(37);
+    pub const Thaa: Self = Self::Thaana;
     pub const Thai: Self = Self(38);
-    /// `Tibt`
     pub const Tibetan: Self = Self(39);
-    /// `Cans`
+    pub const Tibt: Self = Self::Tibetan;
     pub const CanadianAboriginal: Self = Self(40);
-    /// `Yiii`
+    pub const Cans: Self = Self::CanadianAboriginal;
     pub const Yi: Self = Self(41);
-    /// `Tglg`
+    pub const Yiii: Self = Self::Yi;
     pub const Tagalog: Self = Self(42);
-    /// `Hano`
+    pub const Tglg: Self = Self::Tagalog;
     pub const Hanunoo: Self = Self(43);
-    /// `Buhd`
+    pub const Hano: Self = Self::Hanunoo;
     pub const Buhid: Self = Self(44);
-    /// `Tagb`
+    pub const Buhd: Self = Self::Buhid;
     pub const Tagbanwa: Self = Self(45);
-    /// `Brai`
+    pub const Tagb: Self = Self::Tagbanwa;
     pub const Braille: Self = Self(46);
-    /// `Cprt`
+    pub const Brai: Self = Self::Braille;
     pub const Cypriot: Self = Self(47);
-    /// `Limb`
+    pub const Cprt: Self = Self::Cypriot;
     pub const Limbu: Self = Self(48);
-    /// `Linb`
+    pub const Limb: Self = Self::Limbu;
     pub const LinearB: Self = Self(49);
-    /// `Osma`
+    pub const Linb: Self = Self::LinearB;
     pub const Osmanya: Self = Self(50);
-    /// `Shaw`
+    pub const Osma: Self = Self::Osmanya;
     pub const Shavian: Self = Self(51);
-    /// `Tale`
+    pub const Shaw: Self = Self::Shavian;
     pub const TaiLe: Self = Self(52);
-    /// `Ugar`
+    pub const Tale: Self = Self::TaiLe;
     pub const Ugaritic: Self = Self(53);
-    /// `Hrkt`
+    pub const Ugar: Self = Self::Ugaritic;
     pub const KatakanaOrHiragana: Self = Self(54);
-    /// `Bugi`
+    pub const Hrkt: Self = Self::KatakanaOrHiragana;
     pub const Buginese: Self = Self(55);
-    /// `Glag`
+    pub const Bugi: Self = Self::Buginese;
     pub const Glagolitic: Self = Self(56);
-    /// `Khar`
+    pub const Glag: Self = Self::Glagolitic;
     pub const Kharoshthi: Self = Self(57);
-    /// `Sylo`
+    pub const Khar: Self = Self::Kharoshthi;
     pub const SylotiNagri: Self = Self(58);
-    /// `Talu`
+    pub const Sylo: Self = Self::SylotiNagri;
     pub const NewTaiLue: Self = Self(59);
-    /// `Tfng`
+    pub const Talu: Self = Self::NewTaiLue;
     pub const Tifinagh: Self = Self(60);
-    /// `Xpeo`
+    pub const Tfng: Self = Self::Tifinagh;
     pub const OldPersian: Self = Self(61);
-    /// `Bali`
+    pub const Xpeo: Self = Self::OldPersian;
     pub const Balinese: Self = Self(62);
-    /// `Batk`
+    pub const Bali: Self = Self::Balinese;
     pub const Batak: Self = Self(63);
-    /// `Blis` (ISO 15924)
+    pub const Batk: Self = Self::Batak;
+    /// ISO 15924
     pub const BlisSymbols: Self = Self(64);
-    /// `Brah`
+    /// ISO 15924
+    pub const Blis: Self = Self::BlisSymbols;
     pub const Brahmi: Self = Self(65);
+    pub const Brah: Self = Self::Brahmi;
     pub const Cham: Self = Self(66);
-    /// `Cirt` (ISO 15924)
+    /// ISO 15924
     pub const Cirth: Self = Self(67);
-    /// `Cyrs` (ISO 15924)
+    /// ISO 15924
+    pub const Cirt: Self = Self::Cirth;
+    /// ISO 15924
     pub const OldChurchSlavonicCyrillic: Self = Self(68);
-    /// `Egyd` (ISO 15924)
+    /// ISO 15924
+    pub const Cyrs: Self = Self::OldChurchSlavonicCyrillic;
+    /// ISO 15924
     pub const DemoticEgyptian: Self = Self(69);
-    /// `Egyh` (ISO 15924)
+    /// ISO 15924
+    pub const Egyd: Self = Self::DemoticEgyptian;
+    /// ISO 15924
     pub const HieraticEgyptian: Self = Self(70);
-    /// `Egyp`
+    /// ISO 15924
+    pub const Egyh: Self = Self::HieraticEgyptian;
     pub const EgyptianHieroglyphs: Self = Self(71);
-    /// `Geok` (ISO 15924)
+    pub const Egyp: Self = Self::EgyptianHieroglyphs;
+    /// ISO 15924
     pub const Khutsuri: Self = Self(72);
-    /// `Hans` (ISO 15924)
+    /// ISO 15924
+    pub const Geok: Self = Self::Khutsuri;
+    /// ISO 15924
     pub const SimplifiedHan: Self = Self(73);
-    /// `Hant` (ISO 15924)
+    /// ISO 15924
+    pub const Hans: Self = Self::SimplifiedHan;
+    /// ISO 15924
     pub const TraditionalHan: Self = Self(74);
-    /// `Hmng`
+    /// ISO 15924
+    pub const Hant: Self = Self::TraditionalHan;
     pub const PahawhHmong: Self = Self(75);
-    /// `Hung`
+    pub const Hmng: Self = Self::PahawhHmong;
     pub const OldHungarian: Self = Self(76);
-    /// `Inds` (ISO 15924)
+    pub const Hung: Self = Self::OldHungarian;
+    /// ISO 15924
     pub const HarappanIndus: Self = Self(77);
-    /// `Java`
+    /// ISO 15924
+    pub const Inds: Self = Self::HarappanIndus;
     pub const Javanese: Self = Self(78);
-    /// `Kali`
+    pub const Java: Self = Self::Javanese;
     pub const KayahLi: Self = Self(79);
-    /// `Latf` (ISO 15924)
+    pub const Kali: Self = Self::KayahLi;
+    /// ISO 15924
     pub const LatinFraktur: Self = Self(80);
-    /// `Latg` (ISO 15924)
+    /// ISO 15924
+    pub const Latf: Self = Self::LatinFraktur;
+    /// ISO 15924
     pub const LatinGaelic: Self = Self(81);
-    /// `Lepc`
+    /// ISO 15924
+    pub const Latg: Self = Self::LatinGaelic;
     pub const Lepcha: Self = Self(82);
-    /// `Lina`
+    pub const Lepc: Self = Self::Lepcha;
     pub const LinearA: Self = Self(83);
-    /// `Mand`
+    pub const Lina: Self = Self::LinearA;
     pub const Mandaic: Self = Self(84);
-    /// `Maya` (ISO 15924)
+    pub const Mand: Self = Self::Mandaic;
+    /// ISO 15924
     pub const MayanHieroglyphs: Self = Self(85);
-    /// `Mero`
+    /// ISO 15924
+    pub const Maya: Self = Self::MayanHieroglyphs;
     pub const MeroiticHieroglyphs: Self = Self(86);
-    /// `Nkoo`
+    pub const Mero: Self = Self::MeroiticHieroglyphs;
     pub const Nko: Self = Self(87);
-    /// `Orkh`
+    pub const Nkoo: Self = Self::Nko;
     pub const OldTurkic: Self = Self(88);
-    /// `Perm`
+    pub const Orkh: Self = Self::OldTurkic;
     pub const OldPermic: Self = Self(89);
-    /// `Phag`
+    pub const Perm: Self = Self::OldPermic;
     pub const PhagsPa: Self = Self(90);
-    /// `Phnx`
+    pub const Phag: Self = Self::PhagsPa;
     pub const Phoenician: Self = Self(91);
-    /// `Plrd`
+    pub const Phnx: Self = Self::Phoenician;
     pub const Miao: Self = Self(92);
-    /// `Roro` (ISO 15924)
+    pub const Plrd: Self = Self::Miao;
+    /// ISO 15924
     pub const Rongorongo: Self = Self(93);
-    /// `Sara` (ISO 15924)
+    /// ISO 15924
+    pub const Roro: Self = Self::Rongorongo;
+    /// ISO 15924
     pub const Sarati: Self = Self(94);
-    /// `Syre` (ISO 15924)
+    /// ISO 15924
+    pub const Sara: Self = Self::Sarati;
+    /// ISO 15924
     pub const EstrangeloSyriac: Self = Self(95);
-    /// `Syrj` (ISO 15924)
+    /// ISO 15924
+    pub const Syre: Self = Self::EstrangeloSyriac;
+    /// ISO 15924
     pub const WesternSyriac: Self = Self(96);
-    /// `Syrn` (ISO 15924)
+    /// ISO 15924
+    pub const Syrj: Self = Self::WesternSyriac;
+    /// ISO 15924
     pub const EasternSyriac: Self = Self(97);
-    /// `Teng` (ISO 15924)
+    /// ISO 15924
+    pub const Syrn: Self = Self::EasternSyriac;
+    /// ISO 15924
     pub const Tengwar: Self = Self(98);
-    /// `Vaii`
+    /// ISO 15924
+    pub const Teng: Self = Self::Tengwar;
     pub const Vai: Self = Self(99);
-    /// `Visp` (ISO 15924)
+    pub const Vaii: Self = Self::Vai;
+    /// ISO 15924
     pub const VisibleSpeech: Self = Self(100);
-    /// `Xsux`
+    /// ISO 15924
+    pub const Visp: Self = Self::VisibleSpeech;
     pub const Cuneiform: Self = Self(101);
-    /// `Zxxx` (ISO 15924)
+    pub const Xsux: Self = Self::Cuneiform;
+    /// ISO 15924
     pub const UnwrittenLanguages: Self = Self(102);
-    /// `Zzzz`
+    /// ISO 15924
+    pub const Zxxx: Self = Self::UnwrittenLanguages;
     pub const Unknown: Self = Self(103);
-    /// `Cari`
+    pub const Zzzz: Self = Self::Unknown;
     pub const Carian: Self = Self(104);
-    /// `Jpan` (ISO 15924)
+    pub const Cari: Self = Self::Carian;
+    /// ISO 15924
     pub const Japanese: Self = Self(105);
-    /// `Lana`
+    /// ISO 15924
+    pub const Jpan: Self = Self::Japanese;
     pub const TaiTham: Self = Self(106);
-    /// `Lyci`
+    pub const Lana: Self = Self::TaiTham;
     pub const Lycian: Self = Self(107);
-    /// `Lydi`
+    pub const Lyci: Self = Self::Lycian;
     pub const Lydian: Self = Self(108);
-    /// `Olck`
+    pub const Lydi: Self = Self::Lydian;
     pub const OlChiki: Self = Self(109);
-    /// `Rjng`
+    pub const Olck: Self = Self::OlChiki;
     pub const Rejang: Self = Self(110);
-    /// `Saur`
+    pub const Rjng: Self = Self::Rejang;
     pub const Saurashtra: Self = Self(111);
-    /// `Sgnw`
+    pub const Saur: Self = Self::Saurashtra;
     pub const SignWriting: Self = Self(112);
-    /// `Sund`
+    pub const Sgnw: Self = Self::SignWriting;
     pub const Sundanese: Self = Self(113);
-    /// `Moon` (ISO 15924)
+    pub const Sund: Self = Self::Sundanese;
+    /// ISO 15924
     pub const Moon: Self = Self(114);
-    /// `Mtei`
     pub const MeeteiMayek: Self = Self(115);
-    /// `Armi`
+    pub const Mtei: Self = Self::MeeteiMayek;
     pub const ImperialAramaic: Self = Self(116);
-    /// `Avst`
+    pub const Armi: Self = Self::ImperialAramaic;
     pub const Avestan: Self = Self(117);
-    /// `Cakm`
+    pub const Avst: Self = Self::Avestan;
     pub const Chakma: Self = Self(118);
-    /// `Kore` (ISO 15924)
+    pub const Cakm: Self = Self::Chakma;
+    /// ISO 15924
     pub const Korean: Self = Self(119);
-    /// `Kthi`
+    /// ISO 15924
+    pub const Kore: Self = Self::Korean;
     pub const Kaithi: Self = Self(120);
-    /// `Mani`
+    pub const Kthi: Self = Self::Kaithi;
     pub const Manichaean: Self = Self(121);
-    /// `Phli`
+    pub const Mani: Self = Self::Manichaean;
     pub const InscriptionalPahlavi: Self = Self(122);
-    /// `Phlp`
+    pub const Phli: Self = Self::InscriptionalPahlavi;
     pub const PsalterPahlavi: Self = Self(123);
-    /// `Phlv` (ISO 15924)
+    pub const Phlp: Self = Self::PsalterPahlavi;
+    /// ISO 15924
     pub const BookPahlavi: Self = Self(124);
-    /// `Prti`
+    /// ISO 15924
+    pub const Phlv: Self = Self::BookPahlavi;
     pub const InscriptionalParthian: Self = Self(125);
-    /// `Samr`
+    pub const Prti: Self = Self::InscriptionalParthian;
     pub const Samaritan: Self = Self(126);
-    /// `Tavt`
+    pub const Samr: Self = Self::Samaritan;
     pub const TaiViet: Self = Self(127);
-    /// `Zmth` (ISO 15924)
+    pub const Tavt: Self = Self::TaiViet;
+    /// ISO 15924
     pub const MathematicalNotation: Self = Self(128);
-    /// `Zsym` (ISO 15924)
+    /// ISO 15924
+    pub const Zmth: Self = Self::MathematicalNotation;
+    /// ISO 15924
     pub const Symbols: Self = Self(129);
-    /// `Bamu`
+    /// ISO 15924
+    pub const Zsym: Self = Self::Symbols;
     pub const Bamum: Self = Self(130);
+    pub const Bamu: Self = Self::Bamum;
     pub const Lisu: Self = Self(131);
-    /// `Nkgb` (ISO 15924)
+    /// ISO 15924
     pub const NakhiGeba: Self = Self(132);
-    /// `Sarb`
+    /// ISO 15924
+    pub const Nkgb: Self = Self::NakhiGeba;
     pub const OldSouthArabian: Self = Self(133);
-    /// `Bass`
+    pub const Sarb: Self = Self::OldSouthArabian;
     pub const BassaVah: Self = Self(134);
-    /// `Dupl`
+    pub const Bass: Self = Self::BassaVah;
     pub const Duployan: Self = Self(135);
-    /// `Elba`
+    pub const Dupl: Self = Self::Duployan;
     pub const Elbasan: Self = Self(136);
-    /// `Gran`
+    pub const Elba: Self = Self::Elbasan;
     pub const Grantha: Self = Self(137);
-    /// `Kpel` (ISO 15924)
+    pub const Gran: Self = Self::Grantha;
+    /// ISO 15924
     pub const Kpelle: Self = Self(138);
-    /// `Loma` (ISO 15924)
+    /// ISO 15924
+    pub const Kpel: Self = Self::Kpelle;
+    /// ISO 15924
     pub const Loma: Self = Self(139);
-    /// `Mend`
     pub const MendeKikakui: Self = Self(140);
-    /// `Merc`
+    pub const Mend: Self = Self::MendeKikakui;
     pub const MeroiticCursive: Self = Self(141);
-    /// `Narb`
+    pub const Merc: Self = Self::MeroiticCursive;
     pub const OldNorthArabian: Self = Self(142);
-    /// `Nbat`
+    pub const Narb: Self = Self::OldNorthArabian;
     pub const Nabataean: Self = Self(143);
-    /// `Palm`
+    pub const Nbat: Self = Self::Nabataean;
     pub const Palmyrene: Self = Self(144);
-    /// `Sind`
+    pub const Palm: Self = Self::Palmyrene;
     pub const Khudawadi: Self = Self(145);
-    /// `Wara`
+    pub const Sind: Self = Self::Khudawadi;
     pub const WarangCiti: Self = Self(146);
-    /// `Afak` (ISO 15924)
+    pub const Wara: Self = Self::WarangCiti;
+    /// ISO 15924
     pub const Afaka: Self = Self(147);
-    /// `Jurc` (ISO 15924)
+    /// ISO 15924
+    pub const Afak: Self = Self::Afaka;
+    /// ISO 15924
     pub const Jurchen: Self = Self(148);
-    /// `Mroo`
+    /// ISO 15924
+    pub const Jurc: Self = Self::Jurchen;
     pub const Mro: Self = Self(149);
-    /// `Nshu`
+    pub const Mroo: Self = Self::Mro;
     pub const Nushu: Self = Self(150);
-    /// `Shrd`
+    pub const Nshu: Self = Self::Nushu;
     pub const Sharada: Self = Self(151);
-    /// `Sora`
+    pub const Shrd: Self = Self::Sharada;
     pub const SoraSompeng: Self = Self(152);
-    /// `Takr`
+    pub const Sora: Self = Self::SoraSompeng;
     pub const Takri: Self = Self(153);
-    /// `Tang`
+    pub const Takr: Self = Self::Takri;
     pub const Tangut: Self = Self(154);
-    /// `Wole` (ISO 15924)
+    pub const Tang: Self = Self::Tangut;
+    /// ISO 15924
     pub const Woleai: Self = Self(155);
-    /// `Hluw`
+    /// ISO 15924
+    pub const Wole: Self = Self::Woleai;
     pub const AnatolianHieroglyphs: Self = Self(156);
-    /// `Khoj`
+    pub const Hluw: Self = Self::AnatolianHieroglyphs;
     pub const Khojki: Self = Self(157);
-    /// `Tirh`
+    pub const Khoj: Self = Self::Khojki;
     pub const Tirhuta: Self = Self(158);
-    /// `Aghb`
+    pub const Tirh: Self = Self::Tirhuta;
     pub const CaucasianAlbanian: Self = Self(159);
-    /// `Mahj`
+    pub const Aghb: Self = Self::CaucasianAlbanian;
     pub const Mahajani: Self = Self(160);
+    pub const Mahj: Self = Self::Mahajani;
     pub const Ahom: Self = Self(161);
-    /// `Hatr`
     pub const Hatran: Self = Self(162);
+    pub const Hatr: Self = Self::Hatran;
     pub const Modi: Self = Self(163);
-    /// `Mult`
     pub const Multani: Self = Self(164);
-    /// `Pauc`
+    pub const Mult: Self = Self::Multani;
     pub const PauCinHau: Self = Self(165);
-    /// `Sidd`
+    pub const Pauc: Self = Self::PauCinHau;
     pub const Siddham: Self = Self(166);
-    /// `Adlm`
+    pub const Sidd: Self = Self::Siddham;
     pub const Adlam: Self = Self(167);
-    /// `Bhks`
+    pub const Adlm: Self = Self::Adlam;
     pub const Bhaiksuki: Self = Self(168);
-    /// `Marc`
+    pub const Bhks: Self = Self::Bhaiksuki;
     pub const Marchen: Self = Self(169);
+    pub const Marc: Self = Self::Marchen;
     pub const Newa: Self = Self(170);
-    /// `Osge`
     pub const Osage: Self = Self(171);
-    /// `Hanb` (ISO 15924)
+    pub const Osge: Self = Self::Osage;
+    /// ISO 15924
     pub const HanWithBopomofo: Self = Self(172);
-    /// `Jamo` (ISO 15924)
+    /// ISO 15924
+    pub const Hanb: Self = Self::HanWithBopomofo;
+    /// ISO 15924
     pub const Jamo: Self = Self(173);
-    /// `Zsye` (ISO 15924)
+    /// ISO 15924
     pub const SymbolsEmoji: Self = Self(174);
-    /// `Gonm`
+    /// ISO 15924
+    pub const Zsye: Self = Self::SymbolsEmoji;
     pub const MasaramGondi: Self = Self(175);
-    /// `Soyo`
+    pub const Gonm: Self = Self::MasaramGondi;
     pub const Soyombo: Self = Self(176);
-    /// `Zanb`
+    pub const Soyo: Self = Self::Soyombo;
     pub const ZanabazarSquare: Self = Self(177);
-    /// `Dogr`
+    pub const Zanb: Self = Self::ZanabazarSquare;
     pub const Dogra: Self = Self(178);
-    /// `Gong`
+    pub const Dogr: Self = Self::Dogra;
     pub const GunjalaGondi: Self = Self(179);
-    /// `Maka`
+    pub const Gong: Self = Self::GunjalaGondi;
     pub const Makasar: Self = Self(180);
-    /// `Medf`
+    pub const Maka: Self = Self::Makasar;
     pub const Medefaidrin: Self = Self(181);
-    /// `Rohg`
+    pub const Medf: Self = Self::Medefaidrin;
     pub const HanifiRohingya: Self = Self(182);
-    /// `Sogd`
+    pub const Rohg: Self = Self::HanifiRohingya;
     pub const Sogdian: Self = Self(183);
-    /// `Sogo`
+    pub const Sogd: Self = Self::Sogdian;
     pub const OldSogdian: Self = Self(184);
-    /// `Elym`
+    pub const Sogo: Self = Self::OldSogdian;
     pub const Elymaic: Self = Self(185);
-    /// `Hmnp`
+    pub const Elym: Self = Self::Elymaic;
     pub const NyiakengPuachueHmong: Self = Self(186);
-    /// `Nand`
+    pub const Hmnp: Self = Self::NyiakengPuachueHmong;
     pub const Nandinagari: Self = Self(187);
-    /// `Wcho`
+    pub const Nand: Self = Self::Nandinagari;
     pub const Wancho: Self = Self(188);
-    /// `Chrs`
+    pub const Wcho: Self = Self::Wancho;
     pub const Chorasmian: Self = Self(189);
-    /// `Diak`
+    pub const Chrs: Self = Self::Chorasmian;
     pub const DivesAkuru: Self = Self(190);
-    /// `Kits`
+    pub const Diak: Self = Self::DivesAkuru;
     pub const KhitanSmallScript: Self = Self(191);
-    /// `Yezi`
+    pub const Kits: Self = Self::KhitanSmallScript;
     pub const Yezidi: Self = Self(192);
-    /// `Cpmn`
+    pub const Yezi: Self = Self::Yezidi;
     pub const CyproMinoan: Self = Self(193);
-    /// `Ougr`
+    pub const Cpmn: Self = Self::CyproMinoan;
     pub const OldUyghur: Self = Self(194);
-    /// `Tnsa`
+    pub const Ougr: Self = Self::OldUyghur;
     pub const Tangsa: Self = Self(195);
+    pub const Tnsa: Self = Self::Tangsa;
     pub const Toto: Self = Self(196);
-    /// `Vith`
     pub const Vithkuqi: Self = Self(197);
+    pub const Vith: Self = Self::Vithkuqi;
     pub const Kawi: Self = Self(198);
-    /// `Nagm`
     pub const NagMundari: Self = Self(199);
-    /// `Aran` (ISO 15924)
+    pub const Nagm: Self = Self::NagMundari;
+    /// ISO 15924
     pub const ArabicNastaliq: Self = Self(200);
-    /// `Gara`
+    /// ISO 15924
+    pub const Aran: Self = Self::ArabicNastaliq;
     pub const Garay: Self = Self(201);
-    /// `Gukh`
+    pub const Gara: Self = Self::Garay;
     pub const GurungKhema: Self = Self(202);
-    /// `Krai`
+    pub const Gukh: Self = Self::GurungKhema;
     pub const KiratRai: Self = Self(203);
-    /// `Onao`
+    pub const Krai: Self = Self::KiratRai;
     pub const OlOnal: Self = Self(204);
-    /// `Sunu`
+    pub const Onao: Self = Self::OlOnal;
     pub const Sunuwar: Self = Self(205);
-    /// `Todr`
+    pub const Sunu: Self = Self::Sunuwar;
     pub const Todhri: Self = Self(206);
-    /// `Tutg`
+    pub const Todr: Self = Self::Todhri;
     pub const TuluTigalari: Self = Self(207);
-    /// `Berf`
+    pub const Tutg: Self = Self::TuluTigalari;
     pub const BeriaErfe: Self = Self(208);
-    /// `Sidt`
+    pub const Berf: Self = Self::BeriaErfe;
     pub const Sidetic: Self = Self(209);
-    /// `Tayo`
+    pub const Sidt: Self = Self::Sidetic;
     pub const TaiYo: Self = Self(210);
-    /// `Tols`
+    pub const Tayo: Self = Self::TaiYo;
     pub const TolongSiki: Self = Self(211);
-    /// `Hntl` (ISO 15924)
+    pub const Tols: Self = Self::TolongSiki;
+    /// ISO 15924
     pub const TraditionalHanWithLatin: Self = Self(212);
+    /// ISO 15924
+    pub const Hntl: Self = Self::TraditionalHanWithLatin;
 }
 
 #[cfg(feature = "datagen")]
@@ -3051,34 +3128,34 @@ impl Script {
 }
 
 impl SentenceBreak {
-    /// `XX`
     pub const Other: Self = Self(0);
-    /// `AT`
+    pub const XX: Self = Self::Other;
     pub const ATerm: Self = Self(1);
-    /// `CL`
+    pub const AT: Self = Self::ATerm;
     pub const Close: Self = Self(2);
-    /// `FO`
+    pub const CL: Self = Self::Close;
     pub const Format: Self = Self(3);
-    /// `LO`
+    pub const FO: Self = Self::Format;
     pub const Lower: Self = Self(4);
-    /// `NU`
+    pub const LO: Self = Self::Lower;
     pub const Numeric: Self = Self(5);
-    /// `LE`
+    pub const NU: Self = Self::Numeric;
     pub const OLetter: Self = Self(6);
-    /// `SE`
+    pub const LE: Self = Self::OLetter;
     pub const Sep: Self = Self(7);
-    /// `SP`
+    pub const SE: Self = Self::Sep;
     pub const Sp: Self = Self(8);
-    /// `ST`
+    pub const SP: Self = Self::Sp;
     pub const STerm: Self = Self(9);
-    /// `UP`
+    pub const ST: Self = Self::STerm;
     pub const Upper: Self = Self(10);
+    pub const UP: Self = Self::Upper;
     pub const CR: Self = Self(11);
-    /// `EX`
     pub const Extend: Self = Self(12);
+    pub const EX: Self = Self::Extend;
     pub const LF: Self = Self(13);
-    /// `SC`
     pub const SContinue: Self = Self(14);
+    pub const SC: Self = Self::SContinue;
 }
 
 #[cfg(feature = "datagen")]
@@ -3158,14 +3235,14 @@ impl SentenceBreak {
 }
 
 impl VerticalOrientation {
-    /// `R`
     pub const Rotated: Self = Self(0);
-    /// `Tr`
+    pub const R: Self = Self::Rotated;
     pub const TransformedRotated: Self = Self(1);
-    /// `Tu`
+    pub const Tr: Self = Self::TransformedRotated;
     pub const TransformedUpright: Self = Self(2);
-    /// `U`
+    pub const Tu: Self = Self::TransformedUpright;
     pub const Upright: Self = Self(3);
+    pub const U: Self = Self::Upright;
 }
 
 #[cfg(feature = "datagen")]
@@ -3212,45 +3289,45 @@ impl VerticalOrientation {
 }
 
 impl WordBreak {
-    /// `XX`
     pub const Other: Self = Self(0);
-    /// `LE`
+    pub const XX: Self = Self::Other;
     pub const ALetter: Self = Self(1);
-    /// `FO`
+    pub const LE: Self = Self::ALetter;
     pub const Format: Self = Self(2);
-    /// `KA`
+    pub const FO: Self = Self::Format;
     pub const Katakana: Self = Self(3);
-    /// `ML`
+    pub const KA: Self = Self::Katakana;
     pub const MidLetter: Self = Self(4);
-    /// `MN`
+    pub const ML: Self = Self::MidLetter;
     pub const MidNum: Self = Self(5);
-    /// `NU`
+    pub const MN: Self = Self::MidNum;
     pub const Numeric: Self = Self(6);
-    /// `EX`
+    pub const NU: Self = Self::Numeric;
     pub const ExtendNumLet: Self = Self(7);
+    pub const EX: Self = Self::ExtendNumLet;
     pub const CR: Self = Self(8);
     pub const Extend: Self = Self(9);
     pub const LF: Self = Self(10);
-    /// `MB`
     pub const MidNumLet: Self = Self(11);
-    /// `NL`
+    pub const MB: Self = Self::MidNumLet;
     pub const Newline: Self = Self(12);
-    /// `RI`
+    pub const NL: Self = Self::Newline;
     pub const RegionalIndicator: Self = Self(13);
-    /// `HL`
+    pub const RI: Self = Self::RegionalIndicator;
     pub const HebrewLetter: Self = Self(14);
-    /// `SQ`
+    pub const HL: Self = Self::HebrewLetter;
     pub const SingleQuote: Self = Self(15);
-    /// `DQ`
+    pub const SQ: Self = Self::SingleQuote;
     pub const DoubleQuote: Self = Self(16);
-    /// `EB`
+    pub const DQ: Self = Self::DoubleQuote;
     pub const EBase: Self = Self(17);
-    /// `EBG`
+    pub const EB: Self = Self::EBase;
     pub const EBaseGAZ: Self = Self(18);
-    /// `EM`
+    pub const EBG: Self = Self::EBaseGAZ;
     pub const EModifier: Self = Self(19);
-    /// `GAZ`
+    pub const EM: Self = Self::EModifier;
     pub const GlueAfterZwj: Self = Self(20);
+    pub const GAZ: Self = Self::GlueAfterZwj;
     pub const ZWJ: Self = Self(21);
     pub const WSegSpace: Self = Self(22);
 }

@@ -12,9 +12,9 @@ pub mod ffi {
     #[cfg(feature = "buffer_provider")]
     use crate::unstable::provider::ffi::DataProvider;
     use crate::unstable::{errors::ffi::DataError, fixed_decimal::ffi::Decimal};
-    use icu_decimal::options::DecimalFormatterOptions;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use icu_decimal::DecimalFormatterPreferences;
+    use icu_decimal::options::DecimalFormatterOptions;
 
     use writeable::Writeable;
 

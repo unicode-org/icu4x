@@ -16,9 +16,9 @@
 #[macro_export]
 macro_rules! __impl_normalizer_nfd_data_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl $provider {
             #[doc(hidden)]
             pub const SINGLETON_NORMALIZER_NFD_DATA_V1: &'static <icu::normalizer::provider::NormalizerNfdDataV1 as icu_provider::DynamicDataMarker>::DataStruct = &icu::normalizer::provider::DecompositionData {
@@ -29,7 +29,7 @@ macro_rules! __impl_normalizer_nfd_data_v1 {
                 passthrough_cap: 768u16,
             };
         }
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl icu_provider::DataProvider<icu::normalizer::provider::NormalizerNfdDataV1> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::normalizer::provider::NormalizerNfdDataV1>, icu_provider::DataError> {
                 if req.id.locale.is_unknown() {
@@ -42,7 +42,7 @@ macro_rules! __impl_normalizer_nfd_data_v1 {
     };
     ($ provider : ty , ITER) => {
         __impl_normalizer_nfd_data_v1!($provider);
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl icu_provider::IterableDataProvider<icu::normalizer::provider::NormalizerNfdDataV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok([Default::default()].into_iter().collect())
@@ -51,7 +51,7 @@ macro_rules! __impl_normalizer_nfd_data_v1 {
     };
     ($ provider : ty , DRY) => {
         __impl_normalizer_nfd_data_v1!($provider);
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl icu_provider::DryDataProvider<icu::normalizer::provider::NormalizerNfdDataV1> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 if req.id.locale.is_unknown() {
@@ -64,7 +64,7 @@ macro_rules! __impl_normalizer_nfd_data_v1 {
     };
     ($ provider : ty , DRY , ITER) => {
         __impl_normalizer_nfd_data_v1!($provider);
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl icu_provider::DryDataProvider<icu::normalizer::provider::NormalizerNfdDataV1> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 if req.id.locale.is_unknown() {
@@ -74,7 +74,7 @@ macro_rules! __impl_normalizer_nfd_data_v1 {
                 }
             }
         }
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl icu_provider::IterableDataProvider<icu::normalizer::provider::NormalizerNfdDataV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok([Default::default()].into_iter().collect())

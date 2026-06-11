@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieValue};
-use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
+use serde::{Deserialize, Deserializer, Serialize, Serializer, de::Error};
 use zerofrom::ZeroFrom;
 use zerovec::ZeroVec;
 
@@ -52,13 +52,19 @@ where
                         return Err(D::Error::custom(reason));
                     }
                     super::CodePointTrieError::EmptyDataVector => {
-                        return Err(D::Error::custom("CodePointTrie must be constructed from data vector with at least one element"));
+                        return Err(D::Error::custom(
+                            "CodePointTrie must be constructed from data vector with at least one element",
+                        ));
                     }
                     super::CodePointTrieError::IndexTooShortForFastAccess => {
-                        return Err(D::Error::custom("CodePointTrie must be constructed from index vector long enough to accommodate fast-path access"));
+                        return Err(D::Error::custom(
+                            "CodePointTrie must be constructed from index vector long enough to accommodate fast-path access",
+                        ));
                     }
                     super::CodePointTrieError::DataTooShortForFastAccess => {
-                        return Err(D::Error::custom("CodePointTrie must be constructed from data vector long enough to accommodate fast-path access"));
+                        return Err(D::Error::custom(
+                            "CodePointTrie must be constructed from data vector long enough to accommodate fast-path access",
+                        ));
                     }
                 }
             }

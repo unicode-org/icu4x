@@ -5,7 +5,7 @@
 use super::{GenericPatternItem, PatternItem};
 use crate::provider::fields;
 use core::convert::TryFrom;
-use zerovec::ule::{AsULE, UleError, ULE};
+use zerovec::ule::{AsULE, ULE, UleError};
 
 /// `PatternItemULE` is a type optimized for efficient storing and
 /// deserialization of `FixedCalendarDateTimeFormatter` `PatternItem` elements using
@@ -97,7 +97,7 @@ impl PatternItemULE {
 //  6. PatternItemULE byte equality is semantic equality.
 unsafe impl ULE for PatternItemULE {
     fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
-        if bytes.len() % 3 != 0 {
+        if !bytes.len().is_multiple_of(3) {
             return Err(UleError::length::<Self>(bytes.len()));
         }
 
@@ -256,7 +256,7 @@ impl GenericPatternItemULE {
 //  6. GenericPatternItemULE byte equality is semantic equality.
 unsafe impl ULE for GenericPatternItemULE {
     fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
-        if bytes.len() % 3 != 0 {
+        if !bytes.len().is_multiple_of(3) {
             return Err(UleError::length::<Self>(bytes.len()));
         }
         #[expect(clippy::indexing_slicing)] // chunks

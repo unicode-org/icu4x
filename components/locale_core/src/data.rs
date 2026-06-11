@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::extensions::unicode as unicode_ext;
-use crate::preferences::{extensions::unicode::keywords::RegionalSubdivision, LocalePreferences};
-use crate::subtags::{Language, Region, Script, Subtag, Variant};
 #[cfg(feature = "alloc")]
 use crate::ParseError;
+use crate::extensions::unicode as unicode_ext;
+use crate::preferences::{LocalePreferences, extensions::unicode::keywords::RegionalSubdivision};
+use crate::subtags::{Language, Region, Script, Subtag, Variant};
 use crate::{LanguageIdentifier, Locale};
 use core::cmp::Ordering;
 use core::default::Default;

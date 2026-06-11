@@ -1,0 +1,25 @@
+{
+  "variant_pattern_indices": [
+    2,
+    2,
+    2,
+    2,
+    2,
+    2
+  ],
+  "elements": [
+    {
+      "header": 2,
+      "patterns": [
+        "H–H"
+      ]
+    },
+    {
+      "header": 3,
+      "patterns": [
+        "H:mm–H:mm",
+        "H:mm–H:mm"
+      ]
+    }
+  ]
+}

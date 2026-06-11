@@ -1,0 +1,190 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+use itertools::Itertools;
+
+#[track_caller]
+#[allow(unused)]
+fn check_word(s: &str, expected: &[&str], segmenter: WordSegmenterBorrowed<'_>) {
+    let segments = segmenter
+        .segment_str(s)
+        .tuple_windows()
+        .map(|(a, b)| &s[a..b])
+        .collect::<Vec<_>>();
+    assert_eq!(segments, expected, "{s}");
+
+    let segments = segmenter
+        .segment_utf8(s.as_bytes())
+        .tuple_windows()
+        .map(|(a, b)| &s[a..b])
+        .collect::<Vec<_>>();
+    assert_eq!(segments, expected, "{s}");
+
+    if s.chars().all(|c| (c as u32) < 256) {
+        let latin1 = s.chars().map(|c| c as u8).collect::<Vec<_>>();
+        let expected = expected
+            .iter()
+            .copied()
+            .map(|s| s.chars().map(|c| c as u8).collect::<Vec<_>>())
+            .collect::<Vec<_>>();
+        let segments = segmenter
+            .segment_latin1(&latin1)
+            .tuple_windows()
+            .map(|(a, b)| &latin1[a..b])
+            .collect::<Vec<_>>();
+        assert_eq!(segments, expected, "{s}");
+    }
+
+    let utf16: Vec<u16> = s.encode_utf16().collect();
+    let expected = expected
+        .iter()
+        .copied()
+        .map(|s| s.encode_utf16().collect::<Vec<_>>())
+        .collect::<Vec<_>>();
+    let iter = segmenter
+        .segment_utf16(&utf16)
+        .tuple_windows()
+        .map(|(a, b)| &utf16[a..b])
+        .collect::<Vec<_>>();
+    assert_eq!(iter, expected, "{s}");
+}
+
+#[track_caller]
+#[allow(unused)]
+fn check_line(s: &str, expected: &[&str], segmenter: LineSegmenterBorrowed<'_>) {
+    let segments = segmenter
+        .segment_str(s)
+        .tuple_windows()
+        .map(|(a, b)| &s[a..b])
+        .collect::<Vec<_>>();
+    assert_eq!(segments, expected, "{s}");
+
+    let segments = segmenter
+        .segment_utf8(s.as_bytes())
+        .tuple_windows()
+        .map(|(a, b)| &s[a..b])
+        .collect::<Vec<_>>();
+    assert_eq!(segments, expected, "{s}");
+
+    if s.chars().all(|c| (c as u32) < 256) {
+        let latin1 = s.chars().map(|c| c as u8).collect::<Vec<_>>();
+        let expected = expected
+            .iter()
+            .copied()
+            .map(|s| s.chars().map(|c| c as u8).collect::<Vec<_>>())
+            .collect::<Vec<_>>();
+        let segments = segmenter
+            .segment_latin1(&latin1)
+            .tuple_windows()
+            .map(|(a, b)| &latin1[a..b])
+            .collect::<Vec<_>>();
+        assert_eq!(segments, expected, "{s}");
+    }
+
+    let utf16: Vec<u16> = s.encode_utf16().collect();
+    let expected = expected
+        .iter()
+        .copied()
+        .map(|s| s.encode_utf16().collect::<Vec<_>>())
+        .collect::<Vec<_>>();
+    let iter = segmenter
+        .segment_utf16(&utf16)
+        .tuple_windows()
+        .map(|(a, b)| &utf16[a..b])
+        .collect::<Vec<_>>();
+    assert_eq!(iter, expected, "{s}");
+}
+
+
+#[track_caller]
+#[allow(unused)]
+fn check_sentence(s: &str, expected: &[&str], segmenter: SentenceSegmenterBorrowed<'_>) {
+    let segments = segmenter
+        .segment_str(s)
+        .tuple_windows()
+        .map(|(a, b)| &s[a..b])
+        .collect::<Vec<_>>();
+    assert_eq!(segments, expected, "{s}");
+
+    let segments = segmenter
+        .segment_utf8(s.as_bytes())
+        .tuple_windows()
+        .map(|(a, b)| &s[a..b])
+        .collect::<Vec<_>>();
+    assert_eq!(segments, expected, "{s}");
+
+    if s.chars().all(|c| (c as u32) < 256) {
+        let latin1 = s.chars().map(|c| c as u8).collect::<Vec<_>>();
+        let expected = expected
+            .iter()
+            .copied()
+            .map(|s| s.chars().map(|c| c as u8).collect::<Vec<_>>())
+            .collect::<Vec<_>>();
+        let segments = segmenter
+            .segment_latin1(&latin1)
+            .tuple_windows()
+            .map(|(a, b)| &latin1[a..b])
+            .collect::<Vec<_>>();
+        assert_eq!(segments, expected, "{s}");
+    }
+
+    let utf16: Vec<u16> = s.encode_utf16().collect();
+    let expected = expected
+        .iter()
+        .copied()
+        .map(|s| s.encode_utf16().collect::<Vec<_>>())
+        .collect::<Vec<_>>();
+    let iter = segmenter
+        .segment_utf16(&utf16)
+        .tuple_windows()
+        .map(|(a, b)| &utf16[a..b])
+        .collect::<Vec<_>>();
+    assert_eq!(iter, expected, "{s}");
+}
+
+#[track_caller]
+#[allow(unused)]
+fn check_grapheme(s: &str, expected: &[&str], segmenter: GraphemeClusterSegmenterBorrowed<'_>) {
+    let segments = segmenter
+        .segment_str(s)
+        .tuple_windows()
+        .map(|(a, b)| &s[a..b])
+        .collect::<Vec<_>>();
+    assert_eq!(segments, expected, "{s}");
+
+    let segments = segmenter
+        .segment_utf8(s.as_bytes())
+        .tuple_windows()
+        .map(|(a, b)| &s[a..b])
+        .collect::<Vec<_>>();
+    assert_eq!(segments, expected, "{s}");
+
+    if s.chars().all(|c| (c as u32) < 256) {
+        let latin1 = s.chars().map(|c| c as u8).collect::<Vec<_>>();
+        let expected = expected
+            .iter()
+            .copied()
+            .map(|s| s.chars().map(|c| c as u8).collect::<Vec<_>>())
+            .collect::<Vec<_>>();
+        let segments = segmenter
+            .segment_latin1(&latin1)
+            .tuple_windows()
+            .map(|(a, b)| &latin1[a..b])
+            .collect::<Vec<_>>();
+        assert_eq!(segments, expected, "{s}");
+    }
+
+    let utf16: Vec<u16> = s.encode_utf16().collect();
+    let expected = expected
+        .iter()
+        .copied()
+        .map(|s| s.encode_utf16().collect::<Vec<_>>())
+        .collect::<Vec<_>>();
+    let iter = segmenter
+        .segment_utf16(&utf16)
+        .tuple_windows()
+        .map(|(a, b)| &utf16[a..b])
+        .collect::<Vec<_>>();
+    assert_eq!(iter, expected, "{s}");
+}

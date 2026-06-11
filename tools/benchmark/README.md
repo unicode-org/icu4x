@@ -22,7 +22,7 @@ cargo run --package icu_benchmark_memory -- --os macos-latest icu_datetime/work_
 ```
 
 dhat-rs outputs a summary to stderr, plus a `dhat-heap.json` file that can be viewed in the
-[dhat viewer](https://nnethercote.github.io/dh_view/dh_view.html). The summary is collected by this
+[dhat viewer](https://nnethercote.github.io/dh_view/dh_view.html). The JSON data is collected by this
 tool into an `.ndjson` located in the `benchmarks/memory` folder. This is the file that is read by
 the benchmarking action in CI.
 

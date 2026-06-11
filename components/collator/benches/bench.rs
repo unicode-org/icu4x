@@ -4,7 +4,7 @@
 
 use criterion::measurement::WallTime;
 use criterion::{
-    black_box, criterion_group, criterion_main, BatchSize, BenchmarkGroup, BenchmarkId, Criterion,
+    BatchSize, BenchmarkGroup, BenchmarkId, Criterion, black_box, criterion_group, criterion_main,
 };
 
 use icu::collator::{options::*, *};
@@ -54,6 +54,43 @@ fn collator_bench(
                 |mut lines| lines.sort_unstable_by(|left, right| collator.compare(left, right)),
                 BatchSize::SmallInput,
             )
+        },
+    );
+}
+
+#[inline(never)]
+fn sort_key_bench(
+    group: &mut BenchmarkGroup<'_, WallTime>,
+    file_name: &&str,
+    elements: &[&str],
+    index: usize,
+    strength: Strength,
+    case_level: bool,
+    locale_under_bench: &Locale,
+) {
+    let mut options = CollatorOptions::default();
+    options.strength = Some(strength);
+    if case_level {
+        options.case_level = Some(CaseLevel::On);
+    }
+    let collator =
+        Collator::try_new(CollatorPreferences::from(locale_under_bench), options).unwrap();
+
+    let suffix = if case_level { "_caseLevel" } else { "" };
+
+    group.bench_function(
+        BenchmarkId::new(
+            format!("{file_name}/2_icu4x_sort_key"),
+            format!("{index}_{strength:?}{suffix}"),
+        ),
+        |bencher| {
+            bencher.iter(|| {
+                for &s in black_box(elements) {
+                    let mut k = Vec::new();
+                    let Ok(()) = collator.write_sort_key_to(black_box(s), &mut k);
+                    black_box(&k);
+                }
+            })
         },
     );
 }
@@ -238,6 +275,30 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
                     &locale_under_bench,
                 );
             }
+
+            for (index, strength) in [Strength::Primary, Strength::Tertiary]
+                .into_iter()
+                .enumerate()
+            {
+                sort_key_bench(
+                    &mut group,
+                    file_name,
+                    elements,
+                    index,
+                    strength,
+                    false,
+                    &locale_under_bench,
+                );
+            }
+            sort_key_bench(
+                &mut group,
+                file_name,
+                elements,
+                2,
+                Strength::Tertiary,
+                true,
+                &locale_under_bench,
+            );
         }
         // TODO: Bench content_photos with numeric mode on.
         group.finish();

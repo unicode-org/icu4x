@@ -371,9 +371,9 @@ pub enum DateDurationUnit {
 #[cfg(test)]
 mod tests {
     use crate::{
+        Date, Gregorian,
         error::DateFromFieldsError,
         types::{DateFields, Month},
-        Date, Gregorian,
     };
     use itertools::Itertools;
     use std::collections::{BTreeMap, BTreeSet};

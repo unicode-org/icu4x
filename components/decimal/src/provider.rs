@@ -115,11 +115,11 @@ use icu_pattern::{Pattern, PatternBackend, SinglePlaceholder};
 #[cfg(feature = "unstable")]
 use icu_plurals::provider::PluralElementsPackedULE;
 use icu_provider::prelude::*;
-#[cfg(feature = "unstable")]
-use zerovec::ule::vartuple::VarTupleULE;
 use zerovec::VarZeroCow;
 #[cfg(feature = "unstable")]
 use zerovec::VarZeroVec;
+#[cfg(feature = "unstable")]
+use zerovec::ule::vartuple::VarTupleULE;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -433,8 +433,8 @@ impl<P: PatternBackend> CompactPatterns<'static, P> {
         >,
         zero_magnitude: Option<&icu_plurals::PluralElements<&Pattern<P>>>,
     ) -> Result<Self, DataError> {
-        use icu_plurals::provider::FourBitMetadata;
         use icu_plurals::PluralElements;
+        use icu_plurals::provider::FourBitMetadata;
         use zerovec::ule::encode_varule_to_box;
         use zerovec::ule::vartuple::VarTuple;
         use zerovec::vecs::VarZeroVecOwned;

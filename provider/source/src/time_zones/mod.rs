@@ -2,10 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cldr_serde;
-use crate::cldr_serde::time_zones::meta_zones::UsesMetazone;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use crate::cldr_serde;
+use crate::cldr_serde::time_zones::meta_zones::UsesMetazone;
+use crate::source::Cache;
 use core::cmp::Ordering;
 use core::hash::Hash;
 use core::hash::Hasher;
@@ -21,7 +22,6 @@ use litemap::LiteMap;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::collections::HashSet;
-use std::sync::OnceLock;
 use twox_hash::XxHash64;
 
 pub(crate) type Timestamp = icu::time::ZonedDateTime<icu::calendar::Iso, UtcOffset>;
@@ -29,8 +29,6 @@ pub(crate) type Timestamp = icu::time::ZonedDateTime<icu::calendar::Iso, UtcOffs
 mod convert;
 mod names;
 mod windows;
-
-type Cache<T> = OnceLock<Result<T, DataError>>;
 
 #[derive(Debug, Default)]
 pub(crate) struct Caches {

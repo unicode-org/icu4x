@@ -8,7 +8,7 @@ use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::{CyclicYear, EraYear, IsoWeekOfYear};
 use crate::week::{RelativeUnit, WeekCalculator, WeekOf};
-use crate::{types, Calendar, Iso};
+use crate::{Calendar, Iso, types};
 #[cfg(feature = "alloc")]
 use alloc::rc::Rc;
 #[cfg(feature = "alloc")]
@@ -685,9 +685,9 @@ impl<A> Copy for Date<A> where A: AsCalendar + Copy {}
 mod tests {
     use super::*;
     use crate::{
+        Gregorian,
         cal::{Buddhist, Hebrew},
         types::{Month, Weekday},
-        Gregorian,
     };
 
     #[test]

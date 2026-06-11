@@ -122,8 +122,8 @@ fn deserialize_date<'de, D: serde::de::Deserializer<'de>>(
     deserializer: D,
 ) -> Result<Option<Timestamp>, D::Error> {
     use icu::calendar::Iso;
-    use icu::time::zone::UtcOffset;
     use icu::time::DateTime;
+    use icu::time::zone::UtcOffset;
     use serde::de::Error;
 
     let Some(timestamp) = Option::<String>::deserialize(deserializer)? else {

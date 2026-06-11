@@ -6,23 +6,23 @@ mod fixtures;
 mod patterns;
 
 use fixtures::TestOutputItem;
-use icu_calendar::cal::*;
 use icu_calendar::AnyCalendarKind;
+use icu_calendar::cal::*;
 use icu_datetime::fieldsets::enums::*;
 use icu_datetime::scaffold::CldrCalendar;
 use icu_datetime::{
-    pattern::DateTimePattern, pattern::FixedCalendarDateTimeNames, DateTimeFormatter,
-    FixedCalendarDateTimeFormatter,
+    DateTimeFormatter, FixedCalendarDateTimeFormatter, pattern::DateTimePattern,
+    pattern::FixedCalendarDateTimeNames,
 };
 use icu_datetime::{
-    preferences::{CalendarAlgorithm, HijriCalendarAlgorithm},
     DateTimeFormatterPreferences,
+    preferences::{CalendarAlgorithm, HijriCalendarAlgorithm},
 };
-use icu_locale_core::{locale, Locale};
+use icu_locale_core::{Locale, locale};
 use icu_provider::prelude::*;
 use icu_time::{
-    zone::{IanaParser, UtcOffset},
     DateTime, TimeZoneInfo, ZonedDateTime,
+    zone::{IanaParser, UtcOffset},
 };
 use patterns::{
     dayperiods::{DayPeriodExpectation, DayPeriodTests},

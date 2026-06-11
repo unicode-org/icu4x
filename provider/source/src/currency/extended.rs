@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cldr_serde;
 use crate::SourceDataProvider;
+use crate::cldr_serde;
 use icu::experimental::dimension::provider::currency::extended::*;
 use icu::plurals::PluralElements;
 use icu_provider::prelude::*;
@@ -24,7 +24,9 @@ impl DataProvider<CurrencyExtendedDataV1> for SourceDataProvider {
             .numbers
             .currencies
             .get(req.id.marker_attributes.as_str())
-            .ok_or(DataError::custom("No currency associated with the aux key"))?;
+            .ok_or(DataError::custom(
+                "No currency associated with the auxiliary key",
+            ))?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -61,13 +63,12 @@ impl crate::IterableDataProviderCached<CurrencyExtendedDataV1> for SourceDataPro
 
             let currencies = &currencies_resource.main.value.numbers.currencies;
             for (currency, displaynames) in currencies {
-                // By TR 35 (https://unicode.org/reports/tr35/tr35-numbers.html#Currencies)
-                //      If the displayname is not found for the associated `Count`, fall back to the `Count::Other` displayname.
-                //      And the `other` displayname must be present.
-                //      Therefore, we filter out any currencies that do not have an `other` displayname.
-                //      NOTE:
-                //          In case of `other` displayname does not exist, File a Jira ticket to CLDR:
-                //          https://unicode-org.atlassian.net/browse/CLDR
+                // According to TR 35 (https://unicode.org/reports/tr35/tr35-numbers.html#Currencies),
+                // if the display name is not found for an associated `Count`, it falls back to `Count::Other`.
+                // Therefore, we filter out any currencies that lack an `other` display name.
+                //
+                // Note: If an `other` display name does not exist upstream, file an issue with CLDR at:
+                // https://unicode-org.atlassian.net/browse/CLDR
                 if displaynames.other.is_none() {
                     continue;
                 }

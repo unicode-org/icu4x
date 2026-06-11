@@ -6,9 +6,9 @@
 
 #[doc(no_inline)]
 pub use icu_locale::LocaleFallbacker;
-use icu_provider::prelude::*;
 use icu_provider::DryDataProvider;
 use icu_provider::DynamicDryDataProvider;
+use icu_provider::prelude::*;
 
 /// A data provider wrapper that performs locale fallback. This enables arbitrary locales to be
 /// handled at runtime.

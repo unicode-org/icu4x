@@ -1,0 +1,51 @@
+{
+  "has_explicit_medium": true,
+  "has_explicit_short": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    4,
+    4,
+    5
+  ],
+  "elements": [
+    {
+      "header": 6,
+      "patterns": [
+        "y MMMM–MMMM",
+        "y MMMM – y MMMM"
+      ]
+    },
+    {
+      "header": 6,
+      "patterns": [
+        "y MMM–MMM",
+        "y MMM – y MMM"
+      ]
+    },
+    {
+      "header": 6,
+      "patterns": [
+        "y-MM – y-MM",
+        "y-MM – y-MM"
+      ]
+    },
+    {
+      "header": 14,
+      "patterns": [
+        "G y MMM–MMM",
+        "G y MMM – y MMM",
+        "G y MMM – G y MMM"
+      ]
+    },
+    {
+      "header": 14,
+      "patterns": [
+        "G y-MM – y-MM",
+        "G y-MM – y-MM",
+        "G y-MM – G y-MM"
+      ]
+    }
+  ]
+}

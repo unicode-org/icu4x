@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cldr_serde;
 use crate::SourceDataProvider;
+use crate::cldr_serde;
 use icu::experimental::dimension::provider::currency::displayname::*;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
@@ -27,23 +27,17 @@ impl DataProvider<CurrencyDisplaynameV1> for SourceDataProvider {
             .ok_or_else(|| {
                 DataErrorKind::IdentifierNotFound
                     .into_error()
-                    .with_debug_context("No data for currency")
+                    .with_debug_context("No currency associated with the auxiliary key")
             })?;
 
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(CurrencyDisplayname {
-                display_name: Cow::Owned(
-                    currency
-                        .display_name
-                        .as_deref()
-                        .ok_or_else(|| {
-                            DataErrorKind::IdentifierNotFound
-                                .into_error()
-                                .with_debug_context("No display name found for the currency")
-                        })?
-                        .to_string(),
-                ),
+                display_name: Cow::Owned(currency.display_name.clone().ok_or_else(|| {
+                    DataErrorKind::IdentifierNotFound
+                        .into_error()
+                        .with_debug_context("No display name found for the currency")
+                })?),
             }),
         })
     }
@@ -61,13 +55,13 @@ impl crate::IterableDataProviderCached<CurrencyDisplaynameV1> for SourceDataProv
                 .read_and_parse(&locale, "currencies.json")?;
 
             let currencies = &currencies_resource.main.value.numbers.currencies;
-            for (currency, patterns) in currencies {
-                // If the currency doesn't have a display name, we can not create `CurrencyDisplayname` for it.
+            for (iso, currency_data) in currencies {
+                // If the currency doesn't have a display name, we cannot create `CurrencyDisplayname` for it.
                 // Therefore, we skip it.
-                if patterns.display_name.is_none() {
+                if currency_data.display_name.is_none() {
                     continue;
                 }
-                if let Ok(attributes) = DataMarkerAttributes::try_from_string(currency.clone()) {
+                if let Ok(attributes) = DataMarkerAttributes::try_from_string(iso.clone()) {
                     result.insert(DataIdentifierCow::from_owned(attributes, locale));
                 }
             }

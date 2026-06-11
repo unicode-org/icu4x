@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{DataLocaleFamilyAnnotations, DeduplicationStrategy, ExportDriver, ExportMetadata};
-use icu_locale::fallback::LocaleFallbackIterator;
 use icu_locale::LocaleFallbacker;
+use icu_locale::fallback::LocaleFallbackIterator;
 use icu_provider::export::*;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
@@ -88,10 +88,11 @@ impl ExportDriver {
                 };
                 match provider.load_data(marker, req).allow_identifier_not_found() {
                     Ok(Some(data_response)) => {
-                        if let Some(iter) = locale_iter.as_ref() {
-                            if iter.get().is_unknown() && !id.locale.is_unknown() {
-                                log::debug!("Falling back to und: {marker:?}/{id}");
-                            }
+                        if let Some(iter) = locale_iter.as_ref()
+                            && iter.get().is_unknown()
+                            && !id.locale.is_unknown()
+                        {
+                            log::debug!("Falling back to und: {marker:?}/{id}");
                         }
                         return Some(Ok(data_response));
                     }
@@ -201,7 +202,7 @@ impl ExportDriver {
                                 (a, b) => Ok(a.or(b)),
                             }
                         })?;
-            } else if responses.iter().any(|r| r.1 .0.metadata.checksum.is_some()) {
+            } else if responses.iter().any(|r| r.1.0.metadata.checksum.is_some()) {
                 log::warn!("{marker:?} returns a checksum, but it's not configured to");
             }
 
@@ -289,13 +290,13 @@ fn select_locales_for_marker<'a>(
         supported_map.entry(id.locale).or_default().insert(id);
     }
 
-    if !marker.attributes_domain.is_empty() {
-        if let Some(filter) = attributes_filters.get(marker.attributes_domain) {
-            supported_map.retain(|_, ids| {
-                ids.retain(|id| filter(&id.marker_attributes));
-                !ids.is_empty()
-            });
-        }
+    if !marker.attributes_domain.is_empty()
+        && let Some(filter) = attributes_filters.get(marker.attributes_domain)
+    {
+        supported_map.retain(|_, ids| {
+            ids.retain(|id| filter(&id.marker_attributes));
+            !ids.is_empty()
+        });
     }
 
     if include_full && requested_families.is_empty() {

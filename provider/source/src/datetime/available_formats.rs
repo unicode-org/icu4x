@@ -7,19 +7,30 @@ use icu::datetime::provider::pattern::runtime::Pattern;
 use icu::datetime::provider::skeleton::reference::Skeleton;
 use icu::plurals::{PluralCategory, PluralElements};
 
-use std::collections::btree_map::Entry;
+use crate::AltVariantKind;
+use crate::SourceDataProvider;
 use std::collections::BTreeMap;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub(crate) enum AsciiPreferences {
+pub(crate) enum DatetimeAsciiPreference {
     PreferAscii,
     Default,
+}
+
+impl SourceDataProvider {
+    pub(crate) fn datetime_ascii_preference(&self) -> DatetimeAsciiPreference {
+        if self.alt_variants.contains(&AltVariantKind::DatetimeAscii) {
+            DatetimeAsciiPreference::PreferAscii
+        } else {
+            DatetimeAsciiPreference::Default
+        }
+    }
 }
 
 impl cldr_serde::ca::AvailableFormats {
     pub fn parse_skeletons(
         &self,
-        ascii_preferences: AsciiPreferences,
+        datetime_ascii_preference: DatetimeAsciiPreference,
     ) -> BTreeMap<Skeleton, PluralElements<Pattern<'static>>> {
         let mut patterns: BTreeMap<String, BTreeMap<PluralCategory, String>> = BTreeMap::new();
 
@@ -30,7 +41,7 @@ impl cldr_serde::ca::AvailableFormats {
                 Some(stripped) => (stripped, true),
                 None => (skeleton_str.as_str(), false),
             };
-            if ascii_preferences == AsciiPreferences::Default && is_alt_ascii {
+            if datetime_ascii_preference == DatetimeAsciiPreference::Default && is_alt_ascii {
                 continue;
             }
 
@@ -39,24 +50,10 @@ impl cldr_serde::ca::AvailableFormats {
                 None => (skeleton_str, PluralCategory::Other),
             };
 
-            match patterns
+            patterns
                 .entry(skeleton.to_string())
                 .or_default()
-                .entry(plural_category)
-            {
-                Entry::Vacant(e) => {
-                    e.insert(pattern_str.to_string());
-                }
-                Entry::Occupied(mut e) if is_alt_ascii => {
-                    // When `use_alt_ascii` is true, we want `alt-ascii` variants to take precedence
-                    // over standard patterns. Since `self.0.iter()` iterates over a HashMap in a
-                    // non-deterministic order, an ASCII variant might be processed before or after
-                    // a standard pattern. We only overwrite existing entries if the current pattern
-                    // being processed is the `alt-ascii` variant.
-                    e.insert(pattern_str.to_string());
-                }
-                Entry::Occupied(_) => {}
-            }
+                .insert(plural_category, pattern_str.to_string());
         }
 
         // TODO(#308): Support numbering system variations. We currently throw them away.
@@ -77,7 +74,7 @@ impl cldr_serde::ca::AvailableFormats {
 mod test {
     use super::*;
     use icu::datetime::provider::skeleton::{
-        get_best_available_format_pattern, BestSkeleton, SkeletonError,
+        BestSkeleton, SkeletonError, get_best_available_format_pattern,
     };
 
     use core::convert::TryFrom;
@@ -92,8 +89,8 @@ mod test {
     use icu::locale::preferences::extensions::unicode::keywords::HourCycle;
     use std::collections::BTreeMap;
 
-    use crate::datetime::DatagenCalendar;
     use crate::SourceDataProvider;
+    use crate::datetime::DatagenCalendar;
 
     fn get_data_payload() -> BTreeMap<Skeleton, PluralElements<Pattern<'static>>> {
         let locale = locale!("en").into();
@@ -104,7 +101,7 @@ mod test {
             .unwrap();
         data.datetime_formats
             .available_formats
-            .parse_skeletons(AsciiPreferences::Default)
+            .parse_skeletons(DatetimeAsciiPreference::Default)
     }
 
     /// This is an initial smoke test to verify the skeleton machinery is working. For more in-depth
@@ -440,11 +437,11 @@ mod test {
         let skeletons_no_alt = data
             .datetime_formats
             .available_formats
-            .parse_skeletons(AsciiPreferences::Default);
+            .parse_skeletons(DatetimeAsciiPreference::Default);
         let skeletons_alt = data
             .datetime_formats
             .available_formats
-            .parse_skeletons(AsciiPreferences::PreferAscii);
+            .parse_skeletons(DatetimeAsciiPreference::PreferAscii);
 
         let h_skeleton = Skeleton::try_from("h").unwrap();
 
@@ -463,7 +460,13 @@ mod test {
             .unwrap()
             .to_string();
 
-        assert_eq!(pattern_no_alt.as_str(), "h a");
-        assert_eq!(pattern_alt.as_str(), "h a");
+        assert!(
+            pattern_alt.is_ascii(),
+            "Alt-ASCII pattern should be all ASCII"
+        );
+        assert_ne!(
+            pattern_alt, pattern_no_alt,
+            "Alt-ASCII had an impact on the result"
+        );
     }
 }

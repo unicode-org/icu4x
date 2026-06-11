@@ -5,15 +5,15 @@
 use std::collections::HashSet;
 
 use icu::experimental::measure::provider::UnitIdsV1;
-use icu_provider::prelude::*;
 use icu_provider::DataError;
 use icu_provider::DataMarkerAttributes;
 use icu_provider::DataProvider;
 use icu_provider::DataRequest;
 use icu_provider::DataResponse;
+use icu_provider::prelude::*;
 
-use crate::cldr_serde;
 use crate::SourceDataProvider;
+use crate::cldr_serde;
 
 impl DataProvider<UnitIdsV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<UnitIdsV1>, DataError> {

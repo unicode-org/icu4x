@@ -11,11 +11,11 @@ use icu_provider::{marker::DataMarkerIdHash, prelude::*};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::sync::Mutex;
 use zerotrie::ZeroTrieSimpleAscii;
+use zerovec::VarZeroVec;
+use zerovec::ZeroVec;
 use zerovec::maps::MutableZeroVecLike;
 use zerovec::vecs::Index32;
 use zerovec::vecs::VarZeroVecOwned;
-use zerovec::VarZeroVec;
-use zerovec::ZeroVec;
 
 use postcard::ser_flavors::{AllocVec, Flavor};
 

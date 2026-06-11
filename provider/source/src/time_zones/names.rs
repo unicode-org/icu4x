@@ -4,8 +4,8 @@
 
 use crate::SourceDataProvider;
 use core::hash::Hash;
-use icu::time::provider::iana::*;
 use icu::time::TimeZone;
+use icu::time::provider::iana::*;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::HashSet;

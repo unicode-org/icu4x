@@ -2,37 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locale_core::{langid, LanguageIdentifier};
-use icu_segmenter::neo::LineSegmenter;
+use icu_locale_core::{LanguageIdentifier, langid};
+use icu_segmenter::neo::*;
 use icu_segmenter::options::LineBreakOptions;
 use icu_segmenter::options::LineBreakStrictness;
 use icu_segmenter::options::LineBreakWordOption;
-use itertools::Itertools;
 
-#[track_caller]
-fn check_with_options(s: &str, expected: &[&str], options: LineBreakOptions) {
-    let segmenter = LineSegmenter::new_dictionary(options);
-
-    let segments = segmenter
-        .segment_str(s)
-        .tuple_windows()
-        .map(|(a, b)| &s[a..b])
-        .collect::<Vec<_>>();
-    assert_eq!(segments, expected, "{s}");
-
-    let utf16: Vec<u16> = s.encode_utf16().collect();
-    let expected = expected
-        .iter()
-        .copied()
-        .map(|s| s.encode_utf16().collect::<Vec<_>>())
-        .collect::<Vec<_>>();
-    let iter = segmenter
-        .segment_utf16(&utf16)
-        .tuple_windows()
-        .map(|(a, b)| &utf16[a..b])
-        .collect::<Vec<_>>();
-    assert_eq!(iter, expected, "{s}");
-}
+include!("helpers.rs.raw");
 
 static JA: LanguageIdentifier = langid!("ja");
 
@@ -42,7 +18,7 @@ fn strict(s: &str, ja_zh: bool, expected: &[&str]) {
     options.strictness = Some(LineBreakStrictness::Strict);
     options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
-    check_with_options(s, expected, options);
+    check_line(s, expected, LineSegmenter::new_dictionary(options));
 }
 
 #[track_caller]
@@ -51,7 +27,7 @@ fn normal(s: &str, ja_zh: bool, expected: &[&str]) {
     options.strictness = Some(LineBreakStrictness::Normal);
     options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
-    check_with_options(s, expected, options);
+    check_line(s, expected, LineSegmenter::new_dictionary(options));
 }
 
 #[track_caller]
@@ -60,7 +36,16 @@ fn loose(s: &str, ja_zh: bool, expected: &[&str]) {
     options.strictness = Some(LineBreakStrictness::Loose);
     options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
-    check_with_options(s, expected, options);
+    check_line(s, expected, LineSegmenter::new_dictionary(options));
+}
+
+#[track_caller]
+fn anywhere(s: &str, ja_zh: bool, expected: &[&str]) {
+    let mut options = LineBreakOptions::default();
+    options.strictness = Some(LineBreakStrictness::Anywhere);
+    options.word_option = Some(LineBreakWordOption::Normal);
+    options.content_locale = ja_zh.then_some(&JA);
+    check_line(s, expected, LineSegmenter::new_dictionary(options));
 }
 
 #[test]
@@ -190,4 +175,95 @@ fn linebreak_loose() {
     // css/css-text/line-break/line-break-loose-hyphens-003.html
     loose("aa‐", false, &["aa‐"]);
     loose("aa–", false, &["aa–"]);
+}
+
+#[test]
+fn linebreak_anywhere() {
+    anywhere(
+        "الخيل والليل",
+        false,
+        &["ا", "ل", "خ", "ي", "ل", " ", "و", "ا", "ل", "ل", "ي", "ل"],
+    );
+
+    // css/css-text/line-break/line-break-anywhere-001.html
+    anywhere(
+        "aa-a.a)a,a) a aa\u{2060}aa･a",
+        true,
+        &[
+            "a", "a", "-", "a", ".", "a", ")", "a", ",", "a", ")", " ", "a", " ", "a", "a",
+            "\u{2060}", "a", "a", "･", "a",
+        ],
+    );
+
+    // css/css-text/line-break/line-break-anywhere-002.html
+    anywhere(
+        "no hyphenation",
+        false,
+        &[
+            "n", "o", " ", "h", "y", "p", "h", "e", "n", "a", "t", "i", "o", "n",
+        ],
+    );
+
+    // css/css-text/line-break/line-break-anywhere-003.html
+    anywhere("latin", false, &["l", "a", "t", "i", "n"]);
+
+    // css/css-text/line-break/line-break-anywhere-004.html
+    anywhere("XX XXX", false, &["X", "X", " ", "X", "X", "X"]);
+
+    // css/css-text/line-break/line-break-anywhere-005.html
+    anywhere("X X", false, &["X", " ", "X"]);
+
+    // css/css-text/line-break/line-break-anywhere-006.html
+    anywhere(
+        "XXXX XXXX",
+        false,
+        &["X", "X", "X", "X", " ", "X", "X", "X", "X"],
+    );
+
+    // css/css-text/line-break/line-break-anywhere-007.html
+    anywhere("X XX...", true, &["X", " ", "X", "X", ".", ".", "."]);
+
+    // css/css-text/line-break/line-break-anywhere-008.html
+    anywhere("X XX...", true, &["X", " ", "X", "X", ".", ".", "."]);
+
+    // css/css-text/line-break/line-break-anywhere-009.html
+    anywhere("X X", true, &["X", " ", "X"]);
+
+    // css/css-text/line-break/line-break-anywhere-010.html
+    anywhere(
+        "XXXX XXXX",
+        true,
+        &["X", "X", "X", "X", " ", "X", "X", "X", "X"],
+    );
+
+    // css/css-text/line-break/line-break-anywhere-011.html
+    anywhere("XX///", true, &["X", "X", "/", "/", "/"]);
+
+    // css/css-text/line-break/line-break-anywhere-012.html
+    anywhere(r#"X XX\\\"#, true, &["X", " ", "X", "X", "\\", "\\", "\\"]);
+
+    // css/css-text/line-break/line-break-anywhere-013.html
+    anywhere("XXX/X", true, &["X", "X", "X", "/", "X"]);
+
+    // css/css-text/line-break/line-break-anywhere-014.html
+    anywhere(r#"XXX\X"#, false, &["X", "X", "X", "\\", "X"]);
+
+    // css/css-text/line-break/line-break-anywhere-015.html
+    anywhere(r#"XXX\X"#, false, &["X", "X", "X", "\\", "X"]);
+
+    // css/css-text/line-break/line-break-anywhere-016.html
+    anywhere("XXX/X", false, &["X", "X", "X", "/", "X"]);
+
+    // css/css-text/line-break/line-break-anywhere-017.html
+    anywhere("XXXX X", false, &["X", "X", "X", "X", " ", "X"]);
+
+    // line-break-anywhere-overrides-uax-behavior-001.htm
+    anywhere("XX\u{2060}XX", false, &["X", "X", "\u{2060}", "X", "X"]);
+
+    // line-break-anywhere-overrides-uax-behavior-004.htm
+    anywhere(
+        "..\u{200B}...X",
+        false,
+        &[".", ".", "\u{200B}", ".", ".", ".", "X"],
+    );
 }

@@ -4,15 +4,15 @@
 
 extern crate alloc;
 
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{Criterion, black_box, criterion_group, criterion_main};
 use icu_locale::LocaleFallbacker;
-use icu_locale_core::{langid, LanguageIdentifier};
+use icu_locale_core::{LanguageIdentifier, langid};
 use icu_provider::dynutil::UpcastDataPayload;
 use icu_provider::export::*;
 use icu_provider::prelude::*;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
-use icu_provider_blob::export::BlobExporter;
 use icu_provider_blob::BlobDataProvider;
+use icu_provider_blob::export::BlobExporter;
 use std::collections::BTreeSet;
 
 icu_provider::data_marker!(MarkerV1, Empty);

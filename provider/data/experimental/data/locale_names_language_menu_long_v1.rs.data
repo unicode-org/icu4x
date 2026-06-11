@@ -18,9 +18,9 @@
 #[macro_export]
 macro_rules! __impl_locale_names_language_menu_long_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl $provider {
             const DATA_LOCALE_NAMES_LANGUAGE_MENU_LONG_V1: icu_provider::baked::zerotrie::DataForVarULEs<icu::experimental::displaynames::provider::LocaleNamesLanguageMenuLongV1> = {
                 const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1xabcdefghijklmnopqrstuvyz\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x02\x02\x02\x02\x03\x1EIj\x80\xCA\xF1\r>ao\xC0\xD5\xFF\x14\x1A>DY\xBB\xE5\xF9\xFF$\xC5fmrsz\x04\x08\x0C\x10\x1Eku\x81\x1Eku\x82\x1Eku\x83\x1Eku\x84\x1Eku\x85\xC7aeglnrs\x04\x08\x0C\x11\x15\x19\x1Eku\x86\x1Eku\x87\x1Eku\x88o\x1Eku\x89\x1Eku\x8A\x1Eku\x8B\x1Eku\x8C\xC5ahsvy\x04\t\r\x12\x1Eku\x8Dr\x1Eku\x8E\x1Eku\x8F\x1Eku\x90\0\x1Eku\x90\x01\xC3aes\x05\n\x1Eku\x90\x02\x1Eku\x90\x03b\x1Eku\x90\x04\xC6lnostu\x05\x16\x1B49\x1Eku\x90\x05\x1E\xC3cks\x03\x06kb\x80u\x90\x06dh\x90V\x1Eku\x90\x07\xC2\x1E-\x04ku\x90\x08\xC24U\x0719\x1Eku\x90\tS\x1Eku\x90\n\x1Eku\x90\x0B\x1Eku\x90\x0C\xC3air\x05\x12\x1Eku\x90\r\xC2\x1El\x04ku\x90\x0B\x1Eku\x90\x06\xC2\x1E-\x04ku\x90\x0ECA\x1Eku\x90\x0F\xC4adlu\x05\n\x0F\x1Eku\x90\x10\x1Eku\x90\x11\x1Eku\x90\x12\x1Eku\x90\x13\xC7aeirsuy\x05\n\x0F\x13\x19\x1E\x1Eku\x90\x14\x1Eku\x90\x15\x1Eku\x90\x16\x1Eku\x8Cb\x1Eku\x90\x04\x1Eku\x90\x17\x1Eku\x90\x18\xC5adgst\x05\n\x0F\x14\x1Eku\x90\x08\x1Eku\x90\x19\x1Eku\x90\x1A\x1Eku\x90\x1B\x1Eku\x90\x1C\xC2av\x05\x1Eku\x90\x1D\x1Eku\x90\x19\xC7akmnouy\x05\x16\x1B 9>\x1Eku\x90\x1E\xC2\x1E-\x04ku\x90\x1FArab\x1Eku\x90 \x1Eku\x90!\x1Eku\x90\"\xC2\x1Ek\x04ku\x90#\xC2\x1E-\x04ku\x90$Latn\x1Eku\x90%\x1Eku\x90&\x1Eku\x90'\xC3otv\x05\n\x1Eku\x90(\x1Eku\x90)\x1Eku\x90*\xC6klnrsy\x05\n\x0F\x14\x19\x1Eku\x90+\x1Eku\x90,\x1Eku\x90-\x1Eku\x90.\x1Eku\x90\x06\x1Eku\x90/\xC3elo\x05\n\x1Eku\x900\x1Eku\x901\x1Eku\x90\x02r\x1Eku\x902\xC5aclst\x05\x0B\x10\x15\x1Eku\x903m\x1Eku\x904\x1Eku\x905\x1Eku\x906\x1Eku\x907u\x1Eku\x908\xC3mou\x05\n\x1Eku\x909\x1Eku\x90:\x1Eku\x90;\xCBcdhikloqrvw\r\x12\x18\x1D\"',1BG\xC2\x1En\x04ku\x90<\x1Eku\x90=\x1Eku\x90>n\x1Eku\x90?\x1Eku\x90@\x1Eku\x90A\x1Eku\x90B\x1Eku\x90\x06\x1Eku\x90C\xC2\x1E-\x04ku\x90+Latn\x1Eku\x90D\x1Eku\x90E\x1Eku\x90F\xC6aehikr\x05\n\x0F\x14\x19\x1Eku\x90G\x1Eku\x90H\x1Eku\x90I\x1Eku\x90J\x1Eku\x90K\x1Eku\x90L\xC3krz\x05\n\x1Eku\x90M\x1Eku\x90\r\x1Eku\x8Di\x1Eku\x90N\xC2ou\x0F\xC2\x1E-\x04ku\x90OBJ\x1Eku\x90Pe\xC2\x1E-\x04ku\x90QHans\x1Eku\x90R\xC2hu\"\xC2\x1E-\x04ku\x90S\xC2HM\x10\xC2Ka\x05\x1Eku\x90Qnt\x1Eku\x90TO\x1Eku\x90Q\x1Eku\x90U" };
@@ -28,7 +28,7 @@ macro_rules! __impl_locale_names_language_menu_long_v1 {
                 unsafe { icu_provider::baked::zerotrie::DataForVarULEs::from_trie_and_values_unchecked(TRIE, VALUES) }
             };
         }
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl icu_provider::DataProvider<icu::experimental::displaynames::provider::LocaleNamesLanguageMenuLongV1> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::displaynames::provider::LocaleNamesLanguageMenuLongV1>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
@@ -54,7 +54,7 @@ macro_rules! __impl_locale_names_language_menu_long_v1 {
     };
     ($ provider : ty , ITER) => {
         __impl_locale_names_language_menu_long_v1!($provider);
-        #[clippy::msrv = "1.86"]
+        #[clippy::msrv = "1.88"]
         impl icu_provider::IterableDataProvider<icu::experimental::displaynames::provider::LocaleNamesLanguageMenuLongV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider::baked::DataStore::iter(&Self::DATA_LOCALE_NAMES_LANGUAGE_MENU_LONG_V1).collect())
