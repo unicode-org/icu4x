@@ -25,9 +25,8 @@
       ]
     },
     {
-      "header": 6,
+      "header": 4,
       "patterns": [
-        "M/y – M/y",
         "M/y – M/y"
       ]
     },
@@ -40,9 +39,8 @@
       ]
     },
     {
-      "header": 14,
+      "header": 12,
       "patterns": [
-        "G y-MM – y-MM",
         "G y-MM – y-MM",
         "G y-MM – G y-MM"
       ]

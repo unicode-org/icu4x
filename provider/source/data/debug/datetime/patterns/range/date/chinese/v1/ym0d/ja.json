@@ -18,10 +18,8 @@
       ]
     },
     {
-      "header": 7,
+      "header": 4,
       "patterns": [
-        "U/MM/dd～U/MM/dd",
-        "U/MM/dd～U/MM/dd",
         "U/MM/dd～U/MM/dd"
       ]
     }

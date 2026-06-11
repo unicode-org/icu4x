@@ -9,9 +9,8 @@
   ],
   "elements": [
     {
-      "header": 3,
+      "header": 2,
       "patterns": [
-        "E dd/MM – E dd/MM",
         "E dd/MM – E dd/MM"
       ]
     }

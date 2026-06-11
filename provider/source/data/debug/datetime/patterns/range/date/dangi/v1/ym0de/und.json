@@ -10,18 +10,15 @@
   ],
   "elements": [
     {
-      "header": 7,
+      "header": 6,
       "patterns": [
-        "U MMM d, E – MMM d, E",
         "U MMM d, E – MMM d, E",
         "U MMM d, E – U MMM d, E"
       ]
     },
     {
-      "header": 7,
+      "header": 4,
       "patterns": [
-        "y-MM-dd, E – y-MM-dd, E",
-        "y-MM-dd, E – y-MM-dd, E",
         "y-MM-dd, E – y-MM-dd, E"
       ]
     }

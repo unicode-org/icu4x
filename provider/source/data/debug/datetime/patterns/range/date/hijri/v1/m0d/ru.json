@@ -17,9 +17,8 @@
       ]
     },
     {
-      "header": 3,
+      "header": 2,
       "patterns": [
-        "dd.MM — dd.MM",
         "dd.MM — dd.MM"
       ]
     }

@@ -18,10 +18,8 @@
       ]
     },
     {
-      "header": 7,
+      "header": 4,
       "patterns": [
-        "M/d/y – M/d/y",
-        "M/d/y – M/d/y",
         "M/d/y – M/d/y"
       ]
     },

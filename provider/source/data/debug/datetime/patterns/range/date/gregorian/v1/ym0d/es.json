@@ -27,10 +27,8 @@
       ]
     },
     {
-      "header": 7,
+      "header": 4,
       "patterns": [
-        "d/M/y – d/M/y",
-        "d/M/y – d/M/y",
         "d/M/y – d/M/y"
       ]
     },
@@ -44,10 +42,8 @@
       ]
     },
     {
-      "header": 15,
+      "header": 12,
       "patterns": [
-        "d/M/y – d/M/y G",
-        "d/M/y – d/M/y G",
         "d/M/y – d/M/y G",
         "d/M/y G – d/M/y G"
       ]

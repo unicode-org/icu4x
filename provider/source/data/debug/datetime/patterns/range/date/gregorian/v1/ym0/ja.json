@@ -17,9 +17,8 @@
       ]
     },
     {
-      "header": 6,
+      "header": 4,
       "patterns": [
-        "y/MM～y/MM",
         "y/MM～y/MM"
       ]
     },
@@ -32,9 +31,8 @@
       ]
     },
     {
-      "header": 14,
+      "header": 12,
       "patterns": [
-        "Gy/MM～y/MM",
         "Gy/MM～y/MM",
         "Gy/MM～Gy/MM"
       ]

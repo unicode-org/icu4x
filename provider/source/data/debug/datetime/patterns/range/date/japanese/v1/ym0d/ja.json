@@ -19,10 +19,8 @@
       ]
     },
     {
-      "header": 15,
+      "header": 12,
       "patterns": [
-        "GGGGGy/MM/dd～y/MM/dd",
-        "GGGGGy/MM/dd～y/MM/dd",
         "GGGGGy/MM/dd～y/MM/dd",
         "GGGGGy/MM/dd～GGGGGy/MM/dd"
       ]

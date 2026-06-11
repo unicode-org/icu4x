@@ -18,10 +18,8 @@
       ]
     },
     {
-      "header": 7,
+      "header": 4,
       "patterns": [
-        "dd.MM.y – dd.MM.y",
-        "dd.MM.y – dd.MM.y",
         "dd.MM.y – dd.MM.y"
       ]
     },
@@ -35,10 +33,9 @@
       ]
     },
     {
-      "header": 15,
+      "header": 13,
       "patterns": [
         "G dd.MM.y – dd.MM.y",
-        "GGGGG dd.MM.y – dd.MM.y",
         "GGGGG dd.MM.y – dd.MM.y",
         "GGGGG dd.MM.y – GGGGG dd.MM.y"
       ]

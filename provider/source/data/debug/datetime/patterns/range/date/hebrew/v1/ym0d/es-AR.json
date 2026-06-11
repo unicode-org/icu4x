@@ -19,10 +19,8 @@
       ]
     },
     {
-      "header": 15,
+      "header": 12,
       "patterns": [
-        "d/M/y – d/M/y GGGGG",
-        "d/M/y – d/M/y GGGGG",
         "d/M/y – d/M/y GGGGG",
         "d/M/y GGGGG – d/M/y GGGGG"
       ]

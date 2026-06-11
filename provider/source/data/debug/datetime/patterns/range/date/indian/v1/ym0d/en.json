@@ -19,10 +19,8 @@
       ]
     },
     {
-      "header": 15,
+      "header": 12,
       "patterns": [
-        "M/d/y – M/d/y G",
-        "M/d/y – M/d/y G",
         "M/d/y – M/d/y G",
         "M/d/y G – M/d/y G"
       ]

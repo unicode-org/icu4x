@@ -18,27 +18,23 @@
       ]
     },
     {
-      "header": 7,
+      "header": 5,
       "patterns": [
         "E، dd‏/MM‏/y – E، dd‏/MM‏/y",
-        "E، d‏/M‏/y – E، d‏/M‏/y",
         "E، d‏/M‏/y – E، d‏/M‏/y"
       ]
     },
     {
-      "header": 15,
+      "header": 14,
       "patterns": [
-        "E, d MMM – E, d MMM y G",
         "E, d MMM – E, d MMM y G",
         "E, d MMM y – E, d MMM y G",
         "E, d MMM y G – E, d MMM y G"
       ]
     },
     {
-      "header": 15,
+      "header": 12,
       "patterns": [
-        "E, dd-MM-y – E, dd-MM-y GGGG",
-        "E, dd-MM-y – E, dd-MM-y GGGG",
         "E, dd-MM-y – E, dd-MM-y GGGG",
         "E, dd-MM-y GGGG – E, dd-MM-y GGGG"
       ]

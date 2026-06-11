@@ -19,10 +19,8 @@
       ]
     },
     {
-      "header": 15,
+      "header": 12,
       "patterns": [
-        "G y-MM-dd – y-MM-dd",
-        "G y-MM-dd – y-MM-dd",
         "G y-MM-dd – y-MM-dd",
         "G y-MM-dd – G y-MM-dd"
       ]

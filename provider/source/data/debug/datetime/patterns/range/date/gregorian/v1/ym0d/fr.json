@@ -18,10 +18,8 @@
       ]
     },
     {
-      "header": 7,
+      "header": 4,
       "patterns": [
-        "dd/MM/y – dd/MM/y",
-        "dd/MM/y – dd/MM/y",
         "dd/MM/y – dd/MM/y"
       ]
     },

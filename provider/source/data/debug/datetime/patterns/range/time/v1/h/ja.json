@@ -16,9 +16,8 @@
       ]
     },
     {
-      "header": 11,
+      "header": 10,
       "patterns": [
-        "aK時mm分～K時mm分",
         "aK時mm分～K時mm分",
         "aK時mm分～aK時mm分"
       ]

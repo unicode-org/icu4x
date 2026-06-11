@@ -16,9 +16,8 @@
       ]
     },
     {
-      "header": 11,
+      "header": 10,
       "patterns": [
-        "h:mm–h:mm a",
         "h:mm–h:mm a",
         "h:mm a – h:mm a"
       ]

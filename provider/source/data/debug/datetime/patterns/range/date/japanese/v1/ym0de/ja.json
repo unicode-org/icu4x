@@ -19,10 +19,8 @@
       ]
     },
     {
-      "header": 15,
+      "header": 12,
       "patterns": [
-        "GGGGGy/MM/dd(E)～y/MM/dd(E)",
-        "GGGGGy/MM/dd(E)～y/MM/dd(E)",
         "GGGGGy/MM/dd(E)～y/MM/dd(E)",
         "GGGGGy/MM/dd(E)～GGGGGy/MM/dd(E)"
       ]

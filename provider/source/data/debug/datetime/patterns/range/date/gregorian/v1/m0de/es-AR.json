@@ -11,9 +11,8 @@
   ],
   "elements": [
     {
-      "header": 3,
+      "header": 2,
       "patterns": [
-        "E, d 'de' MMMM – E, d 'de' MMMM",
         "E, d 'de' MMMM – E, d 'de' MMMM"
       ]
     },
@@ -25,9 +24,8 @@
       ]
     },
     {
-      "header": 3,
+      "header": 2,
       "patterns": [
-        "E dd/MM – E dd/MM",
         "E dd/MM – E dd/MM"
       ]
     }

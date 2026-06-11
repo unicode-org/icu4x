@@ -28,19 +28,14 @@
       ]
     },
     {
-      "header": 7,
+      "header": 4,
       "patterns": [
-        "d/M/y – d/M/y",
-        "d/M/y – d/M/y",
         "d/M/y – d/M/y"
       ]
     },
     {
-      "header": 15,
+      "header": 8,
       "patterns": [
-        "d/MM/GGGGG y – d/MM/GGGGG y",
-        "d/MM/GGGGG y – d/MM/GGGGG y",
-        "d/MM/GGGGG y – d/MM/GGGGG y",
         "d/MM/GGGGG y – d/MM/GGGGG y"
       ]
     }

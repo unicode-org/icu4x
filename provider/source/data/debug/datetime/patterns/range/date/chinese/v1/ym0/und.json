@@ -25,9 +25,8 @@
       ]
     },
     {
-      "header": 6,
+      "header": 4,
       "patterns": [
-        "y-MM – y-MM",
         "y-MM – y-MM"
       ]
     }

@@ -10,35 +10,29 @@
   ],
   "elements": [
     {
-      "header": 7,
+      "header": 6,
       "patterns": [
-        "y MMM d, E – MMM d, E",
         "y MMM d, E – MMM d, E",
         "y MMM d, E – y MMM d, E"
       ]
     },
     {
-      "header": 7,
+      "header": 4,
       "patterns": [
-        "y-MM-dd, E – y-MM-dd, E",
-        "y-MM-dd, E – y-MM-dd, E",
         "y-MM-dd, E – y-MM-dd, E"
       ]
     },
     {
-      "header": 15,
+      "header": 14,
       "patterns": [
-        "G y MMM d, E – MMM d, E",
         "G y MMM d, E – MMM d, E",
         "G y MMM d, E – y MMM d, E",
         "G y MMM d, E – G y MMM d, E"
       ]
     },
     {
-      "header": 15,
+      "header": 12,
       "patterns": [
-        "G y-MM-dd, E – y-MM-dd, E",
-        "G y-MM-dd, E – y-MM-dd, E",
         "G y-MM-dd, E – y-MM-dd, E",
         "G y-MM-dd, E – G y-MM-dd, E"
       ]

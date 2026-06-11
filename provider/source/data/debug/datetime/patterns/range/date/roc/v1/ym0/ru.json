@@ -18,9 +18,8 @@
       ]
     },
     {
-      "header": 14,
+      "header": 12,
       "patterns": [
-        "MM.y — MM.y G",
         "MM.y — MM.y G",
         "MM.y G — MM.y G"
       ]

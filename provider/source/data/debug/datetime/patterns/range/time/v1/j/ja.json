@@ -15,9 +15,8 @@
       ]
     },
     {
-      "header": 3,
+      "header": 2,
       "patterns": [
-        "H時mm分～H時mm分",
         "H時mm分～H時mm分"
       ]
     }

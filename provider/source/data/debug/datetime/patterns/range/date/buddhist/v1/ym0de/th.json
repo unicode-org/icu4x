@@ -27,27 +27,23 @@
       ]
     },
     {
-      "header": 7,
+      "header": 5,
       "patterns": [
         "E d – E d/M/y",
-        "E d/M/y – E d/M/y",
         "E d/M/y – E d/M/y"
       ]
     },
     {
-      "header": 15,
+      "header": 14,
       "patterns": [
-        "E d MMM – E d MMM G y",
         "E d MMM – E d MMM G y",
         "E d MMM G y – E d MMM y",
         "E d MMM G y – E d MMM G y"
       ]
     },
     {
-      "header": 15,
+      "header": 12,
       "patterns": [
-        "E d/M/y – E d/M/y G",
-        "E d/M/y – E d/M/y G",
         "E d/M/y – E d/M/y G",
         "E d/MM/GGGGG y – E d/MM/GGGGG y"
       ]
