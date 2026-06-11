@@ -1,43 +1,41 @@
 {
-  "pattern_config_map": {
-    "AED": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
+  "decimal_symbols": {
+    "strings": {
+      "minus_sign_prefix": "-",
+      "minus_sign_suffix": "",
+      "plus_sign_prefix": "+",
+      "plus_sign_suffix": "",
+      "decimal_separator": ".",
+      "grouping_separator": ",",
+      "numsys": "latn"
     },
+    "grouping_sizes": {
+      "primary": 3,
+      "secondary": 2,
+      "min_grouping": 1
+    }
+  },
+  "pattern_config_map": {
     "AFN": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 0
       }
     },
-    "ALL": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
     "AMD": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 1
       }
     },
-    "ANG": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
     "AOA": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 2
       }
@@ -45,13 +43,13 @@
     "ARS": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 3
       }
     },
     "AUD": {
-      "short_pattern_selection": "Standard",
+      "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": {
         "Index": 4
@@ -60,16 +58,10 @@
         "Index": 3
       }
     },
-    "AWG": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
     "AZN": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 5
       }
@@ -77,7 +69,7 @@
     "BAM": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 6
       }
@@ -85,41 +77,25 @@
     "BBD": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 3
       }
     },
     "BDT": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "short_pattern_selection": "Standard",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": {
+        "Index": 7
+      },
       "narrow_placeholder_value": {
         "Index": 7
       }
     },
-    "BGN": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
-    "BHD": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
-    "BIF": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
     "BMD": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 3
       }
@@ -127,7 +103,7 @@
     "BND": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 3
       }
@@ -135,14 +111,14 @@
     "BOB": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 8
       }
     },
     "BRL": {
-      "short_pattern_selection": "Standard",
-      "narrow_pattern_selection": "Standard",
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
       "short_placeholder_value": {
         "Index": 9
       },
@@ -153,21 +129,15 @@
     "BSD": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 3
       }
     },
-    "BTN": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
     "BWP": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 10
       }
@@ -175,67 +145,51 @@
     "BYN": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 11
+      }
     },
     "BZD": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 3
       }
     },
     "CAD": {
-      "short_pattern_selection": "Standard",
-      "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": {
-        "Index": 11
-      },
-      "narrow_placeholder_value": {
-        "Index": 3
-      }
-    },
-    "CDF": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
-    "CHF": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
-    "CLP": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": {
-        "Index": 3
-      }
-    },
-    "CNH": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
-    "CNY": {
-      "short_pattern_selection": "Standard",
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": {
         "Index": 12
       },
       "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "CLP": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "CNY": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": {
         "Index": 13
+      },
+      "narrow_placeholder_value": {
+        "Index": 14
       }
     },
     "COP": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 3
       }
@@ -243,15 +197,15 @@
     "CRC": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 14
+        "Index": 15
       }
     },
     "CUC": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 3
       }
@@ -259,95 +213,65 @@
     "CUP": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 3
       }
     },
-    "CVE": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
     "CZK": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 15
+        "Index": 16
       }
-    },
-    "DJF": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
     },
     "DKK": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 16
+        "Index": 17
       }
     },
     "DOP": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 3
       }
     },
-    "DZD": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
     "EGP": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": {
-        "Index": 17
-      }
-    },
-    "ERN": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 18
+      }
     },
     "ESP": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 18
+        "Index": 19
       }
-    },
-    "ETB": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
     },
     "EUR": {
       "short_pattern_selection": "Standard",
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": {
-        "Index": 19
+        "Index": 20
       },
       "narrow_placeholder_value": {
-        "Index": 19
+        "Index": 20
       }
     },
     "FJD": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 3
       }
@@ -355,80 +279,74 @@
     "FKP": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 20
+        "Index": 21
       }
     },
     "GBP": {
       "short_pattern_selection": "Standard",
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": {
-        "Index": 20
+        "Index": 21
       },
       "narrow_placeholder_value": {
-        "Index": 20
+        "Index": 21
       }
     },
     "GEL": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 21
+        "Index": 22
       }
     },
     "GHS": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 22
+        "Index": 23
       }
     },
     "GIP": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 20
+        "Index": 21
       }
-    },
-    "GMD": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
     },
     "GNF": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 23
+        "Index": 24
       }
     },
     "GTQ": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 24
+        "Index": 25
       }
     },
     "GYD": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 3
       }
     },
     "HKD": {
-      "short_pattern_selection": "Standard",
+      "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": {
-        "Index": 25
+        "Index": 26
       },
       "narrow_placeholder_value": {
         "Index": 3
@@ -437,163 +355,127 @@
     "HNL": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 26
+        "Index": 27
       }
     },
     "HRK": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 27
+        "Index": 28
       }
-    },
-    "HTG": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
     },
     "HUF": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 28
+        "Index": 29
       }
     },
     "IDR": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 29
+        "Index": 30
       }
     },
     "ILS": {
       "short_pattern_selection": "Standard",
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": {
-        "Index": 30
+        "Index": 31
       },
       "narrow_placeholder_value": {
-        "Index": 30
+        "Index": 31
       }
     },
     "INR": {
       "short_pattern_selection": "Standard",
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": {
-        "Index": 31
+        "Index": 32
       },
       "narrow_placeholder_value": {
-        "Index": 31
+        "Index": 32
       }
-    },
-    "IQD": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
-    "IRR": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
     },
     "ISK": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 16
+        "Index": 17
       }
     },
     "JMD": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 3
       }
     },
-    "JOD": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
     "JPY": {
-      "short_pattern_selection": "Standard",
+      "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": {
-        "Index": 13
+        "Index": 33
       },
       "narrow_placeholder_value": {
-        "Index": 13
+        "Index": 14
       }
-    },
-    "KES": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
     },
     "KGS": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 32
+        "Index": 34
       }
     },
     "KHR": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 33
+        "Index": 35
       }
     },
     "KMF": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 34
+        "Index": 36
       }
     },
     "KPW": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 35
+        "Index": 37
       }
     },
     "KRW": {
       "short_pattern_selection": "Standard",
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": {
-        "Index": 35
+        "Index": 37
       },
       "narrow_placeholder_value": {
-        "Index": 35
+        "Index": 37
       }
-    },
-    "KWD": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
     },
     "KYD": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 3
       }
@@ -601,50 +483,20 @@
     "KZT": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 36
+        "Index": 38
       }
     },
     "LAK": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": {
-        "Index": 37
-      }
-    },
-    "LBP": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": {
-        "Index": 38
-      }
-    },
-    "LKR": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 39
       }
     },
-    "LRD": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": {
-        "Index": 3
-      }
-    },
-    "LSL": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
-    "LTL": {
+    "LBP": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
       "short_placeholder_value": null,
@@ -652,7 +504,7 @@
         "Index": 40
       }
     },
-    "LVL": {
+    "LKR": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
       "short_placeholder_value": null,
@@ -660,91 +512,67 @@
         "Index": 41
       }
     },
-    "LYD": {
+    "LRD": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
     },
-    "MAD": {
+    "LTL": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
-    "MDL": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
-    "MGA": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 42
       }
     },
-    "MKD": {
+    "LVL": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 43
+      }
+    },
+    "MGA": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 44
+      }
     },
     "MMK": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 43
+        "Index": 45
       }
     },
     "MNT": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 44
+        "Index": 46
       }
-    },
-    "MOP": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
-    "MRU": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
     },
     "MUR": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 39
+        "Index": 41
       }
     },
-    "MVR": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
-    "MWK": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
     "MXN": {
-      "short_pattern_selection": "Standard",
+      "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": {
-        "Index": 45
+        "Index": 47
       },
       "narrow_placeholder_value": {
         "Index": 3
@@ -753,21 +581,15 @@
     "MYR": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 46
+        "Index": 48
       }
-    },
-    "MZN": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
     },
     "NAD": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 3
       }
@@ -775,96 +597,46 @@
     "NGN": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 47
+        "Index": 49
       }
     },
     "NIO": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 48
+        "Index": 50
       }
     },
     "NOK": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 16
+        "Index": 17
       }
     },
     "NPR": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 39
+        "Index": 41
       }
     },
     "NZD": {
-      "short_pattern_selection": "Standard",
+      "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": {
-        "Index": 49
+        "Index": 51
       },
       "narrow_placeholder_value": {
         "Index": 3
       }
     },
-    "OMR": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
-    "PAB": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
-    "PEN": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
-    "PGK": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
     "PHP": {
-      "short_pattern_selection": "Standard",
-      "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": {
-        "Index": 50
-      },
-      "narrow_placeholder_value": {
-        "Index": 50
-      }
-    },
-    "PKR": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": {
-        "Index": 39
-      }
-    },
-    "PLN": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": {
-        "Index": 51
-      }
-    },
-    "PYG": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": "ISO",
@@ -872,80 +644,74 @@
         "Index": 52
       }
     },
-    "QAR": {
+    "PKR": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 41
+      }
     },
-    "RON": {
+    "PLN": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 53
       }
     },
-    "RSD": {
+    "PYG": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 54
+      }
+    },
+    "RON": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 55
+      }
     },
     "RUB": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 54
+        "Index": 56
       }
     },
     "RWF": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 55
+        "Index": 57
       }
-    },
-    "SAR": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
     },
     "SBD": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 3
       }
     },
-    "SCR": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
-    "SDG": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
     "SEK": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 16
+        "Index": 17
       }
     },
     "SGD": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 3
       }
@@ -953,33 +719,15 @@
     "SHP": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 20
+        "Index": 21
       }
-    },
-    "SLE": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
-    "SLL": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
-    "SOS": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
     },
     "SRD": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 3
       }
@@ -987,118 +735,92 @@
     "SSP": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 20
+        "Index": 21
+      }
+    },
+    "STD": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 58
       }
     },
     "STN": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 56
+        "Index": 58
       }
     },
     "SYP": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 20
+        "Index": 21
       }
-    },
-    "SZL": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
     },
     "THB": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "short_pattern_selection": "Standard",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": {
+        "Index": 59
+      },
       "narrow_placeholder_value": {
-        "Index": 57
+        "Index": 59
       }
-    },
-    "TJS": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
-    "TMT": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
-    "TND": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
     },
     "TOP": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 58
+        "Index": 60
       }
     },
     "TRY": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 59
+        "Index": 61
       }
     },
     "TTD": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 3
       }
     },
     "TWD": {
-      "short_pattern_selection": "Standard",
-      "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": {
-        "Index": 60
-      },
-      "narrow_placeholder_value": {
-        "Index": 3
-      }
-    },
-    "TZS": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
+      "short_placeholder_value": {
+        "Index": 62
+      },
+      "narrow_placeholder_value": {
+        "Index": 62
+      }
     },
     "UAH": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 61
+        "Index": 63
       }
     },
-    "UGX": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
     "USD": {
-      "short_pattern_selection": "Standard",
+      "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": {
-        "Index": 3
+        "Index": 64
       },
       "narrow_placeholder_value": {
         "Index": 3
@@ -1107,16 +829,10 @@
     "UYU": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
         "Index": 3
       }
-    },
-    "UZS": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
     },
     "VEF": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
@@ -1126,61 +842,17 @@
         "Index": 8
       }
     },
-    "VES": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
     "VND": {
       "short_pattern_selection": "Standard",
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": {
-        "Index": 62
-      },
-      "narrow_placeholder_value": {
-        "Index": 62
-      }
-    },
-    "VUV": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
-    "WST": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
-    },
-    "XAF": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": {
-        "Index": 63
-      },
-      "narrow_placeholder_value": null
-    },
-    "XCD": {
-      "short_pattern_selection": "Standard",
-      "narrow_pattern_selection": "Standard",
-      "short_placeholder_value": {
-        "Index": 64
-      },
-      "narrow_placeholder_value": {
-        "Index": 3
-      }
-    },
-    "XCG": {
-      "short_pattern_selection": "Standard",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": {
         "Index": 65
       },
-      "narrow_placeholder_value": null
+      "narrow_placeholder_value": {
+        "Index": 65
+      }
     },
-    "XOF": {
+    "XAF": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
       "short_placeholder_value": {
@@ -1188,11 +860,37 @@
       },
       "narrow_placeholder_value": null
     },
+    "XCD": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": {
+        "Index": 67
+      },
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "XCG": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": {
+        "Index": 68
+      },
+      "narrow_placeholder_value": null
+    },
+    "XOF": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": {
+        "Index": 69
+      },
+      "narrow_placeholder_value": null
+    },
     "XPF": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
       "short_placeholder_value": {
-        "Index": 67
+        "Index": 70
       },
       "narrow_placeholder_value": null
     },
@@ -1200,45 +898,33 @@
       "short_pattern_selection": "Standard",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
       "short_placeholder_value": {
-        "Index": 68
+        "Index": 71
       },
-      "narrow_placeholder_value": null
-    },
-    "YER": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
       "narrow_placeholder_value": null
     },
     "ZAR": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 69
+        "Index": 72
       }
     },
     "ZMW": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
+      "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 70
+        "Index": 73
       }
-    },
-    "ZWG": {
-      "short_pattern_selection": "StandardAlphaNextToNumber",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
-      "short_placeholder_value": "ISO",
-      "narrow_placeholder_value": null
     }
   },
   "standard_pattern": [
     {
-      "Placeholder": "Place1"
+      "Placeholder": "Place0"
     },
     {
-      "Placeholder": "Place0"
+      "Placeholder": "Place1"
     }
   ],
   "standard_alpha_next_to_number_pattern": [
@@ -1264,6 +950,7 @@
     "Bs",
     "R$",
     "P",
+    "р.",
     "CA$",
     "CN¥",
     "¥",
@@ -1285,6 +972,7 @@
     "Rp",
     "₪",
     "₹",
+    "JP¥",
     "⃀",
     "៛",
     "CF",
@@ -1315,6 +1003,7 @@
     "₺",
     "NT$",
     "₴",
+    "US$",
     "₫",
     "FCFA",
     "EC$",

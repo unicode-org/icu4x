@@ -58,6 +58,11 @@ impl DecimalSubPattern {
         for item in &items[..body_start] {
             match item {
                 NumberPatternItem::Literal(s) => prefix.push_str(s),
+                NumberPatternItem::Currency
+                | NumberPatternItem::Percent
+                | NumberPatternItem::PerMille
+                | NumberPatternItem::PlusSign
+                | NumberPatternItem::MinusSign => prefix.push_str(item.as_str()),
                 _ => return Err(DataError::custom("InvalidAffixItem")),
             }
         }
@@ -67,6 +72,11 @@ impl DecimalSubPattern {
         for item in &items[body_end + 1..] {
             match item {
                 NumberPatternItem::Literal(s) => suffix.push_str(s),
+                NumberPatternItem::Currency
+                | NumberPatternItem::Percent
+                | NumberPatternItem::PerMille
+                | NumberPatternItem::PlusSign
+                | NumberPatternItem::MinusSign => suffix.push_str(item.as_str()),
                 _ => return Err(DataError::custom("InvalidAffixItem")),
             }
         }

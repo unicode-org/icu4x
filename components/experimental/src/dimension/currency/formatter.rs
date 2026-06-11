@@ -78,14 +78,34 @@ impl CurrencyFormatter {
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
-        let decimal_formatter =
-            DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
         let essential = crate::provider::Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })?
             .payload;
+
+        let symbols_payload: DataPayload<icu_decimal::provider::DecimalSymbolsV1> =
+            essential.clone().map_project(
+                |ess: crate::dimension::provider::currency::essentials::CurrencyEssentials<'_>,
+                 _| ess.decimal_symbols.clone(),
+            );
+
+        let numsys = symbols_payload.get().numsys();
+        let digits = icu_decimal::provider::Baked
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes(
+                    DataMarkerAttributes::from_str_or_panic(numsys),
+                ),
+                ..Default::default()
+            })?
+            .payload;
+
+        let decimal_formatter = DecimalFormatter::try_new_from_payloads(
+            DecimalFormatterOptions::default(),
+            symbols_payload,
+            digits,
+        )?;
 
         Ok(Self {
             options,
@@ -103,21 +123,72 @@ impl CurrencyFormatter {
     where
         D: ?Sized
             + DataProvider<CurrencyEssentialsV1>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
-        let decimal_formatter = DecimalFormatter::try_new_unstable(
-            provider,
-            (&prefs).into(),
-            DecimalFormatterOptions::default(),
-        )?;
-        let essential = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&locale),
-                ..Default::default()
+        let req_numsys = prefs.numbering_system.as_ref().map(|s| s.as_str());
+        let essential = req_numsys
+            .and_then(|nu| {
+                provider
+                    .load(DataRequest {
+                        id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                            DataMarkerAttributes::from_str_or_panic(nu),
+                            &locale,
+                        ),
+                        metadata: {
+                            let mut m = DataRequestMetadata::default();
+                            m.silent = true;
+                            m
+                        },
+                    })
+                    .allow_identifier_not_found()
+                    .ok()
+                    .flatten()
+            })
+            .map(Ok)
+            .unwrap_or_else(|| {
+                provider.load(DataRequest {
+                    id: DataIdentifierBorrowed::for_locale(&locale),
+                    ..Default::default()
+                })
             })?
             .payload;
+
+        let symbols_payload: DataPayload<icu_decimal::provider::DecimalSymbolsV1> =
+            essential.clone().map_project(
+                |ess: crate::dimension::provider::currency::essentials::CurrencyEssentials<'_>,
+                 _| ess.decimal_symbols.clone(),
+            );
+
+        let default_numsys = symbols_payload.get().numsys();
+        let req_numsys = prefs
+            .numbering_system
+            .as_ref()
+            .map(|s| s.as_str())
+            .unwrap_or(default_numsys);
+
+        let digits = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes(
+                    DataMarkerAttributes::from_str_or_panic(req_numsys),
+                ),
+                ..Default::default()
+            })
+            .or_else(|_| {
+                provider.load(DataRequest {
+                    id: DataIdentifierBorrowed::for_marker_attributes(
+                        DataMarkerAttributes::from_str_or_panic(default_numsys),
+                    ),
+                    ..Default::default()
+                })
+            })?
+            .payload;
+
+        let decimal_formatter = DecimalFormatter::try_new_from_payloads(
+            DecimalFormatterOptions::default(),
+            symbols_payload,
+            digits,
+        )?;
 
         Ok(Self {
             options,

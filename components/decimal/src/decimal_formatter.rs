@@ -110,6 +110,19 @@ impl DecimalFormatter {
         })
     }
 
+    /// Creates a new [`DecimalFormatter`] directly from resolved data payloads.
+    pub fn try_new_from_payloads(
+        options: DecimalFormatterOptions,
+        symbols: DataPayload<DecimalSymbolsV1>,
+        digits: DataPayload<DecimalDigitsV1>,
+    ) -> Result<Self, DataError> {
+        Ok(Self {
+            options,
+            symbols,
+            digits,
+        })
+    }
+
     /// Formats a [`Decimal`], returning a [`FormattedDecimal`].
     pub fn format<'l>(&'l self, value: &'l Decimal) -> FormattedDecimal<'l> {
         FormattedDecimal(self.format_sign(

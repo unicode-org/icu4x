@@ -31494,363 +31494,500 @@ currency/displayname/v1, zu/ZAR, 44B, 21B, 3ee33af014eb8505
 currency/displayname/v1, zu/ZMK, 54B, 31B, abe05b241d692995
 currency/displayname/v1, zu/ZMW, 40B, 17B, 15b95ba727a96fd5
 currency/displayname/v1, zu/ZWG, -> ceb/ZWG
-currency/essentials/v1, <lookup>, 1775B, 355 identifiers
-currency/essentials/v1, <total>, 381600B, 343035B, 311 unique payloads
-currency/essentials/v1, af, 1111B, 987B, 7696b773dd86e22a
-currency/essentials/v1, af-NA, 1111B, 987B, ef78bd2710e13aa
-currency/essentials/v1, ak, 1129B, 1005B, b35651a617ebfc8d
-currency/essentials/v1, am, 1141B, 1017B, 32574f5c7f705fdf
-currency/essentials/v1, ar, 1545B, 1421B, 2dc7313d84c2a475
-currency/essentials/v1, ar-AE, 1540B, 1416B, 7293114990b04566
-currency/essentials/v1, ar-DJ, 1556B, 1432B, f42a4807dad3460d
-currency/essentials/v1, ar-ER, 1556B, 1432B, 81ea22ca9f856336
-currency/essentials/v1, ar-KM, 1545B, 1421B, 46d09b1d65bde968
-currency/essentials/v1, ar-LB, 1537B, 1413B, 2108b29c7a81996
-currency/essentials/v1, ar-SO, 1554B, 1430B, fded3907ad79bb62
-currency/essentials/v1, ar-SS, 1551B, 1427B, 1a12f48f4b22548b
-currency/essentials/v1, as, 1128B, 1004B, 948a0b1fd2a7ce53
-currency/essentials/v1, ast, 1089B, 965B, 8c219d9568b84039
-currency/essentials/v1, az, 1133B, 1009B, c2fd47d595f4461e
-currency/essentials/v1, ba, 1121B, 997B, 6894fd59ae645301
-currency/essentials/v1, bal-Latn, 2095B, 1971B, ef380222f41bf8b6
-currency/essentials/v1, be, 1217B, 1093B, 934b9d4098b1b790
-currency/essentials/v1, bg, 992B, 868B, 39fe7ad183431232
-currency/essentials/v1, bho, 1115B, 991B, 2d374a16140a2288
-currency/essentials/v1, bn, 1126B, 1002B, ab6315de4eb665ed
-currency/essentials/v1, bn-IN, 1121B, 997B, 3305c84e3a8e256e
-currency/essentials/v1, br, 1120B, 996B, 6e8da4f675cf87b
-currency/essentials/v1, brx, 4213B, 4089B, 8c69b93258214ca4
-currency/essentials/v1, bs, 1088B, 964B, 63b5e9a441e9ad4
-currency/essentials/v1, bs-Cyrl, 1150B, 1026B, d7a6dceeb77a6875
-currency/essentials/v1, bua, 1117B, 993B, 4ac99ac63c563c6d
-currency/essentials/v1, ca, 1094B, 970B, 9df263b4f039c6de
-currency/essentials/v1, ca-FR, 1103B, 979B, 9805c5a2bff564e9
-currency/essentials/v1, ceb, 1116B, 992B, ff11c3a559a82193
-currency/essentials/v1, chr, 1121B, 997B, 60686a8e94e330d6
-currency/essentials/v1, cs, 1149B, 1025B, 57fb15fd2e36a0fa
-currency/essentials/v1, cv, 1112B, 988B, d6bf10dab0b6d0d6
-currency/essentials/v1, cy, 1111B, 987B, f66bb31e48cc44bb
-currency/essentials/v1, da, 1125B, 1001B, def30fc66f1269d4
-currency/essentials/v1, de, 1168B, 1044B, 1b73ad00f1866907
-currency/essentials/v1, de-AT, 1168B, 1044B, 9c3ebcf758726b54
-currency/essentials/v1, de-CH, 1163B, 1039B, 842367fb8a6364c2
-currency/essentials/v1, de-LI, 1168B, 1044B, 2f65fd4cb13f844e
-currency/essentials/v1, de-LU, 1177B, 1053B, 42e22efc3efe98a5
-currency/essentials/v1, doi, 1104B, 980B, f14705204967075e
-currency/essentials/v1, dsb, 1102B, 978B, 8a2e49d34281d3c
-currency/essentials/v1, ee, 1127B, 1003B, fbcda6163f337f8a
-currency/essentials/v1, el, 1137B, 1013B, 9a75483b2c4d4fd
-currency/essentials/v1, en, 1452B, 1328B, ed50b3becf505b9c
-currency/essentials/v1, en-001, 1463B, 1339B, aeaddccf442176a6
-currency/essentials/v1, en-150, 1465B, 1341B, 97118bb32edf67ee
-currency/essentials/v1, en-AG, 1458B, 1334B, 15efa6e503f1647
+currency/essentials/v1, <lookup>, 2666B, 492 identifiers
+currency/essentials/v1, <total>, 508357B, 448012B, 397 unique payloads
+currency/essentials/v1, af, 1158B, 1006B, 946d6ecb6988ebb
+currency/essentials/v1, af-NA, 1158B, 1006B, 47576b18fb287c05
+currency/essentials/v1, ak, 1175B, 1023B, abf6f011eed9b94b
+currency/essentials/v1, am, 1187B, 1035B, b010fd637c8d281
+currency/essentials/v1, ar, 1597B, 1445B, 7e461e2e9f593be6
+currency/essentials/v1, ar-AE, 1592B, 1440B, aaf60af03f6ccd0a
+currency/essentials/v1, ar-AE/arab, 1592B, 1440B, 2ba5f790c532a80f
+currency/essentials/v1, ar-BH, 1597B, 1445B, 1431103ba542743d
+currency/essentials/v1, ar-BH/latn, -> ar
+currency/essentials/v1, ar-DJ, 1608B, 1456B, e26c191475b8e846
+currency/essentials/v1, ar-DJ/latn, 1608B, 1456B, 6f748b965dfe57d2
+currency/essentials/v1, ar-DZ, 1597B, 1445B, 3e10df68547d3fe2
+currency/essentials/v1, ar-EG, -> ar-BH
+currency/essentials/v1, ar-EG/latn, -> ar
+currency/essentials/v1, ar-ER, 1608B, 1456B, 7e5e91e00cf85d7d
+currency/essentials/v1, ar-ER/latn, 1608B, 1456B, c1621abc9e64811f
+currency/essentials/v1, ar-IL, -> ar-BH
+currency/essentials/v1, ar-IL/latn, -> ar
+currency/essentials/v1, ar-IQ, -> ar-BH
+currency/essentials/v1, ar-IQ/latn, -> ar
+currency/essentials/v1, ar-JO, -> ar-BH
+currency/essentials/v1, ar-JO/latn, -> ar
+currency/essentials/v1, ar-KM, 1597B, 1445B, 64b0dba40e38649e
+currency/essentials/v1, ar-KM/latn, 1597B, 1445B, 30d30d3a300b0e1c
+currency/essentials/v1, ar-KW, -> ar-BH
+currency/essentials/v1, ar-KW/latn, -> ar
+currency/essentials/v1, ar-LB, 1589B, 1437B, 5f440a709aa80284
+currency/essentials/v1, ar-LB/latn, 1589B, 1437B, eb97ac36698a0bd2
+currency/essentials/v1, ar-LY, -> ar-DZ
+currency/essentials/v1, ar-MA, -> ar-DZ
+currency/essentials/v1, ar-MR, -> ar-BH
+currency/essentials/v1, ar-MR/latn, -> ar-DZ
+currency/essentials/v1, ar-OM, -> ar-BH
+currency/essentials/v1, ar-OM/latn, -> ar
+currency/essentials/v1, ar-PS, -> ar-BH
+currency/essentials/v1, ar-PS/latn, -> ar
+currency/essentials/v1, ar-QA, -> ar-BH
+currency/essentials/v1, ar-QA/latn, -> ar
+currency/essentials/v1, ar-SA, -> ar-BH
+currency/essentials/v1, ar-SA/latn, -> ar
+currency/essentials/v1, ar-SD, -> ar-BH
+currency/essentials/v1, ar-SD/latn, -> ar
+currency/essentials/v1, ar-SO, 1606B, 1454B, baf4a1ea2b1f0e7
+currency/essentials/v1, ar-SO/latn, 1606B, 1454B, 228b49c44fb9cfc4
+currency/essentials/v1, ar-SS, 1603B, 1451B, b6e795c15a07a99b
+currency/essentials/v1, ar-SS/latn, 1603B, 1451B, 39f86319f8eb909b
+currency/essentials/v1, ar-SY, -> ar-BH
+currency/essentials/v1, ar-SY/latn, -> ar
+currency/essentials/v1, ar-TD, -> ar-BH
+currency/essentials/v1, ar-TD/latn, -> ar
+currency/essentials/v1, ar-TN, -> ar-DZ
+currency/essentials/v1, ar-YE, -> ar-BH
+currency/essentials/v1, ar-YE/latn, -> ar
+currency/essentials/v1, ar/arab, -> ar-BH
+currency/essentials/v1, as, 1174B, 1022B, 8d9e9d34c33fea11
+currency/essentials/v1, as/latn, 1174B, 1022B, 7802561cc34d0e1
+currency/essentials/v1, ast, 1135B, 983B, 9ec82434d0ebbdce
+currency/essentials/v1, az, 1179B, 1027B, daa823308a0ec335
+currency/essentials/v1, ba, 1168B, 1016B, ad7b1c7c23d8f731
+currency/essentials/v1, bal-Latn, 2141B, 1989B, 56b66369492dc2da
+currency/essentials/v1, be, 1264B, 1112B, 42f23f694e13fb56
+currency/essentials/v1, bg, 1039B, 887B, 43ab1db0b0d61d94
+currency/essentials/v1, bgc, 1163B, 1011B, c2b427aba8d77129
+currency/essentials/v1, bgc/latn, 1163B, 1011B, c1c61c493b96217e
+currency/essentials/v1, bho, 1161B, 1009B, f6ef3c71513acde8
+currency/essentials/v1, bho/latn, 1161B, 1009B, 6c26477b427c3e6a
+currency/essentials/v1, blo, 1164B, 1012B, cf73973e17c04918
+currency/essentials/v1, bn, 1172B, 1020B, 91bb85926b77d6fa
+currency/essentials/v1, bn-IN, 1167B, 1015B, fe5c92f9a5d210d1
+currency/essentials/v1, bn-IN/latn, 1167B, 1015B, 1a8736063d614e40
+currency/essentials/v1, bn/latn, 1172B, 1020B, a92b0e0db2eeaed3
+currency/essentials/v1, br, 1167B, 1015B, 3580651bc22128d6
+currency/essentials/v1, brx, 4259B, 4107B, 5160f30072357bc7
+currency/essentials/v1, brx/deva, 4259B, 4107B, 649fe4449cb6ba4
+currency/essentials/v1, bs, 1134B, 982B, 5c793f0875f3b541
+currency/essentials/v1, bs-Cyrl, 1196B, 1044B, 3c0f0a2c12a48ae9
+currency/essentials/v1, bua, 1164B, 1012B, ca968515af9708a4
+currency/essentials/v1, ca, 1140B, 988B, e7be1fb4fa715961
+currency/essentials/v1, ca-FR, 1149B, 997B, b55d8e1e618a3992
+currency/essentials/v1, ceb, 1162B, 1010B, 6a5a2a27e6b10424
+currency/essentials/v1, chr, 1167B, 1015B, f2857b4d60b92dbe
+currency/essentials/v1, cs, 1196B, 1044B, 9fbf407820b6062
+currency/essentials/v1, cv, 1159B, 1007B, 1d4dc9dc73a47985
+currency/essentials/v1, cy, 1157B, 1005B, d748c3b36843461a
+currency/essentials/v1, da, 1171B, 1019B, 976535a2e5388692
+currency/essentials/v1, de, 1214B, 1062B, efb14338b2465072
+currency/essentials/v1, de-AT, 1215B, 1063B, 5cb1db1b1b4febcf
+currency/essentials/v1, de-CH, 1209B, 1057B, 4a24c4bedbaea039
+currency/essentials/v1, de-LI, 1214B, 1062B, 920bb84ee48355c8
+currency/essentials/v1, de-LU, 1223B, 1071B, bf1ddec63fd37114
+currency/essentials/v1, doi, 1150B, 998B, 650c22a86be84dbb
+currency/essentials/v1, doi/deva, 1150B, 998B, f2f9ba42e00f9cf1
+currency/essentials/v1, dsb, 1148B, 996B, 8d3bfda7cd99ce57
+currency/essentials/v1, ee, 1173B, 1021B, e4a96fb980bf50d7
+currency/essentials/v1, el, 1183B, 1031B, 64bfd104ab33e878
+currency/essentials/v1, en, 1498B, 1346B, ad49ca4258422418
+currency/essentials/v1, en-001, 1509B, 1357B, f870d6771c53ea17
+currency/essentials/v1, en-150, 1511B, 1359B, eb34795db22a996c
+currency/essentials/v1, en-AG, 1504B, 1352B, 614dc4f7667c4e17
 currency/essentials/v1, en-AI, -> en-AG
-currency/essentials/v1, en-AT, 1465B, 1341B, 625c5f43ad3e2e68
-currency/essentials/v1, en-AU, 1397B, 1273B, c64203f9da4be533
-currency/essentials/v1, en-BB, 1463B, 1339B, e84b5c8e39a9f17f
-currency/essentials/v1, en-BI, 1457B, 1333B, 7c41c307a7ed6a9e
-currency/essentials/v1, en-BM, 1463B, 1339B, 47d041cb45fa1498
-currency/essentials/v1, en-BS, 1463B, 1339B, 6815a1a29377ebe5
-currency/essentials/v1, en-BW, 1463B, 1339B, 2d4606132e7e3aad
-currency/essentials/v1, en-BZ, 1463B, 1339B, 9e978561ebcef9c0
-currency/essentials/v1, en-CA, 1457B, 1333B, 71ac54914e7d7d69
-currency/essentials/v1, en-CC, 1459B, 1335B, 9a555b8c14162b94
-currency/essentials/v1, en-CH, -> en-AT
-currency/essentials/v1, en-CK, 1458B, 1334B, 48d4b62b380b8542
+currency/essentials/v1, en-AT, 1511B, 1359B, 430ae82a6d32d5ce
+currency/essentials/v1, en-AU, 1443B, 1291B, 6ecd34e413d1efbe
+currency/essentials/v1, en-BB, 1509B, 1357B, 292c2bc78e59a60c
+currency/essentials/v1, en-BE, 1511B, 1359B, 683bed60d7e482d0
+currency/essentials/v1, en-BI, 1503B, 1351B, 6a9390efe8d3b309
+currency/essentials/v1, en-BM, 1509B, 1357B, 9cd86d3f3b820b5c
+currency/essentials/v1, en-BS, 1509B, 1357B, 3b676868e796d0fa
+currency/essentials/v1, en-BW, 1509B, 1357B, 4c51ab5b721b6b73
+currency/essentials/v1, en-BZ, 1509B, 1357B, f19ac9d48287eea6
+currency/essentials/v1, en-CA, 1503B, 1351B, 88c5c4afcc63ed67
+currency/essentials/v1, en-CC, 1505B, 1353B, 61de4a25ba82af66
+currency/essentials/v1, en-CH, 1511B, 1359B, 965f40f666ddd36c
+currency/essentials/v1, en-CK, 1504B, 1352B, 8abbd99dfacb97f0
 currency/essentials/v1, en-CX, -> en-CC
-currency/essentials/v1, en-DK, 1470B, 1346B, cbe5ac9ea0005737
+currency/essentials/v1, en-CZ, 1512B, 1360B, d4e94129539eadd0
+currency/essentials/v1, en-DE, -> en-BE
+currency/essentials/v1, en-DK, 1516B, 1364B, 7fa520ee685649ef
 currency/essentials/v1, en-DM, -> en-AG
-currency/essentials/v1, en-ER, 1468B, 1344B, 8da74dd1adad9a2c
-currency/essentials/v1, en-FJ, 1463B, 1339B, f535588987cb4b00
-currency/essentials/v1, en-FK, 1469B, 1345B, 471adb48164a2aa
+currency/essentials/v1, en-EE, -> en-CZ
+currency/essentials/v1, en-ER, 1514B, 1362B, 19c143a8800b6116
+currency/essentials/v1, en-ES, -> en-BE
+currency/essentials/v1, en-FI, -> en-CZ
+currency/essentials/v1, en-FJ, 1509B, 1357B, e3d61832ecdab132
+currency/essentials/v1, en-FK, 1515B, 1363B, aafca80e94d99aae
+currency/essentials/v1, en-FR, 1513B, 1361B, 9340eb44013bf2c7
 currency/essentials/v1, en-GD, -> en-AG
-currency/essentials/v1, en-GE, 1465B, 1341B, 98212b1c660370d5
-currency/essentials/v1, en-GH, 1463B, 1339B, d905c9aada87f591
-currency/essentials/v1, en-GI, 1469B, 1345B, a5c636210ca39192
-currency/essentials/v1, en-GM, 1466B, 1342B, 8a0582500fa460ad
-currency/essentials/v1, en-GY, 1463B, 1339B, fcb2141c350f3ed0
-currency/essentials/v1, en-ID, 1463B, 1339B, 4abf9c494b6f540c
-currency/essentials/v1, en-IN, 1458B, 1334B, e2fd8da8e1e20b4a
-currency/essentials/v1, en-JM, 1463B, 1339B, 26913fd441ab2e8f
-currency/essentials/v1, en-KE, 1468B, 1344B, 6a0ee160dc4d997b
+currency/essentials/v1, en-GE, 1513B, 1361B, 160e9a2e26a2beba
+currency/essentials/v1, en-GH, 1509B, 1357B, f6c07b153fa37d65
+currency/essentials/v1, en-GI, 1515B, 1363B, 9a323e7e289d49ee
+currency/essentials/v1, en-GM, 1512B, 1360B, 6ebd40d63a932927
+currency/essentials/v1, en-GY, 1509B, 1357B, c3ac3ed9b127a6f3
+currency/essentials/v1, en-HU, -> en-CZ
+currency/essentials/v1, en-ID, 1509B, 1357B, ca408bbbdd604e82
+currency/essentials/v1, en-IN, 1504B, 1352B, cb37302d5e00a9ab
+currency/essentials/v1, en-IT, -> en-BE
+currency/essentials/v1, en-JM, 1509B, 1357B, 3752e78c0a963c07
+currency/essentials/v1, en-KE, 1514B, 1362B, 40bee24d5e94a9a4
 currency/essentials/v1, en-KI, -> en-CC
 currency/essentials/v1, en-KN, -> en-AG
-currency/essentials/v1, en-KY, 1463B, 1339B, b55aa2d1c4629c7f
+currency/essentials/v1, en-KY, 1509B, 1357B, a61e71135be03c94
 currency/essentials/v1, en-LC, -> en-AG
-currency/essentials/v1, en-LR, 1463B, 1339B, 4d96ec64c945f99
-currency/essentials/v1, en-LS, 1463B, 1339B, 3f7e59adf61e085
-currency/essentials/v1, en-MG, 1463B, 1339B, b4e6a088c9f7d515
-currency/essentials/v1, en-MO, 1469B, 1345B, bf42fc6bdf0c2dc1
+currency/essentials/v1, en-LR, 1509B, 1357B, a5958e28b7d357bc
+currency/essentials/v1, en-LS, 1509B, 1357B, 64c4c6495934e9c9
+currency/essentials/v1, en-LT, -> en-CZ
+currency/essentials/v1, en-LV, -> en-CZ
+currency/essentials/v1, en-MG, 1509B, 1357B, bc0e37a0f8e5a8a5
+currency/essentials/v1, en-MO, 1515B, 1363B, 7a094426cb9e5a52
 currency/essentials/v1, en-MS, -> en-AG
-currency/essentials/v1, en-MT, 1469B, 1345B, 1f404cc988fca093
-currency/essentials/v1, en-MU, 1463B, 1339B, 9cc9755eb37e83ba
-currency/essentials/v1, en-MV, 1469B, 1345B, c11616227e84ae62
-currency/essentials/v1, en-MW, 1467B, 1343B, 4c9964183c2533de
-currency/essentials/v1, en-MY, 1463B, 1339B, 82dfc9adad97b48f
-currency/essentials/v1, en-NA, 1463B, 1339B, 8c60c30853f3407b
+currency/essentials/v1, en-MT, 1515B, 1363B, 8b5c3022b3226e3b
+currency/essentials/v1, en-MU, 1509B, 1357B, 1cfcb69be3758fd5
+currency/essentials/v1, en-MV, 1515B, 1363B, e624607b8a4989a7
+currency/essentials/v1, en-MW, 1513B, 1361B, 39a4bbe7830fe308
+currency/essentials/v1, en-MY, 1509B, 1357B, 3c523c90945a6594
+currency/essentials/v1, en-NA, 1509B, 1357B, ca43594100130923
 currency/essentials/v1, en-NF, -> en-CC
-currency/essentials/v1, en-NG, 1463B, 1339B, 4c7f464ee31284c6
+currency/essentials/v1, en-NG, 1509B, 1357B, 19661ea728458831
 currency/essentials/v1, en-NL, -> en-AT
-currency/essentials/v1, en-NO, 1465B, 1341B, 760e286caaf1eaba
+currency/essentials/v1, en-NO, 1512B, 1360B, 56e237a54132a82a
 currency/essentials/v1, en-NR, -> en-CC
 currency/essentials/v1, en-NU, -> en-CK
 currency/essentials/v1, en-NZ, -> en-CK
-currency/essentials/v1, en-PG, 1463B, 1339B, 81361463bb86a071
-currency/essentials/v1, en-PK, 1463B, 1339B, 8f00daec3715eaec
+currency/essentials/v1, en-PG, 1509B, 1357B, 9563f5269b9ef25b
+currency/essentials/v1, en-PK, 1509B, 1357B, 83a10df87ad0c660
+currency/essentials/v1, en-PL, -> en-BE
 currency/essentials/v1, en-PN, -> en-CK
-currency/essentials/v1, en-RW, 1463B, 1339B, f626ed5ee687aa5d
-currency/essentials/v1, en-SB, 1463B, 1339B, 1d3bf4c128e054fe
-currency/essentials/v1, en-SC, 1467B, 1343B, ecf6bfa91f044f9b
-currency/essentials/v1, en-SE, 1465B, 1341B, c8c9900005300875
-currency/essentials/v1, en-SG, 1463B, 1339B, d574435eee90c192
-currency/essentials/v1, en-SH, 1469B, 1345B, d4cdc3a5e473f937
-currency/essentials/v1, en-SL, 1467B, 1343B, 105922924354ea23
-currency/essentials/v1, en-SS, 1469B, 1345B, 5ae6fdc45c347c95
-currency/essentials/v1, en-SX, 1469B, 1345B, e40991737dd0e2ac
-currency/essentials/v1, en-SZ, 1466B, 1342B, 57e80d1431372369
+currency/essentials/v1, en-PT, -> en-CZ
+currency/essentials/v1, en-RO, -> en-BE
+currency/essentials/v1, en-RW, 1509B, 1357B, ca10f9a82bb8d97a
+currency/essentials/v1, en-SB, 1509B, 1357B, eb71e8229942639f
+currency/essentials/v1, en-SC, 1513B, 1361B, c369462bac35ea55
+currency/essentials/v1, en-SE, 1512B, 1360B, 4581b120bbeb2d3
+currency/essentials/v1, en-SG, 1509B, 1357B, af6107671febc59f
+currency/essentials/v1, en-SH, 1515B, 1363B, af6701940cfaf9e0
+currency/essentials/v1, en-SI, -> en-BE
+currency/essentials/v1, en-SK, -> en-CZ
+currency/essentials/v1, en-SL, 1513B, 1361B, 4344b2a7cef960e3
+currency/essentials/v1, en-SS, 1515B, 1363B, 144ab10f1c510f53
+currency/essentials/v1, en-SX, 1515B, 1363B, 143b8c66f547fe3b
+currency/essentials/v1, en-SZ, 1512B, 1360B, e99c81f2efac74cd
 currency/essentials/v1, en-TK, -> en-CK
-currency/essentials/v1, en-TO, 1463B, 1339B, c1be4881186c7a9d
-currency/essentials/v1, en-TT, 1463B, 1339B, dde39cb8643acc41
+currency/essentials/v1, en-TO, 1509B, 1357B, d4b95af56c677262
+currency/essentials/v1, en-TT, 1509B, 1357B, 870250b233c452b1
 currency/essentials/v1, en-TV, -> en-CC
-currency/essentials/v1, en-TZ, 1468B, 1344B, b0ea80a18209dd5a
-currency/essentials/v1, en-UG, 1468B, 1344B, df24c31db9bdf4a0
+currency/essentials/v1, en-TZ, 1514B, 1362B, d8dcbddc07108160
+currency/essentials/v1, en-UA, -> en-CZ
+currency/essentials/v1, en-UG, 1514B, 1362B, 4443654835a3901b
 currency/essentials/v1, en-VC, -> en-AG
-currency/essentials/v1, en-VU, 1467B, 1343B, be4c758cabae2f
-currency/essentials/v1, en-WS, 1468B, 1344B, beb81cc7fcd3a97b
-currency/essentials/v1, en-ZA, 1461B, 1337B, 2615d2f1ebe2c457
-currency/essentials/v1, en-ZM, 1463B, 1339B, 375ac17697ec933c
-currency/essentials/v1, eo, 1041B, 917B, b97ea4a99732586e
-currency/essentials/v1, es, 1062B, 938B, 6887208739d07395
-currency/essentials/v1, es-419, 1082B, 958B, cf7944786d1745f3
-currency/essentials/v1, es-AR, 1089B, 965B, 906c0811405b25ae
-currency/essentials/v1, es-BO, 1082B, 958B, ee72fb12d1e760d5
-currency/essentials/v1, es-BR, 1082B, 958B, 1b181530df46fb50
-currency/essentials/v1, es-BZ, 1082B, 958B, 29abbe4a393443e9
-currency/essentials/v1, es-CL, 1087B, 963B, 25ae8e7ea0d0411e
-currency/essentials/v1, es-CO, 1089B, 965B, 6bdf931ab71dd632
-currency/essentials/v1, es-CR, 1082B, 958B, f8b7ba4a9ebd99cc
-currency/essentials/v1, es-CU, 1087B, 963B, c081da70aa52914e
-currency/essentials/v1, es-DO, 1092B, 968B, 8741fbf9fa011c3e
-currency/essentials/v1, es-EC, 1082B, 958B, b97f08533e372d0
-currency/essentials/v1, es-GQ, 1066B, 942B, 7e3c15470fa92380
-currency/essentials/v1, es-GT, 1082B, 958B, d35ab3220138e6cc
-currency/essentials/v1, es-HN, 1082B, 958B, a2e6ba9290a0f7bb
-currency/essentials/v1, es-MX, 1085B, 961B, 9c75d97c0d1fa79d
-currency/essentials/v1, es-NI, 1082B, 958B, 5cdaad0773a6c019
-currency/essentials/v1, es-PA, 1093B, 969B, 3b2210a327f55bec
-currency/essentials/v1, es-PE, 1094B, 970B, 15abc9e0853ecb4c
-currency/essentials/v1, es-PH, 1062B, 938B, d3f9ff8016d47ab7
-currency/essentials/v1, es-PR, -> es-EC
-currency/essentials/v1, es-PY, 1089B, 965B, bef4a0be555a78a9
-currency/essentials/v1, es-SV, -> es-EC
-currency/essentials/v1, es-US, 1065B, 941B, 2c96307b93f5fb25
-currency/essentials/v1, es-UY, 1099B, 975B, 59070515ae2eb7d1
-currency/essentials/v1, es-VE, 1094B, 970B, e790268ca7afe9e6
-currency/essentials/v1, et, 1113B, 989B, da837119cdbe0bcc
-currency/essentials/v1, eu, 1128B, 1004B, 77bdc06c7c5e9b97
-currency/essentials/v1, fa, 1147B, 1023B, eea86f2c62452339
-currency/essentials/v1, fa-AF, 1141B, 1017B, c0e941f93217b79d
-currency/essentials/v1, ff-Adlm, 1223B, 1099B, 8719bea368213778
-currency/essentials/v1, ff-Adlm-BF, 1219B, 1095B, 12ff31035cebcc13
+currency/essentials/v1, en-VU, 1513B, 1361B, 7e910c9d6f832a03
+currency/essentials/v1, en-WS, 1514B, 1362B, e66e88e4e1c98741
+currency/essentials/v1, en-ZA, 1508B, 1356B, d8033de0b03d3d52
+currency/essentials/v1, en-ZM, 1509B, 1357B, 937a17cbd3db531
+currency/essentials/v1, eo, 1089B, 937B, ff61e33498d00e20
+currency/essentials/v1, es, 1108B, 956B, 7d89034c8a2987c4
+currency/essentials/v1, es-419, 1128B, 976B, 5baa7103e683a083
+currency/essentials/v1, es-AR, 1135B, 983B, a80f01701b4b91ee
+currency/essentials/v1, es-BO, 1128B, 976B, 83e7871ba950adb1
+currency/essentials/v1, es-BR, 1128B, 976B, 378b8ba75f265849
+currency/essentials/v1, es-BZ, 1128B, 976B, 85a6ef00e095c633
+currency/essentials/v1, es-CL, 1133B, 981B, 498c96a78f1f755c
+currency/essentials/v1, es-CO, 1135B, 983B, 6c02d11b1bf0bda8
+currency/essentials/v1, es-CR, 1129B, 977B, 5f131f567d7924da
+currency/essentials/v1, es-CU, 1133B, 981B, fd76e6255f266c8c
+currency/essentials/v1, es-DO, 1138B, 986B, ddf2bdcc15b0d118
+currency/essentials/v1, es-EC, 1128B, 976B, 6468f12015e0b40b
+currency/essentials/v1, es-GQ, 1112B, 960B, bf97e201c7f0efac
+currency/essentials/v1, es-GT, 1128B, 976B, e6685ce13261ba8a
+currency/essentials/v1, es-HN, 1128B, 976B, 9489113ab4537eff
+currency/essentials/v1, es-MX, 1131B, 979B, 4cace4423f4cd8db
+currency/essentials/v1, es-NI, 1128B, 976B, 5014e9fb9af0a6bc
+currency/essentials/v1, es-PA, 1139B, 987B, 61cad4cefe55f549
+currency/essentials/v1, es-PE, 1140B, 988B, 278d7c430b6d0d5a
+currency/essentials/v1, es-PH, 1108B, 956B, 2c819eb9ac9eeef7
+currency/essentials/v1, es-PR, 1128B, 976B, b9da5b78b6dab54f
+currency/essentials/v1, es-PY, 1135B, 983B, 6513155ea75f9eae
+currency/essentials/v1, es-SV, -> es-PR
+currency/essentials/v1, es-US, 1111B, 959B, e2ced245a0286cb8
+currency/essentials/v1, es-UY, 1145B, 993B, c181046dc1df2f24
+currency/essentials/v1, es-VE, 1140B, 988B, d948b84f8504c729
+currency/essentials/v1, et, 1162B, 1010B, 2245d0658511a74
+currency/essentials/v1, eu, 1176B, 1024B, db0bc9cdd61429f
+currency/essentials/v1, fa, 1204B, 1052B, 62e1507ce170f1c2
+currency/essentials/v1, fa-AF, 1200B, 1048B, 1fcead75c487714e
+currency/essentials/v1, fa-AF/latn, 1195B, 1043B, 85d0a80d46699024
+currency/essentials/v1, fa/latn, 1201B, 1049B, ba81e8388d337b94
+currency/essentials/v1, ff-Adlm, 1271B, 1119B, f419fe95781490bb
+currency/essentials/v1, ff-Adlm-BF, 1267B, 1115B, a8bd0f30b9fea689
+currency/essentials/v1, ff-Adlm-BF/latn, 1267B, 1115B, 9fc60d57a78be733
 currency/essentials/v1, ff-Adlm-CM, -> ff-Adlm-BF
-currency/essentials/v1, ff-Adlm-GH, 1219B, 1095B, a4e894da09e68dff
-currency/essentials/v1, ff-Adlm-GM, 1228B, 1104B, 33af5a96dfdc98c2
+currency/essentials/v1, ff-Adlm-CM/latn, -> ff-Adlm-BF/latn
+currency/essentials/v1, ff-Adlm-GH, 1267B, 1115B, 19b6d34ba7817b7e
+currency/essentials/v1, ff-Adlm-GH/latn, 1267B, 1115B, f97c9e752967f5b7
+currency/essentials/v1, ff-Adlm-GM, 1276B, 1124B, 44e52eb82674d24
+currency/essentials/v1, ff-Adlm-GM/latn, 1276B, 1124B, e0353e80379b8cb4
 currency/essentials/v1, ff-Adlm-GW, -> ff-Adlm-BF
-currency/essentials/v1, ff-Adlm-LR, 1219B, 1095B, 19b6d41d6444bcad
-currency/essentials/v1, ff-Adlm-MR, 1229B, 1105B, 89be54a811bcfa36
+currency/essentials/v1, ff-Adlm-GW/latn, -> ff-Adlm-BF/latn
+currency/essentials/v1, ff-Adlm-LR, 1267B, 1115B, 7adf8fc7c823fb41
+currency/essentials/v1, ff-Adlm-LR/latn, 1267B, 1115B, 7629444ea210de90
+currency/essentials/v1, ff-Adlm-MR, 1277B, 1125B, d112352d1c572b4d
+currency/essentials/v1, ff-Adlm-MR/latn, 1277B, 1125B, 81d2b82f7e8fdd8d
 currency/essentials/v1, ff-Adlm-NE, -> ff-Adlm-BF
-currency/essentials/v1, ff-Adlm-NG, 1205B, 1081B, 9bcc5183a0fc0a4e
-currency/essentials/v1, ff-Adlm-SL, 1229B, 1105B, f90b89670364571e
+currency/essentials/v1, ff-Adlm-NE/latn, -> ff-Adlm-BF/latn
+currency/essentials/v1, ff-Adlm-NG, 1253B, 1101B, 7ce62d2a8763653
+currency/essentials/v1, ff-Adlm-NG/latn, 1253B, 1101B, c55085ae51bec931
+currency/essentials/v1, ff-Adlm-SL, 1277B, 1125B, b50b04a8eb4b4a23
+currency/essentials/v1, ff-Adlm-SL/latn, 1277B, 1125B, 802e80e767c7f385
 currency/essentials/v1, ff-Adlm-SN, -> ff-Adlm-BF
-currency/essentials/v1, fi, 861B, 736B, 8386b6079061e95a
-currency/essentials/v1, fil, 1115B, 991B, 397f0c0f39e495f5
-currency/essentials/v1, fo, 1128B, 1004B, cde9bf89d1423e1f
-currency/essentials/v1, fo-DK, 1133B, 1009B, 1077e0575bb3d0e0
-currency/essentials/v1, fr, 1293B, 1169B, fa4f788880e89a94
-currency/essentials/v1, fr-BI, 1304B, 1180B, e940e6f45990ceb9
-currency/essentials/v1, fr-CA, 1188B, 1064B, bf2c3da0965b32a6
-currency/essentials/v1, fr-CD, 1299B, 1175B, e46a3477f4693756
-currency/essentials/v1, fr-DJ, 1304B, 1180B, eeda2846a4935271
-currency/essentials/v1, fr-DZ, 1303B, 1179B, 3ac1122286f62e01
-currency/essentials/v1, fr-GN, 1293B, 1169B, ba031757dae16015
-currency/essentials/v1, fr-HT, 1302B, 1178B, 1cb08995e89b466b
-currency/essentials/v1, fr-KM, 1297B, 1173B, f7e45e4bc38cb005
-currency/essentials/v1, fr-LU, 1299B, 1175B, ecebcce74ed9712f
-currency/essentials/v1, fr-MG, 1293B, 1169B, 360b34caad306539
-currency/essentials/v1, fr-MR, 1303B, 1179B, 4478762064dfc6b2
-currency/essentials/v1, fr-MU, 1293B, 1169B, 67c809dadaf5a415
-currency/essentials/v1, fr-RW, 1297B, 1173B, 6842e42cff19e233
-currency/essentials/v1, fr-SC, 1303B, 1179B, 94c6b9240704ee00
-currency/essentials/v1, fr-SY, 1297B, 1173B, bbd9e681a84ca536
-currency/essentials/v1, fr-TN, 1303B, 1179B, 875b7223eed232d3
-currency/essentials/v1, fr-VU, 1303B, 1179B, 8bc898620763c0ac
-currency/essentials/v1, fy, 1117B, 993B, 4b68ee66778577af
-currency/essentials/v1, ga, 1111B, 987B, e175d5f2c33d3e8d
-currency/essentials/v1, gd, 1123B, 999B, f77737015d7422c5
-currency/essentials/v1, gl, 1119B, 995B, ea8ac48dc3998db4
-currency/essentials/v1, gu, 1135B, 1011B, d06a9df25105fe5d
-currency/essentials/v1, ha, 1106B, 982B, 4a7b98e9b95cdc0f
-currency/essentials/v1, ha-GH, 1106B, 982B, fe3518457d22bc
-currency/essentials/v1, he, 1148B, 1024B, e5a5a2f04b268072
-currency/essentials/v1, hi, 1127B, 1003B, 50610fc722147bd8
-currency/essentials/v1, hr, 1078B, 954B, f680ee4051f6f6f6
-currency/essentials/v1, hr-BA, 1078B, 954B, b0b66616c4050209
+currency/essentials/v1, ff-Adlm-SN/latn, -> ff-Adlm-BF/latn
+currency/essentials/v1, ff-Adlm/latn, 1271B, 1119B, c2a2d0a874d3fa23
+currency/essentials/v1, fi, 910B, 757B, d8e7f9e6f9524880
+currency/essentials/v1, fil, 1161B, 1009B, fdf762e94c69a89e
+currency/essentials/v1, fo, 1176B, 1024B, 8a21cb7975a8e69f
+currency/essentials/v1, fo-DK, 1181B, 1029B, 31962796b5bb3671
+currency/essentials/v1, fr, 1341B, 1189B, f0e66632f2257c6b
+currency/essentials/v1, fr-BI, 1352B, 1200B, 79a6986519e252b4
+currency/essentials/v1, fr-CA, 1235B, 1083B, 580edcb6a971008
+currency/essentials/v1, fr-CD, 1347B, 1195B, b75eba0eaab8aba1
+currency/essentials/v1, fr-CH, 1339B, 1187B, 7b32d98f811360af
+currency/essentials/v1, fr-DJ, 1352B, 1200B, 7eff805e9ff7436b
+currency/essentials/v1, fr-DZ, 1351B, 1199B, 1e741e597fdd4c5c
+currency/essentials/v1, fr-GN, 1341B, 1189B, 67fc4ba8b62857a0
+currency/essentials/v1, fr-HT, 1350B, 1198B, 13e4fcaaf38823a5
+currency/essentials/v1, fr-KM, 1345B, 1193B, ed500eb1bdb5e637
+currency/essentials/v1, fr-LU, 1345B, 1193B, 9e3a1d63ed8d06e4
+currency/essentials/v1, fr-MA, 1339B, 1187B, c93a7342c618aa00
+currency/essentials/v1, fr-MG, 1341B, 1189B, 7373a1d69e58a7ad
+currency/essentials/v1, fr-MR, 1351B, 1199B, bfcbaef7968f78e8
+currency/essentials/v1, fr-MU, 1341B, 1189B, 7997068c44db761d
+currency/essentials/v1, fr-RW, 1345B, 1193B, 82f412c2b67909a
+currency/essentials/v1, fr-SC, 1351B, 1199B, 8047a6f8986b1046
+currency/essentials/v1, fr-SY, 1345B, 1193B, fafb9a5c818604ef
+currency/essentials/v1, fr-TN, 1351B, 1199B, b01d64157b1d7818
+currency/essentials/v1, fr-VU, 1351B, 1199B, 238cc13bcda0f310
+currency/essentials/v1, fy, 1163B, 1011B, ea5109771cca7655
+currency/essentials/v1, ga, 1157B, 1005B, 5ff98caa513202c4
+currency/essentials/v1, gd, 1169B, 1017B, 34dfde79833e228f
+currency/essentials/v1, gl, 1165B, 1013B, b8218e722d3f73a0
+currency/essentials/v1, gu, 1181B, 1029B, 91f081a197f4a3d3
+currency/essentials/v1, gu/gujr, 1181B, 1029B, 75eb43d1d3d5877e
+currency/essentials/v1, ha, 1152B, 1000B, 3e26e84d3738d4e8
+currency/essentials/v1, ha-GH, 1152B, 1000B, 5ff24c37fc65672d
+currency/essentials/v1, he, 1200B, 1048B, d1bb55d6edfbe8e0
+currency/essentials/v1, hi, 1173B, 1021B, 2ad6390d52e95361
+currency/essentials/v1, hi/deva, 1173B, 1021B, 23e98cbedda1dabb
+currency/essentials/v1, hr, 1126B, 974B, 202de0ec8d1cedbf
+currency/essentials/v1, hr-BA, 1126B, 974B, db2c2734bd4f346b
 currency/essentials/v1, hsb, -> dsb
-currency/essentials/v1, hu, 1082B, 958B, cd57ee26e85ac597
-currency/essentials/v1, hy, 1123B, 999B, f5f2af0a0054bb08
-currency/essentials/v1, ia, 1127B, 1003B, 9de4b22bc4d4cab0
-currency/essentials/v1, id, 1123B, 999B, 754d50c541d17baa
-currency/essentials/v1, ig, 1104B, 980B, 370ed779e2c3b8b
-currency/essentials/v1, ii, 1111B, 987B, 526a94715870685
-currency/essentials/v1, is, 1089B, 965B, f88ce26537f3dc2f
-currency/essentials/v1, it, 1110B, 986B, 435652d6c128b9cb
-currency/essentials/v1, it-CH, 1110B, 986B, 9684d1c19b18e49d
-currency/essentials/v1, ja, 1113B, 989B, 7f7221109d804f3f
-currency/essentials/v1, jv, 1117B, 993B, 35d60b47147063bc
-currency/essentials/v1, ka, 1102B, 978B, a2f838b7021dfc25
-currency/essentials/v1, kea, 1129B, 1005B, 3b8e208c7a976ddb
-currency/essentials/v1, kgp, 1154B, 1030B, d371522ad68ce67b
-currency/essentials/v1, kk, 1137B, 1013B, df89c1a0e11ff9ab
-currency/essentials/v1, kk-Arab, 1117B, 993B, 1f51c4c70a2f73e6
-currency/essentials/v1, km, 1141B, 1017B, e0eea2d467e0b609
-currency/essentials/v1, kn, 1124B, 1000B, 74cf6a38f2d06692
-currency/essentials/v1, ko, 1122B, 998B, 2a4006a89c77dd2
-currency/essentials/v1, kok, 1143B, 1019B, 4d24bb87f84b94bb
-currency/essentials/v1, kok-Latn, -> bho
-currency/essentials/v1, ks, -> doi
-currency/essentials/v1, ks-Deva, 1112B, 988B, 19df636c0ba6a29f
-currency/essentials/v1, ku, 1112B, 988B, a661b534d31de675
-currency/essentials/v1, kxv, -> bho
-currency/essentials/v1, kxv-Deva, -> bho
-currency/essentials/v1, kxv-Orya, -> bho
-currency/essentials/v1, kxv-Telu, -> bho
-currency/essentials/v1, ky, 1134B, 1010B, f7d0973bccc15747
-currency/essentials/v1, lb, 1118B, 994B, 4572617e9a25bec5
-currency/essentials/v1, lij, -> bua
-currency/essentials/v1, lo, 1126B, 1002B, 2c6d0a7349a27798
-currency/essentials/v1, lt, 1017B, 893B, e0ea8f72c86b776f
-currency/essentials/v1, lv, 1111B, 987B, 9c6bd14344275b57
+currency/essentials/v1, ht, 1349B, 1197B, c60755f61b3295ac
+currency/essentials/v1, hu, 1129B, 977B, f6f3e5f593fbbabe
+currency/essentials/v1, hy, 1170B, 1018B, cccb0aa420fb1a50
+currency/essentials/v1, ia, 1173B, 1021B, 32e88a0a6a5d072b
+currency/essentials/v1, id, 1169B, 1017B, f74acdf6463ac9f8
+currency/essentials/v1, ie, 1164B, 1012B, e36075a5157c92fd
+currency/essentials/v1, ig, 1150B, 998B, 3c6af49e7d847414
+currency/essentials/v1, ii, 1157B, 1005B, a512c73978711b7d
+currency/essentials/v1, is, 1135B, 983B, 5c23c9b17af320e0
+currency/essentials/v1, it, 1156B, 1004B, 193d4bbbb5b05312
+currency/essentials/v1, it-CH, 1156B, 1004B, f39bfec0b0c333fb
+currency/essentials/v1, ja, 1159B, 1007B, 695fcfcaa4788ab7
+currency/essentials/v1, jv, 1163B, 1011B, f425dc919e76c5b7
+currency/essentials/v1, jv/java, 1163B, 1011B, 10552cb61dd4bfc8
+currency/essentials/v1, ka, 1149B, 997B, 880cd0655ff95a57
+currency/essentials/v1, kea, 1176B, 1024B, 9d9793bb6a766d14
+currency/essentials/v1, kgp, 1200B, 1048B, b0cc430de7c124fd
+currency/essentials/v1, kk, 1184B, 1032B, c235baeef5e7bf73
+currency/essentials/v1, kk-Arab, 1163B, 1011B, 47c4ae5d134d6520
+currency/essentials/v1, km, 1187B, 1035B, df089841031c1384
+currency/essentials/v1, km/khmr, 1187B, 1035B, b58326add64822da
+currency/essentials/v1, kn, 1170B, 1018B, b4eee70f5e188517
+currency/essentials/v1, kn/knda, 1170B, 1018B, c9d483a5a30628fd
+currency/essentials/v1, ko, 1168B, 1016B, d340f25d9d561318
+currency/essentials/v1, kok, 1189B, 1037B, 826ab949c434c301
+currency/essentials/v1, kok-Latn, 1161B, 1009B, bcc5b497c2163f0e
+currency/essentials/v1, kok/deva, 1189B, 1037B, 9706374a9c561c96
+currency/essentials/v1, ks, 1167B, 1015B, 143a642f599accb9
+currency/essentials/v1, ks-Deva, 1158B, 1006B, 42f1c56c854f81cd
+currency/essentials/v1, ks/latn, 1151B, 999B, d9dd0c9af8fd5063
+currency/essentials/v1, ku, 1158B, 1006B, 97b1e0bc90a1b8d9
+currency/essentials/v1, kxv, -> kok-Latn
+currency/essentials/v1, kxv-Deva, -> kok-Latn
+currency/essentials/v1, kxv-Deva/deva, 1161B, 1009B, a03f06fe63453da7
+currency/essentials/v1, kxv-Orya, -> kok-Latn
+currency/essentials/v1, kxv-Orya/orya, 1161B, 1009B, 99943c34792c9ac
+currency/essentials/v1, kxv-Telu, -> kok-Latn
+currency/essentials/v1, kxv-Telu/telu, 1161B, 1009B, 2569127a093d7deb
+currency/essentials/v1, ky, 1181B, 1029B, 50247c8093ba8404
+currency/essentials/v1, lb, 1164B, 1012B, 888b9b125d3243f6
+currency/essentials/v1, lij, 1163B, 1011B, ba2f2f7e8e20cac9
+currency/essentials/v1, lmo, 1163B, 1011B, 9f6da21c3654c209
+currency/essentials/v1, lo, 1172B, 1020B, 7d60ecbda3288d2e
+currency/essentials/v1, lo/laoo, 1172B, 1020B, fbcbfa20bcb22869
+currency/essentials/v1, lt, 1066B, 914B, 774b0935ff505400
+currency/essentials/v1, lv, 1158B, 1006B, 81d1333558476d5b
 currency/essentials/v1, mai, -> ks-Deva
-currency/essentials/v1, mi, 1106B, 982B, 57aa9992ec15aa3f
-currency/essentials/v1, mk, 1117B, 993B, 6e60fdc28c572844
-currency/essentials/v1, ml, 1115B, 991B, 4251d90d98dd1bc9
-currency/essentials/v1, mn, 1129B, 1005B, 251adde1b4c768e9
-currency/essentials/v1, mni, -> ks-Deva
-currency/essentials/v1, mr, 1110B, 986B, 173521cf0ddfef0a
-currency/essentials/v1, ms, 1111B, 987B, 3dea9e6f0f0f05f1
-currency/essentials/v1, ms-BN, 1113B, 989B, 85bcada6549e6f6
-currency/essentials/v1, ms-ID, 1111B, 987B, 65be385e7115d420
-currency/essentials/v1, ms-SG, 1111B, 987B, f748e280f865d61c
-currency/essentials/v1, mt, 1126B, 1002B, 2d2e69a0f1aef97b
-currency/essentials/v1, my, 1185B, 1061B, 72d849d8ef5a6d45
-currency/essentials/v1, nds, -> bua
-currency/essentials/v1, ne, 1150B, 1026B, f5a5da3cfc8e10e7
-currency/essentials/v1, nl, 1145B, 1021B, 28cfdf6aea930099
-currency/essentials/v1, nl-AW, 1157B, 1033B, c322f7ae5f99f183
-currency/essentials/v1, nl-BQ, 1140B, 1016B, 3025424d17a1981f
-currency/essentials/v1, nl-CW, 1157B, 1033B, 5359aa687ac2d436
-currency/essentials/v1, nl-SR, 1145B, 1021B, a3d7aec4991122e1
+currency/essentials/v1, mai/deva, 1158B, 1006B, e7cfbacf68eca76d
+currency/essentials/v1, mi, 1152B, 1000B, 8b44a078d14eac28
+currency/essentials/v1, mk, 1163B, 1011B, 38e375bd473e327a
+currency/essentials/v1, ml, 1161B, 1009B, 7f9bc2005e1eda1d
+currency/essentials/v1, ml/mlym, 1161B, 1009B, ac0c3bd98db5406f
+currency/essentials/v1, mn, 1175B, 1023B, 4105541168c1b057
+currency/essentials/v1, mni, 1158B, 1006B, 744070f6f9d2053e
+currency/essentials/v1, mni/latn, -> ks-Deva
+currency/essentials/v1, mr, 1156B, 1004B, 2e8b1b454da8e2c7
+currency/essentials/v1, mr/latn, 1156B, 1004B, 4bc5d182354aac6b
+currency/essentials/v1, ms, 1157B, 1005B, d94e2fb10d9ac389
+currency/essentials/v1, ms-BN, 1159B, 1007B, 4b4ca87d137761be
+currency/essentials/v1, ms-ID, 1157B, 1005B, 2f78b706b9ddaee0
+currency/essentials/v1, ms-SG, 1157B, 1005B, 5fe7b9b6f4abdf87
+currency/essentials/v1, mt, 1172B, 1020B, 7be15ac542b03185
+currency/essentials/v1, my, 1231B, 1079B, 3397e9bcee18f288
+currency/essentials/v1, my/latn, 1231B, 1079B, 5f096041afdebf7e
+currency/essentials/v1, nds, -> lij
+currency/essentials/v1, ne, 1196B, 1044B, 2783c67a587428a3
+currency/essentials/v1, ne/latn, 1196B, 1044B, 56dcfab74160ab40
+currency/essentials/v1, nl, 1191B, 1039B, 75592aef22881776
+currency/essentials/v1, nl-AW, 1203B, 1051B, 92c45ecd01e226b2
+currency/essentials/v1, nl-BQ, 1186B, 1034B, d2a1f308de661ced
+currency/essentials/v1, nl-CW, 1203B, 1051B, f22e497af1786cbd
+currency/essentials/v1, nl-SR, 1191B, 1039B, dfcf55c1558709f7
 currency/essentials/v1, nl-SX, -> nl-CW
-currency/essentials/v1, nn, 1061B, 937B, f0b4cb80fb85d110
-currency/essentials/v1, no, 1061B, 937B, fe5c407646691a1b
-currency/essentials/v1, nqo, 2993B, 2869B, 18e16a697136393
-currency/essentials/v1, nso, 1117B, 993B, c59bd2faead7408b
-currency/essentials/v1, oc, 1115B, 991B, 7d23fdf47fbcc0b1
-currency/essentials/v1, om, 1125B, 1001B, 2bb0d7c6d1332187
-currency/essentials/v1, om-KE, 1136B, 1012B, 5fcaffe40cfad7c2
-currency/essentials/v1, or, 1115B, 991B, 179465716df0c55a
-currency/essentials/v1, pa, 1122B, 998B, c375eefb51f1783f
-currency/essentials/v1, pcm, 1125B, 1001B, d52f115775a1a1d
-currency/essentials/v1, pl, 1071B, 947B, 4fc09b0e6dc9386e
-currency/essentials/v1, pms, -> bua
-currency/essentials/v1, ps, 1123B, 999B, 6c10821feeee6f08
-currency/essentials/v1, ps-PK, 1123B, 999B, 7d4059d674649896
-currency/essentials/v1, pt, 1141B, 1017B, f6c59ec08e711d2b
-currency/essentials/v1, pt-AO, 1135B, 1011B, a55fc1ef1d2f8377
-currency/essentials/v1, pt-CV, 1141B, 1017B, 377cac74baa53914
-currency/essentials/v1, pt-LU, 1144B, 1020B, 7a8a9016736c010
-currency/essentials/v1, pt-MO, 1147B, 1023B, cb40768f99a11800
-currency/essentials/v1, pt-MZ, 1146B, 1022B, 5ce43df1cd353634
-currency/essentials/v1, pt-PT, 1135B, 1011B, 5663f746db80a6d2
-currency/essentials/v1, pt-ST, 1135B, 1011B, 35439a8038f18171
-currency/essentials/v1, qu, 1140B, 1016B, 96de123f58081cae
-currency/essentials/v1, qu-BO, 1136B, 1012B, 17f4acb6908cc19c
-currency/essentials/v1, qu-EC, 1131B, 1007B, ca9e6b953214732
-currency/essentials/v1, rm, 1110B, 986B, 864d16319a3a5d49
-currency/essentials/v1, ro, 1082B, 958B, dbbfeb263d69e5cd
-currency/essentials/v1, ro-MD, 1088B, 964B, 1895fc49fa402873
-currency/essentials/v1, ru, 1133B, 1009B, e9e02d141af95728
-currency/essentials/v1, ru-BY, 1132B, 1008B, 214d98e851899bad
-currency/essentials/v1, ru-KG, 1141B, 1017B, d402a33088002a28
-currency/essentials/v1, ru-KZ, 1133B, 1009B, a6a0c4b7aa3f389d
-currency/essentials/v1, ru-MD, 1139B, 1015B, 206c10e0466fa00d
-currency/essentials/v1, rw, 1117B, 993B, bf24b0ce1a55e4a1
-currency/essentials/v1, sa, -> bho
-currency/essentials/v1, sah, 1117B, 993B, f274f2149d91322f
-currency/essentials/v1, sc, 1128B, 1004B, 5572921f0cb527a
-currency/essentials/v1, sd, 1128B, 1004B, 376b3f3f6c1d045a
-currency/essentials/v1, sd-Deva, 1106B, 982B, 9bf0b069e850d3b3
-currency/essentials/v1, si, 1143B, 1019B, 797594155f1c3e22
-currency/essentials/v1, sk, 1098B, 974B, bde3b9d2f9b2060a
-currency/essentials/v1, sl, 1093B, 969B, b4ab2feeb4dc6dec
-currency/essentials/v1, so, 1129B, 1005B, ef44af71c0fd09af
-currency/essentials/v1, so-DJ, 1140B, 1016B, 20656ed9f23367ab
-currency/essentials/v1, so-ET, 1139B, 1015B, 462a58c924b72e8f
-currency/essentials/v1, so-KE, 1140B, 1016B, a41b66ecec060ba3
-currency/essentials/v1, sq, 942B, 818B, 4ef0e145a47f3cb4
-currency/essentials/v1, sq-MK, 953B, 829B, 3dc80a5a185a9f38
-currency/essentials/v1, sr, 1119B, 995B, 7df17dc760727d0c
-currency/essentials/v1, sr-Latn, 1112B, 988B, c0e981987f374909
-currency/essentials/v1, st, 1115B, 991B, e774b23687bd356
-currency/essentials/v1, st-LS, 1124B, 1000B, be601ab371dc9cb
-currency/essentials/v1, su, 1104B, 980B, 8e0abbea5c660310
-currency/essentials/v1, sv, 1167B, 1043B, 6687083125237174
-currency/essentials/v1, sw, 1150B, 1026B, 3af3f60f30e15ae4
-currency/essentials/v1, sw-CD, 1160B, 1036B, 4ae588096ed877c3
-currency/essentials/v1, sw-KE, 1145B, 1021B, 897a40756684ddff
-currency/essentials/v1, sw-UG, 1161B, 1037B, 12c787ac52dafb2f
-currency/essentials/v1, syr, 1128B, 1004B, 86342ed055490dad
-currency/essentials/v1, szl, 1117B, 993B, d4430b1aad1dbea2
-currency/essentials/v1, ta, -> ml
-currency/essentials/v1, ta-LK, 1120B, 996B, bdc6040c6d553701
-currency/essentials/v1, ta-MY, 1121B, 997B, 39c2c6fc5c812480
-currency/essentials/v1, ta-SG, 1122B, 998B, d2c37cdc85ebfffa
-currency/essentials/v1, te, 1121B, 997B, 3adeb4930eac84a
-currency/essentials/v1, tg, 1127B, 1003B, 370e6c72e712f479
-currency/essentials/v1, th, 1117B, 993B, 14b95ee9a78a9f9c
-currency/essentials/v1, ti, 1113B, 989B, 3ce3fc449766af36
-currency/essentials/v1, ti-ER, 1124B, 1000B, 5deb3ad1d7057fb1
-currency/essentials/v1, tk, 1128B, 1004B, bc2cfd58c47d0ca3
-currency/essentials/v1, tn, -> st
-currency/essentials/v1, tn-BW, 1115B, 991B, e22b6045c50161e4
-currency/essentials/v1, to, 1138B, 1014B, 4255f9a629faa5e8
-currency/essentials/v1, tr, 1117B, 993B, 8c1b677c879522e9
+currency/essentials/v1, nn, 1110B, 958B, a07ecf62041745e2
+currency/essentials/v1, no, 1110B, 958B, ab966d3d833e5e7b
+currency/essentials/v1, nqo, 3040B, 2888B, 926f47b30a036069
+currency/essentials/v1, nqo/latn, 3040B, 2888B, a0867f9ab0e66372
+currency/essentials/v1, nso, 1163B, 1011B, c679d571e6ca0004
+currency/essentials/v1, oc, 1162B, 1010B, c6fd284cff7d8114
+currency/essentials/v1, om, 1171B, 1019B, 5b8e7ccf95d0fe86
+currency/essentials/v1, om-KE, 1182B, 1030B, 9b527d1a14871aa
+currency/essentials/v1, or, 1161B, 1009B, c8be7ca5e13ec050
+currency/essentials/v1, or/orya, 1161B, 1009B, 2d7a63fd1ccf153c
+currency/essentials/v1, pa, 1168B, 1016B, dd4ebd7429b482dc
+currency/essentials/v1, pa/guru, 1168B, 1016B, d83ef6f61fc0fc53
+currency/essentials/v1, pcm, 1171B, 1019B, c9b34d22b861de7b
+currency/essentials/v1, pl, 1118B, 966B, 6f4534711dacce58
+currency/essentials/v1, pms, -> lij
+currency/essentials/v1, ps, 1186B, 1034B, c2351a39f45a9e94
+currency/essentials/v1, ps-PK, 1186B, 1034B, e4b4737c7d9f728f
+currency/essentials/v1, ps-PK/latn, 1177B, 1025B, 91da5e9741a77597
+currency/essentials/v1, ps/latn, 1177B, 1025B, 8f2f100676d95f8b
+currency/essentials/v1, pt, 1187B, 1035B, 9b5d755da60867d4
+currency/essentials/v1, pt-AO, 1182B, 1030B, d18965d5b15ceef2
+currency/essentials/v1, pt-CV, 1188B, 1036B, 95bfa4cfdb041c56
+currency/essentials/v1, pt-LU, 1191B, 1039B, 15d33ae10fe8581f
+currency/essentials/v1, pt-MO, 1194B, 1042B, dfcb9d0c283ec835
+currency/essentials/v1, pt-MZ, 1193B, 1041B, 17d9e4d7f6eea546
+currency/essentials/v1, pt-PT, 1182B, 1030B, e2039d55b877cc2d
+currency/essentials/v1, pt-ST, 1182B, 1030B, d0fac711a4ead1ad
+currency/essentials/v1, qu, 1186B, 1034B, cce9a8b184bffc2e
+currency/essentials/v1, qu-BO, 1182B, 1030B, b5287bb28be792bc
+currency/essentials/v1, qu-EC, 1177B, 1025B, fe3dab64df0ed3e
+currency/essentials/v1, raj, -> bgc
+currency/essentials/v1, raj/latn, -> bgc/latn
+currency/essentials/v1, rm, 1158B, 1006B, ee95cd51815bfd87
+currency/essentials/v1, ro, 1128B, 976B, cd3213e558032e23
+currency/essentials/v1, ro-MD, 1134B, 982B, 15b0d75dd8329c2b
+currency/essentials/v1, ru, 1180B, 1028B, b726dde10a24b7a8
+currency/essentials/v1, ru-BY, 1179B, 1027B, ede20e99d17786a2
+currency/essentials/v1, ru-KG, 1188B, 1036B, 5149a32d61e0e4a0
+currency/essentials/v1, ru-KZ, 1180B, 1028B, 55fa9b37d9f714c7
+currency/essentials/v1, ru-MD, 1186B, 1034B, a3fe678aa0d39efe
+currency/essentials/v1, ru-UA, 1180B, 1028B, 1187cbdd8c6a46c8
+currency/essentials/v1, rw, 1163B, 1011B, ff2c0569e40d88c
+currency/essentials/v1, sa, -> kxv-Deva/deva
+currency/essentials/v1, sa/latn, -> kok-Latn
+currency/essentials/v1, sah, 1164B, 1012B, 7380a52210883174
+currency/essentials/v1, sat, 1163B, 1011B, 5638b40a35982032
+currency/essentials/v1, sat/latn, -> bgc/latn
+currency/essentials/v1, sc, 1174B, 1022B, 837ae56a6e5e5087
+currency/essentials/v1, scn, 1163B, 1011B, 30fe501736c13efa
+currency/essentials/v1, sd, 1179B, 1027B, bddeaf484e9f4e93
+currency/essentials/v1, sd-Deva, 1152B, 1000B, d1c6d36f1685f8e2
+currency/essentials/v1, sd/latn, 1174B, 1022B, 43c8386652289b80
+currency/essentials/v1, si, 1189B, 1037B, 84f2cddf59f18c9a
+currency/essentials/v1, sk, 1145B, 993B, a8d33f9e412e3587
+currency/essentials/v1, sl, 1141B, 989B, 5f70c85989c4170
+currency/essentials/v1, so, 1175B, 1023B, 6e78bcaafda6dd5b
+currency/essentials/v1, so-DJ, 1186B, 1034B, 7d2309a22400ea8f
+currency/essentials/v1, so-ET, 1185B, 1033B, c8d0280c6b3e099b
+currency/essentials/v1, so-KE, 1186B, 1034B, f69048e5c06a119d
+currency/essentials/v1, sq, 989B, 837B, 74b1f198102e699b
+currency/essentials/v1, sq-MK, 1000B, 848B, ffdb3aa8ac118cee
+currency/essentials/v1, sr, 1165B, 1013B, 67952094dc338448
+currency/essentials/v1, sr-Latn, 1158B, 1006B, 127014f7f2f14e84
+currency/essentials/v1, st, 1161B, 1009B, 6daa8b548cf968c
+currency/essentials/v1, st-LS, 1170B, 1018B, 6c688d54605c366e
+currency/essentials/v1, su, 1150B, 998B, 11f41176921b7f7
+currency/essentials/v1, sv, 1216B, 1064B, d79dc837b76f4f
+currency/essentials/v1, sw, 1196B, 1044B, 4f3b207fc722622c
+currency/essentials/v1, sw-CD, 1206B, 1054B, 397e8d9ce9f2923f
+currency/essentials/v1, sw-KE, 1191B, 1039B, 82e6b53d3dcbbf9b
+currency/essentials/v1, sw-UG, 1207B, 1055B, 8fcada3374cef21e
+currency/essentials/v1, syr, 1174B, 1022B, b362d6f529f4ef35
+currency/essentials/v1, szl, 1164B, 1012B, fd55e3f89da4f7de
+currency/essentials/v1, ta, 1161B, 1009B, 2b48cf098c17cf27
+currency/essentials/v1, ta-LK, 1166B, 1014B, 69c31457a60f8d65
+currency/essentials/v1, ta-LK/tamldec, 1169B, 1017B, be9d5cbe364fa888
+currency/essentials/v1, ta-MY, 1167B, 1015B, 7ab0cb5d0a2974d9
+currency/essentials/v1, ta-MY/tamldec, 1168B, 1016B, ce4400a20cd221ae
+currency/essentials/v1, ta-SG, 1168B, 1016B, 30e4d5aa6dd9b06a
+currency/essentials/v1, ta-SG/tamldec, 1169B, 1017B, 6530ac2c557aa358
+currency/essentials/v1, ta/tamldec, 1164B, 1012B, 7bcd6856f87a6920
+currency/essentials/v1, te, 1167B, 1015B, ac8539b64f8021a8
+currency/essentials/v1, te/telu, 1167B, 1015B, eba0ee1ee9193ffb
+currency/essentials/v1, tg, 1174B, 1022B, 9d1c5bdf455020e0
+currency/essentials/v1, th, 1163B, 1011B, 4cc0697ce9a7e4b1
+currency/essentials/v1, th/thai, 1163B, 1011B, f01273498ea83280
+currency/essentials/v1, ti, 1159B, 1007B, e0eddb857b0cff1b
+currency/essentials/v1, ti-ER, 1170B, 1018B, 9fa0dbe695321450
+currency/essentials/v1, tk, 1175B, 1023B, c9de47b60a09a800
+currency/essentials/v1, tn, 1161B, 1009B, 32e079cf1d322c59
+currency/essentials/v1, tn-BW, 1161B, 1009B, ee95941de99f7b2e
+currency/essentials/v1, to, 1184B, 1032B, 7b16462e20655953
+currency/essentials/v1, tr, 1163B, 1011B, f695f73193d8cff3
 currency/essentials/v1, tt, -> cv
-currency/essentials/v1, ug, 1109B, 985B, dffb0f1921387b0
-currency/essentials/v1, uk, 1098B, 974B, 1fce0377a5beae89
-currency/essentials/v1, und, 1117B, 993B, a5bdc606d71160e0
-currency/essentials/v1, ur, 1121B, 997B, 1ee8ec94a13c4e78
-currency/essentials/v1, ur-IN, 1121B, 997B, 4fd7db3211c99932
-currency/essentials/v1, uz, 1141B, 1017B, 9652380e7d76650b
-currency/essentials/v1, uz-Cyrl, 1131B, 1007B, bd15a87d940174e
-currency/essentials/v1, vec, 1046B, 922B, b695b2e85473097b
-currency/essentials/v1, vi, 1119B, 995B, dcb696686a05c136
-currency/essentials/v1, vmw, -> bua
-currency/essentials/v1, wo, 1182B, 1058B, b664d402e6d5f930
-currency/essentials/v1, xh, 1130B, 1006B, 4d9f069ba7158d63
-currency/essentials/v1, xnr, -> bho
-currency/essentials/v1, yo, 1110B, 986B, d354b1ed1ec6480
-currency/essentials/v1, yrl, 1163B, 1039B, 89eb9945de64d819
-currency/essentials/v1, yue, 1128B, 1004B, 97c985adb067cb1e
+currency/essentials/v1, tyv, 1164B, 1012B, a76595acf5e45dcd
+currency/essentials/v1, ug, 1155B, 1003B, b58e084394eaaf36
+currency/essentials/v1, ug/arabext, 1172B, 1020B, bfc5daf8d99dbfd6
+currency/essentials/v1, uk, 1145B, 993B, 4361d36dcccdf457
+currency/essentials/v1, und, -> bgc/latn
+currency/essentials/v1, ur, 1173B, 1021B, 4431457fc092d434
+currency/essentials/v1, ur-IN, 1184B, 1032B, ce13f56282c730e0
+currency/essentials/v1, ur-IN/latn, 1173B, 1021B, 3017096430257faf
+currency/essentials/v1, ur/arabext, 1184B, 1032B, fb1aff904332041d
+currency/essentials/v1, uz, 1188B, 1036B, caf0107608799883
+currency/essentials/v1, uz-Cyrl, 1178B, 1026B, 1ec421c65ba3c81a
+currency/essentials/v1, vec, 1094B, 942B, 53b11b25b291a25e
+currency/essentials/v1, vi, 1165B, 1013B, 4523d6b3b7aac1ab
+currency/essentials/v1, vmw, -> lij
+currency/essentials/v1, wo, 1228B, 1076B, eac1c5cd43b1db24
+currency/essentials/v1, xh, 1177B, 1025B, a71e00b16390c8c5
+currency/essentials/v1, xnr, -> kok-Latn
+currency/essentials/v1, xnr/deva, -> kxv-Deva/deva
+currency/essentials/v1, yo, 1156B, 1004B, 3da7e56b9b2ea10f
+currency/essentials/v1, yrl, 1209B, 1057B, f214850d596561f1
+currency/essentials/v1, yue, 1174B, 1022B, 907ec30c03fdf0b1
 currency/essentials/v1, yue-Hans, -> yue
-currency/essentials/v1, zh, 1134B, 1010B, 5b7c0805cec1d45
-currency/essentials/v1, zh-HK, 1118B, 994B, abd11063e4d95484
-currency/essentials/v1, zh-Hans-HK, 1140B, 1016B, 972ca110d06bf8bf
-currency/essentials/v1, zh-Hans-MO, 1152B, 1028B, dc93865f8c4dd286
-currency/essentials/v1, zh-Hant, 1118B, 994B, 56e7b2e3ca6c39a6
-currency/essentials/v1, zh-MO, 1130B, 1006B, ac6b2721cd8211ab
-currency/essentials/v1, zh-SG, 1140B, 1016B, cb031887a5672c37
-currency/essentials/v1, zu, 1120B, 996B, 79c38b12a3a72c47
+currency/essentials/v1, yue-Hans/hanidec, 1177B, 1025B, 39185468b9952b90
+currency/essentials/v1, yue/hanidec, -> yue-Hans/hanidec
+currency/essentials/v1, zh, 1180B, 1028B, b72a84d98136df95
+currency/essentials/v1, zh-HK, 1164B, 1012B, 685ceb4a7622c2a4
+currency/essentials/v1, zh-HK/hanidec, 1167B, 1015B, 8b17f3308559333f
+currency/essentials/v1, zh-Hans-HK, 1186B, 1034B, 4e77d074d37cfe95
+currency/essentials/v1, zh-Hans-HK/hanidec, 1189B, 1037B, d72e78f79062c761
+currency/essentials/v1, zh-Hans-MO, 1198B, 1046B, 9005ad7f3112165f
+currency/essentials/v1, zh-Hans-MO/hanidec, 1201B, 1049B, d4170a30f30e3111
+currency/essentials/v1, zh-Hant, 1164B, 1012B, 14485829c1857b5c
+currency/essentials/v1, zh-Hant/hanidec, 1167B, 1015B, cb11254178dabf4f
+currency/essentials/v1, zh-MO, 1176B, 1024B, 255f68d85fd95786
+currency/essentials/v1, zh-MO/hanidec, 1179B, 1027B, 55663fe7a4710111
+currency/essentials/v1, zh-SG, 1186B, 1034B, 13ed18c93d37419f
+currency/essentials/v1, zh-SG/hanidec, 1189B, 1037B, 1aca297baa9bd00b
+currency/essentials/v1, zh/hanidec, 1183B, 1031B, bd7d31115d8c3162
+currency/essentials/v1, zu, 1166B, 1014B, 3930722d8cd39a55
 currency/extended/data/v1, <lookup>, 195647B, 31417 identifiers
 currency/extended/data/v1, <total>, 2052140B, 1387737B, 28938 unique payloads
 currency/extended/data/v1, af/AED, 35B, 12B, 9f377f898487c846

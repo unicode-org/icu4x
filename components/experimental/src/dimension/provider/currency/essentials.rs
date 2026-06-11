@@ -31,7 +31,9 @@ pub use crate::provider::Baked;
 icu_provider::data_marker!(
     /// Essential currency data needed for currency formatting. For example, currency patterns.
     CurrencyEssentialsV1,
-    CurrencyEssentials<'static>
+    CurrencyEssentials<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "numbering_system"
 );
 
 /// This type contains all of the essential data for currency formatting.
@@ -47,6 +49,10 @@ icu_provider::data_marker!(
 #[cfg_attr(feature = "datagen", databake(path =  icu_experimental::dimension::provider::currency::essentials))]
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyEssentials<'data> {
+    /// Settings and strings used to format the numeric portion of monetary values.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub decimal_symbols: icu_decimal::provider::DecimalSymbols<'data>,
+
     /// A mapping from 3-letter currency ISO codes to their [`CurrencyPatternConfig`].
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub pattern_config_map: ZeroMap<'data, UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>,

@@ -7,6 +7,7 @@ use crate::SourceDataProvider;
 use crate::cldr_serde;
 use crate::cldr_serde::numbers::NumberPattern;
 use crate::cldr_serde::numbers::NumberPatternItem;
+use crate::decimal::decimal_pattern::DecimalSubPattern;
 
 use std::borrow::Cow;
 
@@ -110,7 +111,14 @@ impl DataProvider<CurrencyEssentialsV1> for SourceDataProvider {
             .numbers()
             .read_and_parse(req.id.locale, "numbers.json")?;
 
-        let result = extract_currency_essentials(self, currencies_resource, numbers_resource);
+        let nsname = if !req.id.marker_attributes.is_empty() {
+            req.id.marker_attributes.as_str()
+        } else {
+            &numbers_resource.main.value.numbers.default_numbering_system
+        };
+
+        let result =
+            extract_currency_essentials(self, currencies_resource, numbers_resource, nsname);
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -121,12 +129,7 @@ impl DataProvider<CurrencyEssentialsV1> for SourceDataProvider {
 
 impl IterableDataProviderCached<CurrencyEssentialsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(self
-            .cldr()?
-            .numbers()
-            .list_locales()?
-            .map(DataIdentifierCow::from_locale)
-            .collect())
+        self.iter_ids_for_numbers_with_locales()
     }
 }
 
@@ -134,24 +137,78 @@ fn extract_currency_essentials<'data>(
     provider: &SourceDataProvider,
     currencies_resource: &cldr_serde::currencies::data::Resource,
     numbers_resource: &cldr_serde::numbers::Resource,
+    numsys_name: &str,
 ) -> Result<CurrencyEssentials<'data>, DataError> {
     let currencies = &currencies_resource.main.value.numbers.currencies;
 
-    // TODO(#3838): these patterns might be numbering system dependent.
-    let currency_formats = &&numbers_resource
-        .main
-        .value
-        .numbers
+    let numbers_block = &numbers_resource.main.value.numbers;
+    let currency_formats = numbers_block
         .numsys_data
         .currency_patterns
-        .get("latn")
-        .ok_or_else(|| DataError::custom("Could not find the standard pattern"))?;
+        .get(numsys_name)
+        .or_else(|| numbers_block.numsys_data.currency_patterns.get("latn"))
+        .ok_or_else(|| DataError::custom("Could not find currency patterns"))?;
 
     let standard = &currency_formats.standard;
     let standard_alpha_next_to_number = currency_formats
         .standard_alpha_next_to_number
         .as_ref()
         .unwrap_or(standard);
+
+    let symbols = numbers_block
+        .numsys_data
+        .symbols
+        .get(numsys_name)
+        .or_else(|| numbers_block.numsys_data.symbols.get("latn"))
+        .ok_or_else(|| DataError::custom("Could not find symbols"))?;
+    let formats = numbers_block
+        .numsys_data
+        .formats
+        .get(numsys_name)
+        .or_else(|| numbers_block.numsys_data.formats.get("latn"))
+        .ok_or_else(|| DataError::custom("Could not find formats"))?;
+
+    let monetary_positive = DecimalSubPattern::try_from_items(&standard.positive)?;
+    let negative_sub = formats
+        .standard
+        .negative
+        .as_ref()
+        .map(|s| DecimalSubPattern::try_from_items(s))
+        .transpose()?;
+    let affixes = negative_sub
+        .as_ref()
+        .map(|n| (n.prefix.as_str(), n.suffix.as_str()))
+        .unwrap_or_else(|| ("-", ""));
+
+    let strings = icu::decimal::provider::DecimalSymbolStrsBuilder {
+        minus_sign_prefix: zerovec::VarZeroCow::new_owned(
+            affixes.0.replace('-', &symbols.minus_sign).into_boxed_str(),
+        ),
+        minus_sign_suffix: zerovec::VarZeroCow::new_owned(
+            affixes.1.replace('-', &symbols.minus_sign).into_boxed_str(),
+        ),
+        plus_sign_prefix: zerovec::VarZeroCow::new_owned(
+            affixes.0.replace('-', &symbols.plus_sign).into_boxed_str(),
+        ),
+        plus_sign_suffix: zerovec::VarZeroCow::new_owned(
+            affixes.1.replace('-', &symbols.plus_sign).into_boxed_str(),
+        ),
+        decimal_separator: zerovec::VarZeroCow::new_owned(symbols.decimal.clone().into_boxed_str()),
+        grouping_separator: zerovec::VarZeroCow::new_owned(symbols.group.clone().into_boxed_str()),
+        numsys: zerovec::VarZeroCow::new_owned(numsys_name.to_owned().into_boxed_str()),
+    }
+    .build();
+
+    let grouping_sizes = icu::decimal::provider::GroupingSizes {
+        primary: monetary_positive.primary_grouping,
+        secondary: monetary_positive.secondary_grouping,
+        min_grouping: numbers_block.minimum_grouping_digits,
+    };
+
+    let decimal_symbols = icu::decimal::provider::DecimalSymbols {
+        strings,
+        grouping_sizes,
+    };
 
     let mut currency_patterns_map =
         BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>::new();
@@ -164,10 +221,6 @@ fn extract_currency_essentials<'data>(
     let mut placeholders_checker_map = HashMap::<&str, u16>::new();
 
     /// Deduplicates and stores currency placeholder strings (e.g., "$", "US$").
-    ///
-    /// - If the placeholder matches the 3-letter ISO code exactly, returns `PlaceholderValue::ISO`.
-    /// - If the placeholder already exists in `placeholders`, returns its existing index (`PlaceholderValue::Index`).
-    /// - Otherwise, appends the new placeholder to `placeholders` and returns its new index.
     fn intern_placeholder<'a>(
         placeholder: &'a str,
         iso: &str,
@@ -306,6 +359,7 @@ fn extract_currency_essentials<'data>(
     }
 
     Ok(CurrencyEssentials {
+        decimal_symbols,
         pattern_config_map: ZeroMap::from_iter(currency_patterns_map.iter()),
         standard_pattern: create_pattern(standard)?,
         standard_alpha_next_to_number_pattern: create_pattern(standard_alpha_next_to_number)?,
@@ -369,6 +423,8 @@ fn test_basic() {
         .unwrap();
 
     let en_payload = en.payload.get();
+    assert_eq!(en_payload.decimal_symbols.grouping_separator(), ",");
+    assert_eq!(en_payload.decimal_symbols.decimal_separator(), ".");
 
     assert_writeable_eq!(en_payload.standard_pattern.interpolate((3, "$")), "$3");
     assert_writeable_eq!(
