@@ -10,16 +10,16 @@
   ],
   "elements": [
     {
-      "header": 6,
+      "header": 24,
       "patterns": [
         "U MMM d, E – MMM d, E",
-        "U MMM d, E – U MMM d, E"
+        "U MMM d, E"
       ]
     },
     {
-      "header": 4,
+      "header": 16,
       "patterns": [
-        "y-MM-dd, E – y-MM-dd, E"
+        "y-MM-dd, E"
       ]
     }
   ]

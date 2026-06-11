@@ -1,0 +1,25 @@
+{
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    2,
+    2,
+    2
+  ],
+  "elements": [
+    {
+      "header": 32,
+      "patterns": [
+        "y–y"
+      ]
+    },
+    {
+      "header": 160,
+      "patterns": [
+        "y–y G",
+        "y G – y G"
+      ]
+    }
+  ]
+}

@@ -9,10 +9,10 @@
   ],
   "elements": [
     {
-      "header": 12,
+      "header": 96,
       "patterns": [
         "y–y гг. G",
-        "y г. G — y г. G"
+        "y г. G"
       ]
     }
   ]

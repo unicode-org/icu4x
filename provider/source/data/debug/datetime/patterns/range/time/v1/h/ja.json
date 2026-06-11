@@ -9,17 +9,17 @@
   ],
   "elements": [
     {
-      "header": 10,
+      "header": 72,
       "patterns": [
         "aK時～K時",
-        "aK時～aK時"
+        "aK時"
       ]
     },
     {
-      "header": 10,
+      "header": 72,
       "patterns": [
         "aK時mm分～K時mm分",
-        "aK時mm分～aK時mm分"
+        "aK時mm分"
       ]
     }
   ]

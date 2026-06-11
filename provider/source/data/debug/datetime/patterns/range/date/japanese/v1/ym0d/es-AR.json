@@ -1,0 +1,29 @@
+{
+  "has_explicit_medium": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "elements": [
+    {
+      "header": 170,
+      "patterns": [
+        "d–d 'de' MMM 'de' y G",
+        "d 'de' MMM – d 'de' MMM 'de' y G",
+        "d 'de' MMM 'de' y – d 'de' MMM 'de' y G",
+        "d 'de' MMM 'de' y G – d 'de' MMM 'de' y G"
+      ]
+    },
+    {
+      "header": 160,
+      "patterns": [
+        "d/M/y – d/M/y GGGGG",
+        "d/M/y GGGGG – d/M/y GGGGG"
+      ]
+    }
+  ]
+}

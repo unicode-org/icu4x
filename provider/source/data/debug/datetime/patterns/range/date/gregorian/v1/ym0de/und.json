@@ -10,31 +10,31 @@
   ],
   "elements": [
     {
-      "header": 6,
+      "header": 24,
       "patterns": [
         "y MMM d, E – MMM d, E",
-        "y MMM d, E – y MMM d, E"
+        "y MMM d, E"
       ]
     },
     {
-      "header": 4,
+      "header": 16,
       "patterns": [
-        "y-MM-dd, E – y-MM-dd, E"
+        "y-MM-dd, E"
       ]
     },
     {
-      "header": 14,
+      "header": 104,
       "patterns": [
         "G y MMM d, E – MMM d, E",
         "G y MMM d, E – y MMM d, E",
-        "G y MMM d, E – G y MMM d, E"
+        "G y MMM d, E"
       ]
     },
     {
-      "header": 12,
+      "header": 96,
       "patterns": [
         "G y-MM-dd, E – y-MM-dd, E",
-        "G y-MM-dd, E – G y-MM-dd, E"
+        "G y-MM-dd, E"
       ]
     }
   ]

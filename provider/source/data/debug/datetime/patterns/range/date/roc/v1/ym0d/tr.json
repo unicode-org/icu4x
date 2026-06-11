@@ -10,16 +10,16 @@
   ],
   "elements": [
     {
-      "header": 15,
+      "header": 106,
       "patterns": [
         "G d–d MMM y",
         "G d MMM – d MMM y",
         "G d MMM y – d MMM y",
-        "G d MMM y – G d MMM y"
+        "G d MMM y"
       ]
     },
     {
-      "header": 12,
+      "header": 160,
       "patterns": [
         "GGGGG dd.MM.y – dd.MM.y",
         "GGGGG dd.MM.y GGGGG – dd.MM.y"

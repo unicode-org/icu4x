@@ -10,21 +10,21 @@
   ],
   "elements": [
     {
-      "header": 7,
+      "header": 26,
       "patterns": [
         "dd.–dd. MMM y.",
         "dd. MMM – dd. MMM y.",
-        "dd. MMM y. – dd. MMM y."
+        "dd. MMM y."
       ]
     },
     {
-      "header": 4,
+      "header": 16,
       "patterns": [
-        "d. M. y. – d. M. y."
+        "d. M. y."
       ]
     },
     {
-      "header": 15,
+      "header": 170,
       "patterns": [
         "G y MMM d–d",
         "G y MMM d – MMM d",
@@ -33,7 +33,7 @@
       ]
     },
     {
-      "header": 12,
+      "header": 160,
       "patterns": [
         "G y-MM-dd – y-MM-dd",
         "G y-MM-dd – G y-MM-dd"

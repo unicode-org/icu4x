@@ -11,38 +11,38 @@
   ],
   "elements": [
     {
-      "header": 6,
+      "header": 24,
       "patterns": [
         "y MMMM–MMMM",
-        "y MMMM – y MMMM"
+        "y MMMM"
       ]
     },
     {
-      "header": 6,
+      "header": 24,
       "patterns": [
         "y MMM–MMM",
-        "y MMM – y MMM"
+        "y MMM"
       ]
     },
     {
-      "header": 4,
+      "header": 16,
       "patterns": [
-        "y-MM – y-MM"
+        "y-MM"
       ]
     },
     {
-      "header": 14,
+      "header": 104,
       "patterns": [
         "G y MMM–MMM",
         "G y MMM – y MMM",
-        "G y MMM – G y MMM"
+        "G y MMM"
       ]
     },
     {
-      "header": 12,
+      "header": 96,
       "patterns": [
         "G y-MM – y-MM",
-        "G y-MM – G y-MM"
+        "G y-MM"
       ]
     }
   ]

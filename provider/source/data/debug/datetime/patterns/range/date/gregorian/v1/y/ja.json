@@ -9,16 +9,16 @@
   ],
   "elements": [
     {
-      "header": 4,
+      "header": 16,
       "patterns": [
-        "y年～y年"
+        "y年"
       ]
     },
     {
-      "header": 12,
+      "header": 96,
       "patterns": [
         "Gy年～y年",
-        "Gy年～Gy年"
+        "Gy年"
       ]
     }
   ]

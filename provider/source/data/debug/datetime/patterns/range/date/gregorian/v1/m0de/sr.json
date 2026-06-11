@@ -10,14 +10,14 @@
   ],
   "elements": [
     {
-      "header": 3,
+      "header": 6,
       "patterns": [
         "E, dd. – E, dd. MMM",
-        "E, dd. MMM – E, dd. MMM"
+        "E, dd. MMM"
       ]
     },
     {
-      "header": 2,
+      "header": 8,
       "patterns": [
         "E, d. M. – E, d. M."
       ]

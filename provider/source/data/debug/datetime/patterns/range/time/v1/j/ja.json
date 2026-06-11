@@ -9,15 +9,15 @@
   ],
   "elements": [
     {
-      "header": 2,
+      "header": 4,
       "patterns": [
-        "H時～H時"
+        "H時"
       ]
     },
     {
-      "header": 2,
+      "header": 4,
       "patterns": [
-        "H時mm分～H時mm分"
+        "H時mm分"
       ]
     }
   ]

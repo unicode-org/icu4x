@@ -10,19 +10,19 @@
   ],
   "elements": [
     {
-      "header": 15,
+      "header": 106,
       "patterns": [
         "MMM d – d, y G",
         "MMM d – MMM d, y G",
         "MMM d, y – MMM d, y G",
-        "MMM d, y G – MMM d, y G"
+        "MMM d, y G"
       ]
     },
     {
-      "header": 12,
+      "header": 96,
       "patterns": [
         "M/d/y – M/d/y GGGGG",
-        "M/d/y GGGGG – M/d/y GGGGG"
+        "M/d/y GGGGG"
       ]
     }
   ]

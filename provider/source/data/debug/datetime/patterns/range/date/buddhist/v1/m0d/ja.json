@@ -10,16 +10,16 @@
   ],
   "elements": [
     {
-      "header": 3,
+      "header": 6,
       "patterns": [
         "M月d日～d日",
-        "M月d日～M月d日"
+        "M月d日"
       ]
     },
     {
-      "header": 2,
+      "header": 4,
       "patterns": [
-        "MM/dd～MM/dd"
+        "MM/dd"
       ]
     }
   ]
