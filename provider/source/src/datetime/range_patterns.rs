@@ -21,6 +21,7 @@ use icu::datetime::provider::skeleton::{
     find_best_skeleton, is_bad_match_for_single_field, reference::Skeleton,
 };
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
+use icu_pattern::{DoublePlaceholderPattern, PatternItem as ParserPatternItem};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::str::FromStr;
@@ -138,25 +139,33 @@ fn skeleton_has_time_fields(skeleton: &Skeleton) -> bool {
 /// Extracts the glue string from a CLDR fallback pattern (e.g. "{0} – {1}").
 ///
 /// Returns `None` if the pattern is invalid or if `{0}` and `{1}` are not at the ends
-/// of the string (e.g. if there is a prefix or suffix).
-fn extract_glue(fallback_str: &str) -> Option<&str> {
-    let pos0 = fallback_str.find("{0}")?;
-    let pos1 = fallback_str.find("{1}")?;
-
-    if pos0 < pos1 {
-        // Enforce that {0} and {1} are at the very ends of the pattern (no prefix/suffix).
-        // e.g. "{0} - {1}" is valid, but "before {0} - {1}" is not.
-        if pos0 != 0 || pos1 + 3 != fallback_str.len() {
-            return None;
-        }
-        Some(&fallback_str[pos0 + 3..pos1])
-    } else {
-        // Enforce that {1} and {0} are at the very ends of the pattern (no prefix/suffix).
-        if pos1 != 0 || pos0 + 3 != fallback_str.len() {
-            return None;
-        }
-        Some(&fallback_str[pos1 + 3..pos0])
+/// of the pattern (no prefix/suffix).
+fn extract_glue_from_double_pat(double_pat: &DoublePlaceholderPattern) -> Option<&str> {
+    let mut iter = double_pat.iter();
+    // The pattern must start with a placeholder.
+    let p0 = match iter.next()? {
+        ParserPatternItem::Placeholder(p) => p,
+        _ => return None,
+    };
+    // The middle item must be the glue literal.
+    let glue = match iter.next()? {
+        ParserPatternItem::Literal(glue) => glue,
+        _ => return None,
+    };
+    // The pattern must end with a placeholder.
+    let p1 = match iter.next()? {
+        ParserPatternItem::Placeholder(p) => p,
+        _ => return None,
+    };
+    // The two placeholders must be different (e.g., `{0}` and `{1}`).
+    if p0 == p1 {
+        return None;
     }
+    // There must be no extra items.
+    if iter.next().is_some() {
+        return None;
+    }
+    Some(glue)
 }
 
 /// Decomposes a CLDR range pattern into sub-patterns based on the fallback glue.
@@ -166,7 +175,7 @@ fn extract_glue(fallback_str: &str) -> Option<&str> {
 /// `RangePatternInfo::FullRange` containing the entire pattern.
 fn decompose_pattern(
     pattern_str: &str,
-    fallback_glue_items: Option<&[PatternItem]>,
+    fallback_pattern: Option<&DoublePlaceholderPattern>,
 ) -> RangePatternInfo<'static> {
     let ref_pat = match reference::Pattern::from_str(pattern_str) {
         Ok(p) => p,
@@ -177,11 +186,11 @@ fn decompose_pattern(
 
     let runtime_pat = Pattern::from(&ref_pat);
 
-    if let Some(glue_items) = fallback_glue_items {
+    if let Some(glue) = fallback_pattern.and_then(extract_glue_from_double_pat) {
         let items = ref_pat.into_items();
-        if let Some(idx) = find_subslice(&items, glue_items) {
+        if let Some(idx) = find_glue_in_items(&items, glue) {
             let left_items = items[..idx].to_vec();
-            let right_items = items[idx + glue_items.len()..].to_vec();
+            let right_items = items[idx + glue.chars().count()..].to_vec();
 
             let left_ref = reference::Pattern::from(left_items);
             let right_ref = reference::Pattern::from(right_items);
@@ -198,14 +207,18 @@ fn decompose_pattern(
     RangePatternInfo::FullRange(runtime_pat)
 }
 
-/// Finds the starting index of a subslice `glue_items` within `items`.
-fn find_subslice(items: &[PatternItem], glue_items: &[PatternItem]) -> Option<usize> {
-    if glue_items.is_empty() {
+/// Finds the starting index of a glue string within `items`.
+fn find_glue_in_items(items: &[PatternItem], glue: &str) -> Option<usize> {
+    if glue.is_empty() {
         return None;
     }
-    items
-        .windows(glue_items.len())
-        .position(|window| window == glue_items)
+    let glue_len = glue.chars().count();
+    items.windows(glue_len).position(|window| {
+        window.iter().zip(glue.chars()).all(|(item, c)| match item {
+            PatternItem::Literal(lit_char) => *lit_char == c,
+            _ => false,
+        })
+    })
 }
 
 /// Helper to parse patterns by greatest difference from CLDR raw data.
@@ -214,7 +227,7 @@ fn find_subslice(items: &[PatternItem], glue_items: &[PatternItem]) -> Option<us
 /// and a description for logging.
 fn parse_pgd_generic(
     field_patterns: &HashMap<String, String>,
-    fallback_glue_items: Option<&[PatternItem]>,
+    fallback_pattern: Option<&DoublePlaceholderPattern>,
     map_fn: impl Fn(&str) -> Option<u8>,
     log_desc: &str,
 ) -> Option<PatternsByGreatestDifference<'static>> {
@@ -223,7 +236,7 @@ fn parse_pgd_generic(
         let Some(field_u8) = map_fn(field_str.as_str()) else {
             continue;
         };
-        let info = decompose_pattern(pattern_str, fallback_glue_items);
+        let info = decompose_pattern(pattern_str, fallback_pattern);
         parsed.push((field_u8, info));
     }
 
@@ -246,11 +259,11 @@ fn parse_pgd_generic(
 /// Returns `None` if no date fields are found or parsed successfully.
 fn parse_date_pgd(
     field_patterns: &HashMap<String, String>,
-    fallback_glue_items: Option<&[PatternItem]>,
+    fallback_pattern: Option<&DoublePlaceholderPattern>,
 ) -> Option<PatternsByGreatestDifference<'static>> {
     parse_pgd_generic(
         field_patterns,
-        fallback_glue_items,
+        fallback_pattern,
         |field_str| DateGreatestDifferenceField::from_symbol(field_str).map(|f| f as u8),
         "date",
     )
@@ -262,11 +275,11 @@ fn parse_date_pgd(
 /// Returns `None` if no time fields are found or parsed successfully.
 fn parse_time_pgd(
     field_patterns: &HashMap<String, String>,
-    fallback_glue_items: Option<&[PatternItem]>,
+    fallback_pattern: Option<&DoublePlaceholderPattern>,
 ) -> Option<PatternsByGreatestDifference<'static>> {
     parse_pgd_generic(
         field_patterns,
-        fallback_glue_items,
+        fallback_pattern,
         |field_str| TimeGreatestDifferenceField::from_symbol(field_str).map(|f| f as u8),
         "time",
     )
@@ -290,18 +303,17 @@ fn parse_interval_patterns(
     };
 
     let fallback_str = interval_formats.fallback.as_str();
-    let glue = extract_glue(fallback_str);
-    let glue_items: Option<Vec<PatternItem>> =
-        glue.map(|g| g.chars().map(PatternItem::Literal).collect());
-    let glue_items_ref = glue_items.as_deref();
+    let fallback_pattern =
+        DoublePlaceholderPattern::try_from_str(fallback_str, Default::default()).ok();
+    let fallback_pattern_ref = fallback_pattern.as_deref();
 
     let parsed =
         super::parse_cldr_skeletons(&interval_formats.patterns, |skeleton, field_patterns| {
             let is_time = skeleton_has_time_fields(skeleton);
             if is_time {
-                parse_time_pgd(field_patterns, glue_items_ref).map(ParsedPattern::Time)
+                parse_time_pgd(field_patterns, fallback_pattern_ref).map(ParsedPattern::Time)
             } else {
-                parse_date_pgd(field_patterns, glue_items_ref).map(ParsedPattern::Date)
+                parse_date_pgd(field_patterns, fallback_pattern_ref).map(ParsedPattern::Date)
             }
         });
 
