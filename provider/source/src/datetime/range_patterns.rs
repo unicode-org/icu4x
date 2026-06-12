@@ -15,7 +15,9 @@ use icu::datetime::provider::packed_pattern::{
 use icu::datetime::provider::pattern::runtime::{GenericPattern, Pattern};
 use icu::datetime::provider::range_patterns::*;
 use icu::datetime::provider::semantic_skeletons::GluePattern;
-use icu::datetime::provider::skeleton::{find_best_skeleton, reference::Skeleton};
+use icu::datetime::provider::skeleton::{
+    find_best_skeleton, is_bad_match_for_single_field, reference::Skeleton,
+};
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashMap, HashSet};
@@ -244,7 +246,16 @@ fn match_range_skeleton<'a, 'data>(
     skeletons: &'a BTreeMap<Skeleton, PatternsByGreatestDifference<'data>>,
     fields: &[Field],
 ) -> Option<(&'a Skeleton, &'a PatternsByGreatestDifference<'data>)> {
-    find_best_skeleton(skeletons, fields).map(|m| (m.skeleton, m.value))
+    let matched = find_best_skeleton(skeletons, fields)?;
+
+    // A single field was requested and the best pattern either includes extra fields
+    // or can't be adjusted to match (e.g. text vs numeric). We reject the match
+    // so that we fall back to the glue pattern.
+    if is_bad_match_for_single_field(fields, matched.distance) {
+        return None;
+    }
+
+    Some((matched.skeleton, matched.value))
 }
 
 impl SourceDataProvider {
