@@ -126,7 +126,7 @@ These markers contain the localized name for a specific subtag. They are indexed
 ### 2. Formatting Patterns (Indexed by Locale Only)
 These markers contain the patterns used to combine subtags. They are indexed by the **locale** only, as the patterns apply to all formatting operations for that language.
 
-*   **`LocaleDisplayPatternV1`**:
+*   **`LocaleNamesEssentialsV1`**:
     *   *Attribute*: None (indexed by locale only).
     *   *Contains*:
         *   `localePattern`: The pattern used to combine the base language name with qualifiers (e.g., `"{0} ({1})"`).
@@ -157,7 +157,7 @@ We implement this trait for two marker models:
 *   **`models::Menu`**: Used for Menu display style. The `LanguagePayload` is `DataPayload<LocaleNamesLanguageMenuMediumV1>`.
 
 #### 2. The Generic Owned Struct
-`LanguageDisplayNameOwned<M>` holds the `LanguageIdentifier`, `DisplayNamesOptions`, the generic `language_payload` (determined by `M`), optional `script_payload` and `region_payload` (both using `DataPayloadOr` with `ErasedDisplayNameMarker`), a vector of `variant_payloads` (using `ErasedDisplayNameMarker`), and the `pattern_payload` (using `LocaleDisplayPatternV1`).
+`LanguageDisplayNameOwned<M>` holds the `LanguageIdentifier`, `DisplayNamesOptions`, the generic `language_payload` (determined by `M`), optional `script_payload` and `region_payload` (both using `DataPayloadOr` with `ErasedDisplayNameMarker`), a vector of `variant_payloads` (using `ErasedDisplayNameMarker`), and the `pattern_payload` (using `LocaleNamesEssentialsV1`).
 
 > [!NOTE]
 > **Allocation Papercut**: Storing `variant_payloads` in a `Vec` requires heap allocation, which prevents this struct from being strictly allocation-free in `no_std` environments without an allocator. 
@@ -189,7 +189,7 @@ In `Writeable::write_to` for `LanguageDisplayName<'a>`, we treat `menu_extension
 The formatting algorithm strictly follows **UTS #35 Part 3: Section 3 (Locale Display Names)**.
 
 ### 1. Locale Display Patterns (UTS #35 §3.1)
-We load `LocaleDisplayPatternV1` which contains pre-parsed `DoublePlaceholderPattern`s from CLDR:
+We load `LocaleNamesEssentialsV1` which contains pre-parsed `DoublePlaceholderPattern`s from CLDR:
 *   **`localePattern`**: Combines the language with qualifiers (e.g., `"{0} ({1})"`).
 *   **`localeSeparator`**: Joins multiple qualifiers (e.g., `"{0}, {1}"`).
 
