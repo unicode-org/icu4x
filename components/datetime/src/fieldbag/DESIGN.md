@@ -151,6 +151,7 @@ That makes the string form a better interchange format than inventing a new ad h
 
 - The string syntax should be canonicalized on output.
 - Parsing should reject unsupported syntax rather than guessing.
+- **Parsing must reject explicit hour cycle symbols (`h`, `H`, `K`, `k`).** Skeletons containing these symbols must fail to parse, enforcing that `DateTimeFieldBag` only represents the request for an hour field (using `j` or `C`), with the hour cycle policy resolved separately.
 - If a UTS 35 string contains information the bag cannot represent, the parse should fail or normalize only when the normalization is documented and unambiguous.
 
 ## Conversion To `FieldSetBuilder`
@@ -162,8 +163,14 @@ builder state.
 While this lossy conversion is compliant with the ECMA-402 specification, it may introduce web
 compatibility issues in cases where different fields request different lengths (e.g., a wide
 month but an abbreviated weekday), which must be collapsed into a single coarser builder-wide
-style. We plan to investigate the scope of these web-compat risks and, as needed, iterate on
+style. We plan to investigate the scope of these web-compat risks (tracked under
+[CLDR-19550](https://unicode-org.atlassian.net/browse/CLDR-19550)) and, as needed, iterate on
 the semantic skeleton design to support more granular options.
+
+**Fallback Plan:** If the investigation reveals that web-compat risks are too high, we are prepared
+to enhance `FieldSetBuilder` (and the underlying formatting layer) to support more granular,
+per-field length hints (tracked under [CLDR-19550](https://unicode-org.atlassian.net/browse/CLDR-19550)),
+allowing it to honor mixed-width requests without collapsing them into a single coarse `Length`.
 
 The builder is richer in some ways and coarser in others:
 
@@ -186,7 +193,7 @@ Several bag details do not map one-for-one into builder options:
 
 - Narrow month and weekday widths may collapse into a broader `Length` choice.
 - Exact year width may need to be expressed through `YearStyle` plus the selected fieldset family.
-- Field-specific 2-digit (padded) width choices in the bag (such as two-digit year, month, or day) map to a builder-wide `Alignment::Column` preference, signaling that numeric padding is desired for column alignment.
+- Field-specific 2-digit (padded) width choices in the bag (such as two-digit year, month, or day) map to a builder-wide `Alignment::Column` preference, signaling that numeric padding is desired for column alignment. *(Rationale: In the `fieldsets` model, `Alignment::Column` is the primary mechanism to support 2-digit numeric fields, as column/tabular alignment is the main driver for developers opting into 2-digit widths. This mapping correctly captures this developer intent.)*
 - Minute-only or second-only bags may need to be promoted to a normal time fieldset with the closest
   `TimePrecision`.
 - Day period requests do not currently have a clean dynamic fieldset equivalent and need documented
@@ -197,9 +204,20 @@ Several bag details do not map one-for-one into builder options:
 Some builder settings have no corresponding bag state and should generally remain unset unless a
 clear field-level signal exists:
 
-- `YearStyle`
 - `TimePrecision::MinuteOptional`
 - any future builder options that are not field-presence or field-width information
+
+### YearStyle Mapping
+
+`YearStyle` does not map to a single field in `DateTimeFieldBag`, but its intent is fully represented
+by the **combination of the `year` and `era` fields**:
+
+- `YearStyle::WithEra` maps to `year: Some(Year::Numeric)` + `era: Some(Text::Short)`.
+- `YearStyle::NoEra` maps to `year: Some(Year::Numeric)` + `era: None`.
+- `YearStyle::Full` maps to `year: Some(Year::Numeric)` (forcing 4-digit year) + `era: None` (or auto).
+- `YearStyle::Auto` maps to `year: Some(Year::TwoDigit)` (or `Numeric` depending on length) + `era: None` (or auto).
+
+During conversion, these combinations should be mapped logically to preserve the year/era display policy.
 
 The conversion should be documented as a reconstruction aid, not as a stable interchange format.
 
