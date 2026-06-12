@@ -80,7 +80,7 @@ mod tests {
     }
 
     #[test]
-    fn test_f64_mul_div_nan_infinity() {
+    fn test_f64_mul_div_extreme_cases() {
         // If we pass NaN, it should return NaN
         assert!(f64_mul_div(f64::NAN, 1.0, 2.0).is_nan());
         assert!(f64_mul_div(1.0, f64::NAN, 2.0).is_nan());
@@ -94,5 +94,17 @@ mod tests {
         assert!(f64_mul_div(f64::NEG_INFINITY, 1.0, 2.0).is_nan());
         assert!(f64_mul_div(1.0, f64::NEG_INFINITY, 2.0).is_nan());
         assert!(f64_mul_div(1.0, 1.0, f64::NEG_INFINITY).is_nan());
+
+        // Division by zero
+        assert!(f64_mul_div(1.0, 1.0, 0.0).is_nan());
+        assert!(f64_mul_div(0.0, 1.0, 0.0).is_nan());
+
+        // 0/0 (indeterminate forms)
+        assert!(f64_mul_div(1.0, 0.0, 0.0).is_nan());
+        assert!(f64_mul_div(0.0, 0.0, 0.0).is_nan());
+
+        // Intermediate overflow (known limitation: FMA fails/returns NaN due to
+        // intermediate overflow in a * num, even though the naive math is finite)
+        assert!(f64_mul_div(1e300, 1e300, 1e300).is_nan());
     }
 }

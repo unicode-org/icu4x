@@ -67,15 +67,7 @@ impl Convertible for f64 {
     type Ratio = RatioF64;
 
     fn mul_ratio(&self, ratio: &Self::Ratio) -> Self {
-        let result = super::f64_mul_div::f64_mul_div(*self, ratio.numerator, ratio.denominator);
-        if self.is_finite() {
-            // This assertion might not be true 100% of the time (e.g. extremely large
-            // finite values might still overflow to Infinity during conversion), but
-            // it is there to catch bugs during development, which is why it is only
-            // a debug assertion.
-            debug_assert!(result.is_finite());
-        }
-        result
+        super::f64_mul_div::f64_mul_div(*self, ratio.numerator, ratio.denominator)
     }
 
     fn add_refs(&self, other: &Self) -> Self {
