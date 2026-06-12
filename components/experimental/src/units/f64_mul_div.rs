@@ -18,9 +18,6 @@ use core_maths::*;
 /// This uses the native FMA operation when available, falling back to the `libm` crate
 /// on platforms that don't support it.
 ///
-/// If the FMA calculation results in an infinite value or NaN (e.g., due to overflow
-/// in intermediate steps), it falls back to the naive `a * (num / den)`.
-///
 /// For more details and the mathematical justification, see
 /// [this post by Waldemar Horwat](https://github.com/tc39/proposal-amount/issues/115).
 #[inline]
@@ -33,14 +30,10 @@ pub(super) fn f64_mul_div(a: f64, num: f64, den: f64) -> f64 {
 
     // The total error is the difference between the rounded multiplication+division
     // and the multiplication evaluated in full precision, plus the multiplication
-    // error divided by the denominator, all evaluated in times-den-space. 
+    // error divided by the denominator, all evaluated in times-den-space.
     let total_error = (double_rounded.mul_add(-den, a * num) + multiplication_error) / den;
-    
-    if total_error.is_finite() {
-        double_rounded + total_error
-    } else {
-        a * (num / den)
-    }
+
+    double_rounded + total_error
 }
 
 #[cfg(test)]

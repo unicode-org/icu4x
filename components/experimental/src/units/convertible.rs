@@ -67,7 +67,9 @@ impl Convertible for f64 {
     type Ratio = RatioF64;
 
     fn mul_ratio(&self, ratio: &Self::Ratio) -> Self {
-        super::f64_mul_div::f64_mul_div(*self, ratio.numerator, ratio.denominator)
+        let result = super::f64_mul_div::f64_mul_div(*self, ratio.numerator, ratio.denominator);
+        debug_assert!(result.is_finite());
+        result
     }
 
     fn add_refs(&self, other: &Self) -> Self {
@@ -81,10 +83,14 @@ impl Convertible for f64 {
     fn ratio_from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self::Ratio> {
         let numerator = ratio.numer().to_f64()?;
         let denominator = ratio.denom().to_f64()?;
-        Some(RatioF64 {
-            numerator,
-            denominator,
-        })
+        if numerator.is_finite() && denominator.is_finite() {
+            Some(RatioF64 {
+                numerator,
+                denominator,
+            })
+        } else {
+            None
+        }
     }
 
     fn reciprocal(&self) -> Self {
