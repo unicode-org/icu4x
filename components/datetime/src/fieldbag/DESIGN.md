@@ -47,8 +47,8 @@ We recommend explicit, named methods for conversion and standard traits for seri
 *   `impl writeable::Writeable for DateTimeFieldBag` (enables canonical skeleton serialization)
 *   `impl std::str::FromStr for DateTimeFieldBag` (strict parser using UTS 35 skeleton syntax)
 *   `impl DateTimeFieldBag`
-    *   `pub fn to_string(&self) -> String` (shadows `ToString::to_string` for performance/convenience)
-    *   `pub fn try_from_skeleton(s: &str) -> Result<Self, ParserError>` (explicit named constructor)
+    *   `pub fn to_string(&self) -> String` (convenience wrapper shadowing `ToString::to_string` for high-performance direct serialization)
+    *   `pub fn try_from_skeleton(s: &str) -> Result<Self, ParserError>` (explicit, self-documenting named constructor that delegates to `FromStr`)
     *   `pub fn to_field_set_builder(&self) -> FieldSetBuilder` (lossy conversion)
     *   `pub fn from_field_set_builder(builder: &FieldSetBuilder) -> Self` (best-effort reconstruction)
 
@@ -127,7 +127,9 @@ The hour and day period fields are mapped to UTS 35 input skeleton symbols (`j` 
 *   **Hour-only requests:** Serialized using `j` (numeric) or `jj` (two-digit).
 *   **Requests with explicit day period:** Serialized using the `C` family, which encodes both the hour padding and the day-period width (e.g., `C`/`CC` for abbreviated, `CCC`/`CCCC` for wide, `CCCCC`/`CCCCCC` for narrow).
 
-Since `j` and `C` are input skeleton symbols, they map 1-to-1 to the bag's internal state (hour presence/width and day-period presence/width). During conversion to `FieldSetBuilder`, a day-period field without an hour is not supported and should be rejected or normalized.
+**Standalone Day Period Restriction:** Standalone day periods (requested without an hour) are not supported.
+*   The skeleton parser must reject standalone day period symbols (`a`, `b`, `B`) if no hour symbol is present in the skeleton.
+*   A `DateTimeFieldBag` with `day_period` set but `hour` unset is considered an invalid state. Serialization will fail or be treated as invalid, and conversion to `FieldSetBuilder` will reject it.
 
 
 ## Conversion from DateTimeFieldBag to FieldSetBuilder
@@ -149,8 +151,16 @@ The conversion preserves the closest meaningful mapping for:
 *   **Width Simplification:** Narrow month and weekday widths collapse into a broader `Length` choice.
 *   **Alignment/Padding:** Field-specific 2-digit (padded) width choices map to a builder-wide `Alignment::Column` preference. *(Rationale: In the `fieldsets` model, `Alignment::Column` is the primary mechanism to support 2-digit numeric fields, as column/tabular alignment is the main driver for developers opting into 2-digit widths. This mapping correctly captures this developer intent.)*
 *   **Time Precision:** Minute-only or second-only requests are promoted to a normal time fieldset with the closest `TimePrecision`.
-*   **Day Period:** Day period requests without an hour cannot be cleanly represented in dynamic fieldsets and will be rejected or normalized.
+*   **Day Period:** Day period requests without an hour are rejected as invalid.
 *   **Settings with no bag equivalent:** `TimePrecision::MinuteOptional` and other non-field builder options remain unset.
+
+### `YearStyle` Forward Resolution
+
+Since `FieldSetBuilder` controls year width via a combination of `Length` and `YearStyle`, while the bag controls it via direct field widths, we resolve the mapping as follows:
+*   `year: Some(Year::Numeric)` $\rightarrow$ Maps to `YearStyle::Auto`. The builder's `length` will be guided towards `Length::Medium` or `Length::Long` to prefer full year display.
+*   `year: Some(Year::TwoDigit)` $\rightarrow$ Maps to `YearStyle::Auto`. The builder's `length` will be guided towards `Length::Short` to prefer 2-digit display.
+*   `era: Some(...)` $\rightarrow$ Maps to `YearStyle::WithEra` (overriding the `Auto` choice above to ensure era is displayed).
+*   `era: None` $\rightarrow$ Maps to `YearStyle::Auto` (relying on locale defaults for era display).
 
 The conversion should be documented as a reconstruction aid, not as a stable interchange format.
 
@@ -181,7 +191,7 @@ Conversion from `FieldSetBuilder` back to `DateTimeFieldBag` is also best-effort
 
 The reverse conversion should pick a canonical representative bag for a builder state. That keeps the behavior predictable even when multiple bag shapes could correspond to the same builder.
 
-## Tradeoffs
+## Design Decisions & Alternatives Considered
 
 ### Why keep `fieldbag` separate from `fieldsets`
 
@@ -190,11 +200,12 @@ The reverse conversion should pick a canonical representative bag for a builder 
 - It keeps the lossless string form independent from dynamic fieldset construction.
 - It prevents the module from becoming a catch-all for datetime formatting policy.
 
-### Why not map directly to `CompositeFieldSet`
+### Why convert via `FieldSetBuilder` instead of directly to/from `CompositeFieldSet`
 
+We rejected making `CompositeFieldSet` the direct source/target of `DateTimeFieldBag` conversion.
 - `CompositeFieldSet` is a concrete runtime formatter input, not a general field request.
-- It forces the broadest dynamic shape even when the caller needs a narrower one.
-- It discards information about the builder-style intermediate state that can still be useful.
+- Converting to it directly would force the broadest dynamic shape even when a caller needs a narrower one.
+- Using `FieldSetBuilder` as the intermediate bridge preserves useful state, allows for better optimization before committing to a final `CompositeFieldSet`, and avoids discarding information about the builder-style intermediate state.
 
 ### Why not model stock lengths here
 
@@ -202,23 +213,14 @@ Stock lengths such as `Full`, `Long`, `Medium`, and `Short` are a higher-level p
 They expand into fieldsets and sometimes inject non-bag policy, such as time-zone style.
 They should live in a separate layer.
 
-## Rejected Alternatives
+### Module Naming Alternatives Rejected
 
-### Other module names
-
-We considered and rejected the following names:
+We considered and rejected the following names for the new module:
 *   **`components`**: Already used to describe the ICU4X crate collection.
 *   **`skeleton`**: Exposes an internal standard term that many users will not know (though the string form remains the wire format).
 *   **`pattern`**: ICU4X already uses `pattern` for other datetime concepts.
 *   **`fieldset`**: `fieldsets` already has a distinct meaning in ICU4X.
 *   **`options`**: The bag is not a complete formatter options object.
-
-### Converting directly to/from `CompositeFieldSet`
-
-We rejected making `CompositeFieldSet` the direct source/target of `DateTimeFieldBag` conversion, instead of `FieldSetBuilder`.
-*   `CompositeFieldSet` is a concrete runtime formatter input, not a general field request.
-*   Converting to it directly would force the broadest dynamic shape even when a caller needs a narrower one.
-*   Using `FieldSetBuilder` as the intermediate bridge preserves useful state and allows for better optimization before committing to a final `CompositeFieldSet`.
 
 ## Future Work
 
