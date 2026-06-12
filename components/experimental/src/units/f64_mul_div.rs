@@ -20,6 +20,15 @@ use core_maths::*;
 ///
 /// For more details and the mathematical justification, see
 /// [this post by Waldemar Horwat](https://github.com/tc39/proposal-amount/issues/115).
+///
+/// # Limitations
+/// This algorithm does not handle non-finite inputs (NaN, Infinity) or intermediate
+/// overflows (e.g., `a * num > f64::MAX`) gracefully. In these cases, the error-tracking
+/// math will naturally encounter indeterminate forms (like `Inf - Inf` or `0 * Inf`) and
+/// return `NaN`, even if the naive calculation would have returned a sensible value
+/// (like `Infinity` or `0.0`). We accept this limitation to keep the function extremely
+/// simple, fast, and branchless, relying on callers to enforce finiteness invariants
+/// (which we do in `RatioF64` and `Convertible::mul_ratio`).
 pub(super) fn f64_mul_div(a: f64, num: f64, den: f64) -> f64 {
     let double_rounded = a * num / den;
 
@@ -80,6 +89,12 @@ mod tests {
 
     #[test]
     fn test_f64_mul_div_extreme_cases() {
+        // These extreme cases verify that the function safely propagates to NaN
+        // for non-finite inputs, division by zero, and intermediate overflows.
+        // As documented in the function's limitations, many of these return NaN
+        // even when naive math would return Infinity or 0.0, due to inherent
+        // indeterminate forms in the branchless error-tracking math.
+
         // If we pass NaN, it should return NaN
         assert!(f64_mul_div(f64::NAN, 1.0, 2.0).is_nan());
         assert!(f64_mul_div(1.0, f64::NAN, 2.0).is_nan());
