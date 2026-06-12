@@ -2,20 +2,11 @@
 
 ## Background & Motivation
 
-In ECMA-402 (`Intl.DateTimeFormat`), a formatting request is constructed from a set of user-specified options. These options represent a mix of different concerns:
+In ECMA-402 (`Intl.DateTimeFormat`), a formatting request is constructed from a set of user-specified options. These options represent a mix of different concerns, which are split in a compliant implementation:
 
-1.  **Field selection and widths:** e.g., `year: "numeric"`, `month: "long"`, `day: "numeric"`, `weekday: "short"`.
-2.  **Formatter policy:** e.g., `hourCycle: "h23"`, `numberingSystem: "latn"`, `calendar: "gregory"`.
-3.  **Locale negotiation:** e.g., `localeMatcher: "best fit"`.
-
-Currently, ICU4X's `fieldsets` API is designed around optimized, pre-compiled formatting categories (like `YMD` or `YMDT`) to minimize data size and maximize performance. However, this optimized model is too rigid to directly represent the fine-grained, dynamic field-level requests coming from ECMA-402, where users can request arbitrary combinations of fields and widths.
-
-To bridge this gap, we need a lower-level, highly flexible representation of a datetime formatting request that matches the ECMA-402 model of independent fields and widths, without carrying the broader formatter policy.
-
-In a compliant ECMA-402 implementation, the options are split:
-- **Field-related options** (e.g., `year`, `month`, `day`, `hour`) are mapped to `DateTimeFieldBag` (and subsequently converted to a `FieldSet` via the bridge).
-- **Policy-related options** (e.g., `numberingSystem`, `hourCycle`, `calendar`) are passed to the formatter via `DateTimeFormatterPreferences`.
-- **Locale matching options** (e.g., `localeMatcher`) are handled during locale negotiation beforehand and do not reach the formatter.
+1.  **Field-related options** (e.g., `year`, `month`, `day`, `hour`): These capture the user's choices for field selection and widths. They are mapped to `DateTimeFieldBag` (and subsequently converted to a `FieldSet` via the bridge).
+2.  **Policy-related options** (e.g., `numberingSystem`, `hourCycle`, `calendar`): These represent broader formatter policy and are passed to the formatter via `DateTimeFormatterPreferences`.
+3.  **Locale matching options** (e.g., `localeMatcher`): These are handled during locale negotiation beforehand and do not reach the formatter.
 
 ### Goals
 
@@ -44,7 +35,7 @@ The architecture is built around a 4-step mental model that defines how a format
     *   *Example:* A request for "wide month and two-digit year", represented as `{ year: TwoDigit, month: Long }`.
 2.  **UTS 35 Skeleton String** (Interchange Format): The precise, lossless wire format for the raw request (e.g., `yyMMMM`).
 3.  **`FieldSetBuilder`** (The Bridge): A helper that takes a detailed `DateTimeFieldBag` (or its skeleton) and maps it to the closest matching ICU4X formatting category, collapsing widths if necessary.
-    *   *Example:* Maps the `yyMMMM` request to a `Date` category with a `Long` length.
+    *   *Example:* Maps the `yyMMMM` request to a `YM` fieldset.
 4.  **`CompositeFieldSet`** (Resolved Category): The concrete, optimized runtime enum that wraps the resolved category (e.g., wrapping a `DateFieldSet::YM`). This is a downstream choice, not the core representation of the request.
 
 `DateTimeFieldBag` is a flat struct of optional fields, where each field represents a requested datetime component and its desired width. It acts as a clean, intermediate representation of a user's formatting request.
@@ -54,9 +45,10 @@ The architecture is built around a 4-step mental model that defines how a format
 We recommend explicit, named methods for conversion and standard traits for serialization, making the lossy nature of the conversions clear:
 
 *   `impl writeable::Writeable for DateTimeFieldBag` (enables canonical skeleton serialization)
+*   `impl std::str::FromStr for DateTimeFieldBag` (strict parser using UTS 35 skeleton syntax)
 *   `impl DateTimeFieldBag`
     *   `pub fn to_string(&self) -> String` (shadows `ToString::to_string` for performance/convenience)
-    *   `pub fn from_skeleton_str(s: &str) -> Result<Self, ParserError>` (strict parser)
+    *   `pub fn try_from_skeleton(s: &str) -> Result<Self, ParserError>` (explicit named constructor)
     *   `pub fn to_field_set_builder(&self) -> FieldSetBuilder` (lossy conversion)
     *   `pub fn from_field_set_builder(builder: &FieldSetBuilder) -> Self` (best-effort reconstruction)
 
@@ -97,7 +89,7 @@ The bag does not carry:
 - year style preference
 - other formatter-level knobs that belong to `FieldSetBuilder`
 
-### String Serialization (UTS 35 Skeletons)
+## String Serialization (UTS 35 Skeletons)
 
 The primary exact interchange format for `DateTimeFieldBag` is a string using UTS 35 classical skeleton syntax for the representable subset.
 
@@ -138,7 +130,7 @@ The hour and day period fields are mapped to UTS 35 input skeleton symbols (`j` 
 Since `j` and `C` are input skeleton symbols, they map 1-to-1 to the bag's internal state (hour presence/width and day-period presence/width). During conversion to `FieldSetBuilder`, a day-period field without an hour is not supported and should be rejected or normalized.
 
 
-### Conversion To `FieldSetBuilder`
+## Conversion from DateTimeFieldBag to FieldSetBuilder
 
 Conversion from `DateTimeFieldBag` to `FieldSetBuilder` is best-effort and lossy. It should not fail; when there is no exact mapping, it should choose a documented representative builder state.
 
@@ -162,7 +154,7 @@ The conversion preserves the closest meaningful mapping for:
 
 The conversion should be documented as a reconstruction aid, not as a stable interchange format.
 
-### Conversion From `FieldSetBuilder`
+## Conversion from FieldSetBuilder to DateTimeFieldBag
 
 Conversion from `FieldSetBuilder` back to `DateTimeFieldBag` is also best-effort and inherently lossy, as the builder stores category-level decisions and auxiliary options, while the bag stores field-level choices. It should not fail; the result should be a documented representative bag for the builder state.
 
