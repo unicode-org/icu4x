@@ -5,15 +5,20 @@
 `fieldbag` is the module for a compact, field-level description of a datetime formatting request.
 It is intended to represent the subset of `Intl.DateTimeFormat` / ICU4C-style datetime syntax that
 describes which fields should appear and how wide each field should be, without carrying broader
-formatter policy such as locale preferences, numbering system preference, or hour-cycle preference.
+formatter policy.
+
+In a compliant ECMA-402 implementation, the options are split:
+- **Field-related options** (e.g., `year`, `month`, `day`, `hour`) are mapped to `DateTimeFieldBag` (and subsequently converted to a `FieldSet`).
+- **Policy-related options** (e.g., `numberingSystem`, `hourCycle`, `calendar`) are passed to the formatter via `DateTimeFormatterPreferences`.
+- **Locale matching options** (e.g., `localeMatcher`) are handled during locale negotiation beforehand and do not reach the formatter.
 
 The central type is `DateTimeFieldBag`.
 
 This module is deliberately narrower than ICU4X `fieldsets`:
 
-- `DateTimeFieldBag` is about field content and widths.
-- `FieldSetBuilder` is about building dynamic formatter fieldsets.
-- `CompositeFieldSet` is about choosing a concrete runtime fieldset category.
+- `DateTimeFieldBag` is about fine-grained field content and widths (e.g., requesting a "wide month and two-digit year", represented as `yyMMMM`).
+- `FieldSetBuilder` is the bridge that resolves these detailed requests into coarser ICU4X categories (e.g., mapping `yyMMMM` to a Date category with a Long length).
+- `CompositeFieldSet` is a top-level dynamic enum that wraps all possible runtime fieldset categories (e.g., wrapping a resolved `DateFieldSet::YMD`).
 
 The bag should support two public conversions:
 
@@ -30,8 +35,8 @@ The bag should support two public conversions:
 
 ## Non-Goals
 
-- Stock pattern presets such as `Full`, `Long`, `Medium`, and `Short`.
-- Locale-specific fallback policy.
+- Stock pattern presets (namely, the `dateStyle` and `timeStyle` presets: `Full`, `Long`, `Medium`, and `Short`), as opposed to individual field widths (like `month: "long"` or `weekday: "short"`).
+- Locale negotiation (such as the ECMA-402 `localeMatcher` option), which is not handled by ICU4X.
 - Hour-cycle preferences.
 - Numbering system preferences.
 - A full replacement for the existing `fieldsets` API.
@@ -153,6 +158,12 @@ That makes the string form a better interchange format than inventing a new ad h
 Conversion from `DateTimeFieldBag` to `FieldSetBuilder` should be best-effort, not exact.
 It should not fail; when there is no exact mapping, it should choose a documented representative
 builder state.
+
+While this lossy conversion is compliant with the ECMA-402 specification, it may introduce web
+compatibility issues in cases where different fields request different lengths (e.g., a wide
+month but an abbreviated weekday), which must be collapsed into a single coarser builder-wide
+style. We plan to investigate the scope of these web-compat risks and, as needed, iterate on
+the semantic skeleton design to support more granular options.
 
 The builder is richer in some ways and coarser in others:
 
