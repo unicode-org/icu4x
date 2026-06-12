@@ -5,7 +5,7 @@
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
-use crate::displaynames::{ALT_SECONDARY_SUBSTRING, ALT_SHORT_SUBSTRING, ALT_SUBSTRING};
+use crate::displaynames::{ALT_SECONDARY_SUBSTRING, ALT_SUBSTRING};
 use core::convert::TryFrom;
 use icu::experimental::displaynames::provider::*;
 use icu::locale::{ParseError, subtags::Variant};
@@ -32,19 +32,11 @@ impl DataProvider<VariantDisplayNamesV1> for SourceDataProvider {
 }
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesVariantLongV1,
+    LocaleNamesVariantMediumV1,
     cldr_serde::displaynames::variant::Resource,
     "variants.json",
     variants,
     None::<&str>,
-);
-
-crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesVariantShortV1,
-    cldr_serde::displaynames::variant::Resource,
-    "variants.json",
-    variants,
-    Some(ALT_SHORT_SUBSTRING),
 );
 
 crate::displaynames::impl_displaynames_legacy_iter_v1!(VariantDisplayNamesV1, "variants.json");
@@ -105,10 +97,10 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_variant_long() {
+    fn test_locale_names_variant_medium() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesVariantLongV1> = provider
+        let data: DataPayload<LocaleNamesVariantMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("POSIX").unwrap(),

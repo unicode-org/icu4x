@@ -53,7 +53,7 @@ crate::displaynames::impl_displaynames_legacy_iter_v1!(LanguageDisplayNamesV1, "
 crate::displaynames::impl_displaynames_legacy_iter_v1!(LocaleDisplayNamesV1, "languages.json");
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesLanguageLongV1,
+    LocaleNamesLanguageMediumV1,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
@@ -68,8 +68,16 @@ crate::displaynames::impl_displaynames_v1!(
     Some(ALT_SHORT_SUBSTRING),
 );
 
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesLanguageLongV1,
+    cldr_serde::displaynames::language::Resource,
+    "languages.json",
+    languages,
+    Some(ALT_LONG_SUBSTRING),
+);
+
 crate::displaynames::impl_displaynames_menu_v1!(
-    LocaleNamesLanguageMenuLongV1,
+    LocaleNamesLanguageMenuMediumV1,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
@@ -297,10 +305,10 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_language_long() {
+    fn test_locale_names_language_medium() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesLanguageLongV1> = provider
+        let data: DataPayload<LocaleNamesLanguageMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("aa").unwrap(),
@@ -333,10 +341,28 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_language_menu_long() {
+    fn test_locale_names_language_long() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesLanguageMenuLongV1> = provider
+        let data: DataPayload<LocaleNamesLanguageLongV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("zh").unwrap(),
+                    &langid!("en-001").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(&**data.get(), "Mandarin Chinese");
+    }
+
+    #[test]
+    fn test_locale_names_language_menu_medium() {
+        let provider = SourceDataProvider::new_testing();
+
+        let data: DataPayload<LocaleNamesLanguageMenuMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("ku").unwrap(),

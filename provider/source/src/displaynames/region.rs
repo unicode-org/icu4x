@@ -37,7 +37,7 @@ impl DataProvider<RegionDisplayNamesV1> for SourceDataProvider {
 crate::displaynames::impl_displaynames_legacy_iter_v1!(RegionDisplayNamesV1, "territories.json");
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesRegionLongV1,
+    LocaleNamesRegionMediumV1,
     cldr_serde::displaynames::region::Resource,
     "territories.json",
     regions,
