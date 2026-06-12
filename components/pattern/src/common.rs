@@ -118,37 +118,6 @@ pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
     fn empty() -> &'static Self::Store;
 }
 
-/// Types that implement backing data models for [`Pattern`] and support placeholder extraction
-/// implement this trait.
-///
-/// The trait has no public methods and is not implementable outside of this crate.
-///
-/// <div class="stab unstable">
-/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
-/// trait, please consider using a type from the implementors listed below.
-/// </div>
-///
-/// [`Pattern`]: crate::Pattern
-pub trait ExtractionBackend: PatternBackend + crate::private::Sealed {
-    /// The type that stores the matches for this backend.
-    #[doc(hidden)] // TODO(#4467): Should be internal
-    type DecodedMatches<'p, 'a>;
-
-    /// Extract matches from the store.
-    #[doc(hidden)] // TODO(#4467): Should be internal
-    fn extract<'p, 'a>(
-        store: &'p Self::Store,
-        input: &'a str,
-    ) -> Option<Self::DecodedMatches<'p, 'a>>;
-
-    /// Get a match from the decoded matches.
-    #[doc(hidden)] // TODO(#4467): Should be internal
-    fn get_match<'p, 'b>(
-        store: &Self::DecodedMatches<'p, 'b>,
-        key: Self::PlaceholderKey<'_>,
-    ) -> Option<&'b str>;
-}
-
 /// Trait implemented on collections that can produce [`TryWriteable`]s for interpolation.
 ///
 /// This trait can add [`Part`]s for individual literals or placeholders. The implementations
@@ -294,4 +263,35 @@ where
     fn map_literal<'a, 'l>(&'a self, literal: &'l str) -> Self::L<'a, 'l> {
         (*self).map_literal(literal)
     }
+}
+
+/// Types that implement backing data models for [`Pattern`] and support placeholder extraction
+/// implement this trait.
+///
+/// The trait has no public methods and is not implementable outside of this crate.
+///
+/// <div class="stab unstable">
+/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
+/// </div>
+///
+/// [`Pattern`]: crate::Pattern
+pub trait ExtractionBackend: PatternBackend + crate::private::Sealed {
+    /// The type that stores the matches for this backend.
+    #[doc(hidden)] // TODO(#4467): Should be internal
+    type DecodedMatches<'p, 'a>;
+
+    /// Extract matches from the store.
+    #[doc(hidden)] // TODO(#4467): Should be internal
+    fn extract<'p, 'a>(
+        store: &'p Self::Store,
+        input: &'a str,
+    ) -> Option<Self::DecodedMatches<'p, 'a>>;
+
+    /// Get a match from the decoded matches.
+    #[doc(hidden)] // TODO(#4467): Should be internal
+    fn get_match<'p, 'b>(
+        store: &Self::DecodedMatches<'p, 'b>,
+        key: Self::PlaceholderKey<'_>,
+    ) -> Option<&'b str>;
 }
