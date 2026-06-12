@@ -75,22 +75,31 @@ pub struct Pattern<B: PatternBackend> {
 /// A structure containing the extracted placeholder values.
 ///
 /// Query it using [`Self::get()`].
-pub struct Matches<'p, 'a, B: PatternBackend> {
+pub struct PlaceholderMatches<'p, 'a, B: PatternBackend> {
     pub(crate) store: B::DecodedMatches<'p, 'a>,
 }
 
-impl<'p, B: PatternBackend> fmt::Debug for Matches<'p, '_, B>
+impl<'p, 'a, B: PatternBackend> PlaceholderMatches<'p, 'a, B> {
+    /// Gets the matched substring for the given placeholder key.
+    ///
+    /// Returns `None` if the placeholder was not present in the pattern.
+    pub fn get(&self, key: B::PlaceholderKey<'_>) -> Option<&'a str> {
+        B::get_match(&self.store, key)
+    }
+}
+
+impl<'p, B: PatternBackend> fmt::Debug for PlaceholderMatches<'p, '_, B>
 where
     for<'a> B::DecodedMatches<'p, 'a>: fmt::Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("Matches")
+        f.debug_struct("PlaceholderMatches")
             .field("store", &self.store)
             .finish()
     }
 }
 
-impl<'p, B: PatternBackend> PartialEq for Matches<'p, '_, B>
+impl<'p, B: PatternBackend> PartialEq for PlaceholderMatches<'p, '_, B>
 where
     for<'a> B::DecodedMatches<'p, 'a>: PartialEq,
 {
@@ -99,7 +108,10 @@ where
     }
 }
 
-impl<'p, B: PatternBackend> Eq for Matches<'p, '_, B> where for<'a> B::DecodedMatches<'p, 'a>: Eq {}
+impl<'p, B: PatternBackend> Eq for PlaceholderMatches<'p, '_, B> where
+    for<'a> B::DecodedMatches<'p, 'a>: Eq
+{
+}
 
 impl<B: PatternBackend> PartialEq for Pattern<B> {
     fn eq(&self, other: &Self) -> bool {
@@ -277,13 +289,6 @@ impl<B> Pattern<B>
 where
     B: PatternBackend,
 {
-    /// Extracts placeholder values from the formatted string.
-    ///
-    /// Returns `None` if the input string does not match the pattern.
-    pub fn extract<'p, 'a>(&'p self, input: &'a str) -> Option<Matches<'p, 'a, B>> {
-        B::extract(&self.store, input).map(|store| Matches { store })
-    }
-
     /// Returns an iterator over the [`PatternItem`]s in this pattern.
     pub fn iter(&self) -> impl Iterator<Item = PatternItem<'_, B::PlaceholderKey<'_>>> + '_ {
         B::iter_items(&self.store)

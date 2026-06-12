@@ -11,50 +11,50 @@ use icu_pattern::{
 fn test_single_extraction() {
     // 1. Basic match
     let pattern = SinglePlaceholderPattern::try_from_str("a{0}b", Default::default()).unwrap();
-    let matches = pattern.extract("axyzb").unwrap();
+    let matches = pattern.extract_placeholders("axyzb").unwrap();
     assert_eq!(matches.get(SinglePlaceholderKey::Singleton), Some("xyz"));
 
     // 2. No match
-    assert!(pattern.extract("axyz").is_none());
-    assert!(pattern.extract("xyzb").is_none());
+    assert!(pattern.extract_placeholders("axyz").is_none());
+    assert!(pattern.extract_placeholders("xyzb").is_none());
 
     // 3. Empty prefix/suffix
     let pattern = SinglePlaceholderPattern::try_from_str("{0}", Default::default()).unwrap();
-    let matches = pattern.extract("hello").unwrap();
+    let matches = pattern.extract_placeholders("hello").unwrap();
     assert_eq!(matches.get(SinglePlaceholderKey::Singleton), Some("hello"));
 
     // 4. No placeholder, matches
     let pattern = SinglePlaceholderPattern::try_from_str("literal", Default::default()).unwrap();
-    let matches = pattern.extract("literal").unwrap();
+    let matches = pattern.extract_placeholders("literal").unwrap();
     assert_eq!(matches.get(SinglePlaceholderKey::Singleton), None);
 
     // 5. No placeholder, no match
-    assert!(pattern.extract("other").is_none());
+    assert!(pattern.extract_placeholders("other").is_none());
 }
 
 #[test]
 fn test_double_extraction() {
     // 1. Basic match
     let pattern = DoublePlaceholderPattern::try_from_str("a{0}b{1}c", Default::default()).unwrap();
-    let matches = pattern.extract("axxbyyc").unwrap();
+    let matches = pattern.extract_placeholders("axxbyyc").unwrap();
     assert_eq!(matches.get(DoublePlaceholderKey::Place0), Some("xx"));
     assert_eq!(matches.get(DoublePlaceholderKey::Place1), Some("yy"));
 
     // 2. Ambiguity (first match / lazy)
     let pattern = DoublePlaceholderPattern::try_from_str("a{0}b{1}b", Default::default()).unwrap();
-    let matches = pattern.extract("axbybb").unwrap();
+    let matches = pattern.extract_placeholders("axbybb").unwrap();
     assert_eq!(matches.get(DoublePlaceholderKey::Place0), Some("x"));
     assert_eq!(matches.get(DoublePlaceholderKey::Place1), Some("yb"));
 
     // 3. Reversed order in pattern
     let pattern = DoublePlaceholderPattern::try_from_str("a{1}b{0}c", Default::default()).unwrap();
-    let matches = pattern.extract("axxbyyc").unwrap();
+    let matches = pattern.extract_placeholders("axxbyyc").unwrap();
     assert_eq!(matches.get(DoublePlaceholderKey::Place0), Some("yy"));
     assert_eq!(matches.get(DoublePlaceholderKey::Place1), Some("xx"));
 
     // 4. Adjacent placeholders
     let pattern = DoublePlaceholderPattern::try_from_str("a{0}{1}b", Default::default()).unwrap();
-    let matches = pattern.extract("axyzb").unwrap();
+    let matches = pattern.extract_placeholders("axyzb").unwrap();
     assert_eq!(matches.get(DoublePlaceholderKey::Place0), Some(""));
     assert_eq!(matches.get(DoublePlaceholderKey::Place1), Some("xyz"));
 }
@@ -67,7 +67,9 @@ fn test_multi_named_extraction() {
         Default::default(),
     )
     .unwrap();
-    let matches = pattern.extract("Hello, Alice and Bob!").unwrap();
+    let matches = pattern
+        .extract_placeholders("Hello, Alice and Bob!")
+        .unwrap();
     assert_eq!(
         matches.get(MultiNamedPlaceholderKey("person0")),
         Some("Alice")

@@ -131,15 +131,16 @@ where
     }
 }
 
-impl<'p, 'a> crate::Matches<'p, 'a, DoublePlaceholder> {
-    /// Gets the matched substring for the given placeholder key.
+impl<'p, 'a> crate::Pattern<DoublePlaceholder> {
+    /// Extracts placeholder values from the formatted string.
     ///
-    /// Returns `None` if the placeholder was not present in the pattern.
-    pub fn get(&self, key: DoublePlaceholderKey) -> Option<&'a str> {
-        match key {
-            DoublePlaceholderKey::Place0 => self.store[0],
-            DoublePlaceholderKey::Place1 => self.store[1],
-        }
+    /// Returns `None` if the input string does not match the pattern.
+    pub fn extract_placeholders(
+        &'p self,
+        input: &'a str,
+    ) -> Option<crate::PlaceholderMatches<'p, 'a, DoublePlaceholder>> {
+        DoublePlaceholder::extract(&self.store, input)
+            .map(|store| crate::PlaceholderMatches { store })
     }
 }
 
@@ -345,6 +346,16 @@ impl PatternBackend for DoublePlaceholder {
             Some(matches)
         } else {
             None
+        }
+    }
+
+    fn get_match<'p, 'b>(
+        store: &Self::DecodedMatches<'p, 'b>,
+        key: Self::PlaceholderKey<'_>,
+    ) -> Option<&'b str> {
+        match key {
+            DoublePlaceholderKey::Place0 => store[0],
+            DoublePlaceholderKey::Place1 => store[1],
         }
     }
 

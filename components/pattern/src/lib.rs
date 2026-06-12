@@ -67,8 +67,8 @@ pub use common::PlaceholderValueProvider;
 pub use double::DoublePlaceholder;
 pub use double::DoublePlaceholderKey;
 pub use error::PatternError;
-pub use frontend::Matches;
 pub use frontend::Pattern;
+pub use frontend::PlaceholderMatches;
 #[cfg(feature = "serde")]
 pub use frontend::serde::*;
 pub use multi_named::MissingNamedPlaceholderError;

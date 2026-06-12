@@ -111,12 +111,16 @@ where
     }
 }
 
-impl<'p, 'a> crate::Matches<'p, 'a, SinglePlaceholder> {
-    /// Gets the matched substring for the single placeholder.
+impl<'p, 'a> crate::Pattern<SinglePlaceholder> {
+    /// Extracts placeholder values from the formatted string.
     ///
-    /// Returns `None` if the placeholder was not present in the pattern.
-    pub fn get(&self, _key: SinglePlaceholderKey) -> Option<&'a str> {
-        self.store
+    /// Returns `None` if the input string does not match the pattern.
+    pub fn extract_placeholders(
+        &'p self,
+        input: &'a str,
+    ) -> Option<crate::PlaceholderMatches<'p, 'a, SinglePlaceholder>> {
+        SinglePlaceholder::extract(&self.store, input)
+            .map(|store| crate::PlaceholderMatches { store })
     }
 }
 
@@ -292,6 +296,13 @@ impl PatternBackend for SinglePlaceholder {
                 }
             }
         }
+    }
+
+    fn get_match<'p, 'b>(
+        store: &Self::DecodedMatches<'p, 'b>,
+        _key: Self::PlaceholderKey<'_>,
+    ) -> Option<&'b str> {
+        *store
     }
 
     fn validate_store(store: &Self::Store) -> Result<(), Error> {

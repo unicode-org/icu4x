@@ -148,23 +148,17 @@ where
     }
 }
 
-impl<'p, 'a> crate::Matches<'p, 'a, MultiNamedPlaceholder> {
-    /// Gets the matched substring for the given placeholder key.
+#[cfg(feature = "alloc")]
+impl<'p, 'a> crate::Pattern<MultiNamedPlaceholder> {
+    /// Extracts placeholder values from the formatted string.
     ///
-    /// Returns `None` if the placeholder was not present in the pattern.
-    pub fn get(&self, key: MultiNamedPlaceholderKey<'_>) -> Option<&'a str> {
-        #[cfg(feature = "alloc")]
-        {
-            self.store
-                .iter()
-                .find(|(k, _)| k.0 == key.0)
-                .map(|(_, v)| *v)
-        }
-        #[cfg(not(feature = "alloc"))]
-        {
-            let _ = key;
-            None
-        }
+    /// Returns `None` if the input string does not match the pattern.
+    pub fn extract_placeholders(
+        &'p self,
+        input: &'a str,
+    ) -> Option<crate::PlaceholderMatches<'p, 'a, MultiNamedPlaceholder>> {
+        MultiNamedPlaceholder::extract(&self.store, input)
+            .map(|store| crate::PlaceholderMatches { store })
     }
 }
 
@@ -375,6 +369,22 @@ impl PatternBackend for MultiNamedPlaceholder {
         _input: &'a str,
     ) -> Option<Self::DecodedMatches<'p, 'a>> {
         None
+    }
+
+    fn get_match<'p, 'b>(
+        store: &Self::DecodedMatches<'p, 'b>,
+        key: Self::PlaceholderKey<'_>,
+    ) -> Option<&'b str> {
+        #[cfg(feature = "alloc")]
+        {
+            store.iter().find(|(k, _)| k.0 == key.0).map(|(_, v)| *v)
+        }
+        #[cfg(not(feature = "alloc"))]
+        {
+            let _ = store;
+            let _ = key;
+            None
+        }
     }
 
     fn validate_store(store: &Self::Store) -> Result<(), Error> {
