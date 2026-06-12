@@ -394,6 +394,17 @@ impl<'p, 'a, B: ExtractionBackend> PlaceholderMatches<'p, 'a, B> {
     /// Gets the matched substring for the given placeholder key.
     ///
     /// Returns `None` if the placeholder was not present in the pattern.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_pattern::{Pattern, DoublePlaceholder, DoublePlaceholderKey};
+    ///
+    /// let pattern = Pattern::<DoublePlaceholder>::try_from_str("Hello, {0} and {1}!", Default::default()).unwrap();
+    /// let matches = pattern.extract_placeholders("Hello, Alice and Bob!").unwrap();
+    /// assert_eq!(matches.get(DoublePlaceholderKey::Place0), Some("Alice"));
+    /// assert_eq!(matches.get(DoublePlaceholderKey::Place1), Some("Bob"));
+    /// ```
     pub fn get(&self, key: B::PlaceholderKey<'_>) -> Option<&'a str> {
         B::get_match(&self.store, key)
     }
@@ -428,6 +439,16 @@ impl<B: ExtractionBackend> Pattern<B> {
     /// Extracts placeholder values from the formatted string.
     ///
     /// Returns `None` if the input string does not match the pattern.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_pattern::{Pattern, SinglePlaceholder, SinglePlaceholderKey};
+    ///
+    /// let pattern = Pattern::<SinglePlaceholder>::try_from_str("Hello, {0}!", Default::default()).unwrap();
+    /// let matches = pattern.extract_placeholders("Hello, Alice!").unwrap();
+    /// assert_eq!(matches.get(SinglePlaceholderKey::Singleton), Some("Alice"));
+    /// ```
     pub fn extract_placeholders<'p, 'a>(
         &'p self,
         input: &'a str,
