@@ -114,8 +114,8 @@ pub(crate) struct ProportionalConverter<N>
 where
     N: Convertible,
 {
-    /// The conversion ratio between the input and output units.
-    pub(crate) conversion_ratio: N::Ratio,
+    /// The conversion factor between the input and output units.
+    pub(crate) conversion_factor: N::Ratio,
 }
 
 impl<N> ProportionalConverter<N>
@@ -124,6 +124,6 @@ where
 {
     /// Converts the given value from the input unit to the output unit.
     pub fn convert(&self, value: &N) -> N {
-        value.mul_ratio(&self.conversion_ratio)
+        value.mul_ratio(&self.conversion_factor)
     }
 }
