@@ -93,28 +93,25 @@ macro_rules! impl_displaynames_menu_v1 {
 
                 let mut key_core = req.id.marker_attributes.as_str().to_string();
                 let mut key_extension = key_core.clone();
-                key_core.push_str(MENU_CORE_SUBSTRING);
-                key_extension.push_str(MENU_EXTENSION_SUBSTRING);
+                key_core.push_str($crate::displaynames::MENU_CORE_SUBSTRING);
+                key_extension.push_str($crate::displaynames::MENU_EXTENSION_SUBSTRING);
 
-                let name_core = data
-                    .main
-                    .value
-                    .localedisplaynames
-                    .$field
-                    .get(&key_core)
-                    .ok_or_else(|| {
-                        DataError::custom("failed to find attribute").with_req($marker::INFO, req)
-                    })?;
+                let map = &data.main.value.localedisplaynames.$field;
 
-                let name_extension = data
-                    .main
-                    .value
-                    .localedisplaynames
-                    .$field
-                    .get(&key_extension)
-                    .ok_or_else(|| {
-                        DataError::custom("failed to find attribute").with_req($marker::INFO, req)
+                let (name_core, name_extension) = if let Some(core) = map.get(&key_core) {
+                    let extension = map.get(&key_extension).ok_or_else(|| {
+                        DataError::custom("found menu-core but missing menu-extension").with_req($marker::INFO, req)
                     })?;
+                    (core.as_str(), extension.as_str())
+                } else {
+                    // Fallback to alt-menu
+                    let mut key_alt_menu = req.id.marker_attributes.as_str().to_string();
+                    key_alt_menu.push_str($crate::displaynames::ALT_MENU_SUBSTRING);
+                    let alt_menu = map.get(&key_alt_menu).ok_or_else(|| {
+                        DataError::custom("failed to find menu-core or alt-menu").with_req($marker::INFO, req)
+                    })?;
+                    (alt_menu.as_str(), "")
+                };
 
                 Ok(DataResponse {
                     metadata: Default::default(),
@@ -126,13 +123,44 @@ macro_rules! impl_displaynames_menu_v1 {
             }
         }
 
-        $crate::displaynames::impl_displaynames_iter_v1!(
-            $marker,
-            $resource,
-            $file,
-            $field,
-            Some(MENU_CORE_SUBSTRING)
-        );
+        impl IterableDataProviderCached<$marker> for SourceDataProvider {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+                let mut result = HashSet::new();
+                let displaynames = self.cldr()?.displaynames();
+                for locale in displaynames.list_locales()?.filter(|locale| {
+                    // The directory might exist without the file
+                    self.cldr()
+                        .unwrap()
+                        .displaynames()
+                        .file_exists(locale, $file)
+                        .unwrap_or_default()
+                }) {
+                    let data: &$resource = displaynames.read_and_parse(&locale, $file)?;
+                    for key_str in data.main.value.localedisplaynames.$field.keys() {
+                        let attr = if let Some(attr_str) = key_str.strip_suffix($crate::displaynames::MENU_CORE_SUBSTRING) {
+                            Some(attr_str)
+                        } else if let Some(attr_str) = key_str.strip_suffix($crate::displaynames::ALT_MENU_SUBSTRING) {
+                            Some(attr_str)
+                        } else {
+                            None
+                        };
+
+                        if let Some(attr_str) = attr {
+                            let data_identifier = DataIdentifierCow::from_owned(
+                                DataMarkerAttributes::try_from_string(attr_str.to_string())
+                                    .map_err(|_| {
+                                        DataError::custom("Failed to parse attribute")
+                                            .with_debug_context(&attr_str)
+                                    })?,
+                                locale,
+                            );
+                            result.insert(data_identifier);
+                        }
+                    }
+                }
+                Ok(result)
+            }
+        }
     };
 }
 

@@ -7,8 +7,7 @@ use crate::SourceDataProvider;
 use crate::cldr_serde;
 use crate::displaynames::{
     ALT_LONG_SUBSTRING, ALT_MENU_SUBSTRING, ALT_OFFICIAL_SUBSTRING, ALT_SECONDARY_SUBSTRING,
-    ALT_SHORT_SUBSTRING, ALT_SUBSTRING, ALT_VARIANT_SUBSTRING, MENU_CORE_SUBSTRING,
-    MENU_EXTENSION_SUBSTRING,
+    ALT_SHORT_SUBSTRING, ALT_SUBSTRING, ALT_VARIANT_SUBSTRING,
 };
 
 use icu::experimental::displaynames::provider::*;
@@ -375,5 +374,20 @@ mod tests {
 
         assert_eq!(data.get().core(), "Kurdish");
         assert_eq!(data.get().extension(), "Kurmanji");
+
+        // Test fallback to alt-menu
+        let data_zh: DataPayload<LocaleNamesLanguageMenuMediumV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("zh").unwrap(),
+                    &langid!("en-001").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(data_zh.get().core(), "Chinese, Mandarin");
+        assert_eq!(data_zh.get().extension(), "");
     }
 }
