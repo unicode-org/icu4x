@@ -5,7 +5,7 @@
 //! Code for the [`MultiNamedPlaceholder`] pattern backend.
 
 #[cfg(feature = "alloc")]
-use alloc::{borrow::Cow, boxed::Box, collections::BTreeMap, string::String};
+use alloc::{borrow::Cow, boxed::Box, collections::BTreeMap, string::String, vec::Vec};
 use core::fmt;
 #[cfg(feature = "alloc")]
 use core::str::FromStr;
@@ -145,6 +145,26 @@ where
     #[inline]
     fn map_literal<'a, 'l>(&'a self, literal: &'l str) -> Self::L<'a, 'l> {
         literal
+    }
+}
+
+impl<'p, 'a> crate::Matches<'p, 'a, MultiNamedPlaceholder> {
+    /// Gets the matched substring for the given placeholder key.
+    ///
+    /// Returns `None` if the placeholder was not present in the pattern.
+    pub fn get(&self, key: MultiNamedPlaceholderKey<'_>) -> Option<&'a str> {
+        #[cfg(feature = "alloc")]
+        {
+            self.store
+                .iter()
+                .find(|(k, _)| k.0 == key.0)
+                .map(|(_, v)| *v)
+        }
+        #[cfg(not(feature = "alloc"))]
+        {
+            let _ = key;
+            None
+        }
     }
 }
 
@@ -330,6 +350,33 @@ impl PatternBackend for MultiNamedPlaceholder {
     type Store = str;
     type Iter<'a> = MultiNamedPlaceholderPatternIterator<'a>;
 
+    #[cfg(feature = "alloc")]
+    type DecodedMatches<'p, 'a> = Vec<(MultiNamedPlaceholderKey<'p>, &'a str)>;
+    #[cfg(not(feature = "alloc"))]
+    type DecodedMatches<'p, 'a> = ();
+
+    #[cfg(feature = "alloc")]
+    fn extract<'p, 'a>(
+        store: &'p Self::Store,
+        input: &'a str,
+    ) -> Option<Self::DecodedMatches<'p, 'a>> {
+        let items: Vec<_> = Self::iter_items(store).collect();
+        let mut matches = Vec::new();
+        if match_multi(&items, input, &mut matches) {
+            Some(matches)
+        } else {
+            None
+        }
+    }
+
+    #[cfg(not(feature = "alloc"))]
+    fn extract<'p, 'a>(
+        _store: &'p Self::Store,
+        _input: &'a str,
+    ) -> Option<Self::DecodedMatches<'p, 'a>> {
+        None
+    }
+
     fn validate_store(store: &Self::Store) -> Result<(), Error> {
         let mut iter = MultiNamedPlaceholderPatternIterator::new(store);
         while iter
@@ -472,6 +519,63 @@ impl<'a> MultiNamedPlaceholderPatternIterator<'a> {
                 let literal = self.store;
                 self.store = "";
                 Ok(Some(PatternItem::Literal(literal)))
+            }
+        }
+    }
+}
+
+#[cfg(feature = "alloc")]
+fn match_multi<'p, 'a>(
+    items: &[PatternItem<'_, MultiNamedPlaceholderKey<'p>>],
+    input: &'a str,
+    matches: &mut Vec<(MultiNamedPlaceholderKey<'p>, &'a str)>,
+) -> bool {
+    if items.is_empty() {
+        return input.is_empty();
+    }
+
+    match &items[0] {
+        PatternItem::Literal(lit) => {
+            if input.starts_with(lit) {
+                match_multi(&items[1..], &input[lit.len()..], matches)
+            } else {
+                false
+            }
+        }
+        PatternItem::Placeholder(key) => {
+            if items.len() == 1 {
+                matches.push((key.clone(), input));
+                return true;
+            }
+
+            match &items[1] {
+                PatternItem::Literal(next_lit) => {
+                    let len = matches.len();
+                    for occurrence in input.match_indices(next_lit).map(|(i, _)| i) {
+                        let val = &input[..occurrence];
+                        matches.push((key.clone(), val));
+                        if match_multi(&items[1..], &input[occurrence..], matches) {
+                            return true;
+                        }
+                        matches.truncate(len);
+                    }
+                    false
+                }
+                PatternItem::Placeholder(_) => {
+                    let len = matches.len();
+                    for split_idx in 0..=input.len() {
+                        if !input.is_char_boundary(split_idx) {
+                            continue;
+                        }
+                        let val = &input[..split_idx];
+                        matches.push((key.clone(), val));
+                        if match_multi(&items[1..], &input[split_idx..], matches) {
+                            return true;
+                        }
+                        matches.truncate(len);
+                    }
+                    false
+                }
             }
         }
     }

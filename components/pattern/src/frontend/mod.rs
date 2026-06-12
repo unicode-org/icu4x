@@ -72,6 +72,35 @@ pub struct Pattern<B: PatternBackend> {
     pub store: B::Store,
 }
 
+/// A structure containing the extracted placeholder values.
+///
+/// Query it using [`Self::get()`].
+pub struct Matches<'p, 'a, B: PatternBackend> {
+    pub(crate) store: B::DecodedMatches<'p, 'a>,
+}
+
+impl<'p, B: PatternBackend> fmt::Debug for Matches<'p, '_, B>
+where
+    for<'a> B::DecodedMatches<'p, 'a>: fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Matches")
+            .field("store", &self.store)
+            .finish()
+    }
+}
+
+impl<'p, B: PatternBackend> PartialEq for Matches<'p, '_, B>
+where
+    for<'a> B::DecodedMatches<'p, 'a>: PartialEq,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.store == other.store
+    }
+}
+
+impl<'p, B: PatternBackend> Eq for Matches<'p, '_, B> where for<'a> B::DecodedMatches<'p, 'a>: Eq {}
+
 impl<B: PatternBackend> PartialEq for Pattern<B> {
     fn eq(&self, other: &Self) -> bool {
         self.store == other.store
@@ -248,6 +277,13 @@ impl<B> Pattern<B>
 where
     B: PatternBackend,
 {
+    /// Extracts placeholder values from the formatted string.
+    ///
+    /// Returns `None` if the input string does not match the pattern.
+    pub fn extract<'p, 'a>(&'p self, input: &'a str) -> Option<Matches<'p, 'a, B>> {
+        B::extract(&self.store, input).map(|store| Matches { store })
+    }
+
     /// Returns an iterator over the [`PatternItem`]s in this pattern.
     pub fn iter(&self) -> impl Iterator<Item = PatternItem<'_, B::PlaceholderKey<'_>>> + '_ {
         B::iter_items(&self.store)

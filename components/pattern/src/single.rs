@@ -111,6 +111,15 @@ where
     }
 }
 
+impl<'p, 'a> crate::Matches<'p, 'a, SinglePlaceholder> {
+    /// Gets the matched substring for the single placeholder.
+    ///
+    /// Returns `None` if the placeholder was not present in the pattern.
+    pub fn get(&self, _key: SinglePlaceholderKey) -> Option<&'a str> {
+        self.store
+    }
+}
+
 /// Backend for patterns containing zero or one placeholder.
 ///
 /// This empty type is not constructible.
@@ -212,6 +221,78 @@ impl PatternBackend for SinglePlaceholder {
     type Error<'a> = Infallible;
     type Store = str;
     type Iter<'a> = SinglePlaceholderPatternIterator<'a>;
+    type DecodedMatches<'p, 'a> = Option<&'a str>;
+
+    fn extract<'p, 'a>(
+        store: &'p Self::Store,
+        input: &'a str,
+    ) -> Option<Self::DecodedMatches<'p, 'a>> {
+        let mut iter = Self::iter_items(store);
+        let first = iter.next();
+        match first {
+            None => {
+                if input.is_empty() {
+                    Some(None)
+                } else {
+                    None
+                }
+            }
+            Some(PatternItem::Literal(lit)) => {
+                let second = iter.next();
+                match second {
+                    None => {
+                        if input == lit {
+                            Some(None)
+                        } else {
+                            None
+                        }
+                    }
+                    Some(PatternItem::Placeholder(_)) => {
+                        if !input.starts_with(lit) {
+                            return None;
+                        }
+                        let remaining = &input[lit.len()..];
+                        let third = iter.next();
+                        match third {
+                            None => Some(Some(remaining)),
+                            Some(PatternItem::Literal(suffix)) => {
+                                if remaining.ends_with(suffix) {
+                                    Some(Some(&remaining[..remaining.len() - suffix.len()]))
+                                } else {
+                                    None
+                                }
+                            }
+                            Some(PatternItem::Placeholder(_)) => {
+                                debug_assert!(false, "SinglePlaceholder has multiple placeholders");
+                                None
+                            }
+                        }
+                    }
+                    Some(PatternItem::Literal(_)) => {
+                        debug_assert!(false, "SinglePlaceholder has consecutive literals");
+                        None
+                    }
+                }
+            }
+            Some(PatternItem::Placeholder(_)) => {
+                let second = iter.next();
+                match second {
+                    None => Some(Some(input)),
+                    Some(PatternItem::Literal(suffix)) => {
+                        if input.ends_with(suffix) {
+                            Some(Some(&input[..input.len() - suffix.len()]))
+                        } else {
+                            None
+                        }
+                    }
+                    Some(PatternItem::Placeholder(_)) => {
+                        debug_assert!(false, "SinglePlaceholder has multiple placeholders");
+                        None
+                    }
+                }
+            }
+        }
+    }
 
     fn validate_store(store: &Self::Store) -> Result<(), Error> {
         let placeholder_offset_char = store.chars().next().ok_or(Error::InvalidPattern)?;

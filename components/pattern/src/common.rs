@@ -93,6 +93,16 @@ pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
     #[doc(hidden)] // TODO(#4467): Should be internal
     type Iter<'a>: Iterator<Item = PatternItem<'a, Self::PlaceholderKey<'a>>>;
 
+    /// The type that stores the matches for this backend.
+    type DecodedMatches<'p, 'a>;
+
+    /// Extract matches from the store.
+    #[doc(hidden)]
+    fn extract<'p, 'a>(
+        store: &'p Self::Store,
+        input: &'a str,
+    ) -> Option<Self::DecodedMatches<'p, 'a>>;
+
     /// Checks a store for validity, returning an error if invalid.
     #[doc(hidden)] // TODO(#4467): Should be internal
     fn validate_store(store: &Self::Store) -> Result<(), Error>;
