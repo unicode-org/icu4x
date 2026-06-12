@@ -53,17 +53,21 @@ impl Convertible for Ratio<BigInt> {
 }
 
 /// A conversion ratio for `f64` that preserves the rational representation.
+///
+/// We store the `numerator` and `denominator` as `f64` (instead of integers)
+/// so they can be fed directly into the precision-improving division algorithm
+/// (which uses `f64::mul_add`).
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct RatioF64 {
-    pub(crate) num: f64,
-    pub(crate) den: f64,
+    pub(crate) numerator: f64,
+    pub(crate) denominator: f64,
 }
 
 impl Convertible for f64 {
     type Ratio = RatioF64;
 
     fn mul_ratio(&self, ratio: &Self::Ratio) -> Self {
-        super::f64_mul_div::f64_mul_div(*self, ratio.num, ratio.den)
+        super::f64_mul_div::f64_mul_div(*self, ratio.numerator, ratio.denominator)
     }
 
     fn add_refs(&self, other: &Self) -> Self {
@@ -75,9 +79,12 @@ impl Convertible for f64 {
     }
 
     fn ratio_from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self::Ratio> {
-        let num = ratio.numer().to_f64()?;
-        let den = ratio.denom().to_f64()?;
-        Some(RatioF64 { num, den })
+        let numerator = ratio.numer().to_f64()?;
+        let denominator = ratio.denom().to_f64()?;
+        Some(RatioF64 {
+            numerator,
+            denominator,
+        })
     }
 
     fn reciprocal(&self) -> Self {
