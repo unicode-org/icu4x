@@ -149,8 +149,8 @@ impl ConverterFactory {
             return Some(IcuRatio::zero());
         }
 
-        let output_conversion_rate_recip = output_conversion_info.factor_as_ratio().recip();
-        Some((input_offset - output_offset) * output_conversion_rate_recip)
+        let output_conversion_ratio_recip = output_conversion_info.factor_as_ratio().recip();
+        Some((input_offset - output_offset) * output_conversion_ratio_recip)
     }
 
     /// Checks whether the given units are reciprocal.
@@ -296,17 +296,17 @@ impl ConverterFactory {
         // Determine the sign of the powers of the units from root to unit2.
         let root_to_unit2_direction_sign = if is_reciprocal { 1 } else { -1 };
 
-        let mut conversion_rate = IcuRatio::one();
+        let mut conversion_ratio = IcuRatio::one();
         for &input_single_unit in input_unit.single_units.as_slice() {
-            conversion_rate *= Self::compute_conversion_term(self, input_single_unit, 1)?;
+            conversion_ratio *= Self::compute_conversion_term(self, input_single_unit, 1)?;
         }
 
         if input_unit.constant_denominator() != 0 {
-            conversion_rate /= IcuRatio::from_integer(input_unit.constant_denominator());
+            conversion_ratio /= IcuRatio::from_integer(input_unit.constant_denominator());
         }
 
         for &output_single_unit in output_unit.single_units.as_slice() {
-            conversion_rate *= Self::compute_conversion_term(
+            conversion_ratio *= Self::compute_conversion_term(
                 self,
                 output_single_unit,
                 root_to_unit2_direction_sign,
@@ -315,9 +315,9 @@ impl ConverterFactory {
 
         if output_unit.constant_denominator() != 0 {
             if is_reciprocal {
-                conversion_rate /= IcuRatio::from_integer(output_unit.constant_denominator());
+                conversion_ratio /= IcuRatio::from_integer(output_unit.constant_denominator());
             } else {
-                conversion_rate *= IcuRatio::from_integer(output_unit.constant_denominator());
+                conversion_ratio *= IcuRatio::from_integer(output_unit.constant_denominator());
             }
         }
 
@@ -331,8 +331,8 @@ impl ConverterFactory {
             return None;
         }
 
-        let conversion_rate = T::rate_from_ratio_bigint(conversion_rate.get_ratio())?;
-        let proportional = ProportionalConverter { conversion_rate };
+        let conversion_ratio = T::ratio_from_ratio_bigint(conversion_ratio.get_ratio())?;
+        let proportional = ProportionalConverter { conversion_ratio };
 
         if is_reciprocal {
             Some(UnitsConverter(UnitsConverterInner::Reciprocal(

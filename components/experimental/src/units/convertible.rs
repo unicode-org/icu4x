@@ -9,30 +9,30 @@ use num_traits::ToPrimitive;
 // TODO: add Mul & Add for references to avoid cloning.
 /// A trait for types that can be converted between two units.
 pub trait Convertible: Clone {
-    /// The type representing the conversion rate.
-    type Rate: Clone + core::fmt::Debug;
+    /// The type representing the conversion ratio.
+    type Ratio: Clone + core::fmt::Debug;
 
     /// Adds two values by reference, avoiding data cloning.
     fn add_refs(&self, other: &Self) -> Self;
 
-    /// Multiplies the value by the conversion rate.
-    fn mul_rate(&self, rate: &Self::Rate) -> Self;
+    /// Multiplies the value by the conversion ratio.
+    fn mul_ratio(&self, ratio: &Self::Ratio) -> Self;
 
     /// Converts a [`Ratio<BigInt>`] to the implementing type.
     fn from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self>;
 
-    /// Converts a [`Ratio<BigInt>`] to the associated [`Self::Rate`] type.
-    fn rate_from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self::Rate>;
+    /// Converts a [`Ratio<BigInt>`] to the associated [`Self::Ratio`] type.
+    fn ratio_from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self::Ratio>;
 
     /// Returns the reciprocal of the implementing type.
     fn reciprocal(&self) -> Self;
 }
 
 impl Convertible for Ratio<BigInt> {
-    type Rate = Ratio<BigInt>;
+    type Ratio = Ratio<BigInt>;
 
-    fn mul_rate(&self, rate: &Self::Rate) -> Self {
-        self * rate
+    fn mul_ratio(&self, ratio: &Self::Ratio) -> Self {
+        self * ratio
     }
 
     fn add_refs(&self, other: &Self) -> Self {
@@ -43,7 +43,7 @@ impl Convertible for Ratio<BigInt> {
         Some(ratio)
     }
 
-    fn rate_from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self::Rate> {
+    fn ratio_from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self::Ratio> {
         Some(ratio)
     }
 
@@ -52,18 +52,18 @@ impl Convertible for Ratio<BigInt> {
     }
 }
 
-/// A conversion rate for `f64` that preserves the rational representation.
+/// A conversion ratio for `f64` that preserves the rational representation.
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct F64Rate {
+pub struct RatioF64 {
     pub(crate) num: f64,
     pub(crate) den: f64,
 }
 
 impl Convertible for f64 {
-    type Rate = F64Rate;
+    type Ratio = RatioF64;
 
-    fn mul_rate(&self, rate: &Self::Rate) -> Self {
-        super::f64_mul_div::f64_mul_div(*self, rate.num, rate.den)
+    fn mul_ratio(&self, ratio: &Self::Ratio) -> Self {
+        super::f64_mul_div::f64_mul_div(*self, ratio.num, ratio.den)
     }
 
     fn add_refs(&self, other: &Self) -> Self {
@@ -74,10 +74,10 @@ impl Convertible for f64 {
         ratio.to_f64()
     }
 
-    fn rate_from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self::Rate> {
+    fn ratio_from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self::Ratio> {
         let num = ratio.numer().to_f64()?;
         let den = ratio.denom().to_f64()?;
-        Some(F64Rate { num, den })
+        Some(RatioF64 { num, den })
     }
 
     fn reciprocal(&self) -> Self {
