@@ -44,7 +44,7 @@ mod tests {
     fn test_f64_mul_div_precision() {
         // Case 1: 5 grams to tonnes (1/1_000_000)
         // Naive: 5.0 * (1.0 / 1_000_000.0) = 5.000000000000001e-6
-        // FMA: 5e-6
+        // f64_mul_div: 5e-6
         let val = 5.0;
         let num = 1.0;
         let den = 1_000_000.0;
@@ -56,7 +56,7 @@ mod tests {
 
         // Case 2: 0.1 * (1.0 / 10.0)
         // Naive: 0.010000000000000002
-        // FMA: 0.01
+        // f64_mul_div: 0.01
         let val = 0.1;
         let num = 1.0;
         let den = 10.0;
@@ -68,7 +68,7 @@ mod tests {
 
         // Case 3: 0.1 * (1.0 / 5.0)
         // Naive: 0.020000000000000004
-        // FMA: 0.02
+        // f64_mul_div: 0.02
         let val = 0.1;
         let num = 1.0;
         let den = 5.0;
@@ -77,5 +77,22 @@ mod tests {
         assert_ne!(naive, fma);
         assert_eq!(fma, 0.02);
         assert_eq!(naive, 0.020000000000000004);
+    }
+
+    #[test]
+    fn test_f64_mul_div_nan_infinity() {
+        // If we pass NaN, it should return NaN
+        assert!(f64_mul_div(f64::NAN, 1.0, 2.0).is_nan());
+        assert!(f64_mul_div(1.0, f64::NAN, 2.0).is_nan());
+        assert!(f64_mul_div(1.0, 1.0, f64::NAN).is_nan());
+
+        // If we pass Infinity, it might return NaN due to intermediate Inf - Inf
+        assert!(f64_mul_div(f64::INFINITY, 1.0, 2.0).is_nan());
+        assert!(f64_mul_div(1.0, f64::INFINITY, 2.0).is_nan());
+        assert!(f64_mul_div(1.0, 1.0, f64::INFINITY).is_nan());
+
+        assert!(f64_mul_div(f64::NEG_INFINITY, 1.0, 2.0).is_nan());
+        assert!(f64_mul_div(1.0, f64::NEG_INFINITY, 2.0).is_nan());
+        assert!(f64_mul_div(1.0, 1.0, f64::NEG_INFINITY).is_nan());
     }
 }
