@@ -427,33 +427,46 @@ impl ExtractionBackend for DoublePlaceholder {
         store: &'p Self::Store,
         input: &'a str,
     ) -> Option<Self::DecodedMatches<'p, 'a>> {
-        let mut items = [PatternItem::Literal(""); 5];
-        let mut count = 0;
+        let mut prefix = None;
+        let mut first_ph = None;
+        let mut infix = None;
+        let mut second_ph = None;
+        let mut suffix = None;
+
         for item in Self::iter_items(store) {
-            if count >= 5 {
-                debug_assert!(false, "Too many items in DoublePlaceholder");
-                return None;
+            match item {
+                PatternItem::Literal(s) => {
+                    if first_ph.is_none() {
+                        debug_assert!(prefix.is_none());
+                        prefix = Some(s);
+                    } else if second_ph.is_none() {
+                        debug_assert!(infix.is_none());
+                        infix = Some(s);
+                    } else {
+                        debug_assert!(suffix.is_none());
+                        suffix = Some(s);
+                    }
+                }
+                PatternItem::Placeholder(ph) => {
+                    if first_ph.is_none() {
+                        first_ph = Some(ph);
+                    } else {
+                        debug_assert!(second_ph.is_none());
+                        second_ph = Some(ph);
+                    }
+                }
             }
-            items[count] = item;
-            count += 1;
-        }
-        let items_slice = &items[..count];
-
-        let mut prefix = "";
-        let mut suffix = "";
-        let mut slice = items_slice;
-
-        // 1. Extract prefix if present
-        if let Some(PatternItem::Literal(lit)) = slice.first() {
-            prefix = lit;
-            slice = &slice[1..];
         }
 
-        // 2. Extract suffix if present
-        if let Some(PatternItem::Literal(lit)) = slice.last() {
-            suffix = lit;
-            slice = &slice[..slice.len() - 1];
+        // Resolve infix/suffix if there was only 1 placeholder
+        if second_ph.is_none() {
+            suffix = infix;
+            infix = None;
         }
+
+        let prefix = prefix.unwrap_or("");
+        let infix = infix.unwrap_or("");
+        let suffix = suffix.unwrap_or("");
 
         let mut matches = [None; 2];
 
@@ -466,8 +479,8 @@ impl ExtractionBackend for DoublePlaceholder {
         }
         let remaining = &input[prefix.len()..input.len() - suffix.len()];
 
-        match slice {
-            [] => {
+        match (first_ph, second_ph) {
+            (None, None) => {
                 // 0 placeholders
                 if remaining.is_empty() {
                     Some(matches)
@@ -475,7 +488,7 @@ impl ExtractionBackend for DoublePlaceholder {
                     None
                 }
             }
-            [PatternItem::Placeholder(key)] => {
+            (Some(key), None) => {
                 // 1 placeholder
                 let idx = match key {
                     DoublePlaceholderKey::Place0 => 0,
@@ -484,38 +497,17 @@ impl ExtractionBackend for DoublePlaceholder {
                 matches[idx] = Some(remaining);
                 Some(matches)
             }
-            [
-                PatternItem::Placeholder(key1),
-                PatternItem::Placeholder(key2),
-            ] => {
-                // 2 placeholders, adjacent (infix is "")
-                let idx1 = match key1 {
-                    DoublePlaceholderKey::Place0 => 0,
-                    DoublePlaceholderKey::Place1 => 1,
-                };
-                let idx2 = match key2 {
-                    DoublePlaceholderKey::Place0 => 0,
-                    DoublePlaceholderKey::Place1 => 1,
-                };
-                matches[idx1] = Some("");
-                matches[idx2] = Some(remaining);
-                Some(matches)
-            }
-            [
-                PatternItem::Placeholder(key1),
-                PatternItem::Literal(inf),
-                PatternItem::Placeholder(key2),
-            ] => {
-                // 2 placeholders with infix
-                let idx = if inf.is_empty() {
+            (Some(key1), Some(key2)) => {
+                // 2 placeholders
+                let idx = if infix.is_empty() {
                     Some(0)
                 } else {
-                    remaining.find(inf)
+                    remaining.find(infix)
                 };
 
                 if let Some(i) = idx {
                     let val1 = &remaining[..i];
-                    let val2 = &remaining[i + inf.len()..];
+                    let val2 = &remaining[i + infix.len()..];
                     let idx1 = match key1 {
                         DoublePlaceholderKey::Place0 => 0,
                         DoublePlaceholderKey::Place1 => 1,
@@ -531,15 +523,7 @@ impl ExtractionBackend for DoublePlaceholder {
                     None
                 }
             }
-            _ => {
-                // Any other structure is invalid for DoublePlaceholder
-                debug_assert!(
-                    false,
-                    "Invalid slice structure in DoublePlaceholder: {:?}",
-                    slice
-                );
-                None
-            }
+            (None, Some(_)) => unreachable!("second_ph populated but first_ph is not"),
         }
     }
 
