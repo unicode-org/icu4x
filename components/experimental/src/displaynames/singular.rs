@@ -146,7 +146,9 @@ impl ScriptDisplayNameOwned {
         script: Script,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LocaleNamesScriptShortV1> + DataProvider<LocaleNamesScriptMediumV1> + ?Sized,
+        D: DataProvider<LocaleNamesScriptShortV1>
+            + DataProvider<LocaleNamesScriptMediumV1>
+            + ?Sized,
     {
         try_new_short_unstable::<LocaleNamesScriptShortV1, LocaleNamesScriptMediumV1, _>(
             provider,
@@ -291,7 +293,9 @@ impl RegionDisplayNameOwned {
         region: Region,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LocaleNamesRegionShortV1> + DataProvider<LocaleNamesRegionMediumV1> + ?Sized,
+        D: DataProvider<LocaleNamesRegionShortV1>
+            + DataProvider<LocaleNamesRegionMediumV1>
+            + ?Sized,
     {
         try_new_short_unstable::<LocaleNamesRegionShortV1, LocaleNamesRegionMediumV1, _>(
             provider,

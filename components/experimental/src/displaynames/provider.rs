@@ -9,8 +9,8 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use icu_provider::prelude::*;
 use icu_pattern::DoublePlaceholderPattern;
+use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::{VarZeroCow, ZeroMap};

@@ -101,7 +101,8 @@ macro_rules! impl_displaynames_menu_v1 {
 
                 let (name_core, name_extension) = if let Some(core) = map.get(&key_core) {
                     let extension = map.get(&key_extension).ok_or_else(|| {
-                        DataError::custom("found menu-core but missing menu-extension").with_req($marker::INFO, req)
+                        DataError::custom("found menu-core but missing menu-extension")
+                            .with_req($marker::INFO, req)
                     })?;
                     (core.as_str(), extension.as_str())
                 } else {
@@ -109,7 +110,8 @@ macro_rules! impl_displaynames_menu_v1 {
                     let mut key_alt_menu = req.id.marker_attributes.as_str().to_string();
                     key_alt_menu.push_str($crate::displaynames::ALT_MENU_SUBSTRING);
                     let alt_menu = map.get(&key_alt_menu).ok_or_else(|| {
-                        DataError::custom("failed to find menu-core or alt-menu").with_req($marker::INFO, req)
+                        DataError::custom("failed to find menu-core or alt-menu")
+                            .with_req($marker::INFO, req)
                     })?;
                     (alt_menu.as_str(), "")
                 };
@@ -138,9 +140,13 @@ macro_rules! impl_displaynames_menu_v1 {
                 }) {
                     let data: &$resource = displaynames.read_and_parse(&locale, $file)?;
                     for key_str in data.main.value.localedisplaynames.$field.keys() {
-                        let attr = if let Some(attr_str) = key_str.strip_suffix($crate::displaynames::MENU_CORE_SUBSTRING) {
+                        let attr = if let Some(attr_str) =
+                            key_str.strip_suffix($crate::displaynames::MENU_CORE_SUBSTRING)
+                        {
                             Some(attr_str)
-                        } else if let Some(attr_str) = key_str.strip_suffix($crate::displaynames::ALT_MENU_SUBSTRING) {
+                        } else if let Some(attr_str) =
+                            key_str.strip_suffix($crate::displaynames::ALT_MENU_SUBSTRING)
+                        {
                             Some(attr_str)
                         } else {
                             None

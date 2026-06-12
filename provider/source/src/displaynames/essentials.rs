@@ -20,14 +20,28 @@ impl DataProvider<LocaleNamesEssentialsV1> for SourceDataProvider {
             .displaynames()
             .read_and_parse(req.id.locale, "localeDisplayNames.json")?;
 
-        let pattern_str = &data.main.value.localedisplaynames.locale_display_pattern.locale_pattern;
-        let separator_str = &data.main.value.localedisplaynames.locale_display_pattern.locale_separator;
+        let pattern_str = &data
+            .main
+            .value
+            .localedisplaynames
+            .locale_display_pattern
+            .locale_pattern;
+        let separator_str = &data
+            .main
+            .value
+            .localedisplaynames
+            .locale_display_pattern
+            .locale_separator;
 
         let pattern = DoublePlaceholderPattern::try_from_str(pattern_str, Default::default())
-            .map_err(|e| DataError::custom("Failed to parse localePattern").with_display_context(&e))?;
+            .map_err(|e| {
+                DataError::custom("Failed to parse localePattern").with_display_context(&e)
+            })?;
 
         let separator = DoublePlaceholderPattern::try_from_str(separator_str, Default::default())
-            .map_err(|e| DataError::custom("Failed to parse localeSeparator").with_display_context(&e))?;
+            .map_err(|e| {
+            DataError::custom("Failed to parse localeSeparator").with_display_context(&e)
+        })?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -62,11 +76,17 @@ mod tests {
             .payload;
 
         assert_eq!(
-            data.get().locale_pattern.interpolate(["A", "B"]).to_string(),
+            data.get()
+                .locale_pattern
+                .interpolate(["A", "B"])
+                .to_string(),
             "A (B)"
         );
         assert_eq!(
-            data.get().locale_separator.interpolate(["A", "B"]).to_string(),
+            data.get()
+                .locale_separator
+                .interpolate(["A", "B"])
+                .to_string(),
             "A, B"
         );
     }
