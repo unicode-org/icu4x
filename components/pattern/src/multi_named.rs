@@ -148,20 +148,6 @@ where
     }
 }
 
-#[cfg(feature = "alloc")]
-impl<'p, 'a> crate::Pattern<MultiNamedPlaceholder> {
-    /// Extracts placeholder values from the formatted string.
-    ///
-    /// Returns `None` if the input string does not match the pattern.
-    pub fn extract_placeholders(
-        &'p self,
-        input: &'a str,
-    ) -> Option<crate::PlaceholderMatches<'p, 'a, MultiNamedPlaceholder>> {
-        MultiNamedPlaceholder::extract(&self.store, input)
-            .map(|store| crate::PlaceholderMatches { store })
-    }
-}
-
 /// Backend for patterns containing zero or more named placeholders.
 ///
 /// This empty type is not constructible.
@@ -344,49 +330,6 @@ impl PatternBackend for MultiNamedPlaceholder {
     type Store = str;
     type Iter<'a> = MultiNamedPlaceholderPatternIterator<'a>;
 
-    #[cfg(feature = "alloc")]
-    type DecodedMatches<'p, 'a> = Vec<(MultiNamedPlaceholderKey<'p>, &'a str)>;
-    #[cfg(not(feature = "alloc"))]
-    type DecodedMatches<'p, 'a> = ();
-
-    #[cfg(feature = "alloc")]
-    fn extract<'p, 'a>(
-        store: &'p Self::Store,
-        input: &'a str,
-    ) -> Option<Self::DecodedMatches<'p, 'a>> {
-        let items: Vec<_> = Self::iter_items(store).collect();
-        let mut matches = Vec::new();
-        if match_multi(&items, input, &mut matches) {
-            Some(matches)
-        } else {
-            None
-        }
-    }
-
-    #[cfg(not(feature = "alloc"))]
-    fn extract<'p, 'a>(
-        _store: &'p Self::Store,
-        _input: &'a str,
-    ) -> Option<Self::DecodedMatches<'p, 'a>> {
-        None
-    }
-
-    fn get_match<'p, 'b>(
-        store: &Self::DecodedMatches<'p, 'b>,
-        key: Self::PlaceholderKey<'_>,
-    ) -> Option<&'b str> {
-        #[cfg(feature = "alloc")]
-        {
-            store.iter().find(|(k, _)| k.0 == key.0).map(|(_, v)| *v)
-        }
-        #[cfg(not(feature = "alloc"))]
-        {
-            let _ = store;
-            let _ = key;
-            None
-        }
-    }
-
     fn validate_store(store: &Self::Store) -> Result<(), Error> {
         let mut iter = MultiNamedPlaceholderPatternIterator::new(store);
         while iter
@@ -441,6 +384,31 @@ impl PatternBackend for MultiNamedPlaceholder {
 
     fn empty() -> &'static Self::Store {
         ""
+    }
+}
+
+#[cfg(feature = "alloc")]
+impl ExtractionBackend for MultiNamedPlaceholder {
+    type DecodedMatches<'p, 'a> = Vec<(MultiNamedPlaceholderKey<'p>, &'a str)>;
+
+    fn extract<'p, 'a>(
+        store: &'p Self::Store,
+        input: &'a str,
+    ) -> Option<Self::DecodedMatches<'p, 'a>> {
+        let items: Vec<_> = Self::iter_items(store).collect();
+        let mut matches = Vec::new();
+        if match_multi(&items, input, &mut matches) {
+            Some(matches)
+        } else {
+            None
+        }
+    }
+
+    fn get_match<'p, 'b>(
+        store: &Self::DecodedMatches<'p, 'b>,
+        key: Self::PlaceholderKey<'_>,
+    ) -> Option<&'b str> {
+        store.iter().find(|(k, _)| k.0 == key.0).map(|(_, v)| *v)
     }
 }
 

@@ -131,19 +131,6 @@ where
     }
 }
 
-impl<'p, 'a> crate::Pattern<DoublePlaceholder> {
-    /// Extracts placeholder values from the formatted string.
-    ///
-    /// Returns `None` if the input string does not match the pattern.
-    pub fn extract_placeholders(
-        &'p self,
-        input: &'a str,
-    ) -> Option<crate::PlaceholderMatches<'p, 'a, DoublePlaceholder>> {
-        DoublePlaceholder::extract(&self.store, input)
-            .map(|store| crate::PlaceholderMatches { store })
-    }
-}
-
 /// Internal representation of a placeholder
 #[derive(Debug, Copy, Clone)]
 struct DoublePlaceholderInfo {
@@ -325,39 +312,6 @@ impl PatternBackend for DoublePlaceholder {
     type Error<'a> = Infallible;
     type Store = str;
     type Iter<'a> = DoublePlaceholderPatternIterator<'a>;
-    type DecodedMatches<'p, 'a> = [Option<&'a str>; 2];
-
-    fn extract<'p, 'a>(
-        store: &'p Self::Store,
-        input: &'a str,
-    ) -> Option<Self::DecodedMatches<'p, 'a>> {
-        let mut items = [PatternItem::Literal(""); 5];
-        let mut count = 0;
-        for item in Self::iter_items(store) {
-            if count >= 5 {
-                debug_assert!(false, "Too many items in DoublePlaceholder");
-                return None;
-            }
-            items[count] = item;
-            count += 1;
-        }
-        let mut matches = [None; 2];
-        if match_double(&items[..count], input, &mut matches) {
-            Some(matches)
-        } else {
-            None
-        }
-    }
-
-    fn get_match<'p, 'b>(
-        store: &Self::DecodedMatches<'p, 'b>,
-        key: Self::PlaceholderKey<'_>,
-    ) -> Option<&'b str> {
-        match key {
-            DoublePlaceholderKey::Place0 => store[0],
-            DoublePlaceholderKey::Place1 => store[1],
-        }
-    }
 
     fn validate_store(store: &Self::Store) -> Result<(), Error> {
         let mut chars = store.chars();
@@ -463,6 +417,42 @@ impl PatternBackend for DoublePlaceholder {
 
     fn empty() -> &'static Self::Store {
         "\0\u{1}"
+    }
+}
+
+impl ExtractionBackend for DoublePlaceholder {
+    type DecodedMatches<'p, 'a> = [Option<&'a str>; 2];
+
+    fn extract<'p, 'a>(
+        store: &'p Self::Store,
+        input: &'a str,
+    ) -> Option<Self::DecodedMatches<'p, 'a>> {
+        let mut items = [PatternItem::Literal(""); 5];
+        let mut count = 0;
+        for item in Self::iter_items(store) {
+            if count >= 5 {
+                debug_assert!(false, "Too many items in DoublePlaceholder");
+                return None;
+            }
+            items[count] = item;
+            count += 1;
+        }
+        let mut matches = [None; 2];
+        if match_double(&items[..count], input, &mut matches) {
+            Some(matches)
+        } else {
+            None
+        }
+    }
+
+    fn get_match<'p, 'b>(
+        store: &Self::DecodedMatches<'p, 'b>,
+        key: Self::PlaceholderKey<'_>,
+    ) -> Option<&'b str> {
+        match key {
+            DoublePlaceholderKey::Place0 => store[0],
+            DoublePlaceholderKey::Place1 => store[1],
+        }
     }
 }
 

@@ -111,19 +111,6 @@ where
     }
 }
 
-impl<'p, 'a> crate::Pattern<SinglePlaceholder> {
-    /// Extracts placeholder values from the formatted string.
-    ///
-    /// Returns `None` if the input string does not match the pattern.
-    pub fn extract_placeholders(
-        &'p self,
-        input: &'a str,
-    ) -> Option<crate::PlaceholderMatches<'p, 'a, SinglePlaceholder>> {
-        SinglePlaceholder::extract(&self.store, input)
-            .map(|store| crate::PlaceholderMatches { store })
-    }
-}
-
 /// Backend for patterns containing zero or one placeholder.
 ///
 /// This empty type is not constructible.
@@ -225,6 +212,77 @@ impl PatternBackend for SinglePlaceholder {
     type Error<'a> = Infallible;
     type Store = str;
     type Iter<'a> = SinglePlaceholderPatternIterator<'a>;
+
+    fn validate_store(store: &Self::Store) -> Result<(), Error> {
+        let placeholder_offset_char = store.chars().next().ok_or(Error::InvalidPattern)?;
+        let initial_offset = placeholder_offset_char.len_utf8();
+        let placeholder_offset = placeholder_offset_char as usize;
+        if placeholder_offset > store.len() - initial_offset + 1 {
+            return Err(Error::InvalidPattern);
+        }
+        if placeholder_offset >= 0xD800 {
+            return Err(Error::InvalidPattern);
+        }
+        Ok(())
+    }
+
+    fn iter_items(store: &Self::Store) -> Self::Iter<'_> {
+        let placeholder_offset_char = match store.chars().next() {
+            Some(i) => i,
+            None => {
+                debug_assert!(false);
+                '\0'
+            }
+        };
+        let initial_offset = placeholder_offset_char.len_utf8();
+        SinglePlaceholderPatternIterator {
+            store,
+            placeholder_offset: placeholder_offset_char as usize + initial_offset - 1,
+            current_offset: initial_offset,
+        }
+    }
+
+    #[cfg(feature = "alloc")]
+    fn try_from_items<
+        'cow,
+        'ph,
+        I: Iterator<Item = Result<PatternItemCow<'cow, Self::PlaceholderKey<'ph>>, Error>>,
+    >(
+        items: I,
+    ) -> Result<Box<str>, Error> {
+        let mut result = String::new();
+        let mut seen_placeholder = false;
+        for item in items {
+            match item? {
+                PatternItemCow::Literal(s) => result.push_str(&s),
+                PatternItemCow::Placeholder(_) if !seen_placeholder => {
+                    seen_placeholder = true;
+                    let placeholder_offset =
+                        u32::try_from(result.len() + 1).map_err(|_| Error::InvalidPattern)?;
+                    if placeholder_offset >= 0xD800 {
+                        return Err(Error::InvalidPattern);
+                    }
+                    let placeholder_offset_char =
+                        char::try_from(placeholder_offset).map_err(|_| Error::InvalidPattern)?;
+                    result.insert(0, placeholder_offset_char);
+                }
+                PatternItemCow::Placeholder(_) => {
+                    return Err(Error::InvalidPattern);
+                }
+            }
+        }
+        if !seen_placeholder {
+            result.insert(0, '\0');
+        }
+        Ok(result.into_boxed_str())
+    }
+
+    fn empty() -> &'static Self::Store {
+        "\0"
+    }
+}
+
+impl ExtractionBackend for SinglePlaceholder {
     type DecodedMatches<'p, 'a> = Option<&'a str>;
 
     fn extract<'p, 'a>(
@@ -303,74 +361,6 @@ impl PatternBackend for SinglePlaceholder {
         _key: Self::PlaceholderKey<'_>,
     ) -> Option<&'b str> {
         *store
-    }
-
-    fn validate_store(store: &Self::Store) -> Result<(), Error> {
-        let placeholder_offset_char = store.chars().next().ok_or(Error::InvalidPattern)?;
-        let initial_offset = placeholder_offset_char.len_utf8();
-        let placeholder_offset = placeholder_offset_char as usize;
-        if placeholder_offset > store.len() - initial_offset + 1 {
-            return Err(Error::InvalidPattern);
-        }
-        if placeholder_offset >= 0xD800 {
-            return Err(Error::InvalidPattern);
-        }
-        Ok(())
-    }
-
-    fn iter_items(store: &Self::Store) -> Self::Iter<'_> {
-        let placeholder_offset_char = match store.chars().next() {
-            Some(i) => i,
-            None => {
-                debug_assert!(false);
-                '\0'
-            }
-        };
-        let initial_offset = placeholder_offset_char.len_utf8();
-        SinglePlaceholderPatternIterator {
-            store,
-            placeholder_offset: placeholder_offset_char as usize + initial_offset - 1,
-            current_offset: initial_offset,
-        }
-    }
-
-    #[cfg(feature = "alloc")]
-    fn try_from_items<
-        'cow,
-        'ph,
-        I: Iterator<Item = Result<PatternItemCow<'cow, Self::PlaceholderKey<'ph>>, Error>>,
-    >(
-        items: I,
-    ) -> Result<Box<str>, Error> {
-        let mut result = String::new();
-        let mut seen_placeholder = false;
-        for item in items {
-            match item? {
-                PatternItemCow::Literal(s) => result.push_str(&s),
-                PatternItemCow::Placeholder(_) if !seen_placeholder => {
-                    seen_placeholder = true;
-                    let placeholder_offset =
-                        u32::try_from(result.len() + 1).map_err(|_| Error::InvalidPattern)?;
-                    if placeholder_offset >= 0xD800 {
-                        return Err(Error::InvalidPattern);
-                    }
-                    let placeholder_offset_char =
-                        char::try_from(placeholder_offset).map_err(|_| Error::InvalidPattern)?;
-                    result.insert(0, placeholder_offset_char);
-                }
-                PatternItemCow::Placeholder(_) => {
-                    return Err(Error::InvalidPattern);
-                }
-            }
-        }
-        if !seen_placeholder {
-            result.insert(0, '\0');
-        }
-        Ok(result.into_boxed_str())
-    }
-
-    fn empty() -> &'static Self::Store {
-        "\0"
     }
 }
 

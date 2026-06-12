@@ -59,6 +59,7 @@ mod single;
 
 #[doc(no_inline)]
 pub use PatternError as Error;
+pub use common::ExtractionBackend;
 pub use common::PatternBackend;
 pub use common::PatternItem;
 #[cfg(feature = "alloc")]
