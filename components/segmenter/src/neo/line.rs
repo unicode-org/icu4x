@@ -31,12 +31,7 @@ use utf8_iter::Utf8CharIndices;
 /// For examples of use, see [`LineSegmenter`].
 #[derive(Debug)]
 pub struct LineBreakIterator<'data, 's, Y: RuleBreakType>(
-    RuleBreakIterator<
-        'data,
-        's,
-        Y,
-        ComplexLine<Y>,
-    >,
+    RuleBreakIterator<'data, 's, Y, ComplexLine<Y>>,
 );
 
 derive_usize_iterator_with_type!(LineBreakIterator, 'data);

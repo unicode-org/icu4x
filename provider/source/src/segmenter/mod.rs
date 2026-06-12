@@ -1268,7 +1268,8 @@ impl SourceDataProvider {
         let sa_set = CodePointMapData::<LineBreak>::try_new_unstable(self)?
             .as_borrowed()
             .get_set_for_value(LineBreak::ComplexContext)
-            .to_code_point_inversion_list();
+            .to_code_point_inversion_list()
+            .into_owned();
 
         let tailorings = tailorings
             .into_iter()

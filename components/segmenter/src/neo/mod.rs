@@ -126,13 +126,15 @@ impl<'s, Y: RuleBreakType, C: ComplexHandler<Y>> Iterator for RuleBreakIterator<
 
         (self.remaining_input, self.last_accepting_status) = loop {
             let symbol = if let Some((_, next)) = iter.clone().peekable().next() {
-                let pseudo_symbol = self.data.symbols.get32(next.into());
-                if let Some(i) = pseudo_symbol.checked_sub(self.data.num_symbols) {
+                let pseudo_symbol_or_symbol = self.data.symbols.get32(next.into());
+                if let Some(pseudo_symbol) =
+                    pseudo_symbol_or_symbol.checked_sub(self.data.num_symbols)
+                {
                     self.pseudo_symbol_map
-                        .get(i as usize)
-                        .unwrap_or(pseudo_symbol)
+                        .get(pseudo_symbol as usize)
+                        .unwrap_or(pseudo_symbol_or_symbol)
                 } else {
-                    pseudo_symbol
+                    pseudo_symbol_or_symbol
                 }
             } else {
                 SegmenterStateMachine::EOT_SYMBOL
