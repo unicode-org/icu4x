@@ -427,79 +427,96 @@ impl ExtractionBackend for DoublePlaceholder {
         store: &'p Self::Store,
         input: &'a str,
     ) -> Option<Self::DecodedMatches<'p, 'a>> {
-        fn match_double_recurse<'a>(
-            items: &[PatternItem<'_, DoublePlaceholderKey>],
-            input: &'a str,
-            matches: &mut [Option<&'a str>; 2],
-        ) -> bool {
-            if items.is_empty() {
-                return input.is_empty();
-            }
+        let mut chars = store.chars();
+        let ph1_char = chars.next()?;
+        let ph2_char = chars.next()?;
+        let initial_offset = ph1_char.len_utf8() + ph2_char.len_utf8();
 
-            match &items[0] {
-                PatternItem::Literal(lit) => {
-                    if input.starts_with(lit) {
-                        match_double_recurse(&items[1..], &input[lit.len()..], matches)
-                    } else {
-                        false
-                    }
-                }
-                PatternItem::Placeholder(key) => {
-                    let idx = match key {
+        let mut ph1 = DoublePlaceholderInfo::from_char(ph1_char);
+        let mut ph2 = DoublePlaceholderInfo::from_char(ph2_char);
+
+        let ph1_present = ph1.offset > 0;
+        let ph2_present = ph2.offset > 0;
+
+        if ph1_present {
+            ph1.offset += initial_offset - 1;
+        }
+        if ph2_present {
+            ph2.offset += initial_offset - 1;
+        }
+
+        let mut matches = [None; 2];
+
+        if !ph1_present && !ph2_present {
+            // 0 placeholders
+            let literal = &store[initial_offset..];
+            if input == literal {
+                Some(matches)
+            } else {
+                None
+            }
+        } else if ph1_present && !ph2_present {
+            // 1 placeholder (always ph1)
+            let prefix = &store[initial_offset..ph1.offset];
+            let suffix = &store[ph1.offset..];
+
+            if input.starts_with(prefix)
+                && input.ends_with(suffix)
+                && input.len() >= prefix.len() + suffix.len()
+            {
+                let val = &input[prefix.len()..input.len() - suffix.len()];
+                let idx = match ph1.key {
+                    DoublePlaceholderKey::Place0 => 0,
+                    DoublePlaceholderKey::Place1 => 1,
+                };
+                matches[idx] = Some(val);
+                Some(matches)
+            } else {
+                None
+            }
+        } else if ph1_present && ph2_present {
+            // 2 placeholders
+            let prefix = &store[initial_offset..ph1.offset];
+            let infix = &store[ph1.offset..ph2.offset];
+            let suffix = &store[ph2.offset..];
+
+            if input.starts_with(prefix)
+                && input.ends_with(suffix)
+                && input.len() >= prefix.len() + suffix.len()
+            {
+                let remaining = &input[prefix.len()..input.len() - suffix.len()];
+
+                // Find the first occurrence of infix in remaining
+                let idx = if infix.is_empty() {
+                    Some(0)
+                } else {
+                    remaining.find(infix)
+                };
+
+                if let Some(i) = idx {
+                    let val1 = &remaining[..i];
+                    let val2 = &remaining[i + infix.len()..];
+
+                    let idx1 = match ph1.key {
                         DoublePlaceholderKey::Place0 => 0,
                         DoublePlaceholderKey::Place1 => 1,
                     };
-                    if items.len() == 1 {
-                        matches[idx] = Some(input);
-                        return true;
-                    }
-
-                    match &items[1] {
-                        PatternItem::Literal(next_lit) => {
-                            for occurrence in input.match_indices(next_lit).map(|(i, _)| i) {
-                                let val = &input[..occurrence];
-                                matches[idx] = Some(val);
-                                if match_double_recurse(&items[1..], &input[occurrence..], matches)
-                                {
-                                    return true;
-                                }
-                            }
-                            matches[idx] = None;
-                            false
-                        }
-                        PatternItem::Placeholder(_) => {
-                            for split_idx in 0..=input.len() {
-                                if !input.is_char_boundary(split_idx) {
-                                    continue;
-                                }
-                                let val = &input[..split_idx];
-                                matches[idx] = Some(val);
-                                if match_double_recurse(&items[1..], &input[split_idx..], matches) {
-                                    return true;
-                                }
-                            }
-                            matches[idx] = None;
-                            false
-                        }
-                    }
+                    let idx2 = match ph2.key {
+                        DoublePlaceholderKey::Place0 => 0,
+                        DoublePlaceholderKey::Place1 => 1,
+                    };
+                    matches[idx1] = Some(val1);
+                    matches[idx2] = Some(val2);
+                    Some(matches)
+                } else {
+                    None
                 }
+            } else {
+                None
             }
-        }
-
-        let mut items = [PatternItem::Literal(""); 5];
-        let mut count = 0;
-        for item in Self::iter_items(store) {
-            if count >= 5 {
-                debug_assert!(false, "Too many items in DoublePlaceholder");
-                return None;
-            }
-            items[count] = item;
-            count += 1;
-        }
-        let mut matches = [None; 2];
-        if match_double_recurse(&items[..count], input, &mut matches) {
-            Some(matches)
         } else {
+            // ph2_present && !ph1_present is unreachable
+            debug_assert!(false, "ph2 present but ph1 not present");
             None
         }
     }

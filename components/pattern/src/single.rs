@@ -289,69 +289,29 @@ impl ExtractionBackend for SinglePlaceholder {
         store: &'p Self::Store,
         input: &'a str,
     ) -> Option<Self::DecodedMatches<'p, 'a>> {
-        let mut iter = Self::iter_items(store);
-        let first = iter.next();
-        match first {
-            None => {
-                if input.is_empty() {
-                    Some(None)
-                } else {
-                    None
-                }
-            }
-            Some(PatternItem::Literal(lit)) => {
-                let second = iter.next();
-                match second {
-                    None => {
-                        if input == lit {
-                            Some(None)
-                        } else {
-                            None
-                        }
-                    }
-                    Some(PatternItem::Placeholder(_)) => {
-                        if !input.starts_with(lit) {
-                            return None;
-                        }
-                        let remaining = &input[lit.len()..];
-                        let third = iter.next();
-                        match third {
-                            None => Some(Some(remaining)),
-                            Some(PatternItem::Literal(suffix)) => {
-                                if remaining.ends_with(suffix) {
-                                    Some(Some(&remaining[..remaining.len() - suffix.len()]))
-                                } else {
-                                    None
-                                }
-                            }
-                            Some(PatternItem::Placeholder(_)) => {
-                                debug_assert!(false, "SinglePlaceholder has multiple placeholders");
-                                None
-                            }
-                        }
-                    }
-                    Some(PatternItem::Literal(_)) => {
-                        debug_assert!(false, "SinglePlaceholder has consecutive literals");
-                        None
-                    }
-                }
-            }
-            Some(PatternItem::Placeholder(_)) => {
-                let second = iter.next();
-                match second {
-                    None => Some(Some(input)),
-                    Some(PatternItem::Literal(suffix)) => {
-                        if input.ends_with(suffix) {
-                            Some(Some(&input[..input.len() - suffix.len()]))
-                        } else {
-                            None
-                        }
-                    }
-                    Some(PatternItem::Placeholder(_)) => {
-                        debug_assert!(false, "SinglePlaceholder has multiple placeholders");
-                        None
-                    }
-                }
+        let mut chars = store.chars();
+        let ph_char = chars.next()?;
+        let initial_offset = ph_char.len_utf8();
+
+        if ph_char == '\0' {
+            // No placeholder
+            let literal = &store[initial_offset..];
+            if input == literal { Some(None) } else { None }
+        } else {
+            // One placeholder
+            let ph_offset = ph_char as usize;
+            let ph_store_offset = ph_offset + initial_offset - 1;
+            let prefix = &store[initial_offset..ph_store_offset];
+            let suffix = &store[ph_store_offset..];
+
+            if input.starts_with(prefix)
+                && input.ends_with(suffix)
+                && input.len() >= prefix.len() + suffix.len()
+            {
+                let val = &input[prefix.len()..input.len() - suffix.len()];
+                Some(Some(val))
+            } else {
+                None
             }
         }
     }
