@@ -189,14 +189,11 @@ fn decompose_pattern(
     if let Some(glue) = fallback_pattern.and_then(extract_glue_from_double_pat) {
         let items = ref_pat.into_items();
         if let Some(idx) = find_glue_in_items(&items, glue) {
-            let left_items = items[..idx].to_vec();
-            let right_items = items[idx + glue.chars().count()..].to_vec();
-
-            let left_ref = reference::Pattern::from(left_items);
-            let right_ref = reference::Pattern::from(right_items);
-
-            let left = Pattern::from(&left_ref);
-            let right = Pattern::from(&right_ref);
+            let left: Pattern = items[..idx].iter().copied().collect();
+            let right: Pattern = items[idx + glue.chars().count()..]
+                .iter()
+                .copied()
+                .collect();
 
             if left == right {
                 return RangePatternInfo::Symmetric(left);
