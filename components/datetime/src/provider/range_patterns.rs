@@ -319,11 +319,12 @@ impl<'data> PatternsByGreatestDifference<'data> {
             prev_bit = Some(bit);
         }
 
-        // 2. Deduplicate patterns using a simple one-pass filter.
+        // 2. Deduplicate patterns and pack them in a single pass.
         // We iterate from smallest to largest field. We keep a pattern info only if
         // it is different from the next present pattern info. The last pattern info is always kept.
         // This leverages the fallback behavior in `resolve_fallback`.
-        let mut minimized_infos = Vec::new();
+        let mut flat_patterns = Vec::new();
+        let mut header = GreatestDifferenceHeader::new(0);
 
         let mut it = original_input.into_iter().peekable();
         while let Some((bit, info)) = it.next() {
@@ -334,26 +335,18 @@ impl<'data> PatternsByGreatestDifference<'data> {
             };
 
             if keep {
-                minimized_infos.push((bit, info));
+                let state = match info {
+                    RangePatternInfo::Symmetric(pat) => {
+                        flat_patterns.push(pat);
+                        RangeStructure::Symmetric
+                    }
+                    RangePatternInfo::FullRange(pat) => {
+                        flat_patterns.push(pat);
+                        RangeStructure::FullRange
+                    }
+                };
+                header.set_state(bit, state);
             }
-        }
-
-        // 3. Construct the flat patterns list and encode the header.
-        let mut flat_patterns = Vec::new();
-        let mut header = GreatestDifferenceHeader::new(0);
-
-        for (bit, info) in minimized_infos {
-            let state = match info {
-                RangePatternInfo::Symmetric(pat) => {
-                    flat_patterns.push(pat);
-                    RangeStructure::Symmetric
-                }
-                RangePatternInfo::FullRange(pat) => {
-                    flat_patterns.push(pat);
-                    RangeStructure::FullRange
-                }
-            };
-            header.set_state(bit, state);
         }
 
         let varzerovec = VarZeroVec::from(flat_patterns.as_slice());
