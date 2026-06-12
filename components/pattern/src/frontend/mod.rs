@@ -72,59 +72,6 @@ pub struct Pattern<B: PatternBackend> {
     pub store: B::Store,
 }
 
-/// A structure containing the extracted placeholder values.
-///
-/// Query it using [`Self::get()`].
-pub struct PlaceholderMatches<'p, 'a, B: ExtractionBackend> {
-    pub(crate) store: B::DecodedMatches<'p, 'a>,
-}
-
-impl<'p, 'a, B: ExtractionBackend> PlaceholderMatches<'p, 'a, B> {
-    /// Gets the matched substring for the given placeholder key.
-    ///
-    /// Returns `None` if the placeholder was not present in the pattern.
-    pub fn get(&self, key: B::PlaceholderKey<'_>) -> Option<&'a str> {
-        B::get_match(&self.store, key)
-    }
-}
-
-impl<'p, B: ExtractionBackend> fmt::Debug for PlaceholderMatches<'p, '_, B>
-where
-    for<'a> B::DecodedMatches<'p, 'a>: fmt::Debug,
-{
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("PlaceholderMatches")
-            .field("store", &self.store)
-            .finish()
-    }
-}
-
-impl<'p, B: ExtractionBackend> PartialEq for PlaceholderMatches<'p, '_, B>
-where
-    for<'a> B::DecodedMatches<'p, 'a>: PartialEq,
-{
-    fn eq(&self, other: &Self) -> bool {
-        self.store == other.store
-    }
-}
-
-impl<'p, B: ExtractionBackend> Eq for PlaceholderMatches<'p, '_, B> where
-    for<'a> B::DecodedMatches<'p, 'a>: Eq
-{
-}
-
-impl<B: ExtractionBackend> Pattern<B> {
-    /// Extracts placeholder values from the formatted string.
-    ///
-    /// Returns `None` if the input string does not match the pattern.
-    pub fn extract_placeholders<'p, 'a>(
-        &'p self,
-        input: &'a str,
-    ) -> Option<PlaceholderMatches<'p, 'a, B>> {
-        B::extract(&self.store, input).map(|store| PlaceholderMatches { store })
-    }
-}
-
 impl<B: PatternBackend> PartialEq for Pattern<B> {
     fn eq(&self, other: &Self) -> bool {
         self.store == other.store
@@ -433,6 +380,59 @@ where
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Discard the TryWriteable error (lossy mode)
         self.try_write_to(f).map(|_| ())
+    }
+}
+
+/// A structure containing the extracted placeholder values.
+///
+/// Query it using [`Self::get()`].
+pub struct PlaceholderMatches<'p, 'a, B: ExtractionBackend> {
+    pub(crate) store: B::DecodedMatches<'p, 'a>,
+}
+
+impl<'p, 'a, B: ExtractionBackend> PlaceholderMatches<'p, 'a, B> {
+    /// Gets the matched substring for the given placeholder key.
+    ///
+    /// Returns `None` if the placeholder was not present in the pattern.
+    pub fn get(&self, key: B::PlaceholderKey<'_>) -> Option<&'a str> {
+        B::get_match(&self.store, key)
+    }
+}
+
+impl<'p, B: ExtractionBackend> fmt::Debug for PlaceholderMatches<'p, '_, B>
+where
+    for<'a> B::DecodedMatches<'p, 'a>: fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("PlaceholderMatches")
+            .field("store", &self.store)
+            .finish()
+    }
+}
+
+impl<'p, B: ExtractionBackend> PartialEq for PlaceholderMatches<'p, '_, B>
+where
+    for<'a> B::DecodedMatches<'p, 'a>: PartialEq,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.store == other.store
+    }
+}
+
+impl<'p, B: ExtractionBackend> Eq for PlaceholderMatches<'p, '_, B> where
+    for<'a> B::DecodedMatches<'p, 'a>: Eq
+{
+}
+
+impl<B: ExtractionBackend> Pattern<B> {
+    /// Extracts placeholder values from the formatted string.
+    ///
+    /// Returns `None` if the input string does not match the pattern.
+    pub fn extract_placeholders<'p, 'a>(
+        &'p self,
+        input: &'a str,
+    ) -> Option<PlaceholderMatches<'p, 'a, B>> {
+        B::extract(&self.store, input).map(|store| PlaceholderMatches { store })
     }
 }
 
