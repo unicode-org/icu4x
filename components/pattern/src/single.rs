@@ -289,23 +289,42 @@ impl ExtractionBackend for SinglePlaceholder {
         store: &'p Self::Store,
         input: &'a str,
     ) -> Option<Self::DecodedMatches<'p, 'a>> {
-        let mut chars = store.chars();
-        let ph_char = chars.next()?;
-        let initial_offset = ph_char.len_utf8();
+        let mut prefix = None;
+        let mut ph = None;
+        let mut suffix = None;
 
-        if ph_char == '\0' {
-            // No placeholder
-            let literal = &store[initial_offset..];
-            if input == literal { Some(None) } else { None }
-        } else {
-            // One placeholder
-            let ph_offset = ph_char as usize;
-            let ph_store_offset = ph_offset + initial_offset - 1;
-            let prefix = &store[initial_offset..ph_store_offset];
-            let suffix = &store[ph_store_offset..];
+        for item in Self::iter_items(store) {
+            match item {
+                PatternItem::Literal(s) => {
+                    if ph.is_none() {
+                        debug_assert!(prefix.is_none());
+                        prefix = Some(s);
+                    } else {
+                        debug_assert!(suffix.is_none());
+                        suffix = Some(s);
+                    }
+                }
+                PatternItem::Placeholder(p) => {
+                    debug_assert!(ph.is_none());
+                    ph = Some(p);
+                }
+            }
+        }
 
-            let val = input.strip_prefix(prefix)?.strip_suffix(suffix)?;
-            Some(Some(val))
+        let prefix = prefix.unwrap_or("");
+        let suffix = suffix.unwrap_or("");
+
+        let val = input.strip_prefix(prefix)?.strip_suffix(suffix)?;
+
+        match ph {
+            Some(_) => Some(Some(val)),
+            None => {
+                if val.is_empty() {
+                    Some(None)
+                } else {
+                    None
+                }
+            }
         }
     }
 
