@@ -433,6 +433,7 @@ impl ExtractionBackend for DoublePlaceholder {
         let mut second_ph = None;
         let mut suffix = None;
 
+        // Get the parts from the pattern
         for item in Self::iter_items(store) {
             match item {
                 PatternItem::Literal(s) => {

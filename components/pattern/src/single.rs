@@ -293,6 +293,7 @@ impl ExtractionBackend for SinglePlaceholder {
         let mut ph = None;
         let mut suffix = None;
 
+        // Get the parts from the pattern
         for item in Self::iter_items(store) {
             match item {
                 PatternItem::Literal(s) => {
@@ -311,11 +312,12 @@ impl ExtractionBackend for SinglePlaceholder {
             }
         }
 
-        let prefix = prefix.unwrap_or("");
-        let suffix = suffix.unwrap_or("");
+        // Strip prefix and suffix from input
+        let val = input
+            .strip_prefix(prefix.unwrap_or(""))?
+            .strip_suffix(suffix.unwrap_or(""))?;
 
-        let val = input.strip_prefix(prefix)?.strip_suffix(suffix)?;
-
+        // Return the match
         match ph {
             Some(_) => Some(Some(val)),
             None => {
