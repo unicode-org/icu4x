@@ -7,10 +7,7 @@ use crate::measure::provider::single_unit::SingleUnit;
 use crate::units::ratio::IcuRatio;
 use crate::units::{InvalidConversionError, provider};
 use crate::units::{
-    converter::{
-        OffsetConverter, ProportionalConverter, ReciprocalConverter, UnitsConverter,
-        UnitsConverterInner,
-    },
+    converter::{UnitsConverter, UnitsConverterInner},
     provider::Sign,
 };
 
@@ -331,26 +328,21 @@ impl ConverterFactory {
             return None;
         }
 
-        let conversion_rate = T::from_ratio_bigint(conversion_rate.get_ratio())?;
-        let proportional = ProportionalConverter { conversion_rate };
-
-        if is_reciprocal {
-            Some(UnitsConverter(UnitsConverterInner::Reciprocal(
-                ReciprocalConverter { proportional },
-            )))
+        Some(if is_reciprocal {
+            UnitsConverter(UnitsConverterInner::Reciprocal {
+                factor: T::from_ratio_bigint(conversion_rate.get_ratio())?,
+            })
         } else if offset.is_zero() {
-            Some(UnitsConverter(UnitsConverterInner::Proportional(
-                proportional,
-            )))
+            UnitsConverter(UnitsConverterInner::Proportional {
+                factor: T::from_ratio_bigint(conversion_rate.get_ratio())?,
+            })
         } else {
             let offset = T::from_ratio_bigint(offset.get_ratio())?;
-            Some(UnitsConverter(UnitsConverterInner::Offset(
-                OffsetConverter {
-                    proportional,
-                    offset,
-                },
-            )))
-        }
+            UnitsConverter(UnitsConverterInner::Offset {
+                factor: T::from_ratio_bigint(conversion_rate.get_ratio())?,
+                offset,
+            })
+        })
     }
 }
 
