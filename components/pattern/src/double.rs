@@ -427,81 +427,100 @@ impl ExtractionBackend for DoublePlaceholder {
         store: &'p Self::Store,
         input: &'a str,
     ) -> Option<Self::DecodedMatches<'p, 'a>> {
-        let mut chars = store.chars();
-        let ph1_char = chars.next()?;
-        let ph2_char = chars.next()?;
-        let initial_offset = ph1_char.len_utf8() + ph2_char.len_utf8();
-
-        let mut ph1 = DoublePlaceholderInfo::from_char(ph1_char);
-        let mut ph2 = DoublePlaceholderInfo::from_char(ph2_char);
-
-        let ph1_present = ph1.offset > 0;
-        let ph2_present = ph2.offset > 0;
-
-        if ph1_present {
-            ph1.offset += initial_offset - 1;
+        let mut items = [PatternItem::Literal(""); 5];
+        let mut count = 0;
+        for item in Self::iter_items(store) {
+            if count >= 5 {
+                debug_assert!(false, "Too many items in DoublePlaceholder");
+                return None;
+            }
+            items[count] = item;
+            count += 1;
         }
-        if ph2_present {
-            ph2.offset += initial_offset - 1;
+        let items_slice = &items[..count];
+
+        let mut prefix = "";
+        let mut suffix = "";
+        let mut slice = items_slice;
+
+        // 1. Extract prefix if present
+        if let Some(PatternItem::Literal(lit)) = slice.first() {
+            prefix = lit;
+            slice = &slice[1..];
+        }
+
+        // 2. Extract suffix if present
+        if let Some(PatternItem::Literal(lit)) = slice.last() {
+            suffix = lit;
+            slice = &slice[..slice.len() - 1];
         }
 
         let mut matches = [None; 2];
 
-        if !ph1_present && !ph2_present {
-            // 0 placeholders
-            let literal = &store[initial_offset..];
-            if input == literal {
-                Some(matches)
-            } else {
-                None
-            }
-        } else if ph1_present && !ph2_present {
-            // 1 placeholder (always ph1)
-            let prefix = &store[initial_offset..ph1.offset];
-            let suffix = &store[ph1.offset..];
+        // Strip prefix and suffix from input
+        if !input.starts_with(prefix)
+            || !input.ends_with(suffix)
+            || input.len() < prefix.len() + suffix.len()
+        {
+            return None;
+        }
+        let remaining = &input[prefix.len()..input.len() - suffix.len()];
 
-            if input.starts_with(prefix)
-                && input.ends_with(suffix)
-                && input.len() >= prefix.len() + suffix.len()
-            {
-                let val = &input[prefix.len()..input.len() - suffix.len()];
-                let idx = match ph1.key {
+        match slice {
+            [] => {
+                // 0 placeholders
+                if remaining.is_empty() {
+                    Some(matches)
+                } else {
+                    None
+                }
+            }
+            [PatternItem::Placeholder(key)] => {
+                // 1 placeholder
+                let idx = match key {
                     DoublePlaceholderKey::Place0 => 0,
                     DoublePlaceholderKey::Place1 => 1,
                 };
-                matches[idx] = Some(val);
+                matches[idx] = Some(remaining);
                 Some(matches)
-            } else {
-                None
             }
-        } else if ph1_present && ph2_present {
-            // 2 placeholders
-            let prefix = &store[initial_offset..ph1.offset];
-            let infix = &store[ph1.offset..ph2.offset];
-            let suffix = &store[ph2.offset..];
-
-            if input.starts_with(prefix)
-                && input.ends_with(suffix)
-                && input.len() >= prefix.len() + suffix.len()
-            {
-                let remaining = &input[prefix.len()..input.len() - suffix.len()];
-
-                // Find the first occurrence of infix in remaining
-                let idx = if infix.is_empty() {
+            [
+                PatternItem::Placeholder(key1),
+                PatternItem::Placeholder(key2),
+            ] => {
+                // 2 placeholders, adjacent (infix is "")
+                let idx1 = match key1 {
+                    DoublePlaceholderKey::Place0 => 0,
+                    DoublePlaceholderKey::Place1 => 1,
+                };
+                let idx2 = match key2 {
+                    DoublePlaceholderKey::Place0 => 0,
+                    DoublePlaceholderKey::Place1 => 1,
+                };
+                matches[idx1] = Some("");
+                matches[idx2] = Some(remaining);
+                Some(matches)
+            }
+            [
+                PatternItem::Placeholder(key1),
+                PatternItem::Literal(inf),
+                PatternItem::Placeholder(key2),
+            ] => {
+                // 2 placeholders with infix
+                let idx = if inf.is_empty() {
                     Some(0)
                 } else {
-                    remaining.find(infix)
+                    remaining.find(inf)
                 };
 
                 if let Some(i) = idx {
                     let val1 = &remaining[..i];
-                    let val2 = &remaining[i + infix.len()..];
-
-                    let idx1 = match ph1.key {
+                    let val2 = &remaining[i + inf.len()..];
+                    let idx1 = match key1 {
                         DoublePlaceholderKey::Place0 => 0,
                         DoublePlaceholderKey::Place1 => 1,
                     };
-                    let idx2 = match ph2.key {
+                    let idx2 = match key2 {
                         DoublePlaceholderKey::Place0 => 0,
                         DoublePlaceholderKey::Place1 => 1,
                     };
@@ -511,13 +530,16 @@ impl ExtractionBackend for DoublePlaceholder {
                 } else {
                     None
                 }
-            } else {
+            }
+            _ => {
+                // Any other structure is invalid for DoublePlaceholder
+                debug_assert!(
+                    false,
+                    "Invalid slice structure in DoublePlaceholder: {:?}",
+                    slice
+                );
                 None
             }
-        } else {
-            // ph2_present && !ph1_present is unreachable
-            debug_assert!(false, "ph2 present but ph1 not present");
-            None
         }
     }
 
