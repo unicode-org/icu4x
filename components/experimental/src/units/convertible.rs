@@ -62,6 +62,9 @@ impl Convertible for Ratio<BigInt> {
 /// We store the `numerator` and `denominator` as `f64` (instead of integers)
 /// so they can be fed directly into the precision-improving division algorithm
 /// (which uses `f64::mul_add`).
+///
+/// The numerator and denominator are always integers, so this is an exact
+/// representation of a `Ratio<BigInt>`.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct RatioF64 {
     pub(crate) numerator: f64,
