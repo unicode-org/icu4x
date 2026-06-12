@@ -44,12 +44,11 @@ The architecture is built around a 4-step mental model that defines how a format
 
 We recommend explicit, named methods for conversion and standard traits for serialization, making the lossy nature of the conversions clear:
 
-*   `impl writeable::TryWriteable for DateTimeFieldBag` (enables canonical skeleton serialization with validation)
-    *   `type Error = DateTimeFieldBagValidationError`
+*   `impl writeable::Writeable for DateTimeFieldBag` (enables canonical skeleton serialization)
 *   `impl std::str::FromStr for DateTimeFieldBag` (strict parser using UTS 35 skeleton syntax)
     *   `type Err = DateTimeFieldBagParseError`
 *   `impl DateTimeFieldBag`
-    *   `pub fn to_string(&self) -> String` (convenience wrapper shadowing `ToString::to_string` for high-performance **lossy** serialization; ignores validation errors but propagates formatter errors)
+    *   `pub fn to_string(&self) -> String` (convenience wrapper shadowing `ToString::to_string` for high-performance serialization)
     *   `pub fn try_from_skeleton(s: &str) -> Result<Self, DateTimeFieldBagParseError>` (explicit, self-documenting named constructor that delegates to `FromStr`)
     *   `pub fn to_field_set_builder(&self) -> FieldSetBuilder` (lossy conversion)
     *   `pub fn from_field_set_builder(builder: &FieldSetBuilder) -> Self` (best-effort reconstruction)
@@ -95,8 +94,7 @@ The bag does not carry:
 
 The primary exact interchange format for `DateTimeFieldBag` is a string using UTS 35 classical skeleton syntax for the representable subset.
 
-*   **Serialization:** String output must use ICU4X `TryWriteable` (with `Error = DateTimeFieldBagValidationError`), not `Display`. The serialization always produces a canonicalized string, meaning the same bag state always serializes to the same skeleton string.
-    *   **Lossy Mode:** In lossy mode (e.g., `to_string()`), validation errors are ignored, and a best-effort fallback string is produced.
+*   **Serialization:** String output must use ICU4X `Writeable`, not `Display`. The serialization always produces a canonicalized string, meaning the same bag state always serializes to the same skeleton string.
 *   **Parsing:** Parsing uses the `FromStr` trait (returning `DateTimeFieldBagParseError`) or the `try_from_skeleton` helper. The parser must be strict and reject unsupported syntax rather than guessing.
 
 ### Constraints
@@ -117,6 +115,7 @@ The primary exact interchange format for `DateTimeFieldBag` is a string using UT
 | weekday short / wide / narrow | `E` / `EEEE` / `EEEEE` |
 | day numeric / two-digit | `d` / `dd` |
 | day period with hour | `C` family, with width determined by day-period style and hour padding |
+| day period without hour | `a` / `b` / `B` family (depending on style/width) |
 | hour numeric / two-digit | `j` / `jj` unless an explicit day-period field requires the `C` family |
 | minute numeric / two-digit | `m` / `mm` |
 | second numeric / two-digit | `s` / `ss` |
@@ -125,17 +124,15 @@ The primary exact interchange format for `DateTimeFieldBag` is a string using UT
 
 ### Hour and Day Period Representation
 
-The hour and day period fields are mapped to UTS 35 input skeleton symbols (`j` and `C`) to avoid introducing hour-cycle preferences into the bag.
+The hour and day period fields are mapped to UTS 35 skeleton symbols to avoid introducing hour-cycle preferences into the bag, while still supporting standalone day periods.
 
 *   **Hour-only requests:** Serialized using `j` (numeric) or `jj` (two-digit).
-*   **Requests with explicit day period:** Serialized using the `C` family, which encodes both the hour padding and the day-period width (e.g., `C`/`CC` for abbreviated, `CCC`/`CCCC` for wide, `CCCCC`/`CCCCCC` for narrow).
+*   **Requests with hour and day period:** Serialized using the `C` family, which encodes both the hour padding and the day-period width (e.g., `C`/`CC` for abbreviated, `CCC`/`CCCC` for wide, `CCCCC`/`CCCCCC` for narrow).
+*   **Requests with day period only (no hour):** Serialized using the `a`/`b`/`B` family depending on the requested day-period style (abbreviated/wide/narrow).
 
-**Standalone Day Period Restriction:** Standalone day periods (requested without an hour) are not supported.
-*   The skeleton parser must reject standalone day period symbols (`a`, `b`, `B`) if no hour symbol is present in the skeleton (returning `DateTimeFieldBagParseError`).
-*   A `DateTimeFieldBag` with `day_period` set but `hour` unset is considered an invalid state.
-    *   **Strict Serialization:** `try_write_to` will return `Err(DateTimeFieldBagValidationError::StandaloneDayPeriod)`.
-    *   **Lossy Serialization:** In lossy mode (e.g. `to_string()`), it will write the day period symbol (`a`, `b`, or `B` depending on width) to the sink to preserve the field, but still report the validation error.
-    *   **Builder Conversion:** `to_field_set_builder` will reject it as invalid.
+**Standalone Day Period Handling:**
+*   The skeleton parser **accepts** standalone day period symbols (`a`, `b`, `B`) and parses them into a `DateTimeFieldBag` with `day_period` set and `hour` unset. This ensures lossless round-tripping.
+*   During conversion to `FieldSetBuilder` (`to_field_set_builder`), a standalone day period is not supported by the underlying dynamic fieldsets and will be rejected or normalized (best-effort).
 
 
 ## Conversion from DateTimeFieldBag to FieldSetBuilder
@@ -246,7 +243,7 @@ The implementation should stay close to the existing ICU4X datetime architecture
 
 - implement and expose the bag from `icu_datetime::fieldbag`
 - reuse provider field primitives only when they fit the public fieldbag contract
-- use `TryWriteable` for string output, not `Display`
+- use `Writeable` for string output, not `Display`
 - keep parsing logic explicit and conservative
 - reuse existing `FieldSetBuilder` conversion helpers where possible
 - avoid coupling the bag to locale fallback or formatter selection logic
