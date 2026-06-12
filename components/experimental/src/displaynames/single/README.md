@@ -88,7 +88,7 @@ All owned constructors take their target subtag or `LanguageIdentifier` **by val
     *   `LanguageDisplayNameOwned::try_new(prefs, options, lid)`: Constructor for **Medium** width (Standard/Dialect).
     *   `LanguageDisplayNameOwned::try_new_short(prefs, options, lid)`: Constructor for **Short** width (Standard/Dialect).
     *   `LanguageDisplayNameOwned::try_new_long(prefs, options, lid)`: Constructor for **Long** width (Standard/Dialect).
-    *   `LanguageMenuDisplayNameOwned::try_new_menu(prefs, options, lid)`: Constructor for **Menu** style (Medium width).
+    *   `LanguageDisplayNameOwned::try_new_menu(prefs, options, lid)`: Constructor for **Menu** style (Medium width).
 *   **`RegionDisplayName` / `RegionDisplayNameOwned`**: Formats a single `Region` subtag (e.g., `US` -> "United States").
     *   `RegionDisplayNameOwned::try_new(prefs, subtag)`: Constructor for **Medium** width.
     *   `RegionDisplayNameOwned::try_new_short(prefs, subtag)`: Constructor for **Short** width.
@@ -155,10 +155,6 @@ We define a `LanguageDisplayNameModel` trait with an associated type `LanguagePa
 We implement this trait for two marker models:
 *   **`models::Standard`**: Used for Standard and Dialect display styles. The `LanguagePayload` is `DataPayloadOr<ErasedDisplayNameMarker, ()>`.
 *   **`models::Menu`**: Used for Menu display style. The `LanguagePayload` is `DataPayload<LocaleNamesLanguageMenuMediumV1>`.
-
-We define type aliases for the primary user-facing APIs:
-*   `pub type LanguageDisplayNameOwned = LanguageDisplayNameOwned<models::Standard>;`
-*   `pub type LanguageMenuDisplayNameOwned = LanguageDisplayNameOwned<models::Menu>;`
 
 #### 2. The Generic Owned Struct
 `LanguageDisplayNameOwned<M>` holds the `LanguageIdentifier`, `DisplayNamesOptions`, the generic `language_payload` (determined by `M`), optional `script_payload` and `region_payload` (both using `DataPayloadOr` with `ErasedDisplayNameMarker`), a vector of `variant_payloads` (using `ErasedDisplayNameMarker`), and the `pattern_payload` (using `LocaleDisplayPatternV1`).
