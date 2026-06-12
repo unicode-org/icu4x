@@ -427,6 +427,65 @@ impl ExtractionBackend for DoublePlaceholder {
         store: &'p Self::Store,
         input: &'a str,
     ) -> Option<Self::DecodedMatches<'p, 'a>> {
+        fn match_double_recurse<'a>(
+            items: &[PatternItem<'_, DoublePlaceholderKey>],
+            input: &'a str,
+            matches: &mut [Option<&'a str>; 2],
+        ) -> bool {
+            if items.is_empty() {
+                return input.is_empty();
+            }
+
+            match &items[0] {
+                PatternItem::Literal(lit) => {
+                    if input.starts_with(lit) {
+                        match_double_recurse(&items[1..], &input[lit.len()..], matches)
+                    } else {
+                        false
+                    }
+                }
+                PatternItem::Placeholder(key) => {
+                    let idx = match key {
+                        DoublePlaceholderKey::Place0 => 0,
+                        DoublePlaceholderKey::Place1 => 1,
+                    };
+                    if items.len() == 1 {
+                        matches[idx] = Some(input);
+                        return true;
+                    }
+
+                    match &items[1] {
+                        PatternItem::Literal(next_lit) => {
+                            for occurrence in input.match_indices(next_lit).map(|(i, _)| i) {
+                                let val = &input[..occurrence];
+                                matches[idx] = Some(val);
+                                if match_double_recurse(&items[1..], &input[occurrence..], matches)
+                                {
+                                    return true;
+                                }
+                            }
+                            matches[idx] = None;
+                            false
+                        }
+                        PatternItem::Placeholder(_) => {
+                            for split_idx in 0..=input.len() {
+                                if !input.is_char_boundary(split_idx) {
+                                    continue;
+                                }
+                                let val = &input[..split_idx];
+                                matches[idx] = Some(val);
+                                if match_double_recurse(&items[1..], &input[split_idx..], matches) {
+                                    return true;
+                                }
+                            }
+                            matches[idx] = None;
+                            false
+                        }
+                    }
+                }
+            }
+        }
+
         let mut items = [PatternItem::Literal(""); 5];
         let mut count = 0;
         for item in Self::iter_items(store) {
@@ -438,7 +497,7 @@ impl ExtractionBackend for DoublePlaceholder {
             count += 1;
         }
         let mut matches = [None; 2];
-        if match_double(&items[..count], input, &mut matches) {
+        if match_double_recurse(&items[..count], input, &mut matches) {
             Some(matches)
         } else {
             None
@@ -623,64 +682,6 @@ impl<'a> Iterator for DoublePlaceholderPatternIterator<'a> {
     fn size_hint(&self) -> (usize, Option<usize>) {
         let len = self.len();
         (len, Some(len))
-    }
-}
-
-fn match_double<'a>(
-    items: &[PatternItem<'_, DoublePlaceholderKey>],
-    input: &'a str,
-    matches: &mut [Option<&'a str>; 2],
-) -> bool {
-    if items.is_empty() {
-        return input.is_empty();
-    }
-
-    match &items[0] {
-        PatternItem::Literal(lit) => {
-            if input.starts_with(lit) {
-                match_double(&items[1..], &input[lit.len()..], matches)
-            } else {
-                false
-            }
-        }
-        PatternItem::Placeholder(key) => {
-            let idx = match key {
-                DoublePlaceholderKey::Place0 => 0,
-                DoublePlaceholderKey::Place1 => 1,
-            };
-            if items.len() == 1 {
-                matches[idx] = Some(input);
-                return true;
-            }
-
-            match &items[1] {
-                PatternItem::Literal(next_lit) => {
-                    for occurrence in input.match_indices(next_lit).map(|(i, _)| i) {
-                        let val = &input[..occurrence];
-                        matches[idx] = Some(val);
-                        if match_double(&items[1..], &input[occurrence..], matches) {
-                            return true;
-                        }
-                    }
-                    matches[idx] = None;
-                    false
-                }
-                PatternItem::Placeholder(_) => {
-                    for split_idx in 0..=input.len() {
-                        if !input.is_char_boundary(split_idx) {
-                            continue;
-                        }
-                        let val = &input[..split_idx];
-                        matches[idx] = Some(val);
-                        if match_double(&items[1..], &input[split_idx..], matches) {
-                            return true;
-                        }
-                    }
-                    matches[idx] = None;
-                    false
-                }
-            }
-        }
     }
 }
 
