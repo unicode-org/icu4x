@@ -252,6 +252,8 @@ fn match_range_skeleton<'a, 'data>(
     // or can't be adjusted to match (e.g. text vs numeric). We reject the match
     // so that we fall back to the glue pattern.
     if is_bad_match_for_single_field(fields, matched.distance) {
+        // TODO(#8070): Implement the rest of the skeleton matching resolution algorithm
+        // for range patterns.
         return None;
     }
 
