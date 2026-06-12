@@ -304,15 +304,8 @@ impl ExtractionBackend for SinglePlaceholder {
             let prefix = &store[initial_offset..ph_store_offset];
             let suffix = &store[ph_store_offset..];
 
-            if input.starts_with(prefix)
-                && input.ends_with(suffix)
-                && input.len() >= prefix.len() + suffix.len()
-            {
-                let val = &input[prefix.len()..input.len() - suffix.len()];
-                Some(Some(val))
-            } else {
-                None
-            }
+            let val = input.strip_prefix(prefix)?.strip_suffix(suffix)?;
+            Some(Some(val))
         }
     }
 

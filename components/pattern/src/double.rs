@@ -460,6 +460,7 @@ impl ExtractionBackend for DoublePlaceholder {
 
         // Resolve infix/suffix if there was only 1 placeholder
         if second_ph.is_none() {
+            debug_assert!(suffix.is_none());
             suffix = infix;
             infix = None;
         }
@@ -471,13 +472,7 @@ impl ExtractionBackend for DoublePlaceholder {
         let mut matches = [None; 2];
 
         // Strip prefix and suffix from input
-        if !input.starts_with(prefix)
-            || !input.ends_with(suffix)
-            || input.len() < prefix.len() + suffix.len()
-        {
-            return None;
-        }
-        let remaining = &input[prefix.len()..input.len() - suffix.len()];
+        let remaining = input.strip_prefix(prefix)?.strip_suffix(suffix)?;
 
         match (first_ph, second_ph) {
             (None, None) => {
