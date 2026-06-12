@@ -1,24 +1,37 @@
 # DateTime Field Bag Design
 
-## Summary
+## Background & Motivation
 
-`fieldbag` is the module for a compact, field-level description of a datetime formatting request.
-It is intended to represent the subset of `Intl.DateTimeFormat` / ICU4C-style datetime syntax that
-describes which fields should appear and how wide each field should be, without carrying broader
-formatter policy.
+In ECMA-402 (`Intl.DateTimeFormat`), a formatting request is constructed from a set of user-specified options. These options represent a mix of different concerns:
+
+1.  **Field selection and widths:** e.g., `year: "numeric"`, `month: "long"`, `day: "numeric"`, `weekday: "short"`.
+2.  **Formatter policy:** e.g., `hourCycle: "h23"`, `numberingSystem: "latn"`, `calendar: "gregory"`.
+3.  **Locale negotiation:** e.g., `localeMatcher: "best fit"`.
+
+Currently, ICU4X's `fieldsets` API is designed around optimized, pre-compiled formatting categories (like `YMD` or `YMDT`) to minimize data size and maximize performance. However, this optimized model is too rigid to directly represent the fine-grained, dynamic field-level requests coming from ECMA-402, where users can request arbitrary combinations of fields and widths.
+
+To bridge this gap, we need a lower-level, highly flexible representation of a datetime formatting request that matches the ECMA-402 model of independent fields and widths, without carrying the broader formatter policy.
 
 In a compliant ECMA-402 implementation, the options are split:
-- **Field-related options** (e.g., `year`, `month`, `day`, `hour`) are mapped to `DateTimeFieldBag` (and subsequently converted to a `FieldSet`).
+- **Field-related options** (e.g., `year`, `month`, `day`, `hour`) are mapped to `DateTimeFieldBag` (and subsequently converted to a `FieldSet` via the bridge).
 - **Policy-related options** (e.g., `numberingSystem`, `hourCycle`, `calendar`) are passed to the formatter via `DateTimeFormatterPreferences`.
 - **Locale matching options** (e.g., `localeMatcher`) are handled during locale negotiation beforehand and do not reach the formatter.
 
-The central type is `DateTimeFieldBag`.
+## Proposed Solution
 
-This module is deliberately narrower than ICU4X `fieldsets`:
+We propose a new module, `fieldbag`, centered around the `DateTimeFieldBag` struct.
 
-- `DateTimeFieldBag` is about fine-grained field content and widths (e.g., requesting a "wide month and two-digit year", represented as `yyMMMM`).
-- `FieldSetBuilder` is the bridge that resolves these detailed requests into coarser ICU4X categories (e.g., mapping `yyMMMM` to a Date category with a Long length).
-- `CompositeFieldSet` is a top-level dynamic enum that wraps all possible runtime fieldset categories (e.g., wrapping a resolved `DateFieldSet::YMD`).
+`DateTimeFieldBag` is a flat struct of optional fields, where each field represents a requested datetime component and its desired width. It acts as a clean, intermediate representation of a user's formatting request.
+
+### Relationship to Existing APIs
+
+Unlike the existing `fieldsets` APIs, which represent resolved, optimized formatting categories, `DateTimeFieldBag` represents the raw, unresolved request.
+
+*   **`DateTimeFieldBag`** (Unresolved Request): Captures fine-grained field presence and width choices.
+    *   *Example:* A request for "wide month and two-digit year", represented as `{ year: TwoDigit, month: Long }` (or skeleton `yyMMMM`).
+*   **`FieldSetBuilder`** (The Bridge): A helper that takes a detailed `DateTimeFieldBag` and maps it to the closest matching ICU4X formatting category, collapsing widths if necessary.
+    *   *Example:* Maps the `yyMMMM` request to a `Date` category with a `Long` length.
+*   **`CompositeFieldSet`** (Resolved Category): The concrete runtime enum that wraps the resolved category (e.g., wrapping a `DateFieldSet::YM`).
 
 The bag should support two public conversions:
 
@@ -79,12 +92,21 @@ The bag does not carry:
 - year style preference
 - other formatter-level knobs that belong to `FieldSetBuilder`
 
-## Represented Syntax
+## String Serialization (UTS 35 Skeletons)
 
-The string form should follow UTS 35 classical skeleton conventions for the subset this bag can
-represent. The exact symbol set is intentionally limited to the bag's model.
+The primary exact interchange format for `DateTimeFieldBag` is a string using UTS 35 classical skeleton syntax for the representable subset.
 
-Representative mappings:
+*   **Serialization:** String output must use ICU4X `Writeable`, not `Display`. The serialization always produces a canonicalized string, meaning the same bag state always serializes to the same skeleton string.
+*   **Parsing:** Parsing may use a named constructor or a parsing trait. The parser must be strict and reject unsupported syntax rather than guessing.
+
+### Constraints
+
+*   The string syntax must be canonicalized on output.
+*   Parsing must reject unsupported syntax.
+*   **Parsing must reject explicit hour cycle symbols (`h`, `H`, `K`, `k`).** Skeletons containing these symbols must fail to parse, enforcing that `DateTimeFieldBag` only represents the request for an hour field (using `j` or `C`), with the hour cycle policy resolved separately.
+*   If a UTS 35 string contains information the bag cannot represent, the parse must fail.
+
+### Representative Mappings
 
 | Bag concept | Skeleton form |
 |---|---|
@@ -101,58 +123,15 @@ Representative mappings:
 | fractional second digits | repeated `S` |
 | time zone name | supported `z`, `O`, and `v` forms |
 
-The implementation should define one canonical output per represented bag state.
-That means the same bag should always serialize to the same skeleton string.
+### Hour and Day Period Representation
 
-The hour field is the main place where the design must not accidentally reintroduce an hour-cycle
-preference. ECMA-402 has `hour` as a field and `hourCycle` as a separate option. Since the bag
-contains only fields, the external skeleton form should use UTS 35 input skeleton symbols rather
-than choosing `h`, `H`, or `K` as policy.
+The hour and day period fields are mapped to UTS 35 input skeleton symbols (`j` and `C`) to avoid introducing hour-cycle preferences into the bag.
 
-For hour-only requests, the canonical skeleton output should use `j`:
+*   **Hour-only requests:** Serialized using `j` (numeric) or `jj` (two-digit).
+*   **Requests with explicit day period:** Serialized using the `C` family, which encodes both the hour padding and the day-period width (e.g., `C`/`CC` for abbreviated, `CCC`/`CCCC` for wide, `CCCCC`/`CCCCCC` for narrow).
 
-- `j` for numeric hour
-- `jj` for two-digit hour
+Since `j` and `C` are input skeleton symbols, they map 1-to-1 to the bag's internal state (hour presence/width and day-period presence/width). During conversion to `FieldSetBuilder`, a day-period field without an hour is not supported and should be rejected or normalized.
 
-For requests with an explicit day-period field, the canonical skeleton output should use `C`.
-The `C` family carries both hour padding and day-period width:
-
-- `C` / `CC` for abbreviated day period with numeric / two-digit hour
-- `CCC` / `CCCC` for wide day period with numeric / two-digit hour
-- `CCCCC` / `CCCCCC` for narrow day period with numeric / two-digit hour
-
-The implementation may need fieldbag-specific parsing and writing for `j` and `C`, since these
-symbols are UTS 35 input skeleton symbols and must not occur in CLDR pattern or skeleton data.
-In this design, a day-period field without an hour should not be produced by builder conversion,
-and parsing one should either reject it or define a documented normalization.
-
-## String Form
-
-The string form should use UTS 35 classical skeleton syntax for the representable subset.
-The intent is that a valid bag can be written to a canonical string and parsed back into the same bag.
-
-This is the primary exact interchange format for the type.
-
-String output should use ICU4X `Writeable`, not `Display`.
-Parsing may use a named constructor or a parsing trait, but the public docs should emphasize that
-the accepted syntax is UTS 35 skeleton syntax for the supported subset.
-
-### Why string round-trip is the canonical form
-
-UTS 35 skeleton syntax already captures the core idea of the bag:
-
-- which fields are present
-- how wide they are
-- an established cross-implementation vocabulary
-
-That makes the string form a better interchange format than inventing a new ad hoc serialization.
-
-### Constraints
-
-- The string syntax should be canonicalized on output.
-- Parsing should reject unsupported syntax rather than guessing.
-- **Parsing must reject explicit hour cycle symbols (`h`, `H`, `K`, `k`).** Skeletons containing these symbols must fail to parse, enforcing that `DateTimeFieldBag` only represents the request for an hour field (using `j` or `C`), with the hour cycle policy resolved separately.
-- If a UTS 35 string contains information the bag cannot represent, the parse should fail or normalize only when the normalization is documented and unambiguous.
 
 ## Conversion To `FieldSetBuilder`
 
@@ -163,14 +142,11 @@ builder state.
 While this lossy conversion is compliant with the ECMA-402 specification, it may introduce web
 compatibility issues in cases where different fields request different lengths (e.g., a wide
 month but an abbreviated weekday), which must be collapsed into a single coarser builder-wide
-style. We plan to investigate the scope of these web-compat risks (tracked under
-[CLDR-19550](https://unicode-org.atlassian.net/browse/CLDR-19550)) and, as needed, iterate on
-the semantic skeleton design to support more granular options.
-
-**Fallback Plan:** If the investigation reveals that web-compat risks are too high, we are prepared
-to enhance `FieldSetBuilder` (and the underlying formatting layer) to support more granular,
-per-field length hints (tracked under [CLDR-19550](https://unicode-org.atlassian.net/browse/CLDR-19550)),
-allowing it to honor mixed-width requests without collapsing them into a single coarse `Length`.
+style. We plan to investigate the scope of these web-compat risks under
+[CLDR-19550](https://unicode-org.atlassian.net/browse/CLDR-19550). If the risks are too high,
+our fallback plan is to enhance `FieldSetBuilder` (and the underlying formatting layer) to
+support more granular, per-field length hints, allowing it to honor mixed-width requests
+without collapsing them into a single coarse `Length`.
 
 The builder is richer in some ways and coarser in others:
 
