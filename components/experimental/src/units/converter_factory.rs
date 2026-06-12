@@ -191,13 +191,14 @@ impl ConverterFactory {
                     .get()
                     .conversion_info_by_unit_id(single_unit.unit_id);
 
-                debug_assert!(conversion_info.is_some(), "Failed to get convert info");
-
                 match conversion_info {
                     Some(items) => {
                         insert_base_units(items.basic_units(), single_unit.power as i16, sign, map)
                     }
-                    None => return Err(InvalidConversionError),
+                    None => {
+                        debug_assert!(false, "Failed to get convert info");
+                        return Err(InvalidConversionError);
+                    }
                 }
             }
 
@@ -284,18 +285,20 @@ impl ConverterFactory {
         &self,
         input_unit: &MeasureUnit,
         output_unit: &MeasureUnit,
-    ) -> Option<UnitsConverter<T>> {
-        let is_reciprocal = match self.is_reciprocal(input_unit, output_unit) {
-            Ok(is_reciprocal) => is_reciprocal,
-            Err(InvalidConversionError) => return None,
-        };
+    ) -> Result<UnitsConverter<T>, InvalidConversionError> {
+        let is_reciprocal = self.is_reciprocal(input_unit, output_unit)?;
+
+        // is_reciprocal checked that all simple units can be loaded, so we can ignore load errors after this.
 
         // Determine the sign of the powers of the units from root to unit2.
         let root_to_unit2_direction_sign = if is_reciprocal { 1 } else { -1 };
 
         let mut conversion_rate = IcuRatio::one();
         for &input_single_unit in input_unit.single_units.as_slice() {
-            conversion_rate *= Self::compute_conversion_term(self, input_single_unit, 1)?;
+            let Some(t) = Self::compute_conversion_term(self, input_single_unit, 1) else {
+                continue;
+            };
+            conversion_rate *= t;
         }
 
         if input_unit.constant_denominator() != 0 {
@@ -303,11 +306,14 @@ impl ConverterFactory {
         }
 
         for &output_single_unit in output_unit.single_units.as_slice() {
-            conversion_rate *= Self::compute_conversion_term(
+            let Some(t) = Self::compute_conversion_term(
                 self,
                 output_single_unit,
                 root_to_unit2_direction_sign,
-            )?;
+            ) else {
+                continue;
+            };
+            conversion_rate *= t;
         }
 
         if output_unit.constant_denominator() != 0 {
@@ -318,29 +324,29 @@ impl ConverterFactory {
             }
         }
 
-        let offset = self.compute_offset(input_unit, output_unit)?;
+        let offset = self
+            .compute_offset(input_unit, output_unit)
+            .unwrap_or_else(IcuRatio::zero);
 
         if is_reciprocal && !offset.is_zero() {
             debug_assert!(
                 false,
                 "The units are reciprocal, but the offset is not zero. This is should not happen!.",
             );
-            return None;
         }
 
-        Some(if is_reciprocal {
+        Ok(if is_reciprocal {
             UnitsConverter(UnitsConverterInner::Reciprocal {
-                factor: T::from_ratio_bigint(conversion_rate.get_ratio())?,
+                factor: T::from_ratio_bigint(conversion_rate.get_ratio()),
             })
         } else if offset.is_zero() {
             UnitsConverter(UnitsConverterInner::Proportional {
-                factor: T::from_ratio_bigint(conversion_rate.get_ratio())?,
+                factor: T::from_ratio_bigint(conversion_rate.get_ratio()),
             })
         } else {
-            let offset = T::from_ratio_bigint(offset.get_ratio())?;
             UnitsConverter(UnitsConverterInner::Offset {
-                factor: T::from_ratio_bigint(conversion_rate.get_ratio())?,
-                offset,
+                factor: T::from_ratio_bigint(conversion_rate.get_ratio()),
+                offset: T::from_ratio_bigint(offset.get_ratio()),
             })
         })
     }

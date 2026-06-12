@@ -16,7 +16,7 @@ pub trait Convertible: Clone {
     fn mul_refs(&self, other: &Self) -> Self;
 
     /// Converts a [`Ratio<BigInt>`] to the implementing type.
-    fn from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self>;
+    fn from_ratio_bigint(ratio: Ratio<BigInt>) -> Self;
 
     /// Returns the reciprocal of the implementing type.
     fn reciprocal(&self) -> Self;
@@ -31,8 +31,8 @@ impl Convertible for Ratio<BigInt> {
         self + other
     }
 
-    fn from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self> {
-        Some(ratio)
+    fn from_ratio_bigint(ratio: Ratio<BigInt>) -> Self {
+        ratio
     }
 
     fn reciprocal(&self) -> Self {
@@ -49,8 +49,8 @@ impl Convertible for f64 {
         self + other
     }
 
-    fn from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self> {
-        ratio.to_f64()
+    fn from_ratio_bigint(ratio: Ratio<BigInt>) -> Self {
+        ratio.to_f64().unwrap_or(f64::NAN)
     }
 
     fn reciprocal(&self) -> Self {
