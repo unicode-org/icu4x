@@ -465,14 +465,12 @@ impl ExtractionBackend for DoublePlaceholder {
             infix = None;
         }
 
-        let prefix = prefix.unwrap_or("");
-        let infix = infix.unwrap_or("");
-        let suffix = suffix.unwrap_or("");
-
         let mut matches = [None; 2];
 
         // Strip prefix and suffix from input
-        let remaining = input.strip_prefix(prefix)?.strip_suffix(suffix)?;
+        let remaining = input
+            .strip_prefix(prefix.unwrap_or(""))?
+            .strip_suffix(suffix.unwrap_or(""))?;
 
         match (first_ph, second_ph) {
             (None, None) => {
@@ -494,15 +492,14 @@ impl ExtractionBackend for DoublePlaceholder {
             }
             (Some(key1), Some(key2)) => {
                 // 2 placeholders
-                let idx = if infix.is_empty() {
-                    Some(0)
-                } else {
-                    remaining.find(infix)
+                let (idx, infix_len) = match infix {
+                    Some(inf) => (remaining.find(inf), inf.len()),
+                    None => (Some(0), 0),
                 };
 
                 if let Some(i) = idx {
                     let val1 = &remaining[..i];
-                    let val2 = &remaining[i + infix.len()..];
+                    let val2 = &remaining[i + infix_len..];
                     let idx1 = match key1 {
                         DoublePlaceholderKey::Place0 => 0,
                         DoublePlaceholderKey::Place1 => 1,
