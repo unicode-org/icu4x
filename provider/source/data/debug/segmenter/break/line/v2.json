@@ -30160,7 +30160,7 @@
     158
   ],
   "num_lookaheads": 1,
-  "num_symbols": 77,
+  "pseudo_symbol_shift": 77,
   "pseudo_symbol_map": [
     1,
     2,

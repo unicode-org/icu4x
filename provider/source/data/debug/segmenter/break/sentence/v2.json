@@ -15139,7 +15139,7 @@
     4
   ],
   "num_lookaheads": 0,
-  "num_symbols": 15,
+  "pseudo_symbol_shift": 15,
   "pseudo_symbol_map": [
     9
   ]

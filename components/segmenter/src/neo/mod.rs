@@ -142,16 +142,7 @@ impl<'s, Y: RuleBreakType, C: ComplexHandler<Y>> Iterator for RuleBreakIterator<
 
         (self.remaining_input, self.last_accepting_status) = loop {
             let symbol = if let Some((_, next)) = iter.clone().peekable().next() {
-                let pseudo_symbol_or_symbol = self.data.symbols.get32(next.into());
-                if let Some(pseudo_symbol) =
-                    pseudo_symbol_or_symbol.checked_sub(self.data.num_symbols)
-                {
-                    self.pseudo_symbol_map
-                        .get(pseudo_symbol as usize)
-                        .unwrap_or(pseudo_symbol_or_symbol)
-                } else {
-                    pseudo_symbol_or_symbol
-                }
+                self.symbol(next.into())
             } else {
                 SegmenterStateMachine::EOT_SYMBOL
             };
@@ -262,5 +253,18 @@ impl<'s, Y: RuleBreakType, C: ComplexHandler<Y>> Iterator for RuleBreakIterator<
         }
 
         Some(break_index)
+    }
+}
+
+impl<'data, 's, Y: RuleBreakType, C: ComplexHandler<Y>> RuleBreakIterator<'data, 's, Y, C> {
+    fn symbol(&self, cp: u32) -> u8 {
+        let pseudo_symbol = self.data.symbols.get32(cp);
+        if let Some(i) = pseudo_symbol.checked_sub(self.data.pseudo_symbol_shift) {
+            self.pseudo_symbol_map
+                .get(i as usize)
+                .unwrap_or(pseudo_symbol)
+        } else {
+            pseudo_symbol
+        }
     }
 }

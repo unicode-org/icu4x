@@ -986,6 +986,7 @@ impl SourceDataProvider {
         DataError,
     > {
         let mut magic_symbols = BTreeMap::new();
+        let mut fixed_symbol_assignments = BTreeMap::new();
         let symbols = sources.read_to_string(&format!("{prefix}Symbols.txt"))?;
         let mut symbols = symbols
             .lines()
@@ -1009,7 +1010,10 @@ impl SourceDataProvider {
                 Ok((Cow::Borrowed(symbol), set))
             })
             .collect::<Result<BTreeMap<_, _>, DataError>>()?;
-        let eot_symbol = magic_symbols.remove("eot").unwrap_or("eot");
+        fixed_symbol_assignments.insert(
+            magic_symbols.remove("eot").unwrap_or("eot").to_string(),
+            SegmenterStateMachine::EOT_SYMBOL,
+        );
 
         let states = sources.read_to_string(&format!("{prefix}States.txt"))?;
         let states = states
@@ -1150,23 +1154,37 @@ impl SourceDataProvider {
             }
         }
 
-        // Reserve two symbols for EOT_SYMBOL and NO_SYMBOL
-        assert!(symbols.len() < usize::from(Symbol::MAX) - 2);
-        let symbol_lookup = core::iter::once(eot_symbol)
-            .chain(
-                symbols
-                    .keys()
-                    .filter(|&s| s != eot_symbol && !pseudo_symbol_map.contains_key(s.as_ref()))
-                    .map(|s| s.as_ref()),
-            )
-            // Give pseudo symbols the last symbol codes.
-            .chain(pseudo_symbol_map.keys().map(|k| k.as_str()))
+        let highest_fixed_symbol = fixed_symbol_assignments.values().copied().max().unwrap();
+        let symbol_lookup = symbols
+            .keys()
+            .filter(|&s| {
+                !fixed_symbol_assignments.contains_key(s.as_ref())
+                    && !pseudo_symbol_map.contains_key(s.as_ref())
+            })
             .enumerate()
-            .map(|(i, symbol)| (symbol, Symbol::try_from(i).unwrap()))
+            .map(|(i, symbol)| {
+                (
+                    symbol.as_ref(),
+                    Symbol::try_from(i + highest_fixed_symbol as usize + 1).unwrap(),
+                )
+            })
+            .chain(
+                fixed_symbol_assignments
+                    .iter()
+                    .map(|(k, v)| (k.as_str(), *v)),
+            )
             .collect::<BTreeMap<_, _>>();
-        let pseudo_symbol_map = pseudo_symbol_map
-            .iter()
-            .map(|(k, v)| (symbol_lookup[k.as_str()], symbol_lookup[v.as_str()]))
+
+        let pseudo_symbol_shift = symbol_lookup.values().copied().max().unwrap() + 1;
+        let pseudo_symbol_lookup = pseudo_symbol_map
+            .keys()
+            .enumerate()
+            .map(|(i, k)| {
+                (
+                    k.as_str(),
+                    Symbol::try_from(i + usize::from(pseudo_symbol_shift)).unwrap(),
+                )
+            })
             .collect::<BTreeMap<_, _>>();
 
         // Reserve two states for START and TRASH
@@ -1193,7 +1211,14 @@ impl SourceDataProvider {
         for (symbol, set) in &symbols {
             for range in set.iter_ranges() {
                 missing_codepoints.remove_range32(range.clone());
-                builder.set_range_value(range.clone(), symbol_lookup[&**symbol]);
+                builder.set_range_value(
+                    range.clone(),
+                    symbol_lookup
+                        .get(&**symbol)
+                        .or_else(|| pseudo_symbol_lookup.get(&**symbol))
+                        .copied()
+                        .unwrap(),
+                );
             }
         }
         let missing_codepoints = missing_codepoints.build();
@@ -1271,6 +1296,11 @@ impl SourceDataProvider {
             .to_code_point_inversion_list()
             .into_owned();
 
+        let pseudo_symbol_map = pseudo_symbol_map
+            .iter()
+            .map(|(k, v)| (pseudo_symbol_lookup[k.as_str()], symbol_lookup[v.as_str()]))
+            .collect::<BTreeMap<_, _>>();
+
         let tailorings = tailorings
             .into_iter()
             .map(|(tailoring, tailored_pseudo_symbol_map)| {
@@ -1303,7 +1333,7 @@ impl SourceDataProvider {
                 symbols,
                 states,
                 num_lookaheads: lookahead_lookup.len(),
-                num_symbols: (symbol_lookup.len() - pseudo_symbol_map.len()) as u8,
+                pseudo_symbol_shift,
                 pseudo_symbol_map: pseudo_symbol_map.values().copied().collect(),
             },
             tailorings,

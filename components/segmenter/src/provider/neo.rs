@@ -56,12 +56,12 @@ pub struct SegmenterStateMachine<'data> {
     pub transitions: ZeroVec<'data, State>,
     /// The number of lookaheads, used to size the `lookahead_positions` vector.
     pub num_lookaheads: usize,
-    /// The number of symbols. If the `symbols` trie returns a value larger than this,
+    /// The offset for the pseudo symbols. If the `symbols` trie returns a value larger than this,
     /// it is a pseudo symbol and needs to be looked up in `pseudo_symbol_map`.
-    pub num_symbols: u8,
-    /// The map from pseudo symbols (symbols `c` where `c > num_symbols`) to their actual symbol values.
+    pub pseudo_symbol_shift: u8,
+    /// The map from pseudo symbols (symbols `c` where `c > pseudo_symbol_shift`) to their actual symbol values.
     ///
-    /// Dense linear map, indexed by `c - num_symbols`.
+    /// Dense linear map, indexed by `c - pseudo_symbol_shift`.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub pseudo_symbol_map: ZeroVec<'data, Symbol>,
 }
@@ -77,11 +77,10 @@ impl SegmenterStateMachine<'_> {
     /// The trash state. As our transition matrix is dense, we need a state to represent "no transition".
     /// This state is non-accepting and loops to itself on all inputs.
     pub const TRASH_STATE: State = State::MAX;
+
     /// The end-of-text symbol. This is a dummy symbol that only appears at the end of the input,
     /// and allows the state machine to have special transitions on end-of-text.
     pub const EOT_SYMBOL: Symbol = 0;
-    /// This is used as the absence of a symbol in overrides.
-    pub const NO_SYMBOL: Symbol = 255;
 }
 
 /// A tailoring for [`SegmenterStateMachine`].
