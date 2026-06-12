@@ -17,55 +17,50 @@ In a compliant ECMA-402 implementation, the options are split:
 - **Policy-related options** (e.g., `numberingSystem`, `hourCycle`, `calendar`) are passed to the formatter via `DateTimeFormatterPreferences`.
 - **Locale matching options** (e.g., `localeMatcher`) are handled during locale negotiation beforehand and do not reach the formatter.
 
+### Goals
+
+*   Provide a human-readable, machine-parseable representation of datetime field requests.
+*   Model the common ECMA-402 / ICU4C datetime field subset.
+*   Keep the type focused on fields and field widths, not on other formatter options.
+*   Make round-tripping through a UTS 35 skeleton string lossless for the supported subset.
+*   Make conversion to `FieldSetBuilder` possible even when it is not exact.
+
+### Non-Goals
+
+*   Stock pattern presets (namely, the `dateStyle` and `timeStyle` presets: `Full`, `Long`, `Medium`, and `Short`), as opposed to individual field widths (like `month: "long"` or `weekday: "short"`).
+*   Locale negotiation (such as the ECMA-402 `localeMatcher` option), which is not handled by ICU4X.
+*   Hour-cycle preferences.
+*   Numbering system preferences.
+*   A full replacement for the existing `fieldsets` API.
+*   A perfect round-trip between the bag and `FieldSetBuilder`.
+
 ## Proposed Solution
 
 We propose a new module, `fieldbag`, centered around the `DateTimeFieldBag` struct.
 
-The overall mental model is:
-1.  **`DateTimeFieldBag`** captures a raw, unresolved field request.
-2.  A **UTS 35 string** is the precise, lossless interchange form for that request.
-3.  **`FieldSetBuilder`** is the best-effort bridge into ICU4X dynamic fieldsets.
-4.  **`CompositeFieldSet`** remains a downstream choice, not the core representation.
+The architecture is built around a 4-step mental model that defines how a formatting request flows into the ICU4X formatting pipeline:
+
+1.  **`DateTimeFieldBag`** (Raw Request): Captures the fine-grained field presence and width choices from the user.
+    *   *Example:* A request for "wide month and two-digit year", represented as `{ year: TwoDigit, month: Long }`.
+2.  **UTS 35 Skeleton String** (Interchange Format): The precise, lossless wire format for the raw request (e.g., `yyMMMM`).
+3.  **`FieldSetBuilder`** (The Bridge): A helper that takes a detailed `DateTimeFieldBag` (or its skeleton) and maps it to the closest matching ICU4X formatting category, collapsing widths if necessary.
+    *   *Example:* Maps the `yyMMMM` request to a `Date` category with a `Long` length.
+4.  **`CompositeFieldSet`** (Resolved Category): The concrete, optimized runtime enum that wraps the resolved category (e.g., wrapping a `DateFieldSet::YM`). This is a downstream choice, not the core representation of the request.
 
 `DateTimeFieldBag` is a flat struct of optional fields, where each field represents a requested datetime component and its desired width. It acts as a clean, intermediate representation of a user's formatting request.
 
-### Relationship to Existing APIs
-
-Unlike the existing `fieldsets` APIs, which represent resolved, optimized formatting categories, `DateTimeFieldBag` represents the raw, unresolved request.
-
-*   **`DateTimeFieldBag`** (Unresolved Request): Captures fine-grained field presence and width choices.
-    *   *Example:* A request for "wide month and two-digit year", represented as `{ year: TwoDigit, month: Long }` (or skeleton `yyMMMM`).
-*   **`FieldSetBuilder`** (The Bridge): A helper that takes a detailed `DateTimeFieldBag` and maps it to the closest matching ICU4X formatting category, collapsing widths if necessary.
-    *   *Example:* Maps the `yyMMMM` request to a `Date` category with a `Long` length.
-*   **`CompositeFieldSet`** (Resolved Category): The concrete runtime enum that wraps the resolved category (e.g., wrapping a `DateFieldSet::YM`).
-
 ### Suggested API Surface
 
-We recommend explicit, named methods rather than generic `From` / `Into` traits, to make the lossy nature of the conversions clear:
+We recommend explicit, named methods for conversion and standard traits for serialization, making the lossy nature of the conversions clear:
 
-*   `DateTimeFieldBag::to_field_set_builder(&self) -> FieldSetBuilder`
-*   `DateTimeFieldBag::from_field_set_builder(builder: &FieldSetBuilder) -> Self` (or `from_field_set_builder_best_effort` to emphasize lossiness)
-*   `DateTimeFieldBag::to_skeleton_string(&self) -> String` (using `Writeable` internally)
-*   `DateTimeFieldBag::try_from_skeleton_str(s: &str) -> Result<Self, ParserError>`
+*   `impl writeable::Writeable for DateTimeFieldBag` (enables canonical skeleton serialization)
+*   `impl DateTimeFieldBag`
+    *   `pub fn to_string(&self) -> String` (shadows `ToString::to_string` for performance/convenience)
+    *   `pub fn from_skeleton_str(s: &str) -> Result<Self, ParserError>` (strict parser)
+    *   `pub fn to_field_set_builder(&self) -> FieldSetBuilder` (lossy conversion)
+    *   `pub fn from_field_set_builder(builder: &FieldSetBuilder) -> Self` (best-effort reconstruction)
 
-## Goals
-
-- Provide a human-readable, machine-parseable representation of datetime field requests.
-- Model the common ECMA-402 / ICU4C datetime field subset.
-- Keep the type focused on fields and field widths, not on other formatter options.
-- Make round-tripping through a UTS 35 skeleton string lossless for the supported subset.
-- Make conversion to `FieldSetBuilder` possible even when it is not exact.
-
-## Non-Goals
-
-- Stock pattern presets (namely, the `dateStyle` and `timeStyle` presets: `Full`, `Long`, `Medium`, and `Short`), as opposed to individual field widths (like `month: "long"` or `weekday: "short"`).
-- Locale negotiation (such as the ECMA-402 `localeMatcher` option), which is not handled by ICU4X.
-- Hour-cycle preferences.
-- Numbering system preferences.
-- A full replacement for the existing `fieldsets` API.
-- A perfect round-trip between the bag and `FieldSetBuilder`.
-
-## Module Shape
+### Module Shape
 
 The module name should be `fieldbag` in flat case, matching ICU4X's existing module naming style.
 This avoids the overloaded word `components`, which already means something else in ICU4X.
@@ -75,7 +70,7 @@ The type name should be `DateTimeFieldBag`.
 The module should be public as `icu_datetime::fieldbag`.
 It may reuse `provider::fields` internally, but it should not be a provider-only module.
 
-## Data Model
+### Data Model
 
 `DateTimeFieldBag` is a struct of optional fields, not an ordered list.
 Each field captures the field family and its width choice.
@@ -102,7 +97,7 @@ The bag does not carry:
 - year style preference
 - other formatter-level knobs that belong to `FieldSetBuilder`
 
-## String Serialization (UTS 35 Skeletons)
+### String Serialization (UTS 35 Skeletons)
 
 The primary exact interchange format for `DateTimeFieldBag` is a string using UTS 35 classical skeleton syntax for the representable subset.
 
@@ -143,7 +138,7 @@ The hour and day period fields are mapped to UTS 35 input skeleton symbols (`j` 
 Since `j` and `C` are input skeleton symbols, they map 1-to-1 to the bag's internal state (hour presence/width and day-period presence/width). During conversion to `FieldSetBuilder`, a day-period field without an hour is not supported and should be rejected or normalized.
 
 
-## Conversion To `FieldSetBuilder`
+### Conversion To `FieldSetBuilder`
 
 Conversion from `DateTimeFieldBag` to `FieldSetBuilder` is best-effort and lossy. It should not fail; when there is no exact mapping, it should choose a documented representative builder state.
 
@@ -167,7 +162,7 @@ The conversion preserves the closest meaningful mapping for:
 
 The conversion should be documented as a reconstruction aid, not as a stable interchange format.
 
-## Conversion From `FieldSetBuilder`
+### Conversion From `FieldSetBuilder`
 
 Conversion from `FieldSetBuilder` back to `DateTimeFieldBag` is also best-effort and inherently lossy, as the builder stores category-level decisions and auxiliary options, while the bag stores field-level choices. It should not fail; the result should be a documented representative bag for the builder state.
 
