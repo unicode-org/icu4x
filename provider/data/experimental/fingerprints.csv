@@ -63761,6 +63761,29 @@ locale/display/names/v1, zh-HK, 839B, 657B, 2ff4e4e25b712021
 locale/display/names/v1, zh-Hant, 452B, 269B, a29ee7ed91614ee1
 locale/display/names/v1, zh-MO, -> zh-HK
 locale/display/names/v1, zu, 903B, 721B, f41fadad6c4fafe2
+locale/names/essentials/v1, <lookup>, 135B, 21 identifiers
+locale/names/essentials/v1, <total>, 695B, 143B, 12 unique payloads
+locale/names/essentials/v1, am, 59B, 13B, 4b8979f5f7e725a3
+locale/names/essentials/v1, ar, 58B, 12B, cfc9915a27755449
+locale/names/essentials/v1, brx, 56B, 10B, 14582022333b0df4
+locale/names/essentials/v1, fa, -> ar
+locale/names/essentials/v1, ff-Adlm, 59B, 13B, 55764820154929fd
+locale/names/essentials/v1, ii, 61B, 15B, b486d9d5438b6381
+locale/names/essentials/v1, ja, 58B, 12B, 810702a608e3c9a
+locale/names/essentials/v1, kk-Arab, -> ar
+locale/names/essentials/v1, ko, 56B, 10B, e3e7a62b06173671
+locale/names/essentials/v1, my, 57B, 11B, f4b84e16b7b43b5c
+locale/names/essentials/v1, nqo, -> ar
+locale/names/essentials/v1, shn, 59B, 13B, 20f80cd3b83ebc53
+locale/names/essentials/v1, syr, -> ar
+locale/names/essentials/v1, ti, -> am
+locale/names/essentials/v1, ug, -> ar
+locale/names/essentials/v1, und, 57B, 11B, 6bebeab00fcb2d03
+locale/names/essentials/v1, ur, 57B, 11B, a9956786ebe69ca1
+locale/names/essentials/v1, yue, 58B, 12B, ca4faab9f772451
+locale/names/essentials/v1, yue-Hans, -> yue
+locale/names/essentials/v1, zh, -> ii
+locale/names/essentials/v1, zh-Hant, -> ii
 locale/names/language/long/v1, <lookup>, 2569B, 277 identifiers
 locale/names/language/long/v1, <total>, 17823B, 11613B, 270 unique payloads
 locale/names/language/long/v1, af/zh-Hans, 57B, 34B, 881e76d593051fdc
