@@ -3,8 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_pattern::{
-    DoublePlaceholderKey, DoublePlaceholderPattern, MultiNamedPlaceholderKey,
-    MultiNamedPlaceholderPattern, SinglePlaceholderKey, SinglePlaceholderPattern,
+    DoublePlaceholderKey, DoublePlaceholderPattern, SinglePlaceholderKey, SinglePlaceholderPattern,
 };
 
 #[test]
@@ -57,27 +56,4 @@ fn test_double_extraction() {
     let matches = pattern.extract_placeholders("axyzb").unwrap();
     assert_eq!(matches.get(DoublePlaceholderKey::Place0), Some(""));
     assert_eq!(matches.get(DoublePlaceholderKey::Place1), Some("xyz"));
-}
-
-#[test]
-#[cfg(feature = "alloc")]
-fn test_multi_named_extraction() {
-    let pattern = MultiNamedPlaceholderPattern::try_from_str(
-        "Hello, {person0} and {person1}!",
-        Default::default(),
-    )
-    .unwrap();
-    let matches = pattern
-        .extract_placeholders("Hello, Alice and Bob!")
-        .unwrap();
-    assert_eq!(
-        matches.get(MultiNamedPlaceholderKey("person0")),
-        Some("Alice")
-    );
-    assert_eq!(
-        matches.get(MultiNamedPlaceholderKey("person1")),
-        Some("Bob")
-    );
-
-    assert_eq!(matches.get(MultiNamedPlaceholderKey("person2")), None);
 }

@@ -5,7 +5,7 @@
 //! Code for the [`MultiNamedPlaceholder`] pattern backend.
 
 #[cfg(feature = "alloc")]
-use alloc::{borrow::Cow, boxed::Box, collections::BTreeMap, string::String, vec::Vec};
+use alloc::{borrow::Cow, boxed::Box, collections::BTreeMap, string::String};
 use core::fmt;
 #[cfg(feature = "alloc")]
 use core::str::FromStr;
@@ -387,31 +387,6 @@ impl PatternBackend for MultiNamedPlaceholder {
     }
 }
 
-#[cfg(feature = "alloc")]
-impl ExtractionBackend for MultiNamedPlaceholder {
-    type DecodedMatches<'p, 'a> = Vec<(MultiNamedPlaceholderKey<'p>, &'a str)>;
-
-    fn extract<'p, 'a>(
-        store: &'p Self::Store,
-        input: &'a str,
-    ) -> Option<Self::DecodedMatches<'p, 'a>> {
-        let items: Vec<_> = Self::iter_items(store).collect();
-        let mut matches = Vec::new();
-        if match_multi(&items, input, &mut matches) {
-            Some(matches)
-        } else {
-            None
-        }
-    }
-
-    fn get_match<'p, 'b>(
-        store: &Self::DecodedMatches<'p, 'b>,
-        key: Self::PlaceholderKey<'_>,
-    ) -> Option<&'b str> {
-        store.iter().find(|(k, _)| k.0 == key.0).map(|(_, v)| *v)
-    }
-}
-
 #[derive(Debug)]
 pub struct MultiNamedPlaceholderPatternIterator<'a> {
     store: &'a str,
@@ -497,63 +472,6 @@ impl<'a> MultiNamedPlaceholderPatternIterator<'a> {
                 let literal = self.store;
                 self.store = "";
                 Ok(Some(PatternItem::Literal(literal)))
-            }
-        }
-    }
-}
-
-#[cfg(feature = "alloc")]
-fn match_multi<'p, 'a>(
-    items: &[PatternItem<'_, MultiNamedPlaceholderKey<'p>>],
-    input: &'a str,
-    matches: &mut Vec<(MultiNamedPlaceholderKey<'p>, &'a str)>,
-) -> bool {
-    if items.is_empty() {
-        return input.is_empty();
-    }
-
-    match &items[0] {
-        PatternItem::Literal(lit) => {
-            if input.starts_with(lit) {
-                match_multi(&items[1..], &input[lit.len()..], matches)
-            } else {
-                false
-            }
-        }
-        PatternItem::Placeholder(key) => {
-            if items.len() == 1 {
-                matches.push((key.clone(), input));
-                return true;
-            }
-
-            match &items[1] {
-                PatternItem::Literal(next_lit) => {
-                    let len = matches.len();
-                    for occurrence in input.match_indices(next_lit).map(|(i, _)| i) {
-                        let val = &input[..occurrence];
-                        matches.push((key.clone(), val));
-                        if match_multi(&items[1..], &input[occurrence..], matches) {
-                            return true;
-                        }
-                        matches.truncate(len);
-                    }
-                    false
-                }
-                PatternItem::Placeholder(_) => {
-                    let len = matches.len();
-                    for split_idx in 0..=input.len() {
-                        if !input.is_char_boundary(split_idx) {
-                            continue;
-                        }
-                        let val = &input[..split_idx];
-                        matches.push((key.clone(), val));
-                        if match_multi(&items[1..], &input[split_idx..], matches) {
-                            return true;
-                        }
-                        matches.truncate(len);
-                    }
-                    false
-                }
             }
         }
     }
