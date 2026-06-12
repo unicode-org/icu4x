@@ -492,14 +492,10 @@ impl ExtractionBackend for DoublePlaceholder {
             }
             (Some(key1), Some(key2)) => {
                 // 2 placeholders
-                let (idx, infix_len) = match infix {
-                    Some(inf) => (remaining.find(inf), inf.len()),
-                    None => (Some(0), 0),
+                let (val1, val2) = match infix {
+                    Some(inf) => remaining.split_once(inf)?,
+                    None => ("", remaining),
                 };
-
-                let i = idx?;
-                let (val1, rest) = remaining.split_at_checked(i)?;
-                let (_, val2) = rest.split_at_checked(infix_len)?;
 
                 let slot1 = match key1 {
                     DoublePlaceholderKey::Place0 => &mut matches[0],
