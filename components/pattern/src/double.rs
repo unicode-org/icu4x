@@ -465,13 +465,13 @@ impl ExtractionBackend for DoublePlaceholder {
             infix = None;
         }
 
-        let mut matches = [None; 2];
-
         // Strip prefix and suffix from input
         let remaining = input
             .strip_prefix(prefix.unwrap_or(""))?
             .strip_suffix(suffix.unwrap_or(""))?;
 
+        // Find placeholder matches
+        let mut matches = [None; 2];
         match (first_ph, second_ph) {
             (None, None) => {
                 // 0 placeholders
@@ -483,11 +483,11 @@ impl ExtractionBackend for DoublePlaceholder {
             }
             (Some(key), None) => {
                 // 1 placeholder
-                let idx = match key {
-                    DoublePlaceholderKey::Place0 => 0,
-                    DoublePlaceholderKey::Place1 => 1,
+                let slot = match key {
+                    DoublePlaceholderKey::Place0 => &mut matches[0],
+                    DoublePlaceholderKey::Place1 => &mut matches[1],
                 };
-                matches[idx] = Some(remaining);
+                *slot = Some(remaining);
                 Some(matches)
             }
             (Some(key1), Some(key2)) => {
@@ -497,23 +497,23 @@ impl ExtractionBackend for DoublePlaceholder {
                     None => (Some(0), 0),
                 };
 
-                if let Some(i) = idx {
-                    let val1 = &remaining[..i];
-                    let val2 = &remaining[i + infix_len..];
-                    let idx1 = match key1 {
-                        DoublePlaceholderKey::Place0 => 0,
-                        DoublePlaceholderKey::Place1 => 1,
-                    };
-                    let idx2 = match key2 {
-                        DoublePlaceholderKey::Place0 => 0,
-                        DoublePlaceholderKey::Place1 => 1,
-                    };
-                    matches[idx1] = Some(val1);
-                    matches[idx2] = Some(val2);
-                    Some(matches)
-                } else {
-                    None
-                }
+                let i = idx?;
+                let (val1, rest) = remaining.split_at_checked(i)?;
+                let (_, val2) = rest.split_at_checked(infix_len)?;
+
+                let slot1 = match key1 {
+                    DoublePlaceholderKey::Place0 => &mut matches[0],
+                    DoublePlaceholderKey::Place1 => &mut matches[1],
+                };
+                *slot1 = Some(val1);
+
+                let slot2 = match key2 {
+                    DoublePlaceholderKey::Place0 => &mut matches[0],
+                    DoublePlaceholderKey::Place1 => &mut matches[1],
+                };
+                *slot2 = Some(val2);
+
+                Some(matches)
             }
             (None, Some(_)) => unreachable!("second_ph populated but first_ph is not"),
         }
