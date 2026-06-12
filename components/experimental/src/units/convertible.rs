@@ -31,22 +31,27 @@ pub trait Convertible: Clone {
 impl Convertible for Ratio<BigInt> {
     type Ratio = Ratio<BigInt>;
 
+    #[inline]
     fn mul_ratio(&self, ratio: &Self::Ratio) -> Self {
         self * ratio
     }
 
+    #[inline]
     fn add_refs(&self, other: &Self) -> Self {
         self + other
     }
 
+    #[inline]
     fn from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self> {
         Some(ratio)
     }
 
+    #[inline]
     fn ratio_from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self::Ratio> {
         Some(ratio)
     }
 
+    #[inline]
     fn reciprocal(&self) -> Self {
         self.recip()
     }
@@ -66,14 +71,17 @@ pub struct RatioF64 {
 impl Convertible for f64 {
     type Ratio = RatioF64;
 
+    #[inline]
     fn mul_ratio(&self, ratio: &Self::Ratio) -> Self {
         super::f64_mul_div::f64_mul_div(*self, ratio.numerator, ratio.denominator)
     }
 
+    #[inline]
     fn add_refs(&self, other: &Self) -> Self {
         self + other
     }
 
+    #[inline]
     fn from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self> {
         ratio.to_f64()
     }
@@ -91,6 +99,7 @@ impl Convertible for f64 {
         }
     }
 
+    #[inline]
     fn reciprocal(&self) -> Self {
         self.recip()
     }

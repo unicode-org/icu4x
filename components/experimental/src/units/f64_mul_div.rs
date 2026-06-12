@@ -20,7 +20,6 @@ use core_maths::*;
 ///
 /// For more details and the mathematical justification, see
 /// [this post by Waldemar Horwat](https://github.com/tc39/proposal-amount/issues/115).
-#[inline]
 pub(super) fn f64_mul_div(a: f64, num: f64, den: f64) -> f64 {
     let double_rounded = a * num / den;
 
