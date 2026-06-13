@@ -23,6 +23,29 @@ use zerovec::ZeroSlice;
 
 use super::convertible::Convertible;
 /// `ConverterFactory` is responsible for creating converters.
+///
+/// # Examples
+///
+/// Demonstrating how to use a single factory to create different converters:
+///
+/// ```
+/// use icu_experimental::units::converter_factory::ConverterFactory;
+/// use icu_experimental::measure::measureunit::MeasureUnit;
+///
+/// let factory = ConverterFactory::new();
+///
+/// let meter = MeasureUnit::try_from_str("meter").unwrap();
+/// let foot = MeasureUnit::try_from_str("foot").unwrap();
+///
+/// // 10 meters is approximately 32.8084 feet.
+/// // We use approximate comparison due to floating-point precision.
+/// let meter_to_foot = factory.converter::<f64>(&meter, &foot).unwrap();
+/// assert!((meter_to_foot.convert(&10.0) - 32.8084).abs() < 1e-4);
+///
+/// // 1 foot is exactly 0.3048 meters.
+/// let foot_to_meter = factory.converter::<f64>(&foot, &meter).unwrap();
+/// assert!((foot_to_meter.convert(&1.0) - 0.3048).abs() < 1e-9);
+/// ```
 #[derive(Debug)]
 pub struct ConverterFactory {
     /// Contains the necessary data for the conversion factory.
@@ -283,6 +306,8 @@ impl ConverterFactory {
     /// NOTE:
     ///    This converter does not support conversions between mixed units,
     ///    such as, from "meter" to "foot-and-inch".
+    ///
+    /// See [`ConverterFactory`] for examples.
     pub fn converter<T: Convertible>(
         &self,
         input_unit: &MeasureUnit,

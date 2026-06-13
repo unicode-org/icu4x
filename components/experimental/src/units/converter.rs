@@ -13,6 +13,44 @@ use crate::units::convertible::Convertible;
 /// NOTE:
 ///     This converter does not support conversions between mixed units,
 ///     for example, from "meter" to "foot-and-inch".
+///
+/// # Examples
+///
+/// ```
+/// use icu_experimental::units::converter_factory::ConverterFactory;
+/// use icu_experimental::measure::measureunit::MeasureUnit;
+///
+/// let factory = ConverterFactory::new();
+/// let meter = MeasureUnit::try_from_str("meter").unwrap();
+/// let foot = MeasureUnit::try_from_str("foot").unwrap();
+///
+/// // 10 meters is approximately 32.8084 feet.
+/// // We use approximate comparison due to floating-point precision.
+/// let converter = factory.converter::<f64>(&meter, &foot).unwrap();
+/// assert!((converter.convert(&10.0) - 32.8084).abs() < 1e-4);
+/// ```
+///
+/// High-precision conversion using `Ratio<BigInt>`:
+///
+/// ```
+/// use icu_experimental::units::converter_factory::ConverterFactory;
+/// use icu_experimental::measure::measureunit::MeasureUnit;
+/// use num_bigint::BigInt;
+/// use num_rational::Ratio;
+///
+/// let factory = ConverterFactory::new();
+/// let meter = MeasureUnit::try_from_str("meter").unwrap();
+/// let foot = MeasureUnit::try_from_str("foot").unwrap();
+///
+/// // 1 foot is exactly 0.3048 meters.
+/// // 1 meter is 10000 / 3048 feet = 1250 / 381 feet.
+/// let converter = factory.converter::<Ratio<BigInt>>(&meter, &foot).unwrap();
+///
+/// // 1 meter should be exactly 1250/381 feet.
+/// let one = Ratio::from(BigInt::from(1));
+/// let expected = Ratio::new(BigInt::from(1250), BigInt::from(381));
+/// assert_eq!(converter.convert(&one), expected);
+/// ```
 #[derive(Debug, Clone)]
 pub struct UnitsConverter<N>(pub(crate) UnitsConverterInner<N>)
 where
@@ -23,6 +61,9 @@ where
     N: Convertible,
 {
     /// Converts the given value from the input unit to the output unit.
+    ///
+    ///
+    /// See [`UnitsConverter`] for examples.
     pub fn convert(&self, value: &N) -> N {
         self.0.convert(value)
     }
