@@ -2160,3 +2160,20 @@ fn test_numeric_zeros() {
 // TODO: Test that nn and nb are aliases for no
 
 // TODO: Consider testing ff-Adlm for supplementary-plane tailoring, including contractions
+
+#[test]
+// Regression test for a bug where setting `AlternateHandling::Shifted` and
+// `MaxVariable::Currency` caused a panic during collation.
+// The bug was due to an off-by-one error when validating special primaries,
+// which truncated the `last_primaries` vector and removed the `Currency` element.
+// This test verifies that the collator can be successfully constructed with these
+// options and that it correctly compares an empty string and a space as equal
+// (since space is shifted and ignored at the default Tertiary strength).
+fn test_shifted_max_variable_currency() {
+    let prefs = CollatorPreferences::default();
+    let mut options = CollatorOptions::default();
+    options.alternate_handling = Some(AlternateHandling::Shifted);
+    options.max_variable = Some(MaxVariable::Currency);
+    let collator = Collator::try_new(prefs, options).unwrap();
+    assert_eq!(collator.compare("", " "), Ordering::Equal);
+}

@@ -570,6 +570,16 @@ pub struct CollationSpecialPrimaries<'data> {
     pub numeric_primary: u8,
 }
 
+impl CollationSpecialPrimaries<'_> {
+    /// The length of the compressible bytes array (256 bits packed in `u16`s).
+    pub(crate) const COMPRESSIBLE_BYTES_LEN: usize = 256 / (u16::BITS as usize);
+
+    /// The expected total length of `last_primaries` when it contains both the
+    /// real primaries and the compressible bytes.
+    pub(crate) const TOTAL_LEN_WITH_COMPRESSIBLE_BYTES: usize =
+        MaxVariable::VARIANT_COUNT + Self::COMPRESSIBLE_BYTES_LEN;
+}
+
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 pub(crate) struct CollationSpecialPrimariesValidated<'data> {
     /// The primaries corresponding to `MaxVariable`
@@ -581,11 +591,13 @@ pub(crate) struct CollationSpecialPrimariesValidated<'data> {
     pub numeric_primary: u8,
     /// 256 bits (packed in 16 u16s) to classify every possible
     /// byte into compressible or non-compressible.
-    pub compressible_bytes: &'data [<u16 as AsULE>::ULE; 16],
+    pub compressible_bytes:
+        &'data [<u16 as AsULE>::ULE; CollationSpecialPrimaries::COMPRESSIBLE_BYTES_LEN],
 }
 
 impl CollationSpecialPrimariesValidated<'static> {
-    pub(crate) const HARDCODED_COMPRESSIBLE_BYTES_FALLBACK: &'static [<u16 as AsULE>::ULE; 16] = &[
+    pub(crate) const HARDCODED_COMPRESSIBLE_BYTES_FALLBACK:
+        &'static [<u16 as AsULE>::ULE; CollationSpecialPrimaries::COMPRESSIBLE_BYTES_LEN] = &[
         <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
         <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
         <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
