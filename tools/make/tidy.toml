@@ -133,9 +133,22 @@ end
 echo "License header check complete"
 '''
 
+[tasks.install-cargo-rdme]
+description = "Install cargo-rdme"
+private = true
+script_runner = "@duckscript"
+script = '''
+cargo_list = exec cargo --list
+if not contains ${cargo_list.stdout} "rdme"
+    echo "Installing cargo-rdme..."
+    exec cargo install cargo-rdme --locked
+end
+'''
+
 [tasks.generate-readmes]
 description = "Automatically generate README.md for each component."
-install_crate = { crate_name = "cargo-rdme", test_arg = ["--help"] }
+install_crate = false
+dependencies = ["install-cargo-rdme"]
 category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
