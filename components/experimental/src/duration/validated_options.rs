@@ -4,7 +4,7 @@
 
 use crate::duration::options::*;
 
-/// Validated options for [DurationFormatter](DurationFormatter).
+/// Validated options for [`DurationFormatter`](crate::duration::DurationFormatter).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ValidatedDurationFormatterOptions {
     /// The style that will be applied to units
@@ -86,6 +86,7 @@ pub enum DurationFormatterOptionsError {
 impl core::error::Error for DurationFormatterOptionsError {}
 
 impl ValidatedDurationFormatterOptions {
+    /// Validates the given [`DurationFormatterOptions`] and returns a [`ValidatedDurationFormatterOptions`].
     pub fn validate(
         value: DurationFormatterOptions,
     ) -> Result<Self, DurationFormatterOptionsError> {
