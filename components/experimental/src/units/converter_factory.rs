@@ -337,16 +337,16 @@ impl ConverterFactory {
 
         Ok(if is_reciprocal {
             UnitsConverter(UnitsConverterInner::Reciprocal {
-                factor: T::from_ratio_bigint(conversion_rate.get_ratio()),
+                factor: T::factor_from_ratio_bigint(conversion_rate.get_ratio()),
             })
         } else if offset.is_zero() {
             UnitsConverter(UnitsConverterInner::Proportional {
-                factor: T::from_ratio_bigint(conversion_rate.get_ratio()),
+                factor: T::factor_from_ratio_bigint(conversion_rate.get_ratio()),
             })
         } else {
             UnitsConverter(UnitsConverterInner::Offset {
-                factor: T::from_ratio_bigint(conversion_rate.get_ratio()),
-                offset: T::from_ratio_bigint(offset.get_ratio()),
+                factor: T::factor_from_ratio_bigint(conversion_rate.get_ratio()),
+                offset: T::addend_from_ratio_bigint(offset.get_ratio()),
             })
         })
     }
@@ -363,7 +363,7 @@ mod tests {
         let input_unit = MeasureUnit::try_from_str("meter").unwrap();
         let output_unit = MeasureUnit::try_from_str("foot").unwrap();
         let converter = factory.converter::<f64>(&input_unit, &output_unit).unwrap();
-        let result = converter.convert(&1000.0);
+        let result = converter.convert(1000.0);
         assert!(
             ((result - 3280.84) / 3280.84).abs() < 0.00001,
             "The relative difference between the result and the expected value is too large: {}",
@@ -377,7 +377,7 @@ mod tests {
         let input_unit = MeasureUnit::try_from_str("liter-per-100-kilometer").unwrap();
         let output_unit = MeasureUnit::try_from_str("mile-per-gallon").unwrap();
         let converter = factory.converter::<f64>(&input_unit, &output_unit).unwrap();
-        let result = converter.convert(&1.0);
+        let result = converter.convert(1.0);
         assert!(
             ((result - 235.21) / 235.21).abs() < 0.0001,
             "The relative difference between the result and the expected value is too large: {}",
@@ -391,7 +391,7 @@ mod tests {
         let input_unit = MeasureUnit::try_from_str("celsius").unwrap();
         let output_unit = MeasureUnit::try_from_str("fahrenheit").unwrap();
         let converter = factory.converter::<f64>(&input_unit, &output_unit).unwrap();
-        let result = converter.convert(&0.0);
+        let result = converter.convert(0.0);
         assert!(
             ((result - 32.0) / 32.0).abs() < 0.00001,
             "The relative difference between the result and the expected value is too large: {}",

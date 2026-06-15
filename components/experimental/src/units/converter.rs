@@ -23,12 +23,12 @@ where
     N: Convertible,
 {
     /// Converts the given value from the input unit to the output unit.
-    pub fn convert(&self, value: &N) -> N {
+    pub fn convert(&self, value: N) -> N::Result {
         match &self.0 {
-            UnitsConverterInner::Proportional { factor } => value.mul_refs(factor),
-            UnitsConverterInner::Reciprocal { factor } => value.mul_refs(factor).reciprocal(),
+            UnitsConverterInner::Proportional { factor } => value.mul_ratio_bigint(factor),
+            UnitsConverterInner::Reciprocal { factor } => value.reciprocal_mul_ratio_bigint(factor),
             UnitsConverterInner::Offset { factor, offset } => {
-                value.mul_refs(factor).add_refs(offset)
+                value.add_mul_ratio_bigint(factor, offset)
             }
         }
     }
@@ -51,12 +51,15 @@ where
     /// such as `celsius` to `fahrenheit` and `mile-per-gallon` to `liter-per-100-kilometer`.
     ///
     /// Also, it cannot convert between two units that are not single, such as `meter` to `foot-and-inch`.
-    Proportional { factor: N },
+    Proportional { factor: N::Factor },
     /// A converter for converting between two units that are reciprocal.
     /// For example:
     ///    1 - `meter-per-second` to `second-per-meter`.
     ///    2 - `mile-per-gallon` to `liter-per-100-kilometer`.
-    Reciprocal { factor: N },
+    Reciprocal { factor: N::Factor },
     /// A converter for converting between two units that require an offset.
-    Offset { factor: N, offset: N },
+    Offset {
+        factor: N::Factor,
+        offset: N::Addend,
+    },
 }
