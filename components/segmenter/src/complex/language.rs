@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[derive(PartialEq, Debug, Copy, Clone)]
-pub(super) enum Language {
+pub enum Language {
     Burmese,
     ChineseOrJapanese,
     Khmer,
@@ -13,7 +13,7 @@ pub(super) enum Language {
 }
 
 // TODO: Use data provider
-pub(super) fn get_language(codepoint: u32) -> Language {
+pub(crate) fn get_language(codepoint: u32) -> Language {
     // For Thai, Burmese, Lao and Khmer, these are the intersections
     // of lb=SA with the respective Script
     match codepoint {

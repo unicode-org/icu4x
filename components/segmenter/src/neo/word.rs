@@ -501,18 +501,42 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for ComplexWord<Y> {
 
     type Data<'s> = Y::ComplexData<'s>;
 
-    #[inline(always)]
-    fn is_complex(data: &Self::Data<'_>, iter: &Y::IterAttr<'_>) -> bool {
-        Y::is_complex(data, iter)
+    fn resolve_symbol(symbol: Symbol) -> Symbol {
+        symbol
     }
 
-    #[inline(always)]
-    fn handle<'s>(
-        data: &Self::Data<'_>,
-        complex: &<Y as RuleBreakType>::IterAttr<'s>,
-        past_complex: &<Y as RuleBreakType>::IterAttr<'s>,
-    ) -> impl Iterator<Item = usize> + use<'s, Y> {
-        Y::handle_complex(data, complex, past_complex)
+    fn handle<'data, 's>(
+        _: Symbol,
+        _: &RuleBreakIterator<'_, '_, Y, Self>,
+        data: &Self::Data<'data>,
+        iter: Y::IterAttr<'s>,
+    ) -> Option<(ComplexIterator<'data, 's, Y>, Y::IterAttr<'s>)> {
+        let data = Y::select_complex(
+            data,
+            // TODO: Use symbols to identify runs
+            get_language(
+                iter.clone()
+                    .next()
+                    .map(|(_, cp)| cp.into())
+                    .unwrap_or(char::MAX as u32),
+            ),
+        )?;
+
+        let mut past_complex = iter.clone();
+        past_complex.next();
+        while past_complex.clone().next().is_some_and(|(_, cp)| {
+            get_language(cp.into())
+                == get_language(
+                    iter.clone()
+                        .next()
+                        .map(|(_, cp)| cp.into())
+                        .unwrap_or(char::MAX as u32),
+                )
+        }) {
+            past_complex.next();
+        }
+
+        Some((Y::handle_complex(&data, &iter, &past_complex), past_complex))
     }
 }
 

@@ -19,6 +19,9 @@ mod lstm;
 #[cfg(feature = "lstm")]
 use lstm::*;
 
+#[cfg(feature = "unstable")]
+pub(crate) use language::{Language, get_language};
+
 #[derive(Debug)]
 pub struct ComplexIterator<'data, 's, R: RuleBreakType>(ComplexIteratorInner<'data, 's, R>, usize);
 
@@ -78,7 +81,6 @@ impl<'data> ComplexPayloadBorrowed<'data> {
         )
     }
 
-    #[expect(dead_code)]
     #[cfg(feature = "unstable")]
     pub(crate) fn segment_utf8<'s>(
         self,
@@ -182,7 +184,7 @@ const TH_DICT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("
 const CJ_DICT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("cjdict");
 
 impl<'data> ComplexPayloadsBorrowed<'data> {
-    fn select(&self, language: Language) -> Option<ComplexPayloadBorrowed<'data>> {
+    pub(crate) fn select(&self, language: Language) -> Option<ComplexPayloadBorrowed<'data>> {
         const ERR: DataError = DataError::custom("No segmentation model for language");
         match language {
             Language::Burmese => self.my.or_else(|| {
@@ -206,18 +208,6 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
                 None
             }),
             Language::Unknown => None,
-        }
-    }
-
-    #[cfg(feature = "unstable")]
-    pub(crate) fn handles(&self, cp: u32) -> bool {
-        match get_language(cp) {
-            Language::Burmese => self.my.is_some(),
-            Language::Khmer => self.km.is_some(),
-            Language::ChineseOrJapanese => self.ja.is_some(),
-            Language::Lao => self.lo.is_some(),
-            Language::Thai => self.th.is_some(),
-            Language::Unknown => false,
         }
     }
 
