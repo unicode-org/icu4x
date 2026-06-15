@@ -39,6 +39,7 @@ use crate::provider::CollationMetadataV1;
 use crate::provider::CollationReordering;
 use crate::provider::CollationReorderingV1;
 use crate::provider::CollationRootV1;
+use crate::provider::CollationSpecialPrimaries;
 use crate::provider::CollationSpecialPrimariesV1;
 use crate::provider::CollationSpecialPrimariesValidated;
 use crate::provider::CollationTailoringV1;
@@ -663,12 +664,12 @@ impl Collator {
         }
         let special_primaries = special_primaries.map_project(|csp, _| {
             let compressible_bytes = (csp.last_primaries.len()
-                == MaxVariable::Currency as usize + 16)
+                == CollationSpecialPrimaries::TOTAL_LEN_WITH_COMPRESSIBLE_BYTES)
                 .then(|| {
                     csp.last_primaries
                         .as_maybe_borrowed()?
                         .as_ule_slice()
-                        .get((MaxVariable::Currency as usize)..)?
+                        .get(MaxVariable::VARIANT_COUNT..)?
                         .try_into()
                         .ok()
                 })
@@ -678,7 +679,7 @@ impl Collator {
                 );
 
             CollationSpecialPrimariesValidated {
-                last_primaries: csp.last_primaries.truncated(MaxVariable::Currency as usize),
+                last_primaries: csp.last_primaries.truncated(MaxVariable::VARIANT_COUNT),
                 numeric_primary: csp.numeric_primary,
                 compressible_bytes,
             }
@@ -786,7 +787,7 @@ impl CollatorBorrowed<'static> {
                         .last_primaries
                         .as_slice()
                         .as_ule_slice()
-                        .split_at(MaxVariable::Currency as usize)
+                        .split_at(MaxVariable::VARIANT_COUNT)
                         .0,
                 )
                 .as_zerovec(),
@@ -798,8 +799,8 @@ impl CollatorBorrowed<'static> {
                             .last_primaries
                             .as_slice()
                             .as_ule_slice();
-                    if C.len() == MaxVariable::Currency as usize + 16 {
-                        let i = MaxVariable::Currency as usize;
+                    if C.len() == CollationSpecialPrimaries::TOTAL_LEN_WITH_COMPRESSIBLE_BYTES {
+                        let i = MaxVariable::VARIANT_COUNT;
                         #[allow(clippy::indexing_slicing)] // protected, const
                         &[
                             C[i],
