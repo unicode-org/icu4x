@@ -46,16 +46,13 @@ fn test_cldr_unit_tests() {
         let output_unit =
             MeasureUnit::try_from_str(&test.output_unit).expect("Failed to parse output unit");
 
-        let converter: UnitsConverter<&Ratio<BigInt>> = converter_factory
+        let converter: UnitsConverter = converter_factory
             .converter(&input_unit, &output_unit)
             .expect("Failed to create converter");
         let result =
             converter.convert(&Ratio::<BigInt>::from_str("1000").expect("Failed to parse ratio"));
 
-        let converter_f64: UnitsConverter<f64> = converter_factory
-            .converter(&input_unit, &output_unit)
-            .expect("Failed to create converter for f64");
-        let result_f64 = converter_f64.convert(1000.0);
+        let result_f64 = converter.convert(1000.0);
 
         let diff_ratio = ((result.clone() - test.result.clone().get_ratio())
             / test.result.clone().get_ratio())
@@ -218,8 +215,8 @@ fn test_units_non_convertible() {
         let input_unit = MeasureUnit::try_from_str(input).expect("Failed to parse input unit");
         let output_unit = MeasureUnit::try_from_str(output).expect("Failed to parse output unit");
 
-        let result: Result<UnitsConverter<f64>, InvalidConversionError> =
-            converter_factory.converter::<f64>(&input_unit, &output_unit);
+        let result: Result<UnitsConverter, InvalidConversionError> =
+            converter_factory.converter(&input_unit, &output_unit);
         assert!(
             result.is_err(),
             "Conversion should not be possible between {input:?} and {output:?}"
