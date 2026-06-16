@@ -10,7 +10,7 @@ use icu_experimental::units::ratio::IcuRatio;
 use icu_experimental::{measure::measureunit::MeasureUnit, units::converter::UnitsConverter};
 use num_bigint::BigInt;
 use num_rational::Ratio;
-use num_traits::{Signed, ToPrimitive};
+use num_traits::{FromPrimitive, Signed, ToPrimitive};
 
 #[test]
 fn test_cldr_unit_tests() {
@@ -290,4 +290,48 @@ fn test_unparsable_units() {
             "Unit '{unit}' should be unparsable but was parsed successfully."
         );
     });
+}
+
+#[test]
+fn test_f64_precision() {
+    let factory = ConverterFactory::new();
+
+    let tonne = MeasureUnit::try_from_str("tonne").unwrap();
+    let g = MeasureUnit::try_from_str("gram").unwrap();
+    let kg = MeasureUnit::try_from_str("kilogram").unwrap();
+    let inch = MeasureUnit::try_from_str("inch").unwrap();
+    let cm = MeasureUnit::try_from_str("centimeter").unwrap();
+    let foot = MeasureUnit::try_from_str("foot").unwrap();
+
+    // 5 g to tonnes (factor 1/1000000)
+    let converter_f64 = factory.converter::<f64>(&g, &tonne).unwrap();
+    let converter_exact = factory.converter::<&Ratio<BigInt>>(&g, &tonne).unwrap();
+    let result = converter_f64.convert(5.0);
+    let result_exact = converter_exact.convert(&Ratio::from_i64(5).unwrap());
+    assert_eq!(result, 5e-6);
+    assert_eq!(result, result_exact.to_f64().unwrap());
+
+    // 825 g to kg (factor 1/1000)
+    let converter_f64 = factory.converter::<f64>(&g, &kg).unwrap();
+    let converter_exact = factory.converter::<&Ratio<BigInt>>(&g, &kg).unwrap();
+    let result = converter_f64.convert(825.0);
+    let result_exact = converter_exact.convert(&Ratio::from_i64(825).unwrap());
+    assert_eq!(result, 0.825);
+    assert_eq!(result, result_exact.to_f64().unwrap());
+
+    // 5 in to cm (factor 127/50)
+    let converter_f64 = factory.converter::<f64>(&inch, &cm).unwrap();
+    let converter_exact = factory.converter::<&Ratio<BigInt>>(&inch, &cm).unwrap();
+    let result = converter_f64.convert(5.0);
+    let result_exact = converter_exact.convert(&Ratio::from_i64(5).unwrap());
+    assert_eq!(result, 12.7);
+    assert_eq!(result, result_exact.to_f64().unwrap());
+
+    // 84 in to ft (factor 1/12)
+    let converter_f64 = factory.converter::<f64>(&inch, &foot).unwrap();
+    let converter_exact = factory.converter::<&Ratio<BigInt>>(&inch, &foot).unwrap();
+    let result = converter_f64.convert(84.0);
+    let result_exact = converter_exact.convert(&Ratio::from_i64(84).unwrap());
+    assert_eq!(result, 7.0);
+    assert_eq!(result, result_exact.to_f64().unwrap());
 }
