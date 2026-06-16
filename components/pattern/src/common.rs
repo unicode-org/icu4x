@@ -278,18 +278,30 @@ where
 /// [`Pattern`]: crate::Pattern
 pub trait ExtractionBackend: PatternBackend + crate::private::Sealed {
     /// The type that stores the matches for this backend.
-    #[doc(hidden)] // TODO(#4467): Should be internal
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This API is unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Use with caution.
+    /// </div>
     type InternalDecodedMatches<'p, 'a>;
 
     /// Extract matches from the store.
-    #[doc(hidden)] // TODO(#4467): Should be internal
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This API is unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Use with caution.
+    /// </div>
     fn internal_extract<'p, 'a>(
         store: &'p Self::Store,
         input: &'a str,
     ) -> Option<Self::InternalDecodedMatches<'p, 'a>>;
 
     /// Get a match from the decoded matches.
-    #[doc(hidden)] // TODO(#4467): Should be internal
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This API is unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Use with caution.
+    /// </div>
     fn internal_get_match<'p, 'b>(
         store: &Self::InternalDecodedMatches<'p, 'b>,
         key: Self::PlaceholderKey<'_>,
