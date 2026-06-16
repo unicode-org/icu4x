@@ -25,11 +25,9 @@ where
     /// Converts the given value from the input unit to the output unit.
     pub fn convert(&self, value: N) -> N::Result {
         match &self.0 {
-            UnitsConverterInner::Proportional { factor } => value.mul_ratio_bigint(factor),
-            UnitsConverterInner::Reciprocal { factor } => value.reciprocal_mul_ratio_bigint(factor),
-            UnitsConverterInner::Offset { factor, offset } => {
-                value.add_mul_ratio_bigint(factor, offset)
-            }
+            UnitsConverterInner::Proportional { factor } => value.mul(factor),
+            UnitsConverterInner::Reciprocal { factor } => value.reciprocal_mul(factor),
+            UnitsConverterInner::Offset { factor, offset } => value.mul_add(factor, offset),
         }
     }
 }

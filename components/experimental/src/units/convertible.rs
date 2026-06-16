@@ -13,13 +13,13 @@ pub trait Convertible: Clone {
     type Result: core::fmt::Debug;
 
     /// Computes `self * factor + addend`.
-    fn add_mul_ratio_bigint(self, factor: &Self::Factor, addend: &Self::Addend) -> Self::Result;
+    fn mul_add(self, factor: &Self::Factor, addend: &Self::Addend) -> Self::Result;
 
     /// Computes `self * factor`
-    fn mul_ratio_bigint(self, factor: &Self::Factor) -> Self::Result;
+    fn mul(self, factor: &Self::Factor) -> Self::Result;
 
     /// Computes `1/(self * factor)`
-    fn reciprocal_mul_ratio_bigint(self, factor: &Self::Factor) -> Self::Result;
+    fn reciprocal_mul(self, factor: &Self::Factor) -> Self::Result;
 
     /// Converts a [`Ratio<BigInt>`] to a [`Self::Factor`].
     fn factor_from_ratio_bigint(factor: Ratio<BigInt>) -> Self::Factor;
@@ -34,17 +34,17 @@ impl Convertible for &'_ Ratio<BigInt> {
     type Result = Ratio<BigInt>;
 
     // Exact
-    fn mul_ratio_bigint(self, factor: &Self::Factor) -> Self::Result {
+    fn mul(self, factor: &Self::Factor) -> Self::Result {
         self * factor
     }
 
     // Exact
-    fn add_mul_ratio_bigint(self, factor: &Self::Factor, addend: &Self::Addend) -> Self::Result {
+    fn mul_add(self, factor: &Self::Factor, addend: &Self::Addend) -> Self::Result {
         self * factor + addend
     }
 
     // Exact
-    fn reciprocal_mul_ratio_bigint(self, factor: &Self::Factor) -> Self::Result {
+    fn reciprocal_mul(self, factor: &Self::Factor) -> Self::Result {
         (self * factor).recip()
     }
 
@@ -63,17 +63,17 @@ impl Convertible for f64 {
     type Result = f64;
 
     // TODO: reduce error
-    fn mul_ratio_bigint(self, factor: &Self::Factor) -> Self::Result {
+    fn mul(self, factor: &Self::Factor) -> Self::Result {
         self * factor
     }
 
     // TODO: reduce error
-    fn add_mul_ratio_bigint(self, factor: &Self::Factor, addend: &Self::Addend) -> Self::Result {
+    fn mul_add(self, factor: &Self::Factor, addend: &Self::Addend) -> Self::Result {
         self * factor + addend
     }
 
     // TODO: reduce error
-    fn reciprocal_mul_ratio_bigint(self, factor: &Self::Factor) -> Self::Result {
+    fn reciprocal_mul(self, factor: &Self::Factor) -> Self::Result {
         1.0 / (self * factor)
     }
 
