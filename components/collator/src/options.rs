@@ -251,7 +251,8 @@ pub enum MaxVariable {
 }
 
 impl MaxVariable {
-    /// The number of variants in `MaxVariable`.
+    /// The number of variants in `MaxVariable` (Space, Punctuation, Symbol, Currency),
+    /// which correspond to the "real" special primaries.
     ///
     /// `variant_count` isn't stable yet:
     /// https://github.com/rust-lang/rust/issues/73662

@@ -612,9 +612,6 @@ pub struct CollationSpecialPrimaries<'data> {
 
 #[cfg(feature = "serde")]
 impl CollationSpecialPrimaries<'_> {
-    /// The number of real special primaries (Space, Punctuation, Symbol, Currency).
-    pub(crate) const NUM_PRIMARIES: usize = MaxVariable::VARIANT_COUNT;
-
     /// The length of the compressible bytes array (256 bits packed in `u16`s).
     pub(crate) const COMPRESSIBLE_BYTES_LEN: usize = 256 / (u16::BITS as usize);
 }
@@ -639,7 +636,7 @@ impl<'de> serde::Deserialize<'de> for CollationSpecialPrimaries<'de> {
 
         let Some((l, c)) = concatenated
             .as_ule_slice()
-            .split_at_checked(CollationSpecialPrimaries::NUM_PRIMARIES)
+            .split_at_checked(MaxVariable::VARIANT_COUNT)
         else {
             return Err(serde::de::Error::custom("invalid"));
         };
