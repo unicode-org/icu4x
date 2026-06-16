@@ -10,7 +10,7 @@
 //! ### Status
 //!
 //! Currently, this module has limited support. It supports regions, scripts,
-//! and variants, but support for languages and locales is currently missing.
+//! languages, and variants, but support for locales is currently missing.
 //! More features are on their way.
 //!
 //! If you have any feedback, please let us know at
@@ -18,11 +18,13 @@
 //!
 //! See [the parent module](mod@super) for a comparison of single and multi.
 
+mod language;
 mod region;
 mod script;
 mod variant;
 
 // Re-export from submodules
+pub use language::{LanguageDisplayName, LanguageDisplayNameOwned};
 pub use region::{RegionDisplayName, RegionDisplayNameOwned};
 pub use script::{ScriptDisplayName, ScriptDisplayNameOwned};
 pub use variant::{VariantDisplayName, VariantDisplayNameOwned};

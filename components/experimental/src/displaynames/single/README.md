@@ -215,3 +215,18 @@ As per [CLDR-19336](https://unicode-org.atlassian.net/browse/CLDR-19336), some l
 The following features defined in UTS #35 are currently not supported and are planned for future releases:
 
 1.  **Locale Extension Keywords (UTS #35 §3.2)**: Formatting Unicode extension keys and types (e.g., `-u-ca-gregory` -> "Calendar: Gregorian") using `localeKeyTypePattern`.
+
+---
+
+## Open Questions
+
+1.  **Writeable on Owned Types**:
+    Owned types like `ScriptDisplayNameOwned`, `RegionDisplayNameOwned`, `VariantDisplayNameOwned`, and `LanguageDisplayNameOwned` implement `Writeable` (by forwarding to their borrowed counterparts via `.as_borrowed()`).
+    *   *Question*: Should owned types implement `Writeable` directly, or should users be forced to call `.as_borrowed()` to format them? Keeping `Writeable` on owned types is convenient but increases API surface. We should decide if we want to keep this pattern or deprecate it.
+2.  **Constructor Argument Order**:
+    In `LanguageDisplayNameOwned::try_new(prefs, locale_id, options)`, we have placed `options` last.
+    *   *Question*: Since `options` behaves like a trailing optional bag (similar to varargs), placing it last seems intuitive. Does this align with the broader ICU4X API style?
+3.  **Fallback Behavior in Single Formatters**:
+    Currently, single formatters (`Script`, `Region`, `Variant`, `Language`) fail-fast in the constructor (`try_new` returns `Err(DataError)`) if the specific subtag data is missing from the provider (e.g., `xx` or an untranslated language).
+    *   *Question*: Should we redesign them to support fallback to the code (similar to the multi formatter) by storing the input identifier and making the payloads optional? Or is the current fail-fast behavior preferred for single formatters? If we choose fallback, we will need to update the existing `Region` and `Script` formatters in a future PR to maintain consistency.
+

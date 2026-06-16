@@ -76,13 +76,33 @@ fn test_concatenate() {
             expected: "Afar (Braille, Cocos (Keeling) Islands, IPA Phonetics, Computer)",
             should_borrow: false,
         },
+        TestCase {
+            input_1: &locale!("nl-BE"),
+            expected: "Flemish",
+            should_borrow: true,
+        },
+        TestCase {
+            input_1: &locale!("nl-Latn-BE"),
+            expected: "Flemish (Latin)",
+            should_borrow: false,
+        },
+        TestCase {
+            input_1: &"zh-Hans-fonipa".parse().unwrap(),
+            expected: "Simplified Chinese (IPA Phonetics)",
+            should_borrow: false,
+        },
+        TestCase {
+            input_1: &locale!("hi-Latn"),
+            expected: "Hindi (Latin)",
+            should_borrow: true,
+        },
     ];
     for cas in &cases {
         // TODO: Add tests for different data locales.
         let locale = locale!("en-001");
         let options: DisplayNamesOptions = Default::default();
 
-        let display_name = LocaleDisplayNamesFormatter::try_new(locale.into(), options)
+        let display_name = LocaleDisplayNamesFormatter::try_new(locale.clone().into(), options)
             .expect("Data should load successfully");
 
         let result = display_name.of(cas.input_1);
@@ -95,11 +115,21 @@ fn test_concatenate() {
             let result = result.into_owned();
             assert_eq!(result.capacity(), result.len());
         }
+
+        // Test our new single formatter implementation (only for cases that are in the data, i.e. not "xx")
+        if cas.input_1.id.language != icu_locale_core::subtags::language!("xx") {
+            use icu_experimental::displaynames::single::LanguageDisplayNameOwned;
+            let lang_id = cas.input_1.id.clone();
+            let single_display_name =
+                LanguageDisplayNameOwned::try_new(locale.clone().into(), lang_id, options)
+                    .expect("Data should load successfully");
+
+            use writeable::assert_writeable_eq;
+            assert_writeable_eq!(single_display_name, cas.expected);
+        }
     }
 }
 
-#[cfg(any())]
-// TODO(#7825): Enable this test once LanguageDisplayNameOwned is implemented.
 #[test]
 fn test_single_language_display_name() {
     use icu_experimental::displaynames::DisplayNamesOptions;
@@ -110,12 +140,12 @@ fn test_single_language_display_name() {
     let locale = locale!("en-001");
     let options: DisplayNamesOptions = Default::default();
 
-    // This should format "zh-Hant-HK" to "Traditional Chinese (Hong Kong)" in "en-001"
+    // This should format "zh-Hant-HK" to "Traditional Chinese (Hong Kong SAR China)" in "en-001"
     let lang_id = langid!("zh-Hant-HK");
     let lang_name = LanguageDisplayNameOwned::try_new(locale.into(), lang_id, options)
         .expect("Data should load successfully");
 
-    assert_writeable_eq!(lang_name, "Traditional Chinese (Hong Kong)");
+    assert_writeable_eq!(lang_name, "Traditional Chinese (Hong Kong SAR China)");
 }
 
 #[cfg(any())]
