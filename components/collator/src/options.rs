@@ -250,6 +250,14 @@ pub enum MaxVariable {
     Currency = 3,
 }
 
+impl MaxVariable {
+    /// The number of variants in `MaxVariable`.
+    ///
+    /// `variant_count` isn't stable yet:
+    /// https://github.com/rust-lang/rust/issues/73662
+    pub(crate) const VARIANT_COUNT: usize = MaxVariable::Currency as usize + 1;
+}
+
 /// Whether to distinguish case in sorting, even for sorting levels higher
 /// than tertiary, without having to use tertiary level just to enable case level differences.
 #[derive(Eq, PartialEq, Debug, Copy, Clone)]
