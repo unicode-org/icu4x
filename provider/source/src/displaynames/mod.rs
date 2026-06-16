@@ -35,6 +35,8 @@ pub(crate) const ALT_MENU_SUBSTRING: &str = "-alt-menu";
 /// - `$file`: The JSON file name in CLDR.
 /// - `$field`: The field name in `LocaleDisplayNames` containing the data.
 /// - `$suffix`: An optional string to append to the marker attribute to form the CLDR key.
+/// - `$key_transform`: (Optional) A closure of type `Fn(String) -> String` to transform the marker attribute into the CLDR key.
+/// - `$attr_transform`: (Optional) A closure of type `Fn(String) -> String` to transform the CLDR key back into the marker attribute.
 macro_rules! impl_displaynames_v1 {
     ($marker:ident, $resource:path, $file:literal, $field:ident, $suffix:expr,) => {
         $crate::displaynames::impl_displaynames_v1!(
