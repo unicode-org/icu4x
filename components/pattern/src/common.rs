@@ -283,7 +283,7 @@ pub trait ExtractionBackend: PatternBackend + crate::private::Sealed {
     /// 🚧 This API is unstable; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. Use with caution.
     /// </div>
-    type InternalDecodedMatches<'p, 'a>;
+    type DecodedMatchesUnstable<'p, 'a>;
 
     /// Extract matches from the store.
     ///
@@ -291,10 +291,10 @@ pub trait ExtractionBackend: PatternBackend + crate::private::Sealed {
     /// 🚧 This API is unstable; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. Use with caution.
     /// </div>
-    fn internal_extract<'p, 'a>(
+    fn extract_unstable<'p, 'a>(
         store: &'p Self::Store,
         input: &'a str,
-    ) -> Option<Self::InternalDecodedMatches<'p, 'a>>;
+    ) -> Option<Self::DecodedMatchesUnstable<'p, 'a>>;
 
     /// Get a match from the decoded matches.
     ///
@@ -302,8 +302,8 @@ pub trait ExtractionBackend: PatternBackend + crate::private::Sealed {
     /// 🚧 This API is unstable; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. Use with caution.
     /// </div>
-    fn internal_get_match<'p, 'b>(
-        store: &Self::InternalDecodedMatches<'p, 'b>,
+    fn get_match_unstable<'p, 'b>(
+        store: &Self::DecodedMatchesUnstable<'p, 'b>,
         key: Self::PlaceholderKey<'_>,
     ) -> Option<&'b str>;
 }
