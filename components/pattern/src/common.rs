@@ -279,19 +279,19 @@ where
 pub trait ExtractionBackend: PatternBackend + crate::private::Sealed {
     /// The type that stores the matches for this backend.
     #[doc(hidden)] // TODO(#4467): Should be internal
-    type DecodedMatches<'p, 'a>;
+    type InternalDecodedMatches<'p, 'a>;
 
     /// Extract matches from the store.
     #[doc(hidden)] // TODO(#4467): Should be internal
-    fn extract<'p, 'a>(
+    fn internal_extract<'p, 'a>(
         store: &'p Self::Store,
         input: &'a str,
-    ) -> Option<Self::DecodedMatches<'p, 'a>>;
+    ) -> Option<Self::InternalDecodedMatches<'p, 'a>>;
 
     /// Get a match from the decoded matches.
     #[doc(hidden)] // TODO(#4467): Should be internal
-    fn get_match<'p, 'b>(
-        store: &Self::DecodedMatches<'p, 'b>,
+    fn internal_get_match<'p, 'b>(
+        store: &Self::InternalDecodedMatches<'p, 'b>,
         key: Self::PlaceholderKey<'_>,
     ) -> Option<&'b str>;
 }

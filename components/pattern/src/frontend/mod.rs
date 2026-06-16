@@ -387,7 +387,7 @@ where
 ///
 /// Query it using [`Self::get()`].
 pub struct PlaceholderMatches<'p, 'a, B: ExtractionBackend> {
-    pub(crate) store: B::DecodedMatches<'p, 'a>,
+    pub(crate) store: B::InternalDecodedMatches<'p, 'a>,
 }
 
 impl<'p, 'a, B: ExtractionBackend> PlaceholderMatches<'p, 'a, B> {
@@ -406,13 +406,13 @@ impl<'p, 'a, B: ExtractionBackend> PlaceholderMatches<'p, 'a, B> {
     /// assert_eq!(matches.get(DoublePlaceholderKey::Place1), Some("Bob"));
     /// ```
     pub fn get(&self, key: B::PlaceholderKey<'_>) -> Option<&'a str> {
-        B::get_match(&self.store, key)
+        B::internal_get_match(&self.store, key)
     }
 }
 
 impl<'p, B: ExtractionBackend> fmt::Debug for PlaceholderMatches<'p, '_, B>
 where
-    for<'a> B::DecodedMatches<'p, 'a>: fmt::Debug,
+    for<'a> B::InternalDecodedMatches<'p, 'a>: fmt::Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("PlaceholderMatches")
@@ -423,7 +423,7 @@ where
 
 impl<'p, B: ExtractionBackend> PartialEq for PlaceholderMatches<'p, '_, B>
 where
-    for<'a> B::DecodedMatches<'p, 'a>: PartialEq,
+    for<'a> B::InternalDecodedMatches<'p, 'a>: PartialEq,
 {
     fn eq(&self, other: &Self) -> bool {
         self.store == other.store
@@ -431,7 +431,7 @@ where
 }
 
 impl<'p, B: ExtractionBackend> Eq for PlaceholderMatches<'p, '_, B> where
-    for<'a> B::DecodedMatches<'p, 'a>: Eq
+    for<'a> B::InternalDecodedMatches<'p, 'a>: Eq
 {
 }
 
@@ -453,7 +453,7 @@ impl<B: ExtractionBackend> Pattern<B> {
         &'p self,
         input: &'a str,
     ) -> Option<PlaceholderMatches<'p, 'a, B>> {
-        B::extract(&self.store, input).map(|store| PlaceholderMatches { store })
+        B::internal_extract(&self.store, input).map(|store| PlaceholderMatches { store })
     }
 }
 

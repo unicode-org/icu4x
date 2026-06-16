@@ -283,12 +283,12 @@ impl PatternBackend for SinglePlaceholder {
 }
 
 impl ExtractionBackend for SinglePlaceholder {
-    type DecodedMatches<'p, 'a> = Option<&'a str>;
+    type InternalDecodedMatches<'p, 'a> = Option<&'a str>;
 
-    fn extract<'p, 'a>(
+    fn internal_extract<'p, 'a>(
         store: &'p Self::Store,
         input: &'a str,
-    ) -> Option<Self::DecodedMatches<'p, 'a>> {
+    ) -> Option<Self::InternalDecodedMatches<'p, 'a>> {
         let mut prefix = None;
         let mut ph = None;
         let mut suffix = None;
@@ -330,8 +330,8 @@ impl ExtractionBackend for SinglePlaceholder {
         }
     }
 
-    fn get_match<'p, 'b>(
-        store: &Self::DecodedMatches<'p, 'b>,
+    fn internal_get_match<'p, 'b>(
+        store: &Self::InternalDecodedMatches<'p, 'b>,
         _key: Self::PlaceholderKey<'_>,
     ) -> Option<&'b str> {
         *store

@@ -421,12 +421,12 @@ impl PatternBackend for DoublePlaceholder {
 }
 
 impl ExtractionBackend for DoublePlaceholder {
-    type DecodedMatches<'p, 'a> = [Option<&'a str>; 2];
+    type InternalDecodedMatches<'p, 'a> = [Option<&'a str>; 2];
 
-    fn extract<'p, 'a>(
+    fn internal_extract<'p, 'a>(
         store: &'p Self::Store,
         input: &'a str,
-    ) -> Option<Self::DecodedMatches<'p, 'a>> {
+    ) -> Option<Self::InternalDecodedMatches<'p, 'a>> {
         let mut prefix = None;
         let mut first_ph = None;
         let mut infix = None;
@@ -516,8 +516,8 @@ impl ExtractionBackend for DoublePlaceholder {
         }
     }
 
-    fn get_match<'p, 'b>(
-        store: &Self::DecodedMatches<'p, 'b>,
+    fn internal_get_match<'p, 'b>(
+        store: &Self::InternalDecodedMatches<'p, 'b>,
         key: Self::PlaceholderKey<'_>,
     ) -> Option<&'b str> {
         match key {
