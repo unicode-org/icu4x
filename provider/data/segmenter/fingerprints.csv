@@ -1,5 +1,5 @@
 segmenter/break/grapheme/cluster/v1, <singleton>, 10452B, 10346B, 648dd52b775f2e5d
-segmenter/break/grapheme/cluster/v2, <singleton>, 12450B, 12310B, 663f4e37f018615b
+segmenter/break/grapheme/cluster/v2, <singleton>, 12406B, 12266B, b44043f1b4d00bee
 segmenter/break/line/override/v2, <lookup>, 88B, 7 identifiers
 segmenter/break/line/override/v2, <total>, 504B, 343B, 7 unique payloads
 segmenter/break/line/override/v2, und/cj, 72B, 49B, f3dfe1d8dddabb87
