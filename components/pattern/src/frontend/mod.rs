@@ -401,7 +401,7 @@ impl<'p, 'a, B: ExtractionBackend> PlaceholderMatches<'p, 'a, B> {
     /// use icu_pattern::{Pattern, DoublePlaceholder, DoublePlaceholderKey};
     ///
     /// let pattern = Pattern::<DoublePlaceholder>::try_from_str("Hello, {0} and {1}!", Default::default()).unwrap();
-    /// let matches = pattern.extract_placeholders("Hello, Alice and Bob!").unwrap();
+    /// let matches = pattern.extract_values("Hello, Alice and Bob!").unwrap();
     /// assert_eq!(matches.get(DoublePlaceholderKey::Place0), Some("Alice"));
     /// assert_eq!(matches.get(DoublePlaceholderKey::Place1), Some("Bob"));
     /// ```
@@ -446,10 +446,10 @@ impl<B: ExtractionBackend> Pattern<B> {
     /// use icu_pattern::{Pattern, SinglePlaceholder, SinglePlaceholderKey};
     ///
     /// let pattern = Pattern::<SinglePlaceholder>::try_from_str("Hello, {0}!", Default::default()).unwrap();
-    /// let matches = pattern.extract_placeholders("Hello, Alice!").unwrap();
+    /// let matches = pattern.extract_values("Hello, Alice!").unwrap();
     /// assert_eq!(matches.get(SinglePlaceholderKey::Singleton), Some("Alice"));
     /// ```
-    pub fn extract_placeholders<'p, 'a>(
+    pub fn extract_values<'p, 'a>(
         &'p self,
         input: &'a str,
     ) -> Option<PlaceholderMatches<'p, 'a, B>> {
