@@ -37,6 +37,8 @@ crate::displaynames::impl_displaynames_v1!(
     "variants.json",
     variants,
     None::<&str>,
+    |k: String| k.to_ascii_uppercase(), // load: BCP-47 (lowercase) -> CLDR (uppercase)
+    |k: String| k.to_ascii_lowercase()  // iter: CLDR (uppercase) -> BCP-47 (lowercase)
 );
 
 crate::displaynames::impl_displaynames_legacy_iter_v1!(VariantDisplayNamesV1, "variants.json");
@@ -103,7 +105,7 @@ mod tests {
         let data: DataPayload<LocaleNamesVariantMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str("POSIX").unwrap(),
+                    DataMarkerAttributes::try_from_str("posix").unwrap(),
                     &langid!("en-001").into(),
                 ),
                 ..Default::default()
