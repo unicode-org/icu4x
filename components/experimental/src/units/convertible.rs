@@ -8,55 +8,82 @@ use num_traits::ToPrimitive;
 
 /// A trait for types that can be converted between two units.
 pub trait Convertible: Clone {
+    type Factor: core::fmt::Debug + Clone;
+    type Addend: core::fmt::Debug + Clone;
     type Result: core::fmt::Debug;
 
     /// Computes `self * factor + addend`.
-    fn add_mul_ratio_bigint(&self, factor: &Ratio<BigInt>, addend: &Ratio<BigInt>) -> Self::Result;
+    fn add_mul_ratio_bigint(self, factor: &Self::Factor, addend: &Self::Addend) -> Self::Result;
 
     /// Computes `self * factor`
-    fn mul_ratio_bigint(&self, factor: &Ratio<BigInt>) -> Self::Result;
+    fn mul_ratio_bigint(self, factor: &Self::Factor) -> Self::Result;
 
     /// Computes `1/(self * factor)`
-    fn reciprocal_mul_ratio_bigint(&self, factor: &Ratio<BigInt>) -> Self::Result;
+    fn reciprocal_mul_ratio_bigint(self, factor: &Self::Factor) -> Self::Result;
+
+    /// Converts a [`Ratio<BigInt>`] to a [`Self::Factor`].
+    fn factor_from_ratio_bigint(factor: Ratio<BigInt>) -> Self::Factor;
+
+    /// Converts a [`Ratio<BigInt>`] to a [`Self::Addend`].
+    fn addend_from_ratio_bigint(addend: Ratio<BigInt>) -> Self::Addend;
 }
 
 impl Convertible for &'_ Ratio<BigInt> {
+    type Factor = Ratio<BigInt>;
+    type Addend = Ratio<BigInt>;
     type Result = Ratio<BigInt>;
 
     // Exact
-    fn mul_ratio_bigint(&self, factor: &Ratio<BigInt>) -> Self::Result {
-        *self * factor
+    fn mul_ratio_bigint(self, factor: &Self::Factor) -> Self::Result {
+        self * factor
     }
 
     // Exact
-    fn add_mul_ratio_bigint(&self, factor: &Ratio<BigInt>, addend: &Ratio<BigInt>) -> Self::Result {
-        *self * factor + addend
+    fn add_mul_ratio_bigint(self, factor: &Self::Factor, addend: &Self::Addend) -> Self::Result {
+        self * factor + addend
     }
 
     // Exact
-    fn reciprocal_mul_ratio_bigint(&self, factor: &Ratio<BigInt>) -> Self::Result {
-        (*self * factor).recip()
+    fn reciprocal_mul_ratio_bigint(self, factor: &Self::Factor) -> Self::Result {
+        (self * factor).recip()
+    }
+
+    fn factor_from_ratio_bigint(factor: Ratio<BigInt>) -> Self::Factor {
+        factor
+    }
+
+    fn addend_from_ratio_bigint(addend: Ratio<BigInt>) -> Self::Addend {
+        addend
     }
 }
 
 impl Convertible for f64 {
-    type Result = Self;
+    type Factor = f64;
+    type Addend = f64;
+    type Result = f64;
 
     // TODO: reduce error
-    fn mul_ratio_bigint(&self, factor: &Ratio<BigInt>) -> Self::Result {
-        // Ratio::<BigInt>::to_f64 is infallible
-        self * factor.to_f64().unwrap_or(f64::NAN)
+    fn mul_ratio_bigint(self, factor: &Self::Factor) -> Self::Result {
+        self * factor
     }
 
     // TODO: reduce error
-    fn add_mul_ratio_bigint(&self, factor: &Ratio<BigInt>, addend: &Ratio<BigInt>) -> Self::Result {
-        // Ratio::<BigInt>::to_f64 is infallible
-        self * factor.to_f64().unwrap_or(f64::NAN) + addend.to_f64().unwrap_or(f64::NAN)
+    fn add_mul_ratio_bigint(self, factor: &Self::Factor, addend: &Self::Addend) -> Self::Result {
+        self * factor + addend
     }
 
     // TODO: reduce error
-    fn reciprocal_mul_ratio_bigint(&self, factor: &Ratio<BigInt>) -> Self::Result {
+    fn reciprocal_mul_ratio_bigint(self, factor: &Self::Factor) -> Self::Result {
+        1.0 / (self * factor)
+    }
+
+    fn factor_from_ratio_bigint(factor: Ratio<BigInt>) -> Self::Factor {
         // Ratio::<BigInt>::to_f64 is infallible
-        1.0 / (self * factor.to_f64().unwrap_or(f64::NAN))
+        factor.to_f64().unwrap_or(f64::NAN)
+    }
+
+    fn addend_from_ratio_bigint(addend: Ratio<BigInt>) -> Self::Addend {
+        // Ratio::<BigInt>::to_f64 is infallible
+        addend.to_f64().unwrap_or(f64::NAN)
     }
 }

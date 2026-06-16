@@ -18,6 +18,7 @@ use num_traits::Pow;
 use num_traits::{One, Zero};
 use zerovec::ZeroSlice;
 
+use super::convertible::Convertible;
 /// `ConverterFactory` is responsible for creating converters.
 #[derive(Debug)]
 pub struct ConverterFactory {
@@ -280,11 +281,11 @@ impl ConverterFactory {
     /// NOTE:
     ///    This converter does not support conversions between mixed units,
     ///    such as, from "meter" to "foot-and-inch".
-    pub fn converter(
+    pub fn converter<T: Convertible>(
         &self,
         input_unit: &MeasureUnit,
         output_unit: &MeasureUnit,
-    ) -> Result<UnitsConverter, InvalidConversionError> {
+    ) -> Result<UnitsConverter<T>, InvalidConversionError> {
         let is_reciprocal = self.is_reciprocal(input_unit, output_unit)?;
 
         // is_reciprocal checked that all simple units can be loaded, so we can ignore load errors after this.
@@ -336,16 +337,16 @@ impl ConverterFactory {
 
         Ok(if is_reciprocal {
             UnitsConverter(UnitsConverterInner::Reciprocal {
-                factor: conversion_rate.get_ratio(),
+                factor: T::factor_from_ratio_bigint(conversion_rate.get_ratio()),
             })
         } else if offset.is_zero() {
             UnitsConverter(UnitsConverterInner::Proportional {
-                factor: conversion_rate.get_ratio(),
+                factor: T::factor_from_ratio_bigint(conversion_rate.get_ratio()),
             })
         } else {
             UnitsConverter(UnitsConverterInner::Offset {
-                factor: conversion_rate.get_ratio(),
-                offset: offset.get_ratio(),
+                factor: T::factor_from_ratio_bigint(conversion_rate.get_ratio()),
+                offset: T::addend_from_ratio_bigint(offset.get_ratio()),
             })
         })
     }
@@ -361,7 +362,7 @@ mod tests {
         let factory = ConverterFactory::new();
         let input_unit = MeasureUnit::try_from_str("meter").unwrap();
         let output_unit = MeasureUnit::try_from_str("foot").unwrap();
-        let converter = factory.converter(&input_unit, &output_unit).unwrap();
+        let converter = factory.converter::<f64>(&input_unit, &output_unit).unwrap();
         let result = converter.convert(1000.0);
         assert!(
             ((result - 3280.84) / 3280.84).abs() < 0.00001,
@@ -375,7 +376,7 @@ mod tests {
         let factory = ConverterFactory::new();
         let input_unit = MeasureUnit::try_from_str("liter-per-100-kilometer").unwrap();
         let output_unit = MeasureUnit::try_from_str("mile-per-gallon").unwrap();
-        let converter = factory.converter(&input_unit, &output_unit).unwrap();
+        let converter = factory.converter::<f64>(&input_unit, &output_unit).unwrap();
         let result = converter.convert(1.0);
         assert!(
             ((result - 235.21) / 235.21).abs() < 0.0001,
@@ -389,7 +390,7 @@ mod tests {
         let factory = ConverterFactory::new();
         let input_unit = MeasureUnit::try_from_str("celsius").unwrap();
         let output_unit = MeasureUnit::try_from_str("fahrenheit").unwrap();
-        let converter = factory.converter(&input_unit, &output_unit).unwrap();
+        let converter = factory.converter::<f64>(&input_unit, &output_unit).unwrap();
         let result = converter.convert(0.0);
         assert!(
             ((result - 32.0) / 32.0).abs() < 0.00001,
