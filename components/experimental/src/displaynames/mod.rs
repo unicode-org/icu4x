@@ -44,7 +44,6 @@
 mod displaynames;
 mod options;
 pub mod provider;
-mod singular;
 
 pub mod multi {
     //! Types for loading multiple display names at once.
@@ -61,28 +60,7 @@ pub mod multi {
     pub use displaynames::VariantDisplayNames;
 }
 
-pub mod single {
-    //! Types for loading a single display name at a time.
-    //!
-    //! This submodule is useful for applications that only need to display one or
-    //! two specific names, such as the name of the current region.
-    //!
-    //! ### Status
-    //!
-    //! Currently, this module has limited support. It supports regions and scripts,
-    //! but support for languages, locales, and variants is currently missing.
-    //! More features are on their way.
-    //!
-    //! If you have any feedback, please let us know at
-    //! <https://github.com/unicode-org/icu4x/issues/7825>.
-    //!
-    //! See [the parent module](mod@super) for a comparison of single and multi.
-    use super::singular;
-    pub use singular::RegionDisplayName;
-    pub use singular::RegionDisplayNameOwned;
-    pub use singular::ScriptDisplayName;
-    pub use singular::ScriptDisplayNameOwned;
-}
+pub mod single;
 
 pub use displaynames::DisplayNamesPreferences;
 pub use options::DisplayNamesOptions;
