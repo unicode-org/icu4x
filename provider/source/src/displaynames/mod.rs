@@ -35,29 +35,8 @@ pub(crate) const ALT_MENU_SUBSTRING: &str = "-alt-menu";
 /// - `$file`: The JSON file name in CLDR.
 /// - `$field`: The field name in `LocaleDisplayNames` containing the data.
 /// - `$suffix`: An optional string to append to the marker attribute to form the CLDR key.
-/// - `$key_transform`: (Optional) A closure of type `Fn(String) -> String` to transform the marker attribute into the CLDR key.
-/// - `$attr_transform`: (Optional) A closure of type `Fn(String) -> String` to transform the CLDR key back into the marker attribute.
 macro_rules! impl_displaynames_v1 {
     ($marker:ident, $resource:path, $file:literal, $field:ident, $suffix:expr,) => {
-        $crate::displaynames::impl_displaynames_v1!(
-            $marker,
-            $resource,
-            $file,
-            $field,
-            $suffix,
-            |k: String| k,
-            |k: String| k
-        );
-    };
-    (
-        $marker:ident,
-        $resource:path,
-        $file:literal,
-        $field:ident,
-        $suffix:expr,
-        $key_transform:expr,
-        $attr_transform:expr
-    ) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
@@ -71,8 +50,6 @@ macro_rules! impl_displaynames_v1 {
                 if let Some(suffix) = $suffix {
                     key.push_str(suffix);
                 }
-
-                let key = ($key_transform)(key);
 
                 let name = data
                     .main
@@ -92,12 +69,7 @@ macro_rules! impl_displaynames_v1 {
         }
 
         $crate::displaynames::impl_displaynames_iter_v1!(
-            $marker,
-            $resource,
-            $file,
-            $field,
-            $suffix,
-            $attr_transform
+            $marker, $resource, $file, $field, $suffix
         );
     };
 }
@@ -208,7 +180,7 @@ macro_rules! impl_displaynames_menu_v1 {
 /// - `$field`: The field name in `LocaleDisplayNames` containing the data.
 /// - `$suffix`: An optional string that marks which entries to include in this provider.
 macro_rules! impl_displaynames_iter_v1 {
-    ($marker:ident, $resource:path, $file:literal, $field:ident, $suffix:expr, $attr_transform:expr) => {
+    ($marker:ident, $resource:path, $file:literal, $field:ident, $suffix:expr) => {
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
                 let mut result = HashSet::new();
@@ -234,14 +206,14 @@ macro_rules! impl_displaynames_iter_v1 {
                         };
 
                         if let Some(attr_str) = attr {
-                            let attr_str = ($attr_transform)(attr_str.to_string());
-                            if let Err(_) = DataMarkerAttributes::try_from_str(&attr_str) {
-                                return Err(DataError::custom("Failed to parse attribute")
-                                    .with_debug_context(&attr_str));
-                            }
-                            let boxed = DataMarkerAttributes::try_from_string(attr_str)
-                                .expect("Validated above");
-                            let data_identifier = DataIdentifierCow::from_owned(boxed, locale);
+                            let data_identifier = DataIdentifierCow::from_owned(
+                                DataMarkerAttributes::try_from_string(attr_str.to_string())
+                                    .map_err(|_| {
+                                        DataError::custom("Failed to parse attribute")
+                                            .with_debug_context(&attr_str)
+                                    })?,
+                                locale,
+                            );
                             result.insert(data_identifier);
                         }
                     }
