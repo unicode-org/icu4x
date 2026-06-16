@@ -639,8 +639,6 @@ impl<'de> serde::Deserialize<'de> for CollationSpecialPrimaries<'de> {
 
         let Some((l, c)) = concatenated
             .as_ule_slice()
-            // `variant_count` isn't stable yet:
-            // https://github.com/rust-lang/rust/issues/73662
             .split_at_checked(CollationSpecialPrimaries::NUM_PRIMARIES)
         else {
             return Err(serde::de::Error::custom("invalid"));
