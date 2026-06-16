@@ -250,12 +250,13 @@ pub enum MaxVariable {
     Currency = 3,
 }
 
+#[cfg(feature = "serde")]
 impl MaxVariable {
     /// The number of variants in `MaxVariable` (Space, Punctuation, Symbol, Currency),
     /// which correspond to the "real" special primaries.
     ///
     /// `variant_count` isn't stable yet:
-    /// https://github.com/rust-lang/rust/issues/73662
+    /// <https://github.com/rust-lang/rust/issues/73662>
     pub(crate) const VARIANT_COUNT: usize = MaxVariable::Currency as usize + 1;
 }
 
