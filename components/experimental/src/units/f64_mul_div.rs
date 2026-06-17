@@ -39,6 +39,9 @@ pub(super) fn f64_mul_div(a: f64, num: f64, den: f64) -> f64 {
     // The total error is the difference between the rounded multiplication+division
     // and the multiplication evaluated in full precision, plus the multiplication
     // error divided by the denominator, all evaluated in times-den-space.
+    //
+    // Note: Even if `a`, `num`, and `den` are finite, `total_error` (and the final
+    // result) can still be non-finite (NaN) due to intermediate overflow in `a * num`.
     let total_error = (double_rounded.mul_add(-den, a * num) + multiplication_error) / den;
 
     double_rounded + total_error
@@ -117,8 +120,9 @@ mod tests {
         assert!(f64_mul_div(1.0, 0.0, 0.0).is_nan());
         assert!(f64_mul_div(0.0, 0.0, 0.0).is_nan());
 
-        // Intermediate overflow (known limitation: FMA fails/returns NaN due to
-        // intermediate overflow in a * num, even though the naive math is finite)
+        // Intermediate overflow: Even though all inputs (1e300) are finite, the
+        // intermediate product `a * num` overflows, causing `total_error` to be
+        // non-finite, which ultimately results in NaN.
         assert!(f64_mul_div(1e300, 1e300, 1e300).is_nan());
     }
 }
