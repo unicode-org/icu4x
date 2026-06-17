@@ -58,38 +58,44 @@ mod tests {
         // Case 1: 5 grams to tonnes (1/1_000_000)
         // Naive: 5.0 * (1.0 / 1_000_000.0) = 5.000000000000001e-6
         // f64_mul_div: 5e-6
-        let val = 5.0;
-        let num = 1.0;
-        let den = 1_000_000.0;
-        let naive = val * (num / den);
-        let f64_mul_div = f64_mul_div(val, num, den);
-        assert_ne!(naive, f64_mul_div);
-        assert_eq!(f64_mul_div, 0.000005);
-        assert_eq!(naive, 0.0000049999999999999996);
+        {
+            let val = 5.0;
+            let num = 1.0;
+            let den = 1_000_000.0;
+            let naive = val * (num / den);
+            let f64_mul_div = f64_mul_div(val, num, den);
+            assert_ne!(naive, f64_mul_div);
+            assert_eq!(f64_mul_div, 0.000005);
+            assert_eq!(naive, 0.0000049999999999999996);
+        }
 
         // Case 2: 0.1 * (1.0 / 10.0)
         // Naive: 0.010000000000000002
         // f64_mul_div: 0.01
-        let val = 0.1;
-        let num = 1.0;
-        let den = 10.0;
-        let naive = val * (num / den);
-        let f64_mul_div = f64_mul_div(val, num, den);
-        assert_ne!(naive, f64_mul_div);
-        assert_eq!(f64_mul_div, 0.01);
-        assert_eq!(naive, 0.010000000000000002);
+        {
+            let val = 0.1;
+            let num = 1.0;
+            let den = 10.0;
+            let naive = val * (num / den);
+            let f64_mul_div = f64_mul_div(val, num, den);
+            assert_ne!(naive, f64_mul_div);
+            assert_eq!(f64_mul_div, 0.01);
+            assert_eq!(naive, 0.010000000000000002);
+        }
 
         // Case 3: 0.1 * (1.0 / 5.0)
         // Naive: 0.020000000000000004
         // f64_mul_div: 0.02
-        let val = 0.1;
-        let num = 1.0;
-        let den = 5.0;
-        let naive = val * (num / den);
-        let f64_mul_div = f64_mul_div(val, num, den);
-        assert_ne!(naive, f64_mul_div);
-        assert_eq!(f64_mul_div, 0.02);
-        assert_eq!(naive, 0.020000000000000004);
+        {
+            let val = 0.1;
+            let num = 1.0;
+            let den = 5.0;
+            let naive = val * (num / den);
+            let f64_mul_div = f64_mul_div(val, num, den);
+            assert_ne!(naive, f64_mul_div);
+            assert_eq!(f64_mul_div, 0.02);
+            assert_eq!(naive, 0.020000000000000004);
+        }
     }
 
     #[test]
