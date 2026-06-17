@@ -28,7 +28,8 @@ use core_maths::*;
 /// return `NaN`, even if the naive calculation would have returned a sensible value
 /// (like `Infinity` or `0.0`). We accept this limitation to keep the function extremely
 /// simple, fast, and branchless, relying on callers to enforce finiteness invariants
-/// (which we do in `RatioF64` and `Convertible::mul_ratio`).
+/// (which we do in `RatioF64` and `Convertible::mul_ratio`) (tracked in
+/// [unicode-org/icu4x#8092](https://github.com/unicode-org/icu4x/issues/8092)).
 pub(super) fn f64_mul_div(a: f64, num: f64, den: f64) -> f64 {
     let double_rounded = a * num / den;
 
@@ -41,7 +42,8 @@ pub(super) fn f64_mul_div(a: f64, num: f64, den: f64) -> f64 {
     // error divided by the denominator, all evaluated in times-den-space.
     //
     // Note: Even if `a`, `num`, and `den` are finite, `total_error` (and the final
-    // result) can still be non-finite (NaN) due to intermediate overflow in `a * num`.
+    // result) can still be non-finite (NaN) due to intermediate overflow in `a * num`
+    // (see [unicode-org/icu4x#8092](https://github.com/unicode-org/icu4x/issues/8092)).
     let total_error = (double_rounded.mul_add(-den, a * num) + multiplication_error) / den;
 
     double_rounded + total_error
@@ -122,7 +124,8 @@ mod tests {
 
         // Intermediate overflow: Even though all inputs (1e300) are finite, the
         // intermediate product `a * num` overflows, causing `total_error` to be
-        // non-finite, which ultimately results in NaN.
+        // non-finite, which ultimately results in NaN (see
+        // [unicode-org/icu4x#8092](https://github.com/unicode-org/icu4x/issues/8092)).
         assert!(f64_mul_div(1e300, 1e300, 1e300).is_nan());
     }
 }
