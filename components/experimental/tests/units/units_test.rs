@@ -372,14 +372,13 @@ fn test_f64_vs_bigint_precision() {
         // 3. Assert exact match or minimal difference (closest representable float)
         if expect_exact {
             assert_eq!(
-                actual,
-                expected,
-                "Expected exact match for {input_str} -> {output_str} with value {val}, but got actual={actual}, expected={expected}"
+                actual, expected,
+                "{input_str} -> {output_str} with value {val}"
             );
         } else {
-            let is_minimal = actual == expected.next_up() || actual == expected.next_down();
             let next_down = expected.next_down();
             let next_up = expected.next_up();
+            let is_minimal = actual == next_up || actual == next_down;
             assert!(
                 is_minimal,
                 "Precision mismatch for {input_str} -> {output_str} with value {val}: actual ({actual}) is not the closest representable float to expected ({expected}) [next_down={next_down}, next_up={next_up}]"
