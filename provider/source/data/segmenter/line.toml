@@ -421,6 +421,12 @@ right = "QU_PI"
 [[tables]]
 # LB15a
 name = "QU"
+left = "SOT_HH"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
 left = "ID"
 right = "QU_PI"
 

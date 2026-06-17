@@ -441,11 +441,10 @@ fn generate_rule_break_data(
                                     if p.name == "ID_CN"
                                         && gc.get32(cp) == GeneralCategory::Unassigned
                                     {
-                                        if let Some(c) = char::from_u32(cp) {
-                                            if extended_pictographic.contains(c) {
+                                        if let Some(c) = char::from_u32(cp)
+                                            && extended_pictographic.contains(c) {
                                                 properties_trie.set_value(cp, property_index);
                                             }
-                                        }
                                     } else if p.name == "ID_EastAsian" && is_east_asian(eaw, cp) {
                                         properties_trie.set_value(cp, property_index);
                                     }

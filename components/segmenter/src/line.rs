@@ -1045,13 +1045,10 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                 // LB15c (SP / IS NU)
                 if left_prop == RuleBreakData::LINE_PROPERTY_SP
                     && right_prop == RuleBreakData::LINE_PROPERTY_IS
+                    && let Some((_, next_char)) = self.peek_iter_until_no_combining_mark()
+                    && self.get_linebreak_property(next_char) == RuleBreakData::LINE_PROPERTY_NU
                 {
-                    if let Some((_, next_char)) = self.peek_iter_until_no_combining_mark() {
-                        if self.get_linebreak_property(next_char) == RuleBreakData::LINE_PROPERTY_NU
-                        {
-                            return self.get_current_position();
-                        }
-                    }
+                    return self.get_current_position();
                 }
 
                 // LB4 and LB5 (BK | CR | LF | NL) !
@@ -1067,26 +1064,26 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                         | RuleBreakData::LINE_PROPERTY_ZW => {
                             // Apply LB15a
                             let result = self.get_current_position();
-                            if let Some((_, next_char)) = self.peek_iter_until_no_combining_mark() {
-                                if matches!(
+                            if let Some((_, next_char)) = self.peek_iter_until_no_combining_mark()
+                                && matches!(
                                     self.get_linebreak_property(next_char),
                                     RuleBreakData::LINE_PROPERTY_HH
                                         | RuleBreakData::LINE_PROPERTY_HY
-                                ) {
-                                    return result;
-                                }
+                                )
+                            {
+                                return result;
                             }
-                            if let Some((_, next_char)) = self.peek_iter() {
-                                if matches!(
+                            if let Some((_, next_char)) = self.peek_iter()
+                                && matches!(
                                     self.get_linebreak_property(next_char),
                                     RuleBreakData::LINE_PROPERTY_CM
                                         | RuleBreakData::LINE_PROPERTY_CM_EASTASIAN
                                         | RuleBreakData::LINE_PROPERTY_ZWJ
-                                ) {
-                                    self.advance_iter();
-                                    self.skip_combining_mark();
-                                    return result;
-                                }
+                                )
+                            {
+                                self.advance_iter();
+                                self.skip_combining_mark();
+                                return result;
                             }
                             return result;
                         }
@@ -1147,26 +1144,25 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                 ) && matches!(
                     right_prop,
                     RuleBreakData::LINE_PROPERTY_HY | RuleBreakData::LINE_PROPERTY_HH
-                ) {
-                    if let Some((_, next_char)) = self.peek_iter_until_no_combining_mark() {
-                        match self.get_linebreak_property(next_char) {
-                            RuleBreakData::LINE_PROPERTY_AL
-                            | RuleBreakData::LINE_PROPERTY_AL_EASTASIAN
-                            | RuleBreakData::LINE_PROPERTY_AL_DOTTED_CIRCLE
-                            | RuleBreakData::LINE_PROPERTY_HL
-                            | RuleBreakData::LINE_PROPERTY_AI
-                            | RuleBreakData::LINE_PROPERTY_AI_EASTASIAN
-                            | RuleBreakData::LINE_PROPERTY_XX
-                            | RuleBreakData::LINE_PROPERTY_XX_EXTPICT => {
-                                let result = self.get_current_position();
-                                self.advance_iter();
-                                if left_prop == RuleBreakData::LINE_PROPERTY_CB && after_zwj {
-                                    continue;
-                                }
-                                return result;
+                ) && let Some((_, next_char)) = self.peek_iter_until_no_combining_mark()
+                {
+                    match self.get_linebreak_property(next_char) {
+                        RuleBreakData::LINE_PROPERTY_AL
+                        | RuleBreakData::LINE_PROPERTY_AL_EASTASIAN
+                        | RuleBreakData::LINE_PROPERTY_AL_DOTTED_CIRCLE
+                        | RuleBreakData::LINE_PROPERTY_HL
+                        | RuleBreakData::LINE_PROPERTY_AI
+                        | RuleBreakData::LINE_PROPERTY_AI_EASTASIAN
+                        | RuleBreakData::LINE_PROPERTY_XX
+                        | RuleBreakData::LINE_PROPERTY_XX_EXTPICT => {
+                            let result = self.get_current_position();
+                            self.advance_iter();
+                            if left_prop == RuleBreakData::LINE_PROPERTY_CB && after_zwj {
+                                continue;
                             }
-                            _ => (),
+                            return result;
                         }
+                        _ => (),
                     }
                 }
             }
@@ -1262,6 +1258,14 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                         if left_prop_pre_lb9 == RuleBreakData::LINE_PROPERTY_SP
                             && index != RuleBreakData::LINE_PROPERTY_ZW
                             && prop == RuleBreakData::LINE_PROPERTY_IS
+                            // Skip if the current state has sticky "× Any" semantics.
+                            && !matches!(
+                                self.data.get_break_state_from_table(
+                                    index,
+                                    RuleBreakData::LINE_PROPERTY_AL
+                                ),
+                                BreakState::Keep
+                            )
                         {
                             // LB15c or LB15d
                             self.iter = intermediate_iter;
