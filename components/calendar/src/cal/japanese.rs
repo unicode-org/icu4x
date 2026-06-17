@@ -8,7 +8,7 @@ use crate::cal::abstract_gregorian::{
 use crate::cal::gregorian::CeBce;
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::{DateError, UnknownEraError};
-use crate::provider::{CalendarJapaneseModernV1, EraStartDate, JapaneseEras};
+use crate::provider::{CalendarJapaneseModernV1, EraStartDate, PackedEra};
 use crate::{AsCalendar, Date, types};
 use icu_provider::prelude::*;
 use tinystr::{TinyAsciiStr, tinystr};
@@ -38,7 +38,7 @@ use tinystr::{TinyAsciiStr, tinystr};
 /// data.
 #[derive(Clone, Debug, Default, Copy)]
 pub struct Japanese {
-    eras: JapaneseEras,
+    post_reiwa_era: Option<PackedEra>,
 }
 
 impl Japanese {
@@ -51,7 +51,14 @@ impl Japanese {
     pub const fn new() -> Self {
         const {
             Self {
-                eras: *crate::provider::Baked::SINGLETON_CALENDAR_JAPANESE_MODERN_V1,
+                post_reiwa_era: const {
+                    match crate::provider::Baked::SINGLETON_CALENDAR_JAPANESE_MODERN_V1
+                        .last_after_reiwa()
+                    {
+                        Ok(era) => era,
+                        Err(_) => panic!("Invalid compiled data for Japanese calendar"),
+                    }
+                },
             }
         }
     }
@@ -69,14 +76,18 @@ impl Japanese {
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            eras: *provider.load(Default::default())?.payload.get(),
+            post_reiwa_era: provider
+                .load(Default::default())?
+                .payload
+                .get()
+                .last_after_reiwa()?,
         })
     }
 }
 
 impl Japanese {
     fn eras(self) -> impl Iterator<Item = (EraStartDate, TinyAsciiStr<8>, u8)> {
-        self.eras.last_after_reiwa().into_iter().chain([
+        self.post_reiwa_era.map(|p| p.unpack()).into_iter().chain([
             (
                 EraStartDate {
                     year: 2019,
@@ -264,7 +275,7 @@ mod tests {
     use super::*;
 
     const CALENDAR: Japanese = Japanese {
-        eras: JapaneseEras::with_last_era(
+        post_reiwa_era: match PackedEra::pack(
             EraStartDate {
                 year: 2086,
                 month: 11,
@@ -272,8 +283,10 @@ mod tests {
             },
             tinystr!(8, "fuzu"),
             8,
-        )
-        .unwrap(),
+        ) {
+            Ok(era) => Some(era),
+            _ => unreachable!(),
+        },
     };
 
     fn single_test_roundtrip(era: &str, year: i32, month: u8, day: u8) {
