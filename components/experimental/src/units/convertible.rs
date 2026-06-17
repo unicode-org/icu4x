@@ -61,7 +61,7 @@ impl Convertible for Ratio<BigInt> {
 ///
 /// We store the `numerator` and `denominator` as `f64` (instead of integers)
 /// so they can be fed directly into the precision-improving division algorithm
-/// (which uses `f64::mul_add`).
+/// (`f64_mul_div`).
 ///
 /// The numerator and denominator are always integers, so this is an exact
 /// representation of a `Ratio<BigInt>`.
