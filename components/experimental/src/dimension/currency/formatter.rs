@@ -16,6 +16,7 @@ use writeable::Writeable;
 use super::super::provider::currency::essentials::CurrencyEssentialsV1;
 use super::CurrencyCode;
 use super::options::CurrencyFormatterOptions;
+use icu_pattern::DoublePlaceholderPattern;
 
 extern crate alloc;
 
@@ -80,12 +81,16 @@ impl CurrencyFormatter {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
         let decimal_formatter =
             DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
-        let essential = crate::provider::Baked
+        let essential: DataPayload<CurrencyEssentialsV1> = crate::provider::Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })?
             .payload;
+
+        if essential.get().standard_pattern().is_none() {
+            return Err(DataError::custom("missing standard pattern"));
+        }
 
         Ok(Self {
             options,
@@ -112,12 +117,16 @@ impl CurrencyFormatter {
             (&prefs).into(),
             DecimalFormatterOptions::default(),
         )?;
-        let essential = provider
+        let essential: DataPayload<CurrencyEssentialsV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })?
             .payload;
+
+        if essential.get().standard_pattern().is_none() {
+            return Err(DataError::custom("missing standard pattern"));
+        }
 
         Ok(Self {
             options,
@@ -154,6 +163,8 @@ impl CurrencyFormatter {
             .essential
             .get()
             .name_and_pattern(self.options.width, currency_code);
+
+        let pattern = pattern.unwrap_or_else(|| <&DoublePlaceholderPattern>::default());
 
         self.decimal_formatter.format_sign(
             value.sign,

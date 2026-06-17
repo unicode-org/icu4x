@@ -38,6 +38,7 @@
     not(any(feature = "provider", feature = "blob_input",)),
     allow(unused_assignments, unreachable_code, unused_variables)
 )]
+#![cfg_attr(icu4x_nightly_tests, feature(non_exhaustive_omitted_patterns_lint))]
 
 use clap::{Parser, ValueEnum};
 use displaydoc::Display;
@@ -241,6 +242,11 @@ struct Cli {
     #[cfg(feature = "provider")]
     collation_root_han: CollationRootHan,
 
+    #[arg(long = "alt-variant", value_enum, num_args = 1..)]
+    #[arg(help = "Which alt variants to enable.")]
+    #[cfg(feature = "provider")]
+    alt_variants: Vec<AltVariantKind>,
+
     #[arg(long, value_enum, num_args = 1..)]
     #[arg(
         help = "Which less-common collation tables to include. 'search-all' includes all search tables."
@@ -332,10 +338,16 @@ enum TrieType {
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
-// Mirrors icu_provider_export::CollationRootHan
+// Mirrors icu_provider_source::CollationRootHan
 enum CollationRootHan {
     Unihan,
     Implicit,
+}
+
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
+// Mirrors icu_provider_source::AltVariantKind
+enum AltVariantKind {
+    DatetimeAscii,
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
@@ -493,6 +505,10 @@ fn run(cli: Cli) -> eyre::Result<()> {
                 CollationRootHan::Unihan => icu_provider_source::CollationRootHan::Unihan,
                 CollationRootHan::Implicit => icu_provider_source::CollationRootHan::Implicit,
             });
+
+            p = p.with_alt_variants(cli.alt_variants.iter().copied().map(|v| match v {
+                AltVariantKind::DatetimeAscii => icu_provider_source::AltVariantKind::DatetimeAscii,
+            }));
 
             if cli.trie_type == TrieType::Fast {
                 p = p.with_fast_tries();
@@ -874,4 +890,47 @@ fn test_attributes_regex() {
 
     assert!(std::fs::exists(out.join("hello/world/v1/uppercase")).unwrap());
     assert!(!std::fs::exists(out.join("hello/world/v1/lowercase")).unwrap());
+}
+
+#[cfg(test)]
+#[cfg_attr(icu4x_nightly_tests, deny(non_exhaustive_omitted_patterns))]
+#[allow(unreachable_patterns)]
+mod test_consistency {
+    #[test]
+    fn test_deduplication_consistency() {
+        use crate::Deduplication;
+        use icu_provider_export::DeduplicationStrategy as Upstream;
+        let upstream = Upstream::None;
+        let _ = match upstream {
+            Upstream::Maximal => Deduplication::Maximal,
+            Upstream::RetainBaseLanguages => Deduplication::RetainBaseLanguages,
+            Upstream::None => Deduplication::None,
+            _ => unreachable!(),
+        };
+    }
+
+    #[cfg(feature = "provider")]
+    #[test]
+    fn test_collation_root_han_consistency() {
+        use crate::CollationRootHan;
+        use icu_provider_source::CollationRootHan as Upstream;
+        let upstream = Upstream::Implicit;
+        let _ = match upstream {
+            Upstream::Implicit => CollationRootHan::Implicit,
+            Upstream::Unihan => CollationRootHan::Unihan,
+            _ => unreachable!(),
+        };
+    }
+
+    #[cfg(feature = "provider")]
+    #[test]
+    fn test_alt_variant_kind_consistency() {
+        use crate::AltVariantKind;
+        use icu_provider_source::AltVariantKind as Upstream;
+        let upstream = Upstream::DatetimeAscii;
+        let _ = match upstream {
+            Upstream::DatetimeAscii => AltVariantKind::DatetimeAscii,
+            _ => unreachable!(),
+        };
+    }
 }

@@ -9,6 +9,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use icu_pattern::DoublePlaceholderPattern;
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use tinystr::UnvalidatedTinyAsciiStr;
@@ -175,10 +176,26 @@ pub struct MenuNameParts<'data> {
 
 icu_provider::data_struct!(VariantDisplayNames<'_>, #[cfg(feature = "datagen")]);
 
+/// [`LocaleNamesEssentials`] provides the formatting patterns used to combine subtags.
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
+pub struct LocaleNamesEssentials<'data> {
+    /// The pattern used to combine the base language name with qualifiers (e.g., `"{0} ({1})"`).
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub locale_pattern: VarZeroCow<'data, DoublePlaceholderPattern>,
+    /// The separator used to join multiple qualifiers (e.g., `"{0}, {1}"`).
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub locale_separator: VarZeroCow<'data, DoublePlaceholderPattern>,
+}
+
+icu_provider::data_struct!(LocaleNamesEssentials<'_>, #[cfg(feature = "datagen")]);
+
 icu_provider::data_marker!(
     /// Data marker for region display names.
-    LocaleNamesRegionLongV1,
-    "locale/names/region/long/v1",
+    LocaleNamesRegionMediumV1,
+    "locale/names/region/medium/v1",
     VarZeroCow<'static, str>,
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_region",
@@ -195,8 +212,8 @@ icu_provider::data_marker!(
 
 icu_provider::data_marker!(
     /// Data marker for language display names.
-    LocaleNamesLanguageLongV1,
-    "locale/names/language/long/v1",
+    LocaleNamesLanguageMediumV1,
+    "locale/names/language/medium/v1",
     VarZeroCow<'static, str>,
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_language",
@@ -212,9 +229,18 @@ icu_provider::data_marker!(
 );
 
 icu_provider::data_marker!(
-    /// Data marker for menu-long language display names.
-    LocaleNamesLanguageMenuLongV1,
-    "locale/names/language/menu/long/v1",
+    /// Data marker for long language display names.
+    LocaleNamesLanguageLongV1,
+    "locale/names/language/long/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_language",
+);
+
+icu_provider::data_marker!(
+    /// Data marker for menu-medium language display names.
+    LocaleNamesLanguageMenuMediumV1,
+    "locale/names/language/menu/medium/v1",
     VarZeroCow<'static, MenuNamePartsULE>,
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_language",
@@ -222,8 +248,8 @@ icu_provider::data_marker!(
 
 icu_provider::data_marker!(
     /// Data marker for script display names.
-    LocaleNamesScriptLongV1,
-    "locale/names/script/long/v1",
+    LocaleNamesScriptMediumV1,
+    "locale/names/script/medium/v1",
     VarZeroCow<'static, str>,
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_script",
@@ -240,18 +266,16 @@ icu_provider::data_marker!(
 
 icu_provider::data_marker!(
     /// Data marker for variant display names.
-    LocaleNamesVariantLongV1,
-    "locale/names/variant/long/v1",
+    LocaleNamesVariantMediumV1,
+    "locale/names/variant/medium/v1",
     VarZeroCow<'static, str>,
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_variant",
 );
 
 icu_provider::data_marker!(
-    /// Data marker for short variant display names.
-    LocaleNamesVariantShortV1,
-    "locale/names/variant/short/v1",
-    VarZeroCow<'static, str>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "locale_names_variant",
+    /// Data marker for locale names essentials (patterns).
+    LocaleNamesEssentialsV1,
+    "locale/names/essentials/v1",
+    LocaleNamesEssentials<'static>
 );

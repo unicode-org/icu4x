@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{DatagenCalendar, PackedPatternItem, select_pattern, transpose_with_fallback};
+use crate::datetime::available_formats::DatetimeAsciiPreference;
 use crate::debug_provider::DebugProvider;
 use crate::{IterableDataProviderCached, SourceDataProvider, cldr_serde};
 use icu::datetime::fieldsets::enums::*;
@@ -248,9 +249,14 @@ impl SourceDataProvider {
             req.id.marker_attributes,
             |data| {
                 // Note: We default to atTime here (See https://github.com/unicode-org/conformance/issues/469)
-                let length_combinations_v1 =
-                    GenericLengthPatterns::from(&data.datetime_formats_at_time);
-                let skeleton_patterns = data.datetime_formats.available_formats.parse_skeletons();
+                let length_combinations_v1 = convert_length_patterns(
+                    &data.datetime_formats_at_time,
+                    self.datetime_ascii_preference(),
+                );
+                let skeleton_patterns = data
+                    .datetime_formats
+                    .available_formats
+                    .parse_skeletons(self.datetime_ascii_preference());
                 SemanticSkeletonsContext {
                     skeleton_patterns,
                     length_combinations_v1,
@@ -464,40 +470,42 @@ pub(crate) fn preferred_hour_cycle(
     preferred_hour_cycle.expect("Could not find a preferred hour cycle.")
 }
 
-impl From<&cldr_serde::ca::DateTimeFormatsVariant> for GenericLengthPatterns<'_> {
-    fn from(other: &cldr_serde::ca::DateTimeFormatsVariant) -> Self {
-        // TODO(#308): Support numbering system variations. We currently throw them away.
-        Self {
-            full: other
-                .standard
-                .full
-                .get_pattern()
-                .parse()
-                .expect("Failed to parse pattern"),
-            long: other
-                .standard
-                .long
-                .get_pattern()
-                .parse()
-                .expect("Failed to parse pattern"),
-            medium: other
-                .standard
-                .medium
-                .get_pattern()
-                .parse()
-                .expect("Failed to parse pattern"),
-            short: other
-                .standard
-                .short
-                .get_pattern()
-                .parse()
-                .expect("Failed to parse pattern"),
-        }
+pub(crate) fn convert_length_patterns<'data>(
+    other: &'data cldr_serde::ca::DateTimeFormatsVariant,
+    datetime_ascii_preference: DatetimeAsciiPreference,
+) -> GenericLengthPatterns<'data> {
+    let choose_pattern =
+        |std: &'data cldr_serde::ca::LengthPattern,
+         alt: &'data Option<cldr_serde::ca::LengthPattern>| {
+            if datetime_ascii_preference == DatetimeAsciiPreference::PreferAscii {
+                alt.as_ref().unwrap_or(std)
+            } else {
+                std
+            }
+        };
+
+    GenericLengthPatterns {
+        full: choose_pattern(&other.standard.full, &other.standard.full_alt_ascii)
+            .get_pattern()
+            .parse()
+            .expect("Failed to parse pattern"),
+        long: choose_pattern(&other.standard.long, &other.standard.long_alt_ascii)
+            .get_pattern()
+            .parse()
+            .expect("Failed to parse pattern"),
+        medium: choose_pattern(&other.standard.medium, &other.standard.medium_alt_ascii)
+            .get_pattern()
+            .parse()
+            .expect("Failed to parse pattern"),
+        short: choose_pattern(&other.standard.short, &other.standard.short_alt_ascii)
+            .get_pattern()
+            .parse()
+            .expect("Failed to parse pattern"),
     }
 }
 
 /// Convert from a semantic time field set to classical component options for calculating the pattern.
-fn gen_time_components(
+pub(crate) fn gen_time_components(
     _: Length,
     attributes: &DataMarkerAttributes,
     _: &cldr_serde::ca::Dates,
@@ -523,7 +531,7 @@ fn gen_time_components(
 }
 
 /// Convert from a semantic date field set to classical component options for calculating the pattern.
-fn gen_date_components(
+pub(crate) fn gen_date_components(
     length: Length,
     attributes: &DataMarkerAttributes,
     data: &cldr_serde::ca::Dates,

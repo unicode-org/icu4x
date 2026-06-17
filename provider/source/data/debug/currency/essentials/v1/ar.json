@@ -1035,34 +1035,88 @@
       }
     }
   },
-  "standard_pattern": [
-    {
-      "Literal": "‏"
-    },
-    {
-      "Placeholder": "Place0"
-    },
-    {
-      "Literal": " "
-    },
-    {
-      "Placeholder": "Place1"
-    }
+  "patterns": [
+    [
+      {
+        "Literal": "‏"
+      },
+      {
+        "Placeholder": "Place0"
+      },
+      {
+        "Literal": " "
+      },
+      {
+        "Placeholder": "Place1"
+      }
+    ],
+    [
+      {
+        "Literal": "؜"
+      },
+      {
+        "Placeholder": "Place0"
+      },
+      {
+        "Placeholder": "Place1"
+      }
+    ],
+    [
+      {
+        "Literal": "(؜"
+      },
+      {
+        "Placeholder": "Place0"
+      },
+      {
+        "Placeholder": "Place1"
+      },
+      {
+        "Literal": ")"
+      }
+    ],
+    [
+      {
+        "Literal": "؜"
+      },
+      {
+        "Placeholder": "Place0"
+      },
+      {
+        "Literal": " "
+      },
+      {
+        "Placeholder": "Place1"
+      }
+    ],
+    [
+      {
+        "Literal": "(؜"
+      },
+      {
+        "Placeholder": "Place0"
+      },
+      {
+        "Literal": " "
+      },
+      {
+        "Placeholder": "Place1"
+      },
+      {
+        "Literal": ")"
+      }
+    ]
   ],
-  "standard_alpha_next_to_number_pattern": [
-    {
-      "Literal": "‏"
-    },
-    {
-      "Placeholder": "Place0"
-    },
-    {
-      "Literal": " "
-    },
-    {
-      "Placeholder": "Place1"
-    }
-  ],
+  "indices": {
+    "standard": 0,
+    "standard_negative": 0,
+    "standard_alpha_next_to_number": 0,
+    "standard_alpha_next_to_number_negative": 0,
+    "accounting_positive": 1,
+    "accounting_negative": 2,
+    "accounting_alpha_next_to_number_positive": 3,
+    "accounting_alpha_next_to_number_negative": 4
+  },
   "placeholders": [
     "د.إ.‏",
     "؋",

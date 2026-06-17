@@ -12,9 +12,17 @@
 #[cfg(feature = "unstable")]
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+#[cfg(feature = "unstable")]
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+use crate::source::AbstractFs;
+#[cfg(feature = "unstable")]
+use crate::source::Cache;
 use crate::source::{UnicodeCache, include_files};
 #[cfg(feature = "unstable")]
 use icu::collections::codepointinvlist::CodePointInversionList;
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+#[cfg(feature = "unstable")]
+use icu::properties::PropertyNamesLong;
 use icu::properties::{
     CodePointMapData, CodePointMapDataBorrowed, CodePointSetData,
     props::{
@@ -25,6 +33,8 @@ use icu::properties::{
 use icu::segmenter::options::WordType;
 use icu::segmenter::provider::*;
 use icu_provider::prelude::*;
+#[cfg(feature = "unstable")]
+use std::borrow::Cow;
 use std::collections::HashSet;
 #[cfg(feature = "unstable")]
 use std::collections::{BTreeMap, BTreeSet};
@@ -866,185 +876,505 @@ implement_override!(SegmenterBreakWordOverrideV1, "word.toml", []);
 implement_override!(SegmenterBreakSentenceOverrideV1, "sentence.toml", ["el"]);
 
 #[cfg(feature = "unstable")]
-fn neo_sources() -> crate::source::AbstractFs {
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+fn neo_sources() -> AbstractFs {
     include_files!(
         "../../data/segmenter/neo/";
-        "GraphemeClusterBreakClasses.txt",
         "GraphemeClusterBreakStates.txt",
+        "GraphemeClusterBreakSymbols.txt",
         "GraphemeClusterBreakTransitions.txt",
-        "LineBreakClasses.txt",
+        "LineBreakStates.txt",
+        "LineBreakSymbols.txt",
         "LineBreakTailoring_cj.txt",
         "LineBreakTailoring_loose_cj.txt",
         "LineBreakTailoring_loose.txt",
         "LineBreakTailoring_normal_cj.txt",
-        "LineBreakTailoring_word_keepall.txt",
-        "LineBreakTailoring_word_breakall.txt",
         "LineBreakTailoring_normal.txt",
-        "LineBreakStates.txt",
+        "LineBreakTailoring_word_breakall.txt",
+        "LineBreakTailoring_word_keepall.txt",
         "LineBreakTransitions.txt",
-        "SentenceBreakClasses.txt",
-        "SentenceBreakTailoring_el.txt",
         "SentenceBreakStates.txt",
+        "SentenceBreakSymbols.txt",
+        "SentenceBreakTailoring_el.txt",
         "SentenceBreakTransitions.txt",
-        "WordBreakClasses.txt",
         "WordBreakStates.txt",
+        "WordBreakSymbols.txt",
         "WordBreakTransitions.txt",
     )
 }
 
 #[cfg(feature = "unstable")]
-impl DataProvider<SegmenterBreakLineV2> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterBreakLineV2>, DataError> {
-        self.check_req::<SegmenterBreakLineV2>(req)?;
+type TailoredSegmenter = (
+    SegmenterStateMachine<'static>,
+    BTreeMap<String, SegmenterStateMachineOverride<'static>>,
+);
 
-        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-        return Err(DataError::custom(
-            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
-        )
-        .with_req(SegmenterBreakLineV2::INFO, req));
-
-        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-        {
-            let data = ParsedNfa::parse_nfa_files(
-                self,
-                &neo_sources().read_to_string("LineBreakClasses.txt")?,
-                &neo_sources().read_to_string("LineBreakStates.txt")?,
-                &neo_sources().read_to_string("LineBreakTransitions.txt")?,
-            )?
-            .build(|s| if s == "Mandatory" { 1 } else { 0 });
-
-            Ok(DataResponse {
-                metadata: Default::default(),
-                payload: DataPayload::from_owned(data),
-            })
-        }
-    }
+#[cfg(feature = "unstable")]
+#[derive(Debug, Default)]
+pub(crate) struct NeoSegmenters {
+    line: Cache<TailoredSegmenter>,
+    word: Cache<TailoredSegmenter>,
+    sentence: Cache<TailoredSegmenter>,
+    grapheme_cluster: Cache<TailoredSegmenter>,
 }
 
 #[cfg(feature = "unstable")]
-impl DataProvider<SegmenterBreakWordV2> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterBreakWordV2>, DataError> {
-        self.check_req::<SegmenterBreakWordV2>(req)?;
-
-        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-        return Err(DataError::custom(
-            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
-        )
-        .with_req(SegmenterBreakWordV2::INFO, req));
-
-        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-        {
-            let data = ParsedNfa::parse_nfa_files(
-                self,
-                &neo_sources().read_to_string("WordBreakClasses.txt")?,
-                &neo_sources().read_to_string("WordBreakStates.txt")?,
-                &neo_sources().read_to_string("WordBreakTransitions.txt")?,
-            )?
-            .build(|s| match s {
-                "Letter" => WordType::Letter,
-                "Number" => WordType::Number,
-                _ => WordType::None,
-            } as u8);
-            Ok(DataResponse {
-                metadata: Default::default(),
-                payload: DataPayload::from_owned(data),
-            })
-        }
-    }
-}
-
-#[cfg(feature = "unstable")]
-impl DataProvider<SegmenterBreakSentenceV2> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterBreakSentenceV2>, DataError> {
-        self.check_req::<SegmenterBreakSentenceV2>(req)?;
-
-        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-        return Err(DataError::custom(
-            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
-        )
-        .with_req(SegmenterBreakSentenceV2::INFO, req));
-
-        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-        {
-            let data = ParsedNfa::parse_nfa_files(
-                self,
-                &neo_sources().read_to_string("SentenceBreakClasses.txt")?,
-                &neo_sources().read_to_string("SentenceBreakStates.txt")?,
-                &neo_sources().read_to_string("SentenceBreakTransitions.txt")?,
-            )?
-            .build(|s| if s == "EOL" { 1 } else { 0 });
-            Ok(DataResponse {
-                metadata: Default::default(),
-                payload: DataPayload::from_owned(data),
-            })
-        }
-    }
-}
-
-#[cfg(feature = "unstable")]
-impl DataProvider<SegmenterBreakGraphemeClusterV2> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<SegmenterBreakGraphemeClusterV2>, DataError> {
-        self.check_req::<SegmenterBreakGraphemeClusterV2>(req)?;
-
-        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-        return Err(DataError::custom(
-            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
-        )
-        .with_req(SegmenterBreakGraphemeClusterV2::INFO, req));
-
-        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-        {
-            let data = ParsedNfa::parse_nfa_files(
-                self,
-                &neo_sources().read_to_string("GraphemeClusterBreakClasses.txt")?,
-                &neo_sources().read_to_string("GraphemeClusterBreakStates.txt")?,
-                &neo_sources().read_to_string("GraphemeClusterBreakTransitions.txt")?,
-            )?
-            .build(|s| match s {
-                "" => 0,
-                s => unreachable!("{s}"),
-            });
-            Ok(DataResponse {
-                metadata: Default::default(),
-                payload: DataPayload::from_owned(data),
-            })
-        }
-    }
-}
-
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-#[cfg(feature = "unstable")]
-impl<'a> ParsedNfa<'a> {
-    fn build(&self, status_lookup: fn(&str) -> u8) -> SegmenterStateMachine<'static> {
+impl SourceDataProvider {
+    fn line_segmenter(&self) -> Result<&TailoredSegmenter, DataError> {
+        self.unicode()?
+            .segmenter_cache
+            .line
+            .get_or_init(|| {
+                self.build_segmenter(&neo_sources(), "LineBreak", |s| {
+                    if s == "Mandatory" { 1 } else { 0 }
+                })
+            })
+            .as_ref()
+            .map_err(|&e| e)
+    }
+
+    fn word_segmenter(&self) -> Result<&TailoredSegmenter, DataError> {
+        self.unicode()?
+            .segmenter_cache
+            .word
+            .get_or_init(|| {
+                self.build_segmenter(&neo_sources(), "WordBreak", |s| match s {
+                    "Letter" => WordType::Letter,
+                    "Number" => WordType::Number,
+                    _ => WordType::None,
+                } as u8)
+            })
+            .as_ref()
+            .map_err(|&e| e)
+    }
+
+    fn sentence_segmenter(&self) -> Result<&TailoredSegmenter, DataError> {
+        self.unicode()?
+            .segmenter_cache
+            .sentence
+            .get_or_init(|| {
+                self.build_segmenter(&neo_sources(), "SentenceBreak", |s| {
+                    if s == "EOL" { 1 } else { 0 }
+                })
+            })
+            .as_ref()
+            .map_err(|&e| e)
+    }
+
+    fn grapheme_cluster_segmenter(&self) -> Result<&TailoredSegmenter, DataError> {
+        self.unicode()?
+            .segmenter_cache
+            .grapheme_cluster
+            .get_or_init(|| {
+                self.build_segmenter(&neo_sources(), "GraphemeClusterBreak", |s| match s {
+                    "" => 0,
+                    s => unreachable!("{s}"),
+                })
+            })
+            .as_ref()
+            .map_err(|&e| e)
+    }
+
+    fn build_segmenter(
+        &self,
+        sources: &AbstractFs,
+        prefix: &str,
+        status_lookup: fn(&str) -> u8,
+    ) -> Result<
+        (
+            SegmenterStateMachine<'static>,
+            BTreeMap<String, SegmenterStateMachineOverride<'static>>,
+        ),
+        DataError,
+    > {
+        let mut magic_symbols = BTreeMap::new();
+        let mut fixed_symbol_assignments = BTreeMap::new();
+        let symbols = sources.read_to_string(&format!("{prefix}Symbols.txt"))?;
+        let mut symbols = symbols
+            .lines()
+            .map(|l| l.split('#').next().unwrap().trim())
+            .filter(|l| !l.is_empty())
+            .map(|line| {
+                let mut iter = line.split(';');
+                let symbol = iter.next().unwrap().trim();
+                let unicode_set = iter.next().unwrap().trim();
+
+                let set = icu::properties::unicodeset_parse::parse_unstable(unicode_set, self)
+                    .map_err(|e| {
+                        DataError::custom("unicodeset parse")
+                            .with_display_context(&e.fmt_with_source(unicode_set))
+                    })?
+                    .0;
+                for string in set.strings().iter() {
+                    assert_eq!(magic_symbols.insert(String::from(string), symbol), None);
+                }
+                let set = set.code_points().clone();
+                Ok((Cow::Borrowed(symbol), set))
+            })
+            .collect::<Result<BTreeMap<_, _>, DataError>>()?;
+        fixed_symbol_assignments.insert(
+            magic_symbols.remove("eot").unwrap_or("eot").to_string(),
+            SegmenterStateMachine::EOT_SYMBOL,
+        );
+
+        let states = sources.read_to_string(&format!("{prefix}States.txt"))?;
+        let states = states
+            .lines()
+            .map(|l| l.split('#').next().unwrap().trim())
+            .filter(|l| !l.is_empty())
+            .map(|line| {
+                let mut iter = line.split(';');
+                let state = iter.next().unwrap().trim();
+                let accepting = iter.next().unwrap().trim();
+                let lookahead = iter.next().unwrap().trim();
+                let status = iter.next().unwrap().trim();
+                (
+                    state,
+                    (accepting, Some(lookahead).filter(|s| !s.is_empty()), status),
+                )
+            })
+            .collect::<BTreeMap<_, _>>();
+
+        let transitions = sources.read_to_string(&format!("{prefix}Transitions.txt"))?;
+        let mut transitions = transitions
+            .lines()
+            .map(|l| l.split('#').next().unwrap().trim())
+            .filter(|l| !l.is_empty())
+            .map(|line| {
+                let mut iter = line.split(';');
+                let state = iter.next().unwrap().trim();
+                let symbol = iter.next().unwrap().trim();
+                let next_state = iter.next().unwrap().trim();
+                ((state, symbol), next_state)
+            })
+            .collect::<BTreeMap<_, _>>();
+
+        let lookaheads = states
+            .iter()
+            .flat_map(|(_, &(_, lookahead, _))| lookahead)
+            .collect::<BTreeSet<_>>();
+
+        if prefix == "LineBreak" {
+            // Create symbols for complex scripts, allowing the state machine to use the correct
+            // dictionary without further lookup.
+
+            // TODO: These should be marked in LineBreakSymbols.txt
+            let complex_symbols = [
+                (
+                    "SAmMnmMc",
+                    "AImEastAsian|ALmEastAsianmDottedCircle|SG|XXmExtPictUnassigned",
+                ),
+                ("SA_Mn|SA_Mc", "CM"),
+            ];
+
+            let mut script_symbols_to_symbols = BTreeMap::new();
+            for (symbol, non_complex_symbol) in complex_symbols {
+                let set = symbols.get(symbol).unwrap().clone();
+
+                let mut set_builder = CodePointInversionListBuilder::new();
+                set_builder.add_set(&set);
+
+                for sc in [Script::Myanmar, Script::Lao, Script::Thai, Script::Khmer] {
+                    let sc_set = CodePointMapData::try_new_unstable(self)?
+                        .as_borrowed()
+                        .get_set_for_value(sc);
+
+                    if sc_set
+                        .as_borrowed()
+                        .iter_ranges()
+                        .all(|mut range| range.all(|c| !set.contains32(c)))
+                    {
+                        // no overlap
+                        continue;
+                    }
+
+                    set_builder.remove_set(&sc_set.to_code_point_inversion_list());
+
+                    let mut intersection = CodePointInversionListBuilder::new();
+                    intersection.add_set(&sc_set.to_code_point_inversion_list());
+                    for r in set.iter_ranges_complemented() {
+                        intersection.remove_range32(r);
+                    }
+
+                    let intersection_symbol = format!(
+                        "{symbol}_{}",
+                        PropertyNamesLong::try_new_unstable(self)?
+                            .as_borrowed()
+                            .get(sc)
+                            .unwrap()
+                    );
+                    script_symbols_to_symbols.insert((sc, symbol), intersection_symbol.to_string());
+                    symbols.insert(Cow::Owned(intersection_symbol), intersection.build());
+                }
+
+                let symbol_transitions = transitions
+                    .iter()
+                    .filter(|&(&(_, s), _)| s == symbol)
+                    .map(|(&(before, _), &after)| (before, after))
+                    .collect::<BTreeSet<_>>();
+                let non_complex_symbol_transitions = transitions
+                    .iter()
+                    .filter(|&(&(_, s), _)| s == non_complex_symbol)
+                    .map(|(&(before, _), &after)| (before, after))
+                    .collect::<BTreeSet<_>>();
+
+                if symbol_transitions == non_complex_symbol_transitions {
+                    let non_complex_set = symbols.get_mut(non_complex_symbol).unwrap();
+                    let mut non_complex_set_builder = CodePointInversionListBuilder::new();
+                    non_complex_set_builder.add_set(non_complex_set);
+                    non_complex_set_builder.add_set(&set_builder.build());
+                    *non_complex_set = non_complex_set_builder.build();
+
+                    symbols.remove(symbol);
+                    transitions.retain(|&(_, s), _| s != symbol);
+                    script_symbols_to_symbols
+                        .insert((Script::Unknown, symbol), non_complex_symbol.into());
+                } else {
+                    log::warn!(
+                        "{symbol}/{non_complex_symbol}: {:?} != {:?}",
+                        symbol_transitions
+                            .difference(&non_complex_symbol_transitions)
+                            .collect::<Vec<_>>(),
+                        non_complex_symbol_transitions
+                            .difference(&symbol_transitions)
+                            .collect::<Vec<_>>()
+                    );
+                    script_symbols_to_symbols.insert((Script::Unknown, symbol), symbol.into());
+                }
+            }
+
+            fixed_symbol_assignments.extend(script_symbols_to_symbols.into_iter().map(
+                |((sc, symbol), intersection_symbol)| {
+                    (
+                        intersection_symbol,
+                        match (sc, symbol) {
+                            (Script::Khmer, "SAmMnmMc") => {
+                                SegmenterStateMachine::LB_SA_KHMER_SYMBOL
+                            }
+                            (Script::Khmer, "SA_Mn|SA_Mc") => {
+                                SegmenterStateMachine::LB_SA_CM_KHMER_SYMBOL
+                            }
+                            (Script::Lao, "SAmMnmMc") => SegmenterStateMachine::LB_SA_LAO_SYMBOL,
+                            (Script::Lao, "SA_Mn|SA_Mc") => {
+                                SegmenterStateMachine::LB_SA_CM_LAO_SYMBOL
+                            }
+                            (Script::Myanmar, "SAmMnmMc") => {
+                                SegmenterStateMachine::LB_SA_MYANMAR_SYMBOL
+                            }
+                            (Script::Myanmar, "SA_Mn|SA_Mc") => {
+                                SegmenterStateMachine::LB_SA_CM_MYANMAR_SYMBOL
+                            }
+                            (Script::Thai, "SAmMnmMc") => SegmenterStateMachine::LB_SA_THAI_SYMBOL,
+                            (Script::Thai, "SA_Mn|SA_Mc") => {
+                                SegmenterStateMachine::LB_SA_CM_THAI_SYMBOL
+                            }
+                            (Script::Unknown, "SAmMnmMc") => SegmenterStateMachine::LB_SA_SYMBOL,
+                            (Script::Unknown, "SA_Mn|SA_Mc") => {
+                                SegmenterStateMachine::LB_SA_CM_SYMBOL
+                            }
+                            _ => unreachable!(),
+                        },
+                    )
+                },
+            ));
+        }
+
+        let mut tailorings = BTreeMap::new();
+
+        for tailoring in sources.list(&format!("{prefix}Tailoring_"))? {
+            let tailoring = tailoring.strip_suffix(".txt").unwrap();
+
+            let mut overrides = BTreeMap::<Cow<'static, str>, BTreeSet<char>>::new();
+
+            for line in sources
+                .read_to_string(&format!("{prefix}Tailoring_{tailoring}.txt"))?
+                .lines()
+                .map(|l| l.split('#').next().unwrap().trim())
+                .filter(|l| !l.is_empty())
+            {
+                let mut iter = line.split(';');
+                let unicode_set = iter.next().unwrap().trim();
+                let target = iter.next().unwrap().trim();
+
+                let set = icu::properties::unicodeset_parse::parse_unstable(unicode_set, self)
+                    .map_err(|e| {
+                        DataError::custom("unicodeset parse")
+                            .with_display_context(&e.fmt_with_source(unicode_set))
+                    })?
+                    .0;
+
+                let target = icu::properties::unicodeset_parse::parse_unstable(target, self)
+                    .map_err(|e| {
+                        DataError::custom("unicodeset parse")
+                            .with_display_context(&e.fmt_with_source(unicode_set))
+                    })?
+                    .0;
+
+                let target_symbol = if target.has_strings() {
+                    let target = target.strings().iter().next().unwrap();
+                    let magic = *magic_symbols.get(target).expect(target);
+                    &Cow::Borrowed(magic)
+                } else {
+                    let target = target.code_points().iter_chars().next().unwrap();
+                    symbols
+                        .iter()
+                        .find(|(_, set)| set.contains(target))
+                        .unwrap()
+                        .0
+                };
+
+                for c in set.code_points().iter_chars() {
+                    overrides
+                        .entry(target_symbol.clone())
+                        .or_default()
+                        .insert(c);
+                }
+            }
+
+            tailorings.insert(
+                String::from(tailoring),
+                overrides
+                    .into_iter()
+                    .map(|(k, v)| {
+                        let mut builder = CodePointInversionListBuilder::new();
+                        v.into_iter().for_each(|c| builder.add_char(c));
+                        (k, builder.build())
+                    })
+                    .collect::<BTreeMap<_, CodePointInversionList>>(),
+            );
+        }
+
+        let mut pseudo_symbol_map = BTreeMap::<String, String>::new();
+
+        // Intersect the symbols with all tailorings' overrides.
+        for (tailoring, overrides) in tailorings.clone() {
+            for (rule, set) in overrides {
+                for (symbol, set2) in symbols.clone().into_iter().collect::<Vec<_>>() {
+                    if set.iter_chars().any(|c| set2.contains(c)) {
+                        // Overlapping sets. We need to create a new pseudo-symbol.
+                        let pseudo_symbol = format!("{symbol}_{tailoring}_{rule}");
+                        // Add the intersection as a new symbol.
+                        symbols.insert(Cow::Owned(pseudo_symbol.clone()), {
+                            let mut builder = CodePointInversionListBuilder::new();
+                            builder.add_set(&set);
+                            for r in set2.iter_ranges_complemented() {
+                                builder.remove_range32(r);
+                            }
+                            builder.build()
+                        });
+                        pseudo_symbol_map.insert(pseudo_symbol, {
+                            let mut s = &*symbol;
+                            while let Some(x) = pseudo_symbol_map.get(s) {
+                                s = x.as_str();
+                            }
+                            s.to_string()
+                        });
+                        // Remove the intersection from the root symbol.
+                        symbols.insert(symbol, {
+                            let mut builder = CodePointInversionListBuilder::new();
+                            builder.add_set(&set2);
+                            builder.remove_set(&set);
+                            builder.build()
+                        });
+                    }
+                }
+            }
+        }
+
+        let highest_fixed_symbol = fixed_symbol_assignments.values().copied().max().unwrap();
+        let symbol_lookup = symbols
+            .keys()
+            .filter(|&s| {
+                !fixed_symbol_assignments.contains_key(s.as_ref())
+                    && !pseudo_symbol_map.contains_key(s.as_ref())
+            })
+            .enumerate()
+            .map(|(i, symbol)| {
+                (
+                    symbol.as_ref(),
+                    Symbol::try_from(i + highest_fixed_symbol as usize + 1).unwrap(),
+                )
+            })
+            .chain(
+                fixed_symbol_assignments
+                    .iter()
+                    .map(|(k, v)| (k.as_str(), *v)),
+            )
+            .collect::<BTreeMap<_, _>>();
+
+        let pseudo_symbol_shift = symbol_lookup.values().copied().max().unwrap() + 1;
+        let pseudo_symbol_lookup = pseudo_symbol_map
+            .keys()
+            .enumerate()
+            .map(|(i, k)| {
+                (
+                    k.as_str(),
+                    Symbol::try_from(i + usize::from(pseudo_symbol_shift)).unwrap(),
+                )
+            })
+            .collect::<BTreeMap<_, _>>();
+
+        // Reserve two states for START and TRASH
+        assert!(states.len() < usize::from(State::MAX) - 2);
+        let state_lookup = core::iter::once("START")
+            .chain(states.keys().filter(|&&s| s != "START").copied())
+            .enumerate()
+            .map(|(i, state)| (state, State::try_from(i).unwrap()))
+            .collect::<BTreeMap<_, _>>();
+        assert!(lookaheads.len() < 0b11111);
+        let lookahead_lookup = lookaheads
+            .iter()
+            .enumerate()
+            .map(|(i, lookahead)| (*lookahead, Lookahead::try_from(i).unwrap()))
+            .collect::<BTreeMap<_, _>>();
+
         use icu::collections::codepointinvlist::CodePointInversionListBuilder;
         use icu::collections::codepointtrie::TrieType;
         use icu_codepointtrie_builder::CodePointTrieBuilder;
 
-        let ParsedNfa {
-            classes,
-            states,
-            transitions,
-            class_lookup,
-            state_lookup,
-            lookahead_lookup,
-            ..
-        } = self;
-
         let mut builder = CodePointTrieBuilder::new(0, 0, TrieType::Fast);
         let mut missing_codepoints = CodePointInversionListBuilder::new();
         missing_codepoints.add_set(&CodePointInversionList::all());
-        for (&class, set) in classes {
+        for (symbol, set) in &symbols {
             for range in set.iter_ranges() {
                 missing_codepoints.remove_range32(range.clone());
-                builder.set_range_value(range.clone(), class_lookup[class]);
+                builder.set_range_value(
+                    range.clone(),
+                    symbol_lookup
+                        .get(&**symbol)
+                        .or_else(|| pseudo_symbol_lookup.get(&**symbol))
+                        .copied()
+                        .unwrap(),
+                );
             }
         }
         let missing_codepoints = missing_codepoints.build();
         assert!(missing_codepoints.is_empty(), "{missing_codepoints:?}");
-        let classes = builder.build();
+        let symbols = builder.build();
+
+        let tailorings = tailorings
+            .into_iter()
+            .map(|(tailoring, overrides)| {
+                let mut tailored_pseudo_symbol_map = BTreeMap::<u8, u8>::new();
+
+                for (target_symbol, set) in overrides {
+                    let target_symbol = symbol_lookup[&*target_symbol];
+                    // The set might cover multiple pseudo symbols
+                    for c in set.iter_chars() {
+                        let pseudo_symbol = symbols.get(c);
+                        let prev = tailored_pseudo_symbol_map.insert(pseudo_symbol, target_symbol);
+                        // we fragmented the symbols sufficiently above
+                        assert!(
+                            prev.is_none_or(|p| p == target_symbol),
+                            "{prev:?} {target_symbol} {tailoring} {pseudo_symbol} {c:?}"
+                        );
+                    }
+                }
+
+                (tailoring, tailored_pseudo_symbol_map)
+            })
+            .collect::<BTreeMap<_, _>>();
 
         let states = states
             .iter()
@@ -1070,10 +1400,10 @@ impl<'a> ParsedNfa<'a> {
 
         let transitions = transitions
             .iter()
-            .map(|((state, class), next_state)| {
+            .map(|((state, symbol), next_state)| {
                 (
                     usize::from(state_lookup[state])
-                        + state_lookup.len() * usize::from(class_lookup[class]),
+                        + state_lookup.len() * usize::from(symbol_lookup[symbol]),
                     *state_lookup.get(next_state).expect(next_state),
                 )
             })
@@ -1088,199 +1418,119 @@ impl<'a> ParsedNfa<'a> {
             })
             .collect();
 
-        SegmenterStateMachine {
-            transitions,
-            classes,
-            states,
-            num_lookaheads: lookahead_lookup.len(),
-        }
-    }
-}
+        let pseudo_symbol_map = pseudo_symbol_map
+            .iter()
+            .map(|(k, v)| (pseudo_symbol_lookup[k.as_str()], symbol_lookup[v.as_str()]))
+            .collect::<BTreeMap<_, _>>();
 
-#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-#[cfg(feature = "unstable")]
-struct ParsedNfa<'a> {
-    classes: BTreeMap<&'a str, CodePointInversionList<'static>>,
-    magic_classes: BTreeMap<String, &'a str>,
-    states: BTreeMap<&'a str, (&'a str, Option<&'a str>, &'a str)>,
-    transitions: BTreeMap<(&'a str, &'a str), &'a str>,
-    class_lookup: BTreeMap<&'a str, u8>,
-    state_lookup: BTreeMap<&'a str, u8>,
-    lookahead_lookup: BTreeMap<&'a str, u8>,
-}
-
-#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-#[cfg(feature = "unstable")]
-impl<'a> ParsedNfa<'a> {
-    fn parse_nfa_files(
-        provider: &SourceDataProvider,
-        classes: &'a str,
-        states: &'a str,
-        transitions: &'a str,
-    ) -> Result<Self, DataError> {
-        let mut magic_classes = BTreeMap::new();
-        let classes = classes
-            .lines()
-            .map(|l| l.split('#').next().unwrap().trim())
-            .filter(|l| !l.is_empty())
-            .map(|line| {
-                let mut iter = line.split(';');
-                let class = iter.next().unwrap().trim();
-                let unicode_set = iter.next().unwrap().trim();
-
-                let set = icu::properties::unicodeset_parse::parse_unstable(unicode_set, provider)
-                    .map_err(|e| {
-                        DataError::custom("unicodeset parse")
-                            .with_display_context(&e.fmt_with_source(unicode_set))
-                    })?
-                    .0;
-                for string in set.strings().iter() {
-                    assert_eq!(magic_classes.insert(String::from(string), class), None);
-                }
-                let set = set.code_points().clone();
-                Ok((class, set))
-            })
-            .collect::<Result<BTreeMap<_, _>, DataError>>()?;
-        let eot_class = magic_classes.remove("eot").unwrap_or("eot");
-
-        let states = states
-            .lines()
-            .map(|l| l.split('#').next().unwrap().trim())
-            .filter(|l| !l.is_empty())
-            .map(|line| {
-                let mut iter = line.split(';');
-                let state = iter.next().unwrap().trim();
-                let accepting = iter.next().unwrap().trim();
-                let lookahead = iter.next().unwrap().trim();
-                let status = iter.next().unwrap().trim();
+        let tailorings = tailorings
+            .into_iter()
+            .map(|(tailoring, tailored_pseudo_symbol_map)| {
+                let pseudo_symbol_map = pseudo_symbol_map
+                    .iter()
+                    .map(|(&pseudo_symbol, &root_symbol)| {
+                        tailored_pseudo_symbol_map
+                            .get(&pseudo_symbol)
+                            .copied()
+                            .unwrap_or(root_symbol)
+                    })
+                    .collect::<zerovec::ZeroVec<_>>();
                 (
-                    state,
-                    (accepting, Some(lookahead).filter(|s| !s.is_empty()), status),
+                    tailoring,
+                    SegmenterStateMachineOverride { pseudo_symbol_map },
                 )
             })
-            .collect::<BTreeMap<_, _>>();
-        let transitions = transitions
-            .lines()
-            .map(|l| l.split('#').next().unwrap().trim())
-            .filter(|l| !l.is_empty())
-            .map(|line| {
-                let mut iter = line.split(';');
-                let state = iter.next().unwrap().trim();
-                let class = iter.next().unwrap().trim();
-                let next_state = iter.next().unwrap().trim();
-                ((state, class), next_state)
-            })
-            .collect::<BTreeMap<_, _>>();
+            .collect();
 
-        let lookaheads = states
-            .iter()
-            .flat_map(|(_, &(_, lookahead, _))| lookahead)
-            .collect::<BTreeSet<_>>();
+        Ok((
+            SegmenterStateMachine {
+                transitions,
+                symbols,
+                states,
+                num_lookaheads: lookahead_lookup.len(),
+                pseudo_symbol_shift,
+                pseudo_symbol_map: pseudo_symbol_map.values().copied().collect(),
+            },
+            tailorings,
+        ))
+    }
+}
 
-        // Reserve two classes for EOT and NO_CLASS
-        assert!(classes.len() < usize::from(Class::MAX) - 2);
-        let class_lookup = core::iter::once(eot_class)
-            .chain(classes.keys().filter(|&&s| s != eot_class).copied())
-            .enumerate()
-            .map(|(i, class)| (class, Class::try_from(i).unwrap()))
-            .collect::<BTreeMap<_, _>>();
+#[cfg(feature = "unstable")]
+impl DataProvider<SegmenterBreakLineV2> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterBreakLineV2>, DataError> {
+        self.check_req::<SegmenterBreakLineV2>(req)?;
 
-        // Reserve two states for START and TRASH
-        assert!(states.len() < usize::from(State::MAX) - 2);
-        let state_lookup = core::iter::once("START")
-            .chain(states.keys().filter(|&&s| s != "START").copied())
-            .enumerate()
-            .map(|(i, state)| (state, State::try_from(i).unwrap()))
-            .collect::<BTreeMap<_, _>>();
-        assert!(lookaheads.len() < 0b11111);
-        let lookahead_lookup = lookaheads
-            .iter()
-            .enumerate()
-            .map(|(i, lookahead)| (*lookahead, Lookahead::try_from(i).unwrap()))
-            .collect::<BTreeMap<_, _>>();
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
+        )
+        .with_req(SegmenterBreakLineV2::INFO, req));
 
-        Ok(Self {
-            classes,
-            magic_classes,
-            states,
-            transitions,
-            class_lookup,
-            state_lookup,
-            lookahead_lookup,
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(self.line_segmenter()?.0.clone()),
         })
     }
+}
 
-    fn tailoring(
+#[cfg(feature = "unstable")]
+impl DataProvider<SegmenterBreakWordV2> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterBreakWordV2>, DataError> {
+        self.check_req::<SegmenterBreakWordV2>(req)?;
+
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
+        )
+        .with_req(SegmenterBreakWordV2::INFO, req));
+
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(self.word_segmenter()?.0.clone()),
+        })
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl DataProvider<SegmenterBreakSentenceV2> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterBreakSentenceV2>, DataError> {
+        self.check_req::<SegmenterBreakSentenceV2>(req)?;
+
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
+        )
+        .with_req(SegmenterBreakSentenceV2::INFO, req));
+
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(self.sentence_segmenter()?.0.clone()),
+        })
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl DataProvider<SegmenterBreakGraphemeClusterV2> for SourceDataProvider {
+    fn load(
         &self,
-        provider: &SourceDataProvider,
-        tailorings: &str,
-    ) -> Result<SegmenterStateMachineOverride<'static>, DataError> {
-        let mut builder = icu_codepointtrie_builder::CodePointTrieBuilder::new(
-            SegmenterStateMachine::NO_CLASS,
-            SegmenterStateMachine::NO_CLASS,
-            icu::collections::codepointtrie::TrieType::Small,
-        );
+        req: DataRequest,
+    ) -> Result<DataResponse<SegmenterBreakGraphemeClusterV2>, DataError> {
+        self.check_req::<SegmenterBreakGraphemeClusterV2>(req)?;
 
-        for line in tailorings
-            .lines()
-            .map(|l| l.split('#').next().unwrap().trim())
-            .filter(|l| !l.is_empty())
-        {
-            let mut iter = line.split(';');
-            let unicode_set = iter.next().unwrap().trim();
-            let target = iter.next().unwrap().trim();
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
+        )
+        .with_req(SegmenterBreakGraphemeClusterV2::INFO, req));
 
-            let set = icu::properties::unicodeset_parse::parse_unstable(unicode_set, provider)
-                .map_err(|e| {
-                    DataError::custom("unicodeset parse")
-                        .with_display_context(&e.fmt_with_source(unicode_set))
-                })?
-                .0;
-
-            let target = icu::properties::unicodeset_parse::parse_unstable(target, provider)
-                .map_err(|e| {
-                    DataError::custom("unicodeset parse")
-                        .with_display_context(&e.fmt_with_source(unicode_set))
-                })?
-                .0;
-
-            let (target_class, target_set) = if target.has_strings() {
-                let target = target.strings().iter().next().unwrap();
-                let magic = self.magic_classes.get(target).expect(target);
-                (magic, self.classes.get(magic).unwrap())
-            } else {
-                let target = target.code_points().iter_chars().next().unwrap();
-                self.classes
-                    .iter()
-                    .find(|(_, set)| set.contains(target))
-                    .unwrap()
-            };
-
-            let target_class = self.class_lookup[*target_class];
-
-            for range in set.code_points().iter_ranges() {
-                for cp in range {
-                    if !target_set.contains32(cp) {
-                        builder.set_value(cp, target_class);
-                    }
-                }
-            }
-        }
-
-        let classes = builder.build();
-
-        // The tailoring remaps all complex code points
-        let ignore_complex = CodePointMapData::try_new_unstable(provider)?
-            .as_borrowed()
-            .get_set_for_value(LineBreak::ComplexContext)
-            .as_borrowed()
-            .iter_ranges()
-            .flatten()
-            .all(|cp| classes.get32(cp) != SegmenterStateMachine::NO_CLASS);
-
-        Ok(SegmenterStateMachineOverride {
-            ignore_complex,
-            classes,
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(self.grapheme_cluster_segmenter()?.0.clone()),
         })
     }
 }
@@ -1328,41 +1578,37 @@ impl DataProvider<SegmenterBreakLineOverrideV2> for SourceDataProvider {
         .with_req(SegmenterBreakLineOverrideV2::INFO, req));
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-        {
-            let property_table_override = ParsedNfa::parse_nfa_files(
-                self,
-                &neo_sources().read_to_string("LineBreakClasses.txt")?,
-                &neo_sources().read_to_string("LineBreakStates.txt")?,
-                &neo_sources().read_to_string("LineBreakTransitions.txt")?,
-            )?
-            .tailoring(
-                self,
-                &neo_sources().read_to_string(&format!(
-                    "LineBreakTailoring_{}.txt",
-                    req.id.marker_attributes.as_str()
-                ))?,
-            )?;
-
-            Ok(DataResponse {
-                metadata: Default::default(),
-                payload: DataPayload::from_owned(property_table_override),
-            })
-        }
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(
+                self.line_segmenter()?
+                    .1
+                    .get(req.id.marker_attributes.as_str())
+                    .ok_or_else(|| {
+                        DataErrorKind::IdentifierNotFound
+                            .with_req(SegmenterBreakLineOverrideV2::INFO, req)
+                    })?
+                    .clone(),
+            ),
+        })
     }
 }
 
 #[cfg(feature = "unstable")]
 impl IterableDataProviderCached<SegmenterBreakLineOverrideV2> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(neo_sources()
-            .list("LineBreakTailoring_")?
-            .map(|mut s| {
-                DataMarkerAttributes::try_from_string({
-                    s.truncate(s.len() - 4);
-                    s
-                })
-                .unwrap()
-            })
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
+        )
+        .with_marker(SegmenterBreakLineOverrideV2::INFO));
+
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        Ok(self
+            .line_segmenter()?
+            .1
+            .keys()
+            .map(|s| DataMarkerAttributes::try_from_string(s.clone()).unwrap())
             .map(DataIdentifierCow::from_marker_attributes_owned)
             .collect())
     }
@@ -1383,34 +1629,38 @@ impl DataProvider<SegmenterBreakSentenceOverrideV2> for SourceDataProvider {
         .with_req(SegmenterBreakSentenceOverrideV2::INFO, req));
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-        {
-            let property_table_override = ParsedNfa::parse_nfa_files(
-                self,
-                &neo_sources().read_to_string("SentenceBreakClasses.txt")?,
-                &neo_sources().read_to_string("SentenceBreakStates.txt")?,
-                &neo_sources().read_to_string("SentenceBreakTransitions.txt")?,
-            )?
-            .tailoring(
-                self,
-                &neo_sources()
-                    .read_to_string(&format!("SentenceBreakTailoring_{}.txt", req.id.locale))?,
-            )?;
-
-            Ok(DataResponse {
-                metadata: Default::default(),
-                payload: DataPayload::from_owned(property_table_override),
-            })
-        }
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(
+                self.sentence_segmenter()?
+                    .1
+                    .get(&req.id.locale.to_string())
+                    .ok_or_else(|| {
+                        DataErrorKind::IdentifierNotFound
+                            .with_req(SegmenterBreakSentenceOverrideV2::INFO, req)
+                    })?
+                    .clone(),
+            ),
+        })
     }
 }
 
 #[cfg(feature = "unstable")]
 impl IterableDataProviderCached<SegmenterBreakSentenceOverrideV2> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(neo_sources()
-            .list("SentenceBreakTailoring_")?
-            .map(|s| icu::locale::Locale::try_from_str(s.strip_suffix(".txt").unwrap()).unwrap())
-            .map(|l| DataIdentifierCow::from_locale(l.into()))
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
+        )
+        .with_marker(SegmenterBreakSentenceOverrideV2::INFO));
+
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        Ok(self
+            .sentence_segmenter()?
+            .1
+            .keys()
+            .map(|s| icu::locale::Locale::try_from_str(s).unwrap().into())
+            .map(DataIdentifierCow::from_locale)
             .collect())
     }
 }

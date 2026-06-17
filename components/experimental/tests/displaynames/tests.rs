@@ -97,3 +97,44 @@ fn test_concatenate() {
         }
     }
 }
+
+#[cfg(any())]
+// TODO(#7825): Enable this test once LanguageDisplayNameOwned is implemented.
+#[test]
+fn test_single_language_display_name() {
+    use icu_experimental::displaynames::DisplayNamesOptions;
+    use icu_experimental::displaynames::single::LanguageDisplayNameOwned;
+    use icu_locale_core::{langid, locale};
+    use writeable::assert_writeable_eq;
+
+    let locale = locale!("en-001");
+    let options: DisplayNamesOptions = Default::default();
+
+    // This should format "zh-Hant-HK" to "Traditional Chinese (Hong Kong)" in "en-001"
+    let lang_id = langid!("zh-Hant-HK");
+    let lang_name = LanguageDisplayNameOwned::try_new(locale.into(), lang_id, options)
+        .expect("Data should load successfully");
+
+    assert_writeable_eq!(lang_name, "Traditional Chinese (Hong Kong)");
+}
+
+#[cfg(any())]
+// TODO(#7825): Enable this test once LanguageDisplayNameOwned supports Style::Menu.
+#[test]
+fn test_single_language_display_name_menu() {
+    use icu_experimental::displaynames::single::LanguageDisplayNameOwned;
+    use icu_experimental::displaynames::{DisplayNamesOptions, Style};
+    use icu_locale_core::{langid, locale};
+    use writeable::assert_writeable_eq;
+
+    let locale = locale!("en-001");
+    let mut options: DisplayNamesOptions = Default::default();
+    options.style = Some(Style::Menu);
+
+    // This should format "zh-Hant-HK" to "Chinese (Traditional, Hong Kong)" in "en-001" using Style::Menu
+    let lang_id = langid!("zh-Hant-HK");
+    let lang_name = LanguageDisplayNameOwned::try_new(locale.into(), lang_id, options)
+        .expect("Data should load successfully");
+
+    assert_writeable_eq!(lang_name, "Chinese (Traditional, Hong Kong)");
+}

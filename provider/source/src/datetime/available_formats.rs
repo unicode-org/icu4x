@@ -7,18 +7,47 @@ use icu::datetime::provider::pattern::runtime::Pattern;
 use icu::datetime::provider::skeleton::reference::Skeleton;
 use icu::plurals::{PluralCategory, PluralElements};
 
+use crate::AltVariantKind;
+use crate::SourceDataProvider;
 use std::collections::BTreeMap;
 
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub(crate) enum DatetimeAsciiPreference {
+    PreferAscii,
+    Default,
+}
+
+impl SourceDataProvider {
+    pub(crate) fn datetime_ascii_preference(&self) -> DatetimeAsciiPreference {
+        if self.alt_variants.contains(&AltVariantKind::DatetimeAscii) {
+            DatetimeAsciiPreference::PreferAscii
+        } else {
+            DatetimeAsciiPreference::Default
+        }
+    }
+}
+
 impl cldr_serde::ca::AvailableFormats {
-    pub fn parse_skeletons(&self) -> BTreeMap<Skeleton, PluralElements<Pattern<'static>>> {
+    pub fn parse_skeletons(
+        &self,
+        datetime_ascii_preference: DatetimeAsciiPreference,
+    ) -> BTreeMap<Skeleton, PluralElements<Pattern<'static>>> {
         let mut patterns: BTreeMap<String, BTreeMap<PluralCategory, String>> = BTreeMap::new();
 
         // The CLDR keys for available_formats can have duplicate skeletons with either
         // an additional variant, or with multiple variants for different plurals.
         for (skeleton_str, pattern_str) in self.0.iter() {
+            let (skeleton_str, is_alt_ascii) = match skeleton_str.strip_suffix("-alt-ascii") {
+                Some(stripped) => (stripped, true),
+                None => (skeleton_str.as_str(), false),
+            };
+            if datetime_ascii_preference == DatetimeAsciiPreference::Default && is_alt_ascii {
+                continue;
+            }
+
             let (skeleton, plural_category) = match skeleton_str.split_once("-count-") {
                 Some((s, v)) => (s, PluralCategory::get_for_cldr_string(v).unwrap()),
-                None => (skeleton_str.as_ref(), PluralCategory::Other),
+                None => (skeleton_str, PluralCategory::Other),
             };
 
             patterns
@@ -70,7 +99,9 @@ mod test {
         let data = provider
             .get_dates_resource(&locale, Some(DatagenCalendar::Gregorian))
             .unwrap();
-        data.datetime_formats.available_formats.parse_skeletons()
+        data.datetime_formats
+            .available_formats
+            .parse_skeletons(DatetimeAsciiPreference::Default)
     }
 
     /// This is an initial smoke test to verify the skeleton machinery is working. For more in-depth
@@ -393,5 +424,49 @@ mod test {
         assert_pattern_to_skeleton("x", "x", "Time zones get passed through");
 
         assert_pattern_to_skeleton("Z", "xxxx", "Z gets resolved");
+    }
+
+    #[test]
+    fn test_alt_ascii_parsing() {
+        let locale = locale!("en").into();
+        let provider = SourceDataProvider::new_testing();
+        let data = provider
+            .get_dates_resource(&locale, Some(DatagenCalendar::Gregorian))
+            .unwrap();
+
+        let skeletons_no_alt = data
+            .datetime_formats
+            .available_formats
+            .parse_skeletons(DatetimeAsciiPreference::Default);
+        let skeletons_alt = data
+            .datetime_formats
+            .available_formats
+            .parse_skeletons(DatetimeAsciiPreference::PreferAscii);
+
+        let h_skeleton = Skeleton::try_from("h").unwrap();
+
+        let pattern_no_alt = skeletons_no_alt
+            .get(&h_skeleton)
+            .unwrap()
+            .clone()
+            .try_into_other()
+            .unwrap()
+            .to_string();
+        let pattern_alt = skeletons_alt
+            .get(&h_skeleton)
+            .unwrap()
+            .clone()
+            .try_into_other()
+            .unwrap()
+            .to_string();
+
+        assert!(
+            pattern_alt.is_ascii(),
+            "Alt-ASCII pattern should be all ASCII"
+        );
+        assert_ne!(
+            pattern_alt, pattern_no_alt,
+            "Alt-ASCII had an impact on the result"
+        );
     }
 }

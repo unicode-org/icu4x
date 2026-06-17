@@ -1,0 +1,27 @@
+{
+  "has_explicit_medium": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "elements": [
+    {
+      "header": 26,
+      "patterns": [
+        "U MMM d–d",
+        "U MMM d – MMM d",
+        "U MMM d"
+      ]
+    },
+    {
+      "header": 16,
+      "patterns": [
+        "y-MM-dd"
+      ]
+    }
+  ]
+}

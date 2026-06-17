@@ -1,5 +1,5 @@
 {
-  "classes": {
+  "symbols": {
     "header": {
       "high_start": 918016,
       "shifted12_high_start": 225,
@@ -14319,5 +14319,7 @@
     26,
     26
   ],
-  "num_lookaheads": 0
+  "num_lookaheads": 0,
+  "pseudo_symbol_shift": 21,
+  "pseudo_symbol_map": []
 }

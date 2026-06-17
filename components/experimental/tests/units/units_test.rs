@@ -6,6 +6,7 @@ use core::str::FromStr;
 
 use icu_experimental::units::converter_factory::ConverterFactory;
 use icu_experimental::units::ratio::IcuRatio;
+use icu_experimental::units::InvalidConversionError;
 use icu_experimental::{measure::measureunit::MeasureUnit, units::converter::UnitsConverter};
 use num_bigint::BigInt;
 use num_rational::Ratio;
@@ -45,7 +46,7 @@ fn test_cldr_unit_tests() {
         let output_unit =
             MeasureUnit::try_from_str(&test.output_unit).expect("Failed to parse output unit");
 
-        let converter: UnitsConverter<Ratio<BigInt>> = converter_factory
+        let converter: UnitsConverter<&Ratio<BigInt>> = converter_factory
             .converter(&input_unit, &output_unit)
             .expect("Failed to create converter");
         let result =
@@ -54,7 +55,7 @@ fn test_cldr_unit_tests() {
         let converter_f64: UnitsConverter<f64> = converter_factory
             .converter(&input_unit, &output_unit)
             .expect("Failed to create converter for f64");
-        let result_f64 = converter_f64.convert(&1000.0);
+        let result_f64 = converter_f64.convert(1000.0);
 
         let diff_ratio = ((result.clone() - test.result.clone().get_ratio())
             / test.result.clone().get_ratio())
@@ -217,10 +218,10 @@ fn test_units_non_convertible() {
         let input_unit = MeasureUnit::try_from_str(input).expect("Failed to parse input unit");
         let output_unit = MeasureUnit::try_from_str(output).expect("Failed to parse output unit");
 
-        let result: Option<UnitsConverter<f64>> =
-            converter_factory.converter(&input_unit, &output_unit);
+        let result: Result<UnitsConverter<f64>, InvalidConversionError> =
+            converter_factory.converter::<f64>(&input_unit, &output_unit);
         assert!(
-            result.is_none(),
+            result.is_err(),
             "Conversion should not be possible between {input:?} and {output:?}"
         );
     }
@@ -301,7 +302,7 @@ fn test_f64_precision() {
     let g = MeasureUnit::try_from_str("gram").unwrap();
     let tonne = MeasureUnit::try_from_str("tonne").unwrap();
     let converter = factory.converter::<f64>(&g, &tonne).unwrap();
-    let result = converter.convert(&5.0);
+    let result = converter.convert(5.0);
     assert_eq!(result, 5e-6);
 
     // Case 2: 825 g to kg (factor 1/1000)
@@ -309,7 +310,7 @@ fn test_f64_precision() {
     // Expected with f64_mul_div: 0.825 (exactly representable double closest to 0.825)
     let kg = MeasureUnit::try_from_str("kilogram").unwrap();
     let converter = factory.converter::<f64>(&g, &kg).unwrap();
-    let result = converter.convert(&825.0);
+    let result = converter.convert(825.0);
     assert_eq!(result, 0.825);
 
     // Case 3: 5 in to cm (factor 127/50)
@@ -317,14 +318,14 @@ fn test_f64_precision() {
     let inch = MeasureUnit::try_from_str("inch").unwrap();
     let cm = MeasureUnit::try_from_str("centimeter").unwrap();
     let converter = factory.converter::<f64>(&inch, &cm).unwrap();
-    let result = converter.convert(&5.0);
+    let result = converter.convert(5.0);
     assert_eq!(result, 12.7);
 
     // Case 4: 84 in to ft (factor 1/12)
     // Expected: 7.0
     let foot = MeasureUnit::try_from_str("foot").unwrap();
     let converter = factory.converter::<f64>(&inch, &foot).unwrap();
-    let result = converter.convert(&84.0);
+    let result = converter.convert(84.0);
     assert_eq!(result, 7.0);
 }
 
@@ -356,11 +357,11 @@ fn test_f64_vs_bigint_precision() {
 
         let converter_f64 = factory.converter::<f64>(&input_unit, &output_unit).unwrap();
         let converter_bigint = factory
-            .converter::<Ratio<BigInt>>(&input_unit, &output_unit)
+            .converter::<&Ratio<BigInt>>(&input_unit, &output_unit)
             .unwrap();
 
         // 1. Compute using f64 (FMA)
-        let actual = converter_f64.convert(&val);
+        let actual = converter_f64.convert(val);
 
         // 2. Compute using Ratio<BigInt> (exact + single rounding)
         let val_ratio = Ratio::from_float(val).expect("Failed to convert float to Ratio");

@@ -14,14 +14,24 @@ use crate::props::*;
 {%- if prop.is_open() %}
 
 impl {{ prop.name.to_upper_camel_case() }} {
-    {%- for (discriminant, (short_name, long_name)) in prop.variants() %}
+    {%- for (discriminant, (short_name, long_name, aliases)) in prop.variants() %}
     {%- if (discriminant != 254 || long_name != "Chisoi") %}
     {%- if prop.is_icu4c_only_value(*discriminant) && prop.name == "Script" %}
-    /// `{{short_name}}` (ISO 15924)
-    {%- else if short_name != long_name %}
-    /// `{{short_name}}`
+    /// ISO 15924
     {%- endif %}
-    pub const {{prop.transform_long(long_name)}}: Self = Self({{discriminant}});
+    pub const {{prop.transform_ident(long_name)}}: Self = Self({{discriminant}});
+    {%- if short_name != long_name %}
+    {%- if prop.is_icu4c_only_value(*discriminant) && prop.name == "Script" %}
+    /// ISO 15924
+    {%- endif %}
+    pub const {{prop.transform_ident(short_name)}}: Self = Self::{{prop.transform_ident(long_name)}};
+    {%- endif %}
+    {%- for alias in aliases %}
+    {%- if prop.is_icu4c_only_value(*discriminant) && prop.name == "Script" %}
+    /// ISO 15924
+    {%- endif %}
+    pub const {{prop.transform_ident(alias)}}: Self = Self::{{prop.transform_ident(long_name)}};
+    {%- endfor %}
     {%- endif %}
     {%- endfor %}
 }
@@ -36,9 +46,18 @@ impl {{ prop.name.to_upper_camel_case() }} {
 #[repr(u8)]
 #[allow(missing_docs)] // These variants don't need individual documentation.
 pub enum {{ prop.name.to_upper_camel_case() }} {
-    {%- for (discriminant, (short_name, long_name)) in prop.variants() %}
-    /// `{{short_name}}`
-    {{prop.transform_long(long_name)}} = {{discriminant}},
+    {%- for (discriminant, (short_name, long_name, _)) in prop.variants() %}
+    {{prop.transform_ident(long_name)}} = {{discriminant}},
+    {%- endfor %}
+}
+
+impl {{ prop.name.to_upper_camel_case() }} {
+    {%- for (discriminant, (short_name, long_name, aliases)) in prop.variants() %}    {%- if short_name != long_name %}
+    pub const {{prop.transform_ident(short_name)}}: Self = Self::{{prop.transform_ident(long_name)}};
+    {%- endif %}
+    {%- for alias in aliases %}
+    pub const {{prop.transform_ident(alias)}}: Self = Self::{{prop.transform_ident(long_name)}};
+    {%- endfor %}
     {%- endfor %}
 }
 
@@ -49,9 +68,9 @@ impl databake::Bake for {{ prop.name.to_upper_camel_case() }} {
     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
         env.insert("icu_properties");
         match *self {
-            {%- for (discriminant, (_, long_name)) in prop.variants() %}
+            {%- for (discriminant, (_, long_name, _)) in prop.variants() %}
             {%- if (discriminant != 254 || long_name != "Chisoi") %}
-            Self::{{prop.transform_long(long_name)}} => databake::quote!(icu_properties::props::{{ prop.name.to_upper_camel_case() }}::{{prop.transform_long(long_name)}}),
+            Self::{{prop.transform_ident(long_name)}} => databake::quote!(icu_properties::props::{{ prop.name.to_upper_camel_case() }}::{{prop.transform_ident(long_name)}}),
             {%- endif %}
             {%- endfor %}
             {%- if prop.is_open() %}
@@ -78,9 +97,9 @@ impl {{ prop.name.to_upper_camel_case() }} {
     /// Deprecated
     #[deprecated]
     pub const ALL_VALUES: &'static [Self] = &[
-        {%- for (discriminant, (short_name, long_name)) in prop.variants() %}
+        {%- for (discriminant, (short_name, long_name, _)) in prop.variants() %}
         {%- if (discriminant != 254 || long_name != "Chisoi") %}
-        Self::{{prop.transform_long(long_name)}},
+        Self::{{prop.transform_ident(long_name)}},
         {%- endif %}
         {%- endfor %}
     ];
@@ -89,9 +108,9 @@ impl {{ prop.name.to_upper_camel_case() }} {
     #[doc(hidden)]
     pub fn names() -> impl Iterator<Item = (&'static str, Self)> {
         [
-            {%- for (discriminant, (short_name, long_name)) in prop.variants() %}
+            {%- for (discriminant, (short_name, long_name, _)) in prop.variants() %}
             {%- if discriminant != 254 || long_name != "Chisoi" %}
-            ("{{short_name}}", Self::{{prop.transform_long(long_name)}}),
+            ("{{short_name}}", Self::{{prop.transform_ident(long_name)}}),
             {%- endif %}
             {%- endfor %}
         ].into_iter()

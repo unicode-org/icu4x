@@ -104,6 +104,35 @@ const _: () = {
     impl_datetime_patterns_date_japanese_v1!(Baked);
     impl_datetime_patterns_date_persian_v1!(Baked);
     impl_datetime_patterns_date_roc_v1!(Baked);
+
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_glue_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_time_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_buddhist_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_chinese_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_coptic_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_dangi_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_ethiopian_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_gregorian_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_hebrew_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_indian_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_hijri_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_japanese_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_persian_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_datetime_patterns_range_date_roc_v1!(Baked);
 };
 
 #[cfg(feature = "compiled_data")]
@@ -173,4 +202,32 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     semantic_skeletons::DatetimePatternsDateJapaneseV1::INFO,
     semantic_skeletons::DatetimePatternsDatePersianV1::INFO,
     semantic_skeletons::DatetimePatternsDateRocV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeGlueV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeTimeV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDateBuddhistV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDateChineseV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDateCopticV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDateDangiV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDateEthiopianV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDateGregorianV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDateHebrewV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDateIndianV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDateHijriV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDateJapaneseV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDatePersianV1::INFO,
+    #[cfg(feature = "unstable")]
+    range_patterns::DatetimePatternsRangeDateRocV1::INFO,
 ];

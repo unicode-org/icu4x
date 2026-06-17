@@ -109,7 +109,7 @@ fn make_testdata() {
         )
     })
     .with_marker_attributes_filter("locale_names_variant", |attrs| {
-        matches!(attrs.as_str(), "POSIX")
+        matches!(attrs.as_str(), "posix")
     })
     .with_marker_attributes_filter("numbering_system", |attrs| {
         matches!(attrs.as_str(), "arab" | "beng" | "cakm" | "latn" | "thai")

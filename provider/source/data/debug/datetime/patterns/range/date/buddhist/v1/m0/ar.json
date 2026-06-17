@@ -1,0 +1,32 @@
+{
+  "has_explicit_medium": true,
+  "has_explicit_short": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "elements": [
+    {
+      "header": 8,
+      "patterns": [
+        "LLLL–LLLL"
+      ]
+    },
+    {
+      "header": 8,
+      "patterns": [
+        "MMM–MMM"
+      ]
+    },
+    {
+      "header": 8,
+      "patterns": [
+        "M–M"
+      ]
+    }
+  ]
+}

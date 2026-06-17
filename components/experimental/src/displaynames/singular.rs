@@ -79,7 +79,7 @@ where
 /// ```
 #[derive(Debug)]
 pub struct ScriptDisplayNameOwned {
-    payload: DataPayload<LocaleNamesScriptLongV1>,
+    payload: DataPayload<LocaleNamesScriptMediumV1>,
 }
 
 impl ScriptDisplayNameOwned {
@@ -95,12 +95,12 @@ impl ScriptDisplayNameOwned {
     );
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<D: DataProvider<LocaleNamesScriptLongV1> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<LocaleNamesScriptMediumV1> + ?Sized>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         script: Script,
     ) -> Result<Self, DataError> {
-        try_new_unstable::<LocaleNamesScriptLongV1, _>(provider, prefs, script.as_str())
+        try_new_unstable::<LocaleNamesScriptMediumV1, _>(provider, prefs, script.as_str())
             .map(|payload| Self { payload })
     }
 
@@ -146,9 +146,11 @@ impl ScriptDisplayNameOwned {
         script: Script,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LocaleNamesScriptShortV1> + DataProvider<LocaleNamesScriptLongV1> + ?Sized,
+        D: DataProvider<LocaleNamesScriptShortV1>
+            + DataProvider<LocaleNamesScriptMediumV1>
+            + ?Sized,
     {
-        try_new_short_unstable::<LocaleNamesScriptShortV1, LocaleNamesScriptLongV1, _>(
+        try_new_short_unstable::<LocaleNamesScriptShortV1, LocaleNamesScriptMediumV1, _>(
             provider,
             prefs,
             script.as_str(),
@@ -224,7 +226,7 @@ writeable::impl_display_with_writeable!(ScriptDisplayName<'_>);
 /// ```
 #[derive(Debug)]
 pub struct RegionDisplayNameOwned {
-    payload: DataPayload<LocaleNamesRegionLongV1>,
+    payload: DataPayload<LocaleNamesRegionMediumV1>,
 }
 
 impl RegionDisplayNameOwned {
@@ -240,12 +242,12 @@ impl RegionDisplayNameOwned {
     );
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<D: DataProvider<LocaleNamesRegionLongV1> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<LocaleNamesRegionMediumV1> + ?Sized>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         region: Region,
     ) -> Result<Self, DataError> {
-        try_new_unstable::<LocaleNamesRegionLongV1, _>(provider, prefs, region.as_str())
+        try_new_unstable::<LocaleNamesRegionMediumV1, _>(provider, prefs, region.as_str())
             .map(|payload| Self { payload })
     }
 
@@ -291,9 +293,11 @@ impl RegionDisplayNameOwned {
         region: Region,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LocaleNamesRegionShortV1> + DataProvider<LocaleNamesRegionLongV1> + ?Sized,
+        D: DataProvider<LocaleNamesRegionShortV1>
+            + DataProvider<LocaleNamesRegionMediumV1>
+            + ?Sized,
     {
-        try_new_short_unstable::<LocaleNamesRegionShortV1, LocaleNamesRegionLongV1, _>(
+        try_new_short_unstable::<LocaleNamesRegionShortV1, LocaleNamesRegionMediumV1, _>(
             provider,
             prefs,
             region.as_str(),

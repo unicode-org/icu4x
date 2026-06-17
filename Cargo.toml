@@ -145,7 +145,7 @@ icu_collator = { version = "~2.2.0", path = "components/collator", default-featu
 icu_collections = { version = "~2.2.0", path = "components/collections", default-features = false }
 icu_datetime = { version = "~2.2.0", path = "components/datetime", default-features = false }
 icu_decimal = { version = "~2.2.0", path = "components/decimal", default-features = false }
-icu_experimental = { version = "~0.5.0", path = "components/experimental", default-features = false }
+icu_experimental = { version = "~0.6.0-dev", path = "components/experimental", default-features = false }
 icu_list = { version = "~2.2.0", path = "components/list", default-features = false }
 icu_locale = { version = "~2.2.0", path = "components/locale", default-features = false }
 icu_normalizer = { version = "~2.2.0", path = "components/normalizer", default-features = false }
@@ -181,7 +181,7 @@ icu_plurals_data = { version = "~2.2.0", path = "provider/data/plurals", default
 icu_properties_data = { version = "~2.2.0", path = "provider/data/properties", default-features = false }
 icu_segmenter_data = { version = "~2.2.0", path = "provider/data/segmenter", default-features = false }
 icu_time_data = { version = "~2.2.0", path = "provider/data/time", default-features = false }
-icu_experimental_data = { version = "~0.5.0", path = "provider/data/experimental", default-features = false }
+icu_experimental_data = { version = "~0.6.0-dev", path = "provider/data/experimental", default-features = false }
 
 # Utils
 # Note: some of these versions are lower than the published version for more flexibility. They are marked,
@@ -276,7 +276,7 @@ write16 = { version = "1.0.0", default-features = false }
 
 ## External Deps Group 2: Heavy Dev and Datagen deps. No default features.
 zip = { version = "2", default-features = false }
-tar = { version = "0.4.43", default-features = false }
+tar = { version = "0.4.46", default-features = false }
 flate2 = { version = "1.0.35", default-features = false }
 serde-aux = { version = "4.0.0", default-features = false }
 toml = { version = "0.8.0", default-features = false, features = ["parse"] }
@@ -384,6 +384,7 @@ rust.trivial_numeric_casts = "deny"
 rust.unexpected_cfgs = { level = "warn", check-cfg = [
     'cfg(icu4c_enable_renaming)',
     'cfg(needs_alloc_error_handler)',
+    'cfg(icu4x_nightly_tests)',
     'cfg(icu4x_run_size_tests)',
     'cfg(icu4x_unstable_fast_trie_only)',
 ] }

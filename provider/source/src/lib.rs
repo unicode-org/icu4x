@@ -102,6 +102,7 @@ pub struct SourceDataProvider {
     unicode_paths: Option<Arc<UnicodeCache>>,
     trie_type: TrieType,
     collation_root_han: CollationRootHan,
+    alt_variants: HashSet<AltVariantKind>,
     pub(crate) timezone_horizon: time_zones::Timestamp,
     #[expect(clippy::type_complexity)] // not as complex as it appears
     requests_cache: Arc<
@@ -186,6 +187,7 @@ impl SourceDataProvider {
             )
             .unwrap(),
             collation_root_han: Default::default(),
+            alt_variants: Default::default(),
             requests_cache: Default::default(),
         }
     }
@@ -440,6 +442,16 @@ impl SourceDataProvider {
         }
     }
 
+    /// Set the [`AltVariantKind`]s to enable when generating data.
+    ///
+    /// This allows enabling alternative data variants, such as `alt="ascii"` for datetime patterns.
+    pub fn with_alt_variants(self, variants: impl IntoIterator<Item = AltVariantKind>) -> Self {
+        Self {
+            alt_variants: variants.into_iter().collect(),
+            ..self
+        }
+    }
+
     /// Set the timezone horizon from a UTC date.
     ///
     /// Timezone names that have not been in use since before this date are not included,
@@ -592,6 +604,16 @@ impl std::fmt::Display for CollationRootHan {
             CollationRootHan::Unihan => write!(f, "unihan"),
         }
     }
+}
+
+/// Specifies an alt variant to enable when generating data.
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+#[non_exhaustive]
+pub enum AltVariantKind {
+    /// `alt="ascii"` on certain datetime patterns.
+    ///
+    /// Intended for compatibility with older websites.
+    DatetimeAscii,
 }
 
 /// A language's CLDR coverage level.

@@ -6,54 +6,56 @@ use num_bigint::BigInt;
 use num_rational::Ratio;
 use num_traits::ToPrimitive;
 
-// TODO: add Mul & Add for references to avoid cloning.
 /// A trait for types that can be converted between two units.
 pub trait Convertible: Clone {
-    /// The type representing the conversion ratio.
-    type Ratio: Clone + core::fmt::Debug;
+    type Factor: core::fmt::Debug + Clone;
+    type Addend: core::fmt::Debug + Clone;
+    type Result: core::fmt::Debug;
 
-    /// Adds two values by reference, avoiding data cloning.
-    fn add_refs(&self, other: &Self) -> Self;
+    /// Computes `self * factor`
+    fn mul(self, factor: &Self::Factor) -> Self::Result;
 
-    /// Multiplies the value by the conversion ratio.
-    fn mul_ratio(&self, ratio: &Self::Ratio) -> Self;
+    /// Computes `self * factor + addend`.
+    fn mul_add(self, factor: &Self::Factor, addend: &Self::Addend) -> Self::Result;
 
-    /// Converts a [`Ratio<BigInt>`] to the implementing type.
-    fn from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self>;
+    /// Computes `1/(self * factor)`
+    fn reciprocal_mul(self, factor: &Self::Factor) -> Self::Result;
 
-    /// Converts a [`Ratio<BigInt>`] to the associated [`Self::Ratio`] type.
-    fn ratio_from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self::Ratio>;
+    /// Converts a [`Ratio<BigInt>`] to a [`Self::Factor`].
+    fn factor_from_ratio_bigint(factor: Ratio<BigInt>) -> Self::Factor;
 
-    /// Returns the reciprocal of the implementing type.
-    fn reciprocal(&self) -> Self;
+    /// Converts a [`Ratio<BigInt>`] to a [`Self::Addend`].
+    fn addend_from_ratio_bigint(addend: Ratio<BigInt>) -> Self::Addend;
 }
 
-impl Convertible for Ratio<BigInt> {
-    type Ratio = Ratio<BigInt>;
+impl Convertible for &'_ Ratio<BigInt> {
+    type Factor = Ratio<BigInt>;
+    type Addend = Ratio<BigInt>;
+    type Result = Ratio<BigInt>;
 
     #[inline]
-    fn mul_ratio(&self, ratio: &Self::Ratio) -> Self {
-        self * ratio
+    fn mul(self, factor: &Self::Factor) -> Self::Result {
+        self * factor
     }
 
     #[inline]
-    fn add_refs(&self, other: &Self) -> Self {
-        self + other
+    fn mul_add(self, factor: &Self::Factor, addend: &Self::Addend) -> Self::Result {
+        self * factor + addend
     }
 
     #[inline]
-    fn from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self> {
-        Some(ratio)
+    fn reciprocal_mul(self, factor: &Self::Factor) -> Self::Result {
+        (self * factor).recip()
     }
 
     #[inline]
-    fn ratio_from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self::Ratio> {
-        Some(ratio)
+    fn factor_from_ratio_bigint(factor: Ratio<BigInt>) -> Self::Factor {
+        factor
     }
 
     #[inline]
-    fn reciprocal(&self) -> Self {
-        self.recip()
+    fn addend_from_ratio_bigint(addend: Ratio<BigInt>) -> Self::Addend {
+        addend
     }
 }
 
@@ -86,39 +88,37 @@ pub struct RatioF64 {
 }
 
 impl Convertible for f64 {
-    type Ratio = RatioF64;
+    type Factor = RatioF64;
+    type Addend = f64;
+    type Result = f64;
 
     #[inline]
-    fn mul_ratio(&self, ratio: &Self::Ratio) -> Self {
-        super::f64_mul_div::f64_mul_div(*self, ratio.numerator, ratio.denominator)
+    fn mul(self, factor: &Self::Factor) -> Self::Result {
+        super::f64_mul_div::f64_mul_div(self, factor.numerator, factor.denominator)
     }
 
     #[inline]
-    fn add_refs(&self, other: &Self) -> Self {
-        self + other
+    fn mul_add(self, factor: &Self::Factor, addend: &Self::Addend) -> Self::Result {
+        super::f64_mul_div::f64_mul_div(self, factor.numerator, factor.denominator) + addend
     }
 
     #[inline]
-    fn from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self> {
-        ratio.to_f64()
+    fn reciprocal_mul(self, factor: &Self::Factor) -> Self::Result {
+        1.0 / super::f64_mul_div::f64_mul_div(self, factor.numerator, factor.denominator)
     }
 
     #[inline]
-    fn ratio_from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self::Ratio> {
-        let numerator = ratio.numer().to_f64()?;
-        let denominator = ratio.denom().to_f64()?;
-        if numerator.is_finite() && denominator.is_finite() {
-            Some(RatioF64 {
-                numerator,
-                denominator,
-            })
-        } else {
-            None
+    fn factor_from_ratio_bigint(factor: Ratio<BigInt>) -> Self::Factor {
+        let numerator = factor.numer().to_f64().unwrap_or(f64::NAN);
+        let denominator = factor.denom().to_f64().unwrap_or(f64::NAN);
+        RatioF64 {
+            numerator,
+            denominator,
         }
     }
 
     #[inline]
-    fn reciprocal(&self) -> Self {
-        self.recip()
+    fn addend_from_ratio_bigint(addend: Ratio<BigInt>) -> Self::Addend {
+        addend.to_f64().unwrap_or(f64::NAN)
     }
 }

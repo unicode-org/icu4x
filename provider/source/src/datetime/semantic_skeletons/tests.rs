@@ -3,7 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
+use crate::AltVariantKind;
 use crate::SourceDataProvider;
+use icu::datetime::fieldsets::enums::TimeFieldSet;
 
 #[test]
 fn test_check_for_field() {
@@ -172,6 +174,39 @@ fn test_en_hour_patterns() {
 }
 
 #[test]
+fn test_en_hour_patterns_alt_ascii() {
+    use icu::locale::locale;
+
+    let provider = SourceDataProvider::new_testing();
+    let provider_ascii = provider
+        .clone()
+        .with_alt_variants(std::iter::once(AltVariantKind::DatetimeAscii));
+    let locale = locale!("en").into();
+    for &attributes in TimeFieldSet::ALL_DATA_MARKER_ATTRIBUTES {
+        let req = DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
+            metadata: Default::default(),
+        };
+        let payload: DataPayload<DatetimePatternsTimeV1> = provider.load(req).unwrap().payload;
+        let payload_ascii: DataPayload<DatetimePatternsTimeV1> =
+            provider_ascii.load(req).unwrap().payload;
+
+        let json_str = serde_json::to_string_pretty(payload.get()).unwrap();
+        let json_str_ascii = serde_json::to_string_pretty(payload_ascii.get()).unwrap();
+        assert!(
+            json_str_ascii.is_ascii(),
+            "Alt-ASCII JSON for attributes {attributes:?} should contain only ASCII characters"
+        );
+        if attributes != DataMarkerAttributes::from_str_or_panic("h0") {
+            assert_ne!(
+                json_str_ascii, json_str,
+                "Alt-ASCII should produce a different result"
+            );
+        }
+    }
+}
+
+#[test]
 fn test_en_overlap_patterns() {
     use icu::locale::locale;
 
@@ -219,6 +254,7 @@ fn test_en_overlap_patterns() {
 #[cfg(feature = "networking")]
 mod date_skeleton_consistency_tests {
     use super::*;
+
     use crate::CoverageLevel;
     use crate::datetime::DatagenCalendar;
     use icu::datetime::provider::fields;
@@ -396,8 +432,14 @@ mod date_skeleton_consistency_tests {
     ) -> usize {
         let mut num_problems = 0;
         let data = provider.get_dates_resource(locale, Some(cal)).unwrap();
-        let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats_at_time);
-        let skeleton_patterns = data.datetime_formats.available_formats.parse_skeletons();
+        let length_combinations_v1 = convert_length_patterns(
+            &data.datetime_formats_at_time,
+            provider.datetime_ascii_preference(),
+        );
+        let skeleton_patterns = data
+            .datetime_formats
+            .available_formats
+            .parse_skeletons(provider.datetime_ascii_preference());
         let skeleton_pattern_set = data
             .datetime_formats
             .available_formats

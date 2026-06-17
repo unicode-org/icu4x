@@ -147,11 +147,15 @@ fn extract_currency_essentials<'data>(
         .get("latn")
         .ok_or_else(|| DataError::custom("Could not find the standard pattern"))?;
 
+    // According to UTS #35 (https://unicode.org/reports/tr35/tr35-numbers.html#Currency_Formats),
+    // pattern variants fall back to their base style hierarchy:
+    // - standard-alphaNextToNumber falls back to standard.
+    // - accounting-alphaNextToNumber falls back to accounting (which falls back to standard).
+    // Fallback is handled at runtime by CurrencyEssentials getters to avoid duplicate data storage.
     let standard = &currency_formats.standard;
-    let standard_alpha_next_to_number = currency_formats
-        .standard_alpha_next_to_number
-        .as_ref()
-        .unwrap_or(standard);
+    let standard_alpha_next_to_number = currency_formats.standard_alpha_next_to_number.as_ref();
+    let accounting = currency_formats.accounting.as_ref();
+    let accounting_alpha_next_to_number = currency_formats.accounting_alpha_next_to_number.as_ref();
 
     let mut currency_patterns_map =
         BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>::new();
@@ -280,14 +284,13 @@ fn extract_currency_essentials<'data>(
             }
         };
 
-    /// Create a `DoublePlaceholderPattern` from a string pattern.
-    fn create_pattern<'data>(
-        pattern: &NumberPattern,
-    ) -> Result<Cow<'data, DoublePlaceholderPattern>, DataError> {
-        // TODO(#4677): Handle the negative sub pattern.
-        // TODO: this is wrong - the currency pattern does not necessarily match the decimal pattern with a currency
-        // sign and some literals tacked on.
-        let pattern_items = pattern.positive.iter().flat_map(|item| match item {
+    // TODO: The currency pattern does not necessarily match standard decimal formatting.
+    // We should parse the numeric block (#,##0.00) for custom grouping sizes or numbering system overrides
+    // rather than collapsing it entirely into Place0.
+    fn convert_pattern_items<'a>(
+        items: &'a [NumberPatternItem],
+    ) -> impl Iterator<Item = PatternItemCow<'a, DoublePlaceholderKey>> + 'a {
+        items.iter().flat_map(|item| match item {
             NumberPatternItem::Currency => {
                 Some(PatternItemCow::Placeholder(DoublePlaceholderKey::Place1))
             }
@@ -296,19 +299,93 @@ fn extract_currency_essentials<'data>(
                 Some(PatternItemCow::Placeholder(DoublePlaceholderKey::Place0))
             }
             _ => None,
-        });
+        })
+    }
 
-        DoublePlaceholderPattern::try_from_items(pattern_items.into_iter())
+    fn create_positive_pattern<'data>(
+        pattern: &NumberPattern,
+    ) -> Result<Cow<'data, DoublePlaceholderPattern>, DataError> {
+        DoublePlaceholderPattern::try_from_items(convert_pattern_items(&pattern.positive))
             .map_err(|e| {
-                DataError::custom("Could not parse standard pattern").with_display_context(&e)
+                DataError::custom("Could not parse positive pattern").with_display_context(&e)
             })
             .map(Cow::Owned)
     }
 
+    fn create_negative_pattern<'data>(
+        pattern: &NumberPattern,
+    ) -> Result<Option<Cow<'data, DoublePlaceholderPattern>>, DataError> {
+        if let Some(negative_items) = &pattern.negative {
+            DoublePlaceholderPattern::try_from_items(convert_pattern_items(negative_items))
+                .map_err(|e| {
+                    DataError::custom("Could not parse negative pattern").with_display_context(&e)
+                })
+                .map(Cow::Owned)
+                .map(Some)
+        } else {
+            Ok(None)
+        }
+    }
+
+    let mut unique_patterns = Vec::<Box<DoublePlaceholderPattern>>::new();
+
+    let mut add_pattern = |opt_cow: Option<Cow<'data, DoublePlaceholderPattern>>| -> Option<u8> {
+        opt_cow.map(|cow| {
+            let pat: Box<DoublePlaceholderPattern> = cow.into_owned();
+            if let Some(idx) = unique_patterns.iter().position(|p| p == &pat) {
+                idx as u8
+            } else {
+                let idx = unique_patterns.len() as u8;
+                unique_patterns.push(pat);
+                idx
+            }
+        })
+    };
+
+    let standard_idx = add_pattern(Some(create_positive_pattern(standard)?)).unwrap();
+    let standard_neg_idx = add_pattern(create_negative_pattern(standard)?);
+    let standard_alpha_idx = add_pattern(
+        standard_alpha_next_to_number
+            .map(create_positive_pattern)
+            .transpose()?,
+    )
+    .unwrap_or(standard_idx);
+    let standard_alpha_neg_idx = match standard_alpha_next_to_number {
+        Some(p) => add_pattern(create_negative_pattern(p)?),
+        None => None,
+    };
+    let accounting_pos_idx =
+        add_pattern(accounting.map(create_positive_pattern).transpose()?).unwrap_or(standard_idx);
+    let accounting_neg_idx = match accounting {
+        Some(p) => add_pattern(create_negative_pattern(p)?),
+        None => None,
+    };
+    let accounting_alpha_pos_idx = add_pattern(
+        accounting_alpha_next_to_number
+            .map(create_positive_pattern)
+            .transpose()?,
+    )
+    .unwrap_or(accounting_pos_idx);
+    let accounting_alpha_neg_idx = match accounting_alpha_next_to_number {
+        Some(p) => add_pattern(create_negative_pattern(p)?),
+        None => None,
+    };
+
+    let indices = PatternIndices {
+        standard: standard_idx,
+        standard_negative: standard_neg_idx,
+        standard_alpha_next_to_number: standard_alpha_idx,
+        standard_alpha_next_to_number_negative: standard_alpha_neg_idx,
+        accounting_positive: accounting_pos_idx,
+        accounting_negative: accounting_neg_idx,
+        accounting_alpha_next_to_number_positive: accounting_alpha_pos_idx,
+        accounting_alpha_next_to_number_negative: accounting_alpha_neg_idx,
+    };
+
     Ok(CurrencyEssentials {
         pattern_config_map: ZeroMap::from_iter(currency_patterns_map.iter()),
-        standard_pattern: create_pattern(standard)?,
-        standard_alpha_next_to_number_pattern: create_pattern(standard_alpha_next_to_number)?,
+        patterns: VarZeroVec::from(&unique_patterns),
+        indices,
         placeholders: VarZeroVec::from(&placeholders),
         default_pattern_config,
     })
@@ -370,12 +447,44 @@ fn test_basic() {
 
     let en_payload = en.payload.get();
 
-    assert_writeable_eq!(en_payload.standard_pattern.interpolate((3, "$")), "$3");
+    assert_writeable_eq!(
+        en_payload.standard_pattern().unwrap().interpolate((3, "$")),
+        "$3"
+    );
     assert_writeable_eq!(
         en_payload
-            .standard_alpha_next_to_number_pattern
+            .standard_alpha_next_to_number_pattern()
+            .unwrap()
             .interpolate((3, "$")),
         "$\u{a0}3"
+    );
+    assert_writeable_eq!(
+        en_payload
+            .accounting_positive_pattern()
+            .unwrap()
+            .interpolate((3, "$")),
+        "$3"
+    );
+    assert_writeable_eq!(
+        en_payload
+            .accounting_negative_pattern()
+            .unwrap()
+            .interpolate((3, "$")),
+        "($3)"
+    );
+    assert_writeable_eq!(
+        en_payload
+            .accounting_alpha_next_to_number_positive_pattern()
+            .unwrap()
+            .interpolate((3, "$")),
+        "$\u{a0}3"
+    );
+    assert_writeable_eq!(
+        en_payload
+            .accounting_alpha_next_to_number_negative_pattern()
+            .unwrap()
+            .interpolate((3, "$")),
+        "($\u{a0}3)"
     );
 
     let (en_usd_short, en_usd_narrow) = get_placeholders_of_currency(
@@ -404,7 +513,10 @@ fn test_basic() {
 
     let ar_eg_payload = ar_eg.payload.get();
     assert_writeable_eq!(
-        ar_eg_payload.standard_pattern.interpolate((3, "$")),
+        ar_eg_payload
+            .standard_pattern()
+            .unwrap()
+            .interpolate((3, "$")),
         "\u{200f}3\u{a0}$"
     );
 

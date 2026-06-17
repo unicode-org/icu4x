@@ -1,0 +1,26 @@
+{
+  "has_explicit_short": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "elements": [
+    {
+      "header": 24,
+      "patterns": [
+        "U年MMM～MMM",
+        "U年MMM"
+      ]
+    },
+    {
+      "header": 16,
+      "patterns": [
+        "U/MM"
+      ]
+    }
+  ]
+}

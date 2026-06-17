@@ -180,9 +180,17 @@ impl Eras {
 #[derive(PartialEq, Debug, Deserialize, Clone)]
 pub(crate) struct LengthPatterns {
     pub(crate) full: LengthPattern,
+    #[serde(rename = "full-alt-ascii")]
+    pub(crate) full_alt_ascii: Option<LengthPattern>,
     pub(crate) long: LengthPattern,
+    #[serde(rename = "long-alt-ascii")]
+    pub(crate) long_alt_ascii: Option<LengthPattern>,
     pub(crate) medium: LengthPattern,
+    #[serde(rename = "medium-alt-ascii")]
+    pub(crate) medium_alt_ascii: Option<LengthPattern>,
     pub(crate) short: LengthPattern,
+    #[serde(rename = "short-alt-ascii")]
+    pub(crate) short_alt_ascii: Option<LengthPattern>,
 }
 
 #[derive(PartialEq, Debug, Deserialize, Clone)]
@@ -195,6 +203,8 @@ pub(crate) struct DateTimeFormats {
     pub(crate) available_formats: AvailableFormats,
     #[serde(rename = "appendItems")]
     pub(crate) append_items: AppendItems,
+    #[serde(rename = "intervalFormats")]
+    pub(crate) interval_formats: Option<IntervalFormats>,
 }
 
 #[derive(PartialEq, Debug, Deserialize, Clone)]
@@ -241,7 +251,15 @@ impl DateTimeFormatsVariant {
 }
 
 #[derive(PartialEq, Clone, Debug, Deserialize)]
-pub(crate) struct AvailableFormats(pub(crate) HashMap<String, String>);
+pub(crate) struct AvailableFormats(pub(crate) BTreeMap<String, String>);
+
+#[derive(PartialEq, Clone, Debug, Deserialize)]
+pub(crate) struct IntervalFormats {
+    #[serde(rename = "intervalFormatFallback")]
+    pub(crate) fallback: String,
+    #[serde(flatten)]
+    pub(crate) patterns: HashMap<String, HashMap<String, String>>,
+}
 
 #[derive(PartialEq, Clone, Debug, Deserialize)]
 pub(crate) struct CyclicNameSets {

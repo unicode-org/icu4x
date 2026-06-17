@@ -2,7 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "unstable")]
+use crate::GraphemeClusterSegmenterBorrowed;
 use crate::complex::ComplexPayloadsBorrowed;
+#[cfg(feature = "unstable")]
+use crate::complex::{ComplexIterator, ComplexPayloadBorrowed};
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::provider::*;
 use alloc::vec::Vec;
@@ -32,18 +36,24 @@ pub trait RuleBreakType: crate::private::Sealed + Sized {
     #[doc(hidden)]
     #[cfg(feature = "unstable")]
     type ComplexData<'data>: core::fmt::Debug;
+    #[doc(hidden)]
+    #[cfg(feature = "unstable")]
+    type ComplexLanguageData<'data>: core::fmt::Debug;
 
     #[doc(hidden)]
     #[cfg(feature = "unstable")]
-    fn is_complex(data: &Self::ComplexData<'_>, iter: &Self::IterAttr<'_>) -> bool;
+    fn select_complex<'a>(
+        data: &Self::ComplexData<'a>,
+        language: crate::complex::Language,
+    ) -> Option<Self::ComplexLanguageData<'a>>;
 
     #[doc(hidden)]
     #[cfg(feature = "unstable")]
-    fn handle_complex<'s>(
-        data: &Self::ComplexData<'_>,
+    fn handle_complex<'data, 's>(
+        data: &Self::ComplexLanguageData<'data>,
         complex: &Self::IterAttr<'s>,
         past_complex: &Self::IterAttr<'s>,
-    ) -> impl Iterator<Item = usize> + use<'s, Self>;
+    ) -> ComplexIterator<'data, 's, Self>;
 
     #[doc(hidden)]
     #[cfg(feature = "unstable")]
@@ -300,27 +310,30 @@ impl RuleBreakType for Utf8 {
 
     #[cfg(feature = "unstable")]
     type ComplexData<'data> = ComplexPayloadsBorrowed<'data>;
+    #[cfg(feature = "unstable")]
+    type ComplexLanguageData<'data> = (
+        ComplexPayloadBorrowed<'data>,
+        GraphemeClusterSegmenterBorrowed<'data>,
+    );
 
     #[cfg(feature = "unstable")]
-    fn is_complex(data: &Self::ComplexData<'_>, iter: &Self::IterAttr<'_>) -> bool {
-        iter.as_str()
-            .chars()
-            .next()
-            .is_some_and(|c| data.handles(c.into()))
+    fn select_complex<'a>(
+        &data: &Self::ComplexData<'a>,
+        language: crate::complex::Language,
+    ) -> Option<Self::ComplexLanguageData<'a>> {
+        data.select(language).map(|d| (d, data.grapheme))
     }
 
     #[cfg(feature = "unstable")]
-    fn handle_complex<'s>(
-        data: &Self::ComplexData<'_>,
+    fn handle_complex<'data, 's>(
+        &(lang, grapheme): &Self::ComplexLanguageData<'data>,
         complex: &Self::IterAttr<'s>,
         past_complex: &Self::IterAttr<'s>,
-    ) -> impl Iterator<Item = usize> + use<'s> {
+    ) -> ComplexIterator<'data, 's, Self> {
         let complex_offset = complex.offset();
         #[allow(clippy::indexing_slicing)] // valid offset
         let complex = &complex.as_str()[..(past_complex.offset() - complex_offset)];
-        data.complex_language_segment_str(complex)
-            .into_iter()
-            .map(move |i| i + complex_offset)
+        lang.segment_str(complex, grapheme, complex_offset)
     }
 
     fn char_len(ch: Self::CharType) -> usize {
@@ -353,30 +366,30 @@ impl RuleBreakType for PotentiallyIllFormedUtf8 {
 
     #[cfg(feature = "unstable")]
     type ComplexData<'data> = ComplexPayloadsBorrowed<'data>;
+    #[cfg(feature = "unstable")]
+    type ComplexLanguageData<'data> = (
+        ComplexPayloadBorrowed<'data>,
+        GraphemeClusterSegmenterBorrowed<'data>,
+    );
 
     #[cfg(feature = "unstable")]
-    fn is_complex(data: &Self::ComplexData<'_>, iter: &Self::IterAttr<'_>) -> bool {
-        iter.clone()
-            .next()
-            .is_some_and(|(_, c)| data.handles(c.into()))
+    fn select_complex<'a>(
+        data: &Self::ComplexData<'a>,
+        language: crate::complex::Language,
+    ) -> Option<Self::ComplexLanguageData<'a>> {
+        Utf8::select_complex(data, language)
     }
 
     #[cfg(feature = "unstable")]
-    fn handle_complex<'s>(
-        data: &Self::ComplexData<'_>,
+    fn handle_complex<'data, 's>(
+        &(lang, grapheme): &Self::ComplexLanguageData<'data>,
         complex: &Self::IterAttr<'s>,
         past_complex: &Self::IterAttr<'s>,
-    ) -> impl Iterator<Item = usize> + use<'s> {
+    ) -> ComplexIterator<'data, 's, Self> {
         let offset = complex.offset();
         #[allow(clippy::indexing_slicing)] // valid offset
         let complex = &complex.as_slice()[..(past_complex.offset() - offset)];
-        if let Ok(complex) = core::str::from_utf8(complex) {
-            data.complex_language_segment_str(complex)
-        } else {
-            alloc::vec![complex.len()]
-        }
-        .into_iter()
-        .map(move |i| i + offset)
+        lang.segment_utf8(complex, grapheme, offset)
     }
 
     fn char_len(ch: Self::CharType) -> usize {
@@ -409,21 +422,24 @@ impl RuleBreakType for Latin1 {
 
     #[cfg(feature = "unstable")]
     type ComplexData<'data> = core::convert::Infallible;
+    #[cfg(feature = "unstable")]
+    type ComplexLanguageData<'data> = core::convert::Infallible;
 
     #[cfg(feature = "unstable")]
-    fn is_complex(&data: &Self::ComplexData<'_>, _iter: &Self::IterAttr<'_>) -> bool {
-        match data {}
+    fn select_complex<'a>(
+        _data: &Self::ComplexData<'a>,
+        _language: crate::complex::Language,
+    ) -> Option<Self::ComplexLanguageData<'a>> {
+        None
     }
 
     #[cfg(feature = "unstable")]
-    fn handle_complex<'s>(
-        &data: &Self::ComplexData<'_>,
+    fn handle_complex<'data, 's>(
+        &data: &Self::ComplexData<'data>,
         _complex: &Self::IterAttr<'s>,
         _past_complex: &Self::IterAttr<'s>,
-    ) -> impl Iterator<Item = usize> + use<'s> {
+    ) -> ComplexIterator<'data, 's, Self> {
         match data {}
-        #[allow(unreachable_code)] // ! does not impl Iterator
-        core::iter::empty()
     }
 
     fn char_len(_ch: Self::CharType) -> usize {
@@ -456,24 +472,30 @@ impl RuleBreakType for Utf16 {
 
     #[cfg(feature = "unstable")]
     type ComplexData<'data> = ComplexPayloadsBorrowed<'data>;
+    #[cfg(feature = "unstable")]
+    type ComplexLanguageData<'data> = (
+        ComplexPayloadBorrowed<'data>,
+        GraphemeClusterSegmenterBorrowed<'data>,
+    );
 
     #[cfg(feature = "unstable")]
-    fn is_complex(data: &Self::ComplexData<'_>, iter: &Self::IterAttr<'_>) -> bool {
-        iter.clone().next().is_some_and(|(_, c)| data.handles(c))
+    fn select_complex<'a>(
+        data: &Self::ComplexData<'a>,
+        language: crate::complex::Language,
+    ) -> Option<Self::ComplexLanguageData<'a>> {
+        Utf8::select_complex(data, language)
     }
 
     #[cfg(feature = "unstable")]
-    fn handle_complex<'s>(
-        data: &Self::ComplexData<'_>,
+    fn handle_complex<'data, 's>(
+        &(lang, grapheme): &Self::ComplexLanguageData<'data>,
         complex: &Self::IterAttr<'s>,
         past_complex: &Self::IterAttr<'s>,
-    ) -> impl Iterator<Item = usize> + use<'s> {
+    ) -> ComplexIterator<'data, 's, Utf16> {
         let complex_offset = complex.offset();
         #[allow(clippy::indexing_slicing)] // valid offset
         let complex = &complex.as_slice()[..(past_complex.offset() - complex_offset)];
-        data.complex_language_segment_utf16(complex)
-            .into_iter()
-            .map(move |i| i + complex_offset)
+        lang.segment_utf16(complex, grapheme, complex_offset)
     }
 
     fn char_len(ch: Self::CharType) -> usize {

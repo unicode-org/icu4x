@@ -31,13 +31,7 @@ use utf8_iter::Utf8CharIndices;
 /// For examples of use, see [`LineSegmenter`].
 #[derive(Debug)]
 pub struct LineBreakIterator<'data, 's, Y: RuleBreakType>(
-    RuleBreakIterator<
-        'data,
-        's,
-        Y,
-        Option<&'data SegmenterStateMachineOverride<'data>>,
-        ComplexLine<Y>,
-    >,
+    RuleBreakIterator<'data, 's, Y, ComplexLine<Y>>,
 );
 
 derive_usize_iterator_with_type!(LineBreakIterator, 'data);
@@ -572,20 +566,57 @@ struct ComplexLine<Y>(PhantomData<Y>);
 impl<Y: RuleBreakType> ComplexHandler<Y> for ComplexLine<Y> {
     const BREAK_AT_BOUNDARIES: bool = false;
     const BREAK_STATUS: u8 = false as u8;
+    type Cache = [usize; 16];
     type Data<'s> = Y::ComplexData<'s>;
 
-    #[inline(always)]
-    fn is_complex(data: &Self::Data<'_>, iter: &Y::IterAttr<'_>) -> bool {
-        Y::is_complex(data, iter)
+    fn resolve_symbol(symbol: Symbol) -> Symbol {
+        if !matches!(
+            symbol & 0b1111_1110,
+            SegmenterStateMachine::LB_SA_KHMER_SYMBOL
+                | SegmenterStateMachine::LB_SA_THAI_SYMBOL
+                | SegmenterStateMachine::LB_SA_LAO_SYMBOL
+                | SegmenterStateMachine::LB_SA_MYANMAR_SYMBOL
+        ) {
+            return symbol;
+        }
+        if symbol & 1 == 0 {
+            SegmenterStateMachine::LB_SA_SYMBOL
+        } else {
+            SegmenterStateMachine::LB_SA_CM_SYMBOL
+        }
     }
 
-    #[inline(always)]
-    fn handle<'s>(
-        data: &Self::Data<'_>,
-        complex: &<Y as RuleBreakType>::IterAttr<'s>,
-        past_complex: &<Y as RuleBreakType>::IterAttr<'s>,
-    ) -> impl Iterator<Item = usize> + use<'s, Y> {
-        Y::handle_complex(data, complex, past_complex)
+    fn handle<'data, 's>(
+        symbol: Symbol,
+        dfa: &RuleBreakIterator<'_, '_, Y, Self>,
+        data: &Self::Data<'data>,
+        iter: Y::IterAttr<'s>,
+    ) -> Option<(ComplexIterator<'data, 's, Y>, Y::IterAttr<'s>)> {
+        use crate::complex::Language;
+
+        let data = Y::select_complex(
+            data,
+            match symbol & 0b1111_1110 {
+                SegmenterStateMachine::LB_SA_KHMER_SYMBOL => Language::Khmer,
+                SegmenterStateMachine::LB_SA_THAI_SYMBOL => Language::Thai,
+                SegmenterStateMachine::LB_SA_LAO_SYMBOL => Language::Lao,
+                SegmenterStateMachine::LB_SA_MYANMAR_SYMBOL => Language::Burmese,
+                _ => return None,
+            },
+        )?;
+
+        let mut past_complex = iter.clone();
+        let mut last_complex = past_complex.clone();
+        past_complex.next();
+        while past_complex.clone().next().is_some_and(|(_, cp)| {
+            // Ignore the last bit, which is the difference between XX_SYMBOL and XX_CM_SYMBOL.
+            dfa.symbol(cp.into()) & 0b1111_1110 == symbol & 0b1111_1110
+        }) {
+            past_complex.next();
+            last_complex.next();
+        }
+
+        Some((Y::handle_complex(&data, &iter, &past_complex), last_complex))
     }
 }
 
@@ -603,10 +634,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
             input.char_indices(),
             self.data,
             self.tailoring,
-            self.tailoring
-                .map(|t| !t.ignore_complex)
-                .unwrap_or(true)
-                .then_some(self.complex),
+            Some(self.complex),
         ))
     }
     /// Creates a line break iterator for a potentially ill-formed UTF8 string
@@ -622,10 +650,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
             Utf8CharIndices::new(input),
             self.data,
             self.tailoring,
-            self.tailoring
-                .map(|t| !t.ignore_complex)
-                .unwrap_or(true)
-                .then_some(self.complex),
+            Some(self.complex),
         ))
     }
     /// Creates a line break iterator for a Latin-1 (8-bit) string.
@@ -648,10 +673,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
             Utf16Indices::new(input),
             self.data,
             self.tailoring,
-            self.tailoring
-                .map(|t| !t.ignore_complex)
-                .unwrap_or(true)
-                .then_some(self.complex),
+            Some(self.complex),
         ))
     }
 }

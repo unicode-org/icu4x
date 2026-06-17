@@ -1615,7 +1615,7 @@ version = "2.2.0"
 
 [[package]]
 name = "icu_experimental"
-version = "0.5.0"
+version = "0.6.0-dev"
 dependencies = [
  "core_maths",
  "criterion",
@@ -1655,7 +1655,7 @@ dependencies = [
 
 [[package]]
 name = "icu_experimental_data"
-version = "0.5.0"
+version = "0.6.0-dev"
 
 [[package]]
 name = "icu_freertos"
@@ -2017,6 +2017,7 @@ dependencies = [
  "potential_utf",
  "serde",
  "serde_json",
+ "smallvec",
  "utf8_iter",
  "zerovec",
 ]
@@ -3389,9 +3390,9 @@ checksum = "55937e1799185b12863d447f42597ed69d9928686b8d88a1df17376a097d8369"
 
 [[package]]
 name = "tar"
-version = "0.4.45"
+version = "0.4.46"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "22692a6476a21fa75fdfc11d452fda482af402c008cdbaf3476414e122040973"
+checksum = "3f6221d9a6003c78398e3b239969f352578258df48c8eb051caadae0015bc840"
 dependencies = [
  "filetime",
  "libc",

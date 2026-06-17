@@ -1,0 +1,25 @@
+{
+  "has_explicit_medium": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "elements": [
+    {
+      "header": 4,
+      "patterns": [
+        "MMM d, E"
+      ]
+    },
+    {
+      "header": 4,
+      "patterns": [
+        "MM-dd, E"
+      ]
+    }
+  ]
+}
