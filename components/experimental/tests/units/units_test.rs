@@ -292,12 +292,12 @@ fn test_unparsable_units() {
 }
 
 #[test]
-fn test_fma_precision() {
+fn test_f64_precision() {
     let factory = ConverterFactory::new();
 
     // Case 1: 5 g to tonnes (factor 1/1000000)
-    // Today: 0.0000049999999999999996
-    // Expected with FMA: 0.000005 (exactly representable double closest to 5e-6)
+    // Naive math: 0.0000049999999999999996
+    // Expected with f64_mul_div: 0.000005 (exactly representable double closest to 5e-6)
     let g = MeasureUnit::try_from_str("gram").unwrap();
     let tonne = MeasureUnit::try_from_str("tonne").unwrap();
     let converter = factory.converter::<f64>(&g, &tonne).unwrap();
@@ -305,8 +305,8 @@ fn test_fma_precision() {
     assert_eq!(result, 5e-6);
 
     // Case 2: 825 g to kg (factor 1/1000)
-    // Today: 0.8250000000000001
-    // Expected with FMA: 0.825 (exactly representable double closest to 0.825)
+    // Naive math: 0.8250000000000001
+    // Expected with f64_mul_div: 0.825 (exactly representable double closest to 0.825)
     let kg = MeasureUnit::try_from_str("kilogram").unwrap();
     let converter = factory.converter::<f64>(&g, &kg).unwrap();
     let result = converter.convert(&825.0);
