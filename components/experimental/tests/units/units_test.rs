@@ -327,3 +327,63 @@ fn test_f64_precision() {
     let result = converter.convert(&84.0);
     assert_eq!(result, 7.0);
 }
+
+#[test]
+fn test_f64_vs_bigint_precision() {
+    let factory = ConverterFactory::new();
+
+    // Define specific test cases with their expected exactness: (input, output, value, expect_exact)
+    // - Proportional conversions are always exact matches because FMA achieves single rounding.
+    // - Offset conversions can be 1 unit of precision off due to double rounding (offset addition + FMA).
+    //   However, if they land on exact integers, they remain exact matches.
+    let test_cases = [
+        // Proportional conversions (always exact)
+        ("gram", "tonne", 5.0, true),
+        ("gram", "tonne", 0.123456789, true),
+        ("gram", "kilogram", 825.0, true),
+        ("inch", "centimeter", 5.0, true),
+        ("mile-per-hour", "kilometer-per-hour", 120.0, true),
+        // Offset conversions
+        ("fahrenheit", "celsius", 32.0, true), // 32 F = 0 C (exact)
+        ("fahrenheit", "celsius", 212.0, true), // 212 F = 100 C (exact)
+        ("fahrenheit", "celsius", -40.0, true), // -40 F = -40 C (exact)
+        ("fahrenheit", "celsius", 0.123456789, false), // 1 unit off (verified)
+    ];
+
+    for &(input_str, output_str, val, expect_exact) in &test_cases {
+        let input_unit = MeasureUnit::try_from_str(input_str).unwrap();
+        let output_unit = MeasureUnit::try_from_str(output_str).unwrap();
+
+        let converter_f64 = factory.converter::<f64>(&input_unit, &output_unit).unwrap();
+        let converter_bigint = factory
+            .converter::<Ratio<BigInt>>(&input_unit, &output_unit)
+            .unwrap();
+
+        // 1. Compute using f64 (FMA)
+        let actual = converter_f64.convert(&val);
+
+        // 2. Compute using Ratio<BigInt> (exact + single rounding)
+        let val_ratio = Ratio::from_float(val).expect("Failed to convert float to Ratio");
+        let expected_ratio = converter_bigint.convert(&val_ratio);
+        let expected = expected_ratio
+            .to_f64()
+            .expect("Failed to convert Ratio to float");
+
+        // 3. Assert exact match or minimal difference (closest representable float)
+        if expect_exact {
+            assert_eq!(
+                actual,
+                expected,
+                "Expected exact match for {input_str} -> {output_str} with value {val}, but got actual={actual}, expected={expected}"
+            );
+        } else {
+            let is_minimal = actual == expected.next_up() || actual == expected.next_down();
+            let next_down = expected.next_down();
+            let next_up = expected.next_up();
+            assert!(
+                is_minimal,
+                "Precision mismatch for {input_str} -> {output_str} with value {val}: actual ({actual}) is not the closest representable float to expected ({expected}) [next_down={next_down}, next_up={next_up}]"
+            );
+        }
+    }
+}
