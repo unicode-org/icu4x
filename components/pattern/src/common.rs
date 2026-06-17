@@ -277,7 +277,7 @@ where
 ///
 /// [`Pattern`]: crate::Pattern
 pub trait ExtractionBackend: PatternBackend + crate::private::Sealed {
-    /// 🚧 [Unstable] The type that stores the matches for this backend.
+    /// 🚧 \[Unstable\] The type that stores the matches for this backend.
     ///
     /// <div class="stab unstable">
     /// 🚧 This API is unstable; it may change at any time, in breaking or non-breaking ways,
@@ -285,7 +285,7 @@ pub trait ExtractionBackend: PatternBackend + crate::private::Sealed {
     /// </div>
     type DecodedMatchesUnstable<'p, 'a>;
 
-    /// 🚧 [Unstable] Extract matches from the store.
+    /// 🚧 \[Unstable\] Extract matches from the store.
     ///
     /// <div class="stab unstable">
     /// 🚧 This API is unstable; it may change at any time, in breaking or non-breaking ways,
@@ -296,7 +296,7 @@ pub trait ExtractionBackend: PatternBackend + crate::private::Sealed {
         input: &'a str,
     ) -> Option<Self::DecodedMatchesUnstable<'p, 'a>>;
 
-    /// 🚧 [Unstable] Get a match from the decoded matches.
+    /// 🚧 \[Unstable\] Get a match from the decoded matches.
     ///
     /// <div class="stab unstable">
     /// 🚧 This API is unstable; it may change at any time, in breaking or non-breaking ways,
