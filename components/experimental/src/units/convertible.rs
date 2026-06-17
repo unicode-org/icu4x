@@ -89,6 +89,7 @@ impl Convertible for f64 {
         ratio.to_f64()
     }
 
+    #[inline]
     fn ratio_from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self::Ratio> {
         let numerator = ratio.numer().to_f64()?;
         let denominator = ratio.denom().to_f64()?;
