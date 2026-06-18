@@ -16,10 +16,10 @@ use icu_provider::prelude::*;
 /// use icu::locale::{locale, subtags::variant};
 /// use writeable::assert_writeable_eq;
 ///
-/// let display_name = VariantDisplayNameOwned::try_new(locale!("en").into(), variant!("posix"))
+/// let display_name = VariantDisplayNameOwned::try_new(locale!("en").into(), variant!("fonipa"))
 ///     .expect("Data should load successfully");
 ///
-/// assert_writeable_eq!(display_name, "Computer");
+/// assert_writeable_eq!(display_name, "IPA Phonetics");
 /// ```
 #[derive(Debug)]
 pub struct VariantDisplayNameOwned {
@@ -30,6 +30,19 @@ impl VariantDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, variant: Variant) -> result: Result<Self, DataError>,
         /// Loads the variant display name for a given variant and locale using compiled data.
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::experimental::displaynames::single::VariantDisplayNameOwned;
+        /// use icu::locale::{locale, subtags::variant};
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let display_name = VariantDisplayNameOwned::try_new(locale!("en").into(), variant!("fonipa"))
+        ///     .expect("Data should load successfully");
+        ///
+        /// assert_writeable_eq!(display_name, "IPA Phonetics");
+        /// ```
         functions: [
             try_new,
             try_new_with_buffer_provider,
