@@ -33,16 +33,19 @@ impl Convertible for &'_ Ratio<BigInt> {
     type Addend = Ratio<BigInt>;
     type Result = Ratio<BigInt>;
 
+    // Exact
     #[inline]
     fn mul(self, factor: &Self::Factor) -> Self::Result {
         self * factor
     }
 
+    // Exact
     #[inline]
     fn mul_add(self, factor: &Self::Factor, addend: &Self::Addend) -> Self::Result {
         self * factor + addend
     }
 
+    // Exact
     #[inline]
     fn reciprocal_mul(self, factor: &Self::Factor) -> Self::Result {
         (self * factor).recip()
@@ -97,16 +100,19 @@ impl Convertible for f64 {
         super::f64_mul_div::f64_mul_div(self, factor.numerator, factor.denominator)
     }
 
+    // TODO: reduce error
     #[inline]
     fn mul_add(self, factor: &Self::Factor, addend: &Self::Addend) -> Self::Result {
         super::f64_mul_div::f64_mul_div(self, factor.numerator, factor.denominator) + addend
     }
 
+    // TODO: reduce error
     #[inline]
     fn reciprocal_mul(self, factor: &Self::Factor) -> Self::Result {
         1.0 / super::f64_mul_div::f64_mul_div(self, factor.numerator, factor.denominator)
     }
 
+    // Ratio::<BigInt>::to_f64 is infallible
     #[inline]
     fn factor_from_ratio_bigint(factor: Ratio<BigInt>) -> Self::Factor {
         let numerator = factor.numer().to_f64().unwrap_or(f64::NAN);
@@ -117,6 +123,7 @@ impl Convertible for f64 {
         }
     }
 
+    // Ratio::<BigInt>::to_f64 is infallible
     #[inline]
     fn addend_from_ratio_bigint(addend: Ratio<BigInt>) -> Self::Addend {
         addend.to_f64().unwrap_or(f64::NAN)
