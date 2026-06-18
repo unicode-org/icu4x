@@ -38,6 +38,16 @@ use tinystr::{TinyAsciiStr, tinystr};
 /// data.
 #[derive(Clone, Debug, Default, Copy)]
 pub struct Japanese {
+    /// The latest era after Reiwa, dynamically loaded from data.
+    ///
+    /// Since new Japanese eras are announced infrequently, we only need to support
+    /// dynamically loading the latest era that is not yet hardcoded in the library.
+    /// Once a new era is announced, it can be loaded dynamically from data.
+    /// In subsequent library releases, this era will be hardcoded, freeing up the
+    /// dynamic slot for the next future era.
+    ///
+    /// This keeps the `Japanese` struct small (7 bytes) while allowing transition
+    /// to new eras without library upgrades.
     post_reiwa_era: Option<PackedEra>,
 }
 
