@@ -283,6 +283,9 @@ icu_provider::data_marker!(
 
 impl LocaleNamesRegionMediumV1 {
     /// Helper to create data marker attributes from a region.
+    ///
+    /// This is infallible (will not panic) because a validated `Region` is guaranteed to
+    /// conform to `DataMarkerAttributes` syntax.
     #[inline]
     pub(crate) fn make_attributes(region: &Region) -> &DataMarkerAttributes {
         DataMarkerAttributes::from_str_or_panic(region.as_str())
@@ -291,6 +294,9 @@ impl LocaleNamesRegionMediumV1 {
 
 impl LocaleNamesRegionShortV1 {
     /// Helper to create data marker attributes from a region.
+    ///
+    /// This is infallible (will not panic) because a validated `Region` is guaranteed to
+    /// conform to `DataMarkerAttributes` syntax.
     #[inline]
     pub(crate) fn make_attributes(region: &Region) -> &DataMarkerAttributes {
         DataMarkerAttributes::from_str_or_panic(region.as_str())
@@ -299,6 +305,9 @@ impl LocaleNamesRegionShortV1 {
 
 impl LocaleNamesScriptMediumV1 {
     /// Helper to create data marker attributes from a script.
+    ///
+    /// This is infallible (will not panic) because a validated `Script` is guaranteed to
+    /// conform to `DataMarkerAttributes` syntax.
     #[inline]
     pub(crate) fn make_attributes(script: &Script) -> &DataMarkerAttributes {
         DataMarkerAttributes::from_str_or_panic(script.as_str())
@@ -307,6 +316,9 @@ impl LocaleNamesScriptMediumV1 {
 
 impl LocaleNamesScriptShortV1 {
     /// Helper to create data marker attributes from a script.
+    ///
+    /// This is infallible (will not panic) because a validated `Script` is guaranteed to
+    /// conform to `DataMarkerAttributes` syntax.
     #[inline]
     pub(crate) fn make_attributes(script: &Script) -> &DataMarkerAttributes {
         DataMarkerAttributes::from_str_or_panic(script.as_str())
@@ -315,6 +327,9 @@ impl LocaleNamesScriptShortV1 {
 
 impl LocaleNamesVariantMediumV1 {
     /// Helper to create data marker attributes from a variant.
+    ///
+    /// This is infallible (will not panic) because a validated `Variant` is guaranteed to
+    /// conform to `DataMarkerAttributes` syntax.
     #[inline]
     pub(crate) fn make_attributes(variant: &Variant) -> &DataMarkerAttributes {
         DataMarkerAttributes::from_str_or_panic(variant.as_str())
