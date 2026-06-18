@@ -748,6 +748,7 @@ pub enum AnyCalendarKind {
 impl AnyCalendarKind {
     /// Selects the [`AnyCalendarKind`] appropriate for the given [`CalendarPreferences`].
     pub fn new(prefs: CalendarPreferences) -> Self {
+        #[allow(deprecated)] // TODO: what to do here?
         prefs
             .resolved_algorithm()
             .try_into()

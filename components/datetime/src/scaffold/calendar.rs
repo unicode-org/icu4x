@@ -369,6 +369,14 @@ fn test_calendar_fallback() {
         FormattableAnyCalendar::try_new(locale!("und-u-ca-buddhist").into()),
     );
     assert_eq!(
+        FormattableAnyCalendar::try_new(locale!("th").into()),
+        FormattableAnyCalendar::try_new(locale!("und-u-ca-buddhist").into()),
+    );
+    assert_eq!(
+        FormattableAnyCalendar::try_new(locale!("fa").into()),
+        FormattableAnyCalendar::try_new(locale!("und-u-ca-persian").into()),
+    );
+    assert_eq!(
         FormattableAnyCalendar::try_new(locale!("en-SA-u-ca-islamic").into()),
         FormattableAnyCalendar::try_new(
             Locale::try_from_str("und-u-ca-islamic-umalqura")
@@ -443,10 +451,12 @@ impl FormattableAnyCalendar {
         mut prefs: CalendarPreferences,
     ) -> Result<Self, DataError>
     where
-        P: ?Sized + DataProvider<icu_calendar::provider::CalendarJapaneseModernV1>,
+        P: ?Sized
+            + DataProvider<icu_calendar::provider::CalendarJapaneseModernV1>
+            + DataProvider<icu_calendar::provider::CalendarPreferredV1>,
     {
         use CalendarAlgorithm::*;
-        let any_calendar = match prefs.resolved_algorithm() {
+        let any_calendar = match prefs.resolved_algorithm_unstable(provider)? {
             Buddhist => AnyCalendar::Buddhist(cal::Buddhist),
             Chinese => AnyCalendar::Chinese(cal::ChineseTraditional::new()),
             Coptic => AnyCalendar::Coptic(cal::Coptic),

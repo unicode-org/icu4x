@@ -36,6 +36,7 @@ macro_rules! registry(
         cb!(
             icu::calendar::provider::CalendarJapaneseModernV1: CalendarJapaneseModernV1,
             icu::calendar::provider::CalendarWeekV1: CalendarWeekV1,
+            icu::calendar::provider::CalendarPreferredV1: CalendarPreferredV1,
             icu::casemap::provider::CaseMapV1: CaseMapV1,
             icu::casemap::provider::CaseMapUnfoldV1: CaseMapUnfoldV1,
             icu::collator::provider::CollationRootV1: CollationRootV1,
