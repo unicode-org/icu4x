@@ -66,7 +66,10 @@ impl Japanese {
                         .last_after_reiwa()
                     {
                         Ok(era) => era,
-                        Err(_) => panic!("Invalid compiled data for Japanese calendar"),
+                        Err(_) => {
+                            debug_assert!(false, "Invalid compiled data for Japanese calendar");
+                            None
+                        }
                     }
                 },
             }
