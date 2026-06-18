@@ -60,24 +60,7 @@ impl VariantDisplayNameOwned {
     }
 }
 
-impl writeable::Writeable for VariantDisplayNameOwned {
-    #[inline]
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        self.as_borrowed().write_to(sink)
-    }
-
-    #[inline]
-    fn writeable_length_hint(&self) -> writeable::LengthHint {
-        self.as_borrowed().writeable_length_hint()
-    }
-
-    #[inline]
-    fn writeable_borrow(&self) -> Option<&str> {
-        Some(self.payload.get())
-    }
-}
-
-writeable::impl_display_with_writeable!(VariantDisplayNameOwned);
+impl_writeable_for_single_display_name_owned!(VariantDisplayNameOwned);
 
 /// A localized display name for a single variant.
 #[derive(Debug, Clone, Copy)]
@@ -85,21 +68,4 @@ pub struct VariantDisplayName<'a> {
     value: &'a str,
 }
 
-impl<'a> writeable::Writeable for VariantDisplayName<'a> {
-    #[inline]
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        sink.write_str(self.value)
-    }
-
-    #[inline]
-    fn writeable_length_hint(&self) -> writeable::LengthHint {
-        writeable::LengthHint::exact(self.value.len())
-    }
-
-    #[inline]
-    fn writeable_borrow(&self) -> Option<&str> {
-        Some(self.value)
-    }
-}
-
-writeable::impl_display_with_writeable!(VariantDisplayName<'_>);
+impl_writeable_for_single_display_name_borrowed!(VariantDisplayName);
