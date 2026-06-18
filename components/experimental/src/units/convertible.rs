@@ -68,22 +68,8 @@ impl Convertible for &'_ Ratio<BigInt> {
 /// so they can be fed directly into the precision-improving division algorithm
 /// (`f64_mul_div`).
 ///
-/// The numerator and denominator are always integers, so this is an exact
-/// representation of a `Ratio<BigInt>`.
-///
-/// # Semantics & Limitations
-///
-/// When converting a value using `RatioF64` (via `Convertible::mul_ratio`), the
-/// conversion is performed in a single rounded operation using a precision-improving
-/// FMA-based algorithm (`f64_mul_div`).
-///
-/// However, because the algorithm tracks errors using floating-point math, it has
-/// the following limitations:
-/// - **Non-finite inputs/results:** If the input value, the ratio components, or the
-///   intermediate product `value * numerator` is non-finite (NaN, Infinity, or overflow),
-///   the conversion will return `NaN`. This is a known limitation where the FMA error-tracking
-///   math encounters indeterminate forms (like `Inf - Inf`), even if naive math would
-///   have returned `Infinity` or `0.0` (tracked in [unicode-org/icu4x#8092](https://github.com/unicode-org/icu4x/issues/8092)).
+/// # Invariant
+/// - Both `numerator` and `denominator` are finite integers.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct RatioF64 {
     pub(crate) numerator: f64,
