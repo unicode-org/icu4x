@@ -12,11 +12,11 @@ pub trait Convertible: Clone {
     type Addend: core::fmt::Debug + Clone;
     type Result: core::fmt::Debug;
 
-    /// Computes `self * factor`
-    fn mul(self, factor: &Self::Factor) -> Self::Result;
-
     /// Computes `self * factor + addend`.
     fn mul_add(self, factor: &Self::Factor, addend: &Self::Addend) -> Self::Result;
+
+    /// Computes `self * factor`
+    fn mul(self, factor: &Self::Factor) -> Self::Result;
 
     /// Computes `1/(self * factor)`
     fn reciprocal_mul(self, factor: &Self::Factor) -> Self::Result;
