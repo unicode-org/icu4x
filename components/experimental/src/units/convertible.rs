@@ -101,21 +101,23 @@ impl Convertible for f64 {
         1.0 / super::f64_mul_div::f64_mul_div(self, factor.numerator, factor.denominator)
     }
 
-    // Ratio::<BigInt>::to_f64 is infallible
     #[inline]
     fn factor_from_ratio_bigint(factor: Ratio<BigInt>) -> Self::Factor {
-        // Establishes the invariant: RatioF64 fields are finite integers.
+        // Ratio::<BigInt>::to_f64 is infallible. Establishes the invariant that
+        // numerator and denominator are finite integers.
         let numerator = factor.numer().to_f64().unwrap_or(f64::NAN);
         let denominator = factor.denom().to_f64().unwrap_or(f64::NAN);
+        debug_assert!(numerator.is_finite(), "numerator must be finite");
+        debug_assert!(denominator.is_finite(), "denominator must be finite");
         RatioF64 {
             numerator,
             denominator,
         }
     }
 
-    // Ratio::<BigInt>::to_f64 is infallible
     #[inline]
     fn addend_from_ratio_bigint(addend: Ratio<BigInt>) -> Self::Addend {
+        // Ratio::<BigInt>::to_f64 is infallible
         addend.to_f64().unwrap_or(f64::NAN)
     }
 }
