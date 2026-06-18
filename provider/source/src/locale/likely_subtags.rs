@@ -10,7 +10,6 @@ use icu::locale::provider::*;
 use icu::locale::subtags::{Language, Region, Script};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
-use tinystr::TinyAsciiStr;
 
 impl DataProvider<LocaleLikelySubtagsExtendedV1> for SourceDataProvider {
     fn load(
@@ -142,12 +141,12 @@ impl<'a> LikelySubtagsResources<'a> {
 
 #[derive(Default)]
 pub(crate) struct TransformResult {
-    language_script: BTreeMap<(TinyAsciiStr<3>, TinyAsciiStr<4>), Region>,
-    language_region: BTreeMap<(TinyAsciiStr<3>, TinyAsciiStr<3>), Script>,
-    language: BTreeMap<TinyAsciiStr<3>, (Script, Region)>,
-    script_region: BTreeMap<(TinyAsciiStr<4>, TinyAsciiStr<3>), Language>,
-    script: BTreeMap<TinyAsciiStr<4>, (Language, Region)>,
-    region: BTreeMap<TinyAsciiStr<3>, (Language, Script)>,
+    language_script: BTreeMap<(Language, Script), Region>,
+    language_region: BTreeMap<(Language, Region), Script>,
+    language: BTreeMap<Language, (Script, Region)>,
+    script_region: BTreeMap<(Script, Region), Language>,
+    script: BTreeMap<Script, (Language, Region)>,
+    region: BTreeMap<Region, (Language, Script)>,
     und: Option<(Language, Script, Region)>,
 }
 
@@ -157,17 +156,33 @@ impl TransformResult {
             language_script: self
                 .language_script
                 .iter()
-                .map(|((k1, k2), v)| ((k1.to_unvalidated(), k2.to_unvalidated()), v))
+                .map(|((k1, k2), v)| {
+                    (
+                        (
+                            k1.to_tinystr().to_unvalidated(),
+                            k2.to_tinystr().to_unvalidated(),
+                        ),
+                        v,
+                    )
+                })
                 .collect(),
             language_region: self
                 .language_region
                 .iter()
-                .map(|((k1, k2), v)| ((k1.to_unvalidated(), k2.to_unvalidated()), v))
+                .map(|((k1, k2), v)| {
+                    (
+                        (
+                            k1.to_tinystr().to_unvalidated(),
+                            k2.to_tinystr().to_unvalidated(),
+                        ),
+                        v,
+                    )
+                })
                 .collect(),
             language: self
                 .language
                 .iter()
-                .map(|(k, v)| (k.to_unvalidated(), v))
+                .map(|(k, v)| (k.to_tinystr().to_unvalidated(), v))
                 .collect(),
             und: self.und.unwrap_or((
                 icu::locale::subtags::language!("und"),
@@ -182,17 +197,25 @@ impl TransformResult {
             script_region: self
                 .script_region
                 .iter()
-                .map(|((k1, k2), v)| ((k1.to_unvalidated(), k2.to_unvalidated()), v))
+                .map(|((k1, k2), v)| {
+                    (
+                        (
+                            k1.to_tinystr().to_unvalidated(),
+                            k2.to_tinystr().to_unvalidated(),
+                        ),
+                        v,
+                    )
+                })
                 .collect(),
             script: self
                 .script
                 .iter()
-                .map(|(k, v)| (k.to_unvalidated(), v))
+                .map(|(k, v)| (k.to_tinystr().to_unvalidated(), v))
                 .collect(),
             region: self
                 .region
                 .iter()
-                .map(|(k, v)| (k.to_unvalidated(), v))
+                .map(|(k, v)| (k.to_tinystr().to_unvalidated(), v))
                 .collect(),
         }
     }
@@ -202,32 +225,56 @@ impl TransformResult {
             language_script: self
                 .language_script
                 .iter()
-                .map(|((k1, k2), v)| ((k1.to_unvalidated(), k2.to_unvalidated()), v))
+                .map(|((k1, k2), v)| {
+                    (
+                        (
+                            k1.to_tinystr().to_unvalidated(),
+                            k2.to_tinystr().to_unvalidated(),
+                        ),
+                        v,
+                    )
+                })
                 .collect(),
             language_region: self
                 .language_region
                 .iter()
-                .map(|((k1, k2), v)| ((k1.to_unvalidated(), k2.to_unvalidated()), v))
+                .map(|((k1, k2), v)| {
+                    (
+                        (
+                            k1.to_tinystr().to_unvalidated(),
+                            k2.to_tinystr().to_unvalidated(),
+                        ),
+                        v,
+                    )
+                })
                 .collect(),
             language: self
                 .language
                 .iter()
-                .map(|(k, v)| (k.to_unvalidated(), v))
+                .map(|(k, v)| (k.to_tinystr().to_unvalidated(), v))
                 .collect(),
             script_region: self
                 .script_region
                 .iter()
-                .map(|((k1, k2), v)| ((k1.to_unvalidated(), k2.to_unvalidated()), v))
+                .map(|((k1, k2), v)| {
+                    (
+                        (
+                            k1.to_tinystr().to_unvalidated(),
+                            k2.to_tinystr().to_unvalidated(),
+                        ),
+                        v,
+                    )
+                })
                 .collect(),
             script: self
                 .script
                 .iter()
-                .map(|(k, v)| (k.to_unvalidated(), v))
+                .map(|(k, v)| (k.to_tinystr().to_unvalidated(), v))
                 .collect(),
             region: self
                 .region
                 .iter()
-                .map(|(k, v)| (k.to_unvalidated(), v))
+                .map(|(k, v)| (k.to_tinystr().to_unvalidated(), v))
                 .collect(),
         }
     }
@@ -279,26 +326,26 @@ pub(crate) fn transform<'x>(
         }
 
         if !entry.0.language.is_unknown() {
-            let lang = entry.0.language;
-            if let Some(script) = entry.0.script {
-                with_diff!((Language::UNKNOWN, None, Some(region)) => language_script.insert((lang.to_tinystr(), script.to_tinystr()), region));
-            } else if let Some(region) = entry.0.region {
-                with_diff!((Language::UNKNOWN, Some(script), None) => language_region.insert((lang.to_tinystr(), region.to_tinystr()), script));
+            let l = entry.0.language;
+            if let Some(s) = entry.0.script {
+                with_diff!((Language::UNKNOWN, None, Some(r)) => language_script.insert((l, s), r));
+            } else if let Some(r) = entry.0.region {
+                with_diff!((Language::UNKNOWN, Some(s), None) => language_region.insert((l, r), s));
             } else {
-                with_diff!((Language::UNKNOWN, Some(script), Some(region)) => language.insert(lang.to_tinystr(), (script, region)));
+                with_diff!((Language::UNKNOWN, Some(s), Some(r)) => language.insert(l, (s, r)));
             }
-        } else if let Some(scr) = entry.0.script {
-            if let Some(region) = entry.0.region {
+        } else if let Some(s) = entry.0.script {
+            if let Some(r) = entry.0.region {
                 // Some of the target regions here are not equal to the source, such as und-Latn-001 -> en-Latn-US.
                 // However in the `maximize` method we do not replace tags, so we don't need to store the region.
-                with_diff!((language, None, _) => script_region.insert((scr.to_tinystr(), region.to_tinystr()), language));
+                with_diff!((l, None, _) => script_region.insert((s, r), l));
             } else {
-                with_diff!((language, None, Some(region)) => script.insert(scr.to_tinystr(), (language, region)));
+                with_diff!((l, None, Some(r)) => script.insert(s, (l, r)));
             }
-        } else if let Some(reg) = entry.0.region {
+        } else if let Some(r) = entry.0.region {
             // Some of the target regions here are not equal to the source, such as und-002 -> en-Latn-NG.
             // However in the `maximize` method we do not replace tags, so we don't need to store the region.
-            with_diff!((language, Some(script), _) => region.insert(reg.to_tinystr(), (language, script)));
+            with_diff!((l, Some(s), _) => region.insert(r, (l, s)));
         } else {
             und = Some((
                 entry.1.language,
