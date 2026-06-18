@@ -34,18 +34,19 @@ use icu_provider::prelude::*;
 #[allow(dead_code)]
 #[derive(Debug)]
 pub struct LanguageDisplayNameOwned {
-    locale: DataLocale,
+    formatting_locale: DataLocale,
     options: DisplayNamesOptions,
     language_payload: DataPayload<LocaleNamesLanguageMediumV1>,
     script_payload: DataPayloadOr<LocaleNamesScriptMediumV1, ()>,
     region_payload: DataPayloadOr<LocaleNamesRegionMediumV1, ()>,
-    variant_payloads: Vec<DataPayload<LocaleNamesVariantMediumV1>>,
+    variant_payloads:
+        DataPayloadOr<LocaleNamesVariantMediumV1, Vec<DataPayload<LocaleNamesVariantMediumV1>>>,
     essentials_payload: DataPayload<LocaleNamesEssentialsV1>,
 }
 
 impl LanguageDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
-        (prefs: DisplayNamesPreferences, locale_id: icu_locale::LanguageIdentifier, options: DisplayNamesOptions) -> result: Result<Self, DataError>,
+        (prefs: DisplayNamesPreferences, subject: icu_locale::LanguageIdentifier, options: DisplayNamesOptions) -> result: Result<Self, DataError>,
         /// Loads the language display name for a given language identifier and locale using compiled data.
         functions: [
             try_new,
@@ -59,7 +60,7 @@ impl LanguageDisplayNameOwned {
     pub fn try_new_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
-        locale_id: icu_locale::LanguageIdentifier,
+        mut subject: icu_locale::LanguageIdentifier,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError>
     where
@@ -70,10 +71,10 @@ impl LanguageDisplayNameOwned {
             + DataProvider<LocaleNamesEssentialsV1>
             + ?Sized,
     {
-        let locale = LocaleNamesLanguageMediumV1::make_locale(prefs.locale_preferences);
+        let formatting_locale = LocaleNamesLanguageMediumV1::make_locale(prefs.locale_preferences);
 
         // Step 1: Load/Resolve Language Name (with Dialect resolution)
-        // We want to find the best display name for the given locale_id.
+        // We want to find the best display name for the given subject.
         // In Dialect mode (default), we try to load names for combinations of subtags:
         // - Language + Script + Region (e.g., "zh-Hant-HK")
         // - Language + Script (e.g., "zh-Hant")
@@ -84,79 +85,83 @@ impl LanguageDisplayNameOwned {
         // present subtags (script, region, variants) will be formatted as qualifiers.
 
         let mut language_payload = None;
-        let mut script_consumed = false;
-        let mut region_consumed = false;
 
         // Only try dialect if requested (which is the default)
         if options.language_display == LanguageDisplay::Dialect {
             // 1a. Try 3-subtag combination (if both script and region are present)
-            if let (Some(script), Some(region)) = (locale_id.script, locale_id.region) {
-                let temp_id = icu_locale::LanguageIdentifier {
-                    language: locale_id.language,
-                    script: Some(script),
-                    region: Some(region),
-                    variants: Default::default(),
-                };
-                let attr = temp_id.to_string();
+            if let (Some(script), Some(region)) = (subject.script, subject.region) {
+                let lang_str = subject.language.to_tinystr();
+                let script_str = script.to_tinystr();
+                let region_str = region.to_tinystr();
+                let hyphen = tinystr::tinystr!(1, "-");
+                let attr1: tinystr::TinyAsciiStr<16> = lang_str.concat(hyphen);
+                let attr2: tinystr::TinyAsciiStr<16> = attr1.concat(script_str);
+                let attr3: tinystr::TinyAsciiStr<16> = attr2.concat(hyphen);
+                let attr: tinystr::TinyAsciiStr<16> = attr3.concat(region_str);
                 let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str(&attr)
+                    DataMarkerAttributes::try_from_str(attr.as_str())
                         .map_err(|_| DataError::custom("Invalid dialect attr"))?,
-                    &locale,
+                    &formatting_locale,
                 );
                 let mut metadata = DataRequestMetadata::default();
                 metadata.silent = true;
-                if let Ok(response) = provider.load(DataRequest { id, metadata }) {
+                if let Some(response) = provider
+                    .load(DataRequest { id, metadata })
+                    .allow_identifier_not_found()?
+                {
                     language_payload = Some(response.payload);
-                    script_consumed = true;
-                    region_consumed = true;
+                    subject.script = None;
+                    subject.region = None;
                 }
             }
 
-            // 1b. Try language + script (if script is present and not consumed)
+            // 1b. Try language + script (if script is present)
             if language_payload.is_none()
-                && let Some(script) = locale_id.script
+                && let Some(script) = subject.script
             {
-                let temp_id = icu_locale::LanguageIdentifier {
-                    language: locale_id.language,
-                    script: Some(script),
-                    region: None,
-                    variants: Default::default(),
-                };
-                let attr = temp_id.to_string();
+                let lang_str = subject.language.to_tinystr();
+                let script_str = script.to_tinystr();
+                let hyphen = tinystr::tinystr!(1, "-");
+                let attr1: tinystr::TinyAsciiStr<16> = lang_str.concat(hyphen);
+                let attr: tinystr::TinyAsciiStr<16> = attr1.concat(script_str);
                 let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str(&attr)
+                    DataMarkerAttributes::try_from_str(attr.as_str())
                         .map_err(|_| DataError::custom("Invalid dialect attr"))?,
-                    &locale,
+                    &formatting_locale,
                 );
                 let mut metadata = DataRequestMetadata::default();
                 metadata.silent = true;
-                if let Ok(response) = provider.load(DataRequest { id, metadata }) {
+                if let Some(response) = provider
+                    .load(DataRequest { id, metadata })
+                    .allow_identifier_not_found()?
+                {
                     language_payload = Some(response.payload);
-                    script_consumed = true;
+                    subject.script = None;
                 }
             }
 
-            // 1c. Try language + region (if region is present and not consumed)
+            // 1c. Try language + region (if region is present)
             if language_payload.is_none()
-                && let Some(region) = locale_id.region
+                && let Some(region) = subject.region
             {
-                let temp_id = icu_locale::LanguageIdentifier {
-                    language: locale_id.language,
-                    script: None,
-                    region: Some(region),
-                    variants: Default::default(),
-                };
-                let attr = temp_id.to_string();
+                let lang_str = subject.language.to_tinystr();
+                let region_str = region.to_tinystr();
+                let hyphen = tinystr::tinystr!(1, "-");
+                let attr1: tinystr::TinyAsciiStr<16> = lang_str.concat(hyphen);
+                let attr: tinystr::TinyAsciiStr<16> = attr1.concat(region_str);
                 let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str(&attr)
+                    DataMarkerAttributes::try_from_str(attr.as_str())
                         .map_err(|_| DataError::custom("Invalid dialect attr"))?,
-                    &locale,
+                    &formatting_locale,
                 );
                 let mut metadata = DataRequestMetadata::default();
                 metadata.silent = true;
-                if let Ok(response) = provider.load(DataRequest { id, metadata }) {
+                if let Some(response) = provider
+                    .load(DataRequest { id, metadata })
+                    .allow_identifier_not_found()?
+                {
                     language_payload = Some(response.payload);
-                    region_consumed = true;
+                    subject.region = None;
                 }
             }
         }
@@ -165,12 +170,13 @@ impl LanguageDisplayNameOwned {
         let language_payload = match language_payload {
             Some(payload) => payload,
             None => {
+                // TODO(#8100): Fall back to the code instead of failing with DataError if the language name is not found
                 provider
                     .load(DataRequest {
                         id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                            DataMarkerAttributes::try_from_str(locale_id.language.as_str())
+                            DataMarkerAttributes::try_from_str(subject.language.as_str())
                                 .map_err(|_| DataError::custom("Invalid language"))?,
-                            &locale,
+                            &formatting_locale,
                         ),
                         ..Default::default()
                     })?
@@ -178,86 +184,87 @@ impl LanguageDisplayNameOwned {
             }
         };
 
-        // Step 2: Load script name (if present in locale_id and not consumed)
-        let script_payload = if let Some(script) = locale_id.script {
-            if !script_consumed {
-                let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str(script.as_str())
-                        .map_err(|_| DataError::custom("Invalid script"))?,
-                    &locale,
-                );
-                let mut metadata = DataRequestMetadata::default();
-                metadata.silent = true;
-                match provider.load(DataRequest { id, metadata }) {
-                    Ok(response) => DataPayloadOr::from_payload(response.payload),
-                    Err(DataError {
-                        kind: DataErrorKind::IdentifierNotFound,
-                        ..
-                    }) => DataPayloadOr::none(),
-                    Err(e) => return Err(e),
-                }
-            } else {
-                DataPayloadOr::none()
-            }
-        } else {
-            DataPayloadOr::none()
-        };
-
-        // Step 3: Load region name (if present in locale_id and not consumed)
-        let region_payload = if let Some(region) = locale_id.region {
-            if !region_consumed {
-                let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str(region.as_str())
-                        .map_err(|_| DataError::custom("Invalid region"))?,
-                    &locale,
-                );
-                let mut metadata = DataRequestMetadata::default();
-                metadata.silent = true;
-                match provider.load(DataRequest { id, metadata }) {
-                    Ok(response) => DataPayloadOr::from_payload(response.payload),
-                    Err(DataError {
-                        kind: DataErrorKind::IdentifierNotFound,
-                        ..
-                    }) => DataPayloadOr::none(),
-                    Err(e) => return Err(e),
-                }
-            } else {
-                DataPayloadOr::none()
-            }
-        } else {
-            DataPayloadOr::none()
-        };
-
-        // Step 4: Load variant names (if present in locale_id)
-        let mut variant_payloads = Vec::new();
-        for variant in locale_id.variants.iter() {
+        // Step 2: Load script name (if present in subject)
+        let script_payload = if let Some(script) = subject.script {
             let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::try_from_str(variant.as_str())
-                    .map_err(|_| DataError::custom("Invalid variant"))?,
-                &locale,
+                DataMarkerAttributes::try_from_str(script.as_str())
+                    .map_err(|_| DataError::custom("Invalid script"))?,
+                &formatting_locale,
             );
             let mut metadata = DataRequestMetadata::default();
             metadata.silent = true;
             match provider.load(DataRequest { id, metadata }) {
-                Ok(response) => variant_payloads.push(response.payload),
+                Ok(response) => DataPayloadOr::from_payload(response.payload),
                 Err(DataError {
                     kind: DataErrorKind::IdentifierNotFound,
                     ..
-                }) => {}
+                }) => DataPayloadOr::none(),
                 Err(e) => return Err(e),
             }
+        } else {
+            DataPayloadOr::none()
+        };
+
+        // Step 3: Load region name (if present in subject)
+        let region_payload = if let Some(region) = subject.region {
+            let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::try_from_str(region.as_str())
+                    .map_err(|_| DataError::custom("Invalid region"))?,
+                &formatting_locale,
+            );
+            let mut metadata = DataRequestMetadata::default();
+            metadata.silent = true;
+            match provider.load(DataRequest { id, metadata }) {
+                Ok(response) => DataPayloadOr::from_payload(response.payload),
+                Err(DataError {
+                    kind: DataErrorKind::IdentifierNotFound,
+                    ..
+                }) => DataPayloadOr::none(),
+                Err(e) => return Err(e),
+            }
+        } else {
+            DataPayloadOr::none()
+        };
+
+        // Step 4: Load variant names (if present in subject)
+        let mut loaded_variants = Vec::new();
+        for variant in subject.variants.iter() {
+            let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::try_from_str(variant.as_str())
+                    .map_err(|_| DataError::custom("Invalid variant"))?,
+                &formatting_locale,
+            );
+            let mut metadata = DataRequestMetadata::default();
+            metadata.silent = true;
+            if let Some(response) = provider
+                .load(DataRequest { id, metadata })
+                .allow_identifier_not_found()?
+            {
+                loaded_variants.push(response.payload);
+            } else {
+                // TODO(#8100): Fall back to the code instead of dropping it if the variant name is not found
+            }
         }
+
+        let variant_payloads = if loaded_variants.len() == 1 {
+            match loaded_variants.pop() {
+                Some(payload) => DataPayloadOr::from_payload(payload),
+                None => DataPayloadOr::from_other(loaded_variants),
+            }
+        } else {
+            DataPayloadOr::from_other(loaded_variants)
+        };
 
         // Step 5: Load essentials
         let essentials_payload = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&locale),
+                id: DataIdentifierBorrowed::for_locale(&formatting_locale),
                 ..Default::default()
             })?
             .payload;
 
         Ok(Self {
-            locale,
+            formatting_locale,
             options,
             language_payload,
             script_payload,
@@ -269,11 +276,22 @@ impl LanguageDisplayNameOwned {
 
     /// Returns a borrowed version of this display name.
     pub fn as_borrowed(&self) -> LanguageDisplayName<'_> {
+        let variants = match self.variant_payloads.get() {
+            Ok(payload) => BorrowedVariants::One(payload),
+            Err(vec) => {
+                if vec.is_empty() {
+                    BorrowedVariants::None
+                } else {
+                    BorrowedVariants::Slice(vec.as_slice())
+                }
+            }
+        };
+
         LanguageDisplayName {
             base_name: self.language_payload.get(),
             script_name: self.script_payload.get_option().map(|p| &**p),
             region_name: self.region_payload.get_option().map(|p| &**p),
-            variants: &self.variant_payloads,
+            variants,
             locale_pattern: &self.essentials_payload.get().locale_pattern,
             locale_separator: &self.essentials_payload.get().locale_separator,
         }
@@ -294,13 +312,21 @@ impl writeable::Writeable for LanguageDisplayNameOwned {
 
 writeable::impl_display_with_writeable!(LanguageDisplayNameOwned);
 
+/// Borrowed variants representation to avoid heap allocation.
+#[derive(Debug, Clone, Copy)]
+pub enum BorrowedVariants<'a> {
+    None,
+    One(&'a str),
+    Slice(&'a [DataPayload<LocaleNamesVariantMediumV1>]),
+}
+
 /// A localized display name for a language.
 #[derive(Debug, Clone, Copy)]
 pub struct LanguageDisplayName<'a> {
     base_name: &'a str,
     script_name: Option<&'a str>,
     region_name: Option<&'a str>,
-    variants: &'a [DataPayload<LocaleNamesVariantMediumV1>],
+    variants: BorrowedVariants<'a>,
     locale_pattern: &'a DoublePlaceholderPattern,
     locale_separator: &'a DoublePlaceholderPattern,
 }
@@ -308,67 +334,58 @@ pub struct LanguageDisplayName<'a> {
 struct QualifiersWriteable<'a> {
     script: Option<&'a str>,
     region: Option<&'a str>,
-    variants: &'a [DataPayload<LocaleNamesVariantMediumV1>],
+    variants: BorrowedVariants<'a>,
     separator: &'a DoublePlaceholderPattern,
 }
 
 impl<'a> writeable::Writeable for QualifiersWriteable<'a> {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        // Collect all non-consumed qualifiers (script, region, variants) into a stack array.
-        // We have at most 4 qualifiers (1 script, 1 region, and up to 2 variants in practice,
-        // though BCP-47 allows more, CLDR data rarely has more than 2 variants for display).
-        let mut qs: [&'a str; 4] = [""; 4];
-        let mut len = 0;
-        if let Some(script) = self.script
-            && let Some(q) = qs.get_mut(len)
-        {
-            *q = script;
-            len += 1;
-        }
-        if let Some(region) = self.region
-            && let Some(q) = qs.get_mut(len)
-        {
-            *q = region;
-            len += 1;
-        }
-        for variant in self.variants.iter() {
-            if let Some(q) = qs.get_mut(len) {
-                *q = &**variant.get();
-                len += 1;
+        let mut first = true;
+
+        // TODO: See whether we can share this code with the list component.
+        let mut separator_str = ", ";
+        for item in self.separator.iter() {
+            if let icu_pattern::PatternItem::Literal(s) = item {
+                separator_str = s;
+                break;
             }
         }
 
-        // Format the collected qualifiers.
-        // If we have 1 qualifier, we just write it.
-        // If we have multiple, we join them pair-wise using the locale separator pattern.
-        // For example, if we have [Q0, Q1, Q2], we format it as:
-        //   interpolate(interpolate(Q0, Q1), Q2)
-        // This avoids any allocation and matches the TR35 spec for list formatting of qualifiers.
-        match len {
-            0 => Ok(()),
-            1 => sink.write_str(qs[0]),
-            2 => self.separator.interpolate((qs[0], qs[1])).write_to(sink),
-            3 => self
-                .separator
-                .interpolate((self.separator.interpolate((qs[0], qs[1])), qs[2]))
-                .write_to(sink),
-            4 => self
-                .separator
-                .interpolate((
-                    self.separator
-                        .interpolate((self.separator.interpolate((qs[0], qs[1])), qs[2])),
-                    qs[3],
-                ))
-                .write_to(sink),
-            _ => unreachable!(),
+        let mut write_item = |sink: &mut W, item: &str| -> core::fmt::Result {
+            if !first {
+                sink.write_str(separator_str)?;
+            }
+            sink.write_str(item)?;
+            first = false;
+            Ok(())
+        };
+
+        if let Some(script) = self.script {
+            write_item(sink, script)?;
         }
+        if let Some(region) = self.region {
+            write_item(sink, region)?;
+        }
+        match self.variants {
+            BorrowedVariants::None => {}
+            BorrowedVariants::One(v) => {
+                write_item(sink, v)?;
+            }
+            BorrowedVariants::Slice(slice) => {
+                for variant in slice.iter() {
+                    write_item(sink, variant.get())?;
+                }
+            }
+        }
+        Ok(())
     }
 }
 
 impl<'a> writeable::Writeable for LanguageDisplayName<'a> {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+        let has_variants = !matches!(self.variants, BorrowedVariants::None);
         let has_qualifiers =
-            self.script_name.is_some() || self.region_name.is_some() || !self.variants.is_empty();
+            self.script_name.is_some() || self.region_name.is_some() || has_variants;
 
         if !has_qualifiers {
             sink.write_str(self.base_name)
