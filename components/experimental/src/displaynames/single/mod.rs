@@ -18,60 +18,6 @@
 //!
 //! See [the parent module](mod@super) for a comparison of single and multi.
 
-macro_rules! impl_writeable_for_single_display_name_borrowed {
-    ($borrowed:ident) => {
-        impl<'a> writeable::Writeable for $borrowed<'a> {
-            #[inline]
-            fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-                sink.write_str(self.value)
-            }
-
-            #[inline]
-            fn writeable_length_hint(&self) -> writeable::LengthHint {
-                writeable::LengthHint::exact(self.value.len())
-            }
-
-            #[inline]
-            fn writeable_borrow(&self) -> Option<&str> {
-                Some(self.value)
-            }
-        }
-
-        writeable::impl_display_with_writeable!($borrowed<'_>);
-    };
-}
-
-macro_rules! impl_writeable_for_single_display_name_owned {
-    ($owned:ident) => {
-        impl writeable::Writeable for $owned {
-            #[inline]
-            fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-                self.as_borrowed().write_to(sink)
-            }
-
-            #[inline]
-            fn write_to_parts<S: writeable::PartsWrite + ?Sized>(
-                &self,
-                sink: &mut S,
-            ) -> core::fmt::Result {
-                self.as_borrowed().write_to_parts(sink)
-            }
-
-            #[inline]
-            fn writeable_length_hint(&self) -> writeable::LengthHint {
-                self.as_borrowed().writeable_length_hint()
-            }
-
-            #[inline]
-            fn writeable_borrow(&self) -> Option<&str> {
-                Some(self.payload.get())
-            }
-        }
-
-        writeable::impl_display_with_writeable!($owned);
-    };
-}
-
 mod region;
 mod script;
 mod variant;
@@ -130,3 +76,60 @@ where
         Err(e) => Err(e),
     }
 }
+
+macro_rules! impl_writeable_for_single_display_name_borrowed {
+    ($borrowed:ident) => {
+        impl<'a> writeable::Writeable for $borrowed<'a> {
+            #[inline]
+            fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+                sink.write_str(self.value)
+            }
+
+            #[inline]
+            fn writeable_length_hint(&self) -> writeable::LengthHint {
+                writeable::LengthHint::exact(self.value.len())
+            }
+
+            #[inline]
+            fn writeable_borrow(&self) -> Option<&str> {
+                Some(self.value)
+            }
+        }
+
+        writeable::impl_display_with_writeable!($borrowed<'_>);
+    };
+}
+
+macro_rules! impl_writeable_for_single_display_name_owned {
+    ($owned:ident) => {
+        impl writeable::Writeable for $owned {
+            #[inline]
+            fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+                self.as_borrowed().write_to(sink)
+            }
+
+            #[inline]
+            fn write_to_parts<S: writeable::PartsWrite + ?Sized>(
+                &self,
+                sink: &mut S,
+            ) -> core::fmt::Result {
+                self.as_borrowed().write_to_parts(sink)
+            }
+
+            #[inline]
+            fn writeable_length_hint(&self) -> writeable::LengthHint {
+                self.as_borrowed().writeable_length_hint()
+            }
+
+            #[inline]
+            fn writeable_borrow(&self) -> Option<&str> {
+                Some(self.payload.get())
+            }
+        }
+
+        writeable::impl_display_with_writeable!($owned);
+    };
+}
+
+pub(crate) use impl_writeable_for_single_display_name_borrowed;
+pub(crate) use impl_writeable_for_single_display_name_owned;
