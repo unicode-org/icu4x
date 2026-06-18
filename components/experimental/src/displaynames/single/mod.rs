@@ -34,7 +34,7 @@ use zerovec::VarZeroCow;
 pub(crate) fn try_new_unstable<M, D>(
     provider: &D,
     prefs: DisplayNamesPreferences,
-    attr: &str,
+    attributes: &DataMarkerAttributes,
 ) -> Result<DataPayload<M>, DataError>
 where
     M: DataMarker<DataStruct = VarZeroCow<'static, str>>,
@@ -43,11 +43,7 @@ where
     let locale = M::make_locale(prefs.locale_preferences);
     let payload = provider
         .load(DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::try_from_str(attr)
-                    .map_err(|_| DataError::custom("Invalid subtag"))?,
-                &locale,
-            ),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
         })?
         .payload;
@@ -57,7 +53,7 @@ where
 pub(crate) fn try_new_short_unstable<MShort, MLong, D>(
     provider: &D,
     prefs: DisplayNamesPreferences,
-    attr: &str,
+    attributes: &DataMarkerAttributes,
 ) -> Result<DataPayload<MLong>, DataError>
 where
     MShort: DataMarker<DataStruct = VarZeroCow<'static, str>>,
@@ -65,11 +61,7 @@ where
     D: DataProvider<MShort> + DataProvider<MLong> + ?Sized,
 {
     let locale = MShort::make_locale(prefs.locale_preferences);
-    let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
-        DataMarkerAttributes::try_from_str(attr)
-            .map_err(|_| DataError::custom("Invalid subtag"))?,
-        &locale,
-    );
+    let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale);
     let mut metadata = DataRequestMetadata::default();
     metadata.silent = true;
     let result: Result<DataResponse<MShort>, DataError> =
@@ -80,7 +72,7 @@ where
         Err(DataError {
             kind: DataErrorKind::IdentifierNotFound,
             ..
-        }) => try_new_unstable(provider, prefs, attr),
+        }) => try_new_unstable(provider, prefs, attributes),
         Err(e) => Err(e),
     }
 }

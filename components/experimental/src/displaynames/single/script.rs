@@ -44,8 +44,12 @@ impl ScriptDisplayNameOwned {
         prefs: DisplayNamesPreferences,
         script: Script,
     ) -> Result<Self, DataError> {
-        super::try_new_unstable::<LocaleNamesScriptMediumV1, _>(provider, prefs, script.as_str())
-            .map(|payload| Self { payload })
+        super::try_new_unstable::<LocaleNamesScriptMediumV1, _>(
+            provider,
+            prefs,
+            LocaleNamesScriptMediumV1::make_attributes(&script),
+        )
+        .map(|payload| Self { payload })
     }
 
     icu_provider::gen_buffer_data_constructors!(
@@ -97,7 +101,7 @@ impl ScriptDisplayNameOwned {
         super::try_new_short_unstable::<LocaleNamesScriptShortV1, LocaleNamesScriptMediumV1, _>(
             provider,
             prefs,
-            script.as_str(),
+            LocaleNamesScriptShortV1::make_attributes(&script),
         )
         .map(|payload| Self { payload })
     }

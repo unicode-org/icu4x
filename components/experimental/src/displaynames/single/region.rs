@@ -44,8 +44,12 @@ impl RegionDisplayNameOwned {
         prefs: DisplayNamesPreferences,
         region: Region,
     ) -> Result<Self, DataError> {
-        super::try_new_unstable::<LocaleNamesRegionMediumV1, _>(provider, prefs, region.as_str())
-            .map(|payload| Self { payload })
+        super::try_new_unstable::<LocaleNamesRegionMediumV1, _>(
+            provider,
+            prefs,
+            LocaleNamesRegionMediumV1::make_attributes(&region),
+        )
+        .map(|payload| Self { payload })
     }
 
     icu_provider::gen_buffer_data_constructors!(
@@ -97,7 +101,7 @@ impl RegionDisplayNameOwned {
         super::try_new_short_unstable::<LocaleNamesRegionShortV1, LocaleNamesRegionMediumV1, _>(
             provider,
             prefs,
-            region.as_str(),
+            LocaleNamesRegionShortV1::make_attributes(&region),
         )
         .map(|payload| Self { payload })
     }

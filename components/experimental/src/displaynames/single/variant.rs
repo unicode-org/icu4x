@@ -44,8 +44,12 @@ impl VariantDisplayNameOwned {
         prefs: DisplayNamesPreferences,
         variant: Variant,
     ) -> Result<Self, DataError> {
-        super::try_new_unstable::<LocaleNamesVariantMediumV1, _>(provider, prefs, variant.as_str())
-            .map(|payload| Self { payload })
+        super::try_new_unstable::<LocaleNamesVariantMediumV1, _>(
+            provider,
+            prefs,
+            LocaleNamesVariantMediumV1::make_attributes(&variant),
+        )
+        .map(|payload| Self { payload })
     }
 
     /// Returns a borrowed version of this display name.

@@ -9,6 +9,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use icu_locale_core::subtags::{Region, Script, Variant};
 use icu_pattern::DoublePlaceholderPattern;
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
@@ -279,3 +280,43 @@ icu_provider::data_marker!(
     "locale/names/essentials/v1",
     LocaleNamesEssentials<'static>
 );
+
+impl LocaleNamesRegionMediumV1 {
+    /// Helper to create data marker attributes from a region.
+    #[inline]
+    pub fn make_attributes(region: &Region) -> &DataMarkerAttributes {
+        DataMarkerAttributes::from_str_or_panic(region.as_str())
+    }
+}
+
+impl LocaleNamesRegionShortV1 {
+    /// Helper to create data marker attributes from a region.
+    #[inline]
+    pub fn make_attributes(region: &Region) -> &DataMarkerAttributes {
+        DataMarkerAttributes::from_str_or_panic(region.as_str())
+    }
+}
+
+impl LocaleNamesScriptMediumV1 {
+    /// Helper to create data marker attributes from a script.
+    #[inline]
+    pub fn make_attributes(script: &Script) -> &DataMarkerAttributes {
+        DataMarkerAttributes::from_str_or_panic(script.as_str())
+    }
+}
+
+impl LocaleNamesScriptShortV1 {
+    /// Helper to create data marker attributes from a script.
+    #[inline]
+    pub fn make_attributes(script: &Script) -> &DataMarkerAttributes {
+        DataMarkerAttributes::from_str_or_panic(script.as_str())
+    }
+}
+
+impl LocaleNamesVariantMediumV1 {
+    /// Helper to create data marker attributes from a variant.
+    #[inline]
+    pub fn make_attributes(variant: &Variant) -> &DataMarkerAttributes {
+        DataMarkerAttributes::from_str_or_panic(variant.as_str())
+    }
+}
