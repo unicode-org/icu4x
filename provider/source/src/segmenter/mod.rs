@@ -903,6 +903,44 @@ fn neo_sources() -> AbstractFs {
     )
 }
 
+#[test]
+#[ignore]
+#[cfg(feature = "networking")]
+fn download() {
+    use std::fs::File;
+    use std::io::Write;
+
+    let data_root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("data/segmenter/neo");
+
+    for file in neo_sources().list("").unwrap() {
+        if matches!(
+            file.as_str(),
+            "SentenceBreakTailoring_el.txt"
+                | "LineBreakTailoring_word_breakall.txt"
+                | "LineBreakTailoring_word_keepall.txt"
+        ) {
+            // ICU4X-custom tailorings
+            continue;
+        }
+
+        let target = data_root.join(&file);
+        std::fs::create_dir_all(target.parent().unwrap()).unwrap();
+        crlify::BufWriterWithLineEndingFix::new(File::create(&target).unwrap())
+            .write_all(
+                &AbstractFs::new_from_url(
+                    concat!(
+                        "https://raw.githubusercontent.com/eggrobin/unicodetools/",
+                        "refs/heads/RoBertBastIan/"
+                    )
+                    .into(),
+                )
+                .read_to_buf(&file)
+                .unwrap(),
+            )
+            .unwrap();
+    }
+}
+
 #[cfg(feature = "unstable")]
 type TailoredSegmenter = (
     SegmenterStateMachine<'static>,
