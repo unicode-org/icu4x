@@ -10,9 +10,6 @@ use crate::datetime::DatagenCalendar;
 use crate::source::{AbstractFs, SerdeCache};
 use icu::locale::LanguageIdentifier;
 use icu::locale::LocaleExpander;
-use icu::locale::provider::{
-    LocaleLikelySubtagsExtendedV1, LocaleLikelySubtagsLanguageV1, LocaleLikelySubtagsScriptRegionV1,
-};
 use icu::locale::subtags::Language;
 #[cfg(feature = "unstable")]
 use icu::locale::subtags::Region;
@@ -136,58 +133,13 @@ impl CldrCache {
         use super::locale::likely_subtags::*;
         self.extended_locale_expander
             .get_or_init(|| {
-                use icu_provider::prelude::*;
-                struct Provider {
-                    common: TransformResult,
-                    extended: TransformResult,
-                }
-                impl DataProvider<LocaleLikelySubtagsLanguageV1> for Provider {
-                    fn load(
-                        &self,
-                        _req: DataRequest,
-                    ) -> Result<DataResponse<LocaleLikelySubtagsLanguageV1>, DataError>
-                    {
-                        Ok(DataResponse {
-                            payload: DataPayload::from_owned(self.common.as_langs()),
-                            metadata: Default::default(),
-                        })
-                    }
-                }
-                impl DataProvider<LocaleLikelySubtagsScriptRegionV1> for Provider {
-                    fn load(
-                        &self,
-                        _req: DataRequest,
-                    ) -> Result<DataResponse<LocaleLikelySubtagsScriptRegionV1>, DataError>
-                    {
-                        Ok(DataResponse {
-                            payload: DataPayload::from_owned(self.common.as_script_region()),
-                            metadata: Default::default(),
-                        })
-                    }
-                }
-                impl DataProvider<LocaleLikelySubtagsExtendedV1> for Provider {
-                    fn load(
-                        &self,
-                        _req: DataRequest,
-                    ) -> Result<DataResponse<LocaleLikelySubtagsExtendedV1>, DataError>
-                    {
-                        Ok(DataResponse {
-                            payload: DataPayload::from_owned(self.extended.as_extended()),
-                            metadata: Default::default(),
-                        })
-                    }
-                }
-                let common =
-                    transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_common());
-                let extended =
-                    transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_extended());
-
-                LocaleExpander::try_new_extended_unstable(&Provider { common, extended }).map_err(
-                    |e| {
-                        DataError::custom("creating LocaleExpander in CldrCache")
-                            .with_display_context(&e)
-                    },
+                LocaleExpander::try_new_extended_unstable(
+                    &LikelySubtagsResources::try_from_cldr_cache(self)?,
                 )
+                .map_err(|e| {
+                    DataError::custom("creating LocaleExpander in CldrCache")
+                        .with_display_context(&e)
+                })
             })
             .as_ref()
             .map_err(|&e| e)

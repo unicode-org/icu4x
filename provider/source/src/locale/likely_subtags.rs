@@ -17,12 +17,7 @@ impl DataProvider<LocaleLikelySubtagsExtendedV1> for SourceDataProvider {
         req: DataRequest,
     ) -> Result<DataResponse<LocaleLikelySubtagsExtendedV1>, DataError> {
         self.check_req::<LocaleLikelySubtagsExtendedV1>(req)?;
-        let resources = LikelySubtagsResources::try_from_cldr_cache(self.cldr()?)?;
-
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(transform(resources.get_extended()).as_extended()),
-        })
+        LikelySubtagsResources::try_from_cldr_cache(self.cldr()?)?.load(req)
     }
 }
 
@@ -38,12 +33,7 @@ impl DataProvider<LocaleLikelySubtagsLanguageV1> for SourceDataProvider {
         req: DataRequest,
     ) -> Result<DataResponse<LocaleLikelySubtagsLanguageV1>, DataError> {
         self.check_req::<LocaleLikelySubtagsLanguageV1>(req)?;
-        let resources = LikelySubtagsResources::try_from_cldr_cache(self.cldr()?)?;
-
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(transform(resources.get_common()).as_langs()),
-        })
+        LikelySubtagsResources::try_from_cldr_cache(self.cldr()?)?.load(req)
     }
 }
 
@@ -59,12 +49,7 @@ impl DataProvider<LocaleLikelySubtagsScriptRegionV1> for SourceDataProvider {
         req: DataRequest,
     ) -> Result<DataResponse<LocaleLikelySubtagsScriptRegionV1>, DataError> {
         self.check_req::<LocaleLikelySubtagsScriptRegionV1>(req)?;
-        let resources = LikelySubtagsResources::try_from_cldr_cache(self.cldr()?)?;
-
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(transform(resources.get_common()).as_script_region()),
-        })
+        LikelySubtagsResources::try_from_cldr_cache(self.cldr()?)?.load(req)
     }
 }
 
@@ -74,73 +59,31 @@ impl crate::IterableDataProviderCached<LocaleLikelySubtagsScriptRegionV1> for So
     }
 }
 
-pub(crate) struct LikelySubtagsResources<'a> {
-    likely_subtags: &'a cldr_serde::likely_subtags::Resource,
-    basic_plus_languages: HashSet<Language>,
-}
-
-impl<'a> LikelySubtagsResources<'a> {
+impl LikelySubtagsResources {
     pub(crate) fn try_from_cldr_cache(
-        cache: &'a super::super::CldrCache,
-    ) -> Result<LikelySubtagsResources<'a>, DataError> {
+        cache: &super::super::CldrCache,
+    ) -> Result<LikelySubtagsResources, DataError> {
         let likely_subtags: &cldr_serde::likely_subtags::Resource = cache
             .core()
             .read_and_parse("supplemental/likelySubtags.json")?;
-        let coverage_levels: &cldr_serde::coverage_levels::Resource =
-            cache.core().read_and_parse("coverageLevels.json")?;
-        let basic_plus_languages = Self::get_basic_plus_languages(coverage_levels);
-        Ok(Self {
-            likely_subtags,
-            basic_plus_languages,
-        })
-    }
-
-    fn get_basic_plus_languages(
-        coverage_levels: &cldr_serde::coverage_levels::Resource,
-    ) -> HashSet<Language> {
-        #[expect(clippy::unnecessary_filter_map)] // better for future refactoring
-        coverage_levels
-            .coverage_levels
-            .iter()
-            .filter_map(|(langid, level)| {
-                match level {
-                    // NOTE: If more coverage levels get added, ones below Basic should be filtered here
-                    CoverageLevel::Basic | CoverageLevel::Moderate | CoverageLevel::Modern => {
-                        Some(langid.language)
-                    }
-                }
-            })
-            .collect()
-    }
-
-    fn common_predicate(&self, min_max: &(&LanguageIdentifier, &LanguageIdentifier)) -> bool {
-        let (minimized, maximized) = min_max;
-        self.basic_plus_languages.contains(&maximized.language) || minimized.is_unknown()
-    }
-
-    pub(crate) fn get_common(
-        &self,
-    ) -> impl Iterator<Item = (&LanguageIdentifier, &LanguageIdentifier)> + '_ {
-        self.likely_subtags
-            .supplemental
-            .likely_subtags
-            .iter()
-            .filter(|min_max| self.common_predicate(min_max))
-    }
-
-    pub(crate) fn get_extended(
-        &self,
-    ) -> impl Iterator<Item = (&LanguageIdentifier, &LanguageIdentifier)> + '_ {
-        self.likely_subtags
-            .supplemental
-            .likely_subtags
-            .iter()
-            .filter(|min_max| !self.common_predicate(min_max))
+        let core_languages = cache
+            .locales([
+                CoverageLevel::Basic,
+                CoverageLevel::Moderate,
+                CoverageLevel::Modern,
+            ])?
+            .into_iter()
+            .map(|l| l.language)
+            .filter(|l| !l.is_unknown())
+            .collect();
+        Ok(transform(
+            likely_subtags.supplemental.likely_subtags.iter(),
+            core_languages,
+        ))
     }
 }
 
-#[derive(Default)]
-pub(crate) struct TransformResult {
+pub(crate) struct LikelySubtagsResources {
     language_script: BTreeMap<(Language, Script), Region>,
     language_region: BTreeMap<(Language, Region), Script>,
     language: BTreeMap<Language, (Script, Region)>,
@@ -148,14 +91,19 @@ pub(crate) struct TransformResult {
     script: BTreeMap<Script, (Language, Region)>,
     region: BTreeMap<Region, (Language, Script)>,
     und: Option<(Language, Script, Region)>,
+    core_languages: HashSet<Language>,
 }
 
-impl TransformResult {
-    pub(crate) fn as_langs(&self) -> LikelySubtagsForLanguage<'static> {
-        LikelySubtagsForLanguage {
+impl DataProvider<LocaleLikelySubtagsLanguageV1> for LikelySubtagsResources {
+    fn load(
+        &self,
+        _req: DataRequest,
+    ) -> Result<DataResponse<LocaleLikelySubtagsLanguageV1>, DataError> {
+        let langs = LikelySubtagsForLanguage {
             language_script: self
                 .language_script
                 .iter()
+                .filter(|&(&(l, _), _)| self.core_languages.contains(&l))
                 .map(|((k1, k2), v)| {
                     (
                         (
@@ -169,6 +117,7 @@ impl TransformResult {
             language_region: self
                 .language_region
                 .iter()
+                .filter(|&(&(l, _), _)| self.core_languages.contains(&l))
                 .map(|((k1, k2), v)| {
                     (
                         (
@@ -182,6 +131,7 @@ impl TransformResult {
             language: self
                 .language
                 .iter()
+                .filter(|&(&l, _)| self.core_languages.contains(&l))
                 .map(|(k, v)| (k.to_tinystr().to_unvalidated(), v))
                 .collect(),
             und: self.und.unwrap_or((
@@ -189,14 +139,25 @@ impl TransformResult {
                 icu::locale::subtags::script!("Zzzz"),
                 icu::locale::subtags::region!("ZZ"),
             )),
-        }
-    }
+        };
 
-    pub(crate) fn as_script_region(&self) -> LikelySubtagsForScriptRegion<'static> {
-        LikelySubtagsForScriptRegion {
+        Ok(DataResponse {
+            payload: DataPayload::from_owned(langs),
+            metadata: Default::default(),
+        })
+    }
+}
+
+impl DataProvider<LocaleLikelySubtagsScriptRegionV1> for LikelySubtagsResources {
+    fn load(
+        &self,
+        _req: DataRequest,
+    ) -> Result<DataResponse<LocaleLikelySubtagsScriptRegionV1>, DataError> {
+        let script_region = LikelySubtagsForScriptRegion {
             script_region: self
                 .script_region
                 .iter()
+                .filter(|&(_, &l)| self.core_languages.contains(&l))
                 .map(|((k1, k2), v)| {
                     (
                         (
@@ -210,21 +171,34 @@ impl TransformResult {
             script: self
                 .script
                 .iter()
+                .filter(|&(_, &(l, _))| self.core_languages.contains(&l))
                 .map(|(k, v)| (k.to_tinystr().to_unvalidated(), v))
                 .collect(),
             region: self
                 .region
                 .iter()
+                .filter(|&(_, &(l, _))| self.core_languages.contains(&l))
                 .map(|(k, v)| (k.to_tinystr().to_unvalidated(), v))
                 .collect(),
-        }
-    }
+        };
 
-    pub(crate) fn as_extended(&self) -> LikelySubtagsExtended<'static> {
-        LikelySubtagsExtended {
+        Ok(DataResponse {
+            payload: DataPayload::from_owned(script_region),
+            metadata: Default::default(),
+        })
+    }
+}
+
+impl DataProvider<LocaleLikelySubtagsExtendedV1> for LikelySubtagsResources {
+    fn load(
+        &self,
+        _req: DataRequest,
+    ) -> Result<DataResponse<LocaleLikelySubtagsExtendedV1>, DataError> {
+        let extended = LikelySubtagsExtended {
             language_script: self
                 .language_script
                 .iter()
+                .filter(|&(&(l, _), _)| !self.core_languages.contains(&l))
                 .map(|((k1, k2), v)| {
                     (
                         (
@@ -238,6 +212,7 @@ impl TransformResult {
             language_region: self
                 .language_region
                 .iter()
+                .filter(|&(&(l, _), _)| !self.core_languages.contains(&l))
                 .map(|((k1, k2), v)| {
                     (
                         (
@@ -251,11 +226,13 @@ impl TransformResult {
             language: self
                 .language
                 .iter()
+                .filter(|&(&l, _)| !self.core_languages.contains(&l))
                 .map(|(k, v)| (k.to_tinystr().to_unvalidated(), v))
                 .collect(),
             script_region: self
                 .script_region
                 .iter()
+                .filter(|&(_, &l)| !self.core_languages.contains(&l))
                 .map(|((k1, k2), v)| {
                     (
                         (
@@ -269,20 +246,28 @@ impl TransformResult {
             script: self
                 .script
                 .iter()
+                .filter(|&(_, &(l, _))| !self.core_languages.contains(&l))
                 .map(|(k, v)| (k.to_tinystr().to_unvalidated(), v))
                 .collect(),
             region: self
                 .region
                 .iter()
+                .filter(|&(_, &(l, _))| !self.core_languages.contains(&l))
                 .map(|(k, v)| (k.to_tinystr().to_unvalidated(), v))
                 .collect(),
-        }
+        };
+
+        Ok(DataResponse {
+            payload: DataPayload::from_owned(extended),
+            metadata: Default::default(),
+        })
     }
 }
 
 pub(crate) fn transform<'x>(
     it: impl Iterator<Item = (&'x LanguageIdentifier, &'x LanguageIdentifier)> + 'x,
-) -> TransformResult {
+    core_languages: HashSet<Language>,
+) -> LikelySubtagsResources {
     let mut language_script = BTreeMap::new();
     let mut language_region = BTreeMap::new();
     let mut language = BTreeMap::new();
@@ -352,7 +337,7 @@ pub(crate) fn transform<'x>(
         }
     }
 
-    TransformResult {
+    LikelySubtagsResources {
         language_script,
         language_region,
         language,
@@ -360,6 +345,7 @@ pub(crate) fn transform<'x>(
         script,
         region,
         und,
+        core_languages,
     }
 }
 
