@@ -190,6 +190,8 @@ impl CldrCache {
     /// # Example
     ///  - "en-US" -> "US"
     ///  - "en" -> "US"
+    ///  - "ar" -> "EG"
+    ///  - "und" -> "US" // TODO: change
     #[cfg(feature = "unstable")]
     pub(crate) fn extract_or_infer_region(&self, locale: &DataLocale) -> Result<Region, DataError> {
         if let Some(region) = locale.region {
@@ -198,7 +200,9 @@ impl CldrCache {
 
         let mut lang_id = LanguageIdentifier::from((locale.language, locale.script, locale.region));
         let _ = self.extended_locale_expander()?.maximize(&mut lang_id);
-        Ok(lang_id.region.unwrap())
+        Ok(lang_id
+            .region
+            .unwrap_or(icu::locale::subtags::region!("US")))
     }
 
     /// Computes the script-based locale group for a given locale.
@@ -213,6 +217,10 @@ impl CldrCache {
     /// - "ar-SA" -> "ar-Arab-SA" -> "und-Arab" -> "ar-Arab-EG" -> "ar"
     /// - "bm-Nkoo" -> "bm-Nkoo-ML" -> "und-Nkoo" -> "man-Nkoo-GN" -> "man-Nkoo"
     /// - "nqo" -> "nqo-Nkoo-GN" -> "und-Nkoo" -> "man-Nkoo-GN" -> "man-Nkoo"
+    /// - "und-Latn" -> "en-Latn-US" -> "en"
+    /// - "und-Arab" -> "ar-Arab-EG" -> "ar"
+    /// - "und-US" -> "en-Latn-US" -> "en"
+    /// - "und" -> "und"
     pub(crate) fn script_based_locale_group(
         &self,
         locale: &DataLocale,

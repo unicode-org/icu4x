@@ -417,7 +417,7 @@ fn test_exhaustive() {
     let provider = SourceDataProvider::new_testing();
     let expander = icu::locale::LocaleExpander::try_new_extended_unstable(&provider).unwrap();
 
-    for (source, expected) in provider
+    for (source, mut expected) in provider
         .cldr()
         .unwrap()
         .core()
@@ -435,6 +435,10 @@ fn test_exhaustive() {
             (langid!("tlh-SA"), langid!("tlh-SA")),
         ])
     {
+        if source.is_unknown() {
+            expected = LanguageIdentifier::UNKNOWN;
+        }
+
         let mut actual = source.clone();
         let r = expander.maximize(&mut actual);
         assert_eq!(

@@ -331,7 +331,9 @@ pub struct LikelySubtagsForLanguage<'data> {
     /// Undefined.
     ///
     /// This entry is treated as the following expansions:
-    /// * und->LSR
+    /// * und-S->LSR
+    /// * und-R->LSR
+    /// * und-S-R->LSR
     pub und: (Language, Script, Region),
 }
 

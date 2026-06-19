@@ -399,16 +399,23 @@ impl LocaleExpander {
         }
         if let Some(script) = langid.script {
             if let Some(region) = langid.region
-                && let Some(language) = data.get_sr(script, region)
+                && let Some(language) = data
+                    .get_sr(script, region)
+                    .or_else(|| ((script, region) == (und_s, und_r)).then_some(und_l))
             {
                 return update_langid(language, None, None, langid);
             }
-            if let Some((language, region)) = data.get_s(script) {
+            if let Some((language, region)) = data
+                .get_s(script)
+                .or_else(|| (script == und_s).then_some((und_l, und_r)))
+            {
                 return update_langid(language, None, Some(region), langid);
             }
         }
         if let Some(region) = langid.region
-            && let Some((language, script)) = data.get_r(region)
+            && let Some((language, script)) = data
+                .get_r(region)
+                .or_else(|| (region == und_r).then_some((und_l, und_s)))
         {
             return update_langid(language, Some(script), None, langid);
         }
@@ -417,9 +424,7 @@ impl LocaleExpander {
         // to fall back to bare "und"
         debug_assert!(langid.language.is_unknown());
 
-        // und expands to `und_l-und_s-und_r`
-        // TODO: remove this behavior: https://unicode-org.atlassian.net/browse/CLDR-14524
-        update_langid(und_l, Some(und_s), Some(und_r), langid)
+        TransformResult::Unmodified
     }
 
     /// This returns a new Locale that is the result of running the
@@ -543,7 +548,7 @@ impl LocaleExpander {
     fn infer_likely_script(&self, language: Language, region: Option<Region>) -> Option<Script> {
         // This is an inlined and simplified `maximize`.
         let data = self.as_borrowed();
-        let (_, und_s, _) = data.get_und();
+        let (und_l, und_s, und_r) = data.get_und();
 
         if !language.is_unknown() {
             if let Some(region) = region
@@ -558,7 +563,9 @@ impl LocaleExpander {
             return None;
         }
         if let Some(region) = region
-            && let Some((_, script)) = data.get_r(region)
+            && let Some((_, script)) = data
+                .get_r(region)
+                .or_else(|| (region == und_r).then_some((und_l, und_s)))
         {
             return Some(script);
         }
@@ -567,9 +574,7 @@ impl LocaleExpander {
         // to fall back to bare "und"
         debug_assert!(language.is_unknown());
 
-        // und expands to `und_l-und_s-und_r`
-        // TODO: remove this behavior: https://unicode-org.atlassian.net/browse/CLDR-14524
-        Some(und_s)
+        None
     }
 }
 
@@ -608,10 +613,7 @@ mod tests {
     fn test_get_likely_script() {
         let lc = LocaleExpander::new_common();
 
-        assert_eq!(
-            lc.get_likely_script(&locale!("und").id),
-            Some(script!("Latn"))
-        );
+        assert_eq!(lc.get_likely_script(&locale!("und").id), None);
 
         assert_eq!(
             lc.get_likely_script(&locale!("en").id),
@@ -643,8 +645,7 @@ mod tests {
         let mut locale;
 
         locale = locale!("und");
-        assert_eq!(lc.maximize(&mut locale.id), TransformResult::Modified);
-        assert_eq!(locale, locale!("en-Latn-US"));
+        assert_eq!(lc.maximize(&mut locale.id), TransformResult::Unmodified);
 
         locale = locale!("en");
         assert_eq!(lc.maximize(&mut locale.id), TransformResult::Modified);
