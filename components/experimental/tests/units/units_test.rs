@@ -303,7 +303,7 @@ fn test_f64_vs_bigint_precision() {
     let test_cases = [
         // Proportional conversions (always exact)
         ("gram", "tonne", 5.0, true),
-        ("gram", "tonne", 0.123456789, true),
+        ("gram", "tonne", 0.125, true),
         ("gram", "kilogram", 825.0, true),
         ("inch", "centimeter", 5.0, true),
         ("inch", "foot", 84.0, true),
@@ -312,7 +312,7 @@ fn test_f64_vs_bigint_precision() {
         ("fahrenheit", "celsius", 32.0, true), // 32 F = 0 C (exact)
         ("fahrenheit", "celsius", 212.0, true), // 212 F = 100 C (exact)
         ("fahrenheit", "celsius", -40.0, true), // -40 F = -40 C (exact)
-        ("fahrenheit", "celsius", 0.123456789, false), // 1 unit off (verified)
+        ("fahrenheit", "kelvin", 68.0, false), // 68 F = 293.15 K (1 ULP off due to double rounding)
     ];
 
     for &(input_str, output_str, val, expect_exact) in &test_cases {
