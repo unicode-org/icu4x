@@ -8,12 +8,12 @@ use core_maths::*;
 /// Computes `a * num / den` with higher precision using Fused Multiply-Add (FMA).
 ///
 /// This function implements an algorithm that reduces rounding errors in floating-point
-/// division by utilizing `f64::mul_add` to compute the remainder of the multiplication
-/// and incorporate it into the division.
+/// division by utilizing `f64::mul_add` to compute the errors of the multiplication
+/// and division.
 ///
-/// This is particularly useful for unit conversion where the conversion rate is represented
-/// as a rational fraction `num / den`, and we want to compute `a * (num / den)` more accurately
-/// than the naive calculation.
+/// Used to compute unit conversions where the conversion factor is represented
+/// as a rational fraction `num / den`, allowing us to compute `a * (num / den)`
+/// more accurately than the naive calculation.
 ///
 /// This uses the native FMA operation when available, falling back to the `libm` crate
 /// on platforms that don't support it.
@@ -28,7 +28,7 @@ use core_maths::*;
 /// return `NaN`, even if the naive calculation would have returned a sensible value
 /// (like `Infinity` or `0.0`). We accept this limitation to keep the function extremely
 /// simple, fast, and branchless, relying on callers to enforce finiteness invariants
-/// (which we do in `RatioF64` and `Convertible::mul_ratio`) (tracked in
+/// (which we do in `RatioF64` and `Convertible::mul`) (tracked in
 /// [unicode-org/icu4x#8092](https://github.com/unicode-org/icu4x/issues/8092)).
 pub(super) fn f64_mul_div(a: f64, num: f64, den: f64) -> f64 {
     let double_rounded = a * num / den;
