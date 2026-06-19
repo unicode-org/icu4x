@@ -96,6 +96,11 @@ fn test_concatenate() {
             expected: "Hindi (Latin)",
             should_borrow: true,
         },
+        TestCase {
+            input_1: &locale!("zh-Hant-HK"),
+            expected: "Traditional Chinese (Hong Kong SAR China)",
+            should_borrow: false,
+        },
     ];
     for cas in &cases {
         // TODO: Add tests for different data locales.
@@ -131,43 +136,4 @@ fn test_concatenate() {
             assert_writeable_eq!(single_display_name, cas.expected);
         }
     }
-}
-
-#[test]
-fn test_single_language_display_name() {
-    use icu_experimental::displaynames::DisplayNamesOptions;
-    use icu_experimental::displaynames::single::LanguageIdentifierDisplayNameOwned;
-    use icu_locale_core::{langid, locale};
-    use writeable::assert_writeable_eq;
-
-    let locale = locale!("en-001");
-    let options: DisplayNamesOptions = Default::default();
-
-    // This should format "zh-Hant-HK" to "Traditional Chinese (Hong Kong SAR China)" in "en-001"
-    let lang_id = langid!("zh-Hant-HK");
-    let lang_name = LanguageIdentifierDisplayNameOwned::try_new(locale.into(), lang_id, options)
-        .expect("Data should load successfully");
-
-    assert_writeable_eq!(lang_name, "Traditional Chinese (Hong Kong SAR China)");
-}
-
-// TODO(#7825): Enable this test once LanguageIdentifierDisplayNameOwned supports Style::Menu.
-#[test]
-#[ignore]
-fn test_single_language_display_name_menu() {
-    use icu_experimental::displaynames::single::LanguageIdentifierDisplayNameOwned;
-    use icu_experimental::displaynames::{DisplayNamesOptions, Style};
-    use icu_locale_core::{langid, locale};
-    use writeable::assert_writeable_eq;
-
-    let locale = locale!("en-001");
-    let mut options: DisplayNamesOptions = Default::default();
-    options.style = Some(Style::Menu);
-
-    // This should format "zh-Hant-HK" to "Chinese (Traditional, Hong Kong)" in "en-001" using Style::Menu
-    let lang_id = langid!("zh-Hant-HK");
-    let lang_name = LanguageIdentifierDisplayNameOwned::try_new(locale.into(), lang_id, options)
-        .expect("Data should load successfully");
-
-    assert_writeable_eq!(lang_name, "Chinese (Traditional, Hong Kong)");
 }
