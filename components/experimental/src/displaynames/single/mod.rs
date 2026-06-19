@@ -10,7 +10,7 @@
 //! ### Status
 //!
 //! Currently, this module has limited support. It supports regions, scripts,
-//! languages, and variants, but support for locales is currently missing.
+//! and variants, but support for languages and locales is currently missing.
 //! More features are on their way.
 //!
 //! If you have any feedback, please let us know at
@@ -36,7 +36,7 @@ use zerovec::VarZeroCow;
 pub(crate) fn try_new_unstable<M, D>(
     provider: &D,
     prefs: DisplayNamesPreferences,
-    attr: &str,
+    attributes: &DataMarkerAttributes,
 ) -> Result<DataPayload<M>, DataError>
 where
     M: DataMarker<DataStruct = VarZeroCow<'static, str>>,
@@ -45,11 +45,7 @@ where
     let locale = M::make_locale(prefs.locale_preferences);
     let payload = provider
         .load(DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::try_from_str(attr)
-                    .map_err(|_| DataError::custom("Invalid subtag"))?,
-                &locale,
-            ),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
         })?
         .payload;
@@ -59,7 +55,7 @@ where
 pub(crate) fn try_new_short_unstable<MShort, MLong, D>(
     provider: &D,
     prefs: DisplayNamesPreferences,
-    attr: &str,
+    attributes: &DataMarkerAttributes,
 ) -> Result<DataPayload<MLong>, DataError>
 where
     MShort: DataMarker<DataStruct = VarZeroCow<'static, str>>,
@@ -67,11 +63,7 @@ where
     D: DataProvider<MShort> + DataProvider<MLong> + ?Sized,
 {
     let locale = MShort::make_locale(prefs.locale_preferences);
-    let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
-        DataMarkerAttributes::try_from_str(attr)
-            .map_err(|_| DataError::custom("Invalid subtag"))?,
-        &locale,
-    );
+    let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale);
     let mut metadata = DataRequestMetadata::default();
     metadata.silent = true;
     let result: Result<DataResponse<MShort>, DataError> =
@@ -82,7 +74,64 @@ where
         Err(DataError {
             kind: DataErrorKind::IdentifierNotFound,
             ..
-        }) => try_new_unstable(provider, prefs, attr),
+        }) => try_new_unstable(provider, prefs, attributes),
         Err(e) => Err(e),
     }
 }
+
+macro_rules! impl_writeable_for_single_display_name_borrowed {
+    ($borrowed:ident) => {
+        impl<'a> writeable::Writeable for $borrowed<'a> {
+            #[inline]
+            fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+                sink.write_str(self.value)
+            }
+
+            #[inline]
+            fn writeable_length_hint(&self) -> writeable::LengthHint {
+                writeable::LengthHint::exact(self.value.len())
+            }
+
+            #[inline]
+            fn writeable_borrow(&self) -> Option<&str> {
+                Some(self.value)
+            }
+        }
+
+        writeable::impl_display_with_writeable!($borrowed<'_>);
+    };
+}
+
+macro_rules! impl_writeable_for_single_display_name_owned {
+    ($owned:ident) => {
+        impl writeable::Writeable for $owned {
+            #[inline]
+            fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+                self.as_borrowed().write_to(sink)
+            }
+
+            #[inline]
+            fn write_to_parts<S: writeable::PartsWrite + ?Sized>(
+                &self,
+                sink: &mut S,
+            ) -> core::fmt::Result {
+                self.as_borrowed().write_to_parts(sink)
+            }
+
+            #[inline]
+            fn writeable_length_hint(&self) -> writeable::LengthHint {
+                self.as_borrowed().writeable_length_hint()
+            }
+
+            #[inline]
+            fn writeable_borrow(&self) -> Option<&str> {
+                Some(self.payload.get())
+            }
+        }
+
+        writeable::impl_display_with_writeable!($owned);
+    };
+}
+
+pub(crate) use impl_writeable_for_single_display_name_borrowed;
+pub(crate) use impl_writeable_for_single_display_name_owned;

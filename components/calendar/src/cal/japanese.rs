@@ -38,6 +38,16 @@ use tinystr::{TinyAsciiStr, tinystr};
 /// data.
 #[derive(Clone, Debug, Default, Copy)]
 pub struct Japanese {
+    /// The latest era after Reiwa, dynamically loaded from data.
+    ///
+    /// Since new Japanese eras are announced infrequently, we only need to support
+    /// dynamically loading the latest era that is not yet hardcoded in the library.
+    /// Once a new era is announced, it can be loaded dynamically from data.
+    /// In subsequent library releases, this era will be hardcoded, freeing up the
+    /// dynamic slot for the next future era.
+    ///
+    /// This keeps the `Japanese` struct small (7 bytes) while allowing transition
+    /// to new eras without library upgrades.
     post_reiwa_era: Option<PackedEra>,
 }
 
@@ -51,8 +61,14 @@ impl Japanese {
     pub const fn new() -> Self {
         const {
             Self {
-                post_reiwa_era: crate::provider::Baked::SINGLETON_CALENDAR_JAPANESE_MODERN_V1
-                    .last_after_reiwa(),
+                post_reiwa_era: const {
+                    match crate::provider::Baked::SINGLETON_CALENDAR_JAPANESE_MODERN_V1
+                        .last_after_reiwa()
+                    {
+                        Ok(era) => era,
+                        Err(_) => panic!("Invalid compiled data for Japanese calendar"),
+                    }
+                },
             }
         }
     }
@@ -74,7 +90,7 @@ impl Japanese {
                 .load(Default::default())?
                 .payload
                 .get()
-                .last_after_reiwa(),
+                .last_after_reiwa()?,
         })
     }
 }
@@ -269,7 +285,7 @@ mod tests {
     use super::*;
 
     const CALENDAR: Japanese = Japanese {
-        post_reiwa_era: Some(PackedEra::pack(
+        post_reiwa_era: match PackedEra::pack(
             EraStartDate {
                 year: 2086,
                 month: 11,
@@ -277,7 +293,10 @@ mod tests {
             },
             tinystr!(8, "fuzu"),
             8,
-        )),
+        ) {
+            Ok(era) => Some(era),
+            _ => unreachable!(),
+        },
     };
 
     fn single_test_roundtrip(era: &str, year: i32, month: u8, day: u8) {

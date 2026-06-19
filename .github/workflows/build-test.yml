@@ -267,7 +267,9 @@ jobs:
 
     # Job-specific dependencies
     - name: Install LLD and Clang
-      run: sudo apt-get install lld-20 clang-20
+      run: |
+        sudo apt-get update
+        sudo apt-get install lld-20 clang-20
 
     # Actual job
     - name: Run `cargo make ci-job-test-c`
@@ -301,7 +303,9 @@ jobs:
 
     # Job-specific dependencies
     - name: Install LLD
-      run: sudo apt-get install lld-20
+      run: |
+        sudo apt-get update
+        sudo apt-get install lld-20
 
     # Actual job
     - name: Run `cargo make ci-job-test-js`

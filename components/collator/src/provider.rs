@@ -612,11 +612,8 @@ pub struct CollationSpecialPrimaries<'data> {
 
 #[cfg(feature = "serde")]
 impl CollationSpecialPrimaries<'_> {
-    /// The number of real special primaries (Space, Punctuation, Symbol, Currency).
-    pub(crate) const NUM_PRIMARIES: usize = MaxVariable::Currency as usize + 1; // 4
-
-    /// The length of the compressible bytes array (256 bits packed in 16 u16s).
-    pub(crate) const COMPRESSIBLE_BYTES_LEN: usize = 16;
+    /// The length of the compressible bytes array (256 bits packed in `u16`s).
+    pub(crate) const COMPRESSIBLE_BYTES_LEN: usize = 256 / (u16::BITS as usize);
 }
 
 #[cfg(feature = "serde")]
@@ -639,9 +636,7 @@ impl<'de> serde::Deserialize<'de> for CollationSpecialPrimaries<'de> {
 
         let Some((l, c)) = concatenated
             .as_ule_slice()
-            // `variant_count` isn't stable yet:
-            // https://github.com/rust-lang/rust/issues/73662
-            .split_at_checked(CollationSpecialPrimaries::NUM_PRIMARIES)
+            .split_at_checked(MaxVariable::VARIANT_COUNT)
         else {
             return Err(serde::de::Error::custom("invalid"));
         };

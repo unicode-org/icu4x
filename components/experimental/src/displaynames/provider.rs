@@ -13,6 +13,7 @@ use icu_pattern::DoublePlaceholderPattern;
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use tinystr::UnvalidatedTinyAsciiStr;
+use icu_locale_core::subtags::{Language, Region, Script, Variant};
 use zerovec::{VarZeroCow, ZeroMap};
 
 // We use raw TinyAsciiStrs for map keys, as we then don't have to
@@ -284,9 +285,9 @@ impl LocaleNamesLanguageMediumV1 {
     /// Helper to construct infallible attributes from subtags.
     #[inline]
     pub(crate) fn make_attributes(
-        language: icu_locale_core::subtags::Language,
-        script: Option<icu_locale_core::subtags::Script>,
-        region: Option<icu_locale_core::subtags::Region>,
+        language: Language,
+        script: Option<Script>,
+        region: Option<Region>,
         buffer: &mut tinystr::TinyAsciiStr<16>,
     ) -> &DataMarkerAttributes {
         const HYPHEN: tinystr::TinyAsciiStr<1> = tinystr::tinystr!(1, "-");
@@ -313,5 +314,60 @@ impl LocaleNamesLanguageMediumV1 {
         };
         // This won't panic because the buffer contains subtag strings, which are valid attributes
         DataMarkerAttributes::from_str_or_panic(buffer)
+    }
+}
+
+impl LocaleNamesRegionMediumV1 {
+    /// Helper to create data marker attributes from a region.
+    ///
+    /// This is infallible (will not panic) because a validated `Region` is guaranteed to
+    /// conform to `DataMarkerAttributes` syntax.
+    #[inline]
+    pub(crate) fn make_attributes(region: &Region) -> &DataMarkerAttributes {
+        DataMarkerAttributes::from_str_or_panic(region.as_str())
+    }
+}
+
+impl LocaleNamesRegionShortV1 {
+    /// Helper to create data marker attributes from a region.
+    ///
+    /// This is infallible (will not panic) because a validated `Region` is guaranteed to
+    /// conform to `DataMarkerAttributes` syntax.
+    #[inline]
+    pub(crate) fn make_attributes(region: &Region) -> &DataMarkerAttributes {
+        DataMarkerAttributes::from_str_or_panic(region.as_str())
+    }
+}
+
+impl LocaleNamesScriptMediumV1 {
+    /// Helper to create data marker attributes from a script.
+    ///
+    /// This is infallible (will not panic) because a validated `Script` is guaranteed to
+    /// conform to `DataMarkerAttributes` syntax.
+    #[inline]
+    pub(crate) fn make_attributes(script: &Script) -> &DataMarkerAttributes {
+        DataMarkerAttributes::from_str_or_panic(script.as_str())
+    }
+}
+
+impl LocaleNamesScriptShortV1 {
+    /// Helper to create data marker attributes from a script.
+    ///
+    /// This is infallible (will not panic) because a validated `Script` is guaranteed to
+    /// conform to `DataMarkerAttributes` syntax.
+    #[inline]
+    pub(crate) fn make_attributes(script: &Script) -> &DataMarkerAttributes {
+        DataMarkerAttributes::from_str_or_panic(script.as_str())
+    }
+}
+
+impl LocaleNamesVariantMediumV1 {
+    /// Helper to create data marker attributes from a variant.
+    ///
+    /// This is infallible (will not panic) because a validated `Variant` is guaranteed to
+    /// conform to `DataMarkerAttributes` syntax.
+    #[inline]
+    pub(crate) fn make_attributes(variant: &Variant) -> &DataMarkerAttributes {
+        DataMarkerAttributes::from_str_or_panic(variant.as_str())
     }
 }

@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::{
+    impl_writeable_for_single_display_name_borrowed, impl_writeable_for_single_display_name_owned,
+};
 use crate::displaynames::DisplayNamesPreferences;
 use crate::displaynames::provider::LocaleNamesVariantMediumV1;
 use icu_locale_core::subtags::Variant;
@@ -16,10 +19,10 @@ use icu_provider::prelude::*;
 /// use icu::locale::{locale, subtags::variant};
 /// use writeable::assert_writeable_eq;
 ///
-/// let display_name = VariantDisplayNameOwned::try_new(locale!("en").into(), variant!("posix"))
+/// let display_name = VariantDisplayNameOwned::try_new(locale!("en").into(), variant!("fonipa"))
 ///     .expect("Data should load successfully");
 ///
-/// assert_writeable_eq!(display_name, "Computer");
+/// assert_writeable_eq!(display_name, "IPA Phonetics");
 /// ```
 #[derive(Debug)]
 pub struct VariantDisplayNameOwned {
@@ -30,6 +33,19 @@ impl VariantDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, variant: Variant) -> result: Result<Self, DataError>,
         /// Loads the variant display name for a given variant and locale using compiled data.
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::experimental::displaynames::single::VariantDisplayNameOwned;
+        /// use icu::locale::{locale, subtags::variant};
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let display_name = VariantDisplayNameOwned::try_new(locale!("en").into(), variant!("fonipa"))
+        ///     .expect("Data should load successfully");
+        ///
+        /// assert_writeable_eq!(display_name, "IPA Phonetics");
+        /// ```
         functions: [
             try_new,
             try_new_with_buffer_provider,
@@ -44,8 +60,12 @@ impl VariantDisplayNameOwned {
         prefs: DisplayNamesPreferences,
         variant: Variant,
     ) -> Result<Self, DataError> {
-        super::try_new_unstable::<LocaleNamesVariantMediumV1, _>(provider, prefs, variant.as_str())
-            .map(|payload| Self { payload })
+        super::try_new_unstable::<LocaleNamesVariantMediumV1, _>(
+            provider,
+            prefs,
+            LocaleNamesVariantMediumV1::make_attributes(&variant),
+        )
+        .map(|payload| Self { payload })
     }
 
     /// Returns a borrowed version of this display name.
@@ -56,24 +76,7 @@ impl VariantDisplayNameOwned {
     }
 }
 
-impl writeable::Writeable for VariantDisplayNameOwned {
-    #[inline]
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        self.as_borrowed().write_to(sink)
-    }
-
-    #[inline]
-    fn writeable_length_hint(&self) -> writeable::LengthHint {
-        self.as_borrowed().writeable_length_hint()
-    }
-
-    #[inline]
-    fn writeable_borrow(&self) -> Option<&str> {
-        Some(self.payload.get())
-    }
-}
-
-writeable::impl_display_with_writeable!(VariantDisplayNameOwned);
+impl_writeable_for_single_display_name_owned!(VariantDisplayNameOwned);
 
 /// A localized display name for a single variant.
 #[derive(Debug, Clone, Copy)]
@@ -81,21 +84,4 @@ pub struct VariantDisplayName<'a> {
     value: &'a str,
 }
 
-impl<'a> writeable::Writeable for VariantDisplayName<'a> {
-    #[inline]
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        sink.write_str(self.value)
-    }
-
-    #[inline]
-    fn writeable_length_hint(&self) -> writeable::LengthHint {
-        writeable::LengthHint::exact(self.value.len())
-    }
-
-    #[inline]
-    fn writeable_borrow(&self) -> Option<&str> {
-        Some(self.value)
-    }
-}
-
-writeable::impl_display_with_writeable!(VariantDisplayName<'_>);
+impl_writeable_for_single_display_name_borrowed!(VariantDisplayName);

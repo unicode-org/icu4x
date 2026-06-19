@@ -121,16 +121,17 @@ icu_provider::data_struct!(
 );
 
 impl JapaneseEras<'_> {
-    pub(crate) const fn last_after_reiwa(&self) -> Option<PackedEra> {
+    pub(crate) const fn last_after_reiwa(&self) -> Result<Option<PackedEra>, DataError> {
         let Some(&zerovec::ule::tuple::Tuple2ULE(start, code)) =
             self.dates_to_eras.as_slice().as_ule_slice().last()
         else {
-            return None;
+            return Ok(None);
         };
         if start.year.as_signed_int() < 2026 {
-            return None;
+            return Ok(None);
         }
-        Some(PackedEra::pack(
+
+        match PackedEra::pack(
             EraStartDate {
                 year: start.year.as_signed_int(),
                 month: start.month,
@@ -138,7 +139,10 @@ impl JapaneseEras<'_> {
             },
             code.resize(),
             self.dates_to_eras.as_slice().len() as u8 + 1,
-        ))
+        ) {
+            Ok(e) => Ok(Some(e)),
+            Err(e) => Err(e),
+        }
     }
 }
 
@@ -149,14 +153,31 @@ pub(crate) struct PackedEra(NonZeroU8 /* give a niche */, [u8; 6]);
 impl PackedEra {
     /// Construct a `PackedEra` from a tuple
     /// This supports start dates until 2086-12-31, indices 7 and 8, and lower ASCII alphabetic codes
-    pub const fn pack(start: EraStartDate, code: TinyAsciiStr<8>, index: u8) -> Self {
-        debug_assert!(start.day < 1 << 5); // 5 bits
-        debug_assert!(start.month < 1 << 4); // 4 bits
-        debug_assert!(2026 <= start.year && start.year < 2026 + (1 << 6)); // 6 bits
-
-        debug_assert!(7 <= index && index < 7 + (1 << 1)); // 1 bit
-
-        debug_assert!(code.is_ascii_alphabetic_lowercase()); // 40 bits
+    pub const fn pack(
+        start: EraStartDate,
+        code: TinyAsciiStr<8>,
+        index: u8,
+    ) -> Result<Self, DataError> {
+        // 5 bits
+        if !(0 < start.day && start.day < 1 << 5) {
+            return Err(DataError::custom("Invalid era day"));
+        }
+        // 4 bits
+        if !(0 < start.month && start.month < 1 << 4) {
+            return Err(DataError::custom("Invalid era month"));
+        }
+        // 6 bits
+        if !(2026 <= start.year && start.year < 2026 + (1 << 6)) {
+            return Err(DataError::custom("Invalid era year"));
+        }
+        // 1 bit
+        if !(7 <= index && index < 7 + (1 << 1)) {
+            return Err(DataError::custom("Invalid era index"));
+        }
+        // 40 bits
+        if !code.is_ascii_alphabetic_lowercase() {
+            return Err(DataError::custom("Invalid era code"));
+        }
 
         let mut packed = 0;
 
@@ -177,9 +198,10 @@ impl PackedEra {
 
         let [a, b, c, d, e, f, g, z] = packed.to_le_bytes();
         debug_assert!(z == 0);
-        // the lowest byte contains month and day, so it's non-zero
-        debug_assert!(a > 0);
-        Self(unsafe { NonZeroU8::new_unchecked(a) }, [b, c, d, e, f, g])
+        let Some(a) = NonZeroU8::new(a) else {
+            return Err(DataError::custom("Invalid era start date"));
+        };
+        Ok(Self(a, [b, c, d, e, f, g]))
     }
 
     /// Convert a `PackedEra` into a tuple of start date, code, and
@@ -243,7 +265,7 @@ fn packed_era_roundtrip() {
     let code = tinystr::tinystr!(8, "fuzu");
     let index = 8;
     assert_eq!(
-        PackedEra::pack(start, code, index).unpack(),
+        PackedEra::pack(start, code, index).unwrap().unpack(),
         (start, code, index)
     );
 }

@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::{
+    impl_writeable_for_single_display_name_borrowed, impl_writeable_for_single_display_name_owned,
+};
 use crate::displaynames::DisplayNamesPreferences;
 use crate::displaynames::provider::*;
 use icu_locale::subtags::Script;
@@ -44,8 +47,12 @@ impl ScriptDisplayNameOwned {
         prefs: DisplayNamesPreferences,
         script: Script,
     ) -> Result<Self, DataError> {
-        super::try_new_unstable::<LocaleNamesScriptMediumV1, _>(provider, prefs, script.as_str())
-            .map(|payload| Self { payload })
+        super::try_new_unstable::<LocaleNamesScriptMediumV1, _>(
+            provider,
+            prefs,
+            LocaleNamesScriptMediumV1::make_attributes(&script),
+        )
+        .map(|payload| Self { payload })
     }
 
     icu_provider::gen_buffer_data_constructors!(
@@ -97,7 +104,7 @@ impl ScriptDisplayNameOwned {
         super::try_new_short_unstable::<LocaleNamesScriptShortV1, LocaleNamesScriptMediumV1, _>(
             provider,
             prefs,
-            script.as_str(),
+            LocaleNamesScriptShortV1::make_attributes(&script),
         )
         .map(|payload| Self { payload })
     }
@@ -110,24 +117,7 @@ impl ScriptDisplayNameOwned {
     }
 }
 
-impl writeable::Writeable for ScriptDisplayNameOwned {
-    #[inline]
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        self.as_borrowed().write_to(sink)
-    }
-
-    #[inline]
-    fn writeable_length_hint(&self) -> writeable::LengthHint {
-        self.as_borrowed().writeable_length_hint()
-    }
-
-    #[inline]
-    fn writeable_borrow(&self) -> Option<&str> {
-        Some(self.payload.get())
-    }
-}
-
-writeable::impl_display_with_writeable!(ScriptDisplayNameOwned);
+impl_writeable_for_single_display_name_owned!(ScriptDisplayNameOwned);
 
 /// A localized display name for a single script.
 #[derive(Debug, Clone, Copy)]
@@ -135,21 +125,4 @@ pub struct ScriptDisplayName<'a> {
     value: &'a str,
 }
 
-impl<'a> writeable::Writeable for ScriptDisplayName<'a> {
-    #[inline]
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        sink.write_str(self.value)
-    }
-
-    #[inline]
-    fn writeable_length_hint(&self) -> writeable::LengthHint {
-        writeable::LengthHint::exact(self.value.len())
-    }
-
-    #[inline]
-    fn writeable_borrow(&self) -> Option<&str> {
-        Some(self.value)
-    }
-}
-
-writeable::impl_display_with_writeable!(ScriptDisplayName<'_>);
+impl_writeable_for_single_display_name_borrowed!(ScriptDisplayName);
