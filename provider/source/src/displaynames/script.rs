@@ -5,13 +5,7 @@
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
-use crate::displaynames::{
-    ALT_SECONDARY_SUBSTRING, ALT_SHORT_SUBSTRING, ALT_STANDALONE_SUBSTRING, ALT_SUBSTRING,
-    ALT_VARIANT_SUBSTRING,
-};
-use core::convert::TryFrom;
 use icu::experimental::displaynames::provider::*;
-use icu::locale::{ParseError, subtags::Script};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use zerovec::VarZeroCow;
@@ -27,15 +21,14 @@ impl DataProvider<ScriptDisplayNamesV1> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(ScriptDisplayNames::try_from(data).map_err(|e| {
-                DataError::custom("data for ScriptDisplayNames").with_display_context(&e)
-            })?),
+            payload: DataPayload::from_owned(ScriptDisplayNames::from(data)),
         })
     }
 }
 
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesScriptMediumV1,
+    icu::locale::subtags::Script,
     cldr_serde::displaynames::script::Resource,
     "scripts.json",
     scripts,
@@ -44,39 +37,45 @@ crate::displaynames::impl_displaynames_v1!(
 
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesScriptShortV1,
+    icu::locale::subtags::Script,
     cldr_serde::displaynames::script::Resource,
     "scripts.json",
     scripts,
-    Some(ALT_SHORT_SUBSTRING),
+    Some("short"),
 );
 
 crate::displaynames::impl_displaynames_legacy_iter_v1!(ScriptDisplayNamesV1, "scripts.json");
 
-impl TryFrom<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames<'static> {
-    type Error = ParseError;
-
-    fn try_from(other: &cldr_serde::displaynames::script::Resource) -> Result<Self, Self::Error> {
+impl From<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames<'static> {
+    fn from(other: &cldr_serde::displaynames::script::Resource) -> Self {
         let mut names = BTreeMap::new();
         let mut short_names = BTreeMap::new();
-        for entry in other.main.value.localedisplaynames.scripts.iter() {
-            if let Some(script) = entry.0.strip_suffix(ALT_SHORT_SUBSTRING) {
-                short_names.insert(Script::try_from_str(script)?.to_tinystr(), entry.1.as_str());
-            } else if !entry.0.contains(ALT_SUBSTRING) {
-                names.insert(
-                    Script::try_from_str(entry.0)?.to_tinystr(),
-                    entry.1.as_str(),
-                );
-            } else if entry.0.ends_with(ALT_VARIANT_SUBSTRING)
-                || entry.0.ends_with(ALT_SECONDARY_SUBSTRING)
-            {
-                // TODO(#8012): Handle this with datagen alt flags.
-            } else if entry.0.ends_with(ALT_STANDALONE_SUBSTRING) {
-                // TODO(#8011): Support standalone display names.
-            } else {
-                log::warn!("Unknown alt variant for script: {}", entry.0);
+        for (key, value) in other.main.value.localedisplaynames.scripts.iter() {
+            if key.menu_variant.is_some() {
+                continue;
+            }
+
+            let script = key.subtag;
+
+            match key.alt_variant.as_deref() {
+                Some("short") => {
+                    short_names.insert(script.to_tinystr(), value.as_str());
+                }
+                None => {
+                    names.insert(script.to_tinystr(), value.as_str());
+                }
+                Some("variant") | Some("secondary") => {
+                    // TODO(#8012): Handle this with datagen alt flags.
+                }
+                Some("stand-alone") => {
+                    // TODO(#8011): Support standalone display names.
+                }
+                Some(alt) => {
+                    log::warn!("Unknown alt variant for script: {}", alt);
+                }
             }
         }
-        Ok(Self {
+        Self {
             // Old CLDR versions may contain trivial entries, so filter
             names: names
                 .into_iter()
@@ -88,10 +87,9 @@ impl TryFrom<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames
                 .filter(|&(k, v)| k != v)
                 .map(|(k, v)| (k.to_unvalidated(), v))
                 .collect(),
-        })
+        }
     }
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;

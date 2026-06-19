@@ -8,35 +8,17 @@ pub(crate) mod region;
 pub(crate) mod script;
 pub(crate) mod variant;
 
-pub(crate) const ALT_SUBSTRING: &str = "-alt-";
-pub(crate) const ALT_SHORT_SUBSTRING: &str = "-alt-short";
-pub(crate) const ALT_LONG_SUBSTRING: &str = "-alt-long";
-pub(crate) const ALT_VARIANT_SUBSTRING: &str = "-alt-variant";
-pub(crate) const ALT_STANDALONE_SUBSTRING: &str = "-alt-stand-alone";
-pub(crate) const ALT_OFFICIAL_SUBSTRING: &str = "-alt-official";
-/// Secondary name variant, used in languages and scripts.
-pub(crate) const ALT_SECONDARY_SUBSTRING: &str = "-alt-secondary";
-/// Abbreviation for territory code `IO` (British Indian Ocean Territory).
-pub(crate) const ALT_BIOT_SUBSTRING: &str = "-alt-biot";
-/// Alternate name for territory code `IO` (British Indian Ocean Territory) mapping to "Chagos Archipelago".
-pub(crate) const ALT_CHAGOS_SUBSTRING: &str = "-alt-chagos";
-pub(crate) const MENU_SUBSTRING: &str = "-menu-";
-pub(crate) const MENU_CORE_SUBSTRING: &str = "-menu-core";
-pub(crate) const MENU_EXTENSION_SUBSTRING: &str = "-menu-extension";
-
-// TODO: ALT_MENU_SUBSTRING should be dead. Remove when possible.
-pub(crate) const ALT_MENU_SUBSTRING: &str = "-alt-menu";
-
 /// Macro for implementing a single-name display names data provider.
 ///
 /// Parameters:
 /// - `$marker`: The data marker type.
+/// - `$subtag_ty`: The subtag type (e.g., `Language`, `Script`).
 /// - `$resource`: The CLDR serde resource type.
 /// - `$file`: The JSON file name in CLDR.
 /// - `$field`: The field name in `LocaleDisplayNames` containing the data.
-/// - `$suffix`: An optional string to append to the marker attribute to form the CLDR key.
+/// - `$alt_variant`: The alt variant string (e.g., `None`, `Some("short")`).
 macro_rules! impl_displaynames_v1 {
-    ($marker:ident, $resource:path, $file:literal, $field:ident, $suffix:expr,) => {
+    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr,) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
@@ -46,10 +28,17 @@ macro_rules! impl_displaynames_v1 {
                     .displaynames()
                     .read_and_parse(req.id.locale, $file)?;
 
-                let mut key = req.id.marker_attributes.as_str().to_string();
-                if let Some(suffix) = $suffix {
-                    key.push_str(suffix);
-                }
+                let subtag =
+                    <$subtag_ty as core::str::FromStr>::from_str(req.id.marker_attributes.as_str())
+                        .map_err(|_| {
+                            DataError::custom("failed to parse subtag").with_req($marker::INFO, req)
+                        })?;
+
+                let key = $crate::cldr_serde::displaynames::SubtagWithOptionalAltVariant {
+                    subtag,
+                    alt_variant: $alt_variant.map(String::from),
+                    menu_variant: None,
+                };
 
                 let name = data
                     .main
@@ -69,7 +58,12 @@ macro_rules! impl_displaynames_v1 {
         }
 
         $crate::displaynames::impl_displaynames_iter_v1!(
-            $marker, $resource, $file, $field, $suffix
+            $marker,
+            $subtag_ty,
+            $resource,
+            $file,
+            $field,
+            $alt_variant
         );
     };
 }
@@ -78,11 +72,12 @@ macro_rules! impl_displaynames_v1 {
 ///
 /// Parameters:
 /// - `$marker`: The data marker type.
+/// - `$subtag_ty`: The subtag type.
 /// - `$resource`: The CLDR serde resource type.
 /// - `$file`: The JSON file name in CLDR.
 /// - `$field`: The field name in `LocaleDisplayNames` containing the data.
 macro_rules! impl_displaynames_menu_v1 {
-    ($marker:ident, $resource:path, $file:literal, $field:ident,) => {
+    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident,) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
@@ -92,10 +87,23 @@ macro_rules! impl_displaynames_menu_v1 {
                     .displaynames()
                     .read_and_parse(req.id.locale, $file)?;
 
-                let mut key_core = req.id.marker_attributes.as_str().to_string();
-                let mut key_extension = key_core.clone();
-                key_core.push_str($crate::displaynames::MENU_CORE_SUBSTRING);
-                key_extension.push_str($crate::displaynames::MENU_EXTENSION_SUBSTRING);
+                let subtag =
+                    <$subtag_ty as core::str::FromStr>::from_str(req.id.marker_attributes.as_str())
+                        .map_err(|_| {
+                            DataError::custom("failed to parse subtag").with_req($marker::INFO, req)
+                        })?;
+
+                let key_core = $crate::cldr_serde::displaynames::SubtagWithOptionalAltVariant {
+                    subtag: subtag.clone(),
+                    alt_variant: None,
+                    menu_variant: Some("core".to_string()),
+                };
+                let key_extension =
+                    $crate::cldr_serde::displaynames::SubtagWithOptionalAltVariant {
+                        subtag: subtag.clone(),
+                        alt_variant: None,
+                        menu_variant: Some("extension".to_string()),
+                    };
 
                 let map = &data.main.value.localedisplaynames.$field;
 
@@ -107,8 +115,12 @@ macro_rules! impl_displaynames_menu_v1 {
                     (core.as_str(), extension.as_str())
                 } else {
                     // Fallback to alt-menu
-                    let mut key_alt_menu = req.id.marker_attributes.as_str().to_string();
-                    key_alt_menu.push_str($crate::displaynames::ALT_MENU_SUBSTRING);
+                    let key_alt_menu =
+                        $crate::cldr_serde::displaynames::SubtagWithOptionalAltVariant {
+                            subtag,
+                            alt_variant: Some("menu".to_string()),
+                            menu_variant: None,
+                        };
                     let alt_menu = map.get(&key_alt_menu).ok_or_else(|| {
                         DataError::custom("failed to find menu-core or alt-menu")
                             .with_req($marker::INFO, req)
@@ -131,7 +143,6 @@ macro_rules! impl_displaynames_menu_v1 {
                 let mut result = HashSet::new();
                 let displaynames = self.cldr()?.displaynames();
                 for locale in displaynames.list_locales()?.filter(|locale| {
-                    // The directory might exist without the file
                     self.cldr()
                         .unwrap()
                         .displaynames()
@@ -139,26 +150,19 @@ macro_rules! impl_displaynames_menu_v1 {
                         .unwrap_or_default()
                 }) {
                     let data: &$resource = displaynames.read_and_parse(&locale, $file)?;
-                    for key_str in data.main.value.localedisplaynames.$field.keys() {
-                        let attr = if let Some(attr_str) =
-                            key_str.strip_suffix($crate::displaynames::MENU_CORE_SUBSTRING)
-                        {
-                            Some(attr_str)
-                        } else if let Some(attr_str) =
-                            key_str.strip_suffix($crate::displaynames::ALT_MENU_SUBSTRING)
-                        {
-                            Some(attr_str)
-                        } else {
-                            None
-                        };
+                    for key in data.main.value.localedisplaynames.$field.keys() {
+                        let matches = key.menu_variant.as_deref() == Some("core")
+                            || key.alt_variant.as_deref() == Some("menu");
 
-                        if let Some(attr_str) = attr {
+                        if matches {
+                            let attr_str = key.subtag.to_string();
                             let data_identifier = DataIdentifierCow::from_owned(
-                                DataMarkerAttributes::try_from_string(attr_str.to_string())
-                                    .map_err(|_| {
+                                DataMarkerAttributes::try_from_string(attr_str.clone()).map_err(
+                                    |_| {
                                         DataError::custom("Failed to parse attribute")
                                             .with_debug_context(&attr_str)
-                                    })?,
+                                    },
+                                )?,
                                 locale,
                             );
                             result.insert(data_identifier);
@@ -175,18 +179,18 @@ macro_rules! impl_displaynames_menu_v1 {
 ///
 /// Parameters:
 /// - `$marker`: The data marker type.
+/// - `$subtag_ty`: The subtag type.
 /// - `$resource`: The CLDR serde resource type.
 /// - `$file`: The JSON file name in CLDR.
 /// - `$field`: The field name in `LocaleDisplayNames` containing the data.
-/// - `$suffix`: An optional string that marks which entries to include in this provider.
+/// - `$alt_variant`: The alt variant string (e.g., `None`, `Some("short")`).
 macro_rules! impl_displaynames_iter_v1 {
-    ($marker:ident, $resource:path, $file:literal, $field:ident, $suffix:expr) => {
+    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr) => {
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
                 let mut result = HashSet::new();
                 let displaynames = self.cldr()?.displaynames();
                 for locale in displaynames.list_locales()?.filter(|locale| {
-                    // The directory might exist without the file
                     self.cldr()
                         .unwrap()
                         .displaynames()
@@ -194,24 +198,22 @@ macro_rules! impl_displaynames_iter_v1 {
                         .unwrap_or_default()
                 }) {
                     let data: &$resource = displaynames.read_and_parse(&locale, $file)?;
-                    for key_str in data.main.value.localedisplaynames.$field.keys() {
-                        let attr = if let Some(suffix) = $suffix {
-                            key_str.strip_suffix(suffix)
-                        } else if key_str.contains(crate::displaynames::ALT_SUBSTRING)
-                            || key_str.contains(crate::displaynames::MENU_SUBSTRING)
-                        {
-                            None
-                        } else {
-                            Some(key_str.as_str())
-                        };
+                    for key in data.main.value.localedisplaynames.$field.keys() {
+                        let matches = match ($alt_variant, &key.alt_variant) {
+                            (Some(expected), Some(actual)) => expected == actual,
+                            (None, None) => true,
+                            _ => false,
+                        } && key.menu_variant.is_none();
 
-                        if let Some(attr_str) = attr {
+                        if matches {
+                            let attr_str = key.subtag.to_string();
                             let data_identifier = DataIdentifierCow::from_owned(
-                                DataMarkerAttributes::try_from_string(attr_str.to_string())
-                                    .map_err(|_| {
+                                DataMarkerAttributes::try_from_string(attr_str.clone()).map_err(
+                                    |_| {
                                         DataError::custom("Failed to parse attribute")
                                             .with_debug_context(&attr_str)
-                                    })?,
+                                    },
+                                )?,
                                 locale,
                             );
                             result.insert(data_identifier);

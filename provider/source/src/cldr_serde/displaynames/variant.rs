@@ -7,13 +7,14 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-localenames-full/main/en/variants.json>
 
-use serde::{Deserialize, Deserializer};
+use super::SubtagWithOptionalAltVariant;
+use icu::locale::subtags::Variant;
+use serde::Deserialize;
 use std::collections::HashMap;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct Variants {
-    #[serde(deserialize_with = "deserialize_normalized_keys")]
-    pub(crate) variants: HashMap<String, String>,
+    pub(crate) variants: HashMap<SubtagWithOptionalAltVariant<Variant>, String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
@@ -23,14 +24,3 @@ pub(crate) struct LangDisplayNames {
 }
 
 pub(crate) type Resource = super::super::LocaleResource<LangDisplayNames>;
-
-fn deserialize_normalized_keys<'de, D>(deserializer: D) -> Result<HashMap<String, String>, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    let map = HashMap::<String, String>::deserialize(deserializer)?;
-    Ok(map
-        .into_iter()
-        .map(|(k, v)| (k.to_ascii_lowercase(), v))
-        .collect())
-}

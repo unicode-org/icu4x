@@ -5,17 +5,12 @@
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
-use crate::displaynames::{
-    ALT_LONG_SUBSTRING, ALT_MENU_SUBSTRING, ALT_OFFICIAL_SUBSTRING, ALT_SECONDARY_SUBSTRING,
-    ALT_SHORT_SUBSTRING, ALT_SUBSTRING, ALT_VARIANT_SUBSTRING,
-};
 
 use icu::experimental::displaynames::provider::*;
-use icu::locale::subtags::Language;
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use std::collections::{BTreeMap, HashSet};
-use zerovec::VarZeroCow;
+use zerovec::{VarZeroCow, ZeroMap};
 
 impl DataProvider<LanguageDisplayNamesV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<LanguageDisplayNamesV1>, DataError> {
@@ -53,6 +48,7 @@ crate::displaynames::impl_displaynames_legacy_iter_v1!(LocaleDisplayNamesV1, "la
 
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesLanguageMediumV1,
+    icu::locale::LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
@@ -61,22 +57,25 @@ crate::displaynames::impl_displaynames_v1!(
 
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesLanguageShortV1,
+    icu::locale::LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
-    Some(ALT_SHORT_SUBSTRING),
+    Some("short"),
 );
 
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesLanguageLongV1,
+    icu::locale::LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
-    Some(ALT_LONG_SUBSTRING),
+    Some("long"),
 );
 
 crate::displaynames::impl_displaynames_menu_v1!(
     LocaleNamesLanguageMenuMediumV1,
+    icu::locale::LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
@@ -89,27 +88,35 @@ impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayName
         let mut long_names = BTreeMap::new();
         let mut menu_names = BTreeMap::new();
         for (key, value) in other.main.value.localedisplaynames.languages.iter() {
-            if let Some(lang) = key.strip_suffix(ALT_SHORT_SUBSTRING) {
-                if let Ok(lang) = lang.parse::<Language>() {
+            if key.menu_variant.is_some() {
+                continue;
+            }
+
+            let langid = &key.subtag;
+            if langid.script.is_some() || langid.region.is_some() || !langid.variants.is_empty() {
+                continue;
+            }
+            let lang = langid.language;
+
+            match key.alt_variant.as_deref() {
+                Some("short") => {
                     short_names.insert(lang.to_tinystr(), value.as_ref());
                 }
-            } else if let Some(lang) = key.strip_suffix(ALT_LONG_SUBSTRING) {
-                if let Ok(lang) = lang.parse::<Language>() {
+                Some("long") => {
                     long_names.insert(lang.to_tinystr(), value.as_ref());
                 }
-            } else if let Some(lang) = key.strip_suffix(ALT_MENU_SUBSTRING) {
-                if let Ok(lang) = lang.parse::<Language>() {
+                Some("menu") => {
                     menu_names.insert(lang.to_tinystr(), value.as_ref());
                 }
-            } else if let Ok(lang) = key.parse::<Language>() {
-                names.insert(lang.to_tinystr(), value.as_ref());
-            } else if key.ends_with(ALT_VARIANT_SUBSTRING)
-                || key.ends_with(ALT_SECONDARY_SUBSTRING)
-                || key.ends_with(ALT_OFFICIAL_SUBSTRING)
-            {
-                // TODO(#8012): Handle preference-specific alt variants.
-            } else if key.contains(ALT_SUBSTRING) {
-                log::warn!("Unknown alt variant for language: {}", key);
+                None => {
+                    names.insert(lang.to_tinystr(), value.as_ref());
+                }
+                Some("variant") | Some("secondary") | Some("official") => {
+                    // TODO(#8012): Handle preference-specific alt variants.
+                }
+                Some(alt) => {
+                    log::warn!("Unknown alt variant for language: {}", alt);
+                }
             }
         }
         Self {
@@ -140,59 +147,52 @@ impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayName
 
 impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<'static> {
     fn from(other: &cldr_serde::displaynames::language::Resource) -> Self {
-        let mut names = BTreeMap::new();
-        let mut short_names = BTreeMap::new();
-        let mut long_names = BTreeMap::new();
-        let mut menu_names = BTreeMap::new();
+        let mut names = ZeroMap::new();
+        let mut short_names = ZeroMap::new();
+        let mut long_names = ZeroMap::new();
+        let mut menu_names = ZeroMap::new();
         for (key, value) in other.main.value.localedisplaynames.languages.iter() {
-            if key.contains("-menu-") {
-                // TODO: handle -menu-core and -menu-extension
+            if key.menu_variant.is_some() {
                 continue;
             }
-            #[expect(clippy::collapsible_if)] // consistency
-            if let Some(locale) = key.strip_suffix(ALT_SHORT_SUBSTRING) {
-                if locale.contains('-') {
-                    short_names.insert(locale, value.as_ref());
+
+            let langid = &key.subtag;
+            if langid.script.is_none() && langid.region.is_none() && langid.variants.is_empty() {
+                continue;
+            }
+
+            let locale_str = langid.to_string();
+            let val_str = value.as_str();
+            if locale_str == val_str {
+                continue;
+            }
+
+            let pot_utf8 = PotentialUtf8::from_str(&locale_str);
+
+            match key.alt_variant.as_deref() {
+                Some("short") => {
+                    short_names.insert(pot_utf8, val_str);
                 }
-            } else if let Some(locale) = key.strip_suffix(ALT_LONG_SUBSTRING) {
-                if locale.contains('-') {
-                    long_names.insert(locale, value.as_ref());
+                Some("long") => {
+                    long_names.insert(pot_utf8, val_str);
                 }
-            } else if let Some(locale) = key.strip_suffix(ALT_MENU_SUBSTRING) {
-                if locale.contains('-') {
-                    menu_names.insert(locale, value.as_ref());
+                Some("menu") => {
+                    menu_names.insert(pot_utf8, val_str);
                 }
-            } else if !key.contains(ALT_SUBSTRING) {
-                if key.contains('-') {
-                    names.insert(key, value.as_ref());
+                None => {
+                    names.insert(pot_utf8, val_str);
                 }
+                _ => {}
             }
         }
         Self {
-            names: names
-                .into_iter()
-                .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (PotentialUtf8::from_str(k), v))
-                .collect(),
-            short_names: short_names
-                .into_iter()
-                .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (PotentialUtf8::from_str(k), v))
-                .collect(),
-            long_names: long_names
-                .into_iter()
-                .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (PotentialUtf8::from_str(k), v))
-                .collect(),
-            menu_names: menu_names
-                .into_iter()
-                .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (PotentialUtf8::from_str(k), v))
-                .collect(),
+            names,
+            short_names,
+            long_names,
+            menu_names,
         }
     }
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;

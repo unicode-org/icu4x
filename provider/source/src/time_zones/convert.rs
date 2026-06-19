@@ -143,21 +143,20 @@ impl SourceDataProvider {
                 .regions;
             regions
                 .iter()
-                .filter_map(|(region, value)| {
-                    Some((
-                        icu::locale::subtags::Region::try_from_str(region).ok()?,
-                        value.as_str(),
-                    ))
+                .filter_map(|(key, value)| {
+                    if key.alt_variant.is_none() && key.menu_variant.is_none() {
+                        Some((key.subtag, value.as_str()))
+                    } else {
+                        None
+                    }
                 })
                 // Overwrite with short names, as we want to use those
-                .chain(regions.iter().filter_map(|(region, value)| {
-                    Some((
-                        icu::locale::subtags::Region::try_from_str(
-                            region.strip_suffix("-alt-short")?,
-                        )
-                        .ok()?,
-                        value.as_str(),
-                    ))
+                .chain(regions.iter().filter_map(|(key, value)| {
+                    if key.alt_variant.as_deref() == Some("short") && key.menu_variant.is_none() {
+                        Some((key.subtag, value.as_str()))
+                    } else {
+                        None
+                    }
                 }))
                 .filter(|(r, _)| primary_zones_values.contains(r))
                 .collect()
