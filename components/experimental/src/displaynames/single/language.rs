@@ -271,11 +271,9 @@ enum BorrowedVariants<'a> {
 }
 
 impl BorrowedVariants<'_> {
+    #[inline]
     fn is_empty(&self) -> bool {
-        match self {
-            Self::Slice(slice) if slice.is_empty() => true,
-            _ => false,
-        }
+        matches!(self, Self::Slice([]))
     }
 }
 
