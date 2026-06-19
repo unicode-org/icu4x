@@ -188,13 +188,13 @@ impl LanguageIdentifierDisplayNameOwned {
             );
             let mut metadata = DataRequestMetadata::default();
             metadata.silent = true;
-            match provider.load(DataRequest { id, metadata }) {
-                Ok(response) => DataPayloadOr::from_payload(response.payload),
-                Err(DataError {
-                    kind: DataErrorKind::IdentifierNotFound,
-                    ..
-                }) => DataPayloadOr::none(),
-                Err(e) => return Err(e),
+            if let Some(response) = provider
+                .load(DataRequest { id, metadata })
+                .allow_identifier_not_found()?
+            {
+                DataPayloadOr::from_payload(response.payload)
+            } else {
+                DataPayloadOr::none()
             }
         } else {
             DataPayloadOr::none()
@@ -209,13 +209,13 @@ impl LanguageIdentifierDisplayNameOwned {
             );
             let mut metadata = DataRequestMetadata::default();
             metadata.silent = true;
-            match provider.load(DataRequest { id, metadata }) {
-                Ok(response) => DataPayloadOr::from_payload(response.payload),
-                Err(DataError {
-                    kind: DataErrorKind::IdentifierNotFound,
-                    ..
-                }) => DataPayloadOr::none(),
-                Err(e) => return Err(e),
+            if let Some(response) = provider
+                .load(DataRequest { id, metadata })
+                .allow_identifier_not_found()?
+            {
+                DataPayloadOr::from_payload(response.payload)
+            } else {
+                DataPayloadOr::none()
             }
         } else {
             DataPayloadOr::none()
