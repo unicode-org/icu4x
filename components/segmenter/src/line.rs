@@ -8,7 +8,6 @@ use crate::provider::*;
 use crate::rule_segmenter::*;
 use alloc::string::String;
 use alloc::vec;
-use alloc::vec::Vec;
 use core::char;
 use icu_locale_core::LanguageIdentifier;
 use icu_locale_core::subtags::{Language, language};
@@ -603,13 +602,14 @@ impl<'data> LineSegmenterBorrowed<'data> {
     pub fn segment_str<'s>(self, input: &'s str) -> LineBreakIterator<'data, 's, Utf8> {
         LineBreakIterator {
             iter: input.char_indices(),
+            str_input: Some(input),
             len: input.len(),
             current_pos_data: None,
-            result_cache: Vec::new(),
+            result_cache: ResultCache::new(),
             data: self.data,
             options: self.options,
             complex: self.complex,
-            handle_complex_language: line_handle_complex_language_utf8,
+            handle_complex_language: line_handle_complex_language_str,
         }
     }
     /// Creates a line break iterator for a potentially ill-formed UTF8 string
@@ -623,9 +623,10 @@ impl<'data> LineSegmenterBorrowed<'data> {
     ) -> LineBreakIterator<'data, 's, PotentiallyIllFormedUtf8> {
         LineBreakIterator {
             iter: Utf8CharIndices::new(input),
+            str_input: None,
             len: input.len(),
             current_pos_data: None,
-            result_cache: Vec::new(),
+            result_cache: ResultCache::new(),
             data: self.data,
             options: self.options,
             complex: self.complex,
@@ -638,9 +639,10 @@ impl<'data> LineSegmenterBorrowed<'data> {
     pub fn segment_latin1<'s>(self, input: &'s [u8]) -> LineBreakIterator<'data, 's, Latin1> {
         LineBreakIterator {
             iter: Latin1Indices::new(input),
+            str_input: None,
             len: input.len(),
             current_pos_data: None,
-            result_cache: Vec::new(),
+            result_cache: ResultCache::new(),
             data: self.data,
             options: self.options,
             complex: self.complex,
@@ -654,9 +656,10 @@ impl<'data> LineSegmenterBorrowed<'data> {
     pub fn segment_utf16<'s>(self, input: &'s [u16]) -> LineBreakIterator<'data, 's, Utf16> {
         LineBreakIterator {
             iter: Utf16Indices::new(input),
+            str_input: None,
             len: input.len(),
             current_pos_data: None,
-            result_cache: Vec::new(),
+            result_cache: ResultCache::new(),
             data: self.data,
             options: self.options,
             complex: self.complex,
@@ -767,9 +770,11 @@ fn is_break_utf32_by_loose(
 #[derive(Debug)]
 pub struct LineBreakIterator<'data, 's, Y: RuleBreakType> {
     iter: Y::IterAttr<'s>,
+    // Original UTF-8 input for `segment_str`, used by complex handlers to borrow run slices.
+    str_input: Option<&'s str>,
     len: usize,
     current_pos_data: Option<(usize, Y::CharType)>,
-    result_cache: Vec<usize>,
+    result_cache: ResultCache,
     data: &'data RuleBreakData<'data>,
     options: ResolvedLineBreakOptions,
     complex: ComplexPayloadsBorrowed<'data>,
@@ -785,10 +790,11 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
         if self.options.strictness == LineBreakStrictness::Anywhere {
             let mut grapheme_iter: RuleBreakIterator<'_, '_, Y> = RuleBreakIterator {
                 iter: self.iter.clone(),
+                str_input: None,
                 len: self.len,
                 current_pos_data: self.current_pos_data,
                 data: self.complex.grapheme.data,
-                result_cache: Default::default(),
+                result_cache: ResultCache::new(),
                 complex: None,
                 boundary_property: 0,
                 locale_override: None,
@@ -808,11 +814,11 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
         }
 
         // If we have break point cache by previous run, return this result
-        if let Some(&first_pos) = self.result_cache.first() {
+        if let Some(first_pos) = self.result_cache.next_relative() {
             let mut i = 0;
             loop {
                 if i == first_pos {
-                    self.result_cache = self.result_cache.iter().skip(1).map(|r| r - i).collect();
+                    self.result_cache.consume(i);
                     return self.get_current_position();
                 }
                 i += self.get_current_codepoint().map_or(0, Y::char_len);
@@ -1133,7 +1139,7 @@ fn line_handle_complex_language_utf8<T>(
 where
     T: RuleBreakType<CharType = char>,
 {
-    // word segmenter doesn't define break rules for some languages such as Thai.
+    // UAX 14 relies on dictionary segmentation for complex languages such as Thai.
     let start_iter = iter.iter.clone();
     let start_point = iter.current_pos_data;
     let mut s = String::new();
@@ -1156,13 +1162,13 @@ where
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
     let breaks = iter.complex.complex_language_segment_str(&s);
-    iter.result_cache = breaks;
-    let first_pos = *iter.result_cache.first()?;
+    iter.result_cache.set(breaks);
+    let first_pos = iter.result_cache.next_relative()?;
     let mut i = left_codepoint.len_utf8();
     loop {
         if i == first_pos {
             // Re-calculate breaking offset
-            iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
+            iter.result_cache.consume(i);
             return iter.get_current_position();
         }
         debug_assert!(
@@ -1179,6 +1185,65 @@ where
     }
 }
 
+fn line_handle_complex_language_str(
+    iter: &mut LineBreakIterator<'_, '_, Utf8>,
+    left_codepoint: char,
+) -> Option<usize> {
+    // `segment_str` only receives well-formed UTF-8, so the complex-language
+    // run can be borrowed directly from the original input. Keep this separate
+    // from `line_handle_complex_language_utf8`, which also handles potentially
+    // ill-formed UTF-8 and must preserve replacement-character semantics.
+    let Some(input) = iter.str_input else {
+        return line_handle_complex_language_utf8(iter, left_codepoint);
+    };
+
+    // UAX 14 relies on dictionary segmentation for complex languages such as Thai.
+    let start_iter = iter.iter.clone();
+    let start_point = iter.current_pos_data;
+    let (right_pos, _) = start_point?;
+    let start = right_pos.checked_sub(left_codepoint.len_utf8())?;
+    loop {
+        debug_assert!(!iter.is_eof());
+        iter.advance_iter();
+        if let Some(current_codepoint) = iter.get_current_codepoint() {
+            if iter.get_linebreak_property(current_codepoint) != iter.data.complex_property {
+                break;
+            }
+        } else {
+            // EOF
+            break;
+        }
+    }
+    let end = iter.get_current_position().unwrap_or(iter.len);
+    let s = input.get(start..end)?;
+
+    // Restore iterator to move to head of complex string
+    iter.iter = start_iter;
+    iter.current_pos_data = start_point;
+    let breaks = iter.complex.complex_language_segment_str(s);
+    iter.result_cache.set(breaks);
+    let first_pos = iter.result_cache.next_relative()?;
+    let mut i = left_codepoint.len_utf8();
+    loop {
+        if i == first_pos {
+            // Re-calculate breaking offset
+            iter.result_cache.consume(i);
+            return iter.get_current_position();
+        }
+        debug_assert!(
+            i < first_pos,
+            "we should always arrive at first_pos: near index {:?}",
+            iter.get_current_position()
+        );
+        i += iter.get_current_codepoint().map_or(0, Utf8::char_len);
+        iter.advance_iter();
+        if iter.is_eof() {
+            iter.result_cache.clear();
+            return Some(iter.len);
+        }
+    }
+}
+
 fn line_handle_complex_language_utf16<T>(
     iterator: &mut LineBreakIterator<'_, '_, T>,
     left_codepoint: T::CharType,
@@ -1186,7 +1251,7 @@ fn line_handle_complex_language_utf16<T>(
 where
     T: RuleBreakType<CharType = u32>,
 {
-    // word segmenter doesn't define break rules for some languages such as Thai.
+    // UAX 14 relies on dictionary segmentation for complex languages such as Thai.
     let start_iter = iterator.iter.clone();
     let start_point = iterator.current_pos_data;
     let mut s = vec![left_codepoint as u16];
@@ -1209,19 +1274,14 @@ where
     iterator.iter = start_iter;
     iterator.current_pos_data = start_point;
     let breaks = iterator.complex.complex_language_segment_utf16(&s);
-    iterator.result_cache = breaks;
+    iterator.result_cache.set(breaks);
     // result_cache vector is utf-16 index that is in BMP.
-    let first_pos = *iterator.result_cache.first()?;
+    let first_pos = iterator.result_cache.next_relative()?;
     let mut i = 1;
     loop {
         if i == first_pos {
             // Re-calculate breaking offset
-            iterator.result_cache = iterator
-                .result_cache
-                .iter()
-                .skip(1)
-                .map(|r| r - i)
-                .collect();
+            iterator.result_cache.consume(i);
             return iterator.get_current_position();
         }
         debug_assert!(

@@ -9,7 +9,6 @@ use crate::provider::*;
 use crate::rule_segmenter::*;
 use alloc::string::String;
 use alloc::vec;
-use alloc::vec::Vec;
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
@@ -600,14 +599,15 @@ impl<'data> WordSegmenterBorrowed<'data> {
     pub fn segment_str<'s>(self, input: &'s str) -> WordBreakIterator<'data, 's, Utf8> {
         WordBreakIterator(RuleBreakIterator {
             iter: input.char_indices(),
+            str_input: Some(input),
             len: input.len(),
             current_pos_data: None,
-            result_cache: Vec::new(),
+            result_cache: ResultCache::new(),
             data: self.data,
             complex: Some(self.complex),
             boundary_property: 0,
             locale_override: self.locale_override,
-            handle_complex_language: handle_complex_language_utf8,
+            handle_complex_language: handle_complex_language_str,
         })
     }
 
@@ -622,9 +622,10 @@ impl<'data> WordSegmenterBorrowed<'data> {
     ) -> WordBreakIterator<'data, 's, PotentiallyIllFormedUtf8> {
         WordBreakIterator(RuleBreakIterator {
             iter: Utf8CharIndices::new(input),
+            str_input: None,
             len: input.len(),
             current_pos_data: None,
-            result_cache: Vec::new(),
+            result_cache: ResultCache::new(),
             data: self.data,
             complex: Some(self.complex),
             boundary_property: 0,
@@ -639,9 +640,10 @@ impl<'data> WordSegmenterBorrowed<'data> {
     pub fn segment_latin1<'s>(self, input: &'s [u8]) -> WordBreakIterator<'data, 's, Latin1> {
         WordBreakIterator(RuleBreakIterator {
             iter: Latin1Indices::new(input),
+            str_input: None,
             len: input.len(),
             current_pos_data: None,
-            result_cache: Vec::new(),
+            result_cache: ResultCache::new(),
             data: self.data,
             complex: Some(self.complex),
             boundary_property: 0,
@@ -656,9 +658,10 @@ impl<'data> WordSegmenterBorrowed<'data> {
     pub fn segment_utf16<'s>(self, input: &'s [u16]) -> WordBreakIterator<'data, 's, Utf16> {
         WordBreakIterator(RuleBreakIterator {
             iter: Utf16Indices::new(input),
+            str_input: None,
             len: input.len(),
             current_pos_data: None,
-            result_cache: Vec::new(),
+            result_cache: ResultCache::new(),
             data: self.data,
             complex: Some(self.complex),
             boundary_property: 0,
@@ -703,6 +706,66 @@ impl WordSegmenterBorrowed<'static> {
     }
 }
 
+fn handle_complex_language_str(
+    iter: &mut RuleBreakIterator<'_, '_, Utf8>,
+    left_codepoint: char,
+) -> Option<usize> {
+    // `segment_str` only receives well-formed UTF-8, so the complex-language
+    // run can be borrowed directly from the original input. Keep this separate
+    // from `handle_complex_language_utf8`, which also handles potentially
+    // ill-formed UTF-8 and must preserve replacement-character semantics.
+    let Some(input) = iter.str_input else {
+        return handle_complex_language_utf8(iter, left_codepoint);
+    };
+
+    // word segmenter doesn't define break rules for some languages such as Thai.
+    let start_iter = iter.iter.clone();
+    let start_point = iter.current_pos_data;
+    let (right_pos, _) = start_point?;
+    let start = right_pos.checked_sub(left_codepoint.len_utf8())?;
+    loop {
+        debug_assert!(!iter.is_eof());
+        iter.advance_iter();
+        if let Some(current_break_property) = iter.get_current_break_property() {
+            if current_break_property != iter.data.complex_property {
+                break;
+            }
+        } else {
+            // EOF
+            break;
+        }
+    }
+    let end = iter.get_current_position().unwrap_or(iter.len);
+    let s = input.get(start..end)?;
+
+    // Restore iterator to move to head of complex string
+    iter.iter = start_iter;
+    iter.current_pos_data = start_point;
+    #[expect(clippy::unwrap_used)] // iter.complex present for word segmenter
+    let breaks = iter.complex.unwrap().complex_language_segment_str(s);
+    iter.result_cache.set(breaks);
+    let first_pos = iter.result_cache.next_relative()?;
+    let mut i = left_codepoint.len_utf8();
+    loop {
+        if i == first_pos {
+            // Re-calculate breaking offset
+            iter.result_cache.consume(i);
+            return iter.get_current_position();
+        }
+        debug_assert!(
+            i < first_pos,
+            "we should always arrive at first_pos: near index {:?}",
+            iter.get_current_position()
+        );
+        i += iter.get_current_codepoint().map_or(0, Utf8::char_len);
+        iter.advance_iter();
+        if iter.is_eof() {
+            iter.result_cache.clear();
+            return Some(iter.len);
+        }
+    }
+}
+
 fn handle_complex_language_utf8<T>(
     iter: &mut RuleBreakIterator<'_, '_, T>,
     left_codepoint: T::CharType,
@@ -734,13 +797,13 @@ where
     iter.current_pos_data = start_point;
     #[expect(clippy::unwrap_used)] // iter.complex present for word segmenter
     let breaks = iter.complex.unwrap().complex_language_segment_str(&s);
-    iter.result_cache = breaks;
-    let first_pos = *iter.result_cache.first()?;
+    iter.result_cache.set(breaks);
+    let first_pos = iter.result_cache.next_relative()?;
     let mut i = left_codepoint.len_utf8();
     loop {
         if i == first_pos {
             // Re-calculate breaking offset
-            iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
+            iter.result_cache.consume(i);
             return iter.get_current_position();
         }
         debug_assert!(
@@ -787,14 +850,14 @@ where
     iter.current_pos_data = start_point;
     #[expect(clippy::unwrap_used)] // iter.complex present for word segmenter
     let breaks = iter.complex.unwrap().complex_language_segment_utf16(&s);
-    iter.result_cache = breaks;
+    iter.result_cache.set(breaks);
     // result_cache vector is utf-16 index that is in BMP.
-    let first_pos = *iter.result_cache.first()?;
+    let first_pos = iter.result_cache.next_relative()?;
     let mut i = 1;
     loop {
         if i == first_pos {
             // Re-calculate breaking offset
-            iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
+            iter.result_cache.consume(i);
             return iter.get_current_position();
         }
         debug_assert!(

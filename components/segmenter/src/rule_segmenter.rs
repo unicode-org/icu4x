@@ -80,9 +80,11 @@ pub trait RuleBreakType: crate::private::Sealed + Sized {
 #[derive(Debug)]
 pub struct RuleBreakIterator<'data, 's, Y: RuleBreakType> {
     pub(crate) iter: Y::IterAttr<'s>,
+    // Original UTF-8 input for `segment_str`, used by complex handlers to borrow run slices.
+    pub(crate) str_input: Option<&'s str>,
     pub(crate) len: usize,
     pub(crate) current_pos_data: Option<(usize, Y::CharType)>,
-    pub(crate) result_cache: Vec<usize>,
+    pub(crate) result_cache: ResultCache,
     pub(crate) data: &'data RuleBreakData<'data>,
     pub(crate) complex: Option<ComplexPayloadsBorrowed<'data>>,
     // The property associated with the previous break
@@ -91,6 +93,72 @@ pub struct RuleBreakIterator<'data, 's, Y: RuleBreakType> {
     // Should return None if there is no complex language handling
     pub(crate) handle_complex_language:
         fn(&mut RuleBreakIterator<'data, 's, Y>, Y::CharType) -> Option<usize>,
+}
+
+/// Cached dictionary break offsets for the current complex-language run.
+///
+/// Dictionary segmentation returns offsets from the start of the complex run.
+/// The rule iterator yields one break at a time, so this cache keeps the
+/// original offsets plus a cursor instead of rebuilding a shortened `Vec` after
+/// every yielded break.
+#[derive(Debug)]
+pub(crate) struct ResultCache {
+    breaks: Vec<usize>,
+    index: usize,
+    offset: usize,
+}
+
+impl ResultCache {
+    /// Creates an empty cache for a newly constructed break iterator.
+    #[inline]
+    pub(crate) fn new() -> Self {
+        Self {
+            breaks: Vec::new(),
+            index: 0,
+            offset: 0,
+        }
+    }
+
+    /// Replaces the cache with the break offsets for a new complex-language run.
+    ///
+    /// The offsets are absolute within the run. `offset` tracks how much of the
+    /// run has already been consumed by the outer iterator.
+    #[inline]
+    pub(crate) fn set(&mut self, breaks: Vec<usize>) {
+        self.breaks = breaks;
+        self.index = 0;
+        self.offset = 0;
+    }
+
+    /// Returns the next cached break relative to the current iterator position.
+    #[inline]
+    pub(crate) fn next_relative(&self) -> Option<usize> {
+        self.breaks.get(self.index).map(|&result| {
+            debug_assert!(result >= self.offset);
+            result - self.offset
+        })
+    }
+
+    /// Marks the current cached break as yielded.
+    ///
+    /// `offset` is the number of code units advanced by the outer iterator while
+    /// reaching that break.
+    #[inline]
+    pub(crate) fn consume(&mut self, offset: usize) {
+        self.index += 1;
+        self.offset += offset;
+        if self.index >= self.breaks.len() {
+            self.clear();
+        }
+    }
+
+    /// Empties the cache when the run is exhausted or the iterator reaches EOF.
+    #[inline]
+    pub(crate) fn clear(&mut self) {
+        self.breaks.clear();
+        self.index = 0;
+        self.offset = 0;
+    }
 }
 
 pub(crate) fn empty_handle_complex_language<Y: RuleBreakType>(
@@ -109,11 +177,11 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
 
     fn next(&mut self) -> Option<Self::Item> {
         // If we have break point cache by previous run, return this result
-        if let Some(&first_result) = self.result_cache.first() {
+        if let Some(first_result) = self.result_cache.next_relative() {
             let mut i = 0;
             loop {
                 if i == first_result {
-                    self.result_cache = self.result_cache.iter().skip(1).map(|r| r - i).collect();
+                    self.result_cache.consume(i);
                     return self.get_current_position();
                 }
                 i += self.get_current_codepoint().map_or(0, Y::char_len);

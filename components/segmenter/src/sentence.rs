@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::vec::Vec;
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 
@@ -247,9 +246,10 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
     pub fn segment_str<'s>(self, input: &'s str) -> SentenceBreakIterator<'data, 's, Utf8> {
         SentenceBreakIterator(RuleBreakIterator {
             iter: input.char_indices(),
+            str_input: None,
             len: input.len(),
             current_pos_data: None,
-            result_cache: Vec::new(),
+            result_cache: ResultCache::new(),
             data: self.data,
             complex: None,
             boundary_property: 0,
@@ -268,9 +268,10 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
     ) -> SentenceBreakIterator<'data, 's, PotentiallyIllFormedUtf8> {
         SentenceBreakIterator(RuleBreakIterator {
             iter: Utf8CharIndices::new(input),
+            str_input: None,
             len: input.len(),
             current_pos_data: None,
-            result_cache: Vec::new(),
+            result_cache: ResultCache::new(),
             data: self.data,
             complex: None,
             boundary_property: 0,
@@ -284,9 +285,10 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
     pub fn segment_latin1<'s>(self, input: &'s [u8]) -> SentenceBreakIterator<'data, 's, Latin1> {
         SentenceBreakIterator(RuleBreakIterator {
             iter: Latin1Indices::new(input),
+            str_input: None,
             len: input.len(),
             current_pos_data: None,
-            result_cache: Vec::new(),
+            result_cache: ResultCache::new(),
             data: self.data,
             complex: None,
             boundary_property: 0,
@@ -301,9 +303,10 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
     pub fn segment_utf16<'s>(self, input: &'s [u16]) -> SentenceBreakIterator<'data, 's, Utf16> {
         SentenceBreakIterator(RuleBreakIterator {
             iter: Utf16Indices::new(input),
+            str_input: None,
             len: input.len(),
             current_pos_data: None,
-            result_cache: Vec::new(),
+            result_cache: ResultCache::new(),
             data: self.data,
             complex: None,
             boundary_property: 0,
