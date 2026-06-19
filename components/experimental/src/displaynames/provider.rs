@@ -283,14 +283,15 @@ icu_provider::data_marker!(
 impl LocaleNamesLanguageMediumV1 {
     /// Helper to construct infallible attributes from subtags.
     #[inline]
-    pub fn make_attributes(
+    pub(crate) fn make_attributes(
         language: icu_locale_core::subtags::Language,
         script: Option<icu_locale_core::subtags::Script>,
         region: Option<icu_locale_core::subtags::Region>,
-    ) -> tinystr::TinyAsciiStr<16> {
+        buffer: &mut tinystr::TinyAsciiStr<16>,
+    ) -> &DataMarkerAttributes {
         const HYPHEN: tinystr::TinyAsciiStr<1> = tinystr::tinystr!(1, "-");
         let lang_str = language.to_tinystr();
-        match (script, region) {
+        *buffer = match (script, region) {
             (Some(script), Some(region)) => {
                 let script_str = script.to_tinystr();
                 let region_str = region.to_tinystr();
@@ -309,6 +310,8 @@ impl LocaleNamesLanguageMediumV1 {
                 lang_str.concat::<1, 16>(HYPHEN).concat::<3, 16>(region_str)
             }
             (None, None) => lang_str.resize::<16>(),
-        }
+        };
+        // This won't panic because the buffer contains subtag strings, which are valid attributes
+        DataMarkerAttributes::from_str_or_panic(buffer)
     }
 }

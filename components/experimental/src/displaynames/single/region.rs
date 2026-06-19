@@ -23,7 +23,7 @@ use icu_provider::prelude::*;
 /// ```
 #[derive(Debug)]
 pub struct RegionDisplayNameOwned {
-    payload: DataPayload<LocaleNamesRegionMediumV1>,
+    pub(crate) payload: DataPayload<LocaleNamesRegionMediumV1>,
 }
 
 impl RegionDisplayNameOwned {

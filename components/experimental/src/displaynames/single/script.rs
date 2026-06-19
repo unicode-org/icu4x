@@ -23,7 +23,7 @@ use icu_provider::prelude::*;
 /// ```
 #[derive(Debug)]
 pub struct ScriptDisplayNameOwned {
-    payload: DataPayload<LocaleNamesScriptMediumV1>,
+    pub(crate) payload: DataPayload<LocaleNamesScriptMediumV1>,
 }
 
 impl ScriptDisplayNameOwned {
