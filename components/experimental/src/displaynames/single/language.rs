@@ -188,9 +188,7 @@ impl LanguageIdentifierDisplayNameOwned {
         let mut variant_results = subject
             .variants
             .iter()
-            .map(|variant| {
-                VariantDisplayNameOwned::try_new_unstable(provider, prefs, *variant)
-            })
+            .map(|variant| VariantDisplayNameOwned::try_new_unstable(provider, prefs, *variant))
             .peekable();
         let variant_payloads = if let Some(result) = variant_results.next() {
             if variant_results.peek().is_some() {
@@ -233,14 +231,8 @@ impl LanguageIdentifierDisplayNameOwned {
     /// Returns a borrowed version of this display name.
     pub fn as_borrowed(&self) -> LanguageIdentifierDisplayName<'_> {
         let variants = match self.variant_payloads.get() {
-            Ok(payload) => BorrowedVariants::One(payload),
-            Err(vec) => {
-                if vec.is_empty() {
-                    BorrowedVariants::None
-                } else {
-                    BorrowedVariants::Slice(vec.as_slice())
-                }
-            }
+            Ok(variant_name) => BorrowedVariants::One(variant_name),
+            Err(vec) => BorrowedVariants::Slice(vec.as_slice()),
         };
 
         LanguageIdentifierDisplayName {
@@ -269,11 +261,22 @@ impl writeable::Writeable for LanguageIdentifierDisplayNameOwned {
 writeable::impl_display_with_writeable!(LanguageIdentifierDisplayNameOwned);
 
 /// Borrowed variants representation to avoid heap allocation.
+///
+/// Note: if a compiled-data-only constructor is added in the future,
+/// this will need a new variant for a vec of borrowed variant names.
 #[derive(Debug, Clone, Copy)]
-pub enum BorrowedVariants<'a> {
-    None,
+enum BorrowedVariants<'a> {
     One(&'a str),
     Slice(&'a [DataPayload<LocaleNamesVariantMediumV1>]),
+}
+
+impl BorrowedVariants<'_> {
+    fn is_empty(&self) -> bool {
+        match self {
+            Self::Slice(slice) if slice.is_empty() => true,
+            _ => false,
+        }
+    }
 }
 
 /// A localized display name for a language.
@@ -323,7 +326,6 @@ impl<'a> writeable::Writeable for QualifiersWriteable<'a> {
             write_item(sink, region)?;
         }
         match self.variants {
-            BorrowedVariants::None => {}
             BorrowedVariants::One(v) => {
                 write_item(sink, v)?;
             }
@@ -339,7 +341,7 @@ impl<'a> writeable::Writeable for QualifiersWriteable<'a> {
 
 impl<'a> writeable::Writeable for LanguageIdentifierDisplayName<'a> {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        let has_variants = !matches!(self.variants, BorrowedVariants::None);
+        let has_variants = !self.variants.is_empty();
         let has_qualifiers =
             self.script_name.is_some() || self.region_name.is_some() || has_variants;
 
