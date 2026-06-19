@@ -7,7 +7,7 @@ use crate::SourceDataProvider;
 use crate::cldr_serde;
 use icu::locale::LanguageIdentifier;
 use icu::locale::provider::*;
-use icu::locale::subtags::{Language, Region, Script};
+use icu::locale::subtags::{Language, Region, Script, region, script};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 
@@ -60,6 +60,10 @@ impl crate::IterableDataProviderCached<LocaleLikelySubtagsScriptRegionV1> for So
 }
 
 impl LikelySubtagsResources {
+    // We need to store some und-S-R/und-S/und-R -> LSR expansion in `LikelySubtagsForLanguage::und`. For backward
+    // compatibility, this is und-Latn-US.
+    const UND_SR: (Script, Region) = (script!("Latn"), region!("US"));
+
     pub(crate) fn try_from_cldr_cache(
         cache: &super::super::CldrCache,
     ) -> Result<LikelySubtagsResources, DataError> {
@@ -90,7 +94,7 @@ pub(crate) struct LikelySubtagsResources {
     script_region: BTreeMap<(Script, Region), Language>,
     script: BTreeMap<Script, (Language, Region)>,
     region: BTreeMap<Region, (Language, Script)>,
-    und: Option<(Language, Script, Region)>,
+    und_l: Language,
     core_languages: HashSet<Language>,
 }
 
@@ -134,11 +138,7 @@ impl DataProvider<LocaleLikelySubtagsLanguageV1> for LikelySubtagsResources {
                 .filter(|&(&l, _)| self.core_languages.contains(&l))
                 .map(|(k, v)| (k.to_tinystr().to_unvalidated(), v))
                 .collect(),
-            und: self.und.unwrap_or((
-                icu::locale::subtags::language!("und"),
-                icu::locale::subtags::script!("Zzzz"),
-                icu::locale::subtags::region!("ZZ"),
-            )),
+            und: (self.und_l, Self::UND_SR.0, Self::UND_SR.1),
         };
 
         Ok(DataResponse {
@@ -274,7 +274,6 @@ pub(crate) fn transform<'x>(
     let mut script_region = BTreeMap::new();
     let mut script = BTreeMap::new();
     let mut region = BTreeMap::new();
-    let mut und = None;
 
     for entry in it {
         // Computes the delta of the entry and assigns to the pattern.
@@ -329,12 +328,45 @@ pub(crate) fn transform<'x>(
         } else if let Some(r) = entry.0.region {
             with_diff!((l, Some(s), None) => region.insert(r, (l, s)));
         } else {
-            und = Some((
-                entry.1.language,
-                entry.1.script.expect("targets are complete language codes"),
-                entry.1.region.expect("targets are complete language codes"),
-            ));
+            // Treat the und->LSR expansion as und-S-R->LSR, und-S->LSR, and und-R->LSR. CLDR 50+
+            // will contain these expansions (https://unicode-org.atlassian.net/browse/CLDR-14524).
+            with_diff!((l, Some(s), Some(r)) => {
+                script_region.insert((s, r), l);
+                script.insert(s, (l, r));
+                region.insert(r, (l, s));
+
+            });
         }
+    }
+
+    let und_l = script_region
+        .remove(&LikelySubtagsResources::UND_SR)
+        .unwrap();
+    let und_s = LikelySubtagsResources::UND_SR.0;
+    let und_r = LikelySubtagsResources::UND_SR.1;
+
+    let ls = region.remove(&und_r);
+    if ls != Some((und_l, und_s)) {
+        log::warn!(
+            "cannot store in und: und-{und_s}-{und_r} -> {und_l}-{und_s}-{und_r}, but {}",
+            if let Some((l, s)) = ls {
+                format!("und-{und_r} -> {l}-{s}-{und_r}")
+            } else {
+                format!("no mapping for und-{und_r}")
+            }
+        );
+    }
+
+    let lr = script.remove(&und_s);
+    if lr != Some((und_l, und_r)) {
+        log::warn!(
+            "cannot store in und: und-{und_s}-{und_r} -> {und_l}-{und_s}-{und_r}, but {}",
+            if let Some((l, r)) = lr {
+                format!("und-{und_s} -> {l}-{und_s}-{r}")
+            } else {
+                format!("no mapping for und-{und_s}")
+            }
+        );
     }
 
     LikelySubtagsResources {
@@ -344,7 +376,7 @@ pub(crate) fn transform<'x>(
         script_region,
         script,
         region,
-        und,
+        und_l,
         core_languages,
     }
 }
