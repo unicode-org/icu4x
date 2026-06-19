@@ -122,7 +122,7 @@ macro_rules! impl_displaynames_menu_v1 {
 
                 let (name_core, name_extension) = if let Some(core) = map.get(&key_core) {
                     let key_extension = ModifiedSubtag {
-                        subtag, // Consume subtag
+                        subtag,
                         alt_variant: None,
                         menu_variant: Some($crate::displaynames::MENU_EXTENSION.to_string()),
                     };
@@ -134,7 +134,7 @@ macro_rules! impl_displaynames_menu_v1 {
                 } else {
                     // Fallback to alt-menu
                     let key_alt_menu = ModifiedSubtag {
-                        subtag, // Consume subtag
+                        subtag,
                         alt_variant: Some($crate::displaynames::ALT_MENU.to_string()),
                         menu_variant: None,
                     };

@@ -157,7 +157,8 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<
         let mut menu_names = ZeroMap::new();
         for (key, value) in other.main.value.localedisplaynames.languages.iter() {
             if key.menu_variant.is_some() {
-                // Skip menu keys as they are handled by the menu provider
+                // Note: we don't handle -menu-core and -menu-extension here,
+                // but we handle them in the new LocaleNames markers.
                 continue;
             }
 
