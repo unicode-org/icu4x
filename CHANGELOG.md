@@ -8,6 +8,8 @@ Several crates have had patch releases in the 2.2 stream:
 - Components
     - (2.2.1) `icu_calendar`
         - Fix extended year calculations in Gregorian-like and Coptic-like calendars (unicode-org#7849)
+    - (2.2.1) `icu_collator`
+        - Fix panic when using `AlternateHandling::Shifted` with `MaxVariable::Currency` (off-by-one in special primaries validation). (unicode-org#8081)
 - FFI
     - (2.2.1) `icu` NPM package
         -Fix an issue in JS bindings where enums in objects were not parsed correctly
