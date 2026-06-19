@@ -279,3 +279,36 @@ icu_provider::data_marker!(
     "locale/names/essentials/v1",
     LocaleNamesEssentials<'static>
 );
+
+impl LocaleNamesLanguageMediumV1 {
+    /// Helper to construct infallible attributes from subtags.
+    #[inline]
+    pub fn make_attributes(
+        language: icu_locale_core::subtags::Language,
+        script: Option<icu_locale_core::subtags::Script>,
+        region: Option<icu_locale_core::subtags::Region>,
+    ) -> tinystr::TinyAsciiStr<16> {
+        const HYPHEN: tinystr::TinyAsciiStr<1> = tinystr::tinystr!(1, "-");
+        let lang_str = language.to_tinystr();
+        match (script, region) {
+            (Some(script), Some(region)) => {
+                let script_str = script.to_tinystr();
+                let region_str = region.to_tinystr();
+                lang_str
+                    .concat::<1, 16>(HYPHEN)
+                    .concat::<4, 16>(script_str)
+                    .concat::<1, 16>(HYPHEN)
+                    .concat::<3, 16>(region_str)
+            }
+            (Some(script), None) => {
+                let script_str = script.to_tinystr();
+                lang_str.concat::<1, 16>(HYPHEN).concat::<4, 16>(script_str)
+            }
+            (None, Some(region)) => {
+                let region_str = region.to_tinystr();
+                lang_str.concat::<1, 16>(HYPHEN).concat::<3, 16>(region_str)
+            }
+            (None, None) => lang_str.resize::<16>(),
+        }
+    }
+}

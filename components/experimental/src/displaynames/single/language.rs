@@ -90,17 +90,13 @@ impl LanguageIdentifierDisplayNameOwned {
         if options.language_display == LanguageDisplay::Dialect {
             // 1a. Try 3-subtag combination (if both script and region are present)
             if let (Some(script), Some(region)) = (subject.script, subject.region) {
-                let lang_str = subject.language.to_tinystr();
-                let script_str = script.to_tinystr();
-                let region_str = region.to_tinystr();
-                let hyphen = tinystr::tinystr!(1, "-");
-                let attr1: tinystr::TinyAsciiStr<16> = lang_str.concat(hyphen);
-                let attr2: tinystr::TinyAsciiStr<16> = attr1.concat(script_str);
-                let attr3: tinystr::TinyAsciiStr<16> = attr2.concat(hyphen);
-                let attr: tinystr::TinyAsciiStr<16> = attr3.concat(region_str);
+                let attr = LocaleNamesLanguageMediumV1::make_attributes(
+                    subject.language,
+                    Some(script),
+                    Some(region),
+                );
                 let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str(attr.as_str())
-                        .map_err(|_| DataError::custom("Invalid dialect attr"))?,
+                    DataMarkerAttributes::try_from_str(attr.as_str()).unwrap(),
                     &formatting_locale,
                 );
                 let mut metadata = DataRequestMetadata::default();
@@ -119,14 +115,13 @@ impl LanguageIdentifierDisplayNameOwned {
             if language_payload.is_none()
                 && let Some(script) = subject.script
             {
-                let lang_str = subject.language.to_tinystr();
-                let script_str = script.to_tinystr();
-                let hyphen = tinystr::tinystr!(1, "-");
-                let attr1: tinystr::TinyAsciiStr<16> = lang_str.concat(hyphen);
-                let attr: tinystr::TinyAsciiStr<16> = attr1.concat(script_str);
+                let attr = LocaleNamesLanguageMediumV1::make_attributes(
+                    subject.language,
+                    Some(script),
+                    None,
+                );
                 let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str(attr.as_str())
-                        .map_err(|_| DataError::custom("Invalid dialect attr"))?,
+                    DataMarkerAttributes::try_from_str(attr.as_str()).unwrap(),
                     &formatting_locale,
                 );
                 let mut metadata = DataRequestMetadata::default();
@@ -144,14 +139,13 @@ impl LanguageIdentifierDisplayNameOwned {
             if language_payload.is_none()
                 && let Some(region) = subject.region
             {
-                let lang_str = subject.language.to_tinystr();
-                let region_str = region.to_tinystr();
-                let hyphen = tinystr::tinystr!(1, "-");
-                let attr1: tinystr::TinyAsciiStr<16> = lang_str.concat(hyphen);
-                let attr: tinystr::TinyAsciiStr<16> = attr1.concat(region_str);
+                let attr = LocaleNamesLanguageMediumV1::make_attributes(
+                    subject.language,
+                    None,
+                    Some(region),
+                );
                 let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str(attr.as_str())
-                        .map_err(|_| DataError::custom("Invalid dialect attr"))?,
+                    DataMarkerAttributes::try_from_str(attr.as_str()).unwrap(),
                     &formatting_locale,
                 );
                 let mut metadata = DataRequestMetadata::default();
@@ -171,11 +165,12 @@ impl LanguageIdentifierDisplayNameOwned {
             Some(payload) => payload,
             None => {
                 // TODO(#8100): Fall back to the code instead of failing with DataError if the language name is not found
+                let attr =
+                    LocaleNamesLanguageMediumV1::make_attributes(subject.language, None, None);
                 provider
                     .load(DataRequest {
                         id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                            DataMarkerAttributes::try_from_str(subject.language.as_str())
-                                .map_err(|_| DataError::custom("Invalid language"))?,
+                            DataMarkerAttributes::try_from_str(attr.as_str()).unwrap(),
                             &formatting_locale,
                         ),
                         ..Default::default()
