@@ -7,14 +7,14 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-localenames-full/main/en/scripts.json>
 
-use super::SubtagWithOptionalAltVariant;
+use super::ModifiedSubtag;
 use icu::locale::subtags::Script;
 use serde::Deserialize;
 use std::collections::HashMap;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct Scripts {
-    pub(crate) scripts: HashMap<SubtagWithOptionalAltVariant<Script>, String>,
+    pub(crate) scripts: HashMap<ModifiedSubtag<Script>, String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

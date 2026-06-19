@@ -34,7 +34,7 @@ macro_rules! impl_displaynames_v1 {
                             DataError::custom("failed to parse subtag").with_req($marker::INFO, req)
                         })?;
 
-                let key = $crate::cldr_serde::displaynames::SubtagWithOptionalAltVariant {
+                let key = ModifiedSubtag {
                     subtag,
                     alt_variant: $alt_variant.map(String::from),
                     menu_variant: None,
@@ -93,17 +93,16 @@ macro_rules! impl_displaynames_menu_v1 {
                             DataError::custom("failed to parse subtag").with_req($marker::INFO, req)
                         })?;
 
-                let key_core = $crate::cldr_serde::displaynames::SubtagWithOptionalAltVariant {
+                let key_core = ModifiedSubtag {
                     subtag: subtag.clone(),
                     alt_variant: None,
                     menu_variant: Some("core".to_string()),
                 };
-                let key_extension =
-                    $crate::cldr_serde::displaynames::SubtagWithOptionalAltVariant {
-                        subtag: subtag.clone(),
-                        alt_variant: None,
-                        menu_variant: Some("extension".to_string()),
-                    };
+                let key_extension = ModifiedSubtag {
+                    subtag: subtag.clone(),
+                    alt_variant: None,
+                    menu_variant: Some("extension".to_string()),
+                };
 
                 let map = &data.main.value.localedisplaynames.$field;
 
@@ -115,12 +114,11 @@ macro_rules! impl_displaynames_menu_v1 {
                     (core.as_str(), extension.as_str())
                 } else {
                     // Fallback to alt-menu
-                    let key_alt_menu =
-                        $crate::cldr_serde::displaynames::SubtagWithOptionalAltVariant {
-                            subtag,
-                            alt_variant: Some("menu".to_string()),
-                            menu_variant: None,
-                        };
+                    let key_alt_menu = ModifiedSubtag {
+                        subtag,
+                        alt_variant: Some("menu".to_string()),
+                        menu_variant: None,
+                    };
                     let alt_menu = map.get(&key_alt_menu).ok_or_else(|| {
                         DataError::custom("failed to find menu-core or alt-menu")
                             .with_req($marker::INFO, req)

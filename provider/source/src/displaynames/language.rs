@@ -5,6 +5,7 @@
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
+use crate::cldr_serde::displaynames::ModifiedSubtag;
 
 use icu::experimental::displaynames::provider::*;
 use icu_provider::prelude::*;
@@ -153,6 +154,7 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<
         let mut menu_names = ZeroMap::new();
         for (key, value) in other.main.value.localedisplaynames.languages.iter() {
             if key.menu_variant.is_some() {
+                // Skip menu keys as they are handled by the menu provider
                 continue;
             }
 

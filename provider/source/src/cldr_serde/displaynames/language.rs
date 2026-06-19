@@ -7,14 +7,14 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-localenames-full/main/en/languages.json>
 
-use super::SubtagWithOptionalAltVariant;
+use super::ModifiedSubtag;
 use icu::locale::LanguageIdentifier;
 use serde::Deserialize;
 use std::collections::HashMap;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct Languages {
-    pub(crate) languages: HashMap<SubtagWithOptionalAltVariant<LanguageIdentifier>, String>,
+    pub(crate) languages: HashMap<ModifiedSubtag<LanguageIdentifier>, String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
