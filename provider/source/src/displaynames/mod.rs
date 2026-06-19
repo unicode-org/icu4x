@@ -117,15 +117,15 @@ macro_rules! impl_displaynames_menu_v1 {
                     alt_variant: None,
                     menu_variant: Some($crate::displaynames::MENU_CORE.to_string()),
                 };
-                let key_extension = ModifiedSubtag {
-                    subtag: subtag.clone(),
-                    alt_variant: None,
-                    menu_variant: Some($crate::displaynames::MENU_EXTENSION.to_string()),
-                };
 
                 let map = &data.main.value.localedisplaynames.$field;
 
                 let (name_core, name_extension) = if let Some(core) = map.get(&key_core) {
+                    let key_extension = ModifiedSubtag {
+                        subtag, // Consume subtag
+                        alt_variant: None,
+                        menu_variant: Some($crate::displaynames::MENU_EXTENSION.to_string()),
+                    };
                     let extension = map.get(&key_extension).ok_or_else(|| {
                         DataError::custom("found menu-core but missing menu-extension")
                             .with_req($marker::INFO, req)
@@ -134,7 +134,7 @@ macro_rules! impl_displaynames_menu_v1 {
                 } else {
                     // Fallback to alt-menu
                     let key_alt_menu = ModifiedSubtag {
-                        subtag,
+                        subtag, // Consume subtag
                         alt_variant: Some($crate::displaynames::ALT_MENU.to_string()),
                         menu_variant: None,
                     };
@@ -174,14 +174,12 @@ macro_rules! impl_displaynames_menu_v1 {
                             || key.alt_variant.as_deref() == Some($crate::displaynames::ALT_MENU);
 
                         if matches {
-                            let attr_str = key.subtag.to_string();
                             let data_identifier = DataIdentifierCow::from_owned(
-                                DataMarkerAttributes::try_from_string(attr_str.clone()).map_err(
-                                    |_| {
+                                DataMarkerAttributes::try_from_string(key.subtag.to_string())
+                                    .map_err(|_| {
                                         DataError::custom("Failed to parse attribute")
-                                            .with_debug_context(&attr_str)
-                                    },
-                                )?,
+                                            .with_debug_context(&key.subtag.to_string())
+                                    })?,
                                 locale,
                             );
                             result.insert(data_identifier);
@@ -226,14 +224,12 @@ macro_rules! impl_displaynames_iter_v1 {
                         } && key.menu_variant.is_none();
 
                         if matches {
-                            let attr_str = key.subtag.to_string();
                             let data_identifier = DataIdentifierCow::from_owned(
-                                DataMarkerAttributes::try_from_string(attr_str.clone()).map_err(
-                                    |_| {
+                                DataMarkerAttributes::try_from_string(key.subtag.to_string())
+                                    .map_err(|_| {
                                         DataError::custom("Failed to parse attribute")
-                                            .with_debug_context(&attr_str)
-                                    },
-                                )?,
+                                            .with_debug_context(&key.subtag.to_string())
+                                    })?,
                                 locale,
                             );
                             result.insert(data_identifier);
