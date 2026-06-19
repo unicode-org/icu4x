@@ -151,9 +151,9 @@ fn test_single_language_display_name() {
     assert_writeable_eq!(lang_name, "Traditional Chinese (Hong Kong SAR China)");
 }
 
-#[cfg(any())]
 // TODO(#7825): Enable this test once LanguageIdentifierDisplayNameOwned supports Style::Menu.
 #[test]
+#[ignore]
 fn test_single_language_display_name_menu() {
     use icu_experimental::displaynames::single::LanguageIdentifierDisplayNameOwned;
     use icu_experimental::displaynames::{DisplayNamesOptions, Style};
