@@ -8,6 +8,7 @@ pub(crate) mod region;
 pub(crate) mod script;
 pub(crate) mod variant;
 
+use crate::displaynames::{ALT_SEPARATOR, MENU_SEPARATOR};
 use core::str::FromStr;
 use serde::{Deserialize, Deserializer};
 
@@ -44,18 +45,18 @@ where
             where
                 E: serde::de::Error,
             {
-                if let Some(index) = v.rfind("-menu-") {
+                if let Some(index) = v.rfind(MENU_SEPARATOR) {
                     let (subtag_str, menu_str) = v.split_at(index);
-                    let menu_variant = menu_str.strip_prefix("-menu-").unwrap().to_string();
+                    let menu_variant = menu_str.strip_prefix(MENU_SEPARATOR).unwrap().to_string();
                     let subtag = T::from_str(subtag_str).map_err(E::custom)?;
                     Ok(ModifiedSubtag {
                         subtag,
                         alt_variant: None,
                         menu_variant: Some(menu_variant),
                     })
-                } else if let Some(index) = v.rfind("-alt-") {
+                } else if let Some(index) = v.rfind(ALT_SEPARATOR) {
                     let (subtag_str, alt_str) = v.split_at(index);
-                    let alt_variant = alt_str.strip_prefix("-alt-").unwrap().to_string();
+                    let alt_variant = alt_str.strip_prefix(ALT_SEPARATOR).unwrap().to_string();
                     let subtag = T::from_str(subtag_str).map_err(E::custom)?;
                     Ok(ModifiedSubtag {
                         subtag,

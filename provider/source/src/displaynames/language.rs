@@ -6,6 +6,9 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 use crate::cldr_serde::displaynames::ModifiedSubtag;
+use crate::displaynames::{
+    ALT_LONG, ALT_MENU, ALT_OFFICIAL, ALT_SECONDARY, ALT_SHORT, ALT_VARIANT,
+};
 
 use icu::experimental::displaynames::provider::*;
 use icu_provider::prelude::*;
@@ -62,7 +65,7 @@ crate::displaynames::impl_displaynames_v1!(
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
-    Some("short"),
+    Some(ALT_SHORT),
 );
 
 crate::displaynames::impl_displaynames_v1!(
@@ -71,7 +74,7 @@ crate::displaynames::impl_displaynames_v1!(
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
-    Some("long"),
+    Some(ALT_LONG),
 );
 
 crate::displaynames::impl_displaynames_menu_v1!(
@@ -100,19 +103,19 @@ impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayName
             let lang = langid.language;
 
             match key.alt_variant.as_deref() {
-                Some("short") => {
+                Some(ALT_SHORT) => {
                     short_names.insert(lang.to_tinystr(), value.as_ref());
                 }
-                Some("long") => {
+                Some(ALT_LONG) => {
                     long_names.insert(lang.to_tinystr(), value.as_ref());
                 }
-                Some("menu") => {
+                Some(ALT_MENU) => {
                     menu_names.insert(lang.to_tinystr(), value.as_ref());
                 }
                 None => {
                     names.insert(lang.to_tinystr(), value.as_ref());
                 }
-                Some("variant") | Some("secondary") | Some("official") => {
+                Some(ALT_VARIANT) | Some(ALT_SECONDARY) | Some(ALT_OFFICIAL) => {
                     // TODO(#8012): Handle preference-specific alt variants.
                 }
                 Some(alt) => {
@@ -172,13 +175,13 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<
             let pot_utf8 = PotentialUtf8::from_str(&locale_str);
 
             match key.alt_variant.as_deref() {
-                Some("short") => {
+                Some(ALT_SHORT) => {
                     short_names.insert(pot_utf8, val_str);
                 }
-                Some("long") => {
+                Some(ALT_LONG) => {
                     long_names.insert(pot_utf8, val_str);
                 }
-                Some("menu") => {
+                Some(ALT_MENU) => {
                     menu_names.insert(pot_utf8, val_str);
                 }
                 None => {

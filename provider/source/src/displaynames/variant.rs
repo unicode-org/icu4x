@@ -38,6 +38,7 @@ crate::displaynames::impl_displaynames_v1!(
 
 crate::displaynames::impl_displaynames_legacy_iter_v1!(VariantDisplayNamesV1, "variants.json");
 
+// TODO: Support alt variants for variant display names.
 impl From<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNames<'static> {
     fn from(other: &cldr_serde::displaynames::variant::Resource) -> Self {
         let mut names = BTreeMap::new();

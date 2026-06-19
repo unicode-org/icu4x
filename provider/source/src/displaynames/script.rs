@@ -6,6 +6,7 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 use crate::cldr_serde::displaynames::ModifiedSubtag;
+use crate::displaynames::{ALT_SECONDARY, ALT_SHORT, ALT_STANDALONE, ALT_VARIANT};
 use icu::experimental::displaynames::provider::*;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
@@ -42,7 +43,7 @@ crate::displaynames::impl_displaynames_v1!(
     cldr_serde::displaynames::script::Resource,
     "scripts.json",
     scripts,
-    Some("short"),
+    Some(ALT_SHORT),
 );
 
 crate::displaynames::impl_displaynames_legacy_iter_v1!(ScriptDisplayNamesV1, "scripts.json");
@@ -59,16 +60,16 @@ impl From<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames<'s
             let script = key.subtag;
 
             match key.alt_variant.as_deref() {
-                Some("short") => {
+                Some(ALT_SHORT) => {
                     short_names.insert(script.to_tinystr(), value.as_str());
                 }
                 None => {
                     names.insert(script.to_tinystr(), value.as_str());
                 }
-                Some("variant") | Some("secondary") => {
+                Some(ALT_VARIANT) | Some(ALT_SECONDARY) => {
                     // TODO(#8012): Handle this with datagen alt flags.
                 }
-                Some("stand-alone") => {
+                Some(ALT_STANDALONE) => {
                     // TODO(#8011): Support standalone display names.
                 }
                 Some(alt) => {

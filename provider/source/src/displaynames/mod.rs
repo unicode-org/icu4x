@@ -8,6 +8,25 @@ pub(crate) mod region;
 pub(crate) mod script;
 pub(crate) mod variant;
 
+pub(crate) const ALT_SEPARATOR: &str = "-alt-";
+pub(crate) const MENU_SEPARATOR: &str = "-menu-";
+
+pub(crate) const ALT_SHORT: &str = "short";
+pub(crate) const ALT_LONG: &str = "long";
+pub(crate) const ALT_VARIANT: &str = "variant";
+pub(crate) const ALT_STANDALONE: &str = "stand-alone";
+pub(crate) const ALT_OFFICIAL: &str = "official";
+/// Secondary name variant, used in languages and scripts.
+pub(crate) const ALT_SECONDARY: &str = "secondary";
+/// Abbreviation for territory code `IO` (British Indian Ocean Territory).
+pub(crate) const ALT_BIOT: &str = "biot";
+/// Alternate name for territory code `IO` (British Indian Ocean Territory) mapping to "Chagos Archipelago".
+pub(crate) const ALT_CHAGOS: &str = "chagos";
+pub(crate) const ALT_MENU: &str = "menu";
+
+pub(crate) const MENU_CORE: &str = "core";
+pub(crate) const MENU_EXTENSION: &str = "extension";
+
 /// Macro for implementing a single-name display names data provider.
 ///
 /// Parameters:
@@ -96,12 +115,12 @@ macro_rules! impl_displaynames_menu_v1 {
                 let key_core = ModifiedSubtag {
                     subtag: subtag.clone(),
                     alt_variant: None,
-                    menu_variant: Some("core".to_string()),
+                    menu_variant: Some($crate::displaynames::MENU_CORE.to_string()),
                 };
                 let key_extension = ModifiedSubtag {
                     subtag: subtag.clone(),
                     alt_variant: None,
-                    menu_variant: Some("extension".to_string()),
+                    menu_variant: Some($crate::displaynames::MENU_EXTENSION.to_string()),
                 };
 
                 let map = &data.main.value.localedisplaynames.$field;
@@ -116,7 +135,7 @@ macro_rules! impl_displaynames_menu_v1 {
                     // Fallback to alt-menu
                     let key_alt_menu = ModifiedSubtag {
                         subtag,
-                        alt_variant: Some("menu".to_string()),
+                        alt_variant: Some($crate::displaynames::ALT_MENU.to_string()),
                         menu_variant: None,
                     };
                     let alt_menu = map.get(&key_alt_menu).ok_or_else(|| {
@@ -141,6 +160,7 @@ macro_rules! impl_displaynames_menu_v1 {
                 let mut result = HashSet::new();
                 let displaynames = self.cldr()?.displaynames();
                 for locale in displaynames.list_locales()?.filter(|locale| {
+                    // The directory might exist without the file
                     self.cldr()
                         .unwrap()
                         .displaynames()
@@ -149,8 +169,9 @@ macro_rules! impl_displaynames_menu_v1 {
                 }) {
                     let data: &$resource = displaynames.read_and_parse(&locale, $file)?;
                     for key in data.main.value.localedisplaynames.$field.keys() {
-                        let matches = key.menu_variant.as_deref() == Some("core")
-                            || key.alt_variant.as_deref() == Some("menu");
+                        let matches = key.menu_variant.as_deref()
+                            == Some($crate::displaynames::MENU_CORE)
+                            || key.alt_variant.as_deref() == Some($crate::displaynames::ALT_MENU);
 
                         if matches {
                             let attr_str = key.subtag.to_string();
@@ -189,6 +210,7 @@ macro_rules! impl_displaynames_iter_v1 {
                 let mut result = HashSet::new();
                 let displaynames = self.cldr()?.displaynames();
                 for locale in displaynames.list_locales()?.filter(|locale| {
+                    // The directory might exist without the file
                     self.cldr()
                         .unwrap()
                         .displaynames()

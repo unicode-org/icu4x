@@ -6,6 +6,7 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 use crate::cldr_serde::displaynames::ModifiedSubtag;
+use crate::displaynames::{ALT_BIOT, ALT_CHAGOS, ALT_SHORT, ALT_VARIANT};
 use icu::experimental::displaynames::provider::*;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
@@ -44,7 +45,7 @@ crate::displaynames::impl_displaynames_v1!(
     cldr_serde::displaynames::region::Resource,
     "territories.json",
     regions,
-    Some("short"),
+    Some(ALT_SHORT),
 );
 
 impl From<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames<'static> {
@@ -59,13 +60,13 @@ impl From<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames<'s
             let region = key.subtag;
 
             match key.alt_variant.as_deref() {
-                Some("short") => {
+                Some(ALT_SHORT) => {
                     short_names.insert(region.to_tinystr(), value.as_str());
                 }
                 None => {
                     names.insert(region.to_tinystr(), value.as_str());
                 }
-                Some("variant") | Some("chagos") | Some("biot") => {
+                Some(ALT_VARIANT) | Some(ALT_CHAGOS) | Some(ALT_BIOT) => {
                     // TODO(#8012): Handle this with datagen alt flags.
                 }
                 Some(alt) => {
