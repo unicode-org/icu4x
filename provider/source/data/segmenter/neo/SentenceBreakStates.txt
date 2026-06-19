@@ -4,11 +4,11 @@ ATerm XX ; No ;  ;
 Upper ; Yes ;  ; 
 STerm ; Yes ;  ; 
 ATerm ; Yes ;  ; 
+STerm Sep ; Yes ;  ; 
 STerm Sp ; Yes ;  ; 
-STerm LF ; Yes ;  ; 
 STerm CR ; Yes ;  ; 
 ATerm Sp ; Yes ;  ; 
 ATerm Close ; Yes ;  ; 
 Upper ATerm ; Yes ;  ; 
-eot ; Yes ;  ; EOL
-CR ; Yes ;  ; EOL
+Sep ; Yes ;  ; Nonterminated
+CR ; Yes ;  ; Nonterminated

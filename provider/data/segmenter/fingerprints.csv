@@ -18,7 +18,7 @@ segmenter/break/sentence/override/v2, <lookup>, 35B, 1 identifiers
 segmenter/break/sentence/override/v2, <total>, 25B, 2B, 1 unique payloads
 segmenter/break/sentence/override/v2, el, 25B, 2B, e4bcb727571271c5
 segmenter/break/sentence/v1, <singleton>, 14804B, 14698B, 30687df4b18e0e2e
-segmenter/break/sentence/v2, <singleton>, 18086B, 17947B, 364eff4836c41fbd
+segmenter/break/sentence/v2, <singleton>, 18074B, 17935B, cfd27b1e3fb74ae9
 segmenter/break/word/v1, <singleton>, 16762B, 16657B, 79957a2124e76c2f
 segmenter/break/word/v2, <singleton>, 17084B, 16945B, 6bf00621065dadf7
 segmenter/dictionary/auto/v1, <lookup>, 43B, 1 identifiers

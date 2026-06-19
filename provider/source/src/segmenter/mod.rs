@@ -993,7 +993,7 @@ impl SourceDataProvider {
             .sentence
             .get_or_init(|| {
                 self.build_segmenter(&neo_sources(), "SentenceBreak", |s| {
-                    if s == "EOL" { 1 } else { 0 }
+                    if s == "Nonterminated" { 1 } else { 0 }
                 })
             })
             .as_ref()

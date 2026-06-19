@@ -1,5 +1,5 @@
 # Symbol name ; Symbol definition in UnicodeSet notation
-eot ; [[{eot}]]
+Sep|eot ; [[\p{Sentence_Break=Sep}] [[{eot}]]]
 XX ; [\p{Sentence_Break=Other}]
 Sp ; [\p{Sentence_Break=Sp}]
 LF ; [\p{Sentence_Break=LF}]
@@ -11,6 +11,5 @@ ATerm ; [\p{Sentence_Break=ATerm}]
 Numeric ; [\p{Sentence_Break=Numeric}]
 Upper ; [\p{Sentence_Break=Upper}]
 Lower ; [\p{Sentence_Break=Lower}]
-Sep ; [\p{Sentence_Break=Sep}]
 Extend|Format ; [[\p{Sentence_Break=Extend}] [\p{Sentence_Break=Format}]]
 OLetter ; [\p{Sentence_Break=OLetter}]
