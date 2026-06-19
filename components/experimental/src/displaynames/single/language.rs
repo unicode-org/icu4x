@@ -227,32 +227,51 @@ impl LanguageIdentifierDisplayNameOwned {
         };
 
         // Step 4: Load variant names (if present in subject)
-        let mut loaded_variants = Vec::new();
-        for variant in subject.variants.iter() {
-            let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::try_from_str(variant.as_str())
-                    .map_err(|_| DataError::custom("Invalid variant"))?,
-                &formatting_locale,
-            );
-            let mut metadata = DataRequestMetadata::default();
-            metadata.silent = true;
-            if let Some(response) = provider
-                .load(DataRequest { id, metadata })
-                .allow_identifier_not_found()?
-            {
-                loaded_variants.push(response.payload);
-            } else {
-                // TODO(#8100): Fall back to the code instead of dropping it if the variant name is not found
+        let variant_payloads = match subject.variants.len() {
+            0 => DataPayloadOr::from_other(Vec::new()),
+            1 => {
+                if let Some(variant) = subject.variants.iter().next() {
+                    let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                        DataMarkerAttributes::try_from_str(variant.as_str())
+                            .map_err(|_| DataError::custom("Invalid variant"))?,
+                        &formatting_locale,
+                    );
+                    let mut metadata = DataRequestMetadata::default();
+                    metadata.silent = true;
+                    if let Some(response) = provider
+                        .load(DataRequest { id, metadata })
+                        .allow_identifier_not_found()?
+                    {
+                        DataPayloadOr::from_payload(response.payload)
+                    } else {
+                        // TODO(#8100): Fall back to the code instead of dropping it if the variant name is not found
+                        DataPayloadOr::from_other(Vec::new())
+                    }
+                } else {
+                    DataPayloadOr::from_other(Vec::new())
+                }
             }
-        }
-
-        let variant_payloads = if loaded_variants.len() == 1 {
-            match loaded_variants.pop() {
-                Some(payload) => DataPayloadOr::from_payload(payload),
-                None => DataPayloadOr::from_other(loaded_variants),
+            _ => {
+                let mut loaded_variants = Vec::new();
+                for variant in subject.variants.iter() {
+                    let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                        DataMarkerAttributes::try_from_str(variant.as_str())
+                            .map_err(|_| DataError::custom("Invalid variant"))?,
+                        &formatting_locale,
+                    );
+                    let mut metadata = DataRequestMetadata::default();
+                    metadata.silent = true;
+                    if let Some(response) = provider
+                        .load(DataRequest { id, metadata })
+                        .allow_identifier_not_found()?
+                    {
+                        loaded_variants.push(response.payload);
+                    } else {
+                        // TODO(#8100): Fall back to the code instead of dropping it if the variant name is not found
+                    }
+                }
+                DataPayloadOr::from_other(loaded_variants)
             }
-        } else {
-            DataPayloadOr::from_other(loaded_variants)
         };
 
         // Step 5: Load essentials
