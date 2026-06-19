@@ -347,3 +347,44 @@ fn test_basic() {
     assert_eq!(entry.0, language!("cu"));
     assert_eq!(entry.1, region!("BG"));
 }
+
+#[test]
+fn test_exhaustive() {
+    use icu::locale::langid;
+
+    let provider = SourceDataProvider::new_testing();
+    let expander = icu::locale::LocaleExpander::try_new_extended_unstable(&provider).unwrap();
+
+    for (source, expected) in provider
+        .cldr()
+        .unwrap()
+        .core()
+        .read_and_parse::<cldr_serde::likely_subtags::Resource>("supplemental/likelySubtags.json")
+        .unwrap()
+        .supplemental
+        .likely_subtags
+        .clone()
+        .into_iter()
+        .chain([
+            (langid!("tlh"), langid!("tlh")),
+            (langid!("tlh-Arab"), langid!("tlh-Arab")),
+            (langid!("tlh-Latn"), langid!("tlh-Latn")),
+            (langid!("tlh-US"), langid!("tlh-US")),
+            (langid!("tlh-SA"), langid!("tlh-SA")),
+        ])
+    {
+        let mut actual = source.clone();
+        let r = expander.maximize(&mut actual);
+        assert_eq!(
+            r,
+            if source != expected {
+                icu::locale::TransformResult::Modified
+            } else {
+                icu::locale::TransformResult::Unmodified
+            }
+        );
+        assert_eq!(actual, expected);
+
+        assert_eq!(expander.get_likely_script(&source), expected.script);
+    }
+}
