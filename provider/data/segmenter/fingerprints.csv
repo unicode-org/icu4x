@@ -3,8 +3,8 @@ segmenter/break/grapheme/cluster/v2, <singleton>, 12406B, 12266B, b44043f1b4d00b
 segmenter/break/line/override/v2, <lookup>, 88B, 7 identifiers
 segmenter/break/line/override/v2, <total>, 504B, 343B, 7 unique payloads
 segmenter/break/line/override/v2, und/cj, 72B, 49B, f3dfe1d8dddabb87
-segmenter/break/line/override/v2, und/loose, 72B, 49B, 18464a78bfa30bbf
-segmenter/break/line/override/v2, und/loose_cj, 72B, 49B, f7e8c074f8adf143
+segmenter/break/line/override/v2, und/loose, 72B, 49B, be251936c3c87336
+segmenter/break/line/override/v2, und/loose_cj, 72B, 49B, 818074a8daa846c7
 segmenter/break/line/override/v2, und/normal, 72B, 49B, 2937c132979c0e09
 segmenter/break/line/override/v2, und/normal_cj, 72B, 49B, 8fa93e573043947c
 segmenter/break/line/override/v2, und/word_breakall, 72B, 49B, 487a16ba82ebf199
