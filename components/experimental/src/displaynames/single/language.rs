@@ -162,9 +162,8 @@ impl LanguageIdentifierDisplayNameOwned {
 
         // 1d. Fallback to base language
         let language_payload = match language_payload {
-            Some(payload) => payload,
+            Some(payload) => Some(payload),
             None => {
-                // TODO(#8100): Fall back to the code instead of failing with DataError if the language name is not found
                 let attr =
                     LocaleNamesLanguageMediumV1::make_attributes(subject.language, None, None);
                 provider
@@ -174,10 +173,16 @@ impl LanguageIdentifierDisplayNameOwned {
                             &formatting_locale,
                         ),
                         ..Default::default()
-                    })?
-                    .payload
+                    })
+                    .allow_identifier_not_found()?
+                    .map(|response| response.payload)
             }
         };
+
+        let language_payload = language_payload.ok_or_else(|| {
+            // TODO(#8100): Fall back to the code instead of failing with DataError if the language name is not found
+            DataError::custom("Language not found")
+        })?;
 
         // Step 2: Load script name (if present in subject)
         let script_payload = if let Some(script) = subject.script {
