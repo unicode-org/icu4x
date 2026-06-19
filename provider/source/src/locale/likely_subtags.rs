@@ -315,12 +315,13 @@ pub(crate) fn transform<'x>(
                 ) {
                     $stmt;
                 } else {
-                    panic!(
-                        "The expansion {:?} -> {:?} can not be stored in the pattern {}",
+                    log::error!(
+                        "The expansion {:?} -> {:?} can not be stored in the pattern {}, skipping",
                         entry.0,
                         entry.1,
                         stringify!($pat)
                     );
+                    continue;
                 }
             };
         }
@@ -336,16 +337,12 @@ pub(crate) fn transform<'x>(
             }
         } else if let Some(s) = entry.0.script {
             if let Some(r) = entry.0.region {
-                // Some of the target regions here are not equal to the source, such as und-Latn-001 -> en-Latn-US.
-                // However in the `maximize` method we do not replace tags, so we don't need to store the region.
-                with_diff!((l, None, _) => script_region.insert((s, r), l));
+                with_diff!((l, None, None) => script_region.insert((s, r), l));
             } else {
                 with_diff!((l, None, Some(r)) => script.insert(s, (l, r)));
             }
         } else if let Some(r) = entry.0.region {
-            // Some of the target regions here are not equal to the source, such as und-002 -> en-Latn-NG.
-            // However in the `maximize` method we do not replace tags, so we don't need to store the region.
-            with_diff!((l, Some(s), _) => region.insert(r, (l, s)));
+            with_diff!((l, Some(s), None) => region.insert(r, (l, s)));
         } else {
             und = Some((
                 entry.1.language,
