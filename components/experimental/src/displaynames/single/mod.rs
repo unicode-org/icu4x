@@ -24,7 +24,7 @@ mod script;
 mod variant;
 
 // Re-export from submodules
-pub use language::{LanguageDisplayName, LanguageDisplayNameOwned};
+pub use language::{LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOwned};
 pub use region::{RegionDisplayName, RegionDisplayNameOwned};
 pub use script::{ScriptDisplayName, ScriptDisplayNameOwned};
 pub use variant::{VariantDisplayName, VariantDisplayNameOwned};

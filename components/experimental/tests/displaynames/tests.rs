@@ -118,11 +118,14 @@ fn test_concatenate() {
 
         // Test our new single formatter implementation (only for cases that are in the data, i.e. not "xx")
         if cas.input_1.id.language != icu_locale_core::subtags::language!("xx") {
-            use icu_experimental::displaynames::single::LanguageDisplayNameOwned;
+            use icu_experimental::displaynames::single::LanguageIdentifierDisplayNameOwned;
             let lang_id = cas.input_1.id.clone();
-            let single_display_name =
-                LanguageDisplayNameOwned::try_new(locale.clone().into(), lang_id, options)
-                    .expect("Data should load successfully");
+            let single_display_name = LanguageIdentifierDisplayNameOwned::try_new(
+                locale.clone().into(),
+                lang_id,
+                options,
+            )
+            .expect("Data should load successfully");
 
             use writeable::assert_writeable_eq;
             assert_writeable_eq!(single_display_name, cas.expected);
@@ -133,7 +136,7 @@ fn test_concatenate() {
 #[test]
 fn test_single_language_display_name() {
     use icu_experimental::displaynames::DisplayNamesOptions;
-    use icu_experimental::displaynames::single::LanguageDisplayNameOwned;
+    use icu_experimental::displaynames::single::LanguageIdentifierDisplayNameOwned;
     use icu_locale_core::{langid, locale};
     use writeable::assert_writeable_eq;
 
@@ -142,17 +145,17 @@ fn test_single_language_display_name() {
 
     // This should format "zh-Hant-HK" to "Traditional Chinese (Hong Kong SAR China)" in "en-001"
     let lang_id = langid!("zh-Hant-HK");
-    let lang_name = LanguageDisplayNameOwned::try_new(locale.into(), lang_id, options)
+    let lang_name = LanguageIdentifierDisplayNameOwned::try_new(locale.into(), lang_id, options)
         .expect("Data should load successfully");
 
     assert_writeable_eq!(lang_name, "Traditional Chinese (Hong Kong SAR China)");
 }
 
 #[cfg(any())]
-// TODO(#7825): Enable this test once LanguageDisplayNameOwned supports Style::Menu.
+// TODO(#7825): Enable this test once LanguageIdentifierDisplayNameOwned supports Style::Menu.
 #[test]
 fn test_single_language_display_name_menu() {
-    use icu_experimental::displaynames::single::LanguageDisplayNameOwned;
+    use icu_experimental::displaynames::single::LanguageIdentifierDisplayNameOwned;
     use icu_experimental::displaynames::{DisplayNamesOptions, Style};
     use icu_locale_core::{langid, locale};
     use writeable::assert_writeable_eq;
@@ -163,7 +166,7 @@ fn test_single_language_display_name_menu() {
 
     // This should format "zh-Hant-HK" to "Chinese (Traditional, Hong Kong)" in "en-001" using Style::Menu
     let lang_id = langid!("zh-Hant-HK");
-    let lang_name = LanguageDisplayNameOwned::try_new(locale.into(), lang_id, options)
+    let lang_name = LanguageIdentifierDisplayNameOwned::try_new(locale.into(), lang_id, options)
         .expect("Data should load successfully");
 
     assert_writeable_eq!(lang_name, "Chinese (Traditional, Hong Kong)");

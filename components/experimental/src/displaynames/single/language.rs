@@ -15,14 +15,14 @@ use icu_provider::prelude::*;
 ///
 /// ```
 /// use icu::experimental::displaynames::{
-///     DisplayNamesPreferences, DisplayNamesOptions, single::LanguageDisplayNameOwned,
+///     DisplayNamesPreferences, DisplayNamesOptions, single::LanguageIdentifierDisplayNameOwned,
 /// };
 /// use icu::locale::{locale, langid};
 /// use writeable::assert_writeable_eq;
 ///
 /// let prefs = DisplayNamesPreferences::from(locale!("en"));
 /// let options = DisplayNamesOptions::default();
-/// let display_name = LanguageDisplayNameOwned::try_new(
+/// let display_name = LanguageIdentifierDisplayNameOwned::try_new(
 ///     prefs,
 ///     langid!("fr-CA"),
 ///     options,
@@ -33,7 +33,7 @@ use icu_provider::prelude::*;
 /// ```
 #[allow(dead_code)]
 #[derive(Debug)]
-pub struct LanguageDisplayNameOwned {
+pub struct LanguageIdentifierDisplayNameOwned {
     formatting_locale: DataLocale,
     options: DisplayNamesOptions,
     language_payload: DataPayload<LocaleNamesLanguageMediumV1>,
@@ -44,7 +44,7 @@ pub struct LanguageDisplayNameOwned {
     essentials_payload: DataPayload<LocaleNamesEssentialsV1>,
 }
 
-impl LanguageDisplayNameOwned {
+impl LanguageIdentifierDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, subject: icu_locale::LanguageIdentifier, options: DisplayNamesOptions) -> result: Result<Self, DataError>,
         /// Loads the language display name for a given language identifier and locale using compiled data.
@@ -275,7 +275,7 @@ impl LanguageDisplayNameOwned {
     }
 
     /// Returns a borrowed version of this display name.
-    pub fn as_borrowed(&self) -> LanguageDisplayName<'_> {
+    pub fn as_borrowed(&self) -> LanguageIdentifierDisplayName<'_> {
         let variants = match self.variant_payloads.get() {
             Ok(payload) => BorrowedVariants::One(payload),
             Err(vec) => {
@@ -287,7 +287,7 @@ impl LanguageDisplayNameOwned {
             }
         };
 
-        LanguageDisplayName {
+        LanguageIdentifierDisplayName {
             base_name: self.language_payload.get(),
             script_name: self.script_payload.get_option().map(|p| &**p),
             region_name: self.region_payload.get_option().map(|p| &**p),
@@ -298,7 +298,7 @@ impl LanguageDisplayNameOwned {
     }
 }
 
-impl writeable::Writeable for LanguageDisplayNameOwned {
+impl writeable::Writeable for LanguageIdentifierDisplayNameOwned {
     #[inline]
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         self.as_borrowed().write_to(sink)
@@ -310,7 +310,7 @@ impl writeable::Writeable for LanguageDisplayNameOwned {
     }
 }
 
-writeable::impl_display_with_writeable!(LanguageDisplayNameOwned);
+writeable::impl_display_with_writeable!(LanguageIdentifierDisplayNameOwned);
 
 /// Borrowed variants representation to avoid heap allocation.
 #[derive(Debug, Clone, Copy)]
@@ -322,7 +322,7 @@ pub enum BorrowedVariants<'a> {
 
 /// A localized display name for a language.
 #[derive(Debug, Clone, Copy)]
-pub struct LanguageDisplayName<'a> {
+pub struct LanguageIdentifierDisplayName<'a> {
     base_name: &'a str,
     script_name: Option<&'a str>,
     region_name: Option<&'a str>,
@@ -381,7 +381,7 @@ impl<'a> writeable::Writeable for QualifiersWriteable<'a> {
     }
 }
 
-impl<'a> writeable::Writeable for LanguageDisplayName<'a> {
+impl<'a> writeable::Writeable for LanguageIdentifierDisplayName<'a> {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         let has_variants = !matches!(self.variants, BorrowedVariants::None);
         let has_qualifiers =
@@ -403,4 +403,4 @@ impl<'a> writeable::Writeable for LanguageDisplayName<'a> {
     }
 }
 
-writeable::impl_display_with_writeable!(LanguageDisplayName<'_>);
+writeable::impl_display_with_writeable!(LanguageIdentifierDisplayName<'_>);
