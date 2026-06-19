@@ -216,7 +216,7 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
         let mut offset = 0;
         for (slice, lang) in LanguageIterator::new(input) {
             match self.select(lang) {
-                Some(d) => result.extend(d.segment_str(input, self.grapheme, offset)),
+                Some(d) => result.extend(d.segment_str(slice, self.grapheme, offset)),
                 None => result.push(offset + slice.len()),
             }
             offset += slice.len();
@@ -229,7 +229,7 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
         let mut offset = 0;
         for (slice, lang) in LanguageIteratorUtf16::new(input) {
             match self.select(lang) {
-                Some(d) => result.extend(d.segment_utf16(input, self.grapheme, offset)),
+                Some(d) => result.extend(d.segment_utf16(slice, self.grapheme, offset)),
                 None => result.push(offset + slice.len()),
             }
             offset += slice.len();
@@ -485,5 +485,91 @@ mod tests {
             [12, 21, 33, 42]
         );
         assert_eq!(dict.complex_language_segment_utf16(&utf16), [4, 7, 11, 14]);
+    }
+
+    fn assert_str_segments(
+        complex: ComplexPayloadsBorrowed<'_>,
+        input: &str,
+        expected_breaks: &[usize],
+        expected_segments: &[&str],
+    ) {
+        let breaks = complex.complex_language_segment_str(input);
+        assert_eq!(breaks, expected_breaks);
+
+        let mut previous = 0;
+        let segments: Vec<&str> = breaks
+            .iter()
+            .map(|&breakpoint| {
+                let segment = &input[previous..breakpoint];
+                previous = breakpoint;
+                segment
+            })
+            .collect();
+        assert_eq!(segments, expected_segments);
+    }
+
+    fn assert_utf16_segments(
+        complex: ComplexPayloadsBorrowed<'_>,
+        input: &str,
+        expected_breaks: &[usize],
+        expected_segments: &[&str],
+    ) {
+        let utf16: Vec<u16> = input.encode_utf16().collect();
+        let breaks = complex.complex_language_segment_utf16(&utf16);
+        assert_eq!(breaks, expected_breaks);
+
+        let expected_segments = expected_segments
+            .iter()
+            .map(|segment| segment.encode_utf16().collect::<Vec<_>>())
+            .collect::<Vec<_>>();
+        let mut previous = 0;
+        let segments: Vec<&[u16]> = breaks
+            .iter()
+            .map(|&breakpoint| {
+                let segment = &utf16[previous..breakpoint];
+                previous = breakpoint;
+                segment
+            })
+            .collect();
+        assert_eq!(segments, expected_segments);
+    }
+
+    #[test]
+    fn mixed_complex_script_word_break() {
+        let mut auto = ComplexPayloadsBorrowed::new();
+        auto.with_southeast_asian_lstms();
+        auto.with_japanese_dictionary();
+
+        let mut dict = ComplexPayloadsBorrowed::new();
+        dict.with_southeast_asian_dictionaries();
+        dict.with_japanese_dictionary();
+
+        for complex in [auto, dict] {
+            assert_str_segments(
+                complex,
+                "ภาษาไทย龟山岛",
+                &[12, 21, 30],
+                &["ภาษา", "ไทย", "龟山岛"],
+            );
+            assert_utf16_segments(
+                complex,
+                "ภาษาไทย龟山岛",
+                &[4, 7, 10],
+                &["ภาษา", "ไทย", "龟山岛"],
+            );
+
+            assert_str_segments(
+                complex,
+                "こんにちは世界ภาษาไทย",
+                &[15, 21, 33, 42],
+                &["こんにちは", "世界", "ภาษา", "ไทย"],
+            );
+            assert_utf16_segments(
+                complex,
+                "こんにちは世界ภาษาไทย",
+                &[5, 7, 11, 14],
+                &["こんにちは", "世界", "ภาษา", "ไทย"],
+            );
+        }
     }
 }
