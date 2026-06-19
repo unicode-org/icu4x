@@ -294,7 +294,7 @@ impl LanguageIdentifierDisplayNameOwned {
     }
 
     /// Returns a borrowed version of this display name.
-    pub fn as_borrowed(&self) -> LanguageIdentifierDisplayName<'_> {
+    pub fn as_borrowed(&self) -> LanguageIdentifierDisplayName<'_, '_> {
         let variants = match self.variant_payloads.get() {
             Ok(payload) => BorrowedVariants::One(payload),
             Err(vec) => {
@@ -333,31 +333,31 @@ writeable::impl_display_with_writeable!(LanguageIdentifierDisplayNameOwned);
 
 /// Borrowed variants representation to avoid heap allocation.
 #[derive(Debug, Clone, Copy)]
-pub enum BorrowedVariants<'a> {
+pub enum BorrowedVariants<'a, 'b> {
     None,
     One(&'a str),
-    Slice(&'a [DataPayload<LocaleNamesVariantMediumV1>]),
+    Slice(&'b [DataPayload<LocaleNamesVariantMediumV1>]),
 }
 
 /// A localized display name for a language.
 #[derive(Debug, Clone, Copy)]
-pub struct LanguageIdentifierDisplayName<'a> {
+pub struct LanguageIdentifierDisplayName<'a, 'b> {
     base_name: &'a str,
     script_name: Option<&'a str>,
     region_name: Option<&'a str>,
-    variants: BorrowedVariants<'a>,
+    variants: BorrowedVariants<'a, 'b>,
     locale_pattern: &'a DoublePlaceholderPattern,
     locale_separator: &'a DoublePlaceholderPattern,
 }
 
-struct QualifiersWriteable<'a> {
+struct QualifiersWriteable<'a, 'b> {
     script: Option<&'a str>,
     region: Option<&'a str>,
-    variants: BorrowedVariants<'a>,
+    variants: BorrowedVariants<'a, 'b>,
     separator: &'a DoublePlaceholderPattern,
 }
 
-impl<'a> writeable::Writeable for QualifiersWriteable<'a> {
+impl<'a, 'b> writeable::Writeable for QualifiersWriteable<'a, 'b> {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         let mut first = true;
 
@@ -400,7 +400,7 @@ impl<'a> writeable::Writeable for QualifiersWriteable<'a> {
     }
 }
 
-impl<'a> writeable::Writeable for LanguageIdentifierDisplayName<'a> {
+impl<'a, 'b> writeable::Writeable for LanguageIdentifierDisplayName<'a, 'b> {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         let has_variants = !matches!(self.variants, BorrowedVariants::None);
         let has_qualifiers =
@@ -422,4 +422,4 @@ impl<'a> writeable::Writeable for LanguageIdentifierDisplayName<'a> {
     }
 }
 
-writeable::impl_display_with_writeable!(LanguageIdentifierDisplayName<'_>);
+writeable::impl_display_with_writeable!(LanguageIdentifierDisplayName<'_, '_>);
