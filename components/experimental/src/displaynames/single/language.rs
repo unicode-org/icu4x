@@ -96,7 +96,8 @@ impl LanguageIdentifierDisplayNameOwned {
                     Some(region),
                 );
                 let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str(attr.as_str()).unwrap(),
+                    DataMarkerAttributes::try_from_str(attr.as_str())
+                        .map_err(|_| DataError::custom("Invalid dialect attr"))?,
                     &formatting_locale,
                 );
                 let mut metadata = DataRequestMetadata::default();
@@ -121,7 +122,8 @@ impl LanguageIdentifierDisplayNameOwned {
                     None,
                 );
                 let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str(attr.as_str()).unwrap(),
+                    DataMarkerAttributes::try_from_str(attr.as_str())
+                        .map_err(|_| DataError::custom("Invalid dialect attr"))?,
                     &formatting_locale,
                 );
                 let mut metadata = DataRequestMetadata::default();
@@ -145,7 +147,8 @@ impl LanguageIdentifierDisplayNameOwned {
                     Some(region),
                 );
                 let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str(attr.as_str()).unwrap(),
+                    DataMarkerAttributes::try_from_str(attr.as_str())
+                        .map_err(|_| DataError::custom("Invalid dialect attr"))?,
                     &formatting_locale,
                 );
                 let mut metadata = DataRequestMetadata::default();
@@ -169,7 +172,8 @@ impl LanguageIdentifierDisplayNameOwned {
                 provider
                     .load(DataRequest {
                         id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                            DataMarkerAttributes::try_from_str(attr.as_str()).unwrap(),
+                            DataMarkerAttributes::try_from_str(attr.as_str())
+                                .map_err(|_| DataError::custom("Invalid language"))?,
                             &formatting_locale,
                         ),
                         ..Default::default()
