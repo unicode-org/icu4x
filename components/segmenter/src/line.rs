@@ -739,7 +739,7 @@ fn is_break_utf32_by_loose(
             _,
         ) => ja_zh,
         // breaks between inseparable characters such as U+2025, U+2026 i.e. characters with the Unicode Line Break property IN
-        (RuleBreakData::LINE_PROPERTY_IN, _, _) => true,
+        (RuleBreakData::LINE_PROPERTY_IN, _, RuleBreakData::LINE_PROPERTY_IN) => true,
         // breaks before certain centered punctuation marks:
         (RuleBreakData::LINE_PROPERTY_EX, 0xFF01 | 0xFF1F, _) => ja_zh,
         // breaks before suffixes:
