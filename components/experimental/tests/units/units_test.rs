@@ -293,43 +293,6 @@ fn test_unparsable_units() {
 }
 
 #[test]
-fn test_f64_precision() {
-    let factory = ConverterFactory::new();
-
-    // Case 1: 5 g to tonnes (factor 1/1000000)
-    // Naive math: 0.0000049999999999999996
-    // Expected with f64_mul_div: 0.000005 (exactly representable double closest to 5e-6)
-    let g = MeasureUnit::try_from_str("gram").unwrap();
-    let tonne = MeasureUnit::try_from_str("tonne").unwrap();
-    let converter = factory.converter::<f64>(&g, &tonne).unwrap();
-    let result = converter.convert(5.0);
-    assert_eq!(result, 5e-6);
-
-    // Case 2: 825 g to kg (factor 1/1000)
-    // Naive math: 0.8250000000000001
-    // Expected with f64_mul_div: 0.825 (exactly representable double closest to 0.825)
-    let kg = MeasureUnit::try_from_str("kilogram").unwrap();
-    let converter = factory.converter::<f64>(&g, &kg).unwrap();
-    let result = converter.convert(825.0);
-    assert_eq!(result, 0.825);
-
-    // Case 3: 5 in to cm (factor 127/50)
-    // Expected: 12.7
-    let inch = MeasureUnit::try_from_str("inch").unwrap();
-    let cm = MeasureUnit::try_from_str("centimeter").unwrap();
-    let converter = factory.converter::<f64>(&inch, &cm).unwrap();
-    let result = converter.convert(5.0);
-    assert_eq!(result, 12.7);
-
-    // Case 4: 84 in to ft (factor 1/12)
-    // Expected: 7.0
-    let foot = MeasureUnit::try_from_str("foot").unwrap();
-    let converter = factory.converter::<f64>(&inch, &foot).unwrap();
-    let result = converter.convert(84.0);
-    assert_eq!(result, 7.0);
-}
-
-#[test]
 fn test_f64_vs_bigint_precision() {
     let factory = ConverterFactory::new();
 
@@ -343,6 +306,7 @@ fn test_f64_vs_bigint_precision() {
         ("gram", "tonne", 0.123456789, true),
         ("gram", "kilogram", 825.0, true),
         ("inch", "centimeter", 5.0, true),
+        ("inch", "foot", 84.0, true),
         ("mile-per-hour", "kilometer-per-hour", 120.0, true),
         // Offset conversions
         ("fahrenheit", "celsius", 32.0, true), // 32 F = 0 C (exact)
