@@ -191,8 +191,17 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
     pub fn new_owned(val: Box<V>) -> Self {
-        let val = ManuallyDrop::new(val);
-        let buf: NonNull<[u8]> = val.as_bytes().into();
+        let raw_box: *mut V = Box::into_raw(val);
+        // SAFETY: raw_box is a valid pointer to V as it comes from Box::into_raw.
+        let slice_ref: &[u8] = unsafe { (*raw_box).as_bytes() };
+        // SAFETY: We construct the NonNull pointer directly from raw_box (which has unique owning
+        // provenance) cast to u8, using the length from slice_ref. This avoids losing unique provenance.
+        let buf = unsafe {
+            NonNull::new_unchecked(core::ptr::slice_from_raw_parts_mut(
+                raw_box.cast::<u8>(),
+                slice_ref.len(),
+            ))
+        };
         let raw = RawVarZeroCow {
             // Invariants upheld:
             // 1 & 3: The bytes came from `val` so they're a valid value and byte slice

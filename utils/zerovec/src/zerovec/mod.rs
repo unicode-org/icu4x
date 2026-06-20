@@ -175,7 +175,7 @@ impl<U> EyepatchHackVector<U> {
         //   smaller, from the same pointer, so it will be valid as well, and similarly non-null.
         self.buf = unsafe {
             NonNull::new_unchecked(core::ptr::slice_from_raw_parts_mut(
-                self.buf.as_mut().as_mut_ptr(),
+                self.buf.as_ptr().cast::<U>(),
                 core::cmp::min(max, self.buf.as_ref().len()),
             ))
         };
