@@ -8,7 +8,6 @@ pub(crate) mod region;
 pub(crate) mod script;
 pub(crate) mod variant;
 
-
 pub(crate) const ALT_SHORT: &str = "short";
 pub(crate) const ALT_LONG: &str = "long";
 pub(crate) const ALT_VARIANT: &str = "variant";
