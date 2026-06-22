@@ -6,8 +6,8 @@
 
 use core::convert::Infallible;
 use core::{cmp::Ordering, str::FromStr};
-use writeable::Writeable;
 use writeable::adapters::WriteableAsTryWriteableInfallible;
+use writeable::{TryWriteable, Writeable};
 
 use crate::Error;
 use crate::common::*;
@@ -104,6 +104,55 @@ where
     fn value_for(&self, _key: SinglePlaceholderKey) -> Self::W<'_> {
         let [value] = self;
         WriteableAsTryWriteableInfallible(value)
+    }
+    #[inline]
+    fn map_literal<'a, 'l>(&'a self, literal: &'l str) -> Self::L<'a, 'l> {
+        literal
+    }
+}
+
+/// A value for [`SinglePlaceholder`] that may bubble up errors.
+///
+/// # Examples
+///
+/// Format a pattern with one placeholder, which holds an error:
+///
+/// ```
+/// use either::Either;
+/// use icu_pattern::SinglePlaceholderPattern;
+/// use icu_pattern::SinglePlaceholderValueProviderTry;
+/// use writeable::assert_try_writeable_eq;
+///
+/// let pattern = SinglePlaceholderPattern::try_from_str("Hello {0}", Default::default()).unwrap();
+/// assert_try_writeable_eq!(
+///     pattern.try_interpolate(SinglePlaceholderValueProviderTry(Err::<&str, &str>("Errory"))),
+///     "Hello Errory",
+///     Err("Errory")
+/// );
+/// ```
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[allow(clippy::exhaustive_structs)] // holds a single placeholder value
+pub struct SinglePlaceholderValueProviderTry<W>(pub W);
+
+impl<W> PlaceholderValueProvider<SinglePlaceholderKey> for SinglePlaceholderValueProviderTry<W>
+where
+    W: TryWriteable,
+{
+    type Error = W::Error;
+
+    type W<'a>
+        = &'a W
+    where
+        Self: 'a;
+
+    type L<'a, 'l>
+        = &'l str
+    where
+        Self: 'a;
+
+    #[inline]
+    fn value_for(&self, _key: SinglePlaceholderKey) -> Self::W<'_> {
+        &self.0
     }
     #[inline]
     fn map_literal<'a, 'l>(&'a self, literal: &'l str) -> Self::L<'a, 'l> {

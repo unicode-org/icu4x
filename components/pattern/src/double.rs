@@ -7,8 +7,8 @@
 use core::convert::Infallible;
 use core::{cmp::Ordering, str::FromStr};
 use either::Either;
-use writeable::Writeable;
 use writeable::adapters::WriteableAsTryWriteableInfallible;
+use writeable::{TryWriteable, Writeable};
 
 use crate::Error;
 use crate::common::*;
@@ -124,6 +124,60 @@ where
             DoublePlaceholderKey::Place1 => item1,
         };
         WriteableAsTryWriteableInfallible(writeable)
+    }
+    #[inline]
+    fn map_literal<'a, 'l>(&'a self, literal: &'l str) -> Self::L<'a, 'l> {
+        literal
+    }
+}
+
+/// A pair of values for [`DoublePlaceholder`] that may bubble up errors.
+///
+/// # Examples
+///
+/// Format a pattern with two placeholders, where the second value is an error:
+///
+/// ```
+/// use either::Either;
+/// use icu_pattern::DoublePlaceholderPattern;
+/// use icu_pattern::DoublePlaceholderValueProviderTry;
+/// use writeable::assert_try_writeable_eq;
+///
+/// let pattern = DoublePlaceholderPattern::try_from_str("{0}-{1}", Default::default()).unwrap();
+/// assert_try_writeable_eq!(
+///     pattern.try_interpolate(DoublePlaceholderValueProviderTry(Ok::<&str, &str>("xxx"), Err::<&str, &str>("yyy"))),
+///     "xxx-yyy",
+///     Err(Either::Right("yyy"))
+/// );
+/// ```
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[allow(clippy::exhaustive_structs)] // holds two placeholder values
+pub struct DoublePlaceholderValueProviderTry<W0, W1>(pub W0, pub W1);
+
+impl<W0, W1> PlaceholderValueProvider<DoublePlaceholderKey>
+    for DoublePlaceholderValueProviderTry<W0, W1>
+where
+    W0: TryWriteable,
+    W1: TryWriteable,
+{
+    type Error = Either<W0::Error, W1::Error>;
+
+    type W<'a>
+        = Either<&'a W0, &'a W1>
+    where
+        Self: 'a;
+
+    type L<'a, 'l>
+        = &'l str
+    where
+        Self: 'a;
+
+    #[inline]
+    fn value_for(&self, key: DoublePlaceholderKey) -> Self::W<'_> {
+        match key {
+            DoublePlaceholderKey::Place0 => Either::Left(&self.0),
+            DoublePlaceholderKey::Place1 => Either::Right(&self.1),
+        }
     }
     #[inline]
     fn map_literal<'a, 'l>(&'a self, literal: &'l str) -> Self::L<'a, 'l> {
