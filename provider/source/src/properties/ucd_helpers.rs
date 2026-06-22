@@ -28,14 +28,14 @@ pub(crate) enum UcdLine<'a> {
 }
 
 impl<'a> UcdFields<'a> {
-    pub(crate) fn fields(&self) -> impl Iterator<Item = &'a str> + 'a {
+    pub(crate) fn fields(self) -> impl Iterator<Item = &'a str> + 'a {
         self.0.split(';').map(str::trim)
     }
 }
 
 impl<'a> UcdLine<'a> {
-    pub(crate) fn skip_missing_rule(&self) -> Option<UcdFields<'a>> {
-        if let Self::Fields(c) = *self {
+    pub(crate) fn skip_missing_rule(self) -> Option<UcdFields<'a>> {
+        if let Self::Fields(c) = self {
             Some(c)
         } else {
             None
