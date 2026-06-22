@@ -309,7 +309,6 @@ impl PatternBackend for DoublePlaceholder {
     type PlaceholderKey<'a> = DoublePlaceholderKey;
     #[cfg(feature = "alloc")]
     type PlaceholderKeyCow<'a> = DoublePlaceholderKey;
-    type Error<'a> = Infallible;
     type Store = str;
     type Iter<'a> = DoublePlaceholderPatternIterator<'a>;
 
