@@ -362,10 +362,10 @@ pub unsafe trait VarULE: 'static {
     #[cfg(feature = "alloc")]
     fn to_boxed(&self) -> Box<Self> {
         use alloc::borrow::ToOwned;
-        let bytesvec = self.as_bytes().to_owned().into_boxed_slice();
+        let bytes = self.as_bytes().to_owned().into_boxed_slice();
         // SAFETY:
         // - Self::from_bytes_unchecked is safe because the bytes came from self.as_bytes() which is valid.
-        unsafe { box_from_bytes(bytesvec) }
+        unsafe { cast_box(bytes) }
     }
 }
 
@@ -446,10 +446,10 @@ impl UleError {
 impl core::error::Error for UleError {}
 
 #[cfg(feature = "alloc")]
-/// Reconstructs a `Box<T>` from an allocated byte slice while preserving unique pointer provenance
+/// Reconstructs a `Box<T>` from a `Box<[u8]>` while preserving unique pointer provenance
 /// and correctly resolving DST metadata.
 ///
-/// This is an internal helper used to safely convert a heap-allocated byte buffer (e.g., from a `Vec<u8>`)
+/// This is an internal helper used to safely convert a heap-allocated byte buffer
 /// into an owned `Box<T>` where `T` is an unsized `VarULE` type.
 ///
 /// ### Why this is needed
@@ -467,10 +467,10 @@ impl core::error::Error for UleError {}
 /// ### Safety
 ///
 /// - `T::from_bytes_unchecked` must be safe to call on the slice behind bytes
-pub(crate) unsafe fn box_from_bytes<T: VarULE + ?Sized>(bytes: Box<[u8]>) -> Box<T> {
+pub(crate) unsafe fn cast_box<T: VarULE + ?Sized>(bytes: Box<[u8]>) -> Box<T> {
     use core::alloc::Layout;
     let raw = Box::into_raw(bytes);
-    // SAFETY: caller guarantees `raw` is valid.
+    // SAFETY: we just produced `raw`; it is valid
     let slice: &[u8] = unsafe { &*raw };
     // SAFETY: caller guarantees `from_bytes_unchecked` is safe.
     let ref_t: &T = unsafe { T::from_bytes_unchecked(slice) };

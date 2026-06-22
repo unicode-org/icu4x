@@ -98,7 +98,7 @@ pub fn encode_varule_to_box<S: EncodeAsVarULE<T> + ?Sized, T: VarULE + ?Sized>(x
     // SAFETY:
     // - T::from_bytes_unchecked is safe because the bytes were written by x.encode_var_ule_write
     //   which guarantees a valid representation of T.
-    unsafe { box_from_bytes(vec.into_boxed_slice()) }
+    unsafe { cast_box(vec.into_boxed_slice()) }
 }
 
 unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for T {
