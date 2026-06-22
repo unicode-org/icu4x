@@ -85,35 +85,41 @@ crate::displaynames::impl_displaynames_menu_v1!(
     languages,
 );
 
-impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayNames<'static> {
-    fn from(other: &cldr_serde::displaynames::language::Resource) -> Self {
-        let mut names = BTreeMap::new();
-        let mut short_names = BTreeMap::new();
-        let mut long_names = BTreeMap::new();
-        let mut menu_names = BTreeMap::new();
-        for (key, value) in other.main.value.localedisplaynames.languages.iter() {
-            if key.menu.is_some() {
-                continue;
-            }
-
-            let langid = &key.subtag;
-            if langid.script.is_some() || langid.region.is_some() || !langid.variants.is_empty() {
-                continue;
-            }
-            let lang = langid.language;
-
+fn extract_names<K, F>(
+    resource: &cldr_serde::displaynames::language::Resource,
+    filter_project: F,
+) -> (
+    BTreeMap<K, &str>,
+    BTreeMap<K, &str>,
+    BTreeMap<K, &str>,
+    BTreeMap<K, &str>,
+)
+where
+    K: Ord,
+    F: Fn(&icu::locale::LanguageIdentifier, &str) -> Option<K>,
+{
+    let mut names = BTreeMap::new();
+    let mut short_names = BTreeMap::new();
+    let mut long_names = BTreeMap::new();
+    let mut menu_names = BTreeMap::new();
+    for (key, value) in resource.main.value.localedisplaynames.languages.iter() {
+        if key.menu.is_some() {
+            continue;
+        }
+        let val_str = value.as_str();
+        if let Some(k) = filter_project(&key.subtag, val_str) {
             match key.alt.as_deref() {
                 Some(ALT_SHORT) => {
-                    short_names.insert(lang, value.as_ref());
+                    short_names.insert(k, val_str);
                 }
                 Some(ALT_LONG) => {
-                    long_names.insert(lang, value.as_ref());
+                    long_names.insert(k, val_str);
                 }
                 Some(ALT_MENU) => {
-                    menu_names.insert(lang, value.as_ref());
+                    menu_names.insert(k, val_str);
                 }
                 None => {
-                    names.insert(lang, value.as_ref());
+                    names.insert(k, val_str);
                 }
                 Some(ALT_VARIANT) | Some(ALT_SECONDARY) | Some(ALT_OFFICIAL) => {
                     // TODO(#8012): Handle preference-specific alt variants.
@@ -123,72 +129,54 @@ impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayName
                 }
             }
         }
+    }
+    (names, short_names, long_names, menu_names)
+}
+
+impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayNames<'static> {
+    fn from(other: &cldr_serde::displaynames::language::Resource) -> Self {
+        let (names, short_names, long_names, menu_names) = extract_names(other, |langid, val| {
+            if langid.script.is_some() || langid.region.is_some() || !langid.variants.is_empty() {
+                None
+            } else {
+                let lang = langid.language;
+                if lang.as_str() == val {
+                    None
+                } else {
+                    Some(lang)
+                }
+            }
+        });
+
+        let to_zero_map = |map: BTreeMap<icu::locale::subtags::Language, &str>| {
+            map.into_iter()
+                .map(|(k, v)| (k.to_tinystr().to_unvalidated(), v))
+                .collect()
+        };
+
         Self {
-            // Old CLDR versions may contain trivial entries, so filter
-            names: names
-                .into_iter()
-                .filter(|&(k, v)| k.as_str() != v)
-                .map(|(k, v)| (k.to_tinystr().to_unvalidated(), v))
-                .collect(),
-            short_names: short_names
-                .into_iter()
-                .filter(|&(k, v)| k.as_str() != v)
-                .map(|(k, v)| (k.to_tinystr().to_unvalidated(), v))
-                .collect(),
-            long_names: long_names
-                .into_iter()
-                .filter(|&(k, v)| k.as_str() != v)
-                .map(|(k, v)| (k.to_tinystr().to_unvalidated(), v))
-                .collect(),
-            menu_names: menu_names
-                .into_iter()
-                .filter(|&(k, v)| k.as_str() != v)
-                .map(|(k, v)| (k.to_tinystr().to_unvalidated(), v))
-                .collect(),
+            names: to_zero_map(names),
+            short_names: to_zero_map(short_names),
+            long_names: to_zero_map(long_names),
+            menu_names: to_zero_map(menu_names),
         }
     }
 }
 
 impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<'static> {
     fn from(other: &cldr_serde::displaynames::language::Resource) -> Self {
-        let mut names = BTreeMap::new();
-        let mut short_names = BTreeMap::new();
-        let mut long_names = BTreeMap::new();
-        let mut menu_names = BTreeMap::new();
-        for (key, value) in other.main.value.localedisplaynames.languages.iter() {
-            if key.menu.is_some() {
-                // Note: we don't handle -menu-core and -menu-extension here,
-                // but we handle them in the new LocaleNames markers.
-                continue;
-            }
-
-            let langid = &key.subtag;
+        let (names, short_names, long_names, menu_names) = extract_names(other, |langid, val| {
             if langid.script.is_none() && langid.region.is_none() && langid.variants.is_empty() {
-                continue;
+                None
+            } else {
+                let locale_str = langid.to_string();
+                if locale_str == val {
+                    None
+                } else {
+                    Some(locale_str)
+                }
             }
-
-            let locale_str = langid.to_string();
-            let val_str = value.as_str();
-            if locale_str == val_str {
-                continue;
-            }
-
-            match key.alt.as_deref() {
-                Some(ALT_SHORT) => {
-                    short_names.insert(locale_str, val_str);
-                }
-                Some(ALT_LONG) => {
-                    long_names.insert(locale_str, val_str);
-                }
-                Some(ALT_MENU) => {
-                    menu_names.insert(locale_str, val_str);
-                }
-                None => {
-                    names.insert(locale_str, val_str);
-                }
-                _ => {}
-            }
-        }
+        });
 
         let to_zero_map = |map: BTreeMap<String, &str>| {
             let mut zero_map = ZeroMap::new();
