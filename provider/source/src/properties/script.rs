@@ -54,18 +54,13 @@ impl DataProvider<PropertyScriptWithExtensionsV1> for SourceDataProvider {
 
                 let mut char_with_extensions = HashMap::new();
 
-                for line in self
-                    .unicode()?
-                    .read_to_string("ucd/ScriptExtensions.txt")?
-                    .lines()
-                {
-                    let line = line.split('#').next().unwrap().trim();
-                    if line.is_empty() {
+                for line in self.parse_ucd_lines("ucd/ScriptExtensions.txt")? {
+                    let Some(line) = line.skip_missing_rule() else {
                         continue;
-                    }
-                    let mut fields = line.split(';');
-                    let cp_range = fields.next().unwrap().trim();
-                    let values = fields.next().unwrap().trim();
+                    };
+                    let mut fields = line.fields();
+                    let cp_range = fields.next().unwrap();
+                    let values = fields.next().unwrap();
                     let mut value = values
                         .split_ascii_whitespace()
                         .filter_map(|s| script_parser.as_borrowed().get_strict(s))
@@ -73,11 +68,9 @@ impl DataProvider<PropertyScriptWithExtensionsV1> for SourceDataProvider {
                     // Sort in discriminant order
                     value.sort();
 
-                    let (start, end) = cp_range.split_once("..").unwrap_or((cp_range, cp_range));
-                    let start = u32::from_str_radix(start, 16).unwrap();
-                    let end = u32::from_str_radix(end, 16).unwrap();
+                    let cp_range = super::ucd_helpers::parse_range(cp_range);
 
-                    for cp in start..=end {
+                    for cp in cp_range {
                         let mut value = value.clone();
 
                         let script = script.as_borrowed().get32(cp);
