@@ -35,6 +35,12 @@ class Weekday;
 namespace icu4x {
 namespace capi {
     struct Date;
+
+
+    typedef struct DiplomatDateView {
+      const Date** data;
+      size_t len;
+    } DiplomatDateView;
 } // namespace capi
 } // namespace
 

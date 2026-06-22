@@ -30,6 +30,12 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct VariantOffsetsCalculator;
+
+
+    typedef struct DiplomatVariantOffsetsCalculatorView {
+      const VariantOffsetsCalculator** data;
+      size_t len;
+    } DiplomatVariantOffsetsCalculatorView;
 } // namespace capi
 } // namespace
 

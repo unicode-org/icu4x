@@ -20,6 +20,12 @@ class TimeZone;
 namespace icu4x {
 namespace capi {
     struct TimeZoneIterator;
+
+
+    typedef struct DiplomatTimeZoneIteratorView {
+      const TimeZoneIterator** data;
+      size_t len;
+    } DiplomatTimeZoneIteratorView;
 } // namespace capi
 } // namespace
 

@@ -30,6 +30,12 @@ class YearStyle;
 namespace icu4x {
 namespace capi {
     struct DateFormatterGregorian;
+
+
+    typedef struct DiplomatDateFormatterGregorianView {
+      const DateFormatterGregorian** data;
+      size_t len;
+    } DiplomatDateFormatterGregorianView;
 } // namespace capi
 } // namespace
 

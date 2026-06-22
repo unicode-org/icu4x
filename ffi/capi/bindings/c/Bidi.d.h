@@ -14,6 +14,11 @@
 typedef struct Bidi Bidi;
 
 
+typedef struct DiplomatBidiView {
+  const Bidi** data;
+  size_t len;
+} DiplomatBidiView;
+
 
 
 #endif // Bidi_D_H

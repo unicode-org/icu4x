@@ -14,6 +14,11 @@
 typedef struct TimeZoneAndCanonicalAndNormalizedIterator TimeZoneAndCanonicalAndNormalizedIterator;
 
 
+typedef struct DiplomatTimeZoneAndCanonicalAndNormalizedIteratorView {
+  const TimeZoneAndCanonicalAndNormalizedIterator** data;
+  size_t len;
+} DiplomatTimeZoneAndCanonicalAndNormalizedIteratorView;
+
 
 
 #endif // TimeZoneAndCanonicalAndNormalizedIterator_D_H

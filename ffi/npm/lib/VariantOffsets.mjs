@@ -81,7 +81,7 @@ export class VariantOffsets {
         appendArrayMap
     ) {
         diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#standard.ffiValue, Uint32Array);
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 4, this.#daylight.ffiValue ?? 0, Uint32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 4, this.#daylight?.ffiValue ?? 0, Uint32Array);
     }
 
     // This struct contains borrowed fields, so this takes in a list of

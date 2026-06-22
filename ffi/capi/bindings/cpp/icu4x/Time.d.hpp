@@ -22,6 +22,12 @@ class Rfc9557ParseError;
 namespace icu4x {
 namespace capi {
     struct Time;
+
+
+    typedef struct DiplomatTimeView {
+      const Time** data;
+      size_t len;
+    } DiplomatTimeView;
 } // namespace capi
 } // namespace
 

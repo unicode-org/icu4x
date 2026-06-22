@@ -27,6 +27,12 @@ class LocaleParseError;
 namespace icu4x {
 namespace capi {
     struct RegionDisplayNames;
+
+
+    typedef struct DiplomatRegionDisplayNamesView {
+      const RegionDisplayNames** data;
+      size_t len;
+    } DiplomatRegionDisplayNamesView;
 } // namespace capi
 } // namespace
 

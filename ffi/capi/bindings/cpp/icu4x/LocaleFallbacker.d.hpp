@@ -26,6 +26,12 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct LocaleFallbacker;
+
+
+    typedef struct DiplomatLocaleFallbackerView {
+      const LocaleFallbacker** data;
+      size_t len;
+    } DiplomatLocaleFallbackerView;
 } // namespace capi
 } // namespace
 
@@ -64,7 +70,7 @@ public:
    *
    * See the [Rust documentation for `for_config`](https://docs.rs/icu_locale/2.2.0/icu_locale/struct.LocaleFallbacker.html#method.for_config) for more information.
    */
-  inline std::unique_ptr<icu4x::LocaleFallbackerWithConfig> for_config(icu4x::LocaleFallbackConfig config) const;
+  inline std::unique_ptr<icu4x::LocaleFallbackerWithConfig> for_config(icu4x::LocaleFallbackConfig config) const DIPLOMAT_LIFETIME_BOUND;
 
     inline const icu4x::capi::LocaleFallbacker* AsFFI() const;
     inline icu4x::capi::LocaleFallbacker* AsFFI();

@@ -25,6 +25,12 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct ExemplarCharacters;
+
+
+    typedef struct DiplomatExemplarCharactersView {
+      const ExemplarCharacters** data;
+      size_t len;
+    } DiplomatExemplarCharactersView;
 } // namespace capi
 } // namespace
 

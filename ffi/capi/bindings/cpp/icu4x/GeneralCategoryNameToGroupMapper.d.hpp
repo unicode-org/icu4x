@@ -24,6 +24,12 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct GeneralCategoryNameToGroupMapper;
+
+
+    typedef struct DiplomatGeneralCategoryNameToGroupMapperView {
+      const GeneralCategoryNameToGroupMapper** data;
+      size_t len;
+    } DiplomatGeneralCategoryNameToGroupMapperView;
 } // namespace capi
 } // namespace
 
