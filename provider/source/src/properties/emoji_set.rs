@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::ucd_helpers;
 use crate::SourceDataProvider;
 use icu::collections::codepointinvlist::CodePointInversionListBuilder;
 use icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList;
@@ -38,17 +39,15 @@ impl SourceDataProvider {
                 continue;
             }
             if let Some((a, b)) = seq.split_once("..") {
-                inv_list.add_range32(
-                    u32::from_str_radix(a, 16).unwrap()..=u32::from_str_radix(b, 16).unwrap(),
-                );
+                inv_list.add_range32(ucd_helpers::parse_cp(a)..=ucd_helpers::parse_cp(b));
             } else if seq.contains(' ') {
                 strings.insert(
                     seq.split(' ')
-                        .map(|cp| char::from_u32(u32::from_str_radix(cp, 16).unwrap()).unwrap())
+                        .map(|cp| char::from_u32(ucd_helpers::parse_cp(cp)).unwrap())
                         .collect::<String>(),
                 );
             } else {
-                inv_list.add32(u32::from_str_radix(seq, 16).unwrap());
+                inv_list.add32(ucd_helpers::parse_cp(seq));
             }
         }
 

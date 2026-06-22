@@ -4,6 +4,7 @@
 
 use std::collections::HashSet;
 
+use super::ucd_helpers;
 use crate::SourceDataProvider;
 use icu::properties::provider::PropertyEnumBidiMirroringGlyphV1;
 use icu_provider::prelude::*;
@@ -45,21 +46,19 @@ impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
         let bidi_mirroring = self
             .parse_ucd_lines("ucd/BidiMirroring.txt")?
             .filter_map(|line| {
-                let line = line.skip_missing_rule()?;
-                let mut fields = line.fields();
+                let mut fields = line.skip_missing_rule()?.fields();
                 let cp_range = fields.next().unwrap().trim();
                 let prop_value = fields.next().unwrap().trim();
-                let value = u32::from_str_radix(prop_value, 16).expect(prop_value);
-                let cp = u32::from_str_radix(cp_range, 16).unwrap();
+                let value = ucd_helpers::parse_cp(prop_value);
+                let cp = ucd_helpers::parse_cp(cp_range);
                 Some((cp, char::from_u32(value).unwrap()))
             })
             .collect::<HashMap<_, _>>();
 
         let paired_brackets = self.parse_ucd_lines("ucd/BidiBrackets.txt")?.filter_map(|line| {
-                let line = line.skip_missing_rule()?;
-                let mut parts = line.fields();
-                let cp = u32::from_str_radix(parts.next().unwrap().trim(), 16).unwrap();
-                let mirror = u32::from_str_radix(parts.next().unwrap().trim(), 16).unwrap();
+                let mut parts = line.skip_missing_rule()?.fields();
+                let cp = ucd_helpers::parse_cp(parts.next().unwrap().trim());
+                let mirror = ucd_helpers::parse_cp(parts.next().unwrap().trim());
 
                 if bidi_mirroring[&cp] as u32 != mirror {
                     log::warn!(

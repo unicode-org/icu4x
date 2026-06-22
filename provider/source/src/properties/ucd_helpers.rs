@@ -9,9 +9,13 @@ use icu_provider::prelude::*;
 
 pub(crate) fn parse_range(range_str: &str) -> std::ops::RangeInclusive<u32> {
     let (a, b) = range_str.split_once("..").unwrap_or((range_str, range_str));
-    let a = u32::from_str_radix(a, 16).unwrap();
-    let b = u32::from_str_radix(b, 16).unwrap();
+    let a = parse_cp(a);
+    let b = parse_cp(b);
     a..=b
+}
+
+pub(crate) fn parse_cp(cp: &str) -> u32 {
+    u32::from_str_radix(cp, 16).unwrap()
 }
 
 #[derive(Copy, Clone, Debug)]
@@ -43,11 +47,9 @@ impl SourceDataProvider {
     /// Helper to parse UCD files line-by-line, providing an iterator over the fields of each line.
     ///
     /// It reads the file, strips comments (lines starting with `#` or anything after `#`),
-    /// skips empty lines, and passes a mutable reference to an iterator over the trimmed,
-    /// semicolon-separated fields to the callback.
+    /// skips empty lines, and returns an iterator over each line.
     ///
-    /// **Important:** Eagerly strips all comments, so it **cannot** be used for parsing
-    /// `@missing` rules which are semantically significant comments starting with `# @missing`.
+    /// It handles `# @missing` rules by returning them as `UcdLine::Missing`
     pub(crate) fn parse_ucd_lines<'a>(
         &'a self,
         file: &str,

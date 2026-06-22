@@ -90,11 +90,11 @@ impl SourceDataProvider {
                         continue;
                     };
 
-                    if cps == "0000..10FFFF" {
+                    let range = ucd_helpers::parse_range(cps);
+                    if range == (0..=0x10FFFF) {
                         // This is a statement of default. just check that we're using the same one
                         assert_eq!(value, T::default());
                     } else {
-                        let range = ucd_helpers::parse_range(cps);
                         assert!(
                             *range.start() as i32 > last_seen_cp,
                             "Found @missing rule after data in its block in {file}, we don't currently handle it"
@@ -124,15 +124,9 @@ impl SourceDataProvider {
                         continue;
                     };
 
-                    if cp_range.contains("..") {
-                        let range = ucd_helpers::parse_range(cp_range);
-                        last_seen_cp = *range.end() as i32;
-                        builder.set_range_value(range, value);
-                    } else {
-                        let cp = u32::from_str_radix(cp_range, 16).unwrap();
-                        last_seen_cp = cp as i32;
-                        builder.set_value(cp, value);
-                    }
+                    let range = ucd_helpers::parse_range(cp_range);
+                    last_seen_cp = *range.end() as i32;
+                    builder.set_range_value(range, value);
                 }
             }
         }
