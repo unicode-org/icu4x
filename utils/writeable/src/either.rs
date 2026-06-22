@@ -83,6 +83,7 @@ where
         }
     }
 
+    #[cfg(feature = "alloc")]
     fn try_write_to_string(&self) -> Result<Cow<'_, str>, (Self::Error, Cow<'_, str>)> {
         match self {
             Either::Left(w) => w

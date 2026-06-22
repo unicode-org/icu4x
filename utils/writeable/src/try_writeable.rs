@@ -379,6 +379,7 @@ impl<T: TryWriteable + ?Sized> TryWriteable for &T {
     }
 
     #[inline]
+    #[cfg(feature = "alloc")]
     fn try_write_to_string(&self) -> Result<Cow<'_, str>, (Self::Error, Cow<'_, str>)> {
         (*self).try_write_to_string()
     }
