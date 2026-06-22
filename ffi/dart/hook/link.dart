@@ -2,12 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:code_assets/code_assets.dart'
     show CodeAsset, HookConfigCodeConfig, LinkInputCodeAssets, OS;
-import 'package:hooks/hooks.dart' show LinkInput, link;
+import 'package:hooks/hooks.dart' show link;
 import 'package:logging/logging.dart' show Level, Logger;
 import 'package:native_toolchain_c/native_toolchain_c.dart'
     show CLinker, LinkerOptions;
@@ -27,14 +24,21 @@ Future<void> main(List<String> args) async {
       return;
     }
 
-    final usedSymbols = input.usages
-        ?.constantsOf(
-          record_use.Identifier(
-            importUri: staticLib.id,
-            name: '_DiplomatFfiUse',
-          ),
+    final usedSymbols = input
+        // ignore: experimental_member_use
+        .recordedUses
+        ?.instances[const record_use.Class(
+          '_DiplomatFfiUse',
+          record_use.Library('package:icu4x/src/bindings/lib.g.dart'),
+        )]
+        ?.whereType<record_use.InstanceConstantReference>()
+        .map((instance) => instance.instanceConstant)
+        .whereType<record_use.InstanceConstant>()
+        .map(
+          (instanceConstant) =>
+              instanceConstant.fields['symbol'] as record_use.StringConstant,
         )
-        .map((instance) => instance['symbol'] as String);
+        .map((stringConstant) => stringConstant.value);
 
     print('''
 ### Using symbols:
@@ -63,18 +67,4 @@ Future<void> main(List<String> args) async {
         ..onRecord.listen((record) => print(record.message)),
     );
   });
-}
-
-extension on LinkInput {
-  record_use.RecordedUsages? get usages {
-    // the hooks package is pinned
-    // ignore: experimental_member_use
-    final records = recordedUsagesFile;
-    if (records == null) {
-      return null;
-    }
-    final usagesContent = File.fromUri(records).readAsStringSync();
-    final usagesJson = jsonDecode(usagesContent) as Map<String, dynamic>;
-    return record_use.RecordedUsages.fromJson(usagesJson);
-  }
 }
