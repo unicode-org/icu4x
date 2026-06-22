@@ -363,11 +363,9 @@ pub unsafe trait VarULE: 'static {
     fn to_boxed(&self) -> Box<Self> {
         use alloc::borrow::ToOwned;
         let bytesvec = self.as_bytes().to_owned().into_boxed_slice();
-        let raw = Box::into_raw(bytesvec);
         // SAFETY:
-        // - raw is a valid pointer to [u8] from Box::into_raw of a valid Box.
         // - Self::from_bytes_unchecked is safe because the bytes came from self.as_bytes() which is valid.
-        unsafe { box_from_raw_bytes(raw) }
+        unsafe { box_from_bytes(bytesvec) }
     }
 }
 
@@ -448,7 +446,7 @@ impl UleError {
 impl core::error::Error for UleError {}
 
 #[cfg(feature = "alloc")]
-/// Reconstructs a `Box<T>` from a raw byte slice pointer while preserving unique pointer provenance
+/// Reconstructs a `Box<T>` from an allocated byte slice while preserving unique pointer provenance
 /// and correctly resolving DST metadata.
 ///
 /// This is an internal helper used to safely convert a heap-allocated byte buffer (e.g., from a `Vec<u8>`)
@@ -456,7 +454,7 @@ impl core::error::Error for UleError {}
 ///
 /// ### Why this is needed
 ///
-/// Reconstructing a `Box<T>` from a raw pointer is tricky because:
+/// Reconstructing a `Box<T>` is tricky because:
 /// 1. **Provenance**: If we derive the pointer from a temporary shared reference (e.g., `&[u8]`),
 ///    Miri/Stacked Borrows will tag the pointer as `SharedReadOnly`. Reclaiming unique ownership
 ///    and deallocating through a pointer with shared provenance is Undefined Behavior. To avoid this,
@@ -468,11 +466,10 @@ impl core::error::Error for UleError {}
 ///
 /// ### Safety
 ///
-/// - `raw` must be a valid pointer to `[u8]` obtained from `Box::into_raw` of a box that contains
-///   a valid representation of `T`.
-/// - `T::from_bytes_unchecked` must be safe to call on the slice representation of `raw`.
-pub(crate) unsafe fn box_from_raw_bytes<T: VarULE + ?Sized>(raw: *mut [u8]) -> Box<T> {
+/// - `T::from_bytes_unchecked` must be safe to call on the slice behind bytes
+pub(crate) unsafe fn box_from_bytes<T: VarULE + ?Sized>(bytes: Box<[u8]>) -> Box<T> {
     use core::alloc::Layout;
+    let raw = Box::into_raw(bytes);
     // SAFETY: caller guarantees `raw` is valid.
     let slice: &[u8] = unsafe { &*raw };
     // SAFETY: caller guarantees `from_bytes_unchecked` is safe.
