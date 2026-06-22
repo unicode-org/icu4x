@@ -312,7 +312,8 @@ impl LocaleNamesLanguageMediumV1 {
             }
             (None, None) => lang_str.resize::<16>(),
         };
-        // This won't panic because the buffer contains subtag strings, which are valid attributes
+        // This is infallible (will not panic) because validated `Language`, `Script`, 
+        // `Region`, and hyphens are guaranteed to conform to `DataMarkerAttributes` syntax.
         DataMarkerAttributes::from_str_or_panic(buffer)
     }
 }
