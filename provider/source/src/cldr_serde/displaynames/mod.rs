@@ -8,7 +8,8 @@ pub(crate) mod region;
 pub(crate) mod script;
 pub(crate) mod variant;
 
-use crate::displaynames::{ALT_SEPARATOR, MENU_SEPARATOR};
+const ALT_SEPARATOR: &str = "-alt-";
+const MENU_SEPARATOR: &str = "-menu-";
 use core::str::FromStr;
 use serde::{Deserialize, Deserializer};
 

@@ -8,8 +8,6 @@ pub(crate) mod region;
 pub(crate) mod script;
 pub(crate) mod variant;
 
-pub(crate) const ALT_SEPARATOR: &str = "-alt-";
-pub(crate) const MENU_SEPARATOR: &str = "-menu-";
 
 pub(crate) const ALT_SHORT: &str = "short";
 pub(crate) const ALT_LONG: &str = "long";

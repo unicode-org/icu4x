@@ -85,15 +85,17 @@ crate::displaynames::impl_displaynames_menu_v1!(
     languages,
 );
 
-fn extract_names<K, F>(
-    resource: &cldr_serde::displaynames::language::Resource,
+struct ExtractedNames<'a, K> {
+    names: BTreeMap<K, &'a str>,
+    short_names: BTreeMap<K, &'a str>,
+    long_names: BTreeMap<K, &'a str>,
+    menu_names: BTreeMap<K, &'a str>,
+}
+
+fn extract_names<'a, K, F>(
+    resource: &'a cldr_serde::displaynames::language::Resource,
     filter_project: F,
-) -> (
-    BTreeMap<K, &str>,
-    BTreeMap<K, &str>,
-    BTreeMap<K, &str>,
-    BTreeMap<K, &str>,
-)
+) -> ExtractedNames<'a, K>
 where
     K: Ord,
     F: Fn(&icu::locale::LanguageIdentifier, &str) -> Option<K>,
@@ -130,12 +132,17 @@ where
             }
         }
     }
-    (names, short_names, long_names, menu_names)
+    ExtractedNames {
+        names,
+        short_names,
+        long_names,
+        menu_names,
+    }
 }
 
 impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayNames<'static> {
     fn from(other: &cldr_serde::displaynames::language::Resource) -> Self {
-        let (names, short_names, long_names, menu_names) = extract_names(other, |langid, val| {
+        let extracted = extract_names(other, |langid, val| {
             if langid.script.is_some() || langid.region.is_some() || !langid.variants.is_empty() {
                 None
             } else {
@@ -155,17 +162,17 @@ impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayName
         };
 
         Self {
-            names: to_zero_map(names),
-            short_names: to_zero_map(short_names),
-            long_names: to_zero_map(long_names),
-            menu_names: to_zero_map(menu_names),
+            names: to_zero_map(extracted.names),
+            short_names: to_zero_map(extracted.short_names),
+            long_names: to_zero_map(extracted.long_names),
+            menu_names: to_zero_map(extracted.menu_names),
         }
     }
 }
 
 impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<'static> {
     fn from(other: &cldr_serde::displaynames::language::Resource) -> Self {
-        let (names, short_names, long_names, menu_names) = extract_names(other, |langid, val| {
+        let extracted = extract_names(other, |langid, val| {
             if langid.script.is_none() && langid.region.is_none() && langid.variants.is_empty() {
                 None
             } else {
@@ -187,10 +194,10 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<
         };
 
         Self {
-            names: to_zero_map(names),
-            short_names: to_zero_map(short_names),
-            long_names: to_zero_map(long_names),
-            menu_names: to_zero_map(menu_names),
+            names: to_zero_map(extracted.names),
+            short_names: to_zero_map(extracted.short_names),
+            long_names: to_zero_map(extracted.long_names),
+            menu_names: to_zero_map(extracted.menu_names),
         }
     }
 }
