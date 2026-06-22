@@ -28,7 +28,7 @@ pub(crate) enum UcdLine<'a> {
 }
 
 impl<'a> UcdFields<'a> {
-    pub(crate) fn fields(&self) -> impl Iterator<Item = &'a str> {
+    pub(crate) fn fields(&self) -> impl Iterator<Item = &'a str> + 'a {
         self.0.split(';').map(str::trim)
     }
 }
