@@ -13,7 +13,7 @@ use icu_provider::DataPayloadOr;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 
-/// A localized display name for a language, owned version.
+/// A localized display name for a language identifier, owned version.
 ///
 /// # Example
 ///
@@ -277,7 +277,7 @@ impl BorrowedVariants<'_> {
     }
 }
 
-/// A localized display name for a language.
+/// A localized display name for a language identifier.
 #[derive(Debug, Clone, Copy)]
 pub struct LanguageIdentifierDisplayName<'a> {
     base_name: &'a str,
