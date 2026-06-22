@@ -5,7 +5,7 @@
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
-use crate::cldr_serde::displaynames::ModifiedSubtag;
+use crate::cldr_serde::displaynames::WithAlt;
 use crate::displaynames::{ALT_SECONDARY, ALT_SHORT, ALT_STANDALONE, ALT_VARIANT};
 use icu::experimental::displaynames::provider::*;
 use icu_provider::prelude::*;
@@ -53,13 +53,13 @@ impl From<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames<'s
         let mut names = BTreeMap::new();
         let mut short_names = BTreeMap::new();
         for (key, value) in other.main.value.localedisplaynames.scripts.iter() {
-            if key.menu_variant.is_some() {
+            if key.menu.is_some() {
                 continue;
             }
 
             let script = key.subtag;
 
-            match key.alt_variant.as_deref() {
+            match key.alt.as_deref() {
                 Some(ALT_SHORT) => {
                     short_names.insert(script.to_tinystr(), value.as_str());
                 }

@@ -13,13 +13,13 @@ use core::str::FromStr;
 use serde::{Deserialize, Deserializer};
 
 #[derive(Hash, Eq, PartialEq, Clone, Debug)]
-pub(crate) struct ModifiedSubtag<T> {
+pub(crate) struct WithAlt<T> {
     pub(crate) subtag: T,
-    pub(crate) alt_variant: Option<String>,
-    pub(crate) menu_variant: Option<String>,
+    pub(crate) alt: Option<String>,
+    pub(crate) menu: Option<String>,
 }
 
-impl<'de, T> Deserialize<'de> for ModifiedSubtag<T>
+impl<'de, T> Deserialize<'de> for WithAlt<T>
 where
     T: FromStr,
     T::Err: core::fmt::Display,
@@ -35,7 +35,7 @@ where
             T: FromStr,
             T::Err: core::fmt::Display,
         {
-            type Value = ModifiedSubtag<T>;
+            type Value = WithAlt<T>;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
                 formatter.write_str("a string with optional -alt- or -menu- suffix")
@@ -45,30 +45,26 @@ where
             where
                 E: serde::de::Error,
             {
-                if let Some(index) = v.rfind(MENU_SEPARATOR) {
-                    let (subtag_str, menu_str) = v.split_at(index);
-                    let menu_variant = menu_str.strip_prefix(MENU_SEPARATOR).unwrap().to_string();
+                if let Some((subtag_str, menu_str)) = v.split_once(MENU_SEPARATOR) {
                     let subtag = T::from_str(subtag_str).map_err(E::custom)?;
-                    Ok(ModifiedSubtag {
+                    Ok(WithAlt {
                         subtag,
-                        alt_variant: None,
-                        menu_variant: Some(menu_variant),
+                        alt: None,
+                        menu: Some(menu_str.to_string()),
                     })
-                } else if let Some(index) = v.rfind(ALT_SEPARATOR) {
-                    let (subtag_str, alt_str) = v.split_at(index);
-                    let alt_variant = alt_str.strip_prefix(ALT_SEPARATOR).unwrap().to_string();
+                } else if let Some((subtag_str, alt_str)) = v.split_once(ALT_SEPARATOR) {
                     let subtag = T::from_str(subtag_str).map_err(E::custom)?;
-                    Ok(ModifiedSubtag {
+                    Ok(WithAlt {
                         subtag,
-                        alt_variant: Some(alt_variant),
-                        menu_variant: None,
+                        alt: Some(alt_str.to_string()),
+                        menu: None,
                     })
                 } else {
                     let subtag = T::from_str(v).map_err(E::custom)?;
-                    Ok(ModifiedSubtag {
+                    Ok(WithAlt {
                         subtag,
-                        alt_variant: None,
-                        menu_variant: None,
+                        alt: None,
+                        menu: None,
                     })
                 }
             }

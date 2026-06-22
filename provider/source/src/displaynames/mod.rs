@@ -53,10 +53,10 @@ macro_rules! impl_displaynames_v1 {
                             DataError::custom("failed to parse subtag").with_req($marker::INFO, req)
                         })?;
 
-                let key = ModifiedSubtag {
+                let key = WithAlt {
                     subtag,
-                    alt_variant: $alt_variant.map(String::from),
-                    menu_variant: None,
+                    alt: $alt_variant.map(String::from),
+                    menu: None,
                 };
 
                 let name = data
@@ -112,19 +112,19 @@ macro_rules! impl_displaynames_menu_v1 {
                             DataError::custom("failed to parse subtag").with_req($marker::INFO, req)
                         })?;
 
-                let key_core = ModifiedSubtag {
+                let key_core = WithAlt {
                     subtag: subtag.clone(),
-                    alt_variant: None,
-                    menu_variant: Some($crate::displaynames::MENU_CORE.to_string()),
+                    alt: None,
+                    menu: Some($crate::displaynames::MENU_CORE.to_string()),
                 };
 
                 let map = &data.main.value.localedisplaynames.$field;
 
                 let (name_core, name_extension) = if let Some(core) = map.get(&key_core) {
-                    let key_extension = ModifiedSubtag {
+                    let key_extension = WithAlt {
                         subtag,
-                        alt_variant: None,
-                        menu_variant: Some($crate::displaynames::MENU_EXTENSION.to_string()),
+                        alt: None,
+                        menu: Some($crate::displaynames::MENU_EXTENSION.to_string()),
                     };
                     let extension = map.get(&key_extension).ok_or_else(|| {
                         DataError::custom("found menu-core but missing menu-extension")
@@ -133,10 +133,10 @@ macro_rules! impl_displaynames_menu_v1 {
                     (core.as_str(), extension.as_str())
                 } else {
                     // Fallback to alt-menu
-                    let key_alt_menu = ModifiedSubtag {
+                    let key_alt_menu = WithAlt {
                         subtag,
-                        alt_variant: Some($crate::displaynames::ALT_MENU.to_string()),
-                        menu_variant: None,
+                        alt: Some($crate::displaynames::ALT_MENU.to_string()),
+                        menu: None,
                     };
                     let alt_menu = map.get(&key_alt_menu).ok_or_else(|| {
                         DataError::custom("failed to find menu-core or alt-menu")
@@ -169,9 +169,8 @@ macro_rules! impl_displaynames_menu_v1 {
                 }) {
                     let data: &$resource = displaynames.read_and_parse(&locale, $file)?;
                     for key in data.main.value.localedisplaynames.$field.keys() {
-                        let matches = key.menu_variant.as_deref()
-                            == Some($crate::displaynames::MENU_CORE)
-                            || key.alt_variant.as_deref() == Some($crate::displaynames::ALT_MENU);
+                        let matches = key.menu.as_deref() == Some($crate::displaynames::MENU_CORE)
+                            || key.alt.as_deref() == Some($crate::displaynames::ALT_MENU);
 
                         if matches {
                             let data_identifier = DataIdentifierCow::from_owned(
@@ -217,11 +216,11 @@ macro_rules! impl_displaynames_iter_v1 {
                 }) {
                     let data: &$resource = displaynames.read_and_parse(&locale, $file)?;
                     for key in data.main.value.localedisplaynames.$field.keys() {
-                        let matches = match ($alt_variant, &key.alt_variant) {
+                        let matches = match ($alt_variant, &key.alt) {
                             (Some(expected), Some(actual)) => expected == actual,
                             (None, None) => true,
                             _ => false,
-                        } && key.menu_variant.is_none();
+                        } && key.menu.is_none();
 
                         if matches {
                             let data_identifier = DataIdentifierCow::from_owned(

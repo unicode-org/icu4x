@@ -7,14 +7,14 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-localenames-full/main/en/variants.json>
 
-use super::ModifiedSubtag;
+use super::WithAlt;
 use icu::locale::subtags::Variant;
 use serde::Deserialize;
 use std::collections::HashMap;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct Variants {
-    pub(crate) variants: HashMap<ModifiedSubtag<Variant>, String>,
+    pub(crate) variants: HashMap<WithAlt<Variant>, String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

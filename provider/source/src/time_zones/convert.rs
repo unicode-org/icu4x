@@ -144,7 +144,7 @@ impl SourceDataProvider {
             regions
                 .iter()
                 .filter_map(|(key, value)| {
-                    if key.alt_variant.is_none() && key.menu_variant.is_none() {
+                    if key.alt.is_none() && key.menu.is_none() {
                         Some((key.subtag, value.as_str()))
                     } else {
                         None
@@ -152,7 +152,7 @@ impl SourceDataProvider {
                 })
                 // Overwrite with short names, as we want to use those
                 .chain(regions.iter().filter_map(|(key, value)| {
-                    if key.alt_variant.as_deref() == Some("short") && key.menu_variant.is_none() {
+                    if key.alt.as_deref() == Some("short") && key.menu.is_none() {
                         Some((key.subtag, value.as_str()))
                     } else {
                         None

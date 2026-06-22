@@ -5,7 +5,7 @@
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
-use crate::cldr_serde::displaynames::ModifiedSubtag;
+use crate::cldr_serde::displaynames::WithAlt;
 use crate::displaynames::{ALT_BIOT, ALT_CHAGOS, ALT_SHORT, ALT_VARIANT};
 use icu::experimental::displaynames::provider::*;
 use icu_provider::prelude::*;
@@ -53,13 +53,13 @@ impl From<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames<'s
         let mut names = BTreeMap::new();
         let mut short_names = BTreeMap::new();
         for (key, value) in other.main.value.localedisplaynames.regions.iter() {
-            if key.menu_variant.is_some() {
+            if key.menu.is_some() {
                 continue;
             }
 
             let region = key.subtag;
 
-            match key.alt_variant.as_deref() {
+            match key.alt.as_deref() {
                 Some(ALT_SHORT) => {
                     short_names.insert(region.to_tinystr(), value.as_str());
                 }

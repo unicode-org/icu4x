@@ -5,7 +5,7 @@
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
-use crate::cldr_serde::displaynames::ModifiedSubtag;
+use crate::cldr_serde::displaynames::WithAlt;
 use icu::experimental::displaynames::provider::*;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
@@ -43,13 +43,13 @@ impl From<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNames<
     fn from(other: &cldr_serde::displaynames::variant::Resource) -> Self {
         let mut names = BTreeMap::new();
         for (key, value) in other.main.value.localedisplaynames.variants.iter() {
-            if key.menu_variant.is_some() {
+            if key.menu.is_some() {
                 continue;
             }
 
             let variant = key.subtag;
 
-            match key.alt_variant.as_deref() {
+            match key.alt.as_deref() {
                 None => {
                     names.insert(variant.to_tinystr(), value.as_str());
                 }
