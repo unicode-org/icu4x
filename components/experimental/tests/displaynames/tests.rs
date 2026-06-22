@@ -174,11 +174,8 @@ fn test_concatenate() {
         // Test the newer LanguageIdentifierDisplayName
         use icu_experimental::displaynames::single::LanguageIdentifierDisplayNameOwned;
         let lang_id = cas.input_1.id.clone();
-        let result = LanguageIdentifierDisplayNameOwned::try_new(
-            locale.clone().into(),
-            lang_id,
-            options,
-        );
+        let result =
+            LanguageIdentifierDisplayNameOwned::try_new(locale.clone().into(), lang_id, options);
         match result {
             Ok(single_display_name) => {
                 assert_eq!(cas.single_should_err, false, "{cas:?}");
