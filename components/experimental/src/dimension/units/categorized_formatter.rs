@@ -306,6 +306,7 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
             ..Default::default()
         };
 
+        // TODO(#8125): this might return a short display name from core, even if there would be a long one in extended.
         let display_name = DataProvider::<C::DataMarkerCore>::load(provider, req)
             .map(|r| r.payload.cast())
             .or_else(|_| {
@@ -346,6 +347,7 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
             ..Default::default()
         };
 
+        // TODO(#8125): this might return a short display name from core or extended, even if there would be a long one in outlier.
         let display_name = <crate::provider::Baked as DataProvider<C::DataMarkerCore>>::load(
             &crate::provider::Baked,
             req,
