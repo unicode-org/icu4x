@@ -37,6 +37,23 @@ prefs_convert!(CurrencyFormatterPreferences, DecimalFormatterPreferences, {
 });
 prefs_convert!(CurrencyFormatterPreferences, PluralRulesPreferences);
 
+impl CurrencyFormatterPreferences {
+    pub(crate) fn nu_id<'a>(
+        &'a self,
+        locale: &'a DataLocale,
+    ) -> Option<DataIdentifierBorrowed<'a>> {
+        self.numbering_system
+            .as_ref()
+            .map(|s| s.as_str())
+            .map(|nu| {
+                DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic(nu),
+                    locale,
+                )
+            })
+    }
+}
+
 /// A formatter for monetary values.
 ///
 /// [`CurrencyFormatter`] supports:
@@ -86,7 +103,7 @@ impl CurrencyFormatter {
         let decimal_formatter =
             DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
 
-        let req_id = nu_id(&prefs, &locale);
+        let req_id = prefs.nu_id(&locale);
         let default_id = DataIdentifierBorrowed::for_locale(&locale);
         let ids = req_id.into_iter().chain(core::iter::once(default_id));
         let essential =
@@ -125,7 +142,7 @@ impl CurrencyFormatter {
             (&prefs).into(),
             DecimalFormatterOptions::default(),
         )?;
-        let req_id = nu_id(&prefs, &locale);
+        let req_id = prefs.nu_id(&locale);
         let default_id = DataIdentifierBorrowed::for_locale(&locale);
         let ids = req_id.into_iter().chain(core::iter::once(default_id));
         let essential = load_with_fallback::<CurrencyEssentialsV1>(provider, ids)?.payload;
@@ -181,20 +198,4 @@ impl CurrencyFormatter {
             )),
         )
     }
-}
-
-fn nu_id<'a>(
-    prefs: &'a CurrencyFormatterPreferences,
-    locale: &'a DataLocale,
-) -> Option<DataIdentifierBorrowed<'a>> {
-    prefs
-        .numbering_system
-        .as_ref()
-        .map(|s| s.as_str())
-        .map(|nu| {
-            DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic(nu),
-                locale,
-            )
-        })
 }
