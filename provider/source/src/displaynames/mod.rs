@@ -8,6 +8,9 @@ pub(crate) mod region;
 pub(crate) mod script;
 pub(crate) mod variant;
 
+use crate::cldr_serde::displaynames::WithAlt;
+use std::collections::{BTreeMap, HashMap};
+
 pub(crate) const ALT_SHORT: &str = "short";
 pub(crate) const ALT_LONG: &str = "long";
 pub(crate) const ALT_VARIANT: &str = "variant";
@@ -23,6 +26,64 @@ pub(crate) const ALT_MENU: &str = "menu";
 
 pub(crate) const MENU_CORE: &str = "core";
 pub(crate) const MENU_EXTENSION: &str = "extension";
+
+pub(crate) struct ExtractedNames<'a, K> {
+    pub(crate) names: BTreeMap<K, &'a str>,
+    pub(crate) short_names: BTreeMap<K, &'a str>,
+    pub(crate) long_names: BTreeMap<K, &'a str>,
+    pub(crate) menu_names: BTreeMap<K, &'a str>,
+}
+
+pub(crate) fn extract_names<'a, T, K, F>(
+    map: &'a HashMap<WithAlt<T>, String>,
+    ignored_alts: &[&str],
+    log_context: &str,
+    filter_project: F,
+) -> ExtractedNames<'a, K>
+where
+    K: Ord,
+    F: Fn(&T, &str) -> Option<K>,
+{
+    let mut names = BTreeMap::new();
+    let mut short_names = BTreeMap::new();
+    let mut long_names = BTreeMap::new();
+    let mut menu_names = BTreeMap::new();
+    for (key, value) in map.iter() {
+        if key.menu.is_some() {
+            continue;
+        }
+        let val_str = value.as_str();
+        if let Some(k) = filter_project(&key.subtag, val_str) {
+            match key.alt.as_deref() {
+                Some(ALT_SHORT) => {
+                    short_names.insert(k, val_str);
+                }
+                Some(ALT_LONG) => {
+                    long_names.insert(k, val_str);
+                }
+                Some(ALT_MENU) => {
+                    menu_names.insert(k, val_str);
+                }
+                None => {
+                    names.insert(k, val_str);
+                }
+                Some(alt) => {
+                    if ignored_alts.contains(&alt) {
+                        // TODO(#8012): Handle preference-specific alt variants.
+                    } else {
+                        log::warn!("Unknown alt variant for {}: {}", log_context, alt);
+                    }
+                }
+            }
+        }
+    }
+    ExtractedNames {
+        names,
+        short_names,
+        long_names,
+        menu_names,
+    }
+}
 
 /// Macro for implementing a single-name display names data provider.
 ///

@@ -6,7 +6,7 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 use crate::cldr_serde::displaynames::WithAlt;
-use crate::displaynames::{ALT_SECONDARY, ALT_SHORT, ALT_STANDALONE, ALT_VARIANT};
+use crate::displaynames::{ALT_SECONDARY, ALT_SHORT, ALT_STANDALONE, ALT_VARIANT, extract_names};
 use icu::experimental::displaynames::provider::*;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
@@ -50,45 +50,29 @@ crate::displaynames::impl_displaynames_legacy_iter_v1!(ScriptDisplayNamesV1, "sc
 
 impl From<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames<'static> {
     fn from(other: &cldr_serde::displaynames::script::Resource) -> Self {
-        let mut names = BTreeMap::new();
-        let mut short_names = BTreeMap::new();
-        for (key, value) in other.main.value.localedisplaynames.scripts.iter() {
-            if key.menu.is_some() {
-                continue;
-            }
+        let extracted = extract_names(
+            &other.main.value.localedisplaynames.scripts,
+            &[ALT_VARIANT, ALT_SECONDARY, ALT_STANDALONE],
+            "script",
+            |script, val| {
+                let script_str = script.to_tinystr();
+                if script_str.as_str() == val {
+                    None
+                } else {
+                    Some(script_str)
+                }
+            },
+        );
 
-            let script = key.subtag;
+        let to_zero_map = |map: BTreeMap<tinystr::TinyAsciiStr<4>, &str>| {
+            map.into_iter()
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect()
+        };
 
-            match key.alt.as_deref() {
-                Some(ALT_SHORT) => {
-                    short_names.insert(script.to_tinystr(), value.as_str());
-                }
-                None => {
-                    names.insert(script.to_tinystr(), value.as_str());
-                }
-                Some(ALT_VARIANT) | Some(ALT_SECONDARY) => {
-                    // TODO(#8012): Handle this with datagen alt flags.
-                }
-                Some(ALT_STANDALONE) => {
-                    // TODO(#8011): Support standalone display names.
-                }
-                Some(alt) => {
-                    log::warn!("Unknown alt variant for script: {}", alt);
-                }
-            }
-        }
         Self {
-            // Old CLDR versions may contain trivial entries, so filter
-            names: names
-                .into_iter()
-                .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (k.to_unvalidated(), v))
-                .collect(),
-            short_names: short_names
-                .into_iter()
-                .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (k.to_unvalidated(), v))
-                .collect(),
+            names: to_zero_map(extracted.names),
+            short_names: to_zero_map(extracted.short_names),
         }
     }
 }

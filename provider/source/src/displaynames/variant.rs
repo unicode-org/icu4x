@@ -6,6 +6,7 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 use crate::cldr_serde::displaynames::WithAlt;
+use crate::displaynames::{ALT_SECONDARY, extract_names};
 use icu::experimental::displaynames::provider::*;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
@@ -41,33 +42,28 @@ crate::displaynames::impl_displaynames_legacy_iter_v1!(VariantDisplayNamesV1, "v
 // TODO: Support alt variants for variant display names.
 impl From<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNames<'static> {
     fn from(other: &cldr_serde::displaynames::variant::Resource) -> Self {
-        let mut names = BTreeMap::new();
-        for (key, value) in other.main.value.localedisplaynames.variants.iter() {
-            if key.menu.is_some() {
-                continue;
-            }
+        let extracted = extract_names(
+            &other.main.value.localedisplaynames.variants,
+            &[ALT_SECONDARY],
+            "variant",
+            |variant, val| {
+                let variant_str = variant.to_tinystr();
+                if variant_str.as_str() == val {
+                    None
+                } else {
+                    Some(variant_str)
+                }
+            },
+        );
 
-            let variant = key.subtag;
-
-            match key.alt.as_deref() {
-                None => {
-                    names.insert(variant.to_tinystr(), value.as_str());
-                }
-                Some("secondary") => {
-                    // TODO(#8012): Handle this with datagen alt flags.
-                }
-                Some(alt) => {
-                    log::warn!("Unknown alt variant for variant: {}", alt);
-                }
-            }
-        }
-        Self {
-            // Old CLDR versions may contain trivial entries, so filter
-            names: names
-                .into_iter()
-                .filter(|&(k, v)| k != v)
+        let to_zero_map = |map: BTreeMap<tinystr::TinyAsciiStr<8>, &str>| {
+            map.into_iter()
                 .map(|(k, v)| (k.to_unvalidated(), v))
-                .collect(),
+                .collect()
+        };
+
+        Self {
+            names: to_zero_map(extracted.names),
         }
     }
 }

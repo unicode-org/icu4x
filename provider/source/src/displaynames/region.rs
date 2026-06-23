@@ -6,7 +6,7 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 use crate::cldr_serde::displaynames::WithAlt;
-use crate::displaynames::{ALT_BIOT, ALT_CHAGOS, ALT_SHORT, ALT_VARIANT};
+use crate::displaynames::{ALT_BIOT, ALT_CHAGOS, ALT_SHORT, ALT_VARIANT, extract_names};
 use icu::experimental::displaynames::provider::*;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
@@ -50,42 +50,29 @@ crate::displaynames::impl_displaynames_v1!(
 
 impl From<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames<'static> {
     fn from(other: &cldr_serde::displaynames::region::Resource) -> Self {
-        let mut names = BTreeMap::new();
-        let mut short_names = BTreeMap::new();
-        for (key, value) in other.main.value.localedisplaynames.regions.iter() {
-            if key.menu.is_some() {
-                continue;
-            }
+        let extracted = extract_names(
+            &other.main.value.localedisplaynames.regions,
+            &[ALT_VARIANT, ALT_CHAGOS, ALT_BIOT],
+            "region",
+            |region, val| {
+                let region_str = region.to_tinystr();
+                if region_str.as_str() == val {
+                    None
+                } else {
+                    Some(region_str)
+                }
+            },
+        );
 
-            let region = key.subtag;
+        let to_zero_map = |map: BTreeMap<tinystr::TinyAsciiStr<3>, &str>| {
+            map.into_iter()
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect()
+        };
 
-            match key.alt.as_deref() {
-                Some(ALT_SHORT) => {
-                    short_names.insert(region.to_tinystr(), value.as_str());
-                }
-                None => {
-                    names.insert(region.to_tinystr(), value.as_str());
-                }
-                Some(ALT_VARIANT) | Some(ALT_CHAGOS) | Some(ALT_BIOT) => {
-                    // TODO(#8012): Handle this with datagen alt flags.
-                }
-                Some(alt) => {
-                    log::warn!("Unknown alt variant for region: {}", alt);
-                }
-            }
-        }
         Self {
-            // Old CLDR versions may contain trivial entries, so filter
-            names: names
-                .into_iter()
-                .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (k.to_unvalidated(), v))
-                .collect(),
-            short_names: short_names
-                .into_iter()
-                .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (k.to_unvalidated(), v))
-                .collect(),
+            names: to_zero_map(extracted.names),
+            short_names: to_zero_map(extracted.short_names),
         }
     }
 }
