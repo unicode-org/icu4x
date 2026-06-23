@@ -7,7 +7,7 @@ use crate::SourceDataProvider;
 use crate::cldr_serde;
 use crate::cldr_serde::displaynames::WithAlt;
 use crate::displaynames::{
-    extract_names, ALT_LONG, ALT_OFFICIAL, ALT_SECONDARY, ALT_SHORT, ALT_VARIANT,
+    ALT_LONG, ALT_OFFICIAL, ALT_SECONDARY, ALT_SHORT, ALT_VARIANT, extract_names,
 };
 
 use icu::experimental::displaynames::provider::*;
