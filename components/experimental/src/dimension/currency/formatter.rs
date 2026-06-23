@@ -79,6 +79,10 @@ impl CurrencyFormatter {
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
+        // TODO: We should depend on the currency format patterns directly and not depend on
+        // the decimal formatter. If we do use the decimal formatter, we need to take care of
+        // synchronization of different numbering systems (e.g. if DecimalFormatter falls back
+        // to a different numbering system than the one resolved for CurrencyFormatter).
         let decimal_formatter =
             DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
 
@@ -112,6 +116,10 @@ impl CurrencyFormatter {
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
+        // TODO: We should depend on the currency format patterns directly and not depend on
+        // the decimal formatter. If we do use the decimal formatter, we need to take care of
+        // synchronization of different numbering systems (e.g. if DecimalFormatter falls back
+        // to a different numbering system than the one resolved for CurrencyFormatter).
         let decimal_formatter = DecimalFormatter::try_new_unstable(
             provider,
             (&prefs).into(),
