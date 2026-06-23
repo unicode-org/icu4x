@@ -6,7 +6,9 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 use crate::cldr_serde::displaynames::WithAlt;
-use crate::displaynames::{ALT_BIOT, ALT_CHAGOS, ALT_SHORT, ALT_VARIANT, extract_names};
+use crate::displaynames::{
+    ALT_BIOT, ALT_CHAGOS, ALT_SHORT, ALT_VARIANT, extract_names_for_zeromap_struct,
+};
 use icu::experimental::displaynames::provider::*;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
@@ -50,7 +52,7 @@ crate::displaynames::impl_displaynames_v1!(
 
 impl From<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames<'static> {
     fn from(other: &cldr_serde::displaynames::region::Resource) -> Self {
-        let extracted = extract_names(
+        let extracted = extract_names_for_zeromap_struct(
             &other.main.value.localedisplaynames.regions,
             &[ALT_VARIANT, ALT_CHAGOS, ALT_BIOT],
             "region",

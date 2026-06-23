@@ -6,7 +6,7 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 use crate::cldr_serde::displaynames::WithAlt;
-use crate::displaynames::{ALT_SECONDARY, extract_names};
+use crate::displaynames::{ALT_SECONDARY, extract_names_for_zeromap_struct};
 use icu::experimental::displaynames::provider::*;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
@@ -42,7 +42,7 @@ crate::displaynames::impl_displaynames_legacy_iter_v1!(VariantDisplayNamesV1, "v
 // TODO: Support alt variants for variant display names.
 impl From<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNames<'static> {
     fn from(other: &cldr_serde::displaynames::variant::Resource) -> Self {
-        let extracted = extract_names(
+        let extracted = extract_names_for_zeromap_struct(
             &other.main.value.localedisplaynames.variants,
             &[ALT_SECONDARY],
             "variant",

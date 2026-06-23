@@ -7,7 +7,7 @@ use crate::SourceDataProvider;
 use crate::cldr_serde;
 use crate::cldr_serde::displaynames::WithAlt;
 use crate::displaynames::{
-    ALT_LONG, ALT_OFFICIAL, ALT_SECONDARY, ALT_SHORT, ALT_VARIANT, extract_names,
+    ALT_LONG, ALT_OFFICIAL, ALT_SECONDARY, ALT_SHORT, ALT_VARIANT, extract_names_for_zeromap_struct,
 };
 
 use icu::experimental::displaynames::provider::*;
@@ -87,7 +87,7 @@ crate::displaynames::impl_displaynames_menu_v1!(
 
 impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayNames<'static> {
     fn from(other: &cldr_serde::displaynames::language::Resource) -> Self {
-        let extracted = extract_names(
+        let extracted = extract_names_for_zeromap_struct(
             &other.main.value.localedisplaynames.languages,
             &[ALT_VARIANT, ALT_SECONDARY, ALT_OFFICIAL],
             "language",
@@ -97,6 +97,7 @@ impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayName
                     None
                 } else {
                     let lang = langid.language;
+                    // Old CLDR versions may contain trivial entries, so filter
                     if lang.as_str() == val {
                         None
                     } else {
@@ -123,7 +124,7 @@ impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayName
 
 impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<'static> {
     fn from(other: &cldr_serde::displaynames::language::Resource) -> Self {
-        let extracted = extract_names(
+        let extracted = extract_names_for_zeromap_struct(
             &other.main.value.localedisplaynames.languages,
             &[ALT_VARIANT, ALT_SECONDARY, ALT_OFFICIAL],
             "language",
@@ -133,6 +134,7 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<
                     None
                 } else {
                     let locale_str = langid.to_string();
+                    // Old CLDR versions may contain trivial entries, so filter
                     if locale_str == val {
                         None
                     } else {

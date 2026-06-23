@@ -22,6 +22,7 @@ pub(crate) const ALT_SECONDARY: &str = "secondary";
 pub(crate) const ALT_BIOT: &str = "biot";
 /// Alternate name for territory code `IO` (British Indian Ocean Territory) mapping to "Chagos Archipelago".
 pub(crate) const ALT_CHAGOS: &str = "chagos";
+// ALT_MENU is being replaced by menu=core|extension, but it is still in CLDR
 pub(crate) const ALT_MENU: &str = "menu";
 
 pub(crate) const MENU_CORE: &str = "core";
@@ -34,7 +35,12 @@ pub(crate) struct ExtractedNames<'a, K> {
     pub(crate) menu_names: BTreeMap<K, &'a str>,
 }
 
-pub(crate) fn extract_names<'a, T, K, F>(
+/// Process locale display names from a cldr_serde struct to BTreeMaps
+/// ready to be converted to ZeroMaps.
+///
+/// This fn is used by the zeromap-based structs, not the LocaleNames
+/// attributes-based structs.
+pub(crate) fn extract_names_for_zeromap_struct<'a, T, K, F>(
     map: &'a HashMap<WithAlt<T>, String>,
     ignored_alts: &[&str],
     log_context: &str,
@@ -50,6 +56,8 @@ where
     let mut menu_names = BTreeMap::new();
     for (key, value) in map.iter() {
         if key.menu.is_some() {
+            // Menu core|extension is handled in LocaleNamesLanguageMenu,
+            // and not in the zeromap-based struct.
             continue;
         }
         let val_str = value.as_str();
@@ -69,7 +77,9 @@ where
                 }
                 Some(alt) => {
                     if ignored_alts.contains(&alt) {
-                        // TODO(#8012): Handle preference-specific alt variants.
+                        // TODO(#8012): Handle preference-specific alt variants,
+                        //   perhaps with datagen alt flags.
+                        // TODO(#8011): Support standalone display names.
                     } else {
                         log::warn!("Unknown alt variant for {}: {}", log_context, alt);
                     }
