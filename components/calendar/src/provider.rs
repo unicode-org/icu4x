@@ -22,7 +22,6 @@ use crate::types::Weekday;
 use icu_provider::fallback::{LocaleFallbackConfig, LocaleFallbackPriority};
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
-use zerovec::ZeroVec;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -224,6 +223,8 @@ impl serde::Serialize for JapaneseEras {
     where
         S: serde::Serializer,
     {
+        use zerovec::ZeroVec;
+
         #[derive(serde::Serialize)]
         struct Raw<'data> {
             pub dates_to_eras: ZeroVec<'data, (EraStartDate, TinyAsciiStr<16>)>,
@@ -253,6 +254,7 @@ impl<'de> serde::Deserialize<'de> for JapaneseEras {
         D: serde::Deserializer<'de>,
     {
         use serde::de::Error;
+        use zerovec::ZeroVec;
 
         #[derive(serde::Deserialize)]
         struct Raw<'data> {
@@ -262,24 +264,28 @@ impl<'de> serde::Deserialize<'de> for JapaneseEras {
 
         let Raw { dates_to_eras } = Raw::deserialize(deserializer)?;
 
-        Ok(
-            if let Some(&zerovec::ule::tuple::Tuple2ULE(start, code)) =
-                dates_to_eras.as_slice().as_ule_slice().last()
-            {
-                Self::with_last_era(
-                    EraStartDate {
-                        year: start.year.as_signed_int(),
-                        month: start.month,
-                        day: start.day,
-                    },
-                    code.resize(),
-                    dates_to_eras.as_slice().len() as u8 + 1,
-                )
-                .ok_or_else(|| D::Error::custom("Invalid era"))?
-            } else {
-                Self::up_to_reiwa()
-            },
+        let Some((start, code)) = dates_to_eras.last() else {
+            return Err(D::Error::custom("At least one era is required"));
+        };
+
+        if Self::up_to_reiwa()
+            .eras()
+            .map(|(start, code, ..)| (start, code.resize()))
+            .ne(dates_to_eras
+                .iter()
+                .take(Self::up_to_reiwa().eras().count()))
+        {
+            return Err(D::Error::custom(
+                "Invalid era data: Meiji through Reiwa must be present and in order",
+            ));
+        }
+
+        Ok(Self::with_last_era(
+            start,
+            code.resize(),
+            dates_to_eras.as_slice().len() as u8 + 1,
         )
+        .ok_or_else(|| D::Error::custom("Invalid era"))?)
     }
 }
 
