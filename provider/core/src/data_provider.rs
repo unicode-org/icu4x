@@ -460,6 +460,9 @@ where
     }
 }
 
+// TODO: Discuss where this should go, and if we should add it to the DataProvider trait
+// with a default implementation to allow for more performant implementations (e.g.
+// DynamicDataProviders wouldn't have to look up the marker multiple times).
 /// Load data by trying multiple requests in order, returning the first success.
 ///
 /// This is useful when you have a list of fallback identifiers and want to try them
