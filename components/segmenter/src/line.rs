@@ -767,7 +767,7 @@ fn is_break_utf32_by_loose(
             (
                 RuleBreakData::LINE_PROPERTY_IN | RuleBreakData::LINE_PROPERTY_IN_EASTASIAN,
                 _,
-                _,
+                RuleBreakData::LINE_PROPERTY_IN | RuleBreakData::LINE_PROPERTY_IN_EASTASIAN,
                 _,
             ) => true,
             // breaks before certain centered punctuation marks:
