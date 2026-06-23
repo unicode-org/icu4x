@@ -90,12 +90,14 @@ mod tests {
             "\u{200f}12,345.67\u{a0}ج.م.\u{200f}"
         );
 
-        // 3. Programmatic options override (latn over arab locale)
-        let options = CurrencyFormatterOptions {
-            numbering_system: Some(tinystr!(8, "latn")),
-            ..Default::default()
-        };
-        let fmt_opts = CurrencyFormatter::try_new(locale_arab, options).unwrap();
+        // 3. Programmatic preferences override (latn over arab locale)
+        let mut prefs = locale_arab;
+        let val = "latn"
+            .parse::<icu_locale_core::extensions::unicode::Value>()
+            .unwrap();
+        let nu = crate::dimension::preferences::NumberingSystem::try_from(&val).unwrap();
+        prefs.numbering_system = Some(nu);
+        let fmt_opts = CurrencyFormatter::try_new(prefs, Default::default()).unwrap();
         assert_writeable_eq!(
             fmt_opts.format_fixed_decimal(&value, &currency_code),
             "\u{200f}12,345.67\u{a0}ج.م.\u{200f}"

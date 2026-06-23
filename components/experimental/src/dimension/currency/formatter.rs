@@ -37,23 +37,7 @@ prefs_convert!(CurrencyFormatterPreferences, DecimalFormatterPreferences, {
 });
 prefs_convert!(CurrencyFormatterPreferences, PluralRulesPreferences);
 
-impl CurrencyFormatterPreferences {
-    fn apply_options(mut self, options: &CurrencyFormatterOptions) -> Self {
-        if let Some(nu) = options
-            .numbering_system
-            .as_ref()
-            .and_then(|ns| {
-                ns.as_str()
-                    .parse::<icu_locale_core::extensions::unicode::Value>()
-                    .ok()
-            })
-            .and_then(|val| crate::dimension::preferences::NumberingSystem::try_from(&val).ok())
-        {
-            self.numbering_system = Some(nu);
-        }
-        self
-    }
-}
+
 
 /// A formatter for monetary values.
 ///
@@ -96,15 +80,13 @@ impl CurrencyFormatter {
         prefs: CurrencyFormatterPreferences,
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
-        let resolved_prefs = prefs.apply_options(&options);
-
-        let locale = CurrencyEssentialsV1::make_locale(resolved_prefs.locale_preferences);
+        let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
         let decimal_formatter = DecimalFormatter::try_new(
-            (&resolved_prefs).into(),
+            (&prefs).into(),
             DecimalFormatterOptions::default(),
         )?;
 
-        let req_id = nu_id(&resolved_prefs, &locale);
+        let req_id = nu_id(&prefs, &locale);
         let default_id = DataIdentifierBorrowed::for_locale(&locale);
         let ids = req_id.into_iter().chain(core::iter::once(default_id));
         let essential =
@@ -133,15 +115,13 @@ impl CurrencyFormatter {
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
-        let resolved_prefs = prefs.apply_options(&options);
-
-        let locale = CurrencyEssentialsV1::make_locale(resolved_prefs.locale_preferences);
+        let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
         let decimal_formatter = DecimalFormatter::try_new_unstable(
             provider,
-            (&resolved_prefs).into(),
+            (&prefs).into(),
             DecimalFormatterOptions::default(),
         )?;
-        let req_id = nu_id(&resolved_prefs, &locale);
+        let req_id = nu_id(&prefs, &locale);
         let default_id = DataIdentifierBorrowed::for_locale(&locale);
         let ids = req_id.into_iter().chain(core::iter::once(default_id));
         let essential = load_with_fallback::<CurrencyEssentialsV1>(provider, ids)?.payload;

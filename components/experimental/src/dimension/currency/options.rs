@@ -15,15 +15,12 @@ use serde::{Deserialize, Serialize};
 pub struct CurrencyFormatterOptions {
     /// The width of the currency format.
     pub width: Width,
-    /// The numbering system to format with.
-    pub numbering_system: Option<tinystr::TinyAsciiStr<8>>,
 }
 
 impl From<Width> for CurrencyFormatterOptions {
     fn from(width: Width) -> Self {
         Self {
             width,
-            numbering_system: None,
         }
     }
 }
