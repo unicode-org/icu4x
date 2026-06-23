@@ -10,37 +10,33 @@
   ],
   "elements": [
     {
-      "header": 7,
+      "header": 26,
       "patterns": [
         "y年M月d日～d日",
         "y年M月d日～M月d日",
-        "y年M月d日～y年M月d日"
+        "y年M月d日"
       ]
     },
     {
-      "header": 7,
+      "header": 16,
       "patterns": [
-        "y/MM/dd～y/MM/dd",
-        "y/MM/dd～y/MM/dd",
-        "y/MM/dd～y/MM/dd"
+        "y/MM/dd"
       ]
     },
     {
-      "header": 15,
+      "header": 106,
       "patterns": [
         "Gy年M月d日～d日",
         "Gy年M月d日～M月d日",
         "Gy年M月d日～y年M月d日",
-        "Gy年M月d日～Gy年M月d日"
+        "Gy年M月d日"
       ]
     },
     {
-      "header": 15,
+      "header": 96,
       "patterns": [
         "Gy/MM/dd～y/MM/dd",
-        "Gy/MM/dd～y/MM/dd",
-        "Gy/MM/dd～y/MM/dd",
-        "Gy/MM/dd～Gy/MM/dd"
+        "Gy/MM/dd"
       ]
     }
   ]

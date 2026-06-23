@@ -10,17 +10,16 @@
   ],
   "elements": [
     {
-      "header": 6,
+      "header": 24,
       "patterns": [
         "U年MMM～MMM",
-        "U年MMM～U年MMM"
+        "U年MMM"
       ]
     },
     {
-      "header": 6,
+      "header": 16,
       "patterns": [
-        "U/MM～U/MM",
-        "U/MM～U/MM"
+        "U/MM"
       ]
     }
   ]

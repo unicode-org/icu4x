@@ -3,55 +3,43 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::grapheme::GraphemeClusterSegmenterBorrowed;
+use crate::indices::Utf16Indices;
 use crate::provider::*;
+#[cfg(feature = "unstable")]
+use crate::scaffold::PotentiallyIllFormedUtf8;
+use crate::scaffold::{RuleBreakType, Utf8, Utf16};
 use alloc::vec::Vec;
 use core::char::{REPLACEMENT_CHARACTER, decode_utf16};
 use potential_utf::PotentialUtf8;
+#[cfg(feature = "unstable")]
+use utf8_iter::{Utf8CharIndices, Utf8Chars};
 use zerovec::maps::ZeroMapBorrowed;
 
 mod matrix;
 use matrix::*;
 
 // A word break iterator using LSTM model. Input string have to be same language.
-
-pub(super) struct LstmSegmenterIterator<'s, 'data> {
-    input: &'s str,
-    pos_utf8: usize,
-    bies: BiesIterator<'s, 'data>,
+#[derive(Debug)]
+pub(super) struct LstmSegmenterIterator<'data, 's, R: RuleBreakType> {
+    chars: R::IterAttr<'s>,
+    bies: BiesIterator<'data>,
 }
 
-impl Iterator for LstmSegmenterIterator<'_, '_> {
+impl<R: RuleBreakType> Iterator for LstmSegmenterIterator<'_, '_, R> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
             let is_e = self.bies.next()?;
-            self.pos_utf8 += self.input[self.pos_utf8..].chars().next()?.len_utf8();
-            if is_e || self.bies.len() == 0 {
-                return Some(self.pos_utf8);
+            let (idx, ch) = self.chars.next()?;
+            if is_e || self.bies.input_seq.len() == 0 {
+                return Some(idx + R::char_len(ch));
             }
         }
     }
 }
 
-pub(super) struct LstmSegmenterIteratorUtf16<'s, 'data> {
-    bies: BiesIterator<'s, 'data>,
-    pos: usize,
-}
-
-impl Iterator for LstmSegmenterIteratorUtf16<'_, '_> {
-    type Item = usize;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        loop {
-            self.pos += 1;
-            if self.bies.next()? || self.bies.len() == 0 {
-                return Some(self.pos);
-            }
-        }
-    }
-}
-
+#[derive(Clone, Copy)]
 pub(super) struct LstmSegmenter<'data> {
     dic: ZeroMapBorrowed<'data, PotentialUtf8, u16>,
     embedding: MatrixZero<'data, 2>,
@@ -96,7 +84,7 @@ impl<'data> LstmSegmenter<'data> {
     }
 
     /// Create an LSTM based break iterator for an `str` (a UTF-8 string).
-    pub(super) fn segment_str<'a>(&'a self, input: &'a str) -> LstmSegmenterIterator<'a, 'data> {
+    pub(super) fn segment_str<'s>(self, input: &'s str) -> LstmSegmenterIterator<'data, 's, Utf8> {
         let input_seq = if let Some(grapheme) = self.grapheme {
             grapheme
                 .segment_str(input)
@@ -130,17 +118,59 @@ impl<'data> LstmSegmenter<'data> {
                 .collect()
         };
         LstmSegmenterIterator {
-            input,
-            pos_utf8: 0,
+            chars: input.char_indices(),
+            bies: BiesIterator::new(self, input_seq),
+        }
+    }
+
+    /// Create an LSTM based break iterator for a UTF-8 string.
+    #[cfg(feature = "unstable")]
+    pub(super) fn segment_utf8<'s>(
+        self,
+        input: &'s [u8],
+    ) -> LstmSegmenterIterator<'data, 's, PotentiallyIllFormedUtf8> {
+        let input_seq = if let Some(grapheme) = self.grapheme {
+            grapheme
+                .segment_utf8(input)
+                .collect::<Vec<usize>>()
+                .windows(2)
+                .map(|chunk| {
+                    let range = if let [first, second, ..] = chunk {
+                        *first..*second
+                    } else {
+                        unreachable!()
+                    };
+                    let grapheme_cluster = if let Some(grapheme_cluster) = input.get(range) {
+                        grapheme_cluster
+                    } else {
+                        return self.dic.len() as u16;
+                    };
+
+                    self.dic
+                        .get_copied(PotentialUtf8::from_bytes(grapheme_cluster))
+                        .unwrap_or_else(|| self.dic.len() as u16)
+                })
+                .collect()
+        } else {
+            Utf8Chars::new(input)
+                .map(|c| {
+                    self.dic
+                        .get_copied(PotentialUtf8::from_str(c.encode_utf8(&mut [0; 4])))
+                        .unwrap_or_else(|| self.dic.len() as u16)
+                })
+                .collect()
+        };
+        LstmSegmenterIterator {
+            chars: Utf8CharIndices::new(input),
             bies: BiesIterator::new(self, input_seq),
         }
     }
 
     /// Create an LSTM based break iterator for a UTF-16 string.
-    pub(super) fn segment_utf16<'a>(
-        &'a self,
-        input: &[u16],
-    ) -> LstmSegmenterIteratorUtf16<'a, 'data> {
+    pub(super) fn segment_utf16<'s>(
+        self,
+        input: &'s [u16],
+    ) -> LstmSegmenterIterator<'data, 's, Utf16> {
         let input_seq = if let Some(grapheme) = self.grapheme {
             grapheme
                 .segment_utf16(input)
@@ -184,26 +214,48 @@ impl<'data> LstmSegmenter<'data> {
                 })
                 .collect()
         };
-        LstmSegmenterIteratorUtf16 {
+        LstmSegmenterIterator {
+            chars: Utf16Indices::new(input),
             bies: BiesIterator::new(self, input_seq),
-            pos: 0,
         }
     }
 }
 
-struct BiesIterator<'l, 'data> {
-    segmenter: &'l LstmSegmenter<'data>,
+#[derive(Debug)]
+struct BiesIterator<'data> {
+    embedding: MatrixZero<'data, 2>,
+    fw_w: MatrixZero<'data, 3>,
+    fw_u: MatrixZero<'data, 3>,
+    fw_b: MatrixZero<'data, 2>,
+    timew_fw: MatrixZero<'data, 2>,
+    timew_bw: MatrixZero<'data, 2>,
+    time_b: MatrixZero<'data, 1>,
     input_seq: core::iter::Enumerate<alloc::vec::IntoIter<u16>>,
     h_bw: MatrixOwned<2>,
     curr_fw: MatrixOwned<1>,
     c_fw: MatrixOwned<1>,
 }
 
-impl<'l, 'data> BiesIterator<'l, 'data> {
+impl<'data> BiesIterator<'data> {
     // input_seq is a sequence of id numbers that represents grapheme clusters or code points in the input line. These ids are used later
     // in the embedding layer of the model.
-    fn new(segmenter: &'l LstmSegmenter<'data>, input_seq: Vec<u16>) -> Self {
-        let hunits = segmenter.fw_u.dim().1;
+    fn new(
+        LstmSegmenter {
+            embedding,
+            fw_w,
+            fw_u,
+            fw_b,
+            bw_w,
+            bw_u,
+            bw_b,
+            timew_fw,
+            timew_bw,
+            time_b,
+            ..
+        }: LstmSegmenter<'data>,
+        input_seq: Vec<u16>,
+    ) -> Self {
+        let hunits = fw_u.dim().1;
 
         // Backward LSTM
         let mut c_bw = MatrixOwned::<1>::new_zero([hunits]);
@@ -214,12 +266,12 @@ impl<'l, 'data> BiesIterator<'l, 'data> {
             }
             #[expect(clippy::unwrap_used)]
             compute_hc(
-                segmenter.embedding.submatrix::<1>(g_id as usize).unwrap(), /* shape (dict.len() + 1, hunit), g_id is at most dict.len() */
-                h_bw.submatrix_mut(i).unwrap(), // shape (input_seq.len(), hunits)
+                embedding.submatrix::<1>(g_id as usize).unwrap(), /* shape (dict.len() + 1, hunit), g_id is at most dict.len() */
+                h_bw.submatrix_mut(i).unwrap(),                   // shape (input_seq.len(), hunits)
                 c_bw.as_mut(),
-                segmenter.bw_w,
-                segmenter.bw_u,
-                segmenter.bw_b,
+                bw_w,
+                bw_u,
+                bw_b,
             );
         }
 
@@ -228,18 +280,18 @@ impl<'l, 'data> BiesIterator<'l, 'data> {
             h_bw,
             c_fw: MatrixOwned::<1>::new_zero([hunits]),
             curr_fw: MatrixOwned::<1>::new_zero([hunits]),
-            segmenter,
+            embedding,
+            fw_w,
+            fw_u,
+            fw_b,
+            timew_fw,
+            timew_bw,
+            time_b,
         }
     }
 }
 
-impl ExactSizeIterator for BiesIterator<'_, '_> {
-    fn len(&self) -> usize {
-        self.input_seq.len()
-    }
-}
-
-impl Iterator for BiesIterator<'_, '_> {
+impl Iterator for BiesIterator<'_> {
     type Item = bool;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -247,15 +299,12 @@ impl Iterator for BiesIterator<'_, '_> {
 
         #[expect(clippy::unwrap_used)]
         compute_hc(
-            self.segmenter
-                .embedding
-                .submatrix::<1>(g_id as usize)
-                .unwrap(), // shape (dict.len() + 1, hunit), g_id is at most dict.len()
+            self.embedding.submatrix::<1>(g_id as usize).unwrap(), // shape (dict.len() + 1, hunit), g_id is at most dict.len()
             self.curr_fw.as_mut(),
             self.c_fw.as_mut(),
-            self.segmenter.fw_w,
-            self.segmenter.fw_u,
-            self.segmenter.fw_b,
+            self.fw_w,
+            self.fw_u,
+            self.fw_b,
         );
 
         #[expect(clippy::unwrap_used)] // shape (input_seq.len(), hunits)
@@ -265,10 +314,10 @@ impl Iterator for BiesIterator<'_, '_> {
             data: &mut weights,
             dims: [4],
         };
-        curr_est.add_dot_2d(self.curr_fw.as_borrowed(), self.segmenter.timew_fw);
-        curr_est.add_dot_2d(curr_bw, self.segmenter.timew_bw);
+        curr_est.add_dot_2d(self.curr_fw.as_borrowed(), self.timew_fw);
+        curr_est.add_dot_2d(curr_bw, self.timew_bw);
         #[expect(clippy::unwrap_used)] // both shape (4)
-        curr_est.add(self.segmenter.time_b).unwrap();
+        curr_est.add(self.time_b).unwrap();
         // For correct BIES weight calculation we'd now have to apply softmax, however
         // we're only doing a naive argmax, so a monotonic function doesn't make a difference.
 

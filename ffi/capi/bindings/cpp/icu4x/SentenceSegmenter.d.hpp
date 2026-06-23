@@ -31,6 +31,12 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct SentenceSegmenter;
+
+
+    typedef struct DiplomatSentenceSegmenterView {
+      const SentenceSegmenter** data;
+      size_t len;
+    } DiplomatSentenceSegmenterView;
 } // namespace capi
 } // namespace
 
@@ -68,7 +74,7 @@ public:
    *
    * See the [Rust documentation for `segment_utf8`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.SentenceSegmenterBorrowed.html#method.segment_utf8) for more information.
    */
-  inline std::unique_ptr<icu4x::SentenceBreakIteratorUtf8> segment(std::string_view input) const;
+  inline std::unique_ptr<icu4x::SentenceBreakIteratorUtf8> segment(std::string_view input DIPLOMAT_LIFETIME_BOUND) const DIPLOMAT_LIFETIME_BOUND;
 
   /**
    * Segments a string.
@@ -78,14 +84,14 @@ public:
    *
    * See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.SentenceSegmenterBorrowed.html#method.segment_utf16) for more information.
    */
-  inline std::unique_ptr<icu4x::SentenceBreakIteratorUtf16> segment16(std::u16string_view input) const;
+  inline std::unique_ptr<icu4x::SentenceBreakIteratorUtf16> segment16(std::u16string_view input DIPLOMAT_LIFETIME_BOUND) const DIPLOMAT_LIFETIME_BOUND;
 
   /**
    * Segments a Latin-1 string.
    *
    * See the [Rust documentation for `segment_latin1`](https://docs.rs/icu/2.2.0/icu/segmenter/struct.SentenceSegmenterBorrowed.html#method.segment_latin1) for more information.
    */
-  inline std::unique_ptr<icu4x::SentenceBreakIteratorLatin1> segment_latin1(icu4x::diplomat::span<const uint8_t> input) const;
+  inline std::unique_ptr<icu4x::SentenceBreakIteratorLatin1> segment_latin1(icu4x::diplomat::span<const uint8_t> input DIPLOMAT_LIFETIME_BOUND) const DIPLOMAT_LIFETIME_BOUND;
 
     inline const icu4x::capi::SentenceSegmenter* AsFFI() const;
     inline icu4x::capi::SentenceSegmenter* AsFFI();

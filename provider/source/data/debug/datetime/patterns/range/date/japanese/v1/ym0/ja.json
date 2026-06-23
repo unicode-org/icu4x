@@ -10,19 +10,18 @@
   ],
   "elements": [
     {
-      "header": 14,
+      "header": 104,
       "patterns": [
         "Gy年M月～M月",
         "Gy年M月～y年M月",
-        "Gy年M月～Gy年M月"
+        "Gy年M月"
       ]
     },
     {
-      "header": 14,
+      "header": 96,
       "patterns": [
         "GGGGGy/MM～y/MM",
-        "GGGGGy/MM～y/MM",
-        "GGGGGy/MM～GGGGGy/MM"
+        "GGGGGy/MM"
       ]
     }
   ]

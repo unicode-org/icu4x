@@ -46,6 +46,7 @@ const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-dates-full/main/$LOCALES/dateFields.json",
     "cldr-dates-full/main/$LOCALES/timeZoneNames.json",
     "cldr-dates-full/main/cs/ca-gregorian.json",
+    "cldr-localenames-full/main/$LOCALES/localeDisplayNames.json",
     "cldr-localenames-full/main/$LOCALES/languages.json",
     "cldr-localenames-full/main/$LOCALES/scripts.json",
     "cldr-localenames-full/main/$LOCALES/territories.json",

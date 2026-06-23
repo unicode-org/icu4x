@@ -27,6 +27,12 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct ScriptWithExtensions;
+
+
+    typedef struct DiplomatScriptWithExtensionsView {
+      const ScriptWithExtensions** data;
+      size_t len;
+    } DiplomatScriptWithExtensionsView;
 } // namespace capi
 } // namespace
 
@@ -72,14 +78,14 @@ public:
    *
    * See the [Rust documentation for `as_borrowed`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptWithExtensions.html#method.as_borrowed) for more information.
    */
-  inline std::unique_ptr<icu4x::ScriptWithExtensionsBorrowed> as_borrowed() const;
+  inline std::unique_ptr<icu4x::ScriptWithExtensionsBorrowed> as_borrowed() const DIPLOMAT_LIFETIME_BOUND;
 
   /**
    * Get a list of ranges of code points that contain this script in their `Script_Extensions` values
    *
    * See the [Rust documentation for `get_script_extensions_ranges`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_ranges) for more information.
    */
-  inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_script(uint16_t script) const;
+  inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_script(uint16_t script) const DIPLOMAT_LIFETIME_BOUND;
 
     inline const icu4x::capi::ScriptWithExtensions* AsFFI() const;
     inline icu4x::capi::ScriptWithExtensions* AsFFI();

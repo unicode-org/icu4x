@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub(crate) mod language;
+pub(crate) mod locale_display_pattern;
 pub(crate) mod region;
 pub(crate) mod script;
 pub(crate) mod variant;

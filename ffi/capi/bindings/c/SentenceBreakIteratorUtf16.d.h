@@ -14,6 +14,11 @@
 typedef struct SentenceBreakIteratorUtf16 SentenceBreakIteratorUtf16;
 
 
+typedef struct DiplomatSentenceBreakIteratorUtf16View {
+  const SentenceBreakIteratorUtf16** data;
+  size_t len;
+} DiplomatSentenceBreakIteratorUtf16View;
+
 
 
 #endif // SentenceBreakIteratorUtf16_D_H

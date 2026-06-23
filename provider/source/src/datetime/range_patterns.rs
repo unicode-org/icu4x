@@ -12,11 +12,16 @@ use icu::datetime::provider::fields::{self, Field, components};
 use icu::datetime::provider::packed_pattern::{
     GenericPackedPatterns, GenericPackedPatternsBuilder,
 };
+use icu::datetime::provider::pattern::PatternItem;
+use icu::datetime::provider::pattern::reference;
 use icu::datetime::provider::pattern::runtime::{GenericPattern, Pattern};
 use icu::datetime::provider::range_patterns::*;
 use icu::datetime::provider::semantic_skeletons::GluePattern;
-use icu::datetime::provider::skeleton::{find_best_skeleton, reference::Skeleton};
+use icu::datetime::provider::skeleton::{
+    find_best_skeleton, is_bad_match_for_single_field, reference::Skeleton,
+};
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
+use icu_pattern::{DoublePlaceholderPattern, PatternItem as ParserPatternItem};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::str::FromStr;
@@ -131,12 +136,95 @@ fn skeleton_has_time_fields(skeleton: &Skeleton) -> bool {
     })
 }
 
+/// Extracts the glue string from a CLDR fallback pattern (e.g. "{0} – {1}").
+///
+/// Returns `None` if the pattern is invalid or if `{0}` and `{1}` are not at the ends
+/// of the pattern (no prefix/suffix).
+fn extract_glue_from_double_pat(double_pat: &DoublePlaceholderPattern) -> Option<&str> {
+    let mut iter = double_pat.iter();
+    // The pattern must start with a placeholder.
+    let p0 = match iter.next()? {
+        ParserPatternItem::Placeholder(p) => p,
+        _ => return None,
+    };
+    // The middle item must be the glue literal.
+    let glue = match iter.next()? {
+        ParserPatternItem::Literal(glue) => glue,
+        _ => return None,
+    };
+    // The pattern must end with a placeholder.
+    let p1 = match iter.next()? {
+        ParserPatternItem::Placeholder(p) => p,
+        _ => return None,
+    };
+    // The two placeholders must be different (e.g., `{0}` and `{1}`).
+    if p0 == p1 {
+        return None;
+    }
+    // There must be no extra items.
+    if iter.next().is_some() {
+        return None;
+    }
+    Some(glue)
+}
+
+/// Decomposes a CLDR range pattern into sub-patterns based on the fallback glue.
+///
+/// If the pattern is symmetric (i.e. it can be split by the fallback glue and both sides
+/// are identical), it returns `RangePatternInfo::Symmetric`. Otherwise, it returns
+/// `RangePatternInfo::FullRange` containing the entire pattern.
+fn decompose_pattern(
+    pattern_str: &str,
+    fallback_pattern: Option<&DoublePlaceholderPattern>,
+) -> RangePatternInfo<'static> {
+    let ref_pat = match reference::Pattern::from_str(pattern_str) {
+        Ok(p) => p,
+        Err(_) => {
+            return RangePatternInfo::FullRange(Pattern::default());
+        }
+    };
+
+    let runtime_pat = Pattern::from(&ref_pat);
+
+    if let Some(glue) = fallback_pattern.and_then(extract_glue_from_double_pat) {
+        let items = ref_pat.into_items();
+        if let Some(idx) = find_glue_in_items(&items, glue) {
+            let left: Pattern = items[..idx].iter().copied().collect();
+            let right: Pattern = items[idx + glue.chars().count()..]
+                .iter()
+                .copied()
+                .collect();
+
+            if left == right {
+                return RangePatternInfo::Symmetric(left);
+            }
+        }
+    }
+
+    RangePatternInfo::FullRange(runtime_pat)
+}
+
+/// Finds the starting index of a glue string within `items`.
+fn find_glue_in_items(items: &[PatternItem], glue: &str) -> Option<usize> {
+    if glue.is_empty() {
+        return None;
+    }
+    let glue_len = glue.chars().count();
+    items.windows(glue_len).position(|window| {
+        window.iter().zip(glue.chars()).all(|(item, c)| match item {
+            PatternItem::Literal(lit_char) => *lit_char == c,
+            _ => false,
+        })
+    })
+}
+
 /// Helper to parse patterns by greatest difference from CLDR raw data.
 ///
 /// Takes a mapping closure to convert field strings to their u8 representation,
 /// and a description for logging.
 fn parse_pgd_generic(
     field_patterns: &HashMap<String, String>,
+    fallback_pattern: Option<&DoublePlaceholderPattern>,
     map_fn: impl Fn(&str) -> Option<u8>,
     log_desc: &str,
 ) -> Option<PatternsByGreatestDifference<'static>> {
@@ -145,24 +233,15 @@ fn parse_pgd_generic(
         let Some(field_u8) = map_fn(field_str.as_str()) else {
             continue;
         };
-        let pattern = match Pattern::from_str(pattern_str) {
-            Ok(p) => p,
-            Err(err) => {
-                log::warn!("Failed to parse {log_desc} range pattern '{pattern_str}': {err:?}");
-                continue;
-            }
-        };
-        parsed.push((field_u8, pattern));
+        let info = decompose_pattern(pattern_str, fallback_pattern);
+        parsed.push((field_u8, info));
     }
 
     if parsed.is_empty() {
         return None;
     }
 
-    // Sort by field value
-    parsed.sort_by_key(|(f, _)| *f);
-
-    match PatternsByGreatestDifference::try_from_sorted(parsed) {
+    match PatternsByGreatestDifference::try_from_patterns(parsed) {
         Ok(pgd) => Some(pgd),
         Err(e) => {
             log::warn!("Failed to construct PatternsByGreatestDifference for {log_desc}: {e}");
@@ -177,9 +256,11 @@ fn parse_pgd_generic(
 /// Returns `None` if no date fields are found or parsed successfully.
 fn parse_date_pgd(
     field_patterns: &HashMap<String, String>,
+    fallback_pattern: Option<&DoublePlaceholderPattern>,
 ) -> Option<PatternsByGreatestDifference<'static>> {
     parse_pgd_generic(
         field_patterns,
+        fallback_pattern,
         |field_str| DateGreatestDifferenceField::from_symbol(field_str).map(|f| f as u8),
         "date",
     )
@@ -191,9 +272,11 @@ fn parse_date_pgd(
 /// Returns `None` if no time fields are found or parsed successfully.
 fn parse_time_pgd(
     field_patterns: &HashMap<String, String>,
+    fallback_pattern: Option<&DoublePlaceholderPattern>,
 ) -> Option<PatternsByGreatestDifference<'static>> {
     parse_pgd_generic(
         field_patterns,
+        fallback_pattern,
         |field_str| TimeGreatestDifferenceField::from_symbol(field_str).map(|f| f as u8),
         "time",
     )
@@ -216,13 +299,18 @@ fn parse_interval_patterns(
         return (BTreeMap::new(), BTreeMap::new());
     };
 
+    let fallback_str = interval_formats.fallback.as_str();
+    let fallback_pattern =
+        DoublePlaceholderPattern::try_from_str(fallback_str, Default::default()).ok();
+    let fallback_pattern_ref = fallback_pattern.as_deref();
+
     let parsed =
         super::parse_cldr_skeletons(&interval_formats.patterns, |skeleton, field_patterns| {
             let is_time = skeleton_has_time_fields(skeleton);
             if is_time {
-                parse_time_pgd(field_patterns).map(ParsedPattern::Time)
+                parse_time_pgd(field_patterns, fallback_pattern_ref).map(ParsedPattern::Time)
             } else {
-                parse_date_pgd(field_patterns).map(ParsedPattern::Date)
+                parse_date_pgd(field_patterns, fallback_pattern_ref).map(ParsedPattern::Date)
             }
         });
 
@@ -247,7 +335,18 @@ fn match_range_skeleton<'a, 'data>(
     skeletons: &'a BTreeMap<Skeleton, PatternsByGreatestDifference<'data>>,
     fields: &[Field],
 ) -> Option<(&'a Skeleton, &'a PatternsByGreatestDifference<'data>)> {
-    find_best_skeleton(skeletons, fields).map(|m| (m.skeleton, m.value))
+    let matched = find_best_skeleton(skeletons, fields)?;
+
+    // A single field was requested and the best pattern either includes extra fields
+    // or can't be adjusted to match (e.g. text vs numeric). We reject the match
+    // so that we fall back to the glue pattern.
+    if is_bad_match_for_single_field(fields, matched.distance) {
+        // TODO(#8070): Implement the rest of the skeleton matching resolution algorithm
+        // for range patterns.
+        return None;
+    }
+
+    Some((matched.skeleton, matched.value))
 }
 
 impl SourceDataProvider {

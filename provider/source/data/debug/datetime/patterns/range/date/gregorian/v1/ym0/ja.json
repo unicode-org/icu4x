@@ -10,33 +10,31 @@
   ],
   "elements": [
     {
-      "header": 6,
+      "header": 24,
       "patterns": [
         "y年M月～M月",
-        "y年M月～y年M月"
+        "y年M月"
       ]
     },
     {
-      "header": 6,
+      "header": 16,
       "patterns": [
-        "y/MM～y/MM",
-        "y/MM～y/MM"
+        "y/MM"
       ]
     },
     {
-      "header": 14,
+      "header": 104,
       "patterns": [
         "Gy年M月～M月",
         "Gy年M月～y年M月",
-        "Gy年M月～Gy年M月"
+        "Gy年M月"
       ]
     },
     {
-      "header": 14,
+      "header": 96,
       "patterns": [
         "Gy/MM～y/MM",
-        "Gy/MM～y/MM",
-        "Gy/MM～Gy/MM"
+        "Gy/MM"
       ]
     }
   ]

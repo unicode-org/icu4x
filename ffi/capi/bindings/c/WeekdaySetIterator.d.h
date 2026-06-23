@@ -14,6 +14,11 @@
 typedef struct WeekdaySetIterator WeekdaySetIterator;
 
 
+typedef struct DiplomatWeekdaySetIteratorView {
+  const WeekdaySetIterator** data;
+  size_t len;
+} DiplomatWeekdaySetIteratorView;
+
 
 
 #endif // WeekdaySetIterator_D_H

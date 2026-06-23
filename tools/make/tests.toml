@@ -31,12 +31,24 @@ env = { RUSTFLAGS = "-Dwarnings",  "ICU4X_DATA_DIR" = "../stubdata" }
 command = "cargo"
 args = ["build-all-features"]
 
+[tasks.setup-test-rustflags]
+private = true
+script_runner = "@duckscript"
+script = '''
+rustflags = get_env RUSTFLAGS
+if not ${rustflags}
+    set_env RUSTFLAGS "--cfg=icu4x_run_size_tests"
+else
+    set_env RUSTFLAGS "--cfg=icu4x_run_size_tests ${rustflags}"
+end
+'''
+
 [tasks.test-all-features]
 description = "Run all Rust tests with all features and targets"
 category = "ICU4X Development"
 # This might be required if Windows runs out of disk again
 # env = { RUSTFLAGS = "-Cdebuginfo=none -Cdebug-assertions=true", condition = { platforms = ["windows"] } }
-env = { RUSTFLAGS = "--cfg=icu4x_run_size_tests" }
+dependencies = ["setup-test-rustflags"]
 command = "cargo"
 args = ["test", "--all-features", "--all-targets", "--no-fail-fast"]
 

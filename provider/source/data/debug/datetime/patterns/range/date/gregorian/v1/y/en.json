@@ -9,16 +9,16 @@
   ],
   "elements": [
     {
-      "header": 4,
+      "header": 16,
       "patterns": [
-        "y – y"
+        "y"
       ]
     },
     {
-      "header": 12,
+      "header": 96,
       "patterns": [
         "y – y G",
-        "y G – y G"
+        "y G"
       ]
     }
   ]

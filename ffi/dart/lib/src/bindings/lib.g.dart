@@ -188,7 +188,7 @@ part 'ZonedTimeFormatter.g.dart';
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-class _DiplomatFfiUse {
+final class _DiplomatFfiUse {
   final String symbol;
 
   // ignore: experimental_member_use

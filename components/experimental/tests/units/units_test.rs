@@ -4,6 +4,7 @@
 
 use core::str::FromStr;
 
+use icu_experimental::units::InvalidConversionError;
 use icu_experimental::units::converter_factory::ConverterFactory;
 use icu_experimental::units::ratio::IcuRatio;
 use icu_experimental::{measure::measureunit::MeasureUnit, units::converter::UnitsConverter};
@@ -45,7 +46,7 @@ fn test_cldr_unit_tests() {
         let output_unit =
             MeasureUnit::try_from_str(&test.output_unit).expect("Failed to parse output unit");
 
-        let converter: UnitsConverter<Ratio<BigInt>> = converter_factory
+        let converter: UnitsConverter<&Ratio<BigInt>> = converter_factory
             .converter(&input_unit, &output_unit)
             .expect("Failed to create converter");
         let result =
@@ -54,7 +55,7 @@ fn test_cldr_unit_tests() {
         let converter_f64: UnitsConverter<f64> = converter_factory
             .converter(&input_unit, &output_unit)
             .expect("Failed to create converter for f64");
-        let result_f64 = converter_f64.convert(&1000.0);
+        let result_f64 = converter_f64.convert(1000.0);
 
         let diff_ratio = ((result.clone() - test.result.clone().get_ratio())
             / test.result.clone().get_ratio())
@@ -217,10 +218,10 @@ fn test_units_non_convertible() {
         let input_unit = MeasureUnit::try_from_str(input).expect("Failed to parse input unit");
         let output_unit = MeasureUnit::try_from_str(output).expect("Failed to parse output unit");
 
-        let result: Option<UnitsConverter<f64>> =
-            converter_factory.converter(&input_unit, &output_unit);
+        let result: Result<UnitsConverter<f64>, InvalidConversionError> =
+            converter_factory.converter::<f64>(&input_unit, &output_unit);
         assert!(
-            result.is_none(),
+            result.is_err(),
             "Conversion should not be possible between {input:?} and {output:?}"
         );
     }

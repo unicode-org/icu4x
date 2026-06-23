@@ -11,40 +11,38 @@
   ],
   "elements": [
     {
-      "header": 6,
+      "header": 24,
       "patterns": [
         "LLLL – LLLL y г.",
-        "LLLL y г. – LLLL y г."
+        "LLLL y г."
       ]
     },
     {
-      "header": 6,
+      "header": 24,
       "patterns": [
         "LLL – LLL y г.",
-        "LLL y г. – LLL y г."
+        "LLL y г."
       ]
     },
     {
-      "header": 6,
+      "header": 32,
       "patterns": [
-        "MM.y–MM.y",
         "MM.y–MM.y"
       ]
     },
     {
-      "header": 14,
+      "header": 104,
       "patterns": [
         "LLL – LLL y г. G",
         "LLL y – LLL y гг. G",
-        "LLL y г. G – LLL y г. G"
+        "LLL y г. G"
       ]
     },
     {
-      "header": 14,
+      "header": 96,
       "patterns": [
         "MM.y–MM.y G",
-        "MM.y–MM.y G",
-        "MM.y G – MM.y G"
+        "MM.y G"
       ]
     }
   ]

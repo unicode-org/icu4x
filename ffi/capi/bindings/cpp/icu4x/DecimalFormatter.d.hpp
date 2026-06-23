@@ -28,6 +28,12 @@ class DecimalGroupingStrategy;
 namespace icu4x {
 namespace capi {
     struct DecimalFormatter;
+
+
+    typedef struct DiplomatDecimalFormatterView {
+      const DecimalFormatter** data;
+      size_t len;
+    } DiplomatDecimalFormatterView;
 } // namespace capi
 } // namespace
 

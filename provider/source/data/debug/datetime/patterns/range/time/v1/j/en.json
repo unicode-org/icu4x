@@ -9,18 +9,17 @@
   ],
   "elements": [
     {
-      "header": 10,
+      "header": 72,
       "patterns": [
         "h – h a",
-        "h a – h a"
+        "h a"
       ]
     },
     {
-      "header": 11,
+      "header": 72,
       "patterns": [
         "h:mm – h:mm a",
-        "h:mm – h:mm a",
-        "h:mm a – h:mm a"
+        "h:mm a"
       ]
     }
   ]

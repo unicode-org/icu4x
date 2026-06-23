@@ -10,37 +10,31 @@
   ],
   "elements": [
     {
-      "header": 7,
+      "header": 24,
       "patterns": [
         "y MMM d, E – MMM d, E",
-        "y MMM d, E – MMM d, E",
-        "y MMM d, E – y MMM d, E"
+        "y MMM d, E"
       ]
     },
     {
-      "header": 7,
+      "header": 16,
       "patterns": [
-        "y-MM-dd, E – y-MM-dd, E",
-        "y-MM-dd, E – y-MM-dd, E",
-        "y-MM-dd, E – y-MM-dd, E"
+        "y-MM-dd, E"
       ]
     },
     {
-      "header": 15,
+      "header": 104,
       "patterns": [
-        "G y MMM d, E – MMM d, E",
         "G y MMM d, E – MMM d, E",
         "G y MMM d, E – y MMM d, E",
-        "G y MMM d, E – G y MMM d, E"
+        "G y MMM d, E"
       ]
     },
     {
-      "header": 15,
+      "header": 96,
       "patterns": [
         "G y-MM-dd, E – y-MM-dd, E",
-        "G y-MM-dd, E – y-MM-dd, E",
-        "G y-MM-dd, E – y-MM-dd, E",
-        "G y-MM-dd, E – G y-MM-dd, E"
+        "G y-MM-dd, E"
       ]
     }
   ]

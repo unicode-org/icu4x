@@ -541,6 +541,15 @@ pub fn find_best_skeleton<'a, T>(
     closest_match
 }
 
+/// Returns whether the match is considered a bad fit for a single-field request.
+///
+/// This occurs when a single field was requested (e.g., only weekday `E`) but the best
+/// available match either includes extra fields (e.g., `MEd` which adds month and day)
+/// or has a substantial mismatch (e.g., text vs numeric).
+pub fn is_bad_match_for_single_field(fields: &[Field], distance: u32) -> bool {
+    fields.len() == 1 && distance >= TEXT_VS_NUMERIC_DISTANCE
+}
+
 /// A partial implementation of the [UTS 35 skeleton matching algorithm](https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons).
 ///
 /// The following is implemented:
@@ -577,7 +586,7 @@ pub fn get_best_available_format_pattern<'data>(
     let closest_missing_fields = matched.as_ref().map(|m| m.missing_fields).unwrap_or(0);
 
     if !prefer_matched_pattern
-        && closest_distance >= TEXT_VS_NUMERIC_DISTANCE
+        && is_bad_match_for_single_field(fields, closest_distance)
         && let [field] = fields
     {
         // A single field was requested and the best pattern either includes extra fields or can't be adjusted to match

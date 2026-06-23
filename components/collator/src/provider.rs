@@ -611,6 +611,12 @@ pub struct CollationSpecialPrimaries<'data> {
 }
 
 #[cfg(feature = "serde")]
+impl CollationSpecialPrimaries<'_> {
+    /// The length of the compressible bytes array (256 bits packed in `u16`s).
+    pub(crate) const COMPRESSIBLE_BYTES_LEN: usize = 256 / (u16::BITS as usize);
+}
+
+#[cfg(feature = "serde")]
 impl<'de> serde::Deserialize<'de> for CollationSpecialPrimaries<'de> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -630,9 +636,7 @@ impl<'de> serde::Deserialize<'de> for CollationSpecialPrimaries<'de> {
 
         let Some((l, c)) = concatenated
             .as_ule_slice()
-            // `variant_count` isn't stable yet:
-            // https://github.com/rust-lang/rust/issues/73662
-            .split_at_checked(MaxVariable::Currency as usize + 1)
+            .split_at_checked(MaxVariable::VARIANT_COUNT)
         else {
             return Err(serde::de::Error::custom("invalid"));
         };
@@ -640,7 +644,7 @@ impl<'de> serde::Deserialize<'de> for CollationSpecialPrimaries<'de> {
         let last_primaries = ZeroSlice::from_ule_slice(l).as_zerovec();
         let mut compressible_bytes = ZeroSlice::from_ule_slice(c).as_zerovec();
 
-        if c.len() != 16 {
+        if c.len() != CollationSpecialPrimaries::COMPRESSIBLE_BYTES_LEN {
             compressible_bytes = zerovec::zerovec!(
                 u16; <u16 as AsULE>::ULE::from_unsigned; [
                 0b0000_0000_0000_0000,

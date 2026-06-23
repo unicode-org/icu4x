@@ -306,6 +306,7 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
             ..Default::default()
         };
 
+        // TODO(#8125): this might return a short display name from core, even if there would be a long one in extended.
         let display_name = DataProvider::<C::DataMarkerCore>::load(provider, req)
             .map(|r| r.payload.cast())
             .or_else(|_| {
@@ -346,6 +347,7 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
             ..Default::default()
         };
 
+        // TODO(#8125): this might return a short display name from core or extended, even if there would be a long one in outlier.
         let display_name = <crate::provider::Baked as DataProvider<C::DataMarkerCore>>::load(
             &crate::provider::Baked,
             req,
@@ -459,7 +461,7 @@ mod tests {
                     width: Width::Long,
                     ..Default::default()
                 },
-                "1,000 square meters",
+                "1,000 m²",
             ),
             (
                 locale!("fr-FR"),
@@ -490,13 +492,6 @@ mod tests {
                 options,
             );
 
-            if locale.to_string() == "en-US" {
-                assert!(
-                    formatter.is_err(),
-                    "Expected failure for the en-US locale because the unit is not available in core"
-                );
-                continue;
-            }
             let formatter = formatter.unwrap();
             let signed_decimal = Decimal::from_str(value_str).unwrap();
             let formatted = formatter.format_fixed_decimal(&signed_decimal);
@@ -523,7 +518,7 @@ mod tests {
                     width: Width::Long,
                     ..Default::default()
                 },
-                "1,000 square meters",
+                "1,000 m²",
             ),
             (
                 locale!("fr-FR"),
@@ -587,7 +582,7 @@ mod tests {
                     width: Width::Long,
                     ..Default::default()
                 },
-                "1,000 square meters",
+                "1,000 m²",
             ),
             (
                 locale!("fr-FR"),

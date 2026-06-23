@@ -38,6 +38,7 @@
     not(any(feature = "provider", feature = "blob_input",)),
     allow(unused_assignments, unreachable_code, unused_variables)
 )]
+#![cfg_attr(icu4x_nightly_tests, feature(non_exhaustive_omitted_patterns_lint))]
 
 use clap::{Parser, ValueEnum};
 use displaydoc::Display;
@@ -337,7 +338,7 @@ enum TrieType {
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
-// Mirrors icu_provider_export::CollationRootHan
+// Mirrors icu_provider_source::CollationRootHan
 enum CollationRootHan {
     Unihan,
     Implicit,
@@ -889,4 +890,47 @@ fn test_attributes_regex() {
 
     assert!(std::fs::exists(out.join("hello/world/v1/uppercase")).unwrap());
     assert!(!std::fs::exists(out.join("hello/world/v1/lowercase")).unwrap());
+}
+
+#[cfg(test)]
+#[cfg_attr(icu4x_nightly_tests, deny(non_exhaustive_omitted_patterns))]
+#[allow(unreachable_patterns)]
+mod test_consistency {
+    #[test]
+    fn test_deduplication_consistency() {
+        use crate::Deduplication;
+        use icu_provider_export::DeduplicationStrategy as Upstream;
+        let upstream = Upstream::None;
+        let _ = match upstream {
+            Upstream::Maximal => Deduplication::Maximal,
+            Upstream::RetainBaseLanguages => Deduplication::RetainBaseLanguages,
+            Upstream::None => Deduplication::None,
+            _ => unreachable!(),
+        };
+    }
+
+    #[cfg(feature = "provider")]
+    #[test]
+    fn test_collation_root_han_consistency() {
+        use crate::CollationRootHan;
+        use icu_provider_source::CollationRootHan as Upstream;
+        let upstream = Upstream::Implicit;
+        let _ = match upstream {
+            Upstream::Implicit => CollationRootHan::Implicit,
+            Upstream::Unihan => CollationRootHan::Unihan,
+            _ => unreachable!(),
+        };
+    }
+
+    #[cfg(feature = "provider")]
+    #[test]
+    fn test_alt_variant_kind_consistency() {
+        use crate::AltVariantKind;
+        use icu_provider_source::AltVariantKind as Upstream;
+        let upstream = Upstream::DatetimeAscii;
+        let _ = match upstream {
+            Upstream::DatetimeAscii => AltVariantKind::DatetimeAscii,
+            _ => unreachable!(),
+        };
+    }
 }

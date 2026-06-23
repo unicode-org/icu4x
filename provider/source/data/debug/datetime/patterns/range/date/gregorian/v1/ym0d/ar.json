@@ -10,37 +10,34 @@
   ],
   "elements": [
     {
-      "header": 7,
+      "header": 26,
       "patterns": [
         "d–d MMM y",
         "d MMM – d MMM y",
-        "d MMM y – d MMM y"
+        "d MMM y"
       ]
     },
     {
-      "header": 7,
+      "header": 16,
       "patterns": [
-        "d‏/M‏/y – d‏/M‏/y",
-        "d‏/M‏/y – d‏/M‏/y",
-        "d‏/M‏/y – d‏/M‏/y"
+        "d‏/M‏/y"
       ]
     },
     {
-      "header": 15,
+      "header": 106,
       "patterns": [
         "d–d MMM y G",
         "d MMM – d MMM y G",
         "d MMM y – d MMM y G",
-        "d MMM y G – d MMM y G"
+        "d MMM y G"
       ]
     },
     {
-      "header": 15,
+      "header": 98,
       "patterns": [
         "d-MM-y – d-MM-y GGGG",
         "dd-MM-y – dd-MM-y GGGG",
-        "dd-MM-y – dd-MM-y GGGG",
-        "dd-MM-y GGGG – dd-MM-y GGGG"
+        "dd-MM-y GGGG"
       ]
     }
   ]

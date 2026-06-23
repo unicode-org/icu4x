@@ -255,95 +255,127 @@ impl crate::private::Sealed for GeneralCategoryGroup {}
 use GeneralCategory as GC;
 use GeneralCategoryGroup as GCG;
 
-#[allow(non_upper_case_globals)]
+#[allow(non_upper_case_globals, missing_docs)]
 impl GeneralCategoryGroup {
-    /// (`Lu`) An uppercase letter
+    /// An uppercase letter
     pub const UppercaseLetter: GeneralCategoryGroup = GCG(1 << (GC::UppercaseLetter as u32));
-    /// (`Ll`) A lowercase letter
+    pub const Lu: GeneralCategoryGroup = Self::UppercaseLetter;
+    /// A lowercase letter
+    pub const Ll: Self = Self::LowercaseLetter;
     pub const LowercaseLetter: GeneralCategoryGroup = GCG(1 << (GC::LowercaseLetter as u32));
-    /// (`Lt`) A digraphic letter, with first part uppercase
+    /// A digraphic letter, with first part uppercase
     pub const TitlecaseLetter: GeneralCategoryGroup = GCG(1 << (GC::TitlecaseLetter as u32));
-    /// (`Lm`) A modifier letter
+    pub const Lt: Self = Self::TitlecaseLetter;
+    /// A modifier letter
     pub const ModifierLetter: GeneralCategoryGroup = GCG(1 << (GC::ModifierLetter as u32));
-    /// (`Lo`) Other letters, including syllables and ideographs
+    pub const Lm: Self = Self::ModifierLetter;
+    /// Other letters, including syllables and ideographs
     pub const OtherLetter: GeneralCategoryGroup = GCG(1 << (GC::OtherLetter as u32));
-    /// (`LC`) The union of `UppercaseLetter`, `LowercaseLetter`, and `TitlecaseLetter`
+    pub const Lo: Self = Self::OtherLetter;
+    /// The union of `UppercaseLetter`, `LowercaseLetter`, and `TitlecaseLetter`
     pub const CasedLetter: GeneralCategoryGroup = GCG((1 << (GC::UppercaseLetter as u32))
         | (1 << (GC::LowercaseLetter as u32))
         | (1 << (GC::TitlecaseLetter as u32)));
-    /// (`L`) The union of all letter categories
+    pub const LC: Self = Self::CasedLetter;
+    /// The union of all letter categories
     pub const Letter: GeneralCategoryGroup = GCG((1 << (GC::UppercaseLetter as u32))
         | (1 << (GC::LowercaseLetter as u32))
         | (1 << (GC::TitlecaseLetter as u32))
         | (1 << (GC::ModifierLetter as u32))
         | (1 << (GC::OtherLetter as u32)));
+    pub const L: Self = Self::Letter;
 
-    /// (`Mn`) A nonspacing combining mark (zero advance width)
+    /// A nonspacing combining mark (zero advance width)
     pub const NonspacingMark: GeneralCategoryGroup = GCG(1 << (GC::NonspacingMark as u32));
-    /// (`Me`) An enclosing combining mark
+    pub const Mn: Self = Self::NonspacingMark;
+    /// An enclosing combining mark
     pub const EnclosingMark: GeneralCategoryGroup = GCG(1 << (GC::EnclosingMark as u32));
-    /// (`Mc`) A spacing combining mark (positive advance width)
+    pub const Me: Self = Self::EnclosingMark;
+    /// A spacing combining mark (positive advance width)
     pub const SpacingMark: GeneralCategoryGroup = GCG(1 << (GC::SpacingMark as u32));
-    /// (`M`) The union of all mark categories
+    pub const Mc: Self = Self::SpacingMark;
+    /// The union of all mark categories
     pub const Mark: GeneralCategoryGroup = GCG((1 << (GC::NonspacingMark as u32))
         | (1 << (GC::EnclosingMark as u32))
         | (1 << (GC::SpacingMark as u32)));
+    pub const M: Self = Self::Mark;
 
-    /// (`Nd`) A decimal digit
+    /// A decimal digit
     pub const DecimalNumber: GeneralCategoryGroup = GCG(1 << (GC::DecimalNumber as u32));
-    /// (`Nl`) A letterlike numeric character
+    pub const Nd: Self = Self::DecimalNumber;
+    /// A letterlike numeric character
     pub const LetterNumber: GeneralCategoryGroup = GCG(1 << (GC::LetterNumber as u32));
-    /// (`No`) A numeric character of other type
+    pub const Nl: Self = Self::LetterNumber;
+    /// A numeric character of other type
     pub const OtherNumber: GeneralCategoryGroup = GCG(1 << (GC::OtherNumber as u32));
-    /// (`N`) The union of all number categories
+    pub const No: Self = Self::OtherNumber;
+    /// The union of all number categories
     pub const Number: GeneralCategoryGroup = GCG((1 << (GC::DecimalNumber as u32))
         | (1 << (GC::LetterNumber as u32))
         | (1 << (GC::OtherNumber as u32)));
+    pub const N: Self = Self::Number;
 
-    /// (`Zs`) A space character (of various non-zero widths)
+    /// A space character (of various non-zero widths)
     pub const SpaceSeparator: GeneralCategoryGroup = GCG(1 << (GC::SpaceSeparator as u32));
-    /// (`Zl`) U+2028 LINE SEPARATOR only
+    pub const Zs: Self = Self::SpaceSeparator;
+    /// U+2028 LINE SEPARATOR only
     pub const LineSeparator: GeneralCategoryGroup = GCG(1 << (GC::LineSeparator as u32));
-    /// (`Zp`) U+2029 PARAGRAPH SEPARATOR only
+    pub const Zl: Self = Self::LineSeparator;
+    /// U+2029 PARAGRAPH SEPARATOR only
     pub const ParagraphSeparator: GeneralCategoryGroup = GCG(1 << (GC::ParagraphSeparator as u32));
-    /// (`Z`) The union of all separator categories
+    pub const Zp: Self = Self::ParagraphSeparator;
+    /// The union of all separator categories
     pub const Separator: GeneralCategoryGroup = GCG((1 << (GC::SpaceSeparator as u32))
         | (1 << (GC::LineSeparator as u32))
         | (1 << (GC::ParagraphSeparator as u32)));
+    pub const Z: Self = Self::Separator;
 
-    /// (`Cc`) A C0 or C1 control code
+    /// A C0 or C1 control code
     pub const Control: GeneralCategoryGroup = GCG(1 << (GC::Control as u32));
-    /// (`Cf`) A format control character
+    pub const Cc: Self = Self::Control;
+    /// A format control character
     pub const Format: GeneralCategoryGroup = GCG(1 << (GC::Format as u32));
-    /// (`Co`) A private-use character
+    pub const Cf: Self = Self::Format;
+    /// A private-use character
     pub const PrivateUse: GeneralCategoryGroup = GCG(1 << (GC::PrivateUse as u32));
-    /// (`Cs`) A surrogate code point
+    pub const Co: Self = Self::PrivateUse;
+    /// A surrogate code point
     pub const Surrogate: GeneralCategoryGroup = GCG(1 << (GC::Surrogate as u32));
-    /// (`Cn`) A reserved unassigned code point or a noncharacter
+    pub const Cs: Self = Self::Surrogate;
+    /// A reserved unassigned code point or a noncharacter
     pub const Unassigned: GeneralCategoryGroup = GCG(1 << (GC::Unassigned as u32));
-    /// (`C`) The union of all control code, reserved, and unassigned categories
+    pub const Cn: Self = Self::Unassigned;
+    /// The union of all control code, reserved, and unassigned categories
     pub const Other: GeneralCategoryGroup = GCG((1 << (GC::Control as u32))
         | (1 << (GC::Format as u32))
         | (1 << (GC::PrivateUse as u32))
         | (1 << (GC::Surrogate as u32))
         | (1 << (GC::Unassigned as u32)));
+    pub const C: Self = Self::Other;
 
-    /// (`Pd`) A dash or hyphen punctuation mark
+    /// A dash or hyphen punctuation mark
     pub const DashPunctuation: GeneralCategoryGroup = GCG(1 << (GC::DashPunctuation as u32));
-    /// (`Ps`) An opening punctuation mark (of a pair)
+    pub const Pd: Self = Self::DashPunctuation;
+    /// An opening punctuation mark (of a pair)
     pub const OpenPunctuation: GeneralCategoryGroup = GCG(1 << (GC::OpenPunctuation as u32));
-    /// (`Pe`) A closing punctuation mark (of a pair)
+    pub const Ps: Self = Self::OpenPunctuation;
+    /// A closing punctuation mark (of a pair)
     pub const ClosePunctuation: GeneralCategoryGroup = GCG(1 << (GC::ClosePunctuation as u32));
-    /// (`Pc`) A connecting punctuation mark, like a tie
+    pub const Pe: Self = Self::ClosePunctuation;
+    /// A connecting punctuation mark, like a tie
     pub const ConnectorPunctuation: GeneralCategoryGroup =
         GCG(1 << (GC::ConnectorPunctuation as u32));
-    /// (`Pi`) An initial quotation mark
+    pub const Pc: Self = Self::ConnectorPunctuation;
+    /// An initial quotation mark
     pub const InitialPunctuation: GeneralCategoryGroup = GCG(1 << (GC::InitialPunctuation as u32));
-    /// (`Pf`) A final quotation mark
+    pub const Pi: Self = Self::InitialPunctuation;
+    /// A final quotation mark
     pub const FinalPunctuation: GeneralCategoryGroup = GCG(1 << (GC::FinalPunctuation as u32));
-    /// (`Po`) A punctuation mark of other type
+    pub const Pf: Self = Self::FinalPunctuation;
+    /// A punctuation mark of other type
     pub const OtherPunctuation: GeneralCategoryGroup = GCG(1 << (GC::OtherPunctuation as u32));
-    /// (`P`) The union of all punctuation categories
+    pub const Po: Self = Self::OtherPunctuation;
+    /// The union of all punctuation categories
     pub const Punctuation: GeneralCategoryGroup = GCG((1 << (GC::DashPunctuation as u32))
         | (1 << (GC::OpenPunctuation as u32))
         | (1 << (GC::ClosePunctuation as u32))
@@ -351,20 +383,26 @@ impl GeneralCategoryGroup {
         | (1 << (GC::OtherPunctuation as u32))
         | (1 << (GC::InitialPunctuation as u32))
         | (1 << (GC::FinalPunctuation as u32)));
+    pub const P: Self = Self::Punctuation;
 
-    /// (`Sm`) A symbol of mathematical use
+    /// A symbol of mathematical use
     pub const MathSymbol: GeneralCategoryGroup = GCG(1 << (GC::MathSymbol as u32));
-    /// (`Sc`) A currency sign
+    pub const Sm: Self = Self::MathSymbol;
+    /// A currency sign
     pub const CurrencySymbol: GeneralCategoryGroup = GCG(1 << (GC::CurrencySymbol as u32));
-    /// (`Sk`) A non-letterlike modifier symbol
+    pub const Sc: Self = Self::CurrencySymbol;
+    /// A non-letterlike modifier symbol
     pub const ModifierSymbol: GeneralCategoryGroup = GCG(1 << (GC::ModifierSymbol as u32));
-    /// (`So`) A symbol of other type
+    pub const Sk: Self = Self::ModifierSymbol;
+    /// A symbol of other type
     pub const OtherSymbol: GeneralCategoryGroup = GCG(1 << (GC::OtherSymbol as u32));
-    /// (`S`) The union of all symbol categories
+    pub const So: Self = Self::OtherSymbol;
+    /// The union of all symbol categories
     pub const Symbol: GeneralCategoryGroup = GCG((1 << (GC::MathSymbol as u32))
         | (1 << (GC::CurrencySymbol as u32))
         | (1 << (GC::ModifierSymbol as u32))
         | (1 << (GC::OtherSymbol as u32)));
+    pub const S: Self = Self::Symbol;
 
     const ALL: u32 = (1 << (GC::FinalPunctuation as u32 + 1)) - 1;
 

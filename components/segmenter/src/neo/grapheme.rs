@@ -24,7 +24,7 @@ use utf8_iter::Utf8CharIndices;
 /// For examples of use, see [`GraphemeClusterSegmenter`].
 #[derive(Debug)]
 pub struct GraphemeClusterBreakIterator<'data, 's, Y: RuleBreakType>(
-    RuleBreakIterator<'data, 's, Y, (), NoComplexHandler>,
+    RuleBreakIterator<'data, 's, Y, NoComplexHandler>,
 );
 
 derive_usize_iterator_with_type!(GraphemeClusterBreakIterator, 'data);
@@ -168,7 +168,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
         GraphemeClusterBreakIterator(RuleBreakIterator::new(
             input.char_indices(),
             self.data,
-            (),
+            None,
             None,
         ))
     }
@@ -184,7 +184,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
         GraphemeClusterBreakIterator(RuleBreakIterator::new(
             Utf8CharIndices::new(input),
             self.data,
-            (),
+            None,
             None,
         ))
     }
@@ -198,7 +198,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
         GraphemeClusterBreakIterator(RuleBreakIterator::new(
             Latin1Indices::new(input),
             self.data,
-            (),
+            None,
             None,
         ))
     }
@@ -213,7 +213,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
         GraphemeClusterBreakIterator(RuleBreakIterator::new(
             Utf16Indices::new(input),
             self.data,
-            (),
+            None,
             None,
         ))
     }

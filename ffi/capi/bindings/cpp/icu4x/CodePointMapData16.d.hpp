@@ -27,6 +27,12 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct CodePointMapData16;
+
+
+    typedef struct DiplomatCodePointMapData16View {
+      const CodePointMapData16** data;
+      size_t len;
+    } DiplomatCodePointMapData16View;
 } // namespace capi
 } // namespace
 
@@ -57,14 +63,14 @@ public:
    *
    * See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
    */
-  inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_value(uint16_t value) const;
+  inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_value(uint16_t value) const DIPLOMAT_LIFETIME_BOUND;
 
   /**
    * Produces an iterator over ranges of code points that do not map to `value`
    *
    * See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
    */
-  inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_value_complemented(uint16_t value) const;
+  inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_value_complemented(uint16_t value) const DIPLOMAT_LIFETIME_BOUND;
 
   /**
    * Gets a {@link CodePointSetData} representing all entries in this map that map to the given value

@@ -10,19 +10,16 @@
   ],
   "elements": [
     {
-      "header": 15,
+      "header": 168,
       "patterns": [
-        "E, d 'de' MMM – E, d 'de' MMM 'de' y G",
         "E, d 'de' MMM – E, d 'de' MMM 'de' y G",
         "E, d 'de' MMM 'de' y – E, d 'de' MMM 'de' y G",
         "E, d 'de' MMM 'de' y G – E, d 'de' MMM 'de' y G"
       ]
     },
     {
-      "header": 15,
+      "header": 160,
       "patterns": [
-        "E, d/M/y – E, d/M/y GGGGG",
-        "E, d/M/y – E, d/M/y GGGGG",
         "E, d/M/y – E, d/M/y GGGGG",
         "E, d/M/y GGGGG – E, d/M/y GGGGG"
       ]

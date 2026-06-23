@@ -10,7 +10,7 @@
   ],
   "elements": [
     {
-      "header": 14,
+      "header": 168,
       "patterns": [
         "G MMM – MMM y",
         "G MMM y – MMM y",
@@ -18,11 +18,10 @@
       ]
     },
     {
-      "header": 14,
+      "header": 96,
       "patterns": [
         "GGGGG MM.y – MM.y",
-        "GGGGG MM.y – MM.y",
-        "GGGGG MM.y – GGGGG MM.y"
+        "GGGGG MM.y"
       ]
     }
   ]

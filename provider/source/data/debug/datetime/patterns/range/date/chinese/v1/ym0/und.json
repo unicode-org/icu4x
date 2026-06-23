@@ -11,24 +11,23 @@
   ],
   "elements": [
     {
-      "header": 6,
+      "header": 24,
       "patterns": [
         "U MMMM–MMMM",
-        "U MMMM – U MMMM"
+        "U MMMM"
       ]
     },
     {
-      "header": 6,
+      "header": 24,
       "patterns": [
         "U MMM–MMM",
-        "U MMM – U MMM"
+        "U MMM"
       ]
     },
     {
-      "header": 6,
+      "header": 16,
       "patterns": [
-        "y-MM – y-MM",
-        "y-MM – y-MM"
+        "y-MM"
       ]
     }
   ]

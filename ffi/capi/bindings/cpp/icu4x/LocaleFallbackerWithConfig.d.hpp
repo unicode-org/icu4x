@@ -22,6 +22,12 @@ class LocaleFallbackIterator;
 namespace icu4x {
 namespace capi {
     struct LocaleFallbackerWithConfig;
+
+
+    typedef struct DiplomatLocaleFallbackerWithConfigView {
+      const LocaleFallbackerWithConfig** data;
+      size_t len;
+    } DiplomatLocaleFallbackerWithConfigView;
 } // namespace capi
 } // namespace
 
@@ -41,7 +47,7 @@ public:
    *
    * See the [Rust documentation for `fallback_for`](https://docs.rs/icu_locale/2.2.0/icu_locale/struct.LocaleFallbacker.html#method.fallback_for) for more information.
    */
-  inline std::unique_ptr<icu4x::LocaleFallbackIterator> fallback_for_locale(const icu4x::Locale& locale) const;
+  inline std::unique_ptr<icu4x::LocaleFallbackIterator> fallback_for_locale(const icu4x::Locale& locale) const DIPLOMAT_LIFETIME_BOUND;
 
     inline const icu4x::capi::LocaleFallbackerWithConfig* AsFFI() const;
     inline icu4x::capi::LocaleFallbackerWithConfig* AsFFI();

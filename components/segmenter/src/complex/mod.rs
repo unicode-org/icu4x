@@ -3,6 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::*;
+#[cfg(feature = "unstable")]
+use crate::scaffold::PotentiallyIllFormedUtf8;
+use crate::scaffold::{RuleBreakType, Utf8, Utf16};
 use crate::{GraphemeClusterSegmenter, GraphemeClusterSegmenterBorrowed};
 use alloc::vec::Vec;
 use icu_provider::prelude::*;
@@ -16,56 +19,153 @@ mod lstm;
 #[cfg(feature = "lstm")]
 use lstm::*;
 
+#[cfg(feature = "unstable")]
+pub(crate) use language::{Language, get_language};
+
+#[derive(Debug)]
+pub struct ComplexIterator<'data, 's, R: RuleBreakType>(ComplexIteratorInner<'data, 's, R>, usize);
+
+#[derive(Debug)]
+enum ComplexIteratorInner<'data, 's, R: RuleBreakType> {
+    Dictionary(DictionaryBreakIterator<'data, 's, R>),
+    #[cfg(feature = "lstm")]
+    Lstm(LstmSegmenterIterator<'data, 's, R>),
+}
+
+impl<R: RuleBreakType> Iterator for ComplexIterator<'_, '_, R> {
+    type Item = usize;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        match self.0 {
+            ComplexIteratorInner::Dictionary(ref mut iter) => iter.next(),
+            #[cfg(feature = "lstm")]
+            ComplexIteratorInner::Lstm(ref mut iter) => iter.next(),
+        }
+        .map(|n| n + self.1)
+    }
+}
+
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "lstm", expect(clippy::large_enum_variant))]
-enum DictOrLstm {
+enum ComplexPayload {
     Dict(DataPayload<UCharDictionaryBreakDataV1>),
     #[cfg(feature = "lstm")]
     Lstm(DataPayload<SegmenterLstmAutoV1>),
 }
 
 #[derive(Debug, Clone, Copy)]
-enum DictOrLstmBorrowed<'data> {
+pub enum ComplexPayloadBorrowed<'data> {
     Dict(&'data UCharDictionaryBreakData<'data>),
     #[cfg(feature = "lstm")]
     Lstm(&'data LstmData<'data>),
 }
 
-fn borrow_dictor(dict_or: &DictOrLstm) -> DictOrLstmBorrowed<'_> {
-    match dict_or {
-        DictOrLstm::Dict(dict) => DictOrLstmBorrowed::Dict(dict.get()),
-        #[cfg(feature = "lstm")]
-        DictOrLstm::Lstm(lstm) => DictOrLstmBorrowed::Lstm(lstm.get()),
+impl<'data> ComplexPayloadBorrowed<'data> {
+    pub(crate) fn segment_str<'s>(
+        self,
+        input: &'s str,
+        grapheme: GraphemeClusterSegmenterBorrowed<'data>,
+        offset: usize,
+    ) -> ComplexIterator<'data, 's, Utf8> {
+        ComplexIterator(
+            match self {
+                Self::Dict(dict) => ComplexIteratorInner::Dictionary(
+                    DictionarySegmenter::new(dict, grapheme).segment_str(input),
+                ),
+                #[cfg(feature = "lstm")]
+                Self::Lstm(lstm) => ComplexIteratorInner::Lstm(
+                    LstmSegmenter::new(lstm, grapheme).segment_str(input),
+                ),
+            },
+            offset,
+        )
+    }
+
+    #[cfg(feature = "unstable")]
+    pub(crate) fn segment_utf8<'s>(
+        self,
+        input: &'s [u8],
+        grapheme: GraphemeClusterSegmenterBorrowed<'data>,
+        offset: usize,
+    ) -> ComplexIterator<'data, 's, PotentiallyIllFormedUtf8> {
+        ComplexIterator(
+            match self {
+                Self::Dict(dict) => ComplexIteratorInner::Dictionary(
+                    DictionarySegmenter::new(dict, grapheme).segment_utf8(input),
+                ),
+                #[cfg(feature = "lstm")]
+                Self::Lstm(lstm) => ComplexIteratorInner::Lstm(
+                    LstmSegmenter::new(lstm, grapheme).segment_utf8(input),
+                ),
+            },
+            offset,
+        )
+    }
+
+    pub(crate) fn segment_utf16<'s>(
+        self,
+        input: &'s [u16],
+        grapheme: GraphemeClusterSegmenterBorrowed<'data>,
+        offset: usize,
+    ) -> ComplexIterator<'data, 's, Utf16> {
+        ComplexIterator(
+            match self {
+                Self::Dict(dict) => ComplexIteratorInner::Dictionary(
+                    DictionarySegmenter::new(dict, grapheme).segment_utf16(input),
+                ),
+                #[cfg(feature = "lstm")]
+                Self::Lstm(lstm) => ComplexIteratorInner::Lstm(
+                    LstmSegmenter::new(lstm, grapheme).segment_utf16(input),
+                ),
+            },
+            offset,
+        )
     }
 }
 
-fn fromstatic_dictor(dict_or: DictOrLstmBorrowed<'static>) -> DictOrLstm {
-    match dict_or {
-        DictOrLstmBorrowed::Dict(dict) => DictOrLstm::Dict(DataPayload::from_static_ref(dict)),
-        #[cfg(feature = "lstm")]
-        DictOrLstmBorrowed::Lstm(lstm) => DictOrLstm::Lstm(DataPayload::from_static_ref(lstm)),
+impl ComplexPayload {
+    fn as_borrowed(&self) -> ComplexPayloadBorrowed<'_> {
+        match self {
+            ComplexPayload::Dict(dict) => ComplexPayloadBorrowed::Dict(dict.get()),
+            #[cfg(feature = "lstm")]
+            ComplexPayload::Lstm(lstm) => ComplexPayloadBorrowed::Lstm(lstm.get()),
+        }
+    }
+}
+
+impl ComplexPayloadBorrowed<'static> {
+    fn static_to_owned(self) -> ComplexPayload {
+        match self {
+            ComplexPayloadBorrowed::Dict(dict) => {
+                ComplexPayload::Dict(DataPayload::from_static_ref(dict))
+            }
+            #[cfg(feature = "lstm")]
+            ComplexPayloadBorrowed::Lstm(lstm) => {
+                ComplexPayload::Lstm(DataPayload::from_static_ref(lstm))
+            }
+        }
     }
 }
 
 #[derive(Debug)]
 pub(crate) struct ComplexPayloads {
     grapheme: GraphemeClusterSegmenter,
-    my: Option<DictOrLstm>,
-    km: Option<DictOrLstm>,
-    lo: Option<DictOrLstm>,
-    th: Option<DictOrLstm>,
-    ja: Option<DataPayload<UCharDictionaryBreakDataV1>>,
+    my: Option<ComplexPayload>,
+    km: Option<ComplexPayload>,
+    lo: Option<ComplexPayload>,
+    th: Option<ComplexPayload>,
+    ja: Option<ComplexPayload>,
 }
 
 #[derive(Debug, Clone, Copy)]
 #[doc(hidden)]
 pub struct ComplexPayloadsBorrowed<'data> {
     pub(crate) grapheme: GraphemeClusterSegmenterBorrowed<'data>,
-    my: Option<DictOrLstmBorrowed<'data>>,
-    km: Option<DictOrLstmBorrowed<'data>>,
-    lo: Option<DictOrLstmBorrowed<'data>>,
-    th: Option<DictOrLstmBorrowed<'data>>,
-    ja: Option<&'data UCharDictionaryBreakData<'data>>,
+    my: Option<ComplexPayloadBorrowed<'data>>,
+    km: Option<ComplexPayloadBorrowed<'data>>,
+    lo: Option<ComplexPayloadBorrowed<'data>>,
+    th: Option<ComplexPayloadBorrowed<'data>>,
+    ja: Option<ComplexPayloadBorrowed<'data>>,
 }
 
 #[cfg(feature = "lstm")]
@@ -84,7 +184,7 @@ const TH_DICT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("
 const CJ_DICT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("cjdict");
 
 impl<'data> ComplexPayloadsBorrowed<'data> {
-    fn select(&self, language: Language) -> Option<DictOrLstmBorrowed<'data>> {
+    pub(crate) fn select(&self, language: Language) -> Option<ComplexPayloadBorrowed<'data>> {
         const ERR: DataError = DataError::custom("No segmentation model for language");
         match language {
             Language::Burmese => self.my.or_else(|| {
@@ -103,23 +203,11 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
                 ERR.with_display_context("th");
                 None
             }),
-            Language::ChineseOrJapanese => self.ja.map(DictOrLstmBorrowed::Dict).or_else(|| {
+            Language::ChineseOrJapanese => self.ja.or_else(|| {
                 ERR.with_display_context("ja");
                 None
             }),
             Language::Unknown => None,
-        }
-    }
-
-    #[cfg(feature = "unstable")]
-    pub(crate) fn handles(&self, cp: u32) -> bool {
-        match get_language(cp) {
-            Language::Burmese => self.my.is_some(),
-            Language::Khmer => self.km.is_some(),
-            Language::ChineseOrJapanese => self.ja.is_some(),
-            Language::Lao => self.lo.is_some(),
-            Language::Thai => self.th.is_some(),
-            Language::Unknown => false,
         }
     }
 
@@ -128,18 +216,8 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
         let mut offset = 0;
         for (slice, lang) in LanguageIterator::new(input) {
             match self.select(lang) {
-                Some(DictOrLstmBorrowed::Dict(dict)) => {
-                    let seg = DictionarySegmenter::new(dict, self.grapheme);
-                    result.extend(seg.segment_str(slice).map(|n| offset + n));
-                }
-                #[cfg(feature = "lstm")]
-                Some(DictOrLstmBorrowed::Lstm(lstm)) => {
-                    let seg = LstmSegmenter::new(lstm, self.grapheme);
-                    result.extend(seg.segment_str(slice).map(|n| offset + n));
-                }
-                None => {
-                    result.push(offset + slice.len());
-                }
+                Some(d) => result.extend(d.segment_str(slice, self.grapheme, offset)),
+                None => result.push(offset + slice.len()),
             }
             offset += slice.len();
         }
@@ -151,24 +229,15 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
         let mut offset = 0;
         for (slice, lang) in LanguageIteratorUtf16::new(input) {
             match self.select(lang) {
-                Some(DictOrLstmBorrowed::Dict(dict)) => {
-                    let seg = DictionarySegmenter::new(dict, self.grapheme);
-                    result.extend(seg.segment_utf16(slice).map(|n| offset + n));
-                }
-                #[cfg(feature = "lstm")]
-                Some(DictOrLstmBorrowed::Lstm(lstm)) => {
-                    let seg = LstmSegmenter::new(lstm, self.grapheme);
-                    result.extend(seg.segment_utf16(slice).map(|n| offset + n));
-                }
-                None => {
-                    result.push(offset + slice.len());
-                }
+                Some(d) => result.extend(d.segment_utf16(slice, self.grapheme, offset)),
+                None => result.push(offset + slice.len()),
             }
             offset += slice.len();
         }
         result
     }
 }
+
 impl ComplexPayloadsBorrowed<'static> {
     #[cfg(feature = "lstm")]
     #[cfg(feature = "compiled_data")]
@@ -178,22 +247,22 @@ impl ComplexPayloadsBorrowed<'static> {
         if self.my.is_none() {
             self.my = try_load_static::<SegmenterLstmAutoV1, _>(&Baked, MY_LSTM)
                 .unwrap()
-                .map(DictOrLstmBorrowed::Lstm);
+                .map(ComplexPayloadBorrowed::Lstm);
         }
         if self.km.is_none() {
             self.km = try_load_static::<SegmenterLstmAutoV1, _>(&Baked, KM_LSTM)
                 .unwrap()
-                .map(DictOrLstmBorrowed::Lstm);
+                .map(ComplexPayloadBorrowed::Lstm);
         }
         if self.lo.is_none() {
             self.lo = try_load_static::<SegmenterLstmAutoV1, _>(&Baked, LO_LSTM)
                 .unwrap()
-                .map(DictOrLstmBorrowed::Lstm);
+                .map(ComplexPayloadBorrowed::Lstm);
         }
         if self.th.is_none() {
             self.th = try_load_static::<SegmenterLstmAutoV1, _>(&Baked, TH_LSTM)
                 .unwrap()
-                .map(DictOrLstmBorrowed::Lstm);
+                .map(ComplexPayloadBorrowed::Lstm);
         }
     }
 
@@ -202,7 +271,9 @@ impl ComplexPayloadsBorrowed<'static> {
         #![expect(clippy::unwrap_used)]
         // try_load is infallible if the provider only returns `MissingLocale`.
         if self.ja.is_none() {
-            self.ja = try_load_static::<SegmenterDictionaryAutoV1, _>(&Baked, CJ_DICT).unwrap();
+            self.ja = try_load_static::<SegmenterDictionaryAutoV1, _>(&Baked, CJ_DICT)
+                .unwrap()
+                .map(ComplexPayloadBorrowed::Dict);
         }
     }
 
@@ -213,22 +284,22 @@ impl ComplexPayloadsBorrowed<'static> {
         if self.my.is_none() {
             self.my = try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, MY_DICT)
                 .unwrap()
-                .map(DictOrLstmBorrowed::Dict);
+                .map(ComplexPayloadBorrowed::Dict);
         }
         if self.km.is_none() {
             self.km = try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, KM_DICT)
                 .unwrap()
-                .map(DictOrLstmBorrowed::Dict);
+                .map(ComplexPayloadBorrowed::Dict);
         }
         if self.lo.is_none() {
             self.lo = try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, LO_DICT)
                 .unwrap()
-                .map(DictOrLstmBorrowed::Dict);
+                .map(ComplexPayloadBorrowed::Dict);
         }
         if self.th.is_none() {
             self.th = try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, TH_DICT)
                 .unwrap()
-                .map(DictOrLstmBorrowed::Dict);
+                .map(ComplexPayloadBorrowed::Dict);
         }
     }
 
@@ -247,11 +318,11 @@ impl ComplexPayloadsBorrowed<'static> {
     pub(crate) fn static_to_owned(self) -> ComplexPayloads {
         ComplexPayloads {
             grapheme: self.grapheme.static_to_owned(),
-            my: self.my.map(fromstatic_dictor),
-            km: self.km.map(fromstatic_dictor),
-            lo: self.lo.map(fromstatic_dictor),
-            th: self.th.map(fromstatic_dictor),
-            ja: self.ja.map(DataPayload::from_static_ref),
+            my: self.my.map(ComplexPayloadBorrowed::static_to_owned),
+            km: self.km.map(ComplexPayloadBorrowed::static_to_owned),
+            lo: self.lo.map(ComplexPayloadBorrowed::static_to_owned),
+            th: self.th.map(ComplexPayloadBorrowed::static_to_owned),
+            ja: self.ja.map(ComplexPayloadBorrowed::static_to_owned),
         }
     }
 }
@@ -260,11 +331,11 @@ impl ComplexPayloads {
     pub(crate) fn as_borrowed(&self) -> ComplexPayloadsBorrowed<'_> {
         ComplexPayloadsBorrowed {
             grapheme: self.grapheme.as_borrowed(),
-            my: self.my.as_ref().map(borrow_dictor),
-            km: self.km.as_ref().map(borrow_dictor),
-            lo: self.lo.as_ref().map(borrow_dictor),
-            th: self.th.as_ref().map(borrow_dictor),
-            ja: self.ja.as_ref().map(|p| p.get()),
+            my: self.my.as_ref().map(ComplexPayload::as_borrowed),
+            km: self.km.as_ref().map(ComplexPayload::as_borrowed),
+            lo: self.lo.as_ref().map(ComplexPayload::as_borrowed),
+            th: self.th.as_ref().map(ComplexPayload::as_borrowed),
+            ja: self.ja.as_ref().map(ComplexPayload::as_borrowed),
         }
     }
 
@@ -276,22 +347,22 @@ impl ComplexPayloads {
         if self.my.is_none() {
             self.my = try_load::<SegmenterLstmAutoV1, D>(provider, MY_LSTM)?
                 .map(DataPayload::cast)
-                .map(DictOrLstm::Lstm);
+                .map(ComplexPayload::Lstm);
         }
         if self.km.is_none() {
             self.km = try_load::<SegmenterLstmAutoV1, D>(provider, KM_LSTM)?
                 .map(DataPayload::cast)
-                .map(DictOrLstm::Lstm);
+                .map(ComplexPayload::Lstm);
         }
         if self.lo.is_none() {
             self.lo = try_load::<SegmenterLstmAutoV1, D>(provider, LO_LSTM)?
                 .map(DataPayload::cast)
-                .map(DictOrLstm::Lstm);
+                .map(ComplexPayload::Lstm);
         }
         if self.th.is_none() {
             self.th = try_load::<SegmenterLstmAutoV1, D>(provider, TH_LSTM)?
                 .map(DataPayload::cast)
-                .map(DictOrLstm::Lstm);
+                .map(ComplexPayload::Lstm);
         }
         Ok(())
     }
@@ -300,8 +371,9 @@ impl ComplexPayloads {
     where
         D: DataProvider<SegmenterDictionaryAutoV1> + ?Sized,
     {
-        self.ja =
-            try_load::<SegmenterDictionaryAutoV1, D>(provider, CJ_DICT)?.map(DataPayload::cast);
+        self.ja = try_load::<SegmenterDictionaryAutoV1, D>(provider, CJ_DICT)?
+            .map(DataPayload::cast)
+            .map(ComplexPayload::Dict);
         Ok(())
     }
 
@@ -315,22 +387,22 @@ impl ComplexPayloads {
         if self.my.is_none() {
             self.my = try_load::<SegmenterDictionaryExtendedV1, _>(provider, MY_DICT)?
                 .map(DataPayload::cast)
-                .map(DictOrLstm::Dict);
+                .map(ComplexPayload::Dict);
         }
         if self.km.is_none() {
             self.km = try_load::<SegmenterDictionaryExtendedV1, _>(provider, KM_DICT)?
                 .map(DataPayload::cast)
-                .map(DictOrLstm::Dict);
+                .map(ComplexPayload::Dict);
         }
         if self.lo.is_none() {
             self.lo = try_load::<SegmenterDictionaryExtendedV1, _>(provider, LO_DICT)?
                 .map(DataPayload::cast)
-                .map(DictOrLstm::Dict);
+                .map(ComplexPayload::Dict);
         }
         if self.th.is_none() {
             self.th = try_load::<SegmenterDictionaryExtendedV1, _>(provider, TH_DICT)?
                 .map(DataPayload::cast)
-                .map(DictOrLstm::Dict);
+                .map(ComplexPayload::Dict);
         }
         Ok(())
     }
@@ -349,6 +421,7 @@ impl ComplexPayloads {
         })
     }
 }
+
 fn try_load<M: DataMarker, P: DataProvider<M> + ?Sized>(
     provider: &P,
     model: &'static DataMarkerAttributes,
@@ -391,26 +464,73 @@ fn try_load_static<M: DataMarker, P: DataProvider<M> + ?Sized>(
 mod tests {
     use super::*;
 
-    #[test]
-    fn thai_word_break() {
-        const TEST_STR: &str = "ภาษาไทยภาษาไทย";
-        let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
+    #[track_caller]
+    fn check_complex(s: &str, expected: &[&str], segmenter: ComplexPayloadsBorrowed<'_>) {
+        use itertools::Itertools;
 
+        let segments = [0]
+            .into_iter()
+            .chain(segmenter.complex_language_segment_str(s))
+            .tuple_windows()
+            .map(|(a, b)| &s[a..b])
+            .collect::<Vec<_>>();
+        assert_eq!(segments, expected, "{s}");
+
+        // let segments = segmenter
+        //     .segment_utf8(s.as_bytes())
+        //     .tuple_windows()
+        //     .map(|(a, b)| &s[a..b])
+        //     .collect::<Vec<_>>();
+        // assert_eq!(segments, expected, "{s}");
+
+        let utf16: Vec<u16> = s.encode_utf16().collect();
+        let expected = expected
+            .iter()
+            .copied()
+            .map(|s| s.encode_utf16().collect::<Vec<_>>())
+            .collect::<Vec<_>>();
+        let iter = [0]
+            .into_iter()
+            .chain(segmenter.complex_language_segment_utf16(&utf16))
+            .tuple_windows()
+            .map(|(a, b)| &utf16[a..b])
+            .collect::<Vec<_>>();
+        assert_eq!(iter, expected, "{s}");
+    }
+
+    #[test]
+    fn thai() {
         let mut lstm = ComplexPayloadsBorrowed::new();
         lstm.with_southeast_asian_lstms();
         let mut dict = ComplexPayloadsBorrowed::new();
         dict.with_southeast_asian_dictionaries();
 
-        assert_eq!(
-            lstm.complex_language_segment_str(TEST_STR),
-            [12, 21, 33, 42]
-        );
-        assert_eq!(lstm.complex_language_segment_utf16(&utf16), [4, 7, 11, 14]);
+        check_complex("ภาษาไทยภาษาไทย", &["ภาษา", "ไทย", "ภาษา", "ไทย"], lstm);
+        check_complex("ภาษาไทยภาษาไทย", &["ภาษา", "ไทย", "ภาษา", "ไทย"], dict);
+    }
 
-        assert_eq!(
-            dict.complex_language_segment_str(TEST_STR),
-            [12, 21, 33, 42]
+    #[test]
+    fn mixed() {
+        let mut lstm = ComplexPayloadsBorrowed::new();
+        lstm.with_southeast_asian_lstms();
+        lstm.with_japanese_dictionary();
+
+        let mut dict = ComplexPayloadsBorrowed::new();
+        dict.with_southeast_asian_dictionaries();
+        dict.with_japanese_dictionary();
+
+        check_complex("ภาษาไทย龟山岛", &["ภาษา", "ไทย", "龟山岛"], lstm);
+        check_complex("ภาษาไทย龟山岛", &["ภาษา", "ไทย", "龟山岛"], dict);
+
+        check_complex(
+            "こんにちは世界ภาษาไทย",
+            &["こんにちは", "世界", "ภาษา", "ไทย"],
+            lstm,
         );
-        assert_eq!(dict.complex_language_segment_utf16(&utf16), [4, 7, 11, 14]);
+        check_complex(
+            "こんにちは世界ภาษาไทย",
+            &["こんにちは", "世界", "ภาษา", "ไทย"],
+            dict,
+        );
     }
 }

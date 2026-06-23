@@ -9,20 +9,20 @@
   ],
   "elements": [
     {
-      "header": 7,
+      "header": 26,
       "patterns": [
         "d – d MMM y",
         "d MMM – d MMM y",
-        "d MMM y – d MMM y"
+        "d MMM y"
       ]
     },
     {
-      "header": 15,
+      "header": 106,
       "patterns": [
         "MMM d – d, y G",
         "MMM d – MMM d, y G",
         "MMM d, y – MMM d, y G",
-        "MMM d, y G – MMM d, y G"
+        "MMM d, y G"
       ]
     }
   ]

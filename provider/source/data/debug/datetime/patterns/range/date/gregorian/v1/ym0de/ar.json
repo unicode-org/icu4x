@@ -10,37 +10,33 @@
   ],
   "elements": [
     {
-      "header": 7,
+      "header": 26,
       "patterns": [
         "E، d – E، d MMM، y",
         "E، d MMM – E، d MMM، y",
-        "E، d MMM y – E، d MMM y"
+        "E، d MMM y"
       ]
     },
     {
-      "header": 7,
+      "header": 17,
       "patterns": [
-        "E، dd‏/MM‏/y – E، dd‏/MM‏/y",
-        "E، d‏/M‏/y – E، d‏/M‏/y",
-        "E، d‏/M‏/y – E، d‏/M‏/y"
+        "E، dd‏/MM‏/y",
+        "E، d‏/M‏/y"
       ]
     },
     {
-      "header": 15,
+      "header": 104,
       "patterns": [
-        "E, d MMM – E, d MMM y G",
         "E, d MMM – E, d MMM y G",
         "E, d MMM y – E, d MMM y G",
-        "E, d MMM y G – E, d MMM y G"
+        "E, d MMM y G"
       ]
     },
     {
-      "header": 15,
+      "header": 96,
       "patterns": [
         "E, dd-MM-y – E, dd-MM-y GGGG",
-        "E, dd-MM-y – E, dd-MM-y GGGG",
-        "E, dd-MM-y – E, dd-MM-y GGGG",
-        "E, dd-MM-y GGGG – E, dd-MM-y GGGG"
+        "E, dd-MM-y GGGG"
       ]
     }
   ]

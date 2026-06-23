@@ -20,15 +20,15 @@ pub mod ffi {
     #[diplomat::enum_convert(icu_properties::props::{{prop.name.to_upper_camel_case()}}, needs_wildcard)]
     #[non_exhaustive]
     pub enum {{prop.name.to_upper_camel_case()}} {
-        {%- for (discriminant, (short_name, long_name)) in prop.variants() %}
+        {%- for (discriminant, (short_name, long_name, _)) in prop.variants() %}
         #[diplomat::rust_link(
-            icu::properties::props::{{prop.name.to_upper_camel_case()}}::{{prop.transform_long(long_name)}},
+            icu::properties::props::{{prop.name.to_upper_camel_case()}}::{{prop.transform_ident(long_name)}},
             {{ prop.ffi_variant_kind() }}
         )]
         {%- if prop.default == discriminant %}
         #[diplomat::attr(auto, default)]
         {%- endif %}
-        {{prop.transform_long_ffi(long_name)}} = {{discriminant}},
+        {{prop.transform_ident_ffi(long_name)}} = {{discriminant}},
         {%- endfor %}
     }
 
@@ -83,8 +83,8 @@ pub mod ffi {
         /// Convert from an integer value from ICU4C or `CodePointMapData`
         pub fn from_integer_value(other: {{ prop.int_type() }}) -> Option<Self> {
             Some(match other {
-                {%- for (discriminant, (_, long_name)) in prop.variants() %}
-                {{ discriminant }} => Self::{{prop.transform_long_ffi(long_name)}},
+                {%- for (discriminant, (_, long_name, _)) in prop.variants() %}
+                {{ discriminant }} => Self::{{prop.transform_ident_ffi(long_name)}},
                 {%- endfor %}
                 _ => return None,
             })

@@ -11,23 +11,22 @@
   ],
   "elements": [
     {
-      "header": 3,
+      "header": 10,
       "patterns": [
         "d–d 'de' MMMM",
         "d 'de' MMMM – d 'de' MMMM"
       ]
     },
     {
-      "header": 3,
+      "header": 10,
       "patterns": [
         "dd – dd 'de' MM",
         "d 'de' MMM 'al' d 'de' MMM"
       ]
     },
     {
-      "header": 3,
+      "header": 8,
       "patterns": [
-        "dd/MM – dd/MM",
         "dd/MM – dd/MM"
       ]
     }

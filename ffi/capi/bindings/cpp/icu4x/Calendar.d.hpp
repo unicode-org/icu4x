@@ -24,6 +24,12 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct Calendar;
+
+
+    typedef struct DiplomatCalendarView {
+      const Calendar** data;
+      size_t len;
+    } DiplomatCalendarView;
 } // namespace capi
 } // namespace
 

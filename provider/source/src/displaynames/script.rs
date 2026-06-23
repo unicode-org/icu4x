@@ -35,7 +35,7 @@ impl DataProvider<ScriptDisplayNamesV1> for SourceDataProvider {
 }
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesScriptLongV1,
+    LocaleNamesScriptMediumV1,
     cldr_serde::displaynames::script::Resource,
     "scripts.json",
     scripts,
@@ -140,10 +140,10 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_script_long() {
+    fn test_locale_names_script_medium() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesScriptLongV1> = provider
+        let data: DataPayload<LocaleNamesScriptMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("Latn").unwrap(),

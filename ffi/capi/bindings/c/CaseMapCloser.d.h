@@ -14,6 +14,11 @@
 typedef struct CaseMapCloser CaseMapCloser;
 
 
+typedef struct DiplomatCaseMapCloserView {
+  const CaseMapCloser** data;
+  size_t len;
+} DiplomatCaseMapCloserView;
+
 
 
 #endif // CaseMapCloser_D_H

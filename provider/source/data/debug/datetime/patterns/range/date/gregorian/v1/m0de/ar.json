@@ -10,17 +10,16 @@
   ],
   "elements": [
     {
-      "header": 3,
+      "header": 6,
       "patterns": [
         "E، d – E، d MMM",
-        "E، d MMM – E، d MMM"
+        "E، d MMM"
       ]
     },
     {
-      "header": 3,
+      "header": 4,
       "patterns": [
-        "E، d‏/M – E، d‏/M",
-        "E، d‏/M – E، d‏/M"
+        "E، d‏/M"
       ]
     }
   ]

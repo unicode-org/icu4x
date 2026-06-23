@@ -10,21 +10,18 @@
   ],
   "elements": [
     {
-      "header": 15,
+      "header": 104,
       "patterns": [
         "ccc, d MMM — ccc, d MMM y г. G",
-        "ccc, d MMM — ccc, d MMM y г. G",
         "ccc, d MMM y — ccc, d MMM y гг. G",
-        "ccc, d MMM y г. G — ccc, d MMM y г. G"
+        "ccc, d MMM y г. G"
       ]
     },
     {
-      "header": 15,
+      "header": 96,
       "patterns": [
         "ccc, dd.MM.y — ccc, dd.MM.y G",
-        "ccc, dd.MM.y — ccc, dd.MM.y G",
-        "ccc, dd.MM.y — ccc, dd.MM.y G",
-        "ccc, dd.MM.y G — ccc, dd.MM.y G"
+        "ccc, dd.MM.y G"
       ]
     }
   ]

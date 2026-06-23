@@ -9,6 +9,8 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use icu_locale_core::subtags::{Language, Region, Script, Variant};
+use icu_pattern::DoublePlaceholderPattern;
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use tinystr::UnvalidatedTinyAsciiStr;
@@ -175,10 +177,26 @@ pub struct MenuNameParts<'data> {
 
 icu_provider::data_struct!(VariantDisplayNames<'_>, #[cfg(feature = "datagen")]);
 
+/// [`LocaleNamesEssentials`] provides the formatting patterns used to combine subtags.
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
+pub struct LocaleNamesEssentials<'data> {
+    /// The pattern used to combine the base language name with qualifiers (e.g., `"{0} ({1})"`).
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub locale_pattern: VarZeroCow<'data, DoublePlaceholderPattern>,
+    /// The separator used to join multiple qualifiers (e.g., `"{0}, {1}"`).
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub locale_separator: VarZeroCow<'data, DoublePlaceholderPattern>,
+}
+
+icu_provider::data_struct!(LocaleNamesEssentials<'_>, #[cfg(feature = "datagen")]);
+
 icu_provider::data_marker!(
     /// Data marker for region display names.
-    LocaleNamesRegionLongV1,
-    "locale/names/region/long/v1",
+    LocaleNamesRegionMediumV1,
+    "locale/names/region/medium/v1",
     VarZeroCow<'static, str>,
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_region",
@@ -195,8 +213,8 @@ icu_provider::data_marker!(
 
 icu_provider::data_marker!(
     /// Data marker for language display names.
-    LocaleNamesLanguageLongV1,
-    "locale/names/language/long/v1",
+    LocaleNamesLanguageMediumV1,
+    "locale/names/language/medium/v1",
     VarZeroCow<'static, str>,
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_language",
@@ -212,9 +230,18 @@ icu_provider::data_marker!(
 );
 
 icu_provider::data_marker!(
-    /// Data marker for menu-long language display names.
-    LocaleNamesLanguageMenuLongV1,
-    "locale/names/language/menu/long/v1",
+    /// Data marker for long language display names.
+    LocaleNamesLanguageLongV1,
+    "locale/names/language/long/v1",
+    VarZeroCow<'static, str>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "locale_names_language",
+);
+
+icu_provider::data_marker!(
+    /// Data marker for menu-medium language display names.
+    LocaleNamesLanguageMenuMediumV1,
+    "locale/names/language/menu/medium/v1",
     VarZeroCow<'static, MenuNamePartsULE>,
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_language",
@@ -222,8 +249,8 @@ icu_provider::data_marker!(
 
 icu_provider::data_marker!(
     /// Data marker for script display names.
-    LocaleNamesScriptLongV1,
-    "locale/names/script/long/v1",
+    LocaleNamesScriptMediumV1,
+    "locale/names/script/medium/v1",
     VarZeroCow<'static, str>,
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_script",
@@ -240,18 +267,103 @@ icu_provider::data_marker!(
 
 icu_provider::data_marker!(
     /// Data marker for variant display names.
-    LocaleNamesVariantLongV1,
-    "locale/names/variant/long/v1",
+    LocaleNamesVariantMediumV1,
+    "locale/names/variant/medium/v1",
     VarZeroCow<'static, str>,
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_variant",
 );
 
 icu_provider::data_marker!(
-    /// Data marker for short variant display names.
-    LocaleNamesVariantShortV1,
-    "locale/names/variant/short/v1",
-    VarZeroCow<'static, str>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "locale_names_variant",
+    /// Data marker for locale names essentials (patterns).
+    LocaleNamesEssentialsV1,
+    "locale/names/essentials/v1",
+    LocaleNamesEssentials<'static>
 );
+
+impl LocaleNamesLanguageMediumV1 {
+    /// Helper to construct infallible attributes from subtags.
+    #[inline]
+    pub(crate) fn make_attributes(
+        language: Language,
+        script: Option<Script>,
+        region: Option<Region>,
+        buffer: &mut tinystr::TinyAsciiStr<16>,
+    ) -> &DataMarkerAttributes {
+        const HYPHEN: tinystr::TinyAsciiStr<1> = tinystr::tinystr!(1, "-");
+        let lang_str = language.to_tinystr();
+        *buffer = match (script, region) {
+            (Some(script), Some(region)) => {
+                let script_str = script.to_tinystr();
+                let region_str = region.to_tinystr();
+                lang_str
+                    .concat::<1, 16>(HYPHEN)
+                    .concat::<4, 16>(script_str)
+                    .concat::<1, 16>(HYPHEN)
+                    .concat::<3, 16>(region_str)
+            }
+            (Some(script), None) => {
+                let script_str = script.to_tinystr();
+                lang_str.concat::<1, 16>(HYPHEN).concat::<4, 16>(script_str)
+            }
+            (None, Some(region)) => {
+                let region_str = region.to_tinystr();
+                lang_str.concat::<1, 16>(HYPHEN).concat::<3, 16>(region_str)
+            }
+            (None, None) => lang_str.resize::<16>(),
+        };
+        // This is infallible (will not panic) because validated `Language`, `Script`,
+        // `Region`, and hyphens are guaranteed to conform to `DataMarkerAttributes` syntax.
+        DataMarkerAttributes::from_str_or_panic(buffer)
+    }
+}
+
+impl LocaleNamesRegionMediumV1 {
+    /// Helper to create data marker attributes from a region.
+    #[inline]
+    pub(crate) fn make_attributes(region: &Region) -> &DataMarkerAttributes {
+        // This is infallible (will not panic) because a validated `Region` is guaranteed to
+        // conform to `DataMarkerAttributes` syntax.
+        DataMarkerAttributes::from_str_or_panic(region.as_str())
+    }
+}
+
+impl LocaleNamesRegionShortV1 {
+    /// Helper to create data marker attributes from a region.
+    #[inline]
+    pub(crate) fn make_attributes(region: &Region) -> &DataMarkerAttributes {
+        // This is infallible (will not panic) because a validated `Region` is guaranteed to
+        // conform to `DataMarkerAttributes` syntax.
+        DataMarkerAttributes::from_str_or_panic(region.as_str())
+    }
+}
+
+impl LocaleNamesScriptMediumV1 {
+    /// Helper to create data marker attributes from a script.
+    #[inline]
+    pub(crate) fn make_attributes(script: &Script) -> &DataMarkerAttributes {
+        // This is infallible (will not panic) because a validated `Script` is guaranteed to
+        // conform to `DataMarkerAttributes` syntax.
+        DataMarkerAttributes::from_str_or_panic(script.as_str())
+    }
+}
+
+impl LocaleNamesScriptShortV1 {
+    /// Helper to create data marker attributes from a script.
+    #[inline]
+    pub(crate) fn make_attributes(script: &Script) -> &DataMarkerAttributes {
+        // This is infallible (will not panic) because a validated `Script` is guaranteed to
+        // conform to `DataMarkerAttributes` syntax.
+        DataMarkerAttributes::from_str_or_panic(script.as_str())
+    }
+}
+
+impl LocaleNamesVariantMediumV1 {
+    /// Helper to create data marker attributes from a variant.
+    #[inline]
+    pub(crate) fn make_attributes(variant: &Variant) -> &DataMarkerAttributes {
+        // This is infallible (will not panic) because a validated `Variant` is guaranteed to
+        // conform to `DataMarkerAttributes` syntax.
+        DataMarkerAttributes::from_str_or_panic(variant.as_str())
+    }
+}

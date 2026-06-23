@@ -11,24 +11,21 @@
   ],
   "elements": [
     {
-      "header": 3,
+      "header": 4,
       "patterns": [
-        "E, d 'de' MMMM – E, d 'de' MMMM",
-        "E, d 'de' MMMM – E, d 'de' MMMM"
+        "E, d 'de' MMMM"
       ]
     },
     {
-      "header": 3,
+      "header": 4,
       "patterns": [
-        "E, d MMM – E, d MMM",
-        "E, d MMM – E, d MMM"
+        "E, d MMM"
       ]
     },
     {
-      "header": 3,
+      "header": 4,
       "patterns": [
-        "E, d/M – E, d/M",
-        "E, d/M – E, d/M"
+        "E, d/M"
       ]
     }
   ]
