@@ -35,10 +35,10 @@ pub(crate) struct ExtractedNames<'a, K> {
     pub(crate) menu_names: BTreeMap<K, &'a str>,
 }
 
-/// Process locale display names from a cldr_serde struct to BTreeMaps
-/// ready to be converted to ZeroMaps.
+/// Process locale display names from a `cldr_serde` struct to `BTreeMaps`
+/// ready to be converted to `ZeroMaps`.
 ///
-/// This fn is used by the zeromap-based structs, not the LocaleNames
+/// This fn is used by the zeromap-based structs, not the `LocaleNames`
 /// attributes-based structs.
 pub(crate) fn extract_names_for_zeromap_struct<'a, T, K, F>(
     map: &'a HashMap<WithAlt<T>, String>,
