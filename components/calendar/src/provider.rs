@@ -280,12 +280,12 @@ impl<'de> serde::Deserialize<'de> for JapaneseEras {
             ));
         }
 
-        Ok(Self::with_last_era(
+        Self::with_last_era(
             start,
             code.resize(),
             dates_to_eras.as_slice().len() as u8 + 1,
         )
-        .ok_or_else(|| D::Error::custom("Invalid era"))?)
+        .ok_or_else(|| D::Error::custom("Invalid era"))
     }
 }
 
@@ -450,7 +450,7 @@ fn japanese_eras_serde_roundtrip() {
     .unwrap();
 
     assert_eq!(
-        serde_json::from_str::<JapaneseEras>(&dbg!(serde_json::to_string(&eras).unwrap())).unwrap(),
+        serde_json::from_str::<JapaneseEras>(&serde_json::to_string(&eras).unwrap()).unwrap(),
         eras
     );
 
