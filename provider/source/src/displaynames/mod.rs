@@ -113,7 +113,7 @@ macro_rules! impl_displaynames_v1 {
 
                 let key = WithAlt {
                     subtag,
-                    alt: $alt_variant.map(String::from),
+                    alt: $alt_variant.map(std::borrow::Cow::Borrowed),
                     menu: None,
                 };
 
@@ -173,7 +173,7 @@ macro_rules! impl_displaynames_menu_v1 {
                 let key_core = WithAlt {
                     subtag: subtag.clone(),
                     alt: None,
-                    menu: Some($crate::displaynames::MENU_CORE.to_string()),
+                    menu: Some(std::borrow::Cow::Borrowed($crate::displaynames::MENU_CORE)),
                 };
 
                 let map = &data.main.value.localedisplaynames.$field;
@@ -182,7 +182,9 @@ macro_rules! impl_displaynames_menu_v1 {
                     let key_extension = WithAlt {
                         subtag,
                         alt: None,
-                        menu: Some($crate::displaynames::MENU_EXTENSION.to_string()),
+                        menu: Some(std::borrow::Cow::Borrowed(
+                            $crate::displaynames::MENU_EXTENSION,
+                        )),
                     };
                     let extension = map.get(&key_extension).ok_or_else(|| {
                         DataError::custom("found menu-core but missing menu-extension")
@@ -193,7 +195,7 @@ macro_rules! impl_displaynames_menu_v1 {
                     // Fallback to alt-menu
                     let key_alt_menu = WithAlt {
                         subtag,
-                        alt: Some($crate::displaynames::ALT_MENU.to_string()),
+                        alt: Some(std::borrow::Cow::Borrowed($crate::displaynames::ALT_MENU)),
                         menu: None,
                     };
                     let alt_menu = map.get(&key_alt_menu).ok_or_else(|| {

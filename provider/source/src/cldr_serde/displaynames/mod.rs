@@ -16,8 +16,8 @@ use serde::{Deserialize, Deserializer};
 #[derive(Hash, Eq, PartialEq, Clone, Debug)]
 pub(crate) struct WithAlt<T> {
     pub(crate) subtag: T,
-    pub(crate) alt: Option<String>,
-    pub(crate) menu: Option<String>,
+    pub(crate) alt: Option<std::borrow::Cow<'static, str>>,
+    pub(crate) menu: Option<std::borrow::Cow<'static, str>>,
 }
 
 impl<'de, T> Deserialize<'de> for WithAlt<T>
@@ -51,13 +51,13 @@ where
                     Ok(WithAlt {
                         subtag,
                         alt: None,
-                        menu: Some(menu_str.to_string()),
+                        menu: Some(std::borrow::Cow::Owned(menu_str.to_string())),
                     })
                 } else if let Some((subtag_str, alt_str)) = v.split_once(ALT_SEPARATOR) {
                     let subtag = T::from_str(subtag_str).map_err(E::custom)?;
                     Ok(WithAlt {
                         subtag,
-                        alt: Some(alt_str.to_string()),
+                        alt: Some(std::borrow::Cow::Owned(alt_str.to_string())),
                         menu: None,
                     })
                 } else {
