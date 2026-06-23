@@ -5,6 +5,7 @@
 import 'package:code_assets/code_assets.dart'
     show CodeAsset, HookConfigCodeConfig, LinkInputCodeAssets, OS;
 import 'package:hooks/hooks.dart' show link;
+import 'package:icu4x/src/bindings/lib.g.dart' show symbolMapping;
 import 'package:logging/logging.dart' show Level, Logger;
 import 'package:native_toolchain_c/native_toolchain_c.dart'
     show CLinker, LinkerOptions;
@@ -24,25 +25,28 @@ Future<void> main(List<String> args) async {
       return;
     }
 
-    final usedSymbols = input
+    final recordedUses = input
         // ignore: experimental_member_use
-        .recordedUses
-        ?.instances[const record_use.Class(
-          '_DiplomatFfiUse',
-          record_use.Library('package:icu4x/src/bindings/lib.g.dart'),
-        )]
-        ?.whereType<record_use.InstanceConstantReference>()
-        .map((instance) => instance.instanceConstant)
-        .whereType<record_use.InstanceConstant>()
-        .map(
-          (instanceConstant) =>
-              instanceConstant.fields['symbol'] as record_use.StringConstant,
+        .recordedUses;
+    if (recordedUses == null) {
+      throw ArgumentError(
+        'Enable the --enable-experiment=record-use experiment'
+        ' to use this app.',
+      );
+    }
+    final usedSymbols = recordedUses.calls.keys
+        .where(
+          (id) =>
+              id.library ==
+              const record_use.Library('package:icu4x/src/bindings/lib.g.dart'),
         )
-        .map((stringConstant) => stringConstant.value);
+        .map((id) => id.name)
+        .map((methodName) => symbolMapping[methodName])
+        .nonNulls;
 
     print('''
 ### Using symbols:
-  ${usedSymbols?.join('\n')}
+  ${usedSymbols.join('\n')}
 ### End using symbols
 ''');
 
