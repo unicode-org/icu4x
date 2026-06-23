@@ -219,9 +219,7 @@ macro_rules! impl_displaynames_menu_v1 {
                 let displaynames = self.cldr()?.displaynames();
                 for locale in displaynames.list_locales()?.filter(|locale| {
                     // The directory might exist without the file
-                    displaynames
-                        .file_exists(locale, $file)
-                        .unwrap_or_default()
+                    displaynames.file_exists(locale, $file).unwrap_or_default()
                 }) {
                     let data: &$resource = displaynames.read_and_parse(&locale, $file)?;
                     for key in data.main.value.localedisplaynames.$field.keys() {
@@ -264,9 +262,7 @@ macro_rules! impl_displaynames_iter_v1 {
                 let displaynames = self.cldr()?.displaynames();
                 for locale in displaynames.list_locales()?.filter(|locale| {
                     // The directory might exist without the file
-                    displaynames
-                        .file_exists(locale, $file)
-                        .unwrap_or_default()
+                    displaynames.file_exists(locale, $file).unwrap_or_default()
                 }) {
                     let data: &$resource = displaynames.read_and_parse(&locale, $file)?;
                     for key in data.main.value.localedisplaynames.$field.keys() {
