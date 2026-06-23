@@ -93,6 +93,7 @@ impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayName
             &[ALT_VARIANT, ALT_SECONDARY, ALT_OFFICIAL],
             "language",
             |langid| {
+                // LanguageDisplayNames contains display names for language subtags without other subtags
                 if langid.script.is_some() || langid.region.is_some() || !langid.variants.is_empty()
                 {
                     None
@@ -124,6 +125,8 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<
             &[ALT_VARIANT, ALT_SECONDARY, ALT_OFFICIAL],
             "language",
             |langid| {
+                // LocaleDisplayNames contains display names for languages with other subtags,
+                // not duplicating the display names found in LanguageDisplayNames
                 if langid.script.is_none() && langid.region.is_none() && langid.variants.is_empty()
                 {
                     None
