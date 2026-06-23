@@ -10,8 +10,6 @@ analyzer:
   language:
     strict-casts: true
     strict-inference: true
-  errors:
-    use_null_aware_elements: ignore
 
 linter:
   rules:
