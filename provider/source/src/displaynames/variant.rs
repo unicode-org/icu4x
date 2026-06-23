@@ -46,14 +46,7 @@ impl From<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNames<
             &other.main.value.localedisplaynames.variants,
             &[ALT_SECONDARY],
             "variant",
-            |variant, val| {
-                let variant_str = variant.to_tinystr();
-                if variant_str.as_str() == val {
-                    None
-                } else {
-                    Some(variant_str)
-                }
-            },
+            |variant| Some(variant.to_tinystr()),
         );
 
         let to_zero_map = |map: BTreeMap<tinystr::TinyAsciiStr<8>, &str>| {

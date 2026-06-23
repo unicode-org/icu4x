@@ -14,6 +14,7 @@ use icu::experimental::displaynames::provider::*;
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use std::collections::{BTreeMap, HashSet};
+use tinystr::TinyAsciiStr;
 use zerovec::{VarZeroCow, ZeroMap};
 
 impl DataProvider<LanguageDisplayNamesV1> for SourceDataProvider {
@@ -91,25 +92,19 @@ impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayName
             &other.main.value.localedisplaynames.languages,
             &[ALT_VARIANT, ALT_SECONDARY, ALT_OFFICIAL],
             "language",
-            |langid, val| {
+            |langid| {
                 if langid.script.is_some() || langid.region.is_some() || !langid.variants.is_empty()
                 {
                     None
                 } else {
-                    let lang = langid.language;
-                    // Old CLDR versions may contain trivial entries, so filter
-                    if lang.as_str() == val {
-                        None
-                    } else {
-                        Some(lang)
-                    }
+                    Some(langid.language.to_tinystr())
                 }
             },
         );
 
-        let to_zero_map = |map: BTreeMap<icu::locale::subtags::Language, &str>| {
+        let to_zero_map = |map: BTreeMap<TinyAsciiStr<3>, &str>| {
             map.into_iter()
-                .map(|(k, v)| (k.to_tinystr().to_unvalidated(), v))
+                .map(|(k, v)| (k.to_unvalidated(), v))
                 .collect()
         };
 
@@ -128,18 +123,12 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<
             &other.main.value.localedisplaynames.languages,
             &[ALT_VARIANT, ALT_SECONDARY, ALT_OFFICIAL],
             "language",
-            |langid, val| {
+            |langid| {
                 if langid.script.is_none() && langid.region.is_none() && langid.variants.is_empty()
                 {
                     None
                 } else {
-                    let locale_str = langid.to_string();
-                    // Old CLDR versions may contain trivial entries, so filter
-                    if locale_str == val {
-                        None
-                    } else {
-                        Some(locale_str)
-                    }
+                    Some(langid.to_string())
                 }
             },
         );

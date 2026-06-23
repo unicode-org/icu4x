@@ -47,8 +47,8 @@ pub(crate) fn extract_names_for_zeromap_struct<'a, T, K, F>(
     filter_project: F,
 ) -> ExtractedNames<'a, K>
 where
-    K: Ord,
-    F: Fn(&T, &str) -> Option<K>,
+    K: Ord + PartialEq<str>,
+    F: Fn(&T) -> Option<K>,
 {
     let mut names = BTreeMap::new();
     let mut short_names = BTreeMap::new();
@@ -61,7 +61,11 @@ where
             continue;
         }
         let val_str = value.as_str();
-        if let Some(k) = filter_project(&key.subtag, val_str) {
+        if let Some(k) = filter_project(&key.subtag) {
+            // Old CLDR versions may contain trivial entries, so filter
+            if k == *val_str {
+                continue;
+            }
             match key.alt.as_deref() {
                 Some(ALT_SHORT) => {
                     short_names.insert(k, val_str);

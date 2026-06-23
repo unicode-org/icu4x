@@ -56,14 +56,7 @@ impl From<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames<'s
             &other.main.value.localedisplaynames.scripts,
             &[ALT_VARIANT, ALT_SECONDARY, ALT_STANDALONE],
             "script",
-            |script, val| {
-                let script_str = script.to_tinystr();
-                if script_str.as_str() == val {
-                    None
-                } else {
-                    Some(script_str)
-                }
-            },
+            |script| Some(script.to_tinystr()),
         );
 
         let to_zero_map = |map: BTreeMap<tinystr::TinyAsciiStr<4>, &str>| {

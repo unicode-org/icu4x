@@ -56,14 +56,7 @@ impl From<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames<'s
             &other.main.value.localedisplaynames.regions,
             &[ALT_VARIANT, ALT_CHAGOS, ALT_BIOT],
             "region",
-            |region, val| {
-                let region_str = region.to_tinystr();
-                if region_str.as_str() == val {
-                    None
-                } else {
-                    Some(region_str)
-                }
-            },
+            |region| Some(region.to_tinystr()),
         );
 
         let to_zero_map = |map: BTreeMap<tinystr::TinyAsciiStr<3>, &str>| {
