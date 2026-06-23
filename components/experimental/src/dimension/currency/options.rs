@@ -19,9 +19,7 @@ pub struct CurrencyFormatterOptions {
 
 impl From<Width> for CurrencyFormatterOptions {
     fn from(width: Width) -> Self {
-        Self {
-            width,
-        }
+        Self { width }
     }
 }
 

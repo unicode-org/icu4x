@@ -37,8 +37,6 @@ prefs_convert!(CurrencyFormatterPreferences, DecimalFormatterPreferences, {
 });
 prefs_convert!(CurrencyFormatterPreferences, PluralRulesPreferences);
 
-
-
 /// A formatter for monetary values.
 ///
 /// [`CurrencyFormatter`] supports:
@@ -81,10 +79,8 @@ impl CurrencyFormatter {
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
-        let decimal_formatter = DecimalFormatter::try_new(
-            (&prefs).into(),
-            DecimalFormatterOptions::default(),
-        )?;
+        let decimal_formatter =
+            DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
 
         let req_id = nu_id(&prefs, &locale);
         let default_id = DataIdentifierBorrowed::for_locale(&locale);

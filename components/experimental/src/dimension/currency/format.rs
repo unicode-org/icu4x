@@ -9,9 +9,7 @@ mod tests {
     use tinystr::*;
     use writeable::assert_writeable_eq;
 
-    use crate::dimension::currency::{
-        CurrencyCode, formatter::CurrencyFormatter, options::CurrencyFormatterOptions,
-    };
+    use crate::dimension::currency::{CurrencyCode, formatter::CurrencyFormatter};
 
     #[test]
     pub fn test_en_us() {
