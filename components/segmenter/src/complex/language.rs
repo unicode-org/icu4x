@@ -2,15 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[derive(PartialEq, Debug, Copy, Clone)]
-pub enum Language {
-    Burmese,
-    ChineseOrJapanese,
-    Khmer,
-    Lao,
-    Thai,
-    Unknown,
-}
+use crate::provider::Language;
 
 // TODO: Use data provider
 pub(crate) fn get_language(codepoint: u32) -> Language {
@@ -64,7 +56,7 @@ pub(crate) fn get_language(codepoint: u32) -> Language {
         | 0x0002F800..=0x0002FA1D
         | 0x00030000..=0x0003134A
         | 0x00031350..=0x00033479 => Language::ChineseOrJapanese,
-        _ => Language::Unknown,
+        _ => Language::Other,
     }
 }
 

@@ -592,7 +592,7 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for ComplexLine<Y> {
         data: &Self::Data<'data>,
         iter: Y::IterAttr<'s>,
     ) -> Option<(ComplexIterator<'data, 's, Y>, Y::IterAttr<'s>)> {
-        use crate::complex::Language;
+        use crate::provider::Language;
 
         let data = Y::select_complex(
             data,

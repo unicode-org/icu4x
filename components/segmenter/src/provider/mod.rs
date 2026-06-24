@@ -349,3 +349,20 @@ impl zerovec::ule::AsULE for BreakState {
         }
     }
 }
+
+/// A language category for complex language segmenters.
+#[allow(missing_docs)] // trivial
+#[zerovec::make_ule(DictionaryLanguageULE)]
+#[derive(PartialEq, Debug, Copy, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
+#[repr(u8)]
+pub enum Language {
+    Other = 0,
+    Burmese = 1,
+    ChineseOrJapanese = 2,
+    Khmer = 3,
+    Lao = 4,
+    Thai = 5,
+}

@@ -44,7 +44,7 @@ pub trait RuleBreakType: crate::private::Sealed + Sized {
     #[cfg(feature = "unstable")]
     fn select_complex<'a>(
         data: &Self::ComplexData<'a>,
-        language: crate::complex::Language,
+        language: Language,
     ) -> Option<Self::ComplexLanguageData<'a>>;
 
     #[doc(hidden)]
@@ -319,7 +319,7 @@ impl RuleBreakType for Utf8 {
     #[cfg(feature = "unstable")]
     fn select_complex<'a>(
         &data: &Self::ComplexData<'a>,
-        language: crate::complex::Language,
+        language: Language,
     ) -> Option<Self::ComplexLanguageData<'a>> {
         data.select(language).map(|d| (d, data.grapheme))
     }
@@ -375,7 +375,7 @@ impl RuleBreakType for PotentiallyIllFormedUtf8 {
     #[cfg(feature = "unstable")]
     fn select_complex<'a>(
         data: &Self::ComplexData<'a>,
-        language: crate::complex::Language,
+        language: Language,
     ) -> Option<Self::ComplexLanguageData<'a>> {
         Utf8::select_complex(data, language)
     }
@@ -428,7 +428,7 @@ impl RuleBreakType for Latin1 {
     #[cfg(feature = "unstable")]
     fn select_complex<'a>(
         _data: &Self::ComplexData<'a>,
-        _language: crate::complex::Language,
+        _language: Language,
     ) -> Option<Self::ComplexLanguageData<'a>> {
         None
     }
@@ -481,7 +481,7 @@ impl RuleBreakType for Utf16 {
     #[cfg(feature = "unstable")]
     fn select_complex<'a>(
         data: &Self::ComplexData<'a>,
-        language: crate::complex::Language,
+        language: Language,
     ) -> Option<Self::ComplexLanguageData<'a>> {
         Utf8::select_complex(data, language)
     }
