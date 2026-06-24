@@ -186,15 +186,6 @@ part 'ZonedIsoDateTime.g.dart';
 part 'ZonedTime.g.dart';
 part 'ZonedTimeFormatter.g.dart';
 
-// ignore: experimental_member_use
-@meta.RecordUse()
-class _DiplomatFfiUse {
-  final String symbol;
-
-  // ignore: experimental_member_use
-  const _DiplomatFfiUse(@meta.mustBeConst this.symbol);
-}
-
 /// A [Rune] is a Unicode code point, such as `a`, or `💡`.
 ///
 /// The recommended way to obtain a [Rune] is to create it from a
@@ -237,7 +228,8 @@ final class _RustAlloc implements ffi.Allocator {
   }
 }
 
-@_DiplomatFfiUse('diplomat_alloc')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Void> Function(ffi.Size, ffi.Size)>(
   symbol: 'diplomat_alloc',
   isLeaf: true,
@@ -245,7 +237,8 @@ final class _RustAlloc implements ffi.Allocator {
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Void> _diplomat_alloc(int len, int align);
 
-@_DiplomatFfiUse('diplomat_free')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Void>, ffi.Size, ffi.Size)>(
   symbol: 'diplomat_free',
   isLeaf: true,
@@ -1180,22 +1173,26 @@ final class _Write {
   }
 }
 
-@_DiplomatFfiUse('diplomat_buffer_write_create')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Size)>(symbol: 'diplomat_buffer_write_create', isLeaf: true)
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _diplomat_buffer_write_create(int len);
 
-@_DiplomatFfiUse('diplomat_buffer_write_len')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_write_len', isLeaf: true)
 // ignore: non_constant_identifier_names
 external int _diplomat_buffer_write_len(ffi.Pointer<ffi.Opaque> ptr);
 
-@_DiplomatFfiUse('diplomat_buffer_write_get_bytes')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Uint8> Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_write_get_bytes', isLeaf: true)
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Uint8> _diplomat_buffer_write_get_bytes(ffi.Pointer<ffi.Opaque> ptr);
 
-@_DiplomatFfiUse('diplomat_buffer_write_destroy')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_write_destroy', isLeaf: true)
 // ignore: non_constant_identifier_names
 external void _diplomat_buffer_write_destroy(ffi.Pointer<ffi.Opaque> ptr);

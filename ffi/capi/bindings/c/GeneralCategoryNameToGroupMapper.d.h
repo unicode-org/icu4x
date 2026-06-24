@@ -14,6 +14,11 @@
 typedef struct GeneralCategoryNameToGroupMapper GeneralCategoryNameToGroupMapper;
 
 
+typedef struct DiplomatGeneralCategoryNameToGroupMapperView {
+  const GeneralCategoryNameToGroupMapper** data;
+  size_t len;
+} DiplomatGeneralCategoryNameToGroupMapperView;
+
 
 
 #endif // GeneralCategoryNameToGroupMapper_D_H

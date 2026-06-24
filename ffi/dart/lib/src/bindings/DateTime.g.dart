@@ -63,7 +63,8 @@ final class DateTime {
       ]);
 }
 
-@_DiplomatFfiUse('icu4x_DateTime_from_string_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultDateTimeFfiInt32 Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTime_from_string_mv1')
 // ignore: non_constant_identifier_names
 external _ResultDateTimeFfiInt32 _icu4x_DateTime_from_string_mv1(_SliceUtf8 v, ffi.Pointer<ffi.Opaque> calendar);

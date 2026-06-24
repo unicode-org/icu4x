@@ -59,6 +59,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4b46cbb362ab8752921c97e041f5e366ee6297bd428a31275b9fcf1e380f7299"
 
 [[package]]
+name = "annotate-snippets"
+version = "0.12.13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "74fc7650eedcb2fee505aad48491529e408f0e854c2d9f63eb86c1361b9b3f93"
+dependencies = [
+ "anstyle",
+ "memchr",
+ "unicode-width",
+]
+
+[[package]]
 name = "anstream"
 version = "0.6.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -757,7 +768,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.15.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=686f6cfb3eeb3fee18745bad56fdb18d6145810e#686f6cfb3eeb3fee18745bad56fdb18d6145810e"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=e827245abb92f19cd253f462ac9a9cab3fc9b548#e827245abb92f19cd253f462ac9a9cab3fc9b548"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -788,7 +799,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.15.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=686f6cfb3eeb3fee18745bad56fdb18d6145810e#686f6cfb3eeb3fee18745bad56fdb18d6145810e"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=e827245abb92f19cd253f462ac9a9cab3fc9b548#e827245abb92f19cd253f462ac9a9cab3fc9b548"
 dependencies = [
  "log",
 ]
@@ -796,17 +807,15 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.15.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=686f6cfb3eeb3fee18745bad56fdb18d6145810e#686f6cfb3eeb3fee18745bad56fdb18d6145810e"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=e827245abb92f19cd253f462ac9a9cab3fc9b548#e827245abb92f19cd253f462ac9a9cab3fc9b548"
 dependencies = [
  "askama",
  "clap",
  "colored",
  "diplomat_core",
- "displaydoc",
  "heck 0.5.0",
  "indenter",
  "itertools 0.14.0",
- "pulldown-cmark",
  "quote",
  "serde",
  "syn 2.0.117",
@@ -817,9 +826,9 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.15.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=686f6cfb3eeb3fee18745bad56fdb18d6145810e#686f6cfb3eeb3fee18745bad56fdb18d6145810e"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=e827245abb92f19cd253f462ac9a9cab3fc9b548#e827245abb92f19cd253f462ac9a9cab3fc9b548"
 dependencies = [
- "displaydoc",
+ "annotate-snippets",
  "either",
  "proc-macro2",
  "quote",
@@ -1094,15 +1103,6 @@ dependencies = [
  "futures-task",
  "pin-project-lite",
  "slab",
-]
-
-[[package]]
-name = "getopts"
-version = "0.2.24"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cfe4fbac503b8d1f88e6676011885f34b7174f46e59956bba534ba83abded4df"
-dependencies = [
- "unicode-width",
 ]
 
 [[package]]
@@ -2704,25 +2704,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "pulldown-cmark"
-version = "0.13.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7c3a14896dfa883796f1cb410461aef38810ea05f2b2c33c5aded3649095fdad"
-dependencies = [
- "bitflags",
- "getopts",
- "memchr",
- "pulldown-cmark-escape",
- "unicase",
-]
-
-[[package]]
-name = "pulldown-cmark-escape"
-version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "007d8adb5ddab6f8e3f491ac63566a7d5002cc7ed73901f72057943fa71ae1ae"
-
-[[package]]
 name = "quote"
 version = "1.0.45"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3629,12 +3610,6 @@ dependencies = [
  "combine",
  "walkdir",
 ]
-
-[[package]]
-name = "unicase"
-version = "2.9.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dbc4bc3a9f746d862c45cb89d705aa10f187bb96c76001afab07a0d35ce60142"
 
 [[package]]
 name = "unicode-bidi"

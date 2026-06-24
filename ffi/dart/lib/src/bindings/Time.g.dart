@@ -19,12 +19,16 @@ final class Time implements ffi.Finalizable {
   // maintain borrow validity.
   Time._fromFfi(this._ffi, this._selfEdge) {
     if (_selfEdge.isEmpty) {
-      _finalizer.attach(this, _ffi.cast());
+      _icu4x_Time_destroy_mv1(this, _ffi.cast());
     }
   }
 
-  @_DiplomatFfiUse('icu4x_Time_destroy_mv1')
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_Time_destroy_mv1));
+  // ignore: experimental_member_use
+  @meta.RecordUse()
+  // ignore: non_constant_identifier_names
+  static void _icu4x_Time_destroy_mv1(Time cl, ffi.Pointer<ffi.Void> pointer) => _finalizer.attach(cl, pointer);
+
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_internal_icu4x_Time_destroy_mv1));
 
   /// Creates a new [Time] given field values
   ///
@@ -113,47 +117,56 @@ final class Time implements ffi.Finalizable {
 
 }
 
-@_DiplomatFfiUse('icu4x_Time_destroy_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_Time_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_Time_destroy_mv1(ffi.Pointer<ffi.Void> self);
+external void _internal_icu4x_Time_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@_DiplomatFfiUse('icu4x_Time_create_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_Time_create_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Time_create_mv1(int hour, int minute, int second, int subsecond);
 
-@_DiplomatFfiUse('icu4x_Time_from_string_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_Time_from_string_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Time_from_string_mv1(_SliceUtf8 v);
 
-@_DiplomatFfiUse('icu4x_Time_start_of_day_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function()>(isLeaf: true, symbol: 'icu4x_Time_start_of_day_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Time_start_of_day_mv1();
 
-@_DiplomatFfiUse('icu4x_Time_noon_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function()>(isLeaf: true, symbol: 'icu4x_Time_noon_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Time_noon_mv1();
 
-@_DiplomatFfiUse('icu4x_Time_hour_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Time_hour_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Time_hour_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Time_minute_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Time_minute_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Time_minute_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Time_second_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Time_second_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Time_second_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Time_subsecond_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Time_subsecond_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Time_subsecond_mv1(ffi.Pointer<ffi.Opaque> self);

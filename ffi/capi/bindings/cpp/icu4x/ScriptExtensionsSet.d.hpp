@@ -15,6 +15,12 @@
 namespace icu4x {
 namespace capi {
     struct ScriptExtensionsSet;
+
+
+    typedef struct DiplomatScriptExtensionsSetView {
+      const ScriptExtensionsSet** data;
+      size_t len;
+    } DiplomatScriptExtensionsSetView;
 } // namespace capi
 } // namespace
 

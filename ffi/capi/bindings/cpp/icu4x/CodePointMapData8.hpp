@@ -120,19 +120,19 @@ inline uint8_t icu4x::CodePointMapData8::operator[](char32_t cp) const {
     return result;
 }
 
-inline std::unique_ptr<icu4x::CodePointRangeIterator> icu4x::CodePointMapData8::iter_ranges_for_value(uint8_t value) const {
+inline std::unique_ptr<icu4x::CodePointRangeIterator> icu4x::CodePointMapData8::iter_ranges_for_value(uint8_t value) const DIPLOMAT_LIFETIME_BOUND {
     auto result = icu4x::capi::icu4x_CodePointMapData8_iter_ranges_for_value_mv1(this->AsFFI(),
         value);
     return std::unique_ptr<icu4x::CodePointRangeIterator>(icu4x::CodePointRangeIterator::FromFFI(result));
 }
 
-inline std::unique_ptr<icu4x::CodePointRangeIterator> icu4x::CodePointMapData8::iter_ranges_for_value_complemented(uint8_t value) const {
+inline std::unique_ptr<icu4x::CodePointRangeIterator> icu4x::CodePointMapData8::iter_ranges_for_value_complemented(uint8_t value) const DIPLOMAT_LIFETIME_BOUND {
     auto result = icu4x::capi::icu4x_CodePointMapData8_iter_ranges_for_value_complemented_mv1(this->AsFFI(),
         value);
     return std::unique_ptr<icu4x::CodePointRangeIterator>(icu4x::CodePointRangeIterator::FromFFI(result));
 }
 
-inline std::unique_ptr<icu4x::CodePointRangeIterator> icu4x::CodePointMapData8::iter_ranges_for_group(icu4x::GeneralCategoryGroup group) const {
+inline std::unique_ptr<icu4x::CodePointRangeIterator> icu4x::CodePointMapData8::iter_ranges_for_group(icu4x::GeneralCategoryGroup group) const DIPLOMAT_LIFETIME_BOUND {
     auto result = icu4x::capi::icu4x_CodePointMapData8_iter_ranges_for_group_mv1(this->AsFFI(),
         group.AsFFI());
     return std::unique_ptr<icu4x::CodePointRangeIterator>(icu4x::CodePointRangeIterator::FromFFI(result));

@@ -22,6 +22,12 @@ class ScriptExtensionsSet;
 namespace icu4x {
 namespace capi {
     struct ScriptWithExtensionsBorrowed;
+
+
+    typedef struct DiplomatScriptWithExtensionsBorrowedView {
+      const ScriptWithExtensionsBorrowed** data;
+      size_t len;
+    } DiplomatScriptWithExtensionsBorrowedView;
 } // namespace capi
 } // namespace
 
@@ -47,7 +53,7 @@ public:
    *
    * See the [Rust documentation for `get_script_extensions_val`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_val) for more information.
    */
-  inline std::unique_ptr<icu4x::ScriptExtensionsSet> get_script_extensions_val(char32_t ch) const;
+  inline std::unique_ptr<icu4x::ScriptExtensionsSet> get_script_extensions_val(char32_t ch) const DIPLOMAT_LIFETIME_BOUND;
 
   /**
    * Check if the `Script_Extensions` property of the given code point covers the given script

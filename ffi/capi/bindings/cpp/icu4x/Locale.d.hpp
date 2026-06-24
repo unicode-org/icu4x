@@ -21,6 +21,12 @@ class LocaleParseError;
 namespace icu4x {
 namespace capi {
     struct Locale;
+
+
+    typedef struct DiplomatLocaleView {
+      const Locale** data;
+      size_t len;
+    } DiplomatLocaleView;
 } // namespace capi
 } // namespace
 
@@ -230,6 +236,7 @@ public:
    * See the [Rust documentation for `total_cmp`](https://docs.rs/icu/2.2.0/icu/locale/struct.Locale.html#method.total_cmp) for more information.
    */
   inline int8_t compare_to(const icu4x::Locale& other) const;
+
   inline bool operator==(const icu4x::Locale& other) const;
   inline bool operator!=(const icu4x::Locale& other) const;
   inline bool operator<=(const icu4x::Locale& other) const;

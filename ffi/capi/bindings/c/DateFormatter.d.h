@@ -14,6 +14,11 @@
 typedef struct DateFormatter DateFormatter;
 
 
+typedef struct DiplomatDateFormatterView {
+  const DateFormatter** data;
+  size_t len;
+} DiplomatDateFormatterView;
+
 
 
 #endif // DateFormatter_D_H

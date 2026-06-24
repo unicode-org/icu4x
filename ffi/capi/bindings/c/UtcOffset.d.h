@@ -14,6 +14,11 @@
 typedef struct UtcOffset UtcOffset;
 
 
+typedef struct DiplomatUtcOffsetView {
+  const UtcOffset** data;
+  size_t len;
+} DiplomatUtcOffsetView;
+
 
 
 #endif // UtcOffset_D_H

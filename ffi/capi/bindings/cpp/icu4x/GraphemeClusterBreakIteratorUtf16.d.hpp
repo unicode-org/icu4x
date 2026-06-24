@@ -15,6 +15,12 @@
 namespace icu4x {
 namespace capi {
     struct GraphemeClusterBreakIteratorUtf16;
+
+
+    typedef struct DiplomatGraphemeClusterBreakIteratorUtf16View {
+      const GraphemeClusterBreakIteratorUtf16** data;
+      size_t len;
+    } DiplomatGraphemeClusterBreakIteratorUtf16View;
 } // namespace capi
 } // namespace
 

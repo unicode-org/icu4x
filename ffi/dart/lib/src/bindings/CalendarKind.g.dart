@@ -96,7 +96,8 @@ enum CalendarKind {
 
 }
 
-@_DiplomatFfiUse('icu4x_CalendarKind_create_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CalendarKind_create_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_CalendarKind_create_mv1(ffi.Pointer<ffi.Opaque> locale);

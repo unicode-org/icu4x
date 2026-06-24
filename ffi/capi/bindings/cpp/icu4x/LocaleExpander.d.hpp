@@ -26,6 +26,12 @@ class TransformResult;
 namespace icu4x {
 namespace capi {
     struct LocaleExpander;
+
+
+    typedef struct DiplomatLocaleExpanderView {
+      const LocaleExpander** data;
+      size_t len;
+    } DiplomatLocaleExpanderView;
 } // namespace capi
 } // namespace
 

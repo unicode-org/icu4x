@@ -19,12 +19,16 @@ final class DecimalFormatter implements ffi.Finalizable {
   // maintain borrow validity.
   DecimalFormatter._fromFfi(this._ffi, this._selfEdge) {
     if (_selfEdge.isEmpty) {
-      _finalizer.attach(this, _ffi.cast());
+      _icu4x_DecimalFormatter_destroy_mv1(this, _ffi.cast());
     }
   }
 
-  @_DiplomatFfiUse('icu4x_DecimalFormatter_destroy_mv1')
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_DecimalFormatter_destroy_mv1));
+  // ignore: experimental_member_use
+  @meta.RecordUse()
+  // ignore: non_constant_identifier_names
+  static void _icu4x_DecimalFormatter_destroy_mv1(DecimalFormatter cl, ffi.Pointer<ffi.Void> pointer) => _finalizer.attach(cl, pointer);
+
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_internal_icu4x_DecimalFormatter_destroy_mv1));
 
   /// Creates a new [DecimalFormatter], using compiled data
   ///
@@ -77,27 +81,32 @@ final class DecimalFormatter implements ffi.Finalizable {
 
 }
 
-@_DiplomatFfiUse('icu4x_DecimalFormatter_destroy_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_DecimalFormatter_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_DecimalFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
+external void _internal_icu4x_DecimalFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@_DiplomatFfiUse('icu4x_DecimalFormatter_create_with_grouping_strategy_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_DecimalFormatter_create_with_grouping_strategy_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_DecimalFormatter_create_with_grouping_strategy_mv1(ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void groupingStrategy);
 
-@_DiplomatFfiUse('icu4x_DecimalFormatter_create_with_grouping_strategy_and_provider_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_DecimalFormatter_create_with_grouping_strategy_and_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_DecimalFormatter_create_with_grouping_strategy_and_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void groupingStrategy);
 
-@_DiplomatFfiUse('icu4x_DecimalFormatter_create_with_manual_data_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8, _SliceUtf8, _SliceUtf8, _SliceUtf8, _SliceUtf8, _SliceUtf8, ffi.Uint8, ffi.Uint8, ffi.Uint8, _SliceRune, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_DecimalFormatter_create_with_manual_data_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_DecimalFormatter_create_with_manual_data_mv1(_SliceUtf8 plusSignPrefix, _SliceUtf8 plusSignSuffix, _SliceUtf8 minusSignPrefix, _SliceUtf8 minusSignSuffix, _SliceUtf8 decimalSeparator, _SliceUtf8 groupingSeparator, int primaryGroupSize, int secondaryGroupSize, int minGroupSize, _SliceRune digits, _ResultInt32Void groupingStrategy);
 
-@_DiplomatFfiUse('icu4x_DecimalFormatter_format_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DecimalFormatter_format_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_DecimalFormatter_format_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);

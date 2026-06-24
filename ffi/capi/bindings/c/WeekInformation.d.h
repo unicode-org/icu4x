@@ -14,6 +14,11 @@
 typedef struct WeekInformation WeekInformation;
 
 
+typedef struct DiplomatWeekInformationView {
+  const WeekInformation** data;
+  size_t len;
+} DiplomatWeekInformationView;
+
 
 
 #endif // WeekInformation_D_H
