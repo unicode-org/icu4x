@@ -66,6 +66,7 @@ members = [
     "utils/databake",
     "utils/databake/derive",
     "utils/fixed_decimal",
+    "utils/fused",
     "utils/host_info",
     "utils/ixdtf",
     "utils/litemap",
@@ -194,6 +195,7 @@ crlify = { version = "1.0.4", path = "utils/crlify", default-features = false } 
 databake = { version = "0.2.0", path = "utils/databake", default-features = false } # Current version: 0.2.1
 databake-derive = { version = "0.2.0", path = "utils/databake/derive", default-features = false } # Current version: 0.2.1
 fixed_decimal = { version = "0.7.2", path = "utils/fixed_decimal", default-features = false }
+fused = { version = "0.1.0", path = "utils/fused", default-features = false }
 ixdtf = { version = "0.6.5", path = "utils/ixdtf", default-features = false }
 litemap = { version = "0.8.0", path = "utils/litemap", default-features = false } # Current version: 0.8.2
 potential_utf = { version = "0.1.3", path = "utils/potential_utf", default-features = false } # Current version: 0.1.5
