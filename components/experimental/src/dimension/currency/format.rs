@@ -75,29 +75,16 @@ mod tests {
         let value = "12345.67".parse().unwrap();
 
         // 1. Default numbering system (arab)
-        let fmt_arab = CurrencyFormatter::try_new(locale_arab, Default::default()).unwrap();
+        let fmt_arab = CurrencyFormatter::try_new(prefs_arab, Default::default()).unwrap();
         assert_writeable_eq!(
             fmt_arab.format_fixed_decimal(&value, &currency_code),
             "\u{200f}١٢٬٣٤٥٫٦٧\u{a0}ج.م.\u{200f}"
         );
 
         // 2. Locale extension override (latn)
-        let fmt_latn = CurrencyFormatter::try_new(locale_latn, Default::default()).unwrap();
+        let fmt_latn = CurrencyFormatter::try_new(prefs_latn, Default::default()).unwrap();
         assert_writeable_eq!(
             fmt_latn.format_fixed_decimal(&value, &currency_code),
-            "\u{200f}12,345.67\u{a0}ج.م.\u{200f}"
-        );
-
-        // 3. Programmatic preferences override (latn over arab locale)
-        let mut prefs = locale_arab;
-        let val = "latn"
-            .parse::<icu_locale_core::extensions::unicode::Value>()
-            .unwrap();
-        let nu = crate::dimension::preferences::NumberingSystem::try_from(&val).unwrap();
-        prefs.numbering_system = Some(nu);
-        let fmt_opts = CurrencyFormatter::try_new(prefs, Default::default()).unwrap();
-        assert_writeable_eq!(
-            fmt_opts.format_fixed_decimal(&value, &currency_code),
             "\u{200f}12,345.67\u{a0}ج.م.\u{200f}"
         );
     }

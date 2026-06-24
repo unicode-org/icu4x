@@ -37,23 +37,6 @@ prefs_convert!(CurrencyFormatterPreferences, DecimalFormatterPreferences, {
 });
 prefs_convert!(CurrencyFormatterPreferences, PluralRulesPreferences);
 
-impl CurrencyFormatterPreferences {
-    pub(crate) fn nu_id<'a>(
-        &'a self,
-        locale: &'a DataLocale,
-    ) -> Option<DataIdentifierBorrowed<'a>> {
-        self.numbering_system
-            .as_ref()
-            .map(|s| s.as_str())
-            .map(|nu| {
-                DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::from_str_or_panic(nu),
-                    locale,
-                )
-            })
-    }
-}
-
 /// A formatter for monetary values.
 ///
 /// [`CurrencyFormatter`] supports:
@@ -100,10 +83,11 @@ impl CurrencyFormatter {
         // the decimal formatter. If we do use the decimal formatter, we need to take care of
         // synchronization of different numbering systems (e.g. if DecimalFormatter falls back
         // to a different numbering system than the one resolved for CurrencyFormatter).
+        let decimal_prefs = DecimalFormatterPreferences::from(&prefs);
         let decimal_formatter =
-            DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
+            DecimalFormatter::try_new(decimal_prefs, DecimalFormatterOptions::default())?;
 
-        let req_id = prefs.nu_id(&locale);
+        let req_id = decimal_prefs.nu_id(&locale);
         let default_id = DataIdentifierBorrowed::for_locale(&locale);
         let ids = req_id.into_iter().chain(core::iter::once(default_id));
         let essential =
@@ -137,12 +121,13 @@ impl CurrencyFormatter {
         // the decimal formatter. If we do use the decimal formatter, we need to take care of
         // synchronization of different numbering systems (e.g. if DecimalFormatter falls back
         // to a different numbering system than the one resolved for CurrencyFormatter).
+        let decimal_prefs = DecimalFormatterPreferences::from(&prefs);
         let decimal_formatter = DecimalFormatter::try_new_unstable(
             provider,
-            (&prefs).into(),
+            decimal_prefs,
             DecimalFormatterOptions::default(),
         )?;
-        let req_id = prefs.nu_id(&locale);
+        let req_id = decimal_prefs.nu_id(&locale);
         let default_id = DataIdentifierBorrowed::for_locale(&locale);
         let ids = req_id.into_iter().chain(core::iter::once(default_id));
         let essential = load_with_fallback::<CurrencyEssentialsV1>(provider, ids)?.payload;
@@ -198,4 +183,38 @@ impl CurrencyFormatter {
             )),
         )
     }
+}
+
+// TODO: Discuss reusing the `load_with_fallback` helper from `icu_decimal`
+// (or moving it to a shared location) instead of duplicating it here.
+fn load_with_fallback<'a, M: DataMarker>(
+    provider: &(impl DataProvider<M> + ?Sized),
+    ids: impl Iterator<Item = DataIdentifierBorrowed<'a>>,
+) -> Result<DataResponse<M>, DataError> {
+    let mut ids = ids.peekable();
+
+    while let Some(id) = ids.next() {
+        if ids.peek().is_some() {
+            if let Some(r) = provider
+                .load(DataRequest {
+                    id,
+                    metadata: {
+                        let mut m = DataRequestMetadata::default();
+                        m.silent = true;
+                        m
+                    },
+                })
+                .allow_identifier_not_found()?
+            {
+                return Ok(r);
+            }
+        } else {
+            return provider.load(DataRequest {
+                id,
+                metadata: DataRequestMetadata::default(),
+            });
+        }
+    }
+
+    Err(DataErrorKind::InvalidRequest.into_error())
 }

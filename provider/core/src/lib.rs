@@ -111,7 +111,7 @@ pub mod serde_borrow_de_utils;
 mod data_provider;
 pub use data_provider::{
     BoundDataProvider, DataProvider, DataProviderWithMarker, DryDataProvider, DynamicDataProvider,
-    DynamicDryDataProvider, load_with_fallback,
+    DynamicDryDataProvider,
 };
 #[cfg(feature = "alloc")]
 pub use data_provider::{IterableDataProvider, IterableDynamicDataProvider};
@@ -165,8 +165,8 @@ pub mod prelude {
         BoundDataProvider, DataError, DataErrorKind, DataLocale, DataMarker, DataMarkerAttributes,
         DataMarkerInfo, DataPayload, DataProvider, DataRequest, DataRequestMetadata, DataResponse,
         DataResponseMetadata, DryDataProvider, DynamicDataMarker, DynamicDataProvider,
-        DynamicDryDataProvider, ResultDataError, data_marker, data_struct, load_with_fallback,
-        marker::DataMarkerExt, request::AttributeParseError, request::DataIdentifierBorrowed,
+        DynamicDryDataProvider, ResultDataError, data_marker, data_struct, marker::DataMarkerExt,
+        request::AttributeParseError, request::DataIdentifierBorrowed,
     };
     #[cfg(feature = "alloc")]
     #[doc(no_inline)]
