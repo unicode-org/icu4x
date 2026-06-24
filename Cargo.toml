@@ -82,6 +82,7 @@ members = [
     "utils/zerovec",
     "utils/zerovec/derive",
     "utils/zoneinfo64",
+    "utils/fused",
 
     # Tools
     "tools/benchmark/binsize",

@@ -1,0 +1,37 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "fused"
+description = "High-precision FMA-based floating-point arithmetic algorithms for unit conversion and scaling"
+version = "0.1.0"
+keywords = ["fma", "math", "precision", "no-std"]
+
+authors.workspace = true
+edition.workspace = true
+include.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[package.metadata.workspaces]
+independent = true
+
+[package.metadata.docs.rs]
+all-features = true
+
+[dependencies]
+core_maths = { workspace = true }
+
+[dev-dependencies]
+num-bigint = { workspace = true }
+num-rational = { workspace = true, features = ["std", "num-bigint"] }
+num-traits = { workspace = true }
+rand = { workspace = true, features = ["small_rng"] }
+
+[features]
+default = []
+
+[lints]
+workspace = true
