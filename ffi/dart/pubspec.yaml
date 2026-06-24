@@ -28,7 +28,7 @@ dependencies:
   crypto: ^3.0.7
   ffi: ^2.1.4
   # Pinned as we use unstable APIs
-  hooks: ^2.0.2
+  hooks: 2.0.2
   logging: ^1.3.0
   meta: ^1.17.0
   native_toolchain_c: ^0.19.1
