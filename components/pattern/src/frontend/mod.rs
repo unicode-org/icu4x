@@ -258,9 +258,9 @@ where
     pub fn try_interpolate<'a, P>(
         &'a self,
         value_provider: P,
-    ) -> impl TryWriteable<Error = B::Error<'a>> + fmt::Display + 'a
+    ) -> impl TryWriteable<Error = P::Error> + fmt::Display + 'a
     where
-        P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = B::Error<'a>> + 'a,
+        P: PlaceholderValueProvider<B::PlaceholderKey<'a>> + 'a,
     {
         WriteablePattern::<B, P> {
             store: &self.store,
@@ -277,26 +277,23 @@ where
     pub fn try_interpolate_to_string<'a, P>(
         &'a self,
         value_provider: P,
-    ) -> Result<String, (B::Error<'a>, String)>
+    ) -> Result<String, (P::Error, String)>
     where
-        P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = B::Error<'a>> + 'a,
+        P: PlaceholderValueProvider<B::PlaceholderKey<'a>> + 'a,
     {
         self.try_interpolate(value_provider)
             .try_write_to_string()
             .map(|s| s.into_owned())
             .map_err(|(e, s)| (e, s.into_owned()))
     }
-}
 
-impl<B> Pattern<B>
-where
-    for<'b> B: PatternBackend<Error<'b> = Infallible>,
-{
     /// Returns a [`Writeable`] that interpolates items from the given replacement provider
     /// into this pattern string.
+    ///
+    /// This is defined only on infallible inputs.
     pub fn interpolate<'a, P>(&'a self, value_provider: P) -> impl Writeable + fmt::Display + 'a
     where
-        P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = B::Error<'a>> + 'a,
+        P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = Infallible> + 'a,
     {
         TryWriteableInfallibleAsWriteable(WriteablePattern::<B, P> {
             store: &self.store,
@@ -307,10 +304,12 @@ where
     #[cfg(feature = "alloc")]
     /// Interpolates the pattern directly to a string.
     ///
+    /// This is defined only on infallible inputs.
+    ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     pub fn interpolate_to_string<'a, P>(&'a self, value_provider: P) -> String
     where
-        P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = B::Error<'a>> + 'a,
+        P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = Infallible> + 'a,
     {
         self.interpolate(value_provider)
             .write_to_string()
@@ -326,9 +325,9 @@ struct WriteablePattern<'a, B: PatternBackend, P> {
 impl<'a, B, P> TryWriteable for WriteablePattern<'a, B, P>
 where
     B: PatternBackend,
-    P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = B::Error<'a>>,
+    P: PlaceholderValueProvider<B::PlaceholderKey<'a>>,
 {
-    type Error = B::Error<'a>;
+    type Error = P::Error;
 
     fn try_write_to_parts<S: PartsWrite + ?Sized>(
         &self,
@@ -374,7 +373,7 @@ where
 impl<'a, B, P> fmt::Display for WriteablePattern<'a, B, P>
 where
     B: PatternBackend,
-    P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = B::Error<'a>>,
+    P: PlaceholderValueProvider<B::PlaceholderKey<'a>>,
 {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

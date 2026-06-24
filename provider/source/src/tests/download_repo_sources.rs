@@ -91,7 +91,7 @@ fn download_repo_sources() {
     let provider = SourceDataProvider::new();
 
     let cldr_files = provider
-        .cldr_paths
+        .cldr()
         .unwrap()
         .serde_cache
         .root
@@ -99,7 +99,7 @@ fn download_repo_sources() {
         .unwrap();
 
     let icuexport_files = provider
-        .icuexport_paths
+        .icuexport()
         .unwrap()
         .root
         .dump(
@@ -109,7 +109,7 @@ fn download_repo_sources() {
         .unwrap();
 
     let lstm_files = provider
-        .segmenter_lstm_paths
+        .segmenter_lstm()
         .unwrap()
         .root
         .dump(
@@ -119,7 +119,7 @@ fn download_repo_sources() {
         .unwrap();
 
     let unicode_files = provider
-        .unicode_paths
+        .unicode()
         .unwrap()
         .dump(
             &out_root.join("unicode"),
@@ -140,7 +140,7 @@ fn download_repo_sources() {
     .unwrap();
 
     let mut tzdb_files = provider
-        .tzdb_paths
+        .tzdb()
         .unwrap()
         .root
         .dump(
@@ -255,4 +255,38 @@ pub fn tzdb_data() -> AbstractFs {{
 "
     )
     .unwrap();
+
+    // Download Unicode test files
+    for (ucd_path, repo_path) in [
+        (
+            "ucd/NormalizationTest.txt",
+            "components/normalizer/tests/data/NormalizationTest.txt",
+        ),
+        (
+            "ucd/auxiliary/GraphemeBreakTest.txt",
+            "components/segmenter/tests/testdata/GraphemeBreakTest.txt",
+        ),
+        (
+            "ucd/auxiliary/LineBreakTest.txt",
+            "components/segmenter/tests/testdata/LineBreakTest.txt",
+        ),
+        (
+            "ucd/auxiliary/SentenceBreakTest.txt",
+            "components/segmenter/tests/testdata/SentenceBreakTest.txt",
+        ),
+        (
+            "ucd/auxiliary/WordBreakTest.txt",
+            "components/segmenter/tests/testdata/WordBreakTest.txt",
+        ),
+    ] {
+        std::fs::write(
+            crate_root.join("../..").join(repo_path),
+            provider
+                .unicode()
+                .unwrap()
+                .read_to_string(ucd_path)
+                .expect(ucd_path),
+        )
+        .unwrap();
+    }
 }
