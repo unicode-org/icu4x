@@ -1026,15 +1026,22 @@ impl SourceDataProvider {
     > {
         let mut magic_symbols = BTreeMap::new();
         let mut fixed_symbol_assignments = BTreeMap::new();
+        let mut complex_symbols = BTreeMap::new();
         let symbols = sources.read_to_string(&format!("{prefix}Symbols.txt"))?;
         let mut symbols = symbols
             .lines()
             .map(|l| l.split('#').next().unwrap().trim())
             .filter(|l| !l.is_empty())
             .map(|line| {
-                let mut iter = line.split(';');
-                let symbol = iter.next().unwrap().trim();
-                let unicode_set = iter.next().unwrap().trim();
+                let mut iter = line.split(';').map(str::trim);
+                let symbol = iter.next().unwrap();
+                let unicode_set = iter.next().unwrap();
+
+                if let Some(non_complex_equivalent) = iter.next()
+                    && !non_complex_equivalent.is_empty()
+                {
+                    complex_symbols.insert(symbol, non_complex_equivalent);
+                }
 
                 let set = icu::properties::unicodeset_parse::parse_unstable(unicode_set, self)
                     .map_err(|e| {
@@ -1119,20 +1126,7 @@ impl SourceDataProvider {
         })
         .collect::<Vec<_>>();
 
-        // TODO: These should be marked in LineBreakSymbols.txt
-        let complex_symbols = match prefix {
-            "LineBreak" => [
-                (
-                    "SAmMnmMc",
-                    "AImEastAsian|ALmEastAsianmDottedCircle|SG|XXmExtPictUnassigned",
-                ),
-                ("SA_Mn|SA_Mc", "CM"),
-            ]
-            .as_slice(),
-            _ => &[],
-        };
-
-        for &(symbol, non_complex_symbol) in complex_symbols {
+        for (&symbol, &non_complex_symbol) in &complex_symbols {
             let set = symbols.get(symbol).unwrap().clone();
 
             let mut set_builder = CodePointInversionListBuilder::new();
@@ -1164,36 +1158,38 @@ impl SourceDataProvider {
                 symbols.insert(Cow::Owned(intersection_symbol), intersection.build());
             }
 
-            let symbol_transitions = transitions
-                .iter()
-                .filter(|&(&(_, s), _)| s == symbol)
-                .map(|(&(before, _), &after)| (before, after))
-                .collect::<BTreeSet<_>>();
-            let non_complex_symbol_transitions = transitions
-                .iter()
-                .filter(|&(&(_, s), _)| s == non_complex_symbol)
-                .map(|(&(before, _), &after)| (before, after))
-                .collect::<BTreeSet<_>>();
+            if symbol != non_complex_symbol {
+                let symbol_transitions = transitions
+                    .iter()
+                    .filter(|&(&(_, s), _)| s == symbol)
+                    .map(|(&(before, _), &after)| (before, after))
+                    .collect::<BTreeSet<_>>();
+                let non_complex_symbol_transitions = transitions
+                    .iter()
+                    .filter(|&(&(_, s), _)| s == non_complex_symbol)
+                    .map(|(&(before, _), &after)| (before, after))
+                    .collect::<BTreeSet<_>>();
 
-            if symbol_transitions == non_complex_symbol_transitions {
-                let non_complex_set = symbols.get_mut(non_complex_symbol).unwrap();
-                let mut non_complex_set_builder = CodePointInversionListBuilder::new();
-                non_complex_set_builder.add_set(non_complex_set);
-                non_complex_set_builder.add_set(&set_builder.build());
-                *non_complex_set = non_complex_set_builder.build();
+                if symbol_transitions == non_complex_symbol_transitions {
+                    let non_complex_set = symbols.get_mut(non_complex_symbol).unwrap();
+                    let mut non_complex_set_builder = CodePointInversionListBuilder::new();
+                    non_complex_set_builder.add_set(non_complex_set);
+                    non_complex_set_builder.add_set(&set_builder.build());
+                    *non_complex_set = non_complex_set_builder.build();
 
-                symbols.remove(symbol);
-                transitions.retain(|&(_, s), _| s != symbol);
-            } else {
-                log::warn!(
-                    "{symbol}/{non_complex_symbol}: {:?} != {:?}",
-                    symbol_transitions
-                        .difference(&non_complex_symbol_transitions)
-                        .collect::<Vec<_>>(),
-                    non_complex_symbol_transitions
-                        .difference(&symbol_transitions)
-                        .collect::<Vec<_>>()
-                );
+                    symbols.remove(symbol);
+                    transitions.retain(|&(_, s), _| s != symbol);
+                } else {
+                    log::warn!(
+                        "{symbol}/{non_complex_symbol}: {:?} != {:?}",
+                        symbol_transitions
+                            .difference(&non_complex_symbol_transitions)
+                            .collect::<Vec<_>>(),
+                        non_complex_symbol_transitions
+                            .difference(&symbol_transitions)
+                            .collect::<Vec<_>>()
+                    );
+                }
             }
         }
 
