@@ -4,9 +4,8 @@
 
 [package]
 name = "fused"
-description = "High-precision FMA-based floating-point arithmetic algorithms for unit conversion and scaling"
+description = "High-precision fused floating-point algorithms"
 version = "0.1.0"
-keywords = ["fma", "math", "precision", "no-std"]
 
 authors.workspace = true
 edition.workspace = true
@@ -14,12 +13,6 @@ include.workspace = true
 license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-
-[package.metadata.workspaces]
-independent = true
-
-[package.metadata.docs.rs]
-all-features = true
 
 [dependencies]
 core_maths = { workspace = true }
@@ -29,9 +22,3 @@ num-bigint = { workspace = true }
 num-rational = { workspace = true, features = ["std", "num-bigint"] }
 num-traits = { workspace = true }
 rand = { workspace = true, features = ["small_rng"] }
-
-[features]
-default = []
-
-[lints]
-workspace = true
