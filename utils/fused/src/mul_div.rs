@@ -14,6 +14,27 @@ use core_maths::CoreFloat;
 /// If the compensated result is not finite (due to overflow, underflow, or special inputs like NaN/Inf),
 /// it falls back to the standard, uncompensated operation `(a * num) / den` to ensure zero-cost
 /// robustness.
+///
+/// # Mathematical Limits and Counterintuitive Rounding
+///
+/// High-precision compensation cannot bypass the fundamental representation limits of the IEEE 754
+/// format, nor does it alter standard midpoint tie-breaking rules.
+///
+/// A classic, counterintuitive example is `f64_mul_div(0.3, 3.0, 1.0)`. Mathematically, this is
+/// exactly `0.9`. However, both standard float arithmetic and this compensated algorithm return
+/// `0.8999999999999999`.
+///
+/// This occurs because:
+/// 1. **Representation Limit:** `0.3` is not exactly representable in binary. The nearest representable
+///    float value is slightly less than `0.3` (specifically, `0.29999999999999998889...`).
+/// 2. **Midpoint Tie-Breaking:** The exact mathematical product of this represented float and `3.0` is:
+///    `0.8999999999999999666933092612453037872910501956939697265625`.
+///    This value lands *exactly* halfway between the two adjacent representable floats `0.8999999999999999`
+///    and `0.9`. Under the IEEE 754 round-to-nearest-even rule, the tie is broken by rounding to the
+///    even float (significand ending in `0` in binary), which is `0.8999999999999999`.
+///
+/// Thus, even with infinite intermediate precision, the result must round to `0.8999999999999999`, which
+/// is mathematically correct relative to the represented input value `0.3f64`.
 #[inline]
 pub fn f64_mul_div(a: f64, num: f64, den: f64) -> f64 {
     // Fast path: high-precision compensated algorithm.
@@ -66,5 +87,19 @@ mod tests {
         let den = 1.2345678901234567e300;
         // Exact is 1.0000000000000002
         assert_eq!(f64_mul_div(a, num, den), 1.0000000000000002);
+    }
+
+    #[test]
+    fn test_f64_mul_div_counterintuitive_midpoint() {
+        // Mathematically, 0.3 * 3.0 / 1.0 = 0.9.
+        // However, standard arithmetic yields 0.8999999999999999.
+        // Even with high-precision compensation, the result remains 0.8999999999999999
+        // due to binary representation limits and IEEE 754 round-to-nearest-even tie-breaking
+        // at the exact midpoint.
+        let a = 0.3;
+        let num = 3.0;
+        let den = 1.0;
+        let result = f64_mul_div(a, num, den);
+        assert_eq!(result, 0.8999999999999999);
     }
 }

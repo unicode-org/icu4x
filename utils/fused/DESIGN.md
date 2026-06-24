@@ -86,3 +86,51 @@ The table below summarizes how `fused` compares with other prominent Rust crates
   `accurate` is designed for accumulating errors over large arrays (e.g., summing 1 million floats). It implements Kahan and Neumaier summation algorithms. It is not designed to solve the rounding errors of individual, three-term algebraic operations like `(a * b) / c`. `fused` fills this gap.
 - **`fused` vs `metallic`**:
   `metallic` is a replacement for `libm` written in pure Rust. It focuses on ensuring that transcendental functions (trigonometric, logarithmic, exponential) are faithfully rounded to less than 1 ULP. It does not provide the specific fused scaling and division-multiplication algorithms implemented in `fused`.
+
+---
+
+## 5. Fundamental Precision Limits and Midpoint Rounding
+
+While the algorithms in the `fused` crate guarantee that the result is rounded **exactly once** to the nearest representable float (achieving $\le 1$ ULP of error relative to the exact mathematical result of the represented inputs), they **cannot** bypass the fundamental representation limits of the binary double-precision format, nor do they alter standard IEEE 754 tie-breaking rules.
+
+A classic, highly illustrative example of this is the expression:
+\[ 0.3 \times 3.0 / 1.0 \]
+Mathematically, this is exactly \(0.9\). However:
+*   Standard float arithmetic (`0.3f64 * 3.0f64 / 1.0f64`) yields `0.8999999999999999`.
+*   Our high-precision compensated algorithm (`f64_mul_div(0.3, 3.0, 1.0)`) **also** yields `0.8999999999999999`.
+
+### 5.1 Step-by-Step Mathematical Analysis
+
+#### 1. Binary Representation Error of 0.3
+In base 10, \(0.3\) is a terminating decimal. In base 2, it is a repeating fraction:
+\[ 0.3_{10} = 0.010011001100110011\dots_2 \]
+When rounded to the nearest 53-bit significand, the float \(0.3f64\) is represented as:
+\[ 0.3_{\text{float}} = 0.299999999999999988897769753748434595763683319091796875 \]
+which is slightly *less* than \(0.3\).
+
+#### 2. Exact Multiplication
+When we multiply \(0.3_{\text{float}}\) by \(3.0\) (which is exactly representable in binary as \(3 = 11_2\)), the exact mathematical product in real numbers is:
+\[ P_{\text{real}} = 0.3_{\text{float}} \times 3.0 = 0.8999999999999999666933092612453037872910501956939697265625 \]
+
+#### 3. Midpoint Rounding
+We now round the real number \(P_{\text{real}}\) to the nearest double-precision float. The two closest representable floats are:
+*   \(f_{\text{low}} = 0.899999999999999911182158029987476766109466552734375\)
+*   \(f_{\text{high}} = 0.90000000000000002220446049250313080847263336181640625\)
+
+Let's calculate the absolute distances from the exact real product \(P_{\text{real}}\):
+*   \(|P_{\text{real}} - f_{\text{low}}| = 5.551115123125783 \times 10^{-17}\)
+*   \(|P_{\text{real}} - f_{\text{high}}| = 5.551115123125783 \times 10^{-17}\)
+
+Notice that the distances are **mathematically identical**! The real product \(P_{\text{real}}\) lands **exactly halfway (on the midpoint)** between the two representable floats.
+
+#### 4. Round-to-Nearest-Even Tie-Breaking
+Under the standard IEEE 754 round-to-nearest-even tie-breaking rule, when a real value lies exactly on a midpoint, the tie is broken by selecting the float whose significand ends in an **even** bit (`0` in binary).
+*   \(f_{\text{low}}\) has an even significand (ends in `0` in binary).
+*   \(f_{\text{high}}\) has an odd significand (ends in `1` in binary).
+
+Therefore, the rounding operation selects \(f_{\text{low}}\), yielding `0.8999999999999999`.
+
+### 5.2 Rationale for Algorithm Correctness
+Since \(0.8999999999999999\) is the mathematically correct single-rounded result of the represented input values \(0.3f64\) and \(3.0f64\), the compensated algorithm is **behaving perfectly correctly**. 
+
+Attempting to "force" the result to `0.9` would require violating the IEEE 754 rounding standards or making assumptions about decimal base-10 intent. The `fused` crate is strictly an IEEE 754-compliant binary floating-point library, and it guarantees absolute mathematical fidelity within the binary format.
