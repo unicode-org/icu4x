@@ -1,5 +1,0 @@
-[patch."https://github.com/rust-diplomat/diplomat"]
-diplomat = { path = "../diplomat/macro" }
-diplomat-runtime = { path = "../diplomat/runtime" }
-diplomat_core = { path = "../diplomat/core" }
-diplomat-tool = { path = "../diplomat/tool" }
