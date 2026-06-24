@@ -1111,6 +1111,17 @@ impl SourceDataProvider {
                 (Language::Thai, "[:sc=Thai:]&[:lb=SA:]"),
             ]
             .as_slice(),
+            "WordBreak" => [
+                (Language::Burmese, "[:sc=Myanmar:]&[:lb=SA:]"),
+                (
+                    Language::ChineseOrJapanese,
+                    "[[[:sc=Han:] [:sc=Hiragana:] [:wb=Katakana:] 가-힣] - [:lb=SA:]]",
+                ),
+                (Language::Khmer, "[:sc=Khmer:]&[:lb=SA:]"),
+                (Language::Lao, "[:sc=Lao:]&[:lb=SA:]"),
+                (Language::Thai, "[:sc=Thai:]&[:lb=SA:]"),
+            ]
+            .as_slice(),
             _ => &[],
         }
         .iter()

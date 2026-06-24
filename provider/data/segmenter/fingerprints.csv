@@ -20,7 +20,7 @@ segmenter/break/sentence/override/v2, el, 26B, 3B, d43e5587d8842d17
 segmenter/break/sentence/v1, <singleton>, 14804B, 14698B, 30687df4b18e0e2e
 segmenter/break/sentence/v2, <singleton>, 18075B, 17936B, b7b8079b50254704
 segmenter/break/word/v1, <singleton>, 16762B, 16657B, 79957a2124e76c2f
-segmenter/break/word/v2, <singleton>, 17084B, 16945B, 6bf00621065dadf7
+segmenter/break/word/v2, <singleton>, 18240B, 18101B, 6ef88475997c4096
 segmenter/dictionary/auto/v1, <lookup>, 43B, 1 identifiers
 segmenter/dictionary/auto/v1, <total>, 2007134B, 2007113B, 1 unique payloads
 segmenter/dictionary/auto/v1, und/cjdict, 2007134B, 2007113B, f7552d2848b39b0d
