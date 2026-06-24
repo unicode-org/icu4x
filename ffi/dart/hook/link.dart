@@ -5,7 +5,6 @@
 import 'package:code_assets/code_assets.dart'
     show CodeAsset, HookConfigCodeConfig, LinkInputCodeAssets, OS;
 import 'package:hooks/hooks.dart' show link;
-import 'package:icu4x/src/bindings/lib.g.dart' show symbolMapping;
 import 'package:logging/logging.dart' show Level, Logger;
 import 'package:native_toolchain_c/native_toolchain_c.dart'
     show CLinker, LinkerOptions;
@@ -28,25 +27,29 @@ Future<void> main(List<String> args) async {
     final recordedUses = input
         // ignore: experimental_member_use
         .recordedUses;
+    Iterable<String>? usedSymbols;
     if (recordedUses == null) {
-      throw ArgumentError(
+      print(
         'Enable the --enable-experiment=record-use experiment'
-        ' to use this app.',
+        ' to use treeshake unused symbols.',
       );
+    } else {
+      usedSymbols = recordedUses.calls.keys
+          .where(
+            (id) =>
+                id.library ==
+                const record_use.Library(
+                  'package:icu4x/src/bindings/lib.g.dart',
+                ),
+          )
+          .map((id) => id.name)
+          .where((methodName) => methodName.startsWith('_'))
+          .map((methodName) => methodName.substring(1));
     }
-    final usedSymbols = recordedUses.calls.keys
-        .where(
-          (id) =>
-              id.library ==
-              const record_use.Library('package:icu4x/src/bindings/lib.g.dart'),
-        )
-        .map((id) => id.name)
-        .map((methodName) => symbolMapping[methodName])
-        .nonNulls;
 
     print('''
 ### Using symbols:
-  ${usedSymbols.join('\n')}
+  ${usedSymbols?.join('\n') ?? 'Treeshaking disabled, using all symbols.'}
 ### End using symbols
 ''');
 
