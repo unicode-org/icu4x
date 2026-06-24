@@ -69,8 +69,8 @@ mod tests {
 
     #[test]
     pub fn test_numbering_system_override() {
-        let locale_arab = locale!("ar-EG").into();
-        let locale_latn = locale!("ar-EG-u-nu-latn").into();
+        let prefs_arab = locale!("ar-EG").into();
+        let prefs_latn = locale!("ar-EG-u-nu-latn").into();
         let currency_code = CurrencyCode(tinystr!(3, "EGP"));
         let value = "12345.67".parse().unwrap();
 
