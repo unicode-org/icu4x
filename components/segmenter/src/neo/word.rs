@@ -500,43 +500,22 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for ComplexWord<Y> {
     const BREAK_STATUS: u8 = WordType::Letter as u8;
 
     type Data<'s> = Y::ComplexData<'s>;
+    type LanguageData<'s> = Y::ComplexLanguageData<'s>;
 
-    fn resolve_symbol(symbol: Symbol) -> Symbol {
-        symbol
+    fn select_complex<'data>(
+        data: &Y::ComplexData<'data>,
+        language: Language,
+    ) -> Option<Self::LanguageData<'data>> {
+        Y::select_complex(data, language)
     }
 
     fn handle<'data, 's>(
-        _: Symbol,
-        _: &RuleBreakIterator<'_, '_, Y, Self>,
-        data: &Self::Data<'data>,
+        data: &Self::LanguageData<'data>,
         iter: Y::IterAttr<'s>,
-    ) -> Option<(ComplexIterator<'data, 's, Y>, Y::IterAttr<'s>)> {
-        let data = Y::select_complex(
-            data,
-            // TODO: Use symbols to identify runs
-            get_language(
-                iter.clone()
-                    .next()
-                    .map(|(_, cp)| cp.into())
-                    .unwrap_or(char::MAX as u32),
-            ),
-        )?;
-
-        let mut past_complex = iter.clone();
-        past_complex.next();
-        while past_complex.clone().next().is_some_and(|(_, cp)| {
-            get_language(cp.into())
-                == get_language(
-                    iter.clone()
-                        .next()
-                        .map(|(_, cp)| cp.into())
-                        .unwrap_or(char::MAX as u32),
-                )
-        }) {
-            past_complex.next();
-        }
-
-        Some((Y::handle_complex(&data, &iter, &past_complex), past_complex))
+        _last_complex: Y::IterAttr<'s>,
+        past_complex: Y::IterAttr<'s>,
+    ) -> (ComplexIterator<'data, 's, Y>, Y::IterAttr<'s>) {
+        (Y::handle_complex(data, &iter, &past_complex), past_complex)
     }
 }
 

@@ -19,9 +19,6 @@ mod lstm;
 #[cfg(feature = "lstm")]
 use lstm::*;
 
-#[cfg(feature = "unstable")]
-pub(crate) use language::get_language;
-
 #[derive(Debug)]
 pub struct ComplexIterator<'data, 's, R: RuleBreakType>(ComplexIteratorInner<'data, 's, R>, usize);
 
