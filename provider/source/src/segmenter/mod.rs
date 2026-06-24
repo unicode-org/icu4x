@@ -1300,6 +1300,34 @@ impl SourceDataProvider {
             }
         }
 
+        // Remove unused symbols
+        symbols.retain(|n, set| {
+            if pseudo_symbol_map.contains_key(n.as_ref()) {
+                // Symbol is a pseudo symbol
+                return true;
+            }
+
+            if !set.is_empty() {
+                // Symbol used in root
+                return true;
+            }
+
+            if pseudo_symbol_map
+                .values()
+                .any(|(root_symbol, _)| root_symbol == n.as_ref())
+                || tailorings
+                    .values()
+                    .any(|overrides| overrides.contains_key(n))
+            {
+                // Symbol is a pseudo symbol target
+                return true;
+            }
+
+            transitions.retain(|&(_, m), _| m != n);
+
+            false
+        });
+
         let highest_fixed_symbol = fixed_symbol_assignments.values().copied().max().unwrap();
         let symbol_lookup = symbols
             .keys()
