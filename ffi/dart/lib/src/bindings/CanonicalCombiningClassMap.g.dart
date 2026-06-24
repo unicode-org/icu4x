@@ -19,12 +19,16 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
   // maintain borrow validity.
   CanonicalCombiningClassMap._fromFfi(this._ffi, this._selfEdge) {
     if (_selfEdge.isEmpty) {
-      _finalizer.attach(this, _ffi.cast());
+      _icu4x_CanonicalCombiningClassMap_destroy_mv1(this, _ffi.cast());
     }
   }
 
-  @_DiplomatFfiUse('icu4x_CanonicalCombiningClassMap_destroy_mv1')
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_CanonicalCombiningClassMap_destroy_mv1));
+  // ignore: experimental_member_use
+  @meta.RecordUse()
+  // ignore: non_constant_identifier_names
+  static void _icu4x_CanonicalCombiningClassMap_destroy_mv1(CanonicalCombiningClassMap cl, ffi.Pointer<ffi.Void> pointer) => _finalizer.attach(cl, pointer);
+
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_internal_icu4x_CanonicalCombiningClassMap_destroy_mv1));
 
   /// Construct a new `CanonicalCombiningClassMap` instance for NFC using compiled data.
   ///
@@ -57,22 +61,26 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
 
 }
 
-@_DiplomatFfiUse('icu4x_CanonicalCombiningClassMap_destroy_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_CanonicalCombiningClassMap_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_CanonicalCombiningClassMap_destroy_mv1(ffi.Pointer<ffi.Void> self);
+external void _internal_icu4x_CanonicalCombiningClassMap_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@_DiplomatFfiUse('icu4x_CanonicalCombiningClassMap_create_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CanonicalCombiningClassMap_create_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_CanonicalCombiningClassMap_create_mv1();
 
-@_DiplomatFfiUse('icu4x_CanonicalCombiningClassMap_create_with_provider_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CanonicalCombiningClassMap_create_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CanonicalCombiningClassMap_create_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@_DiplomatFfiUse('icu4x_CanonicalCombiningClassMap_get_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CanonicalCombiningClassMap_get_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_CanonicalCombiningClassMap_get_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
