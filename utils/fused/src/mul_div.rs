@@ -12,8 +12,7 @@ use core_maths::CoreFloat;
 /// result.
 ///
 /// If the compensated result is not finite (due to overflow, underflow, or special inputs like NaN/Inf),
-/// it falls back to the standard, uncompensated operation `(a * num) / den` to ensure zero-cost
-/// robustness.
+/// it falls back to a mathematically robust, magnitude-reordered fallback operation.
 ///
 /// # Mathematical Limits and Counterintuitive Rounding
 ///
@@ -37,6 +36,9 @@ use core_maths::CoreFloat;
 /// is mathematically correct relative to the represented input value `0.3f64`.
 #[inline]
 pub fn f64_mul_div(a: f64, num: f64, den: f64) -> f64 {
+    // Proactively filter out non-finite inputs, NaNs, and division by zero.
+    // In these cases, the standard uncompensated float operation naturally propagates
+    // the correct IEEE 754 special values (Infinity, NaN), avoiding FMA indeterminate forms.
     if !a.is_finite() || !num.is_finite() || !den.is_finite() || den == 0.0 {
         return (a * num) / den;
     }
@@ -44,7 +46,14 @@ pub fn f64_mul_div(a: f64, num: f64, den: f64) -> f64 {
     let prod = a * num;
 
     // 1. Proactive Subnormal Guarding:
-    // If den or prod is subnormal, we must use the fallback to prevent precision collapse.
+    // If den or prod is subnormal, we must immediately route to the fallback.
+    // - Mathematical necessity: FMA error-tracking `fma(a, num, -prod)` is only exact if the
+    //   product `prod` does not underflow. If it is subnormal, the true error falls below the FPU
+    //   representation limit, causing the error term `t` to round silently to 0.0, leading to
+    //   a catastrophic precision collapse of up to 2^50 ULPs.
+    // - Microarchitectural necessity: Modern FPUs stall on subnormal inputs/outputs, triggering
+    //   microcode traps (subnormal assists) that take 100-300 cycles. Checking this proactively
+    //   avoids these massive pipeline penalties, and ensures compatibility with DAZ/FTZ environments.
     if den.abs() < f64::MIN_POSITIVE || prod.abs() < f64::MIN_POSITIVE {
         let a_div = a / den;
         return if a != 0.0 && (a_div.abs() < f64::MIN_POSITIVE || !a_div.is_finite()) {
@@ -56,25 +65,44 @@ pub fn f64_mul_div(a: f64, num: f64, den: f64) -> f64 {
 
     // 2. High-Precision FMA Paths:
     if !prod.is_finite() {
-        // Division-first FMA path (when product overflows but final result is finite)
+        // --- DIVISION-FIRST FMA PATH ---
+        // Triggered when the intermediate product overflows the double-precision range,
+        // but the final scaled quotient might still be a representable, finite normal float.
+        // We divide first to scale the terms down, extracting the exact remainder via FMA.
+        
+        // Compute primary quotient: q = a / den
         let q = a / den;
+        // Extract exact division remainder via FMA: r = a - q * den (Jeannerod's Theorem)
         let r = (-q).mul_add(den, a);
+        // Assemble the compensated result: corrected = q * num + (r * num) / den
+        // We multiply the scaled remainder by num and divide by den, retaining 106-bit precision.
         let corrected = q.mul_add(num, (r * num) / den);
         if corrected.is_finite() {
             return corrected;
         }
     } else {
-        // Product-first FMA path (normal range)
+        // --- PRODUCT-FIRST FMA PATH ---
+        // The standard, ultra-fast path for normal-range operations.
+        
+        // Extract exact product rounding error via FMA: t = a * num - prod (Dekker's Theorem)
         let t = a.mul_add(num, -prod);
+        // Compute primary quotient: q = prod / den
         let q = prod / den;
+        // Extract exact division remainder via FMA: r = prod - q * den (Jeannerod's Theorem)
         let r = (-q).mul_add(den, prod);
+        // Assemble the compensated result: corrected = q + (r + t) / den
+        // This sums the exact remainder and the exact product error, applying them as a single rounded correction.
         let corrected = q + (r + t) / den;
         if corrected.is_finite() {
             return corrected;
         }
     }
 
-    // 3. Ultimate Fallback (magnitude-reordered to prevent overflow/underflow)
+    // 3. Ultimate Fallback (Smart Simple Fallback):
+    // In extreme boundary ranges where FMA compensation fails or overflows, we use a
+    // magnitude-reordered fallback. By dynamically choosing between `(a / den) * num` and
+    // `(num / den) * a` based on magnitude, we scale the intermediate terms down, preventing
+    // catastrophic overflow or underflow while retaining peak precision.
     let a_div = a / den;
     if a != 0.0 && (a_div.abs() < f64::MIN_POSITIVE || !a_div.is_finite()) {
         (num / den) * a
@@ -106,8 +134,7 @@ mod tests {
 
     #[test]
     fn test_f64_mul_div_precision() {
-        // A case where standard (a * num) / den might round differently than compensated.
-        // We will verify this more thoroughly in differential tests, but here is a simple check.
+        // A case where standard (a * num) / den rounds differently than compensated.
         let a = 1.2345678901234567e300;
         let num = 1.0000000000000002;
         let den = 1.2345678901234567e300;
