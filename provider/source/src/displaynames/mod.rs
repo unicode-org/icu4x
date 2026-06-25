@@ -295,17 +295,12 @@ macro_rules! impl_displaynames_legacy_iter_v1 {
     ($marker:ident, $file:literal) => {
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-                Ok(self
-                    .cldr()?
-                    .displaynames()
+                let displaynames = self.cldr()?.displaynames();
+                Ok(displaynames
                     .list_locales()?
                     .filter(|locale| {
                         // The directory might exist without the file
-                        self.cldr()
-                            .unwrap()
-                            .displaynames()
-                            .file_exists(locale, $file)
-                            .unwrap_or_default()
+                        displaynames.file_exists(locale, $file).unwrap_or_default()
                     })
                     .map(DataIdentifierCow::from_locale)
                     .collect())
