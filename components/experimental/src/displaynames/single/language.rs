@@ -13,6 +13,7 @@ use alloc::{vec, vec::Vec};
 use icu_pattern::{DoublePlaceholderPattern, DoublePlaceholderValueProviderTry};
 use icu_provider::DataPayloadOr;
 use icu_provider::prelude::*;
+use icu_locale_core::subtags::{Language, Script, Region, Variant};
 use tinystr::TinyAsciiStr;
 use writeable::{PartsWrite, TryWriteable, adapters::LossyWrap};
 
@@ -24,15 +25,15 @@ pub struct LanguageIdentifierNameFallbackError;
 /// Represents a subtag that is either absent or has fallen back to its code.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
-enum AbsentOrFallback {
+enum AbsentOrFallback<S> {
     /// The subtag was not present in the subject.
     Absent,
     /// The subtag was present, but its display name was not found, so we fall back to the code.
-    Fallback(TinyAsciiStr<4>),
+    Fallback(S),
 }
 
 /// Represents a payload that was either successfully loaded or has fallen back to its code.
-type PayloadOrFallback<M> = DataPayloadOr<M, TinyAsciiStr<8>>;
+type PayloadOrFallback<M, S> = DataPayloadOr<M, S>;
 
 /// A localized display name for a language identifier, owned version.
 ///
@@ -61,12 +62,12 @@ type PayloadOrFallback<M> = DataPayloadOr<M, TinyAsciiStr<8>>;
 pub struct LanguageIdentifierDisplayNameOwned {
     formatting_locale: DataLocale,
     options: LanguageIdentifierDisplayNameOptions,
-    language_payload: DataPayloadOr<LocaleNamesLanguageMediumV1, TinyAsciiStr<4>>,
-    script_payload: DataPayloadOr<LocaleNamesScriptMediumV1, AbsentOrFallback>,
-    region_payload: DataPayloadOr<LocaleNamesRegionMediumV1, AbsentOrFallback>,
+    language_payload: DataPayloadOr<LocaleNamesLanguageMediumV1, Language>,
+    script_payload: DataPayloadOr<LocaleNamesScriptMediumV1, AbsentOrFallback<Script>>,
+    region_payload: DataPayloadOr<LocaleNamesRegionMediumV1, AbsentOrFallback<Region>>,
     variant_payloads: DataPayloadOr<
         LocaleNamesVariantMediumV1,
-        Vec<PayloadOrFallback<LocaleNamesVariantMediumV1>>,
+        Vec<PayloadOrFallback<LocaleNamesVariantMediumV1, Variant>>,
     >,
     essentials_payload: DataPayload<LocaleNamesEssentialsV1>,
 }
@@ -185,7 +186,7 @@ impl LanguageIdentifierDisplayNameOwned {
                 match result {
                     Ok(response) => DataPayloadOr::from_payload(response.payload),
                     Err(e) if e.kind == DataErrorKind::IdentifierNotFound => {
-                        DataPayloadOr::from_other(subject.language.to_tinystr().resize())
+                        DataPayloadOr::from_other(subject.language)
                     }
                     Err(e) => return Err(e),
                 }
@@ -198,7 +199,7 @@ impl LanguageIdentifierDisplayNameOwned {
             match res {
                 Ok(obj) => DataPayloadOr::from_payload(obj.payload),
                 Err(e) if e.kind == DataErrorKind::IdentifierNotFound => DataPayloadOr::from_other(
-                    AbsentOrFallback::Fallback(script.to_tinystr().resize()),
+                    AbsentOrFallback::Fallback(script),
                 ),
                 Err(e) => return Err(e),
             }
@@ -212,7 +213,7 @@ impl LanguageIdentifierDisplayNameOwned {
             match res {
                 Ok(obj) => DataPayloadOr::from_payload(obj.payload),
                 Err(e) if e.kind == DataErrorKind::IdentifierNotFound => DataPayloadOr::from_other(
-                    AbsentOrFallback::Fallback(region.to_tinystr().resize()),
+                    AbsentOrFallback::Fallback(region),
                 ),
                 Err(e) => return Err(e),
             }
@@ -221,12 +222,12 @@ impl LanguageIdentifierDisplayNameOwned {
         };
 
         // Step 4: Load variant names (if present in subject)
-        let load_variant = |variant: icu_locale::subtags::Variant| -> Result<PayloadOrFallback<LocaleNamesVariantMediumV1>, DataError> {
+        let load_variant = |variant: Variant| -> Result<PayloadOrFallback<LocaleNamesVariantMediumV1, Variant>, DataError> {
             let res = VariantDisplayNameOwned::try_new_unstable(provider, prefs, variant);
             match res {
                 Ok(obj) => Ok(DataPayloadOr::from_payload(obj.payload)),
                 Err(e) if e.kind == DataErrorKind::IdentifierNotFound => {
-                    Ok(DataPayloadOr::from_other(variant.to_tinystr().resize()))
+                    Ok(DataPayloadOr::from_other(variant))
                 }
                 Err(e) => Err(e),
             }
@@ -329,7 +330,7 @@ impl LanguageIdentifierDisplayNameOwned {
 #[derive(Debug, Clone, Copy)]
 enum BorrowedVariants<'a> {
     One(&'a str),
-    Slice(&'a [PayloadOrFallback<LocaleNamesVariantMediumV1>]),
+    Slice(&'a [PayloadOrFallback<LocaleNamesVariantMediumV1, Variant>]),
 }
 
 impl BorrowedVariants<'_> {
