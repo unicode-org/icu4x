@@ -181,21 +181,22 @@ fn test_concatenate() {
         use icu_experimental::displaynames::single::LanguageIdentifierDisplayNameOwned;
         let lang_id = cas.input_1.id.clone();
         let single_options = LanguageIdentifierDisplayNameOptions::default();
-        let result = LanguageIdentifierDisplayNameOwned::try_new(
+        let single_display_name = LanguageIdentifierDisplayNameOwned::try_new(
             locale.clone().into(),
             lang_id,
             single_options,
+        )
+        .unwrap();
+        assert_writeable_eq!(
+            single_display_name.as_borrowed_with_fallback(),
+            cas.expected
         );
-        match result {
-            Ok(single_display_name) => {
-                assert_writeable_eq!(single_display_name.as_borrowed_with_fallback(), cas.expected);
-
-                // Verify fallback error reporting via TryWriteable
-                let mut buf = String::new();
-                let write_result = single_display_name.as_borrowed().try_write_to(&mut buf);
-                assert!(write_result.is_ok(), "Writing failed: {cas:?}");
-                let fallback_result = write_result.unwrap();
-                assert_eq!(fallback_result.is_err(), cas.single_should_err, "{cas:?}");
+        let borrowed = single_display_name.as_borrowed();
+        assert_writeable_eq!(borrowed.with_fallback(), cas.expected);
+        match borrowed.try_write_to_string() {
+            Ok(s) => {
+                assert_eq!(cas.single_should_err, false, "{cas:?}");
+                assert_eq!(s, cas.expected);
             }
             Err(_) => {
                 assert_eq!(cas.single_should_err, true, "{cas:?}");
