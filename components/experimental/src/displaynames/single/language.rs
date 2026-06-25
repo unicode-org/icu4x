@@ -10,12 +10,11 @@ use crate::displaynames::{
     DisplayNamesPreferences, LanguageDisplay, LanguageIdentifierDisplayNameOptions,
 };
 use alloc::{vec, vec::Vec};
-use core::fmt::Write;
 use icu_pattern::{DoublePlaceholderPattern, DoublePlaceholderValueProviderTry};
 use icu_provider::DataPayloadOr;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
-use writeable::{Part, PartsWrite, TryWriteable, adapters::LossyWrap};
+use writeable::{PartsWrite, TryWriteable, adapters::LossyWrap};
 
 /// Display name fallback occurred
 #[derive(displaydoc::Display, Debug, Copy, Clone, PartialEq, Eq, Default)]
@@ -166,7 +165,6 @@ impl LanguageIdentifierDisplayNameOwned {
         }
 
         // If the language name is not loaded yet, try loading it from the language subtag alone.
-        // TODO(#8100): Fall back to the code instead of failing with DataError if the language name is not found
         let language_payload = match language_payload_or {
             Some(payload) => payload,
             None => {
@@ -195,7 +193,6 @@ impl LanguageIdentifierDisplayNameOwned {
         };
 
         // Step 2: Load script name (if present in subject)
-        // TODO(#8100): Fall back to the code instead of failing with DataError if the script name is not found
         let script_payload = if let Some(script) = subject.script {
             let res = ScriptDisplayNameOwned::try_new_unstable(provider, prefs, script);
             match res {
@@ -210,7 +207,6 @@ impl LanguageIdentifierDisplayNameOwned {
         };
 
         // Step 3: Load region name (if present in subject)
-        // TODO(#8100): Fall back to the code instead of failing with DataError if the region name is not found
         let region_payload = if let Some(region) = subject.region {
             let res = RegionDisplayNameOwned::try_new_unstable(provider, prefs, region);
             match res {
@@ -246,14 +242,12 @@ impl LanguageIdentifierDisplayNameOwned {
             let first_val = result?;
             if variant_results.peek().is_some() {
                 // 2 or more variants
-                // TODO(#8100): Fall back to the code instead of dropping it if the variant name is not found
                 let payload_vec = core::iter::once(Ok(first_val))
                     .chain(variant_results)
                     .collect::<Result<Vec<_>, _>>()?;
                 DataPayloadOr::from_other(payload_vec)
             } else {
                 // 1 variant
-                // TODO(#8100): Fall back to the code instead of dropping it if the variant name is not found
                 match first_val.into_inner() {
                     Ok(payload) => DataPayloadOr::from_payload(payload),
                     Err(fallback_code) => {
@@ -326,8 +320,6 @@ impl LanguageIdentifierDisplayNameOwned {
     }
 }
 
-
-
 /// Borrowed variants representation to avoid heap allocation.
 ///
 /// Note: if a compiled-data-only constructor is added in the future,
@@ -393,16 +385,17 @@ impl<'a> TryWriteable for QualifiersWriteable<'a> {
             }
         }
 
-        let mut write_item = |sink: &mut S, res: Result<&str, &str>| -> Result<(), core::fmt::Error> {
-            if !first {
-                sink.write_str(separator_str)?;
-            }
-            if res.try_write_to_parts(sink)?.is_err() {
-                fallback_occurred = true;
-            }
-            first = false;
-            Ok(())
-        };
+        let mut write_item =
+            |sink: &mut S, res: Result<&str, &str>| -> Result<(), core::fmt::Error> {
+                if !first {
+                    sink.write_str(separator_str)?;
+                }
+                if res.try_write_to_parts(sink)?.is_err() {
+                    fallback_occurred = true;
+                }
+                first = false;
+                Ok(())
+            };
 
         if let Some(script) = self.script {
             write_item(sink, script)?;
@@ -444,10 +437,8 @@ impl<'a> TryWriteable for LanguageIdentifierDisplayName<'a> {
         let has_qualifiers =
             self.script_name.is_some() || self.region_name.is_some() || has_variants;
 
-        let mut fallback_occurred = false;
-
-        if !has_qualifiers {
-            fallback_occurred = self.base_name.try_write_to_parts(sink)?.is_err();
+        let fallback_occurred = if !has_qualifiers {
+            self.base_name.try_write_to_parts(sink)?.is_err()
         } else {
             let qualifiers = QualifiersWriteable {
                 script: self.script_name,
@@ -456,15 +447,14 @@ impl<'a> TryWriteable for LanguageIdentifierDisplayName<'a> {
                 separator: self.locale_separator,
             };
 
-            fallback_occurred = self
-                .locale_pattern
+            self.locale_pattern
                 .try_interpolate(DoublePlaceholderValueProviderTry(
                     &self.base_name,
                     &qualifiers,
                 ))
                 .try_write_to_parts(sink)?
-                .is_err();
-        }
+                .is_err()
+        };
 
         if fallback_occurred {
             Ok(Err(LanguageIdentifierNameFallbackError))
@@ -473,5 +463,3 @@ impl<'a> TryWriteable for LanguageIdentifierDisplayName<'a> {
         }
     }
 }
-
-

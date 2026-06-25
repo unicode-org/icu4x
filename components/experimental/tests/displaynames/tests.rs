@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_experimental::displaynames::single::{
-    LanguageIdentifierNameFallbackError, LanguageIdentifierDisplayNameOwned,
+    LanguageIdentifierDisplayNameOwned, LanguageIdentifierNameFallbackError,
 };
 use icu_experimental::displaynames::{
     DisplayNamesOptions, LanguageIdentifierDisplayNameOptions, multi::LocaleDisplayNamesFormatter,
