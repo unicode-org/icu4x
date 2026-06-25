@@ -511,11 +511,10 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for ComplexWord<Y> {
 
     fn handle<'data, 's>(
         data: &Self::LanguageData<'data>,
-        iter: Y::IterAttr<'s>,
-        _last_complex: Y::IterAttr<'s>,
-        past_complex: Y::IterAttr<'s>,
-    ) -> (ComplexIterator<'data, 's, Y>, Y::IterAttr<'s>) {
-        (Y::handle_complex(data, &iter, &past_complex), past_complex)
+        iter: &Y::IterAttr<'s>,
+        past_complex: &Y::IterAttr<'s>,
+    ) -> ComplexIterator<'data, 's, Y> {
+        Y::handle_complex(data, iter, past_complex)
     }
 }
 

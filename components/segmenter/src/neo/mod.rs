@@ -34,10 +34,9 @@ pub(crate) trait ComplexHandler<Y: RuleBreakType> {
 
     fn handle<'data, 's>(
         data: &Self::LanguageData<'data>,
-        iter: Y::IterAttr<'s>,
-        last_complex: Y::IterAttr<'s>,
-        past_complex: Y::IterAttr<'s>,
-    ) -> (ComplexIterator<'data, 's, Y>, Y::IterAttr<'s>);
+        iter: &Y::IterAttr<'s>,
+        past_complex: &Y::IterAttr<'s>,
+    ) -> ComplexIterator<'data, 's, Y>;
 }
 
 #[derive(Debug)]
@@ -58,10 +57,9 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for NoComplexHandler {
 
     fn handle<'data, 's>(
         &data: &Self::LanguageData<'data>,
-        _: Y::IterAttr<'s>,
-        _: Y::IterAttr<'s>,
-        _: Y::IterAttr<'s>,
-    ) -> (ComplexIterator<'data, 's, Y>, Y::IterAttr<'s>) {
+        _: &Y::IterAttr<'s>,
+        _: &Y::IterAttr<'s>,
+    ) -> ComplexIterator<'data, 's, Y> {
         match data {}
     }
 }
@@ -175,19 +173,14 @@ impl<'s, Y: RuleBreakType, C: ComplexHandler<Y>> Iterator for RuleBreakIterator<
                     last_complex.next();
                 }
 
-                let (complex_breaks, end_of_complex) = C::handle(
-                    &complex_language_data,
-                    iter.clone(),
-                    last_complex,
-                    past_complex,
-                );
+                let complex_breaks = C::handle(&complex_language_data, &iter, &past_complex);
                 self.cache = complex_breaks.collect::<SmallVec<_>>().into_iter();
 
                 if C::BREAK_AT_BOUNDARIES {
                     // `self.cache` contains a break point at the end of the run, but not at the start.
                     // Store the position of the end of the run, and return the current position
                     // for the start break point (unless it's 0, which we already returned earlier).
-                    self.remaining_input = end_of_complex;
+                    self.remaining_input = past_complex;
                     self.last_accepting_status = C::BREAK_STATUS;
                     return if Y::offset(&iter) == 0 {
                         self.cache.next()
@@ -195,12 +188,11 @@ impl<'s, Y: RuleBreakType, C: ComplexHandler<Y>> Iterator for RuleBreakIterator<
                         Some(Y::offset(&iter))
                     };
                 } else {
-                    // Remove the break point at the end of the run, and store `end_of_complex`, the location
+                    // Remove the break point at the end of the run, and store `last_complex`, the location
                     // of the last complex code point of the run. We'll later restart the state machine
-                    // from this code point, in order to correctly break after it (the state machine will
-                    // treat it as Alphabetic).
+                    // from this code point, in order to correctly break after it.
                     self.cache.next_back();
-                    complex_state = Some(end_of_complex);
+                    complex_state = Some(last_complex);
 
                     // We keep running the state machine to figure out if there's a break point at the start.
                 }

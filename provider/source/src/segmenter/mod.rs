@@ -1152,10 +1152,10 @@ impl SourceDataProvider {
                     continue;
                 }
 
-                set_builder.remove_set(&language_set);
+                set_builder.remove_set(language_set);
 
                 let mut intersection = CodePointInversionListBuilder::new();
-                intersection.add_set(&language_set);
+                intersection.add_set(language_set);
                 for r in set.iter_ranges_complemented() {
                     intersection.remove_range32(r);
                 }
