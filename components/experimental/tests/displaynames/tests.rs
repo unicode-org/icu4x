@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_experimental::displaynames::{DisplayNamesOptions, multi::LocaleDisplayNamesFormatter};
+use icu_experimental::displaynames::{
+    DisplayNamesOptions, LanguageIdentifierDisplayNameOptions, multi::LocaleDisplayNamesFormatter,
+};
 use icu_locale_core::Locale;
 use icu_locale_core::locale;
 use std::borrow::Cow;
@@ -174,8 +176,12 @@ fn test_concatenate() {
         // Test the newer LanguageIdentifierDisplayName
         use icu_experimental::displaynames::single::LanguageIdentifierDisplayNameOwned;
         let lang_id = cas.input_1.id.clone();
-        let result =
-            LanguageIdentifierDisplayNameOwned::try_new(locale.clone().into(), lang_id, options);
+        let single_options = LanguageIdentifierDisplayNameOptions::default();
+        let result = LanguageIdentifierDisplayNameOwned::try_new(
+            locale.clone().into(),
+            lang_id,
+            single_options,
+        );
         match result {
             Ok(single_display_name) => {
                 assert_eq!(cas.single_should_err, false, "{cas:?}");

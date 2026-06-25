@@ -35,6 +35,14 @@ pub struct DisplayNamesOptions {
     pub language_display: LanguageDisplay,
 }
 
+/// A bag of options defining how a language identifier display name will be formatted.
+#[derive(Copy, Debug, Eq, PartialEq, Clone, Default)]
+#[non_exhaustive]
+pub struct LanguageIdentifierDisplayNameOptions {
+    /// The language display kind, defaults to "dialect".
+    pub language_display: Option<LanguageDisplay>,
+}
+
 /// An enum for formatting style.
 #[allow(missing_docs)] // The variants are self explanatory.
 #[non_exhaustive]
