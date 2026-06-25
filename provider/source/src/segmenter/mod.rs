@@ -1098,28 +1098,28 @@ impl SourceDataProvider {
             .flat_map(|(_, &(_, lookahead, _))| lookahead)
             .collect::<BTreeSet<_>>();
 
-        let mut pseudo_symbol_map = BTreeMap::<String, (String, Language)>::new();
+        let mut pseudo_symbol_map = BTreeMap::<String, (String, ComplexScript)>::new();
 
         // Create pseudo symbols for complex scripts, allowing the state machine to use the correct
         // dictionary without further lookup.
 
         let complex_languages = match prefix {
             "LineBreak" => [
-                (Language::Burmese, "[:sc=Myanmar:]&[:lb=SA:]"),
-                (Language::Khmer, "[:sc=Khmer:]&[:lb=SA:]"),
-                (Language::Lao, "[:sc=Lao:]&[:lb=SA:]"),
-                (Language::Thai, "[:sc=Thai:]&[:lb=SA:]"),
+                (ComplexScript::Burmese, "[:sc=Myanmar:]&[:lb=SA:]"),
+                (ComplexScript::Khmer, "[:sc=Khmer:]&[:lb=SA:]"),
+                (ComplexScript::Lao, "[:sc=Lao:]&[:lb=SA:]"),
+                (ComplexScript::Thai, "[:sc=Thai:]&[:lb=SA:]"),
             ]
             .as_slice(),
             "WordBreak" => [
-                (Language::Burmese, "[:sc=Myanmar:]&[:lb=SA:]"),
+                (ComplexScript::Burmese, "[:sc=Myanmar:]&[:lb=SA:]"),
                 (
-                    Language::ChineseOrJapanese,
+                    ComplexScript::ChineseOrJapanese,
                     "[[[:sc=Han:] [:sc=Hiragana:] [:wb=Katakana:] 가-힣] - [:lb=SA:]]",
                 ),
-                (Language::Khmer, "[:sc=Khmer:]&[:lb=SA:]"),
-                (Language::Lao, "[:sc=Lao:]&[:lb=SA:]"),
-                (Language::Thai, "[:sc=Thai:]&[:lb=SA:]"),
+                (ComplexScript::Khmer, "[:sc=Khmer:]&[:lb=SA:]"),
+                (ComplexScript::Lao, "[:sc=Lao:]&[:lb=SA:]"),
+                (ComplexScript::Thai, "[:sc=Thai:]&[:lb=SA:]"),
             ]
             .as_slice(),
             _ => &[],
@@ -1288,7 +1288,7 @@ impl SourceDataProvider {
                         pseudo_symbol_map.insert(pseudo_symbol, {
                             let mut s = &*symbol;
                             // Non-pseudo symbols have Language::Other
-                            let mut l = Language::Other;
+                            let mut l = ComplexScript::None;
                             while let Some(&(ref x, y)) = pseudo_symbol_map.get(s) {
                                 s = x.as_str();
                                 l = y;
@@ -1409,12 +1409,12 @@ impl SourceDataProvider {
         let tailorings = tailorings
             .into_iter()
             .map(|(tailoring, overrides)| {
-                let mut tailored_pseudo_symbol_map = BTreeMap::<u8, (u8, Language)>::new();
+                let mut tailored_pseudo_symbol_map = BTreeMap::<u8, (u8, ComplexScript)>::new();
 
                 for (target_symbol, set) in overrides {
                     let target_symbol = symbol_lookup[&*target_symbol];
                     // TODO?
-                    let target_language = Language::Other;
+                    let target_language = ComplexScript::None;
                     // The set might cover multiple pseudo symbols
                     for c in set.iter_chars() {
                         let pseudo_symbol = symbols.get(c);

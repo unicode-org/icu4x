@@ -44,7 +44,7 @@ pub trait RuleBreakType: crate::private::Sealed + Sized {
     #[cfg(feature = "unstable")]
     fn select_complex<'a>(
         data: &Self::ComplexPayloads<'a>,
-        language: Language,
+        complex_script: ComplexScript,
     ) -> Option<Self::ComplexPayload<'a>>;
 
     #[doc(hidden)]
@@ -88,18 +88,18 @@ pub struct RuleBreakIterator<'data, 's, Y: RuleBreakType> {
     // The property associated with the previous break
     pub(crate) boundary_property: u8,
     pub(crate) locale_override: Option<&'data RuleBreakDataOverride<'data>>,
-    // Should return None if there is no complex language handling
-    pub(crate) handle_complex_language:
+    // Should return None if there is no complex script handling
+    pub(crate) handle_complex:
         fn(&mut RuleBreakIterator<'data, 's, Y>, Y::CharType) -> Option<usize>,
 }
 
-pub(crate) fn empty_handle_complex_language<Y: RuleBreakType>(
+pub(crate) fn empty_handle_complex<Y: RuleBreakType>(
     _i: &mut RuleBreakIterator<'_, '_, Y>,
     _c: Y::CharType,
 ) -> Option<usize> {
     debug_assert!(
         false,
-        "grapheme/sentence segmenters should never need complex language handling"
+        "grapheme/sentence segmenters should never need complex handling"
     );
     None
 }
@@ -162,7 +162,7 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
                 return Some(self.len);
             };
 
-            // Some segmenter rules doesn't have language-specific rules, we have to use LSTM (or dictionary) segmenter.
+            // Some scripts rules doesn't have segmentation rules, we have to use LSTM (or dictionary) segmenter.
             // If property is marked as SA, use it
             if Y::CAN_CONTAIN_SA && right_prop == self.data.complex_property {
                 if left_prop != self.data.complex_property {
@@ -170,7 +170,7 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
                     self.boundary_property = left_prop;
                     return self.get_current_position();
                 }
-                let break_offset = (self.handle_complex_language)(self, left_codepoint);
+                let break_offset = (self.handle_complex)(self, left_codepoint);
                 self.boundary_property = self.data.complex_property;
                 if break_offset.is_some() {
                     return break_offset;
@@ -319,9 +319,9 @@ impl RuleBreakType for Utf8 {
     #[cfg(feature = "unstable")]
     fn select_complex<'a>(
         &data: &Self::ComplexPayloads<'a>,
-        language: Language,
+        complex_script: ComplexScript,
     ) -> Option<Self::ComplexPayload<'a>> {
-        data.select(language).map(|d| (d, data.grapheme))
+        data.select(complex_script).map(|d| (d, data.grapheme))
     }
 
     #[cfg(feature = "unstable")]
@@ -375,9 +375,9 @@ impl RuleBreakType for PotentiallyIllFormedUtf8 {
     #[cfg(feature = "unstable")]
     fn select_complex<'a>(
         data: &Self::ComplexPayloads<'a>,
-        language: Language,
+        complex_script: ComplexScript,
     ) -> Option<Self::ComplexPayload<'a>> {
-        Utf8::select_complex(data, language)
+        Utf8::select_complex(data, complex_script)
     }
 
     #[cfg(feature = "unstable")]
@@ -428,7 +428,7 @@ impl RuleBreakType for Latin1 {
     #[cfg(feature = "unstable")]
     fn select_complex<'a>(
         &complex_payloads: &Self::ComplexPayloads<'a>,
-        _: Language,
+        _: ComplexScript,
     ) -> Option<Self::ComplexPayload<'a>> {
         match complex_payloads {}
     }
@@ -481,9 +481,9 @@ impl RuleBreakType for Utf16 {
     #[cfg(feature = "unstable")]
     fn select_complex<'a>(
         data: &Self::ComplexPayloads<'a>,
-        language: Language,
+        complex_script: ComplexScript,
     ) -> Option<Self::ComplexPayload<'a>> {
-        Utf8::select_complex(data, language)
+        Utf8::select_complex(data, complex_script)
     }
 
     #[cfg(feature = "unstable")]

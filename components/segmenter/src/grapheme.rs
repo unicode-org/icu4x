@@ -175,7 +175,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
             complex: None,
             boundary_property: 0,
             locale_override: None,
-            handle_complex_language: empty_handle_complex_language,
+            handle_complex: empty_handle_complex,
         })
     }
     /// Creates a grapheme cluster break iterator for a potentially ill-formed UTF8 string
@@ -196,7 +196,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
             complex: None,
             boundary_property: 0,
             locale_override: None,
-            handle_complex_language: empty_handle_complex_language,
+            handle_complex: empty_handle_complex,
         })
     }
     /// Creates a grapheme cluster break iterator for a Latin-1 (8-bit) string.
@@ -215,7 +215,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
             complex: None,
             boundary_property: 0,
             locale_override: None,
-            handle_complex_language: empty_handle_complex_language,
+            handle_complex: empty_handle_complex,
         })
     }
 
@@ -235,7 +235,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
             complex: None,
             boundary_property: 0,
             locale_override: None,
-            handle_complex_language: empty_handle_complex_language,
+            handle_complex: empty_handle_complex,
         })
     }
 }

@@ -12,8 +12,8 @@ use icu_provider::prelude::*;
 
 mod dictionary;
 use dictionary::*;
-mod language;
-use language::*;
+mod script;
+use script::*;
 #[cfg(feature = "lstm")]
 mod lstm;
 #[cfg(feature = "lstm")]
@@ -181,38 +181,41 @@ const TH_DICT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("
 const CJ_DICT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("cjdict");
 
 impl<'data> ComplexPayloadsBorrowed<'data> {
-    pub(crate) fn select(&self, language: Language) -> Option<ComplexPayloadBorrowed<'data>> {
-        const ERR: DataError = DataError::custom("No segmentation model for language");
-        match language {
-            Language::Burmese => self.my.or_else(|| {
-                ERR.with_display_context("my");
+    pub(crate) fn select(
+        &self,
+        complex_script: ComplexScript,
+    ) -> Option<ComplexPayloadBorrowed<'data>> {
+        const ERR: DataError = DataError::custom("No segmentation model for complex script");
+        match complex_script {
+            ComplexScript::Burmese => self.my.or_else(|| {
+                ERR.with_display_context("Burmese");
                 None
             }),
-            Language::Khmer => self.km.or_else(|| {
-                ERR.with_display_context("km");
+            ComplexScript::Khmer => self.km.or_else(|| {
+                ERR.with_display_context("Khmer");
                 None
             }),
-            Language::Lao => self.lo.or_else(|| {
-                ERR.with_display_context("lo");
+            ComplexScript::Lao => self.lo.or_else(|| {
+                ERR.with_display_context("Lao");
                 None
             }),
-            Language::Thai => self.th.or_else(|| {
-                ERR.with_display_context("th");
+            ComplexScript::Thai => self.th.or_else(|| {
+                ERR.with_display_context("Thai");
                 None
             }),
-            Language::ChineseOrJapanese => self.ja.or_else(|| {
-                ERR.with_display_context("ja");
+            ComplexScript::ChineseOrJapanese => self.ja.or_else(|| {
+                ERR.with_display_context("Chinese/Japanese");
                 None
             }),
-            Language::Other => None,
+            ComplexScript::None => None,
         }
     }
 
-    pub(crate) fn complex_language_segment_str(&self, input: &str) -> Vec<usize> {
+    pub(crate) fn segment_str(&self, input: &str) -> Vec<usize> {
         let mut result = Vec::new();
         let mut offset = 0;
-        for (slice, lang) in LanguageIterator::new(input) {
-            match self.select(lang) {
+        for (slice, complex_script) in ComplexScriptIterator::new(input) {
+            match self.select(complex_script) {
                 Some(d) => result.extend(d.segment_str(slice, self.grapheme, offset)),
                 None => result.push(offset + slice.len()),
             }
@@ -221,11 +224,11 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
         result
     }
     /// Return UTF-16 segment offset array using dictionary or lstm segmenter.
-    pub(crate) fn complex_language_segment_utf16(&self, input: &[u16]) -> Vec<usize> {
+    pub(crate) fn segment_utf16(&self, input: &[u16]) -> Vec<usize> {
         let mut result = Vec::new();
         let mut offset = 0;
-        for (slice, lang) in LanguageIteratorUtf16::new(input) {
-            match self.select(lang) {
+        for (slice, complex_script) in ComplexScriptIteratorUtf16::new(input) {
+            match self.select(complex_script) {
                 Some(d) => result.extend(d.segment_utf16(slice, self.grapheme, offset)),
                 None => result.push(offset + slice.len()),
             }
@@ -467,7 +470,7 @@ mod tests {
 
         let segments = [0]
             .into_iter()
-            .chain(segmenter.complex_language_segment_str(s))
+            .chain(segmenter.segment_str(s))
             .tuple_windows()
             .map(|(a, b)| &s[a..b])
             .collect::<Vec<_>>();
@@ -488,7 +491,7 @@ mod tests {
             .collect::<Vec<_>>();
         let iter = [0]
             .into_iter()
-            .chain(segmenter.complex_language_segment_utf16(&utf16))
+            .chain(segmenter.segment_utf16(&utf16))
             .tuple_windows()
             .map(|(a, b)| &utf16[a..b])
             .collect::<Vec<_>>();

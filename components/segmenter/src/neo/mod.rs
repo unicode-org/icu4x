@@ -6,7 +6,7 @@
 
 use crate::complex::ComplexIterator;
 use crate::provider::{
-    Acceptance, Language, SegmenterStateMachine, SegmenterStateMachineOverride, Symbol,
+    Acceptance, ComplexScript, SegmenterStateMachine, SegmenterStateMachineOverride, Symbol,
 };
 use crate::scaffold::RuleBreakType;
 use smallvec::SmallVec;
@@ -29,7 +29,7 @@ pub(crate) trait ComplexHandler<Y: RuleBreakType> {
 
     fn select<'data>(
         complex_payloads: &Self::ComplexPayloads<'data>,
-        language: Language,
+        script: ComplexScript,
     ) -> Option<Self::ComplexPayload<'data>>;
 
     fn handle<'data, 's>(
@@ -50,7 +50,7 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for NoComplexHandler {
 
     fn select<'data>(
         &data: &Self::ComplexPayloads<'data>,
-        _: Language,
+        _: ComplexScript,
     ) -> Option<Self::ComplexPayload<'data>> {
         match data {}
     }
@@ -79,7 +79,7 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for NoComplexHandler {
 #[derive(Debug)]
 pub(crate) struct RuleBreakIterator<'data, 's, Y: RuleBreakType, C: ComplexHandler<Y> + ?Sized> {
     data: &'data SegmenterStateMachine<'data>,
-    pseudo_symbol_map: &'data zerovec::ZeroVec<'data, (Symbol, Language)>,
+    pseudo_symbol_map: &'data zerovec::ZeroVec<'data, (Symbol, ComplexScript)>,
     // We use `IntoIter` so that we can pop from the front in O(1) time.
     cache: smallvec::IntoIter<C::Cache>,
     lookahead_positions: SmallVec<[Option<Y::IterAttr<'s>>; 1]>,
@@ -151,15 +151,15 @@ impl<'s, Y: RuleBreakType, C: ComplexHandler<Y>> Iterator for RuleBreakIterator<
         let mut complex_state = None;
 
         (self.remaining_input, self.last_accepting_status) = loop {
-            let (symbol, language) = if let Some((_, next)) = iter.clone().next() {
+            let (symbol, complex_script) = if let Some((_, next)) = iter.clone().next() {
                 self.symbol(next.into())
             } else {
-                (SegmenterStateMachine::EOT_SYMBOL, Language::Other)
+                (SegmenterStateMachine::EOT_SYMBOL, ComplexScript::None)
             };
 
             if complex_state.is_none()
                 && let Some(complex_payloads) = self.complex.as_ref()
-                && let Some(complex_payload) = C::select(complex_payloads, language)
+                && let Some(complex_payload) = C::select(complex_payloads, complex_script)
             {
                 let mut past_complex = iter.clone();
                 let mut last_complex = past_complex.clone();
@@ -167,7 +167,7 @@ impl<'s, Y: RuleBreakType, C: ComplexHandler<Y>> Iterator for RuleBreakIterator<
                 while past_complex
                     .clone()
                     .next()
-                    .is_some_and(|(_, cp)| self.symbol(cp.into()).1 == language)
+                    .is_some_and(|(_, cp)| self.symbol(cp.into()).1 == complex_script)
                 {
                     past_complex.next();
                     last_complex.next();
@@ -259,14 +259,14 @@ impl<'s, Y: RuleBreakType, C: ComplexHandler<Y>> Iterator for RuleBreakIterator<
 }
 
 impl<'data, 's, Y: RuleBreakType, C: ComplexHandler<Y>> RuleBreakIterator<'data, 's, Y, C> {
-    fn symbol(&self, cp: u32) -> (Symbol, Language) {
+    fn symbol(&self, cp: u32) -> (Symbol, ComplexScript) {
         let pseudo_symbol = self.data.symbols.get32(cp);
         if let Some(i) = pseudo_symbol.checked_sub(self.data.pseudo_symbol_shift) {
             self.pseudo_symbol_map
                 .get(i as usize)
-                .unwrap_or((pseudo_symbol, Language::Other))
+                .unwrap_or((pseudo_symbol, ComplexScript::None))
         } else {
-            (pseudo_symbol, Language::Other)
+            (pseudo_symbol, ComplexScript::None)
         }
     }
 }

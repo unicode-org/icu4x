@@ -254,7 +254,7 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
             complex: None,
             boundary_property: 0,
             locale_override: self.locale_override,
-            handle_complex_language: empty_handle_complex_language,
+            handle_complex: empty_handle_complex,
         })
     }
     /// Creates a sentence break iterator for a potentially ill-formed UTF8 string
@@ -275,7 +275,7 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
             complex: None,
             boundary_property: 0,
             locale_override: self.locale_override,
-            handle_complex_language: empty_handle_complex_language,
+            handle_complex: empty_handle_complex,
         })
     }
     /// Creates a sentence break iterator for a Latin-1 (8-bit) string.
@@ -291,7 +291,7 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
             complex: None,
             boundary_property: 0,
             locale_override: self.locale_override,
-            handle_complex_language: empty_handle_complex_language,
+            handle_complex: empty_handle_complex,
         })
     }
 
@@ -308,7 +308,7 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
             complex: None,
             boundary_property: 0,
             locale_override: self.locale_override,
-            handle_complex_language: empty_handle_complex_language,
+            handle_complex: empty_handle_complex,
         })
     }
 }
