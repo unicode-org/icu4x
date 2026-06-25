@@ -25,7 +25,7 @@ mod variant;
 
 // Re-export from submodules
 pub use language::{
-    DisplayNamesFallbackError, LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOwned,
+    LanguageIdentifierNameFallbackError, LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOwned,
 };
 pub use region::{RegionDisplayName, RegionDisplayNameOwned};
 pub use script::{ScriptDisplayName, ScriptDisplayNameOwned};

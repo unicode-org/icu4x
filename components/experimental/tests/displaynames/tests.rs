@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_experimental::displaynames::single::{
-    DisplayNamesFallbackError, LanguageIdentifierDisplayNameOwned,
+    LanguageIdentifierNameFallbackError, LanguageIdentifierDisplayNameOwned,
 };
 use icu_experimental::displaynames::{
     DisplayNamesOptions, LanguageIdentifierDisplayNameOptions, multi::LocaleDisplayNamesFormatter,
@@ -222,7 +222,7 @@ fn test_fallback_parts() {
     assert_try_writeable_parts_eq!(
         display_name.as_borrowed(),
         "xx (YY)",
-        Err(DisplayNamesFallbackError::new()),
+        Err(LanguageIdentifierNameFallbackError),
         [(0, 2, Part::ERROR), (4, 6, Part::ERROR)]
     );
 }

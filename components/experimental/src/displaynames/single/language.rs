@@ -15,20 +15,12 @@ use icu_pattern::{DoublePlaceholderPattern, DoublePlaceholderValueProviderTry};
 use icu_provider::DataPayloadOr;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
-use writeable::{Part, PartsWrite, TryWriteable, Writeable, adapters::LossyWrap};
+use writeable::{Part, PartsWrite, TryWriteable, adapters::LossyWrap};
 
 /// Display name fallback occurred
 #[derive(displaydoc::Display, Debug, Copy, Clone, PartialEq, Eq, Default)]
-#[non_exhaustive]
-pub struct DisplayNamesFallbackError;
-
-impl DisplayNamesFallbackError {
-    /// Create a new `DisplayNamesFallbackError`.
-    #[inline]
-    pub const fn new() -> Self {
-        Self
-    }
-}
+#[allow(clippy::exhaustive_structs)]
+pub struct LanguageIdentifierNameFallbackError;
 
 /// Represents a subtag that is either absent or has fallen back to its code.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -383,7 +375,7 @@ struct QualifiersWriteable<'a> {
 }
 
 impl<'a> TryWriteable for QualifiersWriteable<'a> {
-    type Error = DisplayNamesFallbackError;
+    type Error = LanguageIdentifierNameFallbackError;
 
     fn try_write_to_parts<S: PartsWrite + ?Sized>(
         &self,
@@ -438,7 +430,7 @@ impl<'a> TryWriteable for QualifiersWriteable<'a> {
         }
 
         if fallback_occurred {
-            Ok(Err(DisplayNamesFallbackError))
+            Ok(Err(LanguageIdentifierNameFallbackError))
         } else {
             Ok(Ok(()))
         }
@@ -446,7 +438,7 @@ impl<'a> TryWriteable for QualifiersWriteable<'a> {
 }
 
 impl<'a> TryWriteable for LanguageIdentifierDisplayName<'a> {
-    type Error = DisplayNamesFallbackError;
+    type Error = LanguageIdentifierNameFallbackError;
 
     fn try_write_to_parts<S: PartsWrite + ?Sized>(
         &self,
@@ -485,7 +477,7 @@ impl<'a> TryWriteable for LanguageIdentifierDisplayName<'a> {
         }
 
         if fallback_occurred {
-            Ok(Err(DisplayNamesFallbackError))
+            Ok(Err(LanguageIdentifierNameFallbackError))
         } else {
             Ok(Ok(()))
         }
