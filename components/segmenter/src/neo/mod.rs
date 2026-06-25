@@ -24,16 +24,16 @@ pub(crate) trait ComplexHandler<Y: RuleBreakType> {
     const BREAK_STATUS: u8;
     const BREAK_AT_BOUNDARIES: bool;
     type Cache: smallvec::Array<Item = usize>;
-    type Data<'s>: core::fmt::Debug;
-    type LanguageData<'s>: core::fmt::Debug;
+    type ComplexPayloads<'s>: core::fmt::Debug;
+    type ComplexPayload<'s>: core::fmt::Debug;
 
     fn select_complex<'data>(
-        data: &Self::Data<'data>,
+        complex_payloads: &Self::ComplexPayloads<'data>,
         language: Language,
-    ) -> Option<Self::LanguageData<'data>>;
+    ) -> Option<Self::ComplexPayload<'data>>;
 
     fn handle<'data, 's>(
-        data: &Self::LanguageData<'data>,
+        complex_payload: &Self::ComplexPayload<'data>,
         iter: &Y::IterAttr<'s>,
         past_complex: &Y::IterAttr<'s>,
     ) -> ComplexIterator<'data, 's, Y>;
@@ -45,22 +45,22 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for NoComplexHandler {
     const BREAK_STATUS: u8 = 0;
     const BREAK_AT_BOUNDARIES: bool = false;
     type Cache = [usize; 1];
-    type Data<'s> = core::convert::Infallible;
-    type LanguageData<'s> = core::convert::Infallible;
+    type ComplexPayloads<'s> = core::convert::Infallible;
+    type ComplexPayload<'s> = core::convert::Infallible;
 
     fn select_complex<'data>(
-        &data: &Self::Data<'data>,
+        &data: &Self::ComplexPayloads<'data>,
         _: Language,
-    ) -> Option<Self::LanguageData<'data>> {
+    ) -> Option<Self::ComplexPayload<'data>> {
         match data {}
     }
 
     fn handle<'data, 's>(
-        &data: &Self::LanguageData<'data>,
+        &complex_payload: &Self::ComplexPayload<'data>,
         _: &Y::IterAttr<'s>,
         _: &Y::IterAttr<'s>,
     ) -> ComplexIterator<'data, 's, Y> {
-        match data {}
+        match complex_payload {}
     }
 }
 
@@ -85,7 +85,7 @@ pub(crate) struct RuleBreakIterator<'data, 's, Y: RuleBreakType, C: ComplexHandl
     lookahead_positions: SmallVec<[Option<Y::IterAttr<'s>>; 1]>,
     remaining_input: Y::IterAttr<'s>,
     last_accepting_status: u8,
-    complex: Option<C::Data<'data>>,
+    complex: Option<C::ComplexPayloads<'data>>,
 }
 
 #[test]
@@ -107,7 +107,7 @@ impl<'data, 's, Y: RuleBreakType, C: ComplexHandler<Y>> RuleBreakIterator<'data,
         input: Y::IterAttr<'s>,
         data: &'data SegmenterStateMachine<'data>,
         tailoring: Option<&'data SegmenterStateMachineOverride<'data>>,
-        complex: Option<C::Data<'data>>,
+        complex: Option<C::ComplexPayloads<'data>>,
     ) -> Self
     where
         Y: RuleBreakType,
@@ -158,8 +158,8 @@ impl<'s, Y: RuleBreakType, C: ComplexHandler<Y>> Iterator for RuleBreakIterator<
             };
 
             if complex_state.is_none()
-                && let Some(complex_data) = self.complex.as_ref()
-                && let Some(complex_language_data) = C::select_complex(complex_data, language)
+                && let Some(complex_payloads) = self.complex.as_ref()
+                && let Some(complex_payload) = C::select_complex(complex_payloads, language)
             {
                 let mut past_complex = iter.clone();
                 let mut last_complex = past_complex.clone();
@@ -173,7 +173,7 @@ impl<'s, Y: RuleBreakType, C: ComplexHandler<Y>> Iterator for RuleBreakIterator<
                     last_complex.next();
                 }
 
-                let complex_breaks = C::handle(&complex_language_data, &iter, &past_complex);
+                let complex_breaks = C::handle(&complex_payload, &iter, &past_complex);
                 self.cache = complex_breaks.collect::<SmallVec<_>>().into_iter();
 
                 if C::BREAK_AT_BOUNDARIES {

@@ -499,22 +499,22 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for ComplexWord<Y> {
     type Cache = [usize; 16];
     const BREAK_STATUS: u8 = WordType::Letter as u8;
 
-    type Data<'s> = Y::ComplexData<'s>;
-    type LanguageData<'s> = Y::ComplexLanguageData<'s>;
+    type ComplexPayloads<'s> = Y::ComplexPayloads<'s>;
+    type ComplexPayload<'s> = Y::ComplexPayload<'s>;
 
     fn select_complex<'data>(
-        data: &Y::ComplexData<'data>,
+        complex_payloads: &Y::ComplexPayloads<'data>,
         language: Language,
-    ) -> Option<Self::LanguageData<'data>> {
-        Y::select_complex(data, language)
+    ) -> Option<Self::ComplexPayload<'data>> {
+        Y::select_complex(complex_payloads, language)
     }
 
     fn handle<'data, 's>(
-        data: &Self::LanguageData<'data>,
+        complex_payloads: &Self::ComplexPayload<'data>,
         iter: &Y::IterAttr<'s>,
         past_complex: &Y::IterAttr<'s>,
     ) -> ComplexIterator<'data, 's, Y> {
-        Y::handle_complex(data, iter, past_complex)
+        Y::handle_complex(complex_payloads, iter, past_complex)
     }
 }
 

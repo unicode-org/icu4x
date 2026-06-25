@@ -35,22 +35,22 @@ pub trait RuleBreakType: crate::private::Sealed + Sized {
 
     #[doc(hidden)]
     #[cfg(feature = "unstable")]
-    type ComplexData<'data>: core::fmt::Debug;
+    type ComplexPayloads<'data>: core::fmt::Debug;
     #[doc(hidden)]
     #[cfg(feature = "unstable")]
-    type ComplexLanguageData<'data>: core::fmt::Debug;
+    type ComplexPayload<'data>: core::fmt::Debug;
 
     #[doc(hidden)]
     #[cfg(feature = "unstable")]
     fn select_complex<'a>(
-        data: &Self::ComplexData<'a>,
+        data: &Self::ComplexPayloads<'a>,
         language: Language,
-    ) -> Option<Self::ComplexLanguageData<'a>>;
+    ) -> Option<Self::ComplexPayload<'a>>;
 
     #[doc(hidden)]
     #[cfg(feature = "unstable")]
     fn handle_complex<'data, 's>(
-        data: &Self::ComplexLanguageData<'data>,
+        data: &Self::ComplexPayload<'data>,
         complex: &Self::IterAttr<'s>,
         past_complex: &Self::IterAttr<'s>,
     ) -> ComplexIterator<'data, 's, Self>;
@@ -309,24 +309,24 @@ impl RuleBreakType for Utf8 {
     const CAN_CONTAIN_SA: bool = true;
 
     #[cfg(feature = "unstable")]
-    type ComplexData<'data> = ComplexPayloadsBorrowed<'data>;
+    type ComplexPayloads<'data> = ComplexPayloadsBorrowed<'data>;
     #[cfg(feature = "unstable")]
-    type ComplexLanguageData<'data> = (
+    type ComplexPayload<'data> = (
         ComplexPayloadBorrowed<'data>,
         GraphemeClusterSegmenterBorrowed<'data>,
     );
 
     #[cfg(feature = "unstable")]
     fn select_complex<'a>(
-        &data: &Self::ComplexData<'a>,
+        &data: &Self::ComplexPayloads<'a>,
         language: Language,
-    ) -> Option<Self::ComplexLanguageData<'a>> {
+    ) -> Option<Self::ComplexPayload<'a>> {
         data.select(language).map(|d| (d, data.grapheme))
     }
 
     #[cfg(feature = "unstable")]
     fn handle_complex<'data, 's>(
-        &(lang, grapheme): &Self::ComplexLanguageData<'data>,
+        &(lang, grapheme): &Self::ComplexPayload<'data>,
         complex: &Self::IterAttr<'s>,
         past_complex: &Self::IterAttr<'s>,
     ) -> ComplexIterator<'data, 's, Self> {
@@ -365,24 +365,24 @@ impl RuleBreakType for PotentiallyIllFormedUtf8 {
     const CAN_CONTAIN_SA: bool = true;
 
     #[cfg(feature = "unstable")]
-    type ComplexData<'data> = ComplexPayloadsBorrowed<'data>;
+    type ComplexPayloads<'data> = ComplexPayloadsBorrowed<'data>;
     #[cfg(feature = "unstable")]
-    type ComplexLanguageData<'data> = (
+    type ComplexPayload<'data> = (
         ComplexPayloadBorrowed<'data>,
         GraphemeClusterSegmenterBorrowed<'data>,
     );
 
     #[cfg(feature = "unstable")]
     fn select_complex<'a>(
-        data: &Self::ComplexData<'a>,
+        data: &Self::ComplexPayloads<'a>,
         language: Language,
-    ) -> Option<Self::ComplexLanguageData<'a>> {
+    ) -> Option<Self::ComplexPayload<'a>> {
         Utf8::select_complex(data, language)
     }
 
     #[cfg(feature = "unstable")]
     fn handle_complex<'data, 's>(
-        &(lang, grapheme): &Self::ComplexLanguageData<'data>,
+        &(lang, grapheme): &Self::ComplexPayload<'data>,
         complex: &Self::IterAttr<'s>,
         past_complex: &Self::IterAttr<'s>,
     ) -> ComplexIterator<'data, 's, Self> {
@@ -421,25 +421,25 @@ impl RuleBreakType for Latin1 {
     const CAN_CONTAIN_SA: bool = false;
 
     #[cfg(feature = "unstable")]
-    type ComplexData<'data> = core::convert::Infallible;
+    type ComplexPayloads<'data> = core::convert::Infallible;
     #[cfg(feature = "unstable")]
-    type ComplexLanguageData<'data> = core::convert::Infallible;
+    type ComplexPayload<'data> = core::convert::Infallible;
 
     #[cfg(feature = "unstable")]
     fn select_complex<'a>(
-        _data: &Self::ComplexData<'a>,
-        _language: Language,
-    ) -> Option<Self::ComplexLanguageData<'a>> {
-        None
+        &complex_payloads: &Self::ComplexPayloads<'a>,
+        _: Language,
+    ) -> Option<Self::ComplexPayload<'a>> {
+        match complex_payloads {}
     }
 
     #[cfg(feature = "unstable")]
     fn handle_complex<'data, 's>(
-        &data: &Self::ComplexData<'data>,
-        _complex: &Self::IterAttr<'s>,
-        _past_complex: &Self::IterAttr<'s>,
+        &complex_payload: &Self::ComplexPayloads<'data>,
+        _: &Self::IterAttr<'s>,
+        _: &Self::IterAttr<'s>,
     ) -> ComplexIterator<'data, 's, Self> {
-        match data {}
+        match complex_payload {}
     }
 
     fn char_len(_ch: Self::CharType) -> usize {
@@ -471,24 +471,24 @@ impl RuleBreakType for Utf16 {
     const CAN_CONTAIN_SA: bool = true;
 
     #[cfg(feature = "unstable")]
-    type ComplexData<'data> = ComplexPayloadsBorrowed<'data>;
+    type ComplexPayloads<'data> = ComplexPayloadsBorrowed<'data>;
     #[cfg(feature = "unstable")]
-    type ComplexLanguageData<'data> = (
+    type ComplexPayload<'data> = (
         ComplexPayloadBorrowed<'data>,
         GraphemeClusterSegmenterBorrowed<'data>,
     );
 
     #[cfg(feature = "unstable")]
     fn select_complex<'a>(
-        data: &Self::ComplexData<'a>,
+        data: &Self::ComplexPayloads<'a>,
         language: Language,
-    ) -> Option<Self::ComplexLanguageData<'a>> {
+    ) -> Option<Self::ComplexPayload<'a>> {
         Utf8::select_complex(data, language)
     }
 
     #[cfg(feature = "unstable")]
     fn handle_complex<'data, 's>(
-        &(lang, grapheme): &Self::ComplexLanguageData<'data>,
+        &(lang, grapheme): &Self::ComplexPayload<'data>,
         complex: &Self::IterAttr<'s>,
         past_complex: &Self::IterAttr<'s>,
     ) -> ComplexIterator<'data, 's, Utf16> {
