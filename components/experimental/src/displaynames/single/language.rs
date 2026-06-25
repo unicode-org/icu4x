@@ -397,12 +397,8 @@ impl<'a> TryWriteable for QualifiersWriteable<'a> {
             if !first {
                 sink.write_str(separator_str)?;
             }
-            match res {
-                Ok(s) => sink.write_str(s)?,
-                Err(code) => {
-                    fallback_occurred = true;
-                    sink.with_part(Part::ERROR, |sink| sink.write_str(code))?;
-                }
+            if res.try_write_to_parts(sink)?.is_err() {
+                fallback_occurred = true;
             }
             first = false;
             Ok(())
@@ -451,13 +447,7 @@ impl<'a> TryWriteable for LanguageIdentifierDisplayName<'a> {
         let mut fallback_occurred = false;
 
         if !has_qualifiers {
-            match self.base_name {
-                Ok(s) => sink.write_str(s)?,
-                Err(code) => {
-                    fallback_occurred = true;
-                    sink.with_part(Part::ERROR, |sink| sink.write_str(code))?;
-                }
-            }
+            fallback_occurred = self.base_name.try_write_to_parts(sink)?.is_err();
         } else {
             let qualifiers = QualifiersWriteable {
                 script: self.script_name,
@@ -466,14 +456,14 @@ impl<'a> TryWriteable for LanguageIdentifierDisplayName<'a> {
                 separator: self.locale_separator,
             };
 
-            let interpolated =
-                self.locale_pattern
-                    .try_interpolate(DoublePlaceholderValueProviderTry(
-                        &self.base_name,
-                        &qualifiers,
-                    ));
-
-            fallback_occurred = interpolated.try_write_to_parts(sink)?.is_err();
+            fallback_occurred = self
+                .locale_pattern
+                .try_interpolate(DoublePlaceholderValueProviderTry(
+                    &self.base_name,
+                    &qualifiers,
+                ))
+                .try_write_to_parts(sink)?
+                .is_err();
         }
 
         if fallback_occurred {
