@@ -187,8 +187,8 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
     ) -> Option<ComplexPayloadBorrowed<'data>> {
         const ERR: DataError = DataError::custom("No segmentation model for complex script");
         match complex_script {
-            ComplexScript::Burmese => self.my.or_else(|| {
-                ERR.with_display_context("Burmese");
+            ComplexScript::Myanmar => self.my.or_else(|| {
+                ERR.with_display_context("Myanmar");
                 None
             }),
             ComplexScript::Khmer => self.km.or_else(|| {

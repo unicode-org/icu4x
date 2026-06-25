@@ -360,7 +360,7 @@ impl zerovec::ule::AsULE for BreakState {
 #[repr(u8)]
 pub enum ComplexScript {
     None = 0,
-    Burmese = 1,
+    Myanmar = 1,
     ChineseOrJapanese = 2,
     Khmer = 3,
     Lao = 4,

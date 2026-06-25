@@ -26,7 +26,7 @@ pub(crate) fn get_complex_script(codepoint: u32) -> ComplexScript {
         | 0x109A..=0x109F
         | 0xA9E0..=0xA9EF
         | 0xA9FA..=0xA9FE
-        | 0xAA60..=0xAA7F => ComplexScript::Burmese,
+        | 0xAA60..=0xAA7F => ComplexScript::Myanmar,
         0x1780..=0x17d3 | 0x17d7 | 0x17dc | 0x17dd => ComplexScript::Khmer,
         0x2E80..=0x2E99
         | 0x2E9B..=0x2EF3
@@ -145,11 +145,11 @@ mod tests {
     #[test]
     fn test_combine() {
         const TEST_STR_THAI: &str = "ภาษาไทยภาษาไทย";
-        const TEST_STR_BURMESE: &str = "ဗမာနွယ်ဘာသာစကားမျာ";
-        let s = format!("{TEST_STR_THAI}{TEST_STR_BURMESE}");
+        const TEST_STR_MYANMAR: &str = "ဗမာနွယ်ဘာသာစကားမျာ";
+        let s = format!("{TEST_STR_THAI}{TEST_STR_MYANMAR}");
         let utf16: Vec<u16> = s.encode_utf16().collect();
         let thai_utf16: Vec<u16> = TEST_STR_THAI.encode_utf16().collect();
-        let burmese_utf16: Vec<u16> = TEST_STR_BURMESE.encode_utf16().collect();
+        let myanmar_utf16: Vec<u16> = TEST_STR_MYANMAR.encode_utf16().collect();
 
         let mut iter = ComplexScriptIteratorUtf16::new(&utf16);
         assert_eq!(
@@ -159,8 +159,8 @@ mod tests {
         );
         assert_eq!(
             iter.next(),
-            Some((burmese_utf16.as_slice(), ComplexScript::Burmese)),
-            "Burmese script with UTF-16 at second"
+            Some((myanmar_utf16.as_slice(), ComplexScript::Myanmar)),
+            "Myanmar script with UTF-16 at second"
         );
         assert_eq!(iter.next(), None, "Iterator for UTF-16 is finished");
 
@@ -172,8 +172,8 @@ mod tests {
         );
         assert_eq!(
             iter.next(),
-            Some((TEST_STR_BURMESE, ComplexScript::Burmese)),
-            "Burmese script with UTF-8 at second"
+            Some((TEST_STR_MYANMAR, ComplexScript::Myanmar)),
+            "Myanmar script with UTF-8 at second"
         );
         assert_eq!(iter.next(), None, "Iterator for UTF-8 is finished");
     }

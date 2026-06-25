@@ -1105,14 +1105,14 @@ impl SourceDataProvider {
 
         let complex_languages = match prefix {
             "LineBreak" => [
-                (ComplexScript::Burmese, "[:sc=Myanmar:]&[:lb=SA:]"),
+                (ComplexScript::Myanmar, "[:sc=Myanmar:]&[:lb=SA:]"),
                 (ComplexScript::Khmer, "[:sc=Khmer:]&[:lb=SA:]"),
                 (ComplexScript::Lao, "[:sc=Lao:]&[:lb=SA:]"),
                 (ComplexScript::Thai, "[:sc=Thai:]&[:lb=SA:]"),
             ]
             .as_slice(),
             "WordBreak" => [
-                (ComplexScript::Burmese, "[:sc=Myanmar:]&[:lb=SA:]"),
+                (ComplexScript::Myanmar, "[:sc=Myanmar:]&[:lb=SA:]"),
                 (
                     ComplexScript::ChineseOrJapanese,
                     "[[[:sc=Han:] [:sc=Hiragana:] [:wb=Katakana:] 가-힣] - [:lb=SA:]]",
