@@ -2,47 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+mod common;
+
+use common::{round_ratio_to_f64, ulp_distance_f64};
 use fused::{f64_div_mul, f64_mul_div, f64_mul_div_add};
 use num_rational::Ratio;
-use num_traits::{ToPrimitive, Zero};
+use num_traits::Zero;
 use rand::rngs::SmallRng;
 use rand::{Rng, SeedableRng};
-
-/// Computes the ULP (Unit in the Last Place) distance between two f64 values.
-/// Returns 0 if they are equal, or if both are NaN.
-/// Returns u64::MAX if they have different signs (and are not both zero) or if one is infinite and the other is not.
-fn ulp_distance(actual: f64, expected: f64) -> u64 {
-    if actual.is_nan() && expected.is_nan() {
-        return 0;
-    }
-    if actual == expected {
-        return 0;
-    }
-    if actual.is_infinite() || expected.is_infinite() {
-        if actual == expected {
-            return 0;
-        } else {
-            return u64::MAX;
-        }
-    }
-
-    // Treat -0.0 and 0.0 as equal
-    if actual == 0.0 && expected == 0.0 {
-        return 0;
-    }
-
-    if actual.signum() != expected.signum() {
-        return u64::MAX;
-    }
-
-    let actual_bits = actual.to_bits();
-    let expected_bits = expected.to_bits();
-
-    let actual_int = (actual_bits & 0x7fffffffffffffff) as i64;
-    let expected_int = (expected_bits & 0x7fffffffffffffff) as i64;
-
-    (actual_int - expected_int).abs() as u64
-}
 
 /// Generates a random f64 across the entire representable range, including subnormals.
 fn random_float<R: Rng>(rng: &mut R) -> f64 {
@@ -71,7 +38,7 @@ fn random_float_with_specials<R: Rng>(rng: &mut R) -> f64 {
     }
 }
 
-// Ground truth using num_rational::Ratio
+// Ground truth using num_rational::Ratio and our bit-accurate rounder
 fn ground_truth_mul_div(a: f64, num: f64, den: f64) -> Option<f64> {
     let a_r = Ratio::from_float(a)?;
     let num_r = Ratio::from_float(num)?;
@@ -80,7 +47,7 @@ fn ground_truth_mul_div(a: f64, num: f64, den: f64) -> Option<f64> {
         return None;
     }
     let res_r = (a_r * num_r) / den_r;
-    res_r.to_f64()
+    Some(round_ratio_to_f64(&res_r))
 }
 
 fn ground_truth_mul_div_add(a: f64, num: f64, den: f64, offset: f64) -> Option<f64> {
@@ -92,7 +59,7 @@ fn ground_truth_mul_div_add(a: f64, num: f64, den: f64, offset: f64) -> Option<f
         return None;
     }
     let res_r = (a_r * num_r) / den_r + offset_r;
-    res_r.to_f64()
+    Some(round_ratio_to_f64(&res_r))
 }
 
 fn ground_truth_div_mul(a: f64, b: f64, c: f64) -> Option<f64> {
@@ -104,12 +71,7 @@ fn ground_truth_div_mul(a: f64, b: f64, c: f64) -> Option<f64> {
         return None;
     }
     let res_r = a_r / denom;
-    res_r.to_f64()
-}
-
-#[inline]
-fn is_subnormal_or_zero(f: f64) -> bool {
-    f == 0.0 || f.abs() < f64::MIN_POSITIVE
+    Some(round_ratio_to_f64(&res_r))
 }
 
 #[test]
@@ -128,48 +90,17 @@ fn test_differential_mul_div() {
 
         if let Some(expected) = expected_opt {
             if expected.is_finite() {
-                let dist = ulp_distance(actual, expected);
-
-                let p = a * num;
-                let intermediate_underflow = is_subnormal_or_zero(p);
-                let intermediate_overflow = !standard.is_finite();
-
-                // If the final result is subnormal, OR if the intermediate product underflowed to zero,
-                // we have reduced precision (double rounding) and allow up to 4 ULPs.
-                let is_subnormal = expected.abs() < f64::MIN_POSITIVE;
-                let max_dist = if is_subnormal || intermediate_underflow {
-                    4
-                } else {
-                    1
-                };
-
-                if dist > max_dist {
-                    if intermediate_underflow || intermediate_overflow {
-                        let fallback_dist = ulp_distance(actual, standard);
-                        assert!(
-                            fallback_dist <= 2 || (actual.is_nan() && standard.is_nan()),
-                            "f64_mul_div(a_bits: {:#x}, num_bits: {:#x}, den_bits: {:#x}): actual={}, standard={} (expected={}, ULP dist={}, fallback ULP dist={})",
-                            a.to_bits(),
-                            num.to_bits(),
-                            den.to_bits(),
-                            actual,
-                            standard,
-                            expected,
-                            dist,
-                            fallback_dist
-                        );
-                    } else {
-                        panic!(
-                            "f64_mul_div(a_bits: {:#x}, num_bits: {:#x}, den_bits: {:#x}): actual={}, expected={}, ULP dist={}",
-                            a.to_bits(),
-                            num.to_bits(),
-                            den.to_bits(),
-                            actual,
-                            expected,
-                            dist
-                        );
-                    }
-                }
+                let dist = ulp_distance_f64(actual, expected);
+                assert!(
+                    dist <= 1,
+                    "f64_mul_div(a_bits: {:#x}, num_bits: {:#x}, den_bits: {:#x}): actual={}, expected={}, ULP dist={}",
+                    a.to_bits(),
+                    num.to_bits(),
+                    den.to_bits(),
+                    actual,
+                    expected,
+                    dist
+                );
             } else {
                 assert!(
                     !actual.is_finite(),
@@ -183,7 +114,7 @@ fn test_differential_mul_div() {
             }
         } else {
             assert!(
-                ulp_distance(actual, standard) == 0,
+                ulp_distance_f64(actual, standard) == 0 || (actual.is_nan() && standard.is_nan()),
                 "f64_mul_div(a_bits: {:#x}, num_bits: {:#x}, den_bits: {:#x}): actual={}, fallback={}",
                 a.to_bits(),
                 num.to_bits(),
@@ -212,51 +143,18 @@ fn test_differential_mul_div_add() {
 
         if let Some(expected) = expected_opt {
             if expected.is_finite() {
-                let dist = ulp_distance(actual, expected);
-
-                let p = a * num;
-                let q_std = p / den;
-                let intermediate_underflow = is_subnormal_or_zero(p) || is_subnormal_or_zero(q_std);
-                let intermediate_overflow = !standard.is_finite();
-
-                // If the final result is subnormal, OR if the intermediate steps underflowed to zero,
-                // we allow up to 4 ULPs due to precision limits.
-                let is_subnormal = expected.abs() < f64::MIN_POSITIVE;
-                let max_dist = if is_subnormal || intermediate_underflow {
-                    4
-                } else {
-                    1
-                };
-
-                if dist > max_dist {
-                    if intermediate_underflow || intermediate_overflow {
-                        let fallback_dist = ulp_distance(actual, standard);
-                        assert!(
-                            fallback_dist <= 2 || (actual.is_nan() && standard.is_nan()),
-                            "f64_mul_div_add(a_bits: {:#x}, num_bits: {:#x}, den_bits: {:#x}, offset_bits: {:#x}): actual={}, standard={} (expected={}, ULP dist={}, fallback ULP dist={})",
-                            a.to_bits(),
-                            num.to_bits(),
-                            den.to_bits(),
-                            offset.to_bits(),
-                            actual,
-                            standard,
-                            expected,
-                            dist,
-                            fallback_dist
-                        );
-                    } else {
-                        panic!(
-                            "f64_mul_div_add(a_bits: {:#x}, num_bits: {:#x}, den_bits: {:#x}, offset_bits: {:#x}): actual={}, expected={}, ULP dist={}",
-                            a.to_bits(),
-                            num.to_bits(),
-                            den.to_bits(),
-                            offset.to_bits(),
-                            actual,
-                            expected,
-                            dist
-                        );
-                    }
-                }
+                let dist = ulp_distance_f64(actual, expected);
+                assert!(
+                    dist <= 1,
+                    "f64_mul_div_add(a_bits: {:#x}, num_bits: {:#x}, den_bits: {:#x}, offset_bits: {:#x}): actual={}, expected={}, ULP dist={}",
+                    a.to_bits(),
+                    num.to_bits(),
+                    den.to_bits(),
+                    offset.to_bits(),
+                    actual,
+                    expected,
+                    dist
+                );
             } else {
                 assert!(
                     !actual.is_finite(),
@@ -271,7 +169,7 @@ fn test_differential_mul_div_add() {
             }
         } else {
             assert!(
-                ulp_distance(actual, standard) == 0,
+                ulp_distance_f64(actual, standard) == 0 || (actual.is_nan() && standard.is_nan()),
                 "f64_mul_div_add(a_bits: {:#x}, num_bits: {:#x}, den_bits: {:#x}, offset_bits: {:#x}): actual={}, fallback={}",
                 a.to_bits(),
                 num.to_bits(),
@@ -300,49 +198,17 @@ fn test_differential_div_mul() {
 
         if let Some(expected) = expected_opt {
             if expected.is_finite() {
-                let dist = ulp_distance(actual, expected);
-
-                let hi = b * c;
-                let res = a / hi;
-                let intermediate_underflow = is_subnormal_or_zero(hi) || is_subnormal_or_zero(res);
-                let intermediate_overflow = !standard.is_finite() || !hi.is_finite();
-
-                // We allow up to 4 ULPs if the final result is subnormal, or if the intermediate
-                // product/quotient underflowed to zero (causing double rounding in the correction term).
-                let is_subnormal = expected.abs() < f64::MIN_POSITIVE;
-                let max_dist = if is_subnormal || intermediate_underflow {
-                    4
-                } else {
-                    1
-                };
-
-                if dist > max_dist {
-                    if intermediate_underflow || intermediate_overflow {
-                        let fallback_dist = ulp_distance(actual, standard);
-                        assert!(
-                            fallback_dist <= 2 || (actual.is_nan() && standard.is_nan()),
-                            "f64_div_mul(a_bits: {:#x}, b_bits: {:#x}, c_bits: {:#x}): actual={}, standard={} (expected={}, ULP dist={}, fallback ULP dist={})",
-                            a.to_bits(),
-                            b.to_bits(),
-                            c.to_bits(),
-                            actual,
-                            standard,
-                            expected,
-                            dist,
-                            fallback_dist
-                        );
-                    } else {
-                        panic!(
-                            "f64_div_mul(a_bits: {:#x}, b_bits: {:#x}, c_bits: {:#x}): actual={}, expected={}, ULP dist={}",
-                            a.to_bits(),
-                            b.to_bits(),
-                            c.to_bits(),
-                            actual,
-                            expected,
-                            dist
-                        );
-                    }
-                }
+                let dist = ulp_distance_f64(actual, expected);
+                assert!(
+                    dist <= 1,
+                    "f64_div_mul(a_bits: {:#x}, b_bits: {:#x}, c_bits: {:#x}): actual={}, expected={}, ULP dist={}",
+                    a.to_bits(),
+                    b.to_bits(),
+                    c.to_bits(),
+                    actual,
+                    expected,
+                    dist
+                );
             } else {
                 assert!(
                     !actual.is_finite(),
@@ -356,7 +222,7 @@ fn test_differential_div_mul() {
             }
         } else {
             assert!(
-                ulp_distance(actual, standard) == 0,
+                ulp_distance_f64(actual, standard) == 0 || (actual.is_nan() && standard.is_nan()),
                 "f64_div_mul(a_bits: {:#x}, b_bits: {:#x}, c_bits: {:#x}): actual={}, fallback={}",
                 a.to_bits(),
                 b.to_bits(),

@@ -37,23 +37,49 @@ use core_maths::CoreFloat;
 /// is mathematically correct relative to the represented input value `0.3f64`.
 #[inline]
 pub fn f64_mul_div(a: f64, num: f64, den: f64) -> f64 {
-    // Fast path: high-precision compensated algorithm.
-    // 1. Exact product decomposition: a * num = p + t
-    let p = a * num;
-    let t = a.mul_add(num, -p);
+    if !a.is_finite() || !num.is_finite() || !den.is_finite() || den == 0.0 {
+        return (a * num) / den;
+    }
 
-    // 2. Exact division remainder: p = q * den + r
-    let q = p / den;
-    let r = (-q).mul_add(den, p);
+    let prod = a * num;
 
-    // 3. Compensation: corrected = q + (r + t) / den
-    let corrected = q + (r + t) / den;
+    // 1. Proactive Subnormal Guarding:
+    // If den or prod is subnormal, we must use the fallback to prevent precision collapse.
+    if den.abs() < f64::MIN_POSITIVE || prod.abs() < f64::MIN_POSITIVE {
+        let a_div = a / den;
+        return if a != 0.0 && (a_div.abs() < f64::MIN_POSITIVE || !a_div.is_finite()) {
+            (num / den) * a
+        } else {
+            a_div * num
+        };
+    }
 
-    // 4. Robustness check and zero-cost fallback
-    if corrected.is_finite() {
-        corrected
+    // 2. High-Precision FMA Paths:
+    if !prod.is_finite() {
+        // Division-first FMA path (when product overflows but final result is finite)
+        let q = a / den;
+        let r = (-q).mul_add(den, a);
+        let corrected = q.mul_add(num, (r * num) / den);
+        if corrected.is_finite() {
+            return corrected;
+        }
     } else {
-        (a * num) / den
+        // Product-first FMA path (normal range)
+        let t = a.mul_add(num, -prod);
+        let q = prod / den;
+        let r = (-q).mul_add(den, prod);
+        let corrected = q + (r + t) / den;
+        if corrected.is_finite() {
+            return corrected;
+        }
+    }
+
+    // 3. Ultimate Fallback (magnitude-reordered to prevent overflow/underflow)
+    let a_div = a / den;
+    if a != 0.0 && (a_div.abs() < f64::MIN_POSITIVE || !a_div.is_finite()) {
+        (num / den) * a
+    } else {
+        a_div * num
     }
 }
 

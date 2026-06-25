@@ -24,6 +24,58 @@
 //!    the algorithm immediately falls back to the standard IEEE 754 operation. This ensures
 //!    identical behavior to standard Rust floats for all edge cases while maintaining peak speed.
 //!
+//! ## Mathematical Precision: Opportunities & Limits
+//!
+//! High-precision fused operations are designed to eliminate intermediate rounding errors, but they
+//! cannot bypass the fundamental representation limits of the IEEE 754 binary format. Understanding
+//! this distinction is key to using this crate effectively.
+//!
+//! Below are two classic examples that illustrate the power and the limits of FMA-compensated arithmetic.
+//!
+//! ### 1. Correcting Double-Rounding: `0.1 * 0.1 / 0.1`
+//!
+//! Mathematically, $\frac{0.1 \times 0.1}{0.1} = 0.1$.
+//!
+//! - **Standard Float Arithmetic (`(0.1 * 0.1) / 0.1`):** Yields `0.09999999999999999`.
+//! - **Compensated Arithmetic (`f64_mul_div(0.1, 0.1, 0.1)`):** Yields `0.1` (exactly representable $0.1$ float).
+//!
+//! **Why standard arithmetic fails:**
+//! 1. The input `0.1` is not exactly representable in binary. It is rounded to the nearest float:
+//!    $$0.1_{\text{float}} = 0.1000000000000000055511151231257827021181583404541015625$$
+//! 2. In standard arithmetic, the intermediate product $0.1_{\text{float}} \times 0.1_{\text{float}}$ is computed and immediately rounded to a 53-bit float:
+//!    $$P_{\text{rounded}} = 0.01000000000000000020816681711721685132943093776702880859375$$
+//!    Notice that $P_{\text{rounded}} is slightly *smaller* than the true mathematical product $0.1_{\text{float}}^2$. This is the first rounding.
+//! 3. We then divide $P_{\text{rounded}}$ by $0.1_{\text{float}}$. Because the numerator was rounded down, the quotient is slightly less than $0.1_{\text{float}}$.
+//! 4. Finally, this quotient is rounded to the nearest float, which drops down to `0.09999999999999999`. This is the second rounding (double-rounding flaw).
+//!
+//! **How `fused` corrects this:**
+//! The `f64_mul_div` function uses FMA to extract the exact mathematical error of the multiplication. It retains the full double-width representation of the intermediate product ($0.1_{\text{float}}^2$) and applies it during the division. This ensures the result is rounded **exactly once** at the very end, yielding the correct float `0.1`.
+//!
+//! ---
+//!
+//! ### 2. The Inescapable Midpoint: `0.3 * 3.0 / 1.0`
+//!
+//! Mathematically, $\frac{0.3 \times 3.0}{1.0} = 0.9$.
+//!
+//! - **Standard Float Arithmetic:** Yields `0.8999999999999999`.
+//! - **Compensated Arithmetic:** **Also** yields `0.8999999999999999`.
+//!
+//! **Why even high-precision math cannot "fix" this:**
+//! 1. The input `0.3` is rounded to:
+//!    $$0.3_{\text{float}} = 0.299999999999999988897769753748434595763683319091796875$$
+//!    which is slightly less than $0.3$.
+//! 2. When we multiply $0.3_{\text{float}}$ by $3.0$ (which is exactly representable), the exact mathematical product in real numbers is:
+//!    $$P_{\text{exact}} = 0.8999999999999999666933092612453037872910501956939697265625$$
+//! 3. We must round $P_{\text{exact}}$ to the nearest 53-bit float. The two adjacent representable floats are:
+//!    - $f_{\text{low}} = 0.899999999999999911182158029987476766109466552734375$
+//!    - $f_{\text{high}} = 0.90000000000000002220446049250313080847263336181640625$
+//! 4. The absolute distances are mathematically identical:
+//!    $$|P_{\text{exact}} - f_{\text{low}}| = |P_{\text{exact}} - f_{\text{high}}| = 5.551115123125783 \times 10^{-17}$$
+//!    The exact product lands **exactly on the midpoint** between the two representable floats.
+//! 5. Under the IEEE 754 round-to-nearest-even rule, the tie is broken by selecting the float with an even significand (ending in `0` in binary), which is $f_{\text{low}}$.
+//!
+//! Thus, even with infinite intermediate precision, the mathematically correct rounded result of the represented inputs is `0.8999999999999999`. The algorithm is behaving with perfect fidelity to the IEEE 754 standard.
+//!
 //! ---
 //!
 //! ## Comparative Research

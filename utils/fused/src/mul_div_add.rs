@@ -29,29 +29,62 @@ fn two_sum(x: f64, y: f64) -> (f64, f64) {
 /// operation `((a * num) / den) + offset`.
 #[inline]
 pub fn f64_mul_div_add(a: f64, num: f64, den: f64, offset: f64) -> f64 {
-    // Fast path: high-precision compensated algorithm.
-    // 1. Exact product decomposition: a * num = p + t
-    let p = a * num;
-    let t = a.mul_add(num, -p);
+    if !a.is_finite() || !num.is_finite() || !den.is_finite() || !offset.is_finite() || den == 0.0 {
+        return ((a * num) / den) + offset;
+    }
 
-    // 2. Exact division remainder: p = q_high * den + r
-    let q_high = p / den;
-    let r = (-q_high).mul_add(den, p);
+    let prod = a * num;
 
-    // 3. Quotient low part: q_low = (r + t) / den
-    let q_low = (r + t) / den;
+    // 1. Proactive Subnormal Guarding:
+    // If den or prod is subnormal, we must use the fallback to prevent precision collapse.
+    // We use FMA-fused fallback to prevent catastrophic cancellation from amplifying errors.
+    if den.abs() < f64::MIN_POSITIVE || prod.abs() < f64::MIN_POSITIVE {
+        let a_div = a / den;
+        return if a != 0.0 && (a_div.abs() < f64::MIN_POSITIVE || !a_div.is_finite()) {
+            let num_div = num / den;
+            num_div.mul_add(a, offset)
+        } else {
+            a_div.mul_add(num, offset)
+        };
+    }
 
-    // 4. Exact addition of q_high and offset: q_high + offset = s + e
-    let (s, e) = two_sum(q_high, offset);
+    // 2. High-Precision FMA Paths:
+    if !prod.is_finite() {
+        // Division-first FMA path (when product overflows but final result is finite)
+        let q = a / den;
+        let r = (-q).mul_add(den, a);
+        let q_tail = r / den;
 
-    // 5. Final compensation
-    let corrected = s + (e + q_low);
+        let p_head = q * num;
+        let p_tail = q.mul_add(num, -p_head);
 
-    // 6. Robustness check and zero-cost fallback
-    if corrected.is_finite() {
-        corrected
+        let (s, e) = two_sum(p_head, offset);
+        let corrected = s + (e + p_tail + q_tail * num);
+
+        if corrected.is_finite() {
+            return corrected;
+        }
     } else {
-        ((a * num) / den) + offset
+        // Product-first FMA path (normal range)
+        let t = a.mul_add(num, -prod);
+        let q_high = prod / den;
+        let r = (-q_high).mul_add(den, prod);
+        let q_low = (r + t) / den;
+        let (s, e) = two_sum(q_high, offset);
+        let corrected = s + (e + q_low);
+
+        if corrected.is_finite() {
+            return corrected;
+        }
+    }
+
+    // 3. Ultimate Fallback (FMA-fused to prevent cancellation error)
+    let a_div = a / den;
+    if a != 0.0 && (a_div.abs() < f64::MIN_POSITIVE || !a_div.is_finite()) {
+        let num_div = num / den;
+        num_div.mul_add(a, offset)
+    } else {
+        a_div.mul_add(num, offset)
     }
 }
 

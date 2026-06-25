@@ -17,26 +17,53 @@ use core_maths::CoreFloat;
 /// operation `a / (b * c)`.
 #[inline]
 pub fn f64_div_mul(a: f64, b: f64, c: f64) -> f64 {
-    // Fast path: high-precision compensated algorithm.
-    // 1. Primary denominator product: hi = b * c
+    if !a.is_finite() || !b.is_finite() || !c.is_finite() || b == 0.0 || c == 0.0 {
+        return a / (b * c);
+    }
+
     let hi = b * c;
-    // 2. Exact product rounding error: err = b * c - hi
-    let err = b.mul_add(c, -hi);
 
-    // 3. Primary quotient: res = a / hi
-    let res = a / hi;
-    // 4. Exact division remainder: rem = a - res * hi
-    let rem = res.mul_add(-hi, a);
+    // 1. Proactive Subnormal Guarding:
+    // We must check if either the denominator product `hi` is zero, non-finite, or subnormal.
+    // - Mathematical necessity: If `hi` is subnormal, the FMA error-tracking term
+    //   `b.mul_add(c, -hi)` can underflow to zero, causing a precision collapse of up to 2^50 ULP
+    //   because we lose the ability to track the error.
+    // - Microarchitectural necessity: On x86_64, subnormal operations often trigger CPU microcode
+    //   stalls (subnormal assists), which can take 150-300 cycles. Checking this proactively avoids
+    //   these massive performance penalties on the hot path, and ensures compatibility with DAZ/FTZ.
+    let use_fallback = hi == 0.0 || !hi.is_finite() || hi.abs() < f64::MIN_POSITIVE;
 
-    // 5. Final compensated result using first-order Taylor expansion:
-    //    corrected = res + (rem - res * err) / hi
-    let corrected = res + (res.mul_add(-err, rem)) / hi;
+    if !use_fallback {
+        // Fast path: high-precision compensated algorithm.
+        // 2. Exact product rounding error: err = b * c - hi
+        let err = b.mul_add(c, -hi);
 
-    // 6. Robustness check and zero-cost fallback
-    if corrected.is_finite() {
-        corrected
+        // 3. Primary quotient: res = a / hi
+        let res = a / hi;
+        // 4. Exact division remainder: rem = a - res * hi
+        let rem = res.mul_add(-hi, a);
+
+        // 5. Final compensated result using first-order Taylor expansion:
+        //    corrected = res + (rem - res * err) / hi
+        let corrected = res + (res.mul_add(-err, rem)) / hi;
+
+        // 6. Robustness check and zero-cost fallback
+        if corrected.is_finite() {
+            return corrected;
+        }
+    }
+
+    // 2. Smart Simple Fallback:
+    // When the subnormal check triggers or when the FMA math fails (non-finite result),
+    // we use a magnitude-reordered fallback.
+    // By dynamically choosing between `(a / c) / b` and `(a / b) / c` based on the magnitude
+    // of `a / b`, we completely avoid the intermediate overflow or underflow of the product `b * c`
+    // in extreme ranges.
+    let a_div = a / b;
+    if a != 0.0 && (a_div.abs() < f64::MIN_POSITIVE || !a_div.is_finite()) {
+        (a / c) / b
     } else {
-        a / (b * c)
+        a_div / c
     }
 }
 
