@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_experimental::displaynames::single::{
+    DisplayNamesFallbackError, LanguageIdentifierDisplayNameOwned,
+};
 use icu_experimental::displaynames::{
     DisplayNamesOptions, LanguageIdentifierDisplayNameOptions, multi::LocaleDisplayNamesFormatter,
 };
@@ -9,6 +12,7 @@ use icu_locale_core::Locale;
 use icu_locale_core::locale;
 use std::borrow::Cow;
 use writeable::assert_writeable_eq;
+use writeable::{Part, TryWriteable, assert_try_writeable_parts_eq};
 
 #[test]
 fn test_concatenate() {
@@ -184,12 +188,40 @@ fn test_concatenate() {
         );
         match result {
             Ok(single_display_name) => {
-                assert_eq!(cas.single_should_err, false, "{cas:?}");
-                assert_writeable_eq!(single_display_name, cas.expected);
+                assert_writeable_eq!(single_display_name.as_borrowed_with_fallback(), cas.expected);
+
+                // Verify fallback error reporting via TryWriteable
+                let mut buf = String::new();
+                let write_result = single_display_name.as_borrowed().try_write_to(&mut buf);
+                assert!(write_result.is_ok(), "Writing failed: {cas:?}");
+                let fallback_result = write_result.unwrap();
+                assert_eq!(fallback_result.is_err(), cas.single_should_err, "{cas:?}");
             }
             Err(_) => {
                 assert_eq!(cas.single_should_err, true, "{cas:?}");
             }
         }
     }
+}
+
+#[test]
+fn test_fallback_parts() {
+    let locale = locale!("en-001");
+    let options = LanguageIdentifierDisplayNameOptions::default();
+
+    // xx-YY has both language and region missing in CLDR en data.
+    // It should fall back to "xx (YY)" and annotate "xx" and "YY" with Part::ERROR.
+    let display_name = LanguageIdentifierDisplayNameOwned::try_new(
+        locale.into(),
+        "xx-YY".parse().unwrap(),
+        options,
+    )
+    .unwrap();
+
+    assert_try_writeable_parts_eq!(
+        display_name.as_borrowed(),
+        "xx (YY)",
+        Err(DisplayNamesFallbackError::new()),
+        [(0, 2, Part::ERROR), (4, 6, Part::ERROR)]
+    );
 }

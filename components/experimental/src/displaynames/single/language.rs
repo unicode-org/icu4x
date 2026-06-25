@@ -9,11 +9,39 @@ use crate::displaynames::single::{
 use crate::displaynames::{
     DisplayNamesPreferences, LanguageDisplay, LanguageIdentifierDisplayNameOptions,
 };
-use alloc::vec::Vec;
-use icu_pattern::DoublePlaceholderPattern;
+use alloc::{vec, vec::Vec};
+use core::fmt::Write;
+use icu_pattern::{DoublePlaceholderPattern, DoublePlaceholderValueProviderTry};
 use icu_provider::DataPayloadOr;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
+use writeable::{Part, PartsWrite, TryWriteable, Writeable, adapters::LossyWrap};
+
+/// Display name fallback occurred
+#[derive(displaydoc::Display, Debug, Copy, Clone, PartialEq, Eq, Default)]
+#[non_exhaustive]
+pub struct DisplayNamesFallbackError;
+
+impl DisplayNamesFallbackError {
+    /// Create a new `DisplayNamesFallbackError`.
+    #[inline]
+    pub const fn new() -> Self {
+        Self
+    }
+}
+
+/// Represents a subtag that is either absent or has fallen back to its code.
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+enum AbsentOrFallback {
+    /// The subtag was not present in the subject.
+    Absent,
+    /// The subtag was present, but its display name was not found, so we fall back to the code.
+    Fallback(TinyAsciiStr<4>),
+}
+
+/// Represents a payload that was either successfully loaded or has fallen back to its code.
+type PayloadOrFallback<M> = DataPayloadOr<M, TinyAsciiStr<8>>;
 
 /// A localized display name for a language identifier, owned version.
 ///
@@ -35,18 +63,20 @@ use tinystr::TinyAsciiStr;
 /// )
 /// .expect("Data should load successfully");
 ///
-/// assert_writeable_eq!(display_name, "Canadian French");
+/// assert_writeable_eq!(display_name.as_borrowed_with_fallback(), "Canadian French");
 /// ```
 #[allow(dead_code)]
 #[derive(Debug)]
 pub struct LanguageIdentifierDisplayNameOwned {
     formatting_locale: DataLocale,
     options: LanguageIdentifierDisplayNameOptions,
-    language_payload: DataPayload<LocaleNamesLanguageMediumV1>,
-    script_payload: DataPayloadOr<LocaleNamesScriptMediumV1, ()>,
-    region_payload: DataPayloadOr<LocaleNamesRegionMediumV1, ()>,
-    variant_payloads:
-        DataPayloadOr<LocaleNamesVariantMediumV1, Vec<DataPayload<LocaleNamesVariantMediumV1>>>,
+    language_payload: DataPayloadOr<LocaleNamesLanguageMediumV1, TinyAsciiStr<4>>,
+    script_payload: DataPayloadOr<LocaleNamesScriptMediumV1, AbsentOrFallback>,
+    region_payload: DataPayloadOr<LocaleNamesRegionMediumV1, AbsentOrFallback>,
+    variant_payloads: DataPayloadOr<
+        LocaleNamesVariantMediumV1,
+        Vec<PayloadOrFallback<LocaleNamesVariantMediumV1>>,
+    >,
     essentials_payload: DataPayload<LocaleNamesEssentialsV1>,
 }
 
@@ -79,7 +109,7 @@ impl LanguageIdentifierDisplayNameOwned {
     {
         let formatting_locale = LocaleNamesLanguageMediumV1::make_locale(prefs.locale_preferences);
 
-        // Step 1: Load/Resolve Language Name (with Dialect resolution)
+        // Step 1: Load language name
         // We want to find the best display name for the given subject.
         // In Dialect mode (default), we try to load names for combinations of subtags:
         // - Language + Script + Region (e.g., "zh-Hant-HK")
@@ -89,8 +119,9 @@ impl LanguageIdentifierDisplayNameOwned {
         // and we "consume" the corresponding subtags so they are not repeated in the qualifiers.
         // If none are found, we fall back to the base language name (e.g., "zh") and all
         // present subtags (script, region, variants) will be formatted as qualifiers.
-
-        let mut language_payload = None;
+        //
+        // Prefer dialect handling if requested and available.
+        let mut language_payload_or = None;
 
         // Only try dialect if requested (which is the default)
         if options.language_display.unwrap_or_default() == LanguageDisplay::Dialect {
@@ -100,9 +131,9 @@ impl LanguageIdentifierDisplayNameOwned {
                 (subject.language, None, Some(subject.region)),
             ] {
                 // For Script and Region:
-                // - Some in the first position means "this should be present"
+                // - Some(Some(subtag)) in the first position means "this should be present"
+                // - Some(None) in the first position means "this must be absent"
                 // - None in the first position means "skip this field"
-                // We skip Some(None) because that case will be handled in a subsequent iteration
                 let script = match script {
                     Some(Some(script)) => Some(script),
                     Some(None) => continue,
@@ -130,7 +161,7 @@ impl LanguageIdentifierDisplayNameOwned {
                     .load(DataRequest { id, metadata })
                     .allow_identifier_not_found()?
                 {
-                    language_payload = Some(response.payload);
+                    language_payload_or = Some(DataPayloadOr::from_payload(response.payload));
                     if script.is_some() {
                         subject.script = None;
                     }
@@ -144,7 +175,7 @@ impl LanguageIdentifierDisplayNameOwned {
 
         // If the language name is not loaded yet, try loading it from the language subtag alone.
         // TODO(#8100): Fall back to the code instead of failing with DataError if the language name is not found
-        let language_payload = match language_payload {
+        let language_payload = match language_payload_or {
             Some(payload) => payload,
             None => {
                 let mut buffer = TinyAsciiStr::EMPTY;
@@ -154,57 +185,89 @@ impl LanguageIdentifierDisplayNameOwned {
                     None,
                     &mut buffer,
                 );
-                provider
-                    .load(DataRequest {
-                        id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                            attrs,
-                            &formatting_locale,
-                        ),
-                        ..Default::default()
-                    })?
-                    .payload
+                let result = provider.load(DataRequest {
+                    id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                        attrs,
+                        &formatting_locale,
+                    ),
+                    ..Default::default()
+                });
+                match result {
+                    Ok(response) => DataPayloadOr::from_payload(response.payload),
+                    Err(e) if e.kind == DataErrorKind::IdentifierNotFound => {
+                        DataPayloadOr::from_other(subject.language.to_tinystr().resize())
+                    }
+                    Err(e) => return Err(e),
+                }
             }
         };
 
         // Step 2: Load script name (if present in subject)
         // TODO(#8100): Fall back to the code instead of failing with DataError if the script name is not found
         let script_payload = if let Some(script) = subject.script {
-            DataPayloadOr::from_payload(
-                ScriptDisplayNameOwned::try_new_unstable(provider, prefs, script)?.payload,
-            )
+            let res = ScriptDisplayNameOwned::try_new_unstable(provider, prefs, script);
+            match res {
+                Ok(obj) => DataPayloadOr::from_payload(obj.payload),
+                Err(e) if e.kind == DataErrorKind::IdentifierNotFound => DataPayloadOr::from_other(
+                    AbsentOrFallback::Fallback(script.to_tinystr().resize()),
+                ),
+                Err(e) => return Err(e),
+            }
         } else {
-            DataPayloadOr::none()
+            DataPayloadOr::from_other(AbsentOrFallback::Absent)
         };
 
         // Step 3: Load region name (if present in subject)
         // TODO(#8100): Fall back to the code instead of failing with DataError if the region name is not found
         let region_payload = if let Some(region) = subject.region {
-            DataPayloadOr::from_payload(
-                RegionDisplayNameOwned::try_new_unstable(provider, prefs, region)?.payload,
-            )
+            let res = RegionDisplayNameOwned::try_new_unstable(provider, prefs, region);
+            match res {
+                Ok(obj) => DataPayloadOr::from_payload(obj.payload),
+                Err(e) if e.kind == DataErrorKind::IdentifierNotFound => DataPayloadOr::from_other(
+                    AbsentOrFallback::Fallback(region.to_tinystr().resize()),
+                ),
+                Err(e) => return Err(e),
+            }
         } else {
-            DataPayloadOr::none()
+            DataPayloadOr::from_other(AbsentOrFallback::Absent)
         };
 
         // Step 4: Load variant names (if present in subject)
+        let load_variant = |variant: icu_locale::subtags::Variant| -> Result<PayloadOrFallback<LocaleNamesVariantMediumV1>, DataError> {
+            let res = VariantDisplayNameOwned::try_new_unstable(provider, prefs, variant);
+            match res {
+                Ok(obj) => Ok(DataPayloadOr::from_payload(obj.payload)),
+                Err(e) if e.kind == DataErrorKind::IdentifierNotFound => {
+                    Ok(DataPayloadOr::from_other(variant.to_tinystr().resize()))
+                }
+                Err(e) => Err(e),
+            }
+        };
+
         let mut variant_results = subject
             .variants
             .iter()
-            .map(|variant| VariantDisplayNameOwned::try_new_unstable(provider, prefs, *variant))
+            .map(|variant| load_variant(*variant))
             .peekable();
+
         let variant_payloads = if let Some(result) = variant_results.next() {
+            let first_val = result?;
             if variant_results.peek().is_some() {
                 // 2 or more variants
                 // TODO(#8100): Fall back to the code instead of dropping it if the variant name is not found
-                let payload_vec = core::iter::once(result)
+                let payload_vec = core::iter::once(Ok(first_val))
                     .chain(variant_results)
-                    .map(|result| result.map(|obj| obj.payload))
                     .collect::<Result<Vec<_>, _>>()?;
                 DataPayloadOr::from_other(payload_vec)
             } else {
                 // 1 variant
                 // TODO(#8100): Fall back to the code instead of dropping it if the variant name is not found
-                DataPayloadOr::from_payload(result?.payload)
+                match first_val.into_inner() {
+                    Ok(payload) => DataPayloadOr::from_payload(payload),
+                    Err(fallback_code) => {
+                        DataPayloadOr::from_other(vec![DataPayloadOr::from_other(fallback_code)])
+                    }
+                }
             }
         } else {
             // 0 variants
@@ -232,76 +295,104 @@ impl LanguageIdentifierDisplayNameOwned {
 
     /// Returns a borrowed version of this display name.
     pub fn as_borrowed(&self) -> LanguageIdentifierDisplayName<'_> {
+        let base_name = match self.language_payload.get() {
+            Ok(p) => Ok(p.as_ref()),
+            Err(lang) => Err(lang.as_str()),
+        };
+
+        let script_name = match self.script_payload.get() {
+            Ok(p) => Some(Ok(p.as_ref())),
+            Err(AbsentOrFallback::Fallback(script)) => Some(Err(script.as_str())),
+            Err(AbsentOrFallback::Absent) => None,
+        };
+
+        let region_name = match self.region_payload.get() {
+            Ok(p) => Some(Ok(p.as_ref())),
+            Err(AbsentOrFallback::Fallback(region)) => Some(Err(region.as_str())),
+            Err(AbsentOrFallback::Absent) => None,
+        };
+
         let variants = match self.variant_payloads.get() {
             Ok(variant_name) => BorrowedVariants::One(variant_name),
             Err(vec) => BorrowedVariants::Slice(vec.as_slice()),
         };
 
         LanguageIdentifierDisplayName {
-            base_name: self.language_payload.get(),
-            script_name: self.script_payload.get_option().map(|p| &**p),
-            region_name: self.region_payload.get_option().map(|p| &**p),
+            base_name,
+            script_name,
+            region_name,
             variants,
             locale_pattern: &self.essentials_payload.get().locale_pattern,
             locale_separator: &self.essentials_payload.get().locale_separator,
         }
     }
-}
 
-impl writeable::Writeable for LanguageIdentifierDisplayNameOwned {
+    /// Returns a writeable that formats the display name, ignoring fallback errors.
     #[inline]
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        self.as_borrowed().write_to(sink)
-    }
-
-    #[inline]
-    fn writeable_length_hint(&self) -> writeable::LengthHint {
-        self.as_borrowed().writeable_length_hint()
+    pub fn as_borrowed_with_fallback(&self) -> LossyWrap<LanguageIdentifierDisplayName<'_>> {
+        self.as_borrowed().with_fallback()
     }
 }
 
-writeable::impl_display_with_writeable!(LanguageIdentifierDisplayNameOwned);
+
 
 /// Borrowed variants representation to avoid heap allocation.
 ///
 /// Note: if a compiled-data-only constructor is added in the future,
 /// this will need a new variant for a vec of borrowed variant names.
 #[derive(Debug, Clone, Copy)]
-enum BorrowedVariants<'a> {
+pub(crate) enum BorrowedVariants<'a> {
     One(&'a str),
-    Slice(&'a [DataPayload<LocaleNamesVariantMediumV1>]),
+    Slice(&'a [PayloadOrFallback<LocaleNamesVariantMediumV1>]),
 }
 
 impl BorrowedVariants<'_> {
     #[inline]
     fn is_empty(&self) -> bool {
-        matches!(self, Self::Slice([]))
+        match self {
+            Self::One(_) => false,
+            Self::Slice(slice) => slice.is_empty(),
+        }
     }
 }
 
 /// A localized display name for a language identifier.
 #[derive(Debug, Clone, Copy)]
 pub struct LanguageIdentifierDisplayName<'a> {
-    base_name: &'a str,
-    script_name: Option<&'a str>,
-    region_name: Option<&'a str>,
+    base_name: Result<&'a str, &'a str>,
+    script_name: Option<Result<&'a str, &'a str>>,
+    region_name: Option<Result<&'a str, &'a str>>,
     variants: BorrowedVariants<'a>,
     locale_pattern: &'a DoublePlaceholderPattern,
     locale_separator: &'a DoublePlaceholderPattern,
 }
 
+impl<'a> LanguageIdentifierDisplayName<'a> {
+    /// Returns a writeable that formats the display name, ignoring fallback errors.
+    #[inline]
+    pub fn with_fallback(&self) -> LossyWrap<Self> {
+        LossyWrap(*self)
+    }
+}
+
 struct QualifiersWriteable<'a> {
-    script: Option<&'a str>,
-    region: Option<&'a str>,
+    script: Option<Result<&'a str, &'a str>>,
+    region: Option<Result<&'a str, &'a str>>,
     variants: BorrowedVariants<'a>,
     separator: &'a DoublePlaceholderPattern,
 }
 
-impl<'a> writeable::Writeable for QualifiersWriteable<'a> {
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        let mut first = true;
+impl<'a> TryWriteable for QualifiersWriteable<'a> {
+    type Error = DisplayNamesFallbackError;
+
+    fn try_write_to_parts<S: PartsWrite + ?Sized>(
+        &self,
+        sink: &mut S,
+    ) -> Result<Result<(), Self::Error>, core::fmt::Error> {
+        let mut fallback_occurred = false;
 
         // TODO: See whether we can share this code with the list component.
+        let mut first = true;
         let mut separator_str = ", ";
         for item in self.separator.iter() {
             if let icu_pattern::PatternItem::Literal(s) = item {
@@ -310,11 +401,17 @@ impl<'a> writeable::Writeable for QualifiersWriteable<'a> {
             }
         }
 
-        let mut write_item = |sink: &mut W, item: &str| -> core::fmt::Result {
+        let mut write_item = |sink: &mut S, res: Result<&str, &str>| -> Result<(), core::fmt::Error> {
             if !first {
                 sink.write_str(separator_str)?;
             }
-            sink.write_str(item)?;
+            match res {
+                Ok(s) => sink.write_str(s)?,
+                Err(code) => {
+                    fallback_occurred = true;
+                    sink.with_part(Part::ERROR, |sink| sink.write_str(code))?;
+                }
+            }
             first = false;
             Ok(())
         };
@@ -327,26 +424,48 @@ impl<'a> writeable::Writeable for QualifiersWriteable<'a> {
         }
         match self.variants {
             BorrowedVariants::One(v) => {
-                write_item(sink, v)?;
+                write_item(sink, Ok(v))?;
             }
             BorrowedVariants::Slice(slice) => {
-                for variant in slice.iter() {
-                    write_item(sink, variant.get())?;
+                for item in slice.iter() {
+                    let res = match item.get() {
+                        Ok(p) => Ok(p.as_ref()),
+                        Err(var) => Err(var.as_str()),
+                    };
+                    write_item(sink, res)?;
                 }
             }
         }
-        Ok(())
+
+        if fallback_occurred {
+            Ok(Err(DisplayNamesFallbackError))
+        } else {
+            Ok(Ok(()))
+        }
     }
 }
 
-impl<'a> writeable::Writeable for LanguageIdentifierDisplayName<'a> {
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+impl<'a> TryWriteable for LanguageIdentifierDisplayName<'a> {
+    type Error = DisplayNamesFallbackError;
+
+    fn try_write_to_parts<S: PartsWrite + ?Sized>(
+        &self,
+        sink: &mut S,
+    ) -> Result<Result<(), Self::Error>, core::fmt::Error> {
         let has_variants = !self.variants.is_empty();
         let has_qualifiers =
             self.script_name.is_some() || self.region_name.is_some() || has_variants;
 
+        let mut fallback_occurred = false;
+
         if !has_qualifiers {
-            sink.write_str(self.base_name)
+            match self.base_name {
+                Ok(s) => sink.write_str(s)?,
+                Err(code) => {
+                    fallback_occurred = true;
+                    sink.with_part(Part::ERROR, |sink| sink.write_str(code))?;
+                }
+            }
         } else {
             let qualifiers = QualifiersWriteable {
                 script: self.script_name,
@@ -354,11 +473,23 @@ impl<'a> writeable::Writeable for LanguageIdentifierDisplayName<'a> {
                 variants: self.variants,
                 separator: self.locale_separator,
             };
-            self.locale_pattern
-                .interpolate((self.base_name, qualifiers))
-                .write_to(sink)
+
+            let interpolated =
+                self.locale_pattern
+                    .try_interpolate(DoublePlaceholderValueProviderTry(
+                        &self.base_name,
+                        &qualifiers,
+                    ));
+
+            fallback_occurred = interpolated.try_write_to_parts(sink)?.is_err();
+        }
+
+        if fallback_occurred {
+            Ok(Err(DisplayNamesFallbackError))
+        } else {
+            Ok(Ok(()))
         }
     }
 }
 
-writeable::impl_display_with_writeable!(LanguageIdentifierDisplayName<'_>);
+

@@ -100,6 +100,50 @@ All owned constructors take their target subtag or `LanguageIdentifier` **by val
 
 ---
 
+## Fallback & `TryWriteable`
+
+The `LanguageIdentifierDisplayName` formatter supports robust fallback behavior when localized display names are missing from the data provider (controlled by `DisplayNamesOptions::fallback`).
+
+### Fallback Modes
+*   **`Fallback::Code` (Default)**: If a display name for the language, script, region, or any variant is not found in the provider, the constructor `try_new` (and its width-specific variants) will still **succeed** (returning `Ok`). At format time, the formatter will write the raw BCP-47 subtag code instead of the localized name.
+*   **`Fallback::None`**: If any of the requested display names are missing, the constructor will **fail-fast** and return `Err(DataError)`.
+
+### Detecting Fallback with `TryWriteable`
+To allow applications to detect whether a fallback occurred (and which parts of the output are fallbacks), `LanguageIdentifierDisplayName` and `LanguageIdentifierDisplayNameOwned` implement the **`TryWriteable`** trait instead of just `Writeable`.
+
+*   **Lossy Mode (Default)**: If you format the display name using the standard `Writeable` or `Display` trait (e.g. `to_string()`), it runs in "lossy mode", automatically writing the fallback codes and discarding any errors.
+*   **Strict/Detection Mode**: You can call `try_write_to` or `try_write_to_parts` to capture the `DisplayNamesFallbackError` if a fallback occurred:
+
+```rust
+use writeable::TryWriteable;
+use icu::experimental::displaynames::single::DisplayNamesFallbackError;
+
+let mut sink = String::new();
+let result = display_name.try_write_to(&mut sink);
+
+if let Ok(Err(DisplayNamesFallbackError)) = result {
+    println!("Fallback occurred! Output: {}", sink);
+}
+```
+
+### Fallback Annotations (`Part::ERROR`)
+When a fallback occurs, the formatter annotates the fallback substrings in the output with **`Part::ERROR`**. This allows you to identify exactly which parts of the formatted string are raw codes:
+
+```rust
+use writeable::{assert_try_writeable_parts_eq, Part};
+
+// "xx-YY" has both language and region missing, so it falls back to "xx (YY)"
+assert_try_writeable_parts_eq!(
+    display_name,
+    "xx (YY)",
+    Err(DisplayNamesFallbackError),
+    [(0, 2, Part::ERROR), (4, 6, Part::ERROR)] // "xx" and "YY" are marked as errors
+);
+```
+
+---
+
+
 ## Data Markers & Indexing
 
 The `single` module uses the following data markers. Because it loads names for specific subtags at runtime, it utilizes a two-level indexing strategy combining the target **locale** (for translation) and **marker attributes** (for the subtag).
@@ -227,8 +271,10 @@ The following features defined in UTS #35 are currently not supported and are pl
     In `LanguageIdentifierDisplayNameOwned::try_new(prefs, locale_id, options)`, we have placed `options` last.
     *   *Resolution*: This aligns with the standard ICU4X API style, as `options` behaves like a trailing optional bag.
 3.  **Fallback Behavior in Single Formatters**:
-    Currently, single formatters (`Script`, `Region`, `Variant`, `Language`) fail-fast in the constructor (`try_new` returns `Err(DataError)`) if the specific subtag data is missing from the provider (e.g., `xx` or an untranslated language).
-    *   *Resolution*: We will redesign the single formatters to support falling back to the code instead of failing with `DataError`. This has been deferred to a follow-up issue: [#8100](https://github.com/unicode-org/icu4x/issues/8100).
+    We have implemented full fallback support in `LanguageIdentifierDisplayName` (and `LanguageIdentifierDisplayNameOwned`) using `TryWriteable` (resolving [#8100](https://github.com/unicode-org/icu4x/issues/8100) for the main formatter).
+    Unlike the old multi-formatter (`LocaleDisplayNamesFormatter`), the single formatter does not expose a `fallback` toggle in its options bag (`LanguageIdentifierDisplayNameOptions`).
+    *   *Design Rationale*: Because the formatter returns a `TryWriteable` result, it always performs BCP-47 fallback (lenient mode) under the hood to ensure a display name can be formatted. If a caller wants to verify whether a fallback occurred, they can inspect the `TryWriteable` parts error (`DisplayNamesFallbackError`) directly, rather than needing an options bag toggle. This keeps the API minimal and idiomatic.
+    *   *Follow-up*: The standalone single formatters (`ScriptDisplayNameOwned`, `RegionDisplayNameOwned`, `VariantDisplayNameOwned`) still fail-fast in their constructors if their specific subtag data is missing. We should extend the `TryWriteable` fallback model to these standalone formatters as well in a future release.
 4.  **Dialect Names Data Marker**:
     Should dialect names (currently loaded using the same `LocaleNamesLanguageMediumV1` marker but with language+script+region attributes) be moved to a separate data marker to avoid overloading the language name marker and to allow applications to opt-out of dialect data to save binary size?
 
