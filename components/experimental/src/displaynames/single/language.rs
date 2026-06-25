@@ -122,9 +122,9 @@ impl LanguageIdentifierDisplayNameOwned {
                 (subject.language, None, Some(subject.region)),
             ] {
                 // For Script and Region:
-                // - Some(Some(subtag)) in the first position means "this should be present"
-                // - Some(None) in the first position means "this must be absent"
+                // - Some in the first position means "this should be present"
                 // - None in the first position means "skip this field"
+                // We skip Some(None) because that case will be handled in a subsequent iteration
                 let script = match script {
                     Some(Some(script)) => Some(script),
                     Some(None) => continue,
@@ -313,7 +313,9 @@ impl LanguageIdentifierDisplayNameOwned {
         }
     }
 
-    /// Returns a writeable that formats the display name, ignoring fallback errors.
+    /// Returns a writeable that formats the display name.
+    ///
+    /// Missing display names will fall back to the raw BCP-47 code.
     #[inline]
     pub fn as_borrowed_with_fallback(&self) -> LossyWrap<LanguageIdentifierDisplayName<'_>> {
         self.as_borrowed().with_fallback()
@@ -325,7 +327,7 @@ impl LanguageIdentifierDisplayNameOwned {
 /// Note: if a compiled-data-only constructor is added in the future,
 /// this will need a new variant for a vec of borrowed variant names.
 #[derive(Debug, Clone, Copy)]
-pub(crate) enum BorrowedVariants<'a> {
+enum BorrowedVariants<'a> {
     One(&'a str),
     Slice(&'a [PayloadOrFallback<LocaleNamesVariantMediumV1>]),
 }
@@ -333,10 +335,7 @@ pub(crate) enum BorrowedVariants<'a> {
 impl BorrowedVariants<'_> {
     #[inline]
     fn is_empty(&self) -> bool {
-        match self {
-            Self::One(_) => false,
-            Self::Slice(slice) => slice.is_empty(),
-        }
+        matches!(self, Self::Slice([]))
     }
 }
 
@@ -352,7 +351,9 @@ pub struct LanguageIdentifierDisplayName<'a> {
 }
 
 impl<'a> LanguageIdentifierDisplayName<'a> {
-    /// Returns a writeable that formats the display name, ignoring fallback errors.
+    /// Returns a writeable that formats the display name.
+    ///
+    /// Missing display names will fall back to the raw BCP-47 code.
     #[inline]
     pub fn with_fallback(&self) -> LossyWrap<Self> {
         LossyWrap(*self)
