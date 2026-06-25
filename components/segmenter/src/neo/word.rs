@@ -502,7 +502,7 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for ComplexWord<Y> {
     type ComplexPayloads<'s> = Y::ComplexPayloads<'s>;
     type ComplexPayload<'s> = Y::ComplexPayload<'s>;
 
-    fn select_complex<'data>(
+    fn select<'data>(
         complex_payloads: &Y::ComplexPayloads<'data>,
         language: Language,
     ) -> Option<Self::ComplexPayload<'data>> {

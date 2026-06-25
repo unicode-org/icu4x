@@ -571,7 +571,7 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for ComplexLine<Y> {
     type ComplexPayloads<'s> = Y::ComplexPayloads<'s>;
     type ComplexPayload<'s> = Y::ComplexPayload<'s>;
 
-    fn select_complex<'data>(
+    fn select<'data>(
         complex_payloads: &Self::ComplexPayloads<'data>,
         language: Language,
     ) -> Option<Self::ComplexPayload<'data>> {

@@ -27,7 +27,7 @@ pub(crate) trait ComplexHandler<Y: RuleBreakType> {
     type ComplexPayloads<'s>: core::fmt::Debug;
     type ComplexPayload<'s>: core::fmt::Debug;
 
-    fn select_complex<'data>(
+    fn select<'data>(
         complex_payloads: &Self::ComplexPayloads<'data>,
         language: Language,
     ) -> Option<Self::ComplexPayload<'data>>;
@@ -48,7 +48,7 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for NoComplexHandler {
     type ComplexPayloads<'s> = core::convert::Infallible;
     type ComplexPayload<'s> = core::convert::Infallible;
 
-    fn select_complex<'data>(
+    fn select<'data>(
         &data: &Self::ComplexPayloads<'data>,
         _: Language,
     ) -> Option<Self::ComplexPayload<'data>> {
@@ -159,7 +159,7 @@ impl<'s, Y: RuleBreakType, C: ComplexHandler<Y>> Iterator for RuleBreakIterator<
 
             if complex_state.is_none()
                 && let Some(complex_payloads) = self.complex.as_ref()
-                && let Some(complex_payload) = C::select_complex(complex_payloads, language)
+                && let Some(complex_payload) = C::select(complex_payloads, language)
             {
                 let mut past_complex = iter.clone();
                 let mut last_complex = past_complex.clone();
