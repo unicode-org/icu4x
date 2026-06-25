@@ -8,25 +8,8 @@ pub(crate) mod region;
 pub(crate) mod script;
 pub(crate) mod variant;
 
-use crate::cldr_serde::displaynames::WithAlt;
+use crate::cldr_serde::displaynames::{Alt, WithAlt};
 use std::collections::{BTreeMap, HashMap};
-
-pub(crate) const ALT_SHORT: &str = "short";
-pub(crate) const ALT_LONG: &str = "long";
-pub(crate) const ALT_VARIANT: &str = "variant";
-pub(crate) const ALT_STANDALONE: &str = "stand-alone";
-pub(crate) const ALT_OFFICIAL: &str = "official";
-/// Secondary name variant, used in languages and scripts.
-pub(crate) const ALT_SECONDARY: &str = "secondary";
-/// Abbreviation for territory code `IO` (British Indian Ocean Territory).
-pub(crate) const ALT_BIOT: &str = "biot";
-/// Alternate name for territory code `IO` (British Indian Ocean Territory) mapping to "Chagos Archipelago".
-pub(crate) const ALT_CHAGOS: &str = "chagos";
-// ALT_MENU is being replaced by menu=core|extension, but it is still in CLDR
-pub(crate) const ALT_MENU: &str = "menu";
-
-pub(crate) const MENU_CORE: &str = "core";
-pub(crate) const MENU_EXTENSION: &str = "extension";
 
 pub(crate) struct ExtractedNames<'a, K> {
     pub(crate) names: BTreeMap<K, &'a str>,
@@ -35,14 +18,13 @@ pub(crate) struct ExtractedNames<'a, K> {
     pub(crate) menu_names: BTreeMap<K, &'a str>,
 }
 
-/// Process locale display names from a `cldr_serde` struct to `BTreeMaps`
-/// ready to be converted to `ZeroMaps`.
+/// Extracts locale display names from a `cldr_serde` struct into `BTreeMap`s.
 ///
-/// This fn is used by the zeromap-based structs, not the `LocaleNames`
-/// attributes-based structs.
+/// This helper is used by the legacy (ZeroMap-based) providers, rather than the newer
+/// attributes-based providers.
 pub(crate) fn extract_names_for_zeromap_struct<'a, T, K, F>(
     map: &'a HashMap<WithAlt<T>, String>,
-    ignored_alts: &[&str],
+    ignored_alts: &[Alt],
     log_context: &str,
     filter_project: F,
 ) -> ExtractedNames<'a, K>
@@ -66,26 +48,28 @@ where
             if k == *val_str {
                 continue;
             }
-            match key.alt.as_deref() {
-                Some(ALT_SHORT) => {
+            match key.alt {
+                Some(Alt::Short) => {
                     short_names.insert(k, val_str);
                 }
-                Some(ALT_LONG) => {
+                Some(Alt::Long) => {
                     long_names.insert(k, val_str);
                 }
-                Some(ALT_MENU) => {
+                Some(Alt::Menu) => {
                     menu_names.insert(k, val_str);
                 }
                 None => {
                     names.insert(k, val_str);
                 }
                 Some(alt) => {
-                    if ignored_alts.contains(&alt) {
+                    if alt == Alt::Unknown {
+                        // Discard unknown alts
+                    } else if ignored_alts.contains(&alt) {
                         // TODO(#8012): Handle preference-specific alt variants,
                         //   perhaps with datagen alt flags.
                         // TODO(#8011): Support standalone display names.
                     } else {
-                        log::warn!("Unknown alt variant for {}: {}", log_context, alt);
+                        log::warn!("Unhandled alt variant for {}: {:?}", log_context, alt);
                     }
                 }
             }
@@ -107,7 +91,7 @@ where
 /// - `$resource`: The CLDR serde resource type.
 /// - `$file`: The JSON file name in CLDR.
 /// - `$field`: The field name in `LocaleDisplayNames` containing the data.
-/// - `$alt_variant`: The alt variant string (e.g., `None`, `Some("short")`).
+/// - `$alt_variant`: The alt variant (e.g., `None`, `Some(Alt::Short)`).
 macro_rules! impl_displaynames_v1 {
     ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr,) => {
         impl DataProvider<$marker> for SourceDataProvider {
@@ -127,7 +111,7 @@ macro_rules! impl_displaynames_v1 {
 
                 let key = WithAlt {
                     subtag,
-                    alt: $alt_variant.map(std::borrow::Cow::Borrowed),
+                    alt: $alt_variant,
                     menu: None,
                 };
 
@@ -187,7 +171,7 @@ macro_rules! impl_displaynames_menu_v1 {
                 let key_core = WithAlt {
                     subtag: subtag.clone(),
                     alt: None,
-                    menu: Some(std::borrow::Cow::Borrowed($crate::displaynames::MENU_CORE)),
+                    menu: Some($crate::cldr_serde::displaynames::Menu::Core),
                 };
 
                 let map = &data.main.value.localedisplaynames.$field;
@@ -196,9 +180,7 @@ macro_rules! impl_displaynames_menu_v1 {
                     let key_extension = WithAlt {
                         subtag,
                         alt: None,
-                        menu: Some(std::borrow::Cow::Borrowed(
-                            $crate::displaynames::MENU_EXTENSION,
-                        )),
+                        menu: Some($crate::cldr_serde::displaynames::Menu::Extension),
                     };
                     let extension = map.get(&key_extension).ok_or_else(|| {
                         DataError::custom("found menu-core but missing menu-extension")
@@ -209,7 +191,7 @@ macro_rules! impl_displaynames_menu_v1 {
                     // Fallback to alt-menu
                     let key_alt_menu = WithAlt {
                         subtag,
-                        alt: Some(std::borrow::Cow::Borrowed($crate::displaynames::ALT_MENU)),
+                        alt: Some($crate::cldr_serde::displaynames::Alt::Menu),
                         menu: None,
                     };
                     let alt_menu = map.get(&key_alt_menu).ok_or_else(|| {
@@ -239,8 +221,9 @@ macro_rules! impl_displaynames_menu_v1 {
                 }) {
                     let data: &$resource = displaynames.read_and_parse(&locale, $file)?;
                     for key in data.main.value.localedisplaynames.$field.keys() {
-                        let matches = key.menu.as_deref() == Some($crate::displaynames::MENU_CORE)
-                            || key.alt.as_deref() == Some($crate::displaynames::ALT_MENU);
+                        let matches = key.menu
+                            == Some($crate::cldr_serde::displaynames::Menu::Core)
+                            || key.alt == Some($crate::cldr_serde::displaynames::Alt::Menu);
 
                         if matches {
                             let data_identifier = DataIdentifierCow::from_owned(
@@ -269,7 +252,7 @@ macro_rules! impl_displaynames_menu_v1 {
 /// - `$resource`: The CLDR serde resource type.
 /// - `$file`: The JSON file name in CLDR.
 /// - `$field`: The field name in `LocaleDisplayNames` containing the data.
-/// - `$alt_variant`: The alt variant string (e.g., `None`, `Some("short")`).
+/// - `$alt_variant`: The alt variant (e.g., `None`, `Some(Alt::Short)`).
 macro_rules! impl_displaynames_iter_v1 {
     ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr) => {
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
@@ -282,11 +265,7 @@ macro_rules! impl_displaynames_iter_v1 {
                 }) {
                     let data: &$resource = displaynames.read_and_parse(&locale, $file)?;
                     for key in data.main.value.localedisplaynames.$field.keys() {
-                        let matches = match ($alt_variant, &key.alt) {
-                            (Some(expected), Some(actual)) => expected == actual,
-                            (None, None) => true,
-                            _ => false,
-                        } && key.menu.is_none();
+                        let matches = $alt_variant == key.alt && key.menu.is_none();
 
                         if matches {
                             let data_identifier = DataIdentifierCow::from_owned(

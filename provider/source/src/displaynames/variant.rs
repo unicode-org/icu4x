@@ -5,8 +5,8 @@
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
-use crate::cldr_serde::displaynames::WithAlt;
-use crate::displaynames::{ALT_SECONDARY, extract_names_for_zeromap_struct};
+use crate::cldr_serde::displaynames::{Alt, WithAlt};
+use crate::displaynames::extract_names_for_zeromap_struct;
 use icu::experimental::displaynames::provider::*;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
@@ -34,7 +34,7 @@ crate::displaynames::impl_displaynames_v1!(
     cldr_serde::displaynames::variant::Resource,
     "variants.json",
     variants,
-    None::<&str>,
+    None,
 );
 
 crate::displaynames::impl_displaynames_legacy_iter_v1!(VariantDisplayNamesV1, "variants.json");
@@ -44,7 +44,7 @@ impl From<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNames<
     fn from(other: &cldr_serde::displaynames::variant::Resource) -> Self {
         let extracted = extract_names_for_zeromap_struct(
             &other.main.value.localedisplaynames.variants,
-            &[ALT_SECONDARY],
+            &[Alt::Secondary],
             "variant",
             |variant| Some(variant.to_tinystr()),
         );

@@ -12,12 +12,61 @@ const ALT_SEPARATOR: &str = "-alt-";
 const MENU_SEPARATOR: &str = "-menu-";
 use core::str::FromStr;
 use serde::{Deserialize, Deserializer};
+#[derive(Hash, Eq, PartialEq, Clone, Copy, Debug)]
+pub(crate) enum Alt {
+    Short,
+    Long,
+    Variant,
+    StandAlone,
+    Official,
+    Secondary,
+    Biot,
+    Chagos,
+    Menu,
+    Unknown,
+}
+
+impl FromStr for Alt {
+    type Err = ();
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "short" => Ok(Alt::Short),
+            "long" => Ok(Alt::Long),
+            "variant" => Ok(Alt::Variant),
+            "stand-alone" => Ok(Alt::StandAlone),
+            "official" => Ok(Alt::Official),
+            "secondary" => Ok(Alt::Secondary),
+            "biot" => Ok(Alt::Biot),
+            "chagos" => Ok(Alt::Chagos),
+            "menu" => Ok(Alt::Menu),
+            _ => Err(()),
+        }
+    }
+}
+
+#[derive(Hash, Eq, PartialEq, Clone, Copy, Debug)]
+pub(crate) enum Menu {
+    Core,
+    Extension,
+    Unknown,
+}
+
+impl FromStr for Menu {
+    type Err = ();
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "core" => Ok(Menu::Core),
+            "extension" => Ok(Menu::Extension),
+            _ => Err(()),
+        }
+    }
+}
 
 #[derive(Hash, Eq, PartialEq, Clone, Debug)]
 pub(crate) struct WithAlt<T> {
     pub(crate) subtag: T,
-    pub(crate) alt: Option<std::borrow::Cow<'static, str>>,
-    pub(crate) menu: Option<std::borrow::Cow<'static, str>>,
+    pub(crate) alt: Option<Alt>,
+    pub(crate) menu: Option<Menu>,
 }
 
 impl<'de, T> Deserialize<'de> for WithAlt<T>
@@ -51,13 +100,13 @@ where
                     Ok(WithAlt {
                         subtag,
                         alt: None,
-                        menu: Some(std::borrow::Cow::Owned(menu_str.to_string())),
+                        menu: Some(Menu::from_str(menu_str).unwrap_or(Menu::Unknown)),
                     })
                 } else if let Some((subtag_str, alt_str)) = v.split_once(ALT_SEPARATOR) {
                     let subtag = T::from_str(subtag_str).map_err(E::custom)?;
                     Ok(WithAlt {
                         subtag,
-                        alt: Some(std::borrow::Cow::Owned(alt_str.to_string())),
+                        alt: Some(Alt::from_str(alt_str).unwrap_or(Alt::Unknown)),
                         menu: None,
                     })
                 } else {

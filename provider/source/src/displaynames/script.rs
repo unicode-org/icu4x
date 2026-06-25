@@ -5,10 +5,8 @@
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
-use crate::cldr_serde::displaynames::WithAlt;
-use crate::displaynames::{
-    ALT_SECONDARY, ALT_SHORT, ALT_STANDALONE, ALT_VARIANT, extract_names_for_zeromap_struct,
-};
+use crate::cldr_serde::displaynames::{Alt, WithAlt};
+use crate::displaynames::extract_names_for_zeromap_struct;
 use icu::experimental::displaynames::provider::*;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
@@ -36,7 +34,7 @@ crate::displaynames::impl_displaynames_v1!(
     cldr_serde::displaynames::script::Resource,
     "scripts.json",
     scripts,
-    None::<&str>,
+    None,
 );
 
 crate::displaynames::impl_displaynames_v1!(
@@ -45,7 +43,7 @@ crate::displaynames::impl_displaynames_v1!(
     cldr_serde::displaynames::script::Resource,
     "scripts.json",
     scripts,
-    Some(ALT_SHORT),
+    Some(Alt::Short),
 );
 
 crate::displaynames::impl_displaynames_legacy_iter_v1!(ScriptDisplayNamesV1, "scripts.json");
@@ -54,7 +52,7 @@ impl From<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames<'s
     fn from(other: &cldr_serde::displaynames::script::Resource) -> Self {
         let extracted = extract_names_for_zeromap_struct(
             &other.main.value.localedisplaynames.scripts,
-            &[ALT_VARIANT, ALT_SECONDARY, ALT_STANDALONE],
+            &[Alt::Variant, Alt::Secondary, Alt::StandAlone],
             "script",
             |script| Some(script.to_tinystr()),
         );

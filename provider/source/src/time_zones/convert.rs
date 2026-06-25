@@ -5,6 +5,7 @@
 use super::{MetazoneInfo, MzMembership};
 use crate::SourceDataProvider;
 use crate::cldr_serde;
+use crate::cldr_serde::displaynames::Alt;
 use cldr_serde::time_zones::time_zone_names::*;
 use core::cmp::Ordering;
 use icu::datetime::provider::time_zones::*;
@@ -152,7 +153,7 @@ impl SourceDataProvider {
                 })
                 // Overwrite with short names, as we want to use those
                 .chain(regions.iter().filter_map(|(key, value)| {
-                    if key.alt.as_deref() == Some("short") && key.menu.is_none() {
+                    if key.alt == Some(Alt::Short) && key.menu.is_none() {
                         Some((key.subtag, value.as_str()))
                     } else {
                         None

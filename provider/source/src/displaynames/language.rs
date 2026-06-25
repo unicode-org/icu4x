@@ -5,17 +5,15 @@
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
-use crate::cldr_serde::displaynames::WithAlt;
-use crate::displaynames::{
-    ALT_LONG, ALT_OFFICIAL, ALT_SECONDARY, ALT_SHORT, ALT_VARIANT, extract_names_for_zeromap_struct,
-};
+use crate::cldr_serde::displaynames::{Alt, WithAlt};
+use crate::displaynames::extract_names_for_zeromap_struct;
 
 use icu::experimental::displaynames::provider::*;
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use std::collections::{BTreeMap, HashSet};
 use tinystr::TinyAsciiStr;
-use zerovec::{VarZeroCow, ZeroMap};
+use zerovec::VarZeroCow;
 
 impl DataProvider<LanguageDisplayNamesV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<LanguageDisplayNamesV1>, DataError> {
@@ -57,7 +55,7 @@ crate::displaynames::impl_displaynames_v1!(
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
-    None::<&str>,
+    None,
 );
 
 crate::displaynames::impl_displaynames_v1!(
@@ -66,7 +64,7 @@ crate::displaynames::impl_displaynames_v1!(
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
-    Some(ALT_SHORT),
+    Some(Alt::Short),
 );
 
 crate::displaynames::impl_displaynames_v1!(
@@ -75,7 +73,7 @@ crate::displaynames::impl_displaynames_v1!(
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
-    Some(ALT_LONG),
+    Some(Alt::Long),
 );
 
 crate::displaynames::impl_displaynames_menu_v1!(
@@ -90,7 +88,7 @@ impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayName
     fn from(other: &cldr_serde::displaynames::language::Resource) -> Self {
         let extracted = extract_names_for_zeromap_struct(
             &other.main.value.localedisplaynames.languages,
-            &[ALT_VARIANT, ALT_SECONDARY, ALT_OFFICIAL],
+            &[Alt::Variant, Alt::Secondary, Alt::Official],
             "language",
             |langid| {
                 // LanguageDisplayNames contains display names for language subtags without other subtags
@@ -122,7 +120,7 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<
     fn from(other: &cldr_serde::displaynames::language::Resource) -> Self {
         let extracted = extract_names_for_zeromap_struct(
             &other.main.value.localedisplaynames.languages,
-            &[ALT_VARIANT, ALT_SECONDARY, ALT_OFFICIAL],
+            &[Alt::Variant, Alt::Secondary, Alt::Official],
             "language",
             |langid| {
                 // LocaleDisplayNames contains display names for languages with other subtags,
@@ -137,11 +135,9 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<
         );
 
         let to_zero_map = |map: BTreeMap<String, &str>| {
-            let mut zero_map = ZeroMap::new();
-            for (k, v) in map.into_iter() {
-                zero_map.insert(PotentialUtf8::from_str(&k), v);
-            }
-            zero_map
+            map.iter()
+                .map(|(k, v)| (PotentialUtf8::from_str(k), *v))
+                .collect()
         };
 
         Self {
