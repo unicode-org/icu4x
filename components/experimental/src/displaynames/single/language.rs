@@ -58,6 +58,55 @@ type PayloadOrFallback<M, S> = DataPayloadOr<M, S>;
 ///
 /// assert_writeable_eq!(display_name.as_borrowed().with_fallback(), "Canadian French");
 /// ```
+///
+/// # Fallback and TryWriteable
+///
+/// The formatter supports BCP-47 subtag fallback when localized display names are missing
+/// from the data provider. It implements this fallback using [`TryWriteable`].
+///
+/// By default, formatting runs in "lossy mode" (ignoring fallback errors) when using standard
+/// [`Writeable`] or [`Display`](core::fmt::Display) traits (e.g. via `.as_borrowed_with_fallback()`).
+///
+/// To detect whether a fallback occurred, and which parts of the output are fallbacks, you can
+/// borrow the formatter via [`.as_borrowed()`](Self::as_borrowed()) and call [`TryWriteable`] methods:
+///
+/// ```
+/// use icu::experimental::displaynames::{
+///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions,
+///     single::LanguageIdentifierDisplayNameOwned, single::LanguageIdentifierNameFallbackError,
+/// };
+/// use icu::locale::{locale, langid};
+/// use writeable::{Part, TryWriteable, assert_try_writeable_parts_eq};
+///
+/// let prefs = DisplayNamesPreferences::from(locale!("en"));
+/// let options = LanguageIdentifierDisplayNameOptions::default();
+///
+/// // "it-Qabc-150" has known language "it" ("Italian") and known region "150" ("Europe"),
+/// // but unknown script "Qabc". It should format to "Italian (Qabc, Europe)" and return a fallback error.
+/// let lang_id = langid!("it-Qabc-150");
+/// let display_name = LanguageIdentifierDisplayNameOwned::try_new(
+///     prefs,
+///     lang_id,
+///     options,
+/// )
+/// .expect("Data should load successfully");
+///
+/// let borrowed = display_name.as_borrowed();
+///
+/// // 1. Demonstrate the resulting string and the error return value:
+/// let mut sink = String::new();
+/// let result = borrowed.try_write_to(&mut sink).unwrap();
+/// assert_eq!(sink, "Italian (Qabc, Europe)");
+/// assert_eq!(result, Err(LanguageIdentifierNameFallbackError));
+///
+/// // 2. Demonstrate the fallback parts (annotated with Part::ERROR):
+/// assert_try_writeable_parts_eq!(
+///     borrowed,
+///     "Italian (Qabc, Europe)",
+///     Err(LanguageIdentifierNameFallbackError),
+///     [(9, 13, Part::ERROR)] // "Qabc" is marked as an error
+/// );
+/// ```
 #[allow(dead_code)]
 #[derive(Debug)]
 pub struct LanguageIdentifierDisplayNameOwned {
