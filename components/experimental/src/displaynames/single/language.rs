@@ -16,6 +16,7 @@ use icu_pattern::{DoublePlaceholderPattern, DoublePlaceholderValueProviderTry, P
 use icu_provider::DataPayloadOr;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
+use writeable::Writeable;
 use writeable::{PartsWrite, TryWriteable, adapters::LossyWrap};
 
 /// Display name fallback occurred
@@ -391,7 +392,7 @@ impl<'a> LanguageIdentifierDisplayName<'a> {
     ///
     /// Missing display names will fall back to the raw BCP-47 code.
     #[inline]
-    pub fn with_fallback(&self) -> LossyWrap<Self> {
+    pub fn with_fallback(&self) -> impl Writeable + core::fmt::Display + 'a {
         LossyWrap(*self)
     }
 }
