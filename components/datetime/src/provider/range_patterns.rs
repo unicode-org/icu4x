@@ -7,6 +7,7 @@
 #[cfg(feature = "datagen")]
 use crate::provider::packed_pattern::GenericUnpackedPatterns;
 use crate::provider::packed_pattern::{GenericPackedPatterns, PackedPatternsBuilderHelper};
+use crate::provider::pattern::runtime::PatternBorrowed;
 use crate::provider::pattern::runtime::{Pattern, PatternULE};
 use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
@@ -128,6 +129,40 @@ pub enum RangePatternInfo<'a> {
     FullRange(Pattern<'a>),
 }
 
+impl<'a> RangePatternInfo<'a> {
+    /// Gets the inner pattern.
+    pub fn pattern(&self) -> &Pattern<'a> {
+        match self {
+            Self::Symmetric(p) => p,
+            Self::FullRange(p) => p,
+        }
+    }
+}
+
+/// Fully borrowed version of [`RangePatternInfo`].
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum RangePatternInfoBorrowed<'a> {
+    /// Symmetric pattern: `[sub] [glue] [sub]`, where the sub-pattern is shared.
+    Symmetric(PatternBorrowed<'a>),
+    /// Full Range pattern: the entire range pattern is stored.
+    FullRange(PatternBorrowed<'a>),
+}
+
+impl<'a> From<RangePatternInfoBorrowed<'a>> for RangePatternInfo<'a> {
+    fn from(other: RangePatternInfoBorrowed<'a>) -> Self {
+        match other {
+            RangePatternInfoBorrowed::Symmetric(p) => RangePatternInfo::Symmetric(p.as_pattern()),
+            RangePatternInfoBorrowed::FullRange(p) => RangePatternInfo::FullRange(p.as_pattern()),
+        }
+    }
+}
+
+impl<'a> zerofrom::ZeroFrom<'a, RangePatternInfoBorrowed<'a>> for RangePatternInfo<'a> {
+    fn zero_from(other: &'a RangePatternInfoBorrowed<'a>) -> Self {
+        Self::from(*other)
+    }
+}
+
 /// A bitset encoding which fields are present in the `GreatestDifference` pattern list
 /// and their range structure.
 ///
@@ -235,26 +270,24 @@ fn resolve_fallback(header: GreatestDifferenceHeader, requested: u8, max_value: 
     None
 }
 
-impl<'data> PatternsByGreatestDifference<'data> {
-    /// Internal helper to retrieve and construct `RangePatternInfo` for a resolved field index.
-    ///
-    /// GIGO: If the `resolved_field_idx` is `Absent`, it returns a default symmetric pattern
-    /// to avoid panicking at runtime.
-    fn get_pattern_internal<'a>(&'a self, resolved_field_idx: u8) -> RangePatternInfo<'a> {
-        let state = self.header.get_state(resolved_field_idx);
-        let start_idx = self.header.get_pattern_index(resolved_field_idx);
+impl PatternsByGreatestDifferenceULE {
+    fn get_pattern_internal<'a>(&'a self, resolved_field_idx: u8) -> RangePatternInfoBorrowed<'a> {
+        use zerovec::ule::AsULE;
+        let header = <GreatestDifferenceHeader as AsULE>::from_unaligned(self.header);
+        let state = header.get_state(resolved_field_idx);
+        let start_idx = header.get_pattern_index(resolved_field_idx);
 
         let get_pat = |offset| {
             self.patterns
                 .get(start_idx + offset)
-                .map(<Pattern as zerofrom::ZeroFrom<PatternULE>>::zero_from)
-                .unwrap_or_default()
+                .map(<PatternBorrowed as zerofrom::ZeroFrom<PatternULE>>::zero_from)
+                .unwrap_or(PatternBorrowed::DEFAULT)
         };
 
         match state {
-            RangeStructure::Absent => RangePatternInfo::Symmetric(Pattern::default()),
-            RangeStructure::Symmetric => RangePatternInfo::Symmetric(get_pat(0)),
-            RangeStructure::FullRange => RangePatternInfo::FullRange(get_pat(0)),
+            RangeStructure::Absent => RangePatternInfoBorrowed::Symmetric(PatternBorrowed::DEFAULT),
+            RangeStructure::Symmetric => RangePatternInfoBorrowed::Symmetric(get_pat(0)),
+            RangeStructure::FullRange => RangePatternInfoBorrowed::FullRange(get_pat(0)),
         }
     }
 
@@ -262,12 +295,11 @@ impl<'data> PatternsByGreatestDifference<'data> {
     pub fn get_date_pattern<'a>(
         &'a self,
         field: DateGreatestDifferenceField,
-    ) -> Option<RangePatternInfo<'a>> {
-        let resolved_field_idx = resolve_fallback(
-            self.header,
-            field as u8,
-            DateGreatestDifferenceField::MAX_VALUE,
-        )?;
+    ) -> Option<RangePatternInfoBorrowed<'a>> {
+        use zerovec::ule::AsULE;
+        let header = <GreatestDifferenceHeader as AsULE>::from_unaligned(self.header);
+        let resolved_field_idx =
+            resolve_fallback(header, field as u8, DateGreatestDifferenceField::MAX_VALUE)?;
         Some(self.get_pattern_internal(resolved_field_idx))
     }
 
@@ -275,15 +307,16 @@ impl<'data> PatternsByGreatestDifference<'data> {
     pub fn get_time_pattern<'a>(
         &'a self,
         field: TimeGreatestDifferenceField,
-    ) -> Option<RangePatternInfo<'a>> {
-        let resolved_field_idx = resolve_fallback(
-            self.header,
-            field as u8,
-            TimeGreatestDifferenceField::MAX_VALUE,
-        )?;
+    ) -> Option<RangePatternInfoBorrowed<'a>> {
+        use zerovec::ule::AsULE;
+        let header = <GreatestDifferenceHeader as AsULE>::from_unaligned(self.header);
+        let resolved_field_idx =
+            resolve_fallback(header, field as u8, TimeGreatestDifferenceField::MAX_VALUE)?;
         Some(self.get_pattern_internal(resolved_field_idx))
     }
+}
 
+impl<'data> PatternsByGreatestDifference<'data> {
     /// Construct from an iterator of (`bit_index`, `pattern_info`).
     ///
     /// The `bit_index` must be <= 3.
@@ -540,23 +573,39 @@ mod tests {
                 .is_date_field_present(DateGreatestDifferenceField::Year)
         );
 
+        let pgd_ule_box = zerovec::ule::encode_varule_to_box(&pgd);
+        let pgd: &PatternsByGreatestDifferenceULE = &pgd_ule_box;
+
+        let info_a = RangePatternInfo::Symmetric(pattern1);
+        let info_b = RangePatternInfo::Symmetric(pattern2);
+
         // Day difference should return Day pattern.
         assert_eq!(
-            pgd.get_date_pattern(DateGreatestDifferenceField::Day),
-            Some(RangePatternInfo::Symmetric(pattern1.clone()))
+            pgd.get_date_pattern(DateGreatestDifferenceField::Day)
+                .map(RangePatternInfo::from)
+                .as_ref(),
+            Some(&info_a)
         );
         // Month difference should fall back to Year pattern (since Month is absent but Year is present).
         assert_eq!(
-            pgd.get_date_pattern(DateGreatestDifferenceField::Month),
-            Some(RangePatternInfo::Symmetric(pattern2.clone()))
+            pgd.get_date_pattern(DateGreatestDifferenceField::Month)
+                .map(RangePatternInfo::from)
+                .as_ref(),
+            Some(&info_b)
         );
         // Year difference should return Year pattern.
         assert_eq!(
-            pgd.get_date_pattern(DateGreatestDifferenceField::Year),
-            Some(RangePatternInfo::Symmetric(pattern2.clone()))
+            pgd.get_date_pattern(DateGreatestDifferenceField::Year)
+                .map(RangePatternInfo::from)
+                .as_ref(),
+            Some(&info_b)
         );
         // Era difference should return None (since Era is absent and no larger field is present).
-        assert_eq!(pgd.get_date_pattern(DateGreatestDifferenceField::Era), None);
+        assert_eq!(
+            pgd.get_date_pattern(DateGreatestDifferenceField::Era)
+                .as_ref(),
+            None
+        );
     }
 
     #[test]
@@ -571,8 +620,8 @@ mod tests {
             .unwrap()
             .to_runtime_pattern();
 
-        let info_d = RangePatternInfo::Symmetric(pattern_d.clone());
-        let info_y = RangePatternInfo::Symmetric(pattern_y.clone());
+        let info_d = RangePatternInfo::Symmetric(pattern_d);
+        let info_y = RangePatternInfo::Symmetric(pattern_y);
 
         // Valid date patterns
         let pgd = PatternsByGreatestDifference::try_from_date_patterns(
@@ -589,20 +638,22 @@ mod tests {
         assert_eq!(
             pgd.patterns
                 .get(0)
-                .map(<Pattern as zerofrom::ZeroFrom<PatternULE>>::zero_from),
-            Some(pattern_d.clone())
+                .map(<Pattern as zerofrom::ZeroFrom<PatternULE>>::zero_from)
+                .as_ref(),
+            Some(info_d.pattern())
         );
         assert_eq!(
             pgd.patterns
                 .get(1)
-                .map(<Pattern as zerofrom::ZeroFrom<PatternULE>>::zero_from),
-            Some(pattern_y.clone())
+                .map(<Pattern as zerofrom::ZeroFrom<PatternULE>>::zero_from)
+                .as_ref(),
+            Some(info_y.pattern())
         );
 
         // Unsorted input in BTreeMap::from is automatically sorted
         let pgd2 = PatternsByGreatestDifference::try_from_date_patterns(
             alloc::collections::BTreeMap::from([
-                (DateGreatestDifferenceField::Year, info_y.clone()),
+                (DateGreatestDifferenceField::Year, info_y),
                 (DateGreatestDifferenceField::Day, info_d.clone()),
             ]),
         )
@@ -611,8 +662,9 @@ mod tests {
         assert_eq!(
             pgd2.patterns
                 .get(0)
-                .map(<Pattern as zerofrom::ZeroFrom<PatternULE>>::zero_from),
-            Some(pattern_d.clone())
+                .map(<Pattern as zerofrom::ZeroFrom<PatternULE>>::zero_from)
+                .as_ref(),
+            Some(info_d.pattern())
         );
 
         // Empty
@@ -708,8 +760,8 @@ mod try_from_patterns_tests {
         let pat_b = Pattern::from_str("m").unwrap();
 
         let info_a = RangePatternInfo::Symmetric(pat_a.clone());
-        let info_b = RangePatternInfo::Symmetric(pat_b.clone());
-        let info_c = RangePatternInfo::FullRange(pat_a.clone());
+        let info_b = RangePatternInfo::Symmetric(pat_b);
+        let info_c = RangePatternInfo::FullRange(pat_a);
 
         // 1. All different -> no dedup
         let input = vec![
@@ -726,20 +778,26 @@ mod try_from_patterns_tests {
         // Header value: 0b00100101 = 0x25
         assert_eq!(pgd.header.0, 0x25);
         assert_eq!(pgd.patterns.len(), 3); // 1 (Symmetric) + 1 (Symmetric) + 1 (FullRange) = 3
+
+        let pgd_ule_box = zerovec::ule::encode_varule_to_box(&pgd);
+        let pgd: &PatternsByGreatestDifferenceULE = &pgd_ule_box;
         assert_eq!(
             pgd.get_date_pattern(DateGreatestDifferenceField::Day)
-                .unwrap(),
-            info_a
+                .map(RangePatternInfo::from)
+                .as_ref(),
+            Some(&info_a)
         );
         assert_eq!(
             pgd.get_date_pattern(DateGreatestDifferenceField::Month)
-                .unwrap(),
-            info_b
+                .map(RangePatternInfo::from)
+                .as_ref(),
+            Some(&info_b)
         );
         assert_eq!(
             pgd.get_date_pattern(DateGreatestDifferenceField::Year)
-                .unwrap(),
-            info_c
+                .map(RangePatternInfo::from)
+                .as_ref(),
+            Some(&info_c)
         );
 
         // 2. All identical -> dedup to 1 (at the largest field, Year)
@@ -756,21 +814,27 @@ mod try_from_patterns_tests {
         // Header value: 0b00010000 = 0x10
         assert_eq!(pgd.header.0, 0x10);
         assert_eq!(pgd.patterns.len(), 1);
+
+        let pgd_ule_box = zerovec::ule::encode_varule_to_box(&pgd);
+        let pgd: &PatternsByGreatestDifferenceULE = &pgd_ule_box;
         // Day and Month should fallback to Year (info_a)
         assert_eq!(
             pgd.get_date_pattern(DateGreatestDifferenceField::Day)
-                .unwrap(),
-            info_a
+                .map(RangePatternInfo::from)
+                .as_ref(),
+            Some(&info_a)
         );
         assert_eq!(
             pgd.get_date_pattern(DateGreatestDifferenceField::Month)
-                .unwrap(),
-            info_a
+                .map(RangePatternInfo::from)
+                .as_ref(),
+            Some(&info_a)
         );
         assert_eq!(
             pgd.get_date_pattern(DateGreatestDifferenceField::Year)
-                .unwrap(),
-            info_a
+                .map(RangePatternInfo::from)
+                .as_ref(),
+            Some(&info_a)
         );
 
         // 3. Day and Month identical, Year different -> dedup Day to Month
@@ -787,21 +851,27 @@ mod try_from_patterns_tests {
         // Header value: 0b00010100 = 0x14
         assert_eq!(pgd.header.0, 0x14);
         assert_eq!(pgd.patterns.len(), 2);
+
+        let pgd_ule_box = zerovec::ule::encode_varule_to_box(&pgd);
+        let pgd: &PatternsByGreatestDifferenceULE = &pgd_ule_box;
         // Day should fallback to Month (info_a)
         assert_eq!(
             pgd.get_date_pattern(DateGreatestDifferenceField::Day)
-                .unwrap(),
-            info_a
+                .map(RangePatternInfo::from)
+                .as_ref(),
+            Some(&info_a)
         );
         assert_eq!(
             pgd.get_date_pattern(DateGreatestDifferenceField::Month)
-                .unwrap(),
-            info_a
+                .map(RangePatternInfo::from)
+                .as_ref(),
+            Some(&info_a)
         );
         assert_eq!(
             pgd.get_date_pattern(DateGreatestDifferenceField::Year)
-                .unwrap(),
-            info_b
+                .map(RangePatternInfo::from)
+                .as_ref(),
+            Some(&info_b)
         );
 
         // 4. Day and Year identical, Month different -> no dedup (since Month is in between and different)
@@ -826,11 +896,11 @@ mod try_from_patterns_tests {
         assert_eq!(pgd.patterns.len(), 1);
 
         // 6. Duplicate keys -> error
-        let input = vec![(0, info_a.clone()), (0, info_b.clone())];
+        let input = vec![(0, info_a.clone()), (0, info_b)];
         assert!(PatternsByGreatestDifference::try_from_patterns(input).is_err());
 
         // 7. Out of bound keys -> error
-        let input = vec![(4, info_a.clone())];
+        let input = vec![(4, info_a)];
         assert!(PatternsByGreatestDifference::try_from_patterns(input).is_err());
     }
 }

@@ -40,8 +40,8 @@ pub struct Pattern<'data> {
 }
 
 /// Fully borrowed version of [`Pattern`].
-#[derive(Debug, Copy, Clone)]
-pub(crate) struct PatternBorrowed<'data> {
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub struct PatternBorrowed<'data> {
     pub(crate) items: &'data ZeroSlice<PatternItem>,
     pub(crate) metadata: PatternMetadata,
 }
@@ -146,6 +146,17 @@ impl<'data> PatternBorrowed<'data> {
         Pattern {
             items: self.items.as_zerovec(),
             metadata: self.metadata,
+        }
+    }
+}
+
+impl<'data> zerofrom::ZeroFrom<'data, PatternULE> for PatternBorrowed<'data> {
+    #[inline]
+    fn zero_from(ule: &'data PatternULE) -> Self {
+        use zerovec::ule::AsULE;
+        Self {
+            items: &ule.items,
+            metadata: <PatternMetadata as AsULE>::from_unaligned(ule.metadata),
         }
     }
 }
