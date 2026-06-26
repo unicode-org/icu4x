@@ -6,10 +6,7 @@ use crate::complex::*;
 use crate::indices::*;
 use crate::provider::*;
 use crate::rule_segmenter::*;
-use alloc::string::String;
-use alloc::vec;
 use alloc::vec::Vec;
-use core::char;
 use icu_locale_core::LanguageIdentifier;
 use icu_locale_core::subtags::{Language, language};
 use icu_provider::prelude::*;
@@ -603,13 +600,15 @@ impl<'data> LineSegmenterBorrowed<'data> {
     pub fn segment_str<'s>(self, input: &'s str) -> LineBreakIterator<'data, 's, Utf8> {
         LineBreakIterator {
             iter: input.char_indices(),
+            current_pos_iter: None,
+            previous_pos_iter: None,
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.data,
             options: self.options,
             complex: self.complex,
-            handle_complex_language: line_handle_complex_language_utf8,
+            handle_complex_language: line_handle_complex_language,
         }
     }
     /// Creates a line break iterator for a potentially ill-formed UTF8 string
@@ -623,13 +622,15 @@ impl<'data> LineSegmenterBorrowed<'data> {
     ) -> LineBreakIterator<'data, 's, PotentiallyIllFormedUtf8> {
         LineBreakIterator {
             iter: Utf8CharIndices::new(input),
+            current_pos_iter: None,
+            previous_pos_iter: None,
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.data,
             options: self.options,
             complex: self.complex,
-            handle_complex_language: line_handle_complex_language_utf8,
+            handle_complex_language: line_handle_complex_language,
         }
     }
     /// Creates a line break iterator for a Latin-1 (8-bit) string.
@@ -638,6 +639,8 @@ impl<'data> LineSegmenterBorrowed<'data> {
     pub fn segment_latin1<'s>(self, input: &'s [u8]) -> LineBreakIterator<'data, 's, Latin1> {
         LineBreakIterator {
             iter: Latin1Indices::new(input),
+            current_pos_iter: None,
+            previous_pos_iter: None,
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
@@ -654,13 +657,15 @@ impl<'data> LineSegmenterBorrowed<'data> {
     pub fn segment_utf16<'s>(self, input: &'s [u16]) -> LineBreakIterator<'data, 's, Utf16> {
         LineBreakIterator {
             iter: Utf16Indices::new(input),
+            current_pos_iter: None,
+            previous_pos_iter: None,
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.data,
             options: self.options,
             complex: self.complex,
-            handle_complex_language: line_handle_complex_language_utf16,
+            handle_complex_language: line_handle_complex_language,
         }
     }
 }
@@ -767,6 +772,8 @@ fn is_break_utf32_by_loose(
 #[derive(Debug)]
 pub struct LineBreakIterator<'data, 's, Y: RuleBreakType> {
     iter: Y::IterAttr<'s>,
+    current_pos_iter: Option<Y::IterAttr<'s>>,
+    previous_pos_iter: Option<Y::IterAttr<'s>>,
     len: usize,
     current_pos_data: Option<(usize, Y::CharType)>,
     result_cache: Vec<usize>,
@@ -785,6 +792,8 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
         if self.options.strictness == LineBreakStrictness::Anywhere {
             let mut grapheme_iter: RuleBreakIterator<'_, '_, Y> = RuleBreakIterator {
                 iter: self.iter.clone(),
+                current_pos_iter: self.current_pos_iter.clone(),
+                previous_pos_iter: self.previous_pos_iter.clone(),
                 len: self.len,
                 current_pos_data: self.current_pos_data,
                 data: self.complex.grapheme.data,
@@ -796,6 +805,8 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
             };
             let r = grapheme_iter.next();
             self.iter = grapheme_iter.iter;
+            self.current_pos_iter = grapheme_iter.current_pos_iter;
+            self.previous_pos_iter = grapheme_iter.previous_pos_iter;
             self.len = grapheme_iter.len;
             self.current_pos_data = grapheme_iter.current_pos_data;
             return r;
@@ -945,6 +956,8 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                 BreakState::Keep => continue,
                 BreakState::Index(mut index) | BreakState::Intermediate(mut index) => {
                     let mut previous_iter = self.iter.clone();
+                    let mut previous_current_pos_iter = self.current_pos_iter.clone();
+                    let mut previous_previous_pos_iter = self.previous_pos_iter.clone();
                     let mut previous_pos_data = self.current_pos_data;
                     let mut previous_is_after_zwj = after_zwj;
 
@@ -978,6 +991,8 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                                 .get_break_state_from_table(index, self.data.eot_property);
                             if break_state == BreakState::NoMatch {
                                 self.iter = previous_iter;
+                                self.current_pos_iter = previous_current_pos_iter;
+                                self.previous_pos_iter = previous_previous_pos_iter;
                                 self.current_pos_data = previous_pos_data;
                                 if previous_is_after_zwj {
                                     // Do not break [AK] [ZWJ] ÷ [AS] (eot).
@@ -1007,6 +1022,8 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                             BreakState::Keep => continue 'a,
                             BreakState::NoMatch => {
                                 self.iter = previous_iter;
+                                self.current_pos_iter = previous_current_pos_iter;
+                                self.previous_pos_iter = previous_previous_pos_iter;
                                 self.current_pos_data = previous_pos_data;
                                 if after_zwj {
                                     // Break [AK] ÷ [AS] [ZWJ] [XX],
@@ -1032,6 +1049,8 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                             BreakState::Intermediate(i) => {
                                 index = i;
                                 previous_iter = self.iter.clone();
+                                previous_current_pos_iter = self.current_pos_iter.clone();
+                                previous_previous_pos_iter = self.previous_pos_iter.clone();
                                 previous_pos_data = self.current_pos_data;
                                 previous_is_after_zwj = after_zwj;
                             }
@@ -1039,6 +1058,8 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                                 index = i;
                                 if previous_break_state_is_cp_prop {
                                     previous_iter = self.iter.clone();
+                                    previous_current_pos_iter = self.current_pos_iter.clone();
+                                    previous_previous_pos_iter = self.previous_pos_iter.clone();
                                     previous_pos_data = self.current_pos_data;
                                     previous_is_after_zwj = after_zwj;
                                 }
@@ -1060,7 +1081,12 @@ enum StringBoundaryPosType {
 
 impl<Y: RuleBreakType> LineBreakIterator<'_, '_, Y> {
     fn advance_iter(&mut self) {
+        let current_pos_iter = self.iter.clone();
+        self.previous_pos_iter = self.current_pos_iter.take();
         self.current_pos_data = self.iter.next();
+        if self.current_pos_data.is_some() {
+            self.current_pos_iter = Some(current_pos_iter);
+        }
     }
 
     fn is_eof(&self) -> bool {
@@ -1126,21 +1152,19 @@ impl<Y: RuleBreakType> LineBreakIterator<'_, '_, Y> {
     }
 }
 
-fn line_handle_complex_language_utf8<T>(
+fn line_handle_complex_language<T>(
     iter: &mut LineBreakIterator<'_, '_, T>,
-    left_codepoint: char,
+    _left_codepoint: T::CharType,
 ) -> Option<usize>
 where
-    T: RuleBreakType<CharType = char>,
+    T: ComplexRunSegmenter,
 {
-    // word segmenter doesn't define break rules for some languages such as Thai.
     let start_iter = iter.iter.clone();
+    let start_current_pos_iter = iter.current_pos_iter.clone();
+    let start_previous_pos_iter = iter.previous_pos_iter.clone();
     let start_point = iter.current_pos_data;
-    let mut s = String::new();
-    s.push(left_codepoint);
     loop {
         debug_assert!(!iter.is_eof());
-        s.push(iter.get_current_codepoint()?);
         iter.advance_iter();
         if let Some(current_codepoint) = iter.get_current_codepoint() {
             if iter.get_linebreak_property(current_codepoint) != iter.data.complex_property {
@@ -1151,14 +1175,26 @@ where
             break;
         }
     }
+    let past_complex_iter = if iter.is_eof() {
+        iter.iter.clone()
+    } else {
+        iter.current_pos_iter.clone()?
+    };
 
     // Restore iterator to move to head of complex string
     iter.iter = start_iter;
+    iter.current_pos_iter = start_current_pos_iter;
+    iter.previous_pos_iter = start_previous_pos_iter;
     iter.current_pos_data = start_point;
-    let breaks = iter.complex.complex_language_segment_str(&s);
+    let breaks = T::complex_language_segment(
+        iter.complex,
+        iter.previous_pos_iter.as_ref()?,
+        &past_complex_iter,
+    );
     iter.result_cache = breaks;
     let first_pos = *iter.result_cache.first()?;
-    let mut i = left_codepoint.len_utf8();
+    let run_start_offset = <T as ComplexRunSegmenter>::offset(iter.previous_pos_iter.as_ref()?);
+    let mut i = start_point.map_or(iter.len, |(pos, _)| pos) - run_start_offset;
     loop {
         if i == first_pos {
             // Re-calculate breaking offset
@@ -1175,65 +1211,6 @@ where
         if iter.is_eof() {
             iter.result_cache.clear();
             return Some(iter.len);
-        }
-    }
-}
-
-fn line_handle_complex_language_utf16<T>(
-    iterator: &mut LineBreakIterator<'_, '_, T>,
-    left_codepoint: T::CharType,
-) -> Option<usize>
-where
-    T: RuleBreakType<CharType = u32>,
-{
-    // word segmenter doesn't define break rules for some languages such as Thai.
-    let start_iter = iterator.iter.clone();
-    let start_point = iterator.current_pos_data;
-    let mut s = vec![left_codepoint as u16];
-    loop {
-        debug_assert!(!iterator.is_eof());
-        s.push(iterator.get_current_codepoint()? as u16);
-        iterator.advance_iter();
-        if let Some(current_codepoint) = iterator.get_current_codepoint() {
-            if iterator.get_linebreak_property(current_codepoint) != iterator.data.complex_property
-            {
-                break;
-            }
-        } else {
-            // EOF
-            break;
-        }
-    }
-
-    // Restore iterator to move to head of complex string
-    iterator.iter = start_iter;
-    iterator.current_pos_data = start_point;
-    let breaks = iterator.complex.complex_language_segment_utf16(&s);
-    iterator.result_cache = breaks;
-    // result_cache vector is utf-16 index that is in BMP.
-    let first_pos = *iterator.result_cache.first()?;
-    let mut i = 1;
-    loop {
-        if i == first_pos {
-            // Re-calculate breaking offset
-            iterator.result_cache = iterator
-                .result_cache
-                .iter()
-                .skip(1)
-                .map(|r| r - i)
-                .collect();
-            return iterator.get_current_position();
-        }
-        debug_assert!(
-            i < first_pos,
-            "we should always arrive at first_pos: near index {:?}",
-            iterator.get_current_position()
-        );
-        i += 1;
-        iterator.advance_iter();
-        if iterator.is_eof() {
-            iterator.result_cache.clear();
-            return Some(iterator.len);
         }
     }
 }
@@ -1830,6 +1807,26 @@ mod tests {
             &["ภาษา"],
             LineSegmenter::new_dictionary(Default::default()),
         );
+    }
+
+    #[test]
+    fn complex_ill_formed_utf8_line_break() {
+        let segmenter = LineSegmenter::new_dictionary(Default::default());
+        let input = b"\xE0\xB8\xA0\xE0\xB8\xB2\xE0\xB8\xA9\xE0\xB8\xB2\xFF\xE0\xB9\x84\xE0\xB8\x97\xE0\xB8\xA2";
+
+        let breaks: Vec<usize> = segmenter.segment_utf8(input).collect();
+        assert_eq!(breaks, [0, 12, 22]);
+    }
+
+    #[test]
+    fn complex_unpaired_surrogate_line_break() {
+        let segmenter = LineSegmenter::new_dictionary(Default::default());
+        let input = [
+            0x0E20, 0x0E32, 0x0E29, 0x0E32, 0xD800, 0x0E44, 0x0E17, 0x0E22,
+        ];
+
+        let breaks: Vec<usize> = segmenter.segment_utf16(&input).collect();
+        assert_eq!(breaks, [0, 4, 8]);
     }
 
     #[test]

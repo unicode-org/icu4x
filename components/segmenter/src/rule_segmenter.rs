@@ -80,6 +80,8 @@ pub trait RuleBreakType: crate::private::Sealed + Sized {
 #[derive(Debug)]
 pub struct RuleBreakIterator<'data, 's, Y: RuleBreakType> {
     pub(crate) iter: Y::IterAttr<'s>,
+    pub(crate) current_pos_iter: Option<Y::IterAttr<'s>>,
+    pub(crate) previous_pos_iter: Option<Y::IterAttr<'s>>,
     pub(crate) len: usize,
     pub(crate) current_pos_data: Option<(usize, Y::CharType)>,
     pub(crate) result_cache: Vec<usize>,
@@ -186,6 +188,8 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
                 BreakState::Index(mut index) | BreakState::Intermediate(mut index) => {
                     // This isn't simple rule set. We need marker to restore iterator to previous position.
                     let mut previous_iter = self.iter.clone();
+                    let mut previous_current_pos_iter = self.current_pos_iter.clone();
+                    let mut previous_previous_pos_iter = self.previous_pos_iter.clone();
                     let mut previous_pos_data = self.current_pos_data;
                     let mut previous_left_prop = left_prop;
 
@@ -202,6 +206,8 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
                             {
                                 self.boundary_property = previous_left_prop;
                                 self.iter = previous_iter;
+                                self.current_pos_iter = previous_current_pos_iter;
+                                self.previous_pos_iter = previous_previous_pos_iter;
                                 self.current_pos_data = previous_pos_data;
                                 return self.get_current_position();
                             }
@@ -217,6 +223,8 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
                             BreakState::NoMatch => {
                                 self.boundary_property = previous_left_prop;
                                 self.iter = previous_iter;
+                                self.current_pos_iter = previous_current_pos_iter;
+                                self.previous_pos_iter = previous_previous_pos_iter;
                                 self.current_pos_data = previous_pos_data;
                                 return self.get_current_position();
                             }
@@ -228,6 +236,8 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
                                     previous_left_prop = index;
                                 }
                                 previous_iter = self.iter.clone();
+                                previous_current_pos_iter = self.current_pos_iter.clone();
+                                previous_previous_pos_iter = self.previous_pos_iter.clone();
                                 previous_pos_data = self.current_pos_data;
                             }
                             BreakState::Index(i) => {
@@ -235,6 +245,8 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
                                 if previous_break_state_is_cp_prop {
                                     // Move marker
                                     previous_iter = self.iter.clone();
+                                    previous_current_pos_iter = self.current_pos_iter.clone();
+                                    previous_previous_pos_iter = self.previous_pos_iter.clone();
                                     previous_pos_data = self.current_pos_data;
                                     previous_left_prop = index;
                                 }
@@ -249,7 +261,12 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
 
 impl<Y: RuleBreakType> RuleBreakIterator<'_, '_, Y> {
     pub(crate) fn advance_iter(&mut self) {
+        let current_pos_iter = self.iter.clone();
+        self.previous_pos_iter = self.current_pos_iter.take();
         self.current_pos_data = self.iter.next();
+        if self.current_pos_data.is_some() {
+            self.current_pos_iter = Some(current_pos_iter);
+        }
     }
 
     pub(crate) fn is_eof(&self) -> bool {

@@ -5,13 +5,11 @@
 use crate::grapheme::GraphemeClusterSegmenterBorrowed;
 use crate::indices::Utf16Indices;
 use crate::provider::*;
-#[cfg(feature = "unstable")]
 use crate::scaffold::PotentiallyIllFormedUtf8;
 use crate::scaffold::{RuleBreakType, Utf8, Utf16};
 use alloc::vec::Vec;
 use core::char::{REPLACEMENT_CHARACTER, decode_utf16};
 use potential_utf::PotentialUtf8;
-#[cfg(feature = "unstable")]
 use utf8_iter::{Utf8CharIndices, Utf8Chars};
 use zerovec::maps::ZeroMapBorrowed;
 
@@ -124,7 +122,6 @@ impl<'data> LstmSegmenter<'data> {
     }
 
     /// Create an LSTM based break iterator for a UTF-8 string.
-    #[cfg(feature = "unstable")]
     pub(super) fn segment_utf8<'s>(
         self,
         input: &'s [u8],

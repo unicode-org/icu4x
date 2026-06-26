@@ -168,6 +168,8 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
     pub fn segment_str<'s>(self, input: &'s str) -> GraphemeClusterBreakIterator<'data, 's, Utf8> {
         GraphemeClusterBreakIterator(RuleBreakIterator {
             iter: input.char_indices(),
+            current_pos_iter: None,
+            previous_pos_iter: None,
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
@@ -189,6 +191,8 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
     ) -> GraphemeClusterBreakIterator<'data, 's, PotentiallyIllFormedUtf8> {
         GraphemeClusterBreakIterator(RuleBreakIterator {
             iter: Utf8CharIndices::new(input),
+            current_pos_iter: None,
+            previous_pos_iter: None,
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
@@ -208,6 +212,8 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
     ) -> GraphemeClusterBreakIterator<'data, 's, Latin1> {
         GraphemeClusterBreakIterator(RuleBreakIterator {
             iter: Latin1Indices::new(input),
+            current_pos_iter: None,
+            previous_pos_iter: None,
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
@@ -228,6 +234,8 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
     ) -> GraphemeClusterBreakIterator<'data, 's, Utf16> {
         GraphemeClusterBreakIterator(RuleBreakIterator {
             iter: Utf16Indices::new(input),
+            current_pos_iter: None,
+            previous_pos_iter: None,
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),

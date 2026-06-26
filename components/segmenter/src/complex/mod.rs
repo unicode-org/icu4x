@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::*;
-#[cfg(feature = "unstable")]
 use crate::scaffold::PotentiallyIllFormedUtf8;
 use crate::scaffold::{RuleBreakType, Utf8, Utf16};
 use crate::{GraphemeClusterSegmenter, GraphemeClusterSegmenterBorrowed};
@@ -78,7 +77,6 @@ impl<'data> ComplexPayloadBorrowed<'data> {
         )
     }
 
-    #[cfg(feature = "unstable")]
     pub(crate) fn segment_utf8<'s>(
         self,
         input: &'s [u8],
@@ -141,6 +139,67 @@ impl ComplexPayloadBorrowed<'static> {
                 ComplexPayload::Lstm(DataPayload::from_static_ref(lstm))
             }
         }
+    }
+}
+
+pub(crate) trait ComplexRunSegmenter: RuleBreakType {
+    fn complex_language_segment(
+        complex: ComplexPayloadsBorrowed<'_>,
+        start: &Self::IterAttr<'_>,
+        past: &Self::IterAttr<'_>,
+    ) -> Vec<usize>;
+
+    fn offset(iter: &Self::IterAttr<'_>) -> usize;
+}
+
+impl ComplexRunSegmenter for Utf8 {
+    fn complex_language_segment(
+        complex: ComplexPayloadsBorrowed<'_>,
+        start: &Self::IterAttr<'_>,
+        past: &Self::IterAttr<'_>,
+    ) -> Vec<usize> {
+        let start_offset = start.offset();
+        #[allow(clippy::indexing_slicing)] // valid offsets from CharIndices
+        let input = &start.as_str()[..(past.offset() - start_offset)];
+        complex.complex_language_segment_str(input)
+    }
+
+    fn offset(iter: &Self::IterAttr<'_>) -> usize {
+        iter.offset()
+    }
+}
+
+impl ComplexRunSegmenter for PotentiallyIllFormedUtf8 {
+    fn complex_language_segment(
+        complex: ComplexPayloadsBorrowed<'_>,
+        start: &Self::IterAttr<'_>,
+        past: &Self::IterAttr<'_>,
+    ) -> Vec<usize> {
+        let start_offset = start.offset();
+        #[allow(clippy::indexing_slicing)] // valid offsets from Utf8CharIndices
+        let input = &start.as_slice()[..(past.offset() - start_offset)];
+        complex.complex_language_segment_utf8(input)
+    }
+
+    fn offset(iter: &Self::IterAttr<'_>) -> usize {
+        iter.offset()
+    }
+}
+
+impl ComplexRunSegmenter for Utf16 {
+    fn complex_language_segment(
+        complex: ComplexPayloadsBorrowed<'_>,
+        start: &Self::IterAttr<'_>,
+        past: &Self::IterAttr<'_>,
+    ) -> Vec<usize> {
+        let start_offset = start.offset();
+        #[allow(clippy::indexing_slicing)] // valid offsets from Utf16Indices
+        let input = &start.as_slice()[..(past.offset() - start_offset)];
+        complex.complex_language_segment_utf16(input)
+    }
+
+    fn offset(iter: &Self::IterAttr<'_>) -> usize {
+        iter.offset()
     }
 }
 
@@ -220,6 +279,20 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
         }
         result
     }
+
+    pub(crate) fn complex_language_segment_utf8(&self, input: &[u8]) -> Vec<usize> {
+        let mut result = Vec::new();
+        let mut offset = 0;
+        for (slice, lang) in LanguageIteratorUtf8::new(input) {
+            match self.select(lang) {
+                Some(d) => result.extend(d.segment_utf8(slice, self.grapheme, offset)),
+                None => result.push(offset + slice.len()),
+            }
+            offset += slice.len();
+        }
+        result
+    }
+
     /// Return UTF-16 segment offset array using dictionary or lstm segmenter.
     pub(crate) fn complex_language_segment_utf16(&self, input: &[u16]) -> Vec<usize> {
         let mut result = Vec::new();
