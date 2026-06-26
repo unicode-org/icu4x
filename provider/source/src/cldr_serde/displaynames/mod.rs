@@ -14,6 +14,7 @@ use core::str::FromStr;
 use serde::{Deserialize, Deserializer};
 #[derive(Hash, Eq, PartialEq, Clone, Copy, Debug)]
 pub(crate) enum Alt {
+    Unknown,
     Short,
     Long,
     Variant,
@@ -27,7 +28,6 @@ pub(crate) enum Alt {
     Chagos,
     /// "menu" variant, which is being replaced by menu=core|extension, but is still in CLDR.
     Menu,
-    Unknown,
 }
 
 impl FromStr for Alt {
@@ -50,9 +50,9 @@ impl FromStr for Alt {
 
 #[derive(Hash, Eq, PartialEq, Clone, Copy, Debug)]
 pub(crate) enum Menu {
+    Unknown,
     Core,
     Extension,
-    Unknown,
 }
 
 impl FromStr for Menu {
@@ -101,16 +101,30 @@ where
             {
                 if let Some((subtag_str, menu_str)) = v.split_once(MENU_SEPARATOR) {
                     let subtag = T::from_str(subtag_str).map_err(E::custom)?;
+                    let menu = match Menu::from_str(menu_str) {
+                        Ok(m) => m,
+                        Err(_) => {
+                            log::warn!("Unknown menu variant: {}", menu_str);
+                            Menu::Unknown
+                        }
+                    };
                     Ok(WithAlt {
                         subtag,
                         alt: None,
-                        menu: Some(Menu::from_str(menu_str).unwrap_or(Menu::Unknown)),
+                        menu: Some(menu),
                     })
                 } else if let Some((subtag_str, alt_str)) = v.split_once(ALT_SEPARATOR) {
                     let subtag = T::from_str(subtag_str).map_err(E::custom)?;
+                    let alt = match Alt::from_str(alt_str) {
+                        Ok(a) => a,
+                        Err(_) => {
+                            log::warn!("Unknown alt variant: {}", alt_str);
+                            Alt::Unknown
+                        }
+                    };
                     Ok(WithAlt {
                         subtag,
-                        alt: Some(Alt::from_str(alt_str).unwrap_or(Alt::Unknown)),
+                        alt: Some(alt),
                         menu: None,
                     })
                 } else {
