@@ -395,6 +395,28 @@ where
 ///     "hello"
 /// );
 /// ```
+///
+/// Implement both `Writeable` and `TryWriteable`:
+///
+/// ```
+/// use writeable::adapters::LossyWrap;
+///
+/// // The LossyWrap needs to be a field of MyStruct since it can be borrowed from.
+/// struct MyStruct(LossyWrap<Result<String, String>>);
+/// writeable::impl_try_writeable_delegate!(MyStruct, |&self| &self.0.0, Error = String);
+/// writeable::impl_writeable_delegate!(MyStruct, |&self| &self.0);
+/// writeable::impl_display_with_writeable!(MyStruct);
+///
+/// writeable::assert_try_writeable_eq!(
+///     MyStruct(LossyWrap(Ok("hello".to_string()))),
+///     "hello"
+/// );
+///
+/// writeable::assert_writeable_eq!(
+///     MyStruct(LossyWrap(Ok("hello".to_string()))),
+///     "hello"
+/// );
+/// ```
 #[macro_export]
 macro_rules! impl_try_writeable_delegate {
     ($ty:ty, |&$self:ident| $delegate:expr, Error = $error:ty $(, #[$alloc_feature:meta])? $(, where $($generics:tt)*)?) => {
