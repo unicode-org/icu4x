@@ -102,41 +102,13 @@ All owned constructors take their target subtag or `LanguageIdentifier` **by val
 
 ## Fallback & `TryWriteable`
 
-The `LanguageIdentifierDisplayName` formatter supports robust BCP-47 subtag fallback hierarchy when localized display names are missing from the data provider (resolving [#8100](https://github.com/unicode-org/icu4x/issues/8100)).
-Unlike the old multi-formatter (`LocaleDisplayNamesFormatter`), the single formatter does not expose a `fallback` toggle in its options bag (`LanguageIdentifierDisplayNameOptions`).
-Instead, it always performs BCP-47 fallback (lenient mode) under the hood to ensure a display name can be formatted.
+The `LanguageIdentifierDisplayName` formatter supports BCP-47 subtag fallback when localized display names are missing from the data provider. It implements the fallback using `TryWriteable`.
 
 ### Detecting Fallback with `TryWriteable`
+
 To allow applications to detect whether a fallback occurred (and which parts of the output are fallbacks), `LanguageIdentifierDisplayName` implements the **`TryWriteable`** trait.
 *   **Lossy Mode (Default)**: If you format the display name using the standard `Writeable` or `Display` trait (e.g., via the `.with_fallback()` or `.as_borrowed_with_fallback()` adapters), it runs in "lossy mode", automatically writing the fallback codes and discarding any errors.
-*   **Strict/Detection Mode**: You can borrow the formatter via `.as_borrowed()` and call `try_write_to` or `try_write_to_parts` to capture the `LanguageIdentifierNameFallbackError` if a fallback occurred:
-
-```rust
-use writeable::TryWriteable;
-use icu::experimental::displaynames::single::LanguageIdentifierNameFallbackError;
-
-let mut sink = String::new();
-let result = display_name.as_borrowed().try_write_to(&mut sink);
-
-if let Ok(Err(LanguageIdentifierNameFallbackError)) = result {
-    println!("Fallback occurred! Output: {}", sink);
-}
-```
-
-### Fallback Annotations (`Part::ERROR`)
-When a fallback occurs, the formatter annotates the fallback substrings in the output with **`Part::ERROR`**. This allows you to identify exactly which parts of the formatted string are raw codes:
-
-```rust
-use writeable::{assert_try_writeable_parts_eq, Part};
-
-// "xx-YY" has both language and region missing, so it falls back to "xx (YY)"
-assert_try_writeable_parts_eq!(
-    display_name.as_borrowed(),
-    "xx (YY)",
-    Err(LanguageIdentifierNameFallbackError),
-    [(0, 2, Part::ERROR), (4, 6, Part::ERROR)] // "xx" and "YY" are marked as errors
-);
-```
+*   **Strict/Detection Mode**: You can borrow the formatter via `.as_borrowed()` and call `try_write_to` or `try_write_to_parts` to capture the `LanguageIdentifierNameFallbackError` if a fallback occurred. In `try_write_to_parts`, a `Part::ERROR` will annotate the fallback strings.
 
 ---
 
