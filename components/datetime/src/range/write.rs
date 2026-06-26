@@ -3,7 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::FormattedDateTime;
+use crate::options::Alignment;
+use crate::provider::fields;
 use crate::provider::pattern::PatternItem;
+use crate::provider::pattern::runtime;
+use crate::provider::range_patterns::RangePatternInfoBorrowed;
 use crate::provider::semantic_skeletons::GluePattern;
 use core::fmt;
 use writeable::{PartsWrite, Writeable};
@@ -59,18 +63,114 @@ pub(crate) struct FormattedGreatestDifference<'l> {
     pub(crate) start: FormattedDateTime<'l>,
     #[allow(dead_code, reason = "https://github.com/unicode-org/icu4x/issues/5448")]
     pub(crate) end: FormattedDateTime<'l>,
+    pub(crate) pattern_info: RangePatternInfoBorrowed<'l>,
+    pub(crate) glue: &'l GluePattern<'l>,
+    pub(crate) alignment: Option<Alignment>,
 }
 
 impl Writeable for FormattedGreatestDifference<'_> {
     fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> Result<(), fmt::Error> {
-        // TODO: Support greatest difference formatting (currently just writes the start date)
-        self.start.write_to_parts(sink)
+        match &self.pattern_info {
+            RangePatternInfoBorrowed::FullRange(pattern) => {
+                let (start_pattern, end_pattern) = pattern.split_on_repeated_field();
+                self.write_full_range(start_pattern, end_pattern, sink)
+            }
+            RangePatternInfoBorrowed::Symmetric(pattern) => {
+                let start_side = FormattedSingleSide {
+                    datetime: &self.start,
+                    pattern: *pattern,
+                    alignment: self.alignment,
+                };
+                let end_side = FormattedSingleSide {
+                    datetime: &self.end,
+                    pattern: *pattern,
+                    alignment: self.alignment,
+                };
+                write_glue_pattern(sink, self.glue, &start_side, &end_side)
+            }
+        }
     }
 }
 
-/// The formatting result of a date/time range where the date is the same
-/// but the time differs, formatted by joining the time range and the date
-/// using a glue pattern.
+impl<'l> FormattedGreatestDifference<'l> {
+    fn write_full_range<S: PartsWrite + ?Sized>(
+        &self,
+        start_pattern: runtime::PatternBorrowed<'l>,
+        end_pattern: runtime::PatternBorrowed<'l>,
+        sink: &mut S,
+    ) -> Result<(), fmt::Error> {
+        let start_side = FormattedSingleSide {
+            datetime: &self.start,
+            pattern: start_pattern,
+            alignment: self.alignment,
+        };
+
+        let end_side = FormattedSingleSide {
+            datetime: &self.end,
+            pattern: end_pattern,
+            alignment: self.alignment,
+        };
+
+        start_side.write_to_parts(sink)?;
+        end_side.write_to_parts(sink)?;
+        Ok(())
+    }
+}
+
+#[derive(Debug)]
+struct FormattedSingleSide<'a, 'l> {
+    datetime: &'a FormattedDateTime<'l>,
+    pattern: runtime::PatternBorrowed<'l>,
+    alignment: Option<Alignment>,
+}
+
+impl Writeable for FormattedSingleSide<'_, '_> {
+    fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> Result<(), fmt::Error> {
+        let metadata = self.pattern.metadata;
+        let decimal_formatter = self.datetime.names.decimal_formatter;
+
+        for item in self.pattern.items.iter() {
+            match item {
+                PatternItem::Literal(ch) => sink.write_char(ch)?,
+                PatternItem::Field(field) => {
+                    let mut field = field;
+                    let alignment = self.alignment.unwrap_or_default();
+                    if matches!(alignment, Alignment::Column)
+                        && field.length == fields::FieldLength::One
+                        && matches!(
+                            field.symbol,
+                            fields::FieldSymbol::Month(_)
+                                | fields::FieldSymbol::Day(_)
+                                | fields::FieldSymbol::Week(_)
+                                | fields::FieldSymbol::Hour(_)
+                        )
+                    {
+                        field.length = fields::FieldLength::Two;
+                    }
+
+                    let r = crate::format::datetime::try_write_field(
+                        field,
+                        metadata,
+                        &self.datetime.input,
+                        &self.datetime.names,
+                        decimal_formatter,
+                        sink,
+                    );
+
+                    match r {
+                        Ok(Ok(())) => {}
+                        Err(fmt::Error) => return Err(fmt::Error),
+                        Ok(Err(e)) => {
+                            debug_assert!(false, "unexpected error in FormattedSingleSide: {e:?}");
+                        }
+                    }
+                }
+            }
+        }
+        Ok(())
+    }
+}
+
 #[derive(Debug)]
 pub(crate) struct FormattedTimeRangeMixed<'l> {
     pub(crate) date: FormattedDateTime<'l>,
@@ -84,8 +184,6 @@ impl Writeable for FormattedTimeRangeMixed<'_> {
     }
 }
 
-/// The formatting result of a date/time range formatted using the fallback
-/// range pattern (gluing the fully formatted start and end datetimes).
 #[derive(Debug)]
 pub(crate) struct FormattedRangeFallback<'l> {
     pub(crate) start: FormattedDateTime<'l>,

@@ -197,7 +197,7 @@ impl GreatestDifferenceHeader {
 
     /// Set the range structure for a specific field index (0-3).
     /// Used during datagen.
-    #[cfg(feature = "datagen")]
+    #[cfg(any(feature = "datagen", test))]
     pub fn set_state(&mut self, field_idx: u8, state: RangeStructure) {
         let shift = field_idx * 2;
         let mask = !(0b11 << shift);
@@ -325,7 +325,7 @@ impl<'data> PatternsByGreatestDifference<'data> {
     /// fallback-based deduplication: if a pattern info for a smaller field is identical
     /// to the pattern info for the next larger present field, the smaller field's pattern
     /// is omitted, as it will naturally fall back to the larger field at runtime.
-    #[cfg(feature = "datagen")]
+    #[cfg(any(feature = "datagen", test))]
     pub fn try_from_patterns<I>(iter: I) -> Result<Self, &'static str>
     where
         I: IntoIterator<Item = (u8, RangePatternInfo<'data>)>,
@@ -391,7 +391,7 @@ impl<'data> PatternsByGreatestDifference<'data> {
     }
 
     /// Construct from an iterator of (`DateGreatestDifferenceField`, `pattern_info`).
-    #[cfg(feature = "datagen")]
+    #[cfg(any(feature = "datagen", test))]
     pub fn try_from_date_patterns<I>(iter: I) -> Result<Self, &'static str>
     where
         I: IntoIterator<Item = (DateGreatestDifferenceField, RangePatternInfo<'data>)>,
@@ -400,7 +400,7 @@ impl<'data> PatternsByGreatestDifference<'data> {
     }
 
     /// Construct from an iterator of (`TimeGreatestDifferenceField`, `pattern_info`).
-    #[cfg(feature = "datagen")]
+    #[cfg(any(feature = "datagen", test))]
     pub fn try_from_time_patterns<I>(iter: I) -> Result<Self, &'static str>
     where
         I: IntoIterator<Item = (TimeGreatestDifferenceField, RangePatternInfo<'data>)>,

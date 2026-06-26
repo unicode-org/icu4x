@@ -148,6 +148,75 @@ impl<'data> PatternBorrowed<'data> {
             metadata: self.metadata,
         }
     }
+
+    /// Returns the index of the first repeated field in the pattern, if any.
+    ///
+    /// This is used to find the split point for range patterns.
+    /// Returns the index of the first repeated field in the pattern, if any.
+    ///
+    /// This is used to find the split point for range patterns.
+    #[allow(dead_code, reason = "#5448")]
+    fn first_repeated_field_index(&self) -> Option<usize> {
+        struct Seen {
+            // A bitset where the i-th bit is set if we have seen a field of type index i.
+            // Since there are at most 16 field types, a u16 is sufficient.
+            mask: u16,
+        }
+        impl Seen {
+            fn new() -> Self {
+                Self { mask: 0 }
+            }
+            fn insert_or_contains(&mut self, symbol: crate::provider::fields::FieldSymbol) -> bool {
+                // The top 4 bits of the serialized FieldSymbol index represent the field type
+                // (e.g., Year, Month, Day), as defined in FieldSymbol::idx.
+                let val = symbol.idx() >> 4;
+                let bit = 1 << val;
+                if (self.mask & bit) != 0 {
+                    true
+                } else {
+                    self.mask |= bit;
+                    false
+                }
+            }
+        }
+
+        let mut seen = Seen::new();
+        for (idx, item) in self.items.iter().enumerate() {
+            match item {
+                PatternItem::Field(field) if seen.insert_or_contains(field.symbol) => {
+                    return Some(idx);
+                }
+                _ => {}
+            }
+        }
+        None
+    }
+
+    /// Splits the pattern into two halves at the first repeated field.
+    ///
+    /// If there are no repeated fields, the second half will be empty.
+    #[allow(dead_code, reason = "#5448")]
+    pub(crate) fn split_on_repeated_field(&self) -> (Self, Self) {
+        let idx = self
+            .first_repeated_field_index()
+            .unwrap_or(self.items.len());
+        let ule_slice = self.items.as_ule_slice();
+        let (start_ule, end_ule) = ule_slice.split_at(idx);
+        (
+            Self {
+                items: ZeroSlice::from_ule_slice(start_ule),
+                metadata: self.metadata,
+            },
+            Self {
+                items: ZeroSlice::from_ule_slice(end_ule),
+                metadata: if end_ule.is_empty() {
+                    PatternMetadata::default()
+                } else {
+                    self.metadata
+                },
+            },
+        )
+    }
 }
 
 impl<'data> zerofrom::ZeroFrom<'data, PatternULE> for PatternBorrowed<'data> {
@@ -245,4 +314,46 @@ fn databake() {
         ),
         icu_datetime,
     );
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use core::str::FromStr;
+
+    #[test]
+    fn test_split_on_repeated_field() {
+        let cases = [
+            // No repetition
+            ("yMd", ("yMd", "")),
+            ("yM-d", ("yM-d", "")),
+            ("HH:mm:ss", ("HH:mm:ss", "")),
+            // Repetition of same field type (e.g. in range patterns)
+            ("yMd-d", ("yMd-", "d")),
+            ("yMd-yMd", ("yMd-", "yMd")),
+            ("h:mm a - h:mm a", ("h:mm a - ", "h:mm a")),
+        ];
+
+        for &(pattern_str, (expected_start, expected_end)) in &cases {
+            let pattern = Pattern::from_str(pattern_str).unwrap();
+            let pattern_borrowed = pattern.as_borrowed();
+            let (start, end) = pattern_borrowed.split_on_repeated_field();
+
+            let expected_start_pattern = Pattern::from_str(expected_start).unwrap();
+            let expected_end_pattern = Pattern::from_str(expected_end).unwrap();
+
+            assert_eq!(
+                start,
+                expected_start_pattern.as_borrowed(),
+                "Pattern: {}",
+                pattern_str
+            );
+            assert_eq!(
+                end,
+                expected_end_pattern.as_borrowed(),
+                "Pattern: {}",
+                pattern_str
+            );
+        }
+    }
 }
