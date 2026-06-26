@@ -83,6 +83,19 @@ pub struct CalendarPreference {
     pub default_hijri_algorithm: HijriCalendarAlgorithm,
 }
 
+impl CalendarPreference {
+    /// Resolves a [`Option<CalendarAlgorithm>`] to a concrete algorithm against these preferences.
+    pub fn resolve(&self, unresolved: Option<CalendarAlgorithm>) -> CalendarAlgorithm {
+        match unresolved {
+            Some(CalendarAlgorithm::Hijri(None)) => {
+                CalendarAlgorithm::Hijri(Some(self.default_hijri_algorithm))
+            }
+            Some(a) => a,
+            None => self.default_algorithm,
+        }
+    }
+}
+
 icu_provider::data_marker!(
     /// The preferred calendar algorithm for a region.
     CalendarPreferredV1,

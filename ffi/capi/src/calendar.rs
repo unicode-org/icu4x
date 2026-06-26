@@ -64,10 +64,13 @@ pub mod ffi {
 
     impl CalendarKind {
         /// Creates a new [`CalendarKind`] for the specified locale, using compiled data.
-        #[diplomat::rust_link(icu::calendar::AnyCalendarKind::new, FnInEnum)]
+        #[diplomat::rust_link(icu::calendar::AnyCalendarKind::try_new, FnInEnum)]
+        #[cfg(feature = "compiled_data")]
         pub fn create(locale: &Locale) -> Self {
             let prefs = (&locale.0).into();
-            icu_calendar::AnyCalendarKind::new(prefs).into()
+            icu_calendar::AnyCalendarKind::try_new(prefs)
+                .unwrap_or(icu_calendar::AnyCalendarKind::Gregorian)
+                .into()
         }
     }
 

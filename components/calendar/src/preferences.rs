@@ -16,9 +16,7 @@ pub use icu_locale_core::preferences::extensions::unicode::keywords::FirstDay;
 #[doc = "\n"] // prevent autoformatting
 pub use icu_locale_core::preferences::extensions::unicode::keywords::HijriCalendarAlgorithm;
 
-use crate::provider::CalendarPreferredV1;
 use icu_locale_core::preferences::define_preferences;
-use icu_provider::prelude::*;
 
 define_preferences!(
     /// The preferences for calendars formatting.
@@ -52,73 +50,25 @@ impl CalendarPreferences {
     /// use icu::calendar::preferences::{CalendarAlgorithm, CalendarPreferences, HijriCalendarAlgorithm};
     /// use icu::locale::locale;
     ///
-    /// assert_eq!(CalendarPreferences::from(&locale!("und")).resolved_algorithm_2(), CalendarAlgorithm::Gregory);
-    /// assert_eq!(CalendarPreferences::from(&locale!("und-US-u-ca-hebrew")).resolved_algorithm_2(), CalendarAlgorithm::Hebrew);
-    /// assert_eq!(CalendarPreferences::from(&locale!("und-AF")).resolved_algorithm_2(), CalendarAlgorithm::Persian);
-    /// assert_eq!(CalendarPreferences::from(&locale!("fa")).resolved_algorithm_2(), CalendarAlgorithm::Persian);
-    /// assert_eq!(CalendarPreferences::from(&locale!("und-US-u-rg-thxxxx")).resolved_algorithm_2(), CalendarAlgorithm::Buddhist);
+    /// assert_eq!(CalendarPreferences::from(&locale!("und")).resolved_algorithm(), CalendarAlgorithm::Gregory);
+    /// assert_eq!(CalendarPreferences::from(&locale!("und-US-u-ca-hebrew")).resolved_algorithm(), CalendarAlgorithm::Hebrew);
+    /// assert_eq!(CalendarPreferences::from(&locale!("und-AF")).resolved_algorithm(), CalendarAlgorithm::Persian);
+    /// assert_eq!(CalendarPreferences::from(&locale!("und-US-u-rg-thxxxx")).resolved_algorithm(), CalendarAlgorithm::Buddhist);
     /// assert_eq!(
-    ///     CalendarPreferences::from(&locale!("und-US-u-ca-islamic")).resolved_algorithm_2(),
+    ///     CalendarPreferences::from(&locale!("und-US-u-ca-islamic")).resolved_algorithm(),
     ///     CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil))
     /// );
-    /// # assert_eq!(CalendarPreferences::from(&"und-US-u-ca-islamic-rgsa".parse::<icu::locale::Locale>().unwrap()).resolved_algorithm_2(),
+    /// # assert_eq!(CalendarPreferences::from(&"und-US-u-ca-islamic-rgsa".parse::<icu::locale::Locale>().unwrap()).resolved_algorithm(),
     /// #     CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil))
     /// # );
-    /// # assert_eq!(CalendarPreferences::from(&"und-US-u-ca-islamic-foo".parse::<icu::locale::Locale>().unwrap()).resolved_algorithm_2(),
+    /// # assert_eq!(CalendarPreferences::from(&"und-US-u-ca-islamic-foo".parse::<icu::locale::Locale>().unwrap()).resolved_algorithm(),
     /// #     CalendarAlgorithm::Gregory
     /// # );
-    /// # assert_eq!(CalendarPreferences::from(&"und-US-u-ca-hebrew-foo".parse::<icu::locale::Locale>().unwrap()).resolved_algorithm_2(),
+    /// # assert_eq!(CalendarPreferences::from(&"und-US-u-ca-hebrew-foo".parse::<icu::locale::Locale>().unwrap()).resolved_algorithm(),
     /// #     CalendarAlgorithm::Gregory
     /// # );
     /// ```
-    #[cfg(feature = "compiled_data")]
-    pub fn resolved_algorithm_2(&self) -> CalendarAlgorithm {
-        self.resolved_algorithm_unstable(&crate::provider::Baked)
-            .unwrap_or(CalendarAlgorithm::Gregory)
-    }
-
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::resolved_algorithm_2)]
-    pub fn resolved_algorithm_unstable<P>(
-        self,
-        provider: &P,
-    ) -> Result<CalendarAlgorithm, DataError>
-    where
-        P: ?Sized + DataProvider<CalendarPreferredV1>,
-    {
-        if let Some(c) = self.calendar_algorithm
-            && !matches!(
-                c,
-                CalendarAlgorithm::Hijri(None | Some(HijriCalendarAlgorithm::Rgsa))
-            )
-        {
-            return Ok(c);
-        }
-
-        let region_defaults = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&CalendarPreferredV1::make_locale(
-                    self.locale_preferences,
-                )),
-                metadata: Default::default(),
-            })
-            .map(|response| *response.payload.get())?;
-
-        if matches!(
-            self.calendar_algorithm,
-            Some(CalendarAlgorithm::Hijri(
-                None | Some(HijriCalendarAlgorithm::Rgsa)
-            ))
-        ) {
-            Ok(CalendarAlgorithm::Hijri(Some(
-                region_defaults.default_hijri_algorithm,
-            )))
-        } else {
-            Ok(region_defaults.default_algorithm)
-        }
-    }
-
-    /// Deprecated. Use [`resolved_algorithm_2`](Self::resolved_algorithm_2) instead.
-    #[deprecated(since = "2.3.0", note = "use `resolved_algorithm_2`")]
+    #[deprecated(since = "2.2.0")]
     pub fn resolved_algorithm(self) -> CalendarAlgorithm {
         use icu_locale_core::subtags::{Region, region};
         const AE: Region = region!("AE");
