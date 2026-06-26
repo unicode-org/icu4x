@@ -143,6 +143,7 @@ pub mod adapters {
         /// However, in order to avoid allocating a string, it is more efficient
         /// to use [`Writeable`] directly.
         #[cfg(feature = "alloc")]
+        #[allow(clippy::inherent_to_string_shadow_display)]
         #[inline]
         pub fn to_string(&self) -> String {
             Writeable::write_to_string(self).into_owned()
