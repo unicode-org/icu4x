@@ -137,17 +137,31 @@ mod tests {
         let value = "12345.67".parse().unwrap();
 
         // 1. Default numbering system (arab) - Short
-        let fmt_arab = CurrencyFormatter::<Decimal>::try_new_short(prefs_arab).unwrap();
+        let fmt_arab_short = CurrencyFormatter::<Decimal>::try_new_short(prefs_arab).unwrap();
         assert_writeable_eq!(
-            fmt_arab.format_fixed_decimal(&value, &currency_code),
+            fmt_arab_short.format_fixed_decimal(&value, &currency_code),
             "\u{200f}١٢٬٣٤٥٫٦٧\u{a0}ج.م.\u{200f}"
         );
 
         // 2. Locale extension override (latn) - Short
-        let fmt_latn = CurrencyFormatter::<Decimal>::try_new_short(prefs_latn).unwrap();
+        let fmt_latn_short = CurrencyFormatter::<Decimal>::try_new_short(prefs_latn).unwrap();
         assert_writeable_eq!(
-            fmt_latn.format_fixed_decimal(&value, &currency_code),
+            fmt_latn_short.format_fixed_decimal(&value, &currency_code),
             "\u{200f}12,345.67\u{a0}ج.م.\u{200f}"
+        );
+
+        // 3. Default numbering system (arab) - Narrow
+        let fmt_arab_narrow = CurrencyFormatter::<Decimal>::try_new_narrow(prefs_arab).unwrap();
+        assert_writeable_eq!(
+            fmt_arab_narrow.format_fixed_decimal(&value, &currency_code),
+            "\u{200f}١٢٬٣٤٥٫٦٧\u{a0}E£"
+        );
+
+        // 4. Locale extension override (latn) - Narrow
+        let fmt_latn_narrow = CurrencyFormatter::<Decimal>::try_new_narrow(prefs_latn).unwrap();
+        assert_writeable_eq!(
+            fmt_latn_narrow.format_fixed_decimal(&value, &currency_code),
+            "\u{200f}12,345.67\u{a0}E£"
         );
     }
 
