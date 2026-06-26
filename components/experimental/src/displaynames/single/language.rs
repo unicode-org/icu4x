@@ -10,7 +10,8 @@ use crate::displaynames::{
     DisplayNamesPreferences, LanguageDisplay, LanguageIdentifierDisplayNameOptions,
 };
 use alloc::{vec, vec::Vec};
-use icu_pattern::{DoublePlaceholderPattern, DoublePlaceholderValueProviderTry};
+use icu_locale_core::LanguageIdentifier;
+use icu_pattern::{DoublePlaceholderPattern, DoublePlaceholderValueProviderTry, PatternItem};
 use icu_provider::DataPayloadOr;
 use icu_provider::prelude::*;
 use icu_locale_core::subtags::{Language, Script, Region, Variant};
@@ -74,7 +75,7 @@ pub struct LanguageIdentifierDisplayNameOwned {
 
 impl LanguageIdentifierDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
-        (prefs: DisplayNamesPreferences, subject: icu_locale::LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
+        (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the language display name for a given language identifier and locale using compiled data.
         functions: [
             try_new,
@@ -88,7 +89,7 @@ impl LanguageIdentifierDisplayNameOwned {
     pub fn try_new_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
-        mut subject: icu_locale::LanguageIdentifier,
+        mut subject: LanguageIdentifier,
         options: LanguageIdentifierDisplayNameOptions,
     ) -> Result<Self, DataError>
     where
@@ -176,32 +177,29 @@ impl LanguageIdentifierDisplayNameOwned {
                     None,
                     &mut buffer,
                 );
-                let result = provider.load(DataRequest {
-                    id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                        attrs,
-                        &formatting_locale,
-                    ),
-                    ..Default::default()
-                });
-                match result {
-                    Ok(response) => DataPayloadOr::from_payload(response.payload),
-                    Err(e) if e.kind == DataErrorKind::IdentifierNotFound => {
-                        DataPayloadOr::from_other(subject.language)
-                    }
-                    Err(e) => return Err(e),
+                let response = provider
+                    .load(DataRequest {
+                        id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                            attrs,
+                            &formatting_locale,
+                        ),
+                        ..Default::default()
+                    })
+                    .allow_identifier_not_found()?;
+                match response {
+                    Some(res) => DataPayloadOr::from_payload(res.payload),
+                    None => DataPayloadOr::from_other(subject.language),
                 }
             }
         };
 
         // Step 2: Load script name (if present in subject)
         let script_payload = if let Some(script) = subject.script {
-            let res = ScriptDisplayNameOwned::try_new_unstable(provider, prefs, script);
-            match res {
-                Ok(obj) => DataPayloadOr::from_payload(obj.payload),
-                Err(e) if e.kind == DataErrorKind::IdentifierNotFound => DataPayloadOr::from_other(
-                    AbsentOrFallback::Fallback(script),
-                ),
-                Err(e) => return Err(e),
+            match ScriptDisplayNameOwned::try_new_unstable(provider, prefs, script)
+                .allow_identifier_not_found()?
+            {
+                Some(obj) => DataPayloadOr::from_payload(obj.payload),
+                None => DataPayloadOr::from_other(AbsentOrFallback::Fallback(script)),
             }
         } else {
             DataPayloadOr::from_other(AbsentOrFallback::Absent)
@@ -209,13 +207,11 @@ impl LanguageIdentifierDisplayNameOwned {
 
         // Step 3: Load region name (if present in subject)
         let region_payload = if let Some(region) = subject.region {
-            let res = RegionDisplayNameOwned::try_new_unstable(provider, prefs, region);
-            match res {
-                Ok(obj) => DataPayloadOr::from_payload(obj.payload),
-                Err(e) if e.kind == DataErrorKind::IdentifierNotFound => DataPayloadOr::from_other(
-                    AbsentOrFallback::Fallback(region),
-                ),
-                Err(e) => return Err(e),
+            match RegionDisplayNameOwned::try_new_unstable(provider, prefs, region)
+                .allow_identifier_not_found()?
+            {
+                Some(obj) => DataPayloadOr::from_payload(obj.payload),
+                None => DataPayloadOr::from_other(AbsentOrFallback::Fallback(region)),
             }
         } else {
             DataPayloadOr::from_other(AbsentOrFallback::Absent)
@@ -223,13 +219,11 @@ impl LanguageIdentifierDisplayNameOwned {
 
         // Step 4: Load variant names (if present in subject)
         let load_variant = |variant: Variant| -> Result<PayloadOrFallback<LocaleNamesVariantMediumV1, Variant>, DataError> {
-            let res = VariantDisplayNameOwned::try_new_unstable(provider, prefs, variant);
-            match res {
-                Ok(obj) => Ok(DataPayloadOr::from_payload(obj.payload)),
-                Err(e) if e.kind == DataErrorKind::IdentifierNotFound => {
-                    Ok(DataPayloadOr::from_other(variant))
-                }
-                Err(e) => Err(e),
+            match VariantDisplayNameOwned::try_new_unstable(provider, prefs, variant)
+                .allow_identifier_not_found()?
+            {
+                Some(obj) => Ok(DataPayloadOr::from_payload(obj.payload)),
+                None => Ok(DataPayloadOr::from_other(variant)),
             }
         };
 
@@ -381,7 +375,7 @@ impl<'a> TryWriteable for QualifiersWriteable<'a> {
         let mut first = true;
         let mut separator_str = ", ";
         for item in self.separator.iter() {
-            if let icu_pattern::PatternItem::Literal(s) = item {
+            if let PatternItem::Literal(s) = item {
                 separator_str = s;
                 break;
             }

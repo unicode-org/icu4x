@@ -178,7 +178,6 @@ fn test_concatenate() {
         }
 
         // Test the newer LanguageIdentifierDisplayName
-        use icu_experimental::displaynames::single::LanguageIdentifierDisplayNameOwned;
         let lang_id = cas.input_1.id.clone();
         let single_options = LanguageIdentifierDisplayNameOptions::default();
         let single_display_name = LanguageIdentifierDisplayNameOwned::try_new(
@@ -224,5 +223,27 @@ fn test_fallback_parts() {
         "xx (YY)",
         Err(LanguageIdentifierNameFallbackError),
         [(0, 2, Part::ERROR), (4, 6, Part::ERROR)]
+    );
+}
+
+#[test]
+fn test_single_language_display_name_standard() {
+    use icu_experimental::displaynames::{LanguageDisplay, LanguageIdentifierDisplayNameOptions};
+    use icu_locale_core::{langid, locale};
+    use writeable::assert_writeable_eq;
+
+    let locale = locale!("en-001");
+    let mut options = LanguageIdentifierDisplayNameOptions::default();
+    options.language_display = Some(LanguageDisplay::Standard);
+
+    // This should format "zh-Hant-HK" to "Chinese (Traditional, Hong Kong SAR China)"
+    // in "en-001" using LanguageDisplay::Standard
+    let lang_id = langid!("zh-Hant-HK");
+    let lang_name = LanguageIdentifierDisplayNameOwned::try_new(locale.into(), lang_id, options)
+        .expect("Data should load successfully");
+
+    assert_writeable_eq!(
+        lang_name.as_borrowed_with_fallback(),
+        "Chinese (Traditional, Hong Kong SAR China)"
     );
 }
