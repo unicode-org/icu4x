@@ -247,6 +247,8 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
     pub fn segment_str<'s>(self, input: &'s str) -> SentenceBreakIterator<'data, 's, Utf8> {
         SentenceBreakIterator(RuleBreakIterator {
             iter: input.char_indices(),
+            current_pos_iter: None,
+            previous_pos_iter: None,
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
@@ -268,6 +270,8 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
     ) -> SentenceBreakIterator<'data, 's, PotentiallyIllFormedUtf8> {
         SentenceBreakIterator(RuleBreakIterator {
             iter: Utf8CharIndices::new(input),
+            current_pos_iter: None,
+            previous_pos_iter: None,
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
@@ -284,6 +288,8 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
     pub fn segment_latin1<'s>(self, input: &'s [u8]) -> SentenceBreakIterator<'data, 's, Latin1> {
         SentenceBreakIterator(RuleBreakIterator {
             iter: Latin1Indices::new(input),
+            current_pos_iter: None,
+            previous_pos_iter: None,
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
@@ -301,6 +307,8 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
     pub fn segment_utf16<'s>(self, input: &'s [u16]) -> SentenceBreakIterator<'data, 's, Utf16> {
         SentenceBreakIterator(RuleBreakIterator {
             iter: Utf16Indices::new(input),
+            current_pos_iter: None,
+            previous_pos_iter: None,
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
