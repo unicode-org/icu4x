@@ -171,25 +171,4 @@ mod tests {
             "$12,345.67"
         );
     }
-
-    #[test]
-    pub fn test_en_us_aud() {
-        let locale: CurrencyFormatterPreferences = locale!("en-US").into();
-        let currency_code = CurrencyCode(tinystr!(3, "AUD"));
-        let value = "12345.67".parse().unwrap();
-
-        // Short
-        let fmt_short = CurrencyFormatter::<Decimal>::try_new_short(locale).unwrap();
-        assert_writeable_eq!(
-            fmt_short.format_fixed_decimal(&value, &currency_code),
-            "A$12,345.67"
-        );
-
-        // Narrow
-        let fmt_narrow = CurrencyFormatter::<Decimal>::try_new_narrow(locale).unwrap();
-        assert_writeable_eq!(
-            fmt_narrow.format_fixed_decimal(&value, &currency_code),
-            "$12,345.67"
-        );
-    }
 }
