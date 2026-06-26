@@ -10,6 +10,8 @@ pub(crate) mod variant;
 
 const ALT_SEPARATOR: &str = "-alt-";
 const MENU_SEPARATOR: &str = "-menu-";
+use core::fmt::{self, Display};
+use core::marker::PhantomData;
 use core::str::FromStr;
 use serde::{Deserialize, Deserializer};
 #[derive(Hash, Eq, PartialEq, Clone, Copy, Debug)]
@@ -76,22 +78,22 @@ pub(crate) struct WithAlt<T> {
 impl<'de, T> Deserialize<'de> for WithAlt<T>
 where
     T: FromStr,
-    T::Err: core::fmt::Display,
+    T::Err: Display,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
-        struct Visitor<T>(std::marker::PhantomData<T>);
+        struct Visitor<T>(PhantomData<T>);
 
         impl<'de, T> serde::de::Visitor<'de> for Visitor<T>
         where
             T: FromStr,
-            T::Err: core::fmt::Display,
+            T::Err: Display,
         {
             type Value = WithAlt<T>;
 
-            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
                 formatter.write_str("a string with optional -alt- or -menu- suffix")
             }
 
@@ -138,6 +140,6 @@ where
             }
         }
 
-        deserializer.deserialize_str(Visitor(std::marker::PhantomData))
+        deserializer.deserialize_str(Visitor(PhantomData))
     }
 }

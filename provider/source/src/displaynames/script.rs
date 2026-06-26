@@ -8,6 +8,7 @@ use crate::cldr_serde;
 use crate::cldr_serde::displaynames::{Alt, WithAlt};
 use crate::displaynames::extract_names_for_zeromap_struct;
 use icu::experimental::displaynames::provider::*;
+use icu::locale::subtags::Script;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use zerovec::VarZeroCow;
@@ -30,7 +31,7 @@ impl DataProvider<ScriptDisplayNamesV1> for SourceDataProvider {
 
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesScriptMediumV1,
-    icu::locale::subtags::Script,
+    Script,
     cldr_serde::displaynames::script::Resource,
     "scripts.json",
     scripts,
@@ -39,7 +40,7 @@ crate::displaynames::impl_displaynames_v1!(
 
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesScriptShortV1,
-    icu::locale::subtags::Script,
+    Script,
     cldr_serde::displaynames::script::Resource,
     "scripts.json",
     scripts,

@@ -8,6 +8,7 @@ use crate::cldr_serde;
 use crate::cldr_serde::displaynames::{Alt, WithAlt};
 use crate::displaynames::extract_names_for_zeromap_struct;
 use icu::experimental::displaynames::provider::*;
+use icu::locale::subtags::Variant;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use zerovec::VarZeroCow;
@@ -30,7 +31,7 @@ impl DataProvider<VariantDisplayNamesV1> for SourceDataProvider {
 
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesVariantMediumV1,
-    icu::locale::subtags::Variant,
+    Variant,
     cldr_serde::displaynames::variant::Resource,
     "variants.json",
     variants,

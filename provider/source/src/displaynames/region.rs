@@ -8,6 +8,7 @@ use crate::cldr_serde;
 use crate::cldr_serde::displaynames::{Alt, WithAlt};
 use crate::displaynames::extract_names_for_zeromap_struct;
 use icu::experimental::displaynames::provider::*;
+use icu::locale::subtags::Region;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use zerovec::VarZeroCow;
@@ -32,7 +33,7 @@ crate::displaynames::impl_displaynames_legacy_iter_v1!(RegionDisplayNamesV1, "te
 
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesRegionMediumV1,
-    icu::locale::subtags::Region,
+    Region,
     cldr_serde::displaynames::region::Resource,
     "territories.json",
     regions,
@@ -41,7 +42,7 @@ crate::displaynames::impl_displaynames_v1!(
 
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesRegionShortV1,
-    icu::locale::subtags::Region,
+    Region,
     cldr_serde::displaynames::region::Resource,
     "territories.json",
     regions,

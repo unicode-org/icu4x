@@ -9,6 +9,7 @@ use crate::cldr_serde::displaynames::{Alt, WithAlt};
 use crate::displaynames::extract_names_for_zeromap_struct;
 
 use icu::experimental::displaynames::provider::*;
+use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use std::collections::{BTreeMap, HashSet};
@@ -51,7 +52,7 @@ crate::displaynames::impl_displaynames_legacy_iter_v1!(LocaleDisplayNamesV1, "la
 
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesLanguageMediumV1,
-    icu::locale::LanguageIdentifier,
+    LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
@@ -60,7 +61,7 @@ crate::displaynames::impl_displaynames_v1!(
 
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesLanguageShortV1,
-    icu::locale::LanguageIdentifier,
+    LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
@@ -69,7 +70,7 @@ crate::displaynames::impl_displaynames_v1!(
 
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesLanguageLongV1,
-    icu::locale::LanguageIdentifier,
+    LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
@@ -78,7 +79,7 @@ crate::displaynames::impl_displaynames_v1!(
 
 crate::displaynames::impl_displaynames_menu_v1!(
     LocaleNamesLanguageMenuMediumV1,
-    icu::locale::LanguageIdentifier,
+    LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
