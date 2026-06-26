@@ -114,4 +114,4 @@ impl<T: Writeable + ?Sized> Writeable for WithPart<T> {
     }
 }
 
-crate::impl_display_with_writeable!(WithPart<T>, where T: Writeable + ?Sized);
+crate::impl_display_with_writeable!(@display, WithPart<T>, where T: Writeable + ?Sized);

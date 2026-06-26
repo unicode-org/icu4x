@@ -383,7 +383,7 @@ pub trait Writeable {
 /// );
 /// ```
 ///
-/// With a cfg on fn write_to_string:
+/// With a cfg on fn `write_to_string`:
 ///
 /// ```
 /// struct MyStruct(String);

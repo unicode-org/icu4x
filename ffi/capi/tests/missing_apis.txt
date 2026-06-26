@@ -23,3 +23,4 @@ icu::collator::CollatorBorrowed::new_root#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_to#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_utf16_to#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_utf8_to#FnInStruct
+icu::decimal::FormattedDecimal::write_to#FnInStruct
