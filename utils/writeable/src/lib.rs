@@ -388,7 +388,7 @@ pub trait Writeable {
 /// ```
 /// struct MyStruct(String);
 /// writeable::impl_writeable_delegate!(MyStruct, |&self| &self.0, #[cfg(feature = "alloc")]);
-/// writeable::impl_display_with_writeable!(MyStruct);
+/// writeable::impl_display_with_writeable!(MyStruct, #[cfg(feature = "alloc")]);
 ///
 /// writeable::assert_writeable_eq!(
 ///     MyStruct("hello".to_string()),
