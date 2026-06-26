@@ -261,6 +261,8 @@ impl CurrencyFormatter<Decimal> {
         currency_code: &'l CurrencyCode,
     ) -> impl Writeable + Display + 'l {
         // TODO(#6064): Support plural-specific patterns and full currency formatting spec.
+        // TODO(#8146): Evaluate if FixedDecimal is the correct input type or if we should use
+        // an exact decimal/money representation.
         let (currency_str, pattern, _pattern_selection) = self
             .essential
             .get()
