@@ -8,6 +8,7 @@ use crate::provider::*;
 use crate::rule_segmenter::*;
 use alloc::string::String;
 use alloc::vec;
+#[cfg(test)]
 use alloc::vec::Vec;
 use core::char;
 use icu_locale_core::LanguageIdentifier;
@@ -605,7 +606,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
             iter: input.char_indices(),
             len: input.len(),
             current_pos_data: None,
-            result_cache: Vec::new(),
+            result_cache: new_result_cache(),
             data: self.data,
             options: self.options,
             complex: self.complex,
@@ -625,7 +626,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
             current_pos_data: None,
-            result_cache: Vec::new(),
+            result_cache: new_result_cache(),
             data: self.data,
             options: self.options,
             complex: self.complex,
@@ -640,7 +641,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
             iter: Latin1Indices::new(input),
             len: input.len(),
             current_pos_data: None,
-            result_cache: Vec::new(),
+            result_cache: new_result_cache(),
             data: self.data,
             options: self.options,
             complex: self.complex,
@@ -656,7 +657,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
             iter: Utf16Indices::new(input),
             len: input.len(),
             current_pos_data: None,
-            result_cache: Vec::new(),
+            result_cache: new_result_cache(),
             data: self.data,
             options: self.options,
             complex: self.complex,
@@ -769,7 +770,7 @@ pub struct LineBreakIterator<'data, 's, Y: RuleBreakType> {
     iter: Y::IterAttr<'s>,
     len: usize,
     current_pos_data: Option<(usize, Y::CharType)>,
-    result_cache: Vec<usize>,
+    result_cache: ResultCache,
     data: &'data RuleBreakData<'data>,
     options: ResolvedLineBreakOptions,
     complex: ComplexPayloadsBorrowed<'data>,
@@ -788,7 +789,7 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
                 len: self.len,
                 current_pos_data: self.current_pos_data,
                 data: self.complex.grapheme.data,
-                result_cache: Default::default(),
+                result_cache: new_result_cache(),
                 complex: None,
                 boundary_property: 0,
                 locale_override: None,
@@ -808,17 +809,17 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
         }
 
         // If we have break point cache by previous run, return this result
-        if let Some(&first_pos) = self.result_cache.first() {
+        if let Some(first_pos) = self.result_cache.peek().copied() {
             let mut i = 0;
             loop {
                 if i == first_pos {
-                    self.result_cache = self.result_cache.iter().skip(1).map(|r| r - i).collect();
+                    self.result_cache.next();
                     return self.get_current_position();
                 }
                 i += self.get_current_codepoint().map_or(0, Y::char_len);
                 self.advance_iter();
                 if self.is_eof() {
-                    self.result_cache.clear();
+                    self.result_cache = new_result_cache();
                     return Some(self.len);
                 }
             }
@@ -1156,13 +1157,12 @@ where
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
     let breaks = iter.complex.complex_language_segment_str(&s);
-    iter.result_cache = breaks;
-    let first_pos = *iter.result_cache.first()?;
-    let mut i = left_codepoint.len_utf8();
+    iter.result_cache = result_cache_from_offsets(breaks, left_codepoint.len_utf8());
+    let first_pos = iter.result_cache.peek().copied()?;
+    let mut i = 0;
     loop {
         if i == first_pos {
-            // Re-calculate breaking offset
-            iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
+            iter.result_cache.next();
             return iter.get_current_position();
         }
         debug_assert!(
@@ -1173,7 +1173,7 @@ where
         i += iter.get_current_codepoint().map_or(0, T::char_len);
         iter.advance_iter();
         if iter.is_eof() {
-            iter.result_cache.clear();
+            iter.result_cache = new_result_cache();
             return Some(iter.len);
         }
     }
@@ -1209,19 +1209,13 @@ where
     iterator.iter = start_iter;
     iterator.current_pos_data = start_point;
     let breaks = iterator.complex.complex_language_segment_utf16(&s);
-    iterator.result_cache = breaks;
-    // result_cache vector is utf-16 index that is in BMP.
-    let first_pos = *iterator.result_cache.first()?;
-    let mut i = 1;
+    iterator.result_cache = result_cache_from_offsets(breaks, 1);
+    // result_cache stores UTF-16 code unit distances in BMP-only complex runs.
+    let first_pos = iterator.result_cache.peek().copied()?;
+    let mut i = 0;
     loop {
         if i == first_pos {
-            // Re-calculate breaking offset
-            iterator.result_cache = iterator
-                .result_cache
-                .iter()
-                .skip(1)
-                .map(|r| r - i)
-                .collect();
+            iterator.result_cache.next();
             return iterator.get_current_position();
         }
         debug_assert!(
@@ -1232,7 +1226,7 @@ where
         i += 1;
         iterator.advance_iter();
         if iterator.is_eof() {
-            iterator.result_cache.clear();
+            iterator.result_cache = new_result_cache();
             return Some(iterator.len);
         }
     }
