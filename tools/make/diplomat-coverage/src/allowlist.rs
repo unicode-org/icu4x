@@ -182,6 +182,7 @@ lazy_static::lazy_static! {
         "icu::datetime::DateTimeFormatter::format_unchecked",
         "icu::datetime::NoCalendarFormatter::format_unchecked",
         "icu::datetime::FormattedDateTimeUnchecked",
+        "icu::datetime::range::FormattedDateRange",
 
         // Not planned for 2.0: Would need to introduce diplomat writeable with parts
         "icu::list::parts",

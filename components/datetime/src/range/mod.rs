@@ -3,3 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub(crate) mod difference;
+pub(crate) mod write;
+
+pub use write::FormattedDateRange;
