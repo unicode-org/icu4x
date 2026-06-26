@@ -367,20 +367,7 @@ impl HelloWorldFormatter {
     }
 }
 
-impl Writeable for FormattedHelloWorld<'_> {
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        self.data.message.write_to(sink)
-    }
-
-    fn writeable_borrow(&self) -> Option<&str> {
-        self.data.message.writeable_borrow()
-    }
-
-    fn writeable_length_hint(&self) -> writeable::LengthHint {
-        self.data.message.writeable_length_hint()
-    }
-}
-
+writeable::impl_writeable_delegate!(FormattedHelloWorld<'_>, |&self| &self.data.message);
 writeable::impl_display_with_writeable!(FormattedHelloWorld<'_>);
 
 #[cfg(feature = "export")]
