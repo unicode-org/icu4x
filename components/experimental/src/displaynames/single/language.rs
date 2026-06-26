@@ -11,10 +11,10 @@ use crate::displaynames::{
 };
 use alloc::{vec, vec::Vec};
 use icu_locale_core::LanguageIdentifier;
+use icu_locale_core::subtags::{Language, Region, Script, Variant};
 use icu_pattern::{DoublePlaceholderPattern, DoublePlaceholderValueProviderTry, PatternItem};
 use icu_provider::DataPayloadOr;
 use icu_provider::prelude::*;
-use icu_locale_core::subtags::{Language, Script, Region, Variant};
 use tinystr::TinyAsciiStr;
 use writeable::{PartsWrite, TryWriteable, adapters::LossyWrap};
 
@@ -218,7 +218,10 @@ impl LanguageIdentifierDisplayNameOwned {
         };
 
         // Step 4: Load variant names (if present in subject)
-        let load_variant = |variant: Variant| -> Result<PayloadOrFallback<LocaleNamesVariantMediumV1, Variant>, DataError> {
+        let load_variant = |variant: Variant| -> Result<
+            PayloadOrFallback<LocaleNamesVariantMediumV1, Variant>,
+            DataError,
+        > {
             match VariantDisplayNameOwned::try_new_unstable(provider, prefs, variant)
                 .allow_identifier_not_found()?
             {

@@ -239,12 +239,7 @@ The following features defined in UTS #35 are currently not supported and are pl
 2.  **Constructor Argument Order**:
     In `LanguageIdentifierDisplayNameOwned::try_new(prefs, locale_id, options)`, we have placed `options` last.
     *   *Resolution*: This aligns with the standard ICU4X API style, as `options` behaves like a trailing optional bag.
-3.  **Fallback Behavior in Single Formatters**:
-    We have implemented full fallback support in `LanguageIdentifierDisplayName` (and `LanguageIdentifierDisplayNameOwned` via adapters) using `TryWriteable` (resolving [#8100](https://github.com/unicode-org/icu4x/issues/8100) for the main formatter).
-    Unlike the old multi-formatter (`LocaleDisplayNamesFormatter`), the single formatter does not expose a `fallback` toggle in its options bag (`LanguageIdentifierDisplayNameOptions`).
-    *   *Design Rationale*: Because the formatter returns a `TryWriteable` result, it always performs BCP-47 fallback (lenient mode) under the hood to ensure a display name can be formatted. If a caller wants to verify whether a fallback occurred, they can inspect the `TryWriteable` parts error (`LanguageIdentifierNameFallbackError`) directly, rather than needing an options bag toggle. This keeps the API minimal and idiomatic.
-    *   *Follow-up*: The standalone single formatters (`ScriptDisplayNameOwned`, `RegionDisplayNameOwned`, `VariantDisplayNameOwned`) still fail-fast in their constructors if their specific subtag data is missing. We should extend the `TryWriteable` fallback model to these standalone formatters as well in a future release.
-4.  **Dialect Names Data Marker**:
+3.  **Dialect Names Data Marker**:
     Should dialect names (currently loaded using the same `LocaleNamesLanguageMediumV1` marker but with language+script+region attributes) be moved to a separate data marker to avoid overloading the language name marker and to allow applications to opt-out of dialect data to save binary size?
 
 

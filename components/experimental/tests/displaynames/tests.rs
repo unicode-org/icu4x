@@ -11,8 +11,9 @@ use icu_experimental::displaynames::{
 use icu_locale_core::Locale;
 use icu_locale_core::locale;
 use std::borrow::Cow;
-use writeable::assert_writeable_eq;
-use writeable::{Part, TryWriteable, assert_try_writeable_parts_eq};
+use writeable::{
+    Part, assert_try_writeable_eq, assert_try_writeable_parts_eq, assert_writeable_eq,
+};
 
 #[test]
 fn test_concatenate() {
@@ -192,14 +193,14 @@ fn test_concatenate() {
         );
         let borrowed = single_display_name.as_borrowed();
         assert_writeable_eq!(borrowed.with_fallback(), cas.expected);
-        match borrowed.try_write_to_string() {
-            Ok(s) => {
-                assert_eq!(cas.single_should_err, false, "{cas:?}");
-                assert_eq!(s, cas.expected);
-            }
-            Err(_) => {
-                assert_eq!(cas.single_should_err, true, "{cas:?}");
-            }
+        if cas.single_should_err {
+            assert_try_writeable_eq!(
+                borrowed,
+                cas.expected,
+                Err(LanguageIdentifierNameFallbackError)
+            );
+        } else {
+            assert_try_writeable_eq!(borrowed, cas.expected, Ok(()));
         }
     }
 }
@@ -213,16 +214,16 @@ fn test_fallback_parts() {
     // It should fall back to "xx (YY)" and annotate "xx" and "YY" with Part::ERROR.
     let display_name = LanguageIdentifierDisplayNameOwned::try_new(
         locale.into(),
-        "xx-YY".parse().unwrap(),
+        "xx-Latn-YY".parse().unwrap(),
         options,
     )
     .unwrap();
 
     assert_try_writeable_parts_eq!(
         display_name.as_borrowed(),
-        "xx (YY)",
+        "xx (Latin, YY)",
         Err(LanguageIdentifierNameFallbackError),
-        [(0, 2, Part::ERROR), (4, 6, Part::ERROR)]
+        [(0, 2, Part::ERROR), (11, 13, Part::ERROR)]
     );
 }
 
