@@ -13,6 +13,12 @@ use crate::provider::pattern::{
     GenericPatternItem, PatternItem,
     runtime::{self, PatternMetadata},
 };
+#[cfg(feature = "unstable")]
+#[allow(unused_imports)]
+use crate::provider::range_patterns::{
+    DateGreatestDifferenceField, DatetimePatternsRangeGlueV1, ErasedPackedRangePatterns,
+    RangePatternInfoBorrowed, TimeGreatestDifferenceField,
+};
 use crate::provider::{
     packed_pattern::{ErasedPackedPatterns, PackedSkeletonVariant},
     semantic_skeletons::{DatetimePatternsGlueV1, GluePattern, marker_attrs},
@@ -228,6 +234,46 @@ impl DatePatternSelectionData {
     }
 }
 
+/// Data required for selecting date range patterns.
+///
+/// This struct holds the patterns used to format the date portion of a range.
+#[derive(Debug, Clone)]
+#[cfg(feature = "unstable")]
+#[allow(dead_code)]
+pub(crate) struct DateRangePatternSelectionData {
+    /// The loaded date range patterns, or `None` if date range formatting is not supported.
+    payload: DataPayloadOr<ErasedPackedRangePatterns, ()>,
+}
+
+#[cfg(feature = "unstable")]
+#[allow(dead_code)]
+impl DateRangePatternSelectionData {
+    pub(crate) fn none() -> Self {
+        Self {
+            payload: DataPayloadOr::none(),
+        }
+    }
+
+    pub(crate) fn try_new_with_skeleton(
+        provider: &(impl BoundDataProvider<ErasedPackedRangePatterns> + ?Sized),
+        prefs: DateTimeFormatterPreferences,
+        attributes: &DataMarkerAttributes,
+    ) -> Result<Self, DataError> {
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
+        let payload = provider
+            .load_bound(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
+                ..Default::default()
+            })?
+            .payload;
+        Ok(Self {
+            payload: DataPayloadOr::from_payload(payload),
+        })
+    }
+}
+
 impl DateTimeInputUnchecked {
     fn resolve_time_precision(
         &self,
@@ -381,6 +427,70 @@ impl<'a> TimePatternDataBorrowed<'a> {
             hour_cycle,
             subsecond_digits,
         }
+    }
+}
+
+/// Data required for selecting time range patterns.
+///
+/// This struct holds the patterns used to format the time portion of a range.
+#[derive(Debug, Clone)]
+#[cfg(feature = "unstable")]
+#[allow(dead_code)]
+pub(crate) struct TimeRangePatternSelectionData {
+    /// The loaded time range patterns, or `None` if time range formatting is not supported.
+    payload: DataPayloadOr<ErasedPackedRangePatterns, ()>,
+}
+
+#[cfg(feature = "unstable")]
+#[allow(dead_code)]
+impl TimeRangePatternSelectionData {
+    pub(crate) fn none() -> Self {
+        Self {
+            payload: DataPayloadOr::none(),
+        }
+    }
+
+    pub(crate) fn try_new_with_skeleton(
+        provider: &(impl BoundDataProvider<ErasedPackedRangePatterns> + ?Sized),
+        prefs: DateTimeFormatterPreferences,
+        components: TimeFieldSet,
+    ) -> Result<Self, DataError> {
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
+        let prefs = RawPreferences::from_prefs(prefs);
+        // First try to load with the explicit hour cycle. If there is no explicit hour cycle,
+        // or if loading the explicit hour cycle fails, then load with the default hour cycle.
+        let mut maybe_payload = None;
+        if let Some(hour_cycle) = prefs.hour_cycle {
+            maybe_payload = provider
+                .load_bound(DataRequest {
+                    id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                        components.id_str_for_hour_cycle(Some(hour_cycle)),
+                        &locale,
+                    ),
+                    ..Default::default()
+                })
+                .allow_identifier_not_found()?
+                .map(|r| r.payload);
+        }
+        let payload = match maybe_payload {
+            Some(payload) => payload,
+            None => {
+                provider
+                    .load_bound(DataRequest {
+                        id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                            components.id_str_for_hour_cycle(None),
+                            &locale,
+                        ),
+                        ..Default::default()
+                    })?
+                    .payload
+            }
+        };
+        Ok(Self {
+            payload: DataPayloadOr::from_payload(payload),
+        })
     }
 }
 
@@ -684,6 +794,120 @@ impl DateTimeZonePatternSelectionData {
             alignment: self.options.alignment,
             year_style: self.options.year_style,
         }
+    }
+}
+
+/// Data required for selecting date, time, and zone range patterns.
+///
+/// This struct consolidates the date and time range patterns, as well as the
+/// fallback range glue used when no specific greatest-difference pattern is available.
+#[derive(Debug, Clone)]
+#[cfg(feature = "unstable")]
+#[allow(dead_code)]
+pub(crate) struct DateTimeZoneRangePatternSelectionData {
+    /// Data for selecting date range patterns.
+    pub(crate) date_range: DateRangePatternSelectionData,
+    /// Data for selecting time range patterns.
+    pub(crate) time_range: TimeRangePatternSelectionData,
+    /// Fallback range glue patterns.
+    pub(crate) range_glue: DataPayload<DatetimePatternsRangeGlueV1>,
+}
+
+#[cfg(feature = "unstable")]
+#[allow(dead_code)]
+impl DateTimeZoneRangePatternSelectionData {
+    pub(crate) fn try_new_with_skeleton(
+        date_range_provider: &(impl BoundDataProvider<ErasedPackedRangePatterns> + ?Sized),
+        time_range_provider: &(impl BoundDataProvider<ErasedPackedRangePatterns> + ?Sized),
+        range_glue_provider: &(impl BoundDataProvider<DatetimePatternsRangeGlueV1> + ?Sized),
+        prefs: DateTimeFormatterPreferences,
+        skeleton: CompositeFieldSet,
+    ) -> Result<Self, DataError> {
+        let locale = range_glue_provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
+
+        let range_glue = range_glue_provider
+            .load_bound(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::empty(),
+                    &locale,
+                ),
+                ..Default::default()
+            })?
+            .payload;
+
+        let mut date_range = DateRangePatternSelectionData::none();
+        let mut time_range = TimeRangePatternSelectionData::none();
+
+        match skeleton {
+            CompositeFieldSet::Date(field_set) => {
+                date_range = DateRangePatternSelectionData::try_new_with_skeleton(
+                    date_range_provider,
+                    prefs,
+                    field_set.id_str(),
+                )?;
+            }
+            CompositeFieldSet::CalendarPeriod(field_set) => {
+                date_range = DateRangePatternSelectionData::try_new_with_skeleton(
+                    date_range_provider,
+                    prefs,
+                    field_set.id_str(),
+                )?;
+            }
+            CompositeFieldSet::Time(field_set) => {
+                time_range = TimeRangePatternSelectionData::try_new_with_skeleton(
+                    time_range_provider,
+                    prefs,
+                    field_set,
+                )?;
+            }
+            CompositeFieldSet::DateTime(field_set) => {
+                date_range = DateRangePatternSelectionData::try_new_with_skeleton(
+                    date_range_provider,
+                    prefs,
+                    field_set.to_date_field_set().id_str(),
+                )?;
+                time_range = TimeRangePatternSelectionData::try_new_with_skeleton(
+                    time_range_provider,
+                    prefs,
+                    field_set.to_time_field_set(),
+                )?;
+            }
+            CompositeFieldSet::DateZone(combo) => {
+                date_range = DateRangePatternSelectionData::try_new_with_skeleton(
+                    date_range_provider,
+                    prefs,
+                    combo.dt().id_str(),
+                )?;
+            }
+            CompositeFieldSet::DateTimeZone(combo) => {
+                date_range = DateRangePatternSelectionData::try_new_with_skeleton(
+                    date_range_provider,
+                    prefs,
+                    combo.dt().to_date_field_set().id_str(),
+                )?;
+                time_range = TimeRangePatternSelectionData::try_new_with_skeleton(
+                    time_range_provider,
+                    prefs,
+                    combo.dt().to_time_field_set(),
+                )?;
+            }
+            CompositeFieldSet::TimeZone(combo) => {
+                time_range = TimeRangePatternSelectionData::try_new_with_skeleton(
+                    time_range_provider,
+                    prefs,
+                    combo.dt(),
+                )?;
+            }
+            CompositeFieldSet::Zone(_) => {}
+        }
+
+        Ok(Self {
+            date_range,
+            time_range,
+            range_glue,
+        })
     }
 }
 

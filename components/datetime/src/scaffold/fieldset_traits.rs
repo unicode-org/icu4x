@@ -3,12 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    provider::names::*,
-    provider::packed_pattern::*,
-    provider::range_patterns::*,
-    provider::semantic_skeletons::GluePattern,
-    provider::time_zones::tz,
-    scaffold::*,
+    provider::names::*, provider::packed_pattern::*, provider::range_patterns::*,
+    provider::semantic_skeletons::GluePattern, provider::time_zones::tz, scaffold::*,
 };
 use icu_calendar::{
     provider::{CalendarJapaneseModernV1, CalendarPreferredV1},
@@ -279,6 +275,7 @@ where
 /// Trait to consolidate data provider markers defined by this crate
 /// for datetime range skeleton patterns with a fixed calendar.
 #[rustfmt::skip]
+#[allow(dead_code)]
 pub trait AllFixedCalendarRangePatternDataMarkers<C: CldrCalendar, FSet: DateTimeMarkers>:
     DataProvider<<FSet::D as TypedDateDataMarkers<C>>::DateRangeSkeletonPatternsV1>
     + DataProvider<<FSet::T as TimeMarkers>::TimeRangeSkeletonPatternsV1>
@@ -403,26 +400,38 @@ where
     FSet::T: TimeMarkers,
     FSet::Z: ZoneMarkers,
     T: ?Sized
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Buddhist>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Chinese>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Coptic>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Dangi>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Ethiopian>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Gregorian>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Hebrew>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Indian>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Hijri>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Japanese>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Persian>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Roc>
+        + DataProvider<
+            <<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Buddhist,
+        > + DataProvider<
+            <<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Chinese,
+        > + DataProvider<
+            <<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Coptic,
+        > + DataProvider<
+            <<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Dangi,
+        > + DataProvider<
+            <<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Ethiopian,
+        > + DataProvider<
+            <<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Gregorian,
+        > + DataProvider<
+            <<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Hebrew,
+        > + DataProvider<
+            <<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Indian,
+        > + DataProvider<
+            <<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Hijri,
+        > + DataProvider<
+            <<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Japanese,
+        > + DataProvider<
+            <<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Persian,
+        > + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Roc>
         + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1>
-        + DataProvider<FSet::GluePatternV1>
+        + DataProvider<FSet::GluePatternV1>,
 {
 }
 
 /// Trait to consolidate data provider markers defined by this crate
 /// for datetime range skeleton patterns with any calendar.
 #[rustfmt::skip]
+#[allow(dead_code)]
 pub trait AllAnyCalendarRangePatternDataMarkers<FSet: DateTimeMarkers>:
     DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Buddhist>
     + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Chinese>
