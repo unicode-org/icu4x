@@ -374,6 +374,8 @@ impl BorrowedVariants<'_> {
 }
 
 /// A localized display name for a language identifier.
+///
+/// See [`LanguageIdentifierDisplayNameOwned`].
 #[derive(Debug, Clone, Copy)]
 pub struct LanguageIdentifierDisplayName<'a> {
     base_name: Result<&'a str, &'a str>,
