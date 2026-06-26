@@ -38,6 +38,9 @@ type PayloadOrFallback<M, S> = DataPayloadOr<M, S>;
 
 /// A localized display name for a language identifier, owned version.
 ///
+/// The formatter falls back to the BCP-47 subtag when localized display names are missing
+/// from the data provider. Fallback can be detected using [`TryWriteable`].
+///
 /// # Example
 ///
 /// ```
@@ -59,16 +62,7 @@ type PayloadOrFallback<M, S> = DataPayloadOr<M, S>;
 /// assert_writeable_eq!(display_name.as_borrowed().with_fallback(), "Canadian French");
 /// ```
 ///
-/// # Fallback and TryWriteable
-///
-/// The formatter supports BCP-47 subtag fallback when localized display names are missing
-/// from the data provider. It implements this fallback using [`TryWriteable`].
-///
-/// By default, formatting runs in "lossy mode" (ignoring fallback errors) when using standard
-/// [`Writeable`] or [`Display`](core::fmt::Display) traits (e.g. via `.as_borrowed_with_fallback()`).
-///
-/// To detect whether a fallback occurred, and which parts of the output are fallbacks, you can
-/// borrow the formatter via [`.as_borrowed()`](Self::as_borrowed()) and call [`TryWriteable`] methods:
+/// When a subtag is unknown:
 ///
 /// ```
 /// use icu::experimental::displaynames::{
@@ -82,7 +76,7 @@ type PayloadOrFallback<M, S> = DataPayloadOr<M, S>;
 /// let options = LanguageIdentifierDisplayNameOptions::default();
 ///
 /// // "it-Qabc-150" has known language "it" ("Italian") and known region "150" ("Europe"),
-/// // but unknown script "Qabc". It should format to "Italian (Qabc, Europe)" and return a fallback error.
+/// // but unknown script "Qabc".
 /// let lang_id = langid!("it-Qabc-150");
 /// let display_name = LanguageIdentifierDisplayNameOwned::try_new(
 ///     prefs,
@@ -93,18 +87,18 @@ type PayloadOrFallback<M, S> = DataPayloadOr<M, S>;
 ///
 /// let borrowed = display_name.as_borrowed();
 ///
-/// // 1. Demonstrate the resulting string and the error return value:
+/// // TryWriteable returns an error:
 /// let mut sink = String::new();
-/// let result = borrowed.try_write_to(&mut sink).unwrap();
+/// let result = borrowed.try_write_to(&mut sink).expect("core::fmt::Write succeeded");
 /// assert_eq!(sink, "Italian (Qabc, Europe)");
 /// assert_eq!(result, Err(LanguageIdentifierNameFallbackError));
 ///
-/// // 2. Demonstrate the fallback parts (annotated with Part::ERROR):
+/// // The fallback string is identified with a [`Part::ERROR`](writeable::Part::Error):
 /// assert_try_writeable_parts_eq!(
 ///     borrowed,
 ///     "Italian (Qabc, Europe)",
 ///     Err(LanguageIdentifierNameFallbackError),
-///     [(9, 13, Part::ERROR)] // "Qabc" is marked as an error
+///     [(9, 13, Part::ERROR)] // the span of Qabc
 /// );
 /// ```
 #[allow(dead_code)]
@@ -391,7 +385,7 @@ pub struct LanguageIdentifierDisplayName<'a> {
 }
 
 impl<'a> LanguageIdentifierDisplayName<'a> {
-    /// Returns a writeable that formats the display name.
+    /// Returns a [`Writeable`](writeable::Writeable) that formats the display name.
     ///
     /// Missing display names will fall back to the raw BCP-47 code.
     #[inline]
