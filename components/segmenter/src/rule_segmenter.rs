@@ -9,9 +9,32 @@ use crate::complex::ComplexPayloadsBorrowed;
 use crate::complex::{ComplexIterator, ComplexPayloadBorrowed};
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::provider::*;
-use alloc::vec::Vec;
+use alloc::vec::{IntoIter, Vec};
+use core::iter::Peekable;
 use core::str::CharIndices;
 use utf8_iter::Utf8CharIndices;
+
+pub(crate) type ResultCache = Peekable<IntoIter<usize>>;
+
+pub(crate) fn new_result_cache() -> ResultCache {
+    Vec::new().into_iter().peekable()
+}
+
+pub(crate) fn result_cache_from_offsets(
+    mut break_offsets: Vec<usize>,
+    mut previous_offset: usize,
+) -> ResultCache {
+    // Complex segmenters return offsets relative to the start of the complex run.
+    // The cache stores distances from the iterator's current position to the next
+    // break, then from each cached break to the following cached break.
+    for break_offset in &mut break_offsets {
+        let current_offset = *break_offset;
+        debug_assert!(current_offset >= previous_offset);
+        *break_offset = current_offset.saturating_sub(previous_offset);
+        previous_offset = current_offset;
+    }
+    break_offsets.into_iter().peekable()
+}
 
 /// A trait allowing for `RuleBreakIterator` to be generalized to multiple string
 /// encoding methods and granularity such as grapheme cluster, word, etc.
@@ -82,7 +105,7 @@ pub struct RuleBreakIterator<'data, 's, Y: RuleBreakType> {
     pub(crate) iter: Y::IterAttr<'s>,
     pub(crate) len: usize,
     pub(crate) current_pos_data: Option<(usize, Y::CharType)>,
-    pub(crate) result_cache: Vec<usize>,
+    pub(crate) result_cache: ResultCache,
     pub(crate) data: &'data RuleBreakData<'data>,
     pub(crate) complex: Option<ComplexPayloadsBorrowed<'data>>,
     // The property associated with the previous break
@@ -109,17 +132,17 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
 
     fn next(&mut self) -> Option<Self::Item> {
         // If we have break point cache by previous run, return this result
-        if let Some(&first_result) = self.result_cache.first() {
+        if let Some(first_result) = self.result_cache.peek().copied() {
             let mut i = 0;
             loop {
                 if i == first_result {
-                    self.result_cache = self.result_cache.iter().skip(1).map(|r| r - i).collect();
+                    self.result_cache.next();
                     return self.get_current_position();
                 }
                 i += self.get_current_codepoint().map_or(0, Y::char_len);
                 self.advance_iter();
                 if self.is_eof() {
-                    self.result_cache.clear();
+                    self.result_cache = new_result_cache();
                     self.boundary_property = self.data.complex_property;
                     return Some(self.len);
                 }

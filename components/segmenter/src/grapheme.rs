@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::vec::Vec;
 use icu_provider::prelude::*;
 
 use crate::indices::{Latin1Indices, Utf16Indices};
@@ -170,7 +169,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
             iter: input.char_indices(),
             len: input.len(),
             current_pos_data: None,
-            result_cache: Vec::new(),
+            result_cache: new_result_cache(),
             data: self.data,
             complex: None,
             boundary_property: 0,
@@ -191,7 +190,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
             current_pos_data: None,
-            result_cache: Vec::new(),
+            result_cache: new_result_cache(),
             data: self.data,
             complex: None,
             boundary_property: 0,
@@ -210,7 +209,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
             iter: Latin1Indices::new(input),
             len: input.len(),
             current_pos_data: None,
-            result_cache: Vec::new(),
+            result_cache: new_result_cache(),
             data: self.data,
             complex: None,
             boundary_property: 0,
@@ -230,7 +229,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
             iter: Utf16Indices::new(input),
             len: input.len(),
             current_pos_data: None,
-            result_cache: Vec::new(),
+            result_cache: new_result_cache(),
             data: self.data,
             complex: None,
             boundary_property: 0,
