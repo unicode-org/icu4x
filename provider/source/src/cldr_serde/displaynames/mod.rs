@@ -19,9 +19,13 @@ pub(crate) enum Alt {
     Variant,
     StandAlone,
     Official,
+    /// Secondary name variant, used in languages and scripts.
     Secondary,
+    /// Abbreviation for territory code `IO` (British Indian Ocean Territory).
     Biot,
+    /// Alternate name for territory code `IO` (British Indian Ocean Territory) mapping to "Chagos Archipelago".
     Chagos,
+    /// "menu" variant, which is being replaced by menu=core|extension, but is still in CLDR.
     Menu,
     Unknown,
 }
