@@ -93,6 +93,11 @@ impl CurrencyFormatter<Decimal> {
         ]
     );
 
+    // We manually implement the compiled constructors because of the cross-crate dependency
+    // on `icu_decimal` markers (which are not present in `icu_experimental`'s local `Baked` provider).
+    // TODO: When CurrencyFormatter is migrated out of experimental, check if we can use the
+    // macro-generated versions instead of these manual implementations.
+
     /// Creates a new [`CurrencyFormatter`] for short formatting from compiled locale data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -135,14 +140,15 @@ impl CurrencyFormatter<Decimal> {
     #[cfg(feature = "compiled_data")]
     pub fn try_new_narrow(prefs: CurrencyFormatterPreferences) -> Result<Self, DataError> {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
+        let decimal_prefs = DecimalFormatterPreferences::from(&prefs);
         let decimal_formatter =
-            DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
-        let essential: DataPayload<CurrencyEssentialsV1> = crate::provider::Baked
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&locale),
-                ..Default::default()
-            })?
-            .payload;
+            DecimalFormatter::try_new(decimal_prefs, DecimalFormatterOptions::default())?;
+
+        let req_id = decimal_prefs.nu_id(&locale);
+        let default_id = DataIdentifierBorrowed::for_locale(&locale);
+        let ids = req_id.into_iter().chain(core::iter::once(default_id));
+        let essential =
+            load_with_fallback::<CurrencyEssentialsV1>(&crate::provider::Baked, ids)?.payload;
 
         if essential.get().standard_pattern().is_none() {
             return Err(DataError::custom("missing standard pattern"));
@@ -207,17 +213,16 @@ impl CurrencyFormatter<Decimal> {
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
+        let decimal_prefs = DecimalFormatterPreferences::from(&prefs);
         let decimal_formatter = DecimalFormatter::try_new_unstable(
             provider,
-            (&prefs).into(),
+            decimal_prefs,
             DecimalFormatterOptions::default(),
         )?;
-        let essential: DataPayload<CurrencyEssentialsV1> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&locale),
-                ..Default::default()
-            })?
-            .payload;
+        let req_id = decimal_prefs.nu_id(&locale);
+        let default_id = DataIdentifierBorrowed::for_locale(&locale);
+        let ids = req_id.into_iter().chain(core::iter::once(default_id));
+        let essential = load_with_fallback::<CurrencyEssentialsV1>(provider, ids)?.payload;
 
         if essential.get().standard_pattern().is_none() {
             return Err(DataError::custom("missing standard pattern"));
