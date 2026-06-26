@@ -4,134 +4,217 @@
 
 use criterion::{Criterion, black_box, criterion_group, criterion_main};
 
-use icu_segmenter::LineSegmenter;
+use icu_segmenter::neo::{LineSegmenter as NeoLineSegmenter, WordSegmenter as NeoWordSegmenter};
 use icu_segmenter::options::LineBreakOptions;
 use icu_segmenter::options::LineBreakStrictness;
 use icu_segmenter::options::LineBreakWordOption;
+use icu_segmenter::{LineSegmenter, WordSegmenter};
 
-// Example is MIT license.
-const TEST_STR_EN: &str = "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.";
-const TEST_STR_TH: &str =
-    "ภาษาไทยภาษาไทย ภาษาไทยภาษาไทย ภาษาไทยภาษาไทย ภาษาไทยภาษาไทย ภาษาไทยภาษาไทย ภาษาไทยภาษาไทย";
+const TEXT_ENGLISH: &str = "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.";
+const TEXT_THAI: &str =
+    "ภาษาไทยภาษาไทยภาษาไทยภาษาไทยภาษาไทยภาษาไทยภาษาไทยภาษาไทยภาษาไทยภาษาไทยภาษาไทยภาษาไทย";
+const TEXT_JAPANESE: &str =
+    "こんにちは世界こんにちは世界こんにちは世界こんにちは世界こんにちは世界こんにちは世界";
+const TEXT_HAN: &str = "中文分词需要词典中文分词需要词典中文分词需要词典中文分词需要词典";
+const TEXT_THAI_JAPANESE: &str = "ภาษาไทยこんにちは世界ภาษาไทยこんにちは世界ภาษาไทยこんにちは世界";
+const TEXT_THAI_HAN: &str = "ภาษาไทย龟山岛ภาษาไทย龟山岛ภาษาไทย龟山岛";
+
+const TEXT_CASES: &[TextCase] = &[
+    TextCase {
+        name: "english",
+        text: TEXT_ENGLISH,
+    },
+    TextCase {
+        name: "thai",
+        text: TEXT_THAI,
+    },
+    TextCase {
+        name: "japanese",
+        text: TEXT_JAPANESE,
+    },
+    TextCase {
+        name: "han",
+        text: TEXT_HAN,
+    },
+    TextCase {
+        name: "thai_japanese",
+        text: TEXT_THAI_JAPANESE,
+    },
+    TextCase {
+        name: "thai_han",
+        text: TEXT_THAI_HAN,
+    },
+];
+
+#[derive(Clone, Copy)]
+struct TextCase {
+    name: &'static str,
+    text: &'static str,
+}
+
+fn consume_breakpoints(iter: impl Iterator<Item = usize>) -> usize {
+    black_box(iter.fold(0usize, |checksum, breakpoint| {
+        checksum.wrapping_mul(31).wrapping_add(breakpoint)
+    }))
+}
 
 fn line_break_iter_latin1(c: &mut Criterion) {
-    let mut group = c.benchmark_group("Line Break/Latin1");
+    let mut group = c.benchmark_group("Segmenter/line/segment_latin1");
 
-    let segmenter = LineSegmenter::new_dictionary(Default::default());
+    let published = LineSegmenter::new_dictionary(Default::default());
+    let neo = NeoLineSegmenter::new_dictionary(Default::default());
 
     let mut options = LineBreakOptions::default();
     options.strictness = Some(LineBreakStrictness::Anywhere);
     options.word_option = Some(LineBreakWordOption::BreakAll);
-    let segmenter_css = LineSegmenter::new_dictionary(options);
+    let published_css = LineSegmenter::new_dictionary(options);
+    let neo_css = NeoLineSegmenter::new_dictionary(options);
 
-    group.bench_function("En", |b| {
+    group.bench_function("published_dictionary/english", |b| {
         b.iter(|| {
-            black_box(&segmenter)
-                .segment_latin1(black_box(TEST_STR_EN).as_bytes())
-                .count()
+            consume_breakpoints(
+                black_box(published).segment_latin1(black_box(TEXT_ENGLISH).as_bytes()),
+            )
         })
     });
 
-    group.bench_function("En CSS", |b| {
+    group.bench_function("neo_dictionary/english", |b| {
         b.iter(|| {
-            black_box(&segmenter_css)
-                .segment_latin1(black_box(TEST_STR_EN).as_bytes())
-                .count()
+            consume_breakpoints(black_box(neo).segment_latin1(black_box(TEXT_ENGLISH).as_bytes()))
+        })
+    });
+
+    group.bench_function("published_dictionary_css/english", |b| {
+        b.iter(|| {
+            consume_breakpoints(
+                black_box(published_css).segment_latin1(black_box(TEXT_ENGLISH).as_bytes()),
+            )
+        })
+    });
+
+    group.bench_function("neo_dictionary_css/english", |b| {
+        b.iter(|| {
+            consume_breakpoints(
+                black_box(neo_css).segment_latin1(black_box(TEXT_ENGLISH).as_bytes()),
+            )
         })
     });
 }
 
 fn line_break_iter_utf8(c: &mut Criterion) {
-    let mut group = c.benchmark_group("Line Break/UTF8");
+    let mut group = c.benchmark_group("Segmenter/line/segment_utf8");
 
-    let segmenter_auto = LineSegmenter::new_auto(Default::default());
-    let segmenter_lstm = LineSegmenter::new_lstm(Default::default());
-    let segmenter_dictionary = LineSegmenter::new_dictionary(Default::default());
+    let published = LineSegmenter::new_dictionary(Default::default());
+    let neo = NeoLineSegmenter::new_dictionary(Default::default());
 
-    let mut options = LineBreakOptions::default();
-    options.strictness = Some(LineBreakStrictness::Anywhere);
-    options.word_option = Some(LineBreakWordOption::BreakAll);
-    let segmenter_css_dictionary = LineSegmenter::new_dictionary(options);
-
-    // No need to test "auto", "lstm", or "dictionary" constructor variants since English uses only
-    // UAX14 rules for line breaking.
-    group.bench_function("En", |b| {
-        b.iter(|| {
-            black_box(&segmenter_dictionary)
-                .segment_str(black_box(TEST_STR_EN))
-                .count()
-        })
-    });
-
-    group.bench_function("En CSS", |b| {
-        b.iter(|| {
-            black_box(&segmenter_css_dictionary)
-                .segment_str(black_box(TEST_STR_EN))
-                .count()
-        })
-    });
-
-    let segmenters = [
-        (&segmenter_auto, "auto"),
-        (&segmenter_lstm, "lstm"),
-        (&segmenter_dictionary, "dictionary"),
-    ];
-    for (segmenter, variant) in segmenters {
-        group.bench_function("Th/".to_string() + variant, |b| {
+    for case in TEXT_CASES {
+        group.bench_function(format!("published_dictionary/{}", case.name), |b| {
             b.iter(|| {
-                black_box(&segmenter)
-                    .segment_str(black_box(TEST_STR_TH))
-                    .count()
+                consume_breakpoints(
+                    black_box(published).segment_utf8(black_box(case.text).as_bytes()),
+                )
+            })
+        });
+
+        group.bench_function(format!("neo_dictionary/{}", case.name), |b| {
+            b.iter(|| {
+                consume_breakpoints(black_box(neo).segment_utf8(black_box(case.text).as_bytes()))
             })
         });
     }
 }
 
+fn line_break_iter_str(c: &mut Criterion) {
+    let mut group = c.benchmark_group("Segmenter/line/segment_str");
+
+    let published = LineSegmenter::new_dictionary(Default::default());
+    let neo = NeoLineSegmenter::new_dictionary(Default::default());
+
+    for case in TEXT_CASES {
+        group.bench_function(format!("published_dictionary/{}", case.name), |b| {
+            b.iter(|| consume_breakpoints(black_box(published).segment_str(black_box(case.text))))
+        });
+
+        group.bench_function(format!("neo_dictionary/{}", case.name), |b| {
+            b.iter(|| consume_breakpoints(black_box(neo).segment_str(black_box(case.text))))
+        });
+    }
+}
+
 fn line_break_iter_utf16(c: &mut Criterion) {
-    let mut group = c.benchmark_group("Line Break/UTF16");
+    let mut group = c.benchmark_group("Segmenter/line/segment_utf16");
 
-    let utf16_en: Vec<u16> = TEST_STR_EN.encode_utf16().collect();
-    let utf16_th: Vec<u16> = TEST_STR_TH.encode_utf16().collect();
+    let published = LineSegmenter::new_dictionary(Default::default());
+    let neo = NeoLineSegmenter::new_dictionary(Default::default());
 
-    let segmenter_auto = LineSegmenter::new_auto(Default::default());
-    let segmenter_lstm = LineSegmenter::new_lstm(Default::default());
-    let segmenter_dictionary = LineSegmenter::new_dictionary(Default::default());
+    for case in TEXT_CASES {
+        let utf16 = case.text.encode_utf16().collect::<Vec<u16>>();
 
-    let mut options = LineBreakOptions::default();
-    options.strictness = Some(LineBreakStrictness::Anywhere);
-    options.word_option = Some(LineBreakWordOption::BreakAll);
-    let segmenter_css_dictionary = LineSegmenter::new_dictionary(options);
+        group.bench_function(format!("published_dictionary/{}", case.name), |b| {
+            b.iter(|| consume_breakpoints(black_box(published).segment_utf16(black_box(&utf16))))
+        });
 
-    // No need to test "auto", "lstm", or "dictionary" constructor variants since English uses only
-    // UAX14 rules for line breaking.
-    group.bench_function("En", |b| {
-        b.iter(|| {
-            black_box(&segmenter_dictionary)
-                .segment_utf16(black_box(&utf16_en))
-                .count()
-        })
-    });
+        group.bench_function(format!("neo_dictionary/{}", case.name), |b| {
+            b.iter(|| consume_breakpoints(black_box(neo).segment_utf16(black_box(&utf16))))
+        });
+    }
+}
 
-    group.bench_function("En CSS", |b| {
-        b.iter(|| {
-            black_box(&segmenter_css_dictionary)
-                .segment_utf16(black_box(&utf16_en))
-                .count()
-        })
-    });
+fn word_break_iter_utf8(c: &mut Criterion) {
+    let mut group = c.benchmark_group("Segmenter/word/segment_utf8");
 
-    let segmenters = [
-        (&segmenter_auto, "auto"),
-        (&segmenter_lstm, "lstm"),
-        (&segmenter_dictionary, "dictionary"),
-    ];
-    for (segmenter, variant) in segmenters {
-        group.bench_function("Th/".to_string() + variant, |b| {
+    let published = WordSegmenter::new_dictionary(Default::default());
+    let neo = NeoWordSegmenter::new_dictionary(Default::default());
+
+    for case in TEXT_CASES {
+        group.bench_function(format!("published_dictionary/{}", case.name), |b| {
             b.iter(|| {
-                black_box(&segmenter)
-                    .segment_utf16(black_box(&utf16_th))
-                    .count()
+                consume_breakpoints(
+                    black_box(published).segment_utf8(black_box(case.text).as_bytes()),
+                )
             })
+        });
+
+        group.bench_function(format!("neo_dictionary/{}", case.name), |b| {
+            b.iter(|| {
+                consume_breakpoints(black_box(neo).segment_utf8(black_box(case.text).as_bytes()))
+            })
+        });
+    }
+}
+
+fn word_break_iter_str(c: &mut Criterion) {
+    let mut group = c.benchmark_group("Segmenter/word/segment_str");
+
+    let published = WordSegmenter::new_dictionary(Default::default());
+    let neo = NeoWordSegmenter::new_dictionary(Default::default());
+
+    for case in TEXT_CASES {
+        group.bench_function(format!("published_dictionary/{}", case.name), |b| {
+            b.iter(|| consume_breakpoints(black_box(published).segment_str(black_box(case.text))))
+        });
+
+        group.bench_function(format!("neo_dictionary/{}", case.name), |b| {
+            b.iter(|| consume_breakpoints(black_box(neo).segment_str(black_box(case.text))))
+        });
+    }
+}
+
+fn word_break_iter_utf16(c: &mut Criterion) {
+    let mut group = c.benchmark_group("Segmenter/word/segment_utf16");
+
+    let published = WordSegmenter::new_dictionary(Default::default());
+    let neo = NeoWordSegmenter::new_dictionary(Default::default());
+
+    for case in TEXT_CASES {
+        let utf16 = case.text.encode_utf16().collect::<Vec<u16>>();
+
+        group.bench_function(format!("published_dictionary/{}", case.name), |b| {
+            b.iter(|| consume_breakpoints(black_box(published).segment_utf16(black_box(&utf16))))
+        });
+
+        group.bench_function(format!("neo_dictionary/{}", case.name), |b| {
+            b.iter(|| consume_breakpoints(black_box(neo).segment_utf16(black_box(&utf16))))
         });
     }
 }
@@ -140,6 +223,10 @@ criterion_group!(
     benches,
     line_break_iter_latin1,
     line_break_iter_utf8,
-    line_break_iter_utf16
+    line_break_iter_str,
+    line_break_iter_utf16,
+    word_break_iter_utf8,
+    word_break_iter_str,
+    word_break_iter_utf16
 );
 criterion_main!(benches);
