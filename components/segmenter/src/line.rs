@@ -1081,6 +1081,13 @@ enum StringBoundaryPosType {
 
 impl<Y: RuleBreakType> LineBreakIterator<'_, '_, Y> {
     fn advance_iter(&mut self) {
+        if !Y::CAN_CONTAIN_SA {
+            self.previous_pos_iter = None;
+            self.current_pos_iter = None;
+            self.current_pos_data = self.iter.next();
+            return;
+        }
+
         let current_pos_iter = self.iter.clone();
         self.previous_pos_iter = self.current_pos_iter.take();
         self.current_pos_data = self.iter.next();
@@ -1805,6 +1812,15 @@ mod tests {
         check_line(
             "ภาษา",
             &["ภาษา"],
+            LineSegmenter::new_dictionary(Default::default()),
+        );
+    }
+
+    #[test]
+    fn complex_mixed_thai_cj_line_break() {
+        check_line(
+            "ภาษาไทย龟山岛",
+            &["ภาษา", "ไทย", "龟", "山", "岛"],
             LineSegmenter::new_dictionary(Default::default()),
         );
     }

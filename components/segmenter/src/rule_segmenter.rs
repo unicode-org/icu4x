@@ -261,6 +261,13 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
 
 impl<Y: RuleBreakType> RuleBreakIterator<'_, '_, Y> {
     pub(crate) fn advance_iter(&mut self) {
+        if !Y::CAN_CONTAIN_SA || self.complex.is_none() {
+            self.previous_pos_iter = None;
+            self.current_pos_iter = None;
+            self.current_pos_data = self.iter.next();
+            return;
+        }
+
         let current_pos_iter = self.iter.clone();
         self.previous_pos_iter = self.current_pos_iter.take();
         self.current_pos_data = self.iter.next();
