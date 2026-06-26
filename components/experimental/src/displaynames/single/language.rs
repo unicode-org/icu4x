@@ -56,7 +56,7 @@ type PayloadOrFallback<M, S> = DataPayloadOr<M, S>;
 /// )
 /// .expect("Data should load successfully");
 ///
-/// assert_writeable_eq!(display_name.as_borrowed_with_fallback(), "Canadian French");
+/// assert_writeable_eq!(display_name.as_borrowed().with_fallback(), "Canadian French");
 /// ```
 #[allow(dead_code)]
 #[derive(Debug)]
@@ -277,7 +277,8 @@ impl LanguageIdentifierDisplayNameOwned {
         })
     }
 
-    /// Returns a borrowed version of this display name.
+    /// Returns a borrowed version of this display name
+    /// suitable for writing out to a string.
     pub fn as_borrowed(&self) -> LanguageIdentifierDisplayName<'_> {
         let base_name = match self.language_payload.get() {
             Ok(p) => Ok(p.as_ref()),
@@ -309,14 +310,6 @@ impl LanguageIdentifierDisplayNameOwned {
             locale_pattern: &self.essentials_payload.get().locale_pattern,
             locale_separator: &self.essentials_payload.get().locale_separator,
         }
-    }
-
-    /// Returns a writeable that formats the display name.
-    ///
-    /// Missing display names will fall back to the raw BCP-47 code.
-    #[inline]
-    pub fn as_borrowed_with_fallback(&self) -> LossyWrap<LanguageIdentifierDisplayName<'_>> {
-        self.as_borrowed().with_fallback()
     }
 }
 

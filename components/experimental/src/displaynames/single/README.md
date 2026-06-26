@@ -107,7 +107,7 @@ The `LanguageIdentifierDisplayName` formatter supports BCP-47 subtag fallback wh
 ### Detecting Fallback with `TryWriteable`
 
 To allow applications to detect whether a fallback occurred (and which parts of the output are fallbacks), `LanguageIdentifierDisplayName` implements the **`TryWriteable`** trait.
-*   **Lossy Mode (Default)**: If you format the display name using the standard `Writeable` or `Display` trait (e.g., via the `.with_fallback()` or `.as_borrowed_with_fallback()` adapters), it runs in "lossy mode", automatically writing the fallback codes and discarding any errors.
+*   **Lossy Mode (Default)**: If you format the display name using the standard `Writeable` or `Display` trait (e.g., via the `.with_fallback()` adapter), it runs in "lossy mode", automatically writing the fallback codes and discarding any errors.
 *   **Strict/Detection Mode**: You can borrow the formatter via `.as_borrowed()` and call `try_write_to` or `try_write_to_parts` to capture the `LanguageIdentifierNameFallbackError` if a fallback occurred. In `try_write_to_parts`, a `Part::ERROR` will annotate the fallback strings.
 
 ---

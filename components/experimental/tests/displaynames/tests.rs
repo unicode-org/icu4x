@@ -188,7 +188,7 @@ fn test_concatenate() {
         )
         .unwrap();
         assert_writeable_eq!(
-            single_display_name.as_borrowed_with_fallback(),
+            single_display_name.as_borrowed().with_fallback(),
             cas.expected
         );
         let borrowed = single_display_name.as_borrowed();
@@ -244,7 +244,7 @@ fn test_single_language_display_name_standard() {
         .expect("Data should load successfully");
 
     assert_writeable_eq!(
-        lang_name.as_borrowed_with_fallback(),
+        lang_name.as_borrowed().with_fallback(),
         "Chinese (Traditional, Hong Kong SAR China)"
     );
 }
