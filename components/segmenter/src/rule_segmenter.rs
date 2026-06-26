@@ -29,8 +29,11 @@ pub(crate) fn result_cache_from_offsets(
     // break, then from each cached break to the following cached break.
     for break_offset in &mut break_offsets {
         let current_offset = *break_offset;
-        debug_assert!(current_offset >= previous_offset);
-        *break_offset = current_offset.saturating_sub(previous_offset);
+        assert!(
+            current_offset >= previous_offset,
+            "complex break offsets must be monotonically increasing"
+        );
+        *break_offset = current_offset - previous_offset;
         previous_offset = current_offset;
     }
     break_offsets.into_iter().peekable()
@@ -533,5 +536,32 @@ impl RuleBreakType for Utf16 {
     #[cfg(feature = "unstable")]
     fn is_empty<'s>(iter: &Self::IterAttr<'s>) -> bool {
         iter.as_slice().is_empty()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn result_cache_stores_distances_between_breaks() {
+        let cache = result_cache_from_offsets(vec![12, 21, 33], 3);
+        let distances = cache.collect::<Vec<_>>();
+
+        assert_eq!(distances, [9, 9, 12]);
+    }
+
+    #[test]
+    fn result_cache_allows_break_at_current_position() {
+        let cache = result_cache_from_offsets(vec![3, 12], 3);
+        let distances = cache.collect::<Vec<_>>();
+
+        assert_eq!(distances, [0, 9]);
+    }
+
+    #[test]
+    #[should_panic(expected = "complex break offsets must be monotonically increasing")]
+    fn result_cache_rejects_offsets_before_current_position() {
+        let _ = result_cache_from_offsets(vec![2], 3);
     }
 }
