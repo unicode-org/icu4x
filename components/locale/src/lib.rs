@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, doc)), no_std)]
+#![no_std]
 #![cfg_attr(
     not(test),
     deny(
@@ -82,6 +82,9 @@
 //! [`UTS #35: Unicode LDML 3. LocaleId Canonicalization`]: https://unicode.org/reports/tr35/#LocaleId_Canonicalization,
 
 extern crate alloc;
+
+#[cfg(test)]
+extern crate std;
 
 mod canonicalizer;
 mod directionality;

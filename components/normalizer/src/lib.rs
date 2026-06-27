@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, doc)), no_std)]
+#![no_std]
 #![cfg_attr(
     not(test),
     deny(
@@ -57,6 +57,9 @@
 //! ```
 
 extern crate alloc;
+
+#[cfg(test)]
+extern crate std;
 
 // TODO: The plan is to replace
 // `#[cfg(not(icu4x_unstable_fast_trie_only))]`
