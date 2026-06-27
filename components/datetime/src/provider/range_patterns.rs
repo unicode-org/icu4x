@@ -459,6 +459,9 @@ icu_provider::data_struct!(
     #[cfg(feature = "datagen")]
 );
 
+pub(crate) type ErasedPackedRangePatterns =
+    icu_provider::marker::ErasedMarker<PackedRangePatterns<'static>>;
+
 icu_provider::data_marker!(
     /// `DatetimePatternsRangeGlueV1`
     DatetimePatternsRangeGlueV1,
