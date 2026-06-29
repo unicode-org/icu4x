@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use crate::complex::{ComplexPayloads, ComplexPayloadsBorrowed};
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::iterator_helpers::derive_usize_iterator_with_type;
 use crate::line::{LineBreakOptions, LineBreakStrictness, LineBreakWordOption};
@@ -216,7 +215,6 @@ impl LineSegmenter {
         D: DataProvider<SegmenterBreakLineV2>
             + DataProvider<SegmenterBreakLineOverrideV2>
             + DataProvider<SegmenterLstmAutoV1>
-            + DataProvider<SegmenterBreakGraphemeClusterV1>
             + DataProvider<SegmenterBreakGraphemeClusterV2>
             + ?Sized,
     {
@@ -263,7 +261,6 @@ impl LineSegmenter {
         D: DataProvider<SegmenterBreakLineV2>
             + DataProvider<SegmenterBreakLineOverrideV2>
             + DataProvider<SegmenterLstmAutoV1>
-            + DataProvider<SegmenterBreakGraphemeClusterV1>
             + DataProvider<SegmenterBreakGraphemeClusterV2>
             + ?Sized,
     {
@@ -307,7 +304,6 @@ impl LineSegmenter {
         D: DataProvider<SegmenterBreakLineV2>
             + DataProvider<SegmenterDictionaryExtendedV1>
             + DataProvider<SegmenterBreakLineOverrideV2>
-            + DataProvider<SegmenterBreakGraphemeClusterV1>
             + DataProvider<SegmenterBreakGraphemeClusterV2>
             + ?Sized,
     {
@@ -383,7 +379,6 @@ impl LineSegmenter {
     ) -> Result<Self, DataError>
     where
         D: DataProvider<SegmenterBreakLineV2>
-            + DataProvider<SegmenterBreakGraphemeClusterV1>
             + DataProvider<SegmenterBreakGraphemeClusterV2>
             + DataProvider<SegmenterBreakLineOverrideV2>
             + ?Sized,

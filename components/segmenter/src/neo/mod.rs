@@ -4,7 +4,6 @@
 
 //! Experimental reimplementations
 
-use crate::complex::ComplexIterator;
 use crate::provider::{
     Acceptance, ComplexScript, SegmenterStateMachine, SegmenterStateMachineOverride, Symbol,
 };
@@ -19,6 +18,12 @@ mod sentence;
 pub use sentence::*;
 mod word;
 pub use word::*;
+
+pub(crate) type ComplexIterator<'data, 's, R> =
+    crate::complex::ComplexIterator<'data, 's, GraphemeClusterSegmenterBorrowed<'data>, R>;
+type ComplexPayloads = crate::complex::ComplexPayloads<GraphemeClusterSegmenter>;
+pub(crate) type ComplexPayloadsBorrowed<'data> =
+    crate::complex::ComplexPayloadsBorrowed<'data, GraphemeClusterSegmenterBorrowed<'data>>;
 
 pub(crate) trait ComplexHandler<Y: RuleBreakType> {
     const BREAK_STATUS: u8;

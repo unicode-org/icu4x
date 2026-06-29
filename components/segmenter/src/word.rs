@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::complex::*;
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::iterator_helpers::derive_usize_iterator_with_type;
 use crate::provider::*;
@@ -13,6 +12,10 @@ use alloc::vec::Vec;
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
+
+type ComplexPayloads = crate::complex::ComplexPayloads<crate::GraphemeClusterSegmenter>;
+type ComplexPayloadsBorrowed<'data> =
+    crate::complex::ComplexPayloadsBorrowed<'data, crate::GraphemeClusterSegmenterBorrowed<'data>>;
 
 /// Options to tailor word breaking behavior.
 #[non_exhaustive]

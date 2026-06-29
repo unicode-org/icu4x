@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::grapheme::GraphemeClusterSegmenterBorrowed;
+use super::AbstractGraphemeClusterSegmenterBorrowed;
 use crate::indices::Utf16Indices;
 use crate::provider::*;
 #[cfg(feature = "unstable")]
@@ -40,7 +40,7 @@ impl<R: RuleBreakType> Iterator for LstmSegmenterIterator<'_, '_, R> {
 }
 
 #[derive(Clone, Copy)]
-pub(super) struct LstmSegmenter<'data> {
+pub(super) struct LstmSegmenter<'data, G: AbstractGraphemeClusterSegmenterBorrowed<'data>> {
     dic: ZeroMapBorrowed<'data, PotentialUtf8, u16>,
     embedding: MatrixZero<'data, 2>,
     fw_w: MatrixZero<'data, 3>,
@@ -52,15 +52,12 @@ pub(super) struct LstmSegmenter<'data> {
     timew_fw: MatrixZero<'data, 2>,
     timew_bw: MatrixZero<'data, 2>,
     time_b: MatrixZero<'data, 1>,
-    grapheme: Option<GraphemeClusterSegmenterBorrowed<'data>>,
+    grapheme: Option<G>,
 }
 
-impl<'data> LstmSegmenter<'data> {
+impl<'data, G: AbstractGraphemeClusterSegmenterBorrowed<'data>> LstmSegmenter<'data, G> {
     /// Returns `Err` if grapheme data is required but not present
-    pub(super) fn new(
-        lstm: &'data LstmData<'data>,
-        grapheme: GraphemeClusterSegmenterBorrowed<'data>,
-    ) -> Self {
+    pub(super) fn new(lstm: &'data LstmData<'data>, grapheme: G) -> Self {
         let LstmData::Float32(lstm) = lstm;
         let time_w = MatrixZero::from(&lstm.time_w);
         #[expect(clippy::unwrap_used)] // shape (2, 4, hunits)
@@ -239,7 +236,7 @@ struct BiesIterator<'data> {
 impl<'data> BiesIterator<'data> {
     // input_seq is a sequence of id numbers that represents grapheme clusters or code points in the input line. These ids are used later
     // in the embedding layer of the model.
-    fn new(
+    fn new<G: AbstractGraphemeClusterSegmenterBorrowed<'data>>(
         LstmSegmenter {
             embedding,
             fw_w,
@@ -252,7 +249,7 @@ impl<'data> BiesIterator<'data> {
             timew_bw,
             time_b,
             ..
-        }: LstmSegmenter<'data>,
+        }: LstmSegmenter<'data, G>,
         input_seq: Vec<u16>,
     ) -> Self {
         let hunits = fw_u.dim().1;
