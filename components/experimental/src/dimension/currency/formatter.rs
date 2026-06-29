@@ -69,12 +69,15 @@ pub struct CurrencyFormatter<V: ValueRepresentation> {
     /// A [`DecimalFormatter`] to format the currency value.
     decimal_formatter: DecimalFormatter,
 
+    /// The currency code that this formatter is bound to.
+    bound_currency: CurrencyCode,
+
     _marker: PhantomData<V>,
 }
 
 impl CurrencyFormatter<Decimal> {
     icu_provider::gen_buffer_data_constructors!(
-        (prefs: CurrencyFormatterPreferences) -> error: DataError,
+        (prefs: CurrencyFormatterPreferences, currency_code: &CurrencyCode) -> error: DataError,
         functions: [
             try_new_short: skip,
             try_new_short_with_buffer_provider,
@@ -84,7 +87,7 @@ impl CurrencyFormatter<Decimal> {
     );
 
     icu_provider::gen_buffer_data_constructors!(
-        (prefs: CurrencyFormatterPreferences) -> error: DataError,
+        (prefs: CurrencyFormatterPreferences, currency_code: &CurrencyCode) -> error: DataError,
         functions: [
             try_new_narrow: skip,
             try_new_narrow_with_buffer_provider,
@@ -104,7 +107,10 @@ impl CurrencyFormatter<Decimal> {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_short(prefs: CurrencyFormatterPreferences) -> Result<Self, DataError> {
+    pub fn try_new_short(
+        prefs: CurrencyFormatterPreferences,
+        currency_code: &CurrencyCode,
+    ) -> Result<Self, DataError> {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
         // TODO: We should depend on the currency format patterns directly and not depend on
         // the decimal formatter. If we do use the decimal formatter, we need to take care of
@@ -128,6 +134,7 @@ impl CurrencyFormatter<Decimal> {
             options: Width::Short.into(),
             essential,
             decimal_formatter,
+            bound_currency: *currency_code,
             _marker: PhantomData,
         })
     }
@@ -138,7 +145,10 @@ impl CurrencyFormatter<Decimal> {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_narrow(prefs: CurrencyFormatterPreferences) -> Result<Self, DataError> {
+    pub fn try_new_narrow(
+        prefs: CurrencyFormatterPreferences,
+        currency_code: &CurrencyCode,
+    ) -> Result<Self, DataError> {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
         let decimal_prefs = DecimalFormatterPreferences::from(&prefs);
         let decimal_formatter =
@@ -158,6 +168,7 @@ impl CurrencyFormatter<Decimal> {
             options: Width::Narrow.into(),
             essential,
             decimal_formatter,
+            bound_currency: *currency_code,
             _marker: PhantomData,
         })
     }
@@ -166,6 +177,7 @@ impl CurrencyFormatter<Decimal> {
     pub fn try_new_short_unstable<D>(
         provider: &D,
         prefs: CurrencyFormatterPreferences,
+        currency_code: &CurrencyCode,
     ) -> Result<Self, DataError>
     where
         D: ?Sized
@@ -197,6 +209,7 @@ impl CurrencyFormatter<Decimal> {
             options: Width::Short.into(),
             essential,
             decimal_formatter,
+            bound_currency: *currency_code,
             _marker: PhantomData,
         })
     }
@@ -205,6 +218,7 @@ impl CurrencyFormatter<Decimal> {
     pub fn try_new_narrow_unstable<D>(
         provider: &D,
         prefs: CurrencyFormatterPreferences,
+        currency_code: &CurrencyCode,
     ) -> Result<Self, DataError>
     where
         D: ?Sized
@@ -232,11 +246,12 @@ impl CurrencyFormatter<Decimal> {
             options: Width::Narrow.into(),
             essential,
             decimal_formatter,
+            bound_currency: *currency_code,
             _marker: PhantomData,
         })
     }
 
-    /// Formats a [`FixedDecimal`] value for the given currency code.
+    /// Formats a [`FixedDecimal`] value.
     ///
     /// # Examples
     /// ```
@@ -247,18 +262,17 @@ impl CurrencyFormatter<Decimal> {
     /// use writeable::assert_writeable_eq;
     ///
     /// let locale = locale!("en-US").into();
-    /// let fmt = CurrencyFormatter::<Decimal>::try_new_short(locale).unwrap();
-    /// let value = "12345.67".parse().unwrap();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
+    /// let fmt = CurrencyFormatter::<Decimal>::try_new_short(locale, &currency_code).unwrap();
+    /// let value = "12345.67".parse().unwrap();
     /// assert_writeable_eq!(
-    ///     fmt.format_fixed_decimal(&value, &currency_code),
+    ///     fmt.format_fixed_decimal(&value),
     ///     "$12,345.67"
     /// );
     /// ```
     pub fn format_fixed_decimal<'l>(
         &'l self,
         value: &'l FixedDecimal,
-        currency_code: &'l CurrencyCode,
     ) -> impl Writeable + Display + 'l {
         // TODO(#6064): Support plural-specific patterns and full currency formatting spec.
         // TODO(#8146): Evaluate if FixedDecimal is the correct input type or if we should use
@@ -266,7 +280,7 @@ impl CurrencyFormatter<Decimal> {
         let (currency_str, pattern, _pattern_selection) = self
             .essential
             .get()
-            .name_and_pattern(self.options.width, currency_code);
+            .name_and_pattern(self.options.width, &self.bound_currency);
 
         let pattern = pattern.unwrap_or_else(|| <&DoublePlaceholderPattern>::default());
 
