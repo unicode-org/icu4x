@@ -25,7 +25,6 @@ struct DeriveTest_ZeroTrie_ZeroVec<'data> {
 #[cfg(all(feature = "databake", feature = "alloc"))]
 fn bake_ZeroTrie_ZeroVec() {
     use databake::*;
-    extern crate std;
     test_bake!(
         DeriveTest_ZeroTrie_ZeroVec<'static>,
         crate::DeriveTest_ZeroTrie_ZeroVec {
@@ -51,7 +50,6 @@ struct DeriveTest_ZeroTrieSimpleAscii_ZeroVec<'data> {
 #[cfg(all(feature = "databake", feature = "alloc"))]
 fn bake_ZeroTrieSimpleAscii_ZeroVec() {
     use databake::*;
-    extern crate std;
     test_bake!(
         DeriveTest_ZeroTrieSimpleAscii_ZeroVec<'static>,
         crate::DeriveTest_ZeroTrieSimpleAscii_ZeroVec {
@@ -76,7 +74,6 @@ struct DeriveTest_ZeroAsciiIgnoreCaseTrie_ZeroVec<'data> {
 #[cfg(all(feature = "databake", feature = "alloc"))]
 fn bake_ZeroAsciiIgnoreCaseTrie_ZeroVec() {
     use databake::*;
-    extern crate std;
     test_bake!(
         DeriveTest_ZeroAsciiIgnoreCaseTrie_ZeroVec<'static>,
         crate::DeriveTest_ZeroAsciiIgnoreCaseTrie_ZeroVec {
@@ -101,7 +98,6 @@ struct DeriveTest_ZeroTriePerfectHash_ZeroVec<'data> {
 #[cfg(all(feature = "databake", feature = "alloc"))]
 fn bake_ZeroTriePerfectHash_ZeroVec() {
     use databake::*;
-    extern crate std;
     test_bake!(
         DeriveTest_ZeroTriePerfectHash_ZeroVec<'static>,
         crate::DeriveTest_ZeroTriePerfectHash_ZeroVec {
@@ -126,7 +122,6 @@ struct DeriveTest_ZeroTrieExtendedCapacity_ZeroVec<'data> {
 #[cfg(all(feature = "databake", feature = "alloc"))]
 fn bake_ZeroTrieExtendedCapacity_ZeroVec() {
     use databake::*;
-    extern crate std;
     test_bake!(
         DeriveTest_ZeroTrieExtendedCapacity_ZeroVec<'static>,
         crate::DeriveTest_ZeroTrieExtendedCapacity_ZeroVec {

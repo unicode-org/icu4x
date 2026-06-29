@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, doc, feature = "export")), no_std)]
+#![no_std]
 #![cfg_attr(
     not(test),
     deny(
@@ -30,6 +30,9 @@
 
 #[cfg(feature = "alloc")]
 extern crate alloc;
+
+#[cfg(any(test, doc, feature = "export"))]
+extern crate std;
 
 mod blob_data_provider;
 mod blob_schema;
