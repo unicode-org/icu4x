@@ -10,11 +10,14 @@ use icu_decimal::{
     DecimalFormatter, DecimalFormatterPreferences, options::DecimalFormatterOptions,
 };
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
-use icu_plurals::PluralRulesPreferences;
+use icu_plurals::{PluralRules, PluralRulesPreferences};
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
-use super::super::provider::currency::essentials::CurrencyEssentialsV1;
+use super::super::provider::currency::{
+    essentials::CurrencyEssentialsV1, extended::CurrencyExtendedDataV1,
+    patterns::CurrencyPatternsDataV1,
+};
 use super::CurrencyCode;
 use super::options::{CurrencyFormatterOptions, Width};
 use icu_pattern::DoublePlaceholderPattern;
@@ -48,6 +51,16 @@ pub struct Decimal;
 
 impl ValueRepresentation for Decimal {}
 
+#[derive(Debug)]
+enum CurrencyFormatterData {
+    Essential(DataPayload<CurrencyEssentialsV1>),
+    Long {
+        extended: DataPayload<CurrencyExtendedDataV1>,
+        patterns: DataPayload<CurrencyPatternsDataV1>,
+        plural_rules: PluralRules,
+    },
+}
+
 /// A formatter for monetary values.
 ///
 /// [`CurrencyFormatter`] supports:
@@ -63,11 +76,10 @@ pub struct CurrencyFormatter<V: ValueRepresentation> {
     /// by the constructors (e.g., `try_new_short` sets the width to `Short`).
     options: CurrencyFormatterOptions,
 
-    /// Essential data for the currency formatter.
-    essential: DataPayload<CurrencyEssentialsV1>,
-
     /// A [`DecimalFormatter`] to format the currency value.
     decimal_formatter: DecimalFormatter,
+
+    data: CurrencyFormatterData,
 
     /// The currency code that this formatter is bound to.
     bound_currency: CurrencyCode,
@@ -132,8 +144,8 @@ impl CurrencyFormatter<Decimal> {
 
         Ok(Self {
             options: Width::Short.into(),
-            essential,
             decimal_formatter,
+            data: CurrencyFormatterData::Essential(essential),
             bound_currency: *currency_code,
             _marker: PhantomData,
         })
@@ -166,8 +178,8 @@ impl CurrencyFormatter<Decimal> {
 
         Ok(Self {
             options: Width::Narrow.into(),
-            essential,
             decimal_formatter,
+            data: CurrencyFormatterData::Essential(essential),
             bound_currency: *currency_code,
             _marker: PhantomData,
         })
@@ -207,8 +219,8 @@ impl CurrencyFormatter<Decimal> {
 
         Ok(Self {
             options: Width::Short.into(),
-            essential,
             decimal_formatter,
+            data: CurrencyFormatterData::Essential(essential),
             bound_currency: *currency_code,
             _marker: PhantomData,
         })
@@ -244,8 +256,135 @@ impl CurrencyFormatter<Decimal> {
 
         Ok(Self {
             options: Width::Narrow.into(),
-            essential,
             decimal_formatter,
+            data: CurrencyFormatterData::Essential(essential),
+            bound_currency: *currency_code,
+            _marker: PhantomData,
+        })
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: CurrencyFormatterPreferences, currency_code: &CurrencyCode) -> error: DataError,
+        functions: [
+            try_new_long: skip,
+            try_new_long_with_buffer_provider,
+            try_new_long_unstable,
+            Self
+        ]
+    );
+
+    /// Creates a new [`CurrencyFormatter`] for long formatting from compiled locale data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// # Examples
+    /// ```
+    /// use icu::experimental::dimension::currency::formatter::CurrencyFormatter;
+    /// use icu::experimental::dimension::currency::CurrencyCode;
+    /// use icu::locale::locale;
+    /// use tinystr::*;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let currency_preferences = locale!("en-US").into();
+    /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
+    /// let fmt = CurrencyFormatter::try_new_long(currency_preferences, &currency_code).unwrap();
+    /// let value = "12345.67".parse().unwrap();
+    /// assert_writeable_eq!(fmt.format_fixed_decimal(&value), "12,345.67 US dollars");
+    /// ```
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new_long(
+        prefs: CurrencyFormatterPreferences,
+        currency_code: &CurrencyCode,
+    ) -> Result<Self, DataError> {
+        let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
+        let decimal_formatter =
+            DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
+
+        let marker_attributes = DataMarkerAttributes::try_from_str(currency_code.0.as_str())
+            .map_err(|_| {
+                DataErrorKind::IdentifierNotFound
+                    .into_error()
+                    .with_debug_context("failed to get data marker attribute from a `CurrencyCode`")
+            })?;
+
+        let extended = crate::provider::Baked
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    marker_attributes,
+                    &locale,
+                ),
+                ..Default::default()
+            })?
+            .payload;
+
+        let patterns = crate::provider::Baked.load(Default::default())?.payload;
+
+        let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
+
+        Ok(Self {
+            options: Width::Long.into(),
+            decimal_formatter,
+            data: CurrencyFormatterData::Long {
+                extended,
+                patterns,
+                plural_rules,
+            },
+            bound_currency: *currency_code,
+            _marker: PhantomData,
+        })
+    }
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_long)]
+    pub fn try_new_long_unstable<D>(
+        provider: &D,
+        prefs: CurrencyFormatterPreferences,
+        currency_code: &CurrencyCode,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<CurrencyExtendedDataV1>
+            + DataProvider<CurrencyPatternsDataV1>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1>
+            + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
+    {
+        let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
+        let decimal_formatter = DecimalFormatter::try_new_unstable(
+            provider,
+            (&prefs).into(),
+            DecimalFormatterOptions::default(),
+        )?;
+
+        let marker_attributes = DataMarkerAttributes::try_from_str(currency_code.0.as_str())
+            .map_err(|_| {
+                DataErrorKind::IdentifierNotFound
+                    .into_error()
+                    .with_debug_context("failed to get data marker attribute from a `CurrencyCode`")
+            })?;
+        let extended = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    marker_attributes,
+                    &locale,
+                ),
+                ..Default::default()
+            })?
+            .payload;
+
+        let patterns = provider.load(Default::default())?.payload;
+
+        let plural_rules = PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
+
+        Ok(Self {
+            options: Width::Long.into(),
+            decimal_formatter,
+            data: CurrencyFormatterData::Long {
+                extended,
+                patterns,
+                plural_rules,
+            },
             bound_currency: *currency_code,
             _marker: PhantomData,
         })
@@ -274,24 +413,45 @@ impl CurrencyFormatter<Decimal> {
         &'l self,
         value: &'l FixedDecimal,
     ) -> impl Writeable + Display + 'l {
-        // TODO(#6064): Support plural-specific patterns and full currency formatting spec.
-        // TODO(#8146): Evaluate if FixedDecimal is the correct input type or if we should use
-        // an exact decimal/money representation.
-        let (currency_str, pattern, _pattern_selection) = self
-            .essential
-            .get()
-            .name_and_pattern(self.options.width, &self.bound_currency);
+        match &self.data {
+            CurrencyFormatterData::Essential(essential) => {
+                // TODO(#6064): Support plural-specific patterns and full currency formatting spec.
+                // TODO(#8146): Evaluate if FixedDecimal is the correct input type or if we should use
+                // an exact decimal/money representation.
+                let (currency_str, pattern, _pattern_selection) = essential
+                    .get()
+                    .name_and_pattern(self.options.width, &self.bound_currency);
 
-        let pattern = pattern.unwrap_or_else(|| <&DoublePlaceholderPattern>::default());
+                let pattern = pattern.unwrap_or_else(|| <&DoublePlaceholderPattern>::default());
 
-        self.decimal_formatter.format_sign(
-            value.sign,
-            pattern.interpolate((
-                self.decimal_formatter
-                    .format_unsigned(icu_decimal::Cow::Borrowed(&value.absolute)),
-                currency_str,
-            )),
-        )
+                self.decimal_formatter.format_sign(
+                    value.sign,
+                    pattern.interpolate((
+                        self.decimal_formatter
+                            .format_unsigned(icu_decimal::Cow::Borrowed(&value.absolute)),
+                        currency_str,
+                    )),
+                )
+            }
+            CurrencyFormatterData::Long {
+                extended,
+                patterns,
+                plural_rules,
+            } => {
+                let operands = value.into();
+                let display_name = extended.get().display_names.get(operands, plural_rules);
+                let pattern = patterns.get().patterns.get(operands, plural_rules);
+
+                self.decimal_formatter.format_sign(
+                    value.sign,
+                    pattern.interpolate((
+                        self.decimal_formatter
+                            .format_unsigned(icu_decimal::Cow::Borrowed(&value.absolute)),
+                        display_name,
+                    )),
+                )
+            }
+        }
     }
 }
 

@@ -60,6 +60,17 @@ mod tests {
             fmt_narrow.format_fixed_decimal(&value_4_decimals),
             "$123.4567"
         );
+
+        // Long
+        let fmt_long = CurrencyFormatter::try_new_long(prefs, &currency_code).unwrap();
+        assert_writeable_eq!(
+            fmt_long.format_fixed_decimal(&positive_value, &currency_code),
+            "12,345.67 US dollars"
+        );
+        assert_writeable_eq!(
+            fmt_long.format_fixed_decimal(&negative_value, &currency_code),
+            "-12,345.67 US dollars"
+        );
     }
 
     #[test]
@@ -90,6 +101,17 @@ mod tests {
         assert_writeable_eq!(
             fmt_narrow.format_fixed_decimal(&negative_value),
             "-12\u{202f}345,67\u{a0}€"
+        );
+
+        // Long
+        let fmt_long = CurrencyFormatter::try_new_long(prefs, &currency_code).unwrap();
+        assert_writeable_eq!(
+            fmt_long.format_fixed_decimal(&positive_value, &currency_code),
+            "12\u{202f}345,67 euros"
+        );
+        assert_writeable_eq!(
+            fmt_long.format_fixed_decimal(&negative_value, &currency_code),
+            "-12\u{202f}345,67 euros"
         );
     }
 
@@ -125,6 +147,17 @@ mod tests {
         assert_writeable_eq!(
             fmt_narrow.format_fixed_decimal(&negative_value),
             "\u{61c}-\u{200f}١٢٬٣٤٥٫٦٧\u{a0}E£"
+        );
+
+        // Long
+        let fmt_long = CurrencyFormatter::try_new_long(prefs, &currency_code).unwrap();
+        assert_writeable_eq!(
+            fmt_long.format_fixed_decimal(&positive_value, &currency_code),
+            "١٢٬٣٤٥٫٦٧ جنيه مصري"
+        );
+        assert_writeable_eq!(
+            fmt_long.format_fixed_decimal(&negative_value, &currency_code),
+            "\u{61c}-١٢٬٣٤٥٫٦٧ جنيه مصري"
         );
     }
 
@@ -187,6 +220,20 @@ mod tests {
         assert_writeable_eq!(
             fmt_latn_narrow.format_fixed_decimal(&value),
             "\u{200f}12,345.67\u{a0}E£"
+        );
+
+        // 5. Default numbering system (arab) - Long
+        let fmt_arab_long = CurrencyFormatter::try_new_long(prefs_arab, &currency_code).unwrap();
+        assert_writeable_eq!(
+            fmt_arab_long.format_fixed_decimal(&value, &currency_code),
+            "١٢٬٣٤٥٫٦٧ جنيه مصري"
+        );
+
+        // 6. Locale extension override (latn) - Long
+        let fmt_latn_long = CurrencyFormatter::try_new_long(prefs_latn, &currency_code).unwrap();
+        assert_writeable_eq!(
+            fmt_latn_long.format_fixed_decimal(&value, &currency_code),
+            "12,345.67 جنيه مصري"
         );
     }
 

@@ -44,4 +44,10 @@ pub enum Width {
     /// For example, 1 USD formats as "$1.00" in most locales.
     #[cfg_attr(feature = "serde", serde(rename = "narrow"))]
     Narrow,
+
+    /// Format the currency with the long currency name.
+    ///
+    /// For example, 1 USD formats as "1.00 US dollar" in en-US.
+    #[cfg_attr(feature = "serde", serde(rename = "long"))]
+    Long,
 }
