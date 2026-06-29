@@ -14,6 +14,11 @@
 typedef struct Calendar Calendar;
 
 
+typedef struct DiplomatCalendarView {
+  const Calendar** data;
+  size_t len;
+} DiplomatCalendarView;
+
 
 
 #endif // Calendar_D_H

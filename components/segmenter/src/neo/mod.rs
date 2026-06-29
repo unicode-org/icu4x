@@ -5,7 +5,9 @@
 //! Experimental reimplementations
 
 use crate::complex::ComplexIterator;
-use crate::provider::{Acceptance, SegmenterStateMachine, SegmenterStateMachineOverride, Symbol};
+use crate::provider::{
+    Acceptance, ComplexScript, SegmenterStateMachine, SegmenterStateMachineOverride, Symbol,
+};
 use crate::scaffold::RuleBreakType;
 use smallvec::SmallVec;
 
@@ -22,16 +24,19 @@ pub(crate) trait ComplexHandler<Y: RuleBreakType> {
     const BREAK_STATUS: u8;
     const BREAK_AT_BOUNDARIES: bool;
     type Cache: smallvec::Array<Item = usize>;
-    type Data<'s>: core::fmt::Debug;
+    type ComplexPayloads<'s>: core::fmt::Debug;
+    type ComplexPayload<'s>: core::fmt::Debug;
 
-    fn resolve_symbol(symbol: Symbol) -> Symbol;
+    fn select<'data>(
+        complex_payloads: &Self::ComplexPayloads<'data>,
+        script: ComplexScript,
+    ) -> Option<Self::ComplexPayload<'data>>;
 
     fn handle<'data, 's>(
-        symbol: Symbol,
-        dfa: &RuleBreakIterator<'_, '_, Y, Self>,
-        data: &Self::Data<'data>,
-        iter: Y::IterAttr<'s>,
-    ) -> Option<(ComplexIterator<'data, 's, Y>, Y::IterAttr<'s>)>;
+        complex_payload: &Self::ComplexPayload<'data>,
+        iter: &Y::IterAttr<'s>,
+        past_complex: &Y::IterAttr<'s>,
+    ) -> ComplexIterator<'data, 's, Y>;
 }
 
 #[derive(Debug)]
@@ -40,19 +45,22 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for NoComplexHandler {
     const BREAK_STATUS: u8 = 0;
     const BREAK_AT_BOUNDARIES: bool = false;
     type Cache = [usize; 1];
-    type Data<'s> = core::convert::Infallible;
+    type ComplexPayloads<'s> = core::convert::Infallible;
+    type ComplexPayload<'s> = core::convert::Infallible;
 
-    fn resolve_symbol(symbol: Symbol) -> Symbol {
-        symbol
+    fn select<'data>(
+        &data: &Self::ComplexPayloads<'data>,
+        _: ComplexScript,
+    ) -> Option<Self::ComplexPayload<'data>> {
+        match data {}
     }
 
     fn handle<'data, 's>(
-        _: Symbol,
-        _: &RuleBreakIterator<'_, '_, Y, Self>,
-        &data: &Self::Data<'data>,
-        _: Y::IterAttr<'s>,
-    ) -> Option<(ComplexIterator<'data, 's, Y>, Y::IterAttr<'s>)> {
-        match data {}
+        &complex_payload: &Self::ComplexPayload<'data>,
+        _: &Y::IterAttr<'s>,
+        _: &Y::IterAttr<'s>,
+    ) -> ComplexIterator<'data, 's, Y> {
+        match complex_payload {}
     }
 }
 
@@ -71,13 +79,13 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for NoComplexHandler {
 #[derive(Debug)]
 pub(crate) struct RuleBreakIterator<'data, 's, Y: RuleBreakType, C: ComplexHandler<Y> + ?Sized> {
     data: &'data SegmenterStateMachine<'data>,
-    pseudo_symbol_map: &'data zerovec::ZeroVec<'data, u8>,
+    pseudo_symbol_map: &'data zerovec::ZeroVec<'data, (Symbol, ComplexScript)>,
     // We use `IntoIter` so that we can pop from the front in O(1) time.
     cache: smallvec::IntoIter<C::Cache>,
     lookahead_positions: SmallVec<[Option<Y::IterAttr<'s>>; 1]>,
     remaining_input: Y::IterAttr<'s>,
     last_accepting_status: u8,
-    complex: Option<C::Data<'data>>,
+    complex: Option<C::ComplexPayloads<'data>>,
 }
 
 #[test]
@@ -99,7 +107,7 @@ impl<'data, 's, Y: RuleBreakType, C: ComplexHandler<Y>> RuleBreakIterator<'data,
         input: Y::IterAttr<'s>,
         data: &'data SegmenterStateMachine<'data>,
         tailoring: Option<&'data SegmenterStateMachineOverride<'data>>,
-        complex: Option<C::Data<'data>>,
+        complex: Option<C::ComplexPayloads<'data>>,
     ) -> Self
     where
         Y: RuleBreakType,
@@ -143,26 +151,36 @@ impl<'s, Y: RuleBreakType, C: ComplexHandler<Y>> Iterator for RuleBreakIterator<
         let mut complex_state = None;
 
         (self.remaining_input, self.last_accepting_status) = loop {
-            let mut symbol = if let Some((_, next)) = iter.clone().next() {
+            let (symbol, complex_script) = if let Some((_, next)) = iter.clone().next() {
                 self.symbol(next.into())
             } else {
-                SegmenterStateMachine::EOT_SYMBOL
+                (SegmenterStateMachine::EOT_SYMBOL, ComplexScript::None)
             };
 
-            if let Some((complex_breaks, end_of_complex)) = self
-                .complex
-                .as_ref()
-                .filter(|_| complex_state.is_none())
-                .map(|data| C::handle(symbol, self, data, iter.clone()))
-                .unwrap_or(None)
+            if complex_state.is_none()
+                && let Some(complex_payloads) = self.complex.as_ref()
+                && let Some(complex_payload) = C::select(complex_payloads, complex_script)
             {
+                let mut past_complex = iter.clone();
+                let mut last_complex = past_complex.clone();
+                past_complex.next();
+                while past_complex
+                    .clone()
+                    .next()
+                    .is_some_and(|(_, cp)| self.symbol(cp.into()).1 == complex_script)
+                {
+                    past_complex.next();
+                    last_complex.next();
+                }
+
+                let complex_breaks = C::handle(&complex_payload, &iter, &past_complex);
                 self.cache = complex_breaks.collect::<SmallVec<_>>().into_iter();
 
                 if C::BREAK_AT_BOUNDARIES {
                     // `self.cache` contains a break point at the end of the run, but not at the start.
                     // Store the position of the end of the run, and return the current position
                     // for the start break point (unless it's 0, which we already returned earlier).
-                    self.remaining_input = end_of_complex;
+                    self.remaining_input = past_complex;
                     self.last_accepting_status = C::BREAK_STATUS;
                     return if Y::offset(&iter) == 0 {
                         self.cache.next()
@@ -170,19 +188,15 @@ impl<'s, Y: RuleBreakType, C: ComplexHandler<Y>> Iterator for RuleBreakIterator<
                         Some(Y::offset(&iter))
                     };
                 } else {
-                    // Remove the break point at the end of the run, and store `end_of_complex`, the location
+                    // Remove the break point at the end of the run, and store `last_complex`, the location
                     // of the last complex code point of the run. We'll later restart the state machine
-                    // from this code point, in order to correctly break after it (the state machine will
-                    // treat it as Alphabetic).
+                    // from this code point, in order to correctly break after it.
                     self.cache.next_back();
-                    complex_state = Some(end_of_complex);
+                    complex_state = Some(last_complex);
 
                     // We keep running the state machine to figure out if there's a break point at the start.
                 }
             }
-
-            // Resolve the potentially complex symbol to an actual symbol.
-            symbol = C::resolve_symbol(symbol);
 
             iter.next();
 
@@ -245,14 +259,14 @@ impl<'s, Y: RuleBreakType, C: ComplexHandler<Y>> Iterator for RuleBreakIterator<
 }
 
 impl<'data, 's, Y: RuleBreakType, C: ComplexHandler<Y>> RuleBreakIterator<'data, 's, Y, C> {
-    fn symbol(&self, cp: u32) -> u8 {
+    fn symbol(&self, cp: u32) -> (Symbol, ComplexScript) {
         let pseudo_symbol = self.data.symbols.get32(cp);
         if let Some(i) = pseudo_symbol.checked_sub(self.data.pseudo_symbol_shift) {
             self.pseudo_symbol_map
                 .get(i as usize)
-                .unwrap_or(pseudo_symbol)
+                .unwrap_or((pseudo_symbol, ComplexScript::None))
         } else {
-            pseudo_symbol
+            (pseudo_symbol, ComplexScript::None)
         }
     }
 }

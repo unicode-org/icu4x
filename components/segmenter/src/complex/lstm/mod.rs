@@ -18,7 +18,7 @@ use zerovec::maps::ZeroMapBorrowed;
 mod matrix;
 use matrix::*;
 
-// A word break iterator using LSTM model. Input string have to be same language.
+// A word break iterator using LSTM model. Input string have to be same complex script.
 #[derive(Debug)]
 pub(super) struct LstmSegmenterIterator<'data, 's, R: RuleBreakType> {
     chars: R::IterAttr<'s>,

@@ -14,6 +14,11 @@
 typedef struct WordBreakIteratorLatin1 WordBreakIteratorLatin1;
 
 
+typedef struct DiplomatWordBreakIteratorLatin1View {
+  const WordBreakIteratorLatin1** data;
+  size_t len;
+} DiplomatWordBreakIteratorLatin1View;
+
 
 
 #endif // WordBreakIteratorLatin1_D_H

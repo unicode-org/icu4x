@@ -129,6 +129,8 @@ echo "License header check complete"
 [tasks.generate-readmes]
 description = "Automatically generate README.md for each component."
 install_crate = { crate_name = "cargo-rdme", test_arg = ["--help"] }
+# cargo-rdme 2.0 uses rustdoc-json and is tied to Rust versions
+install_crate_args = ["--version", "1.5.1"]
 category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''

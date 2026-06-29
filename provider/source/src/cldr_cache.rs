@@ -10,9 +10,6 @@ use crate::datetime::DatagenCalendar;
 use crate::source::{AbstractFs, SerdeCache};
 use icu::locale::LanguageIdentifier;
 use icu::locale::LocaleExpander;
-use icu::locale::provider::{
-    LocaleLikelySubtagsExtendedV1, LocaleLikelySubtagsLanguageV1, LocaleLikelySubtagsScriptRegionV1,
-};
 use icu::locale::subtags::Language;
 #[cfg(feature = "unstable")]
 use icu::locale::subtags::Region;
@@ -136,58 +133,13 @@ impl CldrCache {
         use super::locale::likely_subtags::*;
         self.extended_locale_expander
             .get_or_init(|| {
-                use icu_provider::prelude::*;
-                struct Provider {
-                    common: TransformResult,
-                    extended: TransformResult,
-                }
-                impl DataProvider<LocaleLikelySubtagsLanguageV1> for Provider {
-                    fn load(
-                        &self,
-                        _req: DataRequest,
-                    ) -> Result<DataResponse<LocaleLikelySubtagsLanguageV1>, DataError>
-                    {
-                        Ok(DataResponse {
-                            payload: DataPayload::from_owned(self.common.as_langs()),
-                            metadata: Default::default(),
-                        })
-                    }
-                }
-                impl DataProvider<LocaleLikelySubtagsScriptRegionV1> for Provider {
-                    fn load(
-                        &self,
-                        _req: DataRequest,
-                    ) -> Result<DataResponse<LocaleLikelySubtagsScriptRegionV1>, DataError>
-                    {
-                        Ok(DataResponse {
-                            payload: DataPayload::from_owned(self.common.as_script_region()),
-                            metadata: Default::default(),
-                        })
-                    }
-                }
-                impl DataProvider<LocaleLikelySubtagsExtendedV1> for Provider {
-                    fn load(
-                        &self,
-                        _req: DataRequest,
-                    ) -> Result<DataResponse<LocaleLikelySubtagsExtendedV1>, DataError>
-                    {
-                        Ok(DataResponse {
-                            payload: DataPayload::from_owned(self.extended.as_extended()),
-                            metadata: Default::default(),
-                        })
-                    }
-                }
-                let common =
-                    transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_common());
-                let extended =
-                    transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_extended());
-
-                LocaleExpander::try_new_extended_unstable(&Provider { common, extended }).map_err(
-                    |e| {
-                        DataError::custom("creating LocaleExpander in CldrCache")
-                            .with_display_context(&e)
-                    },
+                LocaleExpander::try_new_extended_unstable(
+                    &LikelySubtagsResources::try_from_cldr_cache(self)?,
                 )
+                .map_err(|e| {
+                    DataError::custom("creating LocaleExpander in CldrCache")
+                        .with_display_context(&e)
+                })
             })
             .as_ref()
             .map_err(|&e| e)
@@ -238,6 +190,8 @@ impl CldrCache {
     /// # Example
     ///  - "en-US" -> "US"
     ///  - "en" -> "US"
+    ///  - "ar" -> "EG"
+    ///  - "und" -> "001"
     #[cfg(feature = "unstable")]
     pub(crate) fn extract_or_infer_region(&self, locale: &DataLocale) -> Result<Region, DataError> {
         if let Some(region) = locale.region {
@@ -246,7 +200,9 @@ impl CldrCache {
 
         let mut lang_id = LanguageIdentifier::from((locale.language, locale.script, locale.region));
         let _ = self.extended_locale_expander()?.maximize(&mut lang_id);
-        Ok(lang_id.region.unwrap())
+        Ok(lang_id
+            .region
+            .unwrap_or(icu::locale::subtags::region!("001")))
     }
 
     /// Computes the script-based locale group for a given locale.
@@ -261,6 +217,10 @@ impl CldrCache {
     /// - "ar-SA" -> "ar-Arab-SA" -> "und-Arab" -> "ar-Arab-EG" -> "ar"
     /// - "bm-Nkoo" -> "bm-Nkoo-ML" -> "und-Nkoo" -> "man-Nkoo-GN" -> "man-Nkoo"
     /// - "nqo" -> "nqo-Nkoo-GN" -> "und-Nkoo" -> "man-Nkoo-GN" -> "man-Nkoo"
+    /// - "und-Latn" -> "en-Latn-US" -> "en"
+    /// - "und-Arab" -> "ar-Arab-EG" -> "ar"
+    /// - "und-US" -> "en-Latn-US" -> "en"
+    /// - "und" -> "und"
     pub(crate) fn script_based_locale_group(
         &self,
         locale: &DataLocale,

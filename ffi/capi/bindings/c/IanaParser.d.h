@@ -14,6 +14,11 @@
 typedef struct IanaParser IanaParser;
 
 
+typedef struct DiplomatIanaParserView {
+  const IanaParser** data;
+  size_t len;
+} DiplomatIanaParserView;
+
 
 
 #endif // IanaParser_D_H

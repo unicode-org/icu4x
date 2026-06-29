@@ -86,7 +86,7 @@ cd examples/dart
 exec --fail-on-error dart pub get
 exec --fail-on-error dart format --set-exit-if-changed .
 exec --fail-on-error dart analyze
-exec --fail-on-error dart --enable-experiment=record-use build cli bin/example.dart
+exec --fail-on-error dart --enable-experiment=record-use build cli --target bin/example.dart
 bins = glob_array ./build/cli/*/bundle/bin/*
 bin = array_pop ${bins}
 exec --fail-on-error ${bin}

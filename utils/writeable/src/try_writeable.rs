@@ -354,6 +354,37 @@ where
     }
 }
 
+impl<T: TryWriteable + ?Sized> TryWriteable for &T {
+    type Error = T::Error;
+
+    #[inline]
+    fn try_write_to<W: fmt::Write + ?Sized>(
+        &self,
+        sink: &mut W,
+    ) -> Result<Result<(), Self::Error>, fmt::Error> {
+        (*self).try_write_to(sink)
+    }
+
+    #[inline]
+    fn try_write_to_parts<S: PartsWrite + ?Sized>(
+        &self,
+        sink: &mut S,
+    ) -> Result<Result<(), Self::Error>, fmt::Error> {
+        (*self).try_write_to_parts(sink)
+    }
+
+    #[inline]
+    fn writeable_length_hint(&self) -> LengthHint {
+        (*self).writeable_length_hint()
+    }
+
+    #[inline]
+    #[cfg(feature = "alloc")]
+    fn try_write_to_string(&self) -> Result<Cow<'_, str>, (Self::Error, Cow<'_, str>)> {
+        (*self).try_write_to_string()
+    }
+}
+
 /// Testing macros for types implementing [`TryWriteable`].
 ///
 /// Arguments, in order:

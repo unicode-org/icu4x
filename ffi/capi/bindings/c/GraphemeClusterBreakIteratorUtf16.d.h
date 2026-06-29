@@ -14,6 +14,11 @@
 typedef struct GraphemeClusterBreakIteratorUtf16 GraphemeClusterBreakIteratorUtf16;
 
 
+typedef struct DiplomatGraphemeClusterBreakIteratorUtf16View {
+  const GraphemeClusterBreakIteratorUtf16** data;
+  size_t len;
+} DiplomatGraphemeClusterBreakIteratorUtf16View;
+
 
 
 #endif // GraphemeClusterBreakIteratorUtf16_D_H

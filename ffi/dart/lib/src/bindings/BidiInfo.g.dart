@@ -21,12 +21,16 @@ final class BidiInfo implements ffi.Finalizable {
   // maintain borrow validity.
   BidiInfo._fromFfi(this._ffi, this._selfEdge, this._textEdge) {
     if (_selfEdge.isEmpty) {
-      _finalizer.attach(this, _ffi.cast());
+      _icu4x_BidiInfo_destroy_mv1(this, _ffi.cast());
     }
   }
 
-  @_DiplomatFfiUse('icu4x_BidiInfo_destroy_mv1')
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_BidiInfo_destroy_mv1));
+  // ignore: experimental_member_use
+  @meta.RecordUse()
+  // ignore: non_constant_identifier_names
+  static void _icu4x_BidiInfo_destroy_mv1(BidiInfo cl, ffi.Pointer<ffi.Void> pointer) => _finalizer.attach(cl, pointer);
+
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_internal_icu4x_BidiInfo_destroy_mv1));
 
   /// The number of paragraphs contained here
   int get paragraphCount {
@@ -60,27 +64,32 @@ final class BidiInfo implements ffi.Finalizable {
 
 }
 
-@_DiplomatFfiUse('icu4x_BidiInfo_destroy_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_BidiInfo_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_BidiInfo_destroy_mv1(ffi.Pointer<ffi.Void> self);
+external void _internal_icu4x_BidiInfo_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@_DiplomatFfiUse('icu4x_BidiInfo_paragraph_count_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_BidiInfo_paragraph_count_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_BidiInfo_paragraph_count_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_BidiInfo_paragraph_at_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_BidiInfo_paragraph_at_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_BidiInfo_paragraph_at_mv1(ffi.Pointer<ffi.Opaque> self, int n);
 
-@_DiplomatFfiUse('icu4x_BidiInfo_size_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_BidiInfo_size_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_BidiInfo_size_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_BidiInfo_level_at_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_BidiInfo_level_at_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_BidiInfo_level_at_mv1(ffi.Pointer<ffi.Opaque> self, int pos);

@@ -567,56 +567,23 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for ComplexLine<Y> {
     const BREAK_AT_BOUNDARIES: bool = false;
     const BREAK_STATUS: u8 = false as u8;
     type Cache = [usize; 16];
-    type Data<'s> = Y::ComplexData<'s>;
 
-    fn resolve_symbol(symbol: Symbol) -> Symbol {
-        if !matches!(
-            symbol & 0b1111_1110,
-            SegmenterStateMachine::LB_SA_KHMER_SYMBOL
-                | SegmenterStateMachine::LB_SA_THAI_SYMBOL
-                | SegmenterStateMachine::LB_SA_LAO_SYMBOL
-                | SegmenterStateMachine::LB_SA_MYANMAR_SYMBOL
-        ) {
-            return symbol;
-        }
-        if symbol & 1 == 0 {
-            SegmenterStateMachine::LB_SA_SYMBOL
-        } else {
-            SegmenterStateMachine::LB_SA_CM_SYMBOL
-        }
+    type ComplexPayloads<'s> = Y::ComplexPayloads<'s>;
+    type ComplexPayload<'s> = Y::ComplexPayload<'s>;
+
+    fn select<'data>(
+        complex_payloads: &Self::ComplexPayloads<'data>,
+        complex_script: ComplexScript,
+    ) -> Option<Self::ComplexPayload<'data>> {
+        Y::select_complex(complex_payloads, complex_script)
     }
 
     fn handle<'data, 's>(
-        symbol: Symbol,
-        dfa: &RuleBreakIterator<'_, '_, Y, Self>,
-        data: &Self::Data<'data>,
-        iter: Y::IterAttr<'s>,
-    ) -> Option<(ComplexIterator<'data, 's, Y>, Y::IterAttr<'s>)> {
-        use crate::complex::Language;
-
-        let data = Y::select_complex(
-            data,
-            match symbol & 0b1111_1110 {
-                SegmenterStateMachine::LB_SA_KHMER_SYMBOL => Language::Khmer,
-                SegmenterStateMachine::LB_SA_THAI_SYMBOL => Language::Thai,
-                SegmenterStateMachine::LB_SA_LAO_SYMBOL => Language::Lao,
-                SegmenterStateMachine::LB_SA_MYANMAR_SYMBOL => Language::Burmese,
-                _ => return None,
-            },
-        )?;
-
-        let mut past_complex = iter.clone();
-        let mut last_complex = past_complex.clone();
-        past_complex.next();
-        while past_complex.clone().next().is_some_and(|(_, cp)| {
-            // Ignore the last bit, which is the difference between XX_SYMBOL and XX_CM_SYMBOL.
-            dfa.symbol(cp.into()) & 0b1111_1110 == symbol & 0b1111_1110
-        }) {
-            past_complex.next();
-            last_complex.next();
-        }
-
-        Some((Y::handle_complex(&data, &iter, &past_complex), last_complex))
+        complex_payload: &Self::ComplexPayload<'data>,
+        iter: &Y::IterAttr<'s>,
+        past_complex: &Y::IterAttr<'s>,
+    ) -> ComplexIterator<'data, 's, Y> {
+        Y::handle_complex(complex_payload, iter, past_complex)
     }
 }
 

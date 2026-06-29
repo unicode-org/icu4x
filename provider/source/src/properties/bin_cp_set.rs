@@ -18,15 +18,13 @@ impl SourceDataProvider {
         short_name: &str,
     ) -> Result<(), DataError> {
         let sn = self
-            .unicode()?
-            .read_to_string("ucd/PropertyAliases.txt")?
-            .lines()
-            .filter_map(|l| Some(l.split('#').next().unwrap().trim()).filter(|l| !l.is_empty()))
-            .find_map(|l| {
-                let mut fields = l.split(';').map(str::trim);
-                let sn = fields.next()?;
-                let n = fields.next()?;
-                if n == name { Some(sn) } else { None }
+            .parse_ucd_lines("ucd/PropertyAliases.txt")?
+            .filter_map(|line| line.skip_missing_rule())
+            .find_map(|line| {
+                let mut fields = line.fields();
+                let sn = fields.next();
+                let n = fields.next();
+                if Some(name) == n { sn } else { None }
             });
 
         if let Some(sn) = sn
@@ -83,23 +81,17 @@ impl SourceDataProvider {
             _ => "ucd/PropList.txt",
         };
 
-        for line in self.unicode()?.read_to_string(file)?.lines() {
-            let line = line.split('#').next().unwrap().trim();
-            if line.is_empty() {
+        for line in self.parse_ucd_lines(file)? {
+            let Some(line) = line.skip_missing_rule() else {
+                continue;
+            };
+            let mut fields = line.fields();
+            let range = fields.next().unwrap();
+            if fields.next() != Some(name) {
                 continue;
             }
 
-            let mut parts = line.split(';').map(str::trim);
-            let range = parts.next().unwrap();
-            if parts.next() != Some(name) {
-                continue;
-            }
-
-            let (a, b) = range.split_once("..").unwrap_or((range, range));
-            let a = u32::from_str_radix(a, 16).unwrap();
-            let b = u32::from_str_radix(b, 16).unwrap();
-
-            builder.add_range32(a..=b);
+            builder.add_range32(super::ucd_helpers::parse_range(range));
         }
 
         Ok(builder.build())

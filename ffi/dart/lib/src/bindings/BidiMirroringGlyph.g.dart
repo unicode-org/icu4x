@@ -66,7 +66,8 @@ final class BidiMirroringGlyph {
       ]);
 }
 
-@_DiplomatFfiUse('icu4x_BidiMirroringGlyph_for_char_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_BidiMirroringGlyphFfi Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_BidiMirroringGlyph_for_char_mv1')
 // ignore: non_constant_identifier_names
 external _BidiMirroringGlyphFfi _icu4x_BidiMirroringGlyph_for_char_mv1(Rune ch);

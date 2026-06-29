@@ -29,6 +29,12 @@ class PluralCategory;
 namespace icu4x {
 namespace capi {
     struct PluralRules;
+
+
+    typedef struct DiplomatPluralRulesView {
+      const PluralRules** data;
+      size_t len;
+    } DiplomatPluralRulesView;
 } // namespace capi
 } // namespace
 

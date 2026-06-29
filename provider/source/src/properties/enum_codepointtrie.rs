@@ -8,6 +8,7 @@
 )]
 
 use crate::SourceDataProvider;
+use crate::properties::ucd_helpers::{self, UcdLine};
 use icu::collections::codepointtrie::{CodePointTrie, TrieValue};
 use icu::properties::props::EnumeratedProperty;
 use icu::properties::provider::{names::*, *};
@@ -29,7 +30,7 @@ impl SourceDataProvider {
 
         self.validate_property_name(name, short_name)?;
 
-        let (names_to_short_names, maybe_default) = self.enumerated_prop_names(name, short_name)?;
+        let (names_to_short_names, _) = self.enumerated_prop_names(name, short_name)?;
 
         let file = match name {
             "Indic_Conjunct_Break" => "ucd/DerivedCoreProperties.txt".into(),
@@ -57,82 +58,76 @@ impl SourceDataProvider {
             ),
         };
 
-        let read_to_string = self.unicode()?.read_to_string(&file)?;
-
-        let ucd_default = read_to_string
-            .lines()
-            .find_map(|l| {
-                let mut fields = l
-                    .strip_prefix("# @missing: 0000..10FFFF; ")?
-                    .split(';')
-                    .map(str::trim);
-                if &file == "ucd/DerivedCoreProperties.txt" {
-                    // This is a file containing multiple properties, so we need to check
-                    // the second column for the property name
-                    if fields.next().unwrap() != short_name {
-                        return None;
-                    }
-                }
-                let value = fields.next().unwrap();
-                let value = names_to_short_names
-                    .get(value)
-                    .expect("file should only use names from PropertyValueAliases.txt")
-                    .0;
-                Some(value)
-            })
-            .or_else(|| maybe_default.map(|n| names_to_short_names[n].0))
-            .expect(short_name);
-
-        // @missing entries might use long or short names.
-        let ucd_default = *names_to_short_names
-            .get(ucd_default)
-            .map(|(n, _)| n)
-            .unwrap_or(&ucd_default);
-
-        assert_eq!(
-            *short_name_to_t.get(ucd_default).expect(ucd_default),
-            T::default()
-        );
-
         let mut builder = icu_codepointtrie_builder::CodePointTrieBuilder::new(
             T::default(),
             T::default(),
             self.trie_type().into(),
         );
 
-        for line in read_to_string.lines() {
-            let line = line.strip_prefix("# @missing: ").unwrap_or(line);
-            let line = line.split('#').next().unwrap().trim();
-            if line.is_empty() {
-                continue;
-            }
-            let mut fields = line.split(';');
-            let cp_range = fields.next().unwrap().trim();
-            if &file == "ucd/DerivedCoreProperties.txt" {
-                // This is a file containing multiple properties, so we need to check
-                // the second column for the property name
-                if fields.next().unwrap().trim() != short_name {
-                    continue;
-                }
-            }
-            let value = fields.next().unwrap().trim();
-            let value = names_to_short_names
-                .get(value)
-                .expect("file should only use names from PropertyValueAliases.txt")
-                .0;
-            let Some(&value) = short_name_to_t.get(value) else {
-                // Don't log an error for every code point, the name data marker code
-                // will log an error that there's an unknown variant.
-                continue;
-            };
+        let mut last_seen_cp = -1i32;
 
-            if let Some((start, end)) = cp_range.split_once("..") {
-                let start = u32::from_str_radix(start, 16).unwrap();
-                let end = u32::from_str_radix(end, 16).unwrap();
-                builder.set_range_value(start..=end, value);
-            } else {
-                let cp = u32::from_str_radix(cp_range, 16).unwrap();
-                builder.set_value(cp, value);
+        for line in self.parse_ucd_lines(&file)? {
+            match line {
+                UcdLine::Missing(fields) => {
+                    let mut fields = fields.fields();
+                    let cps = fields.next().unwrap();
+                    if &file == "ucd/DerivedCoreProperties.txt" {
+                        // This is a file containing multiple properties, so we need to check
+                        // the second column for the property name
+                        if fields.next().unwrap() != short_name {
+                            continue;
+                        }
+                    }
+                    let value = fields.next().unwrap();
+                    let value = names_to_short_names
+                        .get(value)
+                        .expect("file should only use names from PropertyValueAliases.txt")
+                        .0;
+
+                    let Some(&value) = short_name_to_t.get(value) else {
+                        // Don't log an error for every code point, the name data marker code
+                        // will log an error that there's an unknown variant.
+                        continue;
+                    };
+
+                    let range = ucd_helpers::parse_range(cps);
+                    if range == (0..=0x10FFFF) {
+                        // This is a statement of default. just check that we're using the same one
+                        assert_eq!(value, T::default());
+                    } else {
+                        assert!(
+                            *range.start() as i32 > last_seen_cp,
+                            "Found @missing rule after data in its block in {file}, we don't currently handle it"
+                        );
+                        builder.set_range_value(range, value);
+                    }
+                }
+                UcdLine::Fields(fields) => {
+                    let mut fields = fields.fields();
+                    let cp_range = fields.next().unwrap();
+                    if &file == "ucd/DerivedCoreProperties.txt" {
+                        // This is a file containing multiple properties, so we need to check
+                        // the second column for the property name
+                        if fields.next().unwrap() != short_name {
+                            continue;
+                        }
+                    }
+
+                    let value = fields.next().unwrap();
+                    let value = names_to_short_names
+                        .get(value)
+                        .expect("file should only use names from PropertyValueAliases.txt")
+                        .0;
+                    let Some(&value) = short_name_to_t.get(value) else {
+                        // Don't log an error for every code point, the name data marker code
+                        // will log an error that there's an unknown variant.
+                        continue;
+                    };
+
+                    let range = ucd_helpers::parse_range(cp_range);
+                    last_seen_cp = *range.end() as i32;
+                    builder.set_range_value(range, value);
+                }
             }
         }
 
@@ -149,38 +144,39 @@ impl SourceDataProvider {
         let mut names = BTreeMap::new();
         let mut default = None;
 
-        for line in self
-            .unicode()?
-            .read_to_string("ucd/PropertyValueAliases.txt")?
-            .lines()
-        {
-            if let Some(line) = line.strip_prefix("# @missing: 0000..10FFFF; ") {
-                let mut parts = line.split(';').map(str::trim);
-                if parts.next().unwrap() != name {
-                    continue;
+        for line in self.parse_ucd_lines("ucd/PropertyValueAliases.txt")? {
+            match line {
+                UcdLine::Missing(fields) => {
+                    let mut fields = fields.fields();
+                    assert_eq!(
+                        fields.next().unwrap(),
+                        "0000..10FFFF",
+                        "We only expect full-range @missing values in PropertyValueAliases.txt"
+                    );
+                    if fields.next().unwrap() != name {
+                        continue;
+                    }
+                    default = Some(fields.next().unwrap())
                 }
-                default = Some(parts.next().unwrap());
-            };
-            let line = line.split('#').next().unwrap().trim();
-            if line.is_empty() {
-                continue;
-            }
-            let mut parts = line.split(';').map(str::trim);
-            if parts.next().unwrap() != short_name {
-                continue;
-            }
-            let numeric_name = (short_name.as_bytes()
-                == icu::properties::props::CanonicalCombiningClass::SHORT_NAME)
-                .then(|| parts.next().unwrap());
-            let short = parts.next().unwrap();
-            let long = parts.next().unwrap();
-            names.insert(short, (short, NameType::Short));
-            names.insert(long, (short, NameType::Long));
-            for alias in parts {
-                names.insert(alias, (short, NameType::Alias));
-            }
-            if let Some(numeric_name) = numeric_name {
-                names.insert(numeric_name, (short, NameType::Numeric));
+                UcdLine::Fields(fields) => {
+                    let mut fields = fields.fields();
+                    if fields.next().unwrap() != short_name {
+                        continue;
+                    }
+                    let numeric_name = (short_name.as_bytes()
+                        == icu::properties::props::CanonicalCombiningClass::SHORT_NAME)
+                        .then(|| fields.next().unwrap());
+                    let short = fields.next().unwrap();
+                    let long = fields.next().unwrap();
+                    names.insert(short, (short, NameType::Short));
+                    names.insert(long, (short, NameType::Long));
+                    for alias in fields {
+                        names.insert(alias, (short, NameType::Alias));
+                    }
+                    if let Some(numeric_name) = numeric_name {
+                        names.insert(numeric_name, (short, NameType::Numeric));
+                    }
+                }
             }
         }
 

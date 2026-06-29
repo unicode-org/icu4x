@@ -499,44 +499,22 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for ComplexWord<Y> {
     type Cache = [usize; 16];
     const BREAK_STATUS: u8 = WordType::Letter as u8;
 
-    type Data<'s> = Y::ComplexData<'s>;
+    type ComplexPayloads<'s> = Y::ComplexPayloads<'s>;
+    type ComplexPayload<'s> = Y::ComplexPayload<'s>;
 
-    fn resolve_symbol(symbol: Symbol) -> Symbol {
-        symbol
+    fn select<'data>(
+        complex_payloads: &Y::ComplexPayloads<'data>,
+        complex_script: ComplexScript,
+    ) -> Option<Self::ComplexPayload<'data>> {
+        Y::select_complex(complex_payloads, complex_script)
     }
 
     fn handle<'data, 's>(
-        _: Symbol,
-        _: &RuleBreakIterator<'_, '_, Y, Self>,
-        data: &Self::Data<'data>,
-        iter: Y::IterAttr<'s>,
-    ) -> Option<(ComplexIterator<'data, 's, Y>, Y::IterAttr<'s>)> {
-        let data = Y::select_complex(
-            data,
-            // TODO: Use symbols to identify runs
-            get_language(
-                iter.clone()
-                    .next()
-                    .map(|(_, cp)| cp.into())
-                    .unwrap_or(char::MAX as u32),
-            ),
-        )?;
-
-        let mut past_complex = iter.clone();
-        past_complex.next();
-        while past_complex.clone().next().is_some_and(|(_, cp)| {
-            get_language(cp.into())
-                == get_language(
-                    iter.clone()
-                        .next()
-                        .map(|(_, cp)| cp.into())
-                        .unwrap_or(char::MAX as u32),
-                )
-        }) {
-            past_complex.next();
-        }
-
-        Some((Y::handle_complex(&data, &iter, &past_complex), past_complex))
+        complex_payloads: &Self::ComplexPayload<'data>,
+        iter: &Y::IterAttr<'s>,
+        past_complex: &Y::IterAttr<'s>,
+    ) -> ComplexIterator<'data, 's, Y> {
+        Y::handle_complex(complex_payloads, iter, past_complex)
     }
 }
 

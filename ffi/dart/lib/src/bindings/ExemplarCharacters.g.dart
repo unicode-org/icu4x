@@ -23,12 +23,16 @@ final class ExemplarCharacters implements ffi.Finalizable {
   // maintain borrow validity.
   ExemplarCharacters._fromFfi(this._ffi, this._selfEdge) {
     if (_selfEdge.isEmpty) {
-      _finalizer.attach(this, _ffi.cast());
+      _icu4x_ExemplarCharacters_destroy_mv1(this, _ffi.cast());
     }
   }
 
-  @_DiplomatFfiUse('icu4x_ExemplarCharacters_destroy_mv1')
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ExemplarCharacters_destroy_mv1));
+  // ignore: experimental_member_use
+  @meta.RecordUse()
+  // ignore: non_constant_identifier_names
+  static void _icu4x_ExemplarCharacters_destroy_mv1(ExemplarCharacters cl, ffi.Pointer<ffi.Void> pointer) => _finalizer.attach(cl, pointer);
+
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_internal_icu4x_ExemplarCharacters_destroy_mv1));
 
   /// Checks whether the string is in the set.
   ///
@@ -179,67 +183,80 @@ final class ExemplarCharacters implements ffi.Finalizable {
 
 }
 
-@_DiplomatFfiUse('icu4x_ExemplarCharacters_destroy_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_ExemplarCharacters_destroy_mv1(ffi.Pointer<ffi.Void> self);
+external void _internal_icu4x_ExemplarCharacters_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@_DiplomatFfiUse('icu4x_ExemplarCharacters_contains_str_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_contains_str_mv1')
 // ignore: non_constant_identifier_names
 external bool _icu4x_ExemplarCharacters_contains_str_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s);
 
-@_DiplomatFfiUse('icu4x_ExemplarCharacters_contains_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_contains_mv1')
 // ignore: non_constant_identifier_names
 external bool _icu4x_ExemplarCharacters_contains_mv1(ffi.Pointer<ffi.Opaque> self, Rune cp);
 
-@_DiplomatFfiUse('icu4x_ExemplarCharacters_create_main_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_create_main_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_create_main_mv1(ffi.Pointer<ffi.Opaque> locale);
 
-@_DiplomatFfiUse('icu4x_ExemplarCharacters_create_main_with_provider_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_create_main_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_create_main_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@_DiplomatFfiUse('icu4x_ExemplarCharacters_create_auxiliary_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_create_auxiliary_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_create_auxiliary_mv1(ffi.Pointer<ffi.Opaque> locale);
 
-@_DiplomatFfiUse('icu4x_ExemplarCharacters_create_auxiliary_with_provider_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_create_auxiliary_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_create_auxiliary_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@_DiplomatFfiUse('icu4x_ExemplarCharacters_create_punctuation_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_create_punctuation_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_create_punctuation_mv1(ffi.Pointer<ffi.Opaque> locale);
 
-@_DiplomatFfiUse('icu4x_ExemplarCharacters_create_punctuation_with_provider_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_create_punctuation_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_create_punctuation_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@_DiplomatFfiUse('icu4x_ExemplarCharacters_create_numbers_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_create_numbers_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_create_numbers_mv1(ffi.Pointer<ffi.Opaque> locale);
 
-@_DiplomatFfiUse('icu4x_ExemplarCharacters_create_numbers_with_provider_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_create_numbers_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_create_numbers_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@_DiplomatFfiUse('icu4x_ExemplarCharacters_create_index_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_create_index_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_create_index_mv1(ffi.Pointer<ffi.Opaque> locale);
 
-@_DiplomatFfiUse('icu4x_ExemplarCharacters_create_index_with_provider_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ExemplarCharacters_create_index_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ExemplarCharacters_create_index_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);

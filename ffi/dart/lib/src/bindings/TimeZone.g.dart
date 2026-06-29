@@ -17,12 +17,16 @@ final class TimeZone implements ffi.Finalizable {
   // maintain borrow validity.
   TimeZone._fromFfi(this._ffi, this._selfEdge) {
     if (_selfEdge.isEmpty) {
-      _finalizer.attach(this, _ffi.cast());
+      _icu4x_TimeZone_destroy_mv1(this, _ffi.cast());
     }
   }
 
-  @_DiplomatFfiUse('icu4x_TimeZone_destroy_mv1')
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_TimeZone_destroy_mv1));
+  // ignore: experimental_member_use
+  @meta.RecordUse()
+  // ignore: non_constant_identifier_names
+  static void _icu4x_TimeZone_destroy_mv1(TimeZone cl, ffi.Pointer<ffi.Void> pointer) => _finalizer.attach(cl, pointer);
+
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_internal_icu4x_TimeZone_destroy_mv1));
 
   /// The unknown time zone.
   ///
@@ -92,47 +96,56 @@ final class TimeZone implements ffi.Finalizable {
 
 }
 
-@_DiplomatFfiUse('icu4x_TimeZone_destroy_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_TimeZone_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_TimeZone_destroy_mv1(ffi.Pointer<ffi.Void> self);
+external void _internal_icu4x_TimeZone_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@_DiplomatFfiUse('icu4x_TimeZone_unknown_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_TimeZone_unknown_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_TimeZone_unknown_mv1();
 
-@_DiplomatFfiUse('icu4x_TimeZone_is_unknown_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZone_is_unknown_mv1')
 // ignore: non_constant_identifier_names
 external bool _icu4x_TimeZone_is_unknown_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_TimeZone_create_from_iana_id_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_TimeZone_create_from_iana_id_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_TimeZone_create_from_iana_id_mv1(_SliceUtf8 ianaId);
 
-@_DiplomatFfiUse('icu4x_TimeZone_create_from_windows_id_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(_SliceUtf8, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_TimeZone_create_from_windows_id_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_TimeZone_create_from_windows_id_mv1(_SliceUtf8 windowsId, _SliceUtf8 region);
 
-@_DiplomatFfiUse('icu4x_TimeZone_create_from_system_id_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(_SliceUtf8, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_TimeZone_create_from_system_id_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_TimeZone_create_from_system_id_mv1(_SliceUtf8 id, _SliceUtf8 region);
 
-@_DiplomatFfiUse('icu4x_TimeZone_create_from_bcp47_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_TimeZone_create_from_bcp47_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_TimeZone_create_from_bcp47_mv1(_SliceUtf8 id);
 
-@_DiplomatFfiUse('icu4x_TimeZone_with_offset_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZone_with_offset_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_TimeZone_with_offset_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> offset);
 
-@_DiplomatFfiUse('icu4x_TimeZone_without_offset_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZone_without_offset_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_TimeZone_without_offset_mv1(ffi.Pointer<ffi.Opaque> self);

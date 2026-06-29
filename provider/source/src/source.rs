@@ -520,9 +520,9 @@ pub(crate) struct UnicodeCache {
     // The `ucd/Unihan.zip` file. Requests matching `ucd/Unihan/` will be resolved through
     // the ZIP file instead of downloading individual files.
     unihan_zip: Option<AbstractFs>,
-    // The `security/uts39-data-X.0.0.zip`` file. Requests matching `security/` will be
+    // The `security/uts39-data-X.0.0.zip` file. Requests matching `security/` will be
     // resolved through the ZIP file instead of downloading individual files.
-    uts_35_zip: Option<AbstractFs>,
+    uts_39_zip: Option<AbstractFs>,
     // Cached file contents. It's all text files, so we cache them as strings.
     file_cache: FrozenMap<String, String>,
     // Cache of enumerated properties CPTs, indexed by short property name.
@@ -546,14 +546,14 @@ impl UnicodeCache {
         let unihan_zip = AbstractFs::new_zip_from_url(format!(
             "https://www.unicode.org/Public/{version}/ucd/Unihan.zip"
         ));
-        let uts_35_zip = AbstractFs::new_zip_from_url(format!(
+        let uts_39_zip = AbstractFs::new_zip_from_url(format!(
             "https://www.unicode.org/Public/{version}/security/uts39-data-{version}.zip"
         ));
         Self {
             root,
             ucd_zip: Some(ucd_zip),
             unihan_zip: Some(unihan_zip),
-            uts_35_zip: Some(uts_35_zip),
+            uts_39_zip: Some(uts_39_zip),
             file_cache: Default::default(),
             cpt_cache: Default::default(),
             #[cfg(feature = "unstable")]
@@ -566,7 +566,7 @@ impl UnicodeCache {
             root,
             ucd_zip: None,
             unihan_zip: None,
-            uts_35_zip: None,
+            uts_39_zip: None,
             file_cache: Default::default(),
             cpt_cache: Default::default(),
             #[cfg(feature = "unstable")]
@@ -588,10 +588,10 @@ impl UnicodeCache {
             (self.ucd_zip.as_ref(), file.strip_prefix("ucd/"))
         {
             Ok(ucd_zip.file_exists(ucd_path)?)
-        } else if let (Some(uts_35_zip), Some(uts_35_path)) =
-            (self.uts_35_zip.as_ref(), file.strip_prefix("security/"))
+        } else if let (Some(uts_39_zip), Some(uts_39_path)) =
+            (self.uts_39_zip.as_ref(), file.strip_prefix("security/"))
         {
-            Ok(uts_35_zip.file_exists(uts_35_path)?)
+            Ok(uts_39_zip.file_exists(uts_39_path)?)
         } else {
             Ok(self.root.file_exists(file)?)
         }
@@ -615,12 +615,12 @@ impl UnicodeCache {
             Ok(self
                 .file_cache
                 .insert(file.to_string(), ucd_zip.read_to_string(ucd_path)?))
-        } else if let (Some(uts_35_zip), Some(uts_35_path)) =
-            (self.uts_35_zip.as_ref(), file.strip_prefix("security/"))
+        } else if let (Some(uts_39_zip), Some(uts_39_path)) =
+            (self.uts_39_zip.as_ref(), file.strip_prefix("security/"))
         {
             Ok(self
                 .file_cache
-                .insert(file.to_string(), uts_35_zip.read_to_string(uts_35_path)?))
+                .insert(file.to_string(), uts_39_zip.read_to_string(uts_39_path)?))
         } else {
             Ok(self
                 .file_cache

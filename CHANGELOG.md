@@ -8,6 +8,8 @@ Several crates have had patch releases in the 2.2 stream:
 - Components
     - (2.2.1) `icu_calendar`
         - Fix extended year calculations in Gregorian-like and Coptic-like calendars (unicode-org#7849)
+    - (2.2.1) `icu_collator`
+        - Fix panic when using `AlternateHandling::Shifted` with `MaxVariable::Currency` (off-by-one in special primaries validation). (unicode-org#8081)
 - Utils
     - (0.8.3) `yoke`
         - Fix soundness of Send/Sync impls on CartableOptionPointer (unicode-org#8029)
@@ -326,7 +328,9 @@ Several crates have had patch releases in the 2.1 stream:
 - Components
     - (2.1.1) General
         - Fix `icu_locale_core` dependency (unicode-org#7191)
-    - (2.1.2)`icu_properties`
+    - (2.1.2) `icu_collator`
+        - Fix panic when using `AlternateHandling::Shifted` with `MaxVariable::Currency` (off-by-one in special primaries validation). (unicode-org#8075)
+    - (2.1.2) `icu_properties`
         - Fix some property constants (unicode-org#7269, unicode-org#7281, unicode-org#7284)
         - Add conversions for `unicode_bidi::BidiClass` (unicode-org#7272)
         - Add `IndicConjunctBreak` (unicode-org#7280)
