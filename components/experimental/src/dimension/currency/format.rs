@@ -32,6 +32,19 @@ mod tests {
             "-$12,345.67"
         );
 
+        // TODO(#8151): This should format to 2 decimal places ($123.46 or $123.00) once we use currency patterns.
+        // Currently it uses decimal patterns which do not pad '123' to 2 decimal places, and do not round '123.4567'.
+        let value_no_decimals = "123".parse().unwrap();
+        assert_writeable_eq!(
+            fmt_short.format_fixed_decimal(&value_no_decimals),
+            "$123"
+        );
+        let value_4_decimals = "123.4567".parse().unwrap();
+        assert_writeable_eq!(
+            fmt_short.format_fixed_decimal(&value_4_decimals),
+            "$123.4567"
+        );
+
         // Narrow
         let fmt_narrow =
             CurrencyFormatter::<Decimal>::try_new_narrow(prefs, &currency_code).unwrap();
@@ -42,6 +55,16 @@ mod tests {
         assert_writeable_eq!(
             fmt_narrow.format_fixed_decimal(&negative_value),
             "-$12,345.67"
+        );
+
+        // TODO(#8151): This should format to 2 decimal places ($123.46 or $123.00) once we use currency patterns.
+        assert_writeable_eq!(
+            fmt_narrow.format_fixed_decimal(&value_no_decimals),
+            "$123"
+        );
+        assert_writeable_eq!(
+            fmt_narrow.format_fixed_decimal(&value_4_decimals),
+            "$123.4567"
         );
     }
 
