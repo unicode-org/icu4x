@@ -154,6 +154,7 @@ impl<'a> CurrencyEssentials<'a> {
         let placeholder_val = match width {
             Width::Short => config.short_placeholder_value,
             Width::Narrow => config.narrow_placeholder_value,
+            Width::Long => unreachable!("CurrencyEssentials does not support Long width"),
         };
 
         let currency = match placeholder_val {
@@ -165,6 +166,7 @@ impl<'a> CurrencyEssentials<'a> {
         let pattern_selection = match width {
             Width::Short => config.short_pattern_selection,
             Width::Narrow => config.narrow_pattern_selection,
+            Width::Long => unreachable!("CurrencyEssentials does not support Long width"),
         };
 
         let pattern = match pattern_selection {
