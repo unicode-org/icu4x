@@ -71,6 +71,16 @@ mod tests {
             fmt_long.format_fixed_decimal(&negative_value),
             "-12,345.67 US dollars"
         );
+
+        // TODO(#8151): This should format to 2 decimal places ("123.46 US dollars" or "123.00 US dollars") once we use currency patterns.
+        assert_writeable_eq!(
+            fmt_long.format_fixed_decimal(&value_no_decimals),
+            "123 US dollars"
+        );
+        assert_writeable_eq!(
+            fmt_long.format_fixed_decimal(&value_4_decimals),
+            "123.4567 US dollars"
+        );
     }
 
     #[test]
