@@ -11,7 +11,6 @@
 )]
 
 use crate::format::DateTimeInputUnchecked;
-use crate::provider::day_periods::DayPeriodRules;
 use crate::provider::names::DayPeriodNames;
 use icu_calendar::types::YearInfo;
 use icu_time::Hour;
@@ -129,12 +128,7 @@ fn has_flexible_day_period_difference(
     hour1: Hour,
     hour2: Hour,
 ) -> bool {
-    if let Some(rules) = dayperiod_names
-        .names
-        .get(4)
-        .and_then(|s| s.split_at_checked(4))
-        .and_then(|(b, _)| DayPeriodRules::decode_from_str(b))
-    {
+    if let Some(rules) = dayperiod_names.day_period_rules() {
         return rules.name_offset(hour1) != rules.name_offset(hour2);
     }
     false
