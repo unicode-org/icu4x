@@ -1,6 +1,6 @@
-# IndicSyllabicCategory-17.0.0.txt
-# Date: 2025-08-01, 04:02:23 GMT
-# © 2025 Unicode®, Inc.
+# IndicSyllabicCategory-18.0.0.txt
+# Date: 2026-04-29, 14:13:54 GMT
+# © 2026 Unicode®, Inc.
 # Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
 # For terms of use and license, see https://www.unicode.org/terms_of_use.html
 #
@@ -137,9 +137,11 @@ A980..A981    ; Bindu # Mn   [2] JAVANESE SIGN PANYANGGA..JAVANESE SIGN CECAK
 11CB5..11CB6  ; Bindu # Mn   [2] MARCHEN SIGN ANUSVARA..MARCHEN SIGN CANDRABINDU
 11D40         ; Bindu # Mn       MASARAM GONDI SIGN ANUSVARA
 11D95         ; Bindu # Mn       GUNJALA GONDI SIGN ANUSVARA
+11DF0         ; Bindu # Mn       BENGALI SIGN COMBINING ANUSVARA ABOVE
 11F00..11F01  ; Bindu # Mn   [2] KAWI SIGN CANDRABINDU..KAWI SIGN ANUSVARA
 1612D         ; Bindu # Mn       GURUNG KHEMA SIGN ANUSVARA
 16D40..16D41  ; Bindu # Lm   [2] KIRAT RAI SIGN ANUSVARA..KIRAT RAI SIGN TONPI
+16D98         ; Bindu # Mn       CHISOI SIGN ANUSVARA
 
 # ================================================
 
@@ -338,6 +340,7 @@ ABED          ; Pure_Killer # Mn       MEETEI MAYEK APUN IYEK
 11F41         ; Pure_Killer # Mc       KAWI SIGN KILLER
 1612F         ; Pure_Killer # Mn       GURUNG KHEMA SIGN THOLHOMA
 16D6B..16D6C  ; Pure_Killer # Lm   [2] KIRAT RAI SIGN VIRAMA..KIRAT RAI SIGN SAAT
+16D9D         ; Pure_Killer # Mn       CHISOI SIGN SISO
 
 # ================================================
 
@@ -523,7 +526,7 @@ ABD1          ; Vowel_Independent # Lo       MEETEI MAYEK LETTER ATIYA
 0B41..0B44    ; Vowel_Dependent # Mn   [4] ORIYA VOWEL SIGN U..ORIYA VOWEL SIGN VOCALIC RR
 0B47..0B48    ; Vowel_Dependent # Mc   [2] ORIYA VOWEL SIGN E..ORIYA VOWEL SIGN AI
 0B4B..0B4C    ; Vowel_Dependent # Mc   [2] ORIYA VOWEL SIGN O..ORIYA VOWEL SIGN AU
-0B55..0B56    ; Vowel_Dependent # Mn   [2] ORIYA SIGN OVERLINE..ORIYA AI LENGTH MARK
+0B53..0B56    ; Vowel_Dependent # Mn   [4] ORIYA SIGN DOT ABOVE..ORIYA AI LENGTH MARK
 0B57          ; Vowel_Dependent # Mc       ORIYA AU LENGTH MARK
 0B62..0B63    ; Vowel_Dependent # Mn   [2] ORIYA VOWEL SIGN VOCALIC L..ORIYA VOWEL SIGN VOCALIC LL
 0BBE..0BBF    ; Vowel_Dependent # Mc   [2] TAMIL VOWEL SIGN AA..TAMIL VOWEL SIGN I
@@ -771,6 +774,12 @@ A866          ; Vowel # Lo       PHAGS-PA LETTER EE
 A922..A925    ; Vowel # Lo   [4] KAYAH LI LETTER A..KAYAH LI LETTER OO
 A926..A92A    ; Vowel # Mn   [5] KAYAH LI VOWEL UE..KAYAH LI VOWEL O
 11150..11154  ; Vowel # Lo   [5] MAHAJANI LETTER A..MAHAJANI LETTER O
+16D80         ; Vowel # Lo       CHISOI LETTER A
+16D82..16D83  ; Vowel # Lo   [2] CHISOI LETTER AAI..CHISOI LETTER AA
+16D86         ; Vowel # Lo       CHISOI LETTER E
+16D89         ; Vowel # Lo       CHISOI LETTER I
+16D8F         ; Vowel # Lo       CHISOI LETTER U
+16D92         ; Vowel # Lo       CHISOI LETTER O
 
 # ================================================
 
@@ -971,14 +980,23 @@ ABD2..ABDA    ; Consonant # Lo   [9] MEETEI MAYEK LETTER GOK..MEETEI MAYEK LETTE
 11A0B..11A32  ; Consonant # Lo  [40] ZANABAZAR SQUARE LETTER KA..ZANABAZAR SQUARE LETTER KSSA
 11A50         ; Consonant # Lo       SOYOMBO LETTER A
 11A5C..11A83  ; Consonant # Lo  [40] SOYOMBO LETTER KA..SOYOMBO LETTER KSSA
+11B0A         ; Consonant # Lo       DEVANAGARI LETTER ALTERNATE DDDA
 11C0E..11C2E  ; Consonant # Lo  [33] BHAIKSUKI LETTER KA..BHAIKSUKI LETTER HA
 11C72..11C8F  ; Consonant # Lo  [30] MARCHEN LETTER KA..MARCHEN LETTER A
 11D0C..11D30  ; Consonant # Lo  [37] MASARAM GONDI LETTER KA..MASARAM GONDI LETTER TRA
 11D6C..11D89  ; Consonant # Lo  [30] GUNJALA GONDI LETTER YA..GUNJALA GONDI LETTER SA
+11DF1         ; Consonant # Lo       BENGALI LETTER ALTERNATE BARGIYA BA
 11EE0..11EF1  ; Consonant # Lo  [18] MAKASAR LETTER KA..MAKASAR LETTER A
 11F12..11F33  ; Consonant # Lo  [34] KAWI LETTER KA..KAWI LETTER JNYA
 16101..1611D  ; Consonant # Lo  [29] GURUNG KHEMA LETTER KA..GURUNG KHEMA LETTER SA
 16D43..16D62  ; Consonant # Lo  [32] KIRAT RAI LETTER A..KIRAT RAI LETTER HA
+16D81         ; Consonant # Lo       CHISOI LETTER BA
+16D84..16D85  ; Consonant # Lo   [2] CHISOI LETTER GA..CHISOI LETTER TA
+16D87..16D88  ; Consonant # Lo   [2] CHISOI LETTER SA..CHISOI LETTER NA
+16D8A..16D8E  ; Consonant # Lo   [5] CHISOI LETTER KA..CHISOI LETTER RRA
+16D90..16D91  ; Consonant # Lo   [2] CHISOI LETTER DA..CHISOI LETTER LA
+16D93..16D97  ; Consonant # Lo   [5] CHISOI LETTER NYA..CHISOI LETTER PA
+16D99..16D9C  ; Consonant # Lo   [4] CHISOI LETTER YA..CHISOI LETTER JARAHA
 
 # ================================================
 
@@ -1398,6 +1416,7 @@ ABF0..ABF9    ; Number # Nd  [10] MEETEI MAYEK DIGIT ZERO..MEETEI MAYEK DIGIT NI
 11F50..11F59  ; Number # Nd  [10] KAWI DIGIT ZERO..KAWI DIGIT NINE
 16130..16139  ; Number # Nd  [10] GURUNG KHEMA DIGIT ZERO..GURUNG KHEMA DIGIT NINE
 16D70..16D79  ; Number # Nd  [10] KIRAT RAI DIGIT ZERO..KIRAT RAI DIGIT NINE
+16DA0..16DA9  ; Number # Nd  [10] CHISOI DIGIT ZERO..CHISOI DIGIT NINE
 
 # ================================================
 
