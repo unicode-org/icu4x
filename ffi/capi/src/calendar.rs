@@ -9,6 +9,7 @@ pub mod ffi {
 
     #[cfg(feature = "buffer_provider")]
     use crate::unstable::errors::ffi::DataError;
+    #[cfg(feature = "compiled_data")]
     use crate::unstable::locale_core::ffi::Locale;
     #[cfg(feature = "buffer_provider")]
     use crate::unstable::provider::ffi::DataProvider;
