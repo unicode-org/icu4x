@@ -148,7 +148,7 @@
     "Khudawadi",
     "Warang_Citi",
     "Afak",
-    "Jurc",
+    "Jurchen",
     "Mro",
     "Nushu",
     "Sharada",
@@ -212,6 +212,8 @@
     "Sidetic",
     "Tai_Yo",
     "Tolong_Siki",
-    "Hntl"
+    "Hntl",
+    "Proto_Cuneiform",
+    "Seal"
   ]
 }
