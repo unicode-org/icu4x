@@ -55,22 +55,22 @@ pub(crate) fn resolve_difference(
     input2: &DateTimeInputUnchecked,
     dayperiod_names: Option<&DayPeriodNames<'_>>,
 ) -> Difference {
-    if input1.zone_offset != input2.zone_offset || input1.zone_id != input2.zone_id {
+    if !input1.has_same_zone(input2) {
         return Difference::Mixed;
     }
 
     // Compare Date fields
     match (input1.year, input2.year) {
-        (Some(y1 @ YearInfo::Era(e1)), Some(y2 @ YearInfo::Era(e2))) => {
+        (Some(YearInfo::Era(e1)), Some(YearInfo::Era(e2))) => {
             if e1.era != e2.era {
                 return Difference::Era;
             }
-            if y1.extended_year() != y2.extended_year() {
+            if e1.year != e2.year {
                 return Difference::Year;
             }
         }
-        (Some(y1 @ YearInfo::Cyclic(_)), Some(y2 @ YearInfo::Cyclic(_))) => {
-            if y1.extended_year() != y2.extended_year() {
+        (Some(YearInfo::Cyclic(c1)), Some(YearInfo::Cyclic(c2))) => {
+            if c1.related_iso != c2.related_iso {
                 return Difference::Year;
             }
         }
@@ -84,10 +84,8 @@ pub(crate) fn resolve_difference(
         }
     }
 
-    // Since we have already established that the years are equal,
-    // comparing month codes is sufficient to detect a month difference.
-    let month1 = input1.month.map(|m| m.to_input().code());
-    let month2 = input2.month.map(|m| m.to_input().code());
+    let month1 = input1.month.map(|m| m.to_input());
+    let month2 = input2.month.map(|m| m.to_input());
     if month1 != month2 {
         // This also catches the Some != None case in case
         // one input chooses to not use month codes. This is
