@@ -66,4 +66,5 @@ pub use displaynames::DisplayNamesPreferences;
 pub use options::DisplayNamesOptions;
 pub use options::Fallback;
 pub use options::LanguageDisplay;
+pub use options::LanguageIdentifierDisplayNameOptions;
 pub use options::Style;

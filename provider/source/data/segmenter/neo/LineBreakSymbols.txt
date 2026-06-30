@@ -1,78 +1,78 @@
-# Symbol name ; Symbol definition in UnicodeSet notation
-BK|NL|eot ; [[\p{Line_Break=Mandatory_Break}] [\p{Line_Break=Next_Line}] [[{eot}]]]
-CM ; [\p{Line_Break=Combining_Mark}]
-BAmEastAsian ; [\p{Line_Break=Break_After}-[\p{ea=F}\p{ea=W}\p{ea=H}]]
-LF ; [\p{Line_Break=Line_Feed}]
-CR ; [\p{Line_Break=Carriage_Return}]
-SP ; [\p{Line_Break=Space}]
-EXmEastAsian ; [\p{Line_Break=Exclamation}-[\p{ea=F}\p{ea=W}\p{ea=H}]]
-QUmPimPf ; [\p{Line_Break=Quotation}-\p{gc=Pi}-\p{gc=Pf}]
-AImEastAsian|ALmEastAsianmDottedCircle|SG|XXmExtPictUnassigned ; [[\p{Line_Break=Ambiguous}-[\p{ea=F}\p{ea=W}\p{ea=H}]] [\p{Line_Break=Alphabetic}-[\p{ea=F}\p{ea=W}\p{ea=H}]-[◌]] [\p{Line_Break=Surrogate}] [\p{Line_Break=Unknown}-[\p{Extended_Pictographic=True}&\p{gc=Cn}]]]
-PRmEastAsian ; [\p{Line_Break=Prefix_Numeric}-[\p{ea=F}\p{ea=W}\p{ea=H}]]
-POmEastAsian ; [\p{Line_Break=Postfix_Numeric}-[\p{ea=F}\p{ea=W}\p{ea=H}]]
-OPmEastAsian ; [\p{Line_Break=Open_Punctuation}-[\p{ea=F}\p{ea=W}\p{ea=H}]]
-CP ; [\p{Line_Break=CP}]
-IS ; [\p{Line_Break=Infix_Numeric}]
-HY ; [\p{Line_Break=Hyphen}]
-SY ; [\p{Line_Break=Break_Symbols}]
-NU ; [\p{Line_Break=Numeric}]
-CLmEastAsian ; [\p{Line_Break=Close_Punctuation}-[\p{ea=F}\p{ea=W}\p{ea=H}]]
-GLmEastAsian ; [\p{Line_Break=Glue}-[\p{ea=F}\p{ea=W}\p{ea=H}]]
-QU_Pi ; [\p{Line_Break=Quotation}&\p{gc=Pi}]
-BB ; [\p{Line_Break=Break_Before}]
-QU_Pf ; [\p{Line_Break=Quotation}&\p{gc=Pf}]
-HH ; [\p{Line_Break=Unambiguous_Hyphen}]
-HL ; [\p{Line_Break=HL}]
-JL ; [\p{Line_Break=JL}]
-JV ; [\p{Line_Break=JV}]
-JT ; [\p{Line_Break=JT}]
-NSmEastAsian ; [\p{Line_Break=Nonstarter}-[\p{ea=F}\p{ea=W}\p{ea=H}]]
-AK ; [\p{Line_Break=Aksara}]
-VI ; [\p{Line_Break=Virama}]
-AS ; [\p{Line_Break=Aksara_Start}]
-IDmEastAsianmExtPictUnassigned ; [\p{Line_Break=Ideographic}-[\p{ea=F}\p{ea=W}\p{ea=H}]-[\p{Extended_Pictographic=True}&\p{gc=Cn}]]
-VF ; [\p{Line_Break=Virama_Final}]
-ZW ; [\p{Line_Break=ZWSpace}]
-ZWJ ; [\p{Line_Break=ZWJ}]
-B2 ; [\p{Line_Break=Break_Both}]
-INmEastAsian ; [\p{Line_Break=Inseparable}-[\p{ea=F}\p{ea=W}\p{ea=H}]]
-WJ ; [\p{Line_Break=Word_Joiner}]
-PR_EastAsian ; [\p{Line_Break=Prefix_Numeric}&[\p{ea=F}\p{ea=W}\p{ea=H}]]
-ID_EastAsian ; [\p{Line_Break=Ideographic}&[\p{ea=F}\p{ea=W}\p{ea=H}]]
-OP_EastAsian ; [\p{Line_Break=Open_Punctuation}&[\p{ea=F}\p{ea=W}\p{ea=H}]]
-CL_EastAsian ; [\p{Line_Break=Close_Punctuation}&[\p{ea=F}\p{ea=W}\p{ea=H}]]
-AI_EastAsian|AL_EastAsian ; [[\p{Line_Break=Ambiguous}&[\p{ea=F}\p{ea=W}\p{ea=H}]] [\p{Line_Break=Alphabetic}&[\p{ea=F}\p{ea=W}\p{ea=H}]]]
-AL_DottedCircle ; [\p{Line_Break=Alphabetic}&[◌]]
-EBmEastAsian ; [\p{Line_Break=E_Base}-[\p{ea=F}\p{ea=W}\p{ea=H}]]
-EB_EastAsian ; [\p{Line_Break=E_Base}&[\p{ea=F}\p{ea=W}\p{ea=H}]]
-BA_EastAsian ; [\p{Line_Break=Break_After}&[\p{ea=F}\p{ea=W}\p{ea=H}]]
-NS_EastAsian|CJ ; [[\p{Line_Break=Nonstarter}&[\p{ea=F}\p{ea=W}\p{ea=H}]] [\p{Line_Break=Conditional_Japanese_Starter}]]
-H2 ; [\p{Line_Break=H2}]
-H3 ; [\p{Line_Break=H3}]
-EX_EastAsian ; [\p{Line_Break=Exclamation}&[\p{ea=F}\p{ea=W}\p{ea=H}]]
-IN_EastAsian ; [\p{Line_Break=Inseparable}&[\p{ea=F}\p{ea=W}\p{ea=H}]]
-PO_EastAsian ; [\p{Line_Break=Postfix_Numeric}&[\p{ea=F}\p{ea=W}\p{ea=H}]]
-CB ; [\p{Line_Break=Contingent_Break}]
-AP ; [\p{Line_Break=Aksara_Prebase}]
-GL_EastAsian ; [\p{Line_Break=Glue}&[\p{ea=F}\p{ea=W}\p{ea=H}]]
-ID_ExtPictUnassigned ; [\p{Line_Break=Ideographic}&[\p{Extended_Pictographic=True}&\p{gc=Cn}]]
-RI ; [\p{Line_Break=Regional_Indicator}]
-EM ; [\p{Line_Break=E_Modifier}]
-XX_ExtPictUnassigned ; [\p{Line_Break=Unknown}&[\p{Extended_Pictographic=True}&\p{gc=Cn}]]
-EAST_ASIAN_UNCLASSIFIED ; [[{EAST_ASIAN_UNCLASSIFIED}]]
-NON_EAST_ASIAN_LOOSE_IN ; [[{NON_EAST_ASIAN_LOOSE_IN}]]
-EAST_ASIAN_LOOSE_IN ; [[{EAST_ASIAN_LOOSE_IN}]]
-NON_EAST_ASIAN_UNCLASSIFIED ; [[{NON_EAST_ASIAN_UNCLASSIFIED}]]
-NON_EAST_ASIAN_POX ; [[{NON_EAST_ASIAN_POX}]]
-EAST_ASIAN_POX ; [[{EAST_ASIAN_POX}]]
-NON_EAST_ASIAN_PRX ; [[{NON_EAST_ASIAN_PRX}]]
-EAST_ASIAN_PRX ; [[{EAST_ASIAN_PRX}]]
-LOOSE_DASH ; [[{LOOSE_DASH}]]
-EAST_ASIAN_ID_AL ; [[{EAST_ASIAN_ID_AL}]]
-SAmMnmMc ; [[\p{Line_Break=Complex_Context}-\p{gc=Mn}-\p{gc=Mc}]]
-SA_Mn|SA_Mc ; [[[\p{Line_Break=Complex_Context}&\p{gc=Mn}]] [[\p{Line_Break=Complex_Context}&\p{gc=Mc}]]]
-EAST_ASIAN_PHRASE_ID ; [[{EAST_ASIAN_PHRASE_ID}]]
-EAST_ASIAN_PHRASE_AL ; [[{EAST_ASIAN_PHRASE_AL}]]
-EAST_ASIAN_PHRASE_NS ; [[{EAST_ASIAN_PHRASE_NS}]]
-EAST_ASIAN_PHRASE_H2 ; [[{EAST_ASIAN_PHRASE_H2}]]
-EAST_ASIAN_PHRASE_H3 ; [[{EAST_ASIAN_PHRASE_H3}]]
+# Symbol name ; Symbol definition in UnicodeSet notation ; Optional non-dictionary equivalent symbol
+BK|NL|eot ; [[\p{Line_Break=Mandatory_Break}] [\p{Line_Break=Next_Line}] [[{eot}]]] ; 
+CM ; [\p{Line_Break=Combining_Mark}] ; 
+BAmEastAsian ; [\p{Line_Break=Break_After}-[\p{ea=F}\p{ea=W}\p{ea=H}]] ; 
+LF ; [\p{Line_Break=Line_Feed}] ; 
+CR ; [\p{Line_Break=Carriage_Return}] ; 
+SP ; [\p{Line_Break=Space}] ; 
+EXmEastAsian ; [\p{Line_Break=Exclamation}-[\p{ea=F}\p{ea=W}\p{ea=H}]] ; 
+QUmPimPf ; [\p{Line_Break=Quotation}-\p{gc=Pi}-\p{gc=Pf}] ; 
+AImEastAsian|ALmEastAsianmDottedCircle|SG|XXmExtPictUnassigned ; [[\p{Line_Break=Ambiguous}-[\p{ea=F}\p{ea=W}\p{ea=H}]] [\p{Line_Break=Alphabetic}-[\p{ea=F}\p{ea=W}\p{ea=H}]-[◌]] [\p{Line_Break=Surrogate}] [\p{Line_Break=Unknown}-[\p{Extended_Pictographic=True}&\p{gc=Cn}]]] ; 
+PRmEastAsian ; [\p{Line_Break=Prefix_Numeric}-[\p{ea=F}\p{ea=W}\p{ea=H}]] ; 
+POmEastAsian ; [\p{Line_Break=Postfix_Numeric}-[\p{ea=F}\p{ea=W}\p{ea=H}]] ; 
+OPmEastAsian ; [\p{Line_Break=Open_Punctuation}-[\p{ea=F}\p{ea=W}\p{ea=H}]] ; 
+CP ; [\p{Line_Break=CP}] ; 
+IS ; [\p{Line_Break=Infix_Numeric}] ; 
+HY ; [\p{Line_Break=Hyphen}] ; 
+SY ; [\p{Line_Break=Break_Symbols}] ; 
+NU ; [\p{Line_Break=Numeric}] ; 
+CLmEastAsian ; [\p{Line_Break=Close_Punctuation}-[\p{ea=F}\p{ea=W}\p{ea=H}]] ; 
+GLmEastAsian ; [\p{Line_Break=Glue}-[\p{ea=F}\p{ea=W}\p{ea=H}]] ; 
+QU_Pi ; [\p{Line_Break=Quotation}&\p{gc=Pi}] ; 
+BB ; [\p{Line_Break=Break_Before}] ; 
+QU_Pf ; [\p{Line_Break=Quotation}&\p{gc=Pf}] ; 
+HH ; [\p{Line_Break=Unambiguous_Hyphen}] ; 
+HL ; [\p{Line_Break=HL}] ; 
+JL ; [\p{Line_Break=JL}] ; 
+JV ; [\p{Line_Break=JV}] ; 
+JT ; [\p{Line_Break=JT}] ; 
+NSmEastAsian ; [\p{Line_Break=Nonstarter}-[\p{ea=F}\p{ea=W}\p{ea=H}]] ; 
+AK ; [\p{Line_Break=Aksara}] ; 
+VI ; [\p{Line_Break=Virama}] ; 
+AS ; [\p{Line_Break=Aksara_Start}] ; 
+IDmEastAsianmExtPictUnassigned ; [\p{Line_Break=Ideographic}-[\p{ea=F}\p{ea=W}\p{ea=H}]-[\p{Extended_Pictographic=True}&\p{gc=Cn}]] ; 
+VF ; [\p{Line_Break=Virama_Final}] ; 
+ZW ; [\p{Line_Break=ZWSpace}] ; 
+ZWJ ; [\p{Line_Break=ZWJ}] ; 
+B2 ; [\p{Line_Break=Break_Both}] ; 
+INmEastAsian ; [\p{Line_Break=Inseparable}-[\p{ea=F}\p{ea=W}\p{ea=H}]] ; 
+WJ ; [\p{Line_Break=Word_Joiner}] ; 
+PR_EastAsian ; [\p{Line_Break=Prefix_Numeric}&[\p{ea=F}\p{ea=W}\p{ea=H}]] ; 
+ID_EastAsian ; [\p{Line_Break=Ideographic}&[\p{ea=F}\p{ea=W}\p{ea=H}]] ; 
+OP_EastAsian ; [\p{Line_Break=Open_Punctuation}&[\p{ea=F}\p{ea=W}\p{ea=H}]] ; 
+CL_EastAsian ; [\p{Line_Break=Close_Punctuation}&[\p{ea=F}\p{ea=W}\p{ea=H}]] ; 
+AI_EastAsian|AL_EastAsian ; [[\p{Line_Break=Ambiguous}&[\p{ea=F}\p{ea=W}\p{ea=H}]] [\p{Line_Break=Alphabetic}&[\p{ea=F}\p{ea=W}\p{ea=H}]]] ; 
+AL_DottedCircle ; [\p{Line_Break=Alphabetic}&[◌]] ; 
+EBmEastAsian ; [\p{Line_Break=E_Base}-[\p{ea=F}\p{ea=W}\p{ea=H}]] ; 
+EB_EastAsian ; [\p{Line_Break=E_Base}&[\p{ea=F}\p{ea=W}\p{ea=H}]] ; 
+BA_EastAsian ; [\p{Line_Break=Break_After}&[\p{ea=F}\p{ea=W}\p{ea=H}]] ; 
+NS_EastAsian|CJ ; [[\p{Line_Break=Nonstarter}&[\p{ea=F}\p{ea=W}\p{ea=H}]] [\p{Line_Break=Conditional_Japanese_Starter}]] ; 
+H2 ; [\p{Line_Break=H2}] ; 
+H3 ; [\p{Line_Break=H3}] ; 
+EX_EastAsian ; [\p{Line_Break=Exclamation}&[\p{ea=F}\p{ea=W}\p{ea=H}]] ; 
+IN_EastAsian ; [\p{Line_Break=Inseparable}&[\p{ea=F}\p{ea=W}\p{ea=H}]] ; 
+PO_EastAsian ; [\p{Line_Break=Postfix_Numeric}&[\p{ea=F}\p{ea=W}\p{ea=H}]] ; 
+CB ; [\p{Line_Break=Contingent_Break}] ; 
+AP ; [\p{Line_Break=Aksara_Prebase}] ; 
+GL_EastAsian ; [\p{Line_Break=Glue}&[\p{ea=F}\p{ea=W}\p{ea=H}]] ; 
+ID_ExtPictUnassigned ; [\p{Line_Break=Ideographic}&[\p{Extended_Pictographic=True}&\p{gc=Cn}]] ; 
+RI ; [\p{Line_Break=Regional_Indicator}] ; 
+EM ; [\p{Line_Break=E_Modifier}] ; 
+XX_ExtPictUnassigned ; [\p{Line_Break=Unknown}&[\p{Extended_Pictographic=True}&\p{gc=Cn}]] ; 
+EAST_ASIAN_UNCLASSIFIED ; [[{EAST_ASIAN_UNCLASSIFIED}]] ; 
+NON_EAST_ASIAN_LOOSE_IN ; [[{NON_EAST_ASIAN_LOOSE_IN}]] ; 
+EAST_ASIAN_LOOSE_IN ; [[{EAST_ASIAN_LOOSE_IN}]] ; 
+NON_EAST_ASIAN_UNCLASSIFIED ; [[{NON_EAST_ASIAN_UNCLASSIFIED}]] ; 
+NON_EAST_ASIAN_POX ; [[{NON_EAST_ASIAN_POX}]] ; 
+EAST_ASIAN_POX ; [[{EAST_ASIAN_POX}]] ; 
+NON_EAST_ASIAN_PRX ; [[{NON_EAST_ASIAN_PRX}]] ; 
+EAST_ASIAN_PRX ; [[{EAST_ASIAN_PRX}]] ; 
+LOOSE_DASH ; [[{LOOSE_DASH}]] ; 
+EAST_ASIAN_ID_AL ; [[{EAST_ASIAN_ID_AL}]] ; 
+SAmMnmMc ; [[\p{Line_Break=Complex_Context}-\p{gc=Mn}-\p{gc=Mc}]] ; AImEastAsian|ALmEastAsianmDottedCircle|SG|XXmExtPictUnassigned
+SA_Mn|SA_Mc ; [[[\p{Line_Break=Complex_Context}&\p{gc=Mn}]] [[\p{Line_Break=Complex_Context}&\p{gc=Mc}]]] ; CM
+EAST_ASIAN_PHRASE_ID ; [[{EAST_ASIAN_PHRASE_ID}]] ; EAST_ASIAN_ID_AL
+EAST_ASIAN_PHRASE_AL ; [[{EAST_ASIAN_PHRASE_AL}]] ; AI_EastAsian|AL_EastAsian
+EAST_ASIAN_PHRASE_NS ; [[{EAST_ASIAN_PHRASE_NS}]] ; EAST_ASIAN_PHRASE_NS
+EAST_ASIAN_PHRASE_H2 ; [[{EAST_ASIAN_PHRASE_H2}]] ; EAST_ASIAN_PHRASE_H2
+EAST_ASIAN_PHRASE_H3 ; [[{EAST_ASIAN_PHRASE_H3}]] ; EAST_ASIAN_PHRASE_H3

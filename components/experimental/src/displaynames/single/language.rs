@@ -6,7 +6,9 @@ use crate::displaynames::provider::*;
 use crate::displaynames::single::{
     RegionDisplayNameOwned, ScriptDisplayNameOwned, VariantDisplayNameOwned,
 };
-use crate::displaynames::{DisplayNamesOptions, DisplayNamesPreferences, LanguageDisplay};
+use crate::displaynames::{
+    DisplayNamesPreferences, LanguageDisplay, LanguageIdentifierDisplayNameOptions,
+};
 use alloc::vec::Vec;
 use icu_pattern::DoublePlaceholderPattern;
 use icu_provider::DataPayloadOr;
@@ -19,13 +21,13 @@ use tinystr::TinyAsciiStr;
 ///
 /// ```
 /// use icu::experimental::displaynames::{
-///     DisplayNamesPreferences, DisplayNamesOptions, single::LanguageIdentifierDisplayNameOwned,
+///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayNameOwned,
 /// };
 /// use icu::locale::{locale, langid};
 /// use writeable::assert_writeable_eq;
 ///
 /// let prefs = DisplayNamesPreferences::from(locale!("en"));
-/// let options = DisplayNamesOptions::default();
+/// let options = LanguageIdentifierDisplayNameOptions::default();
 /// let display_name = LanguageIdentifierDisplayNameOwned::try_new(
 ///     prefs,
 ///     langid!("fr-CA"),
@@ -39,7 +41,7 @@ use tinystr::TinyAsciiStr;
 #[derive(Debug)]
 pub struct LanguageIdentifierDisplayNameOwned {
     formatting_locale: DataLocale,
-    options: DisplayNamesOptions,
+    options: LanguageIdentifierDisplayNameOptions,
     language_payload: DataPayload<LocaleNamesLanguageMediumV1>,
     script_payload: DataPayloadOr<LocaleNamesScriptMediumV1, ()>,
     region_payload: DataPayloadOr<LocaleNamesRegionMediumV1, ()>,
@@ -50,7 +52,7 @@ pub struct LanguageIdentifierDisplayNameOwned {
 
 impl LanguageIdentifierDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
-        (prefs: DisplayNamesPreferences, subject: icu_locale::LanguageIdentifier, options: DisplayNamesOptions) -> result: Result<Self, DataError>,
+        (prefs: DisplayNamesPreferences, subject: icu_locale::LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the language display name for a given language identifier and locale using compiled data.
         functions: [
             try_new,
@@ -65,7 +67,7 @@ impl LanguageIdentifierDisplayNameOwned {
         provider: &D,
         prefs: DisplayNamesPreferences,
         mut subject: icu_locale::LanguageIdentifier,
-        options: DisplayNamesOptions,
+        options: LanguageIdentifierDisplayNameOptions,
     ) -> Result<Self, DataError>
     where
         D: DataProvider<LocaleNamesLanguageMediumV1>
@@ -91,7 +93,7 @@ impl LanguageIdentifierDisplayNameOwned {
         let mut language_payload = None;
 
         // Only try dialect if requested (which is the default)
-        if options.language_display == LanguageDisplay::Dialect {
+        if options.language_display.unwrap_or_default() == LanguageDisplay::Dialect {
             for (language, script, region) in [
                 (subject.language, Some(subject.script), Some(subject.region)),
                 (subject.language, Some(subject.script), None),

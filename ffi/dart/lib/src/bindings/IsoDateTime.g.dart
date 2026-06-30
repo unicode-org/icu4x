@@ -63,7 +63,8 @@ final class IsoDateTime {
       ]);
 }
 
-@_DiplomatFfiUse('icu4x_IsoDateTime_from_string_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultIsoDateTimeFfiInt32 Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_from_string_mv1')
 // ignore: non_constant_identifier_names
 external _ResultIsoDateTimeFfiInt32 _icu4x_IsoDateTime_from_string_mv1(_SliceUtf8 v);

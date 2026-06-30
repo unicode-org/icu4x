@@ -5,16 +5,15 @@
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
-use crate::displaynames::{
-    ALT_LONG_SUBSTRING, ALT_MENU_SUBSTRING, ALT_OFFICIAL_SUBSTRING, ALT_SECONDARY_SUBSTRING,
-    ALT_SHORT_SUBSTRING, ALT_SUBSTRING, ALT_VARIANT_SUBSTRING,
-};
+use crate::cldr_serde::displaynames::{Alt, WithAlt};
+use crate::displaynames::extract_names_for_zeromap_struct;
 
 use icu::experimental::displaynames::provider::*;
-use icu::locale::subtags::Language;
+use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use std::collections::{BTreeMap, HashSet};
+use tinystr::TinyAsciiStr;
 use zerovec::VarZeroCow;
 
 impl DataProvider<LanguageDisplayNamesV1> for SourceDataProvider {
@@ -53,30 +52,34 @@ crate::displaynames::impl_displaynames_legacy_iter_v1!(LocaleDisplayNamesV1, "la
 
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesLanguageMediumV1,
+    LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
-    None::<&str>,
+    None,
 );
 
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesLanguageShortV1,
+    LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
-    Some(ALT_SHORT_SUBSTRING),
+    Some(Alt::Short),
 );
 
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesLanguageLongV1,
+    LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
-    Some(ALT_LONG_SUBSTRING),
+    Some(Alt::Long),
 );
 
 crate::displaynames::impl_displaynames_menu_v1!(
     LocaleNamesLanguageMenuMediumV1,
+    LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
@@ -84,115 +87,68 @@ crate::displaynames::impl_displaynames_menu_v1!(
 
 impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayNames<'static> {
     fn from(other: &cldr_serde::displaynames::language::Resource) -> Self {
-        let mut names = BTreeMap::new();
-        let mut short_names = BTreeMap::new();
-        let mut long_names = BTreeMap::new();
-        let mut menu_names = BTreeMap::new();
-        for (key, value) in other.main.value.localedisplaynames.languages.iter() {
-            if let Some(lang) = key.strip_suffix(ALT_SHORT_SUBSTRING) {
-                if let Ok(lang) = lang.parse::<Language>() {
-                    short_names.insert(lang.to_tinystr(), value.as_ref());
+        let extracted = extract_names_for_zeromap_struct(
+            &other.main.value.localedisplaynames.languages,
+            &[Alt::Variant, Alt::Secondary, Alt::Official],
+            "language",
+            |langid| {
+                // LanguageDisplayNames contains display names for language subtags without other subtags
+                if langid.script.is_some() || langid.region.is_some() || !langid.variants.is_empty()
+                {
+                    None
+                } else {
+                    Some(langid.language.to_tinystr())
                 }
-            } else if let Some(lang) = key.strip_suffix(ALT_LONG_SUBSTRING) {
-                if let Ok(lang) = lang.parse::<Language>() {
-                    long_names.insert(lang.to_tinystr(), value.as_ref());
-                }
-            } else if let Some(lang) = key.strip_suffix(ALT_MENU_SUBSTRING) {
-                if let Ok(lang) = lang.parse::<Language>() {
-                    menu_names.insert(lang.to_tinystr(), value.as_ref());
-                }
-            } else if let Ok(lang) = key.parse::<Language>() {
-                names.insert(lang.to_tinystr(), value.as_ref());
-            } else if key.ends_with(ALT_VARIANT_SUBSTRING)
-                || key.ends_with(ALT_SECONDARY_SUBSTRING)
-                || key.ends_with(ALT_OFFICIAL_SUBSTRING)
-            {
-                // TODO(#8012): Handle preference-specific alt variants.
-            } else if key.contains(ALT_SUBSTRING) {
-                log::warn!("Unknown alt variant for language: {}", key);
-            }
-        }
+            },
+        );
+
+        let to_zero_map = |map: BTreeMap<TinyAsciiStr<3>, &str>| {
+            map.into_iter()
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect()
+        };
+
         Self {
-            // Old CLDR versions may contain trivial entries, so filter
-            names: names
-                .into_iter()
-                .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (k.to_unvalidated(), v))
-                .collect(),
-            short_names: short_names
-                .into_iter()
-                .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (k.to_unvalidated(), v))
-                .collect(),
-            long_names: long_names
-                .into_iter()
-                .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (k.to_unvalidated(), v))
-                .collect(),
-            menu_names: menu_names
-                .into_iter()
-                .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (k.to_unvalidated(), v))
-                .collect(),
+            names: to_zero_map(extracted.names),
+            short_names: to_zero_map(extracted.short_names),
+            long_names: to_zero_map(extracted.long_names),
+            menu_names: to_zero_map(extracted.menu_names),
         }
     }
 }
 
 impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<'static> {
     fn from(other: &cldr_serde::displaynames::language::Resource) -> Self {
-        let mut names = BTreeMap::new();
-        let mut short_names = BTreeMap::new();
-        let mut long_names = BTreeMap::new();
-        let mut menu_names = BTreeMap::new();
-        for (key, value) in other.main.value.localedisplaynames.languages.iter() {
-            if key.contains("-menu-") {
-                // TODO: handle -menu-core and -menu-extension
-                continue;
-            }
-            #[expect(clippy::collapsible_if)] // consistency
-            if let Some(locale) = key.strip_suffix(ALT_SHORT_SUBSTRING) {
-                if locale.contains('-') {
-                    short_names.insert(locale, value.as_ref());
+        let extracted = extract_names_for_zeromap_struct(
+            &other.main.value.localedisplaynames.languages,
+            &[Alt::Variant, Alt::Secondary, Alt::Official],
+            "language",
+            |langid| {
+                // LocaleDisplayNames contains display names for languages with other subtags,
+                // not duplicating the display names found in LanguageDisplayNames
+                if langid.script.is_none() && langid.region.is_none() && langid.variants.is_empty()
+                {
+                    None
+                } else {
+                    Some(langid.to_string())
                 }
-            } else if let Some(locale) = key.strip_suffix(ALT_LONG_SUBSTRING) {
-                if locale.contains('-') {
-                    long_names.insert(locale, value.as_ref());
-                }
-            } else if let Some(locale) = key.strip_suffix(ALT_MENU_SUBSTRING) {
-                if locale.contains('-') {
-                    menu_names.insert(locale, value.as_ref());
-                }
-            } else if !key.contains(ALT_SUBSTRING) {
-                if key.contains('-') {
-                    names.insert(key, value.as_ref());
-                }
-            }
-        }
+            },
+        );
+
+        let to_zero_map = |map: BTreeMap<String, &str>| {
+            map.iter()
+                .map(|(k, v)| (PotentialUtf8::from_str(k), *v))
+                .collect()
+        };
+
         Self {
-            names: names
-                .into_iter()
-                .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (PotentialUtf8::from_str(k), v))
-                .collect(),
-            short_names: short_names
-                .into_iter()
-                .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (PotentialUtf8::from_str(k), v))
-                .collect(),
-            long_names: long_names
-                .into_iter()
-                .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (PotentialUtf8::from_str(k), v))
-                .collect(),
-            menu_names: menu_names
-                .into_iter()
-                .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (PotentialUtf8::from_str(k), v))
-                .collect(),
+            names: to_zero_map(extracted.names),
+            short_names: to_zero_map(extracted.short_names),
+            long_names: to_zero_map(extracted.long_names),
+            menu_names: to_zero_map(extracted.menu_names),
         }
     }
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;

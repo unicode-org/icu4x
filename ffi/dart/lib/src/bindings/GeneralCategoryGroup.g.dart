@@ -134,72 +134,86 @@ final class GeneralCategoryGroup {
       ]);
 }
 
-@_DiplomatFfiUse('icu4x_GeneralCategoryGroup_contains_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Bool Function(_GeneralCategoryGroupFfi, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_GeneralCategoryGroup_contains_mv1')
 // ignore: non_constant_identifier_names
 external bool _icu4x_GeneralCategoryGroup_contains_mv1(_GeneralCategoryGroupFfi self, int val);
 
-@_DiplomatFfiUse('icu4x_GeneralCategoryGroup_complement_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_GeneralCategoryGroupFfi Function(_GeneralCategoryGroupFfi)>(isLeaf: true, symbol: 'icu4x_GeneralCategoryGroup_complement_mv1')
 // ignore: non_constant_identifier_names
 external _GeneralCategoryGroupFfi _icu4x_GeneralCategoryGroup_complement_mv1(_GeneralCategoryGroupFfi self);
 
-@_DiplomatFfiUse('icu4x_GeneralCategoryGroup_all_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_GeneralCategoryGroupFfi Function()>(isLeaf: true, symbol: 'icu4x_GeneralCategoryGroup_all_mv1')
 // ignore: non_constant_identifier_names
 external _GeneralCategoryGroupFfi _icu4x_GeneralCategoryGroup_all_mv1();
 
-@_DiplomatFfiUse('icu4x_GeneralCategoryGroup_empty_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_GeneralCategoryGroupFfi Function()>(isLeaf: true, symbol: 'icu4x_GeneralCategoryGroup_empty_mv1')
 // ignore: non_constant_identifier_names
 external _GeneralCategoryGroupFfi _icu4x_GeneralCategoryGroup_empty_mv1();
 
-@_DiplomatFfiUse('icu4x_GeneralCategoryGroup_union_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_GeneralCategoryGroupFfi Function(_GeneralCategoryGroupFfi, _GeneralCategoryGroupFfi)>(isLeaf: true, symbol: 'icu4x_GeneralCategoryGroup_union_mv1')
 // ignore: non_constant_identifier_names
 external _GeneralCategoryGroupFfi _icu4x_GeneralCategoryGroup_union_mv1(_GeneralCategoryGroupFfi self, _GeneralCategoryGroupFfi other);
 
-@_DiplomatFfiUse('icu4x_GeneralCategoryGroup_intersection_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_GeneralCategoryGroupFfi Function(_GeneralCategoryGroupFfi, _GeneralCategoryGroupFfi)>(isLeaf: true, symbol: 'icu4x_GeneralCategoryGroup_intersection_mv1')
 // ignore: non_constant_identifier_names
 external _GeneralCategoryGroupFfi _icu4x_GeneralCategoryGroup_intersection_mv1(_GeneralCategoryGroupFfi self, _GeneralCategoryGroupFfi other);
 
-@_DiplomatFfiUse('icu4x_GeneralCategoryGroup_cased_letter_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_GeneralCategoryGroupFfi Function()>(isLeaf: true, symbol: 'icu4x_GeneralCategoryGroup_cased_letter_mv1')
 // ignore: non_constant_identifier_names
 external _GeneralCategoryGroupFfi _icu4x_GeneralCategoryGroup_cased_letter_mv1();
 
-@_DiplomatFfiUse('icu4x_GeneralCategoryGroup_letter_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_GeneralCategoryGroupFfi Function()>(isLeaf: true, symbol: 'icu4x_GeneralCategoryGroup_letter_mv1')
 // ignore: non_constant_identifier_names
 external _GeneralCategoryGroupFfi _icu4x_GeneralCategoryGroup_letter_mv1();
 
-@_DiplomatFfiUse('icu4x_GeneralCategoryGroup_mark_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_GeneralCategoryGroupFfi Function()>(isLeaf: true, symbol: 'icu4x_GeneralCategoryGroup_mark_mv1')
 // ignore: non_constant_identifier_names
 external _GeneralCategoryGroupFfi _icu4x_GeneralCategoryGroup_mark_mv1();
 
-@_DiplomatFfiUse('icu4x_GeneralCategoryGroup_number_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_GeneralCategoryGroupFfi Function()>(isLeaf: true, symbol: 'icu4x_GeneralCategoryGroup_number_mv1')
 // ignore: non_constant_identifier_names
 external _GeneralCategoryGroupFfi _icu4x_GeneralCategoryGroup_number_mv1();
 
-@_DiplomatFfiUse('icu4x_GeneralCategoryGroup_separator_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_GeneralCategoryGroupFfi Function()>(isLeaf: true, symbol: 'icu4x_GeneralCategoryGroup_separator_mv1')
 // ignore: non_constant_identifier_names
 external _GeneralCategoryGroupFfi _icu4x_GeneralCategoryGroup_separator_mv1();
 
-@_DiplomatFfiUse('icu4x_GeneralCategoryGroup_other_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_GeneralCategoryGroupFfi Function()>(isLeaf: true, symbol: 'icu4x_GeneralCategoryGroup_other_mv1')
 // ignore: non_constant_identifier_names
 external _GeneralCategoryGroupFfi _icu4x_GeneralCategoryGroup_other_mv1();
 
-@_DiplomatFfiUse('icu4x_GeneralCategoryGroup_punctuation_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_GeneralCategoryGroupFfi Function()>(isLeaf: true, symbol: 'icu4x_GeneralCategoryGroup_punctuation_mv1')
 // ignore: non_constant_identifier_names
 external _GeneralCategoryGroupFfi _icu4x_GeneralCategoryGroup_punctuation_mv1();
 
-@_DiplomatFfiUse('icu4x_GeneralCategoryGroup_symbol_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_GeneralCategoryGroupFfi Function()>(isLeaf: true, symbol: 'icu4x_GeneralCategoryGroup_symbol_mv1')
 // ignore: non_constant_identifier_names
 external _GeneralCategoryGroupFfi _icu4x_GeneralCategoryGroup_symbol_mv1();

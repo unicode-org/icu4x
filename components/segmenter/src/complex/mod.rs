@@ -6,33 +6,43 @@ use crate::provider::*;
 #[cfg(feature = "unstable")]
 use crate::scaffold::PotentiallyIllFormedUtf8;
 use crate::scaffold::{RuleBreakType, Utf8, Utf16};
-use crate::{GraphemeClusterSegmenter, GraphemeClusterSegmenterBorrowed};
 use alloc::vec::Vec;
 use icu_provider::prelude::*;
 
 mod dictionary;
 use dictionary::*;
-mod language;
-use language::*;
+mod script;
+use script::*;
 #[cfg(feature = "lstm")]
 mod lstm;
 #[cfg(feature = "lstm")]
 use lstm::*;
 
-#[cfg(feature = "unstable")]
-pub(crate) use language::{Language, get_language};
+#[derive(Debug)]
+#[doc(hidden)]
+pub struct ComplexIterator<
+    'data,
+    's,
+    G: AbstractGraphemeClusterSegmenterBorrowed<'data>,
+    R: RuleBreakType + 'static,
+>(ComplexIteratorInner<'data, 's, G, R>, usize);
 
 #[derive(Debug)]
-pub struct ComplexIterator<'data, 's, R: RuleBreakType>(ComplexIteratorInner<'data, 's, R>, usize);
-
-#[derive(Debug)]
-enum ComplexIteratorInner<'data, 's, R: RuleBreakType> {
-    Dictionary(DictionaryBreakIterator<'data, 's, R>),
+#[allow(clippy::large_enum_variant)]
+enum ComplexIteratorInner<
+    'data,
+    's,
+    G: AbstractGraphemeClusterSegmenterBorrowed<'data>,
+    R: RuleBreakType + 'static,
+> {
+    Dictionary(DictionaryBreakIterator<'data, 's, G, R>),
     #[cfg(feature = "lstm")]
     Lstm(LstmSegmenterIterator<'data, 's, R>),
 }
 
-impl<R: RuleBreakType> Iterator for ComplexIterator<'_, '_, R> {
+impl<'data, G: AbstractGraphemeClusterSegmenterBorrowed<'data>, R: RuleBreakType> Iterator
+    for ComplexIterator<'data, '_, G, R>
+{
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -61,12 +71,12 @@ pub enum ComplexPayloadBorrowed<'data> {
 }
 
 impl<'data> ComplexPayloadBorrowed<'data> {
-    pub(crate) fn segment_str<'s>(
+    pub(crate) fn segment_str<'s, G: AbstractGraphemeClusterSegmenterBorrowed<'data>>(
         self,
         input: &'s str,
-        grapheme: GraphemeClusterSegmenterBorrowed<'data>,
+        grapheme: G,
         offset: usize,
-    ) -> ComplexIterator<'data, 's, Utf8> {
+    ) -> ComplexIterator<'data, 's, G, Utf8> {
         ComplexIterator(
             match self {
                 Self::Dict(dict) => ComplexIteratorInner::Dictionary(
@@ -82,12 +92,12 @@ impl<'data> ComplexPayloadBorrowed<'data> {
     }
 
     #[cfg(feature = "unstable")]
-    pub(crate) fn segment_utf8<'s>(
+    pub(crate) fn segment_utf8<'s, G: AbstractGraphemeClusterSegmenterBorrowed<'data>>(
         self,
         input: &'s [u8],
-        grapheme: GraphemeClusterSegmenterBorrowed<'data>,
+        grapheme: G,
         offset: usize,
-    ) -> ComplexIterator<'data, 's, PotentiallyIllFormedUtf8> {
+    ) -> ComplexIterator<'data, 's, G, PotentiallyIllFormedUtf8> {
         ComplexIterator(
             match self {
                 Self::Dict(dict) => ComplexIteratorInner::Dictionary(
@@ -102,12 +112,12 @@ impl<'data> ComplexPayloadBorrowed<'data> {
         )
     }
 
-    pub(crate) fn segment_utf16<'s>(
+    pub(crate) fn segment_utf16<'s, G: AbstractGraphemeClusterSegmenterBorrowed<'data>>(
         self,
         input: &'s [u16],
-        grapheme: GraphemeClusterSegmenterBorrowed<'data>,
+        grapheme: G,
         offset: usize,
-    ) -> ComplexIterator<'data, 's, Utf16> {
+    ) -> ComplexIterator<'data, 's, G, Utf16> {
         ComplexIterator(
             match self {
                 Self::Dict(dict) => ComplexIteratorInner::Dictionary(
@@ -147,9 +157,85 @@ impl ComplexPayloadBorrowed<'static> {
     }
 }
 
+pub(crate) trait AbstractGraphemeClusterSegmenter {
+    type Borrowed<'data>: AbstractGraphemeClusterSegmenterBorrowed<'data>
+    where
+        Self: 'data;
+
+    fn as_borrowed<'data>(&'data self) -> Self::Borrowed<'data>;
+}
+
+#[doc(hidden)]
+pub trait AbstractGraphemeClusterSegmenterBorrowed<'data>: core::fmt::Debug + Copy {
+    type Iter<'d, 's, R: RuleBreakType + 'static>: Iterator<Item = usize> + core::fmt::Debug;
+
+    fn segment_str<'s>(self, input: &'s str) -> Self::Iter<'data, 's, Utf8>;
+    #[cfg(feature = "unstable")]
+    fn segment_utf8<'s>(self, input: &'s [u8]) -> Self::Iter<'data, 's, PotentiallyIllFormedUtf8>;
+    fn segment_utf16<'s>(self, input: &'s [u16]) -> Self::Iter<'data, 's, Utf16>;
+}
+
+impl AbstractGraphemeClusterSegmenter for crate::GraphemeClusterSegmenter {
+    type Borrowed<'data> = crate::GraphemeClusterSegmenterBorrowed<'data>;
+
+    fn as_borrowed<'data>(&'data self) -> Self::Borrowed<'data> {
+        self.as_borrowed()
+    }
+}
+
+impl<'data> AbstractGraphemeClusterSegmenterBorrowed<'data>
+    for crate::grapheme::GraphemeClusterSegmenterBorrowed<'data>
+{
+    type Iter<'d, 's, R: RuleBreakType + 'static> =
+        crate::grapheme::GraphemeClusterBreakIterator<'data, 's, R>;
+
+    fn segment_str<'s>(self, input: &'s str) -> Self::Iter<'data, 's, Utf8> {
+        self.segment_str(input)
+    }
+
+    #[cfg(feature = "unstable")]
+    fn segment_utf8<'s>(self, input: &'s [u8]) -> Self::Iter<'data, 's, PotentiallyIllFormedUtf8> {
+        self.segment_utf8(input)
+    }
+
+    fn segment_utf16<'s>(self, input: &'s [u16]) -> Self::Iter<'data, 's, Utf16> {
+        self.segment_utf16(input)
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl AbstractGraphemeClusterSegmenter for crate::neo::GraphemeClusterSegmenter {
+    type Borrowed<'data> = crate::neo::GraphemeClusterSegmenterBorrowed<'data>;
+
+    fn as_borrowed<'data>(&'data self) -> Self::Borrowed<'data> {
+        self.as_borrowed()
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl<'data> AbstractGraphemeClusterSegmenterBorrowed<'data>
+    for crate::neo::GraphemeClusterSegmenterBorrowed<'data>
+{
+    type Iter<'d, 's, R: RuleBreakType + 'static> =
+        crate::neo::GraphemeClusterBreakIterator<'d, 's, R>;
+
+    fn segment_str<'s>(self, input: &'s str) -> Self::Iter<'data, 's, Utf8> {
+        self.segment_str(input)
+    }
+
+    #[cfg(feature = "unstable")]
+    fn segment_utf8<'s>(self, input: &'s [u8]) -> Self::Iter<'data, 's, PotentiallyIllFormedUtf8> {
+        self.segment_utf8(input)
+    }
+
+    fn segment_utf16<'s>(self, input: &'s [u16]) -> Self::Iter<'data, 's, Utf16> {
+        self.segment_utf16(input)
+    }
+}
+
 #[derive(Debug)]
-pub(crate) struct ComplexPayloads {
-    grapheme: GraphemeClusterSegmenter,
+pub(crate) struct ComplexPayloads<G: AbstractGraphemeClusterSegmenter> {
+    grapheme: G,
     my: Option<ComplexPayload>,
     km: Option<ComplexPayload>,
     lo: Option<ComplexPayload>,
@@ -159,8 +245,8 @@ pub(crate) struct ComplexPayloads {
 
 #[derive(Debug, Clone, Copy)]
 #[doc(hidden)]
-pub struct ComplexPayloadsBorrowed<'data> {
-    pub(crate) grapheme: GraphemeClusterSegmenterBorrowed<'data>,
+pub struct ComplexPayloadsBorrowed<'data, G: AbstractGraphemeClusterSegmenterBorrowed<'data>> {
+    pub(crate) grapheme: G,
     my: Option<ComplexPayloadBorrowed<'data>>,
     km: Option<ComplexPayloadBorrowed<'data>>,
     lo: Option<ComplexPayloadBorrowed<'data>>,
@@ -183,39 +269,42 @@ const LO_DICT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("
 const TH_DICT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("thaidict");
 const CJ_DICT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("cjdict");
 
-impl<'data> ComplexPayloadsBorrowed<'data> {
-    pub(crate) fn select(&self, language: Language) -> Option<ComplexPayloadBorrowed<'data>> {
-        const ERR: DataError = DataError::custom("No segmentation model for language");
-        match language {
-            Language::Burmese => self.my.or_else(|| {
-                ERR.with_display_context("my");
+impl<'data, G: AbstractGraphemeClusterSegmenterBorrowed<'data>> ComplexPayloadsBorrowed<'data, G> {
+    pub(crate) fn select(
+        &self,
+        complex_script: ComplexScript,
+    ) -> Option<ComplexPayloadBorrowed<'data>> {
+        const ERR: DataError = DataError::custom("No segmentation model for complex script");
+        match complex_script {
+            ComplexScript::Myanmar => self.my.or_else(|| {
+                ERR.with_display_context("Myanmar");
                 None
             }),
-            Language::Khmer => self.km.or_else(|| {
-                ERR.with_display_context("km");
+            ComplexScript::Khmer => self.km.or_else(|| {
+                ERR.with_display_context("Khmer");
                 None
             }),
-            Language::Lao => self.lo.or_else(|| {
-                ERR.with_display_context("lo");
+            ComplexScript::Lao => self.lo.or_else(|| {
+                ERR.with_display_context("Lao");
                 None
             }),
-            Language::Thai => self.th.or_else(|| {
-                ERR.with_display_context("th");
+            ComplexScript::Thai => self.th.or_else(|| {
+                ERR.with_display_context("Thai");
                 None
             }),
-            Language::ChineseOrJapanese => self.ja.or_else(|| {
-                ERR.with_display_context("ja");
+            ComplexScript::ChineseOrJapanese => self.ja.or_else(|| {
+                ERR.with_display_context("Chinese/Japanese");
                 None
             }),
-            Language::Unknown => None,
+            ComplexScript::None => None,
         }
     }
 
-    pub(crate) fn complex_language_segment_str(&self, input: &str) -> Vec<usize> {
+    pub(crate) fn segment_str(&self, input: &str) -> Vec<usize> {
         let mut result = Vec::new();
         let mut offset = 0;
-        for (slice, lang) in LanguageIterator::new(input) {
-            match self.select(lang) {
+        for (slice, complex_script) in ComplexScriptIterator::new(input) {
+            match self.select(complex_script) {
                 Some(d) => result.extend(d.segment_str(slice, self.grapheme, offset)),
                 None => result.push(offset + slice.len()),
             }
@@ -224,11 +313,11 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
         result
     }
     /// Return UTF-16 segment offset array using dictionary or lstm segmenter.
-    pub(crate) fn complex_language_segment_utf16(&self, input: &[u16]) -> Vec<usize> {
+    pub(crate) fn segment_utf16(&self, input: &[u16]) -> Vec<usize> {
         let mut result = Vec::new();
         let mut offset = 0;
-        for (slice, lang) in LanguageIteratorUtf16::new(input) {
-            match self.select(lang) {
+        for (slice, complex_script) in ComplexScriptIteratorUtf16::new(input) {
+            match self.select(complex_script) {
                 Some(d) => result.extend(d.segment_utf16(slice, self.grapheme, offset)),
                 None => result.push(offset + slice.len()),
             }
@@ -238,7 +327,7 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
     }
 }
 
-impl ComplexPayloadsBorrowed<'static> {
+impl<G: AbstractGraphemeClusterSegmenterBorrowed<'static>> ComplexPayloadsBorrowed<'static, G> {
     #[cfg(feature = "lstm")]
     #[cfg(feature = "compiled_data")]
     pub(crate) fn with_southeast_asian_lstms(&mut self) {
@@ -302,11 +391,13 @@ impl ComplexPayloadsBorrowed<'static> {
                 .map(ComplexPayloadBorrowed::Dict);
         }
     }
+}
 
+impl ComplexPayloadsBorrowed<'static, crate::grapheme::GraphemeClusterSegmenterBorrowed<'static>> {
     #[cfg(feature = "compiled_data")]
     pub(crate) const fn new() -> Self {
         Self {
-            grapheme: GraphemeClusterSegmenter::new(),
+            grapheme: crate::grapheme::GraphemeClusterSegmenter::new(),
             my: None,
             km: None,
             lo: None,
@@ -315,7 +406,9 @@ impl ComplexPayloadsBorrowed<'static> {
         }
     }
 
-    pub(crate) fn static_to_owned(self) -> ComplexPayloads {
+    pub(crate) fn static_to_owned(
+        self,
+    ) -> ComplexPayloads<crate::grapheme::GraphemeClusterSegmenter> {
         ComplexPayloads {
             grapheme: self.grapheme.static_to_owned(),
             my: self.my.map(ComplexPayloadBorrowed::static_to_owned),
@@ -327,8 +420,34 @@ impl ComplexPayloadsBorrowed<'static> {
     }
 }
 
-impl ComplexPayloads {
-    pub(crate) fn as_borrowed(&self) -> ComplexPayloadsBorrowed<'_> {
+#[cfg(feature = "unstable")]
+impl ComplexPayloadsBorrowed<'static, crate::neo::GraphemeClusterSegmenterBorrowed<'static>> {
+    #[cfg(feature = "compiled_data")]
+    pub(crate) const fn new() -> Self {
+        Self {
+            grapheme: crate::neo::GraphemeClusterSegmenter::new(),
+            my: None,
+            km: None,
+            lo: None,
+            th: None,
+            ja: None,
+        }
+    }
+
+    pub(crate) fn static_to_owned(self) -> ComplexPayloads<crate::neo::GraphemeClusterSegmenter> {
+        ComplexPayloads {
+            grapheme: self.grapheme.static_to_owned(),
+            my: self.my.map(ComplexPayloadBorrowed::static_to_owned),
+            km: self.km.map(ComplexPayloadBorrowed::static_to_owned),
+            lo: self.lo.map(ComplexPayloadBorrowed::static_to_owned),
+            th: self.th.map(ComplexPayloadBorrowed::static_to_owned),
+            ja: self.ja.map(ComplexPayloadBorrowed::static_to_owned),
+        }
+    }
+}
+
+impl<G: AbstractGraphemeClusterSegmenter> ComplexPayloads<G> {
+    pub(crate) fn as_borrowed(&self) -> ComplexPayloadsBorrowed<'_, G::Borrowed<'_>> {
         ComplexPayloadsBorrowed {
             grapheme: self.grapheme.as_borrowed(),
             my: self.my.as_ref().map(ComplexPayload::as_borrowed),
@@ -406,13 +525,32 @@ impl ComplexPayloads {
         }
         Ok(())
     }
+}
 
+impl ComplexPayloads<crate::grapheme::GraphemeClusterSegmenter> {
     pub(crate) fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<SegmenterBreakGraphemeClusterV1> + ?Sized,
     {
         Ok(Self {
-            grapheme: GraphemeClusterSegmenter::try_new_unstable(provider)?,
+            grapheme: crate::grapheme::GraphemeClusterSegmenter::try_new_unstable(provider)?,
+            my: None,
+            km: None,
+            lo: None,
+            th: None,
+            ja: None,
+        })
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl ComplexPayloads<crate::neo::GraphemeClusterSegmenter> {
+    pub(crate) fn try_new<D>(provider: &D) -> Result<Self, DataError>
+    where
+        D: DataProvider<SegmenterBreakGraphemeClusterV2> + ?Sized,
+    {
+        Ok(Self {
+            grapheme: crate::neo::GraphemeClusterSegmenter::try_new_unstable(provider)?,
             my: None,
             km: None,
             lo: None,
@@ -465,12 +603,16 @@ mod tests {
     use super::*;
 
     #[track_caller]
-    fn check_complex(s: &str, expected: &[&str], segmenter: ComplexPayloadsBorrowed<'_>) {
+    fn check_complex<'data, G: AbstractGraphemeClusterSegmenterBorrowed<'data>>(
+        s: &str,
+        expected: &[&str],
+        segmenter: ComplexPayloadsBorrowed<'data, G>,
+    ) {
         use itertools::Itertools;
 
         let segments = [0]
             .into_iter()
-            .chain(segmenter.complex_language_segment_str(s))
+            .chain(segmenter.segment_str(s))
             .tuple_windows()
             .map(|(a, b)| &s[a..b])
             .collect::<Vec<_>>();
@@ -491,7 +633,7 @@ mod tests {
             .collect::<Vec<_>>();
         let iter = [0]
             .into_iter()
-            .chain(segmenter.complex_language_segment_utf16(&utf16))
+            .chain(segmenter.segment_utf16(&utf16))
             .tuple_windows()
             .map(|(a, b)| &utf16[a..b])
             .collect::<Vec<_>>();
@@ -500,9 +642,22 @@ mod tests {
 
     #[test]
     fn thai() {
-        let mut lstm = ComplexPayloadsBorrowed::new();
+        let mut lstm = ComplexPayloadsBorrowed::<crate::GraphemeClusterSegmenterBorrowed>::new();
         lstm.with_southeast_asian_lstms();
-        let mut dict = ComplexPayloadsBorrowed::new();
+        let mut dict = ComplexPayloadsBorrowed::<crate::GraphemeClusterSegmenterBorrowed>::new();
+        dict.with_southeast_asian_dictionaries();
+
+        check_complex("ภาษาไทยภาษาไทย", &["ภาษา", "ไทย", "ภาษา", "ไทย"], lstm);
+        check_complex("ภาษาไทยภาษาไทย", &["ภาษา", "ไทย", "ภาษา", "ไทย"], dict);
+    }
+
+    #[test]
+    fn thai_neo() {
+        let mut lstm =
+            ComplexPayloadsBorrowed::<crate::neo::GraphemeClusterSegmenterBorrowed>::new();
+        lstm.with_southeast_asian_lstms();
+        let mut dict =
+            ComplexPayloadsBorrowed::<crate::neo::GraphemeClusterSegmenterBorrowed>::new();
         dict.with_southeast_asian_dictionaries();
 
         check_complex("ภาษาไทยภาษาไทย", &["ภาษา", "ไทย", "ภาษา", "ไทย"], lstm);
@@ -511,11 +666,38 @@ mod tests {
 
     #[test]
     fn mixed() {
-        let mut lstm = ComplexPayloadsBorrowed::new();
+        let mut lstm = ComplexPayloadsBorrowed::<crate::GraphemeClusterSegmenterBorrowed>::new();
         lstm.with_southeast_asian_lstms();
         lstm.with_japanese_dictionary();
 
-        let mut dict = ComplexPayloadsBorrowed::new();
+        let mut dict = ComplexPayloadsBorrowed::<crate::GraphemeClusterSegmenterBorrowed>::new();
+        dict.with_southeast_asian_dictionaries();
+        dict.with_japanese_dictionary();
+
+        check_complex("ภาษาไทย龟山岛", &["ภาษา", "ไทย", "龟山岛"], lstm);
+        check_complex("ภาษาไทย龟山岛", &["ภาษา", "ไทย", "龟山岛"], dict);
+
+        check_complex(
+            "こんにちは世界ภาษาไทย",
+            &["こんにちは", "世界", "ภาษา", "ไทย"],
+            lstm,
+        );
+        check_complex(
+            "こんにちは世界ภาษาไทย",
+            &["こんにちは", "世界", "ภาษา", "ไทย"],
+            dict,
+        );
+    }
+
+    #[test]
+    fn mixed_neo() {
+        let mut lstm =
+            ComplexPayloadsBorrowed::<crate::neo::GraphemeClusterSegmenterBorrowed>::new();
+        lstm.with_southeast_asian_lstms();
+        lstm.with_japanese_dictionary();
+
+        let mut dict =
+            ComplexPayloadsBorrowed::<crate::neo::GraphemeClusterSegmenterBorrowed>::new();
         dict.with_southeast_asian_dictionaries();
         dict.with_japanese_dictionary();
 

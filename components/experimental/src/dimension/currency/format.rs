@@ -66,4 +66,26 @@ mod tests {
             "\u{61c}-\u{200f}١٢٬٣٤٥٫٦٧\u{a0}ج.م.\u{200f}"
         );
     }
+
+    #[test]
+    pub fn test_numbering_system_override() {
+        let prefs_arab = locale!("ar-EG").into();
+        let prefs_latn = locale!("ar-EG-u-nu-latn").into();
+        let currency_code = CurrencyCode(tinystr!(3, "EGP"));
+        let value = "12345.67".parse().unwrap();
+
+        // 1. Default numbering system (arab)
+        let fmt_arab = CurrencyFormatter::try_new(prefs_arab, Default::default()).unwrap();
+        assert_writeable_eq!(
+            fmt_arab.format_fixed_decimal(&value, &currency_code),
+            "\u{200f}١٢٬٣٤٥٫٦٧\u{a0}ج.م.\u{200f}"
+        );
+
+        // 2. Locale extension override (latn)
+        let fmt_latn = CurrencyFormatter::try_new(prefs_latn, Default::default()).unwrap();
+        assert_writeable_eq!(
+            fmt_latn.format_fixed_decimal(&value, &currency_code),
+            "\u{200f}12,345.67\u{a0}ج.م.\u{200f}"
+        );
+    }
 }

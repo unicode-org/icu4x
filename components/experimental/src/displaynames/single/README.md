@@ -19,7 +19,7 @@ classDiagram
 
     class LanguageIdentifierDisplayNameOwned~M~ {
         -lid: LanguageIdentifier
-        -options: DisplayNamesOptions
+        -options: LanguageIdentifierDisplayNameOptions
         +try_new(prefs, options, lid) Self  // Medium
         +try_new_short(prefs, options, lid) Self
         +try_new_long(prefs, options, lid) Self
@@ -157,7 +157,7 @@ We implement this trait for two marker models:
 *   **`models::Menu`**: Used for Menu display style. The `LanguagePayload` is `DataPayload<LocaleNamesLanguageMenuMediumV1>`.
 
 #### 2. The Generic Owned Struct
-`LanguageIdentifierDisplayNameOwned<M>` holds the `LanguageIdentifier`, `DisplayNamesOptions`, the generic `language_payload` (determined by `M`), optional `script_payload` and `region_payload` (both using `DataPayloadOr` with `ErasedDisplayNameMarker`), a vector of `variant_payloads` (using `ErasedDisplayNameMarker`), and the `pattern_payload` (using `LocaleNamesEssentialsV1`).
+`LanguageIdentifierDisplayNameOwned<M>` holds the `LanguageIdentifier`, `LanguageIdentifierDisplayNameOptions`, the generic `language_payload` (determined by `M`), optional `script_payload` and `region_payload` (both using `DataPayloadOr` with `ErasedDisplayNameMarker`), a vector of `variant_payloads` (using `ErasedDisplayNameMarker`), and the `pattern_payload` (using `LocaleNamesEssentialsV1`).
 
 > [!NOTE]
 > **Allocation Papercut**: Storing `variant_payloads` in a `Vec` requires heap allocation, which prevents this struct from being strictly allocation-free in `no_std` environments without an allocator. 
@@ -229,5 +229,8 @@ The following features defined in UTS #35 are currently not supported and are pl
 3.  **Fallback Behavior in Single Formatters**:
     Currently, single formatters (`Script`, `Region`, `Variant`, `Language`) fail-fast in the constructor (`try_new` returns `Err(DataError)`) if the specific subtag data is missing from the provider (e.g., `xx` or an untranslated language).
     *   *Resolution*: We will redesign the single formatters to support falling back to the code instead of failing with `DataError`. This has been deferred to a follow-up issue: [#8100](https://github.com/unicode-org/icu4x/issues/8100).
+4.  **Dialect Names Data Marker**:
+    Should dialect names (currently loaded using the same `LocaleNamesLanguageMediumV1` marker but with language+script+region attributes) be moved to a separate data marker to avoid overloading the language name marker and to allow applications to opt-out of dialect data to save binary size?
+
 
 

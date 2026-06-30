@@ -5,11 +5,8 @@
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
-use crate::displaynames::{
-    ALT_BIOT_SUBSTRING, ALT_CHAGOS_SUBSTRING, ALT_SHORT_SUBSTRING, ALT_SUBSTRING,
-    ALT_VARIANT_SUBSTRING,
-};
-use core::convert::TryFrom;
+use crate::cldr_serde::displaynames::{Alt, WithAlt};
+use crate::displaynames::extract_names_for_zeromap_struct;
 use icu::experimental::displaynames::provider::*;
 use icu::locale::subtags::Region;
 use icu_provider::prelude::*;
@@ -27,9 +24,7 @@ impl DataProvider<RegionDisplayNamesV1> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(RegionDisplayNames::try_from(data).map_err(|e| {
-                DataError::custom("data for RegionDisplayNames").with_display_context(&e)
-            })?),
+            payload: DataPayload::from_owned(RegionDisplayNames::from(data)),
         })
     }
 }
@@ -38,55 +33,43 @@ crate::displaynames::impl_displaynames_legacy_iter_v1!(RegionDisplayNamesV1, "te
 
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesRegionMediumV1,
+    Region,
     cldr_serde::displaynames::region::Resource,
     "territories.json",
     regions,
-    None::<&str>,
+    None,
 );
 
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesRegionShortV1,
+    Region,
     cldr_serde::displaynames::region::Resource,
     "territories.json",
     regions,
-    Some(ALT_SHORT_SUBSTRING),
+    Some(Alt::Short),
 );
 
-impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames<'static> {
-    type Error = icu::locale::ParseError;
-    fn try_from(other: &cldr_serde::displaynames::region::Resource) -> Result<Self, Self::Error> {
-        let mut names = BTreeMap::new();
-        let mut short_names = BTreeMap::new();
-        for (region, value) in other.main.value.localedisplaynames.regions.iter() {
-            if let Some(region) = region.strip_suffix(ALT_SHORT_SUBSTRING) {
-                short_names.insert(Region::try_from_str(region)?.to_tinystr(), value.as_str());
-            } else if !region.contains(ALT_SUBSTRING) {
-                names.insert(Region::try_from_str(region)?.to_tinystr(), value.as_str());
-            } else if region.ends_with(ALT_VARIANT_SUBSTRING)
-                || region.ends_with(ALT_CHAGOS_SUBSTRING)
-                || region.ends_with(ALT_BIOT_SUBSTRING)
-            {
-                // TODO(#8012): Handle this with datagen alt flags.
-            } else {
-                log::warn!("Unknown alt variant for region: {}", region);
-            }
+impl From<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames<'static> {
+    fn from(other: &cldr_serde::displaynames::region::Resource) -> Self {
+        let extracted = extract_names_for_zeromap_struct(
+            &other.main.value.localedisplaynames.regions,
+            &[Alt::Variant, Alt::Chagos, Alt::Biot],
+            "region",
+            |region| Some(region.to_tinystr()),
+        );
+
+        let to_zero_map = |map: BTreeMap<tinystr::TinyAsciiStr<3>, &str>| {
+            map.into_iter()
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect()
+        };
+
+        Self {
+            names: to_zero_map(extracted.names),
+            short_names: to_zero_map(extracted.short_names),
         }
-        Ok(Self {
-            // Old CLDR versions may contain trivial entries, so filter
-            names: names
-                .into_iter()
-                .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (k.to_unvalidated(), v))
-                .collect(),
-            short_names: short_names
-                .into_iter()
-                .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (k.to_unvalidated(), v))
-                .collect(),
-        })
     }
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;

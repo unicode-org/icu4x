@@ -2,12 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{ComplexHandler, RuleBreakIterator, RuleBreakType};
-use crate::complex::*;
+use super::*;
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::iterator_helpers::derive_usize_iterator_with_type;
 use crate::provider::*;
-use crate::rule_segmenter::*;
+use crate::scaffold::{Latin1, PotentiallyIllFormedUtf8, RuleBreakType, Utf8, Utf16};
 #[cfg(feature = "compiled_data")]
 use crate::word::WordBreakInvariantOptions;
 use crate::word::WordBreakOptions;
@@ -242,7 +241,7 @@ impl WordSegmenter {
         D: DataProvider<SegmenterBreakWordV2>
             + DataProvider<SegmenterDictionaryAutoV1>
             + DataProvider<SegmenterLstmAutoV1>
-            + DataProvider<SegmenterBreakGraphemeClusterV1>
+            + DataProvider<SegmenterBreakGraphemeClusterV2>
             + ?Sized,
     {
         let mut complex = ComplexPayloads::try_new(provider)?;
@@ -316,7 +315,7 @@ impl WordSegmenter {
     where
         D: DataProvider<SegmenterBreakWordV2>
             + DataProvider<SegmenterLstmAutoV1>
-            + DataProvider<SegmenterBreakGraphemeClusterV1>
+            + DataProvider<SegmenterBreakGraphemeClusterV2>
             + ?Sized,
     {
         let mut s = Self::try_new_for_non_complex_scripts_unstable(provider, options)?;
@@ -379,7 +378,7 @@ impl WordSegmenter {
         D: DataProvider<SegmenterBreakWordV2>
             + DataProvider<SegmenterDictionaryAutoV1>
             + DataProvider<SegmenterDictionaryExtendedV1>
-            + DataProvider<SegmenterBreakGraphemeClusterV1>
+            + DataProvider<SegmenterBreakGraphemeClusterV2>
             + ?Sized,
     {
         let mut s = Self::try_new_for_non_complex_scripts_unstable(provider, options)?;
@@ -420,7 +419,7 @@ impl WordSegmenter {
     ) -> Result<Self, DataError>
     where
         D: DataProvider<SegmenterBreakWordV2>
-            + DataProvider<SegmenterBreakGraphemeClusterV1>
+            + DataProvider<SegmenterBreakGraphemeClusterV2>
             + ?Sized,
     {
         Ok(Self {
@@ -499,44 +498,22 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for ComplexWord<Y> {
     type Cache = [usize; 16];
     const BREAK_STATUS: u8 = WordType::Letter as u8;
 
-    type Data<'s> = Y::ComplexData<'s>;
+    type ComplexPayloads<'s> = Y::ComplexPayloads<'s>;
+    type ComplexPayload<'s> = Y::ComplexPayload<'s>;
 
-    fn resolve_symbol(symbol: Symbol) -> Symbol {
-        symbol
+    fn select<'data>(
+        complex_payloads: &Y::ComplexPayloads<'data>,
+        complex_script: ComplexScript,
+    ) -> Option<Self::ComplexPayload<'data>> {
+        Y::select_complex(complex_payloads, complex_script)
     }
 
     fn handle<'data, 's>(
-        _: Symbol,
-        _: &RuleBreakIterator<'_, '_, Y, Self>,
-        data: &Self::Data<'data>,
-        iter: Y::IterAttr<'s>,
-    ) -> Option<(ComplexIterator<'data, 's, Y>, Y::IterAttr<'s>)> {
-        let data = Y::select_complex(
-            data,
-            // TODO: Use symbols to identify runs
-            get_language(
-                iter.clone()
-                    .next()
-                    .map(|(_, cp)| cp.into())
-                    .unwrap_or(char::MAX as u32),
-            ),
-        )?;
-
-        let mut past_complex = iter.clone();
-        past_complex.next();
-        while past_complex.clone().next().is_some_and(|(_, cp)| {
-            get_language(cp.into())
-                == get_language(
-                    iter.clone()
-                        .next()
-                        .map(|(_, cp)| cp.into())
-                        .unwrap_or(char::MAX as u32),
-                )
-        }) {
-            past_complex.next();
-        }
-
-        Some((Y::handle_complex(&data, &iter, &past_complex), past_complex))
+        complex_payloads: &Self::ComplexPayload<'data>,
+        iter: &Y::IterAttr<'s>,
+        past_complex: &Y::IterAttr<'s>,
+    ) -> ComplexIterator<'data, 's, Y> {
+        Y::handle_complex(complex_payloads, iter, past_complex)
     }
 }
 

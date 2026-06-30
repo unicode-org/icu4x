@@ -540,10 +540,9 @@ pub(crate) fn load_with_fallback<'a, M: DataMarker>(
 }
 
 impl crate::DecimalFormatterPreferences {
-    pub(crate) fn nu_id<'a>(
-        &'a self,
-        locale: &'a DataLocale,
-    ) -> Option<DataIdentifierBorrowed<'a>> {
+    /// Returns a data identifier with the numbering system resolved from the preferences, if present.
+    #[doc(hidden)]
+    pub fn nu_id<'a>(&'a self, locale: &'a DataLocale) -> Option<DataIdentifierBorrowed<'a>> {
         self.numbering_system
             .as_ref()
             .map(|s| s.as_str())

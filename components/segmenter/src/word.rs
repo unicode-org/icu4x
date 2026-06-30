@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::complex::*;
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::iterator_helpers::derive_usize_iterator_with_type;
 use crate::provider::*;
@@ -13,6 +12,10 @@ use alloc::vec::Vec;
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
+
+type ComplexPayloads = crate::complex::ComplexPayloads<crate::GraphemeClusterSegmenter>;
+type ComplexPayloadsBorrowed<'data> =
+    crate::complex::ComplexPayloadsBorrowed<'data, crate::GraphemeClusterSegmenterBorrowed<'data>>;
 
 /// Options to tailor word breaking behavior.
 #[non_exhaustive]
@@ -607,7 +610,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
             complex: Some(self.complex),
             boundary_property: 0,
             locale_override: self.locale_override,
-            handle_complex_language: handle_complex_language_utf8,
+            handle_complex: handle_complex_utf8,
         })
     }
 
@@ -629,7 +632,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
             complex: Some(self.complex),
             boundary_property: 0,
             locale_override: self.locale_override,
-            handle_complex_language: handle_complex_language_utf8,
+            handle_complex: handle_complex_utf8,
         })
     }
 
@@ -646,7 +649,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
             complex: Some(self.complex),
             boundary_property: 0,
             locale_override: self.locale_override,
-            handle_complex_language: empty_handle_complex_language,
+            handle_complex: empty_handle_complex,
         })
     }
 
@@ -663,7 +666,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
             complex: Some(self.complex),
             boundary_property: 0,
             locale_override: self.locale_override,
-            handle_complex_language: handle_complex_language_utf16,
+            handle_complex: handle_complex_utf16,
         })
     }
 }
@@ -703,14 +706,14 @@ impl WordSegmenterBorrowed<'static> {
     }
 }
 
-fn handle_complex_language_utf8<T>(
+fn handle_complex_utf8<T>(
     iter: &mut RuleBreakIterator<'_, '_, T>,
     left_codepoint: T::CharType,
 ) -> Option<usize>
 where
     T: RuleBreakType<CharType = char>,
 {
-    // word segmenter doesn't define break rules for some languages such as Thai.
+    // word segmenter doesn't define break rules for some scripts such as Thai.
     let start_iter = iter.iter.clone();
     let start_point = iter.current_pos_data;
     let mut s = String::new();
@@ -733,7 +736,7 @@ where
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
     #[expect(clippy::unwrap_used)] // iter.complex present for word segmenter
-    let breaks = iter.complex.unwrap().complex_language_segment_str(&s);
+    let breaks = iter.complex.unwrap().segment_str(&s);
     iter.result_cache = breaks;
     let first_pos = *iter.result_cache.first()?;
     let mut i = left_codepoint.len_utf8();
@@ -757,14 +760,14 @@ where
     }
 }
 
-fn handle_complex_language_utf16<T>(
+fn handle_complex_utf16<T>(
     iter: &mut RuleBreakIterator<'_, '_, T>,
     left_codepoint: T::CharType,
 ) -> Option<usize>
 where
     T: RuleBreakType<CharType = u32>,
 {
-    // word segmenter doesn't define break rules for some languages such as Thai.
+    // word segmenter doesn't define break rules for some scripts such as Thai.
     let start_iter = iter.iter.clone();
     let start_point = iter.current_pos_data;
     let mut s = vec![left_codepoint as u16];
@@ -786,7 +789,7 @@ where
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
     #[expect(clippy::unwrap_used)] // iter.complex present for word segmenter
-    let breaks = iter.complex.unwrap().complex_language_segment_utf16(&s);
+    let breaks = iter.complex.unwrap().segment_utf16(&s);
     iter.result_cache = breaks;
     // result_cache vector is utf-16 index that is in BMP.
     let first_pos = *iter.result_cache.first()?;

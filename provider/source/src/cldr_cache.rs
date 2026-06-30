@@ -191,7 +191,7 @@ impl CldrCache {
     ///  - "en-US" -> "US"
     ///  - "en" -> "US"
     ///  - "ar" -> "EG"
-    ///  - "und" -> "US" // TODO: change
+    ///  - "und" -> "001"
     #[cfg(feature = "unstable")]
     pub(crate) fn extract_or_infer_region(&self, locale: &DataLocale) -> Result<Region, DataError> {
         if let Some(region) = locale.region {
@@ -202,7 +202,7 @@ impl CldrCache {
         let _ = self.extended_locale_expander()?.maximize(&mut lang_id);
         Ok(lang_id
             .region
-            .unwrap_or(icu::locale::subtags::region!("US")))
+            .unwrap_or(icu::locale::subtags::region!("001")))
     }
 
     /// Computes the script-based locale group for a given locale.

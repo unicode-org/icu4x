@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::grapheme::*;
+use super::AbstractGraphemeClusterSegmenterBorrowed;
 use crate::indices::Utf16Indices;
 use crate::provider::*;
 #[cfg(feature = "unstable")]
@@ -17,11 +17,16 @@ use utf8_iter::Utf8CharIndices;
 /// - `'s` = lifetime of the string being segmented
 ///
 #[derive(Debug)]
-pub(super) struct DictionaryBreakIterator<'data, 's, R: RuleBreakType> {
+pub(super) struct DictionaryBreakIterator<
+    'data,
+    's,
+    G: AbstractGraphemeClusterSegmenterBorrowed<'data>,
+    R: RuleBreakType + 'static,
+> {
     trie: Char16Trie<'data>,
     iter: R::IterAttr<'s>,
     len: usize,
-    grapheme_iter: GraphemeClusterBreakIterator<'data, 's, R>,
+    grapheme_iter: G::Iter<'data, 's, R>,
     // TODO transform value for byte trie
 }
 
@@ -29,7 +34,9 @@ pub(super) struct DictionaryBreakIterator<'data, 's, R: RuleBreakType> {
 /// Please see the [module-level documentation](crate) for its usages.
 ///
 /// [`Iterator`]: core::iter::Iterator
-impl<Y: RuleBreakType> Iterator for DictionaryBreakIterator<'_, '_, Y> {
+impl<'data, 's, G: AbstractGraphemeClusterSegmenterBorrowed<'data>, Y: RuleBreakType> Iterator
+    for DictionaryBreakIterator<'data, 's, G, Y>
+{
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -92,16 +99,13 @@ impl<Y: RuleBreakType> Iterator for DictionaryBreakIterator<'_, '_, Y> {
 }
 
 #[derive(Copy, Clone)]
-pub(super) struct DictionarySegmenter<'data> {
+pub(super) struct DictionarySegmenter<'data, G: AbstractGraphemeClusterSegmenterBorrowed<'data>> {
     dict: &'data UCharDictionaryBreakData<'data>,
-    grapheme: GraphemeClusterSegmenterBorrowed<'data>,
+    grapheme: G,
 }
 
-impl<'data> DictionarySegmenter<'data> {
-    pub(super) fn new(
-        dict: &'data UCharDictionaryBreakData<'data>,
-        grapheme: GraphemeClusterSegmenterBorrowed<'data>,
-    ) -> Self {
+impl<'data, G: AbstractGraphemeClusterSegmenterBorrowed<'data>> DictionarySegmenter<'data, G> {
+    pub(super) fn new(dict: &'data UCharDictionaryBreakData<'data>, grapheme: G) -> Self {
         // TODO: no way to verify trie data
         Self { dict, grapheme }
     }
@@ -110,7 +114,7 @@ impl<'data> DictionarySegmenter<'data> {
     pub(super) fn segment_str<'s>(
         self,
         input: &'s str,
-    ) -> DictionaryBreakIterator<'data, 's, Utf8> {
+    ) -> DictionaryBreakIterator<'data, 's, G, Utf8> {
         let grapheme_iter = self.grapheme.segment_str(input);
         DictionaryBreakIterator {
             trie: Char16Trie::new(self.dict.trie_data.clone()),
@@ -125,7 +129,7 @@ impl<'data> DictionarySegmenter<'data> {
     pub(super) fn segment_utf8<'s>(
         self,
         input: &'s [u8],
-    ) -> DictionaryBreakIterator<'data, 's, PotentiallyIllFormedUtf8> {
+    ) -> DictionaryBreakIterator<'data, 's, G, PotentiallyIllFormedUtf8> {
         let grapheme_iter = self.grapheme.segment_utf8(input);
         DictionaryBreakIterator {
             trie: Char16Trie::new(self.dict.trie_data.clone()),
@@ -139,7 +143,7 @@ impl<'data> DictionarySegmenter<'data> {
     pub(super) fn segment_utf16<'s>(
         self,
         input: &'s [u16],
-    ) -> DictionaryBreakIterator<'data, 's, Utf16> {
+    ) -> DictionaryBreakIterator<'data, 's, G, Utf16> {
         let grapheme_iter = self.grapheme.segment_utf16(input);
         DictionaryBreakIterator {
             trie: Char16Trie::new(self.dict.trie_data.clone()),

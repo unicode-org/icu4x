@@ -15,13 +15,13 @@
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
+use core::fmt::Debug;
 use core::num::NonZeroU8;
 
 use crate::types::Weekday;
 use icu_provider::fallback::{LocaleFallbackConfig, LocaleFallbackPriority};
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
-use zerovec::ZeroVec;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -51,7 +51,7 @@ icu_provider::data_marker!(
     /// Modern Japanese era names
     CalendarJapaneseModernV1,
     "calendar/japanese/modern/v1",
-    JapaneseEras<'static>,
+    JapaneseEras,
     is_singleton = true
 );
 
@@ -105,78 +105,235 @@ pub struct EraStartDate {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct JapaneseEras<'data> {
-    /// A map from era start dates to their era codes
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub dates_to_eras: ZeroVec<'data, (EraStartDate, TinyAsciiStr<16>)>,
-}
+#[derive(Debug, PartialEq, Clone, Copy, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
+pub struct JapaneseEras(Option<PackedEra>);
 
 icu_provider::data_struct!(
-    JapaneseEras<'_>,
+    JapaneseEras,
     #[cfg(feature = "datagen")]
 );
 
-impl JapaneseEras<'_> {
-    pub(crate) const fn last_after_reiwa(&self) -> Result<Option<PackedEra>, DataError> {
-        let Some(&zerovec::ule::tuple::Tuple2ULE(start, code)) =
-            self.dates_to_eras.as_slice().as_ule_slice().last()
-        else {
-            return Ok(None);
-        };
-        if start.year.as_signed_int() < 2026 {
-            return Ok(None);
-        }
+impl JapaneseEras {
+    /// Creates a new [`JapaneseEras`] without a post-Reiwa era.
+    pub const fn up_to_reiwa() -> Self {
+        Self(None)
+    }
 
-        match PackedEra::pack(
-            EraStartDate {
-                year: start.year.as_signed_int(),
-                month: start.month,
-                day: start.day,
-            },
-            code.resize(),
-            self.dates_to_eras.as_slice().len() as u8 + 1,
-        ) {
-            Ok(e) => Ok(Some(e)),
-            Err(e) => Err(e),
+    /// Creates a new [`JapaneseEras`] with the last post-Reiwa era's start date, code, and index.
+    pub const fn with_last_era(
+        start: EraStartDate,
+        code: TinyAsciiStr<8>,
+        index: u8,
+    ) -> Option<Self> {
+        if start.year < 2026 {
+            return Some(Self::up_to_reiwa());
+        }
+        let Some(packed) = PackedEra::pack(start, code, index) else {
+            return None;
+        };
+        Some(Self(Some(packed)))
+    }
+
+    /// Returns all post-Meji eras, in chronological order.
+    pub fn eras(self) -> impl DoubleEndedIterator<Item = (EraStartDate, TinyAsciiStr<8>, u8)> {
+        use tinystr::tinystr;
+        [
+            (
+                EraStartDate {
+                    year: 1868,
+                    month: 10,
+                    day: 23,
+                },
+                tinystr!(8, "meiji"),
+                2,
+            ),
+            (
+                EraStartDate {
+                    year: 1912,
+                    month: 7,
+                    day: 30,
+                },
+                tinystr!(8, "taisho"),
+                3,
+            ),
+            (
+                EraStartDate {
+                    year: 1926,
+                    month: 12,
+                    day: 25,
+                },
+                tinystr!(8, "showa"),
+                4,
+            ),
+            (
+                EraStartDate {
+                    year: 1989,
+                    month: 1,
+                    day: 8,
+                },
+                tinystr!(8, "heisei"),
+                5,
+            ),
+            (
+                EraStartDate {
+                    year: 2019,
+                    month: 5,
+                    day: 1,
+                },
+                tinystr!(8, "reiwa"),
+                6,
+            ),
+        ]
+        .into_iter()
+        .chain(self.0.map(PackedEra::unpack))
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl databake::Bake for JapaneseEras {
+    fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
+        ctx.insert("icu_calendar");
+        if let Some((era_start_date, code, idx)) = self.eras().last()
+            && code != "reiwa"
+        {
+            let era_start_date = era_start_date.bake(ctx);
+            let code = code.bake(ctx);
+            let idx = idx.bake(ctx);
+            databake::quote! {
+                icu_calendar::provider::JapaneseEras::with_last_era(#era_start_date, #code, #idx).unwrap()
+            }
+        } else {
+            databake::quote! {
+                icu_calendar::provider::JapaneseEras::up_to_reiwa()
+            }
         }
     }
 }
 
+#[cfg(feature = "datagen")]
+impl databake::BakeSize for JapaneseEras {
+    fn borrows_size(&self) -> usize {
+        0
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl serde::Serialize for JapaneseEras {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use zerovec::ZeroVec;
+
+        #[derive(serde::Serialize)]
+        struct Raw<'data> {
+            pub dates_to_eras: ZeroVec<'data, (EraStartDate, TinyAsciiStr<16>)>,
+        }
+
+        let mut dates_to_eras = self
+            .eras()
+            .map(|(start, code, _)| (start, code.resize()))
+            .collect::<ZeroVec<_>>();
+
+        while let Some((start, code, index)) = self.eras().last()
+            && dates_to_eras.len() + 2 <= index as usize
+        {
+            use zerovec::ule::AsULE;
+
+            dates_to_eras.with_mut(|v| v.push((start, code.resize()).to_unaligned()));
+        }
+
+        Raw { dates_to_eras }.serialize(serializer)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for JapaneseEras {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        use serde::de::Error;
+        use zerovec::ZeroVec;
+
+        #[derive(serde::Deserialize)]
+        struct Raw<'data> {
+            #[serde(borrow)]
+            pub dates_to_eras: ZeroVec<'data, (EraStartDate, TinyAsciiStr<16>)>,
+        }
+
+        let Raw { dates_to_eras } = Raw::deserialize(deserializer)?;
+
+        let Some((start, code)) = dates_to_eras.last() else {
+            return Err(D::Error::custom("At least one era is required"));
+        };
+
+        if Self::up_to_reiwa()
+            .eras()
+            .map(|(start, code, ..)| (start, code.resize()))
+            .ne(dates_to_eras
+                .iter()
+                .take(Self::up_to_reiwa().eras().count()))
+        {
+            return Err(D::Error::custom(
+                "Invalid era data: Meiji through Reiwa must be present and in order",
+            ));
+        }
+
+        Self::with_last_era(
+            start,
+            code.resize(),
+            dates_to_eras.as_slice().len() as u8 + 1,
+        )
+        .ok_or_else(|| D::Error::custom("Invalid era"))
+    }
+}
+
 /// A type to represent a modern (post 2026, 8-byte code) era.
-#[derive(Debug, PartialEq, Copy, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-pub(crate) struct PackedEra(NonZeroU8 /* give a niche */, [u8; 6]);
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[derive(PartialEq, Copy, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+struct PackedEra(NonZeroU8 /* give a niche */, [u8; 6]);
+
+impl Debug for PackedEra {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        let (start, code, index) = self.unpack();
+        f.debug_struct("PackedEra")
+            .field("start", &start)
+            .field("code", &code)
+            .field("index", &index)
+            .field("<packed>", &(self.0, self.1))
+            .finish()
+    }
+}
 
 impl PackedEra {
     /// Construct a `PackedEra` from a tuple
     /// This supports start dates until 2086-12-31, indices 7 and 8, and lower ASCII alphabetic codes
-    pub const fn pack(
-        start: EraStartDate,
-        code: TinyAsciiStr<8>,
-        index: u8,
-    ) -> Result<Self, DataError> {
+    const fn pack(start: EraStartDate, code: TinyAsciiStr<8>, index: u8) -> Option<Self> {
         // 5 bits
         if !(0 < start.day && start.day < 1 << 5) {
-            return Err(DataError::custom("Invalid era day"));
+            return None;
         }
         // 4 bits
         if !(0 < start.month && start.month < 1 << 4) {
-            return Err(DataError::custom("Invalid era month"));
+            return None;
         }
         // 6 bits
         if !(2026 <= start.year && start.year < 2026 + (1 << 6)) {
-            return Err(DataError::custom("Invalid era year"));
+            return None;
         }
         // 1 bit
         if !(7 <= index && index < 7 + (1 << 1)) {
-            return Err(DataError::custom("Invalid era index"));
+            return None;
         }
         // 40 bits
         if !code.is_ascii_alphabetic_lowercase() {
-            return Err(DataError::custom("Invalid era code"));
+            return None;
         }
 
         let mut packed = 0;
@@ -199,14 +356,14 @@ impl PackedEra {
         let [a, b, c, d, e, f, g, z] = packed.to_le_bytes();
         debug_assert!(z == 0);
         let Some(a) = NonZeroU8::new(a) else {
-            return Err(DataError::custom("Invalid era start date"));
+            return None;
         };
-        Ok(Self(a, [b, c, d, e, f, g]))
+        Some(Self(a, [b, c, d, e, f, g]))
     }
 
     /// Convert a `PackedEra` into a tuple of start date, code, and
     /// [`era_index`](crate::types::EraYear::era_index)
-    pub const fn unpack(self) -> (EraStartDate, TinyAsciiStr<8>, u8) {
+    const fn unpack(self) -> (EraStartDate, TinyAsciiStr<8>, u8) {
         let Self(a, [b, c, d, e, f, g]) = self;
         let mut packed = u64::from_le_bytes([a.get(), b, c, d, e, f, g, 0]);
 
@@ -248,7 +405,7 @@ impl PackedEra {
 }
 
 #[test]
-fn packed_era_size() {
+fn japanese_eras_size() {
     assert_eq!(size_of::<PackedEra>(), 7);
     assert_eq!(size_of::<Option<PackedEra>>(), 7);
     assert_eq!(size_of::<crate::cal::Japanese>(), 7);
@@ -256,7 +413,7 @@ fn packed_era_size() {
 }
 
 #[test]
-fn packed_era_roundtrip() {
+fn japanese_eras_packing() {
     let start = EraStartDate {
         year: 2086,
         month: 11,
@@ -264,9 +421,69 @@ fn packed_era_roundtrip() {
     };
     let code = tinystr::tinystr!(8, "fuzu");
     let index = 8;
+
     assert_eq!(
-        PackedEra::pack(start, code, index).unwrap().unpack(),
+        JapaneseEras::with_last_era(start, code, index)
+            .unwrap()
+            .eras()
+            .last()
+            .unwrap(),
         (start, code, index)
+    );
+    assert_ne!(
+        JapaneseEras::up_to_reiwa().eras().last().unwrap(),
+        (start, code, index)
+    );
+}
+
+#[test]
+fn japanese_eras_serde_roundtrip() {
+    let eras = JapaneseEras::with_last_era(
+        EraStartDate {
+            year: 2086,
+            month: 11,
+            day: 1,
+        },
+        tinystr::tinystr!(8, "fuzu"),
+        8,
+    )
+    .unwrap();
+
+    assert_eq!(
+        serde_json::from_str::<JapaneseEras>(&serde_json::to_string(&eras).unwrap()).unwrap(),
+        eras
+    );
+
+    let eras = JapaneseEras::up_to_reiwa();
+
+    assert_eq!(
+        serde_json::from_str::<JapaneseEras>(&serde_json::to_string(&eras).unwrap()).unwrap(),
+        eras
+    );
+}
+
+#[test]
+fn japanese_eras_bake() {
+    databake::test_bake!(
+        JapaneseEras,
+        const,
+        crate::provider::JapaneseEras::with_last_era(
+            crate::provider::EraStartDate {
+                year: 2086i32,
+                month: 11u8,
+                day: 1u8,
+            },
+            tinystr::tinystr!(8usize, "fuzu"),
+            8u8
+        )
+        .unwrap(),
+        icu_calendar
+    );
+    databake::test_bake!(
+        JapaneseEras,
+        const,
+        crate::provider::JapaneseEras::up_to_reiwa(),
+        icu_calendar
     );
 }
 

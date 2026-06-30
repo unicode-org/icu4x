@@ -2,16 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(feature = "unstable")]
-use crate::GraphemeClusterSegmenterBorrowed;
-use crate::complex::ComplexPayloadsBorrowed;
-#[cfg(feature = "unstable")]
-use crate::complex::{ComplexIterator, ComplexPayloadBorrowed};
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::provider::*;
 use alloc::vec::Vec;
 use core::str::CharIndices;
 use utf8_iter::Utf8CharIndices;
+
+pub(crate) type ComplexPayloads = crate::complex::ComplexPayloads<crate::GraphemeClusterSegmenter>;
+pub(crate) type ComplexPayloadsBorrowed<'data> =
+    crate::complex::ComplexPayloadsBorrowed<'data, crate::GraphemeClusterSegmenterBorrowed<'data>>;
 
 /// A trait allowing for `RuleBreakIterator` to be generalized to multiple string
 /// encoding methods and granularity such as grapheme cluster, word, etc.
@@ -20,7 +19,7 @@ use utf8_iter::Utf8CharIndices;
 /// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
 /// trait, please consider using a type from the implementors listed below.
 /// </div>
-pub trait RuleBreakType: crate::private::Sealed + Sized {
+pub trait RuleBreakType: crate::private::Sealed + Sized + core::fmt::Debug + 'static {
     /// The iterator over characters.
     type IterAttr<'s>: Iterator<Item = (usize, Self::CharType)> + Clone + core::fmt::Debug;
 
@@ -35,25 +34,25 @@ pub trait RuleBreakType: crate::private::Sealed + Sized {
 
     #[doc(hidden)]
     #[cfg(feature = "unstable")]
-    type ComplexData<'data>: core::fmt::Debug;
+    type ComplexPayloads<'data>: core::fmt::Debug;
     #[doc(hidden)]
     #[cfg(feature = "unstable")]
-    type ComplexLanguageData<'data>: core::fmt::Debug;
+    type ComplexPayload<'data>: core::fmt::Debug;
 
     #[doc(hidden)]
     #[cfg(feature = "unstable")]
     fn select_complex<'a>(
-        data: &Self::ComplexData<'a>,
-        language: crate::complex::Language,
-    ) -> Option<Self::ComplexLanguageData<'a>>;
+        data: &Self::ComplexPayloads<'a>,
+        complex_script: ComplexScript,
+    ) -> Option<Self::ComplexPayload<'a>>;
 
     #[doc(hidden)]
     #[cfg(feature = "unstable")]
     fn handle_complex<'data, 's>(
-        data: &Self::ComplexLanguageData<'data>,
+        data: &Self::ComplexPayload<'data>,
         complex: &Self::IterAttr<'s>,
         past_complex: &Self::IterAttr<'s>,
-    ) -> ComplexIterator<'data, 's, Self>;
+    ) -> crate::neo::ComplexIterator<'data, 's, Self>;
 
     #[doc(hidden)]
     #[cfg(feature = "unstable")]
@@ -88,18 +87,18 @@ pub struct RuleBreakIterator<'data, 's, Y: RuleBreakType> {
     // The property associated with the previous break
     pub(crate) boundary_property: u8,
     pub(crate) locale_override: Option<&'data RuleBreakDataOverride<'data>>,
-    // Should return None if there is no complex language handling
-    pub(crate) handle_complex_language:
+    // Should return None if there is no complex script handling
+    pub(crate) handle_complex:
         fn(&mut RuleBreakIterator<'data, 's, Y>, Y::CharType) -> Option<usize>,
 }
 
-pub(crate) fn empty_handle_complex_language<Y: RuleBreakType>(
+pub(crate) fn empty_handle_complex<Y: RuleBreakType>(
     _i: &mut RuleBreakIterator<'_, '_, Y>,
     _c: Y::CharType,
 ) -> Option<usize> {
     debug_assert!(
         false,
-        "grapheme/sentence segmenters should never need complex language handling"
+        "grapheme/sentence segmenters should never need complex handling"
     );
     None
 }
@@ -162,7 +161,7 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
                 return Some(self.len);
             };
 
-            // Some segmenter rules doesn't have language-specific rules, we have to use LSTM (or dictionary) segmenter.
+            // Some scripts rules doesn't have segmentation rules, we have to use LSTM (or dictionary) segmenter.
             // If property is marked as SA, use it
             if Y::CAN_CONTAIN_SA && right_prop == self.data.complex_property {
                 if left_prop != self.data.complex_property {
@@ -170,7 +169,7 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
                     self.boundary_property = left_prop;
                     return self.get_current_position();
                 }
-                let break_offset = (self.handle_complex_language)(self, left_codepoint);
+                let break_offset = (self.handle_complex)(self, left_codepoint);
                 self.boundary_property = self.data.complex_property;
                 if break_offset.is_some() {
                     return break_offset;
@@ -309,27 +308,27 @@ impl RuleBreakType for Utf8 {
     const CAN_CONTAIN_SA: bool = true;
 
     #[cfg(feature = "unstable")]
-    type ComplexData<'data> = ComplexPayloadsBorrowed<'data>;
+    type ComplexPayloads<'data> = crate::neo::ComplexPayloadsBorrowed<'data>;
     #[cfg(feature = "unstable")]
-    type ComplexLanguageData<'data> = (
-        ComplexPayloadBorrowed<'data>,
-        GraphemeClusterSegmenterBorrowed<'data>,
+    type ComplexPayload<'data> = (
+        crate::complex::ComplexPayloadBorrowed<'data>,
+        crate::neo::GraphemeClusterSegmenterBorrowed<'data>,
     );
 
     #[cfg(feature = "unstable")]
     fn select_complex<'a>(
-        &data: &Self::ComplexData<'a>,
-        language: crate::complex::Language,
-    ) -> Option<Self::ComplexLanguageData<'a>> {
-        data.select(language).map(|d| (d, data.grapheme))
+        &data: &Self::ComplexPayloads<'a>,
+        complex_script: ComplexScript,
+    ) -> Option<Self::ComplexPayload<'a>> {
+        data.select(complex_script).map(|d| (d, data.grapheme))
     }
 
     #[cfg(feature = "unstable")]
     fn handle_complex<'data, 's>(
-        &(lang, grapheme): &Self::ComplexLanguageData<'data>,
+        &(lang, grapheme): &Self::ComplexPayload<'data>,
         complex: &Self::IterAttr<'s>,
         past_complex: &Self::IterAttr<'s>,
-    ) -> ComplexIterator<'data, 's, Self> {
+    ) -> crate::neo::ComplexIterator<'data, 's, Self> {
         let complex_offset = complex.offset();
         #[allow(clippy::indexing_slicing)] // valid offset
         let complex = &complex.as_str()[..(past_complex.offset() - complex_offset)];
@@ -365,27 +364,27 @@ impl RuleBreakType for PotentiallyIllFormedUtf8 {
     const CAN_CONTAIN_SA: bool = true;
 
     #[cfg(feature = "unstable")]
-    type ComplexData<'data> = ComplexPayloadsBorrowed<'data>;
+    type ComplexPayloads<'data> = crate::neo::ComplexPayloadsBorrowed<'data>;
     #[cfg(feature = "unstable")]
-    type ComplexLanguageData<'data> = (
-        ComplexPayloadBorrowed<'data>,
-        GraphemeClusterSegmenterBorrowed<'data>,
+    type ComplexPayload<'data> = (
+        crate::complex::ComplexPayloadBorrowed<'data>,
+        crate::neo::GraphemeClusterSegmenterBorrowed<'data>,
     );
 
     #[cfg(feature = "unstable")]
     fn select_complex<'a>(
-        data: &Self::ComplexData<'a>,
-        language: crate::complex::Language,
-    ) -> Option<Self::ComplexLanguageData<'a>> {
-        Utf8::select_complex(data, language)
+        data: &Self::ComplexPayloads<'a>,
+        complex_script: ComplexScript,
+    ) -> Option<Self::ComplexPayload<'a>> {
+        Utf8::select_complex(data, complex_script)
     }
 
     #[cfg(feature = "unstable")]
     fn handle_complex<'data, 's>(
-        &(lang, grapheme): &Self::ComplexLanguageData<'data>,
+        &(lang, grapheme): &Self::ComplexPayload<'data>,
         complex: &Self::IterAttr<'s>,
         past_complex: &Self::IterAttr<'s>,
-    ) -> ComplexIterator<'data, 's, Self> {
+    ) -> crate::neo::ComplexIterator<'data, 's, Self> {
         let offset = complex.offset();
         #[allow(clippy::indexing_slicing)] // valid offset
         let complex = &complex.as_slice()[..(past_complex.offset() - offset)];
@@ -421,25 +420,25 @@ impl RuleBreakType for Latin1 {
     const CAN_CONTAIN_SA: bool = false;
 
     #[cfg(feature = "unstable")]
-    type ComplexData<'data> = core::convert::Infallible;
+    type ComplexPayloads<'data> = core::convert::Infallible;
     #[cfg(feature = "unstable")]
-    type ComplexLanguageData<'data> = core::convert::Infallible;
+    type ComplexPayload<'data> = core::convert::Infallible;
 
     #[cfg(feature = "unstable")]
     fn select_complex<'a>(
-        _data: &Self::ComplexData<'a>,
-        _language: crate::complex::Language,
-    ) -> Option<Self::ComplexLanguageData<'a>> {
-        None
+        &complex_payloads: &Self::ComplexPayloads<'a>,
+        _: ComplexScript,
+    ) -> Option<Self::ComplexPayload<'a>> {
+        match complex_payloads {}
     }
 
     #[cfg(feature = "unstable")]
     fn handle_complex<'data, 's>(
-        &data: &Self::ComplexData<'data>,
-        _complex: &Self::IterAttr<'s>,
-        _past_complex: &Self::IterAttr<'s>,
-    ) -> ComplexIterator<'data, 's, Self> {
-        match data {}
+        &complex_payload: &Self::ComplexPayloads<'data>,
+        _: &Self::IterAttr<'s>,
+        _: &Self::IterAttr<'s>,
+    ) -> crate::neo::ComplexIterator<'data, 's, Self> {
+        match complex_payload {}
     }
 
     fn char_len(_ch: Self::CharType) -> usize {
@@ -471,27 +470,27 @@ impl RuleBreakType for Utf16 {
     const CAN_CONTAIN_SA: bool = true;
 
     #[cfg(feature = "unstable")]
-    type ComplexData<'data> = ComplexPayloadsBorrowed<'data>;
+    type ComplexPayloads<'data> = crate::neo::ComplexPayloadsBorrowed<'data>;
     #[cfg(feature = "unstable")]
-    type ComplexLanguageData<'data> = (
-        ComplexPayloadBorrowed<'data>,
-        GraphemeClusterSegmenterBorrowed<'data>,
+    type ComplexPayload<'data> = (
+        crate::complex::ComplexPayloadBorrowed<'data>,
+        crate::neo::GraphemeClusterSegmenterBorrowed<'data>,
     );
 
     #[cfg(feature = "unstable")]
     fn select_complex<'a>(
-        data: &Self::ComplexData<'a>,
-        language: crate::complex::Language,
-    ) -> Option<Self::ComplexLanguageData<'a>> {
-        Utf8::select_complex(data, language)
+        data: &Self::ComplexPayloads<'a>,
+        complex_script: ComplexScript,
+    ) -> Option<Self::ComplexPayload<'a>> {
+        Utf8::select_complex(data, complex_script)
     }
 
     #[cfg(feature = "unstable")]
     fn handle_complex<'data, 's>(
-        &(lang, grapheme): &Self::ComplexLanguageData<'data>,
+        &(lang, grapheme): &Self::ComplexPayload<'data>,
         complex: &Self::IterAttr<'s>,
         past_complex: &Self::IterAttr<'s>,
-    ) -> ComplexIterator<'data, 's, Utf16> {
+    ) -> crate::neo::ComplexIterator<'data, 's, Self> {
         let complex_offset = complex.offset();
         #[allow(clippy::indexing_slicing)] // valid offset
         let complex = &complex.as_slice()[..(past_complex.offset() - complex_offset)];
