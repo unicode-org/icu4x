@@ -23,7 +23,7 @@ macro_rules! __impl_segmenter_break_sentence_override_v2 {
         #[clippy::msrv = "1.88"]
         impl $provider {
             #[doc(hidden)]
-            pub const SEGMENTER_BREAK_SENTENCE_OVERRIDE_V2_CHECKSUM: u64 = 16448288255245299208u64;
+            pub const SEGMENTER_BREAK_SENTENCE_OVERRIDE_V2_CHECKSUM: u64 = 16702168879167473069u64;
             const DATA_SEGMENTER_BREAK_SENTENCE_OVERRIDE_V2: icu_provider::baked::zerotrie::Data<icu::segmenter::provider::SegmenterBreakSentenceOverrideV2> = {
                 const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"el\x80" };
                 const VALUES: &'static [<icu::segmenter::provider::SegmenterBreakSentenceOverrideV2 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct] = &[icu::segmenter::provider::SegmenterStateMachineOverride { pseudo_symbol_map: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\n\0") } }];
