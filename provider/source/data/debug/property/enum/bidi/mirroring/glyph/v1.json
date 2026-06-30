@@ -1,7 +1,7 @@
 {
   "CodePointTrie": {
     "header": {
-      "high_start": 120832,
+      "high_start": 121856,
       "shifted12_high_start": 30,
       "index3_null_offset": 3,
       "data_null_offset": 186,
@@ -73,14 +73,14 @@
       186,
       186,
       186,
-      421,
-      446,
-      446,
-      447,
-      446,
-      446,
-      446,
-      479,
+      469,
+      494,
+      494,
+      495,
+      494,
+      494,
+      494,
+      527,
       0,
       16,
       32,
@@ -322,6 +322,7 @@
       186,
       186,
       1077,
+      1091,
       186,
       186,
       186,
@@ -347,9 +348,9 @@
       186,
       186,
       186,
+      1099,
+      1115,
       186,
-      1090,
-      1106,
       186,
       186,
       186,
@@ -379,9 +380,9 @@
       186,
       186,
       186,
+      1127,
+      1142,
       186,
-      1118,
-      1133,
       186,
       186,
       186,
@@ -390,14 +391,14 @@
       186,
       186,
       186,
+      1150,
+      1160,
       186,
-      1141,
-      1151,
+      1175,
       186,
-      1166,
+      1189,
+      1205,
       186,
-      1180,
-      1196,
       186,
       186,
       186,
@@ -410,23 +411,70 @@
       186,
       186,
       186,
+      319,
       186,
-      1201,
       186,
       186,
       186,
-      1207,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      1210,
+      186,
+      186,
+      186,
+      1216,
       186,
       186,
       317,
       186,
       186,
       186,
-      1203,
+      1212,
       186,
       186,
       186,
-      1209,
+      1218,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      1231,
+      1247,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
+      186,
       186,
       186,
       186,
@@ -495,11 +543,13 @@
       3,
       3,
       3,
-      3,
-      3,
-      3,
-      3,
       389,
+      3,
+      3,
+      3,
+      408,
+      3,
+      437,
       65518
     ],
     "data": [
@@ -2299,7 +2349,7 @@
         "paired_bracket_type": "None"
       },
       {
-        "mirroring_glyph": null,
+        "mirroring_glyph": "𝬐",
         "mirrored": true,
         "paired_bracket_type": "None"
       },
@@ -5969,6 +6019,51 @@
         "paired_bracket_type": "None"
       },
       {
+        "mirroring_glyph": "⹣",
+        "mirrored": true,
+        "paired_bracket_type": "Open"
+      },
+      {
+        "mirroring_glyph": "⹢",
+        "mirrored": true,
+        "paired_bracket_type": "Close"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
         "mirroring_glyph": null,
         "mirrored": false,
         "paired_bracket_type": "None"
@@ -6606,6 +6701,151 @@
       {
         "mirroring_glyph": null,
         "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "𝬄",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "𝬃",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "𝬆",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "𝬅",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "𝬉",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "𝬈",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": "∝",
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": true,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": false,
+        "paired_bracket_type": "None"
+      },
+      {
+        "mirroring_glyph": null,
+        "mirrored": true,
         "paired_bracket_type": "None"
       },
       {
