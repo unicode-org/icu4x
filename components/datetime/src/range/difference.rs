@@ -60,31 +60,34 @@ pub(crate) fn resolve_difference(
     }
 
     // Compare Date fields
-    if let (Some(y1), Some(y2)) = (input1.year, input2.year) {
-        match (y1, y2) {
-            (YearInfo::Era(e1), YearInfo::Era(e2)) => {
-                if e1.era != e2.era {
-                    return Difference::Era;
-                }
-            }
-            (YearInfo::Cyclic(_), YearInfo::Cyclic(_)) => {}
-            _ => {
+    match (input1.year, input2.year) {
+        (Some(y1 @ YearInfo::Era(e1)), Some(y2 @ YearInfo::Era(e2))) => {
+            if e1.era != e2.era {
                 return Difference::Era;
             }
+            if y1.extended_year() != y2.extended_year() {
+                return Difference::Year;
+            }
         }
-        if y1.extended_year() != y2.extended_year() {
-            return Difference::Year;
+        (Some(y1 @ YearInfo::Cyclic(_)), Some(y2 @ YearInfo::Cyclic(_))) => {
+            if y1.extended_year() != y2.extended_year() {
+                return Difference::Year;
+            }
         }
-    } else if input1.year.is_some() != input2.year.is_some() {
-        // One input has a year and the other does not. This is a major structural
-        // difference, so we fall back to Era (the largest date-specific difference).
-        return Difference::Era;
+        (None, None) => {}
+        _ => {
+            // One input has a year and the other does not (Some/None mismatch),
+            // or they have different year types (e.g., Era vs Cyclic).
+            // This is a major structural difference, so we fall back to Era
+            // (the largest date-specific difference).
+            return Difference::Era;
+        }
     }
 
     // Since we have already established that the years are equal,
-    // comparing month ordinals is sufficient to detect a month difference.
-    let month1 = input1.month.map(|m| m.ordinal);
-    let month2 = input2.month.map(|m| m.ordinal);
+    // comparing month codes is sufficient to detect a month difference.
+    let month1 = input1.month.map(|m| m.to_input().code());
+    let month2 = input2.month.map(|m| m.to_input().code());
     if month1 != month2 {
         return Difference::Month;
     }
@@ -94,22 +97,28 @@ pub(crate) fn resolve_difference(
     }
 
     // Compare Time fields
-    if input1.hour != input2.hour {
-        // Hours are different. Check day periods.
-        if let (Some(h1), Some(h2)) = (input1.hour, input2.hour) {
-            // Check standard AM/PM (DayPeriodA)
-            let ampm1 = h1.number() < 12;
-            let ampm2 = h2.number() < 12;
-            if ampm1 != ampm2 {
-                return Difference::DayPeriodA;
-            }
+    match (input1.hour, input2.hour) {
+        (Some(h1), Some(h2)) => {
+            if h1 != h2 {
+                // Check standard AM/PM (DayPeriodA)
+                let ampm1 = h1.number() < 12;
+                let ampm2 = h2.number() < 12;
+                if ampm1 != ampm2 {
+                    return Difference::DayPeriodA;
+                }
 
-            // Check flexible day period (DayPeriodB)
-            if dayperiod_names.is_some_and(|dp| has_flexible_day_period_difference(dp, h1, h2)) {
-                return Difference::DayPeriodB;
+                // Check flexible day period (DayPeriodB)
+                if dayperiod_names.is_some_and(|dp| has_flexible_day_period_difference(dp, h1, h2)) {
+                    return Difference::DayPeriodB;
+                }
+                return Difference::Hour;
             }
         }
-        return Difference::Hour;
+        (None, None) => {}
+        _ => {
+            // One input has an hour and the other does not (Some/None mismatch).
+            return Difference::Hour;
+        }
     }
 
     if input1.minute != input2.minute {
