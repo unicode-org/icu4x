@@ -19,9 +19,9 @@ NU ; [\p{Line_Break=Numeric}] ;
 CLmEastAsian ; [\p{Line_Break=Close_Punctuation}-[\p{ea=F}\p{ea=W}\p{ea=H}]] ; 
 GLmEastAsian ; [\p{Line_Break=Glue}-[\p{ea=F}\p{ea=W}\p{ea=H}]] ; 
 QU_Pi ; [\p{Line_Break=Quotation}&\p{gc=Pi}] ; 
+HH ; [\p{Line_Break=Unambiguous_Hyphen}] ; 
 BB ; [\p{Line_Break=Break_Before}] ; 
 QU_Pf ; [\p{Line_Break=Quotation}&\p{gc=Pf}] ; 
-HH ; [\p{Line_Break=Unambiguous_Hyphen}] ; 
 HL ; [\p{Line_Break=HL}] ; 
 JL ; [\p{Line_Break=JL}] ; 
 JV ; [\p{Line_Break=JV}] ; 
@@ -67,6 +67,7 @@ NON_EAST_ASIAN_POX ; [[{NON_EAST_ASIAN_POX}]] ;
 EAST_ASIAN_POX ; [[{EAST_ASIAN_POX}]] ; 
 NON_EAST_ASIAN_PRX ; [[{NON_EAST_ASIAN_PRX}]] ; 
 EAST_ASIAN_PRX ; [[{EAST_ASIAN_PRX}]] ; 
+LOOSE_HYPHEN ; [[{LOOSE_HYPHEN}]] ; 
 LOOSE_DASH ; [[{LOOSE_DASH}]] ; 
 SAmMnmMc ; [[\p{Line_Break=Complex_Context}-\p{gc=Mn}-\p{gc=Mc}]] ; AImEastAsian|ALmEastAsianmDottedCircle|SG|XXmExtPictUnassigned
 SA_Mn|SA_Mc ; [[[\p{Line_Break=Complex_Context}&\p{gc=Mn}]] [[\p{Line_Break=Complex_Context}&\p{gc=Mc}]]] ; CM
