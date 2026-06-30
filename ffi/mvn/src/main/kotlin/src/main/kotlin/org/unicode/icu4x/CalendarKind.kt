@@ -74,7 +74,7 @@ enum class CalendarKind(val inner: Int) {
         
         /** Creates a new [CalendarKind] for the specified locale, using compiled data.
         *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/calendar/enum.AnyCalendarKind.html#method.new) for more information.
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/calendar/enum.AnyCalendarKind.html#method.try_new) for more information.
         */
         fun create(locale: Locale): CalendarKind {
             
