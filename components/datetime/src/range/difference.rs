@@ -112,7 +112,8 @@ pub(crate) fn resolve_difference(
                 }
 
                 // Check flexible day period (DayPeriodB)
-                if dayperiod_names.is_some_and(|dp| has_flexible_day_period_difference(dp, h1, h2)) {
+                if dayperiod_names.is_some_and(|dp| has_flexible_day_period_difference(dp, h1, h2))
+                {
                     return Difference::DayPeriodB;
                 }
                 return Difference::Hour;
