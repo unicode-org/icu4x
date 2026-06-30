@@ -89,6 +89,10 @@ pub(crate) fn resolve_difference(
     let month1 = input1.month.map(|m| m.to_input().code());
     let month2 = input2.month.map(|m| m.to_input().code());
     if month1 != month2 {
+        // This also catches the Some != None case in case
+        // one input chooses to not use month codes. This is
+        // expected: date time formatting typically needs month codes
+        // to work and "unspecified" should count as a difference.
         return Difference::Month;
     }
 
