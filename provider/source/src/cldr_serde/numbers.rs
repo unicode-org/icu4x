@@ -119,6 +119,22 @@ impl NumberPattern {
             },
         })
     }
+
+    pub(crate) fn integer_structure(&self) -> Vec<NumberPatternItem> {
+        self.positive
+            .iter()
+            .take_while(|item| !matches!(item, NumberPatternItem::DecimalSeparator))
+            .filter(|item| {
+                matches!(
+                    item,
+                    NumberPatternItem::MandatoryDigit
+                        | NumberPatternItem::OptionalDigit
+                        | NumberPatternItem::GroupingSeparator
+                )
+            })
+            .cloned()
+            .collect()
+    }
 }
 
 impl<'de> Deserialize<'de> for NumberPattern {

@@ -116,8 +116,13 @@ impl DataProvider<CurrencyEssentialsV1> for SourceDataProvider {
             &numbers_resource.main.value.numbers.default_numbering_system
         };
 
-        let result =
-            extract_currency_essentials(self, currencies_resource, numbers_resource, nsname);
+        let result = extract_currency_essentials(
+            self,
+            &req.id.locale,
+            currencies_resource,
+            numbers_resource,
+            nsname,
+        );
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -134,6 +139,7 @@ impl IterableDataProviderCached<CurrencyEssentialsV1> for SourceDataProvider {
 
 fn extract_currency_essentials<'data>(
     provider: &SourceDataProvider,
+    locale: &DataLocale,
     currencies_resource: &cldr_serde::currencies::data::Resource,
     numbers_resource: &cldr_serde::numbers::Resource,
     numsys_name: &str,
@@ -167,6 +173,49 @@ fn extract_currency_essentials<'data>(
     let standard_alpha_next_to_number = currency_formats.standard_alpha_next_to_number.as_ref();
     let accounting = currency_formats.accounting.as_ref();
     let accounting_alpha_next_to_number = currency_formats.accounting_alpha_next_to_number.as_ref();
+
+    let decimal_formats = numbers_block
+        .numsys_data
+        .formats
+        .get(numsys_name)
+        .or_else(|| numbers_block.numsys_data.formats.get(default_numsys))
+        .or_else(|| numbers_block.numsys_data.formats.get("latn"))
+        .ok_or_else(|| DataError::custom("Could not find decimal formats"))?;
+
+    let decimal_standard = &decimal_formats.standard;
+    let decimal_int_structure = decimal_standard.integer_structure();
+
+    let check_pattern = |pattern: &NumberPattern, name: &str| -> Result<(), DataError> {
+        let currency_int_structure = pattern.integer_structure();
+        if decimal_int_structure != currency_int_structure {
+            eprintln!(
+                "WARNING: Mismatch in integer structure! Locale: {}, Numsys: {}, Pattern: {}, Decimal: {:?}, Currency: {:?}",
+                locale, numsys_name, name, decimal_int_structure, currency_int_structure,
+            );
+            // Skip ccp due to known CLDR inconsistency (standard is Indian grouping, but alphaNextToNumber is Western)
+            if locale.to_string() == "ccp" {
+                return Ok(());
+            }
+            return Err(
+                DataError::custom("Mismatch in integer structure").with_display_context(&format!(
+                    "Locale: {}, Numsys: {}, Pattern: {}, Decimal: {:?}, Currency: {:?}",
+                    locale, numsys_name, name, decimal_int_structure, currency_int_structure,
+                )),
+            );
+        }
+        Ok(())
+    };
+
+    check_pattern(standard, "standard")?;
+    if let Some(p) = standard_alpha_next_to_number {
+        check_pattern(p, "standard-alphaNextToNumber")?;
+    }
+    if let Some(p) = accounting {
+        check_pattern(p, "accounting")?;
+    }
+    if let Some(p) = accounting_alpha_next_to_number {
+        check_pattern(p, "accounting-alphaNextToNumber")?;
+    }
 
     let mut currency_patterns_map =
         BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>::new();
