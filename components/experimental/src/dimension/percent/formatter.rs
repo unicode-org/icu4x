@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+extern crate alloc;
+
 use fixed_decimal::Decimal;
 use icu_decimal::options::DecimalFormatterOptions;
 use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
@@ -12,8 +14,6 @@ use icu_provider::prelude::*;
 use super::super::provider::percent::PercentEssentialsV1;
 use super::format::FormattedPercent;
 use super::options::PercentFormatterOptions;
-
-extern crate alloc;
 
 define_preferences!(
     /// The preferences for percent formatting.

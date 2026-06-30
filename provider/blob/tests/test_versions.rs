@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+extern crate alloc;
+
 use icu_locale::subtags::{Language, region, script};
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::dynutil::UpcastDataPayload;
@@ -209,5 +211,4 @@ impl IterableDataProvider<HelloWorldV1> for ManyLocalesProvider {
     }
 }
 
-extern crate alloc;
 icu_provider::export::make_exportable_provider!(ManyLocalesProvider, [HelloWorldV1,]);

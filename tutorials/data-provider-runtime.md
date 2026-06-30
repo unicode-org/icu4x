@@ -265,6 +265,8 @@ Forking providers can be implemented using `DataPayload::dynamic_cast`. For an e
 To add custom data markers to your baked data or postcard file, create a forking exportable provider:
 
 ```rust
+extern crate alloc;
+
 use icu::locale::locale;
 use icu::plurals::provider::PluralsCardinalV1;
 use icu_provider::prelude::*;
@@ -309,7 +311,6 @@ impl IterableDataProvider<CustomV1> for CustomProvider {
     }
 }
 
-extern crate alloc;
 icu_provider::export::make_exportable_provider!(CustomProvider, [CustomV1,]);
 
 let icu4x_source_provider = SourceDataProvider::new();

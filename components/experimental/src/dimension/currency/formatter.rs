@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+extern crate alloc;
+
 use core::fmt::Display;
 
 use fixed_decimal::Decimal;
@@ -17,8 +19,6 @@ use super::super::provider::currency::essentials::CurrencyEssentialsV1;
 use super::CurrencyCode;
 use super::options::CurrencyFormatterOptions;
 use icu_pattern::DoublePlaceholderPattern;
-
-extern crate alloc;
 
 define_preferences!(
     /// The preferences for currency formatting.

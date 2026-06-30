@@ -50,18 +50,19 @@
 //! semver version, as are the bindings in the <code>bindings</code> folder.
 //! </div>
 
+extern crate alloc;
+
 #[cfg(any(test, doc, feature = "std"))]
 extern crate std;
+
+#[cfg(all(not(feature = "std"), feature = "libc_alloc"))]
+extern crate libc_alloc;
 
 #[cfg(all(not(feature = "std"), feature = "looping_panic_handler"))]
 #[panic_handler]
 fn panic(_info: &core::panic::PanicInfo) -> ! {
     loop {}
 }
-
-extern crate alloc;
-#[cfg(all(not(feature = "std"), feature = "libc_alloc"))]
-extern crate libc_alloc;
 
 #[cfg(feature = "datetime")]
 pub(crate) mod datetime_helpers;

@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+extern crate alloc;
+use alloc::string::String;
+
 use core::fmt;
 
 use crate::MASK_28_BIT;
@@ -10,9 +13,6 @@ use super::{
     get_subslice, header::BinHeader, read_u16, BinIndex, BinaryDeserializerError, CharsetFamily,
     FormatVersion, ResDescriptor, ResourceReprType,
 };
-
-extern crate alloc;
-use alloc::string::String;
 
 use serde_core::{de, forward_to_deserialize_any, Deserialize};
 
