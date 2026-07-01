@@ -123,7 +123,6 @@ mod request;
 pub use request::{DataLocale, DataMarkerAttributes, DataRequest, DataRequestMetadata, *};
 
 mod response;
-#[doc(hidden)] // TODO(#4467): establish this as an internal API
 pub use response::DataPayloadOr;
 pub use response::{Cart, DataPayload, DataResponse, DataResponseMetadata};
 
