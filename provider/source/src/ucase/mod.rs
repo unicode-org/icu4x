@@ -32,6 +32,28 @@ impl DataProvider<CaseMapV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CaseMapV1>, DataError> {
         self.check_req::<CaseMapV1>(req)?;
 
+        // Adjacency list of characters that are connected by case mappings and simple case folds.
+        // This might contain keys with an empty set of neighbors, which are used for characters
+        // that appear in non-simple case mappings. These are treated as case-sensitive, but they
+        // are not used to compute the simple case closure.
+        let mut adjacency_list: BTreeMap<char, BTreeSet<char>> = BTreeMap::new();
+        fn add_edge(u: char, v: Option<char>, adjacency_list: &mut BTreeMap<char, BTreeSet<char>>) {
+            if let Some(v) = v {
+                adjacency_list.entry(u).or_default().insert(v);
+                adjacency_list.entry(v).or_default().insert(u);
+            }
+        }
+        fn add_edges(u: char, v: &str, adjacency_list: &mut BTreeMap<char, BTreeSet<char>>) {
+            if v.chars().count() == 1 {
+                add_edge(u, v.chars().next(), adjacency_list);
+            } else {
+                adjacency_list.entry(u).or_default();
+                for v in v.chars() {
+                    adjacency_list.entry(v).or_default();
+                }
+            }
+        }
+
         let mut simple = BTreeMap::new();
         for line in self.parse_ucd_lines("ucd/UnicodeData.txt")? {
             let Some(line) = line.skip_missing_rule() else {
@@ -55,26 +77,26 @@ impl DataProvider<CaseMapV1> for SourceDataProvider {
             let upper = fields
                 .next()
                 .filter(|s| !s.is_empty())
-                .map(ucd_helpers::parse_cp);
+                .map(ucd_helpers::parse_cp)
+                .map(|cp| char::from_u32(cp).unwrap());
             let lower = fields
                 .next()
                 .filter(|s| !s.is_empty())
-                .map(ucd_helpers::parse_cp);
+                .map(ucd_helpers::parse_cp)
+                .map(|cp| char::from_u32(cp).unwrap());
             let title = fields
                 .next()
                 .filter(|s| !s.is_empty())
                 .map(ucd_helpers::parse_cp)
+                .map(|cp| char::from_u32(cp).unwrap())
                 .or(upper);
             assert_eq!(fields.next(), None);
 
-            simple.insert(
-                cp,
-                (
-                    upper.map(|cp| char::from_u32(cp).unwrap()),
-                    lower.map(|cp| char::from_u32(cp).unwrap()),
-                    title.map(|cp| char::from_u32(cp).unwrap()),
-                ),
-            );
+            add_edge(cp, lower, &mut adjacency_list);
+            add_edge(cp, upper, &mut adjacency_list);
+            add_edge(cp, title, &mut adjacency_list);
+
+            simple.insert(cp, (upper, lower, title));
         }
 
         let mut special = BTreeMap::<char, (String, String, String, bool)>::new();
@@ -93,6 +115,9 @@ impl DataProvider<CaseMapV1> for SourceDataProvider {
             // There can be multiple entries for the same code point, so we need to merge them together.
             let entry = special.entry(cp).or_default();
             if condition.is_none() {
+                add_edges(cp, &lower, &mut adjacency_list);
+                add_edges(cp, &upper, &mut adjacency_list);
+                add_edges(cp, &title, &mut adjacency_list);
                 entry.0 = lower;
                 entry.1 = upper;
                 entry.2 = title;
@@ -113,21 +138,25 @@ impl DataProvider<CaseMapV1> for SourceDataProvider {
             let mut fields = line.fields();
             let cp = char::from_u32(ucd_helpers::parse_cp(fields.next().unwrap())).unwrap();
             let status = fields.next().unwrap();
-            let full_mapping = ucd_helpers::parse_cps(fields.next().unwrap());
-            let simple_mapping = full_mapping.chars().next().unwrap();
+            let full_fold = ucd_helpers::parse_cps(fields.next().unwrap());
+            let simple_fold = full_fold.chars().next().unwrap();
 
             // There can be multiple entries for the same code point, so we need to merge them together.
             let entry = case_folds.entry(cp).or_default();
             match status {
                 "C" => {
-                    entry.0 = Some(simple_mapping);
-                    entry.1 = Some(full_mapping);
+                    add_edge(cp, Some(simple_fold), &mut adjacency_list);
+                    add_edges(cp, &full_fold, &mut adjacency_list);
+                    entry.0 = Some(simple_fold);
+                    entry.1 = Some(full_fold);
                 }
                 "F" => {
-                    entry.1 = Some(full_mapping);
+                    add_edges(cp, &full_fold, &mut adjacency_list);
+                    entry.1 = Some(full_fold);
                 }
                 "S" => {
-                    entry.0 = Some(simple_mapping);
+                    add_edge(cp, Some(simple_fold), &mut adjacency_list);
+                    entry.0 = Some(simple_fold);
                 }
                 "T" => {
                     // Ignore the actual mappings here. We hardcode them in runtime code.
@@ -136,9 +165,6 @@ impl DataProvider<CaseMapV1> for SourceDataProvider {
                 _ => unreachable!("Invalid status in CaseFolding.txt: {}", status),
             }
         }
-
-        let adjacency_list = build_adjacency_list(&simple, &special, &case_folds);
-        let case_sensitive_set = case_sensitive_set(&simple, &special, &case_folds);
 
         let case_ignorable = CodePointSetData::try_new_unstable::<props::CaseIgnorable>(self)?;
         let case_ignorable = case_ignorable.as_borrowed();
@@ -208,7 +234,7 @@ impl DataProvider<CaseMapV1> for SourceDataProvider {
             };
 
             let ignoreable = case_ignorable.contains(c);
-            let sensitive = case_sensitive_set.contains(&c);
+            let sensitive = adjacency_list.contains_key(&c);
 
             let case_type = if is_lowercase.contains(c) {
                 Some(CaseType::Lower)
@@ -304,84 +330,4 @@ impl crate::IterableDataProviderCached<CaseMapUnfoldV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
-}
-
-/// Generates the case sensitive set, which is all characters that have a case mapping or case fold,
-/// or are a target of a case mapping or case fold.
-#[allow(clippy::type_complexity)]
-fn case_sensitive_set(
-    basic_casing: &BTreeMap<char, (Option<char>, Option<char>, Option<char>)>,
-    special_casing: &BTreeMap<char, (String, String, String, bool)>,
-    case_folds: &BTreeMap<char, (Option<char>, Option<String>, bool)>,
-) -> BTreeSet<char> {
-    let mut case_sensitive_set = BTreeSet::new();
-
-    for (&c, &(upper, lower, title)) in basic_casing {
-        case_sensitive_set
-            .extend((lower.is_some() || upper.is_some() || title.is_some()).then_some(c));
-        case_sensitive_set.extend(lower);
-        case_sensitive_set.extend(upper);
-        case_sensitive_set.extend(title);
-    }
-
-    for (&c, &(simple_fold, ref special_fold, _)) in case_folds {
-        case_sensitive_set.insert(c);
-        case_sensitive_set.extend(simple_fold);
-        case_sensitive_set.extend(special_fold.as_deref().unwrap_or_default().chars());
-    }
-
-    for (&c, (special_lower, special_upper, special_title, _)) in special_casing {
-        case_sensitive_set.insert(c);
-        case_sensitive_set.extend(special_lower.chars());
-        case_sensitive_set.extend(special_upper.chars());
-        case_sensitive_set.extend(special_title.chars());
-    }
-
-    case_sensitive_set
-}
-
-/// Constructs an adjacency list of all characters that are connected via case mappings or case folds.
-#[allow(clippy::type_complexity)]
-fn build_adjacency_list(
-    basic_casing: &BTreeMap<char, (Option<char>, Option<char>, Option<char>)>,
-    special_casing: &BTreeMap<char, (String, String, String, bool)>,
-    case_folds: &BTreeMap<char, (Option<char>, Option<String>, bool)>,
-) -> BTreeMap<char, BTreeSet<char>> {
-    let mut adj_list: BTreeMap<char, BTreeSet<char>> = BTreeMap::new();
-    let mut add_edge = |u: char, v: Option<char>| {
-        if let Some(v) = v
-            && u != v
-        {
-            adj_list.entry(u).or_default().insert(v);
-            adj_list.entry(v).or_default().insert(u);
-        }
-    };
-
-    for (&c, &(upper, lower, title)) in basic_casing {
-        add_edge(c, lower);
-        add_edge(c, upper);
-        add_edge(c, title);
-    }
-    for (&c, &(simple_fold, ref special_fold, _)) in case_folds {
-        add_edge(c, simple_fold);
-        if let Some(special_fold) = special_fold
-            && special_fold.chars().count() == 1
-        {
-            add_edge(c, special_fold.chars().next());
-        }
-    }
-
-    for (&c, (special_lower, special_upper, special_title, _)) in special_casing {
-        if special_lower.chars().count() == 1 {
-            add_edge(c, special_lower.chars().next());
-        }
-        if special_upper.chars().count() == 1 {
-            add_edge(c, special_upper.chars().next());
-        }
-        if special_title.chars().count() == 1 {
-            add_edge(c, special_title.chars().next());
-        }
-    }
-
-    adj_list
 }
