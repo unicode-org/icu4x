@@ -14,6 +14,8 @@ use super::data::MappingKind;
 use super::exception_helpers::{ExceptionBits, ExceptionSlot, SlotPresence};
 use crate::set::ClosureSink;
 use alloc::borrow::Cow;
+#[cfg(feature = "datagen")]
+use alloc::collections::BTreeSet;
 use alloc::string::String;
 use core::fmt;
 #[cfg(any(feature = "serde", feature = "datagen"))]
@@ -57,7 +59,7 @@ impl CaseMapExceptions<'_> {
         exception.unwrap_or(ExceptionULE::EMPTY_EXCEPTION)
     }
 
-    #[cfg(any(feature = "serde", feature = "datagen"))]
+    #[cfg(feature = "serde")]
     pub(crate) fn validate(&self) -> Result<Range<u16>, &'static str> {
         for exception in self.exceptions.iter() {
             exception.validate()?;
@@ -129,6 +131,52 @@ pub struct Exception<'a> {
     /// where `i1 i2 i3` are the indices of the relevant mappings string. The strings are stored in
     /// the order corresponding to the `MappingKind` enum.
     pub data: Cow<'a, str>,
+}
+
+impl Exception<'static> {
+    #[cfg(feature = "datagen")]
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn new(
+        is_sensitive: bool,
+        dot_type: super::data::DotType,
+        delta: Option<i32>,
+        lowercase: Option<char>,
+        uppercase: Option<char>,
+        titlecase: Option<char>,
+        has_conditional_special: bool,
+        casefold: Option<char>,
+        no_simple_case_folding: bool,
+        has_conditional_fold: bool,
+        closure: BTreeSet<char>,
+        full_lower: Option<&str>,
+        full_upper: Option<&str>,
+        full_title: Option<&str>,
+        full_fold: Option<&str>,
+    ) -> Self {
+        let full = [full_lower, full_fold, full_upper, full_title];
+        DecodedException {
+            bits: ExceptionBits {
+                no_simple_case_folding,
+                is_sensitive,
+                dot_type,
+                has_conditional_special,
+                has_conditional_fold,
+                negative_delta: delta.is_some_and(|d| d < 0),
+            },
+            simple_case_delta: delta.map(i32::unsigned_abs),
+            lowercase,
+            casefold,
+            uppercase,
+            titlecase,
+            closure: (!closure.is_empty())
+                .then(|| Cow::Owned(closure.into_iter().collect::<String>())),
+            full: full.iter().any(|s| s.is_some()).then_some(
+                [full_lower, full_fold, full_upper, full_title]
+                    .map(|s| Cow::Borrowed(s.unwrap_or_default())),
+            ),
+        }
+        .encode()
+    }
 }
 
 impl ExceptionULE {
@@ -350,7 +398,7 @@ impl ExceptionULE {
         }
     }
 
-    #[cfg(any(feature = "serde", feature = "datagen"))]
+    #[cfg(feature = "serde")]
     pub(crate) fn validate(&self) -> Result<(), &'static str> {
         // check that ICU4C specific fields are not set
         // check that there is enough space for all the offsets

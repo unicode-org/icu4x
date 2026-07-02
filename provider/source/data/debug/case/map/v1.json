@@ -73935,7 +73935,6 @@
     "exceptions": [
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -73948,7 +73947,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -73961,7 +73959,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -73974,7 +73971,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -73987,7 +73983,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -74000,7 +73995,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74013,7 +74007,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74026,7 +74019,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74039,7 +74031,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74052,7 +74043,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74065,7 +74055,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74078,7 +74067,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74091,7 +74079,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": true,
           "negative_delta": true,
           "is_sensitive": true,
@@ -74104,7 +74091,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74117,7 +74103,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74130,7 +74115,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74143,7 +74127,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74156,7 +74139,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74169,7 +74151,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74182,7 +74163,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74195,7 +74175,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74208,7 +74187,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74221,7 +74199,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74234,7 +74211,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74247,7 +74223,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74260,7 +74235,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74273,7 +74247,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74286,7 +74259,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74299,7 +74271,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74312,7 +74283,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74325,7 +74295,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74338,7 +74307,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74351,7 +74319,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74364,7 +74331,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74377,7 +74343,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74390,7 +74355,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74403,7 +74367,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74416,7 +74379,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74429,7 +74391,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74442,7 +74403,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74455,7 +74415,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74468,7 +74427,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74481,7 +74439,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74494,7 +74451,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74507,7 +74463,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74520,7 +74475,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74533,7 +74487,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74546,7 +74499,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74559,7 +74511,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74572,7 +74523,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74585,7 +74535,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74598,7 +74547,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74611,7 +74559,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74624,7 +74571,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74637,7 +74583,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74650,7 +74595,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74663,7 +74607,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74676,7 +74619,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74689,7 +74631,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74702,7 +74643,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74715,7 +74655,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74728,7 +74667,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74741,7 +74679,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74754,7 +74691,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74767,7 +74703,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74780,7 +74715,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74793,7 +74727,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74806,7 +74739,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74819,7 +74751,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74832,7 +74763,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74845,7 +74775,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74858,7 +74787,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74871,7 +74799,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74884,7 +74811,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74897,7 +74823,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74910,7 +74835,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74923,7 +74847,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74936,7 +74859,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74949,7 +74871,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74962,7 +74883,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74975,7 +74895,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -74988,7 +74907,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75001,7 +74919,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75014,7 +74931,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75027,7 +74943,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75040,7 +74955,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75053,7 +74967,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75066,7 +74979,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75079,7 +74991,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75092,7 +75003,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75105,7 +75015,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75118,7 +75027,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75131,7 +75039,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75144,7 +75051,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75157,7 +75063,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75170,7 +75075,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75183,7 +75087,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75196,7 +75099,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75209,7 +75111,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75222,7 +75123,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75235,7 +75135,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75248,7 +75147,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75261,7 +75159,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75274,7 +75171,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75287,7 +75183,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75300,7 +75195,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75313,7 +75207,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75326,7 +75219,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75339,7 +75231,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75352,7 +75243,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75365,7 +75255,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75378,7 +75267,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75391,7 +75279,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75404,7 +75291,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75417,7 +75303,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75430,7 +75315,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75443,7 +75327,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75456,7 +75339,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75469,7 +75351,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75482,7 +75363,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75495,7 +75375,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75508,7 +75387,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75521,7 +75399,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75534,7 +75411,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75547,7 +75423,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75560,7 +75435,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75573,7 +75447,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75586,7 +75459,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75599,7 +75471,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75612,7 +75483,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75625,7 +75495,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75638,7 +75507,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75651,7 +75519,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75664,7 +75531,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75677,7 +75543,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75690,7 +75555,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75703,7 +75567,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75716,7 +75579,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75729,7 +75591,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75742,7 +75603,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75755,7 +75615,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75768,7 +75627,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75781,7 +75639,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75794,7 +75651,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75807,7 +75663,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75820,7 +75675,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75833,7 +75687,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": true,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75846,7 +75699,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": true,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75859,7 +75711,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75872,7 +75723,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75885,7 +75735,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75898,7 +75747,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75911,7 +75759,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75924,7 +75771,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75937,7 +75783,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75950,7 +75795,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75963,7 +75807,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75976,7 +75819,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -75989,7 +75831,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76002,7 +75843,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76015,7 +75855,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76028,7 +75867,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76041,7 +75879,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76054,7 +75891,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76067,7 +75903,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76080,7 +75915,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76093,7 +75927,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76106,7 +75939,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76119,7 +75951,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76132,7 +75963,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76145,7 +75975,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76158,7 +75987,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76171,7 +75999,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76184,7 +76011,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76197,7 +76023,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76210,7 +76035,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76223,7 +76047,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76236,7 +76059,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76249,7 +76071,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76262,7 +76083,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76275,7 +76095,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76288,7 +76107,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76301,7 +76119,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76314,7 +76131,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76327,7 +76143,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76340,7 +76155,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76353,7 +76167,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76366,7 +76179,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76379,7 +76191,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76392,7 +76203,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76405,7 +76215,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76418,7 +76227,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76431,7 +76239,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76444,7 +76251,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76457,7 +76263,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76470,7 +76275,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76483,7 +76287,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76496,7 +76299,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76509,7 +76311,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76522,7 +76323,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76535,7 +76335,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76548,7 +76347,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76561,7 +76359,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76574,7 +76371,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76587,7 +76383,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76600,7 +76395,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76613,7 +76407,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76626,7 +76419,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76639,7 +76431,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76652,7 +76443,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76665,7 +76455,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76678,7 +76467,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76691,7 +76479,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76704,7 +76491,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76717,7 +76503,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76730,7 +76515,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76743,7 +76527,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76756,7 +76539,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76769,7 +76551,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76782,7 +76563,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76795,7 +76575,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76808,7 +76587,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76821,7 +76599,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76834,7 +76611,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76847,7 +76623,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76860,7 +76635,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76873,7 +76647,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76886,7 +76659,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76899,7 +76671,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76912,7 +76683,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76925,7 +76695,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76938,7 +76707,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76951,7 +76719,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76964,7 +76731,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -76977,7 +76743,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -76990,7 +76755,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77003,7 +76767,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77016,7 +76779,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77029,7 +76791,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77042,7 +76803,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77055,7 +76815,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77068,7 +76827,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77081,7 +76839,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77094,7 +76851,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77107,7 +76863,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77120,7 +76875,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77133,7 +76887,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77146,7 +76899,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77159,7 +76911,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77172,7 +76923,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77185,7 +76935,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77198,7 +76947,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77211,7 +76959,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77224,7 +76971,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77237,7 +76983,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77250,7 +76995,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77263,7 +77007,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77276,7 +77019,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77289,7 +77031,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77302,7 +77043,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77315,7 +77055,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77328,7 +77067,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77341,7 +77079,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77354,7 +77091,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77367,7 +77103,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77380,7 +77115,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77393,7 +77127,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77406,7 +77139,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77419,7 +77151,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77432,7 +77163,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77445,7 +77175,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77458,7 +77187,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77471,7 +77199,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77484,7 +77211,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77497,7 +77223,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77510,7 +77235,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77523,7 +77247,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77536,7 +77259,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77549,7 +77271,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77562,7 +77283,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77575,7 +77295,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77588,7 +77307,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77601,7 +77319,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77614,7 +77331,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77627,7 +77343,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77640,7 +77355,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77653,7 +77367,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": true,
           "is_sensitive": true,
@@ -77666,7 +77379,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77679,7 +77391,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77692,7 +77403,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77705,7 +77415,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77718,7 +77427,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77731,7 +77439,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77744,7 +77451,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77757,7 +77463,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77770,7 +77475,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77783,7 +77487,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77796,7 +77499,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77809,7 +77511,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77822,7 +77523,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77835,7 +77535,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77848,7 +77547,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77861,7 +77559,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77874,7 +77571,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77887,7 +77583,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77900,7 +77595,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77913,7 +77607,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77926,7 +77619,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77939,7 +77631,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77952,7 +77643,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77965,7 +77655,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77978,7 +77667,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -77991,7 +77679,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78004,7 +77691,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78017,7 +77703,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78030,7 +77715,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78043,7 +77727,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78056,7 +77739,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78069,7 +77751,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78082,7 +77763,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78095,7 +77775,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78108,7 +77787,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78121,7 +77799,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78134,7 +77811,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78147,7 +77823,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78160,7 +77835,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78173,7 +77847,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78186,7 +77859,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78199,7 +77871,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78212,7 +77883,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78225,7 +77895,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78238,7 +77907,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78251,7 +77919,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78264,7 +77931,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78277,7 +77943,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78290,7 +77955,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78303,7 +77967,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78316,7 +77979,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78329,7 +77991,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78342,7 +78003,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78355,7 +78015,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78368,7 +78027,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78381,7 +78039,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78394,7 +78051,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78407,7 +78063,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78420,7 +78075,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78433,7 +78087,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78446,7 +78099,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78459,7 +78111,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78472,7 +78123,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78485,7 +78135,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78498,7 +78147,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78511,7 +78159,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78524,7 +78171,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78537,7 +78183,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78550,7 +78195,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78563,7 +78207,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78576,7 +78219,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78589,7 +78231,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78602,7 +78243,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78615,7 +78255,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78628,7 +78267,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78641,7 +78279,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78654,7 +78291,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78667,7 +78303,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78680,7 +78315,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78693,7 +78327,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78706,7 +78339,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78719,7 +78351,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78732,7 +78363,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78745,7 +78375,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78758,7 +78387,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78771,7 +78399,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78784,7 +78411,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78797,7 +78423,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78810,7 +78435,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78823,7 +78447,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78836,7 +78459,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,
@@ -78849,7 +78471,6 @@
       },
       {
         "bits": {
-          "double_width_slots": false,
           "no_simple_case_folding": false,
           "negative_delta": false,
           "is_sensitive": true,

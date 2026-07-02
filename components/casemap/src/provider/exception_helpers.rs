@@ -27,10 +27,6 @@ use zerovec::ule::{AsULE, ULE};
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 pub struct ExceptionBits {
-    /// Whether or not the slots are double-width.
-    ///
-    /// Unused in ICU4X
-    pub double_width_slots: bool,
     /// There is no simple casefolding, even if there is a simple lowercase mapping
     pub no_simple_case_folding: bool,
     /// The delta stored in the `Delta` slot is negative
@@ -49,7 +45,6 @@ impl ExceptionBits {
     /// Extract from the upper half of an ICU4C-format u16
     pub(crate) fn from_integer(int: u8) -> Self {
         let ule = ExceptionBitsULE(int);
-        let double_width_slots = ule.double_width_slots();
         let no_simple_case_folding = ule.no_simple_case_folding();
         let negative_delta = ule.negative_delta();
         let is_sensitive = ule.is_sensitive();
@@ -58,7 +53,6 @@ impl ExceptionBits {
         let dot_type = ule.dot_type();
 
         Self {
-            double_width_slots,
             no_simple_case_folding,
             negative_delta,
             is_sensitive,
@@ -74,9 +68,6 @@ impl ExceptionBits {
         let dot_data = (self.dot_type as u8) << ExceptionBitsULE::DOT_SHIFT;
         int |= dot_data;
 
-        if self.double_width_slots {
-            int |= ExceptionBitsULE::DOUBLE_SLOTS_FLAG
-        }
         if self.no_simple_case_folding {
             int |= ExceptionBitsULE::NO_SIMPLE_CASE_FOLDING_FLAG
         }
