@@ -896,35 +896,51 @@ where
     }
 }
 
+fn key_of_pair<'a, K, V>(pair: (&'a K, &'a V)) -> &'a K {
+    pair.0
+}
+
+fn value_of_pair<'a, K, V>(pair: (&'a K, &'a V)) -> &'a V {
+    pair.1
+}
+
+/// The iterator type returned by [`LiteMap::keys`] and [`LiteMap::iter_keys`].
+pub type LiteMapKeysIter<'a, K, V, S> =
+    core::iter::Map<<S as StoreIterable<'a, K, V>>::KeyValueIter, fn((&'a K, &'a V)) -> &'a K>;
+
+/// The iterator type returned by [`LiteMap::values`] and [`LiteMap::iter_values`].
+pub type LiteMapValuesIter<'a, K, V, S> =
+    core::iter::Map<<S as StoreIterable<'a, K, V>>::KeyValueIter, fn((&'a K, &'a V)) -> &'a V>;
+
 impl<'a, K: 'a, V: 'a, S> LiteMap<K, V, S>
 where
     S: StoreIterable<'a, K, V>,
 {
     /// Produce an ordered iterator over key-value pairs
-    pub fn iter(&'a self) -> impl DoubleEndedIterator<Item = (&'a K, &'a V)> {
+    pub fn iter(&'a self) -> S::KeyValueIter {
         self.values.lm_iter()
     }
 
     /// Produce an ordered iterator over keys
     #[deprecated = "use keys() instead"]
-    pub fn iter_keys(&'a self) -> impl DoubleEndedIterator<Item = &'a K> {
-        self.values.lm_iter().map(|val| val.0)
+    pub fn iter_keys(&'a self) -> LiteMapKeysIter<'a, K, V, S> {
+        self.keys()
     }
 
     /// Produce an iterator over values, ordered by their keys
     #[deprecated = "use values() instead"]
-    pub fn iter_values(&'a self) -> impl DoubleEndedIterator<Item = &'a V> {
-        self.values.lm_iter().map(|val| val.1)
+    pub fn iter_values(&'a self) -> LiteMapValuesIter<'a, K, V, S> {
+        self.values()
     }
 
     /// Produce an ordered iterator over keys
-    pub fn keys(&'a self) -> impl DoubleEndedIterator<Item = &'a K> {
-        self.values.lm_iter().map(|val| val.0)
+    pub fn keys(&'a self) -> LiteMapKeysIter<'a, K, V, S> {
+        self.values.lm_iter().map(key_of_pair)
     }
 
     /// Produce an iterator over values, ordered by their keys
-    pub fn values(&'a self) -> impl DoubleEndedIterator<Item = &'a V> {
-        self.values.lm_iter().map(|val| val.1)
+    pub fn values(&'a self) -> LiteMapValuesIter<'a, K, V, S> {
+        self.values.lm_iter().map(value_of_pair)
     }
 }
 
@@ -933,7 +949,7 @@ where
     S: StoreIterableMut<'a, K, V>,
 {
     /// Produce an ordered mutable iterator over key-value pairs
-    pub fn iter_mut(&'a mut self) -> impl DoubleEndedIterator<Item = (&'a K, &'a mut V)> {
+    pub fn iter_mut(&'a mut self) -> S::KeyValueIterMut {
         self.values.lm_iter_mut()
     }
 }
