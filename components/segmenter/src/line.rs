@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::complex::*;
 use crate::indices::*;
 use crate::provider::*;
 use crate::rule_segmenter::*;

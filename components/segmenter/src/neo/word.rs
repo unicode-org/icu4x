@@ -2,11 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::*;
+use super::{ComplexHandler, RuleBreakIterator, RuleBreakType};
+use crate::complex::*;
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::iterator_helpers::derive_usize_iterator_with_type;
 use crate::provider::*;
-use crate::scaffold::{Latin1, PotentiallyIllFormedUtf8, RuleBreakType, Utf8, Utf16};
+use crate::rule_segmenter::*;
 #[cfg(feature = "compiled_data")]
 use crate::word::WordBreakInvariantOptions;
 use crate::word::WordBreakOptions;
@@ -241,7 +242,7 @@ impl WordSegmenter {
         D: DataProvider<SegmenterBreakWordV2>
             + DataProvider<SegmenterDictionaryAutoV1>
             + DataProvider<SegmenterLstmAutoV1>
-            + DataProvider<SegmenterBreakGraphemeClusterV2>
+            + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
         let mut complex = ComplexPayloads::try_new(provider)?;
@@ -315,7 +316,7 @@ impl WordSegmenter {
     where
         D: DataProvider<SegmenterBreakWordV2>
             + DataProvider<SegmenterLstmAutoV1>
-            + DataProvider<SegmenterBreakGraphemeClusterV2>
+            + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
         let mut s = Self::try_new_for_non_complex_scripts_unstable(provider, options)?;
@@ -378,7 +379,7 @@ impl WordSegmenter {
         D: DataProvider<SegmenterBreakWordV2>
             + DataProvider<SegmenterDictionaryAutoV1>
             + DataProvider<SegmenterDictionaryExtendedV1>
-            + DataProvider<SegmenterBreakGraphemeClusterV2>
+            + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
         let mut s = Self::try_new_for_non_complex_scripts_unstable(provider, options)?;
@@ -419,7 +420,7 @@ impl WordSegmenter {
     ) -> Result<Self, DataError>
     where
         D: DataProvider<SegmenterBreakWordV2>
-            + DataProvider<SegmenterBreakGraphemeClusterV2>
+            + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
         Ok(Self {

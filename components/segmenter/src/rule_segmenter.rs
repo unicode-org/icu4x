@@ -2,15 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "unstable")]
+use crate::GraphemeClusterSegmenterBorrowed;
+use crate::complex::ComplexPayloadsBorrowed;
+#[cfg(feature = "unstable")]
+use crate::complex::{ComplexIterator, ComplexPayloadBorrowed};
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::provider::*;
 use alloc::vec::Vec;
 use core::str::CharIndices;
 use utf8_iter::Utf8CharIndices;
-
-pub(crate) type ComplexPayloads = crate::complex::ComplexPayloads<crate::GraphemeClusterSegmenter>;
-pub(crate) type ComplexPayloadsBorrowed<'data> =
-    crate::complex::ComplexPayloadsBorrowed<'data, crate::GraphemeClusterSegmenterBorrowed<'data>>;
 
 /// A trait allowing for `RuleBreakIterator` to be generalized to multiple string
 /// encoding methods and granularity such as grapheme cluster, word, etc.
@@ -19,7 +20,7 @@ pub(crate) type ComplexPayloadsBorrowed<'data> =
 /// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
 /// trait, please consider using a type from the implementors listed below.
 /// </div>
-pub trait RuleBreakType: crate::private::Sealed + Sized + core::fmt::Debug + 'static {
+pub trait RuleBreakType: crate::private::Sealed + Sized {
     /// The iterator over characters.
     type IterAttr<'s>: Iterator<Item = (usize, Self::CharType)> + Clone + core::fmt::Debug;
 
@@ -52,7 +53,7 @@ pub trait RuleBreakType: crate::private::Sealed + Sized + core::fmt::Debug + 'st
         data: &Self::ComplexPayload<'data>,
         complex: &Self::IterAttr<'s>,
         past_complex: &Self::IterAttr<'s>,
-    ) -> crate::neo::ComplexIterator<'data, 's, Self>;
+    ) -> ComplexIterator<'data, 's, Self>;
 
     #[doc(hidden)]
     #[cfg(feature = "unstable")]
@@ -308,11 +309,11 @@ impl RuleBreakType for Utf8 {
     const CAN_CONTAIN_SA: bool = true;
 
     #[cfg(feature = "unstable")]
-    type ComplexPayloads<'data> = crate::neo::ComplexPayloadsBorrowed<'data>;
+    type ComplexPayloads<'data> = ComplexPayloadsBorrowed<'data>;
     #[cfg(feature = "unstable")]
     type ComplexPayload<'data> = (
-        crate::complex::ComplexPayloadBorrowed<'data>,
-        crate::neo::GraphemeClusterSegmenterBorrowed<'data>,
+        ComplexPayloadBorrowed<'data>,
+        GraphemeClusterSegmenterBorrowed<'data>,
     );
 
     #[cfg(feature = "unstable")]
@@ -328,7 +329,7 @@ impl RuleBreakType for Utf8 {
         &(lang, grapheme): &Self::ComplexPayload<'data>,
         complex: &Self::IterAttr<'s>,
         past_complex: &Self::IterAttr<'s>,
-    ) -> crate::neo::ComplexIterator<'data, 's, Self> {
+    ) -> ComplexIterator<'data, 's, Self> {
         let complex_offset = complex.offset();
         #[allow(clippy::indexing_slicing)] // valid offset
         let complex = &complex.as_str()[..(past_complex.offset() - complex_offset)];
@@ -364,11 +365,11 @@ impl RuleBreakType for PotentiallyIllFormedUtf8 {
     const CAN_CONTAIN_SA: bool = true;
 
     #[cfg(feature = "unstable")]
-    type ComplexPayloads<'data> = crate::neo::ComplexPayloadsBorrowed<'data>;
+    type ComplexPayloads<'data> = ComplexPayloadsBorrowed<'data>;
     #[cfg(feature = "unstable")]
     type ComplexPayload<'data> = (
-        crate::complex::ComplexPayloadBorrowed<'data>,
-        crate::neo::GraphemeClusterSegmenterBorrowed<'data>,
+        ComplexPayloadBorrowed<'data>,
+        GraphemeClusterSegmenterBorrowed<'data>,
     );
 
     #[cfg(feature = "unstable")]
@@ -384,7 +385,7 @@ impl RuleBreakType for PotentiallyIllFormedUtf8 {
         &(lang, grapheme): &Self::ComplexPayload<'data>,
         complex: &Self::IterAttr<'s>,
         past_complex: &Self::IterAttr<'s>,
-    ) -> crate::neo::ComplexIterator<'data, 's, Self> {
+    ) -> ComplexIterator<'data, 's, Self> {
         let offset = complex.offset();
         #[allow(clippy::indexing_slicing)] // valid offset
         let complex = &complex.as_slice()[..(past_complex.offset() - offset)];
@@ -437,7 +438,7 @@ impl RuleBreakType for Latin1 {
         &complex_payload: &Self::ComplexPayloads<'data>,
         _: &Self::IterAttr<'s>,
         _: &Self::IterAttr<'s>,
-    ) -> crate::neo::ComplexIterator<'data, 's, Self> {
+    ) -> ComplexIterator<'data, 's, Self> {
         match complex_payload {}
     }
 
@@ -470,11 +471,11 @@ impl RuleBreakType for Utf16 {
     const CAN_CONTAIN_SA: bool = true;
 
     #[cfg(feature = "unstable")]
-    type ComplexPayloads<'data> = crate::neo::ComplexPayloadsBorrowed<'data>;
+    type ComplexPayloads<'data> = ComplexPayloadsBorrowed<'data>;
     #[cfg(feature = "unstable")]
     type ComplexPayload<'data> = (
-        crate::complex::ComplexPayloadBorrowed<'data>,
-        crate::neo::GraphemeClusterSegmenterBorrowed<'data>,
+        ComplexPayloadBorrowed<'data>,
+        GraphemeClusterSegmenterBorrowed<'data>,
     );
 
     #[cfg(feature = "unstable")]
@@ -490,7 +491,7 @@ impl RuleBreakType for Utf16 {
         &(lang, grapheme): &Self::ComplexPayload<'data>,
         complex: &Self::IterAttr<'s>,
         past_complex: &Self::IterAttr<'s>,
-    ) -> crate::neo::ComplexIterator<'data, 's, Self> {
+    ) -> ComplexIterator<'data, 's, Utf16> {
         let complex_offset = complex.offset();
         #[allow(clippy::indexing_slicing)] // valid offset
         let complex = &complex.as_slice()[..(past_complex.offset() - complex_offset)];
