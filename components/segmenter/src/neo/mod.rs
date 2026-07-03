@@ -130,7 +130,7 @@ pub(crate) struct RuleBreakIterator<'data, 's, Y: RuleBreakType, C: ComplexHandl
     cache: smallvec::IntoIter<C::Cache>,
     lookahead_positions: SmallVec<[Option<Y::IterAttr<'s>>; 1]>,
     remaining_input: Y::IterAttr<'s>,
-    pub(crate) last_accepting_status: u8,
+    last_accepting_status: u8,
     complex: Option<C::ComplexPayloads<'data>>,
 }
 
@@ -170,6 +170,10 @@ impl<'data, 's, Y: RuleBreakType, C: ComplexHandler<Y>> RuleBreakIterator<'data,
             last_accepting_status: 0,
             remaining_input: input,
         }
+    }
+
+    pub(crate) fn last_accepting_status(&self) -> u8 {
+        self.last_accepting_status
     }
 }
 

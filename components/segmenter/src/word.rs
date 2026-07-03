@@ -110,18 +110,15 @@ impl<'data, 's, Y: RuleBreakType> WordBreakIterator<'data, 's, Y> {
     /// Returns the word type of the segment preceding the current boundary.
     #[inline]
     pub fn word_type(&self) -> WordType {
-        match self.0 {
-            WordBreakIteratorInner::Legacy(ref iter) => match iter.rule_status() {
-                0 => WordType::None,
-                1 => WordType::Number,
-                _ => WordType::Letter,
-            },
+        let last_accepting_status = match self.0 {
+            WordBreakIteratorInner::Legacy(ref iter) => iter.rule_status(),
             #[cfg(feature = "unstable")]
-            WordBreakIteratorInner::Neo(ref iter) => match iter.last_accepting_status {
-                0 => WordType::None,
-                1 => WordType::Number,
-                _ => WordType::Letter,
-            },
+            WordBreakIteratorInner::Neo(ref iter) => iter.last_accepting_status(),
+        };
+        match last_accepting_status {
+            0 => WordType::None,
+            1 => WordType::Number,
+            _ => WordType::Letter,
         }
     }
 

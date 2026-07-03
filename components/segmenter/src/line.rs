@@ -1225,7 +1225,7 @@ impl<Y: RuleBreakType> LineBreakIterator<'_, '_, Y> {
         match self.0 {
             LineBreakIteratorInner::Legacy(_) => false,
             #[cfg(feature = "unstable")]
-            LineBreakIteratorInner::Neo(ref iter) => iter.last_accepting_status == (true as u8),
+            LineBreakIteratorInner::Neo(ref iter) => iter.last_accepting_status() == (true as u8),
         }
     }
 }
