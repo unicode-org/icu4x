@@ -3,10 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_properties::PropertyNamesLong;
-use icu_segmenter::neo::GraphemeClusterSegmenter;
-use icu_segmenter::neo::LineSegmenter;
-use icu_segmenter::neo::SentenceSegmenter;
-use icu_segmenter::neo::WordSegmenter;
+use icu_segmenter::GraphemeClusterSegmenter;
+use icu_segmenter::LineSegmenter;
+use icu_segmenter::SentenceSegmenter;
+use icu_segmenter::WordSegmenter;
 use std::char;
 use std::io::BufRead;
 
@@ -95,7 +95,7 @@ fn line_break_test(file: &'static str) {
             .lines()
             .map(|l| l.unwrap()),
     );
-    let segmenter = LineSegmenter::new_for_non_complex_scripts(Default::default());
+    let segmenter = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
     for (i, mut test) in test_iter.enumerate() {
         let s: String = test.chars.into_iter().collect();
         let iter = segmenter.segment_str(&s);
@@ -193,7 +193,7 @@ fn run_line_break_random_test() {
 
 fn word_break_test(file: &'static str) {
     let test_iter = TestContentIterator::new(file);
-    let segmenter = WordSegmenter::new_for_non_complex_scripts(Default::default());
+    let segmenter = WordSegmenter::new_neo_for_non_complex_scripts(Default::default());
     for (i, test) in test_iter.enumerate() {
         let s: String = test.chars.into_iter().collect();
         let iter = segmenter.segment_str(&s);
@@ -274,7 +274,7 @@ fn run_word_break_random_test() {
 
 fn grapheme_break_test(file: &'static str) {
     let test_iter = TestContentIterator::new(file);
-    let segmenter = GraphemeClusterSegmenter::new();
+    let segmenter = GraphemeClusterSegmenter::new_neo();
     for (i, test) in test_iter.enumerate() {
         let s: String = test.chars.into_iter().collect();
         let iter = segmenter.segment_str(&s);
@@ -355,7 +355,7 @@ fn run_grapheme_break_random_test() {
 
 fn sentence_break_test(file: &'static str) {
     let test_iter = TestContentIterator::new(file);
-    let segmenter = SentenceSegmenter::new(Default::default());
+    let segmenter = SentenceSegmenter::new_neo(Default::default());
     for (i, test) in test_iter.enumerate() {
         let s: String = test.chars.into_iter().collect();
         let iter = segmenter.segment_str(&s);

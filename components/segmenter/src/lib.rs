@@ -120,7 +120,6 @@ extern crate alloc;
 
 mod complex;
 mod indices;
-mod iterator_helpers;
 mod rule_segmenter;
 
 /// [`GraphemeClusterSegmenter`] and its related iterators, borrowed types, and options.

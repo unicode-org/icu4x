@@ -315,6 +315,19 @@ impl ComplexPayloadsBorrowed<'static> {
         }
     }
 
+    #[cfg(feature = "compiled_data")]
+    #[cfg(feature = "unstable")]
+    pub(crate) const fn new_neo() -> Self {
+        Self {
+            grapheme: GraphemeClusterSegmenter::new_neo(),
+            my: None,
+            km: None,
+            lo: None,
+            th: None,
+            ja: None,
+        }
+    }
+
     pub(crate) fn static_to_owned(self) -> ComplexPayloads {
         ComplexPayloads {
             grapheme: self.grapheme.static_to_owned(),
@@ -413,6 +426,21 @@ impl ComplexPayloads {
     {
         Ok(Self {
             grapheme: GraphemeClusterSegmenter::try_new_unstable(provider)?,
+            my: None,
+            km: None,
+            lo: None,
+            th: None,
+            ja: None,
+        })
+    }
+
+    #[cfg(feature = "unstable")]
+    pub(crate) fn try_new_neo<D>(provider: &D) -> Result<Self, DataError>
+    where
+        D: DataProvider<SegmenterBreakGraphemeClusterV2> + ?Sized,
+    {
+        Ok(Self {
+            grapheme: GraphemeClusterSegmenter::try_new_neo_unstable(provider)?,
             my: None,
             km: None,
             lo: None,
