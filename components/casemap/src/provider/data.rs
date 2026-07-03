@@ -120,7 +120,8 @@ pub(crate) enum MappingKind {
 #[cfg_attr(feature = "datagen", databake(path = icu_casemap::provider::data))]
 pub struct CaseMapData {
     /// Whether this is default-ignoreable
-    pub ignoreable: bool,
+    #[cfg_attr(feature = "serde", serde(rename = "ignoreable"))]
+    pub is_ignoreable: bool,
     /// The rest of the case mapping data
     pub kind: CaseMapDataKind,
 }
@@ -128,9 +129,9 @@ pub struct CaseMapData {
 impl CaseMapData {
     /// The [`CaseMapData`] for a code point that is uncased, insensitive, and has no dot type.
     pub const UNCASED_INSENSITIVE_NO_DOT: Self = Self {
-        ignoreable: false,
+        is_ignoreable: false,
         kind: CaseMapDataKind::Uncased(NonExceptionData {
-            sensitive: false,
+            is_sensitive: false,
             dot_type: DotType::NoDot,
         }),
     };
@@ -141,8 +142,8 @@ impl CaseMapData {
     pub fn new(
         exceptions: &mut Vec<Exception<'_>>,
         c: char,
-        ignoreable: bool,
-        sensitive: bool,
+        is_ignoreable: bool,
+        is_sensitive: bool,
         dot_type: DotType,
         case_type: Option<CaseType>,
         simple_upper: Option<char>,
@@ -237,7 +238,7 @@ impl CaseMapData {
             let exception = super::exceptions::DecodedException {
                 bits: super::exception_helpers::ExceptionBits {
                     no_simple_case_folding,
-                    is_sensitive: sensitive,
+                    is_sensitive,
                     dot_type,
                     has_conditional_map,
                     has_conditional_fold,
@@ -271,7 +272,7 @@ impl CaseMapData {
         {
             CaseMapDataKind::Delta(
                 NonExceptionData {
-                    sensitive,
+                    is_sensitive,
                     dot_type,
                 },
                 case_type,
@@ -279,12 +280,12 @@ impl CaseMapData {
             )
         } else {
             CaseMapDataKind::Uncased(NonExceptionData {
-                sensitive,
+                is_sensitive,
                 dot_type,
             })
         };
 
-        Self { ignoreable, kind }
+        Self { is_ignoreable, kind }
     }
 }
 
@@ -325,7 +326,8 @@ pub enum CaseMapDataKind {
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct NonExceptionData {
     /// Whether or not the type is case-sensitive
-    pub sensitive: bool,
+    #[cfg_attr(feature = "serde", serde(rename = "sensitive"))]
+    pub is_sensitive: bool,
     /// The "dot type"
     pub dot_type: DotType,
 }
@@ -358,7 +360,7 @@ impl CaseMapData {
 
     #[inline]
     pub(crate) fn is_ignorable(self) -> bool {
-        self.ignoreable
+        self.is_ignoreable
     }
 
     #[inline]
@@ -373,8 +375,8 @@ impl CaseMapData {
     pub(crate) fn is_sensitive(self) -> bool {
         match self.kind {
             CaseMapDataKind::Exception(..) => false,
-            CaseMapDataKind::Delta(ned, ..) => ned.sensitive,
-            CaseMapDataKind::Uncased(ned) => ned.sensitive,
+            CaseMapDataKind::Delta(ned, ..) => ned.is_sensitive,
+            CaseMapDataKind::Uncased(ned) => ned.is_sensitive,
         }
     }
 
@@ -530,7 +532,7 @@ impl AsULE for CaseMapData {
     fn from_unaligned(ule: Self::ULE) -> Self {
         let sixteen = ule.0.as_unsigned_int();
 
-        let ignoreable = (sixteen & CaseMapDataULE::CASE_IGNOREABLE_BIT) != 0;
+        let is_ignoreable = (sixteen & CaseMapDataULE::CASE_IGNOREABLE_BIT) != 0;
         let exception = (sixteen & CaseMapDataULE::EXCEPTION_BIT) != 0;
 
         let case_type = sixteen & CaseMapDataULE::CASE_TYPE_BITS;
@@ -542,10 +544,10 @@ impl AsULE for CaseMapData {
         } else {
             let dot_type = (sixteen & CaseMapDataULE::DOT_TYPE_BITS) >> CaseMapDataULE::DOT_SHIFT;
             let dot_type = DotType::from_masked_bits(dot_type);
-            let sensitive = (sixteen & CaseMapDataULE::CASE_SENSITIVE_BIT) != 0;
+            let is_sensitive = (sixteen & CaseMapDataULE::CASE_SENSITIVE_BIT) != 0;
             let ned = NonExceptionData {
                 dot_type,
-                sensitive,
+                is_sensitive,
             };
             if let Some(case_type) = case_type {
                 // no need to mask first since the delta bits start at 15
@@ -557,12 +559,12 @@ impl AsULE for CaseMapData {
                 CaseMapDataKind::Uncased(ned)
             }
         };
-        CaseMapData { ignoreable, kind }
+        CaseMapData { is_ignoreable, kind }
     }
 
     fn to_unaligned(self) -> Self::ULE {
         let mut sixteen = 0;
-        if self.ignoreable {
+        if self.is_ignoreable {
             sixteen |= CaseMapDataULE::CASE_IGNOREABLE_BIT;
         }
         match self.kind {
@@ -573,7 +575,7 @@ impl AsULE for CaseMapData {
             }
             CaseMapDataKind::Uncased(ned) => {
                 sixteen |= (ned.dot_type as u16) << CaseMapDataULE::DOT_SHIFT;
-                if ned.sensitive {
+                if ned.is_sensitive {
                     sixteen |= CaseMapDataULE::CASE_SENSITIVE_BIT;
                 }
                 // Remaining bytes are left at zero
@@ -584,7 +586,7 @@ impl AsULE for CaseMapData {
                 // right type
                 sixteen |= (delta << CaseMapDataULE::DELTA_SHIFT) as u16;
                 sixteen |= (ned.dot_type as u16) << CaseMapDataULE::DOT_SHIFT;
-                if ned.sensitive {
+                if ned.is_sensitive {
                     sixteen |= CaseMapDataULE::CASE_SENSITIVE_BIT;
                 }
                 sixteen |= case_type as u16;
@@ -602,18 +604,18 @@ mod tests {
     fn test_roundtrip() {
         const TESTCASES: &[CaseMapData] = &[
             CaseMapData {
-                ignoreable: true,
+                is_ignoreable: true,
                 kind: CaseMapDataKind::Exception(Some(CaseType::Title), 923),
             },
             CaseMapData {
-                ignoreable: false,
+                is_ignoreable: false,
                 kind: CaseMapDataKind::Exception(None, 923),
             },
             CaseMapData {
-                ignoreable: true,
+                is_ignoreable: true,
                 kind: CaseMapDataKind::Delta(
                     NonExceptionData {
-                        sensitive: true,
+                        is_sensitive: true,
                         dot_type: DotType::SoftDotted,
                     },
                     CaseType::Upper,
@@ -621,10 +623,10 @@ mod tests {
                 ),
             },
             CaseMapData {
-                ignoreable: false,
+                is_ignoreable: false,
                 kind: CaseMapDataKind::Delta(
                     NonExceptionData {
-                        sensitive: true,
+                        is_sensitive: true,
                         dot_type: DotType::SoftDotted,
                     },
                     CaseType::Upper,
@@ -632,9 +634,9 @@ mod tests {
                 ),
             },
             CaseMapData {
-                ignoreable: false,
+                is_ignoreable: false,
                 kind: CaseMapDataKind::Uncased(NonExceptionData {
-                    sensitive: false,
+                    is_sensitive: false,
                     dot_type: DotType::SoftDotted,
                 }),
             },

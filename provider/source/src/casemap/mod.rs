@@ -233,8 +233,8 @@ impl DataProvider<CaseMapV1> for SourceDataProvider {
                 }
             };
 
-            let ignoreable = case_ignorable.contains(c);
-            let sensitive = adjacency_list.contains_key(&c);
+            let is_ignoreable = case_ignorable.contains(c);
+            let is_sensitive = adjacency_list.contains_key(&c);
 
             let case_type = if is_lowercase.contains(c) {
                 Some(CaseType::Lower)
@@ -251,8 +251,8 @@ impl DataProvider<CaseMapV1> for SourceDataProvider {
                 CaseMapData::new(
                     &mut exceptions,
                     c,
-                    ignoreable,
-                    sensitive,
+                    is_ignoreable,
+                    is_sensitive,
                     dot_type,
                     case_type,
                     simple_upper,
