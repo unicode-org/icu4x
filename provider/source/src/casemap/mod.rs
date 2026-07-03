@@ -12,6 +12,7 @@ use crate::properties::ucd_helpers;
 use icu::casemap::provider::data::{CaseMapData, CaseType, DotType};
 use icu::casemap::provider::exceptions::{CaseMapExceptions, Exception};
 use icu::casemap::provider::{CaseMap, CaseMapUnfold, CaseMapUnfoldV1, CaseMapV1};
+use icu::locale::LanguageIdentifier;
 use icu::properties::{CodePointMapData, CodePointSetData, props};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, BTreeSet, HashSet, VecDeque};
@@ -114,19 +115,45 @@ impl DataProvider<CaseMapV1> for SourceDataProvider {
 
             // There can be multiple entries for the same code point, so we need to merge them together.
             let entry = special.entry(cp).or_default();
-            if condition.is_none() {
+            if let Some(condition) = condition {
+                entry.3 = true;
+                // Check that we handle the condition at runtime.
+                let condition = if let Ok(langid) = condition
+                    .split_ascii_whitespace()
+                    .next()
+                    .unwrap()
+                    .parse::<LanguageIdentifier>()
+                {
+                    const LT: LanguageIdentifier = icu::locale::langid!("lt");
+                    const AZ: LanguageIdentifier = icu::locale::langid!("az");
+                    const TR: LanguageIdentifier = icu::locale::langid!("tr");
+                    if !matches!(langid, LT | AZ | TR) {
+                        log::error!(
+                            "Unhandled language condition in SpecialCasing.txt: {condition}"
+                        );
+                    }
+                    condition.split_ascii_whitespace().nth(1)
+                } else {
+                    condition.split_ascii_whitespace().next()
+                };
+                if let Some(condition) = condition {
+                    if !matches!(
+                        condition.strip_prefix("Not_").unwrap_or(condition),
+                        "Final_Sigma" | "After_Soft_Dotted" | "More_Above" | "After_I" | "Before_Dot"
+                    ) {
+                        log::error!("Unhandled condition in SpecialCasing.txt: {condition}");
+                    }
+                }
+            } else {
                 add_edges(cp, &lower, &mut adjacency_list);
                 add_edges(cp, &upper, &mut adjacency_list);
                 add_edges(cp, &title, &mut adjacency_list);
                 entry.0 = lower;
                 entry.1 = upper;
                 entry.2 = title;
-            } else {
-                // Ignore the actual mappings here. We hardcode them in runtime code.
-                entry.3 = true;
             }
         }
-        // TODO: We currently set this in our data, but don't handle this at runtime,
+        // We have a non-standard conditional mapping for this character,
         // see https://unicode-org.atlassian.net/browse/ICU-13416
         special.entry('և').or_default().3 = true;
 
