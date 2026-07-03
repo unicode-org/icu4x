@@ -136,17 +136,17 @@ impl DataProvider<CaseMapV1> for SourceDataProvider {
                 } else {
                     condition.split_ascii_whitespace().next()
                 };
-                if let Some(condition) = condition {
-                    if !matches!(
+                if let Some(condition) = condition
+                    && !matches!(
                         condition.strip_prefix("Not_").unwrap_or(condition),
                         "Final_Sigma"
                             | "After_Soft_Dotted"
                             | "More_Above"
                             | "After_I"
                             | "Before_Dot"
-                    ) {
-                        log::error!("Unhandled condition in SpecialCasing.txt: {condition}");
-                    }
+                    )
+                {
+                    log::error!("Unhandled condition in SpecialCasing.txt: {condition}");
                 }
             } else {
                 add_edges(cp, &lower, &mut adjacency_list);
