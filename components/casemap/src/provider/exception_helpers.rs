@@ -35,8 +35,9 @@ pub struct ExceptionBits {
     pub is_sensitive: bool,
     /// The dot type of the character
     pub dot_type: DotType,
-    /// If the character has conditional special casing
-    pub has_conditional_special: bool,
+    /// If the character has conditional case mapping
+    #[cfg_attr(feature = "serde", serde(rename = "has_conditional_special"))]
+    pub has_conditional_map: bool,
     /// If the character has conditional case folding
     pub has_conditional_fold: bool,
 }
@@ -48,7 +49,7 @@ impl ExceptionBits {
         let no_simple_case_folding = ule.no_simple_case_folding();
         let negative_delta = ule.negative_delta();
         let is_sensitive = ule.is_sensitive();
-        let has_conditional_special = ule.has_conditional_special();
+        let has_conditional_map = ule.has_conditional_special();
         let has_conditional_fold = ule.has_conditional_fold();
         let dot_type = ule.dot_type();
 
@@ -57,7 +58,7 @@ impl ExceptionBits {
             negative_delta,
             is_sensitive,
             dot_type,
-            has_conditional_special,
+            has_conditional_map,
             has_conditional_fold,
         }
     }
@@ -77,7 +78,7 @@ impl ExceptionBits {
         if self.is_sensitive {
             int |= ExceptionBitsULE::SENSITIVE_FLAG
         }
-        if self.has_conditional_special {
+        if self.has_conditional_map {
             int |= ExceptionBitsULE::CONDITIONAL_SPECIAL_FLAG
         }
         if self.has_conditional_fold {

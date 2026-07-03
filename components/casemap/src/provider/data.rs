@@ -148,30 +148,32 @@ impl CaseMapData {
         simple_upper: Option<char>,
         simple_lower: Option<char>,
         simple_title: Option<char>,
-        special_lower: Option<&str>,
-        special_upper: Option<&str>,
-        special_title: Option<&str>,
-        has_conditional_special: bool,
+        full_lower: Option<&str>,
+        full_upper: Option<&str>,
+        full_title: Option<&str>,
+        has_conditional_map: bool,
         simple_fold: Option<char>,
-        special_fold: Option<&str>,
+        full_fold: Option<&str>,
         has_conditional_fold: bool,
         mut full_closure: BTreeSet<char>,
     ) -> Self {
-        let full_lower = special_lower.filter(|&s| {
-            !has_conditional_special && s != simple_lower.unwrap_or(c).encode_utf8(&mut [0; 4])
+        // Don't store full mappings that are the same as the simple mapping, unless there is a conditional case mapping.
+        let full_lower = full_lower.filter(|&s| {
+            !has_conditional_map && s != simple_lower.unwrap_or(c).encode_utf8(&mut [0; 4])
         });
-        let full_upper = special_upper.filter(|&s| {
-            !has_conditional_special && s != simple_upper.unwrap_or(c).encode_utf8(&mut [0; 4])
+        let full_upper = full_upper.filter(|&s| {
+            !has_conditional_map && s != simple_upper.unwrap_or(c).encode_utf8(&mut [0; 4])
         });
-        let full_title = special_title.filter(|&s| {
-            !has_conditional_special
+        let full_title = full_title.filter(|&s| {
+            !has_conditional_map
                 && s != simple_title
                     .or(simple_upper)
                     .unwrap_or(c)
                     .encode_utf8(&mut [0; 4])
         });
 
-        let full_fold = special_fold.filter(|f| {
+        // Don't store full case folding that is the same as the simple case folding, unless there is a conditional case folding.
+        let full_fold = full_fold.filter(|f| {
             !has_conditional_fold
                 && (f.chars().nth(1).is_some()
                     || f.chars()
@@ -219,7 +221,7 @@ impl CaseMapData {
             .is_none()
             || no_simple_case_folding
             || has_conditional_fold
-            || has_conditional_special
+            || has_conditional_map
             || full_lower.is_some()
             || full_fold.is_some()
             || full_upper.is_some()
@@ -232,25 +234,27 @@ impl CaseMapData {
             // TODO: it's not clear to me why we need this
             let delta = delta.filter(|&(d, _)| d != 0);
 
-            let exception = Exception::new(
-                sensitive,
-                dot_type,
-                // If the delta is applicable, we can use it to compute mappings.
-                delta.map(|(d, _)| d),
-                // Explicit mappings are set if the delta is not applicable, and the mapping is non-trivial.
-                simple_lower.filter(|&l| delta.is_none_or(|(_, d)| d != l)),
-                simple_upper.filter(|&u| delta.is_none_or(|(_, d)| d != u)),
-                simple_title.filter(|&t| Some(t) != simple_upper),
-                has_conditional_special,
-                simple_fold.filter(|&s| delta.is_none() && Some(s) != simple_lower),
-                no_simple_case_folding,
-                has_conditional_fold,
-                full_closure,
-                full_lower,
-                full_upper,
-                full_title,
-                full_fold,
-            );
+            let exception = super::exceptions::DecodedException {
+                bits: super::exception_helpers::ExceptionBits {
+                    no_simple_case_folding,
+                    is_sensitive: sensitive,
+                    dot_type,
+                    has_conditional_map,
+                    has_conditional_fold,
+                    negative_delta: delta.is_some_and(|(d, _)| d < 0),
+                },
+                simple_case_delta: delta.map(|(d, _)| d.unsigned_abs()),
+                lowercase: simple_lower.filter(|&l| delta.is_none_or(|(_, d)| d != l)),
+                uppercase: simple_upper.filter(|&u| delta.is_none_or(|(_, d)| d != u)),
+                titlecase: simple_title.filter(|&t| Some(t) != simple_upper),
+                full_lowercase: full_lower.map(Into::into),
+                full_uppercase: full_upper.map(Into::into),
+                full_titlecase: full_title.map(Into::into),
+                casefold: simple_fold.filter(|&s| delta.is_none() && Some(s) != simple_lower),
+                full_casefold: full_fold.map(Into::into),
+                closure: (!full_closure.is_empty()).then(|| full_closure.into_iter().collect()),
+            }
+            .encode();
 
             CaseMapDataKind::Exception(
                 case_type,

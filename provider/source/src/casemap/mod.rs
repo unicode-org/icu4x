@@ -192,7 +192,7 @@ impl DataProvider<CaseMapV1> for SourceDataProvider {
         let mut exceptions = Vec::<Exception>::new();
 
         for (&c, &(simple_upper, simple_lower, simple_title)) in &simple {
-            let (special_lower, special_upper, special_title, has_conditional_special) = special
+            let (full_lower, full_upper, full_title, has_conditional_map) = special
                 .get(&c)
                 .map(|(lower, title, upper, has_conditional_special)| {
                     (
@@ -204,7 +204,7 @@ impl DataProvider<CaseMapV1> for SourceDataProvider {
                 })
                 .unwrap_or((None, None, None, false));
 
-            let (simple_fold, special_fold, has_conditional_fold) = case_folds
+            let (simple_fold, full_fold, has_conditional_fold) = case_folds
                 .get(&c)
                 .map(|(simple, full, turkic)| (*simple, full.as_deref(), *turkic))
                 .unwrap_or((None, None, false));
@@ -258,12 +258,12 @@ impl DataProvider<CaseMapV1> for SourceDataProvider {
                     simple_upper,
                     simple_lower,
                     simple_title,
-                    special_lower,
-                    special_upper,
-                    special_title,
-                    has_conditional_special,
+                    full_lower,
+                    full_upper,
+                    full_title,
+                    has_conditional_map,
                     simple_fold,
-                    special_fold,
+                    full_fold,
                     has_conditional_fold,
                     full_closure,
                 ),
