@@ -120,6 +120,8 @@ extern crate alloc;
 
 mod complex;
 mod indices;
+#[cfg(feature = "unstable")]
+mod neo;
 mod rule_segmenter;
 
 /// [`GraphemeClusterSegmenter`] and its related iterators, borrowed types, and options.
@@ -205,6 +207,3 @@ pub(crate) mod private {
     /// implemented outside of the segmenter crate.
     pub trait Sealed {}
 }
-
-#[cfg(feature = "unstable")]
-pub mod neo;
