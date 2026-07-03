@@ -285,7 +285,10 @@ impl CaseMapData {
             })
         };
 
-        Self { is_ignoreable, kind }
+        Self {
+            is_ignoreable,
+            kind,
+        }
     }
 }
 
@@ -559,7 +562,10 @@ impl AsULE for CaseMapData {
                 CaseMapDataKind::Uncased(ned)
             }
         };
-        CaseMapData { is_ignoreable, kind }
+        CaseMapData {
+            is_ignoreable,
+            kind,
+        }
     }
 
     fn to_unaligned(self) -> Self::ULE {
