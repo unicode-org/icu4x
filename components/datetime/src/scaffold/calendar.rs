@@ -140,6 +140,7 @@ impl CldrCalendar for cal::Indian {
 ///     type MonthNamesV1 =
 ///         <hijri::UmmAlQura as FormattableHijriRules>::MonthNamesV1;
 ///     type SkeletaV1 = <hijri::UmmAlQura as FormattableHijriRules>::SkeletaV1;
+///     type RangeSkeletaV1 = <hijri::UmmAlQura as FormattableHijriRules>::RangeSkeletaV1;
 /// }
 /// ```
 // TODO: default associated types would be nice (https://github.com/rust-lang/rust/issues/29661)
