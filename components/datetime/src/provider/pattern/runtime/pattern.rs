@@ -156,7 +156,7 @@ impl<'data> PatternBorrowed<'data> {
     ///
     /// This is used to find the split point for range patterns.
     #[allow(dead_code, reason = "#5448")]
-    fn first_repeated_field_index(&self) -> Option<usize> {
+    fn first_repeated_field_index(&self) -> usize {
         struct Seen {
             // A bitset where the i-th bit is set if we have seen a field of type index i.
             // Since there are at most 16 field types, a u16 is sufficient.
@@ -167,8 +167,8 @@ impl<'data> PatternBorrowed<'data> {
                 Self { mask: 0 }
             }
             fn insert_or_contains(&mut self, symbol: crate::provider::fields::FieldSymbol) -> bool {
-                let val = symbol.type_idx();
-                let bit = 1 << val;
+                let type_idx = symbol.type_idx();
+                let bit = 1 << type_idx;
                 if (self.mask & bit) != 0 {
                     true
                 } else {
@@ -182,12 +182,12 @@ impl<'data> PatternBorrowed<'data> {
         for (idx, item) in self.items.iter().enumerate() {
             match item {
                 PatternItem::Field(field) if seen.insert_or_contains(field.symbol) => {
-                    return Some(idx);
+                    return idx;
                 }
                 _ => {}
             }
         }
-        None
+        self.items.len()
     }
 
     /// Splits the pattern into two halves at the first repeated field.
@@ -195,9 +195,7 @@ impl<'data> PatternBorrowed<'data> {
     /// If there are no repeated fields, the second half will be empty.
     #[allow(dead_code, reason = "#5448")]
     pub(crate) fn split_on_repeated_field(&self) -> (Self, Self) {
-        let idx = self
-            .first_repeated_field_index()
-            .unwrap_or(self.items.len());
+        let idx = self.first_repeated_field_index();
         let ule_slice = self.items.as_ule_slice();
         let (start_ule, end_ule) = ule_slice.split_at_checked(idx).unwrap_or((ule_slice, &[]));
         (

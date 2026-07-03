@@ -63,7 +63,7 @@ impl DayPeriodRules {
     }
 
     /// Encodes rules into a string
-    #[cfg(any(feature = "datagen", test))]
+    #[cfg(feature = "datagen")]
     pub fn encode_to_string(&self) -> String {
         let [a, b, c] = self.transitions;
         let raw = u32::from_le_bytes([a, b, c, 0]);
@@ -80,7 +80,7 @@ impl DayPeriodRules {
     }
 }
 
-#[cfg(any(feature = "datagen", test))]
+#[cfg(feature = "datagen")]
 impl DayPeriodRules {
     /// Computes `DayPeriodRules` from a set of periods and names.
     ///
