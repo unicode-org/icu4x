@@ -167,9 +167,7 @@ impl<'data> PatternBorrowed<'data> {
                 Self { mask: 0 }
             }
             fn insert_or_contains(&mut self, symbol: crate::provider::fields::FieldSymbol) -> bool {
-                // The top 4 bits of the serialized FieldSymbol index represent the field type
-                // (e.g., Year, Month, Day), as defined in FieldSymbol::idx.
-                let val = symbol.idx() >> 4;
+                let val = symbol.type_idx();
                 let bit = 1 << val;
                 if (self.mask & bit) != 0 {
                     true
@@ -201,7 +199,7 @@ impl<'data> PatternBorrowed<'data> {
             .first_repeated_field_index()
             .unwrap_or(self.items.len());
         let ule_slice = self.items.as_ule_slice();
-        let (start_ule, end_ule) = ule_slice.split_at(idx);
+        let (start_ule, end_ule) = ule_slice.split_at_checked(idx).unwrap_or((ule_slice, &[]));
         (
             Self {
                 items: ZeroSlice::from_ule_slice(start_ule),

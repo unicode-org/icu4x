@@ -15,13 +15,11 @@ use zerovec::ule::AsULE;
 
 /// The formatting result of a date/time range.
 #[derive(Debug)]
-pub struct FormattedDateRange<'l> {
-    pub(crate) inner: FormattedDateRangeInner<'l>,
-}
+pub struct FormattedDateRange<'l>(pub(crate) FormattedDateRangeInner<'l>);
 
 #[derive(Debug)]
 #[allow(clippy::large_enum_variant)] // Short-lived formatting result, avoid heap allocation
-#[allow(dead_code, reason = "https://github.com/unicode-org/icu4x/issues/5448")]
+#[allow(dead_code, reason = "#5448")]
 pub(crate) enum FormattedDateRangeInner<'l> {
     /// The range resolved to a single date/time (start and end are equal).
     Single(FormattedDateTime<'l>),
@@ -35,7 +33,7 @@ pub(crate) enum FormattedDateRangeInner<'l> {
 
 impl Writeable for FormattedDateRange<'_> {
     fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> Result<(), fmt::Error> {
-        match &self.inner {
+        match &self.0 {
             FormattedDateRangeInner::Single(x) => x.write_to_parts(sink),
             FormattedDateRangeInner::GreatestDifference(x) => x.write_to_parts(sink),
             FormattedDateRangeInner::TimeRangeMixed(x) => x.write_to_parts(sink),
@@ -44,7 +42,7 @@ impl Writeable for FormattedDateRange<'_> {
     }
 
     fn writeable_length_hint(&self) -> writeable::LengthHint {
-        match &self.inner {
+        match &self.0 {
             FormattedDateRangeInner::Single(x) => x.writeable_length_hint(),
             FormattedDateRangeInner::GreatestDifference(x) => x.writeable_length_hint(),
             FormattedDateRangeInner::TimeRangeMixed(x) => x.writeable_length_hint(),
@@ -61,7 +59,7 @@ writeable::impl_display_with_writeable!(FormattedDateRange<'_>);
 #[derive(Debug)]
 pub(crate) struct FormattedGreatestDifference<'l> {
     pub(crate) start: FormattedDateTime<'l>,
-    #[allow(dead_code, reason = "https://github.com/unicode-org/icu4x/issues/5448")]
+    #[allow(dead_code, reason = "#5448")]
     pub(crate) end: FormattedDateTime<'l>,
     pub(crate) pattern_info: RangePatternInfoBorrowed<'l>,
     pub(crate) glue: &'l GluePattern<'l>,
@@ -73,7 +71,18 @@ impl Writeable for FormattedGreatestDifference<'_> {
         match &self.pattern_info {
             RangePatternInfoBorrowed::FullRange(pattern) => {
                 let (start_pattern, end_pattern) = pattern.split_on_repeated_field();
-                self.write_full_range(start_pattern, end_pattern, sink)
+                let start_side = FormattedSingleSide {
+                    datetime: &self.start,
+                    pattern: start_pattern,
+                    alignment: self.alignment,
+                };
+                let end_side = FormattedSingleSide {
+                    datetime: &self.end,
+                    pattern: end_pattern,
+                    alignment: self.alignment,
+                };
+                start_side.write_to_parts(sink)?;
+                end_side.write_to_parts(sink)
             }
             RangePatternInfoBorrowed::Symmetric(pattern) => {
                 let start_side = FormattedSingleSide {
@@ -89,31 +98,6 @@ impl Writeable for FormattedGreatestDifference<'_> {
                 write_glue_pattern(sink, self.glue, &start_side, &end_side)
             }
         }
-    }
-}
-
-impl<'l> FormattedGreatestDifference<'l> {
-    fn write_full_range<S: PartsWrite + ?Sized>(
-        &self,
-        start_pattern: runtime::PatternBorrowed<'l>,
-        end_pattern: runtime::PatternBorrowed<'l>,
-        sink: &mut S,
-    ) -> Result<(), fmt::Error> {
-        let start_side = FormattedSingleSide {
-            datetime: &self.start,
-            pattern: start_pattern,
-            alignment: self.alignment,
-        };
-
-        let end_side = FormattedSingleSide {
-            datetime: &self.end,
-            pattern: end_pattern,
-            alignment: self.alignment,
-        };
-
-        start_side.write_to_parts(sink)?;
-        end_side.write_to_parts(sink)?;
-        Ok(())
     }
 }
 

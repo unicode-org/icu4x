@@ -14,6 +14,7 @@ pub use length::{FieldLength, FieldNumericOverrides, LengthError};
 pub use symbols::*;
 use writeable::Writeable;
 
+#[cfg(any(feature = "unstable", feature = "datagen"))]
 pub mod components;
 
 use core::{
