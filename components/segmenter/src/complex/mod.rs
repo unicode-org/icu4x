@@ -19,8 +19,7 @@ mod lstm;
 use lstm::*;
 
 #[derive(Debug)]
-#[doc(hidden)]
-pub struct ComplexIterator<
+pub(crate) struct ComplexIterator<
     'data,
     's,
     G: AbstractGraphemeClusterSegmenterBorrowed<'data>,
@@ -165,8 +164,7 @@ pub(crate) trait AbstractGraphemeClusterSegmenter {
     fn as_borrowed<'data>(&'data self) -> Self::Borrowed<'data>;
 }
 
-#[doc(hidden)]
-pub trait AbstractGraphemeClusterSegmenterBorrowed<'data>: core::fmt::Debug + Copy {
+pub(crate) trait AbstractGraphemeClusterSegmenterBorrowed<'data>: core::fmt::Debug + Copy {
     type Iter<'d, 's, R: RuleBreakType + 'static>: Iterator<Item = usize> + core::fmt::Debug;
 
     fn segment_str<'s>(self, input: &'s str) -> Self::Iter<'data, 's, Utf8>;
@@ -244,8 +242,7 @@ pub(crate) struct ComplexPayloads<G: AbstractGraphemeClusterSegmenter> {
 }
 
 #[derive(Debug, Clone, Copy)]
-#[doc(hidden)]
-pub struct ComplexPayloadsBorrowed<'data, G: AbstractGraphemeClusterSegmenterBorrowed<'data>> {
+pub(crate) struct ComplexPayloadsBorrowed<'data, G: AbstractGraphemeClusterSegmenterBorrowed<'data>> {
     pub(crate) grapheme: G,
     my: Option<ComplexPayloadBorrowed<'data>>,
     km: Option<ComplexPayloadBorrowed<'data>>,

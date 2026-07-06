@@ -14,7 +14,7 @@ use icu_locale_core::subtags::{Language, language};
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
-#[doc(hidden)]
+#[doc(hidden)] // datagen
 impl RuleBreakData<'_> {
     pub const LINE_PROPERTY_AI: u8 = 1;
     pub const LINE_PROPERTY_AL: u8 = 3;
@@ -44,7 +44,7 @@ impl RuleBreakData<'_> {
 }
 
 #[cfg_attr(not(test), allow(dead_code))]
-#[doc(hidden)]
+#[doc(hidden)] // datagen
 impl RuleBreakData<'_> {
     pub const LINE_PROPERTY_AK: u8 = 2;
     pub const LINE_PROPERTY_AL_DOTTED_CIRCLE: u8 = 4;
