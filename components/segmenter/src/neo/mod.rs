@@ -4,26 +4,13 @@
 
 //! Experimental reimplementations
 
+use crate::complex::ComplexIterator;
 use crate::provider::{
     Acceptance, ComplexScript, SegmenterStateMachine, SegmenterStateMachineOverride, Symbol,
 };
 use crate::scaffold::RuleBreakType;
+use core::marker::PhantomData;
 use smallvec::SmallVec;
-
-mod line;
-pub use line::*;
-mod grapheme;
-pub use grapheme::*;
-mod sentence;
-pub use sentence::*;
-mod word;
-pub use word::*;
-
-pub(crate) type ComplexIterator<'data, 's, R> =
-    crate::complex::ComplexIterator<'data, 's, GraphemeClusterSegmenterBorrowed<'data>, R>;
-type ComplexPayloads = crate::complex::ComplexPayloads<GraphemeClusterSegmenter>;
-pub(crate) type ComplexPayloadsBorrowed<'data> =
-    crate::complex::ComplexPayloadsBorrowed<'data, GraphemeClusterSegmenterBorrowed<'data>>;
 
 pub(crate) trait ComplexHandler<Y: RuleBreakType> {
     const BREAK_STATUS: u8;
@@ -45,7 +32,7 @@ pub(crate) trait ComplexHandler<Y: RuleBreakType> {
 }
 
 #[derive(Debug)]
-struct NoComplexHandler;
+pub(crate) struct NoComplexHandler;
 impl<Y: RuleBreakType> ComplexHandler<Y> for NoComplexHandler {
     const BREAK_STATUS: u8 = 0;
     const BREAK_AT_BOUNDARIES: bool = false;
@@ -66,6 +53,60 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for NoComplexHandler {
         _: &Y::IterAttr<'s>,
     ) -> ComplexIterator<'data, 's, Y> {
         match complex_payload {}
+    }
+}
+
+#[derive(Debug)]
+pub(crate) struct ComplexLine<Y>(PhantomData<Y>);
+
+impl<Y: RuleBreakType> ComplexHandler<Y> for ComplexLine<Y> {
+    const BREAK_AT_BOUNDARIES: bool = false;
+    const BREAK_STATUS: u8 = false as u8;
+    type Cache = [usize; 16];
+
+    type ComplexPayloads<'s> = Y::ComplexPayloads<'s>;
+    type ComplexPayload<'s> = Y::ComplexPayload<'s>;
+
+    fn select<'data>(
+        complex_payloads: &Self::ComplexPayloads<'data>,
+        complex_script: ComplexScript,
+    ) -> Option<Self::ComplexPayload<'data>> {
+        Y::select_complex(complex_payloads, complex_script)
+    }
+
+    fn handle<'data, 's>(
+        complex_payload: &Self::ComplexPayload<'data>,
+        iter: &Y::IterAttr<'s>,
+        past_complex: &Y::IterAttr<'s>,
+    ) -> ComplexIterator<'data, 's, Y> {
+        Y::handle_complex(complex_payload, iter, past_complex)
+    }
+}
+
+#[derive(Debug)]
+pub(crate) struct ComplexWord<Y>(PhantomData<Y>);
+
+impl<Y: RuleBreakType> ComplexHandler<Y> for ComplexWord<Y> {
+    const BREAK_AT_BOUNDARIES: bool = true;
+    type Cache = [usize; 16];
+    const BREAK_STATUS: u8 = crate::options::WordType::Letter as u8;
+
+    type ComplexPayloads<'s> = Y::ComplexPayloads<'s>;
+    type ComplexPayload<'s> = Y::ComplexPayload<'s>;
+
+    fn select<'data>(
+        complex_payloads: &Y::ComplexPayloads<'data>,
+        complex_script: ComplexScript,
+    ) -> Option<Self::ComplexPayload<'data>> {
+        Y::select_complex(complex_payloads, complex_script)
+    }
+
+    fn handle<'data, 's>(
+        complex_payloads: &Self::ComplexPayload<'data>,
+        iter: &Y::IterAttr<'s>,
+        past_complex: &Y::IterAttr<'s>,
+    ) -> ComplexIterator<'data, 's, Y> {
+        Y::handle_complex(complex_payloads, iter, past_complex)
     }
 }
 
@@ -129,6 +170,10 @@ impl<'data, 's, Y: RuleBreakType, C: ComplexHandler<Y>> RuleBreakIterator<'data,
             last_accepting_status: 0,
             remaining_input: input,
         }
+    }
+
+    pub(crate) fn last_accepting_status(&self) -> u8 {
+        self.last_accepting_status
     }
 }
 

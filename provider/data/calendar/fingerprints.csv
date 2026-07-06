@@ -1,4 +1,15 @@
 calendar/japanese/modern/v1, <singleton>, 7B, 111B, ec96742e22e8fc30
+calendar/preferred/v1, <lookup>, 69B, 9 identifiers
+calendar/preferred/v1, <total>, 8B, 8B, 4 unique payloads
+calendar/preferred/v1, und, 2B, 2B, b0943d2017f9429d
+calendar/preferred/v1, und-AE, 2B, 2B, dd7981620af40a41
+calendar/preferred/v1, und-AF, 2B, 2B, e25f81c8aaeec548
+calendar/preferred/v1, und-BH, -> und-AE
+calendar/preferred/v1, und-IR, -> und-AF
+calendar/preferred/v1, und-KW, -> und-AE
+calendar/preferred/v1, und-QA, -> und-AE
+calendar/preferred/v1, und-SA, -> und-AE
+calendar/preferred/v1, und-TH, 2B, 2B, 2ecc72c7427d88a6
 calendar/week/v1, <lookup>, 295B, 73 identifiers
 calendar/week/v1, <total>, 20B, 20B, 10 unique payloads
 calendar/week/v1, und, 2B, 2B, db63f20c2a6a914a

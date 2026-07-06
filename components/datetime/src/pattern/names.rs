@@ -802,6 +802,14 @@ pub(crate) struct RawDateTimeNamesBorrowed<'l> {
     pub(crate) decimal_formatter: Option<&'l DecimalFormatter>,
 }
 
+impl<'l> RawDateTimeNamesBorrowed<'l> {
+    #[cfg(feature = "unstable")]
+    #[allow(dead_code)]
+    pub(crate) fn dayperiod_names(&self) -> Option<&'l DayPeriodNames<'l>> {
+        self.dayperiod_names.get_any()
+    }
+}
+
 impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// Constructor that takes a selected locale and creates an empty instance.
     ///

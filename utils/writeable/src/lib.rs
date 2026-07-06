@@ -140,8 +140,9 @@ pub mod adapters {
         /// Converts the given value to a `String`.
         ///
         /// Under the hood, this uses an efficient [`Writeable`] implementation.
-        /// However, in order to avoid allocating a string, it is more efficient
-        /// to use [`Writeable`] directly.
+        ///
+        /// If you don't need an allocated [`String`], but e.g. need to write this
+        /// to some sink, it is more efficient to use [`Writeable`] directly.
         #[cfg(feature = "alloc")]
         #[allow(clippy::inherent_to_string_shadow_display)]
         #[inline]
@@ -157,6 +158,8 @@ pub mod _internal {
     pub use super::testing::try_writeable_to_parts_for_test;
     #[cfg(feature = "alloc")]
     pub use super::testing::writeable_to_parts_for_test;
+    #[cfg(feature = "alloc")]
+    pub use alloc::borrow::Cow;
     #[cfg(feature = "alloc")]
     pub use alloc::string::String;
 }
@@ -378,6 +381,79 @@ pub trait Writeable {
     }
 }
 
+/// Macro to implement [`Writeable`] by delegating to another `Writeable`.
+///
+/// Useful for wrapper types.
+///
+/// # Examples
+///
+/// ```
+/// struct MyStruct(String);
+/// writeable::impl_writeable_delegate!(MyStruct, |&self| &self.0);
+/// writeable::impl_display_with_writeable!(MyStruct);
+///
+/// writeable::assert_writeable_eq!(
+///     MyStruct("hello".to_string()),
+///     "hello"
+/// );
+/// ```
+///
+/// With a cfg on fn `write_to_string`:
+///
+/// ```
+/// struct MyStruct(String);
+/// writeable::impl_writeable_delegate!(MyStruct, |&self| &self.0, #[cfg(feature = "alloc")]);
+/// writeable::impl_display_with_writeable!(MyStruct, #[cfg(feature = "alloc")]);
+///
+/// writeable::assert_writeable_eq!(
+///     MyStruct("hello".to_string()),
+///     "hello"
+/// );
+/// ```
+///
+/// With generics:
+///
+/// ```
+/// use writeable::Writeable;
+///
+/// struct MyStruct<T>(T);
+/// writeable::impl_writeable_delegate!(MyStruct<T>, |&self| &self.0, where T: Writeable);
+/// writeable::impl_display_with_writeable!(MyStruct<T>, where T: Writeable);
+///
+/// writeable::assert_writeable_eq!(
+///     MyStruct("hello"),
+///     "hello"
+/// );
+/// ```
+#[macro_export]
+macro_rules! impl_writeable_delegate {
+    ($ty:ty, |&$self:ident| $delegate:expr $(, #[$alloc_feature:meta])? $(, where $($generics:tt)*)?) => {
+        impl $(<$($generics)*>)? $crate::Writeable for $ty {
+            #[inline]
+            fn write_to<W: core::fmt::Write + ?Sized>(&$self, sink: &mut W) -> core::fmt::Result {
+                ($delegate).write_to(sink)
+            }
+            #[inline]
+            fn write_to_parts<S: $crate::PartsWrite + ?Sized>(&$self, sink: &mut S) -> core::fmt::Result {
+                ($delegate).write_to_parts(sink)
+            }
+            #[inline]
+            fn writeable_length_hint(&$self) -> $crate::LengthHint {
+                ($delegate).writeable_length_hint()
+            }
+            #[inline]
+            fn writeable_borrow(&$self) -> Option<&str> {
+                ($delegate).writeable_borrow()
+            }
+            #[inline]
+            $(#[$alloc_feature])?
+            fn write_to_string(&$self) -> $crate::_internal::Cow<'_, str> {
+                ($delegate).write_to_string()
+            }
+        }
+    };
+}
+
 /// Implements [`Display`](core::fmt::Display) for types that implement [`Writeable`].
 ///
 /// It's recommended to do this for every [`Writeable`] type, as it will add
@@ -387,27 +463,51 @@ pub trait Writeable {
 /// This macro also adds a concrete `to_string` function. This function will shadow the
 /// standard library `ToString`, using the more efficient writeable-based code path.
 /// To add only `Display`, use the `@display` macro variant.
+///
+/// If your type has generics, list them in a `where` clause in the macro invocation.
+///
+/// # Examples
+///
+/// ```
+/// use writeable::Writeable;
+/// use std::fmt;
+///
+/// struct Message<T>(T);
+///
+/// impl<T> Writeable for Message<T> where T: Writeable {
+///     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+///         sink.write_str("Message: ")?;
+///         self.0.write_to(sink)
+///     }
+///     // ...
+/// }
+///
+/// writeable::impl_display_with_writeable!(Message<T>, where T: Writeable);
+///
+/// writeable::assert_writeable_eq!(Message("hello"), "Message: hello");
+/// ```
 #[macro_export]
 macro_rules! impl_display_with_writeable {
-    (@display, $type:ty) => {
+    (@display, $type:ty $(, where $($generics:tt)*)?) => {
         /// This trait is implemented for compatibility with [`fmt!`](core::fmt).
         /// To create a string, [`Writeable::write_to_string`] is usually more efficient.
-        impl core::fmt::Display for $type {
+        impl $(<$($generics)*>)? core::fmt::Display for $type {
             #[inline]
             fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
                 $crate::Writeable::write_to(&self, f)
             }
         }
     };
-    ($type:ty $(, #[$alloc_feature:meta])? ) => {
-        $crate::impl_display_with_writeable!(@display, $type);
+    ($type:ty $(, #[$alloc_feature:meta])? $(, where $($generics:tt)*)?) => {
+        $crate::impl_display_with_writeable!(@display, $type $(, where $($generics)*)?);
         $(#[$alloc_feature])?
-        impl $type {
+        impl $(<$($generics)*>)? $type {
             /// Converts the given value to a `String`.
             ///
             /// Under the hood, this uses an efficient [`Writeable`] implementation.
-            /// However, in order to avoid allocating a string, it is more efficient
-            /// to use [`Writeable`] directly.
+            ///
+            /// If you don't need an allocated [`String`], but e.g. need to write this
+            /// to some sink, it is more efficient to use [`Writeable`] directly.
             pub fn to_string(&self) -> $crate::_internal::String {
                 $crate::Writeable::write_to_string(self).into_owned()
             }

@@ -7,6 +7,7 @@
 #![allow(clippy::unit_arg)]
 
 use crate::cal::*;
+use crate::provider::CalendarPreferredV1;
 use crate::{AsCalendar, Calendar, Date, Ref};
 
 use crate::preferences::{CalendarAlgorithm, CalendarPreferences, HijriCalendarAlgorithm};
@@ -746,12 +747,76 @@ pub enum AnyCalendarKind {
 }
 
 impl AnyCalendarKind {
+    #[deprecated(since = "2.2.0", note = "use `AnyCalendarKind::try_new`")]
     /// Selects the [`AnyCalendarKind`] appropriate for the given [`CalendarPreferences`].
     pub fn new(prefs: CalendarPreferences) -> Self {
+        #[allow(deprecated)]
         prefs
             .resolved_algorithm()
             .try_into()
             .unwrap_or(Self::Gregorian)
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: CalendarPreferences) -> error: DataError,
+        /// Selects the [`AnyCalendarKind`] appropriate for the given [`CalendarPreferences`].
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::calendar::{AnyCalendarKind, preferences::{CalendarPreferences, HijriCalendarAlgorithm}};
+        /// use icu::locale::locale;
+        ///
+        /// assert_eq!(AnyCalendarKind::try_new(locale!("und").into()).unwrap(), AnyCalendarKind::Gregorian);
+        /// assert_eq!(AnyCalendarKind::try_new(locale!("und-US-u-ca-hebrew").into()).unwrap(), AnyCalendarKind::Hebrew);
+        /// assert_eq!(AnyCalendarKind::try_new(locale!("und-AF").into()).unwrap(), AnyCalendarKind::Persian);
+        /// assert_eq!(AnyCalendarKind::try_new(locale!("fa").into()).unwrap(), AnyCalendarKind::Persian);
+        /// assert_eq!(AnyCalendarKind::try_new(locale!("und-US-u-rg-thxxxx").into()).unwrap(), AnyCalendarKind::Buddhist);
+        /// assert_eq!(
+        ///     AnyCalendarKind::try_new(locale!("und-US-u-ca-islamic").into()).unwrap(),
+        ///     AnyCalendarKind::HijriTabularTypeIIFriday
+        /// );
+        /// # assert_eq!(AnyCalendarKind::try_new("und-US-u-ca-islamic-rgsa".parse::<icu::locale::Locale>().unwrap().into()).unwrap(),
+        /// #     AnyCalendarKind::HijriTabularTypeIIFriday
+        /// # );
+        /// # assert_eq!(AnyCalendarKind::try_new("und-US-u-ca-islamic-foo".parse::<icu::locale::Locale>().unwrap().into()).unwrap(),
+        /// #     AnyCalendarKind::Gregorian
+        /// # );
+        /// # assert_eq!(AnyCalendarKind::try_new("und-US-u-ca-hebrew-foo".parse::<icu::locale::Locale>().unwrap().into()).unwrap(),
+        /// #     AnyCalendarKind::Gregorian
+        /// # );
+        /// ```
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    pub fn try_new_unstable<P: DataProvider<CalendarPreferredV1>>(
+        provider: &P,
+        mut prefs: CalendarPreferences,
+    ) -> Result<Self, DataError> {
+        if prefs.calendar_algorithm
+            == Some(CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Rgsa)))
+        {
+            // Resolve islamic-rgsa to the region's Hijri default.
+            prefs.calendar_algorithm = Some(CalendarAlgorithm::Hijri(None));
+        }
+
+        let algorithm = match prefs.calendar_algorithm {
+            Some(algorithm) if !matches!(algorithm, CalendarAlgorithm::Hijri(None)) => algorithm,
+            unresolved => DataProvider::<CalendarPreferredV1>::load(
+                &provider,
+                DataRequest {
+                    id: DataIdentifierBorrowed::for_locale(&CalendarPreferredV1::make_locale(
+                        prefs.locale_preferences,
+                    )),
+                    metadata: Default::default(),
+                },
+            )?
+            .payload
+            .get()
+            .resolve(unresolved),
+        };
+
+        Ok(algorithm.try_into().unwrap_or(Self::Gregorian))
     }
 }
 

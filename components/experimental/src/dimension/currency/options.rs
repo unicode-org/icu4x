@@ -13,6 +13,8 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
 pub struct CurrencyFormatterOptions {
+    // TODO: Remove this option after migrating all formatters (including CompactCurrencyFormatter)
+    // to use specific constructors, as the width is determined at construction time.
     /// The width of the currency format.
     pub width: Width,
 }

@@ -354,36 +354,113 @@ where
     }
 }
 
-impl<T: TryWriteable + ?Sized> TryWriteable for &T {
-    type Error = T::Error;
-
-    #[inline]
-    fn try_write_to<W: fmt::Write + ?Sized>(
-        &self,
-        sink: &mut W,
-    ) -> Result<Result<(), Self::Error>, fmt::Error> {
-        (*self).try_write_to(sink)
-    }
-
-    #[inline]
-    fn try_write_to_parts<S: PartsWrite + ?Sized>(
-        &self,
-        sink: &mut S,
-    ) -> Result<Result<(), Self::Error>, fmt::Error> {
-        (*self).try_write_to_parts(sink)
-    }
-
-    #[inline]
-    fn writeable_length_hint(&self) -> LengthHint {
-        (*self).writeable_length_hint()
-    }
-
-    #[inline]
-    #[cfg(feature = "alloc")]
-    fn try_write_to_string(&self) -> Result<Cow<'_, str>, (Self::Error, Cow<'_, str>)> {
-        (*self).try_write_to_string()
-    }
+/// Macro to implement [`TryWriteable`] by delegating to another `TryWriteable`.
+///
+/// Useful for wrapper types.
+///
+/// # Examples
+///
+/// ```
+/// struct MyStruct(Result<String, String>);
+/// writeable::impl_try_writeable_delegate!(MyStruct, |&self| &self.0, Error = String);
+///
+/// writeable::assert_try_writeable_eq!(
+///     MyStruct(Ok("hello".to_string())),
+///     "hello"
+/// );
+/// ```
+///
+/// With a cfg on fn `write_to_string`:
+///
+/// ```
+/// struct MyStruct(Result<String, String>);
+/// writeable::impl_try_writeable_delegate!(MyStruct, |&self| &self.0, Error = String, #[cfg(feature = "alloc")]);
+///
+/// writeable::assert_try_writeable_eq!(
+///     MyStruct(Ok("hello".to_string())),
+///     "hello"
+/// );
+/// ```
+///
+/// With generics:
+///
+/// ```
+/// use writeable::Writeable;
+///
+/// struct MyStruct<T>(Result<T, T>);
+/// writeable::impl_try_writeable_delegate!(MyStruct<T>, |&self| &self.0, Error = T, where T: Writeable + Clone);
+///
+/// writeable::assert_try_writeable_eq!(
+///     MyStruct(Ok("hello".to_string())),
+///     "hello"
+/// );
+/// ```
+///
+/// Implement both `Writeable` and `TryWriteable`:
+///
+/// ```
+/// use writeable::adapters::LossyWrap;
+///
+/// // The LossyWrap needs to be a field of MyStruct since it can be borrowed from.
+/// struct MyStruct(LossyWrap<Result<String, String>>);
+/// writeable::impl_try_writeable_delegate!(MyStruct, |&self| &self.0.0, Error = String);
+/// writeable::impl_writeable_delegate!(MyStruct, |&self| &self.0);
+/// writeable::impl_display_with_writeable!(MyStruct);
+///
+/// writeable::assert_try_writeable_eq!(
+///     MyStruct(LossyWrap(Ok("hello".to_string()))),
+///     "hello"
+/// );
+///
+/// writeable::assert_writeable_eq!(
+///     MyStruct(LossyWrap(Ok("hello".to_string()))),
+///     "hello"
+/// );
+/// ```
+#[macro_export]
+macro_rules! impl_try_writeable_delegate {
+    ($ty:ty, |&$self:ident| $delegate:expr, Error = $error:ty $(, #[$alloc_feature:meta])? $(, where $($generics:tt)*)?) => {
+        impl$(<$($generics)*>)? $crate::TryWriteable for $ty {
+            type Error = $error;
+            #[inline]
+            fn try_write_to<W: core::fmt::Write + ?Sized>(
+                &$self,
+                sink: &mut W,
+            ) -> core::result::Result<core::result::Result<(), Self::Error>, core::fmt::Error> {
+                ($delegate).try_write_to(sink)
+            }
+            #[inline]
+            fn try_write_to_parts<S: $crate::PartsWrite + ?Sized>(
+                &$self,
+                sink: &mut S,
+            ) -> core::result::Result<core::result::Result<(), Self::Error>, core::fmt::Error> {
+                ($delegate).try_write_to_parts(sink)
+            }
+            #[inline]
+            fn writeable_length_hint(&$self) -> $crate::LengthHint {
+                ($delegate).writeable_length_hint()
+            }
+            #[inline]
+            $(#[$alloc_feature])?
+            fn try_write_to_string(
+                &$self,
+            ) -> core::result::Result<
+                $crate::_internal::Cow<'_, str>,
+                (Self::Error, $crate::_internal::Cow<'_, str>),
+            > {
+                ($delegate).try_write_to_string()
+            }
+        }
+    };
 }
+
+impl_try_writeable_delegate!(
+    &T,
+    |&self| *self,
+    Error = T::Error,
+    #[cfg(feature = "alloc")],
+    where T: TryWriteable + ?Sized
+);
 
 /// Testing macros for types implementing [`TryWriteable`].
 ///
@@ -472,4 +549,18 @@ fn test_result_try_writeable() {
     result = Err(44);
     assert_try_writeable_eq!(result, "44", Err(44));
     assert_try_writeable_parts_eq!(result, "44", Err(44), [(0, 2, Part::ERROR)])
+}
+
+#[cfg(test)]
+struct DelegatedTryMessage<'s>(Result<&'s str, usize>);
+
+#[cfg(test)]
+impl_try_writeable_delegate!(DelegatedTryMessage<'_>, |&self| &self.0, Error = usize);
+
+#[test]
+fn test_delegated_try_writeable() {
+    let mut message = DelegatedTryMessage(Ok("success"));
+    assert_try_writeable_eq!(message, "success");
+    message = DelegatedTryMessage(Err(44));
+    assert_try_writeable_eq!(message, "44", Err(44));
 }

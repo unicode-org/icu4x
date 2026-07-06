@@ -805,6 +805,11 @@ impl DayPeriodNames<'_> {
             self.names.get(4 + offset)
         }
     }
+    /// Gets the day period rules, if present.
+    pub fn day_period_rules(&self) -> Option<DayPeriodRules> {
+        let (rules, _) = self.names.get(4)?.split_at_checked(4)?;
+        DayPeriodRules::decode_from_str(rules)
+    }
 }
 
 /// Calendar-agnostic year name data marker

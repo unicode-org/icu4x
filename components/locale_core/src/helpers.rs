@@ -146,20 +146,7 @@ macro_rules! impl_tinystr_subtag {
             }
         }
 
-        impl writeable::Writeable for $name {
-            #[inline]
-            fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-                sink.write_str(self.as_str())
-            }
-            #[inline]
-            fn writeable_length_hint(&self) -> writeable::LengthHint {
-                writeable::LengthHint::exact(self.0.len())
-            }
-            fn writeable_borrow(&self) -> Option<&str> {
-                Some(self.0.as_str())
-            }
-        }
-
+        writeable::impl_writeable_delegate!($name, |&self| &self.0, #[cfg(feature = "alloc")]);
         writeable::impl_display_with_writeable!($name, #[cfg(feature = "alloc")]);
 
         #[doc = concat!("A macro allowing for compile-time construction of valid [`", stringify!($name), "`] subtags.")]

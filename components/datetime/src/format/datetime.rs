@@ -104,7 +104,7 @@ where
 //
 // When modifying the list of fields using symbols,
 // update the matching query in `analyze_pattern` function.
-fn try_write_field<W>(
+pub(crate) fn try_write_field<W>(
     field: fields::Field,
     pattern_metadata: PatternMetadata,
     input: &DateTimeInputUnchecked,
