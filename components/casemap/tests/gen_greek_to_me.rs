@@ -29,7 +29,16 @@ fn main() {
     for range in script.iter_ranges_for_value(Script::Greek) {
         for ch in range {
             if let Ok(ch) = char::try_from(ch) {
-                if !GeneralCategoryGroup::Letter.contains(gc.get(ch)) {
+                if !GeneralCategoryGroup::Letter.contains(gc.get(ch))
+                    || !matches!(ch,
+                        // Greek_And_Coptic
+                        '\u{0370}'..='\u{03FF}' |
+                        // Greek_Extended
+                        '\u{1F00}'..='\u{1FFF}' |
+                        // Letterlike_Symbols
+                        '\u{2100}'..='\u{214F}'
+                    )
+                {
                     continue;
                 }
                 let mut buf = [0u8; 4];
@@ -83,9 +92,7 @@ fn main() {
                                 );
                             }
                         }
-                        // Ignore all small letters
-                        '\u{1D00}'..='\u{1DBF}' | '\u{AB65}' => (),
-                        // caps: [[:Grek:]&[:L:]-[\u1D00-\u1DBF\uAB65]] . NFD, remove non-letters, uppercase
+                        // caps: [[:Grek:]&[:L:]] . NFD, remove non-letters, uppercase
                         letter if GeneralCategoryGroup::Letter.contains(gc.get(letter)) => {
                             let uppercased = cm
                                 .uppercase_to_string(
@@ -151,7 +158,7 @@ fn main() {
 
     let mut others = String::new();
     for (ch, data) in extras {
-        writeln!(&mut others, "        '{ch}' => {data},").unwrap();
+        writeln!(&mut others, "        {ch:?} => {data},").unwrap();
     }
 
     let output = format!(
