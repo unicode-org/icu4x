@@ -482,6 +482,8 @@ impl fmt::Display for DisplayDuration {
 
 #[test]
 fn test_collation_filtering() {
+    extern crate alloc;
+
     use crate::DataLocaleFamily;
     use icu::locale::locale;
     use std::collections::BTreeSet;
@@ -526,7 +528,6 @@ fn test_collation_filtering() {
         }
     }
 
-    extern crate alloc;
     icu_provider::export::make_exportable_provider!(
         Provider,
         [icu::collator::provider::CollationTailoringV1,]

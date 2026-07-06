@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, doc, feature = "std")), no_std)]
+#![no_std]
 #![cfg_attr(
     not(test),
     deny(
@@ -92,6 +92,9 @@
 
 #[cfg(feature = "alloc")]
 extern crate alloc;
+
+#[cfg(any(test, doc, feature = "std"))]
+extern crate std;
 
 #[cfg(feature = "baked")]
 pub mod baked;
@@ -192,10 +195,10 @@ pub use log;
 #[doc(hidden)] // internal
 #[cfg(all(
     not(feature = "logging"),
-    all(debug_assertions, feature = "alloc", not(target_os = "none"))
+    debug_assertions,
+    feature = "std",
 ))]
 pub mod log {
-    extern crate std;
     pub use std::eprintln as error;
     pub use std::eprintln as warn;
     pub use std::eprintln as info;
@@ -203,11 +206,12 @@ pub mod log {
     pub use std::eprintln as trace;
 }
 
+#[doc(hidden)] // internal
 #[cfg(all(
     not(feature = "logging"),
-    not(all(debug_assertions, feature = "alloc", not(target_os = "none"),))
+    not(debug_assertions),
+    not(feature = "std"),
 ))]
-#[doc(hidden)] // internal
 pub mod log {
     #[macro_export]
     macro_rules! _internal_noop_log {

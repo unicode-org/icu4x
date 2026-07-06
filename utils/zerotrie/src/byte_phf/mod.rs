@@ -285,7 +285,6 @@ where
 mod tests {
     use super::*;
     use alloc::vec::Vec;
-    extern crate std;
 
     fn random_alphanums(seed: u64, len: usize) -> Vec<u8> {
         use rand::seq::SliceRandom;

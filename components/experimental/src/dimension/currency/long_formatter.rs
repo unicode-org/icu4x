@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+extern crate alloc;
+
 use core::fmt::Display;
 
 use fixed_decimal::Decimal;
@@ -15,8 +17,6 @@ use crate::dimension::provider::currency::{
 };
 
 use super::{CurrencyCode, formatter::CurrencyFormatterPreferences};
-
-extern crate alloc;
 
 /// A formatter for monetary values.
 ///

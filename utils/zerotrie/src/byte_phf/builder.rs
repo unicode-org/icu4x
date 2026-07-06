@@ -146,7 +146,6 @@ impl PerfectByteHashMap<Vec<u8>> {
 mod tests {
     use super::*;
 
-    extern crate std;
     use std::print;
     use std::println;
 

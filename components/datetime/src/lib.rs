@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, doc)), no_std)]
+#![no_std]
 #![cfg_attr(
     not(test),
     deny(
@@ -120,6 +120,9 @@
 //! For field sets that don't contain dates, this can also be achieved using [`NoCalendarFormatter`].
 
 extern crate alloc;
+
+#[cfg(test)]
+extern crate std;
 
 #[cfg(feature = "unstable_chrono_0_4")]
 mod chrono;

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, doc)), no_std)]
+#![no_std]
 #![cfg_attr(
     not(test),
     deny(
@@ -23,6 +23,9 @@
 //! - Use the [`fallback`] module to automatically resolve arbitrary locales for data loading.
 
 extern crate alloc;
+
+#[cfg(test)]
+extern crate std;
 
 pub mod either;
 pub mod empty;

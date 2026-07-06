@@ -27,7 +27,6 @@ struct DeriveTest_SinglePlaceholderPattern_Cow<'data> {
 #[cfg(all(feature = "databake", feature = "alloc"))]
 fn bake_SinglePlaceholderPattern_Cow() {
     use databake::*;
-    extern crate std;
     test_bake!(
         DeriveTest_SinglePlaceholderPattern_Cow<'static>,
         crate::DeriveTest_SinglePlaceholderPattern_Cow {

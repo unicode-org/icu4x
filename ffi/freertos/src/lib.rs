@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, doc)), no_std)]
+#![no_std]
 #![cfg_attr(
     not(test),
     deny(
@@ -32,6 +32,9 @@
     feature(alloc_error_handler)
 )]
 
+#[cfg(test)]
+extern crate std;
+
 // Necessary to for symbols to be linked in
 extern crate icu_capi;
 
@@ -59,9 +62,3 @@ mod stuff {
         loop {}
     }
 }
-
-// Needed for rust runtime stuff
-//
-// renamed so you can't accidentally use it
-#[cfg(not(target_os = "none"))]
-extern crate std as rust_std;

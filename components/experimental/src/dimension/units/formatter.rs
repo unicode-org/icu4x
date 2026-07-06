@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+extern crate alloc;
+
 use fixed_decimal::Decimal;
 use icu_decimal::options::DecimalFormatterOptions;
 use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
@@ -14,8 +16,6 @@ use super::options::{UnitsFormatterOptions, Width};
 use crate::dimension::provider::units::display_names::UnitsDisplayNamesV1;
 use icu_provider::prelude::*;
 use smallvec::SmallVec;
-
-extern crate alloc;
 
 define_preferences!(
     /// The preferences for units formatting.

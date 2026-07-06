@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+extern crate alloc;
+
 #[path = "testutil.rs"]
 mod testutil;
 
@@ -88,7 +90,6 @@ impl IterableDataProvider<HelloWorldV1> for TestingProvider {
     }
 }
 
-extern crate alloc;
 make_exportable_provider!(TestingProvider, [HelloWorldV1,]);
 
 fn families(
