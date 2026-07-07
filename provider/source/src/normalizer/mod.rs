@@ -171,3 +171,179 @@ normalization_non_recursive_decomposition_supplement_provider!(
     NormalizerNfdSupplementV1,
     "decompositionex"
 );
+
+// These macros implement ICU4C-internal properties that we have accidentally exposed (#7892).
+// They are slated for removal, but the code might be useful for a future ICU4C-independent
+// normalization implementation, which is why they live in this file.
+
+macro_rules! impl_nfd_inert_property {
+    ($marker:ident, $try_new_decomp:ident) => {
+        impl DataProvider<icu::properties::provider::$marker> for SourceDataProvider {
+            fn load(
+                &self,
+                _req: DataRequest,
+            ) -> Result<DataResponse<icu::properties::provider::$marker>, DataError> {
+                use icu::collections::codepointinvlist::CodePointInversionListBuilder;
+                use icu::properties::{
+                    CodePointMapData, props::CanonicalCombiningClass,
+                    provider::PropertyCodePointSet,
+                };
+
+                let decomp = icu::normalizer::DecomposingNormalizer::$try_new_decomp(self)?;
+                let decomp = decomp.as_borrowed();
+                let ccc = CodePointMapData::<CanonicalCombiningClass>::try_new_unstable(self)?;
+                let ccc = ccc.as_borrowed();
+
+                let mut builder = CodePointInversionListBuilder::new();
+                for cp in 0..=(char::MAX as u32) {
+                    if let Some(ch) = char::from_u32(cp) {
+                        if ccc.get(ch) == CanonicalCombiningClass::NotReordered {
+                            let mut iter = decomp.normalize_iter([ch].into_iter());
+                            if iter.next() == Some(ch) && iter.next() == None {
+                                builder.add32(cp);
+                            }
+                        }
+                    } else {
+                        builder.add32(cp);
+                    }
+                }
+                Ok(DataResponse {
+                    metadata: Default::default(),
+                    payload: DataPayload::from_owned(PropertyCodePointSet::InversionList(
+                        builder.build(),
+                    )),
+                })
+            }
+        }
+        impl crate::IterableDataProviderCached<icu::properties::provider::$marker>
+            for SourceDataProvider
+        {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+                Ok(HashSet::from_iter([Default::default()]))
+            }
+        }
+    };
+}
+
+macro_rules! impl_nfc_inert_property {
+    ($marker:ident, $try_new_decomp:ident, $try_new_comp:ident) => {
+        impl DataProvider<icu::properties::provider::$marker> for SourceDataProvider {
+            fn load(
+                &self,
+                _req: DataRequest,
+            ) -> Result<DataResponse<icu::properties::provider::$marker>, DataError> {
+                use icu::collections::codepointinvlist::CodePointInversionListBuilder;
+                use icu::properties::{
+                    CodePointMapData, props::CanonicalCombiningClass,
+                    provider::PropertyCodePointSet,
+                };
+
+                let nfc = icu::normalizer::ComposingNormalizer::$try_new_comp(self)?;
+                let nfc = nfc.as_borrowed();
+                let nfd = icu::normalizer::DecomposingNormalizer::$try_new_decomp(self)?;
+                let nfd = nfd.as_borrowed();
+                let comp =
+                    icu::normalizer::properties::CanonicalComposition::try_new_unstable(self)?;
+                let comp = comp.as_borrowed();
+                let ccc = CodePointMapData::<CanonicalCombiningClass>::try_new_unstable(self)?;
+                let ccc = ccc.as_borrowed();
+
+                let mut potential_seconds = HashSet::new();
+                for ch in (0..=char::MAX as u32).filter_map(char::from_u32) {
+                    let mut iter = nfd.normalize_iter([ch].into_iter());
+                    if iter.next().is_some() {
+                        potential_seconds.extend(iter);
+                    }
+                }
+
+                let mut combines_forwards = HashSet::new();
+                let mut combines_backwards = HashSet::new();
+                let mut composes_with_ccc = HashSet::new();
+                for ch in (0..=char::MAX as u32).filter_map(char::from_u32) {
+                    for &second in &potential_seconds {
+                        if comp.compose(ch, second).is_some() {
+                            combines_forwards.insert(ch);
+                            combines_backwards.insert(second);
+                            composes_with_ccc.insert((ch, ccc.get(second)));
+                        }
+                    }
+                }
+
+                let mut builder = CodePointInversionListBuilder::new();
+                'cp: for cp in 0..=(char::MAX as u32) {
+                    let Some(ch) = char::from_u32(cp) else {
+                        builder.add32(cp);
+                        continue;
+                    };
+
+                    if ccc.get(ch) != CanonicalCombiningClass::NotReordered {
+                        continue;
+                    }
+
+                    if combines_forwards.contains(&ch) {
+                        continue;
+                    }
+
+                    let mut nfc_iter = nfc.normalize_iter([ch].into_iter());
+                    if !(nfc_iter.next() == Some(ch) && nfc_iter.next() == None) {
+                        continue;
+                    }
+
+                    let mut nfd = nfd.normalize_iter([ch].into_iter());
+
+                    let mut starter = nfd.next().unwrap();
+                    let mut prev_ccc = CanonicalCombiningClass::NotReordered;
+
+                    if combines_backwards.contains(&starter) {
+                        continue;
+                    }
+
+                    for follow in nfd {
+                        let ccc = ccc.get(follow);
+
+                        if (prev_ccc.0 + 1..ccc.0).any(|ccc| {
+                            composes_with_ccc.contains(&(starter, CanonicalCombiningClass(ccc)))
+                        }) {
+                            continue 'cp;
+                        }
+
+                        if let Some(composite) = comp.compose(starter, follow) {
+                            starter = composite;
+                            prev_ccc = CanonicalCombiningClass::NotReordered;
+                        } else {
+                            prev_ccc = ccc;
+                        }
+                    }
+
+                    builder.add32(cp);
+                }
+                Ok(DataResponse {
+                    metadata: Default::default(),
+                    payload: DataPayload::from_owned(PropertyCodePointSet::InversionList(
+                        builder.build(),
+                    )),
+                })
+            }
+        }
+        impl crate::IterableDataProviderCached<icu::properties::provider::$marker>
+            for SourceDataProvider
+        {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+                Ok(HashSet::from_iter([Default::default()]))
+            }
+        }
+    };
+}
+
+impl_nfd_inert_property!(PropertyBinaryNfdInertV1, try_new_nfd_unstable);
+impl_nfd_inert_property!(PropertyBinaryNfkdInertV1, try_new_nfkd_unstable);
+impl_nfc_inert_property!(
+    PropertyBinaryNfcInertV1,
+    try_new_nfd_unstable,
+    try_new_nfc_unstable
+);
+impl_nfc_inert_property!(
+    PropertyBinaryNfkcInertV1,
+    try_new_nfkd_unstable,
+    try_new_nfkc_unstable
+);
