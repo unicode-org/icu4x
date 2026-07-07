@@ -19,20 +19,10 @@ use tinystr::TinyAsciiStr;
 use writeable::Writeable;
 use writeable::{PartsWrite, TryWriteable, adapters::LossyWrap};
 
-/// Display name fallback occurred
+/// An error returned when a display name was not found in data and has fallen back to the raw BCP-47 subtag code.
 #[derive(displaydoc::Display, Debug, Copy, Clone, PartialEq, Eq, Default)]
 #[allow(clippy::exhaustive_structs)]
 pub struct LanguageIdentifierNameFallbackError;
-
-/// Represents a subtag that is either absent or has fallen back to its code.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[non_exhaustive]
-enum AbsentOrFallback<S> {
-    /// The subtag was not present in the subject.
-    Absent,
-    /// The subtag was present, but its display name was not found, so we fall back to the code.
-    Fallback(S),
-}
 
 /// Represents a payload that was either successfully loaded or has fallen back to its code.
 type PayloadOrFallback<M, S> = DataPayloadOr<M, S>;
@@ -49,7 +39,7 @@ type PayloadOrFallback<M, S> = DataPayloadOr<M, S>;
 ///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayNameOwned,
 /// };
 /// use icu::locale::{locale, langid};
-/// use writeable::assert_writeable_eq;
+/// use writeable::assert_try_writeable_eq;
 ///
 /// let prefs = DisplayNamesPreferences::from(locale!("en"));
 /// let options = LanguageIdentifierDisplayNameOptions::default();
@@ -60,7 +50,7 @@ type PayloadOrFallback<M, S> = DataPayloadOr<M, S>;
 /// )
 /// .expect("Data should load successfully");
 ///
-/// assert_writeable_eq!(display_name.as_borrowed().with_fallback(), "Canadian French");
+/// assert_try_writeable_eq!(display_name.as_borrowed(), "Canadian French", Ok(()));
 /// ```
 ///
 /// When a subtag is unknown:
@@ -88,12 +78,6 @@ type PayloadOrFallback<M, S> = DataPayloadOr<M, S>;
 ///
 /// let borrowed = display_name.as_borrowed();
 ///
-/// // TryWriteable returns an error:
-/// let mut sink = String::new();
-/// let result = borrowed.try_write_to(&mut sink).expect("core::fmt::Write succeeded");
-/// assert_eq!(sink, "Italian (Qabc, Europe)");
-/// assert_eq!(result, Err(LanguageIdentifierNameFallbackError));
-///
 /// // The fallback string is identified with a [`Part::ERROR`](writeable::Part::Error):
 /// assert_try_writeable_parts_eq!(
 ///     borrowed,
@@ -101,6 +85,10 @@ type PayloadOrFallback<M, S> = DataPayloadOr<M, S>;
 ///     Err(LanguageIdentifierNameFallbackError),
 ///     [(9, 13, Part::ERROR)] // the span of Qabc
 /// );
+///
+/// // To format in lossy mode (ignoring fallback errors), use `.with_fallback()`:
+/// use writeable::assert_writeable_eq;
+/// assert_writeable_eq!(borrowed.with_fallback(), "Italian (Qabc, Europe)");
 /// ```
 #[allow(dead_code)]
 #[derive(Debug)]
@@ -108,8 +96,14 @@ pub struct LanguageIdentifierDisplayNameOwned {
     formatting_locale: DataLocale,
     options: LanguageIdentifierDisplayNameOptions,
     language_payload: DataPayloadOr<LocaleNamesLanguageMediumV1, Language>,
-    script_payload: DataPayloadOr<LocaleNamesScriptMediumV1, AbsentOrFallback<Script>>,
-    region_payload: DataPayloadOr<LocaleNamesRegionMediumV1, AbsentOrFallback<Region>>,
+    /// In the fallback (`Option<Script>`) state:
+    /// - `None` indicates the script subtag was absent from the subject.
+    /// - `Some(script)` indicates the script subtag was present, but display name data was not found, so it falls back to the raw code.
+    script_payload: DataPayloadOr<LocaleNamesScriptMediumV1, Option<Script>>,
+    /// In the fallback (`Option<Region>`) state:
+    /// - `None` indicates the region subtag was absent from the subject.
+    /// - `Some(region)` indicates the region subtag was present, but display name data was not found, so it falls back to the raw code.
+    region_payload: DataPayloadOr<LocaleNamesRegionMediumV1, Option<Region>>,
     variant_payloads: DataPayloadOr<
         LocaleNamesVariantMediumV1,
         Vec<PayloadOrFallback<LocaleNamesVariantMediumV1, Variant>>,
@@ -231,7 +225,7 @@ impl LanguageIdentifierDisplayNameOwned {
                     })
                     .allow_identifier_not_found()?;
                 match response {
-                    Some(res) => DataPayloadOr::from_payload(res.payload),
+                    Some(obj) => DataPayloadOr::from_payload(obj.payload),
                     None => DataPayloadOr::from_other(subject.language),
                 }
             }
@@ -243,10 +237,10 @@ impl LanguageIdentifierDisplayNameOwned {
                 .allow_identifier_not_found()?
             {
                 Some(obj) => DataPayloadOr::from_payload(obj.payload),
-                None => DataPayloadOr::from_other(AbsentOrFallback::Fallback(script)),
+                None => DataPayloadOr::from_other(Some(script)),
             }
         } else {
-            DataPayloadOr::from_other(AbsentOrFallback::Absent)
+            DataPayloadOr::from_other(None)
         };
 
         // Step 3: Load region name (if present in subject)
@@ -255,10 +249,10 @@ impl LanguageIdentifierDisplayNameOwned {
                 .allow_identifier_not_found()?
             {
                 Some(obj) => DataPayloadOr::from_payload(obj.payload),
-                None => DataPayloadOr::from_other(AbsentOrFallback::Fallback(region)),
+                None => DataPayloadOr::from_other(Some(region)),
             }
         } else {
-            DataPayloadOr::from_other(AbsentOrFallback::Absent)
+            DataPayloadOr::from_other(None)
         };
 
         // Step 4: Load variant names (if present in subject)
@@ -331,14 +325,14 @@ impl LanguageIdentifierDisplayNameOwned {
 
         let script_name = match self.script_payload.get() {
             Ok(p) => Some(Ok(p.as_ref())),
-            Err(AbsentOrFallback::Fallback(script)) => Some(Err(script.as_str())),
-            Err(AbsentOrFallback::Absent) => None,
+            Err(Some(script)) => Some(Err(script.as_str())),
+            Err(None) => None,
         };
 
         let region_name = match self.region_payload.get() {
             Ok(p) => Some(Ok(p.as_ref())),
-            Err(AbsentOrFallback::Fallback(region)) => Some(Err(region.as_str())),
-            Err(AbsentOrFallback::Absent) => None,
+            Err(Some(region)) => Some(Err(region.as_str())),
+            Err(None) => None,
         };
 
         let variants = match self.variant_payloads.get() {
@@ -392,7 +386,7 @@ impl<'a> LanguageIdentifierDisplayName<'a> {
     ///
     /// Missing display names will fall back to the raw BCP-47 code.
     #[inline]
-    pub fn with_fallback(&self) -> impl Writeable + core::fmt::Display + 'a {
+    pub fn with_fallback(&self) -> impl Writeable + core::fmt::Display + core::fmt::Debug + 'a {
         LossyWrap(*self)
     }
 }
