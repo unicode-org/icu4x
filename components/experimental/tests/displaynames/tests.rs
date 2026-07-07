@@ -218,7 +218,6 @@ fn test_fallback_parts() {
 fn test_single_language_display_name_standard() {
     use icu_experimental::displaynames::{LanguageDisplay, LanguageIdentifierDisplayNameOptions};
     use icu_locale_core::{langid, locale};
-    use writeable::assert_writeable_eq;
 
     let locale = locale!("en-001");
     let mut options = LanguageIdentifierDisplayNameOptions::default();
@@ -230,7 +229,7 @@ fn test_single_language_display_name_standard() {
     let lang_name = LanguageIdentifierDisplayNameOwned::try_new(locale.into(), lang_id, options)
         .expect("Data should load successfully");
 
-    assert_writeable_eq!(
+    assert_try_writeable_eq!(
         lang_name.as_borrowed(),
         "Chinese (Traditional, Hong Kong SAR China)"
     );
