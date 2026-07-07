@@ -529,6 +529,51 @@ impl<'a> ZonePatternDataBorrowed<'a> {
     }
 }
 
+/// Helper function to map a [`CompositeFieldSet`] to loaded date and time pattern selection data.
+///
+/// This function decomposes a composite field set into its date and time components,
+/// applying the provided loader closures `load_date` and `load_time` respectively to load
+/// the specific pattern selection data payloads.
+///
+/// If a component (date or time) is not present in the composite field set, `None` is returned
+/// for that component.
+#[inline]
+fn map_composite_skeleton<DateRes, TimeRes, E>(
+    skeleton: CompositeFieldSet,
+    mut load_date: impl FnMut(&DataMarkerAttributes) -> Result<DateRes, E>,
+    mut load_time: impl FnMut(TimeFieldSet) -> Result<TimeRes, E>,
+) -> Result<(Option<DateRes>, Option<TimeRes>), E> {
+    let mut date = None;
+    let mut time = None;
+    match skeleton {
+        CompositeFieldSet::Date(field_set) => {
+            date = Some(load_date(field_set.id_str())?);
+        }
+        CompositeFieldSet::CalendarPeriod(field_set) => {
+            date = Some(load_date(field_set.id_str())?);
+        }
+        CompositeFieldSet::Time(field_set) => {
+            time = Some(load_time(field_set)?);
+        }
+        CompositeFieldSet::DateTime(field_set) => {
+            date = Some(load_date(field_set.to_date_field_set().id_str())?);
+            time = Some(load_time(field_set.to_time_field_set())?);
+        }
+        CompositeFieldSet::DateZone(combo) => {
+            date = Some(load_date(combo.dt().id_str())?);
+        }
+        CompositeFieldSet::DateTimeZone(combo) => {
+            date = Some(load_date(combo.dt().to_date_field_set().id_str())?);
+            time = Some(load_time(combo.dt().to_time_field_set())?);
+        }
+        CompositeFieldSet::TimeZone(combo) => {
+            time = Some(load_time(combo.dt())?);
+        }
+        CompositeFieldSet::Zone(_) => {}
+    }
+    Ok((date, time))
+}
+
 impl DateTimeZonePatternSelectionData {
     pub(crate) fn try_new_with_skeleton(
         date_provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
@@ -537,182 +582,77 @@ impl DateTimeZonePatternSelectionData {
         prefs: DateTimeFormatterPreferences,
         skeleton: CompositeFieldSet,
     ) -> Result<Self, DataError> {
-        match skeleton {
-            CompositeFieldSet::Date(field_set) => {
-                let options = field_set.to_raw_options();
-                let selection = DatePatternSelectionData::try_new_with_skeleton(
+        // Handle overlap early return.
+        if let CompositeFieldSet::DateTime(field_set) = skeleton {
+            let options = field_set.to_raw_options();
+            if let (Some(attributes), None) = (field_set.id_str(), prefs.hour_cycle)
+                && let Some(overlap) = TimePatternSelectionData::try_new_overlap_with_skeleton(
                     date_provider,
                     prefs,
-                    field_set.id_str(),
-                )?;
-                Ok(Self {
+                    attributes,
                     options,
-                    prefs: Default::default(), // not used: no time
-                    date: selection,
-                    time: TimePatternSelectionData::none(),
-                    zone: None,
-                    glue: None,
-                })
-            }
-            CompositeFieldSet::CalendarPeriod(field_set) => {
-                let options = field_set.to_raw_options();
-                let selection = DatePatternSelectionData::try_new_with_skeleton(
-                    date_provider,
-                    prefs,
-                    field_set.id_str(),
-                )?;
-                Ok(Self {
-                    options,
-                    prefs: Default::default(), // not used: no time
-                    date: selection,
-                    time: TimePatternSelectionData::none(),
-                    zone: None,
-                    glue: None,
-                })
-            }
-            CompositeFieldSet::Time(field_set) => {
-                let options = field_set.to_raw_options();
-                let selection = TimePatternSelectionData::try_new_with_skeleton(
-                    time_provider,
-                    prefs,
-                    field_set,
-                )?;
+                )
+                .allow_identifier_not_found()?
+            {
                 let prefs = RawPreferences::from_prefs(prefs);
-                Ok(Self {
+                return Ok(Self {
                     options,
                     prefs,
                     date: DatePatternSelectionData::none(),
-                    time: selection,
+                    time: overlap,
                     zone: None,
                     glue: None,
-                })
-            }
-            CompositeFieldSet::Zone(field_set) => {
-                let selection = ZonePatternSelectionData::new_with_skeleton(field_set);
-                Ok(Self {
-                    options: RawOptions {
-                        length: None,
-                        date_fields: None,
-                        year_style: None,
-                        alignment: None,
-                        time_precision: None,
-                    },
-                    prefs: Default::default(), // not used: no time
-                    date: DatePatternSelectionData::none(),
-                    time: TimePatternSelectionData::none(),
-                    zone: Some(selection),
-                    glue: None,
-                })
-            }
-            CompositeFieldSet::DateTime(field_set) => {
-                let options = field_set.to_raw_options();
-                // TODO(#5387): load the patterns for custom hour cycles here
-                if let (Some(attributes), None) = (field_set.id_str(), prefs.hour_cycle) {
-                    // Try loading an overlap pattern.
-                    // Note: Overlap patterns are loaded from the date skeleton pattern provider
-                    // and then stored as a TimePatternSelectionData.
-                    if let Some(overlap) = TimePatternSelectionData::try_new_overlap_with_skeleton(
-                        date_provider,
-                        prefs,
-                        attributes,
-                        options,
-                    )
-                    .allow_identifier_not_found()?
-                    {
-                        let prefs = RawPreferences::from_prefs(prefs);
-                        return Ok(Self {
-                            options,
-                            prefs,
-                            date: DatePatternSelectionData::none(),
-                            time: overlap,
-                            zone: None,
-                            glue: None,
-                        });
-                    }
-                }
-                let date = DatePatternSelectionData::try_new_with_skeleton(
-                    date_provider,
-                    prefs,
-                    field_set.to_date_field_set().id_str(),
-                )?;
-                let time = TimePatternSelectionData::try_new_with_skeleton(
-                    time_provider,
-                    prefs,
-                    field_set.to_time_field_set(),
-                )?;
-                let glue = Self::load_glue(glue_provider, prefs, options, GlueType::DateTime)?;
-                let prefs = RawPreferences::from_prefs(prefs);
-                Ok(Self {
-                    options,
-                    prefs,
-                    date,
-                    time,
-                    zone: None,
-                    glue: Some(glue),
-                })
-            }
-            CompositeFieldSet::DateZone(combo) => {
-                let options = combo.dt().to_raw_options();
-                let date = DatePatternSelectionData::try_new_with_skeleton(
-                    date_provider,
-                    prefs,
-                    combo.dt().id_str(),
-                )?;
-                let zone = ZonePatternSelectionData::new_with_skeleton(combo.z());
-                let glue = Self::load_glue(glue_provider, prefs, options, GlueType::DateZone)?;
-                Ok(Self {
-                    options,
-                    prefs: Default::default(), // not used: no time
-                    date,
-                    time: TimePatternSelectionData::none(),
-                    zone: Some(zone),
-                    glue: Some(glue),
-                })
-            }
-            CompositeFieldSet::TimeZone(combo) => {
-                let options = combo.dt().to_raw_options();
-                let time = TimePatternSelectionData::try_new_with_skeleton(
-                    time_provider,
-                    prefs,
-                    combo.dt(),
-                )?;
-                let zone = ZonePatternSelectionData::new_with_skeleton(combo.z());
-                let glue = Self::load_glue(glue_provider, prefs, options, GlueType::TimeZone)?;
-                let prefs = RawPreferences::from_prefs(prefs);
-                Ok(Self {
-                    options,
-                    prefs,
-                    date: DatePatternSelectionData::none(),
-                    time,
-                    zone: Some(zone),
-                    glue: Some(glue),
-                })
-            }
-            CompositeFieldSet::DateTimeZone(combo) => {
-                let options = combo.dt().to_raw_options();
-                let date = DatePatternSelectionData::try_new_with_skeleton(
-                    date_provider,
-                    prefs,
-                    combo.dt().to_date_field_set().id_str(),
-                )?;
-                let time = TimePatternSelectionData::try_new_with_skeleton(
-                    time_provider,
-                    prefs,
-                    combo.dt().to_time_field_set(),
-                )?;
-                let zone = ZonePatternSelectionData::new_with_skeleton(combo.z());
-                let glue = Self::load_glue(glue_provider, prefs, options, GlueType::DateTimeZone)?;
-                let prefs = RawPreferences::from_prefs(prefs);
-                Ok(Self {
-                    options,
-                    prefs,
-                    date,
-                    time,
-                    zone: Some(zone),
-                    glue: Some(glue),
-                })
+                });
             }
         }
+
+        let options = skeleton.to_raw_options();
+        let zone = skeleton
+            .to_zone()
+            .map(ZonePatternSelectionData::new_with_skeleton);
+
+        let glue_type = match skeleton {
+            CompositeFieldSet::DateTime(_) => Some(GlueType::DateTime),
+            CompositeFieldSet::DateZone(_) => Some(GlueType::DateZone),
+            CompositeFieldSet::TimeZone(_) => Some(GlueType::TimeZone),
+            CompositeFieldSet::DateTimeZone(_) => Some(GlueType::DateTimeZone),
+            _ => None,
+        };
+
+        let glue = if let Some(gt) = glue_type {
+            Some(Self::load_glue(glue_provider, prefs, options, gt)?)
+        } else {
+            None
+        };
+
+        let (date_opt, time_opt) = map_composite_skeleton(
+            skeleton,
+            |d_attrs| {
+                DatePatternSelectionData::try_new_with_skeleton(date_provider, prefs, d_attrs)
+            },
+            |t_field_set| {
+                TimePatternSelectionData::try_new_with_skeleton(time_provider, prefs, t_field_set)
+            },
+        )?;
+
+        let has_time = time_opt.is_some();
+        let date = date_opt.unwrap_or_else(DatePatternSelectionData::none);
+        let time = time_opt.unwrap_or_else(TimePatternSelectionData::none);
+
+        let prefs = if has_time {
+            RawPreferences::from_prefs(prefs)
+        } else {
+            Default::default()
+        };
+
+        Ok(Self {
+            options,
+            prefs,
+            date,
+            time,
+            zone,
+            glue,
+        })
     }
 
     fn load_glue(
@@ -837,71 +777,26 @@ impl DateTimeZoneRangePatternSelectionData {
             })?
             .payload;
 
-        let mut date_range = DateRangePatternSelectionData::none();
-        let mut time_range = TimeRangePatternSelectionData::none();
+        let (date_opt, time_opt) = map_composite_skeleton(
+            skeleton,
+            |d_attrs| {
+                DateRangePatternSelectionData::try_new_with_skeleton(
+                    date_range_provider,
+                    prefs,
+                    d_attrs,
+                )
+            },
+            |t_field_set| {
+                TimeRangePatternSelectionData::try_new_with_skeleton(
+                    time_range_provider,
+                    prefs,
+                    t_field_set,
+                )
+            },
+        )?;
 
-        match skeleton {
-            CompositeFieldSet::Date(field_set) => {
-                date_range = DateRangePatternSelectionData::try_new_with_skeleton(
-                    date_range_provider,
-                    prefs,
-                    field_set.id_str(),
-                )?;
-            }
-            CompositeFieldSet::CalendarPeriod(field_set) => {
-                date_range = DateRangePatternSelectionData::try_new_with_skeleton(
-                    date_range_provider,
-                    prefs,
-                    field_set.id_str(),
-                )?;
-            }
-            CompositeFieldSet::Time(field_set) => {
-                time_range = TimeRangePatternSelectionData::try_new_with_skeleton(
-                    time_range_provider,
-                    prefs,
-                    field_set,
-                )?;
-            }
-            CompositeFieldSet::DateTime(field_set) => {
-                date_range = DateRangePatternSelectionData::try_new_with_skeleton(
-                    date_range_provider,
-                    prefs,
-                    field_set.to_date_field_set().id_str(),
-                )?;
-                time_range = TimeRangePatternSelectionData::try_new_with_skeleton(
-                    time_range_provider,
-                    prefs,
-                    field_set.to_time_field_set(),
-                )?;
-            }
-            CompositeFieldSet::DateZone(combo) => {
-                date_range = DateRangePatternSelectionData::try_new_with_skeleton(
-                    date_range_provider,
-                    prefs,
-                    combo.dt().id_str(),
-                )?;
-            }
-            CompositeFieldSet::DateTimeZone(combo) => {
-                date_range = DateRangePatternSelectionData::try_new_with_skeleton(
-                    date_range_provider,
-                    prefs,
-                    combo.dt().to_date_field_set().id_str(),
-                )?;
-                time_range = TimeRangePatternSelectionData::try_new_with_skeleton(
-                    time_range_provider,
-                    prefs,
-                    combo.dt().to_time_field_set(),
-                )?;
-            }
-            CompositeFieldSet::TimeZone(combo) => {
-                time_range = TimeRangePatternSelectionData::try_new_with_skeleton(
-                    time_range_provider,
-                    prefs,
-                    combo.dt(),
-                )?;
-            }
-            CompositeFieldSet::Zone(_) => {}
-        }
+        let date_range = date_opt.unwrap_or_else(DateRangePatternSelectionData::none);
+        let time_range = time_opt.unwrap_or_else(TimeRangePatternSelectionData::none);
 
         Ok(Self {
             date_range,
