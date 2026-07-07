@@ -23,9 +23,6 @@ use writeable::{PartsWrite, TryWriteable, adapters::LossyWrap};
 #[allow(clippy::exhaustive_structs)]
 pub struct LanguageIdentifierNameFallbackError;
 
-/// Represents a payload that was either successfully loaded or has fallen back to its code.
-type PayloadOrFallback<M, S> = DataPayloadOr<M, S>;
-
 /// A localized display name for a language identifier, owned version.
 ///
 /// The formatter falls back to the BCP-47 subtag when localized display names are missing
@@ -105,7 +102,7 @@ pub struct LanguageIdentifierDisplayNameOwned {
     region_payload: DataPayloadOr<LocaleNamesRegionMediumV1, Option<Region>>,
     variant_payloads: DataPayloadOr<
         LocaleNamesVariantMediumV1,
-        Vec<PayloadOrFallback<LocaleNamesVariantMediumV1, Variant>>,
+        Vec<DataPayloadOr<LocaleNamesVariantMediumV1, Variant>>,
     >,
     essentials_payload: DataPayload<LocaleNamesEssentialsV1>,
 }
@@ -256,7 +253,7 @@ impl LanguageIdentifierDisplayNameOwned {
 
         // Step 4: Load variant names (if present in subject)
         let load_variant = |variant: Variant| -> Result<
-            PayloadOrFallback<LocaleNamesVariantMediumV1, Variant>,
+            DataPayloadOr<LocaleNamesVariantMediumV1, Variant>,
             DataError,
         > {
             match VariantDisplayNameOwned::try_new_unstable(provider, prefs, variant)
@@ -357,7 +354,7 @@ impl LanguageIdentifierDisplayNameOwned {
 #[derive(Debug, Clone, Copy)]
 enum BorrowedVariants<'a> {
     One(&'a str),
-    Slice(&'a [PayloadOrFallback<LocaleNamesVariantMediumV1, Variant>]),
+    Slice(&'a [DataPayloadOr<LocaleNamesVariantMediumV1, Variant>]),
 }
 
 impl BorrowedVariants<'_> {
