@@ -145,8 +145,6 @@ impl LanguageIdentifierDisplayNameOwned {
         // and we "consume" the corresponding subtags so they are not repeated in the qualifiers.
         // If none are found, we fall back to the base language name (e.g., "zh") and all
         // present subtags (script, region, variants) will be formatted as qualifiers.
-        //
-        // Prefer dialect handling if requested and available.
         let mut language_payload_or = None;
 
         // Only try dialect if requested (which is the default)
