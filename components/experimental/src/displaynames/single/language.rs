@@ -17,11 +17,14 @@ use icu_provider::DataPayloadOr;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 use writeable::{PartsWrite, TryWriteable, adapters::LossyWrap};
+use crate::size_test_macro::size_test;
 
 /// An error returned when a display name was not found in data and has fallen back to the raw BCP-47 subtag code.
 #[derive(displaydoc::Display, Debug, Copy, Clone, PartialEq, Eq, Default)]
 #[allow(clippy::exhaustive_structs)]
 pub struct LanguageIdentifierNameFallbackError;
+
+size_test!(LanguageIdentifierDisplayNameOwned, language_identifier_display_name_owned_size, 184);
 
 /// A localized display name for a language identifier, owned version.
 ///
@@ -86,11 +89,9 @@ pub struct LanguageIdentifierNameFallbackError;
 /// use writeable::assert_writeable_eq;
 /// assert_writeable_eq!(borrowed, "Italian (Qabc, Europe)");
 /// ```
-#[allow(dead_code)]
+#[doc = language_identifier_display_name_owned_size!()]
 #[derive(Debug)]
 pub struct LanguageIdentifierDisplayNameOwned {
-    formatting_locale: DataLocale,
-    options: LanguageIdentifierDisplayNameOptions,
     /// Either the language display name or the subtag as fallback
     language_payload: DataPayloadOr<LocaleNamesLanguageMediumV1, Language>,
     /// Either the script display name, the subtag as fallback, or None if absent
@@ -297,8 +298,6 @@ impl LanguageIdentifierDisplayNameOwned {
             .payload;
 
         Ok(Self {
-            formatting_locale,
-            options,
             language_payload,
             script_payload,
             region_payload,
