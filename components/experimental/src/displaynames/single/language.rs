@@ -9,7 +9,8 @@ use crate::displaynames::single::{
 use crate::displaynames::{
     DisplayNamesPreferences, LanguageDisplay, LanguageIdentifierDisplayNameOptions,
 };
-use alloc::{vec, vec::Vec};
+use crate::size_test_macro::size_test;
+use alloc::vec::Vec;
 use icu_locale_core::LanguageIdentifier;
 use icu_locale_core::subtags::{Language, Region, Script, Variant};
 use icu_pattern::{DoublePlaceholderPattern, DoublePlaceholderValueProviderTry, PatternItem};
@@ -17,14 +18,17 @@ use icu_provider::DataPayloadOr;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 use writeable::{PartsWrite, TryWriteable, adapters::LossyWrap};
-use crate::size_test_macro::size_test;
 
 /// An error returned when a display name was not found in data and has fallen back to the raw BCP-47 subtag code.
 #[derive(displaydoc::Display, Debug, Copy, Clone, PartialEq, Eq, Default)]
 #[allow(clippy::exhaustive_structs)]
 pub struct LanguageIdentifierNameFallbackError;
 
-size_test!(LanguageIdentifierDisplayNameOwned, language_identifier_display_name_owned_size, 184);
+size_test!(
+    LanguageIdentifierDisplayNameOwned,
+    language_identifier_display_name_owned_size,
+    184
+);
 
 /// A localized display name for a language identifier, owned version.
 ///
@@ -98,11 +102,12 @@ pub struct LanguageIdentifierDisplayNameOwned {
     script_payload: DataPayloadOr<LocaleNamesScriptMediumV1, Option<Script>>,
     /// Either the region display name, the subtag as fallback, or None if absent
     region_payload: DataPayloadOr<LocaleNamesRegionMediumV1, Option<Region>>,
-    /// Either a single variant display name, or a vector of variant display names
-    /// or subtags as fallback. The vector may be empty.
+    /// Either a single variant display name, the subtag as fallback, or
+    /// a vector of variant display names or subtags as fallback.
+    /// The vector may be empty.
     variant_payloads: DataPayloadOr<
         LocaleNamesVariantMediumV1,
-        Vec<DataPayloadOr<LocaleNamesVariantMediumV1, Variant>>,
+        Result<Vec<DataPayloadOr<LocaleNamesVariantMediumV1, Variant>>, Variant>,
     >,
     essentials_payload: DataPayload<LocaleNamesEssentialsV1>,
 }
@@ -274,19 +279,17 @@ impl LanguageIdentifierDisplayNameOwned {
                     .into_iter()
                     .chain(variant_results)
                     .collect::<Result<Vec<_>, _>>()?;
-                DataPayloadOr::from_other(payload_vec)
+                DataPayloadOr::from_other(Ok(payload_vec))
             } else {
                 // 1 variant
                 match first?.into_inner() {
                     Ok(payload) => DataPayloadOr::from_payload(payload),
-                    Err(fallback_code) => {
-                        DataPayloadOr::from_other(vec![DataPayloadOr::from_other(fallback_code)])
-                    }
+                    Err(fallback_code) => DataPayloadOr::from_other(Err(fallback_code)),
                 }
             }
         } else {
             // 0 variants
-            DataPayloadOr::from_other(Vec::new())
+            DataPayloadOr::from_other(Ok(Vec::new()))
         };
 
         // Step 5: Load essentials
@@ -327,8 +330,9 @@ impl LanguageIdentifierDisplayNameOwned {
         };
 
         let variants = match self.variant_payloads.get() {
-            Ok(variant_name) => BorrowedVariants::One(variant_name),
-            Err(vec) => BorrowedVariants::Slice(vec.as_slice()),
+            Ok(variant_name) => BorrowedVariants::One(NameOrFallback(Ok(variant_name))),
+            Err(Ok(vec)) => BorrowedVariants::Slice(vec.as_slice()),
+            Err(Err(variant)) => BorrowedVariants::One(NameOrFallback(Err(variant.as_str()))),
         };
 
         LanguageIdentifierDisplayName(LossyWrap(LanguageIdentifierDisplayNameInner {
@@ -348,7 +352,7 @@ impl LanguageIdentifierDisplayNameOwned {
 /// this will need a new variant for a vec of borrowed variant names.
 #[derive(Debug, Clone, Copy)]
 enum BorrowedVariants<'a> {
-    One(&'a str),
+    One(NameOrFallback<'a>),
     Slice(&'a [DataPayloadOr<LocaleNamesVariantMediumV1, Variant>]),
 }
 
@@ -444,8 +448,8 @@ impl<'a> TryWriteable for QualifiersWriteable<'a> {
             result = result.and(write_item(sink, region)?);
         }
         match self.variants {
-            BorrowedVariants::One(v) => {
-                result = result.and(write_item(sink, NameOrFallback(Ok(v)))?);
+            BorrowedVariants::One(variant) => {
+                result = result.and(write_item(sink, variant)?);
             }
             BorrowedVariants::Slice(slice) => {
                 for item in slice.iter() {
