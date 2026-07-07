@@ -130,7 +130,7 @@ pub use decimal_formatter::{
 };
 
 #[cfg(feature = "unstable")]
-pub use compact_formatter::CompactDecimalFormatter;
+pub use compact_formatter::{CompactDecimalFormatter, FormattedUnsignedCompactDecimal};
 
 pub use preferences::DecimalFormatterPreferences;
 

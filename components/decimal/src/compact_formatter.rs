@@ -76,7 +76,8 @@ use writeable::Writeable;
 #[derive(Debug)]
 pub struct CompactDecimalFormatter {
     plural_rules: PluralRules,
-    decimal_formatter: DecimalFormatter,
+    #[doc(hidden)]
+    pub decimal_formatter: DecimalFormatter,
     compact_data:
         DataPayload<ErasedMarker<<DecimalCompactLongV1 as DynamicDataMarker>::DataStruct>>,
 }
@@ -347,20 +348,26 @@ impl CompactDecimalFormatter {
     ///     "999K"
     /// );
     /// ```
-    pub fn format(&self, value: &Decimal) -> impl Writeable + Display + '_ + use<'_> {
+    pub fn format<'a>(&'a self, value: &Decimal) -> impl Writeable + Display + 'a {
+        self.decimal_formatter
+            .format_sign(value.sign, self.format_unsigned(&value.absolute))
+    }
+
+    #[doc(hidden)]
+    pub fn format_unsigned<'a>(
+        &'a self,
+        value: &UnsignedDecimal,
+    ) -> FormattedUnsignedCompactDecimal<'a> {
         let (compact_pattern, significand) = self
             .compact_data
             .get()
-            .get_pattern_and_significand(&value.absolute, &self.plural_rules);
+            .get_pattern_and_significand(value, &self.plural_rules);
 
-        self.decimal_formatter.format_sign(
-            value.sign,
-            compact_pattern
-                .unwrap_or(Pattern::<SinglePlaceholder>::PASS_THROUGH)
-                .interpolate([self
-                    .decimal_formatter
-                    .format_unsigned(Cow::Owned(significand))]),
-        )
+        FormattedUnsignedCompactDecimal {
+            pattern: compact_pattern,
+            significand,
+            decimal_formatter: &self.decimal_formatter,
+        }
     }
 
     /// Formats a [`Decimal`], returning a [`String`].
@@ -539,6 +546,25 @@ impl CompactDecimalFormatter {
             .last()
             .map(|t| t.sized - t.variable.get_default().0.get())
             .unwrap_or_default()
+    }
+}
+
+#[doc(hidden)]
+#[derive(Debug)]
+pub struct FormattedUnsignedCompactDecimal<'l> {
+    pattern: Option<&'l Pattern<SinglePlaceholder>>,
+    significand: UnsignedDecimal,
+    decimal_formatter: &'l DecimalFormatter,
+}
+
+impl Writeable for FormattedUnsignedCompactDecimal<'_> {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+        self.pattern
+            .unwrap_or(Pattern::<SinglePlaceholder>::PASS_THROUGH)
+            .interpolate([self
+                .decimal_formatter
+                .format_unsigned(Cow::Borrowed(&self.significand))])
+            .write_to(sink)
     }
 }
 
