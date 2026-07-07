@@ -91,15 +91,14 @@ pub struct LanguageIdentifierNameFallbackError;
 pub struct LanguageIdentifierDisplayNameOwned {
     formatting_locale: DataLocale,
     options: LanguageIdentifierDisplayNameOptions,
+    /// Either the language display name or the subtag as fallback
     language_payload: DataPayloadOr<LocaleNamesLanguageMediumV1, Language>,
-    /// In the fallback (`Option<Script>`) state:
-    /// - `None` indicates the script subtag was absent from the subject.
-    /// - `Some(script)` indicates the script subtag was present, but display name data was not found, so it falls back to the raw code.
+    /// Either the script display name, the subtag as fallback, or None if absent
     script_payload: DataPayloadOr<LocaleNamesScriptMediumV1, Option<Script>>,
-    /// In the fallback (`Option<Region>`) state:
-    /// - `None` indicates the region subtag was absent from the subject.
-    /// - `Some(region)` indicates the region subtag was present, but display name data was not found, so it falls back to the raw code.
+    /// Either the region display name, the subtag as fallback, or None if absent
     region_payload: DataPayloadOr<LocaleNamesRegionMediumV1, Option<Region>>,
+    /// Either a single variant display name, or a vector of variant display names
+    /// or subtags as fallback. The vector may be empty.
     variant_payloads: DataPayloadOr<
         LocaleNamesVariantMediumV1,
         Vec<DataPayloadOr<LocaleNamesVariantMediumV1, Variant>>,
