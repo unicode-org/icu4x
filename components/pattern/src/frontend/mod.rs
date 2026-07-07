@@ -381,7 +381,7 @@ where
                     length_hint += self.value_provider.value_for(key).writeable_length_hint();
                 }
             }
-        };
+        }
         length_hint
     }
 }

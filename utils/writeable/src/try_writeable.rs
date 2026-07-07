@@ -187,7 +187,7 @@ pub trait TryWriteable {
     /// In the failure case, this function returns the error and the best-effort string ("lossy mode").
     ///
     /// # Note to implementors
-    /// 
+    ///
     /// See the note in [`Writeable::write_to_string`].
     ///
     /// # Examples
@@ -207,7 +207,9 @@ pub trait TryWriteable {
     #[cfg(feature = "alloc")]
     fn try_write_to_string(&self) -> Result<Cow<'_, str>, (Self::Error, Cow<'_, str>)> {
         if let Some(borrow) = self.try_writeable_borrow() {
-            return borrow.map(Cow::Borrowed).map_err(|(e, s)| (e, Cow::Borrowed(s)));
+            return borrow
+                .map(Cow::Borrowed)
+                .map_err(|(e, s)| (e, Cow::Borrowed(s)));
         }
         let hint = self.writeable_length_hint();
         if hint.is_zero() {
@@ -266,7 +268,7 @@ where
     fn try_writeable_borrow(&self) -> Option<Result<&str, (Self::Error, &str)>> {
         match self {
             Ok(t) => t.writeable_borrow().map(Ok),
-            Err(e) => e.writeable_borrow().map(|s| Err((e.clone(), s)))
+            Err(e) => e.writeable_borrow().map(|s| Err((e.clone(), s))),
         }
     }
 
