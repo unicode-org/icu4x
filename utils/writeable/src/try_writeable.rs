@@ -526,12 +526,11 @@ macro_rules! assert_try_writeable_eq {
         $crate::assert_try_writeable_eq!(@internal, $actual_writeable, $expected_str, $expected_result, $($arg)*);
     }};
     (@internal, $actual_writeable:expr, $expected_str:expr, $expected_result:expr, $($arg:tt)+) => {{
-        use $crate::TryWriteable;
         let actual_writeable = &$actual_writeable;
         let (actual_str, actual_parts, actual_error) = $crate::_internal::try_writeable_to_parts_for_test(actual_writeable);
         assert_eq!(actual_str, $expected_str, $($arg)*);
         assert_eq!(actual_error, Result::<(), _>::from($expected_result).err(), $($arg)*);
-        let actual_result = match actual_writeable.try_write_to_string() {
+        let actual_result = match $crate::TryWriteable::try_write_to_string(&actual_writeable) {
             Ok(actual_cow_str) => {
                 assert_eq!(actual_cow_str, $expected_str, $($arg)+);
                 Ok(())
@@ -542,7 +541,7 @@ macro_rules! assert_try_writeable_eq {
             }
         };
         assert_eq!(actual_result, Result::<(), _>::from($expected_result), $($arg)*);
-        let length_hint = actual_writeable.writeable_length_hint();
+        let length_hint = $crate::TryWriteable::writeable_length_hint(&actual_writeable);
         assert!(
             length_hint.0 <= actual_str.len(),
             "hint lower bound {} larger than actual length {}: {}",
