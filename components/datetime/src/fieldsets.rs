@@ -541,15 +541,15 @@ macro_rules! impl_date_or_calendar_period_marker {
         impl<C: CldrCalendar> TypedDateDataMarkers<C> for $type {
             type DateSkeletonPatternsV1 = datetime_marker_helper!(@dates/typed, yes);
             type DateRangeSkeletonPatternsV1 = datetime_marker_helper!(@dates/range/typed, yes);
-            type YearNamesV1 = datetime_marker_helper!(@years/typed, $($year_yes)?);
-            type MonthNamesV1 = datetime_marker_helper!(@months/typed, $($month_yes)?);
+            type YearNamesV1 = datetime_marker_helper!(@years/typed, $($years_yes)?);
+            type MonthNamesV1 = datetime_marker_helper!(@months/typed, $($months_yes)?);
             type WeekdayNamesV1 = datetime_marker_helper!(@weekdays, $($weekdays_yes)?);
         }
         impl DateDataMarkers for $type {
             type Skel = datetime_marker_helper!(@calmarkers, yes);
             type RangeSkel = datetime_marker_helper!(@calmarkers, yes);
-            type Year = datetime_marker_helper!(@calmarkers, $($year_yes)?);
-            type Month = datetime_marker_helper!(@calmarkers, $($month_yes)?);
+            type Year = datetime_marker_helper!(@calmarkers, $($years_yes)?);
+            type Month = datetime_marker_helper!(@calmarkers, $($months_yes)?);
             type WeekdayNamesV1 = datetime_marker_helper!(@weekdays, $($weekdays_yes)?);
         }
         impl DateTimeMarkers for $type {
