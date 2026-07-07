@@ -16,6 +16,7 @@ use icu_pattern::{DoublePlaceholderPattern, DoublePlaceholderValueProviderTry, P
 use icu_provider::DataPayloadOr;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
+use writeable::LengthHint;
 use writeable::{PartsWrite, TryWriteable, adapters::LossyWrap};
 
 /// An error returned when a display name was not found in data and has fallen back to the raw BCP-47 subtag code.
@@ -407,6 +408,19 @@ struct QualifiersWriteable<'a> {
     separator: &'a DoublePlaceholderPattern,
 }
 
+impl<'a> QualifiersWriteable<'a> {
+    fn separator_str(&self) -> &'a str {
+        let mut separator_str = ", ";
+        for item in self.separator.iter() {
+            if let PatternItem::Literal(s) = item {
+                separator_str = s;
+                break;
+            }
+        }
+        separator_str
+    }
+}
+
 impl<'a> TryWriteable for QualifiersWriteable<'a> {
     type Error = LanguageIdentifierNameFallbackError;
 
@@ -416,13 +430,7 @@ impl<'a> TryWriteable for QualifiersWriteable<'a> {
     ) -> Result<Result<(), Self::Error>, core::fmt::Error> {
         // TODO: See whether we can share this code with the list component.
         let mut first = true;
-        let mut separator_str = ", ";
-        for item in self.separator.iter() {
-            if let PatternItem::Literal(s) = item {
-                separator_str = s;
-                break;
-            }
-        }
+        let separator_str = self.separator_str();
 
         let mut write_item = |sink: &mut S,
                               res: NameOrFallback|
@@ -461,6 +469,42 @@ impl<'a> TryWriteable for QualifiersWriteable<'a> {
 
         Ok(result)
     }
+
+    fn writeable_length_hint(&self) -> LengthHint {
+        let mut length_hint = LengthHint::exact(0);
+        let mut num_items = 0;
+        if let Some(script) = self.script {
+            length_hint += script.writeable_length_hint();
+            num_items += 1;
+        }
+        if let Some(region) = self.region {
+            length_hint += region.writeable_length_hint();
+            num_items += 1;
+        }
+        match self.variants {
+            BorrowedVariants::One(v) => {
+                length_hint += writeable::Writeable::writeable_length_hint(v);
+                num_items += 1;
+            }
+            BorrowedVariants::Slice(slice) => {
+                for item in slice.iter() {
+                    length_hint += match item.get() {
+                        Ok(p) => writeable::Writeable::writeable_length_hint(&**p),
+                        Err(var) => writeable::Writeable::writeable_length_hint(var.as_str()),
+                    };
+                    num_items += 1;
+                }
+            }
+        }
+        length_hint += LengthHint::exact(self.separator_str().len() * (num_items - 1));
+        length_hint
+    }
+}
+
+impl LanguageIdentifierDisplayNameInner<'_> {
+    fn has_qualifiers(&self) -> bool {
+        self.script_name.is_some() || self.region_name.is_some() || !self.variants.is_empty()
+    }
 }
 
 impl<'a> TryWriteable for LanguageIdentifierDisplayNameInner<'a> {
@@ -470,28 +514,48 @@ impl<'a> TryWriteable for LanguageIdentifierDisplayNameInner<'a> {
         &self,
         sink: &mut S,
     ) -> Result<Result<(), Self::Error>, core::fmt::Error> {
-        let has_variants = !self.variants.is_empty();
-        let has_qualifiers =
-            self.script_name.is_some() || self.region_name.is_some() || has_variants;
-
-        if !has_qualifiers {
+        if !self.has_qualifiers() {
             self.base_name.try_write_to_parts(sink)
         } else {
-            let qualifiers = QualifiersWriteable {
-                script: self.script_name,
-                region: self.region_name,
-                variants: self.variants,
-                separator: self.locale_separator,
-            };
-
             let result = self
                 .locale_pattern
                 .try_interpolate(DoublePlaceholderValueProviderTry(
                     self.base_name,
-                    &qualifiers,
+                    QualifiersWriteable {
+                        script: self.script_name,
+                        region: self.region_name,
+                        variants: self.variants,
+                        separator: self.locale_separator,
+                    },
                 ))
                 .try_write_to_parts(sink)?;
             Ok(result.map_err(either::Either::into_inner))
+        }
+    }
+
+    fn writeable_length_hint(&self) -> LengthHint {
+        if !self.has_qualifiers() {
+            self.base_name.writeable_length_hint()
+        } else {
+            self.locale_pattern
+                .try_interpolate(DoublePlaceholderValueProviderTry(
+                    self.base_name,
+                    QualifiersWriteable {
+                        script: self.script_name,
+                        region: self.region_name,
+                        variants: self.variants,
+                        separator: self.locale_separator,
+                    },
+                ))
+                .writeable_length_hint()
+        }
+    }
+
+    fn try_writeable_borrow(&self) -> Option<Result<&str, (Self::Error, &str)>> {
+        if !self.has_qualifiers() {
+            self.base_name.try_writeable_borrow()
+        } else {
+            None
         }
     }
 }
