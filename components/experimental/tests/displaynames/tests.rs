@@ -187,8 +187,8 @@ fn test_concatenate() {
         )
         .unwrap();
         let borrowed = single_display_name.as_borrowed();
-        assert_writeable_eq!(borrowed, cas.expected);
-        assert_try_writeable_eq!(borrowed, cas.expected, cas.single_result);
+        assert_writeable_eq!(borrowed, cas.expected, "{cas:?}");
+        assert_try_writeable_eq!(borrowed, cas.expected, cas.single_result, "{cas:?}");
     }
 }
 

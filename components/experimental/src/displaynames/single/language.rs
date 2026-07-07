@@ -315,19 +315,19 @@ impl LanguageIdentifierDisplayNameOwned {
     /// suitable for writing out to a string.
     pub fn as_borrowed(&self) -> LanguageIdentifierDisplayName<'_> {
         let base_name = match self.language_payload.get() {
-            Ok(p) => Ok(p.as_ref()),
-            Err(lang) => Err(lang.as_str()),
+            Ok(p) => NameOrFallback(Ok(p.as_ref())),
+            Err(lang) => NameOrFallback(Err(lang.as_str())),
         };
 
         let script_name = match self.script_payload.get() {
-            Ok(p) => Some(Ok(p.as_ref())),
-            Err(Some(script)) => Some(Err(script.as_str())),
+            Ok(p) => Some(NameOrFallback(Ok(p.as_ref()))),
+            Err(Some(script)) => Some(NameOrFallback(Err(script.as_str()))),
             Err(None) => None,
         };
 
         let region_name = match self.region_payload.get() {
-            Ok(p) => Some(Ok(p.as_ref())),
-            Err(Some(region)) => Some(Err(region.as_str())),
+            Ok(p) => Some(NameOrFallback(Ok(p.as_ref()))),
+            Err(Some(region)) => Some(NameOrFallback(Err(region.as_str()))),
             Err(None) => None,
         };
 
@@ -372,11 +372,23 @@ pub struct LanguageIdentifierDisplayName<'a>(
     pub(crate) LossyWrap<LanguageIdentifierDisplayNameInner<'a>>,
 );
 
+/// A struct implementing [`TryWriteable`] that returns a [`LanguageIdentifierNameFallbackError`]
+#[derive(Debug, Clone, Copy)]
+struct NameOrFallback<'a>(Result<&'a str, &'a str>);
+
+writeable::impl_try_writeable_delegate!(
+    NameOrFallback<'a>,
+    |&self| &self.0,
+    Error = LanguageIdentifierNameFallbackError,
+    |_fallback_str| LanguageIdentifierNameFallbackError,
+    where 'a
+);
+
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct LanguageIdentifierDisplayNameInner<'a> {
-    base_name: Result<&'a str, &'a str>,
-    script_name: Option<Result<&'a str, &'a str>>,
-    region_name: Option<Result<&'a str, &'a str>>,
+    base_name: NameOrFallback<'a>,
+    script_name: Option<NameOrFallback<'a>>,
+    region_name: Option<NameOrFallback<'a>>,
     variants: BorrowedVariants<'a>,
     locale_pattern: &'a DoublePlaceholderPattern,
     locale_separator: &'a DoublePlaceholderPattern,
@@ -393,8 +405,8 @@ writeable::impl_writeable_delegate!(LanguageIdentifierDisplayName<'_>, |&self| &
 writeable::impl_display_with_writeable!(LanguageIdentifierDisplayName<'_>);
 
 struct QualifiersWriteable<'a> {
-    script: Option<Result<&'a str, &'a str>>,
-    region: Option<Result<&'a str, &'a str>>,
+    script: Option<NameOrFallback<'a>>,
+    region: Option<NameOrFallback<'a>>,
     variants: BorrowedVariants<'a>,
     separator: &'a DoublePlaceholderPattern,
 }
@@ -406,8 +418,6 @@ impl<'a> TryWriteable for QualifiersWriteable<'a> {
         &self,
         sink: &mut S,
     ) -> Result<Result<(), Self::Error>, core::fmt::Error> {
-        let mut fallback_occurred = false;
-
         // TODO: See whether we can share this code with the list component.
         let mut first = true;
         let mut separator_str = ", ";
@@ -418,44 +428,42 @@ impl<'a> TryWriteable for QualifiersWriteable<'a> {
             }
         }
 
-        let mut write_item =
-            |sink: &mut S, res: Result<&str, &str>| -> Result<(), core::fmt::Error> {
-                if !first {
-                    sink.write_str(separator_str)?;
-                }
-                if res.try_write_to_parts(sink)?.is_err() {
-                    fallback_occurred = true;
-                }
-                first = false;
-                Ok(())
-            };
+        let mut write_item = |sink: &mut S,
+                              res: NameOrFallback|
+         -> Result<
+            Result<(), LanguageIdentifierNameFallbackError>,
+            core::fmt::Error,
+        > {
+            if !first {
+                sink.write_str(separator_str)?;
+            }
+            first = false;
+            res.try_write_to_parts(sink)
+        };
 
+        let mut result = Ok(());
         if let Some(script) = self.script {
-            write_item(sink, script)?;
+            result = result.and(write_item(sink, script)?);
         }
         if let Some(region) = self.region {
-            write_item(sink, region)?;
+            result = result.and(write_item(sink, region)?);
         }
         match self.variants {
             BorrowedVariants::One(v) => {
-                write_item(sink, Ok(v))?;
+                result = result.and(write_item(sink, NameOrFallback(Ok(v)))?);
             }
             BorrowedVariants::Slice(slice) => {
                 for item in slice.iter() {
                     let res = match item.get() {
-                        Ok(p) => Ok(p.as_ref()),
-                        Err(var) => Err(var.as_str()),
+                        Ok(p) => NameOrFallback(Ok(p.as_ref())),
+                        Err(var) => NameOrFallback(Err(var.as_str())),
                     };
-                    write_item(sink, res)?;
+                    result = result.and(write_item(sink, res)?);
                 }
             }
         }
 
-        if fallback_occurred {
-            Ok(Err(LanguageIdentifierNameFallbackError))
-        } else {
-            Ok(Ok(()))
-        }
+        Ok(result)
     }
 }
 
@@ -470,8 +478,8 @@ impl<'a> TryWriteable for LanguageIdentifierDisplayNameInner<'a> {
         let has_qualifiers =
             self.script_name.is_some() || self.region_name.is_some() || has_variants;
 
-        let fallback_occurred = if !has_qualifiers {
-            self.base_name.try_write_to_parts(sink)?.is_err()
+        if !has_qualifiers {
+            self.base_name.try_write_to_parts(sink)
         } else {
             let qualifiers = QualifiersWriteable {
                 script: self.script_name,
@@ -480,19 +488,14 @@ impl<'a> TryWriteable for LanguageIdentifierDisplayNameInner<'a> {
                 separator: self.locale_separator,
             };
 
-            self.locale_pattern
+            let result = self
+                .locale_pattern
                 .try_interpolate(DoublePlaceholderValueProviderTry(
-                    &self.base_name,
+                    self.base_name,
                     &qualifiers,
                 ))
-                .try_write_to_parts(sink)?
-                .is_err()
-        };
-
-        if fallback_occurred {
-            Ok(Err(LanguageIdentifierNameFallbackError))
-        } else {
-            Ok(Ok(()))
+                .try_write_to_parts(sink)?;
+            Ok(result.map_err(either::Either::into_inner))
         }
     }
 }
