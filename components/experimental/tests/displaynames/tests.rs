@@ -12,7 +12,7 @@ use icu_locale_core::Locale;
 use icu_locale_core::locale;
 use std::borrow::Cow;
 use writeable::{
-    Part, assert_try_writeable_eq, assert_try_writeable_parts_eq, assert_writeable_eq,
+    Part, Writeable, assert_try_writeable_eq, assert_try_writeable_parts_eq, assert_writeable_eq,
 };
 
 #[test]
@@ -189,6 +189,15 @@ fn test_concatenate() {
         let borrowed = single_display_name.as_borrowed();
         assert_writeable_eq!(borrowed, cas.expected, "{cas:?}");
         assert_try_writeable_eq!(borrowed, cas.expected, cas.single_result, "{cas:?}");
+
+        let cow = borrowed.write_to_string();
+        if cas.should_borrow {
+            assert!(matches!(cow, Cow::Borrowed(_)), "{cas:?}");
+        } else {
+            assert!(matches!(cow, Cow::Owned(_)), "{cas:?}");
+            let result = cow.into_owned();
+            assert_eq!(result.capacity(), result.len(), "{cas:?}");
+        }
     }
 }
 
