@@ -196,14 +196,14 @@ macro_rules! impl_nfd_inert_property {
 
                 let mut builder = CodePointInversionListBuilder::new();
                 for cp in 0..=(char::MAX as u32) {
-                    if let Some(ch) = char::from_u32(cp) {
-                        if ccc.get(ch) == CanonicalCombiningClass::NotReordered {
-                            let mut iter = decomp.normalize_iter([ch].into_iter());
-                            if iter.next() == Some(ch) && iter.next() == None {
-                                builder.add32(cp);
-                            }
-                        }
-                    } else {
+                    let Some(ch) = char::from_u32(cp) else {
+                        builder.add32(cp);
+                        continue;
+                    };
+
+                    if ccc.get(ch) == CanonicalCombiningClass::NotReordered
+                        && decomp.is_normalized(ch.encode_utf8(&mut [0; 4]))
+                    {
                         builder.add32(cp);
                     }
                 }
@@ -284,8 +284,7 @@ macro_rules! impl_nfc_inert_property {
                         continue;
                     }
 
-                    let mut nfc_iter = nfc.normalize_iter([ch].into_iter());
-                    if !(nfc_iter.next() == Some(ch) && nfc_iter.next() == None) {
+                    if !nfc.is_normalized(ch.encode_utf8(&mut [0; 4])) {
                         continue;
                     }
 
