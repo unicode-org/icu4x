@@ -175,11 +175,22 @@ pub trait TryWriteable {
         LengthHint::undefined()
     }
 
+    /// Returns a `&str` that matches the output of `try_write_to`, if possible.
+    ///
+    /// This method is used to avoid materializing a [`String`] in `write_to_string`.
+    fn try_writeable_borrow(&self) -> Option<Result<&str, (Self::Error, &str)>> {
+        None
+    }
+
     /// Writes the content of this writeable to a string.
     ///
     /// In the failure case, this function returns the error and the best-effort string ("lossy mode").
     ///
-    /// Examples
+    /// # Note to implementors
+    /// 
+    /// See the note in [`Writeable::write_to_string`].
+    ///
+    /// # Examples
     ///
     /// ```
     /// # use std::borrow::Cow;
@@ -195,6 +206,9 @@ pub trait TryWriteable {
     /// ```
     #[cfg(feature = "alloc")]
     fn try_write_to_string(&self) -> Result<Cow<'_, str>, (Self::Error, Cow<'_, str>)> {
+        if let Some(borrow) = self.try_writeable_borrow() {
+            return borrow.map(Cow::Borrowed).map_err(|(e, s)| (e, Cow::Borrowed(s)));
+        }
         let hint = self.writeable_length_hint();
         if hint.is_zero() {
             return Ok(Cow::Borrowed(""));
@@ -249,6 +263,13 @@ where
         }
     }
 
+    fn try_writeable_borrow(&self) -> Option<Result<&str, (Self::Error, &str)>> {
+        match self {
+            Ok(t) => t.writeable_borrow().map(Ok),
+            Err(e) => e.writeable_borrow().map(|s| Err((e.clone(), s)))
+        }
+    }
+
     #[inline]
     #[cfg(feature = "alloc")]
     fn try_write_to_string(&self) -> Result<Cow<'_, str>, (Self::Error, Cow<'_, str>)> {
@@ -291,6 +312,12 @@ where
     #[inline]
     fn writeable_length_hint(&self) -> LengthHint {
         self.0.writeable_length_hint()
+    }
+
+    #[inline]
+    fn writeable_borrow(&self) -> Option<&str> {
+        let Ok(s) = self.0.try_writeable_borrow()?;
+        Some(s)
     }
 
     #[inline]
@@ -345,6 +372,11 @@ where
     #[inline]
     fn writeable_length_hint(&self) -> LengthHint {
         self.0.writeable_length_hint()
+    }
+
+    #[inline]
+    fn try_writeable_borrow(&self) -> Option<Result<&str, (Self::Error, &str)>> {
+        self.0.writeable_borrow().map(Ok)
     }
 
     #[inline]
@@ -466,6 +498,15 @@ macro_rules! impl_try_writeable_delegate {
             #[inline]
             fn writeable_length_hint(&$self) -> $crate::LengthHint {
                 ($delegate).writeable_length_hint()
+            }
+            #[inline]
+            fn try_writeable_borrow(&$self) -> Option<Result<&str, (Self::Error, &str)>> {
+                let result = ($delegate).try_writeable_borrow()?;
+                $(
+                    let error_map = |$error_arg| { $error_map };
+                    let result = result.map_err(|(err, cow)| (error_map(err), cow));
+                )?
+                Some(result)
             }
             #[inline]
             $(#[$alloc_feature])?
