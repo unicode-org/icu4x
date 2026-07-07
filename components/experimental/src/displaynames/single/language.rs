@@ -264,20 +264,19 @@ impl LanguageIdentifierDisplayNameOwned {
         let mut variant_results = subject
             .variants
             .iter()
-            .map(|variant| load_variant(*variant))
-            .peekable();
+            .map(|variant| load_variant(*variant));
 
-        let variant_payloads = if let Some(result) = variant_results.next() {
-            let first_val = result?;
-            if variant_results.peek().is_some() {
+        let variant_payloads = if let Some(first) = variant_results.next() {
+            if let Some(second) = variant_results.next() {
                 // 2 or more variants
-                let payload_vec = core::iter::once(Ok(first_val))
+                let payload_vec = [first, second]
+                    .into_iter()
                     .chain(variant_results)
                     .collect::<Result<Vec<_>, _>>()?;
                 DataPayloadOr::from_other(payload_vec)
             } else {
                 // 1 variant
-                match first_val.into_inner() {
+                match first?.into_inner() {
                     Ok(payload) => DataPayloadOr::from_payload(payload),
                     Err(fallback_code) => {
                         DataPayloadOr::from_other(vec![DataPayloadOr::from_other(fallback_code)])
