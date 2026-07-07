@@ -16,7 +16,6 @@ use icu_pattern::{DoublePlaceholderPattern, DoublePlaceholderValueProviderTry, P
 use icu_provider::DataPayloadOr;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
-use writeable::Writeable;
 use writeable::{PartsWrite, TryWriteable, adapters::LossyWrap};
 
 /// An error returned when a display name was not found in data and has fallen back to the raw BCP-47 subtag code.
@@ -86,9 +85,9 @@ type PayloadOrFallback<M, S> = DataPayloadOr<M, S>;
 ///     [(9, 13, Part::ERROR)] // the span of Qabc
 /// );
 ///
-/// // To format in lossy mode (ignoring fallback errors), use `.with_fallback()`:
+/// // To format in lossy mode (ignoring fallback errors), use standard `Writeable` or `Display`:
 /// use writeable::assert_writeable_eq;
-/// assert_writeable_eq!(borrowed.with_fallback(), "Italian (Qabc, Europe)");
+/// assert_writeable_eq!(borrowed, "Italian (Qabc, Europe)");
 /// ```
 #[allow(dead_code)]
 #[derive(Debug)]
@@ -340,14 +339,14 @@ impl LanguageIdentifierDisplayNameOwned {
             Err(vec) => BorrowedVariants::Slice(vec.as_slice()),
         };
 
-        LanguageIdentifierDisplayName {
+        LanguageIdentifierDisplayName(LossyWrap(LanguageIdentifierDisplayNameInner {
             base_name,
             script_name,
             region_name,
             variants,
             locale_pattern: &self.essentials_payload.get().locale_pattern,
             locale_separator: &self.essentials_payload.get().locale_separator,
-        }
+        }))
     }
 }
 
@@ -372,7 +371,12 @@ impl BorrowedVariants<'_> {
 ///
 /// See [`LanguageIdentifierDisplayNameOwned`].
 #[derive(Debug, Clone, Copy)]
-pub struct LanguageIdentifierDisplayName<'a> {
+pub struct LanguageIdentifierDisplayName<'a>(
+    pub(crate) LossyWrap<LanguageIdentifierDisplayNameInner<'a>>,
+);
+
+#[derive(Debug, Clone, Copy)]
+pub(crate) struct LanguageIdentifierDisplayNameInner<'a> {
     base_name: Result<&'a str, &'a str>,
     script_name: Option<Result<&'a str, &'a str>>,
     region_name: Option<Result<&'a str, &'a str>>,
@@ -381,15 +385,15 @@ pub struct LanguageIdentifierDisplayName<'a> {
     locale_separator: &'a DoublePlaceholderPattern,
 }
 
-impl<'a> LanguageIdentifierDisplayName<'a> {
-    /// Returns a [`Writeable`](writeable::Writeable) that formats the display name.
-    ///
-    /// Missing display names will fall back to the raw BCP-47 code.
-    #[inline]
-    pub fn with_fallback(&self) -> impl Writeable + core::fmt::Display + core::fmt::Debug + 'a {
-        LossyWrap(*self)
-    }
-}
+writeable::impl_try_writeable_delegate!(
+    LanguageIdentifierDisplayName<'_>,
+    |&self| &self.0.0,
+    Error = LanguageIdentifierNameFallbackError
+);
+
+writeable::impl_writeable_delegate!(LanguageIdentifierDisplayName<'_>, |&self| &self.0);
+
+writeable::impl_display_with_writeable!(LanguageIdentifierDisplayName<'_>);
 
 struct QualifiersWriteable<'a> {
     script: Option<Result<&'a str, &'a str>>,
@@ -458,7 +462,7 @@ impl<'a> TryWriteable for QualifiersWriteable<'a> {
     }
 }
 
-impl<'a> TryWriteable for LanguageIdentifierDisplayName<'a> {
+impl<'a> TryWriteable for LanguageIdentifierDisplayNameInner<'a> {
     type Error = LanguageIdentifierNameFallbackError;
 
     fn try_write_to_parts<S: PartsWrite + ?Sized>(
