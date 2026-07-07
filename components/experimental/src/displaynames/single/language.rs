@@ -82,7 +82,7 @@ pub struct LanguageIdentifierNameFallbackError;
 ///     [(9, 13, Part::ERROR)] // the span of Qabc
 /// );
 ///
-/// // To format in lossy mode (ignoring fallback errors), use standard `Writeable` or `Display`:
+/// // To format in lossy mode (ignoring fallback errors), use [`Writeable`] or [`Display`]:
 /// use writeable::assert_writeable_eq;
 /// assert_writeable_eq!(borrowed, "Italian (Qabc, Europe)");
 /// ```
