@@ -19,6 +19,9 @@ use core::fmt::Debug;
 use core::num::NonZeroU8;
 
 use crate::types::Weekday;
+use icu_locale_core::preferences::extensions::unicode::keywords::{
+    CalendarAlgorithm, HijriCalendarAlgorithm,
+};
 use icu_provider::fallback::{LocaleFallbackConfig, LocaleFallbackPriority};
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
@@ -44,6 +47,7 @@ const _: () = {
     }
     make_provider!(Baked);
     impl_calendar_japanese_modern_v1!(Baked);
+    impl_calendar_preferred_v1!(Baked);
     impl_calendar_week_v1!(Baked);
 };
 
@@ -67,9 +71,55 @@ icu_provider::data_marker!(
     },
 );
 
+/// Default calendar preferences for a region.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct CalendarPreference {
+    /// The default calendar to use for this region.
+    pub default_algorithm: CalendarAlgorithm,
+    /// The default Hijri calendar to use for this region.
+    pub default_hijri_algorithm: HijriCalendarAlgorithm,
+}
+
+impl CalendarPreference {
+    /// Resolves a [`Option<CalendarAlgorithm>`] to a concrete algorithm against these preferences.
+    pub fn resolve(&self, unresolved: Option<CalendarAlgorithm>) -> CalendarAlgorithm {
+        match unresolved {
+            Some(CalendarAlgorithm::Hijri(None)) => {
+                CalendarAlgorithm::Hijri(Some(self.default_hijri_algorithm))
+            }
+            Some(a) => a,
+            None => self.default_algorithm,
+        }
+    }
+}
+
+icu_provider::data_marker!(
+    /// The preferred calendar algorithm for a region.
+    CalendarPreferredV1,
+    "calendar/preferred/v1",
+    CalendarPreference,
+    fallback_config = {
+        let mut config = LocaleFallbackConfig::default();
+        config.priority = LocaleFallbackPriority::Region;
+        config
+    },
+);
+
+icu_provider::data_struct!(
+    CalendarPreference,
+    #[cfg(feature = "datagen")]
+);
+
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
-pub const MARKERS: &[DataMarkerInfo] = &[CalendarJapaneseModernV1::INFO, CalendarWeekV1::INFO];
+pub const MARKERS: &[DataMarkerInfo] = &[
+    CalendarJapaneseModernV1::INFO,
+    CalendarWeekV1::INFO,
+    CalendarPreferredV1::INFO,
+];
 
 /// The date at which an era started
 ///

@@ -494,7 +494,7 @@ impl<'data> CaseMap<'data> {
     ) -> Option<FullMappingResult<'_>> {
         if locale == CaseMapLocale::Turkish && c == 'i' {
             // In Turkic languages, i turns into a dotted capital I.
-            return Some(FullMappingResult::CodePoint('\u{130}'));
+            return Some(FullMappingResult::CodePoint('İ'));
         }
         if locale == CaseMapLocale::Lithuanian
             && c == '\u{307}'
@@ -505,7 +505,7 @@ impl<'data> CaseMap<'data> {
             return Some(FullMappingResult::Remove);
         }
         // ICU4C's non-standard extension for Armenian ligature ech-yiwn.
-        if c == '\u{587}' {
+        if c == 'և' {
             return match (locale, IS_TITLE_CONTEXT) {
                 (CaseMapLocale::Armenian, false) => Some(FullMappingResult::String("ԵՎ")),
                 (CaseMapLocale::Armenian, true) => Some(FullMappingResult::String("Եվ")),

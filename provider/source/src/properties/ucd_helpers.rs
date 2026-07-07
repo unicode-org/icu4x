@@ -18,6 +18,13 @@ pub(crate) fn parse_cp(cp: &str) -> u32 {
     u32::from_str_radix(cp, 16).unwrap()
 }
 
+pub(crate) fn parse_cps(cps: &str) -> String {
+    cps.split_whitespace()
+        .map(parse_cp)
+        .map(|cp| char::from_u32(cp).unwrap())
+        .collect()
+}
+
 #[derive(Copy, Clone, Debug)]
 pub(crate) struct UcdFields<'a>(&'a str);
 

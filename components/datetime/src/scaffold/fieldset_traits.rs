@@ -8,7 +8,7 @@ use crate::{
     scaffold::*,
 };
 use icu_calendar::{
-    provider::CalendarJapaneseModernV1,
+    provider::{CalendarJapaneseModernV1, CalendarPreferredV1},
     types::{DayOfMonth, DayOfYear, MonthInfo, RataDie, Weekday, YearInfo},
 };
 use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV1};
@@ -505,6 +505,7 @@ pub trait AllAnyCalendarExternalDataMarkers:
     DataProvider<CalendarJapaneseModernV1>
     + DataProvider<DecimalSymbolsV1>
     + DataProvider<DecimalDigitsV1>
+    + DataProvider<CalendarPreferredV1>
 {
 }
 
@@ -513,6 +514,7 @@ impl<T> AllAnyCalendarExternalDataMarkers for T where
         + DataProvider<CalendarJapaneseModernV1>
         + DataProvider<DecimalSymbolsV1>
         + DataProvider<DecimalDigitsV1>
+        + DataProvider<CalendarPreferredV1>
 {
 }
 

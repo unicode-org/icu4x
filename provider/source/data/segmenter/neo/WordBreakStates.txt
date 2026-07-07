@@ -1,9 +1,9 @@
 # State name ; Accepting (Yes, No, or lookahead name); lookahead name or empty; Break type.
 START ; No ;  ; 
 Numeric Single_Quote ; No ;  ; 
-ALettermExtPict Single_Quote ; No ;  ; 
+ALettermExtPictmHangulSyllablemHan Single_Quote ; No ;  ; 
 Hebrew_Letter Double_Quote ; No ;  ; 
-XXmExtPict ; Yes ;  ; 
+XXmExtPictmHiraganamHanmComplexContext ; Yes ;  ; 
 LF ; Yes ;  ; 
 CR ; Yes ;  ; 
 WSegSpace ; Yes ;  ; 
@@ -12,15 +12,15 @@ ZWJ ; Yes ;  ;
 RI ; Yes ;  ; 
 ExtendNumLet ZWJ ; Yes ;  ; 
 RI ZWJ ; Yes ;  ; 
-Hebrew_Letter Single_Quote Extend ; Yes ;  ; 
+Hebrew_Letter Single_Quote ExtendmHanmComplexContext ; Yes ;  ; 
 Hebrew_Letter Single_Quote ZWJ ; Yes ;  ; 
 Numeric ; Yes ;  ; Number
 Numeric ExtendNumLet ; Yes ;  ; Number
 Numeric ZWJ ; Yes ;  ; Number
-ALettermExtPict ; Yes ;  ; Letter
+ALettermExtPictmHangulSyllablemHan ; Yes ;  ; Letter
 Hebrew_Letter ; Yes ;  ; Letter
-ALettermExtPict ExtendNumLet ; Yes ;  ; Letter
-ALettermExtPict ZWJ ; Yes ;  ; Letter
+ALettermExtPictmHangulSyllablemHan ExtendNumLet ; Yes ;  ; Letter
+ALettermExtPictmHangulSyllablemHan ZWJ ; Yes ;  ; Letter
 Hebrew_Letter Single_Quote ; Yes ;  ; Letter
 Hebrew_Letter ZWJ ; Yes ;  ; Letter
 Katakana ; Yes ;  ; Letter

@@ -3,12 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_properties::PropertyNamesLong;
-use icu_segmenter::GraphemeClusterSegmenter;
-use icu_segmenter::LineSegmenter;
-use icu_segmenter::SentenceSegmenter;
-use icu_segmenter::WordSegmenter;
-use std::char;
-use std::io::BufRead;
+use icu_segmenter::*;
 
 struct TestContentIterator<LineIterator>(LineIterator);
 
@@ -89,13 +84,8 @@ where
     }
 }
 
-fn line_break_test(file: &'static str) {
-    let test_iter = TestContentIterator(
-        std::io::BufReader::new(std::fs::File::open(file).unwrap())
-            .lines()
-            .map(|l| l.unwrap()),
-    );
-    let segmenter = LineSegmenter::new_for_non_complex_scripts(Default::default());
+fn line_break_test(file: &'static str, segmenter: LineSegmenterBorrowed) {
+    let test_iter = TestContentIterator::new(file);
     for (i, mut test) in test_iter.enumerate() {
         let s: String = test.chars.into_iter().collect();
         let iter = segmenter.segment_str(&s);
@@ -178,22 +168,42 @@ fn line_break_test(file: &'static str) {
 
 #[test]
 fn run_line_break_test() {
-    line_break_test("./tests/testdata/LineBreakTest_15.1.txt");
+    line_break_test(
+        include_str!("testdata/LineBreakTest_15.1.txt"),
+        LineSegmenter::new_for_non_complex_scripts(Default::default()),
+    );
+    line_break_test(
+        include_str!("testdata/LineBreakTest.txt"),
+        LineSegmenter::new_neo_for_non_complex_scripts(Default::default()),
+    );
 }
 
 #[test]
 fn run_line_break_extra_test() {
-    line_break_test("./tests/testdata/LineBreakExtraTest.txt");
+    line_break_test(
+        include_str!("testdata/LineBreakExtraTest.txt"),
+        LineSegmenter::new_for_non_complex_scripts(Default::default()),
+    );
+    line_break_test(
+        include_str!("testdata/LineBreakExtraTest.txt"),
+        LineSegmenter::new_neo_for_non_complex_scripts(Default::default()),
+    );
 }
 
 #[test]
 fn run_line_break_random_test() {
-    line_break_test("./tests/testdata/LineBreakRandomTest_15.1.txt");
+    line_break_test(
+        include_str!("testdata/LineBreakRandomTest_15.1.txt"),
+        LineSegmenter::new_for_non_complex_scripts(Default::default()),
+    );
+    line_break_test(
+        include_str!("testdata/LineBreakRandomTest.txt"),
+        LineSegmenter::new_neo_for_non_complex_scripts(Default::default()),
+    );
 }
 
-fn word_break_test(file: &'static str) {
+fn word_break_test(file: &'static str, segmenter: WordSegmenterBorrowed) {
     let test_iter = TestContentIterator::new(file);
-    let segmenter = WordSegmenter::new_for_non_complex_scripts(Default::default());
     for (i, test) in test_iter.enumerate() {
         let s: String = test.chars.into_iter().collect();
         let iter = segmenter.segment_str(&s);
@@ -259,22 +269,42 @@ fn word_break_test(file: &'static str) {
 
 #[test]
 fn run_word_break_test() {
-    word_break_test(include_str!("testdata/WordBreakTest.txt"));
+    word_break_test(
+        include_str!("testdata/WordBreakTest.txt"),
+        WordSegmenter::new_for_non_complex_scripts(Default::default()),
+    );
+    word_break_test(
+        include_str!("testdata/WordBreakTest.txt"),
+        WordSegmenter::new_neo_for_non_complex_scripts(Default::default()),
+    );
 }
 
 #[test]
 fn run_word_break_extra_test() {
-    word_break_test(include_str!("testdata/WordBreakExtraTest.txt"));
+    word_break_test(
+        include_str!("testdata/WordBreakExtraTest.txt"),
+        WordSegmenter::new_for_non_complex_scripts(Default::default()),
+    );
+    word_break_test(
+        include_str!("testdata/WordBreakExtraTest.txt"),
+        WordSegmenter::new_neo_for_non_complex_scripts(Default::default()),
+    );
 }
 
 #[test]
 fn run_word_break_random_test() {
-    word_break_test(include_str!("testdata/WordBreakRandomTest.txt"));
+    word_break_test(
+        include_str!("testdata/WordBreakRandomTest.txt"),
+        WordSegmenter::new_for_non_complex_scripts(Default::default()),
+    );
+    word_break_test(
+        include_str!("testdata/WordBreakRandomTest.txt"),
+        WordSegmenter::new_neo_for_non_complex_scripts(Default::default()),
+    );
 }
 
-fn grapheme_break_test(file: &'static str) {
+fn grapheme_break_test(file: &'static str, segmenter: GraphemeClusterSegmenterBorrowed) {
     let test_iter = TestContentIterator::new(file);
-    let segmenter = GraphemeClusterSegmenter::new();
     for (i, test) in test_iter.enumerate() {
         let s: String = test.chars.into_iter().collect();
         let iter = segmenter.segment_str(&s);
@@ -340,22 +370,42 @@ fn grapheme_break_test(file: &'static str) {
 
 #[test]
 fn run_grapheme_break_test() {
-    grapheme_break_test(include_str!("testdata/GraphemeBreakTest.txt"));
+    grapheme_break_test(
+        include_str!("testdata/GraphemeBreakTest.txt"),
+        GraphemeClusterSegmenter::new(),
+    );
+    grapheme_break_test(
+        include_str!("testdata/GraphemeBreakTest.txt"),
+        GraphemeClusterSegmenter::new_neo(),
+    );
 }
 
 #[test]
 fn run_grapheme_break_extra_test() {
-    grapheme_break_test(include_str!("testdata/GraphemeBreakExtraTest.txt"));
+    grapheme_break_test(
+        include_str!("testdata/GraphemeBreakExtraTest.txt"),
+        GraphemeClusterSegmenter::new(),
+    );
+    grapheme_break_test(
+        include_str!("testdata/GraphemeBreakExtraTest.txt"),
+        GraphemeClusterSegmenter::new_neo(),
+    );
 }
 
 #[test]
 fn run_grapheme_break_random_test() {
-    grapheme_break_test(include_str!("testdata/GraphemeBreakRandomTest.txt"));
+    grapheme_break_test(
+        include_str!("testdata/GraphemeBreakRandomTest.txt"),
+        GraphemeClusterSegmenter::new(),
+    );
+    grapheme_break_test(
+        include_str!("testdata/GraphemeBreakRandomTest.txt"),
+        GraphemeClusterSegmenter::new_neo(),
+    );
 }
 
-fn sentence_break_test(file: &'static str) {
+fn sentence_break_test(file: &'static str, segmenter: SentenceSegmenterBorrowed) {
     let test_iter = TestContentIterator::new(file);
-    let segmenter = SentenceSegmenter::new(Default::default());
     for (i, test) in test_iter.enumerate() {
         let s: String = test.chars.into_iter().collect();
         let iter = segmenter.segment_str(&s);
@@ -421,15 +471,36 @@ fn sentence_break_test(file: &'static str) {
 
 #[test]
 fn run_sentence_break_test() {
-    sentence_break_test(include_str!("testdata/SentenceBreakTest.txt"));
+    sentence_break_test(
+        include_str!("testdata/SentenceBreakTest.txt"),
+        SentenceSegmenter::new(Default::default()),
+    );
+    sentence_break_test(
+        include_str!("testdata/SentenceBreakTest.txt"),
+        SentenceSegmenter::new_neo(Default::default()),
+    );
 }
 
 #[test]
 fn run_sentence_break_extra_test() {
-    sentence_break_test(include_str!("testdata/SentenceBreakExtraTest.txt"));
+    sentence_break_test(
+        include_str!("testdata/SentenceBreakExtraTest.txt"),
+        SentenceSegmenter::new(Default::default()),
+    );
+    sentence_break_test(
+        include_str!("testdata/SentenceBreakExtraTest.txt"),
+        SentenceSegmenter::new_neo(Default::default()),
+    );
 }
 
 #[test]
 fn run_sentence_break_random_test() {
-    sentence_break_test(include_str!("testdata/SentenceBreakRandomTest.txt"));
+    sentence_break_test(
+        include_str!("testdata/SentenceBreakRandomTest.txt"),
+        SentenceSegmenter::new(Default::default()),
+    );
+    sentence_break_test(
+        include_str!("testdata/SentenceBreakRandomTest.txt"),
+        SentenceSegmenter::new_neo(Default::default()),
+    );
 }

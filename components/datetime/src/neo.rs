@@ -1138,8 +1138,8 @@ pub type NoCalendarFormatter<FSet> = FixedCalendarDateTimeFormatter<(), FSet>;
 #[derive(Debug)]
 pub struct FormattedDateTime<'a> {
     pattern: DateTimeZonePatternDataBorrowed<'a>,
-    input: DateTimeInputUnchecked,
-    names: RawDateTimeNamesBorrowed<'a>,
+    pub(crate) input: DateTimeInputUnchecked,
+    pub(crate) names: RawDateTimeNamesBorrowed<'a>,
 }
 
 impl Writeable for FormattedDateTime<'_> {

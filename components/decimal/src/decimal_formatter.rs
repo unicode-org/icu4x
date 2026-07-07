@@ -238,38 +238,10 @@ impl Writeable for FormattedUnsignedDecimal<'_> {
     }
 }
 
-impl Writeable for FormattedDecimal<'_> {
-    fn write_to_parts<W>(&self, sink: &mut W) -> Result<(), core::fmt::Error>
-    where
-        W: PartsWrite + ?Sized,
-    {
-        self.0.write_to_parts(sink)
-    }
-}
-
+writeable::impl_writeable_delegate!(FormattedDecimal<'_>, |&self| &self.0, #[cfg(feature = "alloc")]);
 writeable::impl_display_with_writeable!(FormattedDecimal<'_>, #[cfg(feature = "alloc")]);
 writeable::impl_display_with_writeable!(FormattedUnsignedDecimal<'_>, #[cfg(feature = "alloc")]);
-
-/// This trait is implemented for compatibility with [`fmt!`](core::fmt)
-/// To create a string, [`Writeable::write_to_string`] is usually more efficient
-impl<T: Writeable> core::fmt::Display for FormattedSign<'_, T> {
-    #[inline]
-    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-        Writeable::write_to(&self, f)
-    }
-}
-#[cfg(feature = "alloc")]
-impl<T: Writeable> FormattedSign<'_, T> {
-    /// Converts the given value to a `String`.
-    ///
-    /// Under the hood, this uses an efficient [`Writeable`] implementation.
-    /// However, in order to avoid allocating a string, it is more efficient
-    /// to use [`Writeable`] directly.
-    #[allow(clippy::inherent_to_string_shadow_display)]
-    pub fn to_string(&self) -> String {
-        Writeable::write_to_string(self).into_owned()
-    }
-}
+writeable::impl_display_with_writeable!(FormattedSign<'_, T>, #[cfg(feature = "alloc")], where T: Writeable);
 
 #[test]
 fn test_numbering_resolution_fallback() {

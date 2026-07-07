@@ -10,6 +10,7 @@ use crate::scaffold::UnstableSealed;
 use core::marker::PhantomData;
 use icu_calendar::cal;
 use icu_calendar::preferences::{CalendarAlgorithm, CalendarPreferences, HijriCalendarAlgorithm};
+use icu_calendar::provider::CalendarPreferredV1;
 use icu_calendar::types::Weekday;
 use icu_calendar::{AnyCalendar, AnyCalendarKind, AsCalendar, Date, IntoAnyCalendar, Ref};
 use icu_provider::marker::NeverMarker;
@@ -369,6 +370,14 @@ fn test_calendar_fallback() {
         FormattableAnyCalendar::try_new(locale!("und-u-ca-buddhist").into()),
     );
     assert_eq!(
+        FormattableAnyCalendar::try_new(locale!("th").into()),
+        FormattableAnyCalendar::try_new(locale!("und-u-ca-buddhist").into()),
+    );
+    assert_eq!(
+        FormattableAnyCalendar::try_new(locale!("fa").into()),
+        FormattableAnyCalendar::try_new(locale!("und-u-ca-persian").into()),
+    );
+    assert_eq!(
         FormattableAnyCalendar::try_new(locale!("en-SA-u-ca-islamic").into()),
         FormattableAnyCalendar::try_new(
             Locale::try_from_str("und-u-ca-islamic-umalqura")
@@ -443,10 +452,38 @@ impl FormattableAnyCalendar {
         mut prefs: CalendarPreferences,
     ) -> Result<Self, DataError>
     where
-        P: ?Sized + DataProvider<icu_calendar::provider::CalendarJapaneseModernV1>,
+        P: ?Sized
+            + DataProvider<icu_calendar::provider::CalendarJapaneseModernV1>
+            + DataProvider<CalendarPreferredV1>,
     {
         use CalendarAlgorithm::*;
-        let any_calendar = match prefs.resolved_algorithm() {
+
+        if prefs.calendar_algorithm == Some(Iso8601) {
+            // Resolve iso8601 to the region's default.
+            prefs.calendar_algorithm = None;
+        }
+        if prefs.calendar_algorithm == Some(Hijri(Some(HijriCalendarAlgorithm::Rgsa))) {
+            // Resolve islamic-rgsa to the region's Hijri default.
+            prefs.calendar_algorithm = Some(Hijri(None));
+        }
+
+        let algorithm = match prefs.calendar_algorithm {
+            Some(algorithm) if !matches!(algorithm, Hijri(None)) => algorithm,
+            unresolved => DataProvider::<CalendarPreferredV1>::load(
+                &provider,
+                DataRequest {
+                    id: DataIdentifierBorrowed::for_locale(&CalendarPreferredV1::make_locale(
+                        prefs.locale_preferences,
+                    )),
+                    metadata: Default::default(),
+                },
+            )?
+            .payload
+            .get()
+            .resolve(unresolved),
+        };
+
+        let any_calendar = match algorithm {
             Buddhist => AnyCalendar::Buddhist(cal::Buddhist),
             Chinese => AnyCalendar::Chinese(cal::ChineseTraditional::new()),
             Coptic => AnyCalendar::Coptic(cal::Coptic),
@@ -477,9 +514,8 @@ impl FormattableAnyCalendar {
             Persian => AnyCalendar::Persian(cal::Persian),
             Roc => AnyCalendar::Roc(cal::Roc),
             Iso8601 | Hijri(_) => {
-                // unsupported
-                prefs.calendar_algorithm = None;
-                return Self::try_new_unstable(provider, prefs);
+                debug_assert!(false, "filtered out before and not default for any region");
+                AnyCalendar::Gregorian(cal::Gregorian)
             }
             _ => {
                 // unknown

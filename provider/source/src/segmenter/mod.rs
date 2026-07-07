@@ -21,8 +21,6 @@ use crate::source::{UnicodeCache, include_files};
 #[cfg(feature = "unstable")]
 use icu::collections::codepointinvlist::CodePointInversionList;
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-#[cfg(feature = "unstable")]
-use icu::properties::PropertyNamesLong;
 use icu::properties::{
     CodePointMapData, CodePointMapDataBorrowed, CodePointSetData,
     props::{
@@ -903,6 +901,44 @@ fn neo_sources() -> AbstractFs {
     )
 }
 
+#[test]
+#[ignore]
+#[cfg(feature = "networking")]
+fn download() {
+    use std::fs::File;
+    use std::io::Write;
+
+    let data_root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("data/segmenter/neo");
+
+    for file in neo_sources().list("").unwrap() {
+        if matches!(
+            file.as_str(),
+            "SentenceBreakTailoring_el.txt"
+                | "LineBreakTailoring_word_breakall.txt"
+                | "LineBreakTailoring_word_keepall.txt"
+        ) {
+            // ICU4X-custom tailorings
+            continue;
+        }
+
+        let target = data_root.join(&file);
+        std::fs::create_dir_all(target.parent().unwrap()).unwrap();
+        crlify::BufWriterWithLineEndingFix::new(File::create(&target).unwrap())
+            .write_all(
+                &AbstractFs::new_from_url(
+                    concat!(
+                        "https://raw.githubusercontent.com/eggrobin/unicodetools/",
+                        "refs/heads/RoBertBastIan/"
+                    )
+                    .into(),
+                )
+                .read_to_buf(&file)
+                .unwrap(),
+            )
+            .unwrap();
+    }
+}
+
 #[cfg(feature = "unstable")]
 type TailoredSegmenter = (
     SegmenterStateMachine<'static>,
@@ -955,7 +991,7 @@ impl SourceDataProvider {
             .sentence
             .get_or_init(|| {
                 self.build_segmenter(&neo_sources(), "SentenceBreak", |s| {
-                    if s == "EOL" { 1 } else { 0 }
+                    if s == "Nonterminated" { 1 } else { 0 }
                 })
             })
             .as_ref()
@@ -990,15 +1026,22 @@ impl SourceDataProvider {
     > {
         let mut magic_symbols = BTreeMap::new();
         let mut fixed_symbol_assignments = BTreeMap::new();
+        let mut complex_symbols = BTreeMap::new();
         let symbols = sources.read_to_string(&format!("{prefix}Symbols.txt"))?;
         let mut symbols = symbols
             .lines()
             .map(|l| l.split('#').next().unwrap().trim())
             .filter(|l| !l.is_empty())
             .map(|line| {
-                let mut iter = line.split(';');
-                let symbol = iter.next().unwrap().trim();
-                let unicode_set = iter.next().unwrap().trim();
+                let mut iter = line.split(';').map(str::trim);
+                let symbol = iter.next().unwrap();
+                let unicode_set = iter.next().unwrap();
+
+                if let Some(non_complex_equivalent) = iter.next()
+                    && !non_complex_equivalent.is_empty()
+                {
+                    complex_symbols.insert(symbol, non_complex_equivalent);
+                }
 
                 let set = icu::properties::unicodeset_parse::parse_unstable(unicode_set, self)
                     .map_err(|e| {
@@ -1055,59 +1098,78 @@ impl SourceDataProvider {
             .flat_map(|(_, &(_, lookahead, _))| lookahead)
             .collect::<BTreeSet<_>>();
 
-        if prefix == "LineBreak" {
-            // Create symbols for complex scripts, allowing the state machine to use the correct
-            // dictionary without further lookup.
+        let mut pseudo_symbol_map = BTreeMap::<String, (String, ComplexScript)>::new();
 
-            // TODO: These should be marked in LineBreakSymbols.txt
-            let complex_symbols = [
+        // Create pseudo symbols for complex scripts, allowing the state machine to use the correct
+        // dictionary without further lookup.
+
+        let complex_languages = match prefix {
+            "LineBreak" => [
+                (ComplexScript::Myanmar, "[:sc=Myanmar:]&[:lb=SA:]"),
+                (ComplexScript::Khmer, "[:sc=Khmer:]&[:lb=SA:]"),
+                (ComplexScript::Lao, "[:sc=Lao:]&[:lb=SA:]"),
+                (ComplexScript::Thai, "[:sc=Thai:]&[:lb=SA:]"),
+            ]
+            .as_slice(),
+            "WordBreak" => [
+                (ComplexScript::Myanmar, "[:sc=Myanmar:]&[:lb=SA:]"),
                 (
-                    "SAmMnmMc",
-                    "AImEastAsian|ALmEastAsianmDottedCircle|SG|XXmExtPictUnassigned",
+                    ComplexScript::ChineseOrJapanese,
+                    "[[[:sc=Han:] [:sc=Hiragana:] [:wb=Katakana:] 가-힣] - [:lb=SA:]]",
                 ),
-                ("SA_Mn|SA_Mc", "CM"),
-            ];
+                (ComplexScript::Khmer, "[:sc=Khmer:]&[:lb=SA:]"),
+                (ComplexScript::Lao, "[:sc=Lao:]&[:lb=SA:]"),
+                (ComplexScript::Thai, "[:sc=Thai:]&[:lb=SA:]"),
+            ]
+            .as_slice(),
+            _ => &[],
+        }
+        .iter()
+        .map(|&(l, set)| {
+            (
+                l,
+                icu::properties::unicodeset_parse::parse_unstable(set, self)
+                    .unwrap()
+                    .0
+                    .code_points()
+                    .clone(),
+            )
+        })
+        .collect::<Vec<_>>();
 
-            let mut script_symbols_to_symbols = BTreeMap::new();
-            for (symbol, non_complex_symbol) in complex_symbols {
-                let set = symbols.get(symbol).unwrap().clone();
+        for (&symbol, &non_complex_symbol) in &complex_symbols {
+            let set = symbols.get(symbol).unwrap().clone();
 
-                let mut set_builder = CodePointInversionListBuilder::new();
-                set_builder.add_set(&set);
+            let mut set_builder = CodePointInversionListBuilder::new();
+            set_builder.add_set(&set);
 
-                for sc in [Script::Myanmar, Script::Lao, Script::Thai, Script::Khmer] {
-                    let sc_set = CodePointMapData::try_new_unstable(self)?
-                        .as_borrowed()
-                        .get_set_for_value(sc);
-
-                    if sc_set
-                        .as_borrowed()
-                        .iter_ranges()
-                        .all(|mut range| range.all(|c| !set.contains32(c)))
-                    {
-                        // no overlap
-                        continue;
-                    }
-
-                    set_builder.remove_set(&sc_set.to_code_point_inversion_list());
-
-                    let mut intersection = CodePointInversionListBuilder::new();
-                    intersection.add_set(&sc_set.to_code_point_inversion_list());
-                    for r in set.iter_ranges_complemented() {
-                        intersection.remove_range32(r);
-                    }
-
-                    let intersection_symbol = format!(
-                        "{symbol}_{}",
-                        PropertyNamesLong::try_new_unstable(self)?
-                            .as_borrowed()
-                            .get(sc)
-                            .unwrap()
-                    );
-                    script_symbols_to_symbols.insert((sc, symbol), intersection_symbol.to_string());
-                    symbols.insert(Cow::Owned(intersection_symbol), intersection.build());
+            for &(language, ref language_set) in &complex_languages {
+                if language_set
+                    .iter_ranges()
+                    .all(|mut range| range.all(|c| !set.contains32(c)))
+                {
+                    // no overlap
+                    continue;
                 }
 
+                set_builder.remove_set(language_set);
+
+                let mut intersection = CodePointInversionListBuilder::new();
+                intersection.add_set(language_set);
+                for r in set.iter_ranges_complemented() {
+                    intersection.remove_range32(r);
+                }
+
+                let intersection_symbol = format!("{symbol}_{language:?}");
+
+                pseudo_symbol_map.insert(
+                    intersection_symbol.clone(),
+                    (non_complex_symbol.into(), language),
+                );
+                symbols.insert(Cow::Owned(intersection_symbol), intersection.build());
+            }
+
+            if symbol != non_complex_symbol {
                 let symbol_transitions = transitions
                     .iter()
                     .filter(|&(&(_, s), _)| s == symbol)
@@ -1128,8 +1190,6 @@ impl SourceDataProvider {
 
                     symbols.remove(symbol);
                     transitions.retain(|&(_, s), _| s != symbol);
-                    script_symbols_to_symbols
-                        .insert((Script::Unknown, symbol), non_complex_symbol.into());
                 } else {
                     log::warn!(
                         "{symbol}/{non_complex_symbol}: {:?} != {:?}",
@@ -1140,44 +1200,8 @@ impl SourceDataProvider {
                             .difference(&symbol_transitions)
                             .collect::<Vec<_>>()
                     );
-                    script_symbols_to_symbols.insert((Script::Unknown, symbol), symbol.into());
                 }
             }
-
-            fixed_symbol_assignments.extend(script_symbols_to_symbols.into_iter().map(
-                |((sc, symbol), intersection_symbol)| {
-                    (
-                        intersection_symbol,
-                        match (sc, symbol) {
-                            (Script::Khmer, "SAmMnmMc") => {
-                                SegmenterStateMachine::LB_SA_KHMER_SYMBOL
-                            }
-                            (Script::Khmer, "SA_Mn|SA_Mc") => {
-                                SegmenterStateMachine::LB_SA_CM_KHMER_SYMBOL
-                            }
-                            (Script::Lao, "SAmMnmMc") => SegmenterStateMachine::LB_SA_LAO_SYMBOL,
-                            (Script::Lao, "SA_Mn|SA_Mc") => {
-                                SegmenterStateMachine::LB_SA_CM_LAO_SYMBOL
-                            }
-                            (Script::Myanmar, "SAmMnmMc") => {
-                                SegmenterStateMachine::LB_SA_MYANMAR_SYMBOL
-                            }
-                            (Script::Myanmar, "SA_Mn|SA_Mc") => {
-                                SegmenterStateMachine::LB_SA_CM_MYANMAR_SYMBOL
-                            }
-                            (Script::Thai, "SAmMnmMc") => SegmenterStateMachine::LB_SA_THAI_SYMBOL,
-                            (Script::Thai, "SA_Mn|SA_Mc") => {
-                                SegmenterStateMachine::LB_SA_CM_THAI_SYMBOL
-                            }
-                            (Script::Unknown, "SAmMnmMc") => SegmenterStateMachine::LB_SA_SYMBOL,
-                            (Script::Unknown, "SA_Mn|SA_Mc") => {
-                                SegmenterStateMachine::LB_SA_CM_SYMBOL
-                            }
-                            _ => unreachable!(),
-                        },
-                    )
-                },
-            ));
         }
 
         let mut tailorings = BTreeMap::new();
@@ -1245,8 +1269,6 @@ impl SourceDataProvider {
             );
         }
 
-        let mut pseudo_symbol_map = BTreeMap::<String, String>::new();
-
         // Intersect the symbols with all tailorings' overrides.
         for (tailoring, overrides) in tailorings.clone() {
             for (rule, set) in overrides {
@@ -1265,10 +1287,13 @@ impl SourceDataProvider {
                         });
                         pseudo_symbol_map.insert(pseudo_symbol, {
                             let mut s = &*symbol;
-                            while let Some(x) = pseudo_symbol_map.get(s) {
+                            // Non-pseudo symbols have Language::Other
+                            let mut l = ComplexScript::None;
+                            while let Some(&(ref x, y)) = pseudo_symbol_map.get(s) {
                                 s = x.as_str();
+                                l = y;
                             }
-                            s.to_string()
+                            (s.to_string(), l)
                         });
                         // Remove the intersection from the root symbol.
                         symbols.insert(symbol, {
@@ -1281,6 +1306,34 @@ impl SourceDataProvider {
                 }
             }
         }
+
+        // Remove unused symbols
+        symbols.retain(|n, set| {
+            if pseudo_symbol_map.contains_key(n.as_ref()) {
+                // Symbol is a pseudo symbol
+                return true;
+            }
+
+            if !set.is_empty() {
+                // Symbol used in root
+                return true;
+            }
+
+            if pseudo_symbol_map
+                .values()
+                .any(|(root_symbol, _)| root_symbol == n.as_ref())
+                || tailorings
+                    .values()
+                    .any(|overrides| overrides.contains_key(n))
+            {
+                // Symbol is a pseudo symbol target
+                return true;
+            }
+
+            transitions.retain(|&(_, m), _| m != n);
+
+            false
+        });
 
         let highest_fixed_symbol = fixed_symbol_assignments.values().copied().max().unwrap();
         let symbol_lookup = symbols
@@ -1356,17 +1409,20 @@ impl SourceDataProvider {
         let tailorings = tailorings
             .into_iter()
             .map(|(tailoring, overrides)| {
-                let mut tailored_pseudo_symbol_map = BTreeMap::<u8, u8>::new();
+                let mut tailored_pseudo_symbol_map = BTreeMap::<u8, (u8, ComplexScript)>::new();
 
                 for (target_symbol, set) in overrides {
                     let target_symbol = symbol_lookup[&*target_symbol];
+                    // TODO?
+                    let target_language = ComplexScript::None;
                     // The set might cover multiple pseudo symbols
                     for c in set.iter_chars() {
                         let pseudo_symbol = symbols.get(c);
-                        let prev = tailored_pseudo_symbol_map.insert(pseudo_symbol, target_symbol);
+                        let prev = tailored_pseudo_symbol_map
+                            .insert(pseudo_symbol, (target_symbol, target_language));
                         // we fragmented the symbols sufficiently above
                         assert!(
-                            prev.is_none_or(|p| p == target_symbol),
+                            prev.is_none_or(|p| p == (target_symbol, target_language)),
                             "{prev:?} {target_symbol} {tailoring} {pseudo_symbol} {c:?}"
                         );
                     }
@@ -1420,7 +1476,12 @@ impl SourceDataProvider {
 
         let pseudo_symbol_map = pseudo_symbol_map
             .iter()
-            .map(|(k, v)| (pseudo_symbol_lookup[k.as_str()], symbol_lookup[v.as_str()]))
+            .map(|(k, &(ref v, l))| {
+                (
+                    pseudo_symbol_lookup[k.as_str()],
+                    (symbol_lookup[v.as_str()], l),
+                )
+            })
             .collect::<BTreeMap<_, _>>();
 
         let tailorings = tailorings

@@ -43,6 +43,7 @@ use std::path::Path;
 use std::sync::{Arc, OnceLock};
 
 mod calendar;
+mod casemap;
 mod characters;
 mod cldr_serde;
 mod collator;
@@ -69,7 +70,6 @@ mod segmenter;
 mod time_zones;
 #[cfg(feature = "unstable")]
 mod transforms;
-mod ucase;
 #[cfg(feature = "unstable")]
 mod units;
 

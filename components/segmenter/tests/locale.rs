@@ -16,15 +16,28 @@ fn word_break_with_locale() {
 
     let langid = langid!("sv");
     options.content_locale = Some(&langid);
-    let segmenter = WordSegmenter::try_new_auto(options).unwrap();
-
-    check_word("hello:world", &["hello:world"], segmenter.as_borrowed());
+    check_word(
+        "hello:world",
+        &["hello:world"],
+        WordSegmenter::try_new_auto(options).unwrap().as_borrowed(),
+    );
+    check_word(
+        "hello:world",
+        &["hello:world"],
+        WordSegmenter::try_new_neo_auto(options)
+            .unwrap()
+            .as_borrowed(),
+    );
 
     let langid = langid!("en");
     options.content_locale = Some(&langid);
-    let segmenter = WordSegmenter::try_new_auto(options).unwrap();
-
-    check_word("hello:world", &["hello:world"], segmenter.as_borrowed());
+    check_word(
+        "hello:world",
+        &["hello:world"],
+        WordSegmenter::try_new_neo_auto(options)
+            .unwrap()
+            .as_borrowed(),
+    );
 }
 
 #[test]
@@ -34,15 +47,31 @@ fn sentence_break_with_locale() {
 
     let langid = langid!("el");
     options.content_locale = Some(&langid);
-    let segmenter = SentenceSegmenter::try_new(options).unwrap();
     check_sentence(
         "hello; world",
         &["hello; ", "world"],
-        segmenter.as_borrowed(),
+        SentenceSegmenter::try_new(options).unwrap().as_borrowed(),
+    );
+    check_sentence(
+        "hello; world",
+        &["hello; ", "world"],
+        SentenceSegmenter::try_new_neo(options)
+            .unwrap()
+            .as_borrowed(),
     );
 
     let langid = langid!("en");
     options.content_locale = Some(&langid);
-    let segmenter = SentenceSegmenter::try_new(options).unwrap();
-    check_sentence("hello; world", &["hello; world"], segmenter.as_borrowed());
+    check_sentence(
+        "hello; world",
+        &["hello; world"],
+        SentenceSegmenter::try_new(options).unwrap().as_borrowed(),
+    );
+    check_sentence(
+        "hello; world",
+        &["hello; world"],
+        SentenceSegmenter::try_new_neo(options)
+            .unwrap()
+            .as_borrowed(),
+    );
 }
