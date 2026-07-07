@@ -145,7 +145,7 @@ impl LanguageIdentifierDisplayNameOwned {
         // and we "consume" the corresponding subtags so they are not repeated in the qualifiers.
         // If none are found, we fall back to the base language name (e.g., "zh") and all
         // present subtags (script, region, variants) will be formatted as qualifiers.
-        let mut language_payload_or = None;
+        let mut language_payload = None;
 
         // Only try dialect if requested (which is the default)
         if options.language_display.unwrap_or_default() == LanguageDisplay::Dialect {
@@ -185,7 +185,7 @@ impl LanguageIdentifierDisplayNameOwned {
                     .load(DataRequest { id, metadata })
                     .allow_identifier_not_found()?
                 {
-                    language_payload_or = Some(DataPayloadOr::from_payload(response.payload));
+                    language_payload = Some(DataPayloadOr::from_payload(response.payload));
                     if script.is_some() {
                         subject.script = None;
                     }
@@ -198,7 +198,7 @@ impl LanguageIdentifierDisplayNameOwned {
         }
 
         // If the language name is not loaded yet, try loading it from the language subtag alone.
-        let language_payload = match language_payload_or {
+        let language_payload = match language_payload {
             Some(payload) => payload,
             None => {
                 let mut buffer = TinyAsciiStr::EMPTY;
