@@ -370,6 +370,25 @@ where
 /// );
 /// ```
 ///
+/// With an error mapping fn:
+///
+/// ```
+/// struct MyStruct(Result<String, String>);
+/// #[derive(Debug, PartialEq)]
+/// struct MyError;
+/// writeable::impl_try_writeable_delegate!(MyStruct, |&self| &self.0, Error = MyError, |_error| MyError);
+///
+/// writeable::assert_try_writeable_eq!(
+///     MyStruct(Ok("hello".to_string())),
+///     "hello"
+/// );
+/// writeable::assert_try_writeable_eq!(
+///     MyStruct(Err("hello".to_string())),
+///     "hello",
+///     Err(MyError)
+/// );
+/// ```
+///
 /// With a cfg on fn `write_to_string`:
 ///
 /// ```
@@ -419,7 +438,7 @@ where
 /// ```
 #[macro_export]
 macro_rules! impl_try_writeable_delegate {
-    ($ty:ty, |&$self:ident| $delegate:expr, Error = $error:ty $(, #[$alloc_feature:meta])? $(, where $($generics:tt)*)?) => {
+    ($ty:ty, |&$self:ident| $delegate:expr, Error = $error:ty $(, |$error_arg:ident| $error_map:expr)? $(, #[$alloc_feature:meta])? $(, where $($generics:tt)*)?) => {
         impl$(<$($generics)*>)? $crate::TryWriteable for $ty {
             type Error = $error;
             #[inline]
@@ -427,14 +446,22 @@ macro_rules! impl_try_writeable_delegate {
                 &$self,
                 sink: &mut W,
             ) -> core::result::Result<core::result::Result<(), Self::Error>, core::fmt::Error> {
-                ($delegate).try_write_to(sink)
+                let result = ($delegate).try_write_to(sink)?;
+                $(
+                    let result = result.map_err(|$error_arg| { $error_map });
+                )?
+                Ok(result)
             }
             #[inline]
             fn try_write_to_parts<S: $crate::PartsWrite + ?Sized>(
                 &$self,
                 sink: &mut S,
             ) -> core::result::Result<core::result::Result<(), Self::Error>, core::fmt::Error> {
-                ($delegate).try_write_to_parts(sink)
+                let result = ($delegate).try_write_to_parts(sink)?;
+                $(
+                    let result = result.map_err(|$error_arg| { $error_map });
+                )?
+                Ok(result)
             }
             #[inline]
             fn writeable_length_hint(&$self) -> $crate::LengthHint {
@@ -448,7 +475,12 @@ macro_rules! impl_try_writeable_delegate {
                 $crate::_internal::Cow<'_, str>,
                 (Self::Error, $crate::_internal::Cow<'_, str>),
             > {
-                ($delegate).try_write_to_string()
+                let result = ($delegate).try_write_to_string();
+                $(
+                    let error_map = |$error_arg| { $error_map };
+                    let result = result.map_err(|(err, cow)| (error_map(err), cow));
+                )?
+                result
             }
         }
     };
