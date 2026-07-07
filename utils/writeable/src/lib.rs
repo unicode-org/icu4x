@@ -146,6 +146,7 @@ pub mod adapters {
         }
 
         #[inline]
+        #[cfg(feature = "alloc")]
         fn write_to_string(&self) -> Cow<'_, str> {
             match self.0.try_write_to_string() {
                 Ok(s) => s,
