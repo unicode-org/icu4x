@@ -1078,6 +1078,32 @@ impl<T> PluralElements<T> {
     pub fn as_ref(&self) -> PluralElements<&T> {
         PluralElements(self.0.as_ref())
     }
+
+    /// Returns the value for the given [`PluralOperands`] and [`PluralRules`].
+    pub fn get<'a>(&'a self, op: PluralOperands, rules: &PluralRules) -> &'a T {
+        let category = rules.category_for(op);
+
+        if op.is_exactly_zero()
+            && let Some(value) = self.0.explicit_zero.as_ref()
+        {
+            return value;
+        }
+
+        if op.is_exactly_one()
+            && let Some(value) = self.0.explicit_one.as_ref()
+        {
+            return value;
+        }
+
+        match category {
+            PluralCategory::Zero => self.zero(),
+            PluralCategory::One => self.one(),
+            PluralCategory::Two => self.two(),
+            PluralCategory::Few => self.few(),
+            PluralCategory::Many => self.many(),
+            PluralCategory::Other => self.other(),
+        }
+    }
 }
 
 impl<T: PartialEq> PluralElements<T> {

@@ -636,6 +636,7 @@ mod tests {
     use super::*;
     use crate::options::GroupingStrategy;
     use icu_locale_core::locale;
+    use icu_plurals::PluralElements;
     use writeable::assert_writeable_eq;
 
     #[allow(non_snake_case)]
@@ -699,6 +700,37 @@ mod tests {
             let result10T = formatter.format(&10_000_000_000_000_000i64.into());
             assert_writeable_eq!(result10T, case.expected10T, "{:?}", case);
         }
+    }
+
+    #[test]
+    fn plural() {
+        let decimal = DecimalFormatter::try_new(locale!("fr").into(), Default::default()).unwrap();
+        let decimal = decimal.format_unsigned(Cow::Owned(999_999u64.into()));
+
+        let compact =
+            CompactDecimalFormatter::try_new_short(locale!("fr").into(), Default::default())
+                .unwrap();
+        let compact = compact.format_unsigned(&999_999u64.into());
+
+        let dollars = PluralElements::new("dollars US")
+            .with_one_value(Some("dollar US"))
+            .with_many_value(Some("de dollars US"));
+
+        assert_eq!(
+            *dollars.get(
+                decimal.plural_operands(),
+                &PluralRules::try_new(locale!("fr").into(), Default::default()).unwrap()
+            ),
+            "dollars US"
+        );
+
+        assert_eq!(
+            *dollars.get(
+                compact.plural_operands(),
+                &PluralRules::try_new(locale!("fr").into(), Default::default()).unwrap()
+            ),
+            "de dollars US"
+        );
     }
 
     #[test]
