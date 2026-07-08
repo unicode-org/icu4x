@@ -9,9 +9,8 @@
 //!
 //! ### Status
 //!
-//! Currently, this module has limited support. It supports regions, scripts,
-//! and variants, but support for languages and locales is currently missing.
-//! More features are on their way.
+//! Currently, this module supports languages, regions, scripts, and variants.
+//! Support for full locale display names (with extension keywords) is planned for future releases.
 //!
 //! If you have any feedback, please let us know at
 //! <https://github.com/unicode-org/icu4x/issues/7825>.
@@ -25,8 +24,8 @@ mod variant;
 
 // Re-export from submodules
 pub use language::{
-    LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOwned,
-    LanguageIdentifierNameFallbackError,
+    LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameModel,
+    LanguageIdentifierDisplayNameOwned, LanguageIdentifierNameFallbackError, models,
 };
 pub use region::{RegionDisplayName, RegionDisplayNameOwned};
 pub use script::{ScriptDisplayName, ScriptDisplayNameOwned};

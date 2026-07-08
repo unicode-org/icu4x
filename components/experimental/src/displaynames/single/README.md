@@ -20,10 +20,10 @@ classDiagram
     class LanguageIdentifierDisplayNameOwned~M~ {
         -lid: LanguageIdentifier
         -options: LanguageIdentifierDisplayNameOptions
-        +try_new(prefs, options, lid) Self  // Medium
-        +try_new_short(prefs, options, lid) Self
-        +try_new_long(prefs, options, lid) Self
-        +try_new_menu(prefs, options, lid) Self // Only for M = Menu
+        +try_new(prefs, lid, options) Self  // Medium
+        +try_new_short(prefs, lid, options) Self
+        +try_new_long(prefs, lid, options) Self
+        +try_new_menu(prefs, lid, options) Self // Only for M = Menu
         +as_borrowed(&self) LanguageIdentifierDisplayName
     }
     class LanguageIdentifierDisplayName {
@@ -85,10 +85,9 @@ To reflect this, each formatter provides explicit constructors for each supporte
 All owned constructors take their target subtag or `LanguageIdentifier` **by value** because the owned struct needs to store the identifier for fallback purposes, and copying/moving these identifiers is highly efficient in ICU4X (using `TinyStr` under the hood).
 
 *   **`LanguageIdentifierDisplayName` / `LanguageIdentifierDisplayNameOwned<M>`**: Formats a full `LanguageIdentifier` (language, script, region, and variants) into a localized string. It is generic over the display model (Standard/Dialect vs. Menu).
-    *   `LanguageIdentifierDisplayNameOwned::try_new(prefs, options, lid)`: Constructor for **Medium** width (Standard/Dialect).
-    *   `LanguageIdentifierDisplayNameOwned::try_new_short(prefs, options, lid)`: Constructor for **Short** width (Standard/Dialect).
-    *   `LanguageIdentifierDisplayNameOwned::try_new_long(prefs, options, lid)`: Constructor for **Long** width (Standard/Dialect).
-    *   `LanguageIdentifierDisplayNameOwned::try_new_menu(prefs, options, lid)`: Constructor for **Menu** style (Medium width).
+    *   `LanguageIdentifierDisplayNameOwned::try_new(prefs, lid, options)`: Constructor for **Medium** width (Standard/Dialect).
+    *   `LanguageIdentifierDisplayNameOwned::try_new_menu(prefs, lid, options)`: Constructor for **Menu** style (Medium width).
+    *   *(Note: Short and Long constructors for full language identifiers are currently not implemented; see Limitations & Future Work).*
 *   **`RegionDisplayName` / `RegionDisplayNameOwned`**: Formats a single `Region` subtag (e.g., `US` -> "United States").
     *   `RegionDisplayNameOwned::try_new(prefs, subtag)`: Constructor for **Medium** width.
     *   `RegionDisplayNameOwned::try_new_short(prefs, subtag)`: Constructor for **Short** width.
@@ -166,8 +165,8 @@ To support both standard formatting and the specialized Menu style (which requir
 We define a `LanguageIdentifierDisplayNameModel` trait with an associated type `LanguagePayload`. 
 
 We implement this trait for two marker models:
-*   **`models::Standard`**: Used for Standard and Dialect display styles. The `LanguagePayload` is `DataPayloadOr<ErasedDisplayNameMarker, ()>`.
-*   **`models::Menu`**: Used for Menu display style. The `LanguagePayload` is `DataPayload<LocaleNamesLanguageMenuMediumV1>`.
+*   **`models::Standard`**: Used for Standard and Dialect display styles. The `LanguagePayload` is `DataPayloadOr<LocaleNamesLanguageMediumV1, Language>`.
+*   **`models::Menu`**: Used for Menu display style. The `LanguagePayload` is `MenuLanguagePayload`, an enum wrapping either `DataPayload<LocaleNamesLanguageMenuMediumV1>` or a fallback `DataPayloadOr<LocaleNamesLanguageMediumV1, Language>`.
 
 #### 2. The Generic Owned Struct
 `LanguageIdentifierDisplayNameOwned<M>` holds the `LanguageIdentifier`, `LanguageIdentifierDisplayNameOptions`, the generic `language_payload` (determined by `M`), optional `script_payload` and `region_payload` (both using `DataPayloadOr` with `ErasedDisplayNameMarker`), a vector of `variant_payloads` (using `ErasedDisplayNameMarker`), and the `pattern_payload` (using `LocaleNamesEssentialsV1`).
@@ -190,7 +189,7 @@ This struct holds only cheap, borrowed references:
 #### 4. Resolution in `as_borrowed()`
 The differences are resolved in the model-specific implementations of `as_borrowed()`:
 *   For the **`Standard`** model: `base_name` is resolved from `language_payload` (falling back to the raw BCP-47 language subtag if missing), and `menu_extension` is `None`.
-*   For the **`Menu`** model: `base_name` is resolved from `language_payload.get().core`, and `menu_extension` is `Some(language_payload.get().extension)`.
+*   For the **`Menu`** model: if a menu name is present, `base_name` is resolved from `core` and `menu_extension` is `Some(extension)` (if non-empty). If the language has no menu entry in CLDR, it falls back at runtime to loading the Medium width display name, where `menu_extension` is `None`.
 
 #### 5. Zero-Allocation Formatting Pipeline
 In `Writeable::write_to` for `LanguageIdentifierDisplayName<'a>`, we treat `menu_extension` (if present), `script_name`, `region_name`, and the resolved variant names as qualifiers. A stack-allocated `QualifiersWriteable` helper joins them using `locale_separator` directly into the sink, and `icu_pattern::Pattern::interpolate` combines `base_name` and the qualifiers into `locale_pattern` directly into the output sink without any heap allocation.
@@ -228,6 +227,7 @@ As per [CLDR-19336](https://unicode-org.atlassian.net/browse/CLDR-19336), some l
 The following features defined in UTS #35 are currently not supported and are planned for future releases:
 
 1.  **Locale Extension Keywords (UTS #35 §3.2)**: Formatting Unicode extension keys and types (e.g., `-u-ca-gregory` -> "Calendar: Gregorian") using `localeKeyTypePattern`.
+2.  **Short and Long Language Widths**: While Region and Script display names support `try_new_short`, `LanguageIdentifierDisplayNameOwned` currently only implements `try_new` (Medium width) and `try_new_menu`. Support for explicit Short and Long language display widths (`try_new_short` and `try_new_long`) is planned for future releases.
 
 ---
 

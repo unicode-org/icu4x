@@ -243,3 +243,112 @@ fn test_single_language_display_name_standard() {
         "Chinese (Traditional, Hong Kong SAR China)"
     );
 }
+
+#[test]
+fn test_single_language_display_name_menu() {
+    use icu_experimental::displaynames::{
+        LanguageDisplay, LanguageIdentifierDisplayNameOptions,
+        single::{LanguageIdentifierDisplayNameOwned, LanguageIdentifierNameFallbackError, models},
+    };
+    use icu_locale_core::{langid, locale};
+    use writeable::{Part, assert_try_writeable_parts_eq};
+
+    let locale = locale!("en-001");
+    let options = LanguageIdentifierDisplayNameOptions::default();
+
+    // Case 1: Split menu name (ku -> "Kurdish (Kurmanji)")
+    let display_name: LanguageIdentifierDisplayNameOwned<models::Menu> =
+        LanguageIdentifierDisplayNameOwned::try_new_menu(
+            locale.clone().into(),
+            langid!("ku"),
+            options,
+        )
+        .expect("Data should load successfully");
+    let borrowed = display_name.as_borrowed();
+    assert_try_writeable_eq!(borrowed, "Kurdish (Kurmanji)");
+    assert_eq!(borrowed.menu_extension(), Some("Kurmanji"));
+
+    // Case 2: Split menu name with additional qualifiers (ku-TR -> "Kurdish (Kurmanji, Türkiye)")
+    let display_name = LanguageIdentifierDisplayNameOwned::try_new_menu(
+        locale.clone().into(),
+        langid!("ku-TR"),
+        options,
+    )
+    .expect("Data should load successfully");
+    let borrowed = display_name.as_borrowed();
+    assert_try_writeable_eq!(borrowed, "Kurdish (Kurmanji, Türkiye)");
+    assert_eq!(borrowed.menu_extension(), Some("Kurmanji"));
+
+    // Case 3: Menu name with empty extension (zh -> "Chinese, Mandarin")
+    let display_name = LanguageIdentifierDisplayNameOwned::try_new_menu(
+        locale.clone().into(),
+        langid!("zh"),
+        options,
+    )
+    .expect("Data should load successfully");
+    let borrowed = display_name.as_borrowed();
+    assert_try_writeable_eq!(borrowed, "Chinese, Mandarin");
+    assert_eq!(borrowed.menu_extension(), None);
+
+    // Case 4: Runtime fallback to Medium width when menu entry is missing (nl -> "Dutch")
+    let display_name = LanguageIdentifierDisplayNameOwned::try_new_menu(
+        locale.clone().into(),
+        langid!("nl"),
+        options,
+    )
+    .expect("Data should load successfully");
+    let borrowed = display_name.as_borrowed();
+    assert_try_writeable_eq!(borrowed, "Dutch");
+    assert_eq!(borrowed.menu_extension(), None);
+
+    // Case 5: Runtime fallback to Medium width dialect when menu entry is missing (nl-BE -> "Flemish")
+    let display_name = LanguageIdentifierDisplayNameOwned::try_new_menu(
+        locale.clone().into(),
+        langid!("nl-BE"),
+        options,
+    )
+    .expect("Data should load successfully");
+    let borrowed = display_name.as_borrowed();
+    assert_try_writeable_eq!(borrowed, "Flemish");
+    assert_eq!(borrowed.menu_extension(), None);
+
+    // Case 6: Runtime fallback to Medium width for French (fr -> "French")
+    let display_name = LanguageIdentifierDisplayNameOwned::try_new_menu(
+        locale.clone().into(),
+        langid!("fr"),
+        options,
+    )
+    .expect("Data should load successfully");
+    let borrowed = display_name.as_borrowed();
+    assert_try_writeable_eq!(borrowed, "French");
+    assert_eq!(borrowed.menu_extension(), None);
+
+    // Case 7: Unknown subtag in Menu mode (it-Qabc-150 -> "Italian (Qabc, Europe)" with Part::ERROR span)
+    let display_name = LanguageIdentifierDisplayNameOwned::try_new_menu(
+        locale.clone().into(),
+        langid!("it-Qabc-150"),
+        options,
+    )
+    .expect("Data should load successfully");
+    let borrowed = display_name.as_borrowed();
+    assert_try_writeable_parts_eq!(
+        borrowed,
+        "Italian (Qabc, Europe)",
+        Err(LanguageIdentifierNameFallbackError),
+        [(9, 13, Part::ERROR)]
+    );
+    assert_eq!(borrowed.menu_extension(), None);
+
+    // Case 8: Standard display option in Menu mode (nl-BE -> "Dutch (Belgium)" instead of "Flemish")
+    let mut std_options = LanguageIdentifierDisplayNameOptions::default();
+    std_options.language_display = Some(LanguageDisplay::Standard);
+    let display_name = LanguageIdentifierDisplayNameOwned::try_new_menu(
+        locale.clone().into(),
+        langid!("nl-BE"),
+        std_options,
+    )
+    .expect("Data should load successfully");
+    let borrowed = display_name.as_borrowed();
+    assert_try_writeable_eq!(borrowed, "Dutch (Belgium)");
+    assert_eq!(borrowed.menu_extension(), None);
+}
