@@ -170,10 +170,7 @@ We implement this trait for two marker models:
 *   **`models::Menu`**: Used for Menu display style. The `LanguagePayload` is `DataPayload<LocaleNamesLanguageMenuMediumV1>`.
 
 #### 2. The Generic Owned Struct
-`LanguageIdentifierDisplayNameOwned<M>` holds the `LanguageIdentifier`, `LanguageIdentifierDisplayNameOptions`, the generic `language_payload` (determined by `M`), optional `script_payload` and `region_payload` (both using `DataPayloadOr` with `ErasedDisplayNameMarker`), a vector of `variant_payloads` (using `ErasedDisplayNameMarker`), and the `pattern_payload` (using `LocaleNamesEssentialsV1`).
-
-> [!NOTE]
-> **Allocation Papercut Solved (TODO #7825)**: Previously, storing `variant_payloads` in a `Vec` required heap allocation. This has been solved without needing external stack-allocated crates like `SmallVec`: `variant_payloads` is stored as `DataPayloadOr<LocaleNamesVariantMediumV1, Vec<...>>`, achieving zero heap allocation for the vast majority of locales that have zero or one variant.
+`LanguageIdentifierDisplayNameOwned<M>` holds the `LanguageIdentifier`, `LanguageIdentifierDisplayNameOptions`, the generic `language_payload` (determined by `M`), optional `script_payload` and `region_payload` (both using `DataPayloadOr` with `ErasedDisplayNameMarker`), `variant_payloads`, and the `pattern_payload` (using `LocaleNamesEssentialsV1`). To maintain zero heap allocation in `no_std` environments without needing external stack-allocated crates like `SmallVec`, `variant_payloads` is stored as `DataPayloadOr<ErasedDisplayNameMarker, Vec<...>>`, avoiding heap allocation for the vast majority of locales that have zero or one variant.
 
 #### 3. The Shared Borrowed Struct
 Both models resolve their payload differences and borrow to a single, non-generic **`LanguageIdentifierDisplayName<'a>`** struct. 
@@ -223,10 +220,12 @@ As per [CLDR-19336](https://unicode-org.atlassian.net/browse/CLDR-19336), some l
 
 ## Limitations & Future Work
 
-The following features defined in UTS #35 are currently not supported and are planned for future releases:
+### 1. UTS #35 Features
+The following feature defined in UTS #35 is currently not supported and is planned for future releases:
+*   **Locale Extension Keywords (UTS #35 §3.2)**: Formatting Unicode extension keys and types (e.g., `-u-ca-gregory` -> "Calendar: Gregorian") using `localeKeyTypePattern`.
 
-1.  **Locale Extension Keywords (UTS #35 §3.2)**: Formatting Unicode extension keys and types (e.g., `-u-ca-gregory` -> "Calendar: Gregorian") using `localeKeyTypePattern`.
-2.  **`Writeable` / `TryWriteable` on `LanguageIdentifierDisplayNameOwned`**: Currently, `LanguageIdentifierDisplayNameOwned` does not implement `Writeable` or `TryWriteable` directly; callers must call `.as_borrowed()` first. We cannot easily use `writeable::impl_writeable_delegate!` or `writeable::impl_try_writeable_delegate!` to delegate to `.as_borrowed()` on `LanguageIdentifierDisplayNameOwned` due to a temporary lifetime constraint (`E0515`): because `.as_borrowed()` constructs a new `LanguageIdentifierDisplayName<'_>` struct by value on the stack, delegating `.writeable_borrow()` or `.try_writeable_borrow()` attempts to return a string reference tied to the lifetime of that temporary stack struct rather than `&self`.
+### 2. Architectural & Trait Enhancements
+*   **`Writeable` / `TryWriteable` on `LanguageIdentifierDisplayNameOwned`**: Currently, `LanguageIdentifierDisplayNameOwned` does not implement `Writeable` or `TryWriteable` directly; callers must call `.as_borrowed()` first. We cannot easily use `writeable::impl_writeable_delegate!` or `writeable::impl_try_writeable_delegate!` to delegate to `.as_borrowed()` on `LanguageIdentifierDisplayNameOwned` due to a temporary lifetime constraint (`E0515`): because `.as_borrowed()` constructs a new `LanguageIdentifierDisplayName<'_>` struct by value on the stack, delegating `.writeable_borrow()` or `.try_writeable_borrow()` attempts to return a string reference tied to the lifetime of that temporary stack struct rather than `&self`.
     *   *Future Work*: We could either add manual `Writeable`/`TryWriteable` implementations (similar to how `mod.rs` implements `Writeable` manually for single-subtag owned types) or improve the delegate macros to support delegating to `.as_borrowed()` without temporary lifetime constraints.
 
 ---
