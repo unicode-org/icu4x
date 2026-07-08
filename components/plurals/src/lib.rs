@@ -1110,13 +1110,14 @@ impl<T> PluralElements<T> {
         }
 
         match category {
-            PluralCategory::Zero => self.zero(),
-            PluralCategory::One => self.one(),
-            PluralCategory::Two => self.two(),
-            PluralCategory::Few => self.few(),
-            PluralCategory::Many => self.many(),
-            PluralCategory::Other => self.other(),
+            PluralCategory::Zero => self.0.zero.as_ref(),
+            PluralCategory::One => self.0.one.as_ref(),
+            PluralCategory::Two => self.0.two.as_ref(),
+            PluralCategory::Few => self.0.few.as_ref(),
+            PluralCategory::Many => self.0.many.as_ref(),
+            PluralCategory::Other => return &self.0.other,
         }
+        .unwrap_or(&self.0.other)
     }
 }
 
