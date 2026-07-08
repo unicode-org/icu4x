@@ -160,6 +160,7 @@ pub struct VariantDisplayNames<'data> {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
 #[zerovec::make_varule(MenuNamePartsULE)]
+#[zerovec::derive(Debug)]
 #[zerovec::skip_derive(Ord)]
 #[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
 #[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]
@@ -281,6 +282,25 @@ icu_provider::data_marker!(
     LocaleNamesEssentials<'static>
 );
 
+/// A data struct that is either [`MenuNameParts`] or a string
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[allow(clippy::exhaustive_enums)] // provider-unstable
+pub enum MenuNamePartsOrString<'a> {
+    /// A data struct that is [`MenuNameParts`]
+    MenuNameParts(VarZeroCow<'a, MenuNamePartsULE>),
+    /// A data struct that is a string
+    String(VarZeroCow<'a, str>),
+}
+
+/// A marker for [`MenuNamePartsOrString`]
+#[derive(Debug)]
+#[allow(clippy::exhaustive_structs)] // marker
+pub struct MenuNamePartsOrStringErased;
+
+impl DynamicDataMarker for MenuNamePartsOrStringErased {
+    type DataStruct = MenuNamePartsOrString<'static>;
+}
+
 impl LocaleNamesLanguageMediumV1 {
     /// Helper to construct infallible attributes from subtags.
     #[inline]
@@ -318,8 +338,21 @@ impl LocaleNamesLanguageMediumV1 {
     }
 }
 
+impl LocaleNamesLanguageMenuMediumV1 {
+    /// Helper to create data marker attributes from subtags.
+    #[inline]
+    pub(crate) fn make_attributes(
+        language: Language,
+        script: Option<Script>,
+        region: Option<Region>,
+        buffer: &mut tinystr::TinyAsciiStr<16>,
+    ) -> &DataMarkerAttributes {
+        LocaleNamesLanguageMediumV1::make_attributes(language, script, region, buffer)
+    }
+}
+
 impl LocaleNamesRegionMediumV1 {
-    /// Helper to create data marker attributes from a region.
+    /// Helper to construct infallible attributes from subtags.
     #[inline]
     pub(crate) fn make_attributes(region: &Region) -> &DataMarkerAttributes {
         // This is infallible (will not panic) because a validated `Region` is guaranteed to
