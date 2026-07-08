@@ -585,7 +585,11 @@ impl DateTimeZonePatternSelectionData {
         // Handle overlap early return.
         if let CompositeFieldSet::DateTime(field_set) = skeleton {
             let options = field_set.to_raw_options();
+            // TODO(#5387): load the patterns for custom hour cycles here
             if let (Some(attributes), None) = (field_set.id_str(), prefs.hour_cycle)
+                // Try loading an overlap pattern.
+                // Note: Overlap patterns are loaded from the date skeleton pattern provider
+                // and then stored as a TimePatternSelectionData.
                 && let Some(overlap) = TimePatternSelectionData::try_new_overlap_with_skeleton(
                     date_provider,
                     prefs,

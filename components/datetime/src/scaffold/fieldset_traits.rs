@@ -656,7 +656,6 @@ impl ZoneMarkers for () {
     type MetazonePeriodV1 = NeverMarker<tz::MzPeriod<'static>>;
 }
 
-#[allow(unused_macro_rules)]
 macro_rules! datetime_marker_helper {
     (@years/typed, yes) => {
         C::YearNamesV1
@@ -675,9 +674,6 @@ macro_rules! datetime_marker_helper {
     };
     (@dates/range/typed, yes) => {
         C::RangeSkeletaV1
-    };
-    (@dates/range/typed,) => {
-        NeverMarker<PackedRangePatterns<'static>>
     };
     (@calmarkers, yes) => {
         FullDataCalMarkers
@@ -699,9 +695,6 @@ macro_rules! datetime_marker_helper {
     };
     (@times/range, yes) => {
         DatetimePatternsRangeTimeV1
-    };
-    (@times/range,) => {
-        NeverMarker<PackedRangePatterns<'static>>
     };
     (@glue, yes) => {
         DatetimePatternsGlueV1
