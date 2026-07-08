@@ -11,7 +11,7 @@ use icu::collections::char16trie::Char16Trie;
 use icu::collections::codepointtrie::CodePointTrie;
 use icu::normalizer::provider::*;
 use icu_provider::prelude::*;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::convert::TryFrom;
 use zerovec::ZeroVec;
 
@@ -176,7 +176,7 @@ normalization_non_recursive_decomposition_supplement_provider!(
 // They are slated for removal, but the code might be useful for a future ICU4C-independent
 // normalization implementation, which is why they live in this file.
 
-macro_rules! impl_nfd_inert_property {
+macro_rules! impl_decomposition_inert_property {
     ($marker:ident, $try_new_decomp:ident) => {
         impl DataProvider<icu::properties::provider::$marker> for SourceDataProvider {
             fn load(
@@ -184,17 +184,20 @@ macro_rules! impl_nfd_inert_property {
                 _req: DataRequest,
             ) -> Result<DataResponse<icu::properties::provider::$marker>, DataError> {
                 use icu::collections::codepointinvlist::CodePointInversionListBuilder;
+                use icu::normalizer::DecomposingNormalizer;
                 use icu::properties::{
                     CodePointMapData, props::CanonicalCombiningClass,
                     provider::PropertyCodePointSet,
                 };
 
-                let decomp = icu::normalizer::DecomposingNormalizer::$try_new_decomp(self)?;
+                let decomp = DecomposingNormalizer::$try_new_decomp(self)?;
                 let decomp = decomp.as_borrowed();
                 let ccc = CodePointMapData::<CanonicalCombiningClass>::try_new_unstable(self)?;
                 let ccc = ccc.as_borrowed();
 
                 let mut builder = CodePointInversionListBuilder::new();
+                // Add all code points that are starters and are not decomposable,
+                // including surrogates.
                 for cp in 0..=(char::MAX as u32) {
                     let Some(ch) = char::from_u32(cp) else {
                         builder.add32(cp);
@@ -225,7 +228,7 @@ macro_rules! impl_nfd_inert_property {
     };
 }
 
-macro_rules! impl_nfc_inert_property {
+macro_rules! impl_composition_inert_property {
     ($marker:ident, $try_new_decomp:ident, $try_new_comp:ident) => {
         impl DataProvider<icu::properties::provider::$marker> for SourceDataProvider {
             fn load(
@@ -233,39 +236,52 @@ macro_rules! impl_nfc_inert_property {
                 _req: DataRequest,
             ) -> Result<DataResponse<icu::properties::provider::$marker>, DataError> {
                 use icu::collections::codepointinvlist::CodePointInversionListBuilder;
+                use icu::normalizer::properties::{
+                    CanonicalComposition, CanonicalDecomposition, Decomposed,
+                };
+                use icu::normalizer::{ComposingNormalizer, DecomposingNormalizer};
                 use icu::properties::{
                     CodePointMapData, props::CanonicalCombiningClass,
                     provider::PropertyCodePointSet,
                 };
 
-                let nfc = icu::normalizer::ComposingNormalizer::$try_new_comp(self)?;
-                let nfc = nfc.as_borrowed();
-                let nfd = icu::normalizer::DecomposingNormalizer::$try_new_decomp(self)?;
+                let composing_normalizer = ComposingNormalizer::$try_new_comp(self)?;
+                let composing_normalizer = composing_normalizer.as_borrowed();
+                let decomposing_normalizer = DecomposingNormalizer::$try_new_decomp(self)?;
+                let decomposing_normalizer = decomposing_normalizer.as_borrowed();
+                let nfd = DecomposingNormalizer::try_new_nfd_unstable(self)?;
                 let nfd = nfd.as_borrowed();
-                let comp =
-                    icu::normalizer::properties::CanonicalComposition::try_new_unstable(self)?;
-                let comp = comp.as_borrowed();
+
+                let canonical_comp = CanonicalComposition::try_new_unstable(self)?;
+                let canonical_comp = canonical_comp.as_borrowed();
+                let canonical_decomp = CanonicalDecomposition::try_new_unstable(self)?;
+                let canonical_decomp = canonical_decomp.as_borrowed();
                 let ccc = CodePointMapData::<CanonicalCombiningClass>::try_new_unstable(self)?;
                 let ccc = ccc.as_borrowed();
 
+                let mut combines_forwards = HashSet::new();
                 let mut potential_seconds = HashSet::new();
+                let mut composes_with_lowest_ccc = HashMap::new();
+
                 for ch in (0..=char::MAX as u32).filter_map(char::from_u32) {
-                    let mut iter = nfd.normalize_iter([ch].into_iter());
-                    if iter.next().is_some() {
-                        potential_seconds.extend(iter);
+                    if let Decomposed::Expansion(starter, second) = canonical_decomp.decompose(ch)
+                        && canonical_comp.compose(starter, second) == Some(ch)
+                    {
+                        combines_forwards.insert(starter);
+                        potential_seconds.insert(second);
+                        let ccc = ccc.get(second).0;
+                        composes_with_lowest_ccc
+                            .entry(starter)
+                            .and_modify(|c| *c = std::cmp::min(*c, ccc))
+                            .or_insert(ccc);
                     }
                 }
 
-                let mut combines_forwards = HashSet::new();
                 let mut combines_backwards = HashSet::new();
-                let mut composes_with_ccc = HashSet::new();
                 for ch in (0..=char::MAX as u32).filter_map(char::from_u32) {
-                    for &second in &potential_seconds {
-                        if comp.compose(ch, second).is_some() {
-                            combines_forwards.insert(ch);
-                            combines_backwards.insert(second);
-                            composes_with_ccc.insert((ch, ccc.get(second)));
-                        }
+                    let starter = nfd.normalize_iter([ch].into_iter()).next().unwrap();
+                    if potential_seconds.contains(&starter) {
+                        combines_backwards.insert(ch);
                     }
                 }
 
@@ -284,29 +300,29 @@ macro_rules! impl_nfc_inert_property {
                         continue;
                     }
 
-                    if !nfc.is_normalized(ch.encode_utf8(&mut [0; 4])) {
+                    if !composing_normalizer.is_normalized(ch.encode_utf8(&mut [0; 4])) {
                         continue;
                     }
 
-                    let mut nfd = nfd.normalize_iter([ch].into_iter());
+                    let mut decomposed = decomposing_normalizer.normalize_iter([ch].into_iter());
 
-                    let mut starter = nfd.next().unwrap();
+                    let mut starter = decomposed.next().unwrap();
                     let mut prev_ccc = CanonicalCombiningClass::NotReordered;
 
                     if combines_backwards.contains(&starter) {
                         continue;
                     }
 
-                    for follow in nfd {
+                    for follow in decomposed {
                         let ccc = ccc.get(follow);
 
-                        if (prev_ccc.0 + 1..ccc.0).any(|ccc| {
-                            composes_with_ccc.contains(&(starter, CanonicalCombiningClass(ccc)))
-                        }) {
-                            continue 'cp;
+                        if let Some(&lowest_ccc) = composes_with_lowest_ccc.get(&starter) {
+                            if prev_ccc.0 < lowest_ccc && lowest_ccc < ccc.0 {
+                                continue 'cp;
+                            }
                         }
 
-                        if let Some(composite) = comp.compose(starter, follow) {
+                        if let Some(composite) = canonical_comp.compose(starter, follow) {
                             starter = composite;
                             prev_ccc = CanonicalCombiningClass::NotReordered;
                         } else {
@@ -334,14 +350,14 @@ macro_rules! impl_nfc_inert_property {
     };
 }
 
-impl_nfd_inert_property!(PropertyBinaryNfdInertV1, try_new_nfd_unstable);
-impl_nfd_inert_property!(PropertyBinaryNfkdInertV1, try_new_nfkd_unstable);
-impl_nfc_inert_property!(
+impl_decomposition_inert_property!(PropertyBinaryNfdInertV1, try_new_nfd_unstable);
+impl_decomposition_inert_property!(PropertyBinaryNfkdInertV1, try_new_nfkd_unstable);
+impl_composition_inert_property!(
     PropertyBinaryNfcInertV1,
     try_new_nfd_unstable,
     try_new_nfc_unstable
 );
-impl_nfc_inert_property!(
+impl_composition_inert_property!(
     PropertyBinaryNfkcInertV1,
     try_new_nfkd_unstable,
     try_new_nfkc_unstable
