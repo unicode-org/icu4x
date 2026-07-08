@@ -99,6 +99,12 @@ size_test!(
 pub struct LanguageIdentifierDisplayNameOwned {
     /// Either the language display name or the subtag as fallback
     language_payload: DataPayloadOr<LocaleNamesLanguageMediumV1, Language>,
+    /// All other fields (shared between Standard and Menu)
+    qualifiers: QualifiersOwned,
+}
+
+#[derive(Debug)]
+struct QualifiersOwned {
     /// Either the script display name, the subtag as fallback, or None if absent
     script_payload: DataPayloadOr<LocaleNamesScriptMediumV1, Option<Script>>,
     /// Either the region display name, the subtag as fallback, or None if absent
@@ -143,94 +149,134 @@ impl LanguageIdentifierDisplayNameOwned {
         let formatting_locale = LocaleNamesLanguageMediumV1::make_locale(prefs.locale_preferences);
 
         // Step 1: Load language name
-        // We want to find the best display name for the given subject.
-        // In Dialect mode (default), we try to load names for combinations of subtags:
-        // - Language + Script + Region (e.g., "zh-Hant-HK")
-        // - Language + Script (e.g., "zh-Hant")
-        // - Language + Region (e.g., "en-GB")
-        // If any of these are found in the CLDR language names, we use it as the base name,
-        // and we "consume" the corresponding subtags so they are not repeated in the qualifiers.
-        // If none are found, we fall back to the base language name (e.g., "zh") and all
-        // present subtags (script, region, variants) will be formatted as qualifiers.
-        let mut language_payload = None;
-
-        // Only try dialect if requested (which is the default)
-        if options.language_display.unwrap_or_default() == LanguageDisplay::Dialect {
-            for (language, script, region) in [
-                (subject.language, Some(subject.script), Some(subject.region)),
-                (subject.language, Some(subject.script), None),
-                (subject.language, None, Some(subject.region)),
-            ] {
-                // For Script and Region:
-                // - Some in the first position means "this should be present"
-                // - None in the first position means "skip this field"
-                // We skip Some(None) because that case will be handled in a subsequent iteration
-                let script = match script {
-                    Some(Some(script)) => Some(script),
-                    Some(None) => continue,
-                    None => None,
-                };
-                let region = match region {
-                    Some(Some(region)) => Some(region),
-                    Some(None) => continue,
-                    None => None,
-                };
-                let mut buffer = TinyAsciiStr::EMPTY;
-                let attrs = LocaleNamesLanguageMediumV1::make_attributes(
-                    language,
-                    script,
-                    region,
-                    &mut buffer,
-                );
-                let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    attrs,
-                    &formatting_locale,
-                );
-                let mut metadata = DataRequestMetadata::default();
-                metadata.silent = true;
-                if let Some(response) = provider
-                    .load(DataRequest { id, metadata })
-                    .allow_identifier_not_found()?
-                {
-                    language_payload = Some(DataPayloadOr::from_payload(response.payload));
-                    if script.is_some() {
-                        subject.script = None;
-                    }
-                    if region.is_some() {
-                        subject.region = None;
-                    }
-                    break;
-                }
-            }
-        }
+        // Only try dialect if requested (or default)
+        let language_payload =
+            if options.language_display.unwrap_or_default() == LanguageDisplay::Dialect {
+                Self::load_language_dialect_name(provider, &formatting_locale, &mut subject)?
+            } else {
+                None
+            };
 
         // If the language name is not loaded yet, try loading it from the language subtag alone.
         let language_payload = match language_payload {
-            Some(payload) => payload,
+            Some(response) => DataPayloadOr::from_payload(response.payload),
             None => {
-                let mut buffer = TinyAsciiStr::EMPTY;
-                let attrs = LocaleNamesLanguageMediumV1::make_attributes(
+                match Self::load_language_subtag_name(
+                    provider,
+                    &formatting_locale,
                     subject.language,
-                    None,
-                    None,
-                    &mut buffer,
-                );
-                let response = provider
-                    .load(DataRequest {
-                        id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                            attrs,
-                            &formatting_locale,
-                        ),
-                        ..Default::default()
-                    })
-                    .allow_identifier_not_found()?;
-                match response {
-                    Some(obj) => DataPayloadOr::from_payload(obj.payload),
+                )? {
+                    Some(response) => DataPayloadOr::from_payload(response.payload),
                     None => DataPayloadOr::from_other(subject.language),
                 }
             }
         };
 
+        // Load the remaining data
+        let qualifiers = QualifiersOwned::try_new_unstable(provider, prefs, subject)?;
+
+        Ok(Self {
+            language_payload,
+            qualifiers,
+        })
+    }
+
+    /// Loads the name for a langauge dialect, which includes script and region subtags.
+    ///
+    /// We try to load names for combinations of subtags:
+    ///
+    /// - Language + Script + Region (e.g., "zh-Hant-HK")
+    /// - Language + Script (e.g., "zh-Hant")
+    /// - Language + Region (e.g., "en-GB")
+    ///
+    /// We then "consume"  the corresponding subtags from the input LanguageIdentifier
+    /// so they are not repeated in the qualifiers.
+    fn load_language_dialect_name<P>(
+        provider: &P,
+        formatting_locale: &DataLocale,
+        subject: &mut LanguageIdentifier,
+    ) -> Result<Option<DataResponse<LocaleNamesLanguageMediumV1>>, DataError>
+    where
+        P: ?Sized + DataProvider<LocaleNamesLanguageMediumV1>,
+    {
+        for (language, script, region) in [
+            (subject.language, Some(subject.script), Some(subject.region)),
+            (subject.language, Some(subject.script), None),
+            (subject.language, None, Some(subject.region)),
+        ] {
+            // For Script and Region:
+            // - Some in the first position means "this should be present"
+            // - None in the first position means "skip this field"
+            // We skip Some(None) because that case will be handled in a subsequent iteration
+            let script = match script {
+                Some(Some(script)) => Some(script),
+                Some(None) => continue,
+                None => None,
+            };
+            let region = match region {
+                Some(Some(region)) => Some(region),
+                Some(None) => continue,
+                None => None,
+            };
+            let mut buffer = TinyAsciiStr::EMPTY;
+            let attrs =
+                LocaleNamesLanguageMediumV1::make_attributes(language, script, region, &mut buffer);
+            let id =
+                DataIdentifierBorrowed::for_marker_attributes_and_locale(attrs, &formatting_locale);
+            let mut metadata = DataRequestMetadata::default();
+            metadata.silent = true;
+            if let Some(response) = provider
+                .load(DataRequest { id, metadata })
+                .allow_identifier_not_found()?
+            {
+                if script.is_some() {
+                    subject.script = None;
+                }
+                if region.is_some() {
+                    subject.region = None;
+                }
+                return Ok(Some(response));
+            }
+        }
+        Ok(None)
+    }
+
+    /// Loads the name for an individual language subtag.
+    fn load_language_subtag_name<P>(
+        provider: &P,
+        formatting_locale: &DataLocale,
+        language: Language,
+    ) -> Result<Option<DataResponse<LocaleNamesLanguageMediumV1>>, DataError>
+    where
+        P: ?Sized + DataProvider<LocaleNamesLanguageMediumV1>,
+    {
+        let mut buffer = TinyAsciiStr::EMPTY;
+        let attrs = LocaleNamesLanguageMediumV1::make_attributes(language, None, None, &mut buffer);
+        provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    attrs,
+                    formatting_locale,
+                ),
+                ..Default::default()
+            })
+            .allow_identifier_not_found()
+    }
+}
+
+impl QualifiersOwned {
+    fn try_new_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        subject: LanguageIdentifier,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<LocaleNamesScriptMediumV1>
+            + DataProvider<LocaleNamesRegionMediumV1>
+            + DataProvider<LocaleNamesVariantMediumV1>
+            + DataProvider<LocaleNamesEssentialsV1>,
+    {
         // Step 2: Load script name (if present in subject)
         let script_payload = if let Some(script) = subject.script {
             match ScriptDisplayNameOwned::try_new_unstable(provider, prefs, script)
@@ -296,20 +342,23 @@ impl LanguageIdentifierDisplayNameOwned {
         // Step 5: Load essentials
         let essentials_payload = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&formatting_locale),
+                id: DataIdentifierBorrowed::for_locale(&LocaleNamesEssentialsV1::make_locale(
+                    prefs.locale_preferences,
+                )),
                 ..Default::default()
             })?
             .payload;
 
         Ok(Self {
-            language_payload,
             script_payload,
             region_payload,
             variant_payloads,
             essentials_payload,
         })
     }
+}
 
+impl LanguageIdentifierDisplayNameOwned {
     /// Returns a borrowed version of this display name
     /// suitable for writing out to a string.
     pub fn as_borrowed(&self) -> LanguageIdentifierDisplayName<'_> {
@@ -318,13 +367,22 @@ impl LanguageIdentifierDisplayNameOwned {
             Err(lang) => NameOrFallback(Err(lang.as_str())),
         };
 
-        let script_name = match self.script_payload.get() {
+        LanguageIdentifierDisplayName(LossyWrap(LanguageIdentifierDisplayNameInner {
+            base_name,
+            qualifiers: self.qualifiers.as_borrowed(),
+        }))
+    }
+}
+
+impl QualifiersOwned {
+    pub fn as_borrowed(&self) -> QualifiersBorrowed<'_> {
+        let script = match self.script_payload.get() {
             Ok(p) => Some(NameOrFallback(Ok(p.as_ref()))),
             Err(Some(script)) => Some(NameOrFallback(Err(script.as_str()))),
             Err(None) => None,
         };
 
-        let region_name = match self.region_payload.get() {
+        let region = match self.region_payload.get() {
             Ok(p) => Some(NameOrFallback(Ok(p.as_ref()))),
             Err(Some(region)) => Some(NameOrFallback(Err(region.as_str()))),
             Err(None) => None,
@@ -336,14 +394,13 @@ impl LanguageIdentifierDisplayNameOwned {
             Err(Err(variant)) => BorrowedVariants::One(NameOrFallback(Err(variant.as_str()))),
         };
 
-        LanguageIdentifierDisplayName(LossyWrap(LanguageIdentifierDisplayNameInner {
-            base_name,
-            script_name,
-            region_name,
+        QualifiersBorrowed {
+            script,
+            region,
             variants,
-            locale_pattern: &self.essentials_payload.get().locale_pattern,
-            locale_separator: &self.essentials_payload.get().locale_separator,
-        }))
+            glue: &self.essentials_payload.get().locale_pattern,
+            separator: &self.essentials_payload.get().locale_separator,
+        }
     }
 }
 
@@ -387,11 +444,7 @@ writeable::impl_try_writeable_delegate!(
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct LanguageIdentifierDisplayNameInner<'a> {
     base_name: NameOrFallback<'a>,
-    script_name: Option<NameOrFallback<'a>>,
-    region_name: Option<NameOrFallback<'a>>,
-    variants: BorrowedVariants<'a>,
-    locale_pattern: &'a DoublePlaceholderPattern,
-    locale_separator: &'a DoublePlaceholderPattern,
+    qualifiers: QualifiersBorrowed<'a>,
 }
 
 writeable::impl_try_writeable_delegate!(
@@ -404,14 +457,16 @@ writeable::impl_writeable_delegate!(LanguageIdentifierDisplayName<'_>, |&self| &
 
 writeable::impl_display_with_writeable!(LanguageIdentifierDisplayName<'_>);
 
-struct QualifiersWriteable<'a> {
+#[derive(Debug, Copy, Clone)]
+struct QualifiersBorrowed<'a> {
     script: Option<NameOrFallback<'a>>,
     region: Option<NameOrFallback<'a>>,
     variants: BorrowedVariants<'a>,
+    glue: &'a DoublePlaceholderPattern,
     separator: &'a DoublePlaceholderPattern,
 }
 
-impl<'a> QualifiersWriteable<'a> {
+impl<'a> QualifiersBorrowed<'a> {
     fn separator_str(&self) -> &'a str {
         let mut separator_str = ", ";
         for item in self.separator.iter() {
@@ -422,9 +477,13 @@ impl<'a> QualifiersWriteable<'a> {
         }
         separator_str
     }
+
+    fn is_empty(&self) -> bool {
+        self.script.is_none() && self.region.is_none() && self.variants.is_empty()
+    }
 }
 
-impl<'a> TryWriteable for QualifiersWriteable<'a> {
+impl<'a> TryWriteable for QualifiersBorrowed<'a> {
     type Error = LanguageIdentifierNameFallbackError;
 
     fn try_write_to_parts<S: PartsWrite + ?Sized>(
@@ -504,12 +563,6 @@ impl<'a> TryWriteable for QualifiersWriteable<'a> {
     }
 }
 
-impl LanguageIdentifierDisplayNameInner<'_> {
-    fn has_qualifiers(&self) -> bool {
-        self.script_name.is_some() || self.region_name.is_some() || !self.variants.is_empty()
-    }
-}
-
 impl<'a> TryWriteable for LanguageIdentifierDisplayNameInner<'a> {
     type Error = LanguageIdentifierNameFallbackError;
 
@@ -517,19 +570,15 @@ impl<'a> TryWriteable for LanguageIdentifierDisplayNameInner<'a> {
         &self,
         sink: &mut S,
     ) -> Result<Result<(), Self::Error>, core::fmt::Error> {
-        if !self.has_qualifiers() {
+        if self.qualifiers.is_empty() {
             self.base_name.try_write_to_parts(sink)
         } else {
             let result = self
-                .locale_pattern
+                .qualifiers
+                .glue
                 .try_interpolate(DoublePlaceholderValueProviderTry(
                     self.base_name,
-                    QualifiersWriteable {
-                        script: self.script_name,
-                        region: self.region_name,
-                        variants: self.variants,
-                        separator: self.locale_separator,
-                    },
+                    self.qualifiers,
                 ))
                 .try_write_to_parts(sink)?;
             Ok(result.map_err(either::Either::into_inner))
@@ -537,25 +586,21 @@ impl<'a> TryWriteable for LanguageIdentifierDisplayNameInner<'a> {
     }
 
     fn writeable_length_hint(&self) -> LengthHint {
-        if !self.has_qualifiers() {
+        if self.qualifiers.is_empty() {
             self.base_name.writeable_length_hint()
         } else {
-            self.locale_pattern
+            self.qualifiers
+                .glue
                 .try_interpolate(DoublePlaceholderValueProviderTry(
                     self.base_name,
-                    QualifiersWriteable {
-                        script: self.script_name,
-                        region: self.region_name,
-                        variants: self.variants,
-                        separator: self.locale_separator,
-                    },
+                    self.qualifiers,
                 ))
                 .writeable_length_hint()
         }
     }
 
     fn try_writeable_borrow(&self) -> Option<Result<&str, (Self::Error, &str)>> {
-        if !self.has_qualifiers() {
+        if self.qualifiers.is_empty() {
             self.base_name.try_writeable_borrow()
         } else {
             None
