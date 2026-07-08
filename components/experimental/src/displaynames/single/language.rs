@@ -485,8 +485,8 @@ impl<'a> TryWriteable for QualifiersWriteable<'a> {
             num_items += 1;
         }
         match self.variants {
-            BorrowedVariants::One(v) => {
-                length_hint += writeable::Writeable::writeable_length_hint(v);
+            BorrowedVariants::One(variant) => {
+                length_hint += variant.writeable_length_hint();
                 num_items += 1;
             }
             BorrowedVariants::Slice(slice) => {
