@@ -20,10 +20,10 @@ classDiagram
     class LanguageIdentifierDisplayNameOwned~M~ {
         -lid: LanguageIdentifier
         -options: LanguageIdentifierDisplayNameOptions
-        +try_new(prefs, options, lid) Self  // Medium
-        +try_new_short(prefs, options, lid) Self
-        +try_new_long(prefs, options, lid) Self
-        +try_new_menu(prefs, options, lid) Self // Only for M = Menu
+        +try_new(prefs, subject, options) Self  // Medium
+        +try_new_short(prefs, subject, options) Self
+        +try_new_long(prefs, subject, options) Self
+        +try_new_menu(prefs, subject, options) Self // Only for M = Menu
         +as_borrowed(&self) LanguageIdentifierDisplayName
     }
     class LanguageIdentifierDisplayName {
@@ -34,8 +34,8 @@ classDiagram
 
     class RegionDisplayNameOwned {
         -payload: DataPayload~ErasedDisplayNameMarker~
-        +try_new(prefs, subtag) Self // Medium
-        +try_new_short(prefs, subtag) Self
+        +try_new(prefs, region: Region) Self // Medium
+        +try_new_short(prefs, region: Region) Self
         +as_borrowed(&self) RegionDisplayName
     }
     class RegionDisplayName {
@@ -46,8 +46,8 @@ classDiagram
 
     class ScriptDisplayNameOwned {
         -payload: DataPayload~ErasedDisplayNameMarker~
-        +try_new(prefs, subtag) Self // Medium
-        +try_new_short(prefs, subtag) Self
+        +try_new(prefs, script: Script) Self // Medium
+        +try_new_short(prefs, script: Script) Self
         +as_borrowed(&self) ScriptDisplayName
     }
     class ScriptDisplayName {
@@ -58,7 +58,7 @@ classDiagram
 
     class VariantDisplayNameOwned {
         -payload: DataPayload~ErasedDisplayNameMarker~
-        +try_new(prefs, subtag) Self // Medium
+        +try_new(prefs, variant: Variant) Self // Medium
         +as_borrowed(&self) VariantDisplayName
     }
     class VariantDisplayName {
@@ -79,24 +79,24 @@ According to CLDR data, different subtags support different width/length variant
 *   **Scripts**: Short and Medium (default).
 *   **Variants**: Medium (default) only.
 
-To reflect this, each formatter provides explicit constructors for each supported width. The default constructor `try_new` always loads the **Medium** width.
+To reflect this, each formatter provides explicit constructors for each supported width. The default constructor `try_new` always loads the **Medium** width. Note that for Regions and Scripts, requesting Short width via `try_new_short` automatically falls back to Medium width if the short identifier is missing in data, requiring the data provider to implement both Short and Medium data provider traits (`ShortV1 + MediumV1`).
 
-### Value-Passing
-All owned constructors take their target subtag or `LanguageIdentifier` **by value** because the owned struct needs to store the identifier for fallback purposes, and copying/moving these identifiers is highly efficient in ICU4X (using `TinyStr` under the hood).
+### Value-Passing & Argument Ordering
+All owned constructors take their target subtag or `LanguageIdentifier` **by value** because the owned struct needs to store the identifier for fallback purposes, and copying/moving these identifiers is highly efficient in ICU4X (using `TinyStr` under the hood). Notice that in `LanguageIdentifierDisplayNameOwned::try_new(prefs, subject, options)`, the `options` argument is placed last. This aligns with standard ICU4X API style, where options behave like a trailing optional bag.
 
 *   **`LanguageIdentifierDisplayName` / `LanguageIdentifierDisplayNameOwned<M>`**: Formats a full `LanguageIdentifier` (language, script, region, and variants) into a localized string. It is generic over the display model (Standard/Dialect vs. Menu).
-    *   `LanguageIdentifierDisplayNameOwned::try_new(prefs, options, lid)`: Constructor for **Medium** width (Standard/Dialect).
-    *   `LanguageIdentifierDisplayNameOwned::try_new_short(prefs, options, lid)`: Constructor for **Short** width (Standard/Dialect).
-    *   `LanguageIdentifierDisplayNameOwned::try_new_long(prefs, options, lid)`: Constructor for **Long** width (Standard/Dialect).
-    *   `LanguageIdentifierDisplayNameOwned::try_new_menu(prefs, options, lid)`: Constructor for **Menu** style (Medium width).
+    *   `LanguageIdentifierDisplayNameOwned::try_new(prefs, subject, options)`: Constructor for **Medium** width (Standard/Dialect).
+    *   `LanguageIdentifierDisplayNameOwned::try_new_short(prefs, subject, options)`: Constructor for **Short** width (Standard/Dialect).
+    *   `LanguageIdentifierDisplayNameOwned::try_new_long(prefs, subject, options)`: Constructor for **Long** width (Standard/Dialect).
+    *   `LanguageIdentifierDisplayNameOwned::try_new_menu(prefs, subject, options)`: Constructor for **Menu** style (Medium width).
 *   **`RegionDisplayName` / `RegionDisplayNameOwned`**: Formats a single `Region` subtag (e.g., `US` -> "United States").
-    *   `RegionDisplayNameOwned::try_new(prefs, subtag)`: Constructor for **Medium** width.
-    *   `RegionDisplayNameOwned::try_new_short(prefs, subtag)`: Constructor for **Short** width.
+    *   `RegionDisplayNameOwned::try_new(prefs, region: Region)`: Constructor for **Medium** width.
+    *   `RegionDisplayNameOwned::try_new_short(prefs, region: Region)`: Constructor for **Short** width.
 *   **`ScriptDisplayName` / `ScriptDisplayNameOwned`**: Formats a single `Script` subtag (e.g., `Latn` -> "Latin").
-    *   `ScriptDisplayNameOwned::try_new(prefs, subtag)`: Constructor for **Medium** width.
-    *   `ScriptDisplayNameOwned::try_new_short(prefs, subtag)`: Constructor for **Short** width.
+    *   `ScriptDisplayNameOwned::try_new(prefs, script: Script)`: Constructor for **Medium** width.
+    *   `ScriptDisplayNameOwned::try_new_short(prefs, script: Script)`: Constructor for **Short** width.
 *   **`VariantDisplayName` / `VariantDisplayNameOwned`**: Formats a single `Variant` subtag (e.g., `valencia` -> "Valencian").
-    *   `VariantDisplayNameOwned::try_new(prefs, subtag)`: Constructor for **Medium** width.
+    *   `VariantDisplayNameOwned::try_new(prefs, variant: Variant)`: Constructor for **Medium** width.
 
 ---
 
@@ -151,7 +151,7 @@ These markers contain the patterns used to combine subtags. They are indexed by 
 
 The `single` module adheres to general ICU4X design principles to support `no_std` environments and minimize resource usage:
 
-*   **Lazy Formatting (`Writeable`)**: Formatters do not allocate `String`s upon construction. Instead, they store the raw identifiers and loaded `DataPayload`s, deferring formatting until `Writeable::write_to` is called to write directly to the output sink.
+*   **Lazy Formatting (`Writeable`)**: Formatters do not allocate `String`s upon construction. Instead, they store the raw identifiers and loaded `DataPayload`s, deferring formatting until `Writeable::write_to` is called on the borrowed struct (or on the single-subtag owned struct) to write directly to the output sink. Single-subtag owned types (`ScriptDisplayNameOwned`, `RegionDisplayNameOwned`, `VariantDisplayNameOwned`) implement `Writeable` directly for convenience by forwarding to their borrowed counterparts via `.as_borrowed()`. However, `LanguageIdentifierDisplayNameOwned` requires calling `.as_borrowed()` explicitly before formatting (see Section *Limitations & Future Work*).
 *   **Stack Optimization**: We leverage standard ICU4X patterns like `DataPayloadOr` to store optional payloads (e.g., optional script/region) without the stack size overhead of `Option<DataPayload>`.
 *   **Payload Erasing**: We use `ErasedMarker` to allow fields to hold different width variants of the payloads polymorphically at runtime, sharing the same underlying `VarZeroCow<'static, str>` data struct.
     *   *Type Alias*: `pub(crate) type ErasedDisplayNameMarker = icu_provider::marker::ErasedMarker<VarZeroCow<'static, str>>;`
@@ -173,9 +173,7 @@ We implement this trait for two marker models:
 `LanguageIdentifierDisplayNameOwned<M>` holds the `LanguageIdentifier`, `LanguageIdentifierDisplayNameOptions`, the generic `language_payload` (determined by `M`), optional `script_payload` and `region_payload` (both using `DataPayloadOr` with `ErasedDisplayNameMarker`), a vector of `variant_payloads` (using `ErasedDisplayNameMarker`), and the `pattern_payload` (using `LocaleNamesEssentialsV1`).
 
 > [!NOTE]
-> **Allocation Papercut**: Storing `variant_payloads` in a `Vec` requires heap allocation, which prevents this struct from being strictly allocation-free in `no_std` environments without an allocator. 
-> 
-> *Follow-up (TODO #7825)*: We should explore using a stack-allocated collection like `SmallVec` (e.g., `SmallVec<[DataPayload<ErasedDisplayNameMarker>; 1]>`) to eliminate heap allocation for the vast majority of locales that have zero or one variant.
+> **Allocation Papercut Solved (TODO #7825)**: Previously, storing `variant_payloads` in a `Vec` required heap allocation. This has been solved without needing external stack-allocated crates like `SmallVec`: `variant_payloads` is stored as `DataPayloadOr<LocaleNamesVariantMediumV1, Vec<...>>`, achieving zero heap allocation for the vast majority of locales that have zero or one variant.
 
 #### 3. The Shared Borrowed Struct
 Both models resolve their payload differences and borrow to a single, non-generic **`LanguageIdentifierDisplayName<'a>`** struct. 
@@ -184,7 +182,7 @@ This struct holds only cheap, borrowed references:
 *   `base_name`: The resolved base language name (or "core" part for menu style) as a `&'a str`.
 *   `menu_extension`: The optional menu extension part as an `Option<&'a str>`.
 *   `script_name` and `region_name`: Optional resolved names as `Option<&'a str>`.
-*   `variants`: A borrowed slice of variant payloads (`&'a [DataPayload<ErasedDisplayNameMarker>]`). We borrow the payloads directly rather than extracting a dereferenced list of `&'a str`s to avoid heap allocation during `as_borrowed()`. While a dereferenced list would be cleaner, this zero-allocation design is preferred and acceptable since variants are rarely present and not on a hot path.
+*   `variants`: A borrowed representation of variant payloads (`BorrowedVariants<'a>`, which is either `One(&'a str)` or a borrowed slice of `DataPayloadOr` items). We borrow the payloads directly rather than extracting a heap-allocated list of `&'a str`s to avoid heap allocation during `as_borrowed()`. While a dereferenced list would be cleaner, this zero-allocation design is preferred and acceptable since variants are rarely present and not on a hot path.
 *   `locale_pattern` and `locale_separator`: Borrowed patterns from the pattern payload.
 
 #### 4. Resolution in `as_borrowed()`
@@ -228,18 +226,14 @@ As per [CLDR-19336](https://unicode-org.atlassian.net/browse/CLDR-19336), some l
 The following features defined in UTS #35 are currently not supported and are planned for future releases:
 
 1.  **Locale Extension Keywords (UTS #35 §3.2)**: Formatting Unicode extension keys and types (e.g., `-u-ca-gregory` -> "Calendar: Gregorian") using `localeKeyTypePattern`.
+2.  **`Writeable` / `TryWriteable` on `LanguageIdentifierDisplayNameOwned`**: Currently, `LanguageIdentifierDisplayNameOwned` does not implement `Writeable` or `TryWriteable` directly; callers must call `.as_borrowed()` first. We cannot easily use `writeable::impl_writeable_delegate!` or `writeable::impl_try_writeable_delegate!` to delegate to `.as_borrowed()` on `LanguageIdentifierDisplayNameOwned` due to a temporary lifetime constraint (`E0515`): because `.as_borrowed()` constructs a new `LanguageIdentifierDisplayName<'_>` struct by value on the stack, delegating `.writeable_borrow()` or `.try_writeable_borrow()` attempts to return a string reference tied to the lifetime of that temporary stack struct rather than `&self`.
+    *   *Future Work*: We could either add manual `Writeable`/`TryWriteable` implementations (similar to how `mod.rs` implements `Writeable` manually for single-subtag owned types) or improve the delegate macros to support delegating to `.as_borrowed()` without temporary lifetime constraints.
 
 ---
 
 ## Open Questions
 
-1.  **Writeable on Owned Types**:
-    Owned types like `ScriptDisplayNameOwned`, `RegionDisplayNameOwned`, `VariantDisplayNameOwned`, and `LanguageIdentifierDisplayNameOwned` implement `Writeable` (by forwarding to their borrowed counterparts via `.as_borrowed()`).
-    *   *Resolution*: We decided to keep implementing `Writeable` directly on owned types for convenience, as there is no harm in having multiple `Writeable` implementations.
-2.  **Constructor Argument Order**:
-    In `LanguageIdentifierDisplayNameOwned::try_new(prefs, locale_id, options)`, we have placed `options` last.
-    *   *Resolution*: This aligns with the standard ICU4X API style, as `options` behaves like a trailing optional bag.
-3.  **Dialect Names Data Marker**:
+1.  **Dialect Names Data Marker**:
     Should dialect names (currently loaded using the same `LocaleNamesLanguageMediumV1` marker but with language+script+region attributes) be moved to a separate data marker to avoid overloading the language name marker and to allow applications to opt-out of dialect data to save binary size?
 
 
