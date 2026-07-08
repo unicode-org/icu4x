@@ -4,12 +4,9 @@
 
 use core::fmt::Display;
 
-use fixed_decimal::{Decimal as FixedDecimal, UnsignedDecimal};
+use fixed_decimal::Decimal as FixedDecimal;
 use icu_decimal::preferences::CompactDecimalFormatterPreferences;
-use icu_decimal::{
-    CompactDecimalFormatter, FormattedUnsignedCompactDecimal, FormattedUnsignedDecimal,
-};
-use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
+use icu_decimal::{AbstractFormatter, DecimalFormatter, DecimalFormatterPreferences};
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_plurals::{PluralRules, PluralRulesPreferences};
 use icu_provider::prelude::*;
@@ -47,64 +44,6 @@ prefs_convert!(
     { numbering_system }
 );
 
-/// A trait for value representation in currency formatting.
-pub trait ValueRepresentation {
-    /// Data required for this specific value representation.
-    type Formatter: core::fmt::Debug;
-    type Formatted<'a>: Writeable;
-
-    fn format<'a>(data: &'a Self::Formatter, value: &'a UnsignedDecimal) -> Self::Formatted<'a>;
-    fn format_sign(
-        data: &Self::Formatter,
-        value: impl Writeable,
-        sign: fixed_decimal::Sign,
-    ) -> impl Writeable + Display;
-}
-
-/// Representation for decimal currency formatting.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[non_exhaustive]
-pub struct Decimal;
-
-impl ValueRepresentation for Decimal {
-    type Formatter = DecimalFormatter;
-    type Formatted<'a> = FormattedUnsignedDecimal<'a>;
-
-    fn format<'a>(data: &'a Self::Formatter, value: &'a UnsignedDecimal) -> Self::Formatted<'a> {
-        data.format_unsigned(icu_decimal::Cow::Borrowed(value))
-    }
-
-    fn format_sign(
-        data: &Self::Formatter,
-        value: impl Writeable,
-        sign: fixed_decimal::Sign,
-    ) -> impl Writeable + Display {
-        data.format_sign(sign, value)
-    }
-}
-
-/// Representation for compact currency formatting.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[non_exhaustive]
-pub struct Compact;
-
-impl ValueRepresentation for Compact {
-    type Formatter = CompactDecimalFormatter;
-    type Formatted<'a> = FormattedUnsignedCompactDecimal<'a>;
-
-    fn format<'a>(data: &'a Self::Formatter, value: &'a UnsignedDecimal) -> Self::Formatted<'a> {
-        data.format_unsigned(value)
-    }
-
-    fn format_sign(
-        data: &Self::Formatter,
-        value: impl Writeable,
-        sign: fixed_decimal::Sign,
-    ) -> impl Writeable + Display {
-        data.decimal_formatter.format_sign(sign, value)
-    }
-}
-
 #[derive(Debug)]
 pub(crate) enum CurrencyFormatterData {
     Essential {
@@ -127,15 +66,15 @@ pub(crate) enum CurrencyFormatterData {
 ///
 /// Read more about the options in the [`super::options`] module.
 #[derive(Debug)]
-pub struct CurrencyFormatter<V: ValueRepresentation> {
-    value_formatter: V::Formatter,
+pub struct CurrencyFormatter<V: AbstractFormatter> {
+    value_formatter: V,
     currency_data: CurrencyFormatterData,
 }
 
-impl<V: ValueRepresentation> CurrencyFormatter<V> {
+impl<V: AbstractFormatter> CurrencyFormatter<V> {
     #[cfg(feature = "compiled_data")]
     pub(crate) fn try_new_essential(
-        value_formatter: V::Formatter,
+        value_formatter: V,
         prefs: CurrencyFormatterPreferences,
         currency: CurrencyCode,
         width: Width,
@@ -165,7 +104,7 @@ impl<V: ValueRepresentation> CurrencyFormatter<V> {
 
     pub(crate) fn try_new_essential_unstable<D>(
         provider: &D,
-        value_formatter: V::Formatter,
+        value_formatter: V,
         prefs: CurrencyFormatterPreferences,
         currency: CurrencyCode,
         width: Width,
@@ -197,7 +136,7 @@ impl<V: ValueRepresentation> CurrencyFormatter<V> {
 
     #[cfg(feature = "compiled_data")]
     pub(crate) fn try_new_long_internal(
-        value_formatter: V::Formatter,
+        value_formatter: V,
         prefs: CurrencyFormatterPreferences,
         currency: CurrencyCode,
     ) -> Result<Self, DataError> {
@@ -234,7 +173,7 @@ impl<V: ValueRepresentation> CurrencyFormatter<V> {
 
     pub(crate) fn try_new_long_internal_unstable<D>(
         provider: &D,
-        value_formatter: V::Formatter,
+        value_formatter: V,
         prefs: CurrencyFormatterPreferences,
         currency: CurrencyCode,
     ) -> Result<Self, DataError>
@@ -276,7 +215,7 @@ impl<V: ValueRepresentation> CurrencyFormatter<V> {
     }
 }
 
-impl CurrencyFormatter<Decimal> {
+impl CurrencyFormatter<DecimalFormatter> {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: CurrencyFormatterPreferences, currency_code: &CurrencyCode) -> error: DataError,
         functions: [
@@ -445,7 +384,7 @@ impl CurrencyFormatter<Decimal> {
     }
 }
 
-impl<V: ValueRepresentation> CurrencyFormatter<V> {
+impl<V: AbstractFormatter> CurrencyFormatter<V> {
     /// Formats a [`FixedDecimal`] value.
     ///
     /// # Examples
@@ -497,7 +436,7 @@ impl<V: ValueRepresentation> CurrencyFormatter<V> {
         &'l self,
         value: &'l FixedDecimal,
     ) -> impl Writeable + Display + 'l {
-        let formatted_value = V::format(&self.value_formatter, &value.absolute);
+        let formatted_value = V::format_unsigned(&self.value_formatter, &value.absolute);
 
         // TODO(#8146): Evaluate if FixedDecimal is the correct input type or if we should use
         // an exact decimal/money representation.
