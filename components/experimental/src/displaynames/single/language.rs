@@ -25,8 +25,47 @@ use writeable::{PartsWrite, TryWriteable, adapters::LossyWrap};
 #[allow(clippy::exhaustive_structs)]
 pub struct LanguageIdentifierNameFallbackError;
 
+/// Marker models for language display names.
+pub mod models {
+    use super::*;
+    mod private {
+        pub trait Sealed {}
+    }
+
+    /// A trait defining the data model for a language display name (Standard vs. Menu).
+    ///
+    /// <div class="stab unstable">
+    /// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
+    /// trait, please consider using a type from the implementors listed below.
+    /// </div>
+    pub trait LanguageIdentifierDisplayNameModel: private::Sealed {
+        /// The payload storage type for this model.
+        type LanguagePayloadUnstable: 'static + core::fmt::Debug;
+    }
+
+    /// Model for standard and dialect language display names.
+    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    #[allow(clippy::exhaustive_structs)]
+    pub struct Standard;
+
+    impl private::Sealed for Standard {}
+    impl LanguageIdentifierDisplayNameModel for Standard {
+        type LanguagePayloadUnstable = DataPayloadOr<LocaleNamesLanguageMediumV1, Language>;
+    }
+
+    /// Model for menu style language display names.
+    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    #[allow(clippy::exhaustive_structs)]
+    pub struct Menu;
+
+    impl private::Sealed for Menu {}
+    impl LanguageIdentifierDisplayNameModel for Menu {
+        type LanguagePayloadUnstable = DataPayloadOr<LocaleNamesLanguageMediumV1, Language>;
+    }
+}
+
 size_test!(
-    LanguageIdentifierDisplayNameOwned,
+    LanguageIdentifierDisplayNameOwned<models::Standard>,
     language_identifier_display_name_owned_size,
     184
 );
@@ -96,9 +135,9 @@ size_test!(
 /// ```
 #[doc = language_identifier_display_name_owned_size!()]
 #[derive(Debug)]
-pub struct LanguageIdentifierDisplayNameOwned {
+pub struct LanguageIdentifierDisplayNameOwned<M: models::LanguageIdentifierDisplayNameModel> {
     /// Either the language display name or the subtag as fallback
-    language_payload: DataPayloadOr<LocaleNamesLanguageMediumV1, Language>,
+    language_payload: M::LanguagePayloadUnstable,
     /// All other fields (shared between Standard and Menu)
     qualifiers: QualifiersOwned,
 }
@@ -119,7 +158,7 @@ struct QualifiersOwned {
     essentials_payload: DataPayload<LocaleNamesEssentialsV1>,
 }
 
-impl LanguageIdentifierDisplayNameOwned {
+impl LanguageIdentifierDisplayNameOwned<models::Standard> {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the language display name for a given language identifier and locale using compiled data.
@@ -180,7 +219,9 @@ impl LanguageIdentifierDisplayNameOwned {
             qualifiers,
         })
     }
+}
 
+impl<M: models::LanguageIdentifierDisplayNameModel> LanguageIdentifierDisplayNameOwned<M> {
     /// Loads the name for a langauge dialect, which includes script and region subtags.
     ///
     /// We try to load names for combinations of subtags:
@@ -358,7 +399,7 @@ impl QualifiersOwned {
     }
 }
 
-impl LanguageIdentifierDisplayNameOwned {
+impl LanguageIdentifierDisplayNameOwned<models::Standard> {
     /// Returns a borrowed version of this display name
     /// suitable for writing out to a string.
     pub fn as_borrowed(&self) -> LanguageIdentifierDisplayName<'_> {
