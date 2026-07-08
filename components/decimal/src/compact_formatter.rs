@@ -16,7 +16,7 @@ use crate::{
 #[cfg(feature = "alloc")]
 use alloc::string::String;
 use fixed_decimal::UnsignedDecimal;
-use icu_pattern::{Pattern, PatternBackend, SinglePlaceholder};
+use icu_pattern::{Pattern, SinglePlaceholder};
 use icu_plurals::PluralRules;
 use icu_provider::DataError;
 use icu_provider::{marker::ErasedMarker, prelude::*};
