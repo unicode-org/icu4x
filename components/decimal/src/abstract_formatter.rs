@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use fixed_decimal::UnsignedDecimal;
+use icu_plurals::PluralOperands;
 use writeable::Writeable;
 
 use crate::{
@@ -15,6 +16,11 @@ pub trait Sealed {}
 /// A trait representing an abstract number formatter.
 ///
 /// This is a building block for more complicated formatters, like currency or units.
+///
+/// <div class="stab unstable">
+/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
+/// </div>
 pub trait AbstractFormatter: core::fmt::Debug + Sealed {
     #[doc(hidden)]
     type FormattedUnsigned<'a>: Writeable
@@ -30,6 +36,9 @@ pub trait AbstractFormatter: core::fmt::Debug + Sealed {
         value: W,
         sign: fixed_decimal::Sign,
     ) -> FormattedSign<'a, W>;
+
+    #[doc(hidden)]
+    fn plural_operands(value: &Self::FormattedUnsigned<'_>) -> PluralOperands;
 }
 
 impl Sealed for DecimalFormatter {}
@@ -47,6 +56,10 @@ impl AbstractFormatter for DecimalFormatter {
     ) -> FormattedSign<'a, W> {
         self.format_sign(sign, value)
     }
+
+    fn plural_operands(value: &Self::FormattedUnsigned<'_>) -> PluralOperands {
+        value.plural_operands()
+    }
 }
 
 impl Sealed for CompactDecimalFormatter {}
@@ -63,5 +76,9 @@ impl AbstractFormatter for CompactDecimalFormatter {
         sign: fixed_decimal::Sign,
     ) -> FormattedSign<'a, W> {
         self.decimal_formatter.format_sign(sign, value)
+    }
+
+    fn plural_operands(value: &Self::FormattedUnsigned<'_>) -> PluralOperands {
+        value.plural_operands()
     }
 }

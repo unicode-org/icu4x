@@ -17,7 +17,7 @@ use crate::{
 use alloc::string::String;
 use fixed_decimal::UnsignedDecimal;
 use icu_pattern::{Pattern, SinglePlaceholder};
-use icu_plurals::PluralRules;
+use icu_plurals::{PluralOperands, PluralRules};
 use icu_provider::DataError;
 use icu_provider::{marker::ErasedMarker, prelude::*};
 use writeable::Writeable;
@@ -396,6 +396,7 @@ impl CompactDecimalFormatter {
                     pattern: Some(t.variable.get(1.into(), &self.plural_rules).1),
                     significand: UnsignedDecimal::ONE,
                     decimal_formatter: &self.decimal_formatter,
+                    exponent: next_exponent,
                 };
             }
         }
@@ -420,6 +421,7 @@ impl CompactDecimalFormatter {
                 .multiplied_pow10(-i16::from(exponent))
                 .trimmed_end(),
             decimal_formatter: &self.decimal_formatter,
+            exponent,
         }
     }
 
@@ -608,6 +610,7 @@ pub struct FormattedUnsignedCompactDecimal<'l> {
     pattern: Option<&'l Pattern<SinglePlaceholder>>,
     significand: UnsignedDecimal,
     decimal_formatter: &'l DecimalFormatter,
+    exponent: u8,
 }
 
 impl Writeable for FormattedUnsignedCompactDecimal<'_> {
@@ -618,6 +621,12 @@ impl Writeable for FormattedUnsignedCompactDecimal<'_> {
                 .decimal_formatter
                 .format_unsigned(Cow::Borrowed(&self.significand))])
             .write_to(sink)
+    }
+}
+
+impl FormattedUnsignedCompactDecimal<'_> {
+    pub(crate) fn plural_operands(&self) -> PluralOperands {
+        PluralOperands::from_significand_and_exponent(&self.significand, self.exponent)
     }
 }
 

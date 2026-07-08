@@ -4,6 +4,8 @@
 
 use super::Cow;
 use core::fmt::Write;
+#[cfg(feature = "unstable")]
+use icu_plurals::PluralOperands;
 use writeable::Part;
 
 use crate::DecimalFormatterPreferences;
@@ -172,6 +174,13 @@ pub struct FormattedUnsignedDecimal<'l> {
     pub(crate) options: &'l DecimalFormatterOptions,
     pub(crate) symbols: &'l DecimalSymbols<'l>,
     pub(crate) digits: &'l [char; 10],
+}
+
+impl FormattedUnsignedDecimal<'_> {
+    #[cfg(feature = "unstable")]
+    pub(crate) fn plural_operands(&self) -> PluralOperands {
+        PluralOperands::from_significand_and_exponent(&self.value, 0)
+    }
 }
 
 #[doc(hidden)] // TODO(#3647): should be private

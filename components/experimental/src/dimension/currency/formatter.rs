@@ -458,7 +458,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 patterns,
                 plural_rules,
             } => {
-                let operands = value.into();
+                let operands = V::plural_operands(&formatted_value);
                 let currency_str = extended.get().display_names.get(operands, plural_rules);
                 let pattern = patterns.get().patterns.get(operands, plural_rules);
                 (pattern, currency_str)

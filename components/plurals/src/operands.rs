@@ -258,7 +258,8 @@ impl From<u128> for PluralOperands {
 }
 
 impl PluralOperands {
-    fn from_significand_and_exponent(dec: &UnsignedDecimal, exp: u8) -> PluralOperands {
+    /// Creates a [`PluralOperands`] from a significand and power of ten.
+    pub fn from_significand_and_exponent(dec: &UnsignedDecimal, exp: u8) -> PluralOperands {
         let exp_i16 = i16::from(exp);
 
         let mag_range = dec.magnitude_range();
