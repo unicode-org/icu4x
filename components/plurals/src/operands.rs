@@ -258,6 +258,7 @@ impl From<u128> for PluralOperands {
 }
 
 impl PluralOperands {
+    #[doc(hidden)] // todo: figure out whether to expose this
     /// Creates a [`PluralOperands`] from a significand and power of ten.
     pub fn from_significand_and_exponent(dec: &UnsignedDecimal, exp: u8) -> PluralOperands {
         let exp_i16 = i16::from(exp);

@@ -24,7 +24,6 @@ icu::collator::CollatorBorrowed::write_sort_key_to#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_utf16_to#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_utf8_to#FnInStruct
 icu::decimal::FormattedDecimal::write_to#FnInStruct
-icu::plurals::PluralOperands::from_significand_and_exponent#FnInStruct
 icu::segmenter::GraphemeClusterSegmenter::new_neo#FnInStruct
 icu::segmenter::LineSegmenter::new_neo_auto#FnInStruct
 icu::segmenter::LineSegmenter::new_neo_dictionary#FnInStruct

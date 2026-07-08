@@ -1080,6 +1080,20 @@ impl<T> PluralElements<T> {
     }
 
     /// Returns the value for the given [`PluralOperands`] and [`PluralRules`].
+    ///
+    /// # Example
+    /// ```
+    /// use icu::locale::locale;
+    /// use icu::plurals::{PluralCategory, PluralRules, PluralElements};
+    ///
+    /// let rules = PluralRules::try_new_cardinal(locale!("fr").into()).unwrap();
+    ///
+    /// let elements = PluralElements::new("chats").with_one_value(Some("chat"));
+    ///
+    /// assert_eq!(*elements.get(0_usize.into(), &rules), "chat");
+    /// assert_eq!(*elements.get(1_usize.into(), &rules), "chat");
+    /// assert_eq!(*elements.get(12_usize.into(), &rules), "chats");
+    /// ```
     pub fn get<'a>(&'a self, op: PluralOperands, rules: &PluralRules) -> &'a T {
         let category = rules.category_for(op);
 
