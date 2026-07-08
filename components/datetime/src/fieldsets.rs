@@ -59,7 +59,10 @@ pub use crate::combo::Combo;
 use crate::{
     options::*,
     provider::semantic_skeletons::{DatetimePatternsGlueV1, GluePattern},
-    provider::{fields, names::*, semantic_skeletons::*, time_zones::tz},
+    provider::{
+        fields, names::*, range_patterns::DatetimePatternsRangeTimeV1, semantic_skeletons::*,
+        time_zones::tz,
+    },
     raw::neo::RawOptions,
     scaffold::*,
 };
@@ -537,12 +540,14 @@ macro_rules! impl_date_or_calendar_period_marker {
         }
         impl<C: CldrCalendar> TypedDateDataMarkers<C> for $type {
             type DateSkeletonPatternsV1 = datetime_marker_helper!(@dates/typed, yes);
+            type DateRangeSkeletonPatternsV1 = datetime_marker_helper!(@dates/range/typed, yes);
             type YearNamesV1 = datetime_marker_helper!(@years/typed, $($years_yes)?);
             type MonthNamesV1 = datetime_marker_helper!(@months/typed, $($months_yes)?);
             type WeekdayNamesV1 = datetime_marker_helper!(@weekdays, $($weekdays_yes)?);
         }
         impl DateDataMarkers for $type {
             type Skel = datetime_marker_helper!(@calmarkers, yes);
+            type RangeSkel = datetime_marker_helper!(@calmarkers, yes);
             type Year = datetime_marker_helper!(@calmarkers, $($years_yes)?);
             type Month = datetime_marker_helper!(@calmarkers, $($months_yes)?);
             type WeekdayNamesV1 = datetime_marker_helper!(@weekdays, $($weekdays_yes)?);
@@ -701,12 +706,14 @@ macro_rules! impl_date_marker {
         }
         impl<C: CldrCalendar> TypedDateDataMarkers<C> for $type_time {
             type DateSkeletonPatternsV1 = datetime_marker_helper!(@dates/typed, yes);
+            type DateRangeSkeletonPatternsV1 = datetime_marker_helper!(@dates/range/typed, yes);
             type YearNamesV1 = datetime_marker_helper!(@years/typed, $($years_yes)?);
             type MonthNamesV1 = datetime_marker_helper!(@months/typed, $($months_yes)?);
             type WeekdayNamesV1 = datetime_marker_helper!(@weekdays, $($weekdays_yes)?);
         }
         impl DateDataMarkers for $type_time {
             type Skel = datetime_marker_helper!(@calmarkers, yes);
+            type RangeSkel = datetime_marker_helper!(@calmarkers, yes);
             type Year = datetime_marker_helper!(@calmarkers, $($years_yes)?);
             type Month = datetime_marker_helper!(@calmarkers, $($months_yes)?);
             type WeekdayNamesV1 = datetime_marker_helper!(@weekdays, $($weekdays_yes)?);
@@ -715,6 +722,7 @@ macro_rules! impl_date_marker {
             // TODO(#6497): Consider making dayperiods optional
             type DayPeriodNamesV1 = datetime_marker_helper!(@dayperiods, yes);
             type TimeSkeletonPatternsV1 = datetime_marker_helper!(@times, yes);
+            type TimeRangeSkeletonPatternsV1 = datetime_marker_helper!(@times/range, yes);
             type HourInput = datetime_marker_helper!(@input/hour, yes);
             type MinuteInput = datetime_marker_helper!(@input/minute, yes);
             type SecondInput = datetime_marker_helper!(@input/second, yes);
@@ -868,6 +876,7 @@ macro_rules! impl_time_marker {
         impl TimeMarkers for $type {
             type DayPeriodNamesV1 = datetime_marker_helper!(@dayperiods, $($dayperiods_yes)?);
             type TimeSkeletonPatternsV1 = datetime_marker_helper!(@times, yes);
+            type TimeRangeSkeletonPatternsV1 = datetime_marker_helper!(@times/range, yes);
             type HourInput = datetime_marker_helper!(@input/hour, $($hour_yes)?);
             type MinuteInput = datetime_marker_helper!(@input/minute, $($minute_yes)?);
             type SecondInput = datetime_marker_helper!(@input/second, $($second_yes)?);

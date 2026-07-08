@@ -4,15 +4,16 @@
 
 use tinystr::TinyAsciiStr;
 
-pub mod compact_format;
 pub mod compact_formatter;
-pub mod format;
 pub mod formatter;
-pub mod long_compact_format;
-pub mod long_compact_formatter;
 pub mod options;
 
 /// A currency code, such as "USD" or "EUR".
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // newtype
 pub struct CurrencyCode(pub TinyAsciiStr<3>);
+
+#[cfg(test)]
+pub mod compact_format;
+#[cfg(test)]
+pub mod format;
