@@ -17,7 +17,7 @@ use crate::{
 use alloc::string::String;
 use fixed_decimal::UnsignedDecimal;
 use icu_pattern::{Pattern, SinglePlaceholder};
-use icu_plurals::{PluralOperands, PluralRules};
+use icu_plurals::{PluralOperands, PluralRules, PluralSubject};
 use icu_provider::DataError;
 use icu_provider::{marker::ErasedMarker, prelude::*};
 use writeable::Writeable;
@@ -624,8 +624,8 @@ impl Writeable for FormattedUnsignedCompactDecimal<'_> {
     }
 }
 
-impl FormattedUnsignedCompactDecimal<'_> {
-    pub(crate) fn plural_operands(&self) -> PluralOperands {
+impl PluralSubject for FormattedUnsignedCompactDecimal<'_> {
+    fn plural_operands(&self) -> PluralOperands {
         PluralOperands::from_significand_and_exponent(&self.significand, self.exponent)
     }
 }

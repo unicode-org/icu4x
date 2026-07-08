@@ -21,7 +21,7 @@ use icu_decimal::{
     AbstractFormatter, CompactDecimalFormatter, DecimalFormatter, DecimalFormatterPreferences,
 };
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
-use icu_plurals::{PluralRules, PluralRulesPreferences};
+use icu_plurals::{PluralRules, PluralRulesPreferences, PluralSubject};
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 use writeable::Writeable;
@@ -1391,7 +1391,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 patterns,
                 plural_rules,
             } => {
-                let operands = V::plural_operands(&formatted_value);
+                let operands = formatted_value.plural_operands();
                 let currency_str = extended.get().get(operands, plural_rules);
                 let pattern = patterns.get().get(operands, plural_rules);
                 (pattern, currency_str, rounded_value.sign)
