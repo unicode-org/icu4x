@@ -8,7 +8,6 @@ use crate::provider::*;
 use crate::rule_segmenter::*;
 use alloc::string::String;
 use alloc::vec;
-use alloc::vec::Vec;
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
@@ -935,17 +934,14 @@ impl<'data> WordSegmenterBorrowed<'data> {
                 data,
                 complex,
                 locale_override,
-            } => WordBreakIteratorInner::Legacy(RuleBreakIterator {
-                iter: input.char_indices(),
-                len: input.len(),
-                current_pos_data: None,
-                result_cache: Vec::new(),
+            } => WordBreakIteratorInner::Legacy(RuleBreakIterator::new(
+                input.char_indices(),
+                input.len(),
                 data,
-                complex: Some(complex),
-                boundary_property: 0,
                 locale_override,
-                handle_complex: handle_complex_utf8,
-            }),
+                Some(complex),
+                handle_complex_utf8,
+            )),
             #[cfg(feature = "unstable")]
             WordSegmenterBorrowedInner::Neo { data, complex } => WordBreakIteratorInner::Neo(
                 crate::neo::RuleBreakIterator::new(input.char_indices(), data, None, Some(complex)),
@@ -967,17 +963,14 @@ impl<'data> WordSegmenterBorrowed<'data> {
                 data,
                 complex,
                 locale_override,
-            } => WordBreakIteratorInner::Legacy(RuleBreakIterator {
-                iter: Utf8CharIndices::new(input),
-                len: input.len(),
-                current_pos_data: None,
-                result_cache: Vec::new(),
+            } => WordBreakIteratorInner::Legacy(RuleBreakIterator::new(
+                Utf8CharIndices::new(input),
+                input.len(),
                 data,
-                complex: Some(complex),
-                boundary_property: 0,
                 locale_override,
-                handle_complex: handle_complex_utf8,
-            }),
+                Some(complex),
+                handle_complex_utf8,
+            )),
             #[cfg(feature = "unstable")]
             WordSegmenterBorrowedInner::Neo { data, complex } => {
                 WordBreakIteratorInner::Neo(crate::neo::RuleBreakIterator::new(
@@ -999,17 +992,14 @@ impl<'data> WordSegmenterBorrowed<'data> {
                 data,
                 complex,
                 locale_override,
-            } => WordBreakIteratorInner::Legacy(RuleBreakIterator {
-                iter: Latin1Indices::new(input),
-                len: input.len(),
-                current_pos_data: None,
-                result_cache: Vec::new(),
+            } => WordBreakIteratorInner::Legacy(RuleBreakIterator::new(
+                Latin1Indices::new(input),
+                input.len(),
                 data,
-                complex: Some(complex),
-                boundary_property: 0,
                 locale_override,
-                handle_complex: empty_handle_complex,
-            }),
+                Some(complex),
+                empty_handle_complex,
+            )),
             #[cfg(feature = "unstable")]
             WordSegmenterBorrowedInner::Neo { data, .. } => WordBreakIteratorInner::Neo(
                 crate::neo::RuleBreakIterator::new(Latin1Indices::new(input), data, None, None),
@@ -1026,17 +1016,14 @@ impl<'data> WordSegmenterBorrowed<'data> {
                 data,
                 complex,
                 locale_override,
-            } => WordBreakIteratorInner::Legacy(RuleBreakIterator {
-                iter: Utf16Indices::new(input),
-                len: input.len(),
-                current_pos_data: None,
-                result_cache: Vec::new(),
+            } => WordBreakIteratorInner::Legacy(RuleBreakIterator::new(
+                Utf16Indices::new(input),
+                input.len(),
                 data,
-                complex: Some(complex),
-                boundary_property: 0,
                 locale_override,
-                handle_complex: handle_complex_utf16,
-            }),
+                Some(complex),
+                handle_complex_utf16,
+            )),
             #[cfg(feature = "unstable")]
             WordSegmenterBorrowedInner::Neo { data, complex } => {
                 WordBreakIteratorInner::Neo(crate::neo::RuleBreakIterator::new(

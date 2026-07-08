@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::vec::Vec;
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 
@@ -359,17 +358,14 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
             SentenceSegmenterBorrowedInner::Legacy {
                 data,
                 locale_override,
-            } => SentenceBreakIterator(SentenceBreakIteratorInner::Legacy(RuleBreakIterator {
+            } => SentenceBreakIterator(SentenceBreakIteratorInner::Legacy(RuleBreakIterator::new(
                 iter,
                 len,
-                current_pos_data: None,
-                result_cache: Vec::new(),
                 data,
-                complex: None,
-                boundary_property: 0,
                 locale_override,
-                handle_complex: empty_handle_complex,
-            })),
+                None,
+                empty_handle_complex,
+            ))),
             #[cfg(feature = "unstable")]
             SentenceSegmenterBorrowedInner::Neo { data, tailoring } => {
                 SentenceBreakIterator(SentenceBreakIteratorInner::Neo(

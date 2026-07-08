@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::vec::Vec;
 use icu_provider::prelude::*;
 
 use crate::indices::{Latin1Indices, Utf16Indices};
@@ -44,6 +43,25 @@ impl<Y: RuleBreakType> Iterator for GraphemeClusterBreakIterator<'_, '_, Y> {
             #[cfg(feature = "unstable")]
             GraphemeClusterBreakIteratorInner::Neo(iter) => iter.next(),
         }
+    }
+}
+
+impl<'data, 's, Y: RuleBreakType> GraphemeClusterBreakIterator<'data, 's, Y> {
+    #[allow(dead_code)]
+    pub(crate) fn replace_input(
+        self,
+        iter: Y::IterAttr<'s>,
+        len: usize,
+    ) -> GraphemeClusterBreakIterator<'data, 's, Y> {
+        GraphemeClusterBreakIterator(match self.0 {
+            GraphemeClusterBreakIteratorInner::Legacy(old) => {
+                GraphemeClusterBreakIteratorInner::Legacy(old.replace_input(iter, len))
+            }
+            #[cfg(feature = "unstable")]
+            GraphemeClusterBreakIteratorInner::Neo(old) => {
+                GraphemeClusterBreakIteratorInner::Neo(old.replace_input(iter))
+            }
+        })
     }
 }
 
@@ -238,17 +256,14 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
     ) -> GraphemeClusterBreakIterator<'data, 's, Y> {
         GraphemeClusterBreakIterator(match self.0 {
             GraphemeClusterSegmenterBorrowedInner::Legacy(data) => {
-                GraphemeClusterBreakIteratorInner::Legacy(RuleBreakIterator {
+                GraphemeClusterBreakIteratorInner::Legacy(RuleBreakIterator::new(
                     iter,
                     len,
-                    current_pos_data: None,
-                    result_cache: Vec::new(),
                     data,
-                    complex: None,
-                    boundary_property: 0,
-                    locale_override: None,
-                    handle_complex: crate::rule_segmenter::empty_handle_complex,
-                })
+                    None,
+                    None,
+                    crate::rule_segmenter::empty_handle_complex,
+                ))
             }
             #[cfg(feature = "unstable")]
             GraphemeClusterSegmenterBorrowedInner::Neo(data) => {

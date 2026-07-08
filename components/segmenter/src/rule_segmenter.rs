@@ -247,7 +247,46 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
     }
 }
 
-impl<Y: RuleBreakType> RuleBreakIterator<'_, '_, Y> {
+impl<'data, 's, Y: RuleBreakType> RuleBreakIterator<'data, 's, Y> {
+    pub(crate) fn new(
+        iter: Y::IterAttr<'s>,
+        len: usize,
+        data: &'data RuleBreakData<'data>,
+        locale_override: Option<&'data RuleBreakDataOverride<'data>>,
+        complex: Option<ComplexPayloadsBorrowed<'data>>,
+        handle_complex: fn(&mut RuleBreakIterator<'data, 's, Y>, Y::CharType) -> Option<usize>,
+    ) -> Self {
+        Self {
+            iter,
+            len,
+            data,
+            locale_override,
+            complex,
+            handle_complex,
+            current_pos_data: None,
+            result_cache: Vec::new(),
+            boundary_property: 0,
+        }
+    }
+
+    pub(crate) fn replace_input(
+        self,
+        iter: Y::IterAttr<'s>,
+        len: usize,
+    ) -> RuleBreakIterator<'data, 's, Y> {
+        Self {
+            iter,
+            len,
+            data: self.data,
+            locale_override: self.locale_override,
+            complex: self.complex,
+            handle_complex: self.handle_complex,
+            current_pos_data: None,
+            result_cache: Vec::new(),
+            boundary_property: 0,
+        }
+    }
+
     pub(crate) fn advance_iter(&mut self) {
         self.current_pos_data = self.iter.next();
     }

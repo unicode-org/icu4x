@@ -172,6 +172,21 @@ impl<'data, 's, Y: RuleBreakType, C: ComplexHandler<Y>> RuleBreakIterator<'data,
         }
     }
 
+    pub(crate) fn replace_input<'s2>(
+        self,
+        input: Y::IterAttr<'s2>,
+    ) -> RuleBreakIterator<'data, 's2, Y, C> {
+        RuleBreakIterator {
+            data: self.data,
+            pseudo_symbol_map: self.pseudo_symbol_map,
+            complex: self.complex,
+            cache: SmallVec::new().into_iter(),
+            lookahead_positions: SmallVec::from_elem(None, self.data.num_lookaheads),
+            last_accepting_status: 0,
+            remaining_input: input,
+        }
+    }
+
     pub(crate) fn last_accepting_status(&self) -> u8 {
         self.last_accepting_status
     }
