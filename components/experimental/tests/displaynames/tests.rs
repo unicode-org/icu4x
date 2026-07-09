@@ -303,6 +303,20 @@ fn test_concatenate() {
             should_borrow: false,
             single_result: Ok(()),
         },
+        TestCase {
+            input_1: &locale!("ku-IQ"),
+            display_type: DisplayType::Dialect,
+            expected: "Kurdish (Iraq)",
+            should_borrow: false,
+            single_result: Ok(()),
+        },
+        TestCase {
+            input_1: &locale!("ku-IQ"),
+            display_type: DisplayType::Menu,
+            expected: "Kurdish (Kurmanji, Iraq)",
+            should_borrow: false,
+            single_result: Ok(()),
+        },
     ];
     for cas in &cases {
         // TODO: Add tests for different data locales.
@@ -363,8 +377,8 @@ fn test_concatenate() {
         }
         if matches!(cas.display_type, DisplayType::Any | DisplayType::Menu) {
             let borrowed = dname_menu_owned.as_borrowed();
-            // "Hindi (Latin)" is a literal string in data,\
-            // but it doesn't get borrowed for Menu names
+            // "Hindi (Latin)" is a literal string in data,
+            // but it gets reconstructed from patterns for Menu names
             let mut cas = cas.clone();
             if cas.expected == "Hindi (Latin)" {
                 cas.should_borrow = false;
