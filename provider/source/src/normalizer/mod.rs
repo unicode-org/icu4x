@@ -276,7 +276,6 @@ macro_rules! impl_composition_inert_property {
                                 .and_modify(|c| *c = std::cmp::min(*c, ccc))
                                 .or_insert(ccc);
                         }
-
                     }
                 }
 
@@ -316,7 +315,7 @@ macro_rules! impl_composition_inert_property {
                     }
 
                     for follow in decomposed {
-                        if let Some(&lowest_ccc) = composes_with_lowest_reordered_ccc.get(&starter) 
+                        if let Some(&lowest_ccc) = composes_with_lowest_reordered_ccc.get(&starter)
                             && lowest_ccc < ccc.get(follow)
                         {
                             continue 'cp;
