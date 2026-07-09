@@ -319,7 +319,7 @@ impl<M: models::LanguageIdentifierDisplayNameModel> LanguageIdentifierDisplayNam
     /// - Language + Script (e.g., "zh-Hant")
     /// - Language + Region (e.g., "en-GB")
     ///
-    /// We then "consume"  the corresponding subtags from the input LanguageIdentifier
+    /// We then "consume"  the corresponding subtags from the input `LanguageIdentifier`
     /// so they are not repeated in the qualifiers.
     fn load_language_dialect_name<P>(
         provider: &P,
@@ -352,7 +352,7 @@ impl<M: models::LanguageIdentifierDisplayNameModel> LanguageIdentifierDisplayNam
             let attrs =
                 LocaleNamesLanguageMediumV1::make_attributes(language, script, region, &mut buffer);
             let id =
-                DataIdentifierBorrowed::for_marker_attributes_and_locale(attrs, &formatting_locale);
+                DataIdentifierBorrowed::for_marker_attributes_and_locale(attrs, formatting_locale);
             let mut metadata = DataRequestMetadata::default();
             metadata.silent = true;
             if let Some(response) = provider
