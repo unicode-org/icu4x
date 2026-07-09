@@ -261,7 +261,7 @@ macro_rules! impl_composition_inert_property {
 
                 let mut combines_forwards = HashSet::new();
                 let mut potential_seconds = HashSet::new();
-                let mut composes_with_lowest_ccc = HashMap::new();
+                let mut composes_with_lowest_reordered_ccc = HashMap::new();
 
                 for ch in (0..=char::MAX as u32).filter_map(char::from_u32) {
                     if let Decomposed::Expansion(starter, second) = canonical_decomp.decompose(ch)
@@ -269,11 +269,14 @@ macro_rules! impl_composition_inert_property {
                     {
                         combines_forwards.insert(starter);
                         potential_seconds.insert(second);
-                        let ccc = ccc.get(second).0;
-                        composes_with_lowest_ccc
-                            .entry(starter)
-                            .and_modify(|c| *c = std::cmp::min(*c, ccc))
-                            .or_insert(ccc);
+                        let ccc = ccc.get(second);
+                        if ccc > CanonicalCombiningClass::NotReordered {
+                            composes_with_lowest_reordered_ccc
+                                .entry(starter)
+                                .and_modify(|c| *c = std::cmp::min(*c, ccc))
+                                .or_insert(ccc);
+                        }
+
                     }
                 }
 
@@ -307,27 +310,19 @@ macro_rules! impl_composition_inert_property {
                     let mut decomposed = decomposing_normalizer.normalize_iter([ch].into_iter());
 
                     let mut starter = decomposed.next().unwrap();
-                    let mut prev_ccc = CanonicalCombiningClass::NotReordered;
 
                     if combines_backwards.contains(&starter) {
                         continue;
                     }
 
                     for follow in decomposed {
-                        let ccc = ccc.get(follow);
-
-                        if let Some(&lowest_ccc) = composes_with_lowest_ccc.get(&starter) {
-                            if prev_ccc.0 < lowest_ccc && lowest_ccc < ccc.0 {
-                                continue 'cp;
-                            }
+                        if let Some(&lowest_ccc) = composes_with_lowest_reordered_ccc.get(&starter) 
+                            && lowest_ccc < ccc.get(follow)
+                        {
+                            continue 'cp;
                         }
 
-                        if let Some(composite) = canonical_comp.compose(starter, follow) {
-                            starter = composite;
-                            prev_ccc = CanonicalCombiningClass::NotReordered;
-                        } else {
-                            prev_ccc = ccc;
-                        }
+                        starter = canonical_comp.compose(starter, follow).unwrap();
                     }
 
                     builder.add32(cp);
