@@ -51,19 +51,34 @@ fn test_concatenate() {
             single_result: Ok(()),
         },
         TestCase {
+            input_1: &locale!("zh"),
+            display_type: DisplayType::Dialect,
+            expected: "Chinese",
+            should_borrow: true,
+            single_result: Ok(()),
+        },
+        TestCase {
+            input_1: &locale!("zh"),
+            display_type: DisplayType::Menu,
+            expected: "Chinese, Mandarin",
+            should_borrow: true,
+            single_result: Ok(()),
+        },
+        TestCase {
             input_1: &locale!("zh-Hans"),
             display_type: DisplayType::Dialect,
             expected: "Simplified Chinese",
             should_borrow: true,
             single_result: Ok(()),
         },
-        // TestCase {
-        //     input_1: &locale!("zh-Hans"),
-        //     display_type: DisplayType::Menu,
-        //     expected: "Chinese (Simplified)",
-        //     should_borrow: true,
-        //     single_result: Ok(()),
-        // },
+        TestCase {
+            input_1: &locale!("zh-Hans"),
+            display_type: DisplayType::Menu,
+            // Note: this behavior might change in CLDR 49
+            expected: "Chinese, Mandarin (Simplified)",
+            should_borrow: false,
+            single_result: Ok(()),
+        },
         TestCase {
             input_1: &locale!("es-419"),
             display_type: DisplayType::Dialect,
@@ -127,13 +142,14 @@ fn test_concatenate() {
             should_borrow: false,
             single_result: Ok(()),
         },
-        // TestCase {
-        //     input_1: &locale!("zh-Hans-CN"),
-        //     display_type: DisplayType::Menu,
-        //     expected: "Chinese (Simplified, China)",
-        //     should_borrow: false,
-        //     single_result: Ok(()),
-        // },
+        TestCase {
+            input_1: &locale!("zh-Hans-CN"),
+            display_type: DisplayType::Menu,
+            // Note: this behavior might change in CLDR 49
+            expected: "Chinese, Mandarin (Simplified, China)",
+            should_borrow: false,
+            single_result: Ok(()),
+        },
         TestCase {
             input_1: &locale!("es-419-fonipa"),
             display_type: DisplayType::Dialect,
@@ -257,13 +273,14 @@ fn test_concatenate() {
             should_borrow: false,
             single_result: Ok(()),
         },
-        // TestCase {
-        //     input_1: &locale!("zh-Hant-HK"),
-        //     display_type: DisplayType::Menu,
-        //     expected: "Chinese (Traditional, Hong Kong SAR China)",
-        //     should_borrow: false,
-        //     single_result: Ok(()),
-        // },
+        TestCase {
+            input_1: &locale!("zh-Hant-HK"),
+            display_type: DisplayType::Menu,
+            // Note: this behavior might change in CLDR 49
+            expected: "Chinese, Mandarin (Traditional, Hong Kong SAR China)",
+            should_borrow: false,
+            single_result: Ok(()),
+        },
         TestCase {
             // Multiple variants
             input_1: &Locale::try_from_str("es-fonipa-posix-valencia").unwrap(),

@@ -534,7 +534,9 @@ impl LanguageIdentifierDisplayNameOwned<models::Menu> {
         let mut qualifiers = self.qualifiers.as_borrowed();
         let base_name = match self.language_payload.get() {
             Ok(MenuNamePartsOrString::MenuNameParts(parts)) => {
-                qualifiers.menu_extension = Some(parts.extension());
+                if !parts.extension().is_empty() {
+                    qualifiers.menu_extension = Some(parts.extension());
+                }
                 NameOrFallback(Ok(parts.core()))
             }
             Ok(MenuNamePartsOrString::String(string)) => NameOrFallback(Ok(string.as_ref())),
