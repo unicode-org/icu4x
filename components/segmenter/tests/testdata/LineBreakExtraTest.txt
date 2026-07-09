@@ -14,5 +14,7 @@
 × 05D0 × 002D × 0020 ÷ # × [HL] × [HY] × [SP] ÷
 × AA02 ÷ 1192D × 200D × 0020 ÷ # [AS] [AK] [ZWJ] [SP]
 × FFFC × 2E09 × 0020 ÷ 2E08 ÷ # [CB] [QU] [SP] [QU]
-# × AA14 × 200D × A9A3 × 116C9 ÷ # [AS] [ZWJ] [AK] [NU]
+× AA14 × 200D × A9A3 ÷ 116C9 ÷ # [AS] [ZWJ] [AK] [NU]
 × 1F1FF × 200D × 1F1FF × 200D × 1F1FF × 1F1FF ÷	#  × [RI] × [ZWJ] × [RI] × [ZWJ] × [RI] × [RI] ÷
+× 1400 × 2018 × 0020 ÷ 13A34 × 002F × 2E07 × 11662 × 000A ÷ # [HH] [QU] [SP] [AL] [SY] [QU] [BA] [LF]
+× 2018 × 0020 × 002C × 0030 ÷ # [QU_Pi] [SP] [IS] [NU] LB15a wins over LB15c

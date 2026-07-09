@@ -143,6 +143,25 @@ mod tests {
     }
 
     #[test]
+    fn test_myanmar_only() {
+        let s = "မြန်မာစာမြန်မာစာမြန်မာစာ";
+        let utf16: Vec<u16> = s.encode_utf16().collect();
+        let mut iter = ComplexScriptIteratorUtf16::new(&utf16);
+        assert_eq!(
+            iter.next(),
+            Some((utf16.as_slice(), ComplexScript::Myanmar)),
+            "Myanmar script only with UTF-16"
+        );
+        let mut iter = ComplexScriptIterator::new(s);
+        assert_eq!(
+            iter.next(),
+            Some((s, ComplexScript::Myanmar)),
+            "Myanmar script only with UTF-8"
+        );
+        assert_eq!(iter.next(), None, "Iterator for UTF-8 is finished");
+    }
+
+    #[test]
     fn test_combine() {
         const TEST_STR_THAI: &str = "ภาษาไทยภาษาไทย";
         const TEST_STR_MYANMAR: &str = "ဗမာနွယ်ဘာသာစကားမျာ";

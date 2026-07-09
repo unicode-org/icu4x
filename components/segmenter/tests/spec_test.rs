@@ -84,10 +84,62 @@ where
     }
 }
 
-fn line_break_test(file: &'static str, segmenter: LineSegmenterBorrowed) {
+// TODO: The current line breaking implementation does not fully apply LB1, so we have to pre-process the
+// test data to replace complex characters with equivalent non-complex characters. We should remove this
+// once LB1 is fully implemented.
+fn lb1_sa_replace(c: char) -> char {
+    use icu_properties::{
+        CodePointMapData,
+        props::{GeneralCategory, LineBreak},
+    };
+    match CodePointMapData::new().get(c) {
+        LineBreak::ComplexContext => match (CodePointMapData::new().get(c), c.len_utf8()) {
+            (GeneralCategory::NonspacingMark | GeneralCategory::SpacingMark, 2) => {
+                const _: () = assert!('\u{0300}'.len_utf8() == 2);
+                '\u{0300}'
+            }
+            (GeneralCategory::NonspacingMark | GeneralCategory::SpacingMark, 3) => {
+                const _: () = assert!('\u{081C}'.len_utf8() == 3);
+                '\u{081C}'
+            }
+            (GeneralCategory::NonspacingMark | GeneralCategory::SpacingMark, 4) => {
+                const _: () = assert!('\u{101FD}'.len_utf8() == 4);
+                '\u{101FD}'
+            }
+            (_, 2) => {
+                const _: () = assert!('À'.len_utf8() == 2);
+                'À'
+            }
+            (_, 3) => {
+                const _: () = assert!('ࠀ'.len_utf8() == 3);
+                'ࠀ'
+            }
+            (_, 4) => {
+                const _: () = assert!('𐀀'.len_utf8() == 4);
+                '𐀀'
+            }
+            _ => unreachable!(),
+        },
+        _ => c,
+    }
+}
+
+fn line_break_test(
+    file: &'static str,
+    segmenter: LineSegmenterBorrowed,
+    allow_lb1_violation: bool,
+) {
     let test_iter = TestContentIterator::new(file);
     for (i, mut test) in test_iter.enumerate() {
-        let s: String = test.chars.into_iter().collect();
+        let s: String = test
+            .chars
+            .into_iter()
+            .map(if allow_lb1_violation {
+                lb1_sa_replace
+            } else {
+                |ch| ch
+            })
+            .collect();
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
         // NOTE: For consistency with ICU4C and other Segmenters, we return a breakpoint at
@@ -98,16 +150,20 @@ fn line_break_test(file: &'static str, segmenter: LineSegmenterBorrowed) {
         if result != test.break_result_utf8 {
             use icu_properties::{
                 CodePointMapData,
-                props::{GeneralCategory, LineBreak},
+                props::{EastAsianWidth, GeneralCategory, LineBreak},
             };
             let lb = CodePointMapData::<LineBreak>::new();
             let lb_name = PropertyNamesLong::<LineBreak>::new();
             let gc = CodePointMapData::<GeneralCategory>::new();
             let gc_name = PropertyNamesLong::<GeneralCategory>::new();
+            let eaw = CodePointMapData::<EastAsianWidth>::new();
+            let eaw_name = PropertyNamesLong::<EastAsianWidth>::new();
 
             let mut iter = segmenter.segment_str(&s);
             // TODO(egg): It would be really nice to have Name here.
-            println!("  | A | E | Code pt. | Line_Break         | General_Category | Literal");
+            println!(
+                "  | A | E | Code pt. | Line_Break         | General_Category   | East_Asian_Width | Literal"
+            );
             for (i, c) in s.char_indices() {
                 let expected_break = test.break_result_utf8.contains(&i);
                 let actual_break = result.contains(&i);
@@ -115,7 +171,7 @@ fn line_break_test(file: &'static str, segmenter: LineSegmenterBorrowed) {
                     iter.next();
                 }
                 println!(
-                    "{}| {} | {} | {:>8} | {:>18} | {:>18} | {}",
+                    "{}| {} | {} | {:>8} | {:>18} | {:>18} | {:>16} | {}",
                     if actual_break != expected_break {
                         "😭"
                     } else {
@@ -130,6 +186,9 @@ fn line_break_test(file: &'static str, segmenter: LineSegmenterBorrowed) {
                     gc_name
                         .get(gc.get(c))
                         .unwrap_or(&format!("{:?}", gc.get(c))),
+                    eaw_name
+                        .get(eaw.get(c))
+                        .unwrap_or(&format!("{:?}", eaw.get(c))),
                     c
                 )
             }
@@ -171,10 +230,12 @@ fn run_line_break_test() {
     line_break_test(
         include_str!("testdata/LineBreakTest_15.1.txt"),
         LineSegmenter::new_for_non_complex_scripts(Default::default()),
+        true,
     );
     line_break_test(
         include_str!("testdata/LineBreakTest.txt"),
         LineSegmenter::new_neo_for_non_complex_scripts(Default::default()),
+        false,
     );
 }
 
@@ -183,10 +244,12 @@ fn run_line_break_extra_test() {
     line_break_test(
         include_str!("testdata/LineBreakExtraTest.txt"),
         LineSegmenter::new_for_non_complex_scripts(Default::default()),
+        false,
     );
     line_break_test(
         include_str!("testdata/LineBreakExtraTest.txt"),
         LineSegmenter::new_neo_for_non_complex_scripts(Default::default()),
+        false,
     );
 }
 
@@ -195,10 +258,12 @@ fn run_line_break_random_test() {
     line_break_test(
         include_str!("testdata/LineBreakRandomTest_15.1.txt"),
         LineSegmenter::new_for_non_complex_scripts(Default::default()),
+        false,
     );
     line_break_test(
         include_str!("testdata/LineBreakRandomTest.txt"),
         LineSegmenter::new_neo_for_non_complex_scripts(Default::default()),
+        false,
     );
 }
 
