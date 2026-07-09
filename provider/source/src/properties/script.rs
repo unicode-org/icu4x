@@ -8,13 +8,14 @@
 )]
 
 use crate::SourceDataProvider;
+use icu::collections::codepointtrie::TrieValue;
 use icu::properties::props::EnumeratedProperty;
 use icu::properties::props::Script;
 use icu::properties::provider::{PropertyScriptWithExtensionsV1, ScriptWithExtensionsProperty};
 use icu::properties::script::ScriptWithExt;
 use icu::properties::{CodePointMapData, PropertyParser};
 use icu_provider::prelude::*;
-use std::collections::{BTreeMap, HashMap, HashSet};
+use std::collections::{HashMap, HashSet};
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVec};
 
 // implement data provider
@@ -50,7 +51,7 @@ impl DataProvider<PropertyScriptWithExtensionsV1> for SourceDataProvider {
                 let script = CodePointMapData::try_new_unstable(self)?;
 
                 let mut script_sets = vec![];
-                let mut script_sets_lookup = BTreeMap::new();
+                let mut script_sets_lookup = HashMap::new();
 
                 let mut char_with_extensions = HashMap::new();
 
@@ -65,8 +66,8 @@ impl DataProvider<PropertyScriptWithExtensionsV1> for SourceDataProvider {
                         .split_ascii_whitespace()
                         .filter_map(|s| script_parser.as_borrowed().get_strict(s))
                         .collect::<Vec<_>>();
-                    // Sort in discriminant order
-                    value.sort();
+                    // Sort in stable order
+                    value.sort_by_key(|s| s.to_u32());
 
                     let cp_range = super::ucd_helpers::parse_range(cp_range);
 
