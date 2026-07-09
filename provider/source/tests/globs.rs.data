@@ -126,7 +126,7 @@ const LSTM_GLOB: &[&str] = &[
     "Thai_graphclust_model4_heavy/weights.json",
 ];
 
-const UNICODE_GLOB: &[&str] = &[
+const RSCD_GLOB: &[&str] = &[
     "emoji/emoji-sequences.txt",
     "security/IdentifierStatus.txt",
     "ucd/auxiliary/GraphemeBreakProperty.txt",

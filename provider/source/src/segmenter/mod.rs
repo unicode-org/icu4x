@@ -17,7 +17,7 @@ use crate::SourceDataProvider;
 use crate::source::AbstractFs;
 #[cfg(feature = "unstable")]
 use crate::source::Cache;
-use crate::source::{UnicodeCache, include_files};
+use crate::source::{RscdCache, include_files};
 #[cfg(feature = "unstable")]
 use icu::collections::codepointinvlist::CodePointInversionList;
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
@@ -844,29 +844,27 @@ macro_rules! implement_override {
     }
 }
 
-fn unicode_15_1() -> &'static SourceDataProvider {
+fn rscd_15_1() -> &'static SourceDataProvider {
     // Singleton so that all instantiations share the same cache.
     static SINGLETON: OnceLock<SourceDataProvider> = OnceLock::new();
     SINGLETON.get_or_init(|| {
         let mut provider = SourceDataProvider::new_custom();
-        provider.unicode_paths = Some(std::sync::Arc::new(UnicodeCache::new_local(
-            include_files!(
-                "../../data/segmenter/unicode15/";
-                "ucd/DerivedCoreProperties.txt",
-                "ucd/emoji/emoji-data.txt",
-                "ucd/extracted/DerivedEastAsianWidth.txt",
-                "ucd/extracted/DerivedGeneralCategory.txt",
-                "ucd/LineBreak.txt",
-                "ucd/PropertyAliases.txt",
-                "ucd/PropertyValueAliases.txt",
-                "ucd/PropList.txt",
-            ),
-        )));
+        provider.rscd_paths = Some(std::sync::Arc::new(RscdCache::new_local(include_files!(
+            "../../data/segmenter/rscd15/";
+            "ucd/DerivedCoreProperties.txt",
+            "ucd/emoji/emoji-data.txt",
+            "ucd/extracted/DerivedEastAsianWidth.txt",
+            "ucd/extracted/DerivedGeneralCategory.txt",
+            "ucd/LineBreak.txt",
+            "ucd/PropertyAliases.txt",
+            "ucd/PropertyValueAliases.txt",
+            "ucd/PropList.txt",
+        ))));
         provider
     })
 }
 
-implement!(SegmenterBreakLineV1, "line.toml", |_| unicode_15_1());
+implement!(SegmenterBreakLineV1, "line.toml", |_| rscd_15_1());
 implement!(SegmenterBreakGraphemeClusterV1, "grapheme.toml", |s| s);
 implement!(SegmenterBreakWordV1, "word.toml", |s| s);
 implement!(SegmenterBreakSentenceV1, "sentence.toml", |s| s);
@@ -958,7 +956,7 @@ pub(crate) struct NeoSegmenters {
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 impl SourceDataProvider {
     fn line_segmenter(&self) -> Result<&TailoredSegmenter, DataError> {
-        self.unicode()?
+        self.rscd()?
             .segmenter_cache
             .line
             .get_or_init(|| {
@@ -971,7 +969,7 @@ impl SourceDataProvider {
     }
 
     fn word_segmenter(&self) -> Result<&TailoredSegmenter, DataError> {
-        self.unicode()?
+        self.rscd()?
             .segmenter_cache
             .word
             .get_or_init(|| {
@@ -986,7 +984,7 @@ impl SourceDataProvider {
     }
 
     fn sentence_segmenter(&self) -> Result<&TailoredSegmenter, DataError> {
-        self.unicode()?
+        self.rscd()?
             .segmenter_cache
             .sentence
             .get_or_init(|| {
@@ -999,7 +997,7 @@ impl SourceDataProvider {
     }
 
     fn grapheme_cluster_segmenter(&self) -> Result<&TailoredSegmenter, DataError> {
-        self.unicode()?
+        self.rscd()?
             .segmenter_cache
             .grapheme_cluster
             .get_or_init(|| {

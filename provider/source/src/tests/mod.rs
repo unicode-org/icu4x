@@ -14,7 +14,7 @@ include!("data.rs");
 
 use crate::SourceDataProvider;
 use crate::cldr_cache::CldrCache;
-use crate::source::{SerdeCache, TzdbCache, UnicodeCache};
+use crate::source::{RscdCache, SerdeCache, TzdbCache};
 use std::sync::{Arc, OnceLock};
 
 impl SourceDataProvider {
@@ -27,7 +27,7 @@ impl SourceDataProvider {
                 cldr_paths: Some(Arc::new(CldrCache::new(cldr_data()))),
                 icuexport_paths: Some(Arc::new(SerdeCache::new(icuexport_data()))),
                 segmenter_lstm_paths: Some(Arc::new(SerdeCache::new(lstm_data()))),
-                unicode_paths: Some(Arc::new(UnicodeCache::new_local(unicode_data()))),
+                rscd_paths: Some(Arc::new(RscdCache::new_local(rscd_data()))),
                 tzdb_paths: Some(Arc::new(TzdbCache::new(tzdb_data()))),
                 ..SourceDataProvider::new_custom()
             })

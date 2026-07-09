@@ -512,7 +512,7 @@ impl TzdbCache {
 
 // A cache representing https://unicode.org/Public/{version}/
 #[derive(Debug)]
-pub(crate) struct UnicodeCache {
+pub(crate) struct RscdCache {
     root: AbstractFs,
     // The `ucd/UCD.zip` file. Requests matching `ucd/[^Unihan]` will be resolved through
     // the ZIP file instead of downloading individual files.
@@ -536,7 +536,7 @@ pub(crate) struct UnicodeCache {
     pub(crate) segmenter_cache: crate::segmenter::NeoSegmenters,
 }
 
-impl UnicodeCache {
+impl RscdCache {
     #[cfg(feature = "networking")]
     pub fn new_remote(version: &str) -> Self {
         let root = AbstractFs::new_from_url(format!("https://www.unicode.org/Public/{version}/"));

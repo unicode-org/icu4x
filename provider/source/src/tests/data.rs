@@ -689,9 +689,9 @@ pub fn lstm_data() -> AbstractFs {
 }
 
 #[rustfmt::skip]
-pub fn unicode_data() -> AbstractFs {
+pub fn rscd_data() -> AbstractFs {
     include_files!(
-        "../../tests/data/unicode/";
+        "../../tests/data/rscd/";
         "emoji/emoji-sequences.txt",
         "security/IdentifierStatus.txt",
         "ucd/BidiBrackets.txt",

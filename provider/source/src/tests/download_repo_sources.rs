@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceDataProvider;
-use crate::source::{AbstractFs, UnicodeCache};
+use crate::source::{AbstractFs, RscdCache};
 use icu::locale::{LanguageIdentifier, langid};
 use icu_provider::DataError;
 use std::collections::BTreeSet;
@@ -38,7 +38,7 @@ impl AbstractFs {
     }
 }
 
-impl UnicodeCache {
+impl RscdCache {
     pub fn dump(
         &self,
         target: &Path,
@@ -118,15 +118,15 @@ fn download_repo_sources() {
         )
         .unwrap();
 
-    let unicode_files = provider
-        .unicode()
+    let rscd_files = provider
+        .rscd()
         .unwrap()
         .dump(
-            &out_root.join("unicode"),
-            UNICODE_GLOB.iter().copied().map(String::from).collect(),
+            &out_root.join("rscd"),
+            RSCD_GLOB.iter().copied().map(String::from).collect(),
         )
         .unwrap();
-    let irg_path = out_root.join("unicode/ucd/Unihan/Unihan_IRGSources.txt");
+    let irg_path = out_root.join("rscd/ucd/Unihan/Unihan_IRGSources.txt");
     std::io::copy(
         &mut BufReader::new(File::open(&irg_path).unwrap())
             .lines()
@@ -183,13 +183,13 @@ fn download_repo_sources() {
         cldr_files,
         icuexport_files,
         lstm_files,
-        unicode_files,
+        rscd_files,
         tzdb_files,
     ] = [
         cldr_files,
         icuexport_files,
         lstm_files,
-        unicode_files,
+        rscd_files,
         tzdb_files,
     ]
     .map(|files| {
@@ -238,10 +238,10 @@ pub fn lstm_data() -> AbstractFs {{
 }}
 
 #[rustfmt::skip]
-pub fn unicode_data() -> AbstractFs {{
+pub fn rscd_data() -> AbstractFs {{
     include_files!(
-        \"../../tests/data/unicode/\";
-        {unicode_files}
+        \"../../tests/data/rscd/\";
+        {rscd_files}
     )
 }}
 
@@ -256,8 +256,8 @@ pub fn tzdb_data() -> AbstractFs {{
     )
     .unwrap();
 
-    // Download Unicode test files
-    for (ucd_path, repo_path) in [
+    // Download RSCD test files
+    for (rscd_path, repo_path) in [
         (
             "ucd/NormalizationTest.txt",
             "components/normalizer/tests/data/NormalizationTest.txt",
@@ -282,10 +282,10 @@ pub fn tzdb_data() -> AbstractFs {{
         std::fs::write(
             crate_root.join("../..").join(repo_path),
             provider
-                .unicode()
+                .rscd()
                 .unwrap()
-                .read_to_string(ucd_path)
-                .expect(ucd_path),
+                .read_to_string(rscd_path)
+                .expect(rscd_path),
         )
         .unwrap();
     }

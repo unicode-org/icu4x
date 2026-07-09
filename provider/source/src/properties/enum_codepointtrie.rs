@@ -66,7 +66,7 @@ impl SourceDataProvider {
 
         let mut last_seen_cp = -1i32;
 
-        for line in self.parse_ucd_lines(&file)? {
+        for line in self.rscd()?.parse_ucd_lines(&file)? {
             match line {
                 UcdLine::Missing(fields) => {
                     let mut fields = fields.fields();
@@ -144,7 +144,10 @@ impl SourceDataProvider {
         let mut names = BTreeMap::new();
         let mut default = None;
 
-        for line in self.parse_ucd_lines("ucd/PropertyValueAliases.txt")? {
+        for line in self
+            .rscd()?
+            .parse_ucd_lines("ucd/PropertyValueAliases.txt")?
+        {
             match line {
                 UcdLine::Missing(fields) => {
                     let mut fields = fields.fields();
@@ -297,13 +300,13 @@ macro_rules! expand {
                     .with_req($marker::INFO, req));
                     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
                     {
-                        let trie = if let Some(t) = self.unicode()?.cpt_cache.get(core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()).
+                        let trie = if let Some(t) = self.rscd()?.cpt_cache.get(core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()).
                             and_then(|t| t.downcast_ref::<CodePointTrie<'static, $prop>>().cloned()) {
                             t
                         } else {
                             let trie = self.build_enumerated_prop::<$prop>(<$prop>::names().collect())?;
 
-                            self.unicode()?.cpt_cache
+                            self.rscd()?.cpt_cache
                                 .insert(core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap(), Box::new(trie.clone()));
 
                             trie
@@ -329,7 +332,7 @@ macro_rules! expand {
                     for (name, _) in &short_name_to_t {
                         if !names.contains_key(name) && <$prop as EnumeratedProperty>::SHORT_NAME != icu::properties::props::Script::SHORT_NAME {
                             log::warn!(
-                                "Unicode does not contain {} {name:?}",
+                                "UCD does not contain {} {name:?}",
                                 core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap()
                             );
                         }
@@ -338,7 +341,7 @@ macro_rules! expand {
                     let trie = names
                         .into_iter()
                         .filter_map(|(name, (short_name, _))| Some((name, short_name_to_t.get(short_name).copied()?)))
-                        // Add short names that are only defined in ICU4X, not in Unicode (Scripts)
+                        // Add short names that are only defined in ICU4X, not in the UCD (Scripts)
                         .chain(short_name_to_t.clone().into_iter())
                         .map(|(n, v)| (n, v.to_u32() as usize))
                         .collect::<BTreeMap<_, _>>()
@@ -597,10 +600,10 @@ expand!(
 mod tests {
     use super::*;
 
-    // A test of the UnicodeProperty General_Category is truly a test of the
+    // A test of the UCD property General_Category is truly a test of the
     // `GeneralCategory` Rust enum, not the `GeneralCategoryGroup` Rust enum,
     // since we must match the representation and value width of the data from
-    // the ICU CodePointTrie that ICU4X is reading from.
+    // the CodePointTrie that ICU4X is using.
     #[test]
     fn test_general_category() {
         use icu::properties::{CodePointMapData, props::GeneralCategory};

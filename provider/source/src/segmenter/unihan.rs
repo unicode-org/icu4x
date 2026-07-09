@@ -4,7 +4,7 @@
 
 //! This module contains provider implementations for Unihan radicals.
 
-use crate::source::UnicodeCache;
+use crate::source::RscdCache;
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use icu::collections::codepointinvlist::CodePointInversionListBuilder;
 use icu::segmenter::provider::radical::{SegmenterUnihanRadicalV1, UnihanRadicalsData};
@@ -15,10 +15,10 @@ use std::collections::HashSet;
 
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 fn build_unihan_radicals_data(
-    unicode: &UnicodeCache,
+    rscd: &RscdCache,
     trie_type: crate::TrieType,
 ) -> Result<UnihanRadicalsData<'static>, DataError> {
-    let identifier_status = unicode.read_to_string("security/IdentifierStatus.txt")?;
+    let identifier_status = rscd.read_to_string("security/IdentifierStatus.txt")?;
     let mut id_builder = CodePointInversionListBuilder::new();
     for line in identifier_status.lines() {
         if line.starts_with('#') || line.trim().is_empty() {
@@ -36,7 +36,7 @@ fn build_unihan_radicals_data(
     }
     let identifier_status = id_builder.build();
 
-    let raw_content = unicode.read_to_string("ucd/Unihan/Unihan_IRGSources.txt")?;
+    let raw_content = rscd.read_to_string("ucd/Unihan/Unihan_IRGSources.txt")?;
     let mut builder = CodePointTrieBuilder::new(0u8, 0u8, trie_type.into());
 
     for line in raw_content.lines() {
@@ -84,7 +84,7 @@ impl DataProvider<SegmenterUnihanRadicalV1> for SourceDataProvider {
         {
             self.check_req::<SegmenterUnihanRadicalV1>(req)?;
 
-            let data = build_unihan_radicals_data(self.unicode()?, self.trie_type())?;
+            let data = build_unihan_radicals_data(self.rscd()?, self.trie_type())?;
 
             Ok(DataResponse {
                 metadata: Default::default(),

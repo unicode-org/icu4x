@@ -18,6 +18,7 @@ impl SourceDataProvider {
         short_name: &str,
     ) -> Result<(), DataError> {
         let sn = self
+            .rscd()?
             .parse_ucd_lines("ucd/PropertyAliases.txt")?
             .filter_map(|line| line.skip_missing_rule())
             .find_map(|line| {
@@ -38,7 +39,7 @@ impl SourceDataProvider {
         Ok(())
     }
 
-    // get the source data for a Unicode binary property that only defines values for code points
+    // get the source data for a UCD binary property that only defines values for code points
     pub(super) fn get_binary_prop(
         &self,
         name: &str,
@@ -81,7 +82,7 @@ impl SourceDataProvider {
             _ => "ucd/PropList.txt",
         };
 
-        for line in self.parse_ucd_lines(file)? {
+        for line in self.rscd()?.parse_ucd_lines(file)? {
             let Some(line) = line.skip_missing_rule() else {
                 continue;
             };
@@ -98,7 +99,7 @@ impl SourceDataProvider {
     }
 }
 
-macro_rules! impl_unicode_property {
+macro_rules! impl_ucd_property {
     ($(($prop:ty, $marker:ident)),+) => {
         $(
             impl DataProvider<$marker> for SourceDataProvider {
@@ -128,7 +129,7 @@ macro_rules! impl_unicode_property {
     };
 }
 
-impl_unicode_property!(
+impl_ucd_property!(
     (
         icu::properties::props::AsciiHexDigit,
         PropertyBinaryAsciiHexDigitV1
