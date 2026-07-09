@@ -73,14 +73,88 @@ icu_provider::data_marker!(
 
 /// Default calendar preferences for a region.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CalendarPreference {
     /// The default calendar to use for this region.
     pub default_algorithm: CalendarAlgorithm,
     /// The default Hijri calendar to use for this region.
     pub default_hijri_algorithm: HijriCalendarAlgorithm,
+}
+
+#[cfg(feature = "datagen")]
+impl serde::Serialize for CalendarPreference {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let default = match self.default_algorithm {
+            CalendarAlgorithm::Buddhist => 0u8,
+            CalendarAlgorithm::Chinese => 1,
+            CalendarAlgorithm::Coptic => 2,
+            CalendarAlgorithm::Dangi => 3,
+            CalendarAlgorithm::Ethioaa => 4,
+            CalendarAlgorithm::Ethiopic => 5,
+            CalendarAlgorithm::Gregory => 6,
+            CalendarAlgorithm::Hebrew => 7,
+            CalendarAlgorithm::Indian => 8,
+            CalendarAlgorithm::Hijri(Some(s)) if s == self.default_hijri_algorithm => 9,
+            CalendarAlgorithm::Iso8601 => 10,
+            CalendarAlgorithm::Japanese => 11,
+            CalendarAlgorithm::Persian => 12,
+            CalendarAlgorithm::Roc => 13,
+            _ => 6,
+        };
+        let hijri = match self.default_hijri_algorithm {
+            HijriCalendarAlgorithm::Umalqura => 0,
+            HijriCalendarAlgorithm::Tbla => 1,
+            HijriCalendarAlgorithm::Civil => 2,
+            HijriCalendarAlgorithm::Rgsa => 3,
+            _ => 2,
+        };
+
+        (default << 3 | hijri).serialize(serializer)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for CalendarPreference {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let packed = u8::deserialize(deserializer)?;
+        let default_algorithm = packed >> 3;
+        let default_hijri_algorithm = packed & 0x07;
+        let default_hijri_algorithm = match default_hijri_algorithm {
+            0 => HijriCalendarAlgorithm::Umalqura,
+            1 => HijriCalendarAlgorithm::Tbla,
+            2 => HijriCalendarAlgorithm::Civil,
+            3 => HijriCalendarAlgorithm::Rgsa,
+            _ => HijriCalendarAlgorithm::Civil,
+        };
+        let default_algorithm = match default_algorithm {
+            0 => CalendarAlgorithm::Buddhist,
+            1 => CalendarAlgorithm::Chinese,
+            2 => CalendarAlgorithm::Coptic,
+            3 => CalendarAlgorithm::Dangi,
+            4 => CalendarAlgorithm::Ethioaa,
+            5 => CalendarAlgorithm::Ethiopic,
+            6 => CalendarAlgorithm::Gregory,
+            7 => CalendarAlgorithm::Hebrew,
+            8 => CalendarAlgorithm::Indian,
+            9 => CalendarAlgorithm::Hijri(Some(default_hijri_algorithm)),
+            10 => CalendarAlgorithm::Iso8601,
+            11 => CalendarAlgorithm::Japanese,
+            12 => CalendarAlgorithm::Persian,
+            13 => CalendarAlgorithm::Roc,
+            _ => CalendarAlgorithm::Gregory,
+        };
+        Ok(Self {
+            default_algorithm,
+            default_hijri_algorithm,
+        })
+    }
 }
 
 impl CalendarPreference {
