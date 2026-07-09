@@ -3,9 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    provider::semantic_skeletons::GluePattern,
-    provider::{names::*, packed_pattern::*, time_zones::tz},
-    scaffold::*,
+    provider::names::*, provider::packed_pattern::*, provider::range_patterns::*,
+    provider::semantic_skeletons::GluePattern, provider::time_zones::tz, scaffold::*,
 };
 use icu_calendar::{
     provider::{CalendarJapaneseModernV1, CalendarPreferredV1},
@@ -54,6 +53,8 @@ pub trait DateInputMarkers: UnstableSealed {
 pub trait TypedDateDataMarkers<C>: UnstableSealed {
     /// Marker for loading date skeleton patterns.
     type DateSkeletonPatternsV1: DataMarker<DataStruct = PackedPatterns<'static>>;
+    /// Marker for loading date range skeleton patterns.
+    type DateRangeSkeletonPatternsV1: DataMarker<DataStruct = PackedRangePatterns<'static>>;
     /// Marker for loading year names.
     type YearNamesV1: DataMarker<DataStruct = YearNames<'static>>;
     /// Marker for loading month names.
@@ -74,6 +75,8 @@ pub trait TypedDateDataMarkers<C>: UnstableSealed {
 pub trait DateDataMarkers: UnstableSealed {
     /// Cross-calendar data markers for date skeleta.
     type Skel: CalMarkers<ErasedPackedPatterns>;
+    /// Cross-calendar data markers for date range skeleta.
+    type RangeSkel: CalMarkers<ErasedPackedRangePatterns>;
     /// Cross-calendar data markers for year names.
     type Year: CalMarkers<YearNamesV1>;
     /// Cross-calendar data markers for month names.
@@ -102,6 +105,8 @@ pub trait TimeMarkers: UnstableSealed {
     type NanosecondInput: IntoOption<Nanosecond>;
     /// Marker for loading time skeleton patterns.
     type TimeSkeletonPatternsV1: DataMarker<DataStruct = PackedPatterns<'static>>;
+    /// Marker for loading time range skeleton patterns.
+    type TimeRangeSkeletonPatternsV1: DataMarker<DataStruct = PackedRangePatterns<'static>>;
     /// Marker for loading day period names.
     type DayPeriodNamesV1: DataMarker<DataStruct = DayPeriodNames<'static>>;
 }
@@ -268,6 +273,36 @@ where
 }
 
 /// Trait to consolidate data provider markers defined by this crate
+/// for datetime range skeleton patterns with a fixed calendar.
+#[rustfmt::skip]
+#[allow(dead_code)]
+pub trait AllFixedCalendarRangePatternDataMarkers<C: CldrCalendar, FSet: DateTimeMarkers>:
+    DataProvider<<FSet::D as TypedDateDataMarkers<C>>::DateRangeSkeletonPatternsV1>
+    + DataProvider<<FSet::T as TimeMarkers>::TimeRangeSkeletonPatternsV1>
+    + DataProvider<DatetimePatternsRangeGlueV1>
+where
+    FSet::D: TypedDateDataMarkers<C>,
+    FSet::T: TimeMarkers,
+    FSet::Z: ZoneMarkers,
+{
+}
+
+#[rustfmt::skip]
+impl<T, C, FSet> AllFixedCalendarRangePatternDataMarkers<C, FSet> for T
+where
+    C: CldrCalendar,
+    FSet: DateTimeMarkers,
+    FSet::D: TypedDateDataMarkers<C>,
+    FSet::T: TimeMarkers,
+    FSet::Z: ZoneMarkers,
+    T: ?Sized
+        + DataProvider<<FSet::D as TypedDateDataMarkers<C>>::DateRangeSkeletonPatternsV1>
+        + DataProvider<<FSet::T as TimeMarkers>::TimeRangeSkeletonPatternsV1>
+        + DataProvider<DatetimePatternsRangeGlueV1>,
+{
+}
+
+/// Trait to consolidate data provider markers defined by this crate
 /// for datetime formatting with a fixed calendar.
 ///
 /// This trait is implemented on all providers that support datetime formatting,
@@ -380,6 +415,57 @@ where
         + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Roc>
         + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1>
         + DataProvider<FSet::GluePatternV1>
+{
+}
+
+/// Trait to consolidate data provider markers defined by this crate
+/// for datetime range skeleton patterns with any calendar.
+#[rustfmt::skip]
+#[allow(dead_code)]
+pub trait AllAnyCalendarRangePatternDataMarkers<FSet: DateTimeMarkers>:
+    DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Buddhist>
+    + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Chinese>
+    + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Coptic>
+    + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Dangi>
+    + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Ethiopian>
+    + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Gregorian>
+    + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Hebrew>
+    + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Indian>
+    + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Hijri>
+    + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Japanese>
+    + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Persian>
+    + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Roc>
+    + DataProvider<<FSet::T as TimeMarkers>::TimeRangeSkeletonPatternsV1>
+    + DataProvider<DatetimePatternsRangeGlueV1>
+where
+    FSet::D: DateDataMarkers,
+    FSet::T: TimeMarkers,
+    FSet::Z: ZoneMarkers,
+{
+}
+
+#[rustfmt::skip]
+impl<T, FSet> AllAnyCalendarRangePatternDataMarkers<FSet> for T
+where
+    FSet: DateTimeMarkers,
+    FSet::D: DateDataMarkers,
+    FSet::T: TimeMarkers,
+    FSet::Z: ZoneMarkers,
+    T: ?Sized
+        + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Buddhist>
+        + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Chinese>
+        + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Coptic>
+        + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Dangi>
+        + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Ethiopian>
+        + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Gregorian>
+        + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Hebrew>
+        + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Indian>
+        + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Hijri>
+        + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Japanese>
+        + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Persian>
+        + DataProvider<<<FSet::D as DateDataMarkers>::RangeSkel as CalMarkers<ErasedPackedRangePatterns>>::Roc>
+        + DataProvider<<FSet::T as TimeMarkers>::TimeRangeSkeletonPatternsV1>
+        + DataProvider<DatetimePatternsRangeGlueV1>,
 {
 }
 
@@ -529,6 +615,7 @@ impl DateInputMarkers for () {
 
 impl<C> TypedDateDataMarkers<C> for () {
     type DateSkeletonPatternsV1 = NeverMarker<PackedPatterns<'static>>;
+    type DateRangeSkeletonPatternsV1 = NeverMarker<PackedRangePatterns<'static>>;
     type YearNamesV1 = NeverMarker<YearNames<'static>>;
     type MonthNamesV1 = NeverMarker<MonthNames<'static>>;
     type WeekdayNamesV1 = NeverMarker<WeekdayNames<'static>>;
@@ -536,6 +623,7 @@ impl<C> TypedDateDataMarkers<C> for () {
 
 impl DateDataMarkers for () {
     type Skel = NoDataCalMarkers;
+    type RangeSkel = NoDataCalMarkers;
     type Year = NoDataCalMarkers;
     type Month = NoDataCalMarkers;
     type WeekdayNamesV1 = NeverMarker<WeekdayNames<'static>>;
@@ -547,6 +635,7 @@ impl TimeMarkers for () {
     type SecondInput = ();
     type NanosecondInput = ();
     type TimeSkeletonPatternsV1 = NeverMarker<PackedPatterns<'static>>;
+    type TimeRangeSkeletonPatternsV1 = NeverMarker<PackedRangePatterns<'static>>;
     type DayPeriodNamesV1 = NeverMarker<DayPeriodNames<'static>>;
 }
 
@@ -583,6 +672,9 @@ macro_rules! datetime_marker_helper {
     (@dates/typed, yes) => {
         C::SkeletaV1
     };
+    (@dates/range/typed, yes) => {
+        C::RangeSkeletaV1
+    };
     (@calmarkers, yes) => {
         FullDataCalMarkers
     };
@@ -600,6 +692,9 @@ macro_rules! datetime_marker_helper {
     };
     (@times, yes) => {
         DatetimePatternsTimeV1
+    };
+    (@times/range, yes) => {
+        DatetimePatternsRangeTimeV1
     };
     (@glue, yes) => {
         DatetimePatternsGlueV1

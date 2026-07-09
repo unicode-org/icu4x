@@ -36,6 +36,8 @@ pub mod relativetime;
 pub mod transliterate;
 pub mod units;
 
+pub(crate) mod size_test_macro;
+
 #[doc(hidden)] // compiled constructors look for the baked provider here
 pub mod provider {
     // Provider structs must be stable

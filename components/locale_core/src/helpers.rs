@@ -146,7 +146,7 @@ macro_rules! impl_tinystr_subtag {
             }
         }
 
-        writeable::impl_writeable_delegate!($name, |&self| &self.0, #[cfg(feature = "alloc")]);
+        writeable::impl_writeable_delegate!($name, |&self| self.as_str(), #[cfg(feature = "alloc")]);
         writeable::impl_display_with_writeable!($name, #[cfg(feature = "alloc")]);
 
         #[doc = concat!("A macro allowing for compile-time construction of valid [`", stringify!($name), "`] subtags.")]

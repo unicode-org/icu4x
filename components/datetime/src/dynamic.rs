@@ -548,3 +548,34 @@ impl DateAndTimeFieldSet {
         }
     }
 }
+
+impl CompositeFieldSet {
+    pub(crate) fn to_raw_options(self) -> RawOptions {
+        match self {
+            CompositeFieldSet::Date(field_set) => field_set.to_raw_options(),
+            CompositeFieldSet::CalendarPeriod(field_set) => field_set.to_raw_options(),
+            CompositeFieldSet::Time(field_set) => field_set.to_raw_options(),
+            CompositeFieldSet::DateTime(field_set) => field_set.to_raw_options(),
+            CompositeFieldSet::DateZone(combo) => combo.dt().to_raw_options(),
+            CompositeFieldSet::TimeZone(combo) => combo.dt().to_raw_options(),
+            CompositeFieldSet::DateTimeZone(combo) => combo.dt().to_raw_options(),
+            CompositeFieldSet::Zone(_) => RawOptions {
+                length: None,
+                date_fields: None,
+                year_style: None,
+                alignment: None,
+                time_precision: None,
+            },
+        }
+    }
+
+    pub(crate) fn to_zone(self) -> Option<ZoneFieldSet> {
+        match self {
+            CompositeFieldSet::Zone(field_set) => Some(field_set),
+            CompositeFieldSet::DateZone(combo) => Some(combo.z()),
+            CompositeFieldSet::TimeZone(combo) => Some(combo.z()),
+            CompositeFieldSet::DateTimeZone(combo) => Some(combo.z()),
+            _ => None,
+        }
+    }
+}

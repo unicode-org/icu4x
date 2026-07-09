@@ -4,6 +4,8 @@
 
 use super::Cow;
 use core::fmt::Write;
+#[cfg(feature = "unstable")]
+use icu_plurals::PluralOperands;
 use writeable::Part;
 
 use crate::DecimalFormatterPreferences;
@@ -118,8 +120,7 @@ impl DecimalFormatter {
         ))
     }
 
-    #[doc(hidden)] // TODO(#3647): should be private
-    pub fn format_unsigned<'l>(
+    pub(crate) fn format_unsigned<'l>(
         &'l self,
         value: Cow<'l, UnsignedDecimal>,
     ) -> FormattedUnsignedDecimal<'l> {
@@ -131,8 +132,7 @@ impl DecimalFormatter {
         }
     }
 
-    #[doc(hidden)] // TODO(#3647): should be private
-    pub fn format_sign<'l, T>(&'l self, sign: Sign, value: T) -> FormattedSign<'l, T> {
+    pub(crate) fn format_sign<'l, T>(&'l self, sign: Sign, value: T) -> FormattedSign<'l, T> {
         FormattedSign {
             sign: match sign {
                 Sign::None => None,
@@ -174,6 +174,13 @@ pub struct FormattedUnsignedDecimal<'l> {
     pub(crate) options: &'l DecimalFormatterOptions,
     pub(crate) symbols: &'l DecimalSymbols<'l>,
     pub(crate) digits: &'l [char; 10],
+}
+
+impl FormattedUnsignedDecimal<'_> {
+    #[cfg(feature = "unstable")]
+    pub(crate) fn plural_operands(&self) -> PluralOperands {
+        PluralOperands::from_significand_and_exponent(&self.value, 0)
+    }
 }
 
 #[doc(hidden)] // TODO(#3647): should be private

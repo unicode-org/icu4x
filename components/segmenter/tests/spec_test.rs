@@ -124,10 +124,22 @@ fn lb1_sa_replace(c: char) -> char {
     }
 }
 
-fn line_break_test(file: &'static str, segmenter: LineSegmenterBorrowed) {
+fn line_break_test(
+    file: &'static str,
+    segmenter: LineSegmenterBorrowed,
+    allow_lb1_violation: bool,
+) {
     let test_iter = TestContentIterator::new(file);
     for (i, mut test) in test_iter.enumerate() {
-        let s: String = test.chars.into_iter().map(lb1_sa_replace).collect();
+        let s: String = test
+            .chars
+            .into_iter()
+            .map(if allow_lb1_violation {
+                lb1_sa_replace
+            } else {
+                |ch| ch
+            })
+            .collect();
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
         // NOTE: For consistency with ICU4C and other Segmenters, we return a breakpoint at
@@ -218,10 +230,12 @@ fn run_line_break_test() {
     line_break_test(
         include_str!("testdata/LineBreakTest.txt"),
         LineSegmenter::new_for_non_complex_scripts(Default::default()),
+        true,
     );
     line_break_test(
         include_str!("testdata/LineBreakTest.txt"),
         LineSegmenter::new_neo_for_non_complex_scripts(Default::default()),
+        false,
     );
 }
 
@@ -230,10 +244,12 @@ fn run_line_break_extra_test() {
     line_break_test(
         include_str!("testdata/LineBreakExtraTest.txt"),
         LineSegmenter::new_for_non_complex_scripts(Default::default()),
+        false,
     );
     line_break_test(
         include_str!("testdata/LineBreakExtraTest.txt"),
         LineSegmenter::new_neo_for_non_complex_scripts(Default::default()),
+        false,
     );
 }
 
@@ -242,10 +258,12 @@ fn run_line_break_random_test() {
     line_break_test(
         include_str!("testdata/LineBreakRandomTest.txt"),
         LineSegmenter::new_for_non_complex_scripts(Default::default()),
+        false,
     );
     line_break_test(
         include_str!("testdata/LineBreakRandomTest.txt"),
         LineSegmenter::new_neo_for_non_complex_scripts(Default::default()),
+        false,
     );
 }
 

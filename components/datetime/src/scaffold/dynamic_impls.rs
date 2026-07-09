@@ -5,7 +5,9 @@
 use super::*;
 use crate::fieldsets::enums::*;
 use crate::provider::semantic_skeletons::{DatetimePatternsGlueV1, GluePattern};
-use crate::provider::{names::*, semantic_skeletons::*, time_zones::tz};
+use crate::provider::{
+    names::*, range_patterns::DatetimePatternsRangeTimeV1, semantic_skeletons::*, time_zones::tz,
+};
 use icu_calendar::types::{DayOfMonth, DayOfYear, MonthInfo, RataDie, Weekday, YearInfo};
 use icu_provider::marker::NeverMarker;
 use icu_time::{
@@ -44,6 +46,7 @@ impl DateInputMarkers for DateFieldSet {
 
 impl<C: CldrCalendar> TypedDateDataMarkers<C> for DateFieldSet {
     type DateSkeletonPatternsV1 = datetime_marker_helper!(@dates/typed, yes);
+    type DateRangeSkeletonPatternsV1 = datetime_marker_helper!(@dates/range/typed, yes);
     type YearNamesV1 = datetime_marker_helper!(@years/typed, yes);
     type MonthNamesV1 = datetime_marker_helper!(@months/typed, yes);
     type WeekdayNamesV1 = datetime_marker_helper!(@weekdays, yes);
@@ -51,6 +54,7 @@ impl<C: CldrCalendar> TypedDateDataMarkers<C> for DateFieldSet {
 
 impl DateDataMarkers for DateFieldSet {
     type Skel = datetime_marker_helper!(@calmarkers, yes);
+    type RangeSkel = datetime_marker_helper!(@calmarkers, yes);
     type Year = datetime_marker_helper!(@calmarkers, yes);
     type Month = datetime_marker_helper!(@calmarkers, yes);
     type WeekdayNamesV1 = datetime_marker_helper!(@weekdays, yes);
@@ -94,6 +98,7 @@ impl DateInputMarkers for CalendarPeriodFieldSet {
 
 impl<C: CldrCalendar> TypedDateDataMarkers<C> for CalendarPeriodFieldSet {
     type DateSkeletonPatternsV1 = datetime_marker_helper!(@dates/typed, yes);
+    type DateRangeSkeletonPatternsV1 = datetime_marker_helper!(@dates/range/typed, yes);
     type YearNamesV1 = datetime_marker_helper!(@years/typed, yes);
     type MonthNamesV1 = datetime_marker_helper!(@months/typed, yes);
     type WeekdayNamesV1 = datetime_marker_helper!(@weekdays,);
@@ -101,6 +106,7 @@ impl<C: CldrCalendar> TypedDateDataMarkers<C> for CalendarPeriodFieldSet {
 
 impl DateDataMarkers for CalendarPeriodFieldSet {
     type Skel = datetime_marker_helper!(@calmarkers, yes);
+    type RangeSkel = datetime_marker_helper!(@calmarkers, yes);
     type Year = datetime_marker_helper!(@calmarkers, yes);
     type Month = datetime_marker_helper!(@calmarkers, yes);
     type WeekdayNamesV1 = datetime_marker_helper!(@weekdays,);
@@ -136,6 +142,7 @@ impl DateTimeNamesMarker for TimeFieldSet {
 impl TimeMarkers for TimeFieldSet {
     type DayPeriodNamesV1 = datetime_marker_helper!(@dayperiods, yes);
     type TimeSkeletonPatternsV1 = datetime_marker_helper!(@times, yes);
+    type TimeRangeSkeletonPatternsV1 = datetime_marker_helper!(@times/range, yes);
     type HourInput = datetime_marker_helper!(@input/hour, yes);
     type MinuteInput = datetime_marker_helper!(@input/minute, yes);
     type SecondInput = datetime_marker_helper!(@input/second, yes);

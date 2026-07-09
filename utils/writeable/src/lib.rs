@@ -114,42 +114,48 @@ pub mod adapters {
 
     /// A lossy wrapper for a [`TryWriteable`] that implements [`Writeable`]
     /// and ignores any errors.
-    #[derive(Debug)]
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+    #[repr(transparent)]
     #[allow(clippy::exhaustive_structs)] // newtype
     pub struct LossyWrap<T>(pub T);
 
     impl<T: TryWriteable> Writeable for LossyWrap<T> {
+        #[inline]
         fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
             let _ = self.0.try_write_to(sink)?;
             Ok(())
         }
 
+        #[inline]
+        fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
+            let _ = self.0.try_write_to_parts(sink)?;
+            Ok(())
+        }
+
+        #[inline]
         fn writeable_length_hint(&self) -> LengthHint {
             self.0.writeable_length_hint()
         }
-    }
 
-    impl<T: TryWriteable> fmt::Display for LossyWrap<T> {
-        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-            let _ = self.0.try_write_to(f)?;
-            Ok(())
-        }
-    }
-
-    impl<T: TryWriteable> LossyWrap<T> {
-        /// Converts the given value to a `String`.
-        ///
-        /// Under the hood, this uses an efficient [`Writeable`] implementation.
-        ///
-        /// If you don't need an allocated [`String`], but e.g. need to write this
-        /// to some sink, it is more efficient to use [`Writeable`] directly.
-        #[cfg(feature = "alloc")]
-        #[allow(clippy::inherent_to_string_shadow_display)]
         #[inline]
-        pub fn to_string(&self) -> String {
-            Writeable::write_to_string(self).into_owned()
+        fn writeable_borrow(&self) -> Option<&str> {
+            match self.0.try_writeable_borrow()? {
+                Ok(s) => Some(s),
+                Err((_err, s)) => Some(s),
+            }
+        }
+
+        #[inline]
+        #[cfg(feature = "alloc")]
+        fn write_to_string(&self) -> Cow<'_, str> {
+            match self.0.try_write_to_string() {
+                Ok(s) => s,
+                Err((_err, s)) => s,
+            }
         }
     }
+
+    impl_display_with_writeable!(LossyWrap<T>, #[cfg(feature = "alloc")], where T: TryWriteable);
 }
 
 #[doc(hidden)] // for testing and macros

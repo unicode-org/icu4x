@@ -12,28 +12,13 @@ use serde::{Deserialize, Serialize};
 #[derive(Copy, Debug, Eq, PartialEq, Clone, Default, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
-pub struct CurrencyFormatterOptions {
-    // TODO: Remove this option after migrating all formatters (including CompactCurrencyFormatter)
-    // to use specific constructors, as the width is determined at construction time.
-    /// The width of the currency format.
-    pub width: Width,
-}
+pub struct CurrencyFormatterOptions {}
 
-impl From<Width> for CurrencyFormatterOptions {
-    fn from(width: Width) -> Self {
-        Self { width }
-    }
-}
-
-#[derive(Default, Debug, Eq, PartialEq, Clone, Copy, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[non_exhaustive]
-pub enum Width {
+#[derive(Debug, Clone, Copy)]
+pub(crate) enum Width {
     /// Format the currency with the standard (short) currency symbol.
     ///
     /// For example, 1 USD formats as "$1.00" in en-US and "US$1" in most other locales.
-    #[cfg_attr(feature = "serde", serde(rename = "short"))]
-    #[default]
     Short,
 
     /// Format the currency with the narrow currency symbol.
@@ -42,6 +27,5 @@ pub enum Width {
     /// currency is being represented.
     ///
     /// For example, 1 USD formats as "$1.00" in most locales.
-    #[cfg_attr(feature = "serde", serde(rename = "narrow"))]
     Narrow,
 }
