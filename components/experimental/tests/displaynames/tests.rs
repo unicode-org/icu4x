@@ -321,16 +321,14 @@ fn test_concatenate() {
     for cas in &cases {
         // TODO: Add tests for different data locales.
         let locale = locale!("en-001");
-        let options: DisplayNamesOptions = Default::default();
 
         // Test the older LocaleDisplayNamesFormatter
-        if matches!(cas.display_type, DisplayType::Any | DisplayType::Dialect) {
-            let display_name = LocaleDisplayNamesFormatter::try_new(locale.clone().into(), options)
-                .expect("Data should load successfully");
-
-            let result = display_name.of(cas.input_1);
+        fn check_locale_name_formatter(
+            formatter: &LocaleDisplayNamesFormatter,
+            cas: &TestCase<'_>,
+        ) {
+            let result = formatter.of(cas.input_1);
             assert_eq!(result, cas.expected, "{cas:?}");
-
             if cas.should_borrow {
                 assert!(matches!(result, Cow::Borrowed(_)), "{cas:?}");
             } else {
@@ -339,22 +337,38 @@ fn test_concatenate() {
                 assert_eq!(result.capacity(), result.len(), "{cas:?}");
             }
         }
+        if matches!(cas.display_type, DisplayType::Any | DisplayType::Dialect) {
+            let options: DisplayNamesOptions = Default::default();
+            let formatter = LocaleDisplayNamesFormatter::try_new(locale.clone().into(), options)
+                .expect("Data should load successfully");
+            check_locale_name_formatter(&formatter, cas);
+        }
+        if matches!(cas.display_type, DisplayType::Any | DisplayType::Menu) {
+            let mut options: DisplayNamesOptions = Default::default();
+            options.language_display = icu_experimental::displaynames::LanguageDisplay::Standard;
+            options.style = Some(icu_experimental::displaynames::Style::Menu);
+            // "Hindi (Latin)" is a literal string in data,
+            // but it gets reconstructed from patterns for Menu names
+            let mut cas = cas.clone();
+            if cas.expected == "Hindi (Latin)" {
+                cas.should_borrow = false;
+            }
+            // "Kurmanji" Kurdish is not supported in the old code
+            if cas.expected == "Kurdish (Kurmanji)" {
+                cas.expected = "Kurdish";
+                cas.should_borrow = true;
+            }
+            if cas.expected == "Kurdish (Kurmanji, Iraq)" {
+                cas.expected = "Kurdish (Iraq)";
+            }
+            let formatter = LocaleDisplayNamesFormatter::try_new(locale.clone().into(), options)
+                .expect("Data should load successfully");
+            check_locale_name_formatter(&formatter, &cas);
+        }
 
         // Test the newer LanguageIdentifierDisplayName
         let lang_id = cas.input_1.id.clone();
         let single_options = LanguageIdentifierDisplayNameOptions::default();
-        let dname_standard_owned = LanguageIdentifierDisplayNameOwned::try_new(
-            locale.clone().into(),
-            lang_id.clone(),
-            single_options,
-        )
-        .unwrap();
-        let dname_menu_owned = LanguageIdentifierDisplayNameOwned::try_new_menu(
-            locale.clone().into(),
-            lang_id,
-            single_options,
-        )
-        .unwrap();
 
         fn check_language_name_borrowed(
             borrowed: LanguageIdentifierDisplayName<'_>,
@@ -372,10 +386,22 @@ fn test_concatenate() {
             }
         }
         if matches!(cas.display_type, DisplayType::Any | DisplayType::Dialect) {
+            let dname_standard_owned = LanguageIdentifierDisplayNameOwned::try_new(
+                locale.clone().into(),
+                lang_id.clone(),
+                single_options,
+            )
+            .unwrap();
             let borrowed = dname_standard_owned.as_borrowed();
             check_language_name_borrowed(borrowed, cas);
         }
         if matches!(cas.display_type, DisplayType::Any | DisplayType::Menu) {
+            let dname_menu_owned = LanguageIdentifierDisplayNameOwned::try_new_menu(
+                locale.clone().into(),
+                lang_id,
+                single_options,
+            )
+            .unwrap();
             let borrowed = dname_menu_owned.as_borrowed();
             // "Hindi (Latin)" is a literal string in data,
             // but it gets reconstructed from patterns for Menu names
