@@ -175,7 +175,7 @@ struct Cli {
 
     #[arg(long, value_name = "TAG", default_value = "latest", alias = "ucd-tag")]
     #[arg(
-        help = "Download versioned RCSD from unicode.org (`https://www.unicode.org/Public/{tag}/`). \
+        help = "Download versioned RSCD from unicode.org (`https://www.unicode.org/Public/{tag}/`). \
                   Use 'latest' for the latest version verified to work with this version of the binary, \
                   and 'latest-tag' for the literal tag 'latest' on unicode.org. \
                   Ignored if '--unicode-rscd-root' is present. Requires binary to be built with `networking` Cargo feature (enabled by default)."
