@@ -456,3 +456,56 @@ fn test_single_language_display_name_standard() {
         "Chinese (Traditional, Hong Kong SAR China)"
     );
 }
+
+#[test]
+fn test_single_language_display_name_short() {
+    use icu_experimental::displaynames::{LanguageDisplay, LanguageIdentifierDisplayNameOptions};
+    use icu_locale_core::{langid, locale};
+
+    let locale = locale!("en-001");
+    let mut options = LanguageIdentifierDisplayNameOptions::default();
+    options.language_display = Some(LanguageDisplay::Standard);
+
+    let lang_id = langid!("zh-Hant-HK");
+    let lang_name =
+        LanguageIdentifierDisplayNameOwned::try_new_short(locale.clone().into(), lang_id, options)
+            .expect("Data should load successfully");
+
+    assert_try_writeable_eq!(lang_name.as_borrowed(), "Chinese (Traditional, Hong Kong)");
+
+    options.language_display = Some(LanguageDisplay::Dialect);
+    let lang_id = langid!("de-CH");
+    let lang_name =
+        LanguageIdentifierDisplayNameOwned::try_new_short(locale.into(), lang_id, options)
+            .expect("Data should load successfully");
+
+    assert_try_writeable_eq!(lang_name.as_borrowed(), "Swiss High German");
+}
+
+#[test]
+fn test_single_language_display_name_long() {
+    use icu_experimental::displaynames::{LanguageDisplay, LanguageIdentifierDisplayNameOptions};
+    use icu_locale_core::{langid, locale};
+
+    let locale = locale!("en-001");
+    let mut options = LanguageIdentifierDisplayNameOptions::default();
+    options.language_display = Some(LanguageDisplay::Standard);
+
+    let lang_id = langid!("zh-Hant-HK");
+    let lang_name =
+        LanguageIdentifierDisplayNameOwned::try_new_long(locale.clone().into(), lang_id, options)
+            .expect("Data should load successfully");
+
+    assert_try_writeable_eq!(
+        lang_name.as_borrowed(),
+        "Mandarin Chinese (Traditional, Hong Kong SAR China)"
+    );
+
+    options.language_display = Some(LanguageDisplay::Dialect);
+    let lang_id = langid!("de-CH");
+    let lang_name =
+        LanguageIdentifierDisplayNameOwned::try_new_long(locale.into(), lang_id, options)
+            .expect("Data should load successfully");
+
+    assert_try_writeable_eq!(lang_name.as_borrowed(), "Swiss High German");
+}
