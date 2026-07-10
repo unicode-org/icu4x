@@ -82,6 +82,15 @@ pub struct CalendarPreference {
     pub default_hijri_algorithm: HijriCalendarAlgorithm,
 }
 
+#[cfg(any(feature = "serde", feature = "datagen"))]
+#[derive(serde::Serialize, serde::Deserialize)]
+struct CalendarPreferenceHuman<'a> {
+    #[serde(borrow)]
+    default_algorithm: &'a str,
+    #[serde(borrow)]
+    default_hijri_algorithm: &'a str,
+}
+
 #[cfg(feature = "datagen")]
 impl serde::Serialize for CalendarPreference {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -89,14 +98,14 @@ impl serde::Serialize for CalendarPreference {
         S: serde::Serializer,
     {
         if serializer.is_human_readable() {
-            use serde::ser::SerializeStruct;
-            let mut state = serializer.serialize_struct("CalendarPreference", 2)?;
-            state.serialize_field("default_algorithm", self.default_algorithm.as_str())?;
-            state.serialize_field(
-                "default_hijri_algorithm",
-                self.default_hijri_algorithm.as_str(),
-            )?;
-            return state.end();
+            let human = CalendarPreferenceHuman {
+                default_algorithm: self.default_algorithm.as_str(),
+                default_hijri_algorithm: CalendarAlgorithm::Hijri(Some(
+                    self.default_hijri_algorithm,
+                ))
+                .as_str(),
+            };
+            return human.serialize(serializer);
         }
 
         let default = match self.default_algorithm {
@@ -149,13 +158,6 @@ impl<'de> serde::Deserialize<'de> for CalendarPreference {
         D: serde::Deserializer<'de>,
     {
         if deserializer.is_human_readable() {
-            #[derive(serde::Deserialize)]
-            struct CalendarPreferenceHuman<'a> {
-                #[serde(borrow)]
-                default_algorithm: &'a str,
-                #[serde(borrow)]
-                default_hijri_algorithm: &'a str,
-            }
             let human = CalendarPreferenceHuman::deserialize(deserializer)?;
             let default_val =
                 icu_locale_core::extensions::unicode::Value::try_from_str(human.default_algorithm)
@@ -166,8 +168,10 @@ impl<'de> serde::Deserialize<'de> for CalendarPreference {
                 human.default_hijri_algorithm,
             )
             .map_err(serde::de::Error::custom)?;
-            let default_hijri_algorithm =
-                HijriCalendarAlgorithm::try_from(&hijri_val).map_err(serde::de::Error::custom)?;
+            let default_hijri_algorithm = match CalendarAlgorithm::try_from(&hijri_val) {
+                Ok(CalendarAlgorithm::Hijri(Some(h))) => h,
+                _ => return Err(serde::de::Error::custom("expected islamic-* calendar")),
+            };
             return Ok(Self {
                 default_algorithm,
                 default_hijri_algorithm,

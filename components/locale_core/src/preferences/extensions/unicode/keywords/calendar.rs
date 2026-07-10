@@ -24,32 +24,6 @@ enum_keyword!(
         Rgsa
 });
 
-impl HijriCalendarAlgorithm {
-    /// A helper function for displaying as a `&str`.
-    pub const fn as_str(&self) -> &'static str {
-        match self {
-            Self::Umalqura => "umalqura",
-            Self::Tbla => "tbla",
-            Self::Civil => "civil",
-            Self::Rgsa => "rgsa",
-        }
-    }
-}
-
-impl TryFrom<&Value> for HijriCalendarAlgorithm {
-    type Error = PreferencesParseError;
-
-    fn try_from(value: &Value) -> Result<Self, Self::Error> {
-        match value.get_subtag(0).copied() {
-            Some(s) if s == subtag!("umalqura") => Ok(Self::Umalqura),
-            Some(s) if s == subtag!("tbla") => Ok(Self::Tbla),
-            Some(s) if s == subtag!("civil") => Ok(Self::Civil),
-            Some(s) if s == subtag!("rgsa") => Ok(Self::Rgsa),
-            _ => Err(PreferencesParseError::InvalidKeywordValue),
-        }
-    }
-}
-
 /// Handles aliases present in `v`. If found, returns a [`CalendarAlgorithm`], else returns None
 fn handle_aliases(v: &Value) -> Option<CalendarAlgorithm> {
     if *v == value!("islamicc") {
