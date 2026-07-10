@@ -1021,10 +1021,9 @@ impl SourceDataProvider {
         DataError,
     > {
         let mut magic_symbols = BTreeMap::new();
-        let mut fixed_symbol_assignments = BTreeMap::new();
         let mut complex_symbols = BTreeMap::new();
         let symbols = sources.read_to_string(&format!("{prefix}Symbols.txt"))?;
-        let mut symbols = symbols
+        let symbols = symbols
             .lines()
             .map(|l| l.split('#').next().unwrap().trim())
             .filter(|l| !l.is_empty())
@@ -1052,10 +1051,9 @@ impl SourceDataProvider {
                 Ok((symbol.to_owned(), set))
             })
             .collect::<Result<BTreeMap<_, _>, DataError>>()?;
-        fixed_symbol_assignments.insert(
-            magic_symbols.remove("eot").unwrap_or("eot").to_string(),
-            SegmenterStateMachine::EOT_SYMBOL,
-        );
+        let eot_symbol = magic_symbols.remove("eot").unwrap_or("eot").to_string();
+        let magic_symbols = magic_symbols;
+        let complex_symbols = complex_symbols;
 
         let states = sources.read_to_string(&format!("{prefix}States.txt"))?;
         let states = states
@@ -1076,7 +1074,7 @@ impl SourceDataProvider {
             .collect::<BTreeMap<_, _>>();
 
         let transitions = sources.read_to_string(&format!("{prefix}Transitions.txt"))?;
-        let mut transitions = transitions
+        let transitions = transitions
             .lines()
             .map(|l| l.split('#').next().unwrap().trim())
             .filter(|l| !l.is_empty())
@@ -1093,11 +1091,6 @@ impl SourceDataProvider {
             .iter()
             .flat_map(|(_, &(_, lookahead, _))| lookahead)
             .collect::<BTreeSet<_>>();
-
-        let mut pseudo_symbol_map = BTreeMap::<String, (String, ComplexScript)>::new();
-
-        // Create pseudo symbols for complex scripts, allowing the state machine to use the correct
-        // dictionary without further lookup.
 
         let complex_languages = match prefix {
             "LineBreak" => [
@@ -1133,6 +1126,78 @@ impl SourceDataProvider {
         })
         .collect::<Vec<_>>();
 
+        let mut tailorings = BTreeMap::new();
+
+        for tailoring in sources.list(&format!("{prefix}Tailoring_"))? {
+            let tailoring = tailoring.strip_suffix(".txt").unwrap();
+
+            let mut overrides = BTreeMap::<String, BTreeSet<char>>::new();
+
+            for line in sources
+                .read_to_string(&format!("{prefix}Tailoring_{tailoring}.txt"))?
+                .lines()
+                .map(|l| l.split('#').next().unwrap().trim())
+                .filter(|l| !l.is_empty())
+            {
+                let mut iter = line.split(';');
+                let unicode_set = iter.next().unwrap().trim();
+                let target = iter.next().unwrap().trim();
+
+                let set = icu::properties::unicodeset_parse::parse_unstable(unicode_set, self)
+                    .map_err(|e| {
+                        DataError::custom("unicodeset parse")
+                            .with_display_context(&e.fmt_with_source(unicode_set))
+                    })?
+                    .0;
+
+                let target = icu::properties::unicodeset_parse::parse_unstable(target, self)
+                    .map_err(|e| {
+                        DataError::custom("unicodeset parse")
+                            .with_display_context(&e.fmt_with_source(unicode_set))
+                    })?
+                    .0;
+
+                let target_symbol = if target.has_strings() {
+                    magic_symbols[target.strings().iter().next().unwrap()]
+                } else {
+                    let target = target.code_points().iter_chars().next().unwrap();
+                    symbols
+                        .iter()
+                        .find(|(_, set)| set.contains(target))
+                        .unwrap()
+                        .0
+                        .as_str()
+                };
+
+                for c in set.code_points().iter_chars() {
+                    overrides
+                        .entry(target_symbol.to_owned())
+                        .or_default()
+                        .insert(c);
+                }
+            }
+
+            tailorings.insert(
+                String::from(tailoring),
+                overrides
+                    .into_iter()
+                    .map(|(k, v)| {
+                        let mut builder = CodePointInversionListBuilder::new();
+                        v.into_iter().for_each(|c| builder.add_char(c));
+                        (k, builder.build())
+                    })
+                    .collect::<BTreeMap<_, CodePointInversionList>>(),
+            );
+        }
+
+        // We now mutate the state machine.
+
+        let mut symbols = symbols;
+        let mut transitions = transitions;
+        let mut pseudo_symbol_map = BTreeMap::<String, (String, ComplexScript)>::new();
+
+        // Create pseudo symbols for complex scripts, allowing the state machine to use the correct
+        // dictionary without further lookup.
         for (&symbol, &non_complex_symbol) in &complex_symbols {
             let set = symbols.get(symbol).unwrap().clone();
 
@@ -1200,71 +1265,7 @@ impl SourceDataProvider {
             }
         }
 
-        let mut tailorings = BTreeMap::new();
-
-        for tailoring in sources.list(&format!("{prefix}Tailoring_"))? {
-            let tailoring = tailoring.strip_suffix(".txt").unwrap();
-
-            let mut overrides = BTreeMap::<String, BTreeSet<char>>::new();
-
-            for line in sources
-                .read_to_string(&format!("{prefix}Tailoring_{tailoring}.txt"))?
-                .lines()
-                .map(|l| l.split('#').next().unwrap().trim())
-                .filter(|l| !l.is_empty())
-            {
-                let mut iter = line.split(';');
-                let unicode_set = iter.next().unwrap().trim();
-                let target = iter.next().unwrap().trim();
-
-                let set = icu::properties::unicodeset_parse::parse_unstable(unicode_set, self)
-                    .map_err(|e| {
-                        DataError::custom("unicodeset parse")
-                            .with_display_context(&e.fmt_with_source(unicode_set))
-                    })?
-                    .0;
-
-                let target = icu::properties::unicodeset_parse::parse_unstable(target, self)
-                    .map_err(|e| {
-                        DataError::custom("unicodeset parse")
-                            .with_display_context(&e.fmt_with_source(unicode_set))
-                    })?
-                    .0;
-
-                let target_symbol = if target.has_strings() {
-                    magic_symbols[target.strings().iter().next().unwrap()]
-                } else {
-                    let target = target.code_points().iter_chars().next().unwrap();
-                    symbols
-                        .iter()
-                        .find(|(_, set)| set.contains(target))
-                        .unwrap()
-                        .0
-                        .as_str()
-                };
-
-                for c in set.code_points().iter_chars() {
-                    overrides
-                        .entry(target_symbol.to_owned())
-                        .or_default()
-                        .insert(c);
-                }
-            }
-
-            tailorings.insert(
-                String::from(tailoring),
-                overrides
-                    .into_iter()
-                    .map(|(k, v)| {
-                        let mut builder = CodePointInversionListBuilder::new();
-                        v.into_iter().for_each(|c| builder.add_char(c));
-                        (k, builder.build())
-                    })
-                    .collect::<BTreeMap<_, CodePointInversionList>>(),
-            );
-        }
-
-        // Intersect the symbols with all tailorings' overrides.
+        // Create pseudo symbols for all tailorings sets.
         for (tailoring, overrides) in tailorings.clone() {
             for (rule, set) in overrides {
                 for (symbol, set2) in symbols.clone().into_iter().collect::<Vec<_>>() {
@@ -1373,24 +1374,17 @@ impl SourceDataProvider {
             false
         });
 
-        let highest_fixed_symbol = fixed_symbol_assignments.values().copied().max().unwrap();
+        let symbols = symbols;
+        let pseudo_symbol_map = pseudo_symbol_map;
+
+        // Done. The rest of this function encodes the state machine.
+
         let symbol_lookup = symbols
             .keys()
-            .filter(|&s| {
-                !fixed_symbol_assignments.contains_key(s) && !pseudo_symbol_map.contains_key(s)
-            })
+            .filter(|&s| s != &eot_symbol && !pseudo_symbol_map.contains_key(s))
             .enumerate()
-            .map(|(i, symbol)| {
-                (
-                    symbol.as_str(),
-                    Symbol::try_from(i + highest_fixed_symbol as usize + 1).unwrap(),
-                )
-            })
-            .chain(
-                fixed_symbol_assignments
-                    .iter()
-                    .map(|(k, v)| (k.as_str(), *v)),
-            )
+            .map(|(i, symbol)| (symbol.as_str(), Symbol::try_from(i + 1).unwrap()))
+            .chain([(eot_symbol.as_str(), SegmenterStateMachine::EOT_SYMBOL)])
             .collect::<BTreeMap<_, _>>();
 
         let pseudo_symbol_shift = symbol_lookup.values().copied().max().unwrap() + 1;
