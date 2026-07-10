@@ -31,8 +31,6 @@ use icu::properties::{
 use icu::segmenter::options::WordType;
 use icu::segmenter::provider::*;
 use icu_provider::prelude::*;
-#[cfg(feature = "unstable")]
-use std::borrow::Cow;
 use std::collections::HashSet;
 #[cfg(feature = "unstable")]
 use std::collections::{BTreeMap, BTreeSet};
@@ -1051,7 +1049,7 @@ impl SourceDataProvider {
                     assert_eq!(magic_symbols.insert(String::from(string), symbol), None);
                 }
                 let set = set.code_points().clone();
-                Ok((Cow::Borrowed(symbol), set))
+                Ok((symbol.to_owned(), set))
             })
             .collect::<Result<BTreeMap<_, _>, DataError>>()?;
         fixed_symbol_assignments.insert(
@@ -1164,7 +1162,7 @@ impl SourceDataProvider {
                     intersection_symbol.clone(),
                     (non_complex_symbol.into(), language),
                 );
-                symbols.insert(Cow::Owned(intersection_symbol), intersection.build());
+                symbols.insert(intersection_symbol, intersection.build());
             }
 
             if symbol != non_complex_symbol {
@@ -1207,7 +1205,7 @@ impl SourceDataProvider {
         for tailoring in sources.list(&format!("{prefix}Tailoring_"))? {
             let tailoring = tailoring.strip_suffix(".txt").unwrap();
 
-            let mut overrides = BTreeMap::<Cow<'static, str>, BTreeSet<char>>::new();
+            let mut overrides = BTreeMap::<String, BTreeSet<char>>::new();
 
             for line in sources
                 .read_to_string(&format!("{prefix}Tailoring_{tailoring}.txt"))?
@@ -1234,9 +1232,7 @@ impl SourceDataProvider {
                     .0;
 
                 let target_symbol = if target.has_strings() {
-                    let target = target.strings().iter().next().unwrap();
-                    let magic = *magic_symbols.get(target).expect(target);
-                    &Cow::Borrowed(magic)
+                    magic_symbols[target.strings().iter().next().unwrap()]
                 } else {
                     let target = target.code_points().iter_chars().next().unwrap();
                     symbols
@@ -1244,11 +1240,12 @@ impl SourceDataProvider {
                         .find(|(_, set)| set.contains(target))
                         .unwrap()
                         .0
+                        .as_str()
                 };
 
                 for c in set.code_points().iter_chars() {
                     overrides
-                        .entry(target_symbol.clone())
+                        .entry(target_symbol.to_owned())
                         .or_default()
                         .insert(c);
                 }
@@ -1275,7 +1272,7 @@ impl SourceDataProvider {
                         // Overlapping sets. We need to create a new pseudo-symbol.
                         let pseudo_symbol = format!("{symbol}_{tailoring}_{rule}");
                         // Add the intersection as a new symbol.
-                        symbols.insert(Cow::Owned(pseudo_symbol.clone()), {
+                        symbols.insert(pseudo_symbol.clone(), {
                             let mut builder = CodePointInversionListBuilder::new();
                             builder.add_set(&set);
                             for r in set2.iter_ranges_complemented() {
@@ -1307,7 +1304,7 @@ impl SourceDataProvider {
 
         // Remove unused symbols
         symbols.retain(|n, set| {
-            if pseudo_symbol_map.contains_key(n.as_ref()) {
+            if pseudo_symbol_map.contains_key(n) {
                 // Symbol is a pseudo symbol
                 return true;
             }
@@ -1319,7 +1316,7 @@ impl SourceDataProvider {
 
             if pseudo_symbol_map
                 .values()
-                .any(|(root_symbol, _)| root_symbol == n.as_ref())
+                .any(|(root_symbol, _)| root_symbol == n)
                 || tailorings
                     .values()
                     .any(|overrides| overrides.contains_key(n))
@@ -1337,13 +1334,12 @@ impl SourceDataProvider {
         let symbol_lookup = symbols
             .keys()
             .filter(|&s| {
-                !fixed_symbol_assignments.contains_key(s.as_ref())
-                    && !pseudo_symbol_map.contains_key(s.as_ref())
+                !fixed_symbol_assignments.contains_key(s) && !pseudo_symbol_map.contains_key(s)
             })
             .enumerate()
             .map(|(i, symbol)| {
                 (
-                    symbol.as_ref(),
+                    symbol.as_str(),
                     Symbol::try_from(i + highest_fixed_symbol as usize + 1).unwrap(),
                 )
             })
@@ -1393,8 +1389,8 @@ impl SourceDataProvider {
                 builder.set_range_value(
                     range.clone(),
                     symbol_lookup
-                        .get(&**symbol)
-                        .or_else(|| pseudo_symbol_lookup.get(&**symbol))
+                        .get(symbol.as_str())
+                        .or_else(|| pseudo_symbol_lookup.get(symbol.as_str()))
                         .copied()
                         .unwrap(),
                 );
@@ -1410,7 +1406,7 @@ impl SourceDataProvider {
                 let mut tailored_pseudo_symbol_map = BTreeMap::<u8, (u8, ComplexScript)>::new();
 
                 for (target_symbol, set) in overrides {
-                    let target_symbol = symbol_lookup[&*target_symbol];
+                    let target_symbol = symbol_lookup[target_symbol.as_str()];
                     // TODO?
                     let target_language = ComplexScript::None;
                     // The set might cover multiple pseudo symbols
@@ -1454,7 +1450,7 @@ impl SourceDataProvider {
 
         let transitions = transitions
             .iter()
-            .map(|((state, symbol), next_state)| {
+            .map(|(&(state, symbol), &next_state)| {
                 (
                     usize::from(state_lookup[state])
                         + state_lookup.len() * usize::from(symbol_lookup[symbol]),
