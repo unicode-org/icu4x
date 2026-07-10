@@ -88,6 +88,17 @@ impl serde::Serialize for CalendarPreference {
     where
         S: serde::Serializer,
     {
+        if serializer.is_human_readable() {
+            use serde::ser::SerializeStruct;
+            let mut state = serializer.serialize_struct("CalendarPreference", 2)?;
+            state.serialize_field("default_algorithm", self.default_algorithm.as_str())?;
+            state.serialize_field(
+                "default_hijri_algorithm",
+                self.default_hijri_algorithm.as_str(),
+            )?;
+            return state.end();
+        }
+
         let default = match self.default_algorithm {
             CalendarAlgorithm::Buddhist => 1u8,
             CalendarAlgorithm::Chinese => 2,
@@ -137,6 +148,32 @@ impl<'de> serde::Deserialize<'de> for CalendarPreference {
     where
         D: serde::Deserializer<'de>,
     {
+        if deserializer.is_human_readable() {
+            #[derive(serde::Deserialize)]
+            struct CalendarPreferenceHuman<'a> {
+                #[serde(borrow)]
+                default_algorithm: &'a str,
+                #[serde(borrow)]
+                default_hijri_algorithm: &'a str,
+            }
+            let human = CalendarPreferenceHuman::deserialize(deserializer)?;
+            let default_val =
+                icu_locale_core::extensions::unicode::Value::try_from_str(human.default_algorithm)
+                    .map_err(serde::de::Error::custom)?;
+            let default_algorithm =
+                CalendarAlgorithm::try_from(&default_val).map_err(serde::de::Error::custom)?;
+            let hijri_val = icu_locale_core::extensions::unicode::Value::try_from_str(
+                human.default_hijri_algorithm,
+            )
+            .map_err(serde::de::Error::custom)?;
+            let default_hijri_algorithm =
+                HijriCalendarAlgorithm::try_from(&hijri_val).map_err(serde::de::Error::custom)?;
+            return Ok(Self {
+                default_algorithm,
+                default_hijri_algorithm,
+            });
+        }
+
         let packed = u8::deserialize(deserializer)?;
         let default_algorithm = packed >> 3;
         let default_hijri_algorithm = packed & 0x07;
