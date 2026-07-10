@@ -89,28 +89,42 @@ impl serde::Serialize for CalendarPreference {
         S: serde::Serializer,
     {
         let default = match self.default_algorithm {
-            CalendarAlgorithm::Buddhist => 0u8,
-            CalendarAlgorithm::Chinese => 1,
-            CalendarAlgorithm::Coptic => 2,
-            CalendarAlgorithm::Dangi => 3,
-            CalendarAlgorithm::Ethioaa => 4,
-            CalendarAlgorithm::Ethiopic => 5,
-            CalendarAlgorithm::Gregory => 6,
-            CalendarAlgorithm::Hebrew => 7,
-            CalendarAlgorithm::Indian => 8,
-            CalendarAlgorithm::Hijri(Some(s)) if s == self.default_hijri_algorithm => 9,
-            CalendarAlgorithm::Iso8601 => 10,
-            CalendarAlgorithm::Japanese => 11,
-            CalendarAlgorithm::Persian => 12,
-            CalendarAlgorithm::Roc => 13,
-            _ => 6,
+            CalendarAlgorithm::Buddhist => 1u8,
+            CalendarAlgorithm::Chinese => 2,
+            CalendarAlgorithm::Coptic => 3,
+            CalendarAlgorithm::Dangi => 4,
+            CalendarAlgorithm::Ethioaa => 5,
+            CalendarAlgorithm::Ethiopic => 6,
+            CalendarAlgorithm::Gregory => 7,
+            CalendarAlgorithm::Hebrew => 8,
+            CalendarAlgorithm::Indian => 9,
+            CalendarAlgorithm::Hijri(Some(s)) if s == self.default_hijri_algorithm => 10,
+            CalendarAlgorithm::Iso8601 => 11,
+            CalendarAlgorithm::Japanese => 12,
+            CalendarAlgorithm::Persian => 13,
+            CalendarAlgorithm::Roc => 14,
+            _ => {
+                debug_assert!(
+                    false,
+                    "unknown calendar algorithm: {:?}",
+                    self.default_algorithm
+                );
+                0
+            }
         };
         let hijri = match self.default_hijri_algorithm {
-            HijriCalendarAlgorithm::Umalqura => 0,
-            HijriCalendarAlgorithm::Tbla => 1,
-            HijriCalendarAlgorithm::Civil => 2,
-            HijriCalendarAlgorithm::Rgsa => 3,
-            _ => 2,
+            HijriCalendarAlgorithm::Umalqura => 1,
+            HijriCalendarAlgorithm::Tbla => 2,
+            HijriCalendarAlgorithm::Civil => 3,
+            HijriCalendarAlgorithm::Rgsa => 4,
+            _ => {
+                debug_assert!(
+                    false,
+                    "unknown hijri algorithm: {:?}",
+                    self.default_hijri_algorithm
+                );
+                0
+            }
         };
 
         (default << 3 | hijri).serialize(serializer)
@@ -127,28 +141,40 @@ impl<'de> serde::Deserialize<'de> for CalendarPreference {
         let default_algorithm = packed >> 3;
         let default_hijri_algorithm = packed & 0x07;
         let default_hijri_algorithm = match default_hijri_algorithm {
-            0 => HijriCalendarAlgorithm::Umalqura,
-            1 => HijriCalendarAlgorithm::Tbla,
-            2 => HijriCalendarAlgorithm::Civil,
-            3 => HijriCalendarAlgorithm::Rgsa,
-            _ => HijriCalendarAlgorithm::Civil,
+            1 => HijriCalendarAlgorithm::Umalqura,
+            2 => HijriCalendarAlgorithm::Tbla,
+            3 => HijriCalendarAlgorithm::Civil,
+            4 => HijriCalendarAlgorithm::Rgsa,
+            _ => {
+                debug_assert!(
+                    false,
+                    "unknown hijri algorithm discriminant: {default_hijri_algorithm}"
+                );
+                HijriCalendarAlgorithm::Civil
+            }
         };
         let default_algorithm = match default_algorithm {
-            0 => CalendarAlgorithm::Buddhist,
-            1 => CalendarAlgorithm::Chinese,
-            2 => CalendarAlgorithm::Coptic,
-            3 => CalendarAlgorithm::Dangi,
-            4 => CalendarAlgorithm::Ethioaa,
-            5 => CalendarAlgorithm::Ethiopic,
-            6 => CalendarAlgorithm::Gregory,
-            7 => CalendarAlgorithm::Hebrew,
-            8 => CalendarAlgorithm::Indian,
-            9 => CalendarAlgorithm::Hijri(Some(default_hijri_algorithm)),
-            10 => CalendarAlgorithm::Iso8601,
-            11 => CalendarAlgorithm::Japanese,
-            12 => CalendarAlgorithm::Persian,
-            13 => CalendarAlgorithm::Roc,
-            _ => CalendarAlgorithm::Gregory,
+            1 => CalendarAlgorithm::Buddhist,
+            2 => CalendarAlgorithm::Chinese,
+            3 => CalendarAlgorithm::Coptic,
+            4 => CalendarAlgorithm::Dangi,
+            5 => CalendarAlgorithm::Ethioaa,
+            6 => CalendarAlgorithm::Ethiopic,
+            7 => CalendarAlgorithm::Gregory,
+            8 => CalendarAlgorithm::Hebrew,
+            9 => CalendarAlgorithm::Indian,
+            10 => CalendarAlgorithm::Hijri(Some(default_hijri_algorithm)),
+            11 => CalendarAlgorithm::Iso8601,
+            12 => CalendarAlgorithm::Japanese,
+            13 => CalendarAlgorithm::Persian,
+            14 => CalendarAlgorithm::Roc,
+            _ => {
+                debug_assert!(
+                    false,
+                    "unknown calendar algorithm discriminant: {default_algorithm}"
+                );
+                CalendarAlgorithm::Gregory
+            }
         };
         Ok(Self {
             default_algorithm,
