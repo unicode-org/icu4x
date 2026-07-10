@@ -172,6 +172,9 @@ pub struct MenuNameParts<'data> {
     /// The "extension" part of a language menu display name.
     ///
     /// For example, "Kurmanji" in "Kurdish (Kurmanji)".
+    ///
+    /// Note: this is the empty string for language menu names that do not have an extension.
+    /// For example, in CLDR 48, "Chinese, Mandarin" is the core and there is no extension.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub extension: VarZeroCow<'data, str>,
 }
