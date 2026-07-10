@@ -1,1 +1,4 @@
-50
+{
+  "default_algorithm": "gregory",
+  "default_hijri_algorithm": "civil"
+}

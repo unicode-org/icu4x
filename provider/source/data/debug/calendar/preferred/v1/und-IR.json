@@ -1,1 +1,4 @@
-98
+{
+  "default_algorithm": "persian",
+  "default_hijri_algorithm": "civil"
+}

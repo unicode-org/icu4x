@@ -1,1 +1,4 @@
-48
+{
+  "default_algorithm": "gregory",
+  "default_hijri_algorithm": "umalqura"
+}
