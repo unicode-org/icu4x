@@ -1302,6 +1302,47 @@ impl SourceDataProvider {
             }
         }
 
+        let mut unused_pseudo_symbols = pseudo_symbol_map.keys().cloned().collect::<BTreeSet<_>>();
+        let tailorings = tailorings
+            .into_iter()
+            .map(|(tailoring, overrides)| {
+                let mut tailored_pseudo_symbol_map = BTreeMap::new();
+
+                for (target_symbol, set) in overrides {
+                    // TODO?
+                    let target_language = ComplexScript::None;
+                    // The set might cover multiple pseudo symbols
+                    for c in set.iter_chars() {
+                        let pseudo_symbol =
+                            symbols.iter().find(|(_, set)| set.contains(c)).unwrap().0;
+                        unused_pseudo_symbols.remove(pseudo_symbol);
+                        tailored_pseudo_symbol_map.insert(
+                            pseudo_symbol.to_owned(),
+                            (target_symbol.clone(), target_language),
+                        );
+                    }
+                }
+
+                (tailoring, tailored_pseudo_symbol_map)
+            })
+            .collect::<BTreeMap<_, _>>();
+
+        // Remove unused pseudo symbols. It's hard to not generate unused pseudo symbols, because when we split
+        // a previously created pseudo symbol, we don't know which half the other tailoring actually needs.
+        for unused in unused_pseudo_symbols {
+            if pseudo_symbol_map.get(&unused).unwrap().1 != ComplexScript::None {
+                continue;
+            }
+            let resolved = pseudo_symbol_map.remove(&unused).unwrap().0;
+            let set = symbols.remove(&unused).unwrap();
+            let resolved_set = symbols.get_mut(&resolved).unwrap();
+
+            let mut builder = CodePointInversionListBuilder::new();
+            builder.add_set(resolved_set);
+            builder.add_set(&set);
+            *resolved_set = builder.build();
+        }
+
         // Remove unused symbols
         symbols.retain(|n, set| {
             if pseudo_symbol_map.contains_key(n) {
@@ -1317,9 +1358,11 @@ impl SourceDataProvider {
             if pseudo_symbol_map
                 .values()
                 .any(|(root_symbol, _)| root_symbol == n)
-                || tailorings
-                    .values()
-                    .any(|overrides| overrides.contains_key(n))
+                || tailorings.values().any(|tailored_pseudo_symbol_map| {
+                    tailored_pseudo_symbol_map
+                        .values()
+                        .any(|(target_symbol, _)| target_symbol == n)
+                })
             {
                 // Symbol is a pseudo symbol target
                 return true;
@@ -1400,32 +1443,6 @@ impl SourceDataProvider {
         assert!(missing_codepoints.is_empty(), "{missing_codepoints:?}");
         let symbols = builder.build();
 
-        let tailorings = tailorings
-            .into_iter()
-            .map(|(tailoring, overrides)| {
-                let mut tailored_pseudo_symbol_map = BTreeMap::<u8, (u8, ComplexScript)>::new();
-
-                for (target_symbol, set) in overrides {
-                    let target_symbol = symbol_lookup[target_symbol.as_str()];
-                    // TODO?
-                    let target_language = ComplexScript::None;
-                    // The set might cover multiple pseudo symbols
-                    for c in set.iter_chars() {
-                        let pseudo_symbol = symbols.get(c);
-                        let prev = tailored_pseudo_symbol_map
-                            .insert(pseudo_symbol, (target_symbol, target_language));
-                        // we fragmented the symbols sufficiently above
-                        assert!(
-                            prev.is_none_or(|p| p == (target_symbol, target_language)),
-                            "{prev:?} {target_symbol} {tailoring} {pseudo_symbol} {c:?}"
-                        );
-                    }
-                }
-
-                (tailoring, tailored_pseudo_symbol_map)
-            })
-            .collect::<BTreeMap<_, _>>();
-
         let states = states
             .iter()
             .map(|(&state, &(accepting, lookahead, status))| {
@@ -1468,31 +1485,33 @@ impl SourceDataProvider {
             })
             .collect();
 
-        let pseudo_symbol_map = pseudo_symbol_map
-            .iter()
-            .map(|(k, &(ref v, l))| {
-                (
-                    pseudo_symbol_lookup[k.as_str()],
-                    (symbol_lookup[v.as_str()], l),
-                )
-            })
-            .collect::<BTreeMap<_, _>>();
+        let build_pseudo_map = |map: &BTreeMap<String, (String, ComplexScript)>| {
+            map.iter()
+                .map(|(pseudo_symbol, &(ref symbol, complex_script))| {
+                    (
+                        pseudo_symbol_lookup[pseudo_symbol.as_str()],
+                        (symbol_lookup[symbol.as_str()], complex_script),
+                    )
+                })
+                .collect::<BTreeMap<_, _>>()
+                .into_values()
+                .collect()
+        };
 
         let tailorings = tailorings
             .into_iter()
             .map(|(tailoring, tailored_pseudo_symbol_map)| {
-                let pseudo_symbol_map = pseudo_symbol_map
-                    .iter()
-                    .map(|(&pseudo_symbol, &root_symbol)| {
-                        tailored_pseudo_symbol_map
-                            .get(&pseudo_symbol)
-                            .copied()
-                            .unwrap_or(root_symbol)
-                    })
-                    .collect::<zerovec::ZeroVec<_>>();
                 (
                     tailoring,
-                    SegmenterStateMachineOverride { pseudo_symbol_map },
+                    SegmenterStateMachineOverride {
+                        pseudo_symbol_map: build_pseudo_map(
+                            &pseudo_symbol_map
+                                .clone()
+                                .into_iter()
+                                .chain(tailored_pseudo_symbol_map)
+                                .collect(),
+                        ),
+                    },
                 )
             })
             .collect();
@@ -1504,7 +1523,7 @@ impl SourceDataProvider {
                 states,
                 num_lookaheads: lookahead_lookup.len(),
                 pseudo_symbol_shift,
-                pseudo_symbol_map: pseudo_symbol_map.values().copied().collect(),
+                pseudo_symbol_map: build_pseudo_map(&pseudo_symbol_map),
             },
             tailorings,
         ))
