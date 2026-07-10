@@ -160,6 +160,7 @@ pub struct VariantDisplayNames<'data> {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
 #[zerovec::make_varule(MenuNamePartsULE)]
+#[zerovec::derive(Debug)]
 #[zerovec::skip_derive(Ord)]
 #[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
 #[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]

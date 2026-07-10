@@ -15,20 +15,32 @@ use icu_locale_core::LanguageIdentifier;
 use icu_locale_core::subtags::{Language, Region, Script, Variant};
 use icu_pattern::{DoublePlaceholderPattern, DoublePlaceholderValueProviderTry, PatternItem};
 use icu_provider::DataPayloadOr;
+use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 use writeable::LengthHint;
 use writeable::{PartsWrite, TryWriteable, adapters::LossyWrap};
+use zerovec::VarZeroCow;
 
 /// An error returned when a display name was not found in data and has fallen back to the raw BCP-47 subtag code.
 #[derive(displaydoc::Display, Debug, Copy, Clone, PartialEq, Eq, Default)]
 #[allow(clippy::exhaustive_structs)]
 pub struct LanguageIdentifierNameFallbackError;
 
+/// A data struct that is either [`MenuNameParts`] or a string
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[allow(clippy::exhaustive_enums)] // provider-unstable
+enum MenuNamePartsOrString<'a> {
+    /// A data struct that is [`MenuNameParts`]
+    MenuNameParts(VarZeroCow<'a, MenuNamePartsULE>),
+    /// A data struct that is a string
+    String(VarZeroCow<'a, str>),
+}
+
 size_test!(
     LanguageIdentifierDisplayNameOwned,
     language_identifier_display_name_owned_size,
-    184
+    192
 );
 
 /// A localized display name for a language identifier, owned version.
@@ -98,7 +110,7 @@ size_test!(
 #[derive(Debug)]
 pub struct LanguageIdentifierDisplayNameOwned {
     /// Either the language display name or the subtag as fallback
-    language_payload: DataPayloadOr<LocaleNamesLanguageMediumV1, Language>,
+    language_payload: DataPayloadOr<ErasedMarker<MenuNamePartsOrString<'static>>, Language>,
     /// All other fields (shared between Standard and Menu)
     qualifiers: QualifiersOwned,
 }
@@ -159,14 +171,22 @@ impl LanguageIdentifierDisplayNameOwned {
 
         // If the language name is not loaded yet, try loading it from the language subtag alone.
         let language_payload = match language_payload {
-            Some(response) => DataPayloadOr::from_payload(response.payload),
+            Some(response) => DataPayloadOr::from_payload(
+                response
+                    .payload
+                    .map_project(|payload, _| MenuNamePartsOrString::String(payload)),
+            ),
             None => {
                 match Self::load_language_subtag_name(
                     provider,
                     &formatting_locale,
                     subject.language,
                 )? {
-                    Some(response) => DataPayloadOr::from_payload(response.payload),
+                    Some(response) => DataPayloadOr::from_payload(
+                        response
+                            .payload
+                            .map_project(|payload, _| MenuNamePartsOrString::String(payload)),
+                    ),
                     None => DataPayloadOr::from_other(subject.language),
                 }
             }
@@ -363,7 +383,8 @@ impl LanguageIdentifierDisplayNameOwned {
     /// suitable for writing out to a string.
     pub fn as_borrowed(&self) -> LanguageIdentifierDisplayName<'_> {
         let base_name = match self.language_payload.get() {
-            Ok(p) => NameOrFallback(Ok(p.as_ref())),
+            Ok(MenuNamePartsOrString::String(string)) => NameOrFallback(Ok(string.as_ref())),
+            Ok(MenuNamePartsOrString::MenuNameParts(parts)) => todo!(),
             Err(lang) => NameOrFallback(Err(lang.as_str())),
         };
 
