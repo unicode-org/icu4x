@@ -185,7 +185,6 @@ impl LanguageIdentifierDisplayNameOwned {
                     provider,
                     &formatting_locale,
                     subject.language,
-                    false,
                 )? {
                     Some(response) => DataPayloadOr::from_payload(
                         response
@@ -311,7 +310,6 @@ impl LanguageIdentifierDisplayNameOwned {
                     provider,
                     &formatting_locale,
                     subject.language,
-                    true,
                 )?
                 .map(|r| r.payload.cast());
                 if resp.is_none() {
@@ -319,7 +317,6 @@ impl LanguageIdentifierDisplayNameOwned {
                         provider,
                         &formatting_locale,
                         subject.language,
-                        false,
                     )?
                     .map(|r| r.payload);
                 }
@@ -444,7 +441,6 @@ impl LanguageIdentifierDisplayNameOwned {
                     provider,
                     &formatting_locale,
                     subject.language,
-                    true,
                 )?
                 .map(|r| r.payload.cast());
                 if resp.is_none() {
@@ -452,7 +448,6 @@ impl LanguageIdentifierDisplayNameOwned {
                         provider,
                         &formatting_locale,
                         subject.language,
-                        false,
                     )?
                     .map(|r| r.payload);
                 }
@@ -540,7 +535,6 @@ impl LanguageIdentifierDisplayNameOwned {
                         provider,
                         &formatting_locale,
                         subject.language,
-                        false,
                     )? {
                         Some(response) => DataPayloadOr::from_payload(
                             response
@@ -627,7 +621,6 @@ impl LanguageIdentifierDisplayNameOwned {
         provider: &P,
         formatting_locale: &DataLocale,
         language: Language,
-        silent: bool,
     ) -> Result<Option<DataResponse<M>>, DataError>
     where
         M: DataMarker<DataStruct = VarZeroCow<'static, str>>,
@@ -637,7 +630,8 @@ impl LanguageIdentifierDisplayNameOwned {
         let attrs = LocaleNamesLanguageMediumV1::make_attributes(language, None, None, &mut buffer);
         let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(attrs, formatting_locale);
         let mut metadata = DataRequestMetadata::default();
-        metadata.silent = silent;
+        metadata.silent =
+            core::any::TypeId::of::<M>() != core::any::TypeId::of::<LocaleNamesLanguageMediumV1>();
         provider
             .load(DataRequest { id, metadata })
             .allow_identifier_not_found()
