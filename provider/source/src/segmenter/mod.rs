@@ -879,13 +879,13 @@ fn neo_sources() -> AbstractFs {
         "GraphemeClusterBreakTransitions.txt",
         "LineBreakStates.txt",
         "LineBreakSymbols.txt",
-        "LineBreakTailoring_cj.txt",
-        "LineBreakTailoring_loose_cj.txt",
-        "LineBreakTailoring_loose.txt",
-        "LineBreakTailoring_normal_cj.txt",
-        "LineBreakTailoring_normal.txt",
-        "LineBreakTailoring_word_breakall.txt",
-        "LineBreakTailoring_word_keepall.txt",
+        "LineBreakTailoring_ja.txt",
+        "LineBreakTailoring_ja_loose.txt",
+        "LineBreakTailoring_ja_normal.txt",
+        "LineBreakTailoring_und_breakall.txt",
+        "LineBreakTailoring_und_keepall.txt",
+        "LineBreakTailoring_und_loose.txt",
+        "LineBreakTailoring_und_normal.txt",
         "LineBreakTransitions.txt",
         "SentenceBreakStates.txt",
         "SentenceBreakSymbols.txt",
@@ -910,8 +910,8 @@ fn download() {
         if matches!(
             file.as_str(),
             "SentenceBreakTailoring_el.txt"
-                | "LineBreakTailoring_word_breakall.txt"
-                | "LineBreakTailoring_word_keepall.txt"
+                | "LineBreakTailoring_und_breakall.txt"
+                | "LineBreakTailoring_und_keepall.txt"
         ) {
             // ICU4X-custom tailorings
             continue;
@@ -938,7 +938,7 @@ fn download() {
 #[cfg(feature = "unstable")]
 type TailoredSegmenter = (
     SegmenterStateMachine<'static>,
-    BTreeMap<String, SegmenterStateMachineOverride<'static>>,
+    BTreeMap<DataIdentifierCow<'static>, SegmenterStateMachineOverride<'static>>,
 );
 
 #[cfg(feature = "unstable")]
@@ -1016,7 +1016,7 @@ impl SourceDataProvider {
     ) -> Result<
         (
             SegmenterStateMachine<'static>,
-            BTreeMap<String, SegmenterStateMachineOverride<'static>>,
+            BTreeMap<DataIdentifierCow<'static>, SegmenterStateMachineOverride<'static>>,
         ),
         DataError,
     > {
@@ -1178,7 +1178,13 @@ impl SourceDataProvider {
             }
 
             tailorings.insert(
-                String::from(tailoring),
+                {
+                    let (locale, attr) = tailoring.split_once('_').unwrap_or((tailoring, ""));
+                    DataIdentifierCow::from_owned(
+                        DataMarkerAttributes::try_from_string(attr.to_string()).unwrap(),
+                        DataLocale::try_from_str(locale).unwrap(),
+                    )
+                },
                 overrides
                     .into_iter()
                     .map(|(k, v)| {
@@ -1651,7 +1657,7 @@ impl DataProvider<SegmenterBreakLineOverrideV2> for SourceDataProvider {
             payload: DataPayload::from_owned(
                 self.line_segmenter()?
                     .1
-                    .get(req.id.marker_attributes.as_str())
+                    .get(&req.id.as_cow())
                     .ok_or_else(|| {
                         DataErrorKind::IdentifierNotFound
                             .with_req(SegmenterBreakLineOverrideV2::INFO, req)
@@ -1672,13 +1678,7 @@ impl IterableDataProviderCached<SegmenterBreakLineOverrideV2> for SourceDataProv
         .with_marker(SegmenterBreakLineOverrideV2::INFO));
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-        Ok(self
-            .line_segmenter()?
-            .1
-            .keys()
-            .map(|s| DataMarkerAttributes::try_from_string(s.clone()).unwrap())
-            .map(DataIdentifierCow::from_marker_attributes_owned)
-            .collect())
+        Ok(self.line_segmenter()?.1.keys().cloned().collect())
     }
 }
 
@@ -1702,7 +1702,7 @@ impl DataProvider<SegmenterBreakSentenceOverrideV2> for SourceDataProvider {
             payload: DataPayload::from_owned(
                 self.sentence_segmenter()?
                     .1
-                    .get(&req.id.locale.to_string())
+                    .get(&req.id.as_cow())
                     .ok_or_else(|| {
                         DataErrorKind::IdentifierNotFound
                             .with_req(SegmenterBreakSentenceOverrideV2::INFO, req)
@@ -1723,13 +1723,7 @@ impl IterableDataProviderCached<SegmenterBreakSentenceOverrideV2> for SourceData
         .with_marker(SegmenterBreakSentenceOverrideV2::INFO));
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-        Ok(self
-            .sentence_segmenter()?
-            .1
-            .keys()
-            .map(|s| icu::locale::Locale::try_from_str(s).unwrap().into())
-            .map(DataIdentifierCow::from_locale)
-            .collect())
+        Ok(self.sentence_segmenter()?.1.keys().cloned().collect())
     }
 }
 
