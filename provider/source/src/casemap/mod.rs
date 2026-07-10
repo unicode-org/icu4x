@@ -56,7 +56,7 @@ impl DataProvider<CaseMapV1> for SourceDataProvider {
         }
 
         let mut simple = BTreeMap::new();
-        for line in self.parse_ucd_lines("ucd/UnicodeData.txt")? {
+        for line in self.rscd()?.parse_ucd_lines("ucd/UnicodeData.txt")? {
             let Some(line) = line.skip_missing_rule() else {
                 continue;
             };
@@ -101,7 +101,7 @@ impl DataProvider<CaseMapV1> for SourceDataProvider {
         }
 
         let mut special = BTreeMap::<char, (String, String, String, bool)>::new();
-        for line in self.parse_ucd_lines("ucd/SpecialCasing.txt")? {
+        for line in self.rscd()?.parse_ucd_lines("ucd/SpecialCasing.txt")? {
             let Some(line) = line.skip_missing_rule() else {
                 continue;
             };
@@ -162,7 +162,7 @@ impl DataProvider<CaseMapV1> for SourceDataProvider {
         special.entry('և').or_default().3 = true;
 
         let mut case_folds = BTreeMap::<char, (Option<char>, Option<String>, bool)>::new();
-        for line in self.parse_ucd_lines("ucd/CaseFolding.txt")? {
+        for line in self.rscd()?.parse_ucd_lines("ucd/CaseFolding.txt")? {
             let Some(line) = line.skip_missing_rule() else {
                 continue;
             };
@@ -327,7 +327,7 @@ impl DataProvider<CaseMapUnfoldV1> for SourceDataProvider {
 
         let mut unfold_map: BTreeMap<String, BTreeSet<char>> = BTreeMap::new();
 
-        for line in self.parse_ucd_lines("ucd/CaseFolding.txt")? {
+        for line in self.rscd()?.parse_ucd_lines("ucd/CaseFolding.txt")? {
             let Some(line) = line.skip_missing_rule() else {
                 continue;
             };

@@ -36,7 +36,7 @@ use icu::calendar::{Date, Iso};
 use icu::time::Time;
 use icu::time::zone::UtcOffset;
 use icu_provider::prelude::*;
-use source::{AbstractFs, SerdeCache, TzdbCache, UnicodeCache};
+use source::{AbstractFs, RscdCache, SerdeCache, TzdbCache};
 use std::collections::{BTreeSet, HashSet};
 use std::fmt::Debug;
 use std::path::Path;
@@ -89,8 +89,7 @@ mod tests;
 /// * [`is_missing_cldr_error`](Self::is_missing_cldr_error)
 /// * [`is_missing_icuexport_error`](Self::is_missing_icuexport_error)
 /// * [`is_missing_segmenter_lstm_error`](Self::is_missing_segmenter_lstm_error)
-/// * [`is_missing_unihan_error`](Self::is_missing_unihan_error)
-/// * [`is_missing_ucd_error`](Self::is_missing_ucd_error)
+/// * [`is_missing_rscd_error`](Self::is_missing_rscd_error)
 /// * [`is_missing_tzdb_error`](Self::is_missing_tzdb_error)
 #[allow(clippy::exhaustive_structs)] // any information will be added to SourceData
 #[derive(Debug, Clone)]
@@ -99,7 +98,7 @@ pub struct SourceDataProvider {
     icuexport_paths: Option<Arc<SerdeCache>>,
     segmenter_lstm_paths: Option<Arc<SerdeCache>>,
     tzdb_paths: Option<Arc<TzdbCache>>,
-    unicode_paths: Option<Arc<UnicodeCache>>,
+    rscd_paths: Option<Arc<RscdCache>>,
     trie_type: TrieType,
     collation_root_han: CollationRootHan,
     alt_variants: HashSet<AltVariantKind>,
@@ -136,8 +135,12 @@ impl SourceDataProvider {
     /// The segmentation LSTM model tag that has been verified to work with this version of `SourceDataProvider`.
     pub const TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
 
-    /// The UCD version tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const TESTED_UCD_TAG: &'static str = "17.0.0";
+    /// The Unicode version tag that has been verified to work with this version of `SourceDataProvider`.
+    pub const TESTED_UNICODE_TAG: &'static str = "17.0.0";
+
+    /// Deprecated, see [`Self::TESTED_UNICODE_TAG`].
+    #[deprecated(since = "2.3.0", note = "use `TESTED_UNICODE_TAG`")]
+    pub const TESTED_UCD_TAG: &'static str = Self::TESTED_UNICODE_TAG;
 
     /// The TZDB tag that has been verified to work with this version of `SourceDataProvider`.
     pub const TESTED_TZDB_TAG: &'static str = "2026c";
@@ -147,7 +150,7 @@ impl SourceDataProvider {
     /// See [`TESTED_CLDR_TAG`](Self::TESTED_CLDR_TAG),
     /// [`TESTED_ICUEXPORT_TAG`](Self::TESTED_ICUEXPORT_TAG),
     /// [`TESTED_SEGMENTER_LSTM_TAG`](Self::TESTED_SEGMENTER_LSTM_TAG),
-    /// [`TESTED_UCD_TAG`](Self::TESTED_UCD_TAG),
+    /// [`TESTED_UNICODE_TAG`](Self::TESTED_UNICODE_TAG),
     /// [`TESTED_TZDB_TAG`](Self::TESTED_TZDB_TAG).
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
@@ -163,7 +166,7 @@ impl SourceDataProvider {
                     .with_icuexport_for_tag(Self::TESTED_ICUEXPORT_TAG)
                     .with_segmenter_lstm_for_tag(Self::TESTED_SEGMENTER_LSTM_TAG)
                     .with_tzdb_for_tag(Self::TESTED_TZDB_TAG)
-                    .with_ucd_for_tag(Self::TESTED_UCD_TAG)
+                    .with_unicode_rscd_for_tag(Self::TESTED_UNICODE_TAG)
             })
             .clone()
     }
@@ -179,7 +182,7 @@ impl SourceDataProvider {
             icuexport_paths: None,
             segmenter_lstm_paths: None,
             tzdb_paths: None,
-            unicode_paths: None,
+            rscd_paths: None,
             trie_type: Default::default(),
             timezone_horizon: time_zones::Timestamp::try_offset_only_from_str(
                 "2015-01-01T00:00:00Z",
@@ -222,17 +225,27 @@ impl SourceDataProvider {
         })
     }
 
-    /// Deprecated, see [`Self::with_ucd`].
-    #[deprecated(since = "2.3.0", note = "use .with_ucd")]
+    /// Deprecated, see [`Self::with_unicode_rscd`].
+    #[deprecated(since = "2.3.0", note = "use .with_unicode_rscd")]
     pub fn with_unihan(self, _root: &Path) -> Result<Self, DataError> {
-        panic!("Use `.with_ucd` to set UCD data, which includes Unihan data.");
+        panic!(
+            "Use `.with_unicode_rscd` to set Repertoire-synchronized Character Data, which includes Unihan data."
+        );
     }
 
-    /// Adds Unicode source data to the provider. The path should point to a
-    /// directory structure matching <https://www.unicode.org/Public/{version}/>.
-    pub fn with_ucd(self, root: &Path) -> Result<Self, DataError> {
+    /// Deprecated
+    #[deprecated(since = "2.3.0", note = "use .with_unicode_rscd")]
+    pub fn with_ucd(self, _root: &Path) -> Result<Self, DataError> {
+        panic!(
+            "Use `.with_unicode_rscd` to set Repertoire-synchronized Character Data, which includes UCD data."
+        );
+    }
+
+    /// Adds a Unicode Repertoire-synchronized Character Data source data to the provider. The path should
+    /// point to a directory structure matching as described in <https://www.unicode.org/reports/tr44/tr44-37.html#Directory_Structure>.
+    pub fn with_unicode_rscd(self, root: &Path) -> Result<Self, DataError> {
         Ok(Self {
-            unicode_paths: Some(Arc::new(UnicodeCache::new_local(AbstractFs::new(root)?))),
+            rscd_paths: Some(Arc::new(RscdCache::new_local(AbstractFs::new(root)?))),
             ..self
         })
     }
@@ -307,13 +320,22 @@ impl SourceDataProvider {
         }
     }
 
-    /// Deprecated, see [`Self::with_ucd_for_tag`].
+    /// Deprecated, see [`Self::with_unicode_rscd_for_tag`].
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
-    #[deprecated(since = "2.3.0", note = "use .with_ucd_for_tag")]
+    #[deprecated(since = "2.3.0", note = "use .with_unicode_rscd_for_tag")]
     pub fn with_unihan_for_tag(self, _tag: &str) -> Self {
-        panic!("Use `.with_ucd_for_tag` to set UCD data, which includes Unihan data.");
+        panic!("Use `.with_unicode_rscd_for_tag` to set UCD data, which includes Unihan data.");
+    }
+
+    /// Deprecated, see [`Self::with_unicode_rscd_for_tag`].
+    ///
+    /// ✨ *Enabled with the `networking` Cargo feature.*
+    #[cfg(feature = "networking")]
+    #[deprecated(since = "2.3.0", note = "use .with_unicode_rscd_for_tag")]
+    pub fn with_ucd_for_tag(self, tag: &str) -> Self {
+        self.with_unicode_rscd_for_tag(tag)
     }
 
     /// Adds Unicode source data to the provider. The data will be downloaded from
@@ -323,9 +345,9 @@ impl SourceDataProvider {
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
-    pub fn with_ucd_for_tag(self, tag: &str) -> Self {
+    pub fn with_unicode_rscd_for_tag(self, tag: &str) -> Self {
         Self {
-            unicode_paths: Some(Arc::new(UnicodeCache::new_remote(tag))),
+            rscd_paths: Some(Arc::new(RscdCache::new_remote(tag))),
             ..self
         }
     }
@@ -356,8 +378,9 @@ impl SourceDataProvider {
         "Missing segmenter data. Use `.with_segmenter_lstm[_for_tag]` to set segmenter data.",
     );
 
-    const MISSING_UCD_ERROR: DataError =
-        DataError::custom("Missing UCD data. Use `.with_ucd[_for_tag]` to set UCD data.");
+    const MISSING_RSCD_ERROR: DataError = DataError::custom(
+        "Missing Unicode RSCD data. Use `.with_unicode_rscd[_for_tag]` to set Unicode RSCD data.",
+    );
 
     const MISSING_TZDB_ERROR: DataError =
         DataError::custom("Missing tzdb data. Use `.with_tzdb[_for_tag]` to set tzdb data.");
@@ -386,16 +409,22 @@ impl SourceDataProvider {
         e == Self::MISSING_TZDB_ERROR
     }
 
-    /// Identifies errors that are due to missing UCD data.
+    /// Identifies errors that are due to missing Unicode RSCD data.
     #[deprecated]
     pub fn is_missing_unihan_error(e: DataError) -> bool {
-        Self::is_missing_ucd_error(e)
+        Self::is_missing_rscd_error(e)
     }
 
-    /// Identifies errors that are due to missing UCD data.
-    pub fn is_missing_ucd_error(mut e: DataError) -> bool {
+    /// Identifies errors that are due to missing Unicode RSCD data.
+    #[deprecated]
+    pub fn is_missing_ucd_error(e: DataError) -> bool {
+        Self::is_missing_rscd_error(e)
+    }
+
+    /// Identifies errors that are due to missing Unicode RSCD data.
+    pub fn is_missing_rscd_error(mut e: DataError) -> bool {
         e.marker = None;
-        e == Self::MISSING_UCD_ERROR
+        e == Self::MISSING_RSCD_ERROR
     }
 
     fn cldr(&self) -> Result<&CldrCache, DataError> {
@@ -414,9 +443,8 @@ impl SourceDataProvider {
             .ok_or(Self::MISSING_SEGMENTER_LSTM_ERROR)
     }
 
-    #[allow(dead_code)]
-    fn unicode(&self) -> Result<&UnicodeCache, DataError> {
-        self.unicode_paths.as_deref().ok_or(Self::MISSING_UCD_ERROR)
+    fn rscd(&self) -> Result<&RscdCache, DataError> {
+        self.rscd_paths.as_deref().ok_or(Self::MISSING_RSCD_ERROR)
     }
 
     fn tzdb(&self) -> Result<&TzdbCache, DataError> {
