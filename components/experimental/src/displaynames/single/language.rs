@@ -379,8 +379,7 @@ impl LanguageIdentifierDisplayNameOwned {
     {
         let mut buffer = TinyAsciiStr::EMPTY;
         // NOTE: Menu and non-Menu use the same attributes
-        let attrs =
-            LocaleNamesLanguageMediumV1::make_attributes(language, None, None, &mut buffer);
+        let attrs = LocaleNamesLanguageMediumV1::make_attributes(language, None, None, &mut buffer);
         provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
@@ -499,7 +498,7 @@ impl LanguageIdentifierDisplayNameOwned {
                     qualifiers.menu_extension = Some(parts.extension());
                 }
                 NameOrFallback(Ok(parts.core().as_ref()))
-            },
+            }
             Err(lang) => NameOrFallback(Err(lang.as_str())),
         };
 
