@@ -1,0 +1,14 @@
+{
+	"segments": {
+		"identity": {
+			"language": "el"
+		},
+		"segmentations": {
+			"SentenceBreak": {
+				"el": [
+					"[\\u003B ;] ; [?]"
+				]
+			}
+		}
+	}
+}

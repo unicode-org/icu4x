@@ -81,6 +81,10 @@ impl CldrCache {
         CldrDirLang(self, "cldr-units-full/main")
     }
 
+    pub(crate) fn segments(&self) -> CldrDirLang<'_> {
+        CldrDirLang(self, "cldr-segments-full/segments")
+    }
+
     pub(crate) fn dates(&self, cal: Option<DatagenCalendar>) -> CldrDirLang<'_> {
         CldrDirLang(
             self,

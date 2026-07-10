@@ -12,15 +12,16 @@
 #[cfg(feature = "unstable")]
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use crate::cldr_cache::CldrCache;
 #[cfg(feature = "unstable")]
-#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 use crate::source::AbstractFs;
 #[cfg(feature = "unstable")]
 use crate::source::Cache;
 use crate::source::{RscdCache, include_files};
 #[cfg(feature = "unstable")]
 use icu::collections::codepointinvlist::CodePointInversionList;
-#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+#[cfg(feature = "unstable")]
+use icu::locale::extensions::unicode::key;
 use icu::properties::{
     CodePointMapData, CodePointMapDataBorrowed, CodePointSetData,
     props::{
@@ -879,22 +880,30 @@ fn neo_sources() -> AbstractFs {
         "GraphemeClusterBreakTransitions.txt",
         "LineBreakStates.txt",
         "LineBreakSymbols.txt",
-        "LineBreakTailoring_ja.txt",
-        "LineBreakTailoring_ja_loose.txt",
-        "LineBreakTailoring_ja_normal.txt",
-        "LineBreakTailoring_und_breakall.txt",
-        "LineBreakTailoring_und_keepall.txt",
-        "LineBreakTailoring_und_loose.txt",
-        "LineBreakTailoring_und_normal.txt",
         "LineBreakTransitions.txt",
         "SentenceBreakStates.txt",
         "SentenceBreakSymbols.txt",
-        "SentenceBreakTailoring_el.txt",
         "SentenceBreakTransitions.txt",
         "WordBreakStates.txt",
         "WordBreakSymbols.txt",
         "WordBreakTransitions.txt",
     )
+}
+
+#[cfg(feature = "unstable")]
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+fn neo_cldr_json() -> &'static CldrCache {
+    // Singleton so that all instantiations share the same cache.
+    static SINGLETON: OnceLock<CldrCache> = OnceLock::new();
+    SINGLETON.get_or_init(|| {
+        CldrCache::new(include_files!(
+            "../../data/segmenter/cldr-json/";
+            // These files should be upstreamed to CLDR
+            "cldr-segments-full/segments/el/tailorings.json",
+            "cldr-segments-full/segments/ja/tailorings.json",
+            "cldr-segments-full/segments/und/tailorings.json",
+        ))
+    })
 }
 
 #[test]
@@ -907,16 +916,6 @@ fn download() {
     let data_root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("data/segmenter/neo");
 
     for file in neo_sources().list("").unwrap() {
-        if matches!(
-            file.as_str(),
-            "SentenceBreakTailoring_el.txt"
-                | "LineBreakTailoring_und_breakall.txt"
-                | "LineBreakTailoring_und_keepall.txt"
-        ) {
-            // ICU4X-custom tailorings
-            continue;
-        }
-
         let target = data_root.join(&file);
         std::fs::create_dir_all(target.parent().unwrap()).unwrap();
         crlify::BufWriterWithLineEndingFix::new(File::create(&target).unwrap())
@@ -1128,72 +1127,85 @@ impl SourceDataProvider {
 
         let mut tailorings = BTreeMap::new();
 
-        for tailoring in sources.list(&format!("{prefix}Tailoring_"))? {
-            let tailoring = tailoring.strip_suffix(".txt").unwrap();
+        for locale in neo_cldr_json().segments().list_locales()? {
+            let Some(ts) = neo_cldr_json()
+                .segments()
+                .read_and_parse::<crate::cldr_serde::segmentation::Resource>(
+                    &locale,
+                    "tailorings.json",
+                )?
+                .segments
+                .segmentations
+                .0
+                .get(prefix)
+            else {
+                continue;
+            };
 
-            let mut overrides = BTreeMap::<String, BTreeSet<char>>::new();
+            for (keywords, lines) in ts.iter().map(|(k, v)| (&k.extensions.unicode.keywords, v)) {
+                let mut overrides = BTreeMap::<String, BTreeSet<char>>::new();
 
-            for line in sources
-                .read_to_string(&format!("{prefix}Tailoring_{tailoring}.txt"))?
-                .lines()
-                .map(|l| l.split('#').next().unwrap().trim())
-                .filter(|l| !l.is_empty())
-            {
-                let mut iter = line.split(';');
-                let unicode_set = iter.next().unwrap().trim();
-                let target = iter.next().unwrap().trim();
+                for line in lines {
+                    let mut iter = line.split(';');
+                    let unicode_set = iter.next().unwrap().trim();
+                    let target = iter.next().unwrap().trim();
 
-                let set = icu::properties::unicodeset_parse::parse_unstable(unicode_set, self)
-                    .map_err(|e| {
-                        DataError::custom("unicodeset parse")
-                            .with_display_context(&e.fmt_with_source(unicode_set))
-                    })?
-                    .0;
+                    let set = icu::properties::unicodeset_parse::parse_unstable(unicode_set, self)
+                        .map_err(|e| {
+                            DataError::custom("unicodeset parse")
+                                .with_display_context(&e.fmt_with_source(unicode_set))
+                        })?
+                        .0;
 
-                let target = icu::properties::unicodeset_parse::parse_unstable(target, self)
-                    .map_err(|e| {
-                        DataError::custom("unicodeset parse")
-                            .with_display_context(&e.fmt_with_source(unicode_set))
-                    })?
-                    .0;
+                    let target = icu::properties::unicodeset_parse::parse_unstable(target, self)
+                        .map_err(|e| {
+                            DataError::custom("unicodeset parse")
+                                .with_display_context(&e.fmt_with_source(unicode_set))
+                        })?
+                        .0;
 
-                let target_symbol = if target.has_strings() {
-                    magic_symbols[target.strings().iter().next().unwrap()]
-                } else {
-                    let target = target.code_points().iter_chars().next().unwrap();
-                    symbols
-                        .iter()
-                        .find(|(_, set)| set.contains(target))
-                        .unwrap()
-                        .0
-                        .as_str()
-                };
+                    let target_symbol = if target.has_strings() {
+                        magic_symbols[target.strings().iter().next().unwrap()]
+                    } else {
+                        let target = target.code_points().iter_chars().next().unwrap();
+                        symbols
+                            .iter()
+                            .find(|(_, set)| set.contains(target))
+                            .unwrap()
+                            .0
+                            .as_str()
+                    };
 
-                for c in set.code_points().iter_chars() {
-                    overrides
-                        .entry(target_symbol.to_owned())
-                        .or_default()
-                        .insert(c);
+                    for c in set.code_points().iter_chars() {
+                        overrides
+                            .entry(target_symbol.to_owned())
+                            .or_default()
+                            .insert(c);
+                    }
                 }
-            }
 
-            tailorings.insert(
-                {
-                    let (locale, attr) = tailoring.split_once('_').unwrap_or((tailoring, ""));
+                tailorings.insert(
                     DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(attr.to_string()).unwrap(),
-                        DataLocale::try_from_str(locale).unwrap(),
-                    )
-                },
-                overrides
-                    .into_iter()
-                    .map(|(k, v)| {
-                        let mut builder = CodePointInversionListBuilder::new();
-                        v.into_iter().for_each(|c| builder.add_char(c));
-                        (k, builder.build())
-                    })
-                    .collect::<BTreeMap<_, CodePointInversionList>>(),
-            );
+                        DataMarkerAttributes::try_from_string(
+                            keywords
+                                .get(&key!("lb"))
+                                .or_else(|| keywords.get(&key!("lw")))
+                                .map(|v| v.to_string())
+                                .unwrap_or_default(),
+                        )
+                        .unwrap(),
+                        locale,
+                    ),
+                    overrides
+                        .into_iter()
+                        .map(|(k, v)| {
+                            let mut builder = CodePointInversionListBuilder::new();
+                            v.into_iter().for_each(|c| builder.add_char(c));
+                            (k, builder.build())
+                        })
+                        .collect::<BTreeMap<_, CodePointInversionList>>(),
+                );
+            }
         }
 
         // We now mutate the state machine.
