@@ -497,7 +497,7 @@ impl LanguageIdentifierDisplayNameOwned {
                 if !parts.extension().is_empty() {
                     qualifiers.menu_extension = Some(parts.extension());
                 }
-                NameOrFallback(Ok(parts.core().as_ref()))
+                NameOrFallback(Ok(parts.core()))
             }
             Err(lang) => NameOrFallback(Err(lang.as_str())),
         };
