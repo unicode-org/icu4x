@@ -14,7 +14,6 @@ use icu::locale::{
 };
 use icu_provider::prelude::*;
 use std::collections::HashSet;
-#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 use zerovec::ZeroVec;
 
 mod collator_serde;

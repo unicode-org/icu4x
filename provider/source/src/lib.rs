@@ -30,6 +30,11 @@
 //! * `unstable`
 //!   * enables unstable data markers
 
+#![cfg_attr(
+    not(any(feature = "use_wasm", feature = "use_icu4c")),
+    allow(dead_code, unused_imports)
+)]
+
 use cldr_cache::CldrCache;
 use elsa::sync::FrozenMap;
 use icu::calendar::{Date, Iso};

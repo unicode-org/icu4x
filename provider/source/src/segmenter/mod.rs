@@ -4,11 +4,6 @@
 
 //! This module contains provider implementations backed by built-in segmentation data.
 
-#![cfg_attr(
-    not(any(feature = "use_wasm", feature = "use_icu4c")),
-    allow(dead_code, unused_imports)
-)]
-
 #[cfg(feature = "unstable")]
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;

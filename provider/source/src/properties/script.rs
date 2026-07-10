@@ -2,11 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![cfg_attr(
-    not(any(feature = "use_wasm", feature = "use_icu4c")),
-    allow(unused_imports, dead_code)
-)]
-
 use crate::SourceDataProvider;
 use icu::collections::codepointtrie::TrieValue;
 use icu::properties::props::EnumeratedProperty;
