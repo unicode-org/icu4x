@@ -523,3 +523,19 @@ fn test_single_language_display_name_long() {
 
     assert_try_writeable_eq!(lang_name.as_borrowed(), "Swiss High German");
 }
+
+#[test]
+fn test_single_language_display_name_short_menu() {
+    use icu_experimental::displaynames::LanguageIdentifierDisplayNameOptions;
+    use icu_locale_core::{langid, locale};
+
+    let locale = locale!("en-001");
+    let options = LanguageIdentifierDisplayNameOptions::default();
+
+    let lang_id = langid!("en-US");
+    let lang_name =
+        LanguageIdentifierDisplayNameOwned::try_new_short_menu(locale.into(), lang_id, options)
+            .expect("Data should load successfully");
+
+    assert_try_writeable_eq!(lang_name.as_borrowed(), "English (US)");
+}
