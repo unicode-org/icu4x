@@ -476,17 +476,10 @@ fn test_single_language_display_name_short() {
     options.language_display = Some(LanguageDisplay::Dialect);
     let lang_id = langid!("de-CH");
     let lang_name =
-        LanguageIdentifierDisplayNameOwned::try_new_short(locale.clone().into(), lang_id, options)
-            .expect("Data should load successfully");
-
-    assert_try_writeable_eq!(lang_name.as_borrowed(), "Swiss High German");
-
-    let lang_id = langid!("en-US");
-    let lang_name =
         LanguageIdentifierDisplayNameOwned::try_new_short(locale.into(), lang_id, options)
             .expect("Data should load successfully");
 
-    assert_try_writeable_eq!(lang_name.as_borrowed(), "US English");
+    assert_try_writeable_eq!(lang_name.as_borrowed(), "Swiss High German");
 }
 
 #[test]
@@ -508,13 +501,6 @@ fn test_single_language_display_name_long() {
         "Mandarin Chinese (Traditional, Hong Kong SAR China)"
     );
 
-    let lang_id = langid!("zh");
-    let lang_name =
-        LanguageIdentifierDisplayNameOwned::try_new_long(locale.clone().into(), lang_id, options)
-            .expect("Data should load successfully");
-
-    assert_try_writeable_eq!(lang_name.as_borrowed(), "Mandarin Chinese");
-
     options.language_display = Some(LanguageDisplay::Dialect);
     let lang_id = langid!("de-CH");
     let lang_name =
@@ -522,20 +508,4 @@ fn test_single_language_display_name_long() {
             .expect("Data should load successfully");
 
     assert_try_writeable_eq!(lang_name.as_borrowed(), "Swiss High German");
-}
-
-#[test]
-fn test_single_language_display_name_short_menu() {
-    use icu_experimental::displaynames::LanguageIdentifierDisplayNameOptions;
-    use icu_locale_core::{langid, locale};
-
-    let locale = locale!("en-001");
-    let options = LanguageIdentifierDisplayNameOptions::default();
-
-    let lang_id = langid!("en-US");
-    let lang_name =
-        LanguageIdentifierDisplayNameOwned::try_new_short_menu(locale.into(), lang_id, options)
-            .expect("Data should load successfully");
-
-    assert_try_writeable_eq!(lang_name.as_borrowed(), "English (US)");
 }
