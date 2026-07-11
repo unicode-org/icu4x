@@ -6,9 +6,7 @@ use crate::displaynames::provider::*;
 use crate::displaynames::single::{
     RegionDisplayNameOwned, ScriptDisplayNameOwned, VariantDisplayNameOwned,
 };
-use crate::displaynames::{
-    DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions,
-};
+use crate::displaynames::{DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions};
 use crate::size_test_macro::size_test;
 use alloc::vec::Vec;
 use icu_locale_core::LanguageIdentifier;
@@ -213,26 +211,26 @@ impl LanguageIdentifierDisplayNameOwned {
         /// // Default (Medium) length format:
         /// let display_name_medium = LanguageIdentifierDisplayNameOwned::try_new(
         ///     prefs,
-        ///     langid!("zh-Hant-HK"),
+        ///     langid!("en-US"),
         ///     options,
         /// )
         /// .expect("Data should load successfully");
         /// assert_try_writeable_eq!(
         ///     display_name_medium.as_borrowed(),
-        ///     "Traditional Chinese (Hong Kong SAR China)",
+        ///     "American English",
         ///     Ok(())
         /// );
         ///
         /// // Short length format uses shorter subtag/qualifier names when available:
         /// let display_name_short = LanguageIdentifierDisplayNameOwned::try_new_short(
         ///     prefs,
-        ///     langid!("zh-Hant-HK"),
+        ///     langid!("en-US"),
         ///     options,
         /// )
         /// .expect("Data should load successfully");
         /// assert_try_writeable_eq!(
         ///     display_name_short.as_borrowed(),
-        ///     "Traditional Chinese (Hong Kong)",
+        ///     "US English",
         ///     Ok(())
         /// );
         /// ```
@@ -331,26 +329,26 @@ impl LanguageIdentifierDisplayNameOwned {
         /// // Default (Medium) length format:
         /// let display_name_medium = LanguageIdentifierDisplayNameOwned::try_new(
         ///     prefs,
-        ///     langid!("zh-Hant-HK"),
+        ///     langid!("zh"),
         ///     options,
         /// )
         /// .expect("Data should load successfully");
         /// assert_try_writeable_eq!(
         ///     display_name_medium.as_borrowed(),
-        ///     "Traditional Chinese (Hong Kong SAR China)",
+        ///     "Chinese",
         ///     Ok(())
         /// );
         ///
         /// // Long length format uses longer subtag names when available:
         /// let display_name_long = LanguageIdentifierDisplayNameOwned::try_new_long(
         ///     prefs,
-        ///     langid!("zh-Hant-HK"),
+        ///     langid!("zh"),
         ///     options,
         /// )
         /// .expect("Data should load successfully");
         /// assert_try_writeable_eq!(
         ///     display_name_long.as_borrowed(),
-        ///     "Traditional Mandarin Chinese (Hong Kong SAR China)",
+        ///     "Mandarin Chinese",
         ///     Ok(())
         /// );
         /// ```

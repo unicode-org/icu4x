@@ -476,10 +476,17 @@ fn test_single_language_display_name_short() {
     options.language_display = Some(LanguageDisplay::Dialect);
     let lang_id = langid!("de-CH");
     let lang_name =
-        LanguageIdentifierDisplayNameOwned::try_new_short(locale.into(), lang_id, options)
+        LanguageIdentifierDisplayNameOwned::try_new_short(locale.clone().into(), lang_id, options)
             .expect("Data should load successfully");
 
     assert_try_writeable_eq!(lang_name.as_borrowed(), "Swiss High German");
+
+    let lang_id = langid!("en-US");
+    let lang_name =
+        LanguageIdentifierDisplayNameOwned::try_new_short(locale.into(), lang_id, options)
+            .expect("Data should load successfully");
+
+    assert_try_writeable_eq!(lang_name.as_borrowed(), "US English");
 }
 
 #[test]
@@ -500,6 +507,13 @@ fn test_single_language_display_name_long() {
         lang_name.as_borrowed(),
         "Mandarin Chinese (Traditional, Hong Kong SAR China)"
     );
+
+    let lang_id = langid!("zh");
+    let lang_name =
+        LanguageIdentifierDisplayNameOwned::try_new_long(locale.clone().into(), lang_id, options)
+            .expect("Data should load successfully");
+
+    assert_try_writeable_eq!(lang_name.as_borrowed(), "Mandarin Chinese");
 
     options.language_display = Some(LanguageDisplay::Dialect);
     let lang_id = langid!("de-CH");
