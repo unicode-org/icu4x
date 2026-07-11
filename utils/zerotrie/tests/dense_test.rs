@@ -4,7 +4,7 @@
 
 use itertools::Either;
 use itertools::Itertools;
-use rand::Rng;
+use rand::RngExt;
 use rand::SeedableRng;
 use std::collections::BTreeMap;
 use zerotrie::dense::ZeroAsciiDenseSparse2dTrieBorrowed;

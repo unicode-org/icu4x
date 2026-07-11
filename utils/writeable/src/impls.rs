@@ -76,7 +76,7 @@ macro_rules! impl_write_num {
 
             $(
 
-                use rand::{rngs::SmallRng, Rng, SeedableRng};
+                use rand::{rngs::SmallRng, RngExt, SeedableRng};
                 let mut rng = SmallRng::seed_from_u64(4); // chosen by fair dice roll.
                                                           // guaranteed to be random.
                 for _ in 0..1000 {

@@ -218,7 +218,7 @@ where
 mod tests {
     use super::*;
     use crate::ule::AsULE;
-    use rand::{distr::StandardUniform, Rng, SeedableRng};
+    use rand::{distr::StandardUniform, RngExt, SeedableRng};
     use rand_pcg::Lcg64Xsh32;
 
     #[test]
