@@ -110,6 +110,33 @@ jobs:
       run: cargo make ci-job-test
 
 
+  # ci-job-miri
+  miri:
+    runs-on: ubuntu-latest
+    # zerovec currently has known Miri failures tracked in #6723.
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+    # Cargo-make boilerplate
+    - name: Install cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
+
+    # Miri is only available on nightly Rust.
+    - name: Install Miri
+      run: |
+        rustup override set nightly
+        rustup component add miri
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Actual job
+    - name: Run `cargo make ci-job-miri`
+      run: cargo make ci-job-miri
+
+
   # ci-job-test-docs
   test-docs:
     runs-on: ubuntu-latest

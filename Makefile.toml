@@ -71,6 +71,14 @@ dependencies = [
     "test-all-features",
 ]
 
+[tasks.ci-job-miri]
+description = "Run Miri tests for crates containing unsafe code"
+category = "CI"
+script = '''
+cargo miri setup
+cargo miri test -p zerovec -p yoke
+'''
+
 [tasks.ci-job-test-gigo]
 description = "Run specific tests with debug assertions disabled"
 category = "CI"
