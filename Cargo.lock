@@ -1638,6 +1638,7 @@ dependencies = [
  "icu_properties",
  "icu_properties_data",
  "icu_provider",
+ "icu_provider_blob",
  "litemap",
  "log",
  "num-bigint",

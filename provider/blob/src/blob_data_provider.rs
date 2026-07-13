@@ -6,6 +6,8 @@ use crate::blob_schema::BlobBoundLocaleSchema;
 use crate::blob_schema::BlobSchema;
 #[cfg(feature = "alloc")]
 use alloc::boxed::Box;
+use icu_provider::Cart;
+use icu_provider::DynamicDryDataProvider;
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
 use icu_provider::unstable::BindLocaleDataProvider;
@@ -13,8 +15,6 @@ use icu_provider::unstable::BindLocaleResponse;
 use icu_provider::unstable::BoundLocaleDataProvider;
 use icu_provider::unstable::BoundLocaleDataResponse;
 use icu_provider::unstable::DataAttributesRequest;
-use icu_provider::Cart;
-use icu_provider::DynamicDryDataProvider;
 use yoke::*;
 
 /// A data provider that reads from serialized blobs of data.

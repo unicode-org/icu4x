@@ -8,7 +8,7 @@ use icu_provider::prelude::*;
 use icu_provider::unstable::DataAttributesRequest;
 use serde::Deserialize;
 use writeable::Writeable;
-use zerotrie::{cursor::ZeroTrieSimpleAsciiCursor, ZeroTrieSimpleAscii};
+use zerotrie::{ZeroTrieSimpleAscii, cursor::ZeroTrieSimpleAsciiCursor};
 use zerovec::vecs::{Index16, Index32, VarZeroSlice, VarZeroVecFormat, ZeroSlice};
 
 /// A versioned Serde schema for ICU4X data blobs.
