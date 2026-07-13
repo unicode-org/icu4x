@@ -2065,7 +2065,7 @@ dependencies = [
 
 [[package]]
 name = "icu_time_data"
-version = "2.2.0"
+version = "2.2.1"
 
 [[package]]
 name = "indenter"
