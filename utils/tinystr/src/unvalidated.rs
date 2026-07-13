@@ -27,9 +27,6 @@ impl<const N: usize> fmt::Debug for UnvalidatedTinyAsciiStr<N> {
 }
 
 impl<const N: usize> UnvalidatedTinyAsciiStr<N> {
-    /// The empty string as a default value.
-    pub const DEFAULT: Self = Self([0u8; N]);
-
     #[inline]
     /// Converts into a [`TinyAsciiStr`]. Fails if the bytes are not valid ASCII.
     pub fn try_into_tinystr(self) -> Result<TinyAsciiStr<N>, ParseError> {
@@ -55,6 +52,18 @@ impl<const N: usize> UnvalidatedTinyAsciiStr<N> {
     /// Creates one of these from a raw byte array.
     pub const fn from_utf8_unchecked(bytes: [u8; N]) -> Self {
         Self(bytes)
+    }
+
+    #[inline]
+    /// Returns the empty string.
+    pub const fn default() -> Self {
+        Self([0u8; N])
+    }
+}
+
+impl<const N: usize> Default for UnvalidatedTinyAsciiStr<N> {
+    fn default() -> Self {
+        Self::default()
     }
 }
 
