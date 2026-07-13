@@ -278,39 +278,34 @@ impl DynamicDataProvider<BufferMarker> for HelloWorldJsonProvider {
 #[cfg(feature = "deserialize_json")]
 #[derive(Debug)]
 pub struct HelloWorldJsonBoundLocaleProvider {
-    json_strings: BTreeMap<&'static DataMarkerAttributes, String>,
+    message_strings: BTreeMap<&'static DataMarkerAttributes, String>,
 }
 
 #[cfg(feature = "deserialize_json")]
 impl BindLocaleDataProvider<BufferMarker> for HelloWorldJsonProvider {
-    type BoundLocaleDataProvider<'data> = HelloWorldJsonBoundLocaleProvider;
+    type BoundLocaleDataProvider = HelloWorldJsonBoundLocaleProvider;
     fn bind_locale(
         &self,
         marker: DataMarkerInfo,
         req: DataRequest,
-    ) -> Result<BindLocaleResponse<Self::BoundLocaleDataProvider<'static>>, DataError> {
+    ) -> Result<BindLocaleResponse<Self::BoundLocaleDataProvider>, DataError> {
         marker.match_marker(HelloWorldV1::INFO)?;
-        let json_strings = HelloWorldProvider::DATA
+        let message_strings = HelloWorldProvider::DATA
             .iter()
             .filter_map(|(l, a, v)| {
                 if req.id.locale.strict_cmp(l.as_bytes()).is_eq() && !a.is_empty() {
                     let attributes = DataMarkerAttributes::from_str_or_panic(a);
-                    #[expect(clippy::unwrap_used)] // HelloWorld::serialize is infallible
-                    let json_string = serde_json::to_string(&HelloWorld {
-                        message: Cow::Borrowed(v),
-                    })
-                    .unwrap();
-                    Some((attributes, json_string))
+                    Some((attributes, v.to_string()))
                 } else {
                     None
                 }
             })
             .collect::<BTreeMap<_, _>>();
-        if json_strings.is_empty() {
+        if message_strings.is_empty() {
             return Err(DataErrorKind::IdentifierNotFound.with_req(HelloWorldV1::INFO, req));
         }
         Ok(BindLocaleResponse {
-            bound_provider: HelloWorldJsonBoundLocaleProvider { json_strings },
+            bound_provider: HelloWorldJsonBoundLocaleProvider { message_strings },
             metadata: Default::default(),
         })
     }
@@ -323,8 +318,8 @@ impl BoundLocaleDataProvider<BufferMarker> for HelloWorldJsonBoundLocaleProvider
         req: DataAttributesRequest,
     ) -> Result<BoundLocaleDataResponse<'data, BufferMarker>, DataError> {
         // TODO: Implement logic for attributes_prefix_match
-        let json_string = self
-            .json_strings
+        let message_string = self
+            .message_strings
             .get(req.marker_attributes)
             .ok_or_else(|| {
                 DataErrorKind::IdentifierNotFound
@@ -333,10 +328,10 @@ impl BoundLocaleDataProvider<BufferMarker> for HelloWorldJsonBoundLocaleProvider
             })?;
         Ok(BoundLocaleDataResponse {
             metadata: DataResponseMetadata {
-                buffer_format: Some(icu_provider::buf::BufferFormat::Json),
+                buffer_format: Some(icu_provider::buf::BufferFormat::VarULE011),
                 ..Default::default()
             },
-            payload: json_string.as_bytes(),
+            payload: message_string.as_bytes(),
         })
     }
 }
@@ -473,12 +468,12 @@ impl<P: BoundLocaleDataProvider<BufferMarker>>
     ///
     /// assert_writeable_eq!(fmt.format("reverse").unwrap(), "Olleh Dlrow");
     /// ```
-    pub fn try_new_with_buffer_provider<'data, P1>(
-        provider: &'data P1,
+    pub fn try_new_with_buffer_provider<P1>(
+        provider: &P1,
         prefs: HelloWorldFormatterPreferences,
     ) -> Result<Self, DataError>
     where
-        P1: BindLocaleDataProvider<BufferMarker, BoundLocaleDataProvider<'data> = P> + ?Sized,
+        P1: BindLocaleDataProvider<BufferMarker, BoundLocaleDataProvider = P> + ?Sized,
     {
         let locale = HelloWorldV1::INFO.make_locale(prefs.locale_preferences);
         let response = provider.bind_locale(
@@ -526,7 +521,9 @@ impl<P: BoundLocaleDataProvider<HelloWorldV1>> HelloWorldAttributeFormatter<P> {
             metadata,
         })?;
         Ok(FormattedHelloWorld {
-            data: result.payload,
+            data: HelloWorld {
+                message: Cow::Borrowed(result.payload),
+            },
         })
     }
 

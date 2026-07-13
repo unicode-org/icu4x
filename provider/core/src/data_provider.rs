@@ -11,6 +11,7 @@ use alloc::boxed::Box;
 
 use crate::prelude::*;
 use crate::request::DataAttributesRequest;
+use crate::ule::MaybeAsVarULE;
 
 /// A data provider that loads data for a specific [`DataMarkerInfo`].
 pub trait DataProvider<M>
@@ -478,19 +479,18 @@ pub struct BindLocaleResponse<T> {
 pub trait BindLocaleDataProvider<M>
 where
     M: DynamicDataMarker,
+    M::DataStruct: MaybeAsVarULE,
 {
     /// Type of the [`BoundLocaleDataProvider`].
-    type BoundLocaleDataProvider<'data>: BoundLocaleDataProvider<M> + 'data
-    where
-        Self: 'data;
+    type BoundLocaleDataProvider: BoundLocaleDataProvider<M>;
     /// Bind this provider to the given marker and locale.
     ///
     /// This performs a data load for the marker and locale, but not attributes.
-    fn bind_locale<'data>(
-        &'data self,
+    fn bind_locale(
+        &self,
         marker: DataMarkerInfo,
         req: DataRequest,
-    ) -> Result<BindLocaleResponse<Self::BoundLocaleDataProvider<'data>>, DataError>;
+    ) -> Result<BindLocaleResponse<Self::BoundLocaleDataProvider>, DataError>;
 }
 
 /// Like [`DataResponse`] but for [`BoundLocaleDataProvider`].
@@ -498,17 +498,19 @@ where
 pub struct BoundLocaleDataResponse<'data, M>
 where
     M: DynamicDataMarker,
+    M::DataStruct: MaybeAsVarULE,
 {
     /// Metadata about the returned object.
     pub metadata: DataResponseMetadata,
     /// The object itself
-    pub payload: <M::DataStruct as Yokeable<'data>>::Output,
+    pub payload: &'data <M::DataStruct as MaybeAsVarULE>::EncodedStruct,
 }
 
 impl<'data, M> Debug for BoundLocaleDataResponse<'data, M>
 where
     M: DynamicDataMarker,
-    <M::DataStruct as Yokeable<'data>>::Output: Debug,
+    M::DataStruct: MaybeAsVarULE,
+    <M::DataStruct as MaybeAsVarULE>::EncodedStruct: Debug,
 {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(
@@ -524,6 +526,7 @@ where
 pub trait BoundLocaleDataProvider<M>
 where
     M: DynamicDataMarker,
+    M::DataStruct: MaybeAsVarULE,
 {
     /// Query the provider for data, returning the result.
     ///
@@ -538,6 +541,7 @@ where
 impl<M, P> BoundLocaleDataProvider<M> for &P
 where
     M: DynamicDataMarker,
+    M::DataStruct: MaybeAsVarULE,
     P: BoundLocaleDataProvider<M> + ?Sized,
 {
     #[inline]

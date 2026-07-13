@@ -17,6 +17,7 @@ use crate::buf::BufferProvider;
 use crate::data_provider::BoundLocaleDataResponse;
 use crate::data_provider::DynamicDryDataProvider;
 use crate::prelude::*;
+use crate::ule::MaybeAsVarULE;
 use crate::unstable::BoundLocaleDataProvider;
 use serde::de::Deserialize;
 use yoke::Yokeable;
@@ -88,6 +89,7 @@ fn deserialize_impl<'data, M>(
 ) -> Result<<M::DataStruct as Yokeable<'data>>::Output, DataError>
 where
     M: DynamicDataMarker,
+    M::DataStruct: MaybeAsVarULE,
     for<'de> <M::DataStruct as Yokeable<'de>>::Output: Deserialize<'de>,
 {
     match buffer_format {
@@ -111,6 +113,19 @@ where
         BufferFormat::Postcard1 => {
             let mut d = postcard::Deserializer::from_bytes(bytes);
             Ok(Deserialize::deserialize(&mut d)?)
+        }
+
+        BufferFormat::VarULE011 => {
+            use zerovec::ule::VarULE;
+            let varule = <M::DataStruct as MaybeAsVarULE>::EncodedStruct::parse_bytes(bytes)?;
+            todo!()
+            // <M::DataStruct as MaybeAsVarULE>::maybe_zero_from_encoded_struct(&varule).ok_or_else(
+            //     || {
+            //         DataErrorKind::Deserialize.with_str_context(
+            //             "VarULE data struct missing maybe_zero_from_encoded_struct",
+            //         )
+            //     },
+            // )
         }
 
         // Allowed for cases in which all features are enabled
@@ -162,6 +177,7 @@ impl DataPayload<BufferMarker> {
     ) -> Result<DataPayload<M>, DataError>
     where
         M: DynamicDataMarker,
+        M::DataStruct: MaybeAsVarULE,
         for<'de> <M::DataStruct as Yokeable<'de>>::Output: Deserialize<'de>,
     {
         self.try_map_project(|bytes, _| deserialize_impl::<M>(bytes, buffer_format))
@@ -172,6 +188,7 @@ impl<P, M> DynamicDataProvider<M> for DeserializingBufferProvider<'_, P>
 where
     M: DynamicDataMarker,
     P: BufferProvider + ?Sized,
+    M::DataStruct: MaybeAsVarULE,
     for<'de> <M::DataStruct as Yokeable<'de>>::Output: Deserialize<'de>,
 {
     /// Converts a buffer into a concrete type by deserializing from a supported buffer format.
@@ -209,6 +226,7 @@ impl<P, M> DynamicDryDataProvider<M> for DeserializingBufferProvider<'_, P>
 where
     M: DynamicDataMarker,
     P: DynamicDryDataProvider<BufferMarker> + ?Sized,
+    M::DataStruct: MaybeAsVarULE,
     for<'de> <M::DataStruct as Yokeable<'de>>::Output: Deserialize<'de>,
 {
     fn dry_load_data(
@@ -224,6 +242,7 @@ impl<P, M> DataProvider<M> for DeserializingBufferProvider<'_, P>
 where
     M: DataMarker,
     P: DynamicDataProvider<BufferMarker> + ?Sized,
+    M::DataStruct: MaybeAsVarULE,
     for<'de> <M::DataStruct as Yokeable<'de>>::Output: Deserialize<'de>,
 {
     /// Converts a buffer into a concrete type by deserializing from a supported buffer format.
@@ -245,6 +264,7 @@ impl<P, M> DryDataProvider<M> for DeserializingBufferProvider<'_, P>
 where
     M: DataMarker,
     P: DynamicDryDataProvider<BufferMarker> + ?Sized,
+    M::DataStruct: MaybeAsVarULE,
     for<'de> <M::DataStruct as Yokeable<'de>>::Output: Deserialize<'de>,
 {
     fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
@@ -255,6 +275,7 @@ where
 impl<P, M> BoundLocaleDataProvider<M> for DeserializingOwnedBufferProvider<P>
 where
     M: DynamicDataMarker,
+    M::DataStruct: MaybeAsVarULE,
     P: BoundLocaleDataProvider<BufferMarker>,
     for<'de> <M::DataStruct as Yokeable<'de>>::Output: Deserialize<'de>,
 {
@@ -262,16 +283,28 @@ where
         &self,
         req: crate::request::DataAttributesRequest,
     ) -> Result<BoundLocaleDataResponse<'_, M>, DataError> {
+        use zerovec::ule::VarULE;
         let buffer_response = self.0.load_bound(req)?;
         let buffer_format = buffer_response.metadata.buffer_format.ok_or_else(|| {
             DataErrorKind::Deserialize
                 .with_str_context("BufferProvider didn't set BufferFormat")
                 .with_debug_context(&req)
         })?;
+        if buffer_format != BufferFormat::VarULE011 {
+            return Err(DataErrorKind::Deserialize
+                .with_str_context("BoundLocaleDataProvider requires VarULE"));
+        }
+        let payload =
+            <M::DataStruct as MaybeAsVarULE>::EncodedStruct::parse_bytes(buffer_response.payload)
+                .map_err(|ule_err| {
+                DataErrorKind::Deserialize
+                    .with_type_context::<M>()
+                    .with_debug_context(&req)
+                    .with_display_context(&ule_err)
+            })?;
         Ok(BoundLocaleDataResponse {
             metadata: buffer_response.metadata,
-            payload: deserialize_impl::<M>(buffer_response.payload, buffer_format)
-                .map_err(|e| e.with_debug_context(&req))?,
+            payload,
         })
     }
 }
@@ -299,6 +332,14 @@ impl From<postcard::Error> for DataError {
     fn from(e: postcard::Error) -> Self {
         DataErrorKind::Deserialize
             .with_str_context("postcard")
+            .with_display_context(&e)
+    }
+}
+
+impl From<zerovec::ule::UleError> for DataError {
+    fn from(e: zerovec::ule::UleError) -> Self {
+        DataErrorKind::Deserialize
+            .with_str_context("VarULE parsing")
             .with_display_context(&e)
     }
 }

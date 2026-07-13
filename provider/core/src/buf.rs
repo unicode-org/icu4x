@@ -108,6 +108,8 @@ pub enum BufferFormat {
     Bincode1,
     /// Serialize using the [`postcard`] crate, version 1.
     Postcard1,
+    /// Serialize using a [`VarULE`](zerovec::ule::VarULE) encoding, version 0.11.
+    VarULE011,
 }
 
 impl BufferFormat {
@@ -128,6 +130,8 @@ impl BufferFormat {
             BufferFormat::Postcard1 => Ok(()),
             #[cfg(not(feature = "deserialize_postcard_1"))]
             BufferFormat::Postcard1 => Err(DataErrorKind::Deserialize.with_str_context("deserializing `BufferFormat::Postcard1` requires the `deserialize_postcard_1` Cargo feature")),
+
+            BufferFormat::VarULE011 => Ok(()),
         }
     }
 }

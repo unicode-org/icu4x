@@ -3,7 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::blob_schema::BlobBoundLocaleSchema;
-use crate::blob_schema::BlobSchema;
+use crate::blob_schema::RawBlob;
+use crate::blob_schema::ValidatedBlobSchema;
 #[cfg(feature = "alloc")]
 use alloc::boxed::Box;
 use icu_provider::Cart;
@@ -89,7 +90,7 @@ use yoke::*;
 /// ```
 #[derive(Clone)]
 pub struct BlobDataProvider {
-    pub(crate) data: Yoke<BlobSchema<'static>, Option<Cart>>,
+    pub(crate) data: Yoke<ValidatedBlobSchema<'static>, Option<Cart>>,
 }
 
 impl core::fmt::Debug for BlobDataProvider {
@@ -108,7 +109,7 @@ impl BlobDataProvider {
     pub fn try_new_from_blob(blob: Box<[u8]>) -> Result<Self, DataError> {
         Ok(Self {
             data: Cart::try_make_yoke(blob, |bytes| {
-                BlobSchema::deserialize_and_check(&mut postcard::Deserializer::from_bytes(bytes))
+                ValidatedBlobSchema::deserialize_and_check(&mut postcard::Deserializer::from_bytes(bytes))
             })?,
         })
     }
@@ -117,7 +118,7 @@ impl BlobDataProvider {
     /// [`try_new_from_blob`](BlobDataProvider::try_new_from_blob) and is allocation-free.
     pub fn try_new_from_static_blob(blob: &'static [u8]) -> Result<Self, DataError> {
         Ok(Self {
-            data: Yoke::new_owned(BlobSchema::deserialize_and_check(
+            data: Yoke::new_owned(ValidatedBlobSchema::deserialize_and_check(
                 &mut postcard::Deserializer::from_bytes(blob),
             )?),
         })
@@ -125,7 +126,7 @@ impl BlobDataProvider {
 
     #[doc(hidden)] // for testing purposes only: checks if it is using the Bigger format
     pub fn internal_is_using_bigger_format(&self) -> bool {
-        matches!(self.data.get(), BlobSchema::V003Bigger(..))
+        matches!(self.data.get(), ValidatedBlobSchema::V004Bigger(..))
     }
 }
 
@@ -135,15 +136,17 @@ impl DynamicDataProvider<BufferMarker> for BlobDataProvider {
         marker: DataMarkerInfo,
         req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
-        let payload: Yoke<(&[u8], Option<u64>), Option<Cart>> = self
+        let payload: Yoke<RawBlob, Option<Cart>> = self
             .data
             .try_map_project_cloned(|blob, _| blob.load(marker, req))?;
         let mut metadata = DataResponseMetadata::default();
-        metadata.buffer_format = Some(BufferFormat::Postcard1);
-        metadata.checksum = payload.get().1;
+        metadata.buffer_format = Some(payload.get().kind.into_buffer_format());
+        metadata.checksum = payload.get().checksum;
         Ok(DataResponse {
             metadata,
-            payload: DataPayload::from_yoked_buffer(payload.map_project(|(bytes, _), _| bytes)),
+            payload: DataPayload::from_yoked_buffer(
+                payload.map_project(|raw_blob, _| raw_blob.bytes),
+            ),
         })
     }
 }
@@ -204,17 +207,17 @@ pub struct BlobBoundLocaleDataProvider {
 }
 
 impl BindLocaleDataProvider<BufferMarker> for BlobDataProvider {
-    type BoundLocaleDataProvider<'data> = BlobBoundLocaleDataProvider;
+    type BoundLocaleDataProvider = BlobBoundLocaleDataProvider;
     fn bind_locale(
         &self,
         marker: DataMarkerInfo,
         req: DataRequest,
-    ) -> Result<BindLocaleResponse<Self::BoundLocaleDataProvider<'static>>, DataError> {
+    ) -> Result<BindLocaleResponse<Self::BoundLocaleDataProvider>, DataError> {
         let payload: Yoke<(BlobBoundLocaleSchema, Option<u64>), Option<Cart>> = self
             .data
             .try_map_project_cloned(|blob, _| blob.bind_locale(marker, req))?;
         let mut metadata = DataResponseMetadata::default();
-        metadata.buffer_format = Some(BufferFormat::Postcard1);
+        metadata.buffer_format = Some(payload.get().0.kind.into_buffer_format());
         metadata.checksum = payload.get().1;
         Ok(BindLocaleResponse {
             metadata,
@@ -233,7 +236,7 @@ impl BoundLocaleDataProvider<BufferMarker> for BlobBoundLocaleDataProvider {
         let blob = self.data.get();
         let payload = blob.load(req)?;
         let mut metadata = DataResponseMetadata::default();
-        metadata.buffer_format = Some(BufferFormat::Postcard1);
+        metadata.buffer_format = Some(blob.kind.into_buffer_format());
         // Note: the checksum is returned by `bind_locale()` instead of `load_bound()`
         Ok(BoundLocaleDataResponse { metadata, payload })
     }
