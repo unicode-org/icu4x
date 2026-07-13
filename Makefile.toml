@@ -99,6 +99,15 @@ dependencies = [
     "test-docs",
 ]
 
+[tasks.ci-job-miri]
+description = "Run Miri tests for unsafe crates (currently allowed to fail)"
+category = "CI"
+env = { ICU4X_DATA_DIR = "../stubdata" }
+script_runner = "@duckscript"
+script = '''
+exec --fail-on-error cargo +${PINNED_CI_NIGHTLY} miri test -p zerovec --features serde -p yoke
+'''
+
 [tasks.ci-job-full-datagen]
 description = "Run full data generation on latest CLDR and ICU"
 category = "CI"
@@ -257,6 +266,7 @@ dependencies = [
     # Get a coffee
     "ci-job-test",
     "ci-job-test-docs",
+    "ci-job-miri",
     "ci-job-test-cargo",
     "ci-job-testdata",
     "ci-job-features",

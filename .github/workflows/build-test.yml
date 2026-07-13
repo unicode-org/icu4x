@@ -156,6 +156,36 @@ jobs:
       run: cargo make ci-job-test-gigo
 
 
+  # ci-job-miri
+  miri:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+    # Cargo-make boilerplate
+    - name: Install cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
+
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-ci-toolchain
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Job-specific dependencies
+    - name: Install Miri
+      run: |
+        rustup toolchain install "${PINNED_CI_NIGHTLY}"
+        rustup component add miri --toolchain "${PINNED_CI_NIGHTLY}"
+
+    # Actual job
+    - name: Run `cargo make ci-job-miri`
+      run: cargo make ci-job-miri
+
+
   # ci-job-test-cargo
   test-cargo:
     runs-on: ubuntu-latest
