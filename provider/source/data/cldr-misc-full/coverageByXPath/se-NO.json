@@ -1,0 +1,29 @@
+{
+  "coverageByXPath": {
+    "se-NO": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"se\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Latn\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"FI\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"NO\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"SE\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"cs\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"da\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"el\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"et\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"fi\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"hu\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"lv\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"mt\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"sk\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"sl\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"sv\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]"
+      ]
+    }
+  }
+}

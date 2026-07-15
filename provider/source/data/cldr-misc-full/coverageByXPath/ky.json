@@ -1,0 +1,59 @@
+{
+  "coverageByXPath": {
+    "ky": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"ky\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Arab\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Cyrl\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Latn\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"KG\"]",
+        "//ldml/numbers/currencyFormats[@numberSystem=\"arab\"]/currencyFormatLength/currencyFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/currencyFormats[@numberSystem=\"arabext\"]/currencyFormatLength/currencyFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/decimalFormats[@numberSystem=\"arab\"]/decimalFormatLength/decimalFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/decimalFormats[@numberSystem=\"arabext\"]/decimalFormatLength/decimalFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/percentFormats[@numberSystem=\"arab\"]/percentFormatLength/percentFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/percentFormats[@numberSystem=\"arabext\"]/percentFormatLength/percentFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/scientificFormats[@numberSystem=\"arab\"]/scientificFormatLength/scientificFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/scientificFormats[@numberSystem=\"arabext\"]/scientificFormatLength/scientificFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/symbols[@numberSystem=\"arab\"]/decimal",
+        "//ldml/numbers/symbols[@numberSystem=\"arab\"]/group",
+        "//ldml/numbers/symbols[@numberSystem=\"arab\"]/minusSign",
+        "//ldml/numbers/symbols[@numberSystem=\"arab\"]/percentSign",
+        "//ldml/numbers/symbols[@numberSystem=\"arab\"]/plusSign",
+        "//ldml/numbers/symbols[@numberSystem=\"arabext\"]/decimal",
+        "//ldml/numbers/symbols[@numberSystem=\"arabext\"]/group",
+        "//ldml/numbers/symbols[@numberSystem=\"arabext\"]/minusSign",
+        "//ldml/numbers/symbols[@numberSystem=\"arabext\"]/percentSign",
+        "//ldml/numbers/symbols[@numberSystem=\"arabext\"]/plusSign"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"arab\"]"
+      ],
+      "modern": [
+        "//ldml/numbers/rationalFormats[@numberSystem=\"arab\"]/integerAndRationalPattern",
+        "//ldml/numbers/rationalFormats[@numberSystem=\"arab\"]/integerAndRationalPattern[@alt=\"superSub\"]",
+        "//ldml/numbers/rationalFormats[@numberSystem=\"arab\"]/rationalPattern",
+        "//ldml/numbers/rationalFormats[@numberSystem=\"arab\"]/rationalUsage",
+        "//ldml/numbers/rationalFormats[@numberSystem=\"arabext\"]/integerAndRationalPattern",
+        "//ldml/numbers/rationalFormats[@numberSystem=\"arabext\"]/integerAndRationalPattern[@alt=\"superSub\"]",
+        "//ldml/numbers/rationalFormats[@numberSystem=\"arabext\"]/rationalPattern",
+        "//ldml/numbers/rationalFormats[@numberSystem=\"arabext\"]/rationalUsage",
+        "//ldml/numbers/symbols[@numberSystem=\"arab\"]/approximatelySign",
+        "//ldml/numbers/symbols[@numberSystem=\"arab\"]/exponential",
+        "//ldml/numbers/symbols[@numberSystem=\"arab\"]/infinity",
+        "//ldml/numbers/symbols[@numberSystem=\"arab\"]/nan",
+        "//ldml/numbers/symbols[@numberSystem=\"arab\"]/perMille",
+        "//ldml/numbers/symbols[@numberSystem=\"arab\"]/superscriptingExponent",
+        "//ldml/numbers/symbols[@numberSystem=\"arabext\"]/approximatelySign",
+        "//ldml/numbers/symbols[@numberSystem=\"arabext\"]/exponential",
+        "//ldml/numbers/symbols[@numberSystem=\"arabext\"]/infinity",
+        "//ldml/numbers/symbols[@numberSystem=\"arabext\"]/nan",
+        "//ldml/numbers/symbols[@numberSystem=\"arabext\"]/perMille",
+        "//ldml/numbers/symbols[@numberSystem=\"arabext\"]/superscriptingExponent"
+      ]
+    }
+  }
+}

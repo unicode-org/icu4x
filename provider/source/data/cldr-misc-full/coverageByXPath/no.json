@@ -1,0 +1,27 @@
+{
+  "coverageByXPath": {
+    "no": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"no\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Latn\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"NO\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]"
+      ],
+      "modern": [
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"compat\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"dictionary\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"phonebook\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"phonetic\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"pinyin\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"stroke\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"traditional\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"unihan\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"zhuyin\"]"
+      ]
+    }
+  }
+}

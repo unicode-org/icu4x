@@ -1,0 +1,41 @@
+{
+  "coverageByXPath": {
+    "lo-LA": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"lo\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Laoo\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"LA\"]"
+      ],
+      "moderate": [
+        "//ldml/characters/placeholderBoundarySpacing[@type=\"digit-digit\"][@scopes=\"datetime\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"laoo\"]",
+        "//ldml/numbers/currencyFormats[@numberSystem=\"laoo\"]/currencyFormatLength/currencyFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/currencyFormats[@numberSystem=\"laoo\"]/currencyFormatLength/currencyFormat[@type=\"standard\"]/pattern[@type=\"standard\"][@alt=\"alphaNextToNumber\"]",
+        "//ldml/numbers/currencyFormats[@numberSystem=\"laoo\"]/currencyFormatLength/currencyFormat[@type=\"standard\"]/pattern[@type=\"standard\"][@alt=\"noCurrency\"]",
+        "//ldml/numbers/decimalFormats[@numberSystem=\"laoo\"]/decimalFormatLength/decimalFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/percentFormats[@numberSystem=\"laoo\"]/percentFormatLength/percentFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/scientificFormats[@numberSystem=\"laoo\"]/scientificFormatLength/scientificFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/symbols[@numberSystem=\"laoo\"]/decimal",
+        "//ldml/numbers/symbols[@numberSystem=\"laoo\"]/group",
+        "//ldml/numbers/symbols[@numberSystem=\"laoo\"]/minusSign",
+        "//ldml/numbers/symbols[@numberSystem=\"laoo\"]/percentSign",
+        "//ldml/numbers/symbols[@numberSystem=\"laoo\"]/plusSign"
+      ],
+      "modern": [
+        "//ldml/numbers/rationalFormats[@numberSystem=\"laoo\"]/integerAndRationalPattern",
+        "//ldml/numbers/rationalFormats[@numberSystem=\"laoo\"]/integerAndRationalPattern[@alt=\"superSub\"]",
+        "//ldml/numbers/rationalFormats[@numberSystem=\"laoo\"]/rationalPattern",
+        "//ldml/numbers/rationalFormats[@numberSystem=\"laoo\"]/rationalUsage",
+        "//ldml/numbers/symbols[@numberSystem=\"laoo\"]/approximatelySign",
+        "//ldml/numbers/symbols[@numberSystem=\"laoo\"]/exponential",
+        "//ldml/numbers/symbols[@numberSystem=\"laoo\"]/infinity",
+        "//ldml/numbers/symbols[@numberSystem=\"laoo\"]/nan",
+        "//ldml/numbers/symbols[@numberSystem=\"laoo\"]/perMille",
+        "//ldml/numbers/symbols[@numberSystem=\"laoo\"]/superscriptingExponent"
+      ]
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "coverageByXPath": {
+    "osa-US": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"osa\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Osge\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]"
+      ]
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "coverageByXPath": {
+    "sn-ZW": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"sn\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Latn\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"ZW\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]"
+      ]
+    }
+  }
+}

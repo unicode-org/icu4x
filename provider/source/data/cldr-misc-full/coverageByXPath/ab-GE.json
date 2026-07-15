@@ -1,0 +1,16 @@
+{
+  "coverageByXPath": {
+    "ab-GE": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"ab\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Cyrl\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"GE\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]"
+      ]
+    }
+  }
+}

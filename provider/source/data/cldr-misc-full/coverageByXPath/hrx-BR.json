@@ -1,0 +1,14 @@
+{
+  "coverageByXPath": {
+    "hrx-BR": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"hrx\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"BR\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]"
+      ]
+    }
+  }
+}

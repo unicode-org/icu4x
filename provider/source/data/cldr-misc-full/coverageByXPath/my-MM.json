@@ -1,0 +1,41 @@
+{
+  "coverageByXPath": {
+    "my-MM": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"my\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Mymr\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"MM\"]",
+        "//ldml/numbers/currencyFormats[@numberSystem=\"mymr\"]/currencyFormatLength/currencyFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/decimalFormats[@numberSystem=\"mymr\"]/decimalFormatLength/decimalFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/percentFormats[@numberSystem=\"mymr\"]/percentFormatLength/percentFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/scientificFormats[@numberSystem=\"mymr\"]/scientificFormatLength/scientificFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/symbols[@numberSystem=\"mymr\"]/decimal",
+        "//ldml/numbers/symbols[@numberSystem=\"mymr\"]/group",
+        "//ldml/numbers/symbols[@numberSystem=\"mymr\"]/minusSign",
+        "//ldml/numbers/symbols[@numberSystem=\"mymr\"]/percentSign",
+        "//ldml/numbers/symbols[@numberSystem=\"mymr\"]/plusSign"
+      ],
+      "moderate": [
+        "//ldml/characters/placeholderBoundarySpacing[@type=\"digit-digit\"][@scopes=\"datetime\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"mymr\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"mymrshan\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"mymrshan\"][@scope=\"core\"]"
+      ],
+      "modern": [
+        "//ldml/numbers/rationalFormats[@numberSystem=\"mymr\"]/integerAndRationalPattern",
+        "//ldml/numbers/rationalFormats[@numberSystem=\"mymr\"]/integerAndRationalPattern[@alt=\"superSub\"]",
+        "//ldml/numbers/rationalFormats[@numberSystem=\"mymr\"]/rationalPattern",
+        "//ldml/numbers/rationalFormats[@numberSystem=\"mymr\"]/rationalUsage",
+        "//ldml/numbers/symbols[@numberSystem=\"mymr\"]/approximatelySign",
+        "//ldml/numbers/symbols[@numberSystem=\"mymr\"]/exponential",
+        "//ldml/numbers/symbols[@numberSystem=\"mymr\"]/infinity",
+        "//ldml/numbers/symbols[@numberSystem=\"mymr\"]/nan",
+        "//ldml/numbers/symbols[@numberSystem=\"mymr\"]/perMille",
+        "//ldml/numbers/symbols[@numberSystem=\"mymr\"]/superscriptingExponent"
+      ]
+    }
+  }
+}

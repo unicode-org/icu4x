@@ -1,0 +1,16 @@
+{
+  "coverageByXPath": {
+    "csw-CA": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"csw\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Cans\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"CA\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]"
+      ]
+    }
+  }
+}

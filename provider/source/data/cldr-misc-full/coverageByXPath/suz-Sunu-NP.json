@@ -1,0 +1,39 @@
+{
+  "coverageByXPath": {
+    "suz-Sunu-NP": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"suz\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Deva\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Sunu\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"NP\"]",
+        "//ldml/numbers/currencyFormats[@numberSystem=\"deva\"]/currencyFormatLength/currencyFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/decimalFormats[@numberSystem=\"deva\"]/decimalFormatLength/decimalFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/percentFormats[@numberSystem=\"deva\"]/percentFormatLength/percentFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/scientificFormats[@numberSystem=\"deva\"]/scientificFormatLength/scientificFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/symbols[@numberSystem=\"deva\"]/decimal",
+        "//ldml/numbers/symbols[@numberSystem=\"deva\"]/group",
+        "//ldml/numbers/symbols[@numberSystem=\"deva\"]/minusSign",
+        "//ldml/numbers/symbols[@numberSystem=\"deva\"]/percentSign",
+        "//ldml/numbers/symbols[@numberSystem=\"deva\"]/plusSign"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"deva\"]"
+      ],
+      "modern": [
+        "//ldml/numbers/rationalFormats[@numberSystem=\"deva\"]/integerAndRationalPattern",
+        "//ldml/numbers/rationalFormats[@numberSystem=\"deva\"]/integerAndRationalPattern[@alt=\"superSub\"]",
+        "//ldml/numbers/rationalFormats[@numberSystem=\"deva\"]/rationalPattern",
+        "//ldml/numbers/rationalFormats[@numberSystem=\"deva\"]/rationalUsage",
+        "//ldml/numbers/symbols[@numberSystem=\"deva\"]/approximatelySign",
+        "//ldml/numbers/symbols[@numberSystem=\"deva\"]/exponential",
+        "//ldml/numbers/symbols[@numberSystem=\"deva\"]/infinity",
+        "//ldml/numbers/symbols[@numberSystem=\"deva\"]/nan",
+        "//ldml/numbers/symbols[@numberSystem=\"deva\"]/perMille",
+        "//ldml/numbers/symbols[@numberSystem=\"deva\"]/superscriptingExponent"
+      ]
+    }
+  }
+}
