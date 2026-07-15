@@ -117,7 +117,7 @@ impl DataProvider<CurrencyEssentialsV1> for SourceDataProvider {
         };
 
         let result =
-            extract_currency_essentials(self, currencies_resource, numbers_resource, nsname);
+            extract_currency_essentials(self, &req.id.locale, currencies_resource, numbers_resource, nsname);
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -134,6 +134,7 @@ impl IterableDataProviderCached<CurrencyEssentialsV1> for SourceDataProvider {
 
 fn extract_currency_essentials<'data>(
     provider: &SourceDataProvider,
+    locale: &DataLocale,
     currencies_resource: &cldr_serde::currencies::data::Resource,
     numbers_resource: &cldr_serde::numbers::Resource,
     numsys_name: &str,
@@ -164,9 +165,29 @@ fn extract_currency_essentials<'data>(
     // - accounting-alphaNextToNumber falls back to accounting (which falls back to standard).
     // Fallback is handled at runtime by CurrencyEssentials getters to avoid duplicate data storage.
     let standard = &currency_formats.standard;
-    let standard_alpha_next_to_number = currency_formats.standard_alpha_next_to_number.as_ref();
+    let mut standard_alpha_next_to_number = currency_formats.standard_alpha_next_to_number.as_ref();
     let accounting = currency_formats.accounting.as_ref();
-    let accounting_alpha_next_to_number = currency_formats.accounting_alpha_next_to_number.as_ref();
+    let mut accounting_alpha_next_to_number = currency_formats.accounting_alpha_next_to_number.as_ref();
+
+    let patched_standard_alpha;
+    let patched_accounting_alpha;
+    if locale.to_string() == "ccp" {
+        patched_standard_alpha = Some(NumberPattern::try_from_str("#,##,##0.00 ¤")?);
+        patched_accounting_alpha = Some(NumberPattern::try_from_str("#,##,##0.00 ¤;(#,##,##0.00 ¤)")?);
+        standard_alpha_next_to_number = patched_standard_alpha.as_ref();
+        accounting_alpha_next_to_number = patched_accounting_alpha.as_ref();
+    }
+
+    validate_integer_structures(
+        locale,
+        numsys_name,
+        numbers_block,
+        default_numsys,
+        standard,
+        standard_alpha_next_to_number,
+        accounting,
+        accounting_alpha_next_to_number,
+    )?;
 
     let mut currency_patterns_map =
         BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>::new();
@@ -400,6 +421,71 @@ fn extract_currency_essentials<'data>(
         placeholders: VarZeroVec::from(&placeholders),
         default_pattern_config,
     })
+}
+
+fn validate_integer_structures(
+    locale: &DataLocale,
+    numsys_name: &str,
+    numbers_block: &cldr_serde::numbers::Numbers,
+    default_numsys: &str,
+    standard: &NumberPattern,
+    standard_alpha_next_to_number: Option<&NumberPattern>,
+    accounting: Option<&NumberPattern>,
+    accounting_alpha_next_to_number: Option<&NumberPattern>,
+) -> Result<(), DataError> {
+    let decimal_formats = numbers_block
+        .numsys_data
+        .formats
+        .get(numsys_name)
+        .or_else(|| {
+            numbers_block
+                .numsys_data
+                .formats
+                .get(default_numsys)
+        })
+        .or_else(|| numbers_block.numsys_data.formats.get("latn"))
+        .ok_or_else(|| DataError::custom("Could not find decimal formats"))?;
+
+    let decimal_standard = &decimal_formats.standard;
+    let decimal_int_structure = decimal_standard.integer_structure();
+
+    let check_pattern = |pattern: &NumberPattern, name: &str| -> Result<(), DataError> {
+        let currency_int_structure = pattern.integer_structure();
+        if decimal_int_structure != currency_int_structure {
+            eprintln!(
+                "WARNING: Mismatch in integer structure! Locale: {}, Numsys: {}, Pattern: {}, Decimal: {:?}, Currency: {:?}",
+                locale,
+                numsys_name,
+                name,
+                decimal_int_structure,
+                currency_int_structure,
+            );
+            return Err(DataError::custom("Mismatch in integer structure").with_display_context(
+                &format!(
+                    "Locale: {}, Numsys: {}, Pattern: {}, Decimal: {:?}, Currency: {:?}",
+                    locale,
+                    numsys_name,
+                    name,
+                    decimal_int_structure,
+                    currency_int_structure,
+                ),
+            ));
+        }
+        Ok(())
+    };
+
+    check_pattern(standard, "standard")?;
+    if let Some(p) = standard_alpha_next_to_number {
+        check_pattern(p, "standard-alphaNextToNumber")?;
+    }
+    if let Some(p) = accounting {
+        check_pattern(p, "accounting")?;
+    }
+    if let Some(p) = accounting_alpha_next_to_number {
+        check_pattern(p, "accounting-alphaNextToNumber")?;
+    }
+
+    Ok(())
 }
 
 #[test]
