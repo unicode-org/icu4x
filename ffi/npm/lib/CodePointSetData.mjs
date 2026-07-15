@@ -145,7 +145,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_general_category_group_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, group);
+        const result = wasm.icu4x_CodePointSetData_create_general_category_group_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), group);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -206,7 +206,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_ascii_hex_digit_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_ascii_hex_digit_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -267,7 +267,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_alnum_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_alnum_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -328,7 +328,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_alphabetic_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_alphabetic_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -389,7 +389,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_bidi_control_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_bidi_control_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -450,7 +450,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_bidi_mirrored_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_bidi_mirrored_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -511,7 +511,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_blank_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_blank_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -572,7 +572,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_cased_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_cased_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -633,7 +633,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_case_ignorable_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_case_ignorable_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -694,7 +694,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_full_composition_exclusion_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_full_composition_exclusion_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -755,7 +755,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_changes_when_casefolded_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_changes_when_casefolded_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -816,7 +816,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_changes_when_casemapped_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_changes_when_casemapped_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -877,7 +877,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_changes_when_nfkc_casefolded_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_changes_when_nfkc_casefolded_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -938,7 +938,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_changes_when_lowercased_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_changes_when_lowercased_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -999,7 +999,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_changes_when_titlecased_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_changes_when_titlecased_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1060,7 +1060,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_changes_when_uppercased_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_changes_when_uppercased_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1121,7 +1121,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_dash_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_dash_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1182,7 +1182,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_deprecated_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_deprecated_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1243,7 +1243,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_default_ignorable_code_point_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_default_ignorable_code_point_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1304,7 +1304,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_diacritic_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_diacritic_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1365,7 +1365,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_emoji_modifier_base_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_emoji_modifier_base_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1426,7 +1426,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_emoji_component_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_emoji_component_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1487,7 +1487,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_emoji_modifier_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_emoji_modifier_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1548,7 +1548,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_emoji_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_emoji_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1609,7 +1609,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_emoji_presentation_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_emoji_presentation_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1670,7 +1670,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_extender_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_extender_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1731,7 +1731,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_extended_pictographic_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_extended_pictographic_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1792,7 +1792,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_graph_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_graph_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1853,7 +1853,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_grapheme_base_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_grapheme_base_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1914,7 +1914,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_grapheme_extend_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_grapheme_extend_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1975,7 +1975,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_grapheme_link_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_grapheme_link_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -2036,7 +2036,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_hex_digit_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_hex_digit_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -2097,7 +2097,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_hyphen_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_hyphen_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -2158,7 +2158,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_id_compat_math_continue_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_id_compat_math_continue_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -2219,7 +2219,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_id_compat_math_start_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_id_compat_math_start_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -2280,7 +2280,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_id_continue_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_id_continue_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -2341,7 +2341,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_ideographic_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_ideographic_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -2402,7 +2402,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_id_start_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_id_start_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -2463,7 +2463,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_ids_binary_operator_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_ids_binary_operator_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -2524,7 +2524,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_ids_trinary_operator_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_ids_trinary_operator_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -2585,7 +2585,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_ids_unary_operator_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_ids_unary_operator_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -2646,7 +2646,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_join_control_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_join_control_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -2707,7 +2707,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_logical_order_exception_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_logical_order_exception_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -2768,7 +2768,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_lowercase_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_lowercase_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -2829,7 +2829,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_math_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_math_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -2890,7 +2890,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_modifier_combining_mark_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_modifier_combining_mark_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -2951,7 +2951,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_noncharacter_code_point_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_noncharacter_code_point_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -3018,7 +3018,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_nfc_inert_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_nfc_inert_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -3085,7 +3085,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_nfd_inert_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_nfd_inert_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -3152,7 +3152,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_nfkc_inert_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_nfkc_inert_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -3219,7 +3219,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_nfkd_inert_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_nfkd_inert_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -3280,7 +3280,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_pattern_syntax_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_pattern_syntax_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -3341,7 +3341,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_pattern_white_space_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_pattern_white_space_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -3402,7 +3402,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_prepended_concatenation_mark_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_prepended_concatenation_mark_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -3463,7 +3463,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_print_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_print_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -3524,7 +3524,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_quotation_mark_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_quotation_mark_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -3585,7 +3585,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_radical_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_radical_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -3646,7 +3646,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_regional_indicator_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_regional_indicator_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -3707,7 +3707,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_soft_dotted_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_soft_dotted_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -3774,7 +3774,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_segment_starter_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_segment_starter_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -3841,7 +3841,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_case_sensitive_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_case_sensitive_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -3902,7 +3902,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_sentence_terminal_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_sentence_terminal_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -3963,7 +3963,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_terminal_punctuation_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_terminal_punctuation_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -4024,7 +4024,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_unified_ideograph_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_unified_ideograph_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -4085,7 +4085,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_uppercase_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_uppercase_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -4146,7 +4146,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_variation_selector_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_variation_selector_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -4207,7 +4207,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_white_space_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_white_space_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -4268,7 +4268,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_xdigit_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_xdigit_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -4329,7 +4329,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_xid_continue_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_xid_continue_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -4390,7 +4390,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_xid_start_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointSetData_create_xid_start_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -4448,7 +4448,7 @@ export class CodePointSetData {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_for_ecma262_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, propertyNameSlice.ptr);
+        const result = wasm.icu4x_CodePointSetData_create_for_ecma262_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), propertyNameSlice.ptr);
 
         try {
             if (!diplomatReceive.resultFlag) {

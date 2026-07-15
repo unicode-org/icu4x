@@ -4,7 +4,7 @@
 part of 'lib.g.dart';
 
 /// Additional information: [1](https://docs.rs/icu/2.2.0/icu/calendar/error/struct.MismatchedCalendarError.html)
-final class CalendarMismatchedCalendarError {
+final class CalendarMismatchedCalendarError extends core.Error {
 
   // ignore: public_member_api_docs
   CalendarMismatchedCalendarError();

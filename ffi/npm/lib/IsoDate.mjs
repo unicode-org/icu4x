@@ -130,7 +130,7 @@ export class IsoDate {
      */
     toCalendar(calendar) {
 
-        const result = wasm.icu4x_IsoDate_to_calendar_mv1(this.ffiValue, calendar.ffiValue);
+        const result = wasm.icu4x_IsoDate_to_calendar_mv1(this.ffiValue, calendar instanceof Calendar ? calendar.ffiValue : typeError('calendar', 'Calendar'));
 
         try {
             return new Date(diplomatRuntime.internalConstructor, result, []);
@@ -425,7 +425,7 @@ export class IsoDate {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 20, 4, false);
 
 
-        const result = wasm.icu4x_IsoDate_until_with_options_mv1(diplomatReceive.buffer, this.ffiValue, other.ffiValue, DateDifferenceOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(DateDifferenceOptions._sizeBytes), functionCleanupArena, {}, false));
+        const result = wasm.icu4x_IsoDate_until_with_options_mv1(diplomatReceive.buffer, this.ffiValue, other instanceof IsoDate ? other.ffiValue : typeError('other', 'IsoDate'), DateDifferenceOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(DateDifferenceOptions._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             return DateDuration._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);

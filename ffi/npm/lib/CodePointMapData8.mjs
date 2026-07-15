@@ -188,7 +188,7 @@ export class CodePointMapData8 {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_bidi_class_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_bidi_class_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -231,7 +231,7 @@ export class CodePointMapData8 {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_canonical_combining_class_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_canonical_combining_class_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -274,7 +274,7 @@ export class CodePointMapData8 {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_east_asian_width_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_east_asian_width_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -317,7 +317,7 @@ export class CodePointMapData8 {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_general_category_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_general_category_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -360,7 +360,7 @@ export class CodePointMapData8 {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_grapheme_cluster_break_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_grapheme_cluster_break_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -403,7 +403,7 @@ export class CodePointMapData8 {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_hangul_syllable_type_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_hangul_syllable_type_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -446,7 +446,7 @@ export class CodePointMapData8 {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_indic_conjunct_break_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_indic_conjunct_break_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -489,7 +489,7 @@ export class CodePointMapData8 {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_indic_syllabic_category_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_indic_syllabic_category_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -532,7 +532,7 @@ export class CodePointMapData8 {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_joining_group_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_joining_group_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -575,7 +575,7 @@ export class CodePointMapData8 {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_joining_type_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_joining_type_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -618,7 +618,7 @@ export class CodePointMapData8 {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_line_break_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_line_break_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -661,7 +661,7 @@ export class CodePointMapData8 {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_numeric_type_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_numeric_type_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -704,7 +704,7 @@ export class CodePointMapData8 {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_sentence_break_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_sentence_break_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -747,7 +747,7 @@ export class CodePointMapData8 {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_vertical_orientation_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_vertical_orientation_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -790,7 +790,7 @@ export class CodePointMapData8 {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_word_break_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_word_break_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {

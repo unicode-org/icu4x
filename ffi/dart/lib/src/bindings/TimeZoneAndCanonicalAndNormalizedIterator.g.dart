@@ -4,7 +4,7 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `TimeZoneAndCanonicalAndNormalizedIter`](https://docs.rs/icu/2.2.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalAndNormalizedIter.html) for more information.
-final class TimeZoneAndCanonicalAndNormalizedIterator implements ffi.Finalizable, core.Iterator<TimeZoneAndCanonicalAndNormalized> {
+final class TimeZoneAndCanonicalAndNormalizedIterator implements core.Iterator<TimeZoneAndCanonicalAndNormalized>, ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
   // These are "used" in the sense that they keep dependencies alive

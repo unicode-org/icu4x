@@ -103,7 +103,7 @@ export class BidiMirroringGlyph {
     ) {
         diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 0, this.#mirroringGlyph, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue, Uint32Array));
         diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 8, this.#mirrored, Uint8Array);
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 12, this.#pairedBracketType.ffiValue, Int32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 12, new BidiPairedBracketType(this.#pairedBracketType).ffiValue, Int32Array);
     }
 
     // This struct contains borrowed fields, so this takes in a list of

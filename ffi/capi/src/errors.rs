@@ -118,6 +118,7 @@ pub mod ffi {
     #[cfg(feature = "calendar")]
     #[non_exhaustive]
     #[diplomat::attr(auto, error)]
+    #[diplomat::attr(auto, precondition_violation)]
     pub struct CalendarMismatchedCalendarError;
 
     #[derive(Debug, PartialEq, Eq)]
@@ -185,6 +186,7 @@ pub mod ffi {
     #[cfg(feature = "datetime")]
     #[diplomat::rust_link(icu::datetime::MismatchedCalendarError, Struct)]
     #[diplomat::attr(auto, error)]
+    #[diplomat::attr(auto, precondition_violation)]
     pub struct DateTimeMismatchedCalendarError {
         pub this_kind: CalendarKind,
         pub date_kind: DiplomatOption<CalendarKind>,

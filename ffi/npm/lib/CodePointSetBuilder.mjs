@@ -148,7 +148,7 @@ export class CodePointSetBuilder {
      * See the [Rust documentation for `add_set`](https://docs.rs/icu/2.2.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_set) for more information.
      */
     addSet(data) {
-    wasm.icu4x_CodePointSetBuilder_add_set_mv1(this.ffiValue, data.ffiValue);
+    wasm.icu4x_CodePointSetBuilder_add_set_mv1(this.ffiValue, data instanceof CodePointSetData ? data.ffiValue : typeError('data', 'CodePointSetData'));
 
         try {}
 
@@ -193,7 +193,7 @@ export class CodePointSetBuilder {
      * See the [Rust documentation for `remove_set`](https://docs.rs/icu/2.2.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.remove_set) for more information.
      */
     removeSet(data) {
-    wasm.icu4x_CodePointSetBuilder_remove_set_mv1(this.ffiValue, data.ffiValue);
+    wasm.icu4x_CodePointSetBuilder_remove_set_mv1(this.ffiValue, data instanceof CodePointSetData ? data.ffiValue : typeError('data', 'CodePointSetData'));
 
         try {}
 
@@ -238,7 +238,7 @@ export class CodePointSetBuilder {
      * See the [Rust documentation for `retain_set`](https://docs.rs/icu/2.2.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.retain_set) for more information.
      */
     retainSet(data) {
-    wasm.icu4x_CodePointSetBuilder_retain_set_mv1(this.ffiValue, data.ffiValue);
+    wasm.icu4x_CodePointSetBuilder_retain_set_mv1(this.ffiValue, data instanceof CodePointSetData ? data.ffiValue : typeError('data', 'CodePointSetData'));
 
         try {}
 
@@ -289,7 +289,7 @@ export class CodePointSetBuilder {
      * See the [Rust documentation for `complement_set`](https://docs.rs/icu/2.2.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.complement_set) for more information.
      */
     complementSet(data) {
-    wasm.icu4x_CodePointSetBuilder_complement_set_mv1(this.ffiValue, data.ffiValue);
+    wasm.icu4x_CodePointSetBuilder_complement_set_mv1(this.ffiValue, data instanceof CodePointSetData ? data.ffiValue : typeError('data', 'CodePointSetData'));
 
         try {}
 

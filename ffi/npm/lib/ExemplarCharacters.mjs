@@ -97,7 +97,7 @@ export class ExemplarCharacters {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ExemplarCharacters_create_main_mv1(diplomatReceive.buffer, locale.ffiValue);
+        const result = wasm.icu4x_ExemplarCharacters_create_main_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -122,7 +122,7 @@ export class ExemplarCharacters {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ExemplarCharacters_create_main_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_ExemplarCharacters_create_main_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -147,7 +147,7 @@ export class ExemplarCharacters {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ExemplarCharacters_create_auxiliary_mv1(diplomatReceive.buffer, locale.ffiValue);
+        const result = wasm.icu4x_ExemplarCharacters_create_auxiliary_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -172,7 +172,7 @@ export class ExemplarCharacters {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ExemplarCharacters_create_auxiliary_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_ExemplarCharacters_create_auxiliary_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -197,7 +197,7 @@ export class ExemplarCharacters {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ExemplarCharacters_create_punctuation_mv1(diplomatReceive.buffer, locale.ffiValue);
+        const result = wasm.icu4x_ExemplarCharacters_create_punctuation_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -222,7 +222,7 @@ export class ExemplarCharacters {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ExemplarCharacters_create_punctuation_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_ExemplarCharacters_create_punctuation_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -247,7 +247,7 @@ export class ExemplarCharacters {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ExemplarCharacters_create_numbers_mv1(diplomatReceive.buffer, locale.ffiValue);
+        const result = wasm.icu4x_ExemplarCharacters_create_numbers_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -272,7 +272,7 @@ export class ExemplarCharacters {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ExemplarCharacters_create_numbers_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_ExemplarCharacters_create_numbers_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -297,7 +297,7 @@ export class ExemplarCharacters {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ExemplarCharacters_create_index_mv1(diplomatReceive.buffer, locale.ffiValue);
+        const result = wasm.icu4x_ExemplarCharacters_create_index_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -322,7 +322,7 @@ export class ExemplarCharacters {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ExemplarCharacters_create_index_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_ExemplarCharacters_create_index_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {

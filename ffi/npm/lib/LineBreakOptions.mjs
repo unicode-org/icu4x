@@ -89,8 +89,8 @@ export class LineBreakOptions {
         functionCleanupArena,
         appendArrayMap
     ) {
-        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 0, this.#strictness, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
-        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 8, this.#wordOption, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 0, this.#strictness, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, new LineBreakStrictness(jsValue).ffiValue, Int32Array));
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 8, this.#wordOption, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, new LineBreakWordOption(jsValue).ffiValue, Int32Array));
     }
 
     // This struct contains borrowed fields, so this takes in a list of

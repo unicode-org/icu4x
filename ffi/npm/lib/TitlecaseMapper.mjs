@@ -76,7 +76,7 @@ export class TitlecaseMapper {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_TitlecaseMapper_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_TitlecaseMapper_create_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -105,7 +105,7 @@ export class TitlecaseMapper {
         const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
-    wasm.icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(this.ffiValue, sSlice.ptr, locale.ffiValue, TitlecaseOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(TitlecaseOptions._sizeBytes), functionCleanupArena, {}, false), write.buffer);
+    wasm.icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(this.ffiValue, sSlice.ptr, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), TitlecaseOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(TitlecaseOptions._sizeBytes), functionCleanupArena, {}, false), write.buffer);
 
         try {
             return write.readString8();
@@ -132,7 +132,7 @@ export class TitlecaseMapper {
         const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
-    wasm.icu4x_TitlecaseMapper_titlecase_segment_with_compiled_data_v1_mv1(sSlice.ptr, locale.ffiValue, TitlecaseOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(TitlecaseOptions._sizeBytes), functionCleanupArena, {}, false), write.buffer);
+    wasm.icu4x_TitlecaseMapper_titlecase_segment_with_compiled_data_v1_mv1(sSlice.ptr, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), TitlecaseOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(TitlecaseOptions._sizeBytes), functionCleanupArena, {}, false), write.buffer);
 
         try {
             return write.readString8();

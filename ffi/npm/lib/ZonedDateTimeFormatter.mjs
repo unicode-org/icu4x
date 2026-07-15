@@ -60,7 +60,7 @@ export class ZonedDateTimeFormatter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ZonedDateTimeFormatter_create_specific_long_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_specific_long_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), formatter instanceof DateTimeFormatter ? formatter.ffiValue : typeError('formatter', 'DateTimeFormatter'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -88,7 +88,7 @@ export class ZonedDateTimeFormatter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ZonedDateTimeFormatter_create_specific_long_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_specific_long_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), formatter instanceof DateTimeFormatter ? formatter.ffiValue : typeError('formatter', 'DateTimeFormatter'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -116,7 +116,7 @@ export class ZonedDateTimeFormatter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ZonedDateTimeFormatter_create_specific_short_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_specific_short_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), formatter instanceof DateTimeFormatter ? formatter.ffiValue : typeError('formatter', 'DateTimeFormatter'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -144,7 +144,7 @@ export class ZonedDateTimeFormatter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ZonedDateTimeFormatter_create_specific_short_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_specific_short_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), formatter instanceof DateTimeFormatter ? formatter.ffiValue : typeError('formatter', 'DateTimeFormatter'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -172,7 +172,7 @@ export class ZonedDateTimeFormatter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ZonedDateTimeFormatter_create_localized_offset_long_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_localized_offset_long_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), formatter instanceof DateTimeFormatter ? formatter.ffiValue : typeError('formatter', 'DateTimeFormatter'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -200,7 +200,7 @@ export class ZonedDateTimeFormatter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ZonedDateTimeFormatter_create_localized_offset_long_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_localized_offset_long_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), formatter instanceof DateTimeFormatter ? formatter.ffiValue : typeError('formatter', 'DateTimeFormatter'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -228,7 +228,7 @@ export class ZonedDateTimeFormatter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ZonedDateTimeFormatter_create_localized_offset_short_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_localized_offset_short_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), formatter instanceof DateTimeFormatter ? formatter.ffiValue : typeError('formatter', 'DateTimeFormatter'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -256,7 +256,7 @@ export class ZonedDateTimeFormatter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ZonedDateTimeFormatter_create_localized_offset_short_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_localized_offset_short_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), formatter instanceof DateTimeFormatter ? formatter.ffiValue : typeError('formatter', 'DateTimeFormatter'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -284,7 +284,7 @@ export class ZonedDateTimeFormatter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ZonedDateTimeFormatter_create_generic_long_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_generic_long_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), formatter instanceof DateTimeFormatter ? formatter.ffiValue : typeError('formatter', 'DateTimeFormatter'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -312,7 +312,7 @@ export class ZonedDateTimeFormatter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ZonedDateTimeFormatter_create_generic_long_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_generic_long_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), formatter instanceof DateTimeFormatter ? formatter.ffiValue : typeError('formatter', 'DateTimeFormatter'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -340,7 +340,7 @@ export class ZonedDateTimeFormatter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ZonedDateTimeFormatter_create_generic_short_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_generic_short_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), formatter instanceof DateTimeFormatter ? formatter.ffiValue : typeError('formatter', 'DateTimeFormatter'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -368,7 +368,7 @@ export class ZonedDateTimeFormatter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ZonedDateTimeFormatter_create_generic_short_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_generic_short_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), formatter instanceof DateTimeFormatter ? formatter.ffiValue : typeError('formatter', 'DateTimeFormatter'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -396,7 +396,7 @@ export class ZonedDateTimeFormatter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ZonedDateTimeFormatter_create_location_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_location_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), formatter instanceof DateTimeFormatter ? formatter.ffiValue : typeError('formatter', 'DateTimeFormatter'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -424,7 +424,7 @@ export class ZonedDateTimeFormatter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ZonedDateTimeFormatter_create_location_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_location_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), formatter instanceof DateTimeFormatter ? formatter.ffiValue : typeError('formatter', 'DateTimeFormatter'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -452,7 +452,7 @@ export class ZonedDateTimeFormatter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ZonedDateTimeFormatter_create_exemplar_city_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_exemplar_city_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), formatter instanceof DateTimeFormatter ? formatter.ffiValue : typeError('formatter', 'DateTimeFormatter'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -480,7 +480,7 @@ export class ZonedDateTimeFormatter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_ZonedDateTimeFormatter_create_exemplar_city_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_exemplar_city_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), formatter instanceof DateTimeFormatter ? formatter.ffiValue : typeError('formatter', 'DateTimeFormatter'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -505,7 +505,7 @@ export class ZonedDateTimeFormatter {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_ZonedDateTimeFormatter_format_iso_mv1(diplomatReceive.buffer, this.ffiValue, isoDate.ffiValue, time.ffiValue, zone.ffiValue, write.buffer);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_format_iso_mv1(diplomatReceive.buffer, this.ffiValue, isoDate instanceof IsoDate ? isoDate.ffiValue : typeError('isoDate', 'IsoDate'), time instanceof Time ? time.ffiValue : typeError('time', 'Time'), zone instanceof TimeZoneInfo ? zone.ffiValue : typeError('zone', 'TimeZoneInfo'), write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -531,7 +531,7 @@ export class ZonedDateTimeFormatter {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_ZonedDateTimeFormatter_format_same_calendar_mv1(diplomatReceive.buffer, this.ffiValue, date.ffiValue, time.ffiValue, zone.ffiValue, write.buffer);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_format_same_calendar_mv1(diplomatReceive.buffer, this.ffiValue, date instanceof Date ? date.ffiValue : typeError('date', 'Date'), time instanceof Time ? time.ffiValue : typeError('time', 'Time'), zone instanceof TimeZoneInfo ? zone.ffiValue : typeError('zone', 'TimeZoneInfo'), write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
