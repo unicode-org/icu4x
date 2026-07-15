@@ -57,7 +57,7 @@ impl<const N: usize> UnvalidatedTinyAsciiStr<N> {
     #[inline]
     /// Returns the empty string.
     pub const fn default() -> Self {
-        Self([0u8; N])
+        TinyAsciiStr::EMPTY.to_unvalidated()
     }
 }
 
