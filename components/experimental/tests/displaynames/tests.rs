@@ -386,7 +386,7 @@ fn test_concatenate() {
             }
         }
         if matches!(cas.display_type, DisplayType::Any | DisplayType::Dialect) {
-            let dname_standard_owned = LanguageIdentifierDisplayNameOwned::try_new(
+            let dname_standard_owned = LanguageIdentifierDisplayNameOwned::try_new_extended(
                 locale.clone().into(),
                 lang_id.clone(),
                 single_options,
@@ -396,7 +396,7 @@ fn test_concatenate() {
             check_language_name_borrowed(borrowed, cas);
         }
         if matches!(cas.display_type, DisplayType::Any | DisplayType::Menu) {
-            let dname_menu_owned = LanguageIdentifierDisplayNameOwned::try_new_menu(
+            let dname_menu_owned = LanguageIdentifierDisplayNameOwned::try_new_extended_menu(
                 locale.clone().into(),
                 lang_id,
                 single_options,
@@ -492,9 +492,12 @@ fn test_single_language_display_name_long() {
     options.language_display = Some(LanguageDisplay::Standard);
 
     let lang_id = langid!("zh-Hant-HK");
-    let lang_name =
-        LanguageIdentifierDisplayNameOwned::try_new_long(locale.clone().into(), lang_id, options)
-            .expect("Data should load successfully");
+    let lang_name = LanguageIdentifierDisplayNameOwned::try_new_extended_long(
+        locale.clone().into(),
+        lang_id,
+        options,
+    )
+    .expect("Data should load successfully");
 
     assert_try_writeable_eq!(
         lang_name.as_borrowed(),

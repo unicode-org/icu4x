@@ -38,10 +38,12 @@ where
     let mut menu_names = BTreeMap::new();
     for (key, value) in map.iter() {
         if key.menu.is_some() {
+            // Menu core|extension is handled in LocaleNamesLanguageMenu, and not in the zeromap-based struct.
             continue;
         }
         let val_str = value.as_str();
         if let Some(k) = filter_project(&key.subtag) {
+            // Old CLDR versions may contain trivial entries, so filter
             if k == *val_str {
                 continue;
             }
@@ -60,8 +62,11 @@ where
                 }
                 Some(alt) => {
                     if alt == Alt::Unknown {
+                        // Discard unknown alts
                     } else if ignored_alts.contains(&alt) {
+                        // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
                     } else {
+                        // TODO(#8011): Support standalone display names.
                         log::warn!("Unhandled alt variant for {}: {:?}", log_context, alt);
                     }
                 }

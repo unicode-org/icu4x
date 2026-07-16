@@ -213,14 +213,6 @@ icu_provider::data_marker!(
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_region",
 );
-icu_provider::data_marker!(
-    /// Data marker for extended region display names.
-    LocaleNamesRegionExtendedMediumV1,
-    "locale/names/region/extended/medium/v1",
-    VarZeroCow<'static, str>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "locale_names_region",
-);
 
 icu_provider::data_marker!(
     /// Data marker for minimal short region display names.
@@ -273,14 +265,6 @@ icu_provider::data_marker!(
 );
 
 icu_provider::data_marker!(
-    /// Data marker for minimal short language display names.
-    LocaleNamesLanguageMinimalShortV1,
-    "locale/names/language/minimal/short/v1",
-    VarZeroCow<'static, str>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "locale_names_language",
-);
-icu_provider::data_marker!(
     /// Data marker for core short language display names.
     LocaleNamesLanguageCoreShortV1,
     "locale/names/language/core/short/v1",
@@ -298,14 +282,6 @@ icu_provider::data_marker!(
 );
 
 icu_provider::data_marker!(
-    /// Data marker for minimal long language display names.
-    LocaleNamesLanguageMinimalLongV1,
-    "locale/names/language/minimal/long/v1",
-    VarZeroCow<'static, str>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "locale_names_language",
-);
-icu_provider::data_marker!(
     /// Data marker for core long language display names.
     LocaleNamesLanguageCoreLongV1,
     "locale/names/language/core/long/v1",
@@ -322,14 +298,6 @@ icu_provider::data_marker!(
     attributes_domain = "locale_names_language",
 );
 
-icu_provider::data_marker!(
-    /// Data marker for minimal menu-medium language display names.
-    LocaleNamesLanguageMenuMinimalMediumV1,
-    "locale/names/language/menu/minimal/medium/v1",
-    VarZeroCow<'static, MenuNamePartsULE>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "locale_names_language",
-);
 icu_provider::data_marker!(
     /// Data marker for core menu-medium language display names.
     LocaleNamesLanguageMenuCoreMediumV1,
@@ -373,22 +341,6 @@ icu_provider::data_marker!(
 );
 
 icu_provider::data_marker!(
-    /// Data marker for minimal short script display names.
-    LocaleNamesScriptMinimalShortV1,
-    "locale/names/script/minimal/short/v1",
-    VarZeroCow<'static, str>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "locale_names_script",
-);
-icu_provider::data_marker!(
-    /// Data marker for core short script display names.
-    LocaleNamesScriptCoreShortV1,
-    "locale/names/script/core/short/v1",
-    VarZeroCow<'static, str>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "locale_names_script",
-);
-icu_provider::data_marker!(
     /// Data marker for extended short script display names.
     LocaleNamesScriptExtendedShortV1,
     "locale/names/script/extended/short/v1",
@@ -397,22 +349,6 @@ icu_provider::data_marker!(
     attributes_domain = "locale_names_script",
 );
 
-icu_provider::data_marker!(
-    /// Data marker for minimal variant display names.
-    LocaleNamesVariantMinimalMediumV1,
-    "locale/names/variant/minimal/medium/v1",
-    VarZeroCow<'static, str>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "locale_names_variant",
-);
-icu_provider::data_marker!(
-    /// Data marker for core variant display names.
-    LocaleNamesVariantCoreMediumV1,
-    "locale/names/variant/core/medium/v1",
-    VarZeroCow<'static, str>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "locale_names_variant",
-);
 icu_provider::data_marker!(
     /// Data marker for extended variant display names.
     LocaleNamesVariantExtendedMediumV1,
@@ -483,7 +419,7 @@ impl LocaleNamesScriptCoreMediumV1 {
     }
 }
 
-impl LocaleNamesVariantCoreMediumV1 {
+impl LocaleNamesVariantExtendedMediumV1 {
     /// Helper to create data marker attributes from subtag.
     #[inline]
     pub(crate) fn make_attributes(subtag: &Variant) -> &DataMarkerAttributes {
@@ -506,11 +442,6 @@ macro_rules! make_subtag_attributes_impl {
 
 make_subtag_attributes_impl!(
     LocaleNamesRegionMinimalMediumV1,
-    LocaleNamesRegionCoreMediumV1,
-    Region
-);
-make_subtag_attributes_impl!(
-    LocaleNamesRegionExtendedMediumV1,
     LocaleNamesRegionCoreMediumV1,
     Region
 );
@@ -541,28 +472,7 @@ make_subtag_attributes_impl!(
     Script
 );
 make_subtag_attributes_impl!(
-    LocaleNamesScriptMinimalShortV1,
-    LocaleNamesScriptCoreMediumV1,
-    Script
-);
-make_subtag_attributes_impl!(
-    LocaleNamesScriptCoreShortV1,
-    LocaleNamesScriptCoreMediumV1,
-    Script
-);
-make_subtag_attributes_impl!(
     LocaleNamesScriptExtendedShortV1,
     LocaleNamesScriptCoreMediumV1,
     Script
-);
-
-make_subtag_attributes_impl!(
-    LocaleNamesVariantMinimalMediumV1,
-    LocaleNamesVariantCoreMediumV1,
-    Variant
-);
-make_subtag_attributes_impl!(
-    LocaleNamesVariantExtendedMediumV1,
-    LocaleNamesVariantCoreMediumV1,
-    Variant
 );

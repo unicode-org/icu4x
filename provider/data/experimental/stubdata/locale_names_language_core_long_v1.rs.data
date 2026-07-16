@@ -8,7 +8,7 @@
 /// * `icu_provider`
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __impl_locale_names_language_long_v1 {
+macro_rules! __impl_locale_names_language_core_long_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.88"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
@@ -18,42 +18,18 @@ macro_rules! __impl_locale_names_language_long_v1 {
                 Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::experimental::displaynames::provider::LocaleNamesLanguageCoreLongV1 as icu_provider::DataMarker>::INFO, req))
             }
         }
-        impl icu_provider::DataProvider<icu::experimental::displaynames::provider::LocaleNamesLanguageMinimalLongV1> for $provider {
-            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::displaynames::provider::LocaleNamesLanguageMinimalLongV1>, icu_provider::DataError> {
-                let resp: icu_provider::DataResponse<icu::experimental::displaynames::provider::LocaleNamesLanguageCoreLongV1> = self.load(req)?;
-                Ok(resp.cast())
-            }
-        }
-        impl icu_provider::DataProvider<icu::experimental::displaynames::provider::LocaleNamesLanguageExtendedLongV1> for $provider {
-            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::displaynames::provider::LocaleNamesLanguageExtendedLongV1>, icu_provider::DataError> {
-                let resp: icu_provider::DataResponse<icu::experimental::displaynames::provider::LocaleNamesLanguageCoreLongV1> = self.load(req)?;
-                Ok(resp.cast())
-            }
-        }
-
     };
     ($ provider : ty , ITER) => {
-        __impl_locale_names_language_long_v1!($provider);
+        __impl_locale_names_language_core_long_v1!($provider);
         #[clippy::msrv = "1.88"]
         impl icu_provider::IterableDataProvider<icu::experimental::displaynames::provider::LocaleNamesLanguageCoreLongV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(Default::default())
             }
         }
-        impl icu_provider::IterableDataProvider<icu::experimental::displaynames::provider::LocaleNamesLanguageMinimalLongV1> for $provider {
-            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
-                icu_provider::IterableDataProvider::<icu::experimental::displaynames::provider::LocaleNamesLanguageCoreLongV1>::iter_ids(self)
-            }
-        }
-        impl icu_provider::IterableDataProvider<icu::experimental::displaynames::provider::LocaleNamesLanguageExtendedLongV1> for $provider {
-            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
-                icu_provider::IterableDataProvider::<icu::experimental::displaynames::provider::LocaleNamesLanguageCoreLongV1>::iter_ids(self)
-            }
-        }
-
     };
     ($ provider : ty , DRY) => {
-        __impl_locale_names_language_long_v1!($provider);
+        __impl_locale_names_language_core_long_v1!($provider);
         #[clippy::msrv = "1.88"]
         impl icu_provider::DryDataProvider<icu::experimental::displaynames::provider::LocaleNamesLanguageCoreLongV1> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
@@ -62,7 +38,7 @@ macro_rules! __impl_locale_names_language_long_v1 {
         }
     };
     ($ provider : ty , DRY , ITER) => {
-        __impl_locale_names_language_long_v1!($provider);
+        __impl_locale_names_language_core_long_v1!($provider);
         #[clippy::msrv = "1.88"]
         impl icu_provider::DryDataProvider<icu::experimental::displaynames::provider::LocaleNamesLanguageCoreLongV1> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
@@ -78,11 +54,4 @@ macro_rules! __impl_locale_names_language_long_v1 {
     };
 }
 #[doc(inline)]
-pub use __impl_locale_names_language_long_v1 as impl_locale_names_language_long_v1;
-
-#[doc(inline)]
-pub use __impl_locale_names_language_long_v1 as impl_locale_names_language_minimal_long_v1;
-#[doc(inline)]
-pub use __impl_locale_names_language_long_v1 as impl_locale_names_language_core_long_v1;
-#[doc(inline)]
-pub use __impl_locale_names_language_long_v1 as impl_locale_names_language_extended_long_v1;
+pub use __impl_locale_names_language_core_long_v1 as impl_locale_names_language_core_long_v1;

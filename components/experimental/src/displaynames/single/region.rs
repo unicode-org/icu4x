@@ -8,9 +8,8 @@ use super::{
 };
 use crate::displaynames::DisplayNamesPreferences;
 use crate::displaynames::provider::{
-    LocaleNamesRegionCoreMediumV1, LocaleNamesRegionCoreShortV1, LocaleNamesRegionExtendedMediumV1,
-    LocaleNamesRegionExtendedShortV1, LocaleNamesRegionMinimalMediumV1,
-    LocaleNamesRegionMinimalShortV1,
+    LocaleNamesRegionCoreMediumV1, LocaleNamesRegionCoreShortV1, LocaleNamesRegionExtendedShortV1,
+    LocaleNamesRegionMinimalMediumV1, LocaleNamesRegionMinimalShortV1,
 };
 use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
@@ -75,6 +74,19 @@ impl RegionDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
         /// Loads the minimal region display name for a given region and locale using compiled data.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::experimental::displaynames::single::RegionDisplayNameOwned;
+        /// use icu::locale::{locale, subtags::region};
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let display_name = RegionDisplayNameOwned::try_new_minimal(locale!("en").into(), region!("US"))
+        ///     .expect("Data should load successfully");
+        ///
+        /// assert_writeable_eq!(display_name, "United States");
+        /// ```
         functions: [
             try_new_minimal,
             try_new_minimal_with_buffer_provider,
@@ -207,6 +219,19 @@ impl RegionDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
         /// Loads the extended region display name for a given region and locale using compiled data.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::experimental::displaynames::single::RegionDisplayNameOwned;
+        /// use icu::locale::{locale, subtags::region};
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let display_name = RegionDisplayNameOwned::try_new_extended(locale!("en").into(), region!("US"))
+        ///     .expect("Data should load successfully");
+        ///
+        /// assert_writeable_eq!(display_name, "United States");
+        /// ```
         functions: [
             try_new_extended,
             try_new_extended_with_buffer_provider,
@@ -223,17 +248,15 @@ impl RegionDisplayNameOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesRegionExtendedMediumV1>
             + DataProvider<LocaleNamesRegionCoreMediumV1>
             + DataProvider<LocaleNamesRegionMinimalMediumV1>,
     {
-        let attrs = LocaleNamesRegionExtendedMediumV1::make_attributes(&region);
+        let attrs = LocaleNamesRegionCoreMediumV1::make_attributes(&region);
         try_load_markers!(
             provider,
             prefs,
             attrs,
             [
-                LocaleNamesRegionExtendedMediumV1,
                 LocaleNamesRegionCoreMediumV1,
                 LocaleNamesRegionMinimalMediumV1
             ]
@@ -246,6 +269,19 @@ impl RegionDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
         /// Loads the extended short region display name for a given region and locale using compiled data.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::experimental::displaynames::single::RegionDisplayNameOwned;
+        /// use icu::locale::{locale, subtags::region};
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let display_name = RegionDisplayNameOwned::try_new_extended_short(locale!("en").into(), region!("US"))
+        ///     .expect("Data should load successfully");
+        ///
+        /// assert_writeable_eq!(display_name, "US");
+        /// ```
         functions: [
             try_new_extended_short,
             try_new_extended_short_with_buffer_provider,
@@ -265,7 +301,6 @@ impl RegionDisplayNameOwned {
             + DataProvider<LocaleNamesRegionExtendedShortV1>
             + DataProvider<LocaleNamesRegionCoreShortV1>
             + DataProvider<LocaleNamesRegionMinimalShortV1>
-            + DataProvider<LocaleNamesRegionExtendedMediumV1>
             + DataProvider<LocaleNamesRegionCoreMediumV1>
             + DataProvider<LocaleNamesRegionMinimalMediumV1>,
     {
@@ -278,7 +313,6 @@ impl RegionDisplayNameOwned {
                 LocaleNamesRegionExtendedShortV1,
                 LocaleNamesRegionCoreShortV1,
                 LocaleNamesRegionMinimalShortV1,
-                LocaleNamesRegionExtendedMediumV1,
                 LocaleNamesRegionCoreMediumV1,
                 LocaleNamesRegionMinimalMediumV1
             ]

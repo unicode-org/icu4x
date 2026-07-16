@@ -8,9 +8,8 @@ use super::{
 };
 use crate::displaynames::DisplayNamesPreferences;
 use crate::displaynames::provider::{
-    LocaleNamesScriptCoreMediumV1, LocaleNamesScriptCoreShortV1, LocaleNamesScriptExtendedMediumV1,
+    LocaleNamesScriptCoreMediumV1, LocaleNamesScriptExtendedMediumV1,
     LocaleNamesScriptExtendedShortV1, LocaleNamesScriptMinimalMediumV1,
-    LocaleNamesScriptMinimalShortV1,
 };
 use icu_locale_core::subtags::Script;
 use icu_provider::prelude::*;
@@ -24,10 +23,10 @@ use icu_provider::prelude::*;
 /// use icu::locale::{locale, subtags::script};
 /// use writeable::assert_writeable_eq;
 ///
-/// let display_name = ScriptDisplayNameOwned::try_new(locale!("en").into(), script!("Xsux"))
+/// let display_name = ScriptDisplayNameOwned::try_new(locale!("en").into(), script!("Latn"))
 ///     .expect("Data should load successfully");
 ///
-/// assert_writeable_eq!(display_name, "Sumero-Akkadian Cuneiform");
+/// assert_writeable_eq!(display_name, "Latin");
 /// ```
 #[derive(Debug)]
 pub struct ScriptDisplayNameOwned {
@@ -73,6 +72,18 @@ impl ScriptDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
         /// Loads the minimal script display name for a given script and locale using compiled data.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::experimental::displaynames::single::ScriptDisplayNameOwned;
+        /// use icu::locale::{locale, subtags::script};
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// // Minimal script names currently contain no data in CLDR for en
+        /// let display_name = ScriptDisplayNameOwned::try_new_minimal(locale!("en").into(), script!("Latn"));
+        /// assert!(display_name.is_err());
+        /// ```
         functions: [
             try_new_minimal,
             try_new_minimal_with_buffer_provider,
@@ -100,43 +111,6 @@ impl ScriptDisplayNameOwned {
 
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
-        /// Loads the minimal short script display name for a given script and locale using compiled data.
-        functions: [
-            try_new_minimal_short,
-            try_new_minimal_short_with_buffer_provider,
-            try_new_minimal_short_unstable,
-            Self
-        ]
-    );
-
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_minimal_short)]
-    pub fn try_new_minimal_short_unstable<D>(
-        provider: &D,
-        prefs: DisplayNamesPreferences,
-        script: Script,
-    ) -> Result<Self, DataError>
-    where
-        D: ?Sized
-            + DataProvider<LocaleNamesScriptMinimalShortV1>
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>,
-    {
-        let attrs = LocaleNamesScriptMinimalShortV1::make_attributes(&script);
-        try_load_markers!(
-            provider,
-            prefs,
-            attrs,
-            [
-                LocaleNamesScriptMinimalShortV1,
-                LocaleNamesScriptMinimalMediumV1
-            ]
-        )
-        .map(|payload| Self {
-            payload: payload.cast(),
-        })
-    }
-
-    icu_provider::gen_buffer_data_constructors!(
-        (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
         /// Loads the short script display name for a given script and locale using compiled data.
         ///
         /// Falls back to the long name if the short name is not available.
@@ -153,14 +127,14 @@ impl ScriptDisplayNameOwned {
         /// let prefs: DisplayNamesPreferences = locale!("en-US").into();
         ///
         /// // "Xsux" has a short display name in en-US
-        /// let display_name_short = ScriptDisplayNameOwned::try_new_short(prefs, script!("Xsux"))
+        /// let display_name_short = ScriptDisplayNameOwned::try_new_extended_short(prefs, script!("Xsux"))
         ///     .expect("Data should load successfully");
         /// assert_writeable_eq!(display_name_short, "S-A Cuneiform");
         ///
-        /// // "Deva" does not have a short display name, so it falls back to the long display name
-        /// let display_name_long = ScriptDisplayNameOwned::try_new_short(prefs, script!("Deva"))
+        /// // "Latn" does not have a short display name, so it falls back to the long display name
+        /// let display_name_long = ScriptDisplayNameOwned::try_new_short(prefs, script!("Latn"))
         ///     .expect("Data should load successfully");
-        /// assert_writeable_eq!(display_name_long, "Devanagari");
+        /// assert_writeable_eq!(display_name_long, "Latin");
         /// ```
         functions: [
             try_new_short,
@@ -178,19 +152,15 @@ impl ScriptDisplayNameOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesScriptCoreShortV1>
-            + DataProvider<LocaleNamesScriptMinimalShortV1>
             + DataProvider<LocaleNamesScriptCoreMediumV1>
             + DataProvider<LocaleNamesScriptMinimalMediumV1>,
     {
-        let attrs = LocaleNamesScriptCoreShortV1::make_attributes(&script);
+        let attrs = LocaleNamesScriptCoreMediumV1::make_attributes(&script);
         try_load_markers!(
             provider,
             prefs,
             attrs,
             [
-                LocaleNamesScriptCoreShortV1,
-                LocaleNamesScriptMinimalShortV1,
                 LocaleNamesScriptCoreMediumV1,
                 LocaleNamesScriptMinimalMediumV1
             ]
@@ -203,6 +173,19 @@ impl ScriptDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
         /// Loads the extended script display name for a given script and locale using compiled data.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::experimental::displaynames::single::ScriptDisplayNameOwned;
+        /// use icu::locale::{locale, subtags::script};
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let display_name = ScriptDisplayNameOwned::try_new_extended(locale!("en").into(), script!("Latn"))
+        ///     .expect("Data should load successfully");
+        ///
+        /// assert_writeable_eq!(display_name, "Latin");
+        /// ```
         functions: [
             try_new_extended,
             try_new_extended_with_buffer_provider,
@@ -242,6 +225,19 @@ impl ScriptDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
         /// Loads the extended short script display name for a given script and locale using compiled data.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::experimental::displaynames::single::ScriptDisplayNameOwned;
+        /// use icu::locale::{locale, subtags::script};
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let display_name = ScriptDisplayNameOwned::try_new_extended_short(locale!("en").into(), script!("Xsux"))
+        ///     .expect("Data should load successfully");
+        ///
+        /// assert_writeable_eq!(display_name, "S-A Cuneiform");
+        /// ```
         functions: [
             try_new_extended_short,
             try_new_extended_short_with_buffer_provider,
@@ -259,8 +255,6 @@ impl ScriptDisplayNameOwned {
     where
         D: ?Sized
             + DataProvider<LocaleNamesScriptExtendedShortV1>
-            + DataProvider<LocaleNamesScriptCoreShortV1>
-            + DataProvider<LocaleNamesScriptMinimalShortV1>
             + DataProvider<LocaleNamesScriptExtendedMediumV1>
             + DataProvider<LocaleNamesScriptCoreMediumV1>
             + DataProvider<LocaleNamesScriptMinimalMediumV1>,
@@ -272,8 +266,6 @@ impl ScriptDisplayNameOwned {
             attrs,
             [
                 LocaleNamesScriptExtendedShortV1,
-                LocaleNamesScriptCoreShortV1,
-                LocaleNamesScriptMinimalShortV1,
                 LocaleNamesScriptExtendedMediumV1,
                 LocaleNamesScriptCoreMediumV1,
                 LocaleNamesScriptMinimalMediumV1

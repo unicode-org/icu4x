@@ -59,24 +59,6 @@ crate::displaynames::impl_displaynames_v1!(
 );
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesScriptMinimalShortV1,
-    Script,
-    cldr_serde::displaynames::script::Resource,
-    "scripts.json",
-    scripts,
-    Some(Alt::Short),
-    CoverageTier::Minimal,
-);
-crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesScriptCoreShortV1,
-    Script,
-    cldr_serde::displaynames::script::Resource,
-    "scripts.json",
-    scripts,
-    Some(Alt::Short),
-    CoverageTier::Core,
-);
-crate::displaynames::impl_displaynames_v1!(
     LocaleNamesScriptExtendedShortV1,
     Script,
     cldr_serde::displaynames::script::Resource,
@@ -161,7 +143,7 @@ mod tests {
     fn test_locale_names_script_medium() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesScriptCoreMediumV1> = provider
+        let data: DataPayload<LocaleNamesScriptMinimalMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("Latn").unwrap(),

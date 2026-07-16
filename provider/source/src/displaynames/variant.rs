@@ -31,24 +31,6 @@ impl DataProvider<VariantDisplayNamesV1> for SourceDataProvider {
 }
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesVariantMinimalMediumV1,
-    Variant,
-    cldr_serde::displaynames::variant::Resource,
-    "variants.json",
-    variants,
-    None,
-    CoverageTier::Minimal,
-);
-crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesVariantCoreMediumV1,
-    Variant,
-    cldr_serde::displaynames::variant::Resource,
-    "variants.json",
-    variants,
-    None,
-    CoverageTier::Core,
-);
-crate::displaynames::impl_displaynames_v1!(
     LocaleNamesVariantExtendedMediumV1,
     Variant,
     cldr_serde::displaynames::variant::Resource,
@@ -60,6 +42,7 @@ crate::displaynames::impl_displaynames_v1!(
 
 crate::displaynames::impl_displaynames_legacy_iter_v1!(VariantDisplayNamesV1, "variants.json");
 
+// TODO: Support alt variants for variant display names.
 impl From<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNames<'static> {
     fn from(other: &cldr_serde::displaynames::variant::Resource) -> Self {
         let extracted = extract_names_for_zeromap_struct(
@@ -125,5 +108,3 @@ mod tests {
         assert_eq!(&**data.get(), "Computer");
     }
 }
-
-// TODO: Support alt variants for variant display names.

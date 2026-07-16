@@ -50,15 +50,6 @@ crate::displaynames::impl_displaynames_v1!(
     None,
     CoverageTier::Core,
 );
-crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesRegionExtendedMediumV1,
-    Region,
-    cldr_serde::displaynames::region::Resource,
-    "territories.json",
-    regions,
-    None,
-    CoverageTier::Extended,
-);
 
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesRegionMinimalShortV1,
@@ -160,7 +151,7 @@ mod tests {
     fn test_locale_names_region_medium() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesRegionCoreMediumV1> = provider
+        let data: DataPayload<LocaleNamesRegionMinimalMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("AE").unwrap(),
@@ -178,7 +169,7 @@ mod tests {
     fn test_locale_names_region_short() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesRegionCoreShortV1> = provider
+        let data: DataPayload<LocaleNamesRegionMinimalShortV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("GB").unwrap(),

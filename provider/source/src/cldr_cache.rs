@@ -273,19 +273,29 @@ impl CldrCache {
         locale: &DataLocale,
         xpath: &str,
     ) -> Result<CoverageTier, DataError> {
-        let locale_path = format!("cldr-misc-full/coverageByXPath/{locale}.json");
-        if self.serde_cache.file_exists(&locale_path)? {
-            let resource: &CoverageByXPathResource =
-                self.serde_cache.read_and_parse_json(&locale_path)?;
-            let locale_str = locale.to_string();
-            let levels = resource.coverage_by_xpath.get(&locale_str);
-            if let Some(levels) = levels {
-                if levels.basic.contains(xpath) || levels.core.contains(xpath) {
-                    return Ok(CoverageTier::Minimal);
-                } else if levels.moderate.contains(xpath) {
-                    return Ok(CoverageTier::Core);
-                } else if levels.modern.contains(xpath) {
-                    return Ok(CoverageTier::Extended);
+        let full_str = locale.to_string();
+        let base_str = full_str.split('-').next().unwrap_or("").to_string();
+        let candidate_locales = [full_str, base_str];
+        for loc_str in &candidate_locales {
+            if loc_str.is_empty() {
+                continue;
+            }
+            let locale_path = format!("cldr-misc-full/coverageByXPath/{loc_str}.json");
+            if self.serde_cache.file_exists(&locale_path)? {
+                let resource: &CoverageByXPathResource =
+                    self.serde_cache.read_and_parse_json(&locale_path)?;
+                let levels = resource
+                    .coverage_by_xpath
+                    .get(loc_str.as_str())
+                    .or_else(|| resource.coverage_by_xpath.values().next());
+                if let Some(levels) = levels {
+                    if levels.basic.contains(xpath) || levels.core.contains(xpath) {
+                        return Ok(CoverageTier::Minimal);
+                    } else if levels.moderate.contains(xpath) {
+                        return Ok(CoverageTier::Core);
+                    } else if levels.modern.contains(xpath) {
+                        return Ok(CoverageTier::Extended);
+                    }
                 }
             }
         }
@@ -302,6 +312,22 @@ impl CldrCache {
                 } else if levels.modern.contains(xpath) {
                     return Ok(CoverageTier::Extended);
                 }
+            }
+        }
+
+        // TODO: Switch back to reading coverageByXPath.json exclusively from published CLDR data once available.
+        static IN_REPO_COVERAGE_BY_XPATH: OnceLock<CoverageByXPathResource> = OnceLock::new();
+        let in_repo = IN_REPO_COVERAGE_BY_XPATH.get_or_init(|| {
+            serde_json::from_str(include_str!("../data/cldr-misc-full/coverageByXPath.json"))
+                .expect("in-repo coverageByXPath.json should be valid JSON")
+        });
+        if let Some(levels) = in_repo.coverage_by_xpath.get("root") {
+            if levels.basic.contains(xpath) || levels.core.contains(xpath) {
+                return Ok(CoverageTier::Minimal);
+            } else if levels.moderate.contains(xpath) {
+                return Ok(CoverageTier::Core);
+            } else if levels.modern.contains(xpath) {
+                return Ok(CoverageTier::Extended);
             }
         }
 
