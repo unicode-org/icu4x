@@ -357,6 +357,8 @@ impl LanguageIdentifierDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the minimal language display name for a given language identifier and locale using compiled data.
+        ///
+        /// Minimal constructors retain data only for high-frequency subtags to minimize data size.
         functions: [
             try_new_minimal,
             try_new_minimal_with_buffer_provider,
@@ -417,7 +419,7 @@ impl LanguageIdentifierDisplayNameOwned {
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the short language display name for a given language identifier and locale using compiled data.
         ///
-        /// Falls back to the medium name if the short name is not available.
+        /// Falls back to default (medium) length if a short name is not available.
         ///
         /// # Examples
         ///
@@ -528,7 +530,7 @@ impl LanguageIdentifierDisplayNameOwned {
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the long language display name for a given language identifier and locale using compiled data.
         ///
-        /// Falls back to the medium name if the long name is not available.
+        /// Falls back to default (medium) length if a long name is not available.
         ///
         /// # Examples
         ///
@@ -717,6 +719,8 @@ impl LanguageIdentifierDisplayNameOwned {
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the short menu-style language display name for a given language identifier and locale using compiled data.
         ///
+        /// Falls back to default (medium) length if a short name is not available.
+        ///
         /// # Examples
         ///
         /// ```
@@ -800,6 +804,8 @@ impl LanguageIdentifierDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the extended language display name for a given language identifier and locale using compiled data.
+        ///
+        /// Extended constructors include additional display name coverage for rare and uncommon subtags.
         functions: [
             try_new_extended,
             try_new_extended_with_buffer_provider,
@@ -872,6 +878,10 @@ impl LanguageIdentifierDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the extended short language display name for a given language identifier and locale using compiled data.
+        ///
+        /// Extended constructors include additional display name coverage for rare and uncommon subtags.
+        ///
+        /// Falls back to default (medium) length if a short name is not available.
         functions: [
             try_new_extended_short,
             try_new_extended_short_with_buffer_provider,
@@ -955,6 +965,10 @@ impl LanguageIdentifierDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the extended long language display name for a given language identifier and locale using compiled data.
+        ///
+        /// Extended constructors include additional display name coverage for rare and uncommon subtags.
+        ///
+        /// Falls back to default (medium) length if a long name is not available.
         functions: [
             try_new_extended_long,
             try_new_extended_long_with_buffer_provider,
@@ -1029,7 +1043,9 @@ impl LanguageIdentifierDisplayNameOwned {
 
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
-        /// Loads the menu-style language display name for a given language identifier and locale using compiled data with extended coverage.
+        /// Loads the menu-style language display name for a given language identifier and locale using compiled data.
+        ///
+        /// Extended constructors include additional display name coverage for rare and uncommon subtags.
         ///
         /// # Examples
         ///
@@ -1116,7 +1132,11 @@ impl LanguageIdentifierDisplayNameOwned {
 
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
-        /// Loads the short menu-style language display name for a given language identifier and locale using compiled data with extended coverage.
+        /// Loads the short menu-style language display name for a given language identifier and locale using compiled data.
+        ///
+        /// Extended constructors include additional display name coverage for rare and uncommon subtags.
+        ///
+        /// Falls back to default (medium) length if a short name is not available.
         ///
         /// # Examples
         ///

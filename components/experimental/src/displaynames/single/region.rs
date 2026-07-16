@@ -69,9 +69,7 @@ pub struct RegionDisplayNameOwned {
 impl RegionDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
-        /// Loads the core medium region display name for a given region and locale using compiled data.
-        ///
-        /// Falls back to minimal medium if core medium is not available.
+        /// Loads the region display name for a given region and locale using compiled data.
         functions: [
             try_new,
             try_new_with_buffer_provider,
@@ -107,6 +105,8 @@ impl RegionDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
         /// Loads the minimal region display name for a given region and locale using compiled data.
+        ///
+        /// Minimal constructors retain data only for high-frequency subtags to minimize data size.
         ///
         /// # Examples
         ///
@@ -149,7 +149,9 @@ impl RegionDisplayNameOwned {
         (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
         /// Loads the minimal short region display name for a given region and locale using compiled data.
         ///
-        /// Falls back to minimal medium if minimal short is not available.
+        /// Minimal constructors retain data only for high-frequency subtags to minimize data size.
+        ///
+        /// Falls back to default (medium) length if a short name is not available.
         functions: [
             try_new_minimal_short,
             try_new_minimal_short_with_buffer_provider,
@@ -188,7 +190,7 @@ impl RegionDisplayNameOwned {
         (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
         /// Loads the short region display name for a given region and locale using compiled data.
         ///
-        /// Cascades through fallback down to minimal medium if short is not available.
+        /// Falls back to default (medium) length if a short name is not available.
         ///
         /// # Example
         ///
@@ -252,6 +254,10 @@ impl RegionDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
         /// Loads the extended short region display name for a given region and locale using compiled data.
+        ///
+        /// Extended constructors include additional display name coverage for rare and uncommon subtags.
+        ///
+        /// Falls back to default (medium) length if a short name is not available.
         ///
         /// # Examples
         ///

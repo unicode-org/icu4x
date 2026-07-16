@@ -65,7 +65,7 @@ pub struct ScriptDisplayNameOwned {
 impl ScriptDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
-        /// Loads the long script display name for a given script and locale using compiled data.
+        /// Loads the script display name for a given script and locale using compiled data.
         functions: [
             try_new,
             try_new_with_buffer_provider,
@@ -101,6 +101,8 @@ impl ScriptDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
         /// Loads the minimal script display name for a given script and locale using compiled data.
+        ///
+        /// Minimal constructors retain data only for high-frequency subtags to minimize data size.
         ///
         /// # Examples
         ///
@@ -141,6 +143,8 @@ impl ScriptDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
         /// Loads the extended script display name for a given script and locale using compiled data.
+        ///
+        /// Extended constructors include additional display name coverage for rare and uncommon subtags.
         ///
         /// # Examples
         ///
@@ -193,6 +197,10 @@ impl ScriptDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
         /// Loads the extended short script display name for a given script and locale using compiled data.
+        ///
+        /// Extended constructors include additional display name coverage for rare and uncommon subtags.
+        ///
+        /// Falls back to default (medium) length if a short name is not available.
         ///
         /// # Examples
         ///

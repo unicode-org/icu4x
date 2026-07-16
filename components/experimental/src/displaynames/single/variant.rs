@@ -50,6 +50,8 @@ impl VariantDisplayNameOwned {
         (prefs: DisplayNamesPreferences, variant: Variant) -> result: Result<Self, DataError>,
         /// Loads the extended variant display name for a given variant and locale using compiled data.
         ///
+        /// Extended constructors include additional display name coverage for rare and uncommon subtags.
+        ///
         /// # Examples
         ///
         /// ```
