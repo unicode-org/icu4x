@@ -26,16 +26,6 @@ type UnvalidatedScript = UnvalidatedTinyAsciiStr<4>;
 type UnvalidatedLocale = PotentialUtf8;
 type UnvalidatedVariant = UnvalidatedTinyAsciiStr<8>;
 
-#[cfg(feature = "compiled_data")]
-/// Baked data
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
-/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
-/// </div>
-pub use crate::provider::Baked;
-
 icu_provider::data_marker!(
     /// `LocaleDisplayNamesV1`
     LocaleDisplayNamesV1,
