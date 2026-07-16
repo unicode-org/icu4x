@@ -16,16 +16,16 @@ use icu_provider::prelude::*;
 
 macro_rules! table_row {
     (try_new_minimal) => {
-        "| [`try_new_minimal`](Self::try_new_minimal) | \"United States\" | ❌ | ❌ |"
+        "| [`try_new_minimal`](Self::try_new_minimal) | \"United States\" | ❌ |"
     };
     (try_new_minimal_short) => {
-        "| [`try_new_minimal_short`](Self::try_new_minimal_short) | \"US\" | ❌ | ❌ |"
+        "| [`try_new_minimal_short`](Self::try_new_minimal_short) | \"US\" | ❌ |"
     };
     (try_new) => {
-        "| [`try_new`](Self::try_new) | \"United States\" | \"France\" | \"대한민국\" |"
+        "| [`try_new`](Self::try_new) | \"United States\" | \"France\" |"
     };
     (try_new_short) => {
-        "| [`try_new_short`](Self::try_new_short) | \"US\" | \"France\" | \"대한민국\" |"
+        "| [`try_new_short`](Self::try_new_short) | \"US\" | \"France\" |"
     };
 }
 
@@ -36,8 +36,8 @@ macro_rules! table_row {
 /// There are several constructors, each of which links different data and serve
 /// different use cases. The behavior is illustrated in the table below.
 ///
-/// | Constructor | `US` | `FR` | `KR` (`ko`) |
-/// | :--- | :--- | :--- | :--- |
+/// | Constructor | `US` | `FR` |
+/// | :--- | :--- | :--- |
 #[doc = concat!(table_row!(try_new_minimal), "\n")]
 #[doc = concat!(table_row!(try_new_minimal_short), "\n")]
 #[doc = concat!(table_row!(try_new), "\n")]
@@ -276,7 +276,6 @@ mod tests {
     #[test]
     fn test_region_display_name_owned_table() {
         let prefs_en = DisplayNamesPreferences::from(locale!("en"));
-        let prefs_ko = DisplayNamesPreferences::from(locale!("ko"));
 
         let get_row = |f: fn(
             DisplayNamesPreferences,
@@ -288,10 +287,6 @@ mod tests {
                     Err(_) => "❌".to_string(),
                 },
                 match f(prefs_en, region!("FR")) {
-                    Ok(name) => format!("\"{}\"", name.write_to_string()),
-                    Err(_) => "❌".to_string(),
-                },
-                match f(prefs_ko, region!("KR")) {
                     Ok(name) => format!("\"{}\"", name.write_to_string()),
                     Err(_) => "❌".to_string(),
                 },
