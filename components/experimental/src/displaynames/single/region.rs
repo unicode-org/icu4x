@@ -106,7 +106,8 @@ impl RegionDisplayNameOwned {
         (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
         /// Loads the minimal region display name for a given region and locale using compiled data.
         ///
-        /// Minimal constructors retain data only for high-frequency subtags to minimize data size.
+        /// The `minimal` constructor links an extremely limited amount of data: for example,
+        /// only those regions where the formatting locale is spoken.
         ///
         /// # Examples
         ///
@@ -149,7 +150,8 @@ impl RegionDisplayNameOwned {
         (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
         /// Loads the minimal short region display name for a given region and locale using compiled data.
         ///
-        /// Minimal constructors retain data only for high-frequency subtags to minimize data size.
+        /// The `minimal` constructor links an extremely limited amount of data: for example,
+        /// only those regions where the formatting locale is spoken.
         ///
         /// Falls back to default (medium) length if a short name is not available.
         functions: [
@@ -255,7 +257,8 @@ impl RegionDisplayNameOwned {
         (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
         /// Loads the extended short region display name for a given region and locale using compiled data.
         ///
-        /// Extended constructors include additional display name coverage for rare and uncommon subtags.
+        /// The `extended` constructor includes additional data coverage for subtags that
+        /// are less commonly formatted in the target locale.
         ///
         /// Falls back to default (medium) length if a short name is not available.
         ///

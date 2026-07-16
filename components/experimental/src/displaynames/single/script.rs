@@ -102,7 +102,8 @@ impl ScriptDisplayNameOwned {
         (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
         /// Loads the minimal script display name for a given script and locale using compiled data.
         ///
-        /// Minimal constructors retain data only for high-frequency subtags to minimize data size.
+        /// The `minimal` constructor links an extremely limited amount of data: for example,
+        /// only those scripts associated with the formatting locale.
         ///
         /// # Examples
         ///
@@ -144,7 +145,7 @@ impl ScriptDisplayNameOwned {
         (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
         /// Loads the extended script display name for a given script and locale using compiled data.
         ///
-        /// Extended constructors include additional display name coverage for rare and uncommon subtags.
+        /// The `extended` constructor includes additional data coverage for subtags that are less commonly formatted in the target locale.
         ///
         /// # Examples
         ///
@@ -198,7 +199,7 @@ impl ScriptDisplayNameOwned {
         (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
         /// Loads the extended short script display name for a given script and locale using compiled data.
         ///
-        /// Extended constructors include additional display name coverage for rare and uncommon subtags.
+        /// The `extended` constructor includes additional data coverage for subtags that are less commonly formatted in the target locale.
         ///
         /// Falls back to default (medium) length if a short name is not available.
         ///

@@ -358,7 +358,8 @@ impl LanguageIdentifierDisplayNameOwned {
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the minimal language display name for a given language identifier and locale using compiled data.
         ///
-        /// Minimal constructors retain data only for high-frequency subtags to minimize data size.
+        /// The `minimal` constructor links an extremely limited amount of data: for example,
+        /// only the language of the formatting locale itself.
         functions: [
             try_new_minimal,
             try_new_minimal_with_buffer_provider,
@@ -805,7 +806,7 @@ impl LanguageIdentifierDisplayNameOwned {
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the extended language display name for a given language identifier and locale using compiled data.
         ///
-        /// Extended constructors include additional display name coverage for rare and uncommon subtags.
+        /// The `extended` constructor includes additional data coverage for subtags that are less commonly formatted in the target locale.
         functions: [
             try_new_extended,
             try_new_extended_with_buffer_provider,
@@ -879,7 +880,7 @@ impl LanguageIdentifierDisplayNameOwned {
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the extended short language display name for a given language identifier and locale using compiled data.
         ///
-        /// Extended constructors include additional display name coverage for rare and uncommon subtags.
+        /// The `extended` constructor includes additional data coverage for subtags that are less commonly formatted in the target locale.
         ///
         /// Falls back to default (medium) length if a short name is not available.
         functions: [
@@ -966,7 +967,7 @@ impl LanguageIdentifierDisplayNameOwned {
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the extended long language display name for a given language identifier and locale using compiled data.
         ///
-        /// Extended constructors include additional display name coverage for rare and uncommon subtags.
+        /// The `extended` constructor includes additional data coverage for subtags that are less commonly formatted in the target locale.
         ///
         /// Falls back to default (medium) length if a long name is not available.
         functions: [
@@ -1045,7 +1046,7 @@ impl LanguageIdentifierDisplayNameOwned {
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the menu-style language display name for a given language identifier and locale using compiled data.
         ///
-        /// Extended constructors include additional display name coverage for rare and uncommon subtags.
+        /// The `extended` constructor includes additional data coverage for subtags that are less commonly formatted in the target locale.
         ///
         /// # Examples
         ///
@@ -1134,7 +1135,7 @@ impl LanguageIdentifierDisplayNameOwned {
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the short menu-style language display name for a given language identifier and locale using compiled data.
         ///
-        /// Extended constructors include additional display name coverage for rare and uncommon subtags.
+        /// The `extended` constructor includes additional data coverage for subtags that are less commonly formatted in the target locale.
         ///
         /// Falls back to default (medium) length if a short name is not available.
         ///
