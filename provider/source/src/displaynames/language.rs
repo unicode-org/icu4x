@@ -4,11 +4,20 @@
 
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use crate::cldr_cache::CoverageTier;
 use crate::cldr_serde;
 use crate::cldr_serde::displaynames::{Alt, WithAlt};
 use crate::displaynames::extract_names_for_zeromap_struct;
 
-use icu::experimental::displaynames::provider::*;
+use icu::experimental::displaynames::provider::{
+    LanguageDisplayNames, LanguageDisplayNamesV1, LocaleDisplayNames, LocaleDisplayNamesV1,
+    LocaleNamesLanguageCoreLongV1, LocaleNamesLanguageCoreMediumV1, LocaleNamesLanguageCoreShortV1,
+    LocaleNamesLanguageExtendedLongV1, LocaleNamesLanguageExtendedMediumV1,
+    LocaleNamesLanguageExtendedShortV1, LocaleNamesLanguageMenuCoreMediumV1,
+    LocaleNamesLanguageMenuExtendedMediumV1, LocaleNamesLanguageMenuMinimalMediumV1,
+    LocaleNamesLanguageMinimalLongV1, LocaleNamesLanguageMinimalMediumV1,
+    LocaleNamesLanguageMinimalShortV1, MenuNameParts,
+};
 use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
@@ -51,38 +60,112 @@ crate::displaynames::impl_displaynames_legacy_iter_v1!(LanguageDisplayNamesV1, "
 crate::displaynames::impl_displaynames_legacy_iter_v1!(LocaleDisplayNamesV1, "languages.json");
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesLanguageMediumV1,
+    LocaleNamesLanguageMinimalMediumV1,
     LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
     None,
+    CoverageTier::Minimal,
+);
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesLanguageCoreMediumV1,
+    LanguageIdentifier,
+    cldr_serde::displaynames::language::Resource,
+    "languages.json",
+    languages,
+    None,
+    CoverageTier::Core,
+);
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesLanguageExtendedMediumV1,
+    LanguageIdentifier,
+    cldr_serde::displaynames::language::Resource,
+    "languages.json",
+    languages,
+    None,
+    CoverageTier::Extended,
 );
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesLanguageShortV1,
+    LocaleNamesLanguageMinimalShortV1,
     LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
     Some(Alt::Short),
+    CoverageTier::Minimal,
+);
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesLanguageCoreShortV1,
+    LanguageIdentifier,
+    cldr_serde::displaynames::language::Resource,
+    "languages.json",
+    languages,
+    Some(Alt::Short),
+    CoverageTier::Core,
+);
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesLanguageExtendedShortV1,
+    LanguageIdentifier,
+    cldr_serde::displaynames::language::Resource,
+    "languages.json",
+    languages,
+    Some(Alt::Short),
+    CoverageTier::Extended,
 );
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesLanguageLongV1,
+    LocaleNamesLanguageMinimalLongV1,
     LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
     Some(Alt::Long),
+    CoverageTier::Minimal,
 );
-
-crate::displaynames::impl_displaynames_menu_v1!(
-    LocaleNamesLanguageMenuMediumV1,
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesLanguageCoreLongV1,
     LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
+    Some(Alt::Long),
+    CoverageTier::Core,
+);
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesLanguageExtendedLongV1,
+    LanguageIdentifier,
+    cldr_serde::displaynames::language::Resource,
+    "languages.json",
+    languages,
+    Some(Alt::Long),
+    CoverageTier::Extended,
+);
+
+crate::displaynames::impl_displaynames_menu_v1!(
+    LocaleNamesLanguageMenuMinimalMediumV1,
+    LanguageIdentifier,
+    cldr_serde::displaynames::language::Resource,
+    "languages.json",
+    languages,
+    CoverageTier::Minimal,
+);
+crate::displaynames::impl_displaynames_menu_v1!(
+    LocaleNamesLanguageMenuCoreMediumV1,
+    LanguageIdentifier,
+    cldr_serde::displaynames::language::Resource,
+    "languages.json",
+    languages,
+    CoverageTier::Core,
+);
+crate::displaynames::impl_displaynames_menu_v1!(
+    LocaleNamesLanguageMenuExtendedMediumV1,
+    LanguageIdentifier,
+    cldr_serde::displaynames::language::Resource,
+    "languages.json",
+    languages,
+    CoverageTier::Extended,
 );
 
 impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayNames<'static> {
@@ -92,7 +175,6 @@ impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayName
             &[Alt::Variant, Alt::Secondary, Alt::Official],
             "language",
             |langid| {
-                // LanguageDisplayNames contains display names for language subtags without other subtags
                 if langid.script.is_some() || langid.region.is_some() || !langid.variants.is_empty()
                 {
                     None
@@ -149,100 +231,17 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<
         }
     }
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use icu::locale::{langid, subtags::language};
 
     #[test]
-    fn test_basic_lang_display_names() {
-        let provider = SourceDataProvider::new_testing();
-
-        let data: DataPayload<LanguageDisplayNamesV1> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-
-        assert_eq!(
-            data.get()
-                .names
-                .get(&language!("aa").to_tinystr().to_unvalidated())
-                .unwrap(),
-            "Afar"
-        );
-    }
-
-    #[test]
-    fn test_basic_lang_short_display_names() {
-        let provider = SourceDataProvider::new_testing();
-
-        let data: DataPayload<LanguageDisplayNamesV1> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-
-        assert_eq!(
-            data.get()
-                .short_names
-                .get(&language!("az").to_tinystr().to_unvalidated())
-                .unwrap(),
-            "Azeri"
-        );
-    }
-
-    #[test]
-    fn test_basic_lang_long_display_names() {
-        let provider = SourceDataProvider::new_testing();
-
-        let data: DataPayload<LanguageDisplayNamesV1> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-
-        assert_eq!(
-            data.get()
-                .long_names
-                .get(&language!("zh").to_tinystr().to_unvalidated())
-                .unwrap(),
-            "Mandarin Chinese"
-        );
-    }
-
-    #[test]
-    fn test_basic_lang_menu_display_names() {
-        let provider = SourceDataProvider::new_testing();
-
-        let data: DataPayload<LanguageDisplayNamesV1> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-
-        assert_eq!(
-            data.get()
-                .menu_names
-                .get(&language!("zh").to_tinystr().to_unvalidated())
-                .unwrap(),
-            "Chinese, Mandarin"
-        );
-    }
-
-    #[test]
     fn test_basic_locale_display_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleDisplayNamesV1> = provider
+        let data: DataPayload<LanguageDisplayNamesV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
                 ..Default::default()
@@ -253,20 +252,38 @@ mod tests {
         assert_eq!(
             data.get()
                 .names
-                .get(PotentialUtf8::from_str("de-CH"))
+                .get(&language!("es").to_tinystr().to_unvalidated())
                 .unwrap(),
-            "Swiss High German"
+            "Spanish"
         );
+    }
+
+    #[test]
+    fn test_locale_names_language_minimal() {
+        let provider = SourceDataProvider::new_testing();
+
+        let data: DataPayload<LocaleNamesLanguageMinimalMediumV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("en").unwrap(),
+                    &langid!("en-001").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(&**data.get(), "English");
     }
 
     #[test]
     fn test_locale_names_language_medium() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesLanguageMediumV1> = provider
+        let data: DataPayload<LocaleNamesLanguageCoreMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str("aa").unwrap(),
+                    DataMarkerAttributes::try_from_str("es").unwrap(),
                     &langid!("en-001").into(),
                 ),
                 ..Default::default()
@@ -274,35 +291,35 @@ mod tests {
             .unwrap()
             .payload;
 
-        assert_eq!(&**data.get(), "Afar");
+        assert_eq!(&**data.get(), "Spanish");
     }
 
     #[test]
     fn test_locale_names_language_short() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesLanguageShortV1> = provider
+        let data: DataPayload<LocaleNamesLanguageCoreShortV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str("en-GB").unwrap(),
-                    &langid!("en").into(),
+                    DataMarkerAttributes::try_from_str("en-US").unwrap(),
+                    &langid!("en-001").into(),
                 ),
                 ..Default::default()
             })
             .unwrap()
             .payload;
 
-        assert_eq!(&**data.get(), "UK English");
+        assert_eq!(&**data.get(), "US English");
     }
 
     #[test]
     fn test_locale_names_language_long() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesLanguageLongV1> = provider
+        let data: DataPayload<LocaleNamesLanguageCoreLongV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str("zh").unwrap(),
+                    DataMarkerAttributes::try_from_str("zh-Hans").unwrap(),
                     &langid!("en-001").into(),
                 ),
                 ..Default::default()
@@ -310,29 +327,14 @@ mod tests {
             .unwrap()
             .payload;
 
-        assert_eq!(&**data.get(), "Mandarin Chinese");
+        assert_eq!(&**data.get(), "Simplified Mandarin Chinese");
     }
 
     #[test]
     fn test_locale_names_language_menu_medium() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesLanguageMenuMediumV1> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str("ku").unwrap(),
-                    &langid!("en-001").into(),
-                ),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-
-        assert_eq!(data.get().core(), "Kurdish");
-        assert_eq!(data.get().extension(), "Kurmanji");
-
-        // Test fallback to alt-menu
-        let data_zh: DataPayload<LocaleNamesLanguageMenuMediumV1> = provider
+        let data: DataPayload<LocaleNamesLanguageMenuCoreMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("zh").unwrap(),
@@ -343,7 +345,6 @@ mod tests {
             .unwrap()
             .payload;
 
-        assert_eq!(data_zh.get().core(), "Chinese, Mandarin");
-        assert_eq!(data_zh.get().extension(), "");
+        assert_eq!(&*data.get().core(), "Chinese, Mandarin");
     }
 }

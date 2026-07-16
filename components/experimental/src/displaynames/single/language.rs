@@ -2,9 +2,23 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::displaynames::provider::*;
+use crate::displaynames::provider::{
+    LocaleNamesEssentialsV1, LocaleNamesLanguageCoreLongV1, LocaleNamesLanguageCoreMediumV1,
+    LocaleNamesLanguageCoreShortV1, LocaleNamesLanguageExtendedLongV1,
+    LocaleNamesLanguageExtendedMediumV1, LocaleNamesLanguageExtendedShortV1,
+    LocaleNamesLanguageMenuCoreMediumV1, LocaleNamesLanguageMenuExtendedMediumV1,
+    LocaleNamesLanguageMenuMinimalMediumV1, LocaleNamesLanguageMinimalLongV1,
+    LocaleNamesLanguageMinimalMediumV1, LocaleNamesLanguageMinimalShortV1,
+    LocaleNamesRegionCoreMediumV1, LocaleNamesRegionCoreShortV1, LocaleNamesRegionExtendedMediumV1,
+    LocaleNamesRegionExtendedShortV1, LocaleNamesRegionMinimalMediumV1,
+    LocaleNamesRegionMinimalShortV1, LocaleNamesScriptCoreMediumV1, LocaleNamesScriptCoreShortV1,
+    LocaleNamesScriptExtendedMediumV1, LocaleNamesScriptExtendedShortV1,
+    LocaleNamesScriptMinimalMediumV1, LocaleNamesScriptMinimalShortV1,
+    LocaleNamesVariantCoreMediumV1, LocaleNamesVariantExtendedMediumV1,
+    LocaleNamesVariantMinimalMediumV1, MenuNamePartsULE,
+};
 use crate::displaynames::single::{
-    RegionDisplayNameOwned, ScriptDisplayNameOwned, VariantDisplayNameOwned,
+    RegionDisplayNameOwned, ScriptDisplayNameOwned, VariantDisplayNameOwned, try_load_markers,
 };
 use crate::displaynames::{DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions};
 use crate::size_test_macro::size_test;
@@ -116,17 +130,108 @@ pub struct LanguageIdentifierDisplayNameOwned {
 #[derive(Debug)]
 struct QualifiersOwned {
     /// Either the script display name, the subtag as fallback, or None if absent
-    script_payload: DataPayloadOr<LocaleNamesScriptMediumV1, Option<Script>>,
+    script_payload: DataPayloadOr<ErasedMarker<VarZeroCow<'static, str>>, Option<Script>>,
     /// Either the region display name, the subtag as fallback, or None if absent
-    region_payload: DataPayloadOr<LocaleNamesRegionMediumV1, Option<Region>>,
+    region_payload: DataPayloadOr<ErasedMarker<VarZeroCow<'static, str>>, Option<Region>>,
     /// Either a single variant display name, the subtag as fallback, or
     /// a vector of variant display names or subtags as fallback.
     /// The vector may be empty.
     variant_payloads: DataPayloadOr<
-        LocaleNamesVariantMediumV1,
-        Result<Vec<DataPayloadOr<LocaleNamesVariantMediumV1, Variant>>, Variant>,
+        ErasedMarker<VarZeroCow<'static, str>>,
+        Result<Vec<DataPayloadOr<ErasedMarker<VarZeroCow<'static, str>>, Variant>>, Variant>,
     >,
     essentials_payload: DataPayload<LocaleNamesEssentialsV1>,
+}
+
+/// Loads the name for a language dialect, which includes script and region subtags.
+///
+/// We try to load names for combinations of subtags:
+///
+/// - Language + Script + Region (e.g., "zh-Hant-HK")
+/// - Language + Script (e.g., "zh-Hant")
+/// - Language + Region (e.g., "en-GB")
+///
+/// We then "consume"  the corresponding subtags from the input `LanguageIdentifier`
+/// so they are not repeated in the qualifiers.
+macro_rules! try_load_dialect_name {
+    ($provider:expr, $locale:expr, $subject:expr, [ $($marker:ident),+ $(,)? ]) => {{
+        let mut result = None;
+        for (language, script, region) in [
+            ($subject.language, Some($subject.script), Some($subject.region)),
+            ($subject.language, Some($subject.script), None),
+            ($subject.language, None, Some($subject.region)),
+        ] {
+            let script_val = match script {
+                Some(Some(s)) => Some(s),
+                Some(None) => continue,
+                None => None,
+            };
+            let region_val = match region {
+                Some(Some(r)) => Some(r),
+                Some(None) => continue,
+                None => None,
+            };
+            let mut buffer = TinyAsciiStr::EMPTY;
+            let attrs = LocaleNamesLanguageCoreMediumV1::make_attributes(
+                language,
+                script_val,
+                region_val,
+                &mut buffer,
+            );
+            if let Ok(payload) = try_load_markers!($provider, $locale, attrs, [ $($marker),+ ]) {
+                if script_val.is_some() {
+                    $subject.script = None;
+                }
+                if region_val.is_some() {
+                    $subject.region = None;
+                }
+                let payload_cast: DataPayload<LocaleNamesLanguageCoreMediumV1> = payload.cast();
+                result = Some(payload_cast.map_project(|p, _| MenuNamePartsOrString::String(p)));
+                break;
+            }
+        }
+        result
+    }};
+}
+
+/// Loads the name for an individual language subtag.
+macro_rules! try_load_subtag_name {
+    ($provider:expr, $locale:expr, $language:expr, [ $($marker:ident),+ $(,)? ]) => {{
+        let mut buffer = TinyAsciiStr::EMPTY;
+        let attrs = LocaleNamesLanguageCoreMediumV1::make_attributes(
+            $language,
+            None,
+            None,
+            &mut buffer,
+        );
+        match try_load_markers!($provider, $locale, attrs, [ $($marker),+ ]) {
+            Ok(payload) => {
+                let payload_cast: DataPayload<LocaleNamesLanguageCoreMediumV1> = payload.cast();
+                Some(payload_cast.map_project(|p, _| MenuNamePartsOrString::String(p)))
+            }
+            Err(_) => None,
+        }
+    }};
+}
+
+/// Loads the name for a language with menu core and extension parts.
+macro_rules! try_load_menu_name {
+    ($provider:expr, $locale:expr, $language:expr, [ $($marker:ident),+ $(,)? ]) => {{
+        let mut buffer = TinyAsciiStr::EMPTY;
+        let attrs = LocaleNamesLanguageCoreMediumV1::make_attributes(
+            $language,
+            None,
+            None,
+            &mut buffer,
+        );
+        match try_load_markers!($provider, $locale, attrs, [ $($marker),+ ]) {
+            Ok(payload) => {
+                let payload_cast: DataPayload<LocaleNamesLanguageMenuCoreMediumV1> = payload.cast();
+                Some(payload_cast.map_project(|p, _| MenuNamePartsOrString::MenuNameParts(p)))
+            }
+            Err(_) => None,
+        }
+    }};
 }
 
 impl LanguageIdentifierDisplayNameOwned {
@@ -149,41 +254,280 @@ impl LanguageIdentifierDisplayNameOwned {
         options: LanguageIdentifierDisplayNameOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LocaleNamesLanguageMediumV1>
-            + DataProvider<LocaleNamesScriptMediumV1>
-            + DataProvider<LocaleNamesRegionMediumV1>
-            + DataProvider<LocaleNamesVariantMediumV1>
-            + DataProvider<LocaleNamesEssentialsV1>
-            + ?Sized,
+        D: ?Sized
+            + DataProvider<LocaleNamesLanguageCoreMediumV1>
+            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
+            + DataProvider<LocaleNamesScriptCoreMediumV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>
+            + DataProvider<LocaleNamesRegionCoreMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>
+            + DataProvider<LocaleNamesVariantCoreMediumV1>
+            + DataProvider<LocaleNamesVariantMinimalMediumV1>
+            + DataProvider<LocaleNamesEssentialsV1>,
     {
-        let formatting_locale = LocaleNamesLanguageMediumV1::make_locale(prefs.locale_preferences);
-
-        // Step 1: Load language name
-        // Only try dialect if requested (or default)
-        let load_dialect_names = options.should_load_dialect();
+        let load_dialect = options.should_load_dialect();
         let mut language_payload = None;
-        if load_dialect_names {
-            language_payload = Self::load_language_dialect_name::<LocaleNamesLanguageMediumV1, _>(
+        if load_dialect {
+            language_payload = try_load_dialect_name!(
                 provider,
-                &formatting_locale,
-                &mut subject,
-            )?;
+                prefs,
+                subject,
+                [
+                    LocaleNamesLanguageCoreMediumV1,
+                    LocaleNamesLanguageMinimalMediumV1
+                ]
+            );
         }
         if language_payload.is_none() {
-            language_payload = Self::load_language_subtag_name::<LocaleNamesLanguageMediumV1, _>(
+            language_payload = try_load_subtag_name!(
                 provider,
-                &formatting_locale,
+                prefs,
                 subject.language,
-            )?;
+                [
+                    LocaleNamesLanguageCoreMediumV1,
+                    LocaleNamesLanguageMinimalMediumV1
+                ]
+            );
         }
         let language_payload = match language_payload {
             Some(payload) => DataPayloadOr::from_payload(payload),
             None => DataPayloadOr::from_other(subject.language),
         };
 
-        // Load the remaining data
         let qualifiers = QualifiersOwned::try_new_unstable(provider, prefs, subject)?;
+        Ok(Self {
+            language_payload,
+            qualifiers,
+        })
+    }
 
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
+        functions: [
+            try_new_minimal,
+            try_new_minimal_with_buffer_provider,
+            try_new_minimal_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_minimal)]
+    pub fn try_new_minimal_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        mut subject: LanguageIdentifier,
+        options: LanguageIdentifierDisplayNameOptions,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>
+            + DataProvider<LocaleNamesVariantMinimalMediumV1>
+            + DataProvider<LocaleNamesEssentialsV1>,
+    {
+        let load_dialect = options.should_load_dialect();
+        let mut language_payload = None;
+        if load_dialect {
+            language_payload = try_load_dialect_name!(
+                provider,
+                prefs,
+                subject,
+                [LocaleNamesLanguageMinimalMediumV1]
+            );
+        }
+        if language_payload.is_none() {
+            language_payload = try_load_subtag_name!(
+                provider,
+                prefs,
+                subject.language,
+                [LocaleNamesLanguageMinimalMediumV1]
+            );
+        }
+        let language_payload = match language_payload {
+            Some(payload) => DataPayloadOr::from_payload(payload),
+            None => DataPayloadOr::from_other(subject.language),
+        };
+
+        let qualifiers = QualifiersOwned::try_new_minimal_unstable(provider, prefs, subject)?;
+        Ok(Self {
+            language_payload,
+            qualifiers,
+        })
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
+        functions: [
+            try_new_minimal_short,
+            try_new_minimal_short_with_buffer_provider,
+            try_new_minimal_short_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_minimal_short)]
+    pub fn try_new_minimal_short_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        mut subject: LanguageIdentifier,
+        options: LanguageIdentifierDisplayNameOptions,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<LocaleNamesLanguageMinimalShortV1>
+            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
+            + DataProvider<LocaleNamesScriptMinimalShortV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalShortV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>
+            + DataProvider<LocaleNamesVariantMinimalMediumV1>
+            + DataProvider<LocaleNamesEssentialsV1>,
+    {
+        let load_dialect = options.should_load_dialect();
+        let mut language_payload = None;
+        if load_dialect {
+            language_payload = try_load_dialect_name!(
+                provider,
+                prefs,
+                subject,
+                [
+                    LocaleNamesLanguageMinimalShortV1,
+                    LocaleNamesLanguageMinimalMediumV1
+                ]
+            );
+        }
+        if language_payload.is_none() {
+            language_payload = try_load_subtag_name!(
+                provider,
+                prefs,
+                subject.language,
+                [
+                    LocaleNamesLanguageMinimalShortV1,
+                    LocaleNamesLanguageMinimalMediumV1
+                ]
+            );
+        }
+        let language_payload = match language_payload {
+            Some(payload) => DataPayloadOr::from_payload(payload),
+            None => DataPayloadOr::from_other(subject.language),
+        };
+
+        let qualifiers = QualifiersOwned::try_new_minimal_short_unstable(provider, prefs, subject)?;
+        Ok(Self {
+            language_payload,
+            qualifiers,
+        })
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
+        functions: [
+            try_new_minimal_long,
+            try_new_minimal_long_with_buffer_provider,
+            try_new_minimal_long_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_minimal_long)]
+    pub fn try_new_minimal_long_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        mut subject: LanguageIdentifier,
+        options: LanguageIdentifierDisplayNameOptions,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<LocaleNamesLanguageMinimalLongV1>
+            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>
+            + DataProvider<LocaleNamesVariantMinimalMediumV1>
+            + DataProvider<LocaleNamesEssentialsV1>,
+    {
+        let load_dialect = options.should_load_dialect();
+        let mut language_payload = None;
+        if load_dialect {
+            language_payload = try_load_dialect_name!(
+                provider,
+                prefs,
+                subject,
+                [
+                    LocaleNamesLanguageMinimalLongV1,
+                    LocaleNamesLanguageMinimalMediumV1
+                ]
+            );
+        }
+        if language_payload.is_none() {
+            language_payload = try_load_subtag_name!(
+                provider,
+                prefs,
+                subject.language,
+                [
+                    LocaleNamesLanguageMinimalLongV1,
+                    LocaleNamesLanguageMinimalMediumV1
+                ]
+            );
+        }
+        let language_payload = match language_payload {
+            Some(payload) => DataPayloadOr::from_payload(payload),
+            None => DataPayloadOr::from_other(subject.language),
+        };
+
+        let qualifiers = QualifiersOwned::try_new_minimal_unstable(provider, prefs, subject)?;
+        Ok(Self {
+            language_payload,
+            qualifiers,
+        })
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
+        functions: [
+            try_new_minimal_menu,
+            try_new_minimal_menu_with_buffer_provider,
+            try_new_minimal_menu_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_minimal_menu)]
+    pub fn try_new_minimal_menu_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        subject: LanguageIdentifier,
+        _options: LanguageIdentifierDisplayNameOptions,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<LocaleNamesLanguageMenuMinimalMediumV1>
+            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>
+            + DataProvider<LocaleNamesVariantMinimalMediumV1>
+            + DataProvider<LocaleNamesEssentialsV1>,
+    {
+        let mut language_payload = try_load_menu_name!(
+            provider,
+            prefs,
+            subject.language,
+            [LocaleNamesLanguageMenuMinimalMediumV1]
+        );
+        if language_payload.is_none() {
+            language_payload = try_load_subtag_name!(
+                provider,
+                prefs,
+                subject.language,
+                [LocaleNamesLanguageMinimalMediumV1]
+            );
+        }
+        let language_payload = match language_payload {
+            Some(payload) => DataPayloadOr::from_payload(payload),
+            None => DataPayloadOr::from_other(subject.language),
+        };
+
+        let qualifiers = QualifiersOwned::try_new_minimal_unstable(provider, prefs, subject)?;
         Ok(Self {
             language_payload,
             qualifiers,
@@ -250,58 +594,57 @@ impl LanguageIdentifierDisplayNameOwned {
         options: LanguageIdentifierDisplayNameOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LocaleNamesLanguageShortV1>
-            + DataProvider<LocaleNamesLanguageMediumV1>
-            + DataProvider<LocaleNamesScriptShortV1>
-            + DataProvider<LocaleNamesScriptMediumV1>
-            + DataProvider<LocaleNamesRegionShortV1>
-            + DataProvider<LocaleNamesRegionMediumV1>
-            + DataProvider<LocaleNamesVariantMediumV1>
-            + DataProvider<LocaleNamesEssentialsV1>
-            + ?Sized,
+        D: ?Sized
+            + DataProvider<LocaleNamesLanguageCoreShortV1>
+            + DataProvider<LocaleNamesLanguageMinimalShortV1>
+            + DataProvider<LocaleNamesLanguageCoreMediumV1>
+            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
+            + DataProvider<LocaleNamesScriptCoreShortV1>
+            + DataProvider<LocaleNamesScriptMinimalShortV1>
+            + DataProvider<LocaleNamesScriptCoreMediumV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>
+            + DataProvider<LocaleNamesRegionCoreShortV1>
+            + DataProvider<LocaleNamesRegionMinimalShortV1>
+            + DataProvider<LocaleNamesRegionCoreMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>
+            + DataProvider<LocaleNamesVariantCoreMediumV1>
+            + DataProvider<LocaleNamesVariantMinimalMediumV1>
+            + DataProvider<LocaleNamesEssentialsV1>,
     {
-        let formatting_locale = LocaleNamesLanguageShortV1::make_locale(prefs.locale_preferences);
-
-        // Step 1: Load short language name
-        // Only try dialect if requested (or default)
-        let load_dialect_names = options.should_load_dialect();
+        let load_dialect = options.should_load_dialect();
         let mut language_payload = None;
-        if load_dialect_names {
-            language_payload = Self::load_language_dialect_name::<LocaleNamesLanguageShortV1, _>(
+        if load_dialect {
+            language_payload = try_load_dialect_name!(
                 provider,
-                &formatting_locale,
-                &mut subject,
-            )?;
-        }
-        if load_dialect_names && language_payload.is_none() {
-            language_payload = Self::load_language_dialect_name::<LocaleNamesLanguageMediumV1, _>(
-                provider,
-                &formatting_locale,
-                &mut subject,
-            )?;
-        }
-        if language_payload.is_none() {
-            language_payload = Self::load_language_subtag_name::<LocaleNamesLanguageShortV1, _>(
-                provider,
-                &formatting_locale,
-                subject.language,
-            )?;
+                prefs,
+                subject,
+                [
+                    LocaleNamesLanguageCoreShortV1,
+                    LocaleNamesLanguageMinimalShortV1,
+                    LocaleNamesLanguageCoreMediumV1,
+                    LocaleNamesLanguageMinimalMediumV1
+                ]
+            );
         }
         if language_payload.is_none() {
-            language_payload = Self::load_language_subtag_name::<LocaleNamesLanguageMediumV1, _>(
+            language_payload = try_load_subtag_name!(
                 provider,
-                &formatting_locale,
+                prefs,
                 subject.language,
-            )?;
+                [
+                    LocaleNamesLanguageCoreShortV1,
+                    LocaleNamesLanguageMinimalShortV1,
+                    LocaleNamesLanguageCoreMediumV1,
+                    LocaleNamesLanguageMinimalMediumV1
+                ]
+            );
         }
         let language_payload = match language_payload {
             Some(payload) => DataPayloadOr::from_payload(payload),
             None => DataPayloadOr::from_other(subject.language),
         };
 
-        // Load the remaining data
         let qualifiers = QualifiersOwned::try_new_short_unstable(provider, prefs, subject)?;
-
         Ok(Self {
             language_payload,
             qualifiers,
@@ -368,56 +711,53 @@ impl LanguageIdentifierDisplayNameOwned {
         options: LanguageIdentifierDisplayNameOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LocaleNamesLanguageLongV1>
-            + DataProvider<LocaleNamesLanguageMediumV1>
-            + DataProvider<LocaleNamesScriptMediumV1>
-            + DataProvider<LocaleNamesRegionMediumV1>
-            + DataProvider<LocaleNamesVariantMediumV1>
-            + DataProvider<LocaleNamesEssentialsV1>
-            + ?Sized,
+        D: ?Sized
+            + DataProvider<LocaleNamesLanguageCoreLongV1>
+            + DataProvider<LocaleNamesLanguageMinimalLongV1>
+            + DataProvider<LocaleNamesLanguageCoreMediumV1>
+            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
+            + DataProvider<LocaleNamesScriptCoreMediumV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>
+            + DataProvider<LocaleNamesRegionCoreMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>
+            + DataProvider<LocaleNamesVariantCoreMediumV1>
+            + DataProvider<LocaleNamesVariantMinimalMediumV1>
+            + DataProvider<LocaleNamesEssentialsV1>,
     {
-        let formatting_locale = LocaleNamesLanguageLongV1::make_locale(prefs.locale_preferences);
-
-        // Step 1: Load long language name
-        // Only try dialect if requested (or default)
-        let load_dialect_names = options.should_load_dialect();
+        let load_dialect = options.should_load_dialect();
         let mut language_payload = None;
-        if load_dialect_names {
-            language_payload = Self::load_language_dialect_name::<LocaleNamesLanguageLongV1, _>(
+        if load_dialect {
+            language_payload = try_load_dialect_name!(
                 provider,
-                &formatting_locale,
-                &mut subject,
-            )?;
-        }
-        if load_dialect_names && language_payload.is_none() {
-            language_payload = Self::load_language_dialect_name::<LocaleNamesLanguageMediumV1, _>(
-                provider,
-                &formatting_locale,
-                &mut subject,
-            )?;
-        }
-        if language_payload.is_none() {
-            language_payload = Self::load_language_subtag_name::<LocaleNamesLanguageLongV1, _>(
-                provider,
-                &formatting_locale,
-                subject.language,
-            )?;
+                prefs,
+                subject,
+                [
+                    LocaleNamesLanguageCoreLongV1,
+                    LocaleNamesLanguageMinimalLongV1,
+                    LocaleNamesLanguageCoreMediumV1,
+                    LocaleNamesLanguageMinimalMediumV1
+                ]
+            );
         }
         if language_payload.is_none() {
-            language_payload = Self::load_language_subtag_name::<LocaleNamesLanguageMediumV1, _>(
+            language_payload = try_load_subtag_name!(
                 provider,
-                &formatting_locale,
+                prefs,
                 subject.language,
-            )?;
+                [
+                    LocaleNamesLanguageCoreLongV1,
+                    LocaleNamesLanguageMinimalLongV1,
+                    LocaleNamesLanguageCoreMediumV1,
+                    LocaleNamesLanguageMinimalMediumV1
+                ]
+            );
         }
         let language_payload = match language_payload {
             Some(payload) => DataPayloadOr::from_payload(payload),
             None => DataPayloadOr::from_other(subject.language),
         };
 
-        // Load the remaining data
         let qualifiers = QualifiersOwned::try_new_unstable(provider, prefs, subject)?;
-
         Ok(Self {
             language_payload,
             qualifiers,
@@ -465,34 +805,44 @@ impl LanguageIdentifierDisplayNameOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesLanguageMenuMediumV1>
-            + DataProvider<LocaleNamesLanguageMediumV1>
-            + DataProvider<LocaleNamesScriptMediumV1>
-            + DataProvider<LocaleNamesRegionMediumV1>
-            + DataProvider<LocaleNamesVariantMediumV1>
+            + DataProvider<LocaleNamesLanguageMenuCoreMediumV1>
+            + DataProvider<LocaleNamesLanguageMenuMinimalMediumV1>
+            + DataProvider<LocaleNamesLanguageCoreMediumV1>
+            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
+            + DataProvider<LocaleNamesScriptCoreMediumV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>
+            + DataProvider<LocaleNamesRegionCoreMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>
+            + DataProvider<LocaleNamesVariantCoreMediumV1>
+            + DataProvider<LocaleNamesVariantMinimalMediumV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
-        let formatting_locale = LocaleNamesLanguageMediumV1::make_locale(prefs.locale_preferences);
-
-        // Step 1: Load language name
-        // Try the menu name
-        let mut language_payload =
-            Self::load_language_menu_name(provider, &formatting_locale, subject.language)?;
+        let mut language_payload = try_load_menu_name!(
+            provider,
+            prefs,
+            subject.language,
+            [
+                LocaleNamesLanguageMenuCoreMediumV1,
+                LocaleNamesLanguageMenuMinimalMediumV1
+            ]
+        );
         if language_payload.is_none() {
-            language_payload = Self::load_language_subtag_name::<LocaleNamesLanguageMediumV1, _>(
+            language_payload = try_load_subtag_name!(
                 provider,
-                &formatting_locale,
+                prefs,
                 subject.language,
-            )?;
+                [
+                    LocaleNamesLanguageCoreMediumV1,
+                    LocaleNamesLanguageMinimalMediumV1
+                ]
+            );
         }
         let language_payload = match language_payload {
             Some(payload) => DataPayloadOr::from_payload(payload),
             None => DataPayloadOr::from_other(subject.language),
         };
 
-        // Load the remaining data
         let qualifiers = QualifiersOwned::try_new_unstable(provider, prefs, subject)?;
-
         Ok(Self {
             language_payload,
             qualifiers,
@@ -540,165 +890,386 @@ impl LanguageIdentifierDisplayNameOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesLanguageMenuMediumV1>
-            + DataProvider<LocaleNamesLanguageShortV1>
-            + DataProvider<LocaleNamesLanguageMediumV1>
-            + DataProvider<LocaleNamesScriptShortV1>
-            + DataProvider<LocaleNamesScriptMediumV1>
-            + DataProvider<LocaleNamesRegionShortV1>
-            + DataProvider<LocaleNamesRegionMediumV1>
-            + DataProvider<LocaleNamesVariantMediumV1>
+            + DataProvider<LocaleNamesLanguageMenuCoreMediumV1>
+            + DataProvider<LocaleNamesLanguageMenuMinimalMediumV1>
+            + DataProvider<LocaleNamesLanguageCoreShortV1>
+            + DataProvider<LocaleNamesLanguageMinimalShortV1>
+            + DataProvider<LocaleNamesLanguageCoreMediumV1>
+            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
+            + DataProvider<LocaleNamesScriptCoreShortV1>
+            + DataProvider<LocaleNamesScriptMinimalShortV1>
+            + DataProvider<LocaleNamesScriptCoreMediumV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>
+            + DataProvider<LocaleNamesRegionCoreShortV1>
+            + DataProvider<LocaleNamesRegionMinimalShortV1>
+            + DataProvider<LocaleNamesRegionCoreMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>
+            + DataProvider<LocaleNamesVariantCoreMediumV1>
+            + DataProvider<LocaleNamesVariantMinimalMediumV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
-        let formatting_locale = LocaleNamesLanguageShortV1::make_locale(prefs.locale_preferences);
-
-        // Step 1: Load language name
-        // Try the menu name
-        let mut language_payload =
-            Self::load_language_menu_name(provider, &formatting_locale, subject.language)?;
+        let mut language_payload = try_load_menu_name!(
+            provider,
+            prefs,
+            subject.language,
+            [
+                LocaleNamesLanguageMenuCoreMediumV1,
+                LocaleNamesLanguageMenuMinimalMediumV1
+            ]
+        );
         if language_payload.is_none() {
-            language_payload = Self::load_language_subtag_name::<LocaleNamesLanguageShortV1, _>(
+            language_payload = try_load_subtag_name!(
                 provider,
-                &formatting_locale,
+                prefs,
                 subject.language,
-            )?;
-        }
-        if language_payload.is_none() {
-            language_payload = Self::load_language_subtag_name::<LocaleNamesLanguageMediumV1, _>(
-                provider,
-                &formatting_locale,
-                subject.language,
-            )?;
+                [
+                    LocaleNamesLanguageCoreShortV1,
+                    LocaleNamesLanguageMinimalShortV1,
+                    LocaleNamesLanguageCoreMediumV1,
+                    LocaleNamesLanguageMinimalMediumV1
+                ]
+            );
         }
         let language_payload = match language_payload {
             Some(payload) => DataPayloadOr::from_payload(payload),
             None => DataPayloadOr::from_other(subject.language),
         };
 
-        // Load the remaining data
         let qualifiers = QualifiersOwned::try_new_short_unstable(provider, prefs, subject)?;
-
         Ok(Self {
             language_payload,
             qualifiers,
         })
     }
 
-    /// Loads the name for a langauge dialect, which includes script and region subtags.
-    ///
-    /// We try to load names for combinations of subtags:
-    ///
-    /// - Language + Script + Region (e.g., "zh-Hant-HK")
-    /// - Language + Script (e.g., "zh-Hant")
-    /// - Language + Region (e.g., "en-GB")
-    ///
-    /// We then "consume"  the corresponding subtags from the input `LanguageIdentifier`
-    /// so they are not repeated in the qualifiers.
-    fn load_language_dialect_name<M, P>(
-        provider: &P,
-        formatting_locale: &DataLocale,
-        subject: &mut LanguageIdentifier,
-    ) -> Result<Option<DataPayload<ErasedMarker<MenuNamePartsOrString<'static>>>>, DataError>
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
+        functions: [
+            try_new_extended,
+            try_new_extended_with_buffer_provider,
+            try_new_extended_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_extended)]
+    pub fn try_new_extended_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        mut subject: LanguageIdentifier,
+        options: LanguageIdentifierDisplayNameOptions,
+    ) -> Result<Self, DataError>
     where
-        M: DataMarker<DataStruct = VarZeroCow<'static, str>>,
-        P: ?Sized + DataProvider<M>,
+        D: ?Sized
+            + DataProvider<LocaleNamesLanguageExtendedMediumV1>
+            + DataProvider<LocaleNamesLanguageCoreMediumV1>
+            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
+            + DataProvider<LocaleNamesScriptExtendedMediumV1>
+            + DataProvider<LocaleNamesScriptCoreMediumV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>
+            + DataProvider<LocaleNamesRegionExtendedMediumV1>
+            + DataProvider<LocaleNamesRegionCoreMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>
+            + DataProvider<LocaleNamesVariantExtendedMediumV1>
+            + DataProvider<LocaleNamesVariantCoreMediumV1>
+            + DataProvider<LocaleNamesVariantMinimalMediumV1>
+            + DataProvider<LocaleNamesEssentialsV1>,
     {
-        for (language, script, region) in [
-            (subject.language, Some(subject.script), Some(subject.region)),
-            (subject.language, Some(subject.script), None),
-            (subject.language, None, Some(subject.region)),
-        ] {
-            // For Script and Region:
-            // - Some in the first position means "this should be present"
-            // - None in the first position means "skip this field"
-            // We skip Some(None) because that case will be handled in a subsequent iteration
-            let script = match script {
-                Some(Some(script)) => Some(script),
-                Some(None) => continue,
-                None => None,
-            };
-            let region = match region {
-                Some(Some(region)) => Some(region),
-                Some(None) => continue,
-                None => None,
-            };
-            let mut buffer = TinyAsciiStr::EMPTY;
-            let attrs =
-                LocaleNamesLanguageMediumV1::make_attributes(language, script, region, &mut buffer);
-            let id =
-                DataIdentifierBorrowed::for_marker_attributes_and_locale(attrs, formatting_locale);
-            let mut metadata = DataRequestMetadata::default();
-            metadata.silent = true;
-            if let Some(response) = provider
-                .load(DataRequest { id, metadata })
-                .allow_identifier_not_found()?
-            {
-                if script.is_some() {
-                    subject.script = None;
-                }
-                if region.is_some() {
-                    subject.region = None;
-                }
-                return Ok(Some(
-                    response
-                        .payload
-                        .map_project(|payload, _| MenuNamePartsOrString::String(payload)),
-                ));
-            }
+        let load_dialect = options.should_load_dialect();
+        let mut language_payload = None;
+        if load_dialect {
+            language_payload = try_load_dialect_name!(
+                provider,
+                prefs,
+                subject,
+                [
+                    LocaleNamesLanguageExtendedMediumV1,
+                    LocaleNamesLanguageCoreMediumV1,
+                    LocaleNamesLanguageMinimalMediumV1
+                ]
+            );
         }
-        Ok(None)
+        if language_payload.is_none() {
+            language_payload = try_load_subtag_name!(
+                provider,
+                prefs,
+                subject.language,
+                [
+                    LocaleNamesLanguageExtendedMediumV1,
+                    LocaleNamesLanguageCoreMediumV1,
+                    LocaleNamesLanguageMinimalMediumV1
+                ]
+            );
+        }
+        let language_payload = match language_payload {
+            Some(payload) => DataPayloadOr::from_payload(payload),
+            None => DataPayloadOr::from_other(subject.language),
+        };
+
+        let qualifiers = QualifiersOwned::try_new_extended_unstable(provider, prefs, subject)?;
+        Ok(Self {
+            language_payload,
+            qualifiers,
+        })
     }
 
-    /// Loads the name for an individual language subtag.
-    fn load_language_subtag_name<M, P>(
-        provider: &P,
-        formatting_locale: &DataLocale,
-        language: Language,
-    ) -> Result<Option<DataPayload<ErasedMarker<MenuNamePartsOrString<'static>>>>, DataError>
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
+        functions: [
+            try_new_extended_short,
+            try_new_extended_short_with_buffer_provider,
+            try_new_extended_short_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_extended_short)]
+    pub fn try_new_extended_short_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        mut subject: LanguageIdentifier,
+        options: LanguageIdentifierDisplayNameOptions,
+    ) -> Result<Self, DataError>
     where
-        M: DataMarker<DataStruct = VarZeroCow<'static, str>>,
-        P: ?Sized + DataProvider<M>,
+        D: ?Sized
+            + DataProvider<LocaleNamesLanguageExtendedShortV1>
+            + DataProvider<LocaleNamesLanguageCoreShortV1>
+            + DataProvider<LocaleNamesLanguageMinimalShortV1>
+            + DataProvider<LocaleNamesLanguageExtendedMediumV1>
+            + DataProvider<LocaleNamesLanguageCoreMediumV1>
+            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
+            + DataProvider<LocaleNamesScriptExtendedShortV1>
+            + DataProvider<LocaleNamesScriptCoreShortV1>
+            + DataProvider<LocaleNamesScriptMinimalShortV1>
+            + DataProvider<LocaleNamesScriptExtendedMediumV1>
+            + DataProvider<LocaleNamesScriptCoreMediumV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>
+            + DataProvider<LocaleNamesRegionExtendedShortV1>
+            + DataProvider<LocaleNamesRegionCoreShortV1>
+            + DataProvider<LocaleNamesRegionMinimalShortV1>
+            + DataProvider<LocaleNamesRegionExtendedMediumV1>
+            + DataProvider<LocaleNamesRegionCoreMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>
+            + DataProvider<LocaleNamesVariantExtendedMediumV1>
+            + DataProvider<LocaleNamesVariantCoreMediumV1>
+            + DataProvider<LocaleNamesVariantMinimalMediumV1>
+            + DataProvider<LocaleNamesEssentialsV1>,
     {
-        let mut buffer = TinyAsciiStr::EMPTY;
-        let attrs = LocaleNamesLanguageMediumV1::make_attributes(language, None, None, &mut buffer);
-        let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(attrs, formatting_locale);
-        let mut metadata = DataRequestMetadata::default();
-        metadata.silent =
-            core::any::TypeId::of::<M>() != core::any::TypeId::of::<LocaleNamesLanguageMediumV1>();
-        let option = provider
-            .load(DataRequest { id, metadata })
-            .allow_identifier_not_found()?;
-        Ok(option.map(|resp| {
-            resp.payload
-                .map_project(|payload, _| MenuNamePartsOrString::String(payload))
-        }))
+        let load_dialect = options.should_load_dialect();
+        let mut language_payload = None;
+        if load_dialect {
+            language_payload = try_load_dialect_name!(
+                provider,
+                prefs,
+                subject,
+                [
+                    LocaleNamesLanguageExtendedShortV1,
+                    LocaleNamesLanguageCoreShortV1,
+                    LocaleNamesLanguageMinimalShortV1,
+                    LocaleNamesLanguageExtendedMediumV1,
+                    LocaleNamesLanguageCoreMediumV1,
+                    LocaleNamesLanguageMinimalMediumV1
+                ]
+            );
+        }
+        if language_payload.is_none() {
+            language_payload = try_load_subtag_name!(
+                provider,
+                prefs,
+                subject.language,
+                [
+                    LocaleNamesLanguageExtendedShortV1,
+                    LocaleNamesLanguageCoreShortV1,
+                    LocaleNamesLanguageMinimalShortV1,
+                    LocaleNamesLanguageExtendedMediumV1,
+                    LocaleNamesLanguageCoreMediumV1,
+                    LocaleNamesLanguageMinimalMediumV1
+                ]
+            );
+        }
+        let language_payload = match language_payload {
+            Some(payload) => DataPayloadOr::from_payload(payload),
+            None => DataPayloadOr::from_other(subject.language),
+        };
+
+        let qualifiers =
+            QualifiersOwned::try_new_extended_short_unstable(provider, prefs, subject)?;
+        Ok(Self {
+            language_payload,
+            qualifiers,
+        })
     }
 
-    /// Loads the name for a language with menu core and extension parts.
-    fn load_language_menu_name<P>(
-        provider: &P,
-        formatting_locale: &DataLocale,
-        language: Language,
-    ) -> Result<Option<DataPayload<ErasedMarker<MenuNamePartsOrString<'static>>>>, DataError>
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
+        functions: [
+            try_new_extended_long,
+            try_new_extended_long_with_buffer_provider,
+            try_new_extended_long_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_extended_long)]
+    pub fn try_new_extended_long_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        mut subject: LanguageIdentifier,
+        options: LanguageIdentifierDisplayNameOptions,
+    ) -> Result<Self, DataError>
     where
-        P: ?Sized + DataProvider<LocaleNamesLanguageMenuMediumV1>,
+        D: ?Sized
+            + DataProvider<LocaleNamesLanguageExtendedLongV1>
+            + DataProvider<LocaleNamesLanguageCoreLongV1>
+            + DataProvider<LocaleNamesLanguageMinimalLongV1>
+            + DataProvider<LocaleNamesLanguageExtendedMediumV1>
+            + DataProvider<LocaleNamesLanguageCoreMediumV1>
+            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
+            + DataProvider<LocaleNamesScriptExtendedMediumV1>
+            + DataProvider<LocaleNamesScriptCoreMediumV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>
+            + DataProvider<LocaleNamesRegionExtendedMediumV1>
+            + DataProvider<LocaleNamesRegionCoreMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>
+            + DataProvider<LocaleNamesVariantExtendedMediumV1>
+            + DataProvider<LocaleNamesVariantCoreMediumV1>
+            + DataProvider<LocaleNamesVariantMinimalMediumV1>
+            + DataProvider<LocaleNamesEssentialsV1>,
     {
-        let mut buffer = TinyAsciiStr::EMPTY;
-        // NOTE: Menu and non-Menu use the same attributes
-        let attrs = LocaleNamesLanguageMediumV1::make_attributes(language, None, None, &mut buffer);
-        let option = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    attrs,
-                    formatting_locale,
-                ),
-                ..Default::default()
-            })
-            .allow_identifier_not_found()?;
-        Ok(option.map(|resp| {
-            resp.payload
-                .map_project(|payload, _| MenuNamePartsOrString::MenuNameParts(payload))
-        }))
+        let load_dialect = options.should_load_dialect();
+        let mut language_payload = None;
+        if load_dialect {
+            language_payload = try_load_dialect_name!(
+                provider,
+                prefs,
+                subject,
+                [
+                    LocaleNamesLanguageExtendedLongV1,
+                    LocaleNamesLanguageCoreLongV1,
+                    LocaleNamesLanguageMinimalLongV1,
+                    LocaleNamesLanguageExtendedMediumV1,
+                    LocaleNamesLanguageCoreMediumV1,
+                    LocaleNamesLanguageMinimalMediumV1
+                ]
+            );
+        }
+        if language_payload.is_none() {
+            language_payload = try_load_subtag_name!(
+                provider,
+                prefs,
+                subject.language,
+                [
+                    LocaleNamesLanguageExtendedLongV1,
+                    LocaleNamesLanguageCoreLongV1,
+                    LocaleNamesLanguageMinimalLongV1,
+                    LocaleNamesLanguageExtendedMediumV1,
+                    LocaleNamesLanguageCoreMediumV1,
+                    LocaleNamesLanguageMinimalMediumV1
+                ]
+            );
+        }
+        let language_payload = match language_payload {
+            Some(payload) => DataPayloadOr::from_payload(payload),
+            None => DataPayloadOr::from_other(subject.language),
+        };
+
+        let qualifiers = QualifiersOwned::try_new_extended_unstable(provider, prefs, subject)?;
+        Ok(Self {
+            language_payload,
+            qualifiers,
+        })
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
+        /// Loads the menu-style language display name for a given language identifier and locale using compiled data with extended coverage.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::experimental::displaynames::{
+        ///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayNameOwned,
+        /// };
+        /// use icu::locale::{locale, langid};
+        /// use writeable::assert_try_writeable_eq;
+        ///
+        /// let prefs = DisplayNamesPreferences::from(locale!("en"));
+        /// let options = LanguageIdentifierDisplayNameOptions::default();
+        /// let display_name = LanguageIdentifierDisplayNameOwned::try_new_extended_menu(
+        ///     prefs,
+        ///     langid!("en-US"),
+        ///     options,
+        /// )
+        /// .expect("Data should load successfully");
+        ///
+        /// assert_try_writeable_eq!(display_name.as_borrowed(), "English (United States)", Ok(()));
+        /// ```
+        functions: [
+            try_new_extended_menu,
+            try_new_extended_menu_with_buffer_provider,
+            try_new_extended_menu_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_extended_menu)]
+    pub fn try_new_extended_menu_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        subject: LanguageIdentifier,
+        _options: LanguageIdentifierDisplayNameOptions,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<LocaleNamesLanguageMenuExtendedMediumV1>
+            + DataProvider<LocaleNamesLanguageMenuCoreMediumV1>
+            + DataProvider<LocaleNamesLanguageMenuMinimalMediumV1>
+            + DataProvider<LocaleNamesLanguageExtendedMediumV1>
+            + DataProvider<LocaleNamesLanguageCoreMediumV1>
+            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
+            + DataProvider<LocaleNamesScriptExtendedMediumV1>
+            + DataProvider<LocaleNamesScriptCoreMediumV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>
+            + DataProvider<LocaleNamesRegionExtendedMediumV1>
+            + DataProvider<LocaleNamesRegionCoreMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>
+            + DataProvider<LocaleNamesVariantExtendedMediumV1>
+            + DataProvider<LocaleNamesVariantCoreMediumV1>
+            + DataProvider<LocaleNamesVariantMinimalMediumV1>
+            + DataProvider<LocaleNamesEssentialsV1>,
+    {
+        let mut language_payload = try_load_menu_name!(
+            provider,
+            prefs,
+            subject.language,
+            [
+                LocaleNamesLanguageMenuExtendedMediumV1,
+                LocaleNamesLanguageMenuCoreMediumV1,
+                LocaleNamesLanguageMenuMinimalMediumV1
+            ]
+        );
+        if language_payload.is_none() {
+            language_payload = try_load_subtag_name!(
+                provider,
+                prefs,
+                subject.language,
+                [
+                    LocaleNamesLanguageExtendedMediumV1,
+                    LocaleNamesLanguageCoreMediumV1,
+                    LocaleNamesLanguageMinimalMediumV1
+                ]
+            );
+        }
+        let language_payload = match language_payload {
+            Some(payload) => DataPayloadOr::from_payload(payload),
+            None => DataPayloadOr::from_other(subject.language),
+        };
+
+        let qualifiers = QualifiersOwned::try_new_extended_unstable(provider, prefs, subject)?;
+        Ok(Self {
+            language_payload,
+            qualifiers,
+        })
     }
 }
 
@@ -720,7 +1291,7 @@ impl QualifiersOwned {
         // Step 2: Load script name (if present in subject)
         let script_payload = if let Some(script) = subject.script {
             match load_script(provider, prefs, script).allow_identifier_not_found()? {
-                Some(obj) => DataPayloadOr::from_payload(obj.payload),
+                Some(obj) => DataPayloadOr::from_payload(obj.payload.cast()),
                 None => DataPayloadOr::from_other(Some(script)),
             }
         } else {
@@ -730,32 +1301,32 @@ impl QualifiersOwned {
         // Step 3: Load region name (if present in subject)
         let region_payload = if let Some(region) = subject.region {
             match load_region(provider, prefs, region).allow_identifier_not_found()? {
-                Some(obj) => DataPayloadOr::from_payload(obj.payload),
+                Some(obj) => DataPayloadOr::from_payload(obj.payload.cast()),
                 None => DataPayloadOr::from_other(Some(region)),
             }
         } else {
             DataPayloadOr::from_other(None)
         };
 
-        // Step 4: Load variant names (if present in subject)
         let load_variant_helper = |variant: Variant| -> Result<
-            DataPayloadOr<LocaleNamesVariantMediumV1, Variant>,
+            DataPayloadOr<ErasedMarker<VarZeroCow<'static, str>>, Variant>,
             DataError,
         > {
             match load_variant(provider, prefs, variant).allow_identifier_not_found()? {
-                Some(obj) => Ok(DataPayloadOr::from_payload(obj.payload)),
+                Some(obj) => Ok(DataPayloadOr::from_payload(obj.payload.cast())),
                 None => Ok(DataPayloadOr::from_other(variant)),
             }
         };
 
+        // Step 4: Load variant names (if present in subject)
         let mut variant_results = subject
             .variants
             .iter()
             .map(|variant| load_variant_helper(*variant));
 
         let variant_payloads = if let Some(first) = variant_results.next() {
+            // 2 or more variants
             if let Some(second) = variant_results.next() {
-                // 2 or more variants
                 let payload_vec = [first, second]
                     .into_iter()
                     .chain(variant_results)
@@ -798,9 +1369,12 @@ impl QualifiersOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesScriptMediumV1>
-            + DataProvider<LocaleNamesRegionMediumV1>
-            + DataProvider<LocaleNamesVariantMediumV1>
+            + DataProvider<LocaleNamesScriptCoreMediumV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>
+            + DataProvider<LocaleNamesRegionCoreMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>
+            + DataProvider<LocaleNamesVariantCoreMediumV1>
+            + DataProvider<LocaleNamesVariantMinimalMediumV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
         Self::try_new_internal_unstable(
@@ -813,6 +1387,52 @@ impl QualifiersOwned {
         )
     }
 
+    fn try_new_minimal_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        subject: LanguageIdentifier,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>
+            + DataProvider<LocaleNamesVariantMinimalMediumV1>
+            + DataProvider<LocaleNamesEssentialsV1>,
+    {
+        Self::try_new_internal_unstable(
+            provider,
+            prefs,
+            subject,
+            ScriptDisplayNameOwned::try_new_minimal_unstable,
+            RegionDisplayNameOwned::try_new_minimal_unstable,
+            VariantDisplayNameOwned::try_new_minimal_unstable,
+        )
+    }
+
+    fn try_new_minimal_short_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        subject: LanguageIdentifier,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<LocaleNamesScriptMinimalShortV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalShortV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>
+            + DataProvider<LocaleNamesVariantMinimalMediumV1>
+            + DataProvider<LocaleNamesEssentialsV1>,
+    {
+        Self::try_new_internal_unstable(
+            provider,
+            prefs,
+            subject,
+            ScriptDisplayNameOwned::try_new_minimal_short_unstable,
+            RegionDisplayNameOwned::try_new_minimal_short_unstable,
+            VariantDisplayNameOwned::try_new_minimal_unstable,
+        )
+    }
+
     fn try_new_short_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
@@ -820,11 +1440,16 @@ impl QualifiersOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesScriptShortV1>
-            + DataProvider<LocaleNamesScriptMediumV1>
-            + DataProvider<LocaleNamesRegionShortV1>
-            + DataProvider<LocaleNamesRegionMediumV1>
-            + DataProvider<LocaleNamesVariantMediumV1>
+            + DataProvider<LocaleNamesScriptCoreShortV1>
+            + DataProvider<LocaleNamesScriptMinimalShortV1>
+            + DataProvider<LocaleNamesScriptCoreMediumV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>
+            + DataProvider<LocaleNamesRegionCoreShortV1>
+            + DataProvider<LocaleNamesRegionMinimalShortV1>
+            + DataProvider<LocaleNamesRegionCoreMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>
+            + DataProvider<LocaleNamesVariantCoreMediumV1>
+            + DataProvider<LocaleNamesVariantMinimalMediumV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
         Self::try_new_internal_unstable(
@@ -834,6 +1459,68 @@ impl QualifiersOwned {
             ScriptDisplayNameOwned::try_new_short_unstable,
             RegionDisplayNameOwned::try_new_short_unstable,
             VariantDisplayNameOwned::try_new_unstable,
+        )
+    }
+
+    fn try_new_extended_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        subject: LanguageIdentifier,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<LocaleNamesScriptExtendedMediumV1>
+            + DataProvider<LocaleNamesScriptCoreMediumV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>
+            + DataProvider<LocaleNamesRegionExtendedMediumV1>
+            + DataProvider<LocaleNamesRegionCoreMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>
+            + DataProvider<LocaleNamesVariantExtendedMediumV1>
+            + DataProvider<LocaleNamesVariantCoreMediumV1>
+            + DataProvider<LocaleNamesVariantMinimalMediumV1>
+            + DataProvider<LocaleNamesEssentialsV1>,
+    {
+        Self::try_new_internal_unstable(
+            provider,
+            prefs,
+            subject,
+            ScriptDisplayNameOwned::try_new_extended_unstable,
+            RegionDisplayNameOwned::try_new_extended_unstable,
+            VariantDisplayNameOwned::try_new_extended_unstable,
+        )
+    }
+
+    fn try_new_extended_short_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        subject: LanguageIdentifier,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<LocaleNamesScriptExtendedShortV1>
+            + DataProvider<LocaleNamesScriptCoreShortV1>
+            + DataProvider<LocaleNamesScriptMinimalShortV1>
+            + DataProvider<LocaleNamesScriptExtendedMediumV1>
+            + DataProvider<LocaleNamesScriptCoreMediumV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>
+            + DataProvider<LocaleNamesRegionExtendedShortV1>
+            + DataProvider<LocaleNamesRegionCoreShortV1>
+            + DataProvider<LocaleNamesRegionMinimalShortV1>
+            + DataProvider<LocaleNamesRegionExtendedMediumV1>
+            + DataProvider<LocaleNamesRegionCoreMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>
+            + DataProvider<LocaleNamesVariantExtendedMediumV1>
+            + DataProvider<LocaleNamesVariantCoreMediumV1>
+            + DataProvider<LocaleNamesVariantMinimalMediumV1>
+            + DataProvider<LocaleNamesEssentialsV1>,
+    {
+        Self::try_new_internal_unstable(
+            provider,
+            prefs,
+            subject,
+            ScriptDisplayNameOwned::try_new_extended_short_unstable,
+            RegionDisplayNameOwned::try_new_extended_short_unstable,
+            VariantDisplayNameOwned::try_new_extended_unstable,
         )
     }
 }
@@ -899,7 +1586,7 @@ impl QualifiersOwned {
 #[derive(Debug, Clone, Copy)]
 enum BorrowedVariants<'a> {
     One(NameOrFallback<'a>),
-    Slice(&'a [DataPayloadOr<LocaleNamesVariantMediumV1, Variant>]),
+    Slice(&'a [DataPayloadOr<ErasedMarker<VarZeroCow<'static, str>>, Variant>]),
 }
 
 impl BorrowedVariants<'_> {

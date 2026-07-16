@@ -4,10 +4,15 @@
 
 use super::{
     impl_writeable_for_single_display_name_borrowed, impl_writeable_for_single_display_name_owned,
+    try_load_markers,
 };
 use crate::displaynames::DisplayNamesPreferences;
-use crate::displaynames::provider::*;
-use icu_locale::subtags::Script;
+use crate::displaynames::provider::{
+    LocaleNamesScriptCoreMediumV1, LocaleNamesScriptCoreShortV1, LocaleNamesScriptExtendedMediumV1,
+    LocaleNamesScriptExtendedShortV1, LocaleNamesScriptMinimalMediumV1,
+    LocaleNamesScriptMinimalShortV1,
+};
+use icu_locale_core::subtags::Script;
 use icu_provider::prelude::*;
 
 /// A localized display name for a single script, owned version.
@@ -26,7 +31,7 @@ use icu_provider::prelude::*;
 /// ```
 #[derive(Debug)]
 pub struct ScriptDisplayNameOwned {
-    pub(crate) payload: DataPayload<LocaleNamesScriptMediumV1>,
+    pub(crate) payload: DataPayload<LocaleNamesScriptCoreMediumV1>,
 }
 
 impl ScriptDisplayNameOwned {
@@ -42,17 +47,92 @@ impl ScriptDisplayNameOwned {
     );
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<D: DataProvider<LocaleNamesScriptMediumV1> + ?Sized>(
+    pub fn try_new_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         script: Script,
-    ) -> Result<Self, DataError> {
-        super::try_new_unstable::<LocaleNamesScriptMediumV1, _>(
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<LocaleNamesScriptCoreMediumV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>,
+    {
+        let attrs = LocaleNamesScriptCoreMediumV1::make_attributes(&script);
+        try_load_markers!(
             provider,
             prefs,
-            LocaleNamesScriptMediumV1::make_attributes(&script),
+            attrs,
+            [
+                LocaleNamesScriptCoreMediumV1,
+                LocaleNamesScriptMinimalMediumV1
+            ]
         )
         .map(|payload| Self { payload })
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
+        /// Loads the minimal script display name for a given script and locale using compiled data.
+        functions: [
+            try_new_minimal,
+            try_new_minimal_with_buffer_provider,
+            try_new_minimal_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_minimal)]
+    pub fn try_new_minimal_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        script: Script,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized + DataProvider<LocaleNamesScriptMinimalMediumV1>,
+    {
+        let attrs = LocaleNamesScriptMinimalMediumV1::make_attributes(&script);
+        try_load_markers!(provider, prefs, attrs, [LocaleNamesScriptMinimalMediumV1]).map(
+            |payload| Self {
+                payload: payload.cast(),
+            },
+        )
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
+        /// Loads the minimal short script display name for a given script and locale using compiled data.
+        functions: [
+            try_new_minimal_short,
+            try_new_minimal_short_with_buffer_provider,
+            try_new_minimal_short_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_minimal_short)]
+    pub fn try_new_minimal_short_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        script: Script,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<LocaleNamesScriptMinimalShortV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>,
+    {
+        let attrs = LocaleNamesScriptMinimalShortV1::make_attributes(&script);
+        try_load_markers!(
+            provider,
+            prefs,
+            attrs,
+            [
+                LocaleNamesScriptMinimalShortV1,
+                LocaleNamesScriptMinimalMediumV1
+            ]
+        )
+        .map(|payload| Self {
+            payload: payload.cast(),
+        })
     }
 
     icu_provider::gen_buffer_data_constructors!(
@@ -97,16 +177,111 @@ impl ScriptDisplayNameOwned {
         script: Script,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LocaleNamesScriptShortV1>
-            + DataProvider<LocaleNamesScriptMediumV1>
-            + ?Sized,
+        D: ?Sized
+            + DataProvider<LocaleNamesScriptCoreShortV1>
+            + DataProvider<LocaleNamesScriptMinimalShortV1>
+            + DataProvider<LocaleNamesScriptCoreMediumV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>,
     {
-        super::try_new_short_unstable::<LocaleNamesScriptShortV1, LocaleNamesScriptMediumV1, _>(
+        let attrs = LocaleNamesScriptCoreShortV1::make_attributes(&script);
+        try_load_markers!(
             provider,
             prefs,
-            LocaleNamesScriptShortV1::make_attributes(&script),
+            attrs,
+            [
+                LocaleNamesScriptCoreShortV1,
+                LocaleNamesScriptMinimalShortV1,
+                LocaleNamesScriptCoreMediumV1,
+                LocaleNamesScriptMinimalMediumV1
+            ]
         )
-        .map(|payload| Self { payload })
+        .map(|payload| Self {
+            payload: payload.cast(),
+        })
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
+        /// Loads the extended script display name for a given script and locale using compiled data.
+        functions: [
+            try_new_extended,
+            try_new_extended_with_buffer_provider,
+            try_new_extended_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_extended)]
+    pub fn try_new_extended_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        script: Script,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<LocaleNamesScriptExtendedMediumV1>
+            + DataProvider<LocaleNamesScriptCoreMediumV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>,
+    {
+        let attrs = LocaleNamesScriptExtendedMediumV1::make_attributes(&script);
+        try_load_markers!(
+            provider,
+            prefs,
+            attrs,
+            [
+                LocaleNamesScriptExtendedMediumV1,
+                LocaleNamesScriptCoreMediumV1,
+                LocaleNamesScriptMinimalMediumV1
+            ]
+        )
+        .map(|payload| Self {
+            payload: payload.cast(),
+        })
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
+        /// Loads the extended short script display name for a given script and locale using compiled data.
+        functions: [
+            try_new_extended_short,
+            try_new_extended_short_with_buffer_provider,
+            try_new_extended_short_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_extended_short)]
+    pub fn try_new_extended_short_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        script: Script,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<LocaleNamesScriptExtendedShortV1>
+            + DataProvider<LocaleNamesScriptCoreShortV1>
+            + DataProvider<LocaleNamesScriptMinimalShortV1>
+            + DataProvider<LocaleNamesScriptExtendedMediumV1>
+            + DataProvider<LocaleNamesScriptCoreMediumV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>,
+    {
+        let attrs = LocaleNamesScriptExtendedShortV1::make_attributes(&script);
+        try_load_markers!(
+            provider,
+            prefs,
+            attrs,
+            [
+                LocaleNamesScriptExtendedShortV1,
+                LocaleNamesScriptCoreShortV1,
+                LocaleNamesScriptMinimalShortV1,
+                LocaleNamesScriptExtendedMediumV1,
+                LocaleNamesScriptCoreMediumV1,
+                LocaleNamesScriptMinimalMediumV1
+            ]
+        )
+        .map(|payload| Self {
+            payload: payload.cast(),
+        })
     }
 
     /// Returns a borrowed version of this display name.

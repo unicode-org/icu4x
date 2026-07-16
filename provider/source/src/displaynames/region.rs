@@ -4,6 +4,7 @@
 
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use crate::cldr_cache::CoverageTier;
 use crate::cldr_serde;
 use crate::cldr_serde::displaynames::{Alt, WithAlt};
 use crate::displaynames::extract_names_for_zeromap_struct;
@@ -32,21 +33,59 @@ impl DataProvider<RegionDisplayNamesV1> for SourceDataProvider {
 crate::displaynames::impl_displaynames_legacy_iter_v1!(RegionDisplayNamesV1, "territories.json");
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesRegionMediumV1,
+    LocaleNamesRegionMinimalMediumV1,
     Region,
     cldr_serde::displaynames::region::Resource,
     "territories.json",
     regions,
     None,
+    CoverageTier::Minimal,
+);
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesRegionCoreMediumV1,
+    Region,
+    cldr_serde::displaynames::region::Resource,
+    "territories.json",
+    regions,
+    None,
+    CoverageTier::Core,
+);
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesRegionExtendedMediumV1,
+    Region,
+    cldr_serde::displaynames::region::Resource,
+    "territories.json",
+    regions,
+    None,
+    CoverageTier::Extended,
 );
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesRegionShortV1,
+    LocaleNamesRegionMinimalShortV1,
     Region,
     cldr_serde::displaynames::region::Resource,
     "territories.json",
     regions,
     Some(Alt::Short),
+    CoverageTier::Minimal,
+);
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesRegionCoreShortV1,
+    Region,
+    cldr_serde::displaynames::region::Resource,
+    "territories.json",
+    regions,
+    Some(Alt::Short),
+    CoverageTier::Core,
+);
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesRegionExtendedShortV1,
+    Region,
+    cldr_serde::displaynames::region::Resource,
+    "territories.json",
+    regions,
+    Some(Alt::Short),
+    CoverageTier::Extended,
 );
 
 impl From<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames<'static> {
@@ -111,20 +150,20 @@ mod tests {
         assert_eq!(
             data.get()
                 .short_names
-                .get(&region!("BA").to_tinystr().to_unvalidated())
+                .get(&region!("GB").to_tinystr().to_unvalidated())
                 .unwrap(),
-            "Bosnia"
+            "UK"
         );
     }
 
     #[test]
-    fn test_locale_names_region_short() {
+    fn test_locale_names_region_medium() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesRegionShortV1> = provider
+        let data: DataPayload<LocaleNamesRegionCoreMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str("BA").unwrap(),
+                    DataMarkerAttributes::try_from_str("AE").unwrap(),
                     &langid!("en-001").into(),
                 ),
                 ..Default::default()
@@ -132,6 +171,24 @@ mod tests {
             .unwrap()
             .payload;
 
-        assert_eq!(&**data.get(), "Bosnia");
+        assert_eq!(&**data.get(), "United Arab Emirates");
+    }
+
+    #[test]
+    fn test_locale_names_region_short() {
+        let provider = SourceDataProvider::new_testing();
+
+        let data: DataPayload<LocaleNamesRegionCoreShortV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("GB").unwrap(),
+                    &langid!("en-001").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(&**data.get(), "UK");
     }
 }

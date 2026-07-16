@@ -5,6 +5,18 @@
 #![allow(dead_code)] // features
 
 use crate::CoverageLevel;
+
+/// Coverage tiers for display names items derived from CLDR `coverageByXPath` JSON definitions.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub(crate) enum CoverageTier {
+    /// Items with `basic` or `core` CLDR coverage levels.
+    Minimal,
+    /// Items with `moderate` CLDR coverage level.
+    Core,
+    /// Items with `modern` CLDR coverage level or unlisted items.
+    Extended,
+}
+use crate::cldr_serde::coverage_by_xpath::CoverageByXPathResource;
 use crate::cldr_serde::eras::EraData;
 use crate::datetime::DatagenCalendar;
 use crate::source::{AbstractFs, SerdeCache};
@@ -249,6 +261,52 @@ impl CldrCache {
             .minimize_favor_script(&mut group);
         Ok(group.into())
     }
+
+    /// Determines the [`CoverageTier`] for a given `locale` and `xpath` target.
+    ///
+    /// Resolution lookup precedence:
+    /// 1. Locale-specific override file `cldr-misc-full/coverageByXPath/{locale}.json`
+    /// 2. Root defaults file `cldr-misc-full/coverageByXPath.json`
+    /// 3. Defaults to [`CoverageTier::Extended`] if unlisted everywhere.
+    pub(crate) fn coverage_tier(
+        &self,
+        locale: &DataLocale,
+        xpath: &str,
+    ) -> Result<CoverageTier, DataError> {
+        let locale_path = format!("cldr-misc-full/coverageByXPath/{locale}.json");
+        if self.serde_cache.file_exists(&locale_path)? {
+            let resource: &CoverageByXPathResource =
+                self.serde_cache.read_and_parse_json(&locale_path)?;
+            let locale_str = locale.to_string();
+            let levels = resource.coverage_by_xpath.get(&locale_str);
+            if let Some(levels) = levels {
+                if levels.basic.contains(xpath) || levels.core.contains(xpath) {
+                    return Ok(CoverageTier::Minimal);
+                } else if levels.moderate.contains(xpath) {
+                    return Ok(CoverageTier::Core);
+                } else if levels.modern.contains(xpath) {
+                    return Ok(CoverageTier::Extended);
+                }
+            }
+        }
+
+        let root_path = "cldr-misc-full/coverageByXPath.json";
+        if self.serde_cache.file_exists(root_path)? {
+            let resource: &CoverageByXPathResource =
+                self.serde_cache.read_and_parse_json(root_path)?;
+            if let Some(levels) = resource.coverage_by_xpath.get("root") {
+                if levels.basic.contains(xpath) || levels.core.contains(xpath) {
+                    return Ok(CoverageTier::Minimal);
+                } else if levels.moderate.contains(xpath) {
+                    return Ok(CoverageTier::Core);
+                } else if levels.modern.contains(xpath) {
+                    return Ok(CoverageTier::Extended);
+                }
+            }
+        }
+
+        Ok(CoverageTier::Extended)
+    }
 }
 
 pub(crate) struct CldrDirNoLang<'a>(&'a CldrCache, &'static str);
@@ -375,5 +433,29 @@ fn test_script_based_locale_group() {
     assert_eq!(
         cldr.script_based_locale_group(&man).unwrap().to_string(),
         "en"
+    );
+}
+
+#[test]
+fn test_coverage_tier() {
+    use crate::SourceDataProvider;
+
+    let provider = SourceDataProvider::new_testing();
+    let cldr = provider.cldr().unwrap();
+
+    let en = DataLocale::from_str("en").unwrap();
+    // Minimal tier XPath (basic language display name in root defaults)
+    let xpath_minimal = "//ldml/localeDisplayNames/languages/language[@type=\"en\"]";
+    assert_eq!(
+        cldr.coverage_tier(&en, xpath_minimal).unwrap(),
+        CoverageTier::Minimal
+    );
+
+    // Default/unlisted XPath falls back to Extended tier
+    let xpath_unlisted =
+        "//ldml/localeDisplayNames/languages/language[@type=\"unlisted_test_code\"]";
+    assert_eq!(
+        cldr.coverage_tier(&en, xpath_unlisted).unwrap(),
+        CoverageTier::Extended
     );
 }

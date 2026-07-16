@@ -8,7 +8,8 @@ use crate::source::{include_files, AbstractFs};
 
 #[rustfmt::skip]
 pub fn cldr_data() -> AbstractFs {
-    include_files!(
+    let mut fs = {
+        include_files!(
         "../../tests/data/cldr/";
         "cldr-bcp47/bcp47/timezone.json",
         "cldr-cal-buddhist-full/main/ar-EG/ca-buddhist.json",
@@ -598,6 +599,18 @@ pub fn cldr_data() -> AbstractFs {
         "cldr-units-full/main/tr/units.json",
         "cldr-units-full/main/und/units.json"
     )
+    };
+    if let AbstractFs::Memory(map) = &mut fs {
+        map.insert(
+            "cldr-misc-full/coverageByXPath.json",
+            include_bytes!("../../data/cldr-misc-full/coverageByXPath.json").as_slice(),
+        );
+        map.insert(
+            "cldr-misc-full/coverageByXPath/en.json",
+            include_bytes!("../../data/cldr-misc-full/coverageByXPath/en.json").as_slice(),
+        );
+    }
+    fs
 }
 
 #[rustfmt::skip]

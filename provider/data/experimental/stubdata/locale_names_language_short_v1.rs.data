@@ -1,5 +1,5 @@
 // @generated
-/// Implement `DataProvider<LocaleNamesLanguageShortV1>` on the given struct using the data
+/// Implement `DataProvider<LocaleNamesLanguageCoreShortV1>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
 ///
@@ -13,40 +13,64 @@ macro_rules! __impl_locale_names_language_short_v1 {
         #[clippy::msrv = "1.88"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
         #[clippy::msrv = "1.88"]
-        impl icu_provider::DataProvider<icu::experimental::displaynames::provider::LocaleNamesLanguageShortV1> for $provider {
-            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::displaynames::provider::LocaleNamesLanguageShortV1>, icu_provider::DataError> {
-                Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::experimental::displaynames::provider::LocaleNamesLanguageShortV1 as icu_provider::DataMarker>::INFO, req))
+        impl icu_provider::DataProvider<icu::experimental::displaynames::provider::LocaleNamesLanguageCoreShortV1> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::displaynames::provider::LocaleNamesLanguageCoreShortV1>, icu_provider::DataError> {
+                Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::experimental::displaynames::provider::LocaleNamesLanguageCoreShortV1 as icu_provider::DataMarker>::INFO, req))
             }
         }
+        impl icu_provider::DataProvider<icu::experimental::displaynames::provider::LocaleNamesLanguageMinimalShortV1> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::displaynames::provider::LocaleNamesLanguageMinimalShortV1>, icu_provider::DataError> {
+                let resp: icu_provider::DataResponse<icu::experimental::displaynames::provider::LocaleNamesLanguageCoreShortV1> = self.load(req)?;
+                Ok(resp.cast())
+            }
+        }
+        impl icu_provider::DataProvider<icu::experimental::displaynames::provider::LocaleNamesLanguageExtendedShortV1> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::displaynames::provider::LocaleNamesLanguageExtendedShortV1>, icu_provider::DataError> {
+                let resp: icu_provider::DataResponse<icu::experimental::displaynames::provider::LocaleNamesLanguageCoreShortV1> = self.load(req)?;
+                Ok(resp.cast())
+            }
+        }
+
     };
     ($ provider : ty , ITER) => {
         __impl_locale_names_language_short_v1!($provider);
         #[clippy::msrv = "1.88"]
-        impl icu_provider::IterableDataProvider<icu::experimental::displaynames::provider::LocaleNamesLanguageShortV1> for $provider {
+        impl icu_provider::IterableDataProvider<icu::experimental::displaynames::provider::LocaleNamesLanguageCoreShortV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(Default::default())
             }
         }
+        impl icu_provider::IterableDataProvider<icu::experimental::displaynames::provider::LocaleNamesLanguageMinimalShortV1> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                icu_provider::IterableDataProvider::<icu::experimental::displaynames::provider::LocaleNamesLanguageCoreShortV1>::iter_ids(self)
+            }
+        }
+        impl icu_provider::IterableDataProvider<icu::experimental::displaynames::provider::LocaleNamesLanguageExtendedShortV1> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                icu_provider::IterableDataProvider::<icu::experimental::displaynames::provider::LocaleNamesLanguageCoreShortV1>::iter_ids(self)
+            }
+        }
+
     };
     ($ provider : ty , DRY) => {
         __impl_locale_names_language_short_v1!($provider);
         #[clippy::msrv = "1.88"]
-        impl icu_provider::DryDataProvider<icu::experimental::displaynames::provider::LocaleNamesLanguageShortV1> for $provider {
+        impl icu_provider::DryDataProvider<icu::experimental::displaynames::provider::LocaleNamesLanguageCoreShortV1> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
-                Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::experimental::displaynames::provider::LocaleNamesLanguageShortV1 as icu_provider::DataMarker>::INFO, req))
+                Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::experimental::displaynames::provider::LocaleNamesLanguageCoreShortV1 as icu_provider::DataMarker>::INFO, req))
             }
         }
     };
     ($ provider : ty , DRY , ITER) => {
         __impl_locale_names_language_short_v1!($provider);
         #[clippy::msrv = "1.88"]
-        impl icu_provider::DryDataProvider<icu::experimental::displaynames::provider::LocaleNamesLanguageShortV1> for $provider {
+        impl icu_provider::DryDataProvider<icu::experimental::displaynames::provider::LocaleNamesLanguageCoreShortV1> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
-                Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::experimental::displaynames::provider::LocaleNamesLanguageShortV1 as icu_provider::DataMarker>::INFO, req))
+                Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::experimental::displaynames::provider::LocaleNamesLanguageCoreShortV1 as icu_provider::DataMarker>::INFO, req))
             }
         }
         #[clippy::msrv = "1.88"]
-        impl icu_provider::IterableDataProvider<icu::experimental::displaynames::provider::LocaleNamesLanguageShortV1> for $provider {
+        impl icu_provider::IterableDataProvider<icu::experimental::displaynames::provider::LocaleNamesLanguageCoreShortV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(Default::default())
             }
@@ -55,3 +79,10 @@ macro_rules! __impl_locale_names_language_short_v1 {
 }
 #[doc(inline)]
 pub use __impl_locale_names_language_short_v1 as impl_locale_names_language_short_v1;
+
+#[doc(inline)]
+pub use __impl_locale_names_language_short_v1 as impl_locale_names_language_minimal_short_v1;
+#[doc(inline)]
+pub use __impl_locale_names_language_short_v1 as impl_locale_names_language_core_short_v1;
+#[doc(inline)]
+pub use __impl_locale_names_language_short_v1 as impl_locale_names_language_extended_short_v1;

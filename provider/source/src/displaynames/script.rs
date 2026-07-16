@@ -4,6 +4,7 @@
 
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use crate::cldr_cache::CoverageTier;
 use crate::cldr_serde;
 use crate::cldr_serde::displaynames::{Alt, WithAlt};
 use crate::displaynames::extract_names_for_zeromap_struct;
@@ -30,21 +31,59 @@ impl DataProvider<ScriptDisplayNamesV1> for SourceDataProvider {
 }
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesScriptMediumV1,
+    LocaleNamesScriptMinimalMediumV1,
     Script,
     cldr_serde::displaynames::script::Resource,
     "scripts.json",
     scripts,
     None,
+    CoverageTier::Minimal,
+);
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesScriptCoreMediumV1,
+    Script,
+    cldr_serde::displaynames::script::Resource,
+    "scripts.json",
+    scripts,
+    None,
+    CoverageTier::Core,
+);
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesScriptExtendedMediumV1,
+    Script,
+    cldr_serde::displaynames::script::Resource,
+    "scripts.json",
+    scripts,
+    None,
+    CoverageTier::Extended,
 );
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesScriptShortV1,
+    LocaleNamesScriptMinimalShortV1,
     Script,
     cldr_serde::displaynames::script::Resource,
     "scripts.json",
     scripts,
     Some(Alt::Short),
+    CoverageTier::Minimal,
+);
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesScriptCoreShortV1,
+    Script,
+    cldr_serde::displaynames::script::Resource,
+    "scripts.json",
+    scripts,
+    Some(Alt::Short),
+    CoverageTier::Core,
+);
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesScriptExtendedShortV1,
+    Script,
+    cldr_serde::displaynames::script::Resource,
+    "scripts.json",
+    scripts,
+    Some(Alt::Short),
+    CoverageTier::Extended,
 );
 
 crate::displaynames::impl_displaynames_legacy_iter_v1!(ScriptDisplayNamesV1, "scripts.json");
@@ -70,6 +109,7 @@ impl From<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames<'s
         }
     }
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -121,7 +161,7 @@ mod tests {
     fn test_locale_names_script_medium() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesScriptMediumV1> = provider
+        let data: DataPayload<LocaleNamesScriptCoreMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("Latn").unwrap(),
@@ -139,7 +179,7 @@ mod tests {
     fn test_locale_names_script_short() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesScriptShortV1> = provider
+        let data: DataPayload<LocaleNamesScriptExtendedShortV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("Cans").unwrap(),

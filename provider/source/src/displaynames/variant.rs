@@ -4,6 +4,7 @@
 
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use crate::cldr_cache::CoverageTier;
 use crate::cldr_serde;
 use crate::cldr_serde::displaynames::{Alt, WithAlt};
 use crate::displaynames::extract_names_for_zeromap_struct;
@@ -30,17 +31,35 @@ impl DataProvider<VariantDisplayNamesV1> for SourceDataProvider {
 }
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesVariantMediumV1,
+    LocaleNamesVariantMinimalMediumV1,
     Variant,
     cldr_serde::displaynames::variant::Resource,
     "variants.json",
     variants,
     None,
+    CoverageTier::Minimal,
+);
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesVariantCoreMediumV1,
+    Variant,
+    cldr_serde::displaynames::variant::Resource,
+    "variants.json",
+    variants,
+    None,
+    CoverageTier::Core,
+);
+crate::displaynames::impl_displaynames_v1!(
+    LocaleNamesVariantExtendedMediumV1,
+    Variant,
+    cldr_serde::displaynames::variant::Resource,
+    "variants.json",
+    variants,
+    None,
+    CoverageTier::Extended,
 );
 
 crate::displaynames::impl_displaynames_legacy_iter_v1!(VariantDisplayNamesV1, "variants.json");
 
-// TODO: Support alt variants for variant display names.
 impl From<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNames<'static> {
     fn from(other: &cldr_serde::displaynames::variant::Resource) -> Self {
         let extracted = extract_names_for_zeromap_struct(
@@ -61,6 +80,7 @@ impl From<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNames<
         }
     }
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -91,7 +111,7 @@ mod tests {
     fn test_locale_names_variant_medium() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesVariantMediumV1> = provider
+        let data: DataPayload<LocaleNamesVariantExtendedMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("posix").unwrap(),
@@ -105,3 +125,5 @@ mod tests {
         assert_eq!(&**data.get(), "Computer");
     }
 }
+
+// TODO: Support alt variants for variant display names.

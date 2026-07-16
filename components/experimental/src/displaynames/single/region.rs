@@ -4,9 +4,14 @@
 
 use super::{
     impl_writeable_for_single_display_name_borrowed, impl_writeable_for_single_display_name_owned,
+    try_load_markers,
 };
 use crate::displaynames::DisplayNamesPreferences;
-use crate::displaynames::provider::*;
+use crate::displaynames::provider::{
+    LocaleNamesRegionCoreMediumV1, LocaleNamesRegionCoreShortV1, LocaleNamesRegionExtendedMediumV1,
+    LocaleNamesRegionExtendedShortV1, LocaleNamesRegionMinimalMediumV1,
+    LocaleNamesRegionMinimalShortV1,
+};
 use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
 
@@ -26,13 +31,15 @@ use icu_provider::prelude::*;
 /// ```
 #[derive(Debug)]
 pub struct RegionDisplayNameOwned {
-    pub(crate) payload: DataPayload<LocaleNamesRegionMediumV1>,
+    pub(crate) payload: DataPayload<LocaleNamesRegionCoreMediumV1>,
 }
 
 impl RegionDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
-        /// Loads the long region display name for a given region and locale using compiled data.
+        /// Loads the core medium region display name for a given region and locale using compiled data.
+        ///
+        /// Falls back to minimal medium if core medium is not available.
         functions: [
             try_new,
             try_new_with_buffer_provider,
@@ -42,24 +49,101 @@ impl RegionDisplayNameOwned {
     );
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<D: DataProvider<LocaleNamesRegionMediumV1> + ?Sized>(
+    pub fn try_new_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         region: Region,
-    ) -> Result<Self, DataError> {
-        super::try_new_unstable::<LocaleNamesRegionMediumV1, _>(
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<LocaleNamesRegionCoreMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>,
+    {
+        let attrs = LocaleNamesRegionCoreMediumV1::make_attributes(&region);
+        try_load_markers!(
             provider,
             prefs,
-            LocaleNamesRegionMediumV1::make_attributes(&region),
+            attrs,
+            [
+                LocaleNamesRegionCoreMediumV1,
+                LocaleNamesRegionMinimalMediumV1
+            ]
         )
         .map(|payload| Self { payload })
     }
 
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
+        /// Loads the minimal region display name for a given region and locale using compiled data.
+        functions: [
+            try_new_minimal,
+            try_new_minimal_with_buffer_provider,
+            try_new_minimal_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_minimal)]
+    pub fn try_new_minimal_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        region: Region,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized + DataProvider<LocaleNamesRegionMinimalMediumV1>,
+    {
+        let attrs = LocaleNamesRegionMinimalMediumV1::make_attributes(&region);
+        try_load_markers!(provider, prefs, attrs, [LocaleNamesRegionMinimalMediumV1]).map(
+            |payload| Self {
+                payload: payload.cast(),
+            },
+        )
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
+        /// Loads the minimal short region display name for a given region and locale using compiled data.
+        ///
+        /// Falls back to minimal medium if minimal short is not available.
+        functions: [
+            try_new_minimal_short,
+            try_new_minimal_short_with_buffer_provider,
+            try_new_minimal_short_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_minimal_short)]
+    pub fn try_new_minimal_short_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        region: Region,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<LocaleNamesRegionMinimalShortV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>,
+    {
+        let attrs = LocaleNamesRegionMinimalShortV1::make_attributes(&region);
+        try_load_markers!(
+            provider,
+            prefs,
+            attrs,
+            [
+                LocaleNamesRegionMinimalShortV1,
+                LocaleNamesRegionMinimalMediumV1
+            ]
+        )
+        .map(|payload| Self {
+            payload: payload.cast(),
+        })
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
         /// Loads the short region display name for a given region and locale using compiled data.
         ///
-        /// Falls back to the long name if the short name is not available.
+        /// Cascades through fallback down to minimal medium if short is not available.
         ///
         /// # Example
         ///
@@ -97,16 +181,111 @@ impl RegionDisplayNameOwned {
         region: Region,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LocaleNamesRegionShortV1>
-            + DataProvider<LocaleNamesRegionMediumV1>
-            + ?Sized,
+        D: ?Sized
+            + DataProvider<LocaleNamesRegionCoreShortV1>
+            + DataProvider<LocaleNamesRegionMinimalShortV1>
+            + DataProvider<LocaleNamesRegionCoreMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>,
     {
-        super::try_new_short_unstable::<LocaleNamesRegionShortV1, LocaleNamesRegionMediumV1, _>(
+        let attrs = LocaleNamesRegionCoreShortV1::make_attributes(&region);
+        try_load_markers!(
             provider,
             prefs,
-            LocaleNamesRegionShortV1::make_attributes(&region),
+            attrs,
+            [
+                LocaleNamesRegionCoreShortV1,
+                LocaleNamesRegionMinimalShortV1,
+                LocaleNamesRegionCoreMediumV1,
+                LocaleNamesRegionMinimalMediumV1
+            ]
         )
-        .map(|payload| Self { payload })
+        .map(|payload| Self {
+            payload: payload.cast(),
+        })
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
+        /// Loads the extended region display name for a given region and locale using compiled data.
+        functions: [
+            try_new_extended,
+            try_new_extended_with_buffer_provider,
+            try_new_extended_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_extended)]
+    pub fn try_new_extended_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        region: Region,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<LocaleNamesRegionExtendedMediumV1>
+            + DataProvider<LocaleNamesRegionCoreMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>,
+    {
+        let attrs = LocaleNamesRegionExtendedMediumV1::make_attributes(&region);
+        try_load_markers!(
+            provider,
+            prefs,
+            attrs,
+            [
+                LocaleNamesRegionExtendedMediumV1,
+                LocaleNamesRegionCoreMediumV1,
+                LocaleNamesRegionMinimalMediumV1
+            ]
+        )
+        .map(|payload| Self {
+            payload: payload.cast(),
+        })
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
+        /// Loads the extended short region display name for a given region and locale using compiled data.
+        functions: [
+            try_new_extended_short,
+            try_new_extended_short_with_buffer_provider,
+            try_new_extended_short_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_extended_short)]
+    pub fn try_new_extended_short_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        region: Region,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<LocaleNamesRegionExtendedShortV1>
+            + DataProvider<LocaleNamesRegionCoreShortV1>
+            + DataProvider<LocaleNamesRegionMinimalShortV1>
+            + DataProvider<LocaleNamesRegionExtendedMediumV1>
+            + DataProvider<LocaleNamesRegionCoreMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>,
+    {
+        let attrs = LocaleNamesRegionExtendedShortV1::make_attributes(&region);
+        try_load_markers!(
+            provider,
+            prefs,
+            attrs,
+            [
+                LocaleNamesRegionExtendedShortV1,
+                LocaleNamesRegionCoreShortV1,
+                LocaleNamesRegionMinimalShortV1,
+                LocaleNamesRegionExtendedMediumV1,
+                LocaleNamesRegionCoreMediumV1,
+                LocaleNamesRegionMinimalMediumV1
+            ]
+        )
+        .map(|payload| Self {
+            payload: payload.cast(),
+        })
     }
 
     /// Returns a borrowed version of this display name.

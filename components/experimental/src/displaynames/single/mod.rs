@@ -32,55 +32,46 @@ pub use region::{RegionDisplayName, RegionDisplayNameOwned};
 pub use script::{ScriptDisplayName, ScriptDisplayNameOwned};
 pub use variant::{VariantDisplayName, VariantDisplayNameOwned};
 
-use crate::displaynames::DisplayNamesPreferences;
-use icu_provider::prelude::*;
-use zerovec::VarZeroCow;
-
-pub(crate) fn try_new_unstable<M, D>(
-    provider: &D,
-    prefs: DisplayNamesPreferences,
-    attributes: &DataMarkerAttributes,
-) -> Result<DataPayload<M>, DataError>
-where
-    M: DataMarker<DataStruct = VarZeroCow<'static, str>>,
-    D: DataProvider<M> + ?Sized,
-{
-    let locale = M::make_locale(prefs.locale_preferences);
-    let payload = provider
-        .load(DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
-            ..Default::default()
-        })?
-        .payload;
-    Ok(payload)
+macro_rules! try_load_markers {
+    ($provider:expr, $prefs:expr, $attributes:expr, [ $first_marker:ident $(, $rest_marker:ident)* $(,)? ]) => {{
+        let mut result: Option<Result<DataPayload<$first_marker>, DataError>> = None;
+        if result.is_none() {
+            let locale = $first_marker::make_locale($prefs.locale_preferences);
+            let id = DataIdentifierBorrowed::for_marker_attributes_and_locale($attributes, &locale);
+            let mut metadata = DataRequestMetadata::default();
+            metadata.silent = true;
+            match DataProvider::<$first_marker>::load($provider, DataRequest { id, metadata }).allow_identifier_not_found() {
+                Ok(Some(response)) => {
+                    result = Some(Ok(response.payload));
+                }
+                Ok(None) => {}
+                Err(e) => return Err(e),
+            }
+        }
+        $(
+            if result.is_none() {
+                let locale = $rest_marker::make_locale($prefs.locale_preferences);
+                let id = DataIdentifierBorrowed::for_marker_attributes_and_locale($attributes, &locale);
+                let mut metadata = DataRequestMetadata::default();
+                metadata.silent = true;
+                match DataProvider::<$rest_marker>::load($provider, DataRequest { id, metadata }).allow_identifier_not_found() {
+                    Ok(Some(response)) => {
+                        let casted: DataPayload<$first_marker> = response.payload.cast();
+                        result = Some(Ok(casted));
+                    }
+                    Ok(None) => {}
+                    Err(e) => return Err(e),
+                }
+            }
+        )*
+        match result {
+            Some(res) => res,
+            None => Err(DataErrorKind::IdentifierNotFound.into_error()),
+        }
+    }};
 }
 
-pub(crate) fn try_new_short_unstable<MShort, MLong, D>(
-    provider: &D,
-    prefs: DisplayNamesPreferences,
-    attributes: &DataMarkerAttributes,
-) -> Result<DataPayload<MLong>, DataError>
-where
-    MShort: DataMarker<DataStruct = VarZeroCow<'static, str>>,
-    MLong: DataMarker<DataStruct = VarZeroCow<'static, str>>,
-    D: DataProvider<MShort> + DataProvider<MLong> + ?Sized,
-{
-    let locale = MShort::make_locale(prefs.locale_preferences);
-    let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale);
-    let mut metadata = DataRequestMetadata::default();
-    metadata.silent = true;
-    let result: Result<DataResponse<MShort>, DataError> =
-        provider.load(DataRequest { id, metadata });
-
-    match result {
-        Ok(response) => Ok(response.payload.cast()),
-        Err(DataError {
-            kind: DataErrorKind::IdentifierNotFound,
-            ..
-        }) => try_new_unstable(provider, prefs, attributes),
-        Err(e) => Err(e),
-    }
-}
+pub(crate) use try_load_markers;
 
 macro_rules! impl_writeable_for_single_display_name_borrowed {
     ($borrowed:ident) => {
