@@ -7,9 +7,7 @@ use zerovec::{
     ule::{AsULE, ULE, UleError},
 };
 
-use crate::dimension::provider::currency::symbols::{
-    CurrencyPatternConfig, CurrencySymbol, PatternSelection,
-};
+use crate::dimension::provider::currency::symbols::{CurrencyPatternConfig, CurrencySymbolIndex};
 
 const NO_SYMBOL: u16 = 0b0111_1111_1111; // decimal: 2047
 const USE_ISO_CODE: u16 = 0b0111_1111_1110; // decimal: 2046
@@ -22,11 +20,9 @@ pub const MAX_SYMBOL_INDEX: u16 = 0b0111_1111_1101; // decimal: 2045
 ///
 /// The serialization model packages the pattern item in three bytes.
 ///
-/// The first bit (b7) is used to determine the `short_pattern_selection`. If the bit is `0`, then, the value will be `Standard`.
-/// If the bit is `1`, then, the value will be `StandardAlphaNextToNumber`.
+/// The first bit (b7) is unused.
 ///
-/// The second bit (b6) is used to determine the `narrow_pattern_selection`. If the bit is `0`, then, the value will be `Standard`.
-/// If the bit is `1`, then, the value will be `StandardAlphaNextToNumber`.
+/// The second bit (b6) is unused.
 ///
 /// The next three bits (b5, b4 & b3) with the second byte is used to determine the `short_symbol`.
 /// The next three bits (b2, b1 & b0) with the third byte is used to determine the `narrow_symbol`.
@@ -53,8 +49,6 @@ unsafe impl ULE for CurrencyPatternConfigULE {
     }
 }
 
-const PATTERN_SHORT_SHIFT: u8 = 7;
-const PATTERN_NARROW_SHIFT: u8 = 6;
 const INDEX_SHORT_SHIFT: u8 = 3;
 const INDEX_NARROW_SHIFT: u8 = 0;
 
@@ -65,20 +59,13 @@ impl AsULE for CurrencyPatternConfig {
     fn to_unaligned(self) -> Self::ULE {
         let mut first_byte_ule: u8 = 0;
 
-        if self.short_pattern_selection == PatternSelection::StandardAlphaNextToNumber {
-            first_byte_ule |= 0b1 << PATTERN_SHORT_SHIFT;
-        }
-        if self.narrow_pattern_selection == PatternSelection::StandardAlphaNextToNumber {
-            first_byte_ule |= 0b1 << PATTERN_NARROW_SHIFT;
-        }
-
         // For short_symbol
         let [
             short_most_significant_byte,
             short_least_significant_byte_ule,
         ] = match self.short_symbol {
-            Some(CurrencySymbol::Index(index)) => index.to_be_bytes(),
-            Some(CurrencySymbol::ISO) => USE_ISO_CODE.to_be_bytes(),
+            Some(CurrencySymbolIndex::Index(index)) => index.to_be_bytes(),
+            Some(CurrencySymbolIndex::ISO) => USE_ISO_CODE.to_be_bytes(),
             None => NO_SYMBOL.to_be_bytes(),
         };
         if short_most_significant_byte & 0b1111_1000 != 0 {
@@ -93,8 +80,8 @@ impl AsULE for CurrencyPatternConfig {
             narrow_most_significant_byte,
             narrow_least_significant_byte_ule,
         ] = match self.narrow_symbol {
-            Some(CurrencySymbol::Index(index)) => index.to_be_bytes(),
-            Some(CurrencySymbol::ISO) => USE_ISO_CODE.to_be_bytes(),
+            Some(CurrencySymbolIndex::Index(index)) => index.to_be_bytes(),
+            Some(CurrencySymbolIndex::ISO) => USE_ISO_CODE.to_be_bytes(),
             None => NO_SYMBOL.to_be_bytes(),
         };
         if narrow_most_significant_byte & 0b1111_1000 != 0 {
@@ -115,19 +102,6 @@ impl AsULE for CurrencyPatternConfig {
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         let [first_byte, second_byte, third_byte] = unaligned.0;
 
-        let short_pattern_selection =
-            if first_byte & (0b1 << PATTERN_SHORT_SHIFT) == 0b1 << PATTERN_SHORT_SHIFT {
-                PatternSelection::StandardAlphaNextToNumber
-            } else {
-                PatternSelection::Standard
-            };
-
-        let narrow_pattern_selection =
-            if first_byte & (0b1 << PATTERN_NARROW_SHIFT) == 0b1 << PATTERN_NARROW_SHIFT {
-                PatternSelection::StandardAlphaNextToNumber
-            } else {
-                PatternSelection::Standard
-            };
         let short_prefix = (first_byte & (0b111 << INDEX_SHORT_SHIFT)) >> INDEX_SHORT_SHIFT;
         let narrow_prefix = (first_byte & (0b111 << INDEX_NARROW_SHIFT)) >> INDEX_NARROW_SHIFT;
 
@@ -136,25 +110,23 @@ impl AsULE for CurrencyPatternConfig {
 
         let short_symbol = match short_symbol {
             NO_SYMBOL => None,
-            USE_ISO_CODE => Some(CurrencySymbol::ISO),
+            USE_ISO_CODE => Some(CurrencySymbolIndex::ISO),
             index => {
                 debug_assert!(index <= MAX_SYMBOL_INDEX);
-                Some(CurrencySymbol::Index(index))
+                Some(CurrencySymbolIndex::Index(index))
             }
         };
 
         let narrow_symbol = match narrow_symbol {
             NO_SYMBOL => None,
-            USE_ISO_CODE => Some(CurrencySymbol::ISO),
+            USE_ISO_CODE => Some(CurrencySymbolIndex::ISO),
             index => {
                 debug_assert!(index <= MAX_SYMBOL_INDEX);
-                Some(CurrencySymbol::Index(index))
+                Some(CurrencySymbolIndex::Index(index))
             }
         };
 
         CurrencyPatternConfig {
-            short_pattern_selection,
-            narrow_pattern_selection,
             short_symbol,
             narrow_symbol,
         }

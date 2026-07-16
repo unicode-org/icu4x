@@ -179,7 +179,6 @@ fn extract_currency_essentials<'data>(
 
 #[test]
 fn test_essentials() {
-    use icu::experimental::dimension::provider::currency::symbols::PatternSelection;
     use icu::locale::langid;
     use writeable::assert_writeable_eq;
 
@@ -194,42 +193,39 @@ fn test_essentials() {
         .payload;
 
     assert_writeable_eq!(
+        en.get().get_positive(false, false).interpolate((3, "$")),
+        "$3"
+    );
+
+    assert_writeable_eq!(
+        en.get().get_positive(true, true).interpolate((3, "USD")),
+        "USD\u{a0}3"
+    );
+    assert_writeable_eq!(
         en.get()
-            .get_positive(PatternSelection::Standard, false)
+            .get_positive_accounting(false, false)
             .interpolate((3, "$")),
         "$3"
     );
     assert_writeable_eq!(
         en.get()
-            .get_positive(PatternSelection::StandardAlphaNextToNumber, false)
-            .interpolate((3, "$")),
-        "$\u{a0}3"
-    );
-    assert_writeable_eq!(
-        en.get()
-            .get_positive(PatternSelection::Standard, true)
-            .interpolate((3, "$")),
-        "$3"
-    );
-    assert_writeable_eq!(
-        en.get()
-            .get_negative(PatternSelection::Standard, true)
+            .get_negative_accounting(false, false)
             .unwrap()
             .interpolate((3, "$")),
         "($3)"
     );
     assert_writeable_eq!(
         en.get()
-            .get_positive(PatternSelection::StandardAlphaNextToNumber, true)
-            .interpolate((3, "$")),
-        "$\u{a0}3"
+            .get_positive_accounting(true, true)
+            .interpolate((3, "USD")),
+        "USD\u{a0}3"
     );
     assert_writeable_eq!(
         en.get()
-            .get_negative(PatternSelection::StandardAlphaNextToNumber, true)
+            .get_negative_accounting(true, true)
             .unwrap()
-            .interpolate((3, "$")),
-        "($\u{a0}3)"
+            .interpolate((3, "USD")),
+        "(USD\u{a0}3)"
     );
 
     let ar_eg: DataPayload<CurrencyEssentialsV1> = provider
@@ -241,10 +237,7 @@ fn test_essentials() {
         .payload;
 
     assert_writeable_eq!(
-        ar_eg
-            .get()
-            .get_positive(PatternSelection::Standard, false)
-            .interpolate((3, "$")),
+        ar_eg.get().get_positive(false, false).interpolate((3, "$")),
         "\u{200f}3\u{a0}$"
     );
 }

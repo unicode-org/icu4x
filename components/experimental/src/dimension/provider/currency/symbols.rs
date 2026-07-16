@@ -8,6 +8,7 @@
 
 use icu_provider::prelude::*;
 use tinystr::UnvalidatedTinyAsciiStr;
+use zerovec::ule::vartuple::VarTupleULE;
 use zerovec::{VarZeroVec, ZeroMap};
 
 use crate::dimension::currency::CurrencyCode;
@@ -50,42 +51,30 @@ pub struct CurrencySymbols<'data> {
     ///
     /// These values are retrieved using [`CurrencySymbol::Index`] stored in [`CurrencyPatternConfig`].
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub symbols: VarZeroVec<'data, str>,
-
-    /// The fallback currency pattern configuration used
-    /// when a specific currency's pattern is not found in the currency patterns map.
-    pub default_pattern_config: CurrencyPatternConfig,
+    pub symbols: VarZeroVec<'data, VarTupleULE<u8, str>>,
 }
 
 icu_provider::data_struct!(CurrencySymbols<'_>, #[cfg(feature = "datagen")]);
 
-#[zerovec::make_ule(PatternSelectionULE)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency::symbols))]
-#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
-#[repr(u8)]
-pub enum PatternSelection {
-    /// Use the standard pattern.
-    #[default]
-    Standard = 0,
-
-    /// Use the `standard_alpha_next_to_number` pattern.
-    StandardAlphaNextToNumber = 1,
-}
-
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency::symbols))]
-#[derive(Copy, Debug, Clone, PartialEq, PartialOrd, Eq, Ord)]
+#[derive(Copy, Debug, Clone, PartialEq, Eq)]
 #[repr(u16)]
-pub enum CurrencySymbol {
+pub enum CurrencySymbolIndex {
     /// The index of the symbol in the symbols list.
     /// NOTE: the maximum value is `MAX_SYMBOL_INDEX` which is 2045 (`0b0111_1111_1101`).
     Index(u16),
 
     /// The symbol is the ISO code.
     ISO,
+}
+
+#[derive(Copy, Debug, Clone, PartialEq, Eq)]
+pub struct CurrencySymbol<'a> {
+    pub starts_with_letter: bool,
+    pub ends_with_letter: bool,
+    pub symbol: &'a str,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -107,49 +96,49 @@ pub enum Width {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency::symbols))]
-#[derive(Copy, Debug, Clone, Default, PartialEq, PartialOrd, Eq, Ord)]
+#[derive(Copy, Debug, Clone, Default, PartialEq, Eq)]
 pub struct CurrencyPatternConfig {
-    /// Indicates which pattern to use for short currency formatting.
-    pub short_pattern_selection: PatternSelection,
-
-    /// Indicates which pattern to use for narrow currency formatting.
-    pub narrow_pattern_selection: PatternSelection,
-
     /// The symbol for short currency formatting.
     /// If the value is `None`, this means that the short pattern does not have a symbol.
-    pub short_symbol: Option<CurrencySymbol>,
+    pub short_symbol: Option<CurrencySymbolIndex>,
 
     /// The symbol for narrow currency formatting.
     /// If the value is `None`, this means that the narrow pattern does not have a symbol.
-    pub narrow_symbol: Option<CurrencySymbol>,
+    pub narrow_symbol: Option<CurrencySymbolIndex>,
 }
 
 impl<'a> CurrencySymbols<'a> {
     /// Returns the formatted currency name/symbol,
     /// the currency pattern for the given width and currency,
     /// and the pattern selection.
-    pub fn get(&'a self, width: Width, currency: &'a CurrencyCode) -> (&'a str, PatternSelection) {
+    pub fn get(&'a self, width: Width, currency: &'a CurrencyCode) -> CurrencySymbol<'a> {
         let config = self
             .pattern_config_map
             .get_copied(&currency.0.to_unvalidated())
-            .unwrap_or(self.default_pattern_config);
+            .unwrap_or(CurrencyPatternConfig {
+                short_symbol: None,
+                narrow_symbol: None,
+            });
 
         let symbol = match width {
             Width::Short => config.short_symbol,
             Width::Narrow => config.narrow_symbol,
         };
 
-        let symbol = match symbol {
-            Some(CurrencySymbol::Index(index)) => self.symbols.get(index.into()),
-            Some(CurrencySymbol::ISO) | None => None,
+        match symbol {
+            Some(CurrencySymbolIndex::Index(index)) => {
+                self.symbols.get(index.into()).map(|vt| CurrencySymbol {
+                    symbol: &vt.variable,
+                    starts_with_letter: vt.sized & 0b10 != 0,
+                    ends_with_letter: vt.sized & 0b01 != 0,
+                })
+            }
+            Some(CurrencySymbolIndex::ISO) | None => None,
         }
-        .unwrap_or(currency.0.as_str());
-
-        let pattern_selection = match width {
-            Width::Short => config.short_pattern_selection,
-            Width::Narrow => config.narrow_pattern_selection,
-        };
-
-        (symbol, pattern_selection)
+        .unwrap_or(CurrencySymbol {
+            symbol: currency.0.as_str(),
+            starts_with_letter: true,
+            ends_with_letter: true,
+        })
     }
 }

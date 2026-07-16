@@ -449,10 +449,13 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 currency,
             } => {
                 // TODO(#6064): Support plural-specific patterns and full currency formatting spec.
-                let (currency_str, pattern_selection) = symbols.get().get(*width, currency);
-                let pattern = essential.get().get_positive(pattern_selection, false);
+                let currency_symbol = symbols.get().get(*width, currency);
+                let pattern = essential.get().get_positive(
+                    currency_symbol.starts_with_letter,
+                    currency_symbol.ends_with_letter,
+                );
 
-                (pattern, currency_str)
+                (pattern, currency_symbol.symbol)
             }
             CurrencyFormatterData::Long {
                 extended,
