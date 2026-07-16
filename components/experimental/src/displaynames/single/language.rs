@@ -1433,7 +1433,7 @@ impl QualifiersOwned {
             prefs,
             subject,
             ScriptDisplayNameOwned::try_new_extended_unstable,
-            RegionDisplayNameOwned::try_new_extended_unstable,
+            RegionDisplayNameOwned::try_new_unstable,
             VariantDisplayNameOwned::try_new_extended_unstable,
         )
     }

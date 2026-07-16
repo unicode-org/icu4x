@@ -14,7 +14,35 @@ use crate::displaynames::provider::{
 use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
 
+macro_rules! table_row {
+    (try_new_minimal) => {
+        "| [`try_new_minimal`](Self::try_new_minimal) | \"United States\" | ❌ | ❌ |"
+    };
+    (try_new_minimal_short) => {
+        "| [`try_new_minimal_short`](Self::try_new_minimal_short) | \"US\" | ❌ | ❌ |"
+    };
+    (try_new) => {
+        "| [`try_new`](Self::try_new) | \"United States\" | \"France\" | \"대한민국\" |"
+    };
+    (try_new_short) => {
+        "| [`try_new_short`](Self::try_new_short) | \"US\" | \"France\" | \"대한민국\" |"
+    };
+    (try_new_extended_short) => {
+        "| [`try_new_extended_short`](Self::try_new_extended_short) | \"US\" | \"France\" | \"한국\" |"
+    };
+}
+
 /// A localized display name for a single region, owned version.
+///
+/// # Constructor Behavior
+///
+/// | Constructor | `US` (`en`) | `FR` (`en`) | `KR` (`ko`) |
+/// | :--- | :--- | :--- | :--- |
+#[doc = concat!(table_row!(try_new_minimal), "\n")]
+#[doc = concat!(table_row!(try_new_minimal_short), "\n")]
+#[doc = concat!(table_row!(try_new), "\n")]
+#[doc = concat!(table_row!(try_new_short), "\n")]
+#[doc = concat!(table_row!(try_new_extended_short), "\n")]
 ///
 /// # Example
 ///
@@ -218,56 +246,6 @@ impl RegionDisplayNameOwned {
 
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
-        /// Loads the extended region display name for a given region and locale using compiled data.
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use icu::experimental::displaynames::single::RegionDisplayNameOwned;
-        /// use icu::locale::{locale, subtags::region};
-        /// use writeable::assert_writeable_eq;
-        ///
-        /// let display_name = RegionDisplayNameOwned::try_new_extended(locale!("en").into(), region!("US"))
-        ///     .expect("Data should load successfully");
-        ///
-        /// assert_writeable_eq!(display_name, "United States");
-        /// ```
-        functions: [
-            try_new_extended,
-            try_new_extended_with_buffer_provider,
-            try_new_extended_unstable,
-            Self
-        ]
-    );
-
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_extended)]
-    pub fn try_new_extended_unstable<D>(
-        provider: &D,
-        prefs: DisplayNamesPreferences,
-        region: Region,
-    ) -> Result<Self, DataError>
-    where
-        D: ?Sized
-            + DataProvider<LocaleNamesRegionCoreMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>,
-    {
-        let attrs = LocaleNamesRegionCoreMediumV1::make_attributes(&region);
-        try_load_markers!(
-            provider,
-            prefs,
-            attrs,
-            [
-                LocaleNamesRegionCoreMediumV1,
-                LocaleNamesRegionMinimalMediumV1
-            ]
-        )
-        .map(|payload| Self {
-            payload: payload.cast(),
-        })
-    }
-
-    icu_provider::gen_buffer_data_constructors!(
-        (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
         /// Loads the extended short region display name for a given region and locale using compiled data.
         ///
         /// # Examples
@@ -339,3 +317,72 @@ pub struct RegionDisplayName<'a> {
 }
 
 impl_writeable_for_single_display_name_borrowed!(RegionDisplayName);
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use icu_locale_core::{locale, subtags::region};
+    use writeable::Writeable;
+
+    #[test]
+    fn test_region_display_name_owned_table() {
+        let prefs_en = DisplayNamesPreferences::from(locale!("en"));
+        let prefs_ko = DisplayNamesPreferences::from(locale!("ko"));
+
+        let get_row = |f: fn(
+            DisplayNamesPreferences,
+            Region,
+        ) -> Result<RegionDisplayNameOwned, DataError>| {
+            vec![
+                match f(prefs_en, region!("US")) {
+                    Ok(name) => format!("\"{}\"", name.write_to_string()),
+                    Err(_) => "❌".to_string(),
+                },
+                match f(prefs_en, region!("FR")) {
+                    Ok(name) => format!("\"{}\"", name.write_to_string()),
+                    Err(_) => "❌".to_string(),
+                },
+                match f(prefs_ko, region!("KR")) {
+                    Ok(name) => format!("\"{}\"", name.write_to_string()),
+                    Err(_) => "❌".to_string(),
+                },
+            ]
+        };
+
+        let make_row = |name: &str,
+                        f: fn(
+            DisplayNamesPreferences,
+            Region,
+        ) -> Result<RegionDisplayNameOwned, DataError>| {
+            let row = get_row(f);
+            format!("| [`{name}`](Self::{name}) | {} |", row.join(" | "))
+        };
+
+        assert_eq!(
+            make_row("try_new_minimal", RegionDisplayNameOwned::try_new_minimal),
+            table_row!(try_new_minimal)
+        );
+        assert_eq!(
+            make_row(
+                "try_new_minimal_short",
+                RegionDisplayNameOwned::try_new_minimal_short
+            ),
+            table_row!(try_new_minimal_short)
+        );
+        assert_eq!(
+            make_row("try_new", RegionDisplayNameOwned::try_new),
+            table_row!(try_new)
+        );
+        assert_eq!(
+            make_row("try_new_short", RegionDisplayNameOwned::try_new_short),
+            table_row!(try_new_short)
+        );
+        assert_eq!(
+            make_row(
+                "try_new_extended_short",
+                RegionDisplayNameOwned::try_new_extended_short
+            ),
+            table_row!(try_new_extended_short)
+        );
+    }
+}
