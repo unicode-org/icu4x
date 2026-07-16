@@ -8,8 +8,8 @@ use super::{
 };
 use crate::displaynames::DisplayNamesPreferences;
 use crate::displaynames::provider::{
-    LocaleNamesRegionCoreMediumV1, LocaleNamesRegionCoreShortV1, LocaleNamesRegionExtendedShortV1,
-    LocaleNamesRegionMinimalMediumV1, LocaleNamesRegionMinimalShortV1,
+    LocaleNamesRegionCoreMediumV1, LocaleNamesRegionCoreShortV1, LocaleNamesRegionMinimalMediumV1,
+    LocaleNamesRegionMinimalShortV1,
 };
 use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
@@ -27,9 +27,6 @@ macro_rules! table_row {
     (try_new_short) => {
         "| [`try_new_short`](Self::try_new_short) | \"US\" | \"France\" | \"대한민국\" |"
     };
-    (try_new_extended_short) => {
-        "| [`try_new_extended_short`](Self::try_new_extended_short) | \"US\" | \"France\" | \"한국\" |"
-    };
 }
 
 /// A localized display name for a single region, owned version.
@@ -45,7 +42,6 @@ macro_rules! table_row {
 #[doc = concat!(table_row!(try_new_minimal_short), "\n")]
 #[doc = concat!(table_row!(try_new), "\n")]
 #[doc = concat!(table_row!(try_new_short), "\n")]
-#[doc = concat!(table_row!(try_new_extended_short), "\n")]
 ///
 /// > Note: :x: means that the constructor returns an error.
 ///
@@ -253,67 +249,6 @@ impl RegionDisplayNameOwned {
         })
     }
 
-    icu_provider::gen_buffer_data_constructors!(
-        (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
-        /// Loads the extended short region display name for a given region and locale using compiled data.
-        ///
-        /// The `extended` constructor includes additional data coverage for subtags that
-        /// are less commonly formatted in the target locale.
-        ///
-        /// Falls back to default (medium) length if a short name is not available.
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use icu::experimental::displaynames::single::RegionDisplayNameOwned;
-        /// use icu::locale::{locale, subtags::region};
-        /// use writeable::assert_writeable_eq;
-        ///
-        /// let display_name = RegionDisplayNameOwned::try_new_extended_short(locale!("en").into(), region!("US"))
-        ///     .expect("Data should load successfully");
-        ///
-        /// assert_writeable_eq!(display_name, "US");
-        /// ```
-        functions: [
-            try_new_extended_short,
-            try_new_extended_short_with_buffer_provider,
-            try_new_extended_short_unstable,
-            Self
-        ]
-    );
-
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_extended_short)]
-    pub fn try_new_extended_short_unstable<D>(
-        provider: &D,
-        prefs: DisplayNamesPreferences,
-        region: Region,
-    ) -> Result<Self, DataError>
-    where
-        D: ?Sized
-            + DataProvider<LocaleNamesRegionExtendedShortV1>
-            + DataProvider<LocaleNamesRegionCoreShortV1>
-            + DataProvider<LocaleNamesRegionMinimalShortV1>
-            + DataProvider<LocaleNamesRegionCoreMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>,
-    {
-        let attrs = LocaleNamesRegionExtendedShortV1::make_attributes(&region);
-        try_load_markers!(
-            provider,
-            prefs,
-            attrs,
-            [
-                LocaleNamesRegionExtendedShortV1,
-                LocaleNamesRegionCoreShortV1,
-                LocaleNamesRegionMinimalShortV1,
-                LocaleNamesRegionCoreMediumV1,
-                LocaleNamesRegionMinimalMediumV1
-            ]
-        )
-        .map(|payload| Self {
-            payload: payload.cast(),
-        })
-    }
-
     /// Returns a borrowed version of this display name.
     pub fn as_borrowed(&self) -> RegionDisplayName<'_> {
         RegionDisplayName {
@@ -390,13 +325,6 @@ mod tests {
         assert_eq!(
             make_row("try_new_short", RegionDisplayNameOwned::try_new_short),
             table_row!(try_new_short)
-        );
-        assert_eq!(
-            make_row(
-                "try_new_extended_short",
-                RegionDisplayNameOwned::try_new_extended_short
-            ),
-            table_row!(try_new_extended_short)
         );
     }
 }

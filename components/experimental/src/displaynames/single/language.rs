@@ -8,11 +8,10 @@ use crate::displaynames::provider::{
     LocaleNamesLanguageExtendedMediumV1, LocaleNamesLanguageExtendedShortV1,
     LocaleNamesLanguageMenuCoreMediumV1, LocaleNamesLanguageMenuExtendedMediumV1,
     LocaleNamesLanguageMinimalMediumV1, LocaleNamesRegionCoreMediumV1,
-    LocaleNamesRegionCoreShortV1, LocaleNamesRegionExtendedShortV1,
-    LocaleNamesRegionMinimalMediumV1, LocaleNamesRegionMinimalShortV1,
-    LocaleNamesScriptCoreMediumV1, LocaleNamesScriptExtendedMediumV1,
-    LocaleNamesScriptExtendedShortV1, LocaleNamesScriptMinimalMediumV1,
-    LocaleNamesVariantExtendedMediumV1, MenuNamePartsULE,
+    LocaleNamesRegionCoreShortV1, LocaleNamesRegionMinimalMediumV1,
+    LocaleNamesRegionMinimalShortV1, LocaleNamesScriptCoreMediumV1,
+    LocaleNamesScriptExtendedMediumV1, LocaleNamesScriptExtendedShortV1,
+    LocaleNamesScriptMinimalMediumV1, LocaleNamesVariantExtendedMediumV1, MenuNamePartsULE,
 };
 use crate::displaynames::single::{
     RegionDisplayNameOwned, ScriptDisplayNameOwned, VariantDisplayNameOwned, try_load_markers,
@@ -911,7 +910,6 @@ impl LanguageIdentifierDisplayNameOwned {
             + DataProvider<LocaleNamesScriptExtendedMediumV1>
             + DataProvider<LocaleNamesScriptCoreMediumV1>
             + DataProvider<LocaleNamesScriptMinimalMediumV1>
-            + DataProvider<LocaleNamesRegionExtendedShortV1>
             + DataProvider<LocaleNamesRegionCoreShortV1>
             + DataProvider<LocaleNamesRegionMinimalShortV1>
             + DataProvider<LocaleNamesRegionCoreMediumV1>
@@ -1189,7 +1187,6 @@ impl LanguageIdentifierDisplayNameOwned {
             + DataProvider<LocaleNamesScriptExtendedMediumV1>
             + DataProvider<LocaleNamesScriptCoreMediumV1>
             + DataProvider<LocaleNamesScriptMinimalMediumV1>
-            + DataProvider<LocaleNamesRegionExtendedShortV1>
             + DataProvider<LocaleNamesRegionCoreShortV1>
             + DataProvider<LocaleNamesRegionMinimalShortV1>
             + DataProvider<LocaleNamesRegionCoreMediumV1>
@@ -1431,7 +1428,6 @@ impl QualifiersOwned {
             + DataProvider<LocaleNamesScriptExtendedMediumV1>
             + DataProvider<LocaleNamesScriptCoreMediumV1>
             + DataProvider<LocaleNamesScriptMinimalMediumV1>
-            + DataProvider<LocaleNamesRegionExtendedShortV1>
             + DataProvider<LocaleNamesRegionCoreShortV1>
             + DataProvider<LocaleNamesRegionMinimalShortV1>
             + DataProvider<LocaleNamesRegionCoreMediumV1>
@@ -1444,7 +1440,7 @@ impl QualifiersOwned {
             prefs,
             subject,
             ScriptDisplayNameOwned::try_new_extended_short_unstable,
-            RegionDisplayNameOwned::try_new_extended_short_unstable,
+            RegionDisplayNameOwned::try_new_short_unstable,
             VariantDisplayNameOwned::try_new_extended_unstable,
         )
     }

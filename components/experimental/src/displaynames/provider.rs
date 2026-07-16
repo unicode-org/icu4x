@@ -230,14 +230,6 @@ icu_provider::data_marker!(
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_region",
 );
-icu_provider::data_marker!(
-    /// Data marker for extended short region display names.
-    LocaleNamesRegionExtendedShortV1,
-    "locale/names/region/extended/short/v1",
-    VarZeroCow<'static, str>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "locale_names_region",
-);
 
 icu_provider::data_marker!(
     /// Data marker for minimal language display names.
@@ -452,11 +444,6 @@ make_subtag_attributes_impl!(
 );
 make_subtag_attributes_impl!(
     LocaleNamesRegionCoreShortV1,
-    LocaleNamesRegionCoreMediumV1,
-    Region
-);
-make_subtag_attributes_impl!(
-    LocaleNamesRegionExtendedShortV1,
     LocaleNamesRegionCoreMediumV1,
     Region
 );

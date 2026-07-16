@@ -69,15 +69,6 @@ crate::displaynames::impl_displaynames_v1!(
     Some(Alt::Short),
     CoverageTier::Core,
 );
-crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesRegionExtendedShortV1,
-    Region,
-    cldr_serde::displaynames::region::Resource,
-    "territories.json",
-    regions,
-    Some(Alt::Short),
-    CoverageTier::Extended,
-);
 
 impl From<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames<'static> {
     fn from(other: &cldr_serde::displaynames::region::Resource) -> Self {
@@ -181,5 +172,23 @@ mod tests {
             .payload;
 
         assert_eq!(&**data.get(), "UK");
+    }
+
+    #[test]
+    fn test_locale_names_region_short_hk() {
+        let provider = SourceDataProvider::new_testing();
+
+        let data: DataPayload<LocaleNamesRegionCoreShortV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("HK").unwrap(),
+                    &langid!("en").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(&**data.get(), "Hong Kong");
     }
 }
