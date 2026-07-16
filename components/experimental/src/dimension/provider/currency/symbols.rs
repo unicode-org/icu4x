@@ -72,4 +72,15 @@ impl CurrencySymbolsV1 {
     }
 }
 
-icu_provider::data_struct!(CurrencySymbol<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(
+    CurrencySymbol<'_>,
+    varule: VarTupleULE<u8, str>,
+    #[cfg(feature = "datagen")]
+    encode_as_varule: |v: &CurrencySymbol<'_>| &v.0
+);
+
+impl<'zf> zerofrom::ZeroFrom<'zf, VarTupleULE<u8, str>> for CurrencySymbol<'zf> {
+    fn zero_from(source: &'zf VarTupleULE<u8, str>) -> Self {
+        Self(VarZeroCow::zero_from(source))
+    }
+}

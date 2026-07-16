@@ -25,7 +25,6 @@ impl Writeable for FormattedUnit<'_> {
         W: writeable::PartsWrite + ?Sized,
     {
         self.display_name
-            .patterns
             .get(self.value.into(), self.plural_rules)
             .interpolate((self.decimal_formatter.format(self.value),))
             .write_to_parts(sink)

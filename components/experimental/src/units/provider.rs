@@ -11,6 +11,7 @@
 
 use icu_provider::prelude::*;
 use num_bigint::BigInt;
+use zerovec::VarZeroSlice;
 use zerovec::{VarZeroVec, ZeroVec, maps::ZeroVecLike, ule::AsULE};
 
 use crate::measure::provider::single_unit::{SingleUnit, UnitID};
@@ -58,7 +59,12 @@ impl UnitsInfo<'_> {
     }
 }
 
-icu_provider::data_struct!(UnitsInfo<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(
+    UnitsInfo<'_>,
+    varule: VarZeroSlice<ConversionInfoULE>,
+    #[cfg(feature = "datagen")]
+    encode_as_varule: |v: &UnitsInfo<'_>| &v.conversion_info
+);
 
 /// Represents the conversion information for a unit.
 /// Which includes the base unit (the unit which the unit is converted to), the conversion factor, and the offset.
