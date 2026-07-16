@@ -4,8 +4,8 @@
 /// `icu`'s `_unstable` constructors.
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
-/// * 43B for the lookup data structure (2 data identifiers)
-/// * 74B[^1] for the actual data (2 unique structs)
+/// * 38B for the lookup data structure (1 data identifiers)
+/// * 34B[^1] for the actual data (1 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 ///
@@ -23,8 +23,8 @@ macro_rules! __impl_locale_names_language_extended_long_v1 {
         #[clippy::msrv = "1.88"]
         impl $provider {
             const DATA_LOCALE_NAMES_LANGUAGE_EXTENDED_LONG_V1: icu_provider::baked::zerotrie::DataForVarULEs<icu::experimental::displaynames::provider::LocaleNamesLanguageExtendedLongV1> = {
-                const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"en\x1E\xC2cz\x02r\x80h\x81" };
-                const VALUES: &'static zerovec::VarZeroSlice<<<icu::experimental::displaynames::provider::LocaleNamesLanguageExtendedLongV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct as icu_provider::ule::MaybeAsVarULE>::EncodedStruct, zerovec::vecs::Index32> = unsafe { zerovec::vecs::VarZeroSlice32::from_bytes_unchecked(b"\x02\0\0\0\n\0\0\0Woods CreeMandarin Chinese") };
+                const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"en\x1Ecr\x80" };
+                const VALUES: &'static zerovec::VarZeroSlice<<<icu::experimental::displaynames::provider::LocaleNamesLanguageExtendedLongV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct as icu_provider::ule::MaybeAsVarULE>::EncodedStruct, zerovec::vecs::Index32> = unsafe { zerovec::vecs::VarZeroSlice32::from_bytes_unchecked(b"\x01\0\0\0Woods Cree") };
                 unsafe { icu_provider::baked::zerotrie::DataForVarULEs::from_trie_and_values_unchecked(TRIE, VALUES) }
             };
         }
