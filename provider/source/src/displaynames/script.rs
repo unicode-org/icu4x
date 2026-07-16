@@ -143,7 +143,7 @@ mod tests {
     fn test_locale_names_script_medium() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesScriptMinimalMediumV1> = provider
+        let data: DataPayload<LocaleNamesScriptCoreMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("Latn").unwrap(),

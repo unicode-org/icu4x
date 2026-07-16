@@ -151,7 +151,7 @@ mod tests {
     fn test_locale_names_region_medium() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesRegionMinimalMediumV1> = provider
+        let data: DataPayload<LocaleNamesRegionCoreMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("AE").unwrap(),
@@ -169,7 +169,7 @@ mod tests {
     fn test_locale_names_region_short() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesRegionMinimalShortV1> = provider
+        let data: DataPayload<LocaleNamesRegionCoreShortV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("GB").unwrap(),
