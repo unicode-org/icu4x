@@ -10,14 +10,6 @@ use icu_pattern::SinglePlaceholderPattern;
 use icu_plurals::provider::PluralElementsPackedCow;
 use icu_provider::prelude::*;
 
-icu_provider::data_marker!(
-    /// `UnitsDisplayNamesV1`
-    UnitsDisplayNamesV1,
-    UnitsDisplayNames<'static>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "units"
-);
-
 #[derive(Clone, PartialEq, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

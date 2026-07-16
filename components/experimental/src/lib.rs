@@ -60,14 +60,12 @@ pub mod provider {
         }
         make_provider!(Baked);
 
-        impl_short_currency_compact_v1!(Baked);
         impl_currency_essentials_v1!(Baked);
         impl_currency_symbols_v1!(Baked);
         impl_currency_displayname_v1!(Baked);
         impl_currency_patterns_data_v1!(Baked);
         impl_currency_extended_data_v1!(Baked);
         impl_currency_fractions_v1!(Baked);
-        impl_units_display_names_v1!(Baked);
         impl_units_names_area_core_v1!(Baked);
         impl_units_names_area_extended_v1!(Baked);
         impl_units_names_area_outlier_v1!(Baked);
@@ -137,7 +135,6 @@ pub mod provider {
     #[cfg(feature = "datagen")]
     /// The latest minimum set of keys required by this component.
     pub const MARKERS: &[DataMarkerInfo] = &[
-        super::dimension::provider::currency::compact::ShortCurrencyCompactV1::INFO,
         super::dimension::provider::currency::displayname::CurrencyDisplaynameV1::INFO,
         super::dimension::provider::currency::essentials::CurrencyEssentialsV1::INFO,
         super::dimension::provider::currency::symbols::CurrencySymbolsV1::INFO,
@@ -146,7 +143,6 @@ pub mod provider {
         super::dimension::provider::currency::fractions::CurrencyFractionsV1::INFO,
         super::dimension::provider::percent::PercentEssentialsV1::INFO,
         super::dimension::provider::units::essentials::UnitsEssentialsV1::INFO,
-        super::dimension::provider::units::display_names::UnitsDisplayNamesV1::INFO,
         super::dimension::provider::units::categorized_display_names::UnitsNamesAreaCoreV1::INFO,
         super::dimension::provider::units::categorized_display_names::UnitsNamesAreaExtendedV1::INFO,
         super::dimension::provider::units::categorized_display_names::UnitsNamesAreaOutlierV1::INFO,
