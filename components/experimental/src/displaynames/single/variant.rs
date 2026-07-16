@@ -24,7 +24,7 @@ macro_rules! table_row {
 /// There is currently just one constructor, which is named "extended"
 /// since there are no variants with guaranteed display names.
 ///
-/// | Constructor | `fonipa` (`en`) | `posix` (`en`) |
+/// | Constructor | `fonipa` | `posix` |
 /// | :--- | :--- | :--- |
 #[doc = concat!(table_row!(try_new_extended), "\n")]
 ///

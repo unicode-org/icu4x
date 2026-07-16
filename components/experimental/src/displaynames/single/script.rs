@@ -16,16 +16,16 @@ use icu_provider::prelude::*;
 
 macro_rules! table_row {
     (try_new_minimal) => {
-        "| [`try_new_minimal`](Self::try_new_minimal) | ❌ | ❌ | ❌ | \"Unknown Script\" |"
+        "| [`try_new_minimal`](Self::try_new_minimal) | ❌ | ❌ | \"Unknown Script\" |"
     };
     (try_new) => {
-        "| [`try_new`](Self::try_new) | \"Latin\" | ❌ | ❌ | \"Unknown Script\" |"
+        "| [`try_new`](Self::try_new) | \"Latin\" | ❌ | \"Unknown Script\" |"
     };
     (try_new_extended) => {
-        "| [`try_new_extended`](Self::try_new_extended) | \"Latin\" | \"Shavian\" | \"Sumero-Akkadian Cuneiform\" | \"Unknown Script\" |"
+        "| [`try_new_extended`](Self::try_new_extended) | \"Latin\" | \"Sumero-Akkadian Cuneiform\" | \"Unknown Script\" |"
     };
     (try_new_extended_short) => {
-        "| [`try_new_extended_short`](Self::try_new_extended_short) | \"Latin\" | \"Shavian\" | \"S-A Cuneiform\" | \"Unknown Script\" |"
+        "| [`try_new_extended_short`](Self::try_new_extended_short) | \"Latin\" | \"S-A Cuneiform\" | \"Unknown Script\" |"
     };
 }
 
@@ -36,8 +36,8 @@ macro_rules! table_row {
 /// There are several constructors, each of which links different data and serve
 /// different use cases. The behavior is illustrated in the table below.
 ///
-/// | Constructor | `Latn` (`en`) | `Shaw` (`en`) | `Xsux` (`en`) | `Zzzz` (`en`) |
-/// | :--- | :--- | :--- | :--- | :--- |
+/// | Constructor | `Latn` | `Xsux` | `Zzzz` |
+/// | :--- | :--- | :--- | :--- |
 #[doc = concat!(table_row!(try_new_minimal), "\n")]
 #[doc = concat!(table_row!(try_new), "\n")]
 #[doc = concat!(table_row!(try_new_extended), "\n")]
@@ -278,10 +278,6 @@ mod tests {
         ) -> Result<ScriptDisplayNameOwned, DataError>| {
             vec![
                 match f(prefs, script!("Latn")) {
-                    Ok(name) => format!("\"{}\"", name.write_to_string()),
-                    Err(_) => "❌".to_string(),
-                },
-                match f(prefs, script!("Shaw")) {
                     Ok(name) => format!("\"{}\"", name.write_to_string()),
                     Err(_) => "❌".to_string(),
                 },

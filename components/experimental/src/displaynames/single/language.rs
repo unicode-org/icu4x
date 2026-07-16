@@ -83,6 +83,9 @@ macro_rules! table_row {
     (try_new_extended_menu) => {
         "| [`try_new_extended_menu`](Self::try_new_extended_menu) | \"English (United States)\" | \"Chinese, Mandarin\" | \"Azerbaijani\" |"
     };
+    (try_new_extended_short_menu) => {
+        "| [`try_new_extended_short_menu`](Self::try_new_extended_short_menu) | \"English (US)\" | \"Chinese, Mandarin\" | \"Azeri\" |"
+    };
 }
 
 /// A localized display name for a language identifier, owned version.
@@ -95,7 +98,7 @@ macro_rules! table_row {
 /// There are several constructors, each of which links different data and serve
 /// different use cases. The behavior is illustrated in the table below.
 ///
-/// | Constructor | `en-US` (`en`) | `zh` (`en`) | `az` (`en`) |
+/// | Constructor | `en-US` | `zh` | `az` |
 /// | :--- | :--- | :--- | :--- |
 #[doc = concat!(table_row!(try_new_minimal), "\n")]
 #[doc = concat!(table_row!(try_new), "\n")]
@@ -107,6 +110,7 @@ macro_rules! table_row {
 #[doc = concat!(table_row!(try_new_extended_short), "\n")]
 #[doc = concat!(table_row!(try_new_extended_long), "\n")]
 #[doc = concat!(table_row!(try_new_extended_menu), "\n")]
+#[doc = concat!(table_row!(try_new_extended_short_menu), "\n")]
 ///
 /// > Note: :x: means that the name includes a BCP-47 subtag fallback.
 ///
@@ -1109,6 +1113,102 @@ impl LanguageIdentifierDisplayNameOwned {
             qualifiers,
         })
     }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
+        /// Loads the short menu-style language display name for a given language identifier and locale using compiled data with extended coverage.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::experimental::displaynames::{
+        ///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayNameOwned,
+        /// };
+        /// use icu::locale::{locale, langid};
+        /// use writeable::assert_try_writeable_eq;
+        ///
+        /// let prefs = DisplayNamesPreferences::from(locale!("en"));
+        /// let options = LanguageIdentifierDisplayNameOptions::default();
+        /// let display_name = LanguageIdentifierDisplayNameOwned::try_new_extended_short_menu(
+        ///     prefs,
+        ///     langid!("en-US"),
+        ///     options,
+        /// )
+        /// .expect("Data should load successfully");
+        ///
+        /// assert_try_writeable_eq!(display_name.as_borrowed(), "English (US)", Ok(()));
+        /// ```
+        functions: [
+            try_new_extended_short_menu,
+            try_new_extended_short_menu_with_buffer_provider,
+            try_new_extended_short_menu_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_extended_short_menu)]
+    pub fn try_new_extended_short_menu_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        subject: LanguageIdentifier,
+        _options: LanguageIdentifierDisplayNameOptions,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<LocaleNamesLanguageMenuExtendedMediumV1>
+            + DataProvider<LocaleNamesLanguageMenuCoreMediumV1>
+            + DataProvider<LocaleNamesLanguageExtendedShortV1>
+            + DataProvider<LocaleNamesLanguageCoreShortV1>
+            + DataProvider<LocaleNamesLanguageExtendedMediumV1>
+            + DataProvider<LocaleNamesLanguageCoreMediumV1>
+            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
+            + DataProvider<LocaleNamesScriptExtendedShortV1>
+            + DataProvider<LocaleNamesScriptExtendedMediumV1>
+            + DataProvider<LocaleNamesScriptCoreMediumV1>
+            + DataProvider<LocaleNamesScriptMinimalMediumV1>
+            + DataProvider<LocaleNamesRegionExtendedShortV1>
+            + DataProvider<LocaleNamesRegionCoreShortV1>
+            + DataProvider<LocaleNamesRegionMinimalShortV1>
+            + DataProvider<LocaleNamesRegionCoreMediumV1>
+            + DataProvider<LocaleNamesRegionMinimalMediumV1>
+            + DataProvider<LocaleNamesVariantExtendedMediumV1>
+            + DataProvider<LocaleNamesEssentialsV1>,
+    {
+        let mut language_payload = try_load_menu_name!(
+            provider,
+            prefs,
+            subject.language,
+            [
+                LocaleNamesLanguageMenuExtendedMediumV1,
+                LocaleNamesLanguageMenuCoreMediumV1
+            ]
+        );
+        if language_payload.is_none() {
+            language_payload = try_load_subtag_name!(
+                provider,
+                prefs,
+                subject.language,
+                [
+                    LocaleNamesLanguageExtendedShortV1,
+                    LocaleNamesLanguageCoreShortV1,
+                    LocaleNamesLanguageExtendedMediumV1,
+                    LocaleNamesLanguageCoreMediumV1,
+                    LocaleNamesLanguageMinimalMediumV1
+                ]
+            );
+        }
+        let language_payload = match language_payload {
+            Some(payload) => DataPayloadOr::from_payload(payload),
+            None => DataPayloadOr::from_other(subject.language),
+        };
+
+        let qualifiers =
+            QualifiersOwned::try_new_extended_short_unstable(provider, prefs, subject)?;
+        Ok(Self {
+            language_payload,
+            qualifiers,
+        })
+    }
 }
 
 impl QualifiersOwned {
@@ -1708,6 +1808,13 @@ mod tests {
                 LanguageIdentifierDisplayNameOwned::try_new_extended_menu
             ),
             table_row!(try_new_extended_menu)
+        );
+        assert_eq!(
+            make_row(
+                "try_new_extended_short_menu",
+                LanguageIdentifierDisplayNameOwned::try_new_extended_short_menu
+            ),
+            table_row!(try_new_extended_short_menu)
         );
     }
 }
