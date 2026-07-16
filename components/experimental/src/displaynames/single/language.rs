@@ -52,10 +52,63 @@ size_test!(
     192
 );
 
+macro_rules! table_row {
+    (try_new_minimal) => {
+        "| [`try_new_minimal`](Self::try_new_minimal) | \"English (United States)\" | ❌ | ❌ |"
+    };
+    (try_new) => {
+        "| [`try_new`](Self::try_new) | \"American English\" | \"Chinese\" | ❌ |"
+    };
+    (try_new_short) => {
+        "| [`try_new_short`](Self::try_new_short) | \"US English\" | \"Chinese\" | ❌ |"
+    };
+    (try_new_long) => {
+        "| [`try_new_long`](Self::try_new_long) | \"American English\" | \"Mandarin Chinese\" | ❌ |"
+    };
+    (try_new_menu) => {
+        "| [`try_new_menu`](Self::try_new_menu) | \"English (United States)\" | \"Chinese, Mandarin\" | ❌ |"
+    };
+    (try_new_short_menu) => {
+        "| [`try_new_short_menu`](Self::try_new_short_menu) | \"English (US)\" | \"Chinese, Mandarin\" | ❌ |"
+    };
+    (try_new_extended) => {
+        "| [`try_new_extended`](Self::try_new_extended) | \"American English\" | \"Chinese\" | \"Azerbaijani\" |"
+    };
+    (try_new_extended_short) => {
+        "| [`try_new_extended_short`](Self::try_new_extended_short) | \"US English\" | \"Chinese\" | \"Azeri\" |"
+    };
+    (try_new_extended_long) => {
+        "| [`try_new_extended_long`](Self::try_new_extended_long) | \"American English\" | \"Mandarin Chinese\" | \"Azerbaijani\" |"
+    };
+    (try_new_extended_menu) => {
+        "| [`try_new_extended_menu`](Self::try_new_extended_menu) | \"English (United States)\" | \"Chinese, Mandarin\" | \"Azerbaijani\" |"
+    };
+}
+
 /// A localized display name for a language identifier, owned version.
 ///
 /// The formatter falls back to the BCP-47 subtag when localized display names are missing
 /// from the data provider. Fallback can be detected using [`TryWriteable`].
+///
+/// # Constructor Behavior
+///
+/// There are several constructors, each of which links different data and serve
+/// different use cases. The behavior is illustrated in the table below.
+///
+/// | Constructor | `en-US` (`en`) | `zh` (`en`) | `az` (`en`) |
+/// | :--- | :--- | :--- | :--- |
+#[doc = concat!(table_row!(try_new_minimal), "\n")]
+#[doc = concat!(table_row!(try_new), "\n")]
+#[doc = concat!(table_row!(try_new_short), "\n")]
+#[doc = concat!(table_row!(try_new_long), "\n")]
+#[doc = concat!(table_row!(try_new_menu), "\n")]
+#[doc = concat!(table_row!(try_new_short_menu), "\n")]
+#[doc = concat!(table_row!(try_new_extended), "\n")]
+#[doc = concat!(table_row!(try_new_extended_short), "\n")]
+#[doc = concat!(table_row!(try_new_extended_long), "\n")]
+#[doc = concat!(table_row!(try_new_extended_menu), "\n")]
+///
+/// > Note: :x: means that the name includes a BCP-47 subtag fallback.
 ///
 /// # Examples
 ///
@@ -349,177 +402,6 @@ impl LanguageIdentifierDisplayNameOwned {
         };
 
         // Load the remaining data
-        let qualifiers = QualifiersOwned::try_new_minimal_unstable(provider, prefs, subject)?;
-        Ok(Self {
-            language_payload,
-            qualifiers,
-        })
-    }
-
-    icu_provider::gen_buffer_data_constructors!(
-        (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
-        /// Loads the minimal short language display name for a given language identifier and locale using compiled data.
-        functions: [
-            try_new_minimal_short,
-            try_new_minimal_short_with_buffer_provider,
-            try_new_minimal_short_unstable,
-            Self
-        ]
-    );
-
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_minimal_short)]
-    pub fn try_new_minimal_short_unstable<D>(
-        provider: &D,
-        prefs: DisplayNamesPreferences,
-        mut subject: LanguageIdentifier,
-        options: LanguageIdentifierDisplayNameOptions,
-    ) -> Result<Self, DataError>
-    where
-        D: ?Sized
-            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalShortV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>
-            + DataProvider<LocaleNamesVariantExtendedMediumV1>
-            + DataProvider<LocaleNamesEssentialsV1>,
-    {
-        // Step 1: Load language name
-        let load_dialect = options.should_load_dialect();
-        let mut language_payload = None;
-        // Only try dialect if requested (or default)
-        if load_dialect {
-            language_payload = try_load_dialect_name!(
-                provider,
-                prefs,
-                subject,
-                [LocaleNamesLanguageMinimalMediumV1]
-            );
-        }
-        if language_payload.is_none() {
-            language_payload = try_load_subtag_name!(
-                provider,
-                prefs,
-                subject.language,
-                [LocaleNamesLanguageMinimalMediumV1]
-            );
-        }
-        let language_payload = match language_payload {
-            Some(payload) => DataPayloadOr::from_payload(payload),
-            None => DataPayloadOr::from_other(subject.language),
-        };
-
-        // Load the remaining data
-        let qualifiers = QualifiersOwned::try_new_minimal_short_unstable(provider, prefs, subject)?;
-        Ok(Self {
-            language_payload,
-            qualifiers,
-        })
-    }
-
-    icu_provider::gen_buffer_data_constructors!(
-        (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
-        /// Loads the minimal long language display name for a given language identifier and locale using compiled data.
-        functions: [
-            try_new_minimal_long,
-            try_new_minimal_long_with_buffer_provider,
-            try_new_minimal_long_unstable,
-            Self
-        ]
-    );
-
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_minimal_long)]
-    pub fn try_new_minimal_long_unstable<D>(
-        provider: &D,
-        prefs: DisplayNamesPreferences,
-        mut subject: LanguageIdentifier,
-        options: LanguageIdentifierDisplayNameOptions,
-    ) -> Result<Self, DataError>
-    where
-        D: ?Sized
-            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>
-            + DataProvider<LocaleNamesVariantExtendedMediumV1>
-            + DataProvider<LocaleNamesEssentialsV1>,
-    {
-        // Step 1: Load language name
-        let load_dialect = options.should_load_dialect();
-        let mut language_payload = None;
-        // Only try dialect if requested (or default)
-        if load_dialect {
-            language_payload = try_load_dialect_name!(
-                provider,
-                prefs,
-                subject,
-                [LocaleNamesLanguageMinimalMediumV1]
-            );
-        }
-        if language_payload.is_none() {
-            language_payload = try_load_subtag_name!(
-                provider,
-                prefs,
-                subject.language,
-                [LocaleNamesLanguageMinimalMediumV1]
-            );
-        }
-        let language_payload = match language_payload {
-            Some(payload) => DataPayloadOr::from_payload(payload),
-            None => DataPayloadOr::from_other(subject.language),
-        };
-
-        // Load the remaining data
-        let qualifiers = QualifiersOwned::try_new_minimal_unstable(provider, prefs, subject)?;
-        Ok(Self {
-            language_payload,
-            qualifiers,
-        })
-    }
-
-    icu_provider::gen_buffer_data_constructors!(
-        (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
-        /// Loads the minimal menu-style language display name for a given language identifier and locale using compiled data.
-        functions: [
-            try_new_minimal_menu,
-            try_new_minimal_menu_with_buffer_provider,
-            try_new_minimal_menu_unstable,
-            Self
-        ]
-    );
-
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_minimal_menu)]
-    pub fn try_new_minimal_menu_unstable<D>(
-        provider: &D,
-        prefs: DisplayNamesPreferences,
-        subject: LanguageIdentifier,
-        _options: LanguageIdentifierDisplayNameOptions,
-    ) -> Result<Self, DataError>
-    where
-        D: ?Sized
-            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>
-            + DataProvider<LocaleNamesVariantExtendedMediumV1>
-            + DataProvider<LocaleNamesEssentialsV1>,
-    {
-        let mut language_payload = try_load_subtag_name!(
-            provider,
-            prefs,
-            subject.language,
-            [LocaleNamesLanguageMinimalMediumV1]
-        );
-        if language_payload.is_none() {
-            language_payload = try_load_subtag_name!(
-                provider,
-                prefs,
-                subject.language,
-                [LocaleNamesLanguageMinimalMediumV1]
-            );
-        }
-        let language_payload = match language_payload {
-            Some(payload) => DataPayloadOr::from_payload(payload),
-            None => DataPayloadOr::from_other(subject.language),
-        };
-
         let qualifiers = QualifiersOwned::try_new_minimal_unstable(provider, prefs, subject)?;
         Ok(Self {
             language_payload,
@@ -1338,7 +1220,7 @@ impl QualifiersOwned {
             subject,
             ScriptDisplayNameOwned::try_new_unstable,
             RegionDisplayNameOwned::try_new_unstable,
-            VariantDisplayNameOwned::try_new_unstable,
+            VariantDisplayNameOwned::try_new_extended_unstable,
         )
     }
 
@@ -1360,30 +1242,7 @@ impl QualifiersOwned {
             subject,
             ScriptDisplayNameOwned::try_new_minimal_unstable,
             RegionDisplayNameOwned::try_new_minimal_unstable,
-            VariantDisplayNameOwned::try_new_minimal_unstable,
-        )
-    }
-
-    fn try_new_minimal_short_unstable<D>(
-        provider: &D,
-        prefs: DisplayNamesPreferences,
-        subject: LanguageIdentifier,
-    ) -> Result<Self, DataError>
-    where
-        D: ?Sized
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalShortV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>
-            + DataProvider<LocaleNamesVariantExtendedMediumV1>
-            + DataProvider<LocaleNamesEssentialsV1>,
-    {
-        Self::try_new_internal_unstable(
-            provider,
-            prefs,
-            subject,
-            ScriptDisplayNameOwned::try_new_minimal_unstable,
-            RegionDisplayNameOwned::try_new_minimal_short_unstable,
-            VariantDisplayNameOwned::try_new_minimal_unstable,
+            VariantDisplayNameOwned::try_new_extended_unstable,
         )
     }
 
@@ -1407,9 +1266,9 @@ impl QualifiersOwned {
             provider,
             prefs,
             subject,
-            ScriptDisplayNameOwned::try_new_short_unstable,
+            ScriptDisplayNameOwned::try_new_unstable,
             RegionDisplayNameOwned::try_new_short_unstable,
-            VariantDisplayNameOwned::try_new_unstable,
+            VariantDisplayNameOwned::try_new_extended_unstable,
         )
     }
 
@@ -1736,5 +1595,119 @@ impl<'a> TryWriteable for LanguageIdentifierDisplayNameInner<'a> {
         } else {
             None
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use icu_locale_core::{langid, locale};
+    use writeable::TryWriteable;
+
+    #[test]
+    fn test_language_identifier_display_name_owned_table() {
+        let prefs_en = DisplayNamesPreferences::from(locale!("en"));
+        let options = LanguageIdentifierDisplayNameOptions::default();
+
+        let inputs = vec![langid!("en-US"), langid!("zh"), langid!("az")];
+
+        let get_row = |f: fn(
+            DisplayNamesPreferences,
+            LanguageIdentifier,
+            LanguageIdentifierDisplayNameOptions,
+        ) -> Result<LanguageIdentifierDisplayNameOwned, DataError>| {
+            inputs
+                .iter()
+                .map(|id| match f(prefs_en, id.clone(), options) {
+                    Ok(name) => {
+                        let borrowed = name.as_borrowed();
+                        let mut sink = String::new();
+                        match borrowed.try_write_to(&mut sink) {
+                            Ok(Ok(())) => format!("\"{}\"", sink),
+                            _ => "❌".to_string(),
+                        }
+                    }
+                    Err(_) => "❌".to_string(),
+                })
+                .collect::<Vec<_>>()
+        };
+
+        let make_row = |name: &str,
+                        f: fn(
+            DisplayNamesPreferences,
+            LanguageIdentifier,
+            LanguageIdentifierDisplayNameOptions,
+        ) -> Result<LanguageIdentifierDisplayNameOwned, DataError>| {
+            let row = get_row(f);
+            format!("| [`{name}`](Self::{name}) | {} |", row.join(" | "))
+        };
+
+        assert_eq!(
+            make_row(
+                "try_new_minimal",
+                LanguageIdentifierDisplayNameOwned::try_new_minimal
+            ),
+            table_row!(try_new_minimal)
+        );
+        assert_eq!(
+            make_row("try_new", LanguageIdentifierDisplayNameOwned::try_new),
+            table_row!(try_new)
+        );
+        assert_eq!(
+            make_row(
+                "try_new_short",
+                LanguageIdentifierDisplayNameOwned::try_new_short
+            ),
+            table_row!(try_new_short)
+        );
+        assert_eq!(
+            make_row(
+                "try_new_long",
+                LanguageIdentifierDisplayNameOwned::try_new_long
+            ),
+            table_row!(try_new_long)
+        );
+        assert_eq!(
+            make_row(
+                "try_new_menu",
+                LanguageIdentifierDisplayNameOwned::try_new_menu
+            ),
+            table_row!(try_new_menu)
+        );
+        assert_eq!(
+            make_row(
+                "try_new_short_menu",
+                LanguageIdentifierDisplayNameOwned::try_new_short_menu
+            ),
+            table_row!(try_new_short_menu)
+        );
+        assert_eq!(
+            make_row(
+                "try_new_extended",
+                LanguageIdentifierDisplayNameOwned::try_new_extended
+            ),
+            table_row!(try_new_extended)
+        );
+        assert_eq!(
+            make_row(
+                "try_new_extended_short",
+                LanguageIdentifierDisplayNameOwned::try_new_extended_short
+            ),
+            table_row!(try_new_extended_short)
+        );
+        assert_eq!(
+            make_row(
+                "try_new_extended_long",
+                LanguageIdentifierDisplayNameOwned::try_new_extended_long
+            ),
+            table_row!(try_new_extended_long)
+        );
+        assert_eq!(
+            make_row(
+                "try_new_extended_menu",
+                LanguageIdentifierDisplayNameOwned::try_new_extended_menu
+            ),
+            table_row!(try_new_extended_menu)
+        );
     }
 }

@@ -14,7 +14,36 @@ use crate::displaynames::provider::{
 use icu_locale_core::subtags::Script;
 use icu_provider::prelude::*;
 
+macro_rules! table_row {
+    (try_new_minimal) => {
+        "| [`try_new_minimal`](Self::try_new_minimal) | ❌ | ❌ | ❌ | \"Unknown Script\" |"
+    };
+    (try_new) => {
+        "| [`try_new`](Self::try_new) | \"Latin\" | ❌ | ❌ | \"Unknown Script\" |"
+    };
+    (try_new_extended) => {
+        "| [`try_new_extended`](Self::try_new_extended) | \"Latin\" | \"Shavian\" | \"Sumero-Akkadian Cuneiform\" | \"Unknown Script\" |"
+    };
+    (try_new_extended_short) => {
+        "| [`try_new_extended_short`](Self::try_new_extended_short) | \"Latin\" | \"Shavian\" | \"S-A Cuneiform\" | \"Unknown Script\" |"
+    };
+}
+
 /// A localized display name for a single script, owned version.
+///
+/// # Constructor Behavior
+///
+/// There are several constructors, each of which links different data and serve
+/// different use cases. The behavior is illustrated in the table below.
+///
+/// | Constructor | `Latn` (`en`) | `Shaw` (`en`) | `Xsux` (`en`) | `Zzzz` (`en`) |
+/// | :--- | :--- | :--- | :--- | :--- |
+#[doc = concat!(table_row!(try_new_minimal), "\n")]
+#[doc = concat!(table_row!(try_new), "\n")]
+#[doc = concat!(table_row!(try_new_extended), "\n")]
+#[doc = concat!(table_row!(try_new_extended_short), "\n")]
+///
+/// > Note: :x: means that the constructor returns an error.
 ///
 /// # Example
 ///
@@ -107,67 +136,6 @@ impl ScriptDisplayNameOwned {
                 payload: payload.cast(),
             },
         )
-    }
-
-    icu_provider::gen_buffer_data_constructors!(
-        (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
-        /// Loads the short script display name for a given script and locale using compiled data.
-        ///
-        /// Falls back to the long name if the short name is not available.
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::experimental::displaynames::{
-        ///     DisplayNamesPreferences, single::ScriptDisplayNameOwned,
-        /// };
-        /// use icu::locale::{locale, subtags::script};
-        /// use writeable::assert_writeable_eq;
-        ///
-        /// let prefs: DisplayNamesPreferences = locale!("en-US").into();
-        ///
-        /// // "Xsux" has a short display name in en-US
-        /// let display_name_short = ScriptDisplayNameOwned::try_new_extended_short(prefs, script!("Xsux"))
-        ///     .expect("Data should load successfully");
-        /// assert_writeable_eq!(display_name_short, "S-A Cuneiform");
-        ///
-        /// // "Latn" does not have a short display name, so it falls back to the long display name
-        /// let display_name_long = ScriptDisplayNameOwned::try_new_short(prefs, script!("Latn"))
-        ///     .expect("Data should load successfully");
-        /// assert_writeable_eq!(display_name_long, "Latin");
-        /// ```
-        functions: [
-            try_new_short,
-            try_new_short_with_buffer_provider,
-            try_new_short_unstable,
-            Self
-        ]
-    );
-
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_short)]
-    pub fn try_new_short_unstable<D>(
-        provider: &D,
-        prefs: DisplayNamesPreferences,
-        script: Script,
-    ) -> Result<Self, DataError>
-    where
-        D: ?Sized
-            + DataProvider<LocaleNamesScriptCoreMediumV1>
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>,
-    {
-        let attrs = LocaleNamesScriptCoreMediumV1::make_attributes(&script);
-        try_load_markers!(
-            provider,
-            prefs,
-            attrs,
-            [
-                LocaleNamesScriptCoreMediumV1,
-                LocaleNamesScriptMinimalMediumV1
-            ]
-        )
-        .map(|payload| Self {
-            payload: payload.cast(),
-        })
     }
 
     icu_provider::gen_buffer_data_constructors!(
@@ -293,3 +261,68 @@ pub struct ScriptDisplayName<'a> {
 }
 
 impl_writeable_for_single_display_name_borrowed!(ScriptDisplayName);
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use icu_locale_core::{locale, subtags::script};
+    use writeable::Writeable;
+
+    #[test]
+    fn test_script_display_name_owned_table() {
+        let prefs = DisplayNamesPreferences::from(locale!("en"));
+
+        let get_row = |f: fn(
+            DisplayNamesPreferences,
+            Script,
+        ) -> Result<ScriptDisplayNameOwned, DataError>| {
+            vec![
+                match f(prefs, script!("Latn")) {
+                    Ok(name) => format!("\"{}\"", name.write_to_string()),
+                    Err(_) => "❌".to_string(),
+                },
+                match f(prefs, script!("Shaw")) {
+                    Ok(name) => format!("\"{}\"", name.write_to_string()),
+                    Err(_) => "❌".to_string(),
+                },
+                match f(prefs, script!("Xsux")) {
+                    Ok(name) => format!("\"{}\"", name.write_to_string()),
+                    Err(_) => "❌".to_string(),
+                },
+                match f(prefs, script!("Zzzz")) {
+                    Ok(name) => format!("\"{}\"", name.write_to_string()),
+                    Err(_) => "❌".to_string(),
+                },
+            ]
+        };
+
+        let make_row = |name: &str,
+                        f: fn(
+            DisplayNamesPreferences,
+            Script,
+        ) -> Result<ScriptDisplayNameOwned, DataError>| {
+            let row = get_row(f);
+            format!("| [`{name}`](Self::{name}) | {} |", row.join(" | "))
+        };
+
+        assert_eq!(
+            make_row("try_new_minimal", ScriptDisplayNameOwned::try_new_minimal),
+            table_row!(try_new_minimal)
+        );
+        assert_eq!(
+            make_row("try_new", ScriptDisplayNameOwned::try_new),
+            table_row!(try_new)
+        );
+        assert_eq!(
+            make_row("try_new_extended", ScriptDisplayNameOwned::try_new_extended),
+            table_row!(try_new_extended)
+        );
+        assert_eq!(
+            make_row(
+                "try_new_extended_short",
+                ScriptDisplayNameOwned::try_new_extended_short
+            ),
+            table_row!(try_new_extended_short)
+        );
+    }
+}

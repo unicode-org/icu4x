@@ -11,7 +11,22 @@ use crate::displaynames::provider::LocaleNamesVariantExtendedMediumV1;
 use icu_locale_core::subtags::Variant;
 use icu_provider::prelude::*;
 
+macro_rules! table_row {
+    (try_new_extended) => {
+        "| [`try_new_extended`](Self::try_new_extended) | \"IPA Phonetics\" | \"Computer\" |"
+    };
+}
+
 /// A localized display name for a single variant, owned version.
+///
+/// # Constructor Behavior
+///
+/// There is currently just one constructor, which is named "extended"
+/// since there are no variants with guaranteed display names.
+///
+/// | Constructor | `fonipa` (`en`) | `posix` (`en`) |
+/// | :--- | :--- | :--- |
+#[doc = concat!(table_row!(try_new_extended), "\n")]
 ///
 /// # Example
 ///
@@ -20,7 +35,7 @@ use icu_provider::prelude::*;
 /// use icu::locale::{locale, subtags::variant};
 /// use writeable::assert_writeable_eq;
 ///
-/// let display_name = VariantDisplayNameOwned::try_new(locale!("en").into(), variant!("fonipa"))
+/// let display_name = VariantDisplayNameOwned::try_new_extended(locale!("en").into(), variant!("fonipa"))
 ///     .expect("Data should load successfully");
 ///
 /// assert_writeable_eq!(display_name, "IPA Phonetics");
@@ -31,85 +46,6 @@ pub struct VariantDisplayNameOwned {
 }
 
 impl VariantDisplayNameOwned {
-    icu_provider::gen_buffer_data_constructors!(
-        (prefs: DisplayNamesPreferences, variant: Variant) -> result: Result<Self, DataError>,
-        /// Loads the variant display name for a given variant and locale using compiled data.
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::experimental::displaynames::single::VariantDisplayNameOwned;
-        /// use icu::locale::{locale, subtags::variant};
-        /// use writeable::assert_writeable_eq;
-        ///
-        /// let display_name = VariantDisplayNameOwned::try_new(locale!("en").into(), variant!("fonipa"))
-        ///     .expect("Data should load successfully");
-        ///
-        /// assert_writeable_eq!(display_name, "IPA Phonetics");
-        /// ```
-        functions: [
-            try_new,
-            try_new_with_buffer_provider,
-            try_new_unstable,
-            Self
-        ]
-    );
-
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<D>(
-        provider: &D,
-        prefs: DisplayNamesPreferences,
-        variant: Variant,
-    ) -> Result<Self, DataError>
-    where
-        D: ?Sized + DataProvider<LocaleNamesVariantExtendedMediumV1>,
-    {
-        let attrs = LocaleNamesVariantExtendedMediumV1::make_attributes(&variant);
-        try_load_markers!(provider, prefs, attrs, [LocaleNamesVariantExtendedMediumV1])
-            .map(|payload| Self { payload })
-    }
-
-    icu_provider::gen_buffer_data_constructors!(
-        (prefs: DisplayNamesPreferences, variant: Variant) -> result: Result<Self, DataError>,
-        /// Loads the minimal variant display name for a given variant and locale using compiled data.
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use icu::experimental::displaynames::single::VariantDisplayNameOwned;
-        /// use icu::locale::{locale, subtags::variant};
-        /// use writeable::assert_writeable_eq;
-        ///
-        /// let display_name = VariantDisplayNameOwned::try_new_minimal(locale!("en").into(), variant!("posix"))
-        ///     .expect("Data should load successfully");
-        ///
-        /// assert_writeable_eq!(display_name, "Computer");
-        /// ```
-        functions: [
-            try_new_minimal,
-            try_new_minimal_with_buffer_provider,
-            try_new_minimal_unstable,
-            Self
-        ]
-    );
-
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_minimal)]
-    pub fn try_new_minimal_unstable<D>(
-        provider: &D,
-        prefs: DisplayNamesPreferences,
-        variant: Variant,
-    ) -> Result<Self, DataError>
-    where
-        D: ?Sized + DataProvider<LocaleNamesVariantExtendedMediumV1>,
-    {
-        let attrs = LocaleNamesVariantExtendedMediumV1::make_attributes(&variant);
-        try_load_markers!(provider, prefs, attrs, [LocaleNamesVariantExtendedMediumV1]).map(
-            |payload| Self {
-                payload: payload.cast(),
-            },
-        )
-    }
-
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, variant: Variant) -> result: Result<Self, DataError>,
         /// Loads the extended variant display name for a given variant and locale using compiled data.
@@ -168,3 +104,48 @@ pub struct VariantDisplayName<'a> {
 }
 
 impl_writeable_for_single_display_name_borrowed!(VariantDisplayName);
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use icu_locale_core::{locale, subtags::variant};
+    use writeable::Writeable;
+
+    #[test]
+    fn test_variant_display_name_owned_table() {
+        let prefs = DisplayNamesPreferences::from(locale!("en"));
+
+        let get_row = |f: fn(
+            DisplayNamesPreferences,
+            Variant,
+        ) -> Result<VariantDisplayNameOwned, DataError>| {
+            vec![
+                match f(prefs, variant!("fonipa")) {
+                    Ok(name) => format!("\"{}\"", name.write_to_string()),
+                    Err(_) => "❌".to_string(),
+                },
+                match f(prefs, variant!("posix")) {
+                    Ok(name) => format!("\"{}\"", name.write_to_string()),
+                    Err(_) => "❌".to_string(),
+                },
+            ]
+        };
+
+        let make_row = |name: &str,
+                        f: fn(
+            DisplayNamesPreferences,
+            Variant,
+        ) -> Result<VariantDisplayNameOwned, DataError>| {
+            let row = get_row(f);
+            format!("| [`{name}`](Self::{name}) | {} |", row.join(" | "))
+        };
+
+        assert_eq!(
+            make_row(
+                "try_new_extended",
+                VariantDisplayNameOwned::try_new_extended
+            ),
+            table_row!(try_new_extended)
+        );
+    }
+}
