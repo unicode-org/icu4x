@@ -1732,7 +1732,7 @@ mod tests {
         let prefs_en = DisplayNamesPreferences::from(locale!("en"));
         let options = LanguageIdentifierDisplayNameOptions::default();
 
-        let inputs = vec![langid!("en-US"), langid!("zh"), langid!("az")];
+        let inputs = [langid!("en-US"), langid!("zh"), langid!("az")];
 
         let get_row = |f: fn(
             DisplayNamesPreferences,

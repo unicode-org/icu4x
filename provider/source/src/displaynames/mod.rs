@@ -81,7 +81,7 @@ where
     }
 }
 
-/// Helper to construct CLDR XPath string for a display name attribute and subtag.
+/// Helper to construct CLDR `XPath` string for a display name attribute and subtag.
 pub(crate) fn construct_xpath(
     field: &str,
     subtag_str: &str,

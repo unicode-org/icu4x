@@ -316,7 +316,7 @@ mod tests {
             .unwrap()
             .payload;
 
-        assert_eq!(&*data.get().core(), "Chinese, Mandarin");
+        assert_eq!(data.get().core(), "Chinese, Mandarin");
     }
 
     #[test]

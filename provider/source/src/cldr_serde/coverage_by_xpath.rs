@@ -13,19 +13,19 @@ pub(crate) struct CoverageByXPathResource {
     pub(crate) coverage_by_xpath: BTreeMap<String, CoverageByXPathLevels>,
 }
 
-/// Representation of coverage levels (`basic`, `core`, `moderate`, `modern`) containing sets of XPaths.
+/// Representation of coverage levels (`basic`, `core`, `moderate`, `modern`) containing sets of `XPaths`.
 #[derive(Deserialize, Debug)]
 pub(crate) struct CoverageByXPathLevels {
-    /// XPaths classified under the `basic` coverage level.
+    /// `XPaths` classified under the `basic` coverage level.
     #[serde(default)]
     pub(crate) basic: BTreeSet<String>,
-    /// XPaths classified under the `core` coverage level.
+    /// `XPaths` classified under the `core` coverage level.
     #[serde(default)]
     pub(crate) core: BTreeSet<String>,
-    /// XPaths classified under the `moderate` coverage level.
+    /// `XPaths` classified under the `moderate` coverage level.
     #[serde(default)]
     pub(crate) moderate: BTreeSet<String>,
-    /// XPaths classified under the `modern` coverage level.
+    /// `XPaths` classified under the `modern` coverage level.
     #[serde(default)]
     pub(crate) modern: BTreeSet<String>,
 }
