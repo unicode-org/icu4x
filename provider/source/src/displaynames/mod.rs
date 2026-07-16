@@ -244,6 +244,7 @@ macro_rules! impl_displaynames_menu_v1 {
                     })?;
                     (core.as_str(), extension.as_str())
                 } else {
+                    // Fallback to alt-menu
                     let key_alt_menu = WithAlt {
                         subtag: subtag.clone(),
                         alt: Some($crate::cldr_serde::displaynames::Alt::Menu),
@@ -287,10 +288,10 @@ macro_rules! impl_displaynames_menu_v1 {
                 let cldr = self.cldr()?;
                 let displaynames = cldr.displaynames();
                 let field_str = stringify!($field);
-                for locale in displaynames
-                    .list_locales()?
-                    .filter(|locale| displaynames.file_exists(locale, $file).unwrap_or_default())
-                {
+                for locale in displaynames.list_locales()?.filter(|locale| {
+                    // The directory might exist without the file
+                    displaynames.file_exists(locale, $file).unwrap_or_default()
+                }) {
                     let data: &$resource = displaynames.read_and_parse(&locale, $file)?;
                     for key in data.main.value.localedisplaynames.$field.keys() {
                         let matches = key.menu
@@ -342,10 +343,10 @@ macro_rules! impl_displaynames_iter_v1 {
                 let cldr = self.cldr()?;
                 let displaynames = cldr.displaynames();
                 let field_str = stringify!($field);
-                for locale in displaynames
-                    .list_locales()?
-                    .filter(|locale| displaynames.file_exists(locale, $file).unwrap_or_default())
-                {
+                for locale in displaynames.list_locales()?.filter(|locale| {
+                    // The directory might exist without the file
+                    displaynames.file_exists(locale, $file).unwrap_or_default()
+                }) {
                     let data: &$resource = displaynames.read_and_parse(&locale, $file)?;
                     for key in data.main.value.localedisplaynames.$field.keys() {
                         let matches = $alt_variant == key.alt && key.menu.is_none();
@@ -389,7 +390,10 @@ macro_rules! impl_displaynames_legacy_iter_v1 {
                 let displaynames = self.cldr()?.displaynames();
                 Ok(displaynames
                     .list_locales()?
-                    .filter(|locale| displaynames.file_exists(locale, $file).unwrap_or_default())
+                    .filter(|locale| {
+                        // The directory might exist without the file
+                        displaynames.file_exists(locale, $file).unwrap_or_default()
+                    })
                     .map(DataIdentifierCow::from_locale)
                     .collect())
             }
