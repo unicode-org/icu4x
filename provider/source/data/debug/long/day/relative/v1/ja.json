@@ -1,0 +1,35 @@
+{
+  "relatives": {
+    "-2": "一昨日",
+    "-1": "昨日",
+    "0": "今日",
+    "1": "明日",
+    "2": "明後日"
+  },
+  "past": {
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " 日前"
+        }
+      ]
+    ]
+  },
+  "future": {
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " 日後"
+        }
+      ]
+    ]
+  }
+}

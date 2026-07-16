@@ -1,0 +1,34 @@
+{
+  "relatives": {
+    "0": "this hour"
+  },
+  "past": {
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " hr ago"
+        }
+      ]
+    ]
+  },
+  "future": {
+    "other": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " hr"
+        }
+      ]
+    ]
+  }
+}

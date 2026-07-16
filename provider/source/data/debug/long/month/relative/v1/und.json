@@ -1,0 +1,39 @@
+{
+  "relatives": {
+    "-1": "last month",
+    "0": "this month",
+    "1": "next month"
+  },
+  "past": {
+    "other": [
+      0,
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " m"
+        }
+      ]
+    ]
+  },
+  "future": {
+    "other": [
+      0,
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " m"
+        }
+      ]
+    ]
+  }
+}

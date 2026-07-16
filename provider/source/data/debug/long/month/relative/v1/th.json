@@ -1,0 +1,36 @@
+{
+  "relatives": {
+    "-1": "เดือนที่แล้ว",
+    "0": "เดือนนี้",
+    "1": "เดือนหน้า"
+  },
+  "past": {
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " เดือนที่ผ่านมา"
+        }
+      ]
+    ]
+  },
+  "future": {
+    "other": [
+      0,
+      [
+        {
+          "Literal": "ในอีก "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " เดือน"
+        }
+      ]
+    ]
+  }
+}

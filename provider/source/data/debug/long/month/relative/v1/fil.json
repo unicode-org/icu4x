@@ -1,0 +1,36 @@
+{
+  "relatives": {
+    "-1": "nakaraang buwan",
+    "0": "ngayong buwan",
+    "1": "susunod na buwan"
+  },
+  "past": {
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " buwan ang nakalipas"
+        }
+      ]
+    ]
+  },
+  "future": {
+    "other": [
+      0,
+      [
+        {
+          "Literal": "sa "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " buwan"
+        }
+      ]
+    ]
+  }
+}

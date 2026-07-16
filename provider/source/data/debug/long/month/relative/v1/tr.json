@@ -1,0 +1,33 @@
+{
+  "relatives": {
+    "-1": "geçen ay",
+    "0": "bu ay",
+    "1": "gelecek ay"
+  },
+  "past": {
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ay önce"
+        }
+      ]
+    ]
+  },
+  "future": {
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ay sonra"
+        }
+      ]
+    ]
+  }
+}

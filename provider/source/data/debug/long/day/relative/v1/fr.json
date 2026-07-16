@@ -1,0 +1,69 @@
+{
+  "relatives": {
+    "-2": "avant-hier",
+    "-1": "hier",
+    "0": "aujourd’hui",
+    "1": "demain",
+    "2": "après-demain"
+  },
+  "past": {
+    "one": [
+      0,
+      [
+        {
+          "Literal": "il y a "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " jour"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "il y a "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " jours"
+        }
+      ]
+    ]
+  },
+  "future": {
+    "one": [
+      0,
+      [
+        {
+          "Literal": "dans "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " jour"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "dans "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " jours"
+        }
+      ]
+    ]
+  }
+}

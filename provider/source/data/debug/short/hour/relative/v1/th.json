@@ -1,0 +1,34 @@
+{
+  "relatives": {
+    "0": "ชั่วโมงนี้"
+  },
+  "past": {
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ชม. ที่แล้ว"
+        }
+      ]
+    ]
+  },
+  "future": {
+    "other": [
+      0,
+      [
+        {
+          "Literal": "ใน "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ชม."
+        }
+      ]
+    ]
+  }
+}

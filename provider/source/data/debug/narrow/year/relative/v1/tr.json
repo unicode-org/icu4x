@@ -1,0 +1,33 @@
+{
+  "relatives": {
+    "-1": "geçen yıl",
+    "0": "bu yıl",
+    "1": "gelecek yıl"
+  },
+  "past": {
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " yıl önce"
+        }
+      ]
+    ]
+  },
+  "future": {
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " yıl sonra"
+        }
+      ]
+    ]
+  }
+}

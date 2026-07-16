@@ -1,0 +1,19 @@
+{
+  "has_explicit_medium": true,
+  "variant_pattern_indices": [
+    3,
+    4,
+    4,
+    5,
+    6,
+    6
+  ],
+  "elements": [
+    "cccc H",
+    "ccc H",
+    "cccc H:mm",
+    "ccc H:mm",
+    "cccc H:mm:ss",
+    "ccc H:mm:ss"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "has_explicit_medium": true,
+  "has_explicit_short": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "elements": [
+    {
+      "header": 10,
+      "patterns": [
+        "d–d 'de' MMMM",
+        "d 'de' MMMM – d 'de' MMMM"
+      ]
+    },
+    {
+      "header": 10,
+      "patterns": [
+        "dd – dd 'de' MM",
+        "d 'de' MMM 'al' d 'de' MMM"
+      ]
+    },
+    {
+      "header": 8,
+      "patterns": [
+        "dd/MM – dd/MM"
+      ]
+    }
+  ]
+}

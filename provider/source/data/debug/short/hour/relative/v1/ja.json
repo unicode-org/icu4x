@@ -1,0 +1,31 @@
+{
+  "relatives": {
+    "0": "1 時間以内"
+  },
+  "past": {
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " 時間前"
+        }
+      ]
+    ]
+  },
+  "future": {
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " 時間後"
+        }
+      ]
+    ]
+  }
+}

@@ -10,13 +10,12 @@ use icu_decimal::{AbstractFormatter, DecimalFormatter, DecimalFormatterPreferenc
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_plurals::{PluralRules, PluralRulesPreferences};
 use icu_provider::prelude::*;
+use tinystr::TinyAsciiStr;
 use writeable::Writeable;
 
 use super::super::provider::currency::{
-    essentials::CurrencyEssentialsV1,
-    extended::CurrencyExtendedDataV1,
-    patterns::CurrencyPatternsDataV1,
-    symbols::{CurrencySymbolsV1, Width},
+    essentials::CurrencyEssentialsV1, extended::CurrencyExtendedDataV1,
+    patterns::CurrencyPatternsDataV1, symbols::CurrencySymbolsV1,
 };
 use super::CurrencyCode;
 
@@ -46,11 +45,13 @@ prefs_convert!(
 
 #[derive(Debug)]
 pub(crate) enum CurrencyFormatterData {
+    Iso {
+        essential: DataPayload<CurrencyEssentialsV1>,
+        currency: CurrencyCode,
+    },
     Essential {
         essential: DataPayload<CurrencyEssentialsV1>,
-        symbols: DataPayload<CurrencySymbolsV1>,
-        width: Width,
-        currency: CurrencyCode,
+        symbol: DataPayload<CurrencySymbolsV1>,
     },
     Long {
         extended: DataPayload<CurrencyExtendedDataV1>,
@@ -78,7 +79,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         value_formatter: V,
         prefs: CurrencyFormatterPreferences,
         currency: CurrencyCode,
-        width: Width,
+        width: TinyAsciiStr<1>,
     ) -> Result<Self, DataError> {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
         let decimal_prefs = DecimalFormatterPreferences::from(&prefs);
@@ -89,17 +90,32 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let essential =
             load_with_fallback::<CurrencyEssentialsV1>(&crate::provider::Baked, ids.clone())?
                 .payload;
-        let symbols =
-            load_with_fallback::<CurrencySymbolsV1>(&crate::provider::Baked, ids)?.payload;
+        #[allow(const_item_mutation)]
+        let currency_data = match DataProvider::<CurrencySymbolsV1>::load(
+            &crate::provider::Baked,
+            DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    CurrencySymbolsV1::make_attributes(currency, width, &mut TinyAsciiStr::EMPTY),
+                    &locale,
+                ),
+                ..Default::default()
+            },
+        )
+        .allow_identifier_not_found()?
+        {
+            Some(res) => CurrencyFormatterData::Essential {
+                essential,
+                symbol: res.payload,
+            },
+            None => CurrencyFormatterData::Iso {
+                essential,
+                currency,
+            },
+        };
 
         Ok(Self {
             value_formatter,
-            currency_data: CurrencyFormatterData::Essential {
-                essential,
-                symbols,
-                width,
-                currency,
-            },
+            currency_data,
         })
     }
 
@@ -108,7 +124,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         value_formatter: V,
         prefs: CurrencyFormatterPreferences,
         currency: CurrencyCode,
-        width: Width,
+        width: TinyAsciiStr<1>,
     ) -> Result<Self, DataError>
     where
         D: ?Sized + DataProvider<CurrencyEssentialsV1> + DataProvider<CurrencySymbolsV1>,
@@ -120,16 +136,30 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let default_id = DataIdentifierBorrowed::for_locale(&locale);
         let ids = req_id.into_iter().chain(core::iter::once(default_id));
         let essential = load_with_fallback::<CurrencyEssentialsV1>(provider, ids.clone())?.payload;
-        let symbols = load_with_fallback::<CurrencySymbolsV1>(provider, ids)?.payload;
+        #[allow(const_item_mutation)]
+        let currency_data = match provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    CurrencySymbolsV1::make_attributes(currency, width, &mut TinyAsciiStr::EMPTY),
+                    &locale,
+                ),
+                ..Default::default()
+            })
+            .allow_identifier_not_found()?
+        {
+            Some(res) => CurrencyFormatterData::Essential {
+                essential,
+                symbol: res.payload,
+            },
+            None => CurrencyFormatterData::Iso {
+                essential,
+                currency,
+            },
+        };
 
         Ok(Self {
             value_formatter,
-            currency_data: CurrencyFormatterData::Essential {
-                essential,
-                symbols,
-                width,
-                currency,
-            },
+            currency_data,
         })
     }
 
@@ -254,7 +284,7 @@ impl CurrencyFormatter<DecimalFormatter> {
             DecimalFormatter::try_new((&prefs).into(), Default::default())?,
             prefs,
             *currency_code,
-            Width::Short,
+            CurrencySymbolsV1::SHORT,
         )
     }
 
@@ -272,7 +302,7 @@ impl CurrencyFormatter<DecimalFormatter> {
             DecimalFormatter::try_new((&prefs).into(), Default::default())?,
             prefs,
             *currency_code,
-            Width::Narrow,
+            CurrencySymbolsV1::NARROW,
         )
     }
 
@@ -294,7 +324,7 @@ impl CurrencyFormatter<DecimalFormatter> {
             DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
             prefs,
             *currency_code,
-            Width::Short,
+            CurrencySymbolsV1::SHORT,
         )
     }
 
@@ -316,7 +346,7 @@ impl CurrencyFormatter<DecimalFormatter> {
             DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
             prefs,
             *currency_code,
-            Width::Narrow,
+            CurrencySymbolsV1::NARROW,
         )
     }
 
@@ -442,20 +472,19 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         // TODO(#8146): Evaluate if FixedDecimal is the correct input type or if we should use
         // an exact decimal/money representation.
         let (pattern, currency_str) = match &self.currency_data {
-            CurrencyFormatterData::Essential {
+            CurrencyFormatterData::Iso {
                 essential,
-                symbols,
-                width,
                 currency,
             } => {
-                // TODO(#6064): Support plural-specific patterns and full currency formatting spec.
-                let currency_symbol = symbols.get().get(*width, currency);
-                let pattern = essential.get().get_positive(
-                    currency_symbol.starts_with_letter,
-                    currency_symbol.ends_with_letter,
-                );
-
-                (pattern, currency_symbol.symbol)
+                let pattern = essential.get().get_positive(true, true);
+                (pattern, currency.0.as_str())
+            }
+            CurrencyFormatterData::Essential { essential, symbol } => {
+                let symbol = symbol.get();
+                let pattern = essential
+                    .get()
+                    .get_positive(symbol.starts_with_letter(), symbol.ends_with_letter());
+                (pattern, symbol.as_str())
             }
             CurrencyFormatterData::Long {
                 extended,

@@ -1,0 +1,39 @@
+{
+  "relatives": {
+    "-1": "prošle god.",
+    "0": "ove god.",
+    "1": "sledeće god."
+  },
+  "past": {
+    "other": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " god."
+        }
+      ]
+    ]
+  },
+  "future": {
+    "other": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " god."
+        }
+      ]
+    ]
+  }
+}

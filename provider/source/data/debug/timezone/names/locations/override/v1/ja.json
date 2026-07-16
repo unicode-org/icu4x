@@ -1,0 +1,41 @@
+{
+  "locations": {},
+  "pattern_generic": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": "時間"
+    }
+  ],
+  "pattern_standard": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": "標準時"
+    }
+  ],
+  "pattern_daylight": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": "夏時間"
+    }
+  ],
+  "pattern_partial_location": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Literal": "（"
+    },
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": "）"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "has_explicit_medium": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "elements": [
+    {
+      "header": 10,
+      "patterns": [
+        "EEEEที่ d – EEEEที่ d MMM",
+        "EEEEที่ d MMM – EEEEที่ d MMM"
+      ]
+    },
+    {
+      "header": 8,
+      "patterns": [
+        "E d/M – E d/M"
+      ]
+    }
+  ]
+}

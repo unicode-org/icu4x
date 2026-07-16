@@ -1,0 +1,36 @@
+{
+  "relatives": {
+    "-1": "last yr.",
+    "0": "this yr.",
+    "1": "next yr."
+  },
+  "past": {
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "y ago"
+        }
+      ]
+    ]
+  },
+  "future": {
+    "other": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "y"
+        }
+      ]
+    ]
+  }
+}

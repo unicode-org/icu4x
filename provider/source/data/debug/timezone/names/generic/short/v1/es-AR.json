@@ -1,0 +1,8 @@
+{
+  "defaults": {
+    "15": "ART"
+  },
+  "overrides": {
+    "utc": "UTC"
+  }
+}

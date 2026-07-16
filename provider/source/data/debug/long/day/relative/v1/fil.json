@@ -1,0 +1,38 @@
+{
+  "relatives": {
+    "-2": "Araw bago ang kahapon",
+    "-1": "kahapon",
+    "0": "ngayong araw",
+    "1": "bukas",
+    "2": "Samakalawa"
+  },
+  "past": {
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " araw ang nakalipas"
+        }
+      ]
+    ]
+  },
+  "future": {
+    "other": [
+      0,
+      [
+        {
+          "Literal": "sa "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " araw"
+        }
+      ]
+    ]
+  }
+}

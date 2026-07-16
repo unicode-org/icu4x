@@ -1,0 +1,95 @@
+{
+  "relatives": {
+    "-1": "prošlog meseca",
+    "0": "ovog meseca",
+    "1": "sledećeg meseca"
+  },
+  "past": {
+    "one": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " meseca"
+        }
+      ]
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " meseca"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " meseci"
+        }
+      ]
+    ]
+  },
+  "future": {
+    "one": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " mesec"
+        }
+      ]
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " meseca"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " meseci"
+        }
+      ]
+    ]
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "visibility": true,
+  "variable_table": {
+    "compounds": [],
+    "quantifiers_opt": [],
+    "quantifiers_kleene": [],
+    "quantifiers_kleene_plus": [],
+    "segments": [],
+    "unicode_sets": [],
+    "function_calls": [],
+    "max_left_placeholder_count": 0,
+    "max_right_placeholder_count": 0
+  },
+  "filter": [
+    "\u0000-􏿿"
+  ],
+  "id_group_list": [
+    [
+      {
+        "filter": [
+          "\u0000-􏿿"
+        ],
+        "id": "any-null"
+      },
+      {
+        "filter": [
+          "\u0000-􏿿"
+        ],
+        "id": "any-null"
+      }
+    ]
+  ],
+  "rule_group_list": [
+    []
+  ]
+}

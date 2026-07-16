@@ -1,0 +1,95 @@
+{
+  "relatives": {
+    "-1": "prošle godine",
+    "0": "ove godine",
+    "1": "sledeće godine"
+  },
+  "past": {
+    "one": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " godine"
+        }
+      ]
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " godine"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " godina"
+        }
+      ]
+    ]
+  },
+  "future": {
+    "one": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " godinu"
+        }
+      ]
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " godine"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " godina"
+        }
+      ]
+    ]
+  }
+}

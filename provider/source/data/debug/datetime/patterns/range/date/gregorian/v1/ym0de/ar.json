@@ -1,0 +1,43 @@
+{
+  "has_explicit_medium": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    3,
+    4,
+    4
+  ],
+  "elements": [
+    {
+      "header": 26,
+      "patterns": [
+        "E، d – E، d MMM، y",
+        "E، d MMM – E، d MMM، y",
+        "E، d MMM y"
+      ]
+    },
+    {
+      "header": 17,
+      "patterns": [
+        "E، dd‏/MM‏/y",
+        "E، d‏/M‏/y"
+      ]
+    },
+    {
+      "header": 104,
+      "patterns": [
+        "E, d MMM – E, d MMM y G",
+        "E, d MMM y – E, d MMM y G",
+        "E, d MMM y G"
+      ]
+    },
+    {
+      "header": 96,
+      "patterns": [
+        "E, dd-MM-y – E, dd-MM-y GGGG",
+        "E, dd-MM-y GGGG"
+      ]
+    }
+  ]
+}

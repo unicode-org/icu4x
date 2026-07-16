@@ -1,0 +1,170 @@
+{
+  "standard": [
+    {
+      "sized": 3,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": "K"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 6,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": "M"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 9,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": "B"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 12,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": "T"
+            }
+          ]
+        ]
+      }
+    }
+  ],
+  "alpha_next_to_number": [
+    {
+      "sized": 3,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Literal": " "
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": "K"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 6,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Literal": " "
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": "M"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 9,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Literal": " "
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": "B"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 12,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Place1"
+            },
+            {
+              "Literal": " "
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": "T"
+            }
+          ]
+        ]
+      }
+    }
+  ]
+}

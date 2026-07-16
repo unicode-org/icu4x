@@ -1,0 +1,33 @@
+{
+  "relatives": {
+    "-1": "গত মাস",
+    "0": "এই মাস",
+    "1": "পরের মাস"
+  },
+  "past": {
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " মাস আগে"
+        }
+      ]
+    ]
+  },
+  "future": {
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " মাসে"
+        }
+      ]
+    ]
+  }
+}

@@ -44,7 +44,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             CompactDecimalFormatter::try_new_short((&prefs).into(), Default::default())?,
             prefs,
             *currency_code,
-            Width::Short,
+            CurrencySymbolsV1::SHORT,
         )
     }
 
@@ -62,7 +62,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             CompactDecimalFormatter::try_new_short((&prefs).into(), Default::default())?,
             prefs,
             *currency_code,
-            Width::Narrow,
+            CurrencySymbolsV1::NARROW,
         )
     }
 
@@ -90,7 +90,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             )?,
             prefs,
             *currency_code,
-            Width::Short,
+            CurrencySymbolsV1::SHORT,
         )
     }
 
@@ -118,7 +118,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             )?,
             prefs,
             *currency_code,
-            Width::Narrow,
+            CurrencySymbolsV1::NARROW,
         )
     }
 

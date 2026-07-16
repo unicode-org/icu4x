@@ -1,0 +1,39 @@
+{
+  "relatives": {
+    "-1": "l’an dernier",
+    "0": "cette année",
+    "1": "l’an prochain"
+  },
+  "past": {
+    "other": [
+      0,
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " a"
+        }
+      ]
+    ]
+  },
+  "future": {
+    "other": [
+      0,
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " a"
+        }
+      ]
+    ]
+  }
+}

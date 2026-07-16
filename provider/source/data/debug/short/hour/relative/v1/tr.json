@@ -1,0 +1,31 @@
+{
+  "relatives": {
+    "0": "bu saat"
+  },
+  "past": {
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sa. önce"
+        }
+      ]
+    ]
+  },
+  "future": {
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sa. sonra"
+        }
+      ]
+    ]
+  }
+}

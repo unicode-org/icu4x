@@ -1,0 +1,21 @@
+{
+  "start": {
+    "string": ", ",
+    "index_1": 2
+  },
+  "middle": ", ",
+  "end": {
+    "default": {
+      "string": ", বা ",
+      "index_1": 9
+    },
+    "special_case": null
+  },
+  "pair": {
+    "default": {
+      "string": " বা ",
+      "index_1": 8
+    },
+    "special_case": null
+  }
+}
