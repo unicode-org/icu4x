@@ -178498,8 +178498,8 @@ locale/names/region/core/medium/v1, zu/ZA, 41B, 18B, ef679a099025539
 locale/names/region/core/medium/v1, zu/ZM, 32B, 9B, 21b0b898972f0baa
 locale/names/region/core/medium/v1, zu/ZW, 33B, 10B, 3f49455676a5c118
 locale/names/region/core/medium/v1, zu/ZZ, 43B, 20B, 73e2500cd99ef6ac
-locale/names/region/core/short/v1, <lookup>, 3663B, 600 identifiers
-locale/names/region/core/short/v1, <total>, 11795B, 4366B, 323 unique payloads
+locale/names/region/core/short/v1, <lookup>, 3673B, 602 identifiers
+locale/names/region/core/short/v1, <total>, 11863B, 4388B, 325 unique payloads
 locale/names/region/core/short/v1, af/GB, 26B, 3B, d168a2d57f08daca
 locale/names/region/core/short/v1, af/HK, 32B, 9B, 13f9a45abdf02477
 locale/names/region/core/short/v1, af/MO, 29B, 6B, f3dd01ed8a30eaf6
@@ -178658,6 +178658,7 @@ locale/names/region/core/short/v1, fa-AF/HK, 41B, 18B, 1c923976deaf7c36
 locale/names/region/core/short/v1, fa/HK, 39B, 16B, 32ab5939b7df8d44
 locale/names/region/core/short/v1, fa/MO, 36B, 13B, daa84a1b74d0ef43
 locale/names/region/core/short/v1, fa/PS, 36B, 13B, 2981df47fbc07f7b
+locale/names/region/core/short/v1, fa/SA, 38B, 15B, 529d8a39bb819d78
 locale/names/region/core/short/v1, fa/UN, 43B, 20B, 759bfe7fdffa2ee0
 locale/names/region/core/short/v1, ff-Adlm/GB, 32B, 9B, 1151eeec9ee5bbf2
 locale/names/region/core/short/v1, ff-Adlm/HK, 57B, 34B, c608f81e0f8ed54
@@ -178793,6 +178794,7 @@ locale/names/region/core/short/v1, kn/MO, 39B, 16B, c0cafa21ec3767d
 locale/names/region/core/short/v1, kn/PS, 60B, 37B, 74049394c12b60da
 locale/names/region/core/short/v1, kn/UN, 39B, 16B, 87215782936f6576
 locale/names/region/core/short/v1, ko/HK, 30B, 7B, a4b49466f6fcdc
+locale/names/region/core/short/v1, ko/KR, 30B, 7B, 61b7fc2bc604274d
 locale/names/region/core/short/v1, ko/MO, 33B, 10B, 314e9a2d2feccc89
 locale/names/region/core/short/v1, ko/PS, 39B, 16B, 6bb3c71f91415559
 locale/names/region/core/short/v1, ko/UN, 30B, 7B, 597f8ca4d591e4a5
@@ -179100,10 +179102,6 @@ locale/names/region/core/short/v1, zu/HK, 35B, 12B, 4fc38c5bb473c7c
 locale/names/region/core/short/v1, zu/MO, 31B, 8B, 3895a80f595b0607
 locale/names/region/core/short/v1, zu/PS, 35B, 12B, 29a92d0c9dac7076
 locale/names/region/core/short/v1, zu/UN, 31B, 8B, a4fbb62a97b0371e
-locale/names/region/extended/short/v1, <lookup>, 46B, 2 identifiers
-locale/names/region/extended/short/v1, <total>, 68B, 22B, 2 unique payloads
-locale/names/region/extended/short/v1, fa/SA, 38B, 15B, 529d8a39bb819d78
-locale/names/region/extended/short/v1, ko/KR, 30B, 7B, 61b7fc2bc604274d
 locale/names/region/minimal/medium/v1, <lookup>, 1289B, 156 identifiers
 locale/names/region/minimal/medium/v1, <total>, 7082B, 3862B, 140 unique payloads
 locale/names/region/minimal/medium/v1, af/US, 51B, 28B, 40f1ea6a2cd7bd3

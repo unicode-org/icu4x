@@ -53,7 +53,6 @@ include!("units_names_length_extended_v1.rs.data");
 include!("currency_essentials_v1.rs.data");
 include!("short_year_relative_v1.rs.data");
 include!("long_day_relative_v1.rs.data");
-include!("locale_names_region_extended_short_v1.rs.data");
 include!("long_hour_relative_v1.rs.data");
 include!("units_names_length_outlier_v1.rs.data");
 include!("short_second_relative_v1.rs.data");
@@ -165,7 +164,6 @@ macro_rules! impl_data_provider {
         impl_currency_essentials_v1!($provider);
         impl_short_year_relative_v1!($provider);
         impl_long_day_relative_v1!($provider);
-        impl_locale_names_region_extended_short_v1!($provider);
         impl_long_hour_relative_v1!($provider);
         impl_units_names_length_outlier_v1!($provider);
         impl_short_second_relative_v1!($provider);
