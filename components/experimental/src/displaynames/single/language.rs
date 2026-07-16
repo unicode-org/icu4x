@@ -181,6 +181,11 @@ pub struct LanguageIdentifierDisplayNameOwned {
     qualifiers: QualifiersOwned,
 }
 
+type VariantPayloads = DataPayloadOr<
+    ErasedMarker<VarZeroCow<'static, str>>,
+    Result<Vec<DataPayloadOr<ErasedMarker<VarZeroCow<'static, str>>, Variant>>, Variant>,
+>;
+
 #[derive(Debug)]
 struct QualifiersOwned {
     /// Either the script display name, the subtag as fallback, or None if absent
@@ -190,10 +195,7 @@ struct QualifiersOwned {
     /// Either a single variant display name, the subtag as fallback, or
     /// a vector of variant display names or subtags as fallback.
     /// The vector may be empty.
-    variant_payloads: DataPayloadOr<
-        ErasedMarker<VarZeroCow<'static, str>>,
-        Result<Vec<DataPayloadOr<ErasedMarker<VarZeroCow<'static, str>>, Variant>>, Variant>,
-    >,
+    variant_payloads: VariantPayloads,
     essentials_payload: DataPayload<LocaleNamesEssentialsV1>,
 }
 
