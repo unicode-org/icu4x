@@ -4,7 +4,7 @@
 
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
-use crate::cldr_cache::CoverageTier;
+use crate::cldr_cache::CoverageLevelForXPath;
 use crate::cldr_serde;
 use crate::cldr_serde::displaynames::{Alt, WithAlt};
 use crate::displaynames::extract_names_for_zeromap_struct;
@@ -39,7 +39,7 @@ crate::displaynames::impl_displaynames_v1!(
     "territories.json",
     regions,
     None,
-    CoverageTier::Minimal,
+    CoverageLevelForXPath::Basic | CoverageLevelForXPath::Core,
 );
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesRegionCoreMediumV1,
@@ -48,7 +48,7 @@ crate::displaynames::impl_displaynames_v1!(
     "territories.json",
     regions,
     None,
-    CoverageTier::Core,
+    CoverageLevelForXPath::Moderate,
 );
 
 crate::displaynames::impl_displaynames_v1!(
@@ -58,7 +58,7 @@ crate::displaynames::impl_displaynames_v1!(
     "territories.json",
     regions,
     Some(Alt::Short),
-    CoverageTier::Minimal,
+    CoverageLevelForXPath::Basic,
 );
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesRegionCoreShortV1,
@@ -67,7 +67,7 @@ crate::displaynames::impl_displaynames_v1!(
     "territories.json",
     regions,
     Some(Alt::Short),
-    CoverageTier::Core,
+    CoverageLevelForXPath::Moderate,
 );
 
 impl From<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames<'static> {

@@ -135,7 +135,7 @@ pub(crate) fn construct_xpath(
 /// - `$alt_variant`: The alt variant (e.g., `None`, `Some(Alt::Short)`).
 /// - `$tier`: The target coverage tier.
 macro_rules! impl_displaynames_v1 {
-    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr, $tier:expr,) => {
+    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr, $tier:pat,) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
@@ -175,7 +175,7 @@ macro_rules! impl_displaynames_v1 {
                     None,
                 );
                 let item_tier = cldr.coverage_tier(req.id.locale, &xpath)?;
-                if item_tier != $tier {
+                if matches!(item_tier, $tier) {
                     return Err(DataErrorKind::IdentifierNotFound
                         .into_error()
                         .with_req($marker::INFO, req));
@@ -210,7 +210,7 @@ macro_rules! impl_displaynames_v1 {
 /// - `$field`: The field name in `LocaleDisplayNames` containing the data.
 /// - `$tier`: The target coverage tier.
 macro_rules! impl_displaynames_menu_v1 {
-    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $tier:expr,) => {
+    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $tier:pat,) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
@@ -266,7 +266,7 @@ macro_rules! impl_displaynames_menu_v1 {
                     Some($crate::cldr_serde::displaynames::Menu::Core),
                 );
                 let item_tier = cldr.coverage_tier(req.id.locale, &xpath)?;
-                if item_tier != $tier {
+                if matches!(item_tier, $tier) {
                     return Err(DataErrorKind::IdentifierNotFound
                         .into_error()
                         .with_req($marker::INFO, req));
@@ -305,7 +305,7 @@ macro_rules! impl_displaynames_menu_v1 {
                                 None,
                                 Some($crate::cldr_serde::displaynames::Menu::Core),
                             );
-                            if cldr.coverage_tier(&locale, &xpath)? == $tier {
+                            if matches!(cldr.coverage_tier(&locale, &xpath)?, $tier) {
                                 let data_identifier = DataIdentifierCow::from_owned(
                                     DataMarkerAttributes::try_from_string(key.subtag.to_string())
                                         .map_err(|_| {
@@ -336,7 +336,7 @@ macro_rules! impl_displaynames_menu_v1 {
 /// - `$alt_variant`: The alt variant (e.g., `None`, `Some(Alt::Short)`).
 /// - `$tier`: The target coverage tier.
 macro_rules! impl_displaynames_iter_v1 {
-    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr, $tier:expr) => {
+    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr, $tier:pat) => {
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
                 let mut result = HashSet::new();
@@ -358,7 +358,7 @@ macro_rules! impl_displaynames_iter_v1 {
                                 $alt_variant,
                                 None,
                             );
-                            if cldr.coverage_tier(&locale, &xpath)? == $tier {
+                            if matches!(cldr.coverage_tier(&locale, &xpath)?, $tier) {
                                 let data_identifier = DataIdentifierCow::from_owned(
                                     DataMarkerAttributes::try_from_string(key.subtag.to_string())
                                         .map_err(|_| {

@@ -5,17 +5,6 @@
 #![allow(dead_code)] // features
 
 use crate::CoverageLevel;
-
-/// Coverage tiers for display names items derived from CLDR `coverageByXPath` JSON definitions.
-#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub(crate) enum CoverageTier {
-    /// Items with `basic` or `core` CLDR coverage levels.
-    Minimal,
-    /// Items with `moderate` CLDR coverage level.
-    Core,
-    /// Items with `modern` CLDR coverage level or unlisted items.
-    Extended,
-}
 use crate::cldr_serde::coverage_by_xpath::CoverageByXPathResource;
 use crate::cldr_serde::eras::EraData;
 use crate::datetime::DatagenCalendar;
@@ -33,6 +22,21 @@ use std::fmt::Debug;
 use std::str::FromStr;
 use std::sync::OnceLock;
 use writeable::Writeable;
+
+/// Coverage tiers for display names items derived from CLDR `coverageByXPath` JSON definitions.
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub(crate) enum CoverageLevelForXPath {
+    /// Items with `core` CLDR coverage level.
+    Core,
+    /// Items with `basic` CLDR coverage level.
+    Basic,
+    /// Items with `moderate` CLDR coverage level.
+    Moderate,
+    /// Items with `modern` CLDR coverage level.
+    Modern,
+    /// Items with `comprehensive` CLDR coverage level, or unlisted items.
+    Comprehensive,
+}
 
 #[derive(Debug)]
 pub(crate) struct CldrCache {
@@ -272,7 +276,7 @@ impl CldrCache {
         &self,
         locale: &DataLocale,
         xpath: &str,
-    ) -> Result<CoverageTier, DataError> {
+    ) -> Result<CoverageLevelForXPath, DataError> {
         let full_str = locale.to_string();
         let base_str = full_str.split('-').next().unwrap_or("").to_string();
         let candidate_locales = [full_str, base_str];
@@ -289,12 +293,14 @@ impl CldrCache {
                     .get(loc_str.as_str())
                     .or_else(|| resource.coverage_by_xpath.values().next());
                 if let Some(levels) = levels {
-                    if levels.basic.contains(xpath) || levels.core.contains(xpath) {
-                        return Ok(CoverageTier::Minimal);
+                    if levels.core.contains(xpath) {
+                        return Ok(CoverageLevelForXPath::Core);
+                    } else if levels.basic.contains(xpath) {
+                        return Ok(CoverageLevelForXPath::Basic);
                     } else if levels.moderate.contains(xpath) {
-                        return Ok(CoverageTier::Core);
+                        return Ok(CoverageLevelForXPath::Moderate);
                     } else if levels.modern.contains(xpath) {
-                        return Ok(CoverageTier::Extended);
+                        return Ok(CoverageLevelForXPath::Modern);
                     }
                 }
             }
@@ -305,12 +311,14 @@ impl CldrCache {
             let resource: &CoverageByXPathResource =
                 self.serde_cache.read_and_parse_json(root_path)?;
             if let Some(levels) = resource.coverage_by_xpath.get("root") {
-                if levels.basic.contains(xpath) || levels.core.contains(xpath) {
-                    return Ok(CoverageTier::Minimal);
+                if levels.core.contains(xpath) {
+                    return Ok(CoverageLevelForXPath::Core);
+                } else if levels.basic.contains(xpath) {
+                    return Ok(CoverageLevelForXPath::Basic);
                 } else if levels.moderate.contains(xpath) {
-                    return Ok(CoverageTier::Core);
+                    return Ok(CoverageLevelForXPath::Moderate);
                 } else if levels.modern.contains(xpath) {
-                    return Ok(CoverageTier::Extended);
+                    return Ok(CoverageLevelForXPath::Modern);
                 }
             }
         }
@@ -322,16 +330,19 @@ impl CldrCache {
                 .expect("in-repo coverageByXPath.json should be valid JSON")
         });
         if let Some(levels) = in_repo.coverage_by_xpath.get("root") {
-            if levels.basic.contains(xpath) || levels.core.contains(xpath) {
-                return Ok(CoverageTier::Minimal);
+            if levels.core.contains(xpath) {
+                return Ok(CoverageLevelForXPath::Core);
+            } else if levels.basic.contains(xpath) {
+                return Ok(CoverageLevelForXPath::Basic);
             } else if levels.moderate.contains(xpath) {
-                return Ok(CoverageTier::Core);
+                return Ok(CoverageLevelForXPath::Moderate);
             } else if levels.modern.contains(xpath) {
-                return Ok(CoverageTier::Extended);
+                return Ok(CoverageLevelForXPath::Modern);
             }
         }
 
-        Ok(CoverageTier::Extended)
+        // Not found: default to Comprehensive
+        Ok(CoverageLevelForXPath::Comprehensive)
     }
 }
 
@@ -474,7 +485,7 @@ fn test_coverage_tier() {
     let xpath_minimal = "//ldml/localeDisplayNames/languages/language[@type=\"en\"]";
     assert_eq!(
         cldr.coverage_tier(&en, xpath_minimal).unwrap(),
-        CoverageTier::Minimal
+        CoverageLevelForXPath::Basic
     );
 
     // Default/unlisted XPath falls back to Extended tier
@@ -482,6 +493,6 @@ fn test_coverage_tier() {
         "//ldml/localeDisplayNames/languages/language[@type=\"unlisted_test_code\"]";
     assert_eq!(
         cldr.coverage_tier(&en, xpath_unlisted).unwrap(),
-        CoverageTier::Extended
+        CoverageLevelForXPath::Modern
     );
 }

@@ -4,7 +4,7 @@
 
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
-use crate::cldr_cache::CoverageTier;
+use crate::cldr_cache::CoverageLevelForXPath;
 use crate::cldr_serde;
 use crate::cldr_serde::displaynames::{Alt, WithAlt};
 use crate::displaynames::extract_names_for_zeromap_struct;
@@ -37,7 +37,7 @@ crate::displaynames::impl_displaynames_v1!(
     "variants.json",
     variants,
     None,
-    CoverageTier::Extended,
+    CoverageLevelForXPath::Modern,
 );
 
 crate::displaynames::impl_displaynames_legacy_iter_v1!(VariantDisplayNamesV1, "variants.json");

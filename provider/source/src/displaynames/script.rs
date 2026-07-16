@@ -4,7 +4,7 @@
 
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
-use crate::cldr_cache::CoverageTier;
+use crate::cldr_cache::CoverageLevelForXPath;
 use crate::cldr_serde;
 use crate::cldr_serde::displaynames::{Alt, WithAlt};
 use crate::displaynames::extract_names_for_zeromap_struct;
@@ -37,7 +37,7 @@ crate::displaynames::impl_displaynames_v1!(
     "scripts.json",
     scripts,
     None,
-    CoverageTier::Minimal,
+    CoverageLevelForXPath::Basic | CoverageLevelForXPath::Core,
 );
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesScriptCoreMediumV1,
@@ -46,7 +46,7 @@ crate::displaynames::impl_displaynames_v1!(
     "scripts.json",
     scripts,
     None,
-    CoverageTier::Core,
+    CoverageLevelForXPath::Moderate,
 );
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesScriptExtendedMediumV1,
@@ -55,7 +55,7 @@ crate::displaynames::impl_displaynames_v1!(
     "scripts.json",
     scripts,
     None,
-    CoverageTier::Extended,
+    CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 
 crate::displaynames::impl_displaynames_v1!(
@@ -65,7 +65,7 @@ crate::displaynames::impl_displaynames_v1!(
     "scripts.json",
     scripts,
     Some(Alt::Short),
-    CoverageTier::Extended,
+    CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 
 crate::displaynames::impl_displaynames_legacy_iter_v1!(ScriptDisplayNamesV1, "scripts.json");

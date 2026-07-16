@@ -4,7 +4,7 @@
 
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
-use crate::cldr_cache::CoverageTier;
+use crate::cldr_cache::CoverageLevelForXPath;
 use crate::cldr_serde;
 use crate::cldr_serde::displaynames::{Alt, WithAlt};
 use crate::displaynames::extract_names_for_zeromap_struct;
@@ -64,7 +64,7 @@ crate::displaynames::impl_displaynames_v1!(
     "languages.json",
     languages,
     None,
-    CoverageTier::Minimal,
+    CoverageLevelForXPath::Basic | CoverageLevelForXPath::Core,
 );
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesLanguageCoreMediumV1,
@@ -73,7 +73,7 @@ crate::displaynames::impl_displaynames_v1!(
     "languages.json",
     languages,
     None,
-    CoverageTier::Core,
+    CoverageLevelForXPath::Moderate,
 );
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesLanguageExtendedMediumV1,
@@ -82,7 +82,7 @@ crate::displaynames::impl_displaynames_v1!(
     "languages.json",
     languages,
     None,
-    CoverageTier::Extended,
+    CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 
 crate::displaynames::impl_displaynames_v1!(
@@ -92,7 +92,7 @@ crate::displaynames::impl_displaynames_v1!(
     "languages.json",
     languages,
     Some(Alt::Short),
-    CoverageTier::Core,
+    CoverageLevelForXPath::Moderate,
 );
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesLanguageExtendedShortV1,
@@ -101,7 +101,7 @@ crate::displaynames::impl_displaynames_v1!(
     "languages.json",
     languages,
     Some(Alt::Short),
-    CoverageTier::Extended,
+    CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 
 crate::displaynames::impl_displaynames_v1!(
@@ -111,7 +111,7 @@ crate::displaynames::impl_displaynames_v1!(
     "languages.json",
     languages,
     Some(Alt::Long),
-    CoverageTier::Core,
+    CoverageLevelForXPath::Moderate,
 );
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesLanguageExtendedLongV1,
@@ -120,7 +120,7 @@ crate::displaynames::impl_displaynames_v1!(
     "languages.json",
     languages,
     Some(Alt::Long),
-    CoverageTier::Extended,
+    CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 crate::displaynames::impl_displaynames_menu_v1!(
     LocaleNamesLanguageMenuCoreMediumV1,
@@ -128,7 +128,7 @@ crate::displaynames::impl_displaynames_menu_v1!(
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
-    CoverageTier::Core,
+    CoverageLevelForXPath::Moderate,
 );
 crate::displaynames::impl_displaynames_menu_v1!(
     LocaleNamesLanguageMenuExtendedMediumV1,
@@ -136,7 +136,7 @@ crate::displaynames::impl_displaynames_menu_v1!(
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
-    CoverageTier::Extended,
+    CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 
 impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayNames<'static> {
@@ -146,6 +146,7 @@ impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayName
             &[Alt::Variant, Alt::Secondary, Alt::Official],
             "language",
             |langid| {
+                // LanguageDisplayNames contains display names for language subtags without other subtags
                 if langid.script.is_some() || langid.region.is_some() || !langid.variants.is_empty()
                 {
                     None
@@ -333,7 +334,7 @@ mod tests {
             crate::displaynames::construct_xpath("languages", "en-US", Some(Alt::Short), None);
         assert_ne!(
             cldr.coverage_tier(&locale, &xpath_lang_short).unwrap(),
-            CoverageTier::Minimal
+            CoverageLevelForXPath::Basic
         );
 
         // 2. Language Minimal Long
@@ -341,7 +342,7 @@ mod tests {
             crate::displaynames::construct_xpath("languages", "zh-Hans", Some(Alt::Long), None);
         assert_ne!(
             cldr.coverage_tier(&locale, &xpath_lang_long).unwrap(),
-            CoverageTier::Minimal
+            CoverageLevelForXPath::Basic
         );
 
         // 3. Language Menu Minimal Medium
@@ -349,7 +350,7 @@ mod tests {
             crate::displaynames::construct_xpath("languages", "zh", Some(Alt::Menu), None);
         assert_ne!(
             cldr.coverage_tier(&locale, &xpath_lang_menu).unwrap(),
-            CoverageTier::Minimal
+            CoverageLevelForXPath::Basic
         );
 
         // 4. Script Minimal Short
@@ -357,33 +358,33 @@ mod tests {
             crate::displaynames::construct_xpath("scripts", "Latn", Some(Alt::Short), None);
         assert_ne!(
             cldr.coverage_tier(&locale, &xpath_script_short).unwrap(),
-            CoverageTier::Minimal
+            CoverageLevelForXPath::Basic
         );
 
         // 5. Script Core Short
         assert_ne!(
             cldr.coverage_tier(&locale, &xpath_script_short).unwrap(),
-            CoverageTier::Core
+            CoverageLevelForXPath::Moderate
         );
 
         // 6. Variant Minimal Medium
         let xpath_variant = crate::displaynames::construct_xpath("variants", "1996", None, None);
         assert_ne!(
             cldr.coverage_tier(&locale, &xpath_variant).unwrap(),
-            CoverageTier::Minimal
+            CoverageLevelForXPath::Basic
         );
 
         // 7. Variant Core Medium
         assert_ne!(
             cldr.coverage_tier(&locale, &xpath_variant).unwrap(),
-            CoverageTier::Core
+            CoverageLevelForXPath::Moderate
         );
 
         // 8. Region Extended Medium
         let xpath_region = crate::displaynames::construct_xpath("regions", "US", None, None);
         assert_ne!(
             cldr.coverage_tier(&locale, &xpath_region).unwrap(),
-            CoverageTier::Extended
+            CoverageLevelForXPath::Modern
         );
     }
 }
