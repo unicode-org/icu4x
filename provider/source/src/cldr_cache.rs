@@ -57,6 +57,10 @@ pub(crate) struct CldrCache {
     pub(crate) tz_caches: crate::time_zones::Caches,
 }
 
+// Note: We statically embed coverage levels for modern locales here to support overrides
+// (such as Korean KR short name and Farsi SA short name) before they are officially published
+// in CLDR. We only include modern locales to limit the binary size of the datagen tool.
+// TODO: Remove this static cache and read exclusively from CLDR once coverageByXPath is published.
 pub(crate) fn coverage_cldr_cache() -> &'static CldrCache {
     static SINGLETON: OnceLock<CldrCache> = OnceLock::new();
     SINGLETON.get_or_init(|| {
