@@ -7,6 +7,9 @@
 //! For examples, see the `.cursor()` functions
 //! and the `Cursor` types in this module.
 
+#[cfg(feature = "writeable")]
+use writeable::Writeable;
+
 use crate::reader;
 use crate::ZeroAsciiIgnoreCaseTrie;
 use crate::ZeroTrieSimpleAscii;
@@ -74,6 +77,32 @@ where
             trie: self.as_borrowed_slice(),
         }
     }
+
+    /// Queries the trie using a [`Writeable`].
+    ///
+    /// This is a special case of [`Self::cursor()`].
+    ///
+    /// ✨ *Enabled with the `writeable` Cargo feature.*
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerotrie::ZeroTrieSimpleAscii;
+    /// use writeable::adapters::Concat;
+    ///
+    /// // A trie with two values: "abc" and "abcdef"
+    /// let trie = ZeroTrieSimpleAscii::from_bytes(b"abc\x80def\x81");
+    ///
+    /// // Get out the value for "abc"
+    /// assert_eq!(trie.get_with_writeable(Concat("a", "bc")), Some(0));
+    /// ```
+    #[cfg(feature = "writeable")]
+    #[inline]
+    pub fn get_with_writeable(&self, writeable: impl Writeable) -> Option<usize> {
+        let mut cursor = self.cursor();
+        let _infallible = writeable.write_to(&mut cursor);
+        cursor.take_value()
+    }
 }
 
 impl<Store> ZeroAsciiIgnoreCaseTrie<Store>
@@ -110,6 +139,32 @@ where
         ZeroAsciiIgnoreCaseTrieCursor {
             trie: self.as_borrowed_slice(),
         }
+    }
+
+    /// Queries the trie using a [`Writeable`].
+    ///
+    /// This is a special case of [`Self::cursor()`].
+    ///
+    /// ✨ *Enabled with the `writeable` Cargo feature.*
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerotrie::ZeroAsciiIgnoreCaseTrie;
+    /// use writeable::adapters::Concat;
+    ///
+    /// // A trie with two values: "aBc" and "aBcdEf"
+    /// let trie = ZeroAsciiIgnoreCaseTrie::from_bytes(b"aBc\x80dEf\x81");
+    ///
+    /// // Get out the value for "abc"
+    /// assert_eq!(trie.get_with_writeable(Concat("a", "bc")), Some(0));
+    /// ```
+    #[cfg(feature = "writeable")]
+    #[inline]
+    pub fn get_with_writeable(&self, writeable: impl Writeable) -> Option<usize> {
+        let mut cursor = self.cursor();
+        let _infallible = writeable.write_to(&mut cursor);
+        cursor.take_value()
     }
 }
 
