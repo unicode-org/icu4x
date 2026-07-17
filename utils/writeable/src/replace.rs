@@ -29,7 +29,7 @@ use core::fmt;
 /// assert_writeable_eq!(replace, "I 💖 Rust and Rust loves me!");
 /// ```
 #[derive(Debug)]
-#[allow(clippy::exhaustive_structs)] // designed for nesting
+#[allow(clippy::exhaustive_structs)] // well-defined 3-tuple
 pub struct Replace<A, B, C> {
     /// The source writeable.
     pub source: A,
