@@ -2,10 +2,32 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{impl_display_with_writeable, LengthHint, PartsWrite, Writeable};
+use crate::{impl_display_with_writeable, LengthHint, Writeable};
 use core::fmt;
 
 /// A [`Writeable`] adapter that replaces occurrences of a needle with a replacement.
+///
+/// This adapter performs the replacement in a streaming fashion during `write_to`,
+/// requiring zero allocations.
+///
+/// All occurrences of the needle are replaced.
+///
+/// # Examples
+///
+/// ```
+/// use writeable::adapters::Replace;
+/// use writeable::concat_writeable;
+/// use writeable::assert_writeable_eq;
+///
+/// let source = concat_writeable!("I 💖 🦀", " and 🦀 loves me!");
+/// let replace = Replace {
+///     source,
+///     needle: "🦀",
+///     replacement: "Rust",
+/// };
+///
+/// assert_writeable_eq!(replace, "I 💖 Rust and Rust loves me!");
+/// ```
 #[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // designed for nesting
 pub struct Replace<A, B, C> {
@@ -156,10 +178,6 @@ where
         writer.flush()
     }
 
-    fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
-        self.write_to(sink)
-    }
-
     fn writeable_length_hint(&self) -> LengthHint {
         let source_hint = self.source.writeable_length_hint();
         let needle_len = self.needle.as_ref().len();
@@ -173,6 +191,9 @@ where
 
         LengthHint::undefined()
     }
+
+    // TODO: how should we implement write_to_parts? What if the needle spans a part?
+    // TODO: should we implement writeable_borrow, if a replacement doesn't occur? It is O(N)
 }
 
 impl_display_with_writeable!(Replace<A, B, C>, #[cfg(feature = "alloc")], where A: Writeable, B: AsRef<str>, C: Writeable);
