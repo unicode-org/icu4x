@@ -47,7 +47,15 @@ impl<'de> Visitor<'de> for ZeroTrieVisitor {
     {
         let mut litemap = LiteMap::new_vec();
         while let Some(elem) = seq.next_element::<String>()? {
-            litemap.insert(elem.into_bytes(), 0);
+            // CLDR coverage files contain some non-ASCII XPaths, principally emoji annotations
+            // (e.g., //ldml/annotations/annotation[@cp="😀"]).
+            //
+            // However, we want to use a `ZeroTrieSimpleAscii` since it is faster to query.
+            // If we need to support non-ASCII XPaths in the future, this optimization will
+            // need to be revisited.
+            if elem.is_ascii() {
+                litemap.insert(elem.into_bytes(), 0);
+            }
         }
         ZeroTrieSimpleAscii::try_from(&litemap).map_err(DeError::custom)
     }
