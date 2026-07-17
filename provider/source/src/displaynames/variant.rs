@@ -37,7 +37,7 @@ crate::displaynames::impl_displaynames_v1!(
     "variants.json",
     variants,
     None,
-    CoverageLevelForXPath::Modern,
+    CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 
 crate::displaynames::impl_displaynames_legacy_iter_v1!(VariantDisplayNamesV1, "variants.json");

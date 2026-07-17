@@ -175,7 +175,7 @@ macro_rules! impl_displaynames_v1 {
                     None,
                 );
                 let item_tier = cldr.coverage_tier(req.id.locale, &xpath)?;
-                if matches!(item_tier, $tier) {
+                if !matches!(item_tier, $tier) {
                     return Err(DataErrorKind::IdentifierNotFound
                         .into_error()
                         .with_req($marker::INFO, req));
@@ -266,7 +266,7 @@ macro_rules! impl_displaynames_menu_v1 {
                     Some($crate::cldr_serde::displaynames::Menu::Core),
                 );
                 let item_tier = cldr.coverage_tier(req.id.locale, &xpath)?;
-                if matches!(item_tier, $tier) {
+                if !matches!(item_tier, $tier) {
                     return Err(DataErrorKind::IdentifierNotFound
                         .into_error()
                         .with_req($marker::INFO, req));

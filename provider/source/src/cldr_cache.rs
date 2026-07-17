@@ -488,11 +488,11 @@ fn test_coverage_tier() {
         CoverageLevelForXPath::Basic
     );
 
-    // Default/unlisted XPath falls back to Extended tier
+    // Default/unlisted XPath falls back to Comprehensive tier
     let xpath_unlisted =
         "//ldml/localeDisplayNames/languages/language[@type=\"unlisted_test_code\"]";
     assert_eq!(
         cldr.coverage_tier(&en, xpath_unlisted).unwrap(),
-        CoverageLevelForXPath::Modern
+        CoverageLevelForXPath::Comprehensive
     );
 }
