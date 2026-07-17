@@ -145,7 +145,7 @@ mod tests {
         let data: DataPayload<LocaleNamesRegionCoreMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str("AE").unwrap(),
+                    DataMarkerAttributes::try_from_str("AF").unwrap(),
                     &langid!("en-001").into(),
                 ),
                 ..Default::default()
@@ -153,7 +153,7 @@ mod tests {
             .unwrap()
             .payload;
 
-        assert_eq!(&**data.get(), "United Arab Emirates");
+        assert_eq!(&**data.get(), "Afghanistan");
     }
 
     #[test]
@@ -163,7 +163,7 @@ mod tests {
         let data: DataPayload<LocaleNamesRegionCoreShortV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str("GB").unwrap(),
+                    DataMarkerAttributes::try_from_str("PS").unwrap(),
                     &langid!("en-001").into(),
                 ),
                 ..Default::default()
@@ -171,17 +171,17 @@ mod tests {
             .unwrap()
             .payload;
 
-        assert_eq!(&**data.get(), "UK");
+        assert_eq!(&**data.get(), "Palestine");
     }
 
     #[test]
-    fn test_locale_names_region_short_hk() {
+    fn test_locale_names_region_short_un() {
         let provider = SourceDataProvider::new_testing();
 
         let data: DataPayload<LocaleNamesRegionCoreShortV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str("HK").unwrap(),
+                    DataMarkerAttributes::try_from_str("UN").unwrap(),
                     &langid!("en").into(),
                 ),
                 ..Default::default()
@@ -189,6 +189,6 @@ mod tests {
             .unwrap()
             .payload;
 
-        assert_eq!(&**data.get(), "Hong Kong");
+        assert_eq!(&**data.get(), "UN");
     }
 }

@@ -11,6 +11,8 @@ use crate::datetime::DatagenCalendar;
 use crate::source::{AbstractFs, SerdeCache};
 use icu::locale::LanguageIdentifier;
 use icu::locale::LocaleExpander;
+use icu::locale::fallback::LocaleFallbacker;
+use icu::locale::provider::{LocaleLikelySubtagsLanguageV1, LocaleParentsV1};
 use icu::locale::subtags::Language;
 #[cfg(feature = "unstable")]
 use icu::locale::subtags::Region;
@@ -42,6 +44,7 @@ pub(crate) enum CoverageLevelForXPath {
 pub(crate) struct CldrCache {
     pub(crate) serde_cache: SerdeCache,
     extended_locale_expander: OnceLock<Result<LocaleExpander, DataError>>,
+    locale_fallbacker: OnceLock<Result<LocaleFallbacker, DataError>>,
     #[expect(clippy::type_complexity)]
     pub(crate) calendar_eras: OnceLock<
         Result<
@@ -181,6 +184,7 @@ impl CldrCache {
         CldrCache {
             serde_cache: SerdeCache::new(root),
             extended_locale_expander: Default::default(),
+            locale_fallbacker: Default::default(),
             calendar_eras: Default::default(),
             #[cfg(feature = "unstable")]
             transforms: Default::default(),
@@ -277,6 +281,13 @@ impl CldrCache {
                         .with_display_context(&e)
                 })
             })
+            .as_ref()
+            .map_err(|&e| e)
+    }
+
+    pub(crate) fn locale_fallbacker(&self) -> Result<&LocaleFallbacker, DataError> {
+        self.locale_fallbacker
+            .get_or_init(|| LocaleFallbacker::try_new_unstable(&FallbackDataProvider(self)))
             .as_ref()
             .map_err(|&e| e)
     }
@@ -393,16 +404,19 @@ impl CldrCache {
     /// 3. Defaults to [`CoverageTier::Extended`] if unlisted everywhere.
     pub(crate) fn coverage_tier(
         &self,
+        fallbacker: &LocaleFallbacker,
         locale: &DataLocale,
         xpath: impl Writeable,
     ) -> Result<CoverageLevelForXPath, DataError> {
-        let full_str = locale.to_string();
-        let base_str = full_str.split('-').next().unwrap_or("").to_string();
-        let candidate_locales = [full_str, base_str];
-        for loc_str in &candidate_locales {
-            if loc_str.is_empty() {
-                continue;
+        let mut it = fallbacker
+            .for_config(Default::default())
+            .fallback_for(locale.clone());
+        loop {
+            let loc = it.get();
+            if loc.is_unknown() {
+                break;
             }
+            let loc_str = loc.to_string();
             let locale_path = format!("cldr-misc-full/coverageByXPath/{loc_str}.json");
             if self.serde_cache.file_exists(&locale_path)? {
                 let resource: &CoverageByXPathResource =
@@ -423,6 +437,7 @@ impl CldrCache {
                     }
                 }
             }
+            it.step();
         }
 
         let root_path = "cldr-misc-full/coverageByXPath.json";
@@ -576,13 +591,19 @@ fn test_script_based_locale_group() {
 
 #[test]
 fn test_coverage_tier() {
-    let cldr = coverage_cldr_cache();
+    use crate::SourceDataProvider;
+    let provider = SourceDataProvider::new_testing();
+    let cldr = provider.cldr().unwrap();
+    let fallbacker = cldr.locale_fallbacker().unwrap();
+    let coverage_cldr = coverage_cldr_cache();
 
     let en = DataLocale::from_str("en").unwrap();
     // Minimal tier XPath (basic language display name in root defaults)
     let xpath_minimal = "//ldml/localeDisplayNames/languages/language[@type=\"en\"]";
     assert_eq!(
-        cldr.coverage_tier(&en, xpath_minimal).unwrap(),
+        coverage_cldr
+            .coverage_tier(fallbacker, &en, xpath_minimal)
+            .unwrap(),
         CoverageLevelForXPath::Basic
     );
 
@@ -590,7 +611,34 @@ fn test_coverage_tier() {
     let xpath_unlisted =
         "//ldml/localeDisplayNames/languages/language[@type=\"unlisted_test_code\"]";
     assert_eq!(
-        cldr.coverage_tier(&en, xpath_unlisted).unwrap(),
+        coverage_cldr
+            .coverage_tier(fallbacker, &en, xpath_unlisted)
+            .unwrap(),
         CoverageLevelForXPath::Comprehensive
     );
+}
+
+struct FallbackDataProvider<'a>(&'a CldrCache);
+
+impl<'a> DataProvider<LocaleLikelySubtagsLanguageV1> for FallbackDataProvider<'a> {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<LocaleLikelySubtagsLanguageV1>, DataError> {
+        use super::locale::likely_subtags::*;
+        LikelySubtagsResources::try_from_cldr_cache(self.0)?.load(req)
+    }
+}
+
+impl<'a> DataProvider<LocaleParentsV1> for FallbackDataProvider<'a> {
+    fn load(&self, _req: DataRequest) -> Result<DataResponse<LocaleParentsV1>, DataError> {
+        let parents_data: &crate::cldr_serde::parent_locales::Resource = self
+            .0
+            .core()
+            .read_and_parse("supplemental/parentLocales.json")?;
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(parents_data.into()),
+        })
+    }
 }

@@ -322,7 +322,11 @@ mod tests {
 
     #[test]
     fn test_empty_coverage_tiers_assert_no_data() {
-        let cldr = crate::cldr_cache::coverage_cldr_cache();
+        use crate::SourceDataProvider;
+        let provider = SourceDataProvider::new_testing();
+        let cldr = provider.cldr().unwrap();
+        let fallbacker = cldr.locale_fallbacker().unwrap();
+        let coverage_cldr = crate::cldr_cache::coverage_cldr_cache();
         let locale = DataLocale::from(langid!("en"));
 
         // Assert that the 8 removed empty coverage tiers currently have no matching XPaths in CLDR coverageByXPath
@@ -332,7 +336,9 @@ mod tests {
         let xpath_lang_short =
             crate::displaynames::construct_xpath("languages", "en-US", Some(Alt::Short), None);
         assert_ne!(
-            cldr.coverage_tier(&locale, &xpath_lang_short).unwrap(),
+            coverage_cldr
+                .coverage_tier(fallbacker, &locale, &xpath_lang_short)
+                .unwrap(),
             CoverageLevelForXPath::Basic
         );
 
@@ -340,7 +346,9 @@ mod tests {
         let xpath_lang_long =
             crate::displaynames::construct_xpath("languages", "zh-Hans", Some(Alt::Long), None);
         assert_ne!(
-            cldr.coverage_tier(&locale, &xpath_lang_long).unwrap(),
+            coverage_cldr
+                .coverage_tier(fallbacker, &locale, &xpath_lang_long)
+                .unwrap(),
             CoverageLevelForXPath::Basic
         );
 
@@ -348,7 +356,9 @@ mod tests {
         let xpath_lang_menu =
             crate::displaynames::construct_xpath("languages", "zh", Some(Alt::Menu), None);
         assert_ne!(
-            cldr.coverage_tier(&locale, &xpath_lang_menu).unwrap(),
+            coverage_cldr
+                .coverage_tier(fallbacker, &locale, &xpath_lang_menu)
+                .unwrap(),
             CoverageLevelForXPath::Basic
         );
 
@@ -356,33 +366,43 @@ mod tests {
         let xpath_script_short =
             crate::displaynames::construct_xpath("scripts", "Latn", Some(Alt::Short), None);
         assert_ne!(
-            cldr.coverage_tier(&locale, &xpath_script_short).unwrap(),
+            coverage_cldr
+                .coverage_tier(fallbacker, &locale, &xpath_script_short)
+                .unwrap(),
             CoverageLevelForXPath::Basic
         );
 
         // 5. Script Core Short
         assert_ne!(
-            cldr.coverage_tier(&locale, &xpath_script_short).unwrap(),
+            coverage_cldr
+                .coverage_tier(fallbacker, &locale, &xpath_script_short)
+                .unwrap(),
             CoverageLevelForXPath::Moderate
         );
 
         // 6. Variant Minimal Medium
         let xpath_variant = crate::displaynames::construct_xpath("variants", "1996", None, None);
         assert_ne!(
-            cldr.coverage_tier(&locale, &xpath_variant).unwrap(),
+            coverage_cldr
+                .coverage_tier(fallbacker, &locale, &xpath_variant)
+                .unwrap(),
             CoverageLevelForXPath::Basic
         );
 
         // 7. Variant Core Medium
         assert_ne!(
-            cldr.coverage_tier(&locale, &xpath_variant).unwrap(),
+            coverage_cldr
+                .coverage_tier(fallbacker, &locale, &xpath_variant)
+                .unwrap(),
             CoverageLevelForXPath::Moderate
         );
 
         // 8. Region Extended Medium
         let xpath_region = crate::displaynames::construct_xpath("regions", "US", None, None);
         assert_ne!(
-            cldr.coverage_tier(&locale, &xpath_region).unwrap(),
+            coverage_cldr
+                .coverage_tier(fallbacker, &locale, &xpath_region)
+                .unwrap(),
             CoverageLevelForXPath::Modern
         );
     }

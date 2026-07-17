@@ -146,7 +146,7 @@ mod tests {
         let data: DataPayload<LocaleNamesScriptCoreMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str("Latn").unwrap(),
+                    DataMarkerAttributes::try_from_str("Arab").unwrap(),
                     &langid!("en-001").into(),
                 ),
                 ..Default::default()
@@ -154,7 +154,7 @@ mod tests {
             .unwrap()
             .payload;
 
-        assert_eq!(&**data.get(), "Latin");
+        assert_eq!(&**data.get(), "Arabic");
     }
 
     #[test]
