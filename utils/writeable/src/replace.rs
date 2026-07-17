@@ -12,7 +12,7 @@ pub struct Replace<A, B, C> {
     pub replacement: C,
 }
 
-impl<A, B, C> Writeable for Replace<A, B, C> where A: Writeable, B: Writeable, C: Writeable {
+impl<A, B, C> Writeable for Replace<A, B, C> where A: Writeable, B: AsRef<str>, C: Writeable {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         todo!()
     }
@@ -26,12 +26,12 @@ impl<A, B, C> Writeable for Replace<A, B, C> where A: Writeable, B: Writeable, C
     }
 }
 
-impl_display_with_writeable!(Replace<A, B, C>, #[cfg(feature = "alloc")], where A: Writeable, B: Writeable, C: Writeable);
+impl_display_with_writeable!(Replace<A, B, C>, #[cfg(feature = "alloc")], where A: Writeable, B: AsRef<str>, C: Writeable);
 
 #[test]
 fn test_replace() {
     let source = Concat("Hello", " 10 22 1101 33");
-    let needle = Concat("1", "0");
+    let needle = "10";
     let replacement = Concat("4", "4");
 
     let replace = Replace { source, needle, replacement };
