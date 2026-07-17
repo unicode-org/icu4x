@@ -140,7 +140,7 @@ where
         // KMP State Transition:
         // While we have a mismatch and we are not at the start of the needle,
         // backtrack using the prefix function.
-        while matched > 0 && self.remaining_needle.chars().next() != Some(c) {
+        while matched > 0 && !self.remaining_needle.starts_with(c) {
             let old_j = matched;
             matched = get_pi_bytes(self.needle, old_j);
             // Since we backtracked, the prefix of length `old_j - j` is no longer
@@ -152,7 +152,7 @@ where
         }
 
         // If the character matches the next character in the needle, advance the match state.
-        if self.remaining_needle.chars().next() == Some(c) {
+        if self.remaining_needle.starts_with(c) {
             // Advance remaining_needle by the matched character.
             self.remaining_needle = self
                 .remaining_needle
@@ -172,7 +172,7 @@ where
     }
 }
 
-impl<'a, A, C> Writeable for Replace<A, &'a str, C>
+impl<A, C> Writeable for Replace<A, &str, C>
 where
     A: Writeable,
     C: Writeable,
