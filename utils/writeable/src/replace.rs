@@ -4,6 +4,7 @@
 
 use crate::{impl_display_with_writeable, LengthHint, Writeable};
 use core::fmt;
+use core::ops::Range;
 
 /// A [`Writeable`] adapter that replaces occurrences of a needle with a replacement.
 ///
@@ -29,7 +30,7 @@ use core::fmt;
 /// assert_writeable_eq!(replace, "I 💖 Rust and Rust loves me!");
 /// ```
 #[derive(Debug)]
-#[allow(clippy::exhaustive_structs)] // well-defined 3-tuple
+#[allow(clippy::exhaustive_structs)] // designed for nesting
 pub struct Replace<A, B, C> {
     /// The source writeable.
     pub source: A,
@@ -39,34 +40,42 @@ pub struct Replace<A, B, C> {
     pub replacement: C,
 }
 
-// Helper function to get the character at a specific index in a string slice.
-// Since Rust strings are UTF-8, this is an O(N) operation, but it is acceptable
-// because we assume the needle is small.
-fn get_char(s: &str, index: usize) -> Option<char> {
-    s.chars().nth(index)
-}
-
-// Computes the Knuth-Morris-Pratt (KMP) prefix function (failure function) value
-// for the character at index `i` in `needle`.
-//
-// The prefix function value `pi[i]` is the length of the longest proper prefix
-// of `needle[0..=i]` that is also a suffix of `needle[0..=i]`.
-//
-// This is computed on the fly without allocation.
-fn get_pi_char(needle: &str, i: usize) -> usize {
-    for k in (1..=i).rev() {
-        let prefix = needle.chars().take(k);
-        let suffix = needle.chars().take(i + 1).skip(i + 1 - k);
-        if prefix.eq(suffix) {
-            return k;
+/// Computes the Knuth-Morris-Pratt (KMP) prefix function (failure function) value
+/// for the character prefix ending at byte index `matched_bytes` in `needle`.
+///
+/// Returns the byte length of the longest proper prefix of `needle[0..matched_bytes]`
+/// that is also a suffix of `needle[0..matched_bytes]`.
+///
+/// This is computed on the fly without allocation by iterating over char boundaries.
+fn get_pi_bytes(needle: &str, matched_bytes: usize) -> usize {
+    let s = match needle.get(0..matched_bytes) {
+        Some(s) => s,
+        None => return 0,
+    };
+    // char_indices() gives us the byte offsets of character starts.
+    // These offsets correspond to the byte lengths of all possible prefixes.
+    // We want to iterate them in reverse order, excluding the first one (0)
+    // because we want proper prefixes.
+    for k in s
+        .char_indices()
+        .map(|(idx, _)| idx)
+        .rev()
+        .filter(|&idx| idx > 0)
+    {
+        // Compare the prefix of length `k` with the suffix of length `k`.
+        if let Some(suffix) = s.as_bytes().get(s.len() - k..) {
+            if s.as_bytes().starts_with(suffix) {
+                return k;
+            }
         }
     }
     0
 }
 
 // A writer wrapper that performs streaming replacement.
-// It intercepts characters written to it, matches them against `needle` using KMP,
-// and writes `replacement` when a full match is found, or the original characters otherwise.
+// It intercepts characters written to it, matches them against `needle` using KMP
+// (tracking progress by byte offsets), and writes `replacement` when a full match
+// is found, or the original characters otherwise.
 struct ReplaceWriter<'a, W: ?Sized, B, C> {
     // The underlying sink to write to.
     sink: &'a mut W,
@@ -74,8 +83,9 @@ struct ReplaceWriter<'a, W: ?Sized, B, C> {
     needle: &'a B,
     // The replacement to write when the needle is matched.
     replacement: &'a C,
-    // The number of characters of `needle` matched so far.
-    matched_chars: usize,
+    // The number of bytes of `needle` matched so far.
+    // This is always aligned to a character boundary.
+    matched_bytes: usize,
 }
 
 impl<'a, W, B, C> ReplaceWriter<'a, W, B, C>
@@ -89,40 +99,50 @@ where
             sink,
             needle,
             replacement,
-            matched_chars: 0,
+            matched_bytes: 0,
         }
+    }
+
+    fn needle_slice(&self, range: Range<usize>) -> Option<&'a str> {
+        self.needle.as_ref().get(range)
+    }
+
+    fn needle_char_at(&self, index: usize) -> Option<char> {
+        self.needle
+            .as_ref()
+            .get(index..)
+            .and_then(|s| s.chars().next())
     }
 
     // Processes a single character from the source stream.
     fn write_char_buffered(&mut self, c: char) -> fmt::Result {
         let needle_str = self.needle.as_ref();
-        let needle_len = needle_str.chars().count();
+        let needle_len_bytes = needle_str.len();
 
         // If the needle is empty, we just pass through the characters.
-        if needle_len == 0 {
+        if needle_len_bytes == 0 {
             return self.sink.write_char(c);
         }
 
-        let mut j = self.matched_chars;
+        let mut j = self.matched_bytes;
+        debug_assert!(j < needle_str.len());
         // KMP State Transition:
         // While we have a mismatch and we are not at the start of the needle,
         // backtrack using the prefix function.
-        while j > 0 && get_char(needle_str, j) != Some(c) {
+        while j > 0 && self.needle_char_at(j) != Some(c) {
             let old_j = j;
-            j = get_pi_char(needle_str, j - 1);
-            // Since we backtracked, the characters in `needle[j..old_j]` are no longer
-            // part of the potential match. We must write them to the sink.
-            // Note: We only write the prefix of the needle that is no longer matched.
-            for ch in needle_str.chars().take(old_j - j) {
-                self.sink.write_char(ch)?;
-            }
+            j = get_pi_bytes(needle_str, j);
+            // Since we backtracked, the prefix of length `old_j - j` is no longer
+            // part of the potential match. We write it to the sink as a single slice.
+            let slice = self.needle_slice(0..(old_j - j)).ok_or(fmt::Error)?;
+            self.sink.write_str(slice)?;
         }
 
         // If the character matches the next character in the needle, advance the match state.
-        if get_char(needle_str, j) == Some(c) {
-            j += 1;
+        if self.needle_char_at(j) == Some(c) {
+            j += c.len_utf8();
             // Check if we found a full match.
-            if j == needle_len {
+            if j == needle_len_bytes {
                 // Full match found! Write the replacement instead of the needle.
                 self.replacement.write_to(self.sink)?;
                 // Reset match state to start searching for the next occurrence.
@@ -132,18 +152,15 @@ where
             // Mismatch at the very beginning of the needle. Write the character as is.
             self.sink.write_char(c)?;
         }
-        self.matched_chars = j;
+        self.matched_bytes = j;
         Ok(())
     }
 
     // Flushes any partially matched prefix at the end of the stream.
-    // If the stream ends and we have a partial match, those characters must be written.
     fn flush(&mut self) -> fmt::Result {
-        let needle_str = self.needle.as_ref();
-        for ch in needle_str.chars().take(self.matched_chars) {
-            self.sink.write_char(ch)?;
-        }
-        self.matched_chars = 0;
+        let slice = self.needle_slice(0..self.matched_bytes).ok_or(fmt::Error)?;
+        self.sink.write_str(slice)?;
+        self.matched_bytes = 0;
         Ok(())
     }
 }
@@ -282,4 +299,20 @@ fn test_replace() {
         replacement: "星",
     };
     assert_writeable_eq!(replace10, "🚀🚁");
+
+    // Multi-byte UTF-8 with backtracking (no match)
+    let replace11 = Replace {
+        source: "🚀🚀🚁",
+        needle: "🚀🚀🛸",
+        replacement: "星",
+    };
+    assert_writeable_eq!(replace11, "🚀🚀🚁");
+
+    // Multi-byte UTF-8 with backtracking (match)
+    let replace12 = Replace {
+        source: "🚀🚀🚀🛸",
+        needle: "🚀🚀🛸",
+        replacement: "星",
+    };
+    assert_writeable_eq!(replace12, "🚀星");
 }
