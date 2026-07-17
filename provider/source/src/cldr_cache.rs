@@ -277,8 +277,6 @@ impl CldrCache {
         locale: &DataLocale,
         xpath: impl Writeable,
     ) -> Result<CoverageLevelForXPath, DataError> {
-        let xpath_str = xpath.write_to_string();
-        let xpath_bytes = xpath_str.as_bytes();
         let full_str = locale.to_string();
         let base_str = full_str.split('-').next().unwrap_or("").to_string();
         let candidate_locales = [full_str, base_str];
@@ -295,13 +293,13 @@ impl CldrCache {
                     .get(loc_str.as_str())
                     .or_else(|| resource.coverage_by_xpath.values().next());
                 if let Some(levels) = levels {
-                    if levels.core.get(xpath_bytes).is_some() {
+                    if levels.core.get_with_writeable(&xpath).is_some() {
                         return Ok(CoverageLevelForXPath::Core);
-                    } else if levels.basic.get(xpath_bytes).is_some() {
+                    } else if levels.basic.get_with_writeable(&xpath).is_some() {
                         return Ok(CoverageLevelForXPath::Basic);
-                    } else if levels.moderate.get(xpath_bytes).is_some() {
+                    } else if levels.moderate.get_with_writeable(&xpath).is_some() {
                         return Ok(CoverageLevelForXPath::Moderate);
-                    } else if levels.modern.get(xpath_bytes).is_some() {
+                    } else if levels.modern.get_with_writeable(&xpath).is_some() {
                         return Ok(CoverageLevelForXPath::Modern);
                     }
                 }
@@ -313,13 +311,13 @@ impl CldrCache {
             let resource: &CoverageByXPathResource =
                 self.serde_cache.read_and_parse_json(root_path)?;
             if let Some(levels) = resource.coverage_by_xpath.get("root") {
-                if levels.core.get(xpath_bytes).is_some() {
+                if levels.core.get_with_writeable(&xpath).is_some() {
                     return Ok(CoverageLevelForXPath::Core);
-                } else if levels.basic.get(xpath_bytes).is_some() {
+                } else if levels.basic.get_with_writeable(&xpath).is_some() {
                     return Ok(CoverageLevelForXPath::Basic);
-                } else if levels.moderate.get(xpath_bytes).is_some() {
+                } else if levels.moderate.get_with_writeable(&xpath).is_some() {
                     return Ok(CoverageLevelForXPath::Moderate);
-                } else if levels.modern.get(xpath_bytes).is_some() {
+                } else if levels.modern.get_with_writeable(&xpath).is_some() {
                     return Ok(CoverageLevelForXPath::Modern);
                 }
             }
@@ -332,13 +330,13 @@ impl CldrCache {
                 .expect("in-repo coverageByXPath.json should be valid JSON")
         });
         if let Some(levels) = in_repo.coverage_by_xpath.get("root") {
-            if levels.core.get(xpath_bytes).is_some() {
+            if levels.core.get_with_writeable(&xpath).is_some() {
                 return Ok(CoverageLevelForXPath::Core);
-            } else if levels.basic.get(xpath_bytes).is_some() {
+            } else if levels.basic.get_with_writeable(&xpath).is_some() {
                 return Ok(CoverageLevelForXPath::Basic);
-            } else if levels.moderate.get(xpath_bytes).is_some() {
+            } else if levels.moderate.get_with_writeable(&xpath).is_some() {
                 return Ok(CoverageLevelForXPath::Moderate);
-            } else if levels.modern.get(xpath_bytes).is_some() {
+            } else if levels.modern.get_with_writeable(&xpath).is_some() {
                 return Ok(CoverageLevelForXPath::Modern);
             }
         }
