@@ -1960,6 +1960,7 @@ name = "icu_provider_source"
 version = "2.2.0"
 dependencies = [
  "crlify",
+ "either",
  "elsa",
  "flate2",
  "icu",

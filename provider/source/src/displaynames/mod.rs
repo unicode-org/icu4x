@@ -9,7 +9,9 @@ pub(crate) mod script;
 pub(crate) mod variant;
 
 use crate::cldr_serde::displaynames::{Alt, Menu, WithAlt};
+use either::Either;
 use std::collections::{BTreeMap, HashMap};
+use writeable::Writeable;
 
 pub(crate) struct ExtractedNames<'a, K> {
     pub(crate) names: BTreeMap<K, &'a str>,
@@ -82,44 +84,54 @@ where
 }
 
 /// Helper to construct CLDR `XPath` string for a display name attribute and subtag.
-pub(crate) fn construct_xpath(
-    field: &str,
-    subtag_str: &str,
+pub(crate) fn construct_xpath<'a>(
+    field: &'a str,
+    subtag_str: impl Writeable + 'a,
     alt: Option<Alt>,
     menu: Option<Menu>,
-) -> String {
-    let alt_str = if menu.is_some() || alt == Some(Alt::Menu) {
-        r#"[@alt="menu"]"#
-    } else if alt == Some(Alt::Short) {
-        r#"[@alt="short"]"#
-    } else if alt == Some(Alt::Long) {
-        r#"[@alt="long"]"#
-    } else if alt == Some(Alt::Secondary) {
-        r#"[@alt="secondary"]"#
-    } else if alt == Some(Alt::Variant) {
-        r#"[@alt="variant"]"#
-    } else {
-        ""
+) -> impl Writeable + 'a {
+    let alt_str = match (alt, menu) {
+        (None, None) => "",
+        (None, Some(Menu::Core)) => r#"[@menu="core"]"#,
+        (None, Some(Menu::Extension)) => r#"[@menu="extension"]"#,
+        (Some(Alt::Short), None) => r#"[@alt="short"]"#,
+        (Some(Alt::Long), None) => r#"[@alt="long"]"#,
+        (Some(Alt::Menu), None) => r#"[@alt="menu"]"#,
+        (_, _) => {
+            debug_assert!(false, "unexpected alt or menu: {alt:?} {menu:?}");
+            ""
+        }
     };
 
     match field {
-        "languages" => {
-            let formatted_subtag = subtag_str.replace('-', "_");
-            format!(
-                r#"//ldml/localeDisplayNames/languages/language[@type="{formatted_subtag}"]{alt_str}"#
-            )
-        }
-        "regions" | "territories" => {
-            format!(
-                r#"//ldml/localeDisplayNames/territories/territory[@type="{subtag_str}"]{alt_str}"#
-            )
-        }
-        "scripts" => {
-            format!(r#"//ldml/localeDisplayNames/scripts/script[@type="{subtag_str}"]{alt_str}"#)
-        }
-        "variants" => {
-            format!(r#"//ldml/localeDisplayNames/variants/variant[@type="{subtag_str}"]{alt_str}"#)
-        }
+        "languages" => Either::Left(writeable::concat_writeable!(
+            r#"//ldml/localeDisplayNames/languages/language[@type=""#,
+            writeable::adapters::Replace {
+                source: subtag_str,
+                needle: "-",
+                replacement: '_'
+            },
+            r#""]"#,
+            alt_str
+        )),
+        "regions" | "territories" => either::Right(writeable::concat_writeable!(
+            r#"//ldml/localeDisplayNames/territories/territory[@type=""#,
+            subtag_str,
+            r#""]"#,
+            alt_str
+        )),
+        "scripts" => either::Right(writeable::concat_writeable!(
+            r#"//ldml/localeDisplayNames/scripts/script[@type=""#,
+            subtag_str,
+            r#""]"#,
+            alt_str
+        )),
+        "variants" => either::Right(writeable::concat_writeable!(
+            r#"//ldml/localeDisplayNames/variants/variant[@type=""#,
+            subtag_str,
+            r#""]"#,
+            alt_str
+        )),
         _ => panic!("Unknown field: {}", field),
     }
 }
@@ -168,12 +180,8 @@ macro_rules! impl_displaynames_v1 {
                     })?;
 
                 let field_str = stringify!($field);
-                let xpath = $crate::displaynames::construct_xpath(
-                    field_str,
-                    &subtag.to_string(),
-                    $alt_variant,
-                    None,
-                );
+                let xpath =
+                    $crate::displaynames::construct_xpath(field_str, &subtag, $alt_variant, None);
                 let item_tier = cldr.coverage_tier(req.id.locale, &xpath)?;
                 if !matches!(item_tier, $tier) {
                     return Err(DataErrorKind::IdentifierNotFound
@@ -232,6 +240,7 @@ macro_rules! impl_displaynames_menu_v1 {
 
                 let map = &data.main.value.localedisplaynames.$field;
 
+                let mut used_alt_menu = false;
                 let (name_core, name_extension) = if let Some(core) = map.get(&key_core) {
                     let key_extension = WithAlt {
                         subtag: subtag.clone(),
@@ -244,6 +253,7 @@ macro_rules! impl_displaynames_menu_v1 {
                     })?;
                     (core.as_str(), extension.as_str())
                 } else {
+                    used_alt_menu = true;
                     // Fallback to alt-menu
                     let key_alt_menu = WithAlt {
                         subtag: subtag.clone(),
@@ -259,12 +269,21 @@ macro_rules! impl_displaynames_menu_v1 {
                 };
 
                 let field_str = stringify!($field);
-                let xpath = $crate::displaynames::construct_xpath(
-                    field_str,
-                    &subtag.to_string(),
-                    None,
-                    Some($crate::cldr_serde::displaynames::Menu::Core),
-                );
+                let xpath = if used_alt_menu {
+                    $crate::displaynames::construct_xpath(
+                        field_str,
+                        &subtag,
+                        Some($crate::cldr_serde::displaynames::Alt::Menu),
+                        None,
+                    )
+                } else {
+                    $crate::displaynames::construct_xpath(
+                        field_str,
+                        &subtag,
+                        None,
+                        Some($crate::cldr_serde::displaynames::Menu::Core),
+                    )
+                };
                 let item_tier = cldr.coverage_tier(req.id.locale, &xpath)?;
                 if !matches!(item_tier, $tier) {
                     return Err(DataErrorKind::IdentifierNotFound
@@ -299,18 +318,28 @@ macro_rules! impl_displaynames_menu_v1 {
                             || key.alt == Some($crate::cldr_serde::displaynames::Alt::Menu);
 
                         if matches {
-                            let xpath = $crate::displaynames::construct_xpath(
-                                field_str,
-                                &key.subtag.to_string(),
-                                None,
-                                Some($crate::cldr_serde::displaynames::Menu::Core),
-                            );
+                            let xpath =
+                                if key.alt == Some($crate::cldr_serde::displaynames::Alt::Menu) {
+                                    $crate::displaynames::construct_xpath(
+                                        field_str,
+                                        &key.subtag,
+                                        Some($crate::cldr_serde::displaynames::Alt::Menu),
+                                        None,
+                                    )
+                                } else {
+                                    $crate::displaynames::construct_xpath(
+                                        field_str,
+                                        &key.subtag,
+                                        None,
+                                        Some($crate::cldr_serde::displaynames::Menu::Core),
+                                    )
+                                };
                             if matches!(cldr.coverage_tier(&locale, &xpath)?, $tier) {
                                 let data_identifier = DataIdentifierCow::from_owned(
                                     DataMarkerAttributes::try_from_string(key.subtag.to_string())
                                         .map_err(|_| {
                                         DataError::custom("Failed to parse attribute")
-                                            .with_debug_context(&key.subtag.to_string())
+                                            .with_debug_context(&key.subtag)
                                     })?,
                                     locale,
                                 );
@@ -354,7 +383,7 @@ macro_rules! impl_displaynames_iter_v1 {
                         if matches {
                             let xpath = $crate::displaynames::construct_xpath(
                                 field_str,
-                                &key.subtag.to_string(),
+                                &key.subtag,
                                 $alt_variant,
                                 None,
                             );
@@ -363,7 +392,7 @@ macro_rules! impl_displaynames_iter_v1 {
                                     DataMarkerAttributes::try_from_string(key.subtag.to_string())
                                         .map_err(|_| {
                                         DataError::custom("Failed to parse attribute")
-                                            .with_debug_context(&key.subtag.to_string())
+                                            .with_debug_context(&key.subtag)
                                     })?,
                                     locale,
                                 );
