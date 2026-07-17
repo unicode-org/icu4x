@@ -22,10 +22,10 @@ macro_rules! table_row {
         "| [`try_new_minimal_short`](Self::try_new_minimal_short) | \"US\" | ❌ |"
     };
     (try_new) => {
-        "| [`try_new`](Self::try_new) | \"United States\" | \"France\" |"
+        "| [`try_new`](Self::try_new) | \"United States\" | \"Andorra\" |"
     };
     (try_new_short) => {
-        "| [`try_new_short`](Self::try_new_short) | \"US\" | \"France\" |"
+        "| [`try_new_short`](Self::try_new_short) | \"US\" | \"Andorra\" |"
     };
 }
 
@@ -36,7 +36,7 @@ macro_rules! table_row {
 /// There are several constructors, each of which links different data and serve
 /// different use cases. The behavior is illustrated in the table below.
 ///
-/// | Constructor | `US` | `FR` |
+/// | Constructor | `US` | `AD` |
 /// | :--- | :--- | :--- |
 #[doc = concat!(table_row!(try_new_minimal), "\n")]
 #[doc = concat!(table_row!(try_new_minimal_short), "\n")]
@@ -206,10 +206,10 @@ impl RegionDisplayNameOwned {
         ///     .expect("Data should load successfully");
         /// assert_writeable_eq!(display_name_short, "US");
         ///
-        /// // "FR" does not have a short display name, so it falls back to the long display name
-        /// let display_name_long = RegionDisplayNameOwned::try_new_short(prefs, region!("FR"))
+        /// // "AD" does not have a short display name, so it falls back to the long display name
+        /// let display_name_long = RegionDisplayNameOwned::try_new_short(prefs, region!("AD"))
         ///     .expect("Data should load successfully");
-        /// assert_writeable_eq!(display_name_long, "France");
+        /// assert_writeable_eq!(display_name_long, "Andorra");
         /// ```
         functions: [
             try_new_short,
@@ -272,6 +272,7 @@ mod tests {
     use super::*;
     use icu_locale_core::{locale, subtags::region};
     use writeable::Writeable;
+    use writeable::assert_writeable_eq;
 
     #[test]
     fn test_region_display_name_owned_table() {
@@ -286,7 +287,7 @@ mod tests {
                     Ok(name) => format!("\"{}\"", name.write_to_string()),
                     Err(_) => "❌".to_string(),
                 },
-                match f(prefs_en, region!("FR")) {
+                match f(prefs_en, region!("AD")) {
                     Ok(name) => format!("\"{}\"", name.write_to_string()),
                     Err(_) => "❌".to_string(),
                 },
@@ -321,5 +322,40 @@ mod tests {
             make_row("try_new_short", RegionDisplayNameOwned::try_new_short),
             table_row!(try_new_short)
         );
+    }
+
+    #[test]
+    fn test_region_display_name_overrides() {
+        let prefs_ko = DisplayNamesPreferences::from(locale!("ko"));
+
+        assert_writeable_eq!(
+            RegionDisplayNameOwned::try_new(prefs_ko, region!("KR")).unwrap(),
+            "대한민국"
+        );
+        assert_writeable_eq!(
+            RegionDisplayNameOwned::try_new_short(prefs_ko, region!("KR")).unwrap(),
+            "한국"
+        );
+        assert_writeable_eq!(
+            RegionDisplayNameOwned::try_new_minimal(prefs_ko, region!("KR")).unwrap(),
+            "대한민국"
+        );
+        assert_writeable_eq!(
+            RegionDisplayNameOwned::try_new_minimal_short(prefs_ko, region!("KR")).unwrap(),
+            "한국"
+        );
+
+        let prefs_fa = DisplayNamesPreferences::from(locale!("fa"));
+
+        assert_writeable_eq!(
+            RegionDisplayNameOwned::try_new(prefs_fa, region!("SA")).unwrap(),
+            "عربستان سعودی"
+        );
+        assert_writeable_eq!(
+            RegionDisplayNameOwned::try_new_short(prefs_fa, region!("SA")).unwrap(),
+            "عربستان"
+        );
+        assert!(RegionDisplayNameOwned::try_new_minimal(prefs_fa, region!("SA")).is_err());
+        assert!(RegionDisplayNameOwned::try_new_minimal_short(prefs_fa, region!("SA")).is_err());
     }
 }

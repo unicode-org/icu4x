@@ -322,8 +322,7 @@ mod tests {
 
     #[test]
     fn test_empty_coverage_tiers_assert_no_data() {
-        let provider = SourceDataProvider::new_testing();
-        let cldr = provider.cldr().unwrap();
+        let cldr = crate::cldr_cache::coverage_cldr_cache();
         let locale = DataLocale::from(langid!("en"));
 
         // Assert that the 8 removed empty coverage tiers currently have no matching XPaths in CLDR coverageByXPath

@@ -57,6 +57,121 @@ pub(crate) struct CldrCache {
     pub(crate) tz_caches: crate::time_zones::Caches,
 }
 
+pub(crate) fn coverage_cldr_cache() -> &'static CldrCache {
+    static SINGLETON: OnceLock<CldrCache> = OnceLock::new();
+    SINGLETON.get_or_init(|| {
+        CldrCache::new(crate::source::include_files!(
+            "../data/";
+            "cldr-misc-full/coverageByXPath.json",
+            "cldr-misc-full/coverageByXPath/af.json",
+            "cldr-misc-full/coverageByXPath/ak.json",
+            "cldr-misc-full/coverageByXPath/am.json",
+            "cldr-misc-full/coverageByXPath/ar.json",
+            "cldr-misc-full/coverageByXPath/as.json",
+            "cldr-misc-full/coverageByXPath/az.json",
+            "cldr-misc-full/coverageByXPath/ba.json",
+            "cldr-misc-full/coverageByXPath/be.json",
+            "cldr-misc-full/coverageByXPath/bg.json",
+            "cldr-misc-full/coverageByXPath/bn.json",
+            "cldr-misc-full/coverageByXPath/bs.json",
+            "cldr-misc-full/coverageByXPath/ca.json",
+            "cldr-misc-full/coverageByXPath/chr.json",
+            "cldr-misc-full/coverageByXPath/cs.json",
+            "cldr-misc-full/coverageByXPath/cv.json",
+            "cldr-misc-full/coverageByXPath/cy.json",
+            "cldr-misc-full/coverageByXPath/da.json",
+            "cldr-misc-full/coverageByXPath/de.json",
+            "cldr-misc-full/coverageByXPath/dsb.json",
+            "cldr-misc-full/coverageByXPath/el.json",
+            "cldr-misc-full/coverageByXPath/en.json",
+            "cldr-misc-full/coverageByXPath/es.json",
+            "cldr-misc-full/coverageByXPath/et.json",
+            "cldr-misc-full/coverageByXPath/eu.json",
+            "cldr-misc-full/coverageByXPath/fa.json",
+            "cldr-misc-full/coverageByXPath/fi.json",
+            "cldr-misc-full/coverageByXPath/fil.json",
+            "cldr-misc-full/coverageByXPath/fr.json",
+            "cldr-misc-full/coverageByXPath/ga.json",
+            "cldr-misc-full/coverageByXPath/gd.json",
+            "cldr-misc-full/coverageByXPath/gl.json",
+            "cldr-misc-full/coverageByXPath/gu.json",
+            "cldr-misc-full/coverageByXPath/ha.json",
+            "cldr-misc-full/coverageByXPath/he.json",
+            "cldr-misc-full/coverageByXPath/hi.json",
+            "cldr-misc-full/coverageByXPath/hi-Latn.json",
+            "cldr-misc-full/coverageByXPath/hr.json",
+            "cldr-misc-full/coverageByXPath/hsb.json",
+            "cldr-misc-full/coverageByXPath/hu.json",
+            "cldr-misc-full/coverageByXPath/hy.json",
+            "cldr-misc-full/coverageByXPath/id.json",
+            "cldr-misc-full/coverageByXPath/ig.json",
+            "cldr-misc-full/coverageByXPath/is.json",
+            "cldr-misc-full/coverageByXPath/it.json",
+            "cldr-misc-full/coverageByXPath/ja.json",
+            "cldr-misc-full/coverageByXPath/jv.json",
+            "cldr-misc-full/coverageByXPath/ka.json",
+            "cldr-misc-full/coverageByXPath/kk.json",
+            "cldr-misc-full/coverageByXPath/kk-Arab.json",
+            "cldr-misc-full/coverageByXPath/km.json",
+            "cldr-misc-full/coverageByXPath/kn.json",
+            "cldr-misc-full/coverageByXPath/ko.json",
+            "cldr-misc-full/coverageByXPath/kok.json",
+            "cldr-misc-full/coverageByXPath/ky.json",
+            "cldr-misc-full/coverageByXPath/lo.json",
+            "cldr-misc-full/coverageByXPath/lt.json",
+            "cldr-misc-full/coverageByXPath/lv.json",
+            "cldr-misc-full/coverageByXPath/mk.json",
+            "cldr-misc-full/coverageByXPath/ml.json",
+            "cldr-misc-full/coverageByXPath/mn.json",
+            "cldr-misc-full/coverageByXPath/mr.json",
+            "cldr-misc-full/coverageByXPath/ms.json",
+            "cldr-misc-full/coverageByXPath/my.json",
+            "cldr-misc-full/coverageByXPath/ne.json",
+            "cldr-misc-full/coverageByXPath/nl.json",
+            "cldr-misc-full/coverageByXPath/nn.json",
+            "cldr-misc-full/coverageByXPath/no.json",
+            "cldr-misc-full/coverageByXPath/or.json",
+            "cldr-misc-full/coverageByXPath/pa.json",
+            "cldr-misc-full/coverageByXPath/pcm.json",
+            "cldr-misc-full/coverageByXPath/pl.json",
+            "cldr-misc-full/coverageByXPath/ps.json",
+            "cldr-misc-full/coverageByXPath/pt.json",
+            "cldr-misc-full/coverageByXPath/qu.json",
+            "cldr-misc-full/coverageByXPath/rm.json",
+            "cldr-misc-full/coverageByXPath/ro.json",
+            "cldr-misc-full/coverageByXPath/ru.json",
+            "cldr-misc-full/coverageByXPath/sd.json",
+            "cldr-misc-full/coverageByXPath/shn.json",
+            "cldr-misc-full/coverageByXPath/si.json",
+            "cldr-misc-full/coverageByXPath/sk.json",
+            "cldr-misc-full/coverageByXPath/sl.json",
+            "cldr-misc-full/coverageByXPath/so.json",
+            "cldr-misc-full/coverageByXPath/sq.json",
+            "cldr-misc-full/coverageByXPath/sr.json",
+            "cldr-misc-full/coverageByXPath/sr-Latn.json",
+            "cldr-misc-full/coverageByXPath/sv.json",
+            "cldr-misc-full/coverageByXPath/sw.json",
+            "cldr-misc-full/coverageByXPath/ta.json",
+            "cldr-misc-full/coverageByXPath/te.json",
+            "cldr-misc-full/coverageByXPath/th.json",
+            "cldr-misc-full/coverageByXPath/ti.json",
+            "cldr-misc-full/coverageByXPath/tk.json",
+            "cldr-misc-full/coverageByXPath/tr.json",
+            "cldr-misc-full/coverageByXPath/uk.json",
+            "cldr-misc-full/coverageByXPath/und.json",
+            "cldr-misc-full/coverageByXPath/ur.json",
+            "cldr-misc-full/coverageByXPath/uz.json",
+            "cldr-misc-full/coverageByXPath/vi.json",
+            "cldr-misc-full/coverageByXPath/yo.json",
+            "cldr-misc-full/coverageByXPath/yue.json",
+            "cldr-misc-full/coverageByXPath/yue-Hans.json",
+            "cldr-misc-full/coverageByXPath/zh.json",
+            "cldr-misc-full/coverageByXPath/zh-Hant.json",
+            "cldr-misc-full/coverageByXPath/zu.json",
+        ))
+    })
+}
+
 impl CldrCache {
     pub(crate) fn new(root: AbstractFs) -> Self {
         CldrCache {
@@ -323,24 +438,6 @@ impl CldrCache {
             }
         }
 
-        // TODO: Switch back to reading coverageByXPath.json exclusively from published CLDR data once available.
-        static IN_REPO_COVERAGE_BY_XPATH: OnceLock<CoverageByXPathResource> = OnceLock::new();
-        let in_repo = IN_REPO_COVERAGE_BY_XPATH.get_or_init(|| {
-            serde_json::from_str(include_str!("../data/cldr-misc-full/coverageByXPath.json"))
-                .expect("in-repo coverageByXPath.json should be valid JSON")
-        });
-        if let Some(levels) = in_repo.coverage_by_xpath.get("root") {
-            if levels.core.get_with_writeable(&xpath).is_some() {
-                return Ok(CoverageLevelForXPath::Core);
-            } else if levels.basic.get_with_writeable(&xpath).is_some() {
-                return Ok(CoverageLevelForXPath::Basic);
-            } else if levels.moderate.get_with_writeable(&xpath).is_some() {
-                return Ok(CoverageLevelForXPath::Moderate);
-            } else if levels.modern.get_with_writeable(&xpath).is_some() {
-                return Ok(CoverageLevelForXPath::Modern);
-            }
-        }
-
         // Not found: default to Comprehensive
         Ok(CoverageLevelForXPath::Comprehensive)
     }
@@ -475,10 +572,7 @@ fn test_script_based_locale_group() {
 
 #[test]
 fn test_coverage_tier() {
-    use crate::SourceDataProvider;
-
-    let provider = SourceDataProvider::new_testing();
-    let cldr = provider.cldr().unwrap();
+    let cldr = coverage_cldr_cache();
 
     let en = DataLocale::from_str("en").unwrap();
     // Minimal tier XPath (basic language display name in root defaults)

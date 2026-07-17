@@ -182,7 +182,8 @@ macro_rules! impl_displaynames_v1 {
                 let field_str = stringify!($field);
                 let xpath =
                     $crate::displaynames::construct_xpath(field_str, &subtag, $alt_variant, None);
-                let item_tier = cldr.coverage_tier(req.id.locale, &xpath)?;
+                let item_tier = crate::cldr_cache::coverage_cldr_cache()
+                    .coverage_tier(req.id.locale, &xpath)?;
                 if !matches!(item_tier, $tier) {
                     return Err(DataErrorKind::IdentifierNotFound
                         .into_error()
@@ -284,7 +285,8 @@ macro_rules! impl_displaynames_menu_v1 {
                         Some($crate::cldr_serde::displaynames::Menu::Core),
                     )
                 };
-                let item_tier = cldr.coverage_tier(req.id.locale, &xpath)?;
+                let item_tier = crate::cldr_cache::coverage_cldr_cache()
+                    .coverage_tier(req.id.locale, &xpath)?;
                 if !matches!(item_tier, $tier) {
                     return Err(DataErrorKind::IdentifierNotFound
                         .into_error()
@@ -334,7 +336,11 @@ macro_rules! impl_displaynames_menu_v1 {
                                         Some($crate::cldr_serde::displaynames::Menu::Core),
                                     )
                                 };
-                            if matches!(cldr.coverage_tier(&locale, &xpath)?, $tier) {
+                            if matches!(
+                                crate::cldr_cache::coverage_cldr_cache()
+                                    .coverage_tier(&locale, &xpath)?,
+                                $tier
+                            ) {
                                 let data_identifier = DataIdentifierCow::from_owned(
                                     DataMarkerAttributes::try_from_string(key.subtag.to_string())
                                         .map_err(|_| {
@@ -387,7 +393,11 @@ macro_rules! impl_displaynames_iter_v1 {
                                 $alt_variant,
                                 None,
                             );
-                            if matches!(cldr.coverage_tier(&locale, &xpath)?, $tier) {
+                            if matches!(
+                                crate::cldr_cache::coverage_cldr_cache()
+                                    .coverage_tier(&locale, &xpath)?,
+                                $tier
+                            ) {
                                 let data_identifier = DataIdentifierCow::from_owned(
                                     DataMarkerAttributes::try_from_string(key.subtag.to_string())
                                         .map_err(|_| {
