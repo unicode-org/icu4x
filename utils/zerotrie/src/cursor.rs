@@ -166,6 +166,32 @@ where
         let _infallible = writeable.write_to(&mut cursor);
         cursor.take_value()
     }
+
+    /// # Examples
+    ///
+    /// ```
+    /// use zerotrie::ZeroAsciiIgnoreCaseTrie;
+    /// use writeable::adapters::Concat;
+    ///
+    /// // A trie with two values: "aBc" and "aBcdEf"
+    /// let trie = ZeroAsciiIgnoreCaseTrie::from_bytes(b"aBc\x80dEf\x81");
+    ///
+    /// // Get out the value for "abc"
+    /// assert_eq!(trie.get_with_write(Concat("a", "bc")), Some(0));
+    /// ```
+    pub fn get_with_write<T>(
+        &self,
+        value: T,
+    ) -> Option<usize>
+    where
+    for<'a, 'b> &'a T: Into<fn(&'a mut ZeroAsciiIgnoreCaseTrieCursor<'b>, &'a T) -> fmt::Result>
+    {
+        // where F: FnOnce(&mut ZeroAsciiIgnoreCaseTrieCursor) -> fmt::Result
+        let mut cursor = self.cursor();
+        let callback = (&value).into();
+        callback(&mut cursor, &value).ok()?;
+        cursor.take_value()
+    }
 }
 
 impl<'a> ZeroTrieSimpleAscii<&'a [u8]> {

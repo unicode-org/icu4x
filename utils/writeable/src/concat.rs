@@ -118,6 +118,17 @@ where
     }
 }
 
+impl<'a, A, B, T> Into<fn(&'a mut T, &'a Concat<A, B>) -> fmt::Result> for &'a Concat<A, B>
+where
+    T: fmt::Write,
+    A: Writeable,
+    B: Writeable,
+{
+    fn into(self) -> fn(&mut T, &Concat<A, B>) -> fmt::Result {
+        |write, context| context.write_to(write)
+    }
+}
+
 /// Returns a [`Writeable`] concatenating any number of [`Writeable`]s.
 ///
 /// The macro resolves to a nested [`Concat`].
