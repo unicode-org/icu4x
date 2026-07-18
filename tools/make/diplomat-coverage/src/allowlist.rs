@@ -52,6 +52,7 @@ lazy_static::lazy_static! {
         "TryInto", // We expose this when we see fit
         "Unpin",
         "UnwindSafe",
+        "WriteableExt",
 
         // harfbuzz-traits
         "CombiningClassFunc",
