@@ -80,6 +80,7 @@ mod cmp;
 mod concat;
 #[cfg(feature = "either")]
 mod either;
+mod ext;
 mod impls;
 mod ops;
 mod parts_write_adapter;
@@ -99,6 +100,7 @@ use core::fmt;
 
 pub use cmp::{cmp_str, cmp_utf8};
 pub use concat::concat_writeable;
+pub use ext::WriteableExt;
 #[cfg(feature = "alloc")]
 pub use to_string_or_borrow::to_string_or_borrow;
 pub use try_writeable::TryWriteable;
