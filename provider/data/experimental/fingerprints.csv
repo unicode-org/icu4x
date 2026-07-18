@@ -64166,8 +64166,8 @@ locale/names/language/core/long/v1, zh/zh-Hans, 54B, 31B, 7eae5240177c696
 locale/names/language/core/long/v1, zh/zh-Hant, 54B, 31B, 310199d4ec74c359
 locale/names/language/core/long/v1, zu/zh-Hans, 49B, 26B, 56eff2ddc64cc36e
 locale/names/language/core/long/v1, zu/zh-Hant, 47B, 24B, 56dc2dbb5ac64488
-locale/names/language/core/medium/v1, <lookup>, 32469B, 5334 identifiers
-locale/names/language/core/medium/v1, <total>, 207364B, 100530B, 4645 unique payloads
+locale/names/language/core/medium/v1, <lookup>, 32472B, 5334 identifiers
+locale/names/language/core/medium/v1, <total>, 207331B, 100520B, 4644 unique payloads
 locale/names/language/core/medium/v1, af/ar, 31B, 8B, 17d6c6ad44a296bc
 locale/names/language/core/medium/v1, af/ar-001, 48B, 25B, 192fd5631d55d3c4
 locale/names/language/core/medium/v1, af/bn, 32B, 9B, 29f92797affb9307
@@ -65896,6 +65896,7 @@ locale/names/language/core/medium/v1, he/und, 46B, 23B, f3545ce89ffb9c1b
 locale/names/language/core/medium/v1, he/zh, 34B, 11B, 39a272185a873fe4
 locale/names/language/core/medium/v1, he/zh-Hans, 45B, 22B, 6111a92170b673d0
 locale/names/language/core/medium/v1, he/zh-Hant, 49B, 26B, a1e79c4501df0104
+locale/names/language/core/medium/v1, hi-Latn/ff, -> en-GB/ff
 locale/names/language/core/medium/v1, hi/ar, 36B, 13B, 3b44dfe9751b0b59
 locale/names/language/core/medium/v1, hi/ar-001, 68B, 45B, fb8134ba39663fc2
 locale/names/language/core/medium/v1, hi/bn, 42B, 19B, a24e288f2face6df
@@ -66022,7 +66023,6 @@ locale/names/language/core/medium/v1, hsb/und, 38B, 15B, 9732c5648af21284
 locale/names/language/core/medium/v1, hsb/zh, -> dsb/zh
 locale/names/language/core/medium/v1, hsb/zh-Hans, 49B, 26B, f634efa9c9458081
 locale/names/language/core/medium/v1, hsb/zh-Hant, -> dsb/zh-Hant
-locale/names/language/core/medium/v1, ht/fr, 33B, 10B, aa65c1443588fc61
 locale/names/language/core/medium/v1, hu/ar, 28B, 5B, 349d94269e1ca656
 locale/names/language/core/medium/v1, hu/ar-001, 47B, 24B, f65e1283e6fa2a11
 locale/names/language/core/medium/v1, hu/bn, -> fo/bn
@@ -69727,8 +69727,8 @@ locale/names/language/core/short/v1, zu/en-US, 38B, 15B, 3ef68c907754ac26
 locale/names/language/extended/long/v1, <lookup>, 38B, 1 identifiers
 locale/names/language/extended/long/v1, <total>, 34B, 11B, 1 unique payloads
 locale/names/language/extended/long/v1, en/cr, 34B, 11B, 849a06f0cb2da0fc
-locale/names/language/extended/medium/v1, <lookup>, 349718B, 64669 identifiers
-locale/names/language/extended/medium/v1, <total>, 1821364B, 771667B, 45639 unique payloads
+locale/names/language/extended/medium/v1, <lookup>, 349323B, 64603 identifiers
+locale/names/language/extended/medium/v1, <total>, 1820864B, 771535B, 45623 unique payloads
 locale/names/language/extended/medium/v1, af/aa, 28B, 5B, 301aac73d82fc83c
 locale/names/language/extended/medium/v1, af/ab, 32B, 9B, 7b3a06c954a74386
 locale/names/language/extended/medium/v1, af/ace, 33B, 10B, 15884ae484d4124e
@@ -76324,6 +76324,7 @@ locale/names/language/extended/medium/v1, bs-Cyrl/bo, 44B, 21B, 48b1b10fb1a37c9b
 locale/names/language/extended/medium/v1, bs-Cyrl/br, -> bg/br
 locale/names/language/extended/medium/v1, bs-Cyrl/bra, 32B, 9B, f2c17a4df6413629
 locale/names/language/extended/medium/v1, bs-Cyrl/brx, -> ba/brx
+locale/names/language/extended/medium/v1, bs-Cyrl/bs, 40B, 17B, 4b4098386362c879
 locale/names/language/extended/medium/v1, bs-Cyrl/bua, 36B, 13B, 6c70d6b74df484c5
 locale/names/language/extended/medium/v1, bs-Cyrl/bug, 48B, 25B, 2845dca3bab80b0d
 locale/names/language/extended/medium/v1, bs-Cyrl/byn, -> ba/byn
@@ -91290,50 +91291,19 @@ locale/names/language/extended/medium/v1, he/zun, 32B, 9B, b472329d27921084
 locale/names/language/extended/medium/v1, he/zxx, 50B, 27B, d0045dfa5befa0bd
 locale/names/language/extended/medium/v1, he/zza, 32B, 9B, c56617f1be58e35f
 locale/names/language/extended/medium/v1, hi-Latn/af, 31B, 8B, 91c1bc3e5f013537
-locale/names/language/extended/medium/v1, hi-Latn/bas, -> af/bas
-locale/names/language/extended/medium/v1, hi-Latn/bax, -> de/bax
-locale/names/language/extended/medium/v1, hi-Latn/bbj, -> de/bbj
-locale/names/language/extended/medium/v1, hi-Latn/bfd, -> de/bfd
 locale/names/language/extended/medium/v1, hi-Latn/bgc, 34B, 11B, c1d4c5fa368701ae
-locale/names/language/extended/medium/v1, hi-Latn/bkm, -> de/bkm
 locale/names/language/extended/medium/v1, hi-Latn/bo, 31B, 8B, 78b4f7d24ca074f8
-locale/names/language/extended/medium/v1, hi-Latn/bss, -> de/bss
-locale/names/language/extended/medium/v1, hi-Latn/bum, -> de/bum
-locale/names/language/extended/medium/v1, hi-Latn/byv, -> de/byv
 locale/names/language/extended/medium/v1, hi-Latn/ckb, 39B, 16B, 72d763f18e26dc8
 locale/names/language/extended/medium/v1, hi-Latn/crh, 39B, 16B, d6f69a504700f734
-locale/names/language/extended/medium/v1, hi-Latn/cs, -> fil/cs
-locale/names/language/extended/medium/v1, hi-Latn/da, -> fil/da
-locale/names/language/extended/medium/v1, hi-Latn/el, -> fil/el
-locale/names/language/extended/medium/v1, hi-Latn/et, -> fil/et
-locale/names/language/extended/medium/v1, hi-Latn/ewo, -> af/ewo
 locale/names/language/extended/medium/v1, hi-Latn/fa, 30B, 7B, da345d9e43a8ed8c
-locale/names/language/extended/medium/v1, hi-Latn/ff, -> af/ff
-locale/names/language/extended/medium/v1, hi-Latn/fi, -> fil/fi
-locale/names/language/extended/medium/v1, hi-Latn/ha, -> af/ha
-locale/names/language/extended/medium/v1, hi-Latn/hu, -> fil/hu
-locale/names/language/extended/medium/v1, hi-Latn/ibb, -> af/ibb
-locale/names/language/extended/medium/v1, hi-Latn/ig, -> af/ig
-locale/names/language/extended/medium/v1, hi-Latn/kkj, -> af/kkj
-locale/names/language/extended/medium/v1, hi-Latn/kr, -> af/kr
 locale/names/language/extended/medium/v1, hi-Latn/lah, -> cy/lah
-locale/names/language/extended/medium/v1, hi-Latn/lv, -> fil/lv
-locale/names/language/extended/medium/v1, hi-Latn/maf, -> de/maf
 locale/names/language/extended/medium/v1, hi-Latn/mic, -> ha/mic
-locale/names/language/extended/medium/v1, hi-Latn/mt, -> fil/mt
 locale/names/language/extended/medium/v1, hi-Latn/mus, -> en/mus
 locale/names/language/extended/medium/v1, hi-Latn/nan, -> az/nan
 locale/names/language/extended/medium/v1, hi-Latn/nb, 40B, 17B, e6f77d3eac5353f5
 locale/names/language/extended/medium/v1, hi-Latn/nds-NL, -> en/nds-NL
-locale/names/language/extended/medium/v1, hi-Latn/nnh, -> af/nnh
-locale/names/language/extended/medium/v1, hi-Latn/sk, -> fil/sk
-locale/names/language/extended/medium/v1, hi-Latn/sl, -> fil/sl
-locale/names/language/extended/medium/v1, hi-Latn/sv, -> fil/sv
 locale/names/language/extended/medium/v1, hi-Latn/ug, -> af/ug
 locale/names/language/extended/medium/v1, hi-Latn/wal, -> br/wal
-locale/names/language/extended/medium/v1, hi-Latn/yav, -> af/yav
-locale/names/language/extended/medium/v1, hi-Latn/ybb, -> af/ybb
-locale/names/language/extended/medium/v1, hi-Latn/yo, -> ak/yo
 locale/names/language/extended/medium/v1, hi/aa, 39B, 16B, e4d9f2df79d8ac88
 locale/names/language/extended/medium/v1, hi/ab, 57B, 34B, eb78b9d10b56c823
 locale/names/language/extended/medium/v1, hi/ace, 45B, 22B, 31cfc001090321ea
@@ -92796,44 +92766,7 @@ locale/names/language/extended/medium/v1, hsb/zu, 35B, 12B, a181c084435c4d58
 locale/names/language/extended/medium/v1, hsb/zun, -> dsb/zun
 locale/names/language/extended/medium/v1, hsb/zxx, 45B, 22B, 6afdeeabcda6c065
 locale/names/language/extended/medium/v1, hsb/zza, -> dsb/zza
-locale/names/language/extended/medium/v1, ht/bas, 29B, 6B, c63cf6830dd7105f
-locale/names/language/extended/medium/v1, ht/bax, 30B, 7B, b1488bb84dc899ed
-locale/names/language/extended/medium/v1, ht/bbj, 33B, 10B, 868ff204d9700bcb
-locale/names/language/extended/medium/v1, ht/bfd, -> ast/bfd
-locale/names/language/extended/medium/v1, ht/bkm, -> ast/bkm
-locale/names/language/extended/medium/v1, ht/bss, -> ast/bss
-locale/names/language/extended/medium/v1, ht/bum, 30B, 7B, 8e2633fe1d43c529
-locale/names/language/extended/medium/v1, ht/byv, 32B, 9B, 3d21c2b06de42f12
-locale/names/language/extended/medium/v1, ht/cs, 32B, 9B, a81f13e69a913ca1
-locale/names/language/extended/medium/v1, ht/da, 30B, 7B, a47818945cb14c84
-locale/names/language/extended/medium/v1, ht/dzg, -> ast/dzg
-locale/names/language/extended/medium/v1, ht/el, 28B, 5B, 39345182919caf21
-locale/names/language/extended/medium/v1, ht/et, 32B, 9B, 58abdfb11422d93
-locale/names/language/extended/medium/v1, ht/ewo, 31B, 8B, b2e34700e626c296
-locale/names/language/extended/medium/v1, ht/fan, -> ast/fan
-locale/names/language/extended/medium/v1, ht/ff, 28B, 5B, 32f487f919cc09c0
-locale/names/language/extended/medium/v1, ht/fi, 31B, 8B, 6395823c22ea50d0
 locale/names/language/extended/medium/v1, ht/ht, 39B, 16B, 573edfd8e297be69
-locale/names/language/extended/medium/v1, ht/hu, 32B, 9B, 9a31f2a9ed852c1f
-locale/names/language/extended/medium/v1, ht/kbl, 32B, 9B, ecb0999c76e342f6
-locale/names/language/extended/medium/v1, ht/kg, 31B, 8B, d7806c6c27c3721
-locale/names/language/extended/medium/v1, ht/kkj, -> ast/kkj
-locale/names/language/extended/medium/v1, ht/ln, -> ast/ln
-locale/names/language/extended/medium/v1, ht/lv, 30B, 7B, b7641b549ce245d7
-locale/names/language/extended/medium/v1, ht/maf, -> ast/maf
-locale/names/language/extended/medium/v1, ht/mde, -> ast/mde
-locale/names/language/extended/medium/v1, ht/mt, 31B, 8B, a063d76ec42015eb
-locale/names/language/extended/medium/v1, ht/mua, 32B, 9B, 8d46c9b5c1bd589d
-locale/names/language/extended/medium/v1, ht/mye, 31B, 8B, 1a9679c8ea9ceecb
-locale/names/language/extended/medium/v1, ht/nnh, -> ast/nnh
-locale/names/language/extended/medium/v1, ht/sba, -> ast/sba
-locale/names/language/extended/medium/v1, ht/sg, -> ast/sg
-locale/names/language/extended/medium/v1, ht/shu, 38B, 15B, 95114bace47ebda0
-locale/names/language/extended/medium/v1, ht/sk, 32B, 9B, 5a12515e0d6fea5d
-locale/names/language/extended/medium/v1, ht/sl, 32B, 9B, 8d69db2d57a9c19c
-locale/names/language/extended/medium/v1, ht/sv, 32B, 9B, ac81993e77d3ff2f
-locale/names/language/extended/medium/v1, ht/yav, -> ast/yav
-locale/names/language/extended/medium/v1, ht/ybb, -> ast/ybb
 locale/names/language/extended/medium/v1, hu/aa, -> ast/aa
 locale/names/language/extended/medium/v1, hu/ab, 30B, 7B, bbb1c3dcbaea24a8
 locale/names/language/extended/medium/v1, hu/ace, 32B, 9B, 2beabf0f51365372
@@ -94081,7 +94014,7 @@ locale/names/language/extended/medium/v1, ia/lua, -> ast/lua
 locale/names/language/extended/medium/v1, ia/lun, -> ast/lun
 locale/names/language/extended/medium/v1, ia/lus, -> ast/lus
 locale/names/language/extended/medium/v1, ia/luy, -> ast/luy
-locale/names/language/extended/medium/v1, ia/lv, -> ht/lv
+locale/names/language/extended/medium/v1, ia/lv, 30B, 7B, b7641b549ce245d7
 locale/names/language/extended/medium/v1, ia/lzz, -> ast/lzz
 locale/names/language/extended/medium/v1, ia/mad, -> da/mad
 locale/names/language/extended/medium/v1, ia/mag, -> ast/mag
@@ -94857,7 +94790,7 @@ locale/names/language/extended/medium/v1, id/zxx, 51B, 28B, 1f3402f36fdca8ee
 locale/names/language/extended/medium/v1, id/zza, -> af/zza
 locale/names/language/extended/medium/v1, ie/cs, 29B, 6B, a98e4d029e662ec7
 locale/names/language/extended/medium/v1, ie/da, 30B, 7B, c6af99df9a5899c1
-locale/names/language/extended/medium/v1, ie/el, -> ht/el
+locale/names/language/extended/medium/v1, ie/el, 28B, 5B, 39345182919caf21
 locale/names/language/extended/medium/v1, ie/eo, -> af/eo
 locale/names/language/extended/medium/v1, ie/et, 32B, 9B, 7531475b2041e1b5
 locale/names/language/extended/medium/v1, ie/fa, 31B, 8B, e12754942f08b219
@@ -100936,6 +100869,7 @@ locale/names/language/extended/medium/v1, kok-Latn/kgp, -> af/kgp
 locale/names/language/extended/medium/v1, kok-Latn/kk, -> en/kk
 locale/names/language/extended/medium/v1, kok-Latn/km, -> af/km
 locale/names/language/extended/medium/v1, kok-Latn/kn, 34B, 11B, cfe97ad0c57155d6
+locale/names/language/extended/medium/v1, kok-Latn/kok, 31B, 8B, 4619cc36d8cc4375
 locale/names/language/extended/medium/v1, kok-Latn/ks, 31B, 8B, 1b3a0b1e3232d3bc
 locale/names/language/extended/medium/v1, kok-Latn/ku, 30B, 7B, cf13d9b7466c2e86
 locale/names/language/extended/medium/v1, kok-Latn/kxv, -> af/kxv
@@ -106075,7 +106009,7 @@ locale/names/language/extended/medium/v1, mk/br, -> bg/br
 locale/names/language/extended/medium/v1, mk/bra, -> bs-Cyrl/bra
 locale/names/language/extended/medium/v1, mk/brh, 42B, 19B, 9207c2588188e0b6
 locale/names/language/extended/medium/v1, mk/brx, -> ba/brx
-locale/names/language/extended/medium/v1, mk/bs, 40B, 17B, 4b4098386362c879
+locale/names/language/extended/medium/v1, mk/bs, -> bs-Cyrl/bs
 locale/names/language/extended/medium/v1, mk/bss, 34B, 11B, 2b73fcac65f7b170
 locale/names/language/extended/medium/v1, mk/bua, 42B, 19B, ab7431ce03a70366
 locale/names/language/extended/medium/v1, mk/bug, 38B, 15B, 65a006f2fa0a2211
@@ -109453,7 +109387,6 @@ locale/names/language/extended/medium/v1, my/zu, 42B, 19B, 9d6d280eb8afdda6
 locale/names/language/extended/medium/v1, my/zun, 36B, 13B, c200735b5dd1bcb7
 locale/names/language/extended/medium/v1, my/zxx, 119B, 96B, 9996c9b082aa0e76
 locale/names/language/extended/medium/v1, my/zza, 36B, 13B, bebcd3b583419ff4
-locale/names/language/extended/medium/v1, nb/no, -> da/no
 locale/names/language/extended/medium/v1, nds/nds, 40B, 17B, d715ab88b824662c
 locale/names/language/extended/medium/v1, ne/aa, -> kok/aa
 locale/names/language/extended/medium/v1, ne/ab, 57B, 34B, bba197c5772a885
@@ -110674,7 +110607,6 @@ locale/names/language/extended/medium/v1, nn/nds, 32B, 9B, 66a7b0127e447043
 locale/names/language/extended/medium/v1, nn/nds-NL, 35B, 12B, e1544c1caca52670
 locale/names/language/extended/medium/v1, nn/ne, 31B, 8B, ed1adbc041d73a6c
 locale/names/language/extended/medium/v1, nn/niu, 30B, 7B, eb10ee3d49f4af00
-locale/names/language/extended/medium/v1, nn/no, -> da/no
 locale/names/language/extended/medium/v1, nn/nog, -> ast/nog
 locale/names/language/extended/medium/v1, nn/non, 35B, 12B, ba6db2a5336ebedf
 locale/names/language/extended/medium/v1, nn/nqo, -> ast/nqo
@@ -110969,7 +110901,7 @@ locale/names/language/extended/medium/v1, no/kde, -> ast/kde
 locale/names/language/extended/medium/v1, no/kea, 35B, 12B, 9610194d1d5ecfba
 locale/names/language/extended/medium/v1, no/ken, -> ast/ken
 locale/names/language/extended/medium/v1, no/kfo, -> ast/kfo
-locale/names/language/extended/medium/v1, no/kg, -> ht/kg
+locale/names/language/extended/medium/v1, no/kg, 31B, 8B, d7806c6c27c3721
 locale/names/language/extended/medium/v1, no/kgp, -> ast/kgp
 locale/names/language/extended/medium/v1, no/kha, -> ast/kha
 locale/names/language/extended/medium/v1, no/kho, -> da/kho
@@ -115126,7 +115058,7 @@ locale/names/language/extended/medium/v1, rm/ee, -> ast/ee
 locale/names/language/extended/medium/v1, rm/efi, -> ast/efi
 locale/names/language/extended/medium/v1, rm/egy, 37B, 14B, 4a9051653716fa8d
 locale/names/language/extended/medium/v1, rm/eka, -> ast/eka
-locale/names/language/extended/medium/v1, rm/el, -> ht/el
+locale/names/language/extended/medium/v1, rm/el, -> ie/el
 locale/names/language/extended/medium/v1, rm/elx, 32B, 9B, 46a01e75db331a2c
 locale/names/language/extended/medium/v1, rm/enm, 38B, 15B, 45aa39458256a65c
 locale/names/language/extended/medium/v1, rm/eo, -> ast/eo
@@ -115271,7 +115203,7 @@ locale/names/language/extended/medium/v1, rm/lun, -> ast/lun
 locale/names/language/extended/medium/v1, rm/luo, -> ast/luo
 locale/names/language/extended/medium/v1, rm/lus, -> br/lus
 locale/names/language/extended/medium/v1, rm/luy, -> ast/luy
-locale/names/language/extended/medium/v1, rm/lv, -> ht/lv
+locale/names/language/extended/medium/v1, rm/lv, -> ia/lv
 locale/names/language/extended/medium/v1, rm/mad, -> fr/mad
 locale/names/language/extended/medium/v1, rm/mag, -> ast/mag
 locale/names/language/extended/medium/v1, rm/mai, -> ast/mai
@@ -115300,7 +115232,7 @@ locale/names/language/extended/medium/v1, rm/moh, -> ast/moh
 locale/names/language/extended/medium/v1, rm/mos, -> ast/mos
 locale/names/language/extended/medium/v1, rm/mr, -> ast/mr
 locale/names/language/extended/medium/v1, rm/ms, 30B, 7B, 6370d46fd687eeb5
-locale/names/language/extended/medium/v1, rm/mt, -> ht/mt
+locale/names/language/extended/medium/v1, rm/mt, 31B, 8B, a063d76ec42015eb
 locale/names/language/extended/medium/v1, rm/mua, -> ast/mua
 locale/names/language/extended/medium/v1, rm/mul, 33B, 10B, 994d00e0014dde28
 locale/names/language/extended/medium/v1, rm/mus, -> ast/mus
@@ -117388,6 +117320,7 @@ locale/names/language/extended/medium/v1, scn/yue, 33B, 10B, 2dd96b4637f7207
 locale/names/language/extended/medium/v1, scn/za, -> ast/za
 locale/names/language/extended/medium/v1, scn/zu, -> az/zu
 locale/names/language/extended/medium/v1, scn/zxx, 56B, 33B, 3e6f0a1490eea826
+locale/names/language/extended/medium/v1, sd-Deva/sd, -> brx/sd
 locale/names/language/extended/medium/v1, sd/aa, 32B, 9B, 4e4fc41a7dfe2298
 locale/names/language/extended/medium/v1, sd/ab, 40B, 17B, 3d0f26ba87b2d343
 locale/names/language/extended/medium/v1, sd/ace, 40B, 17B, 7331949a7c019c7c
@@ -121047,7 +120980,7 @@ locale/names/language/extended/medium/v1, sr/bo, -> bs-Cyrl/bo
 locale/names/language/extended/medium/v1, sr/br, -> bg/br
 locale/names/language/extended/medium/v1, sr/bra, -> bs-Cyrl/bra
 locale/names/language/extended/medium/v1, sr/brx, -> ba/brx
-locale/names/language/extended/medium/v1, sr/bs, -> mk/bs
+locale/names/language/extended/medium/v1, sr/bs, -> bs-Cyrl/bs
 locale/names/language/extended/medium/v1, sr/bss, -> mk/bss
 locale/names/language/extended/medium/v1, sr/bua, -> mk/bua
 locale/names/language/extended/medium/v1, sr/bug, 40B, 17B, 8cc63a8b709a4c9
@@ -121601,7 +121534,7 @@ locale/names/language/extended/medium/v1, sv/bs, 32B, 9B, 6a8a3e93cb944b84
 locale/names/language/extended/medium/v1, sv/bss, -> da/bss
 locale/names/language/extended/medium/v1, sv/bua, 35B, 12B, b7cb2f1d1e8e8852
 locale/names/language/extended/medium/v1, sv/bug, 35B, 12B, 608b7debde5796e2
-locale/names/language/extended/medium/v1, sv/bum, -> ht/bum
+locale/names/language/extended/medium/v1, sv/bum, 30B, 7B, 8e2633fe1d43c529
 locale/names/language/extended/medium/v1, sv/byn, -> ast/byn
 locale/names/language/extended/medium/v1, sv/byv, 32B, 9B, 7578d0369962430d
 locale/names/language/extended/medium/v1, sv/ca, 34B, 11B, 4ef1bc3b91da02e8
@@ -121773,7 +121706,7 @@ locale/names/language/extended/medium/v1, sv/kde, -> ast/kde
 locale/names/language/extended/medium/v1, sv/kea, 35B, 12B, 2ca89d23e90af3f0
 locale/names/language/extended/medium/v1, sv/ken, 31B, 8B, 22d0589803988f97
 locale/names/language/extended/medium/v1, sv/kfo, -> ast/kfo
-locale/names/language/extended/medium/v1, sv/kg, -> ht/kg
+locale/names/language/extended/medium/v1, sv/kg, -> no/kg
 locale/names/language/extended/medium/v1, sv/kgp, -> ast/kgp
 locale/names/language/extended/medium/v1, sv/kha, -> ast/kha
 locale/names/language/extended/medium/v1, sv/kho, 36B, 13B, e2ad8c2315a369fe
@@ -128507,6 +128440,7 @@ locale/names/language/extended/medium/v1, uz-Cyrl/tzm, 70B, 47B, 54166598de604ea
 locale/names/language/extended/medium/v1, uz-Cyrl/ug, 38B, 15B, d6e3f40659aa414d
 locale/names/language/extended/medium/v1, uz-Cyrl/uk, 40B, 17B, d6f3bcb95ec8b22f
 locale/names/language/extended/medium/v1, uz-Cyrl/ur, -> ba/ur
+locale/names/language/extended/medium/v1, uz-Cyrl/uz, 38B, 15B, a500294e66ebdaf1
 locale/names/language/extended/medium/v1, uz-Cyrl/vai, -> ba/vai
 locale/names/language/extended/medium/v1, uz-Cyrl/ve, -> ba/ve
 locale/names/language/extended/medium/v1, uz-Cyrl/vi, 40B, 17B, e94c3b7c4291a17e
@@ -134963,8 +134897,8 @@ locale/names/language/menu/extended/medium/v1, zh/ku, 53B, 30B, ad34ff049f2aa733
 locale/names/language/menu/extended/medium/v1, zh/yue, 35B, 12B, 9e6ed1ec375fd27b
 locale/names/language/menu/extended/medium/v1, zu/ku, 47B, 24B, 60429f777dc5038f
 locale/names/language/menu/extended/medium/v1, zu/yue, 48B, 25B, 3770fe2b5f808347
-locale/names/language/minimal/medium/v1, <lookup>, 2088B, 282 identifiers
-locale/names/language/minimal/medium/v1, <total>, 9338B, 3427B, 257 unique payloads
+locale/names/language/minimal/medium/v1, <lookup>, 2063B, 278 identifiers
+locale/names/language/minimal/medium/v1, <total>, 9187B, 3368B, 253 unique payloads
 locale/names/language/minimal/medium/v1, af/af, 33B, 10B, b3c68d08a783b95e
 locale/names/language/minimal/medium/v1, af/en, 30B, 7B, 93a2b3a502f6e710
 locale/names/language/minimal/medium/v1, ak/ak, 28B, 5B, bd24586acb442d80
@@ -134992,7 +134926,6 @@ locale/names/language/minimal/medium/v1, bn/bn, 39B, 16B, 44ea3bf3f6b654ed
 locale/names/language/minimal/medium/v1, bn/en, 42B, 19B, 8b2d21efff22ba07
 locale/names/language/minimal/medium/v1, br/en, 31B, 8B, 424c279c6647f170
 locale/names/language/minimal/medium/v1, brx/en, 42B, 19B, 421296eac79d7854
-locale/names/language/minimal/medium/v1, bs-Cyrl/bs, 40B, 17B, 4b4098386362c879
 locale/names/language/minimal/medium/v1, bs-Cyrl/en, 40B, 17B, 981902d5d479fe14
 locale/names/language/minimal/medium/v1, bs/bs, 32B, 9B, 186ee683078670dc
 locale/names/language/minimal/medium/v1, bs/en, 32B, 9B, a46188ad70938d3c
@@ -135094,7 +135027,6 @@ locale/names/language/minimal/medium/v1, kn/kn, 39B, 16B, e5bde55bf04e40ba
 locale/names/language/minimal/medium/v1, ko/en, 30B, 7B, 7c1efbf707f476
 locale/names/language/minimal/medium/v1, ko/ko, 33B, 10B, e245894f581e0499
 locale/names/language/minimal/medium/v1, kok-Latn/en, 30B, 7B, 465735de8e671adb
-locale/names/language/minimal/medium/v1, kok-Latn/kok, 31B, 8B, 4619cc36d8cc4375
 locale/names/language/minimal/medium/v1, kok/en, 45B, 22B, 9537c233d16a63f
 locale/names/language/minimal/medium/v1, kok/kok, 42B, 19B, 71818e6d675a9c1c
 locale/names/language/minimal/medium/v1, ks-Deva/en, 48B, 25B, 3898516454ae0981
@@ -135172,7 +135104,6 @@ locale/names/language/minimal/medium/v1, sat/en, 48B, 25B, 37f8ac34da33a9e2
 locale/names/language/minimal/medium/v1, sc/en, 31B, 8B, 6696d70ca808eab4
 locale/names/language/minimal/medium/v1, scn/en, 30B, 7B, 278d484338a7ddf0
 locale/names/language/minimal/medium/v1, sd-Deva/en, 48B, 25B, 6ad8bf6401cfe945
-locale/names/language/minimal/medium/v1, sd-Deva/sd, 42B, 19B, 1b90da32c9cb2841
 locale/names/language/minimal/medium/v1, sd/en, 38B, 15B, 2115a74710735bd0
 locale/names/language/minimal/medium/v1, sd/sd, 32B, 9B, 1b15e687dd05fa53
 locale/names/language/minimal/medium/v1, shn/en, 57B, 34B, bed061ba03ba96b5
@@ -135222,7 +135153,6 @@ locale/names/language/minimal/medium/v1, uk/uk, 44B, 21B, 2b81847dab0adb46
 locale/names/language/minimal/medium/v1, ur/en, 38B, 15B, e4c29dca2a8a5486
 locale/names/language/minimal/medium/v1, ur/ur, 32B, 9B, 5fa4a734ce58321a
 locale/names/language/minimal/medium/v1, uz-Cyrl/en, 40B, 17B, b78515b2af04319a
-locale/names/language/minimal/medium/v1, uz-Cyrl/uz, 38B, 15B, a500294e66ebdaf1
 locale/names/language/minimal/medium/v1, uz/en, 33B, 10B, 8c6e507633bf7c4
 locale/names/language/minimal/medium/v1, uz/uz, 32B, 9B, 1223adac95b5761b
 locale/names/language/minimal/medium/v1, vec/en, 31B, 8B, 17662fb1e8ab3777
@@ -135247,8 +135177,8 @@ locale/names/language/minimal/medium/v1, zh/en, 30B, 7B, e19924c09dc1350f
 locale/names/language/minimal/medium/v1, zh/zh, -> zh-Hant/zh
 locale/names/language/minimal/medium/v1, zu/en, 33B, 10B, c3bb98f452d6f935
 locale/names/language/minimal/medium/v1, zu/zu, 31B, 8B, 4cc56bb718ca92fa
-locale/names/region/core/medium/v1, <lookup>, 230500B, 43130 identifiers
-locale/names/region/core/medium/v1, <total>, 1266609B, 604547B, 28786 unique payloads
+locale/names/region/core/medium/v1, <lookup>, 229586B, 42965 identifiers
+locale/names/region/core/medium/v1, <total>, 1265982B, 604265B, 28771 unique payloads
 locale/names/region/core/medium/v1, af/001, 31B, 8B, 1f3b12f44fb35b80
 locale/names/region/core/medium/v1, af/002, 30B, 7B, 7e750e246b4a52f6
 locale/names/region/core/medium/v1, af/003, 37B, 14B, 5adc439f092bbb5f
@@ -139685,6 +139615,7 @@ locale/names/region/core/medium/v1, bs-Cyrl/AU, 44B, 21B, 5dd3f1c062267622
 locale/names/region/core/medium/v1, bs-Cyrl/AW, -> ba/AW
 locale/names/region/core/medium/v1, bs-Cyrl/AX, 53B, 30B, 2ccb0e7c48eadbd7
 locale/names/region/core/medium/v1, bs-Cyrl/AZ, 44B, 21B, 2f0f41468305413a
+locale/names/region/core/medium/v1, bs-Cyrl/BA, -> bg/BA
 locale/names/region/core/medium/v1, bs-Cyrl/BB, -> ba/BB
 locale/names/region/core/medium/v1, bs-Cyrl/BD, -> ba/BD
 locale/names/region/core/medium/v1, bs-Cyrl/BE, 38B, 15B, 1e2916524a0db36f
@@ -139909,7 +139840,6 @@ locale/names/region/core/medium/v1, bs-Cyrl/UA, 40B, 17B, 28d7bf1302d1b85
 locale/names/region/core/medium/v1, bs-Cyrl/UG, -> ba/UG
 locale/names/region/core/medium/v1, bs-Cyrl/UM, 67B, 44B, d0ac064b6a2ec82f
 locale/names/region/core/medium/v1, bs-Cyrl/UN, 55B, 32B, c63731b8540b517d
-locale/names/region/core/medium/v1, bs-Cyrl/US, 72B, 49B, 8fd704b921968252
 locale/names/region/core/medium/v1, bs-Cyrl/UY, 38B, 15B, 69b3ed3e9bb30316
 locale/names/region/core/medium/v1, bs-Cyrl/UZ, -> bg/UZ
 locale/names/region/core/medium/v1, bs-Cyrl/VA, -> ba/VA
@@ -148898,137 +148828,17 @@ locale/names/region/core/medium/v1, he/ZA, 45B, 22B, 8659828b700a8e5e
 locale/names/region/core/medium/v1, he/ZM, 34B, 11B, 8413ecad2a520a1e
 locale/names/region/core/medium/v1, he/ZW, 40B, 17B, b0547db126a6f3de
 locale/names/region/core/medium/v1, he/ZZ, 46B, 23B, 618a90f56c2521b9
-locale/names/region/core/medium/v1, hi-Latn/AE, -> ak/AE
-locale/names/region/core/medium/v1, hi-Latn/AG, -> ceb/AG
-locale/names/region/core/medium/v1, hi-Latn/AI, -> af/AI
-locale/names/region/core/medium/v1, hi-Latn/AS, -> ceb/AS
-locale/names/region/core/medium/v1, hi-Latn/AT, -> ast/AT
-locale/names/region/core/medium/v1, hi-Latn/AU, -> ast/AU
 locale/names/region/core/medium/v1, hi-Latn/AX, -> ceb/AX
-locale/names/region/core/medium/v1, hi-Latn/BB, -> af/BB
-locale/names/region/core/medium/v1, hi-Latn/BE, -> ceb/BE
-locale/names/region/core/medium/v1, hi-Latn/BI, -> af/BI
 locale/names/region/core/medium/v1, hi-Latn/BL, -> ceb/BL
-locale/names/region/core/medium/v1, hi-Latn/BM, -> af/BM
-locale/names/region/core/medium/v1, hi-Latn/BS, -> af/BS
-locale/names/region/core/medium/v1, hi-Latn/BW, -> af/BW
-locale/names/region/core/medium/v1, hi-Latn/BZ, -> af/BZ
-locale/names/region/core/medium/v1, hi-Latn/CA, -> ceb/CA
-locale/names/region/core/medium/v1, hi-Latn/CC, -> ceb/CC
-locale/names/region/core/medium/v1, hi-Latn/CH, -> ceb/CH
 locale/names/region/core/medium/v1, hi-Latn/CI, -> ceb/CI
-locale/names/region/core/medium/v1, hi-Latn/CK, -> ceb/CK
-locale/names/region/core/medium/v1, hi-Latn/CM, -> ceb/CM
 locale/names/region/core/medium/v1, hi-Latn/CW, -> ceb/CW
-locale/names/region/core/medium/v1, hi-Latn/CX, -> ceb/CX
-locale/names/region/core/medium/v1, hi-Latn/CY, -> ceb/CY
-locale/names/region/core/medium/v1, hi-Latn/CZ, -> ceb/CZ
-locale/names/region/core/medium/v1, hi-Latn/DE, -> ceb/DE
-locale/names/region/core/medium/v1, hi-Latn/DG, -> af/DG
-locale/names/region/core/medium/v1, hi-Latn/DK, -> ceb/DK
-locale/names/region/core/medium/v1, hi-Latn/DM, -> af/DM
-locale/names/region/core/medium/v1, hi-Latn/EE, -> ast/EE
-locale/names/region/core/medium/v1, hi-Latn/ER, -> af/ER
-locale/names/region/core/medium/v1, hi-Latn/ES, -> ak/ES
-locale/names/region/core/medium/v1, hi-Latn/FI, -> af/FI
-locale/names/region/core/medium/v1, hi-Latn/FJ, -> bal-Latn/FJ
-locale/names/region/core/medium/v1, hi-Latn/FK, -> ast/FK
-locale/names/region/core/medium/v1, hi-Latn/FM, -> ast/FM
-locale/names/region/core/medium/v1, hi-Latn/FR, -> ceb/FR
-locale/names/region/core/medium/v1, hi-Latn/GB, -> ceb/GB
-locale/names/region/core/medium/v1, hi-Latn/GD, -> af/GD
-locale/names/region/core/medium/v1, hi-Latn/GE, -> ceb/GE
-locale/names/region/core/medium/v1, hi-Latn/GG, -> af/GG
-locale/names/region/core/medium/v1, hi-Latn/GH, -> af/GH
-locale/names/region/core/medium/v1, hi-Latn/GI, -> af/GI
-locale/names/region/core/medium/v1, hi-Latn/GM, -> ak/GM
-locale/names/region/core/medium/v1, hi-Latn/GS, -> ceb/GS
-locale/names/region/core/medium/v1, hi-Latn/GU, -> af/GU
-locale/names/region/core/medium/v1, hi-Latn/GY, -> af/GY
-locale/names/region/core/medium/v1, hi-Latn/HK, -> ceb/HK
-locale/names/region/core/medium/v1, hi-Latn/HU, -> ceb/HU
-locale/names/region/core/medium/v1, hi-Latn/ID, -> ast/ID
-locale/names/region/core/medium/v1, hi-Latn/IE, -> ceb/IE
-locale/names/region/core/medium/v1, hi-Latn/IL, -> af/IL
-locale/names/region/core/medium/v1, hi-Latn/IM, -> ak/IM
-locale/names/region/core/medium/v1, hi-Latn/IO, -> fil/IO
-locale/names/region/core/medium/v1, hi-Latn/IT, -> fil/IT
-locale/names/region/core/medium/v1, hi-Latn/JE, -> af/JE
-locale/names/region/core/medium/v1, hi-Latn/JM, -> ca/JM
-locale/names/region/core/medium/v1, hi-Latn/JP, -> af/JP
-locale/names/region/core/medium/v1, hi-Latn/KE, -> ak/KE
-locale/names/region/core/medium/v1, hi-Latn/KI, -> af/KI
-locale/names/region/core/medium/v1, hi-Latn/KN, -> ceb/KN
-locale/names/region/core/medium/v1, hi-Latn/KY, -> ceb/KY
-locale/names/region/core/medium/v1, hi-Latn/LC, -> ceb/LC
-locale/names/region/core/medium/v1, hi-Latn/LR, -> ast/LR
-locale/names/region/core/medium/v1, hi-Latn/LS, -> af/LS
-locale/names/region/core/medium/v1, hi-Latn/LT, -> ceb/LT
-locale/names/region/core/medium/v1, hi-Latn/LV, -> ak/LV
 locale/names/region/core/medium/v1, hi-Latn/MF, -> ceb/MF
-locale/names/region/core/medium/v1, hi-Latn/MG, -> ast/MG
-locale/names/region/core/medium/v1, hi-Latn/MH, -> ceb/MH
-locale/names/region/core/medium/v1, hi-Latn/MO, -> ceb/MO
-locale/names/region/core/medium/v1, hi-Latn/MP, -> ceb/MP
-locale/names/region/core/medium/v1, hi-Latn/MS, -> af/MS
-locale/names/region/core/medium/v1, hi-Latn/MT, -> af/MT
-locale/names/region/core/medium/v1, hi-Latn/MU, -> af/MU
-locale/names/region/core/medium/v1, hi-Latn/MV, -> ak/MV
-locale/names/region/core/medium/v1, hi-Latn/MW, -> af/MW
-locale/names/region/core/medium/v1, hi-Latn/MY, -> br/MY
-locale/names/region/core/medium/v1, hi-Latn/NA, -> ak/NA
-locale/names/region/core/medium/v1, hi-Latn/NF, -> ceb/NF
-locale/names/region/core/medium/v1, hi-Latn/NG, -> br/NG
-locale/names/region/core/medium/v1, hi-Latn/NL, -> ceb/NL
-locale/names/region/core/medium/v1, hi-Latn/NO, -> ceb/NO
-locale/names/region/core/medium/v1, hi-Latn/NR, -> af/NR
-locale/names/region/core/medium/v1, hi-Latn/NU, -> af/NU
-locale/names/region/core/medium/v1, hi-Latn/NZ, -> ceb/NZ
-locale/names/region/core/medium/v1, hi-Latn/PG, -> ceb/PG
-locale/names/region/core/medium/v1, hi-Latn/PH, -> ceb/PH
-locale/names/region/core/medium/v1, hi-Latn/PK, -> af/PK
-locale/names/region/core/medium/v1, hi-Latn/PL, -> ceb/PL
 locale/names/region/core/medium/v1, hi-Latn/PM, -> ceb/PM
-locale/names/region/core/medium/v1, hi-Latn/PN, -> ceb/PN
-locale/names/region/core/medium/v1, hi-Latn/PR, -> af/PR
-locale/names/region/core/medium/v1, hi-Latn/PT, -> af/PT
-locale/names/region/core/medium/v1, hi-Latn/PW, -> af/PW
 locale/names/region/core/medium/v1, hi-Latn/RE, -> bs/RE
-locale/names/region/core/medium/v1, hi-Latn/RO, -> ca/RO
-locale/names/region/core/medium/v1, hi-Latn/RW, -> af/RW
-locale/names/region/core/medium/v1, hi-Latn/SB, -> ceb/SB
-locale/names/region/core/medium/v1, hi-Latn/SC, -> ca/SC
-locale/names/region/core/medium/v1, hi-Latn/SD, -> ak/SD
-locale/names/region/core/medium/v1, hi-Latn/SE, -> ak/SE
-locale/names/region/core/medium/v1, hi-Latn/SG, -> ceb/SG
-locale/names/region/core/medium/v1, hi-Latn/SH, -> ceb/SH
-locale/names/region/core/medium/v1, hi-Latn/SI, -> ak/SI
-locale/names/region/core/medium/v1, hi-Latn/SK, -> ak/SK
-locale/names/region/core/medium/v1, hi-Latn/SL, -> af/SL
-locale/names/region/core/medium/v1, hi-Latn/SS, -> ceb/SS
 locale/names/region/core/medium/v1, hi-Latn/ST, -> ceb/ST
-locale/names/region/core/medium/v1, hi-Latn/SX, -> af/SX
-locale/names/region/core/medium/v1, hi-Latn/SZ, -> af/SZ
-locale/names/region/core/medium/v1, hi-Latn/TC, -> ceb/TC
-locale/names/region/core/medium/v1, hi-Latn/TK, -> af/TK
-locale/names/region/core/medium/v1, hi-Latn/TO, -> af/TO
 locale/names/region/core/medium/v1, hi-Latn/TR, -> bal-Latn/TR
-locale/names/region/core/medium/v1, hi-Latn/TT, -> ceb/TT
-locale/names/region/core/medium/v1, hi-Latn/TV, -> af/TV
-locale/names/region/core/medium/v1, hi-Latn/TZ, -> ast/TZ
-locale/names/region/core/medium/v1, hi-Latn/UA, -> ceb/UA
-locale/names/region/core/medium/v1, hi-Latn/UG, -> af/UG
-locale/names/region/core/medium/v1, hi-Latn/UM, -> ceb/UM
 locale/names/region/core/medium/v1, hi-Latn/US, 37B, 14B, 5343bba1db0e5569
-locale/names/region/core/medium/v1, hi-Latn/VC, -> ceb/VC
-locale/names/region/core/medium/v1, hi-Latn/VG, -> ceb/VG
-locale/names/region/core/medium/v1, hi-Latn/VI, -> ceb/VI
-locale/names/region/core/medium/v1, hi-Latn/VU, -> af/VU
-locale/names/region/core/medium/v1, hi-Latn/WS, -> af/WS
 locale/names/region/core/medium/v1, hi-Latn/XB, 44B, 21B, 27c38736d658a620
-locale/names/region/core/medium/v1, hi-Latn/ZA, -> ceb/ZA
-locale/names/region/core/medium/v1, hi-Latn/ZM, -> ak/ZM
-locale/names/region/core/medium/v1, hi-Latn/ZW, -> af/ZW
 locale/names/region/core/medium/v1, hi/001, 39B, 16B, 8d5b600cd04bcd9b
 locale/names/region/core/medium/v1, hi/002, 48B, 25B, 22546e385ab5af80
 locale/names/region/core/medium/v1, hi/003, 61B, 38B, a839044522cc3128
@@ -149910,52 +149720,6 @@ locale/names/region/core/medium/v1, hsb/ZA, 49B, 26B, 370691a9c95f44ad
 locale/names/region/core/medium/v1, hsb/ZM, -> dsb/ZM
 locale/names/region/core/medium/v1, hsb/ZW, -> de/ZW
 locale/names/region/core/medium/v1, hsb/ZZ, -> dsb/ZZ
-locale/names/region/core/medium/v1, ht/BE, 32B, 9B, 3de9bd288efafacb
-locale/names/region/core/medium/v1, ht/BF, -> af/BF
-locale/names/region/core/medium/v1, ht/BI, -> af/BI
-locale/names/region/core/medium/v1, ht/BJ, 30B, 7B, 87cc3f5dbe233990
-locale/names/region/core/medium/v1, ht/BL, -> ca/BL
-locale/names/region/core/medium/v1, ht/CA, -> ceb/CA
-locale/names/region/core/medium/v1, ht/CD, -> da/CD
-locale/names/region/core/medium/v1, ht/CF, 50B, 27B, 98846bef132488f2
-locale/names/region/core/medium/v1, ht/CG, -> da/CG
-locale/names/region/core/medium/v1, ht/CH, 30B, 7B, 29926bb6d7c41cbb
-locale/names/region/core/medium/v1, ht/CI, -> ca/CI
-locale/names/region/core/medium/v1, ht/CM, -> da/CM
-locale/names/region/core/medium/v1, ht/DJ, -> br/DJ
-locale/names/region/core/medium/v1, ht/DZ, 32B, 9B, f9c9477d9e0b6325
-locale/names/region/core/medium/v1, ht/FR, -> ceb/FR
-locale/names/region/core/medium/v1, ht/GA, -> bal-Latn/GA
-locale/names/region/core/medium/v1, ht/GF, 41B, 18B, 5ba4be7885e70ee
-locale/names/region/core/medium/v1, ht/GN, 31B, 8B, 1fb2a705e60f9ace
-locale/names/region/core/medium/v1, ht/GP, -> af/GP
-locale/names/region/core/medium/v1, ht/GQ, 44B, 21B, ec022389c83019d9
-locale/names/region/core/medium/v1, ht/HT, -> af/HT
-locale/names/region/core/medium/v1, ht/KM, -> ca/KM
-locale/names/region/core/medium/v1, ht/LU, -> ceb/LU
-locale/names/region/core/medium/v1, ht/MA, 29B, 6B, 11ea4e15a17288ce
-locale/names/region/core/medium/v1, ht/MC, -> af/MC
-locale/names/region/core/medium/v1, ht/MF, -> eo/MF
-locale/names/region/core/medium/v1, ht/MG, -> ast/MG
-locale/names/region/core/medium/v1, ht/ML, -> af/ML
-locale/names/region/core/medium/v1, ht/MQ, -> af/MQ
-locale/names/region/core/medium/v1, ht/MR, 34B, 11B, 5a66b6db88c753f6
-locale/names/region/core/medium/v1, ht/MU, 31B, 8B, c16a18037fc62fc3
-locale/names/region/core/medium/v1, ht/NC, 43B, 20B, bb9ab2ae37a4019d
-locale/names/region/core/medium/v1, ht/NE, -> af/NE
-locale/names/region/core/medium/v1, ht/PF, 45B, 22B, 4d270dae74af831a
-locale/names/region/core/medium/v1, ht/PM, -> ca/PM
-locale/names/region/core/medium/v1, ht/RE, -> ga/RE
-locale/names/region/core/medium/v1, ht/RW, -> af/RW
-locale/names/region/core/medium/v1, ht/SC, -> ca/SC
-locale/names/region/core/medium/v1, ht/SN, 33B, 10B, d92b219843e8fe5f
-locale/names/region/core/medium/v1, ht/SY, 29B, 6B, fa48936a472f2dc
-locale/names/region/core/medium/v1, ht/TD, -> br/TD
-locale/names/region/core/medium/v1, ht/TG, -> af/TG
-locale/names/region/core/medium/v1, ht/TN, 31B, 8B, d63f9f16e265aaae
-locale/names/region/core/medium/v1, ht/VU, -> af/VU
-locale/names/region/core/medium/v1, ht/WF, 40B, 17B, f9581225f3f54a77
-locale/names/region/core/medium/v1, ht/YT, -> af/YT
 locale/names/region/core/medium/v1, hu/001, 30B, 7B, a799d217528af4f3
 locale/names/region/core/medium/v1, hu/002, -> af/002
 locale/names/region/core/medium/v1, hu/003, 38B, 15B, 79c03672a7f6aa52
@@ -152495,7 +152259,7 @@ locale/names/region/core/medium/v1, jv/BF, -> af/BF
 locale/names/region/core/medium/v1, jv/BG, 31B, 8B, 7e8af354dcacde30
 locale/names/region/core/medium/v1, jv/BH, -> ca/BH
 locale/names/region/core/medium/v1, jv/BI, -> af/BI
-locale/names/region/core/medium/v1, jv/BJ, -> ht/BJ
+locale/names/region/core/medium/v1, jv/BJ, 30B, 7B, 87cc3f5dbe233990
 locale/names/region/core/medium/v1, jv/BL, 42B, 19B, a4c149fe3b22b526
 locale/names/region/core/medium/v1, jv/BM, -> af/BM
 locale/names/region/core/medium/v1, jv/BN, -> ast/BN
@@ -152682,7 +152446,7 @@ locale/names/region/core/medium/v1, jv/SJ, 46B, 23B, 6a18f22912851dda
 locale/names/region/core/medium/v1, jv/SK, 30B, 7B, 4fea66a94bcefc51
 locale/names/region/core/medium/v1, jv/SL, 38B, 15B, bf9b52f6d4112e3
 locale/names/region/core/medium/v1, jv/SM, -> af/SM
-locale/names/region/core/medium/v1, jv/SN, -> ht/SN
+locale/names/region/core/medium/v1, jv/SN, 33B, 10B, d92b219843e8fe5f
 locale/names/region/core/medium/v1, jv/SO, -> ak/SO
 locale/names/region/core/medium/v1, jv/SR, -> af/SR
 locale/names/region/core/medium/v1, jv/SS, 35B, 12B, b961d9899c6e9cd8
@@ -155221,6 +154985,7 @@ locale/names/region/core/medium/v1, kok-Latn/ID, -> ast/ID
 locale/names/region/core/medium/v1, kok-Latn/IE, 32B, 9B, d9a2b899ff592c2c
 locale/names/region/core/medium/v1, kok-Latn/IL, -> af/IL
 locale/names/region/core/medium/v1, kok-Latn/IM, 37B, 14B, 2cc4751268d007c8
+locale/names/region/core/medium/v1, kok-Latn/IN, 30B, 7B, 4ca719c092bb1502
 locale/names/region/core/medium/v1, kok-Latn/IO, 56B, 33B, 4bc486665bb03642
 locale/names/region/core/medium/v1, kok-Latn/IQ, -> af/IQ
 locale/names/region/core/medium/v1, kok-Latn/IR, -> af/IR
@@ -155351,7 +155116,6 @@ locale/names/region/core/medium/v1, kok-Latn/UA, 31B, 8B, f88f7f24e128deab
 locale/names/region/core/medium/v1, kok-Latn/UG, -> ak/UG
 locale/names/region/core/medium/v1, kok-Latn/UM, 63B, 40B, dbf4ff4c287536a8
 locale/names/region/core/medium/v1, kok-Latn/UN, 40B, 17B, ae7f152361643779
-locale/names/region/core/medium/v1, kok-Latn/US, 50B, 27B, a6d2f520b54c813d
 locale/names/region/core/medium/v1, kok-Latn/UY, -> af/UY
 locale/names/region/core/medium/v1, kok-Latn/UZ, -> bs/UZ
 locale/names/region/core/medium/v1, kok-Latn/VA, 35B, 12B, 536cee85f0fa1599
@@ -161379,7 +161143,6 @@ locale/names/region/core/medium/v1, my/ZA, 57B, 34B, 6f88df2f8b93cf42
 locale/names/region/core/medium/v1, my/ZM, 45B, 22B, 511e11e0d2427e1f
 locale/names/region/core/medium/v1, my/ZW, 48B, 25B, 594091dac83ca6e6
 locale/names/region/core/medium/v1, my/ZZ, 80B, 57B, 545e09544c60dc27
-locale/names/region/core/medium/v1, nb/NO, -> da/NO
 locale/names/region/core/medium/v1, nds/DE, 37B, 14B, 4690ad24d262330b
 locale/names/region/core/medium/v1, nds/NL, 36B, 13B, ea5c26f005126957
 locale/names/region/core/medium/v1, ne/001, -> hi/001
@@ -165185,7 +164948,7 @@ locale/names/region/core/medium/v1, rm/LT, -> ast/LT
 locale/names/region/core/medium/v1, rm/LU, -> af/LU
 locale/names/region/core/medium/v1, rm/LV, -> ia/LV
 locale/names/region/core/medium/v1, rm/LY, -> ast/LY
-locale/names/region/core/medium/v1, rm/MA, -> ht/MA
+locale/names/region/core/medium/v1, rm/MA, 29B, 6B, 11ea4e15a17288ce
 locale/names/region/core/medium/v1, rm/MC, -> af/MC
 locale/names/region/core/medium/v1, rm/MD, -> ast/MD
 locale/names/region/core/medium/v1, rm/ME, -> af/ME
@@ -165481,7 +165244,7 @@ locale/names/region/core/medium/v1, ro/LT, -> ast/LT
 locale/names/region/core/medium/v1, ro/LU, -> af/LU
 locale/names/region/core/medium/v1, ro/LV, -> ast/LV
 locale/names/region/core/medium/v1, ro/LY, -> ast/LY
-locale/names/region/core/medium/v1, ro/MA, -> ht/MA
+locale/names/region/core/medium/v1, ro/MA, -> rm/MA
 locale/names/region/core/medium/v1, ro/MC, -> af/MC
 locale/names/region/core/medium/v1, ro/ME, 34B, 11B, 8b9061f16f0cb08b
 locale/names/region/core/medium/v1, ro/MF, 39B, 16B, 545fad346e16e407
@@ -166538,10 +166301,11 @@ locale/names/region/core/medium/v1, sd-Deva/CN, -> doi/CN
 locale/names/region/core/medium/v1, sd-Deva/DE, -> doi/DE
 locale/names/region/core/medium/v1, sd-Deva/FR, -> hi/FR
 locale/names/region/core/medium/v1, sd-Deva/GB, 42B, 19B, 7064baf5ea2e2de4
+locale/names/region/core/medium/v1, sd-Deva/IN, -> bgc/IN
 locale/names/region/core/medium/v1, sd-Deva/IT, -> doi/IT
 locale/names/region/core/medium/v1, sd-Deva/JP, -> brx/JP
+locale/names/region/core/medium/v1, sd-Deva/PK, -> brx/PK
 locale/names/region/core/medium/v1, sd-Deva/RU, -> mr/RU
-locale/names/region/core/medium/v1, sd-Deva/US, -> mai/019
 locale/names/region/core/medium/v1, sd-Deva/ZZ, 61B, 38B, c1b4f185b187a565
 locale/names/region/core/medium/v1, sd/001, 32B, 9B, 662eba9b36097b07
 locale/names/region/core/medium/v1, sd/002, 36B, 13B, 8fd5d15090e0e87c
@@ -174013,6 +173777,7 @@ locale/names/region/core/medium/v1, uz-Cyrl/419, 53B, 30B, 1d28ad9f3cea853e
 locale/names/region/core/medium/v1, uz-Cyrl/AC, 47B, 24B, 405f9ab5ab3318d3
 locale/names/region/core/medium/v1, uz-Cyrl/AD, -> ba/AD
 locale/names/region/core/medium/v1, uz-Cyrl/AE, 74B, 51B, c20e2c224601124a
+locale/names/region/core/medium/v1, uz-Cyrl/AF, -> tg/AF
 locale/names/region/core/medium/v1, uz-Cyrl/AG, -> tg/AG
 locale/names/region/core/medium/v1, uz-Cyrl/AI, -> ba/AI
 locale/names/region/core/medium/v1, uz-Cyrl/AL, -> ba/AL
@@ -174248,8 +174013,8 @@ locale/names/region/core/medium/v1, uz-Cyrl/TZ, -> ba/TZ
 locale/names/region/core/medium/v1, uz-Cyrl/UA, -> ba/UA
 locale/names/region/core/medium/v1, uz-Cyrl/UG, -> ba/UG
 locale/names/region/core/medium/v1, uz-Cyrl/UM, 58B, 35B, 1a17caae9690fcb
-locale/names/region/core/medium/v1, uz-Cyrl/US, 66B, 43B, 222822af01156381
 locale/names/region/core/medium/v1, uz-Cyrl/UY, -> ba/UY
+locale/names/region/core/medium/v1, uz-Cyrl/UZ, 44B, 21B, 872e6a9c92749528
 locale/names/region/core/medium/v1, uz-Cyrl/VA, -> ba/VA
 locale/names/region/core/medium/v1, uz-Cyrl/VC, 69B, 46B, be934c450b2d409e
 locale/names/region/core/medium/v1, uz-Cyrl/VE, -> ba/VE
@@ -178379,8 +178144,8 @@ locale/names/region/core/medium/v1, zu/YT, 33B, 10B, 38591945e06c2d23
 locale/names/region/core/medium/v1, zu/ZM, 32B, 9B, 21b0b898972f0baa
 locale/names/region/core/medium/v1, zu/ZW, 33B, 10B, 3f49455676a5c118
 locale/names/region/core/medium/v1, zu/ZZ, 43B, 20B, 73e2500cd99ef6ac
-locale/names/region/core/short/v1, <lookup>, 4013B, 669 identifiers
-locale/names/region/core/short/v1, <total>, 13708B, 4945B, 381 unique payloads
+locale/names/region/core/short/v1, <lookup>, 3978B, 662 identifiers
+locale/names/region/core/short/v1, <total>, 13639B, 4922B, 379 unique payloads
 locale/names/region/core/short/v1, af/GB, 26B, 3B, d168a2d57f08daca
 locale/names/region/core/short/v1, af/HK, 32B, 9B, 13f9a45abdf02477
 locale/names/region/core/short/v1, af/MO, 29B, 6B, f3dd01ed8a30eaf6
@@ -178449,7 +178214,6 @@ locale/names/region/core/short/v1, bs-Cyrl/GB, 28B, 5B, 469c05c25fece42
 locale/names/region/core/short/v1, bs-Cyrl/HK, 41B, 18B, 5defaaa8cb557929
 locale/names/region/core/short/v1, bs-Cyrl/MO, -> ba/MO
 locale/names/region/core/short/v1, bs-Cyrl/PS, -> bg/PS
-locale/names/region/core/short/v1, bs-Cyrl/US, 30B, 7B, 5e7ab2f25aeb13da
 locale/names/region/core/short/v1, bs/GB, 26B, 3B, c29f97e919ea7f2
 locale/names/region/core/short/v1, bs/HK, -> br/HK
 locale/names/region/core/short/v1, bs/MO, -> az/MO
@@ -178608,11 +178372,6 @@ locale/names/region/core/short/v1, he/HK, 41B, 18B, 3123a9a6c8919d90
 locale/names/region/core/short/v1, he/MO, 32B, 9B, 616d807f38b955e4
 locale/names/region/core/short/v1, he/PS, 36B, 13B, f25beb38278ca19f
 locale/names/region/core/short/v1, he/US, 34B, 11B, bb4f34503a5865e1
-locale/names/region/core/short/v1, hi-Latn/CC, 37B, 14B, 992b1bb8ec457d20
-locale/names/region/core/short/v1, hi-Latn/GB, -> bs/GB
-locale/names/region/core/short/v1, hi-Latn/HK, -> br/HK
-locale/names/region/core/short/v1, hi-Latn/MO, -> ceb/MO
-locale/names/region/core/short/v1, hi-Latn/PN, 32B, 9B, c2b502f81b47170a
 locale/names/region/core/short/v1, hi-Latn/US, 31B, 8B, 7f2542f0dfa1d143
 locale/names/region/core/short/v1, hi/GB, 42B, 19B, ab9ad193c4e0c4c5
 locale/names/region/core/short/v1, hi/HK, 49B, 26B, 9a69c05ef0d5830b
@@ -178779,7 +178538,7 @@ locale/names/region/core/short/v1, mk/HK, 40B, 17B, 71f221151bbb011a
 locale/names/region/core/short/v1, mk/MO, -> ba/MO
 locale/names/region/core/short/v1, mk/PS, -> bg/PS
 locale/names/region/core/short/v1, mk/UN, 28B, 5B, a4d94fb9d0e052bb
-locale/names/region/core/short/v1, mk/US, -> bs-Cyrl/US
+locale/names/region/core/short/v1, mk/US, 30B, 7B, 5e7ab2f25aeb13da
 locale/names/region/core/short/v1, ml/GB, 36B, 13B, 975c49f90de6ae49
 locale/names/region/core/short/v1, ml/HK, 48B, 25B, d0c9b19335ababbb
 locale/names/region/core/short/v1, ml/MO, 45B, 22B, 5c12163576e68337
@@ -178941,7 +178700,7 @@ locale/names/region/core/short/v1, sr/HK, -> mk/HK
 locale/names/region/core/short/v1, sr/MO, -> ba/MO
 locale/names/region/core/short/v1, sr/PS, -> bg/PS
 locale/names/region/core/short/v1, sr/UN, 28B, 5B, a838ee93ca552bb0
-locale/names/region/core/short/v1, sr/US, -> bs-Cyrl/US
+locale/names/region/core/short/v1, sr/US, -> mk/US
 locale/names/region/core/short/v1, sv/HK, -> af/HK
 locale/names/region/core/short/v1, sv/MO, -> ceb/MO
 locale/names/region/core/short/v1, sv/PS, -> af/PS
@@ -179007,7 +178766,6 @@ locale/names/region/core/short/v1, ur/US, 36B, 13B, c51591cb72117943
 locale/names/region/core/short/v1, uz-Cyrl/HK, -> ba/HK
 locale/names/region/core/short/v1, uz-Cyrl/MO, -> ba/MO
 locale/names/region/core/short/v1, uz-Cyrl/PS, -> tg/PS
-locale/names/region/core/short/v1, uz-Cyrl/US, -> kk/US
 locale/names/region/core/short/v1, uz/GB, 33B, 10B, 9aad802e17873ed
 locale/names/region/core/short/v1, uz/HK, -> tk/HK
 locale/names/region/core/short/v1, uz/MO, -> az/MO
@@ -179050,8 +178808,8 @@ locale/names/region/core/short/v1, zu/MO, 31B, 8B, 3895a80f595b0607
 locale/names/region/core/short/v1, zu/PS, 35B, 12B, 29a92d0c9dac7076
 locale/names/region/core/short/v1, zu/UN, 31B, 8B, a4fbb62a97b0371e
 locale/names/region/core/short/v1, zu/US, 29B, 6B, 789f719126001012
-locale/names/region/minimal/medium/v1, <lookup>, 3064B, 507 identifiers
-locale/names/region/minimal/medium/v1, <total>, 17111B, 6577B, 458 unique payloads
+locale/names/region/minimal/medium/v1, <lookup>, 3069B, 509 identifiers
+locale/names/region/minimal/medium/v1, <total>, 17113B, 6625B, 456 unique payloads
 locale/names/region/minimal/medium/v1, af/NA, 32B, 9B, ee212b1050eea9cc
 locale/names/region/minimal/medium/v1, af/ZA, 35B, 12B, 33ecb5624a1298f9
 locale/names/region/minimal/medium/v1, ak/GH, 29B, 6B, 83ec42bc2caf18bb
@@ -179098,7 +178856,7 @@ locale/names/region/minimal/medium/v1, bn/BD, 48B, 25B, 6ffc5cec5f94e88e
 locale/names/region/minimal/medium/v1, bn/IN, 36B, 13B, d9bc726f1db46e13
 locale/names/region/minimal/medium/v1, br/US, 38B, 15B, 87eb5e3e34a73228
 locale/names/region/minimal/medium/v1, brx/US, 74B, 51B, 19d2a1076a367d36
-locale/names/region/minimal/medium/v1, bs-Cyrl/BA, 60B, 37B, e8dec09c0694f391
+locale/names/region/minimal/medium/v1, bs-Cyrl/US, 72B, 49B, 8fd704b921968252
 locale/names/region/minimal/medium/v1, bs/BA, 43B, 20B, 2f9e337405e03fd9
 locale/names/region/minimal/medium/v1, ca/AD, 31B, 8B, fc4b89c983c5a2b7
 locale/names/region/minimal/medium/v1, ca/ES, 31B, 8B, ebd405ded3cf3f4
@@ -179366,11 +179124,16 @@ locale/names/region/minimal/medium/v1, ha/NG, 32B, 9B, 4de8b5268139bcbe
 locale/names/region/minimal/medium/v1, ha/SD, -> en/SD
 locale/names/region/minimal/medium/v1, he/IL, 34B, 11B, f24fc0ee8fcea804
 locale/names/region/minimal/medium/v1, hi-Latn/IN, 30B, 7B, 3469d19360c5a8e3
+locale/names/region/minimal/medium/v1, hi-Latn/KN, -> en/KN
+locale/names/region/minimal/medium/v1, hi-Latn/LC, -> en/LC
+locale/names/region/minimal/medium/v1, hi-Latn/SH, -> en/SH
+locale/names/region/minimal/medium/v1, hi-Latn/UM, -> en/UM
+locale/names/region/minimal/medium/v1, hi-Latn/VC, -> en/VC
+locale/names/region/minimal/medium/v1, hi-Latn/VI, -> en/VI
 locale/names/region/minimal/medium/v1, hi/IN, 36B, 13B, 3650cfe04b64f553
 locale/names/region/minimal/medium/v1, hr/BA, -> bs/BA
 locale/names/region/minimal/medium/v1, hr/HR, 32B, 9B, 3c5faafd22de8aa2
 locale/names/region/minimal/medium/v1, hsb/DE, 31B, 8B, c4a168d6d150c25a
-locale/names/region/minimal/medium/v1, ht/US, 35B, 12B, 4f64133d3e8394f1
 locale/names/region/minimal/medium/v1, hu/HU, 37B, 14B, b9a6bb48ddbfc3fe
 locale/names/region/minimal/medium/v1, hy/AM, 40B, 17B, 78efb66a75d3a203
 locale/names/region/minimal/medium/v1, ia/US, 36B, 13B, 903fd744eb1de9ca
@@ -179397,7 +179160,7 @@ locale/names/region/minimal/medium/v1, ko-KP/KP, 57B, 34B, 8a6d22bea17f7157
 locale/names/region/minimal/medium/v1, ko/CN, 30B, 7B, 2f45660e378b2580
 locale/names/region/minimal/medium/v1, ko/KP, 30B, 7B, 710e3e20bdd15af7
 locale/names/region/minimal/medium/v1, ko/KR, 36B, 13B, aad2695a92e4aa09
-locale/names/region/minimal/medium/v1, kok-Latn/IN, 30B, 7B, 4ca719c092bb1502
+locale/names/region/minimal/medium/v1, kok-Latn/US, 50B, 27B, a6d2f520b54c813d
 locale/names/region/minimal/medium/v1, kok/IN, -> hi/IN
 locale/names/region/minimal/medium/v1, ks-Deva/US, 61B, 38B, ecac21925807f622
 locale/names/region/minimal/medium/v1, ks/US, 57B, 34B, 2af4970782ee34aa
@@ -179425,7 +179188,6 @@ locale/names/region/minimal/medium/v1, ms/MY, -> en/MY
 locale/names/region/minimal/medium/v1, ms/SG, 33B, 10B, 3ea34dd5064184f
 locale/names/region/minimal/medium/v1, mt/US, 38B, 15B, 2a5f29c18b4e6143
 locale/names/region/minimal/medium/v1, my/MM, 42B, 19B, 93f32f1be1ad64eb
-locale/names/region/minimal/medium/v1, nb/US, 27B, 4B, 69be5458e603305e
 locale/names/region/minimal/medium/v1, ne/IN, -> hi/IN
 locale/names/region/minimal/medium/v1, ne/NP, 39B, 16B, 1bbe84cdda3f82eb
 locale/names/region/minimal/medium/v1, nl/AW, 29B, 6B, a0fd44545720efff
@@ -179475,8 +179237,7 @@ locale/names/region/minimal/medium/v1, sah/US, 82B, 59B, 5328af65e60c62bd
 locale/names/region/minimal/medium/v1, sat/US, 64B, 41B, b9253a822b01ca18
 locale/names/region/minimal/medium/v1, sc/US, 38B, 15B, 30080586301fc51b
 locale/names/region/minimal/medium/v1, scn/US, 38B, 15B, 7912ac6e004b6acb
-locale/names/region/minimal/medium/v1, sd-Deva/IN, -> hi/IN
-locale/names/region/minimal/medium/v1, sd-Deva/PK, 51B, 28B, 7b6cc875b5815311
+locale/names/region/minimal/medium/v1, sd-Deva/US, 45B, 22B, 93f98756cdb05ab
 locale/names/region/minimal/medium/v1, sd/IN, 32B, 9B, 12eaf691e03b8bbe
 locale/names/region/minimal/medium/v1, sd/PK, 38B, 15B, 7b61a162f13ab19e
 locale/names/region/minimal/medium/v1, shn/MM, 87B, 64B, 567a21d2334c39c4
@@ -179495,7 +179256,7 @@ locale/names/region/minimal/medium/v1, sr-Latn/BA, -> bs/BA
 locale/names/region/minimal/medium/v1, sr-Latn/ME, 33B, 10B, aba6136e95d72026
 locale/names/region/minimal/medium/v1, sr-Latn/RS, 30B, 7B, 6d1a19ad22bb4fde
 locale/names/region/minimal/medium/v1, sr-Latn/XK, 30B, 7B, b09b386e4df9aa05
-locale/names/region/minimal/medium/v1, sr/BA, -> bs-Cyrl/BA
+locale/names/region/minimal/medium/v1, sr/BA, 60B, 37B, e8dec09c0694f391
 locale/names/region/minimal/medium/v1, sr/ME, 41B, 18B, d1a6e0b81a95dfdd
 locale/names/region/minimal/medium/v1, sr/RS, 36B, 13B, 9063087a9355185b
 locale/names/region/minimal/medium/v1, sr/XK, 36B, 13B, c9ea9be633a2db0e
@@ -179527,8 +179288,7 @@ locale/names/region/minimal/medium/v1, ug/US, 72B, 49B, 88fbd85533b58b71
 locale/names/region/minimal/medium/v1, uk/UA, 38B, 15B, dd3ccaeac53c896b
 locale/names/region/minimal/medium/v1, ur/IN, 34B, 11B, ae637f3710cf95dc
 locale/names/region/minimal/medium/v1, ur/PK, -> ps/PK
-locale/names/region/minimal/medium/v1, uz-Cyrl/AF, 44B, 21B, 2fcdde468cad8cd0
-locale/names/region/minimal/medium/v1, uz-Cyrl/UZ, 44B, 21B, 872e6a9c92749528
+locale/names/region/minimal/medium/v1, uz-Cyrl/US, 66B, 43B, 222822af01156381
 locale/names/region/minimal/medium/v1, uz/AF, 36B, 13B, 4abe87d626029bc2
 locale/names/region/minimal/medium/v1, uz/UZ, 36B, 13B, fde0af8617c499d
 locale/names/region/minimal/medium/v1, vec/US, 35B, 12B, ef1444a5fc202057
@@ -179559,13 +179319,14 @@ locale/names/region/minimal/medium/v1, zh/MY, 36B, 13B, 9a5d4af61c416706
 locale/names/region/minimal/medium/v1, zh/SG, -> zh-Hant/SG
 locale/names/region/minimal/medium/v1, zh/TW, 30B, 7B, 711c038c8837c18a
 locale/names/region/minimal/medium/v1, zu/ZA, 41B, 18B, ef679a099025539
-locale/names/region/minimal/short/v1, <lookup>, 480B, 55 identifiers
-locale/names/region/minimal/short/v1, <total>, 1261B, 318B, 41 unique payloads
+locale/names/region/minimal/short/v1, <lookup>, 496B, 56 identifiers
+locale/names/region/minimal/short/v1, <total>, 1291B, 325B, 42 unique payloads
 locale/names/region/minimal/short/v1, ar/PS, 36B, 13B, f0407a7c2f085b5a
 locale/names/region/minimal/short/v1, ast/US, 30B, 7B, 614b51a2d63425ab
 locale/names/region/minimal/short/v1, blo/US, 27B, 4B, 1b47a97f3cfe1327
 locale/names/region/minimal/short/v1, br/US, 26B, 3B, 6e38ac52ac87ecb5
 locale/names/region/minimal/short/v1, brx/US, 38B, 15B, ded5771aeaf2ee52
+locale/names/region/minimal/short/v1, bs-Cyrl/US, 30B, 7B, 5e7ab2f25aeb13da
 locale/names/region/minimal/short/v1, ceb/US, 26B, 3B, 9c5a0a99a3dc0c82
 locale/names/region/minimal/short/v1, chr/US, -> ceb/US
 locale/names/region/minimal/short/v1, cy/GB, 26B, 3B, 21a09948e0cb2570
@@ -179582,7 +179343,6 @@ locale/names/region/minimal/short/v1, fo/US, 27B, 4B, 69be5458e603305e
 locale/names/region/minimal/short/v1, fy/US, 26B, 3B, 5c73b892e54f8aa7
 locale/names/region/minimal/short/v1, ga/GB, 26B, 3B, f2020211b2f88cdf
 locale/names/region/minimal/short/v1, gd/GB, -> ga/GB
-locale/names/region/minimal/short/v1, ht/US, 30B, 7B, b7cfb094f8a42c00
 locale/names/region/minimal/short/v1, ia/US, 27B, 4B, 29c08845c87ad3a
 locale/names/region/minimal/short/v1, kea/US, 28B, 5B, 7fa86400ef43ef70
 locale/names/region/minimal/short/v1, kgp/US, 27B, 4B, ead2e4aae93caf90
@@ -179604,6 +179364,7 @@ locale/names/region/minimal/short/v1, tg/US, 28B, 5B, 72b8db496c946f51
 locale/names/region/minimal/short/v1, to/US, 33B, 10B, 1d09f9f626a2ba1
 locale/names/region/minimal/short/v1, tyv/US, 30B, 7B, 7108e2b6e805f7f0
 locale/names/region/minimal/short/v1, ug/US, 34B, 11B, 600d064af97be3b8
+locale/names/region/minimal/short/v1, uz-Cyrl/US, 30B, 7B, ddacd59d68eb942d
 locale/names/region/minimal/short/v1, vec/US, -> fo/US
 locale/names/region/minimal/short/v1, xh/US, 28B, 5B, 4bbc3177eba02377
 locale/names/region/minimal/short/v1, xnr/US, 42B, 19B, 9daf73793f97047
@@ -179616,8 +179377,8 @@ locale/names/region/minimal/short/v1, zh-Hant/HK, -> yue-Hans/HK
 locale/names/region/minimal/short/v1, zh-Hant/MO, -> yue/MO
 locale/names/region/minimal/short/v1, zh/HK, -> yue-Hans/HK
 locale/names/region/minimal/short/v1, zh/MO, -> yue-Hans/MO
-locale/names/script/core/medium/v1, <lookup>, 9124B, 1227 identifiers
-locale/names/script/core/medium/v1, <total>, 43509B, 19296B, 1053 unique payloads
+locale/names/script/core/medium/v1, <lookup>, 9136B, 1229 identifiers
+locale/names/script/core/medium/v1, <total>, 43537B, 19278B, 1055 unique payloads
 locale/names/script/core/medium/v1, af/Arab, 31B, 8B, 17d6c6ad44a296bc
 locale/names/script/core/medium/v1, af/Cyrl, 33B, 10B, 6323b457d72e7549
 locale/names/script/core/medium/v1, af/Hans, 36B, 13B, 7f52a8e4690e978b
@@ -179740,12 +179501,13 @@ locale/names/script/core/medium/v1, brx/Kore, 45B, 22B, e1f5ddc6a510ba2a
 locale/names/script/core/medium/v1, brx/Latn, 39B, 16B, 167b1bb85f57f09c
 locale/names/script/core/medium/v1, brx/Zxxx, 36B, 13B, 453d444a08e130e7
 locale/names/script/core/medium/v1, bs-Cyrl/Arab, 49B, 26B, 78ae8c3ca45421a1
+locale/names/script/core/medium/v1, bs-Cyrl/Cyrl, 40B, 17B, f2425024bb6593f9
 locale/names/script/core/medium/v1, bs-Cyrl/Hans, 54B, 31B, ec20a3ce25982c62
 locale/names/script/core/medium/v1, bs-Cyrl/Hant, 50B, 27B, 9817e77cabce8ea7
 locale/names/script/core/medium/v1, bs-Cyrl/Jpan, 51B, 28B, 610b9b504d8aa58f
 locale/names/script/core/medium/v1, bs-Cyrl/Kore, 51B, 28B, 8f48a86f9c25355b
+locale/names/script/core/medium/v1, bs-Cyrl/Latn, -> ba/Latn
 locale/names/script/core/medium/v1, bs-Cyrl/Zxxx, 51B, 28B, 71e6d04495ce2d0
-locale/names/script/core/medium/v1, bs-Cyrl/Zzzz, 53B, 30B, 3d4f5599a14c35c2
 locale/names/script/core/medium/v1, bs/Arab, 37B, 14B, 20827e22e49ed6ed
 locale/names/script/core/medium/v1, bs/Hans, 40B, 17B, 7df22f0fea30a2a
 locale/names/script/core/medium/v1, bs/Hant, 37B, 14B, 9be723f8c981aa25
@@ -180025,7 +179787,6 @@ locale/names/script/core/medium/v1, hsb/Jpan, 32B, 9B, 81c6ba052af5c087
 locale/names/script/core/medium/v1, hsb/Kore, 32B, 9B, 3a5da91f9c4d6b84
 locale/names/script/core/medium/v1, hsb/Zxxx, 34B, 11B, d6aa1251574d8b96
 locale/names/script/core/medium/v1, hsb/Zzzz, -> dsb/Zzzz
-locale/names/script/core/medium/v1, ht/Latn, -> br/Latn
 locale/names/script/core/medium/v1, hu/Cyrl, 30B, 7B, 544f4927904bcc92
 locale/names/script/core/medium/v1, hu/Hans, 40B, 17B, 6c10ba34285140f8
 locale/names/script/core/medium/v1, hu/Hant, 36B, 13B, e90191c521844145
@@ -180178,6 +179939,7 @@ locale/names/script/core/medium/v1, ko/Zxxx, 30B, 7B, 299ff62b15d0c557
 locale/names/script/core/medium/v1, ko/Zzzz, 45B, 22B, 2dff285c2955a7d9
 locale/names/script/core/medium/v1, kok-Latn/Arab, 34B, 11B, d08bd3755cc7631
 locale/names/script/core/medium/v1, kok-Latn/Cyrl, 30B, 7B, e67ae9aab5fca7cf
+locale/names/script/core/medium/v1, kok-Latn/Latn, 28B, 5B, 5595a3956ba01981
 locale/names/script/core/medium/v1, kok/Arab, 36B, 13B, 384a4c910ad096a4
 locale/names/script/core/medium/v1, kok/Cyrl, -> doi/Cyrl
 locale/names/script/core/medium/v1, kok/Hans, 39B, 16B, 7564ea43136b4b2
@@ -180295,7 +180057,7 @@ locale/names/script/core/medium/v1, mk/Jpan, 51B, 28B, 2e50f0e5fd9163a2
 locale/names/script/core/medium/v1, mk/Kore, -> bs-Cyrl/Kore
 locale/names/script/core/medium/v1, mk/Latn, 53B, 30B, 321e6e677c80904b
 locale/names/script/core/medium/v1, mk/Zxxx, 41B, 18B, e5b2c28266afa957
-locale/names/script/core/medium/v1, mk/Zzzz, -> bs-Cyrl/Zzzz
+locale/names/script/core/medium/v1, mk/Zzzz, 53B, 30B, 3d4f5599a14c35c2
 locale/names/script/core/medium/v1, ml/Arab, 42B, 19B, 5f0ae8d305341f58
 locale/names/script/core/medium/v1, ml/Cyrl, 48B, 25B, dbabd2419354cf24
 locale/names/script/core/medium/v1, ml/Hans, 72B, 49B, bcb39c843d3f7144
@@ -180353,7 +180115,6 @@ locale/names/script/core/medium/v1, my/Kore, 51B, 28B, 203619038fa0f283
 locale/names/script/core/medium/v1, my/Latn, 42B, 19B, 200d3b3673403cf3
 locale/names/script/core/medium/v1, my/Zxxx, 114B, 91B, 7dec6217a4dce3d9
 locale/names/script/core/medium/v1, my/Zzzz, 108B, 85B, 50e1e518d6d44525
-locale/names/script/core/medium/v1, nb/Latn, 31B, 8B, 4aca2822e52173c
 locale/names/script/core/medium/v1, nds/Latn, 33B, 10B, 9c77852220862296
 locale/names/script/core/medium/v1, ne/Arab, -> doi/Arab
 locale/names/script/core/medium/v1, ne/Cyrl, -> doi/Cyrl
@@ -180519,12 +180280,12 @@ locale/names/script/core/medium/v1, scn/Jpan, 34B, 11B, 648c6fd76262625
 locale/names/script/core/medium/v1, scn/Kore, 31B, 8B, 8108052e27300063
 locale/names/script/core/medium/v1, scn/Latn, -> kea/Latn
 locale/names/script/core/medium/v1, scn/Zxxx, 35B, 12B, ea76e8af26e9c7a9
+locale/names/script/core/medium/v1, sd-Deva/Arab, -> doi/Arab
 locale/names/script/core/medium/v1, sd-Deva/Cyrl, -> doi/Cyrl
 locale/names/script/core/medium/v1, sd-Deva/Hans, 328B, 306B, a36b92e9c89271d
 locale/names/script/core/medium/v1, sd-Deva/Hant, 321B, 299B, 68fe12c33ed3de50
 locale/names/script/core/medium/v1, sd-Deva/Latn, -> doi/Latn
 locale/names/script/core/medium/v1, sd-Deva/Zxxx, 48B, 25B, fe564b00f8466545
-locale/names/script/core/medium/v1, sd-Deva/Zzzz, 58B, 35B, a7f0bc9af62501c2
 locale/names/script/core/medium/v1, sd/Cyrl, 36B, 13B, dff28a0b95d4b719
 locale/names/script/core/medium/v1, sd/Hans, 32B, 9B, 3840bff2b7550427
 locale/names/script/core/medium/v1, sd/Hant, 36B, 13B, 2c404fdbb0e39cb6
@@ -180596,7 +180357,7 @@ locale/names/script/core/medium/v1, sr/Hant, 76B, 53B, 4f9c1a4934b59f0a
 locale/names/script/core/medium/v1, sr/Jpan, -> bs-Cyrl/Jpan
 locale/names/script/core/medium/v1, sr/Kore, -> bs-Cyrl/Kore
 locale/names/script/core/medium/v1, sr/Zxxx, -> bs-Cyrl/Zxxx
-locale/names/script/core/medium/v1, sr/Zzzz, -> bs-Cyrl/Zzzz
+locale/names/script/core/medium/v1, sr/Zzzz, -> mk/Zzzz
 locale/names/script/core/medium/v1, st/Latn, 32B, 9B, 52b6f92f588ddd0e
 locale/names/script/core/medium/v1, su/Cyrl, -> id/Cyrl
 locale/names/script/core/medium/v1, su/Hans, -> id/Hans
@@ -180737,12 +180498,14 @@ locale/names/script/core/medium/v1, ur/Kore, 38B, 15B, c1b481347d5bdfad
 locale/names/script/core/medium/v1, ur/Latn, 36B, 13B, 7bb243d80e5375b7
 locale/names/script/core/medium/v1, ur/Zxxx, 48B, 25B, dba4bc6e8451e83e
 locale/names/script/core/medium/v1, ur/Zzzz, 54B, 31B, a079ff691eab62a8
+locale/names/script/core/medium/v1, uz-Cyrl/Arab, 32B, 9B, f769215c626bfadd
+locale/names/script/core/medium/v1, uz-Cyrl/Cyrl, 34B, 11B, 2661c7191dd0011a
 locale/names/script/core/medium/v1, uz-Cyrl/Hans, 56B, 33B, 4a42b87997af63f1
 locale/names/script/core/medium/v1, uz-Cyrl/Hant, 42B, 19B, 80b0dde0689e6159
 locale/names/script/core/medium/v1, uz-Cyrl/Jpan, -> tyv/Jpan
 locale/names/script/core/medium/v1, uz-Cyrl/Kore, 36B, 13B, ffb462ad5915e0a0
+locale/names/script/core/medium/v1, uz-Cyrl/Latn, 34B, 11B, e9dd26976cf99095
 locale/names/script/core/medium/v1, uz-Cyrl/Zxxx, 42B, 19B, bfb34f8cc33c7dca
-locale/names/script/core/medium/v1, uz-Cyrl/Zzzz, 51B, 28B, fc50a614ef42ec7a
 locale/names/script/core/medium/v1, uz/Hans, 36B, 13B, 91c22c861a22e250
 locale/names/script/core/medium/v1, uz/Hant, 34B, 11B, e5e097736de77a7b
 locale/names/script/core/medium/v1, uz/Jpan, -> az/Jpan
@@ -180845,8 +180608,8 @@ locale/names/script/core/medium/v1, zu/Jpan, 36B, 13B, 2409b63538540ab6
 locale/names/script/core/medium/v1, zu/Kore, 34B, 11B, 8da50cb25eb5b70e
 locale/names/script/core/medium/v1, zu/Zxxx, 37B, 14B, cddc18d4d48c0e2e
 locale/names/script/core/medium/v1, zu/Zzzz, 44B, 21B, 1443c25a0bec95b3
-locale/names/script/extended/medium/v1, <lookup>, 113618B, 15837 identifiers
-locale/names/script/extended/medium/v1, <total>, 490245B, 221607B, 11680 unique payloads
+locale/names/script/extended/medium/v1, <lookup>, 113626B, 15837 identifiers
+locale/names/script/extended/medium/v1, <total>, 490296B, 221635B, 11681 unique payloads
 locale/names/script/extended/medium/v1, af/Adlm, 29B, 6B, e451965d2eb44812
 locale/names/script/extended/medium/v1, af/Aran, 32B, 9B, 6e280347c1003491
 locale/names/script/extended/medium/v1, af/Armn, 31B, 8B, 64478f37cd6be3e8
@@ -186280,10 +186043,8 @@ locale/names/script/extended/medium/v1, he/Zsye, 36B, 13B, 93f26cc1e5b68acc
 locale/names/script/extended/medium/v1, he/Zsym, 34B, 11B, 279ef49d82955996
 locale/names/script/extended/medium/v1, he/Zyyy, 32B, 9B, 998770451d865412
 locale/names/script/extended/medium/v1, hi-Latn/Bali, 29B, 6B, 1e0e43c2d389c551
-locale/names/script/extended/medium/v1, hi-Latn/Dsrt, -> bal-Latn/Dsrt
 locale/names/script/extended/medium/v1, hi-Latn/Inds, 30B, 7B, 2d9debe280b1e224
 locale/names/script/extended/medium/v1, hi-Latn/Mymr, 31B, 8B, b8a4c807a2d2d49b
-locale/names/script/extended/medium/v1, hi-Latn/Shaw, -> fy/Shaw
 locale/names/script/extended/medium/v1, hi-Latn/Talu, 36B, 13B, 48c7b7fbc13aaf6a
 locale/names/script/extended/medium/v1, hi/Adlm, 36B, 13B, d351a3eb1bf15a3d
 locale/names/script/extended/medium/v1, hi/Aran, 51B, 28B, 525253ca25ce77e1
@@ -188647,6 +188408,7 @@ locale/names/script/extended/medium/v1, ko/Zsye, 36B, 13B, 65ce9b6b4d33ee18
 locale/names/script/extended/medium/v1, ko/Zsym, 30B, 7B, ae156d0ba0070413
 locale/names/script/extended/medium/v1, ko/Zyyy, 37B, 14B, 3d0f11f1339283ab
 locale/names/script/extended/medium/v1, kok-Latn/Beng, -> cy/Beng
+locale/names/script/extended/medium/v1, kok-Latn/Deva, -> af/Deva
 locale/names/script/extended/medium/v1, kok-Latn/Grek, 28B, 5B, 6d92b69cc6dc4c9a
 locale/names/script/extended/medium/v1, kok-Latn/Hebr, 30B, 7B, 5f815a76f70c3330
 locale/names/script/extended/medium/v1, kok/Adlm, 39B, 16B, 9cecb566a49adbcc
@@ -192449,6 +192211,7 @@ locale/names/script/extended/medium/v1, scn/Zmth, 46B, 23B, fa175994a13be010
 locale/names/script/extended/medium/v1, scn/Zsye, -> ast/Zsye
 locale/names/script/extended/medium/v1, scn/Zsym, 32B, 9B, 529518f75e4f373a
 locale/names/script/extended/medium/v1, scn/Zyyy, 30B, 7B, 7e51d8faa4d37921
+locale/names/script/extended/medium/v1, sd-Deva/Deva, 51B, 28B, c73893e05b17c6bb
 locale/names/script/extended/medium/v1, sd/Adlm, 36B, 13B, 2829fe11686c0da9
 locale/names/script/extended/medium/v1, sd/Aran, -> ks/Aran
 locale/names/script/extended/medium/v1, sd/Armn, 36B, 13B, 42a972111ac56d68
@@ -196688,8 +196451,8 @@ locale/names/script/extended/short/v1, <lookup>, 47B, 2 identifiers
 locale/names/script/extended/short/v1, <total>, 65B, 19B, 2 unique payloads
 locale/names/script/extended/short/v1, en/Cans, 28B, 5B, 4572064f8f126313
 locale/names/script/extended/short/v1, en/Xsux, 37B, 14B, 5df113701d8cfc4c
-locale/names/script/minimal/medium/v1, <lookup>, 1887B, 194 identifiers
-locale/names/script/minimal/medium/v1, <total>, 6417B, 2737B, 160 unique payloads
+locale/names/script/minimal/medium/v1, <lookup>, 1816B, 186 identifiers
+locale/names/script/minimal/medium/v1, <total>, 6317B, 2729B, 156 unique payloads
 locale/names/script/minimal/medium/v1, af/Latn, 29B, 6B, d7b69d1c61776c88
 locale/names/script/minimal/medium/v1, ak/Latn, 30B, 7B, 3a6d7ad92c81b0de
 locale/names/script/minimal/medium/v1, am/Ethi, 39B, 16B, f9d307a8fc27a2a5
@@ -196707,8 +196470,7 @@ locale/names/script/minimal/medium/v1, blo/Zzzz, 57B, 34B, 8f363b3b8888329e
 locale/names/script/minimal/medium/v1, bn/Beng, -> as/Beng
 locale/names/script/minimal/medium/v1, br/Zzzz, 38B, 15B, dea12f258707b0e1
 locale/names/script/minimal/medium/v1, brx/Zzzz, 58B, 35B, f5251c99c5f07358
-locale/names/script/minimal/medium/v1, bs-Cyrl/Cyrl, 40B, 17B, f2425024bb6593f9
-locale/names/script/minimal/medium/v1, bs-Cyrl/Latn, 40B, 17B, 48bf17da34dd153b
+locale/names/script/minimal/medium/v1, bs-Cyrl/Zzzz, 53B, 30B, 3d4f5599a14c35c2
 locale/names/script/minimal/medium/v1, bs/Cyrl, 33B, 10B, 5c05309d075809fb
 locale/names/script/minimal/medium/v1, bs/Latn, 32B, 9B, d5e20fe2eff42d69
 locale/names/script/minimal/medium/v1, ca/Latn, 30B, 7B, 157c7d702c3f9ac7
@@ -196751,7 +196513,6 @@ locale/names/script/minimal/medium/v1, hi/Deva, 48B, 25B, 6ee0b2885a54303e
 locale/names/script/minimal/medium/v1, hi/Latn, 39B, 16B, ab730922d8bdcd90
 locale/names/script/minimal/medium/v1, hr/Latn, -> bs/Latn
 locale/names/script/minimal/medium/v1, hsb/Latn, 34B, 11B, 53625f24d51df43a
-locale/names/script/minimal/medium/v1, ht/Zzzz, 42B, 19B, c696e2b473278c17
 locale/names/script/minimal/medium/v1, hu/Latn, -> en/Latn
 locale/names/script/minimal/medium/v1, hy/Armn, 40B, 17B, 6feeeca236321e29
 locale/names/script/minimal/medium/v1, ia/Zzzz, 43B, 20B, 834215e5e975bc67
@@ -196773,8 +196534,6 @@ locale/names/script/minimal/medium/v1, kk/Cyrl, 47B, 24B, 21fa89aa88ebc072
 locale/names/script/minimal/medium/v1, km/Khmr, 39B, 16B, ebce92b55dc5920f
 locale/names/script/minimal/medium/v1, kn/Knda, 39B, 16B, e5bde55bf04e40ba
 locale/names/script/minimal/medium/v1, ko/Kore, 37B, 14B, 92381293764dea79
-locale/names/script/minimal/medium/v1, kok-Latn/Deva, -> hi-Latn/Deva
-locale/names/script/minimal/medium/v1, kok-Latn/Latn, 28B, 5B, 5595a3956ba01981
 locale/names/script/minimal/medium/v1, kok/Deva, -> hi/Deva
 locale/names/script/minimal/medium/v1, kok/Latn, 36B, 13B, 40db2501d2f65b15
 locale/names/script/minimal/medium/v1, ks-Deva/Zzzz, 77B, 54B, 8e1b0fefc18024f2
@@ -196801,7 +196560,6 @@ locale/names/script/minimal/medium/v1, mr/Deva, -> hi/Deva
 locale/names/script/minimal/medium/v1, ms/Latn, -> en/Latn
 locale/names/script/minimal/medium/v1, mt/Zzzz, 44B, 21B, c1d3693835579fe9
 locale/names/script/minimal/medium/v1, my/Mymr, 42B, 19B, 93f32f1be1ad64eb
-locale/names/script/minimal/medium/v1, nb/Zzzz, 37B, 14B, e6eb4189d2a20d69
 locale/names/script/minimal/medium/v1, ne/Deva, 51B, 28B, 3eb41281a7caf162
 locale/names/script/minimal/medium/v1, nl/Latn, 31B, 8B, 35213cafa88343b7
 locale/names/script/minimal/medium/v1, no/Latn, -> da/Latn
@@ -196823,8 +196581,7 @@ locale/names/script/minimal/medium/v1, sah/Zzzz, 51B, 28B, 885f1a23939249e4
 locale/names/script/minimal/medium/v1, sat/Zzzz, 59B, 36B, 614eec767a93edf5
 locale/names/script/minimal/medium/v1, sc/Zzzz, 44B, 21B, 887d5527f6636a0a
 locale/names/script/minimal/medium/v1, scn/Zzzz, 45B, 22B, caa8d00f020e88c
-locale/names/script/minimal/medium/v1, sd-Deva/Arab, 36B, 13B, 3b44dfe9751b0b59
-locale/names/script/minimal/medium/v1, sd-Deva/Deva, 51B, 28B, c73893e05b17c6bb
+locale/names/script/minimal/medium/v1, sd-Deva/Zzzz, 58B, 35B, a7f0bc9af62501c2
 locale/names/script/minimal/medium/v1, sd/Arab, -> ps/Arab
 locale/names/script/minimal/medium/v1, sd/Deva, 40B, 17B, bbc0fb79a42ebce8
 locale/names/script/minimal/medium/v1, shn/Mymr, 51B, 28B, d97bf691bc4126fc
@@ -196835,8 +196592,8 @@ locale/names/script/minimal/medium/v1, so/Latn, 31B, 8B, 64f3f91ecde7dbd9
 locale/names/script/minimal/medium/v1, sq/Latn, -> fr/Latn
 locale/names/script/minimal/medium/v1, sr-Latn/Cyrl, -> bs/Cyrl
 locale/names/script/minimal/medium/v1, sr-Latn/Latn, -> bs/Latn
-locale/names/script/minimal/medium/v1, sr/Cyrl, -> bs-Cyrl/Cyrl
-locale/names/script/minimal/medium/v1, sr/Latn, -> bs-Cyrl/Latn
+locale/names/script/minimal/medium/v1, sr/Cyrl, 40B, 17B, f2425024bb6593f9
+locale/names/script/minimal/medium/v1, sr/Latn, 40B, 17B, 48bf17da34dd153b
 locale/names/script/minimal/medium/v1, su/Zzzz, 43B, 20B, d625d647548469ea
 locale/names/script/minimal/medium/v1, sv/Latn, 32B, 9B, 593e29d4e4899156
 locale/names/script/minimal/medium/v1, sw/Latn, 32B, 9B, 434e6b73987961f7
@@ -196856,9 +196613,7 @@ locale/names/script/minimal/medium/v1, tyv/Zzzz, 53B, 30B, d243f98f4e71f5ba
 locale/names/script/minimal/medium/v1, ug/Zzzz, 45B, 22B, d80c130ab0c03f43
 locale/names/script/minimal/medium/v1, uk/Cyrl, 40B, 17B, 813c14f5224e8b57
 locale/names/script/minimal/medium/v1, ur/Arab, -> fa/Arab
-locale/names/script/minimal/medium/v1, uz-Cyrl/Arab, -> ky/Arab
-locale/names/script/minimal/medium/v1, uz-Cyrl/Cyrl, 34B, 11B, 2661c7191dd0011a
-locale/names/script/minimal/medium/v1, uz-Cyrl/Latn, 34B, 11B, e9dd26976cf99095
+locale/names/script/minimal/medium/v1, uz-Cyrl/Zzzz, 51B, 28B, fc50a614ef42ec7a
 locale/names/script/minimal/medium/v1, uz/Arab, 28B, 5B, 349d94269e1ca656
 locale/names/script/minimal/medium/v1, uz/Cyrl, 30B, 7B, 6014c33962f9fa3e
 locale/names/script/minimal/medium/v1, uz/Latn, 29B, 6B, 9ec52e9738b81c3a
