@@ -410,7 +410,7 @@ impl CldrCache {
     ) -> Result<CoverageLevelForXPath, DataError> {
         let mut it = fallbacker
             .for_config(Default::default())
-            .fallback_for(locale.clone());
+            .fallback_for(*locale);
         loop {
             let loc = it.get();
             if loc.is_unknown() {
