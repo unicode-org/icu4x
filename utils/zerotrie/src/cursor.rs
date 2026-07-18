@@ -92,7 +92,7 @@ where
     /// let trie = ZeroTrieSimpleAscii::from_bytes(b"abc\x80def\x81");
     ///
     /// // Get out the value for "abc"
-    /// assert_eq!(trie.get_with_write_fn("a".concat_streaming("bc").to_write_fn()), Some(0));
+    /// assert_eq!(trie.get_with_write_fn("a".concat_streaming("bc").into_write_fn()), Some(0));
     /// ```
     #[inline]
     pub fn get_with_write_fn<'a>(
@@ -158,7 +158,7 @@ where
     /// let trie = ZeroAsciiIgnoreCaseTrie::from_bytes(b"aBc\x80dEf\x81");
     ///
     /// // Get out the value for "abc"
-    /// assert_eq!(trie.get_with_write_fn("a".concat_streaming("bc").to_write_fn()), Some(0));
+    /// assert_eq!(trie.get_with_write_fn("a".concat_streaming("bc").into_write_fn()), Some(0));
     /// ```
     #[inline]
     pub fn get_with_write_fn<'a>(

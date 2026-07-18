@@ -73,10 +73,10 @@ pub trait WriteableExt {
     /// }
     ///
     /// // Example usage:
-    /// let s = third_party_fn("Hello, ".concat_streaming("World").to_write_fn()).unwrap();
+    /// let s = third_party_fn("Hello, ".concat_streaming("World").into_write_fn()).unwrap();
     /// assert_eq!(s, "Hello, World");
     /// ```
-    fn to_write_fn<W1: fmt::Write>(self) -> impl FnMut(&mut W1) -> fmt::Result;
+    fn into_write_fn<W1: fmt::Write>(self) -> impl FnMut(&mut W1) -> fmt::Result;
 }
 
 impl<W> WriteableExt for W
@@ -98,7 +98,7 @@ where
     }
 
     #[inline]
-    fn to_write_fn<W1: fmt::Write>(self) -> impl FnMut(&mut W1) -> fmt::Result {
+    fn into_write_fn<W1: fmt::Write>(self) -> impl FnMut(&mut W1) -> fmt::Result {
         move |sink| self.write_to(sink)
     }
 }
