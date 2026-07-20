@@ -515,17 +515,27 @@ fn discover_workspace_crates() -> (Vec<String>, HashSet<String>) {
     let mut util_crates = HashSet::new();
 
     for pkg in metadata.packages {
-        let path = pkg.manifest_path.as_str();
-        if (path.contains("/components/")
-            || path.contains("\\components\\")
-            || path.contains("/provider/core/")
-            || path.contains("\\provider\\core\\"))
+        let is_component = pkg
+            .manifest_path
+            .components()
+            .any(|c| c.as_str() == "components")
+            || (pkg
+                .manifest_path
+                .components()
+                .any(|c| c.as_str() == "provider")
+                && pkg.manifest_path.components().any(|c| c.as_str() == "core"));
+        let has_utils = pkg
+            .manifest_path
+            .components()
+            .any(|c| c.as_str() == "utils");
+
+        if is_component
             && !pkg.name.ends_with("-dev")
             && !pkg.name.contains("codepointtrie")
             && !pkg.name.contains("experimental")
         {
             component_crates.push(pkg.name);
-        } else if path.contains("/utils/") || path.contains("\\utils\\") {
+        } else if has_utils {
             util_crates.insert(pkg.name);
         }
     }
