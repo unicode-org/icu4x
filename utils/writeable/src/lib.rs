@@ -97,7 +97,7 @@ use alloc::borrow::Cow;
 use alloc::string::String;
 use core::fmt;
 
-pub use cmp::{cmp_str, cmp_utf8};
+pub use cmp::{cmp_bytes, cmp_str, cmp_utf8};
 pub use concat::concat_writeable;
 #[cfg(feature = "alloc")]
 pub use to_string_or_borrow::to_string_or_borrow;

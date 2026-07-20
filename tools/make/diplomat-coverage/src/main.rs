@@ -551,24 +551,26 @@ fn discover_workspace_crates() -> (Vec<String>, HashSet<String>) {
 
 fn is_util_module_match(source: &str, util_name: &str) -> bool {
     let source_bytes = source.as_bytes();
-    let util_bytes = util_name.as_bytes();
+    let util_len = util_name.len();
 
-    if source_bytes.len() < util_bytes.len() {
+    if source_bytes.len() < util_len {
         return false;
     }
 
-    for (sb, ub) in source_bytes.iter().zip(util_bytes.iter()) {
-        let expected = if *ub == b'-' { b'_' } else { *ub };
-        if *sb != expected {
-            return false;
-        }
+    let replaced = writeable::adapters::Replace {
+        source: util_name,
+        needle: "-",
+        replacement: "_",
+    };
+    if writeable::cmp_bytes(&replaced, &source_bytes[..util_len]) != std::cmp::Ordering::Equal {
+        return false;
     }
 
-    if source_bytes.len() == util_bytes.len() {
+    if source_bytes.len() == util_len {
         return true;
     }
 
-    source_bytes[util_bytes.len()..].starts_with(b"::")
+    source_bytes[util_len..].starts_with(b"::")
 }
 
 struct UtilApiChecker<'a, 'b> {

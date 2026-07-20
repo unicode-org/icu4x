@@ -57,6 +57,11 @@ pub fn cmp_utf8(writeable: &impl Writeable, other: &[u8]) -> Ordering {
     wc.finish().reverse()
 }
 
+/// Compares the contents of a [`Writeable`] to the given UTF-8 bytes without allocating memory.
+pub fn cmp_bytes(writeable: &impl Writeable, other: &[u8]) -> Ordering {
+    cmp_utf8(writeable, other)
+}
+
 /// Compares the contents of a `Writeable` to the given bytes
 /// without allocating a String to hold the `Writeable` contents.
 ///
