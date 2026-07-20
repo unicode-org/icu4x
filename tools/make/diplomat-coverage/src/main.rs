@@ -799,19 +799,18 @@ impl<'a, 'b> UtilApiChecker<'a, 'b> {
 fn get_type_crates<'a>(ty: &'a Type, krate: &'a Crate, crates: &mut HashSet<&'a str>) {
     match ty {
         Type::ResolvedPath(path) => {
-            if let Some(item) = krate.paths.get(&path.id) {
-                if item.crate_id != 0 {
-                    if let Some(ext) = krate.external_crates.get(&item.crate_id) {
-                        crates.insert(ext.name.as_str());
-                    }
-                }
+            if let Some(item) = krate.paths.get(&path.id)
+                && item.crate_id != 0
+                && let Some(ext) = krate.external_crates.get(&item.crate_id)
+            {
+                crates.insert(ext.name.as_str());
             }
-            if let Some(ref args) = path.args {
-                if let GenericArgs::AngleBracketed { ref args, .. } = **args {
-                    for arg in args {
-                        if let GenericArg::Type(inner_ty) = arg {
-                            get_type_crates(inner_ty, krate, crates);
-                        }
+            if let Some(ref args) = path.args
+                && let GenericArgs::AngleBracketed { ref args, .. } = **args
+            {
+                for arg in args {
+                    if let GenericArg::Type(inner_ty) = arg {
+                        get_type_crates(inner_ty, krate, crates);
                     }
                 }
             }
@@ -831,14 +830,12 @@ fn get_type_crates<'a>(ty: &'a Type, krate: &'a Crate, crates: &mut HashSet<&'a 
             self_type, trait_, ..
         } => {
             get_type_crates(self_type, krate, crates);
-            if let Some(t) = trait_ {
-                if let Some(item) = krate.paths.get(&t.id) {
-                    if item.crate_id != 0 {
-                        if let Some(ext) = krate.external_crates.get(&item.crate_id) {
-                            crates.insert(ext.name.as_str());
-                        }
-                    }
-                }
+            if let Some(t) = trait_
+                && let Some(item) = krate.paths.get(&t.id)
+                && item.crate_id != 0
+                && let Some(ext) = krate.external_crates.get(&item.crate_id)
+            {
+                crates.insert(ext.name.as_str());
             }
         }
         _ => {}
