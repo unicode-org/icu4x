@@ -3,7 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use diplomat_core::*;
-use rustdoc_types::{Crate, Item, ItemEnum, Type};
+use rustdoc_types::{
+    Crate, GenericArg, GenericArgs, Id, Item, ItemEnum, StructKind, Type, VariantKind, Visibility,
+};
 use std::collections::{BTreeSet, HashSet};
 use std::fmt;
 use std::fs::{self, File};
@@ -446,7 +448,9 @@ fn run_util_api_enforcement() {
         ("icu_locale_core", "potential_utf"),
         ("icu_collections", "potential_utf"),
         ("icu_casemap", "potential_utf"),
+        ("icu_datetime", "potential_utf"),
         ("icu_locale", "potential_utf"),
+        ("icu_provider", "databake"),
     ]
     .into_iter()
     .collect();
@@ -460,27 +464,36 @@ fn run_util_api_enforcement() {
         .filter(|u| !bucket1_utils.contains(u) && !bucket2_utils.contains(u))
         .collect();
 
-    // Assert that every discovered util crate belongs to one of the 3 buckets
-    for u in &util_crates {
+    // Validate that bucket configuration stays in sync with workspace crates
+    for u in &bucket1_utils {
         assert!(
-            bucket1_utils.contains(u.as_str())
-                || bucket2_utils.contains(u.as_str())
-                || bucket3_utils.contains(u.as_str()),
-            "Util crate '{u}' is not categorized in any bucket!"
+            util_crates.contains(*u),
+            "Bucket 1 util crate '{u}' does not exist in workspace!"
+        );
+    }
+    for (c, u) in &bucket2_allowlist {
+        assert!(
+            component_crates.iter().any(|x| x == c),
+            "Bucket 2 component crate '{c}' does not exist in workspace!"
+        );
+        assert!(
+            util_crates.contains(*u),
+            "Bucket 2 util crate '{u}' does not exist in workspace!"
         );
     }
 
-    let mut all_violations = Vec::new();
+    let mut all_violations = BTreeSet::new();
     for krate_name in &component_crates {
         let krate = parse_doc(krate_name);
-        let violations = check_crate_util_api_enforcement(
+        let mut checker = UtilApiChecker::new(
             krate_name,
             krate,
             &bucket2_allowlist,
             &bucket2_utils,
             &bucket3_utils,
         );
-        all_violations.extend(violations);
+        checker.walk_item(&krate.root, false);
+        all_violations.extend(checker.violations);
     }
 
     if !all_violations.is_empty() {
@@ -502,14 +515,17 @@ fn discover_workspace_crates() -> (Vec<String>, HashSet<String>) {
     let mut util_crates = HashSet::new();
 
     for pkg in metadata.packages {
-        let path = pkg.manifest_path.as_str().replace('\\', "/");
-        if (path.contains("/components/") || path.contains("/provider/core/"))
+        let path = pkg.manifest_path.as_str();
+        if (path.contains("/components/")
+            || path.contains("\\components\\")
+            || path.contains("/provider/core/")
+            || path.contains("\\provider\\core\\"))
             && !pkg.name.ends_with("-dev")
             && !pkg.name.contains("codepointtrie")
             && !pkg.name.contains("experimental")
         {
             component_crates.push(pkg.name);
-        } else if path.contains("/utils/") {
+        } else if path.contains("/utils/") || path.contains("\\utils\\") {
             util_crates.insert(pkg.name);
         }
     }
@@ -540,176 +556,230 @@ fn is_util_module_match(source: &str, util_name: &str) -> bool {
     source_bytes[util_bytes.len()..].starts_with(b"::")
 }
 
-fn check_crate_util_api_enforcement(
-    krate_name: &str,
-    krate: &Crate,
-    bucket2_allowlist: &HashSet<(&str, &str)>,
-    bucket2_utils: &HashSet<&str>,
-    bucket3_utils: &HashSet<&str>,
-) -> Vec<String> {
-    let mut violations = Vec::new();
-    let mut visited = HashSet::new();
+struct UtilApiChecker<'a, 'b> {
+    krate_name: &'a str,
+    krate: &'a Crate,
+    bucket2_allowlist: &'b HashSet<(&'b str, &'b str)>,
+    bucket2_utils: &'b HashSet<&'b str>,
+    bucket3_utils: &'b HashSet<&'b str>,
+    visited: HashSet<&'a Id>,
+    referenced_buf: HashSet<&'a str>,
+    violations: BTreeSet<String>,
+}
 
-    fn walk_item(
-        id: &rustdoc_types::Id,
-        krate_name: &str,
-        krate: &Crate,
-        visited: &mut HashSet<rustdoc_types::Id>,
-        violations: &mut Vec<String>,
-        bucket2_allowlist: &HashSet<(&str, &str)>,
-        bucket2_utils: &HashSet<&str>,
-        bucket3_utils: &HashSet<&str>,
-        is_provider: bool,
-    ) {
-        if !visited.insert(id.clone()) {
+impl<'a, 'b> UtilApiChecker<'a, 'b> {
+    fn new(
+        krate_name: &'a str,
+        krate: &'a Crate,
+        bucket2_allowlist: &'b HashSet<(&'b str, &'b str)>,
+        bucket2_utils: &'b HashSet<&'b str>,
+        bucket3_utils: &'b HashSet<&'b str>,
+    ) -> Self {
+        Self {
+            krate_name,
+            krate,
+            bucket2_allowlist,
+            bucket2_utils,
+            bucket3_utils,
+            visited: HashSet::new(),
+            referenced_buf: HashSet::new(),
+            violations: BTreeSet::new(),
+        }
+    }
+
+    fn check_referenced_utils(&mut self, is_provider_item: bool, make_ctx: impl Fn() -> String) {
+        let mut ctx: Option<String> = None;
+        for &util in &self.referenced_buf {
+            if self.bucket3_utils.contains(util) && !is_provider_item {
+                let ctx_str = ctx.get_or_insert_with(&make_ctx);
+                self.violations.insert(format!(
+                    "Bucket 3 violation in {}::{ctx_str}: uses internal util '{util}'",
+                    self.krate_name
+                ));
+            } else if self.bucket2_utils.contains(util)
+                && !self.bucket2_allowlist.contains(&(self.krate_name, util))
+            {
+                let ctx_str = ctx.get_or_insert_with(&make_ctx);
+                self.violations.insert(format!(
+                    "Bucket 2 violation in {}::{ctx_str}: uses low-risk util '{util}' outside allowlist",
+                    self.krate_name
+                ));
+            }
+        }
+    }
+
+    fn walk_item(&mut self, id: &'a Id, is_provider: bool) {
+        if !self.visited.insert(id) {
             return;
         }
 
-        if let Some(item) = krate.index.get(id) {
-            if item.visibility != rustdoc_types::Visibility::Public {
-                return;
+        let Some(item) = self.krate.index.get(id) else {
+            return;
+        };
+
+        if item.visibility != Visibility::Public {
+            return;
+        }
+
+        let is_provider_item = is_provider
+            || item.name.as_deref() == Some("provider")
+            || item.name.as_deref() == Some("baked");
+
+        match &item.inner {
+            ItemEnum::Module(module) => {
+                for child_id in &module.items {
+                    self.walk_item(child_id, is_provider_item);
+                }
             }
-
-            let is_provider_item = is_provider
-                || item.name.as_deref() == Some("provider")
-                || item.name.as_deref() == Some("baked");
-
-            match &item.inner {
-                ItemEnum::Module(module) => {
-                    for child_id in &module.items {
-                        walk_item(
-                            child_id,
-                            krate_name,
-                            krate,
-                            visited,
-                            violations,
-                            bucket2_allowlist,
-                            bucket2_utils,
-                            bucket3_utils,
-                            is_provider_item,
-                        );
-                    }
-                }
-                ItemEnum::Use(import) => {
-                    if !is_provider_item {
-                        for util in bucket3_utils {
-                            if is_util_module_match(&import.source, util) {
-                                violations.push(format!(
-                                    "Bucket 3 violation in {krate_name}: pub use {}",
-                                    import.source
-                                ));
-                            }
-                        }
-                    }
-                    for util in bucket2_utils {
+            ItemEnum::Use(import) => {
+                if !is_provider_item {
+                    for util in self.bucket3_utils {
                         if is_util_module_match(&import.source, util) {
-                            if !bucket2_allowlist.contains(&(krate_name, util)) {
-                                violations.push(format!(
-                                    "Bucket 2 violation in {krate_name}: pub use {} (not allowlisted)",
-                                    import.source
-                                ));
+                            self.violations.insert(format!(
+                                "Bucket 3 violation in {}: pub use {}",
+                                self.krate_name, import.source
+                            ));
+                        }
+                    }
+                }
+                for util in self.bucket2_utils {
+                    if is_util_module_match(&import.source, util)
+                        && !self.bucket2_allowlist.contains(&(self.krate_name, util))
+                    {
+                        self.violations.insert(format!(
+                            "Bucket 2 violation in {}: pub use {} (not allowlisted)",
+                            self.krate_name, import.source
+                        ));
+                    }
+                }
+                if let Some(target_id) = &import.id {
+                    self.walk_item(target_id, is_provider_item);
+                }
+            }
+            ItemEnum::Function(func) => {
+                self.referenced_buf.clear();
+                for (_name, ty) in &func.sig.inputs {
+                    get_type_crates(ty, self.krate, &mut self.referenced_buf);
+                }
+                if let Some(output) = &func.sig.output {
+                    get_type_crates(output, self.krate, &mut self.referenced_buf);
+                }
+                self.check_referenced_utils(is_provider_item, || {
+                    let item_name = item.name.as_deref().unwrap_or("<unnamed>");
+                    format!("fn {item_name}")
+                });
+            }
+            ItemEnum::Struct(struct_) => {
+                let struct_name = item.name.as_deref().unwrap_or("<unnamed>");
+
+                let fields_slice: &[Id] = match &struct_.kind {
+                    StructKind::Plain { fields, .. } => fields,
+                    StructKind::Tuple(fields) => {
+                        for field_id in fields.iter().flatten() {
+                            self.check_field(field_id, struct_name, is_provider_item);
+                        }
+                        &[]
+                    }
+                    _ => &[],
+                };
+
+                for field_id in fields_slice {
+                    self.check_field(field_id, struct_name, is_provider_item);
+                }
+
+                for impl_id in &struct_.impls {
+                    self.walk_impl(impl_id, is_provider_item);
+                }
+            }
+            ItemEnum::Enum(enum_) => {
+                let enum_name = item.name.as_deref().unwrap_or("<unnamed>");
+
+                for variant_id in &enum_.variants {
+                    if let Some(variant_item) = self.krate.index.get(variant_id)
+                        && let ItemEnum::Variant(ref variant) = variant_item.inner
+                    {
+                        let variant_name = variant_item.name.as_deref().unwrap_or("<unnamed>");
+                        match &variant.kind {
+                            VariantKind::Plain => {}
+                            VariantKind::Tuple(fields) => {
+                                for field_id in fields.iter().flatten() {
+                                    self.check_field(
+                                        field_id,
+                                        &format!("{enum_name}::{variant_name}"),
+                                        is_provider_item,
+                                    );
+                                }
                             }
-                        }
-                    }
-                    if let Some(ref target_id) = import.id {
-                        walk_item(
-                            target_id,
-                            krate_name,
-                            krate,
-                            visited,
-                            violations,
-                            bucket2_allowlist,
-                            bucket2_utils,
-                            bucket3_utils,
-                            is_provider_item,
-                        );
-                    }
-                }
-                ItemEnum::Function(func) => {
-                    let mut referenced = HashSet::new();
-                    for (_name, ty) in &func.sig.inputs {
-                        get_type_crates(ty, krate, &mut referenced);
-                    }
-                    if let Some(ref output) = func.sig.output {
-                        get_type_crates(output, krate, &mut referenced);
-                    }
-                    for util in referenced {
-                        if bucket3_utils.contains(util) && !is_provider_item {
-                            violations.push(format!(
-                                "Bucket 3 violation in {krate_name}::fn {}: uses internal util '{util}'",
-                                item.name.as_deref().unwrap_or("<unnamed>")
-                            ));
-                        } else if bucket2_utils.contains(util)
-                            && !bucket2_allowlist.contains(&(krate_name, util))
-                        {
-                            violations.push(format!(
-                                "Bucket 2 violation in {krate_name}::fn {}: uses low-risk util '{util}' outside allowlist",
-                                item.name.as_deref().unwrap_or("<unnamed>")
-                            ));
-                        }
-                    }
-                }
-                ItemEnum::Struct(struct_) => {
-                    let field_ids: Vec<Option<&rustdoc_types::Id>> = match &struct_.kind {
-                        rustdoc_types::StructKind::Plain { fields, .. } => {
-                            fields.iter().map(Some).collect()
-                        }
-                        rustdoc_types::StructKind::Tuple(fields) => {
-                            fields.iter().map(|f| f.as_ref()).collect()
-                        }
-                        _ => Vec::new(),
-                    };
-                    for fid in field_ids {
-                        if let Some(field_id) = fid {
-                            if let Some(field_item) = krate.index.get(field_id) {
-                                if field_item.visibility == rustdoc_types::Visibility::Public {
-                                    if let ItemEnum::StructField(ref fty) = field_item.inner {
-                                        let mut referenced = HashSet::new();
-                                        get_type_crates(fty, krate, &mut referenced);
-                                        for util in referenced {
-                                            if bucket3_utils.contains(util) && !is_provider_item {
-                                                violations.push(format!(
-                                                    "Bucket 3 violation in {krate_name}::{}.{}: uses internal util '{util}'",
-                                                    item.name.as_deref().unwrap_or("<unnamed>"),
-                                                    field_item.name.as_deref().unwrap_or("<unnamed>")
-                                                ));
-                                            } else if bucket2_utils.contains(util)
-                                                && !bucket2_allowlist.contains(&(krate_name, util))
-                                            {
-                                                violations.push(format!(
-                                                    "Bucket 2 violation in {krate_name}::{}.{}: uses low-risk util '{util}' outside allowlist",
-                                                    item.name.as_deref().unwrap_or("<unnamed>"),
-                                                    field_item.name.as_deref().unwrap_or("<unnamed>")
-                                                ));
-                                            }
-                                        }
-                                    }
+                            VariantKind::Struct { fields, .. } => {
+                                for field_id in fields {
+                                    self.check_field(
+                                        field_id,
+                                        &format!("{enum_name}::{variant_name}"),
+                                        is_provider_item,
+                                    );
                                 }
                             }
                         }
                     }
                 }
-                _ => {}
+
+                for impl_id in &enum_.impls {
+                    self.walk_impl(impl_id, is_provider_item);
+                }
             }
+            ItemEnum::TypeAlias(type_alias) => {
+                self.referenced_buf.clear();
+                get_type_crates(&type_alias.type_, self.krate, &mut self.referenced_buf);
+                self.check_referenced_utils(is_provider_item, || {
+                    let alias_name = item.name.as_deref().unwrap_or("<unnamed>");
+                    format!("type {alias_name}")
+                });
+            }
+            _ => {}
         }
     }
 
-    walk_item(
-        &krate.root,
-        krate_name,
-        krate,
-        &mut visited,
-        &mut violations,
-        bucket2_allowlist,
-        bucket2_utils,
-        bucket3_utils,
-        false,
-    );
+    fn check_field(&mut self, field_id: &'a Id, parent_ctx: &str, is_provider_item: bool) {
+        if let Some(field_item) = self.krate.index.get(field_id)
+            && field_item.visibility == Visibility::Public
+            && let ItemEnum::StructField(ref fty) = field_item.inner
+        {
+            self.referenced_buf.clear();
+            get_type_crates(fty, self.krate, &mut self.referenced_buf);
+            self.check_referenced_utils(is_provider_item, || {
+                let field_name = field_item.name.as_deref().unwrap_or("<unnamed>");
+                format!("{parent_ctx}.{field_name}")
+            });
+        }
+    }
 
-    violations
+    fn walk_impl(&mut self, impl_id: &'a Id, is_provider_item: bool) {
+        if let Some(impl_item) = self.krate.index.get(impl_id)
+            && let ItemEnum::Impl(ref impl_) = impl_item.inner
+        {
+            for method_id in &impl_.items {
+                if let Some(method_item) = self.krate.index.get(method_id)
+                    && method_item.visibility == Visibility::Public
+                    && let ItemEnum::Function(ref func) = method_item.inner
+                {
+                    self.referenced_buf.clear();
+                    for (_name, ty) in &func.sig.inputs {
+                        get_type_crates(ty, self.krate, &mut self.referenced_buf);
+                    }
+                    if let Some(output) = &func.sig.output {
+                        get_type_crates(output, self.krate, &mut self.referenced_buf);
+                    }
+                    self.check_referenced_utils(is_provider_item, || {
+                        let fn_name = method_item.name.as_deref().unwrap_or("<unnamed>");
+                        format!("fn {fn_name}")
+                    });
+                }
+            }
+        }
+    }
 }
 
-fn get_type_crates<'a>(ty: &Type, krate: &'a Crate, crates: &mut HashSet<&'a str>) {
+fn get_type_crates<'a>(ty: &'a Type, krate: &'a Crate, crates: &mut HashSet<&'a str>) {
     match ty {
         Type::ResolvedPath(path) => {
             if let Some(item) = krate.paths.get(&path.id) {
@@ -720,24 +790,38 @@ fn get_type_crates<'a>(ty: &Type, krate: &'a Crate, crates: &mut HashSet<&'a str
                 }
             }
             if let Some(ref args) = path.args {
-                if let rustdoc_types::GenericArgs::AngleBracketed { ref args, .. } = **args {
+                if let GenericArgs::AngleBracketed { ref args, .. } = **args {
                     for arg in args {
-                        if let rustdoc_types::GenericArg::Type(inner_ty) = arg {
+                        if let GenericArg::Type(inner_ty) = arg {
                             get_type_crates(inner_ty, krate, crates);
                         }
                     }
                 }
             }
         }
-        Type::BorrowedRef { type_, .. } => {
-            get_type_crates(type_, krate, crates);
-        }
-        Type::Slice(type_) => {
+        Type::BorrowedRef { type_, .. }
+        | Type::RawPointer { type_, .. }
+        | Type::Slice(type_)
+        | Type::Array { type_, .. } => {
             get_type_crates(type_, krate, crates);
         }
         Type::Tuple(types) => {
             for t in types {
                 get_type_crates(t, krate, crates);
+            }
+        }
+        Type::QualifiedPath {
+            self_type, trait_, ..
+        } => {
+            get_type_crates(self_type, krate, crates);
+            if let Some(t) = trait_ {
+                if let Some(item) = krate.paths.get(&t.id) {
+                    if item.crate_id != 0 {
+                        if let Some(ext) = krate.external_crates.get(&item.crate_id) {
+                            crates.insert(ext.name.as_str());
+                        }
+                    }
+                }
             }
         }
         _ => {}
