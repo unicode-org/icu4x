@@ -784,6 +784,7 @@ dependencies = [
  "elsa",
  "lazy_static",
  "rustdoc-types",
+ "serde",
  "serde_json",
  "syn-inline-mod",
 ]

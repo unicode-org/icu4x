@@ -4,6 +4,7 @@
 
 use diplomat_core::*;
 use rustdoc_types::{Crate, Item, ItemEnum, Type};
+use serde::Deserialize;
 use std::collections::{BTreeSet, HashSet};
 use std::fmt;
 use std::fs::{self, File};
@@ -420,9 +421,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
 }
 
 fn run_util_api_enforcement() {
-    let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
-    let component_crates = discover_component_crates(manifest_dir);
-    let util_crates = discover_util_crates(manifest_dir);
+    let (component_crates, util_crates) = discover_workspace_crates();
 
     // Bucket 1: Definitely Stable util crates
     let bucket1_utils: HashSet<&str> = [
@@ -430,8 +429,11 @@ fn run_util_api_enforcement() {
         "fixed_decimal",
         "tinystr",
         "yoke",
+        "yoke-derive",
         "zerofrom",
+        "zerofrom-derive",
         "zerovec",
+        "zerovec-derive",
     ]
     .into_iter()
     .collect();
@@ -491,68 +493,48 @@ fn run_util_api_enforcement() {
     }
 }
 
-fn discover_component_crates(manifest_dir: &std::path::Path) -> Vec<String> {
-    let mut crates = Vec::new();
-    let components_dir = manifest_dir.join("../../../components");
-    if let Ok(entries) = std::fs::read_dir(components_dir) {
-        for entry in entries.flatten() {
-            let path = entry.path();
-            if path.is_dir() {
-                let name = path.file_name().and_then(|s| s.to_str()).unwrap_or("");
-                if name == "experimental" || name == "codepointtrie_builder" {
-                    continue;
-                }
-                let cargo_toml = path.join("Cargo.toml");
-                if cargo_toml.exists() {
-                    if let Some(pkg_name) = parse_package_name(&cargo_toml) {
-                        crates.push(pkg_name);
-                    }
-                }
-            }
-        }
-    }
-    let provider_core_toml = manifest_dir.join("../../../provider/core/Cargo.toml");
-    if provider_core_toml.exists() {
-        if let Some(pkg_name) = parse_package_name(&provider_core_toml) {
-            crates.push(pkg_name);
-        }
-    }
-    crates.sort();
-    crates
+#[derive(Deserialize)]
+struct CargoMetadata {
+    packages: Vec<CargoPackage>,
 }
 
-fn discover_util_crates(manifest_dir: &std::path::Path) -> HashSet<String> {
-    let mut crates = HashSet::new();
-    let utils_dir = manifest_dir.join("../../../utils");
-    if let Ok(entries) = std::fs::read_dir(utils_dir) {
-        for entry in entries.flatten() {
-            let path = entry.path();
-            if path.is_dir() {
-                let cargo_toml = path.join("Cargo.toml");
-                if cargo_toml.exists() {
-                    if let Some(pkg_name) = parse_package_name(&cargo_toml) {
-                        crates.insert(pkg_name);
-                    }
-                }
-            }
-        }
-    }
-    crates
+#[derive(Deserialize)]
+struct CargoPackage {
+    name: String,
+    manifest_path: String,
 }
 
-fn parse_package_name(cargo_toml_path: &std::path::Path) -> Option<String> {
-    let content = std::fs::read_to_string(cargo_toml_path).ok()?;
-    for line in content.lines() {
-        let line = line.trim();
-        if line.starts_with("name =") {
-            let parts: Vec<&str> = line.split('=').collect();
-            if parts.len() == 2 {
-                let name = parts[1].trim().trim_matches('"').trim_matches('\'');
-                return Some(name.to_string());
-            }
+fn discover_workspace_crates() -> (Vec<String>, HashSet<String>) {
+    let output = std::process::Command::new("cargo")
+        .args(["metadata", "--format-version", "1", "--no-deps"])
+        .output()
+        .expect("failed to execute cargo metadata");
+
+    if !output.status.success() {
+        panic!("cargo metadata failed: {:?}", output);
+    }
+
+    let metadata: CargoMetadata =
+        serde_json::from_slice(&output.stdout).expect("failed to parse cargo metadata output");
+
+    let mut component_crates = Vec::new();
+    let mut util_crates = HashSet::new();
+
+    for pkg in metadata.packages {
+        let path = pkg.manifest_path.replace('\\', "/");
+        if (path.contains("/components/") || path.contains("/provider/core/"))
+            && !pkg.name.ends_with("-dev")
+            && !pkg.name.contains("codepointtrie")
+            && !pkg.name.contains("experimental")
+        {
+            component_crates.push(pkg.name);
+        } else if path.contains("/utils/") {
+            util_crates.insert(pkg.name);
         }
     }
-    None
+
+    component_crates.sort();
+    (component_crates, util_crates)
 }
 
 fn check_crate_util_api_enforcement(

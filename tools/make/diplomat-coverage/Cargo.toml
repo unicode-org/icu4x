@@ -13,6 +13,7 @@ diplomat_core = { workspace = true }
 elsa = { workspace = true }
 lazy_static = "1"
 rustdoc-types = "0.56"
+serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
 syn-inline-mod = "0.6.0"
 
