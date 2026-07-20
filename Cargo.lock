@@ -780,12 +780,14 @@ dependencies = [
 name = "diplomat-coverage"
 version = "0.0.0"
 dependencies = [
+ "cargo_metadata",
  "diplomat_core",
  "elsa",
  "lazy_static",
  "rustdoc-types",
  "serde_json",
  "syn-inline-mod",
+ "writeable",
 ]
 
 [[package]]
