@@ -529,11 +529,7 @@ fn discover_workspace_crates() -> (Vec<String>, HashSet<String>) {
             .components()
             .any(|c| c.as_str() == "utils");
 
-        if is_component
-            && !pkg.name.ends_with("-dev")
-            && !pkg.name.contains("codepointtrie")
-            && !pkg.name.contains("experimental")
-        {
+        if is_component && pkg.version.major >= 1 && !pkg.name.ends_with("-dev") {
             component_crates.push(pkg.name);
         } else if has_utils {
             util_crates.insert(pkg.name);
