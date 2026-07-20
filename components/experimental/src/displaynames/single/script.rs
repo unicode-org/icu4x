@@ -16,16 +16,16 @@ use icu_provider::prelude::*;
 
 macro_rules! table_row {
     (try_new_minimal) => {
-        "| [`try_new_minimal`](Self::try_new_minimal) | ❌ | ❌ | \"Unknown Script\" |"
+        "| [`try_new_minimal`](Self::try_new_minimal) | \"Latin\" | ❌ | ❌ |"
     };
     (try_new) => {
-        "| [`try_new`](Self::try_new) | \"Latin\" | ❌ | \"Unknown Script\" |"
+        "| [`try_new`](Self::try_new) | \"Latin\" | \"Unknown Script\" | ❌ |"
     };
     (try_new_extended) => {
-        "| [`try_new_extended`](Self::try_new_extended) | \"Latin\" | \"Sumero-Akkadian Cuneiform\" | \"Unknown Script\" |"
+        "| [`try_new_extended`](Self::try_new_extended) | \"Latin\" | \"Unknown Script\" | \"Sumero-Akkadian Cuneiform\" |"
     };
     (try_new_extended_short) => {
-        "| [`try_new_extended_short`](Self::try_new_extended_short) | \"Latin\" | \"S-A Cuneiform\" | \"Unknown Script\" |"
+        "| [`try_new_extended_short`](Self::try_new_extended_short) | \"Latin\" | \"Unknown Script\" | \"S-A Cuneiform\" |"
     };
 }
 
@@ -36,7 +36,7 @@ macro_rules! table_row {
 /// There are several constructors, each of which links different data and serve
 /// different use cases. The behavior is illustrated in the table below.
 ///
-/// | Constructor | `Latn` | `Xsux` | `Zzzz` |
+/// | Constructor | `Latn` | `Zzzz` | `Xsux` |
 /// | :--- | :--- | :--- | :--- |
 #[doc = concat!(table_row!(try_new_minimal), "\n")]
 #[doc = concat!(table_row!(try_new), "\n")]
@@ -290,11 +290,11 @@ mod tests {
                     Ok(name) => format!("\"{}\"", name.write_to_string()),
                     Err(_) => "❌".to_string(),
                 },
-                match f(prefs, script!("Xsux")) {
+                match f(prefs, script!("Zzzz")) {
                     Ok(name) => format!("\"{}\"", name.write_to_string()),
                     Err(_) => "❌".to_string(),
                 },
-                match f(prefs, script!("Zzzz")) {
+                match f(prefs, script!("Xsux")) {
                     Ok(name) => format!("\"{}\"", name.write_to_string()),
                     Err(_) => "❌".to_string(),
                 },
