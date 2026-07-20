@@ -86,13 +86,14 @@ where
     ///
     /// ```
     /// use zerotrie::ZeroTrieSimpleAscii;
-    /// use writeable::WriteableExt;
+    /// use writeable::Writeable;
     ///
     /// // A trie with two values: "abc" and "abcdef"
     /// let trie = ZeroTrieSimpleAscii::from_bytes(b"abc\x80def\x81");
     ///
     /// // Get out the value for "abc"
-    /// assert_eq!(trie.get_with_write_fn("a".concat_streaming("bc").into_write_fn()), Some(0));
+    /// let needle = writeable::concat_writeable!("a", "bc");
+    /// assert_eq!(trie.get_with_write_fn(|sink| needle.write_to(sink)), Some(0));
     /// ```
     #[inline]
     pub fn get_with_write_fn<'a>(
@@ -152,13 +153,14 @@ where
     ///
     /// ```
     /// use zerotrie::ZeroAsciiIgnoreCaseTrie;
-    /// use writeable::WriteableExt;
+    /// use writeable::Writeable;
     ///
     /// // A trie with two values: "aBc" and "aBcdEf"
     /// let trie = ZeroAsciiIgnoreCaseTrie::from_bytes(b"aBc\x80dEf\x81");
     ///
     /// // Get out the value for "abc"
-    /// assert_eq!(trie.get_with_write_fn("a".concat_streaming("bc").into_write_fn()), Some(0));
+    /// let needle = writeable::concat_writeable!("a", "bc");
+    /// assert_eq!(trie.get_with_write_fn(|sink| needle.write_to(sink)), Some(0));
     /// ```
     #[inline]
     pub fn get_with_write_fn<'a>(
