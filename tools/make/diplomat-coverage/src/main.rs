@@ -537,6 +537,28 @@ fn discover_workspace_crates() -> (Vec<String>, HashSet<String>) {
     (component_crates, util_crates)
 }
 
+fn is_util_module_match(source: &str, util_name: &str) -> bool {
+    let source_bytes = source.as_bytes();
+    let util_bytes = util_name.as_bytes();
+
+    if source_bytes.len() < util_bytes.len() {
+        return false;
+    }
+
+    for (sb, ub) in source_bytes.iter().zip(util_bytes.iter()) {
+        let expected = if *ub == b'-' { b'_' } else { *ub };
+        if *sb != expected {
+            return false;
+        }
+    }
+
+    if source_bytes.len() == util_bytes.len() {
+        return true;
+    }
+
+    source_bytes[util_bytes.len()..].starts_with(b"::")
+}
+
 fn check_crate_util_api_enforcement(
     krate_name: &str,
     krate: &Crate,
@@ -590,10 +612,7 @@ fn check_crate_util_api_enforcement(
                 ItemEnum::Use(import) => {
                     if !is_provider_item {
                         for util in bucket3_utils {
-                            let util_mod = util.replace('-', "_");
-                            if import.source.starts_with(&format!("{util_mod}::"))
-                                || import.source == *util_mod
-                            {
+                            if is_util_module_match(&import.source, util) {
                                 violations.push(format!(
                                     "Bucket 3 violation in {krate_name}: pub use {}",
                                     import.source
@@ -602,10 +621,7 @@ fn check_crate_util_api_enforcement(
                         }
                     }
                     for util in bucket2_utils {
-                        let util_mod = util.replace('-', "_");
-                        if import.source.starts_with(&format!("{util_mod}::"))
-                            || import.source == *util_mod
-                        {
+                        if is_util_module_match(&import.source, util) {
                             if !bucket2_allowlist.contains(&(krate_name, util)) {
                                 violations.push(format!(
                                     "Bucket 2 violation in {krate_name}: pub use {} (not allowlisted)",
@@ -637,13 +653,13 @@ fn check_crate_util_api_enforcement(
                         get_type_crates(output, krate, &mut referenced);
                     }
                     for util in referenced {
-                        if bucket3_utils.contains(util.as_str()) && !is_provider_item {
+                        if bucket3_utils.contains(util) && !is_provider_item {
                             violations.push(format!(
                                 "Bucket 3 violation in {krate_name}::fn {}: uses internal util '{util}'",
                                 item.name.as_deref().unwrap_or("<unnamed>")
                             ));
-                        } else if bucket2_utils.contains(util.as_str())
-                            && !bucket2_allowlist.contains(&(krate_name, util.as_str()))
+                        } else if bucket2_utils.contains(util)
+                            && !bucket2_allowlist.contains(&(krate_name, util))
                         {
                             violations.push(format!(
                                 "Bucket 2 violation in {krate_name}::fn {}: uses low-risk util '{util}' outside allowlist",
@@ -670,17 +686,14 @@ fn check_crate_util_api_enforcement(
                                         let mut referenced = HashSet::new();
                                         get_type_crates(fty, krate, &mut referenced);
                                         for util in referenced {
-                                            if bucket3_utils.contains(util.as_str())
-                                                && !is_provider_item
-                                            {
+                                            if bucket3_utils.contains(util) && !is_provider_item {
                                                 violations.push(format!(
                                                     "Bucket 3 violation in {krate_name}::{}.{}: uses internal util '{util}'",
                                                     item.name.as_deref().unwrap_or("<unnamed>"),
                                                     field_item.name.as_deref().unwrap_or("<unnamed>")
                                                 ));
-                                            } else if bucket2_utils.contains(util.as_str())
-                                                && !bucket2_allowlist
-                                                    .contains(&(krate_name, util.as_str()))
+                                            } else if bucket2_utils.contains(util)
+                                                && !bucket2_allowlist.contains(&(krate_name, util))
                                             {
                                                 violations.push(format!(
                                                     "Bucket 2 violation in {krate_name}::{}.{}: uses low-risk util '{util}' outside allowlist",
@@ -715,13 +728,13 @@ fn check_crate_util_api_enforcement(
     violations
 }
 
-fn get_type_crates(ty: &Type, krate: &Crate, crates: &mut HashSet<String>) {
+fn get_type_crates<'a>(ty: &Type, krate: &'a Crate, crates: &mut HashSet<&'a str>) {
     match ty {
         Type::ResolvedPath(path) => {
             if let Some(item) = krate.paths.get(&path.id) {
                 if item.crate_id != 0 {
                     if let Some(ext) = krate.external_crates.get(&item.crate_id) {
-                        crates.insert(ext.name.clone());
+                        crates.insert(ext.name.as_str());
                     }
                 }
             }
