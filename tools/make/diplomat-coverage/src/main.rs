@@ -4,7 +4,6 @@
 
 use diplomat_core::*;
 use rustdoc_types::{Crate, Item, ItemEnum, Type};
-use serde::Deserialize;
 use std::collections::{BTreeSet, HashSet};
 use std::fmt;
 use std::fs::{self, File};
@@ -493,35 +492,17 @@ fn run_util_api_enforcement() {
     }
 }
 
-#[derive(Deserialize)]
-struct CargoMetadata {
-    packages: Vec<CargoPackage>,
-}
-
-#[derive(Deserialize)]
-struct CargoPackage {
-    name: String,
-    manifest_path: String,
-}
-
 fn discover_workspace_crates() -> (Vec<String>, HashSet<String>) {
-    let output = std::process::Command::new("cargo")
-        .args(["metadata", "--format-version", "1", "--no-deps"])
-        .output()
+    let metadata = cargo_metadata::MetadataCommand::new()
+        .no_deps()
+        .exec()
         .expect("failed to execute cargo metadata");
-
-    if !output.status.success() {
-        panic!("cargo metadata failed: {:?}", output);
-    }
-
-    let metadata: CargoMetadata =
-        serde_json::from_slice(&output.stdout).expect("failed to parse cargo metadata output");
 
     let mut component_crates = Vec::new();
     let mut util_crates = HashSet::new();
 
     for pkg in metadata.packages {
-        let path = pkg.manifest_path.replace('\\', "/");
+        let path = pkg.manifest_path.as_str().replace('\\', "/");
         if (path.contains("/components/") || path.contains("/provider/core/"))
             && !pkg.name.ends_with("-dev")
             && !pkg.name.contains("codepointtrie")
