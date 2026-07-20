@@ -562,7 +562,7 @@ fn is_util_module_match(source: &str, util_name: &str) -> bool {
         needle: "-",
         replacement: "_",
     };
-    if writeable::cmp_utf8(&replaced, &source_bytes[..util_len]) != std::cmp::Ordering::Equal {
+    if writeable::cmp_utf8(&replaced, &source_bytes[..util_len]).is_ne() {
         return false;
     }
 
