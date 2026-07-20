@@ -451,6 +451,10 @@ fn run_util_api_enforcement() {
         ("icu_datetime", "potential_utf"),
         ("icu_locale", "potential_utf"),
         ("icu_provider", "databake"),
+        ("icu", "icu_pattern"),
+        ("icu_datetime", "icu_pattern"),
+        ("icu_decimal", "icu_pattern"),
+        ("icu", "icu_experimental"),
     ]
     .into_iter()
     .collect();
@@ -515,6 +519,10 @@ fn discover_workspace_crates() -> (Vec<String>, HashSet<String>) {
     let mut util_crates = HashSet::new();
 
     for pkg in metadata.packages {
+        if pkg.name.ends_with("-dev") {
+            continue;
+        }
+
         let is_component = pkg
             .manifest_path
             .components()
@@ -524,14 +532,15 @@ fn discover_workspace_crates() -> (Vec<String>, HashSet<String>) {
                 .components()
                 .any(|c| c.as_str() == "provider")
                 && pkg.manifest_path.components().any(|c| c.as_str() == "core"));
-        let has_utils = pkg
+
+        let is_utils_dir = pkg
             .manifest_path
             .components()
             .any(|c| c.as_str() == "utils");
 
-        if is_component && pkg.version.major >= 1 && !pkg.name.ends_with("-dev") {
+        if is_component && pkg.version.major >= 1 {
             component_crates.push(pkg.name);
-        } else if has_utils {
+        } else if is_utils_dir || pkg.version.major == 0 {
             util_crates.insert(pkg.name);
         }
     }
