@@ -10,6 +10,8 @@ use crate::{GraphemeClusterSegmenter, GraphemeClusterSegmenterBorrowed};
 use alloc::vec::Vec;
 use icu_provider::prelude::*;
 
+#[cfg(feature = "unstable")]
+mod adaboost;
 mod dictionary;
 use dictionary::*;
 mod script;
