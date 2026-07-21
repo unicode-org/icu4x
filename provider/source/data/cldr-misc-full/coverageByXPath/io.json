@@ -1,0 +1,44 @@
+{
+  "coverageByXPath": {
+    "io": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"io\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Latn\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"001\"]"
+      ],
+      "moderate": [
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT+1\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT+10\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT+11\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT+12\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT+2\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT+3\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT+4\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT+5\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT+6\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT+7\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT+8\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT+9\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT-1\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT-10\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT-11\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT-12\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT-13\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT-14\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT-2\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT-3\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT-4\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT-5\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT-6\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT-7\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT-8\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/GMT-9\"]/exemplarCity",
+        "//ldml/dates/timeZoneNames/zone[@type=\"Etc/UTC\"]/exemplarCity",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]"
+      ]
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "coverageByXPath": {
+    "vai": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"vai\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Latn\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Vaii\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"LR\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"vaii\"]",
+        "//ldml/numbers/currencyFormats[@numberSystem=\"vaii\"]/currencyFormatLength/currencyFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/currencyFormats[@numberSystem=\"vaii\"]/currencyFormatLength/currencyFormat[@type=\"standard\"]/pattern[@type=\"standard\"][@alt=\"alphaNextToNumber\"]",
+        "//ldml/numbers/currencyFormats[@numberSystem=\"vaii\"]/currencyFormatLength/currencyFormat[@type=\"standard\"]/pattern[@type=\"standard\"][@alt=\"noCurrency\"]",
+        "//ldml/numbers/decimalFormats[@numberSystem=\"vaii\"]/decimalFormatLength/decimalFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/percentFormats[@numberSystem=\"vaii\"]/percentFormatLength/percentFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/scientificFormats[@numberSystem=\"vaii\"]/scientificFormatLength/scientificFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/numbers/symbols[@numberSystem=\"vaii\"]/decimal",
+        "//ldml/numbers/symbols[@numberSystem=\"vaii\"]/group",
+        "//ldml/numbers/symbols[@numberSystem=\"vaii\"]/minusSign",
+        "//ldml/numbers/symbols[@numberSystem=\"vaii\"]/percentSign",
+        "//ldml/numbers/symbols[@numberSystem=\"vaii\"]/plusSign"
+      ],
+      "modern": [
+        "//ldml/numbers/rationalFormats[@numberSystem=\"vaii\"]/integerAndRationalPattern",
+        "//ldml/numbers/rationalFormats[@numberSystem=\"vaii\"]/integerAndRationalPattern[@alt=\"superSub\"]",
+        "//ldml/numbers/rationalFormats[@numberSystem=\"vaii\"]/rationalPattern",
+        "//ldml/numbers/rationalFormats[@numberSystem=\"vaii\"]/rationalUsage",
+        "//ldml/numbers/symbols[@numberSystem=\"vaii\"]/approximatelySign",
+        "//ldml/numbers/symbols[@numberSystem=\"vaii\"]/exponential",
+        "//ldml/numbers/symbols[@numberSystem=\"vaii\"]/infinity",
+        "//ldml/numbers/symbols[@numberSystem=\"vaii\"]/nan",
+        "//ldml/numbers/symbols[@numberSystem=\"vaii\"]/perMille",
+        "//ldml/numbers/symbols[@numberSystem=\"vaii\"]/superscriptingExponent"
+      ]
+    }
+  }
+}

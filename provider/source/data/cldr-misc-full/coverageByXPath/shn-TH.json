@@ -1,0 +1,64 @@
+{
+  "coverageByXPath": {
+    "shn-TH": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"shn\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Mymr\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"MM\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"TH\"]"
+      ],
+      "moderate": [
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateFormats/dateFormatLength[@type=\"full\"]/dateFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateFormats/dateFormatLength[@type=\"long\"]/dateFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateFormats/dateFormatLength[@type=\"medium\"]/dateFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateFormats/dateFormatLength[@type=\"short\"]/dateFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/eras/eraAbbr/era[@type=\"0\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"buddhist\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"buddhist\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"mymr\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"mymrshan\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"mymrshan\"][@scope=\"core\"]"
+      ],
+      "modern": [
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"E\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"Ed\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"Gy\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"GyM\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"GyMEd\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"GyMMM\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"GyMMMEd\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"GyMMMEddd\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"GyMMMd\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"GyMMMddd\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"GyMd\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"M\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"MEd\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"MMM\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"MMMEd\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"MMMEddd\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"MMMMd\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"MMMMddd\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"MMMd\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"MMMddd\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"Md\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"d\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"y\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"yyyy\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"yyyyM\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"yyyyMEd\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"yyyyMMM\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"yyyyMMMEd\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"yyyyMMMEddd\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"yyyyMMMM\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"yyyyMMMd\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"yyyyMMMddd\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"yyyyMd\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"yyyyQQQ\"]",
+        "//ldml/dates/calendars/calendar[@type=\"buddhist\"]/dateTimeFormats/availableFormats/dateFormatItem[@id=\"yyyyQQQQ\"]"
+      ]
+    }
+  }
+}
