@@ -49,7 +49,7 @@ pub(crate) enum CurrencyFormatterData {
         essential: DataPayload<CurrencyEssentialsV1>,
         currency: CurrencyCode,
     },
-    IsoExtended {
+    IsoName {
         patterns: DataPayload<CurrencyPatternsDataV1>,
         plural_rules: PluralRules,
         currency: CurrencyCode,
@@ -253,7 +253,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 patterns,
                 plural_rules,
             },
-            None => CurrencyFormatterData::IsoExtended {
+            None => CurrencyFormatterData::IsoName {
                 patterns,
                 plural_rules,
                 currency,
@@ -306,7 +306,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 patterns,
                 plural_rules,
             },
-            None => CurrencyFormatterData::IsoExtended {
+            None => CurrencyFormatterData::IsoName {
                 patterns,
                 plural_rules,
                 currency,
@@ -617,7 +617,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 let pattern = essential.get().get_positive(true, true);
                 (pattern, currency.0.as_str())
             }
-            CurrencyFormatterData::IsoExtended {
+            CurrencyFormatterData::IsoName {
                 patterns,
                 plural_rules,
                 currency,
