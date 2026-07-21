@@ -426,13 +426,29 @@ impl CldrCache {
                     .get(loc_str.as_str())
                     .or_else(|| resource.coverage_by_xpath.values().next());
                 if let Some(levels) = levels {
-                    if levels.core.get_with_writeable(&xpath).is_some() {
+                    if levels
+                        .core
+                        .get_with_write_fn(|sink| xpath.write_to(sink))
+                        .is_some()
+                    {
                         return Ok(CoverageLevelForXPath::Core);
-                    } else if levels.basic.get_with_writeable(&xpath).is_some() {
+                    } else if levels
+                        .basic
+                        .get_with_write_fn(|sink| xpath.write_to(sink))
+                        .is_some()
+                    {
                         return Ok(CoverageLevelForXPath::Basic);
-                    } else if levels.moderate.get_with_writeable(&xpath).is_some() {
+                    } else if levels
+                        .moderate
+                        .get_with_write_fn(|sink| xpath.write_to(sink))
+                        .is_some()
+                    {
                         return Ok(CoverageLevelForXPath::Moderate);
-                    } else if levels.modern.get_with_writeable(&xpath).is_some() {
+                    } else if levels
+                        .modern
+                        .get_with_write_fn(|sink| xpath.write_to(sink))
+                        .is_some()
+                    {
                         return Ok(CoverageLevelForXPath::Modern);
                     }
                 }
@@ -445,13 +461,29 @@ impl CldrCache {
             let resource: &CoverageByXPathResource =
                 self.serde_cache.read_and_parse_json(root_path)?;
             if let Some(levels) = resource.coverage_by_xpath.get("root") {
-                if levels.core.get_with_writeable(&xpath).is_some() {
+                if levels
+                    .core
+                    .get_with_write_fn(|sink| xpath.write_to(sink))
+                    .is_some()
+                {
                     return Ok(CoverageLevelForXPath::Core);
-                } else if levels.basic.get_with_writeable(&xpath).is_some() {
+                } else if levels
+                    .basic
+                    .get_with_write_fn(|sink| xpath.write_to(sink))
+                    .is_some()
+                {
                     return Ok(CoverageLevelForXPath::Basic);
-                } else if levels.moderate.get_with_writeable(&xpath).is_some() {
+                } else if levels
+                    .moderate
+                    .get_with_write_fn(|sink| xpath.write_to(sink))
+                    .is_some()
+                {
                     return Ok(CoverageLevelForXPath::Moderate);
-                } else if levels.modern.get_with_writeable(&xpath).is_some() {
+                } else if levels
+                    .modern
+                    .get_with_write_fn(|sink| xpath.write_to(sink))
+                    .is_some()
+                {
                     return Ok(CoverageLevelForXPath::Modern);
                 }
             }

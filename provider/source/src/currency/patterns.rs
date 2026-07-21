@@ -54,17 +54,15 @@ impl DataProvider<CurrencyPatternsDataV1> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(CurrencyPatternsData {
+            payload: DataPayload::from_owned(
                 // TODO(#5334):
                 //      Before graduating the currency crate,
                 //      Check that the .json data files are completed and no need to fallback chain up to the root.
-                patterns: PluralElements::new(patterns.pattern_other.as_deref().ok_or_else(
-                    || {
-                        DataError::custom("Missing patterns")
-                            .with_debug_context(currency_patterns)
-                            .with_debug_context(&req.id)
-                    },
-                )?)
+                PluralElements::new(patterns.pattern_other.as_deref().ok_or_else(|| {
+                    DataError::custom("Missing patterns")
+                        .with_debug_context(currency_patterns)
+                        .with_debug_context(&req.id)
+                })?)
                 .with_zero_value(patterns.pattern_zero.as_deref())
                 .with_one_value(patterns.pattern_one.as_deref())
                 .with_two_value(patterns.pattern_two.as_deref())
@@ -73,7 +71,7 @@ impl DataProvider<CurrencyPatternsDataV1> for SourceDataProvider {
                 .with_explicit_one_value(patterns.pattern_explicit_one.as_deref())
                 .with_explicit_zero_value(patterns.pattern_explicit_zero.as_deref())
                 .into(),
-            }),
+            ),
         })
     }
 }
@@ -105,7 +103,7 @@ fn test_basic() {
         .payload;
 
     assert_eq!(
-        en.get().patterns.elements.decode().map(|(_, p)| p),
+        en.get().elements.decode().map(|(_, p)| p),
         PluralElements::new(
             DoublePlaceholderPattern::try_from_str("{0} {1}", Default::default())
                 .unwrap()
@@ -122,7 +120,7 @@ fn test_basic() {
         .payload;
 
     assert_eq!(
-        ar.get().patterns.elements.decode().map(|(_, p)| p),
+        ar.get().elements.decode().map(|(_, p)| p),
         PluralElements::new(
             DoublePlaceholderPattern::try_from_str("{0} {1}", Default::default())
                 .unwrap()
@@ -139,7 +137,7 @@ fn test_basic() {
         .payload;
 
     assert_eq!(
-        ja.get().patterns.elements.decode().map(|(_, p)| p),
+        ja.get().elements.decode().map(|(_, p)| p),
         PluralElements::new(
             DoublePlaceholderPattern::try_from_str("{0}{1}", Default::default())
                 .unwrap()

@@ -7,9 +7,6 @@
 //! For examples, see the `.cursor()` functions
 //! and the `Cursor` types in this module.
 
-#[cfg(feature = "writeable")]
-use writeable::Writeable;
-
 use crate::reader;
 use crate::ZeroAsciiIgnoreCaseTrie;
 use crate::ZeroTrieSimpleAscii;
@@ -78,29 +75,33 @@ where
         }
     }
 
-    /// Queries the trie using a [`Writeable`].
+    /// Queries the trie using a closure that writes to a cursor.
     ///
-    /// This is a special case of [`Self::cursor()`].
-    ///
-    /// ✨ *Enabled with the `writeable` Cargo feature.*
+    /// Third-party string-like types can integrate with this API by returning a function
+    /// with the required signature.
     ///
     /// # Examples
     ///
+    /// Using the `writeable` crate:
+    ///
     /// ```
     /// use zerotrie::ZeroTrieSimpleAscii;
-    /// use writeable::adapters::Concat;
+    /// use writeable::Writeable;
     ///
     /// // A trie with two values: "abc" and "abcdef"
     /// let trie = ZeroTrieSimpleAscii::from_bytes(b"abc\x80def\x81");
     ///
     /// // Get out the value for "abc"
-    /// assert_eq!(trie.get_with_writeable(Concat("a", "bc")), Some(0));
+    /// let needle = writeable::concat_writeable!("a", "bc");
+    /// assert_eq!(trie.get_with_write_fn(|sink| needle.write_to(sink)), Some(0));
     /// ```
-    #[cfg(feature = "writeable")]
     #[inline]
-    pub fn get_with_writeable(&self, writeable: impl Writeable) -> Option<usize> {
+    pub fn get_with_write_fn<'a>(
+        &'a self,
+        write_fn: impl for<'b> FnOnce(&'b mut ZeroTrieSimpleAsciiCursor<'a>) -> fmt::Result,
+    ) -> Option<usize> {
         let mut cursor = self.cursor();
-        let _infallible = writeable.write_to(&mut cursor);
+        write_fn(&mut cursor).ok()?;
         cursor.take_value()
     }
 }
@@ -141,29 +142,33 @@ where
         }
     }
 
-    /// Queries the trie using a [`Writeable`].
+    /// Queries the trie using a closure that writes to a cursor.
     ///
-    /// This is a special case of [`Self::cursor()`].
-    ///
-    /// ✨ *Enabled with the `writeable` Cargo feature.*
+    /// Third-party string-like types can integrate with this API by returning a function
+    /// with the required signature.
     ///
     /// # Examples
     ///
+    /// Using the `writeable` crate:
+    ///
     /// ```
     /// use zerotrie::ZeroAsciiIgnoreCaseTrie;
-    /// use writeable::adapters::Concat;
+    /// use writeable::Writeable;
     ///
     /// // A trie with two values: "aBc" and "aBcdEf"
     /// let trie = ZeroAsciiIgnoreCaseTrie::from_bytes(b"aBc\x80dEf\x81");
     ///
     /// // Get out the value for "abc"
-    /// assert_eq!(trie.get_with_writeable(Concat("a", "bc")), Some(0));
+    /// let needle = writeable::concat_writeable!("a", "bc");
+    /// assert_eq!(trie.get_with_write_fn(|sink| needle.write_to(sink)), Some(0));
     /// ```
-    #[cfg(feature = "writeable")]
     #[inline]
-    pub fn get_with_writeable(&self, writeable: impl Writeable) -> Option<usize> {
+    pub fn get_with_write_fn<'a>(
+        &'a self,
+        write_fn: impl for<'b> FnOnce(&'b mut ZeroAsciiIgnoreCaseTrieCursor<'a>) -> fmt::Result,
+    ) -> Option<usize> {
         let mut cursor = self.cursor();
-        let _infallible = writeable.write_to(&mut cursor);
+        write_fn(&mut cursor).ok()?;
         cursor.take_value()
     }
 }

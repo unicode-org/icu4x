@@ -1,26 +1,24 @@
 {
-  "patterns": {
-    "one": [
-      0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " pound"
-        }
-      ]
-    ],
-    "other": [
-      0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " pounds"
-        }
-      ]
+  "one": [
+    0,
+    [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " pound"
+      }
     ]
-  }
+  ],
+  "other": [
+    0,
+    [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " pounds"
+      }
+    ]
+  ]
 }

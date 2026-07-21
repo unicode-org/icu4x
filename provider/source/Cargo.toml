@@ -46,7 +46,7 @@ litemap = { workspace = true, features = ["serde"] }
 tinystr = { workspace = true, features = ["alloc", "serde", "zerovec"] }
 potential_utf = { workspace = true }
 writeable = { workspace = true }
-zerotrie = { workspace = true, features = ["alloc", "writeable", "litemap"] }
+zerotrie = { workspace = true, features = ["alloc"] }
 zerovec = { workspace = true, features = ["serde", "yoke", "alloc"] }
 
 # External dependencies

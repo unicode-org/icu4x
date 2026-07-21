@@ -1,37 +1,35 @@
 {
-  "patterns": {
-    "one": [
-      0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " sekunda"
-        }
-      ]
-    ],
-    "few": [
-      0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " sekunde"
-        }
-      ]
-    ],
-    "other": [
-      0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " sekundi"
-        }
-      ]
+  "one": [
+    0,
+    [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " sekunda"
+      }
     ]
-  }
+  ],
+  "few": [
+    0,
+    [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " sekunde"
+      }
+    ]
+  ],
+  "other": [
+    0,
+    [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " sekundi"
+      }
+    ]
+  ]
 }

@@ -31,7 +31,6 @@ serde_core = { workspace = true, optional = true }
 yoke = { workspace = true, features = ["derive"], optional = true }
 zerofrom = { workspace = true, optional = true }
 zerovec = { workspace = true, optional = true }
-writeable = { workspace = true, optional = true }
 
 [dev-dependencies]
 bincode = { workspace = true }
@@ -64,7 +63,6 @@ serde = ["dep:serde_core", "dep:litemap", "alloc", "litemap/serde", "zerovec?/se
 yoke = ["dep:yoke"]
 zerofrom = ["dep:zerofrom"]
 zerovec = ["dep:zerovec"]
-writeable = ["dep:writeable"]
 
 [[bench]]
 name = "overview"

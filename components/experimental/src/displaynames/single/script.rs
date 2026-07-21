@@ -112,9 +112,9 @@ impl ScriptDisplayNameOwned {
         /// use icu::locale::{locale, subtags::script};
         /// use writeable::assert_writeable_eq;
         ///
-        /// // Minimal script names currently contain no data in CLDR for en
-        /// let display_name = ScriptDisplayNameOwned::try_new_minimal(locale!("en").into(), script!("Latn"));
-        /// assert!(display_name.is_err());
+        /// // Minimal script names contain Latn for en
+        /// let display_name = ScriptDisplayNameOwned::try_new_minimal(locale!("en").into(), script!("Latn")).unwrap();
+        /// assert_writeable_eq!(display_name, "Latin");
         /// ```
         functions: [
             try_new_minimal,

@@ -13,19 +13,3 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
 pub struct CurrencyFormatterOptions {}
-
-#[derive(Debug, Clone, Copy)]
-pub(crate) enum Width {
-    /// Format the currency with the standard (short) currency symbol.
-    ///
-    /// For example, 1 USD formats as "$1.00" in en-US and "US$1" in most other locales.
-    Short,
-
-    /// Format the currency with the narrow currency symbol.
-    ///
-    /// The narrow symbol may be ambiguous, so it should be evident from context which
-    /// currency is being represented.
-    ///
-    /// For example, 1 USD formats as "$1.00" in most locales.
-    Narrow,
-}
