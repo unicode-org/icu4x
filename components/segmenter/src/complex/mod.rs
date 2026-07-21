@@ -7,6 +7,8 @@ use crate::scaffold::{PotentiallyIllFormedUtf8, RuleBreakType, Utf8, Utf16};
 use crate::{GraphemeClusterSegmenter, GraphemeClusterSegmenterBorrowed};
 use icu_provider::prelude::*;
 
+#[cfg(feature = "unstable")]
+mod adaboost;
 mod dictionary;
 use dictionary::*;
 #[cfg(feature = "lstm")]
