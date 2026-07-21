@@ -588,7 +588,7 @@ fn resolve_fraction_info(
     // 2. Try locale-specific standard fraction digits
     if let Some(essentials) = essentials {
         return FractionInfo {
-            digits: essentials.standard_fractions,
+            digits: essentials.fraction_digits,
             rounding: Rounding::R1,
             cash_digits: None,
             cash_rounding: None,

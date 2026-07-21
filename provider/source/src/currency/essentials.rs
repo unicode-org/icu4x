@@ -58,12 +58,16 @@ impl IterableDataProviderCached<CurrencyEssentialsV1> for SourceDataProvider {
 
             for (nsname, patterns) in &numbers.numsys_data.currency_patterns {
                 if patterns.standard.positive.is_empty() {
-                    log::warn!("{locale}/{nsname}: empty standard currency pattern, skipping");
+                    log::debug!("{locale}/{nsname}: empty standard currency pattern, skipping");
                     continue;
                 }
                 if nsname == default_numsys {
                     ids.insert(DataIdentifierCow::from_locale(locale));
-                } else if let Ok(attr) = DataMarkerAttributes::try_from_str(nsname) {
+                } else {
+                    let attr = DataMarkerAttributes::try_from_str(nsname).map_err(|_| {
+                        DataError::custom("Invalid numbering system name")
+                            .with_display_context(nsname)
+                    })?;
                     ids.insert(
                         DataIdentifierBorrowed::for_marker_attributes_and_locale(attr, &locale)
                             .into_owned(),
@@ -195,7 +199,7 @@ fn extract_currency_essentials<'data>(
         accounting_alpha_next_to_number_negative: accounting_alpha_neg_idx,
     };
 
-    let standard_fractions = extract_precision(&standard.positive);
+    let fraction_digits = extract_precision(&standard.positive);
     for pattern in [
         Some(standard),
         standard_alpha_next_to_number,
@@ -205,11 +209,11 @@ fn extract_currency_essentials<'data>(
     .into_iter()
     .flatten()
     {
-        if extract_precision(&pattern.positive) != standard_fractions
+        if extract_precision(&pattern.positive) != fraction_digits
             || pattern
                 .negative
                 .as_ref()
-                .is_some_and(|neg| extract_precision(neg) != standard_fractions)
+                .is_some_and(|neg| extract_precision(neg) != fraction_digits)
         {
             log::warn!("{locale}/{numsys_name}: inconsistent currency pattern fraction digits");
             break;
@@ -219,7 +223,7 @@ fn extract_currency_essentials<'data>(
     Ok(CurrencyEssentials {
         patterns: VarZeroVec::from(&unique_patterns),
         indices,
-        standard_fractions,
+        fraction_digits,
     })
 }
 
