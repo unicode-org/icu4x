@@ -227,6 +227,7 @@ fn extract_currency_essentials<'data>(
     })
 }
 
+// TODO: Refactor fraction resolution to support bit-packed `RoundingInfo` (4 bits digits, 4 bits rounding) in a subsequent PR.
 fn extract_precision(items: &[NumberPatternItem]) -> u8 {
     let mut digits = 0;
     let mut has_decimal = false;

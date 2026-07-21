@@ -75,6 +75,9 @@ impl CurrencyFractions<'_> {
 }
 
 /// Fraction and rounding information for a currency.
+// TODO: Refactor to use bit-packed `struct RoundingInfo { digits: u8, rounding: Rounding }`
+// (4 bits digits, 4 bits rounding) and `struct FractionInfo { normal: RoundingInfo, cash: RoundingInfo }`
+// to optimize data provider memory footprint in a subsequent PR.
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency::fractions))]
