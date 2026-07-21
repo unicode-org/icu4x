@@ -24,6 +24,10 @@ mod v2;
 pub use v2::*;
 mod complex;
 pub use complex::*;
+n#[cfg(feature = "unstable")]
+pub mod adaboost;
+#[cfg(feature = "unstable")]
+pub use adaboost::*;
 
 #[cfg(feature = "datagen")]
 use icu_provider::prelude::*;
@@ -90,6 +94,8 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     SegmenterDictionaryAutoV1::INFO,
     SegmenterDictionaryExtendedV1::INFO,
     SegmenterLstmAutoV1::INFO,
+    #[cfg(feature = "unstable")]
+    SegmenterAdaboostAutoV1::INFO,
     #[cfg(feature = "unstable")]
     SegmenterUnihanRadicalV1::INFO,
     #[cfg(feature = "unstable")]
