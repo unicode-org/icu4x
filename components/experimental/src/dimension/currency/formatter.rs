@@ -496,24 +496,29 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     ) -> impl Writeable + Display + 'l {
         // TODO(#8146): Evaluate if FixedDecimal is the correct input type or if we should use
         // an exact decimal/money representation.
+        // Per UTS #35 (LDML Part 3: Numbers, Section 3.8, Rule 3 in Compact Number Formatting), for uncompacted
+        // fallback values below 1,000 ("0" pattern), significant and maximum fractional digits are adjusted by default
+        // (typically stripping trailing zeros, e.g., "$12" rather than "$12.01"). Rather than gating precision application
+        // at the type/trait level, currency fraction rounding is applied uniformly, relying on the underlying formatter
+        // (such as CompactDecimalFormatter) to trim trailing fractional zeros and format according to magnitude.
         let (pattern, currency_str, formatted_value, sign) = match &self.currency_data {
             CurrencyFormatterData::Iso {
                 essential,
                 currency,
             } => {
                 let pattern = essential.get().get_positive(true, true);
-                let (value_to_format, sign) = if V::REQUIRES_CURRENCY_PRECISION {
-                    // Note: we assume that all currency formatting variants within a locale
-                    // share the same fraction digits as the standard pattern (verified during datagen).
-                    let fraction_info =
-                        self.resolve_fraction_info(*currency, Some(essential.get()));
-                    let rounded_value = apply_precision(value.clone(), fraction_info);
-                    (rounded_value.absolute, rounded_value.sign)
-                } else {
-                    (value.absolute.clone(), value.sign)
-                };
-                let formatted_value = V::format_unsigned(&self.value_formatter, value_to_format);
-                (pattern, currency.0.as_str(), formatted_value, sign)
+                // Note: we assume that all currency formatting variants within a locale
+                // share the same fraction digits as the standard pattern (verified during datagen).
+                let fraction_info = self.resolve_fraction_info(*currency, Some(essential.get()));
+                let rounded_value = apply_precision(value.clone(), fraction_info);
+                let formatted_value =
+                    V::format_unsigned(&self.value_formatter, rounded_value.absolute);
+                (
+                    pattern,
+                    currency.0.as_str(),
+                    formatted_value,
+                    rounded_value.sign,
+                )
             }
             CurrencyFormatterData::Essential {
                 essential,
@@ -524,18 +529,18 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 let pattern = essential
                     .get()
                     .get_positive(symbol.starts_with_letter(), symbol.ends_with_letter());
-                let (value_to_format, sign) = if V::REQUIRES_CURRENCY_PRECISION {
-                    // Note: we assume that all currency formatting variants within a locale
-                    // share the same fraction digits as the standard pattern (verified during datagen).
-                    let fraction_info =
-                        self.resolve_fraction_info(*currency, Some(essential.get()));
-                    let rounded_value = apply_precision(value.clone(), fraction_info);
-                    (rounded_value.absolute, rounded_value.sign)
-                } else {
-                    (value.absolute.clone(), value.sign)
-                };
-                let formatted_value = V::format_unsigned(&self.value_formatter, value_to_format);
-                (pattern, symbol.as_str(), formatted_value, sign)
+                // Note: we assume that all currency formatting variants within a locale
+                // share the same fraction digits as the standard pattern (verified during datagen).
+                let fraction_info = self.resolve_fraction_info(*currency, Some(essential.get()));
+                let rounded_value = apply_precision(value.clone(), fraction_info);
+                let formatted_value =
+                    V::format_unsigned(&self.value_formatter, rounded_value.absolute);
+                (
+                    pattern,
+                    symbol.as_str(),
+                    formatted_value,
+                    rounded_value.sign,
+                )
             }
             CurrencyFormatterData::Long {
                 extended,
@@ -543,14 +548,10 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 plural_rules,
                 currency,
             } => {
-                let (value_to_format, sign) = if V::REQUIRES_CURRENCY_PRECISION {
-                    let fraction_info = self.resolve_fraction_info(*currency, None);
-                    let rounded_value = apply_precision(value.clone(), fraction_info);
-                    (rounded_value.absolute, rounded_value.sign)
-                } else {
-                    (value.absolute.clone(), value.sign)
-                };
-                let formatted_value = V::format_unsigned(&self.value_formatter, value_to_format);
+                let fraction_info = self.resolve_fraction_info(*currency, None);
+                let rounded_value = apply_precision(value.clone(), fraction_info);
+                let formatted_value =
+                    V::format_unsigned(&self.value_formatter, rounded_value.absolute);
 
                 let operands = V::plural_operands(&formatted_value);
                 let currency_str = extended
@@ -559,7 +560,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                     .unwrap_or(currency.0.as_str());
                 let pattern = patterns.get().get(operands, plural_rules);
 
-                (pattern, currency_str, formatted_value, sign)
+                (pattern, currency_str, formatted_value, rounded_value.sign)
             }
         };
 
