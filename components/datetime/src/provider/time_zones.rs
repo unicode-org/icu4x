@@ -110,7 +110,7 @@ icu_provider::data_marker!(
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(PartialEq, Debug, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive( databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[yoke(prove_covariance_manually)]
 pub struct TimeZoneEssentials<'data> {
@@ -150,7 +150,7 @@ impl<'de> serde::Deserialize<'de> for TimeZoneEssentials<'de> {
             offset_separator,
             offset_pattern,
             offset_unknown,
-            offset_zero: _offset_zero
+            offset_zero: _offset_zero,
         } = Raw::deserialize(deserializer)?;
         Ok(TimeZoneEssentials {
             offset_separator,
@@ -160,12 +160,11 @@ impl<'de> serde::Deserialize<'de> for TimeZoneEssentials<'de> {
     }
 }
 
-
 #[cfg(feature = "datagen")]
 impl serde::Serialize for TimeZoneEssentials<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
-        S: serde::Serializer
+        S: serde::Serializer,
     {
         #[derive(serde::Serialize)]
         struct Raw<'data> {
@@ -180,7 +179,8 @@ impl serde::Serialize for TimeZoneEssentials<'_> {
             offset_pattern: Cow::Borrowed(&self.offset_pattern),
             offset_zero: Cow::Borrowed(""),
             offset_unknown: Cow::Borrowed(&self.offset_unknown),
-        }.serialize(serializer)
+        }
+        .serialize(serializer)
     }
 }
 
