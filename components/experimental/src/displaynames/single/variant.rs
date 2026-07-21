@@ -4,12 +4,24 @@
 
 use super::{
     impl_writeable_for_single_display_name_borrowed, impl_writeable_for_single_display_name_owned,
-    try_load_markers,
+    load_one,
 };
 use crate::displaynames::DisplayNamesPreferences;
 use crate::displaynames::provider::LocaleNamesVariantExtendedMediumV1;
 use icu_locale_core::subtags::Variant;
 use icu_provider::prelude::*;
+
+#[inline]
+fn make_attributes(subtag: &Variant) -> &DataMarkerAttributes {
+    // All variant markers use the same attributes
+    LocaleNamesVariantExtendedMediumV1::make_attributes(subtag)
+}
+
+#[inline]
+fn make_locale(prefs: DisplayNamesPreferences) -> DataLocale {
+    // All variant markers use the same locale
+    LocaleNamesVariantExtendedMediumV1::make_locale(prefs.locale_preferences)
+}
 
 macro_rules! table_row {
     (try_new_extended) => {
@@ -79,12 +91,12 @@ impl VariantDisplayNameOwned {
     where
         D: ?Sized + DataProvider<LocaleNamesVariantExtendedMediumV1>,
     {
-        let attrs = LocaleNamesVariantExtendedMediumV1::make_attributes(&variant);
-        try_load_markers!(provider, prefs, attrs, [LocaleNamesVariantExtendedMediumV1]).map(
-            |payload| Self {
-                payload: payload.cast(),
-            },
-        )
+        let attrs = make_attributes(&variant);
+        let locale = make_locale(prefs);
+        let payload =
+            load_one::<LocaleNamesVariantExtendedMediumV1, _, _>(provider, &locale, attrs)?
+                .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
+        Ok(Self { payload })
     }
 
     /// Returns a borrowed version of this display name.

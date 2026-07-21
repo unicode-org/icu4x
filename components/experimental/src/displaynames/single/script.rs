@@ -4,7 +4,7 @@
 
 use super::{
     impl_writeable_for_single_display_name_borrowed, impl_writeable_for_single_display_name_owned,
-    try_load_markers,
+    load_one,
 };
 use crate::displaynames::DisplayNamesPreferences;
 use crate::displaynames::provider::{
@@ -13,6 +13,18 @@ use crate::displaynames::provider::{
 };
 use icu_locale_core::subtags::Script;
 use icu_provider::prelude::*;
+
+#[inline]
+fn make_attributes(subtag: &Script) -> &DataMarkerAttributes {
+    // All script markers use the same attributes
+    LocaleNamesScriptMinimalMediumV1::make_attributes(subtag)
+}
+
+#[inline]
+fn make_locale(prefs: DisplayNamesPreferences) -> DataLocale {
+    // All script markers use the same locale
+    LocaleNamesScriptMinimalMediumV1::make_locale(prefs.locale_preferences)
+}
 
 macro_rules! table_row {
     (try_new_minimal) => {
@@ -85,17 +97,15 @@ impl ScriptDisplayNameOwned {
             + DataProvider<LocaleNamesScriptCoreMediumV1>
             + DataProvider<LocaleNamesScriptMinimalMediumV1>,
     {
-        let attrs = LocaleNamesScriptCoreMediumV1::make_attributes(&script);
-        try_load_markers!(
-            provider,
-            prefs,
-            attrs,
-            [
-                LocaleNamesScriptCoreMediumV1,
-                LocaleNamesScriptMinimalMediumV1
-            ]
-        )
-        .map(|payload| Self { payload })
+        let attrs = make_attributes(&script);
+        let locale = make_locale(prefs);
+        let payload = load_one::<LocaleNamesScriptCoreMediumV1, _, _>(provider, &locale, attrs)?
+            .map_or_else(
+                || load_one::<LocaleNamesScriptMinimalMediumV1, _, _>(provider, &locale, attrs),
+                |p| Ok(Some(p)),
+            )?
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
+        Ok(Self { payload })
     }
 
     icu_provider::gen_buffer_data_constructors!(
@@ -133,12 +143,11 @@ impl ScriptDisplayNameOwned {
     where
         D: ?Sized + DataProvider<LocaleNamesScriptMinimalMediumV1>,
     {
-        let attrs = LocaleNamesScriptMinimalMediumV1::make_attributes(&script);
-        try_load_markers!(provider, prefs, attrs, [LocaleNamesScriptMinimalMediumV1]).map(
-            |payload| Self {
-                payload: payload.cast(),
-            },
-        )
+        let attrs = make_attributes(&script);
+        let locale = make_locale(prefs);
+        let payload = load_one::<LocaleNamesScriptMinimalMediumV1, _, _>(provider, &locale, attrs)?
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
+        Ok(Self { payload })
     }
 
     icu_provider::gen_buffer_data_constructors!(
@@ -179,20 +188,20 @@ impl ScriptDisplayNameOwned {
             + DataProvider<LocaleNamesScriptCoreMediumV1>
             + DataProvider<LocaleNamesScriptMinimalMediumV1>,
     {
-        let attrs = LocaleNamesScriptExtendedMediumV1::make_attributes(&script);
-        try_load_markers!(
-            provider,
-            prefs,
-            attrs,
-            [
-                LocaleNamesScriptExtendedMediumV1,
-                LocaleNamesScriptCoreMediumV1,
-                LocaleNamesScriptMinimalMediumV1
-            ]
-        )
-        .map(|payload| Self {
-            payload: payload.cast(),
-        })
+        let attrs = make_attributes(&script);
+        let locale = make_locale(prefs);
+        let payload =
+            load_one::<LocaleNamesScriptExtendedMediumV1, _, _>(provider, &locale, attrs)?
+                .map_or_else(
+                    || load_one::<LocaleNamesScriptCoreMediumV1, _, _>(provider, &locale, attrs),
+                    |p| Ok(Some(p)),
+                )?
+                .map_or_else(
+                    || load_one::<LocaleNamesScriptMinimalMediumV1, _, _>(provider, &locale, attrs),
+                    |p| Ok(Some(p)),
+                )?
+                .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
+        Ok(Self { payload })
     }
 
     icu_provider::gen_buffer_data_constructors!(
@@ -236,21 +245,23 @@ impl ScriptDisplayNameOwned {
             + DataProvider<LocaleNamesScriptCoreMediumV1>
             + DataProvider<LocaleNamesScriptMinimalMediumV1>,
     {
-        let attrs = LocaleNamesScriptExtendedShortV1::make_attributes(&script);
-        try_load_markers!(
-            provider,
-            prefs,
-            attrs,
-            [
-                LocaleNamesScriptExtendedShortV1,
-                LocaleNamesScriptExtendedMediumV1,
-                LocaleNamesScriptCoreMediumV1,
-                LocaleNamesScriptMinimalMediumV1
-            ]
-        )
-        .map(|payload| Self {
-            payload: payload.cast(),
-        })
+        let attrs = make_attributes(&script);
+        let locale = make_locale(prefs);
+        let payload = load_one::<LocaleNamesScriptExtendedShortV1, _, _>(provider, &locale, attrs)?
+            .map_or_else(
+                || load_one::<LocaleNamesScriptExtendedMediumV1, _, _>(provider, &locale, attrs),
+                |p| Ok(Some(p)),
+            )?
+            .map_or_else(
+                || load_one::<LocaleNamesScriptCoreMediumV1, _, _>(provider, &locale, attrs),
+                |p| Ok(Some(p)),
+            )?
+            .map_or_else(
+                || load_one::<LocaleNamesScriptMinimalMediumV1, _, _>(provider, &locale, attrs),
+                |p| Ok(Some(p)),
+            )?
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
+        Ok(Self { payload })
     }
 
     /// Returns a borrowed version of this display name.
