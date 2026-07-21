@@ -16,10 +16,16 @@ mod tests {
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
         let fmt = CurrencyFormatter::try_new_compact_short(prefs, &currency_code).unwrap();
 
-        // Positive case
+        // Positive cases
         let positive_value = "12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&positive_value);
         assert_writeable_eq!(formatted_currency, "$12K");
+
+        let val_1200 = "1200".parse().unwrap();
+        assert_writeable_eq!(fmt.format_fixed_decimal(&val_1200), "$1.2K");
+
+        let val_1299 = "1299".parse().unwrap();
+        assert_writeable_eq!(fmt.format_fixed_decimal(&val_1299), "$1.3K");
 
         // Negative case
         let negative_value = "-12345.67".parse().unwrap();
@@ -192,11 +198,5 @@ mod tests {
 
         let val_990 = "990".parse().unwrap();
         assert_writeable_eq!(fmt_usd.format_fixed_decimal(&val_990), "$990");
-
-        let val_1200 = "1200".parse().unwrap();
-        assert_writeable_eq!(fmt_usd.format_fixed_decimal(&val_1200), "$1.2K");
-
-        let val_1299 = "1299".parse().unwrap();
-        assert_writeable_eq!(fmt_usd.format_fixed_decimal(&val_1299), "$1.3K");
     }
 }
