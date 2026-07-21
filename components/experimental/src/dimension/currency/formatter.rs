@@ -49,7 +49,7 @@ pub(crate) enum CurrencyFormatterData {
         essential: DataPayload<CurrencyEssentialsV1>,
         currency: CurrencyCode,
     },
-    Essential {
+    Symbol {
         essential: DataPayload<CurrencyEssentialsV1>,
         symbol: DataPayload<CurrencySymbolsV1>,
     },
@@ -103,7 +103,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         )
         .allow_identifier_not_found()?
         {
-            Some(res) => CurrencyFormatterData::Essential {
+            Some(res) => CurrencyFormatterData::Symbol {
                 essential,
                 symbol: res.payload,
             },
@@ -147,7 +147,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             })
             .allow_identifier_not_found()?
         {
-            Some(res) => CurrencyFormatterData::Essential {
+            Some(res) => CurrencyFormatterData::Symbol {
                 essential,
                 symbol: res.payload,
             },
@@ -479,7 +479,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 let pattern = essential.get().get_positive(true, true);
                 (pattern, currency.0.as_str())
             }
-            CurrencyFormatterData::Essential { essential, symbol } => {
+            CurrencyFormatterData::Symbol { essential, symbol } => {
                 let symbol = symbol.get();
                 let pattern = essential
                     .get()
