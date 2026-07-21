@@ -190,6 +190,7 @@ mod tests {
         let usd = CurrencyCode(tinystr!(3, "USD"));
         let fmt_usd = CurrencyFormatter::try_new_compact_short(prefs_en, &usd).unwrap();
 
+        // Positive cases
         let val_12 = "12".parse().unwrap();
         assert_writeable_eq!(fmt_usd.format_fixed_decimal(&val_12), "$12");
 
@@ -198,5 +199,15 @@ mod tests {
 
         let val_1200 = "1200".parse().unwrap();
         assert_writeable_eq!(fmt_usd.format_fixed_decimal(&val_1200), "$1.2K");
+
+        // Negative cases (pattern selection and Rule 3 fallback operate on absolute magnitude)
+        let val_neg_12 = "-12".parse().unwrap();
+        assert_writeable_eq!(fmt_usd.format_fixed_decimal(&val_neg_12), "-$12");
+
+        let val_neg_990 = "-990".parse().unwrap();
+        assert_writeable_eq!(fmt_usd.format_fixed_decimal(&val_neg_990), "-$990");
+
+        let val_neg_1200 = "-1200".parse().unwrap();
+        assert_writeable_eq!(fmt_usd.format_fixed_decimal(&val_neg_1200), "-$1.2K");
     }
 }
