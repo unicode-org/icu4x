@@ -7,7 +7,7 @@ use core::fmt::Display;
 use super::super::provider::currency::{
     essentials::{CurrencyEssentials, CurrencyEssentialsV1},
     extended::CurrencyExtendedDataV1,
-    fractions::{CurrencyFractionsV1, FractionInfo, Rounding},
+    fractions::{CurrencyFractions, CurrencyFractionsV1, FractionInfo, Rounding},
     patterns::CurrencyPatternsDataV1,
     symbols::CurrencySymbolsV1,
 };
@@ -60,13 +60,11 @@ pub(crate) enum CurrencyFormatterData {
     Symbol {
         essential: DataPayload<CurrencyEssentialsV1>,
         symbol: DataPayload<CurrencySymbolsV1>,
-        currency: CurrencyCode,
     },
     Name {
         extended: DataPayload<CurrencyExtendedDataV1>,
         patterns: DataPayload<CurrencyPatternsDataV1>,
         plural_rules: PluralRules,
-        currency: CurrencyCode,
     },
 }
 
@@ -81,7 +79,7 @@ pub(crate) enum CurrencyFormatterData {
 pub struct CurrencyFormatter<V: AbstractFormatter> {
     value_formatter: V,
     currency_data: CurrencyFormatterData,
-    fractions: DataPayload<CurrencyFractionsV1>,
+    fraction_info: FractionInfo,
 }
 
 impl<V: AbstractFormatter> CurrencyFormatter<V> {
@@ -101,6 +99,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let essential =
             load_with_fallback::<CurrencyEssentialsV1>(&crate::provider::Baked, ids.clone())?
                 .payload;
+        let fractions: DataPayload<CurrencyFractionsV1> =
+            crate::provider::Baked.load(Default::default())?.payload;
+        let fraction_info = resolve_fraction_info(currency, Some(essential.get()), fractions.get());
         #[allow(const_item_mutation)]
         let currency_data = match DataProvider::<CurrencySymbolsV1>::load(
             &crate::provider::Baked,
@@ -117,7 +118,6 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             Some(res) => CurrencyFormatterData::Symbol {
                 essential,
                 symbol: res.payload,
-                currency,
             },
             None => CurrencyFormatterData::Iso {
                 essential,
@@ -125,12 +125,10 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             },
         };
 
-        let fractions = crate::provider::Baked.load(Default::default())?.payload;
-
         Ok(Self {
             value_formatter,
             currency_data,
-            fractions,
+            fraction_info,
         })
     }
 
@@ -154,6 +152,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let default_id = DataIdentifierBorrowed::for_locale(&locale);
         let ids = req_id.into_iter().chain(core::iter::once(default_id));
         let essential = load_with_fallback::<CurrencyEssentialsV1>(provider, ids.clone())?.payload;
+        let fractions: DataPayload<CurrencyFractionsV1> =
+            provider.load(Default::default())?.payload;
+        let fraction_info = resolve_fraction_info(currency, Some(essential.get()), fractions.get());
         #[allow(const_item_mutation)]
         let currency_data = match provider
             .load(DataRequest {
@@ -168,7 +169,6 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             Some(res) => CurrencyFormatterData::Symbol {
                 essential,
                 symbol: res.payload,
-                currency,
             },
             None => CurrencyFormatterData::Iso {
                 essential,
@@ -176,12 +176,10 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             },
         };
 
-        let fractions = provider.load(Default::default())?.payload;
-
         Ok(Self {
             value_formatter,
             currency_data,
-            fractions,
+            fraction_info,
         })
     }
 
@@ -212,7 +210,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             .map(|res| res.payload);
 
         let patterns = crate::provider::Baked.load(Default::default())?.payload;
-        let fractions = crate::provider::Baked.load(Default::default())?.payload;
+        let fractions: DataPayload<CurrencyFractionsV1> =
+            crate::provider::Baked.load(Default::default())?.payload;
+        let fraction_info = resolve_fraction_info(currency, None, fractions.get());
 
         let currency_data = match extended_opt {
             Some(extended) => {
@@ -221,7 +221,6 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                     extended,
                     patterns,
                     plural_rules,
-                    currency,
                 }
             }
             None => CurrencyFormatterData::IsoName { patterns, currency },
@@ -230,7 +229,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         Ok(Self {
             value_formatter,
             currency_data,
-            fractions,
+            fraction_info,
         })
     }
 
@@ -268,7 +267,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             .map(|res| res.payload);
 
         let patterns = provider.load(Default::default())?.payload;
-        let fractions = provider.load(Default::default())?.payload;
+        let fractions: DataPayload<CurrencyFractionsV1> =
+            provider.load(Default::default())?.payload;
+        let fraction_info = resolve_fraction_info(currency, None, fractions.get());
 
         let currency_data = match extended_opt {
             Some(extended) => {
@@ -278,7 +279,6 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                     extended,
                     patterns,
                     plural_rules,
-                    currency,
                 }
             }
             None => CurrencyFormatterData::IsoName { patterns, currency },
@@ -287,7 +287,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         Ok(Self {
             value_formatter,
             currency_data,
-            fractions,
+            fraction_info,
         })
     }
 }
@@ -519,73 +519,38 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         // * By default, maximum fraction digits are set to 0, trimming trailing zeros (e.g., "$12" over "$12.00").
         // * Currency fraction precision is applied uniformly without type-level switches, relying on the underlying
         //   formatter (such as CompactDecimalFormatter) to trim trailing zeros according to magnitude.
-        let (pattern, currency_str, formatted_value, sign) = match &self.currency_data {
+        let rounded_value = apply_precision(value.clone(), self.fraction_info);
+        let formatted_value = V::format_unsigned(&self.value_formatter, rounded_value.absolute);
+
+        let (pattern, currency_str) = match &self.currency_data {
             CurrencyFormatterData::Iso {
                 essential,
                 currency,
             } => {
                 let pattern = essential.get().get_positive(true, true);
-                // Note: we assume that all currency formatting variants within a locale
-                // share the same fraction digits as the standard pattern (verified during datagen).
-                let fraction_info = self.resolve_fraction_info(*currency, Some(essential.get()));
-                let rounded_value = apply_precision(value.clone(), fraction_info);
-                let formatted_value =
-                    V::format_unsigned(&self.value_formatter, rounded_value.absolute);
-                (
-                    pattern,
-                    currency.0.as_str(),
-                    formatted_value,
-                    rounded_value.sign,
-                )
+                (pattern, currency.0.as_str())
             }
-            CurrencyFormatterData::Symbol {
-                essential,
-                symbol,
-                currency,
-            } => {
+            CurrencyFormatterData::Symbol { essential, symbol } => {
                 let symbol = symbol.get();
                 let pattern = essential
                     .get()
                     .get_positive(symbol.starts_with_letter(), symbol.ends_with_letter());
-                // Note: we assume that all currency formatting variants within a locale
-                // share the same fraction digits as the standard pattern (verified during datagen).
-                let fraction_info = self.resolve_fraction_info(*currency, Some(essential.get()));
-                let rounded_value = apply_precision(value.clone(), fraction_info);
-                let formatted_value =
-                    V::format_unsigned(&self.value_formatter, rounded_value.absolute);
-                (
-                    pattern,
-                    symbol.as_str(),
-                    formatted_value,
-                    rounded_value.sign,
-                )
+                (pattern, symbol.as_str())
             }
             CurrencyFormatterData::IsoName { patterns, currency } => {
-                let fraction_info = self.resolve_fraction_info(*currency, None);
-                let rounded_value = apply_precision(value.clone(), fraction_info);
-                let formatted_value =
-                    V::format_unsigned(&self.value_formatter, rounded_value.absolute);
-
                 let currency_str = currency.0.as_str();
                 let pattern = patterns.get().elements.get_default().1;
-                (pattern, currency_str, formatted_value, rounded_value.sign)
+                (pattern, currency_str)
             }
             CurrencyFormatterData::Name {
                 extended,
                 patterns,
                 plural_rules,
-                currency,
             } => {
-                let fraction_info = self.resolve_fraction_info(*currency, None);
-                let rounded_value = apply_precision(value.clone(), fraction_info);
-                let formatted_value =
-                    V::format_unsigned(&self.value_formatter, rounded_value.absolute);
-
                 let operands = V::plural_operands(&formatted_value);
                 let currency_str = extended.get().get(operands, plural_rules);
                 let pattern = patterns.get().get(operands, plural_rules);
-
-                (pattern, currency_str, formatted_value, rounded_value.sign)
+                (pattern, currency_str)
             }
         };
 
@@ -597,41 +562,41 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         V::format_sign(
             &self.value_formatter,
             pattern.interpolate((formatted_value, currency_str)),
-            sign,
+            rounded_value.sign,
         )
     }
+}
 
-    /// Resolves the fraction/precision information for a given currency.
-    ///
-    /// The resolution follows a 3-step fallback:
-    /// 1. Try currency-specific override in the global map (e.g., JPY = 0 decimals).
-    /// 2. Try locale-specific standard fraction digits from `CurrencyEssentials` (if available).
-    /// 3. Fallback to the global default.
-    fn resolve_fraction_info(
-        &self,
-        currency_code: CurrencyCode,
-        essentials: Option<&CurrencyEssentials>,
-    ) -> FractionInfo {
-        let iso_code = currency_code.0.to_unvalidated();
+/// Resolves the fraction/precision information for a given currency.
+///
+/// The resolution follows a 3-step fallback:
+/// 1. Try currency-specific override in the global map (e.g., JPY = 0 decimals).
+/// 2. Try locale-specific standard fraction digits from `CurrencyEssentials` (if available).
+/// 3. Fallback to the global default.
+fn resolve_fraction_info(
+    currency_code: CurrencyCode,
+    essentials: Option<&CurrencyEssentials>,
+    fractions: &CurrencyFractions,
+) -> FractionInfo {
+    let iso_code = currency_code.0.to_unvalidated();
 
-        // 1. Try currency-specific override in global map
-        if let Some(ule) = self.fractions.get().fractions.get(&iso_code) {
-            return zerovec::ule::AsULE::from_unaligned(*ule);
-        }
-
-        // 2. Try locale-specific standard fraction digits
-        if let Some(essentials) = essentials {
-            return FractionInfo {
-                digits: essentials.standard_fractions,
-                rounding: Rounding::R1,
-                cash_digits: None,
-                cash_rounding: None,
-            };
-        }
-
-        // 3. Fallback to global default
-        self.fractions.get().default
+    // 1. Try currency-specific override in global map
+    if let Some(ule) = fractions.fractions.get(&iso_code) {
+        return zerovec::ule::AsULE::from_unaligned(*ule);
     }
+
+    // 2. Try locale-specific standard fraction digits
+    if let Some(essentials) = essentials {
+        return FractionInfo {
+            digits: essentials.standard_fractions,
+            rounding: Rounding::R1,
+            cash_digits: None,
+            cash_rounding: None,
+        };
+    }
+
+    // 3. Fallback to global default
+    fractions.default
 }
 
 // TODO: Discuss reusing the `load_with_fallback` helper from `icu_decimal`
