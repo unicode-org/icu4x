@@ -237,7 +237,8 @@ fn make_attributes_for_langid(
         }
         (None, None) => lang_str.resize::<16>(),
     };
-    // Valid BCP-47 subtags conform to DataMarkerAttributes syntax.
+    // This is infallible (will not panic) because validated `Language`, `Script`,
+    // `Region`, and hyphens are guaranteed to conform to `DataMarkerAttributes` syntax.
     DataMarkerAttributes::from_str_or_panic(buffer)
 }
 
@@ -1927,9 +1928,9 @@ mod tests {
                     Ok(name) => {
                         let borrowed = name.as_borrowed();
                         let mut sink = String::new();
-                        match borrowed.try_write_to(&mut sink) {
-                            Ok(Ok(())) => format!("\"{}\"", sink),
-                            _ => "❌".to_string(),
+                        match borrowed.try_write_to(&mut sink).unwrap() {
+                            Ok(()) => format!("\"{}\"", sink),
+                            Err(LanguageIdentifierNameFallbackError) => "❌".to_string(),
                         }
                     }
                     Err(_) => "❌".to_string(),
