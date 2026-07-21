@@ -637,10 +637,11 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         // "If the element value of P is '0', then use the corresponding non-compact number formatting instead,"
         //
         // Specifically, when compact formatters handle uncompacted fallback values below 1,000 ("0" pattern):
-        // * Suffix abbreviation and division steps ("K", "M") are skipped in favor of standard currency format.
-        // * By default, maximum fraction digits are set to 0, trimming trailing zeros (e.g., "$12" over "$12.00").
+        // * Per UTS #35: Suffix abbreviation and division steps ("K", "M") are skipped in favor of standard currency format.
+        // * Per current ICU4X implementation: `CompactDecimalFormatter` trims trailing fractional zeros by default
+        //   (rendering e.g. "$12" instead of "$12.00").
         // * Currency fraction precision is applied uniformly without type-level switches, relying on the underlying
-        //   formatter (such as CompactDecimalFormatter) to trim trailing zeros according to magnitude.
+        //   formatter (such as `CompactDecimalFormatter`) to handle magnitude-based trailing zero trimming.
         let rounded_value = apply_precision(value.clone(), self.fraction_info);
         let formatted_value = V::format_unsigned(&self.value_formatter, rounded_value.absolute);
 

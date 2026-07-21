@@ -182,10 +182,10 @@ mod tests {
         // "If the element value of P is '0', then use the corresponding non-compact number formatting instead,"
         //
         // Specifically, for numbers below 1,000 (which map to the uncompacted pattern "0"):
-        // * Suffix division and compact abbreviation steps (like "K" or "M") are skipped.
-        // * The standard non-compact currency pattern is used instead.
-        // * By default, maximum fractional digits are set to 0, stripping trailing zeros (so 12 USD formats
-        //   as "$12" instead of "$12.00", and 990 USD formats as "$990").
+        // * Per UTS #35: Suffix division and compact abbreviation steps (like "K" or "M") are skipped in favor
+        //   of standard non-compact pattern structures.
+        // * Per current ICU4X `CompactDecimalFormatter` implementation: Maximum fractional digits are trimmed to 0
+        //   by default, stripping trailing zeros (so 12 USD formats as "$12" instead of "$12.00", and 990 USD as "$990").
         let prefs_en = locale!("en-US").into();
         let usd = CurrencyCode(tinystr!(3, "USD"));
         let fmt_usd = CurrencyFormatter::try_new_compact_symbol(prefs_en, &usd).unwrap();
