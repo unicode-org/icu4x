@@ -429,8 +429,6 @@ fn run_util_api_enforcement() {
         "writeable",
         "fixed_decimal",
         "tinystr",
-        "yoke",
-        "yoke-derive",
         "zerofrom",
         "zerofrom-derive",
     ]
@@ -455,6 +453,7 @@ fn run_util_api_enforcement() {
         ("icu", "icu_experimental"),
         ("icu_collections", "zerovec"),
         ("icu_properties", "zerovec"),
+        ("icu_provider", "yoke"),
     ]
     .into_iter()
     .collect();
@@ -787,12 +786,13 @@ impl<'a, 'b> UtilApiChecker<'a, 'b> {
                 && let Some(trait_item) = self.krate.paths.get(&trait_path.id)
                 && trait_item.crate_id != 0
                 && let Some(ext) = self.krate.external_crates.get(&trait_item.crate_id)
-                && ext.name == "zerovec"
                 && let Some(trait_name) = trait_item.path.last()
-                && matches!(
-                    trait_name.as_str(),
-                    "ULE" | "VarULE" | "ZeroMapKV" | "AsULE"
-                )
+                && ((ext.name == "zerovec"
+                    && matches!(
+                        trait_name.as_str(),
+                        "ULE" | "VarULE" | "ZeroMapKV" | "AsULE"
+                    ))
+                    || (ext.name == "yoke" && trait_name.as_str() == "Yokeable"))
             {
                 is_allowed_impl = true;
             }
