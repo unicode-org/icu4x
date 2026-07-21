@@ -1959,6 +1959,7 @@ dependencies = [
 name = "icu_provider_source"
 version = "2.2.0"
 dependencies = [
+ "arraystring",
  "crlify",
  "either",
  "elsa",

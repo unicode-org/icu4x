@@ -9,6 +9,8 @@ use crate::cldr_serde::coverage_by_xpath::CoverageByXPathResource;
 use crate::cldr_serde::eras::EraData;
 use crate::datetime::DatagenCalendar;
 use crate::source::{AbstractFs, SerdeCache};
+use arraystring::{ArrayString, typenum::U64};
+use core::fmt::Write;
 use icu::locale::LanguageIdentifier;
 use icu::locale::LocaleExpander;
 use icu::locale::fallback::LocaleFallbacker;
@@ -1086,46 +1088,19 @@ impl CldrCache {
         let mut it = fallbacker
             .for_config(Default::default())
             .fallback_for(*locale);
-        loop {
-            let loc = it.get();
-            if loc.is_unknown() {
-                break;
-            }
-            let loc_str = loc.to_string();
-            let locale_path = format!("cldr-misc-full/coverageByXPath/{loc_str}.json");
+        while !it.get().is_unknown() {
+            let mut locale_path = ArrayString::<U64>::new();
+            let _ = write!(
+                locale_path,
+                "cldr-misc-full/coverageByXPath/{}.json",
+                it.get()
+            );
             if self.serde_cache.file_exists(&locale_path)? {
                 let resource: &CoverageByXPathResource =
                     self.serde_cache.read_and_parse_json(&locale_path)?;
-                let levels = resource
-                    .coverage_by_xpath
-                    .get(loc_str.as_str())
-                    .or_else(|| resource.coverage_by_xpath.values().next());
-                if let Some(levels) = levels {
-                    if levels
-                        .core
-                        .get_with_write_fn(|sink| xpath.write_to(sink))
-                        .is_some()
-                    {
-                        return Ok(CoverageLevelForXPath::Core);
-                    } else if levels
-                        .basic
-                        .get_with_write_fn(|sink| xpath.write_to(sink))
-                        .is_some()
-                    {
-                        return Ok(CoverageLevelForXPath::Basic);
-                    } else if levels
-                        .moderate
-                        .get_with_write_fn(|sink| xpath.write_to(sink))
-                        .is_some()
-                    {
-                        return Ok(CoverageLevelForXPath::Moderate);
-                    } else if levels
-                        .modern
-                        .get_with_write_fn(|sink| xpath.write_to(sink))
-                        .is_some()
-                    {
-                        return Ok(CoverageLevelForXPath::Modern);
-                    }
+                let levels = resource.coverage_by_xpath.values().next();
+                if let Some(level) = levels.and_then(|l| l.level_for_xpath(&xpath)) {
+                    return Ok(level);
                 }
             }
             it.step();
@@ -1135,32 +1110,12 @@ impl CldrCache {
         if self.serde_cache.file_exists(root_path)? {
             let resource: &CoverageByXPathResource =
                 self.serde_cache.read_and_parse_json(root_path)?;
-            if let Some(levels) = resource.coverage_by_xpath.get("root") {
-                if levels
-                    .core
-                    .get_with_write_fn(|sink| xpath.write_to(sink))
-                    .is_some()
-                {
-                    return Ok(CoverageLevelForXPath::Core);
-                } else if levels
-                    .basic
-                    .get_with_write_fn(|sink| xpath.write_to(sink))
-                    .is_some()
-                {
-                    return Ok(CoverageLevelForXPath::Basic);
-                } else if levels
-                    .moderate
-                    .get_with_write_fn(|sink| xpath.write_to(sink))
-                    .is_some()
-                {
-                    return Ok(CoverageLevelForXPath::Moderate);
-                } else if levels
-                    .modern
-                    .get_with_write_fn(|sink| xpath.write_to(sink))
-                    .is_some()
-                {
-                    return Ok(CoverageLevelForXPath::Modern);
-                }
+            if let Some(level) = resource
+                .coverage_by_xpath
+                .get("root")
+                .and_then(|l| l.level_for_xpath(&xpath))
+            {
+                return Ok(level);
             }
         }
 

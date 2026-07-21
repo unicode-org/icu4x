@@ -34,6 +34,30 @@ pub(crate) struct CoverageByXPathLevels {
     pub(crate) modern: ZeroTrieSimpleAscii<Vec<u8>>,
 }
 
+impl CoverageByXPathLevels {
+    pub(crate) fn level_for_xpath(
+        &self,
+        xpath: &impl writeable::Writeable,
+    ) -> Option<crate::cldr_cache::CoverageLevelForXPath> {
+        use crate::cldr_cache::CoverageLevelForXPath;
+        let contains = |trie: &ZeroTrieSimpleAscii<Vec<u8>>| {
+            trie.get_with_write_fn(|sink| xpath.write_to(sink))
+                .is_some()
+        };
+        if contains(&self.core) {
+            Some(CoverageLevelForXPath::Core)
+        } else if contains(&self.basic) {
+            Some(CoverageLevelForXPath::Basic)
+        } else if contains(&self.moderate) {
+            Some(CoverageLevelForXPath::Moderate)
+        } else if contains(&self.modern) {
+            Some(CoverageLevelForXPath::Modern)
+        } else {
+            None
+        }
+    }
+}
+
 struct ZeroTrieVisitor;
 
 impl<'de> Visitor<'de> for ZeroTrieVisitor {
