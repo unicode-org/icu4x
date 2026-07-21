@@ -176,12 +176,13 @@ mod tests {
     #[test]
     pub fn test_tr35_rule_3_below_1000() {
         // Per UTS #35 (LDML Part 3: Numbers, Section 3.8, Rule 3 in Compact Number Formatting):
-        // "If the element value of P is '0', then use the corresponding non-compact number formatting instead,
-        // and skip the rest of these steps — but adjust the precision as described below. [...]
-        // However, for the '0' case by default the significant digits are adjusted for consistency, typically
-        // to 2 or 3 digits, and the maximum fractional digits are set to 0 (for both currencies and plain decimal).
-        // Thus the output would be $12, not $12.01. [...] while 990 implicitly maps to the special value '0' [...]
-        // and would result in simply '990$'."
+        // "If the element value of P is '0', then use the corresponding non-compact number formatting instead,"
+        //
+        // Specifically, for numbers below 1,000 (which map to the uncompacted pattern "0"):
+        // * Suffix division and compact abbreviation steps (like "K" or "M") are skipped.
+        // * The standard non-compact currency pattern is used instead.
+        // * By default, maximum fractional digits are set to 0, stripping trailing zeros (so 12 USD formats
+        //   as "$12" instead of "$12.00", and 990 USD formats as "$990").
         let prefs_en = locale!("en-US").into();
         let usd = CurrencyCode(tinystr!(3, "USD"));
         let fmt_usd = CurrencyFormatter::try_new_compact_short(prefs_en, &usd).unwrap();
