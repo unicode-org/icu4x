@@ -9,11 +9,10 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use icu_locale_core::subtags::{Language, Region, Script, Variant};
 use icu_pattern::DoublePlaceholderPattern;
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
-use tinystr::{TinyAsciiStr, UnvalidatedTinyAsciiStr, tinystr};
+use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::{VarZeroCow, ZeroMap};
 
 // We use raw TinyAsciiStrs for map keys, as we then don't have to
@@ -195,6 +194,7 @@ icu_provider::data_marker!(
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_region",
 );
+
 icu_provider::data_marker!(
     /// Data marker for core region display names.
     LocaleNamesRegionCoreMediumV1,
@@ -212,6 +212,7 @@ icu_provider::data_marker!(
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_region",
 );
+
 icu_provider::data_marker!(
     /// Data marker for core short region display names.
     LocaleNamesRegionCoreShortV1,
@@ -229,6 +230,7 @@ icu_provider::data_marker!(
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_language",
 );
+
 icu_provider::data_marker!(
     /// Data marker for core language display names.
     LocaleNamesLanguageCoreMediumV1,
@@ -237,6 +239,7 @@ icu_provider::data_marker!(
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_language",
 );
+
 icu_provider::data_marker!(
     /// Data marker for extended language display names.
     LocaleNamesLanguageExtendedMediumV1,
@@ -254,6 +257,7 @@ icu_provider::data_marker!(
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_language",
 );
+
 icu_provider::data_marker!(
     /// Data marker for extended short language display names.
     LocaleNamesLanguageExtendedShortV1,
@@ -271,6 +275,7 @@ icu_provider::data_marker!(
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_language",
 );
+
 icu_provider::data_marker!(
     /// Data marker for extended long language display names.
     LocaleNamesLanguageExtendedLongV1,
@@ -288,6 +293,7 @@ icu_provider::data_marker!(
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_language",
 );
+
 icu_provider::data_marker!(
     /// Data marker for extended menu-medium language display names.
     LocaleNamesLanguageMenuExtendedMediumV1,
@@ -305,6 +311,7 @@ icu_provider::data_marker!(
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_script",
 );
+
 icu_provider::data_marker!(
     /// Data marker for core script display names.
     LocaleNamesScriptCoreMediumV1,
@@ -313,6 +320,7 @@ icu_provider::data_marker!(
     #[cfg(feature = "datagen")]
     attributes_domain = "locale_names_script",
 );
+
 icu_provider::data_marker!(
     /// Data marker for extended script display names.
     LocaleNamesScriptExtendedMediumV1,
@@ -345,111 +353,4 @@ icu_provider::data_marker!(
     LocaleNamesEssentialsV1,
     "locale/names/essentials/v1",
     LocaleNamesEssentials<'static>
-);
-
-impl LocaleNamesLanguageCoreMediumV1 {
-    /// Helper to construct infallible attributes from subtags.
-    #[inline]
-    pub(crate) fn make_attributes(
-        language: Language,
-        script: Option<Script>,
-        region: Option<Region>,
-        buffer: &mut TinyAsciiStr<16>,
-    ) -> &DataMarkerAttributes {
-        const HYPHEN: TinyAsciiStr<1> = tinystr!(1, "-");
-        let lang_str = language.to_tinystr();
-        *buffer = match (script, region) {
-            (Some(script), Some(region)) => {
-                let script_str = script.to_tinystr();
-                let region_str = region.to_tinystr();
-                lang_str
-                    .concat::<1, 16>(HYPHEN)
-                    .concat::<4, 16>(script_str)
-                    .concat::<1, 16>(HYPHEN)
-                    .concat::<3, 16>(region_str)
-            }
-            (Some(script), None) => {
-                let script_str = script.to_tinystr();
-                lang_str.concat::<1, 16>(HYPHEN).concat::<4, 16>(script_str)
-            }
-            (None, Some(region)) => {
-                let region_str = region.to_tinystr();
-                lang_str.concat::<1, 16>(HYPHEN).concat::<3, 16>(region_str)
-            }
-            (None, None) => lang_str.resize::<16>(),
-        };
-        // Valid BCP-47 subtags conform to DataMarkerAttributes syntax.
-        DataMarkerAttributes::from_str_or_panic(buffer)
-    }
-}
-
-impl LocaleNamesRegionCoreMediumV1 {
-    /// Helper to create data marker attributes from subtag.
-    #[inline]
-    pub(crate) fn make_attributes(subtag: &Region) -> &DataMarkerAttributes {
-        // Valid Region subtags conform to DataMarkerAttributes syntax.
-        DataMarkerAttributes::from_str_or_panic(subtag.as_str())
-    }
-}
-
-impl LocaleNamesScriptCoreMediumV1 {
-    /// Helper to create data marker attributes from subtag.
-    #[inline]
-    pub(crate) fn make_attributes(subtag: &Script) -> &DataMarkerAttributes {
-        // Valid Script subtags conform to DataMarkerAttributes syntax.
-        DataMarkerAttributes::from_str_or_panic(subtag.as_str())
-    }
-}
-
-impl LocaleNamesVariantExtendedMediumV1 {
-    /// Helper to create data marker attributes from subtag.
-    #[inline]
-    pub(crate) fn make_attributes(subtag: &Variant) -> &DataMarkerAttributes {
-        // Valid Variant subtags conform to DataMarkerAttributes syntax.
-        DataMarkerAttributes::from_str_or_panic(subtag.as_str())
-    }
-}
-
-macro_rules! make_subtag_attributes_impl {
-    ($marker:ident, $target:ident, $subtag_ty:ty) => {
-        impl $marker {
-            /// Helper to create data marker attributes from subtag.
-            #[inline]
-            pub(crate) fn make_attributes(subtag: &$subtag_ty) -> &DataMarkerAttributes {
-                $target::make_attributes(subtag)
-            }
-        }
-    };
-}
-
-make_subtag_attributes_impl!(
-    LocaleNamesRegionMinimalMediumV1,
-    LocaleNamesRegionCoreMediumV1,
-    Region
-);
-make_subtag_attributes_impl!(
-    LocaleNamesRegionMinimalShortV1,
-    LocaleNamesRegionCoreMediumV1,
-    Region
-);
-make_subtag_attributes_impl!(
-    LocaleNamesRegionCoreShortV1,
-    LocaleNamesRegionCoreMediumV1,
-    Region
-);
-
-make_subtag_attributes_impl!(
-    LocaleNamesScriptMinimalMediumV1,
-    LocaleNamesScriptCoreMediumV1,
-    Script
-);
-make_subtag_attributes_impl!(
-    LocaleNamesScriptExtendedMediumV1,
-    LocaleNamesScriptCoreMediumV1,
-    Script
-);
-make_subtag_attributes_impl!(
-    LocaleNamesScriptExtendedShortV1,
-    LocaleNamesScriptCoreMediumV1,
-    Script
 );

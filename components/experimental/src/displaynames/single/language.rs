@@ -25,7 +25,7 @@ use icu_pattern::{DoublePlaceholderPattern, DoublePlaceholderValueProviderTry, P
 use icu_provider::DataPayloadOr;
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
-use tinystr::TinyAsciiStr;
+use tinystr::{TinyAsciiStr, tinystr};
 use writeable::LengthHint;
 use writeable::{PartsWrite, TryWriteable, adapters::LossyWrap};
 use zerovec::VarZeroCow;
@@ -215,7 +215,30 @@ fn make_attributes_for_langid(
     region: Option<Region>,
     buffer: &mut TinyAsciiStr<16>,
 ) -> &DataMarkerAttributes {
-    LocaleNamesLanguageCoreMediumV1::make_attributes(language, script, region, buffer)
+    const HYPHEN: TinyAsciiStr<1> = tinystr!(1, "-");
+    let lang_str = language.to_tinystr();
+    *buffer = match (script, region) {
+        (Some(script), Some(region)) => {
+            let script_str = script.to_tinystr();
+            let region_str = region.to_tinystr();
+            lang_str
+                .concat::<1, 16>(HYPHEN)
+                .concat::<4, 16>(script_str)
+                .concat::<1, 16>(HYPHEN)
+                .concat::<3, 16>(region_str)
+        }
+        (Some(script), None) => {
+            let script_str = script.to_tinystr();
+            lang_str.concat::<1, 16>(HYPHEN).concat::<4, 16>(script_str)
+        }
+        (None, Some(region)) => {
+            let region_str = region.to_tinystr();
+            lang_str.concat::<1, 16>(HYPHEN).concat::<3, 16>(region_str)
+        }
+        (None, None) => lang_str.resize::<16>(),
+    };
+    // Valid BCP-47 subtags conform to DataMarkerAttributes syntax.
+    DataMarkerAttributes::from_str_or_panic(buffer)
 }
 
 #[inline]

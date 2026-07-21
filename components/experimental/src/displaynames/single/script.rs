@@ -16,8 +16,9 @@ use icu_provider::prelude::*;
 
 #[inline]
 fn make_attributes(subtag: &Script) -> &DataMarkerAttributes {
-    // All script markers use the same attributes
-    LocaleNamesScriptMinimalMediumV1::make_attributes(subtag)
+    // All script markers use the same attributes.
+    // Valid Script subtags conform to DataMarkerAttributes syntax.
+    DataMarkerAttributes::from_str_or_panic(subtag.as_str())
 }
 
 #[inline]

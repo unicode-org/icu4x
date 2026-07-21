@@ -13,8 +13,9 @@ use icu_provider::prelude::*;
 
 #[inline]
 fn make_attributes(subtag: &Variant) -> &DataMarkerAttributes {
-    // All variant markers use the same attributes
-    LocaleNamesVariantExtendedMediumV1::make_attributes(subtag)
+    // All variant markers use the same attributes.
+    // Valid Variant subtags conform to DataMarkerAttributes syntax.
+    DataMarkerAttributes::from_str_or_panic(subtag.as_str())
 }
 
 #[inline]

@@ -16,8 +16,9 @@ use icu_provider::prelude::*;
 
 #[inline]
 fn make_attributes(subtag: &Region) -> &DataMarkerAttributes {
-    // All region markers use the same attributes
-    LocaleNamesRegionMinimalMediumV1::make_attributes(subtag)
+    // All region markers use the same attributes.
+    // Valid Region subtags conform to DataMarkerAttributes syntax.
+    DataMarkerAttributes::from_str_or_panic(subtag.as_str())
 }
 
 #[inline]
