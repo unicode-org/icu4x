@@ -7,35 +7,12 @@
         "//ldml/localeDisplayNames/territories/territory[@type=\"KH\"]"
       ],
       "moderate": [
-        "//ldml/characters/placeholderBoundarySpacing[@type=\"digit-digit\"][@scopes=\"datetime\"]",
         "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
         "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
         "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]",
-        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"khmr\"]",
-        "//ldml/numbers/currencyFormats[@numberSystem=\"khmr\"]/currencyFormatLength/currencyFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
-        "//ldml/numbers/currencyFormats[@numberSystem=\"khmr\"]/currencyFormatLength/currencyFormat[@type=\"standard\"]/pattern[@type=\"standard\"][@alt=\"alphaNextToNumber\"]",
-        "//ldml/numbers/currencyFormats[@numberSystem=\"khmr\"]/currencyFormatLength/currencyFormat[@type=\"standard\"]/pattern[@type=\"standard\"][@alt=\"noCurrency\"]",
-        "//ldml/numbers/decimalFormats[@numberSystem=\"khmr\"]/decimalFormatLength/decimalFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
-        "//ldml/numbers/percentFormats[@numberSystem=\"khmr\"]/percentFormatLength/percentFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
-        "//ldml/numbers/scientificFormats[@numberSystem=\"khmr\"]/scientificFormatLength/scientificFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
-        "//ldml/numbers/symbols[@numberSystem=\"khmr\"]/decimal",
-        "//ldml/numbers/symbols[@numberSystem=\"khmr\"]/group",
-        "//ldml/numbers/symbols[@numberSystem=\"khmr\"]/minusSign",
-        "//ldml/numbers/symbols[@numberSystem=\"khmr\"]/percentSign",
-        "//ldml/numbers/symbols[@numberSystem=\"khmr\"]/plusSign"
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"khmr\"]"
       ],
-      "modern": [
-        "//ldml/numbers/rationalFormats[@numberSystem=\"khmr\"]/integerAndRationalPattern",
-        "//ldml/numbers/rationalFormats[@numberSystem=\"khmr\"]/integerAndRationalPattern[@alt=\"superSub\"]",
-        "//ldml/numbers/rationalFormats[@numberSystem=\"khmr\"]/rationalPattern",
-        "//ldml/numbers/rationalFormats[@numberSystem=\"khmr\"]/rationalUsage",
-        "//ldml/numbers/symbols[@numberSystem=\"khmr\"]/approximatelySign",
-        "//ldml/numbers/symbols[@numberSystem=\"khmr\"]/exponential",
-        "//ldml/numbers/symbols[@numberSystem=\"khmr\"]/infinity",
-        "//ldml/numbers/symbols[@numberSystem=\"khmr\"]/nan",
-        "//ldml/numbers/symbols[@numberSystem=\"khmr\"]/perMille",
-        "//ldml/numbers/symbols[@numberSystem=\"khmr\"]/superscriptingExponent"
-      ]
+      "modern": []
     }
   }
 }

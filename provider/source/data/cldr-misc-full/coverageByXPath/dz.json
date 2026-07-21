@@ -4,16 +4,7 @@
       "basic": [
         "//ldml/localeDisplayNames/languages/language[@type=\"dz\"]",
         "//ldml/localeDisplayNames/scripts/script[@type=\"Tibt\"]",
-        "//ldml/localeDisplayNames/territories/territory[@type=\"BT\"]",
-        "//ldml/numbers/currencyFormats[@numberSystem=\"tibt\"]/currencyFormatLength/currencyFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
-        "//ldml/numbers/decimalFormats[@numberSystem=\"tibt\"]/decimalFormatLength/decimalFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
-        "//ldml/numbers/percentFormats[@numberSystem=\"tibt\"]/percentFormatLength/percentFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
-        "//ldml/numbers/scientificFormats[@numberSystem=\"tibt\"]/scientificFormatLength/scientificFormat[@type=\"standard\"]/pattern[@type=\"standard\"]",
-        "//ldml/numbers/symbols[@numberSystem=\"tibt\"]/decimal",
-        "//ldml/numbers/symbols[@numberSystem=\"tibt\"]/group",
-        "//ldml/numbers/symbols[@numberSystem=\"tibt\"]/minusSign",
-        "//ldml/numbers/symbols[@numberSystem=\"tibt\"]/percentSign",
-        "//ldml/numbers/symbols[@numberSystem=\"tibt\"]/plusSign"
+        "//ldml/localeDisplayNames/territories/territory[@type=\"BT\"]"
       ],
       "moderate": [
         "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
@@ -21,18 +12,7 @@
         "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]",
         "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"tibt\"]"
       ],
-      "modern": [
-        "//ldml/numbers/rationalFormats[@numberSystem=\"tibt\"]/integerAndRationalPattern",
-        "//ldml/numbers/rationalFormats[@numberSystem=\"tibt\"]/integerAndRationalPattern[@alt=\"superSub\"]",
-        "//ldml/numbers/rationalFormats[@numberSystem=\"tibt\"]/rationalPattern",
-        "//ldml/numbers/rationalFormats[@numberSystem=\"tibt\"]/rationalUsage",
-        "//ldml/numbers/symbols[@numberSystem=\"tibt\"]/approximatelySign",
-        "//ldml/numbers/symbols[@numberSystem=\"tibt\"]/exponential",
-        "//ldml/numbers/symbols[@numberSystem=\"tibt\"]/infinity",
-        "//ldml/numbers/symbols[@numberSystem=\"tibt\"]/nan",
-        "//ldml/numbers/symbols[@numberSystem=\"tibt\"]/perMille",
-        "//ldml/numbers/symbols[@numberSystem=\"tibt\"]/superscriptingExponent"
-      ]
+      "modern": []
     }
   }
 }

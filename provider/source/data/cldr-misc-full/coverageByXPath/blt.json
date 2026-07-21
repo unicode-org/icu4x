@@ -7,7 +7,6 @@
         "//ldml/localeDisplayNames/territories/territory[@type=\"VN\"]"
       ],
       "moderate": [
-        "//ldml/characters/placeholderBoundarySpacing[@type=\"digit-digit\"][@scopes=\"datetime\"]",
         "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
         "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
         "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]"
