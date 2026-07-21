@@ -32,6 +32,7 @@ impl Debug for SerdeCache {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         // skip formatting the cache
         let _ = &self.cache;
+        let _ = &self.missing_files_cache;
         f.debug_struct("SerdeCache")
             .field("root", &self.root)
             .finish()
@@ -103,13 +104,12 @@ impl SerdeCache {
         if self.missing_files_cache.get(path).is_some() {
             return Ok(false);
         }
-        if self.root.file_exists(path)? {
-            Ok(true)
-        } else {
+        let exists = self.root.file_exists(path)?;
+        if !exists {
             self.missing_files_cache
                 .insert(path.to_string(), Box::new(()));
-            Ok(false)
         }
+        Ok(exists)
     }
 }
 
