@@ -340,6 +340,7 @@ pub fn tzdb_data() -> AbstractFs {{
         .unwrap();
     }
 
+    #[allow(clippy::single_element_loop)]
     for (icu_path, repo_path) in [(
         "icu4c/source/test/testdata/riwords.txt",
         "components/collator/tests/data/riwords.txt",
