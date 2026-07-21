@@ -10,7 +10,7 @@ use crate::options::*;
 use crate::pattern::DateTimePattern;
 use crate::provider::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::provider::pattern::{
-    GenericPatternItem, PatternItem,
+    GenericPatternItem, PatternItem, TimeGranularity,
     runtime::{self, PatternMetadata},
 };
 #[cfg(feature = "unstable")]
@@ -278,7 +278,7 @@ impl DateTimeInputUnchecked {
     fn resolve_time_precision(
         &self,
         time_precision: TimePrecision,
-        prefer_keep_minutes: bool,
+        time_granularity: TimeGranularity,
     ) -> (PackedSkeletonVariant, Option<SubsecondDigits>) {
         match time_precision {
             TimePrecision::Hour => (PackedSkeletonVariant::Standard, None),
@@ -287,7 +287,7 @@ impl DateTimeInputUnchecked {
             TimePrecision::Subsecond(f) => (PackedSkeletonVariant::Variant1, Some(f)),
             TimePrecision::MinuteOptional => {
                 let minute = self.minute.unwrap_or_default();
-                if minute.is_zero() && !prefer_keep_minutes {
+                if minute.is_zero() && time_granularity == TimeGranularity::Hours {
                     (PackedSkeletonVariant::Standard, None)
                 } else {
                     (PackedSkeletonVariant::Variant0, None)
@@ -409,14 +409,12 @@ impl TimePatternSelectionData {
     ) -> Option<TimePatternDataBorrowed<'_>> {
         let payload = self.payload.get_option()?;
         let time_precision = options.time_precision.unwrap_or_default();
-        let prefer_keep_minutes = matches!(time_precision, TimePrecision::MinuteOptional)
-            && payload
-                .get(options.length(), PackedSkeletonVariant::Standard)
-                .metadata
-                .time_granularity()
-                .prefer_keep_minutes();
+        let time_granularity = payload
+            .get(options.length(), PackedSkeletonVariant::Standard)
+            .metadata
+            .time_granularity();
         let (variant, subsecond_digits) =
-            input.resolve_time_precision(time_precision, prefer_keep_minutes);
+            input.resolve_time_precision(time_precision, time_granularity);
         Some(TimePatternDataBorrowed::Resolved(
             payload.get(options.length(), variant),
             options.alignment,

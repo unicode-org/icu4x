@@ -35,11 +35,17 @@ pub use item::{GenericPatternItem, PatternItem};
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
 pub enum TimeGranularity {
-    /// No time is in the pattern, or hours are 23/24-hour style.
+    /// No time fields are in the pattern, or the smallest time unit is 23/24-hour style hours (e.g., `H` or `k`).
+    ///
+    /// When formatting with [`TimePrecision::MinuteOptional`](crate::options::TimePrecision::MinuteOptional),
+    /// zero minutes are retained for 23/24-hour style hours (formatting `15:00:00` as `15:00`).
     #[default]
-    Hours23OrNone = 0,
-    /// Smallest time unit = 12-hour style hours.
-    Hours12 = 1,
+    None = 0,
+    /// Smallest time unit is 12-hour style hours (e.g., `h` or `K`).
+    ///
+    /// When formatting with [`TimePrecision::MinuteOptional`](crate::options::TimePrecision::MinuteOptional),
+    /// zero minutes are omitted for 12-hour style hours (formatting `15:00:00` as `3 PM`).
+    Hours = 1,
     /// Smallest time unit = minutes.
     Minutes = 2,
     /// Smallest time unit = seconds.
@@ -49,51 +55,29 @@ pub enum TimeGranularity {
 }
 
 impl TimeGranularity {
-    /// Deprecated alias for [`TimeGranularity::Hours12`].
-    #[deprecated(note = "use Hours12 or Hours23OrNone")]
-    #[allow(non_upper_case_globals)]
-    pub const Hours: TimeGranularity = TimeGranularity::Hours12;
-    /// Deprecated alias for [`TimeGranularity::Hours23OrNone`].
-    #[deprecated(note = "use Hours23OrNone")]
-    #[allow(non_upper_case_globals)]
-    pub const None: TimeGranularity = TimeGranularity::Hours23OrNone;
-
     /// Returns [`true`] if the most granular time being displayed will align with
     /// the top of the hour, otherwise returns [`false`].
     /// e.g. `12:00:00` is at the top of the hour for any display granularity.
     /// e.g. `12:00:05` is only at the top of the hour if the seconds are not displayed.
     pub fn is_top_of_hour(self, minute: u8, second: u8, subsecond: u32) -> bool {
         match self {
-            Self::Hours23OrNone | Self::Hours12 => true,
+            Self::None | Self::Hours => true,
             Self::Minutes => minute == 0,
             Self::Seconds => minute == 0 && second == 0,
             Self::Nanoseconds => minute == 0 && second == 0 && subsecond == 0,
         }
     }
 
-    /// Returns [`true`] if [`TimePrecision::MinuteOptional`](crate::options::TimePrecision::MinuteOptional)
-    /// should retain zero minutes (as in 24-hour hour cycles), or [`false`] if zero minutes
-    /// should be omitted (as in 12-hour hour cycles).
-    #[inline]
-    pub(crate) fn prefer_keep_minutes(self) -> bool {
-        debug_assert!(
-            matches!(self, Self::Hours23OrNone | Self::Hours12),
-            "prefer_keep_minutes should only be called on hour-only or date-only patterns, got {:?}",
-            self
-        );
-        matches!(self, Self::Hours23OrNone)
-    }
-
     #[inline]
     pub(crate) fn from_ordinal(ordinal: u8) -> TimeGranularity {
         use TimeGranularity::*;
         match ordinal {
-            0 => Hours23OrNone,
-            1 => Hours12,
+            0 => None,
+            1 => Hours,
             2 => Minutes,
             3 => Seconds,
             4 => Nanoseconds,
-            _ => Hours23OrNone,
+            _ => None,
         }
     }
 
@@ -101,8 +85,8 @@ impl TimeGranularity {
     pub(crate) const fn ordinal(self) -> u8 {
         use TimeGranularity::*;
         match self {
-            Hours23OrNone => 0,
-            Hours12 => 1,
+            None => 0,
+            Hours => 1,
             Minutes => 2,
             Seconds => 3,
             Nanoseconds => 4,
@@ -112,18 +96,18 @@ impl TimeGranularity {
 
 impl From<PatternItem> for TimeGranularity {
     /// Retrieves the granularity of time represented by a [`PatternItem`].
-    /// If the [`PatternItem`] is not time-related, returns [`TimeGranularity::Hours23OrNone`].
+    /// If the [`PatternItem`] is not time-related, returns [`TimeGranularity::None`].
     fn from(item: PatternItem) -> Self {
         match item {
             PatternItem::Field(field) => match field.symbol {
-                fields::FieldSymbol::Hour(fields::Hour::H11 | fields::Hour::H12) => Self::Hours12,
-                fields::FieldSymbol::Hour(fields::Hour::H23) => Self::Hours23OrNone,
+                fields::FieldSymbol::Hour(fields::Hour::H23) => Self::None,
+                fields::FieldSymbol::Hour(fields::Hour::H11 | fields::Hour::H12) => Self::Hours,
                 fields::FieldSymbol::Minute => Self::Minutes,
                 fields::FieldSymbol::Second(_) => Self::Seconds,
                 fields::FieldSymbol::DecimalSecond(_) => Self::Nanoseconds,
-                _ => Self::Hours23OrNone,
+                _ => Self::None,
             },
-            _ => Self::Hours23OrNone,
+            _ => Self::None,
         }
     }
 }

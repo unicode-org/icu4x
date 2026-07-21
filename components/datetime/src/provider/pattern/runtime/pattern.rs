@@ -59,8 +59,7 @@ pub struct PatternBorrowed<'data> {
 pub struct PatternMetadata(u8);
 
 impl PatternMetadata {
-    pub(crate) const DEFAULT: PatternMetadata =
-        Self::from_time_granularity(TimeGranularity::Hours23OrNone);
+    pub(crate) const DEFAULT: PatternMetadata = Self::from_time_granularity(TimeGranularity::None);
 
     #[inline]
     pub(crate) fn time_granularity(self) -> TimeGranularity {
@@ -307,7 +306,7 @@ fn databake() {
         PatternMetadata,
         const,
         crate::provider::pattern::runtime::PatternMetadata::from_time_granularity(
-            crate::provider::pattern::TimeGranularity::Hours12
+            crate::provider::pattern::TimeGranularity::Hours
         ),
         icu_datetime,
     );
