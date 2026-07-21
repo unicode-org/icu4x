@@ -101,7 +101,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 .payload;
         let fractions: DataPayload<CurrencyFractionsV1> =
             crate::provider::Baked.load(Default::default())?.payload;
-        let fraction_info = fractions.get().resolve(currency, Some(essential.get()));
+        let fraction_info = fractions.get().resolve(currency);
         #[allow(const_item_mutation)]
         let currency_data = match DataProvider::<CurrencySymbolsV1>::load(
             &crate::provider::Baked,
@@ -154,7 +154,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let essential = load_with_fallback::<CurrencyEssentialsV1>(provider, ids.clone())?.payload;
         let fractions: DataPayload<CurrencyFractionsV1> =
             provider.load(Default::default())?.payload;
-        let fraction_info = fractions.get().resolve(currency, Some(essential.get()));
+        let fraction_info = fractions.get().resolve(currency);
         #[allow(const_item_mutation)]
         let currency_data = match provider
             .load(DataRequest {
@@ -200,7 +200,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 .payload;
         let fractions: DataPayload<CurrencyFractionsV1> =
             crate::provider::Baked.load(Default::default())?.payload;
-        let fraction_info = fractions.get().resolve(currency, Some(essential.get()));
+        let fraction_info = fractions.get().resolve(currency);
 
         Ok(Self {
             value_formatter,
@@ -230,7 +230,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let essential = load_with_fallback::<CurrencyEssentialsV1>(provider, ids.clone())?.payload;
         let fractions: DataPayload<CurrencyFractionsV1> =
             provider.load(Default::default())?.payload;
-        let fraction_info = fractions.get().resolve(currency, Some(essential.get()));
+        let fraction_info = fractions.get().resolve(currency);
 
         Ok(Self {
             value_formatter,
@@ -271,7 +271,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let patterns = crate::provider::Baked.load(Default::default())?.payload;
         let fractions: DataPayload<CurrencyFractionsV1> =
             crate::provider::Baked.load(Default::default())?.payload;
-        let fraction_info = fractions.get().resolve(currency, None);
+        let fraction_info = fractions.get().resolve(currency);
 
         let currency_data = match extended_opt {
             Some(extended) => {
@@ -328,7 +328,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let patterns = provider.load(Default::default())?.payload;
         let fractions: DataPayload<CurrencyFractionsV1> =
             provider.load(Default::default())?.payload;
-        let fraction_info = fractions.get().resolve(currency, None);
+        let fraction_info = fractions.get().resolve(currency);
 
         let currency_data = match extended_opt {
             Some(extended) => {

@@ -43,34 +43,12 @@ icu_provider::data_struct!(CurrencyFractions<'_>, #[cfg(feature = "datagen")]);
 impl CurrencyFractions<'_> {
     /// Resolves fraction and rounding information for a given currency code.
     ///
-    /// The resolution follows a 3-step fallback hierarchy:
+    /// The resolution follows a 2-step hierarchy per UTS #35 supplemental `<currencyData>`:
     /// 1. Currency-specific override in the global map (e.g., JPY = 0 decimals).
-    /// 2. Locale-specific pattern precision from [`super::essentials::CurrencyEssentials`] (if available).
-    /// 3. Global default precision.
-    pub fn resolve(
-        &self,
-        currency_code: crate::dimension::currency::CurrencyCode,
-        essentials: Option<&super::essentials::CurrencyEssentials>,
-    ) -> FractionInfo {
+    /// 2. Global default precision (`DEFAULT` in supplemental currency data).
+    pub fn resolve(&self, currency_code: crate::dimension::currency::CurrencyCode) -> FractionInfo {
         let iso_code = currency_code.0.to_unvalidated();
-
-        // 1. Try currency-specific override in global map
-        if let Some(info) = self.fractions.get_copied(&iso_code) {
-            return info;
-        }
-
-        // 2. Try locale-specific pattern fraction digits
-        if let Some(essentials) = essentials {
-            return FractionInfo {
-                digits: essentials.fraction_digits,
-                rounding: Rounding::R1,
-                cash_digits: None,
-                cash_rounding: None,
-            };
-        }
-
-        // 3. Fallback to global default
-        self.default
+        self.fractions.get_copied(&iso_code).unwrap_or(self.default)
     }
 }
 
