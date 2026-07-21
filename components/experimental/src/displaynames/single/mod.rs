@@ -32,22 +32,34 @@ pub use region::{RegionDisplayName, RegionDisplayNameOwned};
 pub use script::{ScriptDisplayName, ScriptDisplayNameOwned};
 pub use variant::{VariantDisplayName, VariantDisplayNameOwned};
 
+use icu_provider::prelude::*;
+
+fn load_one<M0, M1, P>(
+    provider: &P,
+    locale: &DataLocale,
+    attrs: &DataMarkerAttributes,
+) -> Result<Option<DataPayload<M1>>, DataError>
+where
+    M0: DataMarker,
+    M1: DynamicDataMarker<DataStruct = M0::DataStruct>,
+    P: DataProvider<M0> + ?Sized,
+{
+    let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(attrs, locale);
+    let mut metadata = DataRequestMetadata::default();
+    metadata.silent = true;
+    let response = provider
+        .load(DataRequest { id, metadata })
+        .allow_identifier_not_found()?;
+    Ok(response.map(|r| r.payload.cast()))
+}
+
 macro_rules! try_load_markers {
     ($provider:expr, $prefs:expr, $attributes:expr, [ $first_marker:ident $(, $rest_marker:ident)* $(,)? ]) => {{
-        let mut result: Option<Result<DataPayload<$first_marker>, DataError>> = None;
-        if result.is_none() {
-            let locale = $first_marker::make_locale($prefs.locale_preferences);
-            let id = DataIdentifierBorrowed::for_marker_attributes_and_locale($attributes, &locale);
-            let mut metadata = DataRequestMetadata::default();
-            metadata.silent = true;
-            match DataProvider::<$first_marker>::load($provider, DataRequest { id, metadata }).allow_identifier_not_found() {
-                Ok(Some(response)) => {
-                    result = Some(Ok(response.payload));
-                }
-                Ok(None) => {}
-                Err(e) => return Err(e),
-            }
-        }
+        let locale = $first_marker::make_locale($prefs.locale_preferences);
+        let id = DataIdentifierBorrowed::for_marker_attributes_and_locale($attributes, &locale);
+        let mut metadata = DataRequestMetadata::default();
+        metadata.silent = true;
+        let mut result: Option<DataPayload<$first_marker>> = DataProvider::<$first_marker>::load($provider, DataRequest { id, metadata }).allow_identifier_not_found()?.map(|r| r.payload.cast());
         $(
             if result.is_none() {
                 let locale = $rest_marker::make_locale($prefs.locale_preferences);
@@ -57,7 +69,7 @@ macro_rules! try_load_markers {
                 match DataProvider::<$rest_marker>::load($provider, DataRequest { id, metadata }).allow_identifier_not_found() {
                     Ok(Some(response)) => {
                         let casted: DataPayload<$first_marker> = response.payload.cast();
-                        result = Some(Ok(casted));
+                        result = Some(casted);
                     }
                     Ok(None) => {}
                     Err(e) => return Err(e),
@@ -65,7 +77,7 @@ macro_rules! try_load_markers {
             }
         )*
         match result {
-            Some(res) => res,
+            Some(res) => Ok(res),
             None => Err(DataErrorKind::IdentifierNotFound.into_error()),
         }
     }};

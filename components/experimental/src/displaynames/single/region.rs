@@ -11,8 +11,21 @@ use crate::displaynames::provider::{
     LocaleNamesRegionCoreMediumV1, LocaleNamesRegionCoreShortV1, LocaleNamesRegionMinimalMediumV1,
     LocaleNamesRegionMinimalShortV1,
 };
+use crate::displaynames::single::load_one;
 use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
+
+#[inline]
+fn make_attributes(subtag: &Region) -> &DataMarkerAttributes {
+    // All region markers use the same attributes
+    LocaleNamesRegionMinimalMediumV1::make_attributes(subtag)
+}
+
+#[inline]
+fn make_locale(prefs: DisplayNamesPreferences) -> DataLocale {
+    // All region markers use the same locale
+    LocaleNamesRegionMinimalMediumV1::make_locale(prefs.locale_preferences)
+}
 
 macro_rules! table_row {
     (try_new_minimal) => {
@@ -85,17 +98,15 @@ impl RegionDisplayNameOwned {
             + DataProvider<LocaleNamesRegionCoreMediumV1>
             + DataProvider<LocaleNamesRegionMinimalMediumV1>,
     {
-        let attrs = LocaleNamesRegionCoreMediumV1::make_attributes(&region);
-        try_load_markers!(
-            provider,
-            prefs,
-            attrs,
-            [
-                LocaleNamesRegionCoreMediumV1,
-                LocaleNamesRegionMinimalMediumV1
-            ]
-        )
-        .map(|payload| Self { payload })
+        let attrs = make_attributes(&region);
+        let locale = make_locale(prefs);
+        let payload = load_one::<LocaleNamesRegionCoreMediumV1, _, _>(provider, &locale, attrs)?
+            .map_or_else(
+                || load_one::<LocaleNamesRegionMinimalMediumV1, _, _>(provider, &locale, attrs),
+                |p| Ok(Some(p)),
+            )?
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
+        Ok(Self { payload })
     }
 
     icu_provider::gen_buffer_data_constructors!(
@@ -134,12 +145,11 @@ impl RegionDisplayNameOwned {
     where
         D: ?Sized + DataProvider<LocaleNamesRegionMinimalMediumV1>,
     {
-        let attrs = LocaleNamesRegionMinimalMediumV1::make_attributes(&region);
-        try_load_markers!(provider, prefs, attrs, [LocaleNamesRegionMinimalMediumV1]).map(
-            |payload| Self {
-                payload: payload.cast(),
-            },
-        )
+        let attrs = make_attributes(&region);
+        let locale = make_locale(prefs);
+        let payload = load_one::<LocaleNamesRegionMinimalMediumV1, _, _>(provider, &locale, attrs)?
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
+        Ok(Self { payload })
     }
 
     icu_provider::gen_buffer_data_constructors!(
@@ -169,19 +179,15 @@ impl RegionDisplayNameOwned {
             + DataProvider<LocaleNamesRegionMinimalShortV1>
             + DataProvider<LocaleNamesRegionMinimalMediumV1>,
     {
-        let attrs = LocaleNamesRegionMinimalShortV1::make_attributes(&region);
-        try_load_markers!(
-            provider,
-            prefs,
-            attrs,
-            [
-                LocaleNamesRegionMinimalShortV1,
-                LocaleNamesRegionMinimalMediumV1
-            ]
-        )
-        .map(|payload| Self {
-            payload: payload.cast(),
-        })
+        let attrs = make_attributes(&region);
+        let locale = make_locale(prefs);
+        let payload = load_one::<LocaleNamesRegionMinimalShortV1, _, _>(provider, &locale, attrs)?
+            .map_or_else(
+                || load_one::<LocaleNamesRegionMinimalMediumV1, _, _>(provider, &locale, attrs),
+                |p| Ok(Some(p)),
+            )?
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
+        Ok(Self { payload })
     }
 
     icu_provider::gen_buffer_data_constructors!(
@@ -232,21 +238,23 @@ impl RegionDisplayNameOwned {
             + DataProvider<LocaleNamesRegionCoreMediumV1>
             + DataProvider<LocaleNamesRegionMinimalMediumV1>,
     {
-        let attrs = LocaleNamesRegionCoreShortV1::make_attributes(&region);
-        try_load_markers!(
-            provider,
-            prefs,
-            attrs,
-            [
-                LocaleNamesRegionCoreShortV1,
-                LocaleNamesRegionMinimalShortV1,
-                LocaleNamesRegionCoreMediumV1,
-                LocaleNamesRegionMinimalMediumV1
-            ]
-        )
-        .map(|payload| Self {
-            payload: payload.cast(),
-        })
+        let attrs = make_attributes(&region);
+        let locale = make_locale(prefs);
+        let payload = load_one::<LocaleNamesRegionCoreShortV1, _, _>(provider, &locale, attrs)?
+            .map_or_else(
+                || load_one::<LocaleNamesRegionMinimalShortV1, _, _>(provider, &locale, attrs),
+                |p| Ok(Some(p)),
+            )?
+            .map_or_else(
+                || load_one::<LocaleNamesRegionCoreMediumV1, _, _>(provider, &locale, attrs),
+                |p| Ok(Some(p)),
+            )?
+            .map_or_else(
+                || load_one::<LocaleNamesRegionMinimalMediumV1, _, _>(provider, &locale, attrs),
+                |p| Ok(Some(p)),
+            )?
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
+        Ok(Self { payload })
     }
 
     /// Returns a borrowed version of this display name.
