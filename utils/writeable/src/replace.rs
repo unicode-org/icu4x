@@ -129,10 +129,8 @@ where
     }
 
     fn write_char(&mut self, c: char) -> fmt::Result {
-        let needle_len_bytes = self.needle.len();
-
         // If the needle is empty, we just pass through the characters.
-        if needle_len_bytes == 0 {
+        if self.needle.is_empty() {
             return self.sink.write_char(c);
         }
 

@@ -14,7 +14,7 @@ mod tests {
     pub fn test_en_us() {
         let prefs = locale!("en-US").into();
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
-        let fmt = CurrencyFormatter::try_new_compact_short(prefs, &currency_code).unwrap();
+        let fmt = CurrencyFormatter::try_new_compact_symbol(prefs, &currency_code).unwrap();
 
         // Positive cases
         let positive_value = "12345.67".parse().unwrap();
@@ -34,7 +34,7 @@ mod tests {
     pub fn test_fr_fr() {
         let prefs = locale!("fr-FR").into();
         let currency_code = CurrencyCode(tinystr!(3, "EUR"));
-        let fmt = CurrencyFormatter::try_new_compact_short(prefs, &currency_code).unwrap();
+        let fmt = CurrencyFormatter::try_new_compact_symbol(prefs, &currency_code).unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -51,7 +51,7 @@ mod tests {
     pub fn test_zh_cn() {
         let prefs = locale!("zh-CN").into();
         let currency_code = CurrencyCode(tinystr!(3, "CNY"));
-        let fmt = CurrencyFormatter::try_new_compact_short(prefs, &currency_code).unwrap();
+        let fmt = CurrencyFormatter::try_new_compact_symbol(prefs, &currency_code).unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -68,7 +68,7 @@ mod tests {
     pub fn test_ar_eg() {
         let prefs = locale!("ar-EG").into();
         let currency_code = CurrencyCode(tinystr!(3, "EGP"));
-        let fmt = CurrencyFormatter::try_new_compact_short(prefs, &currency_code).unwrap();
+        let fmt = CurrencyFormatter::try_new_compact_symbol(prefs, &currency_code).unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -90,7 +90,7 @@ mod tests {
         let prefs = locale!("en-US").into();
 
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
-        let fmt = CurrencyFormatter::try_new_compact_long(prefs, &currency_code).unwrap();
+        let fmt = CurrencyFormatter::try_new_compact_long_name(prefs, &currency_code).unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -108,7 +108,7 @@ mod tests {
         let prefs = locale!("en-US").into();
 
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
-        let fmt = CurrencyFormatter::try_new_compact_long(prefs, &currency_code).unwrap();
+        let fmt = CurrencyFormatter::try_new_compact_long_name(prefs, &currency_code).unwrap();
 
         // Positive case
         let positive_value = "12345000.67".parse().unwrap();
@@ -126,7 +126,7 @@ mod tests {
         let prefs = locale!("fr-FR").into();
 
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
-        let fmt = CurrencyFormatter::try_new_compact_long(prefs, &currency_code).unwrap();
+        let fmt = CurrencyFormatter::try_new_compact_long_name(prefs, &currency_code).unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -144,7 +144,7 @@ mod tests {
         let prefs = locale!("fr-FR").into();
 
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
-        let fmt = CurrencyFormatter::try_new_compact_long(prefs, &currency_code).unwrap();
+        let fmt = CurrencyFormatter::try_new_compact_long_name(prefs, &currency_code).unwrap();
 
         // Positive case
         let positive_value = "12345000.67".parse().unwrap();
@@ -163,8 +163,8 @@ mod tests {
         let usd = CurrencyCode(tinystr!(3, "USD"));
         let sek = CurrencyCode(tinystr!(3, "SEK"));
 
-        let fmt_usd = CurrencyFormatter::try_new_compact_short(prefs, &usd).unwrap();
-        let fmt_sek = CurrencyFormatter::try_new_compact_short(prefs, &sek).unwrap();
+        let fmt_usd = CurrencyFormatter::try_new_compact_symbol(prefs, &usd).unwrap();
+        let fmt_sek = CurrencyFormatter::try_new_compact_symbol(prefs, &sek).unwrap();
 
         // Small number (magnitude < 3, no compact suffix): should fall back cleanly
         let small_value = "123".parse().unwrap();
@@ -188,7 +188,7 @@ mod tests {
         //   as "$12" instead of "$12.00", and 990 USD formats as "$990").
         let prefs_en = locale!("en-US").into();
         let usd = CurrencyCode(tinystr!(3, "USD"));
-        let fmt_usd = CurrencyFormatter::try_new_compact_short(prefs_en, &usd).unwrap();
+        let fmt_usd = CurrencyFormatter::try_new_compact_symbol(prefs_en, &usd).unwrap();
 
         // Positive cases
         let val_12 = "12".parse().unwrap();
@@ -209,5 +209,25 @@ mod tests {
 
         let val_neg_1200 = "-1200".parse().unwrap();
         assert_writeable_eq!(fmt_usd.format_fixed_decimal(&val_neg_1200), "-$1.2K");
+    }
+
+    #[test]
+    pub fn test_compact_name_and_compact_long_symbol() {
+        let prefs = locale!("en-US").into();
+        let usd = CurrencyCode(tinystr!(3, "USD"));
+
+        let fmt_compact_name = CurrencyFormatter::try_new_compact_name(prefs, &usd).unwrap();
+        let fmt_compact_long_symbol =
+            CurrencyFormatter::try_new_compact_long_symbol(prefs, &usd).unwrap();
+
+        let val = "12345.67".parse().unwrap();
+        assert_writeable_eq!(
+            fmt_compact_name.format_fixed_decimal(&val),
+            "12K US dollars"
+        );
+        assert_writeable_eq!(
+            fmt_compact_long_symbol.format_fixed_decimal(&val),
+            "$12 thousand"
+        );
     }
 }
