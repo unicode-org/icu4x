@@ -496,11 +496,14 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     ) -> impl Writeable + Display + 'l {
         // TODO(#8146): Evaluate if FixedDecimal is the correct input type or if we should use
         // an exact decimal/money representation.
-        // Per UTS #35 (LDML Part 3: Numbers, Section 3.8, Rule 3 in Compact Number Formatting), for uncompacted
-        // fallback values below 1,000 ("0" pattern), significant and maximum fractional digits are adjusted by default
-        // (typically stripping trailing zeros, e.g., "$12" rather than "$12.01"). Rather than gating precision application
-        // at the type/trait level, currency fraction rounding is applied uniformly, relying on the underlying formatter
-        // (such as CompactDecimalFormatter) to trim trailing fractional zeros and format according to magnitude.
+        // Per UTS #35 (LDML Part 3: Numbers, Section 3.8, Rule 3 in Compact Number Formatting):
+        // "If the element value of P is '0', then use the corresponding non-compact number formatting instead,"
+        //
+        // Specifically, when compact formatters handle uncompacted fallback values below 1,000 ("0" pattern):
+        // * Suffix abbreviation and division steps ("K", "M") are skipped in favor of standard currency format.
+        // * By default, maximum fraction digits are set to 0, trimming trailing zeros (e.g., "$12" over "$12.00").
+        // * Currency fraction precision is applied uniformly without type-level switches, relying on the underlying
+        //   formatter (such as CompactDecimalFormatter) to trim trailing zeros according to magnitude.
         let (pattern, currency_str, formatted_value, sign) = match &self.currency_data {
             CurrencyFormatterData::Iso {
                 essential,
