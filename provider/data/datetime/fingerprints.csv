@@ -40861,57 +40861,56 @@ timezone/names/cities/root/v1, yue, 3622B, 3578B, 3a4da3572f8c81b0
 timezone/names/cities/root/v1, yue-Hans, 3621B, 3577B, ddecaf08c8c43cdf
 timezone/names/cities/root/v1, zh, -> yue-Hans
 timezone/names/cities/root/v1, zh-Hant, -> yue
-timezone/names/essentials/v1, <lookup>, 250B, 49 identifiers
-timezone/names/essentials/v1, <total>, 4191B, 1155B, 33 unique payloads
-timezone/names/essentials/v1, am, 141B, 49B, 13618327564abe0b
-timezone/names/essentials/v1, ar, 136B, 44B, 1d83a6a1d921b9b8
-timezone/names/essentials/v1, bg, 142B, 50B, 7c663e3205a873e9
-timezone/names/essentials/v1, blo, 108B, 16B, 633b01215a9c9b22
-timezone/names/essentials/v1, bn, 110B, 18B, 6c5fe05da0a0c70
-timezone/names/essentials/v1, br, 109B, 17B, fde06da8328e0692
-timezone/names/essentials/v1, brx, 144B, 52B, ea14a24dfea457fd
+timezone/names/essentials/v1, <lookup>, 248B, 48 identifiers
+timezone/names/essentials/v1, <total>, 2977B, 801B, 32 unique payloads
+timezone/names/essentials/v1, am, 103B, 35B, a23f7a6357fcc287
+timezone/names/essentials/v1, ar, 100B, 32B, a99266e85a92b28
+timezone/names/essentials/v1, bg, 104B, 36B, 52c2c9caa29823d2
+timezone/names/essentials/v1, blo, 82B, 14B, 8d97868dd0e258e9
+timezone/names/essentials/v1, bn, 83B, 15B, 4d9f1b04a8c0bc2b
+timezone/names/essentials/v1, br, 82B, 14B, e7f5db4a4b8e85bf
+timezone/names/essentials/v1, brx, 100B, 32B, 85b1714c93513e14
 timezone/names/essentials/v1, bs, -> bn
 timezone/names/essentials/v1, ceb, -> bn
-timezone/names/essentials/v1, da, 109B, 17B, 77ca7991e97ccf1d
-timezone/names/essentials/v1, ee, 110B, 18B, d90df08a5d82ca28
+timezone/names/essentials/v1, da, 82B, 14B, 53dfe78eb4d4dff7
+timezone/names/essentials/v1, ee, 83B, 15B, 39481db6fd5cb172
 timezone/names/essentials/v1, eo, -> br
 timezone/names/essentials/v1, et, -> bn
-timezone/names/essentials/v1, fa, 144B, 52B, cb1fd8d7505986e0
-timezone/names/essentials/v1, ff-Adlm, 127B, 35B, 1391783e08a5c3fe
-timezone/names/essentials/v1, fi, 109B, 17B, 9466347a6af3702a
-timezone/names/essentials/v1, fr, 109B, 17B, bd33fae1f532127d
-timezone/names/essentials/v1, ga, 109B, 17B, 3dd7bfda41ea7afd
-timezone/names/essentials/v1, he, 112B, 20B, a64cc4b54a2c44e3
+timezone/names/essentials/v1, fa, 106B, 38B, 8502926864d11c79
+timezone/names/essentials/v1, ff-Adlm, 91B, 23B, f508af9ca1470d6c
+timezone/names/essentials/v1, fi, 82B, 14B, bcaa6b09fc793d1f
+timezone/names/essentials/v1, fr, 82B, 14B, 25fd6f83db72e1dc
+timezone/names/essentials/v1, ga, 82B, 14B, 8e2532972f2c76e3
+timezone/names/essentials/v1, he, 85B, 17B, dc4283e4c7d9fb3d
 timezone/names/essentials/v1, id, -> da
-timezone/names/essentials/v1, ie, 109B, 17B, 905a11bb0a2de720
-timezone/names/essentials/v1, ii, 139B, 47B, dafcfc4c34869899
-timezone/names/essentials/v1, km, 152B, 60B, 55e7f412426fdf66
-timezone/names/essentials/v1, ks, 122B, 30B, a9b5552300f5f40a
-timezone/names/essentials/v1, ks-Deva, 144B, 52B, 383f8c0bd105d042
+timezone/names/essentials/v1, ie, 82B, 14B, 61aa8597094f9f6d
+timezone/names/essentials/v1, ii, 97B, 29B, 354693ec8ae14ad7
+timezone/names/essentials/v1, km, 104B, 36B, 7e672d60b6ab594a
+timezone/names/essentials/v1, ks-Deva, 100B, 32B, b8022d73f8cb98ee
 timezone/names/essentials/v1, lij, -> fr
-timezone/names/essentials/v1, mai, 139B, 47B, 7b5c6a0b947f022e
-timezone/names/essentials/v1, ml, 154B, 62B, 8a221654aaed5db3
-timezone/names/essentials/v1, mni, 144B, 52B, 5a66b5845d63b375
-timezone/names/essentials/v1, mr, 113B, 21B, 3914de7221b0ec59
+timezone/names/essentials/v1, mai, 97B, 29B, bf8fdd85fbc49fff
+timezone/names/essentials/v1, ml, 112B, 44B, 6eae0656dacbbaa
+timezone/names/essentials/v1, mni, 100B, 32B, 963922d59626203e
+timezone/names/essentials/v1, mr, 84B, 16B, 13e03326b855b49b
 timezone/names/essentials/v1, nds, -> fr
-timezone/names/essentials/v1, nqo, 119B, 27B, 3ff7298f8c61cb90
+timezone/names/essentials/v1, nqo, 87B, 19B, b49caf20a0150d62
 timezone/names/essentials/v1, oc, -> fr
-timezone/names/essentials/v1, sa, 146B, 54B, 29ab59030090213f
-timezone/names/essentials/v1, sat, 139B, 47B, ea3aacf5a0754058
-timezone/names/essentials/v1, sd, 110B, 18B, 880f5ad39139e11b
+timezone/names/essentials/v1, sa, 101B, 33B, 288385e209a64acb
+timezone/names/essentials/v1, sat, 97B, 29B, a55789c28457a3bc
+timezone/names/essentials/v1, sd, 83B, 15B, afbb63cc5be39115
 timezone/names/essentials/v1, sd-Deva, -> mai
-timezone/names/essentials/v1, si, 172B, 80B, 953460a4daee6aa
-timezone/names/essentials/v1, sl, 111B, 19B, dbe2f5423d20056b
+timezone/names/essentials/v1, si, 124B, 56B, 9b35d713ba7e401d
+timezone/names/essentials/v1, sl, 84B, 16B, b0b50e54cbbafb7e
 timezone/names/essentials/v1, sr, -> da
 timezone/names/essentials/v1, sr-Latn, -> da
 timezone/names/essentials/v1, su, -> da
 timezone/names/essentials/v1, sw, -> bn
-timezone/names/essentials/v1, und, 109B, 17B, 2c158b306dbefbff
+timezone/names/essentials/v1, und, 82B, 14B, 93db861548857f36
 timezone/names/essentials/v1, ur, -> bn
 timezone/names/essentials/v1, ur-IN, -> und
 timezone/names/essentials/v1, vec, -> br
-timezone/names/essentials/v1, xnr, 141B, 49B, c1659301038de8fd
-timezone/names/essentials/v1, yo, 109B, 17B, 200fe60898a31d
+timezone/names/essentials/v1, xnr, 114B, 46B, 7872d6ba4022305d
+timezone/names/essentials/v1, yo, 82B, 14B, a23fd56056ca5528
 timezone/names/generic/long/v1, <lookup>, 900B, 178 identifiers
 timezone/names/generic/long/v1, <total>, 309927B, 294272B, 172 unique payloads
 timezone/names/generic/long/v1, af, 897B, 806B, 8e1d668969b8dbb6
