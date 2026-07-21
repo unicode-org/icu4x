@@ -51,7 +51,6 @@ pub(crate) enum CurrencyFormatterData {
     },
     IsoName {
         patterns: DataPayload<CurrencyPatternsDataV1>,
-        plural_rules: PluralRules,
         currency: CurrencyCode,
     },
     Symbol {
@@ -245,19 +244,16 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
 
         let patterns = crate::provider::Baked.load(Default::default())?.payload;
 
-        let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
-
         let currency_data = match extended_opt {
-            Some(extended) => CurrencyFormatterData::Name {
-                extended,
-                patterns,
-                plural_rules,
-            },
-            None => CurrencyFormatterData::IsoName {
-                patterns,
-                plural_rules,
-                currency,
-            },
+            Some(extended) => {
+                let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
+                CurrencyFormatterData::Name {
+                    extended,
+                    patterns,
+                    plural_rules,
+                }
+            }
+            None => CurrencyFormatterData::IsoName { patterns, currency },
         };
 
         Ok(Self {
@@ -298,19 +294,17 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
 
         let patterns = provider.load(Default::default())?.payload;
 
-        let plural_rules = PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
-
         let currency_data = match extended_opt {
-            Some(extended) => CurrencyFormatterData::Name {
-                extended,
-                patterns,
-                plural_rules,
-            },
-            None => CurrencyFormatterData::IsoName {
-                patterns,
-                plural_rules,
-                currency,
-            },
+            Some(extended) => {
+                let plural_rules =
+                    PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
+                CurrencyFormatterData::Name {
+                    extended,
+                    patterns,
+                    plural_rules,
+                }
+            }
+            None => CurrencyFormatterData::IsoName { patterns, currency },
         };
 
         Ok(Self {
@@ -617,14 +611,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 let pattern = essential.get().get_positive(true, true);
                 (pattern, currency.0.as_str())
             }
-            CurrencyFormatterData::IsoName {
-                patterns,
-                plural_rules,
-                currency,
-            } => {
-                let operands = V::plural_operands(&formatted_value);
+            CurrencyFormatterData::IsoName { patterns, currency } => {
                 let currency_str = currency.0.as_str();
-                let pattern = patterns.get().get(operands, plural_rules);
+                let pattern = patterns.get().elements.get_default().1;
                 (pattern, currency_str)
             }
             CurrencyFormatterData::Symbol { essential, symbol } => {
