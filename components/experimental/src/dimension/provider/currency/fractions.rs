@@ -40,6 +40,40 @@ pub struct CurrencyFractions<'data> {
 
 icu_provider::data_struct!(CurrencyFractions<'_>, #[cfg(feature = "datagen")]);
 
+impl CurrencyFractions<'_> {
+    /// Resolves fraction and rounding information for a given currency code.
+    ///
+    /// The resolution follows a 3-step fallback hierarchy:
+    /// 1. Currency-specific override in the global map (e.g., JPY = 0 decimals).
+    /// 2. Locale-specific pattern precision from [`super::essentials::CurrencyEssentials`] (if available).
+    /// 3. Global default precision.
+    pub fn resolve(
+        &self,
+        currency_code: crate::dimension::currency::CurrencyCode,
+        essentials: Option<&super::essentials::CurrencyEssentials>,
+    ) -> FractionInfo {
+        let iso_code = currency_code.0.to_unvalidated();
+
+        // 1. Try currency-specific override in global map
+        if let Some(info) = self.fractions.get_copied(&iso_code) {
+            return info;
+        }
+
+        // 2. Try locale-specific pattern fraction digits
+        if let Some(essentials) = essentials {
+            return FractionInfo {
+                digits: essentials.fraction_digits,
+                rounding: Rounding::R1,
+                cash_digits: None,
+                cash_rounding: None,
+            };
+        }
+
+        // 3. Fallback to global default
+        self.default
+    }
+}
+
 /// Fraction and rounding information for a currency.
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
