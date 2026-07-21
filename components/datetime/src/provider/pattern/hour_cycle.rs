@@ -160,6 +160,5 @@ pub(crate) fn naively_apply_hour_cycle(pattern: &mut Pattern, hour_cycle: Option
                 None
             }
         });
-        pattern.metadata = runtime::PatternMetadata::from_iter_items(pattern.items.iter());
     }
 }
