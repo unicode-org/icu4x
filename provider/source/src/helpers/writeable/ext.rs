@@ -4,7 +4,7 @@
 
 use core::fmt;
 
-use writeable::{adapters::Concat, adapters::Replace, Writeable};
+use writeable::{Writeable, adapters::Concat, adapters::Replace};
 
 /// An extension trait that adds convenience functions to anything implementing [`Writeable`].
 pub(crate) trait WriteableExt {
@@ -74,8 +74,8 @@ mod tests {
     /// without needing a direct dependency:
     #[test]
     fn test_third_party_fn() {
-        use core::fmt;
         use super::WriteableExt;
+        use core::fmt;
         // Example third-party library:
         // Custom sink:
         struct ThirdPartySink(String);
@@ -86,7 +86,7 @@ mod tests {
         }
         // Endpoint:
         fn third_party_fn(
-            value: impl FnOnce(&mut ThirdPartySink) -> fmt::Result
+            value: impl FnOnce(&mut ThirdPartySink) -> fmt::Result,
         ) -> Result<String, fmt::Error> {
             let mut sink = ThirdPartySink(String::new());
             value(&mut sink)?;
