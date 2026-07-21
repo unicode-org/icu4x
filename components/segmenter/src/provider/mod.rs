@@ -20,6 +20,10 @@
 mod neo;
 #[cfg(feature = "unstable")]
 pub use neo::*;
+#[cfg(feature = "unstable")]
+pub mod adaboost;
+#[cfg(feature = "unstable")]
+pub use adaboost::*;
 mod lstm;
 pub use lstm::*;
 #[cfg(feature = "unstable")]
@@ -153,6 +157,8 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     SegmenterDictionaryAutoV1::INFO,
     SegmenterDictionaryExtendedV1::INFO,
     SegmenterLstmAutoV1::INFO,
+    #[cfg(feature = "unstable")]
+    SegmenterAdaboostAutoV1::INFO,
     #[cfg(feature = "unstable")]
     radical::SegmenterUnihanRadicalV1::INFO,
     #[cfg(feature = "unstable")]
