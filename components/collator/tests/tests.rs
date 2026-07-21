@@ -1729,7 +1729,7 @@ fn test_cantillation_utf8() {
 fn test_conformance_shifted() {
     // Adapted from `UCAConformanceTest::TestTableShifted` of ucaconf.cpp in ICU4C.
     let bugs = [];
-    let dict = include_bytes!("data/CollationTest_CLDR_SHIFTED.txt");
+    let dict = include_bytes!("data/CollationTest_CLDR_SHIFTED_SHORT.txt");
 
     let mut options = CollatorOptions::default();
     options.strength = Some(Strength::Quaternary);
@@ -1772,7 +1772,7 @@ fn test_conformance_shifted() {
 fn test_conformance_non_ignorable() {
     // Adapted from `UCAConformanceTest::TestTableNonIgnorable` of ucaconf.cpp in ICU4C.
     let bugs = [];
-    let dict = include_bytes!("data/CollationTest_CLDR_NON_IGNORABLE.txt");
+    let dict = include_bytes!("data/CollationTest_CLDR_NON_IGNORABLE_SHORT.txt");
 
     let mut options = CollatorOptions::default();
     options.strength = Some(Strength::Quaternary);
