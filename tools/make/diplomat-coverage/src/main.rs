@@ -425,15 +425,9 @@ fn run_util_api_enforcement() {
     let (component_crates, util_crates) = discover_workspace_crates();
 
     // Bucket 1: Definitely Stable util crates
-    let bucket1_utils: HashSet<&str> = [
-        "writeable",
-        "fixed_decimal",
-        "tinystr",
-        "zerofrom",
-        "zerofrom-derive",
-    ]
-    .into_iter()
-    .collect();
+    let bucket1_utils: HashSet<&str> = ["writeable", "fixed_decimal", "tinystr"]
+        .into_iter()
+        .collect();
 
     // Bucket 2: Ambiguous / Low-Risk util crates (restricted to explicit allowlist)
     let bucket2_allowlist: HashSet<(&str, &str)> = [
@@ -454,6 +448,7 @@ fn run_util_api_enforcement() {
         ("icu_collections", "zerovec"),
         ("icu_properties", "zerovec"),
         ("icu_provider", "yoke"),
+        ("icu_provider", "zerofrom"),
     ]
     .into_iter()
     .collect();
@@ -792,7 +787,8 @@ impl<'a, 'b> UtilApiChecker<'a, 'b> {
                         trait_name.as_str(),
                         "ULE" | "VarULE" | "ZeroMapKV" | "AsULE"
                     ))
-                    || (ext.name == "yoke" && trait_name.as_str() == "Yokeable"))
+                    || (ext.name == "yoke" && trait_name.as_str() == "Yokeable")
+                    || (ext.name == "zerofrom" && trait_name.as_str() == "ZeroFrom"))
             {
                 is_allowed_impl = true;
             }
