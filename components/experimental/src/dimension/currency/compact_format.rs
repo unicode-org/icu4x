@@ -21,9 +21,6 @@ mod tests {
         let formatted_currency = fmt.format_fixed_decimal(&positive_value);
         assert_writeable_eq!(formatted_currency, "$12K");
 
-        let val_1200 = "1200".parse().unwrap();
-        assert_writeable_eq!(fmt.format_fixed_decimal(&val_1200), "$1.2K");
-
         let val_1299 = "1299".parse().unwrap();
         assert_writeable_eq!(fmt.format_fixed_decimal(&val_1299), "$1.3K");
 
@@ -198,5 +195,8 @@ mod tests {
 
         let val_990 = "990".parse().unwrap();
         assert_writeable_eq!(fmt_usd.format_fixed_decimal(&val_990), "$990");
+
+        let val_1200 = "1200".parse().unwrap();
+        assert_writeable_eq!(fmt_usd.format_fixed_decimal(&val_1200), "$1.2K");
     }
 }
