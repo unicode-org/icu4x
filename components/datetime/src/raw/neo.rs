@@ -9,8 +9,9 @@ use crate::format::DateTimeInputUnchecked;
 use crate::options::*;
 use crate::pattern::DateTimePattern;
 use crate::provider::fields::{self, Field, FieldLength, FieldSymbol};
+use crate::provider::pattern::CoarseHourCycle;
 use crate::provider::pattern::{
-    GenericPatternItem, PatternItem, TimeGranularity,
+    GenericPatternItem, PatternItem,
     runtime::{self, PatternMetadata},
 };
 #[cfg(feature = "unstable")]
@@ -278,7 +279,7 @@ impl DateTimeInputUnchecked {
     fn resolve_time_precision(
         &self,
         time_precision: TimePrecision,
-        time_granularity: TimeGranularity,
+        coarse_hour_cycle: Option<CoarseHourCycle>,
     ) -> (PackedSkeletonVariant, Option<SubsecondDigits>) {
         match time_precision {
             TimePrecision::Hour => (PackedSkeletonVariant::Standard, None),
@@ -287,7 +288,7 @@ impl DateTimeInputUnchecked {
             TimePrecision::Subsecond(f) => (PackedSkeletonVariant::Variant1, Some(f)),
             TimePrecision::MinuteOptional => {
                 let minute = self.minute.unwrap_or_default();
-                if minute.is_zero() && time_granularity == TimeGranularity::Hours {
+                if minute.is_zero() && matches!(coarse_hour_cycle, Some(CoarseHourCycle::H11H12)) {
                     (PackedSkeletonVariant::Standard, None)
                 } else {
                     (PackedSkeletonVariant::Variant0, None)
@@ -409,12 +410,15 @@ impl TimePatternSelectionData {
     ) -> Option<TimePatternDataBorrowed<'_>> {
         let payload = self.payload.get_option()?;
         let time_precision = options.time_precision.unwrap_or_default();
-        let time_granularity = payload
+        // To get the hour cycle without reading the whole pattern, we can check the time
+        // granularity of the hour pattern (packed variant `Standard`).
+        let coarse_hour_cycle = payload
             .get(options.length(), PackedSkeletonVariant::Standard)
             .metadata
-            .time_granularity();
+            .time_granularity()
+            .coarse_hour_cycle();
         let (variant, subsecond_digits) =
-            input.resolve_time_precision(time_precision, time_granularity);
+            input.resolve_time_precision(time_precision, coarse_hour_cycle);
         Some(TimePatternDataBorrowed::Resolved(
             payload.get(options.length(), variant),
             options.alignment,

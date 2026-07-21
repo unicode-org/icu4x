@@ -50,7 +50,7 @@ pub enum TimeGranularity {
     Minutes = 2,
     /// Smallest time unit = seconds.
     Seconds = 3,
-    /// Smallest time unit = nanoseconds.
+    /// Smallest time unit = Nanoseconds.
     Nanoseconds = 4,
 }
 
@@ -65,6 +65,14 @@ impl TimeGranularity {
             Self::Minutes => minute == 0,
             Self::Seconds => minute == 0 && second == 0,
             Self::Nanoseconds => minute == 0 && second == 0 && subsecond == 0,
+        }
+    }
+
+    pub(crate) fn coarse_hour_cycle(self) -> Option<CoarseHourCycle> {
+        match self {
+            Self::None => Some(CoarseHourCycle::H23),
+            Self::Hours => Some(CoarseHourCycle::H11H12),
+            _ => None,
         }
     }
 
