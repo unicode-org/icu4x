@@ -433,8 +433,6 @@ fn run_util_api_enforcement() {
         "yoke-derive",
         "zerofrom",
         "zerofrom-derive",
-        "zerovec",
-        "zerovec-derive",
     ]
     .into_iter()
     .collect();
@@ -455,6 +453,8 @@ fn run_util_api_enforcement() {
         ("icu_datetime", "icu_pattern"),
         ("icu_decimal", "icu_pattern"),
         ("icu", "icu_experimental"),
+        ("icu_collections", "zerovec"),
+        ("icu_properties", "zerovec"),
     ]
     .into_iter()
     .collect();
@@ -614,6 +614,7 @@ impl<'a, 'b> UtilApiChecker<'a, 'b> {
                     self.krate_name
                 ));
             } else if self.bucket2_utils.contains(util)
+                && !is_provider_item
                 && !self.bucket2_allowlist.contains(&(self.krate_name, util))
             {
                 let ctx_str = ctx.get_or_insert_with(&make_ctx);
@@ -640,7 +641,14 @@ impl<'a, 'b> UtilApiChecker<'a, 'b> {
 
         let is_provider_item = is_provider
             || item.name.as_deref() == Some("provider")
-            || item.name.as_deref() == Some("baked");
+            || item.name.as_deref() == Some("baked")
+            || item.span.as_ref().is_some_and(|span| {
+                let f = span.filename.to_string_lossy();
+                f.contains("/provider/")
+                    || f.contains("/baked/")
+                    || f.ends_with("provider.rs")
+                    || f.ends_with("baked.rs")
+            });
 
         match &item.inner {
             ItemEnum::Module(module) => {
@@ -658,15 +666,15 @@ impl<'a, 'b> UtilApiChecker<'a, 'b> {
                             ));
                         }
                     }
-                }
-                for util in self.bucket2_utils {
-                    if is_util_module_match(&import.source, util)
-                        && !self.bucket2_allowlist.contains(&(self.krate_name, util))
-                    {
-                        self.violations.insert(format!(
-                            "Bucket 2 violation in {}: pub use {} (not allowlisted)",
-                            self.krate_name, import.source
-                        ));
+                    for util in self.bucket2_utils {
+                        if is_util_module_match(&import.source, util)
+                            && !self.bucket2_allowlist.contains(&(self.krate_name, util))
+                        {
+                            self.violations.insert(format!(
+                                "Bucket 2 violation in {}: pub use {} (not allowlisted)",
+                                self.krate_name, import.source
+                            ));
+                        }
                     }
                 }
                 if let Some(target_id) = &import.id {
@@ -774,6 +782,21 @@ impl<'a, 'b> UtilApiChecker<'a, 'b> {
         if let Some(impl_item) = self.krate.index.get(impl_id)
             && let ItemEnum::Impl(ref impl_) = impl_item.inner
         {
+            let mut is_allowed_impl = is_provider_item;
+            if let Some(ref trait_path) = impl_.trait_
+                && let Some(trait_item) = self.krate.paths.get(&trait_path.id)
+                && trait_item.crate_id != 0
+                && let Some(ext) = self.krate.external_crates.get(&trait_item.crate_id)
+                && ext.name == "zerovec"
+                && let Some(trait_name) = trait_item.path.last()
+                && matches!(
+                    trait_name.as_str(),
+                    "ULE" | "VarULE" | "ZeroMapKV" | "AsULE"
+                )
+            {
+                is_allowed_impl = true;
+            }
+
             for method_id in &impl_.items {
                 if let Some(method_item) = self.krate.index.get(method_id)
                     && method_item.visibility == Visibility::Public
@@ -786,7 +809,7 @@ impl<'a, 'b> UtilApiChecker<'a, 'b> {
                     if let Some(output) = &func.sig.output {
                         get_type_crates(output, self.krate, &mut self.referenced_buf);
                     }
-                    self.check_referenced_utils(is_provider_item, || {
+                    self.check_referenced_utils(is_allowed_impl, || {
                         let fn_name = method_item.name.as_deref().unwrap_or("<unnamed>");
                         format!("fn {fn_name}")
                     });
