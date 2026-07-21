@@ -83,6 +83,7 @@ mod either;
 mod impls;
 mod ops;
 mod parts_write_adapter;
+mod replace;
 #[cfg(feature = "alloc")]
 mod testing;
 #[cfg(feature = "alloc")]
@@ -109,6 +110,7 @@ pub mod adapters {
     pub use concat::Concat;
     pub use parts_write_adapter::CoreWriteAsPartsWrite;
     pub use parts_write_adapter::WithPart;
+    pub use replace::Replace;
     pub use try_writeable::TryWriteableInfallibleAsWriteable;
     pub use try_writeable::WriteableAsTryWriteableInfallible;
 

@@ -125,6 +125,15 @@ void main() {
       '14:32',
     );
 
+    expect(
+      TimeFormatter(
+        locale,
+        timePrecision: TimePrecision.hour,
+        alignment: DateTimeAlignment.column,
+      ).format(zonedDateTimeBuddhist.time),
+      '05 Uhr',
+    );
+
     ///// DateTimeFormatter /////
 
     expect(

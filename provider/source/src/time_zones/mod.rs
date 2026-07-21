@@ -602,7 +602,7 @@ macro_rules! impl_iterable_data_provider {
                 fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
                     Ok(self
                         .cldr()?
-                        .dates("gregorian")
+                        .dates(None)
                         .list_locales()?
                         .map(DataIdentifierCow::from_locale)
                         .collect())

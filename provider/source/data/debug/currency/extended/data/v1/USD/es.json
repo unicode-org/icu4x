@@ -1,12 +1,10 @@
 {
-  "display_names": {
-    "one": [
-      0,
-      "dólar estadounidense"
-    ],
-    "other": [
-      0,
-      "dólares estadounidenses"
-    ]
-  }
+  "one": [
+    0,
+    "dólar estadounidense"
+  ],
+  "other": [
+    0,
+    "dólares estadounidenses"
+  ]
 }

@@ -1,16 +1,16 @@
 segmenter/break/grapheme/cluster/v1, <singleton>, 10452B, 10346B, 648dd52b775f2e5d
 segmenter/break/grapheme/cluster/v2, <singleton>, 12406B, 12266B, b44043f1b4d00bee
-segmenter/break/line/override/v2, <lookup>, 88B, 7 identifiers
-segmenter/break/line/override/v2, <total>, 952B, 791B, 7 unique payloads
-segmenter/break/line/override/v2, und/cj, 136B, 113B, dc7ffb3bc8a02cb
-segmenter/break/line/override/v2, und/loose, 136B, 113B, 3479c3ed9c684971
-segmenter/break/line/override/v2, und/loose_cj, 136B, 113B, c779c18a17a3f4f1
-segmenter/break/line/override/v2, und/normal, 136B, 113B, 896055ec8ff16878
-segmenter/break/line/override/v2, und/normal_cj, 136B, 113B, 7334ef7326765e1c
-segmenter/break/line/override/v2, und/word_breakall, 136B, 113B, dbb7170aa90ed25
-segmenter/break/line/override/v2, und/word_keepall, 136B, 113B, 227ebcf4c6d60bc0
+segmenter/break/line/override/v2, <lookup>, 91B, 7 identifiers
+segmenter/break/line/override/v2, <total>, 784B, 623B, 7 unique payloads
+segmenter/break/line/override/v2, ja, 112B, 89B, 9c60300e2949ba65
+segmenter/break/line/override/v2, ja/loose, 112B, 89B, 4d7567421dce1bc8
+segmenter/break/line/override/v2, ja/normal, 112B, 89B, fe008290ba111d04
+segmenter/break/line/override/v2, und/breakall, 112B, 89B, 3f7a0409391e1039
+segmenter/break/line/override/v2, und/keepall, 112B, 89B, b1d970181af1b2b2
+segmenter/break/line/override/v2, und/loose, 112B, 89B, 495a3a06eb79687d
+segmenter/break/line/override/v2, und/normal, 112B, 89B, 8dab4f7909db361e
 segmenter/break/line/v1, <singleton>, 26577B, 26472B, 26b643f90a8de4
-segmenter/break/line/v2, <singleton>, 31284B, 31146B, 9d3eaa66055c3ab1
+segmenter/break/line/v2, <singleton>, 31260B, 31122B, 6bf15fbf10f2c0e5
 segmenter/break/sentence/override/v1, <lookup>, 35B, 1 identifiers
 segmenter/break/sentence/override/v1, <total>, 332B, 273B, 1 unique payloads
 segmenter/break/sentence/override/v1, el, 332B, 273B, 745d858a06d47385

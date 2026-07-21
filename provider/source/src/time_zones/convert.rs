@@ -29,7 +29,7 @@ impl DataProvider<TimezoneNamesEssentialsV1> for SourceDataProvider {
 
         let time_zone_names = &self
             .cldr()?
-            .dates("gregorian")
+            .dates(None)
             .read_and_parse::<Resource>(req.id.locale, "timeZoneNames.json")?
             .main
             .value
@@ -58,7 +58,7 @@ impl SourceDataProvider {
     ) -> Result<(BTreeMap<TimeZone, String>, BTreeMap<TimeZone, String>), DataError> {
         let time_zone_names = &self
             .cldr()?
-            .dates("gregorian")
+            .dates(None)
             .read_and_parse::<Resource>(locale, "timeZoneNames.json")?
             .main
             .value
@@ -201,7 +201,7 @@ impl SourceDataProvider {
             || self
                 .cldr()
                 .unwrap()
-                .dates("gregorian")
+                .dates(None)
                 .file_exists(&group, "timeZoneNames.json")
                 != Ok(true)
         {
@@ -221,7 +221,7 @@ impl DataProvider<TimezoneNamesLocationsOverrideV1> for SourceDataProvider {
 
         let time_zone_names = &self
             .cldr()?
-            .dates("gregorian")
+            .dates(None)
             .read_and_parse::<Resource>(req.id.locale, "timeZoneNames.json")?
             .main
             .value
@@ -406,7 +406,7 @@ impl DataProvider<TimezoneNamesGenericLongV1> for SourceDataProvider {
 
         let time_zone_names_resource = &self
             .cldr()?
-            .dates("gregorian")
+            .dates(None)
             .read_and_parse::<Resource>(req.id.locale, "timeZoneNames.json")?
             .main
             .value
@@ -465,7 +465,7 @@ impl DataProvider<TimezoneNamesStandardLongV1> for SourceDataProvider {
 
         let time_zone_names_resource = &self
             .cldr()?
-            .dates("gregorian")
+            .dates(None)
             .read_and_parse::<Resource>(req.id.locale, "timeZoneNames.json")?
             .main
             .value
@@ -528,7 +528,7 @@ impl DataProvider<TimezoneNamesSpecificLongV1> for SourceDataProvider {
 
         let time_zone_names_resource = &self
             .cldr()?
-            .dates("gregorian")
+            .dates(None)
             .read_and_parse::<Resource>(req.id.locale, "timeZoneNames.json")?
             .main
             .value
@@ -613,7 +613,7 @@ impl DataProvider<TimezoneNamesGenericShortV1> for SourceDataProvider {
 
         let time_zone_names_resource = &self
             .cldr()?
-            .dates("gregorian")
+            .dates(None)
             .read_and_parse::<Resource>(req.id.locale, "timeZoneNames.json")?
             .main
             .value
@@ -647,7 +647,7 @@ impl DataProvider<TimezoneNamesSpecificShortV1> for SourceDataProvider {
 
         let time_zone_names_resource = &self
             .cldr()?
-            .dates("gregorian")
+            .dates(None)
             .read_and_parse::<Resource>(req.id.locale, "timeZoneNames.json")?
             .main
             .value

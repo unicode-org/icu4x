@@ -290,7 +290,10 @@ impl<E: DataExporter> DataExporter for StubExporter<E> {
         id: DataIdentifierBorrowed,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        if id.locale.is_unknown() && marker.expose_baked_consts {
+        if (id.locale.is_unknown()
+            || marker == icu::segmenter::provider::SegmenterBreakLineOverrideV2::INFO)
+            && marker.expose_baked_consts
+        {
             self.0.put_payload(marker, id, payload)
         } else {
             Ok(())

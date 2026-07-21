@@ -4,5 +4,4 @@
 
 pub mod categorized_formatter;
 pub mod format;
-pub mod formatter;
 pub mod options;
