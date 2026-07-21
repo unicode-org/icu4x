@@ -14,7 +14,7 @@ use crate::displaynames::provider::{
     LocaleNamesScriptMinimalMediumV1, LocaleNamesVariantExtendedMediumV1, MenuNamePartsULE,
 };
 use crate::displaynames::single::{
-    RegionDisplayNameOwned, ScriptDisplayNameOwned, VariantDisplayNameOwned, try_load_markers,
+    RegionDisplayNameOwned, ScriptDisplayNameOwned, VariantDisplayNameOwned, load_one,
 };
 use crate::displaynames::{DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions};
 use crate::size_test_macro::size_test;
@@ -44,6 +44,10 @@ enum MenuNamePartsOrString<'a> {
     /// A data struct that is a string
     String(VarZeroCow<'a, str>),
 }
+
+type MenuNamePartsMarker = ErasedMarker<VarZeroCow<'static, MenuNamePartsULE>>;
+
+type StringMarker = ErasedMarker<VarZeroCow<'static, str>>;
 
 size_test!(
     LanguageIdentifierDisplayNameOwned,
@@ -198,6 +202,28 @@ struct QualifiersOwned {
     essentials_payload: DataPayload<LocaleNamesEssentialsV1>,
 }
 
+#[inline]
+fn make_attributes_for_subtag(subtag: &Language) -> &DataMarkerAttributes {
+    // Valid Language subtags conform to DataMarkerAttributes syntax.
+    DataMarkerAttributes::from_str_or_panic(subtag.as_str())
+}
+
+#[inline]
+fn make_attributes_for_langid(
+    language: Language,
+    script: Option<Script>,
+    region: Option<Region>,
+    buffer: &mut TinyAsciiStr<16>,
+) -> &DataMarkerAttributes {
+    LocaleNamesLanguageCoreMediumV1::make_attributes(language, script, region, buffer)
+}
+
+#[inline]
+fn make_locale(prefs: DisplayNamesPreferences) -> DataLocale {
+    // All language markers use the same locale
+    LocaleNamesLanguageCoreMediumV1::make_locale(prefs.locale_preferences)
+}
+
 /// Loads the name for a language dialect, which includes script and region subtags.
 ///
 /// We try to load names for combinations of subtags:
@@ -209,7 +235,7 @@ struct QualifiersOwned {
 /// We then "consume"  the corresponding subtags from the input `LanguageIdentifier`
 /// so they are not repeated in the qualifiers.
 macro_rules! try_load_dialect_name {
-    ($provider:expr, $locale:expr, $subject:expr, [ $($marker:ident),+ $(,)? ]) => {{
+    ($provider:expr, $locale:expr, $subject:expr, [ $first_marker:ident $(, $rest_marker:ident)* $(,)? ]) => {{
         let mut result = None;
         for (language, script, region) in [
             ($subject.language, Some($subject.script), Some($subject.region)),
@@ -227,65 +253,31 @@ macro_rules! try_load_dialect_name {
                 None => None,
             };
             let mut buffer = TinyAsciiStr::EMPTY;
-            let attrs = LocaleNamesLanguageCoreMediumV1::make_attributes(
+            let attrs = make_attributes_for_langid(
                 language,
                 script_val,
                 region_val,
                 &mut buffer,
             );
-            if let Ok(payload) = try_load_markers!($provider, $locale, attrs, [ $($marker),+ ]) {
+            let loaded = load_one::<$first_marker, StringMarker, _>($provider, $locale, attrs)?
+                $(
+                    .map_or_else(
+                        || load_one::<$rest_marker, _, _>($provider, $locale, attrs),
+                        |p| Ok::<_, DataError>(Some(p)),
+                    )?
+                )*;
+            if let Some(payload) = loaded {
                 if script_val.is_some() {
                     $subject.script = None;
                 }
                 if region_val.is_some() {
                     $subject.region = None;
                 }
-                let payload_cast: DataPayload<LocaleNamesLanguageCoreMediumV1> = payload.cast();
-                result = Some(payload_cast.map_project(|p, _| MenuNamePartsOrString::String(p)));
+                result = Some(payload.map_project(|p, _| MenuNamePartsOrString::String(p)));
                 break;
             }
         }
-        result
-    }};
-}
-
-/// Loads the name for an individual language subtag.
-macro_rules! try_load_subtag_name {
-    ($provider:expr, $locale:expr, $language:expr, [ $($marker:ident),+ $(,)? ]) => {{
-        let mut buffer = TinyAsciiStr::EMPTY;
-        let attrs = LocaleNamesLanguageCoreMediumV1::make_attributes(
-            $language,
-            None,
-            None,
-            &mut buffer,
-        );
-        match try_load_markers!($provider, $locale, attrs, [ $($marker),+ ]) {
-            Ok(payload) => {
-                let payload_cast: DataPayload<LocaleNamesLanguageCoreMediumV1> = payload.cast();
-                Some(payload_cast.map_project(|p, _| MenuNamePartsOrString::String(p)))
-            }
-            Err(_) => None,
-        }
-    }};
-}
-
-/// Loads the name for a language with menu core and extension parts.
-macro_rules! try_load_menu_name {
-    ($provider:expr, $locale:expr, $language:expr, [ $($marker:ident),+ $(,)? ]) => {{
-        let mut buffer = TinyAsciiStr::EMPTY;
-        let attrs = LocaleNamesLanguageCoreMediumV1::make_attributes(
-            $language,
-            None,
-            None,
-            &mut buffer,
-        );
-        match try_load_markers!($provider, $locale, attrs, [ $($marker),+ ]) {
-            Ok(payload) => {
-                let payload_cast: DataPayload<LocaleNamesLanguageMenuCoreMediumV1> = payload.cast();
-                Some(payload_cast.map_project(|p, _| MenuNamePartsOrString::MenuNameParts(p)))
-            }
-            Err(_) => None,
-        }
+        Ok::<_, DataError>(result)
     }};
 }
 
@@ -319,29 +311,35 @@ impl LanguageIdentifierDisplayNameOwned {
             + DataProvider<LocaleNamesVariantExtendedMediumV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
+        let locale = make_locale(prefs);
         let load_dialect = options.should_load_dialect();
         let mut language_payload = None;
         if load_dialect {
             language_payload = try_load_dialect_name!(
                 provider,
-                prefs,
+                &locale,
                 subject,
                 [
                     LocaleNamesLanguageCoreMediumV1,
                     LocaleNamesLanguageMinimalMediumV1
                 ]
-            );
+            )?;
         }
         if language_payload.is_none() {
-            language_payload = try_load_subtag_name!(
-                provider,
-                prefs,
-                subject.language,
-                [
-                    LocaleNamesLanguageCoreMediumV1,
-                    LocaleNamesLanguageMinimalMediumV1
-                ]
-            );
+            let attrs = make_attributes_for_subtag(&subject.language);
+            language_payload =
+                load_one::<LocaleNamesLanguageCoreMediumV1, _, _>(provider, &locale, attrs)?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageMinimalMediumV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map(|payload: DataPayload<StringMarker>| {
+                        payload.map_project(|p, _| MenuNamePartsOrString::String(p))
+                    });
         }
         let language_payload = match language_payload {
             Some(payload) => DataPayloadOr::from_payload(payload),
@@ -384,6 +382,7 @@ impl LanguageIdentifierDisplayNameOwned {
             + DataProvider<LocaleNamesVariantExtendedMediumV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
+        let locale = make_locale(prefs);
         // Step 1: Load language name
         let load_dialect = options.should_load_dialect();
         let mut language_payload = None;
@@ -391,18 +390,18 @@ impl LanguageIdentifierDisplayNameOwned {
         if load_dialect {
             language_payload = try_load_dialect_name!(
                 provider,
-                prefs,
+                &locale,
                 subject,
                 [LocaleNamesLanguageMinimalMediumV1]
-            );
+            )?;
         }
         if language_payload.is_none() {
-            language_payload = try_load_subtag_name!(
-                provider,
-                prefs,
-                subject.language,
-                [LocaleNamesLanguageMinimalMediumV1]
-            );
+            let attrs = make_attributes_for_subtag(&subject.language);
+            language_payload =
+                load_one::<LocaleNamesLanguageMinimalMediumV1, _, _>(provider, &locale, attrs)?
+                    .map(|payload: DataPayload<StringMarker>| {
+                        payload.map_project(|p, _| MenuNamePartsOrString::String(p))
+                    });
         }
         let language_payload = match language_payload {
             Some(payload) => DataPayloadOr::from_payload(payload),
@@ -490,31 +489,44 @@ impl LanguageIdentifierDisplayNameOwned {
             + DataProvider<LocaleNamesVariantExtendedMediumV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
+        let locale = make_locale(prefs);
         let load_dialect = options.should_load_dialect();
         let mut language_payload = None;
         if load_dialect {
             language_payload = try_load_dialect_name!(
                 provider,
-                prefs,
+                &locale,
                 subject,
                 [
                     LocaleNamesLanguageCoreShortV1,
                     LocaleNamesLanguageCoreMediumV1,
                     LocaleNamesLanguageMinimalMediumV1
                 ]
-            );
+            )?;
         }
         if language_payload.is_none() {
-            language_payload = try_load_subtag_name!(
-                provider,
-                prefs,
-                subject.language,
-                [
-                    LocaleNamesLanguageCoreShortV1,
-                    LocaleNamesLanguageCoreMediumV1,
-                    LocaleNamesLanguageMinimalMediumV1
-                ]
-            );
+            let attrs = make_attributes_for_subtag(&subject.language);
+            language_payload =
+                load_one::<LocaleNamesLanguageCoreShortV1, _, _>(provider, &locale, attrs)?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageCoreMediumV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageMinimalMediumV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map(|payload: DataPayload<StringMarker>| {
+                        payload.map_project(|p, _| MenuNamePartsOrString::String(p))
+                    });
         }
         let language_payload = match language_payload {
             Some(payload) => DataPayloadOr::from_payload(payload),
@@ -599,31 +611,44 @@ impl LanguageIdentifierDisplayNameOwned {
             + DataProvider<LocaleNamesVariantExtendedMediumV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
+        let locale = make_locale(prefs);
         let load_dialect = options.should_load_dialect();
         let mut language_payload = None;
         if load_dialect {
             language_payload = try_load_dialect_name!(
                 provider,
-                prefs,
+                &locale,
                 subject,
                 [
                     LocaleNamesLanguageCoreLongV1,
                     LocaleNamesLanguageCoreMediumV1,
                     LocaleNamesLanguageMinimalMediumV1
                 ]
-            );
+            )?;
         }
         if language_payload.is_none() {
-            language_payload = try_load_subtag_name!(
-                provider,
-                prefs,
-                subject.language,
-                [
-                    LocaleNamesLanguageCoreLongV1,
-                    LocaleNamesLanguageCoreMediumV1,
-                    LocaleNamesLanguageMinimalMediumV1
-                ]
-            );
+            let attrs = make_attributes_for_subtag(&subject.language);
+            language_payload =
+                load_one::<LocaleNamesLanguageCoreLongV1, _, _>(provider, &locale, attrs)?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageCoreMediumV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageMinimalMediumV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map(|payload: DataPayload<StringMarker>| {
+                        payload.map_project(|p, _| MenuNamePartsOrString::String(p))
+                    });
         }
         let language_payload = match language_payload {
             Some(payload) => DataPayloadOr::from_payload(payload),
@@ -688,22 +713,29 @@ impl LanguageIdentifierDisplayNameOwned {
             + DataProvider<LocaleNamesVariantExtendedMediumV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
-        let mut language_payload = try_load_menu_name!(
-            provider,
-            prefs,
-            subject.language,
-            [LocaleNamesLanguageMenuCoreMediumV1]
-        );
+        let locale = make_locale(prefs);
+        let attrs = make_attributes_for_subtag(&subject.language);
+        let mut language_payload = load_one::<LocaleNamesLanguageMenuCoreMediumV1, _, _>(
+            provider, &locale, attrs,
+        )?
+        .map(|payload: DataPayload<MenuNamePartsMarker>| {
+            payload.map_project(|p, _| MenuNamePartsOrString::MenuNameParts(p))
+        });
         if language_payload.is_none() {
-            language_payload = try_load_subtag_name!(
-                provider,
-                prefs,
-                subject.language,
-                [
-                    LocaleNamesLanguageCoreMediumV1,
-                    LocaleNamesLanguageMinimalMediumV1
-                ]
-            );
+            let attrs = make_attributes_for_subtag(&subject.language);
+            language_payload =
+                load_one::<LocaleNamesLanguageCoreMediumV1, _, _>(provider, &locale, attrs)?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageMinimalMediumV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map(|payload: DataPayload<StringMarker>| {
+                        payload.map_project(|p, _| MenuNamePartsOrString::String(p))
+                    });
         }
         let language_payload = match language_payload {
             Some(payload) => DataPayloadOr::from_payload(payload),
@@ -773,23 +805,37 @@ impl LanguageIdentifierDisplayNameOwned {
             + DataProvider<LocaleNamesVariantExtendedMediumV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
-        let mut language_payload = try_load_menu_name!(
-            provider,
-            prefs,
-            subject.language,
-            [LocaleNamesLanguageMenuCoreMediumV1]
-        );
+        let locale = make_locale(prefs);
+        let attrs = make_attributes_for_subtag(&subject.language);
+        let mut language_payload = load_one::<LocaleNamesLanguageMenuCoreMediumV1, _, _>(
+            provider, &locale, attrs,
+        )?
+        .map(|payload: DataPayload<MenuNamePartsMarker>| {
+            payload.map_project(|p, _| MenuNamePartsOrString::MenuNameParts(p))
+        });
         if language_payload.is_none() {
-            language_payload = try_load_subtag_name!(
-                provider,
-                prefs,
-                subject.language,
-                [
-                    LocaleNamesLanguageCoreShortV1,
-                    LocaleNamesLanguageCoreMediumV1,
-                    LocaleNamesLanguageMinimalMediumV1
-                ]
-            );
+            let attrs = make_attributes_for_subtag(&subject.language);
+            language_payload =
+                load_one::<LocaleNamesLanguageCoreShortV1, _, _>(provider, &locale, attrs)?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageCoreMediumV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageMinimalMediumV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map(|payload: DataPayload<StringMarker>| {
+                        payload.map_project(|p, _| MenuNamePartsOrString::String(p))
+                    });
         }
         let language_payload = match language_payload {
             Some(payload) => DataPayloadOr::from_payload(payload),
@@ -836,6 +882,7 @@ impl LanguageIdentifierDisplayNameOwned {
             + DataProvider<LocaleNamesVariantExtendedMediumV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
+        let locale = make_locale(prefs);
         // Step 1: Load language name
         let load_dialect = options.should_load_dialect();
         let mut language_payload = None;
@@ -843,26 +890,38 @@ impl LanguageIdentifierDisplayNameOwned {
         if load_dialect {
             language_payload = try_load_dialect_name!(
                 provider,
-                prefs,
+                &locale,
                 subject,
                 [
                     LocaleNamesLanguageExtendedMediumV1,
                     LocaleNamesLanguageCoreMediumV1,
                     LocaleNamesLanguageMinimalMediumV1
                 ]
-            );
+            )?;
         }
         if language_payload.is_none() {
-            language_payload = try_load_subtag_name!(
-                provider,
-                prefs,
-                subject.language,
-                [
-                    LocaleNamesLanguageExtendedMediumV1,
-                    LocaleNamesLanguageCoreMediumV1,
-                    LocaleNamesLanguageMinimalMediumV1
-                ]
-            );
+            let attrs = make_attributes_for_subtag(&subject.language);
+            language_payload =
+                load_one::<LocaleNamesLanguageExtendedMediumV1, _, _>(provider, &locale, attrs)?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageCoreMediumV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageMinimalMediumV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map(|payload: DataPayload<StringMarker>| {
+                        payload.map_project(|p, _| MenuNamePartsOrString::String(p))
+                    });
         }
         let language_payload = match language_payload {
             Some(payload) => DataPayloadOr::from_payload(payload),
@@ -917,6 +976,7 @@ impl LanguageIdentifierDisplayNameOwned {
             + DataProvider<LocaleNamesVariantExtendedMediumV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
+        let locale = make_locale(prefs);
         // Step 1: Load language name
         let load_dialect = options.should_load_dialect();
         let mut language_payload = None;
@@ -924,7 +984,7 @@ impl LanguageIdentifierDisplayNameOwned {
         if load_dialect {
             language_payload = try_load_dialect_name!(
                 provider,
-                prefs,
+                &locale,
                 subject,
                 [
                     LocaleNamesLanguageExtendedShortV1,
@@ -933,21 +993,47 @@ impl LanguageIdentifierDisplayNameOwned {
                     LocaleNamesLanguageCoreMediumV1,
                     LocaleNamesLanguageMinimalMediumV1
                 ]
-            );
+            )?;
         }
         if language_payload.is_none() {
-            language_payload = try_load_subtag_name!(
-                provider,
-                prefs,
-                subject.language,
-                [
-                    LocaleNamesLanguageExtendedShortV1,
-                    LocaleNamesLanguageCoreShortV1,
-                    LocaleNamesLanguageExtendedMediumV1,
-                    LocaleNamesLanguageCoreMediumV1,
-                    LocaleNamesLanguageMinimalMediumV1
-                ]
-            );
+            let attrs = make_attributes_for_subtag(&subject.language);
+            language_payload =
+                load_one::<LocaleNamesLanguageExtendedShortV1, _, _>(provider, &locale, attrs)?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageCoreShortV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageExtendedMediumV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageCoreMediumV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageMinimalMediumV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map(|payload: DataPayload<StringMarker>| {
+                        payload.map_project(|p, _| MenuNamePartsOrString::String(p))
+                    });
         }
         let language_payload = match language_payload {
             Some(payload) => DataPayloadOr::from_payload(payload),
@@ -1000,12 +1086,13 @@ impl LanguageIdentifierDisplayNameOwned {
             + DataProvider<LocaleNamesVariantExtendedMediumV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
+        let locale = make_locale(prefs);
         let load_dialect = options.should_load_dialect();
         let mut language_payload = None;
         if load_dialect {
             language_payload = try_load_dialect_name!(
                 provider,
-                prefs,
+                &locale,
                 subject,
                 [
                     LocaleNamesLanguageExtendedLongV1,
@@ -1014,21 +1101,47 @@ impl LanguageIdentifierDisplayNameOwned {
                     LocaleNamesLanguageCoreMediumV1,
                     LocaleNamesLanguageMinimalMediumV1
                 ]
-            );
+            )?;
         }
         if language_payload.is_none() {
-            language_payload = try_load_subtag_name!(
-                provider,
-                prefs,
-                subject.language,
-                [
-                    LocaleNamesLanguageExtendedLongV1,
-                    LocaleNamesLanguageCoreLongV1,
-                    LocaleNamesLanguageExtendedMediumV1,
-                    LocaleNamesLanguageCoreMediumV1,
-                    LocaleNamesLanguageMinimalMediumV1
-                ]
-            );
+            let attrs = make_attributes_for_subtag(&subject.language);
+            language_payload =
+                load_one::<LocaleNamesLanguageExtendedLongV1, _, _>(provider, &locale, attrs)?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageCoreLongV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageExtendedMediumV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageCoreMediumV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageMinimalMediumV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map(|payload: DataPayload<StringMarker>| {
+                        payload.map_project(|p, _| MenuNamePartsOrString::String(p))
+                    });
         }
         let language_payload = match language_payload {
             Some(payload) => DataPayloadOr::from_payload(payload),
@@ -1098,26 +1211,44 @@ impl LanguageIdentifierDisplayNameOwned {
             + DataProvider<LocaleNamesVariantExtendedMediumV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
-        let mut language_payload = try_load_menu_name!(
-            provider,
-            prefs,
-            subject.language,
-            [
-                LocaleNamesLanguageMenuExtendedMediumV1,
-                LocaleNamesLanguageMenuCoreMediumV1
-            ]
-        );
+        let locale = make_locale(prefs);
+        let attrs = make_attributes_for_subtag(&subject.language);
+        let mut language_payload =
+            load_one::<LocaleNamesLanguageMenuExtendedMediumV1, _, _>(provider, &locale, attrs)?
+                .map_or_else(
+                    || {
+                        load_one::<LocaleNamesLanguageMenuCoreMediumV1, _, _>(
+                            provider, &locale, attrs,
+                        )
+                    },
+                    |p| Ok(Some(p)),
+                )?
+                .map(|payload: DataPayload<MenuNamePartsMarker>| {
+                    payload.map_project(|p, _| MenuNamePartsOrString::MenuNameParts(p))
+                });
         if language_payload.is_none() {
-            language_payload = try_load_subtag_name!(
-                provider,
-                prefs,
-                subject.language,
-                [
-                    LocaleNamesLanguageExtendedMediumV1,
-                    LocaleNamesLanguageCoreMediumV1,
-                    LocaleNamesLanguageMinimalMediumV1
-                ]
-            );
+            let attrs = make_attributes_for_subtag(&subject.language);
+            language_payload =
+                load_one::<LocaleNamesLanguageExtendedMediumV1, _, _>(provider, &locale, attrs)?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageCoreMediumV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageMinimalMediumV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map(|payload: DataPayload<StringMarker>| {
+                        payload.map_project(|p, _| MenuNamePartsOrString::String(p))
+                    });
         }
         let language_payload = match language_payload {
             Some(payload) => DataPayloadOr::from_payload(payload),
@@ -1194,28 +1325,60 @@ impl LanguageIdentifierDisplayNameOwned {
             + DataProvider<LocaleNamesVariantExtendedMediumV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
-        let mut language_payload = try_load_menu_name!(
-            provider,
-            prefs,
-            subject.language,
-            [
-                LocaleNamesLanguageMenuExtendedMediumV1,
-                LocaleNamesLanguageMenuCoreMediumV1
-            ]
-        );
+        let locale = make_locale(prefs);
+        let attrs = make_attributes_for_subtag(&subject.language);
+        let mut language_payload =
+            load_one::<LocaleNamesLanguageMenuExtendedMediumV1, _, _>(provider, &locale, attrs)?
+                .map_or_else(
+                    || {
+                        load_one::<LocaleNamesLanguageMenuCoreMediumV1, _, _>(
+                            provider, &locale, attrs,
+                        )
+                    },
+                    |p| Ok(Some(p)),
+                )?
+                .map(|payload: DataPayload<MenuNamePartsMarker>| {
+                    payload.map_project(|p, _| MenuNamePartsOrString::MenuNameParts(p))
+                });
         if language_payload.is_none() {
-            language_payload = try_load_subtag_name!(
-                provider,
-                prefs,
-                subject.language,
-                [
-                    LocaleNamesLanguageExtendedShortV1,
-                    LocaleNamesLanguageCoreShortV1,
-                    LocaleNamesLanguageExtendedMediumV1,
-                    LocaleNamesLanguageCoreMediumV1,
-                    LocaleNamesLanguageMinimalMediumV1
-                ]
-            );
+            let attrs = make_attributes_for_subtag(&subject.language);
+            language_payload =
+                load_one::<LocaleNamesLanguageExtendedShortV1, _, _>(provider, &locale, attrs)?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageCoreShortV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageExtendedMediumV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageCoreMediumV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map_or_else(
+                        || {
+                            load_one::<LocaleNamesLanguageMinimalMediumV1, _, _>(
+                                provider, &locale, attrs,
+                            )
+                        },
+                        |p| Ok(Some(p)),
+                    )?
+                    .map(|payload: DataPayload<StringMarker>| {
+                        payload.map_project(|p, _| MenuNamePartsOrString::String(p))
+                    });
         }
         let language_payload = match language_payload {
             Some(payload) => DataPayloadOr::from_payload(payload),

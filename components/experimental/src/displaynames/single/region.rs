@@ -4,7 +4,6 @@
 
 use super::{
     impl_writeable_for_single_display_name_borrowed, impl_writeable_for_single_display_name_owned,
-    try_load_markers,
 };
 use crate::displaynames::DisplayNamesPreferences;
 use crate::displaynames::provider::{
