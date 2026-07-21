@@ -262,4 +262,36 @@ mod tests {
             CurrencyFormatter::try_new_symbol_narrow(prefs, &currency_code).unwrap();
         assert_writeable_eq!(fmt_symbol_narrow.format_fixed_decimal(&value), "$12,345.67");
     }
+
+    #[test]
+    pub fn test_code() {
+        let prefs_en = locale!("en-US").into();
+        let currency_usd = CurrencyCode(tinystr!(3, "USD"));
+        let value = "12345.67".parse().unwrap();
+
+        let fmt_code_en = CurrencyFormatter::try_new_code(prefs_en, &currency_usd).unwrap();
+        assert_writeable_eq!(
+            fmt_code_en.format_fixed_decimal(&value),
+            "USD\u{a0}12,345.67"
+        );
+
+        let prefs_fr = locale!("fr-FR").into();
+        let currency_eur = CurrencyCode(tinystr!(3, "EUR"));
+        let fmt_code_fr = CurrencyFormatter::try_new_code(prefs_fr, &currency_eur).unwrap();
+        assert_writeable_eq!(
+            fmt_code_fr.format_fixed_decimal(&value),
+            "12\u{202f}345,67\u{a0}EUR"
+        );
+    }
+
+    #[test]
+    pub fn test_name_fallback_to_iso_extended() {
+        let prefs_en = locale!("en-US").into();
+        // Unknown currency code should gracefully fall back to IsoExtended instead of DataError(IdentifierNotFound)
+        let currency_xyz = CurrencyCode(tinystr!(3, "XYZ"));
+        let value = "12345.67".parse().unwrap();
+
+        let fmt_name = CurrencyFormatter::try_new_name(prefs_en, &currency_xyz).unwrap();
+        assert_writeable_eq!(fmt_name.format_fixed_decimal(&value), "12,345.67 XYZ");
+    }
 }

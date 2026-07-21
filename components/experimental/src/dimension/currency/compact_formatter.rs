@@ -33,6 +33,16 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: CurrencyFormatterPreferences, currency_code: &CurrencyCode) -> error: DataError,
         functions: [
+            try_new_compact_code: skip,
+            try_new_compact_code_with_buffer_provider,
+            try_new_compact_code_unstable,
+            Self
+        ]
+    );
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: CurrencyFormatterPreferences, currency_code: &CurrencyCode) -> error: DataError,
+        functions: [
             try_new_compact_name: skip,
             try_new_compact_name_with_buffer_provider,
             try_new_compact_name_unstable,
@@ -56,6 +66,16 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             try_new_compact_long_symbol_narrow: skip,
             try_new_compact_long_symbol_narrow_with_buffer_provider,
             try_new_compact_long_symbol_narrow_unstable,
+            Self
+        ]
+    );
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: CurrencyFormatterPreferences, currency_code: &CurrencyCode) -> error: DataError,
+        functions: [
+            try_new_compact_long_code: skip,
+            try_new_compact_long_code_with_buffer_provider,
+            try_new_compact_long_code_unstable,
             Self
         ]
     );
@@ -103,6 +123,23 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             prefs,
             *currency_code,
             CurrencySymbolsV1::NARROW,
+        )
+    }
+
+    /// Creates a new [`CurrencyFormatter`] for compact short number formatting using the 3-letter ISO currency code from compiled locale data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new_compact_code(
+        prefs: CurrencyFormatterPreferences,
+        currency_code: &CurrencyCode,
+    ) -> Result<Self, DataError> {
+        Self::try_new_code_internal(
+            CompactDecimalFormatter::try_new_short((&prefs).into(), Default::default())?,
+            prefs,
+            *currency_code,
         )
     }
 
@@ -156,6 +193,23 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             prefs,
             *currency_code,
             CurrencySymbolsV1::NARROW,
+        )
+    }
+
+    /// Creates a new [`CurrencyFormatter`] for compact long number formatting using the 3-letter ISO currency code from compiled locale data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new_compact_long_code(
+        prefs: CurrencyFormatterPreferences,
+        currency_code: &CurrencyCode,
+    ) -> Result<Self, DataError> {
+        Self::try_new_code_internal(
+            CompactDecimalFormatter::try_new_long((&prefs).into(), Default::default())?,
+            prefs,
+            *currency_code,
         )
     }
 
@@ -331,6 +385,58 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             + DataProvider<icu_decimal::provider::DecimalCompactLongV1>,
     {
         Self::try_new_name_internal_unstable(
+            provider,
+            CompactDecimalFormatter::try_new_long_unstable(
+                provider,
+                (&prefs).into(),
+                Default::default(),
+            )?,
+            prefs,
+            *currency_code,
+        )
+    }
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_compact_code)]
+    pub fn try_new_compact_code_unstable<D>(
+        provider: &D,
+        prefs: CurrencyFormatterPreferences,
+        currency_code: &CurrencyCode,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<CurrencyEssentialsV1>
+            + DataProvider<icu_decimal::provider::DecimalCompactShortV1>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1>
+            + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
+    {
+        Self::try_new_code_internal_unstable(
+            provider,
+            CompactDecimalFormatter::try_new_short_unstable(
+                provider,
+                (&prefs).into(),
+                Default::default(),
+            )?,
+            prefs,
+            *currency_code,
+        )
+    }
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_compact_long_code)]
+    pub fn try_new_compact_long_code_unstable<D>(
+        provider: &D,
+        prefs: CurrencyFormatterPreferences,
+        currency_code: &CurrencyCode,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<CurrencyEssentialsV1>
+            + DataProvider<icu_decimal::provider::DecimalCompactLongV1>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1>
+            + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
+    {
+        Self::try_new_code_internal_unstable(
             provider,
             CompactDecimalFormatter::try_new_long_unstable(
                 provider,

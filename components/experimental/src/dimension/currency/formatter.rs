@@ -49,6 +49,11 @@ pub(crate) enum CurrencyFormatterData {
         essential: DataPayload<CurrencyEssentialsV1>,
         currency: CurrencyCode,
     },
+    IsoExtended {
+        patterns: DataPayload<CurrencyPatternsDataV1>,
+        plural_rules: PluralRules,
+        currency: CurrencyCode,
+    },
     Symbol {
         essential: DataPayload<CurrencyEssentialsV1>,
         symbol: DataPayload<CurrencySymbolsV1>,
@@ -164,6 +169,57 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     }
 
     #[cfg(feature = "compiled_data")]
+    pub(crate) fn try_new_code_internal(
+        value_formatter: V,
+        prefs: CurrencyFormatterPreferences,
+        currency: CurrencyCode,
+    ) -> Result<Self, DataError> {
+        let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
+        let decimal_prefs = DecimalFormatterPreferences::from(&prefs);
+
+        let req_id = decimal_prefs.nu_id(&locale);
+        let default_id = DataIdentifierBorrowed::for_locale(&locale);
+        let ids = req_id.into_iter().chain(core::iter::once(default_id));
+        let essential =
+            load_with_fallback::<CurrencyEssentialsV1>(&crate::provider::Baked, ids.clone())?
+                .payload;
+
+        Ok(Self {
+            value_formatter,
+            currency_data: CurrencyFormatterData::Iso {
+                essential,
+                currency,
+            },
+        })
+    }
+
+    pub(crate) fn try_new_code_internal_unstable<D>(
+        provider: &D,
+        value_formatter: V,
+        prefs: CurrencyFormatterPreferences,
+        currency: CurrencyCode,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized + DataProvider<CurrencyEssentialsV1>,
+    {
+        let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
+        let decimal_prefs = DecimalFormatterPreferences::from(&prefs);
+
+        let req_id = decimal_prefs.nu_id(&locale);
+        let default_id = DataIdentifierBorrowed::for_locale(&locale);
+        let ids = req_id.into_iter().chain(core::iter::once(default_id));
+        let essential = load_with_fallback::<CurrencyEssentialsV1>(provider, ids.clone())?.payload;
+
+        Ok(Self {
+            value_formatter,
+            currency_data: CurrencyFormatterData::Iso {
+                essential,
+                currency,
+            },
+        })
+    }
+
+    #[cfg(feature = "compiled_data")]
     pub(crate) fn try_new_name_internal(
         value_formatter: V,
         prefs: CurrencyFormatterPreferences,
@@ -176,27 +232,37 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                     .into_error()
                     .with_debug_context("failed to get data marker attribute from a `CurrencyCode`")
             })?;
-        let extended = crate::provider::Baked
+        let extended_opt = crate::provider::Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     marker_attributes,
                     &locale,
                 ),
                 ..Default::default()
-            })?
-            .payload;
+            })
+            .allow_identifier_not_found()?
+            .map(|res| res.payload);
 
         let patterns = crate::provider::Baked.load(Default::default())?.payload;
 
         let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
 
-        Ok(Self {
-            value_formatter,
-            currency_data: CurrencyFormatterData::Name {
+        let currency_data = match extended_opt {
+            Some(extended) => CurrencyFormatterData::Name {
                 extended,
                 patterns,
                 plural_rules,
             },
+            None => CurrencyFormatterData::IsoExtended {
+                patterns,
+                plural_rules,
+                currency,
+            },
+        };
+
+        Ok(Self {
+            value_formatter,
+            currency_data,
         })
     }
 
@@ -219,27 +285,37 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                     .into_error()
                     .with_debug_context("failed to get data marker attribute from a `CurrencyCode`")
             })?;
-        let extended = provider
+        let extended_opt = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     marker_attributes,
                     &locale,
                 ),
                 ..Default::default()
-            })?
-            .payload;
+            })
+            .allow_identifier_not_found()?
+            .map(|res| res.payload);
 
         let patterns = provider.load(Default::default())?.payload;
 
         let plural_rules = PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
 
-        Ok(Self {
-            value_formatter,
-            currency_data: CurrencyFormatterData::Name {
+        let currency_data = match extended_opt {
+            Some(extended) => CurrencyFormatterData::Name {
                 extended,
                 patterns,
                 plural_rules,
             },
+            None => CurrencyFormatterData::IsoExtended {
+                patterns,
+                plural_rules,
+                currency,
+            },
+        };
+
+        Ok(Self {
+            value_formatter,
+            currency_data,
         })
     }
 }
@@ -347,6 +423,68 @@ impl CurrencyFormatter<DecimalFormatter> {
             prefs,
             *currency_code,
             CurrencySymbolsV1::NARROW,
+        )
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: CurrencyFormatterPreferences, currency_code: &CurrencyCode) -> error: DataError,
+        functions: [
+            try_new_code: skip,
+            try_new_code_with_buffer_provider,
+            try_new_code_unstable,
+            Self
+        ]
+    );
+
+    /// Creates a new [`CurrencyFormatter`] for formatting using the 3-letter ISO currency code from compiled locale data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// # Examples
+    /// ```
+    /// use icu::experimental::dimension::currency::formatter::CurrencyFormatter;
+    /// use icu::experimental::dimension::currency::CurrencyCode;
+    /// use icu::locale::locale;
+    /// use tinystr::*;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let currency_preferences = locale!("en-US").into();
+    /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
+    /// let fmt = CurrencyFormatter::try_new_code(currency_preferences, &currency_code).unwrap();
+    /// let value = "12345.67".parse().unwrap();
+    /// assert_writeable_eq!(fmt.format_fixed_decimal(&value), "USD\u{a0}12,345.67");
+    /// ```
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new_code(
+        prefs: CurrencyFormatterPreferences,
+        currency_code: &CurrencyCode,
+    ) -> Result<Self, DataError> {
+        Self::try_new_code_internal(
+            DecimalFormatter::try_new((&prefs).into(), Default::default())?,
+            prefs,
+            *currency_code,
+        )
+    }
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_code)]
+    pub fn try_new_code_unstable<D>(
+        provider: &D,
+        prefs: CurrencyFormatterPreferences,
+        currency_code: &CurrencyCode,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<CurrencyEssentialsV1>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
+    {
+        Self::try_new_code_internal_unstable(
+            provider,
+            DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
+            prefs,
+            *currency_code,
         )
     }
 
@@ -478,6 +616,16 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             } => {
                 let pattern = essential.get().get_positive(true, true);
                 (pattern, currency.0.as_str())
+            }
+            CurrencyFormatterData::IsoExtended {
+                patterns,
+                plural_rules,
+                currency,
+            } => {
+                let operands = V::plural_operands(&formatted_value);
+                let currency_str = currency.0.as_str();
+                let pattern = patterns.get().get(operands, plural_rules);
+                (pattern, currency_str)
             }
             CurrencyFormatterData::Symbol { essential, symbol } => {
                 let symbol = symbol.get();
