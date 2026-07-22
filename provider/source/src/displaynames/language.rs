@@ -212,34 +212,13 @@ mod tests {
     use icu::locale::{langid, subtags::language};
 
     #[test]
-    fn test_basic_locale_display_names() {
-        let provider = SourceDataProvider::new_testing();
-
-        let data: DataPayload<LanguageDisplayNamesV1> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-
-        assert_eq!(
-            data.get()
-                .names
-                .get(&language!("es").to_tinystr().to_unvalidated())
-                .unwrap(),
-            "Spanish"
-        );
-    }
-
-    #[test]
-    fn test_locale_names_language_minimal() {
+    fn test_basic_lang_display_names() {
         let provider = SourceDataProvider::new_testing();
 
         let data: DataPayload<LocaleNamesLanguageMinimalMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str("en").unwrap(),
+                    DataMarkerAttributes::try_from_str("aa").unwrap(),
                     &langid!("en-001").into(),
                 ),
                 ..Default::default()
@@ -247,17 +226,89 @@ mod tests {
             .unwrap()
             .payload;
 
-        assert_eq!(&**data.get(), "English");
+        assert_eq!(&**data.get(), "Afar");
+    }
+
+    #[test]
+    fn test_basic_lang_short_display_names() {
+        let provider = SourceDataProvider::new_testing();
+
+        let data: DataPayload<LocaleNamesLanguageCoreShortV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("az").unwrap(),
+                    &langid!("en-001").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(&**data.get(), "Azeri");
+    }
+
+    #[test]
+    fn test_basic_lang_long_display_names() {
+        let provider = SourceDataProvider::new_testing();
+
+        let data: DataPayload<LocaleNamesLanguageCoreLongV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("zh").unwrap(),
+                    &langid!("en-001").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(&**data.get(), "Mandarin Chinese");
+    }
+
+    #[test]
+    fn test_basic_lang_menu_display_names() {
+        let provider = SourceDataProvider::new_testing();
+
+        let data: DataPayload<LocaleNamesLanguageMenuCoreMediumV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("zh").unwrap(),
+                    &langid!("en-001").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(data.get().core(), "Chinese, Mandarin");
+    }
+
+    #[test]
+    fn test_basic_locale_display_names() {
+        let provider = SourceDataProvider::new_testing();
+
+        let data: DataPayload<LocaleNamesLanguageMinimalMediumV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("de-CH").unwrap(),
+                    &langid!("en-001").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(&**data.get(), "Swiss High German");
     }
 
     #[test]
     fn test_locale_names_language_medium() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesLanguageCoreMediumV1> = provider
+        let data: DataPayload<LocaleNamesLanguageMinimalMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str("es").unwrap(),
+                    DataMarkerAttributes::try_from_str("aa").unwrap(),
                     &langid!("en-001").into(),
                 ),
                 ..Default::default()
@@ -265,7 +316,7 @@ mod tests {
             .unwrap()
             .payload;
 
-        assert_eq!(&**data.get(), "Spanish");
+        assert_eq!(&**data.get(), "Afar");
     }
 
     #[test]
@@ -276,7 +327,7 @@ mod tests {
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("en-GB").unwrap(),
-                    &langid!("en-001").into(),
+                    &langid!("en").into(),
                 ),
                 ..Default::default()
             })
