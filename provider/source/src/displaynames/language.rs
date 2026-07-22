@@ -275,7 +275,7 @@ mod tests {
         let data: DataPayload<LocaleNamesLanguageCoreShortV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str("en-US").unwrap(),
+                    DataMarkerAttributes::try_from_str("en-GB").unwrap(),
                     &langid!("en-001").into(),
                 ),
                 ..Default::default()
@@ -283,7 +283,7 @@ mod tests {
             .unwrap()
             .payload;
 
-        assert_eq!(&**data.get(), "US English");
+        assert_eq!(&**data.get(), "UK English");
     }
 
     #[test]
@@ -291,24 +291,6 @@ mod tests {
         let provider = SourceDataProvider::new_testing();
 
         let data: DataPayload<LocaleNamesLanguageCoreLongV1> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str("zh-Hans").unwrap(),
-                    &langid!("en-001").into(),
-                ),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-
-        assert_eq!(&**data.get(), "Simplified Mandarin Chinese");
-    }
-
-    #[test]
-    fn test_locale_names_language_menu_medium() {
-        let provider = SourceDataProvider::new_testing();
-
-        let data: DataPayload<LocaleNamesLanguageMenuCoreMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("zh").unwrap(),
@@ -319,7 +301,41 @@ mod tests {
             .unwrap()
             .payload;
 
-        assert_eq!(data.get().core(), "Chinese, Mandarin");
+        assert_eq!(&**data.get(), "Mandarin Chinese");
+    }
+
+    #[test]
+    fn test_locale_names_language_menu_medium() {
+        let provider = SourceDataProvider::new_testing();
+
+        let data: DataPayload<LocaleNamesLanguageMenuExtendedMediumV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("ku").unwrap(),
+                    &langid!("en-001").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(data.get().core(), "Kurdish");
+        assert_eq!(data.get().extension(), "Kurmanji");
+
+        // Test fallback to alt-menu
+        let data_zh: DataPayload<LocaleNamesLanguageMenuCoreMediumV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("zh").unwrap(),
+                    &langid!("en-001").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(data_zh.get().core(), "Chinese, Mandarin");
+        assert_eq!(data_zh.get().extension(), "");
     }
 
     /// The cartesian product of Language x (Short | Medium | Long) x (Minimal | Core | Extended) x (Menu)

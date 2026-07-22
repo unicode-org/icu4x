@@ -11,8 +11,8 @@ use icu_experimental::displaynames::single::{
 use icu_experimental::displaynames::{
     DisplayNamesOptions, LanguageIdentifierDisplayNameOptions, multi::LocaleDisplayNamesFormatter,
 };
-use icu_locale_core::Locale;
-use icu_locale_core::locale;
+use icu_locale_core::{Locale, langid, locale};
+
 use icu_provider::IterableDataProvider;
 use std::borrow::Cow;
 use writeable::{
@@ -515,6 +515,173 @@ fn test_single_language_display_name_long() {
             .expect("Data should load successfully");
 
     assert_try_writeable_eq!(lang_name.as_borrowed(), "Swiss High German");
+}
+
+#[test]
+fn test_us_and_uk_english_display_names() {
+    use icu_experimental::displaynames::LanguageDisplay;
+
+    let locale = locale!("en");
+    let lang_us = langid!("en-US");
+    let lang_gb = langid!("en-GB");
+
+    // Default options (LanguageDisplay::Dialect)
+    let default_options = LanguageIdentifierDisplayNameOptions::default();
+
+    // Standard options (LanguageDisplay::Standard)
+    let mut standard_options = LanguageIdentifierDisplayNameOptions::default();
+    standard_options.language_display = Some(LanguageDisplay::Standard);
+
+    // 1. try_new (Dialect: "American English" / "British English")
+    let name_us = LanguageIdentifierDisplayNameOwned::try_new(
+        locale.clone().into(),
+        lang_us.clone(),
+        default_options,
+    )
+    .unwrap();
+    assert_try_writeable_eq!(name_us.as_borrowed(), "American English");
+
+    let name_gb = LanguageIdentifierDisplayNameOwned::try_new(
+        locale.clone().into(),
+        lang_gb.clone(),
+        default_options,
+    )
+    .unwrap();
+    assert_try_writeable_eq!(name_gb.as_borrowed(), "British English");
+
+    // 1b. try_new with LanguageDisplay::Standard ("English (United States)" / "English (United Kingdom)")
+    let name_us_std = LanguageIdentifierDisplayNameOwned::try_new(
+        locale.clone().into(),
+        lang_us.clone(),
+        standard_options,
+    )
+    .unwrap();
+    assert_try_writeable_eq!(name_us_std.as_borrowed(), "English (United States)");
+
+    let name_gb_std = LanguageIdentifierDisplayNameOwned::try_new(
+        locale.clone().into(),
+        lang_gb.clone(),
+        standard_options,
+    )
+    .unwrap();
+    assert_try_writeable_eq!(name_gb_std.as_borrowed(), "English (United Kingdom)");
+
+    // 2. try_new_short ("US English" / "UK English")
+    let name_us_short = LanguageIdentifierDisplayNameOwned::try_new_short(
+        locale.clone().into(),
+        lang_us.clone(),
+        default_options,
+    )
+    .unwrap();
+    assert_try_writeable_eq!(name_us_short.as_borrowed(), "US English");
+
+    let name_gb_short = LanguageIdentifierDisplayNameOwned::try_new_short(
+        locale.clone().into(),
+        lang_gb.clone(),
+        default_options,
+    )
+    .unwrap();
+    assert_try_writeable_eq!(name_gb_short.as_borrowed(), "UK English");
+
+    // 3. try_new_long ("American English" / "British English")
+    let name_us_long = LanguageIdentifierDisplayNameOwned::try_new_long(
+        locale.clone().into(),
+        lang_us.clone(),
+        default_options,
+    )
+    .unwrap();
+    assert_try_writeable_eq!(name_us_long.as_borrowed(), "American English");
+
+    let name_gb_long = LanguageIdentifierDisplayNameOwned::try_new_long(
+        locale.clone().into(),
+        lang_gb.clone(),
+        default_options,
+    )
+    .unwrap();
+    assert_try_writeable_eq!(name_gb_long.as_borrowed(), "British English");
+
+    // 4. try_new_menu ("English (United States)" / "English (United Kingdom)")
+    let name_us_menu = LanguageIdentifierDisplayNameOwned::try_new_menu(
+        locale.clone().into(),
+        lang_us.clone(),
+        default_options,
+    )
+    .unwrap();
+    assert_try_writeable_eq!(name_us_menu.as_borrowed(), "English (United States)");
+
+    let name_gb_menu = LanguageIdentifierDisplayNameOwned::try_new_menu(
+        locale.clone().into(),
+        lang_gb.clone(),
+        default_options,
+    )
+    .unwrap();
+    assert_try_writeable_eq!(name_gb_menu.as_borrowed(), "English (United Kingdom)");
+
+    // 5. try_new_short_menu ("English (US)" / "English (UK)")
+    let name_us_short_menu = LanguageIdentifierDisplayNameOwned::try_new_short_menu(
+        locale.clone().into(),
+        lang_us.clone(),
+        default_options,
+    )
+    .unwrap();
+    assert_try_writeable_eq!(name_us_short_menu.as_borrowed(), "English (US)");
+
+    let name_gb_short_menu = LanguageIdentifierDisplayNameOwned::try_new_short_menu(
+        locale.clone().into(),
+        lang_gb.clone(),
+        default_options,
+    )
+    .unwrap();
+    assert_try_writeable_eq!(name_gb_short_menu.as_borrowed(), "English (UK)");
+
+    // 6. try_new_minimal: in "en" locale, both "en-US" and "en-GB" are present in minimal data
+    let name_us_minimal = LanguageIdentifierDisplayNameOwned::try_new_minimal(
+        locale.clone().into(),
+        lang_us.clone(),
+        default_options,
+    )
+    .unwrap();
+    assert_try_writeable_eq!(name_us_minimal.as_borrowed(), "English (United States)");
+
+    let name_gb_minimal = LanguageIdentifierDisplayNameOwned::try_new_minimal(
+        locale.clone().into(),
+        lang_gb.clone(),
+        default_options,
+    )
+    .unwrap();
+    assert_try_writeable_eq!(name_gb_minimal.as_borrowed(), "English (United Kingdom)");
+
+    // Non-minimal dialect like "fr-CA" in "en" locale minimal slice falls back
+    let name_fr_ca_minimal = LanguageIdentifierDisplayNameOwned::try_new_minimal(
+        locale.into(),
+        langid!("fr-CA"),
+        default_options,
+    )
+    .unwrap();
+    assert_try_writeable_eq!(
+        name_fr_ca_minimal.as_borrowed(),
+        "fr (Canada)",
+        Err(LanguageIdentifierNameFallbackError)
+    );
+
+    // 7. Verify behavior across regional English locales (en-US, en-GB, en-001)
+    for regional_locale in [locale!("en-US"), locale!("en-GB"), locale!("en-001")] {
+        let us_name = LanguageIdentifierDisplayNameOwned::try_new(
+            regional_locale.clone().into(),
+            lang_us.clone(),
+            default_options,
+        )
+        .unwrap();
+        assert_try_writeable_eq!(us_name.as_borrowed(), "American English");
+
+        let gb_name = LanguageIdentifierDisplayNameOwned::try_new(
+            regional_locale.into(),
+            lang_gb.clone(),
+            default_options,
+        )
+        .unwrap();
+        assert_try_writeable_eq!(gb_name.as_borrowed(), "British English");
+    }
 }
 
 struct TestingProvider;
