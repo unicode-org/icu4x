@@ -110,47 +110,31 @@ mod tests {
         assert_eq!(&**data.get(), "Computer");
     }
 
+    /// The cartesian product of Variant x (Short | Medium) x (Minimal | Core | Extended)
+    /// contains some data markers that are uninhabited. This test ensures that every variant display name
+    /// key and coverage tier combination in CLDR is covered by an existing marker, so if future CLDR releases
+    /// add data for uninhabited markers, we learn about it and can take action.
     #[test]
     fn test_empty_coverage_tiers_assert_no_data() {
-        use crate::SourceDataProvider;
         let provider = SourceDataProvider::new_testing();
         let cldr = provider.cldr().unwrap();
-        let fallbacker = cldr.locale_fallbacker().unwrap();
-        let coverage_cldr = crate::cldr_cache::coverage_cldr_cache();
 
-        let displaynames_dir = cldr.displaynames();
-        let locales = displaynames_dir.list_locales().unwrap();
-
-        for locale in locales {
-            if displaynames_dir
-                .file_exists(&locale, "variants.json")
-                .unwrap_or(false)
-                && let Ok(res) = displaynames_dir
-                    .read_and_parse::<cldr_serde::displaynames::variant::Resource>(
-                        &locale,
-                        "variants.json",
-                    )
-            {
-                for key in res.main.value.localedisplaynames.variants.keys() {
-                    let xpath = crate::displaynames::construct_xpath(
-                        "variants",
-                        &key.subtag,
-                        key.alt,
-                        key.menu,
-                    );
-                    let tier = coverage_cldr
-                        .coverage_tier(fallbacker, &locale, &xpath)
-                        .unwrap();
-
-                    if LocaleNamesVariantExtendedMediumV1::contains_key(&key, tier) {
-                        continue;
-                    }
-
-                    panic!(
-                        "Found unexpected alt, menu, and tier combination for variant: {key:?} in locale: {locale:?} and tier: {tier:?}"
-                    );
+        crate::displaynames::for_each_cldr_key_and_tier(
+            cldr,
+            "variants.json",
+            "variants",
+            |res: &cldr_serde::displaynames::variant::Resource| {
+                &res.main.value.localedisplaynames.variants
+            },
+            |locale, key, tier| {
+                if LocaleNamesVariantExtendedMediumV1::contains_key(key, tier) {
+                    return;
                 }
-            }
-        }
+
+                panic!(
+                    "Found unexpected alt, menu, and tier combination for variant: {key:?} in locale: {locale:?} and tier: {tier:?}"
+                );
+            },
+        );
     }
 }

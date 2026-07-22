@@ -194,56 +194,35 @@ mod tests {
         assert_eq!(&**data.get(), "UN");
     }
 
+    /// The cartesian product of Region x (Short | Medium) x (Minimal | Core | Extended)
+    /// contains some data markers that are uninhabited. This test ensures that every region display name
+    /// key and coverage tier combination in CLDR is covered by an existing marker, so if future CLDR releases
+    /// add data for uninhabited markers, we learn about it and can take action.
     #[test]
     fn test_empty_coverage_tiers_assert_no_data() {
-        use crate::SourceDataProvider;
         let provider = SourceDataProvider::new_testing();
         let cldr = provider.cldr().unwrap();
-        let fallbacker = cldr.locale_fallbacker().unwrap();
-        let coverage_cldr = crate::cldr_cache::coverage_cldr_cache();
 
-        let displaynames_dir = cldr.displaynames();
-        let locales = displaynames_dir.list_locales().unwrap();
-
-        for locale in locales {
-            if displaynames_dir
-                .file_exists(&locale, "territories.json")
-                .unwrap_or(false)
-                && let Ok(res) = displaynames_dir
-                    .read_and_parse::<cldr_serde::displaynames::region::Resource>(
-                        &locale,
-                        "territories.json",
-                    )
-            {
-                for key in res.main.value.localedisplaynames.regions.keys() {
-                    let xpath = crate::displaynames::construct_xpath(
-                        "regions",
-                        &key.subtag,
-                        key.alt,
-                        key.menu,
-                    );
-                    let tier = coverage_cldr
-                        .coverage_tier(fallbacker, &locale, &xpath)
-                        .unwrap();
-
-                    if LocaleNamesRegionMinimalMediumV1::contains_key(&key, tier) {
-                        continue;
-                    }
-                    if LocaleNamesRegionCoreMediumV1::contains_key(&key, tier) {
-                        continue;
-                    }
-                    if LocaleNamesRegionMinimalShortV1::contains_key(&key, tier) {
-                        continue;
-                    }
-                    if LocaleNamesRegionCoreShortV1::contains_key(&key, tier) {
-                        continue;
-                    }
-
-                    panic!(
-                        "Found unexpected alt, menu, and tier combination for region: {key:?} in locale: {locale:?} and tier: {tier:?}"
-                    );
+        crate::displaynames::for_each_cldr_key_and_tier(
+            cldr,
+            "territories.json",
+            "regions",
+            |res: &cldr_serde::displaynames::region::Resource| {
+                &res.main.value.localedisplaynames.regions
+            },
+            |locale, key, tier| {
+                if LocaleNamesRegionMinimalMediumV1::contains_key(key, tier)
+                    || LocaleNamesRegionCoreMediumV1::contains_key(key, tier)
+                    || LocaleNamesRegionMinimalShortV1::contains_key(key, tier)
+                    || LocaleNamesRegionCoreShortV1::contains_key(key, tier)
+                {
+                    return;
                 }
-            }
-        }
+
+                panic!(
+                    "Found unexpected alt, menu, and tier combination for region: {key:?} in locale: {locale:?} and tier: {tier:?}"
+                );
+            },
+        );
     }
 }

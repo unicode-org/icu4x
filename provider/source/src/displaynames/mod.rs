@@ -147,6 +147,40 @@ trait CheckAltCoverage {
     fn contains_key<T>(key: &WithAlt<T>, tier: CoverageLevelForXPath) -> bool;
 }
 
+/// Test helper that iterates over all display name entries across all locales in CLDR.
+///
+/// For each entry found in `file_name` (e.g., `"languages.json"`), this function:
+/// 1. Extracts the map of subtag keys (`WithAlt<T>`) via `extract_keys`.
+/// 2. Constructs the corresponding CLDR XPath for `xpath_field` (e.g., `"languages"`).
+/// 3. Looks up the coverage tier (`CoverageLevelForXPath`) for that XPath in the given locale.
+/// 4. Invokes `callback(locale, key, tier)`.
+#[cfg(test)]
+pub(crate) fn for_each_cldr_key_and_tier<Resource, T>(
+    cldr: &crate::cldr_cache::CldrCache,
+    file_name: &str,
+    xpath_field: &str,
+    mut extract_keys: impl FnMut(&Resource) -> &HashMap<WithAlt<T>, String>,
+    mut callback: impl FnMut(&icu_provider::DataLocale, &WithAlt<T>, CoverageLevelForXPath),
+) where
+    Resource: serde::de::DeserializeOwned,
+    T: writeable::Writeable,
+{
+    let fallbacker = cldr.locale_fallbacker().unwrap();
+    let coverage_cldr = crate::cldr_cache::coverage_cldr_cache();
+    let displaynames_dir = cldr.displaynames();
+    for locale in displaynames_dir.list_locales().unwrap() {
+        if let Ok(res) = displaynames_dir.read_and_parse::<Resource>(&locale, file_name) {
+            for key in extract_keys(res).keys() {
+                let xpath = construct_xpath(xpath_field, &key.subtag, key.alt, key.menu);
+                let tier = coverage_cldr
+                    .coverage_tier(fallbacker, &locale, &xpath)
+                    .unwrap();
+                callback(&locale, key, tier);
+            }
+        }
+    }
+}
+
 /// Macro for implementing a single-name display names data provider.
 ///
 /// Parameters:

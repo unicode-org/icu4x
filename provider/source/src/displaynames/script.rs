@@ -177,56 +177,35 @@ mod tests {
         assert_eq!(&**data.get(), "UCAS");
     }
 
+    /// The cartesian product of Script x (Short | Medium) x (Minimal | Core | Extended)
+    /// contains some data markers that are uninhabited. This test ensures that every script display name
+    /// key and coverage tier combination in CLDR is covered by an existing marker, so if future CLDR releases
+    /// add data for uninhabited markers, we learn about it and can take action.
     #[test]
     fn test_empty_coverage_tiers_assert_no_data() {
-        use crate::SourceDataProvider;
         let provider = SourceDataProvider::new_testing();
         let cldr = provider.cldr().unwrap();
-        let fallbacker = cldr.locale_fallbacker().unwrap();
-        let coverage_cldr = crate::cldr_cache::coverage_cldr_cache();
 
-        let displaynames_dir = cldr.displaynames();
-        let locales = displaynames_dir.list_locales().unwrap();
-
-        for locale in locales {
-            if displaynames_dir
-                .file_exists(&locale, "scripts.json")
-                .unwrap_or(false)
-                && let Ok(res) = displaynames_dir
-                    .read_and_parse::<cldr_serde::displaynames::script::Resource>(
-                        &locale,
-                        "scripts.json",
-                    )
-            {
-                for key in res.main.value.localedisplaynames.scripts.keys() {
-                    let xpath = crate::displaynames::construct_xpath(
-                        "scripts",
-                        &key.subtag,
-                        key.alt,
-                        key.menu,
-                    );
-                    let tier = coverage_cldr
-                        .coverage_tier(fallbacker, &locale, &xpath)
-                        .unwrap();
-
-                    if LocaleNamesScriptMinimalMediumV1::contains_key(&key, tier) {
-                        continue;
-                    }
-                    if LocaleNamesScriptCoreMediumV1::contains_key(&key, tier) {
-                        continue;
-                    }
-                    if LocaleNamesScriptExtendedMediumV1::contains_key(&key, tier) {
-                        continue;
-                    }
-                    if LocaleNamesScriptExtendedShortV1::contains_key(&key, tier) {
-                        continue;
-                    }
-
-                    panic!(
-                        "Found unexpected alt, menu, and tier combination for script: {key:?} in locale: {locale:?} and tier: {tier:?}"
-                    );
+        crate::displaynames::for_each_cldr_key_and_tier(
+            cldr,
+            "scripts.json",
+            "scripts",
+            |res: &cldr_serde::displaynames::script::Resource| {
+                &res.main.value.localedisplaynames.scripts
+            },
+            |locale, key, tier| {
+                if LocaleNamesScriptMinimalMediumV1::contains_key(key, tier)
+                    || LocaleNamesScriptCoreMediumV1::contains_key(key, tier)
+                    || LocaleNamesScriptExtendedMediumV1::contains_key(key, tier)
+                    || LocaleNamesScriptExtendedShortV1::contains_key(key, tier)
+                {
+                    return;
                 }
-            }
-        }
+
+                panic!(
+                    "Found unexpected alt, menu, and tier combination for script: {key:?} in locale: {locale:?} and tier: {tier:?}"
+                );
+            },
+        );
     }
 }
