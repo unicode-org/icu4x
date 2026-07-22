@@ -96,11 +96,19 @@ pub(crate) fn construct_xpath<'a>(
         (None, None) => "",
         (None, Some(Menu::Core)) => r#"[@menu="core"]"#,
         (None, Some(Menu::Extension)) => r#"[@menu="extension"]"#,
+        (None, Some(Menu::Unknown)) => "",
         (Some(Alt::Short), None) => r#"[@alt="short"]"#,
         (Some(Alt::Long), None) => r#"[@alt="long"]"#,
+        (Some(Alt::Variant), None) => r#"[@alt="variant"]"#,
+        (Some(Alt::StandAlone), None) => r#"[@alt="stand-alone"]"#,
+        (Some(Alt::Official), None) => r#"[@alt="official"]"#,
+        (Some(Alt::Secondary), None) => r#"[@alt="secondary"]"#,
+        (Some(Alt::Biot), None) => r#"[@alt="biot"]"#,
+        (Some(Alt::Chagos), None) => r#"[@alt="chagos"]"#,
         (Some(Alt::Menu), None) => r#"[@alt="menu"]"#,
-        (_, _) => {
-            debug_assert!(false, "unexpected alt or menu: {alt:?} {menu:?}");
+        (Some(Alt::Unknown), None) => "",
+        (Some(_), Some(_)) => {
+            debug_assert!(false, "unexpected alt and menu together: {alt:?} {menu:?}");
             ""
         }
     };
