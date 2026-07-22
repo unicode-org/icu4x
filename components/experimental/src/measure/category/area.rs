@@ -28,7 +28,7 @@ impl Area {
                     },
                     unit_id: *crate::provider::Baked::UNIT_IDS_V1_UND_METER,
                 }),
-                constant_denominator: 0,
+                constant_denominator: 1,
             },
         }
     }

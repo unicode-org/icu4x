@@ -28,7 +28,7 @@ impl Duration {
                     },
                     unit_id: *crate::provider::Baked::UNIT_IDS_V1_UND_SECOND,
                 }),
-                constant_denominator: 0,
+                constant_denominator: 1,
             },
         }
     }
@@ -47,7 +47,7 @@ impl Duration {
                     },
                     unit_id: *crate::provider::Baked::UNIT_IDS_V1_UND_SECOND,
                 }),
-                constant_denominator: 0,
+                constant_denominator: 1,
             },
         }
     }
@@ -66,7 +66,7 @@ impl Duration {
                     },
                     unit_id: *crate::provider::Baked::UNIT_IDS_V1_UND_SECOND,
                 }),
-                constant_denominator: 0,
+                constant_denominator: 1,
             },
         }
     }
@@ -85,7 +85,7 @@ impl Duration {
                     },
                     unit_id: *crate::provider::Baked::UNIT_IDS_V1_UND_SECOND,
                 }),
-                constant_denominator: 0,
+                constant_denominator: 1,
             },
         }
     }
@@ -104,7 +104,7 @@ impl Duration {
                     },
                     unit_id: *crate::provider::Baked::UNIT_IDS_V1_UND_MINUTE,
                 }),
-                constant_denominator: 0,
+                constant_denominator: 1,
             },
         }
     }
@@ -123,7 +123,7 @@ impl Duration {
                     },
                     unit_id: *crate::provider::Baked::UNIT_IDS_V1_UND_HOUR,
                 }),
-                constant_denominator: 0,
+                constant_denominator: 1,
             },
         }
     }
@@ -142,7 +142,7 @@ impl Duration {
                     },
                     unit_id: *crate::provider::Baked::UNIT_IDS_V1_UND_DAY,
                 }),
-                constant_denominator: 0,
+                constant_denominator: 1,
             },
         }
     }
@@ -161,7 +161,7 @@ impl Duration {
                     },
                     unit_id: *crate::provider::Baked::UNIT_IDS_V1_UND_WEEK,
                 }),
-                constant_denominator: 0,
+                constant_denominator: 1,
             },
         }
     }
@@ -180,7 +180,7 @@ impl Duration {
                     },
                     unit_id: *crate::provider::Baked::UNIT_IDS_V1_UND_MONTH,
                 }),
-                constant_denominator: 0,
+                constant_denominator: 1,
             },
         }
     }
@@ -199,7 +199,7 @@ impl Duration {
                     },
                     unit_id: *crate::provider::Baked::UNIT_IDS_V1_UND_YEAR,
                 }),
-                constant_denominator: 0,
+                constant_denominator: 1,
             },
         }
     }

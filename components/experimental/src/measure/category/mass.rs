@@ -28,7 +28,7 @@ impl Mass {
                     },
                     unit_id: *crate::provider::Baked::UNIT_IDS_V1_UND_GRAM,
                 }),
-                constant_denominator: 0,
+                constant_denominator: 1,
             },
         }
     }
@@ -47,7 +47,7 @@ impl Mass {
                     },
                     unit_id: *crate::provider::Baked::UNIT_IDS_V1_UND_KILOGRAM,
                 }),
-                constant_denominator: 0,
+                constant_denominator: 1,
             },
         }
     }

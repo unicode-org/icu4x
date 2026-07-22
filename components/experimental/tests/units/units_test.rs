@@ -232,7 +232,6 @@ fn test_unparsable_units() {
     let unparsable_units = vec![
         "garbage-unit-dafdsafdsafdsaf",
         "meter-per-second-",
-        "meter-per-second-per-second",
         "-meter-per-second-per-second",
         "kilo-squared-meter",
         "metersecond",

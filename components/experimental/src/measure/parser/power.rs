@@ -5,7 +5,7 @@
 use zerotrie::ZeroTrieSimpleAscii;
 
 /// A trie that contains the powers.
-const POWERS_TRIE: ZeroTrieSimpleAscii<[u8; 64]> = ZeroTrieSimpleAscii::from_sorted_str_tuples(&[
+pub const POWERS_TRIE: ZeroTrieSimpleAscii<[u8; 64]> = ZeroTrieSimpleAscii::from_sorted_str_tuples(&[
     ("cubic", 3),
     ("pow1", 1),
     ("pow10", 10),
@@ -24,24 +24,3 @@ const POWERS_TRIE: ZeroTrieSimpleAscii<[u8; 64]> = ZeroTrieSimpleAscii::from_sor
     ("pow9", 9),
     ("square", 2),
 ]);
-
-// TODO: consider returning Option<(u8, &str)> instead of (1, part) for the case when the power is not found.
-// TODO: complete all the cases for the powers.
-// TODO: consider using a trie for the powers.
-/// Extracts the power from the given CLDR ID part.
-///     - If the power is not found, the function returns (1, part).
-///     - If the power is found, the function will return (power, part without the string of the power).
-pub fn get_power(part: &[u8]) -> (u8, &[u8]) {
-    let mut cursor = POWERS_TRIE.cursor();
-    let mut longest_match = (1, part);
-    for (i, &b) in part.iter().enumerate() {
-        cursor.step(b);
-        if cursor.is_empty() {
-            break;
-        }
-        if let Some(value) = cursor.take_value() {
-            longest_match = (value as u8, &part[i + 1..]);
-        }
-    }
-    longest_match
-}

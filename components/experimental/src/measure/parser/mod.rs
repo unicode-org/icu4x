@@ -3,13 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub mod ids;
-pub(crate) mod power;
-pub(crate) mod si_prefix;
+mod power;
+mod si_prefix;
 
 use crate::measure::measureunit::MeasureUnit;
 use displaydoc::Display;
 use ids::CLDR_IDS_TRIE;
-use power::get_power;
+use power::POWERS_TRIE;
 use si_prefix::get_si_prefix;
 
 use super::provider::si_prefix::{Base, SiPrefix};
@@ -36,89 +36,78 @@ impl MeasureUnit {
     }
 
     /// See [`Self::try_from_str`]
-    pub fn try_from_utf8(mut code_units: &[u8]) -> Result<MeasureUnit, InvalidUnitError> {
+    pub fn try_from_utf8(code_units: &[u8]) -> Result<MeasureUnit, InvalidUnitError> {
         if code_units.starts_with(b"-") || code_units.ends_with(b"-") {
             return Err(InvalidUnitError);
         }
 
-        let mut constant_denominator = 0;
+        let mut constant_denominator = 1;
         let mut single_units = SingleUnitVec::Empty;
-        let mut sign = 1;
-        while !code_units.is_empty() {
-            // First: extract the power.
-            let (power, identifier_part_without_power) = Self::power(code_units)?;
+        let mut power: i8 = 1;
 
-            // Second: extract the si_prefix and the unit_id.
-            let (si_prefix, unit_id, identifier_part_without_unit_id) =
-                match Self::unit_id(identifier_part_without_power) {
-                    Ok((unit_id, identifier_part_without_unit_id)) => (
-                        SiPrefix {
-                            power: 0,
-                            base: Base::Decimal,
-                        },
-                        unit_id,
-                        identifier_part_without_unit_id,
-                    ),
-                    Err(_) => {
-                        let (si_prefix, identifier_part_without_si_prefix) =
-                            Self::si_prefix(identifier_part_without_power);
-                        let (unit_id, identifier_part_without_unit_id) =
-                            match Self::unit_id(identifier_part_without_si_prefix) {
-                                Ok((unit_id, identifier_part_without_unit_id)) => {
-                                    (unit_id, identifier_part_without_unit_id)
-                                }
-                                // If the sign is negative, this means that the identifier may contain more than one `per-` keyword.
-                                Err(_) if sign == 1 => {
-                                    if let Some(remain) = code_units.strip_prefix(b"per-") {
-                                        // First time locating `per-` keyword.
-                                        sign = -1;
-                                        code_units = remain;
+        for part in code_units.split(|c| *c == b'-') {
+            if part.is_empty() {
+                return Err(InvalidUnitError);
+            }
 
-                                        // Extract the constant denominator if present.
-                                        let mut split = remain.splitn(2, |c| *c == b'-');
-                                        if let Some(possible_constant_denominator) = split.next() {
-                                            // Try to parse the possible constant denominator as a u64.
-                                            if let Some(parsed_denominator) =
-                                                core::str::from_utf8(possible_constant_denominator)
-                                                    .ok()
-                                                    .and_then(|s| s.parse::<f64>().ok())
-                                                    .and_then(|num| {
-                                                        if num > u64::MAX as f64 {
-                                                            None
-                                                        } else {
-                                                            Some(num as u64)
-                                                        }
-                                                    })
-                                            {
-                                                constant_denominator = parsed_denominator;
-                                                code_units = split.next().unwrap_or(&[]);
-                                            }
-                                        }
+            if let Some(p) = POWERS_TRIE.get(part) {
+                power *= p as i8;
+                continue;
+            }
 
-                                        continue;
-                                    }
+            if part == b"per" {
+                if power == 1 {
+                    power = -1;
+                } else {
+                    return Err(InvalidUnitError);
+                }
+                continue;
+            }
 
-                                    return Err(InvalidUnitError);
-                                }
-                                Err(e) => return Err(e),
-                            };
-                        (si_prefix, unit_id, identifier_part_without_unit_id)
+            // special case: the whole part is a unit id without SI prefix.
+            // We need to check this because we cannot strip kilo from kilogram
+            // or deca from decade.
+            if let Some(unit_id) = CLDR_IDS_TRIE.get(part) {
+                single_units.push(SingleUnit {
+                    power,
+                    si_prefix: SiPrefix {
+                        power: 0,
+                        base: Base::Decimal,
+                    },
+                    unit_id: unit_id as u16,
+                });
+                power = 1;
+                continue;
+            }
+
+            if let Some(c) = core::str::from_utf8(part)
+                .ok()
+                .and_then(|s| s.parse::<f64>().ok())
+                .and_then(|num| {
+                    if num > u64::MAX as f64 {
+                        None
+                    } else {
+                        Some(num as u64)
                     }
-                };
+                })
+            {
+                if constant_denominator == 1 && power == -1 {
+                    constant_denominator = c;
+                } else {
+                    return Err(InvalidUnitError);
+                }
+                continue;
+            }
+
+            let (si_prefix, rest) = get_si_prefix(part);
+            let unit_id = CLDR_IDS_TRIE.get(rest).ok_or(InvalidUnitError)? as u16;
 
             single_units.push(SingleUnit {
-                power: sign * power as i8,
-                si_prefix,
-                unit_id,
-            });
-
-            code_units = match identifier_part_without_unit_id.strip_prefix(b"-") {
-                Some(remainder) => remainder,
-                None if identifier_part_without_unit_id.is_empty() => {
-                    identifier_part_without_unit_id
-                }
-                None => return Err(InvalidUnitError),
-            };
+                    power,
+                    si_prefix,
+                    unit_id,
+                });
+            power = 1;
         }
 
         // TODO: shall we allow units without any single units?
@@ -133,64 +122,6 @@ impl MeasureUnit {
             constant_denominator,
         })
     }
-
-    /// Retrieves the unit identifier from the given byte slice.
-    ///
-    /// # Returns
-    /// - `Ok((unit_id, remaining_part))`: If the unit id is successfully found, where `unit_id` is the identifier and `remaining_part` is the slice without the unit name and any leading `-` if present.
-    /// - `Err(InvalidUnitError)`: If the unit id is not found in the provided slice.
-    fn unit_id(part: &[u8]) -> Result<(u16, &[u8]), InvalidUnitError> {
-        let mut cursor = CLDR_IDS_TRIE.cursor();
-        let mut longest_match = Err(InvalidUnitError);
-
-        for (i, byte) in part.iter().enumerate() {
-            cursor.step(*byte);
-            if cursor.is_empty() {
-                break;
-            }
-            if let Some(value) = cursor.take_value() {
-                longest_match = Ok((value as u16, &part[i + 1..]));
-            }
-        }
-        longest_match
-    }
-
-    /// Retrieves the power from the given byte slice.
-    ///
-    /// # Returns
-    /// - `Ok((power, remaining_part))`: If the power is successfully found, where `power` is the power and `remaining_part` is the slice without the power and any leading `-` if present.
-    /// - `Err(InvalidUnitError)`: If the power is not found in the provided slice.
-    fn power(part: &[u8]) -> Result<(u8, &[u8]), InvalidUnitError> {
-        let (power, part_without_power) = get_power(part);
-
-        // If the power is not found, return the part as it is.
-        if part_without_power.len() == part.len() {
-            return Ok((power, part));
-        }
-
-        // If the power is found, this means that the part must start with the `-` sign.
-        match part_without_power.strip_prefix(b"-") {
-            Some(part_without_power) => Ok((power, part_without_power)),
-            None => Err(InvalidUnitError),
-        }
-    }
-
-    /// Retrieves the SI prefix from the given byte slice.
-    ///
-    /// # Returns
-    /// - `(SiPrefix, &[u8])`: If the prefix is successfully found, where `prefix` is the prefix and `remaining_part` is the slice without the prefix.
-    /// - `(SiPrefix, &[u8])`: If the prefix is not found, the function will return `(SiPrefix { power: 0, base: Base::Decimal }, part)`.
-    fn si_prefix(part: &[u8]) -> (SiPrefix, &[u8]) {
-        let (si_prefix, part_without_si_prefix) = get_si_prefix(part);
-        if part_without_si_prefix.len() == part.len() {
-            return (si_prefix, part);
-        }
-
-        match part_without_si_prefix.strip_prefix(b"-") {
-            Some(part_without_dash) => (si_prefix, part_without_dash),
-            None => (si_prefix, part_without_si_prefix),
-        }
-    }
 }
 
 #[cfg(test)]
@@ -200,7 +131,8 @@ mod tests {
     #[test]
     fn test_parser_cases() {
         let test_cases = vec![
-            ("meter-per-square-second", 2, 0),
+            ("meter-per-square-cubic-second", 2, 1),
+            ("meter-per-square-second", 2, 1),
             ("portion-per-1e9", 1, 1_000_000_000),
             ("portion-per-1000000000", 1, 1_000_000_000),
             ("liter-per-100-kilometer", 2, 100),
@@ -216,6 +148,7 @@ mod tests {
     #[test]
     fn test_invlalid_unit_ids() {
         let test_cases = vec![
+            "meter-per-square-100",
             "kilo",
             "kilokilo",
             "onekilo",
@@ -251,7 +184,6 @@ mod tests {
             // Invalid units due to invalid constant denominator
             "meter-per--20-second",
             "meter-per-1000-1e9-second",
-            "meter-per-1e19-second",
             "per-1000",
             "meter-per-1000-1000",
             "meter-per-1000-second-1000-kilometer",
@@ -264,19 +196,8 @@ mod tests {
         ];
 
         for input in test_cases {
-            // TODO(Uicode-org/icu4x#6271):
-            //      This is invalid, but because `100-kilometer` is a valid unit, it is not rejected.
-            //      This should be fixed in CLDR.
-            if input == "meter-per-100-100-kilometer" {
-                continue;
-            }
-
             let measure_unit = MeasureUnit::try_from_str(input);
-            if measure_unit.is_ok() {
-                println!("OK:  {input}");
-                continue;
-            }
-            assert!(measure_unit.is_err());
+            assert!(measure_unit.is_err(), "{input}");
         }
     }
 }

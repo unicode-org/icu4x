@@ -25,12 +25,9 @@ pub struct MeasureUnit {
     /// Represents the constant denominator of this measure unit.
     ///
     /// Examples:
-    ///   - For the unit `meter-per-second`, the constant denominator is `0`, because there is no denominator.
+    ///   - For the unit `meter-per-second`, the constant denominator is `1`, because there is no denominator.
     ///   - For the unit `liter-per-100-kilometer`, the constant denominator is `100`.
     ///   - For the unit `portion-per-1e9`, the constant denominator is `1_000_000_000`.
-    ///
-    /// NOTE:
-    ///   If the constant denominator is not set, the value defaults to `0`.
     pub(crate) constant_denominator: u64,
 }
 
@@ -50,9 +47,6 @@ impl MeasureUnit {
     }
 
     /// Returns the constant denominator of this measure unit.
-    ///
-    /// NOTE:
-    ///   If the constant denominator is not set, a value of `0` is returned.
     pub fn constant_denominator(&self) -> u64 {
         self.constant_denominator
     }
@@ -118,7 +112,7 @@ impl MeasureUnit {
 
         let mut short_representation = String::new();
 
-        if self.constant_denominator > 0 {
+        if self.constant_denominator != 1 {
             short_representation.push('C');
             append_power_of_10_to_scientific(self.constant_denominator, &mut short_representation);
         }
