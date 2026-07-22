@@ -54,7 +54,7 @@ const _: () = {
     impl_segmenter_dictionary_auto_v1!(Baked);
     impl_segmenter_break_grapheme_cluster_v1!(Baked);
     impl_segmenter_dictionary_extended_v1!(Baked);
-    impl_segmenter_break_line_v1!(Baked);
+    impl_segmenter_break_line_v3!(Baked);
     #[cfg(feature = "lstm")]
     impl_segmenter_lstm_auto_v1!(Baked);
     #[cfg(feature = "unstable")]
@@ -113,9 +113,9 @@ icu_provider::data_marker!(
     RuleBreakDataOverride<'static>,
 );
 icu_provider::data_marker!(
-    /// `SegmenterBreakLineV1`
-    SegmenterBreakLineV1,
-    "segmenter/break/line/v1",
+    /// `SegmenterBreakLineV3`
+    SegmenterBreakLineV3,
+    "segmenter/break/line/v3",
     RuleBreakData<'static>,
     is_singleton = true
 );
@@ -145,7 +145,7 @@ icu_provider::data_marker!(
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
     SegmenterBreakGraphemeClusterV1::INFO,
-    SegmenterBreakLineV1::INFO,
+    SegmenterBreakLineV3::INFO,
     SegmenterBreakSentenceOverrideV1::INFO,
     SegmenterBreakSentenceV1::INFO,
     SegmenterBreakWordOverrideV1::INFO,

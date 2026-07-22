@@ -341,7 +341,7 @@ pub struct LineSegmenter(LineSegmenterInner);
 enum LineSegmenterInner {
     Legacy {
         options: ResolvedLineBreakOptions,
-        data: DataPayload<SegmenterBreakLineV1>,
+        data: DataPayload<SegmenterBreakLineV3>,
         complex: ComplexPayloads,
     },
     #[cfg(feature = "unstable")]
@@ -408,7 +408,7 @@ impl LineSegmenter {
         options: LineBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<SegmenterBreakLineV1>
+        D: DataProvider<SegmenterBreakLineV3>
             + DataProvider<SegmenterLstmAutoV1>
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
@@ -453,7 +453,7 @@ impl LineSegmenter {
         options: LineBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<SegmenterBreakLineV1>
+        D: DataProvider<SegmenterBreakLineV3>
             + DataProvider<SegmenterLstmAutoV1>
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
@@ -495,7 +495,7 @@ impl LineSegmenter {
         options: LineBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<SegmenterBreakLineV1>
+        D: DataProvider<SegmenterBreakLineV3>
             + DataProvider<SegmenterDictionaryExtendedV1>
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
@@ -517,7 +517,7 @@ impl LineSegmenter {
     ) -> LineSegmenterBorrowed<'static> {
         LineSegmenterBorrowed(LineSegmenterBorrowedInner::Legacy {
             options: options.resolve(),
-            data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
+            data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V3,
             complex: ComplexPayloadsBorrowed::new(),
         })
     }
@@ -538,7 +538,7 @@ impl LineSegmenter {
         options: LineBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<SegmenterBreakLineV1>
+        D: DataProvider<SegmenterBreakLineV3>
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
@@ -2167,7 +2167,7 @@ mod tests {
 
     #[test]
     fn break_rule() {
-        let payload = DataProvider::<SegmenterBreakLineV1>::load(&Baked, Default::default())
+        let payload = DataProvider::<SegmenterBreakLineV3>::load(&Baked, Default::default())
             .expect("Loading should succeed!")
             .payload;
         let lb_data: &RuleBreakData = payload.get();

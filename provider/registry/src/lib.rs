@@ -222,7 +222,7 @@ macro_rules! registry(
             icu::segmenter::provider::SegmenterDictionaryExtendedV1: SegmenterDictionaryExtendedV1,
             icu::segmenter::provider::SegmenterDictionaryAutoV1: SegmenterDictionaryAutoV1,
             icu::segmenter::provider::SegmenterBreakGraphemeClusterV1: SegmenterBreakGraphemeClusterV1,
-            icu::segmenter::provider::SegmenterBreakLineV1: SegmenterBreakLineV1,
+            icu::segmenter::provider::SegmenterBreakLineV3: SegmenterBreakLineV3,
             icu::segmenter::provider::SegmenterLstmAutoV1: SegmenterLstmAutoV1,
             icu::segmenter::provider::SegmenterBreakSentenceOverrideV1: SegmenterBreakSentenceOverrideV1,
             icu::segmenter::provider::SegmenterBreakSentenceV1: SegmenterBreakSentenceV1,

@@ -902,7 +902,7 @@ macro_rules! implement_override {
     }
 }
 
-implement!(SegmenterBreakLineV1, "line.toml", |s| s);
+implement!(SegmenterBreakLineV3, "line.toml", |s| s);
 implement!(SegmenterBreakGraphemeClusterV1, "grapheme.toml", |s| s);
 implement!(SegmenterBreakWordV1, "word.toml", |s| s);
 implement!(SegmenterBreakSentenceV1, "sentence.toml", |s| s);
@@ -1798,7 +1798,7 @@ mod tests {
     #[test]
     fn load_line_data() {
         let provider = SourceDataProvider::new_testing();
-        let response: DataResponse<SegmenterBreakLineV1> = provider
+        let response: DataResponse<SegmenterBreakLineV3> = provider
             .load(Default::default())
             .expect("Loading should succeed!");
         let data = response.payload.get();
