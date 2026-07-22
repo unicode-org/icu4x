@@ -25,12 +25,14 @@ pub(crate) type Cache<T> = OnceLock<Result<T, DataError>>;
 pub(crate) struct SerdeCache {
     pub(crate) root: AbstractFs,
     cache: FrozenMap<String, Box<dyn Any + Send + Sync>>,
+    missing_files_cache: FrozenMap<String, Box<()>>,
 }
 
 impl Debug for SerdeCache {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         // skip formatting the cache
         let _ = &self.cache;
+        let _ = &self.missing_files_cache;
         f.debug_struct("SerdeCache")
             .field("root", &self.root)
             .finish()
@@ -42,6 +44,7 @@ impl SerdeCache {
         Self {
             root,
             cache: FrozenMap::new(),
+            missing_files_cache: FrozenMap::new(),
         }
     }
 
@@ -95,7 +98,18 @@ impl SerdeCache {
     }
 
     pub fn file_exists(&self, path: &str) -> Result<bool, DataError> {
-        self.root.file_exists(path)
+        if self.cache.get(path).is_some() {
+            return Ok(true);
+        }
+        if self.missing_files_cache.get(path).is_some() {
+            return Ok(false);
+        }
+        let exists = self.root.file_exists(path)?;
+        if !exists {
+            self.missing_files_cache
+                .insert(path.to_string(), Box::new(()));
+        }
+        Ok(exists)
     }
 }
 
