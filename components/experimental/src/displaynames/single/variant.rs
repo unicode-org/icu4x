@@ -70,10 +70,10 @@ impl VariantDisplayNameOwned {
         /// use icu::locale::{locale, subtags::variant};
         /// use writeable::assert_writeable_eq;
         ///
-        /// let display_name = VariantDisplayNameOwned::try_new_extended(locale!("en").into(), variant!("posix"))
+        /// let display_name = VariantDisplayNameOwned::try_new_extended(locale!("en").into(), variant!("fonipa"))
         ///     .expect("Data should load successfully");
         ///
-        /// assert_writeable_eq!(display_name, "Computer");
+        /// assert_writeable_eq!(display_name, "IPA Phonetics");
         /// ```
         functions: [
             try_new_extended,

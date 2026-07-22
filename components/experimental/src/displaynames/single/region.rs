@@ -279,7 +279,6 @@ impl_writeable_for_single_display_name_borrowed!(RegionDisplayName);
 mod tests {
     use super::*;
     use icu_locale_core::{locale, subtags::region};
-    use writeable::assert_writeable_eq;
 
     #[test]
     fn test_region_display_name_owned_table() {
@@ -303,40 +302,5 @@ mod tests {
         check_row!(try_new_minimal_short);
         check_row!(try_new);
         check_row!(try_new_short);
-    }
-
-    #[test]
-    fn test_region_display_name_overrides() {
-        let prefs_ko = DisplayNamesPreferences::from(locale!("ko"));
-
-        assert_writeable_eq!(
-            RegionDisplayNameOwned::try_new(prefs_ko, region!("KR")).unwrap(),
-            "대한민국"
-        );
-        assert_writeable_eq!(
-            RegionDisplayNameOwned::try_new_short(prefs_ko, region!("KR")).unwrap(),
-            "한국"
-        );
-        assert_writeable_eq!(
-            RegionDisplayNameOwned::try_new_minimal(prefs_ko, region!("KR")).unwrap(),
-            "대한민국"
-        );
-        assert_writeable_eq!(
-            RegionDisplayNameOwned::try_new_minimal_short(prefs_ko, region!("KR")).unwrap(),
-            "한국"
-        );
-
-        let prefs_fa = DisplayNamesPreferences::from(locale!("fa"));
-
-        assert_writeable_eq!(
-            RegionDisplayNameOwned::try_new(prefs_fa, region!("SA")).unwrap(),
-            "عربستان سعودی"
-        );
-        assert_writeable_eq!(
-            RegionDisplayNameOwned::try_new_short(prefs_fa, region!("SA")).unwrap(),
-            "عربستان"
-        );
-        assert!(RegionDisplayNameOwned::try_new_minimal(prefs_fa, region!("SA")).is_err());
-        assert!(RegionDisplayNameOwned::try_new_minimal_short(prefs_fa, region!("SA")).is_err());
     }
 }

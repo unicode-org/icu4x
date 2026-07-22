@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu::locale::LocaleExpander;
+use icu_experimental::displaynames::DisplayNamesPreferences;
 use icu_experimental::displaynames::provider::LocaleNamesLanguageMinimalMediumV1;
 use icu_experimental::displaynames::single::{
     LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOwned,
@@ -11,7 +12,7 @@ use icu_experimental::displaynames::single::{
 use icu_experimental::displaynames::{
     DisplayNamesOptions, LanguageIdentifierDisplayNameOptions, multi::LocaleDisplayNamesFormatter,
 };
-use icu_locale_core::{Locale, langid, locale};
+use icu_locale_core::{Locale, langid, locale, subtags::region};
 
 use icu_provider::IterableDataProvider;
 use std::borrow::Cow;
@@ -751,4 +752,39 @@ fn test_modern_locales_self_and_maximized_region_display_names() {
             );
         }
     }
+}
+
+#[test]
+fn test_region_display_name_overrides() {
+    let prefs_ko = DisplayNamesPreferences::from(locale!("ko"));
+
+    assert_writeable_eq!(
+        RegionDisplayNameOwned::try_new(prefs_ko, region!("KR")).unwrap(),
+        "대한민국"
+    );
+    assert_writeable_eq!(
+        RegionDisplayNameOwned::try_new_short(prefs_ko, region!("KR")).unwrap(),
+        "한국"
+    );
+    assert_writeable_eq!(
+        RegionDisplayNameOwned::try_new_minimal(prefs_ko, region!("KR")).unwrap(),
+        "대한민국"
+    );
+    assert_writeable_eq!(
+        RegionDisplayNameOwned::try_new_minimal_short(prefs_ko, region!("KR")).unwrap(),
+        "한국"
+    );
+
+    let prefs_fa = DisplayNamesPreferences::from(locale!("fa"));
+
+    assert_writeable_eq!(
+        RegionDisplayNameOwned::try_new(prefs_fa, region!("SA")).unwrap(),
+        "عربستان سعودی"
+    );
+    assert_writeable_eq!(
+        RegionDisplayNameOwned::try_new_short(prefs_fa, region!("SA")).unwrap(),
+        "عربستان"
+    );
+    assert!(RegionDisplayNameOwned::try_new_minimal(prefs_fa, region!("SA")).is_err());
+    assert!(RegionDisplayNameOwned::try_new_minimal_short(prefs_fa, region!("SA")).is_err());
 }
