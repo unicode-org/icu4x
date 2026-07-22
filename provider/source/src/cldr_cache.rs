@@ -9,8 +9,6 @@ use crate::cldr_serde::coverage_by_xpath::CoverageByXPathResource;
 use crate::cldr_serde::eras::EraData;
 use crate::datetime::DatagenCalendar;
 use crate::source::{AbstractFs, SerdeCache};
-use arraystring::{ArrayString, typenum::U64};
-use core::fmt::Write;
 use icu::locale::LanguageIdentifier;
 use icu::locale::LocaleExpander;
 use icu::locale::subtags::Language;
@@ -1073,11 +1071,10 @@ impl CldrCache {
         locale: &DataLocale,
         xpath: impl Writeable,
     ) -> Result<CoverageLevelForXPath, DataError> {
-        let mut locale_path = ArrayString::<U64>::new();
-        let _ = write!(locale_path, "cldr-misc-full/coverageByXPath/{locale}.json");
-        if self.serde_cache.file_exists(&locale_path)? {
-            let resource: &CoverageByXPathResource =
-                self.serde_cache.read_and_parse_json(&locale_path)?;
+        let dir = self.coverage_by_xpath();
+        let locale_file = format!("{locale}.json");
+        if dir.file_exists(&locale_file)? {
+            let resource: &CoverageByXPathResource = dir.read_and_parse(&locale_file)?;
             let levels = resource.coverage_by_xpath.values().next();
             if let Some(level) = levels.and_then(|l| l.level_for_xpath(&xpath)) {
                 return Ok(level);
@@ -1086,10 +1083,10 @@ impl CldrCache {
             log::warn!("Coverage data file not found for locale {locale}");
         }
 
-        let root_path = "cldr-misc-full/coverageByXPath.json";
-        if self.serde_cache.file_exists(root_path)? {
+        let misc_dir = CldrDirNoLang(self, "cldr-misc-full");
+        if misc_dir.file_exists("coverageByXPath.json")? {
             let resource: &CoverageByXPathResource =
-                self.serde_cache.read_and_parse_json(root_path)?;
+                misc_dir.read_and_parse("coverageByXPath.json")?;
             if let Some(level) = resource
                 .coverage_by_xpath
                 .get("root")
@@ -1101,6 +1098,10 @@ impl CldrCache {
 
         // Not found: default to Comprehensive
         Ok(CoverageLevelForXPath::Comprehensive)
+    }
+
+    pub(crate) fn coverage_by_xpath(&self) -> CldrDirNoLang<'_> {
+        CldrDirNoLang(self, "cldr-misc-full/coverageByXPath")
     }
 }
 
@@ -1114,6 +1115,12 @@ impl<'a> CldrDirNoLang<'a> {
         self.0
             .serde_cache
             .read_and_parse_json(&format!("{}/{}", self.1, file_name))
+    }
+
+    pub(crate) fn file_exists(&self, file_name: &str) -> Result<bool, DataError> {
+        self.0
+            .serde_cache
+            .file_exists(&format!("{}/{}", self.1, file_name))
     }
 }
 

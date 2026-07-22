@@ -50,7 +50,6 @@ zerotrie = { workspace = true, features = ["alloc"] }
 zerovec = { workspace = true, features = ["serde", "yoke", "alloc"] }
 
 # External dependencies
-arraystring = { workspace = true }
 either = { workspace = true }
 elsa = { workspace = true }
 flate2 = { workspace = true }
