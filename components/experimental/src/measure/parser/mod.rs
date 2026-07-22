@@ -51,7 +51,7 @@ impl MeasureUnit {
             }
 
             if let Some(p) = POWERS_TRIE.get(part) {
-                power *= p as i8;
+                power = power.checked_mul(p as i8).ok_or(InvalidUnitError)?;
                 continue;
             }
 
