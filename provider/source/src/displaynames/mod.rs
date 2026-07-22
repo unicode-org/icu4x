@@ -170,7 +170,6 @@ pub(crate) fn for_each_cldr_key_and_tier<Resource, T>(
     Resource: serde::de::DeserializeOwned + Send + Sync + 'static,
     T: Writeable,
 {
-    let fallbacker = cldr.locale_fallbacker().unwrap();
     let coverage_cldr = crate::cldr_cache::coverage_cldr_cache();
     let displaynames_dir = cldr.displaynames();
     let mut locales = displaynames_dir.list_locales().unwrap().collect::<Vec<_>>();
@@ -188,9 +187,7 @@ pub(crate) fn for_each_cldr_key_and_tier<Resource, T>(
                     _ => (),
                 };
                 let xpath = construct_xpath(xpath_field, &key.subtag, key.alt, key.menu);
-                let tier = coverage_cldr
-                    .coverage_tier(fallbacker, &locale, &xpath)
-                    .unwrap();
+                let tier = coverage_cldr.coverage_tier(&locale, &xpath).unwrap();
                 callback(&locale, key, tier);
             }
         }
@@ -214,7 +211,6 @@ macro_rules! impl_displaynames_v1 {
                 self.check_req::<$marker>(req)?;
 
                 let cldr = self.cldr()?;
-                let fallbacker = cldr.locale_fallbacker()?;
                 let data: &$resource = cldr.displaynames().read_and_parse(req.id.locale, $file)?;
 
                 let subtag =
@@ -244,11 +240,8 @@ macro_rules! impl_displaynames_v1 {
                 let field_str = stringify!($field);
                 let xpath =
                     $crate::displaynames::construct_xpath(field_str, &subtag, $alt_variant, None);
-                let item_tier = crate::cldr_cache::coverage_cldr_cache().coverage_tier(
-                    fallbacker,
-                    req.id.locale,
-                    &xpath,
-                )?;
+                let item_tier = crate::cldr_cache::coverage_cldr_cache()
+                    .coverage_tier(req.id.locale, &xpath)?;
                 if !matches!(item_tier, $tier) {
                     return Err(DataErrorKind::IdentifierNotFound
                         .into_error()
@@ -300,7 +293,6 @@ macro_rules! impl_displaynames_menu_v1 {
                 self.check_req::<$marker>(req)?;
 
                 let cldr = self.cldr()?;
-                let fallbacker = cldr.locale_fallbacker()?;
                 let data: &$resource = cldr.displaynames().read_and_parse(req.id.locale, $file)?;
 
                 let subtag =
@@ -361,11 +353,8 @@ macro_rules! impl_displaynames_menu_v1 {
                         Some($crate::cldr_serde::displaynames::Menu::Core),
                     )
                 };
-                let item_tier = crate::cldr_cache::coverage_cldr_cache().coverage_tier(
-                    fallbacker,
-                    req.id.locale,
-                    &xpath,
-                )?;
+                let item_tier = crate::cldr_cache::coverage_cldr_cache()
+                    .coverage_tier(req.id.locale, &xpath)?;
                 if !matches!(item_tier, $tier) {
                     return Err(DataErrorKind::IdentifierNotFound
                         .into_error()
@@ -386,7 +375,6 @@ macro_rules! impl_displaynames_menu_v1 {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
                 let mut result = HashSet::new();
                 let cldr = self.cldr()?;
-                let fallbacker = cldr.locale_fallbacker()?;
                 let displaynames = cldr.displaynames();
                 let field_str = stringify!($field);
                 for locale in displaynames.list_locales()?.filter(|locale| {
@@ -418,7 +406,7 @@ macro_rules! impl_displaynames_menu_v1 {
                                 };
                             if matches!(
                                 crate::cldr_cache::coverage_cldr_cache()
-                                    .coverage_tier(fallbacker, &locale, &xpath)?,
+                                    .coverage_tier(&locale, &xpath)?,
                                 $tier
                             ) {
                                 let data_identifier = DataIdentifierCow::from_owned(
@@ -468,7 +456,6 @@ macro_rules! impl_displaynames_iter_v1 {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
                 let mut result = HashSet::new();
                 let cldr = self.cldr()?;
-                let fallbacker = cldr.locale_fallbacker()?;
                 let displaynames = cldr.displaynames();
                 let field_str = stringify!($field);
                 for locale in displaynames.list_locales()?.filter(|locale| {
@@ -488,7 +475,7 @@ macro_rules! impl_displaynames_iter_v1 {
                             );
                             if matches!(
                                 crate::cldr_cache::coverage_cldr_cache()
-                                    .coverage_tier(fallbacker, &locale, &xpath)?,
+                                    .coverage_tier(&locale, &xpath)?,
                                 $tier
                             ) {
                                 let data_identifier = DataIdentifierCow::from_owned(
