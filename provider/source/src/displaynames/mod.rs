@@ -156,8 +156,8 @@ trait CheckAltCoverage {
 ///
 /// For each entry found in `file_name` (e.g., `"languages.json"`), this function:
 /// 1. Extracts the map of subtag keys (`WithAlt<T>`) via `extract_keys`.
-/// 2. Constructs the corresponding CLDR XPath for `xpath_field` (e.g., `"languages"`).
-/// 3. Looks up the coverage tier (`CoverageLevelForXPath`) for that XPath in the given locale.
+/// 2. Constructs the corresponding CLDR `XPath` for `xpath_field` (e.g., `"languages"`).
+/// 3. Looks up the coverage tier (`CoverageLevelForXPath`) for that `XPath` in the given locale.
 /// 4. Invokes `callback(locale, key, tier)`.
 #[cfg(test)]
 pub(crate) fn for_each_cldr_key_and_tier<Resource, T>(
@@ -179,13 +179,10 @@ pub(crate) fn for_each_cldr_key_and_tier<Resource, T>(
             let mut keys = extract_keys(res).keys().collect::<Vec<_>>();
             keys.sort_by_cached_key(|k| (k.subtag.write_to_string().to_string(), k.alt, k.menu));
             for key in keys {
-                match key.alt {
-                    Some(Alt::Variant) => {
-                        // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
-                        return;
-                    }
-                    _ => (),
-                };
+                if let Some(Alt::Variant) = key.alt {
+                    // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
+                    return;
+                }
                 let xpath = construct_xpath(xpath_field, &key.subtag, key.alt, key.menu);
                 let tier = coverage_cldr.coverage_tier(&locale, &xpath).unwrap();
                 callback(&locale, key, tier);

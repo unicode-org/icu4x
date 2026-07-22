@@ -206,10 +206,10 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use crate::displaynames::CheckAltCoverage;
 
-    use super::*;
-    use icu::locale::{langid, subtags::language};
+    use icu::locale::langid;
 
     #[test]
     fn test_basic_lang_display_names() {
