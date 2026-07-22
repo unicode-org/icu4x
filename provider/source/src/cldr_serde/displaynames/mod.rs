@@ -14,7 +14,7 @@ use core::fmt::{self, Display};
 use core::marker::PhantomData;
 use core::str::FromStr;
 use serde::{Deserialize, Deserializer};
-#[derive(Hash, Eq, PartialEq, Clone, Copy, Debug)]
+#[derive(Hash, Eq, PartialEq, PartialOrd, Ord, Clone, Copy, Debug)]
 pub(crate) enum Alt {
     Unknown,
     Short,
@@ -50,7 +50,7 @@ impl FromStr for Alt {
     }
 }
 
-#[derive(Hash, Eq, PartialEq, Clone, Copy, Debug)]
+#[derive(Hash, Eq, PartialEq, PartialOrd, Ord, Clone, Copy, Debug)]
 pub(crate) enum Menu {
     Unknown,
     Core,
@@ -68,7 +68,7 @@ impl FromStr for Menu {
     }
 }
 
-#[derive(Hash, Eq, PartialEq, Clone, Debug)]
+#[derive(Hash, Eq, PartialEq, PartialOrd, Ord, Clone, Debug)]
 pub(crate) struct WithAlt<T> {
     pub(crate) subtag: T,
     pub(crate) alt: Option<Alt>,

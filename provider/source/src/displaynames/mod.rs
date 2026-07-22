@@ -147,7 +147,7 @@ trait CheckAltCoverage {
     fn contains_key<T>(key: &WithAlt<T>, tier: CoverageLevelForXPath) -> bool;
 }
 
-/// Test helper that iterates over all display name entries across all locales in CLDR.
+/// Test helper that iterates over all display name entries across all locales in CLDR in deterministic order.
 ///
 /// For each entry found in `file_name` (e.g., `"languages.json"`), this function:
 /// 1. Extracts the map of subtag keys (`WithAlt<T>`) via `extract_keys`.
@@ -162,15 +162,19 @@ pub(crate) fn for_each_cldr_key_and_tier<Resource, T>(
     mut extract_keys: impl FnMut(&Resource) -> &HashMap<WithAlt<T>, String>,
     mut callback: impl FnMut(&icu_provider::DataLocale, &WithAlt<T>, CoverageLevelForXPath),
 ) where
-    Resource: serde::de::DeserializeOwned,
-    T: writeable::Writeable,
+    Resource: serde::de::DeserializeOwned + Send + Sync + 'static,
+    T: Writeable,
 {
     let fallbacker = cldr.locale_fallbacker().unwrap();
     let coverage_cldr = crate::cldr_cache::coverage_cldr_cache();
     let displaynames_dir = cldr.displaynames();
-    for locale in displaynames_dir.list_locales().unwrap() {
+    let mut locales = displaynames_dir.list_locales().unwrap().collect::<Vec<_>>();
+    locales.sort_by(|a, b| a.total_cmp(b));
+    for locale in locales {
         if let Ok(res) = displaynames_dir.read_and_parse::<Resource>(&locale, file_name) {
-            for key in extract_keys(res).keys() {
+            let mut keys = extract_keys(res).keys().collect::<Vec<_>>();
+            keys.sort_by_cached_key(|k| (k.subtag.write_to_string().to_string(), k.alt, k.menu));
+            for key in keys {
                 let xpath = construct_xpath(xpath_field, &key.subtag, key.alt, key.menu);
                 let tier = coverage_cldr
                     .coverage_tier(fallbacker, &locale, &xpath)
