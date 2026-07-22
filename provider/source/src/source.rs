@@ -100,7 +100,7 @@ impl SerdeCache {
 }
 
 pub(crate) struct ZipData {
-    archive: ZipArchive<Cursor<Vec<u8>>>,
+    archive: RwLock<ZipArchive<Cursor<Vec<u8>>>>,
     file_list: HashSet<String>,
 }
 
@@ -110,7 +110,10 @@ impl ZipData {
             .map_err(|e| DataError::custom("Invalid ZIP file").with_display_context(&e))?;
 
         let file_list = archive.file_names().map(String::from).collect();
-        Ok(Self { archive, file_list })
+        Ok(Self {
+            archive: RwLock::new(archive),
+            file_list,
+        })
     }
 }
 
@@ -137,8 +140,18 @@ impl TarArchive {
 
 pub(crate) enum AbstractFs {
     Fs(PathBuf),
-    Zip(RwLock<Result<ZipData, String>>),
-    Tar(RwLock<Result<TarArchive, String>>),
+    Zip(ZipData),
+    #[cfg(feature = "networking")]
+    ZipUrl {
+        url: String,
+        archive: Cache<ZipData>,
+    },
+    Tar(TarArchive),
+    #[cfg(feature = "networking")]
+    TarUrl {
+        url: String,
+        archive: Cache<TarArchive>,
+    },
     #[cfg(feature = "networking")]
     Http(String),
     Memory(BTreeMap<&'static str, &'static [u8]>),
@@ -158,13 +171,9 @@ impl AbstractFs {
         {
             Ok(Self::Fs(root.to_path_buf()))
         } else if root.extension().is_some_and(|ext| ext == "zip") {
-            Ok(Self::Zip(RwLock::new(Ok(ZipData::try_new(
-                std::fs::read(root)?,
-            )?))))
+            Ok(Self::Zip(ZipData::try_new(std::fs::read(root)?)?))
         } else if root.extension().is_some_and(|ext| ext == "gz") {
-            Ok(Self::Tar(RwLock::new(Ok(TarArchive::try_new(
-                std::fs::read(root)?,
-            )?))))
+            Ok(Self::Tar(TarArchive::try_new(std::fs::read(root)?)?))
         } else {
             Err(DataError::custom("unsupported archive type").with_display_context(&root.display()))
         }
@@ -172,12 +181,18 @@ impl AbstractFs {
 
     #[cfg(feature = "networking")]
     pub fn new_zip_from_url(path: String) -> Self {
-        Self::Zip(RwLock::new(Err(path)))
+        Self::ZipUrl {
+            url: path,
+            archive: OnceLock::new(),
+        }
     }
 
     #[cfg(feature = "networking")]
     pub fn new_tar_from_url(path: String) -> Self {
-        Self::Tar(RwLock::new(Err(path)))
+        Self::TarUrl {
+            url: path,
+            archive: OnceLock::new(),
+        }
     }
 
     #[cfg(feature = "networking")]
@@ -187,7 +202,32 @@ impl AbstractFs {
     }
 
     #[cfg(feature = "networking")]
-    fn download(resource: &String) -> Result<PathBuf, DataError> {
+    fn get_zip_url<'a>(url: &str, archive: &'a Cache<ZipData>) -> Result<&'a ZipData, DataError> {
+        archive
+            .get_or_init(|| {
+                let root = Self::download(url)?;
+                ZipData::try_new(std::fs::read(&root)?).map_err(|e| e.with_path_context(&root))
+            })
+            .as_ref()
+            .map_err(|&e| e)
+    }
+
+    #[cfg(feature = "networking")]
+    fn get_tar_url<'a>(
+        url: &str,
+        archive: &'a Cache<TarArchive>,
+    ) -> Result<&'a TarArchive, DataError> {
+        archive
+            .get_or_init(|| {
+                let root = Self::download(url)?;
+                TarArchive::try_new(std::fs::read(&root)?).map_err(|e| e.with_path_context(&root))
+            })
+            .as_ref()
+            .map_err(|&e| e)
+    }
+
+    #[cfg(feature = "networking")]
+    fn download(resource: &str) -> Result<PathBuf, DataError> {
         let root = std::env::var_os("ICU4X_SOURCE_CACHE")
             .map(PathBuf::from)
             .unwrap_or_else(|| std::env::temp_dir().join("icu4x-source-cache/"))
@@ -224,38 +264,18 @@ impl AbstractFs {
     }
 
     fn init(&self) -> Result<(), DataError> {
-        #[cfg(feature = "networking")]
-        if let Self::Zip(lock) = self {
-            if lock.read().expect("poison").is_ok() {
-                return Ok(());
+        match self {
+            Self::Zip(_) => {}
+            #[cfg(feature = "networking")]
+            Self::ZipUrl { url, archive } => {
+                Self::get_zip_url(url, archive)?;
             }
-            let mut lock = lock.write().expect("poison");
-            let resource = if let Err(resource) = &*lock {
-                resource
-            } else {
-                return Ok(());
-            };
-
-            let root = Self::download(resource)?;
-
-            *lock =
-                Ok(ZipData::try_new(std::fs::read(&root)?)
-                    .map_err(|e| e.with_path_context(&root))?);
-        } else if let Self::Tar(lock) = self {
-            if lock.read().expect("poison").is_ok() {
-                return Ok(());
+            Self::Tar(_) => {}
+            #[cfg(feature = "networking")]
+            Self::TarUrl { url, archive } => {
+                Self::get_tar_url(url, archive)?;
             }
-            let mut lock = lock.write().expect("poison");
-            let resource = if let Err(resource) = &*lock {
-                resource
-            } else {
-                return Ok(());
-            };
-
-            let root = Self::download(resource)?;
-
-            *lock = Ok(TarArchive::try_new(std::fs::read(&root)?)
-                .map_err(|e| e.with_path_context(&root))?);
+            _ => {}
         }
         Ok(())
     }
@@ -268,55 +288,58 @@ impl AbstractFs {
                 std::fs::read(root.join(path))
                     .map_err(|e| DataError::from(e).with_path_context(&root.join(path)))
             }
-            Self::Zip(zip) => {
-                log::debug!("Reading: <zip>/{path}");
-                let mut buf = Vec::new();
-                zip.write()
-                    .expect("poison")
-                    .as_mut()
-                    .ok()
-                    .unwrap() // init called
-                    .archive
-                    .by_name(path)
-                    .map_err(|e| {
-                        DataErrorKind::Io(std::io::ErrorKind::NotFound)
-                            .into_error()
-                            .with_display_context(&e)
-                            .with_display_context(path)
-                    })?
-                    .read_to_end(&mut buf)?;
-                Ok(buf)
-            }
-            Self::Tar(tar) => {
-                log::debug!("Reading: <tar>/{path}");
-                tar::Archive::new(Cursor::new(
-                    &tar.read().expect("poison").as_ref().unwrap().archive,
-                )) // init called
-                .entries_with_seek()
-                .and_then(|e| {
-                    for e in e {
-                        let mut e = e?;
-                        if e.path()?.as_os_str() == path {
-                            let mut vec = vec![];
-                            e.read_to_end(&mut vec)?;
-                            return Ok(vec);
-                        }
-                    }
-                    Err(std::io::ErrorKind::NotFound.into())
-                })
-                .map_err(|e| {
-                    DataErrorKind::Io(e.kind())
-                        .into_error()
-                        .with_display_context(&e)
-                        .with_display_context(path)
-                })
-            }
+            Self::Zip(zip) => self.read_zip(zip, path),
+            #[cfg(feature = "networking")]
+            Self::ZipUrl { url, archive } => self.read_zip(Self::get_zip_url(url, archive)?, path),
+            Self::Tar(tar) => self.read_tar(tar, path),
+            #[cfg(feature = "networking")]
+            Self::TarUrl { url, archive } => self.read_tar(Self::get_tar_url(url, archive)?, path),
             #[cfg(feature = "networking")]
             Self::Http(url) => Ok(std::fs::read(Self::download(&format!("{url}/{path}"))?)?),
             Self::Memory(map) => map.get(path).copied().map(Vec::from).ok_or_else(|| {
                 DataError::custom("Not found in icu4x-datagen's data/").with_display_context(path)
             }),
         }
+    }
+
+    fn read_zip(&self, zip: &ZipData, path: &str) -> Result<Vec<u8>, DataError> {
+        log::debug!("Reading: <zip>/{path}");
+        let mut buf = Vec::new();
+        zip.archive
+            .write()
+            .expect("poison")
+            .by_name(path)
+            .map_err(|e| {
+                DataErrorKind::Io(std::io::ErrorKind::NotFound)
+                    .into_error()
+                    .with_display_context(&e)
+                    .with_display_context(path)
+            })?
+            .read_to_end(&mut buf)?;
+        Ok(buf)
+    }
+
+    fn read_tar(&self, tar: &TarArchive, path: &str) -> Result<Vec<u8>, DataError> {
+        log::debug!("Reading: <tar>/{path}");
+        tar::Archive::new(Cursor::new(&tar.archive))
+            .entries_with_seek()
+            .and_then(|e| {
+                for e in e {
+                    let mut e = e?;
+                    if e.path()?.as_os_str() == path {
+                        let mut vec = vec![];
+                        e.read_to_end(&mut vec)?;
+                        return Ok(vec);
+                    }
+                }
+                Err(std::io::ErrorKind::NotFound.into())
+            })
+            .map_err(|e| {
+                DataErrorKind::Io(e.kind())
+                    .into_error()
+                    .with_display_context(&e)
+                    .with_display_context(path)
+            })
     }
 
     #[allow(dead_code)]
@@ -335,32 +358,12 @@ impl AbstractFs {
                 .map(|e| -> Result<_, DataError> { Ok(e?.file_name().into_string().unwrap()) })
                 .collect::<Result<HashSet<_>, DataError>>()
                 .map(HashSet::into_iter)?,
-            Self::Zip(zip) => zip
-                .read()
-                .expect("poison")
-                .as_ref()
-                .ok()
-                .unwrap() // init called
-                .file_list
-                .iter()
-                .filter_map(|p| p.strip_prefix(path))
-                .filter_map(|suffix| suffix.split('/').find(|s| !s.is_empty()))
-                .map(String::from)
-                .collect::<HashSet<_>>()
-                .into_iter(),
-            Self::Tar(tar) => tar
-                .read()
-                .expect("poison")
-                .as_ref()
-                .ok()
-                .unwrap() // init called
-                .file_list
-                .iter()
-                .filter_map(|p| p.strip_prefix(path))
-                .filter_map(|suffix| suffix.split('/').find(|s| !s.is_empty()))
-                .map(String::from)
-                .collect::<HashSet<_>>()
-                .into_iter(),
+            Self::Zip(zip) => Self::list_zip(zip, path),
+            #[cfg(feature = "networking")]
+            Self::ZipUrl { url, archive } => Self::list_zip(Self::get_zip_url(url, archive)?, path),
+            Self::Tar(tar) => Self::list_tar(tar, path),
+            #[cfg(feature = "networking")]
+            Self::TarUrl { url, archive } => Self::list_tar(Self::get_tar_url(url, archive)?, path),
             #[cfg(feature = "networking")]
             Self::Http(url) => {
                 return Err(
@@ -378,26 +381,40 @@ impl AbstractFs {
         })
     }
 
+    fn list_zip(zip: &ZipData, path: &str) -> std::collections::hash_set::IntoIter<String> {
+        zip.file_list
+            .iter()
+            .filter_map(|p| p.strip_prefix(path))
+            .filter_map(|suffix| suffix.split('/').find(|s| !s.is_empty()))
+            .map(String::from)
+            .collect::<HashSet<_>>()
+            .into_iter()
+    }
+
+    fn list_tar(tar: &TarArchive, path: &str) -> std::collections::hash_set::IntoIter<String> {
+        tar.file_list
+            .iter()
+            .filter_map(|p| p.strip_prefix(path))
+            .filter_map(|suffix| suffix.split('/').find(|s| !s.is_empty()))
+            .map(String::from)
+            .collect::<HashSet<_>>()
+            .into_iter()
+    }
+
     pub fn file_exists(&self, path: &str) -> Result<bool, DataError> {
         self.init()?;
         Ok(match self {
             Self::Fs(root) => root.join(path).is_file(),
-            Self::Zip(zip) => zip
-                .read()
-                .expect("poison")
-                .as_ref()
-                .ok()
-                .unwrap() // init called
-                .file_list
-                .contains(path),
-            Self::Tar(tar) => tar
-                .read()
-                .expect("poison")
-                .as_ref()
-                .ok()
-                .unwrap() // init called
-                .file_list
-                .contains(path),
+            Self::Zip(zip) => zip.file_list.contains(path),
+            #[cfg(feature = "networking")]
+            Self::ZipUrl { url, archive } => {
+                Self::get_zip_url(url, archive)?.file_list.contains(path)
+            }
+            Self::Tar(tar) => tar.file_list.contains(path),
+            #[cfg(feature = "networking")]
+            Self::TarUrl { url, archive } => {
+                Self::get_tar_url(url, archive)?.file_list.contains(path)
+            }
             #[cfg(feature = "networking")]
             Self::Http(url) => Self::download(&format!("{url}/{path}")).is_ok(),
             Self::Memory(map) => map.contains_key(path),
