@@ -49,7 +49,7 @@ prefs_convert!(
 
 #[derive(Debug)]
 pub(crate) enum CurrencyFormatterData {
-    Iso {
+    IsoSymbol {
         essential: DataPayload<CurrencyEssentialsV1>,
         currency: CurrencyCode,
     },
@@ -119,7 +119,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 essential,
                 symbol: res.payload,
             },
-            None => CurrencyFormatterData::Iso {
+            None => CurrencyFormatterData::IsoSymbol {
                 essential,
                 currency,
             },
@@ -170,7 +170,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 essential,
                 symbol: res.payload,
             },
-            None => CurrencyFormatterData::Iso {
+            None => CurrencyFormatterData::IsoSymbol {
                 essential,
                 currency,
             },
@@ -204,7 +204,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
 
         Ok(Self {
             value_formatter,
-            currency_data: CurrencyFormatterData::Iso {
+            currency_data: CurrencyFormatterData::IsoSymbol {
                 essential,
                 currency,
             },
@@ -234,7 +234,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
 
         Ok(Self {
             value_formatter,
-            currency_data: CurrencyFormatterData::Iso {
+            currency_data: CurrencyFormatterData::IsoSymbol {
                 essential,
                 currency,
             },
@@ -353,7 +353,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
 
 impl CurrencyFormatter<DecimalFormatter> {
     icu_provider::gen_buffer_data_constructors!(
-        (prefs: CurrencyFormatterPreferences, currency_code: &CurrencyCode) -> error: DataError,
+        (prefs: CurrencyFormatterPreferences, currency_code: CurrencyCode) -> error: DataError,
         functions: [
             try_new_symbol: skip,
             try_new_symbol_with_buffer_provider,
@@ -363,7 +363,7 @@ impl CurrencyFormatter<DecimalFormatter> {
     );
 
     icu_provider::gen_buffer_data_constructors!(
-        (prefs: CurrencyFormatterPreferences, currency_code: &CurrencyCode) -> error: DataError,
+        (prefs: CurrencyFormatterPreferences, currency_code: CurrencyCode) -> error: DataError,
         functions: [
             try_new_symbol_narrow: skip,
             try_new_symbol_narrow_with_buffer_provider,
@@ -380,12 +380,12 @@ impl CurrencyFormatter<DecimalFormatter> {
     #[cfg(feature = "compiled_data")]
     pub fn try_new_symbol(
         prefs: CurrencyFormatterPreferences,
-        currency_code: &CurrencyCode,
+        currency_code: CurrencyCode,
     ) -> Result<Self, DataError> {
         Self::try_new_essential(
             DecimalFormatter::try_new((&prefs).into(), Default::default())?,
             prefs,
-            *currency_code,
+            currency_code,
             CurrencySymbolsV1::SHORT,
         )
     }
@@ -398,12 +398,12 @@ impl CurrencyFormatter<DecimalFormatter> {
     #[cfg(feature = "compiled_data")]
     pub fn try_new_symbol_narrow(
         prefs: CurrencyFormatterPreferences,
-        currency_code: &CurrencyCode,
+        currency_code: CurrencyCode,
     ) -> Result<Self, DataError> {
         Self::try_new_essential(
             DecimalFormatter::try_new((&prefs).into(), Default::default())?,
             prefs,
-            *currency_code,
+            currency_code,
             CurrencySymbolsV1::NARROW,
         )
     }
@@ -412,7 +412,7 @@ impl CurrencyFormatter<DecimalFormatter> {
     pub fn try_new_symbol_unstable<D>(
         provider: &D,
         prefs: CurrencyFormatterPreferences,
-        currency_code: &CurrencyCode,
+        currency_code: CurrencyCode,
     ) -> Result<Self, DataError>
     where
         D: ?Sized
@@ -426,7 +426,7 @@ impl CurrencyFormatter<DecimalFormatter> {
             provider,
             DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
             prefs,
-            *currency_code,
+            currency_code,
             CurrencySymbolsV1::SHORT,
         )
     }
@@ -435,7 +435,7 @@ impl CurrencyFormatter<DecimalFormatter> {
     pub fn try_new_symbol_narrow_unstable<D>(
         provider: &D,
         prefs: CurrencyFormatterPreferences,
-        currency_code: &CurrencyCode,
+        currency_code: CurrencyCode,
     ) -> Result<Self, DataError>
     where
         D: ?Sized
@@ -449,13 +449,13 @@ impl CurrencyFormatter<DecimalFormatter> {
             provider,
             DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
             prefs,
-            *currency_code,
+            currency_code,
             CurrencySymbolsV1::NARROW,
         )
     }
 
     icu_provider::gen_buffer_data_constructors!(
-        (prefs: CurrencyFormatterPreferences, currency_code: &CurrencyCode) -> error: DataError,
+        (prefs: CurrencyFormatterPreferences, currency_code: CurrencyCode) -> error: DataError,
         functions: [
             try_new_code: skip,
             try_new_code_with_buffer_provider,
@@ -480,19 +480,19 @@ impl CurrencyFormatter<DecimalFormatter> {
     ///
     /// let currency_preferences = locale!("en-US").into();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
-    /// let fmt = CurrencyFormatter::try_new_code(currency_preferences, &currency_code).unwrap();
+    /// let fmt = CurrencyFormatter::try_new_code(currency_preferences, currency_code).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// assert_writeable_eq!(fmt.format_fixed_decimal(&value), "USD\u{a0}12,345.67");
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_code(
         prefs: CurrencyFormatterPreferences,
-        currency_code: &CurrencyCode,
+        currency_code: CurrencyCode,
     ) -> Result<Self, DataError> {
         Self::try_new_code_internal(
             DecimalFormatter::try_new((&prefs).into(), Default::default())?,
             prefs,
-            *currency_code,
+            currency_code,
         )
     }
 
@@ -500,7 +500,7 @@ impl CurrencyFormatter<DecimalFormatter> {
     pub fn try_new_code_unstable<D>(
         provider: &D,
         prefs: CurrencyFormatterPreferences,
-        currency_code: &CurrencyCode,
+        currency_code: CurrencyCode,
     ) -> Result<Self, DataError>
     where
         D: ?Sized
@@ -513,12 +513,12 @@ impl CurrencyFormatter<DecimalFormatter> {
             provider,
             DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
             prefs,
-            *currency_code,
+            currency_code,
         )
     }
 
     icu_provider::gen_buffer_data_constructors!(
-        (prefs: CurrencyFormatterPreferences, currency_code: &CurrencyCode) -> error: DataError,
+        (prefs: CurrencyFormatterPreferences, currency_code: CurrencyCode) -> error: DataError,
         functions: [
             try_new_name: skip,
             try_new_name_with_buffer_provider,
@@ -539,19 +539,19 @@ impl CurrencyFormatter<DecimalFormatter> {
     ///
     /// let currency_preferences = locale!("en-US").into();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
-    /// let fmt = CurrencyFormatter::try_new_name(currency_preferences, &currency_code).unwrap();
+    /// let fmt = CurrencyFormatter::try_new_name(currency_preferences, currency_code).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// assert_writeable_eq!(fmt.format_fixed_decimal(&value), "12,345.67 US dollars");
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_name(
         prefs: CurrencyFormatterPreferences,
-        currency_code: &CurrencyCode,
+        currency_code: CurrencyCode,
     ) -> Result<Self, DataError> {
         Self::try_new_name_internal(
             DecimalFormatter::try_new((&prefs).into(), Default::default())?,
             prefs,
-            *currency_code,
+            currency_code,
         )
     }
 
@@ -559,7 +559,7 @@ impl CurrencyFormatter<DecimalFormatter> {
     pub fn try_new_name_unstable<D>(
         provider: &D,
         prefs: CurrencyFormatterPreferences,
-        currency_code: &CurrencyCode,
+        currency_code: CurrencyCode,
     ) -> Result<Self, DataError>
     where
         D: ?Sized
@@ -574,7 +574,7 @@ impl CurrencyFormatter<DecimalFormatter> {
             provider,
             DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
             prefs,
-            *currency_code,
+            currency_code,
         )
     }
 }
@@ -592,7 +592,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     ///
     /// let currency_preferences = locale!("en-US").into();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
-    /// let fmt = CurrencyFormatter::try_new_symbol(currency_preferences, &currency_code).unwrap();
+    /// let fmt = CurrencyFormatter::try_new_symbol(currency_preferences, currency_code).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// assert_writeable_eq!(
     ///     fmt.format_fixed_decimal(&value),
@@ -609,7 +609,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     ///
     /// let currency_preferences = locale!("en-US").into();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
-    /// let fmt = CurrencyFormatter::try_new_compact_symbol(currency_preferences, &currency_code).unwrap();
+    /// let fmt = CurrencyFormatter::try_new_compact_symbol(currency_preferences, currency_code).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// assert_writeable_eq!(fmt.format_fixed_decimal(&value), "$12K");
     /// ```
@@ -623,7 +623,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     ///
     /// let currency_preferences = locale!("en-US").into();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
-    /// let fmt = CurrencyFormatter::try_new_compact_long_symbol(currency_preferences, &currency_code).unwrap();
+    /// let fmt = CurrencyFormatter::try_new_compact_long_symbol(currency_preferences, currency_code).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// assert_writeable_eq!(fmt.format_fixed_decimal(&value), "$12 thousand");
     /// ```
@@ -646,7 +646,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let formatted_value = V::format_unsigned(&self.value_formatter, rounded_value.absolute);
 
         let (pattern, currency_str) = match &self.currency_data {
-            CurrencyFormatterData::Iso {
+            CurrencyFormatterData::IsoSymbol {
                 essential,
                 currency,
             } => {
