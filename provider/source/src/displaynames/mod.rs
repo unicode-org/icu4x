@@ -99,10 +99,6 @@ pub(crate) fn construct_xpath<'a>(
         (Some(Alt::Short), None) => r#"[@alt="short"]"#,
         (Some(Alt::Long), None) => r#"[@alt="long"]"#,
         (Some(Alt::Menu), None) => r#"[@alt="menu"]"#,
-        (Some(Alt::Variant), _) => {
-            // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
-            ""
-        }
         (_, _) => {
             debug_assert!(false, "unexpected alt or menu: {alt:?} {menu:?}");
             ""
@@ -175,6 +171,13 @@ pub(crate) fn for_each_cldr_key_and_tier<Resource, T>(
             let mut keys = extract_keys(res).keys().collect::<Vec<_>>();
             keys.sort_by_cached_key(|k| (k.subtag.write_to_string().to_string(), k.alt, k.menu));
             for key in keys {
+                match key.alt {
+                    Some(Alt::Variant) => {
+                        // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
+                        return;
+                    }
+                    _ => (),
+                };
                 let xpath = construct_xpath(xpath_field, &key.subtag, key.alt, key.menu);
                 let tier = coverage_cldr
                     .coverage_tier(fallbacker, &locale, &xpath)
