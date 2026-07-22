@@ -144,7 +144,7 @@ pub(crate) fn construct_xpath<'a>(
 
 #[cfg(test)]
 trait CheckAltCoverage {
-    fn check_coverage<T>(key: &WithAlt<T>, tier: CoverageLevelForXPath) -> bool;
+    fn contains_key<T>(key: &WithAlt<T>, tier: CoverageLevelForXPath) -> bool;
 }
 
 /// Macro for implementing a single-name display names data provider.
@@ -224,7 +224,7 @@ macro_rules! impl_displaynames_v1 {
 
         #[cfg(test)]
         impl $crate::displaynames::CheckAltCoverage for $marker {
-            fn check_coverage<T>(
+            fn contains_key<T>(
                 key: &$crate::cldr_serde::displaynames::WithAlt<T>,
                 tier: $crate::cldr_cache::CoverageLevelForXPath,
             ) -> bool {
@@ -390,7 +390,7 @@ macro_rules! impl_displaynames_menu_v1 {
 
         #[cfg(test)]
         impl $crate::displaynames::CheckAltCoverage for $marker {
-            fn check_coverage<T>(
+            fn contains_key<T>(
                 key: &$crate::cldr_serde::displaynames::WithAlt<T>,
                 tier: $crate::cldr_cache::CoverageLevelForXPath,
             ) -> bool {

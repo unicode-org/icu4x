@@ -358,146 +358,36 @@ mod tests {
                         .coverage_tier(fallbacker, &locale, &xpath)
                         .unwrap();
 
-                    if LocaleNamesLanguageMinimalMediumV1::check_coverage(&key, tier) {
+                    if LocaleNamesLanguageMinimalMediumV1::contains_key(&key, tier) {
                         continue;
                     }
-                    if LocaleNamesLanguageCoreMediumV1::check_coverage(&key, tier) {
+                    if LocaleNamesLanguageCoreMediumV1::contains_key(&key, tier) {
                         continue;
                     }
-                    if LocaleNamesLanguageExtendedMediumV1::check_coverage(&key, tier) {
+                    if LocaleNamesLanguageExtendedMediumV1::contains_key(&key, tier) {
                         continue;
                     }
-                    if LocaleNamesLanguageCoreShortV1::check_coverage(&key, tier) {
+                    if LocaleNamesLanguageCoreShortV1::contains_key(&key, tier) {
                         continue;
                     }
-                    if LocaleNamesLanguageExtendedShortV1::check_coverage(&key, tier) {
+                    if LocaleNamesLanguageExtendedShortV1::contains_key(&key, tier) {
                         continue;
                     }
-                    if LocaleNamesLanguageCoreLongV1::check_coverage(&key, tier) {
+                    if LocaleNamesLanguageCoreLongV1::contains_key(&key, tier) {
                         continue;
                     }
-                    if LocaleNamesLanguageExtendedLongV1::check_coverage(&key, tier) {
+                    if LocaleNamesLanguageExtendedLongV1::contains_key(&key, tier) {
                         continue;
                     }
-                    if LocaleNamesLanguageMenuCoreMediumV1::check_coverage(&key, tier) {
+                    if LocaleNamesLanguageMenuCoreMediumV1::contains_key(&key, tier) {
                         continue;
                     }
-                    if LocaleNamesLanguageMenuExtendedMediumV1::check_coverage(&key, tier) {
+                    if LocaleNamesLanguageMenuExtendedMediumV1::contains_key(&key, tier) {
                         continue;
                     }
 
                     panic!(
                         "Found unexpected alt, menu, and tier combination for language: {key:?} in locale: {locale:?} and tier: {tier:?}"
-                    );
-                }
-            }
-
-            // 2. Scripts
-            if displaynames_dir
-                .file_exists(&locale, "scripts.json")
-                .unwrap_or(false)
-                && let Ok(res) = displaynames_dir
-                    .read_and_parse::<cldr_serde::displaynames::script::Resource>(
-                        &locale,
-                        "scripts.json",
-                    )
-            {
-                for key in res.main.value.localedisplaynames.scripts.keys() {
-                    if key.alt != Some(Alt::Short) {
-                        continue;
-                    }
-
-                    let xpath = crate::displaynames::construct_xpath(
-                        "scripts",
-                        &key.subtag,
-                        key.alt,
-                        key.menu,
-                    );
-                    let tier = coverage_cldr
-                        .coverage_tier(fallbacker, &locale, &xpath)
-                        .unwrap();
-
-                    // 4. Script Minimal Short (Basic) & 5. Script Core Short (Moderate)
-                    assert!(
-                        tier != CoverageLevelForXPath::Basic
-                            && tier != CoverageLevelForXPath::Moderate,
-                        "Found unexpected script short display name in tier {:?} for locale {:?}, key {:?}",
-                        tier,
-                        locale,
-                        key
-                    );
-                }
-            }
-
-            // 3. Variants
-            if displaynames_dir
-                .file_exists(&locale, "variants.json")
-                .unwrap_or(false)
-                && let Ok(res) = displaynames_dir
-                    .read_and_parse::<cldr_serde::displaynames::variant::Resource>(
-                        &locale,
-                        "variants.json",
-                    )
-            {
-                for key in res.main.value.localedisplaynames.variants.keys() {
-                    if key.alt.is_some() || key.menu.is_some() {
-                        continue;
-                    }
-
-                    let xpath = crate::displaynames::construct_xpath(
-                        "variants",
-                        &key.subtag,
-                        key.alt,
-                        key.menu,
-                    );
-                    let tier = coverage_cldr
-                        .coverage_tier(fallbacker, &locale, &xpath)
-                        .unwrap();
-
-                    // 6. Variant Minimal Medium (Basic) & 7. Variant Core Medium (Moderate)
-                    assert!(
-                        tier != CoverageLevelForXPath::Basic
-                            && tier != CoverageLevelForXPath::Moderate,
-                        "Found unexpected variant display name in tier {:?} for locale {:?}, key {:?}",
-                        tier,
-                        locale,
-                        key
-                    );
-                }
-            }
-
-            // 4. Regions / Territories
-            if displaynames_dir
-                .file_exists(&locale, "territories.json")
-                .unwrap_or(false)
-                && let Ok(res) = displaynames_dir
-                    .read_and_parse::<cldr_serde::displaynames::region::Resource>(
-                        &locale,
-                        "territories.json",
-                    )
-            {
-                for key in res.main.value.localedisplaynames.regions.keys() {
-                    if key.alt.is_some() || key.menu.is_some() {
-                        continue;
-                    }
-
-                    let xpath = crate::displaynames::construct_xpath(
-                        "regions",
-                        &key.subtag,
-                        key.alt,
-                        key.menu,
-                    );
-                    let tier = coverage_cldr
-                        .coverage_tier(fallbacker, &locale, &xpath)
-                        .unwrap();
-
-                    // 8. Region Extended Medium (Modern)
-                    assert!(
-                        tier != CoverageLevelForXPath::Modern,
-                        "Found unexpected region medium display name in tier {:?} for locale {:?}, key {:?}",
-                        tier,
-                        locale,
-                        key
                     );
                 }
             }

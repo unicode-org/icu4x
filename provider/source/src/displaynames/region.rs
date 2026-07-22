@@ -93,6 +93,8 @@ impl From<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames<'s
 }
 #[cfg(test)]
 mod tests {
+    use crate::displaynames::CheckAltCoverage;
+
     use super::*;
     use icu::locale::{langid, subtags::region};
 
@@ -190,5 +192,58 @@ mod tests {
             .payload;
 
         assert_eq!(&**data.get(), "UN");
+    }
+
+    #[test]
+    fn test_empty_coverage_tiers_assert_no_data() {
+        use crate::SourceDataProvider;
+        let provider = SourceDataProvider::new_testing();
+        let cldr = provider.cldr().unwrap();
+        let fallbacker = cldr.locale_fallbacker().unwrap();
+        let coverage_cldr = crate::cldr_cache::coverage_cldr_cache();
+
+        let displaynames_dir = cldr.displaynames();
+        let locales = displaynames_dir.list_locales().unwrap();
+
+        for locale in locales {
+            if displaynames_dir
+                .file_exists(&locale, "territories.json")
+                .unwrap_or(false)
+                && let Ok(res) = displaynames_dir
+                    .read_and_parse::<cldr_serde::displaynames::region::Resource>(
+                        &locale,
+                        "territories.json",
+                    )
+            {
+                for key in res.main.value.localedisplaynames.regions.keys() {
+                    let xpath = crate::displaynames::construct_xpath(
+                        "regions",
+                        &key.subtag,
+                        key.alt,
+                        key.menu,
+                    );
+                    let tier = coverage_cldr
+                        .coverage_tier(fallbacker, &locale, &xpath)
+                        .unwrap();
+
+                    if LocaleNamesRegionMinimalMediumV1::contains_key(&key, tier) {
+                        continue;
+                    }
+                    if LocaleNamesRegionCoreMediumV1::contains_key(&key, tier) {
+                        continue;
+                    }
+                    if LocaleNamesRegionMinimalShortV1::contains_key(&key, tier) {
+                        continue;
+                    }
+                    if LocaleNamesRegionCoreShortV1::contains_key(&key, tier) {
+                        continue;
+                    }
+
+                    panic!(
+                        "Found unexpected alt, menu, and tier combination for region: {key:?} in locale: {locale:?} and tier: {tier:?}"
+                    );
+                }
+            }
+        }
     }
 }
