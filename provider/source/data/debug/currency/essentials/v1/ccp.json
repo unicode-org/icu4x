@@ -43,6 +43,5 @@
     "accounting_negative": 2,
     "accounting_alpha_next_to_number_positive": 1,
     "accounting_alpha_next_to_number_negative": null
-  },
-  "fraction_digits": 2
+  }
 }

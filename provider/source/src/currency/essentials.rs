@@ -199,51 +199,10 @@ fn extract_currency_essentials<'data>(
         accounting_alpha_next_to_number_negative: accounting_alpha_neg_idx,
     };
 
-    let fraction_digits = extract_precision(&standard.positive);
-    for pattern in [
-        Some(standard),
-        standard_alpha_next_to_number,
-        accounting,
-        accounting_alpha_next_to_number,
-    ]
-    .into_iter()
-    .flatten()
-    {
-        if extract_precision(&pattern.positive) != fraction_digits
-            || pattern
-                .negative
-                .as_ref()
-                .is_some_and(|neg| extract_precision(neg) != fraction_digits)
-        {
-            log::warn!("{locale}/{numsys_name}: inconsistent currency pattern fraction digits");
-            break;
-        }
-    }
-
     Ok(CurrencyEssentials {
         patterns: VarZeroVec::from(&unique_patterns),
         indices,
-        fraction_digits,
     })
-}
-
-// TODO: Refactor fraction resolution to support bit-packed `RoundingInfo` (4 bits digits, 4 bits rounding) in a subsequent PR.
-fn extract_precision(items: &[NumberPatternItem]) -> u8 {
-    let mut digits = 0;
-    let mut has_decimal = false;
-    for item in items {
-        if has_decimal {
-            match item {
-                NumberPatternItem::MandatoryDigit | NumberPatternItem::OptionalDigit => {
-                    digits += 1;
-                }
-                _ => {}
-            }
-        } else if matches!(item, NumberPatternItem::DecimalSeparator) {
-            has_decimal = true;
-        }
-    }
-    digits
 }
 
 #[test]

@@ -52,8 +52,6 @@ pub struct CurrencyEssentials<'data> {
 
     /// Indices into `patterns` for each formatting variant.
     pub indices: PatternIndices,
-    /// Locale-specific pattern fraction digits.
-    pub fraction_digits: u8,
 }
 
 icu_provider::data_struct!(CurrencyEssentials<'_>, #[cfg(feature = "datagen")]);

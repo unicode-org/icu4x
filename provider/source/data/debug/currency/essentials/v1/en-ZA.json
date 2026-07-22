@@ -60,6 +60,5 @@
     "accounting_negative": 1,
     "accounting_alpha_next_to_number_positive": 2,
     "accounting_alpha_next_to_number_negative": 3
-  },
-  "fraction_digits": 2
+  }
 }
