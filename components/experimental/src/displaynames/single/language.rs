@@ -381,8 +381,42 @@ impl LanguageIdentifierDisplayNameOwned {
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the minimal language display name for a given language identifier and locale using compiled data.
         ///
-        /// The `minimal` constructor links an extremely limited amount of data: for example,
+        /// The `minimal` constructor links an *extremely limited* amount of data: for example,
         /// only the language of the formatting locale itself.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::experimental::displaynames::single::LanguageIdentifierDisplayNameOwned;
+        /// use icu::experimental::displaynames::single::LanguageIdentifierNameFallbackError;
+        /// use icu::locale::{langid, locale};
+        /// use writeable::assert_try_writeable_eq;
+        ///
+        /// // French contains its own translation in French...
+        /// let fr_fr = LanguageIdentifierDisplayNameOwned::try_new_minimal(
+        ///     locale!("fr").into(),
+        ///     langid!("fr"),
+        ///     Default::default()
+        /// )
+        /// .unwrap();
+        /// assert_try_writeable_eq!(
+        ///     fr_fr.as_borrowed(),
+        ///     "français"
+        /// );
+        ///
+        /// // ...but not a translation for German.
+        /// let fr_de = LanguageIdentifierDisplayNameOwned::try_new_minimal(
+        ///     locale!("fr").into(),
+        ///     langid!("de"),
+        ///     Default::default()
+        /// )
+        /// .unwrap();
+        /// assert_try_writeable_eq!(
+        ///     fr_de.as_borrowed(),
+        ///     "de",
+        ///     Err(LanguageIdentifierNameFallbackError)
+        /// );
+        /// ```
         functions: [
             try_new_minimal,
             try_new_minimal_with_buffer_provider,
