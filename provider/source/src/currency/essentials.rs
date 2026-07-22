@@ -36,7 +36,7 @@ impl DataProvider<CurrencyEssentialsV1> for SourceDataProvider {
             &numbers_resource.main.value.numbers.default_numbering_system
         };
 
-        let result = extract_currency_essentials(self, numbers_resource, nsname, req.id.locale);
+        let result = extract_currency_essentials(numbers_resource, nsname);
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -79,10 +79,8 @@ impl IterableDataProviderCached<CurrencyEssentialsV1> for SourceDataProvider {
 }
 
 fn extract_currency_essentials<'data>(
-    _provider: &SourceDataProvider,
     numbers_resource: &cldr_serde::numbers::Resource,
     numsys_name: &str,
-    locale: &DataLocale,
 ) -> Result<CurrencyEssentials<'data>, DataError> {
     let numbers_block = &numbers_resource.main.value.numbers;
     let currency_formats = numbers_block
