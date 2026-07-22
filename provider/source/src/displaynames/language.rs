@@ -215,7 +215,7 @@ mod tests {
     fn test_basic_lang_display_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesLanguageMinimalMediumV1> = provider
+        let data: DataPayload<LocaleNamesLanguageCoreMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("aa").unwrap(),
@@ -233,7 +233,7 @@ mod tests {
     fn test_basic_lang_short_display_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesLanguageCoreShortV1> = provider
+        let data: DataPayload<LocaleNamesLanguageExtendedShortV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("az").unwrap(),
@@ -287,7 +287,7 @@ mod tests {
     fn test_basic_locale_display_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesLanguageMinimalMediumV1> = provider
+        let data: DataPayload<LocaleNamesLanguageCoreMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("de-CH").unwrap(),
@@ -305,7 +305,7 @@ mod tests {
     fn test_locale_names_language_medium() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesLanguageMinimalMediumV1> = provider
+        let data: DataPayload<LocaleNamesLanguageCoreMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("aa").unwrap(),
