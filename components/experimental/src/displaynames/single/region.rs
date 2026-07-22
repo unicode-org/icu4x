@@ -279,57 +279,30 @@ impl_writeable_for_single_display_name_borrowed!(RegionDisplayName);
 mod tests {
     use super::*;
     use icu_locale_core::{locale, subtags::region};
-    use writeable::Writeable;
     use writeable::assert_writeable_eq;
 
     #[test]
     fn test_region_display_name_owned_table() {
         let prefs_en = DisplayNamesPreferences::from(locale!("en"));
+        let inputs = [region!("US"), region!("AD")];
 
-        let get_row = |f: fn(
-            DisplayNamesPreferences,
-            Region,
-        ) -> Result<RegionDisplayNameOwned, DataError>| {
-            vec![
-                match f(prefs_en, region!("US")) {
-                    Ok(name) => format!("\"{}\"", name.write_to_string()),
-                    Err(_) => "❌".to_string(),
-                },
-                match f(prefs_en, region!("AD")) {
-                    Ok(name) => format!("\"{}\"", name.write_to_string()),
-                    Err(_) => "❌".to_string(),
-                },
-            ]
-        };
+        macro_rules! check_row {
+            ($constructor:ident) => {
+                let items = inputs.iter().map(|id| {
+                    RegionDisplayNameOwned::$constructor(prefs_en, *id)
+                        .map(|name| Ok::<_, ()>(name.to_string()))
+                });
+                assert_eq!(
+                    super::super::format_table_row(stringify!($constructor), items),
+                    table_row!($constructor)
+                );
+            };
+        }
 
-        let make_row = |name: &str,
-                        f: fn(
-            DisplayNamesPreferences,
-            Region,
-        ) -> Result<RegionDisplayNameOwned, DataError>| {
-            let row = get_row(f);
-            format!("| [`{name}`](Self::{name}) | {} |", row.join(" | "))
-        };
-
-        assert_eq!(
-            make_row("try_new_minimal", RegionDisplayNameOwned::try_new_minimal),
-            table_row!(try_new_minimal)
-        );
-        assert_eq!(
-            make_row(
-                "try_new_minimal_short",
-                RegionDisplayNameOwned::try_new_minimal_short
-            ),
-            table_row!(try_new_minimal_short)
-        );
-        assert_eq!(
-            make_row("try_new", RegionDisplayNameOwned::try_new),
-            table_row!(try_new)
-        );
-        assert_eq!(
-            make_row("try_new_short", RegionDisplayNameOwned::try_new_short),
-            table_row!(try_new_short)
-        );
+        check_row!(try_new_minimal);
+        check_row!(try_new_minimal_short);
+        check_row!(try_new);
+        check_row!(try_new_short);
     }
 
     #[test]

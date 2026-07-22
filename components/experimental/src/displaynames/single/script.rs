@@ -287,59 +287,28 @@ impl_writeable_for_single_display_name_borrowed!(ScriptDisplayName);
 mod tests {
     use super::*;
     use icu_locale_core::{locale, subtags::script};
-    use writeable::Writeable;
 
     #[test]
     fn test_script_display_name_owned_table() {
-        let prefs = DisplayNamesPreferences::from(locale!("en"));
+        let prefs_en = DisplayNamesPreferences::from(locale!("en"));
+        let inputs = [script!("Latn"), script!("Zzzz"), script!("Xsux")];
 
-        let get_row = |f: fn(
-            DisplayNamesPreferences,
-            Script,
-        ) -> Result<ScriptDisplayNameOwned, DataError>| {
-            vec![
-                match f(prefs, script!("Latn")) {
-                    Ok(name) => format!("\"{}\"", name.write_to_string()),
-                    Err(_) => "❌".to_string(),
-                },
-                match f(prefs, script!("Zzzz")) {
-                    Ok(name) => format!("\"{}\"", name.write_to_string()),
-                    Err(_) => "❌".to_string(),
-                },
-                match f(prefs, script!("Xsux")) {
-                    Ok(name) => format!("\"{}\"", name.write_to_string()),
-                    Err(_) => "❌".to_string(),
-                },
-            ]
-        };
+        macro_rules! check_row {
+            ($constructor:ident) => {
+                let items = inputs.iter().map(|id| {
+                    ScriptDisplayNameOwned::$constructor(prefs_en, *id)
+                        .map(|name| Ok::<_, ()>(name.to_string()))
+                });
+                assert_eq!(
+                    super::super::format_table_row(stringify!($constructor), items),
+                    table_row!($constructor)
+                );
+            };
+        }
 
-        let make_row = |name: &str,
-                        f: fn(
-            DisplayNamesPreferences,
-            Script,
-        ) -> Result<ScriptDisplayNameOwned, DataError>| {
-            let row = get_row(f);
-            format!("| [`{name}`](Self::{name}) | {} |", row.join(" | "))
-        };
-
-        assert_eq!(
-            make_row("try_new_minimal", ScriptDisplayNameOwned::try_new_minimal),
-            table_row!(try_new_minimal)
-        );
-        assert_eq!(
-            make_row("try_new", ScriptDisplayNameOwned::try_new),
-            table_row!(try_new)
-        );
-        assert_eq!(
-            make_row("try_new_extended", ScriptDisplayNameOwned::try_new_extended),
-            table_row!(try_new_extended)
-        );
-        assert_eq!(
-            make_row(
-                "try_new_extended_short",
-                ScriptDisplayNameOwned::try_new_extended_short
-            ),
-            table_row!(try_new_extended_short)
-        );
+        check_row!(try_new_minimal);
+        check_row!(try_new);
+        check_row!(try_new_extended);
+        check_row!(try_new_extended_short);
     }
 }

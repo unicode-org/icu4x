@@ -1908,119 +1908,42 @@ impl<'a> TryWriteable for LanguageIdentifierDisplayNameInner<'a> {
 mod tests {
     use super::*;
     use icu_locale_core::{langid, locale};
-    use writeable::TryWriteable;
 
     #[test]
     fn test_language_identifier_display_name_owned_table() {
         let prefs_en = DisplayNamesPreferences::from(locale!("en"));
         let options = LanguageIdentifierDisplayNameOptions::default();
-
         let inputs = [langid!("en-US"), langid!("zh"), langid!("az")];
 
-        let get_row = |f: fn(
-            DisplayNamesPreferences,
-            LanguageIdentifier,
-            LanguageIdentifierDisplayNameOptions,
-        ) -> Result<LanguageIdentifierDisplayNameOwned, DataError>| {
-            inputs
-                .iter()
-                .map(|id| match f(prefs_en, id.clone(), options) {
-                    Ok(name) => {
-                        let borrowed = name.as_borrowed();
-                        let mut sink = String::new();
-                        match borrowed.try_write_to(&mut sink).unwrap() {
-                            Ok(()) => format!("\"{}\"", sink),
-                            Err(LanguageIdentifierNameFallbackError) => "❌".to_string(),
-                        }
-                    }
-                    Err(_) => "❌".to_string(),
-                })
-                .collect::<Vec<_>>()
-        };
+        macro_rules! check_row {
+            ($constructor:ident) => {
+                let items = inputs.iter().map(|id| {
+                    LanguageIdentifierDisplayNameOwned::$constructor(prefs_en, id.clone(), options)
+                        .map(|display_name| {
+                            display_name
+                                .as_borrowed()
+                                .try_write_to_string()
+                                .map(|s| s.into_owned())
+                                .map_err(|e| e.0)
+                        })
+                });
+                assert_eq!(
+                    super::super::format_table_row(stringify!($constructor), items),
+                    table_row!($constructor)
+                );
+            };
+        }
 
-        let make_row = |name: &str,
-                        f: fn(
-            DisplayNamesPreferences,
-            LanguageIdentifier,
-            LanguageIdentifierDisplayNameOptions,
-        ) -> Result<LanguageIdentifierDisplayNameOwned, DataError>| {
-            let row = get_row(f);
-            format!("| [`{name}`](Self::{name}) | {} |", row.join(" | "))
-        };
-
-        assert_eq!(
-            make_row(
-                "try_new_minimal",
-                LanguageIdentifierDisplayNameOwned::try_new_minimal
-            ),
-            table_row!(try_new_minimal)
-        );
-        assert_eq!(
-            make_row("try_new", LanguageIdentifierDisplayNameOwned::try_new),
-            table_row!(try_new)
-        );
-        assert_eq!(
-            make_row(
-                "try_new_short",
-                LanguageIdentifierDisplayNameOwned::try_new_short
-            ),
-            table_row!(try_new_short)
-        );
-        assert_eq!(
-            make_row(
-                "try_new_long",
-                LanguageIdentifierDisplayNameOwned::try_new_long
-            ),
-            table_row!(try_new_long)
-        );
-        assert_eq!(
-            make_row(
-                "try_new_menu",
-                LanguageIdentifierDisplayNameOwned::try_new_menu
-            ),
-            table_row!(try_new_menu)
-        );
-        assert_eq!(
-            make_row(
-                "try_new_short_menu",
-                LanguageIdentifierDisplayNameOwned::try_new_short_menu
-            ),
-            table_row!(try_new_short_menu)
-        );
-        assert_eq!(
-            make_row(
-                "try_new_extended",
-                LanguageIdentifierDisplayNameOwned::try_new_extended
-            ),
-            table_row!(try_new_extended)
-        );
-        assert_eq!(
-            make_row(
-                "try_new_extended_short",
-                LanguageIdentifierDisplayNameOwned::try_new_extended_short
-            ),
-            table_row!(try_new_extended_short)
-        );
-        assert_eq!(
-            make_row(
-                "try_new_extended_long",
-                LanguageIdentifierDisplayNameOwned::try_new_extended_long
-            ),
-            table_row!(try_new_extended_long)
-        );
-        assert_eq!(
-            make_row(
-                "try_new_extended_menu",
-                LanguageIdentifierDisplayNameOwned::try_new_extended_menu
-            ),
-            table_row!(try_new_extended_menu)
-        );
-        assert_eq!(
-            make_row(
-                "try_new_extended_short_menu",
-                LanguageIdentifierDisplayNameOwned::try_new_extended_short_menu
-            ),
-            table_row!(try_new_extended_short_menu)
-        );
+        check_row!(try_new_minimal);
+        check_row!(try_new);
+        check_row!(try_new_short);
+        check_row!(try_new_long);
+        check_row!(try_new_menu);
+        check_row!(try_new_short_menu);
+        check_row!(try_new_extended);
+        check_row!(try_new_extended_short);
+        check_row!(try_new_extended_long);
+        check_row!(try_new_extended_menu);
+        check_row!(try_new_extended_short_menu);
     }
 }

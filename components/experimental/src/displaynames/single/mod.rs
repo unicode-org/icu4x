@@ -109,3 +109,19 @@ macro_rules! impl_writeable_for_single_display_name_owned {
 
 pub(crate) use impl_writeable_for_single_display_name_borrowed;
 pub(crate) use impl_writeable_for_single_display_name_owned;
+
+#[cfg(test)]
+pub(crate) fn format_table_row<S: core::fmt::Display, E1, E2>(
+    name: &str,
+    items: impl IntoIterator<Item = Result<Result<S, E1>, E2>>,
+) -> String {
+    let row = items
+        .into_iter()
+        .map(|item| match item {
+            Ok(Ok(s)) => format!("\"{s}\""),
+            _ => "❌".to_string(),
+        })
+        .collect::<Vec<_>>()
+        .join(" | ");
+    format!("| [`{name}`](Self::{name}) | {row} |")
+}
