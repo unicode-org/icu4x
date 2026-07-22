@@ -75,7 +75,7 @@ fn get_value(relation: &ast::Relation, operands: &PluralOperands) -> Option<u64>
         ast::Operand::V => operands.v as u64,
         ast::Operand::W => operands.w as u64,
         ast::Operand::T => operands.t,
-        ast::Operand::C | ast::Operand::E => operands.c as u64,
+        ast::Operand::C => operands.c as u64,
     };
     if relation.modulo > 0 {
         value.checked_rem_euclid(relation.modulo.into())

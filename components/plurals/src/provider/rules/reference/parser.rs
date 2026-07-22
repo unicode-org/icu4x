@@ -193,7 +193,7 @@ impl<'p> Parser<'p> {
 
     fn get_expression(&mut self) -> Result<Option<ast::Expression>, ParseError> {
         let operand = match self.lexer.peek() {
-            Some(Token::E) => ast::Operand::E,
+            Some(Token::E) => ast::Operand::C,
             Some(Token::Operand(op)) => *op,
             Some(Token::At) | None => return Ok(None),
             _ => return Err(ParseError::ExpectedOperand),

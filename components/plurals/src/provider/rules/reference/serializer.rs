@@ -109,7 +109,6 @@ fn serialize_operand(operand: ast::Operand, w: &mut impl fmt::Write) -> fmt::Res
         ast::Operand::F => w.write_char('f'),
         ast::Operand::T => w.write_char('t'),
         ast::Operand::C => w.write_char('c'),
-        ast::Operand::E => w.write_char('e'),
     }
 }
 

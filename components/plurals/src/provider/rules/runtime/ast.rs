@@ -50,7 +50,6 @@ pub(crate) enum Operand {
     F = 4,
     T = 5,
     C = 6,
-    E = 7,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Ord, PartialOrd)]
@@ -181,7 +180,6 @@ impl From<reference::ast::Operand> for Operand {
             reference::ast::Operand::F => Self::F,
             reference::ast::Operand::T => Self::T,
             reference::ast::Operand::C => Self::C,
-            reference::ast::Operand::E => Self::E,
         }
     }
 }
@@ -196,7 +194,6 @@ impl From<Operand> for reference::ast::Operand {
             Operand::F => Self::F,
             Operand::T => Self::T,
             Operand::C => Self::C,
-            Operand::E => Self::E,
         }
     }
 }
