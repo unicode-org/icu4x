@@ -1487,6 +1487,7 @@ impl QualifiersOwned {
             DataPayloadOr::from_other(None)
         };
 
+        // Step 4: Load variant names (if present in subject)
         let load_variant_helper = |variant: Variant| -> Result<
             DataPayloadOr<ErasedMarker<VarZeroCow<'static, str>>, Variant>,
             DataError,
@@ -1497,15 +1498,14 @@ impl QualifiersOwned {
             }
         };
 
-        // Step 4: Load variant names (if present in subject)
         let mut variant_results = subject
             .variants
             .iter()
             .map(|variant| load_variant_helper(*variant));
 
         let variant_payloads = if let Some(first) = variant_results.next() {
-            // 2 or more variants
             if let Some(second) = variant_results.next() {
+                // 2 or more variants
                 let payload_vec = [first, second]
                     .into_iter()
                     .chain(variant_results)
