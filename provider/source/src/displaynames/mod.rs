@@ -8,6 +8,8 @@ pub(crate) mod region;
 pub(crate) mod script;
 pub(crate) mod variant;
 
+#[cfg(test)]
+use crate::cldr_cache::CoverageLevelForXPath;
 use crate::cldr_serde::displaynames::{Alt, Menu, WithAlt};
 use either::Either;
 use std::collections::{BTreeMap, HashMap};
@@ -97,6 +99,10 @@ pub(crate) fn construct_xpath<'a>(
         (Some(Alt::Short), None) => r#"[@alt="short"]"#,
         (Some(Alt::Long), None) => r#"[@alt="long"]"#,
         (Some(Alt::Menu), None) => r#"[@alt="menu"]"#,
+        (Some(Alt::Variant), _) => {
+            // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
+            ""
+        }
         (_, _) => {
             debug_assert!(false, "unexpected alt or menu: {alt:?} {menu:?}");
             ""
@@ -134,6 +140,11 @@ pub(crate) fn construct_xpath<'a>(
         )),
         _ => panic!("Unknown field: {}", field),
     }
+}
+
+#[cfg(test)]
+trait CheckAltCoverage {
+    fn check_coverage<T>(key: &WithAlt<T>, tier: CoverageLevelForXPath) -> bool;
 }
 
 /// Macro for implementing a single-name display names data provider.
@@ -210,6 +221,16 @@ macro_rules! impl_displaynames_v1 {
             $alt_variant,
             $tier
         );
+
+        #[cfg(test)]
+        impl $crate::displaynames::CheckAltCoverage for $marker {
+            fn check_coverage<T>(
+                key: &$crate::cldr_serde::displaynames::WithAlt<T>,
+                tier: $crate::cldr_cache::CoverageLevelForXPath,
+            ) -> bool {
+                key.alt == $alt_variant && key.menu.is_none() && matches!(tier, $tier)
+            }
+        }
     };
 }
 
@@ -364,6 +385,18 @@ macro_rules! impl_displaynames_menu_v1 {
                     }
                 }
                 Ok(result)
+            }
+        }
+
+        #[cfg(test)]
+        impl $crate::displaynames::CheckAltCoverage for $marker {
+            fn check_coverage<T>(
+                key: &$crate::cldr_serde::displaynames::WithAlt<T>,
+                tier: $crate::cldr_cache::CoverageLevelForXPath,
+            ) -> bool {
+                ((key.alt.is_none() && key.menu.is_some())
+                    || key.alt == Some($crate::cldr_serde::displaynames::Alt::Menu))
+                    && matches!(tier, $tier)
             }
         }
     };

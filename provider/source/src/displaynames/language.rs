@@ -206,6 +206,8 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<
 
 #[cfg(test)]
 mod tests {
+    use crate::displaynames::CheckAltCoverage;
+
     use super::*;
     use icu::locale::{langid, subtags::language};
 
@@ -320,6 +322,9 @@ mod tests {
         assert_eq!(data.get().core(), "Chinese, Mandarin");
     }
 
+    /// The cartesian product of (Language|Script|Region|Variant)x(Short|Medium|Long)x(Minimal|Core|Extended)
+    /// contains some data markers that are uninhabited. This test ensures that if future CLDRs add data in
+    /// one of these markers, we learn about it and can take action.
     #[test]
     fn test_empty_coverage_tiers_assert_no_data() {
         use crate::SourceDataProvider;
@@ -331,8 +336,6 @@ mod tests {
         let displaynames_dir = cldr.displaynames();
         let locales = displaynames_dir.list_locales().unwrap();
 
-        // Assert that the 8 removed empty coverage tiers currently have no matching display names in CLDR data
-        // across all locales, so they can be re-added as markers if data is published in future CLDR releases.
         for locale in locales {
             // 1. Languages
             if displaynames_dir
@@ -345,14 +348,6 @@ mod tests {
                     )
             {
                 for key in res.main.value.localedisplaynames.languages.keys() {
-                    let is_short = key.alt == Some(Alt::Short);
-                    let is_long = key.alt == Some(Alt::Long);
-                    let is_menu = key.alt == Some(Alt::Menu) || key.menu.is_some();
-
-                    if !is_short && !is_long && !is_menu {
-                        continue;
-                    }
-
                     let xpath = crate::displaynames::construct_xpath(
                         "languages",
                         &key.subtag,
@@ -363,38 +358,37 @@ mod tests {
                         .coverage_tier(fallbacker, &locale, &xpath)
                         .unwrap();
 
-                    // 1. Language Minimal Short (Basic | Core)
-                    if is_short {
-                        assert!(
-                            tier != CoverageLevelForXPath::Basic
-                                && tier != CoverageLevelForXPath::Core,
-                            "Found unexpected language short display name in tier {:?} for locale {:?}, key {:?}",
-                            tier,
-                            locale,
-                            key
-                        );
+                    if LocaleNamesLanguageMinimalMediumV1::check_coverage(&key, tier) {
+                        continue;
                     }
-                    // 2. Language Minimal Long (Basic | Core)
-                    if is_long {
-                        assert!(
-                            tier != CoverageLevelForXPath::Basic
-                                && tier != CoverageLevelForXPath::Core,
-                            "Found unexpected language long display name in tier {:?} for locale {:?}, key {:?}",
-                            tier,
-                            locale,
-                            key
-                        );
+                    if LocaleNamesLanguageCoreMediumV1::check_coverage(&key, tier) {
+                        continue;
                     }
-                    // 3. Language Menu Minimal Medium (Basic)
-                    if is_menu {
-                        assert!(
-                            tier != CoverageLevelForXPath::Basic,
-                            "Found unexpected language menu display name in tier {:?} for locale {:?}, key {:?}",
-                            tier,
-                            locale,
-                            key
-                        );
+                    if LocaleNamesLanguageExtendedMediumV1::check_coverage(&key, tier) {
+                        continue;
                     }
+                    if LocaleNamesLanguageCoreShortV1::check_coverage(&key, tier) {
+                        continue;
+                    }
+                    if LocaleNamesLanguageExtendedShortV1::check_coverage(&key, tier) {
+                        continue;
+                    }
+                    if LocaleNamesLanguageCoreLongV1::check_coverage(&key, tier) {
+                        continue;
+                    }
+                    if LocaleNamesLanguageExtendedLongV1::check_coverage(&key, tier) {
+                        continue;
+                    }
+                    if LocaleNamesLanguageMenuCoreMediumV1::check_coverage(&key, tier) {
+                        continue;
+                    }
+                    if LocaleNamesLanguageMenuExtendedMediumV1::check_coverage(&key, tier) {
+                        continue;
+                    }
+
+                    panic!(
+                        "Found unexpected alt, menu, and tier combination for language: {key:?} in locale: {locale:?} and tier: {tier:?}"
+                    );
                 }
             }
 
