@@ -58,7 +58,6 @@ impl IterableDataProviderCached<CurrencyEssentialsV1> for SourceDataProvider {
 
             for (nsname, patterns) in &numbers.numsys_data.currency_patterns {
                 if patterns.standard.positive.is_empty() {
-                    log::debug!("{locale}/{nsname}: empty standard currency pattern, skipping");
                     continue;
                 }
                 if nsname == default_numsys {
