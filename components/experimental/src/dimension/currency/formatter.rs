@@ -4,7 +4,17 @@
 
 use core::fmt::Display;
 
-use fixed_decimal::Decimal as FixedDecimal;
+use super::super::provider::currency::{
+    essentials::CurrencyEssentialsV1,
+    extended::CurrencyExtendedDataV1,
+    fractions::{CurrencyFractionsV1, FractionInfo, Rounding},
+    patterns::CurrencyPatternsDataV1,
+    symbols::CurrencySymbolsV1,
+};
+use super::CurrencyCode;
+use fixed_decimal::{
+    Decimal as FixedDecimal, RoundingIncrement, SignedRoundingMode, UnsignedRoundingMode,
+};
 use icu_decimal::preferences::CompactDecimalFormatterPreferences;
 use icu_decimal::{AbstractFormatter, DecimalFormatter, DecimalFormatterPreferences};
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
@@ -12,12 +22,6 @@ use icu_plurals::{PluralRules, PluralRulesPreferences};
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 use writeable::Writeable;
-
-use super::super::provider::currency::{
-    essentials::CurrencyEssentialsV1, extended::CurrencyExtendedDataV1,
-    patterns::CurrencyPatternsDataV1, symbols::CurrencySymbolsV1,
-};
-use super::CurrencyCode;
 
 extern crate alloc;
 
@@ -75,6 +79,7 @@ pub(crate) enum CurrencyFormatterData {
 pub struct CurrencyFormatter<V: AbstractFormatter> {
     value_formatter: V,
     currency_data: CurrencyFormatterData,
+    fraction_info: FractionInfo,
 }
 
 impl<V: AbstractFormatter> CurrencyFormatter<V> {
@@ -94,6 +99,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let essential =
             load_with_fallback::<CurrencyEssentialsV1>(&crate::provider::Baked, ids.clone())?
                 .payload;
+        let fractions: DataPayload<CurrencyFractionsV1> =
+            crate::provider::Baked.load(Default::default())?.payload;
+        let fraction_info = fractions.get().resolve(currency);
         #[allow(const_item_mutation)]
         let currency_data = match DataProvider::<CurrencySymbolsV1>::load(
             &crate::provider::Baked,
@@ -120,6 +128,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         Ok(Self {
             value_formatter,
             currency_data,
+            fraction_info,
         })
     }
 
@@ -131,7 +140,10 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         width: TinyAsciiStr<1>,
     ) -> Result<Self, DataError>
     where
-        D: ?Sized + DataProvider<CurrencyEssentialsV1> + DataProvider<CurrencySymbolsV1>,
+        D: ?Sized
+            + DataProvider<CurrencyEssentialsV1>
+            + DataProvider<CurrencySymbolsV1>
+            + DataProvider<CurrencyFractionsV1>,
     {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
         let decimal_prefs = DecimalFormatterPreferences::from(&prefs);
@@ -140,6 +152,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let default_id = DataIdentifierBorrowed::for_locale(&locale);
         let ids = req_id.into_iter().chain(core::iter::once(default_id));
         let essential = load_with_fallback::<CurrencyEssentialsV1>(provider, ids.clone())?.payload;
+        let fractions: DataPayload<CurrencyFractionsV1> =
+            provider.load(Default::default())?.payload;
+        let fraction_info = fractions.get().resolve(currency);
         #[allow(const_item_mutation)]
         let currency_data = match provider
             .load(DataRequest {
@@ -164,6 +179,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         Ok(Self {
             value_formatter,
             currency_data,
+            fraction_info,
         })
     }
 
@@ -182,6 +198,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let essential =
             load_with_fallback::<CurrencyEssentialsV1>(&crate::provider::Baked, ids.clone())?
                 .payload;
+        let fractions: DataPayload<CurrencyFractionsV1> =
+            crate::provider::Baked.load(Default::default())?.payload;
+        let fraction_info = fractions.get().resolve(currency);
 
         Ok(Self {
             value_formatter,
@@ -189,6 +208,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 essential,
                 currency,
             },
+            fraction_info,
         })
     }
 
@@ -199,7 +219,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         currency: CurrencyCode,
     ) -> Result<Self, DataError>
     where
-        D: ?Sized + DataProvider<CurrencyEssentialsV1>,
+        D: ?Sized + DataProvider<CurrencyEssentialsV1> + DataProvider<CurrencyFractionsV1>,
     {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
         let decimal_prefs = DecimalFormatterPreferences::from(&prefs);
@@ -208,6 +228,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let default_id = DataIdentifierBorrowed::for_locale(&locale);
         let ids = req_id.into_iter().chain(core::iter::once(default_id));
         let essential = load_with_fallback::<CurrencyEssentialsV1>(provider, ids.clone())?.payload;
+        let fractions: DataPayload<CurrencyFractionsV1> =
+            provider.load(Default::default())?.payload;
+        let fraction_info = fractions.get().resolve(currency);
 
         Ok(Self {
             value_formatter,
@@ -215,6 +238,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 essential,
                 currency,
             },
+            fraction_info,
         })
     }
 
@@ -231,6 +255,8 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                     .into_error()
                     .with_debug_context("failed to get data marker attribute from a `CurrencyCode`")
             })?;
+        // According to UTS #35, if no displayName is found, the currency code itself should be used.
+        // https://www.unicode.org/reports/tr35/tr35-numbers.html#Plural_Rules_in_Currency_Formatting
         let extended_opt = crate::provider::Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
@@ -243,6 +269,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             .map(|res| res.payload);
 
         let patterns = crate::provider::Baked.load(Default::default())?.payload;
+        let fractions: DataPayload<CurrencyFractionsV1> =
+            crate::provider::Baked.load(Default::default())?.payload;
+        let fraction_info = fractions.get().resolve(currency);
 
         let currency_data = match extended_opt {
             Some(extended) => {
@@ -259,6 +288,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         Ok(Self {
             value_formatter,
             currency_data,
+            fraction_info,
         })
     }
 
@@ -272,6 +302,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         D: ?Sized
             + DataProvider<CurrencyExtendedDataV1>
             + DataProvider<CurrencyPatternsDataV1>
+            + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     {
         let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
@@ -281,6 +312,8 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                     .into_error()
                     .with_debug_context("failed to get data marker attribute from a `CurrencyCode`")
             })?;
+        // According to UTS #35, if no displayName is found, the currency code itself should be used.
+        // https://www.unicode.org/reports/tr35/tr35-numbers.html#Plural_Rules_in_Currency_Formatting
         let extended_opt = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
@@ -293,6 +326,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             .map(|res| res.payload);
 
         let patterns = provider.load(Default::default())?.payload;
+        let fractions: DataPayload<CurrencyFractionsV1> =
+            provider.load(Default::default())?.payload;
+        let fraction_info = fractions.get().resolve(currency);
 
         let currency_data = match extended_opt {
             Some(extended) => {
@@ -310,6 +346,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         Ok(Self {
             value_formatter,
             currency_data,
+            fraction_info,
         })
     }
 }
@@ -336,9 +373,6 @@ impl CurrencyFormatter<DecimalFormatter> {
     );
 
     // We manually implement the compiled constructors because of the cross-crate dependency
-    // on `icu_decimal` markers (which are not present in `icu_experimental`'s local `Baked` provider).
-    // TODO: When CurrencyFormatter is migrated out of experimental, check if we can use the
-    // macro-generated versions instead of these manual implementations.
 
     /// Creates a new [`CurrencyFormatter`] for formatting with short currency symbols from compiled locale data.
     ///
@@ -386,6 +420,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         D: ?Sized
             + DataProvider<CurrencyEssentialsV1>
             + DataProvider<CurrencySymbolsV1>
+            + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
@@ -408,6 +443,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         D: ?Sized
             + DataProvider<CurrencyEssentialsV1>
             + DataProvider<CurrencySymbolsV1>
+            + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
@@ -471,6 +507,7 @@ impl CurrencyFormatter<DecimalFormatter> {
     where
         D: ?Sized
             + DataProvider<CurrencyEssentialsV1>
+            + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
@@ -534,6 +571,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         D: ?Sized
             + DataProvider<CurrencyExtendedDataV1>
             + DataProvider<CurrencyPatternsDataV1>
+            + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
@@ -558,9 +596,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     /// use tinystr::*;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let locale = locale!("en-US").into();
+    /// let currency_preferences = locale!("en-US").into();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
-    /// let fmt = CurrencyFormatter::try_new_symbol(locale, currency_code).unwrap();
+    /// let fmt = CurrencyFormatter::try_new_symbol(currency_preferences, currency_code).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// assert_writeable_eq!(
     ///     fmt.format_fixed_decimal(&value),
@@ -575,9 +613,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     /// use tinystr::*;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let locale = locale!("en-US").into();
+    /// let currency_preferences = locale!("en-US").into();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
-    /// let fmt = CurrencyFormatter::try_new_compact_symbol(locale, currency_code).unwrap();
+    /// let fmt = CurrencyFormatter::try_new_compact_symbol(currency_preferences, currency_code).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// assert_writeable_eq!(fmt.format_fixed_decimal(&value), "$12K");
     /// ```
@@ -589,9 +627,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     /// use tinystr::*;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let currency_prefs = locale!("en-US").into();
+    /// let currency_preferences = locale!("en-US").into();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
-    /// let fmt = CurrencyFormatter::try_new_compact_long_symbol(currency_prefs, currency_code).unwrap();
+    /// let fmt = CurrencyFormatter::try_new_compact_long_symbol(currency_preferences, currency_code).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// assert_writeable_eq!(fmt.format_fixed_decimal(&value), "$12 thousand");
     /// ```
@@ -599,10 +637,20 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         &'l self,
         value: &'l FixedDecimal,
     ) -> impl Writeable + Display + 'l {
-        let formatted_value = V::format_unsigned(&self.value_formatter, &value.absolute);
-
         // TODO(#8146): Evaluate if FixedDecimal is the correct input type or if we should use
         // an exact decimal/money representation.
+        // Per UTS #35 (LDML Part 3: Numbers, Section 3.8, Rule 3 in Compact Number Formatting):
+        // "If the element value of P is '0', then use the corresponding non-compact number formatting instead,"
+        //
+        // Specifically, when compact formatters handle uncompacted fallback values below 1,000 ("0" pattern):
+        // * Per UTS #35: Suffix abbreviation and division steps ("K", "M") are skipped in favor of standard currency format.
+        // * Per current ICU4X implementation: `CompactDecimalFormatter` trims trailing fractional zeros by default
+        //   (rendering e.g. "$12" instead of "$12.00").
+        // * Currency fraction precision is applied uniformly without type-level switches, relying on the underlying
+        //   formatter (such as `CompactDecimalFormatter`) to handle magnitude-based trailing zero trimming.
+        let rounded_value = apply_precision(value.clone(), self.fraction_info);
+        let formatted_value = V::format_unsigned(&self.value_formatter, rounded_value.absolute);
+
         let (pattern, currency_str) = match &self.currency_data {
             CurrencyFormatterData::IsoSymbol {
                 essential,
@@ -643,7 +691,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         V::format_sign(
             &self.value_formatter,
             pattern.interpolate((formatted_value, currency_str)),
-            value.sign,
+            rounded_value.sign,
         )
     }
 }
@@ -680,4 +728,22 @@ pub(crate) fn load_with_fallback<'a, M: DataMarker>(
     }
 
     Err(DataErrorKind::InvalidRequest.into_error())
+}
+
+pub(crate) fn apply_precision(value: FixedDecimal, fraction_info: FractionInfo) -> FixedDecimal {
+    let precision = fraction_info.digits as i16;
+    let rounding = fraction_info.rounding;
+
+    let (magnitude, increment) = match rounding {
+        Rounding::R50 => (-precision + 1, RoundingIncrement::MultiplesOf5),
+        Rounding::R20 => (-precision + 1, RoundingIncrement::MultiplesOf2),
+        Rounding::R5 => (-precision, RoundingIncrement::MultiplesOf5),
+        Rounding::R1 => (-precision, RoundingIncrement::MultiplesOf1),
+    };
+
+    value.rounded_with_mode_and_increment(
+        magnitude,
+        SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfExpand),
+        increment,
+    )
 }

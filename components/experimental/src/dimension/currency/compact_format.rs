@@ -16,10 +16,13 @@ mod tests {
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
         let fmt = CurrencyFormatter::try_new_compact_symbol(prefs, currency_code).unwrap();
 
-        // Positive case
+        // Positive cases
         let positive_value = "12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&positive_value);
         assert_writeable_eq!(formatted_currency, "$12K");
+
+        let val_1299 = "1299".parse().unwrap();
+        assert_writeable_eq!(fmt.format_fixed_decimal(&val_1299), "$1.3K");
 
         // Negative case
         let negative_value = "-12345.67".parse().unwrap();
@@ -171,6 +174,41 @@ mod tests {
         // Compact number with alphabetical currency code: should use alpha_next_to_number pattern with non-breaking space
         let compact_value = "12345.67".parse().unwrap();
         assert_writeable_eq!(fmt_sek.format_fixed_decimal(&compact_value), "SEK\u{a0}12K");
+    }
+
+    #[test]
+    pub fn test_tr35_rule_3_below_1000() {
+        // Per UTS #35 (LDML Part 3: Numbers, Section 3.8, Rule 3 in Compact Number Formatting):
+        // "If the element value of P is '0', then use the corresponding non-compact number formatting instead,"
+        //
+        // Specifically, for numbers below 1,000 (which map to the uncompacted pattern "0"):
+        // * Per UTS #35: Suffix division and compact abbreviation steps (like "K" or "M") are skipped in favor
+        //   of standard non-compact pattern structures.
+        // * Per current ICU4X `CompactDecimalFormatter` implementation: Maximum fractional digits are trimmed to 0
+        //   by default, stripping trailing zeros (so 12 USD formats as "$12" instead of "$12.00", and 990 USD as "$990").
+        let prefs_en = locale!("en-US").into();
+        let usd = CurrencyCode(tinystr!(3, "USD"));
+        let fmt_usd = CurrencyFormatter::try_new_compact_symbol(prefs_en, usd).unwrap();
+
+        // Positive cases
+        let val_12 = "12".parse().unwrap();
+        assert_writeable_eq!(fmt_usd.format_fixed_decimal(&val_12), "$12");
+
+        let val_990 = "990".parse().unwrap();
+        assert_writeable_eq!(fmt_usd.format_fixed_decimal(&val_990), "$990");
+
+        let val_1200 = "1200".parse().unwrap();
+        assert_writeable_eq!(fmt_usd.format_fixed_decimal(&val_1200), "$1.2K");
+
+        // Negative cases (pattern selection and Rule 3 fallback operate on absolute magnitude)
+        let val_neg_12 = "-12".parse().unwrap();
+        assert_writeable_eq!(fmt_usd.format_fixed_decimal(&val_neg_12), "-$12");
+
+        let val_neg_990 = "-990".parse().unwrap();
+        assert_writeable_eq!(fmt_usd.format_fixed_decimal(&val_neg_990), "-$990");
+
+        let val_neg_1200 = "-1200".parse().unwrap();
+        assert_writeable_eq!(fmt_usd.format_fixed_decimal(&val_neg_1200), "-$1.2K");
     }
 
     #[test]
