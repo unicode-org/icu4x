@@ -43,7 +43,6 @@ impl DataProvider<TimezoneNamesEssentialsV1> for SourceDataProvider {
             payload: DataPayload::from_owned(TimeZoneEssentials {
                 offset_separator,
                 offset_pattern: Cow::Owned(time_zone_names.gmt_format.0.clone()),
-                offset_zero: time_zone_names.gmt_zero_format.clone().into(),
                 offset_unknown: time_zone_names.gmt_unknown_format.clone().into(),
             }),
         })
