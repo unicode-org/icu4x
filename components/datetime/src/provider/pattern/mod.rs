@@ -35,17 +35,23 @@ pub use item::{GenericPatternItem, PatternItem};
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
 pub enum TimeGranularity {
-    /// No time is in the pattern.
+    /// No time fields are in the pattern, or the smallest time unit is 23/24-hour style hours (e.g., `H` or `k`).
+    ///
+    /// When formatting with [`TimePrecision::MinuteOptional`](crate::options::TimePrecision::MinuteOptional),
+    /// zero minutes are retained for 23/24-hour style hours (formatting `15:00:00` as `15:00`).
     #[default]
-    None,
-    /// Smallest time unit = hours.
-    Hours,
+    None = 0,
+    /// Smallest time unit is 12-hour style hours (e.g., `h` or `K`).
+    ///
+    /// When formatting with [`TimePrecision::MinuteOptional`](crate::options::TimePrecision::MinuteOptional),
+    /// zero minutes are omitted for 12-hour style hours (formatting `15:00:00` as `3 PM`).
+    Hours = 1,
     /// Smallest time unit = minutes.
-    Minutes,
+    Minutes = 2,
     /// Smallest time unit = seconds.
-    Seconds,
+    Seconds = 3,
     /// Smallest time unit = Nanoseconds.
-    Nanoseconds,
+    Nanoseconds = 4,
 }
 
 impl TimeGranularity {
@@ -62,10 +68,19 @@ impl TimeGranularity {
         }
     }
 
+    pub(crate) fn coarse_hour_cycle(self) -> Option<CoarseHourCycle> {
+        match self {
+            Self::None => Some(CoarseHourCycle::H23),
+            Self::Hours => Some(CoarseHourCycle::H11H12),
+            _ => None,
+        }
+    }
+
     #[inline]
     pub(crate) fn from_ordinal(ordinal: u8) -> TimeGranularity {
         use TimeGranularity::*;
         match ordinal {
+            0 => None,
             1 => Hours,
             2 => Minutes,
             3 => Seconds,
@@ -89,11 +104,12 @@ impl TimeGranularity {
 
 impl From<PatternItem> for TimeGranularity {
     /// Retrieves the granularity of time represented by a [`PatternItem`].
-    /// If the [`PatternItem`] is not time-related, returns [`None`].
+    /// If the [`PatternItem`] is not time-related, returns [`TimeGranularity::None`].
     fn from(item: PatternItem) -> Self {
         match item {
             PatternItem::Field(field) => match field.symbol {
-                fields::FieldSymbol::Hour(_) => Self::Hours,
+                fields::FieldSymbol::Hour(fields::Hour::H23) => Self::None,
+                fields::FieldSymbol::Hour(fields::Hour::H11 | fields::Hour::H12) => Self::Hours,
                 fields::FieldSymbol::Minute => Self::Minutes,
                 fields::FieldSymbol::Second(_) => Self::Seconds,
                 fields::FieldSymbol::DecimalSecond(_) => Self::Nanoseconds,
