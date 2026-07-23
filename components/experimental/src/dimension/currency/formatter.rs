@@ -372,6 +372,8 @@ impl CurrencyFormatter<DecimalFormatter> {
         ]
     );
 
+    // We manually implement the compiled constructors because of the cross-crate dependency
+
     /// Creates a new [`CurrencyFormatter`] for formatting with short currency symbols from compiled locale data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -528,6 +530,10 @@ impl CurrencyFormatter<DecimalFormatter> {
     );
 
     /// Creates a new [`CurrencyFormatter`] for formatting with full currency display names from compiled locale data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Examples
     /// ```
