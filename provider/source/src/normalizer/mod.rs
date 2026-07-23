@@ -260,15 +260,18 @@ macro_rules! impl_composition_inert_property {
                 let ccc = ccc.as_borrowed();
 
                 let mut combines_forwards = HashSet::new();
-                let mut potential_seconds = HashSet::new();
+                let mut canonical_comp_seconds = HashSet::new();
                 let mut composes_with_lowest_reordered_ccc = HashMap::new();
 
+                // Compute `combines_forwards`, `canonical_comp_seconds`, and
+                // `composes_with_lowest_reordered_ccc` from the canonical
+                // decompositions of all primary composites.
                 for ch in (0..=char::MAX as u32).filter_map(char::from_u32) {
                     if let Decomposed::Expansion(starter, second) = canonical_decomp.decompose(ch)
                         && canonical_comp.compose(starter, second) == Some(ch)
                     {
                         combines_forwards.insert(starter);
-                        potential_seconds.insert(second);
+                        canonical_comp_seconds.insert(second);
                         let ccc = ccc.get(second);
                         if ccc > CanonicalCombiningClass::NotReordered {
                             composes_with_lowest_reordered_ccc
@@ -281,8 +284,8 @@ macro_rules! impl_composition_inert_property {
 
                 let mut combines_backwards = HashSet::new();
                 for ch in (0..=char::MAX as u32).filter_map(char::from_u32) {
-                    let starter = nfd.normalize_iter([ch].into_iter()).next().unwrap();
-                    if potential_seconds.contains(&starter) {
+                    let nfd_first = nfd.normalize_iter([ch].into_iter()).next().unwrap();
+                    if canonical_comp_seconds.contains(&nfd_first) {
                         combines_backwards.insert(ch);
                     }
                 }
@@ -318,6 +321,13 @@ macro_rules! impl_composition_inert_property {
                         if let Some(&lowest_ccc) = composes_with_lowest_reordered_ccc.get(&starter)
                             && lowest_ccc < ccc.get(follow)
                         {
+                            // There exists a character C (with
+                            // ccc=`lowest_ccc`) which composes with `starter`
+                            // and which is not blocked from `starter` in the
+                            // sequence <`starter`, `follow`, C>, nor therefore in
+                            // <`starter`, (rest of `decomposed`), C>,
+                            // thus the decomposition of <`ch`, C> would compose
+                            // to something different and `ch` is not inert.
                             continue 'cp;
                         }
 
