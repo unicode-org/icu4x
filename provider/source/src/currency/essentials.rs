@@ -112,10 +112,9 @@ fn extract_currency_essentials<'data>(
             NumberPatternItem::DecimalSeparator => {
                 Some(PatternItemCow::Placeholder(DoublePlaceholderKey::Place0))
             }
-            // TODO(#8263): replace the sign characters with the localized plus/minus signs
-            // from the decimal symbols data instead of the ASCII characters.
-            NumberPatternItem::MinusSign => Some(PatternItemCow::Literal(Cow::Borrowed("-"))),
-            NumberPatternItem::PlusSign => Some(PatternItemCow::Literal(Cow::Borrowed("+"))),
+            // TODO(#8263): Consider the case of explicit sign characters (`-`/`+`) in
+            // currency patterns: they are currently dropped here, and should instead be
+            // rendered using the localized plus/minus signs from the decimal symbols data.
             _ => None,
         })
     }
@@ -268,27 +267,5 @@ fn test_essentials() {
     assert_writeable_eq!(
         ar_eg.get().get_positive(false, false).interpolate((3, "$")),
         "\u{200f}3\u{a0}$"
-    );
-
-    // The `latn` patterns for `ar-EG` have an explicit negative subpattern
-    // (`‏#,##0.00 ¤;‏-#,##0.00 ¤`), so the minus sign must be preserved.
-    let ar_eg_latn: DataPayload<CurrencyEssentialsV1> = provider
-        .load(DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("latn"),
-                &langid!("ar-EG").into(),
-            ),
-            ..Default::default()
-        })
-        .unwrap()
-        .payload;
-
-    assert_writeable_eq!(
-        ar_eg_latn
-            .get()
-            .get_negative(false, false)
-            .unwrap()
-            .interpolate((3, "$")),
-        "\u{200f}-3\u{a0}$"
     );
 }

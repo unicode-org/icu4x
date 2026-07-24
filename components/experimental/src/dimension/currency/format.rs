@@ -287,23 +287,6 @@ mod tests {
     }
 
     #[test]
-    pub fn test_standard_negative_pattern() {
-        // `ar` with `latn` numbers has an explicit negative subpattern in the standard
-        // currency pattern (`‏#,##0.00 ¤;‏-#,##0.00 ¤`), which must be used instead of
-        // prepending a minus sign to the positive pattern.
-        let prefs = locale!("ar-EG-u-nu-latn").into();
-        let currency_code = CurrencyCode(tinystr!(3, "EGP"));
-        let negative_value = "-12345.67".parse().unwrap();
-
-        let fmt_symbol =
-            CurrencyFormatter::try_new_symbol(prefs, currency_code, Default::default()).unwrap();
-        assert_writeable_eq!(
-            fmt_symbol.format_fixed_decimal(&negative_value),
-            "\u{200f}-12,345.67\u{a0}ج.م.\u{200f}"
-        );
-    }
-
-    #[test]
     pub fn test_en_us_cad() {
         let prefs = locale!("en-US").into();
         let currency_code = CurrencyCode(tinystr!(3, "CAD"));

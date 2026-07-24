@@ -31494,12 +31494,12 @@ currency/displayname/v1, zu/ZAR, 44B, 21B, 3ee33af014eb8505
 currency/displayname/v1, zu/ZMK, 54B, 31B, abe05b241d692995
 currency/displayname/v1, zu/ZMW, 40B, 17B, 15b95ba727a96fd5
 currency/displayname/v1, zu/ZWG, -> ceb/ZWG
-currency/essentials/v1, <lookup>, 1310B, 265 identifiers
-currency/essentials/v1, <total>, 1950B, 954B, 34 unique payloads
+currency/essentials/v1, <lookup>, 1309B, 265 identifiers
+currency/essentials/v1, <total>, 1839B, 870B, 33 unique payloads
 currency/essentials/v1, af, 64B, 35B, 49ad131a5154a2f1
 currency/essentials/v1, ak, -> af
 currency/essentials/v1, am, -> af
-currency/essentials/v1, ar, 91B, 64B, 27196b54bba42d4d
+currency/essentials/v1, ar, 81B, 54B, a0b7bbe17b912bfc
 currency/essentials/v1, ar-BH, 49B, 18B, faa5164c24cf8ae
 currency/essentials/v1, ar-BH/latn, -> ar
 currency/essentials/v1, ar-DJ, -> ar-BH
@@ -31553,7 +31553,7 @@ currency/essentials/v1, bg, 54B, 25B, 7cc8abe3905bb94e
 currency/essentials/v1, bgc/latn, 46B, 15B, 346e9d5d766b520e
 currency/essentials/v1, bho, 50B, 19B, 54b822d9d785eba7
 currency/essentials/v1, bho/latn, -> bho
-currency/essentials/v1, blo, 53B, 26B, e780a0ad40bb8aef
+currency/essentials/v1, blo, 46B, 19B, adb35563ab4af339
 currency/essentials/v1, bn, 64B, 35B, 3400f979ca0ba061
 currency/essentials/v1, bn-IN, -> af
 currency/essentials/v1, bn-IN/latn, -> af
@@ -31573,7 +31573,7 @@ currency/essentials/v1, cy, -> af
 currency/essentials/v1, da, -> ast
 currency/essentials/v1, de, -> ast
 currency/essentials/v1, de-AT, -> bgc/latn
-currency/essentials/v1, de-CH, 51B, 24B, 88ea36c8d35b73b3
+currency/essentials/v1, de-CH, 50B, 23B, a82a857a7f8e426e
 currency/essentials/v1, de-LI, -> bgc/latn
 currency/essentials/v1, doi, -> bho
 currency/essentials/v1, doi/deva, -> bho
@@ -31585,7 +31585,7 @@ currency/essentials/v1, en-150, -> ast
 currency/essentials/v1, en-AT, -> bgc/latn
 currency/essentials/v1, en-CH, -> de-CH
 currency/essentials/v1, en-MV, -> bgc/latn
-currency/essentials/v1, en-NL, 61B, 34B, 5fc81e2eb4647cb9
+currency/essentials/v1, en-NL, 54B, 27B, a353ffe6a383d69c
 currency/essentials/v1, en-PL, -> bg
 currency/essentials/v1, en-PT, -> bg
 currency/essentials/v1, en-RO, -> bg
@@ -31596,7 +31596,7 @@ currency/essentials/v1, eo, 56B, 27B, 62175116b0724a42
 currency/essentials/v1, es, -> ast
 currency/essentials/v1, es-419, -> bho
 currency/essentials/v1, es-AR, 54B, 25B, 2f5ff3d2ba96526b
-currency/essentials/v1, es-CL, 55B, 28B, 4045b05109271a
+currency/essentials/v1, es-CL, 50B, 23B, 6f7e02fbfd562331
 currency/essentials/v1, es-CO, -> bgc/latn
 currency/essentials/v1, es-DO, -> af
 currency/essentials/v1, es-EC, -> es-CL
@@ -31616,14 +31616,14 @@ currency/essentials/v1, fi, -> ast
 currency/essentials/v1, fil, -> af
 currency/essentials/v1, fo, -> bg
 currency/essentials/v1, fr, -> bg
-currency/essentials/v1, fy, 61B, 34B, 79d5f27b77af9a3d
+currency/essentials/v1, fy, -> en-NL
 currency/essentials/v1, ga, -> af
 currency/essentials/v1, gaa, 54B, 24B, c1e6f9798f58f474
 currency/essentials/v1, gd, -> af
 currency/essentials/v1, gl, -> bg
 currency/essentials/v1, gu, -> af
 currency/essentials/v1, gu/gujr, -> af
-currency/essentials/v1, he, 65B, 38B, d7aad68e82249202
+currency/essentials/v1, he, 52B, 25B, 877e7b3ecd9f46f2
 currency/essentials/v1, hi, -> bho
 currency/essentials/v1, hi-Latn, -> bho
 currency/essentials/v1, hi/deva, -> bho
@@ -31684,7 +31684,7 @@ currency/essentials/v1, my/latn, -> my
 currency/essentials/v1, nds, -> ast
 currency/essentials/v1, ne/latn, -> bgc/latn
 currency/essentials/v1, nl, -> en-NL
-currency/essentials/v1, no, 67B, 39B, 89c367bd4fbb9459
+currency/essentials/v1, no, 60B, 32B, 1db0b8d9dc9370cc
 currency/essentials/v1, nqo/latn, -> bgc/latn
 currency/essentials/v1, nso, 50B, 19B, 608be281c919ff50
 currency/essentials/v1, oc, 58B, 28B, ba07f47f687dd430
