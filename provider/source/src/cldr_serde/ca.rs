@@ -257,6 +257,9 @@ pub(crate) struct AvailableFormats(pub(crate) BTreeMap<String, String>);
 pub(crate) struct IntervalFormats {
     #[serde(rename = "intervalFormatFallback")]
     pub(crate) fallback: String,
+    #[allow(dead_code)]
+    #[serde(rename = "intervalFormatRanges")]
+    pub(crate) interval_format_ranges: HashMap<String, String>,
     #[serde(flatten)]
     pub(crate) patterns: HashMap<String, HashMap<String, String>>,
 }
