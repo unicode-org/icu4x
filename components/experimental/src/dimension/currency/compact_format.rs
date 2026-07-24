@@ -8,33 +8,69 @@ mod tests {
     use tinystr::*;
     use writeable::assert_writeable_eq;
 
-    use crate::dimension::currency::{CurrencyCode, formatter::CurrencyFormatter};
+    use crate::dimension::currency::{
+        CurrencyCode,
+        formatter::CurrencyFormatter,
+        options::{CurrencyFormatterOptions, CurrencyUsage},
+    };
 
     #[test]
     pub fn test_en_us() {
         let prefs = locale!("en-US").into();
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
-        let fmt = CurrencyFormatter::try_new_compact_symbol(prefs, currency_code).unwrap();
+        let accounting = CurrencyFormatterOptions {
+            usage: CurrencyUsage::Accounting,
+            ..Default::default()
+        };
+        let fmt =
+            CurrencyFormatter::try_new_compact_symbol(prefs, currency_code, Default::default())
+                .unwrap();
+        let fmt_accounting =
+            CurrencyFormatter::try_new_compact_symbol(prefs, currency_code, accounting).unwrap();
+        let fmt_narrow = CurrencyFormatter::try_new_compact_symbol_narrow(
+            prefs,
+            currency_code,
+            Default::default(),
+        )
+        .unwrap();
+        let fmt_narrow_accounting =
+            CurrencyFormatter::try_new_compact_symbol_narrow(prefs, currency_code, accounting)
+                .unwrap();
 
         // Positive cases
         let positive_value = "12345.67".parse().unwrap();
-        let formatted_currency = fmt.format_fixed_decimal(&positive_value);
-        assert_writeable_eq!(formatted_currency, "$12K");
+        assert_writeable_eq!(fmt.format_fixed_decimal(&positive_value), "$12K");
+        assert_writeable_eq!(fmt_accounting.format_fixed_decimal(&positive_value), "$12K");
+        assert_writeable_eq!(fmt_narrow.format_fixed_decimal(&positive_value), "$12K");
+        assert_writeable_eq!(
+            fmt_narrow_accounting.format_fixed_decimal(&positive_value),
+            "$12K"
+        );
 
         let val_1299 = "1299".parse().unwrap();
         assert_writeable_eq!(fmt.format_fixed_decimal(&val_1299), "$1.3K");
 
         // Negative case
         let negative_value = "-12345.67".parse().unwrap();
-        let formatted_currency = fmt.format_fixed_decimal(&negative_value);
-        assert_writeable_eq!(formatted_currency, "-$12K");
+        assert_writeable_eq!(fmt.format_fixed_decimal(&negative_value), "-$12K");
+        assert_writeable_eq!(
+            fmt_accounting.format_fixed_decimal(&negative_value),
+            "($12K)"
+        );
+        assert_writeable_eq!(fmt_narrow.format_fixed_decimal(&negative_value), "-$12K");
+        assert_writeable_eq!(
+            fmt_narrow_accounting.format_fixed_decimal(&negative_value),
+            "($12K)"
+        );
     }
 
     #[test]
     pub fn test_fr_fr() {
         let prefs = locale!("fr-FR").into();
         let currency_code = CurrencyCode(tinystr!(3, "EUR"));
-        let fmt = CurrencyFormatter::try_new_compact_symbol(prefs, currency_code).unwrap();
+        let fmt =
+            CurrencyFormatter::try_new_compact_symbol(prefs, currency_code, Default::default())
+                .unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -51,7 +87,9 @@ mod tests {
     pub fn test_zh_cn() {
         let prefs = locale!("zh-CN").into();
         let currency_code = CurrencyCode(tinystr!(3, "CNY"));
-        let fmt = CurrencyFormatter::try_new_compact_symbol(prefs, currency_code).unwrap();
+        let fmt =
+            CurrencyFormatter::try_new_compact_symbol(prefs, currency_code, Default::default())
+                .unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -68,7 +106,9 @@ mod tests {
     pub fn test_ar_eg() {
         let prefs = locale!("ar-EG").into();
         let currency_code = CurrencyCode(tinystr!(3, "EGP"));
-        let fmt = CurrencyFormatter::try_new_compact_symbol(prefs, currency_code).unwrap();
+        let fmt =
+            CurrencyFormatter::try_new_compact_symbol(prefs, currency_code, Default::default())
+                .unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -163,8 +203,10 @@ mod tests {
         let usd = CurrencyCode(tinystr!(3, "USD"));
         let sek = CurrencyCode(tinystr!(3, "SEK"));
 
-        let fmt_usd = CurrencyFormatter::try_new_compact_symbol(prefs, usd).unwrap();
-        let fmt_sek = CurrencyFormatter::try_new_compact_symbol(prefs, sek).unwrap();
+        let fmt_usd =
+            CurrencyFormatter::try_new_compact_symbol(prefs, usd, Default::default()).unwrap();
+        let fmt_sek =
+            CurrencyFormatter::try_new_compact_symbol(prefs, sek, Default::default()).unwrap();
 
         // Small number (magnitude < 3, no compact suffix): should fall back cleanly
         let small_value = "123".parse().unwrap();
@@ -188,7 +230,8 @@ mod tests {
         //   by default, stripping trailing zeros (so 12 USD formats as "$12" instead of "$12.00", and 990 USD as "$990").
         let prefs_en = locale!("en-US").into();
         let usd = CurrencyCode(tinystr!(3, "USD"));
-        let fmt_usd = CurrencyFormatter::try_new_compact_symbol(prefs_en, usd).unwrap();
+        let fmt_usd =
+            CurrencyFormatter::try_new_compact_symbol(prefs_en, usd, Default::default()).unwrap();
 
         // Positive cases
         let val_12 = "12".parse().unwrap();
@@ -215,12 +258,19 @@ mod tests {
     pub fn test_compact_name_and_compact_long_symbol() {
         let prefs = locale!("en-US").into();
         let usd = CurrencyCode(tinystr!(3, "USD"));
+        let accounting = CurrencyFormatterOptions {
+            usage: CurrencyUsage::Accounting,
+            ..Default::default()
+        };
 
         let fmt_compact_name = CurrencyFormatter::try_new_compact_name(prefs, usd).unwrap();
         let fmt_compact_long_symbol =
-            CurrencyFormatter::try_new_compact_long_symbol(prefs, usd).unwrap();
+            CurrencyFormatter::try_new_compact_long_symbol(prefs, usd, Default::default()).unwrap();
+        let fmt_compact_long_symbol_accounting =
+            CurrencyFormatter::try_new_compact_long_symbol(prefs, usd, accounting).unwrap();
 
         let val = "12345.67".parse().unwrap();
+        let negative_val = "-12345.67".parse().unwrap();
         assert_writeable_eq!(
             fmt_compact_name.format_fixed_decimal(&val),
             "12K US dollars"
@@ -229,26 +279,77 @@ mod tests {
             fmt_compact_long_symbol.format_fixed_decimal(&val),
             "$12 thousand"
         );
+        assert_writeable_eq!(
+            fmt_compact_long_symbol_accounting.format_fixed_decimal(&val),
+            "$12 thousand"
+        );
+        assert_writeable_eq!(
+            fmt_compact_long_symbol.format_fixed_decimal(&negative_val),
+            "-$12 thousand"
+        );
+        assert_writeable_eq!(
+            fmt_compact_long_symbol_accounting.format_fixed_decimal(&negative_val),
+            "($12 thousand)"
+        );
     }
 
     #[test]
     pub fn test_compact_code() {
         let prefs_en = locale!("en-US").into();
         let currency_usd = CurrencyCode(tinystr!(3, "USD"));
+        let accounting = CurrencyFormatterOptions {
+            usage: CurrencyUsage::Accounting,
+            ..Default::default()
+        };
         let value = "12345.67".parse().unwrap();
+        let negative_value = "-12345.67".parse().unwrap();
 
         let fmt_compact_code =
-            CurrencyFormatter::try_new_compact_code(prefs_en, currency_usd).unwrap();
-        let fmt_compact_long_code =
-            CurrencyFormatter::try_new_compact_long_code(prefs_en, currency_usd).unwrap();
+            CurrencyFormatter::try_new_compact_code(prefs_en, currency_usd, Default::default())
+                .unwrap();
+        let fmt_compact_code_accounting =
+            CurrencyFormatter::try_new_compact_code(prefs_en, currency_usd, accounting).unwrap();
+        let fmt_compact_long_code = CurrencyFormatter::try_new_compact_long_code(
+            prefs_en,
+            currency_usd,
+            Default::default(),
+        )
+        .unwrap();
+        let fmt_compact_long_code_accounting =
+            CurrencyFormatter::try_new_compact_long_code(prefs_en, currency_usd, accounting)
+                .unwrap();
 
         assert_writeable_eq!(
             fmt_compact_code.format_fixed_decimal(&value),
             "USD\u{a0}12K"
         );
         assert_writeable_eq!(
+            fmt_compact_code_accounting.format_fixed_decimal(&value),
+            "USD\u{a0}12K"
+        );
+        assert_writeable_eq!(
+            fmt_compact_code.format_fixed_decimal(&negative_value),
+            "-USD\u{a0}12K"
+        );
+        assert_writeable_eq!(
+            fmt_compact_code_accounting.format_fixed_decimal(&negative_value),
+            "(USD\u{a0}12K)"
+        );
+        assert_writeable_eq!(
             fmt_compact_long_code.format_fixed_decimal(&value),
             "USD\u{a0}12 thousand"
+        );
+        assert_writeable_eq!(
+            fmt_compact_long_code_accounting.format_fixed_decimal(&value),
+            "USD\u{a0}12 thousand"
+        );
+        assert_writeable_eq!(
+            fmt_compact_long_code.format_fixed_decimal(&negative_value),
+            "-USD\u{a0}12 thousand"
+        );
+        assert_writeable_eq!(
+            fmt_compact_long_code_accounting.format_fixed_decimal(&negative_value),
+            "(USD\u{a0}12 thousand)"
         );
     }
 }

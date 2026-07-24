@@ -112,6 +112,9 @@ fn extract_currency_essentials<'data>(
             NumberPatternItem::DecimalSeparator => {
                 Some(PatternItemCow::Placeholder(DoublePlaceholderKey::Place0))
             }
+            // TODO(#8263): Consider the case of explicit sign characters (`-`/`+`) in
+            // currency patterns: they are currently dropped here, and should instead be
+            // rendered using the localized plus/minus signs from the decimal symbols data.
             _ => None,
         })
     }
