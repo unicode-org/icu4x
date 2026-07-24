@@ -103,6 +103,13 @@
                 }
               }
             },
+            "dayOfMonths": {
+              "format": {
+                "abbreviated": {
+                  "other": "{0}日"
+                }
+              }
+            },
             "days": {
               "format": {
                 "abbreviated": {
@@ -331,6 +338,10 @@
               "short": "Hmm"
             },
             "dateTimeFormats": {
+              "numericSeparators": {
+                "numericDateSeparator": "/",
+                "numericTimeSeparator": ":"
+              },
               "full": "{1} {0}",
               "long": "{1} {0}",
               "medium": "{1} {0}",
@@ -357,7 +368,9 @@
                 "GyMEd": "GGGGGy/M/d(E)",
                 "GyMMM": "Gy年M月",
                 "GyMMMd": "Gy年M月d日",
+                "GyMMMddd": "Gy年M月d日",
                 "GyMMMEd": "Gy年M月d日(E)",
+                "GyMMMEddd": "Gy年M月d日(E)",
                 "GyMMMEEEEd": "Gy年M月d日(EEEE)",
                 "h": "aK時",
                 "H": "H時",
@@ -373,9 +386,12 @@
                 "MEEEEd": "M/d(EEEE)",
                 "MMM": "M月",
                 "MMMd": "M月d日",
+                "MMMddd": "M月d日",
                 "MMMEd": "M月d日(E)",
+                "MMMEddd": "M月d日(E)",
                 "MMMEEEEd": "M月d日(EEEE)",
                 "MMMMd": "M月d日",
+                "MMMMddd": "M月d日",
                 "ms": "mm:ss",
                 "y": "Gy年",
                 "yyyy": "Gy年",
@@ -385,26 +401,35 @@
                 "yyyyMEEEEd": "GGGGGy/M/d(EEEE)",
                 "yyyyMMM": "Gy年M月",
                 "yyyyMMMd": "Gy年M月d日",
+                "yyyyMMMddd": "Gy年M月d日",
                 "yyyyMMMEd": "Gy年M月d日(E)",
+                "yyyyMMMEddd": "Gy年M月d日(E)",
                 "yyyyMMMEEEEd": "Gy年M月d日(EEEE)",
                 "yyyyMMMM": "Gy年M月",
                 "yyyyQQQ": "Gy/QQQ",
                 "yyyyQQQQ": "Gy年QQQQ"
               },
               "appendItems": {
+                "Date-Timezone": "{0} {1}",
                 "Day": "{0} ({2}: {1})",
-                "Day-Of-Week": "{0} {1}",
+                "Day-Of-Week": "{0}({1})",
                 "Era": "{1} {0}",
                 "Hour": "{0} ({2}: {1})",
                 "Minute": "{0} ({2}: {1})",
                 "Month": "{0} ({2}: {1})",
                 "Quarter": "{0} ({2}: {1})",
                 "Second": "{0} ({2}: {1})",
+                "Time-Day-Of-Week": "{0} ({1})",
                 "Timezone": "{0} {1}",
                 "Week": "{0} ({2}: {1})",
                 "Year": "{1} {0}"
               },
               "intervalFormats": {
+                "intervalFormatRanges": {
+                  "mixed": "{0}～{1}",
+                  "non-numeric": "{0}～{1}",
+                  "numeric": "{0}～{1}"
+                },
                 "intervalFormatFallback": "{0}～{1}",
                 "Bh": {
                   "B": "BK時～BK時",
@@ -529,6 +554,10 @@
                 },
                 "MMMM": {
                   "M": "M月～M月"
+                },
+                "MMMMd": {
+                  "d": "M月d日～d日",
+                  "M": "M月d日～M月d日"
                 },
                 "y": {
                   "y": "Gy年～y年"

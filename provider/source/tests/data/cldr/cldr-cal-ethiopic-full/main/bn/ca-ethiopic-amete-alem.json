@@ -103,6 +103,17 @@
                 }
               }
             },
+            "dayOfMonths": {
+              "format": {
+                "abbreviated": {
+                  "one": "{0}",
+                  "two": "{0}",
+                  "few": "{0}",
+                  "many": "{0}",
+                  "other": "{0}"
+                }
+              }
+            },
             "days": {
               "format": {
                 "abbreviated": {
@@ -184,10 +195,10 @@
             "quarters": {
               "format": {
                 "abbreviated": {
-                  "1": "ত্রৈমাসিক",
-                  "2": "দ্বিতীয় ত্রৈমাসিক",
-                  "3": "তৃতীয় ত্রৈমাসিক",
-                  "4": "চতুর্থ ত্রৈমাসিক"
+                  "1": "১ম ত্রৈমাসিক",
+                  "2": "২য় ত্রৈমাসিক",
+                  "3": "৩য় ত্রৈমাসিক",
+                  "4": "৪র্থ ত্রৈমাসিক"
                 },
                 "narrow": {
                   "1": "১",
@@ -196,10 +207,10 @@
                   "4": "৪"
                 },
                 "wide": {
-                  "1": "ত্রৈমাসিক",
-                  "2": "দ্বিতীয় ত্রৈমাসিক",
-                  "3": "তৃতীয় ত্রৈমাসিক",
-                  "4": "চতুর্থ ত্রৈমাসিক"
+                  "1": "১ম ত্রৈমাসিক",
+                  "2": "২য় ত্রৈমাসিক",
+                  "3": "৩য় ত্রৈমাসিক",
+                  "4": "৪র্থ ত্রৈমাসিক"
                 }
               },
               "stand-alone": {
@@ -216,10 +227,10 @@
                   "4": "৪"
                 },
                 "wide": {
-                  "1": "ত্রৈমাসিক",
-                  "2": "দ্বিতীয় ত্রৈমাসিক",
-                  "3": "তৃতীয় ত্রৈমাসিক",
-                  "4": "চতুর্থ ত্রৈমাসিক"
+                  "1": "১ম ত্রৈমাসিক",
+                  "2": "২য় ত্রৈমাসিক",
+                  "3": "৩য় ত্রৈমাসিক",
+                  "4": "৪র্থ ত্রৈমাসিক"
                 }
               }
             },
@@ -291,13 +302,16 @@
             },
             "eras": {
               "eraNames": {
-                "0": "AA"
+                "0": "AA",
+                "1": "AM"
               },
               "eraAbbr": {
-                "0": "AA"
+                "0": "AA",
+                "1": "AM"
               },
               "eraNarrow": {
-                "0": "AA"
+                "0": "AA",
+                "1": "AM"
               }
             },
             "dateFormats": {
@@ -325,6 +339,10 @@
               "short": "ahmm"
             },
             "dateTimeFormats": {
+              "numericSeparators": {
+                "numericDateSeparator": "/",
+                "numericTimeSeparator": ":"
+              },
               "full": "{1} {0}",
               "long": "{1} {0}",
               "medium": "{1} {0}",
@@ -350,7 +368,9 @@
                 "GyMEd": "E, d/M/y G",
                 "GyMMM": "MMM y G",
                 "GyMMMd": "d MMM, y G",
+                "GyMMMddd": "ddd MMM, y G",
                 "GyMMMEd": "E, d MMM, y G",
+                "GyMMMEddd": "E, ddd MMM, y G",
                 "h": "h a",
                 "H": "HH",
                 "hm": "h:mm a",
@@ -361,12 +381,15 @@
                 "Hv": "HH v",
                 "M": "L",
                 "Md": "d/M",
-                "MEd": "E, d-M",
+                "MEd": "E, d/M",
                 "MMdd": "dd-MM",
                 "MMM": "LLL",
                 "MMMd": "d MMM",
+                "MMMddd": "ddd MMM",
                 "MMMEd": "E d MMM",
+                "MMMEddd": "E, ddd MMM",
                 "MMMMd": "d MMMM",
+                "MMMMddd": "ddd MMMM",
                 "MMMMEd": "E d MMMM",
                 "ms": "mm:ss",
                 "y": "y G",
@@ -377,25 +400,34 @@
                 "yyyyMM": "MM-y G",
                 "yyyyMMM": "MMM y G",
                 "yyyyMMMd": "d MMM, y G",
+                "yyyyMMMddd": "ddd MMM, y G",
                 "yyyyMMMEd": "E, d MMM, y G",
+                "yyyyMMMEddd": "E, ddd, MMM, y G",
                 "yyyyMMMM": "MMMM y G",
                 "yyyyQQQ": "QQQ y G",
                 "yyyyQQQQ": "QQQQ y G"
               },
               "appendItems": {
+                "Date-Timezone": "{0} {1}",
                 "Day": "{0} ({2}: {1})",
-                "Day-Of-Week": "{0} {1}",
-                "Era": "{1} {0}",
+                "Day-Of-Week": "{1}, {0}",
+                "Era": "{0} {1}",
                 "Hour": "{0} ({2}: {1})",
                 "Minute": "{0} ({2}: {1})",
                 "Month": "{0} ({2}: {1})",
                 "Quarter": "{0} ({2}: {1})",
                 "Second": "{0} ({2}: {1})",
+                "Time-Day-Of-Week": "{1}, {0}",
                 "Timezone": "{0} {1}",
                 "Week": "{0} ({2}: {1})",
                 "Year": "{1} {0}"
               },
               "intervalFormats": {
+                "intervalFormatRanges": {
+                  "mixed": "{0} – {1}",
+                  "non-numeric": "{0}–{1}",
+                  "numeric": "{0}–{1}"
+                },
                 "intervalFormatFallback": "{0} – {1}",
                 "Bh": {
                   "B": "h B – h B",
@@ -414,7 +446,7 @@
                   "y": "y – y G"
                 },
                 "GyM": {
-                  "G": "M/y GGGGG – M/y GGGGG",
+                  "G": "M/y G – M/y G",
                   "M": "M/y – M/y GGGGG",
                   "y": "M/y – M/y GGGGG"
                 },
@@ -500,6 +532,10 @@
                 "MMMEd": {
                   "d": "E, d MMM – E, d MMM",
                   "M": "E, d MMM – E, d MMM"
+                },
+                "MMMMd": {
+                  "d": "d–d MMMM",
+                  "M": "d MMMM – d MMMM"
                 },
                 "y": {
                   "y": "y–y G"

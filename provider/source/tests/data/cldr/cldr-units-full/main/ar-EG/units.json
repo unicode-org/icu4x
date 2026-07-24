@@ -835,6 +835,10 @@
             "unitPattern-count-many": "{0} باوند قوة",
             "unitPattern-count-other": "{0} باوند قوة"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "gender": "masculine",
             "displayName": "نيوتن",
@@ -844,6 +848,10 @@
             "unitPattern-count-few": "{0} نيوتن",
             "unitPattern-count-many": "{0} نيوتن",
             "unitPattern-count-other": "{0} نيوتن"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "gender": "masculine",
@@ -954,7 +962,7 @@
             "unitPattern-count-other": "{0} نقطة لكل سنتيمتر"
           },
           "graphics-dot-per-inch": {
-            "displayName": "نقطة/بوصة",
+            "displayName": "نقاط لكل بوصة",
             "unitPattern-count-zero": "{0} نقطة لكل بوصة",
             "unitPattern-count-one": "{0} نقطة لكل بوصة",
             "unitPattern-count-two": "نقطتان لكل بوصة",
@@ -1091,6 +1099,10 @@
             "unitPattern-count-many": "{0} بوصة",
             "unitPattern-count-other": "{0} بوصة",
             "perUnitPattern": "{0}/بوصة"
+          },
+          "length-mil": {
+            "displayName": "mil [US]",
+            "unitPattern-count-other": "{0} mil [US]"
           },
           "length-parsec": {
             "displayName": "فرسخ فلكي",
@@ -2968,6 +2980,10 @@
             "unitPattern-count-many": "{0} باوند قوة",
             "unitPattern-count-other": "{0} باوند قوة"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "نيوتن",
             "unitPattern-count-zero": "{0} نيوتن",
@@ -2976,6 +2992,10 @@
             "unitPattern-count-few": "{0} نيوتن",
             "unitPattern-count-many": "{0} نيوتن",
             "unitPattern-count-other": "{0} نيوتن"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "ك.و.س لكل 100 كم",
@@ -3206,6 +3226,10 @@
             "unitPattern-count-many": "{0} بوصة",
             "unitPattern-count-other": "{0} بوصة",
             "perUnitPattern": "{0}/بوصة"
+          },
+          "length-mil": {
+            "displayName": "mil [US]",
+            "unitPattern-count-other": "{0} mil [US]"
           },
           "length-parsec": {
             "displayName": "فرسخ فلكي",
@@ -4440,12 +4464,12 @@
           },
           "angle-degree": {
             "displayName": "درجة",
-            "unitPattern-count-zero": "{0} درجة",
-            "unitPattern-count-one": "{0} درجة",
-            "unitPattern-count-two": "درجتان",
-            "unitPattern-count-few": "{0} درجات",
-            "unitPattern-count-many": "{0} درجة",
-            "unitPattern-count-other": "{0} درجة"
+            "unitPattern-count-zero": "‏{0} °",
+            "unitPattern-count-one": "{0} °‏",
+            "unitPattern-count-two": "{0} °‏",
+            "unitPattern-count-few": "{0} °‏",
+            "unitPattern-count-many": "{0} °‏",
+            "unitPattern-count-other": "{0} °‏"
           },
           "angle-arc-minute": {
             "displayName": "د قوسية",
@@ -5045,6 +5069,10 @@
             "unitPattern-count-many": "{0} باوند قوة",
             "unitPattern-count-other": "{0} باوند قوة"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "نيوتن",
             "unitPattern-count-zero": "{0} نيوتن",
@@ -5053,6 +5081,10 @@
             "unitPattern-count-few": "{0} نيوتن",
             "unitPattern-count-many": "{0} نيوتن",
             "unitPattern-count-other": "{0} نيوتن"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "ك.و.س/100 كم",
@@ -5283,6 +5315,10 @@
             "unitPattern-count-many": "{0} بوصة",
             "unitPattern-count-other": "{0} بوصة",
             "perUnitPattern": "{0}/بوصة"
+          },
+          "length-mil": {
+            "displayName": "mil [US]",
+            "unitPattern-count-other": "{0} mil [US]"
           },
           "length-parsec": {
             "displayName": "فرسخ فلكي",

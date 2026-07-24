@@ -8,8 +8,10 @@
         "timeZoneNames": {
           "hourFormat": "+HH:mm;−HH:mm",
           "gmtFormat": "UTC{0}",
-          "gmtZeroFormat": "UTC",
+          "gmtFormat-alt-utc": "UTC{0}",
           "gmtUnknownFormat": "GMT+?",
+          "gmtUnknownFormat-alt-utc": "UTC+?",
+          "dualOffsetFormat": "{0}/{1}",
           "regionFormat": "heure : {0}",
           "regionFormat-type-daylight": "{0} (heure d’été)",
           "regionFormat-type-standard": "{0} (heure standard)",
@@ -72,7 +74,7 @@
                   "standard": "temps universel coordonné"
                 },
                 "short": {
-                  "standard": "UTC"
+                  "standard": "TU"
                 }
               },
               "Unknown": {
@@ -107,9 +109,6 @@
               },
               "London": {
                 "_type": "zone",
-                "long": {
-                  "daylight": "heure d’été britannique"
-                },
                 "exemplarCity": "Londres"
               },
               "Guernsey": {
@@ -119,12 +118,6 @@
               "Athens": {
                 "_type": "zone",
                 "exemplarCity": "Athènes"
-              },
-              "Dublin": {
-                "_type": "zone",
-                "long": {
-                  "daylight": "heure d’été irlandaise"
-                }
               },
               "Isle_of_Man": {
                 "_type": "zone",
@@ -750,13 +743,6 @@
                 "daylight": "heure d’été de l’Alaska"
               }
             },
-            "Almaty": {
-              "long": {
-                "generic": "heure d’Alma Ata",
-                "standard": "heure normale d’Alma Ata",
-                "daylight": "heure d’été d’Alma Ata"
-              }
-            },
             "Amazon": {
               "long": {
                 "generic": "heure de l’Amazonie",
@@ -801,23 +787,9 @@
             },
             "Apia": {
               "long": {
-                "generic": "heure d’Apia",
-                "standard": "heure normale d’Apia",
-                "daylight": "heure d’été d’Apia"
-              }
-            },
-            "Aqtau": {
-              "long": {
-                "generic": "heure d’Aktaou",
-                "standard": "heure normale d’Aktaou",
-                "daylight": "heure d’été d’Aktaou"
-              }
-            },
-            "Aqtobe": {
-              "long": {
-                "generic": "heure d’Aqtöbe",
-                "standard": "heure normale d’Aqtöbe",
-                "daylight": "heure d’été d’Aqtöbe"
+                "generic": "heure des Samoa occidentales",
+                "standard": "heure normale des Samoa occidentales",
+                "daylight": "heure d’été des Samoa occidentales"
               }
             },
             "Arabian": {
@@ -919,6 +891,13 @@
                 "generic": "heure de Brasilia",
                 "standard": "heure normale de Brasilia",
                 "daylight": "heure d’été de Brasilia"
+              }
+            },
+            "British": {
+              "long": {
+                "generic": "heure britannique",
+                "standard": "heure moyenne de Greenwich",
+                "daylight": "heure d’été britannique"
               }
             },
             "Brunei": {
@@ -1092,6 +1071,16 @@
             "GMT": {
               "long": {
                 "standard": "heure moyenne de Greenwich"
+              },
+              "short": {
+                "standard": "GMT"
+              }
+            },
+            "Greenland": {
+              "long": {
+                "generic": "heure du Groenland",
+                "standard": "heure normale du Groenland",
+                "daylight": "heure d’été du Groenland"
               }
             },
             "Greenland_Eastern": {
@@ -1108,11 +1097,6 @@
                 "daylight": "heure d’été de l’Ouest du Groenland"
               }
             },
-            "Guam": {
-              "long": {
-                "standard": "heure de Guam"
-              }
-            },
             "Gulf": {
               "long": {
                 "standard": "heure du Golfe"
@@ -1125,7 +1109,7 @@
             },
             "Hawaii": {
               "long": {
-                "standard": "heure normale d’Hawaï - Aléoutiennes"
+                "standard": "heure d’Hawaï"
               }
             },
             "Hawaii_Aleutian": {
@@ -1186,6 +1170,13 @@
                 "daylight": "heure d’été d’Iran"
               }
             },
+            "Irish": {
+              "long": {
+                "generic": "heure irlandaise",
+                "standard": "heure moyenne de Greenwich",
+                "daylight": "heure d’été irlandaise"
+              }
+            },
             "Irkutsk": {
               "long": {
                 "generic": "heure d’Irkoutsk",
@@ -1209,9 +1200,9 @@
             },
             "Kamchatka": {
               "long": {
-                "generic": "heure de Petropavlovsk-Kamchatski",
-                "standard": "heure normale de Petropavlovsk-Kamchatski",
-                "daylight": "heure d’été de Petropavlovsk-Kamchatski"
+                "generic": "heure du Kamtchatka",
+                "standard": "heure normale du Kamtchatka",
+                "daylight": "heure d’été du Kamtchatka"
               }
             },
             "Kazakhstan": {
@@ -1380,11 +1371,6 @@
                 "daylight": "heure d’été de Fernando de Noronha"
               }
             },
-            "North_Mariana": {
-              "long": {
-                "standard": "heure des îles Mariannes du Nord"
-              }
-            },
             "Novosibirsk": {
               "long": {
                 "generic": "heure de Novossibirsk",
@@ -1490,9 +1476,7 @@
             },
             "Samoa": {
               "long": {
-                "generic": "heure des Samoa",
-                "standard": "heure normale des Samoa",
-                "daylight": "heure d’été des Samoa"
+                "standard": "heure normale des Samoa"
               }
             },
             "Seychelles": {
@@ -1563,7 +1547,7 @@
               "long": {
                 "generic": "heure de Turquie",
                 "standard": "heure normale de Turquie",
-                "daylight": "heure avancée de Turquie"
+                "daylight": "heure d’été de Turquie"
               }
             },
             "Turkmenistan": {
@@ -1583,6 +1567,11 @@
                 "generic": "heure de l’Uruguay",
                 "standard": "heure normale de l’Uruguay",
                 "daylight": "heure d’été de l’Uruguay"
+              }
+            },
+            "Urumqi": {
+              "long": {
+                "standard": "heure d’Ürümqi"
               }
             },
             "Uzbekistan": {

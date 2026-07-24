@@ -405,6 +405,7 @@ pub fn cldr_data() -> AbstractFs {
         "cldr-localenames-full/main/bn/localeDisplayNames.json",
         "cldr-localenames-full/main/bn/scripts.json",
         "cldr-localenames-full/main/bn/territories.json",
+        "cldr-localenames-full/main/bn/variants.json",
         "cldr-localenames-full/main/ccp/languages.json",
         "cldr-localenames-full/main/ccp/localeDisplayNames.json",
         "cldr-localenames-full/main/ccp/scripts.json",

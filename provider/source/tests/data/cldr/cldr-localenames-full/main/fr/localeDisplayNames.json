@@ -25,18 +25,34 @@
           "collation": "ordre de tri",
           "colNormalization": "tri normalisé",
           "colNumeric": "tri numérique",
+          "colReorder": "réorganisation des scripts/blocs",
           "colStrength": "priorité du tri",
           "currency": "devise",
+          "d0": "destination de transformation",
+          "dx": "exclusions des césures du dictionnaire",
           "em": "Présentation des Emoji",
+          "fw": "Premier jour de la semaine",
+          "h0": "mélangé",
           "hc": "système horaire (12 ou 24 heures)",
+          "i0": "Mode de saisie",
+          "k0": "Clavier",
+          "kv": "Les plus ignorés",
           "lb": "style de saut de ligne",
           "lw": "Sauts de ligne dans les mots",
+          "m0": "règles de transformation",
           "ms": "système de mesure",
+          "mu": "unité de mesure",
           "numbers": "nombres",
+          "rg": "région pour données supplémentaires",
+          "s0": "source de transformation",
+          "sd": "subdivision de région",
           "ss": "Saut de phrase après une abréviation",
+          "t": "transformation",
+          "t0": "traduction automatique",
           "timezone": "fuseau horaire",
           "va": "variante locale",
-          "x": "usage privé"
+          "x": "usage privé",
+          "x0": "transformation à usage privé"
         },
         "types": {
           "calendar": {
@@ -74,6 +90,7 @@
           },
           "colCaseFirst": {
             "lower": "Trier avec les minuscules d’abord",
+            "core": "majuscules",
             "no": "Trier sans ordre lié à la casse",
             "upper": "Trier avec les majuscules d’abord"
           },
@@ -106,14 +123,19 @@
             "no": "Trier les chiffres individuellement",
             "yes": "Trier les chiffres par ordre numérique"
           },
+          "colReorder": {
+            "core": "symbole"
+          },
           "colStrength": {
             "identical": "Tout trier",
+            "core": "base, accents, casse, variantes",
             "primary": "Ne trier que les lettres de base",
             "quaternary": "Trier en tenant compte des caractères accentués, de la casse, de la largeur et des caractères Kana",
             "secondary": "Trier en tenant compte des caractères accentués",
             "tertiary": "Trier en tenant compte des caractères accentués, de la casse et de la largeur"
           },
           "d0": {
+            "casefold": "en minuscules",
             "fwidth": "en pleine chasse",
             "hwidth": "en demi-chasse",
             "npinyin": "Numérique"
@@ -122,11 +144,16 @@
             "core": "texte"
           },
           "hc": {
-            "h11": "système horaire de 12 heures (0–11)",
+            "c12": "système horaire de 12 heures",
             "core": "24 (1–24)",
+            "c24": "système horaire de 24 heures",
+            "h11": "système horaire de 12 heures (0–11)",
             "h12": "système horaire de 12 heures (1–12)",
             "h23": "système horaire de 24 heures (0–23)",
             "h24": "système horaire de 24 heures (1–24)"
+          },
+          "kv": {
+            "core": "Décalage espaces, ponctuation, symboles sauf devises"
           },
           "lb": {
             "loose": "style de saut de ligne permissif",
@@ -150,6 +177,7 @@
           "numbers": {
             "arab": "chiffres arabes",
             "arabext": "chiffres arabes étendus",
+            "core": "chiffres traditionnels",
             "armn": "chiffres arméniens",
             "armnlow": "chiffres arméniens minuscules",
             "beng": "chiffres bengalis",
@@ -197,7 +225,17 @@
           },
           "ss": {
             "core": "Activé"
+          },
+          "t0": {
+            "und": "traduction automatique non spécifiée"
+          },
+          "va": {
+            "core": "variante POSIX"
           }
+        },
+        "typeValues": {
+          "no": "Désactivé",
+          "yes": "Activé"
         },
         "codePatterns": {
           "language": "langue : {0}",
