@@ -2,13 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Provider implementation backed by the Chinese AdaBoost segmentation model.
+//! Provider implementation backed by the Chinese `AdaBoost` segmentation model.
 
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use icu::segmenter::provider::{AdaboostData, SegmenterAdaboostAutoV1};
 use icu_provider::prelude::*;
 use std::collections::{HashMap, HashSet};
-use zerovec::{maps::ZeroMapKV, ZeroMap};
+use zerovec::{ZeroMap, maps::ZeroMapKV};
 
 const CHINESE_ADABOOST_ID: &str = "Chinese_adaboost";
 const CHINESE_ADABOOST_PATH: &str = "adaboost_cjk_segmenter/model.json";
@@ -117,13 +117,11 @@ fn parse_right_radical(key: &str) -> Result<(char, u8), DataError> {
 }
 
 impl DataProvider<SegmenterAdaboostAutoV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<SegmenterAdaboostAutoV1>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterAdaboostAutoV1>, DataError> {
         if req.id.marker_attributes.as_str() != CHINESE_ADABOOST_ID {
-            return Err(DataErrorKind::IdentifierNotFound
-                .with_req(SegmenterAdaboostAutoV1::INFO, req));
+            return Err(
+                DataErrorKind::IdentifierNotFound.with_req(SegmenterAdaboostAutoV1::INFO, req)
+            );
         }
         self.check_req::<SegmenterAdaboostAutoV1>(req)?;
 
@@ -175,14 +173,7 @@ mod tests {
         assert_eq!(counts.into_iter().sum::<usize>(), 5291);
 
         let raw_sum = [
-            &raw.uw2,
-            &raw.uw3,
-            &raw.uw4,
-            &raw.uw5,
-            &raw.bw2,
-            &raw.rad,
-            &raw.lsrid,
-            &raw.rsrid,
+            &raw.uw2, &raw.uw3, &raw.uw4, &raw.uw5, &raw.bw2, &raw.rad, &raw.lsrid, &raw.rsrid,
         ]
         .into_iter()
         .flat_map(|weights| weights.values())
@@ -229,9 +220,7 @@ mod tests {
                     add(model.lsrid.get_copied(&(previous_radical, current)));
                 }
                 if previous_radical != 0 && current_radical != 0 {
-                    add(model
-                        .rad
-                        .get_copied(&(previous_radical, current_radical)));
+                    add(model.rad.get_copied(&(previous_radical, current_radical)));
                 }
                 add(model.bw2.get_copied(&(previous, current)));
                 if i > 1 {
@@ -267,11 +256,10 @@ mod tests {
         );
         assert_eq!(
             parser_scores(&model, radicals, "根据最新的财报数据显示"),
-            [-2628, 9016, -1066, 9332, 7468, -2954, 2030, -506, 6794, -2664]
+            [
+                -2628, 9016, -1066, 9332, 7468, -2954, 2030, -506, 6794, -2664
+            ]
         );
-        assert_eq!(
-            parser_scores(&model, radicals, "𠀀中國"),
-            [1932, -3540]
-        );
+        assert_eq!(parser_scores(&model, radicals, "𠀀中國"), [1932, -3540]);
     }
 }

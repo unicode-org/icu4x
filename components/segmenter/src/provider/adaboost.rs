@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Data provider struct definitions for the AdaBoost segmenter.
+//! Data provider struct definitions for the `AdaBoost` segmenter.
 
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
-/// The data powering the Chinese AdaBoost segmentation model.
+/// The data powering the Chinese `AdaBoost` segmentation model.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -57,7 +57,7 @@ icu_provider::data_struct!(
 );
 
 icu_provider::data_marker!(
-    /// Chinese AdaBoost segmentation model data.
+    /// Chinese `AdaBoost` segmentation model data.
     SegmenterAdaboostAutoV1,
     "segmenter/adaboost/auto/v1",
     AdaboostData<'static>,
