@@ -71653,8 +71653,8 @@ transliterator/rules/v1, und/zh-t-es-419, 371B, 120B, db638e0f77aa97b3
 transliterator/rules/v1, und/zh-t-es-fonipa, 9765B, 9516B, c294408b3712b754
 transliterator/rules/v1, und/zh-t-ru, 19740B, 19492B, 429795f496bfb88e
 transliterator/rules/v1, und/zu-fonipa-t-zu, 1034B, 784B, 2889917275a3561f
-unit/ids/v1, <lookup>, 1362B, 155 identifiers
-unit/ids/v1, <total>, 310B, 183B, 155 unique payloads
+unit/ids/v1, <lookup>, 1374B, 157 identifiers
+unit/ids/v1, <total>, 314B, 187B, 157 unique payloads
 unit/ids/v1, und/acre, 2B, 1B, 667dd5401e6fd800
 unit/ids/v1, und/ampere, 2B, 1B, 39ac0ea289bcb316
 unit/ids/v1, und/arc-minute, 2B, 1B, 9531a4861d0b4d50
@@ -71695,6 +71695,7 @@ unit/ids/v1, und/dot, 2B, 1B, 32200d48ba22dd12
 unit/ids/v1, und/dram, 2B, 1B, dc44b9498747b0d5
 unit/ids/v1, und/drop, 2B, 1B, 2e507210662ba55
 unit/ids/v1, und/dunam, 2B, 1B, 1e0aab529d4cd4ff
+unit/ids/v1, und/dyne, 2B, 2B, 33a4e89b9865254d
 unit/ids/v1, und/earth-mass, 2B, 1B, 73a954421e50668f
 unit/ids/v1, und/earth-radius, 2B, 1B, 9208c26164ee7a99
 unit/ids/v1, und/electronvolt, 2B, 1B, e1f0d1011337e3f0
@@ -71771,6 +71772,7 @@ unit/ids/v1, und/pixel, 2B, 1B, 5d9aaec22a240bc7
 unit/ids/v1, und/point, 2B, 1B, cdf644cd42b8ec8c
 unit/ids/v1, und/pound, 2B, 1B, 33cf41871509d08
 unit/ids/v1, und/pound-force, 2B, 1B, ac281c00a2d339f0
+unit/ids/v1, und/poundal, 2B, 2B, 36c5cb65562d223f
 unit/ids/v1, und/quart, 2B, 1B, 5edaa35cf8fb34eb
 unit/ids/v1, und/quart-imperial, 2B, 1B, c1de4021175db157
 unit/ids/v1, und/quarter, 2B, 1B, 68951fbbb566adf7
@@ -72071,7 +72073,7 @@ units/essentials/v1, zh/long, 419B, 328B, 162bb2ddf0424f5
 units/essentials/v1, zu/long, 459B, 368B, 7be49427b5d78bb8
 units/essentials/v1, zu/narrow, 368B, 277B, 91d5c729f7a05ce9
 units/essentials/v1, zu/short, 366B, 275B, 1ede7e00e34c0972
-units/info/v1, <singleton>, 4579B, 4557B, e257b18ccba1f2fa
+units/info/v1, <singleton>, 4657B, 4635B, 261d97f3b3e99319
 units/names/area/core/v1, <lookup>, 16804B, 1113 identifiers
 units/names/area/core/v1, <total>, 37464B, 22991B, 630 unique payloads
 units/names/area/core/v1, af/long-hectare, 34B, 11B, bdbf2d1fdfceb6a3
