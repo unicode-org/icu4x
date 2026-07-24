@@ -207032,8 +207032,8 @@ transliterator/rules/v1, und/zh-t-es-419, 371B, 120B, db638e0f77aa97b3
 transliterator/rules/v1, und/zh-t-es-fonipa, 9765B, 9516B, c294408b3712b754
 transliterator/rules/v1, und/zh-t-ru, 19740B, 19492B, 429795f496bfb88e
 transliterator/rules/v1, und/zu-fonipa-t-zu, 1034B, 784B, 2889917275a3561f
-unit/ids/v1, <lookup>, 1377B, 157 identifiers
-unit/ids/v1, <total>, 314B, 186B, 157 unique payloads
+unit/ids/v1, <lookup>, 1362B, 155 identifiers
+unit/ids/v1, <total>, 310B, 184B, 155 unique payloads
 unit/ids/v1, und/acre, 2B, 1B, 667dd5401e6fd800
 unit/ids/v1, und/ampere, 2B, 1B, 39ac0ea289bcb316
 unit/ids/v1, und/arc-minute, 2B, 1B, 9531a4861d0b4d50
@@ -207141,7 +207141,6 @@ unit/ids/v1, und/part, 2B, 2B, 6f2a24d549ffed19
 unit/ids/v1, und/pascal, 2B, 1B, ce0e5ae64535af57
 unit/ids/v1, und/percent, 2B, 1B, 74d30d3ec4508c50
 unit/ids/v1, und/permille, 2B, 1B, a55d5db0a1b2a626
-unit/ids/v1, und/permillion, 2B, 1B, 86d81db3c0eab708
 unit/ids/v1, und/permyriad, 2B, 1B, 185851c328f3baea
 unit/ids/v1, und/pinch, 2B, 1B, 33469f3ea832d843
 unit/ids/v1, und/pint, 2B, 1B, 31e9f5038d65ed98
@@ -207149,7 +207148,6 @@ unit/ids/v1, und/pint-imperial, 2B, 1B, 70001b9d1dcbde29
 unit/ids/v1, und/pint-metric, 2B, 1B, 9647f6eabd4ec563
 unit/ids/v1, und/pixel, 2B, 1B, 5d9aaec22a240bc7
 unit/ids/v1, und/point, 2B, 1B, cdf644cd42b8ec8c
-unit/ids/v1, und/portion, 2B, 1B, f578f54de71a64e3
 unit/ids/v1, und/pound, 2B, 1B, 33cf41871509d08
 unit/ids/v1, und/pound-force, 2B, 1B, ac281c00a2d339f0
 unit/ids/v1, und/quart, 2B, 1B, 5edaa35cf8fb34eb
