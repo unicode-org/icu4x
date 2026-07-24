@@ -1,0 +1,28 @@
+{
+  "defaults": [
+    [
+      [
+        136,
+        "Standard"
+      ],
+      "TSİ"
+    ],
+    [
+      [
+        136,
+        "Daylight"
+      ],
+      "TSİ Yaz"
+    ]
+  ],
+  "overrides": [
+    [
+      [
+        "utc",
+        "Standard"
+      ],
+      "UTC"
+    ]
+  ],
+  "use_standard": []
+}

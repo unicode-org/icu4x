@@ -10,12 +10,12 @@
     7
   ],
   "elements": [
-    "EEEE, dd. MMMM y.",
+    "EEEE dd. MMMM y.",
     "E, dd. MM. y.",
     "E, d. M. yy.",
     "E, d. M. y.",
-    "EEEE, dd. MMMM y. GGG",
-    "GGG y-MM-dd, E",
-    "GGG y-M-d, E"
+    "EEEE dd. MMMM y. GGG",
+    "E dd.MM.y. GGG",
+    "E d.M.y. GGG"
   ]
 }

@@ -3,17 +3,6 @@
     "0": "এখন"
   },
   "past": {
-    "one": [
-      0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " সেকেন্ড আগে"
-        }
-      ]
-    ],
     "other": [
       0,
       [
@@ -21,7 +10,7 @@
           "Placeholder": "Singleton"
         },
         {
-          "Literal": " সেকেন্ড পূর্বে"
+          "Literal": " সেকেন্ড আগে"
         }
       ]
     ]
