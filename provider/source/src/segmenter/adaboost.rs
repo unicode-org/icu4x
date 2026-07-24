@@ -171,8 +171,8 @@ mod tests {
             raw.lsrid.len(),
             raw.rsrid.len(),
         ];
-        assert_eq!(counts, [410, 524, 514, 432, 341, 289, 141, 127]);
-        assert_eq!(counts.into_iter().sum::<usize>(), 2778);
+        assert_eq!(counts, [730, 802, 850, 746, 644, 734, 384, 401]);
+        assert_eq!(counts.into_iter().sum::<usize>(), 5291);
 
         let raw_sum = [
             &raw.uw2,
@@ -188,12 +188,12 @@ mod tests {
         .flat_map(|weights| weights.values())
         .map(|&weight| i64::from(weight))
         .sum::<i64>();
-        assert_eq!(raw_sum, 36);
+        assert_eq!(raw_sum, -8);
 
         let converted = raw
             .try_convert()
             .expect("the upstream AdaBoost model should convert");
-        assert_eq!(converted.bias_x2, -36);
+        assert_eq!(converted.bias_x2, 8);
         assert_eq!(converted.uw2.len(), counts[0]);
         assert_eq!(converted.uw3.len(), counts[1]);
         assert_eq!(converted.uw4.len(), counts[2]);
@@ -263,15 +263,15 @@ mod tests {
 
         assert_eq!(
             parser_scores(&model, radicals, "在香港實施愛國者治港"),
-            [5026, -2820, 3424, -828, 2126, 62, 702, 2804, -1710]
+            [5902, -4246, 4204, -2078, 2600, 280, 560, 3506, -1202]
         );
         assert_eq!(
             parser_scores(&model, radicals, "根据最新的财报数据显示"),
-            [-1340, 6180, -196, 9112, 7230, -2156, 1824, -630, 4712, -1824]
+            [-2628, 9016, -1066, 9332, 7468, -2954, 2030, -506, 6794, -2664]
         );
         assert_eq!(
             parser_scores(&model, radicals, "𠀀中國"),
-            [2038, -3212]
+            [1932, -3540]
         );
     }
 }

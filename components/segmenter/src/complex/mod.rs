@@ -9,6 +9,7 @@ use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 
 #[cfg(feature = "unstable")]
+#[allow(dead_code)]
 mod adaboost;
 mod dictionary;
 use dictionary::*;
