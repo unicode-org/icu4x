@@ -107,6 +107,9 @@ fn download_repo_sources() {
         )
         .unwrap();
 
+    // This model is maintained in ICU4X and is not part of the upstream LSTM
+    // release archive. Preserve it while refreshing the downloaded models.
+    let adaboost_model = include_bytes!("../../tests/data/lstm/adaboost_cjk_segmenter/model.json");
     let lstm_files = provider
         .segmenter_lstm()
         .unwrap()
@@ -116,6 +119,9 @@ fn download_repo_sources() {
             LSTM_GLOB.iter().copied().map(String::from).collect(),
         )
         .unwrap();
+    let adaboost_model_path = out_root.join("lstm/adaboost_cjk_segmenter/model.json");
+    std::fs::create_dir_all(adaboost_model_path.parent().unwrap()).unwrap();
+    std::fs::write(adaboost_model_path, adaboost_model).unwrap();
 
     let rscd_files = provider
         .rscd()

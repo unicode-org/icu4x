@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::indices::Utf16Indices;
-use crate::provider::{radical::UnihanRadicalsData, AdaboostData};
+use crate::provider::{AdaboostData, radical::UnihanRadicalsData};
 #[cfg(feature = "unstable")]
 use crate::scaffold::PotentiallyIllFormedUtf8;
 use crate::scaffold::{RuleBreakType, Utf8, Utf16};
@@ -36,10 +36,7 @@ impl<R: RuleBreakType> Iterator for AdaboostSegmenterIterator<'_, '_, R> {
 
             let previous = scalar_value(previous_raw);
             let current = scalar_value(current_raw);
-            let next = self
-                .chars
-                .peek()
-                .map(|(_, ch)| scalar_value(*ch));
+            let next = self.chars.peek().map(|(_, ch)| scalar_value(*ch));
             let should_break = self.segmenter.score_x2(
                 self.previous_previous,
                 previous,
@@ -90,9 +87,7 @@ impl<'data> AdaboostSegmenter<'data> {
         if current_radical != 0 {
             add_weight_x2(
                 &mut score,
-                self.model
-                    .rsrid
-                    .get_copied(&(previous, current_radical)),
+                self.model.rsrid.get_copied(&(previous, current_radical)),
             );
         }
 
@@ -100,9 +95,7 @@ impl<'data> AdaboostSegmenter<'data> {
         if previous_radical != 0 {
             add_weight_x2(
                 &mut score,
-                self.model
-                    .lsrid
-                    .get_copied(&(previous_radical, current)),
+                self.model.lsrid.get_copied(&(previous_radical, current)),
             );
         }
 
@@ -115,16 +108,10 @@ impl<'data> AdaboostSegmenter<'data> {
             );
         }
 
-        add_weight_x2(
-            &mut score,
-            self.model.bw2.get_copied(&(previous, current)),
-        );
+        add_weight_x2(&mut score, self.model.bw2.get_copied(&(previous, current)));
 
         if let Some(previous_previous) = previous_previous {
-            add_weight_x2(
-                &mut score,
-                self.model.uw2.get_copied(&previous_previous),
-            );
+            add_weight_x2(&mut score, self.model.uw2.get_copied(&previous_previous));
         }
 
         add_weight_x2(&mut score, self.model.uw3.get_copied(&previous));
@@ -195,7 +182,7 @@ mod tests {
     use crate::provider::Baked;
     use zerovec::ZeroMap;
 
-    fn empty_model(bias_x2: i32) -> AdaboostData<'static> {
+    fn empty_model<'a>(bias_x2: i32) -> AdaboostData<'a> {
         AdaboostData {
             bias_x2,
             uw2: ZeroMap::new(),
@@ -209,7 +196,7 @@ mod tests {
         }
     }
 
-    fn make_segmenter(model: &AdaboostData<'static>) -> AdaboostSegmenter<'_> {
+    fn make_segmenter<'a>(model: &'a AdaboostData<'a>) -> AdaboostSegmenter<'a> {
         AdaboostSegmenter::new(model, Baked::SINGLETON_SEGMENTER_UNIHAN_RADICAL_V1)
     }
 
@@ -228,9 +215,7 @@ mod tests {
             uw4: [('國', 3)].into_iter().collect(),
             uw5: [('乙', 4)].into_iter().collect(),
             bw2: [(('中', '國'), 5)].into_iter().collect(),
-            rad: [((left_radical, right_radical), 6)]
-                .into_iter()
-                .collect(),
+            rad: [((left_radical, right_radical), 6)].into_iter().collect(),
             lsrid: [((left_radical, '國'), 7)].into_iter().collect(),
             rsrid: [(('中', right_radical), 8)].into_iter().collect(),
         };
@@ -251,7 +236,7 @@ mod tests {
     fn streaming_boundaries_and_terminal() {
         let model = empty_model(-100);
         let segmenter = make_segmenter(&model);
-        assert_eq!(segmenter.segment_str("").collect::<Vec<_>>(), []);
+        assert!(segmenter.segment_str("").collect::<Vec<_>>().is_empty());
         assert_eq!(segmenter.segment_str("甲").collect::<Vec<_>>(), [3]);
 
         let input = "甲乙丙丁戊";
@@ -289,7 +274,9 @@ mod tests {
 
         let supplementary = "𠀀甲";
         assert_eq!(
-            segmenter.segment_utf8(supplementary.as_bytes()).collect::<Vec<_>>(),
+            segmenter
+                .segment_utf8(supplementary.as_bytes())
+                .collect::<Vec<_>>(),
             [4, 7]
         );
         assert_eq!(
@@ -300,9 +287,7 @@ mod tests {
         );
 
         assert_eq!(
-            Baked::SINGLETON_SEGMENTER_UNIHAN_RADICAL_V1
-                .trie
-                .get('A'),
+            Baked::SINGLETON_SEGMENTER_UNIHAN_RADICAL_V1.trie.get('A'),
             0
         );
         assert_eq!(segmenter.segment_str("AB").collect::<Vec<_>>(), [1, 2]);
