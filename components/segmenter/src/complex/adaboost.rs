@@ -12,7 +12,7 @@ use core::iter::Peekable;
 #[cfg(feature = "unstable")]
 use utf8_iter::Utf8CharIndices;
 
-/// A word break iterator using an AdaBoost model.
+/// A word break iterator using an `AdaBoost` model.
 #[derive(Debug)]
 pub(crate) struct AdaboostSegmenterIterator<'data, 's, R: RuleBreakType> {
     segmenter: AdaboostSegmenter<'data>,
@@ -58,7 +58,7 @@ impl<R: RuleBreakType> Iterator for AdaboostSegmenterIterator<'_, '_, R> {
     }
 }
 
-/// Evaluates an AdaBoost word segmentation model.
+/// Evaluates an `AdaBoost` word segmentation model.
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct AdaboostSegmenter<'data> {
     model: &'data AdaboostData<'data>,
