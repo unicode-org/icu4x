@@ -1272,26 +1272,28 @@ fn select_essentials_pattern<'a>(
     symbol_starts_with_letter: bool,
     symbol_ends_with_letter: bool,
 ) -> (&'a icu_pattern::DoublePlaceholderPattern, Sign) {
-    if sign == Sign::Negative {
-        let negative_pattern = if accounting {
-            essentials.get_negative_accounting(symbol_starts_with_letter, symbol_ends_with_letter)
-        } else {
-            essentials.get_negative(symbol_starts_with_letter, symbol_ends_with_letter)
-        };
-        // An explicit negative pattern already encodes the sign (e.g. parentheses or
-        // a minus sign inside the pattern), so the sign is dropped to avoid prepending
-        // a redundant minus.
-        if let Some(pattern) = negative_pattern {
+    if accounting {
+        // An explicit accounting negative pattern already encodes the sign
+        // (e.g. parentheses), so the sign is dropped to avoid prepending a
+        // redundant minus.
+        if sign == Sign::Negative
+            && let Some(pattern) = essentials
+                .get_negative_accounting(symbol_starts_with_letter, symbol_ends_with_letter)
+        {
             return (pattern, Sign::None);
         }
+        return (
+            essentials.get_positive_accounting(symbol_starts_with_letter, symbol_ends_with_letter),
+            sign,
+        );
     }
 
-    let positive_pattern = if accounting {
-        essentials.get_positive_accounting(symbol_starts_with_letter, symbol_ends_with_letter)
-    } else {
-        essentials.get_positive(symbol_starts_with_letter, symbol_ends_with_letter)
-    };
-    (positive_pattern, sign)
+    // NOTE: The explicit standard negative pattern (`essentials.get_negative`) is
+    // handled in a separate PR (#8264).
+    (
+        essentials.get_positive(symbol_starts_with_letter, symbol_ends_with_letter),
+        sign,
+    )
 }
 
 // TODO: Discuss reusing the `load_with_fallback` helper from `icu_decimal`
