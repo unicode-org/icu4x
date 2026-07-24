@@ -8,8 +8,10 @@
         "timeZoneNames": {
           "hourFormat": "+HH:mm;-HH:mm",
           "gmtFormat": "غرينتش{0}",
-          "gmtZeroFormat": "غرينتش",
+          "gmtFormat-alt-utc": "التوقيت العالمي {0}",
           "gmtUnknownFormat": "غرينتش+?",
+          "gmtUnknownFormat-alt-utc": "التوقيت العالمي+?",
+          "dualOffsetFormat": "{0}/{1}",
           "regionFormat": "توقيت {0}",
           "regionFormat-type-daylight": "توقيت {0} الصيفي",
           "regionFormat-type-standard": "توقيت {0} الرسمي",
@@ -30,7 +32,7 @@
               },
               "Easter": {
                 "_type": "zone",
-                "exemplarCity": "استر"
+                "exemplarCity": "جزيرة إيستر"
               },
               "Galapagos": {
                 "_type": "zone",
@@ -176,7 +178,7 @@
                   "standard": "التوقيت العالمي المنسق"
                 },
                 "short": {
-                  "standard": "UTC"
+                  "standard": "التوقيت العالمي"
                 }
               },
               "Unknown": {
@@ -255,9 +257,6 @@
               },
               "London": {
                 "_type": "zone",
-                "long": {
-                  "daylight": "توقيت بريطانيا الصيفي"
-                },
                 "exemplarCity": "لندن"
               },
               "Guernsey": {
@@ -282,9 +281,6 @@
               },
               "Dublin": {
                 "_type": "zone",
-                "long": {
-                  "daylight": "توقيت أيرلندا الرسمي"
-                },
                 "exemplarCity": "دبلن"
               },
               "Isle_of_Man": {
@@ -1738,6 +1734,13 @@
             }
           },
           "metazone": {
+            "Acre": {
+              "long": {
+                "generic": "توقيت أكري",
+                "standard": "توقيت أكري الرسمي",
+                "daylight": "توقيت أكري الصيفي"
+              }
+            },
             "Afghanistan": {
               "long": {
                 "standard": "توقيت أفغانستان"
@@ -1814,9 +1817,9 @@
             },
             "Apia": {
               "long": {
-                "generic": "توقيت آبيا",
-                "standard": "التوقيت الرسمي لآبيا",
-                "daylight": "التوقيت الصيفي لأبيا"
+                "generic": "توقيت ساموا الغربية",
+                "standard": "توقيت ساموا الغربية الرسمي",
+                "daylight": "توقيت ساموا الغربية الصيفي"
               }
             },
             "Arabian": {
@@ -1918,6 +1921,13 @@
                 "generic": "توقيت برازيليا",
                 "standard": "توقيت برازيليا الرسمي",
                 "daylight": "توقيت برازيليا الصيفي"
+              }
+            },
+            "British": {
+              "long": {
+                "generic": "توقيت بريطانيا",
+                "standard": "توقيت غرينتش",
+                "daylight": "توقيت بريطانيا الصيفي"
               }
             },
             "Brunei": {
@@ -2093,6 +2103,13 @@
                 "standard": "توقيت غرينتش"
               }
             },
+            "Greenland": {
+              "long": {
+                "generic": "توقيت غرينلاند",
+                "standard": "توقيت غرينلاند الرسمي",
+                "daylight": "توقيت غرينلاند الصيفي"
+              }
+            },
             "Greenland_Eastern": {
               "long": {
                 "generic": "توقيت شرق غرينلاند",
@@ -2107,11 +2124,6 @@
                 "daylight": "توقيت غرب غرينلاند الصيفي"
               }
             },
-            "Guam": {
-              "long": {
-                "standard": "توقيت غوام"
-              }
-            },
             "Gulf": {
               "long": {
                 "standard": "توقيت الخليج"
@@ -2124,7 +2136,7 @@
             },
             "Hawaii": {
               "long": {
-                "standard": "توقيت هاواي ألوتيان الرسمي"
+                "standard": "توقيت هاواي"
               }
             },
             "Hawaii_Aleutian": {
@@ -2185,6 +2197,13 @@
                 "daylight": "توقيت إيران الصيفي"
               }
             },
+            "Irish": {
+              "long": {
+                "generic": "توقيت أيرلندا",
+                "standard": "توقيت غرينتش",
+                "daylight": "توقيت أيرلندا الرسمي"
+              }
+            },
             "Irkutsk": {
               "long": {
                 "generic": "توقيت إركوتسك",
@@ -2208,9 +2227,9 @@
             },
             "Kamchatka": {
               "long": {
-                "generic": "توقيت كامشاتكا",
-                "standard": "توقيت بيتروبافلوفسك-كامتشاتسكي",
-                "daylight": "توقيت بيتروبافلوفسك-كامتشاتسكي الصيفي"
+                "generic": "توقيت كامتشاتكا",
+                "standard": "توقيت كامتشاتكا الرسمي",
+                "daylight": "توقيت كامتشاتكا الصيفي"
               }
             },
             "Kazakhstan": {
@@ -2379,11 +2398,6 @@
                 "daylight": "توقيت فرناندو دي نورونها الصيفي"
               }
             },
-            "North_Mariana": {
-              "long": {
-                "standard": "توقيت جزر ماريانا الشمالية"
-              }
-            },
             "Novosibirsk": {
               "long": {
                 "generic": "توقيت نوفوسيبيرسك",
@@ -2483,15 +2497,13 @@
             "Samara": {
               "long": {
                 "generic": "توقيت سامارا",
-                "standard": "توقيت سمارا",
-                "daylight": "توقيت سمارا الصيفي"
+                "standard": "توقيت سامارا الرسمي",
+                "daylight": "توقيت سامارا الصيفي"
               }
             },
             "Samoa": {
               "long": {
-                "generic": "توقيت ساموا",
-                "standard": "توقيت ساموا الرسمي",
-                "daylight": "توقيت ساموا الصيفي"
+                "standard": "توقيت ساموا الرسمي"
               }
             },
             "Seychelles": {
@@ -2558,6 +2570,13 @@
                 "standard": "توقيت شوك"
               }
             },
+            "Turkey": {
+              "long": {
+                "generic": "توقيت تركيا",
+                "standard": "توقيت تركيا الرسمي",
+                "daylight": "توقيت تركيا الصيفي"
+              }
+            },
             "Turkmenistan": {
               "long": {
                 "generic": "توقيت تركمانستان",
@@ -2575,6 +2594,11 @@
                 "generic": "توقيت أوروغواي",
                 "standard": "توقيت أوروغواي الرسمي",
                 "daylight": "توقيت أوروغواي الصيفي"
+              }
+            },
+            "Urumqi": {
+              "long": {
+                "standard": "توقيت أورومتشي"
               }
             },
             "Uzbekistan": {

@@ -234,7 +234,9 @@
           },
           "CHF": {
             "displayName": "𑄥𑄭𑄪𑄥𑄴 𑄜𑄳𑄢𑄀",
-            "displayName-count-other": "𑄥𑄭𑄪𑄥𑄴 𑄜𑄳𑄢𑄀"
+            "displayName-count-other": "𑄥𑄭𑄪𑄥𑄴 𑄜𑄳𑄢𑄀",
+            "symbol": "CHF",
+            "symbol-alt-narrow": "Fr."
           },
           "CLF": {
             "displayName": "𑄌𑄨𑄣𑄨𑄠𑄚𑄴 𑄃𑄪𑄚𑄨𑄘𑄘𑄬𑄥𑄴 𑄘𑄨 𑄜𑄮𑄟𑄬𑄚𑄴𑄖𑄮",

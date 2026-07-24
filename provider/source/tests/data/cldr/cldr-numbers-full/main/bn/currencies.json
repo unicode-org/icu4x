@@ -24,8 +24,9 @@
             "symbol-alt-narrow": "؋"
           },
           "ALL": {
-            "displayName": "আলবেনিয়ান লেক",
-            "displayName-count-other": "আলবেনিয়ান লেক"
+            "displayName": "আলবেনীয় লেক",
+            "displayName-count-one": "আলবেনীয় লেক",
+            "displayName-count-other": "আলবেনীয় লেক"
           },
           "AMD": {
             "displayName": "আরমেনিয়ান দ্রাম",
@@ -71,8 +72,9 @@
             "displayName-count-other": "অস্ট্রিয়ান শিলিং"
           },
           "AUD": {
-            "displayName": "অস্ট্রেলিয়ান ডলার",
-            "displayName-count-other": "অস্ট্রেলিয়ান ডলার",
+            "displayName": "অস্ট্রেলীয় ডলার",
+            "displayName-count-one": "অস্ট্রেলীয় ডলার",
+            "displayName-count-other": "অস্ট্রেলীয় ডলার",
             "symbol": "A$",
             "symbol-alt-narrow": "$"
           },
@@ -115,11 +117,13 @@
           },
           "BEF": {
             "displayName": "বেলজিয়ান ফ্রাঙ্ক",
+            "displayName-count-one": "বেলজীয় ফ্রাঙ্ক",
             "displayName-count-other": "বেলজিয়ান ফ্রাঙ্ক"
           },
           "BEL": {
             "displayName": "বেলজিয়ান ফ্রাঙ্ক (আর্থিক)",
-            "displayName-count-other": "বেলজিয়ান ফ্রাঙ্ক (আর্থিক)"
+            "displayName-count-one": "বেলজীয় ফ্রাঙ্ক (আর্থিক)",
+            "displayName-count-other": "বেলজীয় ফ্রাঙ্ক (আর্থিক)"
           },
           "BGL": {
             "displayName": "বুলগেরীয় হার্ড লেভ",
@@ -239,7 +243,9 @@
           },
           "CHF": {
             "displayName": "সুইস ফ্রাঁ",
-            "displayName-count-other": "সুইস ফ্রাঁ"
+            "displayName-count-other": "সুইস ফ্রাঁ",
+            "symbol": "CHF",
+            "symbol-alt-narrow": "Fr."
           },
           "CHW": {
             "displayName": "সুইজারল্যান্ড ফ্রাঙ্ক",
@@ -255,12 +261,14 @@
             "symbol-alt-narrow": "$"
           },
           "CNH": {
-            "displayName": "চাইনিজ ইউয়ান (অফশোর)",
-            "displayName-count-other": "চাইনিজ ইউয়ান (অফশোর)"
+            "displayName": "চীনা ইউয়ান (অফশোর)",
+            "displayName-count-one": "চীনা ইউয়ান (অফশোর)",
+            "displayName-count-other": "চীনা ইউয়ান (অফশোর)"
           },
           "CNY": {
-            "displayName": "চীনা য়ুয়ান",
-            "displayName-count-other": "চীনা য়ুয়ান",
+            "displayName": "চীনা ইউয়ান",
+            "displayName-count-one": "চীনা ইউয়ান",
+            "displayName-count-other": "চীনা ইউয়ান",
             "symbol": "CN¥",
             "symbol-alt-narrow": "¥"
           },
@@ -305,8 +313,9 @@
             "displayName-count-other": "সাইপ্রাস পাউন্ড"
           },
           "CZK": {
-            "displayName": "চেক প্রজাতন্ত্র কোরুনা",
-            "displayName-count-other": "চেক প্রজাতন্ত্র কোরুনা",
+            "displayName": "চেক কোরুনা",
+            "displayName-count-one": "চেক কোরুনা",
+            "displayName-count-other": "চেক কোরুনাস",
             "symbol-alt-narrow": "Kč"
           },
           "DDM": {
@@ -526,13 +535,14 @@
             "displayName-count-other": "ইরাকি দিনার"
           },
           "IRR": {
-            "displayName": "ইরানিয়ান রিয়াল",
-            "displayName-count-other": "ইরানিয়ান রিয়াল"
+            "displayName": "ইরানি রিয়াল",
+            "displayName-count-one": "ইরানি রিয়াল",
+            "displayName-count-other": "ইরানি রিয়াল"
           },
           "ISK": {
             "displayName": "আইসল্যান্ডীয় ক্রোনা",
             "displayName-count-one": "আইসল্যান্ডীয় ক্রোনা",
-            "displayName-count-other": "আইসল্যান্ড ক্রৌন",
+            "displayName-count-other": "আইসল্যান্ডীয় ক্রোনা",
             "symbol-alt-narrow": "kr"
           },
           "ITL": {
@@ -665,8 +675,9 @@
             "displayName-count-other": "মোরোক্কান ফ্রাঙ্ক"
           },
           "MDL": {
-            "displayName": "মোল্ডোভান লেয়ু",
-            "displayName-count-other": "মোল্ডোভান লেয়ু"
+            "displayName": "মোল্ডোভান লিউ",
+            "displayName-count-one": "মোল্ডোভান লিউ",
+            "displayName-count-other": "মোল্ডোভান লেই"
           },
           "MGA": {
             "displayName": "মাদাগাস্কার আরিয়ারি",
@@ -1049,13 +1060,15 @@
             "displayName-count-other": "তাঞ্জনিয়া শিলিং"
           },
           "UAH": {
-            "displayName": "ইউক্রেইন হৃভনিয়া",
-            "displayName-count-other": "ইউক্রেইন হৃভনিয়া",
+            "displayName": "ইউক্রেনীয় রিভনিয়া",
+            "displayName-count-one": "ইউক্রেনীয় রিভনিয়া",
+            "displayName-count-other": "ইউক্রেনীয় রিভনিয়া",
             "symbol-alt-narrow": "₴"
           },
           "UAK": {
             "displayName": "ইউক্রেইন কার্বোভ্যান্টস",
-            "displayName-count-other": "ইউক্রেইন কার্বোভ্যান্টস"
+            "displayName-count-one": "ইউক্রেনীয় কার্বোভ্যান্টস",
+            "displayName-count-other": "ইউক্রেনীয় কার্বোভ্যান্টস"
           },
           "UGS": {
             "displayName": "উগান্ডান শিলিং (১৯৬৬–১৯৮৭)",
@@ -1110,8 +1123,9 @@
             "displayName-count-other": "ভেনিজুয়েলীয় বলিভার"
           },
           "VND": {
-            "displayName": "ভিয়েতনামি ডঙ্গ",
-            "displayName-count-other": "ভিয়েতনামি ডঙ্গ",
+            "displayName": "ভিয়েতনামী ডং",
+            "displayName-count-one": "ভিয়েতনামী ডং",
+            "displayName-count-other": "ভিয়েতনামী ডং",
             "symbol": "₫",
             "symbol-alt-narrow": "₫"
           },
@@ -1148,7 +1162,6 @@
           },
           "XCG": {
             "displayName": "ক্যারিবিয়ান গিল্ডার",
-            "displayName-count-one": "ক্যারিবিয়ান গিল্ডার",
             "displayName-count-other": "ক্যারিবিয়ান গিল্ডার",
             "symbol": "Cg."
           },

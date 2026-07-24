@@ -330,7 +330,9 @@
             "displayName-count-one": "швейцарский франк",
             "displayName-count-few": "швейцарских франка",
             "displayName-count-many": "швейцарских франков",
-            "displayName-count-other": "швейцарского франка"
+            "displayName-count-other": "швейцарского франка",
+            "symbol": "CHF",
+            "symbol-alt-narrow": "Fr."
           },
           "CHW": {
             "displayName": "WIR франк",

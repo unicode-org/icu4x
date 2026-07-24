@@ -1056,6 +1056,22 @@
       "originCountry": "JP",
       "likelyLanguage": "ja"
     },
+    "Jurc": {
+      "rank": 33,
+      "age": {
+        "m_version_": 301989888
+      },
+      "sampleChar": "𘼚",
+      "idUsage": "EXCLUSION",
+      "rtl": "NO",
+      "lbLetters": "YES",
+      "hasCase": "NO",
+      "shapingReq": "NO",
+      "ime": "YES",
+      "density": 3,
+      "originCountry": "CN",
+      "likelyLanguage": "juc"
+    },
     "Kali": {
       "rank": 33,
       "age": {
@@ -1920,6 +1936,22 @@
       "originCountry": "MM",
       "likelyLanguage": "ctd"
     },
+    "Pcun": {
+      "rank": 33,
+      "age": {
+        "m_version_": 301989888
+      },
+      "sampleChar": "𒖭",
+      "idUsage": "EXCLUSION",
+      "rtl": "NO",
+      "lbLetters": "NO",
+      "hasCase": "NO",
+      "shapingReq": "NO",
+      "ime": "YES",
+      "density": 3,
+      "originCountry": "IQ",
+      "likelyLanguage": "und"
+    },
     "Perm": {
       "rank": 33,
       "age": {
@@ -2127,6 +2159,22 @@
       "density": 1,
       "originCountry": "IN",
       "likelyLanguage": "saz"
+    },
+    "Seal": {
+      "rank": 33,
+      "age": {
+        "m_version_": 301989888
+      },
+      "sampleChar": "𾨐",
+      "idUsage": "EXCLUSION",
+      "rtl": "NO",
+      "lbLetters": "YES",
+      "hasCase": "NO",
+      "shapingReq": "NO",
+      "ime": "YES",
+      "density": 3,
+      "originCountry": "CN",
+      "likelyLanguage": "och"
     },
     "Sgnw": {
       "rank": 33,
