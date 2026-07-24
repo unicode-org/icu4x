@@ -39,8 +39,8 @@
               "relativeTimePattern-count-other": "{0} বছরে"
             },
             "relativeTime-type-past": {
-              "relativeTimePattern-count-one": "{0} বছর পূর্বে",
-              "relativeTimePattern-count-other": "{0} বছর পূর্বে"
+              "relativeTimePattern-count-one": "{0} বছর আগে",
+              "relativeTimePattern-count-other": "{0} বছর আগে"
             }
           },
           "year-narrow": {
@@ -53,8 +53,8 @@
               "relativeTimePattern-count-other": "{0} বছরে"
             },
             "relativeTime-type-past": {
-              "relativeTimePattern-count-one": "{0} বছর পূর্বে",
-              "relativeTimePattern-count-other": "{0} বছর পূর্বে"
+              "relativeTimePattern-count-one": "{0} বছর আগে",
+              "relativeTimePattern-count-other": "{0} বছর আগে"
             }
           },
           "quarter": {
@@ -633,7 +633,7 @@
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} সেকেন্ড আগে",
-              "relativeTimePattern-count-other": "{0} সেকেন্ড পূর্বে"
+              "relativeTimePattern-count-other": "{0} সেকেন্ড আগে"
             }
           },
           "second-short": {

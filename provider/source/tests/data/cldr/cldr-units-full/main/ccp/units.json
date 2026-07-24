@@ -449,9 +449,17 @@
             "displayName": "lbf",
             "unitPattern-count-other": "{0} lbf"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "N",
             "unitPattern-count-other": "{0} N"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "kWh/100km",
@@ -561,6 +569,10 @@
             "displayName": "𑄃𑄨𑄚𑄴𑄌𑄨",
             "unitPattern-count-other": "{0} 𑄃𑄨𑄚𑄴𑄌𑄨",
             "perUnitPattern": "{0} 𑄛𑄳𑄢𑄧𑄖𑄨 𑄃𑄨𑄚𑄴𑄌𑄨"
+          },
+          "length-milliinch": {
+            "displayName": "milli-inch",
+            "unitPattern-count-other": "{0} milli-inch"
           },
           "length-parsec": {
             "displayName": "parsecs",
@@ -1572,9 +1584,17 @@
             "displayName": "lbf",
             "unitPattern-count-other": "{0} lbf"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "N",
             "unitPattern-count-other": "{0} N"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "kWh/100km",
@@ -1672,6 +1692,10 @@
             "displayName": "𑄃𑄨𑄚𑄴𑄌𑄨",
             "unitPattern-count-other": "{0} 𑄃𑄨𑄚𑄴𑄌𑄨",
             "perUnitPattern": "{0} 𑄛𑄳𑄢𑄧𑄖𑄨 𑄃𑄨𑄚𑄴𑄌𑄨"
+          },
+          "length-milliinch": {
+            "displayName": "milli-inch",
+            "unitPattern-count-other": "{0} milli-inch"
           },
           "length-parsec": {
             "displayName": "parsecs",
@@ -2638,9 +2662,17 @@
             "displayName": "lbf",
             "unitPattern-count-other": "{0} lbf"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "N",
             "unitPattern-count-other": "{0} N"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "kWh/100km",
@@ -2739,6 +2771,10 @@
             "displayName": "𑄃𑄨𑄚𑄴𑄌𑄨",
             "unitPattern-count-other": "{0} 𑄃𑄨𑄚𑄴𑄌𑄨",
             "perUnitPattern": "{0} 𑄛𑄳𑄢𑄧𑄖𑄨 𑄃𑄨𑄚𑄴𑄌𑄨"
+          },
+          "length-milliinch": {
+            "displayName": "milli-inch",
+            "unitPattern-count-other": "{0} milli-inch"
           },
           "length-parsec": {
             "displayName": "parsecs",

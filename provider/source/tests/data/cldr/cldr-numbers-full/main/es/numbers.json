@@ -156,7 +156,8 @@
           "pluralMinimalPairs-count-one": "{0} día",
           "pluralMinimalPairs-count-many": "{0} de días",
           "pluralMinimalPairs-count-other": "{0} días",
-          "other": "Toma la {0}.ª a la derecha.",
+          "one": "El {0}.ᵉʳ equipo clasificado ganó.",
+          "other": "El {0}.º equipo clasificado ganó.",
           "feminine": "La {0} es...",
           "masculine": "El {0} es…"
         }

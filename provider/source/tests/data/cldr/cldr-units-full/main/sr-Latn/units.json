@@ -971,6 +971,10 @@
             "unitPattern-count-few": "{0} funte sile",
             "unitPattern-count-other": "{0} funti sile"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "gender": "inanimate",
             "displayName": "njutni",
@@ -983,6 +987,10 @@
             "unitPattern-count-other": "{0} njutna",
             "genitive-count-other": "{0} njutna",
             "instrumental-count-other": "{0} njutna"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "gender": "inanimate",
@@ -1255,6 +1263,10 @@
             "unitPattern-count-few": "{0} inča",
             "unitPattern-count-other": "{0} inča",
             "perUnitPattern": "{0}/in"
+          },
+          "length-milliinch": {
+            "displayName": "milli-inch",
+            "unitPattern-count-other": "{0} milli-inch"
           },
           "length-parsec": {
             "displayName": "parseci",
@@ -2789,9 +2801,17 @@
             "displayName": "lbf",
             "unitPattern-count-other": "{0} lbf"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "njutn",
             "unitPattern-count-other": "{0} N"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "kWh/100km",
@@ -2911,6 +2931,10 @@
             "unitPattern-count-few": "{0} inča",
             "unitPattern-count-other": "{0} inča",
             "perUnitPattern": "{0}/in"
+          },
+          "length-milliinch": {
+            "displayName": "milli-inch",
+            "unitPattern-count-other": "{0} milli-inch"
           },
           "length-parsec": {
             "displayName": "parseci",
@@ -3118,8 +3142,6 @@
           },
           "speed-beaufort": {
             "displayName": "Bf",
-            "unitPattern-count-one": "B {0}",
-            "unitPattern-count-few": "B {0}",
             "unitPattern-count-other": "B {0}"
           },
           "temperature-generic": {
@@ -3940,9 +3962,17 @@
             "displayName": "lbf",
             "unitPattern-count-other": "{0} lbf"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "njutn",
             "unitPattern-count-other": "{0} N"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "kWh/100km",
@@ -4064,6 +4094,10 @@
             "unitPattern-count-few": "{0} in",
             "unitPattern-count-other": "{0} in",
             "perUnitPattern": "{0}/in"
+          },
+          "length-milliinch": {
+            "displayName": "milli-inch",
+            "unitPattern-count-other": "{0} milli-inch"
           },
           "length-parsec": {
             "displayName": "parseci",
@@ -4275,8 +4309,6 @@
           },
           "speed-beaufort": {
             "displayName": "Bf",
-            "unitPattern-count-one": "B {0}",
-            "unitPattern-count-few": "B {0}",
             "unitPattern-count-other": "B {0}"
           },
           "temperature-generic": {

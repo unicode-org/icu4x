@@ -265,7 +265,9 @@
           },
           "CHF": {
             "displayName": "ฟรังก์สวิส",
-            "displayName-count-other": "ฟรังก์สวิส"
+            "displayName-count-other": "ฟรังก์สวิส",
+            "symbol": "CHF",
+            "symbol-alt-narrow": "Fr."
           },
           "CHW": {
             "displayName": "ฟรังก์ดับเบิลยูไออาร์",
@@ -1175,8 +1177,8 @@
             "displayName-count-other": "ทาลาซามัว"
           },
           "XAF": {
-            "displayName": "ฟรังก์เซฟาธนาคารรัฐแอฟริกากลาง",
-            "displayName-count-other": "ฟรังก์เซฟาธนาคารรัฐแอฟริกากลาง",
+            "displayName": "ฟรังก์ซีเอฟเอแอฟริกาตะวันตก",
+            "displayName-count-other": "ฟรังก์ซีเอฟเอแอฟริกากลาง",
             "symbol": "FCFA"
           },
           "XAG": {

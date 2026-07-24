@@ -345,7 +345,9 @@
             "displayName": "švajcarski franak",
             "displayName-count-one": "švajcarski franak",
             "displayName-count-few": "švajcarska franka",
-            "displayName-count-other": "švajcarskih franaka"
+            "displayName-count-other": "švajcarskih franaka",
+            "symbol": "CHF",
+            "symbol-alt-narrow": "Fr."
           },
           "CHW": {
             "displayName": "WIR franak",
@@ -1685,8 +1687,6 @@
           },
           "XCG": {
             "displayName": "karipski gulden",
-            "displayName-count-one": "karipski gulden",
-            "displayName-count-few": "karipski gulden",
             "displayName-count-other": "karipski gulden",
             "symbol": "Cg."
           },
@@ -1835,8 +1835,6 @@
           },
           "ZWG": {
             "displayName": "zimbabveansko zlato",
-            "displayName-count-one": "zimbabveansko zlato",
-            "displayName-count-few": "zimbabveansko zlato",
             "displayName-count-other": "zimbabveansko zlato"
           },
           "ZWL": {

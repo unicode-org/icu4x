@@ -97,6 +97,16 @@
                 }
               }
             },
+            "dayOfMonths": {
+              "format": {
+                "abbreviated": {
+                  "one": "{0}st",
+                  "two": "{0}nd",
+                  "few": "{0}rd",
+                  "other": "{0}th"
+                }
+              }
+            },
             "days": {
               "format": {
                 "abbreviated": {
@@ -344,6 +354,10 @@
               "short": "ahmm"
             },
             "dateTimeFormats": {
+              "numericSeparators": {
+                "numericDateSeparator": "/",
+                "numericTimeSeparator": ":"
+              },
               "full": "{1}, {0}",
               "long": "{1}, {0}",
               "medium": "{1}, {0}",
@@ -372,7 +386,14 @@
                 "GyMEd": "E, M/d/y G",
                 "GyMMM": "MMM y G",
                 "GyMMMd": "MMM d, y G",
+                "GyMMMddd": "MMM ddd, y G",
                 "GyMMMEd": "E, MMM d, y G",
+                "GyMMMEddd": "E, MMM ddd, y G",
+                "GyMMMM": "MMMM y G",
+                "GyMMMMd": "MMMM d, y G",
+                "GyMMMMddd": "MMMM ddd, y G",
+                "GyMMMMEd": "E, MMMM d, y G",
+                "GyMMMMEddd": "E, MMMM ddd, y G",
                 "h": "h a",
                 "h-alt-ascii": "h a",
                 "H": "HH",
@@ -396,8 +417,13 @@
                 "MEd": "E, M/d",
                 "MMM": "LLL",
                 "MMMd": "MMM d",
+                "MMMddd": "MMM ddd",
                 "MMMEd": "E, MMM d",
+                "MMMEddd": "E, MMM ddd",
                 "MMMMd": "MMMM d",
+                "MMMMddd": "MMMM ddd",
+                "MMMMEd": "E, MMMM d",
+                "MMMMEddd": "E, MMMM ddd",
                 "MMMMW-count-one": "'week' W 'of' MMMM",
                 "MMMMW-count-other": "'week' W 'of' MMMM",
                 "ms": "mm:ss",
@@ -407,27 +433,43 @@
                 "yMEd": "E, M/d/y",
                 "yMMM": "MMM y",
                 "yMMMd": "MMM d, y",
+                "yMMMddd": "MMM ddd, y",
                 "yMMMEd": "E, MMM d, y",
+                "yMMMEddd": "E, MMM ddd, y",
                 "yMMMM": "MMMM y",
+                "yMMMMd": "MMMM d, y",
+                "yMMMMddd": "MMMM ddd, y",
+                "yMMMMEd": "E, MMMM d, y",
+                "yMMMMEddd": "E, MMMM ddd, y",
                 "yQQQ": "QQQ y",
                 "yQQQQ": "QQQQ y",
                 "yw-count-one": "'week' w 'of' Y",
-                "yw-count-other": "'week' w 'of' Y"
+                "yw-count-other": "'week' w 'of' Y",
+                "yy": "’yy",
+                "yyMMM": "MMM ’yy",
+                "yyMMMd": "MMM d, ’yy"
               },
               "appendItems": {
+                "Date-Timezone": "{0} {1}",
                 "Day": "{0} ({2}: {1})",
-                "Day-Of-Week": "{0} {1}",
+                "Day-Of-Week": "{1}, {0}",
                 "Era": "{0} {1}",
                 "Hour": "{0} ({2}: {1})",
                 "Minute": "{0} ({2}: {1})",
                 "Month": "{0} ({2}: {1})",
                 "Quarter": "{0} ({2}: {1})",
                 "Second": "{0} ({2}: {1})",
+                "Time-Day-Of-Week": "{1}, {0}",
                 "Timezone": "{0} {1}",
                 "Week": "{0} ({2}: {1})",
                 "Year": "{0} {1}"
               },
               "intervalFormats": {
+                "intervalFormatRanges": {
+                  "mixed": "{0} – {1}",
+                  "non-numeric": "{0} – {1}",
+                  "numeric": "{0}–{1}"
+                },
                 "intervalFormatFallback": "{0} – {1}",
                 "Bh": {
                   "B": "h B – h B",
@@ -532,6 +574,10 @@
                 "MMMEd": {
                   "d": "E, MMM d – E, MMM d",
                   "M": "E, MMM d – E, MMM d"
+                },
+                "MMMMd": {
+                  "d": "MMMM d – d",
+                  "M": "MMMM d – MMMM d"
                 },
                 "y": {
                   "y": "y – y"
