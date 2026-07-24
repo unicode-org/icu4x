@@ -692,8 +692,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         // minus sign to the entire positive pattern (e.g., `-¤#,##0` producing `-$12K`).
         // Therefore, `format_sign` is applied as the outermost wrapper around the glued currency string so
         // that the minus sign modifies the full monetary expression rather than just the numeric significand.
-        // When an explicit negative pattern already encodes the sign with literals (e.g. parentheses),
-        // `sign` is `Sign::None` so no redundant minus sign is prepended.
+        // When an explicit negative pattern exists, it already encodes the sign (e.g. parentheses,
+        // or a minus sign placed by the pattern), so `sign` is `Sign::None` and the pattern is
+        // interpolated with the absolute value only.
         V::format_sign(
             &self.value_formatter,
             pattern.interpolate((formatted_value, currency_str)),
@@ -705,9 +706,10 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
 /// Selects the pattern from the currency essentials for the given sign.
 ///
 /// If an explicit negative pattern exists for a negative value, it is returned along with
-/// [`Sign::None`]: such patterns encode the sign with literals (e.g. parentheses), so no
-/// minus sign should be applied on top of them. Otherwise, the positive pattern is returned
-/// with the original sign, and the sign is rendered by the value formatter.
+/// [`Sign::None`]: such patterns already encode the sign (e.g. parentheses, or a minus sign
+/// placed by the pattern), so the pattern is interpolated with the absolute value and no
+/// sign is applied on top of it. Otherwise, the positive pattern of the same category is
+/// returned with the original sign, and the sign is rendered by the value formatter.
 fn select_essentials_pattern<'a>(
     essentials: &'a super::super::provider::currency::essentials::CurrencyEssentials<'_>,
     sign: Sign,

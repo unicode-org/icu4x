@@ -112,6 +112,10 @@ fn extract_currency_essentials<'data>(
             NumberPatternItem::DecimalSeparator => {
                 Some(PatternItemCow::Placeholder(DoublePlaceholderKey::Place0))
             }
+            // TODO(#8263): Render the sign characters using the localized plus/minus
+            // signs from the decimal symbols data instead of the ASCII characters.
+            NumberPatternItem::MinusSign => Some(PatternItemCow::Literal(Cow::Borrowed("-"))),
+            NumberPatternItem::PlusSign => Some(PatternItemCow::Literal(Cow::Borrowed("+"))),
             _ => None,
         })
     }
@@ -129,31 +133,19 @@ fn extract_currency_essentials<'data>(
     fn create_negative_pattern<'data>(
         pattern: &NumberPattern,
     ) -> Result<Option<Cow<'data, DoublePlaceholderPattern>>, DataError> {
-        let Some(negative_items) = &pattern.negative else {
-            return Ok(None);
-        };
-        // Negative subpatterns that contain explicit sign characters (`-`/`+`) are not
-        // baked: prepending the value formatter's localized minus sign to the positive
-        // pattern produces an equivalent result, so only self-contained negative
-        // subpatterns that encode the sign with literals (e.g. parentheses like `($3)`)
-        // are baked and used as-is.
-        // TODO(#8263): Consider supporting such subpatterns by rendering the sign
-        // characters using the localized plus/minus signs from the decimal symbols data,
-        // which would also preserve the sign position specified by the pattern.
-        if negative_items.iter().any(|item| {
-            matches!(
-                item,
-                NumberPatternItem::MinusSign | NumberPatternItem::PlusSign
-            )
-        }) {
-            return Ok(None);
+        // The negative subpattern is baked as-is when it exists; `None` means the
+        // formatter falls back to the positive pattern of the same category and
+        // applies the sign itself.
+        if let Some(negative_items) = &pattern.negative {
+            DoublePlaceholderPattern::try_from_items(convert_pattern_items(negative_items))
+                .map_err(|e| {
+                    DataError::custom("Could not parse negative pattern").with_display_context(&e)
+                })
+                .map(Cow::Owned)
+                .map(Some)
+        } else {
+            Ok(None)
         }
-        DoublePlaceholderPattern::try_from_items(convert_pattern_items(negative_items))
-            .map_err(|e| {
-                DataError::custom("Could not parse negative pattern").with_display_context(&e)
-            })
-            .map(Cow::Owned)
-            .map(Some)
     }
 
     let mut unique_patterns = Vec::<Box<DoublePlaceholderPattern>>::new();
@@ -181,13 +173,17 @@ fn extract_currency_essentials<'data>(
     .unwrap_or(standard_idx);
     let standard_alpha_neg_idx = match standard_alpha_next_to_number {
         Some(p) => add_pattern(create_negative_pattern(p)?),
-        None => None,
+        // No alpha-next-to-number pattern: the category inherits from standard,
+        // including its negative subpattern.
+        None => standard_neg_idx,
     };
     let accounting_pos_idx =
         add_pattern(accounting.map(create_positive_pattern).transpose()?).unwrap_or(standard_idx);
     let accounting_neg_idx = match accounting {
         Some(p) => add_pattern(create_negative_pattern(p)?),
-        None => None,
+        // No accounting pattern: the category inherits from standard,
+        // including its negative subpattern.
+        None => standard_neg_idx,
     };
     let accounting_alpha_pos_idx = add_pattern(
         accounting_alpha_next_to_number
@@ -197,7 +193,9 @@ fn extract_currency_essentials<'data>(
     .unwrap_or(accounting_pos_idx);
     let accounting_alpha_neg_idx = match accounting_alpha_next_to_number {
         Some(p) => add_pattern(create_negative_pattern(p)?),
-        None => None,
+        // No accounting alpha-next-to-number pattern: the category inherits from
+        // accounting, including its negative subpattern.
+        None => accounting_neg_idx,
     };
 
     let indices = PatternIndices {
@@ -282,9 +280,8 @@ fn test_essentials() {
     );
 
     // The `latn` patterns for `ar-EG` have an explicit standard negative subpattern
-    // containing a minus sign. Such subpatterns are not baked (see
-    // `create_negative_pattern`), so `get_negative` returns `None` and the formatter
-    // falls back to prepending the localized minus sign to the positive pattern.
+    // (`\u{200f}#,##0.00\u{a0}\u{a4};\u{200f}-#,##0.00\u{a0}\u{a4}`), which is baked
+    // as-is, sign character included.
     let ar_eg_latn: DataPayload<CurrencyEssentialsV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
@@ -296,5 +293,16 @@ fn test_essentials() {
         .unwrap()
         .payload;
 
-    assert!(ar_eg_latn.get().get_negative(false, false).is_none());
+    assert_writeable_eq!(
+        ar_eg_latn
+            .get()
+            .get_negative(false, false)
+            .unwrap()
+            .interpolate((3, "$")),
+        "\u{200f}-3\u{a0}$"
+    );
+
+    // `en` has no explicit standard negative subpattern, so `get_negative` is `None`
+    // and the formatter falls back to the positive pattern, applying the sign itself.
+    assert!(en.get().get_negative(false, false).is_none());
 }
