@@ -13,7 +13,7 @@ pub mod ffi {
 
     /// An object that runs the ICU4X locale fallback algorithm.
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu_locale::LocaleFallbacker, Struct)]
+    #[diplomat::rust_link(icu::locale::fallback::LocaleFallbacker, Struct)]
     #[diplomat::rust_link(icu::locale::fallback::LocaleFallbackerBorrowed, Struct, hidden)]
     pub struct LocaleFallbacker(pub icu_locale::LocaleFallbacker);
 
@@ -46,7 +46,6 @@ pub mod ffi {
 
     /// An object that runs the ICU4X locale fallback algorithm with specific configurations.
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu_locale::LocaleFallbacker, Struct)]
     #[diplomat::rust_link(icu::locale::fallback::LocaleFallbackerWithConfig, Struct)]
     pub struct LocaleFallbackerWithConfig<'a>(
         pub icu_locale::fallback::LocaleFallbackerWithConfig<'a>,
@@ -59,7 +58,7 @@ pub mod ffi {
 
     impl LocaleFallbacker {
         /// Creates a new `LocaleFallbacker` from compiled data.
-        #[diplomat::rust_link(icu_locale::LocaleFallbacker::new, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::fallback::LocaleFallbacker::new, FnInStruct)]
         #[diplomat::rust_link(
             icu::locale::fallback::LocaleFallbackerBorrowed::new,
             FnInStruct,
@@ -74,7 +73,7 @@ pub mod ffi {
         }
 
         /// Creates a new `LocaleFallbacker` from a data provider.
-        #[diplomat::rust_link(icu_locale::LocaleFallbacker::new, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::fallback::LocaleFallbacker::new, FnInStruct)]
         #[diplomat::rust_link(
             icu::locale::fallback::LocaleFallbackerBorrowed::new,
             FnInStruct,
@@ -91,7 +90,10 @@ pub mod ffi {
         }
 
         /// Creates a new `LocaleFallbacker` without data for limited functionality.
-        #[diplomat::rust_link(icu_locale::LocaleFallbacker::new_without_data, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::locale::fallback::LocaleFallbacker::new_without_data,
+            FnInStruct
+        )]
         #[diplomat::attr(auto, named_constructor)]
         pub fn without_data() -> Box<LocaleFallbacker> {
             Box::new(LocaleFallbacker(
@@ -100,7 +102,7 @@ pub mod ffi {
         }
 
         /// Associates this `LocaleFallbacker` with configuration options.
-        #[diplomat::rust_link(icu_locale::LocaleFallbacker::for_config, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::fallback::LocaleFallbacker::for_config, FnInStruct)]
         #[diplomat::rust_link(
             icu::locale::fallback::LocaleFallbackerBorrowed::for_config,
             FnInStruct,
@@ -120,7 +122,7 @@ pub mod ffi {
 
     impl<'a> LocaleFallbackerWithConfig<'a> {
         /// Creates an iterator from a locale with each step of fallback.
-        #[diplomat::rust_link(icu_locale::LocaleFallbacker::fallback_for, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::fallback::LocaleFallbacker::fallback_for, FnInStruct)]
         #[diplomat::rust_link(
             icu::locale::fallback::LocaleFallbackerBorrowed::fallback_for,
             FnInStruct,
