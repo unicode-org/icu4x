@@ -10,8 +10,8 @@
     0
   ],
   "elements": [
-    "EEEE, dd. MMMM",
-    "E, dd. MM.",
-    "E, d. M."
+    "EEEE dd. MMMM",
+    "E dd. MM.",
+    "E d. M."
   ]
 }

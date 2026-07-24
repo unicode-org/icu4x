@@ -133,7 +133,7 @@
     "GW": "Guinea-Bissau",
     "GY": "Guyana",
     "HK": "Hong Kong SAR China",
-    "HM": "Heard & McDonald Islands",
+    "HM": "Heard Island & McDonald Islands",
     "HN": "Honduras",
     "HR": "Croatia",
     "HT": "Haiti",
@@ -256,7 +256,7 @@
     "TA": "Tristan da Cunha",
     "TC": "Turks & Caicos Islands",
     "TD": "Chad",
-    "TF": "French Southern Territories",
+    "TF": "French Southern and Antarctic Lands",
     "TG": "Togo",
     "TH": "Thailand",
     "TJ": "Tajikistan",
@@ -301,9 +301,12 @@
     "CC": "Cocos Islands",
     "GB": "UK",
     "HK": "Hong Kong",
+    "HM": "Heard & McDonald Islands",
     "MM": "Myanmar",
     "MO": "Macao",
     "PN": "Pitcairn",
-    "PS": "Palestine"
+    "PS": "Palestine",
+    "SH": "St. Helena",
+    "TF": "French Southern Territories"
   }
 }
