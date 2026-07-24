@@ -4,8 +4,8 @@
 /// `icu`'s `_unstable` constructors.
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
-/// * 813B for the lookup data structure (164 data identifiers)
-/// * 31255B[^1] for the actual data (162 unique structs)
+/// * 835B for the lookup data structure (169 data identifiers)
+/// * 32341B[^1] for the actual data (167 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 ///
@@ -24,7 +24,7 @@ macro_rules! __impl_narrow_month_relative_v1 {
         #[clippy::msrv = "1.88"]
         impl $provider {
             const DATA_NARROW_MONTH_RELATIVE_V1: icu_provider::baked::zerotrie::Data<icu::experimental::relativetime::provider::NarrowMonthRelativeV1> = {
-                const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1zabcdefghijklmnopqrstuvwxyz\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x02\x02\x14B_q\x9E\xBE\xCE\xF2\x0E\x16Qa\x86\xA0\xA8\xC2\xC5\xDA-Uv\x7F\x82\x8B\xA5\xC6fkmrsz\x01\x02\x03\x04\x07\x80\x81\x82\x83\x84t\x85\x86\xC8aeglnrsu\x08\t\x0C\x0E\x0F\x12\x1B\x87l-Latn\x88\x89\x8Ac\x8Bo\x8C\x8D\x8Ex\x8F\x90\0-Cyrl\x90\x01a\x90\x02\xC6aehsvy\x02\x05\x08\r\x0F\x90\x03b\x90\x04r\x90\x05\x90\x06w\x90\x07\x90\x08\x90\t\xC4aeos\x02\x04\x07\x90\n\x90\x0Bi\x90\x0Cb\x90\r\xC7elnostu\x02\x04\x12\x14\x1B\x1D\x90\x0E\x90\x0F\x90\x10-\xC20C\x0401\x90\x11A\x90\x12\x90\x13\x90\x14-MX\x90\x15\x90\x16\x90\x17\xC6afiory\x02\t\x0E\x10\x12\x90\x18-Adlm\x90\x19\x90\x1Al\x90\x1B\x90\x1C\x90\x1D\x90\x1E\xC4adlu\x02\x04\x06\x90\x1F\x90 \x90!\x90\"\xC7aeirsuy\x02\x04\r\x0F\x12\x14\x90#\x90$\x90%-Latn\x90&\x90\0b\x90'\x90(\x90)\xC7adegist\x02\x04\x06\x08\n\x0C\x90*\x90+\x90,\x90-\x90.\x90/\x900\xC2av\x02\x901\x902\xCAaegkmnosuy\x02\x05\x08\x11\x13\x15!#%\x903a\x904p\x905\x906-Arab\x907\x908\x909\x90:k\x90;-Latn\x90<\x90=\x90>\x90?\xC4botv\x02\x04\x06\x90@\x90A\x90B\x90C\xC9aiklnrsty\x03\x05\x07\t\x0B\r\x0F\x11i\x90D\x90E\x90F\x90G\x90H\x90I\x90J\x90K\x90L\xC6elnoqs\x02\x04\x06\x08\x0B\x90M\x90N\x90O\x90Po\x90Qo\x90R\xC2mr\x02\x90S\x90T\xC5aclst\x02\x05\x07\t\x90Um\x90V\x90W\x90X\x90Y-PT\x90Zu\x90[\xC5amouw\x03\x05\x07\tj\x90\\\x90]\x90^\x90_\x90`\xCDacdhikloqrvwy\x03\x08\x11\x14\x16\x18\x1A\x1C\x1E246h\x90a\x90bn\x90c\x90d-Deva\x90en\x90f\x90g\x90h\x90i\x90j\x90k\x90l-\xC2BL\x03A\x90matn\x90n-BA\x90o\x90p\x90qr\x90r\xCAaeghiknort\x02\x04\x06\x08\n\x0C\x0E\x10\x12\x90s\x90t\x90u\x90v\x90w\x90x\x90y\x90z\x90{\x90|\xC5gknrz\x02\x04\x07\x0E\x90}\x90~d\x90\x7F\x91\0-IN\x91\x01\x91\x02-Cyrl\x91\x03\xC2ei\x03c\x91\x04\x91\x05o\x91\x06\xC2hn\x02\x91\x07r\x91\x08\xC3oru\x07\n\x91\t-BJ\x91\nl\x91\x0Be\x91\x0C-Hans\x91\r\xC2hu\x14\x91\x0E-\xC2HM\n\xC2Ka\x02\x91\x0Fnt\x91\x10O\x91\x0F\x91\x11" };
+                const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1zabcdefghijklmnopqrstuvwxyz\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x02\x02\x14Bdv\xA3\xC3\xD3\xF7\x13\x1Bbw\x9C\xB6\xBE\xD8\xDB\xF0Ck\x8C\x95\x98\xA1\xBB\xC6fkmrsz\x01\x02\x03\x04\x07\x80\x81\x82\x83\x84t\x85\x86\xC8aeglnrsu\x08\t\x0C\x0E\x0F\x12\x1B\x87l-Latn\x88\x89\x8Ac\x8Bo\x8C\x8D\x8Ex\x8F\x90\0-Cyrl\x90\x01a\x90\x02\xC7aehosvy\x02\x05\x08\x0B\x10\x12\x90\x03b\x90\x04r\x90\x05p\x90\x06\x90\x07w\x90\x08\x90\t\x90\n\xC4aeos\x02\x04\x07\x90\x0B\x90\x0Ci\x90\rb\x90\x0E\xC7elnostu\x02\x04\x12\x14\x1B\x1D\x90\x0F\x90\x10\x90\x11-\xC20C\x0401\x90\x12A\x90\x13\x90\x14\x90\x15-MX\x90\x16\x90\x17\x90\x18\xC6afiory\x02\t\x0E\x10\x12\x90\x19-Adlm\x90\x1A\x90\x1Bl\x90\x1C\x90\x1D\x90\x1E\x90\x1F\xC4adlu\x02\x04\x06\x90 \x90!\x90\"\x90#\xC7aeirsuy\x02\x04\r\x0F\x12\x14\x90$\x90%\x90&-Latn\x90'\x90\0b\x90(\x90)\x90*\xC7adegist\x02\x04\x06\x08\n\x0C\x90+\x90,\x90-\x90.\x90/\x900\x901\xC2av\x02\x902\x903\xCBaegikmnosuy\x02\n\r\x0F\x18\x1A\x1C(-/\x904\xC2ak\x02\x905\x906p\x907\x908\x909-Arab\x90:\x90;\x90<\x90=k\x90>-Latn\x90?\x90@h\x90A\x90B\x90C\xC5blotv\x02\x05\x07\t\x90Dd\x90E\x90F\x90G\x90H\xC9aiklnrsty\x03\x05\x07\t\x0B\r\x0F\x11i\x90I\x90J\x90K\x90L\x90M\x90N\x90O\x90P\x90Q\xC6elnoqs\x02\x04\x06\x08\x0B\x90R\x90S\x90T\x90Uo\x90Vo\x90W\xC2mr\x02\x90X\x90Y\xC5aclst\x02\x05\x07\t\x90Zm\x90[\x90\\\x90]\x90^-PT\x90_u\x90`\xC5amouw\x03\x05\x07\tj\x90a\x90b\x90c\x90d\x90e\xCDacdhikloqrvwy\x03\x08\x11\x14\x16\x18\x1A\x1C\x1E246h\x90f\x90gn\x90h\x90i-Deva\x90jn\x90k\x90l\x90m\x90n\x90o\x90p\x90q-\xC2BL\x03A\x90ratn\x90s-BA\x90t\x90u\x90vr\x90w\xCAaeghiknort\x02\x04\x06\x08\n\x0C\x0E\x10\x12\x90x\x90y\x90z\x90{\x90|\x90}\x90~\x90\x7F\x91\0\x91\x01\xC5gknrz\x02\x04\x07\x0E\x91\x02\x91\x03d\x91\x04\x91\x05-IN\x91\x06\x91\x07-Cyrl\x91\x08\xC2ei\x03c\x91\t\x91\no\x91\x0B\xC2hn\x02\x91\x0Cr\x91\r\xC3oru\x07\n\x91\x0E-BJ\x91\x0Fl\x91\x10e\x91\x11-Hans\x91\x12\xC2hu\x14\x91\x13-\xC2HM\n\xC2Ka\x02\x91\x14nt\x91\x15O\x91\x14\x91\x16" };
                 const VALUES: &'static [<icu::experimental::relativetime::provider::NarrowMonthRelativeV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct] = &[
                     icu::experimental::relativetime::provider::RelativeTimePatternData {
                         relatives: unsafe {
@@ -79,8 +79,8 @@ macro_rules! __impl_narrow_month_relative_v1 {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\0\x01") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\n\0\x0F\0ke\xC3\xA7\xC9\x99n aybu ayg\xC9\x99l\xC9\x99n ay") })
                         },
-                        past: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x01 ay \xC3\xB6nc\xC9\x99") }) },
-                        future: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x01 ay \xC9\x99rzind\xC9\x99") }) },
+                        past: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x01 ay \xC9\x99vv\xC9\x99l") }) },
+                        future: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x01 ay sonra") }) },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternData {
                         relatives: unsafe {
@@ -125,10 +125,10 @@ macro_rules! __impl_narrow_month_relative_v1 {
                     icu::experimental::relativetime::provider::RelativeTimePatternData {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\0\x01") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\t\0\x10\0a\xC5\x8B bo\xC5\x8Boa\xC5\x8B \xC9\x96ea\xC5\x8B f\xC9\x94l\xC9\xA9") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\0\x01") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\n\0\x12\0a\xC5\x8Br bo\xC5\x8Boa\xC5\x8Br \xC9\x96ea\xC5\x8Br f\xC9\x94l\xC9\xA9") })
                         },
-                        past: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x02- m") }) },
-                        future: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x02+ m") }) },
+                        past: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\x80\x0F\x0F\xC9\xA9 \xC9\x96oo \xC9\xA9\xC5\x8Br \x02\0\x0F\0\0\x0E\xC9\xA9 \xC9\x96oo a\xC5\x8Br \x10\x0E\xC9\xA9 \xC9\x96oo a\xC5\x8Br ") }) },
+                        future: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\x80\x11\rna ce \xC9\xA9\xC5\x8Br  n\xC9\xA9\x02\0\x11\0\0\x0Cna ce a\xC5\x8Br  n\xC9\xA9\x10\x0Cna ce a\xC5\x8Br  n\xC9\xA9") }) },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternData {
                         relatives: unsafe {
@@ -143,8 +143,8 @@ macro_rules! __impl_narrow_month_relative_v1 {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\0\x01") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\r\0\x17\0ar m. diaraokar m.-ma\xC3\xB1ar m. a zeu") })
                         },
-                        past: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x02- miz") }) },
-                        future: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x02+ miz") }) },
+                        past: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\x80\x06\x02- miz\x01\0 \x02- viz") }) },
+                        future: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\x80\x06\x02+ miz\x01\0 \x02+ viz") }) },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternData {
                         relatives: unsafe {
@@ -197,10 +197,18 @@ macro_rules! __impl_narrow_month_relative_v1 {
                     icu::experimental::relativetime::provider::RelativeTimePatternData {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\0\x01") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x11\0\x1F\0\xE1\x8E\xA7\xE1\x8E\xB8. \xE1\x8F\xA5\xE1\x8E\xA8\xE1\x8F\x92\xE1\x8E\xAF\xE1\x8E\xA0 \xE1\x8E\xA7\xE1\x8E\xB8.\xE1\x8F\x94\xE1\x8E\xB5\xE1\x8F\x81 \xE1\x8E\xA7\xE1\x8E\xB8.") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\0\x01") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x11\0\x1F\0\xE1\x8E\xA7\xE1\x8E\xB8. \xE1\x8F\xA5\xE1\x8E\xA8\xE1\x8F\x92\xE1\x8E\xAF\xE1\x8E\xA0 \xE1\x8E\xA7\xE1\x8E\xB8.\xE1\x8F\xB4\xE1\x8E\xA2 \xE1\x8E\xA7\xE1\x8E\xB8.") })
                         },
-                        past: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x01 \xE1\x8E\xA7\xE1\x8E\xB8. \xE1\x8F\xA5\xE1\x8E\xA8\xE1\x8F\x92") }) },
-                        future: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x08\xE1\x8E\xBE\xE1\x8E\xBF  \xE1\x8E\xA7\xE1\x8E\xB8.") }) },
+                        past: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x01\xE1\x8E\xA7\xE1\x8E\xB8 \xE1\x8F\xA5\xE1\x8E\xA8\xE1\x8F\x92") }) },
+                        future: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x08\xE1\x8E\xBE\xE1\x8E\xBF \xE1\x8E\xA7\xE1\x8E\xB8") }) },
+                    },
+                    icu::experimental::relativetime::provider::RelativeTimePatternData {
+                        relatives: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\0\x01") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0*\0I\0\xE2\xB2\xA1\xE2\xB2\x93\xE2\xB2\x81\xE2\xB2\x83\xE2\xB2\x9F\xE2\xB2\xA7 \xE2\xB2\x89\xE2\xB2\xA7\xE2\xB2\x81\xCF\xA5\xE2\xB2\xA5\xE2\xB2\x93\xE2\xB2\x9B\xE2\xB2\x93\xE2\xB2\xA1\xE2\xB2\x81\xE2\xB2\x93\xE2\xB2\x81\xE2\xB2\x83\xE2\xB2\x9F\xE2\xB2\xA7 \xE2\xB2\xAB\xE2\xB2\x81\xE2\xB2\x93\xE2\xB2\xA1\xE2\xB2\x93\xE2\xB2\x81\xE2\xB2\x83\xE2\xB2\x9F\xE2\xB2\xA7 \xE2\xB2\x89\xE2\xB2\x91\xE2\xB2\x9B\xE2\xB2\x8F\xE2\xB2\x9F\xE2\xB2\xA9") })
+                        },
+                        past: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x01mo ago") }) },
+                        future: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x04in mo") }) },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternData {
                         relatives: unsafe {
@@ -221,7 +229,7 @@ macro_rules! __impl_narrow_month_relative_v1 {
                     icu::experimental::relativetime::provider::RelativeTimePatternData {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\0\x01") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x17\0(\0\xD0\xB8\xD1\x80\xD1\x82\xD0\xBD\xD3\x97 \xD1\x83\xD0\xB9\xD3\x91\xD1\x85\xD1\x80\xD0\xB0\xD0\xBA\xD1\x83 \xD1\x83\xD0\xB9\xD3\x91\xD1\x85\xD1\x80\xD0\xB0\xD2\xAB\xD0\xB8\xD1\x82\xD0\xB5\xD1\x81 \xD1\x83\xD0\xB9\xD3\x91\xD1\x85\xD1\x80\xD0\xB0") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\0\x01") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x10\0\x1A\0\xD0\xB8\xD1\x80\xD1\x82\xD0\xBD\xD3\x97 \xD1\x83\xD0\xB9.\xD0\xBA\xD1\x83 \xD1\x83\xD0\xB9.\xD2\xAB\xD0\xB8\xD1\x82\xD0\xB5\xD1\x81 \xD1\x83\xD0\xB9.") })
                         },
                         past: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\x80\x14\x01 \xD1\x83\xD0\xB9. \xD0\xBA\xD0\xB0\xD1\x8F\xD0\xBB\xD0\xBB\xD0\xB0\x02\0\x18\0\0\x01 \xD1\x83\xD0\xB9\xD3\x91\xD1\x85 \xD0\xBA\xD0\xB0\xD1\x8F\xD0\xBB\xD0\xBB\xD0\xB0\x10\x01 \xD1\x83\xD0\xB9\xD3\x91\xD1\x85 \xD0\xBA\xD0\xB0\xD1\x8F\xD0\xBB\xD0\xBB\xD0\xB0") }) },
                         future: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x01 \xD1\x83\xD0\xB9\xD3\x91\xD1\x85\xD1\x80\xD0\xB0\xD0\xBD") }) },
@@ -445,7 +453,7 @@ macro_rules! __impl_narrow_month_relative_v1 {
                     icu::experimental::relativetime::provider::RelativeTimePatternData {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\0\x01") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x13\0\x1D\0\xD7\x94\xD7\x97\xD7\x95\xD7\x93\xD7\xA9 \xD7\xA9\xD7\xA2\xD7\x91\xD7\xA8\xD7\x94\xD7\x97\xD7\x95\xD7\x93\xD7\xA9\xD7\x94\xD7\x97\xD7\x95\xD7\x93\xD7\xA9 \xD7\x94\xD7\x91\xD7\x90") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\0\x01") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x13\0\x1D\0\xD7\x91\xD7\x97\xD7\x95\xD7\x93\xD7\xA9 \xD7\xA9\xD7\xA2\xD7\x91\xD7\xA8\xD7\x94\xD7\x97\xD7\x95\xD7\x93\xD7\xA9\xD7\x91\xD7\x97\xD7\x95\xD7\x93\xD7\xA9 \xD7\x94\xD7\x91\xD7\x90") })
                         },
                         past: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\x80\x11\n\xD7\x9C\xD7\xA4\xD7\xA0\xD7\x99  \xD7\x97\xD7\x95\xD7\xB3\x02\0\x14\0\x10\x12\xD7\x9C\xD7\xA4\xD7\xA0\xD7\x99 \xD7\x97\xD7\x95\xD7\xB3 () \x1A\xD7\x9C\xD7\xA4\xD7\xA0\xD7\x99 \xD7\x97\xD7\x95\xD7\x93\xD7\xA9\xD7\x99\xD7\x99\xD7\x9D ()") }) },
                         future: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\x80\x11\n\xD7\x91\xD7\xA2\xD7\x95\xD7\x93  \xD7\x97\xD7\x95\xD7\xB3\x02\0\x11\0\x10\0\xD7\x91\xD7\xA2\xD7\x95\xD7\x93 \xD7\x97\xD7\x95\xD7\xB3 \x1A\xD7\x91\xD7\xA2\xD7\x95\xD7\x93 \xD7\x97\xD7\x95\xD7\x93\xD7\xA9\xD7\x99\xD7\x99\xD7\x9D ()") }) },
@@ -519,8 +527,8 @@ macro_rules! __impl_narrow_month_relative_v1 {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\0\x01") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x0F\0\x17\0\xE1\xBB\x8Cnwa gara aga\xE1\xBB\x8Cnwa a\xE1\xBB\x8Cnwa na-ab\xE1\xBB\x8Ba") })
                         },
-                        past: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x02- m") }) },
-                        future: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x02+ m") }) },
+                        past: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x08\xE1\xBB\x8Dnwa  gara aga") }) },
+                        future: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x10n\xE2\x80\x99ime \xE1\xBB\x8Dnwa ") }) },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternData {
                         relatives: unsafe {
@@ -581,10 +589,26 @@ macro_rules! __impl_narrow_month_relative_v1 {
                     icu::experimental::relativetime::provider::RelativeTimePatternData {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\0\x01") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\r\0\x18\0li p. xnume\xCA\xBCli p. a\xCA\xBCinli p. chal re") })
+                        },
+                        past: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x01 p. chaq") }) },
+                        future: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x06sa\xCA\xBC  p.") }) },
+                    },
+                    icu::experimental::relativetime::provider::RelativeTimePatternData {
+                        relatives: unsafe {
+                            #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\0\x01") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x12\0\x1F\0kys\xC3\xA3 t\xC4\xA9 m\xC5\xA9n k\xC3\xA3kys\xC3\xA3 tag k\xC3\xA3kys\xC3\xA3 \xC5\xA9n k\xC3\xA3") })
                         },
                         past: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x07kys\xC3\xA3  si ser") }) },
                         future: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x07kys\xC3\xA3  kar k\xE1\xBB\xB9") }) },
+                    },
+                    icu::experimental::relativetime::provider::RelativeTimePatternData {
+                        relatives: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\0\x01") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x11\0\x1C\0mweri m\xC5\xA9h\xC4\xA9t\xC5\xA9kumweri \xC5\xA9y\xC5\xA9mweri m\xC5\xA9ku") })
+                        },
+                        past: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x02- m") }) },
+                        future: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x02+ m") }) },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternData {
                         relatives: unsafe {
@@ -653,6 +677,14 @@ macro_rules! __impl_narrow_month_relative_v1 {
                     icu::experimental::relativetime::provider::RelativeTimePatternData {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\0\x01") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\r\0\x18\0l\xC3\xA4tzde Mohnddiese Mohndn\xC3\xA4chste Mohnd") })
+                        },
+                        past: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x02- m") }) },
+                        future: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x02+ m") }) },
+                    },
+                    icu::experimental::relativetime::provider::RelativeTimePatternData {
+                        relatives: unsafe {
+                            #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\0\x01") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\n\0\x10\0meha bor\xC3\xAEev mehmeha were") })
                         },
                         past: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\x80\r\x07ber\xC3\xAE  mehan\x01\0\x10\x07ber\xC3\xAE  meh\xC3\xAA") }) },
@@ -673,6 +705,14 @@ macro_rules! __impl_narrow_month_relative_v1 {
                         },
                         past: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x02- M.") }) },
                         future: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x02+ M.") }) },
+                    },
+                    icu::experimental::relativetime::provider::RelativeTimePatternData {
+                        relatives: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\0\x01") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x12\0\x1E\0le m\xC3\xABis da denantch\xC3\xABsc m\xC3\xABisle m\xC3\xABis che v\xC3\xABgn") })
+                        },
+                        past: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\x80\x0F\x08dan da  m\xC3\xABisc\x01\0\x10\x08dan da  n m\xC3\xABis") }) },
+                        future: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\x80\x0B\x04te  m\xC3\xABisc\x01\0\x10\x04te  n m\xC3\xABis") }) },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternData {
                         relatives: unsafe {
@@ -863,8 +903,8 @@ macro_rules! __impl_narrow_month_relative_v1 {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\0\x01") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x13\0\"\0\xD8\xAA\xDB\x90\xD8\xB1\xD9\x87 \xD9\x85\xD9\x8A\xD8\xA7\xD8\xB4\xD8\xAA\xD8\xAF\xD8\xA7 \xD9\x85\xD9\x8A\xD8\xA7\xD8\xB4\xD8\xAA\xD8\xB1\xD8\xA7\xD8\xAA\xD9\x84\xD9\x88\xD9\x86\xDA\xA9\xDB\x90 \xD9\x85\xD9\x8A\xD8\xA7\xD8\xB4\xD8\xAA") })
                         },
-                        past: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x01 \xD9\x85\xD9\x8A\xD8\xA7\xD8\xB4\xD8\xAA \xD9\x85\xD8\xAE\xDA\xA9\xDB\x90") }) },
-                        future: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\0\x06\xD9\xBE\xD9\x87  \xD9\x85\xD9\x8A\xD8\xA7\xD8\xB4\xD8\xAA \xDA\xA9\xDB\x90") }) },
+                        past: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\x80\x17\x01 \xD9\x85\xD9\x8A\xD8\xA7\xD8\xB4\xD8\xAA\xDB\x90 \xD9\x85\xD8\xAE\xDA\xA9\xDB\x90\x01\0\x10\x01 \xD9\x85\xD9\x8A\xD8\xA7\xD8\xB4\xD8\xAA \xD9\x85\xD8\xAE\xDA\xA9\xDB\x90") }) },
+                        future: icu::plurals::provider::PluralElementsPackedCow { elements: alloc::borrow::Cow::Borrowed(unsafe { icu::plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(b"\x80\x18\x06\xD9\xBE\xD9\x87  \xD9\x85\xD9\x8A\xD8\xA7\xD8\xB4\xD8\xAA\xD9\x88 \xDA\xA9\xDB\x90\x01\0\x10\x06\xD9\xBE\xD9\x87  \xD9\x85\xD9\x8A\xD8\xA7\xD8\xB4\xD8\xAA \xDA\xA9\xDB\x90") }) },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternData {
                         relatives: unsafe {

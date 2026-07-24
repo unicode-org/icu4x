@@ -1,5 +1,5 @@
-plurals/cardinal/v1, <lookup>, 470B, 114 identifiers
-plurals/cardinal/v1, <total>, 6910B, 3077B, 34 unique payloads
+plurals/cardinal/v1, <lookup>, 492B, 120 identifiers
+plurals/cardinal/v1, <total>, 6692B, 2972B, 33 unique payloads
 plurals/cardinal/v1, af, 135B, 21B, aba9719df257b5da
 plurals/cardinal/v1, ak, 135B, 21B, 4842967deaecb34e
 plurals/cardinal/v1, am, 150B, 36B, 2fc19d84ee21c7c5
@@ -18,6 +18,7 @@ plurals/cardinal/v1, bs, 270B, 157B, 31542f816625a097
 plurals/cardinal/v1, ca, 225B, 112B, c5c596e8934e45fb
 plurals/cardinal/v1, ceb, 258B, 145B, a3a1e6ccc63b89c
 plurals/cardinal/v1, chr, -> af
+plurals/cardinal/v1, ckb, -> af
 plurals/cardinal/v1, cs, 195B, 83B, 112902597d69f2c4
 plurals/cardinal/v1, csw, -> ak
 plurals/cardinal/v1, cv, -> blo
@@ -37,11 +38,11 @@ plurals/cardinal/v1, fa, -> am
 plurals/cardinal/v1, fi, -> ast
 plurals/cardinal/v1, fil, -> ceb
 plurals/cardinal/v1, fo, -> af
-plurals/cardinal/v1, fr, 218B, 105B, ec2bf5798a6bb5b3
+plurals/cardinal/v1, fr, 210B, 97B, 17d22114bdf762a5
 plurals/cardinal/v1, fy, -> ast
 plurals/cardinal/v1, ga, 180B, 69B, c8819f8ac3011256
 plurals/cardinal/v1, gd, 189B, 77B, 5082f15aa6bdc89f
-plurals/cardinal/v1, gl, -> ast
+plurals/cardinal/v1, gl, -> ca
 plurals/cardinal/v1, gu, -> am
 plurals/cardinal/v1, ha, -> af
 plurals/cardinal/v1, he, 210B, 97B, d04d905c4c753abd
@@ -60,10 +61,12 @@ plurals/cardinal/v1, kn, -> am
 plurals/cardinal/v1, kok, -> am
 plurals/cardinal/v1, kok-Latn, -> am
 plurals/cardinal/v1, ks, -> af
+plurals/cardinal/v1, ksh, -> blo
 plurals/cardinal/v1, ku, -> af
 plurals/cardinal/v1, ky, -> af
 plurals/cardinal/v1, lb, -> af
 plurals/cardinal/v1, lij, -> ast
+plurals/cardinal/v1, lld, -> ca
 plurals/cardinal/v1, lt, 195B, 83B, b6fa29fde2093dee
 plurals/cardinal/v1, lv, 285B, 172B, cb3f3b805b796f53
 plurals/cardinal/v1, mk, 195B, 81B, 73b6baa03dde2fcc
@@ -80,8 +83,9 @@ plurals/cardinal/v1, or, -> af
 plurals/cardinal/v1, pa, -> ak
 plurals/cardinal/v1, pcm, -> am
 plurals/cardinal/v1, pl, 300B, 188B, e7bd214cb5268762
+plurals/cardinal/v1, prg, -> lv
 plurals/cardinal/v1, ps, -> af
-plurals/cardinal/v1, pt, 210B, 97B, 17d22114bdf762a5
+plurals/cardinal/v1, pt, -> fr
 plurals/cardinal/v1, pt-PT, -> ca
 plurals/cardinal/v1, rm, -> af
 plurals/cardinal/v1, ro, 210B, 97B, f6a1c4d5529bf243
@@ -102,6 +106,7 @@ plurals/cardinal/v1, sw, -> ast
 plurals/cardinal/v1, syr, -> af
 plurals/cardinal/v1, ta, -> af
 plurals/cardinal/v1, te, -> af
+plurals/cardinal/v1, tg, -> am
 plurals/cardinal/v1, ti, -> ak
 plurals/cardinal/v1, tk, -> af
 plurals/cardinal/v1, tn, -> af
@@ -112,18 +117,22 @@ plurals/cardinal/v1, und, 120B, 5B, fd5d54cb7ad1d0d8
 plurals/cardinal/v1, ur, -> ast
 plurals/cardinal/v1, uz, -> af
 plurals/cardinal/v1, vec, -> ca
+plurals/cardinal/v1, vi, -> am
 plurals/cardinal/v1, xh, -> af
 plurals/cardinal/v1, zu, -> am
-plurals/ordinal/v1, <lookup>, 192B, 38 identifiers
-plurals/ordinal/v1, <total>, 4417B, 1709B, 24 unique payloads
+plurals/ordinal/v1, <lookup>, 212B, 42 identifiers
+plurals/ordinal/v1, <total>, 4936B, 1888B, 27 unique payloads
+plurals/ordinal/v1, af, 135B, 21B, 4eaef6ed0d5959ce
 plurals/ordinal/v1, as, 228B, 117B, 3221161baea5577e
 plurals/ordinal/v1, az, 369B, 257B, 3e8d21acf9a0aaf5
 plurals/ordinal/v1, be, 166B, 52B, f56a7d564c0b9595
+plurals/ordinal/v1, bg, 226B, 114B, 5093d72f18e3b82d
 plurals/ordinal/v1, blo, 197B, 85B, b8beac72e03c8bd5
 plurals/ordinal/v1, bn, -> as
 plurals/ordinal/v1, ca, 173B, 61B, cdeb9d9523af85af
 plurals/ordinal/v1, cy, 235B, 125B, 1f06e13363f8e5c
 plurals/ordinal/v1, en, 210B, 98B, f2ce5ed60ab994fe
+plurals/ordinal/v1, es, 158B, 44B, 2dd418efc35c59dc
 plurals/ordinal/v1, fil, 135B, 21B, aba9719df257b5da
 plurals/ordinal/v1, fr, -> fil
 plurals/ordinal/v1, ga, -> fil
@@ -138,6 +147,7 @@ plurals/ordinal/v1, kk, 180B, 66B, 68f9a4ad9bb900ec
 plurals/ordinal/v1, kok, 173B, 61B, 26c2f97c6c00c3cc
 plurals/ordinal/v1, kok-Latn, -> kok
 plurals/ordinal/v1, lij, 159B, 45B, cac8f97db9e0507c
+plurals/ordinal/v1, lld, -> it
 plurals/ordinal/v1, lo, -> fil
 plurals/ordinal/v1, mk, 226B, 114B, b42af1f92db35975
 plurals/ordinal/v1, mr, -> kok
@@ -154,7 +164,7 @@ plurals/ordinal/v1, uk, 150B, 36B, 854d4e03c246475e
 plurals/ordinal/v1, und, 120B, 5B, fd5d54cb7ad1d0d8
 plurals/ordinal/v1, vec, -> it
 plurals/ordinal/v1, vi, -> fil
-plurals/ranges/v1, <lookup>, 133B, 26 identifiers
+plurals/ranges/v1, <lookup>, 141B, 28 identifiers
 plurals/ranges/v1, <total>, 524B, 64B, 10 unique payloads
 plurals/ranges/v1, af, 50B, 4B, b13da4e5718e6e33
 plurals/ranges/v1, ak, 50B, 4B, 64f93a355ae802c9
@@ -180,5 +190,7 @@ plurals/ranges/v1, sd, -> ak
 plurals/ranges/v1, si, -> af
 plurals/ranges/v1, sl, 56B, 10B, adb2afaf65b6452d
 plurals/ranges/v1, sv, -> af
+plurals/ranges/v1, tg, -> ak
 plurals/ranges/v1, und, 48B, 2B, 3a6d9523170345d0
 plurals/ranges/v1, ur, -> af
+plurals/ranges/v1, vi, -> af
