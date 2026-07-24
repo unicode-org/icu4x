@@ -36,7 +36,7 @@ impl DataProvider<CurrencyEssentialsV1> for SourceDataProvider {
             &numbers_resource.main.value.numbers.default_numbering_system
         };
 
-        let result = extract_currency_essentials(self, numbers_resource, nsname);
+        let result = extract_currency_essentials(numbers_resource, nsname);
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -47,31 +47,56 @@ impl DataProvider<CurrencyEssentialsV1> for SourceDataProvider {
 
 impl IterableDataProviderCached<CurrencyEssentialsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        self.iter_ids_for_numbers_with_locales()
+        let mut ids = HashSet::new();
+        for locale in self.cldr()?.numbers().list_locales()? {
+            let numbers_resource: &cldr_serde::numbers::Resource = self
+                .cldr()?
+                .numbers()
+                .read_and_parse(&locale, "numbers.json")?;
+            let numbers = &numbers_resource.main.value.numbers;
+            let default_numsys = &numbers.default_numbering_system;
+
+            for (nsname, patterns) in &numbers.numsys_data.currency_patterns {
+                if patterns.standard.positive.is_empty() {
+                    continue;
+                }
+                if nsname == default_numsys {
+                    ids.insert(DataIdentifierCow::from_locale(locale));
+                } else {
+                    let attr = DataMarkerAttributes::try_from_str(nsname).map_err(|_| {
+                        DataError::custom("Invalid numbering system name")
+                            .with_display_context(nsname)
+                    })?;
+                    ids.insert(
+                        DataIdentifierBorrowed::for_marker_attributes_and_locale(attr, &locale)
+                            .into_owned(),
+                    );
+                }
+            }
+        }
+        Ok(ids)
     }
 }
 
 fn extract_currency_essentials<'data>(
-    _provider: &SourceDataProvider,
     numbers_resource: &cldr_serde::numbers::Resource,
     numsys_name: &str,
 ) -> Result<CurrencyEssentials<'data>, DataError> {
     let numbers_block = &numbers_resource.main.value.numbers;
-    let default_numsys = &numbers_block.default_numbering_system;
     let currency_formats = numbers_block
         .numsys_data
         .currency_patterns
         .get(numsys_name)
-        .or_else(|| {
-            numbers_block
-                .numsys_data
-                .currency_patterns
-                .get(default_numsys)
-        })
-        .or_else(|| numbers_block.numsys_data.currency_patterns.get("latn"))
-        .ok_or_else(|| DataError::custom("Could not find currency patterns"))?;
+        .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
 
+    // We only generate CurrencyEssentials for locale/numsys pairs that possess a non-empty standard
+    // currency pattern (verified during ID iteration in `iter_ids_cached`). Therefore, if this pattern
+    // is missing or empty when `load` is called directly, the requested locale data is unsupported
+    // or malformed, so we treat the identifier as not found.
     let standard = &currency_formats.standard;
+    if standard.positive.is_empty() {
+        return Err(DataErrorKind::IdentifierNotFound.into_error());
+    }
     let standard_alpha_next_to_number = currency_formats.standard_alpha_next_to_number.as_ref();
     let accounting = currency_formats.accounting.as_ref();
     let accounting_alpha_next_to_number = currency_formats.accounting_alpha_next_to_number.as_ref();

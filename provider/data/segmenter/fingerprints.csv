@@ -10,7 +10,7 @@ segmenter/break/line/override/v2, und/keepall, 112B, 89B, b1d970181af1b2b2
 segmenter/break/line/override/v2, und/loose, 112B, 89B, 495a3a06eb79687d
 segmenter/break/line/override/v2, und/normal, 112B, 89B, 8dab4f7909db361e
 segmenter/break/line/v1, <singleton>, 19860B, 19755B, 1abae346855fbab9
-segmenter/break/line/v2, <singleton>, 31260B, 31122B, 6bf15fbf10f2c0e5
+segmenter/break/line/v2, <singleton>, 30612B, 30474B, 3555cdc2c81ed463
 segmenter/break/sentence/override/v1, <lookup>, 35B, 1 identifiers
 segmenter/break/sentence/override/v1, <total>, 332B, 273B, 1 unique payloads
 segmenter/break/sentence/override/v1, el, 332B, 273B, 745d858a06d47385
