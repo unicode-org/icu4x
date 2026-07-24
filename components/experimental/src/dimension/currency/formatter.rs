@@ -13,7 +13,7 @@ use super::super::provider::currency::{
 };
 use super::CurrencyCode;
 use fixed_decimal::{
-    Decimal as FixedDecimal, RoundingIncrement, SignedRoundingMode, UnsignedRoundingMode,
+    Decimal as FixedDecimal, RoundingIncrement, Sign, SignedRoundingMode, UnsignedRoundingMode,
 };
 use icu_decimal::preferences::CompactDecimalFormatterPreferences;
 use icu_decimal::{AbstractFormatter, DecimalFormatter, DecimalFormatterPreferences};
@@ -651,25 +651,29 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let rounded_value = apply_precision(value.clone(), self.fraction_info);
         let formatted_value = V::format_unsigned(&self.value_formatter, rounded_value.absolute);
 
-        let (pattern, currency_str) = match &self.currency_data {
+        let (pattern, currency_str, sign) = match &self.currency_data {
             CurrencyFormatterData::IsoSymbol {
                 essential,
                 currency,
             } => {
-                let pattern = essential.get().get_positive(true, true);
-                (pattern, currency.0.as_str())
+                let (pattern, sign) =
+                    select_essentials_pattern(essential.get(), rounded_value.sign, true, true);
+                (pattern, currency.0.as_str(), sign)
             }
             CurrencyFormatterData::IsoName { patterns, currency } => {
                 let currency_str = currency.0.as_str();
                 let pattern = patterns.get().elements.get_default().1;
-                (pattern, currency_str)
+                (pattern, currency_str, rounded_value.sign)
             }
             CurrencyFormatterData::Symbol { essential, symbol } => {
                 let symbol = symbol.get();
-                let pattern = essential
-                    .get()
-                    .get_positive(symbol.starts_with_letter(), symbol.ends_with_letter());
-                (pattern, symbol.as_str())
+                let (pattern, sign) = select_essentials_pattern(
+                    essential.get(),
+                    rounded_value.sign,
+                    symbol.starts_with_letter(),
+                    symbol.ends_with_letter(),
+                );
+                (pattern, symbol.as_str(), sign)
             }
             CurrencyFormatterData::Name {
                 extended,
@@ -679,7 +683,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 let operands = V::plural_operands(&formatted_value);
                 let currency_str = extended.get().get(operands, plural_rules);
                 let pattern = patterns.get().get(operands, plural_rules);
-                (pattern, currency_str)
+                (pattern, currency_str, rounded_value.sign)
             }
         };
 
@@ -688,12 +692,39 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         // minus sign to the entire positive pattern (e.g., `-¤#,##0` producing `-$12K`).
         // Therefore, `format_sign` is applied as the outermost wrapper around the glued currency string so
         // that the minus sign modifies the full monetary expression rather than just the numeric significand.
+        // When an explicit negative pattern already encodes the sign with literals (e.g. parentheses),
+        // `sign` is `Sign::None` so no redundant minus sign is prepended.
         V::format_sign(
             &self.value_formatter,
             pattern.interpolate((formatted_value, currency_str)),
-            rounded_value.sign,
+            sign,
         )
     }
+}
+
+/// Selects the pattern from the currency essentials for the given sign.
+///
+/// If an explicit negative pattern exists for a negative value, it is returned along with
+/// [`Sign::None`]: such patterns encode the sign with literals (e.g. parentheses), so no
+/// minus sign should be applied on top of them. Otherwise, the positive pattern is returned
+/// with the original sign, and the sign is rendered by the value formatter.
+fn select_essentials_pattern<'a>(
+    essentials: &'a super::super::provider::currency::essentials::CurrencyEssentials<'_>,
+    sign: Sign,
+    symbol_starts_with_letter: bool,
+    symbol_ends_with_letter: bool,
+) -> (&'a icu_pattern::DoublePlaceholderPattern, Sign) {
+    if sign == Sign::Negative
+        && let Some(pattern) =
+            essentials.get_negative(symbol_starts_with_letter, symbol_ends_with_letter)
+    {
+        return (pattern, Sign::None);
+    }
+
+    (
+        essentials.get_positive(symbol_starts_with_letter, symbol_ends_with_letter),
+        sign,
+    )
 }
 
 // TODO: Discuss reusing the `load_with_fallback` helper from `icu_decimal`

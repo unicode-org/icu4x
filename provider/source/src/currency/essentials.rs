@@ -129,16 +129,31 @@ fn extract_currency_essentials<'data>(
     fn create_negative_pattern<'data>(
         pattern: &NumberPattern,
     ) -> Result<Option<Cow<'data, DoublePlaceholderPattern>>, DataError> {
-        if let Some(negative_items) = &pattern.negative {
-            DoublePlaceholderPattern::try_from_items(convert_pattern_items(negative_items))
-                .map_err(|e| {
-                    DataError::custom("Could not parse negative pattern").with_display_context(&e)
-                })
-                .map(Cow::Owned)
-                .map(Some)
-        } else {
-            Ok(None)
+        let Some(negative_items) = &pattern.negative else {
+            return Ok(None);
+        };
+        // Negative subpatterns that contain explicit sign characters (`-`/`+`) are not
+        // baked: prepending the value formatter's localized minus sign to the positive
+        // pattern produces an equivalent result, so only self-contained negative
+        // subpatterns that encode the sign with literals (e.g. parentheses like `($3)`)
+        // are baked and used as-is.
+        // TODO(#8263): Consider supporting such subpatterns by rendering the sign
+        // characters using the localized plus/minus signs from the decimal symbols data,
+        // which would also preserve the sign position specified by the pattern.
+        if negative_items.iter().any(|item| {
+            matches!(
+                item,
+                NumberPatternItem::MinusSign | NumberPatternItem::PlusSign
+            )
+        }) {
+            return Ok(None);
         }
+        DoublePlaceholderPattern::try_from_items(convert_pattern_items(negative_items))
+            .map_err(|e| {
+                DataError::custom("Could not parse negative pattern").with_display_context(&e)
+            })
+            .map(Cow::Owned)
+            .map(Some)
     }
 
     let mut unique_patterns = Vec::<Box<DoublePlaceholderPattern>>::new();
@@ -265,4 +280,21 @@ fn test_essentials() {
         ar_eg.get().get_positive(false, false).interpolate((3, "$")),
         "\u{200f}3\u{a0}$"
     );
+
+    // The `latn` patterns for `ar-EG` have an explicit standard negative subpattern
+    // containing a minus sign. Such subpatterns are not baked (see
+    // `create_negative_pattern`), so `get_negative` returns `None` and the formatter
+    // falls back to prepending the localized minus sign to the positive pattern.
+    let ar_eg_latn: DataPayload<CurrencyEssentialsV1> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("latn"),
+                &langid!("ar-EG").into(),
+            ),
+            ..Default::default()
+        })
+        .unwrap()
+        .payload;
+
+    assert!(ar_eg_latn.get().get_negative(false, false).is_none());
 }
