@@ -124,7 +124,7 @@ macro_rules! __impl_unit_ids_v1 {
             pub const UNIT_IDS_V1_UND_OUNCE: &<icu::experimental::measure::provider::UnitIdsV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct = &99u16;
             pub const UNIT_IDS_V1_UND_OUNCE_TROY: &<icu::experimental::measure::provider::UnitIdsV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct = &100u16;
             pub const UNIT_IDS_V1_UND_PARSEC: &<icu::experimental::measure::provider::UnitIdsV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct = &101u16;
-            pub const UNIT_IDS_V1_UND_PART: &<icu::experimental::measure::provider::UnitIdsV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct = &155u16;
+            pub const UNIT_IDS_V1_UND_PART: &<icu::experimental::measure::provider::UnitIdsV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct = &113u16;
             pub const UNIT_IDS_V1_UND_PASCAL: &<icu::experimental::measure::provider::UnitIdsV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct = &102u16;
             pub const UNIT_IDS_V1_UND_PERCENT: &<icu::experimental::measure::provider::UnitIdsV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct = &103u16;
             pub const UNIT_IDS_V1_UND_PERMILLE: &<icu::experimental::measure::provider::UnitIdsV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct = &104u16;
