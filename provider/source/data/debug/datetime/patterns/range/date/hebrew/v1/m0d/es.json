@@ -12,8 +12,8 @@
     {
       "header": 6,
       "patterns": [
-        "d–d 'de' MMM",
-        "d 'de' MMM"
+        "d–d 'de' MMMM",
+        "d 'de' MMMM"
       ]
     },
     {
