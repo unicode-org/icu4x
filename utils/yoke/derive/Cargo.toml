@@ -24,8 +24,8 @@ path = "src/lib.rs"
 [dependencies]
 proc-macro2 = { workspace = true }
 quote = { workspace = true }
-syn = { workspace = true, features = ["fold", "visit"] }
-synstructure = { workspace = true }
+syn = { version = "3.0", features = ["fold", "visit"] }
+synstructure = "0.14.0"
 
 [dev-dependencies]
 yoke = { path = "..", features = ["derive"] }

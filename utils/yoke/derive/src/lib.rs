@@ -81,7 +81,6 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                 GenericParam::Type(ty) => {
                     // Strip out param defaults, we don't need them in the impl
                     let mut ty = ty.clone();
-                    ty.eq_token = None;
                     ty.default = None;
                     Some(GenericParam::Type(ty))
                 }
