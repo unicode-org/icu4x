@@ -25,7 +25,7 @@ path = "src/lib.rs"
 [dependencies]
 proc-macro2 = { workspace = true }
 quote = { workspace = true }
-syn = { workspace = true, features = ["fold"] }
+syn = { workspace = true, features = ["fold", "visit"] }
 synstructure = { workspace = true }
 
 [dev-dependencies]
