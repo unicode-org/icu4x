@@ -29,7 +29,7 @@ synstructure = { workspace = true }
 
 [dev-dependencies]
 yoke = { path = "..", features = ["derive"] }
-zerovec = { path = "../../../utils/zerovec", features = ["yoke", "alloc"] }
+zerovec = { path = "../../../utils/zerovec", features = ["alloc", "yoke"] }
 
 [lints]
 workspace = true
