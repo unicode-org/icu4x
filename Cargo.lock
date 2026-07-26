@@ -701,8 +701,8 @@ dependencies = [
  "databake",
  "proc-macro2",
  "quote",
- "syn 2.0.117",
- "synstructure 0.13.2",
+ "syn 3.0.3",
+ "synstructure",
 ]
 
 [[package]]
@@ -3339,17 +3339,6 @@ dependencies = [
 
 [[package]]
 name = "synstructure"
-version = "0.13.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "728a70f3dbaf5bab7f0c4b1ac8d7ae5ea60a4b5549c8a5914361c99147a709d2"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.117",
-]
-
-[[package]]
-name = "synstructure"
 version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "901704edd0dfe137f1987838ee4f259e4e063c31371bdb423f7ae38ec6f77f02"
@@ -4242,7 +4231,7 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 3.0.3",
- "synstructure 0.14.0",
+ "synstructure",
  "yoke",
  "zerovec",
 ]
@@ -4281,7 +4270,7 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 3.0.3",
- "synstructure 0.14.0",
+ "synstructure",
  "zerofrom",
  "zerovec",
 ]
@@ -4352,7 +4341,7 @@ dependencies = [
  "quote",
  "serde",
  "serde_json",
- "syn 2.0.117",
+ "syn 3.0.3",
  "zerofrom",
  "zerovec",
 ]
