@@ -4280,8 +4280,8 @@ version = "0.1.7"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.117",
- "synstructure 0.13.2",
+ "syn 3.0.3",
+ "synstructure 0.14.0",
  "zerofrom",
  "zerovec",
 ]
