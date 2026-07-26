@@ -12,4 +12,33 @@ use serde::{Deserialize, Serialize};
 #[derive(Copy, Debug, Eq, PartialEq, Clone, Default, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
-pub struct CurrencyFormatterOptions {}
+pub struct CurrencyFormatterOptions {
+    /// Whether to use standard or accounting currency patterns.
+    pub usage: CurrencyUsage,
+}
+
+impl From<CurrencyUsage> for CurrencyFormatterOptions {
+    fn from(usage: CurrencyUsage) -> Self {
+        Self { usage }
+    }
+}
+
+/// Controls whether currency formatting uses standard or accounting patterns.
+///
+/// Corresponds to ECMA-402 `currencySign`.
+#[derive(Copy, Debug, Eq, PartialEq, Clone, Default, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[non_exhaustive]
+pub enum CurrencyUsage {
+    /// Standard currency formatting (default).
+    ///
+    /// Negative values typically use a leading minus sign, e.g. `-$1,234.56`.
+    #[default]
+    Standard,
+
+    /// Accounting currency formatting.
+    ///
+    /// Negative values may use locale-specific accounting patterns such as
+    /// parentheses, e.g. `($1,234.56)` in `en-US`.
+    Accounting,
+}
