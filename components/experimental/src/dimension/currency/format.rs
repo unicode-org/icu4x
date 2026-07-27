@@ -242,7 +242,7 @@ mod tests {
             CurrencyFormatter::try_new_symbol(prefs, currency_code, Default::default()).unwrap();
         assert_writeable_eq!(
             fmt_symbol.format_fixed_decimal(&negative_value),
-            "\u{200f}-12,345.67\u{a0}\u{62c}.\u{645}.\u{200f}"
+            "\u{200f}-12,345.67\u{a0}ج.م.\u{200f}"
         );
 
         // `de-CH` places the minus sign between the currency symbol and the number
