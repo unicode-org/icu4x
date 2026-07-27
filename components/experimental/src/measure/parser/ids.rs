@@ -14,7 +14,7 @@ pub fn unit_id(id: &str) -> Option<UnitID> {
 #[test]
 fn all_ids_u16() {
     for (_, value) in CLDR_IDS_TRIE.iter() {
-        assert!(value <= u16::MAX as UnitId);
+        assert!(value <= u16::MAX as UnitID);
     }
 }
 
