@@ -15,7 +15,7 @@ pub mod ffi {
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::locale::fallback::LocaleFallbacker, Struct)]
     #[diplomat::rust_link(icu::locale::fallback::LocaleFallbackerBorrowed, Struct, hidden)]
-    pub struct LocaleFallbacker(pub icu_locale::LocaleFallbacker);
+    pub struct LocaleFallbacker(pub icu_locale::fallback::LocaleFallbacker);
 
     /// Priority mode for the ICU4X fallback algorithm.
     #[diplomat::enum_convert(icu_locale::fallback::LocaleFallbackPriority, needs_wildcard)]
@@ -68,7 +68,7 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Box<LocaleFallbacker> {
             Box::new(LocaleFallbacker(
-                icu_locale::LocaleFallbacker::new().static_to_owned(),
+                icu_locale::fallback::LocaleFallbacker::new().static_to_owned(),
             ))
         }
 
@@ -85,7 +85,9 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<LocaleFallbacker>, DataError> {
             Ok(Box::new(LocaleFallbacker(
-                icu_locale::LocaleFallbacker::try_new_with_buffer_provider(provider.get()?)?,
+                icu_locale::fallback::LocaleFallbacker::try_new_with_buffer_provider(
+                    provider.get()?,
+                )?,
             )))
         }
 
@@ -97,7 +99,7 @@ pub mod ffi {
         #[diplomat::attr(auto, named_constructor)]
         pub fn without_data() -> Box<LocaleFallbacker> {
             Box::new(LocaleFallbacker(
-                icu_locale::LocaleFallbacker::new_without_data(),
+                icu_locale::fallback::LocaleFallbacker::new_without_data(),
             ))
         }
 

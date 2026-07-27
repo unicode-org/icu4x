@@ -40,3 +40,7 @@ icu::segmenter::WordSegmenter::try_new_neo_dictionary#FnInStruct
 icu::segmenter::WordSegmenter::try_new_neo_for_non_complex_scripts#FnInStruct
 icu::segmenter::WordSegmenter::try_new_neo_lstm#FnInStruct
 icu::segmenter::iterators::LineBreakIterator::is_mandatory#FnInStruct
+icu_provider_adapters::fallback::LocaleFallbacker#Struct
+icu_provider_adapters::fallback::LocaleFallbacker::for_config#FnInStruct
+icu_provider_adapters::fallback::LocaleFallbacker::new#FnInStruct
+icu_provider_adapters::fallback::LocaleFallbacker::new_without_data#FnInStruct

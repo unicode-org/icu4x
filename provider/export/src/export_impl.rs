@@ -3,8 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{DataLocaleFamilyAnnotations, DeduplicationStrategy, ExportDriver, ExportMetadata};
-use icu_locale::LocaleFallbacker;
-use icu_locale::fallback::LocaleFallbackIterator;
+use icu_locale::fallback::{LocaleFallbackIterator, LocaleFallbacker};
 use icu_provider::export::*;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
