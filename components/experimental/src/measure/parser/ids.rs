@@ -138,7 +138,8 @@ pub(crate) const CLDR_IDS_TRIE: ZeroTrieSimpleAscii<[u8; 1334]> =
         ("pint-metric", 110_usize),
         ("pixel", 111_usize),
         ("point", 112_usize),
-        // TODO(#8269): alias for part
+        // TODO(#8269): `portion` is an alias for `part`. Unit aliases should be handled via a separate
+        // lookup structure (e.g. `UNIT_ALIASES_TRIE`) rather than mapping directly inside `CLDR_IDS_TRIE`.
         ("portion", 113_usize),
         ("pound", 114_usize),
         ("pound-force", 115_usize),
