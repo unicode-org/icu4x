@@ -231,7 +231,7 @@ mod tests {
     #[test]
     pub fn test_explicit_negative_pattern() {
         // `ar` with `latn` numbers has an explicit standard negative subpattern
-        // (`\u{200f}#,##0.00\u{a0}\u{a4};\u{200f}-#,##0.00\u{a0}\u{a4}`), which is used
+        // (`\u{200f}#,##0.00\u{a0}\u{a4};\u{200f}-#,##0.00\u{a0}\u{a4}` / `‏#,##0.00 ¤;‏-#,##0.00 ¤`), which is used
         // as-is for negative values instead of prepending a minus sign to the
         // positive pattern.
         let prefs = locale!("ar-EG-u-nu-latn").into();
@@ -242,7 +242,7 @@ mod tests {
             CurrencyFormatter::try_new_symbol(prefs, currency_code, Default::default()).unwrap();
         assert_writeable_eq!(
             fmt_symbol.format_fixed_decimal(&negative_value),
-            "\u{200f}-12,345.67\u{a0}ج.م.\u{200f}"
+            "‏-12,345.67 ج.م.‏"
         );
 
         // `de-CH` places the minus sign between the currency symbol and the number
