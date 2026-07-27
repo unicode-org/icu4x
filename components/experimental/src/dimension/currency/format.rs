@@ -230,24 +230,29 @@ mod tests {
 
     #[test]
     pub fn test_explicit_negative_pattern() {
-        // `ar` with `latn` numbers has an explicit standard negative subpattern
-        // (`\u{200f}#,##0.00\u{a0}\u{a4};\u{200f}-#,##0.00\u{a0}\u{a4}` / `‏#,##0.00 ¤;‏-#,##0.00 ¤`), which is used
-        // as-is for negative values instead of prepending a minus sign to the
-        // positive pattern.
+        // `ar` with `latn` numbers has an explicit standard negative subpattern:
+        // - Escaped: "\u{200f}#,##0.00\u{a0}\u{a4};\u{200f}-#,##0.00\u{a0}\u{a4}"
+        // - Literal: "‏#,##0.00 ¤;‏-#,##0.00 ¤"
+        // The explicit negative pattern is used as-is for negative values instead of
+        // prepending a minus sign to the positive pattern.
         let prefs = locale!("ar-EG-u-nu-latn").into();
         let currency_code = CurrencyCode(tinystr!(3, "EGP"));
         let negative_value = "-12345.67".parse().unwrap();
 
         let fmt_symbol =
             CurrencyFormatter::try_new_symbol(prefs, currency_code, Default::default()).unwrap();
+        // Expected output:
+        // - Escaped: "\u{200f}-12,345.67\u{a0}\u{62c}.\u{645}.\u{200f}"
+        // - Literal: "‏-12,345.67 ج.م.‏"
         assert_writeable_eq!(
             fmt_symbol.format_fixed_decimal(&negative_value),
             "‏-12,345.67 ج.م.‏"
         );
 
-        // `de-CH` places the minus sign between the currency symbol and the number
-        // (`\u{a4}\u{a0}#,##0.00;\u{a4}-#,##0.00`), which only an explicit negative
-        // pattern can express.
+        // `de-CH` places the minus sign between the currency symbol and the number:
+        // - Escaped: "\u{a4}\u{a0}#,##0.00;\u{a4}-#,##0.00"
+        // - Literal: "¤ #,##0.00;¤-#,##0.00"
+        // This behavior can only be expressed via an explicit negative pattern.
         let prefs = locale!("de-CH").into();
         let currency_code = CurrencyCode(tinystr!(3, "CHF"));
         let fmt_symbol =
