@@ -5,7 +5,6 @@
 use criterion::{Criterion, black_box, criterion_group, criterion_main};
 
 use icu_segmenter::LineSegmenter;
-#[cfg(feature = "unstable")]
 use icu_segmenter::WordSegmenter;
 use icu_segmenter::options::LineBreakOptions;
 use icu_segmenter::options::LineBreakStrictness;
@@ -33,35 +32,39 @@ const TEST_STR_LONG_MIXED: &str = include_str!("../tests/testdata/SegmenterBench
 #[cfg(feature = "unstable")]
 const COMPARISON_CASES: &[TextCase] = &[
     TextCase {
-        name: "english",
+        name: "En",
         text: TEST_STR_EN,
     },
     TextCase {
-        name: "thai",
+        name: "En CSS",
+        text: TEST_STR_EN,
+    },
+    TextCase {
+        name: "Th",
         text: TEST_STR_TH,
     },
     TextCase {
-        name: "japanese",
+        name: "Ja",
         text: TEST_STR_JA,
     },
     TextCase {
-        name: "han",
+        name: "Han",
         text: TEST_STR_HAN,
     },
     TextCase {
-        name: "thai_japanese",
+        name: "Th_Ja",
         text: TEST_STR_TH_JA,
     },
     TextCase {
-        name: "thai_han",
+        name: "Th_Han",
         text: TEST_STR_TH_HAN,
     },
     TextCase {
-        name: "english_thai",
+        name: "En_Th",
         text: TEST_STR_EN_TH,
     },
     TextCase {
-        name: "long_mixed",
+        name: "Mixed",
         text: TEST_STR_LONG_MIXED,
     },
 ];
@@ -73,289 +76,237 @@ struct TextCase {
     text: &'static str,
 }
 
-#[cfg(feature = "unstable")]
-// Consume breakpoint values without collecting them into a Vec.
-fn consume_breakpoints(iter: impl Iterator<Item = usize>) -> usize {
-    black_box(iter.fold(0usize, |checksum, breakpoint| {
-        checksum.wrapping_mul(31).wrapping_add(breakpoint)
-    }))
+fn line_segmenters(
+    options: LineBreakOptions<'_>,
+) -> impl IntoIterator<Item = (icu_segmenter::LineSegmenterBorrowed<'static>, &'static str)> {
+    [
+        (LineSegmenter::new_for_non_complex_scripts(options), ""),
+        (LineSegmenter::new_auto(options), "/auto"),
+        (LineSegmenter::new_lstm(options), "/lstm"),
+        (LineSegmenter::new_dictionary(options), "/dictionary"),
+        #[cfg(feature = "unstable")]
+        (
+            LineSegmenter::new_neo_for_non_complex_scripts(options),
+            "/neo",
+        ),
+        #[cfg(feature = "unstable")]
+        (LineSegmenter::new_neo_auto(options), "/neo/auto"),
+        #[cfg(feature = "unstable")]
+        (LineSegmenter::new_neo_lstm(options), "/neo/lstm"),
+        #[cfg(feature = "unstable")]
+        (
+            LineSegmenter::new_neo_dictionary(options),
+            "/neo/dictionary",
+        ),
+    ]
 }
 
-#[cfg(feature = "unstable")]
-macro_rules! bench_dictionary_str {
-    ($group:expr, $published:expr, $neo:expr) => {{
-        let published = $published;
-        let neo = $neo;
-
-        for case in COMPARISON_CASES {
-            $group.bench_function(format!("published/dictionary/{}", case.name), |b| {
-                b.iter(|| {
-                    consume_breakpoints(black_box(published).segment_str(black_box(case.text)))
-                })
-            });
-
-            $group.bench_function(format!("neo/dictionary/{}", case.name), |b| {
-                b.iter(|| consume_breakpoints(black_box(neo).segment_str(black_box(case.text))))
-            });
-        }
-    }};
-}
-
-#[cfg(feature = "unstable")]
-macro_rules! bench_dictionary_utf8 {
-    ($group:expr, $published:expr, $neo:expr) => {{
-        let published = $published;
-        let neo = $neo;
-
-        for case in COMPARISON_CASES {
-            $group.bench_function(format!("published/dictionary/{}", case.name), |b| {
-                b.iter(|| {
-                    consume_breakpoints(
-                        black_box(published).segment_utf8(black_box(case.text).as_bytes()),
-                    )
-                })
-            });
-
-            $group.bench_function(format!("neo/dictionary/{}", case.name), |b| {
-                b.iter(|| {
-                    consume_breakpoints(
-                        black_box(neo).segment_utf8(black_box(case.text).as_bytes()),
-                    )
-                })
-            });
-        }
-    }};
-}
-
-#[cfg(feature = "unstable")]
-macro_rules! bench_dictionary_utf16 {
-    ($group:expr, $published:expr, $neo:expr) => {{
-        let published = $published;
-        let neo = $neo;
-
-        for case in COMPARISON_CASES {
-            let utf16 = case.text.encode_utf16().collect::<Vec<u16>>();
-
-            $group.bench_function(format!("published/dictionary/{}", case.name), |b| {
-                b.iter(|| {
-                    consume_breakpoints(black_box(published).segment_utf16(black_box(&utf16)))
-                })
-            });
-
-            $group.bench_function(format!("neo/dictionary/{}", case.name), |b| {
-                b.iter(|| consume_breakpoints(black_box(neo).segment_utf16(black_box(&utf16))))
-            });
-        }
-    }};
+fn word_segmenters(
+    options: icu_segmenter::options::WordBreakInvariantOptions,
+) -> impl IntoIterator<Item = (icu_segmenter::WordSegmenterBorrowed<'static>, &'static str)> {
+    [
+        (WordSegmenter::new_for_non_complex_scripts(options), ""),
+        (WordSegmenter::new_auto(options), "/auto"),
+        (WordSegmenter::new_lstm(options), "/lstm"),
+        (WordSegmenter::new_dictionary(options), "/dictionary"),
+        #[cfg(feature = "unstable")]
+        (
+            WordSegmenter::new_neo_for_non_complex_scripts(options),
+            "/neo",
+        ),
+        #[cfg(feature = "unstable")]
+        (WordSegmenter::new_neo_auto(options), "/neo/auto"),
+        #[cfg(feature = "unstable")]
+        (WordSegmenter::new_neo_lstm(options), "/neo/lstm"),
+        #[cfg(feature = "unstable")]
+        (
+            WordSegmenter::new_neo_dictionary(options),
+            "/neo/dictionary",
+        ),
+    ]
 }
 
 fn line_break_iter_latin1(c: &mut Criterion) {
     let mut group = c.benchmark_group("Line Break/Latin1");
 
-    let segmenter = LineSegmenter::new_dictionary(Default::default());
+    for case in COMPARISON_CASES {
+        if !case.text.is_ascii() {
+            continue;
+        }
 
-    let mut options = LineBreakOptions::default();
-    options.strictness = Some(LineBreakStrictness::Anywhere);
-    options.word_option = Some(LineBreakWordOption::BreakAll);
-    let segmenter_css = LineSegmenter::new_dictionary(options);
+        let mut options = LineBreakOptions::default();
+        if case.name.contains("CSS") {
+            options.strictness = Some(LineBreakStrictness::Anywhere);
+            options.word_option = Some(LineBreakWordOption::BreakAll);
+        }
 
-    group.bench_function("En", |b| {
-        b.iter(|| {
-            black_box(&segmenter)
-                .segment_latin1(black_box(TEST_STR_EN).as_bytes())
-                .count()
-        })
-    });
+        for (segmenter, variant) in line_segmenters(options) {
+            if variant.contains("lstm") || variant.contains("dictionary") {
+                // these don't add anything, we only compare to auto to determine the potential complex overhead
+                continue;
+            }
+            group.bench_function(format!("{}{}", case.name, variant), |b| {
+                b.iter(|| {
+                    black_box(&segmenter)
+                        .segment_latin1(black_box(case.text.as_bytes()))
+                        .count()
+                })
+            });
+        }
+    }
+}
 
-    group.bench_function("En CSS", |b| {
-        b.iter(|| {
-            black_box(&segmenter_css)
-                .segment_latin1(black_box(TEST_STR_EN).as_bytes())
-                .count()
-        })
-    });
+fn line_break_iter_str(c: &mut Criterion) {
+    let mut group = c.benchmark_group("Line Break/UTF8");
+
+    for case in COMPARISON_CASES {
+        let mut options = LineBreakOptions::default();
+        if case.name.contains("CSS") {
+            options.strictness = Some(LineBreakStrictness::Anywhere);
+            options.word_option = Some(LineBreakWordOption::BreakAll);
+        }
+
+        for (segmenter, variant) in line_segmenters(options) {
+            group.bench_function(format!("{}{}", case.name, variant), |b| {
+                b.iter(|| {
+                    black_box(&segmenter)
+                        .segment_str(black_box(case.text))
+                        .count()
+                })
+            });
+        }
+    }
 }
 
 fn line_break_iter_utf8(c: &mut Criterion) {
-    let mut group = c.benchmark_group("Line Break/UTF8");
+    let mut group = c.benchmark_group("Line Break/Potential UTF8");
 
-    let segmenter_auto = LineSegmenter::new_auto(Default::default());
-    let segmenter_lstm = LineSegmenter::new_lstm(Default::default());
-    let segmenter_dictionary = LineSegmenter::new_dictionary(Default::default());
+    for case in COMPARISON_CASES {
+        let mut options = LineBreakOptions::default();
+        if case.name.contains("CSS") {
+            options.strictness = Some(LineBreakStrictness::Anywhere);
+            options.word_option = Some(LineBreakWordOption::BreakAll);
+        }
 
-    let mut options = LineBreakOptions::default();
-    options.strictness = Some(LineBreakStrictness::Anywhere);
-    options.word_option = Some(LineBreakWordOption::BreakAll);
-    let segmenter_css_dictionary = LineSegmenter::new_dictionary(options);
-
-    // No need to test "auto", "lstm", or "dictionary" constructor variants since English uses only
-    // UAX14 rules for line breaking.
-    group.bench_function("En", |b| {
-        b.iter(|| {
-            black_box(&segmenter_dictionary)
-                .segment_str(black_box(TEST_STR_EN))
-                .count()
-        })
-    });
-
-    group.bench_function("En CSS", |b| {
-        b.iter(|| {
-            black_box(&segmenter_css_dictionary)
-                .segment_str(black_box(TEST_STR_EN))
-                .count()
-        })
-    });
-
-    let segmenters = [
-        (&segmenter_auto, "auto"),
-        (&segmenter_lstm, "lstm"),
-        (&segmenter_dictionary, "dictionary"),
-    ];
-    for (segmenter, variant) in segmenters {
-        group.bench_function("Th/".to_string() + variant, |b| {
-            b.iter(|| {
-                black_box(&segmenter)
-                    .segment_str(black_box(TEST_STR_TH))
-                    .count()
-            })
-        });
+        for (segmenter, variant) in line_segmenters(options) {
+            group.bench_function(format!("{}{}", case.name, variant), |b| {
+                b.iter(|| {
+                    black_box(&segmenter)
+                        .segment_utf8(black_box(case.text.as_bytes()))
+                        .count()
+                })
+            });
+        }
     }
 }
 
 fn line_break_iter_utf16(c: &mut Criterion) {
     let mut group = c.benchmark_group("Line Break/UTF16");
 
-    let utf16_en: Vec<u16> = TEST_STR_EN.encode_utf16().collect();
-    let utf16_th: Vec<u16> = TEST_STR_TH.encode_utf16().collect();
+    for case in COMPARISON_CASES {
+        let utf16 = case.text.encode_utf16().collect::<Vec<u16>>();
 
-    let segmenter_auto = LineSegmenter::new_auto(Default::default());
-    let segmenter_lstm = LineSegmenter::new_lstm(Default::default());
-    let segmenter_dictionary = LineSegmenter::new_dictionary(Default::default());
+        let mut options = LineBreakOptions::default();
+        if case.name.contains("CSS") {
+            options.strictness = Some(LineBreakStrictness::Anywhere);
+            options.word_option = Some(LineBreakWordOption::BreakAll);
+        }
 
-    let mut options = LineBreakOptions::default();
-    options.strictness = Some(LineBreakStrictness::Anywhere);
-    options.word_option = Some(LineBreakWordOption::BreakAll);
-    let segmenter_css_dictionary = LineSegmenter::new_dictionary(options);
-
-    // No need to test "auto", "lstm", or "dictionary" constructor variants since English uses only
-    // UAX14 rules for line breaking.
-    group.bench_function("En", |b| {
-        b.iter(|| {
-            black_box(&segmenter_dictionary)
-                .segment_utf16(black_box(&utf16_en))
-                .count()
-        })
-    });
-
-    group.bench_function("En CSS", |b| {
-        b.iter(|| {
-            black_box(&segmenter_css_dictionary)
-                .segment_utf16(black_box(&utf16_en))
-                .count()
-        })
-    });
-
-    let segmenters = [
-        (&segmenter_auto, "auto"),
-        (&segmenter_lstm, "lstm"),
-        (&segmenter_dictionary, "dictionary"),
-    ];
-    for (segmenter, variant) in segmenters {
-        group.bench_function("Th/".to_string() + variant, |b| {
-            b.iter(|| {
-                black_box(&segmenter)
-                    .segment_utf16(black_box(&utf16_th))
-                    .count()
-            })
-        });
+        for (segmenter, variant) in line_segmenters(options) {
+            group.bench_function(format!("{}{}", case.name, variant), |b| {
+                b.iter(|| {
+                    black_box(&segmenter)
+                        .segment_utf16(black_box(&utf16))
+                        .count()
+                })
+            });
+        }
     }
 }
 
-#[cfg(feature = "unstable")]
-fn line_break_comparison_str(c: &mut Criterion) {
-    let mut group = c.benchmark_group("Segmenter Comparison/Line/segment_str");
+fn word_break_iter_latin1(c: &mut Criterion) {
+    let mut group = c.benchmark_group("Word Break/Latin1");
 
-    bench_dictionary_str!(
-        group,
-        LineSegmenter::new_dictionary(Default::default()),
-        LineSegmenter::new_neo_dictionary(Default::default())
-    );
+    for case in COMPARISON_CASES {
+        if !case.text.is_ascii() {
+            continue;
+        }
+
+        for (segmenter, variant) in word_segmenters(Default::default()) {
+            if variant.contains("lstm") || variant.contains("dictionary") {
+                // these don't add anything, we only compare to auto to determine the potential complex overhead
+                continue;
+            }
+            group.bench_function(format!("{}{}", case.name, variant), |b| {
+                b.iter(|| {
+                    black_box(&segmenter)
+                        .segment_latin1(black_box(case.text.as_bytes()))
+                        .count()
+                })
+            });
+        }
+    }
 }
 
-#[cfg(feature = "unstable")]
-fn line_break_comparison_utf8(c: &mut Criterion) {
-    let mut group = c.benchmark_group("Segmenter Comparison/Line/segment_utf8");
+fn word_break_iter_str(c: &mut Criterion) {
+    let mut group = c.benchmark_group("Word Break/UTF8");
 
-    bench_dictionary_utf8!(
-        group,
-        LineSegmenter::new_dictionary(Default::default()),
-        LineSegmenter::new_neo_dictionary(Default::default())
-    );
+    for case in COMPARISON_CASES {
+        for (segmenter, variant) in word_segmenters(Default::default()) {
+            group.bench_function(format!("{}{}", case.name, variant), |b| {
+                b.iter(|| {
+                    black_box(&segmenter)
+                        .segment_str(black_box(case.text))
+                        .count()
+                })
+            });
+        }
+    }
 }
 
-#[cfg(feature = "unstable")]
-fn line_break_comparison_utf16(c: &mut Criterion) {
-    let mut group = c.benchmark_group("Segmenter Comparison/Line/segment_utf16");
+fn word_break_iter_utf8(c: &mut Criterion) {
+    let mut group = c.benchmark_group("Word Break/Potential UTF8");
 
-    bench_dictionary_utf16!(
-        group,
-        LineSegmenter::new_dictionary(Default::default()),
-        LineSegmenter::new_neo_dictionary(Default::default())
-    );
+    for case in COMPARISON_CASES {
+        for (segmenter, variant) in word_segmenters(Default::default()) {
+            group.bench_function(format!("{}{}", case.name, variant), |b| {
+                b.iter(|| {
+                    black_box(&segmenter)
+                        .segment_utf8(black_box(case.text.as_bytes()))
+                        .count()
+                })
+            });
+        }
+    }
 }
 
-#[cfg(feature = "unstable")]
-fn word_break_comparison_str(c: &mut Criterion) {
-    let mut group = c.benchmark_group("Segmenter Comparison/Word/segment_str");
+fn word_break_iter_utf16(c: &mut Criterion) {
+    let mut group = c.benchmark_group("Word Break/UTF16");
 
-    bench_dictionary_str!(
-        group,
-        WordSegmenter::new_dictionary(Default::default()),
-        WordSegmenter::new_neo_dictionary(Default::default())
-    );
+    for case in COMPARISON_CASES {
+        let utf16 = case.text.encode_utf16().collect::<Vec<u16>>();
+
+        for (segmenter, variant) in word_segmenters(Default::default()) {
+            group.bench_function(format!("{}{}", case.name, variant), |b| {
+                b.iter(|| {
+                    black_box(&segmenter)
+                        .segment_utf16(black_box(&utf16))
+                        .count()
+                })
+            });
+        }
+    }
 }
 
-#[cfg(feature = "unstable")]
-fn word_break_comparison_utf8(c: &mut Criterion) {
-    let mut group = c.benchmark_group("Segmenter Comparison/Word/segment_utf8");
-
-    bench_dictionary_utf8!(
-        group,
-        WordSegmenter::new_dictionary(Default::default()),
-        WordSegmenter::new_neo_dictionary(Default::default())
-    );
-}
-
-#[cfg(feature = "unstable")]
-fn word_break_comparison_utf16(c: &mut Criterion) {
-    let mut group = c.benchmark_group("Segmenter Comparison/Word/segment_utf16");
-
-    bench_dictionary_utf16!(
-        group,
-        WordSegmenter::new_dictionary(Default::default()),
-        WordSegmenter::new_neo_dictionary(Default::default())
-    );
-}
-
-#[cfg(not(feature = "unstable"))]
 criterion_group!(
     benches,
     line_break_iter_latin1,
-    line_break_iter_utf8,
-    line_break_iter_utf16
-);
-
-#[cfg(feature = "unstable")]
-criterion_group!(
-    benches,
-    line_break_iter_latin1,
+    line_break_iter_str,
     line_break_iter_utf8,
     line_break_iter_utf16,
-    line_break_comparison_str,
-    line_break_comparison_utf8,
-    line_break_comparison_utf16,
-    word_break_comparison_str,
-    word_break_comparison_utf8,
-    word_break_comparison_utf16
+    word_break_iter_latin1,
+    word_break_iter_str,
+    word_break_iter_utf8,
+    word_break_iter_utf16,
 );
 criterion_main!(benches);
