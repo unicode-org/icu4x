@@ -24,9 +24,7 @@ fn word_break_with_locale() {
     check_word(
         "hello:world",
         &["hello:world"],
-        WordSegmenter::try_new_neo_auto(options)
-            .unwrap()
-            .as_borrowed(),
+        WordSegmenter::try_new_auto(options).unwrap().as_borrowed(),
     );
 
     let langid = langid!("en");
@@ -34,9 +32,7 @@ fn word_break_with_locale() {
     check_word(
         "hello:world",
         &["hello:world"],
-        WordSegmenter::try_new_neo_auto(options)
-            .unwrap()
-            .as_borrowed(),
+        WordSegmenter::try_new_auto(options).unwrap().as_borrowed(),
     );
 }
 
@@ -52,13 +48,6 @@ fn sentence_break_with_locale() {
         &["hello; ", "world"],
         SentenceSegmenter::try_new(options).unwrap().as_borrowed(),
     );
-    check_sentence(
-        "hello; world",
-        &["hello; ", "world"],
-        SentenceSegmenter::try_new_neo(options)
-            .unwrap()
-            .as_borrowed(),
-    );
 
     let langid = langid!("en");
     options.content_locale = Some(&langid);
@@ -66,12 +55,5 @@ fn sentence_break_with_locale() {
         "hello; world",
         &["hello; world"],
         SentenceSegmenter::try_new(options).unwrap().as_borrowed(),
-    );
-    check_sentence(
-        "hello; world",
-        &["hello; world"],
-        SentenceSegmenter::try_new_neo(options)
-            .unwrap()
-            .as_borrowed(),
     );
 }

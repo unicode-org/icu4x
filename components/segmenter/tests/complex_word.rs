@@ -14,8 +14,6 @@ fn word_break_th() {
     for segmenter in [
         WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
         WordSegmenter::new_lstm(WordBreakInvariantOptions::default()),
-        WordSegmenter::new_neo_auto(WordBreakInvariantOptions::default()),
-        WordSegmenter::new_neo_lstm(WordBreakInvariantOptions::default()),
     ] {
         // http://wpt.live/css/css-text/word-break/word-break-normal-th-000.html
         let s = "ภาษาไทยภาษาไทย";
@@ -33,14 +31,10 @@ fn word_break_th() {
 
 #[test]
 fn word_break_my() {
-    for segmenter in [
-        WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
-        WordSegmenter::new_neo_auto(WordBreakInvariantOptions::default()),
-    ] {
-        let s = "မြန်မာစာမြန်မာစာမြန်မာစာ";
-        let expected = ["မြန်မာစာ", "မြန်မာစာ", "မြန်မာ", "စာ"];
-        check_word(s, &expected, segmenter);
-    }
+    let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
+    let s = "မြန်မာစာမြန်မာစာမြန်မာစာ";
+    let expected = ["မြန်မာစာ", "မြန်မာစာ", "မြန်မာ", "စာ"];
+    check_word(s, &expected, segmenter);
 }
 
 #[test]
@@ -48,8 +42,6 @@ fn word_break_hiragana() {
     for segmenter in [
         WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
         WordSegmenter::new_dictionary(WordBreakInvariantOptions::default()),
-        WordSegmenter::new_neo_auto(WordBreakInvariantOptions::default()),
-        WordSegmenter::new_neo_dictionary(WordBreakInvariantOptions::default()),
     ] {
         let s = "うなぎうなじ";
         let expected = ["うなぎ", "うなじ"];
@@ -62,8 +54,6 @@ fn word_break_mixed_han() {
     for segmenter in [
         WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
         WordSegmenter::new_dictionary(WordBreakInvariantOptions::default()),
-        WordSegmenter::new_neo_auto(WordBreakInvariantOptions::default()),
-        WordSegmenter::new_neo_dictionary(WordBreakInvariantOptions::default()),
     ] {
         let s = "Welcome龟山岛龟山岛Welcome";
         let expected = ["Welcome", "龟山岛", "龟山岛", "Welcome"];
@@ -77,93 +67,44 @@ fn word_line_th_wikipedia_auto() {
 
     let text = "แพนด้าแดง (อังกฤษ: Red panda, Shining cat; จีน: 小熊貓; พินอิน: Xiǎo xióngmāo) สัตว์เลี้ยงลูกด้วยนมชนิดหนึ่ง มีชื่อวิทยาศาสตร์ว่า Ailurus fulgens";
 
-    for segmenter in [
-        WordSegmenter::new_auto(Default::default()),
-        WordSegmenter::new_neo_auto(Default::default()),
-    ] {
-        check_word(
-            text,
-            &[
-                "แพน",
-                "ด้า",
-                "แดง",
-                " ",
-                "(",
-                "อัง",
-                "กฤษ",
-                ":",
-                " ",
-                "Red",
-                " ",
-                "panda",
-                ",",
-                " ",
-                "Shining",
-                " ",
-                "cat",
-                ";",
-                " ",
-                "จีน",
-                ":",
-                " ",
-                "小熊",
-                "貓",
-                ";",
-                " ",
-                "พิน",
-                "อิน",
-                ":",
-                " ",
-                "Xiǎo",
-                " ",
-                "xióngmāo",
-                ")",
-                " ",
-                "สัตว์",
-                "เลี้ยง",
-                "ลูก",
-                "ด้วย",
-                "นม",
-                "ชนิด",
-                "หนึ่ง",
-                " ",
-                "มี",
-                "ชื่อ",
-                "วิทยาศาสตร์",
-                "ว่า",
-                " ",
-                "Ailurus",
-                " ",
-                "fulgens",
-            ],
-            segmenter,
-        );
-    }
-
-    check_line(
+    check_word(
         text,
         &[
             "แพน",
             "ด้า",
             "แดง",
             " ",
-            "(อัง",
+            "(",
+            "อัง",
             "กฤษ",
-            ": ",
-            "Red ",
-            "panda, ",
-            "Shining ",
-            "cat; ",
+            ":",
+            " ",
+            "Red",
+            " ",
+            "panda",
+            ",",
+            " ",
+            "Shining",
+            " ",
+            "cat",
+            ";",
+            " ",
             "จีน",
-            ": ",
-            "小",
-            "熊",
-            "貓; ",
+            ":",
+            " ",
+            "小熊",
+            "貓",
+            ";",
+            " ",
             "พิน",
             "อิน",
-            ": ",
-            "Xiǎo ",
-            "xióngmāo) ",
+            ":",
+            " ",
+            "Xiǎo",
+            " ",
+            "xióngmāo",
+            ")",
+            " ",
             "สัตว์",
             "เลี้ยง",
             "ลูก",
@@ -177,10 +118,11 @@ fn word_line_th_wikipedia_auto() {
             "วิทยาศาสตร์",
             "ว่า",
             " ",
-            "Ailurus ",
+            "Ailurus",
+            " ",
             "fulgens",
         ],
-        LineSegmenter::new_auto(Default::default()),
+        WordSegmenter::new_auto(Default::default()),
     );
 
     check_line(
@@ -217,6 +159,6 @@ fn word_line_th_wikipedia_auto() {
             "Ailurus ",
             "fulgens",
         ],
-        LineSegmenter::new_neo_auto(Default::default()),
+        LineSegmenter::new_auto(Default::default()),
     );
 }

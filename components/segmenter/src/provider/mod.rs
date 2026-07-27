@@ -15,10 +15,8 @@
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
-#[cfg(feature = "unstable")]
 #[allow(missing_docs)]
 mod neo;
-#[cfg(feature = "unstable")]
 pub use neo::*;
 mod lstm;
 pub use lstm::*;
@@ -50,29 +48,17 @@ const _: () = {
         pub use icu_locale as locale;
     }
     make_provider!(Baked);
-    impl_segmenter_break_sentence_v1!(Baked);
     impl_segmenter_dictionary_auto_v1!(Baked);
-    impl_segmenter_break_grapheme_cluster_v1!(Baked);
     impl_segmenter_dictionary_extended_v1!(Baked);
-    impl_segmenter_break_line_v1!(Baked);
     #[cfg(feature = "lstm")]
     impl_segmenter_lstm_auto_v1!(Baked);
     #[cfg(feature = "unstable")]
     impl_segmenter_unihan_radical_v1!(Baked);
-    impl_segmenter_break_word_v1!(Baked);
-    impl_segmenter_break_word_override_v1!(Baked);
-    impl_segmenter_break_sentence_override_v1!(Baked);
-    #[cfg(feature = "unstable")]
     impl_segmenter_break_line_v2!(Baked);
-    #[cfg(feature = "unstable")]
     impl_segmenter_break_word_v2!(Baked);
-    #[cfg(feature = "unstable")]
     impl_segmenter_break_sentence_v2!(Baked);
-    #[cfg(feature = "unstable")]
     impl_segmenter_break_grapheme_cluster_v2!(Baked);
-    #[cfg(feature = "unstable")]
     impl_segmenter_break_line_override_v2!(Baked);
-    #[cfg(feature = "unstable")]
     impl_segmenter_break_sentence_override_v2!(Baked);
 };
 
@@ -100,18 +86,21 @@ icu_provider::data_marker!(
     #[cfg(feature = "datagen")]
     attributes_domain = "segmenter"
 );
+#[cfg(feature = "serde")]
 icu_provider::data_marker!(
     /// `SegmenterBreakSentenceOverrideV1`
     SegmenterBreakSentenceOverrideV1,
     "segmenter/break/sentence/override/v1",
     RuleBreakDataOverride<'static>,
 );
+#[cfg(feature = "serde")]
 icu_provider::data_marker!(
     /// `SegmenterBreakWordOverrideV1`
     SegmenterBreakWordOverrideV1,
     "segmenter/break/word/override/v1",
     RuleBreakDataOverride<'static>,
 );
+#[cfg(feature = "serde")]
 icu_provider::data_marker!(
     /// `SegmenterBreakLineV1`
     SegmenterBreakLineV1,
@@ -119,6 +108,7 @@ icu_provider::data_marker!(
     RuleBreakData<'static>,
     is_singleton = true
 );
+#[cfg(feature = "serde")]
 icu_provider::data_marker!(
     /// `SegmenterBreakWordV1`
     SegmenterBreakWordV1,
@@ -126,6 +116,7 @@ icu_provider::data_marker!(
     RuleBreakData<'static>,
     is_singleton = true
 );
+#[cfg(feature = "serde")]
 icu_provider::data_marker!(
     /// `SegmenterBreakGraphemeClusterV1`
     SegmenterBreakGraphemeClusterV1,
@@ -133,6 +124,7 @@ icu_provider::data_marker!(
     RuleBreakData<'static>,
     is_singleton = true
 );
+#[cfg(feature = "serde")]
 icu_provider::data_marker!(
     /// `SegmenterBreakSentenceV1`
     SegmenterBreakSentenceV1,
@@ -144,28 +136,16 @@ icu_provider::data_marker!(
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    SegmenterBreakGraphemeClusterV1::INFO,
-    SegmenterBreakLineV1::INFO,
-    SegmenterBreakSentenceOverrideV1::INFO,
-    SegmenterBreakSentenceV1::INFO,
-    SegmenterBreakWordOverrideV1::INFO,
-    SegmenterBreakWordV1::INFO,
     SegmenterDictionaryAutoV1::INFO,
     SegmenterDictionaryExtendedV1::INFO,
     SegmenterLstmAutoV1::INFO,
     #[cfg(feature = "unstable")]
     radical::SegmenterUnihanRadicalV1::INFO,
-    #[cfg(feature = "unstable")]
     SegmenterBreakLineV2::INFO,
-    #[cfg(feature = "unstable")]
     SegmenterBreakWordV2::INFO,
-    #[cfg(feature = "unstable")]
     SegmenterBreakSentenceV2::INFO,
-    #[cfg(feature = "unstable")]
     SegmenterBreakGraphemeClusterV2::INFO,
-    #[cfg(feature = "unstable")]
     SegmenterBreakLineOverrideV2::INFO,
-    #[cfg(feature = "unstable")]
     SegmenterBreakSentenceOverrideV2::INFO,
 ];
 
@@ -211,6 +191,7 @@ pub struct RuleBreakData<'data> {
     pub complex_property: u8,
 }
 
+#[cfg(feature = "serde")]
 impl RuleBreakData<'_> {
     #[inline]
     pub(crate) fn get_break_state_from_table(&self, left: u8, right: u8) -> BreakState {

@@ -531,7 +531,6 @@ pub(crate) struct RscdCache {
     #[allow(dead_code)]
     pub(crate) cpt_cache: FrozenMap<&'static str, Box<dyn Any + Send + Sync>>,
 
-    #[cfg(feature = "unstable")]
     #[allow(dead_code)]
     pub(crate) segmenter_cache: crate::segmenter::NeoSegmenters,
 }
@@ -556,7 +555,6 @@ impl RscdCache {
             uts_39_zip: Some(uts_39_zip),
             file_cache: Default::default(),
             cpt_cache: Default::default(),
-            #[cfg(feature = "unstable")]
             segmenter_cache: Default::default(),
         }
     }
@@ -569,7 +567,6 @@ impl RscdCache {
             uts_39_zip: None,
             file_cache: Default::default(),
             cpt_cache: Default::default(),
-            #[cfg(feature = "unstable")]
             segmenter_cache: Default::default(),
         }
     }
@@ -629,6 +626,7 @@ impl RscdCache {
     }
 }
 
+#[allow(unused_macros)]
 macro_rules! include_files {
     ($base:literal; $($file:literal),* $(,)?) => {
         #[allow(clippy::large_stack_arrays)]

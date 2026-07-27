@@ -9,7 +9,7 @@ and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latte
 
 This module contains segmenter implementation for the following rules.
 
-- Line segmenter that is compatible with [Unicode Standard Annex #14][UAX14] (Version 15.1.0) _Unicode Line
+- Line segmenter that is compatible with [Unicode Standard Annex #14][UAX14] (Version 17.0.0) _Unicode Line
   Breaking Algorithm_, with options to tailor line-breaking behavior for CSS [`line-break`] and
   [`word-break`] properties.
 - Grapheme cluster segmenter, word segmenter, and sentence segmenter that are compatible with

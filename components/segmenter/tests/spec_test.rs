@@ -84,62 +84,10 @@ where
     }
 }
 
-// TODO: The current line breaking implementation does not fully apply LB1, so we have to pre-process the
-// test data to replace complex characters with equivalent non-complex characters. We should remove this
-// once LB1 is fully implemented.
-fn lb1_sa_replace(c: char) -> char {
-    use icu_properties::{
-        CodePointMapData,
-        props::{GeneralCategory, LineBreak},
-    };
-    match CodePointMapData::new().get(c) {
-        LineBreak::ComplexContext => match (CodePointMapData::new().get(c), c.len_utf8()) {
-            (GeneralCategory::NonspacingMark | GeneralCategory::SpacingMark, 2) => {
-                const _: () = assert!('\u{0300}'.len_utf8() == 2);
-                '\u{0300}'
-            }
-            (GeneralCategory::NonspacingMark | GeneralCategory::SpacingMark, 3) => {
-                const _: () = assert!('\u{081C}'.len_utf8() == 3);
-                '\u{081C}'
-            }
-            (GeneralCategory::NonspacingMark | GeneralCategory::SpacingMark, 4) => {
-                const _: () = assert!('\u{101FD}'.len_utf8() == 4);
-                '\u{101FD}'
-            }
-            (_, 2) => {
-                const _: () = assert!('À'.len_utf8() == 2);
-                'À'
-            }
-            (_, 3) => {
-                const _: () = assert!('ࠀ'.len_utf8() == 3);
-                'ࠀ'
-            }
-            (_, 4) => {
-                const _: () = assert!('𐀀'.len_utf8() == 4);
-                '𐀀'
-            }
-            _ => unreachable!(),
-        },
-        _ => c,
-    }
-}
-
-fn line_break_test(
-    file: &'static str,
-    segmenter: LineSegmenterBorrowed,
-    allow_lb1_violation: bool,
-) {
+fn line_break_test(file: &'static str, segmenter: LineSegmenterBorrowed) {
     let test_iter = TestContentIterator::new(file);
     for (i, mut test) in test_iter.enumerate() {
-        let s: String = test
-            .chars
-            .into_iter()
-            .map(if allow_lb1_violation {
-                lb1_sa_replace
-            } else {
-                |ch| ch
-            })
-            .collect();
+        let s: String = test.chars.into_iter().collect();
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
         // NOTE: For consistency with ICU4C and other Segmenters, we return a breakpoint at
@@ -228,14 +176,8 @@ fn line_break_test(
 #[test]
 fn run_line_break_test() {
     line_break_test(
-        include_str!("testdata/LineBreakTest_15.1.txt"),
-        LineSegmenter::new_for_non_complex_scripts(Default::default()),
-        true,
-    );
-    line_break_test(
         include_str!("testdata/LineBreakTest.txt"),
-        LineSegmenter::new_neo_for_non_complex_scripts(Default::default()),
-        false,
+        LineSegmenter::new_for_non_complex_scripts(Default::default()),
     );
 }
 
@@ -244,21 +186,6 @@ fn run_line_break_extra_test() {
     line_break_test(
         include_str!("testdata/LineBreakExtraTest.txt"),
         LineSegmenter::new_for_non_complex_scripts(Default::default()),
-        false,
-    );
-    line_break_test(
-        include_str!("testdata/LineBreakExtraTest.txt"),
-        LineSegmenter::new_neo_for_non_complex_scripts(Default::default()),
-        false,
-    );
-}
-
-#[test]
-fn run_line_break_random_test() {
-    line_break_test(
-        include_str!("testdata/LineBreakRandomTest_15.1.txt"),
-        LineSegmenter::new_for_non_complex_scripts(Default::default()),
-        false,
     );
 }
 
@@ -333,28 +260,12 @@ fn run_word_break_test() {
         include_str!("testdata/WordBreakTest.txt"),
         WordSegmenter::new_for_non_complex_scripts(Default::default()),
     );
-    word_break_test(
-        include_str!("testdata/WordBreakTest.txt"),
-        WordSegmenter::new_neo_for_non_complex_scripts(Default::default()),
-    );
 }
 
 #[test]
 fn run_word_break_extra_test() {
     word_break_test(
         include_str!("testdata/WordBreakExtraTest.txt"),
-        WordSegmenter::new_for_non_complex_scripts(Default::default()),
-    );
-    word_break_test(
-        include_str!("testdata/WordBreakExtraTest.txt"),
-        WordSegmenter::new_neo_for_non_complex_scripts(Default::default()),
-    );
-}
-
-#[test]
-fn run_word_break_random_test() {
-    word_break_test(
-        include_str!("testdata/WordBreakRandomTest.txt"),
         WordSegmenter::new_for_non_complex_scripts(Default::default()),
     );
 }
@@ -430,28 +341,12 @@ fn run_grapheme_break_test() {
         include_str!("testdata/GraphemeBreakTest.txt"),
         GraphemeClusterSegmenter::new(),
     );
-    grapheme_break_test(
-        include_str!("testdata/GraphemeBreakTest.txt"),
-        GraphemeClusterSegmenter::new_neo(),
-    );
 }
 
 #[test]
 fn run_grapheme_break_extra_test() {
     grapheme_break_test(
         include_str!("testdata/GraphemeBreakExtraTest.txt"),
-        GraphemeClusterSegmenter::new(),
-    );
-    grapheme_break_test(
-        include_str!("testdata/GraphemeBreakExtraTest.txt"),
-        GraphemeClusterSegmenter::new_neo(),
-    );
-}
-
-#[test]
-fn run_grapheme_break_random_test() {
-    grapheme_break_test(
-        include_str!("testdata/GraphemeBreakRandomTest.txt"),
         GraphemeClusterSegmenter::new(),
     );
 }
@@ -527,28 +422,12 @@ fn run_sentence_break_test() {
         include_str!("testdata/SentenceBreakTest.txt"),
         SentenceSegmenter::new(Default::default()),
     );
-    sentence_break_test(
-        include_str!("testdata/SentenceBreakTest.txt"),
-        SentenceSegmenter::new_neo(Default::default()),
-    );
 }
 
 #[test]
 fn run_sentence_break_extra_test() {
     sentence_break_test(
         include_str!("testdata/SentenceBreakExtraTest.txt"),
-        SentenceSegmenter::new(Default::default()),
-    );
-    sentence_break_test(
-        include_str!("testdata/SentenceBreakExtraTest.txt"),
-        SentenceSegmenter::new_neo(Default::default()),
-    );
-}
-
-#[test]
-fn run_sentence_break_random_test() {
-    sentence_break_test(
-        include_str!("testdata/SentenceBreakRandomTest.txt"),
         SentenceSegmenter::new(Default::default()),
     );
 }

@@ -19,7 +19,6 @@ fn strict(s: &str, ja_zh: bool, expected: &[&str]) {
     options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
     check_line(s, expected, LineSegmenter::new_dictionary(options));
-    check_line(s, expected, LineSegmenter::new_neo_dictionary(options));
 }
 
 #[track_caller]
@@ -29,7 +28,6 @@ fn normal(s: &str, ja_zh: bool, expected: &[&str]) {
     options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
     check_line(s, expected, LineSegmenter::new_dictionary(options));
-    check_line(s, expected, LineSegmenter::new_neo_dictionary(options));
 }
 
 #[track_caller]
@@ -39,7 +37,6 @@ fn loose(s: &str, ja_zh: bool, expected: &[&str]) {
     options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
     check_line(s, expected, LineSegmenter::new_dictionary(options));
-    check_line(s, expected, LineSegmenter::new_neo_dictionary(options));
 }
 
 #[track_caller]
@@ -49,7 +46,6 @@ fn anywhere(s: &str, ja_zh: bool, expected: &[&str]) {
     options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
     check_line(s, expected, LineSegmenter::new_dictionary(options));
-    check_line(s, expected, LineSegmenter::new_neo_dictionary(options));
 }
 
 #[test]

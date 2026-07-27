@@ -1,4 +1,3 @@
-segmenter/break/grapheme/cluster/v1, <singleton>, 10452B, 10346B, 648dd52b775f2e5d
 segmenter/break/grapheme/cluster/v2, <singleton>, 12406B, 12266B, b44043f1b4d00bee
 segmenter/break/line/override/v2, <lookup>, 90B, 7 identifiers
 segmenter/break/line/override/v2, <total>, 784B, 623B, 7 unique payloads
@@ -9,17 +8,11 @@ segmenter/break/line/override/v2, und/ja-normal, 112B, 89B, d509feb86494e447
 segmenter/break/line/override/v2, und/keepall, 112B, 89B, d8c232646ba01327
 segmenter/break/line/override/v2, und/loose, 112B, 89B, f88150ef1bf4b3cd
 segmenter/break/line/override/v2, und/normal, 112B, 89B, d754ebc2defb3414
-segmenter/break/line/v1, <singleton>, 19860B, 19755B, 1abae346855fbab9
 segmenter/break/line/v2, <singleton>, 30612B, 30474B, c949fb9e0b4fd645
-segmenter/break/sentence/override/v1, <lookup>, 35B, 1 identifiers
-segmenter/break/sentence/override/v1, <total>, 332B, 273B, 1 unique payloads
-segmenter/break/sentence/override/v1, el, 332B, 273B, 745d858a06d47385
 segmenter/break/sentence/override/v2, <lookup>, 35B, 1 identifiers
 segmenter/break/sentence/override/v2, <total>, 26B, 3B, 1 unique payloads
 segmenter/break/sentence/override/v2, el, 26B, 3B, d43e5587d8842d17
-segmenter/break/sentence/v1, <singleton>, 14804B, 14698B, 30687df4b18e0e2e
 segmenter/break/sentence/v2, <singleton>, 18075B, 17936B, b7b8079b50254704
-segmenter/break/word/v1, <singleton>, 16762B, 16657B, 79957a2124e76c2f
 segmenter/break/word/v2, <singleton>, 18240B, 18101B, d36ab7034634d5a6
 segmenter/dictionary/auto/v1, <lookup>, 43B, 1 identifiers
 segmenter/dictionary/auto/v1, <total>, 2007134B, 2007113B, 1 unique payloads

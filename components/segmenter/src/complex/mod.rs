@@ -3,16 +3,17 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::*;
-#[cfg(feature = "unstable")]
-use crate::scaffold::PotentiallyIllFormedUtf8;
-use crate::scaffold::{RuleBreakType, Utf8, Utf16};
+use crate::scaffold::{PotentiallyIllFormedUtf8, RuleBreakType, Utf8, Utf16};
 use crate::{GraphemeClusterSegmenter, GraphemeClusterSegmenterBorrowed};
+#[cfg(feature = "serde")]
 use alloc::vec::Vec;
 use icu_provider::prelude::*;
 
 mod dictionary;
 use dictionary::*;
+#[cfg(feature = "serde")]
 mod script;
+#[cfg(feature = "serde")]
 use script::*;
 #[cfg(feature = "lstm")]
 mod lstm;
@@ -78,7 +79,6 @@ impl<'data> ComplexPayloadBorrowed<'data> {
         )
     }
 
-    #[cfg(feature = "unstable")]
     pub(crate) fn segment_utf8<'s>(
         self,
         input: &'s [u8],
@@ -211,6 +211,7 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
         }
     }
 
+    #[cfg(feature = "serde")]
     pub(crate) fn segment_str(&self, input: &str) -> Vec<usize> {
         let mut result = Vec::new();
         let mut offset = 0;
@@ -224,6 +225,7 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
         result
     }
     /// Return UTF-16 segment offset array using dictionary or lstm segmenter.
+    #[cfg(feature = "serde")]
     pub(crate) fn segment_utf16(&self, input: &[u16]) -> Vec<usize> {
         let mut result = Vec::new();
         let mut offset = 0;
@@ -307,19 +309,6 @@ impl ComplexPayloadsBorrowed<'static> {
     pub(crate) const fn new() -> Self {
         Self {
             grapheme: GraphemeClusterSegmenter::new(),
-            my: None,
-            km: None,
-            lo: None,
-            th: None,
-            ja: None,
-        }
-    }
-
-    #[cfg(feature = "compiled_data")]
-    #[cfg(feature = "unstable")]
-    pub(crate) const fn new_neo() -> Self {
-        Self {
-            grapheme: GraphemeClusterSegmenter::new_neo(),
             my: None,
             km: None,
             lo: None,
@@ -422,7 +411,7 @@ impl ComplexPayloads {
 
     pub(crate) fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<SegmenterBreakGraphemeClusterV1> + ?Sized,
+        D: DataProvider<SegmenterBreakGraphemeClusterV2> + ?Sized,
     {
         Ok(Self {
             grapheme: GraphemeClusterSegmenter::try_new_unstable(provider)?,
@@ -434,13 +423,12 @@ impl ComplexPayloads {
         })
     }
 
-    #[cfg(feature = "unstable")]
-    pub(crate) fn try_new_neo<D>(provider: &D) -> Result<Self, DataError>
-    where
-        D: DataProvider<SegmenterBreakGraphemeClusterV2> + ?Sized,
-    {
+    #[cfg(feature = "serde")]
+    pub(crate) fn try_new_with_buffer_provider(
+        provider: &(impl BufferProvider + ?Sized),
+    ) -> Result<Self, DataError> {
         Ok(Self {
-            grapheme: GraphemeClusterSegmenter::try_new_neo_unstable(provider)?,
+            grapheme: GraphemeClusterSegmenter::try_new_with_buffer_provider(provider)?,
             my: None,
             km: None,
             lo: None,
