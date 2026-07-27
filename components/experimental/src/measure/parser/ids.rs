@@ -4,11 +4,24 @@
 
 use zerotrie::ZeroTrieSimpleAscii;
 
-/// This constant maps simple cldr unit names to their unique identifiers.
-/// Identifiers are immutable; any new unit must be assigned a distinct identifier.
-/// NOTE: These identifiers are tied to the units data generation. After adding a new unit,
-/// remember to regenerate the units data to reflect changes.
-pub const CLDR_IDS_TRIE: ZeroTrieSimpleAscii<[u8; 1341]> =
+use crate::measure::provider::single_unit::UnitID;
+
+/// Maps simple CLDR unit names to their unique identifiers.
+pub fn unit_id(id: &str) -> Option<UnitID> {
+    CLDR_IDS_TRIE.get(id).map(|value| value as UnitID)
+}
+
+#[test]
+fn all_ids_u16() {
+    for (_, value) in CLDR_IDS_TRIE.iter() {
+        assert!(value <= UnitID::MAX as usize);
+    }
+}
+
+// Identifiers are immutable; any new unit must be assigned a distinct identifier.
+// NOTE: These identifiers are tied to the units data generation. After adding a new unit,
+// remember to regenerate the units data to reflect changes.
+pub(crate) const CLDR_IDS_TRIE: ZeroTrieSimpleAscii<[u8; 1334]> =
     ZeroTrieSimpleAscii::from_sorted_str_tuples(&[
         ("acre", 1_usize),
         ("ampere", 2_usize),
@@ -114,11 +127,10 @@ pub const CLDR_IDS_TRIE: ZeroTrieSimpleAscii<[u8; 1341]> =
         ("ounce", 99_usize),
         ("ounce-troy", 100_usize),
         ("parsec", 101_usize),
-        ("part", 155_usize),
+        ("part", 113_usize),
         ("pascal", 102_usize),
         ("percent", 103_usize),
         ("permille", 104_usize),
-        ("permillion", 105_usize),
         ("permyriad", 106_usize),
         ("pinch", 107_usize),
         ("pint", 108_usize),
@@ -126,6 +138,7 @@ pub const CLDR_IDS_TRIE: ZeroTrieSimpleAscii<[u8; 1341]> =
         ("pint-metric", 110_usize),
         ("pixel", 111_usize),
         ("point", 112_usize),
+        // TODO(#8269): alias for part
         ("portion", 113_usize),
         ("pound", 114_usize),
         ("pound-force", 115_usize),

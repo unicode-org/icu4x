@@ -44,8 +44,12 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
             let factor = convert_unit.factor.as_deref().unwrap_or("1");
             let offset = convert_unit.offset.as_deref().unwrap_or("0");
 
+            let Some(unit_id) = icu::experimental::measure::parser::ids::unit_id(unit_name) else {
+                continue;
+            };
+
             convert_units_vec.push(ConversionInfoPreProcessing {
-                unit_id: units_data.unit_id(unit_name)?,
+                unit_id,
                 base_unit,
                 factor_scientific: process_factor(factor, &clean_constants_map)?,
                 offset_scientific: process_factor(offset, &clean_constants_map)?,
@@ -86,7 +90,7 @@ impl crate::IterableDataProviderCached<UnitsInfoV1> for SourceDataProvider {
 
 #[test]
 fn test_basic() {
-    use icu::experimental::measure::parser::ids::CLDR_IDS_TRIE;
+    use icu::experimental::measure::parser::ids::unit_id;
     use icu::experimental::measure::provider::si_prefix::{Base, SiPrefix};
     use icu::experimental::measure::provider::single_unit::SingleUnit;
     use icu::experimental::units::provider::*;
@@ -108,7 +112,7 @@ fn test_basic() {
 
     let units_info = und.payload.get().to_owned();
 
-    let meter_index = CLDR_IDS_TRIE.get("meter").unwrap() as UnitID;
+    let meter_index = unit_id("meter").unwrap();
 
     let big_one = BigUint::from(1u32);
 
@@ -151,7 +155,7 @@ fn test_basic() {
         }
     );
 
-    let foot_index = CLDR_IDS_TRIE.get("foot").unwrap() as UnitID;
+    let foot_index = unit_id("foot").unwrap();
     let foot_convert_index = units_info
         .conversion_info_by_unit_id(foot_index)
         .unwrap()
