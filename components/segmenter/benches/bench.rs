@@ -7,8 +7,6 @@ use criterion::{Criterion, black_box, criterion_group, criterion_main};
 use icu_segmenter::LineSegmenter;
 #[cfg(feature = "unstable")]
 use icu_segmenter::WordSegmenter;
-#[cfg(feature = "unstable")]
-use icu_segmenter::neo::{LineSegmenter as NeoLineSegmenter, WordSegmenter as NeoWordSegmenter};
 use icu_segmenter::options::LineBreakOptions;
 use icu_segmenter::options::LineBreakStrictness;
 use icu_segmenter::options::LineBreakWordOption;
@@ -280,7 +278,7 @@ fn line_break_comparison_str(c: &mut Criterion) {
     bench_dictionary_str!(
         group,
         LineSegmenter::new_dictionary(Default::default()),
-        NeoLineSegmenter::new_dictionary(Default::default())
+        LineSegmenter::new_neo_dictionary(Default::default())
     );
 }
 
@@ -291,7 +289,7 @@ fn line_break_comparison_utf8(c: &mut Criterion) {
     bench_dictionary_utf8!(
         group,
         LineSegmenter::new_dictionary(Default::default()),
-        NeoLineSegmenter::new_dictionary(Default::default())
+        LineSegmenter::new_neo_dictionary(Default::default())
     );
 }
 
@@ -302,7 +300,7 @@ fn line_break_comparison_utf16(c: &mut Criterion) {
     bench_dictionary_utf16!(
         group,
         LineSegmenter::new_dictionary(Default::default()),
-        NeoLineSegmenter::new_dictionary(Default::default())
+        LineSegmenter::new_neo_dictionary(Default::default())
     );
 }
 
@@ -313,7 +311,7 @@ fn word_break_comparison_str(c: &mut Criterion) {
     bench_dictionary_str!(
         group,
         WordSegmenter::new_dictionary(Default::default()),
-        NeoWordSegmenter::new_dictionary(Default::default())
+        WordSegmenter::new_neo_dictionary(Default::default())
     );
 }
 
@@ -324,7 +322,7 @@ fn word_break_comparison_utf8(c: &mut Criterion) {
     bench_dictionary_utf8!(
         group,
         WordSegmenter::new_dictionary(Default::default()),
-        NeoWordSegmenter::new_dictionary(Default::default())
+        WordSegmenter::new_neo_dictionary(Default::default())
     );
 }
 
@@ -335,7 +333,7 @@ fn word_break_comparison_utf16(c: &mut Criterion) {
     bench_dictionary_utf16!(
         group,
         WordSegmenter::new_dictionary(Default::default()),
-        NeoWordSegmenter::new_dictionary(Default::default())
+        WordSegmenter::new_neo_dictionary(Default::default())
     );
 }
 

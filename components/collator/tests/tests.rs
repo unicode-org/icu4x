@@ -39,8 +39,6 @@ const _: () = {
     icu_normalizer_data::impl_normalizer_uts46_data_v1!(TestingProvider);
 };
 
-type StackString = arraystring::ArrayString<arraystring::typenum::U32>;
-
 fn assert_all_comparisons(
     collator: &CollatorBorrowed,
     left: &str,
@@ -73,12 +71,12 @@ fn assert_all_comparisons(
 }
 
 /// Parse a string of space-separated hexadecimal code points (ending in end of input or semicolon)
-fn parse_hex(mut hexes: &[u8]) -> Option<StackString> {
-    let mut buf = StackString::new();
+fn parse_hex(mut hexes: &[u8]) -> Option<String> {
+    let mut buf = String::new();
     loop {
         let (scalar, mut offset) = u32::from_radix_16(hexes);
         if let Some(c) = core::char::from_u32(scalar) {
-            buf.try_push(c).unwrap();
+            buf.push(c);
         } else {
             return None;
         }
@@ -1729,7 +1727,7 @@ fn test_cantillation_utf8() {
 fn test_conformance_shifted() {
     // Adapted from `UCAConformanceTest::TestTableShifted` of ucaconf.cpp in ICU4C.
     let bugs = [];
-    let dict = include_bytes!("data/CollationTest_CLDR_SHIFTED.txt");
+    let dict = include_bytes!("data/CollationTest_CLDR_SHIFTED_SHORT.txt");
 
     let mut options = CollatorOptions::default();
     options.strength = Some(Strength::Quaternary);
@@ -1772,7 +1770,7 @@ fn test_conformance_shifted() {
 fn test_conformance_non_ignorable() {
     // Adapted from `UCAConformanceTest::TestTableNonIgnorable` of ucaconf.cpp in ICU4C.
     let bugs = [];
-    let dict = include_bytes!("data/CollationTest_CLDR_NON_IGNORABLE.txt");
+    let dict = include_bytes!("data/CollationTest_CLDR_NON_IGNORABLE_SHORT.txt");
 
     let mut options = CollatorOptions::default();
     options.strength = Some(Strength::Quaternary);

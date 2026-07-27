@@ -92,7 +92,7 @@ enum CalendarKind {
 
   /// Creates a new [CalendarKind] for the specified locale, using compiled data.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.2.0/icu/calendar/enum.AnyCalendarKind.html#method.new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/calendar/enum.AnyCalendarKind.html#method.try_new) for more information.
   static CalendarKind create(Locale locale) {
     final result = _icu4x_CalendarKind_create_mv1(locale._ffi);
     return CalendarKind.values.firstWhere((v) => v._ffi == result);

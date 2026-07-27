@@ -8,6 +8,6 @@
       "Placeholder": "Singleton"
     }
   ],
-  "offset_zero": "UTC",
+  "offset_zero": "",
   "offset_unknown": "GMT+?"
 }

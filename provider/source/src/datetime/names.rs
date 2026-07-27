@@ -151,7 +151,7 @@ impl SourceDataProvider {
     ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
-            .dates(calendar.cldr_name())
+            .dates(Some(calendar))
             .list_locales()?
             .flat_map(|locale| {
                 keylengths

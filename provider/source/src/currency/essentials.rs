@@ -9,101 +9,21 @@ use crate::cldr_serde::numbers::NumberPattern;
 use crate::cldr_serde::numbers::NumberPatternItem;
 
 use std::borrow::Cow;
-
-use icu_pattern::DoublePlaceholderPattern;
-use tinystr::TinyAsciiStr;
-
-use std::collections::BTreeMap;
-use std::collections::HashMap;
 use std::collections::HashSet;
-use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::VarZeroVec;
-use zerovec::ZeroMap;
 
 use icu_pattern::DoublePlaceholderKey;
+use icu_pattern::DoublePlaceholderPattern;
 use icu_pattern::PatternItemCow;
 
-use icu::experimental::dimension::provider::currency::ule::MAX_PLACEHOLDER_INDEX;
-use icu::properties::CodePointMapData;
-use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
 use icu_provider::DataProvider;
 
 use icu::experimental::dimension::provider::currency::essentials::*;
 use icu_provider::prelude::*;
 
-/// Returns the pattern selection for a currency.
-/// For example:
-///    if the pattern is ¤#,##0.00 and the symbol is EGP,
-///    this means the return value will be `PatternSelection::StandardAlphaNextToNumber`
-///    because the character closest to the number is a letter.
-/// NOTE:
-///   `placeholder_value` must not be empty.
-fn currency_pattern_selection(
-    provider: &SourceDataProvider,
-    pattern: &NumberPattern,
-    placeholder_value: &str,
-) -> Result<PatternSelection, DataError> {
-    if placeholder_value.is_empty() {
-        return Err(DataError::custom("Placeholder value must not be empty"));
-    }
-
-    // TODO(#6064): Handle the negative sub pattern.
-    let pattern = &pattern.positive;
-
-    let currency_sign_index = pattern
-        .iter()
-        .position(|i| matches!(i, NumberPatternItem::Currency))
-        .unwrap();
-    let first_num_index = pattern
-        .iter()
-        .position(|i| {
-            matches!(
-                i,
-                NumberPatternItem::MandatoryDigit | NumberPatternItem::OptionalDigit
-            )
-        })
-        .unwrap();
-    let last_num_index = pattern
-        .iter()
-        .rposition(|i| {
-            matches!(
-                i,
-                NumberPatternItem::MandatoryDigit | NumberPatternItem::OptionalDigit
-            )
-        })
-        .unwrap();
-
-    let letters_set = CodePointMapData::<GeneralCategory>::try_new_unstable(provider)?
-        .as_borrowed()
-        .get_set_for_value_group(GeneralCategoryGroup::Letter);
-
-    let char_closer_to_number = if currency_sign_index < first_num_index {
-        placeholder_value.chars().next_back().unwrap()
-    } else if currency_sign_index > last_num_index {
-        placeholder_value.chars().next().unwrap()
-    } else {
-        return Err(DataError::custom(
-            "Currency sign must not be in the middle of the pattern",
-        ));
-    };
-
-    Ok(
-        if letters_set.as_borrowed().contains(char_closer_to_number) {
-            PatternSelection::StandardAlphaNextToNumber
-        } else {
-            PatternSelection::Standard
-        },
-    )
-}
-
 impl DataProvider<CurrencyEssentialsV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CurrencyEssentialsV1>, DataError> {
         self.check_req::<CurrencyEssentialsV1>(req)?;
-
-        let currencies_resource: &cldr_serde::currencies::data::Resource =
-            self.cldr()?
-                .numbers()
-                .read_and_parse(req.id.locale, "currencies.json")?;
 
         let numbers_resource: &cldr_serde::numbers::Resource = self
             .cldr()?
@@ -116,8 +36,7 @@ impl DataProvider<CurrencyEssentialsV1> for SourceDataProvider {
             &numbers_resource.main.value.numbers.default_numbering_system
         };
 
-        let result =
-            extract_currency_essentials(self, currencies_resource, numbers_resource, nsname);
+        let result = extract_currency_essentials(numbers_resource, nsname);
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -128,176 +47,60 @@ impl DataProvider<CurrencyEssentialsV1> for SourceDataProvider {
 
 impl IterableDataProviderCached<CurrencyEssentialsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        self.iter_ids_for_numbers_with_locales()
+        let mut ids = HashSet::new();
+        for locale in self.cldr()?.numbers().list_locales()? {
+            let numbers_resource: &cldr_serde::numbers::Resource = self
+                .cldr()?
+                .numbers()
+                .read_and_parse(&locale, "numbers.json")?;
+            let numbers = &numbers_resource.main.value.numbers;
+            let default_numsys = &numbers.default_numbering_system;
+
+            for (nsname, patterns) in &numbers.numsys_data.currency_patterns {
+                if patterns.standard.positive.is_empty() {
+                    continue;
+                }
+                if nsname == default_numsys {
+                    ids.insert(DataIdentifierCow::from_locale(locale));
+                } else {
+                    let attr = DataMarkerAttributes::try_from_str(nsname).map_err(|_| {
+                        DataError::custom("Invalid numbering system name")
+                            .with_display_context(nsname)
+                    })?;
+                    ids.insert(
+                        DataIdentifierBorrowed::for_marker_attributes_and_locale(attr, &locale)
+                            .into_owned(),
+                    );
+                }
+            }
+        }
+        Ok(ids)
     }
 }
 
 fn extract_currency_essentials<'data>(
-    provider: &SourceDataProvider,
-    currencies_resource: &cldr_serde::currencies::data::Resource,
     numbers_resource: &cldr_serde::numbers::Resource,
     numsys_name: &str,
 ) -> Result<CurrencyEssentials<'data>, DataError> {
-    let currencies = &currencies_resource.main.value.numbers.currencies;
-
     let numbers_block = &numbers_resource.main.value.numbers;
-    let default_numsys = &numbers_block.default_numbering_system;
-    // Per UTS #35 (LDML Part 3: Numbers), if a pattern block (such as currencyFormats) is not
-    // explicitly defined under a specific non-Latin numbering system (e.g., "arab"), LDML mandates
-    // falling back to the "latn" numbering system within the same locale.
     let currency_formats = numbers_block
         .numsys_data
         .currency_patterns
         .get(numsys_name)
-        .or_else(|| {
-            numbers_block
-                .numsys_data
-                .currency_patterns
-                .get(default_numsys)
-        })
-        .or_else(|| numbers_block.numsys_data.currency_patterns.get("latn"))
-        .ok_or_else(|| DataError::custom("Could not find currency patterns"))?;
+        .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
 
-    // According to UTS #35 (https://unicode.org/reports/tr35/tr35-numbers.html#Currency_Formats),
-    // pattern variants fall back to their base style hierarchy:
-    // - standard-alphaNextToNumber falls back to standard.
-    // - accounting-alphaNextToNumber falls back to accounting (which falls back to standard).
-    // Fallback is handled at runtime by CurrencyEssentials getters to avoid duplicate data storage.
+    // We only generate CurrencyEssentials for locale/numsys pairs that possess a non-empty standard
+    // currency pattern (verified during ID iteration in `iter_ids_cached`). Therefore, if this pattern
+    // is missing or empty when `load` is called directly, the requested locale data is unsupported
+    // or malformed, so we treat the identifier as not found.
     let standard = &currency_formats.standard;
+    if standard.positive.is_empty() {
+        return Err(DataErrorKind::IdentifierNotFound.into_error());
+    }
     let standard_alpha_next_to_number = currency_formats.standard_alpha_next_to_number.as_ref();
     let accounting = currency_formats.accounting.as_ref();
     let accounting_alpha_next_to_number = currency_formats.accounting_alpha_next_to_number.as_ref();
 
-    let mut currency_patterns_map =
-        BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>::new();
-    let mut currency_patterns_standard_none =
-        BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>::new();
-    let mut currency_patterns_standard_next_to_num =
-        BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>::new();
-    let mut placeholders = Vec::<&str>::new();
-    // A map to check if the placeholder is already in the placeholders vector.
-    let mut placeholders_checker_map = HashMap::<&str, u16>::new();
-
-    /// Deduplicates and stores currency placeholder strings (e.g., "$", "US$").
-    ///
-    /// - If the placeholder matches the 3-letter ISO code exactly, returns `PlaceholderValue::ISO`.
-    /// - If the placeholder already exists in `placeholders`, returns its existing index (`PlaceholderValue::Index`).
-    /// - Otherwise, appends the new placeholder to `placeholders` and returns its new index.
-    fn intern_placeholder<'a>(
-        placeholder: &'a str,
-        iso: &str,
-        placeholders: &mut Vec<&'a str>,
-        placeholders_checker_map: &mut HashMap<&'a str, u16>,
-    ) -> Result<PlaceholderValue, DataError> {
-        if let Some(&index) = placeholders_checker_map.get(placeholder) {
-            Ok(PlaceholderValue::Index(index))
-        } else if placeholder == iso {
-            Ok(PlaceholderValue::ISO)
-        } else {
-            let index = placeholders.len() as u16;
-            if index > MAX_PLACEHOLDER_INDEX {
-                return Err(DataError::custom(
-                    "placeholder value exceeded MAX_PLACEHOLDER_INDEX",
-                ));
-            }
-            placeholders.push(placeholder);
-            placeholders_checker_map.insert(placeholder, index);
-            Ok(PlaceholderValue::Index(index))
-        }
-    }
-
-    for (iso, currency_pattern) in currencies {
-        let short_placeholder_value = currency_pattern
-            .short
-            .as_ref()
-            .map(|p| {
-                intern_placeholder(
-                    p.as_str(),
-                    iso,
-                    &mut placeholders,
-                    &mut placeholders_checker_map,
-                )
-            })
-            .transpose()?;
-
-        let narrow_placeholder_value = currency_pattern
-            .narrow
-            .as_ref()
-            .map(|p| {
-                intern_placeholder(
-                    p.as_str(),
-                    iso,
-                    &mut placeholders,
-                    &mut placeholders_checker_map,
-                )
-            })
-            .transpose()?;
-
-        let determine_pattern_selection =
-            |placeholder_index: Option<PlaceholderValue>| -> Result<PatternSelection, DataError> {
-                currency_pattern_selection(
-                    provider,
-                    standard,
-                    match placeholder_index {
-                        Some(PlaceholderValue::Index(index)) => placeholders[index as usize],
-                        Some(PlaceholderValue::ISO) | None => iso.as_str(),
-                    },
-                )
-            };
-
-        let short_pattern_selection: PatternSelection =
-            determine_pattern_selection(short_placeholder_value)?;
-        let narrow_pattern_selection: PatternSelection =
-            determine_pattern_selection(narrow_placeholder_value)?;
-
-        let currency_patterns = CurrencyPatternConfig {
-            short_pattern_selection,
-            narrow_pattern_selection,
-            short_placeholder_value,
-            narrow_placeholder_value,
-        };
-
-        let iso = TinyAsciiStr::try_from_str(iso).unwrap().to_unvalidated();
-        match (short_pattern_selection, narrow_pattern_selection) {
-            (PatternSelection::Standard, PatternSelection::Standard)
-                if short_placeholder_value.is_none() && narrow_placeholder_value.is_none() =>
-            {
-                currency_patterns_standard_none.insert(iso, currency_patterns);
-            }
-            (
-                PatternSelection::StandardAlphaNextToNumber,
-                PatternSelection::StandardAlphaNextToNumber,
-            ) if short_placeholder_value.is_none() && narrow_placeholder_value.is_none() => {
-                currency_patterns_standard_next_to_num.insert(iso, currency_patterns);
-            }
-            _ => {
-                currency_patterns_map.insert(iso, currency_patterns);
-            }
-        }
-    }
-
-    let default_pattern_config =
-        if currency_patterns_standard_none.len() <= currency_patterns_standard_next_to_num.len() {
-            currency_patterns_map.extend(currency_patterns_standard_none);
-            CurrencyPatternConfig {
-                short_pattern_selection: PatternSelection::StandardAlphaNextToNumber,
-                narrow_pattern_selection: PatternSelection::StandardAlphaNextToNumber,
-                short_placeholder_value: None,
-                narrow_placeholder_value: None,
-            }
-        } else {
-            currency_patterns_map.extend(currency_patterns_standard_next_to_num);
-            CurrencyPatternConfig {
-                short_pattern_selection: PatternSelection::Standard,
-                narrow_pattern_selection: PatternSelection::Standard,
-                short_placeholder_value: None,
-                narrow_placeholder_value: None,
-            }
-        };
-
-    // TODO: The currency pattern does not necessarily match standard decimal formatting.
-    // We should parse the numeric block (#,##0.00) for custom grouping sizes or numbering system overrides
-    // rather than collapsing it entirely into Place0.
     fn convert_pattern_items<'a>(
         items: &'a [NumberPatternItem],
     ) -> impl Iterator<Item = PatternItemCow<'a, DoublePlaceholderKey>> + 'a {
@@ -309,6 +112,9 @@ fn extract_currency_essentials<'data>(
             NumberPatternItem::DecimalSeparator => {
                 Some(PatternItemCow::Placeholder(DoublePlaceholderKey::Place0))
             }
+            // TODO(#8263): Consider the case of explicit sign characters (`-`/`+`) in
+            // currency patterns: they are currently dropped here, and should instead be
+            // rendered using the localized plus/minus signs from the decimal symbols data.
             _ => None,
         })
     }
@@ -394,156 +200,72 @@ fn extract_currency_essentials<'data>(
     };
 
     Ok(CurrencyEssentials {
-        pattern_config_map: ZeroMap::from_iter(currency_patterns_map.iter()),
         patterns: VarZeroVec::from(&unique_patterns),
         indices,
-        placeholders: VarZeroVec::from(&placeholders),
-        default_pattern_config,
     })
 }
 
 #[test]
-fn test_basic() {
-    use tinystr::tinystr;
-    use writeable::assert_writeable_eq;
-
-    fn get_placeholders_of_currency(
-        iso_code: UnvalidatedTinyAsciiStr<3>,
-        locale: &DataResponse<CurrencyEssentialsV1>,
-        placeholders: &VarZeroVec<'_, str>,
-    ) -> (String, String) {
-        let default = CurrencyPatternConfig {
-            short_pattern_selection: PatternSelection::Standard,
-            narrow_pattern_selection: PatternSelection::Standard,
-            short_placeholder_value: None,
-            narrow_placeholder_value: None,
-        };
-        let owned = locale.payload.get().to_owned();
-        let currency_pattern: CurrencyPatternConfig = owned
-            .pattern_config_map
-            .get_copied(&iso_code)
-            .unwrap_or(default);
-
-        let short_placeholder = match currency_pattern.short_placeholder_value {
-            Some(PlaceholderValue::Index(index)) => placeholders
-                .get(index as usize)
-                .unwrap_or(&iso_code.try_into_tinystr().unwrap())
-                .to_string(),
-            Some(PlaceholderValue::ISO) => iso_code.try_into_tinystr().unwrap().to_string(),
-            None => "".to_string(),
-        };
-
-        let narrow_placeholder = match currency_pattern.narrow_placeholder_value {
-            Some(PlaceholderValue::Index(index)) => placeholders
-                .get(index as usize)
-                .unwrap_or(&iso_code.try_into_tinystr().unwrap())
-                .to_string(),
-            Some(PlaceholderValue::ISO) => iso_code.try_into_tinystr().unwrap().to_string(),
-            None => "".to_string(),
-        };
-
-        (short_placeholder, narrow_placeholder)
-    }
-
+fn test_essentials() {
     use icu::locale::langid;
+    use writeable::assert_writeable_eq;
 
     let provider = SourceDataProvider::new_testing();
 
-    let en: DataResponse<CurrencyEssentialsV1> = provider
+    let en: DataPayload<CurrencyEssentialsV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
             ..Default::default()
         })
-        .unwrap();
-
-    let en_payload = en.payload.get();
+        .unwrap()
+        .payload;
 
     assert_writeable_eq!(
-        en_payload.standard_pattern().unwrap().interpolate((3, "$")),
+        en.get().get_positive(false, false).interpolate((3, "$")),
         "$3"
     );
+
     assert_writeable_eq!(
-        en_payload
-            .standard_alpha_next_to_number_pattern()
-            .unwrap()
-            .interpolate((3, "$")),
-        "$\u{a0}3"
+        en.get().get_positive(true, true).interpolate((3, "USD")),
+        "USD\u{a0}3"
     );
     assert_writeable_eq!(
-        en_payload
-            .accounting_positive_pattern()
-            .unwrap()
+        en.get()
+            .get_positive_accounting(false, false)
             .interpolate((3, "$")),
         "$3"
     );
     assert_writeable_eq!(
-        en_payload
-            .accounting_negative_pattern()
+        en.get()
+            .get_negative_accounting(false, false)
             .unwrap()
             .interpolate((3, "$")),
         "($3)"
     );
     assert_writeable_eq!(
-        en_payload
-            .accounting_alpha_next_to_number_positive_pattern()
-            .unwrap()
-            .interpolate((3, "$")),
-        "$\u{a0}3"
+        en.get()
+            .get_positive_accounting(true, true)
+            .interpolate((3, "USD")),
+        "USD\u{a0}3"
     );
     assert_writeable_eq!(
-        en_payload
-            .accounting_alpha_next_to_number_negative_pattern()
+        en.get()
+            .get_negative_accounting(true, true)
             .unwrap()
-            .interpolate((3, "$")),
-        "($\u{a0}3)"
+            .interpolate((3, "USD")),
+        "(USD\u{a0}3)"
     );
 
-    let (en_usd_short, en_usd_narrow) = get_placeholders_of_currency(
-        tinystr!(3, "USD").to_unvalidated(),
-        &en,
-        &en_payload.placeholders,
-    );
-    assert_eq!(en_usd_short, "$");
-    assert_eq!(en_usd_narrow, "$");
-
-    let (en_egp_short, en_egp_narrow) = get_placeholders_of_currency(
-        tinystr!(3, "EGP").to_unvalidated(),
-        &en,
-        &en_payload.placeholders,
-    );
-    // TODO(#6064)
-    assert_eq!(en_egp_short, "EGP");
-    assert_eq!(en_egp_narrow, "E£");
-
-    let ar_eg: DataResponse<CurrencyEssentialsV1> = provider
+    let ar_eg: DataPayload<CurrencyEssentialsV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_locale(&langid!("ar-EG").into()),
             ..Default::default()
         })
-        .unwrap();
+        .unwrap()
+        .payload;
 
-    let ar_eg_payload = ar_eg.payload.get();
     assert_writeable_eq!(
-        ar_eg_payload
-            .standard_pattern()
-            .unwrap()
-            .interpolate((3, "$")),
+        ar_eg.get().get_positive(false, false).interpolate((3, "$")),
         "\u{200f}3\u{a0}$"
     );
-
-    let (ar_eg_egp_short, ar_eg_egp_narrow) = get_placeholders_of_currency(
-        tinystr!(3, "EGP").to_unvalidated(),
-        &ar_eg,
-        &ar_eg_payload.placeholders,
-    );
-    assert_eq!(ar_eg_egp_short, "ج.م.\u{200f}");
-    assert_eq!(ar_eg_egp_narrow, "E£");
-
-    let (ar_eg_usd_short, ar_eg_usd_narrow) = get_placeholders_of_currency(
-        tinystr!(3, "USD").to_unvalidated(),
-        &ar_eg,
-        &ar_eg_payload.placeholders,
-    );
-    assert_eq!(ar_eg_usd_short, "US$");
-    assert_eq!(ar_eg_usd_narrow, "US$");
 }

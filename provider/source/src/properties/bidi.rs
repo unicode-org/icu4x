@@ -27,7 +27,7 @@ impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
         self.check_req::<PropertyEnumBidiMirroringGlyphV1>(req)?;
 
         if let Some(t) = self
-            .unicode()?
+            .rscd()?
             .cpt_cache
             .get(core::str::from_utf8(BidiMirroringGlyph::SHORT_NAME).unwrap())
         {
@@ -44,6 +44,7 @@ impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
         let bidi_m_cpinvlist = self.get_binary_prop("Bidi_Mirrored", "Bidi_M")?;
 
         let bidi_mirroring = self
+            .rscd()?
             .parse_ucd_lines("ucd/BidiMirroring.txt")?
             .filter_map(|line| {
                 let mut fields = line.skip_missing_rule()?.fields();
@@ -55,7 +56,7 @@ impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
             })
             .collect::<HashMap<_, _>>();
 
-        let paired_brackets = self.parse_ucd_lines("ucd/BidiBrackets.txt")?.filter_map(|line| {
+        let paired_brackets = self.rscd()?.parse_ucd_lines("ucd/BidiBrackets.txt")?.filter_map(|line| {
                 let mut parts = line.skip_missing_rule()?.fields();
                 let cp = ucd_helpers::parse_cp(parts.next().unwrap().trim());
                 let mirror = ucd_helpers::parse_cp(parts.next().unwrap().trim());
@@ -110,7 +111,7 @@ impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
 
         let trie = builder.build();
 
-        self.unicode()?.cpt_cache.insert(
+        self.rscd()?.cpt_cache.insert(
             core::str::from_utf8(BidiMirroringGlyph::SHORT_NAME).unwrap(),
             Box::new(trie.clone()),
         );

@@ -1,0 +1,30 @@
+{
+	"segments": {
+		"identity": {
+			"language": "ja"
+		},
+		"segmentations": {
+			"LineBreak": {
+				"ja": [
+					"[”] ; [\\}]",
+					"[“] ; [\\{]"
+				],
+				"ja-u-lb-normal": [
+					"[:lb=CJ:] ; [あ]",
+					"[〜 ゠]   ; [{EAST_ASIAN_UNCLASSIFIED}]"
+				],
+				"ja-u-lb-loose": [
+					"[⁈ ⁇ ‼ ⁉] ; [{NON_EAST_ASIAN_UNCLASSIFIED}]",
+					"[！？ ・･ ； ： 々 〻 ゝ ゞ ヽ ヾ] ; [{EAST_ASIAN_UNCLASSIFIED}]",
+					"[‰ ′ ″ ‵ ° ℃ ℉] ; [{NON_EAST_ASIAN_POX}]",
+					"[％﹪ ￠] ; [{EAST_ASIAN_POX}]",
+					"[± ¤ € №] ; [{NON_EAST_ASIAN_PRX}]",
+					"[＄﹩ ￡ ￥ ￦] ; [{EAST_ASIAN_PRX}]",
+					"[:lb=HH:] ; [{LOOSE_DASH}]",
+					"[[:lb=IN:] - [[:ea=F:][:ea=W:][:ea=H:]]] ; [{NON_EAST_ASIAN_LOOSE_IN}]",
+					"[[:lb=IN:] & [[:ea=F:][:ea=W:][:ea=H:]]] ; [{EAST_ASIAN_LOOSE_IN}]"
+				]
+			}
+		}
+	}
+}

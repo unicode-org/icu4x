@@ -149,6 +149,13 @@ impl FieldSymbol {
         })
     }
 
+    /// Returns the high 4 bits of `idx()`, representing the field type category
+    /// (e.g., Year, Month, Day, Hour).
+    #[inline]
+    pub(crate) fn type_idx(self) -> u8 {
+        self.idx() >> 4
+    }
+
     /// Returns the index associated with this [`FieldSymbol`].
     #[cfg(feature = "datagen")]
     fn idx_for_skeleton(self) -> u8 {

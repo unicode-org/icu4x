@@ -154,4 +154,12 @@ impl DateTimeInputUnchecked {
                 .into_option(),
         }
     }
+
+    /// Checks if all the time zone fields (currently: offset, ID, and name timestamp) are the same.
+    #[allow(dead_code)] // TODO(#5448): range formatting is WIP
+    pub(crate) fn has_same_zone(&self, other: &Self) -> bool {
+        self.zone_offset == other.zone_offset
+            && self.zone_id == other.zone_id
+            && self.zone_name_timestamp == other.zone_name_timestamp
+    }
 }

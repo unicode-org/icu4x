@@ -1,26 +1,24 @@
 {
-  "patterns": {
-    "one": [
-      0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " minuto"
-        }
-      ]
-    ],
-    "other": [
-      0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " na minuto"
-        }
-      ]
+  "one": [
+    0,
+    [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " minuto"
+      }
     ]
-  }
+  ],
+  "other": [
+    0,
+    [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " na minuto"
+      }
+    ]
+  ]
 }

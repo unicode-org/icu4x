@@ -2,72 +2,92 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::{IterableDataProviderCached, SourceDataProvider};
+use icu::calendar::preferences::CalendarAlgorithm;
+use icu::calendar::provider::{CalendarPreference, CalendarPreferredV1};
+use icu::locale::{
+    LanguageIdentifier,
+    extensions::unicode::Value,
+    preferences::extensions::unicode::keywords::HijriCalendarAlgorithm,
+    subtags::{Language, Region, region},
+};
+use icu_provider::prelude::*;
+use std::collections::{BTreeMap, HashSet};
+
 /// Data for calendar arithmetic
 pub(crate) mod eras;
 
-#[test]
-fn test_calendar_resolution() {
-    use std::collections::BTreeMap;
+#[derive(serde::Deserialize)]
+struct Resource {
+    supplemental: Supplemental,
+}
 
-    use icu::{
-        calendar::preferences::{CalendarAlgorithm, CalendarPreferences},
-        locale::{
-            LanguageIdentifier,
-            extensions::unicode::Value,
-            subtags::{Language, Region},
-        },
-    };
+#[derive(serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct Supplemental {
+    calendar_preference_data: BTreeMap<Region, Vec<String>>,
+}
 
-    #[derive(serde::Deserialize)]
-    struct Resource {
-        supplemental: Supplemental,
-    }
+impl DataProvider<CalendarPreferredV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CalendarPreferredV1>, DataError> {
+        self.check_req::<CalendarPreferredV1>(req)?;
 
-    #[derive(serde::Deserialize)]
-    #[serde(rename_all = "camelCase")]
-    struct Supplemental {
-        calendar_preference_data: BTreeMap<Region, Vec<String>>,
-    }
-
-    for (&region, algorithms) in &crate::SourceDataProvider::new_testing()
-        .cldr()
-        .unwrap()
-        .core()
-        .read_and_parse::<Resource>("supplemental/calendarPreferenceData.json")
-        .unwrap()
-        .supplemental
-        .calendar_preference_data
-    {
-        let mut region_preferences = CalendarPreferences::from(&LanguageIdentifier::from((
-            Language::UNKNOWN,
-            None,
-            Some(region),
-        )));
-
-        let algorithms = algorithms
+        let mut algorithms = self
+            .cldr()
+            .unwrap()
+            .core()
+            .read_and_parse::<Resource>("supplemental/calendarPreferenceData.json")
+            .unwrap()
+            .supplemental
+            .calendar_preference_data[&req.id.locale.region.unwrap_or(region!("001"))]
             .iter()
             .map(|a| match a.as_str() {
                 "gregorian" => CalendarAlgorithm::Gregory,
                 a => CalendarAlgorithm::try_from(&Value::try_from_str(a).unwrap()).unwrap(),
+            });
+
+        let default_algorithm = algorithms
+            .clone()
+            .next()
+            .unwrap_or(CalendarAlgorithm::Gregory);
+
+        let default_hijri_algorithm = algorithms
+            .find_map(|a| {
+                if let CalendarAlgorithm::Hijri(Some(h)) = a {
+                    Some(h)
+                } else {
+                    None
+                }
             })
-            .collect::<Vec<_>>();
+            .unwrap_or(HijriCalendarAlgorithm::Civil);
 
-        assert_eq!(
-            region_preferences.resolved_algorithm(),
-            algorithms[0],
-            "{region:?}",
-        );
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(CalendarPreference {
+                default_algorithm,
+                default_hijri_algorithm,
+            }),
+        })
+    }
+}
 
-        if let Some(&preferred_islamic_algorithm) = algorithms
-            .iter()
-            .find(|&&a| matches!(a, CalendarAlgorithm::Hijri(Some(_))))
-        {
-            region_preferences.calendar_algorithm = Some(CalendarAlgorithm::Hijri(None));
-            assert_eq!(
-                region_preferences.resolved_algorithm(),
-                preferred_islamic_algorithm,
-                "{region:?}",
-            );
-        }
+impl IterableDataProviderCached<CalendarPreferredV1> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        Ok(self
+            .cldr()
+            .unwrap()
+            .core()
+            .read_and_parse::<Resource>("supplemental/calendarPreferenceData.json")
+            .unwrap()
+            .supplemental
+            .calendar_preference_data
+            .keys()
+            .map(|&region| {
+                DataIdentifierCow::from_locale(
+                    LanguageIdentifier::from((Language::UNKNOWN, None, Some(region))).into(),
+                )
+            })
+            .chain([Default::default()])
+            .collect())
     }
 }

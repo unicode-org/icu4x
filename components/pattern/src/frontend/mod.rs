@@ -368,6 +368,22 @@ where
             Ok(Ok(()))
         }
     }
+
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
+        let mut length_hint = writeable::LengthHint::exact(0);
+        let it = B::iter_items(self.store);
+        for item in it {
+            match item {
+                PatternItem::Literal(s) => {
+                    length_hint += self.value_provider.map_literal(s).writeable_length_hint();
+                }
+                PatternItem::Placeholder(key) => {
+                    length_hint += self.value_provider.value_for(key).writeable_length_hint();
+                }
+            }
+        }
+        length_hint
+    }
 }
 
 impl<'a, B, P> fmt::Display for WriteablePattern<'a, B, P>

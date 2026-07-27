@@ -100,6 +100,19 @@ All owned constructors take their target subtag or `LanguageIdentifier` **by val
 
 ---
 
+## Fallback & `TryWriteable`
+
+The `LanguageIdentifierDisplayName` formatter supports BCP-47 subtag fallback when localized display names are missing from the data provider. It implements the fallback using `TryWriteable`.
+
+### Detecting Fallback with `TryWriteable`
+
+To allow applications to detect whether a fallback occurred (and which parts of the output are fallbacks), `LanguageIdentifierDisplayName` implements the **`TryWriteable`** trait.
+*   **Lossy Mode (Default)**: If you format the display name using the standard `Writeable` or `Display` trait, it runs in "lossy mode", automatically writing the fallback codes and discarding any errors.
+*   **Strict/Detection Mode**: You can borrow the formatter via `.as_borrowed()` and call `try_write_to` or `try_write_to_parts` to capture the `LanguageIdentifierNameFallbackError` if a fallback occurred. In `try_write_to_parts`, a `Part::ERROR` will annotate the fallback strings.
+
+---
+
+
 ## Data Markers & Indexing
 
 The `single` module uses the following data markers. Because it loads names for specific subtags at runtime, it utilizes a two-level indexing strategy combining the target **locale** (for translation) and **marker attributes** (for the subtag).
@@ -226,10 +239,7 @@ The following features defined in UTS #35 are currently not supported and are pl
 2.  **Constructor Argument Order**:
     In `LanguageIdentifierDisplayNameOwned::try_new(prefs, locale_id, options)`, we have placed `options` last.
     *   *Resolution*: This aligns with the standard ICU4X API style, as `options` behaves like a trailing optional bag.
-3.  **Fallback Behavior in Single Formatters**:
-    Currently, single formatters (`Script`, `Region`, `Variant`, `Language`) fail-fast in the constructor (`try_new` returns `Err(DataError)`) if the specific subtag data is missing from the provider (e.g., `xx` or an untranslated language).
-    *   *Resolution*: We will redesign the single formatters to support falling back to the code instead of failing with `DataError`. This has been deferred to a follow-up issue: [#8100](https://github.com/unicode-org/icu4x/issues/8100).
-4.  **Dialect Names Data Marker**:
+3.  **Dialect Names Data Marker**:
     Should dialect names (currently loaded using the same `LocaleNamesLanguageMediumV1` marker but with language+script+region attributes) be moved to a separate data marker to avoid overloading the language name marker and to allow applications to opt-out of dialect data to save binary size?
 
 

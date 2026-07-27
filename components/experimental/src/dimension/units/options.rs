@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Options for [`UnitsFormatter`](crate::dimension::units::formatter::UnitsFormatter).
+//! Options for [`CategorizedFormatter`](crate::dimension::units::categorized_formatter::CategorizedFormatter).
 
 /// A collection of configuration options that determine the formatting behavior of
-/// [`UnitsFormatter`](crate::dimension::units::formatter::UnitsFormatter).
+/// [`CategorizedFormatter`](crate::dimension::units::categorized_formatter::CategorizedFormatter).
 #[derive(Copy, Debug, Eq, PartialEq, Clone, Default)]
 #[non_exhaustive]
 pub struct UnitsFormatterOptions {

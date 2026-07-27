@@ -173,25 +173,29 @@ struct Cli {
     #[cfg(feature = "provider")]
     icuexport_root: Option<PathBuf>,
 
-    #[arg(long, value_name = "TAG", default_value = "17.0.0")]
+    #[arg(long, value_name = "TAG", default_value = "latest", alias = "ucd-tag")]
     #[arg(
-        help = "Download versioned UCD from unicode.org (`https://www.unicode.org/Public/{tag}/`). \
+        help = "Download versioned RSCD from unicode.org (`https://www.unicode.org/Public/{tag}/`). \
                   Use 'latest' for the latest version verified to work with this version of the binary, \
-                  and 'latest-tag' for the literal tag 'latest' on unicode.org."
+                  and 'latest-tag' for the literal tag 'latest' on unicode.org. \
+                  Ignored if '--unicode-rscd-root' is present. Requires binary to be built with `networking` Cargo feature (enabled by default)."
     )]
     #[cfg_attr(not(feature = "networking"), arg(hide = true))]
     #[cfg(feature = "provider")]
-    ucd_tag: String,
+    unicode_tag: String,
 
     #[arg(long, value_name = "PATH")]
-    #[arg(help = "[DEPRECATED] Path to a local Unihan.zip file or directory.")]
+    #[arg(help = "[DEPRECATED] Ignored")]
+    #[deprecated]
     #[cfg(feature = "provider")]
     unihan_root: Option<PathBuf>,
 
-    #[arg(long, value_name = "PATH")]
-    #[arg(help = "Path to a local UCD root directory containing security/IdentifierStatus.txt.")]
+    #[arg(long, value_name = "PATH", alias = "ucd-root")]
+    #[arg(
+        help = "Path to a local Unicode RSCD root directory (see https://www.unicode.org/reports/tr44/tr44-37.html#Directory_Structure)."
+    )]
     #[cfg(feature = "provider")]
-    ucd_root: Option<PathBuf>,
+    unicode_rscd_root: Option<PathBuf>,
 
     #[arg(long, value_name = "TAG", default_value = "latest")]
     #[arg(
@@ -462,8 +466,10 @@ fn run(cli: Cli) -> eyre::Result<()> {
             eyre::bail!(
                 "Segmentation LSTM data is required for this invocation, set --segmenter-lstm-root or --segmenter-lstm-tag"
             );
-        } else if SourceDataProvider::is_missing_ucd_error(e) {
-            eyre::bail!("UCD data is required for this invocation, set --ucd-root or --ucd-tag");
+        } else if SourceDataProvider::is_missing_rscd_error(e) {
+            eyre::bail!(
+                "RSCD data is required for this invocation, set --unicode-rscd-root or --unicode-tag"
+            );
         } else if SourceDataProvider::is_missing_tzdb_error(e) {
             eyre::bail!(
                 "Timezone data is required for this invocation, set --tzdb-root or --tzdb-tag"
@@ -546,18 +552,21 @@ fn run(cli: Cli) -> eyre::Result<()> {
                 (None, _) => p,
             };
 
+            #[allow(deprecated)]
             if cli.unihan_root.is_some() {
-                log::warn!("Ignoring --unihan-root, use --ucd-root instead")
+                log::warn!("Ignoring --unihan-root, use --unicode-rscd-root instead")
             }
 
-            p = match (cli.ucd_root, cli.ucd_tag.as_str()) {
-                (Some(path), _) => p.with_ucd(&path)?,
+            p = match (cli.unicode_rscd_root, cli.unicode_tag.as_str()) {
+                (Some(path), _) => p.with_unicode_rscd(&path)?,
                 #[cfg(feature = "networking")]
-                (_, "latest") => p.with_ucd_for_tag(SourceDataProvider::TESTED_UCD_TAG),
+                (_, "latest") => {
+                    p.with_unicode_rscd_for_tag(SourceDataProvider::TESTED_UNICODE_TAG)
+                }
                 #[cfg(feature = "networking")]
-                (_, "latest-tag") => p.with_ucd_for_tag("latest"),
+                (_, "latest-tag") => p.with_unicode_rscd_for_tag("latest"),
                 #[cfg(feature = "networking")]
-                (_, tag) => p.with_ucd_for_tag(tag),
+                (_, tag) => p.with_unicode_rscd_for_tag(tag),
                 #[cfg(not(feature = "networking"))]
                 (None, _) => p,
             };

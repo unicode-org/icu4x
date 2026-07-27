@@ -5,11 +5,12 @@
 //! Scaffolding traits and impls for calendars.
 
 use crate::MismatchedCalendarError;
-use crate::provider::{names::*, packed_pattern::*, semantic_skeletons::*};
+use crate::provider::{names::*, packed_pattern::*, range_patterns::*, semantic_skeletons::*};
 use crate::scaffold::UnstableSealed;
 use core::marker::PhantomData;
 use icu_calendar::cal;
 use icu_calendar::preferences::{CalendarAlgorithm, CalendarPreferences, HijriCalendarAlgorithm};
+use icu_calendar::provider::CalendarPreferredV1;
 use icu_calendar::types::Weekday;
 use icu_calendar::{AnyCalendar, AnyCalendarKind, AsCalendar, Date, IntoAnyCalendar, Ref};
 use icu_provider::marker::NeverMarker;
@@ -39,60 +40,72 @@ pub trait CldrCalendar: UnstableSealed {
 
     /// The data marker for loading skeleton patterns for this calendar.
     type SkeletaV1: DataMarker<DataStruct = PackedPatterns<'static>>;
+
+    /// The data marker for loading range skeleton patterns for this calendar.
+    type RangeSkeletaV1: DataMarker<DataStruct = PackedRangePatterns<'static>>;
 }
 
 impl CldrCalendar for () {
     type YearNamesV1 = NeverMarker<YearNames<'static>>;
     type MonthNamesV1 = NeverMarker<MonthNames<'static>>;
     type SkeletaV1 = NeverMarker<PackedPatterns<'static>>;
+    type RangeSkeletaV1 = NeverMarker<PackedRangePatterns<'static>>;
 }
 
 impl CldrCalendar for cal::Buddhist {
     type YearNamesV1 = DatetimeNamesYearBuddhistV1;
     type MonthNamesV1 = DatetimeNamesMonthBuddhistV1;
     type SkeletaV1 = DatetimePatternsDateBuddhistV1;
+    type RangeSkeletaV1 = DatetimePatternsRangeDateBuddhistV1;
 }
 
 impl CldrCalendar for cal::ChineseTraditional {
     type YearNamesV1 = DatetimeNamesYearChineseV1;
     type MonthNamesV1 = DatetimeNamesMonthChineseV1;
     type SkeletaV1 = DatetimePatternsDateChineseV1;
+    type RangeSkeletaV1 = DatetimePatternsRangeDateChineseV1;
 }
 
 impl CldrCalendar for cal::Coptic {
     type YearNamesV1 = DatetimeNamesYearCopticV1;
     type MonthNamesV1 = DatetimeNamesMonthCopticV1;
     type SkeletaV1 = DatetimePatternsDateCopticV1;
+    type RangeSkeletaV1 = DatetimePatternsRangeDateCopticV1;
 }
 
 impl CldrCalendar for cal::KoreanTraditional {
     type YearNamesV1 = DatetimeNamesYearDangiV1;
     type MonthNamesV1 = DatetimeNamesMonthDangiV1;
     type SkeletaV1 = DatetimePatternsDateDangiV1;
+    type RangeSkeletaV1 = DatetimePatternsRangeDateDangiV1;
 }
 
 impl CldrCalendar for cal::Ethiopian {
     type YearNamesV1 = DatetimeNamesYearEthiopianV1;
     type MonthNamesV1 = DatetimeNamesMonthEthiopianV1;
     type SkeletaV1 = DatetimePatternsDateEthiopianV1;
+    type RangeSkeletaV1 = DatetimePatternsRangeDateEthiopianV1;
 }
 
 impl CldrCalendar for cal::Gregorian {
     type YearNamesV1 = DatetimeNamesYearGregorianV1;
     type MonthNamesV1 = DatetimeNamesMonthGregorianV1;
     type SkeletaV1 = DatetimePatternsDateGregorianV1;
+    type RangeSkeletaV1 = DatetimePatternsRangeDateGregorianV1;
 }
 
 impl CldrCalendar for cal::Hebrew {
     type YearNamesV1 = DatetimeNamesYearHebrewV1;
     type MonthNamesV1 = DatetimeNamesMonthHebrewV1;
     type SkeletaV1 = DatetimePatternsDateHebrewV1;
+    type RangeSkeletaV1 = DatetimePatternsRangeDateHebrewV1;
 }
 
 impl CldrCalendar for cal::Indian {
     type YearNamesV1 = DatetimeNamesYearIndianV1;
     type MonthNamesV1 = DatetimeNamesMonthIndianV1;
     type SkeletaV1 = DatetimePatternsDateIndianV1;
+    type RangeSkeletaV1 = DatetimePatternsRangeDateIndianV1;
 }
 
 /// [`hijri::Rules`](cal::hijri::unstable_internal::Rules)-specific formatting options.
@@ -127,6 +140,7 @@ impl CldrCalendar for cal::Indian {
 ///     type MonthNamesV1 =
 ///         <hijri::UmmAlQura as FormattableHijriRules>::MonthNamesV1;
 ///     type SkeletaV1 = <hijri::UmmAlQura as FormattableHijriRules>::SkeletaV1;
+///     type RangeSkeletaV1 = <hijri::UmmAlQura as FormattableHijriRules>::RangeSkeletaV1;
 /// }
 /// ```
 // TODO: default associated types would be nice (https://github.com/rust-lang/rust/issues/29661)
@@ -139,6 +153,9 @@ pub trait FormattableHijriRules: cal::hijri::unstable_internal::Rules + Unstable
 
     /// The data marker for loading skeleton patterns for this calendar.
     type SkeletaV1: DataMarker<DataStruct = PackedPatterns<'static>>;
+
+    /// The data marker for loading range skeleton patterns for this calendar.
+    type RangeSkeletaV1: DataMarker<DataStruct = PackedRangePatterns<'static>>;
 }
 
 impl UnstableSealed for cal::hijri::TabularAlgorithm {}
@@ -146,6 +163,7 @@ impl FormattableHijriRules for cal::hijri::TabularAlgorithm {
     type YearNamesV1 = DatetimeNamesYearHijriV1;
     type MonthNamesV1 = DatetimeNamesMonthHijriV1;
     type SkeletaV1 = DatetimePatternsDateHijriV1;
+    type RangeSkeletaV1 = DatetimePatternsRangeDateHijriV1;
 }
 
 impl UnstableSealed for cal::hijri::UmmAlQura {}
@@ -153,6 +171,7 @@ impl FormattableHijriRules for cal::hijri::UmmAlQura {
     type YearNamesV1 = DatetimeNamesYearHijriV1;
     type MonthNamesV1 = DatetimeNamesMonthHijriV1;
     type SkeletaV1 = DatetimePatternsDateHijriV1;
+    type RangeSkeletaV1 = DatetimePatternsRangeDateHijriV1;
 }
 
 #[allow(deprecated)]
@@ -162,30 +181,35 @@ impl FormattableHijriRules for cal::hijri::AstronomicalSimulation {
     type YearNamesV1 = DatetimeNamesYearHijriV1;
     type MonthNamesV1 = DatetimeNamesMonthHijriV1;
     type SkeletaV1 = DatetimePatternsDateHijriV1;
+    type RangeSkeletaV1 = DatetimePatternsRangeDateHijriV1;
 }
 
 impl<R: FormattableHijriRules> CldrCalendar for cal::Hijri<R> {
     type YearNamesV1 = R::YearNamesV1;
     type MonthNamesV1 = R::MonthNamesV1;
     type SkeletaV1 = R::SkeletaV1;
+    type RangeSkeletaV1 = R::RangeSkeletaV1;
 }
 
 impl CldrCalendar for cal::Japanese {
     type YearNamesV1 = DatetimeNamesYearJapaneseV1;
     type MonthNamesV1 = DatetimeNamesMonthJapaneseV1;
     type SkeletaV1 = DatetimePatternsDateJapaneseV1;
+    type RangeSkeletaV1 = DatetimePatternsRangeDateJapaneseV1;
 }
 
 impl CldrCalendar for cal::Persian {
     type YearNamesV1 = DatetimeNamesYearPersianV1;
     type MonthNamesV1 = DatetimeNamesMonthPersianV1;
     type SkeletaV1 = DatetimePatternsDatePersianV1;
+    type RangeSkeletaV1 = DatetimePatternsRangeDatePersianV1;
 }
 
 impl CldrCalendar for cal::Roc {
     type YearNamesV1 = DatetimeNamesYearRocV1;
     type MonthNamesV1 = DatetimeNamesMonthRocV1;
     type SkeletaV1 = DatetimePatternsDateRocV1;
+    type RangeSkeletaV1 = DatetimePatternsRangeDateRocV1;
 }
 
 impl UnstableSealed for () {}
@@ -369,6 +393,14 @@ fn test_calendar_fallback() {
         FormattableAnyCalendar::try_new(locale!("und-u-ca-buddhist").into()),
     );
     assert_eq!(
+        FormattableAnyCalendar::try_new(locale!("th").into()),
+        FormattableAnyCalendar::try_new(locale!("und-u-ca-buddhist").into()),
+    );
+    assert_eq!(
+        FormattableAnyCalendar::try_new(locale!("fa").into()),
+        FormattableAnyCalendar::try_new(locale!("und-u-ca-persian").into()),
+    );
+    assert_eq!(
         FormattableAnyCalendar::try_new(locale!("en-SA-u-ca-islamic").into()),
         FormattableAnyCalendar::try_new(
             Locale::try_from_str("und-u-ca-islamic-umalqura")
@@ -443,10 +475,38 @@ impl FormattableAnyCalendar {
         mut prefs: CalendarPreferences,
     ) -> Result<Self, DataError>
     where
-        P: ?Sized + DataProvider<icu_calendar::provider::CalendarJapaneseModernV1>,
+        P: ?Sized
+            + DataProvider<icu_calendar::provider::CalendarJapaneseModernV1>
+            + DataProvider<CalendarPreferredV1>,
     {
         use CalendarAlgorithm::*;
-        let any_calendar = match prefs.resolved_algorithm() {
+
+        if prefs.calendar_algorithm == Some(Iso8601) {
+            // Resolve iso8601 to the region's default.
+            prefs.calendar_algorithm = None;
+        }
+        if prefs.calendar_algorithm == Some(Hijri(Some(HijriCalendarAlgorithm::Rgsa))) {
+            // Resolve islamic-rgsa to the region's Hijri default.
+            prefs.calendar_algorithm = Some(Hijri(None));
+        }
+
+        let algorithm = match prefs.calendar_algorithm {
+            Some(algorithm) if !matches!(algorithm, Hijri(None)) => algorithm,
+            unresolved => DataProvider::<CalendarPreferredV1>::load(
+                &provider,
+                DataRequest {
+                    id: DataIdentifierBorrowed::for_locale(&CalendarPreferredV1::make_locale(
+                        prefs.locale_preferences,
+                    )),
+                    metadata: Default::default(),
+                },
+            )?
+            .payload
+            .get()
+            .resolve(unresolved),
+        };
+
+        let any_calendar = match algorithm {
             Buddhist => AnyCalendar::Buddhist(cal::Buddhist),
             Chinese => AnyCalendar::Chinese(cal::ChineseTraditional::new()),
             Coptic => AnyCalendar::Coptic(cal::Coptic),
@@ -477,9 +537,8 @@ impl FormattableAnyCalendar {
             Persian => AnyCalendar::Persian(cal::Persian),
             Roc => AnyCalendar::Roc(cal::Roc),
             Iso8601 | Hijri(_) => {
-                // unsupported
-                prefs.calendar_algorithm = None;
-                return Self::try_new_unstable(provider, prefs);
+                debug_assert!(false, "filtered out before and not default for any region");
+                AnyCalendar::Gregorian(cal::Gregorian)
             }
             _ => {
                 // unknown
@@ -608,6 +667,21 @@ impl CalMarkers<ErasedPackedPatterns> for FullDataCalMarkers {
     type Japanese = <cal::Japanese as CldrCalendar>::SkeletaV1;
     type Persian = <cal::Persian as CldrCalendar>::SkeletaV1;
     type Roc = <cal::Roc as CldrCalendar>::SkeletaV1;
+}
+
+impl CalMarkers<ErasedPackedRangePatterns> for FullDataCalMarkers {
+    type Buddhist = <cal::Buddhist as CldrCalendar>::RangeSkeletaV1;
+    type Chinese = <cal::ChineseTraditional as CldrCalendar>::RangeSkeletaV1;
+    type Coptic = <cal::Coptic as CldrCalendar>::RangeSkeletaV1;
+    type Dangi = <cal::KoreanTraditional as CldrCalendar>::RangeSkeletaV1;
+    type Ethiopian = <cal::Ethiopian as CldrCalendar>::RangeSkeletaV1;
+    type Gregorian = <cal::Gregorian as CldrCalendar>::RangeSkeletaV1;
+    type Hebrew = <cal::Hebrew as CldrCalendar>::RangeSkeletaV1;
+    type Indian = <cal::Indian as CldrCalendar>::RangeSkeletaV1;
+    type Hijri = <cal::Hijri<cal::hijri::UmmAlQura> as CldrCalendar>::RangeSkeletaV1;
+    type Japanese = <cal::Japanese as CldrCalendar>::RangeSkeletaV1;
+    type Persian = <cal::Persian as CldrCalendar>::RangeSkeletaV1;
+    type Roc = <cal::Roc as CldrCalendar>::RangeSkeletaV1;
 }
 
 /// A type that can be converted into a specific calendar system.

@@ -206,7 +206,7 @@ pub struct RuleBreakData<'data> {
     /// The index of EOT (end of text) state [`Self::break_state_table`].
     pub eot_property: u8,
 
-    /// The index of "SA" state (or 127 if the complex language isn't handled) for
+    /// The index of "SA" state (or 127 if complex scripts aren't handled) for
     /// [`Self::break_state_table`].
     pub complex_property: u8,
 }
@@ -350,17 +350,17 @@ impl zerovec::ule::AsULE for BreakState {
     }
 }
 
-/// A language category for complex language segmenters.
+/// A complex script that requires special handling in the segmenter.
 #[allow(missing_docs)] // trivial
-#[zerovec::make_ule(DictionaryLanguageULE)]
+#[zerovec::make_ule(ComplexScriptULE)]
 #[derive(PartialEq, Debug, Copy, Clone)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
 #[repr(u8)]
-pub enum Language {
-    Other = 0,
-    Burmese = 1,
+pub enum ComplexScript {
+    None = 0,
+    Myanmar = 1,
     ChineseOrJapanese = 2,
     Khmer = 3,
     Lao = 4,

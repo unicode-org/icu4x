@@ -41,7 +41,6 @@ icu_collator_data = { workspace = true, optional = true }
 icu_locale = { workspace = true, optional = true }
 
 [dev-dependencies]
-arraystring = { workspace = true }
 atoi = { workspace = true }
 icu = { path = "../../components/icu", default-features = false }
 icu_locale_core = { path = "../../components/locale_core" }

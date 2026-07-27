@@ -10,16 +10,6 @@ use icu_provider::prelude::*;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::ZeroMap;
 
-#[cfg(feature = "compiled_data")]
-/// Baked data
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
-/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
-/// </div>
-pub use crate::provider::Baked;
-
 icu_provider::data_marker!(
     /// `CurrencyFractionsV1` provides currency fraction data for rounding and decimal digit rules.
     CurrencyFractionsV1,
@@ -50,7 +40,22 @@ pub struct CurrencyFractions<'data> {
 
 icu_provider::data_struct!(CurrencyFractions<'_>, #[cfg(feature = "datagen")]);
 
+impl CurrencyFractions<'_> {
+    /// Resolves fraction and rounding information for a given currency code.
+    ///
+    /// The resolution follows a 2-step hierarchy per UTS #35 supplemental `<currencyData>`:
+    /// 1. Currency-specific override in the global map (e.g., JPY = 0 decimals).
+    /// 2. Global default precision (`DEFAULT` in supplemental currency data).
+    pub fn resolve(&self, currency_code: crate::dimension::currency::CurrencyCode) -> FractionInfo {
+        let iso_code = currency_code.0.to_unvalidated();
+        self.fractions.get_copied(&iso_code).unwrap_or(self.default)
+    }
+}
+
 /// Fraction and rounding information for a currency.
+// TODO: Refactor to use bit-packed `struct RoundingInfo { digits: u8, rounding: Rounding }`
+// (4 bits digits, 4 bits rounding) and `struct FractionInfo { normal: RoundingInfo, cash: RoundingInfo }`
+// to optimize data provider memory footprint in a subsequent PR.
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency::fractions))]

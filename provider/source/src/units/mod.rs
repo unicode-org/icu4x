@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub(crate) mod categorized_display_name;
-pub(crate) mod display_names;
 pub(crate) mod essentials;
 pub(crate) mod helpers;
 pub(crate) mod ids;

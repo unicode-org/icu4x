@@ -2,171 +2,115 @@
   "pseudo_symbol_map": [
     [
       1,
-      "Other"
+      "None"
     ],
     [
       2,
-      "Other"
+      "None"
     ],
     [
       4,
-      "Other"
+      "None"
     ],
     [
       14,
-      "Other"
+      "None"
     ],
     [
       24,
-      "Other"
+      "None"
     ],
     [
       28,
-      "Other"
+      "None"
     ],
     [
       29,
-      "Other"
+      "None"
     ],
     [
       30,
-      "Other"
+      "None"
     ],
     [
       33,
-      "Other"
+      "None"
     ],
     [
       34,
-      "Other"
+      "None"
     ],
     [
       35,
-      "Other"
+      "None"
     ],
     [
       36,
-      "Other"
-    ],
-    [
-      36,
-      "Other"
+      "None"
     ],
     [
       37,
-      "Other"
-    ],
-    [
-      37,
-      "Other"
+      "None"
     ],
     [
       39,
-      "Other"
+      "None"
     ],
     [
       40,
-      "Other"
+      "None"
     ],
     [
       41,
-      "Other"
+      "None"
     ],
     [
       48,
-      "Other"
+      "None"
     ],
     [
       48,
-      "Other"
+      "None"
     ],
     [
       48,
-      "Other"
-    ],
-    [
-      48,
-      "Other"
-    ],
-    [
-      48,
-      "Other"
-    ],
-    [
-      48,
-      "Other"
-    ],
-    [
-      48,
-      "Other"
+      "None"
     ],
     [
       33,
-      "Other"
-    ],
-    [
-      48,
-      "Other"
-    ],
-    [
-      48,
-      "Other"
+      "None"
     ],
     [
       49,
-      "Other"
+      "None"
     ],
     [
       50,
-      "Other"
+      "None"
     ],
     [
       53,
-      "Other"
+      "None"
     ],
     [
       54,
-      "Other"
+      "None"
     ],
     [
       55,
-      "Other"
+      "None"
     ],
     [
       56,
-      "Other"
+      "None"
     ],
     [
       57,
-      "Other"
-    ],
-    [
-      57,
-      "Other"
-    ],
-    [
-      57,
-      "Other"
+      "None"
     ],
     [
       58,
-      "Other"
-    ],
-    [
-      58,
-      "Other"
-    ],
-    [
-      58,
-      "Other"
-    ],
-    [
-      14,
-      "Burmese"
-    ],
-    [
-      14,
-      "Burmese"
+      "None"
     ],
     [
       14,
@@ -183,6 +127,14 @@
     [
       14,
       "Lao"
+    ],
+    [
+      14,
+      "Myanmar"
+    ],
+    [
+      14,
+      "Myanmar"
     ],
     [
       14,
@@ -194,14 +146,6 @@
     ],
     [
       2,
-      "Burmese"
-    ],
-    [
-      2,
-      "Burmese"
-    ],
-    [
-      2,
       "Khmer"
     ],
     [
@@ -215,6 +159,14 @@
     [
       2,
       "Lao"
+    ],
+    [
+      2,
+      "Myanmar"
+    ],
+    [
+      2,
+      "Myanmar"
     ],
     [
       2,

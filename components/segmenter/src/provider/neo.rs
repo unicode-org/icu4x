@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::Language;
+use super::ComplexScript;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
 use zerovec::ZeroVec;
@@ -61,11 +61,11 @@ pub struct SegmenterStateMachine<'data> {
     /// it is a pseudo symbol and needs to be looked up in `pseudo_symbol_map`.
     pub pseudo_symbol_shift: u8,
     /// The map from pseudo symbols (symbols `c` where `c > pseudo_symbol_shift`) to their
-    /// actual symbol values and complex language.
+    /// actual symbol values and complex script.
     ///
     /// Dense linear map, indexed by `c - pseudo_symbol_shift`.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub pseudo_symbol_map: ZeroVec<'data, (Symbol, Language)>,
+    pub pseudo_symbol_map: ZeroVec<'data, (Symbol, ComplexScript)>,
 }
 
 icu_provider::data_struct!(
@@ -96,7 +96,7 @@ impl SegmenterStateMachine<'_> {
 pub struct SegmenterStateMachineOverride<'data> {
     /// See [`SegmenterStateMachine::pseudo_symbol_map`].
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub pseudo_symbol_map: ZeroVec<'data, (Symbol, Language)>,
+    pub pseudo_symbol_map: ZeroVec<'data, (Symbol, ComplexScript)>,
 }
 
 icu_provider::data_struct!(

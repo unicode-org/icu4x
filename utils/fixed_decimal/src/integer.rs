@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::convert::TryFrom;
-use core::fmt;
 
 use core::str::FromStr;
 
@@ -68,11 +67,7 @@ impl_fixed_integer_from_integer_type!(u32);
 impl_fixed_integer_from_integer_type!(u16);
 impl_fixed_integer_from_integer_type!(u8);
 
-impl writeable::Writeable for FixedInteger {
-    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        self.0.write_to(sink)
-    }
-}
+writeable::impl_writeable_delegate!(FixedInteger, |&self| &self.0);
 
 impl TryFrom<Decimal> for FixedInteger {
     type Error = LimitError;
