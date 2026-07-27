@@ -138,7 +138,8 @@ pub(crate) const CLDR_IDS_TRIE: ZeroTrieSimpleAscii<[u8; 1334]> =
         ("pint-metric", 110_usize),
         ("pixel", 111_usize),
         ("point", 112_usize),
-        ("portion", 113_usize), // alias for part
+        // TODO(#8269): alias for part
+        ("portion", 113_usize),
         ("pound", 114_usize),
         ("pound-force", 115_usize),
         ("quart", 116_usize),
