@@ -1,6 +1,7 @@
 // @generated
 include!("short_day_relative_v1.rs.data");
 include!("long_second_relative_v1.rs.data");
+include!("currency_no_currency_patterns_v1.rs.data");
 include!("person_names_format_v1.rs.data");
 include!("percent_essentials_v1.rs.data");
 include!("locale_names_essentials_v1.rs.data");
@@ -102,6 +103,7 @@ macro_rules! impl_data_provider {
         make_provider!($provider);
         impl_short_day_relative_v1!($provider);
         impl_long_second_relative_v1!($provider);
+        impl_currency_no_currency_patterns_v1!($provider);
         impl_person_names_format_v1!($provider);
         impl_percent_essentials_v1!($provider);
         impl_locale_names_essentials_v1!($provider);
