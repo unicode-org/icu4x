@@ -46,6 +46,14 @@ impl DataProvider<CurrencyNoCurrencyPatternsV1> for SourceDataProvider {
     }
 }
 
+fn has_no_currency_pattern(patterns: &cldr_serde::numbers::CurrencyFormattingPatterns) -> bool {
+    patterns
+        .standard_no_currency
+        .as_ref()
+        .is_some_and(|p| !p.positive.is_empty())
+        || !patterns.standard.positive.is_empty()
+}
+
 impl IterableDataProviderCached<CurrencyNoCurrencyPatternsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         let mut ids = HashSet::new();
@@ -58,12 +66,7 @@ impl IterableDataProviderCached<CurrencyNoCurrencyPatternsV1> for SourceDataProv
             let default_numsys = &numbers.default_numbering_system;
 
             for (nsname, patterns) in &numbers.numsys_data.currency_patterns {
-                let has_std_nc = patterns
-                    .standard_no_currency
-                    .as_ref()
-                    .map_or(false, |p| !p.positive.is_empty());
-                let has_std = !patterns.standard.positive.is_empty();
-                if !has_std_nc && !has_std {
+                if !has_no_currency_pattern(patterns) {
                     continue;
                 }
                 if nsname == default_numsys {
@@ -98,12 +101,7 @@ fn extract_currency_no_currency<'data>(
     // We only generate CurrencyNoCurrencyPatterns for locale/numsys pairs that possess a non-empty
     // `standard_no_currency` or `standard` pattern (verified during ID iteration in `iter_ids_cached`).
     // If both are missing or empty when `load` is called directly, we treat the identifier as not found.
-    let has_std_nc = currency_formats
-        .standard_no_currency
-        .as_ref()
-        .map_or(false, |p| !p.positive.is_empty());
-    let has_std = !currency_formats.standard.positive.is_empty();
-    if !has_std_nc && !has_std {
+    if !has_no_currency_pattern(currency_formats) {
         return Err(DataErrorKind::IdentifierNotFound.into_error());
     }
 
