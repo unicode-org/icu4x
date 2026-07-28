@@ -31495,11 +31495,11 @@ currency/displayname/v1, zu/ZMK, 54B, 31B, abe05b241d692995
 currency/displayname/v1, zu/ZMW, 40B, 17B, 15b95ba727a96fd5
 currency/displayname/v1, zu/ZWG, -> ceb/ZWG
 currency/essentials/v1, <lookup>, 1310B, 265 identifiers
-currency/essentials/v1, <total>, 1950B, 954B, 34 unique payloads
+currency/essentials/v1, <total>, 1958B, 962B, 34 unique payloads
 currency/essentials/v1, af, 64B, 35B, 49ad131a5154a2f1
 currency/essentials/v1, ak, -> af
 currency/essentials/v1, am, -> af
-currency/essentials/v1, ar, 91B, 64B, 27196b54bba42d4d
+currency/essentials/v1, ar, 94B, 67B, bb1ac2aca5b0cd41
 currency/essentials/v1, ar-BH, 49B, 18B, faa5164c24cf8ae
 currency/essentials/v1, ar-BH/latn, -> ar
 currency/essentials/v1, ar-DJ, -> ar-BH
@@ -31623,7 +31623,7 @@ currency/essentials/v1, gd, -> af
 currency/essentials/v1, gl, -> bg
 currency/essentials/v1, gu, -> af
 currency/essentials/v1, gu/gujr, -> af
-currency/essentials/v1, he, 65B, 38B, d7aad68e82249202
+currency/essentials/v1, he, 68B, 41B, 4243dddd701a0eeb
 currency/essentials/v1, hi, -> bho
 currency/essentials/v1, hi-Latn, -> bho
 currency/essentials/v1, hi/deva, -> bho
@@ -31684,7 +31684,7 @@ currency/essentials/v1, my/latn, -> my
 currency/essentials/v1, nds, -> ast
 currency/essentials/v1, ne/latn, -> bgc/latn
 currency/essentials/v1, nl, -> en-NL
-currency/essentials/v1, no, 67B, 39B, 89c367bd4fbb9459
+currency/essentials/v1, no, 69B, 41B, f5e94677db39680
 currency/essentials/v1, nqo/latn, -> bgc/latn
 currency/essentials/v1, nso, 50B, 19B, 608be281c919ff50
 currency/essentials/v1, oc, 58B, 28B, ba07f47f687dd430
