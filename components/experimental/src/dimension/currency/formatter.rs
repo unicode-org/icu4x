@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::fmt::Display;
+use either::Either;
 
 use super::super::provider::currency::{
     essentials::CurrencyEssentialsV1,
@@ -71,6 +72,7 @@ pub(crate) enum CurrencyFormatterData {
         patterns: DataPayload<CurrencyPatternsDataV1>,
         plural_rules: PluralRules,
     },
+    NoCurrency,
 }
 
 /// A formatter for monetary values.
@@ -365,6 +367,47 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             fraction_info,
         })
     }
+
+    #[cfg(feature = "compiled_data")]
+    pub(crate) fn try_new_no_currency_internal(
+        value_formatter: V,
+        _prefs: CurrencyFormatterPreferences,
+        currency: CurrencyCode,
+        options: CurrencyFormatterOptions,
+    ) -> Result<Self, DataError> {
+        let fractions: DataPayload<CurrencyFractionsV1> =
+            crate::provider::Baked.load(Default::default())?.payload;
+        let fraction_info = fractions.get().resolve(currency);
+
+        Ok(Self {
+            value_formatter,
+            currency_data: CurrencyFormatterData::NoCurrency,
+            usage: options.usage,
+            fraction_info,
+        })
+    }
+
+    pub(crate) fn try_new_no_currency_internal_unstable<D>(
+        provider: &D,
+        value_formatter: V,
+        _prefs: CurrencyFormatterPreferences,
+        currency: CurrencyCode,
+        options: CurrencyFormatterOptions,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized + DataProvider<CurrencyFractionsV1>,
+    {
+        let fractions: DataPayload<CurrencyFractionsV1> =
+            provider.load(Default::default())?.payload;
+        let fraction_info = fractions.get().resolve(currency);
+
+        Ok(Self {
+            value_formatter,
+            currency_data: CurrencyFormatterData::NoCurrency,
+            usage: options.usage,
+            fraction_info,
+        })
+    }
 }
 
 impl CurrencyFormatter<DecimalFormatter> {
@@ -626,6 +669,72 @@ impl CurrencyFormatter<DecimalFormatter> {
             DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
             prefs,
             currency_code,
+        )
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: CurrencyFormatterPreferences, currency_code: CurrencyCode) -> error: DataError,
+        functions: [
+            try_new_no_currency: skip,
+            try_new_no_currency_with_buffer_provider,
+            try_new_no_currency_unstable,
+            Self
+        ]
+    );
+
+    /// Creates a new [`CurrencyFormatter`] for formatting currency amounts without a currency symbol, code, or name from compiled locale data.
+    ///
+    /// The currency code is used to determine the number of decimal digits and rounding for the format.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// # Examples
+    /// ```
+    /// use icu::experimental::dimension::currency::formatter::CurrencyFormatter;
+    /// use icu::experimental::dimension::currency::CurrencyCode;
+    /// use icu::locale::locale;
+    /// use tinystr::*;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let currency_preferences = locale!("en-US").into();
+    /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
+    /// let fmt = CurrencyFormatter::try_new_no_currency(currency_preferences, currency_code).unwrap();
+    /// let value = "12345.67".parse().unwrap();
+    /// assert_writeable_eq!(fmt.format_fixed_decimal(&value), "12,345.67");
+    /// ```
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new_no_currency(
+        prefs: CurrencyFormatterPreferences,
+        currency_code: CurrencyCode,
+    ) -> Result<Self, DataError> {
+        Self::try_new_no_currency_internal(
+            DecimalFormatter::try_new((&prefs).into(), Default::default())?,
+            prefs,
+            currency_code,
+            Default::default(),
+        )
+    }
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_no_currency)]
+    pub fn try_new_no_currency_unstable<D>(
+        provider: &D,
+        prefs: CurrencyFormatterPreferences,
+        currency_code: CurrencyCode,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<CurrencyFractionsV1>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
+    {
+        Self::try_new_no_currency_internal_unstable(
+            provider,
+            DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
+            prefs,
+            currency_code,
+            Default::default(),
         )
     }
 }
@@ -1193,6 +1302,15 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         &'l self,
         value: &'l FixedDecimal,
     ) -> impl Writeable + Display + 'l {
+        if let CurrencyFormatterData::NoCurrency = &self.currency_data {
+            let rounded_value = apply_precision(value.clone(), self.fraction_info);
+            return Either::Left(V::format_sign(
+                &self.value_formatter,
+                V::format_unsigned(&self.value_formatter, rounded_value.absolute),
+                rounded_value.sign,
+            ));
+        }
+
         // TODO(#8146): Evaluate if FixedDecimal is the correct input type or if we should use
         // an exact decimal/money representation.
         // Per UTS #35 (LDML Part 3: Numbers, Section 3.8, Rule 3 in Compact Number Formatting):
@@ -1248,6 +1366,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 let pattern = patterns.get().get(operands, plural_rules);
                 (pattern, currency_str, rounded_value.sign)
             }
+            CurrencyFormatterData::NoCurrency => unreachable!(),
         };
 
         // Per UTS #35 (LDML / TR35 Part 3: Numbers, Section 3.2.1), when a pattern does not specify an
@@ -1257,11 +1376,11 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         // that the minus sign modifies the full monetary expression rather than just the numeric significand.
         // When an accounting negative pattern already encodes the sign (e.g. parentheses), `sign` is
         // `Sign::None` so we do not prepend a redundant minus.
-        V::format_sign(
+        Either::Right(V::format_sign(
             &self.value_formatter,
             pattern.interpolate((formatted_value, currency_str)),
             sign,
-        )
+        ))
     }
 }
 
@@ -1341,9 +1460,11 @@ pub(crate) fn apply_precision(value: FixedDecimal, fraction_info: FractionInfo) 
         Rounding::R1 => (-precision, RoundingIncrement::MultiplesOf1),
     };
 
-    value.rounded_with_mode_and_increment(
+    let mut value = value.rounded_with_mode_and_increment(
         magnitude,
         SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfExpand),
         increment,
-    )
+    );
+    value.pad_end(-precision);
+    value
 }
