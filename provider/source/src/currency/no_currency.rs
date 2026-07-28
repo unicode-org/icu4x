@@ -58,8 +58,12 @@ impl IterableDataProviderCached<CurrencyNoCurrencyPatternsV1> for SourceDataProv
             let default_numsys = &numbers.default_numbering_system;
 
             for (nsname, patterns) in &numbers.numsys_data.currency_patterns {
-                if patterns.standard.positive.is_empty() && patterns.standard_no_currency.is_none()
-                {
+                let has_std_nc = patterns
+                    .standard_no_currency
+                    .as_ref()
+                    .map_or(false, |p| !p.positive.is_empty());
+                let has_std = !patterns.standard.positive.is_empty();
+                if !has_std_nc && !has_std {
                     continue;
                 }
                 if nsname == default_numsys {
@@ -90,6 +94,18 @@ fn extract_currency_no_currency<'data>(
         .currency_patterns
         .get(numsys_name)
         .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
+
+    // We only generate CurrencyNoCurrencyPatterns for locale/numsys pairs that possess a non-empty
+    // `standard_no_currency` or `standard` pattern (verified during ID iteration in `iter_ids_cached`).
+    // If both are missing or empty when `load` is called directly, we treat the identifier as not found.
+    let has_std_nc = currency_formats
+        .standard_no_currency
+        .as_ref()
+        .map_or(false, |p| !p.positive.is_empty());
+    let has_std = !currency_formats.standard.positive.is_empty();
+    if !has_std_nc && !has_std {
+        return Err(DataErrorKind::IdentifierNotFound.into_error());
+    }
 
     let (minus_sign, plus_sign) =
         if let Some(symbols) = numbers_block.numsys_data.symbols.get(numsys_name) {
