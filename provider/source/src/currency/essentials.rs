@@ -101,10 +101,20 @@ fn extract_currency_essentials<'data>(
     let accounting = currency_formats.accounting.as_ref();
     let accounting_alpha_next_to_number = currency_formats.accounting_alpha_next_to_number.as_ref();
 
+    let (minus_sign, plus_sign) =
+        if let Some(symbols) = numbers_block.numsys_data.symbols.get(numsys_name) {
+            (symbols.minus_sign.as_str(), symbols.plus_sign.as_str())
+        } else {
+            // TODO: shall we consider a fallback?
+            ("-", "+")
+        };
+
     fn convert_pattern_items<'a>(
         items: &'a [NumberPatternItem],
+        minus_sign: &'a str,
+        plus_sign: &'a str,
     ) -> impl Iterator<Item = PatternItemCow<'a, DoublePlaceholderKey>> + 'a {
-        items.iter().flat_map(|item| match item {
+        items.iter().flat_map(move |item| match item {
             NumberPatternItem::Currency => {
                 Some(PatternItemCow::Placeholder(DoublePlaceholderKey::Place1))
             }
@@ -112,40 +122,48 @@ fn extract_currency_essentials<'data>(
             NumberPatternItem::DecimalSeparator => {
                 Some(PatternItemCow::Placeholder(DoublePlaceholderKey::Place0))
             }
-            // The sign characters are part of the pattern and are kept as literal text.
-            NumberPatternItem::MinusSign => Some(PatternItemCow::Literal(Cow::Borrowed("-"))),
-            NumberPatternItem::PlusSign => Some(PatternItemCow::Literal(Cow::Borrowed("+"))),
+            // Sign characters are rendered using the localized plus/minus signs from the
+            // decimal symbols data for the target numbering system.
+            NumberPatternItem::MinusSign => {
+                Some(PatternItemCow::Literal(Cow::Borrowed(minus_sign)))
+            }
+            NumberPatternItem::PlusSign => Some(PatternItemCow::Literal(Cow::Borrowed(plus_sign))),
             _ => None,
         })
     }
 
-    fn create_positive_pattern<'data>(
-        pattern: &NumberPattern,
-    ) -> Result<Cow<'data, DoublePlaceholderPattern>, DataError> {
-        DoublePlaceholderPattern::try_from_items(convert_pattern_items(&pattern.positive))
+    let create_positive_pattern =
+        |pattern: &NumberPattern| -> Result<Cow<'data, DoublePlaceholderPattern>, DataError> {
+            DoublePlaceholderPattern::try_from_items(convert_pattern_items(
+                &pattern.positive,
+                minus_sign,
+                plus_sign,
+            ))
             .map_err(|e| {
                 DataError::custom("Could not parse positive pattern").with_display_context(&e)
             })
             .map(Cow::Owned)
-    }
+        };
 
-    fn create_negative_pattern<'data>(
-        pattern: &NumberPattern,
-    ) -> Result<Option<Cow<'data, DoublePlaceholderPattern>>, DataError> {
-        // The negative subpattern is baked as-is when it exists; `None` means the
-        // formatter falls back to the positive pattern of the same category and
-        // applies the sign itself.
+    let create_negative_pattern = |pattern: &NumberPattern| -> Result<
+        Option<Cow<'data, DoublePlaceholderPattern>>,
+        DataError,
+    > {
         if let Some(negative_items) = &pattern.negative {
-            DoublePlaceholderPattern::try_from_items(convert_pattern_items(negative_items))
-                .map_err(|e| {
-                    DataError::custom("Could not parse negative pattern").with_display_context(&e)
-                })
-                .map(Cow::Owned)
-                .map(Some)
+            DoublePlaceholderPattern::try_from_items(convert_pattern_items(
+                negative_items,
+                minus_sign,
+                plus_sign,
+            ))
+            .map_err(|e| {
+                DataError::custom("Could not parse negative pattern").with_display_context(&e)
+            })
+            .map(Cow::Owned)
+            .map(Some)
         } else {
             Ok(None)
         }
-    }
+    };
 
     let mut unique_patterns = Vec::<Box<DoublePlaceholderPattern>>::new();
 
@@ -298,7 +316,7 @@ fn test_essentials() {
             .get_negative(false, false)
             .unwrap()
             .interpolate((3, "$")),
-        "\u{200f}-3\u{a0}$"
+        "\u{200f}\u{200e}-3\u{a0}$"
     );
 
     // `en` has no explicit standard negative subpattern, so `get_negative` is `None`

@@ -86,9 +86,7 @@ impl<'a> CurrencyEssentials<'a> {
 
     /// Returns the explicit standard negative pattern, if it exists.
     ///
-    /// The category (plain or alpha-next-to-number) is determined by the positive
-    /// standard pattern, consistently with [`Self::get_positive`]. If the selected
-    /// category has no explicit negative pattern, `None` is returned and the caller
+    /// If the category has no explicit negative pattern, `None` is returned and the caller
     /// falls back to the positive pattern of the same category, applying the sign
     /// itself.
     pub fn get_negative(
@@ -101,11 +99,10 @@ impl<'a> CurrencyEssentials<'a> {
             return None;
         };
 
-        let negative_idx = if is_alpha_next_to_number(
-            standard,
-            symbol_starts_with_letter,
-            symbol_ends_with_letter,
-        ) {
+        let negative_idx = if self.indices.standard_alpha_next_to_number_negative
+            != self.indices.standard_negative
+            && is_alpha_next_to_number(standard, symbol_starts_with_letter, symbol_ends_with_letter)
+        {
             self.indices.standard_alpha_next_to_number_negative
         } else {
             self.indices.standard_negative
@@ -147,9 +144,7 @@ impl<'a> CurrencyEssentials<'a> {
 
     /// Returns the explicit accounting negative pattern, if it exists.
     ///
-    /// The category (plain or alpha-next-to-number) is determined by the positive
-    /// accounting pattern, consistently with [`Self::get_positive_accounting`]. If the
-    /// selected category has no explicit negative pattern, `None` is returned and the
+    /// If the selected category has no explicit negative pattern, `None` is returned and the
     /// caller falls back to the positive pattern of the same category, applying the
     /// sign itself.
     pub fn get_negative_accounting(
@@ -162,11 +157,13 @@ impl<'a> CurrencyEssentials<'a> {
             return None;
         };
 
-        let negative_idx = if is_alpha_next_to_number(
-            accounting,
-            symbol_starts_with_letter,
-            symbol_ends_with_letter,
-        ) {
+        let negative_idx = if self.indices.accounting_alpha_next_to_number_negative
+            != self.indices.accounting_negative
+            && is_alpha_next_to_number(
+                accounting,
+                symbol_starts_with_letter,
+                symbol_ends_with_letter,
+            ) {
             self.indices.accounting_alpha_next_to_number_negative
         } else {
             self.indices.accounting_negative
