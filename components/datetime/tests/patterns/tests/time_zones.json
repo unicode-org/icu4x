@@ -61,7 +61,7 @@
       "zzzz": "British Summer Time",
 
       "v": "UK Time",
-      "vvvv": "UK Time",
+      "vvvv": "British Time",
 
       "VVV": "London",
       "VVVV": "UK Time",
@@ -74,11 +74,11 @@
     "locale": "en",
     "datetime": "2021-07-11T12:00:00.000+00:00[Europe/London]",
     "expectations": {
-      "z": "GMT",
+      "z": "GMT+0",
       "zzzz": "Greenwich Mean Time",
 
       "v": "UK Time",
-      "vvvv": "UK Time",
+      "vvvv": "British Time",
 
       "VVV": "London",
       "VVVV": "UK Time",
@@ -95,7 +95,7 @@
       "zzzz": "Irish Standard Time",
 
       "v": "Ireland Time",
-      "vvvv": "Ireland Time",
+      "vvvv": "Irish Time",
 
       "VVV": "Dublin",
       "VVVV": "Ireland Time",

@@ -129,7 +129,7 @@ mod test {
                         .expect("pattern should not have plural variants")
                         .to_string()
                         .as_str(),
-                    "H:m:s"
+                    "MMMM d, y"
                 )
             }
             BestSkeleton::NoMatch => {

@@ -31,7 +31,7 @@
 //! // Missing data is filled in on a best-effort basis, and an error is signaled.
 //! assert_writeable_parts_eq!(
 //!     dtf.format(&dtz),
-//!     "Nov 20, 2566 BE, 11:35:03.50 AM GMT",
+//!     "Nov 20, 2566 BE, 11:35:03.50 AM GMT+0",
 //!     [
 //!         (0, 3, datetime_parts::MONTH),
 //!         (4, 6, decimal_parts::INTEGER),
@@ -49,7 +49,7 @@
 //!         (26, 28, decimal_parts::FRACTION),
 //!         // note: from 28 to 31 is a NNBSP
 //!         (31, 33, datetime_parts::DAY_PERIOD),
-//!         (34, 37, datetime_parts::TIME_ZONE_NAME),
+//!         (34, 39, datetime_parts::TIME_ZONE_NAME),
 //!     ]
 //! );
 //! ```
