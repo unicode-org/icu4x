@@ -409,6 +409,9 @@ mod tests {
         let prefs_fr = locale!("fr-FR").into();
         let eur = CurrencyCode(tinystr!(3, "EUR"));
         let fmt_eur_fr = CurrencyFormatter::try_new_no_currency(prefs_fr, eur).unwrap();
-        assert_writeable_eq!(fmt_eur_fr.format_fixed_decimal(&positive), "12\u{202f}345,67");
+        assert_writeable_eq!(
+            fmt_eur_fr.format_fixed_decimal(&positive),
+            "12\u{202f}345,67"
+        );
     }
 }
