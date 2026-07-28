@@ -98,6 +98,10 @@ fn extract_currency_no_currency<'data>(
             ("-", "+")
         };
 
+    // Per UTS #35 (LDML, Part 3: Numbers, §3.2 Currency Formats), noCurrency patterns format
+    // a currency value while omitting the currency symbol. Any currency symbol placeholder (`¤` /
+    // `NumberPatternItem::Currency`) in the CLDR pattern is stripped (`_ => None`), leaving only the
+    // single number placeholder (`SinglePlaceholderKey::Singleton`).
     fn convert_pattern_items<'a>(
         items: &'a [NumberPatternItem],
         minus_sign: &'a str,
@@ -149,6 +153,8 @@ fn extract_currency_no_currency<'data>(
         }
     };
 
+    // Per UTS #35 §3.2, if an explicit `alt="noCurrency"` pattern is not supplied in CLDR,
+    // we fall back to using the standard pattern for that category with the currency symbol removed.
     let standard_pattern = if let Some(std_nc) = &currency_formats.standard_no_currency {
         std_nc
     } else {
