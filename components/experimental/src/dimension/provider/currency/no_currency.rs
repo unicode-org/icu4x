@@ -66,7 +66,7 @@ impl<'a> CurrencyNoCurrencyPatterns<'a> {
             .get(self.indices.standard as usize)
             .unwrap_or_else(|| {
                 debug_assert!(false, "Standard pattern index is out of bounds");
-                <&SinglePlaceholderPattern>::default()
+                SinglePlaceholderPattern::PASS_THROUGH
             })
     }
 
