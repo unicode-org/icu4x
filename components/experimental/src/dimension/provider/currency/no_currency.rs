@@ -14,7 +14,7 @@ icu_provider::data_marker!(
     CurrencyNoCurrencyPatterns<'static>,
 );
 
-/// Currency NoCurrency patterns data struct.
+/// Currency `NoCurrency` patterns data struct.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking ways,
