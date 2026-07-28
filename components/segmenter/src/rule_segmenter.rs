@@ -35,7 +35,7 @@ pub trait RuleBreakType: crate::private::Sealed + Sized {
 
     #[doc(hidden)]
     #[cfg(feature = "unstable")]
-    type ComplexPayloads<'data>: core::fmt::Debug;
+    type ComplexPayloads<'data>: core::fmt::Debug + Clone + Copy;
     #[doc(hidden)]
     #[cfg(feature = "unstable")]
     type ComplexPayload<'data>: core::fmt::Debug;
