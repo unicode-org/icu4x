@@ -1,0 +1,37 @@
+{
+  "patterns": [
+    [
+      {
+        "Literal": "‏"
+      },
+      {
+        "Placeholder": "Singleton"
+      }
+    ],
+    [
+      {
+        "Literal": "؜"
+      },
+      {
+        "Placeholder": "Singleton"
+      }
+    ],
+    [
+      {
+        "Literal": "(؜"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": ")"
+      }
+    ]
+  ],
+  "indices": {
+    "standard": 0,
+    "standard_negative": 0,
+    "accounting_positive": 1,
+    "accounting_negative": 2
+  }
+}
