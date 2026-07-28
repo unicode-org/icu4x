@@ -35,20 +35,37 @@ pub(crate) enum GraphemeClusterBreakIteratorInner<'data, 's, Y: RuleBreakType> {
     Neo(crate::neo::RuleBreakIterator<'data, 's, Y, crate::neo::NoComplexHandler>),
 }
 
-impl<'data, 's, Y: RuleBreakType> Clone for GraphemeClusterBreakIteratorInner<'data, 's, Y> {
-    fn clone(&self) -> Self {
-        match self {
-            Self::Legacy(iter) => Self::Legacy(iter.clone()),
-            #[cfg(feature = "unstable")]
-            Self::Neo(iter) => Self::Neo(iter.clone()),
-        }
-    }
-}
-
 impl<'data, 's, Y: RuleBreakType> GraphemeClusterBreakIterator<'data, 's, Y> {
     /// TODO(#8196): do we want to expose clone on this?
     pub(crate) fn clone_internal(&self) -> Self {
-        Self(self.0.clone())
+        let inner = match &self.0 {
+            GraphemeClusterBreakIteratorInner::Legacy(iter) => {
+                GraphemeClusterBreakIteratorInner::Legacy(RuleBreakIterator {
+                    iter: iter.iter.clone(),
+                    len: iter.len,
+                    current_pos_data: iter.current_pos_data,
+                    result_cache: iter.result_cache.clone(),
+                    data: iter.data,
+                    complex: iter.complex,
+                    boundary_property: iter.boundary_property,
+                    locale_override: iter.locale_override,
+                    handle_complex: iter.handle_complex,
+                })
+            }
+            #[cfg(feature = "unstable")]
+            GraphemeClusterBreakIteratorInner::Neo(iter) => {
+                GraphemeClusterBreakIteratorInner::Neo(crate::neo::RuleBreakIterator {
+                    data: iter.data,
+                    pseudo_symbol_map: iter.pseudo_symbol_map,
+                    cache: iter.cache.clone(),
+                    lookahead_positions: iter.lookahead_positions.clone(),
+                    remaining_input: iter.remaining_input.clone(),
+                    last_accepting_status: iter.last_accepting_status,
+                    complex: iter.complex,
+                })
+            }
+        };
+        Self(inner)
     }
 }
 

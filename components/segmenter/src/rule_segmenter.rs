@@ -35,7 +35,7 @@ pub trait RuleBreakType: crate::private::Sealed + Sized {
 
     #[doc(hidden)]
     #[cfg(feature = "unstable")]
-    type ComplexPayloads<'data>: core::fmt::Debug + Clone;
+    type ComplexPayloads<'data>: core::fmt::Debug + Clone + Copy;
     #[doc(hidden)]
     #[cfg(feature = "unstable")]
     type ComplexPayload<'data>: core::fmt::Debug;
@@ -91,22 +91,6 @@ pub struct RuleBreakIterator<'data, 's, Y: RuleBreakType> {
     // Should return None if there is no complex script handling
     pub(crate) handle_complex:
         fn(&mut RuleBreakIterator<'data, 's, Y>, Y::CharType) -> Option<usize>,
-}
-
-impl<'data, 's, Y: RuleBreakType> Clone for RuleBreakIterator<'data, 's, Y> {
-    fn clone(&self) -> Self {
-        Self {
-            iter: self.iter.clone(),
-            len: self.len,
-            current_pos_data: self.current_pos_data,
-            result_cache: self.result_cache.clone(),
-            data: self.data,
-            complex: self.complex,
-            boundary_property: self.boundary_property,
-            locale_override: self.locale_override,
-            handle_complex: self.handle_complex,
-        }
-    }
 }
 
 pub(crate) fn empty_handle_complex<Y: RuleBreakType>(

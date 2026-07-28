@@ -15,8 +15,8 @@ use smallvec::SmallVec;
 pub(crate) trait ComplexHandler<Y: RuleBreakType> {
     const BREAK_STATUS: u8;
     const BREAK_AT_BOUNDARIES: bool;
-    type Cache: smallvec::Array<Item = usize> + Clone;
-    type ComplexPayloads<'s>: core::fmt::Debug + Clone;
+    type Cache: smallvec::Array<Item = usize>;
+    type ComplexPayloads<'s>: core::fmt::Debug;
     type ComplexPayload<'s>: core::fmt::Debug;
 
     fn select<'data>(
@@ -124,30 +124,14 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for ComplexWord<Y> {
 /// For examples of use, see [`LineSegmenter`].
 #[derive(Debug)]
 pub(crate) struct RuleBreakIterator<'data, 's, Y: RuleBreakType, C: ComplexHandler<Y> + ?Sized> {
-    data: &'data SegmenterStateMachine<'data>,
-    pseudo_symbol_map: &'data zerovec::ZeroVec<'data, (Symbol, ComplexScript)>,
+    pub(crate) data: &'data SegmenterStateMachine<'data>,
+    pub(crate) pseudo_symbol_map: &'data zerovec::ZeroVec<'data, (Symbol, ComplexScript)>,
     // We use `IntoIter` so that we can pop from the front in O(1) time.
-    cache: smallvec::IntoIter<C::Cache>,
-    lookahead_positions: SmallVec<[Option<Y::IterAttr<'s>>; 1]>,
-    remaining_input: Y::IterAttr<'s>,
-    last_accepting_status: u8,
-    complex: Option<C::ComplexPayloads<'data>>,
-}
-
-impl<'data, 's, Y: RuleBreakType, C: ComplexHandler<Y>> Clone
-    for RuleBreakIterator<'data, 's, Y, C>
-{
-    fn clone(&self) -> Self {
-        Self {
-            data: self.data,
-            pseudo_symbol_map: self.pseudo_symbol_map,
-            cache: self.cache.clone(),
-            lookahead_positions: self.lookahead_positions.clone(),
-            remaining_input: self.remaining_input.clone(),
-            last_accepting_status: self.last_accepting_status,
-            complex: self.complex.clone(),
-        }
-    }
+    pub(crate) cache: smallvec::IntoIter<C::Cache>,
+    pub(crate) lookahead_positions: SmallVec<[Option<Y::IterAttr<'s>>; 1]>,
+    pub(crate) remaining_input: Y::IterAttr<'s>,
+    pub(crate) last_accepting_status: u8,
+    pub(crate) complex: Option<C::ComplexPayloads<'data>>,
 }
 
 #[test]
