@@ -4,9 +4,9 @@
 
 //! Data provider struct definitions for no-currency patterns.
 
-use alloc::borrow::Cow;
 use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
+use zerovec::VarZeroVec;
 
 icu_provider::data_marker!(
     /// `CurrencyNoCurrencyPatternsV1`
@@ -30,21 +30,61 @@ icu_provider::data_marker!(
 )]
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyNoCurrencyPatterns<'data> {
-    /// Standard positive pattern (required, e.g., "{0}" or "‏{0}").
+    /// A packed list of distinct no-currency patterns referenced by [`NoCurrencyPatternIndices`].
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub standard: Cow<'data, SinglePlaceholderPattern>,
+    pub patterns: VarZeroVec<'data, SinglePlaceholderPattern>,
 
-    /// Standard negative pattern (optional, e.g., "-{0}" or "‏-{0}").
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub standard_negative: Option<Cow<'data, SinglePlaceholderPattern>>,
+    /// Indices into `patterns` for each formatting variant.
+    pub indices: NoCurrencyPatternIndices,
+}
 
-    /// Accounting positive pattern (optional, fallback to `standard`).
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub accounting_positive: Option<Cow<'data, SinglePlaceholderPattern>>,
-
-    /// Accounting negative pattern (optional, e.g., "({0})").
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub accounting_negative: Option<Cow<'data, SinglePlaceholderPattern>>,
+/// Indices into `patterns` in [`CurrencyNoCurrencyPatterns`].
+#[derive(Copy, Clone, PartialEq, Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(
+    feature = "datagen",
+    databake(path = icu_experimental::dimension::provider::currency::no_currency)
+)]
+pub struct NoCurrencyPatternIndices {
+    /// Standard positive pattern index (required).
+    pub standard: u8,
+    /// Standard negative pattern index (optional).
+    pub standard_negative: Option<u8>,
+    /// Accounting positive pattern index (optional).
+    pub accounting_positive: Option<u8>,
+    /// Accounting negative pattern index (optional).
+    pub accounting_negative: Option<u8>,
 }
 
 icu_provider::data_struct!(CurrencyNoCurrencyPatterns<'_>, #[cfg(feature = "datagen")]);
+
+impl<'a> CurrencyNoCurrencyPatterns<'a> {
+    /// Gets the standard positive no-currency pattern.
+    pub fn get_standard(&'a self) -> &'a SinglePlaceholderPattern {
+        self.patterns
+            .get(self.indices.standard as usize)
+            .unwrap_or_else(|| {
+                debug_assert!(false, "Standard pattern index is out of bounds");
+                <&SinglePlaceholderPattern>::default()
+            })
+    }
+
+    /// Gets the standard negative no-currency pattern.
+    pub fn get_standard_negative(&'a self) -> Option<&'a SinglePlaceholderPattern> {
+        let idx = self.indices.standard_negative?;
+        self.patterns.get(idx as usize)
+    }
+
+    /// Gets the accounting positive no-currency pattern.
+    pub fn get_accounting_positive(&'a self) -> Option<&'a SinglePlaceholderPattern> {
+        let idx = self.indices.accounting_positive?;
+        self.patterns.get(idx as usize)
+    }
+
+    /// Gets the accounting negative no-currency pattern.
+    pub fn get_accounting_negative(&'a self) -> Option<&'a SinglePlaceholderPattern> {
+        let idx = self.indices.accounting_negative?;
+        self.patterns.get(idx as usize)
+    }
+}

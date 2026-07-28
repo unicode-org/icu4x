@@ -14,6 +14,7 @@ use std::collections::HashSet;
 use icu_pattern::PatternItemCow;
 use icu_pattern::SinglePlaceholderKey;
 use icu_pattern::SinglePlaceholderPattern;
+use zerovec::VarZeroVec;
 
 use icu::experimental::dimension::provider::currency::no_currency::*;
 use icu_provider::prelude::*;
@@ -133,10 +134,10 @@ fn extract_currency_no_currency<'data>(
         &currency_formats.standard
     };
 
-    let standard = create_pattern(standard_pattern)?;
-    let standard_negative = create_negative_pattern(standard_pattern)?;
+    let standard_pos = create_pattern(standard_pattern)?;
+    let standard_neg = create_negative_pattern(standard_pattern)?;
 
-    let (accounting_positive, accounting_negative) =
+    let (accounting_pos, accounting_neg) =
         if let Some(acc_nc) = &currency_formats.accounting_no_currency {
             (
                 Some(create_pattern(acc_nc)?),
@@ -148,10 +149,35 @@ fn extract_currency_no_currency<'data>(
             (None, None)
         };
 
+    let mut unique_patterns = Vec::<Box<SinglePlaceholderPattern>>::new();
+
+    let mut add_pattern = |opt_cow: Option<Cow<'data, SinglePlaceholderPattern>>| -> Option<u8> {
+        opt_cow.map(|cow| {
+            let pat: Box<SinglePlaceholderPattern> = cow.into_owned();
+            if let Some(idx) = unique_patterns.iter().position(|p| p == &pat) {
+                idx as u8
+            } else {
+                let idx = unique_patterns.len() as u8;
+                unique_patterns.push(pat);
+                idx
+            }
+        })
+    };
+
+    let standard_idx = add_pattern(Some(standard_pos)).unwrap();
+    let standard_neg_idx = add_pattern(standard_neg);
+    let accounting_pos_idx = add_pattern(accounting_pos);
+    let accounting_neg_idx = add_pattern(accounting_neg);
+
+    let indices = NoCurrencyPatternIndices {
+        standard: standard_idx,
+        standard_negative: standard_neg_idx,
+        accounting_positive: accounting_pos_idx,
+        accounting_negative: accounting_neg_idx,
+    };
+
     Ok(CurrencyNoCurrencyPatterns {
-        standard,
-        standard_negative,
-        accounting_positive,
-        accounting_negative,
+        patterns: VarZeroVec::from(&unique_patterns),
+        indices,
     })
 }

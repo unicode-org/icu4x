@@ -1419,22 +1419,22 @@ fn select_no_currency_pattern<'a>(
 ) -> (&'a icu_pattern::SinglePlaceholderPattern, Sign) {
     if accounting {
         if sign == Sign::Negative
-            && let Some(pattern) = &patterns.accounting_negative
+            && let Some(pattern) = patterns.get_accounting_negative()
         {
             return (pattern, Sign::None);
         }
-        if let Some(pattern) = &patterns.accounting_positive {
+        if let Some(pattern) = patterns.get_accounting_positive() {
             return (pattern, sign);
         }
     }
 
     if sign == Sign::Negative
-        && let Some(pattern) = &patterns.standard_negative
+        && let Some(pattern) = patterns.get_standard_negative()
     {
         return (pattern, Sign::None);
     }
 
-    (&patterns.standard, sign)
+    (patterns.get_standard(), sign)
 }
 
 fn select_essentials_pattern<'a>(
