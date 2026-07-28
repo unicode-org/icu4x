@@ -40,6 +40,16 @@ pub struct CurrencyFractions<'data> {
 
 icu_provider::data_struct!(CurrencyFractions<'_>, #[cfg(feature = "datagen")]);
 
+impl CurrencyFractions<'_> {
+    /// Resolves fraction info for a currency code, falling back to the default fraction info if not present.
+    pub fn resolve(&self, currency_code: crate::dimension::currency::CurrencyCode) -> FractionInfo {
+        self.fractions
+            .get_copied(&currency_code.0.into())
+            .unwrap_or(self.default)
+    }
+}
+
+
 /// Fraction and rounding information for a currency.
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]

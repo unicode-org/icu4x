@@ -292,4 +292,36 @@ mod tests {
         let fmt_name = CurrencyFormatter::try_new_name(prefs_en, currency_xyz).unwrap();
         assert_writeable_eq!(fmt_name.format_fixed_decimal(&value), "12,345.67 XYZ");
     }
+
+    #[test]
+    pub fn test_no_currency() {
+        let prefs_en = locale!("en-US").into();
+        let usd = CurrencyCode(tinystr!(3, "USD"));
+        let jpy = CurrencyCode(tinystr!(3, "JPY"));
+        let bhd = CurrencyCode(tinystr!(3, "BHD"));
+
+        let positive = "12345.67".parse().unwrap();
+        let negative = "-12345.67".parse().unwrap();
+        let integer = "123".parse().unwrap();
+
+        // USD: 2 decimal places
+        let fmt_usd = CurrencyFormatter::try_new_no_currency(prefs_en, usd).unwrap();
+        assert_writeable_eq!(fmt_usd.format_fixed_decimal(&positive), "12,345.67");
+        assert_writeable_eq!(fmt_usd.format_fixed_decimal(&negative), "-12,345.67");
+        assert_writeable_eq!(fmt_usd.format_fixed_decimal(&integer), "123.00");
+
+        // JPY: 0 decimal places
+        let fmt_jpy = CurrencyFormatter::try_new_no_currency(prefs_en, jpy).unwrap();
+        assert_writeable_eq!(fmt_jpy.format_fixed_decimal(&positive), "12,346");
+
+        // BHD: 3 decimal places
+        let fmt_bhd = CurrencyFormatter::try_new_no_currency(prefs_en, bhd).unwrap();
+        assert_writeable_eq!(fmt_bhd.format_fixed_decimal(&positive), "12,345.670");
+
+        // French locale EUR: 2 decimal places with French grouping
+        let prefs_fr = locale!("fr-FR").into();
+        let eur = CurrencyCode(tinystr!(3, "EUR"));
+        let fmt_eur_fr = CurrencyFormatter::try_new_no_currency(prefs_fr, eur).unwrap();
+        assert_writeable_eq!(fmt_eur_fr.format_fixed_decimal(&positive), "12\u{202f}345,67");
+    }
 }
