@@ -9,6 +9,7 @@ use super::super::provider::currency::{
     essentials::CurrencyEssentialsV1,
     extended::CurrencyExtendedDataV1,
     fractions::{CurrencyFractionsV1, FractionInfo, Rounding},
+    no_currency::{CurrencyNoCurrencyPatterns, CurrencyNoCurrencyPatternsV1},
     patterns::CurrencyPatternsDataV1,
     symbols::CurrencySymbolsV1,
 };
@@ -72,7 +73,9 @@ pub(crate) enum CurrencyFormatterData {
         patterns: DataPayload<CurrencyPatternsDataV1>,
         plural_rules: PluralRules,
     },
-    NoCurrency,
+    NoCurrency {
+        patterns: DataPayload<CurrencyNoCurrencyPatternsV1>,
+    },
 }
 
 /// A formatter for monetary values.
@@ -371,17 +374,26 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     #[cfg(feature = "compiled_data")]
     pub(crate) fn try_new_no_currency_internal(
         value_formatter: V,
-        _prefs: CurrencyFormatterPreferences,
+        prefs: CurrencyFormatterPreferences,
         currency: CurrencyCode,
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
+        let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
+        let decimal_prefs = DecimalFormatterPreferences::from(&prefs);
+
+        let req_id = decimal_prefs.nu_id(&locale);
+        let default_id = DataIdentifierBorrowed::for_locale(&locale);
+        let ids = req_id.into_iter().chain(core::iter::once(default_id));
+        let patterns =
+            load_with_fallback::<CurrencyNoCurrencyPatternsV1>(&crate::provider::Baked, ids)?
+                .payload;
         let fractions: DataPayload<CurrencyFractionsV1> =
             crate::provider::Baked.load(Default::default())?.payload;
         let fraction_info = fractions.get().resolve(currency);
 
         Ok(Self {
             value_formatter,
-            currency_data: CurrencyFormatterData::NoCurrency,
+            currency_data: CurrencyFormatterData::NoCurrency { patterns },
             usage: options.usage,
             fraction_info,
         })
@@ -390,20 +402,27 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     pub(crate) fn try_new_no_currency_internal_unstable<D>(
         provider: &D,
         value_formatter: V,
-        _prefs: CurrencyFormatterPreferences,
+        prefs: CurrencyFormatterPreferences,
         currency: CurrencyCode,
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError>
     where
-        D: ?Sized + DataProvider<CurrencyFractionsV1>,
+        D: ?Sized + DataProvider<CurrencyNoCurrencyPatternsV1> + DataProvider<CurrencyFractionsV1>,
     {
+        let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
+        let decimal_prefs = DecimalFormatterPreferences::from(&prefs);
+
+        let req_id = decimal_prefs.nu_id(&locale);
+        let default_id = DataIdentifierBorrowed::for_locale(&locale);
+        let ids = req_id.into_iter().chain(core::iter::once(default_id));
+        let patterns = load_with_fallback::<CurrencyNoCurrencyPatternsV1>(provider, ids)?.payload;
         let fractions: DataPayload<CurrencyFractionsV1> =
             provider.load(Default::default())?.payload;
         let fraction_info = fractions.get().resolve(currency);
 
         Ok(Self {
             value_formatter,
-            currency_data: CurrencyFormatterData::NoCurrency,
+            currency_data: CurrencyFormatterData::NoCurrency { patterns },
             usage: options.usage,
             fraction_info,
         })
@@ -673,7 +692,7 @@ impl CurrencyFormatter<DecimalFormatter> {
     }
 
     icu_provider::gen_buffer_data_constructors!(
-        (prefs: CurrencyFormatterPreferences, currency_code: CurrencyCode) -> error: DataError,
+        (prefs: CurrencyFormatterPreferences, currency_code: CurrencyCode, options: CurrencyFormatterOptions) -> error: DataError,
         functions: [
             try_new_no_currency: skip,
             try_new_no_currency_with_buffer_provider,
@@ -700,7 +719,7 @@ impl CurrencyFormatter<DecimalFormatter> {
     ///
     /// let currency_preferences = locale!("en-US").into();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
-    /// let fmt = CurrencyFormatter::try_new_no_currency(currency_preferences, currency_code).unwrap();
+    /// let fmt = CurrencyFormatter::try_new_no_currency(currency_preferences, currency_code, Default::default()).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// assert_writeable_eq!(fmt.format_fixed_decimal(&value), "12,345.67");
     /// ```
@@ -708,12 +727,13 @@ impl CurrencyFormatter<DecimalFormatter> {
     pub fn try_new_no_currency(
         prefs: CurrencyFormatterPreferences,
         currency_code: CurrencyCode,
+        options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         Self::try_new_no_currency_internal(
             DecimalFormatter::try_new((&prefs).into(), Default::default())?,
             prefs,
             currency_code,
-            Default::default(),
+            options,
         )
     }
 
@@ -722,9 +742,11 @@ impl CurrencyFormatter<DecimalFormatter> {
         provider: &D,
         prefs: CurrencyFormatterPreferences,
         currency_code: CurrencyCode,
+        options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError>
     where
         D: ?Sized
+            + DataProvider<CurrencyNoCurrencyPatternsV1>
             + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
@@ -734,7 +756,7 @@ impl CurrencyFormatter<DecimalFormatter> {
             DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
             prefs,
             currency_code,
-            Default::default(),
+            options,
         )
     }
 }
@@ -1302,12 +1324,18 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         &'l self,
         value: &'l FixedDecimal,
     ) -> impl Writeable + Display + 'l {
-        if let CurrencyFormatterData::NoCurrency = &self.currency_data {
+        if let CurrencyFormatterData::NoCurrency { patterns } = &self.currency_data {
             let rounded_value = apply_precision(value.clone(), self.fraction_info);
+            let formatted_value = V::format_unsigned(&self.value_formatter, rounded_value.absolute);
+            let accounting = self.usage == CurrencyUsage::Accounting;
+
+            let (pattern, sign) =
+                select_no_currency_pattern(patterns.get(), accounting, rounded_value.sign);
+
             return Either::Left(V::format_sign(
                 &self.value_formatter,
-                V::format_unsigned(&self.value_formatter, rounded_value.absolute),
-                rounded_value.sign,
+                pattern.interpolate((formatted_value,)),
+                sign,
             ));
         }
 
@@ -1366,7 +1394,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 let pattern = patterns.get().get(operands, plural_rules);
                 (pattern, currency_str, rounded_value.sign)
             }
-            CurrencyFormatterData::NoCurrency => unreachable!(),
+            CurrencyFormatterData::NoCurrency { .. } => unreachable!(),
         };
 
         // Per UTS #35 (LDML / TR35 Part 3: Numbers, Section 3.2.1), when a pattern does not specify an
@@ -1382,6 +1410,31 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             sign,
         ))
     }
+}
+
+fn select_no_currency_pattern<'a>(
+    patterns: &'a CurrencyNoCurrencyPatterns<'_>,
+    accounting: bool,
+    sign: Sign,
+) -> (&'a icu_pattern::SinglePlaceholderPattern, Sign) {
+    if accounting {
+        if sign == Sign::Negative
+            && let Some(pattern) = &patterns.accounting_negative
+        {
+            return (pattern, Sign::None);
+        }
+        if let Some(pattern) = &patterns.accounting_positive {
+            return (pattern, sign);
+        }
+    }
+
+    if sign == Sign::Negative
+        && let Some(pattern) = &patterns.standard_negative
+    {
+        return (pattern, Sign::None);
+    }
+
+    (&patterns.standard, sign)
 }
 
 fn select_essentials_pattern<'a>(

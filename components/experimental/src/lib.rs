@@ -50,12 +50,14 @@ pub mod provider {
     #[cfg(feature = "compiled_data")]
     #[allow(unused_imports)]
     const _: () = {
+        pub use crate as icu_experimental;
         use icu_experimental_data::*;
         pub mod icu {
             pub use crate as experimental;
             pub use icu_collections as collections;
             pub use icu_decimal as decimal;
             pub use icu_locale as locale;
+            pub use icu_pattern as pattern;
             pub use icu_plurals as plurals;
         }
         make_provider!(Baked);
@@ -66,6 +68,7 @@ pub mod provider {
         impl_currency_patterns_data_v1!(Baked);
         impl_currency_extended_data_v1!(Baked);
         impl_currency_fractions_v1!(Baked);
+        impl_currency_no_currency_patterns_v1!(Baked);
         impl_units_names_area_core_v1!(Baked);
         impl_units_names_area_extended_v1!(Baked);
         impl_units_names_area_outlier_v1!(Baked);

@@ -391,27 +391,55 @@ mod tests {
         let negative = "-12345.67".parse().unwrap();
         let integer = "123".parse().unwrap();
 
+        let accounting_options = CurrencyFormatterOptions {
+            usage: CurrencyUsage::Accounting,
+            ..Default::default()
+        };
+
         // USD: 2 decimal places
-        let fmt_usd = CurrencyFormatter::try_new_no_currency(prefs_en, usd).unwrap();
+        let fmt_usd =
+            CurrencyFormatter::try_new_no_currency(prefs_en, usd, Default::default()).unwrap();
+        let fmt_usd_acc =
+            CurrencyFormatter::try_new_no_currency(prefs_en, usd, accounting_options).unwrap();
         assert_writeable_eq!(fmt_usd.format_fixed_decimal(&positive), "12,345.67");
         assert_writeable_eq!(fmt_usd.format_fixed_decimal(&negative), "-12,345.67");
+        assert_writeable_eq!(fmt_usd_acc.format_fixed_decimal(&negative), "(12,345.67)");
         assert_writeable_eq!(fmt_usd.format_fixed_decimal(&integer), "123.00");
 
         // JPY: 0 decimal places
-        let fmt_jpy = CurrencyFormatter::try_new_no_currency(prefs_en, jpy).unwrap();
+        let fmt_jpy =
+            CurrencyFormatter::try_new_no_currency(prefs_en, jpy, Default::default()).unwrap();
         assert_writeable_eq!(fmt_jpy.format_fixed_decimal(&positive), "12,346");
 
         // BHD: 3 decimal places
-        let fmt_bhd = CurrencyFormatter::try_new_no_currency(prefs_en, bhd).unwrap();
+        let fmt_bhd =
+            CurrencyFormatter::try_new_no_currency(prefs_en, bhd, Default::default()).unwrap();
         assert_writeable_eq!(fmt_bhd.format_fixed_decimal(&positive), "12,345.670");
 
         // French locale EUR: 2 decimal places with French grouping
         let prefs_fr = locale!("fr-FR").into();
         let eur = CurrencyCode(tinystr!(3, "EUR"));
-        let fmt_eur_fr = CurrencyFormatter::try_new_no_currency(prefs_fr, eur).unwrap();
+        let fmt_eur_fr =
+            CurrencyFormatter::try_new_no_currency(prefs_fr, eur, Default::default()).unwrap();
         assert_writeable_eq!(
             fmt_eur_fr.format_fixed_decimal(&positive),
             "12\u{202f}345,67"
+        );
+
+        // Arabic locale ar-EG EGP: 2 decimal places with Arabic-Indic digits, BiDi marks and accounting format
+        let prefs_ar = locale!("ar-EG").into();
+        let egp = CurrencyCode(tinystr!(3, "EGP"));
+        let fmt_egp_ar =
+            CurrencyFormatter::try_new_no_currency(prefs_ar, egp, Default::default()).unwrap();
+        let fmt_egp_ar_acc =
+            CurrencyFormatter::try_new_no_currency(prefs_ar, egp, accounting_options).unwrap();
+        assert_writeable_eq!(
+            fmt_egp_ar.format_fixed_decimal(&positive),
+            "١٢\u{66c}٣٤٥\u{66b}٦٧"
+        );
+        assert_writeable_eq!(
+            fmt_egp_ar_acc.format_fixed_decimal(&negative),
+            "\u{061c}-١٢\u{66c}٣٤٥\u{66b}٦٧"
         );
     }
 }
