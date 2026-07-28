@@ -68,9 +68,7 @@ pub(crate) enum CurrencyFormatterData {
         patterns: DataPayload<CurrencyPatternsDataV1>,
         plural_rules: PluralRules,
     },
-    NoCurrency {
-        fraction_info: FractionInfo,
-    },
+    NoCurrency,
 }
 
 /// A formatter for monetary values.
@@ -84,6 +82,7 @@ pub(crate) enum CurrencyFormatterData {
 pub struct CurrencyFormatter<V: AbstractFormatter> {
     value_formatter: V,
     currency_data: CurrencyFormatterData,
+    fraction_info: FractionInfo,
 }
 
 impl<V: AbstractFormatter> CurrencyFormatter<V> {
@@ -103,6 +102,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let essential =
             load_with_fallback::<CurrencyEssentialsV1>(&crate::provider::Baked, ids.clone())?
                 .payload;
+        let fractions: DataPayload<CurrencyFractionsV1> =
+            crate::provider::Baked.load(Default::default())?.payload;
+        let fraction_info = fractions.get().resolve(currency);
         #[allow(const_item_mutation)]
         let currency_data = match DataProvider::<CurrencySymbolsV1>::load(
             &crate::provider::Baked,
@@ -129,6 +131,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         Ok(Self {
             value_formatter,
             currency_data,
+            fraction_info,
         })
     }
 
@@ -140,7 +143,10 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         width: TinyAsciiStr<1>,
     ) -> Result<Self, DataError>
     where
-        D: ?Sized + DataProvider<CurrencyEssentialsV1> + DataProvider<CurrencySymbolsV1>,
+        D: ?Sized
+            + DataProvider<CurrencyEssentialsV1>
+            + DataProvider<CurrencySymbolsV1>
+            + DataProvider<CurrencyFractionsV1>,
     {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
         let decimal_prefs = DecimalFormatterPreferences::from(&prefs);
@@ -149,6 +155,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let default_id = DataIdentifierBorrowed::for_locale(&locale);
         let ids = req_id.into_iter().chain(core::iter::once(default_id));
         let essential = load_with_fallback::<CurrencyEssentialsV1>(provider, ids.clone())?.payload;
+        let fractions: DataPayload<CurrencyFractionsV1> =
+            provider.load(Default::default())?.payload;
+        let fraction_info = fractions.get().resolve(currency);
         #[allow(const_item_mutation)]
         let currency_data = match provider
             .load(DataRequest {
@@ -173,6 +182,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         Ok(Self {
             value_formatter,
             currency_data,
+            fraction_info,
         })
     }
 
@@ -191,6 +201,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let essential =
             load_with_fallback::<CurrencyEssentialsV1>(&crate::provider::Baked, ids.clone())?
                 .payload;
+        let fractions: DataPayload<CurrencyFractionsV1> =
+            crate::provider::Baked.load(Default::default())?.payload;
+        let fraction_info = fractions.get().resolve(currency);
 
         Ok(Self {
             value_formatter,
@@ -198,6 +211,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 essential,
                 currency,
             },
+            fraction_info,
         })
     }
 
@@ -208,7 +222,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         currency: CurrencyCode,
     ) -> Result<Self, DataError>
     where
-        D: ?Sized + DataProvider<CurrencyEssentialsV1>,
+        D: ?Sized + DataProvider<CurrencyEssentialsV1> + DataProvider<CurrencyFractionsV1>,
     {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
         let decimal_prefs = DecimalFormatterPreferences::from(&prefs);
@@ -217,6 +231,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let default_id = DataIdentifierBorrowed::for_locale(&locale);
         let ids = req_id.into_iter().chain(core::iter::once(default_id));
         let essential = load_with_fallback::<CurrencyEssentialsV1>(provider, ids.clone())?.payload;
+        let fractions: DataPayload<CurrencyFractionsV1> =
+            provider.load(Default::default())?.payload;
+        let fraction_info = fractions.get().resolve(currency);
 
         Ok(Self {
             value_formatter,
@@ -224,6 +241,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 essential,
                 currency,
             },
+            fraction_info,
         })
     }
 
@@ -252,6 +270,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             .map(|res| res.payload);
 
         let patterns = crate::provider::Baked.load(Default::default())?.payload;
+        let fractions: DataPayload<CurrencyFractionsV1> =
+            crate::provider::Baked.load(Default::default())?.payload;
+        let fraction_info = fractions.get().resolve(currency);
 
         let currency_data = match extended_opt {
             Some(extended) => {
@@ -268,6 +289,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         Ok(Self {
             value_formatter,
             currency_data,
+            fraction_info,
         })
     }
 
@@ -281,6 +303,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         D: ?Sized
             + DataProvider<CurrencyExtendedDataV1>
             + DataProvider<CurrencyPatternsDataV1>
+            + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     {
         let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
@@ -302,6 +325,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             .map(|res| res.payload);
 
         let patterns = provider.load(Default::default())?.payload;
+        let fractions: DataPayload<CurrencyFractionsV1> =
+            provider.load(Default::default())?.payload;
+        let fraction_info = fractions.get().resolve(currency);
 
         let currency_data = match extended_opt {
             Some(extended) => {
@@ -319,6 +345,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         Ok(Self {
             value_formatter,
             currency_data,
+            fraction_info,
         })
     }
 
@@ -334,7 +361,8 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
 
         Ok(Self {
             value_formatter,
-            currency_data: CurrencyFormatterData::NoCurrency { fraction_info },
+            currency_data: CurrencyFormatterData::NoCurrency,
+            fraction_info,
         })
     }
 
@@ -353,7 +381,8 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
 
         Ok(Self {
             value_formatter,
-            currency_data: CurrencyFormatterData::NoCurrency { fraction_info },
+            currency_data: CurrencyFormatterData::NoCurrency,
+            fraction_info,
         })
     }
 }
@@ -430,6 +459,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         D: ?Sized
             + DataProvider<CurrencyEssentialsV1>
             + DataProvider<CurrencySymbolsV1>
+            + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
@@ -452,6 +482,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         D: ?Sized
             + DataProvider<CurrencyEssentialsV1>
             + DataProvider<CurrencySymbolsV1>
+            + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
@@ -515,6 +546,7 @@ impl CurrencyFormatter<DecimalFormatter> {
     where
         D: ?Sized
             + DataProvider<CurrencyEssentialsV1>
+            + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
@@ -578,6 +610,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         D: ?Sized
             + DataProvider<CurrencyExtendedDataV1>
             + DataProvider<CurrencyPatternsDataV1>
+            + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
@@ -678,6 +711,64 @@ impl<V: AbstractFormatter> Display for FormattedNoCurrency<'_, V> {
     }
 }
 
+struct FormattedCurrencyPattern<'a, V> {
+    formatter: &'a V,
+    value: FixedDecimal,
+    currency_data: &'a CurrencyFormatterData,
+}
+
+impl<V: AbstractFormatter> Writeable for FormattedCurrencyPattern<'_, V> {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+        let formatted_value = V::format_unsigned(self.formatter, &self.value.absolute);
+
+        let (pattern, currency_str) = match self.currency_data {
+            CurrencyFormatterData::IsoSymbol {
+                essential,
+                currency,
+            } => {
+                let pattern = essential.get().get_positive(true, true);
+                (pattern, currency.0.as_str())
+            }
+            CurrencyFormatterData::IsoName { patterns, currency } => {
+                let currency_str = currency.0.as_str();
+                let pattern = patterns.get().elements.get_default().1;
+                (pattern, currency_str)
+            }
+            CurrencyFormatterData::Symbol { essential, symbol } => {
+                let symbol = symbol.get();
+                let pattern = essential
+                    .get()
+                    .get_positive(symbol.starts_with_letter(), symbol.ends_with_letter());
+                (pattern, symbol.as_str())
+            }
+            CurrencyFormatterData::Name {
+                extended,
+                patterns,
+                plural_rules,
+            } => {
+                let operands = V::plural_operands(&formatted_value);
+                let currency_str = extended.get().get(operands, plural_rules);
+                let pattern = patterns.get().get(operands, plural_rules);
+                (pattern, currency_str)
+            }
+            CurrencyFormatterData::NoCurrency => unreachable!(),
+        };
+
+        V::format_sign(
+            self.formatter,
+            pattern.interpolate((formatted_value, currency_str)),
+            self.value.sign,
+        )
+        .write_to(sink)
+    }
+}
+
+impl<V: AbstractFormatter> Display for FormattedCurrencyPattern<'_, V> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        self.write_to(f)
+    }
+}
+
 impl<V: AbstractFormatter> CurrencyFormatter<V> {
     /// Formats a [`FixedDecimal`] value.
     ///
@@ -730,61 +821,20 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         &'l self,
         value: &'l FixedDecimal,
     ) -> impl Writeable + Display + 'l {
-        if let CurrencyFormatterData::NoCurrency { fraction_info } = &self.currency_data {
-            let rounded_value = apply_precision(value.clone(), *fraction_info);
-            return Either::Left(FormattedNoCurrency {
+        let rounded_value = apply_precision(value.clone(), self.fraction_info);
+
+        if let CurrencyFormatterData::NoCurrency = &self.currency_data {
+            Either::Left(FormattedNoCurrency {
                 formatter: &self.value_formatter,
                 value: rounded_value,
-            });
+            })
+        } else {
+            Either::Right(FormattedCurrencyPattern {
+                formatter: &self.value_formatter,
+                value: rounded_value,
+                currency_data: &self.currency_data,
+            })
         }
-
-        let formatted_value = V::format_unsigned(&self.value_formatter, &value.absolute);
-
-        // TODO(#8146): Evaluate if FixedDecimal is the correct input type or if we should use
-        // an exact decimal/money representation.
-        let (pattern, currency_str) = match &self.currency_data {
-            CurrencyFormatterData::IsoSymbol {
-                essential,
-                currency,
-            } => {
-                let pattern = essential.get().get_positive(true, true);
-                (pattern, currency.0.as_str())
-            }
-            CurrencyFormatterData::IsoName { patterns, currency } => {
-                let currency_str = currency.0.as_str();
-                let pattern = patterns.get().elements.get_default().1;
-                (pattern, currency_str)
-            }
-            CurrencyFormatterData::Symbol { essential, symbol } => {
-                let symbol = symbol.get();
-                let pattern = essential
-                    .get()
-                    .get_positive(symbol.starts_with_letter(), symbol.ends_with_letter());
-                (pattern, symbol.as_str())
-            }
-            CurrencyFormatterData::Name {
-                extended,
-                patterns,
-                plural_rules,
-            } => {
-                let operands = V::plural_operands(&formatted_value);
-                let currency_str = extended.get().get(operands, plural_rules);
-                let pattern = patterns.get().get(operands, plural_rules);
-                (pattern, currency_str)
-            }
-            CurrencyFormatterData::NoCurrency { .. } => unreachable!(),
-        };
-
-        // Per UTS #35 (LDML / TR35 Part 3: Numbers, Section 3.2.1), when a pattern does not specify an
-        // explicit negative subpattern, the default negative format is formed by prepending the localized
-        // minus sign to the entire positive pattern (e.g., `-¤#,##0` producing `-$12K`).
-        // Therefore, `format_sign` is applied as the outermost wrapper around the glued currency string so
-        // that the minus sign modifies the full monetary expression rather than just the numeric significand.
-        Either::Right(V::format_sign(
-            &self.value_formatter,
-            pattern.interpolate((formatted_value, currency_str)),
-            value.sign,
-        ))
     }
 }
 
