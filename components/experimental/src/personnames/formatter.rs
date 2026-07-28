@@ -4,7 +4,7 @@
 
 use alloc::string::String;
 use alloc::vec::Vec;
-use icu_locale::fallback::LocaleFallbacker;
+use icu_locale_fallback::LocaleFallbacker;
 use icu_locale_fallback::provider::{LocaleLikelySubtagsLanguageV1, LocaleParentsV1};
 use icu_properties::PropertyNamesShort;
 use icu_properties::props::Script;

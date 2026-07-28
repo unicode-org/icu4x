@@ -35,7 +35,7 @@ icu_locale_core = { workspace = true }
 icu_casemap = { workspace = true }
 icu_decimal = { workspace = true, features = ["unstable"] }
 icu_list = { workspace = true }
-icu_locale = { workspace = true }
+icu_locale = { workspace = true, optional = true } # for person names
 icu_locale_fallback = { workspace = true }
 icu_normalizer = { workspace = true }
 icu_plurals = { workspace = true }
@@ -69,14 +69,13 @@ criterion = { workspace = true }
 icu = { path = "../../components/icu", features = ["unstable"] }
 icu_provider = { path = "../../provider/core", features = ["std"]}
 
-icu_locale_data = { workspace = true }
 icu_locale_fallback_data = { workspace = true }
 icu_properties_data = { workspace = true }
 icu_normalizer_data = { workspace = true }
 
 [features]
 default = ["compiled_data"]
-compiled_data = ["dep:icu_experimental_data", "icu_locale/compiled_data", "icu_locale_fallback/compiled_data", "icu_decimal/compiled_data", "icu_list/compiled_data", "icu_plurals/compiled_data", "icu_properties/compiled_data", "icu_normalizer/compiled_data", "icu_casemap/compiled_data", "icu_provider/baked"]
+compiled_data = ["dep:icu_locale", "dep:icu_experimental_data", "icu_locale/compiled_data", "icu_locale_fallback/compiled_data", "icu_decimal/compiled_data", "icu_list/compiled_data", "icu_plurals/compiled_data", "icu_properties/compiled_data", "icu_normalizer/compiled_data", "icu_casemap/compiled_data", "icu_provider/baked"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "zerotrie/databake", "tinystr/databake", "icu_collections/databake", "dep:log", "icu_pattern/databake", "icu_plurals/datagen", "icu_pattern/alloc", "icu_provider/export", "icu_decimal/datagen"]
 ryu = ["fixed_decimal/ryu"]
 log = ["dep:log"]

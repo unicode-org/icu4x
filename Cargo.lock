@@ -1621,7 +1621,6 @@ dependencies = [
  "icu_list",
  "icu_locale",
  "icu_locale_core",
- "icu_locale_data",
  "icu_locale_fallback",
  "icu_locale_fallback_data",
  "icu_normalizer",
