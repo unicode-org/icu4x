@@ -1767,7 +1767,7 @@ version = "2.2.0"
 
 [[package]]
 name = "icu_pattern"
-version = "0.4.2"
+version = "0.5.0"
 dependencies = [
  "databake",
  "displaydoc",
