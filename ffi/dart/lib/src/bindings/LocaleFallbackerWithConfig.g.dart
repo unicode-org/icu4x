@@ -5,11 +5,6 @@ part of 'lib.g.dart';
 
 /// An object that runs the ICU4X locale fallback algorithm with specific configurations.
 ///
-<<<<<<< HEAD
-=======
-/// See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/2.2.0/icu/locale/fallback/struct.LocaleFallbacker.html) for more information.
-///
->>>>>>> 490e3f316b (Squashed work up until 831ac0e)
 /// See the [Rust documentation for `LocaleFallbackerWithConfig`](https://docs.rs/icu/2.2.0/icu/locale/fallback/struct.LocaleFallbackerWithConfig.html) for more information.
 final class LocaleFallbackerWithConfig implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
