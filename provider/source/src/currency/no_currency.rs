@@ -46,6 +46,8 @@ impl DataProvider<CurrencyNoCurrencyPatternsV1> for SourceDataProvider {
     }
 }
 
+/// Returns true if the currency formatting patterns contain a non-empty `standard-noCurrency`
+/// or fallback `standard` positive pattern.
 fn has_no_currency_pattern(patterns: &cldr_serde::numbers::CurrencyFormattingPatterns) -> bool {
     patterns
         .standard_no_currency
