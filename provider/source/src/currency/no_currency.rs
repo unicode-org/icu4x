@@ -91,42 +91,63 @@ fn extract_currency_no_currency<'data>(
         .get(numsys_name)
         .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
 
+    let (minus_sign, plus_sign) =
+        if let Some(symbols) = numbers_block.numsys_data.symbols.get(numsys_name) {
+            (symbols.minus_sign.as_str(), symbols.plus_sign.as_str())
+        } else {
+            ("-", "+")
+        };
+
     fn convert_pattern_items<'a>(
         items: &'a [NumberPatternItem],
+        minus_sign: &'a str,
+        plus_sign: &'a str,
     ) -> impl Iterator<Item = PatternItemCow<'a, SinglePlaceholderKey>> + 'a {
-        items.iter().flat_map(|item| match item {
+        items.iter().flat_map(move |item| match item {
             NumberPatternItem::DecimalSeparator => {
                 Some(PatternItemCow::Placeholder(SinglePlaceholderKey::Singleton))
             }
             NumberPatternItem::Literal(s) => Some(PatternItemCow::Literal(Cow::Borrowed(s))),
+            NumberPatternItem::MinusSign => {
+                Some(PatternItemCow::Literal(Cow::Borrowed(minus_sign)))
+            }
+            NumberPatternItem::PlusSign => Some(PatternItemCow::Literal(Cow::Borrowed(plus_sign))),
             _ => None,
         })
     }
 
-    fn create_pattern<'data>(
-        pattern: &NumberPattern,
-    ) -> Result<Cow<'data, SinglePlaceholderPattern>, DataError> {
-        SinglePlaceholderPattern::try_from_items(convert_pattern_items(&pattern.positive))
+    let create_pattern =
+        |pattern: &NumberPattern| -> Result<Cow<'data, SinglePlaceholderPattern>, DataError> {
+            SinglePlaceholderPattern::try_from_items(convert_pattern_items(
+                &pattern.positive,
+                minus_sign,
+                plus_sign,
+            ))
             .map_err(|e| {
                 DataError::custom("Could not parse positive pattern").with_display_context(&e)
             })
             .map(Cow::Owned)
-    }
+        };
 
-    fn create_negative_pattern<'data>(
-        pattern: &NumberPattern,
-    ) -> Result<Option<Cow<'data, SinglePlaceholderPattern>>, DataError> {
+    let create_negative_pattern = |pattern: &NumberPattern| -> Result<
+        Option<Cow<'data, SinglePlaceholderPattern>>,
+        DataError,
+    > {
         if let Some(negative_items) = &pattern.negative {
-            SinglePlaceholderPattern::try_from_items(convert_pattern_items(negative_items))
-                .map_err(|e| {
-                    DataError::custom("Could not parse negative pattern").with_display_context(&e)
-                })
-                .map(Cow::Owned)
-                .map(Some)
+            SinglePlaceholderPattern::try_from_items(convert_pattern_items(
+                negative_items,
+                minus_sign,
+                plus_sign,
+            ))
+            .map_err(|e| {
+                DataError::custom("Could not parse negative pattern").with_display_context(&e)
+            })
+            .map(Cow::Owned)
+            .map(Some)
         } else {
             Ok(None)
         }
-    }
+    };
 
     let standard_pattern = if let Some(std_nc) = &currency_formats.standard_no_currency {
         std_nc
