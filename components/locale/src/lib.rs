@@ -95,7 +95,7 @@ pub use icu_locale_core::*;
 pub use canonicalizer::LocaleCanonicalizer;
 pub use directionality::{Direction, LocaleDirectionality};
 pub use expander::LocaleExpander;
-#[doc(inline)]
+#[doc(hidden)] // canonical location in module
 pub use fallback::LocaleFallbacker;
 
 /// Used to track the result of a transformation operation that potentially modifies its argument in place.
