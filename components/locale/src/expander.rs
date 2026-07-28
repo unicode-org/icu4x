@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::*;
+use icu_locale_fallback::provider::{LikelySubtagsForLanguage, LocaleLikelySubtagsLanguageV1};
 
 use icu_locale_core::LanguageIdentifier;
 use icu_locale_core::subtags::{Language, Region, Script};
@@ -224,7 +225,7 @@ impl LocaleExpander {
     pub const fn new_common() -> Self {
         LocaleExpander {
             likely_subtags_l: DataPayload::from_static_ref(
-                Baked::SINGLETON_LOCALE_LIKELY_SUBTAGS_LANGUAGE_V1,
+                icu_locale_fallback::provider::Baked::SINGLETON_LOCALE_LIKELY_SUBTAGS_LANGUAGE_V1,
             ),
             likely_subtags_sr: DataPayload::from_static_ref(
                 Baked::SINGLETON_LOCALE_LIKELY_SUBTAGS_SCRIPT_REGION_V1,
@@ -272,7 +273,7 @@ impl LocaleExpander {
     pub const fn new_extended() -> Self {
         LocaleExpander {
             likely_subtags_l: DataPayload::from_static_ref(
-                Baked::SINGLETON_LOCALE_LIKELY_SUBTAGS_LANGUAGE_V1,
+                icu_locale_fallback::provider::Baked::SINGLETON_LOCALE_LIKELY_SUBTAGS_LANGUAGE_V1,
             ),
             likely_subtags_sr: DataPayload::from_static_ref(
                 Baked::SINGLETON_LOCALE_LIKELY_SUBTAGS_SCRIPT_REGION_V1,

@@ -7,6 +7,7 @@
 use crate::provider::*;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
+use icu_locale_fallback::provider::LocaleLikelySubtagsLanguageV1;
 
 use crate::LocaleExpander;
 use crate::TransformResult;

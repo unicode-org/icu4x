@@ -138,7 +138,9 @@ const _: () = {
     use icu_decimal_data::*;
     pub mod icu {
         pub use crate as decimal;
-        pub use icu_locale as locale;
+        pub mod locale {
+            pub use icu_locale_fallback as fallback;
+        }
     }
     make_provider!(Baked);
     #[cfg(feature = "unstable")]

@@ -53,7 +53,9 @@ const _: () = {
     use icu_plurals_data::*;
     mod icu {
         pub use crate as plurals;
-        pub use icu_locale as locale;
+        pub mod locale {
+            pub use icu_locale_fallback as fallback;
+        }
     }
 
     make_provider!(Baked);

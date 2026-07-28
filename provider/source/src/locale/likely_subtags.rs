@@ -6,6 +6,7 @@ use crate::CoverageLevel;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 use icu::locale::LanguageIdentifier;
+use icu::locale::fallback::provider::*;
 use icu::locale::provider::*;
 use icu::locale::subtags::{Language, Region, Script, region, script};
 use icu_provider::prelude::*;

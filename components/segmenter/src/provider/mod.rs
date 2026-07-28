@@ -47,7 +47,9 @@ const _: () = {
     pub mod icu {
         pub use crate as segmenter;
         pub use icu_collections as collections;
-        pub use icu_locale as locale;
+        pub mod locale {
+            pub use icu_locale_fallback as fallback;
+        }
     }
     make_provider!(Baked);
     impl_segmenter_break_sentence_v1!(Baked);

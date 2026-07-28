@@ -55,7 +55,10 @@ pub mod provider {
             pub use crate as experimental;
             pub use icu_collections as collections;
             pub use icu_decimal as decimal;
-            pub use icu_locale as locale;
+            pub mod locale {
+                pub use icu_locale::*;
+                pub use icu_locale_fallback as fallback;
+            }
             pub use icu_plurals as plurals;
         }
         make_provider!(Baked);

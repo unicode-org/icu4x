@@ -275,14 +275,16 @@ impl BakedExporter {
                     .replace("icu_", "icu::")
                     .replace("icu::provider", "icu_provider")
                     .replace("icu::locale_core", "icu_locale_core")
-                    .replace("icu::pattern", "icu_pattern");
+                    .replace("icu::pattern", "icu_pattern")
+                    .replace("icu::locale_fallback", "icu::locale::fallback");
             } else {
                 // Unformatted
                 formatted = formatted
                     .replace("icu_", "icu :: ")
                     .replace("icu :: provider", "icu_provider")
                     .replace("icu :: locale_core", "icu_locale_core")
-                    .replace("icu :: pattern", "icu_pattern");
+                    .replace("icu :: pattern", "icu_pattern")
+                    .replace("icu :: locale_fallback", "icu :: locale :: fallback");
             }
         }
 
@@ -748,15 +750,15 @@ impl DataExporter for BakedExporter {
                     };
                 }
             } else {
-                dependencies.insert("icu_locale/compiled_data");
+                dependencies.insert("icu_locale_fallback/compiled_data");
                 quote! {
                     let mut metadata = #metadata_bake;
 
                     let payload =  if let Some(payload) = icu_provider::baked::DataStore::get(&Self::#data_ident, req.id, req.metadata.attributes_prefix_match) {
                         payload
                     } else {
-                        const FALLBACKER: icu_locale::fallback::LocaleFallbackerWithConfig<'static> =
-                            icu_locale::fallback::LocaleFallbacker::new()
+                        const FALLBACKER: icu_locale_fallback::LocaleFallbackerWithConfig<'static> =
+                            icu_locale_fallback::LocaleFallbacker::new()
                                 .for_config(<#marker_bake as icu_provider::DataMarker>::INFO.fallback_config);
                         let mut fallback_iterator = FALLBACKER.fallback_for(req.id.locale.clone());
                         loop {

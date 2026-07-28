@@ -80,7 +80,7 @@ define_preferences!(
 
 #[test]
 fn prefs() {
-    use icu_locale::locale;
+    use icu_locale_core::locale;
     assert_eq!(
         DateTimeFormatterPreferences::from_locale_strict(&locale!("en-US-u-hc-h23"))
             .unwrap()

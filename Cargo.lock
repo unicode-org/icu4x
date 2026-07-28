@@ -1395,8 +1395,8 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_calendar_data",
- "icu_locale",
  "icu_locale_core",
+ "icu_locale_fallback",
  "icu_provider",
  "insta",
  "itertools 0.14.0",
@@ -1432,6 +1432,7 @@ dependencies = [
  "icu_list",
  "icu_locale",
  "icu_locale_core",
+ "icu_locale_fallback",
  "icu_normalizer",
  "icu_plurals",
  "icu_properties",
@@ -1494,8 +1495,8 @@ dependencies = [
  "icu",
  "icu_collator_data",
  "icu_collections",
- "icu_locale",
  "icu_locale_core",
+ "icu_locale_fallback",
  "icu_normalizer",
  "icu_normalizer_data",
  "icu_properties",
@@ -1549,8 +1550,8 @@ dependencies = [
  "icu_calendar",
  "icu_datetime_data",
  "icu_decimal",
- "icu_locale",
  "icu_locale_core",
+ "icu_locale_fallback",
  "icu_pattern",
  "icu_plurals",
  "icu_provider",
@@ -1585,8 +1586,8 @@ dependencies = [
  "getrandom 0.3.4",
  "icu",
  "icu_decimal_data",
- "icu_locale",
  "icu_locale_core",
+ "icu_locale_fallback",
  "icu_pattern",
  "icu_plurals",
  "icu_provider",
@@ -1621,6 +1622,8 @@ dependencies = [
  "icu_locale",
  "icu_locale_core",
  "icu_locale_data",
+ "icu_locale_fallback",
+ "icu_locale_fallback_data",
  "icu_normalizer",
  "icu_normalizer_data",
  "icu_pattern",
@@ -1681,7 +1684,8 @@ dependencies = [
  "databake",
  "icu",
  "icu_list_data",
- "icu_locale",
+ "icu_locale_core",
+ "icu_locale_fallback",
  "icu_provider",
  "postcard",
  "regex-automata",
@@ -1706,8 +1710,8 @@ dependencies = [
  "icu_collections",
  "icu_locale_core",
  "icu_locale_data",
+ "icu_locale_fallback",
  "icu_provider",
- "potential_utf",
  "serde",
  "serde_json",
  "tinystr",
@@ -1737,6 +1741,28 @@ dependencies = [
 
 [[package]]
 name = "icu_locale_data"
+version = "2.2.0"
+
+[[package]]
+name = "icu_locale_fallback"
+version = "2.2.0"
+dependencies = [
+ "criterion",
+ "databake",
+ "icu",
+ "icu_locale_core",
+ "icu_locale_fallback_data",
+ "icu_provider",
+ "potential_utf",
+ "serde",
+ "serde_json",
+ "tinystr",
+ "writeable",
+ "zerovec",
+]
+
+[[package]]
+name = "icu_locale_fallback_data"
 version = "2.2.0"
 
 [[package]]
@@ -1792,8 +1818,8 @@ dependencies = [
  "displaydoc",
  "fixed_decimal",
  "icu",
- "icu_locale",
  "icu_locale_core",
+ "icu_locale_fallback",
  "icu_plurals_data",
  "icu_provider",
  "postcard",
@@ -1859,6 +1885,7 @@ name = "icu_provider_adapters"
 version = "2.2.0"
 dependencies = [
  "icu_locale",
+ "icu_locale_fallback",
  "icu_provider",
  "writeable",
 ]
@@ -1906,6 +1933,8 @@ dependencies = [
  "elsa",
  "icu",
  "icu_locale",
+ "icu_locale_core",
+ "icu_locale_fallback",
  "icu_provider",
  "icu_provider_baked",
  "icu_provider_blob",
@@ -1994,8 +2023,8 @@ dependencies = [
  "icu",
  "icu_benchmark_macros",
  "icu_collections",
- "icu_locale",
  "icu_locale_core",
+ "icu_locale_fallback",
  "icu_properties",
  "icu_provider",
  "icu_segmenter_data",
