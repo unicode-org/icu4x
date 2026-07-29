@@ -309,3 +309,56 @@ fn test_minute_optional_hour_cycle() {
         "7:00\u{2009}–\u{2009}7:15\u{202f}AM"
     );
 }
+
+#[test]
+fn test_date_range_ej() {
+    use icu_calendar::Date;
+    use icu_datetime::fieldsets;
+    use icu_datetime::input::{DateTime, Time};
+    use icu_datetime::range::{DateRangeFormatter, FixedCalendarDateRangeFormatter};
+    use icu_locale_core::locale;
+    use writeable::assert_writeable_eq;
+
+    let start_greg = Date::try_new_gregorian(2024, 8, 9).unwrap(); // Friday
+    let end_greg = Date::try_new_gregorian(2024, 8, 10).unwrap(); // Saturday
+
+    let start = DateTime {
+        date: start_greg,
+        time: Time::try_new(20, 40, 0, 0).unwrap(),
+    };
+    let end_same_day = DateTime {
+        date: start_greg,
+        time: Time::try_new(21, 50, 0, 0).unwrap(),
+    };
+    let end_next_day = DateTime {
+        date: end_greg,
+        time: Time::try_new(21, 50, 0, 0).unwrap(),
+    };
+
+    let fs = fieldsets::E::short().with_time_hm();
+
+    let fmt = FixedCalendarDateRangeFormatter::try_new(locale!("en-US").into(), fs).unwrap();
+    let any_cal_fmt = DateRangeFormatter::try_new(locale!("en-US").into(), fs).unwrap();
+
+    // Overlap patterns like `ej` (weekday + time) operate as unified date-time patterns
+    // without independent date and glue separation in `DateTimeZonePatternSelectionData`.
+    // When range formatting is invoked, both formatters cleanly produce the expected
+    // fallback range output without field conflicts.
+    assert_writeable_eq!(
+        fmt.format(&start, &end_same_day),
+        "Fri 8:40\u{202f}PM\u{2009}–\u{2009}Fri 9:50\u{202f}PM"
+    );
+    assert_writeable_eq!(
+        fmt.format(&start, &end_next_day),
+        "Fri 8:40\u{202f}PM\u{2009}–\u{2009}Sat 9:50\u{202f}PM"
+    );
+
+    assert_writeable_eq!(
+        any_cal_fmt.format(&start, &end_same_day),
+        "Fri 8:40\u{202f}PM\u{2009}–\u{2009}Fri 9:50\u{202f}PM"
+    );
+    assert_writeable_eq!(
+        any_cal_fmt.format(&start, &end_next_day),
+        "Fri 8:40\u{202f}PM\u{2009}–\u{2009}Sat 9:50\u{202f}PM"
+    );
+}
