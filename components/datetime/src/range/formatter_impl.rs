@@ -249,13 +249,7 @@ pub(crate) fn format_impl_shared<'a>(
 
     // Early fallback for mixed date-time formatter with date difference.
     // UTS 35: If date differs in a mixed skeleton, fall back to range fallback (Case 4).
-    if is_mixed
-        && !diff.is_time_diff()
-        && !matches!(
-            diff,
-            Difference::None | Difference::Incomparable | Difference::Second
-        )
-    {
+    if is_mixed && diff.is_date_diff() {
         return FormattedDateRange(fallback_format_shared(
             core,
             range_selection,
