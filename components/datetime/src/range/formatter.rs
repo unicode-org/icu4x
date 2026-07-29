@@ -203,9 +203,10 @@ where
         let core = RangeFormatterCore {
             names: self.datetime_formatter.names.as_borrowed(),
             selection: &self.datetime_formatter.selection,
+            range_selection: &self.range_selection,
         };
 
-        core.format(&self.range_selection, &start_input, &end_input)
+        core.format(&start_input, &end_input)
     }
 }
 
@@ -375,8 +376,9 @@ where
         let core = RangeFormatterCore {
             names: self.datetime_formatter.names.as_borrowed(),
             selection: &self.datetime_formatter.selection,
+            range_selection: &self.range_selection,
         };
 
-        core.format(&self.range_selection, &start_input, &end_input)
+        core.format(&start_input, &end_input)
     }
 }

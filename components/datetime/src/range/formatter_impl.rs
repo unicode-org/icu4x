@@ -16,8 +16,8 @@ use crate::raw::neo::{
     DateTimeZoneRangePatternSelectionData,
 };
 
-/// An internal struct containing the types from "core" DateTimeFormatter/FixedCalendarDateTimeFormatter
-/// needed for range formatting.
+/// An internal struct containing the fields of RangeFormatter types,
+/// splitting up the inner `DateTimeFormatter` fields as well.
 ///
 /// This allows shared range formatting infrastructure to work over both
 /// `FixedCalendarDateTimeFormatter` and `DateTimeFormatter`.
@@ -25,6 +25,7 @@ use crate::raw::neo::{
 pub(crate) struct RangeFormatterCore<'a> {
     pub(crate) names: RawDateTimeNamesBorrowed<'a>,
     pub(crate) selection: &'a DateTimeZonePatternSelectionData,
+    pub(crate) range_selection: &'a DateTimeZoneRangePatternSelectionData,
 }
 
 impl<'a> RangeFormatterCore<'a> {
@@ -71,7 +72,6 @@ impl<'a> RangeFormatterCore<'a> {
     /// Helper function to construct a `FormattedGreatestDifference` with shared parameters.
     fn make_greatest_difference(
         self,
-        range_selection: &'a DateTimeZoneRangePatternSelectionData,
         start: FormattedDateTime<'a>,
         end: FormattedDateTime<'a>,
         pattern_info: RangePatternInfoBorrowed<'a>,
@@ -80,7 +80,7 @@ impl<'a> RangeFormatterCore<'a> {
             start,
             end,
             pattern_info,
-            glue: range_selection.range_glue.get(),
+            glue: self.range_selection.range_glue.get(),
             alignment: self.selection.options.alignment,
         }
     }
@@ -92,24 +92,22 @@ impl<'a> RangeFormatterCore<'a> {
     /// are shared.
     fn format_greatest_difference(
         self,
-        range_selection: &'a DateTimeZoneRangePatternSelectionData,
         start: &DateTimeInputUnchecked,
         end: &DateTimeInputUnchecked,
         diff: Difference,
         use_time: bool,
     ) -> Option<FormattedDateRangeInner<'a>> {
         let pattern_info = if use_time {
-            range_selection
+            self.range_selection
                 .time_range
                 .select(start, end, self.selection.options, diff)?
         } else {
-            range_selection
+            self.range_selection
                 .date_range
                 .select(start, self.selection.options, diff)?
         };
 
         let formatted = self.make_greatest_difference(
-            range_selection,
             self.format_datetime(start),
             self.format_datetime(end),
             pattern_info,
@@ -126,7 +124,6 @@ impl<'a> RangeFormatterCore<'a> {
     /// 3. Formatting the sides and wrapping them in the appropriate result type.
     pub(crate) fn format(
         self,
-        range_selection: &'a DateTimeZoneRangePatternSelectionData,
         start: &DateTimeInputUnchecked,
         end: &DateTimeInputUnchecked,
     ) -> FormattedDateRange<'a> {
@@ -135,31 +132,29 @@ impl<'a> RangeFormatterCore<'a> {
         // 1. Resolve difference
         let diff = resolve_difference(start, end, dayperiods);
 
-        let is_mixed = range_selection.date_range.payload.is_payload()
-            && range_selection.time_range.payload.is_payload();
+        let is_mixed = self.range_selection.date_range.payload.is_payload()
+            && self.range_selection.time_range.payload.is_payload();
 
         // Early fallback for mixed date-time formatter with date difference.
         // UTS 35: If date differs in a mixed skeleton, fall back to range fallback (Case 4).
         if is_mixed && diff.is_date_diff() {
-            return FormattedDateRange(self.format_fallback(range_selection, start, end));
+            return FormattedDateRange(self.format_fallback(start, end));
         }
 
         // 2. Select pattern and format
         let inner = match diff {
             Difference::None => FormattedDateRangeInner::Single(self.format_datetime(start)),
-            Difference::Incomparable | Difference::Second => {
-                self.format_fallback(range_selection, start, end)
-            }
+            Difference::Incomparable | Difference::Second => self.format_fallback(start, end),
             diff => {
                 if is_mixed {
                     // Case 3: Mixed range, only time differs (date diff was handled by early fallback).
                     let date_formatted = self.format_date_only(start);
-                    let time_range_formatted = range_selection
+                    let time_range_formatted = self
+                        .range_selection
                         .time_range
                         .select(start, end, self.selection.options, diff)
                         .map(|pattern_info| {
                             self.make_greatest_difference(
-                                range_selection,
                                 self.format_time_only(start),
                                 self.format_time_only(end),
                                 pattern_info,
@@ -174,13 +169,13 @@ impl<'a> RangeFormatterCore<'a> {
                             glue,
                         })
                     } else {
-                        self.format_fallback(range_selection, start, end)
+                        self.format_fallback(start, end)
                     }
                 } else {
                     // Case 2: Time-only or Date-only range.
                     let use_time = diff.is_time_diff();
-                    self.format_greatest_difference(range_selection, start, end, diff, use_time)
-                        .unwrap_or_else(|| self.format_fallback(range_selection, start, end))
+                    self.format_greatest_difference(start, end, diff, use_time)
+                        .unwrap_or_else(|| self.format_fallback(start, end))
                 }
             }
         };
@@ -194,13 +189,12 @@ impl<'a> RangeFormatterCore<'a> {
     /// is available, or when the difference requires a full fallback (Case 4).
     fn format_fallback(
         self,
-        range_selection: &'a DateTimeZoneRangePatternSelectionData,
         start: &DateTimeInputUnchecked,
         end: &DateTimeInputUnchecked,
     ) -> FormattedDateRangeInner<'a> {
         let start_formatted = self.format_datetime(start);
         let end_formatted = self.format_datetime(end);
-        let glue = range_selection.range_glue.get();
+        let glue = self.range_selection.range_glue.get();
         FormattedDateRangeInner::Fallback(FormattedRangeFallback {
             start: start_formatted,
             end: end_formatted,
