@@ -1174,7 +1174,31 @@ impl SourceDataProvider {
                     }
                 }
 
-                tailorings.insert(
+                let id = if prefix == "LineBreak" {
+                    let x;
+                    DataIdentifierCow::from_marker_attributes_owned(
+                        DataMarkerAttributes::try_from_string(format!(
+                            "{}{}{}",
+                            if locale.is_unknown() {
+                                ""
+                            } else {
+                                x = locale.to_string();
+                                &x
+                            },
+                            if locale.is_unknown() || keywords.is_empty() {
+                                ""
+                            } else {
+                                "-"
+                            },
+                            keywords
+                                .get(&key!("lb"))
+                                .or_else(|| keywords.get(&key!("lw")))
+                                .map(|v| v.to_string())
+                                .unwrap_or_default()
+                        ))
+                        .unwrap(),
+                    )
+                } else {
                     DataIdentifierCow::from_owned(
                         DataMarkerAttributes::try_from_string(
                             keywords
@@ -1185,7 +1209,11 @@ impl SourceDataProvider {
                         )
                         .unwrap(),
                         locale,
-                    ),
+                    )
+                };
+
+                tailorings.insert(
+                    id,
                     overrides
                         .into_iter()
                         .map(|(k, v)| {

@@ -708,19 +708,19 @@ impl LineSegmenter {
                     Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_KEEPALL)
                 }
                 (true, LineBreakStrictness::Loose, LineBreakWordOption::Normal) => {
-                    Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_JA_LOOSE)
+                    Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_JA_LOOSE)
                 }
                 (false, LineBreakStrictness::Loose, LineBreakWordOption::Normal) => {
                     Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_LOOSE)
                 }
                 (true, LineBreakStrictness::Normal, LineBreakWordOption::Normal) => {
-                    Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_JA_NORMAL)
+                    Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_JA_NORMAL)
                 }
                 (false, LineBreakStrictness::Normal, LineBreakWordOption::Normal) => {
                     Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_NORMAL)
                 }
                 (true, LineBreakStrictness::Strict, LineBreakWordOption::Normal) => {
-                    Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_JA)
+                    Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_JA)
                 }
                 (false, LineBreakStrictness::Strict, LineBreakWordOption::Normal) => None,
                 (_, LineBreakStrictness::Anywhere, _) => {
@@ -759,19 +759,35 @@ impl LineSegmenter {
             + DataProvider<SegmenterBreakLineOverrideV2>
             + ?Sized,
     {
-        use icu_locale_core::preferences::extensions::unicode::keywords::{
-            LineBreakStyle, LineBreakWordHandling,
-        };
-
         let options = options.resolve();
 
         let data = provider.load(Default::default())?;
 
-        let lb = match options.strictness {
-            LineBreakStrictness::Loose => Some(LineBreakStyle::Loose.as_str()),
-            LineBreakStrictness::Normal => Some(LineBreakStyle::Normal.as_str()),
-            LineBreakStrictness::Strict => None,
-            LineBreakStrictness::Anywhere => {
+        let id = match (options.ja_zh, options.strictness, options.word_option) {
+            (_, _, LineBreakWordOption::BreakAll) => {
+                Some(const { DataMarkerAttributes::from_str_or_panic("breakall") })
+            }
+            (_, _, LineBreakWordOption::KeepAll) => {
+                Some(const { DataMarkerAttributes::from_str_or_panic("keepall") })
+            }
+            (true, LineBreakStrictness::Loose, LineBreakWordOption::Normal) => {
+                Some(const { DataMarkerAttributes::from_str_or_panic("ja-loose") })
+            }
+            (false, LineBreakStrictness::Loose, LineBreakWordOption::Normal) => {
+                Some(const { DataMarkerAttributes::from_str_or_panic("loose") })
+            }
+            (true, LineBreakStrictness::Normal, LineBreakWordOption::Normal) => {
+                Some(const { DataMarkerAttributes::from_str_or_panic("ja-normal") })
+            }
+            (false, LineBreakStrictness::Normal, LineBreakWordOption::Normal) => {
+                Some(const { DataMarkerAttributes::from_str_or_panic("normal") })
+            }
+            (true, LineBreakStrictness::Strict, LineBreakWordOption::Normal) => {
+                Some(const { DataMarkerAttributes::from_str_or_panic("ja") })
+            }
+            (false, LineBreakStrictness::Strict, LineBreakWordOption::Normal) => None,
+            (_, LineBreakStrictness::Anywhere, _) => {
+                // Return a line segmenter that is actually a grapheme cluster segmenter.
                 return Ok(Self(LineSegmenterInner::Neo {
                     data: DataProvider::<SegmenterBreakGraphemeClusterV2>::load(
                         provider,
@@ -785,43 +801,24 @@ impl LineSegmenter {
             }
         };
 
-        let lw = match options.word_option {
-            LineBreakWordOption::BreakAll => Some(LineBreakWordHandling::BreakAll.as_str()),
-            LineBreakWordOption::KeepAll => Some(LineBreakWordHandling::KeepAll.as_str()),
-            LineBreakWordOption::Normal => None,
-        };
-
-        let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
-            DataMarkerAttributes::from_str_or_panic(lb.or(lw).unwrap_or_default()),
-            if options.ja_zh {
-                &const {
-                    let mut ja = DataLocale::default();
-                    ja.language = language!("ja");
-                    ja
-                }
-            } else {
-                &const { DataLocale::default() }
-            },
-        );
-
-        let tailoring = Some(id)
-            .filter(|&id| id == DataIdentifierBorrowed::default())
+        let tailoring = id
             .map(|id| {
                 provider.load(DataRequest {
-                    id,
+                    id: DataIdentifierBorrowed::for_marker_attributes(id),
                     metadata: Default::default(),
                 })
             })
             .transpose()?;
 
         if let Some(ref tailoring) = tailoring
+            && let Some(id) = id
             && data.metadata.checksum != tailoring.metadata.checksum
         {
             return Err(
                 DataErrorKind::InconsistentData(SegmenterBreakLineV2::INFO).with_req(
                     SegmenterBreakLineOverrideV2::INFO,
                     DataRequest {
-                        id,
+                        id: DataIdentifierBorrowed::for_marker_attributes(id),
                         metadata: Default::default(),
                     },
                 ),
