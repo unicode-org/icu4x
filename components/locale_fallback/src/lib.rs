@@ -42,8 +42,8 @@ pub mod provider;
 /// # Examples
 ///
 /// ```
-/// use icu_locale_fallback::LocaleFallbacker;
-/// use icu_locale_core::locale;
+/// use icu::locale::fallback::LocaleFallbacker;
+/// use icu::locale::core::locale;
 ///
 /// // Set up a LocaleFallbacker with data.
 /// let fallbacker = LocaleFallbacker::new();
@@ -71,8 +71,8 @@ pub mod provider;
 /// `zh-Hans` normalizes to `zh` because `Hans` is the default script for `zh`:
 ///
 /// ```
-/// use icu_locale_fallback::LocaleFallbacker;
-/// use icu_locale_core::locale;
+/// use icu::locale::fallback::LocaleFallbacker;
+/// use icu::locale::core::locale;
 ///
 /// // Set up a LocaleFallbacker with data.
 /// let fallbacker = LocaleFallbacker::new();
