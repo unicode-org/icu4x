@@ -305,13 +305,13 @@ impl DateTimeInputUnchecked {
 
     /// Resolve the variant to select based on time precision
     ///
-    /// In case of range patterns, `second_range_minute_is_zero` should be set to whether or not
-    /// the second input has a nonzero `minute` field. Set to None for non range patterns.
+    /// In case of range patterns, `range_second_input` should be set to the end input
+    /// of the range. Set to None for non range patterns.
     fn resolve_time_precision(
         &self,
         time_precision: TimePrecision,
         coarse_hour_cycle: Option<CoarseHourCycle>,
-        second_range_minute_is_zero: Option<bool>,
+        range_second_input: Option<&Self>,
     ) -> (PackedSkeletonVariant, Option<SubsecondDigits>) {
         match time_precision {
             TimePrecision::Hour => (PackedSkeletonVariant::Standard, None),
@@ -320,8 +320,11 @@ impl DateTimeInputUnchecked {
             TimePrecision::Subsecond(f) => (PackedSkeletonVariant::Variant1, Some(f)),
             TimePrecision::MinuteOptional => {
                 let minute = self.minute.unwrap_or_default();
+                let second_range_minute_is_zero = range_second_input
+                    .map(|input2| input2.minute.unwrap_or_default().is_zero())
+                    .unwrap_or(true);
                 if minute.is_zero()
-                    && second_range_minute_is_zero.unwrap_or(true)
+                    && second_range_minute_is_zero
                     && matches!(coarse_hour_cycle, Some(CoarseHourCycle::H11H12))
                 {
                     (PackedSkeletonVariant::Standard, None)
@@ -556,12 +559,8 @@ impl TimeRangePatternSelectionData {
 
         let coarse_hour_cycle = payload.get_coarse_hour_cycle(options.length());
         let time_precision = options.time_precision.unwrap_or_default();
-        let second_range_minute_is_zero = input2.minute.unwrap_or_default().is_zero();
-        let (variant, _) = input.resolve_time_precision(
-            time_precision,
-            coarse_hour_cycle,
-            Some(second_range_minute_is_zero),
-        );
+        let (variant, _) =
+            input.resolve_time_precision(time_precision, coarse_hour_cycle, Some(input2));
         let ule = payload.get_element(options.length(), variant)?;
 
         ule.get_time_pattern(field)
