@@ -206,7 +206,7 @@ fn extract_currency_essentials<'data>(
     .unwrap_or(accounting_pos_idx);
     let accounting_alpha_neg_idx = match accounting_alpha_next_to_number {
         Some(p) => add_pattern(create_negative_pattern(p)?),
-        // TODO(#8279): In the accounting case especially, fall back to accounting_neg_idx if
+        // TODO(CLDR-19680): In the accounting case especially, fall back to accounting_neg_idx if
         // accounting alpha negative does not exist (to preserve accounting parentheses formatting).
         None => accounting_neg_idx,
     };
