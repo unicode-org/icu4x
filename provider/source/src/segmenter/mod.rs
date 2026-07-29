@@ -915,13 +915,10 @@ fn download() {
         std::fs::create_dir_all(target.parent().unwrap()).unwrap();
         crlify::BufWriterWithLineEndingFix::new(File::create(&target).unwrap())
             .write_all(
-                &AbstractFs::new_from_url(
-                    concat!(
-                        "https://raw.githubusercontent.com/eggrobin/unicodetools/",
-                        "refs/heads/RoBertBastIan/"
-                    )
-                    .into(),
-                )
+                &AbstractFs::new_from_url(format!(
+                    "https://unicode.org/review/pri555/{}",
+                    SourceDataProvider::TESTED_UNICODE_TAG
+                ))
                 .read_to_buf(&file)
                 .unwrap(),
             )
