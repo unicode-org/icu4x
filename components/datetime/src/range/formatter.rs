@@ -14,7 +14,7 @@ use crate::external_loaders::{
 use crate::fieldsets::enums::CompositeFieldSet;
 use crate::format::DateTimeInputUnchecked;
 use crate::provider::range_patterns::DatetimePatternsRangeGlueV1;
-use crate::range::formatter_impl::{RangeFormatterCore, format_impl};
+use crate::range::formatter_impl::RangeFormatterCore;
 use crate::range::write::FormattedDateRange;
 use crate::raw::neo::DateTimeZoneRangePatternSelectionData;
 use crate::scaffold::{
@@ -205,7 +205,7 @@ where
             selection: &self.datetime_formatter.selection,
         };
 
-        format_impl(core, &self.range_selection, &start_input, &end_input)
+        core.format(&self.range_selection, &start_input, &end_input)
     }
 }
 
@@ -377,6 +377,6 @@ where
             selection: &self.datetime_formatter.selection,
         };
 
-        format_impl(core, &self.range_selection, &start_input, &end_input)
+        core.format(&self.range_selection, &start_input, &end_input)
     }
 }
