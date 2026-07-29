@@ -88,7 +88,7 @@ impl<'a> CurrencyEssentials<'a> {
     ///
     /// If the category has no explicit negative pattern, `None` is returned and the caller
     /// falls back to the positive pattern of the same category, applying the sign
-    /// itself.
+    /// itself per UTS #35 (LDML Part 3: Numbers, Section 3.2.1).
     pub fn get_negative(
         &'a self,
         symbol_starts_with_letter: bool,
@@ -146,7 +146,7 @@ impl<'a> CurrencyEssentials<'a> {
     ///
     /// If the selected category has no explicit negative pattern, `None` is returned and the
     /// caller falls back to the positive pattern of the same category, applying the
-    /// sign itself.
+    /// sign itself per UTS #35 (LDML Part 3: Numbers, Section 3.2.1).
     pub fn get_negative_accounting(
         &'a self,
         symbol_starts_with_letter: bool,

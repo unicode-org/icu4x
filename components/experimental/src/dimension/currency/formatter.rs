@@ -1262,8 +1262,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
 /// If an explicit negative pattern exists for a negative value, it is returned along with
 /// [`Sign::None`]: such patterns already encode the sign (e.g. parentheses, or a minus sign
 /// placed by the pattern), so the pattern is interpolated with the absolute value and no
-/// sign is applied on top of it. Otherwise, the positive pattern of the same category is
-/// returned with the original sign, and the sign is rendered by the value formatter.
+/// sign is applied on top of it. Otherwise, per UTS #35 (LDML Part 3: Numbers, Section 3.2.1),
+/// the positive pattern of the same category is returned with the original sign, and the sign is
+/// rendered by the value formatter.
 fn select_essentials_pattern<'a>(
     essentials: &'a super::super::provider::currency::essentials::CurrencyEssentials<'_>,
     accounting: bool,
