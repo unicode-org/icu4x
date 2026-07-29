@@ -306,7 +306,7 @@ impl<'a> core::ops::Deref for DecimalSymbols<'a> {
 
 impl DecimalSymbols<'static> {
     /// Create a new en-US format for use in testing
-    #[cfg(feature = "datagen")]
+    #[cfg(any(test, feature = "datagen"))]
     pub fn new_en_for_testing() -> Self {
         let strings = DecimalSymbolStrsBuilder {
             minus_sign_prefix: VarZeroCow::new_borrowed("-"),
