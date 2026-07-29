@@ -554,7 +554,7 @@ impl TimeRangePatternSelectionData {
             _ => return None,
         };
 
-        let coarse_hour_cycle = payload.get_coarse_hour_cycle(options.length(), field);
+        let coarse_hour_cycle = payload.get_coarse_hour_cycle(options.length());
         let time_precision = options.time_precision.unwrap_or_default();
         let second_range_minute_is_zero = input2.minute.unwrap_or_default().is_zero();
         let (variant, _) = input.resolve_time_precision(
