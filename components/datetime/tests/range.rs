@@ -5,7 +5,7 @@
 use icu_calendar::Date;
 use icu_datetime::fieldsets;
 use icu_datetime::input::{DateTime, Time};
-use icu_datetime::{DateRangeFormatter, FixedCalendarDateRangeFormatter};
+use icu_datetime::range::{DateRangeFormatter, FixedCalendarDateRangeFormatter};
 use icu_locale_core::locale;
 use writeable::assert_writeable_eq;
 
@@ -140,9 +140,9 @@ fn test_date_range_any_calendar_dynamic_conversion() {
 #[test]
 fn test_date_range_timezone() {
     use icu_calendar::Date;
-    use icu_datetime::FixedCalendarDateRangeFormatter;
     use icu_datetime::fieldsets;
     use icu_datetime::input::Time;
+    use icu_datetime::range::FixedCalendarDateRangeFormatter;
     use icu_locale_core::locale;
     use icu_time::zone::UtcOffset;
     use icu_time::{TimeZone, ZonedDateTime};
@@ -182,9 +182,9 @@ fn test_date_range_timezone() {
 fn test_date_range_hebrew_leap() {
     use icu_calendar::Date;
     use icu_calendar::cal::Hebrew;
-    use icu_datetime::FixedCalendarDateRangeFormatter;
     use icu_datetime::fieldsets;
     use icu_datetime::input::{DateTime, Time};
+    use icu_datetime::range::FixedCalendarDateRangeFormatter;
     use icu_locale_core::locale;
     use writeable::assert_writeable_eq;
 

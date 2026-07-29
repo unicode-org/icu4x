@@ -38,7 +38,7 @@ use icu_provider::prelude::*;
 /// use icu::calendar::Date;
 /// use icu::datetime::input::{DateTime, Time};
 /// use icu::datetime::fieldsets::YMD;
-/// use icu::datetime::DateRangeFormatter;
+/// use icu::datetime::range::DateRangeFormatter;
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
@@ -231,7 +231,7 @@ where
 /// use icu::calendar::Date;
 /// use icu::datetime::input::{DateTime, Time};
 /// use icu::datetime::fieldsets::YMD;
-/// use icu::datetime::FixedCalendarDateRangeFormatter;
+/// use icu::datetime::range::FixedCalendarDateRangeFormatter;
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
