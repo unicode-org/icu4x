@@ -175,11 +175,22 @@ pub trait TryWriteable {
         LengthHint::undefined()
     }
 
+    /// Returns a `&str` that matches the output of `try_write_to`, if possible.
+    ///
+    /// This method is used to avoid materializing a [`String`] in `write_to_string`.
+    fn try_writeable_borrow(&self) -> Option<Result<&str, (Self::Error, &str)>> {
+        None
+    }
+
     /// Writes the content of this writeable to a string.
     ///
     /// In the failure case, this function returns the error and the best-effort string ("lossy mode").
     ///
-    /// Examples
+    /// # Note to implementors
+    ///
+    /// See the note in [`Writeable::write_to_string`].
+    ///
+    /// # Examples
     ///
     /// ```
     /// # use std::borrow::Cow;
@@ -195,6 +206,11 @@ pub trait TryWriteable {
     /// ```
     #[cfg(feature = "alloc")]
     fn try_write_to_string(&self) -> Result<Cow<'_, str>, (Self::Error, Cow<'_, str>)> {
+        if let Some(borrow) = self.try_writeable_borrow() {
+            return borrow
+                .map(Cow::Borrowed)
+                .map_err(|(e, s)| (e, Cow::Borrowed(s)));
+        }
         let hint = self.writeable_length_hint();
         if hint.is_zero() {
             return Ok(Cow::Borrowed(""));
@@ -249,6 +265,13 @@ where
         }
     }
 
+    fn try_writeable_borrow(&self) -> Option<Result<&str, (Self::Error, &str)>> {
+        match self {
+            Ok(t) => t.writeable_borrow().map(Ok),
+            Err(e) => e.writeable_borrow().map(|s| Err((e.clone(), s))),
+        }
+    }
+
     #[inline]
     #[cfg(feature = "alloc")]
     fn try_write_to_string(&self) -> Result<Cow<'_, str>, (Self::Error, Cow<'_, str>)> {
@@ -291,6 +314,12 @@ where
     #[inline]
     fn writeable_length_hint(&self) -> LengthHint {
         self.0.writeable_length_hint()
+    }
+
+    #[inline]
+    fn writeable_borrow(&self) -> Option<&str> {
+        let Ok(s) = self.0.try_writeable_borrow()?;
+        Some(s)
     }
 
     #[inline]
@@ -345,6 +374,11 @@ where
     #[inline]
     fn writeable_length_hint(&self) -> LengthHint {
         self.0.writeable_length_hint()
+    }
+
+    #[inline]
+    fn try_writeable_borrow(&self) -> Option<Result<&str, (Self::Error, &str)>> {
+        self.0.writeable_borrow().map(Ok)
     }
 
     #[inline]
@@ -468,6 +502,15 @@ macro_rules! impl_try_writeable_delegate {
                 ($delegate).writeable_length_hint()
             }
             #[inline]
+            fn try_writeable_borrow(&$self) -> Option<Result<&str, (Self::Error, &str)>> {
+                let result = ($delegate).try_writeable_borrow()?;
+                $(
+                    let error_map = |$error_arg| { $error_map };
+                    let result = result.map_err(|(err, cow)| (error_map(err), cow));
+                )?
+                Some(result)
+            }
+            #[inline]
             $(#[$alloc_feature])?
             fn try_write_to_string(
                 &$self,
@@ -526,12 +569,11 @@ macro_rules! assert_try_writeable_eq {
         $crate::assert_try_writeable_eq!(@internal, $actual_writeable, $expected_str, $expected_result, $($arg)*);
     }};
     (@internal, $actual_writeable:expr, $expected_str:expr, $expected_result:expr, $($arg:tt)+) => {{
-        use $crate::TryWriteable;
         let actual_writeable = &$actual_writeable;
         let (actual_str, actual_parts, actual_error) = $crate::_internal::try_writeable_to_parts_for_test(actual_writeable);
         assert_eq!(actual_str, $expected_str, $($arg)*);
         assert_eq!(actual_error, Result::<(), _>::from($expected_result).err(), $($arg)*);
-        let actual_result = match actual_writeable.try_write_to_string() {
+        let actual_result = match $crate::TryWriteable::try_write_to_string(&actual_writeable) {
             Ok(actual_cow_str) => {
                 assert_eq!(actual_cow_str, $expected_str, $($arg)+);
                 Ok(())
@@ -542,7 +584,7 @@ macro_rules! assert_try_writeable_eq {
             }
         };
         assert_eq!(actual_result, Result::<(), _>::from($expected_result), $($arg)*);
-        let length_hint = actual_writeable.writeable_length_hint();
+        let length_hint = $crate::TryWriteable::writeable_length_hint(&actual_writeable);
         assert!(
             length_hint.0 <= actual_str.len(),
             "hint lower bound {} larger than actual length {}: {}",

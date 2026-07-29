@@ -13,6 +13,7 @@ use core::iter::FromIterator;
 use core::ops::RangeInclusive;
 #[cfg(feature = "alloc")]
 use icu_collections::codepointinvlist::CodePointInversionList;
+use icu_collections::codepointtrie::TrieValue;
 use icu_provider::prelude::*;
 use zerovec::{ZeroSlice, ule::AsULE};
 
@@ -211,7 +212,7 @@ impl<'a> ScriptExtensionsSet<'a> {
     ///     .contains(&Script::Grantha));
     /// ```
     pub fn contains(&self, x: &Script) -> bool {
-        ZeroSlice::binary_search(self.values, x).is_ok()
+        ZeroSlice::binary_search_by(self.values, |y| y.to_u32().cmp(&x.to_u32())).is_ok()
     }
 
     /// Gets an iterator over the elements.

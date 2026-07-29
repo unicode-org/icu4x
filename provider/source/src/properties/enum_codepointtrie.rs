@@ -2,19 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![cfg_attr(
-    not(any(feature = "use_wasm", feature = "use_icu4c")),
-    allow(unused_imports, dead_code)
-)]
-
 use crate::SourceDataProvider;
 use crate::properties::ucd_helpers::{self, UcdLine};
 use icu::collections::codepointtrie::{CodePointTrie, TrieValue};
 use icu::properties::props::EnumeratedProperty;
 use icu::properties::provider::{names::*, *};
 use icu_provider::prelude::*;
-use std::collections::BTreeMap;
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fmt::Debug;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ule::NichedOption;
@@ -23,7 +17,7 @@ impl SourceDataProvider {
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
     pub(super) fn build_enumerated_prop<T: EnumeratedProperty + Debug>(
         &self,
-        short_name_to_t: BTreeMap<&'static str, T>,
+        short_name_to_t: HashMap<&'static str, T>,
     ) -> Result<CodePointTrie<'static, T>, DataError> {
         let name = core::str::from_utf8(T::NAME).unwrap();
         let short_name = core::str::from_utf8(T::SHORT_NAME).unwrap();
@@ -66,7 +60,7 @@ impl SourceDataProvider {
 
         let mut last_seen_cp = -1i32;
 
-        for line in self.parse_ucd_lines(&file)? {
+        for line in self.rscd()?.parse_ucd_lines(&file)? {
             match line {
                 UcdLine::Missing(fields) => {
                     let mut fields = fields.fields();
@@ -140,11 +134,14 @@ impl SourceDataProvider {
         &'a self,
         name: &str,
         short_name: &str,
-    ) -> Result<(BTreeMap<&'a str, (&'a str, NameType)>, Option<&'a str>), DataError> {
-        let mut names = BTreeMap::new();
+    ) -> Result<(HashMap<&'a str, (&'a str, NameType)>, Option<&'a str>), DataError> {
+        let mut names = HashMap::new();
         let mut default = None;
 
-        for line in self.parse_ucd_lines("ucd/PropertyValueAliases.txt")? {
+        for line in self
+            .rscd()?
+            .parse_ucd_lines("ucd/PropertyValueAliases.txt")?
+        {
             match line {
                 UcdLine::Missing(fields) => {
                     let mut fields = fields.fields();
@@ -201,38 +198,27 @@ enum NameType {
     Alias,
 }
 
-fn validate_dense<T: TrieValue + Ord + Debug>(map: &BTreeMap<T, &str>) -> Result<(), DataError> {
-    if let Some((&first, _)) = map.first_key_value() {
-        if first.to_u32() > 0 {
-            return Err(DataError::custom(
-                "Property has nonzero starting discriminant, perhaps consider \
-                 storing its names as a sparse map or by specializing this error",
-            )
-            .with_debug_context(&first));
-        }
-    } else {
-        return Err(DataError::custom("Property has no values!"));
+fn validate_dense<T: TrieValue + Debug, V: Debug + Copy>(
+    map: &HashMap<T, V>,
+) -> Result<Vec<V>, DataError> {
+    let map = map
+        .iter()
+        .map(|(k, &v)| (k.to_u32() as usize, v))
+        .collect::<BTreeMap<_, _>>();
+
+    if !map.keys().copied().eq(0..map.len()) {
+        return Err(DataError::custom(
+            "Property has more than 0 gaps and cannot be stored in a dense map",
+        )
+        .with_debug_context(&map));
     };
-    if let Some((&last, _)) = map.last_key_value() {
-        let range = last.to_u32() as usize + 1;
-        let count = map.len();
-        let gaps = range - count;
-        if gaps > 0 {
-            return Err(DataError::custom(
-                "Property has more than 0 gaps, \
-                perhaps consider storing its names in a sparse map or by specializing this error",
-            )
-            .with_display_context(&gaps));
-        }
-    } else {
-        return Err(DataError::custom("Property has no values!"));
-    };
-    Ok(())
+
+    Ok(map.into_values().collect())
 }
 
 #[allow(clippy::unnecessary_wraps)] // signature required by macro
-fn convert_sparse<T: TrieValue + Ord>(
-    map: BTreeMap<T, &str>,
+fn convert_sparse<T: TrieValue>(
+    map: HashMap<T, &str>,
 ) -> Result<PropertyEnumToValueNameSparseMap<'static>, DataError> {
     Ok(PropertyEnumToValueNameSparseMap {
         map: map
@@ -242,24 +228,24 @@ fn convert_sparse<T: TrieValue + Ord>(
     })
 }
 
-fn convert_linear<T: TrieValue + Ord + Debug>(
-    map: BTreeMap<T, &str>,
+fn convert_linear<T: TrieValue + Debug>(
+    map: HashMap<T, &str>,
 ) -> Result<PropertyEnumToValueNameLinearMap<'static>, DataError> {
-    validate_dense(&map)?;
+    let dense = validate_dense(&map)?;
 
     Ok(PropertyEnumToValueNameLinearMap {
-        map: (&map.into_values().collect::<Vec<_>>()).into(),
+        map: (&dense).into(),
     })
 }
 
 fn convert_script(
-    map: BTreeMap<icu::properties::props::Script, &str>,
+    map: HashMap<icu::properties::props::Script, &str>,
 ) -> Result<PropertyScriptToIcuScriptMap<'static>, DataError> {
-    validate_dense(&map)?;
+    let dense = validate_dense(&map)?;
 
     Ok(PropertyScriptToIcuScriptMap {
-        map: map
-            .into_values()
+        map: dense
+            .into_iter()
             .map(|s| {
                 if s.is_empty() {
                     Ok(NichedOption(None))
@@ -297,13 +283,13 @@ macro_rules! expand {
                     .with_req($marker::INFO, req));
                     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
                     {
-                        let trie = if let Some(t) = self.unicode()?.cpt_cache.get(core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()).
+                        let trie = if let Some(t) = self.rscd()?.cpt_cache.get(core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()).
                             and_then(|t| t.downcast_ref::<CodePointTrie<'static, $prop>>().cloned()) {
                             t
                         } else {
                             let trie = self.build_enumerated_prop::<$prop>(<$prop>::names().collect())?;
 
-                            self.unicode()?.cpt_cache
+                            self.rscd()?.cpt_cache
                                 .insert(core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap(), Box::new(trie.clone()));
 
                             trie
@@ -322,14 +308,14 @@ macro_rules! expand {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$parse_marker>, DataError> {
                     self.check_req::<$parse_marker>(req)?;
 
-                    let short_name_to_t = <$prop>::names().collect::<BTreeMap<_, _>>();
+                    let short_name_to_t = <$prop>::names().collect::<HashMap<_, _>>();
 
                     let names = self.enumerated_prop_names(core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(), core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap())?.0;
 
                     for (name, _) in &short_name_to_t {
                         if !names.contains_key(name) && <$prop as EnumeratedProperty>::SHORT_NAME != icu::properties::props::Script::SHORT_NAME {
                             log::warn!(
-                                "Unicode does not contain {} {name:?}",
+                                "UCD does not contain {} {name:?}",
                                 core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap()
                             );
                         }
@@ -338,10 +324,10 @@ macro_rules! expand {
                     let trie = names
                         .into_iter()
                         .filter_map(|(name, (short_name, _))| Some((name, short_name_to_t.get(short_name).copied()?)))
-                        // Add short names that are only defined in ICU4X, not in Unicode (Scripts)
+                        // Add short names that are only defined in ICU4X, not in the UCD (Scripts)
                         .chain(short_name_to_t.clone().into_iter())
                         .map(|(n, v)| (n, v.to_u32() as usize))
-                        .collect::<BTreeMap<_, _>>()
+                        .collect::<HashMap<_, _>>()
                         .into_iter()
                         .collect::<ZeroTrieSimpleAscii<_>>()
                         .convert_store();
@@ -371,7 +357,7 @@ macro_rules! expand {
             {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$long_marker>, DataError> {
                     self.check_req::<$long_marker>(req)?;
-                    let short_name_to_t = <$prop>::names().collect::<BTreeMap<_, _>>();
+                    let short_name_to_t = <$prop>::names().collect::<HashMap<_, _>>();
 
                     let names = self.enumerated_prop_names(core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(), core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap())?.0;
 
@@ -443,7 +429,7 @@ impl DataProvider<PropertyNameParseGeneralCategoryMaskV1> for SourceDataProvider
 
         self.check_req::<PropertyNameParseGeneralCategoryMaskV1>(req)?;
 
-        let short_name_to_t = GeneralCategoryGroup::names().collect::<BTreeMap<_, _>>();
+        let short_name_to_t = GeneralCategoryGroup::names().collect::<HashMap<_, _>>();
 
         let trie = self
             .enumerated_prop_names("General_Category", "gc")?
@@ -597,10 +583,10 @@ expand!(
 mod tests {
     use super::*;
 
-    // A test of the UnicodeProperty General_Category is truly a test of the
+    // A test of the UCD property General_Category is truly a test of the
     // `GeneralCategory` Rust enum, not the `GeneralCategoryGroup` Rust enum,
     // since we must match the representation and value width of the data from
-    // the ICU CodePointTrie that ICU4X is reading from.
+    // the CodePointTrie that ICU4X is using.
     #[test]
     fn test_general_category() {
         use icu::properties::{CodePointMapData, props::GeneralCategory};

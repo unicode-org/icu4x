@@ -37,7 +37,7 @@ pub trait MeasureUnitCategory {
 /// This is useful for type inference and for ensuring that the correct units are used.
 #[derive(Debug)]
 pub struct CategorizedMeasureUnit<T: MeasureUnitCategory> {
-    _category: PhantomData<T>,
+    pub(crate) _category: PhantomData<T>,
     pub unit: MeasureUnit,
 }
 

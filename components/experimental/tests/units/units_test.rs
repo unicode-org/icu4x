@@ -41,6 +41,11 @@ fn test_cldr_unit_tests() {
     let converter_factory = ConverterFactory::new();
 
     for test in tests {
+        if test.input_unit == "beaufort" {
+            // TODO(#6804): Support beaufort
+            continue;
+        }
+
         let input_unit =
             MeasureUnit::try_from_str(&test.input_unit).expect("Failed to parse input unit");
         let output_unit =

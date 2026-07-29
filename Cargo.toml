@@ -244,7 +244,6 @@ diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "e827
 # EXTRA_CAPI_DEPS
 # EXTRA_BLOB_DEPS
 # EXTRA_FS_DEPS
-arrayvec = { version = "0.7.2", default-features = false }
 chrono = { version = "0.4", default-features = false }
 chrono-tz = { version = "0.10", default-features = false }
 core_maths = { version = "0.1.0", default-features = false }
@@ -282,7 +281,6 @@ serde-aux = { version = "4.0.0", default-features = false }
 toml = { version = "0.8.0", default-features = false, features = ["parse"] }
 
 ## External Deps Group 3: Dev and Datagen deps. Include default features.
-arraystring = "0.3.0"
 askama = "0.15"
 atoi = "2.0.0"
 bincode = "1.3.1" # Can be updated to 2.0 after MSRV 1.85

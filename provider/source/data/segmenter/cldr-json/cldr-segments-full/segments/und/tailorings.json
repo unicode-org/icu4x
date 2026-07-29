@@ -1,0 +1,27 @@
+{
+	"segments": {
+		"identity": {
+			"language": "en"
+		},
+		"segmentations": {
+			"LineBreak": {
+				"und-u-lb-normal": [
+					"[:lb=CJ:] ; [あ]"
+				],
+				"und-u-lb-loose": [
+					"[々 〻 ゝ ゞ ヽ ヾ] ; [{EAST_ASIAN_UNCLASSIFIED}]",
+					"[[:lb=IN:] - [[:ea=F:][:ea=W:][:ea=H:]]] ; [{NON_EAST_ASIAN_LOOSE_IN}]",
+					"[[:lb=IN:] & [[:ea=F:][:ea=W:][:ea=H:]]] ; [{EAST_ASIAN_LOOSE_IN}]"
+				],
+				"und-u-lw-breakall": [
+					"# This is very hacky, see https://github.com/unicode-org/icu4x/issues/8047",
+					"[[:lb=NU:][:lb=AL:][:lb=SA:][:lb=CJ:]] ; [字]"
+				],
+				"und-u-lw-keepall": [
+					"# This is very hacky, see https://github.com/unicode-org/icu4x/issues/8047",
+					"[[:lb=ID:][:lb=CJ:][:lb=JL:][:lb=JV:][:lb=JT:][:lb=H2:][:lb=H3:]] ; [a]"
+				]
+			}
+		}
+	}
+}

@@ -124,14 +124,14 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for ComplexWord<Y> {
 /// For examples of use, see [`LineSegmenter`].
 #[derive(Debug)]
 pub(crate) struct RuleBreakIterator<'data, 's, Y: RuleBreakType, C: ComplexHandler<Y> + ?Sized> {
-    data: &'data SegmenterStateMachine<'data>,
-    pseudo_symbol_map: &'data zerovec::ZeroVec<'data, (Symbol, ComplexScript)>,
+    pub(crate) data: &'data SegmenterStateMachine<'data>,
+    pub(crate) pseudo_symbol_map: &'data zerovec::ZeroVec<'data, (Symbol, ComplexScript)>,
     // We use `IntoIter` so that we can pop from the front in O(1) time.
-    cache: smallvec::IntoIter<C::Cache>,
-    lookahead_positions: SmallVec<[Option<Y::IterAttr<'s>>; 1]>,
-    remaining_input: Y::IterAttr<'s>,
-    last_accepting_status: u8,
-    complex: Option<C::ComplexPayloads<'data>>,
+    pub(crate) cache: smallvec::IntoIter<C::Cache>,
+    pub(crate) lookahead_positions: SmallVec<[Option<Y::IterAttr<'s>>; 1]>,
+    pub(crate) remaining_input: Y::IterAttr<'s>,
+    pub(crate) last_accepting_status: u8,
+    pub(crate) complex: Option<C::ComplexPayloads<'data>>,
 }
 
 #[test]

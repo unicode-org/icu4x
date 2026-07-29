@@ -696,20 +696,26 @@ impl LineSegmenter {
         LineSegmenterBorrowed(LineSegmenterBorrowedInner::Neo {
             data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V2,
             tailoring: match (options.ja_zh, options.strictness, options.word_option) {
+                (_, _, LineBreakWordOption::BreakAll) => {
+                    Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_BREAKALL)
+                }
+                (_, _, LineBreakWordOption::KeepAll) => {
+                    Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_KEEPALL)
+                }
                 (true, LineBreakStrictness::Loose, LineBreakWordOption::Normal) => {
-                    Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_LOOSE_CJ)
+                    Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_JA_LOOSE)
                 }
                 (false, LineBreakStrictness::Loose, LineBreakWordOption::Normal) => {
                     Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_LOOSE)
                 }
                 (true, LineBreakStrictness::Normal, LineBreakWordOption::Normal) => {
-                    Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_NORMAL_CJ)
+                    Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_JA_NORMAL)
                 }
                 (false, LineBreakStrictness::Normal, LineBreakWordOption::Normal) => {
                     Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_NORMAL)
                 }
                 (true, LineBreakStrictness::Strict, LineBreakWordOption::Normal) => {
-                    Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_CJ)
+                    Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_JA)
                 }
                 (false, LineBreakStrictness::Strict, LineBreakWordOption::Normal) => None,
                 (_, LineBreakStrictness::Anywhere, _) => {
@@ -720,13 +726,6 @@ impl LineSegmenter {
                         complex: ComplexPayloadsBorrowed::new_neo(),
                     });
                 }
-                (false, LineBreakStrictness::Strict, LineBreakWordOption::BreakAll) => {
-                    Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_WORD_BREAKALL)
-                }
-                (false, LineBreakStrictness::Strict, LineBreakWordOption::KeepAll) => {
-                    Some(Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_UND_WORD_KEEPALL)
-                }
-                _ => unimplemented!(),
             },
             complex: ComplexPayloadsBorrowed::new_neo(),
         })
@@ -755,26 +754,17 @@ impl LineSegmenter {
             + DataProvider<SegmenterBreakLineOverrideV2>
             + ?Sized,
     {
+        use icu_locale_core::preferences::extensions::unicode::keywords::{
+            LineBreakStyle, LineBreakWordHandling,
+        };
+
         let options = options.resolve();
 
-        let tailoring = match (options.ja_zh, options.strictness, options.word_option) {
-            (true, LineBreakStrictness::Loose, LineBreakWordOption::Normal) => {
-                const { Some(DataMarkerAttributes::from_str_or_panic("loose_cj")) }
-            }
-            (false, LineBreakStrictness::Loose, LineBreakWordOption::Normal) => {
-                const { Some(DataMarkerAttributes::from_str_or_panic("loose")) }
-            }
-            (true, LineBreakStrictness::Normal, LineBreakWordOption::Normal) => {
-                const { Some(DataMarkerAttributes::from_str_or_panic("normal_cj")) }
-            }
-            (false, LineBreakStrictness::Normal, LineBreakWordOption::Normal) => {
-                const { Some(DataMarkerAttributes::from_str_or_panic("normal")) }
-            }
-            (true, LineBreakStrictness::Strict, LineBreakWordOption::Normal) => {
-                const { Some(DataMarkerAttributes::from_str_or_panic("cj")) }
-            }
-            (_, LineBreakStrictness::Anywhere, _) => {
-                // Return a line segmenter that is actually a grapheme cluster segmenter.
+        let lb = match options.strictness {
+            LineBreakStrictness::Loose => Some(LineBreakStyle::Loose.as_str()),
+            LineBreakStrictness::Normal => Some(LineBreakStyle::Normal.as_str()),
+            LineBreakStrictness::Strict => None,
+            LineBreakStrictness::Anywhere => {
                 return Ok(Self(LineSegmenterInner::Neo {
                     data: DataProvider::<SegmenterBreakGraphemeClusterV2>::load(
                         provider,
@@ -786,22 +776,37 @@ impl LineSegmenter {
                     complex: ComplexPayloads::try_new_neo(provider)?,
                 }));
             }
-            (false, LineBreakStrictness::Strict, LineBreakWordOption::BreakAll) => {
-                const { Some(DataMarkerAttributes::from_str_or_panic("word_breakall")) }
-            }
-            (false, LineBreakStrictness::Strict, LineBreakWordOption::KeepAll) => {
-                const { Some(DataMarkerAttributes::from_str_or_panic("word_keepall")) }
-            }
-            _ => unimplemented!(),
-        }
-        .map(|a| {
-            provider.load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes(a),
-                metadata: Default::default(),
+        };
+
+        let lw = match options.word_option {
+            LineBreakWordOption::BreakAll => Some(LineBreakWordHandling::BreakAll.as_str()),
+            LineBreakWordOption::KeepAll => Some(LineBreakWordHandling::KeepAll.as_str()),
+            LineBreakWordOption::Normal => None,
+        };
+
+        let tailoring = DataIdentifierBorrowed::for_marker_attributes_and_locale(
+            DataMarkerAttributes::from_str_or_panic(lb.or(lw).unwrap_or_default()),
+            if options.ja_zh {
+                &const {
+                    let mut ja = DataLocale::default();
+                    ja.language = language!("ja");
+                    ja
+                }
+            } else {
+                &const { DataLocale::default() }
+            },
+        );
+
+        let tailoring = Some(tailoring)
+            .filter(|&id| id == DataIdentifierBorrowed::default())
+            .map(|id| {
+                provider.load(DataRequest {
+                    id,
+                    metadata: Default::default(),
+                })
             })
-        })
-        .transpose()?
-        .map(|d| d.payload);
+            .transpose()?
+            .map(|d| d.payload);
 
         Ok(Self(LineSegmenterInner::Neo {
             data: provider.load(Default::default())?.payload,

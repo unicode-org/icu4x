@@ -73,14 +73,155 @@ icu_provider::data_marker!(
 
 /// Default calendar preferences for a region.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CalendarPreference {
     /// The default calendar to use for this region.
     pub default_algorithm: CalendarAlgorithm,
     /// The default Hijri calendar to use for this region.
     pub default_hijri_algorithm: HijriCalendarAlgorithm,
+}
+
+#[cfg(any(feature = "serde", feature = "datagen"))]
+#[derive(serde::Serialize, serde::Deserialize)]
+struct CalendarPreferenceHuman<'a> {
+    #[serde(borrow)]
+    default_algorithm: &'a str,
+    #[serde(borrow)]
+    default_hijri_algorithm: &'a str,
+}
+
+#[cfg(feature = "datagen")]
+impl serde::Serialize for CalendarPreference {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        if serializer.is_human_readable() {
+            let human = CalendarPreferenceHuman {
+                default_algorithm: self.default_algorithm.as_str(),
+                default_hijri_algorithm: CalendarAlgorithm::Hijri(Some(
+                    self.default_hijri_algorithm,
+                ))
+                .as_str(),
+            };
+            return human.serialize(serializer);
+        }
+
+        let default = match self.default_algorithm {
+            CalendarAlgorithm::Buddhist => 1u8,
+            CalendarAlgorithm::Chinese => 2,
+            CalendarAlgorithm::Coptic => 3,
+            CalendarAlgorithm::Dangi => 4,
+            CalendarAlgorithm::Ethioaa => 5,
+            CalendarAlgorithm::Ethiopic => 6,
+            CalendarAlgorithm::Gregory => 7,
+            CalendarAlgorithm::Hebrew => 8,
+            CalendarAlgorithm::Indian => 9,
+            CalendarAlgorithm::Hijri(Some(s)) if s == self.default_hijri_algorithm => 10,
+            CalendarAlgorithm::Iso8601 => 11,
+            CalendarAlgorithm::Japanese => 12,
+            CalendarAlgorithm::Persian => 13,
+            CalendarAlgorithm::Roc => 14,
+            _ => {
+                debug_assert!(
+                    false,
+                    "unknown calendar algorithm: {:?}",
+                    self.default_algorithm
+                );
+                0
+            }
+        };
+        let hijri = match self.default_hijri_algorithm {
+            HijriCalendarAlgorithm::Umalqura => 1,
+            HijriCalendarAlgorithm::Tbla => 2,
+            HijriCalendarAlgorithm::Civil => 3,
+            HijriCalendarAlgorithm::Rgsa => 4,
+            _ => {
+                debug_assert!(
+                    false,
+                    "unknown hijri algorithm: {:?}",
+                    self.default_hijri_algorithm
+                );
+                0
+            }
+        };
+
+        (default << 3 | hijri).serialize(serializer)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for CalendarPreference {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        if deserializer.is_human_readable() {
+            let human = CalendarPreferenceHuman::deserialize(deserializer)?;
+            let default_val =
+                icu_locale_core::extensions::unicode::Value::try_from_str(human.default_algorithm)
+                    .map_err(serde::de::Error::custom)?;
+            let default_algorithm =
+                CalendarAlgorithm::try_from(&default_val).map_err(serde::de::Error::custom)?;
+            let hijri_val = icu_locale_core::extensions::unicode::Value::try_from_str(
+                human.default_hijri_algorithm,
+            )
+            .map_err(serde::de::Error::custom)?;
+            let default_hijri_algorithm = match CalendarAlgorithm::try_from(&hijri_val) {
+                Ok(CalendarAlgorithm::Hijri(Some(h))) => h,
+                _ => return Err(serde::de::Error::custom("expected islamic-* calendar")),
+            };
+            return Ok(Self {
+                default_algorithm,
+                default_hijri_algorithm,
+            });
+        }
+
+        let packed = u8::deserialize(deserializer)?;
+        let default_algorithm = packed >> 3;
+        let default_hijri_algorithm = packed & 0x07;
+        let default_hijri_algorithm = match default_hijri_algorithm {
+            1 => HijriCalendarAlgorithm::Umalqura,
+            2 => HijriCalendarAlgorithm::Tbla,
+            3 => HijriCalendarAlgorithm::Civil,
+            4 => HijriCalendarAlgorithm::Rgsa,
+            _ => {
+                debug_assert!(
+                    false,
+                    "unknown hijri algorithm discriminant: {default_hijri_algorithm}"
+                );
+                HijriCalendarAlgorithm::Civil
+            }
+        };
+        let default_algorithm = match default_algorithm {
+            1 => CalendarAlgorithm::Buddhist,
+            2 => CalendarAlgorithm::Chinese,
+            3 => CalendarAlgorithm::Coptic,
+            4 => CalendarAlgorithm::Dangi,
+            5 => CalendarAlgorithm::Ethioaa,
+            6 => CalendarAlgorithm::Ethiopic,
+            7 => CalendarAlgorithm::Gregory,
+            8 => CalendarAlgorithm::Hebrew,
+            9 => CalendarAlgorithm::Indian,
+            10 => CalendarAlgorithm::Hijri(Some(default_hijri_algorithm)),
+            11 => CalendarAlgorithm::Iso8601,
+            12 => CalendarAlgorithm::Japanese,
+            13 => CalendarAlgorithm::Persian,
+            14 => CalendarAlgorithm::Roc,
+            _ => {
+                debug_assert!(
+                    false,
+                    "unknown calendar algorithm discriminant: {default_algorithm}"
+                );
+                CalendarAlgorithm::Gregory
+            }
+        };
+        Ok(Self {
+            default_algorithm,
+            default_hijri_algorithm,
+        })
+    }
 }
 
 impl CalendarPreference {

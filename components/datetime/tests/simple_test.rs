@@ -483,3 +483,49 @@ fn test_adar_narrow() {
         Ok(())
     );
 }
+
+#[test]
+fn test_minute_optional_hour_cycle() {
+    use icu_datetime::NoCalendarFormatter;
+    use icu_datetime::options::TimePrecision;
+
+    let time_zero = Time::try_new(7, 0, 0, 0).unwrap();
+    let time_nonzero = Time::try_new(7, 12, 0, 0).unwrap();
+
+    let fs = fieldsets::T::short().with_time_precision(TimePrecision::MinuteOptional);
+
+    // en-US (default h12): zero minutes omitted
+    let fmt_en = NoCalendarFormatter::try_new(locale!("en-US").into(), fs).unwrap();
+    assert_writeable_eq!(fmt_en.format(&time_zero), "7\u{202f}AM");
+    assert_writeable_eq!(fmt_en.format(&time_nonzero), "7:12\u{202f}AM");
+
+    // fr (default h23): zero minutes retained
+    let fmt_fr = NoCalendarFormatter::try_new(locale!("fr").into(), fs).unwrap();
+    assert_writeable_eq!(fmt_fr.format(&time_zero), "07:00");
+    assert_writeable_eq!(fmt_fr.format(&time_nonzero), "07:12");
+
+    // en-US with -u-hc-h23 override: zero minutes retained
+    let fmt_en_h23 = NoCalendarFormatter::try_new(locale!("en-US-u-hc-h23").into(), fs).unwrap();
+    assert_writeable_eq!(fmt_en_h23.format(&time_zero), "07:00");
+    assert_writeable_eq!(fmt_en_h23.format(&time_nonzero), "07:12");
+
+    // fr with -u-hc-h12 override: zero minutes omitted
+    let fmt_fr_h12 = NoCalendarFormatter::try_new(locale!("fr-u-hc-h12").into(), fs).unwrap();
+    assert_writeable_eq!(fmt_fr_h12.format(&time_zero), "7\u{202f}AM");
+    assert_writeable_eq!(fmt_fr_h12.format(&time_nonzero), "7:12\u{202f}AM");
+
+    // fr with -u-hc-h11 override: zero minutes omitted
+    let fmt_fr_h11 = NoCalendarFormatter::try_new(locale!("fr-u-hc-h11").into(), fs).unwrap();
+    assert_writeable_eq!(fmt_fr_h11.format(&time_zero), "7\u{202f}AM");
+    assert_writeable_eq!(fmt_fr_h11.format(&time_nonzero), "7:12\u{202f}AM");
+
+    // en-US with -u-hc-c24 override: zero minutes retained
+    let fmt_en_c24 = NoCalendarFormatter::try_new(locale!("en-US-u-hc-c24").into(), fs).unwrap();
+    assert_writeable_eq!(fmt_en_c24.format(&time_zero), "07:00");
+    assert_writeable_eq!(fmt_en_c24.format(&time_nonzero), "07:12");
+
+    // fr with -u-hc-c12 override: zero minutes omitted
+    let fmt_fr_c12 = NoCalendarFormatter::try_new(locale!("fr-u-hc-c12").into(), fs).unwrap();
+    assert_writeable_eq!(fmt_fr_c12.format(&time_zero), "7\u{202f}AM");
+    assert_writeable_eq!(fmt_fr_c12.format(&time_nonzero), "7:12\u{202f}AM");
+}

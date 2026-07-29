@@ -25,7 +25,6 @@ use writeable::Writeable;
 #[derive(Debug)]
 pub(crate) struct CldrCache {
     pub(crate) serde_cache: SerdeCache,
-    dir_suffix: OnceLock<Result<&'static str, DataError>>,
     extended_locale_expander: OnceLock<Result<LocaleExpander, DataError>>,
     #[expect(clippy::type_complexity)]
     pub(crate) calendar_eras: OnceLock<
@@ -46,7 +45,6 @@ impl CldrCache {
     pub(crate) fn new(root: AbstractFs) -> Self {
         CldrCache {
             serde_cache: SerdeCache::new(root),
-            dir_suffix: Default::default(),
             extended_locale_expander: Default::default(),
             calendar_eras: Default::default(),
             #[cfg(feature = "unstable")]
@@ -56,40 +54,53 @@ impl CldrCache {
     }
 
     pub(crate) fn core(&self) -> CldrDirNoLang<'_> {
-        CldrDirNoLang(self, "cldr-core".to_owned())
+        CldrDirNoLang(self, "cldr-core")
     }
 
     pub(crate) fn numbers(&self) -> CldrDirLang<'_> {
-        CldrDirLang(self, "cldr-numbers".to_owned())
+        CldrDirLang(self, "cldr-numbers-full/main")
     }
 
     pub(crate) fn misc(&self) -> CldrDirLang<'_> {
-        CldrDirLang(self, "cldr-misc".to_owned())
+        CldrDirLang(self, "cldr-misc-full/main")
     }
 
     pub(crate) fn bcp47(&self) -> CldrDirNoLang<'_> {
-        CldrDirNoLang(self, "cldr-bcp47/bcp47".to_string())
+        CldrDirNoLang(self, "cldr-bcp47/bcp47")
     }
 
     pub(crate) fn personnames(&self) -> CldrDirLang<'_> {
-        CldrDirLang(self, "cldr-person-names".to_owned())
+        CldrDirLang(self, "cldr-person-names-full/main")
     }
 
     pub(crate) fn displaynames(&self) -> CldrDirLang<'_> {
-        CldrDirLang(self, "cldr-localenames".to_owned())
+        CldrDirLang(self, "cldr-localenames-full/main")
     }
 
     pub(crate) fn units(&self) -> CldrDirLang<'_> {
-        CldrDirLang(self, "cldr-units".to_owned())
+        CldrDirLang(self, "cldr-units-full/main")
     }
 
-    pub(crate) fn dates(&self, cal: &str) -> CldrDirLang<'_> {
+    pub(crate) fn segments(&self) -> CldrDirLang<'_> {
+        CldrDirLang(self, "cldr-segments-full/segments")
+    }
+
+    pub(crate) fn dates(&self, cal: Option<DatagenCalendar>) -> CldrDirLang<'_> {
         CldrDirLang(
             self,
-            if cal == "gregorian" || cal == "generic" {
-                "cldr-dates".to_owned()
-            } else {
-                format!("cldr-cal-{cal}")
+            match cal {
+                Some(DatagenCalendar::Buddhist) => "cldr-cal-buddhist-full/main",
+                Some(DatagenCalendar::Chinese) => "cldr-cal-chinese-full/main",
+                Some(DatagenCalendar::Coptic) => "cldr-cal-coptic-full/main",
+                Some(DatagenCalendar::Dangi) => "cldr-cal-dangi-full/main",
+                Some(DatagenCalendar::Ethiopic) => "cldr-cal-ethiopic-full/main",
+                Some(DatagenCalendar::Hebrew) => "cldr-cal-hebrew-full/main",
+                Some(DatagenCalendar::Indian) => "cldr-cal-indian-full/main",
+                Some(DatagenCalendar::Hijri) => "cldr-cal-islamic-full/main",
+                Some(DatagenCalendar::Japanese) => "cldr-cal-japanese-full/main",
+                Some(DatagenCalendar::Persian) => "cldr-cal-persian-full/main",
+                Some(DatagenCalendar::Roc) => "cldr-cal-roc-full/main",
+                Some(DatagenCalendar::Gregorian) | None => "cldr-dates-full/main",
             },
         )
     }
@@ -117,16 +128,6 @@ impl CldrCache {
             a.strict_cmp(b.as_bytes())
         });
         Ok(locales)
-    }
-
-    pub(crate) fn dir_suffix(&self) -> Result<&'static str, DataError> {
-        *self.dir_suffix.get_or_init(|| {
-            if self.serde_cache.list("cldr-misc-full")?.next().is_some() {
-                Ok("full")
-            } else {
-                Ok("modern")
-            }
-        })
     }
 
     pub(crate) fn extended_locale_expander(&self) -> Result<&LocaleExpander, DataError> {
@@ -250,7 +251,7 @@ impl CldrCache {
     }
 }
 
-pub(crate) struct CldrDirNoLang<'a>(&'a CldrCache, String);
+pub(crate) struct CldrDirNoLang<'a>(&'a CldrCache, &'static str);
 
 impl<'a> CldrDirNoLang<'a> {
     pub(crate) fn read_and_parse<S>(&self, file_name: &str) -> Result<&'a S, DataError>
@@ -263,7 +264,7 @@ impl<'a> CldrDirNoLang<'a> {
     }
 }
 
-pub(crate) struct CldrDirLang<'a>(&'a CldrCache, String);
+pub(crate) struct CldrDirLang<'a>(&'a CldrCache, &'static str);
 
 impl<'a> CldrDirLang<'a> {
     pub(crate) fn read_and_parse<S>(
@@ -274,8 +275,7 @@ impl<'a> CldrDirLang<'a> {
     where
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
-        let dir_suffix = self.0.dir_suffix()?;
-        let path = format!("{}-{dir_suffix}/main/{locale}/{file_name}", self.1);
+        let path = format!("{}/{locale}/{file_name}", self.1);
         if self.0.serde_cache.file_exists(&path)? {
             self.0.serde_cache.read_and_parse_json(&path)
         } else if let Some(new_locale) = self.0.add_script_extended(locale)? {
@@ -288,12 +288,10 @@ impl<'a> CldrDirLang<'a> {
     }
 
     pub(crate) fn list_locales(&self) -> Result<impl Iterator<Item = DataLocale> + '_, DataError> {
-        let dir_suffix = self.0.dir_suffix()?;
-        let path = format!("{}-{dir_suffix}/main", self.1);
         Ok(self
             .0
             .serde_cache
-            .list(&path)?
+            .list(self.1)?
             .map(|path| -> Result<DataLocale, DataError> {
                 let locale = DataLocale::from_str(&path).unwrap();
                 Ok(self.0.remove_script_extended(&locale)?.unwrap_or(locale))
@@ -307,8 +305,7 @@ impl<'a> CldrDirLang<'a> {
         lang: &DataLocale,
         file_name: &str,
     ) -> Result<bool, DataError> {
-        let dir_suffix = self.0.dir_suffix()?;
-        let path = format!("{}-{dir_suffix}/main/{lang}/{file_name}", self.1);
+        let path = format!("{}/{lang}/{file_name}", self.1);
         if self.0.serde_cache.file_exists(&path)? {
             Ok(true)
         } else if let Some(new_locale) = self.0.add_script_extended(lang)? {

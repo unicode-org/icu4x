@@ -392,6 +392,31 @@ pub struct PluralElementsPackedCow<'data, V: VarULE + ?Sized> {
     pub elements: Cow<'data, PluralElementsPackedULE<V>>,
 }
 
+impl<T: VarULE + ?Sized> icu_provider::ule::MaybeAsVarULE for PluralElementsPackedCow<'_, T> {
+    type EncodedStruct = PluralElementsPackedULE<T>;
+}
+
+#[cfg(feature = "datagen")]
+impl<T: VarULE + ?Sized> icu_provider::ule::MaybeEncodeAsVarULE for PluralElementsPackedCow<'_, T> {
+    type EncodeableStruct<'b>
+        = &'b PluralElementsPackedULE<T>
+    where
+        Self: 'b;
+    fn maybe_as_encodeable<'b>(&'b self) -> Option<Self::EncodeableStruct<'b>> {
+        Some(&self.elements)
+    }
+}
+
+impl<'a, V: VarULE + ?Sized> ZeroFrom<'a, PluralElementsPackedULE<V>>
+    for PluralElementsPackedCow<'a, V>
+{
+    fn zero_from(other: &'a PluralElementsPackedULE<V>) -> Self {
+        Self {
+            elements: Cow::Borrowed(other),
+        }
+    }
+}
+
 /// A bitpacked DST for [`PluralElements`].
 ///
 /// Can be put in a [`Cow`] or a [`VarZeroSlice`].

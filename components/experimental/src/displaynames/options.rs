@@ -43,6 +43,12 @@ pub struct LanguageIdentifierDisplayNameOptions {
     pub language_display: Option<LanguageDisplay>,
 }
 
+impl LanguageIdentifierDisplayNameOptions {
+    pub(crate) fn should_load_dialect(self) -> bool {
+        self.language_display.unwrap_or_default() == LanguageDisplay::Dialect
+    }
+}
+
 /// An enum for formatting style.
 #[allow(missing_docs)] // The variants are self explanatory.
 #[non_exhaustive]

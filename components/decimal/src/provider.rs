@@ -401,21 +401,7 @@ where
 }
 
 #[cfg(feature = "unstable")]
-impl<P: PatternBackend> icu_provider::ule::MaybeAsVarULE for CompactPatterns<'_, P> {
-    type EncodedStruct = [()];
-}
-
-#[cfg(feature = "datagen")]
-#[cfg(feature = "unstable")]
-impl<P: PatternBackend> icu_provider::ule::MaybeEncodeAsVarULE for CompactPatterns<'_, P> {
-    type EncodeableStruct<'b>
-        = &'b [()]
-    where
-        Self: 'b;
-    fn maybe_as_encodeable<'b>(&'b self) -> Option<Self::EncodeableStruct<'b>> {
-        None
-    }
-}
+icu_provider::data_struct!(<P: PatternBackend> CompactPatterns<'_, P>, #[cfg(feature = "datagen")]);
 
 #[cfg(feature = "datagen")]
 #[cfg(feature = "unstable")]

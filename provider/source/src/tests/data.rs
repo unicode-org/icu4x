@@ -671,11 +671,7 @@ pub fn icuexport_data() -> AbstractFs {
         "norm/small/nfdex.toml",
         "norm/small/nfkdex.toml",
         "norm/small/uts46d.toml",
-        "segmenter/dictionary/thaidict.toml",
-        "uprops/small/nfcinert.toml",
-        "uprops/small/nfdinert.toml",
-        "uprops/small/nfkcinert.toml",
-        "uprops/small/nfkdinert.toml"
+        "segmenter/dictionary/thaidict.toml"
     )
 }
 
@@ -689,9 +685,9 @@ pub fn lstm_data() -> AbstractFs {
 }
 
 #[rustfmt::skip]
-pub fn unicode_data() -> AbstractFs {
+pub fn rscd_data() -> AbstractFs {
     include_files!(
-        "../../tests/data/unicode/";
+        "../../tests/data/rscd/";
         "emoji/emoji-sequences.txt",
         "security/IdentifierStatus.txt",
         "ucd/BidiBrackets.txt",

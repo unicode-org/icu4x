@@ -24,7 +24,7 @@ impl SourceDataProvider {
         let mut strings = BTreeSet::new();
 
         for line in self
-            .unicode()?
+            .rscd()?
             .read_to_string("emoji/emoji-sequences.txt")?
             .lines()
         {

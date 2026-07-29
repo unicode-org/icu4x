@@ -1,4 +1,4 @@
 {
-  "default_algorithm": "Gregory",
-  "default_hijri_algorithm": "Umalqura"
+  "default_algorithm": "gregory",
+  "default_hijri_algorithm": "islamic-umalqura"
 }

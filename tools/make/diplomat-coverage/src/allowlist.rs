@@ -364,6 +364,7 @@ lazy_static::lazy_static! {
         "icu::time::types::TimeZoneVariantULE",
 
         // Reexported
+        "icu_provider_adapters::fallback::LocaleFallbacker",
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
         "icu::calendar::error::DateError",

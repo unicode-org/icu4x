@@ -1,18 +1,16 @@
 {
-  "patterns": {
-    "other": [
-      0,
-      [
-        {
-          "Placeholder": "Place0"
-        },
-        {
-          "Literal": " "
-        },
-        {
-          "Placeholder": "Place1"
-        }
-      ]
+  "other": [
+    0,
+    [
+      {
+        "Placeholder": "Place0"
+      },
+      {
+        "Literal": " "
+      },
+      {
+        "Placeholder": "Place1"
+      }
     ]
-  }
+  ]
 }

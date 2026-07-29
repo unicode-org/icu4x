@@ -1,4 +1,4 @@
 {
-  "default_algorithm": "Buddhist",
-  "default_hijri_algorithm": "Civil"
+  "default_algorithm": "buddhist",
+  "default_hijri_algorithm": "islamic-civil"
 }

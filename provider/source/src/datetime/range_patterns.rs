@@ -444,7 +444,7 @@ impl IterableDataProviderCached<DatetimePatternsRangeGlueV1> for SourceDataProvi
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
-            .dates("gregorian")
+            .dates(None)
             .list_locales()?
             .map(DataIdentifierCow::from_locale)
             .collect())

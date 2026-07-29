@@ -4,7 +4,7 @@
 
 //! This module contains helpers for parsing files from the UCD
 
-use crate::SourceDataProvider;
+use crate::source::RscdCache;
 use icu_provider::prelude::*;
 
 pub(crate) fn parse_range(range_str: &str) -> std::ops::RangeInclusive<u32> {
@@ -50,7 +50,7 @@ impl<'a> UcdLine<'a> {
     }
 }
 
-impl SourceDataProvider {
+impl RscdCache {
     /// Helper to parse UCD files line-by-line, providing an iterator over the fields of each line.
     ///
     /// It reads the file, strips comments (lines starting with `#` or anything after `#`),
@@ -61,20 +61,16 @@ impl SourceDataProvider {
         &'a self,
         file: &str,
     ) -> Result<impl Iterator<Item = UcdLine<'a>>, DataError> {
-        Ok(self
-            .unicode()?
-            .read_to_string(file)?
-            .lines()
-            .filter_map(|line| {
-                if let Some(l) = line.strip_prefix("# @missing: ") {
-                    Some(UcdLine::Missing(UcdFields(l)))
-                } else {
-                    let line = line.split('#').next().unwrap().trim();
-                    if line.is_empty() {
-                        return None;
-                    }
-                    Some(UcdLine::Fields(UcdFields(line)))
+        Ok(self.read_to_string(file)?.lines().filter_map(|line| {
+            if let Some(l) = line.strip_prefix("# @missing: ") {
+                Some(UcdLine::Missing(UcdFields(l)))
+            } else {
+                let line = line.split('#').next().unwrap().trim();
+                if line.is_empty() {
+                    return None;
                 }
-            }))
+                Some(UcdLine::Fields(UcdFields(line)))
+            }
+        }))
     }
 }

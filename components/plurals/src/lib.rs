@@ -1078,6 +1078,47 @@ impl<T> PluralElements<T> {
     pub fn as_ref(&self) -> PluralElements<&T> {
         PluralElements(self.0.as_ref())
     }
+
+    /// Returns the value for the given [`PluralOperands`] and [`PluralRules`].
+    ///
+    /// # Example
+    /// ```
+    /// use icu::locale::locale;
+    /// use icu::plurals::{PluralCategory, PluralRules, PluralElements};
+    ///
+    /// let rules = PluralRules::try_new_cardinal(locale!("fr").into()).unwrap();
+    ///
+    /// let elements = PluralElements::new("chats").with_one_value(Some("chat"));
+    ///
+    /// assert_eq!(*elements.get(0_usize.into(), &rules), "chat");
+    /// assert_eq!(*elements.get(1_usize.into(), &rules), "chat");
+    /// assert_eq!(*elements.get(12_usize.into(), &rules), "chats");
+    /// ```
+    pub fn get<'a>(&'a self, op: PluralOperands, rules: &PluralRules) -> &'a T {
+        let category = rules.category_for(op);
+
+        if op.is_exactly_zero()
+            && let Some(value) = self.0.explicit_zero.as_ref()
+        {
+            return value;
+        }
+
+        if op.is_exactly_one()
+            && let Some(value) = self.0.explicit_one.as_ref()
+        {
+            return value;
+        }
+
+        match category {
+            PluralCategory::Zero => self.0.zero.as_ref(),
+            PluralCategory::One => self.0.one.as_ref(),
+            PluralCategory::Two => self.0.two.as_ref(),
+            PluralCategory::Few => self.0.few.as_ref(),
+            PluralCategory::Many => self.0.many.as_ref(),
+            PluralCategory::Other => return &self.0.other,
+        }
+        .unwrap_or(&self.0.other)
+    }
 }
 
 impl<T: PartialEq> PluralElements<T> {

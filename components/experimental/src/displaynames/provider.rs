@@ -26,16 +26,6 @@ type UnvalidatedScript = UnvalidatedTinyAsciiStr<4>;
 type UnvalidatedLocale = PotentialUtf8;
 type UnvalidatedVariant = UnvalidatedTinyAsciiStr<8>;
 
-#[cfg(feature = "compiled_data")]
-/// Baked data
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
-/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
-/// </div>
-pub use crate::provider::Baked;
-
 icu_provider::data_marker!(
     /// `LocaleDisplayNamesV1`
     LocaleDisplayNamesV1,
@@ -160,6 +150,7 @@ pub struct VariantDisplayNames<'data> {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
 #[zerovec::make_varule(MenuNamePartsULE)]
+#[zerovec::derive(Debug)]
 #[zerovec::skip_derive(Ord)]
 #[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
 #[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]
@@ -171,6 +162,9 @@ pub struct MenuNameParts<'data> {
     /// The "extension" part of a language menu display name.
     ///
     /// For example, "Kurmanji" in "Kurdish (Kurmanji)".
+    ///
+    /// Note: this is the empty string for language menu names that do not have an extension.
+    /// For example, in CLDR 48, "Chinese, Mandarin" is the core and there is no extension.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub extension: VarZeroCow<'data, str>,
 }
