@@ -60,7 +60,7 @@ icu_provider::data_marker!(
 pub const MARKERS: &[DataMarkerInfo] =
     &[LocaleLikelySubtagsLanguageV1::INFO, LocaleParentsV1::INFO];
 
-use ::icu_locale_core::subtags::{Language, Region, Script};
+use icu_locale_core::subtags::{Language, Region, Script};
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use tinystr::UnvalidatedTinyAsciiStr;

@@ -19,7 +19,7 @@
 #![warn(missing_docs)]
 
 use crate::provider::*;
-use ::icu_locale_core::subtags::{Language, Region, Script, Subtag, Variant, region, script};
+use icu_locale_core::subtags::{Language, Region, Script, Subtag, Variant, region, script};
 use icu_provider::prelude::*;
 
 #[doc(inline)]
