@@ -303,10 +303,15 @@ impl DateTimeInputUnchecked {
         }
     }
 
+    /// Resolve the variant to select based on time precision
+    ///
+    /// In case of range patterns, `second_range_minute_is_zero` should be set to whether or not
+    /// the second input has a nonzero `minute` field. Set to None for non range patterns.
     fn resolve_time_precision(
         &self,
         time_precision: TimePrecision,
         coarse_hour_cycle: Option<CoarseHourCycle>,
+        second_range_minute_is_zero: Option<bool>,
     ) -> (PackedSkeletonVariant, Option<SubsecondDigits>) {
         match time_precision {
             TimePrecision::Hour => (PackedSkeletonVariant::Standard, None),
@@ -315,7 +320,10 @@ impl DateTimeInputUnchecked {
             TimePrecision::Subsecond(f) => (PackedSkeletonVariant::Variant1, Some(f)),
             TimePrecision::MinuteOptional => {
                 let minute = self.minute.unwrap_or_default();
-                if minute.is_zero() && matches!(coarse_hour_cycle, Some(CoarseHourCycle::H11H12)) {
+                if minute.is_zero()
+                    && second_range_minute_is_zero.unwrap_or(true)
+                    && matches!(coarse_hour_cycle, Some(CoarseHourCycle::H11H12))
+                {
                     (PackedSkeletonVariant::Standard, None)
                 } else {
                     (PackedSkeletonVariant::Variant0, None)
@@ -445,7 +453,7 @@ impl TimePatternSelectionData {
             .time_granularity()
             .coarse_hour_cycle();
         let (variant, subsecond_digits) =
-            input.resolve_time_precision(time_precision, coarse_hour_cycle);
+            input.resolve_time_precision(time_precision, coarse_hour_cycle, None);
         Some(TimePatternDataBorrowed::Resolved(
             payload.get(options.length(), variant),
             options.alignment,
@@ -533,14 +541,11 @@ impl TimeRangePatternSelectionData {
     pub(crate) fn select<'a>(
         &'a self,
         input: &DateTimeInputUnchecked,
+        input2: &DateTimeInputUnchecked,
         options: RawOptions,
         diff: Difference,
     ) -> Option<RangePatternInfoBorrowed<'a>> {
         let payload = self.payload.get_option()?;
-        let time_precision = options.time_precision.unwrap_or_default();
-        let (variant, _) = input.resolve_time_precision(time_precision);
-        let ule = payload.get_element(options.length(), variant)?;
-
         let field = match diff {
             Difference::DayPeriodB => TimeGreatestDifferenceField::DayPeriodB,
             Difference::DayPeriodA => TimeGreatestDifferenceField::DayPeriodA,
@@ -548,6 +553,16 @@ impl TimeRangePatternSelectionData {
             Difference::Minute => TimeGreatestDifferenceField::Minute,
             _ => return None,
         };
+
+        let coarse_hour_cycle = payload.get_coarse_hour_cycle(options.length(), field);
+        let time_precision = options.time_precision.unwrap_or_default();
+        let second_range_minute_is_zero = input2.minute.unwrap_or_default().is_zero();
+        let (variant, _) = input.resolve_time_precision(
+            time_precision,
+            coarse_hour_cycle,
+            Some(second_range_minute_is_zero),
+        );
+        let ule = payload.get_element(options.length(), variant)?;
 
         ule.get_time_pattern(field)
     }

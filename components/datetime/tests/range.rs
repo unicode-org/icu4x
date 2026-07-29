@@ -213,3 +213,99 @@ fn test_date_range_hebrew_leap() {
         "28 Adar I\u{2009}–\u{2009}28 Adar II 5771"
     );
 }
+
+/// Range version of `test_minute_optional_hour_cycle` from `simple_test` (PR #8237)
+#[test]
+fn test_minute_optional_hour_cycle() {
+    use icu_datetime::options::TimePrecision;
+    use icu_datetime::range::NoCalendarRangeFormatter;
+
+    let time = Time::try_new(7, 0, 0, 0).unwrap();
+    let time_hour_diff = Time::try_new(8, 0, 0, 0).unwrap();
+    let time_minute_diff = Time::try_new(7, 15, 0, 0).unwrap();
+
+    let fs = fieldsets::T::short().with_time_precision(TimePrecision::MinuteOptional);
+
+    // en-US (default h12): zero minutes omitted
+    let fmt_en = NoCalendarRangeFormatter::try_new(locale!("en-US").into(), fs).unwrap();
+    assert_writeable_eq!(
+        fmt_en.format(&time, &time_hour_diff),
+        "7\u{2009}–\u{2009}8\u{202f}AM"
+    );
+    assert_writeable_eq!(
+        fmt_en.format(&time, &time_minute_diff),
+        // The range pattern takes precedence here
+        "7:00\u{2009}–\u{2009}7:15\u{202f}AM"
+    );
+
+    // fr (default h23): zero minutes retained
+    let fmt_fr = NoCalendarRangeFormatter::try_new(locale!("fr").into(), fs).unwrap();
+    assert_writeable_eq!(
+        fmt_fr.format(&time, &time_hour_diff),
+        "07:00\u{2009}–\u{2009}08:00"
+    );
+    assert_writeable_eq!(
+        fmt_fr.format(&time, &time_minute_diff),
+        "07:00\u{2009}–\u{2009}07:15"
+    );
+
+    // en-US with -u-hc-h23 override: zero minutes retained
+    let fmt_en_h23 =
+        NoCalendarRangeFormatter::try_new(locale!("en-US-u-hc-h23").into(), fs).unwrap();
+    assert_writeable_eq!(
+        fmt_en_h23.format(&time, &time_hour_diff),
+        "07:00\u{2009}–\u{2009}08:00"
+    );
+    assert_writeable_eq!(
+        fmt_en_h23.format(&time, &time_minute_diff),
+        "07:00\u{2009}–\u{2009}07:15"
+    );
+
+    // fr with -u-hc-h12 override: zero minutes omitted
+    let fmt_fr_12 = NoCalendarRangeFormatter::try_new(locale!("fr-u-hc-h12").into(), fs).unwrap();
+    assert_writeable_eq!(
+        fmt_fr_12.format(&time, &time_hour_diff),
+        "7\u{2009}–\u{2009}8\u{202f}AM"
+    );
+    assert_writeable_eq!(
+        fmt_fr_12.format(&time, &time_minute_diff),
+        // The range pattern takes precedence here
+        "7:00\u{2009}–\u{2009}7:15\u{202f}AM"
+    );
+
+    // fr with -u-hc-h11 override: zero minutes omitted
+    let fmt_fr_h11 = NoCalendarRangeFormatter::try_new(locale!("fr-u-hc-h11").into(), fs).unwrap();
+    assert_writeable_eq!(
+        fmt_fr_h11.format(&time, &time_hour_diff),
+        "7\u{2009}–\u{2009}8\u{202f}AM"
+    );
+    assert_writeable_eq!(
+        fmt_fr_h11.format(&time, &time_minute_diff),
+        // The range pattern takes precedence here
+        "7:00\u{2009}–\u{2009}7:15\u{202f}AM"
+    );
+
+    // en-US with -u-hc-c24 override: zero minutes retained
+    let fmt_en_c24 =
+        NoCalendarRangeFormatter::try_new(locale!("en-US-u-hc-c24").into(), fs).unwrap();
+    assert_writeable_eq!(
+        fmt_en_c24.format(&time, &time_hour_diff),
+        "07:00\u{2009}–\u{2009}08:00"
+    );
+    assert_writeable_eq!(
+        fmt_en_c24.format(&time, &time_minute_diff),
+        "07:00\u{2009}–\u{2009}07:15"
+    );
+
+    // fr with -u-hc-c12 override: zero minutes omitted
+    let fmt_fr_c12 = NoCalendarRangeFormatter::try_new(locale!("fr-u-hc-c12").into(), fs).unwrap();
+    assert_writeable_eq!(
+        fmt_fr_c12.format(&time, &time_hour_diff),
+        "7\u{2009}–\u{2009}8\u{202f}AM"
+    );
+    assert_writeable_eq!(
+        fmt_fr_c12.format(&time, &time_minute_diff),
+        // The range pattern takes precedence here
+        "7:00\u{2009}–\u{2009}7:15\u{202f}AM"
+    );
+}

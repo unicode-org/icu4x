@@ -55,10 +55,7 @@ impl Difference {
     }
     /// Returns whether the difference is in a date field (day, month, year, era).
     pub(crate) fn is_date_diff(self) -> bool {
-        matches!(
-            self,
-            Self::Day | Self::Month | Self::Year | Self::Era
-        )
+        matches!(self, Self::Day | Self::Month | Self::Year | Self::Era)
     }
 }
 /// Resolves the greatest difference between two datetimes.

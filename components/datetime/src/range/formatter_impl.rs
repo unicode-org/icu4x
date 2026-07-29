@@ -208,7 +208,7 @@ fn format_greatest_difference<'a>(
     let pattern_info = if use_time {
         range_selection
             .time_range
-            .select(start, core.options(), diff)?
+            .select(start, end, core.options(), diff)?
     } else {
         range_selection
             .date_range
@@ -271,7 +271,7 @@ pub(crate) fn format_impl_shared<'a>(
                 let date_formatted = format_date_only(core, start, names);
                 let time_range_formatted = range_selection
                     .time_range
-                    .select(start, core.options(), diff)
+                    .select(start, end, core.options(), diff)
                     .map(|pattern_info| {
                         make_greatest_difference(
                             core,
