@@ -232,7 +232,7 @@ fn format_greatest_difference<'a>(
 /// 1. Resolving the greatest difference between the start and end dates.
 /// 2. Selecting the appropriate pattern (date range, time range, or fallback).
 /// 3. Formatting the sides and wrapping them in the appropriate result type.
-pub(crate) fn format_impl_shared<'a>(
+pub(crate) fn format_impl<'a>(
     core: &'a impl RangeFormatterCore,
     range_selection: &'a DateTimeZoneRangePatternSelectionData,
     start: &DateTimeInputUnchecked,
@@ -250,7 +250,7 @@ pub(crate) fn format_impl_shared<'a>(
     // Early fallback for mixed date-time formatter with date difference.
     // UTS 35: If date differs in a mixed skeleton, fall back to range fallback (Case 4).
     if is_mixed && diff.is_date_diff() {
-        return FormattedDateRange(fallback_format_shared(
+        return FormattedDateRange(format_fallback(
             core,
             range_selection,
             start,
@@ -263,7 +263,7 @@ pub(crate) fn format_impl_shared<'a>(
     let inner = match diff {
         Difference::None => FormattedDateRangeInner::Single(format_datetime(core, start, names)),
         Difference::Incomparable | Difference::Second => {
-            fallback_format_shared(core, range_selection, start, end, names)
+            format_fallback(core, range_selection, start, end, names)
         }
         diff => {
             if is_mixed {
@@ -289,14 +289,14 @@ pub(crate) fn format_impl_shared<'a>(
                         glue,
                     })
                 } else {
-                    fallback_format_shared(core, range_selection, start, end, names)
+                    format_fallback(core, range_selection, start, end, names)
                 }
             } else {
                 // Case 2: Time-only or Date-only range.
                 let use_time = diff.is_time_diff();
                 format_greatest_difference(core, range_selection, start, end, names, diff, use_time)
                     .unwrap_or_else(|| {
-                        fallback_format_shared(core, range_selection, start, end, names)
+                        format_fallback(core, range_selection, start, end, names)
                     })
             }
         }
@@ -309,7 +309,7 @@ pub(crate) fn format_impl_shared<'a>(
 ///
 /// This is used as a final fallback when no specific greatest difference pattern
 /// is available, or when the difference requires a full fallback (Case 4).
-fn fallback_format_shared<'a>(
+fn format_fallback<'a>(
     core: &'a impl RangeFormatterCore,
     range_selection: &'a DateTimeZoneRangePatternSelectionData,
     start: &DateTimeInputUnchecked,

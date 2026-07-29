@@ -14,7 +14,7 @@ use crate::external_loaders::{
 use crate::fieldsets::enums::CompositeFieldSet;
 use crate::format::DateTimeInputUnchecked;
 use crate::provider::range_patterns::DatetimePatternsRangeGlueV1;
-use crate::range::formatter_impl::format_impl_shared;
+use crate::range::formatter_impl::format_impl;
 use crate::range::write::FormattedDateRange;
 use crate::raw::neo::DateTimeZoneRangePatternSelectionData;
 use crate::scaffold::{
@@ -210,7 +210,7 @@ where
             I::Converted<'a>,
         >(&end_cal);
 
-        format_impl_shared(
+        format_impl(
             &self.datetime_formatter,
             &self.range_selection,
             &start_input,
@@ -388,7 +388,7 @@ where
         let end_input =
             DateTimeInputUnchecked::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(end);
 
-        format_impl_shared(
+        format_impl(
             &self.datetime_formatter,
             &self.range_selection,
             &start_input,
