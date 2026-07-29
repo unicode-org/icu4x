@@ -190,17 +190,13 @@ fn extract_currency_essentials<'data>(
     .unwrap_or(standard_idx);
     let standard_alpha_neg_idx = match standard_alpha_next_to_number {
         Some(p) => add_pattern(create_negative_pattern(p)?),
-        // No alpha-next-to-number pattern: the category inherits from standard,
-        // including its negative subpattern.
-        None => standard_neg_idx,
+        None => None,
     };
     let accounting_pos_idx =
         add_pattern(accounting.map(create_positive_pattern).transpose()?).unwrap_or(standard_idx);
     let accounting_neg_idx = match accounting {
         Some(p) => add_pattern(create_negative_pattern(p)?),
-        // No accounting pattern: the category inherits from standard,
-        // including its negative subpattern.
-        None => standard_neg_idx,
+        None => None,
     };
     let accounting_alpha_pos_idx = add_pattern(
         accounting_alpha_next_to_number
@@ -210,9 +206,7 @@ fn extract_currency_essentials<'data>(
     .unwrap_or(accounting_pos_idx);
     let accounting_alpha_neg_idx = match accounting_alpha_next_to_number {
         Some(p) => add_pattern(create_negative_pattern(p)?),
-        // No accounting alpha-next-to-number pattern: the category inherits from
-        // accounting, including its negative subpattern.
-        None => accounting_neg_idx,
+        None => None,
     };
 
     let indices = PatternIndices {
