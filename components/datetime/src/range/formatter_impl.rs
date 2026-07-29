@@ -253,7 +253,7 @@ pub(crate) fn format_impl_shared<'a>(
         && !diff.is_time_diff()
         && !matches!(
             diff,
-            Difference::None | Difference::Mixed | Difference::Second
+            Difference::None | Difference::Incomparable | Difference::Second
         )
     {
         return FormattedDateRange(fallback_format_shared(
@@ -268,7 +268,7 @@ pub(crate) fn format_impl_shared<'a>(
     // 2. Select pattern and format
     let inner = match diff {
         Difference::None => FormattedDateRangeInner::Single(format_datetime(core, start, names)),
-        Difference::Mixed | Difference::Second => {
+        Difference::Incomparable | Difference::Second => {
             fallback_format_shared(core, range_selection, start, end, names)
         }
         diff => {
