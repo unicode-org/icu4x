@@ -188,6 +188,9 @@ fn extract_currency_essentials<'data>(
             .transpose()?,
     )
     .unwrap_or(standard_idx);
+    // Per UTS #35 (Section 3.2.1), if an explicit negative subpattern is absent in CLDR,
+    // the negative index is `None`. The runtime formatter then falls back to the
+    // positive pattern of the same category and applies the localized minus sign.
     let standard_alpha_neg_idx = match standard_alpha_next_to_number {
         Some(p) => add_pattern(create_negative_pattern(p)?),
         None => None,
