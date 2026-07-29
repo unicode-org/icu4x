@@ -313,14 +313,9 @@ impl WordSegmenter {
     #[cfg(feature = "compiled_data")]
     #[cfg(feature = "auto")]
     pub fn new_auto(_options: WordBreakInvariantOptions) -> WordSegmenterBorrowed<'static> {
-        let mut complex = ComplexPayloadsBorrowed::new();
-        complex.with_southeast_asian_lstms();
-        complex.with_japanese_dictionary();
-        WordSegmenterBorrowed(WordSegmenterBorrowedInner::Legacy {
-            data: Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
-            complex,
-            locale_override: None,
-        })
+        let mut s = Self::new_for_non_complex_scripts(_options);
+        s.load_auto();
+        s
     }
 
     #[cfg(feature = "auto")]
@@ -348,30 +343,9 @@ impl WordSegmenter {
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
-        let mut complex = ComplexPayloads::try_new(provider)?;
-        complex.with_southeast_asian_lstms(provider)?;
-        complex.with_japanese_dictionary(provider)?;
-        Ok(Self(WordSegmenterInner::Legacy {
-            payload: provider.load(Default::default())?.payload,
-            complex,
-            payload_locale_override: if let Some(locale) = options.content_locale {
-                let locale = DataLocale::from(locale);
-                let req = DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(&locale),
-                    metadata: {
-                        let mut metadata = DataRequestMetadata::default();
-                        metadata.silent = true;
-                        metadata
-                    },
-                };
-                provider
-                    .load(req)
-                    .allow_identifier_not_found()?
-                    .map(|r| r.payload)
-            } else {
-                None
-            },
-        }))
+        let mut s = Self::try_new_for_non_complex_scripts_unstable(provider, options)?;
+        s.load_auto_unstable(provider)?;
+        Ok(s)
     }
 
     /// Constructs a [`WordSegmenter`] with an invariant locale and compiled LSTM data for
@@ -602,14 +576,10 @@ impl WordSegmenter {
     #[cfg(feature = "compiled_data")]
     #[cfg(feature = "auto")]
     #[cfg(feature = "unstable")]
-    pub fn new_neo_auto(_options: WordBreakInvariantOptions) -> WordSegmenterBorrowed<'static> {
-        let mut complex = ComplexPayloadsBorrowed::new_neo();
-        complex.with_southeast_asian_lstms();
-        complex.with_japanese_dictionary();
-        WordSegmenterBorrowed(WordSegmenterBorrowedInner::Neo {
-            data: Baked::SINGLETON_SEGMENTER_BREAK_WORD_V2,
-            complex,
-        })
+    pub fn new_neo_auto(options: WordBreakInvariantOptions) -> WordSegmenterBorrowed<'static> {
+        let mut s = Self::new_neo_for_non_complex_scripts(options);
+        s.load_auto();
+        s
     }
 
     #[cfg(feature = "auto")]
@@ -638,13 +608,9 @@ impl WordSegmenter {
             + DataProvider<SegmenterBreakGraphemeClusterV2>
             + ?Sized,
     {
-        let mut complex = ComplexPayloads::try_new_neo(provider)?;
-        complex.with_southeast_asian_lstms(provider)?;
-        complex.with_japanese_dictionary(provider)?;
-        Ok(Self(WordSegmenterInner::Neo {
-            payload: provider.load(Default::default())?.payload,
-            complex,
-        }))
+        let mut s = Self::try_new_neo_for_non_complex_scripts(options)?;
+        s.load_auto_unstable(provider)?;
+        Ok(s)
     }
 
     /// Constructs a [`WordSegmenter`] with an invariant locale and compiled LSTM data for
@@ -902,6 +868,34 @@ impl WordSegmenter {
         self.load_dictionary_unstable(&provider.as_deserializing())
     }
 
+    #[cfg(feature = "auto")]
+    fn load_auto_unstable<D>(&mut self, provider: &D) -> Result<(), DataError>
+    where
+        D: DataProvider<SegmenterDictionaryAutoV1> + DataProvider<SegmenterLstmAutoV1> + ?Sized,
+    {
+        let complex = match self.0 {
+            WordSegmenterInner::Legacy {
+                ref mut complex, ..
+            } => complex,
+            #[cfg(feature = "unstable")]
+            WordSegmenterInner::Neo {
+                ref mut complex, ..
+            } => complex,
+        };
+        complex.with_southeast_asian_lstms(provider)?;
+        complex.with_japanese_dictionary(provider)?;
+        Ok(())
+    }
+
+    #[cfg(feature = "auto")]
+    #[cfg(feature = "serde")]
+    fn load_auto_with_buffer_provider(
+        &mut self,
+        provider: &(impl BufferProvider + ?Sized),
+    ) -> Result<(), DataError> {
+        self.load_auto_unstable(&provider.as_deserializing())
+    }
+
     /// Constructs a borrowed version of this type for more efficient querying.
     ///
     /// Most useful methods for segmentation are on this type.
@@ -1086,6 +1080,22 @@ impl WordSegmenterBorrowed<'static> {
             } => complex,
         };
         complex.with_southeast_asian_dictionaries();
+        complex.with_japanese_dictionary();
+    }
+
+    #[cfg(feature = "auto")]
+    #[cfg(feature = "compiled_data")]
+    fn load_auto(&mut self) {
+        let complex = match self.0 {
+            WordSegmenterBorrowedInner::Legacy {
+                ref mut complex, ..
+            } => complex,
+            #[cfg(feature = "unstable")]
+            WordSegmenterBorrowedInner::Neo {
+                ref mut complex, ..
+            } => complex,
+        };
+        complex.with_southeast_asian_lstms();
         complex.with_japanese_dictionary();
     }
 
