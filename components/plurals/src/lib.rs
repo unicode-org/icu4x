@@ -956,7 +956,7 @@ impl<T> PluralElements<T> {
     /// # Examples
     ///
     /// ```
-    /// use icu_plurals::PluralElements;
+    /// use icu::plurals::PluralElements;
     ///
     /// let mut only_other = PluralElements::new("abc").with_one_value(Some("abc"));
     /// assert_eq!(only_other.try_into_other(), Some("abc"));
@@ -995,7 +995,7 @@ impl<T> PluralElements<T> {
     /// # Examples
     ///
     /// ```
-    /// use icu_plurals::PluralElements;
+    /// use icu::plurals::PluralElements;
     ///
     /// let x = PluralElements::new(11).with_one_value(Some(15));
     /// let y = x.map(|i| i * 2);
@@ -1041,7 +1041,7 @@ impl<T> PluralElements<T> {
     /// # Examples
     ///
     /// ```
-    /// use icu_plurals::PluralElements;
+    /// use icu::plurals::PluralElements;
     ///
     /// let mut x = PluralElements::new(11).with_one_value(Some(15));
     /// x.for_each_mut(|i| *i *= 2);
