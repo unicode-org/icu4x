@@ -65,7 +65,7 @@ impl MeasureUnit {
     /// # Examples
     ///
     /// ```
-    /// use icu_experimental::measure::measureunit::MeasureUnit;
+    /// use icu::experimental::measure::measureunit::MeasureUnit;
     ///
     /// let measure_unit = MeasureUnit::try_from_str("meter").unwrap();
     /// let short_representation = measure_unit.generate_short_representation();

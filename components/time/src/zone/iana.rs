@@ -177,8 +177,8 @@ impl<'a> IanaParserBorrowed<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu_time::zone::iana::IanaParser;
-    /// use icu_time::TimeZone;
+    /// use icu::time::zone::iana::IanaParser;
+    /// use icu::time::TimeZone;
     ///
     /// let parser = IanaParser::new();
     ///
@@ -421,8 +421,8 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu_time::zone::iana::IanaParserExtended;
-    /// use icu_time::TimeZone;
+    /// use icu::time::zone::iana::IanaParserExtended;
+    /// use icu::time::TimeZone;
     ///
     /// let parser = IanaParserExtended::new();
     ///
