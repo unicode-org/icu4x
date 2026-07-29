@@ -250,13 +250,7 @@ pub(crate) fn format_impl<'a>(
     // Early fallback for mixed date-time formatter with date difference.
     // UTS 35: If date differs in a mixed skeleton, fall back to range fallback (Case 4).
     if is_mixed && diff.is_date_diff() {
-        return FormattedDateRange(format_fallback(
-            core,
-            range_selection,
-            start,
-            end,
-            names,
-        ));
+        return FormattedDateRange(format_fallback(core, range_selection, start, end, names));
     }
 
     // 2. Select pattern and format
@@ -295,9 +289,7 @@ pub(crate) fn format_impl<'a>(
                 // Case 2: Time-only or Date-only range.
                 let use_time = diff.is_time_diff();
                 format_greatest_difference(core, range_selection, start, end, names, diff, use_time)
-                    .unwrap_or_else(|| {
-                        format_fallback(core, range_selection, start, end, names)
-                    })
+                    .unwrap_or_else(|| format_fallback(core, range_selection, start, end, names))
             }
         }
     };

@@ -88,13 +88,9 @@ where
             + AllAnyCalendarFormattingDataMarkers<FSet>
             + AllAnyCalendarRangePatternDataMarkers<FSet>,
     {
-        let field_set_with_options_clone = field_set_with_options.clone();
-        let datetime_formatter = DateTimeFormatter::try_new_internal(
-            provider,
-            external_loader,
-            prefs,
-            field_set_with_options_clone.get_field(),
-        )?;
+        let field = field_set_with_options.get_field();
+        let datetime_formatter =
+            DateTimeFormatter::try_new_internal(provider, external_loader, prefs, field)?;
 
         let range_selection = DateTimeZoneRangePatternSelectionData::try_new_with_skeleton(
             &FormattableAnyCalendarNamesLoader::<<FSet::D as DateDataMarkers>::RangeSkel, _>::new(
@@ -104,7 +100,7 @@ where
             &<FSet::T as TimeMarkers>::TimeRangeSkeletonPatternsV1::bind(provider),
             &DatetimePatternsRangeGlueV1::bind(provider),
             prefs,
-            field_set_with_options.get_field(),
+            field,
         )
         .map_err(DateTimeFormatterLoadError::Data)?;
 
@@ -280,12 +276,12 @@ where
             + AllFixedCalendarFormattingDataMarkers<C, FSet>
             + AllFixedCalendarRangePatternDataMarkers<C, FSet>,
     {
-        let field_set_with_options_clone = field_set_with_options.clone();
+        let field = field_set_with_options.get_field();
         let datetime_formatter = FixedCalendarDateTimeFormatter::try_new_internal(
             provider,
             external_loader,
             prefs,
-            field_set_with_options_clone.get_field(),
+            field,
         )?;
 
         let range_selection = DateTimeZoneRangePatternSelectionData::try_new_with_skeleton(
@@ -293,7 +289,7 @@ where
             &<FSet::T as TimeMarkers>::TimeRangeSkeletonPatternsV1::bind(provider),
             &DatetimePatternsRangeGlueV1::bind(provider),
             prefs,
-            field_set_with_options.get_field(),
+            field,
         )
         .map_err(DateTimeFormatterLoadError::Data)?;
 
