@@ -110,9 +110,7 @@ where
         })
     }
 
-    /// Constructor taking a data provider.
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(
         provider: &P,
         prefs: DateTimeFormatterPreferences,
@@ -155,11 +153,7 @@ where
     }
 
     #[cfg(feature = "serde")]
-    /// Constructor taking a buffer provider.
-    ///
-    /// ✨ *Enabled with the `serde` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::try_new)]
     pub fn try_new_with_buffer_provider<P>(
         provider: &P,
         prefs: DateTimeFormatterPreferences,
@@ -299,9 +293,7 @@ where
         })
     }
 
-    /// Constructor taking a data provider.
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(
         provider: &P,
         prefs: DateTimeFormatterPreferences,
@@ -344,11 +336,7 @@ where
     }
 
     #[cfg(feature = "serde")]
-    /// Constructor taking a buffer provider.
-    ///
-    /// ✨ *Enabled with the `serde` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::try_new)]
     pub fn try_new_with_buffer_provider<P>(
         provider: &P,
         prefs: DateTimeFormatterPreferences,
