@@ -20,10 +20,10 @@ classDiagram
     class LanguageIdentifierDisplayNameOwned~M~ {
         -lid: LanguageIdentifier
         -options: LanguageIdentifierDisplayNameOptions
-        +try_new(prefs, options, lid) Self  // Medium
-        +try_new_short(prefs, options, lid) Self
-        +try_new_long(prefs, options, lid) Self
-        +try_new_menu(prefs, options, lid) Self // Only for M = Menu
+        +try_new_light(prefs, options, lid) Self  // Medium
+        +try_new_short_light(prefs, options, lid) Self
+        +try_new_long_light(prefs, options, lid) Self
+        +try_new_menu_light(prefs, options, lid) Self // Only for M = Menu
         +as_borrowed(&self) LanguageIdentifierDisplayName
     }
     class LanguageIdentifierDisplayName {
@@ -34,8 +34,8 @@ classDiagram
 
     class RegionDisplayNameOwned {
         -payload: DataPayload~ErasedDisplayNameMarker~
-        +try_new(prefs, subtag) Self // Medium
-        +try_new_short(prefs, subtag) Self
+        +try_new_light(prefs, subtag) Self // Medium
+        +try_new_short_light(prefs, subtag) Self
         +as_borrowed(&self) RegionDisplayName
     }
     class RegionDisplayName {
@@ -46,8 +46,8 @@ classDiagram
 
     class ScriptDisplayNameOwned {
         -payload: DataPayload~ErasedDisplayNameMarker~
-        +try_new(prefs, subtag) Self // Medium
-        +try_new_short(prefs, subtag) Self
+        +try_new_light(prefs, subtag) Self // Medium
+        +try_new_short_light(prefs, subtag) Self
         +as_borrowed(&self) ScriptDisplayName
     }
     class ScriptDisplayName {
@@ -58,7 +58,7 @@ classDiagram
 
     class VariantDisplayNameOwned {
         -payload: DataPayload~ErasedDisplayNameMarker~
-        +try_new(prefs, subtag) Self // Medium
+        +try_new_heavy(prefs, subtag) Self // Medium
         +as_borrowed(&self) VariantDisplayName
     }
     class VariantDisplayName {
@@ -85,18 +85,18 @@ To reflect this, each formatter provides explicit constructors for each supporte
 All owned constructors take their target subtag or `LanguageIdentifier` **by value** because the owned struct needs to store the identifier for fallback purposes, and copying/moving these identifiers is highly efficient in ICU4X (using `TinyStr` under the hood).
 
 *   **`LanguageIdentifierDisplayName` / `LanguageIdentifierDisplayNameOwned<M>`**: Formats a full `LanguageIdentifier` (language, script, region, and variants) into a localized string. It is generic over the display model (Standard/Dialect vs. Menu).
-    *   `LanguageIdentifierDisplayNameOwned::try_new(prefs, options, lid)`: Constructor for **Medium** width (Standard/Dialect).
-    *   `LanguageIdentifierDisplayNameOwned::try_new_short(prefs, options, lid)`: Constructor for **Short** width (Standard/Dialect).
-    *   `LanguageIdentifierDisplayNameOwned::try_new_long(prefs, options, lid)`: Constructor for **Long** width (Standard/Dialect).
-    *   `LanguageIdentifierDisplayNameOwned::try_new_menu(prefs, options, lid)`: Constructor for **Menu** style (Medium width).
+    *   `LanguageIdentifierDisplayNameOwned::try_new_light(prefs, options, lid)`: Constructor for **Medium** width (Standard/Dialect).
+    *   `LanguageIdentifierDisplayNameOwned::try_new_short_light(prefs, options, lid)`: Constructor for **Short** width (Standard/Dialect).
+    *   `LanguageIdentifierDisplayNameOwned::try_new_long_light(prefs, options, lid)`: Constructor for **Long** width (Standard/Dialect).
+    *   `LanguageIdentifierDisplayNameOwned::try_new_menu_light(prefs, options, lid)`: Constructor for **Menu** style (Medium width).
 *   **`RegionDisplayName` / `RegionDisplayNameOwned`**: Formats a single `Region` subtag (e.g., `US` -> "United States").
-    *   `RegionDisplayNameOwned::try_new(prefs, subtag)`: Constructor for **Medium** width.
-    *   `RegionDisplayNameOwned::try_new_short(prefs, subtag)`: Constructor for **Short** width.
+    *   `RegionDisplayNameOwned::try_new_light(prefs, subtag)`: Constructor for **Medium** width.
+    *   `RegionDisplayNameOwned::try_new_short_light(prefs, subtag)`: Constructor for **Short** width.
 *   **`ScriptDisplayName` / `ScriptDisplayNameOwned`**: Formats a single `Script` subtag (e.g., `Latn` -> "Latin").
-    *   `ScriptDisplayNameOwned::try_new(prefs, subtag)`: Constructor for **Medium** width.
-    *   `ScriptDisplayNameOwned::try_new_short(prefs, subtag)`: Constructor for **Short** width.
+    *   `ScriptDisplayNameOwned::try_new_light(prefs, subtag)`: Constructor for **Medium** width.
+    *   `ScriptDisplayNameOwned::try_new_short_light(prefs, subtag)`: Constructor for **Short** width.
 *   **`VariantDisplayName` / `VariantDisplayNameOwned`**: Formats a single `Variant` subtag (e.g., `valencia` -> "Valencian").
-    *   `VariantDisplayNameOwned::try_new(prefs, subtag)`: Constructor for **Medium** width.
+    *   `VariantDisplayNameOwned::try_new_heavy(prefs, subtag)`: Constructor for **Medium** width.
 
 ---
 
@@ -237,7 +237,7 @@ The following features defined in UTS #35 are currently not supported and are pl
     Owned types like `ScriptDisplayNameOwned`, `RegionDisplayNameOwned`, `VariantDisplayNameOwned`, and `LanguageIdentifierDisplayNameOwned` implement `Writeable` (by forwarding to their borrowed counterparts via `.as_borrowed()`).
     *   *Resolution*: We decided to keep implementing `Writeable` directly on owned types for convenience, as there is no harm in having multiple `Writeable` implementations.
 2.  **Constructor Argument Order**:
-    In `LanguageIdentifierDisplayNameOwned::try_new(prefs, locale_id, options)`, we have placed `options` last.
+    In `LanguageIdentifierDisplayNameOwned::try_new_light(prefs, locale_id, options)`, we have placed `options` last.
     *   *Resolution*: This aligns with the standard ICU4X API style, as `options` behaves like a trailing optional bag.
 3.  **Dialect Names Data Marker**:
     Should dialect names (currently loaded using the same `LocaleNamesLanguageMediumV1` marker but with language+script+region attributes) be moved to a separate data marker to avoid overloading the language name marker and to allow applications to opt-out of dialect data to save binary size?

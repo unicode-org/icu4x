@@ -25,8 +25,8 @@ fn make_locale(prefs: DisplayNamesPreferences) -> DataLocale {
 }
 
 macro_rules! table_row {
-    (try_new_extended) => {
-        "| [`try_new_extended`](Self::try_new_extended) | \"IPA Phonetics\" | \"Computer\" |"
+    (try_new_heavy) => {
+        "| [`try_new_heavy`](Self::try_new_heavy) | \"IPA Phonetics\" | \"Computer\" |"
     };
 }
 
@@ -39,7 +39,7 @@ macro_rules! table_row {
 ///
 /// | Constructor | `fonipa` | `posix` |
 /// | :--- | :--- | :--- |
-#[doc = concat!(table_row!(try_new_extended), "\n")]
+#[doc = concat!(table_row!(try_new_heavy), "\n")]
 ///
 /// # Example
 ///
@@ -48,7 +48,7 @@ macro_rules! table_row {
 /// use icu::locale::{locale, subtags::variant};
 /// use writeable::assert_writeable_eq;
 ///
-/// let display_name = VariantDisplayNameOwned::try_new_extended(locale!("en").into(), variant!("fonipa"))
+/// let display_name = VariantDisplayNameOwned::try_new_heavy(locale!("en").into(), variant!("fonipa"))
 ///     .expect("Data should load successfully");
 ///
 /// assert_writeable_eq!(display_name, "IPA Phonetics");
@@ -70,21 +70,21 @@ impl VariantDisplayNameOwned {
         /// use icu::locale::{locale, subtags::variant};
         /// use writeable::assert_writeable_eq;
         ///
-        /// let display_name = VariantDisplayNameOwned::try_new_extended(locale!("en").into(), variant!("fonipa"))
+        /// let display_name = VariantDisplayNameOwned::try_new_heavy(locale!("en").into(), variant!("fonipa"))
         ///     .expect("Data should load successfully");
         ///
         /// assert_writeable_eq!(display_name, "IPA Phonetics");
         /// ```
         functions: [
-            try_new_extended,
-            try_new_extended_with_buffer_provider,
-            try_new_extended_unstable,
+            try_new_heavy,
+            try_new_heavy_with_buffer_provider,
+            try_new_heavy_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_extended)]
-    pub fn try_new_extended_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_heavy)]
+    pub fn try_new_heavy_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         variant: Variant,
@@ -141,6 +141,6 @@ mod tests {
             };
         }
 
-        check_row!(try_new_extended);
+        check_row!(try_new_heavy);
     }
 }

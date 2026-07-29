@@ -28,17 +28,17 @@ fn make_locale(prefs: DisplayNamesPreferences) -> DataLocale {
 }
 
 macro_rules! table_row {
-    (try_new_minimal) => {
-        "| [`try_new_minimal`](Self::try_new_minimal) | \"United States\" | ❌ |"
+    (try_new_tiny) => {
+        "| [`try_new_tiny`](Self::try_new_tiny) | \"United States\" | ❌ |"
     };
-    (try_new_minimal_short) => {
-        "| [`try_new_minimal_short`](Self::try_new_minimal_short) | \"US\" | ❌ |"
+    (try_new_short_tiny) => {
+        "| [`try_new_short_tiny`](Self::try_new_short_tiny) | \"US\" | ❌ |"
     };
-    (try_new) => {
-        "| [`try_new`](Self::try_new) | \"United States\" | \"Andorra\" |"
+    (try_new_light) => {
+        "| [`try_new_light`](Self::try_new_light) | \"United States\" | \"Andorra\" |"
     };
-    (try_new_short) => {
-        "| [`try_new_short`](Self::try_new_short) | \"US\" | \"Andorra\" |"
+    (try_new_short_light) => {
+        "| [`try_new_short_light`](Self::try_new_short_light) | \"US\" | \"Andorra\" |"
     };
 }
 
@@ -51,10 +51,10 @@ macro_rules! table_row {
 ///
 /// | Constructor | `US` | `AD` |
 /// | :--- | :--- | :--- |
-#[doc = concat!(table_row!(try_new_minimal), "\n")]
-#[doc = concat!(table_row!(try_new_minimal_short), "\n")]
-#[doc = concat!(table_row!(try_new), "\n")]
-#[doc = concat!(table_row!(try_new_short), "\n")]
+#[doc = concat!(table_row!(try_new_tiny), "\n")]
+#[doc = concat!(table_row!(try_new_short_tiny), "\n")]
+#[doc = concat!(table_row!(try_new_light), "\n")]
+#[doc = concat!(table_row!(try_new_short_light), "\n")]
 ///
 /// > Note: :x: means that the constructor returns an error.
 ///
@@ -65,7 +65,7 @@ macro_rules! table_row {
 /// use icu::locale::{locale, subtags::region};
 /// use writeable::assert_writeable_eq;
 ///
-/// let display_name = RegionDisplayNameOwned::try_new(locale!("en").into(), region!("US"))
+/// let display_name = RegionDisplayNameOwned::try_new_light(locale!("en").into(), region!("US"))
 ///     .expect("Data should load successfully");
 ///
 /// assert_writeable_eq!(display_name, "United States");
@@ -80,15 +80,15 @@ impl RegionDisplayNameOwned {
         (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
         /// Loads the region display name for a given region and locale using compiled data.
         functions: [
-            try_new,
-            try_new_with_buffer_provider,
-            try_new_unstable,
+            try_new_light,
+            try_new_light_with_buffer_provider,
+            try_new_light_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_light)]
+    pub fn try_new_light_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         region: Region,
@@ -123,21 +123,21 @@ impl RegionDisplayNameOwned {
         /// use icu::locale::{locale, subtags::region};
         /// use writeable::assert_writeable_eq;
         ///
-        /// let display_name = RegionDisplayNameOwned::try_new_minimal(locale!("en").into(), region!("US"))
+        /// let display_name = RegionDisplayNameOwned::try_new_tiny(locale!("en").into(), region!("US"))
         ///     .expect("Data should load successfully");
         ///
         /// assert_writeable_eq!(display_name, "United States");
         /// ```
         functions: [
-            try_new_minimal,
-            try_new_minimal_with_buffer_provider,
-            try_new_minimal_unstable,
+            try_new_tiny,
+            try_new_tiny_with_buffer_provider,
+            try_new_tiny_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_minimal)]
-    pub fn try_new_minimal_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_tiny)]
+    pub fn try_new_tiny_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         region: Region,
@@ -161,15 +161,15 @@ impl RegionDisplayNameOwned {
         ///
         /// Falls back to default (medium) length if a short name is not available.
         functions: [
-            try_new_minimal_short,
-            try_new_minimal_short_with_buffer_provider,
-            try_new_minimal_short_unstable,
+            try_new_short_tiny,
+            try_new_short_tiny_with_buffer_provider,
+            try_new_short_tiny_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_minimal_short)]
-    pub fn try_new_minimal_short_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_short_tiny)]
+    pub fn try_new_short_tiny_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         region: Region,
@@ -208,25 +208,25 @@ impl RegionDisplayNameOwned {
         /// let prefs: DisplayNamesPreferences = locale!("en-US").into();
         ///
         /// // "US" has a short display name in en-US
-        /// let display_name_short = RegionDisplayNameOwned::try_new_short(prefs, region!("US"))
+        /// let display_name_short = RegionDisplayNameOwned::try_new_short_light(prefs, region!("US"))
         ///     .expect("Data should load successfully");
         /// assert_writeable_eq!(display_name_short, "US");
         ///
         /// // "AD" does not have a short display name, so it falls back to the long display name
-        /// let display_name_long = RegionDisplayNameOwned::try_new_short(prefs, region!("AD"))
+        /// let display_name_long = RegionDisplayNameOwned::try_new_short_light(prefs, region!("AD"))
         ///     .expect("Data should load successfully");
         /// assert_writeable_eq!(display_name_long, "Andorra");
         /// ```
         functions: [
-            try_new_short,
-            try_new_short_with_buffer_provider,
-            try_new_short_unstable,
+            try_new_short_light,
+            try_new_short_light_with_buffer_provider,
+            try_new_short_light_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_short)]
-    pub fn try_new_short_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_short_light)]
+    pub fn try_new_short_light_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         region: Region,
@@ -298,9 +298,9 @@ mod tests {
             };
         }
 
-        check_row!(try_new_minimal);
-        check_row!(try_new_minimal_short);
-        check_row!(try_new);
-        check_row!(try_new_short);
+        check_row!(try_new_tiny);
+        check_row!(try_new_short_tiny);
+        check_row!(try_new_light);
+        check_row!(try_new_short_light);
     }
 }

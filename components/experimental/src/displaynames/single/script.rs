@@ -28,17 +28,17 @@ fn make_locale(prefs: DisplayNamesPreferences) -> DataLocale {
 }
 
 macro_rules! table_row {
-    (try_new_minimal) => {
-        "| [`try_new_minimal`](Self::try_new_minimal) | \"Latin\" | ❌ | ❌ |"
+    (try_new_tiny) => {
+        "| [`try_new_tiny`](Self::try_new_tiny) | \"Latin\" | ❌ | ❌ |"
     };
-    (try_new) => {
-        "| [`try_new`](Self::try_new) | \"Latin\" | \"Unknown Script\" | ❌ |"
+    (try_new_light) => {
+        "| [`try_new_light`](Self::try_new_light) | \"Latin\" | \"Unknown Script\" | ❌ |"
     };
-    (try_new_extended) => {
-        "| [`try_new_extended`](Self::try_new_extended) | \"Latin\" | \"Unknown Script\" | \"Sumero-Akkadian Cuneiform\" |"
+    (try_new_heavy) => {
+        "| [`try_new_heavy`](Self::try_new_heavy) | \"Latin\" | \"Unknown Script\" | \"Sumero-Akkadian Cuneiform\" |"
     };
-    (try_new_extended_short) => {
-        "| [`try_new_extended_short`](Self::try_new_extended_short) | \"Latin\" | \"Unknown Script\" | \"S-A Cuneiform\" |"
+    (try_new_short_heavy) => {
+        "| [`try_new_short_heavy`](Self::try_new_short_heavy) | \"Latin\" | \"Unknown Script\" | \"S-A Cuneiform\" |"
     };
 }
 
@@ -51,10 +51,10 @@ macro_rules! table_row {
 ///
 /// | Constructor | `Latn` | `Zzzz` | `Xsux` |
 /// | :--- | :--- | :--- | :--- |
-#[doc = concat!(table_row!(try_new_minimal), "\n")]
-#[doc = concat!(table_row!(try_new), "\n")]
-#[doc = concat!(table_row!(try_new_extended), "\n")]
-#[doc = concat!(table_row!(try_new_extended_short), "\n")]
+#[doc = concat!(table_row!(try_new_tiny), "\n")]
+#[doc = concat!(table_row!(try_new_light), "\n")]
+#[doc = concat!(table_row!(try_new_heavy), "\n")]
+#[doc = concat!(table_row!(try_new_short_heavy), "\n")]
 ///
 /// > Note: :x: means that the constructor returns an error.
 ///
@@ -65,7 +65,7 @@ macro_rules! table_row {
 /// use icu::locale::{locale, subtags::script};
 /// use writeable::assert_writeable_eq;
 ///
-/// let display_name = ScriptDisplayNameOwned::try_new(locale!("en").into(), script!("Latn"))
+/// let display_name = ScriptDisplayNameOwned::try_new_light(locale!("en").into(), script!("Latn"))
 ///     .expect("Data should load successfully");
 ///
 /// assert_writeable_eq!(display_name, "Latin");
@@ -80,15 +80,15 @@ impl ScriptDisplayNameOwned {
         (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
         /// Loads the script display name for a given script and locale using compiled data.
         functions: [
-            try_new,
-            try_new_with_buffer_provider,
-            try_new_unstable,
+            try_new_light,
+            try_new_light_with_buffer_provider,
+            try_new_light_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_light)]
+    pub fn try_new_light_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         script: Script,
@@ -124,19 +124,19 @@ impl ScriptDisplayNameOwned {
         /// use writeable::assert_writeable_eq;
         ///
         /// // Minimal script names contain Latn for en
-        /// let display_name = ScriptDisplayNameOwned::try_new_minimal(locale!("en").into(), script!("Latn")).unwrap();
+        /// let display_name = ScriptDisplayNameOwned::try_new_tiny(locale!("en").into(), script!("Latn")).unwrap();
         /// assert_writeable_eq!(display_name, "Latin");
         /// ```
         functions: [
-            try_new_minimal,
-            try_new_minimal_with_buffer_provider,
-            try_new_minimal_unstable,
+            try_new_tiny,
+            try_new_tiny_with_buffer_provider,
+            try_new_tiny_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_minimal)]
-    pub fn try_new_minimal_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_tiny)]
+    pub fn try_new_tiny_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         script: Script,
@@ -164,21 +164,21 @@ impl ScriptDisplayNameOwned {
         /// use icu::locale::{locale, subtags::script};
         /// use writeable::assert_writeable_eq;
         ///
-        /// let display_name = ScriptDisplayNameOwned::try_new_extended(locale!("en").into(), script!("Latn"))
+        /// let display_name = ScriptDisplayNameOwned::try_new_heavy(locale!("en").into(), script!("Latn"))
         ///     .expect("Data should load successfully");
         ///
         /// assert_writeable_eq!(display_name, "Latin");
         /// ```
         functions: [
-            try_new_extended,
-            try_new_extended_with_buffer_provider,
-            try_new_extended_unstable,
+            try_new_heavy,
+            try_new_heavy_with_buffer_provider,
+            try_new_heavy_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_extended)]
-    pub fn try_new_extended_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_heavy)]
+    pub fn try_new_heavy_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         script: Script,
@@ -220,21 +220,21 @@ impl ScriptDisplayNameOwned {
         /// use icu::locale::{locale, subtags::script};
         /// use writeable::assert_writeable_eq;
         ///
-        /// let display_name = ScriptDisplayNameOwned::try_new_extended_short(locale!("en").into(), script!("Xsux"))
+        /// let display_name = ScriptDisplayNameOwned::try_new_short_heavy(locale!("en").into(), script!("Xsux"))
         ///     .expect("Data should load successfully");
         ///
         /// assert_writeable_eq!(display_name, "S-A Cuneiform");
         /// ```
         functions: [
-            try_new_extended_short,
-            try_new_extended_short_with_buffer_provider,
-            try_new_extended_short_unstable,
+            try_new_short_heavy,
+            try_new_short_heavy_with_buffer_provider,
+            try_new_short_heavy_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_extended_short)]
-    pub fn try_new_extended_short_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_short_heavy)]
+    pub fn try_new_short_heavy_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         script: Script,
@@ -306,9 +306,9 @@ mod tests {
             };
         }
 
-        check_row!(try_new_minimal);
-        check_row!(try_new);
-        check_row!(try_new_extended);
-        check_row!(try_new_extended_short);
+        check_row!(try_new_tiny);
+        check_row!(try_new_light);
+        check_row!(try_new_heavy);
+        check_row!(try_new_short_heavy);
     }
 }

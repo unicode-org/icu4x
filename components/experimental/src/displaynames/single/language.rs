@@ -56,38 +56,38 @@ size_test!(
 );
 
 macro_rules! table_row {
-    (try_new_minimal) => {
-        "| [`try_new_minimal`](Self::try_new_minimal) | \"English (United States)\" | ❌ | ❌ |"
+    (try_new_tiny) => {
+        "| [`try_new_tiny`](Self::try_new_tiny) | \"English (United States)\" | ❌ | ❌ |"
     };
-    (try_new) => {
-        "| [`try_new`](Self::try_new) | \"American English\" | \"Chinese\" | ❌ |"
+    (try_new_light) => {
+        "| [`try_new_light`](Self::try_new_light) | \"American English\" | \"Chinese\" | ❌ |"
     };
-    (try_new_short) => {
-        "| [`try_new_short`](Self::try_new_short) | \"US English\" | \"Chinese\" | ❌ |"
+    (try_new_short_light) => {
+        "| [`try_new_short_light`](Self::try_new_short_light) | \"US English\" | \"Chinese\" | ❌ |"
     };
-    (try_new_long) => {
-        "| [`try_new_long`](Self::try_new_long) | \"American English\" | \"Mandarin Chinese\" | ❌ |"
+    (try_new_long_light) => {
+        "| [`try_new_long_light`](Self::try_new_long_light) | \"American English\" | \"Mandarin Chinese\" | ❌ |"
     };
-    (try_new_menu) => {
-        "| [`try_new_menu`](Self::try_new_menu) | \"English (United States)\" | \"Chinese, Mandarin\" | ❌ |"
+    (try_new_menu_light) => {
+        "| [`try_new_menu_light`](Self::try_new_menu_light) | \"English (United States)\" | \"Chinese, Mandarin\" | ❌ |"
     };
-    (try_new_short_menu) => {
-        "| [`try_new_short_menu`](Self::try_new_short_menu) | \"English (US)\" | \"Chinese, Mandarin\" | ❌ |"
+    (try_new_short_menu_light) => {
+        "| [`try_new_short_menu_light`](Self::try_new_short_menu_light) | \"English (US)\" | \"Chinese, Mandarin\" | ❌ |"
     };
-    (try_new_extended) => {
-        "| [`try_new_extended`](Self::try_new_extended) | \"American English\" | \"Chinese\" | \"Azerbaijani\" |"
+    (try_new_heavy) => {
+        "| [`try_new_heavy`](Self::try_new_heavy) | \"American English\" | \"Chinese\" | \"Azerbaijani\" |"
     };
-    (try_new_extended_short) => {
-        "| [`try_new_extended_short`](Self::try_new_extended_short) | \"US English\" | \"Chinese\" | \"Azeri\" |"
+    (try_new_short_heavy) => {
+        "| [`try_new_short_heavy`](Self::try_new_short_heavy) | \"US English\" | \"Chinese\" | \"Azeri\" |"
     };
-    (try_new_extended_long) => {
-        "| [`try_new_extended_long`](Self::try_new_extended_long) | \"American English\" | \"Mandarin Chinese\" | \"Azerbaijani\" |"
+    (try_new_long_heavy) => {
+        "| [`try_new_long_heavy`](Self::try_new_long_heavy) | \"American English\" | \"Mandarin Chinese\" | \"Azerbaijani\" |"
     };
-    (try_new_extended_menu) => {
-        "| [`try_new_extended_menu`](Self::try_new_extended_menu) | \"English (United States)\" | \"Chinese, Mandarin\" | \"Azerbaijani\" |"
+    (try_new_menu_heavy) => {
+        "| [`try_new_menu_heavy`](Self::try_new_menu_heavy) | \"English (United States)\" | \"Chinese, Mandarin\" | \"Azerbaijani\" |"
     };
-    (try_new_extended_short_menu) => {
-        "| [`try_new_extended_short_menu`](Self::try_new_extended_short_menu) | \"English (US)\" | \"Chinese, Mandarin\" | \"Azeri\" |"
+    (try_new_short_menu_heavy) => {
+        "| [`try_new_short_menu_heavy`](Self::try_new_short_menu_heavy) | \"English (US)\" | \"Chinese, Mandarin\" | \"Azeri\" |"
     };
 }
 
@@ -103,17 +103,17 @@ macro_rules! table_row {
 ///
 /// | Constructor | `en-US` | `zh` | `az` |
 /// | :--- | :--- | :--- | :--- |
-#[doc = concat!(table_row!(try_new_minimal), "\n")]
-#[doc = concat!(table_row!(try_new), "\n")]
-#[doc = concat!(table_row!(try_new_short), "\n")]
-#[doc = concat!(table_row!(try_new_long), "\n")]
-#[doc = concat!(table_row!(try_new_menu), "\n")]
-#[doc = concat!(table_row!(try_new_short_menu), "\n")]
-#[doc = concat!(table_row!(try_new_extended), "\n")]
-#[doc = concat!(table_row!(try_new_extended_short), "\n")]
-#[doc = concat!(table_row!(try_new_extended_long), "\n")]
-#[doc = concat!(table_row!(try_new_extended_menu), "\n")]
-#[doc = concat!(table_row!(try_new_extended_short_menu), "\n")]
+#[doc = concat!(table_row!(try_new_tiny), "\n")]
+#[doc = concat!(table_row!(try_new_light), "\n")]
+#[doc = concat!(table_row!(try_new_short_light), "\n")]
+#[doc = concat!(table_row!(try_new_long_light), "\n")]
+#[doc = concat!(table_row!(try_new_menu_light), "\n")]
+#[doc = concat!(table_row!(try_new_short_menu_light), "\n")]
+#[doc = concat!(table_row!(try_new_heavy), "\n")]
+#[doc = concat!(table_row!(try_new_short_heavy), "\n")]
+#[doc = concat!(table_row!(try_new_long_heavy), "\n")]
+#[doc = concat!(table_row!(try_new_menu_heavy), "\n")]
+#[doc = concat!(table_row!(try_new_short_menu_heavy), "\n")]
 ///
 /// > Note: :x: means that the name includes a BCP-47 subtag fallback.
 ///
@@ -128,7 +128,7 @@ macro_rules! table_row {
 ///
 /// let prefs = DisplayNamesPreferences::from(locale!("en"));
 /// let options = LanguageIdentifierDisplayNameOptions::default();
-/// let display_name = LanguageIdentifierDisplayNameOwned::try_new(
+/// let display_name = LanguageIdentifierDisplayNameOwned::try_new_light(
 ///     prefs,
 ///     langid!("fr-CA"),
 ///     options,
@@ -154,7 +154,7 @@ macro_rules! table_row {
 /// // "it-Qabc-150" has known language "it" ("Italian") and known region "150" ("Europe"),
 /// // but unknown script "Qabc".
 /// let lang_id = langid!("it-Qabc-150");
-/// let display_name = LanguageIdentifierDisplayNameOwned::try_new(
+/// let display_name = LanguageIdentifierDisplayNameOwned::try_new_light(
 ///     prefs,
 ///     lang_id,
 ///     options,
@@ -310,15 +310,15 @@ impl LanguageIdentifierDisplayNameOwned {
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the language display name for a given language identifier and locale using compiled data.
         functions: [
-            try_new,
-            try_new_with_buffer_provider,
-            try_new_unstable,
+            try_new_light,
+            try_new_light_with_buffer_provider,
+            try_new_light_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_light)]
+    pub fn try_new_light_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         mut subject: LanguageIdentifier,
@@ -370,7 +370,7 @@ impl LanguageIdentifierDisplayNameOwned {
             None => DataPayloadOr::from_other(subject.language),
         };
 
-        let qualifiers = QualifiersOwned::try_new_unstable(provider, prefs, subject)?;
+        let qualifiers = QualifiersOwned::try_new_light_unstable(provider, prefs, subject)?;
         Ok(Self {
             language_payload,
             qualifiers,
@@ -393,7 +393,7 @@ impl LanguageIdentifierDisplayNameOwned {
         /// use writeable::assert_try_writeable_eq;
         ///
         /// // French contains its own translation in French...
-        /// let fr_fr = LanguageIdentifierDisplayNameOwned::try_new_minimal(
+        /// let fr_fr = LanguageIdentifierDisplayNameOwned::try_new_tiny(
         ///     locale!("fr").into(),
         ///     langid!("fr"),
         ///     Default::default()
@@ -405,7 +405,7 @@ impl LanguageIdentifierDisplayNameOwned {
         /// );
         ///
         /// // ...but not a translation for German.
-        /// let fr_de = LanguageIdentifierDisplayNameOwned::try_new_minimal(
+        /// let fr_de = LanguageIdentifierDisplayNameOwned::try_new_tiny(
         ///     locale!("fr").into(),
         ///     langid!("de"),
         ///     Default::default()
@@ -418,15 +418,15 @@ impl LanguageIdentifierDisplayNameOwned {
         /// );
         /// ```
         functions: [
-            try_new_minimal,
-            try_new_minimal_with_buffer_provider,
-            try_new_minimal_unstable,
+            try_new_tiny,
+            try_new_tiny_with_buffer_provider,
+            try_new_tiny_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_minimal)]
-    pub fn try_new_minimal_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_tiny)]
+    pub fn try_new_tiny_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         mut subject: LanguageIdentifier,
@@ -467,7 +467,7 @@ impl LanguageIdentifierDisplayNameOwned {
         };
 
         // Load the remaining data
-        let qualifiers = QualifiersOwned::try_new_minimal_unstable(provider, prefs, subject)?;
+        let qualifiers = QualifiersOwned::try_new_tiny_unstable(provider, prefs, subject)?;
         Ok(Self {
             language_payload,
             qualifiers,
@@ -493,7 +493,7 @@ impl LanguageIdentifierDisplayNameOwned {
         /// let options = LanguageIdentifierDisplayNameOptions::default();
         ///
         /// // Default (Medium) length format:
-        /// let display_name_medium = LanguageIdentifierDisplayNameOwned::try_new(
+        /// let display_name_medium = LanguageIdentifierDisplayNameOwned::try_new_light(
         ///     prefs,
         ///     langid!("en-US"),
         ///     options,
@@ -506,7 +506,7 @@ impl LanguageIdentifierDisplayNameOwned {
         /// );
         ///
         /// // Short length format uses shorter subtag/qualifier names when available:
-        /// let display_name_short = LanguageIdentifierDisplayNameOwned::try_new_short(
+        /// let display_name_short = LanguageIdentifierDisplayNameOwned::try_new_short_light(
         ///     prefs,
         ///     langid!("en-US"),
         ///     options,
@@ -519,15 +519,15 @@ impl LanguageIdentifierDisplayNameOwned {
         /// );
         /// ```
         functions: [
-            try_new_short,
-            try_new_short_with_buffer_provider,
-            try_new_short_unstable,
+            try_new_short_light,
+            try_new_short_light_with_buffer_provider,
+            try_new_short_light_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_short)]
-    pub fn try_new_short_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_short_light)]
+    pub fn try_new_short_light_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         mut subject: LanguageIdentifier,
@@ -591,7 +591,7 @@ impl LanguageIdentifierDisplayNameOwned {
             None => DataPayloadOr::from_other(subject.language),
         };
 
-        let qualifiers = QualifiersOwned::try_new_short_unstable(provider, prefs, subject)?;
+        let qualifiers = QualifiersOwned::try_new_short_light_unstable(provider, prefs, subject)?;
         Ok(Self {
             language_payload,
             qualifiers,
@@ -617,7 +617,7 @@ impl LanguageIdentifierDisplayNameOwned {
         /// let options = LanguageIdentifierDisplayNameOptions::default();
         ///
         /// // Default (Medium) length format:
-        /// let display_name_medium = LanguageIdentifierDisplayNameOwned::try_new(
+        /// let display_name_medium = LanguageIdentifierDisplayNameOwned::try_new_light(
         ///     prefs,
         ///     langid!("zh"),
         ///     options,
@@ -630,7 +630,7 @@ impl LanguageIdentifierDisplayNameOwned {
         /// );
         ///
         /// // Long length format uses longer subtag names when available:
-        /// let display_name_long = LanguageIdentifierDisplayNameOwned::try_new_extended_long(
+        /// let display_name_long = LanguageIdentifierDisplayNameOwned::try_new_long_heavy(
         ///     prefs,
         ///     langid!("zh"),
         ///     options,
@@ -643,15 +643,15 @@ impl LanguageIdentifierDisplayNameOwned {
         /// );
         /// ```
         functions: [
-            try_new_long,
-            try_new_long_with_buffer_provider,
-            try_new_long_unstable,
+            try_new_long_light,
+            try_new_long_light_with_buffer_provider,
+            try_new_long_light_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_long)]
-    pub fn try_new_long_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_long_light)]
+    pub fn try_new_long_light_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         mut subject: LanguageIdentifier,
@@ -713,7 +713,7 @@ impl LanguageIdentifierDisplayNameOwned {
             None => DataPayloadOr::from_other(subject.language),
         };
 
-        let qualifiers = QualifiersOwned::try_new_unstable(provider, prefs, subject)?;
+        let qualifiers = QualifiersOwned::try_new_light_unstable(provider, prefs, subject)?;
         Ok(Self {
             language_payload,
             qualifiers,
@@ -735,7 +735,7 @@ impl LanguageIdentifierDisplayNameOwned {
         ///
         /// let prefs = DisplayNamesPreferences::from(locale!("en"));
         /// let options = LanguageIdentifierDisplayNameOptions::default();
-        /// let display_name = LanguageIdentifierDisplayNameOwned::try_new_menu(
+        /// let display_name = LanguageIdentifierDisplayNameOwned::try_new_menu_light(
         ///     prefs,
         ///     langid!("fr-CA"),
         ///     options,
@@ -745,15 +745,15 @@ impl LanguageIdentifierDisplayNameOwned {
         /// assert_try_writeable_eq!(display_name.as_borrowed(), "French (Canada)", Ok(()));
         /// ```
         functions: [
-            try_new_menu,
-            try_new_menu_with_buffer_provider,
-            try_new_menu_unstable,
+            try_new_menu_light,
+            try_new_menu_light_with_buffer_provider,
+            try_new_menu_light_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_menu)]
-    pub fn try_new_menu_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_menu_light)]
+    pub fn try_new_menu_light_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         subject: LanguageIdentifier,
@@ -800,7 +800,7 @@ impl LanguageIdentifierDisplayNameOwned {
             None => DataPayloadOr::from_other(subject.language),
         };
 
-        let qualifiers = QualifiersOwned::try_new_unstable(provider, prefs, subject)?;
+        let qualifiers = QualifiersOwned::try_new_light_unstable(provider, prefs, subject)?;
         Ok(Self {
             language_payload,
             qualifiers,
@@ -824,7 +824,7 @@ impl LanguageIdentifierDisplayNameOwned {
         ///
         /// let prefs = DisplayNamesPreferences::from(locale!("en"));
         /// let options = LanguageIdentifierDisplayNameOptions::default();
-        /// let display_name = LanguageIdentifierDisplayNameOwned::try_new_short_menu(
+        /// let display_name = LanguageIdentifierDisplayNameOwned::try_new_short_menu_light(
         ///     prefs,
         ///     langid!("en-US"),
         ///     options,
@@ -834,15 +834,15 @@ impl LanguageIdentifierDisplayNameOwned {
         /// assert_try_writeable_eq!(display_name.as_borrowed(), "English (US)", Ok(()));
         /// ```
         functions: [
-            try_new_short_menu,
-            try_new_short_menu_with_buffer_provider,
-            try_new_short_menu_unstable,
+            try_new_short_menu_light,
+            try_new_short_menu_light_with_buffer_provider,
+            try_new_short_menu_light_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_short_menu)]
-    pub fn try_new_short_menu_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_short_menu_light)]
+    pub fn try_new_short_menu_light_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         subject: LanguageIdentifier,
@@ -900,7 +900,7 @@ impl LanguageIdentifierDisplayNameOwned {
             None => DataPayloadOr::from_other(subject.language),
         };
 
-        let qualifiers = QualifiersOwned::try_new_short_unstable(provider, prefs, subject)?;
+        let qualifiers = QualifiersOwned::try_new_short_light_unstable(provider, prefs, subject)?;
         Ok(Self {
             language_payload,
             qualifiers,
@@ -913,15 +913,15 @@ impl LanguageIdentifierDisplayNameOwned {
         ///
         /// The `extended` constructor includes additional data coverage for subtags that are less commonly formatted in the target locale.
         functions: [
-            try_new_extended,
-            try_new_extended_with_buffer_provider,
-            try_new_extended_unstable,
+            try_new_heavy,
+            try_new_heavy_with_buffer_provider,
+            try_new_heavy_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_extended)]
-    pub fn try_new_extended_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_heavy)]
+    pub fn try_new_heavy_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         mut subject: LanguageIdentifier,
@@ -987,7 +987,7 @@ impl LanguageIdentifierDisplayNameOwned {
         };
 
         // Load the remaining data
-        let qualifiers = QualifiersOwned::try_new_extended_unstable(provider, prefs, subject)?;
+        let qualifiers = QualifiersOwned::try_new_heavy_unstable(provider, prefs, subject)?;
         Ok(Self {
             language_payload,
             qualifiers,
@@ -1002,15 +1002,15 @@ impl LanguageIdentifierDisplayNameOwned {
         ///
         /// Falls back to default (medium) length if a short name is not available.
         functions: [
-            try_new_extended_short,
-            try_new_extended_short_with_buffer_provider,
-            try_new_extended_short_unstable,
+            try_new_short_heavy,
+            try_new_short_heavy_with_buffer_provider,
+            try_new_short_heavy_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_extended_short)]
-    pub fn try_new_extended_short_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_short_heavy)]
+    pub fn try_new_short_heavy_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         mut subject: LanguageIdentifier,
@@ -1099,8 +1099,7 @@ impl LanguageIdentifierDisplayNameOwned {
         };
 
         // Load the remaining data
-        let qualifiers =
-            QualifiersOwned::try_new_extended_short_unstable(provider, prefs, subject)?;
+        let qualifiers = QualifiersOwned::try_new_short_heavy_unstable(provider, prefs, subject)?;
         Ok(Self {
             language_payload,
             qualifiers,
@@ -1115,15 +1114,15 @@ impl LanguageIdentifierDisplayNameOwned {
         ///
         /// Falls back to default (medium) length if a long name is not available.
         functions: [
-            try_new_extended_long,
-            try_new_extended_long_with_buffer_provider,
-            try_new_extended_long_unstable,
+            try_new_long_heavy,
+            try_new_long_heavy_with_buffer_provider,
+            try_new_long_heavy_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_extended_long)]
-    pub fn try_new_extended_long_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_long_heavy)]
+    pub fn try_new_long_heavy_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         mut subject: LanguageIdentifier,
@@ -1206,7 +1205,7 @@ impl LanguageIdentifierDisplayNameOwned {
             None => DataPayloadOr::from_other(subject.language),
         };
 
-        let qualifiers = QualifiersOwned::try_new_extended_unstable(provider, prefs, subject)?;
+        let qualifiers = QualifiersOwned::try_new_heavy_unstable(provider, prefs, subject)?;
         Ok(Self {
             language_payload,
             qualifiers,
@@ -1230,7 +1229,7 @@ impl LanguageIdentifierDisplayNameOwned {
         ///
         /// let prefs = DisplayNamesPreferences::from(locale!("en"));
         /// let options = LanguageIdentifierDisplayNameOptions::default();
-        /// let display_name = LanguageIdentifierDisplayNameOwned::try_new_extended_menu(
+        /// let display_name = LanguageIdentifierDisplayNameOwned::try_new_menu_heavy(
         ///     prefs,
         ///     langid!("en-US"),
         ///     options,
@@ -1240,15 +1239,15 @@ impl LanguageIdentifierDisplayNameOwned {
         /// assert_try_writeable_eq!(display_name.as_borrowed(), "English (United States)", Ok(()));
         /// ```
         functions: [
-            try_new_extended_menu,
-            try_new_extended_menu_with_buffer_provider,
-            try_new_extended_menu_unstable,
+            try_new_menu_heavy,
+            try_new_menu_heavy_with_buffer_provider,
+            try_new_menu_heavy_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_extended_menu)]
-    pub fn try_new_extended_menu_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_menu_heavy)]
+    pub fn try_new_menu_heavy_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         subject: LanguageIdentifier,
@@ -1313,7 +1312,7 @@ impl LanguageIdentifierDisplayNameOwned {
             None => DataPayloadOr::from_other(subject.language),
         };
 
-        let qualifiers = QualifiersOwned::try_new_extended_unstable(provider, prefs, subject)?;
+        let qualifiers = QualifiersOwned::try_new_heavy_unstable(provider, prefs, subject)?;
         Ok(Self {
             language_payload,
             qualifiers,
@@ -1339,7 +1338,7 @@ impl LanguageIdentifierDisplayNameOwned {
         ///
         /// let prefs = DisplayNamesPreferences::from(locale!("en"));
         /// let options = LanguageIdentifierDisplayNameOptions::default();
-        /// let display_name = LanguageIdentifierDisplayNameOwned::try_new_extended_short_menu(
+        /// let display_name = LanguageIdentifierDisplayNameOwned::try_new_short_menu_heavy(
         ///     prefs,
         ///     langid!("en-US"),
         ///     options,
@@ -1349,15 +1348,15 @@ impl LanguageIdentifierDisplayNameOwned {
         /// assert_try_writeable_eq!(display_name.as_borrowed(), "English (US)", Ok(()));
         /// ```
         functions: [
-            try_new_extended_short_menu,
-            try_new_extended_short_menu_with_buffer_provider,
-            try_new_extended_short_menu_unstable,
+            try_new_short_menu_heavy,
+            try_new_short_menu_heavy_with_buffer_provider,
+            try_new_short_menu_heavy_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_extended_short_menu)]
-    pub fn try_new_extended_short_menu_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_short_menu_heavy)]
+    pub fn try_new_short_menu_heavy_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         subject: LanguageIdentifier,
@@ -1443,8 +1442,7 @@ impl LanguageIdentifierDisplayNameOwned {
             None => DataPayloadOr::from_other(subject.language),
         };
 
-        let qualifiers =
-            QualifiersOwned::try_new_extended_short_unstable(provider, prefs, subject)?;
+        let qualifiers = QualifiersOwned::try_new_short_heavy_unstable(provider, prefs, subject)?;
         Ok(Self {
             language_payload,
             qualifiers,
@@ -1541,7 +1539,7 @@ impl QualifiersOwned {
         })
     }
 
-    fn try_new_unstable<D>(
+    fn try_new_light_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         subject: LanguageIdentifier,
@@ -1559,13 +1557,13 @@ impl QualifiersOwned {
             provider,
             prefs,
             subject,
-            ScriptDisplayNameOwned::try_new_unstable,
-            RegionDisplayNameOwned::try_new_unstable,
-            VariantDisplayNameOwned::try_new_extended_unstable,
+            ScriptDisplayNameOwned::try_new_light_unstable,
+            RegionDisplayNameOwned::try_new_light_unstable,
+            VariantDisplayNameOwned::try_new_heavy_unstable,
         )
     }
 
-    fn try_new_minimal_unstable<D>(
+    fn try_new_tiny_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         subject: LanguageIdentifier,
@@ -1581,13 +1579,13 @@ impl QualifiersOwned {
             provider,
             prefs,
             subject,
-            ScriptDisplayNameOwned::try_new_minimal_unstable,
-            RegionDisplayNameOwned::try_new_minimal_unstable,
-            VariantDisplayNameOwned::try_new_extended_unstable,
+            ScriptDisplayNameOwned::try_new_tiny_unstable,
+            RegionDisplayNameOwned::try_new_tiny_unstable,
+            VariantDisplayNameOwned::try_new_heavy_unstable,
         )
     }
 
-    fn try_new_short_unstable<D>(
+    fn try_new_short_light_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         subject: LanguageIdentifier,
@@ -1607,13 +1605,13 @@ impl QualifiersOwned {
             provider,
             prefs,
             subject,
-            ScriptDisplayNameOwned::try_new_unstable,
-            RegionDisplayNameOwned::try_new_short_unstable,
-            VariantDisplayNameOwned::try_new_extended_unstable,
+            ScriptDisplayNameOwned::try_new_light_unstable,
+            RegionDisplayNameOwned::try_new_short_light_unstable,
+            VariantDisplayNameOwned::try_new_heavy_unstable,
         )
     }
 
-    fn try_new_extended_unstable<D>(
+    fn try_new_heavy_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         subject: LanguageIdentifier,
@@ -1632,13 +1630,13 @@ impl QualifiersOwned {
             provider,
             prefs,
             subject,
-            ScriptDisplayNameOwned::try_new_extended_unstable,
-            RegionDisplayNameOwned::try_new_unstable,
-            VariantDisplayNameOwned::try_new_extended_unstable,
+            ScriptDisplayNameOwned::try_new_heavy_unstable,
+            RegionDisplayNameOwned::try_new_light_unstable,
+            VariantDisplayNameOwned::try_new_heavy_unstable,
         )
     }
 
-    fn try_new_extended_short_unstable<D>(
+    fn try_new_short_heavy_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         subject: LanguageIdentifier,
@@ -1660,9 +1658,9 @@ impl QualifiersOwned {
             provider,
             prefs,
             subject,
-            ScriptDisplayNameOwned::try_new_extended_short_unstable,
-            RegionDisplayNameOwned::try_new_short_unstable,
-            VariantDisplayNameOwned::try_new_extended_unstable,
+            ScriptDisplayNameOwned::try_new_short_heavy_unstable,
+            RegionDisplayNameOwned::try_new_short_light_unstable,
+            VariantDisplayNameOwned::try_new_heavy_unstable,
         )
     }
 }
@@ -1968,16 +1966,16 @@ mod tests {
             };
         }
 
-        check_row!(try_new_minimal);
-        check_row!(try_new);
-        check_row!(try_new_short);
-        check_row!(try_new_long);
-        check_row!(try_new_menu);
-        check_row!(try_new_short_menu);
-        check_row!(try_new_extended);
-        check_row!(try_new_extended_short);
-        check_row!(try_new_extended_long);
-        check_row!(try_new_extended_menu);
-        check_row!(try_new_extended_short_menu);
+        check_row!(try_new_tiny);
+        check_row!(try_new_light);
+        check_row!(try_new_short_light);
+        check_row!(try_new_long_light);
+        check_row!(try_new_menu_light);
+        check_row!(try_new_short_menu_light);
+        check_row!(try_new_heavy);
+        check_row!(try_new_short_heavy);
+        check_row!(try_new_long_heavy);
+        check_row!(try_new_menu_heavy);
+        check_row!(try_new_short_menu_heavy);
     }
 }
