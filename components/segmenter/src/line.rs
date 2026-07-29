@@ -692,6 +692,11 @@ impl LineSegmenter {
     pub const fn new_neo_for_non_complex_scripts(
         options: LineBreakOptions,
     ) -> LineSegmenterBorrowed<'static> {
+        const _: () = assert!(
+            Baked::SEGMENTER_BREAK_LINE_V2_CHECKSUM
+                == Baked::SEGMENTER_BREAK_LINE_OVERRIDE_V2_CHECKSUM
+        );
+
         let options = options.resolve();
         LineSegmenterBorrowed(LineSegmenterBorrowedInner::Neo {
             data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V2,
@@ -760,6 +765,8 @@ impl LineSegmenter {
 
         let options = options.resolve();
 
+        let data = provider.load(Default::default())?;
+
         let lb = match options.strictness {
             LineBreakStrictness::Loose => Some(LineBreakStyle::Loose.as_str()),
             LineBreakStrictness::Normal => Some(LineBreakStyle::Normal.as_str()),
@@ -784,7 +791,7 @@ impl LineSegmenter {
             LineBreakWordOption::Normal => None,
         };
 
-        let tailoring = DataIdentifierBorrowed::for_marker_attributes_and_locale(
+        let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
             DataMarkerAttributes::from_str_or_panic(lb.or(lw).unwrap_or_default()),
             if options.ja_zh {
                 &const {
@@ -797,7 +804,7 @@ impl LineSegmenter {
             },
         );
 
-        let tailoring = Some(tailoring)
+        let tailoring = Some(id)
             .filter(|&id| id == DataIdentifierBorrowed::default())
             .map(|id| {
                 provider.load(DataRequest {
@@ -805,13 +812,26 @@ impl LineSegmenter {
                     metadata: Default::default(),
                 })
             })
-            .transpose()?
-            .map(|d| d.payload);
+            .transpose()?;
+
+        if let Some(ref tailoring) = tailoring
+            && data.metadata.checksum != tailoring.metadata.checksum
+        {
+            return Err(
+                DataErrorKind::InconsistentData(SegmenterBreakLineV2::INFO).with_req(
+                    SegmenterBreakLineOverrideV2::INFO,
+                    DataRequest {
+                        id,
+                        metadata: Default::default(),
+                    },
+                ),
+            );
+        }
 
         Ok(Self(LineSegmenterInner::Neo {
-            data: provider.load(Default::default())?.payload,
+            data: data.payload,
             complex: ComplexPayloads::try_new_neo(provider)?,
-            tailoring,
+            tailoring: tailoring.map(|d| d.payload),
         }))
     }
 

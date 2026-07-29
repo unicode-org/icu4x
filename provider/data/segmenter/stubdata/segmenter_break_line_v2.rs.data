@@ -32,12 +32,14 @@ macro_rules! __impl_segmenter_break_line_v2 {
                 pseudo_symbol_shift: 69u8,
                 pseudo_symbol_map: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\x02\0\x04\0\x0E\0\x18\0\x1C\0\x1D\0\x1E\0!\0\"\0#\0$\0%\0'\0(\0)\x000\x000\x000\x000\x001\x002\x005\x006\x007\08\09\0:\0\x0E\x03\x0E\x03\x0E\x04\x0E\x04\x0E\x01\x0E\x01\x0E\x05\x0E\x05\x02\x03\x02\x03\x02\x04\x02\x04\x02\x01\x02\x01\x02\x05\x02\x05") },
             };
+            #[doc(hidden)]
+            pub const SEGMENTER_BREAK_LINE_V2_CHECKSUM: u64 = 13466080001078558292u64;
         }
         #[clippy::msrv = "1.88"]
         impl icu_provider::DataProvider<icu::segmenter::provider::SegmenterBreakLineV2> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::segmenter::provider::SegmenterBreakLineV2>, icu_provider::DataError> {
                 if req.id.locale.is_unknown() {
-                    Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_SEGMENTER_BREAK_LINE_V2), metadata: icu_provider::DataResponseMetadata::default() })
+                    Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_SEGMENTER_BREAK_LINE_V2), metadata: icu_provider::DataResponseMetadata::default().with_checksum(Self::SEGMENTER_BREAK_LINE_V2_CHECKSUM) })
                 } else {
                     Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::segmenter::provider::SegmenterBreakLineV2 as icu_provider::DataMarker>::INFO, req))
                 }
@@ -59,7 +61,7 @@ macro_rules! __impl_segmenter_break_line_v2 {
         impl icu_provider::DryDataProvider<icu::segmenter::provider::SegmenterBreakLineV2> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 if req.id.locale.is_unknown() {
-                    Ok(icu_provider::DataResponseMetadata::default())
+                    Ok(icu_provider::DataResponseMetadata::default().with_checksum(Self::SEGMENTER_BREAK_LINE_V2_CHECKSUM))
                 } else {
                     Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::segmenter::provider::SegmenterBreakLineV2 as icu_provider::DataMarker>::INFO, req))
                 }
@@ -72,7 +74,7 @@ macro_rules! __impl_segmenter_break_line_v2 {
         impl icu_provider::DryDataProvider<icu::segmenter::provider::SegmenterBreakLineV2> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 if req.id.locale.is_unknown() {
-                    Ok(icu_provider::DataResponseMetadata::default())
+                    Ok(icu_provider::DataResponseMetadata::default().with_checksum(Self::SEGMENTER_BREAK_LINE_V2_CHECKSUM))
                 } else {
                     Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::segmenter::provider::SegmenterBreakLineV2 as icu_provider::DataMarker>::INFO, req))
                 }
