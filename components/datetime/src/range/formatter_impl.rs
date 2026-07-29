@@ -16,7 +16,7 @@ use crate::raw::neo::{
     DateTimeZoneRangePatternSelectionData,
 };
 
-/// An internal struct containing the fields of RangeFormatter types,
+/// An internal struct containing the fields of `RangeFormatter` types,
 /// splitting up the inner `DateTimeFormatter` fields as well.
 ///
 /// This allows shared range formatting infrastructure to work over both
