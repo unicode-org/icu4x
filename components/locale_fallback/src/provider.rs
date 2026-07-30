@@ -33,9 +33,9 @@ const _: () = {
     pub mod icu {
         pub mod locale {
             pub use crate as fallback;
-            pub use crate::provider;
         }
     }
+    pub use crate as icu_locale_fallback;
     make_provider!(Baked);
     impl_locale_likely_subtags_language_v1!(Baked);
     impl_locale_parents_v1!(Baked);
