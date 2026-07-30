@@ -6,7 +6,6 @@ use crate::LocaleExpander;
 use crate::provider::*;
 use icu_locale_core::LanguageIdentifier;
 use icu_locale_core::subtags::Script;
-use icu_locale_fallback::provider::LocaleLikelySubtagsLanguageV1;
 use icu_provider::prelude::*;
 
 /// Represents the direction of a script.
