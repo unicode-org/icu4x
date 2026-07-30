@@ -1499,11 +1499,9 @@ pub(crate) fn apply_precision(value: FixedDecimal, fraction_info: FractionInfo) 
         Rounding::R1 => (-precision, RoundingIncrement::MultiplesOf1),
     };
 
-    let mut value = value.rounded_with_mode_and_increment(
+    value.rounded_with_mode_and_increment(
         magnitude,
         SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfExpand),
         increment,
-    );
-    value.pad_end(-precision);
-    value
+    )
 }
