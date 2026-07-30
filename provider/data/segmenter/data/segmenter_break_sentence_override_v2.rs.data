@@ -22,6 +22,8 @@ macro_rules! __impl_segmenter_break_sentence_override_v2 {
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
         #[clippy::msrv = "1.88"]
         impl $provider {
+            #[doc(hidden)]
+            pub const SEGMENTER_BREAK_SENTENCE_OVERRIDE_V2_CHECKSUM: u64 = 16448288255245299208u64;
             const DATA_SEGMENTER_BREAK_SENTENCE_OVERRIDE_V2: icu_provider::baked::zerotrie::Data<icu::segmenter::provider::SegmenterBreakSentenceOverrideV2> = {
                 const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"el\x80" };
                 const VALUES: &'static [<icu::segmenter::provider::SegmenterBreakSentenceOverrideV2 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct] = &[icu::segmenter::provider::SegmenterStateMachineOverride { pseudo_symbol_map: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\n\0") } }];
@@ -31,7 +33,7 @@ macro_rules! __impl_segmenter_break_sentence_override_v2 {
         #[clippy::msrv = "1.88"]
         impl icu_provider::DataProvider<icu::segmenter::provider::SegmenterBreakSentenceOverrideV2> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::segmenter::provider::SegmenterBreakSentenceOverrideV2>, icu_provider::DataError> {
-                let mut metadata = icu_provider::DataResponseMetadata::default();
+                let mut metadata = icu_provider::DataResponseMetadata::default().with_checksum(Self::SEGMENTER_BREAK_SENTENCE_OVERRIDE_V2_CHECKSUM);
                 let payload = if let Some(payload) = icu_provider::baked::DataStore::get(&Self::DATA_SEGMENTER_BREAK_SENTENCE_OVERRIDE_V2, req.id, req.metadata.attributes_prefix_match) {
                     payload
                 } else {

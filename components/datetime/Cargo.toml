@@ -124,6 +124,10 @@ name = "datetime"
 required-features = ["unstable", "compiled_data", "serde"]
 
 [[test]]
+name = "range"
+required-features = ["compiled_data", "unstable"]
+
+[[test]]
 name = "resolved_components"
 required-features = ["unstable", "compiled_data"]
 
