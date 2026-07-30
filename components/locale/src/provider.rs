@@ -15,11 +15,6 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-#[doc(inline)]
-pub use icu_locale_fallback::provider::{
-    LikelySubtagsForLanguage, LocaleLikelySubtagsLanguageV1, LocaleParentsV1, Parents,
-};
-
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
