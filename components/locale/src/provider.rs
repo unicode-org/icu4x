@@ -290,7 +290,7 @@ icu_provider::data_struct!(
 /// language.
 ///
 /// This struct contains mappings when the input does not contain a language subtag.
-/// Also see [`LikelySubtagsForLanguage`].
+/// Also see [`LikelySubtagsForLanguage`](icu_locale_fallback::provider::LikelySubtagsForLanguage).
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
