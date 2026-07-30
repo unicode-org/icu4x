@@ -45,9 +45,6 @@ const _: () = {
     use icu_datetime_data::*;
     pub mod icu {
         pub use crate as datetime;
-        pub mod locale {
-            pub use icu_locale_fallback as fallback;
-        }
     }
     make_provider!(Baked);
 

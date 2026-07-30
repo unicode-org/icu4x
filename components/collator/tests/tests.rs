@@ -18,9 +18,6 @@ const _: () = {
     pub mod icu {
         pub use crate as collator;
         pub use icu_collections as collections;
-        pub mod locale {
-            pub use icu_locale_fallback as fallback;
-        }
         pub use icu_normalizer as normalizer;
     }
     make_provider!(TestingProvider);

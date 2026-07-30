@@ -38,9 +38,6 @@ const _: () = {
     use icu_list_data::*;
     pub mod icu {
         pub use crate as list;
-        pub mod locale {
-            pub use icu_locale_fallback as fallback;
-        }
     }
     make_provider!(Baked);
     impl_list_and_v1!(Baked);
