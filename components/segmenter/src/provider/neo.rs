@@ -110,6 +110,8 @@ icu_provider::data_marker!(
     "segmenter/break/line/v2",
     SegmenterStateMachine<'static>,
     is_singleton = true,
+    #[cfg(feature = "datagen")]
+    has_checksum = true,
 );
 
 icu_provider::data_marker!(
@@ -118,6 +120,8 @@ icu_provider::data_marker!(
     "segmenter/break/word/v2",
     SegmenterStateMachine<'static>,
     is_singleton = true,
+    #[cfg(feature = "datagen")]
+    has_checksum = true,
 );
 
 icu_provider::data_marker!(
@@ -126,6 +130,8 @@ icu_provider::data_marker!(
     "segmenter/break/grapheme/cluster/v2",
     SegmenterStateMachine<'static>,
     is_singleton = true,
+    #[cfg(feature = "datagen")]
+    has_checksum = true,
 );
 
 icu_provider::data_marker!(
@@ -134,6 +140,8 @@ icu_provider::data_marker!(
     "segmenter/break/sentence/v2",
     SegmenterStateMachine<'static>,
     is_singleton = true,
+    #[cfg(feature = "datagen")]
+    has_checksum = true,
 );
 
 icu_provider::data_marker!(
@@ -143,6 +151,7 @@ icu_provider::data_marker!(
     SegmenterStateMachineOverride<'static>,
     #[cfg(feature = "datagen")]
     expose_baked_consts = true,
+    has_checksum = true,
 );
 
 icu_provider::data_marker!(
@@ -150,4 +159,6 @@ icu_provider::data_marker!(
     SegmenterBreakSentenceOverrideV2,
     "segmenter/break/sentence/override/v2",
     SegmenterStateMachineOverride<'static>,
+    #[cfg(feature = "datagen")]
+    has_checksum = true,
 );
