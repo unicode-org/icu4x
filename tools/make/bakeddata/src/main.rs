@@ -28,7 +28,7 @@ const COMPONENTS: &[(&str, &[DataMarkerInfo], &str)] = &[
     ("locale", icu::locale::provider::MARKERS, REPO_VERSION),
     (
         "locale_fallback",
-        icu_locale_fallback::provider::MARKERS,
+        icu::locale::fallback::provider::MARKERS,
         REPO_VERSION,
     ),
     (

@@ -10,7 +10,7 @@ checksum = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
 
 [[package]]
 name = "calendrical_calculations"
-version = "0.2.4"
+version = "0.2.2"
 dependencies = [
  "core_maths",
  "displaydoc",
@@ -44,7 +44,7 @@ checksum = "48c757948c5ede0e46177b7add2e67155f70e33c07fea8284df6576da70b3719"
 
 [[package]]
 name = "fixed_decimal"
-version = "0.7.2"
+version = "0.7.0"
 dependencies = [
  "displaydoc",
  "smallvec",
@@ -53,7 +53,7 @@ dependencies = [
 
 [[package]]
 name = "icu"
-version = "2.2.0"
+version = "2.0.0"
 dependencies = [
  "icu_calendar",
  "icu_casemap",
@@ -75,13 +75,13 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "2.2.1"
+version = "2.0.4"
 dependencies = [
  "calendrical_calculations",
  "displaydoc",
  "icu_calendar_data",
+ "icu_locale",
  "icu_locale_core",
- "icu_locale_fallback",
  "icu_provider",
  "ixdtf",
  "serde",
@@ -91,11 +91,11 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar_data"
-version = "2.2.0"
+version = "2.0.0"
 
 [[package]]
 name = "icu_casemap"
-version = "2.2.0"
+version = "2.0.0"
 dependencies = [
  "icu_casemap_data",
  "icu_collections",
@@ -109,16 +109,16 @@ dependencies = [
 
 [[package]]
 name = "icu_casemap_data"
-version = "2.2.0"
+version = "2.0.0"
 
 [[package]]
 name = "icu_collator"
-version = "2.2.0"
+version = "2.1.0-dev"
 dependencies = [
  "icu_collator_data",
  "icu_collections",
+ "icu_locale",
  "icu_locale_core",
- "icu_locale_fallback",
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
@@ -130,16 +130,15 @@ dependencies = [
 
 [[package]]
 name = "icu_collator_data"
-version = "2.2.0"
+version = "2.1.0-dev"
 
 [[package]]
 name = "icu_collections"
-version = "2.2.0"
+version = "2.0.0"
 dependencies = [
  "displaydoc",
  "potential_utf",
  "serde",
- "utf8_iter",
  "yoke",
  "zerofrom",
  "zerovec",
@@ -147,15 +146,15 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime"
-version = "2.2.0"
+version = "2.0.0"
 dependencies = [
  "displaydoc",
  "fixed_decimal",
  "icu_calendar",
  "icu_datetime_data",
  "icu_decimal",
+ "icu_locale",
  "icu_locale_core",
- "icu_locale_fallback",
  "icu_pattern",
  "icu_plurals",
  "icu_provider",
@@ -168,19 +167,16 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime_data"
-version = "2.2.0"
+version = "2.0.2"
 
 [[package]]
 name = "icu_decimal"
-version = "2.2.0"
+version = "2.0.0"
 dependencies = [
- "displaydoc",
  "fixed_decimal",
  "icu_decimal_data",
+ "icu_locale",
  "icu_locale_core",
- "icu_locale_fallback",
- "icu_pattern",
- "icu_plurals",
  "icu_provider",
  "serde",
  "writeable",
@@ -189,11 +185,11 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal_data"
-version = "2.2.0"
+version = "2.0.0"
 
 [[package]]
 name = "icu_experimental"
-version = "0.6.0-dev"
+version = "0.4.0-dev.1"
 dependencies = [
  "displaydoc",
  "either",
@@ -205,7 +201,6 @@ dependencies = [
  "icu_list",
  "icu_locale",
  "icu_locale_core",
- "icu_locale_fallback",
  "icu_normalizer",
  "icu_pattern",
  "icu_plurals",
@@ -225,14 +220,14 @@ dependencies = [
 
 [[package]]
 name = "icu_experimental_data"
-version = "0.6.0-dev"
+version = "0.3.0"
 
 [[package]]
 name = "icu_list"
-version = "2.2.0"
+version = "2.0.0"
 dependencies = [
  "icu_list_data",
- "icu_locale_fallback",
+ "icu_locale",
  "icu_provider",
  "regex-automata",
  "serde",
@@ -242,24 +237,24 @@ dependencies = [
 
 [[package]]
 name = "icu_list_data"
-version = "2.2.0"
+version = "2.0.0"
 
 [[package]]
 name = "icu_locale"
-version = "2.2.0"
+version = "2.0.0"
 dependencies = [
  "icu_collections",
  "icu_locale_core",
  "icu_locale_data",
- "icu_locale_fallback",
  "icu_provider",
+ "potential_utf",
  "tinystr",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_locale_core"
-version = "2.2.0"
+version = "2.0.0"
 dependencies = [
  "displaydoc",
  "litemap",
@@ -271,27 +266,11 @@ dependencies = [
 
 [[package]]
 name = "icu_locale_data"
-version = "2.2.0"
-
-[[package]]
-name = "icu_locale_fallback"
-version = "2.2.0"
-dependencies = [
- "icu_locale_core",
- "icu_locale_fallback_data",
- "icu_provider",
- "potential_utf",
- "tinystr",
- "zerovec",
-]
-
-[[package]]
-name = "icu_locale_fallback_data"
-version = "2.2.0"
+version = "2.0.0"
 
 [[package]]
 name = "icu_normalizer"
-version = "2.2.0"
+version = "2.0.0"
 dependencies = [
  "icu_collections",
  "icu_normalizer_data",
@@ -306,11 +285,11 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer_data"
-version = "2.2.0"
+version = "2.0.0"
 
 [[package]]
 name = "icu_pattern"
-version = "0.4.2"
+version = "0.4.0"
 dependencies = [
  "displaydoc",
  "either",
@@ -322,10 +301,10 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals"
-version = "2.2.0"
+version = "2.0.0"
 dependencies = [
  "fixed_decimal",
- "icu_locale_fallback",
+ "icu_locale",
  "icu_plurals_data",
  "icu_provider",
  "zerovec",
@@ -333,13 +312,12 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals_data"
-version = "2.2.0"
+version = "2.0.0"
 
 [[package]]
 name = "icu_properties"
-version = "2.2.0"
+version = "2.0.1"
 dependencies = [
- "displaydoc",
  "icu_collections",
  "icu_locale_core",
  "icu_properties_data",
@@ -351,11 +329,11 @@ dependencies = [
 
 [[package]]
 name = "icu_properties_data"
-version = "2.2.0"
+version = "2.0.1"
 
 [[package]]
 name = "icu_provider"
-version = "2.2.0"
+version = "2.0.0"
 dependencies = [
  "displaydoc",
  "icu_locale_core",
@@ -370,26 +348,25 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter"
-version = "2.2.0"
+version = "2.0.0"
 dependencies = [
  "core_maths",
  "icu_collections",
- "icu_locale_fallback",
+ "icu_locale",
  "icu_provider",
  "icu_segmenter_data",
  "potential_utf",
- "smallvec",
  "utf8_iter",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_segmenter_data"
-version = "2.2.0"
+version = "2.0.0"
 
 [[package]]
 name = "icu_time"
-version = "2.2.0"
+version = "2.0.0"
 dependencies = [
  "calendrical_calculations",
  "displaydoc",
@@ -405,11 +382,11 @@ dependencies = [
 
 [[package]]
 name = "icu_time_data"
-version = "2.2.0"
+version = "2.0.2"
 
 [[package]]
 name = "ixdtf"
-version = "0.6.5"
+version = "0.6.3"
 
 [[package]]
 name = "libm"
@@ -419,7 +396,7 @@ checksum = "f9fbbcab51052fe104eb5e5d351cf728d30a5be1fe14d9be8a3b097481fb97de"
 
 [[package]]
 name = "litemap"
-version = "0.8.2"
+version = "0.8.0"
 
 [[package]]
 name = "num-bigint"
@@ -462,7 +439,7 @@ dependencies = [
 
 [[package]]
 name = "potential_utf"
-version = "0.1.5"
+version = "0.1.3"
 dependencies = [
  "serde_core",
  "writeable",
@@ -559,7 +536,7 @@ dependencies = [
 
 [[package]]
 name = "tinystr"
-version = "0.8.3"
+version = "0.8.1"
 dependencies = [
  "displaydoc",
  "serde_core",
@@ -599,14 +576,14 @@ checksum = "d1890f4022759daae28ed4fe62859b1236caebfc61ede2f63ed4e695f3f6d936"
 
 [[package]]
 name = "writeable"
-version = "0.6.3"
+version = "0.6.1"
 dependencies = [
  "either",
 ]
 
 [[package]]
 name = "yoke"
-version = "0.8.3"
+version = "0.8.0"
 dependencies = [
  "stable_deref_trait",
  "yoke-derive",
@@ -615,7 +592,7 @@ dependencies = [
 
 [[package]]
 name = "yoke-derive"
-version = "0.8.2"
+version = "0.8.0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -625,14 +602,14 @@ dependencies = [
 
 [[package]]
 name = "zerofrom"
-version = "0.1.8"
+version = "0.1.6"
 dependencies = [
  "zerofrom-derive",
 ]
 
 [[package]]
 name = "zerofrom-derive"
-version = "0.1.7"
+version = "0.1.6"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -642,17 +619,16 @@ dependencies = [
 
 [[package]]
 name = "zerotrie"
-version = "0.2.4"
+version = "0.2.2"
 dependencies = [
  "displaydoc",
  "yoke",
  "zerofrom",
- "zerovec",
 ]
 
 [[package]]
 name = "zerovec"
-version = "0.11.6"
+version = "0.11.4"
 dependencies = [
  "serde",
  "yoke",
@@ -662,7 +638,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.11.3"
+version = "0.11.1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -671,23 +647,23 @@ dependencies = [
 
 [[patch.unused]]
 name = "bies"
-version = "0.3.0"
+version = "0.2.4"
 
 [[patch.unused]]
 name = "crlify"
-version = "1.0.5"
+version = "1.0.4"
 
 [[patch.unused]]
 name = "databake"
-version = "0.2.1"
+version = "0.2.0"
 
 [[patch.unused]]
 name = "databake-derive"
-version = "0.2.1"
+version = "0.2.0"
 
 [[patch.unused]]
 name = "icu4x-datagen"
-version = "2.2.0"
+version = "2.0.0"
 
 [[patch.unused]]
 name = "icu4x_ecma402"
@@ -699,44 +675,48 @@ version = "0.0.0"
 
 [[patch.unused]]
 name = "icu_capi"
-version = "2.2.0"
+version = "2.0.2"
 
 [[patch.unused]]
 name = "icu_codepointtrie_builder"
-version = "0.6.0"
+version = "0.5.0"
 
 [[patch.unused]]
 name = "icu_freertos"
-version = "2.2.0"
+version = "2.0.0"
+
+[[patch.unused]]
+name = "icu_harfbuzz"
+version = "0.3.0"
 
 [[patch.unused]]
 name = "icu_provider_adapters"
-version = "2.2.0"
+version = "2.0.0"
 
 [[patch.unused]]
 name = "icu_provider_baked"
-version = "2.2.0"
+version = "2.0.1"
 
 [[patch.unused]]
 name = "icu_provider_blob"
-version = "2.2.0"
+version = "2.0.0"
 
 [[patch.unused]]
 name = "icu_provider_export"
-version = "2.2.0"
+version = "2.0.0"
 
 [[patch.unused]]
 name = "icu_provider_fs"
-version = "2.2.0"
+version = "2.0.0"
 
 [[patch.unused]]
 name = "icu_provider_registry"
-version = "2.2.0"
+version = "2.0.0"
 
 [[patch.unused]]
 name = "icu_provider_source"
-version = "2.2.0"
+version = "2.0.2"
 
 [[patch.unused]]
 name = "tzif"
-version = "0.5.0"
+version = "0.4.0"
