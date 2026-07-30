@@ -349,8 +349,6 @@ lazy_static::lazy_static! {
         "icu::decimal::provider",
         "icu::list::provider",
         "icu::locale::provider",
-        "icu::locale::fallback::provider",
-        "icu_locale_fallback::provider",
         "icu::normalizer::provider",
         "icu::plurals::provider",
         "icu::properties::provider",

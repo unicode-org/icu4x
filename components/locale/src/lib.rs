@@ -90,7 +90,12 @@ mod expander;
 /// Locale fallback algorithm re-exports.
 pub mod fallback {
     #[doc(inline)]
-    pub use icu_locale_fallback::*;
+    pub use icu_locale_fallback::{
+        LocaleFallbacker,
+        LocaleFallbackerBorrowed,
+        LocaleFallbackerWithConfig,
+        LocaleFallbackIterator,
+    };
 }
 pub mod provider;
 
