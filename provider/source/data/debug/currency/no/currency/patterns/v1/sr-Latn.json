@@ -2,7 +2,7 @@
   "patterns": [
     [
       {
-        "Placeholder": "Singleton"
+        "Placeholder": "Place0"
       }
     ],
     [
@@ -10,7 +10,7 @@
         "Literal": "("
       },
       {
-        "Placeholder": "Singleton"
+        "Placeholder": "Place0"
       },
       {
         "Literal": ")"

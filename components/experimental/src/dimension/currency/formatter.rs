@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::fmt::Display;
-use either::Either;
 
 use super::super::provider::currency::{
     essentials::CurrencyEssentialsV1,
@@ -1324,21 +1323,6 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         &'l self,
         value: &'l FixedDecimal,
     ) -> impl Writeable + Display + 'l {
-        if let CurrencyFormatterData::NoCurrency { patterns } = &self.currency_data {
-            let rounded_value = apply_precision(value.clone(), self.fraction_info);
-            let formatted_value = V::format_unsigned(&self.value_formatter, rounded_value.absolute);
-            let accounting = self.usage == CurrencyUsage::Accounting;
-
-            let (pattern, sign) =
-                select_no_currency_pattern(patterns.get(), accounting, rounded_value.sign);
-
-            return Either::Left(V::format_sign(
-                &self.value_formatter,
-                pattern.interpolate((formatted_value,)),
-                sign,
-            ));
-        }
-
         // TODO(#8146): Evaluate if FixedDecimal is the correct input type or if we should use
         // an exact decimal/money representation.
         // Per UTS #35 (LDML Part 3: Numbers, Section 3.8, Rule 3 in Compact Number Formatting):
@@ -1394,7 +1378,11 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 let pattern = patterns.get().get(operands, plural_rules);
                 (pattern, currency_str, rounded_value.sign)
             }
-            CurrencyFormatterData::NoCurrency { .. } => unreachable!(),
+            CurrencyFormatterData::NoCurrency { patterns } => {
+                let (pattern, sign) =
+                    select_no_currency_pattern(patterns.get(), accounting, rounded_value.sign);
+                (pattern, "", sign)
+            }
         };
 
         // Per UTS #35 (LDML / TR35 Part 3: Numbers, Section 3.2.1), when a pattern does not specify an
@@ -1404,11 +1392,11 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         // that the minus sign modifies the full monetary expression rather than just the numeric significand.
         // When an accounting negative pattern already encodes the sign (e.g. parentheses), `sign` is
         // `Sign::None` so we do not prepend a redundant minus.
-        Either::Right(V::format_sign(
+        V::format_sign(
             &self.value_formatter,
             pattern.interpolate((formatted_value, currency_str)),
             sign,
-        ))
+        )
     }
 }
 
@@ -1416,25 +1404,23 @@ fn select_no_currency_pattern<'a>(
     patterns: &'a CurrencyNoCurrencyPatterns<'_>,
     accounting: bool,
     sign: Sign,
-) -> (&'a icu_pattern::SinglePlaceholderPattern, Sign) {
+) -> (&'a icu_pattern::DoublePlaceholderPattern, Sign) {
     if accounting {
         if sign == Sign::Negative
-            && let Some(pattern) = patterns.get_accounting_negative()
+            && let Some(pattern) = patterns.get_negative_accounting()
         {
             return (pattern, Sign::None);
         }
-        if let Some(pattern) = patterns.get_accounting_positive() {
-            return (pattern, sign);
-        }
+        return (patterns.get_positive_accounting(), sign);
     }
 
     if sign == Sign::Negative
-        && let Some(pattern) = patterns.get_standard_negative()
+        && let Some(pattern) = patterns.get_negative()
     {
         return (pattern, Sign::None);
     }
 
-    (patterns.get_standard(), sign)
+    (patterns.get_positive(), sign)
 }
 
 fn select_essentials_pattern<'a>(

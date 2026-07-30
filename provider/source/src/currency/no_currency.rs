@@ -11,9 +11,9 @@ use crate::cldr_serde::numbers::NumberPatternItem;
 use std::borrow::Cow;
 use std::collections::HashSet;
 
+use icu_pattern::DoublePlaceholderKey;
+use icu_pattern::DoublePlaceholderPattern;
 use icu_pattern::PatternItemCow;
-use icu_pattern::SinglePlaceholderKey;
-use icu_pattern::SinglePlaceholderPattern;
 use zerovec::VarZeroVec;
 
 use icu::experimental::dimension::provider::currency::no_currency::*;
@@ -117,15 +117,15 @@ fn extract_currency_no_currency<'data>(
     // Per UTS #35 (LDML, Part 3: Numbers, §3.2 Currency Formats), noCurrency patterns format
     // a currency value while omitting the currency symbol. Any currency symbol placeholder (`¤` /
     // `NumberPatternItem::Currency`) in the CLDR pattern is stripped (`_ => None`), leaving only the
-    // single number placeholder (`SinglePlaceholderKey::Singleton`).
+    // number placeholder (`DoublePlaceholderKey::Place0`).
     fn convert_pattern_items<'a>(
         items: &'a [NumberPatternItem],
         minus_sign: &'a str,
         plus_sign: &'a str,
-    ) -> impl Iterator<Item = PatternItemCow<'a, SinglePlaceholderKey>> + 'a {
+    ) -> impl Iterator<Item = PatternItemCow<'a, DoublePlaceholderKey>> + 'a {
         items.iter().flat_map(move |item| match item {
             NumberPatternItem::DecimalSeparator => {
-                Some(PatternItemCow::Placeholder(SinglePlaceholderKey::Singleton))
+                Some(PatternItemCow::Placeholder(DoublePlaceholderKey::Place0))
             }
             NumberPatternItem::Literal(s) => Some(PatternItemCow::Literal(Cow::Borrowed(s))),
             NumberPatternItem::MinusSign => {
@@ -137,8 +137,8 @@ fn extract_currency_no_currency<'data>(
     }
 
     let create_pattern =
-        |pattern: &NumberPattern| -> Result<Cow<'data, SinglePlaceholderPattern>, DataError> {
-            SinglePlaceholderPattern::try_from_items(convert_pattern_items(
+        |pattern: &NumberPattern| -> Result<Cow<'data, DoublePlaceholderPattern>, DataError> {
+            DoublePlaceholderPattern::try_from_items(convert_pattern_items(
                 &pattern.positive,
                 minus_sign,
                 plus_sign,
@@ -150,11 +150,11 @@ fn extract_currency_no_currency<'data>(
         };
 
     let create_negative_pattern = |pattern: &NumberPattern| -> Result<
-        Option<Cow<'data, SinglePlaceholderPattern>>,
+        Option<Cow<'data, DoublePlaceholderPattern>>,
         DataError,
     > {
         if let Some(negative_items) = &pattern.negative {
-            SinglePlaceholderPattern::try_from_items(convert_pattern_items(
+            DoublePlaceholderPattern::try_from_items(convert_pattern_items(
                 negative_items,
                 minus_sign,
                 plus_sign,
@@ -192,11 +192,11 @@ fn extract_currency_no_currency<'data>(
             (None, None)
         };
 
-    let mut unique_patterns = Vec::<Box<SinglePlaceholderPattern>>::new();
+    let mut unique_patterns = Vec::<Box<DoublePlaceholderPattern>>::new();
 
-    let mut add_pattern = |opt_cow: Option<Cow<'data, SinglePlaceholderPattern>>| -> Option<u8> {
+    let mut add_pattern = |opt_cow: Option<Cow<'data, DoublePlaceholderPattern>>| -> Option<u8> {
         opt_cow.map(|cow| {
-            let pat: Box<SinglePlaceholderPattern> = cow.into_owned();
+            let pat: Box<DoublePlaceholderPattern> = cow.into_owned();
             if let Some(idx) = unique_patterns.iter().position(|p| p == &pat) {
                 idx as u8
             } else {
@@ -209,7 +209,7 @@ fn extract_currency_no_currency<'data>(
 
     let standard_idx = add_pattern(Some(standard_pos)).unwrap();
     let standard_neg_idx = add_pattern(standard_neg);
-    let accounting_pos_idx = add_pattern(accounting_pos);
+    let accounting_pos_idx = add_pattern(accounting_pos).unwrap_or(standard_idx);
     let accounting_neg_idx = add_pattern(accounting_neg);
 
     let indices = NoCurrencyPatternIndices {

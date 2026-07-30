@@ -4,7 +4,7 @@
 
 //! Data provider struct definitions for no-currency patterns.
 
-use icu_pattern::SinglePlaceholderPattern;
+use icu_pattern::DoublePlaceholderPattern;
 use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
 
@@ -32,7 +32,7 @@ icu_provider::data_marker!(
 pub struct CurrencyNoCurrencyPatterns<'data> {
     /// A packed list of distinct no-currency patterns referenced by [`NoCurrencyPatternIndices`].
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub patterns: VarZeroVec<'data, SinglePlaceholderPattern>,
+    pub patterns: VarZeroVec<'data, DoublePlaceholderPattern>,
 
     /// Indices into `patterns` for each formatting variant.
     pub indices: NoCurrencyPatternIndices,
@@ -51,8 +51,8 @@ pub struct NoCurrencyPatternIndices {
     pub standard: u8,
     /// Standard negative pattern index (optional).
     pub standard_negative: Option<u8>,
-    /// Accounting positive pattern index (optional).
-    pub accounting_positive: Option<u8>,
+    /// Accounting positive pattern index (defaults to standard positive).
+    pub accounting_positive: u8,
     /// Accounting negative pattern index (optional).
     pub accounting_negative: Option<u8>,
 }
@@ -61,29 +61,33 @@ icu_provider::data_struct!(CurrencyNoCurrencyPatterns<'_>, #[cfg(feature = "data
 
 impl<'a> CurrencyNoCurrencyPatterns<'a> {
     /// Gets the standard positive no-currency pattern.
-    pub fn get_standard(&'a self) -> &'a SinglePlaceholderPattern {
+    pub fn get_positive(&'a self) -> &'a DoublePlaceholderPattern {
         self.patterns
             .get(self.indices.standard as usize)
             .unwrap_or_else(|| {
                 debug_assert!(false, "Standard pattern index is out of bounds");
-                SinglePlaceholderPattern::PASS_THROUGH
+                <&DoublePlaceholderPattern>::default()
             })
     }
 
     /// Gets the standard negative no-currency pattern.
-    pub fn get_standard_negative(&'a self) -> Option<&'a SinglePlaceholderPattern> {
+    pub fn get_negative(&'a self) -> Option<&'a DoublePlaceholderPattern> {
         let idx = self.indices.standard_negative?;
         self.patterns.get(idx as usize)
     }
 
     /// Gets the accounting positive no-currency pattern.
-    pub fn get_accounting_positive(&'a self) -> Option<&'a SinglePlaceholderPattern> {
-        let idx = self.indices.accounting_positive?;
-        self.patterns.get(idx as usize)
+    pub fn get_positive_accounting(&'a self) -> &'a DoublePlaceholderPattern {
+        self.patterns
+            .get(self.indices.accounting_positive as usize)
+            .unwrap_or_else(|| {
+                debug_assert!(false, "Accounting positive pattern index is out of bounds");
+                <&DoublePlaceholderPattern>::default()
+            })
     }
 
     /// Gets the accounting negative no-currency pattern.
-    pub fn get_accounting_negative(&'a self) -> Option<&'a SinglePlaceholderPattern> {
+    pub fn get_negative_accounting(&'a self) -> Option<&'a DoublePlaceholderPattern> {
         let idx = self.indices.accounting_negative?;
         self.patterns.get(idx as usize)
     }

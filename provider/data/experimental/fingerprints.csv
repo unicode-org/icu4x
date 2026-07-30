@@ -63182,12 +63182,12 @@ currency/extended/data/v1, zu/ZMW, 41B, 18B, 5df40b65221c99b7
 currency/extended/data/v1, zu/ZWG, -> en/ZWG
 currency/fractions/v1, <singleton>, 406B, 358B, 63bf9b07c8e1921e
 currency/no/currency/patterns/v1, <lookup>, 930B, 161 identifiers
-currency/no/currency/patterns/v1, <total>, 321B, 148B, 7 unique payloads
-currency/no/currency/patterns/v1, af, 40B, 15B, 94b71f9132ccaed7
+currency/no/currency/patterns/v1, <total>, 336B, 156B, 7 unique payloads
+currency/no/currency/patterns/v1, af, 42B, 16B, 9dc7b173efbcc793
 currency/no/currency/patterns/v1, ak, -> af
 currency/no/currency/patterns/v1, am, -> af
-currency/no/currency/patterns/v1, ar, 60B, 36B, 711a761a197b0697
-currency/no/currency/patterns/v1, ar-BH, 35B, 9B, 87b9780a67815193
+currency/no/currency/patterns/v1, ar, 64B, 39B, 300c4c5ee43a79ac
+currency/no/currency/patterns/v1, ar-BH, 36B, 9B, 5c6547db63ec41de
 currency/no/currency/patterns/v1, ar-BH/latn, -> ar
 currency/no/currency/patterns/v1, ar-DJ, -> ar-BH
 currency/no/currency/patterns/v1, ar-DJ/latn, -> ar
@@ -63252,22 +63252,22 @@ currency/no/currency/patterns/v1, es-AR, -> af
 currency/no/currency/patterns/v1, es-DO, -> af
 currency/no/currency/patterns/v1, et, -> af
 currency/no/currency/patterns/v1, eu, -> af
-currency/no/currency/patterns/v1, fa, 46B, 21B, 7ab160d1d552d960
-currency/no/currency/patterns/v1, fa-AF, 43B, 18B, 48c61382d38f552a
+currency/no/currency/patterns/v1, fa, 48B, 22B, 5bdce8a0b9cb77f5
+currency/no/currency/patterns/v1, fa-AF, 45B, 19B, a2edfee15db648aa
 currency/no/currency/patterns/v1, fa-AF/latn, -> fa-AF
 currency/no/currency/patterns/v1, fa/latn, -> fa
 currency/no/currency/patterns/v1, ff-Adlm/latn, -> ar-BH
 currency/no/currency/patterns/v1, fil, -> af
 currency/no/currency/patterns/v1, fo, -> af
 currency/no/currency/patterns/v1, fr, -> af
-currency/no/currency/patterns/v1, fy, 39B, 15B, 7026e06056e2cacc
+currency/no/currency/patterns/v1, fy, 41B, 16B, 504687f34a0a9a03
 currency/no/currency/patterns/v1, ga, -> af
 currency/no/currency/patterns/v1, gaa, -> af
 currency/no/currency/patterns/v1, gd, -> af
 currency/no/currency/patterns/v1, gl, -> af
 currency/no/currency/patterns/v1, gu, -> af
 currency/no/currency/patterns/v1, gu/gujr, -> af
-currency/no/currency/patterns/v1, he, 58B, 34B, 45005177f1ef3285
+currency/no/currency/patterns/v1, he, 60B, 35B, 87927fccd06c685d
 currency/no/currency/patterns/v1, hi-Latn, -> ar-BH
 currency/no/currency/patterns/v1, hi/deva, -> ar-BH
 currency/no/currency/patterns/v1, ia, -> af
