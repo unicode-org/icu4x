@@ -178,5 +178,9 @@ required-features = ["serde"]
 name = "elevator_floors"
 required-features = ["serde"]
 
+[[example]]
+name = "sort_key_calculator"
+required-features = ["compiled_data"]
+
 [lints]
 workspace = true

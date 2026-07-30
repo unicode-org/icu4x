@@ -32,6 +32,7 @@ const _: () = {
     use icu_locale_fallback_data::*;
     pub mod icu {
         pub mod locale {
+            pub use crate::provider;
             pub use crate as fallback;
         }
     }
