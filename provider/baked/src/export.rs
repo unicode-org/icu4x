@@ -276,7 +276,7 @@ impl BakedExporter {
                     .replace("icu::provider", "icu_provider")
                     .replace("icu::locale_core", "icu_locale_core")
                     .replace("icu::pattern", "icu_pattern")
-                    .replace("icu::locale_fallback", "icu::locale::fallback");
+                    .replace("icu::locale_fallback", "icu_locale_fallback");
             } else {
                 // Unformatted
                 formatted = formatted
@@ -284,7 +284,7 @@ impl BakedExporter {
                     .replace("icu :: provider", "icu_provider")
                     .replace("icu :: locale_core", "icu_locale_core")
                     .replace("icu :: pattern", "icu_pattern")
-                    .replace("icu :: locale_fallback", "icu :: locale :: fallback");
+                    .replace("icu :: locale_fallback", "icu_locale_fallback");
             }
         }
 
