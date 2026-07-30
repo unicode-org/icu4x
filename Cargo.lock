@@ -222,6 +222,7 @@ version = "0.0.0"
 dependencies = [
  "crlify",
  "icu",
+ "icu_locale_fallback",
  "icu_provider",
  "icu_provider_export",
  "icu_provider_source",
