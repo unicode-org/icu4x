@@ -344,6 +344,11 @@ fn test_date_range_ej() {
     // without independent date and glue separation in `DateTimeZonePatternSelectionData`.
     // When range formatting is invoked, both formatters cleanly produce the expected
     // fallback range output without field conflicts.
+    //
+    // Note: This behavior relies on the assumption that any locale in CLDR supporting `ej` in
+    // date/time patterns also defines corresponding interval range pattern data. This invariant
+    // is verified across all locales and calendars in datagen tests:
+    // `icu_provider_source::datetime::range_patterns::tests`.
     assert_writeable_eq!(
         fmt.format(&start, &end_same_day),
         "Fri 8:40\u{202f}PM\u{2009}–\u{2009}Fri 9:50\u{202f}PM"

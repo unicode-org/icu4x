@@ -656,6 +656,14 @@ impl DateTimeZonePatternSelectionData {
         skeleton: CompositeFieldSet,
     ) -> Result<Self, DataError> {
         // Handle overlap early return.
+        //
+        // Note: For range formatting on overlap skeletons (such as `ej` for short weekday + time),
+        // returning early with `date: DatePatternSelectionData::none()` and `glue: None` causes
+        // time interval differences to drop to fallback range formatting (`format_fallback`).
+        // This relies on the assumption that any locale in CLDR supporting overlap patterns in
+        // standard date/time formatting also defines corresponding interval range pattern data.
+        // This coverage assumption is verified across all locales and calendars in datagen tests:
+        // `icu_provider_source::datetime::range_patterns::tests`.
         if let CompositeFieldSet::DateTime(field_set) = skeleton {
             let options = field_set.to_raw_options();
             // TODO(#5387): load the patterns for custom hour cycles here
