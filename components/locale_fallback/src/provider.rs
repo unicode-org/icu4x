@@ -33,6 +33,7 @@ const _: () = {
     pub mod icu {
         pub mod locale {
             pub use crate as fallback;
+            pub use crate::provider;
         }
     }
     make_provider!(Baked);
