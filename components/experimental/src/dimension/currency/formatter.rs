@@ -90,13 +90,16 @@ pub struct CurrencyFormatter<V: AbstractFormatter> {
 
 impl<V: AbstractFormatter> CurrencyFormatter<V> {
     #[cfg(feature = "compiled_data")]
-    pub(crate) fn try_new_essential(
-        value_formatter: V,
+    pub(crate) fn try_new_essential<F>(
         prefs: CurrencyFormatterPreferences,
         currency: CurrencyCode,
         width: TinyAsciiStr<1>,
         options: CurrencyFormatterOptions,
-    ) -> Result<Self, DataError> {
+        make_formatter: F,
+    ) -> Result<Self, DataError>
+    where
+        F: FnOnce(icu_decimal::options::DecimalFormatterOptions) -> Result<V, DataError>,
+    {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
         let decimal_prefs = DecimalFormatterPreferences::from(&prefs);
 
@@ -110,7 +113,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             crate::provider::Baked.load(Default::default())?.payload;
         let fraction_info = fractions.get().resolve(currency);
         #[allow(const_item_mutation)]
-        let currency_data = match DataProvider::<CurrencySymbolsV1>::load(
+        let symbol_opt = DataProvider::<CurrencySymbolsV1>::load(
             &crate::provider::Baked,
             DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
@@ -120,17 +123,23 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 ..Default::default()
             },
         )
-        .allow_identifier_not_found()?
-        {
-            Some(res) => CurrencyFormatterData::Symbol {
-                essential,
-                symbol: res.payload,
-            },
+        .allow_identifier_not_found()?;
+
+        let mut decimal_options = icu_decimal::options::DecimalFormatterOptions::default();
+        let currency_data = match symbol_opt {
+            Some(res) => {
+                let symbol: DataPayload<CurrencySymbolsV1> = res.payload;
+                decimal_options.decimal_separator = symbol.get().decimal_separator_char();
+                decimal_options.grouping_separator = symbol.get().grouping_separator_char();
+                CurrencyFormatterData::Symbol { essential, symbol }
+            }
             None => CurrencyFormatterData::IsoSymbol {
                 essential,
                 currency,
             },
         };
+
+        let value_formatter = make_formatter(decimal_options)?;
 
         Ok(Self {
             value_formatter,
@@ -140,19 +149,20 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         })
     }
 
-    pub(crate) fn try_new_essential_unstable<D>(
+    pub(crate) fn try_new_essential_unstable<D, F>(
         provider: &D,
-        value_formatter: V,
         prefs: CurrencyFormatterPreferences,
         currency: CurrencyCode,
         width: TinyAsciiStr<1>,
         options: CurrencyFormatterOptions,
+        make_formatter: F,
     ) -> Result<Self, DataError>
     where
         D: ?Sized
             + DataProvider<CurrencyEssentialsV1>
             + DataProvider<CurrencySymbolsV1>
             + DataProvider<CurrencyFractionsV1>,
+        F: FnOnce(icu_decimal::options::DecimalFormatterOptions) -> Result<V, DataError>,
     {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
         let decimal_prefs = DecimalFormatterPreferences::from(&prefs);
@@ -165,7 +175,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             provider.load(Default::default())?.payload;
         let fraction_info = fractions.get().resolve(currency);
         #[allow(const_item_mutation)]
-        let currency_data = match provider
+        let symbol_opt = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     CurrencySymbolsV1::make_attributes(currency, width, &mut TinyAsciiStr::EMPTY),
@@ -173,17 +183,23 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 ),
                 ..Default::default()
             })
-            .allow_identifier_not_found()?
-        {
-            Some(res) => CurrencyFormatterData::Symbol {
-                essential,
-                symbol: res.payload,
-            },
+            .allow_identifier_not_found()?;
+
+        let mut decimal_options = icu_decimal::options::DecimalFormatterOptions::default();
+        let currency_data = match symbol_opt {
+            Some(res) => {
+                let symbol: DataPayload<CurrencySymbolsV1> = res.payload;
+                decimal_options.decimal_separator = symbol.get().decimal_separator_char();
+                decimal_options.grouping_separator = symbol.get().grouping_separator_char();
+                CurrencyFormatterData::Symbol { essential, symbol }
+            }
             None => CurrencyFormatterData::IsoSymbol {
                 essential,
                 currency,
             },
         };
+
+        let value_formatter = make_formatter(decimal_options)?;
 
         Ok(Self {
             value_formatter,
@@ -194,12 +210,15 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     }
 
     #[cfg(feature = "compiled_data")]
-    pub(crate) fn try_new_code_internal(
-        value_formatter: V,
+    pub(crate) fn try_new_code_internal<F>(
         prefs: CurrencyFormatterPreferences,
         currency: CurrencyCode,
         options: CurrencyFormatterOptions,
-    ) -> Result<Self, DataError> {
+        make_formatter: F,
+    ) -> Result<Self, DataError>
+    where
+        F: FnOnce(icu_decimal::options::DecimalFormatterOptions) -> Result<V, DataError>,
+    {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
         let decimal_prefs = DecimalFormatterPreferences::from(&prefs);
 
@@ -213,6 +232,32 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             crate::provider::Baked.load(Default::default())?.payload;
         let fraction_info = fractions.get().resolve(currency);
 
+        #[allow(const_item_mutation)]
+        let symbol_opt = DataProvider::<CurrencySymbolsV1>::load(
+            &crate::provider::Baked,
+            DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    CurrencySymbolsV1::make_attributes(
+                        currency,
+                        CurrencySymbolsV1::SHORT,
+                        &mut TinyAsciiStr::EMPTY,
+                    ),
+                    &locale,
+                ),
+                ..Default::default()
+            },
+        )
+        .allow_identifier_not_found()?;
+
+        let mut decimal_options = icu_decimal::options::DecimalFormatterOptions::default();
+        if let Some(res) = symbol_opt {
+            let symbol: DataPayload<CurrencySymbolsV1> = res.payload;
+            decimal_options.decimal_separator = symbol.get().decimal_separator_char();
+            decimal_options.grouping_separator = symbol.get().grouping_separator_char();
+        }
+
+        let value_formatter = make_formatter(decimal_options)?;
+
         Ok(Self {
             value_formatter,
             currency_data: CurrencyFormatterData::IsoSymbol {
@@ -224,15 +269,19 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         })
     }
 
-    pub(crate) fn try_new_code_internal_unstable<D>(
+    pub(crate) fn try_new_code_internal_unstable<D, F>(
         provider: &D,
-        value_formatter: V,
         prefs: CurrencyFormatterPreferences,
         currency: CurrencyCode,
         options: CurrencyFormatterOptions,
+        make_formatter: F,
     ) -> Result<Self, DataError>
     where
-        D: ?Sized + DataProvider<CurrencyEssentialsV1> + DataProvider<CurrencyFractionsV1>,
+        D: ?Sized
+            + DataProvider<CurrencyEssentialsV1>
+            + DataProvider<CurrencySymbolsV1>
+            + DataProvider<CurrencyFractionsV1>,
+        F: FnOnce(icu_decimal::options::DecimalFormatterOptions) -> Result<V, DataError>,
     {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
         let decimal_prefs = DecimalFormatterPreferences::from(&prefs);
@@ -244,6 +293,30 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let fractions: DataPayload<CurrencyFractionsV1> =
             provider.load(Default::default())?.payload;
         let fraction_info = fractions.get().resolve(currency);
+
+        #[allow(const_item_mutation)]
+        let symbol_opt = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    CurrencySymbolsV1::make_attributes(
+                        currency,
+                        CurrencySymbolsV1::SHORT,
+                        &mut TinyAsciiStr::EMPTY,
+                    ),
+                    &locale,
+                ),
+                ..Default::default()
+            })
+            .allow_identifier_not_found()?;
+
+        let mut decimal_options = icu_decimal::options::DecimalFormatterOptions::default();
+        if let Some(res) = symbol_opt {
+            let symbol: DataPayload<CurrencySymbolsV1> = res.payload;
+            decimal_options.decimal_separator = symbol.get().decimal_separator_char();
+            decimal_options.grouping_separator = symbol.get().grouping_separator_char();
+        }
+
+        let value_formatter = make_formatter(decimal_options)?;
 
         Ok(Self {
             value_formatter,
@@ -257,11 +330,14 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     }
 
     #[cfg(feature = "compiled_data")]
-    pub(crate) fn try_new_name_internal(
-        value_formatter: V,
+    pub(crate) fn try_new_name_internal<F>(
         prefs: CurrencyFormatterPreferences,
         currency: CurrencyCode,
-    ) -> Result<Self, DataError> {
+        make_formatter: F,
+    ) -> Result<Self, DataError>
+    where
+        F: FnOnce(icu_decimal::options::DecimalFormatterOptions) -> Result<V, DataError>,
+    {
         let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
         let marker_attributes =
             DataMarkerAttributes::try_from_str(currency.0.as_str()).map_err(|_| {
@@ -287,6 +363,32 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             crate::provider::Baked.load(Default::default())?.payload;
         let fraction_info = fractions.get().resolve(currency);
 
+        #[allow(const_item_mutation)]
+        let symbol_opt = DataProvider::<CurrencySymbolsV1>::load(
+            &crate::provider::Baked,
+            DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    CurrencySymbolsV1::make_attributes(
+                        currency,
+                        CurrencySymbolsV1::SHORT,
+                        &mut TinyAsciiStr::EMPTY,
+                    ),
+                    &locale,
+                ),
+                ..Default::default()
+            },
+        )
+        .allow_identifier_not_found()?;
+
+        let mut decimal_options = icu_decimal::options::DecimalFormatterOptions::default();
+        if let Some(res) = symbol_opt {
+            let symbol: DataPayload<CurrencySymbolsV1> = res.payload;
+            decimal_options.decimal_separator = symbol.get().decimal_separator_char();
+            decimal_options.grouping_separator = symbol.get().grouping_separator_char();
+        }
+
+        let value_formatter = make_formatter(decimal_options)?;
+
         let currency_data = match extended_opt {
             Some(extended) => {
                 let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
@@ -307,18 +409,20 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         })
     }
 
-    pub(crate) fn try_new_name_internal_unstable<D>(
+    pub(crate) fn try_new_name_internal_unstable<D, F>(
         provider: &D,
-        value_formatter: V,
         prefs: CurrencyFormatterPreferences,
         currency: CurrencyCode,
+        make_formatter: F,
     ) -> Result<Self, DataError>
     where
         D: ?Sized
             + DataProvider<CurrencyExtendedDataV1>
             + DataProvider<CurrencyPatternsDataV1>
+            + DataProvider<CurrencySymbolsV1>
             + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
+        F: FnOnce(icu_decimal::options::DecimalFormatterOptions) -> Result<V, DataError>,
     {
         let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
         let marker_attributes =
@@ -344,6 +448,30 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let fractions: DataPayload<CurrencyFractionsV1> =
             provider.load(Default::default())?.payload;
         let fraction_info = fractions.get().resolve(currency);
+
+        #[allow(const_item_mutation)]
+        let symbol_opt = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    CurrencySymbolsV1::make_attributes(
+                        currency,
+                        CurrencySymbolsV1::SHORT,
+                        &mut TinyAsciiStr::EMPTY,
+                    ),
+                    &locale,
+                ),
+                ..Default::default()
+            })
+            .allow_identifier_not_found()?;
+
+        let mut decimal_options = icu_decimal::options::DecimalFormatterOptions::default();
+        if let Some(res) = symbol_opt {
+            let symbol: DataPayload<CurrencySymbolsV1> = res.payload;
+            decimal_options.decimal_separator = symbol.get().decimal_separator_char();
+            decimal_options.grouping_separator = symbol.get().grouping_separator_char();
+        }
+
+        let value_formatter = make_formatter(decimal_options)?;
 
         let currency_data = match extended_opt {
             Some(extended) => {
@@ -410,11 +538,11 @@ impl CurrencyFormatter<DecimalFormatter> {
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         Self::try_new_essential(
-            DecimalFormatter::try_new((&prefs).into(), Default::default())?,
             prefs,
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
+            |opts| DecimalFormatter::try_new((&prefs).into(), opts),
         )
     }
 
@@ -430,11 +558,11 @@ impl CurrencyFormatter<DecimalFormatter> {
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         Self::try_new_essential(
-            DecimalFormatter::try_new((&prefs).into(), Default::default())?,
             prefs,
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
+            |opts| DecimalFormatter::try_new((&prefs).into(), opts),
         )
     }
 
@@ -455,11 +583,11 @@ impl CurrencyFormatter<DecimalFormatter> {
     {
         Self::try_new_essential_unstable(
             provider,
-            DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
             prefs,
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
+            |opts| DecimalFormatter::try_new_unstable(provider, (&prefs).into(), opts),
         )
     }
 
@@ -480,11 +608,11 @@ impl CurrencyFormatter<DecimalFormatter> {
     {
         Self::try_new_essential_unstable(
             provider,
-            DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
             prefs,
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
+            |opts| DecimalFormatter::try_new_unstable(provider, (&prefs).into(), opts),
         )
     }
 
@@ -533,12 +661,9 @@ impl CurrencyFormatter<DecimalFormatter> {
         currency_code: CurrencyCode,
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
-        Self::try_new_code_internal(
-            DecimalFormatter::try_new((&prefs).into(), Default::default())?,
-            prefs,
-            currency_code,
-            options,
-        )
+        Self::try_new_code_internal(prefs, currency_code, options, |opts| {
+            DecimalFormatter::try_new((&prefs).into(), opts)
+        })
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_code)]
@@ -551,17 +676,14 @@ impl CurrencyFormatter<DecimalFormatter> {
     where
         D: ?Sized
             + DataProvider<CurrencyEssentialsV1>
+            + DataProvider<CurrencySymbolsV1>
             + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
-        Self::try_new_code_internal_unstable(
-            provider,
-            DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
-            prefs,
-            currency_code,
-            options,
-        )
+        Self::try_new_code_internal_unstable(provider, prefs, currency_code, options, |opts| {
+            DecimalFormatter::try_new_unstable(provider, (&prefs).into(), opts)
+        })
     }
 
     icu_provider::gen_buffer_data_constructors!(
@@ -599,11 +721,9 @@ impl CurrencyFormatter<DecimalFormatter> {
         prefs: CurrencyFormatterPreferences,
         currency_code: CurrencyCode,
     ) -> Result<Self, DataError> {
-        Self::try_new_name_internal(
-            DecimalFormatter::try_new((&prefs).into(), Default::default())?,
-            prefs,
-            currency_code,
-        )
+        Self::try_new_name_internal(prefs, currency_code, |opts| {
+            DecimalFormatter::try_new((&prefs).into(), opts)
+        })
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_name)]
@@ -616,17 +736,15 @@ impl CurrencyFormatter<DecimalFormatter> {
         D: ?Sized
             + DataProvider<CurrencyExtendedDataV1>
             + DataProvider<CurrencyPatternsDataV1>
+            + DataProvider<CurrencySymbolsV1>
             + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     {
-        Self::try_new_name_internal_unstable(
-            provider,
-            DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
-            prefs,
-            currency_code,
-        )
+        Self::try_new_name_internal_unstable(provider, prefs, currency_code, |opts| {
+            DecimalFormatter::try_new_unstable(provider, (&prefs).into(), opts)
+        })
     }
 }
 
@@ -747,11 +865,11 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         Self::try_new_essential(
-            CompactDecimalFormatter::try_new_short((&prefs).into(), Default::default())?,
             prefs,
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
+            |opts| CompactDecimalFormatter::try_new_short((&prefs).into(), opts.into()),
         )
     }
 
@@ -767,11 +885,11 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         Self::try_new_essential(
-            CompactDecimalFormatter::try_new_short((&prefs).into(), Default::default())?,
             prefs,
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
+            |opts| CompactDecimalFormatter::try_new_short((&prefs).into(), opts.into()),
         )
     }
 
@@ -786,12 +904,9 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         currency_code: CurrencyCode,
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
-        Self::try_new_code_internal(
-            CompactDecimalFormatter::try_new_short((&prefs).into(), Default::default())?,
-            prefs,
-            currency_code,
-            options,
-        )
+        Self::try_new_code_internal(prefs, currency_code, options, |opts| {
+            CompactDecimalFormatter::try_new_short((&prefs).into(), opts.into())
+        })
     }
 
     /// Creates a new [`CurrencyFormatter`] for compact short number formatting with full currency display names from compiled locale data.
@@ -804,11 +919,9 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         prefs: CurrencyFormatterPreferences,
         currency_code: CurrencyCode,
     ) -> Result<Self, DataError> {
-        Self::try_new_name_internal(
-            CompactDecimalFormatter::try_new_short((&prefs).into(), Default::default())?,
-            prefs,
-            currency_code,
-        )
+        Self::try_new_name_internal(prefs, currency_code, |opts| {
+            CompactDecimalFormatter::try_new_short((&prefs).into(), opts.into())
+        })
     }
 
     /// Creates a new [`CurrencyFormatter`] for compact long number formatting with short currency symbols from compiled locale data.
@@ -823,11 +936,11 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         Self::try_new_essential(
-            CompactDecimalFormatter::try_new_long((&prefs).into(), Default::default())?,
             prefs,
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
+            |opts| CompactDecimalFormatter::try_new_long((&prefs).into(), opts.into()),
         )
     }
 
@@ -843,11 +956,11 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         Self::try_new_essential(
-            CompactDecimalFormatter::try_new_long((&prefs).into(), Default::default())?,
             prefs,
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
+            |opts| CompactDecimalFormatter::try_new_long((&prefs).into(), opts.into()),
         )
     }
 
@@ -862,12 +975,9 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         currency_code: CurrencyCode,
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
-        Self::try_new_code_internal(
-            CompactDecimalFormatter::try_new_long((&prefs).into(), Default::default())?,
-            prefs,
-            currency_code,
-            options,
-        )
+        Self::try_new_code_internal(prefs, currency_code, options, |opts| {
+            CompactDecimalFormatter::try_new_long((&prefs).into(), opts.into())
+        })
     }
 
     /// Creates a new [`CurrencyFormatter`] for compact long number formatting with full currency display names from compiled locale data.
@@ -880,11 +990,9 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         prefs: CurrencyFormatterPreferences,
         currency_code: CurrencyCode,
     ) -> Result<Self, DataError> {
-        Self::try_new_name_internal(
-            CompactDecimalFormatter::try_new_long((&prefs).into(), Default::default())?,
-            prefs,
-            currency_code,
-        )
+        Self::try_new_name_internal(prefs, currency_code, |opts| {
+            CompactDecimalFormatter::try_new_long((&prefs).into(), opts.into())
+        })
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_compact_symbol)]
@@ -906,15 +1014,17 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
     {
         Self::try_new_essential_unstable(
             provider,
-            CompactDecimalFormatter::try_new_short_unstable(
-                provider,
-                (&prefs).into(),
-                Default::default(),
-            )?,
             prefs,
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
+            |opts| {
+                CompactDecimalFormatter::try_new_short_unstable(
+                    provider,
+                    (&prefs).into(),
+                    opts.into(),
+                )
+            },
         )
     }
 
@@ -937,15 +1047,17 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
     {
         Self::try_new_essential_unstable(
             provider,
-            CompactDecimalFormatter::try_new_short_unstable(
-                provider,
-                (&prefs).into(),
-                Default::default(),
-            )?,
             prefs,
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
+            |opts| {
+                CompactDecimalFormatter::try_new_short_unstable(
+                    provider,
+                    (&prefs).into(),
+                    opts.into(),
+                )
+            },
         )
     }
 
@@ -959,22 +1071,16 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         D: ?Sized
             + DataProvider<CurrencyExtendedDataV1>
             + DataProvider<CurrencyPatternsDataV1>
+            + DataProvider<CurrencySymbolsV1>
             + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>
             + DataProvider<icu_decimal::provider::DecimalCompactShortV1>,
     {
-        Self::try_new_name_internal_unstable(
-            provider,
-            CompactDecimalFormatter::try_new_short_unstable(
-                provider,
-                (&prefs).into(),
-                Default::default(),
-            )?,
-            prefs,
-            currency_code,
-        )
+        Self::try_new_name_internal_unstable(provider, prefs, currency_code, |opts| {
+            CompactDecimalFormatter::try_new_short_unstable(provider, (&prefs).into(), opts.into())
+        })
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_compact_long_symbol)]
@@ -996,15 +1102,17 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
     {
         Self::try_new_essential_unstable(
             provider,
-            CompactDecimalFormatter::try_new_long_unstable(
-                provider,
-                (&prefs).into(),
-                Default::default(),
-            )?,
             prefs,
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
+            |opts| {
+                CompactDecimalFormatter::try_new_long_unstable(
+                    provider,
+                    (&prefs).into(),
+                    opts.into(),
+                )
+            },
         )
     }
 
@@ -1027,15 +1135,17 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
     {
         Self::try_new_essential_unstable(
             provider,
-            CompactDecimalFormatter::try_new_long_unstable(
-                provider,
-                (&prefs).into(),
-                Default::default(),
-            )?,
             prefs,
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
+            |opts| {
+                CompactDecimalFormatter::try_new_long_unstable(
+                    provider,
+                    (&prefs).into(),
+                    opts.into(),
+                )
+            },
         )
     }
 
@@ -1049,22 +1159,16 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         D: ?Sized
             + DataProvider<CurrencyExtendedDataV1>
             + DataProvider<CurrencyPatternsDataV1>
+            + DataProvider<CurrencySymbolsV1>
             + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>
             + DataProvider<icu_decimal::provider::DecimalCompactLongV1>,
     {
-        Self::try_new_name_internal_unstable(
-            provider,
-            CompactDecimalFormatter::try_new_long_unstable(
-                provider,
-                (&prefs).into(),
-                Default::default(),
-            )?,
-            prefs,
-            currency_code,
-        )
+        Self::try_new_name_internal_unstable(provider, prefs, currency_code, |opts| {
+            CompactDecimalFormatter::try_new_long_unstable(provider, (&prefs).into(), opts.into())
+        })
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_compact_code)]
@@ -1077,23 +1181,16 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
     where
         D: ?Sized
             + DataProvider<CurrencyEssentialsV1>
+            + DataProvider<CurrencySymbolsV1>
             + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalCompactShortV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     {
-        Self::try_new_code_internal_unstable(
-            provider,
-            CompactDecimalFormatter::try_new_short_unstable(
-                provider,
-                (&prefs).into(),
-                Default::default(),
-            )?,
-            prefs,
-            currency_code,
-            options,
-        )
+        Self::try_new_code_internal_unstable(provider, prefs, currency_code, options, |opts| {
+            CompactDecimalFormatter::try_new_short_unstable(provider, (&prefs).into(), opts.into())
+        })
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_compact_long_code)]
@@ -1106,23 +1203,16 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
     where
         D: ?Sized
             + DataProvider<CurrencyEssentialsV1>
+            + DataProvider<CurrencySymbolsV1>
             + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalCompactLongV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     {
-        Self::try_new_code_internal_unstable(
-            provider,
-            CompactDecimalFormatter::try_new_long_unstable(
-                provider,
-                (&prefs).into(),
-                Default::default(),
-            )?,
-            prefs,
-            currency_code,
-            options,
-        )
+        Self::try_new_code_internal_unstable(provider, prefs, currency_code, options, |opts| {
+            CompactDecimalFormatter::try_new_long_unstable(provider, (&prefs).into(), opts.into())
+        })
     }
 }
 
