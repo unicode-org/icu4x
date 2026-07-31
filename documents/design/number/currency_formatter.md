@@ -162,7 +162,7 @@ Combining both orthogonal dimensions produces the complete $5 \times 4$ variatio
 | **Narrow Symbol** (`$`) | `$1,234.50` | `$1.2M` | `$1.2 million` | `$1.23E4` |
 | **ISO Currency Code** (`USD`) | `USD 1,234.50` | `USD 1.2M` | `USD 1.2 million` | `USD 1.23E4` |
 | **Display Name (Pluralized)** | `1,234.50 US dollars`<br>`1.00 US dollar` | `1.2M US dollars` | `1.2 million US dollars` | `1.23E4 US dollars` |
-| **No Currency (Numeric Only)** | `1,234.50` | `1.2M` | `1.2 million` | `1.23E4` |
+| **No Currency (Numeric Only)** | `1,234.50`<br>`(1,234.50)`<br>*(UTS #35 `standard-noCurrency`)* | *N/A (Not in UTS #35 / ECMA-402;<br>use `CompactDecimalFormatter`)* | *N/A (Not in UTS #35 / ECMA-402;<br>use `CompactDecimalFormatter`)* | *N/A (Use `DecimalFormatter`)* |
 
 ### 3.3 Deep Dive into the Two Dimensions
 
@@ -177,7 +177,7 @@ Combining both orthogonal dimensions produces the complete $5 \times 4$ variatio
 2. **Narrow Symbol**: Resolves the shortest available symbol from `CurrencySymbolsV1` (e.g. `$` instead of `US$` or `CA$`).
 3. **ISO Currency Code**: Formats the 3-letter ISO 4217 code directly (e.g. `USD`, `EUR`), applying alpha-next-to-number spacing rules.
 4. **Display Name**: Resolves full currency names from `CurrencyExtendedDataV1` and interpolates into plural pattern templates (`CurrencyPatternsDataV1`) selected by the numeric value.
-5. **No Currency**: Formats the numeric value with currency-specific decimal fractions and cash rounding, but suppresses the currency symbol entirely using `CurrencyPatternsNoCurrencyV1`.
+5. **No Currency**: Formats the numeric value with currency-specific decimal fractions and cash rounding (e.g. 0 decimals for JPY, 2 for USD, 3 for BHD) and supports both standard and accounting parenthetical formats (`(1,234.50)`), while suppressing the currency symbol entirely using `CurrencyPatternsNoCurrencyV1`. Note that compact and scientific no-currency combinations are not defined as currency formats in UTS #35 or ECMA-402; applications requiring compact numbers without symbols use `CompactDecimalFormatter` directly.
 
 ---
 
