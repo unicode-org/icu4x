@@ -448,9 +448,9 @@ macro_rules! impl_posix_property {
                 ) -> Result<DataResponse<$marker>, DataError> {
                     self.check_req::<$marker>(req)?;
 
-                    #[cfg(not(feature = "unstable"))]
+                    #[cfg(not(any(test, feature = "unstable")))]
                     use icu::properties::unstable_unicodeset_parse::parse_unstable;
-                    #[cfg(feature = "unstable")]
+                    #[cfg(any(test, feature = "unstable"))]
                     use icu::properties::unicodeset_parse::parse_unstable;
 
                     let set = parse_unstable($set_string, self)
