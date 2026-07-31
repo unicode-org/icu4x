@@ -65,18 +65,6 @@ impl CldrCache {
         CldrDirLang(self, "cldr-misc-full/main")
     }
 
-    /// This is for the temporary experimental coverage level data.
-    /// See `coverage_experimental.rs`
-    pub(crate) fn misc_root(&self) -> CldrDirNoLang<'_> {
-        CldrDirNoLang(self, "cldr-misc-full")
-    }
-
-    /// This is for the temporary experimental coverage level data.
-    /// See `coverage_experimental.rs`
-    pub(crate) fn experimental_coverage_by_xpath(&self) -> CldrDirLang<'_> {
-        CldrDirLang(self, "cldr-misc-full/coverageByXPath")
-    }
-
     pub(crate) fn bcp47(&self) -> CldrDirNoLang<'_> {
         CldrDirNoLang(self, "cldr-bcp47/bcp47")
     }

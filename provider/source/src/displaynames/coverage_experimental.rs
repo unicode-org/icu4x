@@ -6,14 +6,103 @@
 //! generated from a snapshot of CLDR 48 to populate the tiny/light/heavy display names
 //! depth tiers. This code should be deleted when a longer-term solution is available.
 
-use crate::{cldr_cache::CldrCache, cldr_serde::coverage_by_xpath::CoverageByXPathResource};
+use crate::source::SerdeCache;
 use icu_provider::prelude::*;
+use litemap::LiteMap;
+use serde::Deserialize;
+use serde::de::{Deserializer, Error as DeError, SeqAccess, Visitor};
+use std::collections::BTreeMap;
+use std::fmt;
 use std::sync::OnceLock;
 use writeable::Writeable;
+use zerotrie::ZeroTrieSimpleAscii;
+
+/// Serde wrapper for `coverageByXPath.json` and locale-specific `coverageByXPath/{locale}.json` files.
+/// If this is added to CLDR JSON, this should be moved to `cldr_serde`.
+#[derive(Deserialize, Debug)]
+pub(super) struct CoverageByXPathResource {
+    /// Mapping from locale identifier (or `"root"`) to its corresponding coverage levels object.
+    #[serde(rename = "coverageByXPath")]
+    pub(super) coverage_by_xpath: BTreeMap<String, CoverageByXPathLevels>,
+}
+
+/// Representation of coverage levels (`basic`, `core`, `moderate`, `modern`) containing sets of `XPaths`.
+/// If this is added to CLDR JSON, this should be moved to `cldr_serde`.
+#[derive(Deserialize, Debug)]
+pub(super) struct CoverageByXPathLevels {
+    /// `XPaths` classified under the `basic` coverage level.
+    #[serde(default, deserialize_with = "set_to_trie")]
+    pub(super) basic: ZeroTrieSimpleAscii<Vec<u8>>,
+    /// `XPaths` classified under the `core` coverage level.
+    #[serde(default, deserialize_with = "set_to_trie")]
+    pub(super) core: ZeroTrieSimpleAscii<Vec<u8>>,
+    /// `XPaths` classified under the `moderate` coverage level.
+    #[serde(default, deserialize_with = "set_to_trie")]
+    pub(super) moderate: ZeroTrieSimpleAscii<Vec<u8>>,
+    /// `XPaths` classified under the `modern` coverage level.
+    #[serde(default, deserialize_with = "set_to_trie")]
+    pub(super) modern: ZeroTrieSimpleAscii<Vec<u8>>,
+}
+
+impl CoverageByXPathLevels {
+    pub(super) fn level_for_xpath(&self, xpath: &impl Writeable) -> Option<CoverageLevelForXPath> {
+        let contains = |trie: &ZeroTrieSimpleAscii<Vec<u8>>| {
+            trie.get_with_write_fn(|sink| xpath.write_to(sink))
+                .is_some()
+        };
+        if contains(&self.core) {
+            Some(CoverageLevelForXPath::Core)
+        } else if contains(&self.basic) {
+            Some(CoverageLevelForXPath::Basic)
+        } else if contains(&self.moderate) {
+            Some(CoverageLevelForXPath::Moderate)
+        } else if contains(&self.modern) {
+            Some(CoverageLevelForXPath::Modern)
+        } else {
+            None
+        }
+    }
+}
+
+struct ZeroTrieVisitor;
+
+impl<'de> Visitor<'de> for ZeroTrieVisitor {
+    type Value = ZeroTrieSimpleAscii<Vec<u8>>;
+    fn expecting(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "a sequence of XPaths")
+    }
+    fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
+    where
+        A: SeqAccess<'de>,
+    {
+        let mut litemap = LiteMap::new_vec();
+        while let Some(elem) = seq.next_element::<String>()? {
+            // CLDR coverage files contain some non-ASCII XPaths, principally emoji annotations
+            // (e.g., //ldml/annotations/annotation[@cp="😀"]).
+            //
+            // However, we want to use a `ZeroTrieSimpleAscii` since it is faster to query.
+            // If we need to support non-ASCII XPaths in the future, this optimization will
+            // need to be revisited.
+            if elem.is_ascii() {
+                litemap.insert(elem.into_bytes(), 0);
+            }
+        }
+        ZeroTrieSimpleAscii::try_from(&litemap).map_err(DeError::custom)
+    }
+}
+
+fn set_to_trie<'de, D>(deserializer: D) -> Result<ZeroTrieSimpleAscii<Vec<u8>>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    deserializer.deserialize_seq(ZeroTrieVisitor)
+}
+
+pub(super) struct CoverageByXPathCache(SerdeCache);
 
 /// Coverage tiers for display names items derived from CLDR `coverageByXPath` JSON definitions.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
-pub(crate) enum CoverageLevelForXPath {
+pub(super) enum CoverageLevelForXPath {
     /// Items with `core` CLDR coverage level.
     Core,
     /// Items with `basic` CLDR coverage level.
@@ -26,21 +115,21 @@ pub(crate) enum CoverageLevelForXPath {
     Comprehensive,
 }
 
-impl CldrCache {
+impl CoverageByXPathCache {
     /// Determines the [`CoverageTier`] for a given `locale` and `xpath` target.
     ///
     /// Resolution lookup precedence:
     /// 1. Locale-specific override file `cldr-misc-full/coverageByXPath/{locale}.json`
     /// 2. Root defaults file `cldr-misc-full/coverageByXPath.json`
     /// 3. Defaults to [`CoverageTier::Extended`] if unlisted everywhere.
-    pub(crate) fn coverage_tier(
+    pub(super) fn coverage_tier(
         &self,
         locale: &DataLocale,
         xpath: impl Writeable,
     ) -> Result<CoverageLevelForXPath, DataError> {
-        let dir = self.experimental_coverage_by_xpath();
-        if dir.file_exists(locale, "")? {
-            let resource: &CoverageByXPathResource = dir.read_and_parse(locale, "")?;
+        let locale_path = format!("cldr-misc-full/coverageByXPath/{locale}.json");
+        if self.0.file_exists(&locale_path)? {
+            let resource: &CoverageByXPathResource = self.0.read_and_parse_json(&locale_path)?;
             let levels = resource.coverage_by_xpath.values().next();
             if let Some(level) = levels.and_then(|l| l.level_for_xpath(&xpath)) {
                 return Ok(level);
@@ -49,8 +138,9 @@ impl CldrCache {
             log::warn!("Coverage data file not found for locale {locale}");
         }
 
-        let misc_dir = self.misc_root();
-        let resource: &CoverageByXPathResource = misc_dir.read_and_parse("coverageByXPath.json")?;
+        let resource: &CoverageByXPathResource = self
+            .0
+            .read_and_parse_json("cldr-misc-full/coverageByXPath.json")?;
         if let Some(level) = resource
             .coverage_by_xpath
             .get("root")
@@ -67,10 +157,10 @@ impl CldrCache {
 // Note: We statically embed coverage levels for all CLDR locales here so we can support
 // locale display name depth slicing before these data are officially published to CLDR JSON.
 // TODO: Remove this static cache and read exclusively from CLDR once coverageByXPath is published.
-pub(crate) fn coverage_cldr_cache() -> &'static CldrCache {
-    static SINGLETON: OnceLock<CldrCache> = OnceLock::new();
+pub(super) fn coverage_cldr_cache() -> &'static CoverageByXPathCache {
+    static SINGLETON: OnceLock<CoverageByXPathCache> = OnceLock::new();
     SINGLETON.get_or_init(|| {
-        CldrCache::new(crate::source::include_files!(
+        CoverageByXPathCache(SerdeCache::new(crate::source::include_files!(
             "../../data/";
             "cldr-misc-full/coverageByXPath.json",
             "cldr-misc-full/coverageByXPath/aa-DJ.json",
@@ -853,7 +943,7 @@ pub(crate) fn coverage_cldr_cache() -> &'static CldrCache {
             "cldr-misc-full/coverageByXPath/zh-Latn.json",
             "cldr-misc-full/coverageByXPath/zh.json",
             "cldr-misc-full/coverageByXPath/zu.json",
-        ))
+        )))
     })
 }
 
@@ -886,18 +976,15 @@ fn test_coverage_tier() {
 fn test_all_filesystem_locales_in_coverage_cldr_cache() {
     use crate::source::AbstractFs;
     let data_dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("data");
-    let fs_cldr = CldrCache::new(AbstractFs::new(&data_dir).unwrap());
+    let fs_cldr = SerdeCache::new(AbstractFs::new(&data_dir).unwrap());
     let coverage_cldr = coverage_cldr_cache();
 
-    let files = fs_cldr
-        .serde_cache
-        .list("cldr-misc-full/coverageByXPath")
-        .unwrap();
+    let files = fs_cldr.list("cldr-misc-full/coverageByXPath").unwrap();
 
     for file_name in files {
         let full_path = format!("cldr-misc-full/coverageByXPath/{file_name}");
         assert!(
-            coverage_cldr.serde_cache.file_exists(&full_path).unwrap(),
+            coverage_cldr.0.file_exists(&full_path).unwrap(),
             "Missing file in coverage_cldr_cache: {full_path}"
         );
     }

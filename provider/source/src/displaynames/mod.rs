@@ -161,7 +161,7 @@ trait CheckAltCoverage {
 /// 3. Looks up the coverage tier (`CoverageLevelForXPath`) for that `XPath` in the given locale.
 /// 4. Invokes `callback(locale, key, tier)`.
 #[cfg(test)]
-pub(crate) fn for_each_cldr_key_and_tier<Resource, T>(
+fn for_each_cldr_key_and_tier<Resource, T>(
     cldr: &crate::cldr_cache::CldrCache,
     file_name: &str,
     xpath_field: &str,
