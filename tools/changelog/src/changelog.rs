@@ -42,7 +42,7 @@ struct ChangelogEntry {
 static CHANGELOG_HEADER: LazyLock<Regex> =
     LazyLock::new(|| Regex::new("(\n|^)#+ Changelog(?<annotation>.*(\n|$))").unwrap());
 static SECTION: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new("^(?<crate>\\S+):(?<entry>.*)$").unwrap());
+    LazyLock::new(|| Regex::new("^(?<crate>`?\\S+`?:|`\\S+`)(?<entry>.*)$").unwrap());
 
 #[derive(Clone, Debug, Default)]
 struct SectionState {
@@ -83,7 +83,13 @@ impl OrganizedChangelog {
                 let entry = header.name("entry").unwrap().as_str().trim().to_owned();
 
                 current_section = Some(SectionState {
-                    krate: header.name("crate").unwrap().as_str().to_owned(),
+                    krate: header
+                        .name("crate")
+                        .unwrap()
+                        .as_str()
+                        .trim_matches(':')
+                        .trim_matches('`')
+                        .to_owned(),
                     entry,
                     bullets: Vec::new(),
                     indent_stack: Vec::new(),
