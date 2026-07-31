@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::coverage_experimental::CoverageLevelForXPath;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
-use crate::cldr_cache::CoverageLevelForXPath;
 use crate::cldr_serde;
 use crate::cldr_serde::displaynames::{Alt, WithAlt};
 use crate::displaynames::extract_names_for_zeromap_struct;

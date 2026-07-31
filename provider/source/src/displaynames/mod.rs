@@ -2,15 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+pub(crate) mod coverage_experimental;
 pub(crate) mod essentials;
 pub(crate) mod language;
 pub(crate) mod region;
 pub(crate) mod script;
 pub(crate) mod variant;
 
-#[cfg(test)]
-use crate::cldr_cache::CoverageLevelForXPath;
 use crate::cldr_serde::displaynames::{Alt, Menu, WithAlt};
+#[cfg(test)]
+use coverage_experimental::CoverageLevelForXPath;
 use either::Either;
 use std::collections::{BTreeMap, HashMap};
 use writeable::Writeable;
@@ -170,7 +171,7 @@ pub(crate) fn for_each_cldr_key_and_tier<Resource, T>(
     Resource: serde::de::DeserializeOwned + Send + Sync + 'static,
     T: Writeable,
 {
-    let coverage_cldr = crate::cldr_cache::coverage_cldr_cache();
+    let coverage_cldr = coverage_experimental::coverage_cldr_cache();
     let displaynames_dir = cldr.displaynames();
     let mut locales = displaynames_dir.list_locales().unwrap().collect::<Vec<_>>();
     locales.sort_by(|a, b| a.total_cmp(b));
@@ -237,7 +238,7 @@ macro_rules! impl_displaynames_v1 {
                 let field_str = stringify!($field);
                 let xpath =
                     $crate::displaynames::construct_xpath(field_str, &subtag, $alt_variant, None);
-                let item_tier = crate::cldr_cache::coverage_cldr_cache()
+                let item_tier = crate::displaynames::coverage_experimental::coverage_cldr_cache()
                     .coverage_tier(req.id.locale, &xpath)?;
                 if !matches!(item_tier, $tier) {
                     return Err(DataErrorKind::IdentifierNotFound
@@ -266,7 +267,7 @@ macro_rules! impl_displaynames_v1 {
         impl $crate::displaynames::CheckAltCoverage for $marker {
             fn contains_key<T>(
                 key: &$crate::cldr_serde::displaynames::WithAlt<T>,
-                tier: $crate::cldr_cache::CoverageLevelForXPath,
+                tier: $crate::displaynames::coverage_experimental::CoverageLevelForXPath,
             ) -> bool {
                 key.alt == $alt_variant && key.menu.is_none() && matches!(tier, $tier)
             }
@@ -350,7 +351,7 @@ macro_rules! impl_displaynames_menu_v1 {
                         Some($crate::cldr_serde::displaynames::Menu::Core),
                     )
                 };
-                let item_tier = crate::cldr_cache::coverage_cldr_cache()
+                let item_tier = crate::displaynames::coverage_experimental::coverage_cldr_cache()
                     .coverage_tier(req.id.locale, &xpath)?;
                 if !matches!(item_tier, $tier) {
                     return Err(DataErrorKind::IdentifierNotFound
@@ -402,7 +403,7 @@ macro_rules! impl_displaynames_menu_v1 {
                                     )
                                 };
                             if matches!(
-                                crate::cldr_cache::coverage_cldr_cache()
+                                crate::displaynames::coverage_experimental::coverage_cldr_cache()
                                     .coverage_tier(&locale, &xpath)?,
                                 $tier
                             ) {
@@ -427,7 +428,7 @@ macro_rules! impl_displaynames_menu_v1 {
         impl $crate::displaynames::CheckAltCoverage for $marker {
             fn contains_key<T>(
                 key: &$crate::cldr_serde::displaynames::WithAlt<T>,
-                tier: $crate::cldr_cache::CoverageLevelForXPath,
+                tier: $crate::displaynames::coverage_experimental::CoverageLevelForXPath,
             ) -> bool {
                 ((key.alt.is_none() && key.menu.is_some())
                     || key.alt == Some($crate::cldr_serde::displaynames::Alt::Menu))
@@ -471,7 +472,7 @@ macro_rules! impl_displaynames_iter_v1 {
                                 None,
                             );
                             if matches!(
-                                crate::cldr_cache::coverage_cldr_cache()
+                                crate::displaynames::coverage_experimental::coverage_cldr_cache()
                                     .coverage_tier(&locale, &xpath)?,
                                 $tier
                             ) {

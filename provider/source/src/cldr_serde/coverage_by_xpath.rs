@@ -2,6 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! NOTE: This JSON structure is temporary, experimental, and unstable.
+//! See `coverage_experimental.rs` for more information.
+
+use crate::displaynames::coverage_experimental::CoverageLevelForXPath;
 use litemap::LiteMap;
 use serde::Deserialize;
 use serde::de::{Deserializer, Error as DeError, SeqAccess, Visitor};
@@ -38,8 +42,7 @@ impl CoverageByXPathLevels {
     pub(crate) fn level_for_xpath(
         &self,
         xpath: &impl writeable::Writeable,
-    ) -> Option<crate::cldr_cache::CoverageLevelForXPath> {
-        use crate::cldr_cache::CoverageLevelForXPath;
+    ) -> Option<CoverageLevelForXPath> {
         let contains = |trie: &ZeroTrieSimpleAscii<Vec<u8>>| {
             trie.get_with_write_fn(|sink| xpath.write_to(sink))
                 .is_some()
