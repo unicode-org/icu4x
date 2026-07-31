@@ -50,14 +50,12 @@ pub mod provider {
     #[cfg(feature = "compiled_data")]
     #[allow(unused_imports)]
     const _: () = {
-        pub use crate as icu_experimental;
         use icu_experimental_data::*;
         pub mod icu {
             pub use crate as experimental;
             pub use icu_collections as collections;
             pub use icu_decimal as decimal;
             pub use icu_locale as locale;
-            pub use icu_pattern as pattern;
             pub use icu_plurals as plurals;
         }
         make_provider!(Baked);
