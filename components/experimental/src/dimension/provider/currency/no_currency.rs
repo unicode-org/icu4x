@@ -64,7 +64,7 @@ impl<'a> CurrencyPatternsNoCurrency<'a> {
     ///
     /// This is used as a safe fallback if an index in [`NoCurrencyPatternIndices`] is out of bounds
     /// due to corrupt or malformed provider data.
-    pub const PASS_THROUGH: &'static DoublePlaceholderPattern =
+    const PASS_THROUGH: &'static DoublePlaceholderPattern =
         DoublePlaceholderPattern::from_ref_store_unchecked("\u{2}\u{1}");
 
     /// Gets the standard positive no-currency pattern.
