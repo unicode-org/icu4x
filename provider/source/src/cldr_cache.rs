@@ -318,13 +318,17 @@ impl<'a> CldrDirLang<'a> {
 
     pub(crate) fn file_exists(
         &self,
-        lang: &DataLocale,
+        locale: &DataLocale,
         file_name: &str,
     ) -> Result<bool, DataError> {
-        let path = format!("{}/{lang}/{file_name}", self.1);
+        let path = if file_name.is_empty() {
+            format!("{}/{locale}.json", self.1)
+        } else {
+            format!("{}/{locale}/{file_name}", self.1)
+        };
         if self.0.serde_cache.file_exists(&path)? {
             Ok(true)
-        } else if let Some(new_locale) = self.0.add_script_extended(lang)? {
+        } else if let Some(new_locale) = self.0.add_script_extended(locale)? {
             self.file_exists(&new_locale, file_name)
         } else {
             Ok(false)
