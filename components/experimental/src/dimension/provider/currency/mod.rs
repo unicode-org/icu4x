@@ -7,5 +7,6 @@ pub mod essentials;
 pub mod extended;
 pub mod fractions;
 mod fractions_ule;
+pub mod no_currency;
 pub mod patterns;
 pub mod symbols;
