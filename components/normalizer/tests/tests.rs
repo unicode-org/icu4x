@@ -454,13 +454,11 @@ fn test_uts46_normalize_validate() {
     );
 }
 
-type StackString = arraystring::ArrayString<arraystring::typenum::U48>;
-
 #[test]
 fn test_nfd_str_to() {
     let normalizer = DecomposingNormalizerBorrowed::new_nfd();
 
-    let mut buf = StackString::new();
+    let mut buf = String::new();
     assert!(normalizer.normalize_to("ä", &mut buf).is_ok());
     assert_eq!(&buf, "a\u{0308}");
 
@@ -473,7 +471,7 @@ fn test_nfd_str_to() {
 fn test_nfd_utf8_to() {
     let normalizer = DecomposingNormalizerBorrowed::new_nfd();
 
-    let mut buf = StackString::new();
+    let mut buf = String::new();
     assert!(
         normalizer
             .normalize_utf8_to("ä".as_bytes(), &mut buf)
@@ -490,13 +488,11 @@ fn test_nfd_utf8_to() {
     assert_eq!(&buf, "e\u{0323}\u{0302}");
 }
 
-type StackVec = arrayvec::ArrayVec<u16, 32>;
-
 #[test]
 fn test_nfd_utf16_to() {
     let normalizer = DecomposingNormalizerBorrowed::new_nfd();
 
-    let mut buf = StackVec::new();
+    let mut buf = Vec::new();
     assert!(
         normalizer
             .normalize_utf16_to([0x00E4u16].as_slice(), &mut buf)
@@ -517,7 +513,7 @@ fn test_nfd_utf16_to() {
 fn test_nfc_str_to() {
     let normalizer = ComposingNormalizerBorrowed::new_nfc();
 
-    let mut buf = StackString::new();
+    let mut buf = String::new();
     assert!(normalizer.normalize_to("a\u{0308}", &mut buf).is_ok());
     assert_eq!(&buf, "ä");
 
@@ -534,7 +530,7 @@ fn test_nfc_str_to() {
 fn test_nfc_utf8_to() {
     let normalizer = ComposingNormalizerBorrowed::new_nfc();
 
-    let mut buf = StackString::new();
+    let mut buf = String::new();
     assert!(
         normalizer
             .normalize_utf8_to("a\u{0308}".as_bytes(), &mut buf)
@@ -555,7 +551,7 @@ fn test_nfc_utf8_to() {
 fn test_nfc_utf16_to() {
     let normalizer = ComposingNormalizerBorrowed::new_nfc();
 
-    let mut buf = StackVec::new();
+    let mut buf = Vec::new();
     assert!(
         normalizer
             .normalize_utf16_to([0x0061u16, 0x0308u16].as_slice(), &mut buf)
@@ -576,7 +572,7 @@ fn test_nfc_utf16_to() {
 fn test_nfc_utf8_to_errors() {
     let normalizer = ComposingNormalizerBorrowed::new_nfc();
 
-    let mut buf = StackString::new();
+    let mut buf = String::new();
     assert!(
         normalizer
             .normalize_utf8_to(b"\xFFa\xCC\x88\xFF", &mut buf)
@@ -613,7 +609,7 @@ fn test_nfc_utf8_to_errors() {
 fn test_nfd_utf8_to_errors() {
     let normalizer = DecomposingNormalizerBorrowed::new_nfd();
 
-    let mut buf = StackString::new();
+    let mut buf = String::new();
     assert!(
         normalizer
             .normalize_utf8_to(b"\xFF\xC3\xA4\xFF", &mut buf)
@@ -650,7 +646,7 @@ fn test_nfd_utf8_to_errors() {
 fn test_nfc_utf16_to_errors() {
     let normalizer = ComposingNormalizerBorrowed::new_nfc();
 
-    let mut buf = StackVec::new();
+    let mut buf = Vec::new();
     assert!(
         normalizer
             .normalize_utf16_to([0xD800u16, 0x0061u16, 0x0308u16].as_slice(), &mut buf)
@@ -777,7 +773,7 @@ fn test_nfc_utf16_to_errors() {
 fn test_nfd_utf16_to_errors() {
     let normalizer = DecomposingNormalizerBorrowed::new_nfd();
 
-    let mut buf = StackVec::new();
+    let mut buf = Vec::new();
     assert!(
         normalizer
             .normalize_utf16_to([0xD800u16, 0x00E4u16].as_slice(), &mut buf)
@@ -904,19 +900,19 @@ use atoi::FromRadix16;
 use icu_properties::props::CanonicalCombiningClass;
 
 /// Parse five semicolon-terminated strings consisting of space-separated hexadecimal scalar values
-fn parse_hex(mut hexes: &[u8]) -> [StackString; 5] {
+fn parse_hex(mut hexes: &[u8]) -> [String; 5] {
     let mut strings = [
-        StackString::new(),
-        StackString::new(),
-        StackString::new(),
-        StackString::new(),
-        StackString::new(),
+        String::new(),
+        String::new(),
+        String::new(),
+        String::new(),
+        String::new(),
     ];
     let mut current = 0;
     loop {
         let (scalar, mut offset) = u32::from_radix_16(hexes);
         let c = core::char::from_u32(scalar).unwrap();
-        strings[current].try_push(c).unwrap();
+        strings[current].push(c);
         match hexes[offset] {
             b';' => {
                 current += 1;
@@ -1132,30 +1128,24 @@ fn test_conformance() {
 //     }
 // }
 
-fn str_to_utf16(s: &str, sink: &mut StackVec) {
+fn str_to_utf16(s: &str, sink: &mut Vec<u16>) {
     sink.clear();
-    let mut buf = [0u16; 2];
-    for c in s.chars() {
-        sink.try_extend_from_slice(c.encode_utf16(&mut buf))
-            .unwrap();
-    }
+    sink.extend(s.encode_utf16());
 }
 
-fn char_to_utf16(c: char, sink: &mut StackVec) {
+fn char_to_utf16(c: char, sink: &mut Vec<u16>) {
     sink.clear();
-    let mut buf = [0u16; 2];
-    sink.try_extend_from_slice(c.encode_utf16(&mut buf))
-        .unwrap();
+    sink.extend(c.encode_utf16(&mut [0; 2]).iter());
 }
 
-fn str_to_str(s: &str, sink: &mut StackString) {
+fn str_to_str(s: &str, sink: &mut String) {
     sink.clear();
-    sink.try_push_str(s).unwrap();
+    sink.push_str(s);
 }
 
-fn char_to_str(c: char, sink: &mut StackString) {
+fn char_to_str(c: char, sink: &mut String) {
     sink.clear();
-    sink.try_push(c).unwrap();
+    sink.push(c);
 }
 
 #[test]
@@ -1165,9 +1155,9 @@ fn test_conformance_utf16() {
     let nfc = ComposingNormalizerBorrowed::new_nfc();
     let nfkc = ComposingNormalizerBorrowed::new_nfkc();
 
-    let mut input = StackVec::new();
-    let mut normalized = StackVec::new();
-    let mut expected = StackVec::new();
+    let mut input = Vec::new();
+    let mut normalized = Vec::new();
+    let mut expected = Vec::new();
 
     let mut prev = 0u32;
     let mut part = 0u8;
@@ -1378,9 +1368,9 @@ fn test_conformance_utf8() {
     let nfc = ComposingNormalizerBorrowed::new_nfc();
     let nfkc = ComposingNormalizerBorrowed::new_nfkc();
 
-    let mut input = StackString::new();
-    let mut normalized = StackString::new();
-    let mut expected = StackString::new();
+    let mut input = String::new();
+    let mut normalized = String::new();
+    let mut expected = String::new();
 
     let mut prev = 0u32;
     let mut part = 0u8;

@@ -68,11 +68,5 @@ EAST_ASIAN_POX ; [[{EAST_ASIAN_POX}]] ;
 NON_EAST_ASIAN_PRX ; [[{NON_EAST_ASIAN_PRX}]] ; 
 EAST_ASIAN_PRX ; [[{EAST_ASIAN_PRX}]] ; 
 LOOSE_DASH ; [[{LOOSE_DASH}]] ; 
-EAST_ASIAN_ID_AL ; [[{EAST_ASIAN_ID_AL}]] ; 
 SAmMnmMc ; [[\p{Line_Break=Complex_Context}-\p{gc=Mn}-\p{gc=Mc}]] ; AImEastAsian|ALmEastAsianmDottedCircle|SG|XXmExtPictUnassigned
 SA_Mn|SA_Mc ; [[[\p{Line_Break=Complex_Context}&\p{gc=Mn}]] [[\p{Line_Break=Complex_Context}&\p{gc=Mc}]]] ; CM
-EAST_ASIAN_PHRASE_ID ; [[{EAST_ASIAN_PHRASE_ID}]] ; EAST_ASIAN_ID_AL
-EAST_ASIAN_PHRASE_AL ; [[{EAST_ASIAN_PHRASE_AL}]] ; AI_EastAsian|AL_EastAsian
-EAST_ASIAN_PHRASE_NS ; [[{EAST_ASIAN_PHRASE_NS}]] ; EAST_ASIAN_PHRASE_NS
-EAST_ASIAN_PHRASE_H2 ; [[{EAST_ASIAN_PHRASE_H2}]] ; EAST_ASIAN_PHRASE_H2
-EAST_ASIAN_PHRASE_H3 ; [[{EAST_ASIAN_PHRASE_H3}]] ; EAST_ASIAN_PHRASE_H3

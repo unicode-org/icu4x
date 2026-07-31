@@ -353,7 +353,7 @@ impl zerovec::ule::AsULE for BreakState {
 /// A complex script that requires special handling in the segmenter.
 #[allow(missing_docs)] // trivial
 #[zerovec::make_ule(ComplexScriptULE)]
-#[derive(PartialEq, Debug, Copy, Clone)]
+#[derive(PartialEq, Debug, Copy, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]

@@ -81,7 +81,7 @@ pub mod prelude {
     pub use icu_provider::{DataLocale, DataMarker, DataMarkerInfo, export::DataExporter};
 }
 
-use icu_locale::LocaleFallbacker;
+use icu_locale::fallback::LocaleFallbacker;
 use icu_provider::export::DataExporter;
 use icu_provider::export::ExportableProvider;
 use icu_provider::prelude::*;

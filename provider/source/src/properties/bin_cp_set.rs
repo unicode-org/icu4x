@@ -325,57 +325,6 @@ impl_ucd_property!(
     (icu::properties::props::XidStart, PropertyBinaryXidStartV1)
 );
 
-macro_rules! impl_icu4c_property {
-    ($(($prop:ty, $marker:ident)),+) => {
-        $(
-            #[allow(deprecated)]
-            impl DataProvider<$marker> for SourceDataProvider {
-                fn load(
-                    &self,
-                    req: DataRequest,
-                ) -> Result<DataResponse<$marker>, DataError> {
-                    self.check_req::<$marker>(req)?;
-
-                    let name = core::str::from_utf8(<$prop as BinaryProperty>::NAME).unwrap();
-                    let short_name = core::str::from_utf8(<$prop as BinaryProperty>::SHORT_NAME).unwrap();
-
-                    let mut builder = CodePointInversionListBuilder::new();
-                    let data = self
-                        .icuexport()?
-                        .read_and_parse_toml::<super::uprops_serde::binary::Main>(&format!(
-                            "uprops/{}/{}.toml",
-                            self.trie_type(),
-                            short_name
-                        ))?
-                        .binary_property
-                        .first()
-                        .ok_or_else(|| DataErrorKind::MarkerNotFound.into_error())?;
-
-                    if name != data.long_name
-                        || short_name != data.short_name.as_ref().unwrap_or(&data.long_name)
-                    {
-                        return Err(DataError::custom("Property name mismatch").with_display_context(name));
-                    }
-                    for (start, end) in &data.ranges {
-                        builder.add_range32(start..=end);
-                    }
-
-                    Ok(DataResponse {
-                        metadata: Default::default(),
-                        payload: DataPayload::from_owned(PropertyCodePointSet::InversionList(builder.build()))
-                    })
-                }
-            }
-
-            impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
-                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-                    Ok(HashSet::from_iter([Default::default()]))
-                }
-            }
-        )+
-    };
-}
-
 impl DataProvider<PropertyBinarySegmentStarterV1> for SourceDataProvider {
     fn load(
         &self,
@@ -488,13 +437,6 @@ impl crate::IterableDataProviderCached<PropertyBinaryCaseSensitiveV1> for Source
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
-
-impl_icu4c_property!(
-    (icu::properties::props::NfcInert, PropertyBinaryNfcInertV1),
-    (icu::properties::props::NfdInert, PropertyBinaryNfdInertV1),
-    (icu::properties::props::NfkcInert, PropertyBinaryNfkcInertV1),
-    (icu::properties::props::NfkdInert, PropertyBinaryNfkdInertV1)
-);
 
 macro_rules! impl_posix_property {
     ($(($prop:ty, $marker:ident, $set_string:literal)),+) => {

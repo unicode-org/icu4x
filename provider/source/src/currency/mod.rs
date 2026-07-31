@@ -6,5 +6,6 @@ pub(crate) mod displayname;
 pub(crate) mod essentials;
 pub(crate) mod extended;
 pub(crate) mod fractions;
+pub(crate) mod no_currency;
 pub(crate) mod patterns;
 pub(crate) mod symbols;

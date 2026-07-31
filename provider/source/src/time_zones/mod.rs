@@ -775,7 +775,6 @@ mod tests {
         };
 
         let time_zone_formats: DataResponse<TimezoneNamesEssentialsV1> = provider.load(en).unwrap();
-        assert_eq!("GMT", time_zone_formats.payload.get().offset_zero);
         assert_eq!("GMT+?", time_zone_formats.payload.get().offset_unknown);
 
         let locations_root: DataResponse<TimezoneNamesLocationsRootV1> = provider.load(en).unwrap();
