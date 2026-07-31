@@ -185,7 +185,7 @@ fn for_each_cldr_key_and_tier<Resource, T>(
                     return;
                 }
                 let xpath = construct_xpath(xpath_field, &key.subtag, key.alt, key.menu);
-                let tier = coverage_cldr.coverage_tier(&locale, &xpath).unwrap();
+                let tier = coverage_cldr.coverage_tier(&locale, &xpath, cldr).unwrap();
                 callback(&locale, key, tier);
             }
         }
@@ -239,7 +239,7 @@ macro_rules! impl_displaynames_v1 {
                 let xpath =
                     $crate::displaynames::construct_xpath(field_str, &subtag, $alt_variant, None);
                 let item_tier = crate::displaynames::coverage_experimental::coverage_cldr_cache()
-                    .coverage_tier(req.id.locale, &xpath)?;
+                    .coverage_tier(req.id.locale, &xpath, cldr)?;
                 if !matches!(item_tier, $tier) {
                     return Err(DataErrorKind::IdentifierNotFound
                         .into_error()
@@ -352,7 +352,7 @@ macro_rules! impl_displaynames_menu_v1 {
                     )
                 };
                 let item_tier = crate::displaynames::coverage_experimental::coverage_cldr_cache()
-                    .coverage_tier(req.id.locale, &xpath)?;
+                    .coverage_tier(req.id.locale, &xpath, cldr)?;
                 if !matches!(item_tier, $tier) {
                     return Err(DataErrorKind::IdentifierNotFound
                         .into_error()
@@ -404,7 +404,7 @@ macro_rules! impl_displaynames_menu_v1 {
                                 };
                             if matches!(
                                 crate::displaynames::coverage_experimental::coverage_cldr_cache()
-                                    .coverage_tier(&locale, &xpath)?,
+                                    .coverage_tier(&locale, &xpath, cldr)?,
                                 $tier
                             ) {
                                 let data_identifier = DataIdentifierCow::from_owned(
@@ -473,7 +473,7 @@ macro_rules! impl_displaynames_iter_v1 {
                             );
                             if matches!(
                                 crate::displaynames::coverage_experimental::coverage_cldr_cache()
-                                    .coverage_tier(&locale, &xpath)?,
+                                    .coverage_tier(&locale, &xpath, cldr)?,
                                 $tier
                             ) {
                                 let data_identifier = DataIdentifierCow::from_owned(

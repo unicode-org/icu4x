@@ -6,6 +6,7 @@
 //! generated from a snapshot of CLDR 48 to populate the tiny/light/heavy display names
 //! depth tiers. This code should be deleted when a longer-term solution is available.
 
+use crate::cldr_cache::CldrCache;
 use crate::source::SerdeCache;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
@@ -126,6 +127,7 @@ impl CoverageByXPathCache {
         &self,
         locale: &DataLocale,
         xpath: impl Writeable,
+        cldr_cache: &CldrCache,
     ) -> Result<CoverageLevelForXPath, DataError> {
         let locale_path = format!("cldr-misc-full/coverageByXPath/{locale}.json");
         if self.0.file_exists(&locale_path)? {
@@ -135,7 +137,16 @@ impl CoverageByXPathCache {
                 return Ok(level);
             }
         } else {
-            log::warn!("Coverage data file not found for locale {locale}");
+            if locale.variant.is_some() {
+                // el-polyton, ...
+                let mut new_locale = *locale;
+                new_locale.variant = None;
+                return self.coverage_tier(&new_locale, xpath, cldr_cache);
+            } else if let Some(new_locale) = cldr_cache.add_script_extended(locale)? {
+                return self.coverage_tier(&new_locale, xpath, cldr_cache);
+            } else {
+                log::warn!("Coverage data file not found for locale {locale}");
+            }
         }
 
         let resource: &CoverageByXPathResource = self
@@ -952,14 +963,14 @@ fn test_coverage_tier() {
     use crate::SourceDataProvider;
     use std::str::FromStr;
     let provider = SourceDataProvider::new_testing();
-    let _cldr = provider.cldr().unwrap();
+    let cldr = provider.cldr().unwrap();
     let coverage_cldr = coverage_cldr_cache();
 
     let en = DataLocale::from_str("en").unwrap();
     // Minimal tier XPath (basic language display name in root defaults)
     let xpath_minimal = "//ldml/localeDisplayNames/languages/language[@type=\"en\"]";
     assert_eq!(
-        coverage_cldr.coverage_tier(&en, xpath_minimal).unwrap(),
+        coverage_cldr.coverage_tier(&en, xpath_minimal, cldr).unwrap(),
         CoverageLevelForXPath::Basic
     );
 
@@ -967,7 +978,7 @@ fn test_coverage_tier() {
     let xpath_unlisted =
         "//ldml/localeDisplayNames/languages/language[@type=\"unlisted_test_code\"]";
     assert_eq!(
-        coverage_cldr.coverage_tier(&en, xpath_unlisted).unwrap(),
+        coverage_cldr.coverage_tier(&en, xpath_unlisted, cldr).unwrap(),
         CoverageLevelForXPath::Comprehensive
     );
 }
