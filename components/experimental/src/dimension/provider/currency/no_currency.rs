@@ -60,13 +60,23 @@ pub struct NoCurrencyPatternIndices {
 icu_provider::data_struct!(CurrencyNoCurrencyPatterns<'_>, #[cfg(feature = "datagen")]);
 
 impl<'a> CurrencyNoCurrencyPatterns<'a> {
+    /// A pass-through pattern containing only placeholder `{0}` (the formatted numeric value).
+    ///
+    /// This is used as a safe fallback if an index in [`NoCurrencyPatternIndices`] is out of bounds
+    /// due to corrupt or malformed provider data.
+    pub const PASS_THROUGH: &'static DoublePlaceholderPattern =
+        DoublePlaceholderPattern::from_ref_store_unchecked("\u{2}\u{1}");
+
     /// Gets the standard positive no-currency pattern.
     pub fn get_positive(&'a self) -> &'a DoublePlaceholderPattern {
         self.patterns
             .get(self.indices.standard as usize)
             .unwrap_or_else(|| {
-                debug_assert!(false, "Standard pattern index is out of bounds");
-                <&DoublePlaceholderPattern>::default()
+                debug_assert!(
+                    false,
+                    "Standard pattern index is out of bounds; data may be corrupt"
+                );
+                Self::PASS_THROUGH
             })
     }
 
@@ -81,8 +91,11 @@ impl<'a> CurrencyNoCurrencyPatterns<'a> {
         self.patterns
             .get(self.indices.accounting_positive as usize)
             .unwrap_or_else(|| {
-                debug_assert!(false, "Accounting positive pattern index is out of bounds");
-                <&DoublePlaceholderPattern>::default()
+                debug_assert!(
+                    false,
+                    "Accounting positive pattern index is out of bounds; data may be corrupt"
+                );
+                Self::PASS_THROUGH
             })
     }
 
@@ -91,4 +104,19 @@ impl<'a> CurrencyNoCurrencyPatterns<'a> {
         let idx = self.indices.accounting_negative?;
         self.patterns.get(idx as usize)
     }
+}
+
+#[test]
+fn test_pass_through_pattern() {
+    use writeable::assert_writeable_eq;
+
+    assert_eq!(
+        CurrencyNoCurrencyPatterns::PASS_THROUGH,
+        &*DoublePlaceholderPattern::try_from_str("{0}", Default::default()).unwrap()
+    );
+
+    assert_writeable_eq!(
+        CurrencyNoCurrencyPatterns::PASS_THROUGH.interpolate((123, "")),
+        "123"
+    );
 }
