@@ -13,12 +13,20 @@ pub struct DecimalFormatterOptions {
     ///
     /// Default is [`GroupingStrategy::Auto`]
     pub grouping_strategy: Option<GroupingStrategy>,
+
+    /// Custom decimal separator override.
+    pub decimal_separator: Option<char>,
+
+    /// Custom grouping separator override.
+    pub grouping_separator: Option<char>,
 }
 
 impl From<GroupingStrategy> for DecimalFormatterOptions {
     fn from(grouping_strategy: GroupingStrategy) -> Self {
         Self {
             grouping_strategy: Some(grouping_strategy),
+            decimal_separator: None,
+            grouping_separator: None,
         }
     }
 }
@@ -79,13 +87,19 @@ pub enum GroupingStrategy {
 ///
 /// ✨ *Enabled with the `unstable` Cargo feature.*
 #[cfg(feature = "unstable")]
-#[derive(Debug, Eq, PartialEq, Clone)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Hash)]
 #[non_exhaustive]
 pub struct CompactDecimalFormatterOptions {
     /// When to render grouping separators.
     ///
     /// Default is [`GroupingStrategy::Min2`]
     pub grouping_strategy: Option<GroupingStrategy>,
+
+    /// Custom decimal separator override.
+    pub decimal_separator: Option<char>,
+
+    /// Custom grouping separator override.
+    pub grouping_separator: Option<char>,
 }
 
 #[cfg(feature = "unstable")]
@@ -100,6 +114,8 @@ impl From<DecimalFormatterOptions> for CompactDecimalFormatterOptions {
     fn from(decimal_formatter_options: DecimalFormatterOptions) -> Self {
         Self {
             grouping_strategy: decimal_formatter_options.grouping_strategy,
+            decimal_separator: decimal_formatter_options.decimal_separator,
+            grouping_separator: decimal_formatter_options.grouping_separator,
         }
     }
 }
@@ -109,6 +125,8 @@ impl From<CompactDecimalFormatterOptions> for DecimalFormatterOptions {
     fn from(decimal_formatter_options: CompactDecimalFormatterOptions) -> Self {
         Self {
             grouping_strategy: decimal_formatter_options.grouping_strategy,
+            decimal_separator: decimal_formatter_options.decimal_separator,
+            grouping_separator: decimal_formatter_options.grouping_separator,
         }
     }
 }
@@ -118,6 +136,8 @@ impl From<GroupingStrategy> for CompactDecimalFormatterOptions {
     fn from(grouping_strategy: GroupingStrategy) -> Self {
         Self {
             grouping_strategy: Some(grouping_strategy),
+            decimal_separator: None,
+            grouping_separator: None,
         }
     }
 }

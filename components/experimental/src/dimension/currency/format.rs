@@ -379,4 +379,18 @@ mod tests {
         let fmt_name = CurrencyFormatter::try_new_name(prefs, currency_code).unwrap();
         assert_writeable_eq!(fmt_name.format_fixed_decimal(&value), "12,346 Japanese yen");
     }
+
+    #[test]
+    pub fn test_currency_symbol_decimal_override() {
+        let prefs: CurrencyFormatterPreferences = locale!("pt-PT").into();
+        let currency_code = CurrencyCode(tinystr!(3, "PTE"));
+        let value = "12345.67".parse().unwrap();
+
+        let fmt_symbol =
+            CurrencyFormatter::try_new_symbol(prefs, currency_code, Default::default()).unwrap();
+        assert_writeable_eq!(
+            fmt_symbol.format_fixed_decimal(&value),
+            "12,345$67\u{a0}\u{200b}"
+        );
+    }
 }

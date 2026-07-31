@@ -21,6 +21,15 @@ pub(crate) struct CurrencyPatterns {
     #[serde(rename = "displayName")]
     pub(crate) display_name: Option<String>,
 
+    #[serde(rename = "pattern")]
+    pub(crate) pattern: Option<String>,
+
+    #[serde(rename = "decimal")]
+    pub(crate) decimal: Option<String>,
+
+    #[serde(rename = "group")]
+    pub(crate) group: Option<String>,
+
     #[serde(rename = "displayName-count-0")]
     pub(crate) explicit_zero: Option<String>,
 

@@ -39,19 +39,47 @@ impl DataProvider<CurrencySymbolsV1> for SourceDataProvider {
             .unwrap();
 
         let symbol = match length {
-            s if s == CurrencySymbolsV1::SHORT.as_str() => currency_pattern.short.as_ref(),
-            n if n == CurrencySymbolsV1::NARROW.as_str() => currency_pattern.narrow.as_ref(),
+            s if s == CurrencySymbolsV1::SHORT.as_str() => {
+                currency_pattern.short.as_deref().unwrap_or(currency)
+            }
+            n if n == CurrencySymbolsV1::NARROW.as_str() => {
+                currency_pattern.narrow.as_deref().unwrap_or(currency)
+            }
             _ => unreachable!(),
-        }
-        .unwrap();
+        };
 
         // TODO: This is not entirely correct. We need to look at the first/last grapheme cluster.
-        let starts_with_letter = letters_set
-            .as_borrowed()
-            .contains(symbol.chars().next().unwrap());
-        let ends_with_letter = letters_set
-            .as_borrowed()
-            .contains(symbol.chars().next_back().unwrap());
+        let starts_with_letter = symbol
+            .chars()
+            .next()
+            .is_some_and(|c| letters_set.as_borrowed().contains(c));
+        let ends_with_letter = symbol
+            .chars()
+            .next_back()
+            .is_some_and(|c| letters_set.as_borrowed().contains(c));
+
+        let decimal = match currency_pattern.decimal.as_deref() {
+            Some(s) if s.chars().count() > 1 => {
+                log::warn!(
+                    "Multi-character decimal separator override for currency {} in locale {}: '{s}' - ignoring",
+                    currency,
+                    req.id.locale,
+                );
+                None
+            }
+            s => s,
+        };
+        let group = match currency_pattern.group.as_deref() {
+            Some(s) if s.chars().count() > 1 => {
+                log::warn!(
+                    "Multi-character grouping separator override for currency {} in locale {}: '{s}' - ignoring",
+                    currency,
+                    req.id.locale,
+                );
+                None
+            }
+            s => s,
+        };
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -59,6 +87,8 @@ impl DataProvider<CurrencySymbolsV1> for SourceDataProvider {
                 symbol,
                 starts_with_letter,
                 ends_with_letter,
+                decimal,
+                group,
             )),
         })
     }
@@ -81,7 +111,15 @@ impl IterableDataProviderCached<CurrencySymbolsV1> for SourceDataProvider {
                 .numbers
                 .currencies
             {
-                if patterns.short.as_ref().is_some_and(|s| s != currency) {
+                let has_overrides = patterns
+                    .decimal
+                    .as_deref()
+                    .is_some_and(|s| s.chars().count() == 1)
+                    || patterns
+                        .group
+                        .as_deref()
+                        .is_some_and(|s| s.chars().count() == 1);
+                if patterns.short.as_ref().is_some_and(|s| s != currency) || has_overrides {
                     ids.insert(DataIdentifierCow::from_owned(
                         DataMarkerAttributes::try_from_string(format!("s/{currency}")).unwrap(),
                         locale,
@@ -132,34 +170,34 @@ fn test_symbols() {
 
     assert_eq!(
         load(EN, USD, CurrencySymbolsV1::SHORT).unwrap().get(),
-        &CurrencySymbol::new("$", false, false)
+        &CurrencySymbol::new("$", false, false, None, None)
     );
     assert_eq!(
         load(EN, USD, CurrencySymbolsV1::NARROW).unwrap().get(),
-        &CurrencySymbol::new("$", false, false)
+        &CurrencySymbol::new("$", false, false, None, None)
     );
 
     assert_eq!(load(EN, EGP, CurrencySymbolsV1::SHORT), None);
     assert_eq!(
         load(EN, EGP, CurrencySymbolsV1::NARROW).unwrap().get(),
-        &CurrencySymbol::new("E£", true, false)
+        &CurrencySymbol::new("E£", true, false, None, None)
     );
 
     assert_eq!(
         load(AR_EG, EGP, CurrencySymbolsV1::SHORT).unwrap().get(),
-        &CurrencySymbol::new("ج.م.\u{200f}", true, false)
+        &CurrencySymbol::new("ج.م.\u{200f}", true, false, None, None)
     );
     assert_eq!(
         load(AR_EG, EGP, CurrencySymbolsV1::NARROW).unwrap().get(),
-        &CurrencySymbol::new("E£", true, false)
+        &CurrencySymbol::new("E£", true, false, None, None)
     );
 
     assert_eq!(
         load(AR_EG, USD, CurrencySymbolsV1::SHORT).unwrap().get(),
-        &CurrencySymbol::new("US$", true, false)
+        &CurrencySymbol::new("US$", true, false, None, None)
     );
     assert_eq!(
         load(AR_EG, USD, CurrencySymbolsV1::NARROW).unwrap().get(),
-        &CurrencySymbol::new("US$", true, false)
+        &CurrencySymbol::new("US$", true, false, None, None)
     );
 }

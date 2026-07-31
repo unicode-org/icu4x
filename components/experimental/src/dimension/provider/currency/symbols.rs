@@ -9,7 +9,6 @@
 use icu_provider::prelude::*;
 use tinystr::{TinyAsciiStr, tinystr};
 use zerovec::VarZeroCow;
-use zerovec::ule::vartuple::{VarTuple, VarTupleULE};
 
 use crate::dimension::currency::CurrencyCode;
 
@@ -25,33 +24,61 @@ icu_provider::data_marker!(
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency::symbols))]
 #[derive(Debug, Clone, PartialEq, Eq, zerofrom::ZeroFrom, yoke::Yokeable)]
-
-pub struct CurrencySymbol<'a>(
-    #[doc(hidden)]
+pub struct CurrencySymbol<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub VarZeroCow<'a, VarTupleULE<u8, str>>,
-);
+    pub symbol: VarZeroCow<'data, str>,
+    pub starts_with_letter: bool,
+    pub ends_with_letter: bool,
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub decimal_separator: Option<VarZeroCow<'data, str>>,
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub grouping_separator: Option<VarZeroCow<'data, str>>,
+}
 
 impl CurrencySymbol<'_> {
-    pub fn new(symbol: &str, starts_with_letter: bool, ends_with_letter: bool) -> Self {
-        let sized = (starts_with_letter as u8) << 1 | (ends_with_letter as u8);
-        let variable = VarZeroCow::from(symbol);
-        Self(VarZeroCow::from_encodeable(&VarTuple { sized, variable }))
+    pub fn new(
+        symbol: &str,
+        starts_with_letter: bool,
+        ends_with_letter: bool,
+        decimal_separator: Option<&str>,
+        grouping_separator: Option<&str>,
+    ) -> CurrencySymbol<'static> {
+        CurrencySymbol {
+            symbol: VarZeroCow::from(alloc::boxed::Box::<str>::from(symbol)),
+            starts_with_letter,
+            ends_with_letter,
+            decimal_separator: decimal_separator
+                .map(|s| VarZeroCow::from(alloc::boxed::Box::<str>::from(s))),
+            grouping_separator: grouping_separator
+                .map(|s| VarZeroCow::from(alloc::boxed::Box::<str>::from(s))),
+        }
     }
 
     /// Returns true if the symbol starts with a letter.
     pub fn starts_with_letter(&self) -> bool {
-        self.0.sized & 0b10 != 0
+        self.starts_with_letter
     }
 
     /// Returns true if the symbol ends with a letter.
     pub fn ends_with_letter(&self) -> bool {
-        self.0.sized & 0b01 != 0
+        self.ends_with_letter
+    }
+
+    pub(crate) fn decimal_separator_char(&self) -> Option<char> {
+        self.decimal_separator
+            .as_deref()
+            .and_then(|s| s.chars().next())
+    }
+
+    pub(crate) fn grouping_separator_char(&self) -> Option<char> {
+        self.grouping_separator
+            .as_deref()
+            .and_then(|s| s.chars().next())
     }
 
     /// Returns the symbol as a string slice.
     pub fn as_str(&self) -> &str {
-        &self.0.variable
+        &self.symbol
     }
 }
 
@@ -72,15 +99,4 @@ impl CurrencySymbolsV1 {
     }
 }
 
-icu_provider::data_struct!(
-    CurrencySymbol<'_>,
-    varule: VarTupleULE<u8, str>,
-    #[cfg(feature = "datagen")]
-    encode_as_varule: |v: &CurrencySymbol<'_>| &v.0
-);
-
-impl<'zf> zerofrom::ZeroFrom<'zf, VarTupleULE<u8, str>> for CurrencySymbol<'zf> {
-    fn zero_from(source: &'zf VarTupleULE<u8, str>) -> Self {
-        Self(VarZeroCow::zero_from(source))
-    }
-}
+icu_provider::data_struct!(CurrencySymbol<'_>, #[cfg(feature = "datagen")]);
