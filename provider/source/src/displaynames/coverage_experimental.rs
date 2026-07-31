@@ -26,6 +26,29 @@ pub(crate) enum CoverageLevelForXPath {
     Comprehensive,
 }
 
+impl CoverageByXPathLevels {
+    pub(crate) fn level_for_xpath(
+        &self,
+        xpath: &impl writeable::Writeable,
+    ) -> Option<CoverageLevelForXPath> {
+        let contains = |trie: &ZeroTrieSimpleAscii<Vec<u8>>| {
+            trie.get_with_write_fn(|sink| xpath.write_to(sink))
+                .is_some()
+        };
+        if contains(&self.core) {
+            Some(CoverageLevelForXPath::Core)
+        } else if contains(&self.basic) {
+            Some(CoverageLevelForXPath::Basic)
+        } else if contains(&self.moderate) {
+            Some(CoverageLevelForXPath::Moderate)
+        } else if contains(&self.modern) {
+            Some(CoverageLevelForXPath::Modern)
+        } else {
+            None
+        }
+    }
+}
+
 impl CldrCache {
     /// Determines the [`CoverageTier`] for a given `locale` and `xpath` target.
     ///
@@ -39,9 +62,8 @@ impl CldrCache {
         xpath: impl Writeable,
     ) -> Result<CoverageLevelForXPath, DataError> {
         let dir = self.experimental_coverage_by_xpath();
-        let locale_file = format!("{locale}.json");
-        if dir.file_exists(&locale_file)? {
-            let resource: &CoverageByXPathResource = dir.read_and_parse(&locale_file)?;
+        if dir.file_exists(&locale, "")? {
+            let resource: &CoverageByXPathResource = dir.read_and_parse(&locale, "")?;
             let levels = resource.coverage_by_xpath.values().next();
             if let Some(level) = levels.and_then(|l| l.level_for_xpath(&xpath)) {
                 return Ok(level);
@@ -51,16 +73,13 @@ impl CldrCache {
         }
 
         let misc_dir = self.misc_root();
-        if misc_dir.file_exists("coverageByXPath.json")? {
-            let resource: &CoverageByXPathResource =
-                misc_dir.read_and_parse("coverageByXPath.json")?;
-            if let Some(level) = resource
-                .coverage_by_xpath
-                .get("root")
-                .and_then(|l| l.level_for_xpath(&xpath))
-            {
-                return Ok(level);
-            }
+        let resource: &CoverageByXPathResource = misc_dir.read_and_parse("coverageByXPath.json")?;
+        if let Some(level) = resource
+            .coverage_by_xpath
+            .get("root")
+            .and_then(|l| l.level_for_xpath(&xpath))
+        {
+            return Ok(level);
         }
 
         // Not found: default to Comprehensive
