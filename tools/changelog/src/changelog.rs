@@ -54,6 +54,10 @@ struct SectionState {
 
 impl OrganizedChangelog {
     fn add(&mut self, data: &PrData) {
+        if data.is_dependabot() {
+            return;
+        }
+
         let Some(header) = CHANGELOG_HEADER.captures(&data.body) else {
             self.no_changelog_found.push(data.clone());
             return;
