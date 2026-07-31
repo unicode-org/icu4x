@@ -21,23 +21,17 @@ fn word_break_with_locale() {
         &["hello:world"],
         WordSegmenter::try_new_auto(options).unwrap().as_borrowed(),
     );
-    check_word(
-        "hello:world",
-        &["hello:world"],
-        WordSegmenter::try_new_neo_auto(options)
-            .unwrap()
-            .as_borrowed(),
-    );
+    check_word("hello:world", &["hello:world"], {
+        let mut s = WordSegmenter::new_neo_for_non_complex_scripts(Default::default());
+        s.load_auto();
+        s
+    });
 
-    let langid = langid!("en");
-    options.content_locale = Some(&langid);
-    check_word(
-        "hello:world",
-        &["hello:world"],
-        WordSegmenter::try_new_neo_auto(options)
-            .unwrap()
-            .as_borrowed(),
-    );
+    check_word("hello:world", &["hello:world"], {
+        let mut s = WordSegmenter::new_neo_for_non_complex_scripts(Default::default());
+        s.load_auto();
+        s
+    });
 }
 
 #[test]

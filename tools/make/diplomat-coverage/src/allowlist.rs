@@ -274,6 +274,7 @@ lazy_static::lazy_static! {
         "icu::segmenter::LineSegmenterBorrowed::load_dictionary",
         "icu::segmenter::WordSegmenterBorrowed::load_lstm",
         "icu::segmenter::WordSegmenterBorrowed::load_dictionary",
+        "icu::segmenter::WordSegmenterBorrowed::load_auto",
 
         // Not planned for 2.0
         // We will revisit these APIs when Duration Formatter needs them. We may need to rename things
