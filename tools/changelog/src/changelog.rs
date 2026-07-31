@@ -130,7 +130,11 @@ impl OrganizedChangelog {
         self.flush(data, &mut current_section);
 
         if !additional_lines.is_empty() {
-            self.additional.push((data.clone(), additional_lines));
+            if additional_lines.trim() == "N/A" {
+                self.n_a.push(data.clone());
+            } else {
+                self.additional.push((data.clone(), additional_lines));
+            }
         }
     }
 
