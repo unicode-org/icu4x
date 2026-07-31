@@ -229,15 +229,6 @@ impl GraphemeClusterSegmenter {
         ))
     }
 
-    #[cfg(feature = "unstable")]
-    icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
-        functions: [
-            new_neo: skip,
-            try_new_neo_with_buffer_provider,
-            try_new_neo_unstable,
-            Self,
-    ]);
-
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_neo)]
     #[cfg(feature = "unstable")]
     pub fn try_new_neo_unstable<D>(provider: &D) -> Result<Self, DataError>

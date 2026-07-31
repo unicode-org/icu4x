@@ -16,7 +16,11 @@ fn break_all(s: &str, expected: &[&str]) {
     options.word_option = Some(LineBreakWordOption::BreakAll);
     options.content_locale = None;
     check_line(s, expected, LineSegmenter::new_dictionary(options));
-    check_line(s, expected, LineSegmenter::new_neo_dictionary(options));
+    check_line(s, expected, {
+        let mut s = LineSegmenter::new_for_non_complex_scripts(options);
+        s.load_dictionary();
+        s
+    });
 }
 
 #[track_caller]
@@ -26,7 +30,11 @@ fn keep_all(s: &str, expected: &[&str]) {
     options.word_option = Some(LineBreakWordOption::KeepAll);
     options.content_locale = None;
     check_line(s, expected, LineSegmenter::new_dictionary(options));
-    check_line(s, expected, LineSegmenter::new_neo_dictionary(options));
+    check_line(s, expected, {
+        let mut s = LineSegmenter::new_for_non_complex_scripts(options);
+        s.load_dictionary();
+        s
+    });
 }
 
 #[track_caller]
@@ -36,7 +44,11 @@ fn normal(s: &str, expected: &[&str]) {
     options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = None;
     check_line(s, expected, LineSegmenter::new_dictionary(options));
-    check_line(s, expected, LineSegmenter::new_neo_dictionary(options));
+    check_line(s, expected, {
+        let mut s = LineSegmenter::new_for_non_complex_scripts(options);
+        s.load_dictionary();
+        s
+    });
 }
 
 #[test]

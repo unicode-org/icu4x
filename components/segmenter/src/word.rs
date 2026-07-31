@@ -544,216 +544,6 @@ impl WordSegmenter {
         }))
     }
 
-    /// Constructs a [`WordSegmenter`] with an invariant locale and the best available compiled data for
-    /// complex scripts (Chinese, Japanese, Khmer, Lao, Myanmar, and Thai).
-    ///
-    /// The current behavior, which is subject to change, is to use the LSTM model when available
-    /// and the dictionary model for Chinese and Japanese.
-    ///
-    /// ✨ *Enabled with the `compiled_data` and `auto` Cargo features.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    ///
-    /// # Examples
-    ///
-    /// Behavior with complex scripts:
-    ///
-    /// ```
-    /// use icu::segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
-    ///
-    /// let th_str = "ทุกสองสัปดาห์";
-    /// let ja_str = "こんにちは世界";
-    ///
-    /// let segmenter =
-    ///     WordSegmenter::new_auto(WordBreakInvariantOptions::default());
-    ///
-    /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
-    /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
-    ///
-    /// assert_eq!(th_bps, [0, 9, 18, 39]);
-    /// assert_eq!(ja_bps, [0, 15, 21]);
-    /// ```
-    #[cfg(feature = "compiled_data")]
-    #[cfg(feature = "auto")]
-    #[cfg(feature = "unstable")]
-    pub fn new_neo_auto(options: WordBreakInvariantOptions) -> WordSegmenterBorrowed<'static> {
-        let mut s = Self::new_neo_for_non_complex_scripts(options);
-        s.load_auto();
-        s
-    }
-
-    #[cfg(feature = "auto")]
-    #[cfg(feature = "unstable")]
-    icu_provider::gen_buffer_data_constructors!(
-        (options: WordBreakOptions) -> error: DataError,
-        functions: [
-            try_new_neo_auto,
-            try_new_neo_auto_with_buffer_provider,
-            try_new_neo_auto_unstable,
-            Self
-        ]
-    );
-
-    #[cfg(feature = "auto")]
-    #[cfg(feature = "unstable")]
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_neo_auto)]
-    pub fn try_new_neo_auto_unstable<D>(
-        provider: &D,
-        _options: WordBreakOptions,
-    ) -> Result<Self, DataError>
-    where
-        D: DataProvider<SegmenterBreakWordV2>
-            + DataProvider<SegmenterDictionaryAutoV1>
-            + DataProvider<SegmenterLstmAutoV1>
-            + DataProvider<SegmenterBreakGraphemeClusterV2>
-            + ?Sized,
-    {
-        let mut s = Self::try_new_neo_for_non_complex_scripts(options)?;
-        s.load_auto_unstable(provider)?;
-        Ok(s)
-    }
-
-    /// Constructs a [`WordSegmenter`] with an invariant locale and compiled LSTM data for
-    /// complex scripts (Burmese, Khmer, Lao, and Thai).
-    ///
-    /// The LSTM, or Long Term Short Memory, is a machine learning model. It is smaller than
-    /// the full dictionary but more expensive during segmentation (inference).
-    ///
-    /// Warning: there is not currently an LSTM model for Chinese or Japanese, so the [`WordSegmenter`]
-    /// created by this function will have unexpected behavior in spans of those scripts.
-    ///
-    /// ✨ *Enabled with the `compiled_data` and `lstm` Cargo features.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    ///
-    /// # Examples
-    ///
-    /// Behavior with complex scripts:
-    ///
-    /// ```
-    /// use icu::segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
-    ///
-    /// let th_str = "ทุกสองสัปดาห์";
-    /// let ja_str = "こんにちは世界";
-    ///
-    /// let segmenter =
-    ///     WordSegmenter::new_lstm(WordBreakInvariantOptions::default());
-    ///
-    /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
-    /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
-    ///
-    /// assert_eq!(th_bps, [0, 9, 18, 39]);
-    ///
-    /// // Note: We aren't able to find a suitable breakpoint in Chinese/Japanese.
-    /// assert_eq!(ja_bps, [0, 21]);
-    /// ```
-    #[cfg(feature = "compiled_data")]
-    #[cfg(feature = "lstm")]
-    #[cfg(feature = "unstable")]
-    pub fn new_neo_lstm(options: WordBreakInvariantOptions) -> WordSegmenterBorrowed<'static> {
-        let mut s = Self::new_neo_for_non_complex_scripts(options);
-        s.load_lstm();
-        s
-    }
-
-    #[cfg(feature = "lstm")]
-    #[cfg(feature = "unstable")]
-    icu_provider::gen_buffer_data_constructors!(
-        (options: WordBreakOptions) -> error: DataError,
-        functions: [
-            try_new_neo_lstm,
-            try_new_neo_lstm_with_buffer_provider,
-            try_new_neo_lstm_unstable,
-            Self
-        ]
-    );
-
-    #[cfg(feature = "lstm")]
-    #[cfg(feature = "unstable")]
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
-    pub fn try_new_neo_lstm_unstable<D>(
-        provider: &D,
-        options: WordBreakOptions,
-    ) -> Result<Self, DataError>
-    where
-        D: DataProvider<SegmenterBreakWordV2>
-            + DataProvider<SegmenterLstmAutoV1>
-            + DataProvider<SegmenterBreakGraphemeClusterV1>
-            + ?Sized,
-    {
-        let mut s = Self::try_new_neo_for_non_complex_scripts_unstable(provider, options)?;
-        s.load_lstm_unstable(provider)?;
-        Ok(s)
-    }
-
-    /// Construct a [`WordSegmenter`] with an invariant locale and compiled dictionary data for
-    /// complex scripts (Chinese, Japanese, Khmer, Lao, Myanmar, and Thai).
-    ///
-    /// The dictionary model uses a list of words to determine appropriate breakpoints. It is
-    /// faster than the LSTM model but requires more data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    ///
-    /// # Examples
-    ///
-    /// Behavior with complex scripts:
-    ///
-    /// ```
-    /// use icu::segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
-    ///
-    /// let th_str = "ทุกสองสัปดาห์";
-    /// let ja_str = "こんにちは世界";
-    ///
-    /// let segmenter =
-    ///     WordSegmenter::new_dictionary(WordBreakInvariantOptions::default());
-    ///
-    /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
-    /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
-    ///
-    /// assert_eq!(th_bps, [0, 9, 18, 39]);
-    /// assert_eq!(ja_bps, [0, 15, 21]);
-    /// ```
-    #[cfg(feature = "compiled_data")]
-    #[cfg(feature = "unstable")]
-    pub fn new_neo_dictionary(
-        options: WordBreakInvariantOptions,
-    ) -> WordSegmenterBorrowed<'static> {
-        let mut s = Self::new_neo_for_non_complex_scripts(options);
-        s.load_dictionary();
-        s
-    }
-
-    #[cfg(feature = "unstable")]
-    icu_provider::gen_buffer_data_constructors!(
-        (options: WordBreakOptions) -> error: DataError,
-        functions: [
-            try_new_neo_dictionary,
-            try_new_neo_dictionary_with_buffer_provider,
-            try_new_neo_dictionary_unstable,
-            Self
-        ]
-    );
-
-    #[cfg(feature = "unstable")]
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_neo_dictionary)]
-    pub fn try_new_neo_dictionary_unstable<D>(
-        provider: &D,
-        options: WordBreakOptions,
-    ) -> Result<Self, DataError>
-    where
-        D: DataProvider<SegmenterBreakWordV2>
-            + DataProvider<SegmenterDictionaryAutoV1>
-            + DataProvider<SegmenterDictionaryExtendedV1>
-            + DataProvider<SegmenterBreakGraphemeClusterV1>
-            + ?Sized,
-    {
-        let mut s = Self::try_new_neo_for_non_complex_scripts_unstable(provider, options)?;
-        s.load_dictionary_unstable(provider)?;
-        Ok(s)
-    }
-
     /// Construct a [`WordSegmenter`] with an invariant locale and no support for
     /// scripts requiring complex context dependent word breaks (Chinese, Japanese, Khmer, Lao, Myanmar, and Thai).
     ///
@@ -770,17 +560,6 @@ impl WordSegmenter {
             complex: ComplexPayloadsBorrowed::new(),
         })
     }
-
-    #[cfg(feature = "unstable")]
-    icu_provider::gen_buffer_data_constructors!(
-        (options: WordBreakOptions) -> error: DataError,
-        functions: [
-            try_new_neo_for_non_complex_scripts,
-            try_new_neo_for_non_complex_scripts_with_buffer_provider,
-            try_new_neo_for_non_complex_scripts_unstable,
-            Self
-        ]
-    );
 
     #[cfg(feature = "unstable")]
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_neo_for_non_complex_scripts)]
@@ -868,8 +647,10 @@ impl WordSegmenter {
         self.load_dictionary_unstable(&provider.as_deserializing())
     }
 
+    /// Loads the best available complex script data for a [`WordSegmenter`] constructed with
+    /// [`WordSegmenter::new_for_non_complex_scripts`].
     #[cfg(feature = "auto")]
-    fn load_auto_unstable<D>(&mut self, provider: &D) -> Result<(), DataError>
+    pub fn load_auto_unstable<D>(&mut self, provider: &D) -> Result<(), DataError>
     where
         D: DataProvider<SegmenterDictionaryAutoV1> + DataProvider<SegmenterLstmAutoV1> + ?Sized,
     {
@@ -887,9 +668,13 @@ impl WordSegmenter {
         Ok(())
     }
 
+    /// A version of [`Self::load_auto_unstable`] that uses custom data
+    /// provided by a [`BufferProvider`].
+    ///
+    /// ✨ *Enabled with the `serde` Cargo feature.*
     #[cfg(feature = "auto")]
     #[cfg(feature = "serde")]
-    fn load_auto_with_buffer_provider(
+    pub fn load_auto_with_buffer_provider(
         &mut self,
         provider: &(impl BufferProvider + ?Sized),
     ) -> Result<(), DataError> {
@@ -1083,9 +868,13 @@ impl WordSegmenterBorrowed<'static> {
         complex.with_japanese_dictionary();
     }
 
+    /// Loads the best available complex script data for a [`WordSegmenter`] constructed with
+    /// [`WordSegmenter::new_for_non_complex_scripts`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     #[cfg(feature = "auto")]
     #[cfg(feature = "compiled_data")]
-    fn load_auto(&mut self) {
+    pub fn load_auto(&mut self) {
         let complex = match self.0 {
             WordSegmenterBorrowedInner::Legacy {
                 ref mut complex, ..
@@ -1233,14 +1022,16 @@ where
 
 #[test]
 fn empty_string() {
-    let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
+    let segmenter =
+        WordSegmenter::new_for_non_complex_scripts(WordBreakInvariantOptions::default());
     let breaks: Vec<usize> = segmenter.segment_str("").collect();
     assert_eq!(breaks, [0]);
 }
 
 #[test]
 fn empty_string_neo() {
-    let segmenter = WordSegmenter::new_neo_auto(WordBreakInvariantOptions::default());
+    let segmenter =
+        WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
     let breaks: Vec<usize> = segmenter.segment_str("").collect();
     assert_eq!(breaks, [0]);
 }
