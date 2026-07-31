@@ -10,7 +10,6 @@ use crate::cldr_serde::numbers::NumberPatternItem;
 
 use std::borrow::Cow;
 use std::collections::HashSet;
-use zerovec::VarZeroVec;
 
 use icu_pattern::DoublePlaceholderKey;
 use icu_pattern::DoublePlaceholderPattern;
@@ -47,34 +46,7 @@ impl DataProvider<CurrencyEssentialsV1> for SourceDataProvider {
 
 impl IterableDataProviderCached<CurrencyEssentialsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        let mut ids = HashSet::new();
-        for locale in self.cldr()?.numbers().list_locales()? {
-            let numbers_resource: &cldr_serde::numbers::Resource = self
-                .cldr()?
-                .numbers()
-                .read_and_parse(&locale, "numbers.json")?;
-            let numbers = &numbers_resource.main.value.numbers;
-            let default_numsys = &numbers.default_numbering_system;
-
-            for (nsname, patterns) in &numbers.numsys_data.currency_patterns {
-                if patterns.standard.positive.is_empty() {
-                    continue;
-                }
-                if nsname == default_numsys {
-                    ids.insert(DataIdentifierCow::from_locale(locale));
-                } else {
-                    let attr = DataMarkerAttributes::try_from_str(nsname).map_err(|_| {
-                        DataError::custom("Invalid numbering system name")
-                            .with_display_context(nsname)
-                    })?;
-                    ids.insert(
-                        DataIdentifierBorrowed::for_marker_attributes_and_locale(attr, &locale)
-                            .into_owned(),
-                    );
-                }
-            }
-        }
-        Ok(ids)
+        super::iter_numsys_pattern_ids(self, |patterns| !patterns.standard.positive.is_empty())
     }
 }
 
@@ -144,47 +116,38 @@ fn extract_currency_essentials<'data>(
         }
     }
 
-    let mut unique_patterns = Vec::<Box<DoublePlaceholderPattern>>::new();
-
-    let mut add_pattern = |opt_cow: Option<Cow<'data, DoublePlaceholderPattern>>| -> Option<u8> {
-        opt_cow.map(|cow| {
-            let pat: Box<DoublePlaceholderPattern> = cow.into_owned();
-            if let Some(idx) = unique_patterns.iter().position(|p| p == &pat) {
-                idx as u8
-            } else {
-                let idx = unique_patterns.len() as u8;
-                unique_patterns.push(pat);
-                idx
-            }
-        })
-    };
-
-    let standard_idx = add_pattern(Some(create_positive_pattern(standard)?)).unwrap();
-    let standard_neg_idx = add_pattern(create_negative_pattern(standard)?);
-    let standard_alpha_idx = add_pattern(
-        standard_alpha_next_to_number
-            .map(create_positive_pattern)
-            .transpose()?,
-    )
-    .unwrap_or(standard_idx);
+    let mut tracker = super::UniquePatternsTracker::new();
+    let standard_idx = tracker
+        .add(Some(create_positive_pattern(standard)?))
+        .unwrap();
+    let standard_neg_idx = tracker.add(create_negative_pattern(standard)?);
+    let standard_alpha_idx = tracker
+        .add(
+            standard_alpha_next_to_number
+                .map(create_positive_pattern)
+                .transpose()?,
+        )
+        .unwrap_or(standard_idx);
     let standard_alpha_neg_idx = match standard_alpha_next_to_number {
-        Some(p) => add_pattern(create_negative_pattern(p)?),
+        Some(p) => tracker.add(create_negative_pattern(p)?),
         None => None,
     };
-    let accounting_pos_idx =
-        add_pattern(accounting.map(create_positive_pattern).transpose()?).unwrap_or(standard_idx);
+    let accounting_pos_idx = tracker
+        .add(accounting.map(create_positive_pattern).transpose()?)
+        .unwrap_or(standard_idx);
     let accounting_neg_idx = match accounting {
-        Some(p) => add_pattern(create_negative_pattern(p)?),
+        Some(p) => tracker.add(create_negative_pattern(p)?),
         None => None,
     };
-    let accounting_alpha_pos_idx = add_pattern(
-        accounting_alpha_next_to_number
-            .map(create_positive_pattern)
-            .transpose()?,
-    )
-    .unwrap_or(accounting_pos_idx);
+    let accounting_alpha_pos_idx = tracker
+        .add(
+            accounting_alpha_next_to_number
+                .map(create_positive_pattern)
+                .transpose()?,
+        )
+        .unwrap_or(accounting_pos_idx);
     let accounting_alpha_neg_idx = match accounting_alpha_next_to_number {
-        Some(p) => add_pattern(create_negative_pattern(p)?),
+        Some(p) => tracker.add(create_negative_pattern(p)?),
         None => None,
     };
 
@@ -200,7 +163,7 @@ fn extract_currency_essentials<'data>(
     };
 
     Ok(CurrencyEssentials {
-        patterns: VarZeroVec::from(&unique_patterns),
+        patterns: tracker.into_var_zero_vec(),
         indices,
     })
 }
