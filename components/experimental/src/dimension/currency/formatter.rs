@@ -8,7 +8,7 @@ use super::super::provider::currency::{
     essentials::CurrencyEssentialsV1,
     extended::CurrencyExtendedDataV1,
     fractions::{CurrencyFractionsV1, FractionInfo, Rounding},
-    no_currency::{CurrencyNoCurrencyPatterns, CurrencyNoCurrencyPatternsV1},
+    no_currency::{CurrencyPatternsNoCurrency, CurrencyPatternsNoCurrencyV1},
     patterns::CurrencyPatternsDataV1,
     symbols::CurrencySymbolsV1,
 };
@@ -73,7 +73,7 @@ pub(crate) enum CurrencyFormatterData {
         plural_rules: PluralRules,
     },
     NoCurrency {
-        patterns: DataPayload<CurrencyNoCurrencyPatternsV1>,
+        patterns: DataPayload<CurrencyPatternsNoCurrencyV1>,
     },
 }
 
@@ -384,7 +384,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let default_id = DataIdentifierBorrowed::for_locale(&locale);
         let ids = req_id.into_iter().chain(core::iter::once(default_id));
         let patterns =
-            load_with_fallback::<CurrencyNoCurrencyPatternsV1>(&crate::provider::Baked, ids)?
+            load_with_fallback::<CurrencyPatternsNoCurrencyV1>(&crate::provider::Baked, ids)?
                 .payload;
         let fractions: DataPayload<CurrencyFractionsV1> =
             crate::provider::Baked.load(Default::default())?.payload;
@@ -406,7 +406,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError>
     where
-        D: ?Sized + DataProvider<CurrencyNoCurrencyPatternsV1> + DataProvider<CurrencyFractionsV1>,
+        D: ?Sized + DataProvider<CurrencyPatternsNoCurrencyV1> + DataProvider<CurrencyFractionsV1>,
     {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
         let decimal_prefs = DecimalFormatterPreferences::from(&prefs);
@@ -414,7 +414,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let req_id = decimal_prefs.nu_id(&locale);
         let default_id = DataIdentifierBorrowed::for_locale(&locale);
         let ids = req_id.into_iter().chain(core::iter::once(default_id));
-        let patterns = load_with_fallback::<CurrencyNoCurrencyPatternsV1>(provider, ids)?.payload;
+        let patterns = load_with_fallback::<CurrencyPatternsNoCurrencyV1>(provider, ids)?.payload;
         let fractions: DataPayload<CurrencyFractionsV1> =
             provider.load(Default::default())?.payload;
         let fraction_info = fractions.get().resolve(currency);
@@ -745,7 +745,7 @@ impl CurrencyFormatter<DecimalFormatter> {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<CurrencyNoCurrencyPatternsV1>
+            + DataProvider<CurrencyPatternsNoCurrencyV1>
             + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
@@ -1401,7 +1401,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
 }
 
 fn select_no_currency_pattern<'a>(
-    patterns: &'a CurrencyNoCurrencyPatterns<'_>,
+    patterns: &'a CurrencyPatternsNoCurrency<'_>,
     accounting: bool,
     sign: Sign,
 ) -> (&'a icu_pattern::DoublePlaceholderPattern, Sign) {

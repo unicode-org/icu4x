@@ -19,12 +19,12 @@ use zerovec::VarZeroVec;
 use icu::experimental::dimension::provider::currency::no_currency::*;
 use icu_provider::prelude::*;
 
-impl DataProvider<CurrencyNoCurrencyPatternsV1> for SourceDataProvider {
+impl DataProvider<CurrencyPatternsNoCurrencyV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<CurrencyNoCurrencyPatternsV1>, DataError> {
-        self.check_req::<CurrencyNoCurrencyPatternsV1>(req)?;
+    ) -> Result<DataResponse<CurrencyPatternsNoCurrencyV1>, DataError> {
+        self.check_req::<CurrencyPatternsNoCurrencyV1>(req)?;
 
         let numbers_resource: &cldr_serde::numbers::Resource = self
             .cldr()?
@@ -56,7 +56,7 @@ fn has_no_currency_pattern(patterns: &cldr_serde::numbers::CurrencyFormattingPat
         || !patterns.standard.positive.is_empty()
 }
 
-impl IterableDataProviderCached<CurrencyNoCurrencyPatternsV1> for SourceDataProvider {
+impl IterableDataProviderCached<CurrencyPatternsNoCurrencyV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         let mut ids = HashSet::new();
         for locale in self.cldr()?.numbers().list_locales()? {
@@ -92,7 +92,7 @@ impl IterableDataProviderCached<CurrencyNoCurrencyPatternsV1> for SourceDataProv
 fn extract_currency_no_currency<'data>(
     numbers_resource: &cldr_serde::numbers::Resource,
     numsys_name: &str,
-) -> Result<CurrencyNoCurrencyPatterns<'data>, DataError> {
+) -> Result<CurrencyPatternsNoCurrency<'data>, DataError> {
     let numbers_block = &numbers_resource.main.value.numbers;
     let currency_formats = numbers_block
         .numsys_data
@@ -100,7 +100,7 @@ fn extract_currency_no_currency<'data>(
         .get(numsys_name)
         .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
 
-    // We only generate CurrencyNoCurrencyPatterns for locale/numsys pairs that possess a non-empty
+    // We only generate CurrencyPatternsNoCurrency for locale/numsys pairs that possess a non-empty
     // `standard_no_currency` or `standard` pattern (verified during ID iteration in `iter_ids_cached`).
     // If both are missing or empty when `load` is called directly, we treat the identifier as not found.
     if !has_no_currency_pattern(currency_formats) {
@@ -219,7 +219,7 @@ fn extract_currency_no_currency<'data>(
         accounting_negative: accounting_neg_idx,
     };
 
-    Ok(CurrencyNoCurrencyPatterns {
+    Ok(CurrencyPatternsNoCurrency {
         patterns: VarZeroVec::from(&unique_patterns),
         indices,
     })

@@ -9,9 +9,9 @@ use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
 
 icu_provider::data_marker!(
-    /// `CurrencyNoCurrencyPatternsV1`
-    CurrencyNoCurrencyPatternsV1,
-    CurrencyNoCurrencyPatterns<'static>,
+    /// `CurrencyPatternsNoCurrencyV1`
+    CurrencyPatternsNoCurrencyV1,
+    CurrencyPatternsNoCurrency<'static>,
 );
 
 /// Currency `NoCurrency` patterns data struct.
@@ -29,7 +29,7 @@ icu_provider::data_marker!(
     databake(path = icu_experimental::dimension::provider::currency::no_currency)
 )]
 #[yoke(prove_covariance_manually)]
-pub struct CurrencyNoCurrencyPatterns<'data> {
+pub struct CurrencyPatternsNoCurrency<'data> {
     /// A packed list of distinct no-currency patterns referenced by [`NoCurrencyPatternIndices`].
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub patterns: VarZeroVec<'data, DoublePlaceholderPattern>,
@@ -38,7 +38,7 @@ pub struct CurrencyNoCurrencyPatterns<'data> {
     pub indices: NoCurrencyPatternIndices,
 }
 
-/// Indices into `patterns` in [`CurrencyNoCurrencyPatterns`].
+/// Indices into `patterns` in [`CurrencyPatternsNoCurrency`].
 #[derive(Copy, Clone, PartialEq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
@@ -57,9 +57,9 @@ pub struct NoCurrencyPatternIndices {
     pub accounting_negative: Option<u8>,
 }
 
-icu_provider::data_struct!(CurrencyNoCurrencyPatterns<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(CurrencyPatternsNoCurrency<'_>, #[cfg(feature = "datagen")]);
 
-impl<'a> CurrencyNoCurrencyPatterns<'a> {
+impl<'a> CurrencyPatternsNoCurrency<'a> {
     /// A pass-through pattern containing only placeholder `{0}` (the formatted numeric value).
     ///
     /// This is used as a safe fallback if an index in [`NoCurrencyPatternIndices`] is out of bounds
@@ -111,12 +111,12 @@ fn test_pass_through_pattern() {
     use writeable::assert_writeable_eq;
 
     assert_eq!(
-        CurrencyNoCurrencyPatterns::PASS_THROUGH,
+        CurrencyPatternsNoCurrency::PASS_THROUGH,
         &*DoublePlaceholderPattern::try_from_str("{0}", Default::default()).unwrap()
     );
 
     assert_writeable_eq!(
-        CurrencyNoCurrencyPatterns::PASS_THROUGH.interpolate((123, "")),
+        CurrencyPatternsNoCurrency::PASS_THROUGH.interpolate((123, "")),
         "123"
     );
 }
