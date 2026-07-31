@@ -6,10 +6,7 @@
 //! generated from a snapshot of CLDR 48 to populate the tiny/light/heavy display names
 //! depth tiers. This code should be deleted when a longer-term solution is available.
 
-use crate::{
-    cldr_cache::{CldrCache, CldrDirNoLang},
-    cldr_serde::coverage_by_xpath::CoverageByXPathResource,
-};
+use crate::{cldr_cache::CldrCache, cldr_serde::coverage_by_xpath::CoverageByXPathResource};
 use icu_provider::prelude::*;
 use std::sync::OnceLock;
 use writeable::Writeable;
@@ -41,7 +38,7 @@ impl CldrCache {
         locale: &DataLocale,
         xpath: impl Writeable,
     ) -> Result<CoverageLevelForXPath, DataError> {
-        let dir = self.coverage_by_xpath();
+        let dir = self.experimental_coverage_by_xpath();
         let locale_file = format!("{locale}.json");
         if dir.file_exists(&locale_file)? {
             let resource: &CoverageByXPathResource = dir.read_and_parse(&locale_file)?;
@@ -53,7 +50,7 @@ impl CldrCache {
             log::warn!("Coverage data file not found for locale {locale}");
         }
 
-        let misc_dir = CldrDirNoLang(self, "cldr-misc-full");
+        let misc_dir = self.misc_root();
         if misc_dir.file_exists("coverageByXPath.json")? {
             let resource: &CoverageByXPathResource =
                 misc_dir.read_and_parse("coverageByXPath.json")?;
@@ -68,10 +65,6 @@ impl CldrCache {
 
         // Not found: default to Comprehensive
         Ok(CoverageLevelForXPath::Comprehensive)
-    }
-
-    pub(crate) fn coverage_by_xpath(&self) -> CldrDirNoLang<'_> {
-        CldrDirNoLang(self, "cldr-misc-full/coverageByXPath")
     }
 }
 

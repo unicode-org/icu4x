@@ -65,6 +65,18 @@ impl CldrCache {
         CldrDirLang(self, "cldr-misc-full/main")
     }
 
+    /// This is for the temporary experimental coverage level data.
+    /// See `coverage_experimental.rs`
+    pub(crate) fn misc_root(&self) -> CldrDirNoLang<'_> {
+        CldrDirNoLang(self, "cldr-misc-full")
+    }
+
+    /// This is for the temporary experimental coverage level data.
+    /// See `coverage_experimental.rs`
+    pub(crate) fn experimental_coverage_by_xpath(&self) -> CldrDirNoLang<'_> {
+        CldrDirNoLang(self, "cldr-misc-full/coverageByXPath")
+    }
+
     pub(crate) fn bcp47(&self) -> CldrDirNoLang<'_> {
         CldrDirNoLang(self, "cldr-bcp47/bcp47")
     }
@@ -251,7 +263,7 @@ impl CldrCache {
     }
 }
 
-pub(crate) struct CldrDirNoLang<'a>(pub(crate) &'a CldrCache, pub(crate) &'static str);
+pub(crate) struct CldrDirNoLang<'a>(&'a CldrCache, &'static str);
 
 impl<'a> CldrDirNoLang<'a> {
     pub(crate) fn read_and_parse<S>(&self, file_name: &str) -> Result<&'a S, DataError>
