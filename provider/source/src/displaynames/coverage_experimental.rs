@@ -970,7 +970,9 @@ fn test_coverage_tier() {
     // Minimal tier XPath (basic language display name in root defaults)
     let xpath_minimal = "//ldml/localeDisplayNames/languages/language[@type=\"en\"]";
     assert_eq!(
-        coverage_cldr.coverage_tier(&en, xpath_minimal, cldr).unwrap(),
+        coverage_cldr
+            .coverage_tier(&en, xpath_minimal, cldr)
+            .unwrap(),
         CoverageLevelForXPath::Basic
     );
 
@@ -978,7 +980,9 @@ fn test_coverage_tier() {
     let xpath_unlisted =
         "//ldml/localeDisplayNames/languages/language[@type=\"unlisted_test_code\"]";
     assert_eq!(
-        coverage_cldr.coverage_tier(&en, xpath_unlisted, cldr).unwrap(),
+        coverage_cldr
+            .coverage_tier(&en, xpath_unlisted, cldr)
+            .unwrap(),
         CoverageLevelForXPath::Comprehensive
     );
 }
