@@ -26,29 +26,6 @@ pub(crate) enum CoverageLevelForXPath {
     Comprehensive,
 }
 
-impl CoverageByXPathLevels {
-    pub(crate) fn level_for_xpath(
-        &self,
-        xpath: &impl writeable::Writeable,
-    ) -> Option<CoverageLevelForXPath> {
-        let contains = |trie: &ZeroTrieSimpleAscii<Vec<u8>>| {
-            trie.get_with_write_fn(|sink| xpath.write_to(sink))
-                .is_some()
-        };
-        if contains(&self.core) {
-            Some(CoverageLevelForXPath::Core)
-        } else if contains(&self.basic) {
-            Some(CoverageLevelForXPath::Basic)
-        } else if contains(&self.moderate) {
-            Some(CoverageLevelForXPath::Moderate)
-        } else if contains(&self.modern) {
-            Some(CoverageLevelForXPath::Modern)
-        } else {
-            None
-        }
-    }
-}
-
 impl CldrCache {
     /// Determines the [`CoverageTier`] for a given `locale` and `xpath` target.
     ///
@@ -62,8 +39,8 @@ impl CldrCache {
         xpath: impl Writeable,
     ) -> Result<CoverageLevelForXPath, DataError> {
         let dir = self.experimental_coverage_by_xpath();
-        if dir.file_exists(&locale, "")? {
-            let resource: &CoverageByXPathResource = dir.read_and_parse(&locale, "")?;
+        if dir.file_exists(locale, "")? {
+            let resource: &CoverageByXPathResource = dir.read_and_parse(locale, "")?;
             let levels = resource.coverage_by_xpath.values().next();
             if let Some(level) = levels.and_then(|l| l.level_for_xpath(&xpath)) {
                 return Ok(level);

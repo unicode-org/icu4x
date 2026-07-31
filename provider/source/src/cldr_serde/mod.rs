@@ -9,6 +9,7 @@
 
 pub(crate) mod aliases;
 pub(crate) mod ca;
+#[cfg(feature = "unstable")]
 pub(crate) mod coverage_by_xpath;
 pub(crate) mod coverage_levels;
 #[cfg(feature = "unstable")]

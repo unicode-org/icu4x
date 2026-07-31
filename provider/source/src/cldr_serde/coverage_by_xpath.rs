@@ -5,6 +5,7 @@
 //! NOTE: This JSON structure is temporary, experimental, and unstable.
 //! See `coverage_experimental.rs` for more information.
 
+use crate::displaynames::coverage_experimental::CoverageLevelForXPath;
 use litemap::LiteMap;
 use serde::Deserialize;
 use serde::de::{Deserializer, Error as DeError, SeqAccess, Visitor};
@@ -35,6 +36,29 @@ pub(crate) struct CoverageByXPathLevels {
     /// `XPaths` classified under the `modern` coverage level.
     #[serde(default, deserialize_with = "set_to_trie")]
     pub(crate) modern: ZeroTrieSimpleAscii<Vec<u8>>,
+}
+
+impl CoverageByXPathLevels {
+    pub(crate) fn level_for_xpath(
+        &self,
+        xpath: &impl writeable::Writeable,
+    ) -> Option<CoverageLevelForXPath> {
+        let contains = |trie: &ZeroTrieSimpleAscii<Vec<u8>>| {
+            trie.get_with_write_fn(|sink| xpath.write_to(sink))
+                .is_some()
+        };
+        if contains(&self.core) {
+            Some(CoverageLevelForXPath::Core)
+        } else if contains(&self.basic) {
+            Some(CoverageLevelForXPath::Basic)
+        } else if contains(&self.moderate) {
+            Some(CoverageLevelForXPath::Moderate)
+        } else if contains(&self.modern) {
+            Some(CoverageLevelForXPath::Modern)
+        } else {
+            None
+        }
+    }
 }
 
 struct ZeroTrieVisitor;
