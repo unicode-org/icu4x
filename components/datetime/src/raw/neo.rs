@@ -24,6 +24,8 @@ use crate::provider::{
     packed_pattern::{ErasedPackedPatterns, PackedSkeletonVariant},
     semantic_skeletons::{DatetimePatternsGlueV1, GluePattern, marker_attrs},
 };
+#[cfg(feature = "unstable")]
+use crate::range::difference::Difference;
 use icu_calendar::types::YearAmbiguity;
 use icu_provider::DataPayloadOr;
 use icu_provider::prelude::*;
@@ -124,23 +126,23 @@ impl ItemsAndOptions<'_> {
 
 #[derive(Debug, Clone)]
 pub(crate) struct DateTimeZonePatternSelectionData {
-    options: RawOptions,
-    prefs: RawPreferences,
-    date: DatePatternSelectionData,
+    pub(crate) options: RawOptions,
+    pub(crate) prefs: RawPreferences,
+    pub(crate) date: DatePatternSelectionData,
     // The data for the overlap case is the same as for time, so we use the same intermediate
     // type. This means that we can't have overlap patterns with both a year and a time. This
     // assumption might need to be revisited.
-    time: TimePatternSelectionData,
-    zone: Option<ZonePatternSelectionData>,
-    glue: Option<DataPayload<DatetimePatternsGlueV1>>,
+    pub(crate) time: TimePatternSelectionData,
+    pub(crate) zone: Option<ZonePatternSelectionData>,
+    pub(crate) glue: Option<DataPayload<DatetimePatternsGlueV1>>,
 }
 
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct DateTimeZonePatternDataBorrowed<'a> {
-    date: Option<DatePatternDataBorrowed<'a>>,
-    time: Option<TimePatternDataBorrowed<'a>>,
-    zone: Option<ZonePatternDataBorrowed<'a>>,
-    glue: Option<&'a GluePattern<'a>>,
+    pub(crate) date: Option<DatePatternDataBorrowed<'a>>,
+    pub(crate) time: Option<TimePatternDataBorrowed<'a>>,
+    pub(crate) zone: Option<ZonePatternDataBorrowed<'a>>,
+    pub(crate) glue: Option<&'a GluePattern<'a>>,
 }
 
 impl DatePatternSelectionData {
@@ -191,43 +193,7 @@ impl DatePatternSelectionData {
         options: RawOptions,
     ) -> Option<DatePatternDataBorrowed<'_>> {
         let payload = self.payload.get_option()?;
-        let year_style = options.year_style.unwrap_or_default();
-        let ambiguity = input
-            .year
-            .as_ref()
-            .map(|y| {
-                y.era()
-                    .map(|e| e.ambiguity)
-                    .unwrap_or(YearAmbiguity::EraRequired)
-            })
-            .unwrap_or(YearAmbiguity::EraAndCenturyRequired);
-
-        let variant = match (year_style, ambiguity) {
-            (YearStyle::WithEra, _) => PackedSkeletonVariant::Variant1,
-
-            (
-                YearStyle::Full,
-                YearAmbiguity::EraAndCenturyRequired | YearAmbiguity::EraRequired,
-            ) => PackedSkeletonVariant::Variant1,
-            (YearStyle::Full, YearAmbiguity::CenturyRequired | YearAmbiguity::Unambiguous) => {
-                PackedSkeletonVariant::Variant0
-            }
-
-            (
-                YearStyle::Auto | YearStyle::NoEra,
-                YearAmbiguity::Unambiguous | YearAmbiguity::EraRequired,
-            ) => PackedSkeletonVariant::Standard,
-
-            (YearStyle::Auto, YearAmbiguity::CenturyRequired) => PackedSkeletonVariant::Variant0,
-            (YearStyle::Auto, YearAmbiguity::EraAndCenturyRequired) => {
-                PackedSkeletonVariant::Variant1
-            }
-
-            (
-                YearStyle::NoEra,
-                YearAmbiguity::CenturyRequired | YearAmbiguity::EraAndCenturyRequired,
-            ) => PackedSkeletonVariant::Variant0,
-        };
+        let variant = input.resolve_date_variant(options);
         Some(DatePatternDataBorrowed::Resolved(
             payload.get(options.length(), variant),
             options.alignment,
@@ -243,7 +209,7 @@ impl DatePatternSelectionData {
 #[allow(dead_code)]
 pub(crate) struct DateRangePatternSelectionData {
     /// The loaded date range patterns, or `None` if date range formatting is not supported.
-    payload: DataPayloadOr<ErasedPackedRangePatterns, ()>,
+    pub(crate) payload: DataPayloadOr<ErasedPackedRangePatterns, ()>,
 }
 
 #[cfg(feature = "unstable")]
@@ -273,13 +239,79 @@ impl DateRangePatternSelectionData {
             payload: DataPayloadOr::from_payload(payload),
         })
     }
+
+    pub(crate) fn select<'a>(
+        &'a self,
+        input: &DateTimeInputUnchecked,
+        options: RawOptions,
+        diff: Difference,
+    ) -> Option<RangePatternInfoBorrowed<'a>> {
+        let payload = self.payload.get_option()?;
+        let variant = input.resolve_date_variant(options);
+        let ule = payload.get_element(options.length(), variant)?;
+
+        let field = match diff {
+            Difference::Era => DateGreatestDifferenceField::Era,
+            Difference::Year => DateGreatestDifferenceField::Year,
+            Difference::Month => DateGreatestDifferenceField::Month,
+            Difference::Day => DateGreatestDifferenceField::Day,
+            _ => return None,
+        };
+
+        ule.get_date_pattern(field)
+    }
 }
 
 impl DateTimeInputUnchecked {
+    fn resolve_date_variant(&self, options: RawOptions) -> PackedSkeletonVariant {
+        let year_style = options.year_style.unwrap_or_default();
+        let ambiguity = self
+            .year
+            .as_ref()
+            .map(|y| {
+                y.era()
+                    .map(|e| e.ambiguity)
+                    .unwrap_or(YearAmbiguity::EraRequired)
+            })
+            .unwrap_or(YearAmbiguity::EraAndCenturyRequired);
+
+        match (year_style, ambiguity) {
+            (YearStyle::WithEra, _) => PackedSkeletonVariant::Variant1,
+
+            (
+                YearStyle::Full,
+                YearAmbiguity::EraAndCenturyRequired | YearAmbiguity::EraRequired,
+            ) => PackedSkeletonVariant::Variant1,
+            (YearStyle::Full, YearAmbiguity::CenturyRequired | YearAmbiguity::Unambiguous) => {
+                PackedSkeletonVariant::Variant0
+            }
+
+            (
+                YearStyle::Auto | YearStyle::NoEra,
+                YearAmbiguity::Unambiguous | YearAmbiguity::EraRequired,
+            ) => PackedSkeletonVariant::Standard,
+
+            (YearStyle::Auto, YearAmbiguity::CenturyRequired) => PackedSkeletonVariant::Variant0,
+            (YearStyle::Auto, YearAmbiguity::EraAndCenturyRequired) => {
+                PackedSkeletonVariant::Variant1
+            }
+
+            (
+                YearStyle::NoEra,
+                YearAmbiguity::CenturyRequired | YearAmbiguity::EraAndCenturyRequired,
+            ) => PackedSkeletonVariant::Variant0,
+        }
+    }
+
+    /// Resolve the variant to select based on time precision
+    ///
+    /// In case of range patterns, `second_range_minute_is_zero` should be set to whether or not
+    /// the second input has a nonzero `minute` field. Set to None for non range patterns.
     fn resolve_time_precision(
         &self,
         time_precision: TimePrecision,
         coarse_hour_cycle: Option<CoarseHourCycle>,
+        second_range_minute_is_zero: Option<bool>,
     ) -> (PackedSkeletonVariant, Option<SubsecondDigits>) {
         match time_precision {
             TimePrecision::Hour => (PackedSkeletonVariant::Standard, None),
@@ -288,7 +320,10 @@ impl DateTimeInputUnchecked {
             TimePrecision::Subsecond(f) => (PackedSkeletonVariant::Variant1, Some(f)),
             TimePrecision::MinuteOptional => {
                 let minute = self.minute.unwrap_or_default();
-                if minute.is_zero() && matches!(coarse_hour_cycle, Some(CoarseHourCycle::H11H12)) {
+                if minute.is_zero()
+                    && second_range_minute_is_zero.unwrap_or(true)
+                    && matches!(coarse_hour_cycle, Some(CoarseHourCycle::H11H12))
+                {
                     (PackedSkeletonVariant::Standard, None)
                 } else {
                     (PackedSkeletonVariant::Variant0, None)
@@ -418,7 +453,7 @@ impl TimePatternSelectionData {
             .time_granularity()
             .coarse_hour_cycle();
         let (variant, subsecond_digits) =
-            input.resolve_time_precision(time_precision, coarse_hour_cycle);
+            input.resolve_time_precision(time_precision, coarse_hour_cycle, None);
         Some(TimePatternDataBorrowed::Resolved(
             payload.get(options.length(), variant),
             options.alignment,
@@ -448,7 +483,7 @@ impl<'a> TimePatternDataBorrowed<'a> {
 #[allow(dead_code)]
 pub(crate) struct TimeRangePatternSelectionData {
     /// The loaded time range patterns, or `None` if time range formatting is not supported.
-    payload: DataPayloadOr<ErasedPackedRangePatterns, ()>,
+    pub(crate) payload: DataPayloadOr<ErasedPackedRangePatterns, ()>,
 }
 
 #[cfg(feature = "unstable")]
@@ -501,6 +536,35 @@ impl TimeRangePatternSelectionData {
         Ok(Self {
             payload: DataPayloadOr::from_payload(payload),
         })
+    }
+
+    pub(crate) fn select<'a>(
+        &'a self,
+        input: &DateTimeInputUnchecked,
+        input2: &DateTimeInputUnchecked,
+        options: RawOptions,
+        diff: Difference,
+    ) -> Option<RangePatternInfoBorrowed<'a>> {
+        let payload = self.payload.get_option()?;
+        let field = match diff {
+            Difference::DayPeriodB => TimeGreatestDifferenceField::DayPeriodB,
+            Difference::DayPeriodA => TimeGreatestDifferenceField::DayPeriodA,
+            Difference::Hour => TimeGreatestDifferenceField::Hour,
+            Difference::Minute => TimeGreatestDifferenceField::Minute,
+            _ => return None,
+        };
+
+        let coarse_hour_cycle = payload.get_coarse_hour_cycle(options.length(), field);
+        let time_precision = options.time_precision.unwrap_or_default();
+        let second_range_minute_is_zero = input2.minute.unwrap_or_default().is_zero();
+        let (variant, _) = input.resolve_time_precision(
+            time_precision,
+            coarse_hour_cycle,
+            Some(second_range_minute_is_zero),
+        );
+        let ule = payload.get_element(options.length(), variant)?;
+
+        ule.get_time_pattern(field)
     }
 }
 

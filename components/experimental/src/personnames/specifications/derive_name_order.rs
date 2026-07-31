@@ -50,7 +50,7 @@ pub fn name_order_derive(
 
 #[cfg(test)]
 mod tests {
-    use icu_locale::LocaleFallbacker;
+    use icu_locale::fallback::LocaleFallbacker;
     use icu_locale_core::locale;
     use zerovec::VarZeroVec;
 

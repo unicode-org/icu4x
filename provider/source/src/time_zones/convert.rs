@@ -622,10 +622,28 @@ impl DataProvider<TimezoneNamesGenericShortV1> for SourceDataProvider {
         let metazones = self.metazones()?;
 
         let defaults = iter_mz_defaults(time_zone_names_resource, &metazones.ids, false)
-            .flat_map(|(mz, zf)| variant_fallback(zf).map(move |v| (mz, v)))
+            .flat_map(|(mz, zf)| {
+                zf.0.get("generic")
+                    .or_else(|| {
+                        // Only fall back to standard name if the zone is a standard-only zone.
+                        // We do this because we don't want London to use GMT as the generic name.
+                        (!metazones
+                            .reverse
+                            .contains_key(&(mz, MzMembership::StandardAndDaylight)))
+                        .then(|| zf.0.get("standard"))
+                        .flatten()
+                    })
+                    .map(|s| s.as_str())
+                    .map(move |v| (mz, v))
+            })
             .collect();
         let overrides = iter_mz_overrides(time_zone_names_resource, bcp47_tzid_data, false)
-            .flat_map(|(tz, zf)| variant_fallback(zf).map(move |v| (tz, v)))
+            .flat_map(|(tz, zf)| {
+                zf.0.get("generic")
+                    .or_else(|| zf.0.get("standard"))
+                    .map(|s| s.as_str())
+                    .map(move |v| (tz, v))
+            })
             .collect();
 
         Ok(DataResponse {
@@ -730,19 +748,6 @@ fn iter_mz_overrides<'a>(
                     }
                 })
         })
-}
-
-/// Performs part 1 of type fallback as specified in the UTS-35 spec for `TimeZone` Goals:
-/// <https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Goals>
-///
-/// Part 2 of type fallback requires access to the IANA `TimeZone` Database
-/// as well as a specific datetime context, so it is not relevant to `DataProvider`.
-fn variant_fallback(zone_format: &ZoneFormat) -> Option<&str> {
-    zone_format
-        .0
-        .get("generic")
-        .or_else(|| zone_format.0.get("standard"))
-        .map(|s| s.as_str())
 }
 
 fn variant_convert(zone_format: &ZoneFormat) -> impl Iterator<Item = (TimeZoneVariant, &str)> {

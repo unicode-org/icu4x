@@ -5,7 +5,7 @@
 //! A data provider wrapper that performs locale fallback.
 
 #[doc(no_inline)]
-pub use icu_locale::LocaleFallbacker;
+pub use icu_locale::fallback::LocaleFallbacker;
 use icu_provider::DryDataProvider;
 use icu_provider::DynamicDryDataProvider;
 use icu_provider::prelude::*;
@@ -38,7 +38,7 @@ use icu_provider::prelude::*;
 /// // But if we wrap the provider in a fallback provider...
 /// let provider = LocaleFallbackProvider::new(
 ///     provider,
-///     icu_locale::LocaleFallbacker::new().static_to_owned(),
+///     icu_locale::fallback::LocaleFallbacker::new().static_to_owned(),
 /// );
 ///
 /// // ...then we can load "ja-JP" based on "ja" data
@@ -70,7 +70,7 @@ impl<P> LocaleFallbackProvider<P> {
     ///
     /// ```
     /// use icu_locale::langid;
-    /// use icu_locale::LocaleFallbacker;
+    /// use icu_locale::fallback::LocaleFallbacker;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     /// use icu_provider_adapters::fallback::LocaleFallbackProvider;

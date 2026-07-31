@@ -915,13 +915,10 @@ fn download() {
         std::fs::create_dir_all(target.parent().unwrap()).unwrap();
         crlify::BufWriterWithLineEndingFix::new(File::create(&target).unwrap())
             .write_all(
-                &AbstractFs::new_from_url(
-                    concat!(
-                        "https://raw.githubusercontent.com/eggrobin/unicodetools/",
-                        "refs/heads/RoBertBastIan/"
-                    )
-                    .into(),
-                )
+                &AbstractFs::new_from_url(format!(
+                    "https://unicode.org/review/pri555/{}",
+                    SourceDataProvider::TESTED_UNICODE_TAG
+                ))
                 .read_to_buf(&file)
                 .unwrap(),
             )
@@ -933,6 +930,7 @@ fn download() {
 type TailoredSegmenter = (
     SegmenterStateMachine<'static>,
     BTreeMap<DataIdentifierCow<'static>, SegmenterStateMachineOverride<'static>>,
+    u64,
 );
 
 #[cfg(feature = "unstable")]
@@ -1007,13 +1005,7 @@ impl SourceDataProvider {
         sources: &AbstractFs,
         prefix: &str,
         status_lookup: fn(&str) -> u8,
-    ) -> Result<
-        (
-            SegmenterStateMachine<'static>,
-            BTreeMap<DataIdentifierCow<'static>, SegmenterStateMachineOverride<'static>>,
-        ),
-        DataError,
-    > {
+    ) -> Result<TailoredSegmenter, DataError> {
         let mut magic_symbols = BTreeMap::new();
         let mut complex_symbols = BTreeMap::new();
         let symbols = sources.read_to_string(&format!("{prefix}Symbols.txt"))?;
@@ -1179,7 +1171,31 @@ impl SourceDataProvider {
                     }
                 }
 
-                tailorings.insert(
+                let id = if prefix == "LineBreak" {
+                    let x;
+                    DataIdentifierCow::from_marker_attributes_owned(
+                        DataMarkerAttributes::try_from_string(format!(
+                            "{}{}{}",
+                            if locale.is_unknown() {
+                                ""
+                            } else {
+                                x = locale.to_string();
+                                &x
+                            },
+                            if locale.is_unknown() || keywords.is_empty() {
+                                ""
+                            } else {
+                                "-"
+                            },
+                            keywords
+                                .get(&key!("lb"))
+                                .or_else(|| keywords.get(&key!("lw")))
+                                .map(|v| v.to_string())
+                                .unwrap_or_default()
+                        ))
+                        .unwrap(),
+                    )
+                } else {
                     DataIdentifierCow::from_owned(
                         DataMarkerAttributes::try_from_string(
                             keywords
@@ -1190,7 +1206,11 @@ impl SourceDataProvider {
                         )
                         .unwrap(),
                         locale,
-                    ),
+                    )
+                };
+
+                tailorings.insert(
+                    id,
                     overrides
                         .into_iter()
                         .map(|(k, v)| {
@@ -1392,6 +1412,17 @@ impl SourceDataProvider {
 
         // Done. The rest of this function encodes the state machine.
 
+        let hash = {
+            use core::hash::{Hash, Hasher};
+
+            let mut hash = twox_hash::XxHash64::with_seed(0);
+            symbols.hash(&mut hash);
+            pseudo_symbol_map.hash(&mut hash);
+            states.hash(&mut hash);
+            transitions.hash(&mut hash);
+            hash.finish()
+        };
+
         let symbol_lookup = symbols
             .keys()
             .filter(|&s| s != &eot_symbol && !pseudo_symbol_map.contains_key(s))
@@ -1533,6 +1564,7 @@ impl SourceDataProvider {
                 pseudo_symbol_map: build_pseudo_map(&pseudo_symbol_map),
             },
             tailorings,
+            hash,
         ))
     }
 }
@@ -1550,7 +1582,7 @@ impl DataProvider<SegmenterBreakLineV2> for SourceDataProvider {
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         Ok(DataResponse {
-            metadata: Default::default(),
+            metadata: DataResponseMetadata::default().with_checksum(self.line_segmenter()?.2),
             payload: DataPayload::from_owned(self.line_segmenter()?.0.clone()),
         })
     }
@@ -1569,7 +1601,7 @@ impl DataProvider<SegmenterBreakWordV2> for SourceDataProvider {
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         Ok(DataResponse {
-            metadata: Default::default(),
+            metadata: DataResponseMetadata::default().with_checksum(self.word_segmenter()?.2),
             payload: DataPayload::from_owned(self.word_segmenter()?.0.clone()),
         })
     }
@@ -1588,7 +1620,7 @@ impl DataProvider<SegmenterBreakSentenceV2> for SourceDataProvider {
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         Ok(DataResponse {
-            metadata: Default::default(),
+            metadata: DataResponseMetadata::default().with_checksum(self.sentence_segmenter()?.2),
             payload: DataPayload::from_owned(self.sentence_segmenter()?.0.clone()),
         })
     }
@@ -1610,7 +1642,8 @@ impl DataProvider<SegmenterBreakGraphemeClusterV2> for SourceDataProvider {
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         Ok(DataResponse {
-            metadata: Default::default(),
+            metadata: DataResponseMetadata::default()
+                .with_checksum(self.grapheme_cluster_segmenter()?.2),
             payload: DataPayload::from_owned(self.grapheme_cluster_segmenter()?.0.clone()),
         })
     }
@@ -1660,7 +1693,7 @@ impl DataProvider<SegmenterBreakLineOverrideV2> for SourceDataProvider {
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         Ok(DataResponse {
-            metadata: Default::default(),
+            metadata: DataResponseMetadata::default().with_checksum(self.line_segmenter()?.2),
             payload: DataPayload::from_owned(
                 self.line_segmenter()?
                     .1
@@ -1705,7 +1738,7 @@ impl DataProvider<SegmenterBreakSentenceOverrideV2> for SourceDataProvider {
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         Ok(DataResponse {
-            metadata: Default::default(),
+            metadata: DataResponseMetadata::default().with_checksum(self.sentence_segmenter()?.2),
             payload: DataPayload::from_owned(
                 self.sentence_segmenter()?
                     .1

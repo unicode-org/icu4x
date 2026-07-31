@@ -63199,6 +63199,169 @@ currency/patterns/data/v1, zh, -> ja
 currency/patterns/data/v1, zh-Hans-HK, -> und
 currency/patterns/data/v1, zh-Hans-MO, -> und
 currency/patterns/data/v1, zh-SG, -> und
+currency/patterns/no/currency/v1, <lookup>, 930B, 161 identifiers
+currency/patterns/no/currency/v1, <total>, 336B, 156B, 7 unique payloads
+currency/patterns/no/currency/v1, af, 42B, 16B, 9dc7b173efbcc793
+currency/patterns/no/currency/v1, ak, -> af
+currency/patterns/no/currency/v1, am, -> af
+currency/patterns/no/currency/v1, ar, 64B, 39B, 300c4c5ee43a79ac
+currency/patterns/no/currency/v1, ar-BH, 36B, 9B, 5c6547db63ec41de
+currency/patterns/no/currency/v1, ar-BH/latn, -> ar
+currency/patterns/no/currency/v1, ar-DJ, -> ar-BH
+currency/patterns/no/currency/v1, ar-DJ/latn, -> ar
+currency/patterns/no/currency/v1, ar-EG, -> ar-BH
+currency/patterns/no/currency/v1, ar-EG/latn, -> ar
+currency/patterns/no/currency/v1, ar-ER, -> ar-BH
+currency/patterns/no/currency/v1, ar-ER/latn, -> ar
+currency/patterns/no/currency/v1, ar-IL, -> ar-BH
+currency/patterns/no/currency/v1, ar-IL/latn, -> ar
+currency/patterns/no/currency/v1, ar-IQ, -> ar-BH
+currency/patterns/no/currency/v1, ar-IQ/latn, -> ar
+currency/patterns/no/currency/v1, ar-JO, -> ar-BH
+currency/patterns/no/currency/v1, ar-JO/latn, -> ar
+currency/patterns/no/currency/v1, ar-KM, -> ar-BH
+currency/patterns/no/currency/v1, ar-KM/latn, -> ar
+currency/patterns/no/currency/v1, ar-KW, -> ar-BH
+currency/patterns/no/currency/v1, ar-KW/latn, -> ar
+currency/patterns/no/currency/v1, ar-LB, -> ar-BH
+currency/patterns/no/currency/v1, ar-LB/latn, -> ar
+currency/patterns/no/currency/v1, ar-MR, -> ar-BH
+currency/patterns/no/currency/v1, ar-MR/latn, -> ar
+currency/patterns/no/currency/v1, ar-OM, -> ar-BH
+currency/patterns/no/currency/v1, ar-OM/latn, -> ar
+currency/patterns/no/currency/v1, ar-PS, -> ar-BH
+currency/patterns/no/currency/v1, ar-PS/latn, -> ar
+currency/patterns/no/currency/v1, ar-QA, -> ar-BH
+currency/patterns/no/currency/v1, ar-QA/latn, -> ar
+currency/patterns/no/currency/v1, ar-SA, -> ar-BH
+currency/patterns/no/currency/v1, ar-SA/latn, -> ar
+currency/patterns/no/currency/v1, ar-SD, -> ar-BH
+currency/patterns/no/currency/v1, ar-SD/latn, -> ar
+currency/patterns/no/currency/v1, ar-SO, -> ar-BH
+currency/patterns/no/currency/v1, ar-SO/latn, -> ar
+currency/patterns/no/currency/v1, ar-SS, -> ar-BH
+currency/patterns/no/currency/v1, ar-SS/latn, -> ar
+currency/patterns/no/currency/v1, ar-SY, -> ar-BH
+currency/patterns/no/currency/v1, ar-SY/latn, -> ar
+currency/patterns/no/currency/v1, ar-TD, -> ar-BH
+currency/patterns/no/currency/v1, ar-TD/latn, -> ar
+currency/patterns/no/currency/v1, ar-YE, -> ar-BH
+currency/patterns/no/currency/v1, ar-YE/latn, -> ar
+currency/patterns/no/currency/v1, ar/arab, -> ar-BH
+currency/patterns/no/currency/v1, as, -> af
+currency/patterns/no/currency/v1, as/latn, -> af
+currency/patterns/no/currency/v1, bg, -> af
+currency/patterns/no/currency/v1, bgc/latn, -> ar-BH
+currency/patterns/no/currency/v1, bho/latn, -> ar-BH
+currency/patterns/no/currency/v1, bn, -> af
+currency/patterns/no/currency/v1, bn/latn, -> af
+currency/patterns/no/currency/v1, br, -> af
+currency/patterns/no/currency/v1, brx, -> af
+currency/patterns/no/currency/v1, brx/deva, -> af
+currency/patterns/no/currency/v1, ca, -> af
+currency/patterns/no/currency/v1, ceb, -> af
+currency/patterns/no/currency/v1, chr, -> af
+currency/patterns/no/currency/v1, cv, -> af
+currency/patterns/no/currency/v1, cy, -> af
+currency/patterns/no/currency/v1, doi/deva, -> ar-BH
+currency/patterns/no/currency/v1, en, -> af
+currency/patterns/no/currency/v1, eo, -> af
+currency/patterns/no/currency/v1, es-AR, -> af
+currency/patterns/no/currency/v1, es-DO, -> af
+currency/patterns/no/currency/v1, et, -> af
+currency/patterns/no/currency/v1, eu, -> af
+currency/patterns/no/currency/v1, fa, 48B, 22B, 5bdce8a0b9cb77f5
+currency/patterns/no/currency/v1, fa-AF, 45B, 19B, a2edfee15db648aa
+currency/patterns/no/currency/v1, fa-AF/latn, -> fa-AF
+currency/patterns/no/currency/v1, fa/latn, -> fa
+currency/patterns/no/currency/v1, ff-Adlm/latn, -> ar-BH
+currency/patterns/no/currency/v1, fil, -> af
+currency/patterns/no/currency/v1, fo, -> af
+currency/patterns/no/currency/v1, fr, -> af
+currency/patterns/no/currency/v1, fy, 41B, 16B, 504687f34a0a9a03
+currency/patterns/no/currency/v1, ga, -> af
+currency/patterns/no/currency/v1, gaa, -> af
+currency/patterns/no/currency/v1, gd, -> af
+currency/patterns/no/currency/v1, gl, -> af
+currency/patterns/no/currency/v1, gu, -> af
+currency/patterns/no/currency/v1, gu/gujr, -> af
+currency/patterns/no/currency/v1, he, 60B, 35B, 87927fccd06c685d
+currency/patterns/no/currency/v1, hi-Latn, -> ar-BH
+currency/patterns/no/currency/v1, hi/deva, -> ar-BH
+currency/patterns/no/currency/v1, ia, -> af
+currency/patterns/no/currency/v1, ig, -> af
+currency/patterns/no/currency/v1, ja, -> af
+currency/patterns/no/currency/v1, jv/java, -> ar-BH
+currency/patterns/no/currency/v1, km, -> af
+currency/patterns/no/currency/v1, km/khmr, -> af
+currency/patterns/no/currency/v1, kn, -> af
+currency/patterns/no/currency/v1, kn/knda, -> af
+currency/patterns/no/currency/v1, ko, -> af
+currency/patterns/no/currency/v1, kok/deva, -> ar-BH
+currency/patterns/no/currency/v1, ks/latn, -> ar-BH
+currency/patterns/no/currency/v1, ku, -> af
+currency/patterns/no/currency/v1, kxv, -> af
+currency/patterns/no/currency/v1, kxv-Deva/deva, -> ar-BH
+currency/patterns/no/currency/v1, kxv-Orya/orya, -> ar-BH
+currency/patterns/no/currency/v1, kxv-Telu/telu, -> ar-BH
+currency/patterns/no/currency/v1, lo/laoo, -> ar-BH
+currency/patterns/no/currency/v1, mai/deva, -> ar-BH
+currency/patterns/no/currency/v1, ml, -> af
+currency/patterns/no/currency/v1, ml/mlym, -> af
+currency/patterns/no/currency/v1, mni/latn, -> ar-BH
+currency/patterns/no/currency/v1, mr, -> af
+currency/patterns/no/currency/v1, mr/latn, -> af
+currency/patterns/no/currency/v1, ms, -> af
+currency/patterns/no/currency/v1, my/latn, -> ar-BH
+currency/patterns/no/currency/v1, ne/latn, -> ar-BH
+currency/patterns/no/currency/v1, nl, -> af
+currency/patterns/no/currency/v1, no, -> af
+currency/patterns/no/currency/v1, nqo/latn, -> ar-BH
+currency/patterns/no/currency/v1, or, -> af
+currency/patterns/no/currency/v1, or/orya, -> af
+currency/patterns/no/currency/v1, pa/guru, -> ar-BH
+currency/patterns/no/currency/v1, pl, -> af
+currency/patterns/no/currency/v1, ps, -> af
+currency/patterns/no/currency/v1, ps/latn, -> af
+currency/patterns/no/currency/v1, pt-PT, -> af
+currency/patterns/no/currency/v1, raj/latn, -> ar-BH
+currency/patterns/no/currency/v1, rm, -> af
+currency/patterns/no/currency/v1, ro, -> af
+currency/patterns/no/currency/v1, sa/latn, -> ar-BH
+currency/patterns/no/currency/v1, sat/latn, -> ar-BH
+currency/patterns/no/currency/v1, sc, -> af
+currency/patterns/no/currency/v1, sd/latn, -> af
+currency/patterns/no/currency/v1, si, -> af
+currency/patterns/no/currency/v1, sk, -> af
+currency/patterns/no/currency/v1, sl, -> af
+currency/patterns/no/currency/v1, so, -> af
+currency/patterns/no/currency/v1, sq, -> af
+currency/patterns/no/currency/v1, sr, -> af
+currency/patterns/no/currency/v1, sr-Latn, -> af
+currency/patterns/no/currency/v1, ta, -> af
+currency/patterns/no/currency/v1, ta/tamldec, -> af
+currency/patterns/no/currency/v1, te, -> af
+currency/patterns/no/currency/v1, te/telu, -> af
+currency/patterns/no/currency/v1, th, -> af
+currency/patterns/no/currency/v1, th/thai, -> af
+currency/patterns/no/currency/v1, tr, -> af
+currency/patterns/no/currency/v1, ug/arabext, -> ar-BH
+currency/patterns/no/currency/v1, und, -> ar-BH
+currency/patterns/no/currency/v1, ur, -> af
+currency/patterns/no/currency/v1, ur-IN/latn, -> af
+currency/patterns/no/currency/v1, ur/arabext, -> af
+currency/patterns/no/currency/v1, uz, -> af
+currency/patterns/no/currency/v1, xnr/deva, -> ar-BH
+currency/patterns/no/currency/v1, yo, -> af
+currency/patterns/no/currency/v1, yue, -> af
+currency/patterns/no/currency/v1, yue-Hans, -> af
+currency/patterns/no/currency/v1, yue-Hans/hanidec, -> af
+currency/patterns/no/currency/v1, yue/hanidec, -> af
+currency/patterns/no/currency/v1, zh, -> af
+currency/patterns/no/currency/v1, zh-Hant, -> af
+currency/patterns/no/currency/v1, zh-Hant/hanidec, -> af
+currency/patterns/no/currency/v1, zh/hanidec, -> af
+currency/patterns/no/currency/v1, zu, -> af
 currency/symbols/v1, <lookup>, 11386B, 1590 identifiers
 currency/symbols/v1, <total>, 25881B, 7297B, 808 unique payloads
 currency/symbols/v1, af-NA/s/NAD, 26B, 3B, 8f758e12daad89e7
@@ -207032,8 +207195,8 @@ transliterator/rules/v1, und/zh-t-es-419, 371B, 120B, db638e0f77aa97b3
 transliterator/rules/v1, und/zh-t-es-fonipa, 9765B, 9516B, c294408b3712b754
 transliterator/rules/v1, und/zh-t-ru, 19740B, 19492B, 429795f496bfb88e
 transliterator/rules/v1, und/zu-fonipa-t-zu, 1034B, 784B, 2889917275a3561f
-unit/ids/v1, <lookup>, 1377B, 157 identifiers
-unit/ids/v1, <total>, 314B, 186B, 157 unique payloads
+unit/ids/v1, <lookup>, 1362B, 155 identifiers
+unit/ids/v1, <total>, 310B, 183B, 155 unique payloads
 unit/ids/v1, und/acre, 2B, 1B, 667dd5401e6fd800
 unit/ids/v1, und/ampere, 2B, 1B, 39ac0ea289bcb316
 unit/ids/v1, und/arc-minute, 2B, 1B, 9531a4861d0b4d50
@@ -207137,11 +207300,10 @@ unit/ids/v1, und/osaji, 2B, 1B, efae8b44dcd72ae4
 unit/ids/v1, und/ounce, 2B, 1B, 13bbcfff670ab914
 unit/ids/v1, und/ounce-troy, 2B, 1B, 263f0da8f84d9a8e
 unit/ids/v1, und/parsec, 2B, 1B, 9518371704f485d9
-unit/ids/v1, und/part, 2B, 2B, 6f2a24d549ffed19
+unit/ids/v1, und/part, 2B, 1B, f578f54de71a64e3
 unit/ids/v1, und/pascal, 2B, 1B, ce0e5ae64535af57
 unit/ids/v1, und/percent, 2B, 1B, 74d30d3ec4508c50
 unit/ids/v1, und/permille, 2B, 1B, a55d5db0a1b2a626
-unit/ids/v1, und/permillion, 2B, 1B, 86d81db3c0eab708
 unit/ids/v1, und/permyriad, 2B, 1B, 185851c328f3baea
 unit/ids/v1, und/pinch, 2B, 1B, 33469f3ea832d843
 unit/ids/v1, und/pint, 2B, 1B, 31e9f5038d65ed98
@@ -207149,7 +207311,6 @@ unit/ids/v1, und/pint-imperial, 2B, 1B, 70001b9d1dcbde29
 unit/ids/v1, und/pint-metric, 2B, 1B, 9647f6eabd4ec563
 unit/ids/v1, und/pixel, 2B, 1B, 5d9aaec22a240bc7
 unit/ids/v1, und/point, 2B, 1B, cdf644cd42b8ec8c
-unit/ids/v1, und/portion, 2B, 1B, f578f54de71a64e3
 unit/ids/v1, und/pound, 2B, 1B, 33cf41871509d08
 unit/ids/v1, und/pound-force, 2B, 1B, ac281c00a2d339f0
 unit/ids/v1, und/quart, 2B, 1B, 5edaa35cf8fb34eb
@@ -207450,7 +207611,7 @@ units/essentials/v1, zh/long, 419B, 328B, 162bb2ddf0424f5
 units/essentials/v1, zu/long, 472B, 381B, 9d8d26c99e1c6c2d
 units/essentials/v1, zu/narrow, 368B, 277B, 91d5c729f7a05ce9
 units/essentials/v1, zu/short, 366B, 275B, 1ede7e00e34c0972
-units/info/v1, <singleton>, 4579B, 4557B, 83496aa763fb35b5
+units/info/v1, <singleton>, 4579B, 4557B, e257b18ccba1f2fa
 units/names/area/core/v1, <lookup>, 16794B, 1112 identifiers
 units/names/area/core/v1, <total>, 37821B, 23141B, 639 unique payloads
 units/names/area/core/v1, af/long-hectare, 34B, 11B, bdbf2d1fdfceb6a3
