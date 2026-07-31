@@ -24,12 +24,12 @@ path = "src/lib.rs"
 [dependencies]
 proc-macro2 = { workspace = true }
 quote = { workspace = true }
-syn = { workspace = true, features = ["fold"] }
+syn = { workspace = true, features = ["fold", "visit"] }
 synstructure = { workspace = true }
 
 [dev-dependencies]
 yoke = { path = "..", features = ["derive"] }
-zerovec = { path = "../../../utils/zerovec", features = ["yoke", "alloc"] }
+zerovec = { path = "../../../utils/zerovec", features = ["alloc", "yoke"] }
 
 [lints]
 workspace = true

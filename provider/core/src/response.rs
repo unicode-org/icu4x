@@ -92,7 +92,7 @@ pub struct DataPayload<M: DynamicDataMarker>(pub(crate) DataPayloadInner<M>);
 ///
 /// The type parameter `O` is stored as part of the interior enum, leading to
 /// better stack size optimization. `O` can be as large as the [`DataPayload`]
-/// minus two words without impacting stack size.
+/// minus two usizes without impacting stack size.
 ///
 /// # Examples
 ///
@@ -132,19 +132,19 @@ pub struct DataPayload<M: DynamicDataMarker>(pub(crate) DataPayloadInner<M>);
 ///
 /// const W: usize = size_of::<usize>();
 ///
-/// // Data struct is 3 words:
+/// // Data struct is 3 usizes:
 /// icu_provider::data_marker!(SampleV1, [usize; 3]);
 ///
-/// // DataPayload adds a word for a total of 4 words:
+/// // DataPayload adds a usize for a total of 4 usizes:
 /// assert_eq!(W * 4, size_of::<DataPayload<SampleV1>>());
 ///
-/// // Option<DataPayload> balloons to 5 words:
+/// // Option<DataPayload> balloons to 5 usizes:
 /// assert_eq!(W * 5, size_of::<Option<DataPayload<SampleV1>>>());
 ///
 /// // But, using DataPayloadOr is the same size as DataPayload:
 /// assert_eq!(W * 4, size_of::<DataPayloadOr<SampleV1, ()>>());
 ///
-/// // The largest optimized Other type is two words smaller than the DataPayload:
+/// // The largest optimized Other type is two usizes smaller than the DataPayload:
 /// assert_eq!(W * 4, size_of::<DataPayloadOr<SampleV1, [usize; 1]>>());
 /// assert_eq!(W * 4, size_of::<DataPayloadOr<SampleV1, [usize; 2]>>());
 /// assert_eq!(W * 5, size_of::<DataPayloadOr<SampleV1, [usize; 3]>>());

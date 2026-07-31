@@ -4,7 +4,6 @@
 
 use tinystr::TinyAsciiStr;
 
-pub mod compact_formatter;
 pub mod formatter;
 pub mod options;
 

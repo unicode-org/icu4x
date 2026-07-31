@@ -293,6 +293,15 @@ impl<'a, T: AsULE + Ord> Ord for ZeroVec<'a, T> {
     }
 }
 
+impl<'a, T: AsULE + core::hash::Hash> core::hash::Hash for ZeroVec<'a, T> {
+    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
+        for e in self.iter() {
+            e.hash(state);
+        }
+        self.len().hash(state);
+    }
+}
+
 impl<'a, T: AsULE> AsRef<[T::ULE]> for ZeroVec<'a, T> {
     fn as_ref(&self) -> &[T::ULE] {
         self.as_ule_slice()

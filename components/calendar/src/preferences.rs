@@ -68,7 +68,7 @@ impl CalendarPreferences {
     /// #     CalendarAlgorithm::Gregory
     /// # );
     /// ```
-    #[deprecated(since = "2.2.0")]
+    #[deprecated(since = "2.3.0")]
     pub fn resolved_algorithm(self) -> CalendarAlgorithm {
         use icu_locale_core::subtags::{Region, region};
         const AE: Region = region!("AE");

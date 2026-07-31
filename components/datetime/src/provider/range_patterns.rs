@@ -10,6 +10,7 @@ use crate::provider::packed_pattern::{GenericPackedPatterns, PackedPatternsBuild
 use crate::provider::pattern::runtime::PatternBorrowed;
 use crate::provider::pattern::runtime::{Pattern, PatternULE};
 use icu_provider::prelude::*;
+use zerofrom::ZeroFrom;
 use zerovec::VarZeroVec;
 
 /// The date fields that can have a greatest difference.
@@ -157,7 +158,7 @@ impl<'a> From<RangePatternInfoBorrowed<'a>> for RangePatternInfo<'a> {
     }
 }
 
-impl<'a> zerofrom::ZeroFrom<'a, RangePatternInfoBorrowed<'a>> for RangePatternInfo<'a> {
+impl<'a> ZeroFrom<'a, RangePatternInfoBorrowed<'a>> for RangePatternInfo<'a> {
     fn zero_from(other: &'a RangePatternInfoBorrowed<'a>) -> Self {
         Self::from(*other)
     }
@@ -240,7 +241,7 @@ impl GreatestDifferenceHeader {
 /// the smaller field is marked as absent in the header and its pattern is omitted. At runtime,
 /// requesting the smaller field will correctly fall back to the larger field and retrieve the
 /// identical pattern.
-#[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom, Default)]
+#[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, ZeroFrom, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
@@ -280,7 +281,7 @@ impl PatternsByGreatestDifferenceULE {
         let get_pat = |offset| {
             self.patterns
                 .get(start_idx + offset)
-                .map(<PatternBorrowed as zerofrom::ZeroFrom<PatternULE>>::zero_from)
+                .map(<PatternBorrowed as ZeroFrom<PatternULE>>::zero_from)
                 .unwrap_or(PatternBorrowed::DEFAULT)
         };
 
@@ -425,7 +426,7 @@ impl PackedPatternsBuilderHelper for PatternsByGreatestDifferenceULE {
             .elements
             .iter()
             .map(|pgd_ule| {
-                <PatternsByGreatestDifference<'a> as zerofrom::ZeroFrom<
+                <PatternsByGreatestDifference<'a> as ZeroFrom<
                     PatternsByGreatestDifferenceULE,
                 >>::zero_from(pgd_ule)
             })
@@ -448,6 +449,29 @@ impl<'a>
         let mut builder = self;
         let unpacked = builder.build_unpacked();
         unpacked.build::<PatternsByGreatestDifferenceULE>()
+    }
+}
+
+impl<'data> GenericPackedPatterns<'data, PatternsByGreatestDifferenceULE> {
+    /// Get the coarse hour cycle used by a time pattern
+    #[cfg(feature = "unstable")]
+    pub(crate) fn get_coarse_hour_cycle(
+        &self,
+        length: crate::options::Length,
+        diff: TimeGreatestDifferenceField,
+    ) -> Option<crate::provider::pattern::CoarseHourCycle> {
+        use crate::provider::packed_pattern::PackedSkeletonVariant;
+        // To get the hour cycle without reading the whole pattern, we can check the time
+        // granularity of the hour pattern (packed variant `Standard`).
+        let element = self.get_element(length, PackedSkeletonVariant::Standard)?;
+        // Query the pattern with maximal difference
+        let pattern = element.get_time_pattern(diff)?;
+        let pattern = RangePatternInfo::zero_from(&pattern);
+        pattern
+            .pattern()
+            .metadata
+            .time_granularity()
+            .coarse_hour_cycle()
     }
 }
 
@@ -641,14 +665,14 @@ mod tests {
         assert_eq!(
             pgd.patterns
                 .get(0)
-                .map(<Pattern as zerofrom::ZeroFrom<PatternULE>>::zero_from)
+                .map(<Pattern as ZeroFrom<PatternULE>>::zero_from)
                 .as_ref(),
             Some(info_d.pattern())
         );
         assert_eq!(
             pgd.patterns
                 .get(1)
-                .map(<Pattern as zerofrom::ZeroFrom<PatternULE>>::zero_from)
+                .map(<Pattern as ZeroFrom<PatternULE>>::zero_from)
                 .as_ref(),
             Some(info_y.pattern())
         );
@@ -665,7 +689,7 @@ mod tests {
         assert_eq!(
             pgd2.patterns
                 .get(0)
-                .map(<Pattern as zerofrom::ZeroFrom<PatternULE>>::zero_from)
+                .map(<Pattern as ZeroFrom<PatternULE>>::zero_from)
                 .as_ref(),
             Some(info_d.pattern())
         );
@@ -717,7 +741,7 @@ mod _serde {
                 .patterns
                 .iter()
                 .map(|p| {
-                    let runtime_pattern = <Pattern as zerofrom::ZeroFrom<PatternULE>>::zero_from(p);
+                    let runtime_pattern = <Pattern as ZeroFrom<PatternULE>>::zero_from(p);
                     crate::provider::pattern::reference::Pattern::from(&runtime_pattern)
                 })
                 .collect();

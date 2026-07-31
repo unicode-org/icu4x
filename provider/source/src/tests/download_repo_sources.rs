@@ -289,4 +289,71 @@ pub fn tzdb_data() -> AbstractFs {{
         )
         .unwrap();
     }
+
+    for (cldr_path, repo_path) in [
+        (
+            "common/testData/units/unitsTest.txt",
+            "components/experimental/tests/units/data/unitsTest.txt",
+        ),
+        (
+            "common/uca/CollationTest_CLDR_SHIFTED_SHORT.txt",
+            "components/collator/tests/data/CollationTest_CLDR_SHIFTED_SHORT.txt",
+        ),
+        (
+            "common/uca/CollationTest_CLDR_NON_IGNORABLE_SHORT.txt",
+            "components/collator/tests/data/CollationTest_CLDR_NON_IGNORABLE_SHORT.txt",
+        ),
+        (
+            "common/testData/transforms/el-Latn-t-el-m0-bgn.txt",
+            "components/experimental/tests/transliterate/data/fixtures/el-Latn-t-el-m0-bgn.txt",
+        ),
+        (
+            "common/testData/transforms/und-Arab-t-und-beng.txt",
+            "components/experimental/tests/transliterate/data/fixtures/und-Arab-t-und-beng.txt",
+        ),
+        (
+            "common/testData/transforms/und-t-d0-publish.txt",
+            "components/experimental/tests/transliterate/data/fixtures/und-t-d0-publish.txt",
+        ),
+        (
+            "common/testData/transforms/und-t-s0-publish.txt",
+            "components/experimental/tests/transliterate/data/fixtures/und-t-s0-publish.txt",
+        ),
+        (
+            "common/testData/transforms/und-t-und-latn-d0-ascii.txt",
+            "components/experimental/tests/transliterate/data/fixtures/und-t-und-latn-d0-ascii.txt",
+        ),
+    ] {
+        std::fs::write(
+            crate_root.join("../..").join(repo_path),
+            AbstractFs::new_from_url(format!(
+                "https://raw.githubusercontent.com/unicode-org/cldr/refs/tags/release-{}/",
+                SourceDataProvider::TESTED_CLDR_TAG
+                    .replace(".", "-")
+                    .rsplit_once("-")
+                    .unwrap()
+                    .0
+            ))
+            .read_to_string(cldr_path)
+            .expect(cldr_path),
+        )
+        .unwrap();
+    }
+
+    #[allow(clippy::single_element_loop)]
+    for (icu_path, repo_path) in [(
+        "icu4c/source/test/testdata/riwords.txt",
+        "components/collator/tests/data/riwords.txt",
+    )] {
+        std::fs::write(
+            crate_root.join("../..").join(repo_path),
+            AbstractFs::new_from_url(format!(
+                "https://raw.githubusercontent.com/unicode-org/icu/refs/tags/{}/",
+                SourceDataProvider::TESTED_ICUEXPORT_TAG
+            ))
+            .read_to_string(icu_path)
+            .expect(icu_path),
+        )
+        .unwrap();
+    }
 }

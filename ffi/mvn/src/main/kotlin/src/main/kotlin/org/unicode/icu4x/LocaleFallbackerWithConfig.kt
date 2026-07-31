@@ -11,8 +11,6 @@ internal interface LocaleFallbackerWithConfigLib: Library {
 }
 /** An object that runs the ICU4X locale fallback algorithm with specific configurations.
 *
-*See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu_locale/2.2.0/icu_locale/struct.LocaleFallbacker.html) for more information.
-*
 *See the [Rust documentation for `LocaleFallbackerWithConfig`](https://docs.rs/icu/2.2.0/icu/locale/fallback/struct.LocaleFallbackerWithConfig.html) for more information.
 */
 class LocaleFallbackerWithConfig internal constructor (
@@ -46,7 +44,7 @@ class LocaleFallbackerWithConfig internal constructor (
     
     /** Creates an iterator from a locale with each step of fallback.
     *
-    *See the [Rust documentation for `fallback_for`](https://docs.rs/icu_locale/2.2.0/icu_locale/struct.LocaleFallbacker.html#method.fallback_for) for more information.
+    *See the [Rust documentation for `fallback_for`](https://docs.rs/icu/2.2.0/icu/locale/fallback/struct.LocaleFallbacker.html#method.fallback_for) for more information.
     */
     fun fallbackForLocale(locale: Locale): LocaleFallbackIterator {
         // This lifetime edge depends on lifetimes: 'a, 'b

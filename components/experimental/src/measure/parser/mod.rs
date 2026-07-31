@@ -69,6 +69,13 @@ impl MeasureUnit {
                                 }
                                 // If the sign is negative, this means that the identifier may contain more than one `per-` keyword.
                                 Err(_) if sign == 1 => {
+                                    if let Some(remain) = code_units.strip_prefix(b"permillion") {
+                                        // First time locating `per-` keyword.
+                                        sign = -1;
+                                        code_units = remain.strip_prefix(b"-").unwrap_or(remain);
+                                        constant_denominator = 1_000_000;
+                                        continue;
+                                    }
                                     if let Some(remain) = code_units.strip_prefix(b"per-") {
                                         // First time locating `per-` keyword.
                                         sign = -1;

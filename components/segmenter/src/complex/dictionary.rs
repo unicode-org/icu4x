@@ -60,13 +60,14 @@ impl<Y: RuleBreakType> Iterator for DictionaryBreakIterator<'_, '_, Y> {
                     }
 
                     intermediate_length = next.0 + Y::char_len(next.1);
-                    previous_match = Some(self.iter.clone());
+                    previous_match = Some((self.iter.clone(), self.grapheme_iter.clone_internal()));
                 }
                 TrieResult::NoMatch => {
                     if intermediate_length > 0 {
-                        if let Some(previous_match) = previous_match {
+                        if let Some((prev_iter, prev_grapheme_iter)) = previous_match {
                             // Rewind previous match point
-                            self.iter = previous_match;
+                            self.iter = prev_iter;
+                            self.grapheme_iter = prev_grapheme_iter;
                         }
                         return Some(intermediate_length);
                     }
@@ -239,5 +240,35 @@ mod tests {
         let s_utf16: Vec<u16> = s.encode_utf16().collect();
         let r: Vec<usize> = segmenter.segment_utf16(&s_utf16).collect();
         assert_eq!(r, vec![0, 4, 7, 11, 14, 18, 21]);
+    }
+
+    #[test]
+    fn test_dictionary_grapheme_rewind() {
+        let response: DataResponse<SegmenterDictionaryAutoV1> = Baked
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes(
+                    DataMarkerAttributes::from_str_or_panic("cjdict"),
+                ),
+                ..Default::default()
+            })
+            .unwrap();
+        let dict_segmenter =
+            DictionarySegmenter::new(response.payload.get(), GraphemeClusterSegmenter::new());
+
+        // Test that grapheme_iter is correctly rewound when trie traversal backtracks.
+        // In "エディターエディター":
+        // 1. "エディター" (15 bytes) is matched as an Intermediate dictionary word at byte 15.
+        // 2. Trie traversal continues exploring whether the compound prefix "エディターエディ..."
+        //    forms a longer dictionary word, advancing grapheme_iter past byte 15 in the process.
+        // 3. When trie traversal eventually hits NoMatch, self.iter rewinds to the last match
+        //    at byte 15.
+        // 4. Without rewinding grapheme_iter alongside self.iter, on the next call to next()
+        //    (starting from byte 15), grapheme_iter is already positioned ahead of byte 15.
+        //    When the second word's prefix "エディ" hits an Intermediate match at byte 24,
+        //    the grapheme boundary check fails because grapheme_iter skips past 24, causing
+        //    incorrect segmentation.
+        let s = "エディターエディター";
+        let result: Vec<usize> = dict_segmenter.segment_str(s).collect();
+        assert_eq!(result, vec![15, 30]);
     }
 }
