@@ -11,7 +11,7 @@ The number formatting ecosystem in ICU4X provides modular, zero-copy, and `#[no_
 * **Decimal Formatter (`icu::decimal`)**:
   Core localized numeric formatting, grouping separators, decimal symbols, numbering system glyphs, and precision/rounding rules.
 * **Currency Formatter (`icu::currency` / `icu_experimental::dimension::currency`)**:
-  Monetary formatting supporting standard symbols, narrow symbols, ISO 4217 codes, pluralized display names, accounting parenthetical formats, no-currency numeric formatting, and compact currency notations.
+  Monetary formatting supporting standard symbols, narrow symbols, ISO currency codes (e.g. USD, EUR), pluralized display names, accounting parenthetical formats, no-currency numeric formatting, and compact currency notations.
 * **Units & Measurement Formatter (`icu::units` / `icu_experimental::dimension::units`)**:
   Dimensioned unit formatting across categories (length, mass, volume, area, temperature, speed, etc.) with compound units and SI prefixes.
 * **Duration Formatter (`icu::duration` / `icu_experimental::dimension::duration`)**:

@@ -138,9 +138,9 @@ graph LR
     end
 
     subgraph Fusion["3. Zero-Allocation Composition"]
-        Slot0["Placeholder {0}<br>(Formatted Number)"]
-        Slot1["Placeholder {1}<br>(Currency Identifier)"]
-        Pattern["DoublePlaceholderPattern<br>(\"{0} {1}\", \"{1}{0}\", etc.)"]
+        Slot0["Numeric Slot 0<br>(Formatted Number)"]
+        Slot1["Currency Slot 1<br>(Currency Identifier)"]
+        Pattern["DoublePlaceholderPattern<br>(Resolved Locale Pattern)"]
         Output["Output Buffer / Parts Tokens<br>(writeable::PartsWrite)"]
     end
 
