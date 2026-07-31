@@ -695,7 +695,6 @@ const _: () = {
     use icu_experimental_data::*;
     mod icu {
         pub use icu_experimental as experimental;
-        pub use icu_locale as locale;
     }
 
     make_provider!(TestingProvider);
