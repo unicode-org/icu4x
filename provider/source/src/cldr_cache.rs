@@ -73,8 +73,8 @@ impl CldrCache {
 
     /// This is for the temporary experimental coverage level data.
     /// See `coverage_experimental.rs`
-    pub(crate) fn experimental_coverage_by_xpath(&self) -> CldrDirNoLang<'_> {
-        CldrDirNoLang(self, "cldr-misc-full/coverageByXPath")
+    pub(crate) fn experimental_coverage_by_xpath(&self) -> CldrDirLang<'_> {
+        CldrDirLang(self, "cldr-misc-full/coverageByXPath")
     }
 
     pub(crate) fn bcp47(&self) -> CldrDirNoLang<'_> {
@@ -274,12 +274,6 @@ impl<'a> CldrDirNoLang<'a> {
             .serde_cache
             .read_and_parse_json(&format!("{}/{}", self.1, file_name))
     }
-
-    pub(crate) fn file_exists(&self, file_name: &str) -> Result<bool, DataError> {
-        self.0
-            .serde_cache
-            .file_exists(&format!("{}/{}", self.1, file_name))
-    }
 }
 
 pub(crate) struct CldrDirLang<'a>(&'a CldrCache, &'static str);
@@ -293,7 +287,11 @@ impl<'a> CldrDirLang<'a> {
     where
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
-        let path = format!("{}/{locale}/{file_name}", self.1);
+        let path = if file_name.is_empty() {
+            format!("{}/{locale}.json", self.1)
+        } else {
+            format!("{}/{locale}/{file_name}", self.1)
+        };
         if self.0.serde_cache.file_exists(&path)? {
             self.0.serde_cache.read_and_parse_json(&path)
         } else if let Some(new_locale) = self.0.add_script_extended(locale)? {
