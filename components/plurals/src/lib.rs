@@ -1178,3 +1178,212 @@ impl<T: PartialEq> PluralElements<T> {
         })
     }
 }
+
+#[test]
+fn asdf() {
+    use crate::PluralRules;
+    use icu::locale::locale;
+    use writeable::{Writeable, assert_writeable_eq, impl_display_with_writeable};
+    use zerovec::ule::{vartuple::*, *};
+    use zerovec::vecs::*;
+
+    #[derive(Clone, Copy, PartialEq, Eq, Debug)]
+    enum PluralCategory {
+        Zero = 0,
+        One = 1,
+        Two = 2,
+        Few = 3,
+        Many = 4,
+        ExplicitZero = 5,
+        ExplicitOne = 6,
+        Other = 7,
+    }
+
+    #[derive(Default, Clone, Copy, PartialEq, Eq, Debug)]
+    struct PluralCategorySet(u8);
+    impl PluralCategorySet {
+        fn new(categories: impl IntoIterator<Item = PluralCategory>) -> Self {
+            let mut set = Self::default();
+            for category in categories {
+                set.add(category);
+            }
+            set
+        }
+
+        fn add(&mut self, category: PluralCategory) {
+            self.0 |= 1 << (category as u8);
+        }
+
+        fn contains(&self, category: PluralCategory) -> bool {
+            self.0 & (1 << (category as u8)) != 0
+        }
+    }
+
+    impl AsULE for PluralCategorySet {
+        type ULE = u8;
+        fn to_unaligned(self) -> Self::ULE {
+            self.0
+        }
+        fn from_unaligned(unaligned: Self::ULE) -> Self {
+            Self(unaligned)
+        }
+    }
+
+    struct PluralElementsSCSPacked<'a>(
+        VarZeroVec<'a, VarTupleULE<PluralCategorySet, str>, Index16>,
+    );
+
+    impl<'a> PluralElementsSCSPacked<'a> {
+        fn get(&'a self, rules: &PluralRules, n: usize) -> impl Writeable + std::fmt::Display + 'a {
+            let operands = PluralOperands::from(n);
+            let plural_category = if operands.is_exactly_zero()
+                && self.0.iter().any(|&VarTupleULE { sized, .. }| {
+                    PluralCategorySet::from_unaligned(sized).contains(PluralCategory::ExplicitZero)
+                }) {
+                PluralCategory::ExplicitZero
+            } else if operands.is_exactly_one()
+                && self.0.iter().any(|&VarTupleULE { sized, .. }| {
+                    PluralCategorySet::from_unaligned(sized).contains(PluralCategory::ExplicitOne)
+                })
+            {
+                PluralCategory::ExplicitOne
+            } else {
+                match rules.category_for(operands) {
+                    crate::PluralCategory::Zero => PluralCategory::Zero,
+                    crate::PluralCategory::One => PluralCategory::One,
+                    crate::PluralCategory::Two => PluralCategory::Two,
+                    crate::PluralCategory::Few => PluralCategory::Few,
+                    crate::PluralCategory::Many => PluralCategory::Many,
+                    crate::PluralCategory::Other => PluralCategory::Other,
+                }
+            };
+            InterpolatedPluralWriteable {
+                encoded: &self.0,
+                plural_category,
+                writeable: n,
+            }
+        }
+    }
+
+    struct InterpolatedPluralWriteable<'a, W: Writeable> {
+        encoded: &'a VarZeroVec<'a, VarTupleULE<PluralCategorySet, str>, Index16>,
+        plural_category: PluralCategory,
+        writeable: W,
+    }
+
+    impl<W: Writeable> Writeable for InterpolatedPluralWriteable<'_, W> {
+        fn write_to<S: core::fmt::Write + ?Sized>(&self, sink: &mut S) -> core::fmt::Result {
+            let mut applicable_chunks = self
+                .encoded
+                .iter()
+                .filter_map(
+                    |&VarTupleULE {
+                         sized,
+                         ref variable,
+                     }| {
+                        PluralCategorySet::from_unaligned(sized)
+                            .contains(self.plural_category)
+                            .then_some(variable)
+                    },
+                )
+                .peekable();
+
+            let mut placeholder_idx = applicable_chunks
+                .peek()
+                .and_then(|s| (s.chars().next()? as usize).checked_sub(1));
+
+            for (i, mut chunk) in applicable_chunks.enumerate() {
+                if i == 0 {
+                    let mut chars = chunk.chars();
+                    chars.next();
+                    chunk = chars.as_str();
+                }
+                if let Some(p) = placeholder_idx.as_mut() {
+                    if let Some((a, b)) = chunk.split_at_checked(*p) {
+                        sink.write_str(a)?;
+                        self.writeable.write_to(sink)?;
+                        sink.write_str(b)?;
+                        placeholder_idx = None;
+                    } else {
+                        *p -= chunk.len();
+                    }
+                } else {
+                    sink.write_str(chunk)?;
+                }
+            }
+            Ok(())
+        }
+    }
+    impl_display_with_writeable!(InterpolatedPluralWriteable<'_, W>, where W: Writeable);
+
+    type P = PluralCategory;
+    type PS = PluralCategorySet;
+    let encoded = PluralElementsSCSPacked(VarZeroVec::<_, Index16>::from(
+        &[
+            (PS::new([P::ExplicitZero]), "\u{0}rien "),
+            (PS::new([P::One, P::Many, P::Other]), "\u{1} "),
+            (PS::new([P::Many, P::ExplicitZero]), "d'"),
+            (
+                PS::new([P::ExplicitZero, P::One, P::Many, P::Other]),
+                "once",
+            ),
+            (PS::new([P::Other, P::Many, P::ExplicitZero]), "s"),
+            (
+                PS::new([P::ExplicitZero, P::One, P::Many, P::Other]),
+                " liquide",
+            ),
+            (PS::new([P::Other, P::Many, P::ExplicitZero]), "s"),
+            (
+                PS::new([P::ExplicitZero, P::One, P::Many, P::Other]),
+                " impériale",
+            ),
+            (PS::new([P::Other, P::Many, P::ExplicitZero]), "s"),
+        ]
+        .map(|(sized, variable)| VarTuple { sized, variable }),
+    ));
+
+    let baseline = provider::PluralElementsPackedCow::try_from(
+        PluralElements::new(
+            icu_pattern::SinglePlaceholderPattern::try_from_str(
+                "{0} onces liquides impériales",
+                Default::default(),
+            )
+            .unwrap(),
+        )
+        .with_one_value(Some(
+            icu_pattern::SinglePlaceholderPattern::try_from_str(
+                "{0} once liquide impériale",
+                Default::default(),
+            )
+            .unwrap(),
+        ))
+        .with_many_value(Some(
+            icu_pattern::SinglePlaceholderPattern::try_from_str(
+                "{0} d'onces liquides impériales",
+                Default::default(),
+            )
+            .unwrap(),
+        ))
+        .with_explicit_zero_value(Some(
+            icu_pattern::SinglePlaceholderPattern::try_from_str(
+                "rien d'onces liquides impériales",
+                Default::default(),
+            )
+            .unwrap(),
+        )),
+    )
+    .unwrap();
+
+    assert_eq!(databake::BakeSize::borrows_size(&encoded.0), 63);
+    // assert_eq!(databake::BakeSize::borrows_size(&baseline), 128);
+
+    let rules = PluralRules::try_new(locale!("fr").into(), Default::default()).unwrap();
+
+    assert_writeable_eq!(encoded.get(&rules, 0), "rien d'onces liquides impériales");
+    assert_writeable_eq!(encoded.get(&rules, 1), "1 once liquide impériale");
+    assert_writeable_eq!(
+        encoded.get(&rules, 1_000_000),
+        "1000000 d'onces liquides impériales"
+    );
+    assert_writeable_eq!(encoded.get(&rules, 17), "17 onces liquides impériales");
+}
