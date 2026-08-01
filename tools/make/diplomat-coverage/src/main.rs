@@ -3,7 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use diplomat_core::*;
-use rustdoc_types::{Crate, Item, ItemEnum, Type};
+use rustdoc_types::{
+    Crate, GenericArg, GenericArgs, Id, Item, ItemEnum, StructKind, Type, VariantKind, Visibility,
+};
 use std::collections::{BTreeSet, HashSet};
 use std::fmt;
 use std::fs::{self, File};
@@ -41,6 +43,8 @@ impl fmt::Display for RustLinkInfo {
 }
 
 fn main() {
+    run_util_api_enforcement();
+
     let out_path = std::env::args().nth(1);
     let doc_types = ["icu", "fixed_decimal", "icu_provider_adapters"]
         .into_iter()
@@ -90,51 +94,51 @@ fn main() {
         .for_each(|item| writeln!(out_stream, "{item}").unwrap());
 }
 
-fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::DocType)> {
-    fn parse_doc(krate: &str) -> &Crate {
-        lazy_static::lazy_static! {
-            static ref CRATES: elsa::sync::FrozenMap<String, Box<Crate>> = elsa::sync::FrozenMap::new();
-        }
-
-        if CRATES.get(krate).is_none() {
-            eprintln!("Parsing crate {krate}");
-            std::process::Command::new("rustup")
-                .args(["install", "nightly-2025-09-27"])
-                .output()
-                .expect("failed to install nightly");
-            let output = std::process::Command::new("rustup")
-                .args([
-                    "run",
-                    "nightly-2025-09-27",
-                    "cargo",
-                    "rustdoc",
-                    "-p",
-                    krate,
-                    "--all-features",
-                    "--",
-                    "-Zunstable-options",
-                    "--output-format",
-                    "json",
-                ])
-                .env_remove("RUSTDOCFLAGS")
-                .output()
-                .expect("failed to execute rustdoc");
-            if !output.status.success() {
-                panic!("Rustdoc build failed with {output:?}");
-            }
-            let path = PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
-                .join("../../../target/doc")
-                .join(krate)
-                .with_extension("json");
-            eprintln!("Attempting to load {path:?}");
-            CRATES.insert(
-                krate.to_owned(),
-                serde_json::from_slice(&fs::read(&path).unwrap()).unwrap(),
-            );
-        }
-        CRATES.get(krate).unwrap()
+fn parse_doc(krate: &str) -> &'static Crate {
+    lazy_static::lazy_static! {
+        static ref CRATES: elsa::sync::FrozenMap<String, Box<Crate>> = elsa::sync::FrozenMap::new();
     }
 
+    if CRATES.get(krate).is_none() {
+        eprintln!("Parsing crate {krate}");
+        std::process::Command::new("rustup")
+            .args(["install", "nightly-2025-09-27"])
+            .output()
+            .expect("failed to install nightly");
+        let output = std::process::Command::new("rustup")
+            .args([
+                "run",
+                "nightly-2025-09-27",
+                "cargo",
+                "rustdoc",
+                "-p",
+                krate,
+                "--all-features",
+                "--",
+                "-Zunstable-options",
+                "--output-format",
+                "json",
+            ])
+            .env_remove("RUSTDOCFLAGS")
+            .output()
+            .expect("failed to execute rustdoc");
+        if !output.status.success() {
+            panic!("Rustdoc build failed with {output:?}");
+        }
+        let path = PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
+            .join("../../../target/doc")
+            .join(krate)
+            .with_extension("json");
+        eprintln!("Attempting to load {path:?}");
+        CRATES.insert(
+            krate.to_owned(),
+            serde_json::from_slice(&fs::read(&path).unwrap()).unwrap(),
+        );
+    }
+    CRATES.get(krate).unwrap()
+}
+
+fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::DocType)> {
     #[derive(Debug)]
     enum In<'a> {
         Trait,
@@ -415,4 +419,444 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
     );
 
     types.into_iter()
+}
+
+fn run_util_api_enforcement() {
+    let (component_crates, util_crates) = discover_workspace_crates();
+
+    // Bucket 1: Definitely Stable util crates
+    let bucket1_utils: HashSet<&str> = ["writeable", "fixed_decimal", "tinystr"]
+        .into_iter()
+        .collect();
+
+    // Bucket 2: Ambiguous / Low-Risk util crates (restricted to explicit allowlist)
+    let bucket2_allowlist: HashSet<(&str, &str)> = [
+        ("icu_calendar", "calendrical_calculations"),
+        ("icu_calendar", "ixdtf"),
+        ("icu_time", "ixdtf"),
+        ("icu_locale_core", "litemap"),
+        ("icu_locale_core", "potential_utf"),
+        ("icu_collections", "potential_utf"),
+        ("icu_casemap", "potential_utf"),
+        ("icu_datetime", "potential_utf"),
+        ("icu_locale", "potential_utf"),
+        ("icu_provider", "databake"),
+        ("icu", "icu_pattern"),
+        ("icu_datetime", "icu_pattern"),
+        ("icu_decimal", "icu_pattern"),
+        ("icu", "icu_experimental"),
+        ("icu_collections", "zerovec"),
+        ("icu_properties", "zerovec"),
+        ("icu_provider", "yoke"),
+        ("icu_provider", "zerofrom"),
+    ]
+    .into_iter()
+    .collect();
+
+    let bucket2_utils: HashSet<&str> = bucket2_allowlist.iter().map(|(_, u)| *u).collect();
+
+    // Bucket 3: Default for all remaining util crates (Internal only)
+    let bucket3_utils: HashSet<&str> = util_crates
+        .iter()
+        .map(|s| s.as_str())
+        .filter(|u| !bucket1_utils.contains(u) && !bucket2_utils.contains(u))
+        .collect();
+
+    // Validate that bucket configuration stays in sync with workspace crates
+    for u in &bucket1_utils {
+        assert!(
+            util_crates.contains(*u),
+            "Bucket 1 util crate '{u}' does not exist in workspace!"
+        );
+    }
+    for (c, u) in &bucket2_allowlist {
+        assert!(
+            component_crates.iter().any(|x| x == c),
+            "Bucket 2 component crate '{c}' does not exist in workspace!"
+        );
+        assert!(
+            util_crates.contains(*u),
+            "Bucket 2 util crate '{u}' does not exist in workspace!"
+        );
+    }
+
+    let mut all_violations = BTreeSet::new();
+    for krate_name in &component_crates {
+        let krate = parse_doc(krate_name);
+        let mut checker = UtilApiChecker::new(
+            krate_name,
+            krate,
+            &bucket2_allowlist,
+            &bucket2_utils,
+            &bucket3_utils,
+        );
+        checker.walk_item(&krate.root, false);
+        all_violations.extend(checker.violations);
+    }
+
+    if !all_violations.is_empty() {
+        eprintln!("\nUtil crate public API enforcement violations found:");
+        for v in &all_violations {
+            eprintln!("  [ERROR] {v}");
+        }
+        std::process::exit(1);
+    }
+}
+
+fn discover_workspace_crates() -> (Vec<String>, HashSet<String>) {
+    let metadata = cargo_metadata::MetadataCommand::new()
+        .no_deps()
+        .exec()
+        .expect("failed to execute cargo metadata");
+
+    let mut component_crates = Vec::new();
+    let mut util_crates = HashSet::new();
+
+    for pkg in metadata.packages {
+        if pkg.name.ends_with("-dev") {
+            continue;
+        }
+
+        let is_component = pkg
+            .manifest_path
+            .components()
+            .any(|c| c.as_str() == "components")
+            || (pkg
+                .manifest_path
+                .components()
+                .any(|c| c.as_str() == "provider")
+                && pkg.manifest_path.components().any(|c| c.as_str() == "core"));
+
+        let is_utils_dir = pkg
+            .manifest_path
+            .components()
+            .any(|c| c.as_str() == "utils");
+
+        if is_component && pkg.version.major >= 1 {
+            component_crates.push(pkg.name);
+        } else if is_utils_dir || pkg.version.major == 0 {
+            util_crates.insert(pkg.name);
+        }
+    }
+
+    component_crates.sort();
+    (component_crates, util_crates)
+}
+
+fn is_util_module_match(source: &str, util_name: &str) -> bool {
+    let source_bytes = source.as_bytes();
+    let util_len = util_name.len();
+
+    if source_bytes.len() < util_len {
+        return false;
+    }
+
+    let replaced = writeable::adapters::Replace {
+        source: util_name,
+        needle: "-",
+        replacement: "_",
+    };
+    if writeable::cmp_utf8(&replaced, &source_bytes[..util_len]).is_ne() {
+        return false;
+    }
+
+    if source_bytes.len() == util_len {
+        return true;
+    }
+
+    source_bytes[util_len..].starts_with(b"::")
+}
+
+struct UtilApiChecker<'a, 'b> {
+    krate_name: &'a str,
+    krate: &'a Crate,
+    bucket2_allowlist: &'b HashSet<(&'b str, &'b str)>,
+    bucket2_utils: &'b HashSet<&'b str>,
+    bucket3_utils: &'b HashSet<&'b str>,
+    visited: HashSet<&'a Id>,
+    referenced_buf: HashSet<&'a str>,
+    violations: BTreeSet<String>,
+}
+
+impl<'a, 'b> UtilApiChecker<'a, 'b> {
+    fn new(
+        krate_name: &'a str,
+        krate: &'a Crate,
+        bucket2_allowlist: &'b HashSet<(&'b str, &'b str)>,
+        bucket2_utils: &'b HashSet<&'b str>,
+        bucket3_utils: &'b HashSet<&'b str>,
+    ) -> Self {
+        Self {
+            krate_name,
+            krate,
+            bucket2_allowlist,
+            bucket2_utils,
+            bucket3_utils,
+            visited: HashSet::new(),
+            referenced_buf: HashSet::new(),
+            violations: BTreeSet::new(),
+        }
+    }
+
+    fn check_referenced_utils(&mut self, is_provider_item: bool, make_ctx: impl Fn() -> String) {
+        let mut ctx: Option<String> = None;
+        for &util in &self.referenced_buf {
+            if self.bucket3_utils.contains(util) && !is_provider_item {
+                let ctx_str = ctx.get_or_insert_with(&make_ctx);
+                self.violations.insert(format!(
+                    "Bucket 3 violation in {}::{ctx_str}: uses internal util '{util}'",
+                    self.krate_name
+                ));
+            } else if self.bucket2_utils.contains(util)
+                && !is_provider_item
+                && !self.bucket2_allowlist.contains(&(self.krate_name, util))
+            {
+                let ctx_str = ctx.get_or_insert_with(&make_ctx);
+                self.violations.insert(format!(
+                    "Bucket 2 violation in {}::{ctx_str}: uses low-risk util '{util}' outside allowlist",
+                    self.krate_name
+                ));
+            }
+        }
+    }
+
+    fn walk_item(&mut self, id: &'a Id, is_provider: bool) {
+        if !self.visited.insert(id) {
+            return;
+        }
+
+        let Some(item) = self.krate.index.get(id) else {
+            return;
+        };
+
+        if item.visibility != Visibility::Public {
+            return;
+        }
+
+        let is_provider_item = is_provider
+            || item.name.as_deref() == Some("provider")
+            || item.name.as_deref() == Some("baked")
+            || item.span.as_ref().is_some_and(|span| {
+                let f = span.filename.to_string_lossy();
+                f.contains("/provider/")
+                    || f.contains("/baked/")
+                    || f.ends_with("provider.rs")
+                    || f.ends_with("baked.rs")
+            });
+
+        match &item.inner {
+            ItemEnum::Module(module) => {
+                for child_id in &module.items {
+                    self.walk_item(child_id, is_provider_item);
+                }
+            }
+            ItemEnum::Use(import) => {
+                if !is_provider_item {
+                    for util in self.bucket3_utils {
+                        if is_util_module_match(&import.source, util) {
+                            self.violations.insert(format!(
+                                "Bucket 3 violation in {}: pub use {}",
+                                self.krate_name, import.source
+                            ));
+                        }
+                    }
+                    for util in self.bucket2_utils {
+                        if is_util_module_match(&import.source, util)
+                            && !self.bucket2_allowlist.contains(&(self.krate_name, util))
+                        {
+                            self.violations.insert(format!(
+                                "Bucket 2 violation in {}: pub use {} (not allowlisted)",
+                                self.krate_name, import.source
+                            ));
+                        }
+                    }
+                }
+                if let Some(target_id) = &import.id {
+                    self.walk_item(target_id, is_provider_item);
+                }
+            }
+            ItemEnum::Function(func) => {
+                self.referenced_buf.clear();
+                for (_name, ty) in &func.sig.inputs {
+                    get_type_crates(ty, self.krate, &mut self.referenced_buf);
+                }
+                if let Some(output) = &func.sig.output {
+                    get_type_crates(output, self.krate, &mut self.referenced_buf);
+                }
+                self.check_referenced_utils(is_provider_item, || {
+                    let item_name = item.name.as_deref().unwrap_or("<unnamed>");
+                    format!("fn {item_name}")
+                });
+            }
+            ItemEnum::Struct(struct_) => {
+                let struct_name = item.name.as_deref().unwrap_or("<unnamed>");
+
+                let fields_slice: &[Id] = match &struct_.kind {
+                    StructKind::Plain { fields, .. } => fields,
+                    StructKind::Tuple(fields) => {
+                        for field_id in fields.iter().flatten() {
+                            self.check_field(field_id, struct_name, is_provider_item);
+                        }
+                        &[]
+                    }
+                    _ => &[],
+                };
+
+                for field_id in fields_slice {
+                    self.check_field(field_id, struct_name, is_provider_item);
+                }
+
+                for impl_id in &struct_.impls {
+                    self.walk_impl(impl_id, is_provider_item);
+                }
+            }
+            ItemEnum::Enum(enum_) => {
+                let enum_name = item.name.as_deref().unwrap_or("<unnamed>");
+
+                for variant_id in &enum_.variants {
+                    if let Some(variant_item) = self.krate.index.get(variant_id)
+                        && let ItemEnum::Variant(ref variant) = variant_item.inner
+                    {
+                        let variant_name = variant_item.name.as_deref().unwrap_or("<unnamed>");
+                        match &variant.kind {
+                            VariantKind::Plain => {}
+                            VariantKind::Tuple(fields) => {
+                                for field_id in fields.iter().flatten() {
+                                    self.check_field(
+                                        field_id,
+                                        &format!("{enum_name}::{variant_name}"),
+                                        is_provider_item,
+                                    );
+                                }
+                            }
+                            VariantKind::Struct { fields, .. } => {
+                                for field_id in fields {
+                                    self.check_field(
+                                        field_id,
+                                        &format!("{enum_name}::{variant_name}"),
+                                        is_provider_item,
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+
+                for impl_id in &enum_.impls {
+                    self.walk_impl(impl_id, is_provider_item);
+                }
+            }
+            ItemEnum::TypeAlias(type_alias) => {
+                self.referenced_buf.clear();
+                get_type_crates(&type_alias.type_, self.krate, &mut self.referenced_buf);
+                self.check_referenced_utils(is_provider_item, || {
+                    let alias_name = item.name.as_deref().unwrap_or("<unnamed>");
+                    format!("type {alias_name}")
+                });
+            }
+            _ => {}
+        }
+    }
+
+    fn check_field(&mut self, field_id: &'a Id, parent_ctx: &str, is_provider_item: bool) {
+        if let Some(field_item) = self.krate.index.get(field_id)
+            && field_item.visibility == Visibility::Public
+            && let ItemEnum::StructField(ref fty) = field_item.inner
+        {
+            self.referenced_buf.clear();
+            get_type_crates(fty, self.krate, &mut self.referenced_buf);
+            self.check_referenced_utils(is_provider_item, || {
+                let field_name = field_item.name.as_deref().unwrap_or("<unnamed>");
+                format!("{parent_ctx}.{field_name}")
+            });
+        }
+    }
+
+    fn walk_impl(&mut self, impl_id: &'a Id, is_provider_item: bool) {
+        if let Some(impl_item) = self.krate.index.get(impl_id)
+            && let ItemEnum::Impl(ref impl_) = impl_item.inner
+        {
+            let mut is_allowed_impl = is_provider_item;
+            if let Some(ref trait_path) = impl_.trait_
+                && let Some(trait_item) = self.krate.paths.get(&trait_path.id)
+                && trait_item.crate_id != 0
+                && let Some(ext) = self.krate.external_crates.get(&trait_item.crate_id)
+                && let Some(trait_name) = trait_item.path.last()
+                && ((ext.name == "zerovec"
+                    && matches!(
+                        trait_name.as_str(),
+                        "ULE" | "VarULE" | "ZeroMapKV" | "AsULE"
+                    ))
+                    || (ext.name == "yoke" && trait_name.as_str() == "Yokeable")
+                    || (ext.name == "zerofrom" && trait_name.as_str() == "ZeroFrom"))
+            {
+                is_allowed_impl = true;
+            }
+
+            for method_id in &impl_.items {
+                if let Some(method_item) = self.krate.index.get(method_id)
+                    && method_item.visibility == Visibility::Public
+                    && let ItemEnum::Function(ref func) = method_item.inner
+                {
+                    self.referenced_buf.clear();
+                    for (_name, ty) in &func.sig.inputs {
+                        get_type_crates(ty, self.krate, &mut self.referenced_buf);
+                    }
+                    if let Some(output) = &func.sig.output {
+                        get_type_crates(output, self.krate, &mut self.referenced_buf);
+                    }
+                    self.check_referenced_utils(is_allowed_impl, || {
+                        let fn_name = method_item.name.as_deref().unwrap_or("<unnamed>");
+                        format!("fn {fn_name}")
+                    });
+                }
+            }
+        }
+    }
+}
+
+fn get_type_crates<'a>(ty: &'a Type, krate: &'a Crate, crates: &mut HashSet<&'a str>) {
+    match ty {
+        Type::ResolvedPath(path) => {
+            if let Some(item) = krate.paths.get(&path.id)
+                && item.crate_id != 0
+                && let Some(ext) = krate.external_crates.get(&item.crate_id)
+            {
+                crates.insert(ext.name.as_str());
+            }
+            if let Some(ref args) = path.args
+                && let GenericArgs::AngleBracketed { ref args, .. } = **args
+            {
+                for arg in args {
+                    if let GenericArg::Type(inner_ty) = arg {
+                        get_type_crates(inner_ty, krate, crates);
+                    }
+                }
+            }
+        }
+        Type::BorrowedRef { type_, .. }
+        | Type::RawPointer { type_, .. }
+        | Type::Slice(type_)
+        | Type::Array { type_, .. } => {
+            get_type_crates(type_, krate, crates);
+        }
+        Type::Tuple(types) => {
+            for t in types {
+                get_type_crates(t, krate, crates);
+            }
+        }
+        Type::QualifiedPath {
+            self_type, trait_, ..
+        } => {
+            get_type_crates(self_type, krate, crates);
+            if let Some(t) = trait_
+                && let Some(item) = krate.paths.get(&t.id)
+                && item.crate_id != 0
+                && let Some(ext) = krate.external_crates.get(&item.crate_id)
+            {
+                crates.insert(ext.name.as_str());
+            }
+        }
+        _ => {}
+    }
 }
