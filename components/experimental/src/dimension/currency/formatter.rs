@@ -268,7 +268,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     ) -> Result<Self, DataError> {
         let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
         let marker_attributes =
-            DataMarkerAttributes::try_from_str(currency.0.as_str()).map_err(|_| {
+            DataMarkerAttributes::try_from_str(currency.as_str()).map_err(|_| {
                 DataErrorKind::IdentifierNotFound
                     .into_error()
                     .with_debug_context("failed to get data marker attribute from a `CurrencyCode`")
@@ -326,7 +326,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     {
         let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
         let marker_attributes =
-            DataMarkerAttributes::try_from_str(currency.0.as_str()).map_err(|_| {
+            DataMarkerAttributes::try_from_str(currency.as_str()).map_err(|_| {
                 DataErrorKind::IdentifierNotFound
                     .into_error()
                     .with_debug_context("failed to get data marker attribute from a `CurrencyCode`")
@@ -578,7 +578,7 @@ impl CurrencyFormatter<DecimalFormatter> {
     /// use writeable::assert_writeable_eq;
     ///
     /// let currency_preferences = locale!("en-US").into();
-    /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
+    /// let currency_code = CurrencyCode::try_from_str("USD").unwrap();
     /// let fmt = CurrencyFormatter::try_new_code(
     ///     currency_preferences,
     ///     currency_code,
@@ -650,7 +650,7 @@ impl CurrencyFormatter<DecimalFormatter> {
     /// use writeable::assert_writeable_eq;
     ///
     /// let currency_preferences = locale!("en-US").into();
-    /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
+    /// let currency_code = CurrencyCode::try_from_str("USD").unwrap();
     /// let fmt = CurrencyFormatter::try_new_name(currency_preferences, currency_code).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// assert_writeable_eq!(fmt.format_fixed_decimal(&value), "12,345.67 US dollars");
@@ -717,7 +717,7 @@ impl CurrencyFormatter<DecimalFormatter> {
     /// use writeable::assert_writeable_eq;
     ///
     /// let currency_preferences = locale!("en-US").into();
-    /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
+    /// let currency_code = CurrencyCode::try_from_str("USD").unwrap();
     /// let fmt = CurrencyFormatter::try_new_no_currency(currency_preferences, currency_code, Default::default()).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// assert_writeable_eq!(fmt.format_fixed_decimal(&value), "12,345.67");
@@ -1268,7 +1268,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     /// use writeable::assert_writeable_eq;
     ///
     /// let currency_preferences = locale!("en-US").into();
-    /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
+    /// let currency_code = CurrencyCode::try_from_str("USD").unwrap();
     /// let fmt = CurrencyFormatter::try_new_symbol(
     ///     currency_preferences,
     ///     currency_code,
@@ -1290,7 +1290,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     /// use writeable::assert_writeable_eq;
     ///
     /// let currency_preferences = locale!("en-US").into();
-    /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
+    /// let currency_code = CurrencyCode::try_from_str("USD").unwrap();
     /// let fmt = CurrencyFormatter::try_new_compact_symbol(
     ///     currency_preferences,
     ///     currency_code,
@@ -1309,7 +1309,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     /// use writeable::assert_writeable_eq;
     ///
     /// let currency_preferences = locale!("en-US").into();
-    /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
+    /// let currency_code = CurrencyCode::try_from_str("USD").unwrap();
     /// let fmt = CurrencyFormatter::try_new_compact_long_symbol(
     ///     currency_preferences,
     ///     currency_code,

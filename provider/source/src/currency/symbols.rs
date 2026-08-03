@@ -106,8 +106,8 @@ fn test_symbols() {
     use icu::locale::{LanguageIdentifier, langid};
     use tinystr::{TinyAsciiStr, tinystr};
 
-    const USD: CurrencyCode = CurrencyCode(tinystr!(3, "USD"));
-    const EGP: CurrencyCode = CurrencyCode(tinystr!(3, "EGP"));
+    const USD: CurrencyCode = CurrencyCode::from_tinystr_unvalidated(tinystr!(3, "USD"));
+    const EGP: CurrencyCode = CurrencyCode::from_tinystr_unvalidated(tinystr!(3, "EGP"));
     const EN: LanguageIdentifier = langid!("en");
     const AR_EG: LanguageIdentifier = langid!("ar-EG");
 

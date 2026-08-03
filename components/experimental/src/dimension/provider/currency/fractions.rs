@@ -47,7 +47,7 @@ impl CurrencyFractions<'_> {
     /// 1. Currency-specific override in the global map (e.g., JPY = 0 decimals).
     /// 2. Global default precision (`DEFAULT` in supplemental currency data).
     pub fn resolve(&self, currency_code: crate::dimension::currency::CurrencyCode) -> FractionInfo {
-        let iso_code = currency_code.0.to_unvalidated();
+        let iso_code = currency_code.to_tinystr().to_unvalidated();
         self.fractions.get_copied(&iso_code).unwrap_or(self.default)
     }
 }

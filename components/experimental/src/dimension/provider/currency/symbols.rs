@@ -66,7 +66,7 @@ impl CurrencySymbolsV1 {
     ) -> &DataMarkerAttributes {
         *buffer = width
             .concat::<1, 2>(tinystr!(1, "/"))
-            .concat::<3, 5>(currency.0);
+            .concat::<3, 5>(currency.to_tinystr());
         // All valid
         DataMarkerAttributes::try_from_str(buffer).unwrap()
     }

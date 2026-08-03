@@ -6,7 +6,6 @@
 #[cfg(test)]
 mod tests {
     use icu_locale_core::locale;
-    use tinystr::*;
     use writeable::assert_writeable_eq;
 
     use crate::dimension::currency::{
@@ -18,7 +17,7 @@ mod tests {
     #[test]
     pub fn test_en_us() {
         let prefs = locale!("en-US").into();
-        let currency_code = CurrencyCode(tinystr!(3, "USD"));
+        let currency_code = CurrencyCode::try_from_str("USD").unwrap();
         let accounting = CurrencyFormatterOptions {
             usage: CurrencyUsage::Accounting,
             ..Default::default()
@@ -115,7 +114,7 @@ mod tests {
     #[test]
     pub fn test_fr_fr() {
         let prefs = locale!("fr-FR").into();
-        let currency_code = CurrencyCode(tinystr!(3, "EUR"));
+        let currency_code = CurrencyCode::try_from_str("EUR").unwrap();
 
         // Short / Symbol
         let fmt_symbol =
@@ -159,7 +158,7 @@ mod tests {
     #[test]
     pub fn test_ar_eg() {
         let prefs = locale!("ar-EG").into();
-        let currency_code = CurrencyCode(tinystr!(3, "EGP"));
+        let currency_code = CurrencyCode::try_from_str("EGP").unwrap();
 
         // Short / Symbol
         let fmt_symbol =
@@ -207,7 +206,7 @@ mod tests {
     #[test]
     pub fn test_usd_in_fr_fr() {
         let prefs = locale!("fr-FR").into();
-        let currency_code = CurrencyCode(tinystr!(3, "USD"));
+        let currency_code = CurrencyCode::try_from_str("USD").unwrap();
         let value = "12345.67".parse().unwrap();
 
         // Short / Symbol USD in fr-FR should be US$ or $US
@@ -232,7 +231,7 @@ mod tests {
     pub fn test_numbering_system_override() {
         let prefs_arab = locale!("ar-EG").into();
         let prefs_latn = locale!("ar-EG-u-nu-latn").into();
-        let currency_code = CurrencyCode(tinystr!(3, "EGP"));
+        let currency_code = CurrencyCode::try_from_str("EGP").unwrap();
         let value = "12345.67".parse().unwrap();
 
         // 1. Default numbering system (arab) - Symbol
@@ -289,7 +288,7 @@ mod tests {
     #[test]
     pub fn test_en_us_cad() {
         let prefs = locale!("en-US").into();
-        let currency_code = CurrencyCode(tinystr!(3, "CAD"));
+        let currency_code = CurrencyCode::try_from_str("CAD").unwrap();
         let value = "12345.67".parse().unwrap();
 
         // Short / Symbol
@@ -307,7 +306,7 @@ mod tests {
     #[test]
     pub fn test_code() {
         let prefs_en = locale!("en-US").into();
-        let currency_usd = CurrencyCode(tinystr!(3, "USD"));
+        let currency_usd = CurrencyCode::try_from_str("USD").unwrap();
         let accounting = CurrencyFormatterOptions {
             usage: CurrencyUsage::Accounting,
             ..Default::default()
@@ -337,7 +336,7 @@ mod tests {
         );
 
         let prefs_fr = locale!("fr-FR").into();
-        let currency_eur = CurrencyCode(tinystr!(3, "EUR"));
+        let currency_eur = CurrencyCode::try_from_str("EUR").unwrap();
         let fmt_code_fr =
             CurrencyFormatter::try_new_code(prefs_fr, currency_eur, Default::default()).unwrap();
         assert_writeable_eq!(
@@ -350,7 +349,7 @@ mod tests {
     pub fn test_name_fallback_to_iso_name() {
         let prefs_en: CurrencyFormatterPreferences = locale!("en-US").into();
         // Unknown currency code should gracefully fall back to IsoName instead of DataError(IdentifierNotFound)
-        let currency_xyz = CurrencyCode(tinystr!(3, "XYZ"));
+        let currency_xyz = CurrencyCode::try_from_str("XYZ").unwrap();
         let value = "12345.67".parse().unwrap();
 
         let fmt_name = CurrencyFormatter::try_new_name(prefs_en, currency_xyz).unwrap();
@@ -360,7 +359,7 @@ mod tests {
     #[test]
     pub fn test_jpy() {
         let prefs: CurrencyFormatterPreferences = locale!("en-US").into();
-        let currency_code = CurrencyCode(tinystr!(3, "JPY"));
+        let currency_code = CurrencyCode::try_from_str("JPY").unwrap();
         let value = "12345.67".parse().unwrap();
 
         // JPY has 0 decimals (defined in global CurrencyFractionsV1)
@@ -383,9 +382,9 @@ mod tests {
     #[test]
     pub fn test_no_currency() {
         let prefs_en = locale!("en-US").into();
-        let usd = CurrencyCode(tinystr!(3, "USD"));
-        let jpy = CurrencyCode(tinystr!(3, "JPY"));
-        let bhd = CurrencyCode(tinystr!(3, "BHD"));
+        let usd = CurrencyCode::try_from_str("USD").unwrap();
+        let jpy = CurrencyCode::try_from_str("JPY").unwrap();
+        let bhd = CurrencyCode::try_from_str("BHD").unwrap();
 
         let positive = "12345.67".parse().unwrap();
         let negative = "-12345.67".parse().unwrap();
@@ -418,7 +417,7 @@ mod tests {
 
         // French locale EUR: 2 decimal places with French grouping
         let prefs_fr = locale!("fr-FR").into();
-        let eur = CurrencyCode(tinystr!(3, "EUR"));
+        let eur = CurrencyCode::try_from_str("EUR").unwrap();
         let fmt_eur_fr =
             CurrencyFormatter::try_new_no_currency(prefs_fr, eur, Default::default()).unwrap();
         assert_writeable_eq!(
@@ -428,7 +427,7 @@ mod tests {
 
         // Arabic locale ar-EG EGP: 2 decimal places with Arabic-Indic digits, BiDi marks and accounting format
         let prefs_ar = locale!("ar-EG").into();
-        let egp = CurrencyCode(tinystr!(3, "EGP"));
+        let egp = CurrencyCode::try_from_str("EGP").unwrap();
         let fmt_egp_ar =
             CurrencyFormatter::try_new_no_currency(prefs_ar, egp, Default::default()).unwrap();
         let fmt_egp_ar_acc =
