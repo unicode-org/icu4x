@@ -9,10 +9,8 @@ pub(crate) mod region;
 pub(crate) mod script;
 pub(crate) mod variant;
 
-use crate::cldr_serde::displaynames::{Alt, Menu, WithAlt};
-use either::Either;
+use crate::cldr_serde::displaynames::{Alt, WithAlt};
 use std::collections::{BTreeMap, HashMap};
-use writeable::Writeable;
 
 pub(crate) struct ExtractedNames<'a, K> {
     pub(crate) names: BTreeMap<K, &'a str>,
@@ -41,7 +39,8 @@ where
     let mut menu_names = BTreeMap::new();
     for (key, value) in map.iter() {
         if key.menu.is_some() {
-            // Menu core|extension is handled in LocaleNamesLanguageMenu, and not in the zeromap-based struct.
+            // Menu core|extension is handled in LocaleNamesLanguageMenu,
+            // and not in the zeromap-based struct.
             continue;
         }
         let val_str = value.as_str();
@@ -82,67 +81,6 @@ where
         short_names,
         long_names,
         menu_names,
-    }
-}
-
-/// Helper to construct CLDR `XPath` string for a display name attribute and subtag.
-pub(crate) fn construct_xpath<'a>(
-    field: &'a str,
-    subtag_str: impl Writeable + 'a,
-    alt: Option<Alt>,
-    menu: Option<Menu>,
-) -> impl Writeable + 'a {
-    let alt_str = match (alt, menu) {
-        (None, None) => "",
-        (None, Some(Menu::Core)) => r#"[@menu="core"]"#,
-        (None, Some(Menu::Extension)) => r#"[@menu="extension"]"#,
-        (None, Some(Menu::Unknown)) => "",
-        (Some(Alt::Short), None) => r#"[@alt="short"]"#,
-        (Some(Alt::Long), None) => r#"[@alt="long"]"#,
-        (Some(Alt::Variant), None) => r#"[@alt="variant"]"#,
-        (Some(Alt::StandAlone), None) => r#"[@alt="stand-alone"]"#,
-        (Some(Alt::Official), None) => r#"[@alt="official"]"#,
-        (Some(Alt::Secondary), None) => r#"[@alt="secondary"]"#,
-        (Some(Alt::Biot), None) => r#"[@alt="biot"]"#,
-        (Some(Alt::Chagos), None) => r#"[@alt="chagos"]"#,
-        (Some(Alt::Menu), None) => r#"[@alt="menu"]"#,
-        (Some(Alt::Unknown), None) => "",
-        (Some(_), Some(_)) => {
-            debug_assert!(false, "unexpected alt and menu together: {alt:?} {menu:?}");
-            ""
-        }
-    };
-
-    match field {
-        "languages" => Either::Left(writeable::concat_writeable!(
-            r#"//ldml/localeDisplayNames/languages/language[@type=""#,
-            writeable::adapters::Replace {
-                source: subtag_str,
-                needle: "-",
-                replacement: '_'
-            },
-            r#""]"#,
-            alt_str
-        )),
-        "regions" | "territories" => either::Right(writeable::concat_writeable!(
-            r#"//ldml/localeDisplayNames/territories/territory[@type=""#,
-            subtag_str,
-            r#""]"#,
-            alt_str
-        )),
-        "scripts" => either::Right(writeable::concat_writeable!(
-            r#"//ldml/localeDisplayNames/scripts/script[@type=""#,
-            subtag_str,
-            r#""]"#,
-            alt_str
-        )),
-        "variants" => either::Right(writeable::concat_writeable!(
-            r#"//ldml/localeDisplayNames/variants/variant[@type=""#,
-            subtag_str,
-            r#""]"#,
-            alt_str
-        )),
-        _ => panic!("Unknown field: {}", field),
     }
 }
 
@@ -191,7 +129,7 @@ macro_rules! impl_displaynames_v1 {
 
                 let field_str = stringify!($field);
                 let xpath =
-                    $crate::displaynames::construct_xpath(field_str, &subtag, $alt_variant, None);
+                    $crate::displaynames::coverage_experimental::construct_xpath(field_str, &subtag, $alt_variant, None);
                 let item_tier = crate::displaynames::coverage_experimental::coverage_cldr_cache()
                     .coverage_tier(req.id.locale, &xpath, cldr)?;
                 if !matches!(item_tier, $tier) {
@@ -291,14 +229,14 @@ macro_rules! impl_displaynames_menu_v1 {
 
                 let field_str = stringify!($field);
                 let xpath = if used_alt_menu {
-                    $crate::displaynames::construct_xpath(
+                    $crate::displaynames::coverage_experimental::construct_xpath(
                         field_str,
                         &subtag,
                         Some($crate::cldr_serde::displaynames::Alt::Menu),
                         None,
                     )
                 } else {
-                    $crate::displaynames::construct_xpath(
+                    $crate::displaynames::coverage_experimental::construct_xpath(
                         field_str,
                         &subtag,
                         None,
@@ -342,14 +280,14 @@ macro_rules! impl_displaynames_menu_v1 {
                         if matches {
                             let xpath =
                                 if key.alt == Some($crate::cldr_serde::displaynames::Alt::Menu) {
-                                    $crate::displaynames::construct_xpath(
+                                    $crate::displaynames::coverage_experimental::construct_xpath(
                                         field_str,
                                         &key.subtag,
                                         Some($crate::cldr_serde::displaynames::Alt::Menu),
                                         None,
                                     )
                                 } else {
-                                    $crate::displaynames::construct_xpath(
+                                    $crate::displaynames::coverage_experimental::construct_xpath(
                                         field_str,
                                         &key.subtag,
                                         None,
@@ -419,7 +357,7 @@ macro_rules! impl_displaynames_iter_v1 {
                         let matches = $alt_variant == key.alt && key.menu.is_none();
 
                         if matches {
-                            let xpath = $crate::displaynames::construct_xpath(
+                            let xpath = $crate::displaynames::coverage_experimental::construct_xpath(
                                 field_str,
                                 &key.subtag,
                                 $alt_variant,

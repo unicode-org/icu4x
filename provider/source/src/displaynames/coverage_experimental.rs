@@ -8,9 +8,11 @@
 
 use crate::cldr_cache::CldrCache;
 #[cfg(test)]
-use crate::cldr_serde::displaynames::{Alt, WithAlt};
+use crate::cldr_serde::displaynames::WithAlt;
+use crate::cldr_serde::displaynames::{Alt, Menu};
 use crate::source::SerdeCache;
 use icu_provider::prelude::*;
+use either::Either;
 use litemap::LiteMap;
 use serde::Deserialize;
 use serde::de::{Deserializer, Error as DeError, SeqAccess, Visitor};
@@ -166,6 +168,67 @@ impl CoverageByXPathCache {
 
         // Not found: default to Comprehensive
         Ok(CoverageLevelForXPath::Comprehensive)
+    }
+}
+
+/// Helper to construct CLDR `XPath` string for a display name attribute and subtag.
+pub(crate) fn construct_xpath<'a>(
+    field: &'a str,
+    subtag_str: impl Writeable + 'a,
+    alt: Option<Alt>,
+    menu: Option<Menu>,
+) -> impl Writeable + 'a {
+    let alt_str = match (alt, menu) {
+        (None, None) => "",
+        (None, Some(Menu::Core)) => r#"[@menu="core"]"#,
+        (None, Some(Menu::Extension)) => r#"[@menu="extension"]"#,
+        (None, Some(Menu::Unknown)) => "",
+        (Some(Alt::Short), None) => r#"[@alt="short"]"#,
+        (Some(Alt::Long), None) => r#"[@alt="long"]"#,
+        (Some(Alt::Variant), None) => r#"[@alt="variant"]"#,
+        (Some(Alt::StandAlone), None) => r#"[@alt="stand-alone"]"#,
+        (Some(Alt::Official), None) => r#"[@alt="official"]"#,
+        (Some(Alt::Secondary), None) => r#"[@alt="secondary"]"#,
+        (Some(Alt::Biot), None) => r#"[@alt="biot"]"#,
+        (Some(Alt::Chagos), None) => r#"[@alt="chagos"]"#,
+        (Some(Alt::Menu), None) => r#"[@alt="menu"]"#,
+        (Some(Alt::Unknown), None) => "",
+        (Some(_), Some(_)) => {
+            debug_assert!(false, "unexpected alt and menu together: {alt:?} {menu:?}");
+            ""
+        }
+    };
+
+    match field {
+        "languages" => Either::Left(writeable::concat_writeable!(
+            r#"//ldml/localeDisplayNames/languages/language[@type=""#,
+            writeable::adapters::Replace {
+                source: subtag_str,
+                needle: "-",
+                replacement: '_'
+            },
+            r#""]"#,
+            alt_str
+        )),
+        "regions" | "territories" => either::Right(writeable::concat_writeable!(
+            r#"//ldml/localeDisplayNames/territories/territory[@type=""#,
+            subtag_str,
+            r#""]"#,
+            alt_str
+        )),
+        "scripts" => either::Right(writeable::concat_writeable!(
+            r#"//ldml/localeDisplayNames/scripts/script[@type=""#,
+            subtag_str,
+            r#""]"#,
+            alt_str
+        )),
+        "variants" => either::Right(writeable::concat_writeable!(
+            r#"//ldml/localeDisplayNames/variants/variant[@type=""#,
+            subtag_str,
+            r#""]"#,
+            alt_str
+        )),
+        _ => panic!("Unknown field: {}", field),
     }
 }
 
@@ -998,7 +1061,7 @@ pub(super) fn for_each_cldr_key_and_tier<Resource, T>(
                     // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
                     return;
                 }
-                let xpath = super::construct_xpath(xpath_field, &key.subtag, key.alt, key.menu);
+                let xpath = construct_xpath(xpath_field, &key.subtag, key.alt, key.menu);
                 let tier = coverage_cldr.coverage_tier(&locale, &xpath, cldr).unwrap();
                 callback(&locale, key, tier);
             }
