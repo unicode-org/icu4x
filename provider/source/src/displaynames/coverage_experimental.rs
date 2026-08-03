@@ -7,12 +7,16 @@
 //! depth tiers. This code should be deleted when a longer-term solution is available.
 
 use crate::cldr_cache::CldrCache;
+#[cfg(test)]
+use crate::cldr_serde::displaynames::{Alt, WithAlt};
 use crate::source::SerdeCache;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use serde::Deserialize;
 use serde::de::{Deserializer, Error as DeError, SeqAccess, Visitor};
 use std::collections::BTreeMap;
+#[cfg(test)]
+use std::collections::HashMap;
 use std::fmt;
 use std::sync::OnceLock;
 use writeable::Writeable;
@@ -956,6 +960,50 @@ pub(super) fn coverage_cldr_cache() -> &'static CoverageByXPathCache {
             "displaynames/coverageByXPath/zu.json",
         )))
     })
+}
+
+#[cfg(test)]
+pub(super) trait CheckAltCoverage {
+    fn contains_key<T>(key: &WithAlt<T>, tier: CoverageLevelForXPath) -> bool;
+}
+
+/// Test helper that iterates over all display name entries across all locales in CLDR in deterministic order.
+///
+/// For each entry found in `file_name` (e.g., `"languages.json"`), this function:
+/// 1. Extracts the map of subtag keys (`WithAlt<T>`) via `extract_keys`.
+/// 2. Constructs the corresponding CLDR `XPath` for `xpath_field` (e.g., `"languages"`).
+/// 3. Looks up the coverage tier (`CoverageLevelForXPath`) for that `XPath` in the given locale.
+/// 4. Invokes `callback(locale, key, tier)`.
+#[cfg(test)]
+pub(super) fn for_each_cldr_key_and_tier<Resource, T>(
+    cldr: &CldrCache,
+    file_name: &str,
+    xpath_field: &str,
+    mut extract_keys: impl FnMut(&Resource) -> &HashMap<WithAlt<T>, String>,
+    mut callback: impl FnMut(&DataLocale, &WithAlt<T>, CoverageLevelForXPath),
+) where
+    Resource: serde::de::DeserializeOwned + Send + Sync + 'static,
+    T: Writeable,
+{
+    let coverage_cldr = coverage_cldr_cache();
+    let displaynames_dir = cldr.displaynames();
+    let mut locales = displaynames_dir.list_locales().unwrap().collect::<Vec<_>>();
+    locales.sort_by(|a, b| a.total_cmp(b));
+    for locale in locales {
+        if let Ok(res) = displaynames_dir.read_and_parse::<Resource>(&locale, file_name) {
+            let mut keys = extract_keys(res).keys().collect::<Vec<_>>();
+            keys.sort_by_cached_key(|k| (k.subtag.write_to_string().to_string(), k.alt, k.menu));
+            for key in keys {
+                if let Some(Alt::Variant) = key.alt {
+                    // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
+                    return;
+                }
+                let xpath = super::construct_xpath(xpath_field, &key.subtag, key.alt, key.menu);
+                let tier = coverage_cldr.coverage_tier(&locale, &xpath, cldr).unwrap();
+                callback(&locale, key, tier);
+            }
+        }
+    }
 }
 
 #[test]

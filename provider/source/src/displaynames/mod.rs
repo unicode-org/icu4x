@@ -10,8 +10,6 @@ pub(crate) mod script;
 pub(crate) mod variant;
 
 use crate::cldr_serde::displaynames::{Alt, Menu, WithAlt};
-#[cfg(test)]
-use coverage_experimental::CoverageLevelForXPath;
 use either::Either;
 use std::collections::{BTreeMap, HashMap};
 use writeable::Writeable;
@@ -220,7 +218,7 @@ macro_rules! impl_displaynames_v1 {
         );
 
         #[cfg(test)]
-        impl $crate::displaynames::CheckAltCoverage for $marker {
+        impl $crate::displaynames::coverage_experimental::CheckAltCoverage for $marker {
             fn contains_key<T>(
                 key: &$crate::cldr_serde::displaynames::WithAlt<T>,
                 tier: $crate::displaynames::coverage_experimental::CoverageLevelForXPath,
@@ -381,7 +379,7 @@ macro_rules! impl_displaynames_menu_v1 {
         }
 
         #[cfg(test)]
-        impl $crate::displaynames::CheckAltCoverage for $marker {
+        impl $crate::displaynames::coverage_experimental::CheckAltCoverage for $marker {
             fn contains_key<T>(
                 key: &$crate::cldr_serde::displaynames::WithAlt<T>,
                 tier: $crate::displaynames::coverage_experimental::CoverageLevelForXPath,
@@ -478,47 +476,3 @@ pub(crate) use impl_displaynames_iter_v1;
 pub(crate) use impl_displaynames_legacy_iter_v1;
 pub(crate) use impl_displaynames_menu_v1;
 pub(crate) use impl_displaynames_v1;
-
-#[cfg(test)]
-trait CheckAltCoverage {
-    fn contains_key<T>(key: &WithAlt<T>, tier: CoverageLevelForXPath) -> bool;
-}
-
-/// Test helper that iterates over all display name entries across all locales in CLDR in deterministic order.
-///
-/// For each entry found in `file_name` (e.g., `"languages.json"`), this function:
-/// 1. Extracts the map of subtag keys (`WithAlt<T>`) via `extract_keys`.
-/// 2. Constructs the corresponding CLDR `XPath` for `xpath_field` (e.g., `"languages"`).
-/// 3. Looks up the coverage tier (`CoverageLevelForXPath`) for that `XPath` in the given locale.
-/// 4. Invokes `callback(locale, key, tier)`.
-#[cfg(test)]
-fn for_each_cldr_key_and_tier<Resource, T>(
-    cldr: &crate::cldr_cache::CldrCache,
-    file_name: &str,
-    xpath_field: &str,
-    mut extract_keys: impl FnMut(&Resource) -> &HashMap<WithAlt<T>, String>,
-    mut callback: impl FnMut(&icu_provider::DataLocale, &WithAlt<T>, CoverageLevelForXPath),
-) where
-    Resource: serde::de::DeserializeOwned + Send + Sync + 'static,
-    T: Writeable,
-{
-    let coverage_cldr = coverage_experimental::coverage_cldr_cache();
-    let displaynames_dir = cldr.displaynames();
-    let mut locales = displaynames_dir.list_locales().unwrap().collect::<Vec<_>>();
-    locales.sort_by(|a, b| a.total_cmp(b));
-    for locale in locales {
-        if let Ok(res) = displaynames_dir.read_and_parse::<Resource>(&locale, file_name) {
-            let mut keys = extract_keys(res).keys().collect::<Vec<_>>();
-            keys.sort_by_cached_key(|k| (k.subtag.write_to_string().to_string(), k.alt, k.menu));
-            for key in keys {
-                if let Some(Alt::Variant) = key.alt {
-                    // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
-                    return;
-                }
-                let xpath = construct_xpath(xpath_field, &key.subtag, key.alt, key.menu);
-                let tier = coverage_cldr.coverage_tier(&locale, &xpath, cldr).unwrap();
-                callback(&locale, key, tier);
-            }
-        }
-    }
-}

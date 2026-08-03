@@ -206,8 +206,8 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<
 
 #[cfg(test)]
 mod tests {
+    use super::super::coverage_experimental::CheckAltCoverage;
     use super::*;
-    use crate::displaynames::CheckAltCoverage;
     use icu::locale::langid;
     use icu::locale::subtags::language;
 
@@ -490,7 +490,7 @@ mod tests {
         let provider = SourceDataProvider::new_testing();
         let cldr = provider.cldr().unwrap();
 
-        crate::displaynames::for_each_cldr_key_and_tier(
+        crate::displaynames::coverage_experimental::for_each_cldr_key_and_tier(
             cldr,
             "languages.json",
             "languages",

@@ -94,9 +94,8 @@ impl From<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames<'s
 
 #[cfg(test)]
 mod tests {
-    use crate::displaynames::CheckAltCoverage;
-
     use super::*;
+    use crate::displaynames::coverage_experimental::CheckAltCoverage;
     use icu::locale::{langid, subtags::script};
 
     #[test]
@@ -222,7 +221,7 @@ mod tests {
         let provider = SourceDataProvider::new_testing();
         let cldr = provider.cldr().unwrap();
 
-        crate::displaynames::for_each_cldr_key_and_tier(
+        crate::displaynames::coverage_experimental::for_each_cldr_key_and_tier(
             cldr,
             "scripts.json",
             "scripts",
