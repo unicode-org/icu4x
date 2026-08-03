@@ -7,7 +7,7 @@ use super::{
 };
 use crate::displaynames::DisplayNamesPreferences;
 use crate::displaynames::provider::*;
-use icu_locale::subtags::Script;
+use icu_locale_core::subtags::Script;
 use icu_provider::prelude::*;
 
 /// A localized display name for a single script, owned version.

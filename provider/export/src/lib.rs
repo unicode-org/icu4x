@@ -76,12 +76,14 @@ pub mod prelude {
         DataLocaleFamily, DeduplicationStrategy, ExportDriver, FallbackOptions, NoFallbackOptions,
     };
     #[doc(no_inline)]
-    pub use icu_locale::{LocaleFallbacker, locale};
+    pub use icu_locale_core::locale;
+    #[doc(no_inline)]
+    pub use icu_locale_fallback::LocaleFallbacker;
     #[doc(no_inline)]
     pub use icu_provider::{DataLocale, DataMarker, DataMarkerInfo, export::DataExporter};
 }
 
-use icu_locale::fallback::LocaleFallbacker;
+use icu_locale_fallback::LocaleFallbacker;
 use icu_provider::export::DataExporter;
 use icu_provider::export::ExportableProvider;
 use icu_provider::prelude::*;

@@ -87,7 +87,11 @@ mod canonicalizer;
 mod directionality;
 pub mod exemplar_chars;
 mod expander;
-pub mod fallback;
+/// Locale fallback algorithm re-exports.
+pub mod fallback {
+    #[doc(inline)]
+    pub use icu_locale_fallback::*;
+}
 pub mod provider;
 
 pub use icu_locale_core::*;
