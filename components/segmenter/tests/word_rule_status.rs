@@ -12,7 +12,7 @@ fn rule_status() {
         WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
         {
             let mut s =
-                WordSegmenter::new_for_non_complex_scripts(WordBreakInvariantOptions::default());
+                WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
             s.load_auto();
             s
         },
@@ -55,7 +55,7 @@ fn rule_status_letter_eof() {
         WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
         {
             let mut s =
-                WordSegmenter::new_for_non_complex_scripts(WordBreakInvariantOptions::default());
+                WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
             s.load_auto();
             s
         },
@@ -86,7 +86,7 @@ fn rule_status_numeric_eof() {
         WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
         {
             let mut s =
-                WordSegmenter::new_for_non_complex_scripts(WordBreakInvariantOptions::default());
+                WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
             s.load_auto();
             s
         },
@@ -117,7 +117,7 @@ fn rule_status_th() {
         WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
         {
             let mut s =
-                WordSegmenter::new_for_non_complex_scripts(WordBreakInvariantOptions::default());
+                WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
             s.load_auto();
             s
         },

@@ -16,13 +16,13 @@ fn word_break_th() {
         WordSegmenter::new_lstm(WordBreakInvariantOptions::default()),
         {
             let mut s =
-                WordSegmenter::new_for_non_complex_scripts(WordBreakInvariantOptions::default());
+                WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
             s.load_auto();
             s
         },
         {
             let mut s =
-                WordSegmenter::new_for_non_complex_scripts(WordBreakInvariantOptions::default());
+                WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
             s.load_auto();
             s
         },
@@ -47,7 +47,7 @@ fn word_break_my() {
         WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
         {
             let mut s =
-                WordSegmenter::new_for_non_complex_scripts(WordBreakInvariantOptions::default());
+                WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
             s.load_auto();
             s
         },
@@ -65,13 +65,13 @@ fn word_break_hiragana() {
         WordSegmenter::new_dictionary(WordBreakInvariantOptions::default()),
         {
             let mut s =
-                WordSegmenter::new_for_non_complex_scripts(WordBreakInvariantOptions::default());
+                WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
             s.load_auto();
             s
         },
         {
             let mut s =
-                WordSegmenter::new_for_non_complex_scripts(WordBreakInvariantOptions::default());
+                WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
             s.load_dictionary();
             s
         },
@@ -89,13 +89,13 @@ fn word_break_mixed_han() {
         WordSegmenter::new_dictionary(WordBreakInvariantOptions::default()),
         {
             let mut s =
-                WordSegmenter::new_for_non_complex_scripts(WordBreakInvariantOptions::default());
+                WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
             s.load_auto();
             s
         },
         {
             let mut s =
-                WordSegmenter::new_for_non_complex_scripts(WordBreakInvariantOptions::default());
+                WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
             s.load_dictionary();
             s
         },
@@ -114,7 +114,7 @@ fn word_line_th_wikipedia_auto() {
 
     for segmenter in [WordSegmenter::new_auto(Default::default()), {
         let mut s =
-            WordSegmenter::new_for_non_complex_scripts(WordBreakInvariantOptions::default());
+            WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
         s.load_auto();
         s
     }] {
