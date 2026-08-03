@@ -137,9 +137,9 @@ mod tests {
         assert_eq!(
             data.get()
                 .short_names
-                .get(&region!("GB").to_tinystr().to_unvalidated())
+                .get(&region!("BA").to_tinystr().to_unvalidated())
                 .unwrap(),
-            "UK"
+            "Bosnia"
         );
     }
 
@@ -168,15 +168,15 @@ mod tests {
         let data: DataPayload<LocaleNamesRegionCoreShortV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str("UN").unwrap(),
-                    &langid!("en").into(),
+                    DataMarkerAttributes::try_from_str("BA").unwrap(),
+                    &langid!("en-001").into(),
                 ),
                 ..Default::default()
             })
             .unwrap()
             .payload;
 
-        assert_eq!(&**data.get(), "UN");
+        assert_eq!(&**data.get(), "Bosnia");
     }
 
     #[test]
