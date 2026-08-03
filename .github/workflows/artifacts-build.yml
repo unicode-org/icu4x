@@ -32,6 +32,7 @@ permissions:
   contents: write
   pages: write
   id-token: write
+  attestations: write
 
 env:
   GCP_PROJECT_ID: "dev-infra-273822"
@@ -768,6 +769,15 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref_type == 'tag' && github.repository == 'unicode-org/icu4x'
     steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - name: Generate SPDX SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          path: ./
+          format: spdx-json
+          output-file: icu4x-sbom.spdx.json
+
       - name: Download binaries
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
@@ -775,6 +785,17 @@ jobs:
 
       - name: Display structure of downloaded files
         run: ls -R
+
+      - name: Generate build provenance attestation
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: 'ffi-*-libs/*'
+
+      - name: Generate SBOM attestation
+        uses: actions/attest@v4
+        with:
+          subject-path: 'ffi-*-libs/*'
+          sbom-path: icu4x-sbom.spdx.json
 
       - name: Release
         uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8
