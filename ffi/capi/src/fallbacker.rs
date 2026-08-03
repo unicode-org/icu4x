@@ -139,9 +139,17 @@ pub mod ffi {
             &'b self,
             locale: &'temp Locale,
         ) -> Box<LocaleFallbackIterator<'a>> {
-            Box::new(LocaleFallbackIterator(
-                self.0.fallback_for((&locale.0).into()),
-            ))
+            let prefs = icu_locale_core::preferences::LocalePreferences::from(&locale.0);
+            Box::new(LocaleFallbackIterator(self.0.fallback_for(
+                match self.0.config().priority {
+                    icu_locale_fallback::LocaleFallbackPriority::Region => {
+                        prefs.to_data_locale_region_priority()
+                    }
+                    icu_locale_fallback::LocaleFallbackPriority::Language | _ => {
+                        prefs.to_data_locale_language_priority()
+                    }
+                },
+            )))
         }
     }
 
