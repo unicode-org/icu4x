@@ -12,7 +12,6 @@ use crate::cldr_serde::displaynames::WithAlt;
 use crate::cldr_serde::displaynames::{Alt, Menu};
 use crate::source::SerdeCache;
 use icu_provider::prelude::*;
-use either::Either;
 use litemap::LiteMap;
 use serde::Deserialize;
 use serde::de::{Deserializer, Error as DeError, SeqAccess, Visitor};
@@ -173,7 +172,7 @@ impl CoverageByXPathCache {
 
 /// Helper to construct CLDR `XPath` string for a display name attribute and subtag.
 pub(crate) fn construct_xpath<'a>(
-    field: &'a str,
+    xpath_prefix: &'a str,
     subtag_str: impl Writeable + 'a,
     alt: Option<Alt>,
     menu: Option<Menu>,
@@ -199,37 +198,17 @@ pub(crate) fn construct_xpath<'a>(
         }
     };
 
-    match field {
-        "languages" => Either::Left(writeable::concat_writeable!(
-            r#"//ldml/localeDisplayNames/languages/language[@type=""#,
-            writeable::adapters::Replace {
-                source: subtag_str,
-                needle: "-",
-                replacement: '_'
-            },
-            r#""]"#,
-            alt_str
-        )),
-        "regions" | "territories" => either::Right(writeable::concat_writeable!(
-            r#"//ldml/localeDisplayNames/territories/territory[@type=""#,
-            subtag_str,
-            r#""]"#,
-            alt_str
-        )),
-        "scripts" => either::Right(writeable::concat_writeable!(
-            r#"//ldml/localeDisplayNames/scripts/script[@type=""#,
-            subtag_str,
-            r#""]"#,
-            alt_str
-        )),
-        "variants" => either::Right(writeable::concat_writeable!(
-            r#"//ldml/localeDisplayNames/variants/variant[@type=""#,
-            subtag_str,
-            r#""]"#,
-            alt_str
-        )),
-        _ => panic!("Unknown field: {}", field),
-    }
+    writeable::concat_writeable!(
+        xpath_prefix,
+        r#"[@type=""#,
+        writeable::adapters::Replace {
+            source: subtag_str,
+            needle: "-",
+            replacement: '_'
+        },
+        r#""]"#,
+        alt_str
+    )
 }
 
 // Note: We statically embed coverage levels for all CLDR locales here so we can support

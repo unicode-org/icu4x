@@ -95,7 +95,7 @@ where
 /// - `$alt_variant`: The alt variant (e.g., `None`, `Some(Alt::Short)`).
 /// - `$tier`: The target coverage tier.
 macro_rules! impl_displaynames_v1 {
-    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr, $tier:pat,) => {
+    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr, $xpath_prefix:literal, $tier:pat,) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
@@ -127,9 +127,12 @@ macro_rules! impl_displaynames_v1 {
                             .with_req($marker::INFO, req)
                     })?;
 
-                let field_str = stringify!($field);
-                let xpath =
-                    $crate::displaynames::coverage_experimental::construct_xpath(field_str, &subtag, $alt_variant, None);
+                let xpath = $crate::displaynames::coverage_experimental::construct_xpath(
+                    $xpath_prefix,
+                    &subtag,
+                    $alt_variant,
+                    None,
+                );
                 let item_tier = crate::displaynames::coverage_experimental::coverage_cldr_cache()
                     .coverage_tier(req.id.locale, &xpath, cldr)?;
                 if !matches!(item_tier, $tier) {
@@ -152,6 +155,7 @@ macro_rules! impl_displaynames_v1 {
             $file,
             $field,
             $alt_variant,
+            $xpath_prefix,
             $tier
         );
 
@@ -177,7 +181,7 @@ macro_rules! impl_displaynames_v1 {
 /// - `$field`: The field name in `LocaleDisplayNames` containing the data.
 /// - `$tier`: The target coverage tier.
 macro_rules! impl_displaynames_menu_v1 {
-    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $tier:pat,) => {
+    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $xpath_prefix:literal, $tier:pat,) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
@@ -227,17 +231,16 @@ macro_rules! impl_displaynames_menu_v1 {
                     (alt_menu.as_str(), "")
                 };
 
-                let field_str = stringify!($field);
                 let xpath = if used_alt_menu {
                     $crate::displaynames::coverage_experimental::construct_xpath(
-                        field_str,
+                        $xpath_prefix,
                         &subtag,
                         Some($crate::cldr_serde::displaynames::Alt::Menu),
                         None,
                     )
                 } else {
                     $crate::displaynames::coverage_experimental::construct_xpath(
-                        field_str,
+                        $xpath_prefix,
                         &subtag,
                         None,
                         Some($crate::cldr_serde::displaynames::Menu::Core),
@@ -266,7 +269,6 @@ macro_rules! impl_displaynames_menu_v1 {
                 let mut result = HashSet::new();
                 let cldr = self.cldr()?;
                 let displaynames = cldr.displaynames();
-                let field_str = stringify!($field);
                 for locale in displaynames.list_locales()?.filter(|locale| {
                     // The directory might exist without the file
                     displaynames.file_exists(locale, $file).unwrap_or_default()
@@ -281,14 +283,14 @@ macro_rules! impl_displaynames_menu_v1 {
                             let xpath =
                                 if key.alt == Some($crate::cldr_serde::displaynames::Alt::Menu) {
                                     $crate::displaynames::coverage_experimental::construct_xpath(
-                                        field_str,
+                                        $xpath_prefix,
                                         &key.subtag,
                                         Some($crate::cldr_serde::displaynames::Alt::Menu),
                                         None,
                                     )
                                 } else {
                                     $crate::displaynames::coverage_experimental::construct_xpath(
-                                        field_str,
+                                        $xpath_prefix,
                                         &key.subtag,
                                         None,
                                         Some($crate::cldr_serde::displaynames::Menu::Core),
@@ -341,13 +343,12 @@ macro_rules! impl_displaynames_menu_v1 {
 /// - `$alt_variant`: The alt variant (e.g., `None`, `Some(Alt::Short)`).
 /// - `$tier`: The target coverage tier.
 macro_rules! impl_displaynames_iter_v1 {
-    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr, $tier:pat) => {
+    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr, $xpath_prefix:literal, $tier:pat) => {
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
                 let mut result = HashSet::new();
                 let cldr = self.cldr()?;
                 let displaynames = cldr.displaynames();
-                let field_str = stringify!($field);
                 for locale in displaynames.list_locales()?.filter(|locale| {
                     // The directory might exist without the file
                     displaynames.file_exists(locale, $file).unwrap_or_default()
@@ -357,12 +358,13 @@ macro_rules! impl_displaynames_iter_v1 {
                         let matches = $alt_variant == key.alt && key.menu.is_none();
 
                         if matches {
-                            let xpath = $crate::displaynames::coverage_experimental::construct_xpath(
-                                field_str,
-                                &key.subtag,
-                                $alt_variant,
-                                None,
-                            );
+                            let xpath =
+                                $crate::displaynames::coverage_experimental::construct_xpath(
+                                    $xpath_prefix,
+                                    &key.subtag,
+                                    $alt_variant,
+                                    None,
+                                );
                             if matches!(
                                 crate::displaynames::coverage_experimental::coverage_cldr_cache()
                                     .coverage_tier(&locale, &xpath, cldr)?,

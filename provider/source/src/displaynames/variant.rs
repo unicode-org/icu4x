@@ -37,6 +37,7 @@ crate::displaynames::impl_displaynames_v1!(
     "variants.json",
     variants,
     None,
+    "//ldml/localeDisplayNames/variants/variant",
     CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 

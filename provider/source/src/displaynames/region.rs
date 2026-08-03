@@ -39,6 +39,7 @@ crate::displaynames::impl_displaynames_v1!(
     "territories.json",
     regions,
     None,
+    "//ldml/localeDisplayNames/territories/territory",
     CoverageLevelForXPath::Basic | CoverageLevelForXPath::Core,
 );
 crate::displaynames::impl_displaynames_v1!(
@@ -48,6 +49,7 @@ crate::displaynames::impl_displaynames_v1!(
     "territories.json",
     regions,
     None,
+    "//ldml/localeDisplayNames/territories/territory",
     CoverageLevelForXPath::Moderate,
 );
 
@@ -58,6 +60,7 @@ crate::displaynames::impl_displaynames_v1!(
     "territories.json",
     regions,
     Some(Alt::Short),
+    "//ldml/localeDisplayNames/territories/territory",
     CoverageLevelForXPath::Basic,
 );
 crate::displaynames::impl_displaynames_v1!(
@@ -67,6 +70,7 @@ crate::displaynames::impl_displaynames_v1!(
     "territories.json",
     regions,
     Some(Alt::Short),
+    "//ldml/localeDisplayNames/territories/territory",
     CoverageLevelForXPath::Moderate,
 );
 

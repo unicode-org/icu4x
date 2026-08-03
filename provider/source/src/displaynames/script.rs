@@ -37,6 +37,7 @@ crate::displaynames::impl_displaynames_v1!(
     "scripts.json",
     scripts,
     None,
+    "//ldml/localeDisplayNames/scripts/script",
     CoverageLevelForXPath::Basic | CoverageLevelForXPath::Core,
 );
 crate::displaynames::impl_displaynames_v1!(
@@ -46,6 +47,7 @@ crate::displaynames::impl_displaynames_v1!(
     "scripts.json",
     scripts,
     None,
+    "//ldml/localeDisplayNames/scripts/script",
     CoverageLevelForXPath::Moderate,
 );
 crate::displaynames::impl_displaynames_v1!(
@@ -55,6 +57,7 @@ crate::displaynames::impl_displaynames_v1!(
     "scripts.json",
     scripts,
     None,
+    "//ldml/localeDisplayNames/scripts/script",
     CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 
@@ -65,6 +68,7 @@ crate::displaynames::impl_displaynames_v1!(
     "scripts.json",
     scripts,
     Some(Alt::Short),
+    "//ldml/localeDisplayNames/scripts/script",
     CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 
