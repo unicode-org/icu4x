@@ -27,12 +27,6 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct Bidi;
-
-
-    typedef struct DiplomatBidiView {
-      const Bidi** data;
-      size_t len;
-    } DiplomatBidiView;
 } // namespace capi
 } // namespace
 

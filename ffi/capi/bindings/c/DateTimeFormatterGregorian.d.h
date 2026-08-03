@@ -14,11 +14,6 @@
 typedef struct DateTimeFormatterGregorian DateTimeFormatterGregorian;
 
 
-typedef struct DiplomatDateTimeFormatterGregorianView {
-  const DateTimeFormatterGregorian** data;
-  size_t len;
-} DiplomatDateTimeFormatterGregorianView;
-
 
 
 #endif // DateTimeFormatterGregorian_D_H

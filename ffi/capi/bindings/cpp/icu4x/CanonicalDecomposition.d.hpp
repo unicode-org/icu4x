@@ -24,12 +24,6 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct CanonicalDecomposition;
-
-
-    typedef struct DiplomatCanonicalDecompositionView {
-      const CanonicalDecomposition** data;
-      size_t len;
-    } DiplomatCanonicalDecompositionView;
 } // namespace capi
 } // namespace
 

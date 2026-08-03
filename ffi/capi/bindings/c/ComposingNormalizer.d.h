@@ -14,11 +14,6 @@
 typedef struct ComposingNormalizer ComposingNormalizer;
 
 
-typedef struct DiplomatComposingNormalizerView {
-  const ComposingNormalizer** data;
-  size_t len;
-} DiplomatComposingNormalizerView;
-
 
 
 #endif // ComposingNormalizer_D_H

@@ -35,12 +35,6 @@ class DateTimeWriteError;
 namespace icu4x {
 namespace capi {
     struct ZonedDateFormatterGregorian;
-
-
-    typedef struct DiplomatZonedDateFormatterGregorianView {
-      const ZonedDateFormatterGregorian** data;
-      size_t len;
-    } DiplomatZonedDateFormatterGregorianView;
 } // namespace capi
 } // namespace
 

@@ -36,12 +36,6 @@ class YearStyle;
 namespace icu4x {
 namespace capi {
     struct DateTimeFormatter;
-
-
-    typedef struct DiplomatDateTimeFormatterView {
-      const DateTimeFormatter** data;
-      size_t len;
-    } DiplomatDateTimeFormatterView;
 } // namespace capi
 } // namespace
 

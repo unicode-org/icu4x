@@ -27,12 +27,6 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct ScriptWithExtensions;
-
-
-    typedef struct DiplomatScriptWithExtensionsView {
-      const ScriptWithExtensions** data;
-      size_t len;
-    } DiplomatScriptWithExtensionsView;
 } // namespace capi
 } // namespace
 

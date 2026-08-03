@@ -20,12 +20,6 @@ class BidiParagraph;
 namespace icu4x {
 namespace capi {
     struct BidiInfo;
-
-
-    typedef struct DiplomatBidiInfoView {
-      const BidiInfo** data;
-      size_t len;
-    } DiplomatBidiInfoView;
 } // namespace capi
 } // namespace
 

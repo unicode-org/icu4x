@@ -14,11 +14,6 @@
 typedef struct ZonedDateFormatterGregorian ZonedDateFormatterGregorian;
 
 
-typedef struct DiplomatZonedDateFormatterGregorianView {
-  const ZonedDateFormatterGregorian** data;
-  size_t len;
-} DiplomatZonedDateFormatterGregorianView;
-
 
 
 #endif // ZonedDateFormatterGregorian_D_H
