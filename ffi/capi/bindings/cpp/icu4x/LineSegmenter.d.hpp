@@ -32,12 +32,6 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct LineSegmenter;
-
-
-    typedef struct DiplomatLineSegmenterView {
-      const LineSegmenter** data;
-      size_t len;
-    } DiplomatLineSegmenterView;
 } // namespace capi
 } // namespace
 

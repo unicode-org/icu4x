@@ -22,12 +22,6 @@ class LocaleFallbackIterator;
 namespace icu4x {
 namespace capi {
     struct LocaleFallbackerWithConfig;
-
-
-    typedef struct DiplomatLocaleFallbackerWithConfigView {
-      const LocaleFallbackerWithConfig** data;
-      size_t len;
-    } DiplomatLocaleFallbackerWithConfigView;
 } // namespace capi
 } // namespace
 

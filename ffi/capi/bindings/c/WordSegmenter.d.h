@@ -14,11 +14,6 @@
 typedef struct WordSegmenter WordSegmenter;
 
 
-typedef struct DiplomatWordSegmenterView {
-  const WordSegmenter** data;
-  size_t len;
-} DiplomatWordSegmenterView;
-
 
 
 #endif // WordSegmenter_D_H

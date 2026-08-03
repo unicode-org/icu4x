@@ -14,11 +14,6 @@
 typedef struct SentenceSegmenter SentenceSegmenter;
 
 
-typedef struct DiplomatSentenceSegmenterView {
-  const SentenceSegmenter** data;
-  size_t len;
-} DiplomatSentenceSegmenterView;
-
 
 
 #endif // SentenceSegmenter_D_H

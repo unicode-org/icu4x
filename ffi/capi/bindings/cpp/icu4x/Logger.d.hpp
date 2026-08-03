@@ -15,12 +15,6 @@
 namespace icu4x {
 namespace capi {
     struct Logger;
-
-
-    typedef struct DiplomatLoggerView {
-      const Logger** data;
-      size_t len;
-    } DiplomatLoggerView;
 } // namespace capi
 } // namespace
 

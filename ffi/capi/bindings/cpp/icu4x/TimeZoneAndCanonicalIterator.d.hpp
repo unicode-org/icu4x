@@ -19,12 +19,6 @@ struct TimeZoneAndCanonical;
 namespace icu4x {
 namespace capi {
     struct TimeZoneAndCanonicalIterator;
-
-
-    typedef struct DiplomatTimeZoneAndCanonicalIteratorView {
-      const TimeZoneAndCanonicalIterator** data;
-      size_t len;
-    } DiplomatTimeZoneAndCanonicalIteratorView;
 } // namespace capi
 } // namespace
 

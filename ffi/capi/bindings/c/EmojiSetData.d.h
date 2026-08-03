@@ -14,11 +14,6 @@
 typedef struct EmojiSetData EmojiSetData;
 
 
-typedef struct DiplomatEmojiSetDataView {
-  const EmojiSetData** data;
-  size_t len;
-} DiplomatEmojiSetDataView;
-
 
 
 #endif // EmojiSetData_D_H

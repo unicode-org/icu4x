@@ -20,12 +20,6 @@ class Locale;
 namespace icu4x {
 namespace capi {
     struct CaseMapLocales;
-
-
-    typedef struct DiplomatCaseMapLocalesView {
-      const CaseMapLocales** data;
-      size_t len;
-    } DiplomatCaseMapLocalesView;
 } // namespace capi
 } // namespace
 
