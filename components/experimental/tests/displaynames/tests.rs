@@ -680,12 +680,20 @@ fn test_us_and_uk_english_display_names() {
         assert_try_writeable_eq!(us_name.as_borrowed(), "American English");
 
         let gb_name = LanguageIdentifierDisplayNameOwned::try_new_light(
-            regional_locale.into(),
+            regional_locale.clone().into(),
             lang_gb.clone(),
             default_options,
         )
         .unwrap();
         assert_try_writeable_eq!(gb_name.as_borrowed(), "British English");
+
+        let gb_name = LanguageIdentifierDisplayNameOwned::try_new_light(
+            regional_locale.into(),
+            langid!("en-001"),
+            default_options,
+        )
+        .unwrap();
+        assert_try_writeable_eq!(gb_name.as_borrowed(), "English (world)");
     }
 }
 
