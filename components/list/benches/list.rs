@@ -7,7 +7,7 @@ use icu_list::{
     ListFormatter,
     options::{ListFormatterOptions, ListLength},
 };
-use icu_locale::locale;
+use icu_locale_core::locale;
 use writeable::Writeable;
 
 fn list_benches(c: &mut Criterion) {

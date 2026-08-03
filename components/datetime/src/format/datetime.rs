@@ -686,7 +686,7 @@ mod tests {
 
     #[test]
     fn julian_day() {
-        let locale = icu_locale::locale!("en");
+        let locale = icu_locale_core::locale!("en");
         let parsed_pattern = DateTimePattern::try_from_pattern_str("g").unwrap();
         let mut names = FixedCalendarDateTimeNames::<
             icu_calendar::cal::Gregorian,
@@ -702,7 +702,7 @@ mod tests {
 
     #[test]
     fn extended_year() {
-        let locale = icu_locale::locale!("en");
+        let locale = icu_locale_core::locale!("en");
         let parsed_pattern = DateTimePattern::try_from_pattern_str("u").unwrap();
         let mut names = FixedCalendarDateTimeNames::<
             icu_calendar::cal::Ethiopian,
