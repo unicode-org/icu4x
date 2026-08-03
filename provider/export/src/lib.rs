@@ -76,7 +76,7 @@ pub mod prelude {
         DataLocaleFamily, DeduplicationStrategy, ExportDriver, FallbackOptions, NoFallbackOptions,
     };
     #[doc(no_inline)]
-    pub use icu_locale_core::locale;
+    pub use icu_locale_core::{data_locale, locale};
     #[doc(no_inline)]
     pub use icu_locale_fallback::LocaleFallbacker;
     #[doc(no_inline)]
