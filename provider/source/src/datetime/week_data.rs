@@ -97,7 +97,7 @@ impl IterableDataProviderCached<CalendarWeekV1> for SourceDataProvider {
 fn test_basic_cldr_week_data_v2() {
     use icu::calendar::provider::WeekdaySet;
     use icu::calendar::types::Weekday::*;
-    use icu::locale::langid;
+    use icu::locale::data_locale;
 
     let provider = SourceDataProvider::new_testing();
 
@@ -111,7 +111,7 @@ fn test_basic_cldr_week_data_v2() {
 
     let fr_week_data: DataResponse<CalendarWeekV1> = provider
         .load(DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("und-FR").into()).as_borrowed(),
+            id: DataIdentifierCow::from_locale(data_locale!("und-FR")).as_borrowed(),
             ..Default::default()
         })
         .unwrap();
@@ -123,7 +123,7 @@ fn test_basic_cldr_week_data_v2() {
 
     let iq_week_data: DataResponse<CalendarWeekV1> = provider
         .load(DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("und-IQ").into()).as_borrowed(),
+            id: DataIdentifierCow::from_locale(data_locale!("und-IQ")).as_borrowed(),
             ..Default::default()
         })
         .unwrap();
@@ -136,7 +136,7 @@ fn test_basic_cldr_week_data_v2() {
 
     let gg_week_data: DataResponse<CalendarWeekV1> = provider
         .load(DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("und-GG").into()).as_borrowed(),
+            id: DataIdentifierCow::from_locale(data_locale!("und-GG")).as_borrowed(),
             ..Default::default()
         })
         .unwrap();
@@ -152,7 +152,7 @@ fn test_basic_cldr_week_data_v2() {
 
     let ir_week_data: DataResponse<CalendarWeekV1> = provider
         .load(DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("und-IR").into()).as_borrowed(),
+            id: DataIdentifierCow::from_locale(data_locale!("und-IR")).as_borrowed(),
             ..Default::default()
         })
         .unwrap();

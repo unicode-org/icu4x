@@ -170,14 +170,14 @@ fn extract_currency_essentials<'data>(
 
 #[test]
 fn test_essentials() {
-    use icu::locale::langid;
+    use icu::locale::data_locale;
     use writeable::assert_writeable_eq;
 
     let provider = SourceDataProvider::new_testing();
 
     let en: DataPayload<CurrencyEssentialsV1> = provider
         .load(DataRequest {
-            id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+            id: DataIdentifierBorrowed::for_locale(&data_locale!("en")),
             ..Default::default()
         })
         .unwrap()
@@ -221,7 +221,7 @@ fn test_essentials() {
 
     let ar_eg: DataPayload<CurrencyEssentialsV1> = provider
         .load(DataRequest {
-            id: DataIdentifierBorrowed::for_locale(&langid!("ar-EG").into()),
+            id: DataIdentifierBorrowed::for_locale(&data_locale!("ar-EG")),
             ..Default::default()
         })
         .unwrap()

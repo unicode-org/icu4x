@@ -174,7 +174,7 @@ impl_units_display_names_provider!(UnitsNamesVolumeOutlierV1, UnitType::Outlier,
 
 #[test]
 fn test_basic() {
-    use icu::locale::langid;
+    use icu::locale::{data_locale, locale};
     use icu::plurals::PluralRules;
     use icu_provider::prelude::*;
     use writeable::assert_writeable_eq;
@@ -185,14 +185,14 @@ fn test_basic() {
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("long-meter"),
-                &langid!("en").into(),
+                &data_locale!("en"),
             ),
             ..Default::default()
         })
         .unwrap()
         .payload;
 
-    let en_rules = PluralRules::try_new_cardinal_unstable(&provider, langid!("en").into()).unwrap();
+    let en_rules = PluralRules::try_new_cardinal_unstable(&provider, locale!("en").into()).unwrap();
     let long = us_locale_long_meter
         .get()
         .get(1.into(), &en_rules)
@@ -203,7 +203,7 @@ fn test_basic() {
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("short-meter"),
-                &langid!("en").into(),
+                &data_locale!("en"),
             ),
             ..Default::default()
         })
@@ -220,14 +220,14 @@ fn test_basic() {
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("long-meter"),
-                &langid!("ar-EG").into(),
+                &data_locale!("ar-EG"),
             ),
             ..Default::default()
         })
         .unwrap()
         .payload;
 
-    let ar_rules = PluralRules::try_new_cardinal_unstable(&provider, langid!("ar").into()).unwrap();
+    let ar_rules = PluralRules::try_new_cardinal_unstable(&provider, locale!("ar").into()).unwrap();
     let long = ar_eg_locale.get().get(1.into(), &ar_rules).interpolate([1]);
     assert_writeable_eq!(long, "متر");
 
@@ -235,14 +235,14 @@ fn test_basic() {
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("short-meter"),
-                &langid!("fr").into(),
+                &data_locale!("fr"),
             ),
             ..Default::default()
         })
         .unwrap()
         .payload;
 
-    let fr_rules = PluralRules::try_new_cardinal_unstable(&provider, langid!("fr").into()).unwrap();
+    let fr_rules = PluralRules::try_new_cardinal_unstable(&provider, locale!("fr").into()).unwrap();
     let short = fr_locale.get().get(5.into(), &fr_rules).interpolate([5]);
     assert_writeable_eq!(short, "5 m");
 }

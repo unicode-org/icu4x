@@ -169,6 +169,17 @@ impl From<&Locale> for DataLocale {
     }
 }
 
+impl From<(Language, Option<Script>, Option<Region>)> for DataLocale {
+    fn from((l, s, r): (Language, Option<Script>, Option<Region>)) -> Self {
+        Self::from_parts(
+            l,
+            s,
+            r.map(|r| unicode_ext::SubdivisionId::new(r, unicode_ext::SubdivisionSuffix::UNKNOWN)),
+            None,
+        )
+    }
+}
+
 impl FromStr for DataLocale {
     type Err = ParseError;
     #[inline]

@@ -4,7 +4,7 @@
 
 use crate::SourceDataProvider;
 use crate::source::{AbstractFs, RscdCache};
-use icu::locale::{LanguageIdentifier, langid};
+use icu::locale::{DataLocale, data_locale};
 use icu_provider::DataError;
 use std::collections::BTreeSet;
 use std::fs::File;

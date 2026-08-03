@@ -152,7 +152,7 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu::locale::{langid, subtags::language};
+    use icu::locale::{data_locale, subtags::language};
 
     #[test]
     fn test_basic_lang_display_names() {
@@ -160,7 +160,7 @@ mod tests {
 
         let data: DataPayload<LanguageDisplayNamesV1> = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
+                id: DataIdentifierBorrowed::for_locale(&data_locale!("en-001")),
                 ..Default::default()
             })
             .unwrap()
@@ -181,7 +181,7 @@ mod tests {
 
         let data: DataPayload<LanguageDisplayNamesV1> = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
+                id: DataIdentifierBorrowed::for_locale(&data_locale!("en-001")),
                 ..Default::default()
             })
             .unwrap()
@@ -202,7 +202,7 @@ mod tests {
 
         let data: DataPayload<LanguageDisplayNamesV1> = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
+                id: DataIdentifierBorrowed::for_locale(&data_locale!("en-001")),
                 ..Default::default()
             })
             .unwrap()
@@ -223,7 +223,7 @@ mod tests {
 
         let data: DataPayload<LanguageDisplayNamesV1> = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
+                id: DataIdentifierBorrowed::for_locale(&data_locale!("en-001")),
                 ..Default::default()
             })
             .unwrap()
@@ -244,7 +244,7 @@ mod tests {
 
         let data: DataPayload<LocaleDisplayNamesV1> = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
+                id: DataIdentifierBorrowed::for_locale(&data_locale!("en-001")),
                 ..Default::default()
             })
             .unwrap()
@@ -267,7 +267,7 @@ mod tests {
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("aa").unwrap(),
-                    &langid!("en-001").into(),
+                    &data_locale!("en-001"),
                 ),
                 ..Default::default()
             })
@@ -285,7 +285,7 @@ mod tests {
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("en-GB").unwrap(),
-                    &langid!("en").into(),
+                    &data_locale!("en"),
                 ),
                 ..Default::default()
             })
@@ -303,7 +303,7 @@ mod tests {
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("zh").unwrap(),
-                    &langid!("en-001").into(),
+                    &data_locale!("en-001"),
                 ),
                 ..Default::default()
             })
@@ -321,7 +321,7 @@ mod tests {
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("ku").unwrap(),
-                    &langid!("en-001").into(),
+                    &data_locale!("en-001"),
                 ),
                 ..Default::default()
             })
@@ -336,7 +336,7 @@ mod tests {
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("zh").unwrap(),
-                    &langid!("en-001").into(),
+                    &data_locale!("en-001"),
                 ),
                 ..Default::default()
             })
