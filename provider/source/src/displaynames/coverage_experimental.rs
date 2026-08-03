@@ -1020,7 +1020,7 @@ pub(super) trait CheckAltCoverage {
 pub(super) fn for_each_cldr_key_and_tier<Resource, T>(
     cldr: &CldrCache,
     file_name: &str,
-    xpath_field: &str,
+    xpath_prefix: &str,
     mut extract_keys: impl FnMut(&Resource) -> &HashMap<WithAlt<T>, String>,
     mut callback: impl FnMut(&DataLocale, &WithAlt<T>, CoverageLevelForXPath),
 ) where
@@ -1040,7 +1040,7 @@ pub(super) fn for_each_cldr_key_and_tier<Resource, T>(
                     // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
                     return;
                 }
-                let xpath = construct_xpath(xpath_field, &key.subtag, key.alt, key.menu);
+                let xpath = construct_xpath(xpath_prefix, &key.subtag, key.alt, key.menu);
                 let tier = coverage_cldr.coverage_tier(&locale, &xpath, cldr).unwrap();
                 callback(&locale, key, tier);
             }

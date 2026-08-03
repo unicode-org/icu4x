@@ -502,7 +502,7 @@ mod tests {
         crate::displaynames::coverage_experimental::for_each_cldr_key_and_tier(
             cldr,
             "languages.json",
-            "languages",
+            "//ldml/localeDisplayNames/languages/language",
             |res: &cldr_serde::displaynames::language::Resource| {
                 &res.main.value.localedisplaynames.languages
             },

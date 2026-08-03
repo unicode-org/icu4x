@@ -227,7 +227,7 @@ mod tests {
         crate::displaynames::coverage_experimental::for_each_cldr_key_and_tier(
             cldr,
             "territories.json",
-            "regions",
+            "//ldml/localeDisplayNames/territories/territory",
             |res: &cldr_serde::displaynames::region::Resource| {
                 &res.main.value.localedisplaynames.regions
             },

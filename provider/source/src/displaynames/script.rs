@@ -228,7 +228,7 @@ mod tests {
         crate::displaynames::coverage_experimental::for_each_cldr_key_and_tier(
             cldr,
             "scripts.json",
-            "scripts",
+            "//ldml/localeDisplayNames/scripts/script",
             |res: &cldr_serde::displaynames::script::Resource| {
                 &res.main.value.localedisplaynames.scripts
             },

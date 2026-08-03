@@ -122,7 +122,7 @@ mod tests {
         crate::displaynames::coverage_experimental::for_each_cldr_key_and_tier(
             cldr,
             "variants.json",
-            "variants",
+            "//ldml/localeDisplayNames/variants/variant",
             |res: &cldr_serde::displaynames::variant::Resource| {
                 &res.main.value.localedisplaynames.variants
             },
