@@ -109,7 +109,7 @@ pub mod unstable {
     pub mod displaynames;
     #[cfg(feature = "locale")]
     pub mod exemplar_chars;
-    #[cfg(feature = "locale")]
+    #[cfg(feature = "locale_fallback")]
     pub mod fallbacker;
     #[cfg(feature = "decimal")]
     pub mod fixed_decimal;

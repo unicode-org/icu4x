@@ -1,6 +1,4 @@
 // @generated
-include!("locale_likely_subtags_language_v1.rs.data");
-include!("locale_parents_v1.rs.data");
 include!("locale_exemplar_characters_main_v1.rs.data");
 include!("locale_exemplar_characters_numbers_v1.rs.data");
 include!("locale_aliases_v1.rs.data");
@@ -37,7 +35,6 @@ macro_rules! __make_provider {
 pub use __make_provider as make_provider;
 /// This macro requires the following crates:
 /// * `icu`
-/// * `icu_locale_core`
 /// * `icu_provider`
 /// * `icu_provider/baked`
 /// * `zerovec`
@@ -45,8 +42,6 @@ pub use __make_provider as make_provider;
 macro_rules! impl_data_provider {
     ($ provider : ty) => {
         make_provider!($provider);
-        impl_locale_likely_subtags_language_v1!($provider);
-        impl_locale_parents_v1!($provider);
         impl_locale_exemplar_characters_main_v1!($provider);
         impl_locale_exemplar_characters_numbers_v1!($provider);
         impl_locale_aliases_v1!($provider);

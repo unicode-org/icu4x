@@ -2531,7 +2531,7 @@ where
 #[cfg(test)]
 mod test {
     use super::*;
-    use icu_locale::locale;
+    use icu_locale_core::locale;
 
     type Key = Vec<u8>;
 

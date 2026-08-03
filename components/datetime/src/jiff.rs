@@ -331,7 +331,7 @@ impl ConvertCalendar for jiff::tz::Offset {
 #[test]
 fn jiff() {
     use crate::{DateTimeFormatter, fieldsets};
-    use icu_locale::locale;
+    use icu_locale_core::locale;
     use writeable::assert_writeable_eq;
 
     let jiff = jiff::Timestamp::from_nanosecond(1726011440123456789)
@@ -383,7 +383,7 @@ fn jiff() {
 #[test]
 fn jiff_fixed_calendar() {
     use crate::{DateTimeFormatter, FixedCalendarDateTimeFormatter, fieldsets};
-    use icu_locale::locale;
+    use icu_locale_core::locale;
     use writeable::assert_writeable_eq;
 
     let jiff = jiff::Timestamp::from_nanosecond(1726011440123456789)
@@ -438,7 +438,7 @@ fn jiff_fixed_calendar() {
 #[test]
 fn jiff_no_calendar() {
     use crate::{NoCalendarFormatter, fieldsets};
-    use icu_locale::locale;
+    use icu_locale_core::locale;
     use writeable::assert_writeable_eq;
 
     let jiff = jiff::Timestamp::from_nanosecond(1726011440123456789)

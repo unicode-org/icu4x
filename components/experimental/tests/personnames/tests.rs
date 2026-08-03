@@ -18,14 +18,16 @@ const _: () = {
     mod icu {
         pub use icu_collections as collections;
         pub use icu_experimental as experimental;
-        pub use icu_locale as locale;
+        pub mod locale {
+            pub use icu_locale_fallback as fallback;
+        }
         pub use icu_properties as properties;
     }
 
     make_provider!(TestingProvider);
     impl_person_names_format_v1!(TestingProvider);
-    icu_locale_data::impl_locale_likely_subtags_language_v1!(TestingProvider);
-    icu_locale_data::impl_locale_parents_v1!(TestingProvider);
+    icu_locale_fallback_data::impl_locale_likely_subtags_language_v1!(TestingProvider);
+    icu_locale_fallback_data::impl_locale_parents_v1!(TestingProvider);
     icu_properties_data::impl_property_name_short_script_v1!(TestingProvider);
     icu_properties_data::impl_property_script_with_extensions_v1!(TestingProvider);
 };
