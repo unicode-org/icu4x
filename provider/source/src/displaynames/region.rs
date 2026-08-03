@@ -141,14 +141,14 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_region_medium() {
+    fn test_locale_names_region_core_medium() {
         let provider = SourceDataProvider::new_testing();
 
         let data: DataPayload<LocaleNamesRegionCoreMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("AF").unwrap(),
-                    &langid!("en-001").into(),
+                    &langid!("en").into(),
                 ),
                 ..Default::default()
             })
@@ -159,25 +159,7 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_region_short() {
-        let provider = SourceDataProvider::new_testing();
-
-        let data: DataPayload<LocaleNamesRegionCoreShortV1> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str("PS").unwrap(),
-                    &langid!("en-001").into(),
-                ),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-
-        assert_eq!(&**data.get(), "Palestine");
-    }
-
-    #[test]
-    fn test_locale_names_region_short_un() {
+    fn test_locale_names_region_core_short() {
         let provider = SourceDataProvider::new_testing();
 
         let data: DataPayload<LocaleNamesRegionCoreShortV1> = provider
@@ -192,6 +174,42 @@ mod tests {
             .payload;
 
         assert_eq!(&**data.get(), "UN");
+    }
+
+    #[test]
+    fn test_locale_names_region_minimal_medium() {
+        let provider = SourceDataProvider::new_testing();
+
+        let data: DataPayload<LocaleNamesRegionMinimalMediumV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("US").unwrap(),
+                    &langid!("en").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(&**data.get(), "United States");
+    }
+
+    #[test]
+    fn test_locale_names_region_minimal_short() {
+        let provider = SourceDataProvider::new_testing();
+
+        let data: DataPayload<LocaleNamesRegionMinimalShortV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("GB").unwrap(),
+                    &langid!("en").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(&**data.get(), "UK");
     }
 
     /// The cartesian product of Region x (Short | Medium) x (Minimal | Core | Extended)

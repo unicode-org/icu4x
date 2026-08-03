@@ -142,7 +142,7 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_script_medium() {
+    fn test_locale_names_script_core_medium() {
         let provider = SourceDataProvider::new_testing();
 
         let data: DataPayload<LocaleNamesScriptCoreMediumV1> = provider
@@ -160,7 +160,43 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_script_short() {
+    fn test_locale_names_script_minimal_medium() {
+        let provider = SourceDataProvider::new_testing();
+
+        let data: DataPayload<LocaleNamesScriptMinimalMediumV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("Latn").unwrap(),
+                    &langid!("en").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(&**data.get(), "Latin");
+    }
+
+    #[test]
+    fn test_locale_names_script_extended_medium() {
+        let provider = SourceDataProvider::new_testing();
+
+        let data: DataPayload<LocaleNamesScriptExtendedMediumV1> = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str("Cans").unwrap(),
+                    &langid!("en").into(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(&**data.get(), "Unified Canadian Aboriginal Syllabics");
+    }
+
+    #[test]
+    fn test_locale_names_script_extended_short() {
         let provider = SourceDataProvider::new_testing();
 
         let data: DataPayload<LocaleNamesScriptExtendedShortV1> = provider

@@ -93,7 +93,7 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_variant_medium() {
+    fn test_locale_names_variant_extended_medium() {
         let provider = SourceDataProvider::new_testing();
 
         let data: DataPayload<LocaleNamesVariantExtendedMediumV1> = provider
