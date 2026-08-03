@@ -2281,6 +2281,17 @@ mod tests {
             s.load_dictionary();
             s
         });
+
+        // # 8243
+        check_line(
+            "ก\u{2060}รุ\u{2060}ง",
+            &["ก\u{2060}รุ\u{2060}ง"],
+            {
+                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
+                s.load_dictionary();
+                s
+            },
+        );
     }
 
     #[test]
@@ -2355,6 +2366,17 @@ mod tests {
         check_line(
             "សេចក្ដីប្រកាសជាសកលស្ដីពីសិទ្ធិមនុស្ស",
             &["សេចក្ដីប្រកាស", "ជាស", "កល", "ស្ដីពី", "សិទ្ធិមនុស្ស"],
+            {
+                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
+                s.load_dictionary();
+                s
+            },
+        );
+
+        // #7218
+        check_line(
+            "អស់ នឹង មាន",
+            &["អស់ ", "នឹង ", "មាន"],
             {
                 let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
                 s.load_dictionary();
