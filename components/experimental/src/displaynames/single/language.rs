@@ -3,15 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::displaynames::provider::{
-    LocaleNamesEssentialsV1, LocaleNamesLanguageCoreLongV1, LocaleNamesLanguageCoreMediumV1,
-    LocaleNamesLanguageCoreShortV1, LocaleNamesLanguageExtendedLongV1,
-    LocaleNamesLanguageExtendedMediumV1, LocaleNamesLanguageExtendedShortV1,
-    LocaleNamesLanguageMenuCoreMediumV1, LocaleNamesLanguageMenuExtendedMediumV1,
-    LocaleNamesLanguageMinimalMediumV1, LocaleNamesRegionCoreMediumV1,
-    LocaleNamesRegionCoreShortV1, LocaleNamesRegionMinimalMediumV1,
-    LocaleNamesRegionMinimalShortV1, LocaleNamesScriptCoreMediumV1,
-    LocaleNamesScriptExtendedMediumV1, LocaleNamesScriptExtendedShortV1,
-    LocaleNamesScriptMinimalMediumV1, LocaleNamesVariantExtendedMediumV1, MenuNamePartsULE,
+    LocaleNamesEssentialsV1, LocaleNamesLanguageLongHeavyV1, LocaleNamesLanguageLongLightV1,
+    LocaleNamesLanguageMediumHeavyV1, LocaleNamesLanguageMediumLightV1,
+    LocaleNamesLanguageMediumTinyV1, LocaleNamesLanguageMenuMediumHeavyV1,
+    LocaleNamesLanguageMenuMediumLightV1, LocaleNamesLanguageShortHeavyV1,
+    LocaleNamesLanguageShortLightV1, LocaleNamesRegionMediumLightV1, LocaleNamesRegionMediumTinyV1,
+    LocaleNamesRegionShortLightV1, LocaleNamesRegionShortTinyV1, LocaleNamesScriptMediumHeavyV1,
+    LocaleNamesScriptMediumLightV1, LocaleNamesScriptMediumTinyV1, LocaleNamesScriptShortHeavyV1,
+    LocaleNamesVariantMediumHeavyV1, MenuNamePartsULE,
 };
 use crate::displaynames::single::{
     RegionDisplayNameOwned, ScriptDisplayNameOwned, VariantDisplayNameOwned, load_one,
@@ -245,7 +244,7 @@ fn make_attributes_for_langid(
 #[inline]
 fn make_locale(prefs: DisplayNamesPreferences) -> DataLocale {
     // All language markers use the same locale
-    LocaleNamesLanguageCoreMediumV1::make_locale(prefs.locale_preferences)
+    LocaleNamesLanguageMediumLightV1::make_locale(prefs.locale_preferences)
 }
 
 /// Loads the name for a language dialect, which includes script and region subtags.
@@ -326,13 +325,13 @@ impl LanguageIdentifierDisplayNameOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesLanguageCoreMediumV1>
-            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
-            + DataProvider<LocaleNamesScriptCoreMediumV1>
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>
-            + DataProvider<LocaleNamesRegionCoreMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>
-            + DataProvider<LocaleNamesVariantExtendedMediumV1>
+            + DataProvider<LocaleNamesLanguageMediumLightV1>
+            + DataProvider<LocaleNamesLanguageMediumTinyV1>
+            + DataProvider<LocaleNamesScriptMediumLightV1>
+            + DataProvider<LocaleNamesScriptMediumTinyV1>
+            + DataProvider<LocaleNamesRegionMediumLightV1>
+            + DataProvider<LocaleNamesRegionMediumTinyV1>
+            + DataProvider<LocaleNamesVariantMediumHeavyV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
         let locale = make_locale(prefs);
@@ -344,18 +343,18 @@ impl LanguageIdentifierDisplayNameOwned {
                 &locale,
                 subject,
                 [
-                    LocaleNamesLanguageCoreMediumV1,
-                    LocaleNamesLanguageMinimalMediumV1
+                    LocaleNamesLanguageMediumLightV1,
+                    LocaleNamesLanguageMediumTinyV1
                 ]
             )?;
         }
         if language_payload.is_none() {
             let attrs = make_attributes_for_subtag(&subject.language);
             language_payload =
-                load_one::<LocaleNamesLanguageCoreMediumV1, _, _>(provider, &locale, attrs)?
+                load_one::<LocaleNamesLanguageMediumLightV1, _, _>(provider, &locale, attrs)?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageMinimalMediumV1, _, _>(
+                            load_one::<LocaleNamesLanguageMediumTinyV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -434,10 +433,10 @@ impl LanguageIdentifierDisplayNameOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>
-            + DataProvider<LocaleNamesVariantExtendedMediumV1>
+            + DataProvider<LocaleNamesLanguageMediumTinyV1>
+            + DataProvider<LocaleNamesScriptMediumTinyV1>
+            + DataProvider<LocaleNamesRegionMediumTinyV1>
+            + DataProvider<LocaleNamesVariantMediumHeavyV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
         let locale = make_locale(prefs);
@@ -450,16 +449,17 @@ impl LanguageIdentifierDisplayNameOwned {
                 provider,
                 &locale,
                 subject,
-                [LocaleNamesLanguageMinimalMediumV1]
+                [LocaleNamesLanguageMediumTinyV1]
             )?;
         }
         if language_payload.is_none() {
             let attrs = make_attributes_for_subtag(&subject.language);
-            language_payload =
-                load_one::<LocaleNamesLanguageMinimalMediumV1, _, _>(provider, &locale, attrs)?
-                    .map(|payload: DataPayload<StringMarker>| {
-                        payload.map_project(|p, _| MenuNamePartsOrString::String(p))
-                    });
+            language_payload = load_one::<LocaleNamesLanguageMediumTinyV1, _, _>(
+                provider, &locale, attrs,
+            )?
+            .map(|payload: DataPayload<StringMarker>| {
+                payload.map_project(|p, _| MenuNamePartsOrString::String(p))
+            });
         }
         let language_payload = match language_payload {
             Some(payload) => DataPayloadOr::from_payload(payload),
@@ -535,16 +535,16 @@ impl LanguageIdentifierDisplayNameOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesLanguageCoreShortV1>
-            + DataProvider<LocaleNamesLanguageCoreMediumV1>
-            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
-            + DataProvider<LocaleNamesScriptCoreMediumV1>
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>
-            + DataProvider<LocaleNamesRegionCoreShortV1>
-            + DataProvider<LocaleNamesRegionMinimalShortV1>
-            + DataProvider<LocaleNamesRegionCoreMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>
-            + DataProvider<LocaleNamesVariantExtendedMediumV1>
+            + DataProvider<LocaleNamesLanguageShortLightV1>
+            + DataProvider<LocaleNamesLanguageMediumLightV1>
+            + DataProvider<LocaleNamesLanguageMediumTinyV1>
+            + DataProvider<LocaleNamesScriptMediumLightV1>
+            + DataProvider<LocaleNamesScriptMediumTinyV1>
+            + DataProvider<LocaleNamesRegionShortLightV1>
+            + DataProvider<LocaleNamesRegionShortTinyV1>
+            + DataProvider<LocaleNamesRegionMediumLightV1>
+            + DataProvider<LocaleNamesRegionMediumTinyV1>
+            + DataProvider<LocaleNamesVariantMediumHeavyV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
         let locale = make_locale(prefs);
@@ -556,19 +556,19 @@ impl LanguageIdentifierDisplayNameOwned {
                 &locale,
                 subject,
                 [
-                    LocaleNamesLanguageCoreShortV1,
-                    LocaleNamesLanguageCoreMediumV1,
-                    LocaleNamesLanguageMinimalMediumV1
+                    LocaleNamesLanguageShortLightV1,
+                    LocaleNamesLanguageMediumLightV1,
+                    LocaleNamesLanguageMediumTinyV1
                 ]
             )?;
         }
         if language_payload.is_none() {
             let attrs = make_attributes_for_subtag(&subject.language);
             language_payload =
-                load_one::<LocaleNamesLanguageCoreShortV1, _, _>(provider, &locale, attrs)?
+                load_one::<LocaleNamesLanguageShortLightV1, _, _>(provider, &locale, attrs)?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageCoreMediumV1, _, _>(
+                            load_one::<LocaleNamesLanguageMediumLightV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -576,7 +576,7 @@ impl LanguageIdentifierDisplayNameOwned {
                     )?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageMinimalMediumV1, _, _>(
+                            load_one::<LocaleNamesLanguageMediumTinyV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -659,14 +659,14 @@ impl LanguageIdentifierDisplayNameOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesLanguageCoreLongV1>
-            + DataProvider<LocaleNamesLanguageCoreMediumV1>
-            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
-            + DataProvider<LocaleNamesScriptCoreMediumV1>
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>
-            + DataProvider<LocaleNamesRegionCoreMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>
-            + DataProvider<LocaleNamesVariantExtendedMediumV1>
+            + DataProvider<LocaleNamesLanguageLongLightV1>
+            + DataProvider<LocaleNamesLanguageMediumLightV1>
+            + DataProvider<LocaleNamesLanguageMediumTinyV1>
+            + DataProvider<LocaleNamesScriptMediumLightV1>
+            + DataProvider<LocaleNamesScriptMediumTinyV1>
+            + DataProvider<LocaleNamesRegionMediumLightV1>
+            + DataProvider<LocaleNamesRegionMediumTinyV1>
+            + DataProvider<LocaleNamesVariantMediumHeavyV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
         let locale = make_locale(prefs);
@@ -678,19 +678,19 @@ impl LanguageIdentifierDisplayNameOwned {
                 &locale,
                 subject,
                 [
-                    LocaleNamesLanguageCoreLongV1,
-                    LocaleNamesLanguageCoreMediumV1,
-                    LocaleNamesLanguageMinimalMediumV1
+                    LocaleNamesLanguageLongLightV1,
+                    LocaleNamesLanguageMediumLightV1,
+                    LocaleNamesLanguageMediumTinyV1
                 ]
             )?;
         }
         if language_payload.is_none() {
             let attrs = make_attributes_for_subtag(&subject.language);
             language_payload =
-                load_one::<LocaleNamesLanguageCoreLongV1, _, _>(provider, &locale, attrs)?
+                load_one::<LocaleNamesLanguageLongLightV1, _, _>(provider, &locale, attrs)?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageCoreMediumV1, _, _>(
+                            load_one::<LocaleNamesLanguageMediumLightV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -698,7 +698,7 @@ impl LanguageIdentifierDisplayNameOwned {
                     )?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageMinimalMediumV1, _, _>(
+                            load_one::<LocaleNamesLanguageMediumTinyV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -761,19 +761,19 @@ impl LanguageIdentifierDisplayNameOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesLanguageMenuCoreMediumV1>
-            + DataProvider<LocaleNamesLanguageCoreMediumV1>
-            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
-            + DataProvider<LocaleNamesScriptCoreMediumV1>
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>
-            + DataProvider<LocaleNamesRegionCoreMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>
-            + DataProvider<LocaleNamesVariantExtendedMediumV1>
+            + DataProvider<LocaleNamesLanguageMenuMediumLightV1>
+            + DataProvider<LocaleNamesLanguageMediumLightV1>
+            + DataProvider<LocaleNamesLanguageMediumTinyV1>
+            + DataProvider<LocaleNamesScriptMediumLightV1>
+            + DataProvider<LocaleNamesScriptMediumTinyV1>
+            + DataProvider<LocaleNamesRegionMediumLightV1>
+            + DataProvider<LocaleNamesRegionMediumTinyV1>
+            + DataProvider<LocaleNamesVariantMediumHeavyV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
         let locale = make_locale(prefs);
         let attrs = make_attributes_for_subtag(&subject.language);
-        let mut language_payload = load_one::<LocaleNamesLanguageMenuCoreMediumV1, _, _>(
+        let mut language_payload = load_one::<LocaleNamesLanguageMenuMediumLightV1, _, _>(
             provider, &locale, attrs,
         )?
         .map(|payload: DataPayload<MenuNamePartsMarker>| {
@@ -782,10 +782,10 @@ impl LanguageIdentifierDisplayNameOwned {
         if language_payload.is_none() {
             let attrs = make_attributes_for_subtag(&subject.language);
             language_payload =
-                load_one::<LocaleNamesLanguageCoreMediumV1, _, _>(provider, &locale, attrs)?
+                load_one::<LocaleNamesLanguageMediumLightV1, _, _>(provider, &locale, attrs)?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageMinimalMediumV1, _, _>(
+                            load_one::<LocaleNamesLanguageMediumTinyV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -850,22 +850,22 @@ impl LanguageIdentifierDisplayNameOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesLanguageMenuCoreMediumV1>
-            + DataProvider<LocaleNamesLanguageCoreShortV1>
-            + DataProvider<LocaleNamesLanguageCoreMediumV1>
-            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
-            + DataProvider<LocaleNamesScriptCoreMediumV1>
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>
-            + DataProvider<LocaleNamesRegionCoreShortV1>
-            + DataProvider<LocaleNamesRegionMinimalShortV1>
-            + DataProvider<LocaleNamesRegionCoreMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>
-            + DataProvider<LocaleNamesVariantExtendedMediumV1>
+            + DataProvider<LocaleNamesLanguageMenuMediumLightV1>
+            + DataProvider<LocaleNamesLanguageShortLightV1>
+            + DataProvider<LocaleNamesLanguageMediumLightV1>
+            + DataProvider<LocaleNamesLanguageMediumTinyV1>
+            + DataProvider<LocaleNamesScriptMediumLightV1>
+            + DataProvider<LocaleNamesScriptMediumTinyV1>
+            + DataProvider<LocaleNamesRegionShortLightV1>
+            + DataProvider<LocaleNamesRegionShortTinyV1>
+            + DataProvider<LocaleNamesRegionMediumLightV1>
+            + DataProvider<LocaleNamesRegionMediumTinyV1>
+            + DataProvider<LocaleNamesVariantMediumHeavyV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
         let locale = make_locale(prefs);
         let attrs = make_attributes_for_subtag(&subject.language);
-        let mut language_payload = load_one::<LocaleNamesLanguageMenuCoreMediumV1, _, _>(
+        let mut language_payload = load_one::<LocaleNamesLanguageMenuMediumLightV1, _, _>(
             provider, &locale, attrs,
         )?
         .map(|payload: DataPayload<MenuNamePartsMarker>| {
@@ -874,10 +874,10 @@ impl LanguageIdentifierDisplayNameOwned {
         if language_payload.is_none() {
             let attrs = make_attributes_for_subtag(&subject.language);
             language_payload =
-                load_one::<LocaleNamesLanguageCoreShortV1, _, _>(provider, &locale, attrs)?
+                load_one::<LocaleNamesLanguageShortLightV1, _, _>(provider, &locale, attrs)?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageCoreMediumV1, _, _>(
+                            load_one::<LocaleNamesLanguageMediumLightV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -885,7 +885,7 @@ impl LanguageIdentifierDisplayNameOwned {
                     )?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageMinimalMediumV1, _, _>(
+                            load_one::<LocaleNamesLanguageMediumTinyV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -929,15 +929,15 @@ impl LanguageIdentifierDisplayNameOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesLanguageExtendedMediumV1>
-            + DataProvider<LocaleNamesLanguageCoreMediumV1>
-            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
-            + DataProvider<LocaleNamesScriptExtendedMediumV1>
-            + DataProvider<LocaleNamesScriptCoreMediumV1>
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>
-            + DataProvider<LocaleNamesRegionCoreMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>
-            + DataProvider<LocaleNamesVariantExtendedMediumV1>
+            + DataProvider<LocaleNamesLanguageMediumHeavyV1>
+            + DataProvider<LocaleNamesLanguageMediumLightV1>
+            + DataProvider<LocaleNamesLanguageMediumTinyV1>
+            + DataProvider<LocaleNamesScriptMediumHeavyV1>
+            + DataProvider<LocaleNamesScriptMediumLightV1>
+            + DataProvider<LocaleNamesScriptMediumTinyV1>
+            + DataProvider<LocaleNamesRegionMediumLightV1>
+            + DataProvider<LocaleNamesRegionMediumTinyV1>
+            + DataProvider<LocaleNamesVariantMediumHeavyV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
         let locale = make_locale(prefs);
@@ -951,19 +951,19 @@ impl LanguageIdentifierDisplayNameOwned {
                 &locale,
                 subject,
                 [
-                    LocaleNamesLanguageExtendedMediumV1,
-                    LocaleNamesLanguageCoreMediumV1,
-                    LocaleNamesLanguageMinimalMediumV1
+                    LocaleNamesLanguageMediumHeavyV1,
+                    LocaleNamesLanguageMediumLightV1,
+                    LocaleNamesLanguageMediumTinyV1
                 ]
             )?;
         }
         if language_payload.is_none() {
             let attrs = make_attributes_for_subtag(&subject.language);
             language_payload =
-                load_one::<LocaleNamesLanguageExtendedMediumV1, _, _>(provider, &locale, attrs)?
+                load_one::<LocaleNamesLanguageMediumHeavyV1, _, _>(provider, &locale, attrs)?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageCoreMediumV1, _, _>(
+                            load_one::<LocaleNamesLanguageMediumLightV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -971,7 +971,7 @@ impl LanguageIdentifierDisplayNameOwned {
                     )?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageMinimalMediumV1, _, _>(
+                            load_one::<LocaleNamesLanguageMediumTinyV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -1018,20 +1018,20 @@ impl LanguageIdentifierDisplayNameOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesLanguageExtendedShortV1>
-            + DataProvider<LocaleNamesLanguageCoreShortV1>
-            + DataProvider<LocaleNamesLanguageExtendedMediumV1>
-            + DataProvider<LocaleNamesLanguageCoreMediumV1>
-            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
-            + DataProvider<LocaleNamesScriptExtendedShortV1>
-            + DataProvider<LocaleNamesScriptExtendedMediumV1>
-            + DataProvider<LocaleNamesScriptCoreMediumV1>
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>
-            + DataProvider<LocaleNamesRegionCoreShortV1>
-            + DataProvider<LocaleNamesRegionMinimalShortV1>
-            + DataProvider<LocaleNamesRegionCoreMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>
-            + DataProvider<LocaleNamesVariantExtendedMediumV1>
+            + DataProvider<LocaleNamesLanguageShortHeavyV1>
+            + DataProvider<LocaleNamesLanguageShortLightV1>
+            + DataProvider<LocaleNamesLanguageMediumHeavyV1>
+            + DataProvider<LocaleNamesLanguageMediumLightV1>
+            + DataProvider<LocaleNamesLanguageMediumTinyV1>
+            + DataProvider<LocaleNamesScriptShortHeavyV1>
+            + DataProvider<LocaleNamesScriptMediumHeavyV1>
+            + DataProvider<LocaleNamesScriptMediumLightV1>
+            + DataProvider<LocaleNamesScriptMediumTinyV1>
+            + DataProvider<LocaleNamesRegionShortLightV1>
+            + DataProvider<LocaleNamesRegionShortTinyV1>
+            + DataProvider<LocaleNamesRegionMediumLightV1>
+            + DataProvider<LocaleNamesRegionMediumTinyV1>
+            + DataProvider<LocaleNamesVariantMediumHeavyV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
         let locale = make_locale(prefs);
@@ -1045,21 +1045,21 @@ impl LanguageIdentifierDisplayNameOwned {
                 &locale,
                 subject,
                 [
-                    LocaleNamesLanguageExtendedShortV1,
-                    LocaleNamesLanguageCoreShortV1,
-                    LocaleNamesLanguageExtendedMediumV1,
-                    LocaleNamesLanguageCoreMediumV1,
-                    LocaleNamesLanguageMinimalMediumV1
+                    LocaleNamesLanguageShortHeavyV1,
+                    LocaleNamesLanguageShortLightV1,
+                    LocaleNamesLanguageMediumHeavyV1,
+                    LocaleNamesLanguageMediumLightV1,
+                    LocaleNamesLanguageMediumTinyV1
                 ]
             )?;
         }
         if language_payload.is_none() {
             let attrs = make_attributes_for_subtag(&subject.language);
             language_payload =
-                load_one::<LocaleNamesLanguageExtendedShortV1, _, _>(provider, &locale, attrs)?
+                load_one::<LocaleNamesLanguageShortHeavyV1, _, _>(provider, &locale, attrs)?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageCoreShortV1, _, _>(
+                            load_one::<LocaleNamesLanguageShortLightV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -1067,7 +1067,7 @@ impl LanguageIdentifierDisplayNameOwned {
                     )?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageExtendedMediumV1, _, _>(
+                            load_one::<LocaleNamesLanguageMediumHeavyV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -1075,7 +1075,7 @@ impl LanguageIdentifierDisplayNameOwned {
                     )?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageCoreMediumV1, _, _>(
+                            load_one::<LocaleNamesLanguageMediumLightV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -1083,7 +1083,7 @@ impl LanguageIdentifierDisplayNameOwned {
                     )?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageMinimalMediumV1, _, _>(
+                            load_one::<LocaleNamesLanguageMediumTinyV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -1130,17 +1130,17 @@ impl LanguageIdentifierDisplayNameOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesLanguageExtendedLongV1>
-            + DataProvider<LocaleNamesLanguageCoreLongV1>
-            + DataProvider<LocaleNamesLanguageExtendedMediumV1>
-            + DataProvider<LocaleNamesLanguageCoreMediumV1>
-            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
-            + DataProvider<LocaleNamesScriptExtendedMediumV1>
-            + DataProvider<LocaleNamesScriptCoreMediumV1>
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>
-            + DataProvider<LocaleNamesRegionCoreMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>
-            + DataProvider<LocaleNamesVariantExtendedMediumV1>
+            + DataProvider<LocaleNamesLanguageLongHeavyV1>
+            + DataProvider<LocaleNamesLanguageLongLightV1>
+            + DataProvider<LocaleNamesLanguageMediumHeavyV1>
+            + DataProvider<LocaleNamesLanguageMediumLightV1>
+            + DataProvider<LocaleNamesLanguageMediumTinyV1>
+            + DataProvider<LocaleNamesScriptMediumHeavyV1>
+            + DataProvider<LocaleNamesScriptMediumLightV1>
+            + DataProvider<LocaleNamesScriptMediumTinyV1>
+            + DataProvider<LocaleNamesRegionMediumLightV1>
+            + DataProvider<LocaleNamesRegionMediumTinyV1>
+            + DataProvider<LocaleNamesVariantMediumHeavyV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
         let locale = make_locale(prefs);
@@ -1152,21 +1152,21 @@ impl LanguageIdentifierDisplayNameOwned {
                 &locale,
                 subject,
                 [
-                    LocaleNamesLanguageExtendedLongV1,
-                    LocaleNamesLanguageCoreLongV1,
-                    LocaleNamesLanguageExtendedMediumV1,
-                    LocaleNamesLanguageCoreMediumV1,
-                    LocaleNamesLanguageMinimalMediumV1
+                    LocaleNamesLanguageLongHeavyV1,
+                    LocaleNamesLanguageLongLightV1,
+                    LocaleNamesLanguageMediumHeavyV1,
+                    LocaleNamesLanguageMediumLightV1,
+                    LocaleNamesLanguageMediumTinyV1
                 ]
             )?;
         }
         if language_payload.is_none() {
             let attrs = make_attributes_for_subtag(&subject.language);
             language_payload =
-                load_one::<LocaleNamesLanguageExtendedLongV1, _, _>(provider, &locale, attrs)?
+                load_one::<LocaleNamesLanguageLongHeavyV1, _, _>(provider, &locale, attrs)?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageCoreLongV1, _, _>(
+                            load_one::<LocaleNamesLanguageLongLightV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -1174,7 +1174,7 @@ impl LanguageIdentifierDisplayNameOwned {
                     )?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageExtendedMediumV1, _, _>(
+                            load_one::<LocaleNamesLanguageMediumHeavyV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -1182,7 +1182,7 @@ impl LanguageIdentifierDisplayNameOwned {
                     )?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageCoreMediumV1, _, _>(
+                            load_one::<LocaleNamesLanguageMediumLightV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -1190,7 +1190,7 @@ impl LanguageIdentifierDisplayNameOwned {
                     )?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageMinimalMediumV1, _, _>(
+                            load_one::<LocaleNamesLanguageMediumTinyV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -1255,26 +1255,26 @@ impl LanguageIdentifierDisplayNameOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesLanguageMenuExtendedMediumV1>
-            + DataProvider<LocaleNamesLanguageMenuCoreMediumV1>
-            + DataProvider<LocaleNamesLanguageExtendedMediumV1>
-            + DataProvider<LocaleNamesLanguageCoreMediumV1>
-            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
-            + DataProvider<LocaleNamesScriptExtendedMediumV1>
-            + DataProvider<LocaleNamesScriptCoreMediumV1>
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>
-            + DataProvider<LocaleNamesRegionCoreMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>
-            + DataProvider<LocaleNamesVariantExtendedMediumV1>
+            + DataProvider<LocaleNamesLanguageMenuMediumHeavyV1>
+            + DataProvider<LocaleNamesLanguageMenuMediumLightV1>
+            + DataProvider<LocaleNamesLanguageMediumHeavyV1>
+            + DataProvider<LocaleNamesLanguageMediumLightV1>
+            + DataProvider<LocaleNamesLanguageMediumTinyV1>
+            + DataProvider<LocaleNamesScriptMediumHeavyV1>
+            + DataProvider<LocaleNamesScriptMediumLightV1>
+            + DataProvider<LocaleNamesScriptMediumTinyV1>
+            + DataProvider<LocaleNamesRegionMediumLightV1>
+            + DataProvider<LocaleNamesRegionMediumTinyV1>
+            + DataProvider<LocaleNamesVariantMediumHeavyV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
         let locale = make_locale(prefs);
         let attrs = make_attributes_for_subtag(&subject.language);
         let mut language_payload =
-            load_one::<LocaleNamesLanguageMenuExtendedMediumV1, _, _>(provider, &locale, attrs)?
+            load_one::<LocaleNamesLanguageMenuMediumHeavyV1, _, _>(provider, &locale, attrs)?
                 .map_or_else(
                     || {
-                        load_one::<LocaleNamesLanguageMenuCoreMediumV1, _, _>(
+                        load_one::<LocaleNamesLanguageMenuMediumLightV1, _, _>(
                             provider, &locale, attrs,
                         )
                     },
@@ -1286,10 +1286,10 @@ impl LanguageIdentifierDisplayNameOwned {
         if language_payload.is_none() {
             let attrs = make_attributes_for_subtag(&subject.language);
             language_payload =
-                load_one::<LocaleNamesLanguageExtendedMediumV1, _, _>(provider, &locale, attrs)?
+                load_one::<LocaleNamesLanguageMediumHeavyV1, _, _>(provider, &locale, attrs)?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageCoreMediumV1, _, _>(
+                            load_one::<LocaleNamesLanguageMediumLightV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -1297,7 +1297,7 @@ impl LanguageIdentifierDisplayNameOwned {
                     )?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageMinimalMediumV1, _, _>(
+                            load_one::<LocaleNamesLanguageMediumTinyV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -1364,31 +1364,31 @@ impl LanguageIdentifierDisplayNameOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesLanguageMenuExtendedMediumV1>
-            + DataProvider<LocaleNamesLanguageMenuCoreMediumV1>
-            + DataProvider<LocaleNamesLanguageExtendedShortV1>
-            + DataProvider<LocaleNamesLanguageCoreShortV1>
-            + DataProvider<LocaleNamesLanguageExtendedMediumV1>
-            + DataProvider<LocaleNamesLanguageCoreMediumV1>
-            + DataProvider<LocaleNamesLanguageMinimalMediumV1>
-            + DataProvider<LocaleNamesScriptExtendedShortV1>
-            + DataProvider<LocaleNamesScriptExtendedMediumV1>
-            + DataProvider<LocaleNamesScriptCoreMediumV1>
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>
-            + DataProvider<LocaleNamesRegionCoreShortV1>
-            + DataProvider<LocaleNamesRegionMinimalShortV1>
-            + DataProvider<LocaleNamesRegionCoreMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>
-            + DataProvider<LocaleNamesVariantExtendedMediumV1>
+            + DataProvider<LocaleNamesLanguageMenuMediumHeavyV1>
+            + DataProvider<LocaleNamesLanguageMenuMediumLightV1>
+            + DataProvider<LocaleNamesLanguageShortHeavyV1>
+            + DataProvider<LocaleNamesLanguageShortLightV1>
+            + DataProvider<LocaleNamesLanguageMediumHeavyV1>
+            + DataProvider<LocaleNamesLanguageMediumLightV1>
+            + DataProvider<LocaleNamesLanguageMediumTinyV1>
+            + DataProvider<LocaleNamesScriptShortHeavyV1>
+            + DataProvider<LocaleNamesScriptMediumHeavyV1>
+            + DataProvider<LocaleNamesScriptMediumLightV1>
+            + DataProvider<LocaleNamesScriptMediumTinyV1>
+            + DataProvider<LocaleNamesRegionShortLightV1>
+            + DataProvider<LocaleNamesRegionShortTinyV1>
+            + DataProvider<LocaleNamesRegionMediumLightV1>
+            + DataProvider<LocaleNamesRegionMediumTinyV1>
+            + DataProvider<LocaleNamesVariantMediumHeavyV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
         let locale = make_locale(prefs);
         let attrs = make_attributes_for_subtag(&subject.language);
         let mut language_payload =
-            load_one::<LocaleNamesLanguageMenuExtendedMediumV1, _, _>(provider, &locale, attrs)?
+            load_one::<LocaleNamesLanguageMenuMediumHeavyV1, _, _>(provider, &locale, attrs)?
                 .map_or_else(
                     || {
-                        load_one::<LocaleNamesLanguageMenuCoreMediumV1, _, _>(
+                        load_one::<LocaleNamesLanguageMenuMediumLightV1, _, _>(
                             provider, &locale, attrs,
                         )
                     },
@@ -1400,10 +1400,10 @@ impl LanguageIdentifierDisplayNameOwned {
         if language_payload.is_none() {
             let attrs = make_attributes_for_subtag(&subject.language);
             language_payload =
-                load_one::<LocaleNamesLanguageExtendedShortV1, _, _>(provider, &locale, attrs)?
+                load_one::<LocaleNamesLanguageShortHeavyV1, _, _>(provider, &locale, attrs)?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageCoreShortV1, _, _>(
+                            load_one::<LocaleNamesLanguageShortLightV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -1411,7 +1411,7 @@ impl LanguageIdentifierDisplayNameOwned {
                     )?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageExtendedMediumV1, _, _>(
+                            load_one::<LocaleNamesLanguageMediumHeavyV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -1419,7 +1419,7 @@ impl LanguageIdentifierDisplayNameOwned {
                     )?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageCoreMediumV1, _, _>(
+                            load_one::<LocaleNamesLanguageMediumLightV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -1427,7 +1427,7 @@ impl LanguageIdentifierDisplayNameOwned {
                     )?
                     .map_or_else(
                         || {
-                            load_one::<LocaleNamesLanguageMinimalMediumV1, _, _>(
+                            load_one::<LocaleNamesLanguageMediumTinyV1, _, _>(
                                 provider, &locale, attrs,
                             )
                         },
@@ -1546,11 +1546,11 @@ impl QualifiersOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesScriptCoreMediumV1>
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>
-            + DataProvider<LocaleNamesRegionCoreMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>
-            + DataProvider<LocaleNamesVariantExtendedMediumV1>
+            + DataProvider<LocaleNamesScriptMediumLightV1>
+            + DataProvider<LocaleNamesScriptMediumTinyV1>
+            + DataProvider<LocaleNamesRegionMediumLightV1>
+            + DataProvider<LocaleNamesRegionMediumTinyV1>
+            + DataProvider<LocaleNamesVariantMediumHeavyV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
         Self::try_new_internal_unstable(
@@ -1570,9 +1570,9 @@ impl QualifiersOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>
-            + DataProvider<LocaleNamesVariantExtendedMediumV1>
+            + DataProvider<LocaleNamesScriptMediumTinyV1>
+            + DataProvider<LocaleNamesRegionMediumTinyV1>
+            + DataProvider<LocaleNamesVariantMediumHeavyV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
         Self::try_new_internal_unstable(
@@ -1592,13 +1592,13 @@ impl QualifiersOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesScriptCoreMediumV1>
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>
-            + DataProvider<LocaleNamesRegionCoreShortV1>
-            + DataProvider<LocaleNamesRegionMinimalShortV1>
-            + DataProvider<LocaleNamesRegionCoreMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>
-            + DataProvider<LocaleNamesVariantExtendedMediumV1>
+            + DataProvider<LocaleNamesScriptMediumLightV1>
+            + DataProvider<LocaleNamesScriptMediumTinyV1>
+            + DataProvider<LocaleNamesRegionShortLightV1>
+            + DataProvider<LocaleNamesRegionShortTinyV1>
+            + DataProvider<LocaleNamesRegionMediumLightV1>
+            + DataProvider<LocaleNamesRegionMediumTinyV1>
+            + DataProvider<LocaleNamesVariantMediumHeavyV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
         Self::try_new_internal_unstable(
@@ -1618,12 +1618,12 @@ impl QualifiersOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesScriptExtendedMediumV1>
-            + DataProvider<LocaleNamesScriptCoreMediumV1>
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>
-            + DataProvider<LocaleNamesRegionCoreMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>
-            + DataProvider<LocaleNamesVariantExtendedMediumV1>
+            + DataProvider<LocaleNamesScriptMediumHeavyV1>
+            + DataProvider<LocaleNamesScriptMediumLightV1>
+            + DataProvider<LocaleNamesScriptMediumTinyV1>
+            + DataProvider<LocaleNamesRegionMediumLightV1>
+            + DataProvider<LocaleNamesRegionMediumTinyV1>
+            + DataProvider<LocaleNamesVariantMediumHeavyV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
         Self::try_new_internal_unstable(
@@ -1643,15 +1643,15 @@ impl QualifiersOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesScriptExtendedShortV1>
-            + DataProvider<LocaleNamesScriptExtendedMediumV1>
-            + DataProvider<LocaleNamesScriptCoreMediumV1>
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>
-            + DataProvider<LocaleNamesRegionCoreShortV1>
-            + DataProvider<LocaleNamesRegionMinimalShortV1>
-            + DataProvider<LocaleNamesRegionCoreMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>
-            + DataProvider<LocaleNamesVariantExtendedMediumV1>
+            + DataProvider<LocaleNamesScriptShortHeavyV1>
+            + DataProvider<LocaleNamesScriptMediumHeavyV1>
+            + DataProvider<LocaleNamesScriptMediumLightV1>
+            + DataProvider<LocaleNamesScriptMediumTinyV1>
+            + DataProvider<LocaleNamesRegionShortLightV1>
+            + DataProvider<LocaleNamesRegionShortTinyV1>
+            + DataProvider<LocaleNamesRegionMediumLightV1>
+            + DataProvider<LocaleNamesRegionMediumTinyV1>
+            + DataProvider<LocaleNamesVariantMediumHeavyV1>
             + DataProvider<LocaleNamesEssentialsV1>,
     {
         Self::try_new_internal_unstable(

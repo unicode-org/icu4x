@@ -33,7 +33,7 @@ impl DataProvider<RegionDisplayNamesV1> for SourceDataProvider {
 crate::displaynames::impl_displaynames_legacy_iter_v1!(RegionDisplayNamesV1, "territories.json");
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesRegionMinimalMediumV1,
+    LocaleNamesRegionMediumTinyV1,
     Region,
     cldr_serde::displaynames::region::Resource,
     "territories.json",
@@ -43,7 +43,7 @@ crate::displaynames::impl_displaynames_v1!(
     CoverageLevelForXPath::Basic | CoverageLevelForXPath::Core,
 );
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesRegionCoreMediumV1,
+    LocaleNamesRegionMediumLightV1,
     Region,
     cldr_serde::displaynames::region::Resource,
     "territories.json",
@@ -54,7 +54,7 @@ crate::displaynames::impl_displaynames_v1!(
 );
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesRegionMinimalShortV1,
+    LocaleNamesRegionShortTinyV1,
     Region,
     cldr_serde::displaynames::region::Resource,
     "territories.json",
@@ -64,7 +64,7 @@ crate::displaynames::impl_displaynames_v1!(
     CoverageLevelForXPath::Basic,
 );
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesRegionCoreShortV1,
+    LocaleNamesRegionShortLightV1,
     Region,
     cldr_serde::displaynames::region::Resource,
     "territories.json",
@@ -144,10 +144,10 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_region_core_medium() {
+    fn test_locale_names_region_medium_light() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesRegionCoreMediumV1> = provider
+        let data: DataPayload<LocaleNamesRegionMediumLightV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("AF").unwrap(),
@@ -162,10 +162,10 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_region_core_short() {
+    fn test_locale_names_region_short_light() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesRegionCoreShortV1> = provider
+        let data: DataPayload<LocaleNamesRegionShortLightV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("BA").unwrap(),
@@ -180,10 +180,10 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_region_minimal_medium() {
+    fn test_locale_names_region_medium_tiny() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesRegionMinimalMediumV1> = provider
+        let data: DataPayload<LocaleNamesRegionMediumTinyV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("US").unwrap(),
@@ -198,10 +198,10 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_region_minimal_short() {
+    fn test_locale_names_region_short_tiny() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesRegionMinimalShortV1> = provider
+        let data: DataPayload<LocaleNamesRegionShortTinyV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("GB").unwrap(),
@@ -232,10 +232,10 @@ mod tests {
                 &res.main.value.localedisplaynames.regions
             },
             |locale, key, tier| {
-                if LocaleNamesRegionMinimalMediumV1::contains_key(key, tier)
-                    || LocaleNamesRegionCoreMediumV1::contains_key(key, tier)
-                    || LocaleNamesRegionMinimalShortV1::contains_key(key, tier)
-                    || LocaleNamesRegionCoreShortV1::contains_key(key, tier)
+                if LocaleNamesRegionMediumTinyV1::contains_key(key, tier)
+                    || LocaleNamesRegionMediumLightV1::contains_key(key, tier)
+                    || LocaleNamesRegionShortTinyV1::contains_key(key, tier)
+                    || LocaleNamesRegionShortLightV1::contains_key(key, tier)
                 {
                     return;
                 }

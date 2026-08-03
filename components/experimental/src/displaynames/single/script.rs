@@ -8,8 +8,8 @@ use super::{
 };
 use crate::displaynames::DisplayNamesPreferences;
 use crate::displaynames::provider::{
-    LocaleNamesScriptCoreMediumV1, LocaleNamesScriptExtendedMediumV1,
-    LocaleNamesScriptExtendedShortV1, LocaleNamesScriptMinimalMediumV1,
+    LocaleNamesScriptMediumHeavyV1, LocaleNamesScriptMediumLightV1, LocaleNamesScriptMediumTinyV1,
+    LocaleNamesScriptShortHeavyV1,
 };
 use icu_locale_core::subtags::Script;
 use icu_provider::prelude::*;
@@ -24,7 +24,7 @@ fn make_attributes(subtag: &Script) -> &DataMarkerAttributes {
 #[inline]
 fn make_locale(prefs: DisplayNamesPreferences) -> DataLocale {
     // All script markers use the same locale
-    LocaleNamesScriptMinimalMediumV1::make_locale(prefs.locale_preferences)
+    LocaleNamesScriptMediumTinyV1::make_locale(prefs.locale_preferences)
 }
 
 macro_rules! table_row {
@@ -72,7 +72,7 @@ macro_rules! table_row {
 /// ```
 #[derive(Debug)]
 pub struct ScriptDisplayNameOwned {
-    pub(crate) payload: DataPayload<LocaleNamesScriptCoreMediumV1>,
+    pub(crate) payload: DataPayload<LocaleNamesScriptMediumLightV1>,
 }
 
 impl ScriptDisplayNameOwned {
@@ -95,14 +95,14 @@ impl ScriptDisplayNameOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesScriptCoreMediumV1>
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>,
+            + DataProvider<LocaleNamesScriptMediumLightV1>
+            + DataProvider<LocaleNamesScriptMediumTinyV1>,
     {
         let attrs = make_attributes(&script);
         let locale = make_locale(prefs);
-        let payload = load_one::<LocaleNamesScriptCoreMediumV1, _, _>(provider, &locale, attrs)?
+        let payload = load_one::<LocaleNamesScriptMediumLightV1, _, _>(provider, &locale, attrs)?
             .map_or_else(
-                || load_one::<LocaleNamesScriptMinimalMediumV1, _, _>(provider, &locale, attrs),
+                || load_one::<LocaleNamesScriptMediumTinyV1, _, _>(provider, &locale, attrs),
                 |p| Ok(Some(p)),
             )?
             .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
@@ -142,11 +142,11 @@ impl ScriptDisplayNameOwned {
         script: Script,
     ) -> Result<Self, DataError>
     where
-        D: ?Sized + DataProvider<LocaleNamesScriptMinimalMediumV1>,
+        D: ?Sized + DataProvider<LocaleNamesScriptMediumTinyV1>,
     {
         let attrs = make_attributes(&script);
         let locale = make_locale(prefs);
-        let payload = load_one::<LocaleNamesScriptMinimalMediumV1, _, _>(provider, &locale, attrs)?
+        let payload = load_one::<LocaleNamesScriptMediumTinyV1, _, _>(provider, &locale, attrs)?
             .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
         Ok(Self { payload })
     }
@@ -185,23 +185,22 @@ impl ScriptDisplayNameOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesScriptExtendedMediumV1>
-            + DataProvider<LocaleNamesScriptCoreMediumV1>
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>,
+            + DataProvider<LocaleNamesScriptMediumHeavyV1>
+            + DataProvider<LocaleNamesScriptMediumLightV1>
+            + DataProvider<LocaleNamesScriptMediumTinyV1>,
     {
         let attrs = make_attributes(&script);
         let locale = make_locale(prefs);
-        let payload =
-            load_one::<LocaleNamesScriptExtendedMediumV1, _, _>(provider, &locale, attrs)?
-                .map_or_else(
-                    || load_one::<LocaleNamesScriptCoreMediumV1, _, _>(provider, &locale, attrs),
-                    |p| Ok(Some(p)),
-                )?
-                .map_or_else(
-                    || load_one::<LocaleNamesScriptMinimalMediumV1, _, _>(provider, &locale, attrs),
-                    |p| Ok(Some(p)),
-                )?
-                .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
+        let payload = load_one::<LocaleNamesScriptMediumHeavyV1, _, _>(provider, &locale, attrs)?
+            .map_or_else(
+                || load_one::<LocaleNamesScriptMediumLightV1, _, _>(provider, &locale, attrs),
+                |p| Ok(Some(p)),
+            )?
+            .map_or_else(
+                || load_one::<LocaleNamesScriptMediumTinyV1, _, _>(provider, &locale, attrs),
+                |p| Ok(Some(p)),
+            )?
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
         Ok(Self { payload })
     }
 
@@ -241,24 +240,24 @@ impl ScriptDisplayNameOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesScriptExtendedShortV1>
-            + DataProvider<LocaleNamesScriptExtendedMediumV1>
-            + DataProvider<LocaleNamesScriptCoreMediumV1>
-            + DataProvider<LocaleNamesScriptMinimalMediumV1>,
+            + DataProvider<LocaleNamesScriptShortHeavyV1>
+            + DataProvider<LocaleNamesScriptMediumHeavyV1>
+            + DataProvider<LocaleNamesScriptMediumLightV1>
+            + DataProvider<LocaleNamesScriptMediumTinyV1>,
     {
         let attrs = make_attributes(&script);
         let locale = make_locale(prefs);
-        let payload = load_one::<LocaleNamesScriptExtendedShortV1, _, _>(provider, &locale, attrs)?
+        let payload = load_one::<LocaleNamesScriptShortHeavyV1, _, _>(provider, &locale, attrs)?
             .map_or_else(
-                || load_one::<LocaleNamesScriptExtendedMediumV1, _, _>(provider, &locale, attrs),
+                || load_one::<LocaleNamesScriptMediumHeavyV1, _, _>(provider, &locale, attrs),
                 |p| Ok(Some(p)),
             )?
             .map_or_else(
-                || load_one::<LocaleNamesScriptCoreMediumV1, _, _>(provider, &locale, attrs),
+                || load_one::<LocaleNamesScriptMediumLightV1, _, _>(provider, &locale, attrs),
                 |p| Ok(Some(p)),
             )?
             .map_or_else(
-                || load_one::<LocaleNamesScriptMinimalMediumV1, _, _>(provider, &locale, attrs),
+                || load_one::<LocaleNamesScriptMediumTinyV1, _, _>(provider, &locale, attrs),
                 |p| Ok(Some(p)),
             )?
             .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;

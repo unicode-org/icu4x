@@ -11,10 +11,11 @@ use crate::displaynames::extract_names_for_zeromap_struct;
 
 use icu::experimental::displaynames::provider::{
     LanguageDisplayNames, LanguageDisplayNamesV1, LocaleDisplayNames, LocaleDisplayNamesV1,
-    LocaleNamesLanguageCoreLongV1, LocaleNamesLanguageCoreMediumV1, LocaleNamesLanguageCoreShortV1,
-    LocaleNamesLanguageExtendedLongV1, LocaleNamesLanguageExtendedMediumV1,
-    LocaleNamesLanguageExtendedShortV1, LocaleNamesLanguageMenuCoreMediumV1,
-    LocaleNamesLanguageMenuExtendedMediumV1, LocaleNamesLanguageMinimalMediumV1, MenuNameParts,
+    LocaleNamesLanguageLongHeavyV1, LocaleNamesLanguageLongLightV1,
+    LocaleNamesLanguageMediumHeavyV1, LocaleNamesLanguageMediumLightV1,
+    LocaleNamesLanguageMediumTinyV1, LocaleNamesLanguageMenuMediumHeavyV1,
+    LocaleNamesLanguageMenuMediumLightV1, LocaleNamesLanguageShortHeavyV1,
+    LocaleNamesLanguageShortLightV1, MenuNameParts,
 };
 use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
@@ -58,7 +59,7 @@ crate::displaynames::impl_displaynames_legacy_iter_v1!(LanguageDisplayNamesV1, "
 crate::displaynames::impl_displaynames_legacy_iter_v1!(LocaleDisplayNamesV1, "languages.json");
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesLanguageMinimalMediumV1,
+    LocaleNamesLanguageMediumTinyV1,
     LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
@@ -68,7 +69,7 @@ crate::displaynames::impl_displaynames_v1!(
     CoverageLevelForXPath::Basic | CoverageLevelForXPath::Core,
 );
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesLanguageCoreMediumV1,
+    LocaleNamesLanguageMediumLightV1,
     LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
@@ -78,7 +79,7 @@ crate::displaynames::impl_displaynames_v1!(
     CoverageLevelForXPath::Moderate,
 );
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesLanguageExtendedMediumV1,
+    LocaleNamesLanguageMediumHeavyV1,
     LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
@@ -89,7 +90,7 @@ crate::displaynames::impl_displaynames_v1!(
 );
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesLanguageCoreShortV1,
+    LocaleNamesLanguageShortLightV1,
     LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
@@ -99,7 +100,7 @@ crate::displaynames::impl_displaynames_v1!(
     CoverageLevelForXPath::Moderate,
 );
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesLanguageExtendedShortV1,
+    LocaleNamesLanguageShortHeavyV1,
     LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
@@ -110,7 +111,7 @@ crate::displaynames::impl_displaynames_v1!(
 );
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesLanguageCoreLongV1,
+    LocaleNamesLanguageLongLightV1,
     LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
@@ -120,7 +121,7 @@ crate::displaynames::impl_displaynames_v1!(
     CoverageLevelForXPath::Moderate,
 );
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesLanguageExtendedLongV1,
+    LocaleNamesLanguageLongHeavyV1,
     LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
@@ -130,7 +131,7 @@ crate::displaynames::impl_displaynames_v1!(
     CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 crate::displaynames::impl_displaynames_menu_v1!(
-    LocaleNamesLanguageMenuCoreMediumV1,
+    LocaleNamesLanguageMenuMediumLightV1,
     LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
@@ -139,7 +140,7 @@ crate::displaynames::impl_displaynames_menu_v1!(
     CoverageLevelForXPath::Moderate,
 );
 crate::displaynames::impl_displaynames_menu_v1!(
-    LocaleNamesLanguageMenuExtendedMediumV1,
+    LocaleNamesLanguageMenuMediumHeavyV1,
     LanguageIdentifier,
     cldr_serde::displaynames::language::Resource,
     "languages.json",
@@ -326,10 +327,10 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_language_core_medium() {
+    fn test_locale_names_language_medium_light() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesLanguageCoreMediumV1> = provider
+        let data: DataPayload<LocaleNamesLanguageMediumLightV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("fr").unwrap(),
@@ -344,10 +345,10 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_language_minimal_medium() {
+    fn test_locale_names_language_medium_tiny() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesLanguageMinimalMediumV1> = provider
+        let data: DataPayload<LocaleNamesLanguageMediumTinyV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("en").unwrap(),
@@ -362,10 +363,10 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_language_extended_medium() {
+    fn test_locale_names_language_medium_heavy() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesLanguageExtendedMediumV1> = provider
+        let data: DataPayload<LocaleNamesLanguageMediumHeavyV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("aa").unwrap(),
@@ -380,10 +381,10 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_language_core_short() {
+    fn test_locale_names_language_short_light() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesLanguageCoreShortV1> = provider
+        let data: DataPayload<LocaleNamesLanguageShortLightV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("en-GB").unwrap(),
@@ -398,10 +399,10 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_language_extended_short() {
+    fn test_locale_names_language_short_heavy() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesLanguageExtendedShortV1> = provider
+        let data: DataPayload<LocaleNamesLanguageShortHeavyV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("az").unwrap(),
@@ -416,10 +417,10 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_language_core_long() {
+    fn test_locale_names_language_long_light() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesLanguageCoreLongV1> = provider
+        let data: DataPayload<LocaleNamesLanguageLongLightV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("zh").unwrap(),
@@ -434,10 +435,10 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_language_extended_long() {
+    fn test_locale_names_language_long_heavy() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesLanguageExtendedLongV1> = provider
+        let data: DataPayload<LocaleNamesLanguageLongHeavyV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("cr").unwrap(),
@@ -452,10 +453,10 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_language_menu_extended_medium() {
+    fn test_locale_names_language_menu_medium_heavy() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesLanguageMenuExtendedMediumV1> = provider
+        let data: DataPayload<LocaleNamesLanguageMenuMediumHeavyV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("ku").unwrap(),
@@ -471,11 +472,11 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_language_menu_core_medium() {
+    fn test_locale_names_language_menu_medium_light() {
         let provider = SourceDataProvider::new_testing();
 
         // Test fallback to alt-menu
-        let data: DataPayload<LocaleNamesLanguageMenuCoreMediumV1> = provider
+        let data: DataPayload<LocaleNamesLanguageMenuMediumLightV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("zh").unwrap(),
@@ -507,15 +508,15 @@ mod tests {
                 &res.main.value.localedisplaynames.languages
             },
             |locale, key, tier| {
-                if LocaleNamesLanguageMinimalMediumV1::contains_key(key, tier)
-                    || LocaleNamesLanguageCoreMediumV1::contains_key(key, tier)
-                    || LocaleNamesLanguageExtendedMediumV1::contains_key(key, tier)
-                    || LocaleNamesLanguageCoreShortV1::contains_key(key, tier)
-                    || LocaleNamesLanguageExtendedShortV1::contains_key(key, tier)
-                    || LocaleNamesLanguageCoreLongV1::contains_key(key, tier)
-                    || LocaleNamesLanguageExtendedLongV1::contains_key(key, tier)
-                    || LocaleNamesLanguageMenuCoreMediumV1::contains_key(key, tier)
-                    || LocaleNamesLanguageMenuExtendedMediumV1::contains_key(key, tier)
+                if LocaleNamesLanguageMediumTinyV1::contains_key(key, tier)
+                    || LocaleNamesLanguageMediumLightV1::contains_key(key, tier)
+                    || LocaleNamesLanguageMediumHeavyV1::contains_key(key, tier)
+                    || LocaleNamesLanguageShortLightV1::contains_key(key, tier)
+                    || LocaleNamesLanguageShortHeavyV1::contains_key(key, tier)
+                    || LocaleNamesLanguageLongLightV1::contains_key(key, tier)
+                    || LocaleNamesLanguageLongHeavyV1::contains_key(key, tier)
+                    || LocaleNamesLanguageMenuMediumLightV1::contains_key(key, tier)
+                    || LocaleNamesLanguageMenuMediumHeavyV1::contains_key(key, tier)
                 {
                     return;
                 }

@@ -31,7 +31,7 @@ impl DataProvider<VariantDisplayNamesV1> for SourceDataProvider {
 }
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesVariantExtendedMediumV1,
+    LocaleNamesVariantMediumHeavyV1,
     Variant,
     cldr_serde::displaynames::variant::Resource,
     "variants.json",
@@ -93,10 +93,10 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_variant_extended_medium() {
+    fn test_locale_names_variant_medium_heavy() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesVariantExtendedMediumV1> = provider
+        let data: DataPayload<LocaleNamesVariantMediumHeavyV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("posix").unwrap(),
@@ -127,7 +127,7 @@ mod tests {
                 &res.main.value.localedisplaynames.variants
             },
             |locale, key, tier| {
-                if LocaleNamesVariantExtendedMediumV1::contains_key(key, tier) {
+                if LocaleNamesVariantMediumHeavyV1::contains_key(key, tier) {
                     return;
                 }
 

@@ -4,7 +4,7 @@
 
 use icu::locale::LocaleExpander;
 use icu_experimental::displaynames::DisplayNamesPreferences;
-use icu_experimental::displaynames::provider::LocaleNamesLanguageMinimalMediumV1;
+use icu_experimental::displaynames::provider::LocaleNamesLanguageMediumTinyV1;
 use icu_experimental::displaynames::single::{
     LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOwned,
     LanguageIdentifierNameFallbackError, RegionDisplayNameOwned,
@@ -706,13 +706,13 @@ const _: () = {
     }
 
     make_provider!(TestingProvider);
-    impl_locale_names_language_minimal_medium_v1!(TestingProvider, ITER);
+    impl_locale_names_language_medium_tiny_v1!(TestingProvider, ITER);
 };
 
 #[test]
 fn test_modern_locales_self_and_maximized_region_display_names() {
     let available_locales: Vec<_> =
-        IterableDataProvider::<LocaleNamesLanguageMinimalMediumV1>::iter_ids(&TestingProvider)
+        IterableDataProvider::<LocaleNamesLanguageMediumTinyV1>::iter_ids(&TestingProvider)
             .expect("iter_ids should succeed")
             .into_iter()
             .map(|id| id.locale)

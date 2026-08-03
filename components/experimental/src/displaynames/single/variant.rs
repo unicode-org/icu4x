@@ -7,7 +7,7 @@ use super::{
     load_one,
 };
 use crate::displaynames::DisplayNamesPreferences;
-use crate::displaynames::provider::LocaleNamesVariantExtendedMediumV1;
+use crate::displaynames::provider::LocaleNamesVariantMediumHeavyV1;
 use icu_locale_core::subtags::Variant;
 use icu_provider::prelude::*;
 
@@ -21,7 +21,7 @@ fn make_attributes(subtag: &Variant) -> &DataMarkerAttributes {
 #[inline]
 fn make_locale(prefs: DisplayNamesPreferences) -> DataLocale {
     // All variant markers use the same locale
-    LocaleNamesVariantExtendedMediumV1::make_locale(prefs.locale_preferences)
+    LocaleNamesVariantMediumHeavyV1::make_locale(prefs.locale_preferences)
 }
 
 macro_rules! table_row {
@@ -55,7 +55,7 @@ macro_rules! table_row {
 /// ```
 #[derive(Debug)]
 pub struct VariantDisplayNameOwned {
-    pub(crate) payload: DataPayload<LocaleNamesVariantExtendedMediumV1>,
+    pub(crate) payload: DataPayload<LocaleNamesVariantMediumHeavyV1>,
 }
 
 impl VariantDisplayNameOwned {
@@ -90,13 +90,12 @@ impl VariantDisplayNameOwned {
         variant: Variant,
     ) -> Result<Self, DataError>
     where
-        D: ?Sized + DataProvider<LocaleNamesVariantExtendedMediumV1>,
+        D: ?Sized + DataProvider<LocaleNamesVariantMediumHeavyV1>,
     {
         let attrs = make_attributes(&variant);
         let locale = make_locale(prefs);
-        let payload =
-            load_one::<LocaleNamesVariantExtendedMediumV1, _, _>(provider, &locale, attrs)?
-                .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
+        let payload = load_one::<LocaleNamesVariantMediumHeavyV1, _, _>(provider, &locale, attrs)?
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
         Ok(Self { payload })
     }
 

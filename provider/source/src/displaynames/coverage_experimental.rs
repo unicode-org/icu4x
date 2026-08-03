@@ -122,12 +122,12 @@ pub(super) enum CoverageLevelForXPath {
 }
 
 impl CoverageByXPathCache {
-    /// Determines the [`CoverageTier`] for a given `locale` and `xpath` target.
+    /// Determines the coverage tier (`Tiny`, `Light`, or `Heavy`) for a given `locale` and `xpath` target.
     ///
     /// Resolution lookup precedence:
     /// 1. Locale-specific override file `displaynames/coverageByXPath/{locale}.json`
     /// 2. Root defaults file `displaynames/coverageByXPath.json`
-    /// 3. Defaults to [`CoverageTier::Extended`] if unlisted everywhere.
+    /// 3. Defaults to Heavy tier if unlisted everywhere.
     pub(super) fn coverage_tier(
         &self,
         locale: &DataLocale,
@@ -1057,7 +1057,7 @@ fn test_coverage_tier() {
     let coverage_cldr = coverage_cldr_cache();
 
     let en = DataLocale::from_str("en").unwrap();
-    // Minimal tier XPath (basic language display name in root defaults)
+    // Tiny tier XPath (basic language display name in root defaults)
     let xpath_minimal = "//ldml/localeDisplayNames/languages/language[@type=\"en\"]";
     assert_eq!(
         coverage_cldr

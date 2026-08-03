@@ -31,7 +31,7 @@ impl DataProvider<ScriptDisplayNamesV1> for SourceDataProvider {
 }
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesScriptMinimalMediumV1,
+    LocaleNamesScriptMediumTinyV1,
     Script,
     cldr_serde::displaynames::script::Resource,
     "scripts.json",
@@ -41,7 +41,7 @@ crate::displaynames::impl_displaynames_v1!(
     CoverageLevelForXPath::Basic | CoverageLevelForXPath::Core,
 );
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesScriptCoreMediumV1,
+    LocaleNamesScriptMediumLightV1,
     Script,
     cldr_serde::displaynames::script::Resource,
     "scripts.json",
@@ -51,7 +51,7 @@ crate::displaynames::impl_displaynames_v1!(
     CoverageLevelForXPath::Moderate,
 );
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesScriptExtendedMediumV1,
+    LocaleNamesScriptMediumHeavyV1,
     Script,
     cldr_serde::displaynames::script::Resource,
     "scripts.json",
@@ -62,7 +62,7 @@ crate::displaynames::impl_displaynames_v1!(
 );
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesScriptExtendedShortV1,
+    LocaleNamesScriptShortHeavyV1,
     Script,
     cldr_serde::displaynames::script::Resource,
     "scripts.json",
@@ -145,10 +145,10 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_script_core_medium() {
+    fn test_locale_names_script_medium_light() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesScriptCoreMediumV1> = provider
+        let data: DataPayload<LocaleNamesScriptMediumLightV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("Arab").unwrap(),
@@ -163,10 +163,10 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_script_minimal_medium() {
+    fn test_locale_names_script_medium_tiny() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesScriptMinimalMediumV1> = provider
+        let data: DataPayload<LocaleNamesScriptMediumTinyV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("Latn").unwrap(),
@@ -181,10 +181,10 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_script_extended_medium() {
+    fn test_locale_names_script_medium_heavy() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesScriptExtendedMediumV1> = provider
+        let data: DataPayload<LocaleNamesScriptMediumHeavyV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("Cans").unwrap(),
@@ -199,10 +199,10 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_script_extended_short() {
+    fn test_locale_names_script_short_heavy() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesScriptExtendedShortV1> = provider
+        let data: DataPayload<LocaleNamesScriptShortHeavyV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("Cans").unwrap(),
@@ -233,10 +233,10 @@ mod tests {
                 &res.main.value.localedisplaynames.scripts
             },
             |locale, key, tier| {
-                if LocaleNamesScriptMinimalMediumV1::contains_key(key, tier)
-                    || LocaleNamesScriptCoreMediumV1::contains_key(key, tier)
-                    || LocaleNamesScriptExtendedMediumV1::contains_key(key, tier)
-                    || LocaleNamesScriptExtendedShortV1::contains_key(key, tier)
+                if LocaleNamesScriptMediumTinyV1::contains_key(key, tier)
+                    || LocaleNamesScriptMediumLightV1::contains_key(key, tier)
+                    || LocaleNamesScriptMediumHeavyV1::contains_key(key, tier)
+                    || LocaleNamesScriptShortHeavyV1::contains_key(key, tier)
                 {
                     return;
                 }

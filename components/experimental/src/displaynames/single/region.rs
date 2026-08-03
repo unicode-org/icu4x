@@ -7,8 +7,8 @@ use super::{
 };
 use crate::displaynames::DisplayNamesPreferences;
 use crate::displaynames::provider::{
-    LocaleNamesRegionCoreMediumV1, LocaleNamesRegionCoreShortV1, LocaleNamesRegionMinimalMediumV1,
-    LocaleNamesRegionMinimalShortV1,
+    LocaleNamesRegionMediumLightV1, LocaleNamesRegionMediumTinyV1, LocaleNamesRegionShortLightV1,
+    LocaleNamesRegionShortTinyV1,
 };
 use crate::displaynames::single::load_one;
 use icu_locale_core::subtags::Region;
@@ -24,7 +24,7 @@ fn make_attributes(subtag: &Region) -> &DataMarkerAttributes {
 #[inline]
 fn make_locale(prefs: DisplayNamesPreferences) -> DataLocale {
     // All region markers use the same locale
-    LocaleNamesRegionMinimalMediumV1::make_locale(prefs.locale_preferences)
+    LocaleNamesRegionMediumTinyV1::make_locale(prefs.locale_preferences)
 }
 
 macro_rules! table_row {
@@ -72,7 +72,7 @@ macro_rules! table_row {
 /// ```
 #[derive(Debug)]
 pub struct RegionDisplayNameOwned {
-    pub(crate) payload: DataPayload<LocaleNamesRegionCoreMediumV1>,
+    pub(crate) payload: DataPayload<LocaleNamesRegionMediumLightV1>,
 }
 
 impl RegionDisplayNameOwned {
@@ -95,14 +95,14 @@ impl RegionDisplayNameOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesRegionCoreMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>,
+            + DataProvider<LocaleNamesRegionMediumLightV1>
+            + DataProvider<LocaleNamesRegionMediumTinyV1>,
     {
         let attrs = make_attributes(&region);
         let locale = make_locale(prefs);
-        let payload = load_one::<LocaleNamesRegionCoreMediumV1, _, _>(provider, &locale, attrs)?
+        let payload = load_one::<LocaleNamesRegionMediumLightV1, _, _>(provider, &locale, attrs)?
             .map_or_else(
-                || load_one::<LocaleNamesRegionMinimalMediumV1, _, _>(provider, &locale, attrs),
+                || load_one::<LocaleNamesRegionMediumTinyV1, _, _>(provider, &locale, attrs),
                 |p| Ok(Some(p)),
             )?
             .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
@@ -143,11 +143,11 @@ impl RegionDisplayNameOwned {
         region: Region,
     ) -> Result<Self, DataError>
     where
-        D: ?Sized + DataProvider<LocaleNamesRegionMinimalMediumV1>,
+        D: ?Sized + DataProvider<LocaleNamesRegionMediumTinyV1>,
     {
         let attrs = make_attributes(&region);
         let locale = make_locale(prefs);
-        let payload = load_one::<LocaleNamesRegionMinimalMediumV1, _, _>(provider, &locale, attrs)?
+        let payload = load_one::<LocaleNamesRegionMediumTinyV1, _, _>(provider, &locale, attrs)?
             .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
         Ok(Self { payload })
     }
@@ -176,14 +176,14 @@ impl RegionDisplayNameOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesRegionMinimalShortV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>,
+            + DataProvider<LocaleNamesRegionShortTinyV1>
+            + DataProvider<LocaleNamesRegionMediumTinyV1>,
     {
         let attrs = make_attributes(&region);
         let locale = make_locale(prefs);
-        let payload = load_one::<LocaleNamesRegionMinimalShortV1, _, _>(provider, &locale, attrs)?
+        let payload = load_one::<LocaleNamesRegionShortTinyV1, _, _>(provider, &locale, attrs)?
             .map_or_else(
-                || load_one::<LocaleNamesRegionMinimalMediumV1, _, _>(provider, &locale, attrs),
+                || load_one::<LocaleNamesRegionMediumTinyV1, _, _>(provider, &locale, attrs),
                 |p| Ok(Some(p)),
             )?
             .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
@@ -233,24 +233,24 @@ impl RegionDisplayNameOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<LocaleNamesRegionCoreShortV1>
-            + DataProvider<LocaleNamesRegionMinimalShortV1>
-            + DataProvider<LocaleNamesRegionCoreMediumV1>
-            + DataProvider<LocaleNamesRegionMinimalMediumV1>,
+            + DataProvider<LocaleNamesRegionShortLightV1>
+            + DataProvider<LocaleNamesRegionShortTinyV1>
+            + DataProvider<LocaleNamesRegionMediumLightV1>
+            + DataProvider<LocaleNamesRegionMediumTinyV1>,
     {
         let attrs = make_attributes(&region);
         let locale = make_locale(prefs);
-        let payload = load_one::<LocaleNamesRegionCoreShortV1, _, _>(provider, &locale, attrs)?
+        let payload = load_one::<LocaleNamesRegionShortLightV1, _, _>(provider, &locale, attrs)?
             .map_or_else(
-                || load_one::<LocaleNamesRegionMinimalShortV1, _, _>(provider, &locale, attrs),
+                || load_one::<LocaleNamesRegionShortTinyV1, _, _>(provider, &locale, attrs),
                 |p| Ok(Some(p)),
             )?
             .map_or_else(
-                || load_one::<LocaleNamesRegionCoreMediumV1, _, _>(provider, &locale, attrs),
+                || load_one::<LocaleNamesRegionMediumLightV1, _, _>(provider, &locale, attrs),
                 |p| Ok(Some(p)),
             )?
             .map_or_else(
-                || load_one::<LocaleNamesRegionMinimalMediumV1, _, _>(provider, &locale, attrs),
+                || load_one::<LocaleNamesRegionMediumTinyV1, _, _>(provider, &locale, attrs),
                 |p| Ok(Some(p)),
             )?
             .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;

@@ -120,21 +120,21 @@ The `single` module uses the following data markers. Because it loads names for 
 ### 1. Subtag Display Names (Indexed by Locale + Marker Attribute)
 These markers contain the localized name for a specific subtag. They are indexed by the **locale** of the translation (e.g., `en`) and a **marker attribute** containing the BCP-47 subtag string (e.g., `US`, `Latn`, `zh`).
 
-*   **`LocaleNamesLanguageShortV1` / `LocaleNamesLanguageMediumV1` / `LocaleNamesLanguageLongV1`**:
+*   **`LocaleNamesLanguageMediumTinyV1` / `LocaleNamesLanguageMediumLightV1` / `LocaleNamesLanguageMediumHeavyV1` / `LocaleNamesLanguageShortLightV1` / `LocaleNamesLanguageShortHeavyV1` / `LocaleNamesLanguageLongLightV1` / `LocaleNamesLanguageLongHeavyV1`**:
     *   *Attribute*: Language subtag (e.g., `en`, `zh`).
-    *   *Description*: Contains a single string representing the localized short, medium, or long name for the language.
-*   **`LocaleNamesScriptShortV1` / `LocaleNamesScriptMediumV1`**:
+    *   *Description*: Contains a single string representing the localized short, medium, or long name for the language across `Tiny`, `Light`, and `Heavy` coverage tiers.
+*   **`LocaleNamesScriptMediumTinyV1` / `LocaleNamesScriptMediumLightV1` / `LocaleNamesScriptMediumHeavyV1` / `LocaleNamesScriptShortHeavyV1`**:
     *   *Attribute*: Script subtag (e.g., `Latn`, `Hant`).
-    *   *Description*: Contains a single string representing the localized short or medium name for the script.
-*   **`LocaleNamesRegionShortV1` / `LocaleNamesRegionMediumV1`**:
+    *   *Description*: Contains a single string representing the localized short or medium name for the script across `Tiny`, `Light`, and `Heavy` coverage tiers.
+*   **`LocaleNamesRegionMediumTinyV1` / `LocaleNamesRegionMediumLightV1` / `LocaleNamesRegionShortTinyV1` / `LocaleNamesRegionShortLightV1`**:
     *   *Attribute*: Region subtag (e.g., `US`, `FR`, `001`).
-    *   *Description*: Contains a single string representing the localized short or medium name for the region.
-*   **`LocaleNamesVariantMediumV1`**:
+    *   *Description*: Contains a single string representing the localized short or medium name for the region across `Tiny` and `Light` coverage tiers.
+*   **`LocaleNamesVariantMediumHeavyV1`**:
     *   *Attribute*: Variant subtag (e.g., `valencia`).
-    *   *Description*: Contains a single string representing the localized medium name for the variant.
-*   **`LocaleNamesLanguageMenuMediumV1`**:
+    *   *Description*: Contains a single string representing the localized medium name for the variant in the `Heavy` coverage tier.
+*   **`LocaleNamesLanguageMenuMediumLightV1` / `LocaleNamesLanguageMenuMediumHeavyV1`**:
     *   *Attribute*: Language subtag (e.g., `zh`).
-    *   *Description*: Contains the split "core" and "extension" parts of the localized menu name (used for hierarchical dropdowns).
+    *   *Description*: Contains the split "core" and "extension" parts of the localized menu name across `Light` and `Heavy` coverage tiers (used for hierarchical dropdowns).
 
 ### 2. Formatting Patterns (Indexed by Locale Only)
 These markers contain the patterns used to combine subtags. They are indexed by the **locale** only, as the patterns apply to all formatting operations for that language.
