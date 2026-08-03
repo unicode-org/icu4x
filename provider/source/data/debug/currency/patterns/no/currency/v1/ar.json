@@ -1,0 +1,45 @@
+{
+  "patterns": [
+    [
+      {
+        "Literal": "‏"
+      },
+      {
+        "Placeholder": "Place0"
+      }
+    ],
+    [
+      {
+        "Literal": "‏‎-"
+      },
+      {
+        "Placeholder": "Place0"
+      }
+    ],
+    [
+      {
+        "Literal": "؜"
+      },
+      {
+        "Placeholder": "Place0"
+      }
+    ],
+    [
+      {
+        "Literal": "(؜"
+      },
+      {
+        "Placeholder": "Place0"
+      },
+      {
+        "Literal": ")"
+      }
+    ]
+  ],
+  "indices": {
+    "standard": 0,
+    "standard_negative": 1,
+    "accounting_positive": 2,
+    "accounting_negative": 3
+  }
+}

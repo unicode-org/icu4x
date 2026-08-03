@@ -283,17 +283,16 @@ impl SentenceSegmenter {
         })
     }
 
+    /// Constructs a [`SentenceSegmenter`] for a given options and using compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
     #[cfg(feature = "unstable")]
-    icu_provider::gen_buffer_data_constructors!(
-        (options: SentenceBreakOptions) -> error: DataError,
-        /// Constructs a [`SentenceSegmenter`] for a given options and using compiled data.
-        functions: [
-            try_new_neo,
-            try_new_neo_with_buffer_provider,
-            try_new_neo_unstable,
-            Self
-        ]
-    );
+    pub fn try_new_neo(options: SentenceBreakOptions) -> Result<Self, DataError> {
+        Self::try_new_neo_unstable(&Baked, options)
+    }
 
     #[cfg(feature = "unstable")]
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_neo)]

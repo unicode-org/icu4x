@@ -25,6 +25,20 @@ pub(crate) struct PrData {
     pub(crate) number: u32,
     pub(crate) body: String,
     pub(crate) title: String,
+    pub(crate) author: Author,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, Debug, Default, Clone, PartialEq, Eq)]
+pub(crate) struct Author {
+    pub(crate) login: String,
+}
+
+impl PrData {
+    pub(crate) fn is_dependabot(&self) -> bool {
+        self.author.login == "dependabot"
+            || self.author.login == "app/dependabot"
+            || self.author.login == "dependabot[bot]"
+    }
 }
 
 fn revs(revs: &str) -> Vec<String> {
@@ -57,7 +71,7 @@ pub(crate) fn run(args: FetchGithub) {
             .arg("--state")
             .arg("merged")
             .arg("--json")
-            .arg("title,body,number")
+            .arg("title,body,number,author")
             .output()
             .expect("Running gh pr list failed");
         let data: Vec<PrData> = serde_json::from_slice(&output.stdout).unwrap();
