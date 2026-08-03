@@ -162,7 +162,6 @@ pub const EXTRA_FS_DEPS: &[&str] = &[
 /// Dependencies needed by datagen provider (not counting `log` and `zip` deps)
 /// This might change semi frequently but we should try and keep this small.
 pub const EXTRA_SOURCE_DEPS: &[&str] = &[
-    "arraystring",
     "databake",
     "databake-derive",
     "elsa",
@@ -197,7 +196,6 @@ pub const EXTRA_SOURCE_DEPS: &[&str] = &[
     "typeid",
     "toml",
     "twox-hash",
-    "typenum",
     "winnow",
     "zmij",
 ];

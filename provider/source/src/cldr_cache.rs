@@ -278,11 +278,7 @@ impl<'a> CldrDirLang<'a> {
     where
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
-        let path = if file_name.is_empty() {
-            format!("{}/{locale}.json", self.1)
-        } else {
-            format!("{}/{locale}/{file_name}", self.1)
-        };
+        let path = format!("{}/{locale}/{file_name}", self.1);
         if self.0.serde_cache.file_exists(&path)? {
             self.0.serde_cache.read_and_parse_json(&path)
         } else if let Some(new_locale) = self.0.add_script_extended(locale)? {
@@ -309,17 +305,13 @@ impl<'a> CldrDirLang<'a> {
 
     pub(crate) fn file_exists(
         &self,
-        locale: &DataLocale,
+        lang: &DataLocale,
         file_name: &str,
     ) -> Result<bool, DataError> {
-        let path = if file_name.is_empty() {
-            format!("{}/{locale}.json", self.1)
-        } else {
-            format!("{}/{locale}/{file_name}", self.1)
-        };
+        let path = format!("{}/{lang}/{file_name}", self.1);
         if self.0.serde_cache.file_exists(&path)? {
             Ok(true)
-        } else if let Some(new_locale) = self.0.add_script_extended(locale)? {
+        } else if let Some(new_locale) = self.0.add_script_extended(lang)? {
             self.file_exists(&new_locale, file_name)
         } else {
             Ok(false)
