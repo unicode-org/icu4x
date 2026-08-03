@@ -5,14 +5,28 @@
 //! Tools for locale fallback, enabling arbitrary input locales to be mapped into the nearest
 //! locale with data.
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+#![cfg_attr(not(any(test, doc)), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+    )
+)]
+#![warn(missing_docs)]
+
 use crate::provider::*;
-use icu_locale_core::subtags::*;
+use icu_locale_core::subtags::{Language, Region, Script, Subtag, Variant, region, script};
 use icu_provider::prelude::*;
 
 #[doc(inline)]
 pub use icu_provider::fallback::{LocaleFallbackConfig, LocaleFallbackPriority};
 
 mod algorithms;
+pub mod provider;
 
 /// Implements the algorithm defined in *[UTS #35: Locale Inheritance and Matching]*.
 ///
@@ -169,11 +183,7 @@ impl LocaleFallbacker {
                 language_region: Default::default(),
                 language_script: Default::default(),
                 // Unused
-                und: (
-                    Language::UNKNOWN,
-                    crate::subtags::script!("Zzzz"),
-                    crate::subtags::region!("ZZ"),
-                ),
+                und: (Language::UNKNOWN, script!("Zzzz"), region!("ZZ")),
             }),
             parents: DataPayload::from_owned(Default::default()),
         }
