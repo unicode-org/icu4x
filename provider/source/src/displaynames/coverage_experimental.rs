@@ -122,12 +122,12 @@ pub(super) enum CoverageLevelForXPath {
 }
 
 impl CoverageByXPathCache {
-    /// Determines the coverage tier (`Tiny`, `Light`, or `Heavy`) for a given `locale` and `xpath` target.
+    /// Determines the [`CoverageLevelForXPath`] for a given `locale` and `xpath` target.
     ///
     /// Resolution lookup precedence:
     /// 1. Locale-specific override file `displaynames/coverageByXPath/{locale}.json`
     /// 2. Root defaults file `displaynames/coverageByXPath.json`
-    /// 3. Defaults to Heavy tier if unlisted everywhere.
+    /// 3. Defaults to [`CoverageLevelForXPath::Comprehensive`] if unlisted everywhere.
     pub(super) fn coverage_tier(
         &self,
         locale: &DataLocale,
