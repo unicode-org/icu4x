@@ -15,14 +15,16 @@ fn word_break_th() {
         WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
         WordSegmenter::new_lstm(WordBreakInvariantOptions::default()),
         {
-            let mut s =
-                WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
+            let mut s = WordSegmenter::new_neo_for_non_complex_scripts(
+                WordBreakInvariantOptions::default(),
+            );
             s.load_auto();
             s
         },
         {
-            let mut s =
-                WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
+            let mut s = WordSegmenter::new_neo_for_non_complex_scripts(
+                WordBreakInvariantOptions::default(),
+            );
             s.load_auto();
             s
         },
@@ -46,8 +48,9 @@ fn word_break_my() {
     for segmenter in [
         WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
         {
-            let mut s =
-                WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
+            let mut s = WordSegmenter::new_neo_for_non_complex_scripts(
+                WordBreakInvariantOptions::default(),
+            );
             s.load_auto();
             s
         },
@@ -64,14 +67,16 @@ fn word_break_hiragana() {
         WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
         WordSegmenter::new_dictionary(WordBreakInvariantOptions::default()),
         {
-            let mut s =
-                WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
+            let mut s = WordSegmenter::new_neo_for_non_complex_scripts(
+                WordBreakInvariantOptions::default(),
+            );
             s.load_auto();
             s
         },
         {
-            let mut s =
-                WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
+            let mut s = WordSegmenter::new_neo_for_non_complex_scripts(
+                WordBreakInvariantOptions::default(),
+            );
             s.load_dictionary();
             s
         },
@@ -88,14 +93,16 @@ fn word_break_mixed_han() {
         WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
         WordSegmenter::new_dictionary(WordBreakInvariantOptions::default()),
         {
-            let mut s =
-                WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
+            let mut s = WordSegmenter::new_neo_for_non_complex_scripts(
+                WordBreakInvariantOptions::default(),
+            );
             s.load_auto();
             s
         },
         {
-            let mut s =
-                WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
+            let mut s = WordSegmenter::new_neo_for_non_complex_scripts(
+                WordBreakInvariantOptions::default(),
+            );
             s.load_dictionary();
             s
         },
