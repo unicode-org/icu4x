@@ -1,267 +1,404 @@
 # Design Document: ICU4X Currency Formatter
 
-- **Status**: In Implementation
-- **Author**: Younies Mahmoud ([@younies](https://github.com/younies) &lt;younies@google.com&gt;, &lt;younies@unicode.org&gt;)
-- **Reviewers**: ICU4X Sub-Committee (Shane Carr [@sffc](https://github.com/sffc), Robert Bastian [@robertbastian](https://github.com/robertbastian), Manish Goregaokar [@Manishearth](https://github.com/Manishearth))
-- **Relevant Standards**:
-  - [Unicode Technical Standard #35 (UTS 35, LDML Part 3 §3.2 "Currency Formats")](https://unicode.org/reports/tr35/tr35-numbers.html#Currency_Formats)
-  - [ECMA-402 ECMAScript Internationalization API Specification (`Intl.NumberFormat`, `style: "currency"`)](https://tc39.es/ecma402/#sec-intl.numberformat)
-  - [ISO 4217 Currency Codes](https://www.iso.org/iso-4217-currency-codes.html)
+| Attribute | Details |
+| :--- | :--- |
+| **Status** | In Implementation / RFC |
+| **Authors** | Younies Mahmoud ([@younies](https://github.com/younies) &lt;younies@google.com&gt;, &lt;younies@unicode.org&gt;) |
+| **Reviewers** | ICU4X Sub-Committee: Shane Carr ([@sffc](https://github.com/sffc)), Robert Bastian ([@robertbastian](https://github.com/robertbastian)), Manish Goregaokar ([@Manishearth](https://github.com/Manishearth)) |
+| **Target Crates** | `icu::currency`, `icu_experimental::dimension::currency`, `icu_provider` |
+| **Tracking Issues** | [#5480](https://github.com/unicode-org/icu4x/issues/5480), [#8290](https://github.com/unicode-org/icu4x/pull/8290), [#8291](https://github.com/unicode-org/icu4x/pull/8291) |
+| **Relevant Standards** | • [Unicode Technical Standard #35 (LDML Part 3 §3.2 "Currency Formats")](https://unicode.org/reports/tr35/tr35-numbers.html#Currency_Formats)<br>• [ECMA-402 `Intl.NumberFormat` (`style: "currency"`)](https://tc39.es/ecma402/#sec-intl.numberformat)<br>• [ISO 4217 Currency Codes](https://www.iso.org/iso-4217-currency-codes.html) |
 
 ---
 
-## 1. Overview & Introduction
+## 1. Overview & Motivation
 
-Currency formatting is a mission-critical internationalization capability used every day by billions of users across web browsers, operating systems, mobile devices, e-commerce platforms, and financial systems. Formatting monetary amounts involves much more than appending a symbol to a number: it requires locale-sensitive positioning, variant accounting representations (e.g., parenthetical negative formats in finance), currency-specific decimal precision and cash rounding increments, pluralization rules for currency names, and compact notations.
+Currency formatting is a foundational internationalization capability required across web engines, operating systems, mobile devices, and server infrastructure. 
 
-### 1.1 Target Clients & Ecosystem Consumers
+Formatting monetary amounts is substantially more complex than prepending a symbol to a number:
+* **Locale-sensitive placement**: Pre-number (`$100`), post-number (`100 €`), or spaced (`100 $`).
+* **Accounting representations**: Parenthetical financial negative formats (`($100)` vs. `-$100`).
+* **Display style variants**: Standard symbol (`$`), narrow symbol (`$`), ISO code (`USD 100`), or pluralized names (`1 US dollar`, `5 US dollars`).
+* **Currency-specific precision & cash rounding**: Locale/currency decimal rules (e.g., 0 decimals for JPY, 2 for USD, 3 for BHD/KWD, 5-cent cash rounding for CHF/CAD).
+* **Alpha-next-to-number spacing**: Inserting non-breaking space when an alphanumeric currency symbol or code sits adjacent to digits.
+* **Compact notations**: Combining currency symbols with abbreviated scale multipliers (`$1.2M`, `1,2 M €`).
 
-The ICU4X Currency Formatter is designed to serve a broad range of high-demand clients:
+### 1.1 Target Consumers & Environments
 
-* **Google Chrome & Chromium (V8 Engine)**:
-  The primary tier-1 consumer. Chrome and the V8 JavaScript engine require a fast, lightweight, and standards-compliant currency formatter to back the JavaScript `Intl.NumberFormat` API with `style: "currency"` per the **ECMA-402** specification. Memory efficiency and minimal binary footprint are critical for Chrome's mobile and desktop distributions.
-* **Mozilla Firefox (SpiderMonkey Engine)**:
-  SpiderMonkey and the Firefox platform are migrating to ICU4X to standardize ECMAScript internationalization on a high-performance, modular Rust engine.
-* **Fuchsia OS & Android / Embedded Devices**:
-  Embedded and operating-system-level services require `#![no_std]` support, zero-copy data loading, and fine-grained data modularity so applications do not pay memory costs for unused data.
-* **Cloud, Billing & Financial Backends**:
-  High-throughput financial, payment, and cloud billing systems require thread-safe, zero-allocation formatting pipelines capable of processing millions of transactions per second with sub-microsecond latency.
+The ICU4X Currency Formatter is designed for four primary deployment environments:
+
+1. **Web Engines (Chromium / V8, Mozilla Firefox / SpiderMonkey)**:
+   - Serves as the high-performance backing implementation for JavaScript's `Intl.NumberFormat` with `style: "currency"`.
+   - Priorities: Minimal binary footprint, sub-microsecond formatting latency, `#![no_std]` compilation, and full ECMA-402 test262 compliance.
+2. **Operating Systems & Embedded Platforms (Fuchsia OS, Android, Wearables)**:
+   - Operating-system-level services and resource-constrained environments.
+   - Priorities: Zero dynamic memory allocation during formatting, zero-copy deserialization (`ZeroCopy` / `ZeroMap`), and fine-grained data modularity.
+3. **Multi-Language Applications via Foreign Function Interfaces (Diplomat / FFI)**:
+   - Shared internationalization engine for C++, Dart, JavaScript/WASM, and Go.
+   - Priorities: Clean C-ABI boundary, opaque pointer handles, and zero-copy string buffer streaming.
+4. **Backend Services & Microservices**:
+   - Multi-threaded cloud services and server-side rendering pipelines.
+   - Priorities: `Send + Sync` thread safety, low memory overhead per instance, and absence of global caches or locks.
 
 ---
 
-## 2. Requirements
+## 2. Requirements & Standards Compliance
 
-To fulfill the requirements of all target clients, the design must comply with both the **Unicode Technical Standard #35 (UTS #35 / CLDR)** and the **ECMAScript 402 (ECMA-402)** internationalization specification.
+To satisfy all consumers, the architecture harmonizes the requirements of **UTS #35** and **ECMA-402**:
 
 ```mermaid
 graph TD
-    subgraph UTS35["UTS #35 (CLDR) Requirements"]
-        U1["1. Locale-Sensitive Symbol Placement"]
-        U2["2. Accounting & Negative Sign Formats"]
-        U3["3. Currency Display Variants (Symbol, Code, Name, No-Currency)"]
-        U4["4. Alpha-Next-To-Number Spacing"]
-        U5["5. ISO 4217 Precision & Cash Rounding"]
-        U6["6. Pluralization for Currency Names"]
-        U7["7. Compact Currency Notations ($1.2M)"]
-        U8["8. Numbering System Overrides (latn, arab, deva)"]
-    end
+    classDef default stroke:#58a6ff,stroke-width:1.5px,fill:none;
+    classDef spec stroke:#d29922,stroke-width:1.5px,fill:none;
+    classDef engine stroke:#2ea043,stroke-width:2px,fill:none;
 
-    subgraph ECMA402["ECMA-402 Additional Requirements"]
-        E1["1. Scientific & Engineering Currency Notation ($1.23E4)"]
-        E2["2. Fine-Grained Sign Display (auto, always, never, exceptZero, negative)"]
-        E3["3. Precision Overrides (min/max fraction & significant digits)"]
-        E4["4. Custom Rounding Modes & Increments"]
-        E5["5. Trailing Zero Display (auto, stripIfInteger)"]
-        E6["6. Formatted Parts Tokenization (formatToParts)"]
-    end
+    UTS35["<b>UTS #35 (CLDR)</b><br>• Locale Placement & Spacing<br>• Accounting Patterns<br>• Plural Currency Names<br>• Fractions & Cash Rounding"]:::spec
+    ECMA402["<b>ECMA-402</b><br>• Scientific / Engineering Notations<br>• 5-State signDisplay<br>• Precision & Rounding Overrides<br>• Tokenized formatToParts()"]:::spec
 
-    UTS35 --> Formatter["ICU4X Currency Formatter Engine"]
+    UTS35 --> Formatter["<b>ICU4X Currency Formatter</b><br>Zero-Allocation • Modular Data • Composable"]:::engine
     ECMA402 --> Formatter
 ```
 
-### 2.1 Requirements from Unicode Technical Standard #35 (UTS #35)
+### 2.1 UTS #35 (LDML Part 3 §3.2) Requirements
 
-UTS #35 (LDML Part 3: Numbers, §3.2 "Currency Formats") defines the following core requirements:
+| Requirement | Description | Example (`en-US`) | Example (`fr-FR`) |
+| :--- | :--- | :--- | :--- |
+| **Locale Placement** | Position symbol relative to digits with locale conventions | `$1,234.50` | `1 234,50 €` |
+| **Accounting Format** | Financial accounting negative notation with parentheses | `($1,234.50)` | `(1 234,50 €)` |
+| **Display Variants** | Symbol, Narrow Symbol, ISO Code, Display Name, No-Currency | `$`, `USD`, `US dollars` | `€`, `EUR`, `euros` |
+| **Alpha Spacing** | Non-breaking space inserted when alpha characters abut digits | `USD 100` | `100 USD` |
+| **Fractions & Rounding** | Default fraction digits and cash transaction rounding increments | USD = 2, JPY = 0 | EUR = 2, CHF = 5¢ cash |
+| **Pluralized Names** | Unit names with plural category resolution (`one`, `other`, etc.) | `1 dollar`, `5 dollars` | `1 dollar`, `5 dollars` |
+| **Compact Notation** | Currency symbol combined with compact scale exponent | `$1.2M` | `1,2 M €` |
 
-1. **Locale-Sensitive Placement & Patterns**:
-   Position the currency identifier relative to the number according to the locale's conventions (prefix vs. suffix, spacing), e.g. `$100` in `en-US`, `100 €` in `fr-FR`, and `100 $` in `fr-CA`.
-2. **Accounting & Negative Formats**:
-   Support both standard negative formats (e.g. `-$100`) and financial accounting parenthetical formats (e.g. `($100)`), resolving locale-specific patterns for positive and negative amounts.
-3. **Currency Display Variants**:
-   - **Standard Symbol**: Localized symbol (e.g. `$`, `€`, `£`, `CA$`).
-   - **Narrow Symbol**: Disambiguated concise symbol (e.g. `$` instead of `US$` in foreign locales).
-   - **ISO Currency Code**: 3-letter ISO 4217 currency code (e.g. `USD 100`).
-   - **Currency Display Name**: Full localized unit names with plural category selection (e.g. `1 US dollar`, `5 US dollars`, `5 dollars des États-Unis`).
-   - **No-Currency / Formal Pattern**: Formatting the numeric value per the locale's `standard-noCurrency` pattern, applying currency-specific precision and grouping while omitting the currency symbol.
-4. **Alpha-Next-To-Number Spacing Rules**:
-   Insert a localized non-breaking space when an alphanumeric currency symbol or ISO code is positioned directly adjacent to numeric digits, preventing visual collision.
-5. **Currency Precision, Fractions & Cash Rounding**:
-   Automatically resolve standard decimal digits (e.g. `2` for USD/EUR, `0` for JPY, `3` for BHD/KWD) and cash transaction rounding increments (e.g. 5-cent rounding for CHF/CAD) according to CLDR `supplementalData/currencyData`.
-6. **Plural Category Selection for Currency Names**:
-   Select the correct plural category (`zero`, `one`, `two`, `few`, `many`, `other`) based on the formatted numeric operands and language plural rules.
-7. **Compact Currency Notation**:
-   Combine currency symbols with localized compact decimal units (e.g. `$1.2M`, `$1.2 million`, `1,2 M €`).
-8. **Numbering System Overrides**:
-   Format numbers according to the requested numbering system (e.g. `latn`, `arab`, `deva`), applying the appropriate decimal symbols and digit glyphs.
+### 2.2 ECMA-402 (`Intl.NumberFormat`) Requirements
 
-### 2.2 Requirements from ECMAScript 402 (ECMA-402) — Additional Capabilities
-
-ECMA-402 (`Intl.NumberFormat` with `style: "currency"`) specifies several advanced behaviors that are not explicitly defined in UTS #35:
-
-1. **Scientific and Engineering Currency Formatting**:
-   ECMA-402 permits combining `style: "currency"` with `notation: "scientific"` or `notation: "engineering"` (e.g. `$1.23E4` or `1.23E4 USD`). Because UTS #35 does not specify dedicated scientific currency pattern templates, ICU4X synthesizes this by formatting the numeric value through its scientific decimal engine and interpolating the result into the locale's currency pattern.
-2. **Fine-Grained Sign Display Controls (`signDisplay`)**:
-   ECMA-402 provides 5 distinct sign display policies:
-   - `"auto"`: Sign displayed only on negative values (default).
-   - `"always"`: Explicit sign displayed on all values (e.g. `+$100`, `-$100`).
-   - `"never"`: No sign displayed even on negative values (e.g. `$100`).
-   - `"exceptZero"`: Sign displayed for positive and negative values, but omitted for zero (`+$100`, `$0`, `-$100`).
-   - `"negative"`: Sign displayed only if the number is negative (omitting sign for `-0`).
-3. **Explicit Precision & Significant Digit Overrides**:
-   Callers can override CLDR currency fraction defaults by supplying explicit `minimumFractionDigits`, `maximumFractionDigits`, `minimumSignificantDigits`, `maximumSignificantDigits`, and resolve precedence via `roundingPriority` (`"auto"`, `"morePrecision"`, `"lessPrecision"`).
-4. **Custom Rounding Modes & Increments**:
-   Support all ECMA-402 rounding modes (`ceil`, `floor`, `expand`, `trunc`, `halfCeil`, `halfFloor`, `halfExpand`, `halfTrunc`, `halfEven`) and arbitrary `roundingIncrement` values (e.g. 1, 2, 5, 10, 20, 25, 50).
-5. **Trailing Zero Display Controls (`trailingZeroDisplay`)**:
-   Support `"auto"` and `"stripIfInteger"` (e.g. displaying `$100` instead of `$100.00` when integer).
-6. **Tokenized Parts Output (`formatToParts`)**:
-   Provide structured token annotations (`currency`, `integer`, `decimal`, `fraction`, `group`, `plusSign`, `minusSign`, `literal`, `exponentSeparator`, `exponentInteger`) via `writeable::PartsWrite` for JavaScript consumers.
+| Capability | Specification Behavior | ICU4X Handling |
+| :--- | :--- | :--- |
+| **Scientific / Engineering** | Combine currency with exponential notation (`$1.23E4`) | Numeric engine formats exponent; currency engine wraps result |
+| **`signDisplay` Policies** | `"auto"`, `"always"`, `"never"`, `"exceptZero"`, `"negative"` | Explicit sign policy passed to numeric formatter & pattern selector |
+| **Precision Overrides** | Caller overrides fraction or significant digits | `FixedDecimal` precision overrides CLDR default fractions |
+| **Custom Rounding** | Support `ceil`, `floor`, `halfEven`, and custom increments | Handled by `fixed_decimal` rounding pipeline |
+| **`trailingZeroDisplay`** | `"auto"` or `"stripIfInteger"` (e.g. `$100` vs `$100.00`) | Handled by numeric formatter before pattern interpolation |
+| **`formatToParts()`** | Structured token emission (`currency`, `integer`, `decimal`, etc.) | Streamed via `writeable::PartsWrite` zero-allocation annotations |
 
 ---
 
-## 3. Design: The Two-Dimensional Currency Space
+## 3. Architecture: The Two-Dimensional Currency Space
 
 Currency formatting is fundamentally **orthogonal and two-dimensional**:
-1. **Dimension 1 (Number Representation)**: Controls how the numeric digits, powers of ten, grouping separators, and compact scale prefixes are computed and formatted.
-2. **Dimension 2 (Currency Representation)**: Controls how the currency identity (symbol, narrow symbol, ISO 4217 code, pluralized display name, or absence of symbol) is resolved and positioned relative to the number.
+1. **Dimension 1 (Number Representation)**: How numeric digits, signs, grouping separators, and compact scale prefixes are computed.
+2. **Dimension 2 (Currency Representation)**: How the currency identifier (symbol, narrow symbol, ISO code, name, or omitted symbol) is resolved and placed.
 
-### 3.1 Architectural Orthogonality & Composability
+### 3.1 Orthogonal Composition Model
 
-In traditional monolithic i18n libraries, these two dimensions were often coupled into rigid pipelines, causing combinatoric code complexity and data duplication.
-
-ICU4X completely decouples these two dimensions into a **modular, composable architecture**:
-* The **Numeric Engine** (`DecimalFormatter`, `CompactDecimalFormatter`, or scientific decimal engine) formats the numeric value according to locale digits, grouping separators, and compact exponents, producing **Placeholder `{0}`**.
-* The **Currency Engine** resolves the currency token (symbol, narrow symbol, ISO code, display name, or empty string) according to locale data and options, producing **Placeholder `{1}`**.
-* The **Pattern Interpolator** streams both placeholders into a single `DoublePlaceholderPattern` with zero intermediate heap allocations.
+Rather than creating monolithic formatters with combinatoric branching, ICU4X cleanly separates numeric formatting from currency pattern interpolation:
 
 ```mermaid
 graph LR
-    subgraph Inputs["1. Inputs"]
-        Val["Numeric Amount<br>(FixedDecimal)"]
-        Cur["Currency Code<br>(ISO 4217)"]
-        Opts["Options & Locale<br>(Usage / Display Style)"]
-    end
+    classDef input stroke:#58a6ff,stroke-width:1.5px,fill:none;
+    classDef engine stroke:#2ea043,stroke-width:1.5px,fill:none;
+    classDef output stroke:#d29922,stroke-width:2px,fill:none;
 
-    subgraph Engines["2. Orthogonal Resolution"]
-        NumEngine["Numeric Engine<br>(Decimal / Compact / Scientific)"]
-        CurEngine["Currency Engine<br>(Symbol / Narrow / Code / Name / None)"]
-        PatEngine["Pattern Engine<br>(Standard / Accounting / Spacing)"]
-    end
+    Val["Numeric Value<br><i>(FixedDecimal)</i>"]:::input
+    Cur["Currency Code & Style<br><i>(USD / Symbol)</i>"]:::input
 
-    subgraph Fusion["3. Zero-Allocation Composition"]
-        Slot0["Numeric Slot 0<br>(Formatted Number)"]
-        Slot1["Currency Slot 1<br>(Currency Identifier)"]
-        Pattern["DoublePlaceholderPattern<br>(Resolved Locale Pattern)"]
-        Output["Output Buffer / Parts Tokens<br>(writeable::PartsWrite)"]
-    end
+    NumEngine["<b>Numeric Engine</b><br>Decimal / Compact / Scientific"]:::engine
+    CurEngine["<b>Currency Engine</b><br>Symbol / Code / Name / None"]:::engine
 
-    Val --> NumEngine --> Slot0
-    Cur --> CurEngine --> Slot1
-    Opts --> PatEngine --> Pattern
-    Slot0 --> Pattern
-    Slot1 --> Pattern
-    Pattern --> Output
+    Pattern["<b>DoublePlaceholderPattern</b><br><code>{0}</code>: Number &nbsp;|&nbsp; <code>{1}</code>: Currency"]:::engine
+    Out["<b>Zero-Allocation Output</b><br><i>(writeable::PartsWrite)</i>"]:::output
+
+    Val --> NumEngine -->|"{0}"| Pattern
+    Cur --> CurEngine -->|"{1}"| Pattern
+    Pattern --> Out
 ```
 
 ### 3.2 The 2D Variation Matrix
 
-Combining both orthogonal dimensions produces the complete $5 \times 4$ variation matrix:
+Combining both dimensions yields the complete $5 \times 4$ variation matrix:
 
-| Currency Representation \ Number Representation | Standard Decimal | Compact Short | Compact Long | Scientific / Engineering |
+| Currency Style \ Number Style | Standard Decimal | Compact Short | Compact Long | Scientific / Engineering |
 | :--- | :--- | :--- | :--- | :--- |
 | **Standard Symbol** (`$`) | `$1,234.50`<br>`-$1,234.50`<br>`($1,234.50)` | `$1.2M`<br>`-$1.2M` | `$1.2 million`<br>`-$1.2 million` | `$1.23E4`<br>`-$1.23E4` |
 | **Narrow Symbol** (`$`) | `$1,234.50` | `$1.2M` | `$1.2 million` | `$1.23E4` |
-| **ISO Currency Code** (`USD`) | `USD 1,234.50` | `USD 1.2M` | `USD 1.2 million` | `USD 1.23E4` |
-| **Display Name (Pluralized)** | `1,234.50 US dollars`<br>`1.00 US dollar` | `1.2M US dollars` | `1.2 million US dollars` | `1.23E4 US dollars` |
-| **No Currency (Numeric Only)** | `1,234.50`<br>`(1,234.50)`<br>*(UTS #35 `standard-noCurrency`)* | *N/A (Not in UTS #35 / ECMA-402;<br>use `CompactDecimalFormatter`)* | *N/A (Not in UTS #35 / ECMA-402;<br>use `CompactDecimalFormatter`)* | *N/A (Use `DecimalFormatter`)* |
-
-### 3.3 Deep Dive into the Two Dimensions
-
-#### Dimension 1: The Number Representation
-1. **Standard Decimal**: Uses `DecimalFormatter` to apply locale-sensitive decimal and grouping separators, user-specified or ISO 4217 fraction digits, and numbering systems (e.g. `latn`, `arab`).
-2. **Compact Short**: Uses `CompactDecimalFormatter` with short compact notation data (e.g. `$1.2M` in English, `1,2 M €` in French) selecting patterns based on the compact exponent and plural category.
-3. **Compact Long**: Formats numbers with expanded compact words (e.g. `$1.2 million`, `1,2 million d'euros`) with plural category resolution on the compact unit.
-4. **Scientific / Engineering**: Formats numbers with power-of-ten scientific exponents (e.g. `$1.23E4`), satisfying ECMA-402 requirements without requiring special CLDR data.
-
-#### Dimension 2: The Currency Representation
-1. **Standard Symbol**: Resolves localized currency symbols from `CurrencySymbolsV1`. In locales with disambiguated symbols (e.g. `CA$` in the US for Canadian Dollars), the full symbol is used.
-2. **Narrow Symbol**: Resolves the shortest available symbol from `CurrencySymbolsV1` (e.g. `$` instead of `US$` or `CA$`).
-3. **ISO Currency Code**: Formats the 3-letter ISO 4217 code directly (e.g. `USD`, `EUR`), applying alpha-next-to-number spacing rules.
-4. **Display Name**: Resolves full currency names from `CurrencyExtendedDataV1` and interpolates into plural pattern templates (`CurrencyPatternsDataV1`) selected by the numeric value.
-5. **No Currency**: Formats the numeric value with currency-specific decimal fractions and cash rounding (e.g. 0 decimals for JPY, 2 for USD, 3 for BHD) and supports both standard and accounting parenthetical formats (`(1,234.50)`), while suppressing the currency symbol entirely using `CurrencyPatternsNoCurrencyV1`. Note that compact and scientific no-currency combinations are not defined as currency formats in UTS #35 or ECMA-402; applications requiring compact numbers without symbols use `CompactDecimalFormatter` directly.
+| **ISO Code** (`USD`) | `USD 1,234.50` | `USD 1.2M` | `USD 1.2 million` | `USD 1.23E4` |
+| **Display Name** | `1,234.50 US dollars`<br>`1.00 US dollar` | `1.2M US dollars` | `1.2 million US dollars` | `1.23E4 US dollars` |
+| **No Currency** *(Numeric Only)* | `1,234.50`<br>`(1,234.50)`<br>*(UTS #35 `standard-noCurrency`)* | *N/A (Use `CompactDecimalFormatter`)* | *N/A (Use `CompactDecimalFormatter`)* | *N/A (Use `DecimalFormatter`)* |
 
 ---
 
 ## 4. Modular Data Architecture ("Pay-For-What-You-Use")
 
-In real-world applications, individual consumers rarely need all cells of the 2D matrix simultaneously. For example:
-- A banking checkout UI may only need **Standard Symbol**, **Accounting**, and **No-Currency** formats with standard decimal numbers.
-- A financial dashboard may need **Compact Short** currency notation.
-- A general browser engine (Chrome/V8) may load full symbol and name data on demand.
-
-To achieve optimal memory and binary footprint, ICU4X decomposes the data across **modular data markers**. Calling a specific constructor (e.g. `try_new`, `try_new_no_currency`, or `try_new_compact`) links and loads **only the data markers required for that specific capability**:
+ICU4X avoids monolithic data payloads. Data is split into **granular, modular markers** so applications only load and pay memory for the features they actually use:
 
 ```mermaid
 graph TD
-    subgraph Formatter["CurrencyFormatter Types"]
-        StandardCF["CurrencyFormatter<DecimalFormatter>"]
-        CompactCF["CurrencyFormatter<CompactDecimalFormatter>"]
-        NoCurCF["CurrencyFormatter::try_new_no_currency"]
+    classDef constructor stroke:#58a6ff,stroke-width:1.5px,fill:none;
+    classDef marker stroke:#2ea043,stroke-width:1.5px,fill:none;
+
+    subgraph Constructors["1. Targeted Constructors"]
+        C_NoCur["<code>try_new_no_currency()</code><br>Symbol-less Numeric"]:::constructor
+        C_Std["<code>try_new()</code><br>Standard & Accounting"]:::constructor
+        C_Compact["<code>try_new_compact()</code><br>Compact Multipliers"]:::constructor
+        C_Ext["<code>try_new_with_extended_data()</code><br>Plural Unit Names"]:::constructor
     end
 
-    subgraph DataMarkers["Modular Data Markers"]
-        M_Ess["CurrencyEssentialsV1<br>(Patterns & Spacing)"]
-        M_NoCur["CurrencyPatternsNoCurrencyV1<br>(Symbol-less Patterns, ~336B)"]
-        M_Sym["CurrencySymbolsV1<br>(Localized Symbols)"]
-        M_Ext["CurrencyExtendedDataV1<br>(Display Names)"]
-        M_Pat["CurrencyPatternsDataV1<br>(Plural Pattern Templates)"]
-        M_Frac["CurrencyFractionsV1<br>(Digits & Cash Rounding)"]
+    subgraph Markers["2. Modular Data Markers"]
+        M_NoCur["<b>CurrencyPatternsNoCurrencyV1</b><br><i>~336 B total across all locales</i>"]:::marker
+        M_Ess["<b>CurrencyEssentialsV1</b><br><i>Patterns, Index Table & Spacing</i>"]:::marker
+        M_Sym["<b>CurrencySymbolsV1</b><br><i>Localized Symbol & Narrow Map</i>"]:::marker
+        M_Frac["<b>CurrencyFractionsV1</b><br><i>Fractions & Cash Rounding</i>"]:::marker
+        M_Ext["<b>CurrencyExtendedDataV1</b><br><i>Plural Display Names</i>"]:::marker
+        M_Pat["<b>CurrencyPatternsDataV1</b><br><i>Plural Templates</i>"]:::marker
     end
 
-    StandardCF --> M_Ess
-    StandardCF --> M_Sym
-    StandardCF --> M_Frac
+    C_NoCur --> M_NoCur
+    C_NoCur --> M_Frac
 
-    NoCurCF --> M_NoCur
-    NoCurCF --> M_Frac
+    C_Std --> M_Ess
+    C_Std --> M_Sym
+    C_Std --> M_Frac
 
-    CompactCF --> M_Ess
-    CompactCF --> M_Sym
-    CompactCF --> M_Frac
+    C_Compact --> M_Ess
+    C_Compact --> M_Sym
+    C_Compact --> M_Frac
+
+    C_Ext --> M_Ext
+    C_Ext --> M_Pat
+    C_Ext --> M_Frac
 ```
 
-### 4.1 Data Markers Breakdown
+### 4.1 Data Marker Definitions
 
-| Marker | Data Contents | Payload Size (Baked) | Used When |
-| :--- | :--- | :--- | :--- |
-| `CurrencyEssentialsV1` | Packed standard & accounting patterns, alpha spacing rules, and index table | Small (~1.2 KB / locale tree) | Standard, Accounting, and ISO Code formatting |
-| `CurrencyPatternsNoCurrencyV1` | Packed no-currency standard & accounting patterns with symbols stripped | Minimal (~336 bytes total across all 160+ locales) | `try_new_no_currency` constructors |
-| `CurrencySymbolsV1` | Localized symbol and narrow symbol map keyed by ISO 4217 code | Fine-grained per locale | Symbol & Narrow Symbol formatting |
-| `CurrencyExtendedDataV1` | Localized currency display names per currency code | Loaded on-demand | Currency Display Name formatting (`"name"`) |
-| `CurrencyPatternsDataV1` | Plural pattern templates (`zero`, `one`, `two`, `few`, `many`, `other`) | Fine-grained | Currency Display Name formatting |
-| `CurrencyFractionsV1` | Standard decimal digits, cash digits, and rounding increments per currency | Shared static table | All currency formatters (fraction & cash rounding resolution) |
-
-### 4.2 Pattern Storage: `DoublePlaceholderPattern`
-
-All pattern-bearing markers (`CurrencyEssentialsV1` and `CurrencyPatternsNoCurrencyV1`) use `DoublePlaceholderPattern`:
-* `{0}`: The formatted numeric value.
-* `{1}`: The currency identifier string (symbol, code, name, or empty string).
-
-> [!NOTE]
-> By leveraging `DoublePlaceholderPattern` across both `CurrencyEssentials` and `CurrencyPatternsNoCurrency`, the runtime pipeline remains completely unified: formatting a no-currency amount simply passes an empty string `""` for placeholder `{1}`, eliminating the need for `Either` branches or separate execution paths.
-
-### 4.3 Zero-Copy Packed Indices
-
-To minimize memory footprint and avoid duplicate pattern allocations, distinct patterns for each locale are stored once in a `VarZeroVec<'data, DoublePlaceholderPattern>` and referenced by 1-byte indices:
-
+#### 1. `CurrencyEssentialsV1` (Standard & Accounting Patterns)
 ```rust
-pub struct CurrencyPatternsNoCurrency<'data> {
+#[icu_provider::data_struct(marker(CurrencyEssentialsV1Marker, "currency/essentials@1"))]
+#[derive(Debug, Clone, PartialEq)]
+pub struct CurrencyEssentialsV1<'data> {
+    /// Deduplicated pattern templates for the locale.
     pub patterns: VarZeroVec<'data, DoublePlaceholderPattern>,
-    pub indices: NoCurrencyPatternIndices,
+    /// 1-byte indices mapping usage modes to patterns.
+    pub indices: PatternIndices,
+    /// Spacing rules for alpha characters next to digits.
+    pub spacing: CurrencySpacingRules,
 }
 
-pub struct NoCurrencyPatternIndices {
-    pub standard: u8,
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub struct PatternIndices {
+    pub standard_positive: u8,
     pub standard_negative: Option<u8>,
     pub accounting_positive: u8,
     pub accounting_negative: Option<u8>,
 }
 ```
 
+#### 2. `CurrencyPatternsNoCurrencyV1` (Symbol-less Patterns)
+```rust
+#[icu_provider::data_struct(marker(CurrencyPatternsNoCurrencyV1Marker, "currency/patterns_no_currency@1"))]
+#[derive(Debug, Clone, PartialEq)]
+pub struct CurrencyPatternsNoCurrencyV1<'data> {
+    /// Deduplicated symbol-less patterns (e.g. "{0}", "({0})").
+    pub patterns: VarZeroVec<'data, DoublePlaceholderPattern>,
+    pub indices: PatternIndices,
+}
+```
+> [!NOTE]
+> `CurrencyPatternsNoCurrencyV1` requires only **~336 bytes total** across all 160+ CLDR locales in baked data, providing ultra-lightweight symbol-less and accounting formatting.
+
+#### 3. `CurrencySymbolsV1` (Localized Symbols)
+```rust
+#[icu_provider::data_struct(marker(CurrencySymbolsV1Marker, "currency/symbols@1"))]
+#[derive(Debug, Clone, PartialEq)]
+pub struct CurrencySymbolsV1<'data> {
+    /// Localized symbols keyed by ISO-4217 3-letter code.
+    pub symbols: ZeroMap<'data, UnvalidatedCurrency, str>,
+    /// Narrow symbol overrides (e.g. "$" instead of "US$").
+    pub narrow_symbols: ZeroMap<'data, UnvalidatedCurrency, str>,
+}
+```
+
+#### 4. `CurrencyExtendedDataV1` & `CurrencyPatternsDataV1` (Plural Display Names)
+```rust
+#[icu_provider::data_struct(marker(CurrencyExtendedDataV1Marker, "currency/extended@1"))]
+#[derive(Debug, Clone, PartialEq)]
+pub struct CurrencyExtendedDataV1<'data> {
+    /// Pluralized display names (e.g. "US dollar", "US dollars").
+    pub display_names: ZeroMap2d<'data, UnvalidatedCurrency, PluralCategory, str>,
+}
+
+#[icu_provider::data_struct(marker(CurrencyPatternsDataV1Marker, "currency/patterns@1"))]
+#[derive(Debug, Clone, PartialEq)]
+pub struct CurrencyPatternsDataV1<'data> {
+    /// Patterns keyed by plural category for currency name formatting.
+    pub patterns: ZeroMap<'data, PluralCategory, DoublePlaceholderPattern>,
+}
+```
+
+#### 5. `CurrencyFractionsV1` (Fractions & Cash Rounding)
+```rust
+#[icu_provider::data_struct(marker(CurrencyFractionsV1Marker, "currency/fractions@1"))]
+#[derive(Debug, Clone, PartialEq)]
+pub struct CurrencyFractionsV1<'data> {
+    /// Fraction digits and cash rounding increments per currency.
+    pub fractions: ZeroMap<'data, UnvalidatedCurrency, CurrencyFractionData>,
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub struct CurrencyFractionData {
+    pub digits: u8,
+    pub cash_digits: u8,
+    pub cash_rounding_increment: u8,
+}
+```
+
 ---
 
-## 5. Runtime Formatting Pipeline & Zero Heap Allocation
+## 5. Public Rust API Specification
 
-The runtime formatting pipeline streams directly into a `writeable::PartsWrite` or `core::fmt::Write` buffer without allocating intermediate heap strings:
+### 5.1 Primary Formatter Struct
+
+```rust
+pub struct CurrencyFormatter<V: AbstractFormatter = DecimalFormatter> {
+    value_formatter: V,
+    currency_data: CurrencyFormatterData,
+    options: CurrencyFormatterOptions,
+    fraction_info: FractionInfo,
+}
+```
+
+### 5.2 Constructors
+
+```rust
+impl CurrencyFormatter<DecimalFormatter> {
+    /// Creates a standard/accounting currency formatter with compiled data.
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new(
+        locale: &DataLocale,
+        currency: CurrencyCode,
+        options: CurrencyFormatterOptions,
+    ) -> Result<Self, DataError>;
+
+    /// Creates a lightweight symbol-less currency formatter (~336 B data footprint).
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new_no_currency(
+        locale: &DataLocale,
+        currency: CurrencyCode,
+        options: CurrencyFormatterOptions,
+    ) -> Result<Self, DataError>;
+
+    /// Creates a formatter supporting full pluralized currency names.
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new_with_extended_data(
+        locale: &DataLocale,
+        currency: CurrencyCode,
+        options: CurrencyFormatterOptions,
+    ) -> Result<Self, DataError>;
+}
+
+impl CurrencyFormatter<CompactDecimalFormatter> {
+    /// Creates a compact currency formatter (e.g. "$1.2M", "$1.2 million").
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new_compact(
+        locale: &DataLocale,
+        currency: CurrencyCode,
+        options: CurrencyFormatterOptions,
+        compact_options: CompactDecimalFormatterOptions,
+    ) -> Result<Self, DataError>;
+}
+```
+
+### 5.3 Configuration Types & Options
+
+```rust
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Default)]
+pub struct CurrencyFormatterOptions {
+    /// Standard or accounting pattern selection.
+    pub usage: CurrencyUsage,
+    /// Symbol, NarrowSymbol, Code, or Name display style.
+    pub display_style: CurrencyDisplayStyle,
+    /// Sign display policy (Auto, Always, Never, ExceptZero, Negative).
+    pub sign_display: SignDisplay,
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Default)]
+pub enum CurrencyUsage {
+    #[default]
+    Standard,
+    Accounting,
+    Cash,
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Default)]
+pub enum CurrencyDisplayStyle {
+    #[default]
+    Symbol,
+    NarrowSymbol,
+    Code,
+    Name,
+    NoCurrency,
+}
+```
+
+### 5.4 Formatted Output & `writeable` Tokenization
+
+The formatter implements `writeable::Writeable`, writing directly into any string buffer or token stream without intermediate heap allocations:
+
+```rust
+pub struct FormattedCurrency<'a> {
+    // Zero-allocation borrowing wrapper
+}
+
+impl<'a> writeable::Writeable for FormattedCurrency<'a> {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result;
+    fn write_to_parts<W: writeable::PartsWrite + ?Sized>(&self, sink: &mut W) -> Result<(), writeable::PartError>;
+}
+```
+
+Token annotations emitted via `write_to_parts`:
+* `writeable::Part::Currency`
+* `writeable::Part::Integer`
+* `writeable::Part::DecimalSeparator`
+* `writeable::Part::Fraction`
+* `writeable::Part::GroupSeparator`
+* `writeable::Part::MinusSign` / `PlusSign`
+* `writeable::Part::Literal`
+
+### 5.5 Usage Example
+
+```rust
+use icu::currency::{CurrencyCode, CurrencyFormatter, options::*};
+use icu::locale::locale;
+use fixed_decimal::FixedDecimal;
+
+// 1. Standard currency formatting
+let fmt = CurrencyFormatter::try_new(
+    &locale!("en-US").into(),
+    CurrencyCode::try_from_str("USD")?,
+    CurrencyFormatterOptions::default(),
+)?;
+
+let decimal = FixedDecimal::from(123450).multiplied_pow10(-2); // 1234.50
+let formatted = fmt.format(&decimal);
+assert_eq!(formatted.to_string(), "$1,234.50");
+
+// 2. Accounting parenthetical formatting
+let mut acct_opts = CurrencyFormatterOptions::default();
+acct_opts.usage = CurrencyUsage::Accounting;
+
+let acct_fmt = CurrencyFormatter::try_new(
+    &locale!("en-US").into(),
+    CurrencyCode::try_from_str("USD")?,
+    acct_opts,
+)?;
+
+let neg_decimal = FixedDecimal::from(-123450).multiplied_pow10(-2); // -1234.50
+assert_eq!(acct_fmt.format(&neg_decimal).to_string(), "($1,234.50)");
+```
+
+---
+
+## 6. Runtime Pipeline & Zero-Allocation Interpolation
 
 ```mermaid
 sequenceDiagram
@@ -269,42 +406,121 @@ sequenceDiagram
     participant App as Application / V8
     participant CF as CurrencyFormatter
     participant Frac as CurrencyFractionsV1
-    participant NumFmt as Numeric Formatter (Decimal / Compact / Scientific)
+    participant NumFmt as Numeric Engine (Decimal / Compact)
     participant Pat as Pattern Resolution
-    participant Out as Output Buffer (writeable)
+    participant Out as Output Buffer (writeable::PartsWrite)
 
     App->>CF: format(value, currency)
     CF->>Frac: resolve(currency, usage)
     Frac-->>CF: FractionInfo (decimal digits, cash increment)
-    CF->>NumFmt: format numeric value with resolved precision
+    CF->>NumFmt: format numeric value with precision & sign policy
     NumFmt-->>CF: Formatted number writeable
-    CF->>Pat: select_pattern(sign, accounting, display_style)
-    Pat-->>CF: (DoublePlaceholderPattern, symbol_str, sign_policy)
-    CF->>Out: pattern.interpolate((formatted_number, symbol_str))
-    Out-->>App: Rendered Result (or Parts Tokens)
+    CF->>Pat: select_pattern(sign, usage, display_style)
+    Pat-->>CF: (DoublePlaceholderPattern, symbol_str, suppress_num_sign)
+    CF->>Out: pattern.interpolate(formatted_number, symbol_str)
+    Out-->>App: Streamed Result / Parts Tokens
 ```
 
-### Pipeline Steps:
-
-1. **Fraction & Rounding Resolution**:
-   The formatter queries `CurrencyFractionsV1` with the target `CurrencyCode` and `usage` mode (`Standard` vs `Cash`) to obtain the number of decimal digits and rounding increments.
-2. **Numeric Value Formatting**:
-   The value is passed to the inner numeric formatter (`DecimalFormatter`, `CompactDecimalFormatter`, or scientific decimal engine) with the resolved precision and rounding parameters.
-3. **Pattern & Sign Selection**:
-   The pattern selector retrieves the appropriate `DoublePlaceholderPattern`:
-   - Negative values in accounting mode resolve `accounting_negative` if present, falling back to `accounting_positive` or `standard`.
-   - If the pattern encodes its own sign/parentheses, the numeric sign is suppressed to avoid double negation (`--$100`).
-4. **Streaming Interpolation**:
-   `DoublePlaceholderPattern::interpolate(...)` writes the pattern literals and the two writeables (`formatted_number` and `symbol_str`) directly into the destination buffer with zero intermediate memory allocations.
+### 6.1 Sign Suppression & Negative Formats
+When an accounting pattern contains literal parentheses or signs (e.g. `({1}{0})`), the inner numeric engine suppresses its negative sign to prevent double negatives such as `(-$1,234.50)`.
 
 ---
 
-## 6. Verification, Testing & Performance Targets
+## 7. ECMA-402 & JavaScript Engine Integration
 
-| Quality Attribute | Target Requirement | Implementation / Status |
+| ECMA-402 `Intl.NumberFormat` Option | ICU4X Rust Representation |
+| :--- | :--- |
+| `style: "currency"` | `CurrencyFormatter` |
+| `currency: "USD"` | `CurrencyCode::try_from_str("USD")` |
+| `currencyDisplay: "symbol"` | `CurrencyDisplayStyle::Symbol` |
+| `currencyDisplay: "narrowSymbol"` | `CurrencyDisplayStyle::NarrowSymbol` |
+| `currencyDisplay: "code"` | `CurrencyDisplayStyle::Code` |
+| `currencyDisplay: "name"` | `CurrencyDisplayStyle::Name` |
+| `currencySign: "standard"` | `CurrencyUsage::Standard` |
+| `currencySign: "accounting"` | `CurrencyUsage::Accounting` |
+| `signDisplay: "auto" / "always" / "never" / "exceptZero" / "negative"` | `options::SignDisplay` |
+| `notation: "scientific" / "engineering"` | `CurrencyFormatter<ScientificDecimalFormatter>` |
+| `notation: "compact", compactDisplay: "short" / "long"` | `CurrencyFormatter<CompactDecimalFormatter>` |
+| `formatToParts()` | `writeable::Writeable::write_to_parts()` |
+
+---
+
+## 8. FFI & Diplomat Bindings Architecture
+
+For integration into Chromium/V8, Mozilla Firefox/SpiderMonkey, and C++ platforms, the API is exposed via [Diplomat](https://github.com/rust-diplomat/diplomat):
+
+```rust
+#[diplomat::bridge]
+pub mod ffi {
+    use super::*;
+
+    #[diplomat::opaque]
+    pub struct ICU4XCurrencyFormatter(pub CurrencyFormatter<DecimalFormatter>);
+
+    impl ICU4XCurrencyFormatter {
+        pub fn create(
+            locale: &ICU4XLocale,
+            currency_code: &DiplomatStr,
+            options: ICU4XCurrencyFormatterOptions,
+        ) -> Result<Box<ICU4XCurrencyFormatter>, ICU4XError>;
+
+        pub fn format(
+            &self,
+            value: &ICU4XFixedDecimal,
+            write: &mut DiplomatWrite,
+        ) -> Result<(), ICU4XError>;
+    }
+}
+```
+
+---
+
+## 9. CLDR Data Generation Pipeline
+
+1. **Ingested Sources**:
+   - `cldr-numbers-full/main/<locale>/currencies.json` (Symbols, display names)
+   - `cldr-numbers-full/main/<locale>/numbers.json` (Currency format patterns, accounting patterns, spacing)
+   - `cldr-core/supplemental/currencyData.json` (Fraction digits, cash rounding increments)
+2. **Defensive Validation & Sanitization**:
+   - **Multi-character override filtering**: If CLDR specifies a multi-character decimal separator override for a currency, the datagen logs a warning and safely falls back to standard locale decimal separators.
+   - **Unvalidated currency codes**: Arbitrary 3-letter codes not in ISO 4217 gracefully format using the literal 3-letter code and default 2-digit fraction precision.
+3. **Datagen Invocation**:
+   ```bash
+   cargo run -p icu4x-datagen --features unstable -- \
+     -m CurrencyEssentialsV1 \
+     -m CurrencyPatternsNoCurrencyV1 \
+     -m CurrencySymbolsV1 \
+     -m CurrencyFractionsV1 \
+     -l full --format baked -o provider/data/
+   ```
+
+---
+
+## 10. Performance Targets & Stack Size Bounds
+
+| Quality Attribute | Target Requirement | Measured / Status |
 | :--- | :--- | :--- |
-| **Heap Allocations** | Exactly 0 heap allocations during `format()` | Achieved via `writeable` streaming |
-| **Latency** | Sub-microsecond formatting latency per item | Verified (< 1 µs on x86_64 and ARM64) |
+| **Heap Allocations** | Exactly 0 heap allocations during `format()` | Verified via `writeable` streaming |
+| **Latency** | Sub-microsecond formatting latency per item | Verified (< 1 µs on x86_64 & ARM64) |
 | **No-Currency Footprint** | < 1 KB across all CLDR locales | ~336 bytes total in baked data |
-| **ECMA-402 Compatibility** | 100% test262 compliance for `Intl.NumberFormat` currency tests | Designed for full V8 / SpiderMonkey integration |
-| **Defensive Safety** | `#![no_std]` compatible, safe fallback on corrupted data | `PASS_THROUGH` (`{0}`) fallback with unit tests |
+| **Stack Size Bounds** | Guarded by compile-time `size_test!` | `Option<char>` niche-optimized (4 bytes) |
+| **Defensive Fallback** | `#![no_std]` compatible, safe fallback | `PASS_THROUGH` (`{0}`) on malformed data |
+
+---
+
+## 11. Implementation Roadmap & Stacked PR Strategy
+
+```mermaid
+graph TD
+    classDef branch stroke:#58a6ff,stroke-width:1.5px,fill:none;
+    classDef current stroke:#2ea043,stroke-width:2px,fill:none;
+
+    PR1["<b>PR 1 (#8290)</b><br>Decimal Separator Options & Niche Optimization"]:::branch
+    PR2["<b>PR 2 (#8291)</b><br>CLDR Currency Decimal Separator Overrides"]:::branch
+    PR3["<b>PR 3</b><br>CurrencyEssentialsV1 & No-Currency Data Markers"]:::current
+    PR4["<b>PR 4</b><br>Compact Currency Formatter Matrix Integration"]:::branch
+    PR5["<b>PR 5</b><br>Diplomat FFI Bindings & V8 Intl Integration"]:::branch
+
+    PR1 --> PR2 --> PR3 --> PR4 --> PR5
+```
+
