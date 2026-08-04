@@ -1389,8 +1389,8 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         // minus sign to the entire positive pattern (e.g., `-¤#,##0` producing `-$12K`).
         // Therefore, `format_sign` is applied as the outermost wrapper around the glued currency string so
         // that the minus sign modifies the full monetary expression rather than just the numeric significand.
-        // When an accounting negative pattern already encodes the sign (e.g. parentheses), `sign` is
-        // `Sign::None` so we do not prepend a redundant minus.
+        // When an explicit negative subpattern already encodes the sign (e.g. parentheses or explicit minus
+        // placement in CLDR), `sign` is returned as `Sign::None` so `format_sign` does not prepend a redundant minus.
         V::format_sign(
             &self.value_formatter,
             pattern.interpolate((formatted_value, currency_str)),
