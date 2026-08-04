@@ -44,19 +44,19 @@ unsafe impl<T: EqULE, const N: usize> EqULE for [T; N] {}
 unsafe impl VarULE for str {
     #[inline]
     fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
-        core::str::from_utf8(bytes).map_err(|_| UleError::parse::<Self>())?;
+        str::from_utf8(bytes).map_err(|_| UleError::parse::<Self>())?;
         Ok(())
     }
 
     #[inline]
     fn parse_bytes(bytes: &[u8]) -> Result<&Self, UleError> {
-        core::str::from_utf8(bytes).map_err(|_| UleError::parse::<Self>())
+        str::from_utf8(bytes).map_err(|_| UleError::parse::<Self>())
     }
     /// Invariant: must be safe to call when called on a slice that previously
     /// succeeded with `parse_bytes`
     #[inline]
     unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
-        core::str::from_utf8_unchecked(bytes)
+        str::from_utf8_unchecked(bytes)
     }
 }
 

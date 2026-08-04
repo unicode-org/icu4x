@@ -1074,7 +1074,7 @@ impl<'de> KeyDeserializer<'de> {
             )?;
 
         let input = get_subslice(self.input, 0..terminator_pos)?;
-        core::str::from_utf8(input)
+        str::from_utf8(input)
             .map_err(|_| BinaryDeserializerError::invalid_data("key string is not valid UTF-8"))
     }
 }

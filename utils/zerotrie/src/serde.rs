@@ -76,7 +76,7 @@ impl Serialize for SerdeByteStrOwned {
     {
         let bytes: &[u8] = &self.0;
         if serializer.is_human_readable() {
-            if let Ok(s) = core::str::from_utf8(bytes) {
+            if let Ok(s) = str::from_utf8(bytes) {
                 return serializer.serialize_str(s);
             }
         }
@@ -92,7 +92,7 @@ impl Serialize for SerdeByteStr<'_> {
         S: Serializer,
     {
         if serializer.is_human_readable() {
-            if let Ok(s) = core::str::from_utf8(self.0) {
+            if let Ok(s) = str::from_utf8(self.0) {
                 return serializer.serialize_str(s);
             }
         }

@@ -134,8 +134,7 @@ impl CompactDecimal {
                 exponent: 0,
             }),
             Some(exponent_str) => {
-                let exponent_str =
-                    core::str::from_utf8(exponent_str).map_err(|_| ParseError::Syntax)?;
+                let exponent_str = str::from_utf8(exponent_str).map_err(|_| ParseError::Syntax)?;
                 if parts.next().is_some() {
                     return Err(ParseError::Syntax);
                 }

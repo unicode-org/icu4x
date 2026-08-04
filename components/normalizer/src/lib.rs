@@ -1619,7 +1619,7 @@ macro_rules! normalizer_methods {
             });
             // SAFETY: The normalization check also checks for
             // UTF-8 well-formedness.
-            (unsafe { core::str::from_utf8_unchecked(head) }, tail)
+            (unsafe { str::from_utf8_unchecked(head) }, tail)
         }
 
         /// Return the index a slice of potentially-invalid UTF-8 is normalized up to
@@ -1935,7 +1935,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                         break 'fastest;
                     }
                     // End of stream
-                    sink.write_str(unsafe { core::str::from_utf8_unchecked(pending_slice) })?;
+                    sink.write_str(unsafe { str::from_utf8_unchecked(pending_slice) })?;
                     return Ok(());
                 }
                 #[expect(clippy::indexing_slicing)]
@@ -1967,7 +1967,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                     let back = consumed_so_far.next_back();
                     debug_assert_eq!(back, Some(char::REPLACEMENT_CHARACTER));
                     let consumed_so_far_slice = consumed_so_far.as_slice();
-                    sink.write_str(unsafe { core::str::from_utf8_unchecked(consumed_so_far_slice) } )?;
+                    sink.write_str(unsafe { str::from_utf8_unchecked(consumed_so_far_slice) } )?;
 
                     // We could call `gather_and_sort_combining` here and
                     // `continue 'outer`, but this should be better for code
@@ -1981,7 +1981,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                 let consumed_so_far_slice = &pending_slice[..pending_slice.len()
                     - decomposition.delegate.as_slice().len()
                     - upcoming.len_utf8()];
-                sink.write_str(unsafe { core::str::from_utf8_unchecked(consumed_so_far_slice) } )?;
+                sink.write_str(unsafe { str::from_utf8_unchecked(consumed_so_far_slice) } )?;
 
                 // Now let's figure out if we got a starter or a non-starter.
                 if decomposition_starts_with_non_starter(
@@ -2614,7 +2614,7 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                         let back = consumed_so_far.next_back();
                         debug_assert_eq!(back, Some(char::REPLACEMENT_CHARACTER));
                         let consumed_so_far_slice = consumed_so_far.as_slice();
-                        sink.write_str(unsafe { core::str::from_utf8_unchecked(consumed_so_far_slice) })?;
+                        sink.write_str(unsafe { str::from_utf8_unchecked(consumed_so_far_slice) })?;
                         undecomposed_starter = CharacterAndTrieValue::new(char::REPLACEMENT_CHARACTER, 0);
                         composition.decomposition.pending = None;
                         break 'fast;
@@ -2635,11 +2635,11 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                         undecomposed_starter = composition.decomposition.attach_trie_value(consumed_so_far.next_back().unwrap());
                     }
                     let consumed_so_far_slice = consumed_so_far.as_slice();
-                    sink.write_str(unsafe { core::str::from_utf8_unchecked(consumed_so_far_slice)})?;
+                    sink.write_str(unsafe { str::from_utf8_unchecked(consumed_so_far_slice)})?;
                     break 'fast;
                 }
                 // End of stream
-                sink.write_str(unsafe { core::str::from_utf8_unchecked(pending_slice) })?;
+                sink.write_str(unsafe { str::from_utf8_unchecked(pending_slice) })?;
                 return Ok(());
             }
         },

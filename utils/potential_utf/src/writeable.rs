@@ -19,7 +19,7 @@ impl TryWriteable for &'_ PotentialUtf8 {
         let mut remaining = &self.0;
         let mut r = Ok(());
         loop {
-            match core::str::from_utf8(remaining) {
+            match str::from_utf8(remaining) {
                 Ok(valid) => {
                     sink.write_str(valid)?;
                     return Ok(r);
@@ -27,7 +27,7 @@ impl TryWriteable for &'_ PotentialUtf8 {
                 Err(e) => {
                     // SAFETY: By Utf8Error invariants
                     let valid = unsafe {
-                        core::str::from_utf8_unchecked(remaining.get_unchecked(..e.valid_up_to()))
+                        str::from_utf8_unchecked(remaining.get_unchecked(..e.valid_up_to()))
                     };
                     sink.write_str(valid)?;
                     sink.with_part(Part::ERROR, |s| s.write_char(char::REPLACEMENT_CHARACTER))?;
@@ -96,13 +96,13 @@ mod test {
         assert_try_writeable_parts_eq!(
             PotentialUtf8::from_bytes(b"Foo\xFDBar"),
             "Foo�Bar",
-            Err(core::str::from_utf8(b"Foo\xFDBar").unwrap_err()),
+            Err(str::from_utf8(b"Foo\xFDBar").unwrap_err()),
             [(3, 6, Part::ERROR)]
         );
         assert_try_writeable_parts_eq!(
             PotentialUtf8::from_bytes(b"Foo\xFDBar\xff"),
             "Foo�Bar�",
-            Err(core::str::from_utf8(b"Foo\xFDBar\xff").unwrap_err()),
+            Err(str::from_utf8(b"Foo\xFDBar\xff").unwrap_err()),
             [(3, 6, Part::ERROR), (9, 12, Part::ERROR)],
         );
     }

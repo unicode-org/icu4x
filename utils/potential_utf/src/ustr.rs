@@ -120,7 +120,7 @@ impl PotentialUtf8 {
     // Note: this is const starting in 1.63
     #[inline]
     pub fn try_as_str(&self) -> Result<&str, core::str::Utf8Error> {
-        core::str::from_utf8(&self.0)
+        str::from_utf8(&self.0)
     }
 }
 

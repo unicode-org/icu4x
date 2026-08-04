@@ -10,7 +10,7 @@ use alloc::string::String;
 use core::borrow::Borrow;
 use core::fmt;
 use core::ops::Deref;
-use core::str::{self, FromStr};
+use core::str::FromStr;
 
 #[repr(transparent)]
 #[derive(PartialEq, Eq, Ord, PartialOrd, Copy, Clone, Hash)]

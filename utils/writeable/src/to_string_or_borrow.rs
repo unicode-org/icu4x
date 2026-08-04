@@ -47,9 +47,9 @@ impl<'a> PartiallyValidatedUtf8<'a> {
         debug_assert!(self.offset <= self.slice.len());
         // Safety: self.offset is a valid end index in a range (from field invariant)
         let valid_slice = unsafe { self.slice.get_unchecked(..self.offset) };
-        debug_assert!(core::str::from_utf8(valid_slice).is_ok());
+        debug_assert!(str::from_utf8(valid_slice).is_ok());
         // Safety: the UTF-8 of slice has been validated up to offset (from field invariant)
-        unsafe { core::str::from_utf8_unchecked(valid_slice) }
+        unsafe { str::from_utf8_unchecked(valid_slice) }
     }
 }
 
