@@ -215,7 +215,7 @@ impl fmt::Debug for DateFields<'_> {
             day,
         } = *self;
         let mut builder = f.debug_struct("DateFields");
-        if let Some(s) = era.and_then(|s| core::str::from_utf8(s).ok()) {
+        if let Some(s) = era.and_then(|s| str::from_utf8(s).ok()) {
             builder.field("era", &Some(s));
         } else {
             builder.field("era", &era);
@@ -223,7 +223,7 @@ impl fmt::Debug for DateFields<'_> {
         builder.field("era_year", &era_year);
         builder.field("extended_year", &extended_year);
         builder.field("month", &month);
-        if let Some(s) = month_code.and_then(|s| core::str::from_utf8(s).ok()) {
+        if let Some(s) = month_code.and_then(|s| str::from_utf8(s).ok()) {
             builder.field("month_code", &Some(s));
         } else {
             builder.field("month_code", &month_code);

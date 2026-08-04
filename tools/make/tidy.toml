@@ -269,14 +269,14 @@ exit_on_error true
 set_env "RUSTFLAGS" "-D unused_crate_dependencies"
 exec --fail-on-error cargo check --all-features
 unset_env "RUSTFLAGS"
-exec --fail-on-error cargo run --manifest-path tools/make/depcheck/Cargo.toml
+exec --fail-on-error cargo run -m tools/make/depcheck/Cargo.toml
 '''
 
 [tasks.codegen]
 description = "Run the codegen tool"
 category = "ICU4X Development"
 command = "cargo"
-args = ["run", "--manifest-path", "tools/make/codegen/Cargo.toml"]
+args = ["run", "-m", "tools/make/codegen/Cargo.toml"]
 
 [tasks.codegen-check]
 description = "Check that the codegen is in sync with the output."

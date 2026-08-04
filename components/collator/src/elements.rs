@@ -18,7 +18,6 @@
 //! This module also declares various constants that are also used
 //! by the `comparison` module.
 
-use core::char::REPLACEMENT_CHARACTER;
 use icu_collections::char16trie::TrieResult;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_normalizer::provider::DecompositionData;
@@ -219,11 +218,11 @@ pub(crate) const FFFD_CE32: CollationElement32 = CollationElement32(FFFD_CE32_VA
 
 pub(crate) const EMPTY_U16: &ZeroSlice<u16> = zeroslice![];
 const SINGLE_REPLACEMENT_CHARACTER_U16: &ZeroSlice<u16> =
-    zeroslice!(u16; <u16 as AsULE>::ULE::from_unsigned; [REPLACEMENT_CHARACTER as u16]);
+    zeroslice!(u16; <u16 as AsULE>::ULE::from_unsigned; [char::REPLACEMENT_CHARACTER as u16]);
 
 pub(crate) const EMPTY_CHAR: &ZeroSlice<char> = zeroslice![];
 const SINGLE_REPLACEMENT_CHARACTER_CHAR: &ZeroSlice<char> =
-    zeroslice!(char; <char as AsULE>::ULE::from_aligned; [REPLACEMENT_CHARACTER]);
+    zeroslice!(char; <char as AsULE>::ULE::from_aligned; [char::REPLACEMENT_CHARACTER]);
 
 /// If `opt` is `Some`, unwrap it. If `None`, panic if debug assertions
 /// are enabled and return `default` if debug assertions are not enabled.
@@ -244,7 +243,7 @@ pub(crate) fn unwrap_or_gigo<T>(opt: Option<T>, default: T) -> T {
 /// Convert a `u32` _obtained from data provider data_ to `char`.
 #[inline(always)]
 pub(crate) fn char_from_u32(u: u32) -> char {
-    unwrap_or_gigo(core::char::from_u32(u), REPLACEMENT_CHARACTER)
+    unwrap_or_gigo(char::from_u32(u), char::REPLACEMENT_CHARACTER)
 }
 
 /// Convert a `u16` _obtained from data provider data_ to `char`.
@@ -1652,7 +1651,7 @@ where
                                     || {
                                         // GIGO case
                                         debug_assert!(false);
-                                        (REPLACEMENT_CHARACTER, EMPTY_U16)
+                                        (char::REPLACEMENT_CHARACTER, EMPTY_U16)
                                     },
                                     |(first, tail)| (char_from_u16(first), tail),
                                 );
@@ -1703,7 +1702,7 @@ where
                                 .unwrap_or_else(|| {
                                     // GIGO case
                                     debug_assert!(false);
-                                    (REPLACEMENT_CHARACTER, EMPTY_CHAR)
+                                    (char::REPLACEMENT_CHARACTER, EMPTY_CHAR)
                                 });
 
                             c = starter;
@@ -1798,7 +1797,7 @@ where
                         // Safety: HANGUL_T_BASE is 0x11A7, t is < HANGUL_T_COUNT = 28, so this is definitely
                         // in range for a char (≤ 0xD800)
                         CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(unsafe {
-                            core::char::from_u32_unchecked(HANGUL_T_BASE + t)
+                            char::from_u32_unchecked(HANGUL_T_BASE + t)
                         }),
                     );
                 } else {
@@ -1807,7 +1806,7 @@ where
                         // Safety: HANGUL_V_BASE is 0x1161, v is < HANGUL_N_COUNT = 588, so this is definitely
                         // in range for a char (≤ 0xD800)
                         CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(unsafe {
-                            core::char::from_u32_unchecked(HANGUL_V_BASE + v)
+                            char::from_u32_unchecked(HANGUL_V_BASE + v)
                         }),
                     );
                 }

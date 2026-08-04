@@ -184,7 +184,7 @@ impl<'a> Replaceable<'a> {
     /// # Safety
     /// The caller must ensure the visible portion of `content` is valid UTF-8.
     unsafe fn from_hide(content: Hide<'a>) -> Self {
-        debug_assert!(core::str::from_utf8(&content).is_ok());
+        debug_assert!(str::from_utf8(&content).is_ok());
         Self {
             content,
             // SAFETY: these uphold the invariants
@@ -201,9 +201,9 @@ impl<'a> Replaceable<'a> {
 
     /// Returns the full internal text as a `&str`.
     pub(crate) fn as_str(&self) -> &str {
-        debug_assert!(core::str::from_utf8(&self.content).is_ok());
+        debug_assert!(str::from_utf8(&self.content).is_ok());
         // SAFETY: Replaceable's invariant states that content is always valid UTF-8
-        unsafe { core::str::from_utf8_unchecked(&self.content) }
+        unsafe { str::from_utf8_unchecked(&self.content) }
     }
 
     /// Returns the current modifiable text as a `&str`.
@@ -768,7 +768,7 @@ impl<'a, 'b> Insertable<'a, 'b> {
 
     pub(crate) fn curr_replacement(&self) -> &str {
         // SAFETY: the invariant states that this part of the content is valid UTF-8
-        unsafe { core::str::from_utf8_unchecked(&self._rep.content[self.start..self.curr]) }
+        unsafe { str::from_utf8_unchecked(&self._rep.content[self.start..self.curr]) }
     }
 
     /// Will set the cursor to the current position of the replacement.

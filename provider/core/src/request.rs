@@ -324,7 +324,7 @@ impl DataMarkerAttributes {
         };
 
         // SAFETY: `validate` requires a UTF-8 subset
-        let s = unsafe { core::str::from_utf8_unchecked(code_units) };
+        let s = unsafe { str::from_utf8_unchecked(code_units) };
 
         // SAFETY: `Self` has the same layout as `str`
         Ok(unsafe { &*(s as *const str as *const Self) })

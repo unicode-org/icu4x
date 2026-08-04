@@ -22,8 +22,8 @@ impl DataProvider<PropertyScriptWithExtensionsV1> for SourceDataProvider {
         self.check_req::<PropertyScriptWithExtensionsV1>(req)?;
 
         self.validate_property_name(
-            core::str::from_utf8(Script::NAME).unwrap(),
-            core::str::from_utf8(Script::SHORT_NAME).unwrap(),
+            str::from_utf8(Script::NAME).unwrap(),
+            str::from_utf8(Script::SHORT_NAME).unwrap(),
         )?;
 
         #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
@@ -37,7 +37,7 @@ impl DataProvider<PropertyScriptWithExtensionsV1> for SourceDataProvider {
             let data = if let Some(t) = self
                 .rscd()?
                 .cpt_cache
-                .get(core::str::from_utf8(Script::SHORT_NAME).unwrap())
+                .get(str::from_utf8(Script::SHORT_NAME).unwrap())
                 .and_then(|t| t.downcast_ref::<ScriptWithExtensionsProperty>().cloned())
             {
                 t
@@ -114,7 +114,7 @@ impl DataProvider<PropertyScriptWithExtensionsV1> for SourceDataProvider {
                 let data = ScriptWithExtensionsProperty { trie, extensions };
 
                 self.rscd()?.cpt_cache.insert(
-                    core::str::from_utf8(Script::SHORT_NAME).unwrap(),
+                    str::from_utf8(Script::SHORT_NAME).unwrap(),
                     Box::new(data.clone()),
                 );
 
