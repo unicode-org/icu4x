@@ -19,12 +19,6 @@ class BidiDirection;
 namespace icu4x {
 namespace capi {
     struct BidiParagraph;
-
-
-    typedef struct DiplomatBidiParagraphView {
-      const BidiParagraph** data;
-      size_t len;
-    } DiplomatBidiParagraphView;
 } // namespace capi
 } // namespace
 

@@ -34,12 +34,6 @@ class TimeZoneVariant;
 namespace icu4x {
 namespace capi {
     struct TimeZoneInfo;
-
-
-    typedef struct DiplomatTimeZoneInfoView {
-      const TimeZoneInfo** data;
-      size_t len;
-    } DiplomatTimeZoneInfoView;
 } // namespace capi
 } // namespace
 

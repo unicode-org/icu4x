@@ -14,11 +14,6 @@
 typedef struct Date Date;
 
 
-typedef struct DiplomatDateView {
-  const Date** data;
-  size_t len;
-} DiplomatDateView;
-
 
 
 #endif // Date_D_H

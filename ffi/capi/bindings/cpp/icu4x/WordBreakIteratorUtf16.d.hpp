@@ -19,12 +19,6 @@ class SegmenterWordType;
 namespace icu4x {
 namespace capi {
     struct WordBreakIteratorUtf16;
-
-
-    typedef struct DiplomatWordBreakIteratorUtf16View {
-      const WordBreakIteratorUtf16** data;
-      size_t len;
-    } DiplomatWordBreakIteratorUtf16View;
 } // namespace capi
 } // namespace
 

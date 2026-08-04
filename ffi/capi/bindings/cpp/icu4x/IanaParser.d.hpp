@@ -27,12 +27,6 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct IanaParser;
-
-
-    typedef struct DiplomatIanaParserView {
-      const IanaParser** data;
-      size_t len;
-    } DiplomatIanaParserView;
 } // namespace capi
 } // namespace
 

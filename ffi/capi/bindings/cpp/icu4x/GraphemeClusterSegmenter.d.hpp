@@ -29,12 +29,6 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct GraphemeClusterSegmenter;
-
-
-    typedef struct DiplomatGraphemeClusterSegmenterView {
-      const GraphemeClusterSegmenter** data;
-      size_t len;
-    } DiplomatGraphemeClusterSegmenterView;
 } // namespace capi
 } // namespace
 

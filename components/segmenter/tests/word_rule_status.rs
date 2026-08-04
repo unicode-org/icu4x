@@ -11,8 +11,9 @@ fn rule_status() {
     for segmenter in [
         WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
         {
-            let mut s =
-                WordSegmenter::new_for_non_complex_scripts(WordBreakInvariantOptions::default());
+            let mut s = WordSegmenter::new_neo_for_non_complex_scripts(
+                WordBreakInvariantOptions::default(),
+            );
             s.load_auto();
             s
         },
@@ -54,8 +55,9 @@ fn rule_status_letter_eof() {
     for segmenter in [
         WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
         {
-            let mut s =
-                WordSegmenter::new_for_non_complex_scripts(WordBreakInvariantOptions::default());
+            let mut s = WordSegmenter::new_neo_for_non_complex_scripts(
+                WordBreakInvariantOptions::default(),
+            );
             s.load_auto();
             s
         },
@@ -85,8 +87,9 @@ fn rule_status_numeric_eof() {
     for segmenter in [
         WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
         {
-            let mut s =
-                WordSegmenter::new_for_non_complex_scripts(WordBreakInvariantOptions::default());
+            let mut s = WordSegmenter::new_neo_for_non_complex_scripts(
+                WordBreakInvariantOptions::default(),
+            );
             s.load_auto();
             s
         },
@@ -116,8 +119,9 @@ fn rule_status_th() {
     for segmenter in [
         WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
         {
-            let mut s =
-                WordSegmenter::new_for_non_complex_scripts(WordBreakInvariantOptions::default());
+            let mut s = WordSegmenter::new_neo_for_non_complex_scripts(
+                WordBreakInvariantOptions::default(),
+            );
             s.load_auto();
             s
         },

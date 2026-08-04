@@ -94,7 +94,7 @@ fn test_basic() {
     use icu::experimental::measure::provider::si_prefix::{Base, SiPrefix};
     use icu::experimental::measure::provider::single_unit::SingleUnit;
     use icu::experimental::units::provider::*;
-    use icu::locale::langid;
+    use icu::locale::data_locale;
     use icu_provider::prelude::*;
     use num_bigint::BigUint;
     use num_rational::Ratio;
@@ -105,7 +105,7 @@ fn test_basic() {
 
     let und: DataResponse<UnitsInfoV1> = provider
         .load(DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("und").into()).as_borrowed(),
+            id: DataIdentifierCow::from_locale(data_locale!("und")).as_borrowed(),
             ..Default::default()
         })
         .unwrap();

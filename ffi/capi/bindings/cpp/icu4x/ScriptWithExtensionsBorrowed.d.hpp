@@ -22,12 +22,6 @@ class ScriptExtensionsSet;
 namespace icu4x {
 namespace capi {
     struct ScriptWithExtensionsBorrowed;
-
-
-    typedef struct DiplomatScriptWithExtensionsBorrowedView {
-      const ScriptWithExtensionsBorrowed** data;
-      size_t len;
-    } DiplomatScriptWithExtensionsBorrowedView;
 } // namespace capi
 } // namespace
 

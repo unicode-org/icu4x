@@ -15,6 +15,7 @@ namespace capi { struct Locale; }
 class Locale;
 namespace capi { struct LocaleFallbackIterator; }
 class LocaleFallbackIterator;
+struct LocaleFallbackConfig;
 } // namespace icu4x
 
 
@@ -22,12 +23,6 @@ class LocaleFallbackIterator;
 namespace icu4x {
 namespace capi {
     struct LocaleFallbackerWithConfig;
-
-
-    typedef struct DiplomatLocaleFallbackerWithConfigView {
-      const LocaleFallbackerWithConfig** data;
-      size_t len;
-    } DiplomatLocaleFallbackerWithConfigView;
 } // namespace capi
 } // namespace
 
@@ -39,6 +34,13 @@ namespace icu4x {
  */
 class LocaleFallbackerWithConfig {
 public:
+
+  /**
+   * Returns the associated config.
+   *
+   * See the [Rust documentation for `config`](https://docs.rs/icu/2.2.0/icu/locale/fallback/struct.LocaleFallbackerWithConfig.html#method.config) for more information.
+   */
+  inline icu4x::LocaleFallbackConfig config() const;
 
   /**
    * Creates an iterator from a locale with each step of fallback.

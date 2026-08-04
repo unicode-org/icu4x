@@ -843,11 +843,11 @@ impl_pattern_datagen!(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locale_core::langid;
+    use icu_locale_core::data_locale;
     #[test]
     fn test_basic_symbols() {
         let provider = SourceDataProvider::new_testing();
-        let dl: DataLocale = langid!("cs").into();
+        let dl: DataLocale = data_locale!("cs");
         let data = provider
             .get_dates_resource(&dl, Some(DatagenCalendar::Gregorian))
             .unwrap();

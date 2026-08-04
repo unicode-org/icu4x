@@ -6,7 +6,6 @@ use crate::{IterableDataProviderCached, SourceDataProvider};
 use icu::calendar::preferences::CalendarAlgorithm;
 use icu::calendar::provider::{CalendarPreference, CalendarPreferredV1};
 use icu::locale::{
-    LanguageIdentifier,
     extensions::unicode::Value,
     preferences::extensions::unicode::keywords::HijriCalendarAlgorithm,
     subtags::{Language, Region, region},
@@ -83,9 +82,11 @@ impl IterableDataProviderCached<CalendarPreferredV1> for SourceDataProvider {
             .calendar_preference_data
             .keys()
             .map(|&region| {
-                DataIdentifierCow::from_locale(
-                    LanguageIdentifier::from((Language::UNKNOWN, None, Some(region))).into(),
-                )
+                DataIdentifierCow::from_locale(DataLocale::from((
+                    Language::UNKNOWN,
+                    None,
+                    Some(region),
+                )))
             })
             .chain([Default::default()])
             .collect())

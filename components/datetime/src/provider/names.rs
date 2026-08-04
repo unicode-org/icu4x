@@ -831,7 +831,7 @@ fn test_dayperiod_names() {
         DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("5"),
-                &icu_locale_core::langid!("zh").into(),
+                &icu::locale::data_locale!("zh"),
             ),
             ..Default::default()
         },
@@ -852,7 +852,7 @@ fn test_dayperiod_names() {
         DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("5"),
-                &icu_locale_core::langid!("zh-Hant").into(),
+                &icu::locale::data_locale!("zh-Hant"),
             ),
             ..Default::default()
         },
