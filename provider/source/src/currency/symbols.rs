@@ -146,20 +146,20 @@ fn test_symbols() {
     );
 
     assert_eq!(
-        load(AR_EG, EGP, CurrencySymbolsV1::SHORT).unwrap().get(),
+        load(AR_EG, egp, CurrencySymbolsV1::SHORT).unwrap().get(),
         &CurrencySymbol::new("ج.م.\u{200f}", true, false)
     );
     assert_eq!(
-        load(AR_EG, EGP, CurrencySymbolsV1::NARROW).unwrap().get(),
+        load(AR_EG, egp, CurrencySymbolsV1::NARROW).unwrap().get(),
         &CurrencySymbol::new("E£", true, false)
     );
 
     assert_eq!(
-        load(AR_EG, USD, CurrencySymbolsV1::SHORT).unwrap().get(),
+        load(AR_EG, usd, CurrencySymbolsV1::SHORT).unwrap().get(),
         &CurrencySymbol::new("US$", true, false)
     );
     assert_eq!(
-        load(AR_EG, USD, CurrencySymbolsV1::NARROW).unwrap().get(),
+        load(AR_EG, usd, CurrencySymbolsV1::NARROW).unwrap().get(),
         &CurrencySymbol::new("US$", true, false)
     );
 }
