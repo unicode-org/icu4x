@@ -27,7 +27,7 @@ fi
 cargo \
     $( ([[ $TYPE == "static" ]] || [[ $NO_STD == 1 ]]) && echo "+$NIGHTLY" ) \
     "rustc" \
-    "--manifest-path=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )/Cargo.toml" \
+    "-m=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )/Cargo.toml" \
     "--crate-type=$( [[ "$TYPE" == "static" ]] && echo "staticlib" || echo "cdylib" )" \
     "--release" \
     "--config=profile.release.panic=\"abort\"" \
