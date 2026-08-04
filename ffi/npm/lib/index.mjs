@@ -86,9 +86,17 @@ export { DateFormatter } from "./DateFormatter.mjs"
 
 export { DateFormatterGregorian } from "./DateFormatterGregorian.mjs"
 
+export { DateRangeFormatter } from "./DateRangeFormatter.mjs"
+
+export { DateRangeFormatterGregorian } from "./DateRangeFormatterGregorian.mjs"
+
 export { DateTimeFormatter } from "./DateTimeFormatter.mjs"
 
 export { DateTimeFormatterGregorian } from "./DateTimeFormatterGregorian.mjs"
+
+export { DateTimeRangeFormatter } from "./DateTimeRangeFormatter.mjs"
+
+export { DateTimeRangeFormatterGregorian } from "./DateTimeRangeFormatterGregorian.mjs"
 
 export { DecimalFormatter } from "./DecimalFormatter.mjs"
 
@@ -203,6 +211,8 @@ export { WordSegmenter } from "./WordSegmenter.mjs"
 export { Time } from "./Time.mjs"
 
 export { TimeFormatter } from "./TimeFormatter.mjs"
+
+export { TimeRangeFormatter } from "./TimeRangeFormatter.mjs"
 
 export { TimeZone } from "./TimeZone.mjs"
 
