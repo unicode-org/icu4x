@@ -32,9 +32,12 @@ impl databake::Bake for CurrencyCode {
         env.insert("icu_experimental");
         let string = self.as_str();
         databake::quote! {
-            icu_experimental::dimension::currency::CurrencyCode::from_tinystr_unvalidated(
+            match icu_experimental::dimension::currency::CurrencyCode::try_from_tinystr(
                 tinystr::tinystr!(3, #string)
-            )
+            ) {
+                Ok(c) => c,
+                Err(_) => unreachable!(),
+            }
         }
     }
 }
@@ -119,38 +122,6 @@ impl CurrencyCode {
         } else {
             Err(CurrencyCodeError)
         }
-    }
-
-    /// Creates a [`CurrencyCode`] from a [`TinyAsciiStr<3>`] without returning a `Result`.
-    ///
-    /// # Panics
-    ///
-    /// Panics if `s` is not exactly 3 uppercase ASCII letters (`A`-`Z`).
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_experimental::dimension::currency::CurrencyCode;
-    /// use tinystr::tinystr;
-    ///
-    /// let code = CurrencyCode::from_tinystr_unvalidated(tinystr!(3, "USD"));
-    /// assert_eq!(code.as_str(), "USD");
-    /// ```
-    ///
-    /// ```should_panic
-    /// use icu_experimental::dimension::currency::CurrencyCode;
-    /// use tinystr::tinystr;
-    ///
-    /// // Panics because "usd" is not 3 uppercase ASCII letters:
-    /// let _ = CurrencyCode::from_tinystr_unvalidated(tinystr!(3, "usd"));
-    /// ```
-    #[inline]
-    pub const fn from_tinystr_unvalidated(s: TinyAsciiStr<3>) -> Self {
-        assert!(
-            s.len() == 3 && s.is_ascii_alphabetic_uppercase(),
-            "Currency code must be 3 uppercase ASCII letters (A-Z)"
-        );
-        Self(s)
     }
 
     /// Returns the currency code as a string slice.
@@ -313,11 +284,5 @@ mod tests {
                 );
             }
         }
-    }
-
-    #[test]
-    #[should_panic(expected = "Currency code must be 3 uppercase ASCII letters (A-Z)")]
-    fn test_from_tinystr_unvalidated_panics_on_bogus() {
-        let _ = CurrencyCode::from_tinystr_unvalidated(tinystr!(3, "usd"));
     }
 }

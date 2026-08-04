@@ -106,8 +106,8 @@ fn test_symbols() {
     use icu::locale::{DataLocale, data_locale};
     use tinystr::{TinyAsciiStr, tinystr};
 
-    const USD: CurrencyCode = CurrencyCode::from_tinystr_unvalidated(tinystr!(3, "USD"));
-    const EGP: CurrencyCode = CurrencyCode::from_tinystr_unvalidated(tinystr!(3, "EGP"));
+    let usd = CurrencyCode::try_from_tinystr(tinystr!(3, "USD")).unwrap();
+    let egp = CurrencyCode::try_from_tinystr(tinystr!(3, "EGP")).unwrap();
     const EN: DataLocale = data_locale!("en");
     const AR_EG: DataLocale = data_locale!("ar-EG");
 
@@ -131,17 +131,17 @@ fn test_symbols() {
     };
 
     assert_eq!(
-        load(EN, USD, CurrencySymbolsV1::SHORT).unwrap().get(),
+        load(EN, usd, CurrencySymbolsV1::SHORT).unwrap().get(),
         &CurrencySymbol::new("$", false, false)
     );
     assert_eq!(
-        load(EN, USD, CurrencySymbolsV1::NARROW).unwrap().get(),
+        load(EN, usd, CurrencySymbolsV1::NARROW).unwrap().get(),
         &CurrencySymbol::new("$", false, false)
     );
 
-    assert_eq!(load(EN, EGP, CurrencySymbolsV1::SHORT), None);
+    assert_eq!(load(EN, egp, CurrencySymbolsV1::SHORT), None);
     assert_eq!(
-        load(EN, EGP, CurrencySymbolsV1::NARROW).unwrap().get(),
+        load(EN, egp, CurrencySymbolsV1::NARROW).unwrap().get(),
         &CurrencySymbol::new("E£", true, false)
     );
 
