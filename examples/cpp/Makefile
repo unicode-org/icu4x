@@ -18,7 +18,7 @@ OUT_FILES = $(subst .cpp,,$(TEST_FILES))
 $(ALL_HEADERS):
 
 target/debug/libicu_capi.a: FORCE
-	cargo rustc -p icu_capi --features icu_capi/unstable --crate-type staticlib
+	cargo rustc -p icu_capi --crate-type staticlib --features icu_capi/unstable
 
 %: %.cpp target/debug/libicu_capi.a $(ALL_HEADERS)
 	$(CXX) -std=c++17 -L target/debug -I ${HEADERS} $@.cpp -licu_capi -lm -o $@
