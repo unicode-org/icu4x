@@ -244,7 +244,7 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::locale::Locale::normalizing_eq, FnInStruct)]
         pub fn normalizing_eq(&self, other: &DiplomatStr) -> bool {
-            if let Ok(other) = core::str::from_utf8(other) {
+            if let Ok(other) = str::from_utf8(other) {
                 self.0.normalizing_eq(other)
             } else {
                 // invalid UTF8 won't be allowed in locales anyway

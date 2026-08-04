@@ -414,7 +414,7 @@ impl CodePointInversionListBuilder {
     ///     0x0,
     ///     0x41,
     ///     0x46,
-    ///     (std::char::MAX as u32) + 1,
+    ///     (char::MAX as u32) + 1,
     /// ])
     /// .unwrap();
     /// builder.add_set(&set);
@@ -532,7 +532,6 @@ impl CodePointInversionListBuilder {
 #[cfg(test)]
 mod tests {
     use super::{CodePointInversionList, CodePointInversionListBuilder};
-    use core::char;
 
     fn generate_tester(ex: &[u32]) -> CodePointInversionListBuilder {
         let check = CodePointInversionList::try_from_u32_inversion_list_slice(ex).unwrap();

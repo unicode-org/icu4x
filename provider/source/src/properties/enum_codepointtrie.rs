@@ -19,8 +19,8 @@ impl SourceDataProvider {
         &self,
         short_name_to_t: HashMap<&'static str, T>,
     ) -> Result<CodePointTrie<'static, T>, DataError> {
-        let name = core::str::from_utf8(T::NAME).unwrap();
-        let short_name = core::str::from_utf8(T::SHORT_NAME).unwrap();
+        let name = str::from_utf8(T::NAME).unwrap();
+        let short_name = str::from_utf8(T::SHORT_NAME).unwrap();
 
         self.validate_property_name(name, short_name)?;
 
@@ -283,14 +283,14 @@ macro_rules! expand {
                     .with_req($marker::INFO, req));
                     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
                     {
-                        let trie = if let Some(t) = self.rscd()?.cpt_cache.get(core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()).
+                        let trie = if let Some(t) = self.rscd()?.cpt_cache.get(str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()).
                             and_then(|t| t.downcast_ref::<CodePointTrie<'static, $prop>>().cloned()) {
                             t
                         } else {
                             let trie = self.build_enumerated_prop::<$prop>(<$prop>::names().collect())?;
 
                             self.rscd()?.cpt_cache
-                                .insert(core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap(), Box::new(trie.clone()));
+                                .insert(str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap(), Box::new(trie.clone()));
 
                             trie
                         };
@@ -310,13 +310,13 @@ macro_rules! expand {
 
                     let short_name_to_t = <$prop>::names().collect::<HashMap<_, _>>();
 
-                    let names = self.enumerated_prop_names(core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(), core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap())?.0;
+                    let names = self.enumerated_prop_names(str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(), str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap())?.0;
 
                     for (name, _) in &short_name_to_t {
                         if !names.contains_key(name) && <$prop as EnumeratedProperty>::SHORT_NAME != icu::properties::props::Script::SHORT_NAME {
                             log::warn!(
                                 "UCD does not contain {} {name:?}",
-                                core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap()
+                                str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap()
                             );
                         }
                     }
@@ -359,7 +359,7 @@ macro_rules! expand {
                     self.check_req::<$long_marker>(req)?;
                     let short_name_to_t = <$prop>::names().collect::<HashMap<_, _>>();
 
-                    let names = self.enumerated_prop_names(core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(), core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap())?.0;
+                    let names = self.enumerated_prop_names(str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(), str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap())?.0;
 
                     let names = short_name_to_t.iter().map(|(&short_name, &t)| (t, short_name))
                         .chain(names
@@ -374,7 +374,7 @@ macro_rules! expand {
                                     }
                                     log::error!(
                                         "Missing Rust value for {} {name:?} {short_name:?}",
-                                        core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap()
+                                        str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap()
                                     );
                                     return None;
                                 };

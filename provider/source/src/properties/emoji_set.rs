@@ -71,8 +71,8 @@ macro_rules! expand {
                 ) -> Result<DataResponse<$marker>, DataError> {
                     self.check_req::<$marker>(req)?;
                     let data = self.get_unicodeset_property(
-                        core::str::from_utf8(<$prop as EmojiSet>::NAME).unwrap(),
-                        core::str::from_utf8(<$prop as EmojiSet>::SHORT_NAME).unwrap(),
+                        str::from_utf8(<$prop as EmojiSet>::NAME).unwrap(),
+                        str::from_utf8(<$prop as EmojiSet>::SHORT_NAME).unwrap(),
                     )?;
 
                     Ok(DataResponse {
