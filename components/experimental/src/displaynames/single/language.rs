@@ -13,7 +13,7 @@ use crate::displaynames::provider::{
     LocaleNamesVariantMediumHeavyV1, MenuNamePartsULE,
 };
 use crate::displaynames::single::{
-    RegionDisplayNameOwned, ScriptDisplayNameOwned, VariantDisplayNameOwned, load_one,
+    RegionDisplayName, ScriptDisplayName, VariantDisplayName, load_one,
 };
 use crate::displaynames::{DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions};
 use crate::size_test_macro::size_test;
@@ -49,7 +49,7 @@ type MenuNamePartsMarker = ErasedMarker<VarZeroCow<'static, MenuNamePartsULE>>;
 type StringMarker = ErasedMarker<VarZeroCow<'static, str>>;
 
 size_test!(
-    LanguageIdentifierDisplayNameOwned,
+    LanguageIdentifierDisplayName,
     language_identifier_display_name_owned_size,
     192
 );
@@ -120,14 +120,14 @@ macro_rules! table_row {
 ///
 /// ```
 /// use icu::experimental::displaynames::{
-///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayNameOwned,
+///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayName,
 /// };
 /// use icu::locale::{locale, langid};
 /// use writeable::assert_try_writeable_eq;
 ///
 /// let prefs = DisplayNamesPreferences::from(locale!("en"));
 /// let options = LanguageIdentifierDisplayNameOptions::default();
-/// let display_name = LanguageIdentifierDisplayNameOwned::try_new_light(
+/// let display_name = LanguageIdentifierDisplayName::try_new_light(
 ///     prefs,
 ///     langid!("fr-CA"),
 ///     options,
@@ -142,7 +142,7 @@ macro_rules! table_row {
 /// ```
 /// use icu::experimental::displaynames::{
 ///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions,
-///     single::LanguageIdentifierDisplayNameOwned, single::LanguageIdentifierNameFallbackError,
+///     single::LanguageIdentifierDisplayName, single::LanguageIdentifierNameFallbackError,
 /// };
 /// use icu::locale::{locale, langid};
 /// use writeable::{Part, TryWriteable, assert_try_writeable_parts_eq};
@@ -153,7 +153,7 @@ macro_rules! table_row {
 /// // "it-Qabc-150" has known language "it" ("Italian") and known region "150" ("Europe"),
 /// // but unknown script "Qabc".
 /// let lang_id = langid!("it-Qabc-150");
-/// let display_name = LanguageIdentifierDisplayNameOwned::try_new_light(
+/// let display_name = LanguageIdentifierDisplayName::try_new_light(
 ///     prefs,
 ///     lang_id,
 ///     options,
@@ -176,7 +176,7 @@ macro_rules! table_row {
 /// ```
 #[doc = language_identifier_display_name_owned_size!()]
 #[derive(Debug)]
-pub struct LanguageIdentifierDisplayNameOwned {
+pub struct LanguageIdentifierDisplayName {
     /// Either the language display name or the subtag as fallback
     language_payload: DataPayloadOr<ErasedMarker<MenuNamePartsOrString<'static>>, Language>,
     /// All other fields (shared between Standard and Menu)
@@ -304,7 +304,7 @@ macro_rules! try_load_dialect_name {
     }};
 }
 
-impl LanguageIdentifierDisplayNameOwned {
+impl LanguageIdentifierDisplayName {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the language display name for a given language identifier and locale using compiled data.
@@ -386,13 +386,13 @@ impl LanguageIdentifierDisplayNameOwned {
         /// # Examples
         ///
         /// ```
-        /// use icu::experimental::displaynames::single::LanguageIdentifierDisplayNameOwned;
+        /// use icu::experimental::displaynames::single::LanguageIdentifierDisplayName;
         /// use icu::experimental::displaynames::single::LanguageIdentifierNameFallbackError;
         /// use icu::locale::{langid, locale};
         /// use writeable::assert_try_writeable_eq;
         ///
         /// // French contains its own translation in French...
-        /// let fr_fr = LanguageIdentifierDisplayNameOwned::try_new_tiny(
+        /// let fr_fr = LanguageIdentifierDisplayName::try_new_tiny(
         ///     locale!("fr").into(),
         ///     langid!("fr"),
         ///     Default::default()
@@ -404,7 +404,7 @@ impl LanguageIdentifierDisplayNameOwned {
         /// );
         ///
         /// // ...but not a translation for German.
-        /// let fr_de = LanguageIdentifierDisplayNameOwned::try_new_tiny(
+        /// let fr_de = LanguageIdentifierDisplayName::try_new_tiny(
         ///     locale!("fr").into(),
         ///     langid!("de"),
         ///     Default::default()
@@ -484,7 +484,7 @@ impl LanguageIdentifierDisplayNameOwned {
         ///
         /// ```
         /// use icu::experimental::displaynames::{
-        ///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayNameOwned,
+        ///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayName,
         /// };
         /// use icu::locale::{locale, langid};
         /// use writeable::assert_try_writeable_eq;
@@ -493,7 +493,7 @@ impl LanguageIdentifierDisplayNameOwned {
         /// let options = LanguageIdentifierDisplayNameOptions::default();
         ///
         /// // Default (Medium) length format:
-        /// let display_name_medium = LanguageIdentifierDisplayNameOwned::try_new_light(
+        /// let display_name_medium = LanguageIdentifierDisplayName::try_new_light(
         ///     prefs,
         ///     langid!("en-US"),
         ///     options,
@@ -506,7 +506,7 @@ impl LanguageIdentifierDisplayNameOwned {
         /// );
         ///
         /// // Short length format uses shorter subtag/qualifier names when available:
-        /// let display_name_short = LanguageIdentifierDisplayNameOwned::try_new_short_light(
+        /// let display_name_short = LanguageIdentifierDisplayName::try_new_short_light(
         ///     prefs,
         ///     langid!("en-US"),
         ///     options,
@@ -608,7 +608,7 @@ impl LanguageIdentifierDisplayNameOwned {
         ///
         /// ```
         /// use icu::experimental::displaynames::{
-        ///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayNameOwned,
+        ///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayName,
         /// };
         /// use icu::locale::{locale, langid};
         /// use writeable::assert_try_writeable_eq;
@@ -617,7 +617,7 @@ impl LanguageIdentifierDisplayNameOwned {
         /// let options = LanguageIdentifierDisplayNameOptions::default();
         ///
         /// // Default (Medium) length format:
-        /// let display_name_medium = LanguageIdentifierDisplayNameOwned::try_new_light(
+        /// let display_name_medium = LanguageIdentifierDisplayName::try_new_light(
         ///     prefs,
         ///     langid!("zh"),
         ///     options,
@@ -630,7 +630,7 @@ impl LanguageIdentifierDisplayNameOwned {
         /// );
         ///
         /// // Long length format uses longer subtag names when available:
-        /// let display_name_long = LanguageIdentifierDisplayNameOwned::try_new_long_heavy(
+        /// let display_name_long = LanguageIdentifierDisplayName::try_new_long_heavy(
         ///     prefs,
         ///     langid!("zh"),
         ///     options,
@@ -728,14 +728,14 @@ impl LanguageIdentifierDisplayNameOwned {
         ///
         /// ```
         /// use icu::experimental::displaynames::{
-        ///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayNameOwned,
+        ///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayName,
         /// };
         /// use icu::locale::{locale, langid};
         /// use writeable::assert_try_writeable_eq;
         ///
         /// let prefs = DisplayNamesPreferences::from(locale!("en"));
         /// let options = LanguageIdentifierDisplayNameOptions::default();
-        /// let display_name = LanguageIdentifierDisplayNameOwned::try_new_menu_light(
+        /// let display_name = LanguageIdentifierDisplayName::try_new_menu_light(
         ///     prefs,
         ///     langid!("fr-CA"),
         ///     options,
@@ -817,14 +817,14 @@ impl LanguageIdentifierDisplayNameOwned {
         ///
         /// ```
         /// use icu::experimental::displaynames::{
-        ///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayNameOwned,
+        ///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayName,
         /// };
         /// use icu::locale::{locale, langid};
         /// use writeable::assert_try_writeable_eq;
         ///
         /// let prefs = DisplayNamesPreferences::from(locale!("en"));
         /// let options = LanguageIdentifierDisplayNameOptions::default();
-        /// let display_name = LanguageIdentifierDisplayNameOwned::try_new_short_menu_light(
+        /// let display_name = LanguageIdentifierDisplayName::try_new_short_menu_light(
         ///     prefs,
         ///     langid!("en-US"),
         ///     options,
@@ -1222,14 +1222,14 @@ impl LanguageIdentifierDisplayNameOwned {
         ///
         /// ```
         /// use icu::experimental::displaynames::{
-        ///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayNameOwned,
+        ///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayName,
         /// };
         /// use icu::locale::{locale, langid};
         /// use writeable::assert_try_writeable_eq;
         ///
         /// let prefs = DisplayNamesPreferences::from(locale!("en"));
         /// let options = LanguageIdentifierDisplayNameOptions::default();
-        /// let display_name = LanguageIdentifierDisplayNameOwned::try_new_menu_heavy(
+        /// let display_name = LanguageIdentifierDisplayName::try_new_menu_heavy(
         ///     prefs,
         ///     langid!("en-US"),
         ///     options,
@@ -1331,14 +1331,14 @@ impl LanguageIdentifierDisplayNameOwned {
         ///
         /// ```
         /// use icu::experimental::displaynames::{
-        ///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayNameOwned,
+        ///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayName,
         /// };
         /// use icu::locale::{locale, langid};
         /// use writeable::assert_try_writeable_eq;
         ///
         /// let prefs = DisplayNamesPreferences::from(locale!("en"));
         /// let options = LanguageIdentifierDisplayNameOptions::default();
-        /// let display_name = LanguageIdentifierDisplayNameOwned::try_new_short_menu_heavy(
+        /// let display_name = LanguageIdentifierDisplayName::try_new_short_menu_heavy(
         ///     prefs,
         ///     langid!("en-US"),
         ///     options,
@@ -1461,9 +1461,9 @@ impl QualifiersOwned {
     ) -> Result<Self, DataError>
     where
         D: ?Sized + DataProvider<LocaleNamesEssentialsV1>,
-        FS: Fn(&D, DisplayNamesPreferences, Script) -> Result<ScriptDisplayNameOwned, DataError>,
-        FR: Fn(&D, DisplayNamesPreferences, Region) -> Result<RegionDisplayNameOwned, DataError>,
-        FV: Fn(&D, DisplayNamesPreferences, Variant) -> Result<VariantDisplayNameOwned, DataError>,
+        FS: Fn(&D, DisplayNamesPreferences, Script) -> Result<ScriptDisplayName, DataError>,
+        FR: Fn(&D, DisplayNamesPreferences, Region) -> Result<RegionDisplayName, DataError>,
+        FV: Fn(&D, DisplayNamesPreferences, Variant) -> Result<VariantDisplayName, DataError>,
     {
         // Step 2: Load script name (if present in subject)
         let script_payload = if let Some(script) = subject.script {
@@ -1557,9 +1557,9 @@ impl QualifiersOwned {
             provider,
             prefs,
             subject,
-            ScriptDisplayNameOwned::try_new_light_unstable,
-            RegionDisplayNameOwned::try_new_light_unstable,
-            VariantDisplayNameOwned::try_new_heavy_unstable,
+            ScriptDisplayName::try_new_light_unstable,
+            RegionDisplayName::try_new_light_unstable,
+            VariantDisplayName::try_new_heavy_unstable,
         )
     }
 
@@ -1579,9 +1579,9 @@ impl QualifiersOwned {
             provider,
             prefs,
             subject,
-            ScriptDisplayNameOwned::try_new_tiny_unstable,
-            RegionDisplayNameOwned::try_new_tiny_unstable,
-            VariantDisplayNameOwned::try_new_heavy_unstable,
+            ScriptDisplayName::try_new_tiny_unstable,
+            RegionDisplayName::try_new_tiny_unstable,
+            VariantDisplayName::try_new_heavy_unstable,
         )
     }
 
@@ -1605,9 +1605,9 @@ impl QualifiersOwned {
             provider,
             prefs,
             subject,
-            ScriptDisplayNameOwned::try_new_light_unstable,
-            RegionDisplayNameOwned::try_new_short_light_unstable,
-            VariantDisplayNameOwned::try_new_heavy_unstable,
+            ScriptDisplayName::try_new_light_unstable,
+            RegionDisplayName::try_new_short_light_unstable,
+            VariantDisplayName::try_new_heavy_unstable,
         )
     }
 
@@ -1630,9 +1630,9 @@ impl QualifiersOwned {
             provider,
             prefs,
             subject,
-            ScriptDisplayNameOwned::try_new_heavy_unstable,
-            RegionDisplayNameOwned::try_new_light_unstable,
-            VariantDisplayNameOwned::try_new_heavy_unstable,
+            ScriptDisplayName::try_new_heavy_unstable,
+            RegionDisplayName::try_new_light_unstable,
+            VariantDisplayName::try_new_heavy_unstable,
         )
     }
 
@@ -1658,17 +1658,17 @@ impl QualifiersOwned {
             provider,
             prefs,
             subject,
-            ScriptDisplayNameOwned::try_new_short_heavy_unstable,
-            RegionDisplayNameOwned::try_new_short_light_unstable,
-            VariantDisplayNameOwned::try_new_heavy_unstable,
+            ScriptDisplayName::try_new_short_heavy_unstable,
+            RegionDisplayName::try_new_short_light_unstable,
+            VariantDisplayName::try_new_heavy_unstable,
         )
     }
 }
 
-impl LanguageIdentifierDisplayNameOwned {
+impl LanguageIdentifierDisplayName {
     /// Returns a borrowed version of this display name
     /// suitable for writing out to a string.
-    pub fn as_borrowed(&self) -> LanguageIdentifierDisplayName<'_> {
+    pub fn as_borrowed(&self) -> LanguageIdentifierDisplayNameBorrowed<'_> {
         let mut qualifiers = self.qualifiers.as_borrowed();
         let base_name = match self.language_payload.get() {
             Ok(MenuNamePartsOrString::String(string)) => NameOrFallback(Ok(string.as_ref())),
@@ -1681,7 +1681,7 @@ impl LanguageIdentifierDisplayNameOwned {
             Err(lang) => NameOrFallback(Err(lang.as_str())),
         };
 
-        LanguageIdentifierDisplayName(LossyWrap(LanguageIdentifierDisplayNameInner {
+        LanguageIdentifierDisplayNameBorrowed(LossyWrap(LanguageIdentifierDisplayNameInner {
             base_name,
             qualifiers,
         }))
@@ -1738,9 +1738,9 @@ impl BorrowedVariants<'_> {
 
 /// A localized display name for a language identifier.
 ///
-/// See [`LanguageIdentifierDisplayNameOwned`].
+/// See [`LanguageIdentifierDisplayName`].
 #[derive(Debug, Clone, Copy)]
-pub struct LanguageIdentifierDisplayName<'a>(
+pub struct LanguageIdentifierDisplayNameBorrowed<'a>(
     pub(crate) LossyWrap<LanguageIdentifierDisplayNameInner<'a>>,
 );
 
@@ -1763,14 +1763,14 @@ pub(crate) struct LanguageIdentifierDisplayNameInner<'a> {
 }
 
 writeable::impl_try_writeable_delegate!(
-    LanguageIdentifierDisplayName<'_>,
+    LanguageIdentifierDisplayNameBorrowed<'_>,
     |&self| &self.0.0,
     Error = LanguageIdentifierNameFallbackError
 );
 
-writeable::impl_writeable_delegate!(LanguageIdentifierDisplayName<'_>, |&self| &self.0);
+writeable::impl_writeable_delegate!(LanguageIdentifierDisplayNameBorrowed<'_>, |&self| &self.0);
 
-writeable::impl_display_with_writeable!(LanguageIdentifierDisplayName<'_>);
+writeable::impl_display_with_writeable!(LanguageIdentifierDisplayNameBorrowed<'_>);
 
 #[derive(Debug, Copy, Clone)]
 struct QualifiersBorrowed<'a> {
@@ -1950,14 +1950,15 @@ mod tests {
         macro_rules! check_row {
             ($constructor:ident) => {
                 let items = inputs.iter().map(|id| {
-                    LanguageIdentifierDisplayNameOwned::$constructor(prefs_en, id.clone(), options)
-                        .map(|display_name| {
+                    LanguageIdentifierDisplayName::$constructor(prefs_en, id.clone(), options).map(
+                        |display_name| {
                             display_name
                                 .as_borrowed()
                                 .try_write_to_string()
                                 .map(|s| s.into_owned())
                                 .map_err(|e| e.0)
-                        })
+                        },
+                    )
                 });
                 assert_eq!(
                     super::super::format_table_row(stringify!($constructor), items),
