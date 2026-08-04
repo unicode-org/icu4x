@@ -111,6 +111,7 @@ impl CurrencyCode {
     /// assert!(CurrencyCode::try_from_tinystr(tinystr!(3, "USD")).is_ok());
     /// assert!(CurrencyCode::try_from_tinystr(tinystr!(3, "usd")).is_err());
     /// assert!(CurrencyCode::try_from_tinystr(tinystr!(3, "123")).is_err());
+    /// assert!(CurrencyCode::try_from_tinystr(tinystr!(3, "US")).is_err());
     /// ```
     pub const fn try_from_tinystr(s: TinyAsciiStr<3>) -> Result<Self, CurrencyCodeError> {
         if s.len() == 3 && s.is_ascii_alphabetic_uppercase() {
@@ -120,14 +121,27 @@ impl CurrencyCode {
         }
     }
 
-    /// Creates a [`CurrencyCode`] from a [`TinyAsciiStr<3>`] without validation.
+    /// Creates a [`CurrencyCode`] from a [`TinyAsciiStr<3>`] without returning a `Result`.
     ///
-    /// # Safety / Invariant
+    /// # Panics
     ///
-    /// The caller must ensure that `s` contains 3 uppercase ASCII letters (`A`-`Z`).
+    /// Panics if `s` is not exactly 3 uppercase ASCII letters (`A`-`Z`).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_experimental::dimension::currency::CurrencyCode;
+    /// use tinystr::tinystr;
+    ///
+    /// let code = CurrencyCode::from_tinystr_unvalidated(tinystr!(3, "USD"));
+    /// assert_eq!(code.as_str(), "USD");
+    /// ```
     #[inline]
     pub const fn from_tinystr_unvalidated(s: TinyAsciiStr<3>) -> Self {
-        debug_assert!(s.len() == 3 && s.is_ascii_alphabetic_uppercase());
+        assert!(
+            s.len() == 3 && s.is_ascii_alphabetic_uppercase(),
+            "Currency code must be 3 uppercase ASCII letters (A-Z)"
+        );
         Self(s)
     }
 
@@ -274,7 +288,7 @@ mod tests {
         for code in invalid {
             assert!(
                 CurrencyCode::try_from_str(code).is_err(),
-                "Expected error for: {code}"
+                "Expected error for try_from_str: {code}"
             );
             assert!(
                 code.parse::<CurrencyCode>().is_err(),
@@ -282,13 +296,20 @@ mod tests {
             );
             assert!(
                 CurrencyCode::try_from_utf8(code.as_bytes()).is_err(),
-                "Expected error for utf8: {code}"
+                "Expected error for try_from_utf8: {code}"
             );
+            if let Ok(ts) = TinyAsciiStr::<3>::try_from_utf8(code.as_bytes()) {
+                assert!(
+                    CurrencyCode::try_from_tinystr(ts).is_err(),
+                    "Expected error for try_from_tinystr: {code}"
+                );
+            }
         }
+    }
 
-        assert!(CurrencyCode::try_from_tinystr(tinystr!(3, "usd")).is_err());
-        assert!(CurrencyCode::try_from_tinystr(tinystr!(3, "US")).is_err());
-        assert!(CurrencyCode::try_from_tinystr(tinystr!(3, "123")).is_err());
-        assert!(CurrencyCode::try_from_tinystr(tinystr!(3, "U12")).is_err());
+    #[test]
+    #[should_panic(expected = "Currency code must be 3 uppercase ASCII letters (A-Z)")]
+    fn test_from_tinystr_unvalidated_panics_on_bogus() {
+        let _ = CurrencyCode::from_tinystr_unvalidated(tinystr!(3, "usd"));
     }
 }
