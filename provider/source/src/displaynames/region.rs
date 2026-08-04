@@ -151,7 +151,7 @@ mod tests {
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("AF").unwrap(),
-                    &langid!("en").into(),
+                    &data_locale!("en"),
                 ),
                 ..Default::default()
             })
@@ -187,7 +187,7 @@ mod tests {
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("US").unwrap(),
-                    &langid!("en").into(),
+                    &data_locale!("en"),
                 ),
                 ..Default::default()
             })
@@ -205,7 +205,7 @@ mod tests {
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("GB").unwrap(),
-                    &langid!("en").into(),
+                    &data_locale!("en"),
                 ),
                 ..Default::default()
             })

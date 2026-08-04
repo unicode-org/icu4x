@@ -170,7 +170,7 @@ mod tests {
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("Latn").unwrap(),
-                    &langid!("en").into(),
+                    &data_locale!("en"),
                 ),
                 ..Default::default()
             })
@@ -188,7 +188,7 @@ mod tests {
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("Cans").unwrap(),
-                    &langid!("en").into(),
+                    &data_locale!("en"),
                 ),
                 ..Default::default()
             })
