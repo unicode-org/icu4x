@@ -6,6 +6,7 @@ include!("segmenter_unihan_radical_v1.rs.data");
 include!("segmenter_break_grapheme_cluster_v1.rs.data");
 include!("segmenter_dictionary_extended_v1.rs.data");
 include!("segmenter_break_line_v2.rs.data");
+include!("segmenter_break_line_v1.rs.data");
 include!("segmenter_break_line_v3.rs.data");
 include!("segmenter_lstm_auto_v1.rs.data");
 include!("segmenter_break_grapheme_cluster_v2.rs.data");
@@ -56,6 +57,7 @@ macro_rules! impl_data_provider {
         impl_segmenter_break_grapheme_cluster_v1!($provider);
         impl_segmenter_dictionary_extended_v1!($provider);
         impl_segmenter_break_line_v2!($provider);
+        impl_segmenter_break_line_v1!($provider);
         impl_segmenter_break_line_v3!($provider);
         impl_segmenter_lstm_auto_v1!($provider);
         impl_segmenter_break_grapheme_cluster_v2!($provider);

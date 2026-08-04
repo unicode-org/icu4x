@@ -22,9 +22,9 @@
 //!
 //! This module contains segmenter implementation for the following rules.
 //!
-//! - Line segmenter that is compatible with [Unicode Standard Annex #14][UAX14] (Version 17.0.0) _Unicode Line
-//!   Breaking Algorithm_, with options to tailor line-breaking behavior for CSS [`line-break`] and
-//!   [`word-break`] properties.
+//! - Line segmenter that is compatible with [Unicode Standard Annex #14][UAX14] (Version 15.1.0, or
+//!   Version 17.0.0 with the `*_17_*` constructors) _Unicode Line Breaking Algorithm_, with options
+//!   to tailor line-breaking behavior for CSS [`line-break`] and [`word-break`] properties.
 //! - Grapheme cluster segmenter, word segmenter, and sentence segmenter that are compatible with
 //!   [Unicode Standard Annex #29][UAX29] (Version 17.0.0), _Unicode Text Segmentation_.
 //!
@@ -128,6 +128,10 @@ mod rule_segmenter;
 mod grapheme;
 /// [`LineSegmenter`] and its related iterators, borrowed types, and options.
 mod line;
+/// The Unicode 17 line breaking implementation, used with `SegmenterBreakLineV3` data.
+#[cfg(any(feature = "unstable", feature = "datagen"))]
+#[cfg_attr(not(feature = "unstable"), allow(dead_code))]
+mod line_v3;
 /// [`SentenceSegmenter`] and its related iterators, borrowed types, and options.
 mod sentence;
 /// [`WordSegmenter`] and its related iterators, borrowed types, and options.
