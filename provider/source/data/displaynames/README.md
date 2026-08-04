@@ -4,6 +4,12 @@ The JSON files in this directory (`coverageByXPath.json` and `coverageByXPath/*.
 
 To minimize repository size and compilation overhead, these source JSON files are filtered down to only retain XPaths located under `//ldml/localeDisplayNames`.
 
+***These files are intended to be deleted as soon as the coverage data are added to CLDR JSON.***
+
+## Re-generating these files
+
+These files were generated from a snapshot of https://github.com/unicode-org/cldr/pull/5909.
+
 ## Filtering with `jq`
 
 To filter down the JSON files using [`jq`](https://jqlang.github.io/jq/), run the following shell loop:
