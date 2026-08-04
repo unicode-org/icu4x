@@ -96,7 +96,6 @@ use crate::provider::NormalizerNfkdDataV1;
 use crate::provider::NormalizerUts46DataV1;
 use alloc::borrow::Cow;
 use alloc::string::String;
-use core::char::REPLACEMENT_CHARACTER;
 use icu_collections::char16trie::Char16Trie;
 use icu_collections::char16trie::Char16TrieIterator;
 use icu_collections::char16trie::TrieResult;
@@ -302,7 +301,7 @@ fn unwrap_or_gigo<T>(opt: Option<T>, default: T) -> T {
 /// Convert a `u32` _obtained from data provider data_ to `char`.
 #[inline(always)]
 fn char_from_u32(u: u32) -> char {
-    unwrap_or_gigo(core::char::from_u32(u), REPLACEMENT_CHARACTER)
+    unwrap_or_gigo(char::from_u32(u), char::REPLACEMENT_CHARACTER)
 }
 
 /// Convert a `u16` _obtained from data provider data_ to `char`.
@@ -653,7 +652,7 @@ where
                 || {
                     // GIGO case
                     debug_assert!(false);
-                    (REPLACEMENT_CHARACTER, EMPTY_U16)
+                    (char::REPLACEMENT_CHARACTER, EMPTY_U16)
                 },
                 |(first, trail)| (char_from_u16(first), trail),
             );
@@ -697,7 +696,7 @@ where
             .unwrap_or_else(|| {
                 // GIGO case
                 debug_assert!(false);
-                (REPLACEMENT_CHARACTER, EMPTY_CHAR)
+                (char::REPLACEMENT_CHARACTER, EMPTY_CHAR)
             });
         if only_non_starters_in_trail {
             // All the rest are combining
@@ -749,7 +748,7 @@ where
                     IgnorableBehavior::ReplacementCharacter => {
                         return Some(CharacterAndTrieValue::new(
                             c,
-                            u32::from(REPLACEMENT_CHARACTER) | NON_ROUND_TRIP_MARKER,
+                            u32::from(char::REPLACEMENT_CHARACTER) | NON_ROUND_TRIP_MARKER,
                         ));
                     }
                     IgnorableBehavior::Ignored => {
@@ -826,12 +825,12 @@ where
                         // within the Hangul jamo block and, therefore, the scalar
                         // value range by construction.
                         self.buffer.push(CharacterAndClass::new_starter(unsafe {
-                            core::char::from_u32_unchecked(HANGUL_V_BASE + v)
+                            char::from_u32_unchecked(HANGUL_V_BASE + v)
                         }));
-                        let first = unsafe { core::char::from_u32_unchecked(HANGUL_L_BASE + l) };
+                        let first = unsafe { char::from_u32_unchecked(HANGUL_L_BASE + l) };
                         if t != 0 {
                             self.buffer.push(CharacterAndClass::new_starter(unsafe {
-                                core::char::from_u32_unchecked(HANGUL_T_BASE + t)
+                                char::from_u32_unchecked(HANGUL_T_BASE + t)
                             }));
                             (first, 2)
                         } else {
@@ -849,7 +848,7 @@ where
                                 // SAFETY: `FDFA_NFKD` is known not to contain
                                 // surrogates.
                                 CharacterAndClass::new_starter(unsafe {
-                                    core::char::from_u32_unchecked(u32::from(u))
+                                    char::from_u32_unchecked(u32::from(u))
                                 })
                             }));
                             ('\u{0635}', 17)
@@ -977,7 +976,7 @@ where
                     _ => {
                         // GIGO case
                         debug_assert!(false);
-                        CharacterAndClass::new_with_placeholder(REPLACEMENT_CHARACTER)
+                        CharacterAndClass::new_with_placeholder(char::REPLACEMENT_CHARACTER)
                     }
                 };
                 self.buffer.push(mapped);
@@ -1301,7 +1300,7 @@ macro_rules! composing_normalize_to {
                     // We don't know if a `REPLACEMENT_CHARACTER` occurred in the slice or
                     // was returned in response to an error by the iterator. Assume the
                     // latter for correctness even though it pessimizes the former.
-                    if $always_valid_utf || $undecomposed_starter.character != REPLACEMENT_CHARACTER {
+                    if $always_valid_utf || $undecomposed_starter.character != char::REPLACEMENT_CHARACTER {
                         let $pending_slice = &$text[$text.len() - $composition.decomposition.delegate.$as_slice().len() - $undecomposed_starter.character.$len_utf()..];
                         // The `$fast` block must either:
                         // 1. Return due to reaching EOF
@@ -1958,7 +1957,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                 }
 
                 // TODO: Annotate as unlikely.
-                if upcoming == REPLACEMENT_CHARACTER {
+                if upcoming == char::REPLACEMENT_CHARACTER {
                     // We might have an error, so fall out of the fast path.
 
                     // Since the U+FFFD might signify an error, we can't
@@ -1966,7 +1965,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                     #[expect(clippy::indexing_slicing)]
                     let mut consumed_so_far = pending_slice[..pending_slice.len() - decomposition.delegate.as_slice().len()].chars();
                     let back = consumed_so_far.next_back();
-                    debug_assert_eq!(back, Some(REPLACEMENT_CHARACTER));
+                    debug_assert_eq!(back, Some(char::REPLACEMENT_CHARACTER));
                     let consumed_so_far_slice = consumed_so_far.as_slice();
                     sink.write_str(unsafe { core::str::from_utf8_unchecked(consumed_so_far_slice) } )?;
 
@@ -2604,7 +2603,7 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                     // We need to fall off the fast path.
 
                     // TODO(#2006): Annotate as unlikely
-                    if upcoming == REPLACEMENT_CHARACTER {
+                    if upcoming == char::REPLACEMENT_CHARACTER {
                         // Can't tell if this is an error or a literal U+FFFD in
                         // the input. Assuming the former to be sure.
 
@@ -2613,10 +2612,10 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                         #[expect(clippy::indexing_slicing)]
                         let mut consumed_so_far = pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_slice().len()].chars();
                         let back = consumed_so_far.next_back();
-                        debug_assert_eq!(back, Some(REPLACEMENT_CHARACTER));
+                        debug_assert_eq!(back, Some(char::REPLACEMENT_CHARACTER));
                         let consumed_so_far_slice = consumed_so_far.as_slice();
                         sink.write_str(unsafe { core::str::from_utf8_unchecked(consumed_so_far_slice) })?;
-                        undecomposed_starter = CharacterAndTrieValue::new(REPLACEMENT_CHARACTER, 0);
+                        undecomposed_starter = CharacterAndTrieValue::new(char::REPLACEMENT_CHARACTER, 0);
                         composition.decomposition.pending = None;
                         break 'fast;
                     }
