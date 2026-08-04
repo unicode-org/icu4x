@@ -304,7 +304,7 @@ mod tests {
         for len in 1..16 {
             for seed in 0..150 {
                 let keys = random_alphanums(seed, len);
-                let keys_str = str::from_utf8(&keys).unwrap();
+                let keys_str = core::str::from_utf8(&keys).unwrap();
                 let computed = PerfectByteHashMap::try_new(&keys).expect(keys_str);
                 computed
                     .check()
@@ -332,7 +332,7 @@ mod tests {
         for len in 16..60 {
             for seed in 0..75 {
                 let keys = random_alphanums(seed, len);
-                let keys_str = str::from_utf8(&keys).unwrap();
+                let keys_str = core::str::from_utf8(&keys).unwrap();
                 let computed = PerfectByteHashMap::try_new(&keys).expect(keys_str);
                 computed
                     .check()

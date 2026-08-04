@@ -161,7 +161,7 @@ impl<const N: usize, T: Copy> ConstArrayBuilder<N, T> {
             const PREFIX: &[u8; 31] = b"Buffer too large. Size needed: ";
             let len_bytes: [u8; PREFIX.len() + crate::helpers::MAX_USIZE_LEN_AS_DIGITS] =
                 crate::helpers::const_fmt_int(*PREFIX, actual_len);
-            let Ok(len_str) = str::from_utf8(&len_bytes) else {
+            let Ok(len_str) = core::str::from_utf8(&len_bytes) else {
                 unreachable!()
             };
             panic!("{}", len_str);

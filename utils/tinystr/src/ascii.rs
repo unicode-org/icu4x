@@ -305,7 +305,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     #[inline]
     pub const fn as_str(&self) -> &str {
         // as_utf8 is valid utf8
-        unsafe { str::from_utf8_unchecked(self.as_utf8()) }
+        unsafe { core::str::from_utf8_unchecked(self.as_utf8()) }
     }
 
     #[inline]

@@ -26,7 +26,7 @@ macro_rules! impl_write_num {
                     i -= 1;
                 }
                 #[expect(clippy::indexing_slicing)] // buf is ASCII
-                let s = unsafe { str::from_utf8_unchecked(&buf[i..]) };
+                let s = unsafe { core::str::from_utf8_unchecked(&buf[i..]) };
                 sink.write_str(s)
             }
 
