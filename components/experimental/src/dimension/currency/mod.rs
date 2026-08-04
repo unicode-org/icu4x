@@ -136,6 +136,14 @@ impl CurrencyCode {
     /// let code = CurrencyCode::from_tinystr_unvalidated(tinystr!(3, "USD"));
     /// assert_eq!(code.as_str(), "USD");
     /// ```
+    ///
+    /// ```should_panic
+    /// use icu_experimental::dimension::currency::CurrencyCode;
+    /// use tinystr::tinystr;
+    ///
+    /// // Panics because "usd" is not 3 uppercase ASCII letters:
+    /// let _ = CurrencyCode::from_tinystr_unvalidated(tinystr!(3, "usd"));
+    /// ```
     #[inline]
     pub const fn from_tinystr_unvalidated(s: TinyAsciiStr<3>) -> Self {
         assert!(
