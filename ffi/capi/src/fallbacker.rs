@@ -123,6 +123,17 @@ pub mod ffi {
     }
 
     impl<'a> LocaleFallbackerWithConfig<'a> {
+        /// Returns the associated config.
+        #[diplomat::rust_link(
+            icu::locale::fallback::LocaleFallbackerWithConfig::config,
+            FnInStruct
+        )]
+        pub fn config(&self) -> LocaleFallbackConfig {
+            LocaleFallbackConfig {
+                priority: self.0.config().priority.into(),
+            }
+        }
+
         /// Creates an iterator from a locale with each step of fallback.
         #[diplomat::rust_link(icu::locale::fallback::LocaleFallbacker::fallback_for, FnInStruct)]
         #[diplomat::rust_link(
