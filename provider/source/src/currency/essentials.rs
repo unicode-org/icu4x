@@ -266,7 +266,7 @@ fn test_essentials() {
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("latn"),
-                &langid!("ar-EG").into(),
+                &data_locale!("ar-EG"),
             ),
             ..Default::default()
         })
