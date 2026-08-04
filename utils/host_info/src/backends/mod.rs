@@ -174,10 +174,9 @@ pub trait HostInfoBackend: RawHostInfoBackend {
     /// The implementation should attempt to retrieve collation set by the user in the host system.
     fn collation() -> Result<Option<(Language, CollationType)>, HostInfoError> {
         Ok(Self::raw_collation()?.and_then(|(raw_lang, raw_col)| {
-            unicode::Value::from_str(&raw_col)
+            Language::from_str(&raw_lang).ok().zip(unicode::Value::from_str(&raw_col)
                 .ok()
-                .and_then(|col| CollationType::try_from(&col).ok())
-                .and_then(|col| Language::from_str(&raw_lang).ok().map(|lang| (lang, col)))
+                .and_then(|col| CollationType::try_from(&col).ok()))
         }))
     }
 }
