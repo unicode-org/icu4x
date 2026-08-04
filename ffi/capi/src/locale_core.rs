@@ -266,9 +266,3 @@ pub mod ffi {
         }
     }
 }
-
-impl ffi::Locale {
-    pub fn to_datalocale(&self) -> icu_provider::DataLocale {
-        (&self.0).into()
-    }
-}

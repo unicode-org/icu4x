@@ -7,6 +7,7 @@ import com.sun.jna.Structure
 
 internal interface LocaleFallbackerWithConfigLib: Library {
     fun icu4x_LocaleFallbackerWithConfig_destroy_mv1(handle: Pointer)
+    fun icu4x_LocaleFallbackerWithConfig_config_mv1(handle: Pointer): LocaleFallbackConfigNative
     fun icu4x_LocaleFallbackerWithConfig_fallback_for_locale_mv1(handle: Pointer, locale: Pointer): Pointer
 }
 /** An object that runs the ICU4X locale fallback algorithm with specific configurations.
@@ -40,6 +41,17 @@ class LocaleFallbackerWithConfig internal constructor (
     companion object {
         internal val libClass: Class<LocaleFallbackerWithConfigLib> = LocaleFallbackerWithConfigLib::class.java
         internal val lib: LocaleFallbackerWithConfigLib = Native.load("icu4x", libClass)
+    }
+    
+    /** Returns the associated config.
+    *
+    *See the [Rust documentation for `config`](https://docs.rs/icu/2.2.0/icu/locale/fallback/struct.LocaleFallbackerWithConfig.html#method.config) for more information.
+    */
+    fun config(): LocaleFallbackConfig {
+        
+        val returnVal = lib.icu4x_LocaleFallbackerWithConfig_config_mv1(handle);
+        val returnStruct = LocaleFallbackConfig.fromNative(returnVal)
+        return returnStruct
     }
     
     /** Creates an iterator from a locale with each step of fallback.

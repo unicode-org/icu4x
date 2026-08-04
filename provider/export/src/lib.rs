@@ -76,7 +76,7 @@ pub mod prelude {
         DataLocaleFamily, DeduplicationStrategy, ExportDriver, FallbackOptions, NoFallbackOptions,
     };
     #[doc(no_inline)]
-    pub use icu_locale_core::locale;
+    pub use icu_locale_core::{data_locale, locale};
     #[doc(no_inline)]
     pub use icu_locale_fallback::LocaleFallbacker;
     #[doc(no_inline)]
@@ -376,11 +376,11 @@ fn test_family_precedence() {
         driver.requested_families,
         [
             (
-                icu::locale::langid!("en").into(),
+                icu::locale::data_locale!("en"),
                 DataLocaleFamilyAnnotations::single()
             ),
             (
-                icu::locale::langid!("zh-TW").into(),
+                icu::locale::data_locale!("zh-TW"),
                 DataLocaleFamilyAnnotations::without_descendants()
             ),
         ]
