@@ -246,4 +246,37 @@ mod tests {
             },
         );
     }
+
+    #[test]
+    #[cfg(feature = "networking")]
+    fn test_modern_locales_have_maximized_region_display_names() {
+        use crate::CoverageLevel;
+        use icu::locale::LocaleExpander;
+
+        let provider = SourceDataProvider::new();
+        let cldr = provider.cldr().unwrap();
+        let modern_locales = cldr.locales([CoverageLevel::Modern]).unwrap();
+
+        let expander = LocaleExpander::try_new_extended_unstable(&provider).unwrap();
+
+        let tiny_region_ids =
+            IterableDataProvider::<LocaleNamesRegionMediumTinyV1>::iter_ids(&provider).unwrap();
+
+        for data_locale in modern_locales {
+            if data_locale.is_unknown() {
+                continue;
+            }
+            let mut langid = data_locale.into_locale().id;
+            expander.maximize(&mut langid);
+            let region = langid.region.unwrap();
+
+            let data_id = DataIdentifierCow::from_borrowed_and_owned(
+                DataMarkerAttributes::from_str_or_panic(region.as_str()),
+                data_locale,
+            );
+
+            // Assert that all modern locales contain a region displayname for their maximized region in the tiny slice
+            assert!(tiny_region_ids.contains(&data_id), "{data_locale}");
+        }
+    }
 }

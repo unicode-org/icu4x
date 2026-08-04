@@ -216,16 +216,9 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<
 
 #[cfg(test)]
 mod tests {
-    use crate::CoverageLevel;
-
     use super::super::coverage_experimental::CheckAltCoverage;
     use super::*;
-    use icu::experimental::displaynames::{
-        LanguageIdentifierDisplayNameOptions,
-        single::{LanguageIdentifierDisplayNameOwned, RegionDisplayNameOwned},
-    };
-    use icu::locale::{Locale, LocaleExpander, data_locale, subtags::language};
-    use writeable::TryWriteable;
+    use icu::locale::{data_locale, subtags::language};
 
     #[test]
     fn test_basic_lang_display_names() {
@@ -536,53 +529,30 @@ mod tests {
 
     #[test]
     #[cfg(feature = "networking")]
-    fn test_modern_locales_self_and_maximized_region_display_names() {
+    fn test_modern_locales_have_self_language_name() {
+        use crate::CoverageLevel;
+
         let provider = SourceDataProvider::new();
         let cldr = provider.cldr().unwrap();
         let modern_locales = cldr.locales([CoverageLevel::Modern]).unwrap();
 
-        let expander = LocaleExpander::try_new_extended_unstable(&provider).unwrap();
-        let options = LanguageIdentifierDisplayNameOptions::default();
+        let tiny_language_ids =
+            IterableDataProvider::<LocaleNamesLanguageMediumTinyV1>::iter_ids(&provider).unwrap();
 
         for data_locale in modern_locales {
             if data_locale.is_unknown() {
                 continue;
             }
-            let locale: Locale = data_locale.into_locale();
-            let lang_id = locale.id.clone();
+            let langid = data_locale.into_locale().id;
+            let language = langid.language;
 
-            // Assert that all modern locales contain a language displayname for themselves in the minimal language slice
-            let lang_display_name = LanguageIdentifierDisplayNameOwned::try_new_tiny_unstable(
-                &provider,
-                locale.clone().into(),
-                lang_id,
-                options,
-            )
-            .expect("Minimal language display name construction should succeed");
-
-            assert!(
-                lang_display_name
-                    .as_borrowed()
-                    .try_write_to_string()
-                    .is_ok(),
-                "Expected language display name for {locale} in minimal language slice, but got fallback"
+            let data_id = DataIdentifierCow::from_borrowed_and_owned(
+                DataMarkerAttributes::from_str_or_panic(language.as_str()),
+                data_locale,
             );
 
-            // Assert that all modern locales contain a display name for their LocaleExpander maximized region
-            let mut max_locale = locale.clone();
-            expander.maximize(&mut max_locale.id);
-            if let Some(region) = max_locale.id.region {
-                let region_display_name = RegionDisplayNameOwned::try_new_tiny_unstable(
-                    &provider,
-                    locale.clone().into(),
-                    region,
-                );
-
-                assert!(
-                    region_display_name.is_ok(),
-                    "Expected minimal region display name for maximized region {region} in {locale}"
-                );
-            }
+            // Assert that all modern locales contain a language displayname for themselves in the tiny slice
+            assert!(tiny_language_ids.contains(&data_id), "{data_locale}");
         }
     }
 }
