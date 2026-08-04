@@ -127,6 +127,7 @@ impl CurrencyCode {
     /// The caller must ensure that `s` contains 3 uppercase ASCII letters (`A`-`Z`).
     #[inline]
     pub const fn from_tinystr_unvalidated(s: TinyAsciiStr<3>) -> Self {
+        debug_assert!(s.len() == 3 && s.is_ascii_alphabetic_uppercase());
         Self(s)
     }
 
@@ -284,5 +285,10 @@ mod tests {
                 "Expected error for utf8: {code}"
             );
         }
+
+        assert!(CurrencyCode::try_from_tinystr(tinystr!(3, "usd")).is_err());
+        assert!(CurrencyCode::try_from_tinystr(tinystr!(3, "US")).is_err());
+        assert!(CurrencyCode::try_from_tinystr(tinystr!(3, "123")).is_err());
+        assert!(CurrencyCode::try_from_tinystr(tinystr!(3, "U12")).is_err());
     }
 }
