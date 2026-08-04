@@ -100,7 +100,7 @@ impl From<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames<'s
 mod tests {
     use super::*;
     use crate::displaynames::coverage_experimental::CheckAltCoverage;
-    use icu::locale::{langid, subtags::script};
+    use icu::locale::{data_locale, subtags::script};
 
     #[test]
     fn test_basic_script_display_names() {
@@ -108,7 +108,7 @@ mod tests {
 
         let data: DataPayload<ScriptDisplayNamesV1> = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
+                id: DataIdentifierBorrowed::for_locale(&data_locale!("en-001")),
                 ..Default::default()
             })
             .unwrap()
@@ -129,7 +129,7 @@ mod tests {
 
         let data: DataPayload<ScriptDisplayNamesV1> = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
+                id: DataIdentifierBorrowed::for_locale(&data_locale!("en-001")),
                 ..Default::default()
             })
             .unwrap()
@@ -152,7 +152,7 @@ mod tests {
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("Arab").unwrap(),
-                    &langid!("en-001").into(),
+                    &data_locale!("en-001"),
                 ),
                 ..Default::default()
             })
@@ -206,7 +206,7 @@ mod tests {
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("Cans").unwrap(),
-                    &langid!("en-001").into(),
+                    &data_locale!("en-001"),
                 ),
                 ..Default::default()
             })

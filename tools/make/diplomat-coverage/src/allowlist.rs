@@ -479,6 +479,7 @@ lazy_static::lazy_static! {
 
         // macros
         "icu::locale::langid",
+        "icu::locale::data_locale",
         "icu::locale::locale",
         "icu::locale::extensions::other::subtag",
         "icu::locale::extensions::private::subtag",

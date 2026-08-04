@@ -14,11 +14,6 @@
 typedef struct TimeZoneFormatter TimeZoneFormatter;
 
 
-typedef struct DiplomatTimeZoneFormatterView {
-  const TimeZoneFormatter** data;
-  size_t len;
-} DiplomatTimeZoneFormatterView;
-
 
 
 #endif // TimeZoneFormatter_D_H

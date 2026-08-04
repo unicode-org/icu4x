@@ -69,7 +69,7 @@ impl From<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNames<
 mod tests {
     use super::*;
     use crate::displaynames::coverage_experimental::CheckAltCoverage;
-    use icu::locale::{langid, subtags::variant};
+    use icu::locale::{data_locale, subtags::variant};
 
     #[test]
     fn test_basic_variant_display_names() {
@@ -77,7 +77,7 @@ mod tests {
 
         let data: DataPayload<VariantDisplayNamesV1> = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
+                id: DataIdentifierBorrowed::for_locale(&data_locale!("en-001")),
                 ..Default::default()
             })
             .unwrap()
@@ -100,7 +100,7 @@ mod tests {
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("posix").unwrap(),
-                    &langid!("en-001").into(),
+                    &data_locale!("en-001"),
                 ),
                 ..Default::default()
             })

@@ -164,11 +164,11 @@ fn extract_currency_no_currency<'data>(
             (None, None)
         };
 
-    let mut tracker = super::UniquePatternsTracker::new();
-    let standard_idx = tracker.add(Some(standard_pos)).unwrap();
-    let standard_neg_idx = tracker.add(standard_neg);
-    let accounting_pos_idx = tracker.add(accounting_pos).unwrap_or(standard_idx);
-    let accounting_neg_idx = tracker.add(accounting_neg);
+    let mut patterns = super::PatternSet::new();
+    let standard_idx = patterns.add(Some(standard_pos)).unwrap();
+    let standard_neg_idx = patterns.add(standard_neg);
+    let accounting_pos_idx = patterns.add(accounting_pos).unwrap_or(standard_idx);
+    let accounting_neg_idx = patterns.add(accounting_neg);
 
     let indices = NoCurrencyPatternIndices {
         standard: standard_idx,
@@ -178,7 +178,7 @@ fn extract_currency_no_currency<'data>(
     };
 
     Ok(CurrencyPatternsNoCurrency {
-        patterns: tracker.into_var_zero_vec(),
+        patterns: patterns.into_var_zero_vec(),
         indices,
     })
 }

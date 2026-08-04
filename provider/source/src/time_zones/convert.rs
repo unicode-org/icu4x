@@ -186,8 +186,8 @@ impl SourceDataProvider {
 
     fn dedupe_group(&self, mut locale: DataLocale) -> Result<DataLocale, DataError> {
         // und stores the und-Latn group.
-        if locale == icu::locale::langid!("und").into() {
-            locale = icu::locale::langid!("und-Latn").into();
+        if locale == icu::locale::data_locale!("und") {
+            locale = icu::locale::data_locale!("und-Latn");
         }
 
         let group = self.cldr()?.script_based_locale_group(&locale)?;

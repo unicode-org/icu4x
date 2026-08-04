@@ -14,11 +14,6 @@
 typedef struct RegionDisplayNames RegionDisplayNames;
 
 
-typedef struct DiplomatRegionDisplayNamesView {
-  const RegionDisplayNames** data;
-  size_t len;
-} DiplomatRegionDisplayNamesView;
-
 
 
 #endif // RegionDisplayNames_D_H

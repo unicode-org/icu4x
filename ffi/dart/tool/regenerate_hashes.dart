@@ -53,6 +53,31 @@ Future<void> main(List<String> args) async {
         continue;
       }
       final bytes = await response.fold<List<int>>([], (a, b) => a..addAll(b));
+
+      final tempFile = File(
+        '${Directory.systemTemp.path}/icu4x_verify_$rustTarget-$libraryType',
+      );
+      await tempFile.writeAsBytes(bytes);
+
+      print(
+        'Verifying GitHub artifact attestation for $rustTarget-$libraryType...',
+      );
+      final verifyResult = await Process.run('gh', [
+        'attestation',
+        'verify',
+        tempFile.path,
+        '--owner',
+        'unicode-org',
+        '--repo',
+        'icu4x',
+      ]);
+      if (verifyResult.exitCode != 0) {
+        throw Exception(
+          'SECURITY ERROR: Artifact attestation verification failed for '
+          '$rustTarget-$libraryType at $uri:\n${verifyResult.stderr}',
+        );
+      }
+
       final fileHash = sha256.convert(bytes).toString();
       fileHashes[(rustTarget, libraryType)] = fileHash;
       print('Hash is $fileHash');

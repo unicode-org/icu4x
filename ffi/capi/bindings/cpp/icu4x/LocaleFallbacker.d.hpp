@@ -26,12 +26,6 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct LocaleFallbacker;
-
-
-    typedef struct DiplomatLocaleFallbackerView {
-      const LocaleFallbacker** data;
-      size_t len;
-    } DiplomatLocaleFallbackerView;
 } // namespace capi
 } // namespace
 

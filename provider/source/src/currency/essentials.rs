@@ -116,12 +116,12 @@ fn extract_currency_essentials<'data>(
         }
     }
 
-    let mut tracker = super::UniquePatternsTracker::new();
-    let standard_idx = tracker
+    let mut patterns = super::PatternSet::new();
+    let standard_idx = patterns
         .add(Some(create_positive_pattern(standard)?))
         .unwrap();
-    let standard_neg_idx = tracker.add(create_negative_pattern(standard)?);
-    let standard_alpha_idx = tracker
+    let standard_neg_idx = patterns.add(create_negative_pattern(standard)?);
+    let standard_alpha_idx = patterns
         .add(
             standard_alpha_next_to_number
                 .map(create_positive_pattern)
@@ -129,17 +129,17 @@ fn extract_currency_essentials<'data>(
         )
         .unwrap_or(standard_idx);
     let standard_alpha_neg_idx = match standard_alpha_next_to_number {
-        Some(p) => tracker.add(create_negative_pattern(p)?),
+        Some(p) => patterns.add(create_negative_pattern(p)?),
         None => None,
     };
-    let accounting_pos_idx = tracker
+    let accounting_pos_idx = patterns
         .add(accounting.map(create_positive_pattern).transpose()?)
         .unwrap_or(standard_idx);
     let accounting_neg_idx = match accounting {
-        Some(p) => tracker.add(create_negative_pattern(p)?),
+        Some(p) => patterns.add(create_negative_pattern(p)?),
         None => None,
     };
-    let accounting_alpha_pos_idx = tracker
+    let accounting_alpha_pos_idx = patterns
         .add(
             accounting_alpha_next_to_number
                 .map(create_positive_pattern)
@@ -147,7 +147,7 @@ fn extract_currency_essentials<'data>(
         )
         .unwrap_or(accounting_pos_idx);
     let accounting_alpha_neg_idx = match accounting_alpha_next_to_number {
-        Some(p) => tracker.add(create_negative_pattern(p)?),
+        Some(p) => patterns.add(create_negative_pattern(p)?),
         None => None,
     };
 
@@ -163,21 +163,21 @@ fn extract_currency_essentials<'data>(
     };
 
     Ok(CurrencyEssentials {
-        patterns: tracker.into_var_zero_vec(),
+        patterns: patterns.into_var_zero_vec(),
         indices,
     })
 }
 
 #[test]
 fn test_essentials() {
-    use icu::locale::langid;
+    use icu::locale::data_locale;
     use writeable::assert_writeable_eq;
 
     let provider = SourceDataProvider::new_testing();
 
     let en: DataPayload<CurrencyEssentialsV1> = provider
         .load(DataRequest {
-            id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+            id: DataIdentifierBorrowed::for_locale(&data_locale!("en")),
             ..Default::default()
         })
         .unwrap()
@@ -221,7 +221,7 @@ fn test_essentials() {
 
     let ar_eg: DataPayload<CurrencyEssentialsV1> = provider
         .load(DataRequest {
-            id: DataIdentifierBorrowed::for_locale(&langid!("ar-EG").into()),
+            id: DataIdentifierBorrowed::for_locale(&data_locale!("ar-EG")),
             ..Default::default()
         })
         .unwrap()

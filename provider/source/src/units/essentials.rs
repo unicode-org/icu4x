@@ -150,7 +150,7 @@ impl crate::IterableDataProviderCached<UnitsEssentialsV1> for SourceDataProvider
 
 #[test]
 fn test_basic() {
-    use icu::locale::langid;
+    use icu::locale::data_locale;
     use icu_provider::prelude::*;
 
     let provider = SourceDataProvider::new_testing();
@@ -159,7 +159,7 @@ fn test_basic() {
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("long"),
-                &langid!("en").into(),
+                &data_locale!("en"),
             ),
             ..Default::default()
         })
@@ -176,7 +176,7 @@ fn test_basic() {
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("long"),
-                &langid!("fr").into(),
+                &data_locale!("fr"),
             ),
             ..Default::default()
         })
@@ -193,7 +193,7 @@ fn test_basic() {
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("short"),
-                &langid!("ar").into(),
+                &data_locale!("ar"),
             ),
             ..Default::default()
         })

@@ -482,7 +482,7 @@ impl fmt::Display for DisplayDuration {
 #[test]
 fn test_collation_filtering() {
     use crate::DataLocaleFamily;
-    use icu::locale::locale;
+    use icu::locale::data_locale;
     use std::collections::BTreeSet;
 
     struct Provider;
@@ -501,24 +501,24 @@ fn test_collation_filtering() {
         fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
             Ok(BTreeSet::from_iter(
                 [
-                    (locale!("ko"), "search"),
-                    (locale!("ko"), "searchjl"),
-                    (locale!("ko"), "unihan"),
-                    (locale!("ko"), ""),
-                    (locale!("und"), "emoji"),
-                    (locale!("und"), "eor"),
-                    (locale!("und"), "search"),
-                    (locale!("und"), ""),
-                    (locale!("zh"), "stroke"),
-                    (locale!("zh"), "unihan"),
-                    (locale!("zh"), "zhuyin"),
-                    (locale!("zh"), ""),
+                    (data_locale!("ko"), "search"),
+                    (data_locale!("ko"), "searchjl"),
+                    (data_locale!("ko"), "unihan"),
+                    (data_locale!("ko"), ""),
+                    (data_locale!("und"), "emoji"),
+                    (data_locale!("und"), "eor"),
+                    (data_locale!("und"), "search"),
+                    (data_locale!("und"), ""),
+                    (data_locale!("zh"), "stroke"),
+                    (data_locale!("zh"), "unihan"),
+                    (data_locale!("zh"), "zhuyin"),
+                    (data_locale!("zh"), ""),
                 ]
                 .into_iter()
                 .map(|(l, a)| {
                     DataIdentifierCow::from_borrowed_and_owned(
                         DataMarkerAttributes::from_str_or_panic(a),
-                        l.into(),
+                        l,
                     )
                 }),
             ))
@@ -540,42 +540,42 @@ fn test_collation_filtering() {
     let cases = [
         TestCase {
             include_collations: &[],
-            language: locale!("zh").into(),
+            language: data_locale!("zh"),
             expected: &["", "stroke", "unihan", "zhuyin"],
         },
         TestCase {
             include_collations: &["search*"],
-            language: locale!("zh").into(),
+            language: data_locale!("zh"),
             expected: &["", "stroke", "unihan", "zhuyin"],
         },
         TestCase {
             include_collations: &[],
-            language: locale!("ko").into(),
+            language: data_locale!("ko"),
             expected: &["", "unihan"],
         },
         TestCase {
             include_collations: &["search"],
-            language: locale!("ko").into(),
+            language: data_locale!("ko"),
             expected: &["", "search", "unihan"],
         },
         TestCase {
             include_collations: &["searchjl"],
-            language: locale!("ko").into(),
+            language: data_locale!("ko"),
             expected: &["", "searchjl", "unihan"],
         },
         TestCase {
             include_collations: &["search", "searchjl"],
-            language: locale!("ko").into(),
+            language: data_locale!("ko"),
             expected: &["", "search", "searchjl", "unihan"],
         },
         TestCase {
             include_collations: &["search*"],
-            language: locale!("ko").into(),
+            language: data_locale!("ko"),
             expected: &["", "search", "searchjl", "unihan"],
         },
         TestCase {
             include_collations: &[],
-            language: locale!("und").into(),
+            language: data_locale!("und"),
             expected: &["", "emoji", "eor"],
         },
     ];

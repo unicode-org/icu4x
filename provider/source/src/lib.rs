@@ -543,7 +543,7 @@ impl SourceDataProvider {
 
 #[test]
 fn test_check_req() {
-    use icu::locale::langid;
+    use icu::locale::data_locale;
     use icu_provider::hello_world::*;
 
     #[allow(non_local_definitions)] // test-scoped, only place that uses it
@@ -564,7 +564,7 @@ fn test_check_req() {
     assert!(
         provider
             .check_req::<HelloWorldV1>(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("fi").into()),
+                id: DataIdentifierBorrowed::for_locale(&data_locale!("fi")),
                 ..Default::default()
             })
             .is_ok()
@@ -572,7 +572,7 @@ fn test_check_req() {
     assert!(
         provider
             .check_req::<HelloWorldV1>(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("arc").into()),
+                id: DataIdentifierBorrowed::for_locale(&data_locale!("arc")),
                 ..Default::default()
             })
             .is_err()

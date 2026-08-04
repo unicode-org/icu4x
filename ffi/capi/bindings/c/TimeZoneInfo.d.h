@@ -14,11 +14,6 @@
 typedef struct TimeZoneInfo TimeZoneInfo;
 
 
-typedef struct DiplomatTimeZoneInfoView {
-  const TimeZoneInfo** data;
-  size_t len;
-} DiplomatTimeZoneInfoView;
-
 
 
 #endif // TimeZoneInfo_D_H
