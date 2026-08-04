@@ -7,7 +7,7 @@ use core::cmp::Ordering;
 use atoi::FromRadix16;
 use icu_collator::provider::*;
 use icu_collator::{options::*, preferences::*, *};
-use icu_locale_core::{Locale, langid, locale};
+use icu_locale_core::{Locale, data_locale, locale};
 use icu_provider::prelude::*;
 
 struct TestingProvider;
@@ -18,7 +18,6 @@ const _: () = {
     pub mod icu {
         pub use crate as collator;
         pub use icu_collections as collections;
-        pub use icu_locale as locale;
         pub use icu_normalizer as normalizer;
     }
     make_provider!(TestingProvider);
@@ -1509,7 +1508,7 @@ fn test_nb_nn_no() {
         .unwrap()
         .metadata
         .locale,
-        Some(langid!("no").into())
+        Some(data_locale!("no"))
     );
 
     // And "nn" should work, too
@@ -1532,7 +1531,7 @@ fn test_nb_nn_no() {
         .unwrap()
         .metadata
         .locale,
-        Some(langid!("no").into())
+        Some(data_locale!("no"))
     );
 }
 

@@ -23,12 +23,6 @@ class DecimalParseError;
 namespace icu4x {
 namespace capi {
     struct PluralOperands;
-
-
-    typedef struct DiplomatPluralOperandsView {
-      const PluralOperands** data;
-      size_t len;
-    } DiplomatPluralOperandsView;
 } // namespace capi
 } // namespace
 

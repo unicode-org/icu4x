@@ -33,12 +33,6 @@ class TimePrecision;
 namespace icu4x {
 namespace capi {
     struct ZonedTimeFormatter;
-
-
-    typedef struct DiplomatZonedTimeFormatterView {
-      const ZonedTimeFormatter** data;
-      size_t len;
-    } DiplomatZonedTimeFormatterView;
 } // namespace capi
 } // namespace
 

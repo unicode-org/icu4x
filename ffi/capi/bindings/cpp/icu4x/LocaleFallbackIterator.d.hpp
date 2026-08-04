@@ -20,12 +20,6 @@ class Locale;
 namespace icu4x {
 namespace capi {
     struct LocaleFallbackIterator;
-
-
-    typedef struct DiplomatLocaleFallbackIteratorView {
-      const LocaleFallbackIterator** data;
-      size_t len;
-    } DiplomatLocaleFallbackIteratorView;
 } // namespace capi
 } // namespace
 

@@ -14,11 +14,6 @@
 typedef struct DataProvider DataProvider;
 
 
-typedef struct DiplomatDataProviderView {
-  const DataProvider** data;
-  size_t len;
-} DiplomatDataProviderView;
-
 
 
 #endif // DataProvider_D_H

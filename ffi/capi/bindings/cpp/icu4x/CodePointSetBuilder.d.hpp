@@ -22,12 +22,6 @@ class CodePointSetData;
 namespace icu4x {
 namespace capi {
     struct CodePointSetBuilder;
-
-
-    typedef struct DiplomatCodePointSetBuilderView {
-      const CodePointSetBuilder** data;
-      size_t len;
-    } DiplomatCodePointSetBuilderView;
 } // namespace capi
 } // namespace
 

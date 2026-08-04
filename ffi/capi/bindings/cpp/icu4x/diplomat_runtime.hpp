@@ -568,7 +568,11 @@ template <typename Ret, typename... Args> struct fn_traits<std::function<Ret(Arg
     static T c_run_callback_diplomat_opaque(const void* cb, replace_fn_t<Args>... args) {
       Ret out = c_run_callback(cb, args...);
 
-      return out->AsFFI();
+      if constexpr(std::is_pointer_v<Ret>) {
+        return out->AsFFI();
+      } else {
+        return out.AsFFI();
+      }
     }
 
     static void c_delete(const void *cb) {

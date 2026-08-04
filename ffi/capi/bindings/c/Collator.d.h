@@ -14,11 +14,6 @@
 typedef struct Collator Collator;
 
 
-typedef struct DiplomatCollatorView {
-  const Collator** data;
-  size_t len;
-} DiplomatCollatorView;
-
 
 
 #endif // Collator_D_H

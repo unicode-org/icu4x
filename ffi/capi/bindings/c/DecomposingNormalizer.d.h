@@ -14,11 +14,6 @@
 typedef struct DecomposingNormalizer DecomposingNormalizer;
 
 
-typedef struct DiplomatDecomposingNormalizerView {
-  const DecomposingNormalizer** data;
-  size_t len;
-} DiplomatDecomposingNormalizerView;
-
 
 
 #endif // DecomposingNormalizer_D_H

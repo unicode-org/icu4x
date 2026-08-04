@@ -14,11 +14,6 @@
 typedef struct LocaleFallbacker LocaleFallbacker;
 
 
-typedef struct DiplomatLocaleFallbackerView {
-  const LocaleFallbacker** data;
-  size_t len;
-} DiplomatLocaleFallbackerView;
-
 
 
 #endif // LocaleFallbacker_D_H

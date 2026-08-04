@@ -21,12 +21,6 @@ struct TimeZoneInvalidOffsetError;
 namespace icu4x {
 namespace capi {
     struct UtcOffset;
-
-
-    typedef struct DiplomatUtcOffsetView {
-      const UtcOffset** data;
-      size_t len;
-    } DiplomatUtcOffsetView;
 } // namespace capi
 } // namespace
 

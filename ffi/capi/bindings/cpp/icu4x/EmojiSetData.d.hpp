@@ -23,12 +23,6 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct EmojiSetData;
-
-
-    typedef struct DiplomatEmojiSetDataView {
-      const EmojiSetData** data;
-      size_t len;
-    } DiplomatEmojiSetDataView;
 } // namespace capi
 } // namespace
 

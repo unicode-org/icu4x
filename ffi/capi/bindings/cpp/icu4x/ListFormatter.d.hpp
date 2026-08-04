@@ -26,12 +26,6 @@ class ListLength;
 namespace icu4x {
 namespace capi {
     struct ListFormatter;
-
-
-    typedef struct DiplomatListFormatterView {
-      const ListFormatter** data;
-      size_t len;
-    } DiplomatListFormatterView;
 } // namespace capi
 } // namespace
 

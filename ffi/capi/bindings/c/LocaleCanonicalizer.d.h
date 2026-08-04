@@ -14,11 +14,6 @@
 typedef struct LocaleCanonicalizer LocaleCanonicalizer;
 
 
-typedef struct DiplomatLocaleCanonicalizerView {
-  const LocaleCanonicalizer** data;
-  size_t len;
-} DiplomatLocaleCanonicalizerView;
-
 
 
 #endif // LocaleCanonicalizer_D_H

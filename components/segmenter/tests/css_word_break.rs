@@ -17,7 +17,7 @@ fn break_all(s: &str, expected: &[&str]) {
     options.content_locale = None;
     check_line(s, expected, LineSegmenter::new_dictionary(options));
     check_line(s, expected, {
-        let mut s = LineSegmenter::new_for_non_complex_scripts(options);
+        let mut s = LineSegmenter::new_neo_for_non_complex_scripts(options);
         s.load_dictionary();
         s
     });
@@ -31,7 +31,7 @@ fn keep_all(s: &str, expected: &[&str]) {
     options.content_locale = None;
     check_line(s, expected, LineSegmenter::new_dictionary(options));
     check_line(s, expected, {
-        let mut s = LineSegmenter::new_for_non_complex_scripts(options);
+        let mut s = LineSegmenter::new_neo_for_non_complex_scripts(options);
         s.load_dictionary();
         s
     });
@@ -45,7 +45,7 @@ fn normal(s: &str, expected: &[&str]) {
     options.content_locale = None;
     check_line(s, expected, LineSegmenter::new_dictionary(options));
     check_line(s, expected, {
-        let mut s = LineSegmenter::new_for_non_complex_scripts(options);
+        let mut s = LineSegmenter::new_neo_for_non_complex_scripts(options);
         s.load_dictionary();
         s
     });

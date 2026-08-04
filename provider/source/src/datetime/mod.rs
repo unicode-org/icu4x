@@ -428,7 +428,8 @@ pub(crate) fn select_pattern<T: PackedPatternItem>(
 mod test {
     use super::*;
     use icu::{
-        datetime::provider::skeleton::reference::Skeleton, locale::langid, plurals::PluralElements,
+        datetime::provider::skeleton::reference::Skeleton, locale::data_locale,
+        plurals::PluralElements,
     };
 
     #[test]
@@ -436,7 +437,7 @@ mod test {
     fn test_datetime_skeletons() {
         let provider = SourceDataProvider::new_testing();
         let skeletons = provider
-            .get_dates_resource(&langid!("fil").into(), Some(DatagenCalendar::Gregorian))
+            .get_dates_resource(&data_locale!("fil"), Some(DatagenCalendar::Gregorian))
             .unwrap()
             .datetime_formats
             .available_formats

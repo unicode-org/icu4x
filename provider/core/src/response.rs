@@ -99,14 +99,14 @@ pub struct DataPayload<M: DynamicDataMarker>(pub(crate) DataPayloadInner<M>);
 /// Create and use [`DataPayloadOr`]:
 ///
 /// ```
-/// use icu_locale_core::langid;
+/// use icu_locale_core::data_locale;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider::DataPayloadOr;
 ///
 /// let response: DataResponse<HelloWorldV1> = HelloWorldProvider
 ///     .load(DataRequest {
-///         id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
+///         id: DataIdentifierBorrowed::for_locale(&data_locale!("de")),
 ///         ..Default::default()
 ///     })
 ///     .expect("Loading should succeed");
@@ -1110,7 +1110,7 @@ fn test_debug() {
     use crate::prelude::*;
     let resp = HelloWorldProvider
         .load(DataRequest {
-            id: DataIdentifierBorrowed::for_locale(&icu_locale_core::locale!("en").into()),
+            id: DataIdentifierBorrowed::for_locale(&icu_locale_core::data_locale!("en")),
             ..Default::default()
         })
         .unwrap();

@@ -23,12 +23,6 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct CanonicalCombiningClassMap;
-
-
-    typedef struct DiplomatCanonicalCombiningClassMapView {
-      const CanonicalCombiningClassMap** data;
-      size_t len;
-    } DiplomatCanonicalCombiningClassMapView;
 } // namespace capi
 } // namespace
 

@@ -73,7 +73,7 @@ impl From<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames<'s
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu::locale::{langid, subtags::region};
+    use icu::locale::{data_locale, subtags::region};
 
     #[test]
     fn test_basic() {
@@ -81,7 +81,7 @@ mod tests {
 
         let data: DataPayload<RegionDisplayNamesV1> = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
+                id: DataIdentifierBorrowed::for_locale(&data_locale!("en-001")),
                 ..Default::default()
             })
             .unwrap()
@@ -102,7 +102,7 @@ mod tests {
 
         let data: DataPayload<RegionDisplayNamesV1> = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
+                id: DataIdentifierBorrowed::for_locale(&data_locale!("en-001")),
                 ..Default::default()
             })
             .unwrap()
@@ -125,7 +125,7 @@ mod tests {
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("BA").unwrap(),
-                    &langid!("en-001").into(),
+                    &data_locale!("en-001"),
                 ),
                 ..Default::default()
             })

@@ -14,11 +14,6 @@
 typedef struct LocaleDirectionality LocaleDirectionality;
 
 
-typedef struct DiplomatLocaleDirectionalityView {
-  const LocaleDirectionality** data;
-  size_t len;
-} DiplomatLocaleDirectionalityView;
-
 
 
 #endif // LocaleDirectionality_D_H
