@@ -273,10 +273,8 @@ impl Aligned8 {
                 & !(word + 0x2525_2525_2525_2525)
                 & 0x8080_8080_8080_8080)
                 >> 2);
-        // SAFETY: The bitwise arithmetic identifies uppercase ASCII bytes ('A'..='Z') in the word,
-        // shifts that match to produce 0x20 for those bytes, and ORs them to map to lowercase ('a'..='z').
-        // All other bytes are ORed with 0 and remain unchanged.
-        // Since all input bytes are valid ASCII (0..=127), this mapping preserves the ASCII range (0..=127) on all bytes.
+        /// SAFETY: The existing word is ASCII, and it is bitwise-ORed with a subset of 0x80_80_80_...,
+        /// which keeps the word in the ASCII range (all bytes <= 127).
         unsafe { AsciiByte::to_ascii_byte_array(&result.to_ne_bytes()) }
     }
 
@@ -287,11 +285,8 @@ impl Aligned8 {
             & 0x8080_8080_8080_8080)
             >> 2;
         let result = (word | mask) & !(0x20 & mask);
-        // SAFETY: The bitwise arithmetic identifies lowercase ASCII bytes ('a'..='z') at byte 0,
-        // and uppercase ASCII bytes ('A'..='Z') at bytes 1..=7.
-        // It then clears the 0x20 bit on byte 0 (if lowercase) and sets the 0x20 bit on bytes 1..=7 (if uppercase),
-        // leaving non-alphabetic bytes completely unchanged.
-        // Since all input bytes are valid ASCII (0..=127), this mapping preserves the ASCII range (0..=127) on all bytes.
+        /// SAFETY: The existing word is ASCII, and it is bitwise-ORed with a subset of 0x80_80_80_...,
+        /// which keeps the word in the ASCII range (all bytes <= 127).
         unsafe { AsciiByte::to_ascii_byte_array(&u64::from_le(result).to_ne_bytes()) }
     }
 
@@ -302,10 +297,8 @@ impl Aligned8 {
                 & !(word + 0x0505_0505_0505_0505)
                 & 0x8080_8080_8080_8080)
                 >> 2);
-        // SAFETY: The bitwise arithmetic identifies lowercase ASCII bytes ('a'..='z') in the word,
-        // shifts that match to produce 0x20 for those bytes, and ANDs with !0x20 to clear it, mapping to uppercase ('A'..='Z').
-        // All other bytes are ANDed with !0 and remain unchanged.
-        // Since all input bytes are valid ASCII (0..=127), this mapping preserves the ASCII range (0..=127) on all bytes.
+        /// SAFETY: The existing word is ASCII, and it is bitwise-ORed with a subset of 0x80_80_80_...,
+        /// which keeps the word in the ASCII range (all bytes <= 127).
         unsafe { AsciiByte::to_ascii_byte_array(&result.to_ne_bytes()) }
     }
 }
