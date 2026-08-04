@@ -33,7 +33,7 @@ pub use script::{ScriptDisplayName, ScriptDisplayNameOwned};
 pub use variant::{VariantDisplayName, VariantDisplayNameOwned};
 
 use crate::displaynames::DisplayNamesPreferences;
-use icu_provider::prelude::*;
+use icu_provider::{prelude::*, unstable::BindLocaleDataProvider};
 use zerovec::VarZeroCow;
 
 pub(crate) fn try_new_unstable<M, D>(
@@ -53,6 +53,25 @@ where
         })?
         .payload;
     Ok(payload)
+}
+
+pub(crate) fn try_new_unstable_bind<M, D>(
+    provider: &D,
+    prefs: DisplayNamesPreferences,
+) -> Result<D::BoundLocaleDataProvider, DataError>
+where
+    D: BindLocaleDataProvider<M>,
+    M: DataMarker<DataStruct = VarZeroCow<'static, str>>,
+{
+    let locale = M::INFO.make_locale(prefs.locale_preferences);
+    let response = provider.bind_locale(
+        M::INFO,
+        DataRequest {
+            id: DataIdentifierBorrowed::for_locale(&locale),
+            metadata: Default::default(),
+        },
+    )?;
+    Ok(response.bound_provider)
 }
 
 pub(crate) fn try_new_short_unstable<MShort, MLong, D>(

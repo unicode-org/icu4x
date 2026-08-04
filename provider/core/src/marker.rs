@@ -434,6 +434,8 @@ pub struct DataMarkerInfo {
     pub is_singleton: bool,
     /// Whether this data marker uses checksums for integrity purposes.
     pub has_checksum: bool,
+    /// Whether the marker's data struct has a VarULE optimization.
+    pub has_varule: bool,
     /// The fallback to use for this data marker.
     pub fallback_config: LocaleFallbackConfig,
     /// The attributes domain for this data marker. This can be used for filtering marker
@@ -471,6 +473,7 @@ impl DataMarkerInfo {
             fallback_config: LocaleFallbackConfig::default(),
             is_singleton: false,
             has_checksum: false,
+            has_varule: false,
             #[cfg(feature = "export")]
             attributes_domain: "",
             #[cfg(feature = "export")]

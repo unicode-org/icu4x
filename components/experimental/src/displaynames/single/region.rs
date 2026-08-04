@@ -9,6 +9,9 @@ use crate::displaynames::DisplayNamesPreferences;
 use crate::displaynames::provider::*;
 use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
+use icu_provider::unstable::BindLocaleDataProvider;
+use icu_provider::unstable::BoundLocaleDataProvider;
+use icu_provider::unstable::DataAttributesRequest;
 
 /// A localized display name for a single region, owned version.
 ///
@@ -118,6 +121,41 @@ impl RegionDisplayNameOwned {
 }
 
 impl_writeable_for_single_display_name_owned!(RegionDisplayNameOwned);
+
+pub struct RegionDisplayNames<P> {
+    pub(crate) provider: P,
+}
+
+impl<P> RegionDisplayNames<P>
+where
+    P: BoundLocaleDataProvider<LocaleNamesRegionMediumV1>,
+{
+    pub fn try_new_unstable<P0>(
+        provider: &P0,
+        prefs: DisplayNamesPreferences,
+    ) -> Result<Self, DataError>
+    where
+        P0: BindLocaleDataProvider<LocaleNamesRegionMediumV1, BoundLocaleDataProvider = P>,
+    {
+        super::try_new_unstable_bind(provider, prefs).map(|provider| Self { provider })
+    }
+
+    pub fn of(&self, region: Region) -> Result<Option<RegionDisplayName<'_>>, DataError> {
+        let Some(response) = self
+            .provider
+            .load_bound(DataAttributesRequest {
+                marker_attributes: LocaleNamesRegionMediumV1::make_attributes(&region),
+                metadata: Default::default(),
+            })
+            .allow_identifier_not_found()?
+        else {
+            return Ok(None);
+        };
+        Ok(Some(RegionDisplayName {
+            value: &response.payload,
+        }))
+    }
+}
 
 /// A localized display name for a single region.
 #[derive(Debug, Clone, Copy)]

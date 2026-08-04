@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use yoke::Yokeable;
 #[cfg(feature = "export")]
 use zerovec::ule::EncodeAsVarULE;
 use zerovec::ule::VarULE;
@@ -24,6 +25,13 @@ pub trait MaybeAsVarULE {
     /// The [`VarULE`] type for this data struct, or `[()]`
     /// if it cannot be represented as [`VarULE`].
     type EncodedStruct: ?Sized + VarULE;
+    // /// Convert the encoded struct to the normal struct.
+    // #[inline]
+    // fn maybe_zero_from_encoded_struct<'a>(
+    //     _encoded_struct: &'a Self::EncodedStruct,
+    // ) -> Option<<Self as Yokeable<'a>>::Output> {
+    //     None
+    // }
 }
 
 /// Export-only trait associated with [`MaybeAsVarULE`]. See that trait
@@ -92,10 +100,12 @@ macro_rules! data_struct {
 //=== Standard impls ===//
 
 #[cfg(feature = "alloc")]
-impl<'a, K0, V> MaybeAsVarULE for ZeroMap<'a, K0, V>
+impl<K0, V> MaybeAsVarULE for ZeroMap<'static, K0, V>
 where
-    K0: ZeroMapKV<'a>,
-    V: ZeroMapKV<'a>,
+    for<'b> K0: ZeroMapKV<'b> + 'static,
+    for<'b> V: ZeroMapKV<'b> + 'static,
+    for<'b> <K0 as ZeroMapKV<'static>>::Container: Yokeable<'b>,
+    for<'b> <V as ZeroMapKV<'static>>::Container: Yokeable<'b>,
     K0: ?Sized,
     V: ?Sized,
 {
@@ -104,10 +114,12 @@ where
 
 #[cfg(feature = "alloc")]
 #[cfg(feature = "export")]
-impl<'a, K0, V> MaybeEncodeAsVarULE for ZeroMap<'a, K0, V>
+impl<K0, V> MaybeEncodeAsVarULE for ZeroMap<'static, K0, V>
 where
-    K0: ZeroMapKV<'a>,
-    V: ZeroMapKV<'a>,
+    for<'b> K0: ZeroMapKV<'b> + 'static,
+    for<'b> V: ZeroMapKV<'b> + 'static,
+    for<'b> <K0 as ZeroMapKV<'static>>::Container: Yokeable<'b>,
+    for<'b> <V as ZeroMapKV<'static>>::Container: Yokeable<'b>,
     K0: ?Sized,
     V: ?Sized,
 {
@@ -166,6 +178,10 @@ impl<T, const N: usize> MaybeEncodeAsVarULE for [T; N] {
     fn maybe_as_encodeable<'a>(&'a self) -> Option<Self::EncodeableStruct<'a>> {
         None
     }
+}
+
+impl<'a, V: VarULE + ?Sized> MaybeAsVarULE for &'a V {
+    type EncodedStruct = V;
 }
 
 impl MaybeAsVarULE for u16 {

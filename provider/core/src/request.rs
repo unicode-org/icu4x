@@ -35,6 +35,16 @@ pub struct DataRequest<'a> {
     pub metadata: DataRequestMetadata,
 }
 
+/// A request for data, but with the locale pre-resolved.
+#[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
+#[allow(clippy::exhaustive_structs)] // exported in an unstable module
+pub struct DataAttributesRequest<'a> {
+    /// Marker-specific request attributes
+    pub marker_attributes: &'a DataMarkerAttributes,
+    /// Metadata that may affect the behavior of the data provider.
+    pub metadata: DataRequestMetadata,
+}
+
 /// Metadata for data requests. This is currently empty, but it may be extended with options
 /// for tuning locale fallback, buffer layout, and so forth.
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
