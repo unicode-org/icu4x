@@ -74,10 +74,7 @@ fn parse_hex(mut hexes: &[u8]) -> Option<String> {
     let mut buf = String::new();
     loop {
         let (scalar, mut offset) = u32::from_radix_16(hexes);
-        {
-            let c = core::char::from_u32(scalar)?;
-            buf.push(c);
-        }
+        buf.push(char::from_u32(scalar)?);
         if offset == hexes.len() {
             return Some(buf);
         }

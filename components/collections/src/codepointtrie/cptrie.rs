@@ -950,10 +950,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
                 }
                 let i2: u16 = self.index.get(i1 as usize)?;
                 let i3_block_idx: u32 = (i2 as u32) + ((c >> SHIFT_2) & INDEX_2_MASK);
-                i3_block = {
-                    let i3b = self.index.get(i3_block_idx as usize)?;
-                    i3b as u32
-                };
+                i3_block = self.index.get(i3_block_idx as usize)? as u32;
                 if i3_block == prev_i3_block && (c - start) >= CP_PER_INDEX_2_ENTRY {
                     // The index-3 block is the same as the previous one, and filled with value.
                     debug_assert!((c & (CP_PER_INDEX_2_ENTRY - 1)) == 0);
@@ -1003,24 +1000,15 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             loop {
                 let mut block: u32;
                 if (i3_block & 0x8000) == 0 {
-                    block = {
-                        let b = self.index.get((i3_block + i3) as usize)?;
-                        b as u32
-                    };
+                    block = self.index.get((i3_block + i3) as usize)? as u32;
                 } else {
                     // 18-bit indexes stored in groups of 9 entries per 8 indexes.
                     let mut group: u32 = (i3_block & 0x7fff) + (i3 & !7) + (i3 >> 3);
                     let gi: u32 = i3 & 7;
-                    let gi_val: u32 = {
-                        let giv = self.index.get(group as usize)?;
-                        giv.into()
-                    };
+                    let gi_val: u32 = self.index.get(group as usize)?.into();
                     block = (gi_val << (2 + (2 * gi))) & 0x30000;
                     group += 1;
-                    let ggi_val: u32 = {
-                        let ggiv = self.index.get((group + gi) as usize)?;
-                        ggiv as u32
-                    };
+                    let ggi_val: u32 = self.index.get((group + gi) as usize)? as u32;
                     block |= ggi_val;
                 }
 
