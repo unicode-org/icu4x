@@ -458,20 +458,16 @@ impl<'data> GenericPackedPatterns<'data, PatternsByGreatestDifferenceULE> {
     pub(crate) fn get_coarse_hour_cycle(
         &self,
         length: crate::options::Length,
-        diff: TimeGreatestDifferenceField,
     ) -> Option<crate::provider::pattern::CoarseHourCycle> {
         use crate::provider::packed_pattern::PackedSkeletonVariant;
         // To get the hour cycle without reading the whole pattern, we can check the time
         // granularity of the hour pattern (packed variant `Standard`).
         let element = self.get_element(length, PackedSkeletonVariant::Standard)?;
-        // Query the pattern with maximal difference
-        let pattern = element.get_time_pattern(diff)?;
-        let pattern = RangePatternInfo::zero_from(&pattern);
-        pattern
-            .pattern()
-            .metadata
-            .time_granularity()
-            .coarse_hour_cycle()
+        // CoarseHourCycle is an invariant across all difference patterns in the store,
+        // so we can just inspect the first available pattern instead of querying by difference.
+        let pattern_ule = element.patterns.get(0)?;
+        let pattern = <PatternBorrowed as ZeroFrom<PatternULE>>::zero_from(pattern_ule);
+        pattern.metadata.time_granularity().coarse_hour_cycle()
     }
 }
 
