@@ -97,8 +97,12 @@ pub mod unstable {
     pub mod date;
     #[cfg(feature = "datetime")]
     pub mod date_formatter;
+    #[cfg(all(feature = "datetime", feature = "unstable"))]
+    pub mod date_range_formatter;
     #[cfg(feature = "datetime")]
     pub mod date_time_formatter;
+    #[cfg(all(feature = "datetime", feature = "unstable"))]
+    pub mod date_time_range_formatter;
     #[cfg(feature = "calendar")]
     pub mod datetime;
     #[cfg(feature = "datetime")]
@@ -159,6 +163,8 @@ pub mod unstable {
     pub mod time;
     #[cfg(feature = "datetime")]
     pub mod time_formatter;
+    #[cfg(all(feature = "datetime", feature = "unstable"))]
+    pub mod time_range_formatter;
     #[cfg(feature = "datetime")]
     pub mod timezone;
     #[cfg(feature = "datetime")]
