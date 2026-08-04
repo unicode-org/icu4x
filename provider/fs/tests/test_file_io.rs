@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locale_core::langid;
+use icu_locale_core::data_locale;
 use icu_provider::hello_world::{HelloWorld, HelloWorldProvider, HelloWorldV1};
 use icu_provider::prelude::*;
 use icu_provider_fs::FsDataProvider;
@@ -51,7 +51,7 @@ fn test_errors() {
 
         let err: Result<DataResponse<HelloWorldV1>, DataError> =
             provider.as_deserializing().load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("zh-DE").into()),
+                id: DataIdentifierBorrowed::for_locale(&data_locale!("zh-DE")),
                 ..Default::default()
             });
 

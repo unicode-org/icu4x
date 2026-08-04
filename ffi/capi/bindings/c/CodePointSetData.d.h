@@ -14,11 +14,6 @@
 typedef struct CodePointSetData CodePointSetData;
 
 
-typedef struct DiplomatCodePointSetDataView {
-  const CodePointSetData** data;
-  size_t len;
-} DiplomatCodePointSetDataView;
-
 
 
 #endif // CodePointSetData_D_H

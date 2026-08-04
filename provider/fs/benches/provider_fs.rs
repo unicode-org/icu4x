@@ -4,7 +4,7 @@
 
 use criterion::{Criterion, black_box, criterion_group, criterion_main};
 
-use icu_locale_core::langid;
+use icu_locale_core::data_locale;
 use icu_provider::hello_world::HelloWorldV1;
 use icu_provider::prelude::*;
 use icu_provider_fs::FsDataProvider;
@@ -18,7 +18,7 @@ fn overview_bench(c: &mut Criterion) {
             let _: DataResponse<HelloWorldV1> = black_box(&provider)
                 .as_deserializing()
                 .load(DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(&langid!("ru").into()),
+                    id: DataIdentifierBorrowed::for_locale(&data_locale!("ru")),
                     ..Default::default()
                 })
                 .expect("Loading was successful");
@@ -41,7 +41,7 @@ fn json_bench(c: &mut Criterion) {
             let _: DataResponse<HelloWorldV1> = black_box(&provider)
                 .as_deserializing()
                 .load(DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(&langid!("ru").into()),
+                    id: DataIdentifierBorrowed::for_locale(&data_locale!("ru")),
                     ..Default::default()
                 })
                 .expect("Loading was successful");
@@ -53,7 +53,7 @@ fn json_bench(c: &mut Criterion) {
             let _: DataResponse<HelloWorldV1> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load(DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(&langid!("ru").into()),
+                    id: DataIdentifierBorrowed::for_locale(&data_locale!("ru")),
                     ..Default::default()
                 })
                 .expect("Loading was successful");
@@ -70,7 +70,7 @@ fn bincode_bench(c: &mut Criterion) {
             let _: DataResponse<HelloWorldV1> = black_box(&provider)
                 .as_deserializing()
                 .load(DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(&langid!("ru").into()),
+                    id: DataIdentifierBorrowed::for_locale(&data_locale!("ru")),
                     ..Default::default()
                 })
                 .expect("Loading was successful");
@@ -82,7 +82,7 @@ fn bincode_bench(c: &mut Criterion) {
             let _: DataResponse<HelloWorldV1> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load(DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(&langid!("ru").into()),
+                    id: DataIdentifierBorrowed::for_locale(&data_locale!("ru")),
                     ..Default::default()
                 })
                 .expect("Loading was successful");
@@ -99,7 +99,7 @@ fn postcard_bench(c: &mut Criterion) {
             let _: DataResponse<HelloWorldV1> = black_box(&provider)
                 .as_deserializing()
                 .load(DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(&langid!("ru").into()),
+                    id: DataIdentifierBorrowed::for_locale(&data_locale!("ru")),
                     ..Default::default()
                 })
                 .expect("Loading was successful");
@@ -111,7 +111,7 @@ fn postcard_bench(c: &mut Criterion) {
             let _: DataResponse<HelloWorldV1> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load(DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(&langid!("ru").into()),
+                    id: DataIdentifierBorrowed::for_locale(&data_locale!("ru")),
                     ..Default::default()
                 })
                 .expect("Loading was successful");

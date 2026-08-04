@@ -269,6 +269,11 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
             },
         }
     }
+
+    /// Returns this fallbacker's configuration.
+    pub fn config(&self) -> LocaleFallbackConfig {
+        self.config
+    }
 }
 
 impl LocaleFallbackIterator<'_> {

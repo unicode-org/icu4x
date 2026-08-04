@@ -13,7 +13,7 @@ CAPI_COMPONENT := segmenter
 .DEFAULT_GOAL := test
 .PHONY: build test
 
-ICU_CAPI := $(shell cargo metadata --manifest-path Cargo.toml --format-version 1 | jq '.packages[] | select(.name == "icu_capi").manifest_path' | xargs dirname)
+ICU_CAPI := $(shell cargo metadata -m Cargo.toml --format-version 1 | jq '.packages[] | select(.name == "icu_capi").manifest_path' | xargs dirname)
 HEADERS := ${ICU_CAPI}/bindings/c
 ALL_HEADERS := $(wildcard ${HEADERS}/*)
 

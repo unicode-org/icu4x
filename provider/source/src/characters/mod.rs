@@ -289,7 +289,7 @@ fn parse_exemplar_char_string(s: &str) -> HashSet<String> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu::locale::langid;
+    use icu::locale::data_locale;
 
     #[test]
     fn test_parse_exemplar_chars() {
@@ -481,7 +481,7 @@ mod tests {
 
         let actual = icu::locale::exemplar_chars::ExemplarCharacters::try_new_main_unstable(
             &provider,
-            &langid!("en-001").into(),
+            &data_locale!("en-001"),
         )
         .unwrap();
 

@@ -26,12 +26,6 @@ class DecimalSignedRoundingMode;
 namespace icu4x {
 namespace capi {
     struct Decimal;
-
-
-    typedef struct DiplomatDecimalView {
-      const Decimal** data;
-      size_t len;
-    } DiplomatDecimalView;
 } // namespace capi
 } // namespace
 

@@ -7,7 +7,7 @@ use core::cmp::Ordering;
 use atoi::FromRadix16;
 use icu_collator::provider::*;
 use icu_collator::{options::*, preferences::*, *};
-use icu_locale_core::{Locale, langid, locale};
+use icu_locale_core::{Locale, data_locale, locale};
 use icu_provider::prelude::*;
 
 struct TestingProvider;
@@ -74,11 +74,7 @@ fn parse_hex(mut hexes: &[u8]) -> Option<String> {
     let mut buf = String::new();
     loop {
         let (scalar, mut offset) = u32::from_radix_16(hexes);
-        if let Some(c) = core::char::from_u32(scalar) {
-            buf.push(c);
-        } else {
-            return None;
-        }
+        buf.push(char::from_u32(scalar)?);
         if offset == hexes.len() {
             return Some(buf);
         }
@@ -1508,7 +1504,7 @@ fn test_nb_nn_no() {
         .unwrap()
         .metadata
         .locale,
-        Some(langid!("no").into())
+        Some(data_locale!("no"))
     );
 
     // And "nn" should work, too
@@ -1531,7 +1527,7 @@ fn test_nb_nn_no() {
         .unwrap()
         .metadata
         .locale,
-        Some(langid!("no").into())
+        Some(data_locale!("no"))
     );
 }
 

@@ -14,11 +14,6 @@
 typedef struct CaseMapper CaseMapper;
 
 
-typedef struct DiplomatCaseMapperView {
-  const CaseMapper** data;
-  size_t len;
-} DiplomatCaseMapperView;
-
 
 
 #endif // CaseMapper_D_H

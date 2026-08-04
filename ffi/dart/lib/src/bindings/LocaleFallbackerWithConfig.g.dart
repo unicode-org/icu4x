@@ -32,6 +32,14 @@ final class LocaleFallbackerWithConfig implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_internal_icu4x_LocaleFallbackerWithConfig_destroy_mv1));
 
+  /// Returns the associated config.
+  ///
+  /// See the [Rust documentation for `config`](https://docs.rs/icu/2.2.0/icu/locale/fallback/struct.LocaleFallbackerWithConfig.html#method.config) for more information.
+  LocaleFallbackConfig config() {
+    final result = _icu4x_LocaleFallbackerWithConfig_config_mv1(_ffi);
+    return LocaleFallbackConfig._fromFfi(result);
+  }
+
   /// Creates an iterator from a locale with each step of fallback.
   ///
   /// See the [Rust documentation for `fallback_for`](https://docs.rs/icu/2.2.0/icu/locale/fallback/struct.LocaleFallbacker.html#method.fallback_for) for more information.
@@ -49,6 +57,12 @@ final class LocaleFallbackerWithConfig implements ffi.Finalizable {
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_LocaleFallbackerWithConfig_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _internal_icu4x_LocaleFallbackerWithConfig_destroy_mv1(ffi.Pointer<ffi.Void> self);
+
+// ignore: experimental_member_use
+@meta.RecordUse()
+@ffi.Native<_LocaleFallbackConfigFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleFallbackerWithConfig_config_mv1')
+// ignore: non_constant_identifier_names
+external _LocaleFallbackConfigFfi _icu4x_LocaleFallbackerWithConfig_config_mv1(ffi.Pointer<ffi.Opaque> self);
 
 // ignore: experimental_member_use
 @meta.RecordUse()

@@ -537,13 +537,13 @@ fn explicit_preresolved() {
 #[test]
 fn explicit_hybrid_without_descendants() {
     let selected_locales = [
-        DataLocaleFamily::without_descendants(locale!("arc").into()), // Aramaic, not in supported list
-        DataLocaleFamily::without_descendants(locale!("ar-EG").into()),
-        DataLocaleFamily::without_descendants(locale!("ar-SA").into()),
-        DataLocaleFamily::without_descendants(locale!("en-GB").into()),
-        DataLocaleFamily::without_descendants(locale!("es").into()),
-        DataLocaleFamily::without_descendants(locale!("sr-ME").into()),
-        DataLocaleFamily::without_descendants(locale!("ru-Cyrl-RU").into()),
+        DataLocaleFamily::without_descendants(data_locale!("arc")), // Aramaic, not in supported list
+        DataLocaleFamily::without_descendants(data_locale!("ar-EG")),
+        DataLocaleFamily::without_descendants(data_locale!("ar-SA")),
+        DataLocaleFamily::without_descendants(data_locale!("en-GB")),
+        DataLocaleFamily::without_descendants(data_locale!("es")),
+        DataLocaleFamily::without_descendants(data_locale!("sr-ME")),
+        DataLocaleFamily::without_descendants(data_locale!("ru-Cyrl-RU")),
     ];
     let exported = export_to_map(
         ExportDriver::new(
@@ -584,13 +584,13 @@ fn explicit_hybrid_without_descendants() {
 #[test]
 fn explicit_hybrid_without_ancestors() {
     let selected_locales = [
-        DataLocaleFamily::without_ancestors(locale!("arc").into()), // Aramaic, not in supported list
-        DataLocaleFamily::without_ancestors(locale!("ar-EG").into()),
-        DataLocaleFamily::without_ancestors(locale!("ar-SA").into()),
-        DataLocaleFamily::without_ancestors(locale!("en-GB").into()),
-        DataLocaleFamily::without_ancestors(locale!("es").into()),
-        DataLocaleFamily::without_ancestors(locale!("sr-ME").into()),
-        DataLocaleFamily::without_ancestors(locale!("ru-Cyrl-RU").into()),
+        DataLocaleFamily::without_ancestors(data_locale!("arc")), // Aramaic, not in supported list
+        DataLocaleFamily::without_ancestors(data_locale!("ar-EG")),
+        DataLocaleFamily::without_ancestors(data_locale!("ar-SA")),
+        DataLocaleFamily::without_ancestors(data_locale!("en-GB")),
+        DataLocaleFamily::without_ancestors(data_locale!("es")),
+        DataLocaleFamily::without_ancestors(data_locale!("sr-ME")),
+        DataLocaleFamily::without_ancestors(data_locale!("ru-Cyrl-RU")),
     ];
     let exported = export_to_map(
         ExportDriver::new(
@@ -631,14 +631,14 @@ fn explicit_hybrid_without_ancestors() {
 #[test]
 fn explicit_hybrid_mixed_families() {
     let selected_locales = [
-        DataLocaleFamily::without_ancestors(locale!("arc").into()), // Aramaic, not in supported list
-        DataLocaleFamily::with_descendants(locale!("ar-EG").into()),
-        DataLocaleFamily::without_ancestors(locale!("ar-EG").into()), // duplicate entry for ar-EG
-        DataLocaleFamily::with_descendants(locale!("en").into()),
-        DataLocaleFamily::single(locale!("en").into()), // duplicate entry for en
-        DataLocaleFamily::without_ancestors(locale!("en-GB").into()),
-        DataLocaleFamily::without_descendants(locale!("es").into()),
-        DataLocaleFamily::with_descendants(locale!("es").into()), // duplicate entry for es
+        DataLocaleFamily::without_ancestors(data_locale!("arc")), // Aramaic, not in supported list
+        DataLocaleFamily::with_descendants(data_locale!("ar-EG")),
+        DataLocaleFamily::without_ancestors(data_locale!("ar-EG")), // duplicate entry for ar-EG
+        DataLocaleFamily::with_descendants(data_locale!("en")),
+        DataLocaleFamily::single(data_locale!("en")), // duplicate entry for en
+        DataLocaleFamily::without_ancestors(data_locale!("en-GB")),
+        DataLocaleFamily::without_descendants(data_locale!("es")),
+        DataLocaleFamily::with_descendants(data_locale!("es")), // duplicate entry for es
     ];
     let exported = export_to_map(
         ExportDriver::new(

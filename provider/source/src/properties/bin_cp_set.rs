@@ -109,8 +109,8 @@ macro_rules! impl_ucd_property {
                 ) -> Result<DataResponse<$marker>, DataError> {
                     self.check_req::<$marker>(req)?;
                     let data = self.get_binary_prop(
-                        core::str::from_utf8(<$prop as BinaryProperty>::NAME).unwrap(),
-                        core::str::from_utf8(<$prop as BinaryProperty>::SHORT_NAME).unwrap()
+                        str::from_utf8(<$prop as BinaryProperty>::NAME).unwrap(),
+                        str::from_utf8(<$prop as BinaryProperty>::SHORT_NAME).unwrap()
                     )?;
 
                     Ok(DataResponse {

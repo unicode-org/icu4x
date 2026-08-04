@@ -32,12 +32,6 @@ class Weekday;
 namespace icu4x {
 namespace capi {
     struct IsoDate;
-
-
-    typedef struct DiplomatIsoDateView {
-      const IsoDate** data;
-      size_t len;
-    } DiplomatIsoDateView;
 } // namespace capi
 } // namespace
 

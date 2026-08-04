@@ -9,7 +9,6 @@ use crate::scaffold::*;
 use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
-use core::char;
 use icu_locale_core::LanguageIdentifier;
 use icu_locale_core::subtags::{Language, language};
 use icu_provider::prelude::*;
@@ -2254,7 +2253,7 @@ mod tests {
             "ภาษาไทยภาษาไทย",
             &["ภาษา", "ไทย", "ภาษา", "ไทย"],
             {
-                let mut s = LineSegmenter::new_for_non_complex_scripts(Default::default());
+                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
                 s.load_lstm();
                 s
             },
@@ -2264,23 +2263,34 @@ mod tests {
             "ภาษาไทยภาษาไทย",
             &["ภาษา", "ไทย", "ภาษา", "ไทย"],
             {
-                let mut s = LineSegmenter::new_for_non_complex_scripts(Default::default());
+                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
                 s.load_dictionary();
                 s
             },
         );
 
         check_line("ภาษา", &["ภาษา"], {
-            let mut s = LineSegmenter::new_for_non_complex_scripts(Default::default());
+            let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
             s.load_lstm();
             s
         });
 
         check_line("ภาษา", &["ภาษา"], {
-            let mut s = LineSegmenter::new_for_non_complex_scripts(Default::default());
+            let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
             s.load_dictionary();
             s
         });
+
+        // # 8243
+        check_line(
+            "ก\u{2060}รุ\u{2060}ง",
+            &["ก\u{2060}รุ\u{2060}ง"],
+            {
+                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
+                s.load_dictionary();
+                s
+            },
+        );
     }
 
     #[test]
@@ -2308,7 +2318,7 @@ mod tests {
             "မြန်မာဘာသာစကား",
             &["မြန်", "မာ", "ဘာသာ", "စကား"],
             {
-                let mut s = LineSegmenter::new_for_non_complex_scripts(Default::default());
+                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
                 s.load_lstm();
                 s
             },
@@ -2318,7 +2328,7 @@ mod tests {
             "မြန်မာဘာသာစကား",
             &["မြန်မာဘာသာ", "စကား"],
             {
-                let mut s = LineSegmenter::new_for_non_complex_scripts(Default::default());
+                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
                 s.load_dictionary();
                 s
             },
@@ -2346,7 +2356,7 @@ mod tests {
             "សេចក្ដីប្រកាសជាសកលស្ដីពីសិទ្ធិមនុស្ស",
             &["សេចក្ដីប្រកាស", "ជាស", "កល", "ស្ដីពី", "សិទ្ធិមនុស្ស"],
             {
-                let mut s = LineSegmenter::new_for_non_complex_scripts(Default::default());
+                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
                 s.load_lstm();
                 s
             },
@@ -2356,7 +2366,18 @@ mod tests {
             "សេចក្ដីប្រកាសជាសកលស្ដីពីសិទ្ធិមនុស្ស",
             &["សេចក្ដីប្រកាស", "ជាស", "កល", "ស្ដីពី", "សិទ្ធិមនុស្ស"],
             {
-                let mut s = LineSegmenter::new_for_non_complex_scripts(Default::default());
+                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
+                s.load_dictionary();
+                s
+            },
+        );
+
+        // #7218
+        check_line(
+            "អស់ នឹង មាន",
+            &["អស់ ", "នឹង ", "មាន"],
+            {
+                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
                 s.load_dictionary();
                 s
             },
@@ -2384,7 +2405,7 @@ mod tests {
             "ກ່ຽວກັບສິດຂອງມະນຸດ",
             &["ກ່ຽວ", "ກັບ", "ສິດ", "ຂອງ", "ມະນຸດ"],
             {
-                let mut s = LineSegmenter::new_for_non_complex_scripts(Default::default());
+                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
                 s.load_lstm();
                 s
             },
@@ -2394,7 +2415,7 @@ mod tests {
             "ກ່ຽວກັບສິດຂອງມະນຸດ",
             &["ກ່ຽວກັບ", "ສິດ", "ຂອງ", "ມະນຸດ"],
             {
-                let mut s = LineSegmenter::new_for_non_complex_scripts(Default::default());
+                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
                 s.load_dictionary();
                 s
             },
@@ -2410,7 +2431,7 @@ mod tests {
 
     #[test]
     fn empty_string_neo() {
-        let segmenter = LineSegmenter::new_for_non_complex_scripts(Default::default());
+        let segmenter = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
         let breaks: Vec<usize> = segmenter.segment_str("").collect();
         assert_eq!(breaks, [0]);
     }

@@ -26,12 +26,6 @@ class LocaleDirection;
 namespace icu4x {
 namespace capi {
     struct LocaleDirectionality;
-
-
-    typedef struct DiplomatLocaleDirectionalityView {
-      const LocaleDirectionality** data;
-      size_t len;
-    } DiplomatLocaleDirectionalityView;
 } // namespace capi
 } // namespace
 
