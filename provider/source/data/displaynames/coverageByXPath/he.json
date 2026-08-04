@@ -1,0 +1,36 @@
+{
+  "coverageByXPath": {
+    "he": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"he\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Hebr\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"IL\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"hebrew\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"hebrew\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic-civil\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic-civil\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic-tbla\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic-tbla\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"hebr\"]"
+      ],
+      "modern": [
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"compat\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"dictionary\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"phonebook\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"phonetic\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"pinyin\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"stroke\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"traditional\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"unihan\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"zhuyin\"]"
+      ]
+    }
+  }
+}

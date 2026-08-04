@@ -4,13 +4,59 @@
 
 use super::{
     impl_writeable_for_single_display_name_borrowed, impl_writeable_for_single_display_name_owned,
+    load_one,
 };
 use crate::displaynames::DisplayNamesPreferences;
-use crate::displaynames::provider::*;
+use crate::displaynames::provider::{
+    LocaleNamesScriptMediumHeavyV1, LocaleNamesScriptMediumLightV1, LocaleNamesScriptMediumTinyV1,
+    LocaleNamesScriptShortHeavyV1,
+};
 use icu_locale_core::subtags::Script;
 use icu_provider::prelude::*;
 
+#[inline]
+fn make_attributes(subtag: &Script) -> &DataMarkerAttributes {
+    // All script markers use the same attributes.
+    // Valid Script subtags conform to DataMarkerAttributes syntax.
+    DataMarkerAttributes::from_str_or_panic(subtag.as_str())
+}
+
+#[inline]
+fn make_locale(prefs: DisplayNamesPreferences) -> DataLocale {
+    // All script markers use the same locale
+    LocaleNamesScriptMediumTinyV1::make_locale(prefs.locale_preferences)
+}
+
+macro_rules! table_row {
+    (try_new_tiny) => {
+        "| [`try_new_tiny`](Self::try_new_tiny) | \"Latin\" | ❌ | ❌ |"
+    };
+    (try_new_light) => {
+        "| [`try_new_light`](Self::try_new_light) | \"Latin\" | \"Unknown Script\" | ❌ |"
+    };
+    (try_new_heavy) => {
+        "| [`try_new_heavy`](Self::try_new_heavy) | \"Latin\" | \"Unknown Script\" | \"Sumero-Akkadian Cuneiform\" |"
+    };
+    (try_new_short_heavy) => {
+        "| [`try_new_short_heavy`](Self::try_new_short_heavy) | \"Latin\" | \"Unknown Script\" | \"S-A Cuneiform\" |"
+    };
+}
+
 /// A localized display name for a single script, owned version.
+///
+/// # Constructor Behavior
+///
+/// There are several constructors, each of which links different data and serve
+/// different use cases. The behavior is illustrated in the table below.
+///
+/// | Constructor | `Latn` | `Zzzz` | `Xsux` |
+/// | :--- | :--- | :--- | :--- |
+#[doc = concat!(table_row!(try_new_tiny), "\n")]
+#[doc = concat!(table_row!(try_new_light), "\n")]
+#[doc = concat!(table_row!(try_new_heavy), "\n")]
+#[doc = concat!(table_row!(try_new_short_heavy), "\n")]
+///
+/// > Note: :x: means that the constructor returns an error.
 ///
 /// # Example
 ///
@@ -19,94 +65,203 @@ use icu_provider::prelude::*;
 /// use icu::locale::{locale, subtags::script};
 /// use writeable::assert_writeable_eq;
 ///
-/// let display_name = ScriptDisplayNameOwned::try_new(locale!("en").into(), script!("Xsux"))
+/// let display_name = ScriptDisplayNameOwned::try_new_light(locale!("en").into(), script!("Latn"))
 ///     .expect("Data should load successfully");
 ///
-/// assert_writeable_eq!(display_name, "Sumero-Akkadian Cuneiform");
+/// assert_writeable_eq!(display_name, "Latin");
 /// ```
 #[derive(Debug)]
 pub struct ScriptDisplayNameOwned {
-    pub(crate) payload: DataPayload<LocaleNamesScriptMediumV1>,
+    pub(crate) payload: DataPayload<LocaleNamesScriptMediumLightV1>,
 }
 
 impl ScriptDisplayNameOwned {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
-        /// Loads the long script display name for a given script and locale using compiled data.
+        /// Loads the script display name for a given script and locale using compiled data.
         functions: [
-            try_new,
-            try_new_with_buffer_provider,
-            try_new_unstable,
+            try_new_light,
+            try_new_light_with_buffer_provider,
+            try_new_light_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<D: DataProvider<LocaleNamesScriptMediumV1> + ?Sized>(
-        provider: &D,
-        prefs: DisplayNamesPreferences,
-        script: Script,
-    ) -> Result<Self, DataError> {
-        super::try_new_unstable::<LocaleNamesScriptMediumV1, _>(
-            provider,
-            prefs,
-            LocaleNamesScriptMediumV1::make_attributes(&script),
-        )
-        .map(|payload| Self { payload })
-    }
-
-    icu_provider::gen_buffer_data_constructors!(
-        (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
-        /// Loads the short script display name for a given script and locale using compiled data.
-        ///
-        /// Falls back to the long name if the short name is not available.
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::experimental::displaynames::{
-        ///     DisplayNamesPreferences, single::ScriptDisplayNameOwned,
-        /// };
-        /// use icu::locale::{locale, subtags::script};
-        /// use writeable::assert_writeable_eq;
-        ///
-        /// let prefs: DisplayNamesPreferences = locale!("en-US").into();
-        ///
-        /// // "Xsux" has a short display name in en-US
-        /// let display_name_short = ScriptDisplayNameOwned::try_new_short(prefs, script!("Xsux"))
-        ///     .expect("Data should load successfully");
-        /// assert_writeable_eq!(display_name_short, "S-A Cuneiform");
-        ///
-        /// // "Deva" does not have a short display name, so it falls back to the long display name
-        /// let display_name_long = ScriptDisplayNameOwned::try_new_short(prefs, script!("Deva"))
-        ///     .expect("Data should load successfully");
-        /// assert_writeable_eq!(display_name_long, "Devanagari");
-        /// ```
-        functions: [
-            try_new_short,
-            try_new_short_with_buffer_provider,
-            try_new_short_unstable,
-            Self
-        ]
-    );
-
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_short)]
-    pub fn try_new_short_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_light)]
+    pub fn try_new_light_unstable<D>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         script: Script,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LocaleNamesScriptShortV1>
-            + DataProvider<LocaleNamesScriptMediumV1>
-            + ?Sized,
+        D: ?Sized
+            + DataProvider<LocaleNamesScriptMediumLightV1>
+            + DataProvider<LocaleNamesScriptMediumTinyV1>,
     {
-        super::try_new_short_unstable::<LocaleNamesScriptShortV1, LocaleNamesScriptMediumV1, _>(
-            provider,
-            prefs,
-            LocaleNamesScriptShortV1::make_attributes(&script),
-        )
-        .map(|payload| Self { payload })
+        let attrs = make_attributes(&script);
+        let locale = make_locale(prefs);
+        let payload = load_one::<LocaleNamesScriptMediumLightV1, _, _>(provider, &locale, attrs)?
+            .map_or_else(
+                || load_one::<LocaleNamesScriptMediumTinyV1, _, _>(provider, &locale, attrs),
+                |p| Ok(Some(p)),
+            )?
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
+        Ok(Self { payload })
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
+        /// Loads the minimal script display name for a given script and locale using compiled data.
+        ///
+        /// The `minimal` constructor links an extremely limited amount of data: for example,
+        /// only those scripts associated with the formatting locale.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::experimental::displaynames::single::ScriptDisplayNameOwned;
+        /// use icu::locale::{locale, subtags::script};
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// // Minimal script names contain Latn for en
+        /// let display_name = ScriptDisplayNameOwned::try_new_tiny(locale!("en").into(), script!("Latn")).unwrap();
+        /// assert_writeable_eq!(display_name, "Latin");
+        /// ```
+        functions: [
+            try_new_tiny,
+            try_new_tiny_with_buffer_provider,
+            try_new_tiny_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_tiny)]
+    pub fn try_new_tiny_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        script: Script,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized + DataProvider<LocaleNamesScriptMediumTinyV1>,
+    {
+        let attrs = make_attributes(&script);
+        let locale = make_locale(prefs);
+        let payload = load_one::<LocaleNamesScriptMediumTinyV1, _, _>(provider, &locale, attrs)?
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
+        Ok(Self { payload })
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
+        /// Loads the extended script display name for a given script and locale using compiled data.
+        ///
+        /// The `extended` constructor includes additional data coverage for subtags that are less commonly formatted in the target locale.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::experimental::displaynames::single::ScriptDisplayNameOwned;
+        /// use icu::locale::{locale, subtags::script};
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let display_name = ScriptDisplayNameOwned::try_new_heavy(locale!("en").into(), script!("Latn"))
+        ///     .expect("Data should load successfully");
+        ///
+        /// assert_writeable_eq!(display_name, "Latin");
+        /// ```
+        functions: [
+            try_new_heavy,
+            try_new_heavy_with_buffer_provider,
+            try_new_heavy_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_heavy)]
+    pub fn try_new_heavy_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        script: Script,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<LocaleNamesScriptMediumHeavyV1>
+            + DataProvider<LocaleNamesScriptMediumLightV1>
+            + DataProvider<LocaleNamesScriptMediumTinyV1>,
+    {
+        let attrs = make_attributes(&script);
+        let locale = make_locale(prefs);
+        let payload = load_one::<LocaleNamesScriptMediumHeavyV1, _, _>(provider, &locale, attrs)?
+            .map_or_else(
+                || load_one::<LocaleNamesScriptMediumLightV1, _, _>(provider, &locale, attrs),
+                |p| Ok(Some(p)),
+            )?
+            .map_or_else(
+                || load_one::<LocaleNamesScriptMediumTinyV1, _, _>(provider, &locale, attrs),
+                |p| Ok(Some(p)),
+            )?
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
+        Ok(Self { payload })
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
+        /// Loads the extended short script display name for a given script and locale using compiled data.
+        ///
+        /// The `extended` constructor includes additional data coverage for subtags that are less commonly formatted in the target locale.
+        ///
+        /// Falls back to default (medium) length if a short name is not available.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::experimental::displaynames::single::ScriptDisplayNameOwned;
+        /// use icu::locale::{locale, subtags::script};
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let display_name = ScriptDisplayNameOwned::try_new_short_heavy(locale!("en").into(), script!("Xsux"))
+        ///     .expect("Data should load successfully");
+        ///
+        /// assert_writeable_eq!(display_name, "S-A Cuneiform");
+        /// ```
+        functions: [
+            try_new_short_heavy,
+            try_new_short_heavy_with_buffer_provider,
+            try_new_short_heavy_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_short_heavy)]
+    pub fn try_new_short_heavy_unstable<D>(
+        provider: &D,
+        prefs: DisplayNamesPreferences,
+        script: Script,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<LocaleNamesScriptShortHeavyV1>
+            + DataProvider<LocaleNamesScriptMediumHeavyV1>
+            + DataProvider<LocaleNamesScriptMediumLightV1>
+            + DataProvider<LocaleNamesScriptMediumTinyV1>,
+    {
+        let attrs = make_attributes(&script);
+        let locale = make_locale(prefs);
+        let payload = load_one::<LocaleNamesScriptShortHeavyV1, _, _>(provider, &locale, attrs)?
+            .map_or_else(
+                || load_one::<LocaleNamesScriptMediumHeavyV1, _, _>(provider, &locale, attrs),
+                |p| Ok(Some(p)),
+            )?
+            .map_or_else(
+                || load_one::<LocaleNamesScriptMediumLightV1, _, _>(provider, &locale, attrs),
+                |p| Ok(Some(p)),
+            )?
+            .map_or_else(
+                || load_one::<LocaleNamesScriptMediumTinyV1, _, _>(provider, &locale, attrs),
+                |p| Ok(Some(p)),
+            )?
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
+        Ok(Self { payload })
     }
 
     /// Returns a borrowed version of this display name.
@@ -126,3 +281,33 @@ pub struct ScriptDisplayName<'a> {
 }
 
 impl_writeable_for_single_display_name_borrowed!(ScriptDisplayName);
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use icu_locale_core::{locale, subtags::script};
+
+    #[test]
+    fn test_script_display_name_owned_table() {
+        let prefs_en = DisplayNamesPreferences::from(locale!("en"));
+        let inputs = [script!("Latn"), script!("Zzzz"), script!("Xsux")];
+
+        macro_rules! check_row {
+            ($constructor:ident) => {
+                let items = inputs.iter().map(|id| {
+                    ScriptDisplayNameOwned::$constructor(prefs_en, *id)
+                        .map(|name| Ok::<_, ()>(name.to_string()))
+                });
+                assert_eq!(
+                    super::super::format_table_row(stringify!($constructor), items),
+                    table_row!($constructor)
+                );
+            };
+        }
+
+        check_row!(try_new_tiny);
+        check_row!(try_new_light);
+        check_row!(try_new_heavy);
+        check_row!(try_new_short_heavy);
+    }
+}

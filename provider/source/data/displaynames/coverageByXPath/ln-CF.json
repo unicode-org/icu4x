@@ -1,0 +1,23 @@
+{
+  "coverageByXPath": {
+    "ln-CF": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"ln\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Latn\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"AO\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"CD\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"CD\"][@alt=\"variant\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"CF\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"CG\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"CG\"][@alt=\"variant\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"kg\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"sg\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]"
+      ]
+    }
+  }
+}

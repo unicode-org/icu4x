@@ -88,15 +88,24 @@ pub mod provider {
         impl_region_display_names_v1!(Baked);
         impl_script_display_names_v1!(Baked);
         impl_variant_display_names_v1!(Baked);
-        impl_locale_names_region_medium_v1!(Baked);
-        impl_locale_names_region_short_v1!(Baked);
-        impl_locale_names_language_medium_v1!(Baked);
-        impl_locale_names_language_short_v1!(Baked);
-        impl_locale_names_language_long_v1!(Baked);
-        impl_locale_names_language_menu_medium_v1!(Baked);
-        impl_locale_names_script_medium_v1!(Baked);
-        impl_locale_names_script_short_v1!(Baked);
-        impl_locale_names_variant_medium_v1!(Baked);
+        impl_locale_names_region_medium_tiny_v1!(Baked);
+        impl_locale_names_region_medium_light_v1!(Baked);
+        impl_locale_names_region_short_tiny_v1!(Baked);
+        impl_locale_names_region_short_light_v1!(Baked);
+        impl_locale_names_language_medium_tiny_v1!(Baked);
+        impl_locale_names_language_medium_light_v1!(Baked);
+        impl_locale_names_language_medium_heavy_v1!(Baked);
+        impl_locale_names_language_short_light_v1!(Baked);
+        impl_locale_names_language_short_heavy_v1!(Baked);
+        impl_locale_names_language_long_light_v1!(Baked);
+        impl_locale_names_language_long_heavy_v1!(Baked);
+        impl_locale_names_language_menu_medium_light_v1!(Baked);
+        impl_locale_names_language_menu_medium_heavy_v1!(Baked);
+        impl_locale_names_script_medium_tiny_v1!(Baked);
+        impl_locale_names_script_medium_light_v1!(Baked);
+        impl_locale_names_script_medium_heavy_v1!(Baked);
+        impl_locale_names_script_short_heavy_v1!(Baked);
+        impl_locale_names_variant_medium_heavy_v1!(Baked);
         impl_locale_names_essentials_v1!(Baked);
         impl_percent_essentials_v1!(Baked);
         impl_person_names_format_v1!(Baked);
@@ -165,15 +174,24 @@ pub mod provider {
         super::displaynames::provider::RegionDisplayNamesV1::INFO,
         super::displaynames::provider::ScriptDisplayNamesV1::INFO,
         super::displaynames::provider::VariantDisplayNamesV1::INFO,
-        super::displaynames::provider::LocaleNamesRegionMediumV1::INFO,
-        super::displaynames::provider::LocaleNamesRegionShortV1::INFO,
-        super::displaynames::provider::LocaleNamesLanguageMediumV1::INFO,
-        super::displaynames::provider::LocaleNamesLanguageShortV1::INFO,
-        super::displaynames::provider::LocaleNamesLanguageLongV1::INFO,
-        super::displaynames::provider::LocaleNamesLanguageMenuMediumV1::INFO,
-        super::displaynames::provider::LocaleNamesScriptMediumV1::INFO,
-        super::displaynames::provider::LocaleNamesScriptShortV1::INFO,
-        super::displaynames::provider::LocaleNamesVariantMediumV1::INFO,
+        super::displaynames::provider::LocaleNamesRegionMediumTinyV1::INFO,
+        super::displaynames::provider::LocaleNamesRegionMediumLightV1::INFO,
+        super::displaynames::provider::LocaleNamesRegionShortTinyV1::INFO,
+        super::displaynames::provider::LocaleNamesRegionShortLightV1::INFO,
+        super::displaynames::provider::LocaleNamesLanguageMediumTinyV1::INFO,
+        super::displaynames::provider::LocaleNamesLanguageMediumLightV1::INFO,
+        super::displaynames::provider::LocaleNamesLanguageMediumHeavyV1::INFO,
+        super::displaynames::provider::LocaleNamesLanguageShortLightV1::INFO,
+        super::displaynames::provider::LocaleNamesLanguageShortHeavyV1::INFO,
+        super::displaynames::provider::LocaleNamesLanguageLongLightV1::INFO,
+        super::displaynames::provider::LocaleNamesLanguageLongHeavyV1::INFO,
+        super::displaynames::provider::LocaleNamesLanguageMenuMediumLightV1::INFO,
+        super::displaynames::provider::LocaleNamesLanguageMenuMediumHeavyV1::INFO,
+        super::displaynames::provider::LocaleNamesScriptMediumTinyV1::INFO,
+        super::displaynames::provider::LocaleNamesScriptMediumLightV1::INFO,
+        super::displaynames::provider::LocaleNamesScriptMediumHeavyV1::INFO,
+        super::displaynames::provider::LocaleNamesScriptShortHeavyV1::INFO,
+        super::displaynames::provider::LocaleNamesVariantMediumHeavyV1::INFO,
         super::displaynames::provider::LocaleNamesEssentialsV1::INFO,
         super::measure::provider::UnitIdsV1::INFO,
         super::personnames::provider::PersonNamesFormatV1::INFO,

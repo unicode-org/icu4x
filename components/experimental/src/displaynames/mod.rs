@@ -35,8 +35,8 @@
 //! assert_writeable_eq!(multi.of(region!("GB")).unwrap(), "United Kingdom");
 //!
 //! // Single: Load only the region(s) we need.
-//! let us = RegionDisplayNameOwned::try_new(locale, region!("US")).unwrap();
-//! let gb = RegionDisplayNameOwned::try_new(locale, region!("GB")).unwrap();
+//! let us = RegionDisplayNameOwned::try_new_light(locale, region!("US")).unwrap();
+//! let gb = RegionDisplayNameOwned::try_new_light(locale, region!("GB")).unwrap();
 //! assert_writeable_eq!(us, "United States");
 //! assert_writeable_eq!(gb, "United Kingdom");
 //! ```

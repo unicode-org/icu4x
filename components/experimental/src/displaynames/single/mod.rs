@@ -32,54 +32,25 @@ pub use region::{RegionDisplayName, RegionDisplayNameOwned};
 pub use script::{ScriptDisplayName, ScriptDisplayNameOwned};
 pub use variant::{VariantDisplayName, VariantDisplayNameOwned};
 
-use crate::displaynames::DisplayNamesPreferences;
 use icu_provider::prelude::*;
-use zerovec::VarZeroCow;
 
-pub(crate) fn try_new_unstable<M, D>(
-    provider: &D,
-    prefs: DisplayNamesPreferences,
-    attributes: &DataMarkerAttributes,
-) -> Result<DataPayload<M>, DataError>
+fn load_one<M0, M1, P>(
+    provider: &P,
+    locale: &DataLocale,
+    attrs: &DataMarkerAttributes,
+) -> Result<Option<DataPayload<M1>>, DataError>
 where
-    M: DataMarker<DataStruct = VarZeroCow<'static, str>>,
-    D: DataProvider<M> + ?Sized,
+    M0: DataMarker,
+    M1: DynamicDataMarker<DataStruct = M0::DataStruct>,
+    P: DataProvider<M0> + ?Sized,
 {
-    let locale = M::make_locale(prefs.locale_preferences);
-    let payload = provider
-        .load(DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
-            ..Default::default()
-        })?
-        .payload;
-    Ok(payload)
-}
-
-pub(crate) fn try_new_short_unstable<MShort, MLong, D>(
-    provider: &D,
-    prefs: DisplayNamesPreferences,
-    attributes: &DataMarkerAttributes,
-) -> Result<DataPayload<MLong>, DataError>
-where
-    MShort: DataMarker<DataStruct = VarZeroCow<'static, str>>,
-    MLong: DataMarker<DataStruct = VarZeroCow<'static, str>>,
-    D: DataProvider<MShort> + DataProvider<MLong> + ?Sized,
-{
-    let locale = MShort::make_locale(prefs.locale_preferences);
-    let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale);
+    let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(attrs, locale);
     let mut metadata = DataRequestMetadata::default();
     metadata.silent = true;
-    let result: Result<DataResponse<MShort>, DataError> =
-        provider.load(DataRequest { id, metadata });
-
-    match result {
-        Ok(response) => Ok(response.payload.cast()),
-        Err(DataError {
-            kind: DataErrorKind::IdentifierNotFound,
-            ..
-        }) => try_new_unstable(provider, prefs, attributes),
-        Err(e) => Err(e),
-    }
+    let response = provider
+        .load(DataRequest { id, metadata })
+        .allow_identifier_not_found()?;
+    Ok(response.map(|r| r.payload.cast()))
 }
 
 macro_rules! impl_writeable_for_single_display_name_borrowed {
@@ -138,3 +109,19 @@ macro_rules! impl_writeable_for_single_display_name_owned {
 
 pub(crate) use impl_writeable_for_single_display_name_borrowed;
 pub(crate) use impl_writeable_for_single_display_name_owned;
+
+#[cfg(test)]
+pub(crate) fn format_table_row<S: core::fmt::Display, E1, E2>(
+    name: &str,
+    items: impl IntoIterator<Item = Result<Result<S, E1>, E2>>,
+) -> String {
+    let row = items
+        .into_iter()
+        .map(|item| match item {
+            Ok(Ok(s)) => format!("\"{s}\""),
+            _ => "❌".to_string(),
+        })
+        .collect::<Vec<_>>()
+        .join(" | ");
+    format!("| [`{name}`](Self::{name}) | {row} |")
+}
