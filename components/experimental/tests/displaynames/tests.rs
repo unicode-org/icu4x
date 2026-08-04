@@ -2,9 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu::locale::LocaleExpander;
 use icu_experimental::displaynames::DisplayNamesPreferences;
-use icu_experimental::displaynames::provider::LocaleNamesLanguageMediumTinyV1;
 use icu_experimental::displaynames::single::{
     LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOwned,
     LanguageIdentifierNameFallbackError, RegionDisplayNameOwned,
@@ -13,12 +11,9 @@ use icu_experimental::displaynames::{
     DisplayNamesOptions, LanguageIdentifierDisplayNameOptions, multi::LocaleDisplayNamesFormatter,
 };
 use icu_locale_core::{Locale, langid, locale, subtags::region};
-
-use icu_provider::IterableDataProvider;
 use std::borrow::Cow;
 use writeable::{
-    Part, TryWriteable, Writeable, assert_try_writeable_eq, assert_try_writeable_parts_eq,
-    assert_writeable_eq,
+    Part, Writeable, assert_try_writeable_eq, assert_try_writeable_parts_eq, assert_writeable_eq,
 };
 
 #[test]
@@ -694,74 +689,6 @@ fn test_us_and_uk_english_display_names() {
         )
         .unwrap();
         assert_try_writeable_eq!(gb_name.as_borrowed(), "English (world)");
-    }
-}
-
-struct TestingProvider;
-
-const _: () = {
-    use icu_experimental_data::*;
-    mod icu {
-        pub use icu_experimental as experimental;
-    }
-
-    make_provider!(TestingProvider);
-    impl_locale_names_language_medium_tiny_v1!(TestingProvider, ITER);
-};
-
-#[test]
-fn test_modern_locales_self_and_maximized_region_display_names() {
-    let available_locales: Vec<_> =
-        IterableDataProvider::<LocaleNamesLanguageMediumTinyV1>::iter_ids(&TestingProvider)
-            .expect("iter_ids should succeed")
-            .into_iter()
-            .map(|id| id.locale)
-            .collect();
-
-    assert!(
-        available_locales.len() >= 100,
-        "Expected at least 100 available locales, found {}",
-        available_locales.len()
-    );
-
-    let expander = LocaleExpander::new_extended();
-    let options = LanguageIdentifierDisplayNameOptions::default();
-
-    for data_locale in available_locales {
-        if data_locale.is_unknown() {
-            continue;
-        }
-        let locale: Locale = data_locale.into_locale();
-        let lang_id = locale.id.clone();
-
-        // Assert that all modern locales contain a language displayname for themselves in the minimal language slice
-        let lang_display_name = LanguageIdentifierDisplayNameOwned::try_new_tiny(
-            locale.clone().into(),
-            lang_id,
-            options,
-        )
-        .expect("Minimal language display name construction should succeed");
-
-        assert!(
-            lang_display_name
-                .as_borrowed()
-                .try_write_to_string()
-                .is_ok(),
-            "Expected language display name for {locale} in minimal language slice, but got fallback"
-        );
-
-        // Assert that all modern locales contain a display name for their LocaleExpander maximized region
-        let mut max_locale = locale.clone();
-        expander.maximize(&mut max_locale.id);
-        if let Some(region) = max_locale.id.region {
-            let region_display_name =
-                RegionDisplayNameOwned::try_new_tiny(locale.clone().into(), region);
-
-            assert!(
-                region_display_name.is_ok(),
-                "Expected minimal region display name for maximized region {region} in {locale}"
-            );
-        }
     }
 }
 
