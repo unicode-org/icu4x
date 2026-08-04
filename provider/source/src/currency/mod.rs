@@ -22,16 +22,16 @@ use crate::cldr_serde;
 
 /// Helper to collect and deduplicate `DoublePlaceholderPattern`s into a `VarZeroVec`.
 #[derive(Default)]
-pub(crate) struct UniquePatternsTracker {
+struct PatternSet {
     patterns: Vec<Box<DoublePlaceholderPattern>>,
 }
 
-impl UniquePatternsTracker {
-    pub fn new() -> Self {
+impl PatternSet {
+    fn new() -> Self {
         Self::default()
     }
 
-    pub fn add(&mut self, opt_cow: Option<Cow<'_, DoublePlaceholderPattern>>) -> Option<u8> {
+    fn add(&mut self, opt_cow: Option<Cow<'_, DoublePlaceholderPattern>>) -> Option<u8> {
         opt_cow.map(|cow| {
             let pat: Box<DoublePlaceholderPattern> = cow.into_owned();
             if let Some(idx) = self.patterns.iter().position(|p| p == &pat) {
@@ -44,13 +44,13 @@ impl UniquePatternsTracker {
         })
     }
 
-    pub fn into_var_zero_vec<'data>(self) -> VarZeroVec<'data, DoublePlaceholderPattern> {
+    fn into_var_zero_vec<'data>(self) -> VarZeroVec<'data, DoublePlaceholderPattern> {
         VarZeroVec::from(&self.patterns)
     }
 }
 
 /// Helper to iterate through locales and numbering system patterns in `numbers.json`.
-pub(crate) fn iter_numsys_pattern_ids<F>(
+fn iter_numsys_pattern_ids<F>(
     provider: &SourceDataProvider,
     predicate: F,
 ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>
