@@ -1384,6 +1384,13 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             }
         };
 
+        // Per UTS #35 (LDML / TR35 Part 3: Numbers, Section 3.2.1), when a pattern does not specify an
+        // explicit negative subpattern, the default negative format is formed by prepending the localized
+        // minus sign to the entire positive pattern (e.g., `-¤#,##0` producing `-$12K`).
+        // Therefore, `format_sign` is applied as the outermost wrapper around the glued currency string so
+        // that the minus sign modifies the full monetary expression rather than just the numeric significand.
+        // When an accounting negative pattern already encodes the sign (e.g. parentheses), `sign` is
+        // `Sign::None` so we do not prepend a redundant minus.
         V::format_sign(
             &self.value_formatter,
             pattern.interpolate((formatted_value, currency_str)),
