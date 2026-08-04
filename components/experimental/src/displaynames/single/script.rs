@@ -61,21 +61,21 @@ macro_rules! table_row {
 /// # Example
 ///
 /// ```
-/// use icu::experimental::displaynames::single::ScriptDisplayNameOwned;
+/// use icu::experimental::displaynames::single::ScriptDisplayName;
 /// use icu::locale::{locale, subtags::script};
 /// use writeable::assert_writeable_eq;
 ///
-/// let display_name = ScriptDisplayNameOwned::try_new_light(locale!("en").into(), script!("Latn"))
+/// let display_name = ScriptDisplayName::try_new_light(locale!("en").into(), script!("Latn"))
 ///     .expect("Data should load successfully");
 ///
 /// assert_writeable_eq!(display_name, "Latin");
 /// ```
 #[derive(Debug)]
-pub struct ScriptDisplayNameOwned {
+pub struct ScriptDisplayName {
     pub(crate) payload: DataPayload<LocaleNamesScriptMediumLightV1>,
 }
 
-impl ScriptDisplayNameOwned {
+impl ScriptDisplayName {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
         /// Loads the script display name for a given script and locale using compiled data.
@@ -119,12 +119,12 @@ impl ScriptDisplayNameOwned {
         /// # Examples
         ///
         /// ```
-        /// use icu::experimental::displaynames::single::ScriptDisplayNameOwned;
+        /// use icu::experimental::displaynames::single::ScriptDisplayName;
         /// use icu::locale::{locale, subtags::script};
         /// use writeable::assert_writeable_eq;
         ///
         /// // Minimal script names contain Latn for en
-        /// let display_name = ScriptDisplayNameOwned::try_new_tiny(locale!("en").into(), script!("Latn")).unwrap();
+        /// let display_name = ScriptDisplayName::try_new_tiny(locale!("en").into(), script!("Latn")).unwrap();
         /// assert_writeable_eq!(display_name, "Latin");
         /// ```
         functions: [
@@ -160,11 +160,11 @@ impl ScriptDisplayNameOwned {
         /// # Examples
         ///
         /// ```
-        /// use icu::experimental::displaynames::single::ScriptDisplayNameOwned;
+        /// use icu::experimental::displaynames::single::ScriptDisplayName;
         /// use icu::locale::{locale, subtags::script};
         /// use writeable::assert_writeable_eq;
         ///
-        /// let display_name = ScriptDisplayNameOwned::try_new_heavy(locale!("en").into(), script!("Latn"))
+        /// let display_name = ScriptDisplayName::try_new_heavy(locale!("en").into(), script!("Latn"))
         ///     .expect("Data should load successfully");
         ///
         /// assert_writeable_eq!(display_name, "Latin");
@@ -215,11 +215,11 @@ impl ScriptDisplayNameOwned {
         /// # Examples
         ///
         /// ```
-        /// use icu::experimental::displaynames::single::ScriptDisplayNameOwned;
+        /// use icu::experimental::displaynames::single::ScriptDisplayName;
         /// use icu::locale::{locale, subtags::script};
         /// use writeable::assert_writeable_eq;
         ///
-        /// let display_name = ScriptDisplayNameOwned::try_new_short_heavy(locale!("en").into(), script!("Xsux"))
+        /// let display_name = ScriptDisplayName::try_new_short_heavy(locale!("en").into(), script!("Xsux"))
         ///     .expect("Data should load successfully");
         ///
         /// assert_writeable_eq!(display_name, "S-A Cuneiform");
@@ -265,22 +265,22 @@ impl ScriptDisplayNameOwned {
     }
 
     /// Returns a borrowed version of this display name.
-    pub fn as_borrowed(&self) -> ScriptDisplayName<'_> {
-        ScriptDisplayName {
+    pub fn as_borrowed(&self) -> ScriptDisplayNameBorrowed<'_> {
+        ScriptDisplayNameBorrowed {
             value: self.payload.get(),
         }
     }
 }
 
-impl_writeable_for_single_display_name_owned!(ScriptDisplayNameOwned);
+impl_writeable_for_single_display_name_owned!(ScriptDisplayName);
 
 /// A localized display name for a single script.
 #[derive(Debug, Clone, Copy)]
-pub struct ScriptDisplayName<'a> {
+pub struct ScriptDisplayNameBorrowed<'a> {
     value: &'a str,
 }
 
-impl_writeable_for_single_display_name_borrowed!(ScriptDisplayName);
+impl_writeable_for_single_display_name_borrowed!(ScriptDisplayNameBorrowed);
 
 #[cfg(test)]
 mod tests {
@@ -295,7 +295,7 @@ mod tests {
         macro_rules! check_row {
             ($constructor:ident) => {
                 let items = inputs.iter().map(|id| {
-                    ScriptDisplayNameOwned::$constructor(prefs_en, *id)
+                    ScriptDisplayName::$constructor(prefs_en, *id)
                         .map(|name| Ok::<_, ()>(name.to_string()))
                 });
                 assert_eq!(

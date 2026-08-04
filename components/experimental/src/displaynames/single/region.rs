@@ -61,21 +61,21 @@ macro_rules! table_row {
 /// # Example
 ///
 /// ```
-/// use icu::experimental::displaynames::single::RegionDisplayNameOwned;
+/// use icu::experimental::displaynames::single::RegionDisplayName;
 /// use icu::locale::{locale, subtags::region};
 /// use writeable::assert_writeable_eq;
 ///
-/// let display_name = RegionDisplayNameOwned::try_new_light(locale!("en").into(), region!("US"))
+/// let display_name = RegionDisplayName::try_new_light(locale!("en").into(), region!("US"))
 ///     .expect("Data should load successfully");
 ///
 /// assert_writeable_eq!(display_name, "United States");
 /// ```
 #[derive(Debug)]
-pub struct RegionDisplayNameOwned {
+pub struct RegionDisplayName {
     pub(crate) payload: DataPayload<LocaleNamesRegionMediumLightV1>,
 }
 
-impl RegionDisplayNameOwned {
+impl RegionDisplayName {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
         /// Loads the region display name for a given region and locale using compiled data.
@@ -119,11 +119,11 @@ impl RegionDisplayNameOwned {
         /// # Examples
         ///
         /// ```
-        /// use icu::experimental::displaynames::single::RegionDisplayNameOwned;
+        /// use icu::experimental::displaynames::single::RegionDisplayName;
         /// use icu::locale::{locale, subtags::region};
         /// use writeable::assert_writeable_eq;
         ///
-        /// let display_name = RegionDisplayNameOwned::try_new_tiny(locale!("en").into(), region!("US"))
+        /// let display_name = RegionDisplayName::try_new_tiny(locale!("en").into(), region!("US"))
         ///     .expect("Data should load successfully");
         ///
         /// assert_writeable_eq!(display_name, "United States");
@@ -200,7 +200,7 @@ impl RegionDisplayNameOwned {
         ///
         /// ```
         /// use icu::experimental::displaynames::{
-        ///     DisplayNamesPreferences, single::RegionDisplayNameOwned,
+        ///     DisplayNamesPreferences, single::RegionDisplayName,
         /// };
         /// use icu::locale::{locale, subtags::region};
         /// use writeable::assert_writeable_eq;
@@ -208,12 +208,12 @@ impl RegionDisplayNameOwned {
         /// let prefs: DisplayNamesPreferences = locale!("en-US").into();
         ///
         /// // "US" has a short display name in en-US
-        /// let display_name_short = RegionDisplayNameOwned::try_new_short_light(prefs, region!("US"))
+        /// let display_name_short = RegionDisplayName::try_new_short_light(prefs, region!("US"))
         ///     .expect("Data should load successfully");
         /// assert_writeable_eq!(display_name_short, "US");
         ///
         /// // "AD" does not have a short display name, so it falls back to the long display name
-        /// let display_name_long = RegionDisplayNameOwned::try_new_short_light(prefs, region!("AD"))
+        /// let display_name_long = RegionDisplayName::try_new_short_light(prefs, region!("AD"))
         ///     .expect("Data should load successfully");
         /// assert_writeable_eq!(display_name_long, "Andorra");
         /// ```
@@ -258,22 +258,22 @@ impl RegionDisplayNameOwned {
     }
 
     /// Returns a borrowed version of this display name.
-    pub fn as_borrowed(&self) -> RegionDisplayName<'_> {
-        RegionDisplayName {
+    pub fn as_borrowed(&self) -> RegionDisplayNameBorrowed<'_> {
+        RegionDisplayNameBorrowed {
             value: self.payload.get(),
         }
     }
 }
 
-impl_writeable_for_single_display_name_owned!(RegionDisplayNameOwned);
+impl_writeable_for_single_display_name_owned!(RegionDisplayName);
 
 /// A localized display name for a single region.
 #[derive(Debug, Clone, Copy)]
-pub struct RegionDisplayName<'a> {
+pub struct RegionDisplayNameBorrowed<'a> {
     value: &'a str,
 }
 
-impl_writeable_for_single_display_name_borrowed!(RegionDisplayName);
+impl_writeable_for_single_display_name_borrowed!(RegionDisplayNameBorrowed);
 
 #[cfg(test)]
 mod tests {
@@ -288,7 +288,7 @@ mod tests {
         macro_rules! check_row {
             ($constructor:ident) => {
                 let items = inputs.iter().map(|id| {
-                    RegionDisplayNameOwned::$constructor(prefs_en, *id)
+                    RegionDisplayName::$constructor(prefs_en, *id)
                         .map(|name| Ok::<_, ()>(name.to_string()))
                 });
                 assert_eq!(

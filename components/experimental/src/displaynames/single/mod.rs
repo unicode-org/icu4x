@@ -25,12 +25,12 @@ mod variant;
 
 // Re-export from submodules
 pub use language::{
-    LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOwned,
+    LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameBorrowed,
     LanguageIdentifierNameFallbackError,
 };
-pub use region::{RegionDisplayName, RegionDisplayNameOwned};
-pub use script::{ScriptDisplayName, ScriptDisplayNameOwned};
-pub use variant::{VariantDisplayName, VariantDisplayNameOwned};
+pub use region::{RegionDisplayName, RegionDisplayNameBorrowed};
+pub use script::{ScriptDisplayName, ScriptDisplayNameBorrowed};
+pub use variant::{VariantDisplayName, VariantDisplayNameBorrowed};
 
 use icu_provider::prelude::*;
 

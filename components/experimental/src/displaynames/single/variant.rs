@@ -44,21 +44,21 @@ macro_rules! table_row {
 /// # Example
 ///
 /// ```
-/// use icu::experimental::displaynames::single::VariantDisplayNameOwned;
+/// use icu::experimental::displaynames::single::VariantDisplayName;
 /// use icu::locale::{locale, subtags::variant};
 /// use writeable::assert_writeable_eq;
 ///
-/// let display_name = VariantDisplayNameOwned::try_new_heavy(locale!("en").into(), variant!("fonipa"))
+/// let display_name = VariantDisplayName::try_new_heavy(locale!("en").into(), variant!("fonipa"))
 ///     .expect("Data should load successfully");
 ///
 /// assert_writeable_eq!(display_name, "IPA Phonetics");
 /// ```
 #[derive(Debug)]
-pub struct VariantDisplayNameOwned {
+pub struct VariantDisplayName {
     pub(crate) payload: DataPayload<LocaleNamesVariantMediumHeavyV1>,
 }
 
-impl VariantDisplayNameOwned {
+impl VariantDisplayName {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, variant: Variant) -> result: Result<Self, DataError>,
         /// Loads the display name for a given variant in a given locale using compiled data.
@@ -66,11 +66,11 @@ impl VariantDisplayNameOwned {
         /// # Examples
         ///
         /// ```
-        /// use icu::experimental::displaynames::single::VariantDisplayNameOwned;
+        /// use icu::experimental::displaynames::single::VariantDisplayName;
         /// use icu::locale::{locale, subtags::variant};
         /// use writeable::assert_writeable_eq;
         ///
-        /// let display_name = VariantDisplayNameOwned::try_new_heavy(locale!("en").into(), variant!("fonipa"))
+        /// let display_name = VariantDisplayName::try_new_heavy(locale!("en").into(), variant!("fonipa"))
         ///     .expect("Data should load successfully");
         ///
         /// assert_writeable_eq!(display_name, "IPA Phonetics");
@@ -100,22 +100,22 @@ impl VariantDisplayNameOwned {
     }
 
     /// Returns a borrowed version of this display name.
-    pub fn as_borrowed(&self) -> VariantDisplayName<'_> {
-        VariantDisplayName {
+    pub fn as_borrowed(&self) -> VariantDisplayNameBorrowed<'_> {
+        VariantDisplayNameBorrowed {
             value: self.payload.get(),
         }
     }
 }
 
-impl_writeable_for_single_display_name_owned!(VariantDisplayNameOwned);
+impl_writeable_for_single_display_name_owned!(VariantDisplayName);
 
 /// A localized display name for a single variant.
 #[derive(Debug, Clone, Copy)]
-pub struct VariantDisplayName<'a> {
+pub struct VariantDisplayNameBorrowed<'a> {
     value: &'a str,
 }
 
-impl_writeable_for_single_display_name_borrowed!(VariantDisplayName);
+impl_writeable_for_single_display_name_borrowed!(VariantDisplayNameBorrowed);
 
 #[cfg(test)]
 mod tests {
@@ -130,7 +130,7 @@ mod tests {
         macro_rules! check_row {
             ($constructor:ident) => {
                 let items = inputs.iter().map(|id| {
-                    VariantDisplayNameOwned::$constructor(prefs_en, *id)
+                    VariantDisplayName::$constructor(prefs_en, *id)
                         .map(|name| Ok::<_, ()>(name.to_string()))
                 });
                 assert_eq!(
