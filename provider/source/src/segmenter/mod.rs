@@ -9,8 +9,6 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_cache::CldrCache;
 #[cfg(feature = "unstable")]
-use crate::source::AbstractFs;
-#[cfg(feature = "unstable")]
 use crate::source::Cache;
 use crate::source::{RscdCache, include_files};
 #[cfg(feature = "unstable")]
@@ -1040,7 +1038,7 @@ implement_override!(SegmenterBreakSentenceOverrideV1, "sentence.toml", ["el"]);
 
 #[cfg(feature = "unstable")]
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-fn neo_sources() -> AbstractFs {
+fn neo_sources() -> crate::source::AbstractFs {
     include_files!(
         "../../data/segmenter/neo/";
         "GraphemeClusterBreakStates.txt",
@@ -1076,7 +1074,8 @@ fn neo_cldr_json() -> &'static CldrCache {
 
 #[test]
 #[ignore]
-#[cfg(feature = "networking")]
+#[cfg(all(feature = "unstable", feature = "networking"))]
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 fn download() {
     use std::fs::File;
     use std::io::Write;
@@ -1088,7 +1087,7 @@ fn download() {
         std::fs::create_dir_all(target.parent().unwrap()).unwrap();
         crlify::BufWriterWithLineEndingFix::new(File::create(&target).unwrap())
             .write_all(
-                &AbstractFs::new_from_url(format!(
+                &crate::source::AbstractFs::new_from_url(format!(
                     "https://unicode.org/review/pri555/{}",
                     SourceDataProvider::TESTED_UNICODE_TAG
                 ))
@@ -1175,7 +1174,7 @@ impl SourceDataProvider {
 
     fn build_segmenter(
         &self,
-        sources: &AbstractFs,
+        sources: &crate::source::AbstractFs,
         prefix: &str,
         status_lookup: fn(&str) -> u8,
     ) -> Result<TailoredSegmenter, DataError> {
