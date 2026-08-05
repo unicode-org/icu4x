@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Data provider struct definitions for the lstm
-
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use zerovec::{ZeroMap, ZeroVec};

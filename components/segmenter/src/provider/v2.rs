@@ -7,6 +7,65 @@ use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
 use zerovec::ZeroVec;
 
+icu_provider::data_marker!(
+    /// `SegmenterBreakLineV2`
+    SegmenterBreakLineV2,
+    "segmenter/break/line/v2",
+    SegmenterStateMachine<'static>,
+    is_singleton = true,
+    #[cfg(feature = "datagen")]
+    has_checksum = true,
+);
+
+icu_provider::data_marker!(
+    /// `SegmenterBreakWordV2`
+    SegmenterBreakWordV2,
+    "segmenter/break/word/v2",
+    SegmenterStateMachine<'static>,
+    is_singleton = true,
+    #[cfg(feature = "datagen")]
+    has_checksum = true,
+);
+
+icu_provider::data_marker!(
+    /// `SegmenterBreakGraphemeClusterV2`
+    SegmenterBreakGraphemeClusterV2,
+    "segmenter/break/grapheme/cluster/v2",
+    SegmenterStateMachine<'static>,
+    is_singleton = true,
+    #[cfg(feature = "datagen")]
+    has_checksum = true,
+);
+
+icu_provider::data_marker!(
+    /// `SegmenterBreakSentenceV2`
+    SegmenterBreakSentenceV2,
+    "segmenter/break/sentence/v2",
+    SegmenterStateMachine<'static>,
+    is_singleton = true,
+    #[cfg(feature = "datagen")]
+    has_checksum = true,
+);
+
+icu_provider::data_marker!(
+    /// `SegmenterBreakLineOverrideV2`
+    SegmenterBreakLineOverrideV2,
+    "segmenter/break/line/override/v2",
+    SegmenterStateMachineOverride<'static>,
+    #[cfg(feature = "datagen")]
+    expose_baked_consts = true,
+    has_checksum = true,
+);
+
+icu_provider::data_marker!(
+    /// `SegmenterBreakSentenceOverrideV2`
+    SegmenterBreakSentenceOverrideV2,
+    "segmenter/break/sentence/override/v2",
+    SegmenterStateMachineOverride<'static>,
+    #[cfg(feature = "datagen")]
+    has_checksum = true,
+);
+
 pub type State = u8;
 pub type Symbol = u8;
 pub type Lookahead = u8;
@@ -102,63 +161,4 @@ pub struct SegmenterStateMachineOverride<'data> {
 icu_provider::data_struct!(
     SegmenterStateMachineOverride<'_>,
     #[cfg(feature = "datagen")]
-);
-
-icu_provider::data_marker!(
-    /// `SegmenterBreakLineV2`
-    SegmenterBreakLineV2,
-    "segmenter/break/line/v2",
-    SegmenterStateMachine<'static>,
-    is_singleton = true,
-    #[cfg(feature = "datagen")]
-    has_checksum = true,
-);
-
-icu_provider::data_marker!(
-    /// `SegmenterBreakWordV2`
-    SegmenterBreakWordV2,
-    "segmenter/break/word/v2",
-    SegmenterStateMachine<'static>,
-    is_singleton = true,
-    #[cfg(feature = "datagen")]
-    has_checksum = true,
-);
-
-icu_provider::data_marker!(
-    /// `SegmenterBreakGraphemeClusterV2`
-    SegmenterBreakGraphemeClusterV2,
-    "segmenter/break/grapheme/cluster/v2",
-    SegmenterStateMachine<'static>,
-    is_singleton = true,
-    #[cfg(feature = "datagen")]
-    has_checksum = true,
-);
-
-icu_provider::data_marker!(
-    /// `SegmenterBreakSentenceV2`
-    SegmenterBreakSentenceV2,
-    "segmenter/break/sentence/v2",
-    SegmenterStateMachine<'static>,
-    is_singleton = true,
-    #[cfg(feature = "datagen")]
-    has_checksum = true,
-);
-
-icu_provider::data_marker!(
-    /// `SegmenterBreakLineOverrideV2`
-    SegmenterBreakLineOverrideV2,
-    "segmenter/break/line/override/v2",
-    SegmenterStateMachineOverride<'static>,
-    #[cfg(feature = "datagen")]
-    expose_baked_consts = true,
-    has_checksum = true,
-);
-
-icu_provider::data_marker!(
-    /// `SegmenterBreakSentenceOverrideV2`
-    SegmenterBreakSentenceOverrideV2,
-    "segmenter/break/sentence/override/v2",
-    SegmenterStateMachineOverride<'static>,
-    #[cfg(feature = "datagen")]
-    has_checksum = true,
 );
