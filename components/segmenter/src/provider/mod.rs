@@ -91,7 +91,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     SegmenterDictionaryExtendedV1::INFO,
     SegmenterLstmAutoV1::INFO,
     #[cfg(feature = "unstable")]
-    radical::SegmenterUnihanRadicalV1::INFO,
+    SegmenterUnihanRadicalV1::INFO,
     #[cfg(feature = "unstable")]
     SegmenterBreakLineV2::INFO,
     #[cfg(feature = "unstable")]

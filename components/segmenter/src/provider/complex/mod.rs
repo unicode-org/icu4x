@@ -7,7 +7,9 @@ pub use lstm::*;
 mod dictionary;
 pub use dictionary::*;
 #[cfg(feature = "unstable")]
-pub mod radical;
+mod radical;
+#[cfg(feature = "unstable")]
+pub use radical::*;
 
 icu_provider::data_marker!(
     /// `SegmenterLstmWordLineAutoV1`
@@ -34,4 +36,13 @@ icu_provider::data_marker!(
     UCharDictionaryBreakData<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "segmenter"
+);
+
+#[cfg(feature = "unstable")]
+icu_provider::data_marker!(
+    /// Marker for the singleton trie mapping code points to their Unihan IRG source radical IDs.
+    SegmenterUnihanRadicalV1,
+    "segmenter/unihan/radical/v1",
+    UnihanRadicalsData<'static>,
+    is_singleton = true
 );
