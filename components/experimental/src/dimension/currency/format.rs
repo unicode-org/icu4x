@@ -9,7 +9,6 @@ mod tests {
     use writeable::assert_writeable_eq;
 
     use crate::dimension::currency::{
-        CurrencyType,
         formatter::{CurrencyFormatter, CurrencyFormatterPreferences},
         options::{CurrencyFormatterOptions, CurrencyUsage},
     };
