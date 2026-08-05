@@ -1,0 +1,33 @@
+{
+  "coverageByXPath": {
+    "ta-LK": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"ta\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Taml\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"IN\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"LK\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"MY\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"SG\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"chinese\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"chinese\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"indian\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"indian\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic-civil\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic-civil\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic-tbla\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic-tbla\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"taml\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"tamldec\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"tamldec\"][@scope=\"core\"]"
+      ],
+      "modern": []
+    }
+  }
+}

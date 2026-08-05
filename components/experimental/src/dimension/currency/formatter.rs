@@ -13,9 +13,8 @@ use super::super::provider::currency::{
     symbols::CurrencySymbolsV1,
 };
 use super::CurrencyType;
-use fixed_decimal::Sign;
 use fixed_decimal::{
-    Decimal as FixedDecimal, RoundingIncrement, SignedRoundingMode, UnsignedRoundingMode,
+    Decimal as FixedDecimal, RoundingIncrement, Sign, SignedRoundingMode, UnsignedRoundingMode,
 };
 use icu_decimal::preferences::CompactDecimalFormatterPreferences;
 use icu_decimal::{
@@ -1386,13 +1385,10 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             }
         };
 
-        // Per UTS #35 (LDML / TR35 Part 3: Numbers, Section 3.2.1), when a pattern does not specify an
-        // explicit negative subpattern, the default negative format is formed by prepending the localized
-        // minus sign to the entire positive pattern (e.g., `-¤#,##0` producing `-$12K`).
-        // Therefore, `format_sign` is applied as the outermost wrapper around the glued currency string so
-        // that the minus sign modifies the full monetary expression rather than just the numeric significand.
-        // When an accounting negative pattern already encodes the sign (e.g. parentheses), `sign` is
-        // `Sign::None` so we do not prepend a redundant minus.
+        // Per UTS #35 (Section 3.2.1), when no explicit negative subpattern exists, the negative format
+        // is formed by prepending the localized minus sign to the entire positive pattern (e.g., `-$12K`).
+        // `format_sign` is applied as the outermost wrapper around the interpolated currency string.
+        // (If an explicit negative pattern was selected, `sign` is `Sign::None` so this is a no-op).
         V::format_sign(
             &self.value_formatter,
             pattern.interpolate((formatted_value, currency_str)),
@@ -1401,6 +1397,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     }
 }
 
+/// Selects the pattern for no-currency formatting for the given sign.
+///
+/// Returns [`Sign::None`] if an explicit negative pattern is matched (which already encodes the sign).
 fn select_no_currency_pattern<'a>(
     patterns: &'a CurrencyPatternsNoCurrency<'_>,
     accounting: bool,
@@ -1424,6 +1423,14 @@ fn select_no_currency_pattern<'a>(
     (patterns.get_positive(), sign)
 }
 
+/// Selects the pattern from the currency essentials for the given sign.
+///
+/// If an explicit negative pattern exists for a negative value, it is returned along with
+/// [`Sign::None`]: such patterns already encode the sign (e.g. parentheses, or a minus sign
+/// placed by the pattern), so the pattern is interpolated with the absolute value and no
+/// sign is applied on top of it. Otherwise, per UTS #35 (LDML Part 3: Numbers, Section 3.2.1),
+/// the positive pattern of the same category is returned with the original sign, and the sign is
+/// rendered by the value formatter.
 fn select_essentials_pattern<'a>(
     essentials: &'a super::super::provider::currency::essentials::CurrencyEssentials<'_>,
     accounting: bool,
@@ -1431,28 +1438,23 @@ fn select_essentials_pattern<'a>(
     symbol_starts_with_letter: bool,
     symbol_ends_with_letter: bool,
 ) -> (&'a icu_pattern::DoublePlaceholderPattern, Sign) {
-    if accounting {
-        // An explicit accounting negative pattern already encodes the sign
-        // (e.g. parentheses), so the sign is dropped to avoid prepending a
-        // redundant minus.
-        if sign == Sign::Negative
-            && let Some(pattern) = essentials
-                .get_negative_accounting(symbol_starts_with_letter, symbol_ends_with_letter)
-        {
+    if sign == Sign::Negative {
+        let negative_pattern = if accounting {
+            essentials.get_negative_accounting(symbol_starts_with_letter, symbol_ends_with_letter)
+        } else {
+            essentials.get_negative(symbol_starts_with_letter, symbol_ends_with_letter)
+        };
+        if let Some(pattern) = negative_pattern {
             return (pattern, Sign::None);
         }
-        return (
-            essentials.get_positive_accounting(symbol_starts_with_letter, symbol_ends_with_letter),
-            sign,
-        );
     }
 
-    // NOTE: The explicit standard negative pattern (`essentials.get_negative`) is
-    // handled in a separate PR (#8264).
-    (
-        essentials.get_positive(symbol_starts_with_letter, symbol_ends_with_letter),
-        sign,
-    )
+    let positive_pattern = if accounting {
+        essentials.get_positive_accounting(symbol_starts_with_letter, symbol_ends_with_letter)
+    } else {
+        essentials.get_positive(symbol_starts_with_letter, symbol_ends_with_letter)
+    };
+    (positive_pattern, sign)
 }
 
 // TODO: Discuss reusing the `load_with_fallback` helper from `icu_decimal`

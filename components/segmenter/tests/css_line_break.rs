@@ -20,6 +20,11 @@ fn strict(s: &str, ja_zh: bool, expected: &[&str]) {
     options.content_locale = ja_zh.then_some(&JA);
     check_line(s, expected, LineSegmenter::new_dictionary(options));
     check_line(s, expected, {
+        let mut s = LineSegmenter::new_17_for_non_complex_scripts(options);
+        s.load_dictionary();
+        s
+    });
+    check_line(s, expected, {
         let mut s = LineSegmenter::new_neo_for_non_complex_scripts(options);
         s.load_dictionary();
         s
@@ -33,6 +38,11 @@ fn normal(s: &str, ja_zh: bool, expected: &[&str]) {
     options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
     check_line(s, expected, LineSegmenter::new_dictionary(options));
+    check_line(s, expected, {
+        let mut s = LineSegmenter::new_17_for_non_complex_scripts(options);
+        s.load_dictionary();
+        s
+    });
     check_line(s, expected, {
         let mut s = LineSegmenter::new_neo_for_non_complex_scripts(options);
         s.load_dictionary();
@@ -48,6 +58,11 @@ fn loose(s: &str, ja_zh: bool, expected: &[&str]) {
     options.content_locale = ja_zh.then_some(&JA);
     check_line(s, expected, LineSegmenter::new_dictionary(options));
     check_line(s, expected, {
+        let mut s = LineSegmenter::new_17_for_non_complex_scripts(options);
+        s.load_dictionary();
+        s
+    });
+    check_line(s, expected, {
         let mut s = LineSegmenter::new_neo_for_non_complex_scripts(options);
         s.load_dictionary();
         s
@@ -61,6 +76,11 @@ fn anywhere(s: &str, ja_zh: bool, expected: &[&str]) {
     options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
     check_line(s, expected, LineSegmenter::new_dictionary(options));
+    check_line(s, expected, {
+        let mut s = LineSegmenter::new_17_for_non_complex_scripts(options);
+        s.load_dictionary();
+        s
+    });
     check_line(s, expected, {
         let mut s = LineSegmenter::new_neo_for_non_complex_scripts(options);
         s.load_dictionary();

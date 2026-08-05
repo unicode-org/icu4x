@@ -73,10 +73,20 @@ fn extract_currency_essentials<'data>(
     let accounting = currency_formats.accounting.as_ref();
     let accounting_alpha_next_to_number = currency_formats.accounting_alpha_next_to_number.as_ref();
 
+    let (minus_sign, plus_sign) =
+        if let Some(symbols) = numbers_block.numsys_data.symbols.get(numsys_name) {
+            (symbols.minus_sign.as_str(), symbols.plus_sign.as_str())
+        } else {
+            // TODO: shall we consider a fallback?
+            ("-", "+")
+        };
+
     fn convert_pattern_items<'a>(
         items: &'a [NumberPatternItem],
+        minus_sign: &'a str,
+        plus_sign: &'a str,
     ) -> impl Iterator<Item = PatternItemCow<'a, DoublePlaceholderKey>> + 'a {
-        items.iter().flat_map(|item| match item {
+        items.iter().flat_map(move |item| match item {
             NumberPatternItem::Currency => {
                 Some(PatternItemCow::Placeholder(DoublePlaceholderKey::Place1))
             }
@@ -84,37 +94,49 @@ fn extract_currency_essentials<'data>(
             NumberPatternItem::DecimalSeparator => {
                 Some(PatternItemCow::Placeholder(DoublePlaceholderKey::Place0))
             }
-            // TODO(#8263): Consider the case of explicit sign characters (`-`/`+`) in
-            // currency patterns: they are currently dropped here, and should instead be
-            // rendered using the localized plus/minus signs from the decimal symbols data.
+            // TODO: In a follow-up PR, consider using a sign placeholder instead of baking the
+            // sign symbol string directly into the pattern to avoid duplicating sign symbol data
+            // from decimal symbols.
+            NumberPatternItem::MinusSign => {
+                Some(PatternItemCow::Literal(Cow::Borrowed(minus_sign)))
+            }
+            NumberPatternItem::PlusSign => Some(PatternItemCow::Literal(Cow::Borrowed(plus_sign))),
             _ => None,
         })
     }
 
-    fn create_positive_pattern<'data>(
-        pattern: &NumberPattern,
-    ) -> Result<Cow<'data, DoublePlaceholderPattern>, DataError> {
-        DoublePlaceholderPattern::try_from_items(convert_pattern_items(&pattern.positive))
+    let create_positive_pattern =
+        |pattern: &NumberPattern| -> Result<Cow<'data, DoublePlaceholderPattern>, DataError> {
+            DoublePlaceholderPattern::try_from_items(convert_pattern_items(
+                &pattern.positive,
+                minus_sign,
+                plus_sign,
+            ))
             .map_err(|e| {
                 DataError::custom("Could not parse positive pattern").with_display_context(&e)
             })
             .map(Cow::Owned)
-    }
+        };
 
-    fn create_negative_pattern<'data>(
-        pattern: &NumberPattern,
-    ) -> Result<Option<Cow<'data, DoublePlaceholderPattern>>, DataError> {
+    let create_negative_pattern = |pattern: &NumberPattern| -> Result<
+        Option<Cow<'data, DoublePlaceholderPattern>>,
+        DataError,
+    > {
         if let Some(negative_items) = &pattern.negative {
-            DoublePlaceholderPattern::try_from_items(convert_pattern_items(negative_items))
-                .map_err(|e| {
-                    DataError::custom("Could not parse negative pattern").with_display_context(&e)
-                })
-                .map(Cow::Owned)
-                .map(Some)
+            DoublePlaceholderPattern::try_from_items(convert_pattern_items(
+                negative_items,
+                minus_sign,
+                plus_sign,
+            ))
+            .map_err(|e| {
+                DataError::custom("Could not parse negative pattern").with_display_context(&e)
+            })
+            .map(Cow::Owned)
+            .map(Some)
         } else {
             Ok(None)
         }
-    }
+    };
 
     let mut patterns = super::PatternSet::new();
     let standard_idx = patterns
@@ -128,6 +150,9 @@ fn extract_currency_essentials<'data>(
                 .transpose()?,
         )
         .unwrap_or(standard_idx);
+    // Per UTS #35 (Section 3.2.1), if an explicit negative subpattern is absent in CLDR,
+    // the negative index is `None`. The runtime formatter then falls back to the
+    // positive pattern of the same category and applies the localized minus sign.
     let standard_alpha_neg_idx = match standard_alpha_next_to_number {
         Some(p) => patterns.add(create_negative_pattern(p)?),
         None => None,
@@ -148,7 +173,9 @@ fn extract_currency_essentials<'data>(
         .unwrap_or(accounting_pos_idx);
     let accounting_alpha_neg_idx = match accounting_alpha_next_to_number {
         Some(p) => patterns.add(create_negative_pattern(p)?),
-        None => None,
+        // TODO(#8279, CLDR-19680): In the accounting case especially, fall back to accounting_neg_idx if
+        // accounting alpha negative does not exist (to preserve accounting parentheses formatting).
+        None => accounting_neg_idx,
     };
 
     let indices = PatternIndices {
@@ -231,4 +258,31 @@ fn test_essentials() {
         ar_eg.get().get_positive(false, false).interpolate((3, "$")),
         "\u{200f}3\u{a0}$"
     );
+
+    // The `latn` patterns for `ar-EG` have an explicit standard negative subpattern
+    // (`\u{200f}#,##0.00\u{a0}\u{a4};\u{200f}-#,##0.00\u{a0}\u{a4}`), which is baked
+    // as-is, sign character included.
+    let ar_eg_latn: DataPayload<CurrencyEssentialsV1> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("latn"),
+                &data_locale!("ar-EG"),
+            ),
+            ..Default::default()
+        })
+        .unwrap()
+        .payload;
+
+    assert_writeable_eq!(
+        ar_eg_latn
+            .get()
+            .get_negative(false, false)
+            .unwrap()
+            .interpolate((3, "$")),
+        "\u{200f}\u{200e}-3\u{a0}$"
+    );
+
+    // `en` has no explicit standard negative subpattern, so `get_negative` is `None`
+    // and the formatter falls back to the positive pattern, applying the sign itself.
+    assert!(en.get().get_negative(false, false).is_none());
 }

@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::coverage_experimental::CoverageLevelForXPath;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
@@ -30,12 +31,14 @@ impl DataProvider<VariantDisplayNamesV1> for SourceDataProvider {
 }
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesVariantMediumV1,
+    LocaleNamesVariantMediumHeavyV1,
     Variant,
     cldr_serde::displaynames::variant::Resource,
     "variants.json",
     variants,
     None,
+    "//ldml/localeDisplayNames/variants/variant",
+    CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 
 crate::displaynames::impl_displaynames_legacy_iter_v1!(VariantDisplayNamesV1, "variants.json");
@@ -61,9 +64,11 @@ impl From<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNames<
         }
     }
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::displaynames::coverage_experimental::CheckAltCoverage;
     use icu::locale::{data_locale, subtags::variant};
 
     #[test]
@@ -88,10 +93,10 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_variant_medium() {
+    fn test_locale_names_variant_medium_heavy() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesVariantMediumV1> = provider
+        let data: DataPayload<LocaleNamesVariantMediumHeavyV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::try_from_str("posix").unwrap(),
@@ -103,5 +108,33 @@ mod tests {
             .payload;
 
         assert_eq!(&**data.get(), "Computer");
+    }
+
+    /// The cartesian product of Variant x (Short | Medium) x (Minimal | Core | Extended)
+    /// contains some data markers that are uninhabited. This test ensures that every variant display name
+    /// key and coverage tier combination in CLDR is covered by an existing marker, so if future CLDR releases
+    /// add data for uninhabited markers, we learn about it and can take action.
+    #[test]
+    fn test_empty_coverage_tiers_assert_no_data() {
+        let provider = SourceDataProvider::new_testing();
+        let cldr = provider.cldr().unwrap();
+
+        crate::displaynames::coverage_experimental::for_each_cldr_key_and_tier(
+            cldr,
+            "variants.json",
+            "//ldml/localeDisplayNames/variants/variant",
+            |res: &cldr_serde::displaynames::variant::Resource| {
+                &res.main.value.localedisplaynames.variants
+            },
+            |locale, key, tier| {
+                if LocaleNamesVariantMediumHeavyV1::contains_key(key, tier) {
+                    return;
+                }
+
+                panic!(
+                    "Found unexpected alt, menu, and tier combination for variant: {key:?} in locale: {locale:?} and tier: {tier:?}"
+                );
+            },
+        );
     }
 }
