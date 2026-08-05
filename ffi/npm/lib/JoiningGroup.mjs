@@ -116,7 +116,17 @@ export class JoiningGroup {
         ["ThinYeh", 102],
         ["VerticalTail", 103],
         ["KashmiriYeh", 104],
-        ["ThinNoon", 105]
+        ["ThinNoon", 105],
+        ["CrownAin", 106],
+        ["CrownBeh", 107],
+        ["CrownFeh", 108],
+        ["CrownHah", 109],
+        ["CrownHeh", 110],
+        ["CrownKaf", 111],
+        ["CrownMeem", 112],
+        ["CrownSad", 113],
+        ["CrownSeen", 114],
+        ["CrownTah", 115]
     ]);
 
     static getAllEntries() {
@@ -268,6 +278,16 @@ export class JoiningGroup {
         new JoiningGroup(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 103),
         new JoiningGroup(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 104),
         new JoiningGroup(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 105),
+        new JoiningGroup(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 106),
+        new JoiningGroup(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 107),
+        new JoiningGroup(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 108),
+        new JoiningGroup(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 109),
+        new JoiningGroup(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 110),
+        new JoiningGroup(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 111),
+        new JoiningGroup(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 112),
+        new JoiningGroup(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 113),
+        new JoiningGroup(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 114),
+        new JoiningGroup(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 115),
     ];
 
     /**
@@ -694,6 +714,46 @@ export class JoiningGroup {
      * See the [Rust documentation for `ThinNoon`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ThinNoon) for more information.
      */
     static ThinNoon = JoiningGroup.#objectValues[105];
+    /**
+     * See the [Rust documentation for `CrownAin`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownAin) for more information.
+     */
+    static CrownAin = JoiningGroup.#objectValues[106];
+    /**
+     * See the [Rust documentation for `CrownBeh`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownBeh) for more information.
+     */
+    static CrownBeh = JoiningGroup.#objectValues[107];
+    /**
+     * See the [Rust documentation for `CrownFeh`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownFeh) for more information.
+     */
+    static CrownFeh = JoiningGroup.#objectValues[108];
+    /**
+     * See the [Rust documentation for `CrownHah`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownHah) for more information.
+     */
+    static CrownHah = JoiningGroup.#objectValues[109];
+    /**
+     * See the [Rust documentation for `CrownHeh`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownHeh) for more information.
+     */
+    static CrownHeh = JoiningGroup.#objectValues[110];
+    /**
+     * See the [Rust documentation for `CrownKaf`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownKaf) for more information.
+     */
+    static CrownKaf = JoiningGroup.#objectValues[111];
+    /**
+     * See the [Rust documentation for `CrownMeem`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownMeem) for more information.
+     */
+    static CrownMeem = JoiningGroup.#objectValues[112];
+    /**
+     * See the [Rust documentation for `CrownSad`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownSad) for more information.
+     */
+    static CrownSad = JoiningGroup.#objectValues[113];
+    /**
+     * See the [Rust documentation for `CrownSeen`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownSeen) for more information.
+     */
+    static CrownSeen = JoiningGroup.#objectValues[114];
+    /**
+     * See the [Rust documentation for `CrownTah`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownTah) for more information.
+     */
+    static CrownTah = JoiningGroup.#objectValues[115];
 
 
     /**
