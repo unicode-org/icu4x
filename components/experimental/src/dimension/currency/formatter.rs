@@ -301,7 +301,10 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                     plural_rules,
                 }
             }
-            None => CurrencyFormatterData::IsoName { patterns, iso_code: currency.iso_code() },
+            None => CurrencyFormatterData::IsoName {
+                patterns,
+                iso_code: currency.iso_code(),
+            },
         };
 
         Ok(Self {
@@ -361,7 +364,10 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                     plural_rules,
                 }
             }
-            None => CurrencyFormatterData::IsoName { patterns, iso_code: currency.iso_code() },
+            None => CurrencyFormatterData::IsoName {
+                patterns,
+                iso_code: currency.iso_code(),
+            },
         };
 
         Ok(Self {
