@@ -359,6 +359,13 @@ typedef enum Block {
   Block_TaiYo = 344,
   Block_TangutComponentsSupplement = 345,
   Block_TolongSiki = 346,
+  Block_ArchaicCuneiformNumerals = 347,
+  Block_BengaliSupplement = 348,
+  Block_Jurchen = 349,
+  Block_JurchenRadicals = 350,
+  Block_MiscellaneousSymbolsAndArrowsExtended = 351,
+  Block_MusicalSymbolsSupplement = 352,
+  Block_Seal = 353,
 } Block;
 
 typedef struct Block_option {union { Block ok; }; bool is_ok; } Block_option;

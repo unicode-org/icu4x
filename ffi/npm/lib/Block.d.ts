@@ -1404,6 +1404,34 @@ export class Block {
      * See the [Rust documentation for `TolongSiki`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.TolongSiki) for more information.
      */
     static TolongSiki : Block;
+    /**
+     * See the [Rust documentation for `ArchaicCuneiformNumerals`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.ArchaicCuneiformNumerals) for more information.
+     */
+    static ArchaicCuneiformNumerals : Block;
+    /**
+     * See the [Rust documentation for `BengaliSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.BengaliSupplement) for more information.
+     */
+    static BengaliSupplement : Block;
+    /**
+     * See the [Rust documentation for `Jurchen`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Jurchen) for more information.
+     */
+    static Jurchen : Block;
+    /**
+     * See the [Rust documentation for `JurchenRadicals`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.JurchenRadicals) for more information.
+     */
+    static JurchenRadicals : Block;
+    /**
+     * See the [Rust documentation for `MiscellaneousSymbolsAndArrowsExtended`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MiscellaneousSymbolsAndArrowsExtended) for more information.
+     */
+    static MiscellaneousSymbolsAndArrowsExtended : Block;
+    /**
+     * See the [Rust documentation for `MusicalSymbolsSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MusicalSymbolsSupplement) for more information.
+     */
+    static MusicalSymbolsSupplement : Block;
+    /**
+     * See the [Rust documentation for `Seal`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Seal) for more information.
+     */
+    static Seal : Block;
 
 
     /**

@@ -698,7 +698,21 @@ enum Block {
   /// See the [Rust documentation for `TangutComponentsSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.TangutComponentsSupplement) for more information.
   tangutComponentsSupplement,
   /// See the [Rust documentation for `TolongSiki`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.TolongSiki) for more information.
-  tolongSiki;
+  tolongSiki,
+  /// See the [Rust documentation for `ArchaicCuneiformNumerals`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.ArchaicCuneiformNumerals) for more information.
+  archaicCuneiformNumerals,
+  /// See the [Rust documentation for `BengaliSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.BengaliSupplement) for more information.
+  bengaliSupplement,
+  /// See the [Rust documentation for `Jurchen`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Jurchen) for more information.
+  jurchen,
+  /// See the [Rust documentation for `JurchenRadicals`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.JurchenRadicals) for more information.
+  jurchenRadicals,
+  /// See the [Rust documentation for `MiscellaneousSymbolsAndArrowsExtended`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MiscellaneousSymbolsAndArrowsExtended) for more information.
+  miscellaneousSymbolsAndArrowsExtended,
+  /// See the [Rust documentation for `MusicalSymbolsSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MusicalSymbolsSupplement) for more information.
+  musicalSymbolsSupplement,
+  /// See the [Rust documentation for `Seal`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Seal) for more information.
+  seal;
 
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.3.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
   static Block forChar(Rune ch) {

@@ -366,6 +366,13 @@ namespace capi {
       Block_TaiYo = 344,
       Block_TangutComponentsSupplement = 345,
       Block_TolongSiki = 346,
+      Block_ArchaicCuneiformNumerals = 347,
+      Block_BengaliSupplement = 348,
+      Block_Jurchen = 349,
+      Block_JurchenRadicals = 350,
+      Block_MiscellaneousSymbolsAndArrowsExtended = 351,
+      Block_MusicalSymbolsSupplement = 352,
+      Block_Seal = 353,
     };
 
     typedef struct Block_option {union { Block ok; }; bool is_ok; } Block_option;
@@ -1767,6 +1774,34 @@ public:
          * See the [Rust documentation for `TolongSiki`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.TolongSiki) for more information.
          */
         TolongSiki = 346,
+        /**
+         * See the [Rust documentation for `ArchaicCuneiformNumerals`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.ArchaicCuneiformNumerals) for more information.
+         */
+        ArchaicCuneiformNumerals = 347,
+        /**
+         * See the [Rust documentation for `BengaliSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.BengaliSupplement) for more information.
+         */
+        BengaliSupplement = 348,
+        /**
+         * See the [Rust documentation for `Jurchen`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Jurchen) for more information.
+         */
+        Jurchen = 349,
+        /**
+         * See the [Rust documentation for `JurchenRadicals`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.JurchenRadicals) for more information.
+         */
+        JurchenRadicals = 350,
+        /**
+         * See the [Rust documentation for `MiscellaneousSymbolsAndArrowsExtended`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MiscellaneousSymbolsAndArrowsExtended) for more information.
+         */
+        MiscellaneousSymbolsAndArrowsExtended = 351,
+        /**
+         * See the [Rust documentation for `MusicalSymbolsSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MusicalSymbolsSupplement) for more information.
+         */
+        MusicalSymbolsSupplement = 352,
+        /**
+         * See the [Rust documentation for `Seal`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Seal) for more information.
+         */
+        Seal = 353,
     };
 
     Block(): value(Value::NoBlock) {}
