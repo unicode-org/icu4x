@@ -17,10 +17,7 @@ struct_keyword!(
     TinyAsciiStr<3>,
     |input: &Value| {
         if let Some(subtag) = input.as_single_subtag() {
-            let ts = subtag.as_tinystr();
-            if ts.len() == 3 && ts.is_ascii_alphabetic() {
-                return Ok(Self(ts.resize().to_ascii_lowercase()));
-            }
+            return Self::try_from_tinystr(subtag.as_tinystr());
         }
         Err(PreferencesParseError::InvalidKeywordValue)
     },
@@ -51,20 +48,8 @@ impl CurrencyType {
     /// assert!(CurrencyType::try_from_utf8(b"USDDD").is_err());
     /// ```
     pub const fn try_from_utf8(code_units: &[u8]) -> Result<Self, PreferencesParseError> {
-        if let &[a, b, c] = code_units {
-            if a.is_ascii_alphabetic() && b.is_ascii_alphabetic() && c.is_ascii_alphabetic() {
-                let lower = [
-                    a.to_ascii_lowercase(),
-                    b.to_ascii_lowercase(),
-                    c.to_ascii_lowercase(),
-                ];
-                match TinyAsciiStr::try_from_utf8(&lower) {
-                    Ok(s) => Ok(Self(s)),
-                    Err(_) => Err(PreferencesParseError::InvalidKeywordValue),
-                }
-            } else {
-                Err(PreferencesParseError::InvalidKeywordValue)
-            }
+        if let Ok(ts) = TinyAsciiStr::<3>::try_from_utf8(code_units) {
+            Self::try_from_tinystr(ts)
         } else {
             Err(PreferencesParseError::InvalidKeywordValue)
         }
@@ -93,7 +78,7 @@ impl CurrencyType {
         Self::try_from_utf8(s.as_bytes())
     }
 
-    /// Creates a [`CurrencyType`] from a [`TinyAsciiStr<3>`], validating that it contains
+    /// Creates a [`CurrencyType`] from a [`TinyAsciiStr<N>`], validating that it contains
     /// exactly 3 ASCII alphabetic characters (case-insensitive).
     ///
     /// The parsed currency identifier is stored in lower case.
@@ -109,9 +94,9 @@ impl CurrencyType {
     /// assert!(CurrencyType::try_from_tinystr(tinystr!(3, "123")).is_err());
     /// assert!(CurrencyType::try_from_tinystr(tinystr!(3, "US")).is_err());
     /// ```
-    pub const fn try_from_tinystr(s: TinyAsciiStr<3>) -> Result<Self, PreferencesParseError> {
+    pub const fn try_from_tinystr<const N: usize>(s: TinyAsciiStr<N>) -> Result<Self, PreferencesParseError> {
         if s.len() == 3 && s.is_ascii_alphabetic() {
-            Ok(Self(s.to_ascii_lowercase()))
+            Ok(Self(s.resize().to_ascii_lowercase()))
         } else {
             Err(PreferencesParseError::InvalidKeywordValue)
         }
@@ -149,32 +134,6 @@ impl core::str::FromStr for CurrencyType {
     }
 }
 
-impl TryFrom<&str> for CurrencyType {
-    type Error = PreferencesParseError;
-
-    #[inline]
-    fn try_from(s: &str) -> Result<Self, Self::Error> {
-        Self::try_from_str(s)
-    }
-}
-
-impl TryFrom<&[u8]> for CurrencyType {
-    type Error = PreferencesParseError;
-
-    #[inline]
-    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
-        Self::try_from_utf8(bytes)
-    }
-}
-
-impl TryFrom<TinyAsciiStr<3>> for CurrencyType {
-    type Error = PreferencesParseError;
-
-    #[inline]
-    fn try_from(s: TinyAsciiStr<3>) -> Result<Self, Self::Error> {
-        Self::try_from_tinystr(s)
-    }
-}
 
 #[cfg(test)]
 mod tests {
