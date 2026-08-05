@@ -102,19 +102,19 @@ impl IterableDataProviderCached<CurrencySymbolsV1> for SourceDataProvider {
 
 #[test]
 fn test_symbols() {
-    use icu::experimental::dimension::currency::CurrencyCode;
+    use icu::experimental::dimension::currency::CurrencyType;
     use icu::locale::{DataLocale, data_locale};
     use tinystr::{TinyAsciiStr, tinystr};
 
-    let usd = CurrencyCode::try_from_tinystr(tinystr!(3, "USD")).unwrap();
-    let egp = CurrencyCode::try_from_tinystr(tinystr!(3, "EGP")).unwrap();
+    let usd = CurrencyType::try_from_tinystr(tinystr!(3, "USD")).unwrap();
+    let egp = CurrencyType::try_from_tinystr(tinystr!(3, "EGP")).unwrap();
     const EN: DataLocale = data_locale!("en");
     const AR_EG: DataLocale = data_locale!("ar-EG");
 
     let provider = SourceDataProvider::new_testing();
 
     #[allow(const_item_mutation)]
-    let load = |locale: DataLocale, currency: CurrencyCode, width: TinyAsciiStr<1>| {
+    let load = |locale: DataLocale, currency: CurrencyType, width: TinyAsciiStr<1>| {
         DataProvider::<CurrencySymbolsV1>::load(
             &provider,
             DataRequest {

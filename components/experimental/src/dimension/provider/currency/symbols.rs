@@ -11,7 +11,7 @@ use tinystr::{TinyAsciiStr, tinystr};
 use zerovec::VarZeroCow;
 use zerovec::ule::vartuple::{VarTuple, VarTupleULE};
 
-use crate::dimension::currency::CurrencyCode;
+use crate::dimension::currency::CurrencyType;
 
 icu_provider::data_marker!(
     /// Currency symbol data needed for short and narrow currency formatting.
@@ -60,13 +60,13 @@ impl CurrencySymbolsV1 {
     pub const NARROW: TinyAsciiStr<1> = tinystr!(1, "n");
 
     pub fn make_attributes(
-        currency: CurrencyCode,
+        currency: CurrencyType,
         width: TinyAsciiStr<1>,
         buffer: &mut TinyAsciiStr<5>,
     ) -> &DataMarkerAttributes {
         *buffer = width
             .concat::<1, 2>(tinystr!(1, "/"))
-            .concat::<3, 5>(currency.to_tinystr());
+            .concat::<3, 5>(currency.iso_code());
         // All valid
         DataMarkerAttributes::try_from_str(buffer).unwrap()
     }

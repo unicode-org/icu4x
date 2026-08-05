@@ -46,8 +46,8 @@ impl CurrencyFractions<'_> {
     /// The resolution follows a 2-step hierarchy per UTS #35 supplemental `<currencyData>`:
     /// 1. Currency-specific override in the global map (e.g., JPY = 0 decimals).
     /// 2. Global default precision (`DEFAULT` in supplemental currency data).
-    pub fn resolve(&self, currency_code: crate::dimension::currency::CurrencyCode) -> FractionInfo {
-        let iso_code = currency_code.to_tinystr().to_unvalidated();
+    pub fn resolve(&self, currency: crate::dimension::currency::CurrencyType) -> FractionInfo {
+        let iso_code = currency.iso_code().to_unvalidated();
         self.fractions.get_copied(&iso_code).unwrap_or(self.default)
     }
 }

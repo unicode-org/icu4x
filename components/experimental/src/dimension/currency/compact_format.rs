@@ -8,7 +8,7 @@ mod tests {
     use writeable::assert_writeable_eq;
 
     use crate::dimension::currency::{
-        CurrencyCode,
+        CurrencyType,
         formatter::CurrencyFormatter,
         options::{CurrencyFormatterOptions, CurrencyUsage},
     };
@@ -16,7 +16,7 @@ mod tests {
     #[test]
     pub fn test_en_us() {
         let prefs = locale!("en-US").into();
-        let currency_code = CurrencyCode::try_from_str("USD").unwrap();
+        let currency_code = CurrencyType::try_from_str("USD").unwrap();
         let accounting = CurrencyFormatterOptions {
             usage: CurrencyUsage::Accounting,
             ..Default::default()
@@ -66,7 +66,7 @@ mod tests {
     #[test]
     pub fn test_fr_fr() {
         let prefs = locale!("fr-FR").into();
-        let currency_code = CurrencyCode::try_from_str("EUR").unwrap();
+        let currency_code = CurrencyType::try_from_str("EUR").unwrap();
         let fmt =
             CurrencyFormatter::try_new_compact_symbol(prefs, currency_code, Default::default())
                 .unwrap();
@@ -85,7 +85,7 @@ mod tests {
     #[test]
     pub fn test_zh_cn() {
         let prefs = locale!("zh-CN").into();
-        let currency_code = CurrencyCode::try_from_str("CNY").unwrap();
+        let currency_code = CurrencyType::try_from_str("CNY").unwrap();
         let fmt =
             CurrencyFormatter::try_new_compact_symbol(prefs, currency_code, Default::default())
                 .unwrap();
@@ -104,7 +104,7 @@ mod tests {
     #[test]
     pub fn test_ar_eg() {
         let prefs = locale!("ar-EG").into();
-        let currency_code = CurrencyCode::try_from_str("EGP").unwrap();
+        let currency_code = CurrencyType::try_from_str("EGP").unwrap();
         let fmt =
             CurrencyFormatter::try_new_compact_symbol(prefs, currency_code, Default::default())
                 .unwrap();
@@ -128,7 +128,7 @@ mod tests {
     pub fn test_en_us_long() {
         let prefs = locale!("en-US").into();
 
-        let currency_code = CurrencyCode::try_from_str("USD").unwrap();
+        let currency_code = CurrencyType::try_from_str("USD").unwrap();
         let fmt = CurrencyFormatter::try_new_compact_long_name(prefs, currency_code).unwrap();
 
         // Positive case
@@ -146,7 +146,7 @@ mod tests {
     pub fn test_en_us_millions_long() {
         let prefs = locale!("en-US").into();
 
-        let currency_code = CurrencyCode::try_from_str("USD").unwrap();
+        let currency_code = CurrencyType::try_from_str("USD").unwrap();
         let fmt = CurrencyFormatter::try_new_compact_long_name(prefs, currency_code).unwrap();
 
         // Positive case
@@ -164,7 +164,7 @@ mod tests {
     pub fn test_fr_fr_long() {
         let prefs = locale!("fr-FR").into();
 
-        let currency_code = CurrencyCode::try_from_str("USD").unwrap();
+        let currency_code = CurrencyType::try_from_str("USD").unwrap();
         let fmt = CurrencyFormatter::try_new_compact_long_name(prefs, currency_code).unwrap();
 
         // Positive case
@@ -182,7 +182,7 @@ mod tests {
     pub fn test_fr_fr_millions_long() {
         let prefs = locale!("fr-FR").into();
 
-        let currency_code = CurrencyCode::try_from_str("USD").unwrap();
+        let currency_code = CurrencyType::try_from_str("USD").unwrap();
         let fmt = CurrencyFormatter::try_new_compact_long_name(prefs, currency_code).unwrap();
 
         // Positive case
@@ -199,8 +199,8 @@ mod tests {
     #[test]
     pub fn test_alpha_next_to_number_and_small_numbers() {
         let prefs = locale!("en-US").into();
-        let usd = CurrencyCode::try_from_str("USD").unwrap();
-        let sek = CurrencyCode::try_from_str("SEK").unwrap();
+        let usd = CurrencyType::try_from_str("USD").unwrap();
+        let sek = CurrencyType::try_from_str("SEK").unwrap();
 
         let fmt_usd =
             CurrencyFormatter::try_new_compact_symbol(prefs, usd, Default::default()).unwrap();
@@ -228,7 +228,7 @@ mod tests {
         // * Per current ICU4X `CompactDecimalFormatter` implementation: Maximum fractional digits are trimmed to 0
         //   by default, stripping trailing zeros (so 12 USD formats as "$12" instead of "$12.00", and 990 USD as "$990").
         let prefs_en = locale!("en-US").into();
-        let usd = CurrencyCode::try_from_str("USD").unwrap();
+        let usd = CurrencyType::try_from_str("USD").unwrap();
         let fmt_usd =
             CurrencyFormatter::try_new_compact_symbol(prefs_en, usd, Default::default()).unwrap();
 
@@ -256,7 +256,7 @@ mod tests {
     #[test]
     pub fn test_compact_name_and_compact_long_symbol() {
         let prefs = locale!("en-US").into();
-        let usd = CurrencyCode::try_from_str("USD").unwrap();
+        let usd = CurrencyType::try_from_str("USD").unwrap();
         let accounting = CurrencyFormatterOptions {
             usage: CurrencyUsage::Accounting,
             ..Default::default()
@@ -295,7 +295,7 @@ mod tests {
     #[test]
     pub fn test_compact_code() {
         let prefs_en = locale!("en-US").into();
-        let currency_usd = CurrencyCode::try_from_str("USD").unwrap();
+        let currency_usd = CurrencyType::try_from_str("USD").unwrap();
         let accounting = CurrencyFormatterOptions {
             usage: CurrencyUsage::Accounting,
             ..Default::default()
