@@ -51,21 +51,19 @@ impl CurrencyType {
     /// assert!(CurrencyType::try_from_utf8(b"USDDD").is_err());
     /// ```
     pub const fn try_from_utf8(code_units: &[u8]) -> Result<Self, PreferencesParseError> {
-        if code_units.len() != 3 {
-            return Err(PreferencesParseError::InvalidKeywordValue);
-        }
-        if code_units[0].is_ascii_alphabetic()
-            && code_units[1].is_ascii_alphabetic()
-            && code_units[2].is_ascii_alphabetic()
-        {
-            let lower = [
-                code_units[0].to_ascii_lowercase(),
-                code_units[1].to_ascii_lowercase(),
-                code_units[2].to_ascii_lowercase(),
-            ];
-            match TinyAsciiStr::try_from_utf8(&lower) {
-                Ok(s) => Ok(Self(s)),
-                Err(_) => Err(PreferencesParseError::InvalidKeywordValue),
+        if let &[a, b, c] = code_units {
+            if a.is_ascii_alphabetic() && b.is_ascii_alphabetic() && c.is_ascii_alphabetic() {
+                let lower = [
+                    a.to_ascii_lowercase(),
+                    b.to_ascii_lowercase(),
+                    c.to_ascii_lowercase(),
+                ];
+                match TinyAsciiStr::try_from_utf8(&lower) {
+                    Ok(s) => Ok(Self(s)),
+                    Err(_) => Err(PreferencesParseError::InvalidKeywordValue),
+                }
+            } else {
+                Err(PreferencesParseError::InvalidKeywordValue)
             }
         } else {
             Err(PreferencesParseError::InvalidKeywordValue)

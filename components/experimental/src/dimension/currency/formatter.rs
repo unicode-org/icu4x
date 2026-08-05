@@ -582,7 +582,6 @@ impl CurrencyFormatter<DecimalFormatter> {
     /// use icu::experimental::dimension::currency::formatter::CurrencyFormatter;
     /// use icu::experimental::dimension::currency::CurrencyType;
     /// use icu::locale::locale;
-    /// use tinystr::*;
     /// use writeable::assert_writeable_eq;
     ///
     /// let currency_preferences = locale!("en-US").into();
@@ -654,7 +653,6 @@ impl CurrencyFormatter<DecimalFormatter> {
     /// use icu::experimental::dimension::currency::formatter::CurrencyFormatter;
     /// use icu::experimental::dimension::currency::CurrencyType;
     /// use icu::locale::locale;
-    /// use tinystr::*;
     /// use writeable::assert_writeable_eq;
     ///
     /// let currency_preferences = locale!("en-US").into();
@@ -721,7 +719,6 @@ impl CurrencyFormatter<DecimalFormatter> {
     /// use icu::experimental::dimension::currency::formatter::CurrencyFormatter;
     /// use icu::experimental::dimension::currency::CurrencyType;
     /// use icu::locale::locale;
-    /// use tinystr::*;
     /// use writeable::assert_writeable_eq;
     ///
     /// let currency_preferences = locale!("en-US").into();
@@ -1272,7 +1269,6 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     /// use icu::experimental::dimension::currency::formatter::CurrencyFormatter;
     /// use icu::experimental::dimension::currency::CurrencyType;
     /// use icu::locale::locale;
-    /// use tinystr::*;
     /// use writeable::assert_writeable_eq;
     ///
     /// let currency_preferences = locale!("en-US").into();
@@ -1294,7 +1290,6 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     /// use icu::experimental::dimension::currency::formatter::CurrencyFormatter;
     /// use icu::experimental::dimension::currency::CurrencyType;
     /// use icu::locale::locale;
-    /// use tinystr::*;
     /// use writeable::assert_writeable_eq;
     ///
     /// let currency_preferences = locale!("en-US").into();
@@ -1313,7 +1308,6 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     /// use icu::experimental::dimension::currency::formatter::CurrencyFormatter;
     /// use icu::experimental::dimension::currency::CurrencyType;
     /// use icu::locale::locale;
-    /// use tinystr::*;
     /// use writeable::assert_writeable_eq;
     ///
     /// let currency_preferences = locale!("en-US").into();
