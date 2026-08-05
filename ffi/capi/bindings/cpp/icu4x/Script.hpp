@@ -257,6 +257,8 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_TaiYo:
         case icu4x::capi::Script_TolongSiki:
         case icu4x::capi::Script_TraditionalHanWithLatin:
+        case icu4x::capi::Script_ProtoCuneiform:
+        case icu4x::capi::Script_Seal:
         case icu4x::capi::Script_Chisoi:
             return static_cast<icu4x::Script::Value>(c_enum);
         default:

@@ -125,6 +125,16 @@ namespace capi {
       JoiningGroup_VerticalTail = 103,
       JoiningGroup_KashmiriYeh = 104,
       JoiningGroup_ThinNoon = 105,
+      JoiningGroup_CrownAin = 106,
+      JoiningGroup_CrownBeh = 107,
+      JoiningGroup_CrownFeh = 108,
+      JoiningGroup_CrownHah = 109,
+      JoiningGroup_CrownHeh = 110,
+      JoiningGroup_CrownKaf = 111,
+      JoiningGroup_CrownMeem = 112,
+      JoiningGroup_CrownSad = 113,
+      JoiningGroup_CrownSeen = 114,
+      JoiningGroup_CrownTah = 115,
     };
 
     typedef struct JoiningGroup_option {union { JoiningGroup ok; }; bool is_ok; } JoiningGroup_option;
@@ -562,6 +572,46 @@ public:
          * See the [Rust documentation for `ThinNoon`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ThinNoon) for more information.
          */
         ThinNoon = 105,
+        /**
+         * See the [Rust documentation for `CrownAin`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownAin) for more information.
+         */
+        CrownAin = 106,
+        /**
+         * See the [Rust documentation for `CrownBeh`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownBeh) for more information.
+         */
+        CrownBeh = 107,
+        /**
+         * See the [Rust documentation for `CrownFeh`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownFeh) for more information.
+         */
+        CrownFeh = 108,
+        /**
+         * See the [Rust documentation for `CrownHah`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownHah) for more information.
+         */
+        CrownHah = 109,
+        /**
+         * See the [Rust documentation for `CrownHeh`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownHeh) for more information.
+         */
+        CrownHeh = 110,
+        /**
+         * See the [Rust documentation for `CrownKaf`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownKaf) for more information.
+         */
+        CrownKaf = 111,
+        /**
+         * See the [Rust documentation for `CrownMeem`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownMeem) for more information.
+         */
+        CrownMeem = 112,
+        /**
+         * See the [Rust documentation for `CrownSad`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownSad) for more information.
+         */
+        CrownSad = 113,
+        /**
+         * See the [Rust documentation for `CrownSeen`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownSeen) for more information.
+         */
+        CrownSeen = 114,
+        /**
+         * See the [Rust documentation for `CrownTah`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownTah) for more information.
+         */
+        CrownTah = 115,
     };
 
     JoiningGroup(): value(Value::NoJoiningGroup) {}
