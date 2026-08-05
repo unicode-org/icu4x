@@ -228,6 +228,11 @@ fn line_break_test(
 #[test]
 fn run_line_break_test() {
     line_break_test(
+        include_str!("testdata/LineBreakTest_15.1.txt"),
+        LineSegmenter::new_for_non_complex_scripts(Default::default()),
+        true,
+    );
+    line_break_test(
         include_str!("testdata/LineBreakTest.txt"),
         LineSegmenter::new_17_for_non_complex_scripts(Default::default()),
         true,
@@ -239,24 +244,13 @@ fn run_line_break_test() {
     );
 }
 
-/// `SegmenterBreakLineV1` data is evaluated with the Unicode 15.1 rules it was generated for, so it
-/// is tested against the Unicode 15.1 test files.
 #[test]
-fn run_line_break_test_v1_data() {
+fn run_line_break_extra_test() {
     line_break_test(
-        include_str!("testdata/LineBreakTest_15.1.txt"),
-        LineSegmenter::new_for_non_complex_scripts(Default::default()),
-        true,
-    );
-    line_break_test(
-        include_str!("testdata/LineBreakRandomTest_15.1.txt"),
+        include_str!("testdata/LineBreakExtraTest_15.1.txt"),
         LineSegmenter::new_for_non_complex_scripts(Default::default()),
         false,
     );
-}
-
-#[test]
-fn run_line_break_extra_test() {
     line_break_test(
         include_str!("testdata/LineBreakExtraTest.txt"),
         LineSegmenter::new_17_for_non_complex_scripts(Default::default()),
@@ -271,6 +265,11 @@ fn run_line_break_extra_test() {
 
 #[test]
 fn run_line_break_random_test() {
+    line_break_test(
+        include_str!("testdata/LineBreakRandomTest_15.1.txt"),
+        LineSegmenter::new_for_non_complex_scripts(Default::default()),
+        false,
+    );
     line_break_test(
         include_str!("testdata/LineBreakRandomTest.txt"),
         LineSegmenter::new_17_for_non_complex_scripts(Default::default()),

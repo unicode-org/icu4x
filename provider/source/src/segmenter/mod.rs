@@ -1029,10 +1029,8 @@ fn rscd_15_1() -> &'static SourceDataProvider {
     })
 }
 
-// `SegmenterBreakLineV1` is superseded by `SegmenterBreakLineV3`, but is still generated so that
-// data files can be consumed by older versions of ICU4X. It implements Unicode 15.1, so it is
-// generated from a pinned copy of the Unicode 15.1 data.
-implement!(SegmenterBreakLineV1, "line_v1.toml", |_| rscd_15_1());
+implement!(SegmenterBreakLineV1, "line15.toml", |_| rscd_15_1());
+#[cfg(feature = "unstable")]
 implement!(SegmenterBreakLineV3, "line.toml", |s| s);
 implement!(SegmenterBreakGraphemeClusterV1, "grapheme.toml", |s| s);
 implement!(SegmenterBreakWordV1, "word.toml", |s| s);

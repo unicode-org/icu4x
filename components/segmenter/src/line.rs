@@ -216,10 +216,8 @@ impl LineBreakOptions<'_> {
 /// always a breakpoint returned at index 0, but this breakpoint is not a
 /// meaningful line break opportunity.
 ///
-/// Line segmenter is curretly compatible with [Unicode Standard Annex #14][UAX14] (Version 15.1.0).
-/// The `*_17_*` constructors, which require the `unstable` Cargo feature, implement Version 17.0.0
-/// instead; they read [`SegmenterBreakLineV3`] data, whereas the other constructors read
-/// [`SegmenterBreakLineV1`] data.
+/// Line segmenter is currently compatible with [Unicode Standard Annex #14][UAX14] (Version 15.1.0).
+/// The `*_17_*` and `*_neo_*` constructors, which require the `unstable` Cargo feature, implement Version 17.0.0.
 ///
 /// [UAX14]: https://www.unicode.org/reports/tr14/tr14-55.html
 ///
@@ -552,17 +550,6 @@ impl LineSegmenter {
             new_for_non_complex_scripts: skip,
             try_new_for_non_complex_scripts_with_buffer_provider,
             try_new_for_non_complex_scripts_unstable,
-            Self,
-        ]
-    );
-
-    #[cfg(feature = "unstable")]
-    icu_provider::gen_buffer_data_constructors!(
-        (options: LineBreakOptions) -> error: DataError,
-        functions: [
-            new_17_for_non_complex_scripts: skip,
-            try_new_17_for_non_complex_scripts_with_buffer_provider,
-            try_new_17_for_non_complex_script_unstable,
             Self,
         ]
     );
