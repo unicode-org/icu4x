@@ -94,7 +94,9 @@ impl CurrencyType {
     /// assert!(CurrencyType::try_from_tinystr(tinystr!(3, "123")).is_err());
     /// assert!(CurrencyType::try_from_tinystr(tinystr!(3, "US")).is_err());
     /// ```
-    pub const fn try_from_tinystr<const N: usize>(s: TinyAsciiStr<N>) -> Result<Self, PreferencesParseError> {
+    pub const fn try_from_tinystr<const N: usize>(
+        s: TinyAsciiStr<N>,
+    ) -> Result<Self, PreferencesParseError> {
         if s.len() == 3 && s.is_ascii_alphabetic() {
             Ok(Self(s.resize().to_ascii_lowercase()))
         } else {
@@ -133,7 +135,6 @@ impl core::str::FromStr for CurrencyType {
         Self::try_from_str(s)
     }
 }
-
 
 #[cfg(test)]
 mod tests {
