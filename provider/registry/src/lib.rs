@@ -369,6 +369,7 @@ macro_rules! registry(
             icu::segmenter::provider::radical::SegmenterUnihanRadicalV1: SegmenterUnihanRadicalV1,
             icu::segmenter::provider::SegmenterBreakGraphemeClusterV2: SegmenterBreakGraphemeClusterV2,
             icu::segmenter::provider::SegmenterBreakLineV2: SegmenterBreakLineV2,
+            icu::segmenter::provider::SegmenterBreakLineV3: SegmenterBreakLineV3,
             icu::segmenter::provider::SegmenterBreakSentenceV2: SegmenterBreakSentenceV2,
             icu::segmenter::provider::SegmenterBreakWordV2: SegmenterBreakWordV2,
             icu::segmenter::provider::SegmenterBreakLineOverrideV2: SegmenterBreakLineOverrideV2,

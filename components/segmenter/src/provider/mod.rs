@@ -54,6 +54,8 @@ const _: () = {
     impl_segmenter_break_grapheme_cluster_v1!(Baked);
     impl_segmenter_dictionary_extended_v1!(Baked);
     impl_segmenter_break_line_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_segmenter_break_line_v3!(Baked);
     #[cfg(feature = "lstm")]
     impl_segmenter_lstm_auto_v1!(Baked);
     #[cfg(feature = "unstable")]
@@ -118,6 +120,14 @@ icu_provider::data_marker!(
     RuleBreakData<'static>,
     is_singleton = true
 );
+#[cfg(feature = "unstable")]
+icu_provider::data_marker!(
+    /// `SegmenterBreakLineV3`
+    SegmenterBreakLineV3,
+    "segmenter/break/line/v3",
+    RuleBreakData<'static>,
+    is_singleton = true
+);
 icu_provider::data_marker!(
     /// `SegmenterBreakWordV1`
     SegmenterBreakWordV1,
@@ -145,6 +155,8 @@ icu_provider::data_marker!(
 pub const MARKERS: &[DataMarkerInfo] = &[
     SegmenterBreakGraphemeClusterV1::INFO,
     SegmenterBreakLineV1::INFO,
+    #[cfg(feature = "unstable")]
+    SegmenterBreakLineV3::INFO,
     SegmenterBreakSentenceOverrideV1::INFO,
     SegmenterBreakSentenceV1::INFO,
     SegmenterBreakWordOverrideV1::INFO,

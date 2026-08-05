@@ -215,9 +215,10 @@ impl LineBreakOptions<'_> {
 /// always a breakpoint returned at index 0, but this breakpoint is not a
 /// meaningful line break opportunity.
 ///
-/// Line segmenter is curretly compatible with [Unicode Standard Annex #14][UAX14] (Version 15.1.0).
+/// Line segmenter is currently compatible with [Unicode Standard Annex #14][UAX14] (Version 15.1.0).
+/// The `*_17_*` and `*_neo_*` constructors, which require the `unstable` Cargo feature, implement Version 17.0.0.
 ///
-/// [UAX14]: https://www.unicode.org/reports/tr14/tr14-51.html
+/// [UAX14]: https://www.unicode.org/reports/tr14/tr14-55.html
 ///
 /// [LD3]: https://www.unicode.org/reports/tr14/#LD3
 /// [LD7]: https://www.unicode.org/reports/tr14/#LD7
@@ -333,6 +334,12 @@ enum LineSegmenterInner {
         complex: ComplexPayloads,
     },
     #[cfg(feature = "unstable")]
+    LegacyV3 {
+        options: ResolvedLineBreakOptions,
+        data: DataPayload<SegmenterBreakLineV3>,
+        complex: ComplexPayloads,
+    },
+    #[cfg(feature = "unstable")]
     Neo {
         data: DataPayload<SegmenterBreakLineV2>,
         tailoring: Option<DataPayload<SegmenterBreakLineOverrideV2>>,
@@ -349,6 +356,12 @@ pub struct LineSegmenterBorrowed<'data>(LineSegmenterBorrowedInner<'data>);
 #[derive(Debug, Clone, Copy)]
 enum LineSegmenterBorrowedInner<'data> {
     Legacy {
+        options: ResolvedLineBreakOptions,
+        data: &'data RuleBreakData<'data>,
+        complex: ComplexPayloadsBorrowed<'data>,
+    },
+    #[cfg(feature = "unstable")]
+    LegacyV3 {
         options: ResolvedLineBreakOptions,
         data: &'data RuleBreakData<'data>,
         complex: ComplexPayloadsBorrowed<'data>,
@@ -510,6 +523,26 @@ impl LineSegmenter {
         })
     }
 
+    /// Constructs a [`LineSegmenter`] with an invariant locale, custom [`LineBreakOptions`], and
+    /// no support for scripts requiring complex context dependent line breaks (Khmer, Lao, Myanmar, Thai).
+    ///
+    /// ✨ *Enabled with the `unstable` Cargo feature.*
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "unstable")]
+    #[cfg(feature = "compiled_data")]
+    pub const fn new_17_for_non_complex_scripts(
+        options: LineBreakOptions,
+    ) -> LineSegmenterBorrowed<'static> {
+        LineSegmenterBorrowed(LineSegmenterBorrowedInner::LegacyV3 {
+            options: options.resolve(),
+            data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V3,
+            complex: ComplexPayloadsBorrowed::new(),
+        })
+    }
+
     icu_provider::gen_buffer_data_constructors!(
         (options: LineBreakOptions) -> error: DataError,
         functions: [
@@ -531,6 +564,24 @@ impl LineSegmenter {
             + ?Sized,
     {
         Ok(Self(LineSegmenterInner::Legacy {
+            data: provider.load(Default::default())?.payload,
+            options: options.resolve(),
+            complex: ComplexPayloads::try_new(provider)?,
+        }))
+    }
+
+    #[cfg(feature = "unstable")]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_17_for_non_complex_scripts)]
+    pub fn try_new_17_for_non_complex_script_unstable<D>(
+        provider: &D,
+        options: LineBreakOptions,
+    ) -> Result<Self, DataError>
+    where
+        D: DataProvider<SegmenterBreakLineV3>
+            + DataProvider<SegmenterBreakGraphemeClusterV1>
+            + ?Sized,
+    {
+        Ok(Self(LineSegmenterInner::LegacyV3 {
             data: provider.load(Default::default())?.payload,
             options: options.resolve(),
             complex: ComplexPayloads::try_new(provider)?,
@@ -697,6 +748,10 @@ impl LineSegmenter {
                 ref mut complex, ..
             } => complex,
             #[cfg(feature = "unstable")]
+            LineSegmenterInner::LegacyV3 {
+                ref mut complex, ..
+            } => complex,
+            #[cfg(feature = "unstable")]
             LineSegmenterInner::Neo {
                 ref mut complex, ..
             } => complex,
@@ -734,6 +789,10 @@ impl LineSegmenter {
                 ref mut complex, ..
             } => complex,
             #[cfg(feature = "unstable")]
+            LineSegmenterInner::LegacyV3 {
+                ref mut complex, ..
+            } => complex,
+            #[cfg(feature = "unstable")]
             LineSegmenterInner::Neo {
                 ref mut complex, ..
             } => complex,
@@ -763,6 +822,16 @@ impl LineSegmenter {
                 options,
                 complex,
             } => LineSegmenterBorrowedInner::Legacy {
+                options: *options,
+                data: data.get(),
+                complex: complex.as_borrowed(),
+            },
+            #[cfg(feature = "unstable")]
+            LineSegmenterInner::LegacyV3 {
+                data,
+                options,
+                complex,
+            } => LineSegmenterBorrowedInner::LegacyV3 {
                 options: *options,
                 data: data.get(),
                 complex: complex.as_borrowed(),
@@ -802,6 +871,19 @@ impl<'data> LineSegmenterBorrowed<'data> {
                 handle_complex: line_handle_complex_utf8,
             }),
             #[cfg(feature = "unstable")]
+            LineSegmenterBorrowedInner::LegacyV3 {
+                options,
+                data,
+                complex,
+            } => LineBreakIteratorInner::LegacyV3(crate::line_v3::LineBreakIteratorV3::new(
+                input.char_indices(),
+                input.len(),
+                data,
+                options,
+                complex,
+                crate::line_v3::line_handle_complex_utf8,
+            )),
+            #[cfg(feature = "unstable")]
             LineSegmenterBorrowedInner::Neo {
                 data,
                 tailoring,
@@ -839,6 +921,19 @@ impl<'data> LineSegmenterBorrowed<'data> {
                 handle_complex: line_handle_complex_utf8,
             }),
             #[cfg(feature = "unstable")]
+            LineSegmenterBorrowedInner::LegacyV3 {
+                data,
+                options,
+                complex,
+            } => LineBreakIteratorInner::LegacyV3(crate::line_v3::LineBreakIteratorV3::new(
+                Utf8CharIndices::new(input),
+                input.len(),
+                data,
+                options,
+                complex,
+                crate::line_v3::line_handle_complex_utf8,
+            )),
+            #[cfg(feature = "unstable")]
             LineSegmenterBorrowedInner::Neo {
                 data,
                 tailoring,
@@ -872,6 +967,19 @@ impl<'data> LineSegmenterBorrowed<'data> {
                 handle_complex: |_, _| None,
             }),
             #[cfg(feature = "unstable")]
+            LineSegmenterBorrowedInner::LegacyV3 {
+                data,
+                options,
+                complex,
+            } => LineBreakIteratorInner::LegacyV3(crate::line_v3::LineBreakIteratorV3::new(
+                Latin1Indices::new(input),
+                input.len(),
+                data,
+                options,
+                complex,
+                |_, _| None,
+            )),
+            #[cfg(feature = "unstable")]
             LineSegmenterBorrowedInner::Neo {
                 data, tailoring, ..
             } => LineBreakIteratorInner::Neo(crate::neo::RuleBreakIterator::new(
@@ -902,6 +1010,19 @@ impl<'data> LineSegmenterBorrowed<'data> {
                 complex,
                 handle_complex: line_handle_complex_utf16,
             }),
+            #[cfg(feature = "unstable")]
+            LineSegmenterBorrowedInner::LegacyV3 {
+                data,
+                options,
+                complex,
+            } => LineBreakIteratorInner::LegacyV3(crate::line_v3::LineBreakIteratorV3::new(
+                Utf16Indices::new(input),
+                input.len(),
+                data,
+                options,
+                complex,
+                crate::line_v3::line_handle_complex_utf16,
+            )),
             #[cfg(feature = "unstable")]
             LineSegmenterBorrowedInner::Neo {
                 data,
@@ -936,6 +1057,10 @@ impl LineSegmenterBorrowed<'static> {
                 ref mut complex, ..
             } => complex,
             #[cfg(feature = "unstable")]
+            LineSegmenterBorrowedInner::LegacyV3 {
+                ref mut complex, ..
+            } => complex,
+            #[cfg(feature = "unstable")]
             LineSegmenterBorrowedInner::Neo {
                 ref mut complex, ..
             } => complex,
@@ -960,6 +1085,10 @@ impl LineSegmenterBorrowed<'static> {
                 ref mut complex, ..
             } => complex,
             #[cfg(feature = "unstable")]
+            LineSegmenterBorrowedInner::LegacyV3 {
+                ref mut complex, ..
+            } => complex,
+            #[cfg(feature = "unstable")]
             LineSegmenterBorrowedInner::Neo {
                 ref mut complex, ..
             } => complex,
@@ -978,6 +1107,16 @@ impl LineSegmenterBorrowed<'static> {
                 options,
                 complex,
             } => LineSegmenterInner::Legacy {
+                data: DataPayload::from_static_ref(data),
+                complex: complex.static_to_owned(),
+                options,
+            },
+            #[cfg(feature = "unstable")]
+            LineSegmenterBorrowedInner::LegacyV3 {
+                data,
+                options,
+                complex,
+            } => LineSegmenterInner::LegacyV3 {
                 data: DataPayload::from_static_ref(data),
                 complex: complex.static_to_owned(),
                 options,
@@ -1070,6 +1209,8 @@ struct LegacyIterator<'data, 's, Y: RuleBreakType> {
 enum LineBreakIteratorInner<'data, 's, Y: RuleBreakType> {
     Legacy(LegacyIterator<'data, 's, Y>),
     #[cfg(feature = "unstable")]
+    LegacyV3(crate::line_v3::LineBreakIteratorV3<'data, 's, Y>),
+    #[cfg(feature = "unstable")]
     Neo(crate::neo::RuleBreakIterator<'data, 's, Y, crate::neo::ComplexLine<Y>>),
 }
 
@@ -1079,6 +1220,8 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
     fn next(&mut self) -> Option<Self::Item> {
         match self.0 {
             LineBreakIteratorInner::Legacy(ref mut iter) => iter.next(),
+            #[cfg(feature = "unstable")]
+            LineBreakIteratorInner::LegacyV3(ref mut iter) => iter.next(),
             #[cfg(feature = "unstable")]
             LineBreakIteratorInner::Neo(ref mut iter) => iter.next(),
         }
@@ -1091,6 +1234,8 @@ impl<Y: RuleBreakType> LineBreakIterator<'_, '_, Y> {
     pub fn is_mandatory(&self) -> bool {
         match self.0 {
             LineBreakIteratorInner::Legacy(_) => false,
+            #[cfg(feature = "unstable")]
+            LineBreakIteratorInner::LegacyV3(_) => false,
             #[cfg(feature = "unstable")]
             LineBreakIteratorInner::Neo(ref iter) => iter.last_accepting_status() == (true as u8),
         }
@@ -1386,7 +1531,7 @@ impl<Y: RuleBreakType> Iterator for LegacyIterator<'_, '_, Y> {
     }
 }
 
-enum StringBoundaryPosType {
+pub(crate) enum StringBoundaryPosType {
     Start,
     Middle,
     End,
@@ -2166,6 +2311,61 @@ mod tests {
     }
 
     #[test]
+    fn linebreak_17() {
+        let segmenter = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
+
+        check_line("hello world", &["hello ", "world"], segmenter);
+
+        check_line("$10 $10", &["$10 ", "$10"], segmenter);
+
+        // LB10
+
+        // LB14
+        check_line("[  abc def", &["[  abc ", "def"], segmenter);
+
+        // LB15 used to prevent the break at 6, but has been removed in Unicode 15.1.
+        check_line("abc\u{0022}  (def", &["abc\u{0022}  ", "(def"], segmenter);
+
+        // Instead, in Unicode 15.1, LB15a and LB15b prevent these breaks.
+        check_line("« miaou »", &["« miaou »"], segmenter);
+
+        // But not these:
+        check_line(
+            "Die Katze hat »miau« gesagt.",
+            &["Die ", "Katze ", "hat ", "»miau« ", "gesagt."],
+            segmenter,
+        );
+
+        // LB16
+        check_line("\u{0029}\u{203C}", &["\u{0029}\u{203C}"], segmenter);
+        check_line("\u{0029}  \u{203C}", &["\u{0029}  \u{203C}"], segmenter);
+
+        // LB17
+        check_line("\u{2014}\u{2014}aa", &["\u{2014}\u{2014}", "aa"], segmenter);
+        check_line(
+            "\u{2014}  \u{2014}aa",
+            &["\u{2014}  \u{2014}", "aa"],
+            segmenter,
+        );
+
+        check_line(
+            "\u{2014}\u{2014}  \u{2014}\u{2014}123 abc",
+            &["\u{2014}\u{2014}  \u{2014}\u{2014}", "123 ", "abc"],
+            segmenter,
+        );
+
+        // LB25
+        check_line("(0,1)+(2,3)", &["(0,1)+(2,3)"], segmenter);
+
+        check_line("——  ——123 abc", &["——  ——", "123 ", "abc"], segmenter);
+        check_line(
+            "\u{1F3FB} \u{1F3FB}",
+            &["\u{1F3FB} ", "\u{1F3FB}"],
+            segmenter,
+        );
+    }
+
+    #[test]
     fn linebreak_neo() {
         let segmenter = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
 
@@ -2248,6 +2448,41 @@ mod tests {
     }
 
     #[test]
+    fn thai_line_break_17() {
+        check_line(
+            "ภาษาไทยภาษาไทย",
+            &["ภาษา", "ไทย", "ภาษา", "ไทย"],
+            {
+                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
+                s.load_lstm();
+                s
+            },
+        );
+
+        check_line(
+            "ภาษาไทยภาษาไทย",
+            &["ภาษา", "ไทย", "ภาษา", "ไทย"],
+            {
+                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
+                s.load_dictionary();
+                s
+            },
+        );
+
+        check_line("ภาษา", &["ภาษา"], {
+            let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
+            s.load_lstm();
+            s
+        });
+
+        check_line("ภาษา", &["ภาษา"], {
+            let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
+            s.load_dictionary();
+            s
+        });
+    }
+
+    #[test]
     fn thai_line_break_neo() {
         check_line(
             "ภาษาไทยภาษาไทย",
@@ -2311,6 +2546,31 @@ mod tests {
     }
 
     #[test]
+    fn burmese_line_break_17() {
+        // "Burmese Language" in Burmese
+
+        check_line(
+            "မြန်မာဘာသာစကား",
+            &["မြန်", "မာ", "ဘာသာ", "စကား"],
+            {
+                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
+                s.load_lstm();
+                s
+            },
+        );
+
+        check_line(
+            "မြန်မာဘာသာစကား",
+            &["မြန်မာဘာသာ", "စကား"],
+            {
+                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
+                s.load_dictionary();
+                s
+            },
+        );
+    }
+
+    #[test]
     fn burmese_line_break_neo() {
         // "Burmese Language" in Burmese
 
@@ -2347,6 +2607,29 @@ mod tests {
             "សេចក្ដីប្រកាសជាសកលស្ដីពីសិទ្ធិមនុស្ស",
             &["សេចក្ដីប្រកាស", "ជាស", "កល", "ស្ដីពី", "សិទ្ធិមនុស្ស"],
             LineSegmenter::new_dictionary(Default::default()),
+        );
+    }
+
+    #[test]
+    fn khmer_line_break_17() {
+        check_line(
+            "សេចក្ដីប្រកាសជាសកលស្ដីពីសិទ្ធិមនុស្ស",
+            &["សេចក្ដីប្រកាស", "ជាស", "កល", "ស្ដីពី", "សិទ្ធិមនុស្ស"],
+            {
+                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
+                s.load_lstm();
+                s
+            },
+        );
+
+        check_line(
+            "សេចក្ដីប្រកាសជាសកលស្ដីពីសិទ្ធិមនុស្ស",
+            &["សេចក្ដីប្រកាស", "ជាស", "កល", "ស្ដីពី", "សិទ្ធិមនុស្ស"],
+            {
+                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
+                s.load_dictionary();
+                s
+            },
         );
     }
 
@@ -2400,6 +2683,29 @@ mod tests {
     }
 
     #[test]
+    fn lao_line_break_17() {
+        check_line(
+            "ກ່ຽວກັບສິດຂອງມະນຸດ",
+            &["ກ່ຽວ", "ກັບ", "ສິດ", "ຂອງ", "ມະນຸດ"],
+            {
+                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
+                s.load_lstm();
+                s
+            },
+        );
+
+        check_line(
+            "ກ່ຽວກັບສິດຂອງມະນຸດ",
+            &["ກ່ຽວກັບ", "ສິດ", "ຂອງ", "ມະນຸດ"],
+            {
+                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
+                s.load_dictionary();
+                s
+            },
+        );
+    }
+
+    #[test]
     fn lao_line_break_neo() {
         check_line(
             "ກ່ຽວກັບສິດຂອງມະນຸດ",
@@ -2425,6 +2731,13 @@ mod tests {
     #[test]
     fn empty_string() {
         let segmenter = LineSegmenter::new_for_non_complex_scripts(Default::default());
+        let breaks: Vec<usize> = segmenter.segment_str("").collect();
+        assert_eq!(breaks, [0]);
+    }
+
+    #[test]
+    fn empty_string_17() {
+        let segmenter = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
         let breaks: Vec<usize> = segmenter.segment_str("").collect();
         assert_eq!(breaks, [0]);
     }

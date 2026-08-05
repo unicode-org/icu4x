@@ -232,6 +232,53 @@ fn word_line_th_wikipedia_auto() {
         &[
             "แพน",
             "ด้า",
+            "แดง",
+            " ",
+            "(อัง",
+            "กฤษ",
+            ": ",
+            "Red ",
+            "panda, ",
+            "Shining ",
+            "cat; ",
+            "จีน",
+            ": ",
+            "小",
+            "熊",
+            "貓; ",
+            "พิน",
+            "อิน",
+            ": ",
+            "Xiǎo ",
+            "xióngmāo) ",
+            "สัตว์",
+            "เลี้ยง",
+            "ลูก",
+            "ด้วย",
+            "นม",
+            "ชนิด",
+            "หนึ่ง",
+            " ",
+            "มี",
+            "ชื่อ",
+            "วิทยาศาสตร์",
+            "ว่า",
+            " ",
+            "Ailurus ",
+            "fulgens",
+        ],
+        {
+            let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
+            s.load_lstm();
+            s
+        },
+    );
+
+    check_line(
+        text,
+        &[
+            "แพน",
+            "ด้า",
             "แดง ",
             "(อัง",
             "กฤษ: ",
