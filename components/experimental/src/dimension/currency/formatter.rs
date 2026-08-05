@@ -585,7 +585,7 @@ impl CurrencyFormatter<DecimalFormatter> {
     /// use writeable::assert_writeable_eq;
     ///
     /// let currency_preferences = locale!("en-US").into();
-    /// let currency_code = CurrencyType::try_from_str("USD").unwrap();
+    /// let currency_code = "USD".try_into().unwrap();
     /// let fmt = CurrencyFormatter::try_new_code(
     ///     currency_preferences,
     ///     currency_code,
@@ -656,7 +656,7 @@ impl CurrencyFormatter<DecimalFormatter> {
     /// use writeable::assert_writeable_eq;
     ///
     /// let currency_preferences = locale!("en-US").into();
-    /// let currency_code = CurrencyType::try_from_str("USD").unwrap();
+    /// let currency_code = "USD".try_into().unwrap();
     /// let fmt = CurrencyFormatter::try_new_name(currency_preferences, currency_code).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// assert_writeable_eq!(fmt.format_fixed_decimal(&value), "12,345.67 US dollars");
@@ -722,7 +722,7 @@ impl CurrencyFormatter<DecimalFormatter> {
     /// use writeable::assert_writeable_eq;
     ///
     /// let currency_preferences = locale!("en-US").into();
-    /// let currency_code = CurrencyType::try_from_str("USD").unwrap();
+    /// let currency_code = "USD".try_into().unwrap();
     /// let fmt = CurrencyFormatter::try_new_no_currency(currency_preferences, currency_code, Default::default()).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// assert_writeable_eq!(fmt.format_fixed_decimal(&value), "12,345.67");
@@ -1272,7 +1272,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     /// use writeable::assert_writeable_eq;
     ///
     /// let currency_preferences = locale!("en-US").into();
-    /// let currency_code = CurrencyType::try_from_str("USD").unwrap();
+    /// let currency_code = "USD".try_into().unwrap();
     /// let fmt = CurrencyFormatter::try_new_symbol(
     ///     currency_preferences,
     ///     currency_code,
@@ -1293,7 +1293,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     /// use writeable::assert_writeable_eq;
     ///
     /// let currency_preferences = locale!("en-US").into();
-    /// let currency_code = CurrencyType::try_from_str("USD").unwrap();
+    /// let currency_code = "USD".try_into().unwrap();
     /// let fmt = CurrencyFormatter::try_new_compact_symbol(
     ///     currency_preferences,
     ///     currency_code,
@@ -1311,7 +1311,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     /// use writeable::assert_writeable_eq;
     ///
     /// let currency_preferences = locale!("en-US").into();
-    /// let currency_code = CurrencyType::try_from_str("USD").unwrap();
+    /// let currency_code = "USD".try_into().unwrap();
     /// let fmt = CurrencyFormatter::try_new_compact_long_symbol(
     ///     currency_preferences,
     ///     currency_code,
