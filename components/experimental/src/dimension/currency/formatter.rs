@@ -54,7 +54,7 @@ prefs_convert!(
 
 #[derive(Debug)]
 pub(crate) enum CurrencyFormatterData {
-    IsoSymbol {
+    IsoCode {
         essential: DataPayload<CurrencyEssentialsV1>,
         iso_code: TinyAsciiStr<3>,
     },
@@ -129,7 +129,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 essential,
                 symbol: res.payload,
             },
-            None => CurrencyFormatterData::IsoSymbol {
+            None => CurrencyFormatterData::IsoCode {
                 essential,
                 iso_code: currency.iso_code(),
             },
@@ -182,7 +182,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 essential,
                 symbol: res.payload,
             },
-            None => CurrencyFormatterData::IsoSymbol {
+            None => CurrencyFormatterData::IsoCode {
                 essential,
                 iso_code: currency.iso_code(),
             },
@@ -218,7 +218,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
 
         Ok(Self {
             value_formatter,
-            currency_data: CurrencyFormatterData::IsoSymbol {
+            currency_data: CurrencyFormatterData::IsoCode {
                 essential,
                 iso_code: currency.iso_code(),
             },
@@ -250,7 +250,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
 
         Ok(Self {
             value_formatter,
-            currency_data: CurrencyFormatterData::IsoSymbol {
+            currency_data: CurrencyFormatterData::IsoCode {
                 essential,
                 iso_code: currency.iso_code(),
             },
@@ -1346,7 +1346,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let accounting = self.usage == CurrencyUsage::Accounting;
 
         let (pattern, currency_str, sign) = match &self.currency_data {
-            CurrencyFormatterData::IsoSymbol {
+            CurrencyFormatterData::IsoCode {
                 essential,
                 iso_code,
             } => {
