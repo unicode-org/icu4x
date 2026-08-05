@@ -9,10 +9,8 @@
 //! implementations don't share code: the property values in the data, and the rules that consume
 //! them, changed in incompatible ways between the two Unicode versions.
 
+use super::{LineBreakStrictness, LineBreakWordOption, ResolvedLineBreakOptions};
 use crate::complex::*;
-use crate::line::{
-    LineBreakStrictness, LineBreakWordOption, ResolvedLineBreakOptions, StringBoundaryPosType,
-};
 use crate::provider::*;
 use crate::scaffold::*;
 use alloc::string::String;
@@ -176,7 +174,7 @@ fn is_complex_rule(property: u8) -> bool {
 }
 
 #[derive(Debug)]
-pub(crate) struct LineBreakIteratorV3<'data, 's, Y: RuleBreakType> {
+pub(super) struct LineBreakIteratorV3<'data, 's, Y: RuleBreakType> {
     iter: Y::IterAttr<'s>,
     len: usize,
     current_pos_data: Option<(usize, Y::CharType)>,
@@ -188,11 +186,11 @@ pub(crate) struct LineBreakIteratorV3<'data, 's, Y: RuleBreakType> {
     handle_complex: HandleComplex<'data, 's, Y>,
 }
 
-pub(crate) type HandleComplex<'data, 's, Y> =
+type HandleComplex<'data, 's, Y> =
     fn(&mut LineBreakIteratorV3<'data, 's, Y>, <Y as RuleBreakType>::CharType) -> Option<usize>;
 
 impl<'data, 's, Y: RuleBreakType> LineBreakIteratorV3<'data, 's, Y> {
-    pub(crate) fn new(
+    pub(super) fn new(
         iter: Y::IterAttr<'s>,
         len: usize,
         data: &'data RuleBreakData<'data>,
@@ -220,28 +218,27 @@ impl<Y: RuleBreakType> Iterator for LineBreakIteratorV3<'_, '_, Y> {
         if self.options.strictness == LineBreakStrictness::Anywhere {
             use crate::grapheme::*;
             let mut grapheme_iter =
-                GraphemeClusterBreakIterator(GraphemeClusterBreakIteratorInner::Legacy(
-                    crate::rule_segmenter::RuleBreakIterator {
+                GraphemeClusterBreakIterator(GraphemeClusterBreakIteratorInner::V1(
+                    crate::rule_segmenter_v1::RuleBreakIterator {
                         iter: self.iter.clone(),
                         len: self.len,
                         current_pos_data: self.current_pos_data,
                         data: match self.complex.grapheme.0 {
-                            GraphemeClusterSegmenterBorrowedInner::Legacy(data) => data,
+                            GraphemeClusterSegmenterBorrowedInner::V1(data) => data,
                             #[cfg(feature = "unstable")]
-                            GraphemeClusterSegmenterBorrowedInner::Neo(_) => unreachable!(),
+                            GraphemeClusterSegmenterBorrowedInner::V2(_) => unreachable!(),
                         },
                         result_cache: Default::default(),
                         complex: None,
                         boundary_property: 0,
                         locale_override: None,
-                        handle_complex: crate::rule_segmenter::empty_handle_complex::<Y>,
+                        handle_complex: crate::rule_segmenter_v1::empty_handle_complex::<Y>,
                     },
                 ));
             let r = grapheme_iter.next();
             #[cfg_attr(not(feature = "unstable"), allow(irrefutable_let_patterns))]
-            let GraphemeClusterBreakIterator(GraphemeClusterBreakIteratorInner::Legacy(
-                grapheme_iter,
-            )) = grapheme_iter
+            let GraphemeClusterBreakIterator(GraphemeClusterBreakIteratorInner::V1(grapheme_iter)) =
+                grapheme_iter
             else {
                 unreachable!();
             };
@@ -795,6 +792,12 @@ impl<Y: RuleBreakType> Iterator for LineBreakIteratorV3<'_, '_, Y> {
     }
 }
 
+enum StringBoundaryPosType {
+    Start,
+    Middle,
+    End,
+}
+
 impl<Y: RuleBreakType> LineBreakIteratorV3<'_, '_, Y> {
     fn advance_iter(&mut self) {
         self.current_pos_data = self.iter.next();
@@ -903,7 +906,7 @@ impl<Y: RuleBreakType> LineBreakIteratorV3<'_, '_, Y> {
     }
 }
 
-pub(crate) fn line_handle_complex_utf8<T>(
+pub(super) fn line_handle_complex_utf8<T>(
     iter: &mut LineBreakIteratorV3<'_, '_, T>,
     left_codepoint: char,
 ) -> Option<usize>
@@ -956,7 +959,7 @@ where
     }
 }
 
-pub(crate) fn line_handle_complex_utf16<T>(
+pub(super) fn line_handle_complex_utf16<T>(
     iterator: &mut LineBreakIteratorV3<'_, '_, T>,
     left_codepoint: T::CharType,
 ) -> Option<usize>
@@ -1015,78 +1018,75 @@ where
 }
 
 #[cfg(test)]
-#[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
-    use crate::options::LineBreakOptions;
+    use crate::*;
     use icu_provider::prelude::*;
 
     #[test]
     fn linebreak_property() {
-        let input = "input";
-        let segmenter = LineBreakIteratorV3::<Utf8>::new(
-            input.char_indices(),
-            input.len(),
-            Baked::SINGLETON_SEGMENTER_BREAK_LINE_V3,
-            LineBreakOptions::default().resolve(),
-            ComplexPayloadsBorrowed::new(),
-            line_handle_complex_utf8,
-        );
+        let super::super::LineBreakIteratorInner::V3(iterator) =
+            LineSegmenter::new_17_for_non_complex_scripts(Default::default())
+                .segment_str("input")
+                .0
+        else {
+            unreachable!()
+        };
 
         assert_eq!(
-            segmenter.get_linebreak_property('\u{0020}'),
+            iterator.get_linebreak_property('\u{0020}'),
             RuleBreakData::LINE_V3_PROPERTY_SP
         );
         assert_eq!(
-            segmenter.get_linebreak_property('\u{0022}'),
+            iterator.get_linebreak_property('\u{0022}'),
             RuleBreakData::LINE_V3_PROPERTY_QU
         );
         assert_eq!(
-            segmenter.get_linebreak_property('('),
+            iterator.get_linebreak_property('('),
             RuleBreakData::LINE_V3_PROPERTY_OP
         );
         assert_eq!(
-            segmenter.get_linebreak_property('\u{0030}'),
+            iterator.get_linebreak_property('\u{0030}'),
             RuleBreakData::LINE_V3_PROPERTY_NU
         );
         assert_eq!(
-            segmenter.get_linebreak_property('['),
+            iterator.get_linebreak_property('['),
             RuleBreakData::LINE_V3_PROPERTY_OP
         );
         assert_eq!(
-            segmenter.get_linebreak_property('\u{1f3fb}'),
+            iterator.get_linebreak_property('\u{1f3fb}'),
             RuleBreakData::LINE_V3_PROPERTY_EM
         );
         assert_eq!(
-            segmenter.get_linebreak_property('\u{20000}'),
+            iterator.get_linebreak_property('\u{20000}'),
             RuleBreakData::LINE_V3_PROPERTY_ID_EASTASIAN
         );
         assert_eq!(
-            segmenter.get_linebreak_property('\u{e0020}'),
+            iterator.get_linebreak_property('\u{e0020}'),
             RuleBreakData::LINE_V3_PROPERTY_CM
         );
         assert_eq!(
-            segmenter.get_linebreak_property('\u{3041}'),
+            iterator.get_linebreak_property('\u{3041}'),
             RuleBreakData::LINE_V3_PROPERTY_CJ
         );
         assert_eq!(
-            segmenter.get_linebreak_property('\u{0025}'),
+            iterator.get_linebreak_property('\u{0025}'),
             RuleBreakData::LINE_V3_PROPERTY_PO
         );
         assert_eq!(
-            segmenter.get_linebreak_property('\u{00A7}'),
+            iterator.get_linebreak_property('\u{00A7}'),
             RuleBreakData::LINE_V3_PROPERTY_AI
         );
         assert_eq!(
-            segmenter.get_linebreak_property('\u{50005}'),
+            iterator.get_linebreak_property('\u{50005}'),
             RuleBreakData::LINE_V3_PROPERTY_XX
         );
         assert_eq!(
-            segmenter.get_linebreak_property('\u{17D6}'),
+            iterator.get_linebreak_property('\u{17D6}'),
             RuleBreakData::LINE_V3_PROPERTY_NS
         );
         assert_eq!(
-            segmenter.get_linebreak_property('\u{2014}'),
+            iterator.get_linebreak_property('\u{2014}'),
             RuleBreakData::LINE_V3_PROPERTY_B2
         );
     }

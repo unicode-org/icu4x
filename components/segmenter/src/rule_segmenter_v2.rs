@@ -9,7 +9,6 @@ use crate::provider::{
     Acceptance, ComplexScript, SegmenterStateMachine, SegmenterStateMachineOverride, Symbol,
 };
 use crate::scaffold::RuleBreakType;
-use core::marker::PhantomData;
 use smallvec::SmallVec;
 
 pub(crate) trait ComplexHandler<Y: RuleBreakType> {
@@ -56,60 +55,6 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for NoComplexHandler {
     }
 }
 
-#[derive(Debug)]
-pub(crate) struct ComplexLine<Y>(PhantomData<Y>);
-
-impl<Y: RuleBreakType> ComplexHandler<Y> for ComplexLine<Y> {
-    const BREAK_AT_BOUNDARIES: bool = false;
-    const BREAK_STATUS: u8 = false as u8;
-    type Cache = [usize; 16];
-
-    type ComplexPayloads<'s> = Y::ComplexPayloads<'s>;
-    type ComplexPayload<'s> = Y::ComplexPayload<'s>;
-
-    fn select<'data>(
-        complex_payloads: &Self::ComplexPayloads<'data>,
-        complex_script: ComplexScript,
-    ) -> Option<Self::ComplexPayload<'data>> {
-        Y::select_complex(complex_payloads, complex_script)
-    }
-
-    fn handle<'data, 's>(
-        complex_payload: &Self::ComplexPayload<'data>,
-        iter: &Y::IterAttr<'s>,
-        past_complex: &Y::IterAttr<'s>,
-    ) -> ComplexIterator<'data, 's, Y> {
-        Y::handle_complex(complex_payload, iter, past_complex)
-    }
-}
-
-#[derive(Debug)]
-pub(crate) struct ComplexWord<Y>(PhantomData<Y>);
-
-impl<Y: RuleBreakType> ComplexHandler<Y> for ComplexWord<Y> {
-    const BREAK_AT_BOUNDARIES: bool = true;
-    type Cache = [usize; 16];
-    const BREAK_STATUS: u8 = crate::options::WordType::Letter as u8;
-
-    type ComplexPayloads<'s> = Y::ComplexPayloads<'s>;
-    type ComplexPayload<'s> = Y::ComplexPayload<'s>;
-
-    fn select<'data>(
-        complex_payloads: &Y::ComplexPayloads<'data>,
-        complex_script: ComplexScript,
-    ) -> Option<Self::ComplexPayload<'data>> {
-        Y::select_complex(complex_payloads, complex_script)
-    }
-
-    fn handle<'data, 's>(
-        complex_payloads: &Self::ComplexPayload<'data>,
-        iter: &Y::IterAttr<'s>,
-        past_complex: &Y::IterAttr<'s>,
-    ) -> ComplexIterator<'data, 's, Y> {
-        Y::handle_complex(complex_payloads, iter, past_complex)
-    }
-}
-
 /// Implements the [`Iterator`] trait over the line break opportunities of the given string.
 ///
 /// Lifetimes:
@@ -123,7 +68,12 @@ impl<Y: RuleBreakType> ComplexHandler<Y> for ComplexWord<Y> {
 ///
 /// For examples of use, see [`LineSegmenter`].
 #[derive(Debug)]
-pub(crate) struct RuleBreakIterator<'data, 's, Y: RuleBreakType, C: ComplexHandler<Y> + ?Sized> {
+pub(crate) struct RuleBreakIterator<
+    'data,
+    's,
+    Y: RuleBreakType,
+    C: ComplexHandler<Y> + ?Sized = NoComplexHandler,
+> {
     pub(crate) data: &'data SegmenterStateMachine<'data>,
     pub(crate) pseudo_symbol_map: &'data zerovec::ZeroVec<'data, (Symbol, ComplexScript)>,
     // We use `IntoIter` so that we can pop from the front in O(1) time.

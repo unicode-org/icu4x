@@ -6,75 +6,15 @@ use crate::complex::*;
 use crate::indices::*;
 use crate::provider::*;
 use crate::scaffold::*;
-use alloc::string::String;
-use alloc::vec;
-use alloc::vec::Vec;
 use icu_locale_core::LanguageIdentifier;
 use icu_locale_core::subtags::{Language, language};
 use icu_provider::prelude::*;
-use utf8_iter::Utf8CharIndices;
 
-#[doc(hidden)]
-impl RuleBreakData<'_> {
-    pub const LINE_PROPERTY_AI: u8 = 1;
-    pub const LINE_PROPERTY_AL: u8 = 3;
-    pub const LINE_PROPERTY_BA: u8 = 8;
-    pub const LINE_PROPERTY_BK: u8 = 10;
-    pub const LINE_PROPERTY_CJ: u8 = 12;
-    pub const LINE_PROPERTY_CM: u8 = 14;
-    pub const LINE_PROPERTY_CR: u8 = 16;
-    pub const LINE_PROPERTY_EX: u8 = 19;
-    pub const LINE_PROPERTY_H2: u8 = 21;
-    pub const LINE_PROPERTY_H3: u8 = 22;
-    pub const LINE_PROPERTY_HY: u8 = 24;
-    pub const LINE_PROPERTY_ID: u8 = 25;
-    pub const LINE_PROPERTY_IN: u8 = 27;
-    pub const LINE_PROPERTY_JL: u8 = 29;
-    pub const LINE_PROPERTY_JT: u8 = 30;
-    pub const LINE_PROPERTY_JV: u8 = 31;
-    pub const LINE_PROPERTY_LF: u8 = 32;
-    pub const LINE_PROPERTY_NL: u8 = 33;
-    pub const LINE_PROPERTY_NS: u8 = 34;
-    pub const LINE_PROPERTY_NU: u8 = 35;
-    pub const LINE_PROPERTY_PO_EAW: u8 = 39;
-    pub const LINE_PROPERTY_PR_EAW: u8 = 41;
-    pub const LINE_PROPERTY_SP: u8 = 47;
-    pub const LINE_PROPERTY_ZW: u8 = 53;
-    pub const LINE_PROPERTY_ZWJ: u8 = 54;
-}
-
-#[cfg_attr(not(test), allow(dead_code))]
-#[doc(hidden)]
-impl RuleBreakData<'_> {
-    pub const LINE_PROPERTY_AK: u8 = 2;
-    pub const LINE_PROPERTY_AL_DOTTED_CIRCLE: u8 = 4;
-    pub const LINE_PROPERTY_AP: u8 = 5;
-    pub const LINE_PROPERTY_AS: u8 = 6;
-    pub const LINE_PROPERTY_B2: u8 = 7;
-    pub const LINE_PROPERTY_BB: u8 = 9;
-    pub const LINE_PROPERTY_CB: u8 = 11;
-    pub const LINE_PROPERTY_CL: u8 = 13;
-    pub const LINE_PROPERTY_CP: u8 = 15;
-    pub const LINE_PROPERTY_EB: u8 = 17;
-    pub const LINE_PROPERTY_EM: u8 = 18;
-    pub const LINE_PROPERTY_GL: u8 = 20;
-    pub const LINE_PROPERTY_HL: u8 = 23;
-    pub const LINE_PROPERTY_ID_CN: u8 = 26;
-    pub const LINE_PROPERTY_IS: u8 = 28;
-    pub const LINE_PROPERTY_OP_EA: u8 = 36;
-    pub const LINE_PROPERTY_OP_OP30: u8 = 37;
-    pub const LINE_PROPERTY_PO: u8 = 38;
-    pub const LINE_PROPERTY_PR: u8 = 40;
-    pub const LINE_PROPERTY_QU: u8 = 42;
-    pub const LINE_PROPERTY_QU_PF: u8 = 43;
-    pub const LINE_PROPERTY_QU_PI: u8 = 44;
-    pub const LINE_PROPERTY_RI: u8 = 45;
-    pub const LINE_PROPERTY_SY: u8 = 48;
-    pub const LINE_PROPERTY_VF: u8 = 49;
-    pub const LINE_PROPERTY_VI: u8 = 50;
-    pub const LINE_PROPERTY_WJ: u8 = 51;
-    pub const LINE_PROPERTY_XX: u8 = 52;
-}
+mod v1;
+/// The Unicode 17 line breaking implementation, used with `SegmenterBreakLineV3` data.
+#[cfg(any(feature = "unstable", feature = "datagen"))]
+#[cfg_attr(not(feature = "unstable"), allow(dead_code))]
+mod v3;
 
 /// An enum specifies the strictness of line-breaking rules. It can be passed as
 /// an argument when creating a line segmenter.
@@ -328,21 +268,21 @@ pub struct LineSegmenter(LineSegmenterInner);
 
 #[derive(Debug)]
 enum LineSegmenterInner {
-    Legacy {
+    V1 {
         options: ResolvedLineBreakOptions,
         data: DataPayload<SegmenterBreakLineV1>,
         complex: ComplexPayloads,
     },
     #[cfg(feature = "unstable")]
-    LegacyV3 {
-        options: ResolvedLineBreakOptions,
-        data: DataPayload<SegmenterBreakLineV3>,
+    V2 {
+        data: DataPayload<SegmenterBreakLineV2>,
+        tailoring: Option<DataPayload<SegmenterBreakLineOverrideV2>>,
         complex: ComplexPayloads,
     },
     #[cfg(feature = "unstable")]
-    Neo {
-        data: DataPayload<SegmenterBreakLineV2>,
-        tailoring: Option<DataPayload<SegmenterBreakLineOverrideV2>>,
+    V3 {
+        options: ResolvedLineBreakOptions,
+        data: DataPayload<SegmenterBreakLineV3>,
         complex: ComplexPayloads,
     },
 }
@@ -355,21 +295,21 @@ pub struct LineSegmenterBorrowed<'data>(LineSegmenterBorrowedInner<'data>);
 
 #[derive(Debug, Clone, Copy)]
 enum LineSegmenterBorrowedInner<'data> {
-    Legacy {
+    V1 {
         options: ResolvedLineBreakOptions,
         data: &'data RuleBreakData<'data>,
         complex: ComplexPayloadsBorrowed<'data>,
     },
     #[cfg(feature = "unstable")]
-    LegacyV3 {
-        options: ResolvedLineBreakOptions,
-        data: &'data RuleBreakData<'data>,
-        complex: ComplexPayloadsBorrowed<'data>,
-    },
-    #[cfg(feature = "unstable")]
-    Neo {
+    V2 {
         data: &'data SegmenterStateMachine<'data>,
         tailoring: Option<&'data SegmenterStateMachineOverride<'data>>,
+        complex: ComplexPayloadsBorrowed<'data>,
+    },
+    #[cfg(feature = "unstable")]
+    V3 {
+        options: ResolvedLineBreakOptions,
+        data: &'data RuleBreakData<'data>,
         complex: ComplexPayloadsBorrowed<'data>,
     },
 }
@@ -516,7 +456,7 @@ impl LineSegmenter {
     pub const fn new_for_non_complex_scripts(
         options: LineBreakOptions,
     ) -> LineSegmenterBorrowed<'static> {
-        LineSegmenterBorrowed(LineSegmenterBorrowedInner::Legacy {
+        LineSegmenterBorrowed(LineSegmenterBorrowedInner::V1 {
             options: options.resolve(),
             data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
             complex: ComplexPayloadsBorrowed::new(),
@@ -536,7 +476,7 @@ impl LineSegmenter {
     pub const fn new_17_for_non_complex_scripts(
         options: LineBreakOptions,
     ) -> LineSegmenterBorrowed<'static> {
-        LineSegmenterBorrowed(LineSegmenterBorrowedInner::LegacyV3 {
+        LineSegmenterBorrowed(LineSegmenterBorrowedInner::V3 {
             options: options.resolve(),
             data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V3,
             complex: ComplexPayloadsBorrowed::new(),
@@ -563,7 +503,7 @@ impl LineSegmenter {
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
-        Ok(Self(LineSegmenterInner::Legacy {
+        Ok(Self(LineSegmenterInner::V1 {
             data: provider.load(Default::default())?.payload,
             options: options.resolve(),
             complex: ComplexPayloads::try_new(provider)?,
@@ -581,7 +521,7 @@ impl LineSegmenter {
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
-        Ok(Self(LineSegmenterInner::LegacyV3 {
+        Ok(Self(LineSegmenterInner::V3 {
             data: provider.load(Default::default())?.payload,
             options: options.resolve(),
             complex: ComplexPayloads::try_new(provider)?,
@@ -605,7 +545,7 @@ impl LineSegmenter {
         );
 
         let options = options.resolve();
-        LineSegmenterBorrowed(LineSegmenterBorrowedInner::Neo {
+        LineSegmenterBorrowed(LineSegmenterBorrowedInner::V2 {
             data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V2,
             tailoring: match (options.ja_zh, options.strictness, options.word_option) {
                 (_, _, LineBreakWordOption::BreakAll) => {
@@ -632,7 +572,7 @@ impl LineSegmenter {
                 (false, LineBreakStrictness::Strict, LineBreakWordOption::Normal) => None,
                 (_, LineBreakStrictness::Anywhere, _) => {
                     // Return a line segmenter that is actually a grapheme cluster segmenter.
-                    return LineSegmenterBorrowed(LineSegmenterBorrowedInner::Neo {
+                    return LineSegmenterBorrowed(LineSegmenterBorrowedInner::V2 {
                         data: Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V2,
                         tailoring: None,
                         complex: ComplexPayloadsBorrowed::new_neo(),
@@ -684,7 +624,7 @@ impl LineSegmenter {
             (false, LineBreakStrictness::Strict, LineBreakWordOption::Normal) => None,
             (_, LineBreakStrictness::Anywhere, _) => {
                 // Return a line segmenter that is actually a grapheme cluster segmenter.
-                return Ok(Self(LineSegmenterInner::Neo {
+                return Ok(Self(LineSegmenterInner::V2 {
                     data: DataProvider::<SegmenterBreakGraphemeClusterV2>::load(
                         provider,
                         Default::default(),
@@ -721,7 +661,7 @@ impl LineSegmenter {
             );
         }
 
-        Ok(Self(LineSegmenterInner::Neo {
+        Ok(Self(LineSegmenterInner::V2 {
             data: data.payload,
             complex: ComplexPayloads::try_new_neo(provider)?,
             tailoring: tailoring.map(|d| d.payload),
@@ -744,15 +684,15 @@ impl LineSegmenter {
         // [1]: https://www.unicode.org/reports/tr14/#ID
         // [2]: https://www.unicode.org/reports/tr14/#SA
         match self.0 {
-            LineSegmenterInner::Legacy {
+            LineSegmenterInner::V1 {
                 ref mut complex, ..
             } => complex,
             #[cfg(feature = "unstable")]
-            LineSegmenterInner::LegacyV3 {
+            LineSegmenterInner::V2 {
                 ref mut complex, ..
             } => complex,
             #[cfg(feature = "unstable")]
-            LineSegmenterInner::Neo {
+            LineSegmenterInner::V3 {
                 ref mut complex, ..
             } => complex,
         }
@@ -785,15 +725,15 @@ impl LineSegmenter {
         // [1]: https://www.unicode.org/reports/tr14/#ID
         // [2]: https://www.unicode.org/reports/tr14/#SA
         match self.0 {
-            LineSegmenterInner::Legacy {
+            LineSegmenterInner::V1 {
                 ref mut complex, ..
             } => complex,
             #[cfg(feature = "unstable")]
-            LineSegmenterInner::LegacyV3 {
+            LineSegmenterInner::V2 {
                 ref mut complex, ..
             } => complex,
             #[cfg(feature = "unstable")]
-            LineSegmenterInner::Neo {
+            LineSegmenterInner::V3 {
                 ref mut complex, ..
             } => complex,
         }
@@ -817,33 +757,33 @@ impl LineSegmenter {
     /// Most useful methods for segmentation are on this type.
     pub fn as_borrowed(&self) -> LineSegmenterBorrowed<'_> {
         LineSegmenterBorrowed(match &self.0 {
-            LineSegmenterInner::Legacy {
+            LineSegmenterInner::V1 {
                 data,
                 options,
                 complex,
-            } => LineSegmenterBorrowedInner::Legacy {
+            } => LineSegmenterBorrowedInner::V1 {
                 options: *options,
                 data: data.get(),
                 complex: complex.as_borrowed(),
             },
             #[cfg(feature = "unstable")]
-            LineSegmenterInner::LegacyV3 {
-                data,
-                options,
-                complex,
-            } => LineSegmenterBorrowedInner::LegacyV3 {
-                options: *options,
-                data: data.get(),
-                complex: complex.as_borrowed(),
-            },
-            #[cfg(feature = "unstable")]
-            LineSegmenterInner::Neo {
+            LineSegmenterInner::V2 {
                 data,
                 tailoring,
                 complex,
-            } => LineSegmenterBorrowedInner::Neo {
+            } => LineSegmenterBorrowedInner::V2 {
                 data: data.get(),
                 tailoring: tailoring.as_ref().map(|t| t.get()),
+                complex: complex.as_borrowed(),
+            },
+            #[cfg(feature = "unstable")]
+            LineSegmenterInner::V3 {
+                data,
+                options,
+                complex,
+            } => LineSegmenterBorrowedInner::V3 {
+                options: *options,
+                data: data.get(),
                 complex: complex.as_borrowed(),
             },
         })
@@ -856,43 +796,41 @@ impl<'data> LineSegmenterBorrowed<'data> {
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_str<'s>(self, input: &'s str) -> LineBreakIterator<'data, 's, Utf8> {
         LineBreakIterator(match self.0 {
-            LineSegmenterBorrowedInner::Legacy {
+            LineSegmenterBorrowedInner::V1 {
                 options,
                 data,
                 complex,
-            } => LineBreakIteratorInner::Legacy(LegacyIterator {
-                iter: input.char_indices(),
-                len: input.len(),
-                current_pos_data: None,
-                result_cache: Vec::new(),
-                data,
-                options,
-                complex,
-                handle_complex: line_handle_complex_utf8,
-            }),
-            #[cfg(feature = "unstable")]
-            LineSegmenterBorrowedInner::LegacyV3 {
-                options,
-                data,
-                complex,
-            } => LineBreakIteratorInner::LegacyV3(crate::line_v3::LineBreakIteratorV3::new(
+            } => LineBreakIteratorInner::V1(v1::LineBreakIteratorV1::new(
                 input.char_indices(),
                 input.len(),
                 data,
                 options,
                 complex,
-                crate::line_v3::line_handle_complex_utf8,
+                v1::line_handle_complex_utf8,
             )),
             #[cfg(feature = "unstable")]
-            LineSegmenterBorrowedInner::Neo {
+            LineSegmenterBorrowedInner::V2 {
                 data,
                 tailoring,
                 complex,
-            } => LineBreakIteratorInner::Neo(crate::neo::RuleBreakIterator::new(
+            } => LineBreakIteratorInner::V2(crate::rule_segmenter_v2::RuleBreakIterator::new(
                 input.char_indices(),
                 data,
                 tailoring,
                 Some(complex),
+            )),
+            #[cfg(feature = "unstable")]
+            LineSegmenterBorrowedInner::V3 {
+                options,
+                data,
+                complex,
+            } => LineBreakIteratorInner::V3(v3::LineBreakIteratorV3::new(
+                input.char_indices(),
+                input.len(),
+                data,
+                options,
+                complex,
+                v3::line_handle_complex_utf8,
             )),
         })
     }
@@ -906,43 +844,41 @@ impl<'data> LineSegmenterBorrowed<'data> {
         input: &'s [u8],
     ) -> LineBreakIterator<'data, 's, PotentiallyIllFormedUtf8> {
         LineBreakIterator(match self.0 {
-            LineSegmenterBorrowedInner::Legacy {
+            LineSegmenterBorrowedInner::V1 {
                 data,
                 options,
                 complex,
-            } => LineBreakIteratorInner::Legacy(LegacyIterator {
-                iter: Utf8CharIndices::new(input),
-                len: input.len(),
-                current_pos_data: None,
-                result_cache: Vec::new(),
-                data,
-                options,
-                complex,
-                handle_complex: line_handle_complex_utf8,
-            }),
-            #[cfg(feature = "unstable")]
-            LineSegmenterBorrowedInner::LegacyV3 {
-                data,
-                options,
-                complex,
-            } => LineBreakIteratorInner::LegacyV3(crate::line_v3::LineBreakIteratorV3::new(
+            } => LineBreakIteratorInner::V1(v1::LineBreakIteratorV1::new(
                 Utf8CharIndices::new(input),
                 input.len(),
                 data,
                 options,
                 complex,
-                crate::line_v3::line_handle_complex_utf8,
+                v1::line_handle_complex_utf8,
             )),
             #[cfg(feature = "unstable")]
-            LineSegmenterBorrowedInner::Neo {
+            LineSegmenterBorrowedInner::V2 {
                 data,
                 tailoring,
                 complex,
-            } => LineBreakIteratorInner::Neo(crate::neo::RuleBreakIterator::new(
+            } => LineBreakIteratorInner::V2(crate::rule_segmenter_v2::RuleBreakIterator::new(
                 Utf8CharIndices::new(input),
                 data,
                 tailoring,
                 Some(complex),
+            )),
+            #[cfg(feature = "unstable")]
+            LineSegmenterBorrowedInner::V3 {
+                data,
+                options,
+                complex,
+            } => LineBreakIteratorInner::V3(v3::LineBreakIteratorV3::new(
+                Utf8CharIndices::new(input),
+                input.len(),
+                data,
+                options,
+                complex,
+                v3::line_handle_complex_utf8,
             )),
         })
     }
@@ -952,26 +888,11 @@ impl<'data> LineSegmenterBorrowed<'data> {
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_latin1<'s>(self, input: &'s [u8]) -> LineBreakIterator<'data, 's, Latin1> {
         LineBreakIterator(match self.0 {
-            LineSegmenterBorrowedInner::Legacy {
+            LineSegmenterBorrowedInner::V1 {
                 data,
                 options,
                 complex,
-            } => LineBreakIteratorInner::Legacy(LegacyIterator {
-                iter: Latin1Indices::new(input),
-                len: input.len(),
-                current_pos_data: None,
-                result_cache: Vec::new(),
-                data,
-                options,
-                complex,
-                handle_complex: |_, _| None,
-            }),
-            #[cfg(feature = "unstable")]
-            LineSegmenterBorrowedInner::LegacyV3 {
-                data,
-                options,
-                complex,
-            } => LineBreakIteratorInner::LegacyV3(crate::line_v3::LineBreakIteratorV3::new(
+            } => LineBreakIteratorInner::V1(v1::LineBreakIteratorV1::new(
                 Latin1Indices::new(input),
                 input.len(),
                 data,
@@ -980,13 +901,26 @@ impl<'data> LineSegmenterBorrowed<'data> {
                 |_, _| None,
             )),
             #[cfg(feature = "unstable")]
-            LineSegmenterBorrowedInner::Neo {
+            LineSegmenterBorrowedInner::V2 {
                 data, tailoring, ..
-            } => LineBreakIteratorInner::Neo(crate::neo::RuleBreakIterator::new(
+            } => LineBreakIteratorInner::V2(crate::rule_segmenter_v2::RuleBreakIterator::new(
                 Latin1Indices::new(input),
                 data,
                 tailoring,
                 None,
+            )),
+            #[cfg(feature = "unstable")]
+            LineSegmenterBorrowedInner::V3 {
+                data,
+                options,
+                complex,
+            } => LineBreakIteratorInner::V3(v3::LineBreakIteratorV3::new(
+                Latin1Indices::new(input),
+                input.len(),
+                data,
+                options,
+                complex,
+                |_, _| None,
             )),
         })
     }
@@ -996,43 +930,41 @@ impl<'data> LineSegmenterBorrowed<'data> {
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_utf16<'s>(self, input: &'s [u16]) -> LineBreakIterator<'data, 's, Utf16> {
         LineBreakIterator(match self.0 {
-            LineSegmenterBorrowedInner::Legacy {
+            LineSegmenterBorrowedInner::V1 {
                 data,
                 options,
                 complex,
-            } => LineBreakIteratorInner::Legacy(LegacyIterator {
-                iter: Utf16Indices::new(input),
-                len: input.len(),
-                current_pos_data: None,
-                result_cache: Vec::new(),
-                data,
-                options,
-                complex,
-                handle_complex: line_handle_complex_utf16,
-            }),
-            #[cfg(feature = "unstable")]
-            LineSegmenterBorrowedInner::LegacyV3 {
-                data,
-                options,
-                complex,
-            } => LineBreakIteratorInner::LegacyV3(crate::line_v3::LineBreakIteratorV3::new(
+            } => LineBreakIteratorInner::V1(v1::LineBreakIteratorV1::new(
                 Utf16Indices::new(input),
                 input.len(),
                 data,
                 options,
                 complex,
-                crate::line_v3::line_handle_complex_utf16,
+                v1::line_handle_complex_utf16,
             )),
             #[cfg(feature = "unstable")]
-            LineSegmenterBorrowedInner::Neo {
+            LineSegmenterBorrowedInner::V2 {
                 data,
                 tailoring,
                 complex,
-            } => LineBreakIteratorInner::Neo(crate::neo::RuleBreakIterator::new(
+            } => LineBreakIteratorInner::V2(crate::rule_segmenter_v2::RuleBreakIterator::new(
                 Utf16Indices::new(input),
                 data,
                 tailoring,
                 Some(complex),
+            )),
+            #[cfg(feature = "unstable")]
+            LineSegmenterBorrowedInner::V3 {
+                data,
+                options,
+                complex,
+            } => LineBreakIteratorInner::V3(v3::LineBreakIteratorV3::new(
+                Utf16Indices::new(input),
+                input.len(),
+                data,
+                options,
+                complex,
+                v3::line_handle_complex_utf16,
             )),
         })
     }
@@ -1053,15 +985,15 @@ impl LineSegmenterBorrowed<'static> {
         // [1]: https://www.unicode.org/reports/tr14/#ID
         // [2]: https://www.unicode.org/reports/tr14/#SA,
         match self.0 {
-            LineSegmenterBorrowedInner::Legacy {
+            LineSegmenterBorrowedInner::V1 {
                 ref mut complex, ..
             } => complex,
             #[cfg(feature = "unstable")]
-            LineSegmenterBorrowedInner::LegacyV3 {
+            LineSegmenterBorrowedInner::V2 {
                 ref mut complex, ..
             } => complex,
             #[cfg(feature = "unstable")]
-            LineSegmenterBorrowedInner::Neo {
+            LineSegmenterBorrowedInner::V3 {
                 ref mut complex, ..
             } => complex,
         }
@@ -1081,15 +1013,15 @@ impl LineSegmenterBorrowed<'static> {
         // [1]: https://www.unicode.org/reports/tr14/#ID
         // [2]: https://www.unicode.org/reports/tr14/#SA
         match self.0 {
-            LineSegmenterBorrowedInner::Legacy {
+            LineSegmenterBorrowedInner::V1 {
                 ref mut complex, ..
             } => complex,
             #[cfg(feature = "unstable")]
-            LineSegmenterBorrowedInner::LegacyV3 {
+            LineSegmenterBorrowedInner::V2 {
                 ref mut complex, ..
             } => complex,
             #[cfg(feature = "unstable")]
-            LineSegmenterBorrowedInner::Neo {
+            LineSegmenterBorrowedInner::V3 {
                 ref mut complex, ..
             } => complex,
         }
@@ -1102,79 +1034,37 @@ impl LineSegmenterBorrowed<'static> {
     /// compile-time optimizations that are possible with [`LineSegmenterBorrowed`].
     pub fn static_to_owned(self) -> LineSegmenter {
         LineSegmenter(match self.0 {
-            LineSegmenterBorrowedInner::Legacy {
+            LineSegmenterBorrowedInner::V1 {
                 data,
                 options,
                 complex,
-            } => LineSegmenterInner::Legacy {
+            } => LineSegmenterInner::V1 {
                 data: DataPayload::from_static_ref(data),
                 complex: complex.static_to_owned(),
                 options,
             },
             #[cfg(feature = "unstable")]
-            LineSegmenterBorrowedInner::LegacyV3 {
-                data,
-                options,
-                complex,
-            } => LineSegmenterInner::LegacyV3 {
-                data: DataPayload::from_static_ref(data),
-                complex: complex.static_to_owned(),
-                options,
-            },
-            #[cfg(feature = "unstable")]
-            LineSegmenterBorrowedInner::Neo {
+            LineSegmenterBorrowedInner::V2 {
                 data,
                 tailoring,
                 complex,
-            } => LineSegmenterInner::Neo {
+            } => LineSegmenterInner::V2 {
                 data: DataPayload::from_static_ref(data),
                 complex: complex.static_to_owned(),
                 tailoring: tailoring.map(DataPayload::from_static_ref),
             },
+            #[cfg(feature = "unstable")]
+            LineSegmenterBorrowedInner::V3 {
+                data,
+                options,
+                complex,
+            } => LineSegmenterInner::V3 {
+                data: DataPayload::from_static_ref(data),
+                complex: complex.static_to_owned(),
+                options,
+            },
         })
     }
-}
-
-fn is_break_utf32_by_normal(codepoint: u32, ja_zh: bool) -> bool {
-    matches!(codepoint, 0x301C | 0x30A0 if ja_zh)
-}
-
-#[inline]
-fn is_break_utf32_by_loose(
-    right_codepoint: u32,
-    left_prop: u8,
-    right_prop: u8,
-    ja_zh: bool,
-) -> Option<bool> {
-    Some(match (right_prop, right_codepoint, left_prop) {
-        // breaks before hyphens
-        (RuleBreakData::LINE_PROPERTY_BA, 0x2010 | 0x2013, RuleBreakData::LINE_PROPERTY_ID) => true,
-        // breaks before certain CJK hyphen-like characters
-        (RuleBreakData::LINE_PROPERTY_NS, 0x301C | 0x30A0, _) => ja_zh,
-        // breaks before iteration marks
-        (
-            RuleBreakData::LINE_PROPERTY_NS,
-            0x3005 | 0x303B | 0x309D | 0x309E | 0x30FD | 0x30FE,
-            _,
-        ) => true,
-        // breaks before certain centered punctuation marks:
-        (
-            RuleBreakData::LINE_PROPERTY_NS,
-            0x30FB | 0xFF1A | 0xFF1B | 0xFF65 | 0x203C | 0x2047..=0x2049,
-            _,
-        ) => ja_zh,
-        // breaks between inseparable characters such as U+2025, U+2026 i.e. characters with the Unicode Line Break property IN
-        (RuleBreakData::LINE_PROPERTY_IN, _, RuleBreakData::LINE_PROPERTY_IN) => true,
-        // breaks before certain centered punctuation marks:
-        (RuleBreakData::LINE_PROPERTY_EX, 0xFF01 | 0xFF1F, _) => ja_zh,
-        // breaks before suffixes:
-        // Characters with the Unicode Line Break property PO and the East Asian Width property
-        (RuleBreakData::LINE_PROPERTY_PO_EAW, _, _) => ja_zh,
-        // breaks after prefixes:
-        // Characters with the Unicode Line Break property PR and the East Asian Width property
-        (_, _, RuleBreakData::LINE_PROPERTY_PR_EAW) => ja_zh,
-        _ => return None,
-    })
 }
 
 /// Implements the [`Iterator`] trait over the line break opportunities of the given string.
@@ -1193,25 +1083,12 @@ fn is_break_utf32_by_loose(
 pub struct LineBreakIterator<'data, 's, Y: RuleBreakType>(LineBreakIteratorInner<'data, 's, Y>);
 
 #[derive(Debug)]
-struct LegacyIterator<'data, 's, Y: RuleBreakType> {
-    iter: Y::IterAttr<'s>,
-    len: usize,
-    current_pos_data: Option<(usize, Y::CharType)>,
-    result_cache: Vec<usize>,
-    data: &'data RuleBreakData<'data>,
-    options: ResolvedLineBreakOptions,
-    complex: ComplexPayloadsBorrowed<'data>,
-    // Should return None if there is no complex handling
-    pub(crate) handle_complex: fn(&mut LegacyIterator<'data, 's, Y>, Y::CharType) -> Option<usize>,
-}
-
-#[derive(Debug)]
 enum LineBreakIteratorInner<'data, 's, Y: RuleBreakType> {
-    Legacy(LegacyIterator<'data, 's, Y>),
+    V1(v1::LineBreakIteratorV1<'data, 's, Y>),
     #[cfg(feature = "unstable")]
-    LegacyV3(crate::line_v3::LineBreakIteratorV3<'data, 's, Y>),
+    V2(crate::rule_segmenter_v2::RuleBreakIterator<'data, 's, Y, ComplexLine<Y>>),
     #[cfg(feature = "unstable")]
-    Neo(crate::neo::RuleBreakIterator<'data, 's, Y, crate::neo::ComplexLine<Y>>),
+    V3(v3::LineBreakIteratorV3<'data, 's, Y>),
 }
 
 impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
@@ -1219,11 +1096,11 @@ impl<Y: RuleBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
 
     fn next(&mut self) -> Option<Self::Item> {
         match self.0 {
-            LineBreakIteratorInner::Legacy(ref mut iter) => iter.next(),
+            LineBreakIteratorInner::V1(ref mut iter) => iter.next(),
             #[cfg(feature = "unstable")]
-            LineBreakIteratorInner::LegacyV3(ref mut iter) => iter.next(),
+            LineBreakIteratorInner::V2(ref mut iter) => iter.next(),
             #[cfg(feature = "unstable")]
-            LineBreakIteratorInner::Neo(ref mut iter) => iter.next(),
+            LineBreakIteratorInner::V3(ref mut iter) => iter.next(),
         }
     }
 }
@@ -1233,487 +1110,41 @@ impl<Y: RuleBreakType> LineBreakIterator<'_, '_, Y> {
     /// Returns whether the last break was mandatory
     pub fn is_mandatory(&self) -> bool {
         match self.0 {
-            LineBreakIteratorInner::Legacy(_) => false,
+            LineBreakIteratorInner::V1(_) => false,
             #[cfg(feature = "unstable")]
-            LineBreakIteratorInner::LegacyV3(_) => false,
+            LineBreakIteratorInner::V2(ref iter) => iter.last_accepting_status() == (true as u8),
             #[cfg(feature = "unstable")]
-            LineBreakIteratorInner::Neo(ref iter) => iter.last_accepting_status() == (true as u8),
+            LineBreakIteratorInner::V3(_) => false,
         }
     }
 }
 
-impl<Y: RuleBreakType> Iterator for LegacyIterator<'_, '_, Y> {
-    type Item = usize;
+#[derive(Debug)]
+#[cfg(feature = "unstable")]
+struct ComplexLine<Y>(core::marker::PhantomData<Y>);
 
-    fn next(&mut self) -> Option<Self::Item> {
-        if self.options.strictness == LineBreakStrictness::Anywhere {
-            use crate::grapheme::*;
-            let mut grapheme_iter =
-                GraphemeClusterBreakIterator(GraphemeClusterBreakIteratorInner::Legacy(
-                    crate::rule_segmenter::RuleBreakIterator {
-                        iter: self.iter.clone(),
-                        len: self.len,
-                        current_pos_data: self.current_pos_data,
-                        data: match self.complex.grapheme.0 {
-                            GraphemeClusterSegmenterBorrowedInner::Legacy(data) => data,
-                            #[cfg(feature = "unstable")]
-                            GraphemeClusterSegmenterBorrowedInner::Neo(_) => unreachable!(),
-                        },
-                        result_cache: Default::default(),
-                        complex: None,
-                        boundary_property: 0,
-                        locale_override: None,
-                        handle_complex: crate::rule_segmenter::empty_handle_complex::<Y>,
-                    },
-                ));
-            let r = grapheme_iter.next();
-            #[cfg_attr(not(feature = "unstable"), allow(irrefutable_let_patterns))]
-            let GraphemeClusterBreakIterator(GraphemeClusterBreakIteratorInner::Legacy(
-                grapheme_iter,
-            )) = grapheme_iter
-            else {
-                unreachable!();
-            };
-            self.iter = grapheme_iter.iter;
-            self.len = grapheme_iter.len;
-            self.current_pos_data = grapheme_iter.current_pos_data;
-            return r;
-        }
+#[cfg(feature = "unstable")]
+impl<Y: RuleBreakType> crate::rule_segmenter_v2::ComplexHandler<Y> for ComplexLine<Y> {
+    const BREAK_AT_BOUNDARIES: bool = false;
+    const BREAK_STATUS: u8 = false as u8;
+    type Cache = [usize; 16];
 
-        match self.check_eof() {
-            StringBoundaryPosType::Start => return Some(0),
-            StringBoundaryPosType::End => return None,
-            _ => (),
-        }
+    type ComplexPayloads<'s> = Y::ComplexPayloads<'s>;
+    type ComplexPayload<'s> = Y::ComplexPayload<'s>;
 
-        // If we have break point cache by previous run, return this result
-        if let Some(&first_pos) = self.result_cache.first() {
-            let mut i = 0;
-            loop {
-                if i == first_pos {
-                    self.result_cache = self.result_cache.iter().skip(1).map(|r| r - i).collect();
-                    return self.get_current_position();
-                }
-                i += self.get_current_codepoint().map_or(0, Y::char_len);
-                self.advance_iter();
-                if self.is_eof() {
-                    self.result_cache.clear();
-                    return Some(self.len);
-                }
-            }
-        }
-
-        // The state prior to a sequence of CM and ZWJ affected by rule LB9.
-        let mut lb9_left: Option<u8> = None;
-        // Whether LB9 was applied to a ZWJ, so that breaks at the current
-        // position must be suppressed.
-        let mut lb8a_after_lb9 = false;
-
-        'a: loop {
-            debug_assert!(!self.is_eof());
-
-            let left_codepoint = self.get_current_codepoint()?;
-            self.advance_iter();
-            let Some(right_codepoint) = self.get_current_codepoint() else {
-                return Some(self.len);
-            };
-
-            let left_prop = lb9_left.unwrap_or_else(|| self.get_linebreak_property(left_codepoint));
-            let right_prop = self.get_linebreak_property(right_codepoint);
-
-            // UAX14 doesn't have Thai etc, so use another way.
-            if Y::CAN_CONTAIN_SA
-                && self.get_linebreak_property(left_codepoint) == self.data.complex_property
-                && right_prop == self.data.complex_property
-            {
-                let result = (self.handle_complex)(self, left_codepoint);
-                if result.is_some() {
-                    return result;
-                }
-                // I may have to fetch text until non-SA character?.
-            }
-
-            let after_zwj = lb8a_after_lb9
-                || (lb9_left.is_none() && left_prop == RuleBreakData::LINE_PROPERTY_ZWJ);
-
-            if (right_prop == RuleBreakData::LINE_PROPERTY_CM
-                || right_prop == RuleBreakData::LINE_PROPERTY_ZWJ)
-                && left_prop != RuleBreakData::LINE_PROPERTY_BK
-                && left_prop != RuleBreakData::LINE_PROPERTY_CR
-                && left_prop != RuleBreakData::LINE_PROPERTY_LF
-                && left_prop != RuleBreakData::LINE_PROPERTY_NL
-                && left_prop != RuleBreakData::LINE_PROPERTY_SP
-                && left_prop != RuleBreakData::LINE_PROPERTY_ZW
-            {
-                lb9_left = Some(left_prop);
-                lb8a_after_lb9 = right_prop == RuleBreakData::LINE_PROPERTY_ZWJ;
-                continue;
-            } else {
-                lb9_left = None;
-                lb8a_after_lb9 = false;
-            }
-
-            // CSS word-break property handling
-            #[allow(clippy::single_match)]
-            if self.options.word_option == LineBreakWordOption::KeepAll {
-                //  typographic letter units shouldn't be break
-                if matches!(
-                    left_prop,
-                    RuleBreakData::LINE_PROPERTY_AI
-                        | RuleBreakData::LINE_PROPERTY_AL
-                        | RuleBreakData::LINE_PROPERTY_ID
-                        | RuleBreakData::LINE_PROPERTY_NU
-                        | RuleBreakData::LINE_PROPERTY_HY
-                        | RuleBreakData::LINE_PROPERTY_H2
-                        | RuleBreakData::LINE_PROPERTY_H3
-                        | RuleBreakData::LINE_PROPERTY_JL
-                        | RuleBreakData::LINE_PROPERTY_JV
-                        | RuleBreakData::LINE_PROPERTY_JT
-                        | RuleBreakData::LINE_PROPERTY_CJ
-                ) && matches!(
-                    right_prop,
-                    RuleBreakData::LINE_PROPERTY_AI
-                        | RuleBreakData::LINE_PROPERTY_AL
-                        | RuleBreakData::LINE_PROPERTY_ID
-                        | RuleBreakData::LINE_PROPERTY_NU
-                        | RuleBreakData::LINE_PROPERTY_HY
-                        | RuleBreakData::LINE_PROPERTY_H2
-                        | RuleBreakData::LINE_PROPERTY_H3
-                        | RuleBreakData::LINE_PROPERTY_JL
-                        | RuleBreakData::LINE_PROPERTY_JV
-                        | RuleBreakData::LINE_PROPERTY_JT
-                        | RuleBreakData::LINE_PROPERTY_CJ
-                ) {
-                    continue;
-                }
-            }
-
-            // CSS line-break property handling
-            match self.options.strictness {
-                LineBreakStrictness::Normal
-                    if is_break_utf32_by_normal(right_codepoint.into(), self.options.ja_zh)
-                        && !after_zwj =>
-                {
-                    return self.get_current_position();
-                }
-                LineBreakStrictness::Loose => {
-                    if let Some(breakable) = is_break_utf32_by_loose(
-                        right_codepoint.into(),
-                        left_prop,
-                        right_prop,
-                        self.options.ja_zh,
-                    ) {
-                        if breakable && !after_zwj {
-                            return self.get_current_position();
-                        }
-                        continue;
-                    }
-                }
-                _ => (),
-            };
-
-            // If break_state is equals or grater than 0, it is alias of property.
-            match self.data.get_break_state_from_table(left_prop, right_prop) {
-                BreakState::Break | BreakState::NoMatch => {
-                    if after_zwj {
-                        continue;
-                    } else {
-                        return self.get_current_position();
-                    }
-                }
-                BreakState::Keep => continue,
-                BreakState::Index(mut index) | BreakState::Intermediate(mut index) => {
-                    let mut previous_iter = self.iter.clone();
-                    let mut previous_pos_data = self.current_pos_data;
-                    let mut previous_is_after_zwj = after_zwj;
-
-                    // Since we are building up a state in this inner loop, we do not
-                    // need an analogue of lb9_left; continuing the inner loop preserves
-                    // `index` which is the current state, and thus implements the
-                    // “treat as” rule.
-                    let mut left_prop_pre_lb9 = right_prop;
-
-                    // current state isn't resolved due to intermediating.
-                    // Example, [AK] [AS] is processing LB28a, but if not matched after fetching
-                    // data, we should break after [AK].
-                    let is_intermediate_rule_no_match = if lb8a_after_lb9 {
-                        // left was ZWJ so we don't break between ZWJ.
-                        true
-                    } else {
-                        index > self.data.last_codepoint_property
-                    };
-
-                    loop {
-                        self.advance_iter();
-                        let after_zwj = left_prop_pre_lb9 == RuleBreakData::LINE_PROPERTY_ZWJ;
-
-                        let previous_break_state_is_cp_prop =
-                            index <= self.data.last_codepoint_property;
-
-                        let Some(prop) = self.get_current_linebreak_property() else {
-                            // Reached EOF. But we are analyzing multiple characters now, so next break may be previous point.
-                            let break_state = self
-                                .data
-                                .get_break_state_from_table(index, self.data.eot_property);
-                            if break_state == BreakState::NoMatch {
-                                self.iter = previous_iter;
-                                self.current_pos_data = previous_pos_data;
-                                if previous_is_after_zwj {
-                                    // Do not break [AK] [ZWJ] ÷ [AS] (eot).
-                                    continue 'a;
-                                } else {
-                                    return self.get_current_position();
-                                }
-                            }
-                            // EOF
-                            return Some(self.len);
-                        };
-
-                        if (prop == RuleBreakData::LINE_PROPERTY_CM
-                            || prop == RuleBreakData::LINE_PROPERTY_ZWJ)
-                            && left_prop_pre_lb9 != RuleBreakData::LINE_PROPERTY_BK
-                            && left_prop_pre_lb9 != RuleBreakData::LINE_PROPERTY_CR
-                            && left_prop_pre_lb9 != RuleBreakData::LINE_PROPERTY_LF
-                            && left_prop_pre_lb9 != RuleBreakData::LINE_PROPERTY_NL
-                            && left_prop_pre_lb9 != RuleBreakData::LINE_PROPERTY_SP
-                            && left_prop_pre_lb9 != RuleBreakData::LINE_PROPERTY_ZW
-                        {
-                            left_prop_pre_lb9 = prop;
-                            continue;
-                        }
-
-                        match self.data.get_break_state_from_table(index, prop) {
-                            BreakState::Keep => continue 'a,
-                            BreakState::NoMatch => {
-                                self.iter = previous_iter;
-                                self.current_pos_data = previous_pos_data;
-                                if after_zwj {
-                                    // Break [AK] ÷ [AS] [ZWJ] [XX],
-                                    // but not [AK] [ZWJ] ÷ [AS] [ZWJ] [XX].
-                                    if is_intermediate_rule_no_match && !previous_is_after_zwj {
-                                        return self.get_current_position();
-                                    }
-                                    continue 'a;
-                                } else if previous_is_after_zwj {
-                                    // Do not break [AK] [ZWJ] ÷ [AS] [XX].
-                                    continue 'a;
-                                } else {
-                                    return self.get_current_position();
-                                }
-                            }
-                            BreakState::Break => {
-                                if after_zwj {
-                                    continue 'a;
-                                } else {
-                                    return self.get_current_position();
-                                }
-                            }
-                            BreakState::Intermediate(i) => {
-                                index = i;
-                                previous_iter = self.iter.clone();
-                                previous_pos_data = self.current_pos_data;
-                                previous_is_after_zwj = after_zwj;
-                            }
-                            BreakState::Index(i) => {
-                                index = i;
-                                if previous_break_state_is_cp_prop {
-                                    previous_iter = self.iter.clone();
-                                    previous_pos_data = self.current_pos_data;
-                                    previous_is_after_zwj = after_zwj;
-                                }
-                            }
-                        }
-                        left_prop_pre_lb9 = prop;
-                    }
-                }
-            }
-        }
-    }
-}
-
-pub(crate) enum StringBoundaryPosType {
-    Start,
-    Middle,
-    End,
-}
-
-impl<Y: RuleBreakType> LegacyIterator<'_, '_, Y> {
-    fn advance_iter(&mut self) {
-        self.current_pos_data = self.iter.next();
+    fn select<'data>(
+        complex_payloads: &Self::ComplexPayloads<'data>,
+        complex_script: ComplexScript,
+    ) -> Option<Self::ComplexPayload<'data>> {
+        Y::select_complex(complex_payloads, complex_script)
     }
 
-    fn is_eof(&self) -> bool {
-        self.current_pos_data.is_none()
-    }
-
-    #[inline]
-    fn check_eof(&mut self) -> StringBoundaryPosType {
-        if self.is_eof() {
-            self.advance_iter();
-            if self.is_eof() {
-                if self.len == 0 {
-                    // Empty string. Since `self.current_pos_data` is always going to be empty,
-                    // we never read `self.len` except for here, so we can use it to mark that
-                    // we have already returned the single empty-string breakpoint.
-                    self.len = 1;
-                    StringBoundaryPosType::Start
-                } else {
-                    StringBoundaryPosType::End
-                }
-            } else {
-                StringBoundaryPosType::Start
-            }
-        } else {
-            StringBoundaryPosType::Middle
-        }
-    }
-
-    fn get_current_position(&self) -> Option<usize> {
-        self.current_pos_data.map(|(pos, _)| pos)
-    }
-
-    fn get_current_codepoint(&self) -> Option<Y::CharType> {
-        self.current_pos_data.map(|(_, codepoint)| codepoint)
-    }
-
-    fn get_linebreak_property(&self, codepoint: Y::CharType) -> u8 {
-        match (
-            (self.options.word_option, self.options.strictness),
-            self.data.property_table.get32(codepoint.into()),
-        ) {
-            // CJ is treated as NS by default, yielding strict line breaking.
-            // https://www.unicode.org/reports/tr14/#CJ
-            (
-                (LineBreakWordOption::BreakAll, _)
-                | (_, LineBreakStrictness::Loose | LineBreakStrictness::Normal),
-                RuleBreakData::LINE_PROPERTY_CJ,
-            ) => RuleBreakData::LINE_PROPERTY_ID, // All CJ's General_Category is Other_Letter (Lo).
-            ((LineBreakWordOption::BreakAll, _), p) if p == self.data.complex_property => {
-                RuleBreakData::LINE_PROPERTY_ID
-            }
-            (
-                (LineBreakWordOption::BreakAll, _),
-                RuleBreakData::LINE_PROPERTY_AL | RuleBreakData::LINE_PROPERTY_NU,
-            ) => RuleBreakData::LINE_PROPERTY_ID,
-            (_, prop) => prop,
-        }
-    }
-
-    fn get_current_linebreak_property(&self) -> Option<u8> {
-        self.get_current_codepoint()
-            .map(|c| self.get_linebreak_property(c))
-    }
-}
-
-fn line_handle_complex_utf8<T>(
-    iter: &mut LegacyIterator<'_, '_, T>,
-    left_codepoint: char,
-) -> Option<usize>
-where
-    T: RuleBreakType<CharType = char>,
-{
-    // word segmenter doesn't define break rules for some scripts such as Thai.
-    let start_iter = iter.iter.clone();
-    let start_point = iter.current_pos_data;
-    let mut s = String::new();
-    s.push(left_codepoint);
-    loop {
-        debug_assert!(!iter.is_eof());
-        s.push(iter.get_current_codepoint()?);
-        iter.advance_iter();
-        if let Some(current_codepoint) = iter.get_current_codepoint() {
-            if iter.get_linebreak_property(current_codepoint) != iter.data.complex_property {
-                break;
-            }
-        } else {
-            // EOF
-            break;
-        }
-    }
-
-    // Restore iterator to move to head of complex string
-    iter.iter = start_iter;
-    iter.current_pos_data = start_point;
-    let breaks = iter.complex.segment_str(&s);
-    iter.result_cache = breaks;
-    let first_pos = *iter.result_cache.first()?;
-    let mut i = left_codepoint.len_utf8();
-    loop {
-        if i == first_pos {
-            // Re-calculate breaking offset
-            iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
-            return iter.get_current_position();
-        }
-        debug_assert!(
-            i < first_pos,
-            "we should always arrive at first_pos: near index {:?}",
-            iter.get_current_position()
-        );
-        i += iter.get_current_codepoint().map_or(0, T::char_len);
-        iter.advance_iter();
-        if iter.is_eof() {
-            iter.result_cache.clear();
-            return Some(iter.len);
-        }
-    }
-}
-
-fn line_handle_complex_utf16<T>(
-    iterator: &mut LegacyIterator<'_, '_, T>,
-    left_codepoint: T::CharType,
-) -> Option<usize>
-where
-    T: RuleBreakType<CharType = u32>,
-{
-    // word segmenter doesn't define break rules for some scripts such as Thai.
-    let start_iter = iterator.iter.clone();
-    let start_point = iterator.current_pos_data;
-    let mut s = vec![left_codepoint as u16];
-    loop {
-        debug_assert!(!iterator.is_eof());
-        s.push(iterator.get_current_codepoint()? as u16);
-        iterator.advance_iter();
-        if let Some(current_codepoint) = iterator.get_current_codepoint() {
-            if iterator.get_linebreak_property(current_codepoint) != iterator.data.complex_property
-            {
-                break;
-            }
-        } else {
-            // EOF
-            break;
-        }
-    }
-
-    // Restore iterator to move to head of complex string
-    iterator.iter = start_iter;
-    iterator.current_pos_data = start_point;
-    let breaks = iterator.complex.segment_utf16(&s);
-    iterator.result_cache = breaks;
-    // result_cache vector is utf-16 index that is in BMP.
-    let first_pos = *iterator.result_cache.first()?;
-    let mut i = 1;
-    loop {
-        if i == first_pos {
-            // Re-calculate breaking offset
-            iterator.result_cache = iterator
-                .result_cache
-                .iter()
-                .skip(1)
-                .map(|r| r - i)
-                .collect();
-            return iterator.get_current_position();
-        }
-        debug_assert!(
-            i < first_pos,
-            "we should always arrive at first_pos: near index {:?}",
-            iterator.get_current_position()
-        );
-        i += 1;
-        iterator.advance_iter();
-        if iterator.is_eof() {
-            iterator.result_cache.clear();
-            return Some(iterator.len);
-        }
+    fn handle<'data, 's>(
+        complex_payload: &Self::ComplexPayload<'data>,
+        iter: &Y::IterAttr<'s>,
+        past_complex: &Y::IterAttr<'s>,
+    ) -> ComplexIterator<'data, 's, Y> {
+        Y::handle_complex(complex_payload, iter, past_complex)
     }
 }
 
@@ -1724,514 +1155,6 @@ mod tests {
     use crate::*;
 
     include!("../tests/helpers.rs.raw");
-
-    #[test]
-    fn linebreak_property() {
-        let LineBreakIterator(LineBreakIteratorInner::Legacy(segmenter)) =
-            LineSegmenter::new_for_non_complex_scripts(Default::default()).segment_str("input")
-        else {
-            unreachable!()
-        };
-
-        assert_eq!(
-            segmenter.get_linebreak_property('\u{0020}'),
-            RuleBreakData::LINE_PROPERTY_SP
-        );
-        assert_eq!(
-            segmenter.get_linebreak_property('\u{0022}'),
-            RuleBreakData::LINE_PROPERTY_QU
-        );
-        assert_eq!(
-            segmenter.get_linebreak_property('('),
-            RuleBreakData::LINE_PROPERTY_OP_OP30
-        );
-        assert_eq!(
-            segmenter.get_linebreak_property('\u{0030}'),
-            RuleBreakData::LINE_PROPERTY_NU
-        );
-        assert_eq!(
-            segmenter.get_linebreak_property('['),
-            RuleBreakData::LINE_PROPERTY_OP_OP30
-        );
-        assert_eq!(
-            segmenter.get_linebreak_property('\u{1f3fb}'),
-            RuleBreakData::LINE_PROPERTY_EM
-        );
-        assert_eq!(
-            segmenter.get_linebreak_property('\u{20000}'),
-            RuleBreakData::LINE_PROPERTY_ID
-        );
-        assert_eq!(
-            segmenter.get_linebreak_property('\u{e0020}'),
-            RuleBreakData::LINE_PROPERTY_CM
-        );
-        assert_eq!(
-            segmenter.get_linebreak_property('\u{3041}'),
-            RuleBreakData::LINE_PROPERTY_CJ
-        );
-        assert_eq!(
-            segmenter.get_linebreak_property('\u{0025}'),
-            RuleBreakData::LINE_PROPERTY_PO
-        );
-        assert_eq!(
-            segmenter.get_linebreak_property('\u{00A7}'),
-            RuleBreakData::LINE_PROPERTY_AI
-        );
-        assert_eq!(
-            segmenter.get_linebreak_property('\u{50005}'),
-            RuleBreakData::LINE_PROPERTY_XX
-        );
-        assert_eq!(
-            segmenter.get_linebreak_property('\u{17D6}'),
-            RuleBreakData::LINE_PROPERTY_NS
-        );
-        assert_eq!(
-            segmenter.get_linebreak_property('\u{2014}'),
-            RuleBreakData::LINE_PROPERTY_B2
-        );
-    }
-
-    #[test]
-    fn break_rule() {
-        let payload = DataProvider::<SegmenterBreakLineV1>::load(&Baked, Default::default())
-            .expect("Loading should succeed!")
-            .payload;
-        let lb_data: &RuleBreakData = payload.get();
-
-        let is_break = |left, right| {
-            matches!(
-                lb_data.get_break_state_from_table(left, right),
-                BreakState::Break | BreakState::NoMatch
-            )
-        };
-
-        // LB4
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_BK,
-                RuleBreakData::LINE_PROPERTY_AL
-            ),
-            true
-        );
-        // LB5
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_CR,
-                RuleBreakData::LINE_PROPERTY_LF
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_CR,
-                RuleBreakData::LINE_PROPERTY_AL
-            ),
-            true
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_LF,
-                RuleBreakData::LINE_PROPERTY_AL
-            ),
-            true
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_NL,
-                RuleBreakData::LINE_PROPERTY_AL
-            ),
-            true
-        );
-        // LB6
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_AL,
-                RuleBreakData::LINE_PROPERTY_BK
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_AL,
-                RuleBreakData::LINE_PROPERTY_CR
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_AL,
-                RuleBreakData::LINE_PROPERTY_LF
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_AL,
-                RuleBreakData::LINE_PROPERTY_NL
-            ),
-            false
-        );
-        // LB7
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_AL,
-                RuleBreakData::LINE_PROPERTY_SP
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_AL,
-                RuleBreakData::LINE_PROPERTY_ZW
-            ),
-            false
-        );
-        // LB8
-        // LB8a and LB9 omitted: These are handled outside of the state table.
-        // LB10
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_ZWJ,
-                RuleBreakData::LINE_PROPERTY_SP
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_SP,
-                RuleBreakData::LINE_PROPERTY_CM
-            ),
-            true
-        );
-        // LB11
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_AL,
-                RuleBreakData::LINE_PROPERTY_WJ
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_WJ,
-                RuleBreakData::LINE_PROPERTY_AL
-            ),
-            false
-        );
-        // LB12
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_GL,
-                RuleBreakData::LINE_PROPERTY_AL
-            ),
-            false
-        );
-        // LB12a
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_AL,
-                RuleBreakData::LINE_PROPERTY_GL
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_SP,
-                RuleBreakData::LINE_PROPERTY_GL
-            ),
-            true
-        );
-        // LB13
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_AL,
-                RuleBreakData::LINE_PROPERTY_CL
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_AL,
-                RuleBreakData::LINE_PROPERTY_CP
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_AL,
-                RuleBreakData::LINE_PROPERTY_EX
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_AL,
-                RuleBreakData::LINE_PROPERTY_IS
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_AL,
-                RuleBreakData::LINE_PROPERTY_SY
-            ),
-            false
-        );
-        // LB18
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_SP,
-                RuleBreakData::LINE_PROPERTY_AL
-            ),
-            true
-        );
-        // LB19
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_AL,
-                RuleBreakData::LINE_PROPERTY_QU
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_QU,
-                RuleBreakData::LINE_PROPERTY_AL
-            ),
-            false
-        );
-        // LB20
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_AL,
-                RuleBreakData::LINE_PROPERTY_CB
-            ),
-            true
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_CB,
-                RuleBreakData::LINE_PROPERTY_AL
-            ),
-            true
-        );
-        // LB20
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_AL,
-                RuleBreakData::LINE_PROPERTY_BA
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_AL,
-                RuleBreakData::LINE_PROPERTY_HY
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_AL,
-                RuleBreakData::LINE_PROPERTY_NS
-            ),
-            false
-        );
-        // LB21
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_AL,
-                RuleBreakData::LINE_PROPERTY_BA
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_BB,
-                RuleBreakData::LINE_PROPERTY_AL
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_ID,
-                RuleBreakData::LINE_PROPERTY_BA
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_ID,
-                RuleBreakData::LINE_PROPERTY_NS
-            ),
-            false
-        );
-        // LB21a
-        // LB21b
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_SY,
-                RuleBreakData::LINE_PROPERTY_HL
-            ),
-            false
-        );
-        // LB22
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_AL,
-                RuleBreakData::LINE_PROPERTY_IN
-            ),
-            false
-        );
-        // LB 23
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_AL,
-                RuleBreakData::LINE_PROPERTY_NU
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_HL,
-                RuleBreakData::LINE_PROPERTY_NU
-            ),
-            false
-        );
-        // LB 23a
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_PR,
-                RuleBreakData::LINE_PROPERTY_ID
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_PR,
-                RuleBreakData::LINE_PROPERTY_EB
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_PR,
-                RuleBreakData::LINE_PROPERTY_EM
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_ID,
-                RuleBreakData::LINE_PROPERTY_PO
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_EB,
-                RuleBreakData::LINE_PROPERTY_PO
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_EM,
-                RuleBreakData::LINE_PROPERTY_PO
-            ),
-            false
-        );
-        // LB26
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_JL,
-                RuleBreakData::LINE_PROPERTY_JL
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_JL,
-                RuleBreakData::LINE_PROPERTY_JV
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_JL,
-                RuleBreakData::LINE_PROPERTY_H2
-            ),
-            false
-        );
-        // LB27
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_JL,
-                RuleBreakData::LINE_PROPERTY_IN
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_JL,
-                RuleBreakData::LINE_PROPERTY_PO
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_PR,
-                RuleBreakData::LINE_PROPERTY_JL
-            ),
-            false
-        );
-        // LB28
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_AL,
-                RuleBreakData::LINE_PROPERTY_AL
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_HL,
-                RuleBreakData::LINE_PROPERTY_AL
-            ),
-            false
-        );
-        // LB29
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_IS,
-                RuleBreakData::LINE_PROPERTY_AL
-            ),
-            false
-        );
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_IS,
-                RuleBreakData::LINE_PROPERTY_HL
-            ),
-            false
-        );
-        // LB30b
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_EB,
-                RuleBreakData::LINE_PROPERTY_EM
-            ),
-            false
-        );
-        // LB31
-        assert_eq!(
-            is_break(
-                RuleBreakData::LINE_PROPERTY_ID,
-                RuleBreakData::LINE_PROPERTY_ID
-            ),
-            true
-        );
-    }
 
     #[test]
     fn test_mandatory() {
