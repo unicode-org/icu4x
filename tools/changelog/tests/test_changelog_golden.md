@@ -22,10 +22,6 @@
 
 - Fix `TrailingCase::Unchanged` handling for Dutch (unicode-org#7863)
 
-## icu_collator_data`/`icu_provider_source
-
-- Fixed an issue where the emoji collation was not loading correctly (unicode-org#7989)
-
 ## icu_datetime
 
 - Use the correct calendar even if the region is only implied by the language (i.e. `fa`) (unicode-org#8102)
@@ -37,6 +33,11 @@
 ## icu_experimental/currency
 
 - Add formatting support for negative currency subpatterns (unicode-org#9001)
+
+## icu_experimental/personnames
+
+- Add initial implementation of person names formatter (unicode-org#9006)
+- Add support for titles and honorifics in person names (unicode-org#9007)
 
 ## icu_list
 
@@ -82,7 +83,8 @@ Closes #8164
 =====================
 
 - Bump diplomat (https://github.com/unicode-org/icu4x/pull/7885)
-- Fix emoji collation (https://github.com/unicode-org/icu4x/pull/7989)
+- Initial person names formatter (https://github.com/unicode-org/icu4x/pull/9006)
+- Person names titles support (https://github.com/unicode-org/icu4x/pull/9007)
 - Infer region in calendar resolution (https://github.com/unicode-org/icu4x/pull/8102)
 - Infer region in calendar resolution (https://github.com/unicode-org/icu4x/pull/8102)
 - Infer region in calendar resolution (https://github.com/unicode-org/icu4x/pull/8102)

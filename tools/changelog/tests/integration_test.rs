@@ -10,7 +10,7 @@ fn test_changelog_golden() {
     let golden_path = manifest_path.join("tests/test_changelog_golden.md");
 
     let output = std::process::Command::new("cargo")
-        .args(&[
+        .args([
             "run",
             "--all-features",
             "-p",

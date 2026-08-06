@@ -16,12 +16,20 @@
         "login": "robertbastian"
       }
     },
-    "f0f2481e7b4be2f5b8d8df356294014ba53c1382": {
-      "number": 7989,
-      "body": "Fixes #7972 \r\n\r\n## Changelog\r\n\r\n`icu_collator_data`/`icu_provider_source`:\r\n* Fixed an issue where the emoji collation was not loading correctly",
-      "title": "Fix emoji collation",
+    "mock_commit_6": {
+      "number": 9006,
+      "body": "## Changelog\r\n\r\n`icu_experimental/personnames`:\r\n* Add initial implementation of person names formatter",
+      "title": "Initial person names formatter",
       "author": {
-        "login": "robertbastian"
+        "login": "gemini"
+      }
+    },
+    "mock_commit_7": {
+      "number": 9007,
+      "body": "## Changelog\r\n\r\n`icu_experimental/personnames`:\r\n* Add support for titles and honorifics in person names",
+      "title": "Person names titles support",
+      "author": {
+        "login": "gemini"
       }
     },
     "a5635a1a4ce870c0fc67aaa4f696599768ba06b5": {
