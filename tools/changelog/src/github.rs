@@ -14,7 +14,7 @@ pub(crate) struct GithubState {
 
 impl GithubState {
     pub(crate) fn load(path: &str) -> Self {
-        println!("Reading prior state from {path}");
+        eprintln!("Reading prior state from {path}");
         let file = fs::read(path).unwrap();
         serde_json::from_slice(&file).unwrap()
     }
