@@ -14,7 +14,7 @@ pub(crate) struct GithubState {
 
 impl GithubState {
     pub(crate) fn load(path: &str) -> Self {
-        println!("Reading prior state from {path}");
+        eprintln!("Reading prior state from {path}");
         let file = fs::read(path).unwrap();
         serde_json::from_slice(&file).unwrap()
     }
@@ -74,7 +74,14 @@ pub(crate) fn run(args: FetchGithub) {
             .arg("title,body,number,author")
             .output()
             .expect("Running gh pr list failed");
-        let data: Vec<PrData> = serde_json::from_slice(&output.stdout).unwrap();
+        let data: Vec<PrData> = match serde_json::from_slice(&output.stdout) {
+            Ok(data) => data,
+            Err(e) => {
+                eprintln!("Misformatted data for rev {rev} ({e}): {output:?}");
+                std::thread::sleep(std::time::Duration::from_secs(1));
+                continue;
+            }
+        };
         let Some(single) = data.first() else {
             println!("Found no data for rev {rev}; is it merged?");
             continue;
