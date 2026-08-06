@@ -38,9 +38,25 @@
 
 - Add formatting support for negative currency subpatterns (unicode-org#9001)
 
+## icu_list
+
+- Add support for custom list styles (unicode-org#9004)
+ - Allowed users to pass custom templates
+ - Added validation for templates
+ - Checked for matching placeholders
+ - Verified order of placeholders
+
 ## icu_locale_core
 
 - `preferences` types now implement `databake` (feature-gated) (unicode-org#8102)
+
+## icu_properties
+
+- Update properties data for Unicode 16.0 (unicode-org#9005)
+ - Loaded new property files
+ - Updated script definitions
+ - Added new scripts
+ - Updated aliases for existing scripts
 
 ## writeable
 

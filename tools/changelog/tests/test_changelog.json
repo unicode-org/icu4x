@@ -95,6 +95,22 @@
       "author": {
         "login": "gemini"
       }
+    },
+    "mock_commit_4": {
+      "number": 9004,
+      "body": "## Changelog\r\n\r\n`icu_list`: Add support for custom list styles\r\n  - Allowed users to pass custom templates\r\n  - Added validation for templates\r\n    - Checked for matching placeholders\r\n    - Verified order of placeholders",
+      "title": "Custom list styles",
+      "author": {
+        "login": "gemini"
+      }
+    },
+    "mock_commit_5": {
+      "number": 9005,
+      "body": "## Changelog\r\n\r\n`icu_properties`: Update properties data for Unicode 16.0\r\n  * Loaded new property files\r\n  * Updated script definitions\r\n    * Added new scripts\r\n    * Updated aliases for existing scripts",
+      "title": "Unicode 16.0 prep",
+      "author": {
+        "login": "gemini"
+      }
     }
   }
 }
