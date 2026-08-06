@@ -29,7 +29,14 @@ fn test_changelog_golden() {
     let stdout = String::from_utf8(output.stdout).unwrap();
     let golden = std::fs::read_to_string(golden_path).unwrap();
 
-    // Normalize newlines for Windows/Linux compatibility if needed,
-    // but we are on Linux so it should be fine.
-    assert_eq!(stdout, golden);
+    let mut stdout_lines = stdout.lines();
+    let mut golden_lines = golden.lines();
+    loop {
+        let s = stdout_lines.next();
+        let g = golden_lines.next();
+        assert_eq!(s, g);
+        if s.is_none() {
+            break;
+        }
+    }
 }
