@@ -16,6 +16,7 @@
 
 - Add `AnyCalendarKind::try_new` and deprecate  `AnyCalendarKind::new`. The new version uses locale data to infer calendars from locales. (unicode-org#8102)
 - Deprecate `CalendarPreferences::resolve_calendar`. This method did not perform likely-subtags expansion. (unicode-org#8102)
+- Fix bug in leap year calculation for Julian calendar (unicode-org#9003)
 
 ## icu_casemapping
 
@@ -28,6 +29,14 @@
 ## icu_datetime
 
 - Use the correct calendar even if the region is only implied by the language (i.e. `fa`) (unicode-org#8102)
+- Improved performance of datetime formatting (unicode-org#9002)
+ - Optimized cache lookup
+ - Reduced allocations in helper functions
+ - Avoided cloning locale in hot path
+
+## icu_experimental/currency
+
+- Add formatting support for negative currency subpatterns (unicode-org#9001)
 
 ## icu_locale_core
 
@@ -63,6 +72,8 @@ Closes #8164
 - Infer region in calendar resolution (https://github.com/unicode-org/icu4x/pull/8102)
 - writeable: impl TryWriteable on references, Either (https://github.com/unicode-org/icu4x/pull/8109)
 - 2026c (https://github.com/unicode-org/icu4x/pull/8200)
+- Add negative currency subpatterns (https://github.com/unicode-org/icu4x/pull/9001)
+- Fix Julian leap year (https://github.com/unicode-org/icu4x/pull/9003)
 
 
 # N/A

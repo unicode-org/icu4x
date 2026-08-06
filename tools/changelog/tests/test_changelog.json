@@ -71,6 +71,30 @@
       "author": {
         "login": "Chaganti-Reddy"
       }
+    },
+    "mock_commit_1": {
+      "number": 9001,
+      "body": "## Changelog\r\n\r\n`icu_experimental/currency`:\r\n* Add formatting support for negative currency subpatterns",
+      "title": "Add negative currency subpatterns",
+      "author": {
+        "login": "gemini"
+      }
+    },
+    "mock_commit_2": {
+      "number": 9002,
+      "body": "## Changelog\r\n\r\n`icu_datetime`: Improved performance of datetime formatting\r\n  * Optimized cache lookup\r\n  * Reduced allocations in helper functions\r\n    * Avoided cloning locale in hot path",
+      "title": "Optimize datetime formatting",
+      "author": {
+        "login": "gemini"
+      }
+    },
+    "mock_commit_3": {
+      "number": 9003,
+      "body": "## Changelog\r\n\r\n`icu_calendar`:\r\n* Fix bug in leap year calculation for Julian calendar",
+      "title": "Fix Julian leap year",
+      "author": {
+        "login": "gemini"
+      }
     }
   }
 }
