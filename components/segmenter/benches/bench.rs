@@ -15,21 +15,14 @@ const TEST_STR_EN: &str = "Permission is hereby granted, free of charge, to any 
 const TEST_STR_TH: &str =
     "ภาษาไทยภาษาไทย ภาษาไทยภาษาไทย ภาษาไทยภาษาไทย ภาษาไทยภาษาไทย ภาษาไทยภาษาไทย ภาษาไทยภาษาไทย";
 
-#[cfg(feature = "unstable")]
 const TEST_STR_JA: &str =
     "こんにちは世界こんにちは世界こんにちは世界こんにちは世界こんにちは世界こんにちは世界";
-#[cfg(feature = "unstable")]
 const TEST_STR_HAN: &str = "中文分词需要词典中文分词需要词典中文分词需要词典中文分词需要词典";
-#[cfg(feature = "unstable")]
 const TEST_STR_TH_JA: &str = "ภาษาไทยこんにちは世界ภาษาไทยこんにちは世界ภาษาไทยこんにちは世界";
-#[cfg(feature = "unstable")]
 const TEST_STR_TH_HAN: &str = "ภาษาไทย龟山岛ภาษาไทย龟山岛ภาษาไทย龟山岛";
-#[cfg(feature = "unstable")]
 const TEST_STR_EN_TH: &str = "Thai text ภาษาไทยภาษาไทย mixed with non-complex Latin text";
-#[cfg(feature = "unstable")]
 const TEST_STR_LONG_MIXED: &str = include_str!("../tests/testdata/SegmenterBenchMixed.txt");
 
-#[cfg(feature = "unstable")]
 const COMPARISON_CASES: &[TextCase] = &[
     TextCase {
         name: "En",
@@ -69,7 +62,6 @@ const COMPARISON_CASES: &[TextCase] = &[
     },
 ];
 
-#[cfg(feature = "unstable")]
 #[derive(Clone, Copy)]
 struct TextCase {
     name: &'static str,
