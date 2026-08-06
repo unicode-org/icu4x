@@ -1,6 +1,6 @@
 # Changelog
 
-## icu 2.3
+## icu4x 2.3
 
 - Components
   - General
