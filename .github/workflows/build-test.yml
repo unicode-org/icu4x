@@ -604,7 +604,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Notify slack of failure
-        uses: ravsamhq/notify-slack-action@4ed28566c2bdcdaee6dca2b46b9666d01b4ed8a4 # v1
+        uses: ravsamhq/notify-slack-action@be814b201e233b2dc673608aa46e5447c8ab13f2 # v2.5.0
         with:
           notify_when: failure
           status: failure # We do the filtering earlier
