@@ -2,114 +2,31 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::extensions::unicode::{Key, key};
 use crate::preferences::extensions::unicode::errors::PreferencesParseError;
 use crate::preferences::extensions::unicode::struct_keyword;
 use crate::{extensions::unicode::Value, subtags::Subtag};
 use tinystr::TinyAsciiStr;
 
-struct_keyword!(
+impl_tinystr_subtag!(
     /// A Unicode Currency Identifier defines a type of currency.
     ///
     /// The valid values are listed in [LDML](https://unicode.org/reports/tr35/#UnicodeCurrencyIdentifier).
-    [Copy]
     CurrencyType,
-    "cu",
-    TinyAsciiStr<3>,
-    |input: &Value| {
-        if let Some(subtag) = input.as_single_subtag() {
-            return Self::try_from_tinystr(subtag.as_tinystr());
-        }
-        Err(PreferencesParseError::InvalidKeywordValue)
-    },
-    |input: &CurrencyType| {
-        Value::from_subtag(Some(
-            Subtag::from_tinystr_unvalidated(input.0.resize()),
-        ))
-    }
+    preferences::extensions::unicode::keywords,
+    currency,
+    preferences_extensions_unicode_keywords_currency,
+    3..=3,
+    s,
+    s.is_ascii_alphabetic(),
+    s.to_ascii_lowercase(),
+    s.is_ascii_alphabetic() && s.is_ascii_lowercase(),
+    InvalidExtension,
+    ["usd"],
+    ["dollar"],
 );
 
 impl CurrencyType {
-    /// Parses a [`CurrencyType`] from a UTF-8 byte slice.
-    ///
-    /// Valid currency identifiers consist of exactly 3 ASCII alphabetic characters (case-insensitive).
-    ///
-    /// The parsed currency identifier is stored in lower case.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_locale_core::preferences::extensions::unicode::keywords::CurrencyType;
-    ///
-    /// assert!(CurrencyType::try_from_utf8(b"USD").is_ok());
-    /// assert!(CurrencyType::try_from_utf8(b"usd").is_ok());
-    /// assert!(CurrencyType::try_from_utf8(b"uSd").is_ok());
-    /// assert!(CurrencyType::try_from_utf8(b"US").is_err());
-    /// assert!(CurrencyType::try_from_utf8(b"US1").is_err());
-    /// assert!(CurrencyType::try_from_utf8(b"USDDD").is_err());
-    /// ```
-    pub const fn try_from_utf8(code_units: &[u8]) -> Result<Self, PreferencesParseError> {
-        if let Ok(ts) = TinyAsciiStr::<3>::try_from_utf8(code_units) {
-            Self::try_from_tinystr(ts)
-        } else {
-            Err(PreferencesParseError::InvalidKeywordValue)
-        }
-    }
-
-    /// Parses a [`CurrencyType`] from a string slice.
-    ///
-    /// Valid currency identifiers consist of exactly 3 ASCII alphabetic characters (case-insensitive).
-    ///
-    /// The parsed currency identifier is stored in lower case.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_locale_core::preferences::extensions::unicode::keywords::CurrencyType;
-    ///
-    /// assert!(CurrencyType::try_from_str("USD").is_ok());
-    /// assert!(CurrencyType::try_from_str("uSd").is_ok());
-    /// assert!(CurrencyType::try_from_str("usd").is_ok());
-    /// assert!(CurrencyType::try_from_str("123").is_err());
-    /// assert!(CurrencyType::try_from_str("US").is_err());
-    /// assert!(CurrencyType::try_from_str("USDDD").is_err());
-    /// ```
-    #[inline]
-    pub const fn try_from_str(s: &str) -> Result<Self, PreferencesParseError> {
-        Self::try_from_utf8(s.as_bytes())
-    }
-
-    /// Creates a [`CurrencyType`] from a [`TinyAsciiStr<N>`], validating that it contains
-    /// exactly 3 ASCII alphabetic characters (case-insensitive).
-    ///
-    /// The parsed currency identifier is stored in lower case.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_locale_core::preferences::extensions::unicode::keywords::CurrencyType;
-    /// use tinystr::tinystr;
-    ///
-    /// assert!(CurrencyType::try_from_tinystr(tinystr!(3, "USD")).is_ok());
-    /// assert!(CurrencyType::try_from_tinystr(tinystr!(3, "usd")).is_ok());
-    /// assert!(CurrencyType::try_from_tinystr(tinystr!(3, "123")).is_err());
-    /// assert!(CurrencyType::try_from_tinystr(tinystr!(3, "US")).is_err());
-    /// ```
-    pub const fn try_from_tinystr<const N: usize>(
-        s: TinyAsciiStr<N>,
-    ) -> Result<Self, PreferencesParseError> {
-        if s.len() == 3 && s.is_ascii_alphabetic() {
-            Ok(Self(s.resize().to_ascii_lowercase()))
-        } else {
-            Err(PreferencesParseError::InvalidKeywordValue)
-        }
-    }
-
-    /// Returns the currency identifier as a lower case string slice.
-    #[inline]
-    pub const fn as_str(&self) -> &str {
-        self.0.as_str()
-    }
-
     /// Returns the ISO 4217 3-letter upper case currency code as a [`TinyAsciiStr<3>`].
     ///
     /// # Examples
@@ -127,12 +44,59 @@ impl CurrencyType {
     }
 }
 
-impl core::str::FromStr for CurrencyType {
-    type Err = PreferencesParseError;
+impl TryFrom<Value> for CurrencyType {
+    type Error = PreferencesParseError;
+    fn try_from(input: Value) -> Result<Self, Self::Error> {
+        Self::try_from(&input)
+    }
+}
 
-    #[inline]
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Self::try_from_str(s)
+impl TryFrom<&Value> for CurrencyType {
+    type Error = PreferencesParseError;
+    fn try_from(input: &Value) -> Result<Self, Self::Error> {
+        if let Some(subtag) = input.as_single_subtag() {
+            let ts = subtag.as_tinystr();
+            if ts.len() == 3 && ts.is_ascii_alphabetic() {
+                return Ok(Self(ts.resize()));
+            }
+        }
+        Err(PreferencesParseError::InvalidKeywordValue)
+    }
+}
+
+impl From<CurrencyType> for Value {
+    fn from(input: CurrencyType) -> Value {
+        (&input).into()
+    }
+}
+impl From<&CurrencyType> for Value {
+    fn from(input: &CurrencyType) -> Value {
+        Value::from_subtag(Some(Subtag::from_tinystr_unvalidated(input.0.resize())))
+    }
+}
+impl crate::preferences::PreferenceKey for CurrencyType {
+    fn unicode_extension_key() -> Option<Key> {
+        Some(Self::UNICODE_EXTENSION_KEY)
+    }
+    fn try_from_key_value(key: &Key, value: &Value) -> Result<Option<Self>, PreferencesParseError> {
+        if Self::UNICODE_EXTENSION_KEY == *key {
+            let result = Self::try_from(value.clone())?;
+            Ok(Some(result))
+        } else {
+            Ok(None)
+        }
+    }
+    fn unicode_extension_value(&self) -> Option<Value> {
+        Some(self.into())
+    }
+}
+impl CurrencyType {
+    pub(crate) const UNICODE_EXTENSION_KEY: Key = key!("cu");
+}
+impl core::ops::Deref for CurrencyType {
+    type Target = TinyAsciiStr<3>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 
