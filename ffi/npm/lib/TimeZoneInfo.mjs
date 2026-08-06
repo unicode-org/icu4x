@@ -73,7 +73,7 @@ export class TimeZoneInfo {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
 
-        const result = wasm.icu4x_TimeZoneInfo_from_parts_mv1(id.ffiValue, offset?.ffiValue ?? 0, diplomatRuntime.optionToBufferForCalling(wasm, variant, 4, 4, functionCleanupArena, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
+        const result = wasm.icu4x_TimeZoneInfo_from_parts_mv1(id instanceof TimeZone ? id.ffiValue : typeError('id', 'TimeZone'), offset === null || offset instanceof UtcOffset ? offset?.ffiValue ?? 0 : typeError('offset', 'UtcOffset'), diplomatRuntime.optionToBufferForCalling(wasm, variant, 4, 4, functionCleanupArena, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, new TimeZoneVariant(jsValue).ffiValue, Int32Array)]));
 
         try {
             return new TimeZoneInfo(diplomatRuntime.internalConstructor, result, []);
@@ -119,7 +119,7 @@ export class TimeZoneInfo {
      */
     atDateTimeIso(date, time) {
 
-        const result = wasm.icu4x_TimeZoneInfo_at_date_time_iso_mv1(this.ffiValue, date.ffiValue, time.ffiValue);
+        const result = wasm.icu4x_TimeZoneInfo_at_date_time_iso_mv1(this.ffiValue, date instanceof IsoDate ? date.ffiValue : typeError('date', 'IsoDate'), time instanceof Time ? time.ffiValue : typeError('time', 'Time'));
 
         try {
             return new TimeZoneInfo(diplomatRuntime.internalConstructor, result, []);
@@ -147,7 +147,7 @@ export class TimeZoneInfo {
      */
     atDateTime(date, time) {
 
-        const result = wasm.icu4x_TimeZoneInfo_at_date_time_mv1(this.ffiValue, date.ffiValue, time.ffiValue);
+        const result = wasm.icu4x_TimeZoneInfo_at_date_time_mv1(this.ffiValue, date instanceof Date ? date.ffiValue : typeError('date', 'Date'), time instanceof Time ? time.ffiValue : typeError('time', 'Time'));
 
         try {
             return new TimeZoneInfo(diplomatRuntime.internalConstructor, result, []);
@@ -215,7 +215,7 @@ export class TimeZoneInfo {
      */
     withVariant(timeVariant) {
 
-        const result = wasm.icu4x_TimeZoneInfo_with_variant_mv1(this.ffiValue, timeVariant.ffiValue);
+        const result = wasm.icu4x_TimeZoneInfo_with_variant_mv1(this.ffiValue, new TimeZoneVariant(timeVariant).ffiValue);
 
         try {
             return new TimeZoneInfo(diplomatRuntime.internalConstructor, result, []);
@@ -251,7 +251,7 @@ export class TimeZoneInfo {
      */
     inferVariant(offsetCalculator) {
 
-        const result = wasm.icu4x_TimeZoneInfo_infer_variant_mv1(this.ffiValue, offsetCalculator.ffiValue);
+        const result = wasm.icu4x_TimeZoneInfo_infer_variant_mv1(this.ffiValue, offsetCalculator instanceof VariantOffsetsCalculator ? offsetCalculator.ffiValue : typeError('offsetCalculator', 'VariantOffsetsCalculator'));
 
         try {
             return result === 1;

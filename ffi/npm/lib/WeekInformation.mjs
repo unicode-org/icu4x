@@ -54,7 +54,7 @@ export class WeekInformation {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_WeekInformation_create_mv1(diplomatReceive.buffer, locale.ffiValue);
+        const result = wasm.icu4x_WeekInformation_create_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -79,7 +79,7 @@ export class WeekInformation {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_WeekInformation_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_WeekInformation_create_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -120,7 +120,7 @@ export class WeekInformation {
      */
     isWeekend(day) {
 
-        const result = wasm.icu4x_WeekInformation_is_weekend_mv1(this.ffiValue, day.ffiValue);
+        const result = wasm.icu4x_WeekInformation_is_weekend_mv1(this.ffiValue, new Weekday(day).ffiValue);
 
         try {
             return result;

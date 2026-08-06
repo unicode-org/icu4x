@@ -73,7 +73,7 @@ export class VariantOffsetsCalculator {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_VariantOffsetsCalculator_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_VariantOffsetsCalculator_create_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -96,7 +96,7 @@ export class VariantOffsetsCalculator {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
 
 
-        const result = wasm.icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1(diplomatReceive.buffer, this.ffiValue, timeZone.ffiValue, utcDate.ffiValue, utcTime.ffiValue);
+        const result = wasm.icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1(diplomatReceive.buffer, this.ffiValue, timeZone instanceof TimeZone ? timeZone.ffiValue : typeError('timeZone', 'TimeZone'), utcDate instanceof IsoDate ? utcDate.ffiValue : typeError('utcDate', 'IsoDate'), utcTime instanceof Time ? utcTime.ffiValue : typeError('utcTime', 'Time'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -118,7 +118,7 @@ export class VariantOffsetsCalculator {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
 
 
-        const result = wasm.icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_timestamp_mv1(diplomatReceive.buffer, this.ffiValue, timeZone.ffiValue, timestamp);
+        const result = wasm.icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_timestamp_mv1(diplomatReceive.buffer, this.ffiValue, timeZone instanceof TimeZone ? timeZone.ffiValue : typeError('timeZone', 'TimeZone'), timestamp);
 
         try {
             if (!diplomatReceive.resultFlag) {

@@ -75,7 +75,7 @@ export class CaseMapCloser {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CaseMapCloser_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CaseMapCloser_create_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -98,7 +98,7 @@ export class CaseMapCloser {
      * See the [Rust documentation for `add_case_closure_to`](https://docs.rs/icu/2.2.0/icu/casemap/struct.CaseMapCloserBorrowed.html#method.add_case_closure_to) for more information.
      */
     addCaseClosureTo(c, builder) {
-    wasm.icu4x_CaseMapCloser_add_case_closure_to_mv1(this.ffiValue, c, builder.ffiValue);
+    wasm.icu4x_CaseMapCloser_add_case_closure_to_mv1(this.ffiValue, c, builder instanceof CodePointSetBuilder ? builder.ffiValue : typeError('builder', 'CodePointSetBuilder'));
 
         try {}
 
@@ -120,7 +120,7 @@ export class CaseMapCloser {
 
         const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
 
-        const result = wasm.icu4x_CaseMapCloser_add_string_case_closure_to_mv1(this.ffiValue, sSlice.ptr, builder.ffiValue);
+        const result = wasm.icu4x_CaseMapCloser_add_string_case_closure_to_mv1(this.ffiValue, sSlice.ptr, builder instanceof CodePointSetBuilder ? builder.ffiValue : typeError('builder', 'CodePointSetBuilder'));
 
         try {
             return result;

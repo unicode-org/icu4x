@@ -190,7 +190,7 @@ export class CalendarKind {
      */
     static create(locale) {
 
-        const result = wasm.icu4x_CalendarKind_create_mv1(locale.ffiValue);
+        const result = wasm.icu4x_CalendarKind_create_mv1(locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             return new CalendarKind(diplomatRuntime.internalConstructor, result);

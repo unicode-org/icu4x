@@ -4,7 +4,7 @@
 part of 'lib.g.dart';
 
 /// Additional information: [1](https://docs.rs/icu/2.2.0/icu/datetime/enum.DateTimeFormatterLoadError.html), [2](https://docs.rs/icu/2.2.0/icu/datetime/pattern/enum.PatternLoadError.html), [3](https://docs.rs/icu_provider/2.2.0/icu_provider/struct.DataError.html), [4](https://docs.rs/icu_provider/2.2.0/icu_provider/enum.DataErrorKind.html)
-enum DateTimeFormatterLoadError {
+enum DateTimeFormatterLoadError implements core.Exception {
   // ignore: public_member_api_docs
   unknown,
   // ignore: public_member_api_docs
