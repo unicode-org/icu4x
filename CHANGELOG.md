@@ -1,7 +1,7 @@
 # Changelog
 
 
-## icu 2.2.x
+## icu4x 2.2.x
 
 Several crates have had patch releases in the 2.2 stream:
 
@@ -321,7 +321,7 @@ Several crates have had patch releases in the 2.2 stream:
         - Mark `Offset`, `Transition`, and `PossibleOffset` as `#[non_exhaustive]`
         - Internal cleanups
 
-## icu 2.1.x
+## icu4x 2.1.x
 
 Several crates have had patch releases in the 2.1 stream:
 
