@@ -366,9 +366,8 @@ macro_rules! impl_displaynames_iter_v1 {
                                     None,
                                 );
                             if matches!(item_tier, $tier) {
-                                let subtag_str = writeable::Writeable::write_to_string(&key.subtag);
                                 let data_identifier = DataIdentifierCow::from_owned(
-                                    DataMarkerAttributes::try_from_string(subtag_str.into_owned())
+                                    DataMarkerAttributes::try_from_string(key.subtag.to_string())
                                         .map_err(|_| {
                                         DataError::custom("Failed to parse attribute")
                                             .with_debug_context(&key.subtag)
