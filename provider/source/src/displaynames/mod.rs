@@ -265,7 +265,7 @@ macro_rules! impl_displaynames_menu_v1 {
         }
 
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<$crate::DataIdentifierCached>, DataError> {
                 let mut result = HashSet::new();
                 let cldr = self.cldr()?;
                 let displaynames = cldr.displaynames();
@@ -301,14 +301,7 @@ macro_rules! impl_displaynames_menu_v1 {
                                     .coverage_tier(&locale, &xpath, cldr)?,
                                 $tier
                             ) {
-                                let data_identifier = DataIdentifierCow::from_owned(
-                                    DataMarkerAttributes::try_from_string(key.subtag.to_string())
-                                        .map_err(|_| {
-                                        DataError::custom("Failed to parse attribute")
-                                            .with_debug_context(&key.subtag)
-                                    })?,
-                                    locale,
-                                );
+                                let data_identifier = crate::DataIdentifierCached::from_writeable_attributes_and_locale(&key.subtag, locale)?;
                                 result.insert(data_identifier);
                             }
                         }
@@ -345,7 +338,7 @@ macro_rules! impl_displaynames_menu_v1 {
 macro_rules! impl_displaynames_iter_v1 {
     ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr, $xpath_prefix:literal, $tier:pat) => {
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<$crate::DataIdentifierCached>, DataError> {
                 let mut result = HashSet::new();
                 let cldr = self.cldr()?;
                 let displaynames = cldr.displaynames();
@@ -370,14 +363,7 @@ macro_rules! impl_displaynames_iter_v1 {
                                     .coverage_tier(&locale, &xpath, cldr)?,
                                 $tier
                             ) {
-                                let data_identifier = DataIdentifierCow::from_owned(
-                                    DataMarkerAttributes::try_from_string(key.subtag.to_string())
-                                        .map_err(|_| {
-                                        DataError::custom("Failed to parse attribute")
-                                            .with_debug_context(&key.subtag)
-                                    })?,
-                                    locale,
-                                );
+                                let data_identifier = crate::DataIdentifierCached::from_writeable_attributes_and_locale(&key.subtag, locale)?;
                                 result.insert(data_identifier);
                             }
                         }
@@ -397,7 +383,7 @@ macro_rules! impl_displaynames_iter_v1 {
 macro_rules! impl_displaynames_legacy_iter_v1 {
     ($marker:ident, $file:literal) => {
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<$crate::DataIdentifierCached>, DataError> {
                 let displaynames = self.cldr()?.displaynames();
                 Ok(displaynames
                     .list_locales()?
@@ -405,7 +391,7 @@ macro_rules! impl_displaynames_legacy_iter_v1 {
                         // The directory might exist without the file
                         displaynames.file_exists(locale, $file).unwrap_or_default()
                     })
-                    .map(DataIdentifierCow::from_locale)
+                    .map($crate::DataIdentifierCached::from_locale)
                     .collect())
             }
         }

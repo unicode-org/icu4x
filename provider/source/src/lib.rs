@@ -111,10 +111,7 @@ pub struct SourceDataProvider {
     pub(crate) timezone_horizon: time_zones::Timestamp,
     #[expect(clippy::type_complexity)] // not as complex as it appears
     requests_cache: Arc<
-        FrozenMap<
-            DataMarkerInfo,
-            Box<OnceLock<Result<HashSet<DataIdentifierCow<'static>>, DataError>>>,
-        >,
+        FrozenMap<DataMarkerInfo, Box<OnceLock<Result<HashSet<DataIdentifierCached>, DataError>>>>,
     >,
 }
 
@@ -521,6 +518,87 @@ impl SourceDataProvider {
     }
 }
 
+/// A crate-internal data identifier representation for cache storage wrapping [`DataIdentifierCow<'static>`].
+#[derive(Default, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub(crate) struct DataIdentifierCachedWithLifetime<'a>(pub(crate) DataIdentifierCow<'a>);
+
+pub(crate) type DataIdentifierCached = DataIdentifierCachedWithLifetime<'static>;
+
+impl<'a> core::ops::Deref for DataIdentifierCachedWithLifetime<'a> {
+    type Target = DataIdentifierCow<'a>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl<'a> DataIdentifierCachedWithLifetime<'a> {
+    pub(crate) fn from_locale(locale: impl Into<DataLocale>) -> Self {
+        Self(DataIdentifierCow::from_locale(locale.into()))
+    }
+
+    pub(crate) fn from_attributes(attr: &'a DataMarkerAttributes) -> Self {
+        Self(DataIdentifierCow::from_marker_attributes(attr))
+    }
+
+    pub(crate) fn from_attributes_and_locale(
+        attr: &'a DataMarkerAttributes,
+        locale: impl Into<DataLocale>,
+    ) -> Self {
+        Self(DataIdentifierCow::from_borrowed_and_owned(
+            attr,
+            locale.into(),
+        ))
+    }
+
+    pub(crate) fn from_cow(cow: DataIdentifierCow<'a>) -> Self {
+        Self(cow)
+    }
+
+    pub(crate) fn as_cow(&self) -> DataIdentifierCow<'_> {
+        self.0.clone()
+    }
+
+    pub(crate) fn into_owned(self) -> DataIdentifierCached {
+        DataIdentifierCachedWithLifetime(DataIdentifierCow::from_owned(
+            self.0.marker_attributes.into_owned(),
+            self.0.locale,
+        ))
+    }
+}
+
+impl DataIdentifierCached {
+    pub(crate) fn from_writeable_attributes(
+        attr: impl writeable::Writeable + Debug,
+    ) -> Result<Self, DataError> {
+        let s = attr.write_to_string();
+        if s.is_empty() {
+            Ok(Self(DataIdentifierCow::from_marker_attributes(
+                DataMarkerAttributes::empty(),
+            )))
+        } else {
+            let boxed = DataMarkerAttributes::try_from_string(s.into_owned()).map_err(|_| {
+                DataError::custom("Invalid marker attributes").with_debug_context(&attr)
+            })?;
+            Ok(Self(DataIdentifierCow::from_marker_attributes_owned(boxed)))
+        }
+    }
+
+    pub(crate) fn from_writeable_attributes_and_locale(
+        attr: impl writeable::Writeable + Debug,
+        locale: impl Into<DataLocale>,
+    ) -> Result<Self, DataError> {
+        let s = attr.write_to_string();
+        if s.is_empty() {
+            Ok(Self(DataIdentifierCow::from_locale(locale.into())))
+        } else {
+            let boxed = DataMarkerAttributes::try_from_string(s.into_owned()).map_err(|_| {
+                DataError::custom("Invalid marker attributes").with_debug_context(&attr)
+            })?;
+            Ok(Self(DataIdentifierCow::from_owned(boxed, locale.into())))
+        }
+    }
+}
+
 impl SourceDataProvider {
     fn check_req<M: DataMarker>(&self, req: DataRequest) -> Result<(), DataError>
     where
@@ -532,7 +610,10 @@ impl SourceDataProvider {
             } else {
                 Ok(())
             }
-        } else if !self.populate_requests_cache()?.contains(&req.id.as_cow()) {
+        } else if !self
+            .populate_requests_cache()?
+            .contains(&DataIdentifierCachedWithLifetime(req.id.as_cow()))
+        {
             Err(DataErrorKind::IdentifierNotFound)
         } else {
             Ok(())
@@ -555,8 +636,12 @@ fn test_check_req() {
 
     #[allow(non_local_definitions)] // test-scoped, only place that uses it
     impl IterableDataProviderCached<HelloWorldV1> for SourceDataProvider {
-        fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-            Ok(HelloWorldProvider.iter_ids()?.into_iter().collect())
+        fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
+            Ok(HelloWorldProvider
+                .iter_ids()?
+                .into_iter()
+                .map(DataIdentifierCachedWithLifetime)
+                .collect())
         }
     }
 
@@ -580,13 +665,13 @@ fn test_check_req() {
 }
 
 trait IterableDataProviderCached<M: DataMarker>: DataProvider<M> {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>;
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError>;
 }
 
 impl SourceDataProvider {
     fn populate_requests_cache<M: DataMarker>(
         &self,
-    ) -> Result<&HashSet<DataIdentifierCow<'_>>, DataError>
+    ) -> Result<&HashSet<DataIdentifierCached>, DataError>
     where
         SourceDataProvider: IterableDataProviderCached<M>,
     {
@@ -609,7 +694,7 @@ where
         } else {
             self.populate_requests_cache()?
                 .iter()
-                .map(|id| id.as_borrowed().as_cow())
+                .map(|id| id.as_cow())
                 .collect()
         })
     }

@@ -4,6 +4,7 @@
 
 use std::collections::HashSet;
 
+use crate::DataIdentifierCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 use icu::locale::provider::*;
@@ -23,7 +24,7 @@ impl DataProvider<LocaleScriptDirectionV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<LocaleScriptDirectionV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

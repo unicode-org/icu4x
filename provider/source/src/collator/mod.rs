@@ -7,6 +7,7 @@
 
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use crate::{DataIdentifierCached, DataIdentifierCachedWithLifetime};
 use icu::collator::provider::*;
 use icu::locale::{
     data_locale,
@@ -52,7 +53,7 @@ fn id_to_file_name(id: DataIdentifierBorrowed) -> String {
     s
 }
 
-fn file_name_to_ids(file_name: &str) -> Vec<DataIdentifierCow<'static>> {
+fn file_name_to_ids(file_name: &str) -> Vec<DataIdentifierCached> {
     let (mut language, mut variant) = file_name.rsplit_once('_').unwrap();
     if language == "root" {
         language = "und";
@@ -69,32 +70,27 @@ fn file_name_to_ids(file_name: &str) -> Vec<DataIdentifierCow<'static>> {
         locale.script = Some(script!("Hani"));
         if variant == "pinyin" {
             // Pinyin is stored in both und-Hans and und-Hani/pinyin
-            r.push(DataIdentifierCow::from_borrowed_and_owned(
-                Default::default(),
-                data_locale!("und-Hans"),
-            ));
+            r.push(DataIdentifierCached::from_locale(data_locale!("und-Hans")));
         } else if variant == "stroke" {
             // Stroke is stored in both und-Hans and und-Hani/stroke
-            r.push(DataIdentifierCow::from_borrowed_and_owned(
-                Default::default(),
-                data_locale!("und-Hant"),
-            ));
+            r.push(DataIdentifierCached::from_locale(data_locale!("und-Hant")));
         }
     } else if variant == "standard" {
         variant = "";
     }
 
     let marker_attributes = match variant {
-        "traditional" => DataMarkerAttributes::from_str_or_panic("trad").to_owned(),
-        "phonebook" => DataMarkerAttributes::from_str_or_panic("phonebk").to_owned(),
-        "dictionary" => DataMarkerAttributes::from_str_or_panic("dict").to_owned(),
-        v => match DataMarkerAttributes::try_from_str(v) {
-            Ok(s) => s.to_owned(),
-            _ => return r,
-        },
+        "traditional" => "trad",
+        "phonebook" => "phonebk",
+        "dictionary" => "dict",
+        v => v,
     };
 
-    r.push(DataIdentifierCow::from_owned(marker_attributes, locale));
+    if let Ok(id) =
+        DataIdentifierCached::from_writeable_attributes_and_locale(marker_attributes, locale)
+    {
+        r.push(id);
+    }
     r
 }
 
@@ -119,7 +115,7 @@ impl SourceDataProvider {
             })
     }
 
-    fn list_ids(&self, suffix: &str) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn list_ids(&self, suffix: &str) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(self
             .icuexport()?
             .list(&format!("collation/{}", self.collation_root_han()))?
@@ -152,7 +148,7 @@ macro_rules! collation_provider {
                         self.check_req::<$marker>(req)?;
 
                         let has_tailoring = self.list_ids("_data")?
-                            .contains(&DataIdentifierCow::from_borrowed_and_owned(&req.id.marker_attributes, *req.id.locale));
+                            .contains(&DataIdentifierCachedWithLifetime::from_attributes_and_locale(&req.id.marker_attributes, *req.id.locale));
 
                         Ok(DataResponse {
                             metadata: Default::default(),
@@ -163,7 +159,7 @@ macro_rules! collation_provider {
             }
 
             impl IterableDataProviderCached<$marker> for SourceDataProvider {
-                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
                     self.list_ids(<collator_serde::$serde_struct>::suffix())
                 }
             }

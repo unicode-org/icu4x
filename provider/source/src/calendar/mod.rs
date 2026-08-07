@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::DataIdentifierCached;
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use icu::calendar::preferences::CalendarAlgorithm;
 use icu::calendar::provider::{CalendarPreference, CalendarPreferredV1};
@@ -71,7 +72,7 @@ impl DataProvider<CalendarPreferredV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<CalendarPreferredV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(self
             .cldr()
             .unwrap()
@@ -82,11 +83,7 @@ impl IterableDataProviderCached<CalendarPreferredV1> for SourceDataProvider {
             .calendar_preference_data
             .keys()
             .map(|&region| {
-                DataIdentifierCow::from_locale(DataLocale::from((
-                    Language::UNKNOWN,
-                    None,
-                    Some(region),
-                )))
+                DataIdentifierCached::from_locale((Language::UNKNOWN, None, Some(region)))
             })
             .chain([Default::default()])
             .collect())

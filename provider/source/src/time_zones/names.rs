@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::DataIdentifierCached;
 use crate::SourceDataProvider;
 use core::hash::Hash;
 use icu::time::TimeZone;
@@ -67,7 +68,7 @@ impl DataProvider<TimezoneIdentifiersIanaCoreV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<TimezoneIdentifiersIanaCoreV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -116,7 +117,7 @@ impl DataProvider<TimezoneIdentifiersIanaExtendedV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<TimezoneIdentifiersIanaExtendedV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

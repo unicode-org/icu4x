@@ -5,6 +5,7 @@
 //! This module contains provider implementations backed by TOML files
 //! exported from ICU.
 
+use crate::DataIdentifierCached;
 use crate::SourceDataProvider;
 use crate::TrieType;
 use icu::collections::char16trie::Char16Trie;
@@ -43,7 +44,7 @@ macro_rules! normalization_provider {
         }
 
         impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
                 Ok(HashSet::from_iter([Default::default()]))
             }
         }
@@ -221,7 +222,7 @@ macro_rules! impl_decomposition_inert_property {
         impl crate::IterableDataProviderCached<icu::properties::provider::$marker>
             for SourceDataProvider
         {
-            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
                 Ok(HashSet::from_iter([Default::default()]))
             }
         }
@@ -347,7 +348,7 @@ macro_rules! impl_composition_inert_property {
         impl crate::IterableDataProviderCached<icu::properties::provider::$marker>
             for SourceDataProvider
         {
-            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
                 Ok(HashSet::from_iter([Default::default()]))
             }
         }

@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::DataIdentifierCached;
+use crate::DataIdentifierCachedWithLifetime;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
@@ -168,7 +170,7 @@ macro_rules! implement {
         }
 
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
                 Ok(self
                     .cldr()?
                     .misc()
@@ -180,7 +182,10 @@ macro_rules! implement {
                             ListFormatterPatterns::WIDE,
                         ]
                         .into_iter()
-                        .map(move |a| DataIdentifierCow::from_borrowed_and_owned(a, l.clone()))
+                        .map(move |a| {
+                            DataIdentifierCachedWithLifetime::from_attributes_and_locale(a, l)
+                                .into_owned()
+                        })
                     })
                     .collect())
             }

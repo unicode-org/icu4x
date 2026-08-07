@@ -10,6 +10,7 @@ use icu::experimental::personnames::provider::*;
 use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
 
+use crate::DataIdentifierCached;
 use crate::IterableDataProviderCached;
 use crate::cldr_serde::personnames::person_name_format_json_struct::Resource;
 
@@ -33,7 +34,7 @@ impl DataProvider<PersonNamesFormatV1> for crate::SourceDataProvider {
 }
 
 impl IterableDataProviderCached<PersonNamesFormatV1> for crate::SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(self
             .cldr()?
             .personnames()
@@ -46,7 +47,7 @@ impl IterableDataProviderCached<PersonNamesFormatV1> for crate::SourceDataProvid
                     .file_exists(locale, "personNames.json")
                     .unwrap_or_default()
             })
-            .map(DataIdentifierCow::from_locale)
+            .map(DataIdentifierCached::from_locale)
             .collect())
     }
 }
