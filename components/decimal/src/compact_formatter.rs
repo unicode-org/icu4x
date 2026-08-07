@@ -690,9 +690,9 @@ mod tests {
         ];
         for case in cases {
             let formatter = if case.short {
-                CompactDecimalFormatter::try_new_short(locale!("en").into(), case.options.clone())
+                CompactDecimalFormatter::try_new_short(locale!("en").into(), case.options)
             } else {
-                CompactDecimalFormatter::try_new_long(locale!("en").into(), case.options.clone())
+                CompactDecimalFormatter::try_new_long(locale!("en").into(), case.options)
             }
             .unwrap();
             let result1T = formatter.format(&1_000_000_000_000_000i64.into());

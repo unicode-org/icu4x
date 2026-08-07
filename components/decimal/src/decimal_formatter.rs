@@ -22,7 +22,7 @@ use icu_provider::prelude::*;
 use writeable::PartsWrite;
 use writeable::Writeable;
 
-size_test!(DecimalFormatter, decimal_formatter_size, 96);
+size_test!(DecimalFormatter, decimal_formatter_size, 104);
 
 /// A formatter for [`Decimal`], rendering decimal digits in an i18n-friendly way.
 ///
@@ -222,16 +222,18 @@ impl Writeable for FormattedUnsignedDecimal<'_> {
                     self.options.grouping_strategy.unwrap_or_default(),
                     self.symbols.grouping_sizes,
                 ) {
-                    w.with_part(parts::GROUP, |w| {
-                        w.write_str(self.symbols.grouping_separator())
+                    w.with_part(parts::GROUP, |w| match self.options.grouping_separator {
+                        Some(sep) => w.write_char(sep),
+                        None => w.write_str(self.symbols.grouping_separator()),
                     })?;
                 }
             }
             Ok(())
         })?;
         if range.peek().is_some() {
-            w.with_part(parts::DECIMAL, |w| {
-                w.write_str(self.symbols.decimal_separator())
+            w.with_part(parts::DECIMAL, |w| match self.options.decimal_separator {
+                Some(sep) => w.write_char(sep),
+                None => w.write_str(self.symbols.decimal_separator()),
             })?;
             w.with_part(parts::FRACTION, |w| {
                 for m in range.by_ref() {
@@ -287,4 +289,19 @@ pub fn test_es_mx() {
     let fmt = DecimalFormatter::try_new(locale, Default::default()).unwrap();
     let fd = "12345.67".parse().unwrap();
     assert_writeable_eq!(fmt.format(&fd), "12,345.67");
+}
+
+#[test]
+pub fn test_custom_separators() {
+    use icu_locale_core::locale;
+    use writeable::assert_writeable_eq;
+
+    let options = DecimalFormatterOptions {
+        decimal_separator: Some('$'),
+        grouping_separator: Some(' '),
+        ..Default::default()
+    };
+    let fmt = DecimalFormatter::try_new(locale!("pt-PT").into(), options).unwrap();
+    let fd = "12345.67".parse().unwrap();
+    assert_writeable_eq!(fmt.format(&fd), "12 345$67");
 }
