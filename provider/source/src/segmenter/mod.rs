@@ -1935,12 +1935,7 @@ impl IterableDataProviderCached<SegmenterBreakSentenceOverrideV2> for SourceData
         .with_marker(SegmenterBreakSentenceOverrideV2::INFO));
 
         #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-        Ok(self
-            .sentence_segmenter()?
-            .1
-            .keys()
-            .cloned()
-            .collect())
+        Ok(self.sentence_segmenter()?.1.keys().cloned().collect())
     }
 }
 
