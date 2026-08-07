@@ -1939,7 +1939,7 @@ impl IterableDataProviderCached<SegmenterBreakSentenceOverrideV2> for SourceData
             .sentence_segmenter()?
             .1
             .keys()
-            .map(|x| x.clone())
+            .cloned()
             .collect())
     }
 }

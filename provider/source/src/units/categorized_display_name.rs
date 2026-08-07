@@ -115,7 +115,7 @@ impl SourceDataProvider {
 
                     let id = DataIdentifierCached::from_writeable_attributes_and_locale(
                         writeable::concat_writeable!(length, "-", unit),
-                        locale.clone(),
+                        locale,
                     )?;
                     data_locales.insert(id);
                 }

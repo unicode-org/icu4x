@@ -129,17 +129,17 @@ impl SourceDataProvider {
             .core()
             .read_and_parse("supplemental/numberingSystems.json")?;
 
-        Ok(resource
+        resource
             .supplemental
             .numbering_systems
             .iter()
             .filter(|(_nsname, data)| data.nstype == NumberingSystemType::Numeric)
             .map(|(nsname, _data)| {
                 DataIdentifierCachedWithLifetime::from_writeable_attributes_and_locale(
-                    &nsname,
+                    nsname,
                     DataLocale::default(),
                 )
             })
-            .collect::<Result<_, _>>()?)
+            .collect()
     }
 }
