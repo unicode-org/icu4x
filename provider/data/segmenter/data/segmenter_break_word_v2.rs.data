@@ -33,7 +33,7 @@ macro_rules! __impl_segmenter_break_word_v2 {
                 pseudo_symbol_map: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x02\x07\x02\x07\x03\x07\x04\x07\x01\x07\x05\t\x02\x13\x02\x13\x03\x13\x04\x13\x01\x13\x05") },
             };
             #[doc(hidden)]
-            pub const SEGMENTER_BREAK_WORD_V2_CHECKSUM: u64 = 10731519429229393919u64;
+            pub const SEGMENTER_BREAK_WORD_V2_CHECKSUM: u64 = 2288019632402923605u64;
         }
         #[clippy::msrv = "1.88"]
         impl icu_provider::DataProvider<icu::segmenter::provider::SegmenterBreakWordV2> for $provider {
