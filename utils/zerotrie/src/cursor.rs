@@ -368,7 +368,7 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
     }
 }
 
-impl ZeroAsciiIgnoreCaseTrieCursor<'_> {
+impl<'a> ZeroAsciiIgnoreCaseTrieCursor<'a> {
     /// Steps the cursor one byte into the trie.
     ///
     /// Returns the byte if matched, which may be a different case than the input byte.
@@ -433,6 +433,31 @@ impl ZeroAsciiIgnoreCaseTrieCursor<'_> {
     #[inline]
     pub fn is_empty(&self) -> bool {
         self.trie.is_empty()
+    }
+
+    /// Returns a trie for all suffixes that begin with the previously stepped
+    /// bytes.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerotrie::ZeroAsciiIgnoreCaseTrie;
+    ///
+    /// // A trie with two values: "aBc" and "aBcdEf"
+    /// let trie = ZeroAsciiIgnoreCaseTrie::from_bytes(b"aBc\x80dEf\x81");
+    ///
+    /// // Consume the prefix "ab"
+    /// let mut cursor = trie.cursor();
+    /// cursor.step(b'a');
+    /// cursor.step(b'b');
+    /// let suffix_trie = cursor.into_suffix_trie();
+    ///
+    /// // The suffix trie contains the strings "c" and "cdef" (case-insensitive!)
+    /// assert_eq!(suffix_trie.get("c"), Some(0));
+    /// assert_eq!(suffix_trie.get("CDEF"), Some(1));
+    /// ```
+    pub fn into_suffix_trie(self) -> ZeroAsciiIgnoreCaseTrie<&'a [u8]> {
+        self.trie
     }
 }
 
