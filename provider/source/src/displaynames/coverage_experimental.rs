@@ -14,11 +14,9 @@ use crate::source::SerdeCache;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use serde::Deserialize;
-use serde::de::{Deserializer, Error as DeError, SeqAccess, Visitor};
 use std::collections::BTreeMap;
 #[cfg(test)]
 use std::collections::HashMap;
-use std::fmt;
 use std::sync::OnceLock;
 use writeable::Writeable;
 use zerotrie::ZeroTrieSimpleAscii;
@@ -32,76 +30,169 @@ pub(super) struct CoverageByXPathResource {
     pub(super) coverage_by_xpath: BTreeMap<String, CoverageByXPathLevels>,
 }
 
-/// Representation of coverage levels (`basic`, `core`, `moderate`, `modern`) containing sets of `XPaths`.
-/// If this is added to CLDR JSON, this should be moved to `cldr_serde`.
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub(super) enum DisplayNameCategory {
+    Language,
+    Territory,
+    Script,
+    Variant,
+}
+
+fn parse_cldr_xpath(xpath: &str) -> Option<(DisplayNameCategory, String)> {
+    let prefix_lang = "//ldml/localeDisplayNames/languages/language";
+    let prefix_terr = "//ldml/localeDisplayNames/territories/territory";
+    let prefix_script = "//ldml/localeDisplayNames/scripts/script";
+    let prefix_var = "//ldml/localeDisplayNames/variants/variant";
+
+    let (category, rest) = if let Some(r) = xpath.strip_prefix(prefix_lang) {
+        (DisplayNameCategory::Language, r)
+    } else if let Some(r) = xpath.strip_prefix(prefix_terr) {
+        (DisplayNameCategory::Territory, r)
+    } else if let Some(r) = xpath.strip_prefix(prefix_script) {
+        (DisplayNameCategory::Script, r)
+    } else if let Some(r) = xpath.strip_prefix(prefix_var) {
+        (DisplayNameCategory::Variant, r)
+    } else {
+        return None;
+    };
+
+    let type_prefix = "[@type=\"";
+    let rest = rest.strip_prefix(type_prefix)?;
+    let quote_idx = rest.find('"')?;
+    let val = &rest[..quote_idx];
+    let remaining_attrs = &rest[quote_idx + 1..];
+    let extra_attrs = remaining_attrs.strip_prefix(']')?;
+
+    let key = if extra_attrs.is_empty() {
+        val.to_string()
+    } else {
+        format!("{val}{extra_attrs}")
+    };
+
+    Some((category, key))
+}
+
+#[derive(Deserialize)]
+struct RawCoverageByXPathLevels {
+    #[serde(default)]
+    basic: Vec<String>,
+    #[serde(default)]
+    core: Vec<String>,
+    #[serde(default)]
+    moderate: Vec<String>,
+    #[serde(default)]
+    modern: Vec<String>,
+}
+
+/// Coverage level representation for display names categories (`language`, `territory`, `script`, `variant`).
+///
+/// **Note on File Contents & Scope**:
+/// `CoverageByXPathLevels` contains parsed coverage level data specifically tailored for display names subtags.
+/// If additional CLDR XPaths (e.g., unit patterns, currency display names, or calendar fields) need to be supported
+/// for coverage filtering in the future, they should be parsed into their own category-specific `ZeroTrie` fields
+/// on this struct or a dedicated coverage struct, following the pattern of the display names fields below.
 #[derive(Deserialize, Debug)]
+#[serde(try_from = "RawCoverageByXPathLevels")]
 pub(super) struct CoverageByXPathLevels {
-    /// `XPaths` classified under the `basic` coverage level.
-    #[serde(default, deserialize_with = "set_to_trie")]
-    pub(super) basic: ZeroTrieSimpleAscii<Vec<u8>>,
-    /// `XPaths` classified under the `core` coverage level.
-    #[serde(default, deserialize_with = "set_to_trie")]
-    pub(super) core: ZeroTrieSimpleAscii<Vec<u8>>,
-    /// `XPaths` classified under the `moderate` coverage level.
-    #[serde(default, deserialize_with = "set_to_trie")]
-    pub(super) moderate: ZeroTrieSimpleAscii<Vec<u8>>,
-    /// `XPaths` classified under the `modern` coverage level.
-    #[serde(default, deserialize_with = "set_to_trie")]
-    pub(super) modern: ZeroTrieSimpleAscii<Vec<u8>>,
+    pub(super) language: ZeroTrieSimpleAscii<Vec<u8>>,
+    pub(super) territory: ZeroTrieSimpleAscii<Vec<u8>>,
+    pub(super) script: ZeroTrieSimpleAscii<Vec<u8>>,
+    pub(super) variant: ZeroTrieSimpleAscii<Vec<u8>>,
+}
+
+impl TryFrom<RawCoverageByXPathLevels> for CoverageByXPathLevels {
+    type Error = String;
+
+    fn try_from(raw: RawCoverageByXPathLevels) -> Result<Self, Self::Error> {
+        let mut map_lang = LiteMap::new_vec();
+        let mut map_terr = LiteMap::new_vec();
+        let mut map_script = LiteMap::new_vec();
+        let mut map_var = LiteMap::new_vec();
+
+        let levels = [
+            (CoverageLevelForXPath::Core, raw.core),
+            (CoverageLevelForXPath::Basic, raw.basic),
+            (CoverageLevelForXPath::Moderate, raw.moderate),
+            (CoverageLevelForXPath::Modern, raw.modern),
+        ];
+
+        for (tier, xpaths) in levels {
+            let tier_val = tier.to_usize();
+            for xpath in xpaths {
+                if !xpath.is_ascii() {
+                    continue;
+                }
+                if let Some((category, key)) = parse_cldr_xpath(&xpath) {
+                    let map = match category {
+                        DisplayNameCategory::Language => &mut map_lang,
+                        DisplayNameCategory::Territory => &mut map_terr,
+                        DisplayNameCategory::Script => &mut map_script,
+                        DisplayNameCategory::Variant => &mut map_var,
+                    };
+                    map.insert(key.into_bytes(), tier_val);
+                }
+            }
+        }
+
+        Ok(CoverageByXPathLevels {
+            language: ZeroTrieSimpleAscii::try_from(&map_lang).map_err(|e| format!("{e:?}"))?,
+            territory: ZeroTrieSimpleAscii::try_from(&map_terr).map_err(|e| format!("{e:?}"))?,
+            script: ZeroTrieSimpleAscii::try_from(&map_script).map_err(|e| format!("{e:?}"))?,
+            variant: ZeroTrieSimpleAscii::try_from(&map_var).map_err(|e| format!("{e:?}"))?,
+        })
+    }
 }
 
 impl CoverageByXPathLevels {
-    pub(super) fn level_for_xpath(&self, xpath: &impl Writeable) -> Option<CoverageLevelForXPath> {
-        let contains = |trie: &ZeroTrieSimpleAscii<Vec<u8>>| {
-            trie.get_with_write_fn(|sink| xpath.write_to(sink))
-                .is_some()
+    pub(super) fn level_for_category(
+        &self,
+        category: DisplayNameCategory,
+        subtag: impl Writeable,
+        alt: Option<Alt>,
+        menu: Option<Menu>,
+    ) -> Option<CoverageLevelForXPath> {
+        use core::fmt::Write;
+        let trie = match category {
+            DisplayNameCategory::Language => &self.language,
+            DisplayNameCategory::Territory => &self.territory,
+            DisplayNameCategory::Script => &self.script,
+            DisplayNameCategory::Variant => &self.variant,
         };
-        if contains(&self.core) {
-            Some(CoverageLevelForXPath::Core)
-        } else if contains(&self.basic) {
-            Some(CoverageLevelForXPath::Basic)
-        } else if contains(&self.moderate) {
-            Some(CoverageLevelForXPath::Moderate)
-        } else if contains(&self.modern) {
-            Some(CoverageLevelForXPath::Modern)
-        } else {
-            None
-        }
-    }
-}
 
-struct ZeroTrieVisitor;
-
-impl<'de> Visitor<'de> for ZeroTrieVisitor {
-    type Value = ZeroTrieSimpleAscii<Vec<u8>>;
-    fn expecting(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "a sequence of XPaths")
-    }
-    fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
-    where
-        A: SeqAccess<'de>,
-    {
-        let mut litemap = LiteMap::new_vec();
-        while let Some(elem) = seq.next_element::<String>()? {
-            // CLDR coverage files contain some non-ASCII XPaths, principally emoji annotations
-            // (e.g., //ldml/annotations/annotation[@cp="😀"]).
-            //
-            // However, we want to use a `ZeroTrieSimpleAscii` since it is faster to query.
-            // If we need to support non-ASCII XPaths in the future, this optimization will
-            // need to be revisited.
-            if elem.is_ascii() {
-                litemap.insert(elem.into_bytes(), 0);
+        let mut cursor = trie.cursor();
+        if category == DisplayNameCategory::Language {
+            writeable::adapters::Replace {
+                source: &subtag,
+                needle: "-",
+                replacement: '_',
             }
+            .write_to(&mut cursor)
+            .ok()?;
+        } else {
+            subtag.write_to(&mut cursor).ok()?;
         }
-        ZeroTrieSimpleAscii::try_from(&litemap).map_err(DeError::custom)
-    }
-}
 
-fn set_to_trie<'de, D>(deserializer: D) -> Result<ZeroTrieSimpleAscii<Vec<u8>>, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    deserializer.deserialize_seq(ZeroTrieVisitor)
+        // return early
+        if cursor.is_empty() {
+            return None;
+        }
+
+        if let Some(alt) = alt {
+            cursor.write_str("[@alt=\"").ok()?;
+            cursor.write_str(alt.as_str()).ok()?;
+            cursor.write_str("\"]").ok()?;
+        }
+
+        if let Some(menu) = menu {
+            cursor.write_str("[@menu=\"").ok()?;
+            cursor.write_str(menu.as_str()).ok()?;
+            cursor.write_str("\"]").ok()?;
+        }
+
+        cursor
+            .take_value()
+            .and_then(CoverageLevelForXPath::from_usize)
+    }
 }
 
 pub(super) struct CoverageByXPathCache(SerdeCache);
@@ -110,19 +201,80 @@ pub(super) struct CoverageByXPathCache(SerdeCache);
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub(super) enum CoverageLevelForXPath {
     /// Items with `core` CLDR coverage level.
-    Core,
+    Core = 0,
     /// Items with `basic` CLDR coverage level.
-    Basic,
+    Basic = 1,
     /// Items with `moderate` CLDR coverage level.
-    Moderate,
+    Moderate = 2,
     /// Items with `modern` CLDR coverage level.
-    Modern,
+    Modern = 3,
     /// Items with `comprehensive` CLDR coverage level, or unlisted items.
-    Comprehensive,
+    Comprehensive = 4,
+}
+
+impl CoverageLevelForXPath {
+    fn to_usize(self) -> usize {
+        self as usize
+    }
+
+    fn from_usize(val: usize) -> Option<Self> {
+        match val {
+            0 => Some(Self::Core),
+            1 => Some(Self::Basic),
+            2 => Some(Self::Moderate),
+            3 => Some(Self::Modern),
+            _ => None,
+        }
+    }
 }
 
 impl CoverageByXPathCache {
-    /// Determines the [`CoverageLevelForXPath`] for a given `locale` and `xpath` target.
+    pub(super) fn get_levels_for_locale<'a>(
+        &'a self,
+        locale: &DataLocale,
+        cldr_cache: &'a CldrCache,
+    ) -> Result<Option<&'a CoverageByXPathLevels>, DataError> {
+        let locale_path = format!("displaynames/coverageByXPath/{locale}.json");
+        if self.0.file_exists(&locale_path)? {
+            let resource: &CoverageByXPathResource = self.0.read_and_parse_json(&locale_path)?;
+            Ok(resource.coverage_by_xpath.values().next())
+        } else {
+            if locale.variant.is_some() {
+                let mut new_locale = *locale;
+                new_locale.variant = None;
+                self.get_levels_for_locale(&new_locale, cldr_cache)
+            } else if let Some(new_locale) = cldr_cache.add_script_extended(locale)? {
+                self.get_levels_for_locale(&new_locale, cldr_cache)
+            } else {
+                Ok(None)
+            }
+        }
+    }
+
+    pub(super) fn get_root_levels(&self) -> Result<Option<&CoverageByXPathLevels>, DataError> {
+        let resource: &CoverageByXPathResource = self
+            .0
+            .read_and_parse_json("displaynames/coverageByXPath.json")?;
+        Ok(resource.coverage_by_xpath.get("root"))
+    }
+
+    pub(super) fn coverage_tier_from_levels(
+        locale_levels: Option<&CoverageByXPathLevels>,
+        root_levels: Option<&CoverageByXPathLevels>,
+        category: DisplayNameCategory,
+        subtag: impl Writeable,
+        alt: Option<Alt>,
+        menu: Option<Menu>,
+    ) -> CoverageLevelForXPath {
+        locale_levels
+            .and_then(|l| l.level_for_category(category, &subtag, alt, menu))
+            .or_else(|| {
+                root_levels.and_then(|l| l.level_for_category(category, &subtag, alt, menu))
+            })
+            .unwrap_or(CoverageLevelForXPath::Comprehensive)
+    }
+
+    /// Determines the [`CoverageLevelForXPath`] for a given `locale` and subtag item target.
     ///
     /// Resolution lookup precedence:
     /// 1. Locale-specific override file `displaynames/coverageByXPath/{locale}.json`
@@ -131,84 +283,23 @@ impl CoverageByXPathCache {
     pub(super) fn coverage_tier(
         &self,
         locale: &DataLocale,
-        xpath: impl Writeable,
+        category: DisplayNameCategory,
+        subtag: impl Writeable,
+        alt: Option<Alt>,
+        menu: Option<Menu>,
         cldr_cache: &CldrCache,
     ) -> Result<CoverageLevelForXPath, DataError> {
-        let locale_path = format!("displaynames/coverageByXPath/{locale}.json");
-        if self.0.file_exists(&locale_path)? {
-            let resource: &CoverageByXPathResource = self.0.read_and_parse_json(&locale_path)?;
-            let levels = resource.coverage_by_xpath.values().next();
-            if let Some(level) = levels.and_then(|l| l.level_for_xpath(&xpath)) {
-                return Ok(level);
-            }
-        } else {
-            if locale.variant.is_some() {
-                // el-polyton, ...
-                let mut new_locale = *locale;
-                new_locale.variant = None;
-                return self.coverage_tier(&new_locale, xpath, cldr_cache);
-            } else if let Some(new_locale) = cldr_cache.add_script_extended(locale)? {
-                return self.coverage_tier(&new_locale, xpath, cldr_cache);
-            } else {
-                log::warn!("Coverage data file not found for locale {locale}");
-            }
-        }
-
-        let resource: &CoverageByXPathResource = self
-            .0
-            .read_and_parse_json("displaynames/coverageByXPath.json")?;
-        if let Some(level) = resource
-            .coverage_by_xpath
-            .get("root")
-            .and_then(|l| l.level_for_xpath(&xpath))
-        {
-            return Ok(level);
-        }
-
-        // Not found: default to Comprehensive
-        Ok(CoverageLevelForXPath::Comprehensive)
+        let locale_levels = self.get_levels_for_locale(locale, cldr_cache)?;
+        let root_levels = self.get_root_levels()?;
+        Ok(Self::coverage_tier_from_levels(
+            locale_levels,
+            root_levels,
+            category,
+            subtag,
+            alt,
+            menu,
+        ))
     }
-}
-
-/// Helper to construct CLDR `XPath` string for a display name attribute and subtag.
-pub(crate) fn construct_xpath<'a>(
-    xpath_prefix: &'a str,
-    subtag_str: impl Writeable + 'a,
-    alt: Option<Alt>,
-    menu: Option<Menu>,
-) -> impl Writeable + 'a {
-    let alt_str = match (alt, menu) {
-        (None, None) => "",
-        (None, Some(Menu::Core)) => r#"[@menu="core"]"#,
-        (None, Some(Menu::Extension)) => r#"[@menu="extension"]"#,
-        (None, Some(Menu::Unknown)) => "",
-        (Some(Alt::Short), None) => r#"[@alt="short"]"#,
-        (Some(Alt::Long), None) => r#"[@alt="long"]"#,
-        (Some(Alt::Variant), None) => r#"[@alt="variant"]"#,
-        (Some(Alt::StandAlone), None) => r#"[@alt="stand-alone"]"#,
-        (Some(Alt::Official), None) => r#"[@alt="official"]"#,
-        (Some(Alt::Secondary), None) => r#"[@alt="secondary"]"#,
-        (Some(Alt::Biot), None) => r#"[@alt="biot"]"#,
-        (Some(Alt::Chagos), None) => r#"[@alt="chagos"]"#,
-        (Some(Alt::Menu), None) => r#"[@alt="menu"]"#,
-        (Some(Alt::Unknown), None) => "",
-        (Some(_), Some(_)) => {
-            debug_assert!(false, "unexpected alt and menu together: {alt:?} {menu:?}");
-            ""
-        }
-    };
-
-    writeable::concat_writeable!(
-        xpath_prefix,
-        r#"[@type=""#,
-        writeable::adapters::Replace {
-            source: subtag_str,
-            needle: "-",
-            replacement: '_'
-        },
-        r#""]"#,
-        alt_str
-    )
 }
 
 // Note: We statically embed coverage levels for all CLDR locales here so we can support
@@ -1020,7 +1111,7 @@ pub(super) trait CheckAltCoverage {
 pub(super) fn for_each_cldr_key_and_tier<Resource, T>(
     cldr: &CldrCache,
     file_name: &str,
-    xpath_prefix: &str,
+    category: DisplayNameCategory,
     mut extract_keys: impl FnMut(&Resource) -> &HashMap<WithAlt<T>, String>,
     mut callback: impl FnMut(&DataLocale, &WithAlt<T>, CoverageLevelForXPath),
 ) where
@@ -1040,8 +1131,9 @@ pub(super) fn for_each_cldr_key_and_tier<Resource, T>(
                     // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
                     return;
                 }
-                let xpath = construct_xpath(xpath_prefix, &key.subtag, key.alt, key.menu);
-                let tier = coverage_cldr.coverage_tier(&locale, &xpath, cldr).unwrap();
+                let tier = coverage_cldr
+                    .coverage_tier(&locale, category, &key.subtag, key.alt, key.menu, cldr)
+                    .unwrap();
                 callback(&locale, key, tier);
             }
         }
@@ -1057,21 +1149,23 @@ fn test_coverage_tier() {
     let coverage_cldr = coverage_cldr_cache();
 
     let en = DataLocale::from_str("en").unwrap();
-    // Tiny tier XPath (basic language display name in root defaults)
-    let xpath_minimal = "//ldml/localeDisplayNames/languages/language[@type=\"en\"]";
     assert_eq!(
         coverage_cldr
-            .coverage_tier(&en, xpath_minimal, cldr)
+            .coverage_tier(&en, DisplayNameCategory::Language, "en", None, None, cldr)
             .unwrap(),
         CoverageLevelForXPath::Basic
     );
 
-    // Default/unlisted XPath falls back to Comprehensive tier
-    let xpath_unlisted =
-        "//ldml/localeDisplayNames/languages/language[@type=\"unlisted_test_code\"]";
     assert_eq!(
         coverage_cldr
-            .coverage_tier(&en, xpath_unlisted, cldr)
+            .coverage_tier(
+                &en,
+                DisplayNameCategory::Language,
+                "unlisted_test_code",
+                None,
+                None,
+                cldr
+            )
             .unwrap(),
         CoverageLevelForXPath::Comprehensive
     );

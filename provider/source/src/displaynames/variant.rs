@@ -37,7 +37,7 @@ crate::displaynames::impl_displaynames_v1!(
     "variants.json",
     variants,
     None,
-    "//ldml/localeDisplayNames/variants/variant",
+    crate::displaynames::coverage_experimental::DisplayNameCategory::Variant,
     CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 
@@ -122,7 +122,7 @@ mod tests {
         crate::displaynames::coverage_experimental::for_each_cldr_key_and_tier(
             cldr,
             "variants.json",
-            "//ldml/localeDisplayNames/variants/variant",
+            crate::displaynames::coverage_experimental::DisplayNameCategory::Variant,
             |res: &cldr_serde::displaynames::variant::Resource| {
                 &res.main.value.localedisplaynames.variants
             },
