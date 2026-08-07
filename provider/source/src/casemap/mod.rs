@@ -7,6 +7,7 @@
     allow(unused_imports, dead_code)
 )]
 
+use crate::DataIdentifierCached;
 use crate::SourceDataProvider;
 use crate::properties::ucd_helpers;
 use icu::casemap::provider::data::{CaseMapData, CaseType, DotType};
@@ -316,7 +317,7 @@ impl DataProvider<CaseMapV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<CaseMapV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -358,7 +359,7 @@ impl DataProvider<CaseMapUnfoldV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<CaseMapUnfoldV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

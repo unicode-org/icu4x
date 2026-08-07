@@ -4,6 +4,7 @@
 
 use std::collections::HashSet;
 
+use crate::DataIdentifierCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 use icu_provider::prelude::*;
@@ -76,7 +77,7 @@ impl SourceDataProvider {
     /// This also includes a bare <locale>
     pub(crate) fn iter_ids_for_numbers_with_locales(
         &self,
-    ) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+    ) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
@@ -87,19 +88,19 @@ impl SourceDataProvider {
                     .expect("All languages from list_locales should be present")
                     .into_iter()
                     .filter_map(move |nsname| {
-                        crate::DataIdentifierCached::from_attributes_and_locale(
+                        DataIdentifierCached::from_attributes_and_locale(
                             nsname.as_str(),
                             locale.clone(),
                         )
                         .ok()
                     })
-                    .chain([crate::DataIdentifierCached::from_locale(last)])
+                    .chain([DataIdentifierCached::from_locale(last)])
             })
             .collect())
     }
 
     /// Produce `DataIdentifier`'s for all *used* numbering systems in the form und/<numsys>
-    fn iter_ids_for_used_numbers(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+    fn iter_ids_for_used_numbers(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
@@ -109,7 +110,7 @@ impl SourceDataProvider {
                     .expect("All languages from list_locales should be present")
                     .into_iter()
                     .filter_map(move |_nsname| {
-                        crate::DataIdentifierCached::from_attributes_and_locale(
+                        DataIdentifierCached::from_attributes_and_locale(
                             _nsname.as_str(),
                             DataLocale::default(),
                         )
@@ -121,7 +122,7 @@ impl SourceDataProvider {
 
     /// Produce `DataIdentifier`'s for all digit-based numbering systems in the form und/<numsys>
     #[allow(unused)] // TODO(#5824): Support user-specified numbering systems
-    fn iter_all_number_ids(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+    fn iter_all_number_ids(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         use cldr_serde::numbering_systems::NumberingSystemType;
         let resource: &cldr_serde::numbering_systems::Resource = self
             .cldr()?
@@ -134,7 +135,7 @@ impl SourceDataProvider {
             .iter()
             .filter(|(_nsname, data)| data.nstype == NumberingSystemType::Numeric)
             .filter_map(|(nsname, _data)| {
-                crate::DataIdentifierCached::from_attributes_and_locale(
+                DataIdentifierCached::from_attributes_and_locale(
                     nsname.as_str(),
                     DataLocale::default(),
                 )

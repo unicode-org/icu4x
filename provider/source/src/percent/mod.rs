@@ -5,6 +5,7 @@
 use std::borrow::Cow;
 use std::collections::HashSet;
 
+use crate::DataIdentifierCached;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
@@ -38,12 +39,12 @@ impl DataProvider<PercentEssentialsV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<PercentEssentialsV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
             .list_locales()?
-            .map(crate::DataIdentifierCached::from_locale)
+            .map(DataIdentifierCached::from_locale)
             .collect())
     }
 }

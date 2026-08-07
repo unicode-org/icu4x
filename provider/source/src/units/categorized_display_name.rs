@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::DataIdentifierCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 use cldr_serde::units::preferences::UnitType;
@@ -65,7 +66,7 @@ impl SourceDataProvider {
         &self,
         unit_type: UnitType,
         category: &str,
-    ) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+    ) -> Result<HashSet<DataIdentifierCached>, DataError> {
         let mut data_locales = HashSet::new();
         let numbers = self.cldr()?.numbers();
         let locales = numbers.list_locales()?;
@@ -114,7 +115,7 @@ impl SourceDataProvider {
                         continue;
                     }
 
-                    let id = crate::DataIdentifierCached::from_attributes_and_locale(
+                    let id = DataIdentifierCached::from_attributes_and_locale(
                         writeable::concat_writeable!(length, "-", unit),
                         locale.clone(),
                     )?;
@@ -137,7 +138,7 @@ macro_rules! impl_units_display_names_provider {
         }
 
         impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
                 self.get_display_name_iter_ids_cached($unit_type, $category)
             }
         }

@@ -7,6 +7,7 @@
     allow(unused_imports, dead_code)
 )]
 
+use crate::DataIdentifierCached;
 use crate::SourceDataProvider;
 use icu::collections::codepointtrie::TrieValue;
 use icu::properties::props::EnumeratedProperty;
@@ -135,7 +136,7 @@ impl DataProvider<PropertyScriptWithExtensionsV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<PropertyScriptWithExtensionsV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

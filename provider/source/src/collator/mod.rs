@@ -5,6 +5,7 @@
 //! This module contains provider implementations backed by TOML files
 //! exported from ICU.
 
+use crate::DataIdentifierCached;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::collator::provider::*;
@@ -53,7 +54,7 @@ fn id_to_file_name(id: DataIdentifierBorrowed) -> String {
     s
 }
 
-fn file_name_to_ids(file_name: &str) -> Vec<crate::DataIdentifierCached> {
+fn file_name_to_ids(file_name: &str) -> Vec<DataIdentifierCached> {
     let (mut language, mut variant) = file_name.rsplit_once('_').unwrap();
     if language == "root" {
         language = "und";
@@ -70,14 +71,10 @@ fn file_name_to_ids(file_name: &str) -> Vec<crate::DataIdentifierCached> {
         locale.script = Some(script!("Hani"));
         if variant == "pinyin" {
             // Pinyin is stored in both und-Hans and und-Hani/pinyin
-            r.push(crate::DataIdentifierCached::from_locale(locale!(
-                "und-Hans"
-            )));
+            r.push(DataIdentifierCached::from_locale(locale!("und-Hans")));
         } else if variant == "stroke" {
             // Stroke is stored in both und-Hans and und-Hani/stroke
-            r.push(crate::DataIdentifierCached::from_locale(locale!(
-                "und-Hant"
-            )));
+            r.push(DataIdentifierCached::from_locale(locale!("und-Hant")));
         }
     } else if variant == "standard" {
         variant = "";
@@ -90,9 +87,7 @@ fn file_name_to_ids(file_name: &str) -> Vec<crate::DataIdentifierCached> {
         v => v,
     };
 
-    if let Ok(id) =
-        crate::DataIdentifierCached::from_attributes_and_locale(marker_attributes, locale)
-    {
+    if let Ok(id) = DataIdentifierCached::from_attributes_and_locale(marker_attributes, locale) {
         r.push(id);
     }
     r
@@ -119,7 +114,7 @@ impl SourceDataProvider {
             })
     }
 
-    fn list_ids(&self, suffix: &str) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+    fn list_ids(&self, suffix: &str) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(self
             .icuexport()?
             .list(&format!("collation/{}", self.collation_root_han()))?
@@ -151,7 +146,7 @@ macro_rules! collation_provider {
                     {
                         self.check_req::<$marker>(req)?;
 
-                        let id_cached = crate::DataIdentifierCached::from_attributes_and_locale(req.id.marker_attributes.as_str(), req.id.locale.clone())?;
+                        let id_cached = DataIdentifierCached::from_attributes_and_locale(req.id.marker_attributes.as_str(), req.id.locale.clone())?;
                         let has_tailoring = self.list_ids("_data")?
                             .contains(&id_cached);
 
@@ -164,7 +159,7 @@ macro_rules! collation_provider {
             }
 
             impl IterableDataProviderCached<$marker> for SourceDataProvider {
-                fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
                     self.list_ids(<collator_serde::$serde_struct>::suffix())
                 }
             }
@@ -208,8 +203,8 @@ macro_rules! collation_provider {
                             .map(|id| id.marker_attributes)
                             .collect::<HashSet<_>>()
                         {
-                            let locale = crate::DataIdentifierCached::from_attributes_and_locale(attribute.as_str(), locale.clone()).unwrap();
-                            let parent = crate::DataIdentifierCached::from_attributes_and_locale(attribute.as_str(), parent.clone()).unwrap();
+                            let locale = DataIdentifierCached::from_attributes_and_locale(attribute.as_str(), locale.clone()).unwrap();
+                            let parent = DataIdentifierCached::from_attributes_and_locale(attribute.as_str(), parent.clone()).unwrap();
                             assert_eq!(
                                 DataProvider::<$marker>::load(&fallback_provider, DataRequest { id: locale.as_borrowed(), ..Default::default() })
                                     .as_ref()

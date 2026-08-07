@@ -11,6 +11,7 @@ use icu_provider::DataRequest;
 use icu_provider::DataResponse;
 use icu_provider::prelude::*;
 
+use crate::DataIdentifierCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 
@@ -32,7 +33,7 @@ impl DataProvider<UnitIdsV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<UnitIdsV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         let units_data: &cldr_serde::units::info::Resource = self
             .cldr()?
             .core()
@@ -41,7 +42,7 @@ impl crate::IterableDataProviderCached<UnitIdsV1> for SourceDataProvider {
         let ids_set = units_data
             .unit_ids_map()?
             .keys()
-            .map(|unit_name| crate::DataIdentifierCached::from_attributes(unit_name))
+            .map(|unit_name| DataIdentifierCached::from_attributes(unit_name))
             .collect::<Result<_, _>>()?;
 
         Ok(ids_set)

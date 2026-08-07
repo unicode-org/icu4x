@@ -4,6 +4,7 @@
 
 use std::collections::{BTreeMap, HashSet};
 
+use crate::DataIdentifierCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde::{self};
 
@@ -130,7 +131,7 @@ impl DataProvider<UnitsEssentialsV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<UnitsEssentialsV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         let units = self.cldr()?.units();
         let locales = units.list_locales()?;
         Ok(locales
@@ -143,10 +144,7 @@ impl crate::IterableDataProviderCached<UnitsEssentialsV1> for SourceDataProvider
                 ]
                 .into_iter()
                 .map(move |length| {
-                    crate::DataIdentifierCached::from_static_attributes_and_locale(
-                        length,
-                        locale.clone(),
-                    )
+                    DataIdentifierCached::from_static_attributes_and_locale(length, locale.clone())
                 })
             })
             .collect())

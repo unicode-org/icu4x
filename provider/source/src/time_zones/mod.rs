@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::DataIdentifierCached;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
@@ -599,12 +600,12 @@ macro_rules! impl_iterable_data_provider {
     ($($marker:ident),+) => {
         $(
             impl IterableDataProviderCached<$marker> for SourceDataProvider {
-                fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
                     Ok(self
                         .cldr()?
                         .dates("gregorian")
                         .list_locales()?
-                        .map(crate::DataIdentifierCached::from_locale)
+                        .map(DataIdentifierCached::from_locale)
                         .collect())
                 }
             }
@@ -626,7 +627,7 @@ impl_iterable_data_provider!(
 );
 
 impl IterableDataProviderCached<TimezonePeriodsV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

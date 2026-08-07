@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::DataIdentifierCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 use crate::cldr_serde::units::data::DurationUnits;
@@ -159,7 +160,7 @@ impl SourceDataProvider {
 
 #[cfg(feature = "unstable")]
 impl crate::IterableDataProviderCached<DigitalDurationDataV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
@@ -171,7 +172,7 @@ impl crate::IterableDataProviderCached<DigitalDurationDataV1> for SourceDataProv
                     .read_and_parse::<cldr_serde::units::data::Resource>(locale, "units.json")
                     .is_ok()
             })
-            .map(crate::DataIdentifierCached::from_locale)
+            .map(DataIdentifierCached::from_locale)
             .collect())
     }
 }

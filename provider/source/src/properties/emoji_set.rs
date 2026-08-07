@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::ucd_helpers;
+use crate::DataIdentifierCached;
 use crate::SourceDataProvider;
 use icu::collections::codepointinvlist::CodePointInversionListBuilder;
 use icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList;
@@ -83,7 +84,7 @@ macro_rules! expand {
             }
 
             impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
-                fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
                     Ok(HashSet::from_iter([Default::default()]))
                 }
             }

@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::DataIdentifierCached;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::decimal::provider::*;
@@ -28,7 +29,7 @@ impl DataProvider<DecimalDigitsV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<DecimalDigitsV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         self.iter_ids_for_used_numbers()
     }
 }

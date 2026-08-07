@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{DatagenCalendar, PackedPatternItem, select_pattern, transpose_with_fallback};
+use crate::DataIdentifierCached;
 use crate::datetime::available_formats::DatetimeAsciiPreference;
 use crate::debug_provider::DebugProvider;
 use crate::{IterableDataProviderCached, SourceDataProvider, cldr_serde};
@@ -383,9 +384,7 @@ impl SourceDataProvider {
 
         Ok(T::build_packed(builder))
     }
-    fn time_skeleton_supported_locales(
-        &self,
-    ) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+    fn time_skeleton_supported_locales(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         super::iter_skeleton_supported_locales(
             self,
             None,
@@ -396,7 +395,7 @@ impl SourceDataProvider {
     fn date_skeleton_supported_locales(
         &self,
         calendar: DatagenCalendar,
-    ) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+    ) -> Result<HashSet<DataIdentifierCached>, DataError> {
         super::iter_skeleton_supported_locales(
             self,
             Some(calendar),
@@ -595,7 +594,7 @@ impl DataProvider<DatetimePatternsTimeV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<DatetimePatternsTimeV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         self.time_skeleton_supported_locales()
     }
 }
@@ -609,7 +608,7 @@ macro_rules! impl_datetime_skeleton_datagen {
         }
 
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
                 self.date_skeleton_supported_locales($calendar)
             }
         }

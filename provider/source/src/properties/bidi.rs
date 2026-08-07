@@ -4,6 +4,7 @@
 
 use std::collections::HashSet;
 
+use crate::DataIdentifierCached;
 use crate::SourceDataProvider;
 use icu::properties::provider::PropertyEnumBidiMirroringGlyphV1;
 use icu_provider::prelude::*;
@@ -137,7 +138,7 @@ impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

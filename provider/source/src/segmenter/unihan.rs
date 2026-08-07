@@ -4,6 +4,7 @@
 
 //! This module contains provider implementations for Unihan radicals.
 
+use crate::DataIdentifierCached;
 use crate::source::RscdCache;
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use icu::collections::codepointinvlist::CodePointInversionListBuilder;
@@ -95,7 +96,7 @@ impl DataProvider<SegmenterUnihanRadicalV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<SegmenterUnihanRadicalV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(HashSet::new())
     }
 }

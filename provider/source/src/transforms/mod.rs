@@ -4,6 +4,7 @@
 
 use super::CldrCache;
 use super::cldr_serde::transforms;
+use crate::DataIdentifierCached;
 use crate::SourceDataProvider;
 use icu::experimental::transliterate::RuleCollection;
 use icu::experimental::transliterate::provider::*;
@@ -192,7 +193,7 @@ impl DataProvider<TransliteratorRulesV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<TransliteratorRulesV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(self
             .cldr()?
             .transforms()?
@@ -202,7 +203,7 @@ impl crate::IterableDataProviderCached<TransliteratorRulesV1> for SourceDataProv
             .iter_ids()?
             .into_iter()
             .map(|id| {
-                crate::DataIdentifierCached::from_attributes_and_locale(
+                DataIdentifierCached::from_attributes_and_locale(
                     id.marker_attributes.as_str(),
                     id.locale.clone(),
                 )

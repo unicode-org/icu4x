@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::DataIdentifierCached;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::segmenter::provider::SegmenterDictionaryAutoV1;
@@ -53,12 +54,12 @@ macro_rules! implement {
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(
                 &self,
-            ) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+            ) -> Result<HashSet<DataIdentifierCached>, DataError> {
                 const SUPPORTED: &[&DataMarkerAttributes] = &[$(DataMarkerAttributes::from_str_or_panic($supported)),*];
                 Ok(SUPPORTED
                     .iter()
                     .copied()
-                    .map(crate::DataIdentifierCached::from_static_attributes)
+                    .map(DataIdentifierCached::from_static_attributes)
                     .collect())
             }
         }

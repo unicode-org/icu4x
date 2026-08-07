@@ -4,6 +4,7 @@
 
 //! This module contains provider implementations backed by LSTM segmentation data.
 
+use crate::DataIdentifierCached;
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use icu::segmenter::provider::{
     LstmData, LstmDataFloat32, LstmMatrix1, LstmMatrix2, LstmMatrix3, ModelType,
@@ -206,11 +207,11 @@ impl DataProvider<SegmenterLstmAutoV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<SegmenterLstmAutoV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(self
             .segmenter_lstm()?
             .list("")?
-            .filter_map(|p| crate::DataIdentifierCached::from_attributes(p).ok())
+            .filter_map(|p| DataIdentifierCached::from_attributes(p).ok())
             .collect())
     }
 }

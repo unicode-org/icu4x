@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::DataIdentifierCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 use icu::experimental::dimension::provider::currency::displayname::*;
@@ -44,7 +45,7 @@ impl DataProvider<CurrencyDisplaynameV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<CurrencyDisplaynameV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         let mut result = HashSet::new();
         let numbers = self.cldr()?.numbers();
         let locales = numbers.list_locales()?;
@@ -62,7 +63,7 @@ impl crate::IterableDataProviderCached<CurrencyDisplaynameV1> for SourceDataProv
                     continue;
                 }
                 if let Ok(id) =
-                    crate::DataIdentifierCached::from_attributes_and_locale(iso, locale.clone())
+                    DataIdentifierCached::from_attributes_and_locale(iso, locale.clone())
                 {
                     result.insert(id);
                 }

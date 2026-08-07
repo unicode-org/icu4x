@@ -4,6 +4,7 @@
 
 use std::collections::HashSet;
 
+use crate::DataIdentifierCached;
 use crate::SourceDataProvider;
 use crate::{cldr_serde, units::helpers::ScientificNumber};
 use icu::experimental::measure::provider::single_unit::UnitID;
@@ -79,7 +80,7 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<UnitsInfoV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

@@ -5,6 +5,7 @@
 use core::ops::Deref;
 use std::collections::HashSet;
 
+use crate::DataIdentifierCached;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
@@ -39,12 +40,12 @@ macro_rules! exemplar_chars_impls {
         }
 
         impl IterableDataProviderCached<$data_marker_name> for SourceDataProvider {
-            fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
                 Ok(self
                     .cldr()?
                     .misc()
                     .list_locales()?
-                    .map(crate::DataIdentifierCached::from_locale)
+                    .map(DataIdentifierCached::from_locale)
                     .collect())
             }
         }
