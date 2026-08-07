@@ -19,7 +19,7 @@ fn test_export_language_identifier_display_names() {
     ExportDriver::new(
         modern_locales
             .into_iter()
-            .map(|loc| DataLocaleFamily::without_descendants(loc))
+            .map(DataLocaleFamily::without_descendants)
             // for the purposes of this test, use every 10th locale
             .step_by(10),
         DeduplicationStrategy::None.into(),
