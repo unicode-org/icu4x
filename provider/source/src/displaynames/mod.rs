@@ -237,10 +237,9 @@ macro_rules! impl_displaynames_menu_v1 {
                 } else {
                     (None, Some($crate::cldr_serde::displaynames::Menu::Core))
                 };
-                let subtag_str = writeable::Writeable::write_to_string(&subtag);
                 let item_tier =
                     crate::displaynames::coverage_experimental::coverage_cldr_cache()
-                        .coverage_tier(req.id.locale, $category, &subtag_str, alt, menu, cldr)?;
+                        .coverage_tier(req.id.locale, $category, &subtag, alt, menu, cldr)?;
                 if !matches!(item_tier, $tier) {
                     return Err(DataErrorKind::IdentifierNotFound
                         .into_error()

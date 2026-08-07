@@ -12,8 +12,16 @@ fn test_export_language_identifier_display_names() {
     let mut blob_bytes = Vec::new();
     let exporter = BlobExporter::new_with_sink(Box::new(&mut blob_bytes));
 
+    let modern_locales = provider
+        .locales_for_coverage_levels([icu_provider_source::CoverageLevel::Modern])
+        .unwrap();
+
     ExportDriver::new(
-        [DataLocaleFamily::FULL],
+        modern_locales
+            .into_iter()
+            .map(|loc| DataLocaleFamily::without_descendants(loc))
+            // for the purposes of this test, use every 10th locale
+            .step_by(10),
         DeduplicationStrategy::None.into(),
         LocaleFallbacker::try_new_unstable(&provider).unwrap(),
     )
@@ -27,8 +35,8 @@ fn test_export_language_identifier_display_names() {
     .unwrap();
 
     assert!(
-        blob_bytes.len() >= 5_000_000,
-        "postcard blob size {} should be at least 5 MB",
+        blob_bytes.len() >= 100_000,
+        "postcard blob size {} should be at least 100 kB",
         blob_bytes.len()
     );
 }

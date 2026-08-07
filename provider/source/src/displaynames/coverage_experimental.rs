@@ -223,6 +223,7 @@ impl CoverageLevelForXPath {
             1 => Some(Self::Basic),
             2 => Some(Self::Moderate),
             3 => Some(Self::Modern),
+            4 => Some(Self::Comprehensive),
             _ => None,
         }
     }
