@@ -197,6 +197,7 @@ impl<'a> Char16TrieIterator<'a> {
     /// let res = iter.next('c');
     /// assert_eq!(res, TrieResult::NoMatch);
     /// ```
+    #[inline]
     pub fn next(&mut self, c: char) -> TrieResult {
         if (c as u32) <= 0xffff {
             self.next16(c as u16)
@@ -230,6 +231,7 @@ impl<'a> Char16TrieIterator<'a> {
     /// let res = iter.next('c');
     /// assert_eq!(res, TrieResult::NoMatch);
     /// ```
+    #[inline]
     pub fn next32(&mut self, c: u32) -> TrieResult {
         if c <= 0xffff {
             self.next16(c as u16)
@@ -263,6 +265,7 @@ impl<'a> Char16TrieIterator<'a> {
     /// let res = iter.next16('c' as u16);
     /// assert_eq!(res, TrieResult::NoMatch);
     /// ```
+    #[inline]
     pub fn next16(&mut self, c: u16) -> TrieResult {
         let mut pos = match self.pos {
             Some(p) => p,
@@ -291,6 +294,7 @@ impl<'a> Char16TrieIterator<'a> {
         }
     }
 
+    #[inline]
     fn branch_next(&mut self, pos: usize, length: usize, in_unit: u16) -> TrieResult {
         let mut pos = pos;
         let mut length = length;
@@ -365,6 +369,7 @@ impl<'a> Char16TrieIterator<'a> {
         }
     }
 
+    #[inline]
     fn next_impl(&mut self, pos: usize, in_unit: u16) -> TrieResult {
         let mut node = trie_unwrap!(self.trie.get(pos));
         let mut pos = pos + 1;
@@ -404,6 +409,7 @@ impl<'a> Char16TrieIterator<'a> {
         TrieResult::NoMatch
     }
 
+    #[inline]
     fn stop(&mut self) {
         self.pos = None;
     }
@@ -445,6 +451,7 @@ impl<'a> Char16TrieIterator<'a> {
         Some(v)
     }
 
+    #[inline]
     fn value_result(&self, pos: usize) -> TrieResult {
         match self.get_value(pos) {
             Some(result) => result,
