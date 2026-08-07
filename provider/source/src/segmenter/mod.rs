@@ -1347,6 +1347,7 @@ impl SourceDataProvider {
 
                 let id = if prefix == "LineBreak" {
                     let x;
+                    // TODO: Avoid allocating a string here; use a Writeable
                     DataIdentifierCached::from_writeable_attributes(format!(
                         "{}{}{}",
                         if locale.is_unknown() {
@@ -1368,6 +1369,7 @@ impl SourceDataProvider {
                     ))
                     .unwrap()
                 } else {
+                    // TODO: Avoid allocating a string here; use a Writeable
                     DataIdentifierCached::from_writeable_attributes_and_locale(
                         keywords
                             .get(&key!("lb"))
