@@ -33,7 +33,7 @@ macro_rules! __impl_segmenter_break_sentence_v2 {
                 pseudo_symbol_map: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\t\0") },
             };
             #[doc(hidden)]
-            pub const SEGMENTER_BREAK_SENTENCE_V2_CHECKSUM: u64 = 16448288255245299208u64;
+            pub const SEGMENTER_BREAK_SENTENCE_V2_CHECKSUM: u64 = 4052899530778027350u64;
         }
         #[clippy::msrv = "1.88"]
         impl icu_provider::DataProvider<icu::segmenter::provider::SegmenterBreakSentenceV2> for $provider {

@@ -33,7 +33,7 @@ macro_rules! __impl_segmenter_break_grapheme_cluster_v2 {
                 pseudo_symbol_map: zerovec::ZeroVec::new(),
             };
             #[doc(hidden)]
-            pub const SEGMENTER_BREAK_GRAPHEME_CLUSTER_V2_CHECKSUM: u64 = 1199987300401214443u64;
+            pub const SEGMENTER_BREAK_GRAPHEME_CLUSTER_V2_CHECKSUM: u64 = 12393384370774602146u64;
         }
         #[clippy::msrv = "1.88"]
         impl icu_provider::DataProvider<icu::segmenter::provider::SegmenterBreakGraphemeClusterV2> for $provider {
