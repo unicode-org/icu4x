@@ -103,7 +103,7 @@ impl DataProvider<DecimalSymbolsV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<DecimalSymbolsV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         self.iter_ids_for_numbers_with_locales()
     }
 }
@@ -116,7 +116,7 @@ fn test_basic() {
 
     let ar_decimal: DataResponse<DecimalSymbolsV1> = provider
         .load(DataRequest {
-            id: crate::intern_id_locale(langid!("ar-EG")),
+            id: DataIdentifierBorrowed::for_locale(&langid!("ar-EG").into()),
             ..Default::default()
         })
         .unwrap();

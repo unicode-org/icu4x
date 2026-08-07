@@ -212,9 +212,7 @@ macro_rules! impl_displaynames_menu_v1 {
         }
 
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(
-                &self,
-            ) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
                 let mut result = HashSet::new();
                 let displaynames = self.cldr()?.displaynames();
                 for locale in displaynames.list_locales()?.filter(|locale| {
@@ -228,10 +226,11 @@ macro_rules! impl_displaynames_menu_v1 {
                             || key.alt == Some($crate::cldr_serde::displaynames::Alt::Menu);
 
                         if matches {
-                            let data_identifier = crate::intern_id_attributes_and_locale(
-                                key.subtag.to_string(),
-                                locale,
-                            )?;
+                            let data_identifier =
+                                crate::DataIdentifierCached::from_attributes_and_locale(
+                                    key.subtag.to_string(),
+                                    locale.clone(),
+                                )?;
                             result.insert(data_identifier);
                         }
                     }
@@ -254,9 +253,7 @@ macro_rules! impl_displaynames_menu_v1 {
 macro_rules! impl_displaynames_iter_v1 {
     ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr) => {
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(
-                &self,
-            ) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
                 let mut result = HashSet::new();
                 let displaynames = self.cldr()?.displaynames();
                 for locale in displaynames.list_locales()?.filter(|locale| {
@@ -268,10 +265,11 @@ macro_rules! impl_displaynames_iter_v1 {
                         let matches = $alt_variant == key.alt && key.menu.is_none();
 
                         if matches {
-                            let data_identifier = crate::intern_id_attributes_and_locale(
-                                key.subtag.to_string(),
-                                locale,
-                            )?;
+                            let data_identifier =
+                                crate::DataIdentifierCached::from_attributes_and_locale(
+                                    key.subtag.to_string(),
+                                    locale.clone(),
+                                )?;
                             result.insert(data_identifier);
                         }
                     }
@@ -290,9 +288,7 @@ macro_rules! impl_displaynames_iter_v1 {
 macro_rules! impl_displaynames_legacy_iter_v1 {
     ($marker:ident, $file:literal) => {
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(
-                &self,
-            ) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
                 let displaynames = self.cldr()?.displaynames();
                 Ok(displaynames
                     .list_locales()?
@@ -300,7 +296,7 @@ macro_rules! impl_displaynames_legacy_iter_v1 {
                         // The directory might exist without the file
                         displaynames.file_exists(locale, $file).unwrap_or_default()
                     })
-                    .map(crate::intern_id_locale)
+                    .map(crate::DataIdentifierCached::from_locale)
                     .collect())
             }
         }

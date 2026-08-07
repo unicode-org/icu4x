@@ -160,7 +160,7 @@ impl DataProvider<ShortCurrencyCompactV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<ShortCurrencyCompactV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         let cldr = self.cldr()?;
         let mut r = self.iter_ids_for_numbers_with_locales()?;
         // TODO(#7493): This filtering might not be needed
@@ -180,15 +180,14 @@ impl IterableDataProviderCached<ShortCurrencyCompactV1> for SourceDataProvider {
                 }
             };
 
-            let numbering_system = if id.marker_attributes.is_empty() {
-                numbers_resource
+            let numbering_system = match id.marker_attributes {
+                None => numbers_resource
                     .main
                     .value
                     .numbers
                     .default_numbering_system
-                    .as_str()
-            } else {
-                id.marker_attributes.as_str()
+                    .as_str(),
+                Some(attr) => attr.as_str(),
             };
 
             numbers_resource

@@ -206,11 +206,11 @@ impl DataProvider<SegmenterLstmAutoV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<SegmenterLstmAutoV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         Ok(self
             .segmenter_lstm()?
             .list("")?
-            .filter_map(|p| crate::intern_id_attributes(p).ok())
+            .filter_map(|p| crate::DataIdentifierCached::from_attributes(p).ok())
             .collect())
     }
 }

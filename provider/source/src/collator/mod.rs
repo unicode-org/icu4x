@@ -53,7 +53,7 @@ fn id_to_file_name(id: DataIdentifierBorrowed) -> String {
     s
 }
 
-fn file_name_to_ids(file_name: &str) -> Vec<DataIdentifierBorrowed<'static>> {
+fn file_name_to_ids(file_name: &str) -> Vec<crate::DataIdentifierCached> {
     let (mut language, mut variant) = file_name.rsplit_once('_').unwrap();
     if language == "root" {
         language = "und";
@@ -70,10 +70,14 @@ fn file_name_to_ids(file_name: &str) -> Vec<DataIdentifierBorrowed<'static>> {
         locale.script = Some(script!("Hani"));
         if variant == "pinyin" {
             // Pinyin is stored in both und-Hans and und-Hani/pinyin
-            r.push(crate::intern_id_locale(locale!("und-Hans")));
+            r.push(crate::DataIdentifierCached::from_locale(locale!(
+                "und-Hans"
+            )));
         } else if variant == "stroke" {
             // Stroke is stored in both und-Hans and und-Hani/stroke
-            r.push(crate::intern_id_locale(locale!("und-Hant")));
+            r.push(crate::DataIdentifierCached::from_locale(locale!(
+                "und-Hant"
+            )));
         }
     } else if variant == "standard" {
         variant = "";
@@ -86,7 +90,9 @@ fn file_name_to_ids(file_name: &str) -> Vec<DataIdentifierBorrowed<'static>> {
         v => v,
     };
 
-    if let Ok(id) = crate::intern_id_attributes_and_locale(marker_attributes, locale) {
+    if let Ok(id) =
+        crate::DataIdentifierCached::from_attributes_and_locale(marker_attributes, locale)
+    {
         r.push(id);
     }
     r
@@ -113,10 +119,7 @@ impl SourceDataProvider {
             })
     }
 
-    fn list_ids(
-        &self,
-        suffix: &str,
-    ) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    fn list_ids(&self, suffix: &str) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         Ok(self
             .icuexport()?
             .list(&format!("collation/{}", self.collation_root_han()))?
@@ -148,8 +151,9 @@ macro_rules! collation_provider {
                     {
                         self.check_req::<$marker>(req)?;
 
+                        let id_cached = crate::DataIdentifierCached::from_attributes_and_locale(req.id.marker_attributes.as_str(), req.id.locale.clone())?;
                         let has_tailoring = self.list_ids("_data")?
-                            .contains(&req.id);
+                            .contains(&id_cached);
 
                         Ok(DataResponse {
                             metadata: Default::default(),
@@ -160,7 +164,7 @@ macro_rules! collation_provider {
             }
 
             impl IterableDataProviderCached<$marker> for SourceDataProvider {
-                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+                fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
                     self.list_ids(<collator_serde::$serde_struct>::suffix())
                 }
             }
@@ -192,8 +196,8 @@ macro_rules! collation_provider {
                     continue;
                 }
 
-                let locale = locale.into();
-                let parent = parent.into();
+                let locale: DataLocale = locale.into();
+                let parent: DataLocale = parent.into();
 
                 $(
                     if !$marker::INFO.is_singleton {
@@ -204,13 +208,13 @@ macro_rules! collation_provider {
                             .map(|id| id.marker_attributes)
                             .collect::<HashSet<_>>()
                         {
-                            let locale = DataIdentifierBorrowed::for_marker_attributes_and_locale(&*attribute, &locale);
-                            let parent = DataIdentifierBorrowed::for_marker_attributes_and_locale(&*attribute, &parent);
+                            let locale = crate::DataIdentifierCached::from_attributes_and_locale(attribute.as_str(), locale.clone()).unwrap();
+                            let parent = crate::DataIdentifierCached::from_attributes_and_locale(attribute.as_str(), parent.clone()).unwrap();
                             assert_eq!(
-                                DataProvider::<$marker>::load(&fallback_provider, DataRequest { id: locale, ..Default::default() })
+                                DataProvider::<$marker>::load(&fallback_provider, DataRequest { id: locale.as_borrowed(), ..Default::default() })
                                     .as_ref()
                                     .map(|response| response.payload.get()),
-                                DataProvider::<$marker>::load(&fallback_provider, DataRequest { id: parent, ..Default::default() })
+                                DataProvider::<$marker>::load(&fallback_provider, DataRequest { id: parent.as_borrowed(), ..Default::default() })
                                     .as_ref()
                                     .map(|response| response.payload.get()),
                                 "{locale:?} should match {parent:?} for {:?}", $marker::INFO

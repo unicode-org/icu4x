@@ -799,7 +799,7 @@ macro_rules! implement {
         }
 
         impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
                 Ok(HashSet::from_iter([Default::default()]))
             }
         }
@@ -833,11 +833,11 @@ macro_rules! implement_override {
         }
 
         impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
                 const SUPPORTED: &[&str] = &[$($supported),*];
                 Ok(SUPPORTED
                    .iter()
-                   .map(|l|crate::intern_id_locale(DataLocale::try_from_str(l).unwrap()))
+                   .map(|l|crate::DataIdentifierCached::from_locale(DataLocale::try_from_str(l).unwrap()))
                    .collect())
             }
         }
@@ -1596,28 +1596,28 @@ impl DataProvider<SegmenterBreakGraphemeClusterV2> for SourceDataProvider {
 
 #[cfg(feature = "unstable")]
 impl IterableDataProviderCached<SegmenterBreakLineV2> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         Ok([Default::default()].into_iter().collect())
     }
 }
 
 #[cfg(feature = "unstable")]
 impl IterableDataProviderCached<SegmenterBreakSentenceV2> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         Ok([Default::default()].into_iter().collect())
     }
 }
 
 #[cfg(feature = "unstable")]
 impl IterableDataProviderCached<SegmenterBreakWordV2> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         Ok([Default::default()].into_iter().collect())
     }
 }
 
 #[cfg(feature = "unstable")]
 impl IterableDataProviderCached<SegmenterBreakGraphemeClusterV2> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         Ok([Default::default()].into_iter().collect())
     }
 }
@@ -1655,7 +1655,7 @@ impl DataProvider<SegmenterBreakLineOverrideV2> for SourceDataProvider {
 
 #[cfg(feature = "unstable")]
 impl IterableDataProviderCached<SegmenterBreakLineOverrideV2> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
         return Err(DataError::custom(
             "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
@@ -1667,7 +1667,7 @@ impl IterableDataProviderCached<SegmenterBreakLineOverrideV2> for SourceDataProv
             .line_segmenter()?
             .1
             .keys()
-            .filter_map(|s| crate::intern_id_attributes(s).ok())
+            .filter_map(|s| crate::DataIdentifierCached::from_attributes(s).ok())
             .collect())
     }
 }
@@ -1705,7 +1705,7 @@ impl DataProvider<SegmenterBreakSentenceOverrideV2> for SourceDataProvider {
 
 #[cfg(feature = "unstable")]
 impl IterableDataProviderCached<SegmenterBreakSentenceOverrideV2> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
         return Err(DataError::custom(
             "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
@@ -1718,7 +1718,7 @@ impl IterableDataProviderCached<SegmenterBreakSentenceOverrideV2> for SourceData
             .1
             .keys()
             .filter_map(|s| DataLocale::try_from_str(s).ok())
-            .map(crate::intern_id_locale)
+            .map(crate::DataIdentifierCached::from_locale)
             .collect())
     }
 }

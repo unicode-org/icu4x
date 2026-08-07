@@ -79,7 +79,7 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<UnitsInfoV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -101,7 +101,7 @@ fn test_basic() {
 
     let und: DataResponse<UnitsInfoV1> = provider
         .load(DataRequest {
-            id: crate::intern_id_locale(langid!("und")),
+            id: DataIdentifierBorrowed::for_locale(&langid!("und").into()),
             ..Default::default()
         })
         .unwrap();

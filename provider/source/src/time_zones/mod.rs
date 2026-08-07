@@ -599,12 +599,12 @@ macro_rules! impl_iterable_data_provider {
     ($($marker:ident),+) => {
         $(
             impl IterableDataProviderCached<$marker> for SourceDataProvider {
-                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+                fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
                     Ok(self
                         .cldr()?
                         .dates("gregorian")
                         .list_locales()?
-                        .map(crate::intern_id_locale)
+                        .map(crate::DataIdentifierCached::from_locale)
                         .collect())
                 }
             }
@@ -626,7 +626,7 @@ impl_iterable_data_provider!(
 );
 
 impl IterableDataProviderCached<TimezonePeriodsV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

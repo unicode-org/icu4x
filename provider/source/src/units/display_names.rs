@@ -55,7 +55,7 @@ impl DataProvider<UnitsDisplayNamesV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<UnitsDisplayNamesV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         let mut data_locales = HashSet::new();
 
         let numbers = self.cldr()?.numbers();
@@ -83,9 +83,9 @@ impl crate::IterableDataProviderCached<UnitsDisplayNamesV1> for SourceDataProvid
                         if patterns.other.is_none() {
                             continue;
                         }
-                        let id = crate::intern_id_attributes_and_locale(
+                        let id = crate::DataIdentifierCached::from_attributes_and_locale(
                             writeable::concat_writeable!(length, "-", unit),
-                            locale,
+                            locale.clone(),
                         )?;
                         data_locales.insert(id);
                     }

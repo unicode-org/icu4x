@@ -105,10 +105,7 @@ pub struct SourceDataProvider {
     pub(crate) timezone_horizon: time_zones::Timestamp,
     #[expect(clippy::type_complexity)] // not as complex as it appears
     requests_cache: Arc<
-        FrozenMap<
-            DataMarkerInfo,
-            Box<OnceLock<Result<HashSet<DataIdentifierBorrowed<'static>>, DataError>>>,
-        >,
+        FrozenMap<DataMarkerInfo, Box<OnceLock<Result<HashSet<DataIdentifierCached>, DataError>>>>,
     >,
 }
 
@@ -515,6 +512,77 @@ impl SourceDataProvider {
     }
 }
 
+#[derive(Default, Debug, Clone, PartialEq, Eq, Hash)]
+pub(crate) struct DataIdentifierCached {
+    pub(crate) marker_attributes: Option<&'static DataMarkerAttributes>,
+    pub(crate) locale: DataLocale,
+}
+
+impl DataIdentifierCached {
+    pub(crate) fn from_locale(locale: impl Into<DataLocale>) -> Self {
+        Self {
+            marker_attributes: None,
+            locale: locale.into(),
+        }
+    }
+
+    pub(crate) fn from_static_attributes(attr: &'static DataMarkerAttributes) -> Self {
+        Self {
+            marker_attributes: if attr.is_empty() { None } else { Some(attr) },
+            locale: DataLocale::default(),
+        }
+    }
+
+    pub(crate) fn from_static_attributes_and_locale(
+        attr: &'static DataMarkerAttributes,
+        locale: impl Into<DataLocale>,
+    ) -> Self {
+        Self {
+            marker_attributes: if attr.is_empty() { None } else { Some(attr) },
+            locale: locale.into(),
+        }
+    }
+
+    pub(crate) fn from_attributes(attr: impl writeable::Writeable) -> Result<Self, DataError> {
+        let attr_static = intern_marker_attributes(attr)?;
+        Ok(Self {
+            marker_attributes: if attr_static.is_empty() {
+                None
+            } else {
+                Some(attr_static)
+            },
+            locale: DataLocale::default(),
+        })
+    }
+
+    pub(crate) fn from_attributes_and_locale(
+        attr: impl writeable::Writeable,
+        locale: impl Into<DataLocale>,
+    ) -> Result<Self, DataError> {
+        let attr_static = intern_marker_attributes(attr)?;
+        Ok(Self {
+            marker_attributes: if attr_static.is_empty() {
+                None
+            } else {
+                Some(attr_static)
+            },
+            locale: locale.into(),
+        })
+    }
+
+    pub(crate) fn as_borrowed(&self) -> DataIdentifierBorrowed<'_> {
+        DataIdentifierBorrowed::for_marker_attributes_and_locale(
+            self.marker_attributes
+                .unwrap_or(DataMarkerAttributes::empty()),
+            &self.locale,
+        )
+    }
+
+    pub(crate) fn as_cow(&self) -> DataIdentifierCow<'_> {
+        self.as_borrowed().as_cow()
+    }
+}
+
 impl SourceDataProvider {
     fn check_req<M: DataMarker>(&self, req: DataRequest) -> Result<(), DataError>
     where
@@ -526,10 +594,28 @@ impl SourceDataProvider {
             } else {
                 Ok(())
             }
-        } else if !self.populate_requests_cache()?.contains(&req.id) {
-            Err(DataErrorKind::IdentifierNotFound)
         } else {
-            Ok(())
+            let cache = self.populate_requests_cache::<M>()?;
+            let attr_option = if req.id.marker_attributes.is_empty() {
+                None
+            } else {
+                match intern_marker_attributes(req.id.marker_attributes.as_str()) {
+                    Ok(attr) => Some(attr),
+                    Err(_) => {
+                        return Err(DataErrorKind::IdentifierNotFound
+                            .with_req(<M as DataMarker>::INFO, req));
+                    }
+                }
+            };
+            let key = DataIdentifierCached {
+                marker_attributes: attr_option,
+                locale: req.id.locale.clone(),
+            };
+            if cache.contains(&key) {
+                Ok(())
+            } else {
+                Err(DataErrorKind::IdentifierNotFound)
+            }
         }
         .map_err(|e| e.with_req(<M as DataMarker>::INFO, req))
     }
@@ -549,11 +635,11 @@ fn test_check_req() {
 
     #[allow(non_local_definitions)] // test-scoped, only place that uses it
     impl IterableDataProviderCached<HelloWorldV1> for SourceDataProvider {
-        fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+        fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
             Ok(HelloWorldProvider
                 .iter_ids()?
                 .into_iter()
-                .map(|id| intern_id_locale(id.locale))
+                .map(|id| DataIdentifierCached::from_locale(id.locale))
                 .collect())
         }
     }
@@ -578,13 +664,13 @@ fn test_check_req() {
 }
 
 trait IterableDataProviderCached<M: DataMarker>: DataProvider<M> {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError>;
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError>;
 }
 
 impl SourceDataProvider {
     fn populate_requests_cache<M: DataMarker>(
         &self,
-    ) -> Result<&HashSet<DataIdentifierBorrowed<'static>>, DataError>
+    ) -> Result<&HashSet<DataIdentifierCached>, DataError>
     where
         SourceDataProvider: IterableDataProviderCached<M>,
     {
@@ -615,39 +701,6 @@ pub(crate) fn intern_marker_attributes(
         .map_err(|_| DataError::custom("Invalid marker attributes"))?;
     let inserted = map.insert(boxed.to_string(), boxed);
     Ok(inserted)
-}
-
-static LOCALES_CACHE: OnceLock<FrozenMap<DataLocale, Box<DataLocale>>> = OnceLock::new();
-
-pub(crate) fn intern_locale(locale: impl Into<DataLocale>) -> &'static DataLocale {
-    let locale = locale.into();
-    let map = LOCALES_CACHE.get_or_init(FrozenMap::new);
-    if let Some(loc) = map.get(&locale) {
-        return loc;
-    }
-    map.insert(locale.clone(), Box::new(locale))
-}
-
-pub(crate) fn intern_id_locale(locale: impl Into<DataLocale>) -> DataIdentifierBorrowed<'static> {
-    DataIdentifierBorrowed::for_locale(intern_locale(locale))
-}
-
-pub(crate) fn intern_id_attributes(
-    w: impl writeable::Writeable,
-) -> Result<DataIdentifierBorrowed<'static>, DataError> {
-    Ok(DataIdentifierBorrowed::for_marker_attributes(
-        intern_marker_attributes(w)?,
-    ))
-}
-
-pub(crate) fn intern_id_attributes_and_locale(
-    w: impl writeable::Writeable,
-    locale: impl Into<DataLocale>,
-) -> Result<DataIdentifierBorrowed<'static>, DataError> {
-    Ok(DataIdentifierBorrowed::for_marker_attributes_and_locale(
-        intern_marker_attributes(w)?,
-        intern_locale(locale),
-    ))
 }
 
 impl<M: DataMarker> IterableDataProvider<M> for SourceDataProvider

@@ -65,7 +65,7 @@ impl SourceDataProvider {
         &self,
         unit_type: UnitType,
         category: &str,
-    ) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    ) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         let mut data_locales = HashSet::new();
         let numbers = self.cldr()?.numbers();
         let locales = numbers.list_locales()?;
@@ -114,9 +114,9 @@ impl SourceDataProvider {
                         continue;
                     }
 
-                    let id = crate::intern_id_attributes_and_locale(
+                    let id = crate::DataIdentifierCached::from_attributes_and_locale(
                         writeable::concat_writeable!(length, "-", unit),
-                        locale,
+                        locale.clone(),
                     )?;
                     data_locales.insert(id);
                 }
@@ -137,9 +137,7 @@ macro_rules! impl_units_display_names_provider {
         }
 
         impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(
-                &self,
-            ) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
                 self.get_display_name_iter_ids_cached($unit_type, $category)
             }
         }

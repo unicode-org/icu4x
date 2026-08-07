@@ -79,12 +79,12 @@ impl DataProvider<CurrencyPatternsDataV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<CurrencyPatternsDataV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
             .list_locales()?
-            .map(crate::intern_id_locale)
+            .map(crate::DataIdentifierCached::from_locale)
             .collect())
     }
 }

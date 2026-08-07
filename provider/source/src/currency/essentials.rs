@@ -127,7 +127,7 @@ impl DataProvider<CurrencyEssentialsV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<CurrencyEssentialsV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         self.iter_ids_for_numbers_with_locales()
     }
 }

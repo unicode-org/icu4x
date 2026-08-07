@@ -148,16 +148,16 @@ impl SourceDataProvider {
         &self,
         calendar: DatagenCalendar,
         keylengths: &'static [&DataMarkerAttributes],
-    ) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    ) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         Ok(self
             .cldr()?
             .dates(calendar.cldr_name())
             .list_locales()?
             .flat_map(|locale| {
                 keylengths.iter().map(move |&length| {
-                    DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    crate::DataIdentifierCached::from_static_attributes_and_locale(
                         length,
-                        crate::intern_locale(locale),
+                        locale.clone(),
                     )
                 })
             })
@@ -645,9 +645,7 @@ macro_rules! impl_symbols_datagen {
         }
 
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(
-                &self,
-            ) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
                 self.iter_datetime_ids($calendar, $lengths)
             }
         }
@@ -663,9 +661,7 @@ macro_rules! impl_pattern_datagen {
         }
 
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(
-                &self,
-            ) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
                 self.iter_datetime_ids($calendar, $lengths)
             }
         }

@@ -168,9 +168,7 @@ macro_rules! implement {
         }
 
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(
-                &self,
-            ) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
                 Ok(self
                     .cldr()?
                     .misc()
@@ -183,7 +181,11 @@ macro_rules! implement {
                         ]
                         .into_iter()
                         .filter_map(move |a| {
-                            crate::intern_id_attributes_and_locale(a.as_str(), l.clone()).ok()
+                            crate::DataIdentifierCached::from_attributes_and_locale(
+                                a.as_str(),
+                                l.clone(),
+                            )
+                            .ok()
                         })
                     })
                     .collect())

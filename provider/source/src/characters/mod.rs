@@ -39,14 +39,12 @@ macro_rules! exemplar_chars_impls {
         }
 
         impl IterableDataProviderCached<$data_marker_name> for SourceDataProvider {
-            fn iter_ids_cached(
-                &self,
-            ) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
                 Ok(self
                     .cldr()?
                     .misc()
                     .list_locales()?
-                    .map(crate::intern_id_locale)
+                    .map(crate::DataIdentifierCached::from_locale)
                     .collect())
             }
         }

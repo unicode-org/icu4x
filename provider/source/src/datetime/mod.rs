@@ -217,7 +217,7 @@ pub(crate) fn iter_skeleton_supported_locales(
     provider: &SourceDataProvider,
     calendar: Option<DatagenCalendar>,
     fieldset_attributes: &[&[&'static DataMarkerAttributes]],
-) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
     let cldr_cal = calendar
         .map(DatagenCalendar::cldr_name)
         .unwrap_or("generic");
@@ -229,10 +229,10 @@ pub(crate) fn iter_skeleton_supported_locales(
             fieldset_attributes
                 .iter()
                 .flat_map(|list| list.iter())
-                .map(move |attrs| {
-                    DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                .map(move |&attrs| {
+                    crate::DataIdentifierCached::from_static_attributes_and_locale(
                         attrs,
-                        crate::intern_locale(locale),
+                        locale.clone(),
                     )
                 })
         })

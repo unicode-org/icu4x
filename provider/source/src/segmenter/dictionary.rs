@@ -53,12 +53,12 @@ macro_rules! implement {
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(
                 &self,
-            ) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+            ) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
                 const SUPPORTED: &[&DataMarkerAttributes] = &[$(DataMarkerAttributes::from_str_or_panic($supported)),*];
                 Ok(SUPPORTED
                     .iter()
                     .copied()
-                    .map(DataIdentifierBorrowed::for_marker_attributes)
+                    .map(crate::DataIdentifierCached::from_static_attributes)
                     .collect())
             }
         }

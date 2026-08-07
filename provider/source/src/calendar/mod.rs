@@ -72,7 +72,7 @@ impl DataProvider<CalendarPreferredV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<CalendarPreferredV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         Ok(self
             .cldr()
             .unwrap()
@@ -83,7 +83,7 @@ impl IterableDataProviderCached<CalendarPreferredV1> for SourceDataProvider {
             .calendar_preference_data
             .keys()
             .map(|&region| {
-                crate::intern_id_locale(LanguageIdentifier::from((
+                crate::DataIdentifierCached::from_locale(LanguageIdentifier::from((
                     Language::UNKNOWN,
                     None,
                     Some(region),

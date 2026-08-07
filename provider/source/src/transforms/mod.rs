@@ -192,7 +192,7 @@ impl DataProvider<TransliteratorRulesV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<TransliteratorRulesV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         Ok(self
             .cldr()?
             .transforms()?
@@ -202,7 +202,7 @@ impl crate::IterableDataProviderCached<TransliteratorRulesV1> for SourceDataProv
             .iter_ids()?
             .into_iter()
             .map(|id| {
-                crate::intern_id_attributes_and_locale(
+                crate::DataIdentifierCached::from_attributes_and_locale(
                     id.marker_attributes.as_str(),
                     id.locale.clone(),
                 )

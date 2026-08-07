@@ -32,7 +32,7 @@ impl DataProvider<UnitIdsV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<UnitIdsV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         let units_data: &cldr_serde::units::info::Resource = self
             .cldr()?
             .core()
@@ -41,7 +41,7 @@ impl crate::IterableDataProviderCached<UnitIdsV1> for SourceDataProvider {
         let ids_set = units_data
             .unit_ids_map()?
             .keys()
-            .map(|unit_name| crate::intern_id_attributes(unit_name))
+            .map(|unit_name| crate::DataIdentifierCached::from_attributes(unit_name))
             .collect::<Result<_, _>>()?;
 
         Ok(ids_set)

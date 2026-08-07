@@ -385,7 +385,7 @@ impl SourceDataProvider {
     }
     fn time_skeleton_supported_locales(
         &self,
-    ) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    ) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         super::iter_skeleton_supported_locales(
             self,
             None,
@@ -396,7 +396,7 @@ impl SourceDataProvider {
     fn date_skeleton_supported_locales(
         &self,
         calendar: DatagenCalendar,
-    ) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    ) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         super::iter_skeleton_supported_locales(
             self,
             Some(calendar),
@@ -595,7 +595,7 @@ impl DataProvider<DatetimePatternsTimeV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<DatetimePatternsTimeV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         self.time_skeleton_supported_locales()
     }
 }
@@ -609,9 +609,7 @@ macro_rules! impl_datetime_skeleton_datagen {
         }
 
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(
-                &self,
-            ) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
                 self.date_skeleton_supported_locales($calendar)
             }
         }

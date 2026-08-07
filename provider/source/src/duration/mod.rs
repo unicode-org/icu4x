@@ -159,7 +159,7 @@ impl SourceDataProvider {
 
 #[cfg(feature = "unstable")]
 impl crate::IterableDataProviderCached<DigitalDurationDataV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
@@ -171,7 +171,7 @@ impl crate::IterableDataProviderCached<DigitalDurationDataV1> for SourceDataProv
                     .read_and_parse::<cldr_serde::units::data::Resource>(locale, "units.json")
                     .is_ok()
             })
-            .map(crate::intern_id_locale)
+            .map(crate::DataIdentifierCached::from_locale)
             .collect())
     }
 }

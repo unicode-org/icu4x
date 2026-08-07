@@ -139,7 +139,7 @@ impl DataProvider<CalendarJapaneseModernV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<CalendarJapaneseModernV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<crate::DataIdentifierCached>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
