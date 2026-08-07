@@ -168,7 +168,9 @@ macro_rules! implement {
         }
 
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+            fn iter_ids_cached(
+                &self,
+            ) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
                 Ok(self
                     .cldr()?
                     .misc()
@@ -180,7 +182,9 @@ macro_rules! implement {
                             ListFormatterPatterns::WIDE,
                         ]
                         .into_iter()
-                        .map(move |a| DataIdentifierCow::from_borrowed_and_owned(a, l.clone()))
+                        .filter_map(move |a| {
+                            crate::intern_id_attributes_and_locale(a.as_str(), l.clone()).ok()
+                        })
                     })
                     .collect())
             }

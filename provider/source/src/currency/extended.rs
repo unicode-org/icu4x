@@ -51,7 +51,7 @@ impl DataProvider<CurrencyExtendedDataV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<CurrencyExtendedDataV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
         let mut result = HashSet::new();
         let numbers = self.cldr()?.numbers();
         let locales = numbers.list_locales()?;
@@ -72,8 +72,8 @@ impl crate::IterableDataProviderCached<CurrencyExtendedDataV1> for SourceDataPro
                 if displaynames.other.is_none() {
                     continue;
                 }
-                if let Ok(attributes) = DataMarkerAttributes::try_from_string(currency.clone()) {
-                    result.insert(DataIdentifierCow::from_owned(attributes, locale));
+                if let Ok(id) = crate::intern_id_attributes_and_locale(currency, locale) {
+                    result.insert(id);
                 }
             }
         }

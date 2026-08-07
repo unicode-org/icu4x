@@ -38,12 +38,12 @@ impl DataProvider<PercentEssentialsV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<PercentEssentialsV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
             .list_locales()?
-            .map(DataIdentifierCow::from_locale)
+            .map(crate::intern_id_locale)
             .collect())
     }
 }
@@ -232,7 +232,7 @@ fn test_basic() {
 
     let en: DataResponse<PercentEssentialsV1> = provider
         .load(DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("en").into()).as_borrowed(),
+            id: crate::intern_id_locale(langid!("en")),
             ..Default::default()
         })
         .unwrap();
@@ -244,7 +244,7 @@ fn test_basic() {
 
     let tr: DataResponse<PercentEssentialsV1> = provider
         .load(DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("tr").into()).as_borrowed(),
+            id: crate::intern_id_locale(langid!("tr")),
             ..Default::default()
         })
         .unwrap();
@@ -256,7 +256,7 @@ fn test_basic() {
 
     let ar_eg: DataResponse<PercentEssentialsV1> = provider
         .load(DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("ar-EG").into()).as_borrowed(),
+            id: crate::intern_id_locale(langid!("ar-EG")),
             ..Default::default()
         })
         .unwrap();

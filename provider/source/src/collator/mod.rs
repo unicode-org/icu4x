@@ -53,7 +53,7 @@ fn id_to_file_name(id: DataIdentifierBorrowed) -> String {
     s
 }
 
-fn file_name_to_ids(file_name: &str) -> Vec<DataIdentifierCow<'static>> {
+fn file_name_to_ids(file_name: &str) -> Vec<DataIdentifierBorrowed<'static>> {
     let (mut language, mut variant) = file_name.rsplit_once('_').unwrap();
     if language == "root" {
         language = "und";
@@ -70,32 +70,25 @@ fn file_name_to_ids(file_name: &str) -> Vec<DataIdentifierCow<'static>> {
         locale.script = Some(script!("Hani"));
         if variant == "pinyin" {
             // Pinyin is stored in both und-Hans and und-Hani/pinyin
-            r.push(DataIdentifierCow::from_borrowed_and_owned(
-                Default::default(),
-                locale!("und-Hans").into(),
-            ));
+            r.push(crate::intern_id_locale(locale!("und-Hans")));
         } else if variant == "stroke" {
             // Stroke is stored in both und-Hans and und-Hani/stroke
-            r.push(DataIdentifierCow::from_borrowed_and_owned(
-                Default::default(),
-                locale!("und-Hant").into(),
-            ));
+            r.push(crate::intern_id_locale(locale!("und-Hant")));
         }
     } else if variant == "standard" {
         variant = "";
     }
 
     let marker_attributes = match variant {
-        "traditional" => DataMarkerAttributes::from_str_or_panic("trad").to_owned(),
-        "phonebook" => DataMarkerAttributes::from_str_or_panic("phonebk").to_owned(),
-        "dictionary" => DataMarkerAttributes::from_str_or_panic("dict").to_owned(),
-        v => match DataMarkerAttributes::try_from_str(v) {
-            Ok(s) => s.to_owned(),
-            _ => return r,
-        },
+        "traditional" => "trad",
+        "phonebook" => "phonebk",
+        "dictionary" => "dict",
+        v => v,
     };
 
-    r.push(DataIdentifierCow::from_owned(marker_attributes, locale));
+    if let Ok(id) = crate::intern_id_attributes_and_locale(marker_attributes, locale) {
+        r.push(id);
+    }
     r
 }
 
@@ -120,7 +113,10 @@ impl SourceDataProvider {
             })
     }
 
-    fn list_ids(&self, suffix: &str) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn list_ids(
+        &self,
+        suffix: &str,
+    ) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
         Ok(self
             .icuexport()?
             .list(&format!("collation/{}", self.collation_root_han()))?
@@ -153,7 +149,7 @@ macro_rules! collation_provider {
                         self.check_req::<$marker>(req)?;
 
                         let has_tailoring = self.list_ids("_data")?
-                            .contains(&DataIdentifierCow::from_borrowed_and_owned(&req.id.marker_attributes, *req.id.locale));
+                            .contains(&req.id);
 
                         Ok(DataResponse {
                             metadata: Default::default(),
@@ -164,7 +160,7 @@ macro_rules! collation_provider {
             }
 
             impl IterableDataProviderCached<$marker> for SourceDataProvider {
-                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
                     self.list_ids(<collator_serde::$serde_struct>::suffix())
                 }
             }

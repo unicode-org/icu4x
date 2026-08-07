@@ -77,7 +77,7 @@ impl SourceDataProvider {
     /// This also includes a bare <locale>
     pub(crate) fn iter_ids_for_numbers_with_locales(
         &self,
-    ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    ) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
@@ -87,20 +87,18 @@ impl SourceDataProvider {
                 self.get_supported_numsys_for_langid(&locale, true)
                     .expect("All languages from list_locales should be present")
                     .into_iter()
-                    .map(move |nsname| {
-                        DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                            DataMarkerAttributes::try_from_str(&nsname).unwrap(),
-                            &locale,
-                        )
-                        .into_owned()
+                    .filter_map(move |nsname| {
+                        crate::intern_id_attributes_and_locale(nsname.as_str(), locale.clone()).ok()
                     })
-                    .chain([DataIdentifierCow::from_locale(last)])
+                    .chain([crate::intern_id_locale(last)])
             })
             .collect())
     }
 
     /// Produce `DataIdentifier`'s for all *used* numbering systems in the form und/<numsys>
-    fn iter_ids_for_used_numbers(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_for_used_numbers(
+        &self,
+    ) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
@@ -109,12 +107,8 @@ impl SourceDataProvider {
                 self.get_supported_numsys_for_langid(&locale, false)
                     .expect("All languages from list_locales should be present")
                     .into_iter()
-                    .map(move |nsname| {
-                        DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                            DataMarkerAttributes::try_from_str(&nsname).unwrap(),
-                            &locale!("und").into(),
-                        )
-                        .into_owned()
+                    .filter_map(move |nsname| {
+                        crate::intern_id_attributes_and_locale(nsname.as_str(), locale!("und")).ok()
                     })
             })
             .collect())
@@ -122,7 +116,7 @@ impl SourceDataProvider {
 
     /// Produce `DataIdentifier`'s for all digit-based numbering systems in the form und/<numsys>
     #[allow(unused)] // TODO(#5824): Support user-specified numbering systems
-    fn iter_all_number_ids(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_all_number_ids(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
         use cldr_serde::numbering_systems::NumberingSystemType;
         let resource: &cldr_serde::numbering_systems::Resource = self
             .cldr()?
@@ -134,12 +128,8 @@ impl SourceDataProvider {
             .numbering_systems
             .iter()
             .filter(|(_nsname, data)| data.nstype == NumberingSystemType::Numeric)
-            .map(|(nsname, _data)| {
-                DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str(nsname).unwrap(),
-                    &locale!("und").into(),
-                )
-                .into_owned()
+            .filter_map(|(nsname, _data)| {
+                crate::intern_id_attributes_and_locale(nsname, locale!("und")).ok()
             })
             .collect())
     }

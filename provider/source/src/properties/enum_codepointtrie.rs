@@ -398,25 +398,25 @@ macro_rules! expand {
             }
 
             impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
-                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>  {
+                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError>  {
                     Ok(HashSet::from_iter([Default::default()]))
                 }
             }
 
             impl crate::IterableDataProviderCached<$parse_marker> for SourceDataProvider {
-                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>  {
+                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError>  {
                     Ok(HashSet::from_iter([Default::default()]))
                 }
             }
 
             impl crate::IterableDataProviderCached<$short_marker> for SourceDataProvider {
-                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>  {
+                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError>  {
                     Ok(HashSet::from_iter([Default::default()]))
                 }
             }
 
             impl crate::IterableDataProviderCached<$long_marker> for SourceDataProvider {
-                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>  {
+                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError>  {
                     Ok(HashSet::from_iter([Default::default()]))
                 }
             }
@@ -464,7 +464,7 @@ impl DataProvider<PropertyNameParseGeneralCategoryMaskV1> for SourceDataProvider
 impl crate::IterableDataProviderCached<PropertyNameParseGeneralCategoryMaskV1>
     for SourceDataProvider
 {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

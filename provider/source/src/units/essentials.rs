@@ -130,7 +130,7 @@ impl DataProvider<UnitsEssentialsV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<UnitsEssentialsV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
         let units = self.cldr()?.units();
         let locales = units.list_locales()?;
         Ok(locales
@@ -142,7 +142,12 @@ impl crate::IterableDataProviderCached<UnitsEssentialsV1> for SourceDataProvider
                     DataMarkerAttributes::from_str_or_panic("narrow"),
                 ]
                 .into_iter()
-                .map(move |length| DataIdentifierCow::from_borrowed_and_owned(length, locale))
+                .map(move |length| {
+                    DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                        length,
+                        crate::intern_locale(locale),
+                    )
+                })
             })
             .collect())
     }

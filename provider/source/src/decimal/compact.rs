@@ -92,13 +92,13 @@ impl DataProvider<DecimalCompactLongV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<DecimalCompactShortV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
         self.iter_ids_for_numbers_with_locales()
     }
 }
 
 impl IterableDataProviderCached<DecimalCompactLongV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
         self.iter_ids_for_numbers_with_locales()
     }
 }
@@ -178,7 +178,7 @@ mod tests {
 
         let ja_compact_short: DataPayload<DecimalCompactShortV1> = provider
             .load(DataRequest {
-                id: DataIdentifierCow::from_locale(langid!("ja").into()).as_borrowed(),
+                id: crate::intern_id_locale(langid!("ja")),
                 ..Default::default()
             })
             .unwrap()

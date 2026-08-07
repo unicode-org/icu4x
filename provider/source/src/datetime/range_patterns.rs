@@ -389,7 +389,7 @@ impl SourceDataProvider {
     /// Returns the set of supported locales for time range skeletons.
     fn time_range_skeleton_supported_locales(
         &self,
-    ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    ) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
         super::iter_skeleton_supported_locales(
             self,
             None,
@@ -401,7 +401,7 @@ impl SourceDataProvider {
     fn date_range_skeleton_supported_locales(
         &self,
         calendar: DatagenCalendar,
-    ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    ) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
         super::iter_skeleton_supported_locales(
             self,
             Some(calendar),
@@ -441,12 +441,12 @@ impl DataProvider<DatetimePatternsRangeGlueV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<DatetimePatternsRangeGlueV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
         Ok(self
             .cldr()?
             .dates("gregorian")
             .list_locales()?
-            .map(DataIdentifierCow::from_locale)
+            .map(crate::intern_id_locale)
             .collect())
     }
 }
@@ -471,7 +471,7 @@ impl DataProvider<DatetimePatternsRangeTimeV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<DatetimePatternsRangeTimeV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
         self.time_range_skeleton_supported_locales()
     }
 }
@@ -495,7 +495,9 @@ macro_rules! impl_datetime_range_skeleton_datagen {
         }
 
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+            fn iter_ids_cached(
+                &self,
+            ) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
                 self.date_range_skeleton_supported_locales($calendar)
             }
         }

@@ -67,7 +67,7 @@ impl DataProvider<CalendarWeekV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<CalendarWeekV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
         let week_data: &cldr_serde::week_data::Resource = self
             .cldr()?
             .core()
@@ -87,7 +87,7 @@ impl IterableDataProviderCached<CalendarWeekV1> for SourceDataProvider {
             .map(|region| {
                 let mut locale = DataLocale::default();
                 locale.region = region;
-                DataIdentifierCow::from_locale(locale)
+                crate::intern_id_locale(locale)
             })
             .collect())
     }
@@ -111,7 +111,7 @@ fn test_basic_cldr_week_data_v2() {
 
     let fr_week_data: DataResponse<CalendarWeekV1> = provider
         .load(DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("und-FR").into()).as_borrowed(),
+            id: crate::intern_id_locale(langid!("und-FR")),
             ..Default::default()
         })
         .unwrap();
@@ -123,7 +123,7 @@ fn test_basic_cldr_week_data_v2() {
 
     let iq_week_data: DataResponse<CalendarWeekV1> = provider
         .load(DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("und-IQ").into()).as_borrowed(),
+            id: crate::intern_id_locale(langid!("und-IQ")),
             ..Default::default()
         })
         .unwrap();
@@ -136,7 +136,7 @@ fn test_basic_cldr_week_data_v2() {
 
     let gg_week_data: DataResponse<CalendarWeekV1> = provider
         .load(DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("und-GG").into()).as_borrowed(),
+            id: crate::intern_id_locale(langid!("und-GG")),
             ..Default::default()
         })
         .unwrap();
@@ -152,7 +152,7 @@ fn test_basic_cldr_week_data_v2() {
 
     let ir_week_data: DataResponse<CalendarWeekV1> = provider
         .load(DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("und-IR").into()).as_borrowed(),
+            id: crate::intern_id_locale(langid!("und-IR")),
             ..Default::default()
         })
         .unwrap();

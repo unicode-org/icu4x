@@ -47,7 +47,7 @@ pub struct DataRequestMetadata {
 }
 
 /// The borrowed version of a [`DataIdentifierCow`].
-#[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub struct DataIdentifierBorrowed<'a> {
     /// Marker-specific request attributes

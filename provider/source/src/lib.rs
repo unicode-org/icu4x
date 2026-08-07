@@ -107,7 +107,7 @@ pub struct SourceDataProvider {
     requests_cache: Arc<
         FrozenMap<
             DataMarkerInfo,
-            Box<OnceLock<Result<HashSet<DataIdentifierCow<'static>>, DataError>>>,
+            Box<OnceLock<Result<HashSet<DataIdentifierBorrowed<'static>>, DataError>>>,
         >,
     >,
 }
@@ -526,7 +526,7 @@ impl SourceDataProvider {
             } else {
                 Ok(())
             }
-        } else if !self.populate_requests_cache()?.contains(&req.id.as_cow()) {
+        } else if !self.populate_requests_cache()?.contains(&req.id) {
             Err(DataErrorKind::IdentifierNotFound)
         } else {
             Ok(())
@@ -549,8 +549,12 @@ fn test_check_req() {
 
     #[allow(non_local_definitions)] // test-scoped, only place that uses it
     impl IterableDataProviderCached<HelloWorldV1> for SourceDataProvider {
-        fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-            Ok(HelloWorldProvider.iter_ids()?.into_iter().collect())
+        fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
+            Ok(HelloWorldProvider
+                .iter_ids()?
+                .into_iter()
+                .map(|id| intern_id_locale(id.locale))
+                .collect())
         }
     }
 
@@ -574,13 +578,13 @@ fn test_check_req() {
 }
 
 trait IterableDataProviderCached<M: DataMarker>: DataProvider<M> {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>;
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError>;
 }
 
 impl SourceDataProvider {
     fn populate_requests_cache<M: DataMarker>(
         &self,
-    ) -> Result<&HashSet<DataIdentifierCow<'_>>, DataError>
+    ) -> Result<&HashSet<DataIdentifierBorrowed<'static>>, DataError>
     where
         SourceDataProvider: IterableDataProviderCached<M>,
     {
@@ -593,6 +597,59 @@ impl SourceDataProvider {
     }
 }
 
+static ATTRIBUTES_CACHE: OnceLock<FrozenMap<String, Box<DataMarkerAttributes>>> = OnceLock::new();
+
+pub(crate) fn intern_marker_attributes(
+    w: impl writeable::Writeable,
+) -> Result<&'static DataMarkerAttributes, DataError> {
+    let s = w.write_to_string();
+    if s.is_empty() {
+        return Ok(DataMarkerAttributes::empty());
+    }
+    let map = ATTRIBUTES_CACHE.get_or_init(FrozenMap::new);
+    if let Some(attr) = map.get(&*s) {
+        return Ok(attr);
+    }
+    let s_string = s.into_owned();
+    let boxed = DataMarkerAttributes::try_from_string(s_string)
+        .map_err(|_| DataError::custom("Invalid marker attributes"))?;
+    let inserted = map.insert(boxed.to_string(), boxed);
+    Ok(inserted)
+}
+
+static LOCALES_CACHE: OnceLock<FrozenMap<DataLocale, Box<DataLocale>>> = OnceLock::new();
+
+pub(crate) fn intern_locale(locale: impl Into<DataLocale>) -> &'static DataLocale {
+    let locale = locale.into();
+    let map = LOCALES_CACHE.get_or_init(FrozenMap::new);
+    if let Some(loc) = map.get(&locale) {
+        return loc;
+    }
+    map.insert(locale.clone(), Box::new(locale))
+}
+
+pub(crate) fn intern_id_locale(locale: impl Into<DataLocale>) -> DataIdentifierBorrowed<'static> {
+    DataIdentifierBorrowed::for_locale(intern_locale(locale))
+}
+
+pub(crate) fn intern_id_attributes(
+    w: impl writeable::Writeable,
+) -> Result<DataIdentifierBorrowed<'static>, DataError> {
+    Ok(DataIdentifierBorrowed::for_marker_attributes(
+        intern_marker_attributes(w)?,
+    ))
+}
+
+pub(crate) fn intern_id_attributes_and_locale(
+    w: impl writeable::Writeable,
+    locale: impl Into<DataLocale>,
+) -> Result<DataIdentifierBorrowed<'static>, DataError> {
+    Ok(DataIdentifierBorrowed::for_marker_attributes_and_locale(
+        intern_marker_attributes(w)?,
+        intern_locale(locale),
+    ))
+}
+
 impl<M: DataMarker> IterableDataProvider<M> for SourceDataProvider
 where
     SourceDataProvider: IterableDataProviderCached<M>,
@@ -603,7 +660,7 @@ where
         } else {
             self.populate_requests_cache()?
                 .iter()
-                .map(|id| id.as_borrowed().as_cow())
+                .map(|id| id.as_cow())
                 .collect()
         })
     }

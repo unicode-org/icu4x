@@ -160,7 +160,7 @@ impl DataProvider<ShortCurrencyCompactV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<ShortCurrencyCompactV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
         let cldr = self.cldr()?;
         let mut r = self.iter_ids_for_numbers_with_locales()?;
         // TODO(#7493): This filtering might not be needed

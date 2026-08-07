@@ -33,7 +33,7 @@ impl DataProvider<PersonNamesFormatV1> for crate::SourceDataProvider {
 }
 
 impl IterableDataProviderCached<PersonNamesFormatV1> for crate::SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
         Ok(self
             .cldr()?
             .personnames()
@@ -46,7 +46,7 @@ impl IterableDataProviderCached<PersonNamesFormatV1> for crate::SourceDataProvid
                     .file_exists(locale, "personNames.json")
                     .unwrap_or_default()
             })
-            .map(DataIdentifierCow::from_locale)
+            .map(crate::intern_id_locale)
             .collect())
     }
 }

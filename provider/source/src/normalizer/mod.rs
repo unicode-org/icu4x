@@ -43,7 +43,9 @@ macro_rules! normalization_provider {
         }
 
         impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+            fn iter_ids_cached(
+                &self,
+            ) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
                 Ok(HashSet::from_iter([Default::default()]))
             }
         }

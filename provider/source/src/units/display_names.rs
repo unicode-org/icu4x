@@ -7,7 +7,6 @@ use crate::cldr_serde;
 use icu::experimental::dimension::provider::units::display_names::{
     UnitsDisplayNames, UnitsDisplayNamesV1,
 };
-use icu_provider::DataMarkerAttributes;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
@@ -56,7 +55,7 @@ impl DataProvider<UnitsDisplayNamesV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<UnitsDisplayNamesV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
         let mut data_locales = HashSet::new();
 
         let numbers = self.cldr()?.numbers();
@@ -84,14 +83,11 @@ impl crate::IterableDataProviderCached<UnitsDisplayNamesV1> for SourceDataProvid
                         if patterns.other.is_none() {
                             continue;
                         }
-                        data_locales.insert(DataIdentifierCow::from_owned(
-                            DataMarkerAttributes::try_from_string(format!("{length}-{unit}"))
-                                .map_err(|_| {
-                                    DataError::custom("Failed to parse the attribute")
-                                        .with_debug_context(&unit)
-                                })?,
+                        let id = crate::intern_id_attributes_and_locale(
+                            writeable::concat_writeable!(length, "-", unit),
                             locale,
-                        ));
+                        )?;
+                        data_locales.insert(id);
                     }
                 }
             }

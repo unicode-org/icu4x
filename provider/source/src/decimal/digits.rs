@@ -28,7 +28,7 @@ impl DataProvider<DecimalDigitsV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<DecimalDigitsV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
         self.iter_ids_for_used_numbers()
     }
 }

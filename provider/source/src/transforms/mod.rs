@@ -192,7 +192,7 @@ impl DataProvider<TransliteratorRulesV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<TransliteratorRulesV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
         Ok(self
             .cldr()?
             .transforms()?
@@ -201,8 +201,13 @@ impl crate::IterableDataProviderCached<TransliteratorRulesV1> for SourceDataProv
             .as_provider_unstable(self, self, self)?
             .iter_ids()?
             .into_iter()
-            .map(|id| id.as_borrowed().into_owned())
-            .collect())
+            .map(|id| {
+                crate::intern_id_attributes_and_locale(
+                    id.marker_attributes.as_str(),
+                    id.locale.clone(),
+                )
+            })
+            .collect::<Result<_, _>>()?)
     }
 }
 
@@ -216,10 +221,9 @@ mod tests {
 
         let _data: DataPayload<TransliteratorRulesV1> = provider
             .load(DataRequest {
-                id: DataIdentifierCow::from_marker_attributes(
+                id: DataIdentifierBorrowed::for_marker_attributes(
                     DataMarkerAttributes::from_str_or_panic("de-t-de-d0-ascii"),
-                )
-                .as_borrowed(),
+                ),
                 ..Default::default()
             })
             .unwrap()
@@ -232,10 +236,9 @@ mod tests {
 
         let _data: DataPayload<TransliteratorRulesV1> = provider
             .load(DataRequest {
-                id: DataIdentifierCow::from_marker_attributes(
+                id: DataIdentifierBorrowed::for_marker_attributes(
                     DataMarkerAttributes::from_str_or_panic("und-latn-t-s0-ascii"),
-                )
-                .as_borrowed(),
+                ),
                 ..Default::default()
             })
             .unwrap()

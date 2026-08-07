@@ -206,12 +206,11 @@ impl DataProvider<SegmenterLstmAutoV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<SegmenterLstmAutoV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
         Ok(self
             .segmenter_lstm()?
             .list("")?
-            .filter_map(|p| DataMarkerAttributes::try_from_string(p).ok())
-            .map(DataIdentifierCow::from_marker_attributes_owned)
+            .filter_map(|p| crate::intern_id_attributes(p).ok())
             .collect())
     }
 }

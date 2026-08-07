@@ -67,7 +67,7 @@ impl DataProvider<TimezoneIdentifiersIanaCoreV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<TimezoneIdentifiersIanaCoreV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -116,7 +116,7 @@ impl DataProvider<TimezoneIdentifiersIanaExtendedV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<TimezoneIdentifiersIanaExtendedV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierBorrowed<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
