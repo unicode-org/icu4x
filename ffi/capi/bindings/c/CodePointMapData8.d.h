@@ -14,6 +14,11 @@
 typedef struct CodePointMapData8 CodePointMapData8;
 
 
+typedef struct DiplomatCodePointMapData8View {
+  const CodePointMapData8** data;
+  size_t len;
+} DiplomatCodePointMapData8View;
+
 
 
 #endif // CodePointMapData8_D_H

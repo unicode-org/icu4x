@@ -326,7 +326,6 @@ impl PatternBackend for MultiNamedPlaceholder {
     type PlaceholderKey<'a> = MultiNamedPlaceholderKey<'a>;
     #[cfg(feature = "alloc")]
     type PlaceholderKeyCow<'a> = MultiNamedPlaceholderKeyCow<'a>;
-    type Error<'a> = MissingNamedPlaceholderError<'a>;
     type Store = str;
     type Iter<'a> = MultiNamedPlaceholderPatternIterator<'a>;
 

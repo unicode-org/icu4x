@@ -182,6 +182,9 @@ lazy_static::lazy_static! {
         "icu::datetime::DateTimeFormatter::format_unchecked",
         "icu::datetime::NoCalendarFormatter::format_unchecked",
         "icu::datetime::FormattedDateTimeUnchecked",
+        "icu::datetime::range::DateRangeFormatter",
+        "icu::datetime::range::FixedCalendarDateRangeFormatter",
+        "icu::datetime::range::FormattedDateRange",
 
         // Not planned for 2.0: Would need to introduce diplomat writeable with parts
         "icu::list::parts",
@@ -325,8 +328,6 @@ lazy_static::lazy_static! {
 
         "icu::properties::unicodeset_parse",
 
-        "icu::segmenter::neo",
-
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
         // and markers and newtypes
@@ -363,6 +364,7 @@ lazy_static::lazy_static! {
         "icu::time::types::TimeZoneVariantULE",
 
         // Reexported
+        "icu_provider_adapters::fallback::LocaleFallbacker",
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
         "icu::calendar::error::DateError",

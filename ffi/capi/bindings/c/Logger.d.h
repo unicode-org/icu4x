@@ -14,6 +14,11 @@
 typedef struct Logger Logger;
 
 
+typedef struct DiplomatLoggerView {
+  const Logger** data;
+  size_t len;
+} DiplomatLoggerView;
+
 
 
 #endif // Logger_D_H

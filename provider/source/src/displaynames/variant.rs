@@ -5,10 +5,10 @@
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
-use crate::displaynames::{ALT_SECONDARY_SUBSTRING, ALT_SHORT_SUBSTRING, ALT_SUBSTRING};
-use core::convert::TryFrom;
+use crate::cldr_serde::displaynames::{Alt, WithAlt};
+use crate::displaynames::extract_names_for_zeromap_struct;
 use icu::experimental::displaynames::provider::*;
-use icu::locale::{ParseError, subtags::Variant};
+use icu::locale::subtags::Variant;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use zerovec::VarZeroCow;
@@ -24,60 +24,43 @@ impl DataProvider<VariantDisplayNamesV1> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(VariantDisplayNames::try_from(data).map_err(|e| {
-                DataError::custom("data for VariantDisplayNames").with_display_context(&e)
-            })?),
+            payload: DataPayload::from_owned(VariantDisplayNames::from(data)),
         })
     }
 }
 
 crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesVariantLongV1,
+    LocaleNamesVariantMediumV1,
+    Variant,
     cldr_serde::displaynames::variant::Resource,
     "variants.json",
     variants,
-    None::<&str>,
-);
-
-crate::displaynames::impl_displaynames_v1!(
-    LocaleNamesVariantShortV1,
-    cldr_serde::displaynames::variant::Resource,
-    "variants.json",
-    variants,
-    Some(ALT_SHORT_SUBSTRING),
+    None,
 );
 
 crate::displaynames::impl_displaynames_legacy_iter_v1!(VariantDisplayNamesV1, "variants.json");
 
-impl TryFrom<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNames<'static> {
-    type Error = ParseError;
+// TODO: Support alt variants for variant display names.
+impl From<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNames<'static> {
+    fn from(other: &cldr_serde::displaynames::variant::Resource) -> Self {
+        let extracted = extract_names_for_zeromap_struct(
+            &other.main.value.localedisplaynames.variants,
+            &[Alt::Secondary],
+            "variant",
+            |variant| Some(variant.to_tinystr()),
+        );
 
-    fn try_from(other: &cldr_serde::displaynames::variant::Resource) -> Result<Self, Self::Error> {
-        let mut names = BTreeMap::new();
-        for entry in other.main.value.localedisplaynames.variants.iter() {
-            // TODO: Support alt variants for variant display names.
-            if !entry.0.contains(ALT_SUBSTRING) {
-                names.insert(
-                    Variant::try_from_str(entry.0)?.to_tinystr(),
-                    entry.1.as_str(),
-                );
-            } else if entry.0.ends_with(ALT_SECONDARY_SUBSTRING) {
-                // TODO(#8012): Handle this with datagen alt flags.
-            } else {
-                log::warn!("Unknown alt variant for variant: {}", entry.0);
-            }
-        }
-        Ok(Self {
-            // Old CLDR versions may contain trivial entries, so filter
-            names: names
-                .into_iter()
-                .filter(|&(k, v)| k != v)
+        let to_zero_map = |map: BTreeMap<tinystr::TinyAsciiStr<8>, &str>| {
+            map.into_iter()
                 .map(|(k, v)| (k.to_unvalidated(), v))
-                .collect(),
-        })
+                .collect()
+        };
+
+        Self {
+            names: to_zero_map(extracted.names),
+        }
     }
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -105,13 +88,13 @@ mod tests {
     }
 
     #[test]
-    fn test_locale_names_variant_long() {
+    fn test_locale_names_variant_medium() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleNamesVariantLongV1> = provider
+        let data: DataPayload<LocaleNamesVariantMediumV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::try_from_str("POSIX").unwrap(),
+                    DataMarkerAttributes::try_from_str("posix").unwrap(),
                     &langid!("en-001").into(),
                 ),
                 ..Default::default()

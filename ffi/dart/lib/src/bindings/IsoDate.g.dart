@@ -19,12 +19,16 @@ final class IsoDate implements ffi.Finalizable {
   // maintain borrow validity.
   IsoDate._fromFfi(this._ffi, this._selfEdge) {
     if (_selfEdge.isEmpty) {
-      _finalizer.attach(this, _ffi.cast());
+      _icu4x_IsoDate_destroy_mv1(this, _ffi.cast());
     }
   }
 
-  @_DiplomatFfiUse('icu4x_IsoDate_destroy_mv1')
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_IsoDate_destroy_mv1));
+  // ignore: experimental_member_use
+  @meta.RecordUse()
+  // ignore: non_constant_identifier_names
+  static void _icu4x_IsoDate_destroy_mv1(IsoDate cl, ffi.Pointer<ffi.Void> pointer) => _finalizer.attach(cl, pointer);
+
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_internal_icu4x_IsoDate_destroy_mv1));
 
   /// Creates a new [IsoDate] from the specified date.
   ///
@@ -204,102 +208,122 @@ final class IsoDate implements ffi.Finalizable {
 
 }
 
-@_DiplomatFfiUse('icu4x_IsoDate_destroy_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_IsoDate_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_IsoDate_destroy_mv1(ffi.Pointer<ffi.Void> self);
+external void _internal_icu4x_IsoDate_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@_DiplomatFfiUse('icu4x_IsoDate_create_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Int32, ffi.Uint8, ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_IsoDate_create_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_IsoDate_create_mv1(int year, int month, int day);
 
-@_DiplomatFfiUse('icu4x_IsoDate_from_rata_die_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Int64)>(isLeaf: true, symbol: 'icu4x_IsoDate_from_rata_die_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_IsoDate_from_rata_die_mv1(int rd);
 
-@_DiplomatFfiUse('icu4x_IsoDate_from_string_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_IsoDate_from_string_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_IsoDate_from_string_mv1(_SliceUtf8 v);
 
-@_DiplomatFfiUse('icu4x_IsoDate_to_calendar_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_to_calendar_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_IsoDate_to_calendar_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> calendar);
 
-@_DiplomatFfiUse('icu4x_IsoDate_to_any_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_to_any_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_IsoDate_to_any_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_IsoDate_to_rata_die_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Int64 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_to_rata_die_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDate_to_rata_die_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_IsoDate_day_of_year_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_day_of_year_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDate_day_of_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_IsoDate_day_of_month_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_day_of_month_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDate_day_of_month_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_IsoDate_day_of_week_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_day_of_week_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDate_day_of_week_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_IsoDate_weekday_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_weekday_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDate_weekday_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_IsoDate_week_of_year_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_IsoWeekOfYearFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_week_of_year_mv1')
 // ignore: non_constant_identifier_names
 external _IsoWeekOfYearFfi _icu4x_IsoDate_week_of_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_IsoDate_month_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_month_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDate_month_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_IsoDate_year_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_year_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDate_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_IsoDate_is_in_leap_year_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_is_in_leap_year_mv1')
 // ignore: non_constant_identifier_names
 external bool _icu4x_IsoDate_is_in_leap_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_IsoDate_months_in_year_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_months_in_year_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDate_months_in_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_IsoDate_days_in_month_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_days_in_month_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDate_days_in_month_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_IsoDate_days_in_year_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_days_in_year_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDate_days_in_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_IsoDate_try_add_with_options_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _DateDurationFfi, _DateAddOptionsFfi)>(isLeaf: true, symbol: 'icu4x_IsoDate_try_add_with_options_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_IsoDate_try_add_with_options_mv1(ffi.Pointer<ffi.Opaque> self, _DateDurationFfi duration, _DateAddOptionsFfi options);
 
-@_DiplomatFfiUse('icu4x_IsoDate_until_with_options_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_DateDurationFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _DateDifferenceOptionsFfi)>(isLeaf: true, symbol: 'icu4x_IsoDate_until_with_options_mv1')
 // ignore: non_constant_identifier_names
 external _DateDurationFfi _icu4x_IsoDate_until_with_options_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> other, _DateDifferenceOptionsFfi options);

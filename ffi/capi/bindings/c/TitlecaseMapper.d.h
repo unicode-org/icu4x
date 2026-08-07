@@ -14,6 +14,11 @@
 typedef struct TitlecaseMapper TitlecaseMapper;
 
 
+typedef struct DiplomatTitlecaseMapperView {
+  const TitlecaseMapper** data;
+  size_t len;
+} DiplomatTitlecaseMapperView;
+
 
 
 #endif // TitlecaseMapper_D_H

@@ -114,6 +114,8 @@ impl<'a, T> core::ops::Deref for Cow<'a, T> {
 }
 
 #[cfg(feature = "unstable")]
+mod abstract_formatter;
+#[cfg(feature = "unstable")]
 mod compact_formatter;
 mod decimal_formatter;
 #[cfg(feature = "unstable")]
@@ -130,7 +132,10 @@ pub use decimal_formatter::{
 };
 
 #[cfg(feature = "unstable")]
-pub use compact_formatter::CompactDecimalFormatter;
+pub use compact_formatter::{CompactDecimalFormatter, FormattedUnsignedCompactDecimal};
+
+#[cfg(feature = "unstable")]
+pub use abstract_formatter::AbstractFormatter;
 
 pub use preferences::DecimalFormatterPreferences;
 

@@ -15,6 +15,12 @@
 namespace icu4x {
 namespace capi {
     struct LineBreakIteratorUtf16;
+
+
+    typedef struct DiplomatLineBreakIteratorUtf16View {
+      const LineBreakIteratorUtf16** data;
+      size_t len;
+    } DiplomatLineBreakIteratorUtf16View;
 } // namespace capi
 } // namespace
 

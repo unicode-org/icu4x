@@ -28,6 +28,12 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct CodePointMapData8;
+
+
+    typedef struct DiplomatCodePointMapData8View {
+      const CodePointMapData8** data;
+      size_t len;
+    } DiplomatCodePointMapData8View;
 } // namespace capi
 } // namespace
 
@@ -58,14 +64,14 @@ public:
    *
    * See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
    */
-  inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_value(uint8_t value) const;
+  inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_value(uint8_t value) const DIPLOMAT_LIFETIME_BOUND;
 
   /**
    * Produces an iterator over ranges of code points that do not map to `value`
    *
    * See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
    */
-  inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_value_complemented(uint8_t value) const;
+  inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_value_complemented(uint8_t value) const DIPLOMAT_LIFETIME_BOUND;
 
   /**
    * Given a mask value (the nth bit marks property value = n), produce an iterator over ranges of code points
@@ -79,7 +85,7 @@ public:
    *
    * See the [Rust documentation for `iter_ranges_for_group`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group) for more information.
    */
-  inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_group(icu4x::GeneralCategoryGroup group) const;
+  inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_group(icu4x::GeneralCategoryGroup group) const DIPLOMAT_LIFETIME_BOUND;
 
   /**
    * Gets a {@link CodePointSetData} representing all entries in this map that map to the given value

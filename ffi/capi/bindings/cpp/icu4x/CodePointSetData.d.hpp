@@ -26,6 +26,12 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct CodePointSetData;
+
+
+    typedef struct DiplomatCodePointSetDataView {
+      const CodePointSetData** data;
+      size_t len;
+    } DiplomatCodePointSetDataView;
 } // namespace capi
 } // namespace
 
@@ -54,14 +60,14 @@ public:
    *
    * See the [Rust documentation for `iter_ranges`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointSetDataBorrowed.html#method.iter_ranges) for more information.
    */
-  inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges() const;
+  inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges() const DIPLOMAT_LIFETIME_BOUND;
 
   /**
    * Produces an iterator over ranges of code points not contained in this set
    *
    * See the [Rust documentation for `iter_ranges_complemented`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointSetDataBorrowed.html#method.iter_ranges_complemented) for more information.
    */
-  inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_complemented() const;
+  inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_complemented() const DIPLOMAT_LIFETIME_BOUND;
 
   /**
    * Produces a set for obtaining General Category Group values

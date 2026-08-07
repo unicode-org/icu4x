@@ -342,7 +342,7 @@ impl IntoOption<YearStyle> for YearStyle {
 /// The examples in the discriminants are based on the following inputs and hour cycles:
 ///
 /// 1. 11 o'clock with 12-hour time
-/// 2. 16:20 (4:20 pm) with 24-hour time
+/// 2. 16:00 (4:00 pm) with 24-hour time
 /// 3. 7:15:01.85 with 24-hour time
 ///
 /// Fractional second digits can be displayed with a fixed precision. If you would like
@@ -430,7 +430,7 @@ pub enum TimePrecision {
     /// Examples:
     ///
     /// 1. `11:00 am`
-    /// 2. `16:20`
+    /// 2. `16:00`
     /// 3. `07:15`
     Minute,
     /// Display the hour, minute, and second. Hide fractional seconds.
@@ -440,7 +440,7 @@ pub enum TimePrecision {
     /// Examples:
     ///
     /// 1. `11:00:00 am`
-    /// 2. `16:20:00`
+    /// 2. `16:00:00`
     /// 3. `07:15:01`
     #[default]
     Second,
@@ -450,15 +450,15 @@ pub enum TimePrecision {
     /// Examples with [`SubsecondDigits::S1`]:
     ///
     /// 1. `11:00:00.0 am`
-    /// 2. `16:20:00.0`
+    /// 2. `16:00:00.0`
     /// 3. `07:15:01.8`
     Subsecond(SubsecondDigits),
-    /// Display the hour; display the minute if nonzero. Hide the second.
+    /// Display the hour; display the minute if nonzero or if the pattern/hour cycle retains 0 minutes (such as in 24-hour time). Hide the second.
     ///
     /// Examples:
     ///
     /// 1. `11 am`
-    /// 2. `16:20`
+    /// 2. `16:00`
     /// 3. `07:15`
     MinuteOptional,
 }

@@ -249,8 +249,8 @@ int main() {
     // Test maximize.
     write = diplomat_simple_write(output, 40);
     struct DiplomatStringView und_str = {
-        "und",
-        3
+        "und-US",
+        6
     };
     locale_result = icu4x_Locale_from_string_mv1(und_str);
     if (!locale_result.is_ok) {

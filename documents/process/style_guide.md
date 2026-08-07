@@ -287,7 +287,7 @@ See [this issue](https://github.com/unicode-org/rust-discuss/issues/15) for more
 
 ### Cross-crate internal APIs :: suggested
 
-Cross-crate internal APIs (public APIs marked `#[doc(hidden)]` for use by other ICU4X crates) allow sharing functionality between crates. If used, they must adhere to the following guidelines:
+Cross-crate internal APIs (public APIs marked `#[doc(hidden)]` in ICU4X component crates for use by other ICU4X component crates) allow sharing functionality between crates. If used, they must adhere to the following guidelines:
 
 - **Test and document as if stable:** A change to an internal API in one crate can break assumptions in another ("action at a distance"). To mitigate this, cross-crate internal APIs should be documented and tested to a similar level of scrutiny as public APIs.
 - **Design for graceful upgrades:** When clients update one crate at a time, they may experience ephemeral build breakages if these APIs change. Spend time designing the API shape to reduce the potential that you need to change it in the next release, which can cause friction for clients, or such that it is easy to "duplicate" the API instead of editing the existing one. (Note: anything using a trait impl is trickier to duplicate.)

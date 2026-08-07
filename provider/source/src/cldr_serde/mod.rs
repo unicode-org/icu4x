@@ -31,6 +31,8 @@ pub(crate) mod personnames;
 #[cfg(feature = "unstable")]
 pub(crate) mod plural_ranges;
 pub(crate) mod plurals;
+#[cfg(feature = "unstable")]
+pub(crate) mod segmentation;
 pub(crate) mod time_zones;
 #[cfg(feature = "unstable")]
 pub(crate) mod transforms;

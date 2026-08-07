@@ -2,10 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::dimension::provider::units::display_names::UnitsDisplayNamesV1;
-use crate::dimension::units::formatter::{UnitsFormatter, UnitsFormatterPreferences};
+use core::marker::PhantomData;
+
+use crate::dimension::provider::units::categorized_display_names::{
+    UnitsNamesDurationCoreV1, UnitsNamesDurationExtendedV1, UnitsNamesDurationOutlierV1,
+};
+use crate::dimension::units::categorized_formatter::{
+    CategorizedFormatter, CategorizedUnitsFormatterPreferences,
+};
 use crate::dimension::units::options::{UnitsFormatterOptions, Width};
 use crate::duration::options::FieldStyle;
+use crate::measure::category::CategorizedMeasureUnit;
+use crate::measure::measureunit::MeasureUnit;
 
 use super::format::FormattedDuration;
 use super::options::BaseStyle;
@@ -33,9 +41,11 @@ define_preferences!(
     }
 );
 
-prefs_convert!(DurationFormatterPreferences, UnitsFormatterPreferences, {
-    numbering_system
-});
+prefs_convert!(
+    DurationFormatterPreferences,
+    CategorizedUnitsFormatterPreferences,
+    { numbering_system }
+);
 prefs_convert!(DurationFormatterPreferences, DecimalFormatterPreferences, {
     numbering_system
 });
@@ -64,20 +74,20 @@ pub struct DurationFormatter {
 
 #[derive(Debug)]
 pub(crate) struct DurationUnitFormatter {
-    pub(crate) year: UnitsFormatter,
-    pub(crate) month: UnitsFormatter,
-    pub(crate) week: UnitsFormatter,
-    pub(crate) day: UnitsFormatter,
-    pub(crate) hour: UnitsFormatter,
-    pub(crate) minute: UnitsFormatter,
-    pub(crate) second: UnitsFormatter,
-    pub(crate) millisecond: UnitsFormatter,
-    pub(crate) microsecond: UnitsFormatter,
-    pub(crate) nanosecond: UnitsFormatter,
+    pub(crate) year: CategorizedFormatter<crate::measure::category::Duration>,
+    pub(crate) month: CategorizedFormatter<crate::measure::category::Duration>,
+    pub(crate) week: CategorizedFormatter<crate::measure::category::Duration>,
+    pub(crate) day: CategorizedFormatter<crate::measure::category::Duration>,
+    pub(crate) hour: CategorizedFormatter<crate::measure::category::Duration>,
+    pub(crate) minute: CategorizedFormatter<crate::measure::category::Duration>,
+    pub(crate) second: CategorizedFormatter<crate::measure::category::Duration>,
+    pub(crate) millisecond: CategorizedFormatter<crate::measure::category::Duration>,
+    pub(crate) microsecond: CategorizedFormatter<crate::measure::category::Duration>,
+    pub(crate) nanosecond: CategorizedFormatter<crate::measure::category::Duration>,
 }
 
 impl core::ops::Index<Unit> for DurationUnitFormatter {
-    type Output = UnitsFormatter;
+    type Output = CategorizedFormatter<crate::measure::category::Duration>;
 
     fn index(&self, index: Unit) -> &Self::Output {
         match index {
@@ -118,7 +128,22 @@ impl DurationUnitFormatter {
             let w = DurationUnitFormatter::field_style_to_unit_width(style, options.base);
             let options = UnitsFormatterOptions { width: w };
 
-            UnitsFormatter::try_new((&prefs).into(), unit.as_unit_formatter_name(), options)
+            CategorizedFormatter::<crate::measure::category::Duration>::try_new_outlier(
+                (&prefs).into(),
+                match unit {
+                    Unit::Year => crate::measure::category::Duration::year(),
+                    Unit::Month => crate::measure::category::Duration::month(),
+                    Unit::Week => crate::measure::category::Duration::week(),
+                    Unit::Day => crate::measure::category::Duration::day(),
+                    Unit::Hour => crate::measure::category::Duration::hour(),
+                    Unit::Minute => crate::measure::category::Duration::minute(),
+                    Unit::Second => crate::measure::category::Duration::second(),
+                    Unit::Millisecond => crate::measure::category::Duration::millisecond(),
+                    Unit::Microsecond => crate::measure::category::Duration::microsecond(),
+                    Unit::Nanosecond => crate::measure::category::Duration::nanosecond(),
+                },
+                options,
+            )
         };
 
         Ok(DurationUnitFormatter {
@@ -137,7 +162,9 @@ impl DurationUnitFormatter {
 
     fn try_new_unstable<
         D: ?Sized
-            + DataProvider<UnitsDisplayNamesV1>
+            + DataProvider<UnitsNamesDurationCoreV1>
+            + DataProvider<UnitsNamesDurationExtendedV1>
+            + DataProvider<UnitsNamesDurationOutlierV1>
             + DataProvider<DecimalSymbolsV1>
             + DataProvider<DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
@@ -150,10 +177,13 @@ impl DurationUnitFormatter {
             let w = DurationUnitFormatter::field_style_to_unit_width(style, options.base);
             let options = UnitsFormatterOptions { width: w };
 
-            UnitsFormatter::try_new_unstable(
+            CategorizedFormatter::<crate::measure::category::Duration>::try_new_outlier_unstable(
                 provider,
                 (&prefs).into(),
-                unit.as_unit_formatter_name(),
+                CategorizedMeasureUnit {
+                    _category: PhantomData,
+                    unit: MeasureUnit::try_from_str(unit.as_unit_formatter_name()).unwrap(),
+                },
                 options,
             )
         };
@@ -233,7 +263,9 @@ impl DurationFormatter {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<
         D: DataProvider<provider::DigitalDurationDataV1>
-            + DataProvider<UnitsDisplayNamesV1>
+            + DataProvider<UnitsNamesDurationCoreV1>
+            + DataProvider<UnitsNamesDurationExtendedV1>
+            + DataProvider<UnitsNamesDurationOutlierV1>
             + DataProvider<DecimalSymbolsV1>
             + DataProvider<DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>

@@ -25,6 +25,12 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct WindowsParser;
+
+
+    typedef struct DiplomatWindowsParserView {
+      const WindowsParser** data;
+      size_t len;
+    } DiplomatWindowsParserView;
 } // namespace capi
 } // namespace
 

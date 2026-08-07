@@ -27,6 +27,12 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct IanaParser;
+
+
+    typedef struct DiplomatIanaParserView {
+      const IanaParser** data;
+      size_t len;
+    } DiplomatIanaParserView;
 } // namespace capi
 } // namespace
 
@@ -64,7 +70,7 @@ public:
   /**
    * See the [Rust documentation for `iter`](https://docs.rs/icu/2.2.0/icu/time/zone/iana/struct.IanaParserBorrowed.html#method.iter) for more information.
    */
-  inline std::unique_ptr<icu4x::TimeZoneIterator> iter() const;
+  inline std::unique_ptr<icu4x::TimeZoneIterator> iter() const DIPLOMAT_LIFETIME_BOUND;
 
     inline const icu4x::capi::IanaParser* AsFFI() const;
     inline icu4x::capi::IanaParser* AsFFI();

@@ -10,4 +10,4 @@ mod bin_cp_set;
 mod emoji_set;
 mod enum_codepointtrie;
 mod script;
-mod uprops_serde;
+pub(crate) mod ucd_helpers;

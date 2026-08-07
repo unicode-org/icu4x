@@ -78,7 +78,10 @@ fn make_testdata() {
         )
     })
     .with_marker_attributes_filter("currency", |attrs| {
-        matches!(attrs.as_str(), "CAD" | "EGP" | "EUR" | "GBP" | "USD")
+        matches!(
+            attrs.as_str().split('/').next_back().unwrap(),
+            "CAD" | "EGP" | "EUR" | "GBP" | "USD"
+        )
     })
     .with_marker_attributes_filter("locale_names_region", |attrs| {
         matches!(
@@ -109,7 +112,7 @@ fn make_testdata() {
         )
     })
     .with_marker_attributes_filter("locale_names_variant", |attrs| {
-        matches!(attrs.as_str(), "POSIX")
+        matches!(attrs.as_str(), "posix")
     })
     .with_marker_attributes_filter("numbering_system", |attrs| {
         matches!(attrs.as_str(), "arab" | "beng" | "cakm" | "latn" | "thai")

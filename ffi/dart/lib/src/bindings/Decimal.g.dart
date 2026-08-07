@@ -17,12 +17,16 @@ final class Decimal implements ffi.Finalizable {
   // maintain borrow validity.
   Decimal._fromFfi(this._ffi, this._selfEdge) {
     if (_selfEdge.isEmpty) {
-      _finalizer.attach(this, _ffi.cast());
+      _icu4x_Decimal_destroy_mv1(this, _ffi.cast());
     }
   }
 
-  @_DiplomatFfiUse('icu4x_Decimal_destroy_mv1')
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_Decimal_destroy_mv1));
+  // ignore: experimental_member_use
+  @meta.RecordUse()
+  // ignore: non_constant_identifier_names
+  static void _icu4x_Decimal_destroy_mv1(Decimal cl, ffi.Pointer<ffi.Void> pointer) => _finalizer.attach(cl, pointer);
+
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_internal_icu4x_Decimal_destroy_mv1));
 
   /// Construct an [Decimal] from an integer.
   ///
@@ -254,157 +258,188 @@ final class Decimal implements ffi.Finalizable {
 
 }
 
-@_DiplomatFfiUse('icu4x_Decimal_destroy_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_Decimal_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_Decimal_destroy_mv1(ffi.Pointer<ffi.Void> self);
+external void _internal_icu4x_Decimal_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@_DiplomatFfiUse('icu4x_Decimal_from_int64_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Int64)>(isLeaf: true, symbol: 'icu4x_Decimal_from_int64_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_Decimal_from_int64_mv1(int v);
 
-@_DiplomatFfiUse('icu4x_Decimal_from_double_with_lower_magnitude_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueDecimalLimitErrorFfi Function(ffi.Double, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_Decimal_from_double_with_lower_magnitude_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueDecimalLimitErrorFfi _icu4x_Decimal_from_double_with_lower_magnitude_mv1(double f, int magnitude);
 
-@_DiplomatFfiUse('icu4x_Decimal_from_double_with_significant_digits_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueDecimalLimitErrorFfi Function(ffi.Double, ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_Decimal_from_double_with_significant_digits_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueDecimalLimitErrorFfi _icu4x_Decimal_from_double_with_significant_digits_mv1(double f, int digits);
 
-@_DiplomatFfiUse('icu4x_Decimal_from_double_with_round_trip_precision_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueDecimalLimitErrorFfi Function(ffi.Double)>(isLeaf: true, symbol: 'icu4x_Decimal_from_double_with_round_trip_precision_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueDecimalLimitErrorFfi _icu4x_Decimal_from_double_with_round_trip_precision_mv1(double f);
 
-@_DiplomatFfiUse('icu4x_Decimal_from_string_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_Decimal_from_string_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Decimal_from_string_mv1(_SliceUtf8 v);
 
-@_DiplomatFfiUse('icu4x_Decimal_digit_at_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_Decimal_digit_at_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Decimal_digit_at_mv1(ffi.Pointer<ffi.Opaque> self, int magnitude);
 
-@_DiplomatFfiUse('icu4x_Decimal_magnitude_start_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Decimal_magnitude_start_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Decimal_magnitude_start_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Decimal_magnitude_end_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Decimal_magnitude_end_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Decimal_magnitude_end_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Decimal_nonzero_magnitude_start_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Decimal_nonzero_magnitude_start_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Decimal_nonzero_magnitude_start_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Decimal_nonzero_magnitude_end_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Decimal_nonzero_magnitude_end_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Decimal_nonzero_magnitude_end_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Decimal_is_zero_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Decimal_is_zero_mv1')
 // ignore: non_constant_identifier_names
 external bool _icu4x_Decimal_is_zero_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Decimal_multiply_pow10_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_Decimal_multiply_pow10_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Decimal_multiply_pow10_mv1(ffi.Pointer<ffi.Opaque> self, int power);
 
-@_DiplomatFfiUse('icu4x_Decimal_sign_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Decimal_sign_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Decimal_sign_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Decimal_set_sign_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_Decimal_set_sign_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Decimal_set_sign_mv1(ffi.Pointer<ffi.Opaque> self, int sign);
 
-@_DiplomatFfiUse('icu4x_Decimal_apply_sign_display_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_Decimal_apply_sign_display_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Decimal_apply_sign_display_mv1(ffi.Pointer<ffi.Opaque> self, int signDisplay);
 
-@_DiplomatFfiUse('icu4x_Decimal_trim_start_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Decimal_trim_start_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Decimal_trim_start_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Decimal_trim_end_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Decimal_trim_end_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Decimal_trim_end_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Decimal_trim_end_if_integer_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Decimal_trim_end_if_integer_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Decimal_trim_end_if_integer_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Decimal_pad_start_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_Decimal_pad_start_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Decimal_pad_start_mv1(ffi.Pointer<ffi.Opaque> self, int position);
 
-@_DiplomatFfiUse('icu4x_Decimal_pad_end_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_Decimal_pad_end_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Decimal_pad_end_mv1(ffi.Pointer<ffi.Opaque> self, int position);
 
-@_DiplomatFfiUse('icu4x_Decimal_set_max_position_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_Decimal_set_max_position_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Decimal_set_max_position_mv1(ffi.Pointer<ffi.Opaque> self, int position);
 
-@_DiplomatFfiUse('icu4x_Decimal_round_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_Decimal_round_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Decimal_round_mv1(ffi.Pointer<ffi.Opaque> self, int position);
 
-@_DiplomatFfiUse('icu4x_Decimal_ceil_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_Decimal_ceil_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Decimal_ceil_mv1(ffi.Pointer<ffi.Opaque> self, int position);
 
-@_DiplomatFfiUse('icu4x_Decimal_expand_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_Decimal_expand_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Decimal_expand_mv1(ffi.Pointer<ffi.Opaque> self, int position);
 
-@_DiplomatFfiUse('icu4x_Decimal_floor_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_Decimal_floor_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Decimal_floor_mv1(ffi.Pointer<ffi.Opaque> self, int position);
 
-@_DiplomatFfiUse('icu4x_Decimal_trunc_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_Decimal_trunc_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Decimal_trunc_mv1(ffi.Pointer<ffi.Opaque> self, int position);
 
-@_DiplomatFfiUse('icu4x_Decimal_round_with_mode_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_Decimal_round_with_mode_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Decimal_round_with_mode_mv1(ffi.Pointer<ffi.Opaque> self, int position, int mode);
 
-@_DiplomatFfiUse('icu4x_Decimal_round_with_mode_and_increment_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_Decimal_round_with_mode_and_increment_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Decimal_round_with_mode_and_increment_mv1(ffi.Pointer<ffi.Opaque> self, int position, int mode, int increment);
 
-@_DiplomatFfiUse('icu4x_Decimal_concatenate_end_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Decimal_concatenate_end_mv1')
 // ignore: non_constant_identifier_names
 external _ResultVoidVoid _icu4x_Decimal_concatenate_end_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> other);
 
-@_DiplomatFfiUse('icu4x_Decimal_to_string_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Decimal_to_string_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Decimal_to_string_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);

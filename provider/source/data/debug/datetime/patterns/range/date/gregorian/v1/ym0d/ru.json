@@ -10,33 +10,33 @@
   ],
   "elements": [
     {
-      "header": 7,
+      "header": 26,
       "patterns": [
         "d–d MMM y г.",
         "d MMM – d MMM y г.",
-        "d MMM y г. – d MMM y г."
+        "d MMM y г."
       ]
     },
     {
-      "header": 4,
+      "header": 32,
       "patterns": [
         "dd.MM.y–dd.MM.y"
       ]
     },
     {
-      "header": 15,
+      "header": 106,
       "patterns": [
         "d–d MMM y г. G",
         "d MMM – d MMM y г. G",
         "d MMM y – d MMM y гг. G",
-        "d MMM y г. G – d MMM y г. G"
+        "d MMM y г. G"
       ]
     },
     {
-      "header": 12,
+      "header": 96,
       "patterns": [
         "dd.MM.y–dd.MM.y G",
-        "dd.MM.y G – dd.MM.y G"
+        "dd.MM.y G"
       ]
     }
   ]

@@ -100,32 +100,38 @@ enum GraphemeClusterBreak {
 
 }
 
-@_DiplomatFfiUse('icu4x_GraphemeClusterBreak_for_char_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Int32 Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_GraphemeClusterBreak_for_char_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_GraphemeClusterBreak_for_char_mv1(Rune ch);
 
-@_DiplomatFfiUse('icu4x_GraphemeClusterBreak_long_name_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultSliceUtf8Void Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_GraphemeClusterBreak_long_name_mv1')
 // ignore: non_constant_identifier_names
 external _ResultSliceUtf8Void _icu4x_GraphemeClusterBreak_long_name_mv1(int self);
 
-@_DiplomatFfiUse('icu4x_GraphemeClusterBreak_short_name_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultSliceUtf8Void Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_GraphemeClusterBreak_short_name_mv1')
 // ignore: non_constant_identifier_names
 external _ResultSliceUtf8Void _icu4x_GraphemeClusterBreak_short_name_mv1(int self);
 
-@_DiplomatFfiUse('icu4x_GraphemeClusterBreak_to_integer_value_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_GraphemeClusterBreak_to_integer_value_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_GraphemeClusterBreak_to_integer_value_mv1(int self);
 
-@_DiplomatFfiUse('icu4x_GraphemeClusterBreak_from_integer_value_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultInt32Void Function(ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_GraphemeClusterBreak_from_integer_value_mv1')
 // ignore: non_constant_identifier_names
 external _ResultInt32Void _icu4x_GraphemeClusterBreak_from_integer_value_mv1(int other);
 
-@_DiplomatFfiUse('icu4x_GraphemeClusterBreak_try_from_str_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultInt32Void Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_GraphemeClusterBreak_try_from_str_mv1')
 // ignore: non_constant_identifier_names
 external _ResultInt32Void _icu4x_GraphemeClusterBreak_try_from_str_mv1(_SliceUtf8 s);

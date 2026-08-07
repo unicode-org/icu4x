@@ -23,8 +23,12 @@ where
     N: Convertible,
 {
     /// Converts the given value from the input unit to the output unit.
-    pub fn convert(&self, value: &N) -> N {
-        self.0.convert(value)
+    pub fn convert(&self, value: N) -> N::Result {
+        match &self.0 {
+            UnitsConverterInner::Proportional { factor } => value.mul(factor),
+            UnitsConverterInner::Reciprocal { factor } => value.reciprocal_mul(factor),
+            UnitsConverterInner::Offset { factor, offset } => value.mul_add(factor, offset),
+        }
     }
 }
 
@@ -37,93 +41,23 @@ pub(crate) enum UnitsConverterInner<N>
 where
     N: Convertible,
 {
-    Proportional(ProportionalConverter<N>),
-    Reciprocal(ReciprocalConverter<N>),
-    Offset(OffsetConverter<N>),
-}
-
-impl<N> UnitsConverterInner<N>
-where
-    N: Convertible,
-{
-    /// Converts the given value from the input unit to the output unit based on the inner converter type.
-    fn convert(&self, value: &N) -> N {
-        match self {
-            UnitsConverterInner::Proportional(converter) => converter.convert(value),
-            UnitsConverterInner::Reciprocal(converter) => converter.convert(value),
-            UnitsConverterInner::Offset(converter) => converter.convert(value),
-        }
-    }
-}
-
-/// A converter for converting between two units that are reciprocal.
-/// For example:
-///    1 - `meter-per-second` to `second-per-meter`.
-///    2 - `mile-per-gallon` to `liter-per-100-kilometer`.
-#[derive(Debug, Clone)]
-pub(crate) struct ReciprocalConverter<N>
-where
-    N: Convertible,
-{
-    pub(crate) proportional: ProportionalConverter<N>,
-}
-
-impl<N> ReciprocalConverter<N>
-where
-    N: Convertible,
-{
-    /// Converts the given value from the input unit to the output unit.
-    pub(crate) fn convert(&self, value: &N) -> N {
-        self.proportional.convert(value).reciprocal()
-    }
-}
-
-/// A converter for converting between two units that require an offset.
-#[derive(Debug, Clone)]
-pub(crate) struct OffsetConverter<N>
-where
-    N: Convertible,
-{
-    /// The proportional converter.
-    pub(crate) proportional: ProportionalConverter<N>,
-
-    /// The offset value to be added to the result of the proportional converter.
-    pub(crate) offset: N,
-}
-
-impl<N> OffsetConverter<N>
-where
-    N: Convertible,
-{
-    /// Converts the given value from the input unit to the output unit.
-    pub(crate) fn convert(&self, value: &N) -> N {
-        self.proportional.convert(value).add_refs(&self.offset)
-    }
-}
-
-/// `ProportionalConverter` is responsible for converting between two units that are proportionally related.
-/// For example: 1- `meter` to `foot`.
-///              2- `square-meter` to `square-foot`.
-///
-/// However, it cannot convert between two units that are not proportionally related,
-/// such as `celsius` to `fahrenheit` and `mile-per-gallon` to `liter-per-100-kilometer`.
-///
-/// Also, it cannot convert between two units that are not single, such as `meter` to `foot-and-inch`.
-#[derive(Debug, Clone)]
-pub(crate) struct ProportionalConverter<N>
-where
-    N: Convertible,
-{
-    /// The conversion rate between the input and output units.
-    pub(crate) conversion_rate: N,
-}
-
-impl<N> ProportionalConverter<N>
-where
-    N: Convertible,
-{
-    /// Converts the given value from the input unit to the output unit.
-    pub fn convert(&self, value: &N) -> N {
-        value.mul_refs(&self.conversion_rate)
-    }
+    /// `ProportionalConverter` is responsible for converting between two units that are proportionally related.
+    /// For example: 1- `meter` to `foot`.
+    ///              2- `square-meter` to `square-foot`.
+    ///
+    /// However, it cannot convert between two units that are not proportionally related,
+    /// such as `celsius` to `fahrenheit` and `mile-per-gallon` to `liter-per-100-kilometer`.
+    ///
+    /// Also, it cannot convert between two units that are not single, such as `meter` to `foot-and-inch`.
+    Proportional { factor: N::Factor },
+    /// A converter for converting between two units that are reciprocal.
+    /// For example:
+    ///    1 - `meter-per-second` to `second-per-meter`.
+    ///    2 - `mile-per-gallon` to `liter-per-100-kilometer`.
+    Reciprocal { factor: N::Factor },
+    /// A converter for converting between two units that require an offset.
+    Offset {
+        factor: N::Factor,
+        offset: N::Addend,
+    },
 }

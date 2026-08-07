@@ -19,6 +19,12 @@ struct CodePointRangeIteratorResult;
 namespace icu4x {
 namespace capi {
     struct CodePointRangeIterator;
+
+
+    typedef struct DiplomatCodePointRangeIteratorView {
+      const CodePointRangeIterator** data;
+      size_t len;
+    } DiplomatCodePointRangeIteratorView;
 } // namespace capi
 } // namespace
 

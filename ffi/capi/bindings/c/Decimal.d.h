@@ -14,6 +14,11 @@
 typedef struct Decimal Decimal;
 
 
+typedef struct DiplomatDecimalView {
+  const Decimal** data;
+  size_t len;
+} DiplomatDecimalView;
+
 
 
 #endif // Decimal_D_H

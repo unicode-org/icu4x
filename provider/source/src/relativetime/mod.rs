@@ -55,7 +55,7 @@ macro_rules! make_data_provider {
                     self.check_req::<$marker>(req)?;
                     let resource: &cldr_serde::date_fields::Resource = self
                         .cldr()?
-                        .dates("gregorian")
+                        .dates(None)
                         .read_and_parse(req.id.locale, "dateFields.json")?;
                     let fields = &resource.main.value.dates.fields;
 
@@ -82,7 +82,7 @@ macro_rules! make_data_provider {
                 fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
                     Ok(self
                         .cldr()?
-                        .dates("gregorian")
+                        .dates(None)
                         .list_locales()?
                         .map(DataIdentifierCow::from_locale)
                         .collect())

@@ -1,0 +1,28 @@
+{
+  "has_explicit_short": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "elements": [
+    {
+      "header": 168,
+      "patterns": [
+        "G y MMM d, E – MMM d, E",
+        "G y MMM d, E – y MMM d, E",
+        "G y MMM d, E – G y MMM d, E"
+      ]
+    },
+    {
+      "header": 160,
+      "patterns": [
+        "G y-MM-dd, E – y-MM-dd, E",
+        "G y-MM-dd, E – G y-MM-dd, E"
+      ]
+    }
+  ]
+}

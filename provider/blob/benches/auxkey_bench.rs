@@ -5,7 +5,7 @@
 extern crate alloc;
 
 use criterion::{Criterion, black_box, criterion_group, criterion_main};
-use icu_locale::LocaleFallbacker;
+use icu_locale::fallback::LocaleFallbacker;
 use icu_locale_core::{LanguageIdentifier, langid};
 use icu_provider::dynutil::UpcastDataPayload;
 use icu_provider::export::*;

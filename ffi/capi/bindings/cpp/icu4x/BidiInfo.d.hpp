@@ -20,6 +20,12 @@ class BidiParagraph;
 namespace icu4x {
 namespace capi {
     struct BidiInfo;
+
+
+    typedef struct DiplomatBidiInfoView {
+      const BidiInfo** data;
+      size_t len;
+    } DiplomatBidiInfoView;
 } // namespace capi
 } // namespace
 
@@ -40,7 +46,7 @@ public:
   /**
    * Get the nth paragraph, returning `None` if out of bounds
    */
-  inline std::unique_ptr<icu4x::BidiParagraph> paragraph_at(size_t n) const;
+  inline std::unique_ptr<icu4x::BidiParagraph> paragraph_at(size_t n) const DIPLOMAT_LIFETIME_BOUND;
 
   /**
    * The number of bytes in this full text

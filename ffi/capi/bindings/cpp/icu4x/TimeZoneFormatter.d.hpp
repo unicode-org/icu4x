@@ -28,6 +28,12 @@ class DateTimeWriteError;
 namespace icu4x {
 namespace capi {
     struct TimeZoneFormatter;
+
+
+    typedef struct DiplomatTimeZoneFormatterView {
+      const TimeZoneFormatter** data;
+      size_t len;
+    } DiplomatTimeZoneFormatterView;
 } // namespace capi
 } // namespace
 

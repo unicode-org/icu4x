@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceDataProvider;
-use crate::source::{AbstractFs, UnicodeCache};
+use crate::source::{AbstractFs, RscdCache};
 use icu::locale::{LanguageIdentifier, langid};
 use icu_provider::DataError;
 use std::collections::BTreeSet;
@@ -38,7 +38,7 @@ impl AbstractFs {
     }
 }
 
-impl UnicodeCache {
+impl RscdCache {
     pub fn dump(
         &self,
         target: &Path,
@@ -91,7 +91,7 @@ fn download_repo_sources() {
     let provider = SourceDataProvider::new();
 
     let cldr_files = provider
-        .cldr_paths
+        .cldr()
         .unwrap()
         .serde_cache
         .root
@@ -99,7 +99,7 @@ fn download_repo_sources() {
         .unwrap();
 
     let icuexport_files = provider
-        .icuexport_paths
+        .icuexport()
         .unwrap()
         .root
         .dump(
@@ -109,7 +109,7 @@ fn download_repo_sources() {
         .unwrap();
 
     let lstm_files = provider
-        .segmenter_lstm_paths
+        .segmenter_lstm()
         .unwrap()
         .root
         .dump(
@@ -118,15 +118,15 @@ fn download_repo_sources() {
         )
         .unwrap();
 
-    let unicode_files = provider
-        .unicode_paths
+    let rscd_files = provider
+        .rscd()
         .unwrap()
         .dump(
-            &out_root.join("unicode"),
-            UNICODE_GLOB.iter().copied().map(String::from).collect(),
+            &out_root.join("rscd"),
+            RSCD_GLOB.iter().copied().map(String::from).collect(),
         )
         .unwrap();
-    let irg_path = out_root.join("unicode/ucd/Unihan/Unihan_IRGSources.txt");
+    let irg_path = out_root.join("rscd/ucd/Unihan/Unihan_IRGSources.txt");
     std::io::copy(
         &mut BufReader::new(File::open(&irg_path).unwrap())
             .lines()
@@ -140,7 +140,7 @@ fn download_repo_sources() {
     .unwrap();
 
     let mut tzdb_files = provider
-        .tzdb_paths
+        .tzdb()
         .unwrap()
         .root
         .dump(
@@ -183,13 +183,13 @@ fn download_repo_sources() {
         cldr_files,
         icuexport_files,
         lstm_files,
-        unicode_files,
+        rscd_files,
         tzdb_files,
     ] = [
         cldr_files,
         icuexport_files,
         lstm_files,
-        unicode_files,
+        rscd_files,
         tzdb_files,
     ]
     .map(|files| {
@@ -238,10 +238,10 @@ pub fn lstm_data() -> AbstractFs {{
 }}
 
 #[rustfmt::skip]
-pub fn unicode_data() -> AbstractFs {{
+pub fn rscd_data() -> AbstractFs {{
     include_files!(
-        \"../../tests/data/unicode/\";
-        {unicode_files}
+        \"../../tests/data/rscd/\";
+        {rscd_files}
     )
 }}
 
@@ -255,4 +255,105 @@ pub fn tzdb_data() -> AbstractFs {{
 "
     )
     .unwrap();
+
+    // Download RSCD test files
+    for (rscd_path, repo_path) in [
+        (
+            "ucd/NormalizationTest.txt",
+            "components/normalizer/tests/data/NormalizationTest.txt",
+        ),
+        (
+            "ucd/auxiliary/GraphemeBreakTest.txt",
+            "components/segmenter/tests/testdata/GraphemeBreakTest.txt",
+        ),
+        (
+            "ucd/auxiliary/LineBreakTest.txt",
+            "components/segmenter/tests/testdata/LineBreakTest.txt",
+        ),
+        (
+            "ucd/auxiliary/SentenceBreakTest.txt",
+            "components/segmenter/tests/testdata/SentenceBreakTest.txt",
+        ),
+        (
+            "ucd/auxiliary/WordBreakTest.txt",
+            "components/segmenter/tests/testdata/WordBreakTest.txt",
+        ),
+    ] {
+        std::fs::write(
+            crate_root.join("../..").join(repo_path),
+            provider
+                .rscd()
+                .unwrap()
+                .read_to_string(rscd_path)
+                .expect(rscd_path),
+        )
+        .unwrap();
+    }
+
+    for (cldr_path, repo_path) in [
+        (
+            "common/testData/units/unitsTest.txt",
+            "components/experimental/tests/units/data/unitsTest.txt",
+        ),
+        (
+            "common/uca/CollationTest_CLDR_SHIFTED_SHORT.txt",
+            "components/collator/tests/data/CollationTest_CLDR_SHIFTED_SHORT.txt",
+        ),
+        (
+            "common/uca/CollationTest_CLDR_NON_IGNORABLE_SHORT.txt",
+            "components/collator/tests/data/CollationTest_CLDR_NON_IGNORABLE_SHORT.txt",
+        ),
+        (
+            "common/testData/transforms/el-Latn-t-el-m0-bgn.txt",
+            "components/experimental/tests/transliterate/data/fixtures/el-Latn-t-el-m0-bgn.txt",
+        ),
+        (
+            "common/testData/transforms/und-Arab-t-und-beng.txt",
+            "components/experimental/tests/transliterate/data/fixtures/und-Arab-t-und-beng.txt",
+        ),
+        (
+            "common/testData/transforms/und-t-d0-publish.txt",
+            "components/experimental/tests/transliterate/data/fixtures/und-t-d0-publish.txt",
+        ),
+        (
+            "common/testData/transforms/und-t-s0-publish.txt",
+            "components/experimental/tests/transliterate/data/fixtures/und-t-s0-publish.txt",
+        ),
+        (
+            "common/testData/transforms/und-t-und-latn-d0-ascii.txt",
+            "components/experimental/tests/transliterate/data/fixtures/und-t-und-latn-d0-ascii.txt",
+        ),
+    ] {
+        std::fs::write(
+            crate_root.join("../..").join(repo_path),
+            AbstractFs::new_from_url(format!(
+                "https://raw.githubusercontent.com/unicode-org/cldr/refs/tags/release-{}/",
+                SourceDataProvider::TESTED_CLDR_TAG
+                    .replace(".", "-")
+                    .rsplit_once("-")
+                    .unwrap()
+                    .0
+            ))
+            .read_to_string(cldr_path)
+            .expect(cldr_path),
+        )
+        .unwrap();
+    }
+
+    #[allow(clippy::single_element_loop)]
+    for (icu_path, repo_path) in [(
+        "icu4c/source/test/testdata/riwords.txt",
+        "components/collator/tests/data/riwords.txt",
+    )] {
+        std::fs::write(
+            crate_root.join("../..").join(repo_path),
+            AbstractFs::new_from_url(format!(
+                "https://raw.githubusercontent.com/unicode-org/icu/refs/tags/{}/",
+                SourceDataProvider::TESTED_ICUEXPORT_TAG
+            ))
+            .read_to_string(icu_path)
+            .expect(icu_path),
+        )
+        .unwrap();
+    }
 }

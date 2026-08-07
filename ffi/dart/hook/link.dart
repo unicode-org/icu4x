@@ -2,12 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:code_assets/code_assets.dart'
     show CodeAsset, HookConfigCodeConfig, LinkInputCodeAssets, OS;
-import 'package:hooks/hooks.dart' show LinkInput, link;
+import 'package:hooks/hooks.dart' show link;
 import 'package:logging/logging.dart' show Level, Logger;
 import 'package:native_toolchain_c/native_toolchain_c.dart'
     show CLinker, LinkerOptions;
@@ -27,18 +24,32 @@ Future<void> main(List<String> args) async {
       return;
     }
 
-    final usedSymbols = input.usages
-        ?.constantsOf(
-          record_use.Identifier(
-            importUri: staticLib.id,
-            name: '_DiplomatFfiUse',
-          ),
-        )
-        .map((instance) => instance['symbol'] as String);
+    final recordedUses = input
+        // ignore: experimental_member_use
+        .recordedUses;
+    Iterable<String>? usedSymbols;
+    if (recordedUses == null) {
+      print(
+        'Enable the --enable-experiment=record-use experiment'
+        ' to use treeshake unused symbols.',
+      );
+    } else {
+      usedSymbols = recordedUses.calls.keys
+          .where(
+            (id) =>
+                id.library ==
+                const record_use.Library(
+                  'package:icu4x/src/bindings/lib.g.dart',
+                ),
+          )
+          .map((id) => id.name)
+          .where((methodName) => methodName.startsWith('_'))
+          .map((methodName) => methodName.substring(1));
+    }
 
     print('''
 ### Using symbols:
-  ${usedSymbols?.join('\n')}
+  ${usedSymbols?.join('\n') ?? 'Treeshaking disabled, using all symbols.'}
 ### End using symbols
 ''');
 
@@ -47,13 +58,16 @@ Future<void> main(List<String> args) async {
       packageName: input.packageName,
       assetName: 'src/bindings/lib.g.dart',
       sources: [staticLib.file!.toFilePath()],
-      libraries:
-          // On Windows, icu4x.lib is lacking /DEFAULTLIB directives to advise
-          // the linker on what libraries to link against. To make up for that,
-          // the libraries used have to be provided to the linker explicitly.
-          input.config.code.targetOS == OS.windows
-          ? const ['MSVCRT', 'ws2_32', 'userenv', 'ntdll']
-          : const [],
+      libraries: switch (input.config.code.targetOS) {
+        // On Windows, icu4x.lib is lacking /DEFAULTLIB directives to advise
+        // the linker on what libraries to link against. To make up for that,
+        // the libraries used have to be provided to the linker explicitly.
+        OS.windows => const ['MSVCRT', 'ws2_32', 'userenv', 'ntdll'],
+        // On Android, libm (math library) is not linked by default, but math
+        // functions like `expf` referenced in Rust libicu4x require libm.
+        OS.android => const ['m'],
+        _ => const [],
+      },
       linkerOptions: LinkerOptions.treeshake(symbolsToKeep: usedSymbols),
     ).run(
       input: input,
@@ -63,18 +77,4 @@ Future<void> main(List<String> args) async {
         ..onRecord.listen((record) => print(record.message)),
     );
   });
-}
-
-extension on LinkInput {
-  record_use.RecordedUsages? get usages {
-    // the hooks package is pinned
-    // ignore: experimental_member_use
-    final records = recordedUsagesFile;
-    if (records == null) {
-      return null;
-    }
-    final usagesContent = File.fromUri(records).readAsStringSync();
-    final usagesJson = jsonDecode(usagesContent) as Map<String, dynamic>;
-    return record_use.RecordedUsages.fromJson(usagesJson);
-  }
 }

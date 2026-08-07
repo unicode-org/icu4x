@@ -112,22 +112,26 @@ final class ZonedDateTime {
       ]);
 }
 
-@_DiplomatFfiUse('icu4x_ZonedDateTime_strict_from_string_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultZonedDateTimeFfiInt32 Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTime_strict_from_string_mv1')
 // ignore: non_constant_identifier_names
 external _ResultZonedDateTimeFfiInt32 _icu4x_ZonedDateTime_strict_from_string_mv1(_SliceUtf8 v, ffi.Pointer<ffi.Opaque> calendar, ffi.Pointer<ffi.Opaque> ianaParser);
 
-@_DiplomatFfiUse('icu4x_ZonedDateTime_location_only_from_string_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultZonedDateTimeFfiInt32 Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTime_location_only_from_string_mv1')
 // ignore: non_constant_identifier_names
 external _ResultZonedDateTimeFfiInt32 _icu4x_ZonedDateTime_location_only_from_string_mv1(_SliceUtf8 v, ffi.Pointer<ffi.Opaque> calendar, ffi.Pointer<ffi.Opaque> ianaParser);
 
-@_DiplomatFfiUse('icu4x_ZonedDateTime_offset_only_from_string_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultZonedDateTimeFfiInt32 Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTime_offset_only_from_string_mv1')
 // ignore: non_constant_identifier_names
 external _ResultZonedDateTimeFfiInt32 _icu4x_ZonedDateTime_offset_only_from_string_mv1(_SliceUtf8 v, ffi.Pointer<ffi.Opaque> calendar);
 
-@_DiplomatFfiUse('icu4x_ZonedDateTime_lenient_from_string_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultZonedDateTimeFfiInt32 Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTime_lenient_from_string_mv1')
 // ignore: non_constant_identifier_names
 external _ResultZonedDateTimeFfiInt32 _icu4x_ZonedDateTime_lenient_from_string_mv1(_SliceUtf8 v, ffi.Pointer<ffi.Opaque> calendar, ffi.Pointer<ffi.Opaque> ianaParser);

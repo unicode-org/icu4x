@@ -17,12 +17,16 @@ final class Logger implements ffi.Finalizable {
   // maintain borrow validity.
   Logger._fromFfi(this._ffi, this._selfEdge) {
     if (_selfEdge.isEmpty) {
-      _finalizer.attach(this, _ffi.cast());
+      _icu4x_Logger_destroy_mv1(this, _ffi.cast());
     }
   }
 
-  @_DiplomatFfiUse('icu4x_Logger_destroy_mv1')
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_Logger_destroy_mv1));
+  // ignore: experimental_member_use
+  @meta.RecordUse()
+  // ignore: non_constant_identifier_names
+  static void _icu4x_Logger_destroy_mv1(Logger cl, ffi.Pointer<ffi.Void> pointer) => _finalizer.attach(cl, pointer);
+
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_internal_icu4x_Logger_destroy_mv1));
 
   /// Initialize the logger using `simple_logger`
   ///
@@ -36,12 +40,14 @@ final class Logger implements ffi.Finalizable {
 
 }
 
-@_DiplomatFfiUse('icu4x_Logger_destroy_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_Logger_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_Logger_destroy_mv1(ffi.Pointer<ffi.Void> self);
+external void _internal_icu4x_Logger_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@_DiplomatFfiUse('icu4x_Logger_init_simple_logger_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Bool Function()>(isLeaf: true, symbol: 'icu4x_Logger_init_simple_logger_mv1')
 // ignore: non_constant_identifier_names
 external bool _icu4x_Logger_init_simple_logger_mv1();

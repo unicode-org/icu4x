@@ -23,6 +23,12 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct ComposingNormalizer;
+
+
+    typedef struct DiplomatComposingNormalizerView {
+      const ComposingNormalizer** data;
+      size_t len;
+    } DiplomatComposingNormalizerView;
 } // namespace capi
 } // namespace
 

@@ -12,5 +12,3 @@ T ; Yes ;  ;
 RI ; Yes ;  ; 
 ExtPict ZWJ ; Yes ;  ; 
 LinkingConsonant Extend_ConjunctLinker ; Yes ;  ; 
-RI RI ; Yes ; RI RI / RI ; 
-RI RI RI ; RI RI / RI ;  ; 

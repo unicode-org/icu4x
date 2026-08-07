@@ -1164,36 +1164,69 @@ where
             // OR
             // key is a binary property and value is a truthy/falsy value
 
-            match key.as_bytes() {
-                GeneralCategory::NAME | GeneralCategory::SHORT_NAME => try_gc = Ok(value),
-                GraphemeClusterBreak::NAME | GraphemeClusterBreak::SHORT_NAME => {
-                    try_gcb = Ok(value)
+            fn loose(s: &[u8]) -> impl Iterator<Item = u8> + '_ {
+                s.iter()
+                    .map(|&c| c.to_ascii_lowercase())
+                    .filter(|&c| c != b'_')
+            }
+
+            if loose(key.as_bytes()).eq(loose(GeneralCategory::NAME))
+                || loose(key.as_bytes()).eq(loose(GeneralCategory::SHORT_NAME))
+            {
+                try_gc = Ok(value)
+            } else if loose(key.as_bytes()).eq(loose(GraphemeClusterBreak::NAME))
+                || loose(key.as_bytes()).eq(loose(GraphemeClusterBreak::SHORT_NAME))
+            {
+                try_gcb = Ok(value)
+            } else if loose(key.as_bytes()).eq(loose(IndicConjunctBreak::NAME))
+                || loose(key.as_bytes()).eq(loose(IndicConjunctBreak::SHORT_NAME))
+            {
+                try_incb = Ok(value)
+            } else if loose(key.as_bytes()).eq(loose(LineBreak::NAME))
+                || loose(key.as_bytes()).eq(loose(LineBreak::SHORT_NAME))
+            {
+                try_lb = Ok(value)
+            } else if loose(key.as_bytes()).eq(loose(Script::NAME))
+                || loose(key.as_bytes()).eq(loose(Script::SHORT_NAME))
+            {
+                try_sc = Ok(value)
+            } else if loose(key.as_bytes()).eq(loose(SentenceBreak::NAME))
+                || loose(key.as_bytes()).eq(loose(SentenceBreak::SHORT_NAME))
+            {
+                try_sb = Ok(value)
+            } else if loose(key.as_bytes()).eq(loose(WordBreak::NAME))
+                || loose(key.as_bytes()).eq(loose(WordBreak::SHORT_NAME))
+            {
+                try_wb = Ok(value)
+            } else if loose(key.as_bytes()).eq(loose(EastAsianWidth::NAME))
+                || loose(key.as_bytes()).eq(loose(EastAsianWidth::SHORT_NAME))
+            {
+                try_eaw = Ok(value)
+            } else if loose(key.as_bytes()).eq(loose(CanonicalCombiningClass::NAME))
+                || loose(key.as_bytes()).eq(loose(CanonicalCombiningClass::SHORT_NAME))
+            {
+                try_ccc = Ok(value)
+            } else if loose(key.as_bytes()).eq(loose(b"Script_Extensions"))
+                || loose(key.as_bytes()).eq(loose(b"scx"))
+            {
+                try_scx = Ok(value)
+            } else if loose(key.as_bytes()).eq(loose(b"Block"))
+                || loose(key.as_bytes()).eq(loose(b"blk"))
+            {
+                try_block = Ok(value)
+            } else {
+                let normalized_value = value.to_ascii_lowercase();
+                let truthy = matches!(normalized_value.as_str(), "true" | "t" | "yes" | "y");
+                let falsy = matches!(normalized_value.as_str(), "false" | "f" | "no" | "n");
+                // value must either match truthy or falsy
+                if truthy == falsy {
+                    return Err(PEK::UnknownProperty.into());
                 }
-                IndicConjunctBreak::NAME | IndicConjunctBreak::SHORT_NAME => try_incb = Ok(value),
-                LineBreak::NAME | LineBreak::SHORT_NAME => try_lb = Ok(value),
-                Script::NAME | Script::SHORT_NAME => try_sc = Ok(value),
-                SentenceBreak::NAME | SentenceBreak::SHORT_NAME => try_sb = Ok(value),
-                WordBreak::NAME | WordBreak::SHORT_NAME => try_wb = Ok(value),
-                CanonicalCombiningClass::NAME | CanonicalCombiningClass::SHORT_NAME => {
-                    try_ccc = Ok(value)
-                }
-                EastAsianWidth::NAME | EastAsianWidth::SHORT_NAME => try_eaw = Ok(value),
-                b"Script_Extensions" | b"scx" => try_scx = Ok(value),
-                b"Block" | b"blk" => try_block = Ok(value),
-                _ => {
-                    let normalized_value = value.to_ascii_lowercase();
-                    let truthy = matches!(normalized_value.as_str(), "true" | "t" | "yes" | "y");
-                    let falsy = matches!(normalized_value.as_str(), "false" | "f" | "no" | "n");
-                    // value must either match truthy or falsy
-                    if truthy == falsy {
-                        return Err(PEK::UnknownProperty.into());
-                    }
-                    // correctness: if we reach this point, only `try_binary` can be Ok, hence
-                    // it does not matter that further down we unconditionally return `inverted`,
-                    // because only `try_binary` can enter that code path.
-                    inverted = falsy;
-                    try_binary = Ok(key);
-                }
+                // correctness: if we reach this point, only `try_binary` can be Ok, hence
+                // it does not matter that further down we unconditionally return `inverted`,
+                // because only `try_binary` can enter that code path.
+                inverted = falsy;
+                try_binary = Ok(key);
             }
         } else {
             // key is binary property

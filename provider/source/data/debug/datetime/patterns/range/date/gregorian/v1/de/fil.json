@@ -9,9 +9,9 @@
   ],
   "elements": [
     {
-      "header": 2,
+      "header": 4,
       "patterns": [
-        "E, M/d – E, M/d"
+        "E, M/d"
       ]
     }
   ]

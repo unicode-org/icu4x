@@ -11,29 +11,29 @@
   ],
   "elements": [
     {
-      "header": 10,
+      "header": 72,
       "patterns": [
         "MMM – MMM G y",
-        "MMM G y – MMM G y"
+        "MMM G y"
       ]
     },
     {
-      "header": 6,
+      "header": 24,
       "patterns": [
         "MMM–MMM y",
-        "MMM y – MMM y"
+        "MMM y"
       ]
     },
     {
-      "header": 4,
+      "header": 16,
       "patterns": [
-        "M/y – M/y"
+        "M/y"
       ]
     },
     {
-      "header": 8,
+      "header": 64,
       "patterns": [
-        "MM/GGGGG y – MM/GGGGG y"
+        "MM/GGGGG y"
       ]
     }
   ]

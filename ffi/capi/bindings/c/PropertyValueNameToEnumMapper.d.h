@@ -14,6 +14,11 @@
 typedef struct PropertyValueNameToEnumMapper PropertyValueNameToEnumMapper;
 
 
+typedef struct DiplomatPropertyValueNameToEnumMapperView {
+  const PropertyValueNameToEnumMapper** data;
+  size_t len;
+} DiplomatPropertyValueNameToEnumMapperView;
+
 
 
 #endif // PropertyValueNameToEnumMapper_D_H

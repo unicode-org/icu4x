@@ -47,13 +47,13 @@ inline uint16_t icu4x::CodePointMapData16::operator[](char32_t cp) const {
     return result;
 }
 
-inline std::unique_ptr<icu4x::CodePointRangeIterator> icu4x::CodePointMapData16::iter_ranges_for_value(uint16_t value) const {
+inline std::unique_ptr<icu4x::CodePointRangeIterator> icu4x::CodePointMapData16::iter_ranges_for_value(uint16_t value) const DIPLOMAT_LIFETIME_BOUND {
     auto result = icu4x::capi::icu4x_CodePointMapData16_iter_ranges_for_value_mv1(this->AsFFI(),
         value);
     return std::unique_ptr<icu4x::CodePointRangeIterator>(icu4x::CodePointRangeIterator::FromFFI(result));
 }
 
-inline std::unique_ptr<icu4x::CodePointRangeIterator> icu4x::CodePointMapData16::iter_ranges_for_value_complemented(uint16_t value) const {
+inline std::unique_ptr<icu4x::CodePointRangeIterator> icu4x::CodePointMapData16::iter_ranges_for_value_complemented(uint16_t value) const DIPLOMAT_LIFETIME_BOUND {
     auto result = icu4x::capi::icu4x_CodePointMapData16_iter_ranges_for_value_complemented_mv1(this->AsFFI(),
         value);
     return std::unique_ptr<icu4x::CodePointRangeIterator>(icu4x::CodePointRangeIterator::FromFFI(result));

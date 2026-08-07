@@ -19,12 +19,16 @@ final class WeekdaySetIterator implements ffi.Finalizable, core.Iterator<Weekday
   // maintain borrow validity.
   WeekdaySetIterator._fromFfi(this._ffi, this._selfEdge) {
     if (_selfEdge.isEmpty) {
-      _finalizer.attach(this, _ffi.cast());
+      _icu4x_WeekdaySetIterator_destroy_mv1(this, _ffi.cast());
     }
   }
 
-  @_DiplomatFfiUse('icu4x_WeekdaySetIterator_destroy_mv1')
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_WeekdaySetIterator_destroy_mv1));
+  // ignore: experimental_member_use
+  @meta.RecordUse()
+  // ignore: non_constant_identifier_names
+  static void _icu4x_WeekdaySetIterator_destroy_mv1(WeekdaySetIterator cl, ffi.Pointer<ffi.Void> pointer) => _finalizer.attach(cl, pointer);
+
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_internal_icu4x_WeekdaySetIterator_destroy_mv1));
 
   Weekday? _current;
 
@@ -48,12 +52,14 @@ final class WeekdaySetIterator implements ffi.Finalizable, core.Iterator<Weekday
 
 }
 
-@_DiplomatFfiUse('icu4x_WeekdaySetIterator_destroy_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_WeekdaySetIterator_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_WeekdaySetIterator_destroy_mv1(ffi.Pointer<ffi.Void> self);
+external void _internal_icu4x_WeekdaySetIterator_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@_DiplomatFfiUse('icu4x_WeekdaySetIterator_next_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WeekdaySetIterator_next_mv1')
 // ignore: non_constant_identifier_names
 external _ResultInt32Void _icu4x_WeekdaySetIterator_next_mv1(ffi.Pointer<ffi.Opaque> self);

@@ -401,21 +401,7 @@ where
 }
 
 #[cfg(feature = "unstable")]
-impl<P: PatternBackend> icu_provider::ule::MaybeAsVarULE for CompactPatterns<'_, P> {
-    type EncodedStruct = [()];
-}
-
-#[cfg(feature = "datagen")]
-#[cfg(feature = "unstable")]
-impl<P: PatternBackend> icu_provider::ule::MaybeEncodeAsVarULE for CompactPatterns<'_, P> {
-    type EncodeableStruct<'b>
-        = &'b [()]
-    where
-        Self: 'b;
-    fn maybe_as_encodeable<'b>(&'b self) -> Option<Self::EncodeableStruct<'b>> {
-        None
-    }
-}
+icu_provider::data_struct!(<P: PatternBackend> CompactPatterns<'_, P>, #[cfg(feature = "datagen")]);
 
 #[cfg(feature = "datagen")]
 #[cfg(feature = "unstable")]
@@ -540,10 +526,9 @@ pub(crate) fn load_with_fallback<'a, M: DataMarker>(
 }
 
 impl crate::DecimalFormatterPreferences {
-    pub(crate) fn nu_id<'a>(
-        &'a self,
-        locale: &'a DataLocale,
-    ) -> Option<DataIdentifierBorrowed<'a>> {
+    /// Returns a data identifier with the numbering system resolved from the preferences, if present.
+    #[doc(hidden)]
+    pub fn nu_id<'a>(&'a self, locale: &'a DataLocale) -> Option<DataIdentifierBorrowed<'a>> {
         self.numbering_system
             .as_ref()
             .map(|s| s.as_str())

@@ -36,6 +36,8 @@ pub mod relativetime;
 pub mod transliterate;
 pub mod units;
 
+pub(crate) mod size_test_macro;
+
 #[doc(hidden)] // compiled constructors look for the baked provider here
 pub mod provider {
     // Provider structs must be stable
@@ -58,13 +60,12 @@ pub mod provider {
         }
         make_provider!(Baked);
 
-        impl_short_currency_compact_v1!(Baked);
         impl_currency_essentials_v1!(Baked);
+        impl_currency_symbols_v1!(Baked);
         impl_currency_displayname_v1!(Baked);
         impl_currency_patterns_data_v1!(Baked);
         impl_currency_extended_data_v1!(Baked);
         impl_currency_fractions_v1!(Baked);
-        impl_units_display_names_v1!(Baked);
         impl_units_names_area_core_v1!(Baked);
         impl_units_names_area_extended_v1!(Baked);
         impl_units_names_area_outlier_v1!(Baked);
@@ -87,15 +88,16 @@ pub mod provider {
         impl_region_display_names_v1!(Baked);
         impl_script_display_names_v1!(Baked);
         impl_variant_display_names_v1!(Baked);
-        impl_locale_names_region_long_v1!(Baked);
+        impl_locale_names_region_medium_v1!(Baked);
         impl_locale_names_region_short_v1!(Baked);
-        impl_locale_names_language_long_v1!(Baked);
+        impl_locale_names_language_medium_v1!(Baked);
         impl_locale_names_language_short_v1!(Baked);
-        impl_locale_names_language_menu_long_v1!(Baked);
-        impl_locale_names_script_long_v1!(Baked);
+        impl_locale_names_language_long_v1!(Baked);
+        impl_locale_names_language_menu_medium_v1!(Baked);
+        impl_locale_names_script_medium_v1!(Baked);
         impl_locale_names_script_short_v1!(Baked);
-        impl_locale_names_variant_long_v1!(Baked);
-        impl_locale_names_variant_short_v1!(Baked);
+        impl_locale_names_variant_medium_v1!(Baked);
+        impl_locale_names_essentials_v1!(Baked);
         impl_percent_essentials_v1!(Baked);
         impl_person_names_format_v1!(Baked);
         impl_long_day_relative_v1!(Baked);
@@ -133,15 +135,14 @@ pub mod provider {
     #[cfg(feature = "datagen")]
     /// The latest minimum set of keys required by this component.
     pub const MARKERS: &[DataMarkerInfo] = &[
-        super::dimension::provider::currency::compact::ShortCurrencyCompactV1::INFO,
         super::dimension::provider::currency::displayname::CurrencyDisplaynameV1::INFO,
         super::dimension::provider::currency::essentials::CurrencyEssentialsV1::INFO,
+        super::dimension::provider::currency::symbols::CurrencySymbolsV1::INFO,
         super::dimension::provider::currency::patterns::CurrencyPatternsDataV1::INFO,
         super::dimension::provider::currency::extended::CurrencyExtendedDataV1::INFO,
         super::dimension::provider::currency::fractions::CurrencyFractionsV1::INFO,
         super::dimension::provider::percent::PercentEssentialsV1::INFO,
         super::dimension::provider::units::essentials::UnitsEssentialsV1::INFO,
-        super::dimension::provider::units::display_names::UnitsDisplayNamesV1::INFO,
         super::dimension::provider::units::categorized_display_names::UnitsNamesAreaCoreV1::INFO,
         super::dimension::provider::units::categorized_display_names::UnitsNamesAreaExtendedV1::INFO,
         super::dimension::provider::units::categorized_display_names::UnitsNamesAreaOutlierV1::INFO,
@@ -163,15 +164,16 @@ pub mod provider {
         super::displaynames::provider::RegionDisplayNamesV1::INFO,
         super::displaynames::provider::ScriptDisplayNamesV1::INFO,
         super::displaynames::provider::VariantDisplayNamesV1::INFO,
-        super::displaynames::provider::LocaleNamesRegionLongV1::INFO,
+        super::displaynames::provider::LocaleNamesRegionMediumV1::INFO,
         super::displaynames::provider::LocaleNamesRegionShortV1::INFO,
-        super::displaynames::provider::LocaleNamesLanguageLongV1::INFO,
+        super::displaynames::provider::LocaleNamesLanguageMediumV1::INFO,
         super::displaynames::provider::LocaleNamesLanguageShortV1::INFO,
-        super::displaynames::provider::LocaleNamesLanguageMenuLongV1::INFO,
-        super::displaynames::provider::LocaleNamesScriptLongV1::INFO,
+        super::displaynames::provider::LocaleNamesLanguageLongV1::INFO,
+        super::displaynames::provider::LocaleNamesLanguageMenuMediumV1::INFO,
+        super::displaynames::provider::LocaleNamesScriptMediumV1::INFO,
         super::displaynames::provider::LocaleNamesScriptShortV1::INFO,
-        super::displaynames::provider::LocaleNamesVariantLongV1::INFO,
-        super::displaynames::provider::LocaleNamesVariantShortV1::INFO,
+        super::displaynames::provider::LocaleNamesVariantMediumV1::INFO,
+        super::displaynames::provider::LocaleNamesEssentialsV1::INFO,
         super::measure::provider::UnitIdsV1::INFO,
         super::personnames::provider::PersonNamesFormatV1::INFO,
         super::relativetime::provider::LongDayRelativeV1::INFO,

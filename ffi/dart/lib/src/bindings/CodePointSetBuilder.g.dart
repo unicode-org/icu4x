@@ -17,12 +17,16 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   // maintain borrow validity.
   CodePointSetBuilder._fromFfi(this._ffi, this._selfEdge) {
     if (_selfEdge.isEmpty) {
-      _finalizer.attach(this, _ffi.cast());
+      _icu4x_CodePointSetBuilder_destroy_mv1(this, _ffi.cast());
     }
   }
 
-  @_DiplomatFfiUse('icu4x_CodePointSetBuilder_destroy_mv1')
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_CodePointSetBuilder_destroy_mv1));
+  // ignore: experimental_member_use
+  @meta.RecordUse()
+  // ignore: non_constant_identifier_names
+  static void _icu4x_CodePointSetBuilder_destroy_mv1(CodePointSetBuilder cl, ffi.Pointer<ffi.Void> pointer) => _finalizer.attach(cl, pointer);
+
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_internal_icu4x_CodePointSetBuilder_destroy_mv1));
 
   /// Make a new set builder containing nothing
   ///
@@ -151,87 +155,104 @@ final class CodePointSetBuilder implements ffi.Finalizable {
 
 }
 
-@_DiplomatFfiUse('icu4x_CodePointSetBuilder_destroy_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_CodePointSetBuilder_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_CodePointSetBuilder_destroy_mv1(ffi.Pointer<ffi.Void> self);
+external void _internal_icu4x_CodePointSetBuilder_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@_DiplomatFfiUse('icu4x_CodePointSetBuilder_create_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetBuilder_create_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetBuilder_create_mv1();
 
-@_DiplomatFfiUse('icu4x_CodePointSetBuilder_build_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetBuilder_build_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetBuilder_build_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_CodePointSetBuilder_complement_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetBuilder_complement_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CodePointSetBuilder_complement_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_CodePointSetBuilder_is_empty_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetBuilder_is_empty_mv1')
 // ignore: non_constant_identifier_names
 external bool _icu4x_CodePointSetBuilder_is_empty_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_CodePointSetBuilder_add_char_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetBuilder_add_char_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CodePointSetBuilder_add_char_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
-@_DiplomatFfiUse('icu4x_CodePointSetBuilder_add_inclusive_range_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetBuilder_add_inclusive_range_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CodePointSetBuilder_add_inclusive_range_mv1(ffi.Pointer<ffi.Opaque> self, Rune start, Rune end);
 
-@_DiplomatFfiUse('icu4x_CodePointSetBuilder_add_set_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetBuilder_add_set_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CodePointSetBuilder_add_set_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> data);
 
-@_DiplomatFfiUse('icu4x_CodePointSetBuilder_remove_char_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetBuilder_remove_char_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CodePointSetBuilder_remove_char_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
-@_DiplomatFfiUse('icu4x_CodePointSetBuilder_remove_inclusive_range_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetBuilder_remove_inclusive_range_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CodePointSetBuilder_remove_inclusive_range_mv1(ffi.Pointer<ffi.Opaque> self, Rune start, Rune end);
 
-@_DiplomatFfiUse('icu4x_CodePointSetBuilder_remove_set_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetBuilder_remove_set_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CodePointSetBuilder_remove_set_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> data);
 
-@_DiplomatFfiUse('icu4x_CodePointSetBuilder_retain_char_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetBuilder_retain_char_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CodePointSetBuilder_retain_char_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
-@_DiplomatFfiUse('icu4x_CodePointSetBuilder_retain_inclusive_range_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetBuilder_retain_inclusive_range_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CodePointSetBuilder_retain_inclusive_range_mv1(ffi.Pointer<ffi.Opaque> self, Rune start, Rune end);
 
-@_DiplomatFfiUse('icu4x_CodePointSetBuilder_retain_set_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetBuilder_retain_set_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CodePointSetBuilder_retain_set_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> data);
 
-@_DiplomatFfiUse('icu4x_CodePointSetBuilder_complement_char_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetBuilder_complement_char_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CodePointSetBuilder_complement_char_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
-@_DiplomatFfiUse('icu4x_CodePointSetBuilder_complement_inclusive_range_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetBuilder_complement_inclusive_range_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CodePointSetBuilder_complement_inclusive_range_mv1(ffi.Pointer<ffi.Opaque> self, Rune start, Rune end);
 
-@_DiplomatFfiUse('icu4x_CodePointSetBuilder_complement_set_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetBuilder_complement_set_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CodePointSetBuilder_complement_set_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> data);

@@ -10,18 +10,18 @@
   ],
   "elements": [
     {
-      "header": 14,
+      "header": 104,
       "patterns": [
         "LLL — LLL y г. G",
         "LLL y — LLL y гг. G",
-        "LLL y г. G — LLL y г. G"
+        "LLL y г. G"
       ]
     },
     {
-      "header": 12,
+      "header": 96,
       "patterns": [
         "MM.y — MM.y G",
-        "MM.y G — MM.y G"
+        "MM.y G"
       ]
     }
   ]

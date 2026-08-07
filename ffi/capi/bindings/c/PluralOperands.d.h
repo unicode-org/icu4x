@@ -14,6 +14,11 @@
 typedef struct PluralOperands PluralOperands;
 
 
+typedef struct DiplomatPluralOperandsView {
+  const PluralOperands** data;
+  size_t len;
+} DiplomatPluralOperandsView;
+
 
 
 #endif // PluralOperands_D_H

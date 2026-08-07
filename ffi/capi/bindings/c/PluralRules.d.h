@@ -14,6 +14,11 @@
 typedef struct PluralRules PluralRules;
 
 
+typedef struct DiplomatPluralRulesView {
+  const PluralRules** data;
+  size_t len;
+} DiplomatPluralRulesView;
+
 
 
 #endif // PluralRules_D_H

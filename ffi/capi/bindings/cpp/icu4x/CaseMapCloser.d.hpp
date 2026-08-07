@@ -25,6 +25,12 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct CaseMapCloser;
+
+
+    typedef struct DiplomatCaseMapCloserView {
+      const CaseMapCloser** data;
+      size_t len;
+    } DiplomatCaseMapCloserView;
 } // namespace capi
 } // namespace
 

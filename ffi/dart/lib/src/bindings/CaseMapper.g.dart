@@ -17,12 +17,16 @@ final class CaseMapper implements ffi.Finalizable {
   // maintain borrow validity.
   CaseMapper._fromFfi(this._ffi, this._selfEdge) {
     if (_selfEdge.isEmpty) {
-      _finalizer.attach(this, _ffi.cast());
+      _icu4x_CaseMapper_destroy_mv1(this, _ffi.cast());
     }
   }
 
-  @_DiplomatFfiUse('icu4x_CaseMapper_destroy_mv1')
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_CaseMapper_destroy_mv1));
+  // ignore: experimental_member_use
+  @meta.RecordUse()
+  // ignore: non_constant_identifier_names
+  static void _icu4x_CaseMapper_destroy_mv1(CaseMapper cl, ffi.Pointer<ffi.Void> pointer) => _finalizer.attach(cl, pointer);
+
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_internal_icu4x_CaseMapper_destroy_mv1));
 
   /// Construct a new `CaseMapper` instance using compiled data.
   ///
@@ -252,112 +256,134 @@ final class CaseMapper implements ffi.Finalizable {
 
 }
 
-@_DiplomatFfiUse('icu4x_CaseMapper_destroy_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_CaseMapper_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_CaseMapper_destroy_mv1(ffi.Pointer<ffi.Void> self);
+external void _internal_icu4x_CaseMapper_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@_DiplomatFfiUse('icu4x_CaseMapper_create_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CaseMapper_create_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_CaseMapper_create_mv1();
 
-@_DiplomatFfiUse('icu4x_CaseMapper_create_with_provider_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapper_create_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CaseMapper_create_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@_DiplomatFfiUse('icu4x_CaseMapper_lowercase_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapper_lowercase_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CaseMapper_lowercase_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> write);
 
-@_DiplomatFfiUse('icu4x_CaseMapper_uppercase_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapper_uppercase_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CaseMapper_uppercase_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> write);
 
-@_DiplomatFfiUse('icu4x_CaseMapper_lowercase_with_compiled_data_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapper_lowercase_with_compiled_data_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CaseMapper_lowercase_with_compiled_data_mv1(_SliceUtf8 s, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> write);
 
-@_DiplomatFfiUse('icu4x_CaseMapper_uppercase_with_compiled_data_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapper_uppercase_with_compiled_data_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CaseMapper_uppercase_with_compiled_data_mv1(_SliceUtf8 s, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> write);
 
-@_DiplomatFfiUse('icu4x_CaseMapper_titlecase_segment_with_only_case_data_v1_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>, _TitlecaseOptionsFfi, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapper_titlecase_segment_with_only_case_data_v1_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CaseMapper_titlecase_segment_with_only_case_data_v1_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s, ffi.Pointer<ffi.Opaque> locale, _TitlecaseOptionsFfi options, ffi.Pointer<ffi.Opaque> write);
 
-@_DiplomatFfiUse('icu4x_CaseMapper_titlecase_segment_with_only_case_compiled_data_v1_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>, _TitlecaseOptionsFfi, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapper_titlecase_segment_with_only_case_compiled_data_v1_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CaseMapper_titlecase_segment_with_only_case_compiled_data_v1_mv1(_SliceUtf8 s, ffi.Pointer<ffi.Opaque> locale, _TitlecaseOptionsFfi options, ffi.Pointer<ffi.Opaque> write);
 
-@_DiplomatFfiUse('icu4x_CaseMapper_fold_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapper_fold_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CaseMapper_fold_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s, ffi.Pointer<ffi.Opaque> write);
 
-@_DiplomatFfiUse('icu4x_CaseMapper_fold_turkic_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapper_fold_turkic_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CaseMapper_fold_turkic_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s, ffi.Pointer<ffi.Opaque> write);
 
-@_DiplomatFfiUse('icu4x_CaseMapper_add_case_closure_to_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapper_add_case_closure_to_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CaseMapper_add_case_closure_to_mv1(ffi.Pointer<ffi.Opaque> self, Rune c, ffi.Pointer<ffi.Opaque> builder);
 
-@_DiplomatFfiUse('icu4x_CaseMapper_simple_lowercase_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_lowercase_mv1')
 // ignore: non_constant_identifier_names
 external Rune _icu4x_CaseMapper_simple_lowercase_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
-@_DiplomatFfiUse('icu4x_CaseMapper_simple_lowercase_with_compiled_data_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint32 Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_lowercase_with_compiled_data_mv1')
 // ignore: non_constant_identifier_names
 external Rune _icu4x_CaseMapper_simple_lowercase_with_compiled_data_mv1(Rune ch);
 
-@_DiplomatFfiUse('icu4x_CaseMapper_simple_uppercase_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_uppercase_mv1')
 // ignore: non_constant_identifier_names
 external Rune _icu4x_CaseMapper_simple_uppercase_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
-@_DiplomatFfiUse('icu4x_CaseMapper_simple_uppercase_with_compiled_data_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint32 Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_uppercase_with_compiled_data_mv1')
 // ignore: non_constant_identifier_names
 external Rune _icu4x_CaseMapper_simple_uppercase_with_compiled_data_mv1(Rune ch);
 
-@_DiplomatFfiUse('icu4x_CaseMapper_simple_titlecase_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_titlecase_mv1')
 // ignore: non_constant_identifier_names
 external Rune _icu4x_CaseMapper_simple_titlecase_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
-@_DiplomatFfiUse('icu4x_CaseMapper_simple_titlecase_with_compiled_data_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint32 Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_titlecase_with_compiled_data_mv1')
 // ignore: non_constant_identifier_names
 external Rune _icu4x_CaseMapper_simple_titlecase_with_compiled_data_mv1(Rune ch);
 
-@_DiplomatFfiUse('icu4x_CaseMapper_simple_fold_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_fold_mv1')
 // ignore: non_constant_identifier_names
 external Rune _icu4x_CaseMapper_simple_fold_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
-@_DiplomatFfiUse('icu4x_CaseMapper_simple_fold_with_compiled_data_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint32 Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_fold_with_compiled_data_mv1')
 // ignore: non_constant_identifier_names
 external Rune _icu4x_CaseMapper_simple_fold_with_compiled_data_mv1(Rune ch);
 
-@_DiplomatFfiUse('icu4x_CaseMapper_simple_fold_turkic_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_fold_turkic_mv1')
 // ignore: non_constant_identifier_names
 external Rune _icu4x_CaseMapper_simple_fold_turkic_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
-@_DiplomatFfiUse('icu4x_CaseMapper_simple_fold_turkic_with_compiled_data_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint32 Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_fold_turkic_with_compiled_data_mv1')
 // ignore: non_constant_identifier_names
 external Rune _icu4x_CaseMapper_simple_fold_turkic_with_compiled_data_mv1(Rune ch);

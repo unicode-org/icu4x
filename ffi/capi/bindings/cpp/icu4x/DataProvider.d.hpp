@@ -23,6 +23,12 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct DataProvider;
+
+
+    typedef struct DiplomatDataProviderView {
+      const DataProvider** data;
+      size_t len;
+    } DiplomatDataProviderView;
 } // namespace capi
 } // namespace
 

@@ -8,108 +8,124 @@ use icu_segmenter::options::WordType;
 
 #[test]
 fn rule_status() {
-    let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
-    let mut iter = segmenter.segment_str("hello world 123");
+    for segmenter in [
+        WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
+        WordSegmenter::new_neo_auto(WordBreakInvariantOptions::default()),
+    ] {
+        let mut iter = segmenter.segment_str("hello world 123");
 
-    assert_eq!(iter.next(), Some(0), "SOT");
-    assert_eq!(iter.word_type(), WordType::None, "none");
-    assert!(!iter.is_word_like(), "SOT is false");
+        assert_eq!(iter.next(), Some(0), "SOT");
+        assert_eq!(iter.word_type(), WordType::None, "none");
+        assert!(!iter.is_word_like(), "SOT is false");
 
-    assert_eq!(iter.next(), Some(5), "after hello");
-    assert_eq!(iter.word_type(), WordType::Letter, "letter");
-    assert!(iter.is_word_like(), "Letter is true");
+        assert_eq!(iter.next(), Some(5), "after hello");
+        assert_eq!(iter.word_type(), WordType::Letter, "letter");
+        assert!(iter.is_word_like(), "Letter is true");
 
-    assert_eq!(iter.next(), Some(6), "after space");
-    assert_eq!(iter.word_type(), WordType::None, "none");
-    assert!(!iter.is_word_like(), "None is false");
+        assert_eq!(iter.next(), Some(6), "after space");
+        assert_eq!(iter.word_type(), WordType::None, "none");
+        assert!(!iter.is_word_like(), "None is false");
 
-    assert_eq!(iter.next(), Some(11), "after world");
-    assert_eq!(iter.word_type(), WordType::Letter, "letter");
-    assert!(iter.is_word_like(), "Letter is true");
+        assert_eq!(iter.next(), Some(11), "after world");
+        assert_eq!(iter.word_type(), WordType::Letter, "letter");
+        assert!(iter.is_word_like(), "Letter is true");
 
-    assert_eq!(iter.next(), Some(12), "after space");
-    assert_eq!(iter.word_type(), WordType::None, "none");
-    assert!(!iter.is_word_like(), "None is false");
+        assert_eq!(iter.next(), Some(12), "after space");
+        assert_eq!(iter.word_type(), WordType::None, "none");
+        assert!(!iter.is_word_like(), "None is false");
 
-    assert_eq!(iter.next(), Some(15), "after number");
-    assert_eq!(iter.word_type(), WordType::Number, "number");
-    assert!(iter.is_word_like(), "Number is true");
+        assert_eq!(iter.next(), Some(15), "after number");
+        assert_eq!(iter.word_type(), WordType::Number, "number");
+        assert!(iter.is_word_like(), "Number is true");
 
-    assert_eq!(iter.next(), None, "EOT");
-    assert_eq!(iter.word_type(), WordType::None, "none");
-    assert!(!iter.is_word_like(), "None is false");
+        assert_eq!(iter.next(), None, "EOT");
+        assert_eq!(iter.word_type(), WordType::None, "none");
+        assert!(!iter.is_word_like(), "None is false");
+    }
 }
 
 #[test]
 fn rule_status_letter_eof() {
-    let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
-    let mut iter = segmenter.segment_str("one.");
+    for segmenter in [
+        WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
+        WordSegmenter::new_neo_auto(WordBreakInvariantOptions::default()),
+    ] {
+        let mut iter = segmenter.segment_str("one.");
 
-    assert_eq!(iter.next(), Some(0), "SOT");
-    assert_eq!(iter.word_type(), WordType::None, "none");
-    assert!(!iter.is_word_like(), "SOT is false");
+        assert_eq!(iter.next(), Some(0), "SOT");
+        assert_eq!(iter.word_type(), WordType::None, "none");
+        assert!(!iter.is_word_like(), "SOT is false");
 
-    assert_eq!(iter.next(), Some(3), "after one");
-    assert_eq!(iter.word_type(), WordType::Letter, "letter");
-    assert!(iter.is_word_like(), "Letter is true");
+        assert_eq!(iter.next(), Some(3), "after one");
+        assert_eq!(iter.word_type(), WordType::Letter, "letter");
+        assert!(iter.is_word_like(), "Letter is true");
 
-    assert_eq!(iter.next(), Some(4), "after full stop");
-    assert_eq!(iter.word_type(), WordType::None, "none");
-    assert!(!iter.is_word_like(), "None is false");
+        assert_eq!(iter.next(), Some(4), "after full stop");
+        assert_eq!(iter.word_type(), WordType::None, "none");
+        assert!(!iter.is_word_like(), "None is false");
 
-    assert_eq!(iter.next(), None, "EOT");
-    assert_eq!(iter.word_type(), WordType::None, "none");
-    assert!(!iter.is_word_like(), "None is false");
+        assert_eq!(iter.next(), None, "EOT");
+        assert_eq!(iter.word_type(), WordType::None, "none");
+        assert!(!iter.is_word_like(), "None is false");
+    }
 }
 
 #[test]
 fn rule_status_numeric_eof() {
-    let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
-    let mut iter = segmenter.segment_str("42.");
+    for segmenter in [
+        WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
+        WordSegmenter::new_neo_auto(WordBreakInvariantOptions::default()),
+    ] {
+        let mut iter = segmenter.segment_str("42.");
 
-    assert_eq!(iter.next(), Some(0), "SOT");
-    assert_eq!(iter.word_type(), WordType::None, "none");
-    assert!(!iter.is_word_like(), "SOT is false");
+        assert_eq!(iter.next(), Some(0), "SOT");
+        assert_eq!(iter.word_type(), WordType::None, "none");
+        assert!(!iter.is_word_like(), "SOT is false");
 
-    assert_eq!(iter.next(), Some(2), "after 42");
-    assert_eq!(iter.word_type(), WordType::Number, "Number");
-    assert!(iter.is_word_like(), "Number is true");
+        assert_eq!(iter.next(), Some(2), "after 42");
+        assert_eq!(iter.word_type(), WordType::Number, "Number");
+        assert!(iter.is_word_like(), "Number is true");
 
-    assert_eq!(iter.next(), Some(3), "after full stop");
-    assert_eq!(iter.word_type(), WordType::None, "none");
-    assert!(!iter.is_word_like(), "None is false");
+        assert_eq!(iter.next(), Some(3), "after full stop");
+        assert_eq!(iter.word_type(), WordType::None, "none");
+        assert!(!iter.is_word_like(), "None is false");
 
-    assert_eq!(iter.next(), None, "EOT");
-    assert_eq!(iter.word_type(), WordType::None, "none");
-    assert!(!iter.is_word_like(), "None is false");
+        assert_eq!(iter.next(), None, "EOT");
+        assert_eq!(iter.word_type(), WordType::None, "none");
+        assert!(!iter.is_word_like(), "None is false");
+    }
 }
 
 #[test]
 fn rule_status_th() {
-    let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
-    let mut iter = segmenter.segment_str("ภาษาไทยภาษาไทย");
+    for segmenter in [
+        WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
+        WordSegmenter::new_neo_auto(WordBreakInvariantOptions::default()),
+    ] {
+        let mut iter = segmenter.segment_str("ภาษาไทยภาษาไทย");
 
-    assert_eq!(iter.next(), Some(0), "SOT");
-    assert_eq!(iter.word_type(), WordType::None, "none");
-    assert!(!iter.is_word_like(), "SOT is false");
+        assert_eq!(iter.next(), Some(0), "SOT");
+        assert_eq!(iter.word_type(), WordType::None, "none");
+        assert!(!iter.is_word_like(), "SOT is false");
 
-    assert_eq!(iter.next(), Some(12), "after 1st word");
-    assert_eq!(iter.word_type(), WordType::Letter, "letter");
-    assert!(iter.is_word_like(), "Letter(Thai) is true");
+        assert_eq!(iter.next(), Some(12), "after 1st word");
+        assert_eq!(iter.word_type(), WordType::Letter, "letter");
+        assert!(iter.is_word_like(), "Letter(Thai) is true");
 
-    assert_eq!(iter.next(), Some(21), "after 2nd word");
-    assert_eq!(iter.word_type(), WordType::Letter, "letter");
-    assert!(iter.is_word_like(), "Letter(Thai) is true");
+        assert_eq!(iter.next(), Some(21), "after 2nd word");
+        assert_eq!(iter.word_type(), WordType::Letter, "letter");
+        assert!(iter.is_word_like(), "Letter(Thai) is true");
 
-    assert_eq!(iter.next(), Some(33), "after 3rd word");
-    assert_eq!(iter.word_type(), WordType::Letter, "letter");
-    assert!(iter.is_word_like(), "Letter(Thai) is true");
+        assert_eq!(iter.next(), Some(33), "after 3rd word");
+        assert_eq!(iter.word_type(), WordType::Letter, "letter");
+        assert!(iter.is_word_like(), "Letter(Thai) is true");
 
-    assert_eq!(iter.next(), Some(42), "after 4th word and next is EOT");
-    assert_eq!(iter.word_type(), WordType::Letter, "letter");
-    assert!(iter.is_word_like(), "Letter(Thai) is true");
+        assert_eq!(iter.next(), Some(42), "after 4th word and next is EOT");
+        assert_eq!(iter.word_type(), WordType::Letter, "letter");
+        assert!(iter.is_word_like(), "Letter(Thai) is true");
 
-    assert_eq!(iter.next(), None, "EOT");
-    assert_eq!(iter.word_type(), WordType::None, "none");
-    assert!(!iter.is_word_like(), "None is false");
+        assert_eq!(iter.next(), None, "EOT");
+        assert_eq!(iter.word_type(), WordType::None, "none");
+        assert!(!iter.is_word_like(), "None is false");
+    }
 }

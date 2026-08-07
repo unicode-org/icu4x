@@ -14,6 +14,11 @@
 typedef struct Time Time;
 
 
+typedef struct DiplomatTimeView {
+  const Time** data;
+  size_t len;
+} DiplomatTimeView;
+
 
 
 #endif // Time_D_H

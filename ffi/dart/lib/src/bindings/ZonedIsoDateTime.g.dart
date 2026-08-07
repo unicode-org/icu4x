@@ -80,12 +80,14 @@ final class ZonedIsoDateTime {
       ]);
 }
 
-@_DiplomatFfiUse('icu4x_ZonedIsoDateTime_strict_from_string_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultZonedIsoDateTimeFfiInt32 Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedIsoDateTime_strict_from_string_mv1')
 // ignore: non_constant_identifier_names
 external _ResultZonedIsoDateTimeFfiInt32 _icu4x_ZonedIsoDateTime_strict_from_string_mv1(_SliceUtf8 v, ffi.Pointer<ffi.Opaque> ianaParser);
 
-@_DiplomatFfiUse('icu4x_ZonedIsoDateTime_from_epoch_milliseconds_and_utc_offset_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ZonedIsoDateTimeFfi Function(ffi.Int64, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedIsoDateTime_from_epoch_milliseconds_and_utc_offset_mv1')
 // ignore: non_constant_identifier_names
 external _ZonedIsoDateTimeFfi _icu4x_ZonedIsoDateTime_from_epoch_milliseconds_and_utc_offset_mv1(int epochMilliseconds, ffi.Pointer<ffi.Opaque> utcOffset);

@@ -14,6 +14,11 @@
 typedef struct ReorderedIndexMap ReorderedIndexMap;
 
 
+typedef struct DiplomatReorderedIndexMapView {
+  const ReorderedIndexMap** data;
+  size_t len;
+} DiplomatReorderedIndexMapView;
+
 
 
 #endif // ReorderedIndexMap_D_H

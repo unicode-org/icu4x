@@ -9,13 +9,13 @@
   ],
   "elements": [
     {
-      "header": 2,
+      "header": 8,
       "patterns": [
         "H–H"
       ]
     },
     {
-      "header": 2,
+      "header": 8,
       "patterns": [
         "H:mm–H:mm"
       ]

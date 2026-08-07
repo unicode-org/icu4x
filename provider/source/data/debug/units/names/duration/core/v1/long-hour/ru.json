@@ -1,37 +1,35 @@
 {
-  "patterns": {
-    "one": [
-      0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " час"
-        }
-      ]
-    ],
-    "many": [
-      0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " часов"
-        }
-      ]
-    ],
-    "other": [
-      0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " часа"
-        }
-      ]
+  "one": [
+    0,
+    [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " час"
+      }
     ]
-  }
+  ],
+  "many": [
+    0,
+    [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " часов"
+      }
+    ]
+  ],
+  "other": [
+    0,
+    [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " часа"
+      }
+    ]
+  ]
 }

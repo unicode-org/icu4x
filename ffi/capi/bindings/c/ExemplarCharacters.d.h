@@ -14,6 +14,11 @@
 typedef struct ExemplarCharacters ExemplarCharacters;
 
 
+typedef struct DiplomatExemplarCharactersView {
+  const ExemplarCharacters** data;
+  size_t len;
+} DiplomatExemplarCharactersView;
+
 
 
 #endif // ExemplarCharacters_D_H

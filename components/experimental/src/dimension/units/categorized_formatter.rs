@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::dimension::provider::units::display_names::UnitsDisplayNames;
 use crate::dimension::units::format::FormattedUnit;
 use crate::dimension::units::options::Width;
 use crate::measure::category::CategorizedMeasureUnit;
@@ -17,6 +18,7 @@ use icu_plurals::PluralRules;
 use icu_plurals::PluralRulesPreferences;
 use icu_provider::DataError;
 use icu_provider::marker::DataMarkerExt;
+use icu_provider::marker::ErasedMarker;
 use icu_provider::{
     DataIdentifierBorrowed, DataMarkerAttributes, DataPayload, DataProvider, DataRequest,
 };
@@ -55,8 +57,7 @@ prefs_convert!(CategorizedUnitsFormatterPreferences, PluralRulesPreferences);
 #[derive(Debug)]
 pub struct CategorizedFormatter<C: MeasureUnitCategory> {
     _category: PhantomData<C>,
-    display_name:
-        DataPayload<crate::dimension::provider::units::display_names::UnitsDisplayNamesV1>,
+    display_name: DataPayload<ErasedMarker<UnitsDisplayNames<'static>>>,
     decimal_formatter: DecimalFormatter,
     plural_rules: PluralRules,
 }
@@ -306,6 +307,7 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
             ..Default::default()
         };
 
+        // TODO(#8125): this might return a short display name from core, even if there would be a long one in extended.
         let display_name = DataProvider::<C::DataMarkerCore>::load(provider, req)
             .map(|r| r.payload.cast())
             .or_else(|_| {
@@ -346,6 +348,7 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
             ..Default::default()
         };
 
+        // TODO(#8125): this might return a short display name from core or extended, even if there would be a long one in outlier.
         let display_name = <crate::provider::Baked as DataProvider<C::DataMarkerCore>>::load(
             &crate::provider::Baked,
             req,
@@ -459,7 +462,7 @@ mod tests {
                     width: Width::Long,
                     ..Default::default()
                 },
-                "1,000 square meters",
+                "1,000 m²",
             ),
             (
                 locale!("fr-FR"),
@@ -490,13 +493,6 @@ mod tests {
                 options,
             );
 
-            if locale.to_string() == "en-US" {
-                assert!(
-                    formatter.is_err(),
-                    "Expected failure for the en-US locale because the unit is not available in core"
-                );
-                continue;
-            }
             let formatter = formatter.unwrap();
             let signed_decimal = Decimal::from_str(value_str).unwrap();
             let formatted = formatter.format_fixed_decimal(&signed_decimal);
@@ -523,7 +519,7 @@ mod tests {
                     width: Width::Long,
                     ..Default::default()
                 },
-                "1,000 square meters",
+                "1,000 m²",
             ),
             (
                 locale!("fr-FR"),
@@ -587,7 +583,7 @@ mod tests {
                     width: Width::Long,
                     ..Default::default()
                 },
-                "1,000 square meters",
+                "1,000 m²",
             ),
             (
                 locale!("fr-FR"),

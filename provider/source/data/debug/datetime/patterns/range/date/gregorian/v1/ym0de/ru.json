@@ -10,32 +10,32 @@
   ],
   "elements": [
     {
-      "header": 7,
+      "header": 26,
       "patterns": [
         "ccc, d – ccc, d MMM y г.",
         "ccc, d MMM – ccc, d MMM y г.",
-        "ccc, d MMM y г. – ccc, d MMM y г."
+        "ccc, d MMM y г."
       ]
     },
     {
-      "header": 4,
+      "header": 16,
       "patterns": [
-        "ccc, dd.MM.y – ccc, dd.MM.y"
+        "ccc, dd.MM.y"
       ]
     },
     {
-      "header": 14,
+      "header": 104,
       "patterns": [
         "ccc, d MMM – ccc, d MMM y г. G",
         "ccc, d MMM y – ccc, d MMM y гг. G",
-        "ccc, d MMM y г. G – ccc, d MMM y г. G"
+        "ccc, d MMM y г. G"
       ]
     },
     {
-      "header": 12,
+      "header": 96,
       "patterns": [
         "ccc, dd.MM.y – ccc, dd.MM.y G",
-        "ccc, dd.MM.y G – ccc, dd.MM.y G"
+        "ccc, dd.MM.y G"
       ]
     }
   ]

@@ -14,6 +14,11 @@
 typedef struct LineBreakIteratorUtf16 LineBreakIteratorUtf16;
 
 
+typedef struct DiplomatLineBreakIteratorUtf16View {
+  const LineBreakIteratorUtf16** data;
+  size_t len;
+} DiplomatLineBreakIteratorUtf16View;
+
 
 
 #endif // LineBreakIteratorUtf16_D_H

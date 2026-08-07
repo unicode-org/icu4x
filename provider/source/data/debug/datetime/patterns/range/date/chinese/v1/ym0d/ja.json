@@ -10,17 +10,17 @@
   ],
   "elements": [
     {
-      "header": 7,
+      "header": 26,
       "patterns": [
         "U年MMMd日～d日",
         "U年MMMd日～MMMd日",
-        "U年MMMd日～U年MMMd日"
+        "U年MMMd日"
       ]
     },
     {
-      "header": 4,
+      "header": 16,
       "patterns": [
-        "U/MM/dd～U/MM/dd"
+        "U/MM/dd"
       ]
     }
   ]

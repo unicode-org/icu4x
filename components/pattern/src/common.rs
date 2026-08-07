@@ -78,9 +78,6 @@ pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
     #[cfg(feature = "alloc")]
     type PlaceholderKeyCow<'a>;
 
-    /// The type of error that the [`TryWriteable`] for this backend can return.
-    type Error<'a>;
-
     /// The unsized type of the store required for this backend, usually `str` or `[u8]`.
     // Note: it is not good practice to feature-gate trait types, but this trait is sealed
     #[doc(hidden)] // TODO(#4467): Should be internal

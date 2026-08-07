@@ -11,18 +11,10 @@
 
 use icu_provider::prelude::*;
 use num_bigint::BigInt;
+use zerovec::VarZeroSlice;
 use zerovec::{VarZeroVec, ZeroVec, maps::ZeroVecLike, ule::AsULE};
 
 use crate::measure::provider::single_unit::{SingleUnit, UnitID};
-#[cfg(feature = "compiled_data")]
-/// Baked data
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
-/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
-/// </div>
-pub use crate::provider::Baked;
 
 use super::ratio::IcuRatio;
 
@@ -67,7 +59,12 @@ impl UnitsInfo<'_> {
     }
 }
 
-icu_provider::data_struct!(UnitsInfo<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(
+    UnitsInfo<'_>,
+    varule: VarZeroSlice<ConversionInfoULE>,
+    #[cfg(feature = "datagen")]
+    encode_as_varule: |v: &UnitsInfo<'_>| &v.conversion_info
+);
 
 /// Represents the conversion information for a unit.
 /// Which includes the base unit (the unit which the unit is converted to), the conversion factor, and the offset.

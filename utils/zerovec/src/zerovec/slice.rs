@@ -575,6 +575,15 @@ impl<T: AsULE + Ord> Ord for ZeroSlice<T> {
     }
 }
 
+impl<T: AsULE + core::hash::Hash> core::hash::Hash for ZeroSlice<T> {
+    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
+        for e in self.iter() {
+            e.hash(state);
+        }
+        self.len().hash(state);
+    }
+}
+
 #[cfg(feature = "alloc")]
 impl<T: AsULE> AsRef<ZeroSlice<T>> for Vec<T::ULE> {
     fn as_ref(&self) -> &ZeroSlice<T> {

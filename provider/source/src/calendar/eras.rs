@@ -108,19 +108,32 @@ impl DataProvider<CalendarJapaneseModernV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CalendarJapaneseModernV1>, DataError> {
         self.check_req::<CalendarJapaneseModernV1>(req)?;
 
-        let (inherit, ref eras) = self.all_eras()?[&DatagenCalendar::Japanese];
-
-        let dates_to_eras = inherit
+        let eras = self.all_eras()?[&DatagenCalendar::Japanese]
+            .1
             .iter()
-            .flat_map(|i| self.all_eras().unwrap()[i].1.iter())
-            .chain(eras)
-            .filter(|(_, data)| !matches!(data.code.as_str(), "bce" | "ce"))
-            .map(|(_, data)| (data.start.unwrap(), data.code.parse().unwrap()))
-            .collect();
+            .map(|(_, era)| {
+                (
+                    era.start.unwrap(),
+                    era.code.parse().unwrap(),
+                    era.icu4x_era_index.unwrap(),
+                )
+            })
+            .collect::<Vec<(EraStartDate, tinystr::TinyAsciiStr<8>, u8)>>();
+
+        let data = JapaneseEras::with_last_era(
+            eras.last().unwrap().0,
+            eras.last().unwrap().1,
+            eras.last().unwrap().2,
+        )
+        .ok_or_else(|| DataError::custom("Invalid era"))?;
+
+        if eras != data.eras().collect::<Vec<_>>() {
+            return Err(DataError::custom("Invalid Japanese eras"));
+        }
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(JapaneseEras { dates_to_eras }),
+            payload: DataPayload::from_owned(data),
         })
     }
 }

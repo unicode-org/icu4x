@@ -1,0 +1,27 @@
+{
+  "locale_pattern": [
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": " ("
+    },
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Literal": ")"
+    }
+  ],
+  "locale_separator": [
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": ", "
+    },
+    {
+      "Placeholder": "Place1"
+    }
+  ]
+}

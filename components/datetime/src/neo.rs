@@ -278,7 +278,7 @@ where
     FSet::T: TimeMarkers,
     FSet::Z: ZoneMarkers,
 {
-    fn try_new_internal<P, L>(
+    pub(crate) fn try_new_internal<P, L>(
         provider: &P,
         loader: &L,
         prefs: DateTimeFormatterPreferences,
@@ -497,7 +497,7 @@ where
     FSet::T: TimeMarkers,
     FSet::Z: ZoneMarkers,
 {
-    fn try_new_internal<P, L>(
+    pub(crate) fn try_new_internal<P, L>(
         provider: &P,
         loader: &L,
         prefs: DateTimeFormatterPreferences,
@@ -1137,9 +1137,9 @@ pub type NoCalendarFormatter<FSet> = FixedCalendarDateTimeFormatter<(), FSet>;
 /// Not intended to be stored: convert to a string first.
 #[derive(Debug)]
 pub struct FormattedDateTime<'a> {
-    pattern: DateTimeZonePatternDataBorrowed<'a>,
-    input: DateTimeInputUnchecked,
-    names: RawDateTimeNamesBorrowed<'a>,
+    pub(crate) pattern: DateTimeZonePatternDataBorrowed<'a>,
+    pub(crate) input: DateTimeInputUnchecked,
+    pub(crate) names: RawDateTimeNamesBorrowed<'a>,
 }
 
 impl Writeable for FormattedDateTime<'_> {

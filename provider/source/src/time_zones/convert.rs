@@ -5,6 +5,7 @@
 use super::{MetazoneInfo, MzMembership};
 use crate::SourceDataProvider;
 use crate::cldr_serde;
+use crate::cldr_serde::displaynames::Alt;
 use cldr_serde::time_zones::time_zone_names::*;
 use core::cmp::Ordering;
 use icu::datetime::provider::time_zones::*;
@@ -28,7 +29,7 @@ impl DataProvider<TimezoneNamesEssentialsV1> for SourceDataProvider {
 
         let time_zone_names = &self
             .cldr()?
-            .dates("gregorian")
+            .dates(None)
             .read_and_parse::<Resource>(req.id.locale, "timeZoneNames.json")?
             .main
             .value
@@ -42,7 +43,6 @@ impl DataProvider<TimezoneNamesEssentialsV1> for SourceDataProvider {
             payload: DataPayload::from_owned(TimeZoneEssentials {
                 offset_separator,
                 offset_pattern: Cow::Owned(time_zone_names.gmt_format.0.clone()),
-                offset_zero: time_zone_names.gmt_zero_format.clone().into(),
                 offset_unknown: time_zone_names.gmt_unknown_format.clone().into(),
             }),
         })
@@ -57,7 +57,7 @@ impl SourceDataProvider {
     ) -> Result<(BTreeMap<TimeZone, String>, BTreeMap<TimeZone, String>), DataError> {
         let time_zone_names = &self
             .cldr()?
-            .dates("gregorian")
+            .dates(None)
             .read_and_parse::<Resource>(locale, "timeZoneNames.json")?
             .main
             .value
@@ -143,21 +143,20 @@ impl SourceDataProvider {
                 .regions;
             regions
                 .iter()
-                .filter_map(|(region, value)| {
-                    Some((
-                        icu::locale::subtags::Region::try_from_str(region).ok()?,
-                        value.as_str(),
-                    ))
+                .filter_map(|(key, value)| {
+                    if key.alt.is_none() && key.menu.is_none() {
+                        Some((key.subtag, value.as_str()))
+                    } else {
+                        None
+                    }
                 })
                 // Overwrite with short names, as we want to use those
-                .chain(regions.iter().filter_map(|(region, value)| {
-                    Some((
-                        icu::locale::subtags::Region::try_from_str(
-                            region.strip_suffix("-alt-short")?,
-                        )
-                        .ok()?,
-                        value.as_str(),
-                    ))
+                .chain(regions.iter().filter_map(|(key, value)| {
+                    if key.alt == Some(Alt::Short) && key.menu.is_none() {
+                        Some((key.subtag, value.as_str()))
+                    } else {
+                        None
+                    }
                 }))
                 .filter(|(r, _)| primary_zones_values.contains(r))
                 .collect()
@@ -185,7 +184,12 @@ impl SourceDataProvider {
         Ok((locations, exemplar_cities))
     }
 
-    fn dedupe_group(&self, locale: DataLocale) -> Result<DataLocale, DataError> {
+    fn dedupe_group(&self, mut locale: DataLocale) -> Result<DataLocale, DataError> {
+        // und stores the und-Latn group.
+        if locale == icu::locale::langid!("und").into() {
+            locale = icu::locale::langid!("und-Latn").into();
+        }
+
         let group = self.cldr()?.script_based_locale_group(&locale)?;
         if self
             .cldr()
@@ -196,7 +200,7 @@ impl SourceDataProvider {
             || self
                 .cldr()
                 .unwrap()
-                .dates("gregorian")
+                .dates(None)
                 .file_exists(&group, "timeZoneNames.json")
                 != Ok(true)
         {
@@ -216,7 +220,7 @@ impl DataProvider<TimezoneNamesLocationsOverrideV1> for SourceDataProvider {
 
         let time_zone_names = &self
             .cldr()?
-            .dates("gregorian")
+            .dates(None)
             .read_and_parse::<Resource>(req.id.locale, "timeZoneNames.json")?
             .main
             .value
@@ -401,7 +405,7 @@ impl DataProvider<TimezoneNamesGenericLongV1> for SourceDataProvider {
 
         let time_zone_names_resource = &self
             .cldr()?
-            .dates("gregorian")
+            .dates(None)
             .read_and_parse::<Resource>(req.id.locale, "timeZoneNames.json")?
             .main
             .value
@@ -460,7 +464,7 @@ impl DataProvider<TimezoneNamesStandardLongV1> for SourceDataProvider {
 
         let time_zone_names_resource = &self
             .cldr()?
-            .dates("gregorian")
+            .dates(None)
             .read_and_parse::<Resource>(req.id.locale, "timeZoneNames.json")?
             .main
             .value
@@ -523,7 +527,7 @@ impl DataProvider<TimezoneNamesSpecificLongV1> for SourceDataProvider {
 
         let time_zone_names_resource = &self
             .cldr()?
-            .dates("gregorian")
+            .dates(None)
             .read_and_parse::<Resource>(req.id.locale, "timeZoneNames.json")?
             .main
             .value
@@ -608,7 +612,7 @@ impl DataProvider<TimezoneNamesGenericShortV1> for SourceDataProvider {
 
         let time_zone_names_resource = &self
             .cldr()?
-            .dates("gregorian")
+            .dates(None)
             .read_and_parse::<Resource>(req.id.locale, "timeZoneNames.json")?
             .main
             .value
@@ -618,10 +622,28 @@ impl DataProvider<TimezoneNamesGenericShortV1> for SourceDataProvider {
         let metazones = self.metazones()?;
 
         let defaults = iter_mz_defaults(time_zone_names_resource, &metazones.ids, false)
-            .flat_map(|(mz, zf)| variant_fallback(zf).map(move |v| (mz, v)))
+            .flat_map(|(mz, zf)| {
+                zf.0.get("generic")
+                    .or_else(|| {
+                        // Only fall back to standard name if the zone is a standard-only zone.
+                        // We do this because we don't want London to use GMT as the generic name.
+                        (!metazones
+                            .reverse
+                            .contains_key(&(mz, MzMembership::StandardAndDaylight)))
+                        .then(|| zf.0.get("standard"))
+                        .flatten()
+                    })
+                    .map(|s| s.as_str())
+                    .map(move |v| (mz, v))
+            })
             .collect();
         let overrides = iter_mz_overrides(time_zone_names_resource, bcp47_tzid_data, false)
-            .flat_map(|(tz, zf)| variant_fallback(zf).map(move |v| (tz, v)))
+            .flat_map(|(tz, zf)| {
+                zf.0.get("generic")
+                    .or_else(|| zf.0.get("standard"))
+                    .map(|s| s.as_str())
+                    .map(move |v| (tz, v))
+            })
             .collect();
 
         Ok(DataResponse {
@@ -642,7 +664,7 @@ impl DataProvider<TimezoneNamesSpecificShortV1> for SourceDataProvider {
 
         let time_zone_names_resource = &self
             .cldr()?
-            .dates("gregorian")
+            .dates(None)
             .read_and_parse::<Resource>(req.id.locale, "timeZoneNames.json")?
             .main
             .value
@@ -726,19 +748,6 @@ fn iter_mz_overrides<'a>(
                     }
                 })
         })
-}
-
-/// Performs part 1 of type fallback as specified in the UTS-35 spec for `TimeZone` Goals:
-/// <https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Goals>
-///
-/// Part 2 of type fallback requires access to the IANA `TimeZone` Database
-/// as well as a specific datetime context, so it is not relevant to `DataProvider`.
-fn variant_fallback(zone_format: &ZoneFormat) -> Option<&str> {
-    zone_format
-        .0
-        .get("generic")
-        .or_else(|| zone_format.0.get("standard"))
-        .map(|s| s.as_str())
 }
 
 fn variant_convert(zone_format: &ZoneFormat) -> impl Iterator<Item = (TimeZoneVariant, &str)> {

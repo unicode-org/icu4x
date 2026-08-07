@@ -17,12 +17,16 @@ final class ZonedTimeFormatter implements ffi.Finalizable {
   // maintain borrow validity.
   ZonedTimeFormatter._fromFfi(this._ffi, this._selfEdge) {
     if (_selfEdge.isEmpty) {
-      _finalizer.attach(this, _ffi.cast());
+      _icu4x_ZonedTimeFormatter_destroy_mv1(this, _ffi.cast());
     }
   }
 
-  @_DiplomatFfiUse('icu4x_ZonedTimeFormatter_destroy_mv1')
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ZonedTimeFormatter_destroy_mv1));
+  // ignore: experimental_member_use
+  @meta.RecordUse()
+  // ignore: non_constant_identifier_names
+  static void _icu4x_ZonedTimeFormatter_destroy_mv1(ZonedTimeFormatter cl, ffi.Pointer<ffi.Void> pointer) => _finalizer.attach(cl, pointer);
+
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_internal_icu4x_ZonedTimeFormatter_destroy_mv1));
 
   /// Creates a zoned formatter based on a non-zoned formatter.
   ///
@@ -294,92 +298,110 @@ final class ZonedTimeFormatter implements ffi.Finalizable {
 
 }
 
-@_DiplomatFfiUse('icu4x_ZonedTimeFormatter_destroy_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_ZonedTimeFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
+external void _internal_icu4x_ZonedTimeFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_specific_long_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_specific_long_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_specific_long_mv1(ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
-@_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_specific_long_with_provider_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_specific_long_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_specific_long_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
-@_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_specific_short_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_specific_short_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_specific_short_mv1(ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
-@_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_specific_short_with_provider_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_specific_short_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_specific_short_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
-@_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_localized_offset_long_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_localized_offset_long_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_localized_offset_long_mv1(ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
-@_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_localized_offset_long_with_provider_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_localized_offset_long_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_localized_offset_long_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
-@_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_localized_offset_short_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_localized_offset_short_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_localized_offset_short_mv1(ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
-@_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_localized_offset_short_with_provider_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_localized_offset_short_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_localized_offset_short_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
-@_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_generic_long_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_generic_long_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_generic_long_mv1(ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
-@_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_generic_long_with_provider_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_generic_long_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_generic_long_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
-@_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_generic_short_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_generic_short_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_generic_short_mv1(ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
-@_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_generic_short_with_provider_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_generic_short_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_generic_short_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
-@_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_location_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_location_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_location_mv1(ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
-@_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_location_with_provider_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_location_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_location_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
-@_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_exemplar_city_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_exemplar_city_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_exemplar_city_mv1(ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
-@_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_exemplar_city_with_provider_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_exemplar_city_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_exemplar_city_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
-@_DiplomatFfiUse('icu4x_ZonedTimeFormatter_format_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_format_mv1')
 // ignore: non_constant_identifier_names
 external _ResultVoidInt32 _icu4x_ZonedTimeFormatter_format_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> time, ffi.Pointer<ffi.Opaque> zone, ffi.Pointer<ffi.Opaque> write);

@@ -8,7 +8,6 @@
 
 use icu_pattern::DoublePlaceholderPattern;
 use icu_plurals::provider::PluralElementsPackedCow;
-use icu_provider::prelude::*;
 
 icu_provider::data_marker!(
     /// `CurrencyPatternsDataV1`
@@ -17,15 +16,4 @@ icu_provider::data_marker!(
 );
 
 /// Currency Extended data struct.
-#[derive(Debug, Clone, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency::patterns))]
-#[yoke(prove_covariance_manually)]
-pub struct CurrencyPatternsData<'data> {
-    /// Contains the unit patterns for a currency based on plural rules.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub patterns: PluralElementsPackedCow<'data, DoublePlaceholderPattern>,
-}
-
-icu_provider::data_struct!(CurrencyPatternsData<'_>, #[cfg(feature = "datagen")]);
+pub type CurrencyPatternsData<'data> = PluralElementsPackedCow<'data, DoublePlaceholderPattern>;

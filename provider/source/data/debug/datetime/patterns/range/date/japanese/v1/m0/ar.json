@@ -11,19 +11,19 @@
   ],
   "elements": [
     {
-      "header": 2,
+      "header": 8,
       "patterns": [
         "LLLL–LLLL"
       ]
     },
     {
-      "header": 2,
+      "header": 8,
       "patterns": [
         "MMM–MMM"
       ]
     },
     {
-      "header": 2,
+      "header": 8,
       "patterns": [
         "M–M"
       ]

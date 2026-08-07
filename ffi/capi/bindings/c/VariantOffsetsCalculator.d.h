@@ -14,6 +14,11 @@
 typedef struct VariantOffsetsCalculator VariantOffsetsCalculator;
 
 
+typedef struct DiplomatVariantOffsetsCalculatorView {
+  const VariantOffsetsCalculator** data;
+  size_t len;
+} DiplomatVariantOffsetsCalculatorView;
+
 
 
 #endif // VariantOffsetsCalculator_D_H

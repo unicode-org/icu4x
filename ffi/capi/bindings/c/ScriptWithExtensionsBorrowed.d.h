@@ -14,6 +14,11 @@
 typedef struct ScriptWithExtensionsBorrowed ScriptWithExtensionsBorrowed;
 
 
+typedef struct DiplomatScriptWithExtensionsBorrowedView {
+  const ScriptWithExtensionsBorrowed** data;
+  size_t len;
+} DiplomatScriptWithExtensionsBorrowedView;
+
 
 
 #endif // ScriptWithExtensionsBorrowed_D_H

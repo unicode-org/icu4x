@@ -1,15 +1,13 @@
 {
-  "patterns": {
-    "other": [
-      0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " د"
-        }
-      ]
+  "other": [
+    0,
+    [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " د"
+      }
     ]
-  }
+  ]
 }

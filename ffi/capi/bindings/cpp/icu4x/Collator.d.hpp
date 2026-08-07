@@ -27,6 +27,12 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct Collator;
+
+
+    typedef struct DiplomatCollatorView {
+      const Collator** data;
+      size_t len;
+    } DiplomatCollatorView;
 } // namespace capi
 } // namespace
 

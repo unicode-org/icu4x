@@ -374,6 +374,7 @@ impl LocaleExpander {
     /// ```
     pub fn maximize(&self, langid: &mut LanguageIdentifier) -> TransformResult {
         let data = self.as_borrowed();
+        let (und_l, und_s, und_r) = data.get_und();
 
         if !langid.language.is_unknown() && langid.script.is_some() && langid.region.is_some() {
             return TransformResult::Unmodified;
@@ -398,16 +399,23 @@ impl LocaleExpander {
         }
         if let Some(script) = langid.script {
             if let Some(region) = langid.region
-                && let Some(language) = data.get_sr(script, region)
+                && let Some(language) = data
+                    .get_sr(script, region)
+                    .or_else(|| ((script, region) == (und_s, und_r)).then_some(und_l))
             {
                 return update_langid(language, None, None, langid);
             }
-            if let Some((language, region)) = data.get_s(script) {
+            if let Some((language, region)) = data
+                .get_s(script)
+                .or_else(|| (script == und_s).then_some((und_l, und_r)))
+            {
                 return update_langid(language, None, Some(region), langid);
             }
         }
         if let Some(region) = langid.region
-            && let Some((language, script)) = data.get_r(region)
+            && let Some((language, script)) = data
+                .get_r(region)
+                .or_else(|| (region == und_r).then_some((und_l, und_s)))
         {
             return update_langid(language, Some(script), None, langid);
         }
@@ -415,12 +423,8 @@ impl LocaleExpander {
         // We failed to find anything in the und-SR, und-S, or und-R tables,
         // to fall back to bare "und"
         debug_assert!(langid.language.is_unknown());
-        update_langid(
-            data.get_und().0,
-            Some(data.get_und().1),
-            Some(data.get_und().2),
-            langid,
-        )
+
+        TransformResult::Unmodified
     }
 
     /// This returns a new Locale that is the result of running the
@@ -534,41 +538,42 @@ impl LocaleExpander {
 
     // TODO(3492): consider turning this and a future get_likely_region/get_likely_language public
     #[inline]
-    pub(crate) fn get_likely_script(&self, langid: &LanguageIdentifier) -> Option<Script> {
+    #[doc(hidden)] // for testing in SourceDataProvider
+    pub fn get_likely_script(&self, langid: &LanguageIdentifier) -> Option<Script> {
         langid
             .script
             .or_else(|| self.infer_likely_script(langid.language, langid.region))
     }
 
     fn infer_likely_script(&self, language: Language, region: Option<Region>) -> Option<Script> {
+        // This is an inlined and simplified `maximize`.
         let data = self.as_borrowed();
+        let (und_l, und_s, und_r) = data.get_und();
 
-        // proceed through _all possible cases_ in order of specificity
-        // (borrowed from LocaleExpander::maximize):
-        // 1. language + region
-        // 2. language
-        // 3. region
-        // we need to check all cases, because e.g. for "en-US" the default script is associated
-        // with "en" but not "en-US"
         if !language.is_unknown() {
-            if let Some(region) = region {
-                // 1. we know both language and region
-                if let Some(script) = data.get_lr(language, region) {
-                    return Some(script);
-                }
+            if let Some(region) = region
+                && let Some(script) = data.get_lr(language, region)
+            {
+                return Some(script);
             }
-            // 2. we know language, but we either do not know region or knowing region did not help
             if let Some((script, _)) = data.get_l(language) {
                 return Some(script);
             }
+            // Language not found: return None.
+            return None;
         }
-        if let Some(region) = region {
-            // 3. we know region, but we either do not know language or knowing language did not help
-            if let Some((_, script)) = data.get_r(region) {
-                return Some(script);
-            }
+        if let Some(region) = region
+            && let Some((_, script)) = data
+                .get_r(region)
+                .or_else(|| (region == und_r).then_some((und_l, und_s)))
+        {
+            return Some(script);
         }
-        // we could not figure out the script from the given locale
+
+        // We failed to find anything in the und-SR, und-S, or und-R tables,
+        // to fall back to bare "und"
+        debug_assert!(language.is_unknown());
+
         None
     }
 }
@@ -583,7 +588,7 @@ impl AsRef<LocaleExpander> for LocaleExpander {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locale_core::locale;
+    use icu_locale_core::{locale, subtags::script};
 
     #[test]
     fn test_minimize_favor_script() {
@@ -602,5 +607,67 @@ mod tests {
         let mut locale = locale!("yue-Hans");
         assert_eq!(lc.minimize(&mut locale.id), TransformResult::Modified);
         assert_eq!(locale, locale!("yue-CN"));
+    }
+
+    #[test]
+    fn test_get_likely_script() {
+        let lc = LocaleExpander::new_common();
+
+        assert_eq!(lc.get_likely_script(&locale!("und").id), None);
+
+        assert_eq!(
+            lc.get_likely_script(&locale!("en").id),
+            Some(script!("Latn"))
+        );
+        assert_eq!(
+            lc.get_likely_script(&locale!("en-US").id),
+            Some(script!("Latn"))
+        );
+        assert_eq!(
+            lc.get_likely_script(&locale!("und-US").id),
+            Some(script!("Latn"))
+        );
+
+        assert_eq!(
+            lc.get_likely_script(&locale!("und-SA").id),
+            Some(script!("Arab"))
+        );
+
+        assert_eq!(lc.get_likely_script(&locale!("tlh").id), None);
+        assert_eq!(lc.get_likely_script(&locale!("tlh-US").id), None);
+        assert_eq!(lc.get_likely_script(&locale!("tlh-SA").id), None);
+    }
+
+    #[test]
+    fn test_maximize() {
+        let lc = LocaleExpander::new_common();
+
+        let mut locale;
+
+        locale = locale!("und");
+        assert_eq!(lc.maximize(&mut locale.id), TransformResult::Unmodified);
+
+        locale = locale!("en");
+        assert_eq!(lc.maximize(&mut locale.id), TransformResult::Modified);
+        assert_eq!(locale, locale!("en-Latn-US"));
+
+        locale = locale!("en-US");
+        assert_eq!(lc.maximize(&mut locale.id), TransformResult::Modified);
+        assert_eq!(locale, locale!("en-Latn-US"));
+
+        locale = locale!("und-US");
+        assert_eq!(lc.maximize(&mut locale.id), TransformResult::Modified);
+        assert_eq!(locale, locale!("en-Latn-US"));
+
+        locale = locale!("und-SA");
+        assert_eq!(lc.maximize(&mut locale.id), TransformResult::Modified);
+        assert_eq!(locale, locale!("ar-Arab-SA"));
+
+        locale = locale!("tlh");
+        assert_eq!(lc.maximize(&mut locale.id), TransformResult::Unmodified);
+        locale = locale!("tlh-US");
+        assert_eq!(lc.maximize(&mut locale.id), TransformResult::Unmodified);
+        locale = locale!("tlh-SA");
+        assert_eq!(lc.maximize(&mut locale.id), TransformResult::Unmodified);
     }
 }

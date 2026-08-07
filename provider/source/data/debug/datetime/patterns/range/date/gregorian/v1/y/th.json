@@ -10,14 +10,14 @@
   ],
   "elements": [
     {
-      "header": 12,
+      "header": 160,
       "patterns": [
         "G y–y",
         "G y – G y"
       ]
     },
     {
-      "header": 4,
+      "header": 32,
       "patterns": [
         "y–y"
       ]

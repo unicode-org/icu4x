@@ -19,12 +19,16 @@ final class Date implements ffi.Finalizable {
   // maintain borrow validity.
   Date._fromFfi(this._ffi, this._selfEdge) {
     if (_selfEdge.isEmpty) {
-      _finalizer.attach(this, _ffi.cast());
+      _icu4x_Date_destroy_mv1(this, _ffi.cast());
     }
   }
 
-  @_DiplomatFfiUse('icu4x_Date_destroy_mv1')
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_Date_destroy_mv1));
+  // ignore: experimental_member_use
+  @meta.RecordUse()
+  // ignore: non_constant_identifier_names
+  static void _icu4x_Date_destroy_mv1(Date cl, ffi.Pointer<ffi.Void> pointer) => _finalizer.attach(cl, pointer);
+
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_internal_icu4x_Date_destroy_mv1));
 
   /// Creates a new [Date] representing the ISO date
   /// given but in a given calendar
@@ -308,137 +312,164 @@ final class Date implements ffi.Finalizable {
 
 }
 
-@_DiplomatFfiUse('icu4x_Date_destroy_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_Date_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_Date_destroy_mv1(ffi.Pointer<ffi.Void> self);
+external void _internal_icu4x_Date_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@_DiplomatFfiUse('icu4x_Date_from_iso_in_calendar_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Int32, ffi.Uint8, ffi.Uint8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_from_iso_in_calendar_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Date_from_iso_in_calendar_mv1(int isoYear, int isoMonth, int isoDay, ffi.Pointer<ffi.Opaque> calendar);
 
-@_DiplomatFfiUse('icu4x_Date_from_fields_in_calendar_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(_DateFieldsFfi, _DateFromFieldsOptionsFfi, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_from_fields_in_calendar_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Date_from_fields_in_calendar_mv1(_DateFieldsFfi fields, _DateFromFieldsOptionsFfi options, ffi.Pointer<ffi.Opaque> calendar);
 
-@_DiplomatFfiUse('icu4x_Date_from_codes_in_calendar_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8, ffi.Int32, _SliceUtf8, ffi.Uint8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_from_codes_in_calendar_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Date_from_codes_in_calendar_mv1(_SliceUtf8 eraCode, int year, _SliceUtf8 monthCode, int day, ffi.Pointer<ffi.Opaque> calendar);
 
-@_DiplomatFfiUse('icu4x_Date_from_rata_die_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Int64, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_from_rata_die_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Date_from_rata_die_mv1(int rd, ffi.Pointer<ffi.Opaque> calendar);
 
-@_DiplomatFfiUse('icu4x_Date_from_string_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_from_string_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Date_from_string_mv1(_SliceUtf8 v, ffi.Pointer<ffi.Opaque> calendar);
 
-@_DiplomatFfiUse('icu4x_Date_to_calendar_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_to_calendar_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_Date_to_calendar_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> calendar);
 
-@_DiplomatFfiUse('icu4x_Date_to_iso_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_to_iso_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_Date_to_iso_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Date_to_rata_die_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Int64 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_to_rata_die_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Date_to_rata_die_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Date_day_of_year_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_day_of_year_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Date_day_of_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Date_day_of_month_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_day_of_month_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Date_day_of_month_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Date_day_of_week_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_day_of_week_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Date_day_of_week_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Date_weekday_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_weekday_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Date_weekday_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Date_ordinal_month_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_ordinal_month_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Date_ordinal_month_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Date_month_code_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_month_code_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Date_month_code_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
-@_DiplomatFfiUse('icu4x_Date_month_number_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_month_number_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Date_month_number_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Date_month_is_leap_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_month_is_leap_mv1')
 // ignore: non_constant_identifier_names
 external bool _icu4x_Date_month_is_leap_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Date_era_year_or_related_iso_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_era_year_or_related_iso_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Date_era_year_or_related_iso_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Date_extended_year_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_extended_year_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Date_extended_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Date_era_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_era_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Date_era_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
-@_DiplomatFfiUse('icu4x_Date_months_in_year_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_months_in_year_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Date_months_in_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Date_days_in_month_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_days_in_month_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Date_days_in_month_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Date_days_in_year_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_days_in_year_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Date_days_in_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Date_is_in_leap_year_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_is_in_leap_year_mv1')
 // ignore: non_constant_identifier_names
 external bool _icu4x_Date_is_in_leap_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Date_calendar_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_calendar_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_Date_calendar_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Date_try_add_with_options_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _DateDurationFfi, _DateAddOptionsFfi)>(isLeaf: true, symbol: 'icu4x_Date_try_add_with_options_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Date_try_add_with_options_mv1(ffi.Pointer<ffi.Opaque> self, _DateDurationFfi duration, _DateAddOptionsFfi options);
 
-@_DiplomatFfiUse('icu4x_Date_try_until_with_options_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultDateDurationFfiCalendarMismatchedCalendarErrorFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _DateDifferenceOptionsFfi)>(isLeaf: true, symbol: 'icu4x_Date_try_until_with_options_mv1')
 // ignore: non_constant_identifier_names
 external _ResultDateDurationFfiCalendarMismatchedCalendarErrorFfi _icu4x_Date_try_until_with_options_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> other, _DateDifferenceOptionsFfi options);

@@ -11,20 +11,20 @@
   ],
   "elements": [
     {
-      "header": 2,
+      "header": 8,
       "patterns": [
         "E, d 'de' MMMM – E, d 'de' MMMM"
       ]
     },
     {
-      "header": 3,
+      "header": 10,
       "patterns": [
         "E d 'al' E d 'de' MMM",
         "E d 'de' MMM 'al' E d 'de' MMM"
       ]
     },
     {
-      "header": 2,
+      "header": 8,
       "patterns": [
         "E dd/MM – E dd/MM"
       ]

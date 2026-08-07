@@ -30,6 +30,12 @@ class TimePrecision;
 namespace icu4x {
 namespace capi {
     struct TimeFormatter;
+
+
+    typedef struct DiplomatTimeFormatterView {
+      const TimeFormatter** data;
+      size_t len;
+    } DiplomatTimeFormatterView;
 } // namespace capi
 } // namespace
 

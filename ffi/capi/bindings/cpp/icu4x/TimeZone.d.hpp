@@ -24,6 +24,12 @@ class UtcOffset;
 namespace icu4x {
 namespace capi {
     struct TimeZone;
+
+
+    typedef struct DiplomatTimeZoneView {
+      const TimeZone** data;
+      size_t len;
+    } DiplomatTimeZoneView;
 } // namespace capi
 } // namespace
 

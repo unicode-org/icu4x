@@ -14,6 +14,11 @@
 typedef struct ZonedTimeFormatter ZonedTimeFormatter;
 
 
+typedef struct DiplomatZonedTimeFormatterView {
+  const ZonedTimeFormatter** data;
+  size_t len;
+} DiplomatZonedTimeFormatterView;
+
 
 
 #endif // ZonedTimeFormatter_D_H

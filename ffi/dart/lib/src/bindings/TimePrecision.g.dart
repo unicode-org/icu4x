@@ -45,7 +45,8 @@ enum TimePrecision {
 
 }
 
-@_DiplomatFfiUse('icu4x_TimePrecision_from_subsecond_digits_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultInt32Void Function(ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_TimePrecision_from_subsecond_digits_mv1')
 // ignore: non_constant_identifier_names
 external _ResultInt32Void _icu4x_TimePrecision_from_subsecond_digits_mv1(int digits);

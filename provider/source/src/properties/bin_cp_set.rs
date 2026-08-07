@@ -18,15 +18,14 @@ impl SourceDataProvider {
         short_name: &str,
     ) -> Result<(), DataError> {
         let sn = self
-            .unicode()?
-            .read_to_string("ucd/PropertyAliases.txt")?
-            .lines()
-            .filter_map(|l| Some(l.split('#').next().unwrap().trim()).filter(|l| !l.is_empty()))
-            .find_map(|l| {
-                let mut fields = l.split(';').map(str::trim);
-                let sn = fields.next()?;
-                let n = fields.next()?;
-                if n == name { Some(sn) } else { None }
+            .rscd()?
+            .parse_ucd_lines("ucd/PropertyAliases.txt")?
+            .filter_map(|line| line.skip_missing_rule())
+            .find_map(|line| {
+                let mut fields = line.fields();
+                let sn = fields.next();
+                let n = fields.next();
+                if Some(name) == n { sn } else { None }
             });
 
         if let Some(sn) = sn
@@ -40,7 +39,7 @@ impl SourceDataProvider {
         Ok(())
     }
 
-    // get the source data for a Unicode binary property that only defines values for code points
+    // get the source data for a UCD binary property that only defines values for code points
     pub(super) fn get_binary_prop(
         &self,
         name: &str,
@@ -83,30 +82,24 @@ impl SourceDataProvider {
             _ => "ucd/PropList.txt",
         };
 
-        for line in self.unicode()?.read_to_string(file)?.lines() {
-            let line = line.split('#').next().unwrap().trim();
-            if line.is_empty() {
+        for line in self.rscd()?.parse_ucd_lines(file)? {
+            let Some(line) = line.skip_missing_rule() else {
+                continue;
+            };
+            let mut fields = line.fields();
+            let range = fields.next().unwrap();
+            if fields.next() != Some(name) {
                 continue;
             }
 
-            let mut parts = line.split(';').map(str::trim);
-            let range = parts.next().unwrap();
-            if parts.next() != Some(name) {
-                continue;
-            }
-
-            let (a, b) = range.split_once("..").unwrap_or((range, range));
-            let a = u32::from_str_radix(a, 16).unwrap();
-            let b = u32::from_str_radix(b, 16).unwrap();
-
-            builder.add_range32(a..=b);
+            builder.add_range32(super::ucd_helpers::parse_range(range));
         }
 
         Ok(builder.build())
     }
 }
 
-macro_rules! impl_unicode_property {
+macro_rules! impl_ucd_property {
     ($(($prop:ty, $marker:ident)),+) => {
         $(
             impl DataProvider<$marker> for SourceDataProvider {
@@ -136,7 +129,7 @@ macro_rules! impl_unicode_property {
     };
 }
 
-impl_unicode_property!(
+impl_ucd_property!(
     (
         icu::properties::props::AsciiHexDigit,
         PropertyBinaryAsciiHexDigitV1
@@ -332,57 +325,6 @@ impl_unicode_property!(
     (icu::properties::props::XidStart, PropertyBinaryXidStartV1)
 );
 
-macro_rules! impl_icu4c_property {
-    ($(($prop:ty, $marker:ident)),+) => {
-        $(
-            #[allow(deprecated)]
-            impl DataProvider<$marker> for SourceDataProvider {
-                fn load(
-                    &self,
-                    req: DataRequest,
-                ) -> Result<DataResponse<$marker>, DataError> {
-                    self.check_req::<$marker>(req)?;
-
-                    let name = core::str::from_utf8(<$prop as BinaryProperty>::NAME).unwrap();
-                    let short_name = core::str::from_utf8(<$prop as BinaryProperty>::SHORT_NAME).unwrap();
-
-                    let mut builder = CodePointInversionListBuilder::new();
-                    let data = self
-                        .icuexport()?
-                        .read_and_parse_toml::<super::uprops_serde::binary::Main>(&format!(
-                            "uprops/{}/{}.toml",
-                            self.trie_type(),
-                            short_name
-                        ))?
-                        .binary_property
-                        .first()
-                        .ok_or_else(|| DataErrorKind::MarkerNotFound.into_error())?;
-
-                    if name != data.long_name
-                        || short_name != data.short_name.as_ref().unwrap_or(&data.long_name)
-                    {
-                        return Err(DataError::custom("Property name mismatch").with_display_context(name));
-                    }
-                    for (start, end) in &data.ranges {
-                        builder.add_range32(start..=end);
-                    }
-
-                    Ok(DataResponse {
-                        metadata: Default::default(),
-                        payload: DataPayload::from_owned(PropertyCodePointSet::InversionList(builder.build()))
-                    })
-                }
-            }
-
-            impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
-                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-                    Ok(HashSet::from_iter([Default::default()]))
-                }
-            }
-        )+
-    };
-}
-
 impl DataProvider<PropertyBinarySegmentStarterV1> for SourceDataProvider {
     fn load(
         &self,
@@ -495,13 +437,6 @@ impl crate::IterableDataProviderCached<PropertyBinaryCaseSensitiveV1> for Source
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
-
-impl_icu4c_property!(
-    (icu::properties::props::NfcInert, PropertyBinaryNfcInertV1),
-    (icu::properties::props::NfdInert, PropertyBinaryNfdInertV1),
-    (icu::properties::props::NfkcInert, PropertyBinaryNfkcInertV1),
-    (icu::properties::props::NfkdInert, PropertyBinaryNfkdInertV1)
-);
 
 macro_rules! impl_posix_property {
     ($(($prop:ty, $marker:ident, $set_string:literal)),+) => {

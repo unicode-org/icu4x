@@ -15,6 +15,12 @@
 namespace icu4x {
 namespace capi {
     struct ReorderedIndexMap;
+
+
+    typedef struct DiplomatReorderedIndexMapView {
+      const ReorderedIndexMap** data;
+      size_t len;
+    } DiplomatReorderedIndexMapView;
 } // namespace capi
 } // namespace
 
@@ -32,7 +38,7 @@ public:
   /**
    * Get this as a slice/array of indices
    */
-  inline icu4x::diplomat::span<const size_t> as_slice() const;
+  inline icu4x::diplomat::span<const size_t> as_slice() const DIPLOMAT_LIFETIME_BOUND;
 
   /**
    * The length of this map

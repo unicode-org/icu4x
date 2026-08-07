@@ -26,6 +26,12 @@ class TransformResult;
 namespace icu4x {
 namespace capi {
     struct LocaleCanonicalizer;
+
+
+    typedef struct DiplomatLocaleCanonicalizerView {
+      const LocaleCanonicalizer** data;
+      size_t len;
+    } DiplomatLocaleCanonicalizerView;
 } // namespace capi
 } // namespace
 

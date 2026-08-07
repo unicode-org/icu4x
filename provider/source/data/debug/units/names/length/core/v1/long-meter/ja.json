@@ -1,15 +1,13 @@
 {
-  "patterns": {
-    "other": [
-      0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " メートル"
-        }
-      ]
+  "other": [
+    0,
+    [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " メートル"
+      }
     ]
-  }
+  ]
 }

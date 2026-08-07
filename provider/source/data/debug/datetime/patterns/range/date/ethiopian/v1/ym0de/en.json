@@ -10,18 +10,18 @@
   ],
   "elements": [
     {
-      "header": 14,
+      "header": 104,
       "patterns": [
         "E, MMM d – E, MMM d, y G",
         "E, MMM d, y – E, MMM d, y G",
-        "E, MMM d, y G – E, MMM d, y G"
+        "E, MMM d, y G"
       ]
     },
     {
-      "header": 12,
+      "header": 96,
       "patterns": [
         "E, M/d/y – E, M/d/y G",
-        "E, M/d/y G – E, M/d/y G"
+        "E, M/d/y G"
       ]
     }
   ]

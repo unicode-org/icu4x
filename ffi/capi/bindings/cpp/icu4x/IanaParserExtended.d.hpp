@@ -28,6 +28,12 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct IanaParserExtended;
+
+
+    typedef struct DiplomatIanaParserExtendedView {
+      const IanaParserExtended** data;
+      size_t len;
+    } DiplomatIanaParserExtendedView;
 } // namespace capi
 } // namespace
 
@@ -60,17 +66,17 @@ public:
   /**
    * See the [Rust documentation for `parse`](https://docs.rs/icu/2.2.0/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.parse) for more information.
    */
-  inline icu4x::TimeZoneAndCanonicalAndNormalized parse(std::string_view value) const;
+  inline icu4x::TimeZoneAndCanonicalAndNormalized parse(std::string_view value) const DIPLOMAT_LIFETIME_BOUND;
 
   /**
    * See the [Rust documentation for `iter`](https://docs.rs/icu/2.2.0/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter) for more information.
    */
-  inline std::unique_ptr<icu4x::TimeZoneAndCanonicalIterator> iter() const;
+  inline std::unique_ptr<icu4x::TimeZoneAndCanonicalIterator> iter() const DIPLOMAT_LIFETIME_BOUND;
 
   /**
    * See the [Rust documentation for `iter_all`](https://docs.rs/icu/2.2.0/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter_all) for more information.
    */
-  inline std::unique_ptr<icu4x::TimeZoneAndCanonicalAndNormalizedIterator> iter_all() const;
+  inline std::unique_ptr<icu4x::TimeZoneAndCanonicalAndNormalizedIterator> iter_all() const DIPLOMAT_LIFETIME_BOUND;
 
     inline const icu4x::capi::IanaParserExtended* AsFFI() const;
     inline icu4x::capi::IanaParserExtended* AsFFI();

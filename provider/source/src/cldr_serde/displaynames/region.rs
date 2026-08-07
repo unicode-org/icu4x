@@ -7,13 +7,15 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-localenames-full/main/en/territories.json>
 
+use super::WithAlt;
+use icu::locale::subtags::Region;
 use serde::Deserialize;
 use std::collections::HashMap;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct Regions {
     #[serde(rename = "territories")]
-    pub(crate) regions: HashMap<String, String>,
+    pub(crate) regions: HashMap<WithAlt<Region>, String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

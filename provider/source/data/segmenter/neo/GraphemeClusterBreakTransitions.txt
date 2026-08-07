@@ -75,7 +75,7 @@ RI ; SpacingMark ; XXmLinkingConsonantmExtPict
 RI ; Extend_ConjunctLinker ; XXmLinkingConsonantmExtPict
 RI ; ExtendmConjunctLinkermConjunctExtender ; XXmLinkingConsonantmExtPict
 RI ; ZWJ ; XXmLinkingConsonantmExtPict
-RI ; RI ; RI RI
+RI ; RI ; XXmLinkingConsonantmExtPict
 ExtPict ZWJ ; ExtPict ; ExtPict
 ExtPict ZWJ ; Extend_ConjunctExtendermConjunctLinker ; XXmLinkingConsonantmExtPict
 ExtPict ZWJ ; SpacingMark ; XXmLinkingConsonantmExtPict
@@ -88,9 +88,3 @@ LinkingConsonant Extend_ConjunctLinker ; LinkingConsonant ; LinkingConsonant
 LinkingConsonant Extend_ConjunctLinker ; Extend_ConjunctLinker ; LinkingConsonant Extend_ConjunctLinker
 LinkingConsonant Extend_ConjunctLinker ; ExtendmConjunctLinkermConjunctExtender ; XXmLinkingConsonantmExtPict
 LinkingConsonant Extend_ConjunctLinker ; ZWJ ; LinkingConsonant Extend_ConjunctLinker
-RI RI ; Extend_ConjunctExtendermConjunctLinker ; XXmLinkingConsonantmExtPict
-RI RI ; SpacingMark ; XXmLinkingConsonantmExtPict
-RI RI ; Extend_ConjunctLinker ; XXmLinkingConsonantmExtPict
-RI RI ; ExtendmConjunctLinkermConjunctExtender ; XXmLinkingConsonantmExtPict
-RI RI ; ZWJ ; XXmLinkingConsonantmExtPict
-RI RI ; RI ; RI RI RI

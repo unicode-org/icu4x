@@ -14,6 +14,11 @@
 typedef struct IsoDate IsoDate;
 
 
+typedef struct DiplomatIsoDateView {
+  const IsoDate** data;
+  size_t len;
+} DiplomatIsoDateView;
+
 
 
 #endif // IsoDate_D_H

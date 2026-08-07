@@ -14,6 +14,11 @@
 typedef struct WordBreakIteratorUtf8 WordBreakIteratorUtf8;
 
 
+typedef struct DiplomatWordBreakIteratorUtf8View {
+  const WordBreakIteratorUtf8** data;
+  size_t len;
+} DiplomatWordBreakIteratorUtf8View;
+
 
 
 #endif // WordBreakIteratorUtf8_D_H

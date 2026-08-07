@@ -14,6 +14,11 @@
 typedef struct DecimalFormatter DecimalFormatter;
 
 
+typedef struct DiplomatDecimalFormatterView {
+  const DecimalFormatter** data;
+  size_t len;
+} DiplomatDecimalFormatterView;
+
 
 
 #endif // DecimalFormatter_D_H

@@ -17,12 +17,16 @@ final class Collator implements ffi.Finalizable {
   // maintain borrow validity.
   Collator._fromFfi(this._ffi, this._selfEdge) {
     if (_selfEdge.isEmpty) {
-      _finalizer.attach(this, _ffi.cast());
+      _icu4x_Collator_destroy_mv1(this, _ffi.cast());
     }
   }
 
-  @_DiplomatFfiUse('icu4x_Collator_destroy_mv1')
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_Collator_destroy_mv1));
+  // ignore: experimental_member_use
+  @meta.RecordUse()
+  // ignore: non_constant_identifier_names
+  static void _icu4x_Collator_destroy_mv1(Collator cl, ffi.Pointer<ffi.Void> pointer) => _finalizer.attach(cl, pointer);
+
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_internal_icu4x_Collator_destroy_mv1));
 
   /// Construct a new Collator instance using compiled data.
   ///
@@ -76,27 +80,32 @@ final class Collator implements ffi.Finalizable {
 
 }
 
-@_DiplomatFfiUse('icu4x_Collator_destroy_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_Collator_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_Collator_destroy_mv1(ffi.Pointer<ffi.Void> self);
+external void _internal_icu4x_Collator_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@_DiplomatFfiUse('icu4x_Collator_create_v1_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _CollatorOptionsFfi)>(isLeaf: true, symbol: 'icu4x_Collator_create_v1_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Collator_create_v1_mv1(ffi.Pointer<ffi.Opaque> locale, _CollatorOptionsFfi options);
 
-@_DiplomatFfiUse('icu4x_Collator_create_v1_with_provider_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _CollatorOptionsFfi)>(isLeaf: true, symbol: 'icu4x_Collator_create_v1_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Collator_create_v1_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _CollatorOptionsFfi options);
 
-@_DiplomatFfiUse('icu4x_Collator_compare_utf16_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<ffi.Int8 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_Collator_compare_utf16_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Collator_compare_utf16_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf16 left, _SliceUtf16 right);
 
-@_DiplomatFfiUse('icu4x_Collator_resolved_options_v1_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_CollatorResolvedOptionsFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Collator_resolved_options_v1_mv1')
 // ignore: non_constant_identifier_names
 external _CollatorResolvedOptionsFfi _icu4x_Collator_resolved_options_v1_mv1(ffi.Pointer<ffi.Opaque> self);

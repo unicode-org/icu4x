@@ -135,6 +135,9 @@ pub mod options;
 pub mod parts;
 pub mod pattern;
 pub mod provider;
+/// Date and time range formatting.
+#[cfg(feature = "unstable")]
+pub mod range;
 pub(crate) mod raw;
 pub mod scaffold;
 pub(crate) mod size_test_macro;

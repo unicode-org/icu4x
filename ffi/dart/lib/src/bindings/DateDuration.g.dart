@@ -122,27 +122,32 @@ final class DateDuration {
       ]);
 }
 
-@_DiplomatFfiUse('icu4x_DateDuration_from_string_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_ResultDateDurationFfiInt32 Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_DateDuration_from_string_mv1')
 // ignore: non_constant_identifier_names
 external _ResultDateDurationFfiInt32 _icu4x_DateDuration_from_string_mv1(_SliceUtf8 v);
 
-@_DiplomatFfiUse('icu4x_DateDuration_for_years_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_DateDurationFfi Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateDuration_for_years_mv1')
 // ignore: non_constant_identifier_names
 external _DateDurationFfi _icu4x_DateDuration_for_years_mv1(int years);
 
-@_DiplomatFfiUse('icu4x_DateDuration_for_months_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_DateDurationFfi Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateDuration_for_months_mv1')
 // ignore: non_constant_identifier_names
 external _DateDurationFfi _icu4x_DateDuration_for_months_mv1(int months);
 
-@_DiplomatFfiUse('icu4x_DateDuration_for_weeks_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_DateDurationFfi Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateDuration_for_weeks_mv1')
 // ignore: non_constant_identifier_names
 external _DateDurationFfi _icu4x_DateDuration_for_weeks_mv1(int weeks);
 
-@_DiplomatFfiUse('icu4x_DateDuration_for_days_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_DateDurationFfi Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateDuration_for_days_mv1')
 // ignore: non_constant_identifier_names
 external _DateDurationFfi _icu4x_DateDuration_for_days_mv1(int days);

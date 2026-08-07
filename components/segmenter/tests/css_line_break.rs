@@ -19,6 +19,7 @@ fn strict(s: &str, ja_zh: bool, expected: &[&str]) {
     options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
     check_line(s, expected, LineSegmenter::new_dictionary(options));
+    check_line(s, expected, LineSegmenter::new_neo_dictionary(options));
 }
 
 #[track_caller]
@@ -28,6 +29,7 @@ fn normal(s: &str, ja_zh: bool, expected: &[&str]) {
     options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
     check_line(s, expected, LineSegmenter::new_dictionary(options));
+    check_line(s, expected, LineSegmenter::new_neo_dictionary(options));
 }
 
 #[track_caller]
@@ -37,6 +39,7 @@ fn loose(s: &str, ja_zh: bool, expected: &[&str]) {
     options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
     check_line(s, expected, LineSegmenter::new_dictionary(options));
+    check_line(s, expected, LineSegmenter::new_neo_dictionary(options));
 }
 
 #[track_caller]
@@ -46,6 +49,7 @@ fn anywhere(s: &str, ja_zh: bool, expected: &[&str]) {
     options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
     check_line(s, expected, LineSegmenter::new_dictionary(options));
+    check_line(s, expected, LineSegmenter::new_neo_dictionary(options));
 }
 
 #[test]
@@ -149,11 +153,11 @@ fn linebreak_loose() {
     loose("文＄文", true, &["文", "＄", "文"]);
 
     // from css/css-text/i18n/unknown-lang/css-text-line-break-in-loose.html
-    loose("文․文", false, &["文", "․", "文"]);
-    loose("文‥文", false, &["文", "‥", "文"]);
-    loose("文…文", false, &["文", "…", "文"]);
-    loose("文⋯文", false, &["文", "⋯", "文"]);
-    loose("文︙文", false, &["文", "︙", "文"]);
+    loose("文․文", false, &["文․", "文"]);
+    loose("文‥文", false, &["文‥", "文"]);
+    loose("文…文", false, &["文…", "文"]);
+    loose("文⋯文", false, &["文⋯", "文"]);
+    loose("文︙文", false, &["文︙", "文"]);
 
     // from css/css-text/i18n/unknown-lang/css-text-line-break-pr-loose.html
     loose("文±文", false, &["文", "±文"]);
@@ -162,11 +166,11 @@ fn linebreak_loose() {
     loose("文＄文", false, &["文", "＄文"]);
 
     // from css/css-text/i18n/zh/css-text-line-break-zh-in-loose.xht
-    loose("文․文", true, &["文", "․", "文"]);
-    loose("文‥文", true, &["文", "‥", "文"]);
-    loose("文…文", true, &["文", "…", "文"]);
-    loose("文⋯文", true, &["文", "⋯", "文"]);
-    loose("文︙文", true, &["文", "︙", "文"]);
+    loose("文․文", true, &["文․", "文"]);
+    loose("文‥文", true, &["文‥", "文"]);
+    loose("文…文", true, &["文…", "文"]);
+    loose("文⋯文", true, &["文⋯", "文"]);
+    loose("文︙文", true, &["文︙", "文"]);
 
     // css/css-text/line-break/line-break-loose-hyphens-001.html
     loose("文‐文", true, &["文", "‐", "文"]);

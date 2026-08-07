@@ -14,6 +14,11 @@
 typedef struct CanonicalDecomposition CanonicalDecomposition;
 
 
+typedef struct DiplomatCanonicalDecompositionView {
+  const CanonicalDecomposition** data;
+  size_t len;
+} DiplomatCanonicalDecompositionView;
+
 
 
 #endif // CanonicalDecomposition_D_H

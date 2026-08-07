@@ -350,6 +350,15 @@ where
             _ => None,
         }
     }
+
+    /// Returns the underlying payload regardless of variable matching.
+    #[allow(dead_code, reason = "https://github.com/unicode-org/icu4x/issues/5448")]
+    pub(crate) fn get_any(&self) -> Option<Payload> {
+        match self {
+            Self::None => None,
+            Self::SingleLength { payload, .. } => Some(*payload),
+        }
+    }
 }
 
 impl<Payload> OptionalNames<(), Payload>

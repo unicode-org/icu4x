@@ -1,12 +1,10 @@
 {
-  "display_names": {
-    "one": [
-      0,
-      "libra esterlina"
-    ],
-    "other": [
-      0,
-      "libras esterlinas"
-    ]
-  }
+  "one": [
+    0,
+    "libra esterlina"
+  ],
+  "other": [
+    0,
+    "libras esterlinas"
+  ]
 }

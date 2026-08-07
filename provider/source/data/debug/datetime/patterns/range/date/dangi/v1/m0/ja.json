@@ -11,21 +11,21 @@
   ],
   "elements": [
     {
-      "header": 2,
+      "header": 4,
       "patterns": [
-        "MMMM～MMMM"
+        "MMMM"
       ]
     },
     {
-      "header": 2,
+      "header": 4,
       "patterns": [
-        "MMM～MMM"
+        "MMM"
       ]
     },
     {
-      "header": 2,
+      "header": 4,
       "patterns": [
-        "M月～M月"
+        "M月"
       ]
     }
   ]

@@ -14,6 +14,11 @@
 typedef struct ScriptWithExtensions ScriptWithExtensions;
 
 
+typedef struct DiplomatScriptWithExtensionsView {
+  const ScriptWithExtensions** data;
+  size_t len;
+} DiplomatScriptWithExtensionsView;
+
 
 
 #endif // ScriptWithExtensions_D_H

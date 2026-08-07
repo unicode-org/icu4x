@@ -23,6 +23,12 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct PropertyValueNameToEnumMapper;
+
+
+    typedef struct DiplomatPropertyValueNameToEnumMapperView {
+      const PropertyValueNameToEnumMapper** data;
+      size_t len;
+    } DiplomatPropertyValueNameToEnumMapperView;
 } // namespace capi
 } // namespace
 

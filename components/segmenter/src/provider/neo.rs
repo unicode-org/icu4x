@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::ComplexScript;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
 use zerovec::ZeroVec;
@@ -45,17 +46,26 @@ impl zerovec::ule::AsULE for Acceptance {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
 pub struct SegmenterStateMachine<'data> {
-    // A map from Unicode scalar values to their DFA symbol.
+    /// A map from Unicode scalar values to their DFA symbol.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub symbols: CodePointTrie<'data, Symbol>,
-    // A dense map of DFA states.
+    /// A dense map of DFA states.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub states: ZeroVec<'data, (Acceptance, Option<Lookahead>)>,
-    // A dense map of DFA transitions, indexed by symbol * states.len() + state
+    /// A dense map of DFA transitions, indexed by `symbol * states.len() + state`
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub transitions: ZeroVec<'data, State>,
-    // The number of lookaheads, used to size the lookahead_positions vector.
+    /// The number of lookaheads, used to size the `lookahead_positions` vector.
     pub num_lookaheads: usize,
+    /// The offset for the pseudo symbols. If the `symbols` trie returns a value larger than this,
+    /// it is a pseudo symbol and needs to be looked up in `pseudo_symbol_map`.
+    pub pseudo_symbol_shift: u8,
+    /// The map from pseudo symbols (symbols `c` where `c > pseudo_symbol_shift`) to their
+    /// actual symbol values and complex script.
+    ///
+    /// Dense linear map, indexed by `c - pseudo_symbol_shift`.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub pseudo_symbol_map: ZeroVec<'data, (Symbol, ComplexScript)>,
 }
 
 icu_provider::data_struct!(
@@ -69,11 +79,10 @@ impl SegmenterStateMachine<'_> {
     /// The trash state. As our transition matrix is dense, we need a state to represent "no transition".
     /// This state is non-accepting and loops to itself on all inputs.
     pub const TRASH_STATE: State = State::MAX;
+
     /// The end-of-text symbol. This is a dummy symbol that only appears at the end of the input,
     /// and allows the state machine to have special transitions on end-of-text.
     pub const EOT_SYMBOL: Symbol = 0;
-    /// This is used as the absence of a symbol in overrides.
-    pub const NO_SYMBOL: Symbol = 255;
 }
 
 /// A tailoring for [`SegmenterStateMachine`].
@@ -85,12 +94,9 @@ impl SegmenterStateMachine<'_> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct SegmenterStateMachineOverride<'data> {
-    /// The symbol mapping overlay.
+    /// See [`SegmenterStateMachine::pseudo_symbol_map`].
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub symbols: CodePointTrie<'data, u8>,
-
-    /// Whether to suppress SA handling.
-    pub ignore_complex: bool,
+    pub pseudo_symbol_map: ZeroVec<'data, (Symbol, ComplexScript)>,
 }
 
 icu_provider::data_struct!(
@@ -104,6 +110,8 @@ icu_provider::data_marker!(
     "segmenter/break/line/v2",
     SegmenterStateMachine<'static>,
     is_singleton = true,
+    #[cfg(feature = "datagen")]
+    has_checksum = true,
 );
 
 icu_provider::data_marker!(
@@ -112,6 +120,8 @@ icu_provider::data_marker!(
     "segmenter/break/word/v2",
     SegmenterStateMachine<'static>,
     is_singleton = true,
+    #[cfg(feature = "datagen")]
+    has_checksum = true,
 );
 
 icu_provider::data_marker!(
@@ -120,6 +130,8 @@ icu_provider::data_marker!(
     "segmenter/break/grapheme/cluster/v2",
     SegmenterStateMachine<'static>,
     is_singleton = true,
+    #[cfg(feature = "datagen")]
+    has_checksum = true,
 );
 
 icu_provider::data_marker!(
@@ -128,6 +140,8 @@ icu_provider::data_marker!(
     "segmenter/break/sentence/v2",
     SegmenterStateMachine<'static>,
     is_singleton = true,
+    #[cfg(feature = "datagen")]
+    has_checksum = true,
 );
 
 icu_provider::data_marker!(
@@ -137,6 +151,7 @@ icu_provider::data_marker!(
     SegmenterStateMachineOverride<'static>,
     #[cfg(feature = "datagen")]
     expose_baked_consts = true,
+    has_checksum = true,
 );
 
 icu_provider::data_marker!(
@@ -144,4 +159,6 @@ icu_provider::data_marker!(
     SegmenterBreakSentenceOverrideV2,
     "segmenter/break/sentence/override/v2",
     SegmenterStateMachineOverride<'static>,
+    #[cfg(feature = "datagen")]
+    has_checksum = true,
 );

@@ -329,6 +329,11 @@ pub struct LikelySubtagsForLanguage<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub language: ZeroMap<'data, UnvalidatedLanguage, (Script, Region)>,
     /// Undefined.
+    ///
+    /// This entry is treated as the following expansions:
+    /// * und-S->LSR
+    /// * und-R->LSR
+    /// * und-S-R->LSR
     pub und: (Language, Script, Region),
 }
 

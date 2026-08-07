@@ -28,6 +28,12 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct CaseMapper;
+
+
+    typedef struct DiplomatCaseMapperView {
+      const CaseMapper** data;
+      size_t len;
+    } DiplomatCaseMapperView;
 } // namespace capi
 } // namespace
 

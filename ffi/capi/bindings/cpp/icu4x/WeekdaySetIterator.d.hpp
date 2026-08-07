@@ -19,6 +19,12 @@ class Weekday;
 namespace icu4x {
 namespace capi {
     struct WeekdaySetIterator;
+
+
+    typedef struct DiplomatWeekdaySetIteratorView {
+      const WeekdaySetIterator** data;
+      size_t len;
+    } DiplomatWeekdaySetIteratorView;
 } // namespace capi
 } // namespace
 

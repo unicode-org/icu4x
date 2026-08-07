@@ -11,20 +11,20 @@
   ],
   "elements": [
     {
-      "header": 3,
+      "header": 10,
       "patterns": [
         "EEEEที่ d – EEEEที่ d MMM",
         "EEEEที่ d MMM – EEEEที่ d MMM"
       ]
     },
     {
-      "header": 2,
+      "header": 8,
       "patterns": [
         "E d MMM – E d MMM"
       ]
     },
     {
-      "header": 2,
+      "header": 8,
       "patterns": [
         "E d/M – E d/M"
       ]

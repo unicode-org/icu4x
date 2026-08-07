@@ -14,6 +14,11 @@
 typedef struct GraphemeClusterSegmenter GraphemeClusterSegmenter;
 
 
+typedef struct DiplomatGraphemeClusterSegmenterView {
+  const GraphemeClusterSegmenter** data;
+  size_t len;
+} DiplomatGraphemeClusterSegmenterView;
+
 
 
 #endif // GraphemeClusterSegmenter_D_H

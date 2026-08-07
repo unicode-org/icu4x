@@ -62,7 +62,8 @@ final class TitlecaseOptions {
       ]);
 }
 
-@_DiplomatFfiUse('icu4x_TitlecaseOptionsV1_default_mv1')
+// ignore: experimental_member_use
+@meta.RecordUse()
 @ffi.Native<_TitlecaseOptionsFfi Function()>(isLeaf: true, symbol: 'icu4x_TitlecaseOptionsV1_default_mv1')
 // ignore: non_constant_identifier_names
 external _TitlecaseOptionsFfi _icu4x_TitlecaseOptionsV1_default_mv1();

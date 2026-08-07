@@ -28,7 +28,7 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline std::unique_ptr<icu4x::LocaleFallbackIterator> icu4x::LocaleFallbackerWithConfig::fallback_for_locale(const icu4x::Locale& locale) const {
+inline std::unique_ptr<icu4x::LocaleFallbackIterator> icu4x::LocaleFallbackerWithConfig::fallback_for_locale(const icu4x::Locale& locale) const DIPLOMAT_LIFETIME_BOUND {
     auto result = icu4x::capi::icu4x_LocaleFallbackerWithConfig_fallback_for_locale_mv1(this->AsFFI(),
         locale.AsFFI());
     return std::unique_ptr<icu4x::LocaleFallbackIterator>(icu4x::LocaleFallbackIterator::FromFFI(result));

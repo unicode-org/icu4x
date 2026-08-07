@@ -74,6 +74,36 @@ where
             trie: self.as_borrowed_slice(),
         }
     }
+
+    /// Queries the trie using a closure that writes to a cursor.
+    ///
+    /// Third-party string-like types can integrate with this API by returning a function
+    /// with the required signature.
+    ///
+    /// # Examples
+    ///
+    /// Using the `writeable` crate:
+    ///
+    /// ```
+    /// use zerotrie::ZeroTrieSimpleAscii;
+    /// use writeable::Writeable;
+    ///
+    /// // A trie with two values: "abc" and "abcdef"
+    /// let trie = ZeroTrieSimpleAscii::from_bytes(b"abc\x80def\x81");
+    ///
+    /// // Get out the value for "abc"
+    /// let needle = writeable::concat_writeable!("a", "bc");
+    /// assert_eq!(trie.get_with_write_fn(|sink| needle.write_to(sink)), Some(0));
+    /// ```
+    #[inline]
+    pub fn get_with_write_fn<'a>(
+        &'a self,
+        write_fn: impl for<'b> FnOnce(&'b mut ZeroTrieSimpleAsciiCursor<'a>) -> fmt::Result,
+    ) -> Option<usize> {
+        let mut cursor = self.cursor();
+        write_fn(&mut cursor).ok()?;
+        cursor.take_value()
+    }
 }
 
 impl<Store> ZeroAsciiIgnoreCaseTrie<Store>
@@ -110,6 +140,36 @@ where
         ZeroAsciiIgnoreCaseTrieCursor {
             trie: self.as_borrowed_slice(),
         }
+    }
+
+    /// Queries the trie using a closure that writes to a cursor.
+    ///
+    /// Third-party string-like types can integrate with this API by returning a function
+    /// with the required signature.
+    ///
+    /// # Examples
+    ///
+    /// Using the `writeable` crate:
+    ///
+    /// ```
+    /// use zerotrie::ZeroAsciiIgnoreCaseTrie;
+    /// use writeable::Writeable;
+    ///
+    /// // A trie with two values: "aBc" and "aBcdEf"
+    /// let trie = ZeroAsciiIgnoreCaseTrie::from_bytes(b"aBc\x80dEf\x81");
+    ///
+    /// // Get out the value for "abc"
+    /// let needle = writeable::concat_writeable!("a", "bc");
+    /// assert_eq!(trie.get_with_write_fn(|sink| needle.write_to(sink)), Some(0));
+    /// ```
+    #[inline]
+    pub fn get_with_write_fn<'a>(
+        &'a self,
+        write_fn: impl for<'b> FnOnce(&'b mut ZeroAsciiIgnoreCaseTrieCursor<'a>) -> fmt::Result,
+    ) -> Option<usize> {
+        let mut cursor = self.cursor();
+        write_fn(&mut cursor).ok()?;
+        cursor.take_value()
     }
 }
 
