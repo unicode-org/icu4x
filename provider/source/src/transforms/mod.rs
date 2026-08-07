@@ -4,6 +4,8 @@
 
 use super::CldrCache;
 use super::cldr_serde::transforms;
+use crate::DataIdentifierCached;
+use crate::DataIdentifierCachedWithLifetime;
 use crate::SourceDataProvider;
 use icu::experimental::transliterate::RuleCollection;
 use icu::experimental::transliterate::provider::*;
@@ -192,7 +194,7 @@ impl DataProvider<TransliteratorRulesV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<TransliteratorRulesV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(self
             .cldr()?
             .transforms()?
@@ -201,7 +203,13 @@ impl crate::IterableDataProviderCached<TransliteratorRulesV1> for SourceDataProv
             .as_provider_unstable(self, self, self)?
             .iter_ids()?
             .into_iter()
-            .map(|id| id.as_borrowed().into_owned())
+            .map(|id| {
+                DataIdentifierCachedWithLifetime::from_attributes_and_locale(
+                    &id.marker_attributes,
+                    id.locale,
+                )
+                .into_owned()
+            })
             .collect())
     }
 }
@@ -216,10 +224,9 @@ mod tests {
 
         let _data: DataPayload<TransliteratorRulesV1> = provider
             .load(DataRequest {
-                id: DataIdentifierCow::from_marker_attributes(
+                id: DataIdentifierBorrowed::for_marker_attributes(
                     DataMarkerAttributes::from_str_or_panic("de-t-de-d0-ascii"),
-                )
-                .as_borrowed(),
+                ),
                 ..Default::default()
             })
             .unwrap()
@@ -232,10 +239,9 @@ mod tests {
 
         let _data: DataPayload<TransliteratorRulesV1> = provider
             .load(DataRequest {
-                id: DataIdentifierCow::from_marker_attributes(
+                id: DataIdentifierBorrowed::for_marker_attributes(
                     DataMarkerAttributes::from_str_or_panic("und-latn-t-s0-ascii"),
-                )
-                .as_borrowed(),
+                ),
                 ..Default::default()
             })
             .unwrap()

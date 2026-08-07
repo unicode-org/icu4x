@@ -6,6 +6,7 @@
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 
+use crate::DataIdentifierCached;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
@@ -77,12 +78,12 @@ macro_rules! implement {
         }
 
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
                 Ok(self
                     .get_rules_for(<$marker>::INFO)?
                     .0
                     .keys()
-                    .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
+                    .map(|l| DataIdentifierCached::from_locale(DataLocale::from(l)))
                     .collect())
             }
         }
@@ -140,12 +141,12 @@ impl DataProvider<PluralsRangesV1> for SourceDataProvider {
 
 #[cfg(feature = "unstable")]
 impl IterableDataProviderCached<PluralsRangesV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(self
             .get_plural_ranges()?
             .0
             .keys()
-            .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
+            .map(|l| DataIdentifierCached::from_locale(DataLocale::from(l)))
             .chain([Default::default()]) // `und` is not included in the locales of plural ranges.
             .collect())
     }

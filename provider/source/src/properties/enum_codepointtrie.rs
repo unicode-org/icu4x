@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::DataIdentifierCached;
 use crate::SourceDataProvider;
 use crate::properties::ucd_helpers::{self, UcdLine};
 use icu::collections::codepointtrie::{CodePointTrie, TrieValue};
@@ -393,25 +394,25 @@ macro_rules! expand {
             }
 
             impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
-                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>  {
+                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError>  {
                     Ok(HashSet::from_iter([Default::default()]))
                 }
             }
 
             impl crate::IterableDataProviderCached<$parse_marker> for SourceDataProvider {
-                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>  {
+                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError>  {
                     Ok(HashSet::from_iter([Default::default()]))
                 }
             }
 
             impl crate::IterableDataProviderCached<$short_marker> for SourceDataProvider {
-                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>  {
+                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError>  {
                     Ok(HashSet::from_iter([Default::default()]))
                 }
             }
 
             impl crate::IterableDataProviderCached<$long_marker> for SourceDataProvider {
-                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>  {
+                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError>  {
                     Ok(HashSet::from_iter([Default::default()]))
                 }
             }
@@ -459,7 +460,7 @@ impl DataProvider<PropertyNameParseGeneralCategoryMaskV1> for SourceDataProvider
 impl crate::IterableDataProviderCached<PropertyNameParseGeneralCategoryMaskV1>
     for SourceDataProvider
 {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

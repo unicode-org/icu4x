@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::DataIdentifierCached;
 use crate::SourceDataProvider;
 use icu::casemap::options::TitlecaseOptions;
 use icu::collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
@@ -121,7 +122,7 @@ macro_rules! impl_ucd_property {
             }
 
             impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
-                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
                     Ok(HashSet::from_iter([Default::default()]))
                 }
             }
@@ -366,7 +367,7 @@ impl DataProvider<PropertyBinarySegmentStarterV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<PropertyBinarySegmentStarterV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -433,7 +434,7 @@ impl DataProvider<PropertyBinaryCaseSensitiveV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<PropertyBinaryCaseSensitiveV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -468,7 +469,7 @@ macro_rules! impl_posix_property {
             }
 
             impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
-                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+                fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
                     Ok(HashSet::from_iter([Default::default()]))
                 }
             }

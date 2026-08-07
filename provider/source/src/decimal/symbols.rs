@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::DataIdentifierCached;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
@@ -103,7 +104,7 @@ impl DataProvider<DecimalSymbolsV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<DecimalSymbolsV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         self.iter_ids_for_numbers_with_locales()
     }
 }
@@ -116,7 +117,7 @@ fn test_basic() {
 
     let ar_decimal: DataResponse<DecimalSymbolsV1> = provider
         .load(DataRequest {
-            id: DataIdentifierCow::from_locale(data_locale!("ar-EG")).as_borrowed(),
+            id: DataIdentifierBorrowed::for_locale(&data_locale!("ar-EG")),
             ..Default::default()
         })
         .unwrap();

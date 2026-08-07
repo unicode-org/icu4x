@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::DataIdentifierCached;
 use crate::SourceDataProvider;
 use icu::collections::codepointtrie::TrieValue;
 use icu::properties::props::EnumeratedProperty;
@@ -130,7 +131,7 @@ impl DataProvider<PropertyScriptWithExtensionsV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<PropertyScriptWithExtensionsV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

@@ -4,6 +4,8 @@
 
 use std::collections::HashSet;
 
+use crate::DataIdentifierCached;
+use crate::DataIdentifierCachedWithLifetime;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 use icu_provider::prelude::*;
@@ -76,7 +78,7 @@ impl SourceDataProvider {
     /// This also includes a bare <locale>
     pub(crate) fn iter_ids_for_numbers_with_locales(
         &self,
-    ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    ) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
@@ -87,19 +89,18 @@ impl SourceDataProvider {
                     .expect("All languages from list_locales should be present")
                     .into_iter()
                     .map(move |nsname| {
-                        DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                            DataMarkerAttributes::try_from_str(&nsname).unwrap(),
-                            &locale,
+                        DataIdentifierCachedWithLifetime::from_attributes_and_locale(
+                            &nsname, locale,
                         )
                         .into_owned()
                     })
-                    .chain([DataIdentifierCow::from_locale(last)])
+                    .chain([DataIdentifierCached::from_locale(last)])
             })
             .collect())
     }
 
     /// Produce `DataIdentifier`'s for all *used* numbering systems in the form und/<numsys>
-    fn iter_ids_for_used_numbers(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_for_used_numbers(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
@@ -109,8 +110,9 @@ impl SourceDataProvider {
                     .expect("All languages from list_locales should be present")
                     .into_iter()
                     .map(move |nsname| {
-                        DataIdentifierBorrowed::for_marker_attributes(
-                            DataMarkerAttributes::try_from_str(&nsname).unwrap(),
+                        DataIdentifierCachedWithLifetime::from_attributes_and_locale(
+                            &nsname,
+                            DataLocale::default(),
                         )
                         .into_owned()
                     })
@@ -120,24 +122,24 @@ impl SourceDataProvider {
 
     /// Produce `DataIdentifier`'s for all digit-based numbering systems in the form und/<numsys>
     #[allow(unused)] // TODO(#5824): Support user-specified numbering systems
-    fn iter_all_number_ids(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_all_number_ids(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         use cldr_serde::numbering_systems::NumberingSystemType;
         let resource: &cldr_serde::numbering_systems::Resource = self
             .cldr()?
             .core()
             .read_and_parse("supplemental/numberingSystems.json")?;
 
-        Ok(resource
+        resource
             .supplemental
             .numbering_systems
             .iter()
             .filter(|(_nsname, data)| data.nstype == NumberingSystemType::Numeric)
             .map(|(nsname, _data)| {
-                DataIdentifierBorrowed::for_marker_attributes(
-                    DataMarkerAttributes::try_from_str(nsname).unwrap(),
+                DataIdentifierCachedWithLifetime::from_writeable_attributes_and_locale(
+                    nsname,
+                    DataLocale::default(),
                 )
-                .into_owned()
             })
-            .collect())
+            .collect()
     }
 }

@@ -5,7 +5,8 @@
 use super::semantic_skeletons::{gen_date_components, gen_time_components};
 use super::{DatagenCalendar, PackedPatternItem};
 use crate::{
-    IterableDataProviderCached, SourceDataProvider, cldr_serde, debug_provider::DebugProvider,
+    DataIdentifierCached, IterableDataProviderCached, SourceDataProvider, cldr_serde,
+    debug_provider::DebugProvider,
 };
 use icu::datetime::fieldsets::enums::*;
 use icu::datetime::provider::fields::{self, Field, components};
@@ -392,7 +393,7 @@ impl SourceDataProvider {
     /// Returns the set of supported locales for time range skeletons.
     fn time_range_skeleton_supported_locales(
         &self,
-    ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    ) -> Result<HashSet<DataIdentifierCached>, DataError> {
         super::iter_skeleton_supported_locales(
             self,
             None,
@@ -404,7 +405,7 @@ impl SourceDataProvider {
     fn date_range_skeleton_supported_locales(
         &self,
         calendar: DatagenCalendar,
-    ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    ) -> Result<HashSet<DataIdentifierCached>, DataError> {
         super::iter_skeleton_supported_locales(
             self,
             Some(calendar),
@@ -444,12 +445,12 @@ impl DataProvider<DatetimePatternsRangeGlueV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<DatetimePatternsRangeGlueV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(self
             .cldr()?
             .dates(None)
             .list_locales()?
-            .map(DataIdentifierCow::from_locale)
+            .map(DataIdentifierCached::from_locale)
             .collect())
     }
 }
@@ -474,7 +475,7 @@ impl DataProvider<DatetimePatternsRangeTimeV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<DatetimePatternsRangeTimeV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         self.time_range_skeleton_supported_locales()
     }
 }
@@ -498,7 +499,7 @@ macro_rules! impl_datetime_range_skeleton_datagen {
         }
 
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
                 self.date_range_skeleton_supported_locales($calendar)
             }
         }

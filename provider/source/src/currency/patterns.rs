@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::DataIdentifierCached;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
@@ -77,12 +78,12 @@ impl DataProvider<CurrencyPatternsDataV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<CurrencyPatternsDataV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
             .list_locales()?
-            .map(DataIdentifierCow::from_locale)
+            .map(DataIdentifierCached::from_locale)
             .collect())
     }
 }

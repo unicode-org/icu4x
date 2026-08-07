@@ -4,6 +4,8 @@
 
 //! This module contains provider implementations backed by built-in segmentation data.
 
+use crate::DataIdentifierCached;
+use crate::DataIdentifierCachedWithLifetime;
 #[cfg(feature = "unstable")]
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
@@ -962,7 +964,7 @@ macro_rules! implement {
         }
 
         impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
                 Ok(HashSet::from_iter([Default::default()]))
             }
         }
@@ -996,11 +998,11 @@ macro_rules! implement_override {
         }
 
         impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
                 const SUPPORTED: &[&str] = &[$($supported),*];
                 Ok(SUPPORTED
                    .iter()
-                   .map(|l|DataIdentifierCow::from_locale(DataLocale::try_from_str(l).unwrap()))
+                   .map(|l|DataIdentifierCached::from_locale(DataLocale::try_from_str(l).unwrap()))
                    .collect())
             }
         }
@@ -1101,7 +1103,7 @@ fn download() {
 #[cfg(feature = "unstable")]
 type TailoredSegmenter = (
     SegmenterStateMachine<'static>,
-    BTreeMap<DataIdentifierCow<'static>, SegmenterStateMachineOverride<'static>>,
+    BTreeMap<DataIdentifierCached, SegmenterStateMachineOverride<'static>>,
     u64,
 );
 
@@ -1345,40 +1347,38 @@ impl SourceDataProvider {
 
                 let id = if prefix == "LineBreak" {
                     let x;
-                    DataIdentifierCow::from_marker_attributes_owned(
-                        DataMarkerAttributes::try_from_string(format!(
-                            "{}{}{}",
-                            if locale.is_unknown() {
-                                ""
-                            } else {
-                                x = locale.to_string();
-                                &x
-                            },
-                            if locale.is_unknown() || keywords.is_empty() {
-                                ""
-                            } else {
-                                "-"
-                            },
-                            keywords
-                                .get(&key!("lb"))
-                                .or_else(|| keywords.get(&key!("lw")))
-                                .map(|v| v.to_string())
-                                .unwrap_or_default()
-                        ))
-                        .unwrap(),
-                    )
+                    // TODO: Avoid allocating a string here; use a Writeable
+                    DataIdentifierCached::from_writeable_attributes(format!(
+                        "{}{}{}",
+                        if locale.is_unknown() {
+                            ""
+                        } else {
+                            x = locale.to_string();
+                            &x
+                        },
+                        if locale.is_unknown() || keywords.is_empty() {
+                            ""
+                        } else {
+                            "-"
+                        },
+                        keywords
+                            .get(&key!("lb"))
+                            .or_else(|| keywords.get(&key!("lw")))
+                            .map(|v| v.to_string())
+                            .unwrap_or_default()
+                    ))
+                    .unwrap()
                 } else {
-                    DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(
-                            keywords
-                                .get(&key!("lb"))
-                                .or_else(|| keywords.get(&key!("lw")))
-                                .map(|v| v.to_string())
-                                .unwrap_or_default(),
-                        )
-                        .unwrap(),
+                    // TODO: Avoid allocating a string here; use a Writeable
+                    DataIdentifierCached::from_writeable_attributes_and_locale(
+                        keywords
+                            .get(&key!("lb"))
+                            .or_else(|| keywords.get(&key!("lw")))
+                            .map(|v| v.to_string())
+                            .unwrap_or_default(),
                         locale,
                     )
+                    .unwrap()
                 };
 
                 tailorings.insert(
@@ -1476,7 +1476,7 @@ impl SourceDataProvider {
                 for (symbol, set2) in symbols.clone().into_iter().collect::<Vec<_>>() {
                     if set.iter_chars().any(|c| set2.contains(c)) {
                         // Overlapping sets. We need to create a new pseudo-symbol.
-                        let pseudo_symbol = format!("{symbol}_{tailoring}_{rule}");
+                        let pseudo_symbol = format!("{symbol}_{}_{rule}", tailoring.0);
                         // Add the intersection as a new symbol.
                         symbols.insert(pseudo_symbol.clone(), {
                             let mut builder = CodePointInversionListBuilder::new();
@@ -1823,28 +1823,28 @@ impl DataProvider<SegmenterBreakGraphemeClusterV2> for SourceDataProvider {
 
 #[cfg(feature = "unstable")]
 impl IterableDataProviderCached<SegmenterBreakLineV2> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok([Default::default()].into_iter().collect())
     }
 }
 
 #[cfg(feature = "unstable")]
 impl IterableDataProviderCached<SegmenterBreakSentenceV2> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok([Default::default()].into_iter().collect())
     }
 }
 
 #[cfg(feature = "unstable")]
 impl IterableDataProviderCached<SegmenterBreakWordV2> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok([Default::default()].into_iter().collect())
     }
 }
 
 #[cfg(feature = "unstable")]
 impl IterableDataProviderCached<SegmenterBreakGraphemeClusterV2> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok([Default::default()].into_iter().collect())
     }
 }
@@ -1869,7 +1869,7 @@ impl DataProvider<SegmenterBreakLineOverrideV2> for SourceDataProvider {
             payload: DataPayload::from_owned(
                 self.line_segmenter()?
                     .1
-                    .get(&req.id.as_cow())
+                    .get(&DataIdentifierCachedWithLifetime::from_cow(req.id.as_cow()))
                     .ok_or_else(|| {
                         DataErrorKind::IdentifierNotFound
                             .with_req(SegmenterBreakLineOverrideV2::INFO, req)
@@ -1882,7 +1882,7 @@ impl DataProvider<SegmenterBreakLineOverrideV2> for SourceDataProvider {
 
 #[cfg(feature = "unstable")]
 impl IterableDataProviderCached<SegmenterBreakLineOverrideV2> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
         return Err(DataError::custom(
             "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
@@ -1914,7 +1914,7 @@ impl DataProvider<SegmenterBreakSentenceOverrideV2> for SourceDataProvider {
             payload: DataPayload::from_owned(
                 self.sentence_segmenter()?
                     .1
-                    .get(&req.id.as_cow())
+                    .get(&DataIdentifierCachedWithLifetime::from_cow(req.id.as_cow()))
                     .ok_or_else(|| {
                         DataErrorKind::IdentifierNotFound
                             .with_req(SegmenterBreakSentenceOverrideV2::INFO, req)
@@ -1927,7 +1927,7 @@ impl DataProvider<SegmenterBreakSentenceOverrideV2> for SourceDataProvider {
 
 #[cfg(feature = "unstable")]
 impl IterableDataProviderCached<SegmenterBreakSentenceOverrideV2> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
         return Err(DataError::custom(
             "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",

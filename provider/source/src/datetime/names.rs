@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::DatagenCalendar;
+use crate::DataIdentifierCached;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde::ca;
@@ -148,15 +149,15 @@ impl SourceDataProvider {
         &self,
         calendar: DatagenCalendar,
         keylengths: &'static [&DataMarkerAttributes],
-    ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    ) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(self
             .cldr()?
             .dates(Some(calendar))
             .list_locales()?
             .flat_map(|locale| {
-                keylengths
-                    .iter()
-                    .map(move |&length| DataIdentifierCow::from_borrowed_and_owned(length, locale))
+                keylengths.iter().map(move |&length| {
+                    DataIdentifierCached::from_attributes_and_locale(length, locale)
+                })
             })
             .collect())
     }
@@ -642,7 +643,7 @@ macro_rules! impl_symbols_datagen {
         }
 
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
                 self.iter_datetime_ids($calendar, $lengths)
             }
         }
@@ -658,7 +659,7 @@ macro_rules! impl_pattern_datagen {
         }
 
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
                 self.iter_datetime_ids($calendar, $lengths)
             }
         }

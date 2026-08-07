@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::DataIdentifierCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 use cldr_serde::units::preferences::UnitType;
@@ -13,7 +14,6 @@ use icu::experimental::dimension::provider::units::categorized_display_names::{
     UnitsNamesVolumeCoreV1, UnitsNamesVolumeExtendedV1, UnitsNamesVolumeOutlierV1,
 };
 use icu::experimental::dimension::provider::units::display_names::UnitsDisplayNames;
-use icu_provider::DataMarkerAttributes;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
@@ -64,7 +64,7 @@ impl SourceDataProvider {
         &self,
         unit_type: UnitType,
         category: &str,
-    ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    ) -> Result<HashSet<DataIdentifierCached>, DataError> {
         let mut data_locales = HashSet::new();
         let numbers = self.cldr()?.numbers();
         let locales = numbers.list_locales()?;
@@ -113,15 +113,11 @@ impl SourceDataProvider {
                         continue;
                     }
 
-                    data_locales.insert(DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(format!("{length}-{unit}")).map_err(
-                            |_| {
-                                DataError::custom("Failed to parse the attribute")
-                                    .with_debug_context(&unit)
-                            },
-                        )?,
+                    let id = DataIdentifierCached::from_writeable_attributes_and_locale(
+                        writeable::concat_writeable!(length, "-", unit),
                         locale,
-                    ));
+                    )?;
+                    data_locales.insert(id);
                 }
             }
         }
@@ -140,7 +136,7 @@ macro_rules! impl_units_display_names_provider {
         }
 
         impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
-            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
                 self.get_display_name_iter_ids_cached($unit_type, $category)
             }
         }

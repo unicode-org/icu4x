@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::DataIdentifierCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 use icu::calendar::AnyCalendarKind;
@@ -217,7 +218,7 @@ pub(crate) fn iter_skeleton_supported_locales(
     provider: &SourceDataProvider,
     calendar: Option<DatagenCalendar>,
     fieldset_attributes: &[&[&'static DataMarkerAttributes]],
-) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+) -> Result<HashSet<DataIdentifierCached>, DataError> {
     Ok(provider
         .cldr()?
         .dates(calendar)
@@ -226,7 +227,7 @@ pub(crate) fn iter_skeleton_supported_locales(
             fieldset_attributes
                 .iter()
                 .flat_map(|list| list.iter())
-                .map(move |attrs| DataIdentifierCow::from_borrowed_and_owned(attrs, locale))
+                .map(move |attrs| DataIdentifierCached::from_attributes_and_locale(attrs, locale))
         })
         .collect())
 }
