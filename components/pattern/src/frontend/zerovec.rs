@@ -36,6 +36,7 @@ where
 /// 5. The implementation of `from_bytes_unchecked()` returns a reference to the same data.
 /// 6. `parse_bytes()` is equivalent to `validate_bytes()` followed by `from_bytes_unchecked()`.
 /// 7. `Pattern<B>` byte equality is semantic equality.
+/// 8. There are no concrete methods with the same name as VarULE trait methods.
 unsafe impl<B, S: ?Sized + VarULE> VarULE for Pattern<B>
 where
     B: PatternBackend<Store = S>,
