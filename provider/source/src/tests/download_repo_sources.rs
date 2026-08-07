@@ -326,14 +326,9 @@ pub fn tzdb_data() -> AbstractFs {{
     ] {
         std::fs::write(
             crate_root.join("../..").join(repo_path),
-            AbstractFs::new_from_url(format!(
-                "https://raw.githubusercontent.com/unicode-org/cldr/refs/tags/release-{}/",
-                SourceDataProvider::TESTED_CLDR_TAG
-                    .replace(".", "-")
-                    .rsplit_once("-")
-                    .unwrap()
-                    .0
-            ))
+            AbstractFs::new_from_url(
+                "https://raw.githubusercontent.com/unicode-org/cldr/9fcd5110ae7bdb7b985177b09b4512b8a5d6790c/".into(),
+            )
             .read_to_string(cldr_path)
             .expect(cldr_path),
         )

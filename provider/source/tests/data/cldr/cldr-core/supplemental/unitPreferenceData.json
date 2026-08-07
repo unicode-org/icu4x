@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "16.0.0",
-      "_cldrVersion": "48"
+      "_cldrVersion": "49"
     },
     "unitPreferenceData": {
       "area": {
@@ -598,6 +598,15 @@
           "US": [
             {
               "unit": "foodcalorie"
+            }
+          ]
+        }
+      },
+      "force": {
+        "default": {
+          "001": [
+            {
+              "unit": "newton"
             }
           ]
         }

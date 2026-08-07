@@ -409,9 +409,17 @@
             "displayName": "แรงปอนด์",
             "unitPattern-count-other": "{0} แรงปอนด์"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "นิวตัน",
             "unitPattern-count-other": "{0} นิวตัน"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "กิโลวัตต์-ชั่วโมงต่อ 100 กิโลเมตร",
@@ -521,6 +529,10 @@
             "displayName": "นิ้ว",
             "unitPattern-count-other": "{0} นิ้ว",
             "perUnitPattern": "{0} ต่อนิ้ว"
+          },
+          "length-mil": {
+            "displayName": "mil [US]",
+            "unitPattern-count-other": "{0} mil [US]"
           },
           "length-parsec": {
             "displayName": "พาร์เซก",
@@ -656,7 +668,7 @@
           },
           "power-milliwatt": {
             "displayName": "มิลลิวัตต์",
-            "unitPattern-count-other": "{0} มิลลิวัตต์"
+            "unitPattern-count-other": "{0} mW"
           },
           "power-horsepower": {
             "displayName": "แรงม้า",
@@ -1480,9 +1492,17 @@
             "displayName": "แรงปอนด์",
             "unitPattern-count-other": "{0} lbf"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "นิวตัน",
             "unitPattern-count-other": "{0} N"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "กิโลวัตต์-ชม./100กม.",
@@ -1592,6 +1612,10 @@
             "displayName": "นิ้ว",
             "unitPattern-count-other": "{0} นิ้ว",
             "perUnitPattern": "{0}/นิ้ว"
+          },
+          "length-mil": {
+            "displayName": "mil [US]",
+            "unitPattern-count-other": "{0} mil [US]"
           },
           "length-parsec": {
             "displayName": "พาร์เซก",
@@ -1727,7 +1751,7 @@
           },
           "power-milliwatt": {
             "displayName": "มิลลิวัตต์",
-            "unitPattern-count-other": "{0} มิลลิวัตต์"
+            "unitPattern-count-other": "{0} mW"
           },
           "power-horsepower": {
             "displayName": "แรงม้า",
@@ -2551,9 +2575,17 @@
             "displayName": "lbf",
             "unitPattern-count-other": "{0}lbf"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "N",
             "unitPattern-count-other": "{0}N"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "กิโลวัตต์-ชม./100กม.",
@@ -2663,6 +2695,10 @@
             "displayName": "นิ้ว",
             "unitPattern-count-other": "{0}″",
             "perUnitPattern": "{0}/นิ้ว"
+          },
+          "length-mil": {
+            "displayName": "mil [US]",
+            "unitPattern-count-other": "{0} mil [US]"
           },
           "length-parsec": {
             "displayName": "พาร์เซก",

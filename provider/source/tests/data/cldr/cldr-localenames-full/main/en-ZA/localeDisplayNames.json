@@ -93,6 +93,7 @@
           },
           "colCaseFirst": {
             "lower": "Sort Lowercase First",
+            "core": "Uppercase",
             "no": "Sort Normal Case Order",
             "upper": "Sort Uppercase First"
           },
@@ -128,6 +129,7 @@
           },
           "colReorder": {
             "currency": "Currency",
+            "core": "Symbol",
             "digit": "Digits",
             "punct": "Punctuation",
             "space": "Whitespace",
@@ -135,6 +137,7 @@
           },
           "colStrength": {
             "identical": "Sort All",
+            "core": "Base, Accents, Case, Variants",
             "primary": "Sort Base Letters Only",
             "quaternary": "Sort Accents/Case/Width/Kana",
             "secondary": "Sort Accents",
@@ -184,8 +187,10 @@
             "hybrid": "Hybrid"
           },
           "hc": {
-            "h11": "12-Hour System (0–11)",
+            "c12": "12-Hour System",
             "core": "24 (1–24)",
+            "c24": "24-Hour System",
+            "h11": "12-Hour System (0–11)",
             "h12": "12-Hour System (1–12)",
             "h23": "24-Hour System (0–23)",
             "h24": "24-Hour System (1–24)"
@@ -418,6 +423,10 @@
             "posix": "POSIX Compliant Locale",
             "core": "POSIX variant"
           }
+        },
+        "typeValues": {
+          "no": "Off",
+          "yes": "On"
         },
         "codePatterns": {
           "language": "Language: {0}",

@@ -1,25 +1,32 @@
 {
   "names": {
     "ar-001": "Modern Standard Arabic",
-    "en-US": "Ingles (American)",
+    "de-AT": "Austrian German",
+    "de-CH": "Swiss High German",
+    "en-AU": "Australian English",
+    "en-CA": "Canadian English",
+    "en-GB": "British English",
+    "en-US": "American English",
     "es-419": "Latin American na Espanyol",
     "es-ES": "European Spanish",
     "es-MX": "Mexican na Espanyol",
     "fa-AF": "Dari",
+    "fr-CA": "Canadian French",
+    "fr-CH": "Swiss French",
     "nds-NL": "Low Saxon",
     "nl-BE": "Flemish",
     "pt-PT": "European Portuguese",
     "ro-MD": "Moldavian",
     "sw-CD": "Congo Swahili",
-    "zh-Hans": "Pinasimpleng Chinese",
-    "zh-Hant": "Tradisyonal na Chinese"
+    "zh-Hans": "Simplified Chinese",
+    "zh-Hant": "Traditional Chinese"
   },
   "short_names": {
     "en-GB": "Ingles sa UK",
-    "en-US": "Ingles sa US"
+    "en-US": "US English"
   },
   "long_names": {
-    "zh-Hans": "Pinasimpleng Mandarin Chinese",
+    "zh-Hans": "Simplified Mandarin Chinese",
     "zh-Hant": "Tradisyonal na Mandarin Chinese"
   },
   "menu_names": {}

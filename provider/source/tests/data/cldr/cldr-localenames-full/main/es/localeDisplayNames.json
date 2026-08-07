@@ -25,18 +25,34 @@
           "collation": "orden",
           "colNormalization": "orden con normalización",
           "colNumeric": "orden numérico",
+          "colReorder": "reordenación por sistema de escritura/bloque",
           "colStrength": "intensidad de orden",
           "currency": "moneda",
+          "d0": "destino de transformación",
+          "dx": "exclusiones de separación por diccionario",
           "em": "presentación del emoji",
+          "fw": "primer día de la semana",
+          "h0": "intercalado",
           "hc": "ciclo horario (12 o 24 horas)",
+          "i0": "método de entrada",
+          "k0": "teclado",
+          "kv": "valor máximo ignorado",
           "lb": "estilo de salto de línea",
           "lw": "salto de línea en palabras",
+          "m0": "reglas de transformación",
           "ms": "sistema de medición",
+          "mu": "unidad de medida",
           "numbers": "números",
+          "rg": "región para datos complementarios",
+          "s0": "origen de transformación",
+          "sd": "subdivisión de región",
           "ss": "salto de oración después de abreviatura",
+          "t": "transformación",
+          "t0": "traducido automáticamente",
           "timezone": "zona horaria",
           "va": "variante local",
-          "x": "uso privado"
+          "x": "uso privado",
+          "x0": "transformación de uso privado"
         },
         "types": {
           "calendar": {
@@ -51,9 +67,9 @@
             "hebrew": "calendario hebreo",
             "indian": "calendario nacional hindú",
             "islamic": "calendario hijri",
-            "islamic-civil": "calendario hijri tabular",
-            "islamic-umalqura": "calendario hijri Umm al-Qura",
-            "iso8601": "calendario ISO-8601",
+            "islamic-civil": "calendario hijri (tabular, época civil)",
+            "islamic-umalqura": "calendario hijri (Umm al-Qura)",
+            "iso8601": "calendario gregoriano (ISO-8601)",
             "japanese": "calendario japonés",
             "persian": "calendario persa",
             "roc": "calendario de la República de China"
@@ -73,6 +89,7 @@
           },
           "colCaseFirst": {
             "lower": "Ordenar empezando por minúsculas",
+            "core": "mayúsculas",
             "no": "Ordenar siguiendo orden normal de mayúsculas y minúsculas",
             "upper": "Ordenar empezando por mayúsculas"
           },
@@ -105,8 +122,12 @@
             "no": "Ordenar dígitos individualmente",
             "yes": "Ordenar dígitos numéricamente"
           },
+          "colReorder": {
+            "core": "símbolo"
+          },
           "colStrength": {
             "identical": "Ordenar todo",
+            "core": "base, acentos, mayúsculas/minúsculas, variantes",
             "primary": "Ordenar solo letras base",
             "quaternary": "Ordenar acentos/mayúsculas y minúsculas/ancho/kana",
             "secondary": "Ordenar acentos",
@@ -121,11 +142,16 @@
             "core": "texto"
           },
           "hc": {
-            "h11": "sistema de 12 horas (0–11)",
+            "c12": "sistema de 12 horas",
             "core": "24 (1–24)",
+            "c24": "sistema de 24 horas",
+            "h11": "sistema de 12 horas (0–11)",
             "h12": "sistema de 12 horas (1–12)",
             "h23": "sistema de 24 horas (0–23)",
             "h24": "sistema de 24 horas (1–24)"
+          },
+          "kv": {
+            "core": "ignorar espacios, puntuación y símbolos no monetarios"
           },
           "lb": {
             "loose": "estilo de salto de línea flexible",
@@ -149,6 +175,7 @@
           "numbers": {
             "arab": "dígitos indoarábigos",
             "arabext": "dígitos indoarábigos extendidos",
+            "core": "números tradicionales",
             "armn": "números en armenio",
             "armnlow": "números en armenio en minúscula",
             "beng": "dígitos en bengalí",
@@ -194,7 +221,17 @@
           },
           "ss": {
             "core": "activado"
+          },
+          "t0": {
+            "und": "traducción automática no especificada"
+          },
+          "va": {
+            "core": "variante POSIX"
           }
+        },
+        "typeValues": {
+          "no": "No",
+          "yes": "Sí"
         },
         "codePatterns": {
           "language": "Idioma: {0}",

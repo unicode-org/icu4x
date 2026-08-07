@@ -11,7 +11,7 @@
   ],
   "elements": [
     "dd.MMMM",
-    "dd.MM.",
+    "d.M.",
     "d. M."
   ]
 }

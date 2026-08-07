@@ -232,6 +232,8 @@ namespace capi {
       Script_TaiYo = 210,
       Script_TolongSiki = 211,
       Script_TraditionalHanWithLatin = 212,
+      Script_ProtoCuneiform = 213,
+      Script_Seal = 214,
       Script_Chisoi = 254,
     };
 
@@ -1098,6 +1100,14 @@ public:
          * See the [Rust documentation for `TraditionalHanWithLatin`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.TraditionalHanWithLatin) for more information.
          */
         TraditionalHanWithLatin = 212,
+        /**
+         * See the [Rust documentation for `ProtoCuneiform`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.ProtoCuneiform) for more information.
+         */
+        ProtoCuneiform = 213,
+        /**
+         * See the [Rust documentation for `Seal`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Seal) for more information.
+         */
+        Seal = 214,
         /**
          * See the [Rust documentation for `Chisoi`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.Script.html#associatedconstant.Chisoi) for more information.
          */

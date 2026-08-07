@@ -237,6 +237,16 @@ jg; Thin_Yeh; 102
 jg; Vertical_Tail; 103
 jg; Kashmiri_Yeh; 104
 jg; Thin_Noon; 105
+jg; Crown_Ain; 106
+jg; Crown_Beh; 107
+jg; Crown_Feh; 108
+jg; Crown_Hah; 109
+jg; Crown_Heh; 110
+jg; Crown_Kaf; 111
+jg; Crown_Meem; 112
+jg; Crown_Sad; 113
+jg; Crown_Seen; 114
+jg; Crown_Tah; 115
 
 jt; U; 0
 jt; C; 1
@@ -513,6 +523,8 @@ sc; Sidt; 209
 sc; Tayo; 210
 sc; Tols; 211
 sc; Hntl; 212; Traditional_Han_With_Latin
+sc; Pcun; 213
+sc; Seal; 214
 
 SB; XX; 0
 SB; AT; 1

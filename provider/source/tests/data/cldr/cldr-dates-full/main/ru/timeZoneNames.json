@@ -8,8 +8,10 @@
         "timeZoneNames": {
           "hourFormat": "+HH:mm;-HH:mm",
           "gmtFormat": "GMT{0}",
-          "gmtZeroFormat": "GMT",
+          "gmtFormat-alt-utc": "UTC{0}",
           "gmtUnknownFormat": "GMT+?",
+          "gmtUnknownFormat-alt-utc": "UTC+?",
+          "dualOffsetFormat": "{0}/{1}",
           "regionFormat": "{0}",
           "regionFormat-type-daylight": "{0}, летнее время",
           "regionFormat-type-standard": "{0}, стандартное время",
@@ -255,9 +257,6 @@
               },
               "London": {
                 "_type": "zone",
-                "long": {
-                  "daylight": "Великобритания, летнее время"
-                },
                 "exemplarCity": "Лондон"
               },
               "Guernsey": {
@@ -282,9 +281,6 @@
               },
               "Dublin": {
                 "_type": "zone",
-                "long": {
-                  "daylight": "Ирландия, стандартное время"
-                },
                 "exemplarCity": "Дублин"
               },
               "Isle_of_Man": {
@@ -1740,9 +1736,9 @@
           "metazone": {
             "Acre": {
               "long": {
-                "generic": "Акри время",
-                "standard": "Акри стандартное время",
-                "daylight": "Акри летнее время"
+                "generic": "Акри",
+                "standard": "Акри, стандартное время",
+                "daylight": "Акри, летнее время"
               }
             },
             "Afghanistan": {
@@ -1775,13 +1771,6 @@
                 "generic": "Аляска",
                 "standard": "Аляска, стандартное время",
                 "daylight": "Аляска, летнее время"
-              }
-            },
-            "Almaty": {
-              "long": {
-                "generic": "Алма-Ата время",
-                "standard": "Алма-Ата стандартное время",
-                "daylight": "Алма-Ата летнее время"
               }
             },
             "Amazon": {
@@ -1831,20 +1820,6 @@
                 "generic": "Апиа",
                 "standard": "Апиа, стандартное время",
                 "daylight": "Апиа, летнее время"
-              }
-            },
-            "Aqtau": {
-              "long": {
-                "generic": "Актау время",
-                "standard": "Актау, стандартное время",
-                "daylight": "Актау летнее время"
-              }
-            },
-            "Aqtobe": {
-              "long": {
-                "generic": "Актобе время",
-                "standard": "Актобе стандартное время",
-                "daylight": "Актобе летнее время"
               }
             },
             "Arabian": {
@@ -1946,6 +1921,13 @@
                 "generic": "Бразилия",
                 "standard": "Бразилия, стандартное время",
                 "daylight": "Бразилия, летнее время"
+              }
+            },
+            "British": {
+              "long": {
+                "generic": "Британское время",
+                "standard": "Среднее время по Гринвичу",
+                "daylight": "Великобритания, летнее время"
               }
             },
             "Brunei": {
@@ -2126,6 +2108,13 @@
                 "standard": "Среднее время по Гринвичу"
               }
             },
+            "Greenland": {
+              "long": {
+                "generic": "Гренландия",
+                "standard": "Гренландия, стандартное время",
+                "daylight": "Гренландия, летнее время"
+              }
+            },
             "Greenland_Eastern": {
               "long": {
                 "generic": "Восточная Гренландия",
@@ -2140,11 +2129,6 @@
                 "daylight": "Западная Гренландия, летнее время"
               }
             },
-            "Guam": {
-              "long": {
-                "standard": "Гуам"
-              }
-            },
             "Gulf": {
               "long": {
                 "standard": "Персидский залив"
@@ -2157,7 +2141,7 @@
             },
             "Hawaii": {
               "long": {
-                "standard": "Гавайско-алеутское стандартное время"
+                "standard": "Гавайское стандартное время"
               }
             },
             "Hawaii_Aleutian": {
@@ -2216,6 +2200,13 @@
                 "generic": "Иран",
                 "standard": "Иран, стандартное время",
                 "daylight": "Иран, летнее время"
+              }
+            },
+            "Irish": {
+              "long": {
+                "generic": "Ирландское время",
+                "standard": "Среднее время по Гринвичу",
+                "daylight": "Ирландия, стандартное время"
               }
             },
             "Irkutsk": {
@@ -2285,11 +2276,6 @@
                 "standard": "Киргизия"
               }
             },
-            "Lanka": {
-              "long": {
-                "standard": "Шри-Ланка"
-              }
-            },
             "Line_Islands": {
               "long": {
                 "standard": "о-ва Лайн"
@@ -2300,13 +2286,6 @@
                 "generic": "Лорд-Хау",
                 "standard": "Лорд-Хау, стандартное время",
                 "daylight": "Лорд-Хау, летнее время"
-              }
-            },
-            "Macau": {
-              "long": {
-                "generic": "Макао",
-                "standard": "Макао, стандартное время",
-                "daylight": "Макао, летнее время"
               }
             },
             "Magadan": {
@@ -2424,11 +2403,6 @@
                 "daylight": "Фернанду-ди-Норонья, летнее время"
               }
             },
-            "North_Mariana": {
-              "long": {
-                "standard": "Северные Марианские о-ва"
-              }
-            },
             "Novosibirsk": {
               "long": {
                 "generic": "Новосибирск",
@@ -2508,13 +2482,6 @@
                 "standard": "Пхеньян"
               }
             },
-            "Qyzylorda": {
-              "long": {
-                "generic": "Кызылорда*",
-                "standard": "Кызылорда, стандартное время*",
-                "daylight": "Кызылорда, летнее время*"
-              }
-            },
             "Reunion": {
               "long": {
                 "standard": "Реюньон"
@@ -2534,16 +2501,14 @@
             },
             "Samara": {
               "long": {
-                "generic": "Время в Самаре",
-                "standard": "Самарское стандартное время",
-                "daylight": "Самарское летнее время"
+                "generic": "Самара",
+                "standard": "Самара, стандартное время",
+                "daylight": "Самара, летнее время"
               }
             },
             "Samoa": {
               "long": {
-                "generic": "Самоа",
-                "standard": "Самоа, стандартное время",
-                "daylight": "Самоа, летнее время"
+                "standard": "Самоа, стандартное время"
               }
             },
             "Seychelles": {
@@ -2612,9 +2577,9 @@
             },
             "Turkey": {
               "long": {
-                "generic": "Турецкое время",
-                "standard": "Турецкое стандартное время",
-                "daylight": "Турецкое летнее время"
+                "generic": "Турция",
+                "standard": "Турция, стандартное время",
+                "daylight": "Турция, летнее время"
               }
             },
             "Turkmenistan": {
@@ -2634,6 +2599,11 @@
                 "generic": "Уругвай",
                 "standard": "Уругвай, стандартное время",
                 "daylight": "Уругвай, летнее время"
+              }
+            },
+            "Urumqi": {
+              "long": {
+                "standard": "Урумчи"
               }
             },
             "Uzbekistan": {

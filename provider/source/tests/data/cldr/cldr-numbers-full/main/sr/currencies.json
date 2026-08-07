@@ -344,7 +344,9 @@
             "displayName": "швајцарски франак",
             "displayName-count-one": "швајцарски франак",
             "displayName-count-few": "швајцарска франка",
-            "displayName-count-other": "швајцарских франака"
+            "displayName-count-other": "швајцарских франака",
+            "symbol": "CHF",
+            "symbol-alt-narrow": "Fr."
           },
           "CHW": {
             "displayName": "WIR франак",
@@ -1684,8 +1686,6 @@
           },
           "XCG": {
             "displayName": "карипски гулден",
-            "displayName-count-one": "карипски гулден",
-            "displayName-count-few": "карипски гулден",
             "displayName-count-other": "карипски гулден",
             "symbol": "Cg."
           },
@@ -1834,8 +1834,6 @@
           },
           "ZWG": {
             "displayName": "зимбабвеанско злато",
-            "displayName-count-one": "зимбабвеанско злато",
-            "displayName-count-few": "зимбабвеанско злато",
             "displayName-count-other": "зимбабвеанско злато"
           },
           "ZWL": {

@@ -8,8 +8,10 @@
         "timeZoneNames": {
           "hourFormat": "+HH:mm;-HH:mm",
           "gmtFormat": "GMT {0}",
-          "gmtZeroFormat": "GMT",
+          "gmtFormat-alt-utc": "ইউটিসি{0}",
           "gmtUnknownFormat": "GMT+?",
+          "gmtUnknownFormat-alt-utc": "UTC+?",
+          "dualOffsetFormat": "{0}/{1}",
           "regionFormat": "{0} সময়",
           "regionFormat-type-daylight": "{0} দিবালোক সময়",
           "regionFormat-type-standard": "{0} মানক সময়",
@@ -176,12 +178,12 @@
                   "standard": "স্থানাংকিত আন্তর্জাতিক সময়"
                 },
                 "short": {
-                  "standard": "UTC"
+                  "standard": "ইউটিসি"
                 }
               },
               "Unknown": {
                 "_type": "zone",
-                "exemplarCity": "অজানা শহর"
+                "exemplarCity": "অচেনা লোকেশন"
               }
             },
             "Europe": {
@@ -255,9 +257,6 @@
               },
               "London": {
                 "_type": "zone",
-                "long": {
-                  "daylight": "ব্রিটিশ গ্রীষ্মকালীন সময়"
-                },
                 "exemplarCity": "লন্ডন"
               },
               "Guernsey": {
@@ -282,9 +281,6 @@
               },
               "Dublin": {
                 "_type": "zone",
-                "long": {
-                  "daylight": "আইরিশ মানক সময়"
-                },
                 "exemplarCity": "ডাবলিন"
               },
               "Isle_of_Man": {
@@ -447,7 +443,7 @@
               },
               "Bahrain": {
                 "_type": "zone",
-                "exemplarCity": "বাহারিন"
+                "exemplarCity": "বাহরাইন"
               },
               "Brunei": {
                 "_type": "zone",
@@ -475,7 +471,7 @@
               },
               "Tbilisi": {
                 "_type": "zone",
-                "exemplarCity": "সিবিলিশি"
+                "exemplarCity": "তিবিলিসি"
               },
               "Hong_Kong": {
                 "_type": "zone",
@@ -575,7 +571,7 @@
               },
               "Beirut": {
                 "_type": "zone",
-                "exemplarCity": "বেইরুট"
+                "exemplarCity": "বৈরুত"
               },
               "Colombo": {
                 "_type": "zone",
@@ -707,7 +703,7 @@
               },
               "Riyadh": {
                 "_type": "zone",
-                "exemplarCity": "রিয়াধ"
+                "exemplarCity": "রিয়াদ"
               },
               "Singapore": {
                 "_type": "zone",
@@ -715,7 +711,7 @@
               },
               "Damascus": {
                 "_type": "zone",
-                "exemplarCity": "দামাস্কাস"
+                "exemplarCity": "দামেস্ক"
               },
               "Bangkok": {
                 "_type": "zone",
@@ -815,7 +811,7 @@
               },
               "Aruba": {
                 "_type": "zone",
-                "exemplarCity": "এরুবা"
+                "exemplarCity": "আরুবা"
               },
               "Barbados": {
                 "_type": "zone",
@@ -1821,16 +1817,16 @@
             },
             "Apia": {
               "long": {
-                "generic": "অপিয়া সময়",
-                "standard": "অপিয়া মানক সময়",
-                "daylight": "অপিয়া দিনের সময়"
+                "generic": "পশ্চিম সামোয়া সময়",
+                "standard": "পশ্চিম সামোয়া মানক সময়",
+                "daylight": "পশ্চিম সামোয়া দিবালোক সময়"
               }
             },
             "Arabian": {
               "long": {
-                "generic": "আরবি সময়",
-                "standard": "আরবি মানক সময়",
-                "daylight": "আরবি দিবালোক সময়"
+                "generic": "আরব সময়",
+                "standard": "আরব মান সময়",
+                "daylight": "আরব দিবালোক সময়"
               }
             },
             "Argentina": {
@@ -1925,6 +1921,13 @@
                 "generic": "ব্রাসিলিয়া সময়",
                 "standard": "ব্রাসিলিয়া মানক সময়",
                 "daylight": "ব্রাসিলিয়া গ্রীষ্মকালীন সময়"
+              }
+            },
+            "British": {
+              "long": {
+                "generic": "ব্রিটিশ সময়",
+                "standard": "গ্রীনিচ মিন টাইম",
+                "daylight": "ব্রিটিশ গ্রীষ্মকালীন সময়"
               }
             },
             "Brunei": {
@@ -2100,18 +2103,25 @@
                 "standard": "গ্রীনিচ মিন টাইম"
               }
             },
+            "Greenland": {
+              "long": {
+                "generic": "গ্রিনল্যান্ড সময়",
+                "standard": "গ্রিনল্যান্ড মানক সময়",
+                "daylight": "গ্রিনল্যান্ড গ্রীষ্মকালীন সময়"
+              }
+            },
             "Greenland_Eastern": {
               "long": {
-                "generic": "পূর্ব গ্রীনল্যান্ড সময়",
-                "standard": "পূর্ব গ্রীনল্যান্ড মানক সময়",
-                "daylight": "পূর্ব গ্রীনল্যান্ড গ্রীষ্মকালীন সময়"
+                "generic": "পূর্ব গ্রিনল্যান্ড সময়",
+                "standard": "পূর্ব গ্রিনল্যান্ড মানক সময়",
+                "daylight": "পূর্ব গ্রিনল্যান্ড গ্রীষ্মকালীন সময়"
               }
             },
             "Greenland_Western": {
               "long": {
-                "generic": "পশ্চিম গ্রীনল্যান্ড সময়",
+                "generic": "পশ্চিম গ্রিনল্যান্ড সময়",
                 "standard": "পশ্চিম গ্রীনল্যান্ড মানক সময়",
-                "daylight": "পশ্চিম গ্রীনল্যান্ড গ্রীষ্মকালীন সময়"
+                "daylight": "পশ্চিম গ্রিনল্যান্ড গ্রীষ্মকালীন সময়"
               }
             },
             "Gulf": {
@@ -2126,14 +2136,14 @@
             },
             "Hawaii": {
               "long": {
-                "standard": "হাওয়াই-আলেউত মানক সময়"
+                "standard": "হাওয়াই সময়"
               }
             },
             "Hawaii_Aleutian": {
               "long": {
-                "generic": "হাওয়াই-আলেউত সময়",
+                "generic": "হাওয়াই-অ্যালিউশিয়ান সময়",
                 "standard": "হাওয়াই-আলেউত মানক সময়",
-                "daylight": "হাওয়াই-আলেউত দিবালোক সময়"
+                "daylight": "হাওয়াই-অ্যালিউশিয়ান দিবালোক সময়"
               }
             },
             "Hong_Kong": {
@@ -2190,6 +2200,13 @@
                 "daylight": "ইরান দিবালোক সময়"
               }
             },
+            "Irish": {
+              "long": {
+                "generic": "আইরিশ সময়",
+                "standard": "গ্রীনিচ মিন টাইম",
+                "daylight": "আইরিশ মানক সময়"
+              }
+            },
             "Irkutsk": {
               "long": {
                 "generic": "ইরকুটস্ক সময়",
@@ -2213,9 +2230,9 @@
             },
             "Kamchatka": {
               "long": {
-                "generic": "পিত্রেপ্যাভলস্ক- ক্যামচ্যাটস্কি সময়",
-                "standard": "পিত্রেপ্যাভলস্ক- ক্যামচ্যাটস্কি মান সময়",
-                "daylight": "পিত্রেপ্যাভলস্ক- ক্যামচ্যাটস্কি গৃষ্মকালীন সময়"
+                "generic": "কামচাটকার সময়",
+                "standard": "কামচাটকার মানক সময়",
+                "daylight": "কামচাটকার গৃষ্মকালীন সময়"
               }
             },
             "Kazakhstan": {
@@ -2489,9 +2506,7 @@
             },
             "Samoa": {
               "long": {
-                "generic": "সামোয়া সময়",
-                "standard": "সামোয়া মানক সময়",
-                "daylight": "সামোয়া দিবালোক সময়"
+                "standard": "সামোয়া মানক সময়"
               }
             },
             "Seychelles": {
@@ -2531,9 +2546,9 @@
             },
             "Taipei": {
               "long": {
-                "generic": "তাইপেই সময়",
-                "standard": "তাইপেই মানক সময়",
-                "daylight": "তাইপেই দিবালোক সময়"
+                "generic": "তাইওয়ান সময়",
+                "standard": "তাইওয়ান মানক সময়",
+                "daylight": "তাইওয়ান দিবালোক সময়"
               }
             },
             "Tajikistan": {
@@ -2558,6 +2573,13 @@
                 "standard": "চুক সময়"
               }
             },
+            "Turkey": {
+              "long": {
+                "generic": "তুরস্ক সময়",
+                "standard": "তুরস্ক মানক সময়",
+                "daylight": "তুরস্ক গ্রীষ্মকালীন সময়"
+              }
+            },
             "Turkmenistan": {
               "long": {
                 "generic": "তুর্কমেনিস্তান সময়",
@@ -2575,6 +2597,11 @@
                 "generic": "উরুগুয়ে সময়",
                 "standard": "উরুগুয়ে মানক সময়",
                 "daylight": "উরুগুয়ে গ্রীষ্মকালীন সময়"
+              }
+            },
+            "Urumqi": {
+              "long": {
+                "standard": "উরুমচি সময়"
               }
             },
             "Uzbekistan": {

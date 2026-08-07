@@ -11,9 +11,9 @@
   "elements": [
     "EEEE h a",
     "E h a",
-    "EEEE, h:m a",
-    "E, h:mm a",
-    "EEEE, h:m:s a",
-    "E, h:mm:ss a"
+    "EEEE, H:m",
+    "E, HH:mm",
+    "EEEE, H:m:s",
+    "E, HH:mm:ss"
   ]
 }
