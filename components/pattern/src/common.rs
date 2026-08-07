@@ -272,7 +272,10 @@ where
 /// trait, please consider using a type from the implementors listed below.
 /// </div>
 ///
+/// ✨ *Enabled with the `unstable` Cargo feature.*
+///
 /// [`Pattern`]: crate::Pattern
+#[cfg(feature = "unstable")]
 pub trait ExtractionBackend: PatternBackend + crate::private::Sealed {
     /// 🚧 \[Unstable\] The type that stores the matches for this backend.
     ///

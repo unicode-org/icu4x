@@ -401,14 +401,32 @@ where
 /// A structure containing the extracted placeholder values.
 ///
 /// Query it using [`Self::get()`].
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. If you find this useful, please comment on the
+/// [tracking issue #8331](https://github.com/unicode-org/icu4x/issues/8331).
+/// </div>
+///
+/// ✨ *Enabled with the `unstable` Cargo feature.*
+#[cfg(feature = "unstable")]
 pub struct PlaceholderMatches<'p, 'a, B: ExtractionBackend> {
     pub(crate) store: B::DecodedMatchesUnstable<'p, 'a>,
 }
 
+#[cfg(feature = "unstable")]
 impl<'p, 'a, B: ExtractionBackend> PlaceholderMatches<'p, 'a, B> {
     /// Gets the matched substring for the given placeholder key.
     ///
     /// Returns `None` if the placeholder was not present in the pattern.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. If you find this useful, please comment on the
+    /// [tracking issue #8331](https://github.com/unicode-org/icu4x/issues/8331).
+    /// </div>
+    ///
+    /// ✨ *Enabled with the `unstable` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -425,6 +443,7 @@ impl<'p, 'a, B: ExtractionBackend> PlaceholderMatches<'p, 'a, B> {
     }
 }
 
+#[cfg(feature = "unstable")]
 impl<'p, B: ExtractionBackend> fmt::Debug for PlaceholderMatches<'p, '_, B>
 where
     for<'a> B::DecodedMatchesUnstable<'p, 'a>: fmt::Debug,
@@ -436,6 +455,7 @@ where
     }
 }
 
+#[cfg(feature = "unstable")]
 impl<'p, B: ExtractionBackend> PartialEq for PlaceholderMatches<'p, '_, B>
 where
     for<'a> B::DecodedMatchesUnstable<'p, 'a>: PartialEq,
@@ -445,15 +465,25 @@ where
     }
 }
 
+#[cfg(feature = "unstable")]
 impl<'p, B: ExtractionBackend> Eq for PlaceholderMatches<'p, '_, B> where
     for<'a> B::DecodedMatchesUnstable<'p, 'a>: Eq
 {
 }
 
+#[cfg(feature = "unstable")]
 impl<B: ExtractionBackend> Pattern<B> {
     /// Extracts placeholder values from the formatted string.
     ///
     /// Returns `None` if the input string does not match the pattern.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. If you find this useful, please comment on the
+    /// [tracking issue #8331](https://github.com/unicode-org/icu4x/issues/8331).
+    /// </div>
+    ///
+    /// ✨ *Enabled with the `unstable` Cargo feature.*
     ///
     /// # Examples
     ///

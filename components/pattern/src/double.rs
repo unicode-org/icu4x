@@ -473,6 +473,7 @@ impl PatternBackend for DoublePlaceholder {
     }
 }
 
+#[cfg(feature = "unstable")]
 impl ExtractionBackend for DoublePlaceholder {
     type DecodedMatchesUnstable<'p, 'a> = [Option<&'a str>; 2];
 

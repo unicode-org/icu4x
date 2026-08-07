@@ -59,6 +59,7 @@ mod single;
 
 #[doc(no_inline)]
 pub use PatternError as Error;
+#[cfg(feature = "unstable")]
 pub use common::ExtractionBackend;
 pub use common::PatternBackend;
 pub use common::PatternItem;
@@ -70,6 +71,7 @@ pub use double::DoublePlaceholderKey;
 pub use double::DoublePlaceholderValueProviderTry;
 pub use error::PatternError;
 pub use frontend::Pattern;
+#[cfg(feature = "unstable")]
 pub use frontend::PlaceholderMatches;
 #[cfg(feature = "serde")]
 pub use frontend::serde::*;

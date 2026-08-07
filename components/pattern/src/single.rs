@@ -330,6 +330,7 @@ impl PatternBackend for SinglePlaceholder {
     }
 }
 
+#[cfg(feature = "unstable")]
 impl ExtractionBackend for SinglePlaceholder {
     type DecodedMatchesUnstable<'p, 'a> = Option<&'a str>;
 
