@@ -8,16 +8,40 @@ enum_keyword!(
     /// A Unicode Collation Identifier defines a type of collation (sort order).
     ///
     /// The valid values are listed in [LDML](https://unicode.org/reports/tr35/#UnicodeCollationIdentifier).
+    /// 
+    /// # Supported Values
+    /// 
+    /// Not all collation orderings are always supported by ICU4X:
+    /// 
+    /// - Some apply to specific locales only
+    /// - Some require a custom data build
+    /// - Some are not supported at all
+    /// 
+    /// The nature of each option is documented on a best-effort basis.
+    /// 
+    /// When an ordering is not supported, `icu::collator` falls back to the default ordering for the locale.
+    /// 
+    /// For a discussion of which options are supported when, see
+    /// <https://github.com/unicode-org/icu4x/issues/6033>.
+    /// 
+    /// For more information on how to add more orderings to a custom data build, see
+    /// [`ExportDriver::with_additional_collations`](https://docs.rs/icu_provider_export/latest/icu_provider_export/struct.ExportDriver.html#method.with_additional_collations).
     CollationType {
         /// A previous version of the ordering, for compatibility
         ("compat" => Compat),
         /// Dictionary style ordering (such as in Sinhala)
         ("dict" => Dict),
         /// The default Unicode collation element table order
+        /// 
+        /// 🛈 `icu::collator` does not support the `ducet` ordering. See [`CollationType`].
         ("ducet" => Ducet),
         /// Recommended ordering for emoji characters
+        /// 
+        /// 🛈 `icu::collator` supports this ordering only in the root locale. See [`CollationType`].
         ("emoji" => Emoji),
         /// European ordering rules
+        /// 
+        /// 🛈 `icu::collator` supports this ordering only in the root locale. See [`CollationType`].
         ("eor" => Eor),
         /// Phonebook style ordering (such as in German)
         ("phonebk" => Phonebk),
@@ -26,8 +50,12 @@ enum_keyword!(
         /// Pinyin ordering for Latin and for CJK characters (used in Chinese)
         ("pinyin" => Pinyin),
         /// Special collation type for string search
+        ///
+        /// 🛈 `icu::collator` does not include search collation rules by default. See [`CollationType`].
         ("search" => Search),
         /// Special collation type for Korean initial consonant search
+        ///
+        /// 🛈 `icu::collator` does not include search collation rules by default. See [`CollationType`].
         ("searchjl" => Searchjl),
         /// Default ordering for each language
         ("standard" => Standard),
