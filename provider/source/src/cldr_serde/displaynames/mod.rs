@@ -32,6 +32,23 @@ pub(crate) enum Alt {
     Menu,
 }
 
+impl Alt {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Alt::Short => "short",
+            Alt::Long => "long",
+            Alt::Variant => "variant",
+            Alt::StandAlone => "stand-alone",
+            Alt::Official => "official",
+            Alt::Secondary => "secondary",
+            Alt::Biot => "biot",
+            Alt::Chagos => "chagos",
+            Alt::Menu => "menu",
+            Alt::Unknown => "unknown",
+        }
+    }
+}
+
 impl FromStr for Alt {
     type Err = ();
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -55,6 +72,16 @@ pub(crate) enum Menu {
     Unknown,
     Core,
     Extension,
+}
+
+impl Menu {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Menu::Core => "core",
+            Menu::Extension => "extension",
+            Menu::Unknown => "unknown",
+        }
+    }
 }
 
 impl FromStr for Menu {
