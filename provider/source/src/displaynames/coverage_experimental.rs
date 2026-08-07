@@ -50,10 +50,9 @@ fn parse_cldr_xpath(xpath: &str) -> Option<(DisplayNameCategory, String)> {
         (DisplayNameCategory::Territory, r)
     } else if let Some(r) = xpath.strip_prefix(prefix_script) {
         (DisplayNameCategory::Script, r)
-    } else if let Some(r) = xpath.strip_prefix(prefix_var) {
-        (DisplayNameCategory::Variant, r)
     } else {
-        return None;
+        let r = xpath.strip_prefix(prefix_var)?;
+        (DisplayNameCategory::Variant, r)
     };
 
     let type_prefix = "[@type=\"";
@@ -88,7 +87,7 @@ struct RawCoverageByXPathLevels {
 ///
 /// **Note on File Contents & Scope**:
 /// `CoverageByXPathLevels` contains parsed coverage level data specifically tailored for display names subtags.
-/// If additional CLDR XPaths (e.g., unit patterns, currency display names, or calendar fields) need to be supported
+/// If additional CLDR `XPaths` (e.g., unit patterns, currency display names, or calendar fields) need to be supported
 /// for coverage filtering in the future, they should be parsed into their own category-specific `ZeroTrie` fields
 /// on this struct or a dedicated coverage struct, following the pattern of the display names fields below.
 #[derive(Deserialize, Debug)]

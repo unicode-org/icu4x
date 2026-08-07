@@ -33,7 +33,7 @@ pub(crate) enum Alt {
 }
 
 impl Alt {
-    pub fn as_str(&self) -> &'static str {
+    pub fn as_str(self) -> &'static str {
         match self {
             Alt::Short => "short",
             Alt::Long => "long",
@@ -75,7 +75,7 @@ pub(crate) enum Menu {
 }
 
 impl Menu {
-    pub fn as_str(&self) -> &'static str {
+    pub fn as_str(self) -> &'static str {
         match self {
             Menu::Core => "core",
             Menu::Extension => "extension",
