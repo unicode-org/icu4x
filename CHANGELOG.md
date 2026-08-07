@@ -1,5 +1,215 @@
 # Changelog
 
+## icu4x 2.3
+
+- Components
+  - General
+    - Updated data to TZDB 2026c (unicode-org#8200)
+  - `icu_calendar`
+    - Fix extended year calculations in Gregorian-like and Coptic-like calendars (unicode-org#7849)
+    - Add `Julian` to `AnyCalendar` (unicode-org#7224)
+    - Fix safety issue in `Japanese::try_new_with_buffer_provider` (unicode-org#8095)
+    - Add `AnyCalendarKind::try_new` and deprecate  `AnyCalendarKind::new`. The new version uses locale data to infer calendars from locales. (unicode-org#8102)
+    - Deprecate `CalendarPreferences::resolve_calendar`. This method did not perform likely-subtags expansion. (unicode-org#8102)
+  - `icu_casemapping`
+    - Fix `TrailingCase::Unchanged` handling for Dutch (unicode-org#7863)
+  - `icu_collator`
+    - Add `CollatorBorrowed::new_root` (unicode-org#7893)
+    - Changes to the `CollationSpecialPrimariesV1` data struct (unicode-org#7872)
+    - Fix a possible panic when generating a sort key for a collation that uses backward secondary level. (unicode-org#7927)
+    - Fix generation of identical level sort keys containing the codepoint U+A000. (unicode-org#7928)
+    - Fixed an issue where the emoji collation was not loading correctly (unicode-org#7989)
+    - The performance of sort key generation was tuned. (unicode-org#7930)
+  - `icu_collections`
+    - Fix a bug in `CodePointInversionList::contains_set` (unicode-org#8121)
+    - `impl Hash for CodePointInversionList` (unicode-org#8282)
+  - `icu_datetime`
+    - Support numbering system overrides for datetime patterns when found in data (unicode-org#7905)
+    - Correctly handle CLDR 48.2 data with "c" in the skeletons. (unicode-org#7945)
+    - Correctly handle the `B` pattern in hour field sets (unicode-org#7971)
+    - Correctly implement numeric month fields for calendars with leap months (unicode-org#7986)
+    - Implement data structures for packed range patterns. (unicode-org#7966)
+    - Use the correct calendar even if the region is only implied by the language (i.e. `fa`) (unicode-org#8102)
+    - Add scaffolding for range formatting (unicode-org#8173)
+      - New associated type: `TypedDateDataMarkers::RangeSkel`
+    - Preserve zero minutes in MinuteOptional format for 24-hour hour cycles (unicode-org#8237)
+      - Modified variants on `TimeGranularity`: `Hours23OrNone`, `Hours12`
+      - Added deprecated const aliases: `TimeGranularity::Hours`, `TimeGranularity::None`
+    - Add unstable range formatter (unicode-org#8149)
+      - New types: `DateRangeFormatter`, `FixedCalendarDateRangeFormatter`, `FormattedDateRange`
+  - `icu_decimal`
+    - Fix integer overflow in UnsignedDecimal exponent parsing (unicode-org#8289)
+  - `icu_experimental/currency`
+    - Polishes documentation, extraction logic, and error reporting across experimental currency components: (unicode-org#8049)
+      - **`CurrencyExtendedDataV1`**: Improves grammar in struct doc comments and standardizes runtime error context to use precise "auxiliary key" terminology.
+      - **`CurrencyDisplaynameV1`**: Corrects copy-paste artifacts in definitions and optimizes payload construction in `load` by eliminating redundant string conversions.
+      - **`ShortCurrencyCompactV1`**: Renames internal map to `alpha_next_to_number_patterns` for perfect field alignment and replaces vague `"pattern"` runtime error strings with detailed, actionable messages.
+    - This PR improves code readability, documentation, and maintainability for `CurrencyEssentialsV1` definitions and its underlying datagen extraction logic (unicode-org#8048)
+    - Overhauls CurrencyEssentialsV1 data storage (unicode-org#8050)
+    - improvements to `CurrencyEssentialsV1` (unicode-org#8053)
+    - Implement `ValueRepresentation` trait and `Decimal` marker struct to support typestate-based currency formatting. (unicode-org#8145)
+    - Refactor `CurrencyFormatter` to be generic over `ValueRepresentation`: `pub struct CurrencyFormatter<V: ValueRepresentation>`. (unicode-org#8145)
+    - Migrate the old short and narrow currency formatter to `CurrencyFormatter<Decimal>` with new `try_new_short` and `try_new_narrow` constructors (and their unstable/buffer variants), removing the old non-generic `try_new` constructors. (unicode-org#8145)
+    - **Fix Narrow Fallback**: Update both compiled and unstable versions of `try_new_narrow` to use robust fallback loading, ensuring they correctly support numbering system overrides consistently with `try_new_short`. (unicode-org#8145)
+    - Update experimental currency tests and doctests to use the new generic API, including comprehensive test cases for narrow formatting and numbering system overrides. (unicode-org#8145)
+    - Migrated `LongCurrencyFormatter` to `CurrencyFormatter`. (unicode-org#8150)
+    - Added `try_new_long` and `try_new_long_unstable` constructors. (unicode-org#8150)
+    - **Architecture Unification**: Refactored `CurrencyFormatter<V>` to constrain `V: AbstractFormatter`, allowing it to wrap either `DecimalFormatter` or `CompactDecimalFormatter` directly in a single `value_formatter: V` field. (unicode-org#8189)
+    - **Constructor Streamlining**: (unicode-org#8189)
+    - Standard constructors (`try_new_short`, `try_new_narrow`, `try_new_long`) initialize `CurrencyFormatter` with `DecimalFormatter`. (unicode-org#8189)
+    - Compact constructors (`try_new_compact_short`, `try_new_compact_narrow`, `try_new_compact_long`) initialize `CurrencyFormatter` with `CompactDecimalFormatter`. (unicode-org#8189)
+    - Add new data struct `CurrencySymbolsV1` with bounds on various constructors (unicode-org#8228)
+    - Renamed standard currency constructors (`try_new_short` -> `try_new_symbol`, `try_new_narrow` -> `try_new_symbol_narrow`, `try_new_long` -> `try_new_name`). (unicode-org#8211)
+    - Renamed compact short constructors (`try_new_compact_short` -> `try_new_compact_symbol`, `try_new_compact_narrow` -> `try_new_compact_symbol_narrow`, `try_new_compact_long` -> `try_new_compact_name`). (unicode-org#8211)
+    - Added/renamed compact long constructors (`try_new_compact_long_symbol`, `try_new_compact_long_symbol_narrow`, `try_new_compact_long_name`). (unicode-org#8211)
+    - Updated FFI / unstable macro wrappers, unit tests, and doctests across all 9 variants. (unicode-org#8211)
+    - Introduce `try_new_code` constructors for explicit ISO code formatting across decimal and compact currency formatters. (unicode-org#8229)
+    - Introduce `IsoName` fallback variant in `try_new_name` to remove optional payload overhead when long currency display names are absent. (unicode-org#8229)
+    - Apply fraction precision and rounding uniformly across all currency formatters. (unicode-org#8169)
+    - Optimize runtime performance by resolving and caching `FractionInfo` during formatter construction. (unicode-org#8169)
+    - Extend `CurrencyFormatterOptions` with `usage: CurrencyUsage` (`Standard` default, `Accounting`). (unicode-org#8187)
+    - Added `CurrencyFormatter::try_new_no_currency` and `try_new_no_currency_unstable` constructors and `CurrencyNoCurrencyPatternsV1` data marker. (unicode-org#8275)
+  - `icu_experimental/displaynames`
+    - Split singular display names into owned and borrowed types (unicode-org#8006)
+      - New types: `ScriptDisplayNameOwned`, `ScriptDisplayName<'a>`, `RegionDisplayNameOwned`, `RegionDisplayName<'a>`
+      - New methods: `ScriptDisplayNameOwned::as_borrowed()`, `RegionDisplayNameOwned::as_borrowed()`
+    - New types `VariantDisplayName` and `VariantDisplayNameOwned` (unicode-org#8085)
+    - Added `displaynames::single::LanguageDisplayNameOwned` and `LanguageDisplayName` for formatting language display names. (unicode-org#8082)
+    - Introduce dedicated `LanguageIdentifierDisplayNameOptions` struct (unicode-org#8135)
+      - New types: `LanguageIdentifierDisplayNameOptions`
+    - Implement BCP-47 fallback for `LanguageIdentifierDisplayName` (unicode-org#8132)
+      - New types: `LanguageIdentifierNameFallbackError`
+      - Trait implementations:
+        - `LanguageIdentifierDisplayName` implements `TryWriteable`, `Writeable`, and `Display` directly using `writeable::impl_delegate` macros over an internal `LossyWrap` field.
+        - Removed `Writeable` and `TryWriteable` from `LanguageIdentifierDisplayNameOwned` (use `.as_borrowed()` to format).
+      - Constructor behavior: The constructors `try_new()`, `try_new_with_buffer_provider()`, and `try_new_unstable()` no longer fail when the display name is not found.
+    - New constructors `LanguageIdentifierDisplayNameOwned::try_new_menu[_unstable|_with_buffer_provider]` (unicode-org#8216)
+    - New methods: `LanguageIdentifierDisplayNameOwned::try_new_short[_unstable|_with_buffer_provider]`, `LanguageIdentifierDisplayNameOwned::try_new_long[_unstable|_with_buffer_provider]` `LanguageIdentifierDisplayNameOwned::try_new_short_menu[_unstable|_with_buffer_provider]` (unicode-org#8219)
+    - Refactor single display name constructors into Tiny, Light, and Heavy data tiers (unicode-org#8233)
+      - Constructors on `RegionDisplayNameOwned`, `ScriptDisplayNameOwned`, `VariantDisplayNameOwned`, and `LanguageIdentifierDisplayNameOwned` are overhauled
+  - `icu_experimental/unicodeset`
+    - Add support for `:EastAsianWidth=:` to unicode set parser (unicode-org#7896)
+  - `icu_experimental/units`
+    - `Convertibles`s are now passed by value, and for `Ratio<BigInt>` the `Convertible` impl is now on the reference (unicode-org#8073)
+    - The `Convertibles` trait was completely overhauled to allow for more accurate calculations (unicode-org#8073)
+    - Remove `UnitsFormatter`, use `CategorizedUnitsFormatter` (unicode-org#8236)
+  - `icu_list`
+    - Prevent correctness errors from out-of-range indices in list patterns. (unicode-org#7887)
+  - `icu_locale`
+    - fixes fallback with language-likely script but region-unlikely script, which fixes data loading and generation behavior for locales including  `sr-Cyrl-ME` and `zh-Hans-TW` (unicode-org#7857)
+    - Allow digits as extension singletons as allowed by BCP47, e.g. `-1-foobar` (unicode-org#8019)
+    - Fixes an issue in `LocaleDirectionality` for unknown languages (unicode-org#7918)
+    - `LocaleExpander::maximize` no longer maximizes `und` to `en-Latn-US` (unicode-org#8110)
+  - `icu_locale_core`
+    - Add `AsRef<LanguageIdentifier>` impls (unicode-org#7923)
+      - New impls: `AsRef<LanguageIdentifier> for Locale`, `AsRef<LanguageIdentifier> for LanguageIdentifier`
+    - `preferences` types now implement `databake` (feature-gated) (unicode-org#8102)
+    - Make `DataLocale::try_from_[str|utf8]` const (unicode-org#8305)
+    - Add `data_locale!` macro (unicode-org#8305)
+  - `icu_locale_fallback`
+    - New crate splitting fallback functionality out of `icu_locale`, including: (unicode-org#8245)
+      - Struct `LocaleFallbacker`
+      - Struct `LocaleFallbackerBorrowed`
+      - Struct `LocaleFallbackerWithConfig`
+      - Struct `LocaleFallbackIterator`
+    - New fn `LocaleFallbackerWithConfig::config` (unicode-org#8305)
+  - `icu_pattern`
+    - Remove public associated Error type from sealed trait PatternBackend (unicode-org#8122)
+    - new input structs DoublePlaceholderValueProviderTry, SinglePlaceholderValueProviderTry (unicode-org#8123)
+    - manually implement `writeable_length_hint` (unicode-org#8193)
+  - `icu_plurals`
+    - Add generic `ZeroFrom` implementation for `PluralElements` (unicode-org#7999)
+      - New trait implementations: `impl<'a, T, C> ZeroFrom<'a, PluralElements<C>> for PluralElements<T>`
+    - add `PluralElements::get` (unicode-org#8198)
+    - Fix potential overflow in `PluralOperands::from_significand_and_exponent` (unicode-org#8285)
+  - `icu_properties`
+    - Add experimental UTS#35 Unicode set parsing (unicode-org#7935)
+    - Deprecate some non-Unicode properties (unicode-org#7973)
+    - Deprecate `to_icu4c_value`/`from_icu4c_value` on enumerated properties (unicode-org#7997)
+    - Expose `CanonicalCombiningClass`' integer field (unicode-org#7997)
+    - Deprecate `HangulSyllableType::LeadingVowelSyllable`, `HangulSyllableType::LeadingVowelTrailingSyllable`, `Script::Ethiopian`, and `Script::Nastaliq` in favor of names matching their official Unicode names (unicode-org#8016)
+      - New associated constants: `HangulSyllableType::LVSyllable`, `HangulSyllableType::LVTSyllable`, `Script::Ethiopic`, `Script::ArabicNastaliq`
+    - Added `Script` constants for some non-Unicode scripts (unicode-org#8017)
+    - Add enumerated property constants for short names and aliases (i.e. `LineBreak::HH`) (unicode-org#8040)
+  - `icu_segmenter`
+    - Add unstable Unihan radical provider data and baked support (unicode-org#7805)
+      - New types: `icu_segmenter::provider::UnihanIrgData<'data>`, `icu_segmenter::provider::SegmenterUnihanRadicalV1`
+      - New associated const: `icu_segmenter::provider::Baked::SINGLETON_SEGMENTER_UNIHAN_RADICAL_V1`
+      - The `experimental_segmenter` example now uses `radaboost` for the Chinese radical model and adds `thadaboost` for Thai
+    - Use grapheme segmentation for `LineBreakStrictness:Anywhere` (unicode-org#7941)
+    - add experimental `neo::LineSegmenter` (unicode-org#7942)
+    - Align word segmenter behaviour with ICU4C and UAX#29 (unicode-org#7952)
+    - Fix a bug in loose line breaking (unicode-org#8111)
+    - Fix rewinding behavior in dictionary segmenter (unicode-org#8195)
+    - Add `WordSegmenter[Borrowed]::load_auto[_unstable|_with_buffer_provider]` to load the complex segmentation data that is loaded by `WordSegmenter::new_auto` (unicode-org#8299)
+- Data model and providers
+  - `icu4x-datagen`
+    - Add `--alt-variant` CLI flag to enable alt variants during datagen. (unicode-org#8025)
+  - `icu_provider`
+    - allow slashes in DataMarkerAttributes (unicode-org#7890)
+    - Add type DataPayloadOr (note: it is already in the 1.5.x changelog) (unicode-org#8163)
+  - `icu_provider_fs`
+    - Add defense-in-depth against path traversal. (unicode-org#7887)
+  - `icu_provider_registry`
+    - Export `icu_segmenter::provider::SegmenterUnihanRadicalV1` (unicode-org#7805)
+  - `icu_provider_source`
+    - Add Unihan radical trie generation for `icu_segmenter::provider::SegmenterUnihanRadicalV1` (unicode-org#7805)
+      - `SourceDataProvider` can now load this marker from Unihan IRG data
+    - Deprecated the unihan data source (unicode-org#7882)
+    - Compute properties directly from the `unicode` data source, instead of from `icuexport` (unicode-org#7904)
+    - Warn on unknown alt variants in display names (unicode-org#8010)
+      - Added warnings for unknown `alt` variants in `language.rs`, `script.rs`, and `variant.rs`.
+      - Ignored `-alt-variant` and `-alt-chagos` in `region.rs`.
+    - Add `with_alt_variants` to `SourceDataProvider` to support alt variants. (unicode-org#8025)
+      - New enum: `AltVariantKind`
+      - New method: `SourceDataProvider::with_alt_variants`
+    - Updated `LocaleNamesVariantMediumV1` datagen to normalize variant keys to lowercase and perform case-insensitive lookups. (unicode-org#8084)
+    - New items: `SourceDataProvider::with_unicode_rscd_for_tag()`, `SourceDataProvider::with_unicode_rscd()`, `SourceDataProvider::TESTED_UNICODE_TAG`, `SourceDataProvider::is_missing_rscd_error()`, (unicode-org#8210)
+    - Deprecated `SourceDataProvider::with_ucd_for_tag()`, `SourceDataProvider::with_unihan_for_tag()`, `SourceDataProvider::with_ucd()`, `SourceDataProvider::with_unihan()`, `SourceDataProvider::TESTED_UCD_TAG`, , `SourceDataProvider::is_missing_ucd_error()` (unicode-org#8210)
+- FFI
+  - General
+    - Fix an issue in JS bindings where enums in objects were not parsed correctly (unicode-org#7885)
+    - Update supported Dart toolchain for `record_use` to `3.13.0-215.0.dev` (unicode-org#8119)
+    - Dart: in the build hook, skip building if code assets are disabled. (unicode-org#8183)
+    - Add `libm` as a library input in the Dart linking script for Android. (unicode-org#8199)
+  - `icu_capi`
+    - Dart, Kotlin: use the `Script` type on `ScriptExtension` APIs (unicode-org#7996)
+- Utils
+  - `ixdtf`
+    - Reject trailing input after annotations in `YearMonth` and `MonthDay` parsing (unicode-org#8294)
+  - `litemap`
+    - Make return types of `LiteMap` iter methods (`iter`, `iter_mut`, `values`, `keys`) concrete: (unicode-org#8072)
+      - New types: `ValuesIter`, `KeysIter`, implements relevant traits, returned by `values` and `keys` respectively.
+      - Changed: The return types of the aforementioned methods go from an `impl DoubleEndedIterator` to concrete types such as `S::KeyValueIter`, `S::KeyValueIterMut` or the aforementioned new types.
+  - `potential_utf`
+    - Use `Box::from_raw()` instead of `transmute` for converting unsized transparent boxes. (unicode-org#7871)
+  - `resb`
+    - Add defense-in-depth around checked multiplication. (unicode-org#7887)
+    - (breaking) APIs produce a typed `I32Pair` instead of `(i32, i32)` for maximum layout soundness (unicode-org#8008)
+    - (breaking) `cast_bytes_to_slice` replaced with type-specific cast functions (unicode-org#8008)
+  - `tinystr`
+    - add `UnvalidatedTinyAsciiStr::DEFAULT` (unicode-org#8225)
+  - `writeable`
+    - impl TryWriteable on references (unicode-org#8109)
+    - impl TryWriteable on Either (unicode-org#8109)
+    - New concrete fn LossyWrap::to_string (unicode-org#8140)
+    - New `impl_writeable_delegate!` macro to delegate `Writeable` implementations (unicode-org#8139)
+    - New `impl_try_writeable_delegate!` macro to delegate `TryWriteable` implementations (unicode-org#8139)
+    - Support for `where` clause in `impl_display_with_writeable!` (unicode-org#8139)
+    - Add standard derives and `repr(transparent)` to `LossyWrap` (unicode-org#8132)
+      - `LossyWrap<T>` now derives `Clone`, `Copy`, `PartialEq`, `Eq`, `PartialOrd`, `Ord`, and `Hash`, and is marked `#[repr(transparent)]`, enabling its use inside `Copy` structs and with delegate macros.
+      - Added error mapping fn to `impl_try_writeable_delegate!`
+    - add `TryWriteable::try_writeable_borrow` (unicode-org#8192)
+    - new struct `writeable::adapters::Replace` (unicode-org#8238)
+  - `zerofrom`
+    - enable all features in playground (unicode-org#7958)
+  - `zerotrie`
+    - new functions `ZeroAsciiIgnoreCaseTrie::get_with_write_fn`, `ZeroTrieZimpleAscii::get_with_write_fn` (unicode-org#8242)
+  - `zerovec`
+    - Fix minor soundness issue around unchecked multiplication, add defense in depth against other overflow situations. (unicode-org#7887)
+    - `impl Hash for ZeroVec, ZeroSlice` (unicode-org#8282)
+  - `zerovec_derive`
+    - Support sparse enums in `zerovec::make_ule`. (unicode-org#7940)
 
 ## icu4x 2.2.x
 
