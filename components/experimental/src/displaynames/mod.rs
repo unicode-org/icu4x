@@ -17,7 +17,7 @@
 //!
 //! ## Examples
 //!
-//! The [`multi`] module lets you load multiple names at once, whereas [`icu::locale::names`]
+//! The [`multi`] module lets you load multiple names at once, whereas `icu_locale::names`
 //! loads one name at a time.
 //!
 //! ```
