@@ -135,10 +135,7 @@ impl SourceDataProvider {
             .iter()
             .filter(|(_nsname, data)| data.nstype == NumberingSystemType::Numeric)
             .map(|(nsname, _data)| {
-                DataIdentifierCachedWithLifetime::from_writeable_attributes_and_locale(
-                    nsname,
-                    DataLocale::default(),
-                )
+                DataIdentifierCachedWithLifetime::from_writeable_attributes(nsname)
             })
             .collect()
     }
