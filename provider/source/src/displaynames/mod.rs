@@ -270,15 +270,15 @@ macro_rules! impl_displaynames_menu_v1 {
                 let mut result = HashSet::new();
                 let cldr = self.cldr()?;
                 let displaynames = cldr.displaynames();
+                let coverage_cache =
+                    crate::displaynames::coverage_experimental::coverage_cldr_cache();
+                let root_levels = coverage_cache.get_root_levels()?;
                 for locale in displaynames.list_locales()?.filter(|locale| {
                     // The directory might exist without the file
                     displaynames.file_exists(locale, $file).unwrap_or_default()
                 }) {
                     let data: &$resource = displaynames.read_and_parse(&locale, $file)?;
-                    let coverage_cache =
-                        crate::displaynames::coverage_experimental::coverage_cldr_cache();
                     let locale_levels = coverage_cache.get_levels_for_locale(&locale, cldr)?;
-                    let root_levels = coverage_cache.get_root_levels()?;
 
                     for key in data.main.value.localedisplaynames.$field.keys() {
                         let matches = key.menu
@@ -352,15 +352,15 @@ macro_rules! impl_displaynames_iter_v1 {
                 let mut result = HashSet::new();
                 let cldr = self.cldr()?;
                 let displaynames = cldr.displaynames();
+                let coverage_cache =
+                    crate::displaynames::coverage_experimental::coverage_cldr_cache();
+                let root_levels = coverage_cache.get_root_levels()?;
                 for locale in displaynames.list_locales()?.filter(|locale| {
                     // The directory might exist without the file
                     displaynames.file_exists(locale, $file).unwrap_or_default()
                 }) {
                     let data: &$resource = displaynames.read_and_parse(&locale, $file)?;
-                    let coverage_cache =
-                        crate::displaynames::coverage_experimental::coverage_cldr_cache();
                     let locale_levels = coverage_cache.get_levels_for_locale(&locale, cldr)?;
-                    let root_levels = coverage_cache.get_root_levels()?;
 
                     for key in data.main.value.localedisplaynames.$field.keys() {
                         let matches = $alt_variant == key.alt && key.menu.is_none();
