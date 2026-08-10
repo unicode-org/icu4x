@@ -33,18 +33,18 @@ pub(crate) enum Alt {
 }
 
 impl Alt {
-    pub fn as_str(self) -> &'static str {
+    pub fn as_str(self) -> Option<&'static str> {
         match self {
-            Alt::Short => "short",
-            Alt::Long => "long",
-            Alt::Variant => "variant",
-            Alt::StandAlone => "stand-alone",
-            Alt::Official => "official",
-            Alt::Secondary => "secondary",
-            Alt::Biot => "biot",
-            Alt::Chagos => "chagos",
-            Alt::Menu => "menu",
-            Alt::Unknown => "unknown",
+            Alt::Short => Some("short"),
+            Alt::Long => Some("long"),
+            Alt::Variant => Some("variant"),
+            Alt::StandAlone => Some("stand-alone"),
+            Alt::Official => Some("official"),
+            Alt::Secondary => Some("secondary"),
+            Alt::Biot => Some("biot"),
+            Alt::Chagos => Some("chagos"),
+            Alt::Menu => Some("menu"),
+            Alt::Unknown => None,
         }
     }
 }
@@ -75,11 +75,11 @@ pub(crate) enum Menu {
 }
 
 impl Menu {
-    pub fn as_str(self) -> &'static str {
+    pub fn as_str(self) -> Option<&'static str> {
         match self {
-            Menu::Core => "core",
-            Menu::Extension => "extension",
-            Menu::Unknown => "unknown",
+            Menu::Core => Some("core"),
+            Menu::Extension => Some("extension"),
+            Menu::Unknown => None,
         }
     }
 }

@@ -95,15 +95,15 @@ impl CoverageCategoryLevels {
             return None;
         }
 
-        if let Some(alt) = alt {
+        if let Some(alt) = alt.and_then(Alt::as_str) {
             cursor.write_str("[@alt=\"").ok()?;
-            cursor.write_str(alt.as_str()).ok()?;
+            cursor.write_str(alt).ok()?;
             cursor.write_str("\"]").ok()?;
         }
 
-        if let Some(menu) = menu {
+        if let Some(menu) = menu.and_then(Menu::as_str) {
             cursor.write_str("[@menu=\"").ok()?;
-            cursor.write_str(menu.as_str()).ok()?;
+            cursor.write_str(menu).ok()?;
             cursor.write_str("\"]").ok()?;
         }
 
