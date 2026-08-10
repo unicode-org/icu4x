@@ -9,11 +9,10 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use icu_pattern::DoublePlaceholderPattern;
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use tinystr::UnvalidatedTinyAsciiStr;
-use zerovec::{VarZeroCow, ZeroMap};
+use zerovec::ZeroMap;
 
 // We use raw TinyAsciiStrs for map keys, as we then don't have to
 // validate them as subtags on deserialization. Map lookup can be

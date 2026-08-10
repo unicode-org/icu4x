@@ -17,12 +17,12 @@
 //!
 //! ## Examples
 //!
-//! The [`multi`] module lets you load multiple names at once, whereas [`single`]
+//! The [`multi`] module lets you load multiple names at once, whereas [`icu::locale::names`]
 //! loads one name at a time.
 //!
 //! ```
 //! use icu::experimental::displaynames::multi::RegionDisplayNames;
-//! use icu::experimental::displaynames::single::RegionDisplayName;
+//! use icu::locale::names::RegionDisplayName;
 //! use icu::experimental::displaynames::DisplayNamesOptions;
 //! use icu::locale::{locale, subtags::region};
 //! use writeable::assert_writeable_eq;
@@ -67,5 +67,4 @@ pub use displaynames::DisplayNamesPreferences;
 pub use options::DisplayNamesOptions;
 pub use options::Fallback;
 pub use options::LanguageDisplay;
-pub use options::LanguageIdentifierDisplayNameOptions;
 pub use options::Style;
