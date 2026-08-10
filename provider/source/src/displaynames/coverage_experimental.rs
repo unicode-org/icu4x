@@ -57,10 +57,7 @@ fn parse_cldr_xpath(xpath: &str) -> Option<(DisplayNameCategory, String)> {
 
     let type_prefix = "[@type=\"";
     let rest = rest.strip_prefix(type_prefix)?;
-    let quote_idx = rest.find('"')?;
-    let val = &rest[..quote_idx];
-    let remaining_attrs = &rest[quote_idx + 1..];
-    let extra_attrs = remaining_attrs.strip_prefix(']')?;
+    let (val, extra_attrs) = rest.split_once("\"]")?;
 
     let key = if extra_attrs.is_empty() {
         val.to_string()
