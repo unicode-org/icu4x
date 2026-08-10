@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::DisplayNamesPreferences;
 use super::{
     impl_writeable_for_single_display_name_borrowed, impl_writeable_for_single_display_name_owned,
     load_one,
 };
-use crate::displaynames::DisplayNamesPreferences;
-use crate::displaynames::provider::LocaleNamesVariantMediumHeavyV1;
+use crate::provider::names::LocaleNamesVariantMediumHeavyV1;
 use icu_locale_core::subtags::Variant;
 use icu_provider::prelude::*;
 

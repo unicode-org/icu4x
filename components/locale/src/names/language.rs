@@ -2,7 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::displaynames::provider::{
+use super::{
+    DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, RegionDisplayName,
+    ScriptDisplayName, VariantDisplayName, load_one,
+};
+use crate::provider::names::{
     LocaleNamesEssentialsV1, LocaleNamesLanguageLongHeavyV1, LocaleNamesLanguageLongLightV1,
     LocaleNamesLanguageMediumHeavyV1, LocaleNamesLanguageMediumLightV1,
     LocaleNamesLanguageMediumTinyV1, LocaleNamesLanguageMenuMediumHeavyV1,
@@ -12,10 +16,6 @@ use crate::displaynames::provider::{
     LocaleNamesScriptMediumLightV1, LocaleNamesScriptMediumTinyV1, LocaleNamesScriptShortHeavyV1,
     LocaleNamesVariantMediumHeavyV1, MenuNamePartsULE,
 };
-use crate::displaynames::single::{
-    RegionDisplayName, ScriptDisplayName, VariantDisplayName, load_one,
-};
-use crate::displaynames::{DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions};
 use crate::size_test_macro::size_test;
 use alloc::vec::Vec;
 use icu_locale_core::LanguageIdentifier;
