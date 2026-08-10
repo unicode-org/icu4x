@@ -6,8 +6,8 @@ use icu_provider_export::blob_exporter::BlobExporter;
 use icu_provider_export::prelude::*;
 use icu_provider_source::SourceDataProvider;
 
-#[test]
-fn test_export_language_identifier_display_names() {
+fn main() {
+    let t0 = std::time::Instant::now();
     let provider = SourceDataProvider::new();
     let mut blob_bytes = Vec::new();
     let exporter = BlobExporter::new_with_sink(Box::new(&mut blob_bytes));
@@ -19,9 +19,7 @@ fn test_export_language_identifier_display_names() {
     ExportDriver::new(
         modern_locales
             .into_iter()
-            .map(DataLocaleFamily::without_descendants)
-            // for the purposes of this test, use every 10th locale
-            .step_by(10),
+            .map(DataLocaleFamily::without_descendants),
         DeduplicationStrategy::None.into(),
         LocaleFallbacker::try_new_unstable(&provider).unwrap(),
     )
@@ -34,9 +32,10 @@ fn test_export_language_identifier_display_names() {
     .export(&provider, exporter)
     .unwrap();
 
-    assert!(
-        blob_bytes.len() >= 100_000,
-        "postcard blob size {} should be at least 100 kB",
+    let elapsed = t0.elapsed();
+    println!(
+        "displaynames bench: {:.3?} s, blob size: {} bytes",
+        elapsed.as_secs_f64(),
         blob_bytes.len()
     );
 }

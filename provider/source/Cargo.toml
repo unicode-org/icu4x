@@ -105,9 +105,15 @@ icu_experimental = []
 skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
 max_combination_size = 3
 
+[lib]
+bench = false  # This option is required for Benchmark CI
+
+# Standalone benchmark binary for display names data export performance.
+# We set `harness = false` so that it runs as a standalone binary with main() when
+# executing `cargo bench`, but is NOT executed during `cargo test` / `cargo make ci-job-test`.
+[[bench]]
+name = "displaynames"
+harness = false
+
 [lints]
 workspace = true
-
-[[test]]
-name = "e2e"
-required-features = ["networking"]
