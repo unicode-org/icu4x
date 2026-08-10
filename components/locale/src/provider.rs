@@ -15,6 +15,9 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+#[cfg(feature = "unstable")]
+pub mod names;
+
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data

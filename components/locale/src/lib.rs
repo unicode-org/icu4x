@@ -92,6 +92,8 @@ pub mod fallback {
     #[doc(inline)]
     pub use icu_locale_fallback::*;
 }
+#[cfg(feature = "unstable")]
+pub mod names;
 pub mod provider;
 
 pub use icu_locale_core::*;
