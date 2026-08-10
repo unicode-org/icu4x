@@ -61,7 +61,7 @@ macro_rules! table_row {
 /// # Example
 ///
 /// ```
-/// use icu::experimental::displaynames::single::RegionDisplayName;
+/// use icu::locale::names::RegionDisplayName;
 /// use icu::locale::{locale, subtags::region};
 /// use writeable::assert_writeable_eq;
 ///
@@ -119,7 +119,7 @@ impl RegionDisplayName {
         /// # Examples
         ///
         /// ```
-        /// use icu::experimental::displaynames::single::RegionDisplayName;
+        /// use icu::locale::names::RegionDisplayName;
         /// use icu::locale::{locale, subtags::region};
         /// use writeable::assert_writeable_eq;
         ///
@@ -199,9 +199,7 @@ impl RegionDisplayName {
         /// # Example
         ///
         /// ```
-        /// use icu::experimental::displaynames::{
-        ///     DisplayNamesPreferences, single::RegionDisplayName,
-        /// };
+        /// use icu::locale::names::{DisplayNamesPreferences, RegionDisplayName};
         /// use icu::locale::{locale, subtags::region};
         /// use writeable::assert_writeable_eq;
         ///

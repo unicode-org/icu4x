@@ -119,8 +119,8 @@ macro_rules! table_row {
 /// # Examples
 ///
 /// ```
-/// use icu::experimental::displaynames::{
-///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayName,
+/// use icu::locale::names::{
+///     DisplayNamesPreferences, LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOptions,
 /// };
 /// use icu::locale::{locale, langid};
 /// use writeable::assert_try_writeable_eq;
@@ -140,9 +140,9 @@ macro_rules! table_row {
 /// When a subtag is unknown:
 ///
 /// ```
-/// use icu::experimental::displaynames::{
-///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions,
-///     single::LanguageIdentifierDisplayName, single::LanguageIdentifierNameFallbackError,
+/// use icu::locale::names::{
+///     DisplayNamesPreferences, LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOptions,
+///     LanguageIdentifierNameFallbackError,
 /// };
 /// use icu::locale::{locale, langid};
 /// use writeable::{Part, TryWriteable, assert_try_writeable_parts_eq};
@@ -386,8 +386,9 @@ impl LanguageIdentifierDisplayName {
         /// # Examples
         ///
         /// ```
-        /// use icu::experimental::displaynames::single::LanguageIdentifierDisplayName;
-        /// use icu::experimental::displaynames::single::LanguageIdentifierNameFallbackError;
+        /// use icu::locale::names::{
+        ///     LanguageIdentifierDisplayName, LanguageIdentifierNameFallbackError,
+        /// };
         /// use icu::locale::{langid, locale};
         /// use writeable::assert_try_writeable_eq;
         ///
@@ -483,8 +484,8 @@ impl LanguageIdentifierDisplayName {
         /// # Examples
         ///
         /// ```
-        /// use icu::experimental::displaynames::{
-        ///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayName,
+        /// use icu::locale::names::{
+        ///     DisplayNamesPreferences, LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOptions,
         /// };
         /// use icu::locale::{locale, langid};
         /// use writeable::assert_try_writeable_eq;
@@ -607,8 +608,8 @@ impl LanguageIdentifierDisplayName {
         /// # Examples
         ///
         /// ```
-        /// use icu::experimental::displaynames::{
-        ///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayName,
+        /// use icu::locale::names::{
+        ///     DisplayNamesPreferences, LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOptions,
         /// };
         /// use icu::locale::{locale, langid};
         /// use writeable::assert_try_writeable_eq;
@@ -727,8 +728,8 @@ impl LanguageIdentifierDisplayName {
         /// # Examples
         ///
         /// ```
-        /// use icu::experimental::displaynames::{
-        ///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayName,
+        /// use icu::locale::names::{
+        ///     DisplayNamesPreferences, LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOptions,
         /// };
         /// use icu::locale::{locale, langid};
         /// use writeable::assert_try_writeable_eq;
@@ -816,8 +817,8 @@ impl LanguageIdentifierDisplayName {
         /// # Examples
         ///
         /// ```
-        /// use icu::experimental::displaynames::{
-        ///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayName,
+        /// use icu::locale::names::{
+        ///     DisplayNamesPreferences, LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOptions,
         /// };
         /// use icu::locale::{locale, langid};
         /// use writeable::assert_try_writeable_eq;
@@ -1221,8 +1222,8 @@ impl LanguageIdentifierDisplayName {
         /// # Examples
         ///
         /// ```
-        /// use icu::experimental::displaynames::{
-        ///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayName,
+        /// use icu::locale::names::{
+        ///     DisplayNamesPreferences, LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOptions,
         /// };
         /// use icu::locale::{locale, langid};
         /// use writeable::assert_try_writeable_eq;
@@ -1330,8 +1331,8 @@ impl LanguageIdentifierDisplayName {
         /// # Examples
         ///
         /// ```
-        /// use icu::experimental::displaynames::{
-        ///     DisplayNamesPreferences, LanguageIdentifierDisplayNameOptions, single::LanguageIdentifierDisplayName,
+        /// use icu::locale::names::{
+        ///     DisplayNamesPreferences, LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOptions,
         /// };
         /// use icu::locale::{locale, langid};
         /// use writeable::assert_try_writeable_eq;

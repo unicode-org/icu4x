@@ -44,7 +44,7 @@ macro_rules! table_row {
 /// # Example
 ///
 /// ```
-/// use icu::experimental::displaynames::single::VariantDisplayName;
+/// use icu::locale::names::VariantDisplayName;
 /// use icu::locale::{locale, subtags::variant};
 /// use writeable::assert_writeable_eq;
 ///
@@ -66,7 +66,7 @@ impl VariantDisplayName {
         /// # Examples
         ///
         /// ```
-        /// use icu::experimental::displaynames::single::VariantDisplayName;
+        /// use icu::locale::names::VariantDisplayName;
         /// use icu::locale::{locale, subtags::variant};
         /// use writeable::assert_writeable_eq;
         ///

@@ -2,13 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_experimental::displaynames::DisplayNamesPreferences;
-use icu_experimental::displaynames::single::{
-    LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameBorrowed,
-    LanguageIdentifierNameFallbackError, RegionDisplayName,
-};
-use icu_experimental::displaynames::{
-    DisplayNamesOptions, LanguageIdentifierDisplayNameOptions, multi::LocaleDisplayNamesFormatter,
+use icu_experimental::displaynames::{DisplayNamesOptions, multi::LocaleDisplayNamesFormatter};
+use icu_locale::names::{
+    DisplayNamesPreferences, LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameBorrowed,
+    LanguageIdentifierDisplayNameOptions, LanguageIdentifierNameFallbackError, RegionDisplayName,
 };
 use icu_locale_core::{Locale, langid, locale, subtags::region};
 use std::borrow::Cow;
@@ -438,7 +435,7 @@ fn test_fallback_parts() {
 
 #[test]
 fn test_single_language_display_name_standard() {
-    use icu_experimental::displaynames::{LanguageDisplay, LanguageIdentifierDisplayNameOptions};
+    use icu_locale::names::{LanguageDisplay, LanguageIdentifierDisplayNameOptions};
     use icu_locale_core::{langid, locale};
 
     let locale = locale!("en-001");
@@ -459,7 +456,7 @@ fn test_single_language_display_name_standard() {
 
 #[test]
 fn test_single_language_display_name_short() {
-    use icu_experimental::displaynames::{LanguageDisplay, LanguageIdentifierDisplayNameOptions};
+    use icu_locale::names::{LanguageDisplay, LanguageIdentifierDisplayNameOptions};
     use icu_locale_core::{langid, locale};
 
     let locale = locale!("en-001");
@@ -484,7 +481,7 @@ fn test_single_language_display_name_short() {
 
 #[test]
 fn test_single_language_display_name_long() {
-    use icu_experimental::displaynames::{LanguageDisplay, LanguageIdentifierDisplayNameOptions};
+    use icu_locale::names::{LanguageDisplay, LanguageIdentifierDisplayNameOptions};
     use icu_locale_core::{langid, locale};
 
     let locale = locale!("en-001");
@@ -512,7 +509,7 @@ fn test_single_language_display_name_long() {
 
 #[test]
 fn test_us_and_uk_english_display_names() {
-    use icu_experimental::displaynames::LanguageDisplay;
+    use icu_locale::names::LanguageDisplay;
 
     let locale = locale!("en");
     let lang_us = langid!("en-US");

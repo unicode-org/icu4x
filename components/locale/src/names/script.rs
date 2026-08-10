@@ -61,7 +61,7 @@ macro_rules! table_row {
 /// # Example
 ///
 /// ```
-/// use icu::experimental::displaynames::single::ScriptDisplayName;
+/// use icu::locale::names::ScriptDisplayName;
 /// use icu::locale::{locale, subtags::script};
 /// use writeable::assert_writeable_eq;
 ///
@@ -119,7 +119,7 @@ impl ScriptDisplayName {
         /// # Examples
         ///
         /// ```
-        /// use icu::experimental::displaynames::single::ScriptDisplayName;
+        /// use icu::locale::names::ScriptDisplayName;
         /// use icu::locale::{locale, subtags::script};
         /// use writeable::assert_writeable_eq;
         ///
@@ -160,7 +160,7 @@ impl ScriptDisplayName {
         /// # Examples
         ///
         /// ```
-        /// use icu::experimental::displaynames::single::ScriptDisplayName;
+        /// use icu::locale::names::ScriptDisplayName;
         /// use icu::locale::{locale, subtags::script};
         /// use writeable::assert_writeable_eq;
         ///
@@ -215,7 +215,7 @@ impl ScriptDisplayName {
         /// # Examples
         ///
         /// ```
-        /// use icu::experimental::displaynames::single::ScriptDisplayName;
+        /// use icu::locale::names::ScriptDisplayName;
         /// use icu::locale::{locale, subtags::script};
         /// use writeable::assert_writeable_eq;
         ///
