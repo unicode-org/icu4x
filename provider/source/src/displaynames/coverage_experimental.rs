@@ -11,6 +11,8 @@ use crate::cldr_cache::CldrCache;
 use crate::cldr_serde::displaynames::WithAlt;
 use crate::cldr_serde::displaynames::{Alt, Menu};
 use crate::source::SerdeCache;
+use icu_locale_core::LanguageIdentifier;
+use icu_locale_core::subtags::{Language, Region, Script, Variant};
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use serde::Deserialize;
@@ -62,30 +64,30 @@ fn parse_cldr_xpath(xpath: &str) -> Option<(CoverageCategory, String)> {
 
     let normalized_val = match category {
         CoverageCategory::Language => {
-            if let Ok(lang) = val.parse::<icu_locale_core::subtags::Language>() {
+            if let Ok(lang) = val.parse::<Language>() {
                 lang.to_string()
-            } else if let Ok(lang_id) = val.parse::<icu_locale_core::LanguageIdentifier>() {
+            } else if let Ok(lang_id) = val.parse::<LanguageIdentifier>() {
                 lang_id.to_string()
             } else {
                 val.replace('_', "-")
             }
         }
         CoverageCategory::Territory => {
-            if let Ok(region) = val.parse::<icu_locale_core::subtags::Region>() {
+            if let Ok(region) = val.parse::<Region>() {
                 region.to_string()
             } else {
                 val.to_string()
             }
         }
         CoverageCategory::Script => {
-            if let Ok(script) = val.parse::<icu_locale_core::subtags::Script>() {
+            if let Ok(script) = val.parse::<Script>() {
                 script.to_string()
             } else {
                 val.to_string()
             }
         }
         CoverageCategory::Variant => {
-            if let Ok(variant) = val.parse::<icu_locale_core::subtags::Variant>() {
+            if let Ok(variant) = val.parse::<Variant>() {
                 variant.to_string()
             } else {
                 val.to_string()
