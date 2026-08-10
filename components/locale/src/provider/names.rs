@@ -27,8 +27,6 @@ pub struct MenuNameParts<'data> {
     pub extension: VarZeroCow<'data, str>,
 }
 
-icu_provider::data_struct!(VariantDisplayNames<'_>, #[cfg(feature = "datagen")]);
-
 /// [`LocaleNamesEssentials`] provides the formatting patterns used to combine subtags.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

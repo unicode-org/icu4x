@@ -142,3 +142,5 @@ pub struct VariantDisplayNames<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub names: ZeroMap<'data, UnvalidatedVariant, str>,
 }
+
+icu_provider::data_struct!(VariantDisplayNames<'_>, #[cfg(feature = "datagen")]);
