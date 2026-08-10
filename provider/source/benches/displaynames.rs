@@ -2,6 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Standalone benchmark measuring performance of exporting display names data
+//! across modern coverage locales.
+//!
+//! Run using:
+//! ```text
+//! cargo bench -p icu_provider_source --bench displaynames
+//! ```
+
 use icu_provider_export::blob_exporter::BlobExporter;
 use icu_provider_export::prelude::*;
 use icu_provider_source::SourceDataProvider;
