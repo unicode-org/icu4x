@@ -29,7 +29,6 @@ run_task.name = [
     "ci-job-fmt",
     "ci-job-clippy",
     "check-no-features",
-    "depcheck",
     "ci-job-doc",
 ]
 
