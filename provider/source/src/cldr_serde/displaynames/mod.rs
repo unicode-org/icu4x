@@ -33,6 +33,7 @@ pub(crate) enum Alt {
 }
 
 impl Alt {
+    /// Returns the string representation of the `Alt` variant, or `None` if `Unknown`.
     pub fn as_str(self) -> Option<&'static str> {
         match self {
             Alt::Short => Some("short"),
@@ -75,6 +76,7 @@ pub(crate) enum Menu {
 }
 
 impl Menu {
+    /// Returns the string representation of the `Menu` variant, or `None` if `Unknown`.
     pub fn as_str(self) -> Option<&'static str> {
         match self {
             Menu::Core => Some("core"),

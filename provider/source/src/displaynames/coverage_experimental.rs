@@ -175,7 +175,7 @@ struct XPathArrayVisitor<'a> {
 impl<'de, 'a> DeserializeSeed<'de> for XPathArraySeed<'a> {
     type Value = ();
 
-    fn deserialize(self, deserializer: D) -> Result<Self::Value, D::Error>
+    fn deserialize<D>(self, deserializer: D) -> Result<Self::Value, D::Error>
     where
         D: Deserializer<'de>,
     {
@@ -196,7 +196,7 @@ impl<'de, 'a> Visitor<'de> for XPathArrayVisitor<'a> {
         formatter.write_str("a sequence of CLDR XPaths")
     }
 
-    fn visit_seq<A>(mut self, mut seq: A) -> Result<Self::Value, A::Error>
+    fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
     where
         A: SeqAccess<'de>,
     {
