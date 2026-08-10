@@ -103,7 +103,7 @@ fn parse_cldr_xpath(xpath: &str) -> Option<(CoverageCategory, String)> {
 
 use serde::de::{DeserializeSeed, Deserializer, MapAccess, SeqAccess, Visitor};
 
-/// Coverage level representation for display names categories (`language`, `territory`, `script`, `variant`).
+/// Single-category trie mapping subtag keys to coverage levels (`CoverageLevelForXPath`).
 #[derive(Debug, Default)]
 pub(super) struct CoverageCategoryLevels(pub(super) ZeroTrieSimpleAscii<Vec<u8>>);
 
