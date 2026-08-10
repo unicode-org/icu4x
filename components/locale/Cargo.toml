@@ -31,10 +31,14 @@ icu_provider = { workspace = true, features = ["alloc"] }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
 zerovec = { workspace = true,  features = ["alloc", "yoke"] }
-
 icu_collections = { workspace = true }
-
 icu_locale_data = { workspace = true, optional = true }
+
+# Dependencies for icu_locale::names
+displaydoc = { workspace = true, optional = true }
+either = { workspace = true, optional = true }
+icu_pattern = { workspace = true, optional = true, features = ["alloc", "yoke", "zerovec"] }
+writeable = { workspace = true, optional = true }
 
 [dev-dependencies]
 serde = { workspace = true, features = ["derive"] }
@@ -49,7 +53,7 @@ criterion = { workspace = true }
 bench = false  # This option is required for Benchmark CI
 
 [features]
-unstable = []
+unstable = ["dep:writeable", "dep:displaydoc", "dep:either", "dep:icu_pattern", "zerovec/derive"]
 default = ["compiled_data"]
 serde = ["dep:serde", "icu_locale_core/serde", "icu_locale_fallback/serde", "tinystr/serde", "zerovec/serde", "icu_provider/serde", "icu_collections/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_locale_core/databake", "icu_locale_fallback/datagen", "tinystr/databake", "icu_collections/databake", "icu_provider/export"]
