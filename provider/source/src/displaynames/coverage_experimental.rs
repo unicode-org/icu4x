@@ -155,30 +155,36 @@ pub(super) struct CoverageByXPathLevels {
     pub(super) variant: CoverageCategoryLevels,
 }
 
-struct XPathArraySeed<'a>(
-    &'a mut LiteMap<Vec<u8>, usize>,
-    &'a mut LiteMap<Vec<u8>, usize>,
-    &'a mut LiteMap<Vec<u8>, usize>,
-    &'a mut LiteMap<Vec<u8>, usize>,
-    usize,
-);
+struct XPathArraySeed<'a> {
+    lang: &'a mut LiteMap<Vec<u8>, usize>,
+    terr: &'a mut LiteMap<Vec<u8>, usize>,
+    script: &'a mut LiteMap<Vec<u8>, usize>,
+    var: &'a mut LiteMap<Vec<u8>, usize>,
+    level_val: usize,
+}
 
-struct XPathArrayVisitor<'a>(
-    &'a mut LiteMap<Vec<u8>, usize>,
-    &'a mut LiteMap<Vec<u8>, usize>,
-    &'a mut LiteMap<Vec<u8>, usize>,
-    &'a mut LiteMap<Vec<u8>, usize>,
-    usize,
-);
+struct XPathArrayVisitor<'a> {
+    lang: &'a mut LiteMap<Vec<u8>, usize>,
+    terr: &'a mut LiteMap<Vec<u8>, usize>,
+    script: &'a mut LiteMap<Vec<u8>, usize>,
+    var: &'a mut LiteMap<Vec<u8>, usize>,
+    level_val: usize,
+}
 
 impl<'de, 'a> DeserializeSeed<'de> for XPathArraySeed<'a> {
     type Value = ();
 
-    fn deserialize<D>(self, deserializer: D) -> Result<Self::Value, D::Error>
+    fn deserialize(self, deserializer: D) -> Result<Self::Value, D::Error>
     where
         D: Deserializer<'de>,
     {
-        deserializer.deserialize_seq(XPathArrayVisitor(self.0, self.1, self.2, self.3, self.4))
+        deserializer.deserialize_seq(XPathArrayVisitor {
+            lang: self.lang,
+            terr: self.terr,
+            script: self.script,
+            var: self.var,
+            level_val: self.level_val,
+        })
     }
 }
 
@@ -189,7 +195,7 @@ impl<'de, 'a> Visitor<'de> for XPathArrayVisitor<'a> {
         formatter.write_str("a sequence of CLDR XPaths")
     }
 
-    fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
+    fn visit_seq<A>(mut self, mut seq: A) -> Result<Self::Value, A::Error>
     where
         A: SeqAccess<'de>,
     {
@@ -199,12 +205,12 @@ impl<'de, 'a> Visitor<'de> for XPathArrayVisitor<'a> {
             }
             if let Some((category, key)) = parse_cldr_xpath(xpath.as_ref()) {
                 let map = match category {
-                    CoverageCategory::Language => &mut *self.0,
-                    CoverageCategory::Territory => &mut *self.1,
-                    CoverageCategory::Script => &mut *self.2,
-                    CoverageCategory::Variant => &mut *self.3,
+                    CoverageCategory::Language => &mut *self.lang,
+                    CoverageCategory::Territory => &mut *self.terr,
+                    CoverageCategory::Script => &mut *self.script,
+                    CoverageCategory::Variant => &mut *self.var,
                 };
-                map.insert(key.into_bytes(), self.4);
+                map.insert(key.into_bytes(), self.level_val);
             }
         }
         Ok(())
@@ -245,13 +251,13 @@ impl<'de> Deserialize<'de> for CoverageByXPathLevels {
                             continue;
                         }
                     };
-                    map.next_value_seed(XPathArraySeed(
-                        &mut map_lang,
-                        &mut map_terr,
-                        &mut map_script,
-                        &mut map_var,
+                    map.next_value_seed(XPathArraySeed {
+                        lang: &mut map_lang,
+                        terr: &mut map_terr,
+                        script: &mut map_script,
+                        var: &mut map_var,
                         level_val,
-                    ))?;
+                    })?;
                 }
 
                 Ok(CoverageByXPathLevels {
