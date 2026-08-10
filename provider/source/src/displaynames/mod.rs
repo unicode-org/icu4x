@@ -93,6 +93,7 @@ where
 /// - `$file`: The JSON file name in CLDR.
 /// - `$field`: The field name in `LocaleDisplayNames` containing the data.
 /// - `$alt_variant`: The alt variant (e.g., `None`, `Some(Alt::Short)`).
+/// - `$category`: The category field on `CoverageByXPathLevels` (`language`, `territory`, `script`, or `variant`).
 /// - `$tier`: The target coverage tier.
 macro_rules! impl_displaynames_v1 {
     ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr, $category:ident, $tier:pat,) => {
@@ -180,6 +181,7 @@ macro_rules! impl_displaynames_v1 {
 /// - `$resource`: The CLDR serde resource type.
 /// - `$file`: The JSON file name in CLDR.
 /// - `$field`: The field name in `LocaleDisplayNames` containing the data.
+/// - `$category`: The category field on `CoverageByXPathLevels` (`language`, `territory`, `script`, or `variant`).
 /// - `$tier`: The target coverage tier.
 macro_rules! impl_displaynames_menu_v1 {
     ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $category:ident, $tier:pat,) => {
@@ -341,6 +343,7 @@ macro_rules! impl_displaynames_menu_v1 {
 /// - `$file`: The JSON file name in CLDR.
 /// - `$field`: The field name in `LocaleDisplayNames` containing the data.
 /// - `$alt_variant`: The alt variant (e.g., `None`, `Some(Alt::Short)`).
+/// - `$category`: The category field on `CoverageByXPathLevels` (`language`, `territory`, `script`, or `variant`).
 /// - `$tier`: The target coverage tier.
 macro_rules! impl_displaynames_iter_v1 {
     ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr, $category:ident, $tier:pat) => {

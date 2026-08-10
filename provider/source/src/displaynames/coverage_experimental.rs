@@ -114,6 +114,12 @@ impl CoverageCategoryLevels {
 }
 
 /// Coverage level representation for display names categories (`language`, `territory`, `script`, `variant`).
+///
+/// # Note on File Contents & Scope
+/// The raw source JSON files (`coverageByXPath.json` and `coverageByXPath/{locale}.json`) contain `XPaths`
+/// for many CLDR elements beyond display names. During Serde deserialization, only supported display name
+/// category `XPaths` are parsed into their respective trie maps (`language`, `territory`, `script`, `variant`),
+/// and all unrelated `XPaths` are ignored.
 #[derive(Debug)]
 pub(super) struct CoverageByXPathLevels {
     pub(super) language: CoverageCategoryLevels,
@@ -1154,9 +1160,8 @@ pub(super) trait CheckAltCoverage {
 ///
 /// For each entry found in `file_name` (e.g., `"languages.json"`), this function:
 /// 1. Extracts the map of subtag keys (`WithAlt<T>`) via `extract_keys`.
-/// 2. Constructs the corresponding CLDR `XPath` for `xpath_field` (e.g., `"languages"`).
-/// 3. Looks up the coverage tier (`CoverageLevelForXPath`) for that `XPath` in the given locale.
-/// 4. Invokes `callback(locale, key, tier)`.
+/// 2. Looks up the coverage tier (`CoverageLevelForXPath`) for that entry in the given locale using `get_category`.
+/// 3. Invokes `callback(locale, key, tier)`.
 #[cfg(test)]
 pub(super) fn for_each_cldr_key_and_tier<Resource, T>(
     cldr: &CldrCache,
