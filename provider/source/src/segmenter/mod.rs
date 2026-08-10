@@ -1345,40 +1345,28 @@ impl SourceDataProvider {
                     }
                 }
 
+                let kw = keywords
+                    .get(&key!("lb"))
+                    .or_else(|| keywords.get(&key!("lw")));
                 let id = if prefix == "LineBreak" {
-                    let x;
-                    // TODO: Avoid allocating a string here; use a Writeable
-                    DataIdentifierCached::from_writeable_attributes(format!(
-                        "{}{}{}",
-                        if locale.is_unknown() {
-                            ""
+                    if locale.is_unknown() {
+                        if let Some(kw) = kw {
+                            DataIdentifierCached::from_writeable_attributes(kw)
                         } else {
-                            x = locale.to_string();
-                            &x
-                        },
-                        if locale.is_unknown() || keywords.is_empty() {
-                            ""
-                        } else {
-                            "-"
-                        },
-                        keywords
-                            .get(&key!("lb"))
-                            .or_else(|| keywords.get(&key!("lw")))
-                            .map(|v| v.to_string())
-                            .unwrap_or_default()
-                    ))
+                            DataIdentifierCached::from_writeable_attributes("")
+                        }
+                    } else if let Some(kw) = kw {
+                        DataIdentifierCached::from_writeable_attributes(
+                            writeable::concat_writeable!(locale, "-", kw),
+                        )
+                    } else {
+                        DataIdentifierCached::from_writeable_attributes(locale)
+                    }
                     .unwrap()
+                } else if let Some(kw) = kw {
+                    DataIdentifierCached::from_writeable_attributes_and_locale(kw, locale).unwrap()
                 } else {
-                    // TODO: Avoid allocating a string here; use a Writeable
-                    DataIdentifierCached::from_writeable_attributes_and_locale(
-                        keywords
-                            .get(&key!("lb"))
-                            .or_else(|| keywords.get(&key!("lw")))
-                            .map(|v| v.to_string())
-                            .unwrap_or_default(),
-                        locale,
-                    )
-                    .unwrap()
+                    DataIdentifierCached::from_locale(locale)
                 };
 
                 tailorings.insert(
