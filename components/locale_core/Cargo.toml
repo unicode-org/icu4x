@@ -71,6 +71,7 @@ harness = false
 
 [package.metadata.cargo-semver-checks.lints]
 workspace = true
+repr_transparent_added = "allow"
 
 
 [lints]
