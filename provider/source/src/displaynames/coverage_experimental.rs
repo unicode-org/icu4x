@@ -68,17 +68,7 @@ fn parse_cldr_xpath(xpath: &str) -> Option<(CoverageCategory, String)> {
     Some((category, key))
 }
 
-#[derive(Deserialize)]
-struct RawCoverageByXPathLevels {
-    #[serde(default)]
-    basic: Vec<String>,
-    #[serde(default)]
-    core: Vec<String>,
-    #[serde(default)]
-    moderate: Vec<String>,
-    #[serde(default)]
-    modern: Vec<String>,
-}
+use serde::de::{DeserializeSeed, Deserializer, MapAccess, SeqAccess, Visitor};
 
 /// Coverage level representation for display names categories (`language`, `territory`, `script`, `variant`).
 #[derive(Debug, Default)]
@@ -129,8 +119,7 @@ impl CoverageCategoryLevels {
 }
 
 /// Coverage level representation for display names categories (`language`, `territory`, `script`, `variant`).
-#[derive(Deserialize, Debug)]
-#[serde(try_from = "RawCoverageByXPathLevels")]
+#[derive(Debug)]
 pub(super) struct CoverageByXPathLevels {
     pub(super) language: CoverageCategoryLevels,
     pub(super) territory: CoverageCategoryLevels,
@@ -138,54 +127,127 @@ pub(super) struct CoverageByXPathLevels {
     pub(super) variant: CoverageCategoryLevels,
 }
 
-impl TryFrom<RawCoverageByXPathLevels> for CoverageByXPathLevels {
-    type Error = String;
+struct XPathArraySeed<'a>(
+    &'a mut LiteMap<Vec<u8>, usize>,
+    &'a mut LiteMap<Vec<u8>, usize>,
+    &'a mut LiteMap<Vec<u8>, usize>,
+    &'a mut LiteMap<Vec<u8>, usize>,
+    usize,
+);
 
-    fn try_from(raw: RawCoverageByXPathLevels) -> Result<Self, Self::Error> {
-        let mut map_lang = LiteMap::new_vec();
-        let mut map_terr = LiteMap::new_vec();
-        let mut map_script = LiteMap::new_vec();
-        let mut map_var = LiteMap::new_vec();
+struct XPathArrayVisitor<'a>(
+    &'a mut LiteMap<Vec<u8>, usize>,
+    &'a mut LiteMap<Vec<u8>, usize>,
+    &'a mut LiteMap<Vec<u8>, usize>,
+    &'a mut LiteMap<Vec<u8>, usize>,
+    usize,
+);
 
-        let levels = [
-            (CoverageLevelForXPath::Core, raw.core),
-            (CoverageLevelForXPath::Basic, raw.basic),
-            (CoverageLevelForXPath::Moderate, raw.moderate),
-            (CoverageLevelForXPath::Modern, raw.modern),
-        ];
+impl<'de, 'a> DeserializeSeed<'de> for XPathArraySeed<'a> {
+    type Value = ();
 
-        for (tier, xpaths) in levels {
-            let tier_val = tier.to_usize();
-            for xpath in xpaths {
-                if !xpath.is_ascii() {
-                    continue;
-                }
-                if let Some((category, key)) = parse_cldr_xpath(&xpath) {
-                    let map = match category {
-                        CoverageCategory::Language => &mut map_lang,
-                        CoverageCategory::Territory => &mut map_terr,
-                        CoverageCategory::Script => &mut map_script,
-                        CoverageCategory::Variant => &mut map_var,
+    fn deserialize<D>(self, deserializer: D) -> Result<Self::Value, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        deserializer.deserialize_seq(XPathArrayVisitor(self.0, self.1, self.2, self.3, self.4))
+    }
+}
+
+impl<'de, 'a> Visitor<'de> for XPathArrayVisitor<'a> {
+    type Value = ();
+
+    fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+        formatter.write_str("a sequence of CLDR XPaths")
+    }
+
+    fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
+    where
+        A: SeqAccess<'de>,
+    {
+        while let Some(xpath) = seq.next_element::<std::borrow::Cow<'_, str>>()? {
+            if !xpath.is_ascii() {
+                continue;
+            }
+            if let Some((category, key)) = parse_cldr_xpath(xpath.as_ref()) {
+                let map = match category {
+                    CoverageCategory::Language => &mut *self.0,
+                    CoverageCategory::Territory => &mut *self.1,
+                    CoverageCategory::Script => &mut *self.2,
+                    CoverageCategory::Variant => &mut *self.3,
+                };
+                map.insert(key.into_bytes(), self.4);
+            }
+        }
+        Ok(())
+    }
+}
+
+impl<'de> Deserialize<'de> for CoverageByXPathLevels {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        struct CoverageByXPathLevelsVisitor;
+
+        impl<'de> Visitor<'de> for CoverageByXPathLevelsVisitor {
+            type Value = CoverageByXPathLevels;
+
+            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+                formatter.write_str("a struct CoverageByXPathLevels")
+            }
+
+            fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
+            where
+                A: MapAccess<'de>,
+            {
+                let mut map_lang = LiteMap::new_vec();
+                let mut map_terr = LiteMap::new_vec();
+                let mut map_script = LiteMap::new_vec();
+                let mut map_var = LiteMap::new_vec();
+
+                while let Some(key) = map.next_key::<std::borrow::Cow<'_, str>>()? {
+                    let level_val = match key.as_ref() {
+                        "core" => CoverageLevelForXPath::Core.to_usize(),
+                        "basic" => CoverageLevelForXPath::Basic.to_usize(),
+                        "moderate" => CoverageLevelForXPath::Moderate.to_usize(),
+                        "modern" => CoverageLevelForXPath::Modern.to_usize(),
+                        _ => {
+                            let _ = map.next_value::<serde::de::IgnoredAny>()?;
+                            continue;
+                        }
                     };
-                    map.insert(key.into_bytes(), tier_val);
+                    map.next_value_seed(XPathArraySeed(
+                        &mut map_lang,
+                        &mut map_terr,
+                        &mut map_script,
+                        &mut map_var,
+                        level_val,
+                    ))?;
                 }
+
+                Ok(CoverageByXPathLevels {
+                    language: CoverageCategoryLevels(
+                        ZeroTrieSimpleAscii::try_from(&map_lang)
+                            .map_err(serde::de::Error::custom)?,
+                    ),
+                    territory: CoverageCategoryLevels(
+                        ZeroTrieSimpleAscii::try_from(&map_terr)
+                            .map_err(serde::de::Error::custom)?,
+                    ),
+                    script: CoverageCategoryLevels(
+                        ZeroTrieSimpleAscii::try_from(&map_script)
+                            .map_err(serde::de::Error::custom)?,
+                    ),
+                    variant: CoverageCategoryLevels(
+                        ZeroTrieSimpleAscii::try_from(&map_var)
+                            .map_err(serde::de::Error::custom)?,
+                    ),
+                })
             }
         }
 
-        Ok(CoverageByXPathLevels {
-            language: CoverageCategoryLevels(
-                ZeroTrieSimpleAscii::try_from(&map_lang).map_err(|e| format!("{e:?}"))?,
-            ),
-            territory: CoverageCategoryLevels(
-                ZeroTrieSimpleAscii::try_from(&map_terr).map_err(|e| format!("{e:?}"))?,
-            ),
-            script: CoverageCategoryLevels(
-                ZeroTrieSimpleAscii::try_from(&map_script).map_err(|e| format!("{e:?}"))?,
-            ),
-            variant: CoverageCategoryLevels(
-                ZeroTrieSimpleAscii::try_from(&map_var).map_err(|e| format!("{e:?}"))?,
-            ),
-        })
+        deserializer.deserialize_map(CoverageByXPathLevelsVisitor)
     }
 }
 
