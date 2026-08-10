@@ -131,7 +131,6 @@ macro_rules! impl_displaynames_v1 {
                     .coverage_tier(
                     req.id.locale,
                     |l| &l.$category,
-                    stringify!($category) == "language",
                     &subtag,
                     $alt_variant,
                     None,
@@ -243,7 +242,6 @@ macro_rules! impl_displaynames_menu_v1 {
                         .coverage_tier(
                             req.id.locale,
                             |l| &l.$category,
-                            stringify!($category) == "language",
                             &subtag,
                             alt,
                             menu,
@@ -297,7 +295,6 @@ macro_rules! impl_displaynames_menu_v1 {
                                     locale_levels,
                                     root_levels,
                                     |l| &l.$category,
-                                    stringify!($category) == "language",
                                     &key.subtag,
                                     alt,
                                     menu,
@@ -371,7 +368,6 @@ macro_rules! impl_displaynames_iter_v1 {
                                     locale_levels,
                                     root_levels,
                                     |l| &l.$category,
-                                    stringify!($category) == "language",
                                     &key.subtag,
                                     $alt_variant,
                                     None,

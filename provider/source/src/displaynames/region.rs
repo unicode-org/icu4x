@@ -228,7 +228,6 @@ mod tests {
             cldr,
             "territories.json",
             |l| &l.territory,
-            false,
             |res: &cldr_serde::displaynames::region::Resource| {
                 &res.main.value.localedisplaynames.regions
             },

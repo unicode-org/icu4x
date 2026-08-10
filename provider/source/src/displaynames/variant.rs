@@ -123,7 +123,6 @@ mod tests {
             cldr,
             "variants.json",
             |l| &l.variant,
-            false,
             |res: &cldr_serde::displaynames::variant::Resource| {
                 &res.main.value.localedisplaynames.variants
             },

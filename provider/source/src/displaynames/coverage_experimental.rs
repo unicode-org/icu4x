@@ -78,23 +78,18 @@ impl CoverageCategoryLevels {
     pub(super) fn level(
         &self,
         subtag: impl Writeable,
-        is_language: bool,
         alt: Option<Alt>,
         menu: Option<Menu>,
     ) -> Option<CoverageLevelForXPath> {
         use core::fmt::Write;
         let mut cursor = self.0.cursor();
-        if is_language {
-            writeable::adapters::Replace {
-                source: &subtag,
-                needle: "-",
-                replacement: '_',
-            }
-            .write_to(&mut cursor)
-            .ok()?;
-        } else {
-            subtag.write_to(&mut cursor).ok()?;
+        writeable::adapters::Replace {
+            source: &subtag,
+            needle: "-",
+            replacement: '_',
         }
+        .write_to(&mut cursor)
+        .ok()?;
 
         if cursor.is_empty() {
             return None;
@@ -315,21 +310,17 @@ impl CoverageByXPathCache {
         Ok(resource.coverage_by_xpath.get("root"))
     }
 
-    #[allow(clippy::too_many_arguments)]
     pub(super) fn coverage_tier_from_levels(
         locale_levels: Option<&CoverageByXPathLevels>,
         root_levels: Option<&CoverageByXPathLevels>,
         get_category: impl Fn(&CoverageByXPathLevels) -> &CoverageCategoryLevels,
-        is_language: bool,
         subtag: impl Writeable,
         alt: Option<Alt>,
         menu: Option<Menu>,
     ) -> CoverageLevelForXPath {
         locale_levels
-            .and_then(|l| get_category(l).level(&subtag, is_language, alt, menu))
-            .or_else(|| {
-                root_levels.and_then(|l| get_category(l).level(&subtag, is_language, alt, menu))
-            })
+            .and_then(|l| get_category(l).level(&subtag, alt, menu))
+            .or_else(|| root_levels.and_then(|l| get_category(l).level(&subtag, alt, menu)))
             .unwrap_or(CoverageLevelForXPath::Comprehensive)
     }
 
@@ -339,12 +330,10 @@ impl CoverageByXPathCache {
     /// 1. Locale-specific override file `displaynames/coverageByXPath/{locale}.json`
     /// 2. Root defaults file `displaynames/coverageByXPath.json`
     /// 3. Defaults to [`CoverageLevelForXPath::Comprehensive`] if unlisted everywhere.
-    #[allow(clippy::too_many_arguments)]
     pub(super) fn coverage_tier(
         &self,
         locale: &DataLocale,
         get_category: impl Fn(&CoverageByXPathLevels) -> &CoverageCategoryLevels,
-        is_language: bool,
         subtag: impl Writeable,
         alt: Option<Alt>,
         menu: Option<Menu>,
@@ -356,7 +345,6 @@ impl CoverageByXPathCache {
             locale_levels,
             root_levels,
             get_category,
-            is_language,
             subtag,
             alt,
             menu,
@@ -1174,7 +1162,6 @@ pub(super) fn for_each_cldr_key_and_tier<Resource, T>(
     cldr: &CldrCache,
     file_name: &str,
     get_category: impl Fn(&CoverageByXPathLevels) -> &CoverageCategoryLevels,
-    is_language: bool,
     mut extract_keys: impl FnMut(&Resource) -> &HashMap<WithAlt<T>, String>,
     mut callback: impl FnMut(&DataLocale, &WithAlt<T>, CoverageLevelForXPath),
 ) where
@@ -1195,15 +1182,7 @@ pub(super) fn for_each_cldr_key_and_tier<Resource, T>(
                     return;
                 }
                 let tier = coverage_cldr
-                    .coverage_tier(
-                        &locale,
-                        &get_category,
-                        is_language,
-                        &key.subtag,
-                        key.alt,
-                        key.menu,
-                        cldr,
-                    )
+                    .coverage_tier(&locale, &get_category, &key.subtag, key.alt, key.menu, cldr)
                     .unwrap();
                 callback(&locale, key, tier);
             }
@@ -1222,22 +1201,14 @@ fn test_coverage_tier() {
     let en = DataLocale::from_str("en").unwrap();
     assert_eq!(
         coverage_cldr
-            .coverage_tier(&en, |l| &l.language, true, "en", None, None, cldr)
+            .coverage_tier(&en, |l| &l.language, "en", None, None, cldr)
             .unwrap(),
         CoverageLevelForXPath::Basic
     );
 
     assert_eq!(
         coverage_cldr
-            .coverage_tier(
-                &en,
-                |l| &l.language,
-                true,
-                "unlisted_test_code",
-                None,
-                None,
-                cldr
-            )
+            .coverage_tier(&en, |l| &l.language, "unlisted_test_code", None, None, cldr)
             .unwrap(),
         CoverageLevelForXPath::Comprehensive
     );

@@ -229,7 +229,6 @@ mod tests {
             cldr,
             "scripts.json",
             |l| &l.script,
-            false,
             |res: &cldr_serde::displaynames::script::Resource| {
                 &res.main.value.localedisplaynames.scripts
             },

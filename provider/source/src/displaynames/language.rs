@@ -503,7 +503,6 @@ mod tests {
             cldr,
             "languages.json",
             |l| &l.language,
-            true,
             |res: &cldr_serde::displaynames::language::Resource| {
                 &res.main.value.localedisplaynames.languages
             },
