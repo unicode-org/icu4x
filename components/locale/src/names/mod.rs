@@ -33,7 +33,40 @@ pub use region::{RegionDisplayName, RegionDisplayNameBorrowed};
 pub use script::{ScriptDisplayName, ScriptDisplayNameBorrowed};
 pub use variant::{VariantDisplayName, VariantDisplayNameBorrowed};
 
+use icu_locale_core::preferences::define_preferences;
 use icu_provider::prelude::*;
+
+define_preferences!(
+    /// The preferences for display names.
+    [Copy]
+    DisplayNamesPreferences,
+    {}
+);
+
+/// A bag of options defining how a language identifier display name will be formatted.
+#[derive(Copy, Debug, Eq, PartialEq, Clone, Default)]
+#[non_exhaustive]
+pub struct LanguageIdentifierDisplayNameOptions {
+    /// The language display kind, defaults to "dialect".
+    pub language_display: Option<LanguageDisplay>,
+}
+
+impl LanguageIdentifierDisplayNameOptions {
+    pub(crate) fn should_load_dialect(self) -> bool {
+        self.language_display.unwrap_or_default() == LanguageDisplay::Dialect
+    }
+}
+
+/// An enum for language display style.
+#[non_exhaustive]
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Default)]
+pub enum LanguageDisplay {
+    /// Dialect display mode (default).
+    #[default]
+    Dialect,
+    /// Standard display mode.
+    Standard,
+}
 
 fn load_one<M0, M1, P>(
     provider: &P,
