@@ -27,14 +27,14 @@
 //! use icu::locale::{locale, subtags::region};
 //! use writeable::assert_writeable_eq;
 //!
-//! let locale = locale!("en").into();
-//!
 //! // Multi: Load a formatter that can display many regions.
+//! let locale = locale!("en").into();
 //! let multi = RegionDisplayNames::try_new(locale, DisplayNamesOptions::default()).unwrap();
 //! assert_writeable_eq!(multi.of(region!("US")).unwrap(), "United States");
 //! assert_writeable_eq!(multi.of(region!("GB")).unwrap(), "United Kingdom");
 //!
 //! // Single: Load only the region(s) we need.
+//! let locale = locale!("en").into();
 //! let us = RegionDisplayName::try_new_light(locale, region!("US")).unwrap();
 //! let gb = RegionDisplayName::try_new_light(locale, region!("GB")).unwrap();
 //! assert_writeable_eq!(us, "United States");
