@@ -127,6 +127,7 @@ serde_human = [
 unstable = [
     "icu_calendar/unstable",
     "icu_datetime/unstable",
+    "icu_locale/unstable",
     "icu_plurals/unstable",
     "icu_properties/unstable",
     "icu_segmenter/unstable",
