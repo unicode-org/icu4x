@@ -518,7 +518,7 @@ impl SourceDataProvider {
     }
 }
 
-/// A crate-internal data identifier representation for cache storage wrapping [`DataIdentifierCow<'static>`].
+/// A crate-internal data identifier representation for cache storage wrapping [`DataIdentifierCow<'a>`].
 #[derive(Default, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) struct DataIdentifierCachedWithLifetime<'a>(pub(crate) DataIdentifierCow<'a>);
 
@@ -554,7 +554,7 @@ impl<'a> DataIdentifierCachedWithLifetime<'a> {
         Self(cow)
     }
 
-    pub(crate) fn as_cow(&self) -> DataIdentifierCow<'_> {
+    pub(crate) fn as_cow(&self) -> DataIdentifierCow<'a> {
         self.0.clone()
     }
 
@@ -570,17 +570,7 @@ impl DataIdentifierCached {
     pub(crate) fn from_writeable_attributes(
         attr: impl writeable::Writeable + Debug,
     ) -> Result<Self, DataError> {
-        let s = attr.write_to_string();
-        if s.is_empty() {
-            Ok(Self(DataIdentifierCow::from_marker_attributes(
-                DataMarkerAttributes::empty(),
-            )))
-        } else {
-            let boxed = DataMarkerAttributes::try_from_string(s.into_owned()).map_err(|_| {
-                DataError::custom("Invalid marker attributes").with_debug_context(&attr)
-            })?;
-            Ok(Self(DataIdentifierCow::from_marker_attributes_owned(boxed)))
-        }
+        Self::from_writeable_attributes_and_locale(attr, DataLocale::default())
     }
 
     pub(crate) fn from_writeable_attributes_and_locale(
