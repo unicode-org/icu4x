@@ -201,6 +201,8 @@ impl<'de, 'a> Visitor<'de> for XPathArrayVisitor<'a> {
         A: SeqAccess<'de>,
     {
         while let Some(xpath) = seq.next_element::<Cow<'_, str>>()? {
+            // Non-ASCII XPaths (e.g. emoji annotations) are not display names subtags
+            // and cannot be stored in ZeroTrieSimpleAscii.
             if !xpath.is_ascii() {
                 continue;
             }
