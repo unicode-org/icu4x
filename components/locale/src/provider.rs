@@ -15,6 +15,10 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+#[cfg(feature = "unstable")]
+/// Data provider structs for locale display names.
+pub mod names;
+
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
@@ -45,6 +49,45 @@ const _: () = {
     impl_locale_exemplar_characters_main_v1!(Baked);
     impl_locale_exemplar_characters_numbers_v1!(Baked);
     impl_locale_exemplar_characters_punctuation_v1!(Baked);
+
+    #[cfg(feature = "unstable")]
+    impl_locale_names_region_medium_tiny_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_locale_names_region_medium_light_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_locale_names_region_short_tiny_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_locale_names_region_short_light_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_locale_names_language_medium_tiny_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_locale_names_language_medium_light_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_locale_names_language_medium_heavy_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_locale_names_language_short_light_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_locale_names_language_short_heavy_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_locale_names_language_long_light_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_locale_names_language_long_heavy_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_locale_names_language_menu_medium_light_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_locale_names_language_menu_medium_heavy_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_locale_names_script_medium_tiny_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_locale_names_script_medium_light_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_locale_names_script_medium_heavy_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_locale_names_script_short_heavy_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_locale_names_variant_medium_heavy_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_locale_names_essentials_v1!(Baked);
 };
 
 icu_provider::data_marker!(
@@ -120,6 +163,44 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     LocaleLikelySubtagsExtendedV1::INFO,
     LocaleLikelySubtagsScriptRegionV1::INFO,
     LocaleScriptDirectionV1::INFO,
+    #[cfg(feature = "unstable")]
+    names::LocaleNamesRegionMediumTinyV1::INFO,
+    #[cfg(feature = "unstable")]
+    names::LocaleNamesRegionMediumLightV1::INFO,
+    #[cfg(feature = "unstable")]
+    names::LocaleNamesRegionShortTinyV1::INFO,
+    #[cfg(feature = "unstable")]
+    names::LocaleNamesRegionShortLightV1::INFO,
+    #[cfg(feature = "unstable")]
+    names::LocaleNamesLanguageMediumTinyV1::INFO,
+    #[cfg(feature = "unstable")]
+    names::LocaleNamesLanguageMediumLightV1::INFO,
+    #[cfg(feature = "unstable")]
+    names::LocaleNamesLanguageMediumHeavyV1::INFO,
+    #[cfg(feature = "unstable")]
+    names::LocaleNamesLanguageShortLightV1::INFO,
+    #[cfg(feature = "unstable")]
+    names::LocaleNamesLanguageShortHeavyV1::INFO,
+    #[cfg(feature = "unstable")]
+    names::LocaleNamesLanguageLongLightV1::INFO,
+    #[cfg(feature = "unstable")]
+    names::LocaleNamesLanguageLongHeavyV1::INFO,
+    #[cfg(feature = "unstable")]
+    names::LocaleNamesLanguageMenuMediumLightV1::INFO,
+    #[cfg(feature = "unstable")]
+    names::LocaleNamesLanguageMenuMediumHeavyV1::INFO,
+    #[cfg(feature = "unstable")]
+    names::LocaleNamesScriptMediumTinyV1::INFO,
+    #[cfg(feature = "unstable")]
+    names::LocaleNamesScriptMediumLightV1::INFO,
+    #[cfg(feature = "unstable")]
+    names::LocaleNamesScriptMediumHeavyV1::INFO,
+    #[cfg(feature = "unstable")]
+    names::LocaleNamesScriptShortHeavyV1::INFO,
+    #[cfg(feature = "unstable")]
+    names::LocaleNamesVariantMediumHeavyV1::INFO,
+    #[cfg(feature = "unstable")]
+    names::LocaleNamesEssentialsV1::INFO,
 ];
 
 #[cfg(doc)]
