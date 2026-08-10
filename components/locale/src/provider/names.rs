@@ -6,7 +6,7 @@
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
+#[cfg_attr(feature = "datagen", databake(path = icu_locale::provider::names))]
 #[zerovec::make_varule(MenuNamePartsULE)]
 #[zerovec::derive(Debug)]
 #[zerovec::skip_derive(Ord)]
@@ -33,7 +33,7 @@ icu_provider::data_struct!(VariantDisplayNames<'_>, #[cfg(feature = "datagen")])
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
+#[cfg_attr(feature = "datagen", databake(path = icu_locale::provider::names))]
 pub struct LocaleNamesEssentials<'data> {
     /// The pattern used to combine the base language name with qualifiers (e.g., `"{0} ({1})"`).
     #[cfg_attr(feature = "serde", serde(borrow))]
