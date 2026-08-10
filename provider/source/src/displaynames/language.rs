@@ -65,7 +65,7 @@ crate::displaynames::impl_displaynames_v1!(
     "languages.json",
     languages,
     None,
-    crate::displaynames::coverage_experimental::DisplayNameCategory::Language,
+    language,
     CoverageLevelForXPath::Basic | CoverageLevelForXPath::Core,
 );
 crate::displaynames::impl_displaynames_v1!(
@@ -75,7 +75,7 @@ crate::displaynames::impl_displaynames_v1!(
     "languages.json",
     languages,
     None,
-    crate::displaynames::coverage_experimental::DisplayNameCategory::Language,
+    language,
     CoverageLevelForXPath::Moderate,
 );
 crate::displaynames::impl_displaynames_v1!(
@@ -85,7 +85,7 @@ crate::displaynames::impl_displaynames_v1!(
     "languages.json",
     languages,
     None,
-    crate::displaynames::coverage_experimental::DisplayNameCategory::Language,
+    language,
     CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 
@@ -96,7 +96,7 @@ crate::displaynames::impl_displaynames_v1!(
     "languages.json",
     languages,
     Some(Alt::Short),
-    crate::displaynames::coverage_experimental::DisplayNameCategory::Language,
+    language,
     CoverageLevelForXPath::Moderate,
 );
 crate::displaynames::impl_displaynames_v1!(
@@ -106,7 +106,7 @@ crate::displaynames::impl_displaynames_v1!(
     "languages.json",
     languages,
     Some(Alt::Short),
-    crate::displaynames::coverage_experimental::DisplayNameCategory::Language,
+    language,
     CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 
@@ -117,7 +117,7 @@ crate::displaynames::impl_displaynames_v1!(
     "languages.json",
     languages,
     Some(Alt::Long),
-    crate::displaynames::coverage_experimental::DisplayNameCategory::Language,
+    language,
     CoverageLevelForXPath::Moderate,
 );
 crate::displaynames::impl_displaynames_v1!(
@@ -127,7 +127,7 @@ crate::displaynames::impl_displaynames_v1!(
     "languages.json",
     languages,
     Some(Alt::Long),
-    crate::displaynames::coverage_experimental::DisplayNameCategory::Language,
+    language,
     CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 crate::displaynames::impl_displaynames_menu_v1!(
@@ -136,7 +136,7 @@ crate::displaynames::impl_displaynames_menu_v1!(
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
-    crate::displaynames::coverage_experimental::DisplayNameCategory::Language,
+    language,
     CoverageLevelForXPath::Moderate,
 );
 crate::displaynames::impl_displaynames_menu_v1!(
@@ -145,7 +145,7 @@ crate::displaynames::impl_displaynames_menu_v1!(
     cldr_serde::displaynames::language::Resource,
     "languages.json",
     languages,
-    crate::displaynames::coverage_experimental::DisplayNameCategory::Language,
+    language,
     CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 
@@ -502,7 +502,8 @@ mod tests {
         crate::displaynames::coverage_experimental::for_each_cldr_key_and_tier(
             cldr,
             "languages.json",
-            crate::displaynames::coverage_experimental::DisplayNameCategory::Language,
+            |l| &l.language,
+            true,
             |res: &cldr_serde::displaynames::language::Resource| {
                 &res.main.value.localedisplaynames.languages
             },

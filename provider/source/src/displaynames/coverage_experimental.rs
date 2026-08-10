@@ -31,28 +31,28 @@ pub(super) struct CoverageByXPathResource {
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
-pub(super) enum DisplayNameCategory {
+enum CoverageCategory {
     Language,
     Territory,
     Script,
     Variant,
 }
 
-fn parse_cldr_xpath(xpath: &str) -> Option<(DisplayNameCategory, String)> {
+fn parse_cldr_xpath(xpath: &str) -> Option<(CoverageCategory, String)> {
     let prefix_lang = "//ldml/localeDisplayNames/languages/language";
     let prefix_terr = "//ldml/localeDisplayNames/territories/territory";
     let prefix_script = "//ldml/localeDisplayNames/scripts/script";
     let prefix_var = "//ldml/localeDisplayNames/variants/variant";
 
     let (category, rest) = if let Some(r) = xpath.strip_prefix(prefix_lang) {
-        (DisplayNameCategory::Language, r)
+        (CoverageCategory::Language, r)
     } else if let Some(r) = xpath.strip_prefix(prefix_terr) {
-        (DisplayNameCategory::Territory, r)
+        (CoverageCategory::Territory, r)
     } else if let Some(r) = xpath.strip_prefix(prefix_script) {
-        (DisplayNameCategory::Script, r)
+        (CoverageCategory::Script, r)
     } else {
         let r = xpath.strip_prefix(prefix_var)?;
-        (DisplayNameCategory::Variant, r)
+        (CoverageCategory::Variant, r)
     };
 
     let type_prefix = "[@type=\"";
@@ -81,19 +81,61 @@ struct RawCoverageByXPathLevels {
 }
 
 /// Coverage level representation for display names categories (`language`, `territory`, `script`, `variant`).
-///
-/// **Note on File Contents & Scope**:
-/// `CoverageByXPathLevels` contains parsed coverage level data specifically tailored for display names subtags.
-/// If additional CLDR `XPaths` (e.g., unit patterns, currency display names, or calendar fields) need to be supported
-/// for coverage filtering in the future, they should be parsed into their own category-specific `ZeroTrie` fields
-/// on this struct or a dedicated coverage struct, following the pattern of the display names fields below.
+#[derive(Debug, Default)]
+pub(super) struct CoverageCategoryLevels(pub(super) ZeroTrieSimpleAscii<Vec<u8>>);
+
+impl CoverageCategoryLevels {
+    pub(super) fn level(
+        &self,
+        subtag: impl Writeable,
+        is_language: bool,
+        alt: Option<Alt>,
+        menu: Option<Menu>,
+    ) -> Option<CoverageLevelForXPath> {
+        use core::fmt::Write;
+        let mut cursor = self.0.cursor();
+        if is_language {
+            writeable::adapters::Replace {
+                source: &subtag,
+                needle: "-",
+                replacement: '_',
+            }
+            .write_to(&mut cursor)
+            .ok()?;
+        } else {
+            subtag.write_to(&mut cursor).ok()?;
+        }
+
+        if cursor.is_empty() {
+            return None;
+        }
+
+        if let Some(alt) = alt {
+            cursor.write_str("[@alt=\"").ok()?;
+            cursor.write_str(alt.as_str()).ok()?;
+            cursor.write_str("\"]").ok()?;
+        }
+
+        if let Some(menu) = menu {
+            cursor.write_str("[@menu=\"").ok()?;
+            cursor.write_str(menu.as_str()).ok()?;
+            cursor.write_str("\"]").ok()?;
+        }
+
+        cursor
+            .take_value()
+            .and_then(CoverageLevelForXPath::from_usize)
+    }
+}
+
+/// Coverage level representation for display names categories (`language`, `territory`, `script`, `variant`).
 #[derive(Deserialize, Debug)]
 #[serde(try_from = "RawCoverageByXPathLevels")]
 pub(super) struct CoverageByXPathLevels {
-    pub(super) language: ZeroTrieSimpleAscii<Vec<u8>>,
-    pub(super) territory: ZeroTrieSimpleAscii<Vec<u8>>,
-    pub(super) script: ZeroTrieSimpleAscii<Vec<u8>>,
-    pub(super) variant: ZeroTrieSimpleAscii<Vec<u8>>,
+    pub(super) language: CoverageCategoryLevels,
+    pub(super) territory: CoverageCategoryLevels,
+    pub(super) script: CoverageCategoryLevels,
+    pub(super) variant: CoverageCategoryLevels,
 }
 
 impl TryFrom<RawCoverageByXPathLevels> for CoverageByXPathLevels {
@@ -120,10 +162,10 @@ impl TryFrom<RawCoverageByXPathLevels> for CoverageByXPathLevels {
                 }
                 if let Some((category, key)) = parse_cldr_xpath(&xpath) {
                     let map = match category {
-                        DisplayNameCategory::Language => &mut map_lang,
-                        DisplayNameCategory::Territory => &mut map_terr,
-                        DisplayNameCategory::Script => &mut map_script,
-                        DisplayNameCategory::Variant => &mut map_var,
+                        CoverageCategory::Language => &mut map_lang,
+                        CoverageCategory::Territory => &mut map_terr,
+                        CoverageCategory::Script => &mut map_script,
+                        CoverageCategory::Variant => &mut map_var,
                     };
                     map.insert(key.into_bytes(), tier_val);
                 }
@@ -131,63 +173,19 @@ impl TryFrom<RawCoverageByXPathLevels> for CoverageByXPathLevels {
         }
 
         Ok(CoverageByXPathLevels {
-            language: ZeroTrieSimpleAscii::try_from(&map_lang).map_err(|e| format!("{e:?}"))?,
-            territory: ZeroTrieSimpleAscii::try_from(&map_terr).map_err(|e| format!("{e:?}"))?,
-            script: ZeroTrieSimpleAscii::try_from(&map_script).map_err(|e| format!("{e:?}"))?,
-            variant: ZeroTrieSimpleAscii::try_from(&map_var).map_err(|e| format!("{e:?}"))?,
+            language: CoverageCategoryLevels(
+                ZeroTrieSimpleAscii::try_from(&map_lang).map_err(|e| format!("{e:?}"))?,
+            ),
+            territory: CoverageCategoryLevels(
+                ZeroTrieSimpleAscii::try_from(&map_terr).map_err(|e| format!("{e:?}"))?,
+            ),
+            script: CoverageCategoryLevels(
+                ZeroTrieSimpleAscii::try_from(&map_script).map_err(|e| format!("{e:?}"))?,
+            ),
+            variant: CoverageCategoryLevels(
+                ZeroTrieSimpleAscii::try_from(&map_var).map_err(|e| format!("{e:?}"))?,
+            ),
         })
-    }
-}
-
-impl CoverageByXPathLevels {
-    pub(super) fn level_for_category(
-        &self,
-        category: DisplayNameCategory,
-        subtag: impl Writeable,
-        alt: Option<Alt>,
-        menu: Option<Menu>,
-    ) -> Option<CoverageLevelForXPath> {
-        use core::fmt::Write;
-        let trie = match category {
-            DisplayNameCategory::Language => &self.language,
-            DisplayNameCategory::Territory => &self.territory,
-            DisplayNameCategory::Script => &self.script,
-            DisplayNameCategory::Variant => &self.variant,
-        };
-
-        let mut cursor = trie.cursor();
-        if category == DisplayNameCategory::Language {
-            writeable::adapters::Replace {
-                source: &subtag,
-                needle: "-",
-                replacement: '_',
-            }
-            .write_to(&mut cursor)
-            .ok()?;
-        } else {
-            subtag.write_to(&mut cursor).ok()?;
-        }
-
-        // return early
-        if cursor.is_empty() {
-            return None;
-        }
-
-        if let Some(alt) = alt {
-            cursor.write_str("[@alt=\"").ok()?;
-            cursor.write_str(alt.as_str()).ok()?;
-            cursor.write_str("\"]").ok()?;
-        }
-
-        if let Some(menu) = menu {
-            cursor.write_str("[@menu=\"").ok()?;
-            cursor.write_str(menu.as_str()).ok()?;
-            cursor.write_str("\"]").ok()?;
-        }
-
-        cursor
-            .take_value()
-            .and_then(CoverageLevelForXPath::from_usize)
     }
 }
 
@@ -255,18 +253,20 @@ impl CoverageByXPathCache {
         Ok(resource.coverage_by_xpath.get("root"))
     }
 
+    #[allow(clippy::too_many_arguments)]
     pub(super) fn coverage_tier_from_levels(
         locale_levels: Option<&CoverageByXPathLevels>,
         root_levels: Option<&CoverageByXPathLevels>,
-        category: DisplayNameCategory,
+        get_category: impl Fn(&CoverageByXPathLevels) -> &CoverageCategoryLevels,
+        is_language: bool,
         subtag: impl Writeable,
         alt: Option<Alt>,
         menu: Option<Menu>,
     ) -> CoverageLevelForXPath {
         locale_levels
-            .and_then(|l| l.level_for_category(category, &subtag, alt, menu))
+            .and_then(|l| get_category(l).level(&subtag, is_language, alt, menu))
             .or_else(|| {
-                root_levels.and_then(|l| l.level_for_category(category, &subtag, alt, menu))
+                root_levels.and_then(|l| get_category(l).level(&subtag, is_language, alt, menu))
             })
             .unwrap_or(CoverageLevelForXPath::Comprehensive)
     }
@@ -277,10 +277,12 @@ impl CoverageByXPathCache {
     /// 1. Locale-specific override file `displaynames/coverageByXPath/{locale}.json`
     /// 2. Root defaults file `displaynames/coverageByXPath.json`
     /// 3. Defaults to [`CoverageLevelForXPath::Comprehensive`] if unlisted everywhere.
+    #[allow(clippy::too_many_arguments)]
     pub(super) fn coverage_tier(
         &self,
         locale: &DataLocale,
-        category: DisplayNameCategory,
+        get_category: impl Fn(&CoverageByXPathLevels) -> &CoverageCategoryLevels,
+        is_language: bool,
         subtag: impl Writeable,
         alt: Option<Alt>,
         menu: Option<Menu>,
@@ -291,7 +293,8 @@ impl CoverageByXPathCache {
         Ok(Self::coverage_tier_from_levels(
             locale_levels,
             root_levels,
-            category,
+            get_category,
+            is_language,
             subtag,
             alt,
             menu,
@@ -1108,7 +1111,8 @@ pub(super) trait CheckAltCoverage {
 pub(super) fn for_each_cldr_key_and_tier<Resource, T>(
     cldr: &CldrCache,
     file_name: &str,
-    category: DisplayNameCategory,
+    get_category: impl Fn(&CoverageByXPathLevels) -> &CoverageCategoryLevels,
+    is_language: bool,
     mut extract_keys: impl FnMut(&Resource) -> &HashMap<WithAlt<T>, String>,
     mut callback: impl FnMut(&DataLocale, &WithAlt<T>, CoverageLevelForXPath),
 ) where
@@ -1129,7 +1133,15 @@ pub(super) fn for_each_cldr_key_and_tier<Resource, T>(
                     return;
                 }
                 let tier = coverage_cldr
-                    .coverage_tier(&locale, category, &key.subtag, key.alt, key.menu, cldr)
+                    .coverage_tier(
+                        &locale,
+                        &get_category,
+                        is_language,
+                        &key.subtag,
+                        key.alt,
+                        key.menu,
+                        cldr,
+                    )
                     .unwrap();
                 callback(&locale, key, tier);
             }
@@ -1148,7 +1160,7 @@ fn test_coverage_tier() {
     let en = DataLocale::from_str("en").unwrap();
     assert_eq!(
         coverage_cldr
-            .coverage_tier(&en, DisplayNameCategory::Language, "en", None, None, cldr)
+            .coverage_tier(&en, |l| &l.language, true, "en", None, None, cldr)
             .unwrap(),
         CoverageLevelForXPath::Basic
     );
@@ -1157,7 +1169,8 @@ fn test_coverage_tier() {
         coverage_cldr
             .coverage_tier(
                 &en,
-                DisplayNameCategory::Language,
+                |l| &l.language,
+                true,
                 "unlisted_test_code",
                 None,
                 None,

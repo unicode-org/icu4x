@@ -37,7 +37,7 @@ crate::displaynames::impl_displaynames_v1!(
     "scripts.json",
     scripts,
     None,
-    crate::displaynames::coverage_experimental::DisplayNameCategory::Script,
+    script,
     CoverageLevelForXPath::Basic | CoverageLevelForXPath::Core,
 );
 crate::displaynames::impl_displaynames_v1!(
@@ -47,7 +47,7 @@ crate::displaynames::impl_displaynames_v1!(
     "scripts.json",
     scripts,
     None,
-    crate::displaynames::coverage_experimental::DisplayNameCategory::Script,
+    script,
     CoverageLevelForXPath::Moderate,
 );
 crate::displaynames::impl_displaynames_v1!(
@@ -57,7 +57,7 @@ crate::displaynames::impl_displaynames_v1!(
     "scripts.json",
     scripts,
     None,
-    crate::displaynames::coverage_experimental::DisplayNameCategory::Script,
+    script,
     CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 
@@ -68,7 +68,7 @@ crate::displaynames::impl_displaynames_v1!(
     "scripts.json",
     scripts,
     Some(Alt::Short),
-    crate::displaynames::coverage_experimental::DisplayNameCategory::Script,
+    script,
     CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 
@@ -228,7 +228,8 @@ mod tests {
         crate::displaynames::coverage_experimental::for_each_cldr_key_and_tier(
             cldr,
             "scripts.json",
-            crate::displaynames::coverage_experimental::DisplayNameCategory::Script,
+            |l| &l.script,
+            false,
             |res: &cldr_serde::displaynames::script::Resource| {
                 &res.main.value.localedisplaynames.scripts
             },

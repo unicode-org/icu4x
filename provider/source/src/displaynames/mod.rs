@@ -95,7 +95,7 @@ where
 /// - `$alt_variant`: The alt variant (e.g., `None`, `Some(Alt::Short)`).
 /// - `$tier`: The target coverage tier.
 macro_rules! impl_displaynames_v1 {
-    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr, $category:expr, $tier:pat,) => {
+    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr, $category:ident, $tier:pat,) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
@@ -130,7 +130,8 @@ macro_rules! impl_displaynames_v1 {
                 let item_tier = crate::displaynames::coverage_experimental::coverage_cldr_cache()
                     .coverage_tier(
                     req.id.locale,
-                    $category,
+                    |l| &l.$category,
+                    stringify!($category) == "language",
                     &subtag,
                     $alt_variant,
                     None,
@@ -182,7 +183,7 @@ macro_rules! impl_displaynames_v1 {
 /// - `$field`: The field name in `LocaleDisplayNames` containing the data.
 /// - `$tier`: The target coverage tier.
 macro_rules! impl_displaynames_menu_v1 {
-    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $category:expr, $tier:pat,) => {
+    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $category:ident, $tier:pat,) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
@@ -239,7 +240,15 @@ macro_rules! impl_displaynames_menu_v1 {
                 };
                 let item_tier =
                     crate::displaynames::coverage_experimental::coverage_cldr_cache()
-                        .coverage_tier(req.id.locale, $category, &subtag, alt, menu, cldr)?;
+                        .coverage_tier(
+                            req.id.locale,
+                            |l| &l.$category,
+                            stringify!($category) == "language",
+                            &subtag,
+                            alt,
+                            menu,
+                            cldr,
+                        )?;
                 if !matches!(item_tier, $tier) {
                     return Err(DataErrorKind::IdentifierNotFound
                         .into_error()
@@ -287,7 +296,8 @@ macro_rules! impl_displaynames_menu_v1 {
                                 crate::displaynames::coverage_experimental::CoverageByXPathCache::coverage_tier_from_levels(
                                     locale_levels,
                                     root_levels,
-                                    $category,
+                                    |l| &l.$category,
+                                    stringify!($category) == "language",
                                     &key.subtag,
                                     alt,
                                     menu,
@@ -336,7 +346,7 @@ macro_rules! impl_displaynames_menu_v1 {
 /// - `$alt_variant`: The alt variant (e.g., `None`, `Some(Alt::Short)`).
 /// - `$tier`: The target coverage tier.
 macro_rules! impl_displaynames_iter_v1 {
-    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr, $category:expr, $tier:pat) => {
+    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr, $category:ident, $tier:pat) => {
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
                 let mut result = HashSet::new();
@@ -360,14 +370,16 @@ macro_rules! impl_displaynames_iter_v1 {
                                 crate::displaynames::coverage_experimental::CoverageByXPathCache::coverage_tier_from_levels(
                                     locale_levels,
                                     root_levels,
-                                    $category,
+                                    |l| &l.$category,
+                                    stringify!($category) == "language",
                                     &key.subtag,
                                     $alt_variant,
                                     None,
                                 );
                             if matches!(item_tier, $tier) {
+                                let subtag_str = writeable::Writeable::write_to_string(&key.subtag);
                                 let data_identifier = DataIdentifierCow::from_owned(
-                                    DataMarkerAttributes::try_from_string(key.subtag.to_string())
+                                    DataMarkerAttributes::try_from_string(subtag_str.into_owned())
                                         .map_err(|_| {
                                         DataError::custom("Failed to parse attribute")
                                             .with_debug_context(&key.subtag)
