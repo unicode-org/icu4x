@@ -59,10 +59,43 @@ fn parse_cldr_xpath(xpath: &str) -> Option<(CoverageCategory, String)> {
     let rest = rest.strip_prefix(type_prefix)?;
     let (val, extra_attrs) = rest.split_once("\"]")?;
 
+    let normalized_val = match category {
+        CoverageCategory::Language => {
+            if let Ok(lang) = val.parse::<icu_locale_core::subtags::Language>() {
+                lang.to_string()
+            } else if let Ok(lang_id) = val.parse::<icu_locale_core::LanguageIdentifier>() {
+                lang_id.to_string()
+            } else {
+                val.replace('_', "-")
+            }
+        }
+        CoverageCategory::Territory => {
+            if let Ok(region) = val.parse::<icu_locale_core::subtags::Region>() {
+                region.to_string()
+            } else {
+                val.to_string()
+            }
+        }
+        CoverageCategory::Script => {
+            if let Ok(script) = val.parse::<icu_locale_core::subtags::Script>() {
+                script.to_string()
+            } else {
+                val.to_string()
+            }
+        }
+        CoverageCategory::Variant => {
+            if let Ok(variant) = val.parse::<icu_locale_core::subtags::Variant>() {
+                variant.to_string()
+            } else {
+                val.to_string()
+            }
+        }
+    };
+
     let key = if extra_attrs.is_empty() {
-        val.to_string()
+        normalized_val
     } else {
-        format!("{val}{extra_attrs}")
+        format!("{normalized_val}{extra_attrs}")
     };
 
     Some((category, key))
@@ -83,13 +116,7 @@ impl CoverageCategoryLevels {
     ) -> Option<CoverageLevelForXPath> {
         use core::fmt::Write;
         let mut cursor = self.0.cursor();
-        writeable::adapters::Replace {
-            source: &subtag,
-            needle: "-",
-            replacement: '_',
-        }
-        .write_to(&mut cursor)
-        .ok()?;
+        subtag.write_to(&mut cursor).ok()?;
 
         if cursor.is_empty() {
             return None;
