@@ -60,7 +60,8 @@ pub mod multi {
     pub use displaynames::VariantDisplayNames;
 }
 
-pub mod single;
+/// The single displaynames APIs have been moved to `icu_locale::names`.
+pub mod single {}
 
 pub use displaynames::DisplayNamesPreferences;
 pub use options::DisplayNamesOptions;

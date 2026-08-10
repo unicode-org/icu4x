@@ -2,21 +2,22 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Types for loading a single display name at a time.
+//! Types representing the name of a language, script, region, or variant.
 //!
-//! This submodule is useful for applications that only need to display one or
-//! two specific names, such as the name of the current region.
+//! See `icu_experimental::displaynames` for another display names API designed for loading
+//! multiple names at once, such as when populating a dropdown menu. Please send feedback on
+//! your use cases.
 //!
-//! ### Status
-//!
-//! Currently, this module has limited support. It supports regions, scripts,
-//! and variants, but support for languages and locales is currently missing.
-//! More features are on their way.
-//!
+//! Display names for full locale identifiers are not currently supported.
 //! If you have any feedback, please let us know at
 //! <https://github.com/unicode-org/icu4x/issues/7825>.
 //!
-//! See [the parent module](mod@super) for a comparison of single and multi.
+//! <div class="stab unstable">
+//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+//!
+//! Graduation tracking issue: [issue #3913](https://github.com/unicode-org/icu4x/issues/3913).
+//! </div>
 
 mod language;
 mod region;
