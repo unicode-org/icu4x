@@ -14,6 +14,7 @@ use crate::source::SerdeCache;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use serde::Deserialize;
+use std::borrow::Cow;
 use std::collections::BTreeMap;
 #[cfg(test)]
 use std::collections::HashMap;
@@ -199,7 +200,7 @@ impl<'de, 'a> Visitor<'de> for XPathArrayVisitor<'a> {
     where
         A: SeqAccess<'de>,
     {
-        while let Some(xpath) = seq.next_element::<std::borrow::Cow<'_, str>>()? {
+        while let Some(xpath) = seq.next_element::<Cow<'_, str>>()? {
             if !xpath.is_ascii() {
                 continue;
             }
@@ -240,7 +241,7 @@ impl<'de> Deserialize<'de> for CoverageByXPathLevels {
                 let mut map_script = LiteMap::new_vec();
                 let mut map_var = LiteMap::new_vec();
 
-                while let Some(key) = map.next_key::<std::borrow::Cow<'_, str>>()? {
+                while let Some(key) = map.next_key::<Cow<'_, str>>()? {
                     let level_val = match key.as_ref() {
                         "core" => CoverageLevelForXPath::Core.to_usize(),
                         "basic" => CoverageLevelForXPath::Basic.to_usize(),
