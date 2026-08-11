@@ -126,6 +126,8 @@ export { Locale } from "./Locale.mjs"
 
 export { LocaleDirectionality } from "./LocaleDirectionality.mjs"
 
+export { LocaleNamesUnstable } from "./LocaleNamesUnstable.mjs"
+
 export { Logger } from "./Logger.mjs"
 
 export { ComposingNormalizer } from "./ComposingNormalizer.mjs"
@@ -307,6 +309,8 @@ export { ListLength } from "./ListLength.mjs"
 export { TransformResult } from "./TransformResult.mjs"
 
 export { LocaleDirection } from "./LocaleDirection.mjs"
+
+export { LanguageDisplayUnstable } from "./LanguageDisplayUnstable.mjs"
 
 export { PluralCategory } from "./PluralCategory.mjs"
 

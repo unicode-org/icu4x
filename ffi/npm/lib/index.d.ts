@@ -128,6 +128,8 @@ export { Locale } from "./Locale"
 
 export { LocaleDirectionality } from "./LocaleDirectionality"
 
+export { LocaleNamesUnstable } from "./LocaleNamesUnstable"
+
 export { Logger } from "./Logger"
 
 export { ComposingNormalizer } from "./ComposingNormalizer"
@@ -309,6 +311,8 @@ export { ListLength } from "./ListLength"
 export { TransformResult } from "./TransformResult"
 
 export { LocaleDirection } from "./LocaleDirection"
+
+export { LanguageDisplayUnstable } from "./LanguageDisplayUnstable"
 
 export { PluralCategory } from "./PluralCategory"
 

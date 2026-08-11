@@ -121,6 +121,8 @@ pub mod unstable {
     pub mod locale;
     #[cfg(feature = "locale")]
     pub mod locale_directionality;
+    #[cfg(all(feature = "locale", feature = "unstable"))]
+    pub mod locale_names;
     #[cfg(feature = "normalizer")]
     pub mod normalizer;
     #[cfg(feature = "normalizer")]
