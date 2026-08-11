@@ -189,7 +189,7 @@ int main() {
 
   // Language identifier display name
   std::unique_ptr<Locale> targetLocale = Locale::from_string("en-US").ok().value();
-  out = LocaleNamesUnstable::for_language_identifier_light(*formattingLocale.get(), *targetLocale.get(), LanguageDisplay::Dialect).ok().value();
+  out = LocaleNamesUnstable::for_language_identifier_light(*formattingLocale.get(), *targetLocale.get(), LanguageDisplayUnstable::Dialect).ok().value();
   std::cout << "formatting locale 'fr', langid 'en-US': " << out << std::endl;
   if (!test_string(out, "anglais américain", "Language identifier display name in French")) {
     return 1;
