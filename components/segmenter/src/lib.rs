@@ -120,18 +120,14 @@ extern crate alloc;
 
 mod complex;
 mod indices;
+mod rule_segmenter_v1;
 #[cfg(feature = "unstable")]
-mod neo;
-mod rule_segmenter;
+mod rule_segmenter_v2;
 
 /// [`GraphemeClusterSegmenter`] and its related iterators, borrowed types, and options.
 mod grapheme;
 /// [`LineSegmenter`] and its related iterators, borrowed types, and options.
 mod line;
-/// The Unicode 17 line breaking implementation, used with `SegmenterBreakLineV3` data.
-#[cfg(any(feature = "unstable", feature = "datagen"))]
-#[cfg_attr(not(feature = "unstable"), allow(dead_code))]
-mod line_v3;
 /// [`SentenceSegmenter`] and its related iterators, borrowed types, and options.
 mod sentence;
 /// [`WordSegmenter`] and its related iterators, borrowed types, and options.
@@ -162,41 +158,8 @@ pub mod options {
 }
 
 /// Largely-internal scaffolding types (You should very rarely need to reference these directly)
-pub mod scaffold {
-    // TODO: These should have never been public
-    pub use crate::rule_segmenter::{Latin1, PotentiallyIllFormedUtf8, RuleBreakType, Utf8, Utf16};
-
-    // TODO: This should have never been public
-    /// A trait allowing for [`WordBreakIterator`](crate::iterators::WordBreakIterator) to be generalized to multiple
-    /// string iteration methods.
-    ///
-    /// This is implemented by ICU4X for several common string types.
-    ///
-    /// <div class="stab unstable">
-    /// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
-    /// trait, please consider using a type from the implementors listed below.
-    /// </div>
-    pub trait WordBreakType: crate::private::Sealed + Sized + RuleBreakType {}
-    impl WordBreakType for Utf8 {}
-    impl WordBreakType for PotentiallyIllFormedUtf8 {}
-    impl WordBreakType for Latin1 {}
-    impl WordBreakType for Utf16 {}
-
-    // TODO: This should have never been public
-    /// A trait allowing for `LineBreakIterator` to be generalized to multiple string iteration methods.
-    ///
-    /// This is implemented by ICU4X for several common string types.
-    ///
-    /// <div class="stab unstable">
-    /// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
-    /// trait, please consider using a type from the implementors listed below.
-    /// </div>
-    pub trait LineBreakType: crate::private::Sealed + Sized + RuleBreakType {}
-    impl LineBreakType for Utf8 {}
-    impl LineBreakType for PotentiallyIllFormedUtf8 {}
-    impl LineBreakType for Latin1 {}
-    impl LineBreakType for Utf16 {}
-}
+// TODO: These should have never been public
+pub mod scaffold;
 
 /// Types supporting iteration over segments. Obtained from the segmenter types.
 pub mod iterators {

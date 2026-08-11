@@ -9,8 +9,6 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_cache::CldrCache;
 #[cfg(feature = "unstable")]
-use crate::source::AbstractFs;
-#[cfg(feature = "unstable")]
 use crate::source::Cache;
 use crate::source::{RscdCache, include_files};
 #[cfg(feature = "unstable")]
@@ -1040,9 +1038,9 @@ implement_override!(SegmenterBreakSentenceOverrideV1, "sentence.toml", ["el"]);
 
 #[cfg(feature = "unstable")]
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-fn neo_sources() -> AbstractFs {
+fn pri_555_sources() -> crate::source::AbstractFs {
     include_files!(
-        "../../data/segmenter/neo/";
+        "../../data/segmenter/pri555/";
         "GraphemeClusterBreakStates.txt",
         "GraphemeClusterBreakSymbols.txt",
         "GraphemeClusterBreakTransitions.txt",
@@ -1060,7 +1058,7 @@ fn neo_sources() -> AbstractFs {
 
 #[cfg(feature = "unstable")]
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-fn neo_cldr_json() -> &'static CldrCache {
+fn pri555_cldr_json() -> &'static CldrCache {
     // Singleton so that all instantiations share the same cache.
     static SINGLETON: OnceLock<CldrCache> = OnceLock::new();
     SINGLETON.get_or_init(|| {
@@ -1076,19 +1074,20 @@ fn neo_cldr_json() -> &'static CldrCache {
 
 #[test]
 #[ignore]
-#[cfg(feature = "networking")]
+#[cfg(all(feature = "unstable", feature = "networking"))]
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 fn download() {
     use std::fs::File;
     use std::io::Write;
 
-    let data_root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("data/segmenter/neo");
+    let data_root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("data/segmenter/pri555");
 
-    for file in neo_sources().list("").unwrap() {
+    for file in pri_555_sources().list("").unwrap() {
         let target = data_root.join(&file);
         std::fs::create_dir_all(target.parent().unwrap()).unwrap();
         crlify::BufWriterWithLineEndingFix::new(File::create(&target).unwrap())
             .write_all(
-                &AbstractFs::new_from_url(format!(
+                &crate::source::AbstractFs::new_from_url(format!(
                     "https://unicode.org/review/pri555/{}",
                     SourceDataProvider::TESTED_UNICODE_TAG
                 ))
@@ -1123,7 +1122,7 @@ impl SourceDataProvider {
             .segmenter_cache
             .line
             .get_or_init(|| {
-                self.build_segmenter(&neo_sources(), "LineBreak", |s| {
+                self.build_segmenter(&pri_555_sources(), "LineBreak", |s| {
                     if s == "Mandatory" { 1 } else { 0 }
                 })
             })
@@ -1136,7 +1135,7 @@ impl SourceDataProvider {
             .segmenter_cache
             .word
             .get_or_init(|| {
-                self.build_segmenter(&neo_sources(), "WordBreak", |s| match s {
+                self.build_segmenter(&pri_555_sources(), "WordBreak", |s| match s {
                     "Letter" => WordType::Letter,
                     "Number" => WordType::Number,
                     _ => WordType::None,
@@ -1151,7 +1150,7 @@ impl SourceDataProvider {
             .segmenter_cache
             .sentence
             .get_or_init(|| {
-                self.build_segmenter(&neo_sources(), "SentenceBreak", |s| {
+                self.build_segmenter(&pri_555_sources(), "SentenceBreak", |s| {
                     if s == "Nonterminated" { 1 } else { 0 }
                 })
             })
@@ -1164,7 +1163,7 @@ impl SourceDataProvider {
             .segmenter_cache
             .grapheme_cluster
             .get_or_init(|| {
-                self.build_segmenter(&neo_sources(), "GraphemeClusterBreak", |s| match s {
+                self.build_segmenter(&pri_555_sources(), "GraphemeClusterBreak", |s| match s {
                     "" => 0,
                     s => unreachable!("{s}"),
                 })
@@ -1175,7 +1174,7 @@ impl SourceDataProvider {
 
     fn build_segmenter(
         &self,
-        sources: &AbstractFs,
+        sources: &crate::source::AbstractFs,
         prefix: &str,
         status_lookup: fn(&str) -> u8,
     ) -> Result<TailoredSegmenter, DataError> {
@@ -1287,8 +1286,8 @@ impl SourceDataProvider {
 
         let mut tailorings = BTreeMap::new();
 
-        for locale in neo_cldr_json().segments().list_locales()? {
-            let Some(ts) = neo_cldr_json()
+        for locale in pri555_cldr_json().segments().list_locales()? {
+            let Some(ts) = pri555_cldr_json()
                 .segments()
                 .read_and_parse::<crate::cldr_serde::segmentation::Resource>(
                     &locale,

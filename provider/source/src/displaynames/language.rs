@@ -11,13 +11,15 @@ use crate::displaynames::extract_names_for_zeromap_struct;
 
 use icu::experimental::displaynames::provider::{
     LanguageDisplayNames, LanguageDisplayNamesV1, LocaleDisplayNames, LocaleDisplayNamesV1,
+};
+use icu::locale::LanguageIdentifier;
+use icu::locale::provider::names::{
     LocaleNamesLanguageLongHeavyV1, LocaleNamesLanguageLongLightV1,
     LocaleNamesLanguageMediumHeavyV1, LocaleNamesLanguageMediumLightV1,
     LocaleNamesLanguageMediumTinyV1, LocaleNamesLanguageMenuMediumHeavyV1,
     LocaleNamesLanguageMenuMediumLightV1, LocaleNamesLanguageShortHeavyV1,
     LocaleNamesLanguageShortLightV1, MenuNameParts,
 };
-use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use std::collections::{BTreeMap, HashSet};

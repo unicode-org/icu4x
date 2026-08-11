@@ -223,9 +223,12 @@ icu_benchmark_macros = { path = "tools/benchmark/macros" }
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
 # Diplomat must be published preceding a new ICU4X release but may use git versions in between
 diplomat = { version = "0.16.0", default-features = false }
-diplomat-runtime = { version = "0.16.0", default-features = false }
 diplomat_core = { version = "0.16.0", default-features = false }
 diplomat-tool = { version = "0.16.0" }
+# Range dep for better compatability. We will not have this problem
+# after diplomat-runtime 1.0.0
+# <https://github.com/rust-diplomat/diplomat/issues/958>
+diplomat-runtime = { version = ">= 0.15.2, < 0.17.0", default-features = false }
 
 # EXTERNAL DEPENDENCIES
 #
@@ -350,9 +353,9 @@ inherits = "bench"
 debug = true
 
 [workspace.lints]
-clippy.alloc-instead-of-core = "warn"
-clippy.bool-assert-comparison = "allow" # more readable
-clippy.branches-sharing-code = "warn"
+clippy.alloc_instead_of_core = "warn"
+clippy.bool_assert_comparison = "allow" # more readable
+clippy.branches_sharing_code = "warn"
 clippy.collection_is_never_read = "warn"
 clippy.crosspointer_transmute = "warn"
 clippy.dbg_macro = "warn"
@@ -367,7 +370,7 @@ clippy.mismatching_type_param_order = "warn"
 clippy.missing_fields_in_debug = "warn"
 clippy.missing_transmute_annotations = "warn"
 clippy.negative_feature_names = "warn"
-clippy.or-fun-call = "warn"
+clippy.or_fun_call = "warn"
 clippy.same_functions_in_if_condition = "warn"
 clippy.todo = "warn"
 clippy.transmute_bytes_to_str = "warn"
@@ -378,7 +381,7 @@ clippy.transmute_ptr_to_ref = "warn"
 clippy.transmute_undefined_repr = "warn"
 clippy.transmutes_expressible_as_ptr_casts = "warn"
 clippy.trivially_copy_pass_by_ref = "deny"
-clippy.unnecessary-wraps = "warn"
+clippy.unnecessary_wraps = "warn"
 clippy.useless_transmute = "warn"
 clippy.wildcard_dependencies = "warn"
 rust.missing_debug_implementations = "deny"
