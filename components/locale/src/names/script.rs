@@ -12,7 +12,7 @@ use crate::provider::names::{
     LocaleNamesScriptShortHeavyV1,
 };
 use icu_locale_core::subtags::Script;
-use icu_provider::prelude::*;
+use icu_provider::{DataPayloadOr, prelude::*};
 
 #[inline]
 fn make_attributes(subtag: &Script) -> &DataMarkerAttributes {
@@ -72,7 +72,7 @@ macro_rules! table_row {
 /// ```
 #[derive(Debug)]
 pub struct ScriptDisplayName {
-    pub(crate) payload: DataPayload<LocaleNamesScriptMediumLightV1>,
+    pub(crate) payload: DataPayloadOr<LocaleNamesScriptMediumLightV1, Script>,
 }
 
 impl ScriptDisplayName {
@@ -105,6 +105,7 @@ impl ScriptDisplayName {
                 || load_one::<LocaleNamesScriptMediumTinyV1, _, _>(provider, &locale, attrs),
                 |p| Ok(Some(p)),
             )?
+            .map(DataPayloadOr::from_payload)
             .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
         Ok(Self { payload })
     }
@@ -147,6 +148,7 @@ impl ScriptDisplayName {
         let attrs = make_attributes(&script);
         let locale = make_locale(prefs);
         let payload = load_one::<LocaleNamesScriptMediumTinyV1, _, _>(provider, &locale, attrs)?
+            .map(DataPayloadOr::from_payload)
             .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
         Ok(Self { payload })
     }
@@ -200,6 +202,7 @@ impl ScriptDisplayName {
                 || load_one::<LocaleNamesScriptMediumTinyV1, _, _>(provider, &locale, attrs),
                 |p| Ok(Some(p)),
             )?
+            .map(DataPayloadOr::from_payload)
             .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
         Ok(Self { payload })
     }
@@ -260,14 +263,23 @@ impl ScriptDisplayName {
                 || load_one::<LocaleNamesScriptMediumTinyV1, _, _>(provider, &locale, attrs),
                 |p| Ok(Some(p)),
             )?
+            .map(DataPayloadOr::from_payload)
             .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
         Ok(Self { payload })
+    }
+
+    #[inline]
+    fn borrow_str(&self) -> &str {
+        match self.payload.get() {
+            Ok(s) => s,
+            Err(subtag) => subtag.as_str(),
+        }
     }
 
     /// Returns a borrowed version of this display name.
     pub fn as_borrowed(&self) -> ScriptDisplayNameBorrowed<'_> {
         ScriptDisplayNameBorrowed {
-            value: self.payload.get(),
+            value: self.borrow_str(),
         }
     }
 }

@@ -12,6 +12,7 @@ use crate::provider::names::{
     LocaleNamesRegionShortTinyV1,
 };
 use icu_locale_core::subtags::Region;
+use icu_provider::DataPayloadOr;
 use icu_provider::prelude::*;
 
 #[inline]
@@ -72,7 +73,7 @@ macro_rules! table_row {
 /// ```
 #[derive(Debug)]
 pub struct RegionDisplayName {
-    pub(crate) payload: DataPayload<LocaleNamesRegionMediumLightV1>,
+    pub(crate) payload: DataPayloadOr<LocaleNamesRegionMediumLightV1, Region>,
 }
 
 impl RegionDisplayName {
@@ -105,6 +106,7 @@ impl RegionDisplayName {
                 || load_one::<LocaleNamesRegionMediumTinyV1, _, _>(provider, &locale, attrs),
                 |p| Ok(Some(p)),
             )?
+            .map(DataPayloadOr::from_payload)
             .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
         Ok(Self { payload })
     }
@@ -148,6 +150,7 @@ impl RegionDisplayName {
         let attrs = make_attributes(&region);
         let locale = make_locale(prefs);
         let payload = load_one::<LocaleNamesRegionMediumTinyV1, _, _>(provider, &locale, attrs)?
+            .map(DataPayloadOr::from_payload)
             .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
         Ok(Self { payload })
     }
@@ -186,6 +189,7 @@ impl RegionDisplayName {
                 || load_one::<LocaleNamesRegionMediumTinyV1, _, _>(provider, &locale, attrs),
                 |p| Ok(Some(p)),
             )?
+            .map(DataPayloadOr::from_payload)
             .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
         Ok(Self { payload })
     }
@@ -251,14 +255,23 @@ impl RegionDisplayName {
                 || load_one::<LocaleNamesRegionMediumTinyV1, _, _>(provider, &locale, attrs),
                 |p| Ok(Some(p)),
             )?
+            .map(DataPayloadOr::from_payload)
             .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
         Ok(Self { payload })
+    }
+
+    #[inline]
+    fn borrow_str(&self) -> &str {
+        match self.payload.get() {
+            Ok(s) => s,
+            Err(subtag) => subtag.as_str(),
+        }
     }
 
     /// Returns a borrowed version of this display name.
     pub fn as_borrowed(&self) -> RegionDisplayNameBorrowed<'_> {
         RegionDisplayNameBorrowed {
-            value: self.payload.get(),
+            value: self.borrow_str(),
         }
     }
 }
