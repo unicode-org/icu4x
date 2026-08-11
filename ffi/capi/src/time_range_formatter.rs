@@ -28,7 +28,7 @@ pub mod ffi {
     use crate::unstable::provider::ffi::DataProvider;
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter, Struct)]
+    #[diplomat::rust_link(icu::datetime::range::NoCalendarRangeFormatter, Typedef)]
     pub struct TimeRangeFormatter(
         pub  icu_datetime::range::
         FixedCalendarDateRangeFormatter<
@@ -39,7 +39,7 @@ pub mod ffi {
 
     impl TimeRangeFormatter {
         #[diplomat::attr(supports = fallible_constructors, constructor)]
-        #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::range::NoCalendarRangeFormatter::try_new, FnInTypedef)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::hms, FnInStruct, hidden)]
@@ -79,7 +79,7 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
-        #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::range::NoCalendarRangeFormatter::try_new, FnInTypedef)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::hms, FnInStruct, hidden)]
@@ -119,7 +119,7 @@ pub mod ffi {
             )))
         }
         
-        #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::range::NoCalendarRangeFormatter::format, FnInTypedef)]
         #[diplomat::rust_link(icu::datetime::range::FormattedDateRange, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::range::FormattedDateRange::to_string, FnInStruct, hidden)]
         pub fn format(

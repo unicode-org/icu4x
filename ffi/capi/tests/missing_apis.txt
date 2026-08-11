@@ -23,10 +23,6 @@ icu::collator::CollatorBorrowed::new_root#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_to#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_utf16_to#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_utf8_to#FnInStruct
-icu::datetime::range::NoCalendarRangeFormatter#Typedef
-icu::datetime::range::NoCalendarRangeFormatter::cast_into_fset#FnInTypedef
-icu::datetime::range::NoCalendarRangeFormatter::format#FnInTypedef
-icu::datetime::range::NoCalendarRangeFormatter::try_new#FnInTypedef
 icu::decimal::FormattedDecimal::write_to#FnInStruct
 icu::locale::names::DisplayNamesPreferences#Struct
 icu::locale::names::DisplayNamesPreferences::extend#FnInStruct

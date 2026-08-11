@@ -38,7 +38,7 @@ int main() {
         std::unique_ptr<DateRangeFormatter> fmt = DateRangeFormatter::create_ymd(*locale.get(), DateTimeLength::Medium, std::nullopt, std::nullopt).ok().value();
         out = fmt->format_iso(*start_date.get(), *end_next_day.get());
         std::cout << "DateRangeFormatter YMD: " << out;
-        if (out != "Dec 22\u2009\u2013\u200923, 2023") {
+        if (out != "Dec 22 – 23, 2023") {
             std::cout << " (unexpected!)";
             saw_unexpected_output = true;
         }
@@ -50,7 +50,7 @@ int main() {
         std::unique_ptr<DateRangeFormatterGregorian> fmt = DateRangeFormatterGregorian::create_ymd(*locale.get(), DateTimeLength::Medium, std::nullopt, std::nullopt).ok().value();
         out = fmt->format_iso(*start_date.get(), *end_next_day.get());
         std::cout << "DateRangeFormatterGregorian YMD: " << out;
-        if (out != "Dec 22\u2009\u2013\u200923, 2023") {
+        if (out != "Dec 22 – 23, 2023") {
             std::cout << " (unexpected!)";
             saw_unexpected_output = true;
         }
@@ -62,7 +62,7 @@ int main() {
         std::unique_ptr<TimeRangeFormatter> fmt = TimeRangeFormatter::create(*locale.get(), DateTimeLength::Medium, std::nullopt, std::nullopt).ok().value();
         out = fmt->format(*start_time.get(), *end_time.get());
         std::cout << "TimeRangeFormatter: " << out;
-        if (out != "9:00\u202fAM\u2009\u2013\u20095:00\u202fPM") {
+        if (out != "9:00 AM – 5:00 PM") {
             std::cout << " (unexpected!)";
             saw_unexpected_output = true;
         }
@@ -74,7 +74,7 @@ int main() {
         std::unique_ptr<DateTimeRangeFormatter> fmt = DateTimeRangeFormatter::create_ymdt(*locale.get(), DateTimeLength::Medium, std::nullopt, std::nullopt, std::nullopt).ok().value();
         out = fmt->format_iso(*start_date.get(), *start_time.get(), *end_next_day.get(), *end_time.get());
         std::cout << "DateTimeRangeFormatter YMDT: " << out;
-        if (out != "Dec 22, 2023, 9:00:00\u202fAM\u2009\u2013\u2009Dec 23, 2023, 5:00:00\u202fPM") {
+        if (out != "Dec 22, 2023, 9:00:00 AM – Dec 23, 2023, 5:00:00 PM") {
             std::cout << " (unexpected!)";
             saw_unexpected_output = true;
         }

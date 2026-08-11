@@ -41,7 +41,7 @@ pub mod ffi {
     {%- endif %}
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter, Struct)]
+    #[diplomat::rust_link(icu::datetime::range::{{ formatter_kind.rustlink_range() }}, {{ formatter_kind.rustlink_doctype() }})]
     pub struct {{ ffi_type }}(
         pub  icu_datetime::range::
         {%- if formatter_kind.is_fixed_calendar %}
@@ -87,7 +87,7 @@ pub mod ffi {
         {%- else %}
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ named_constructor }}")]
         {%- endif %}
-        #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::range::{{ formatter_kind.rustlink_range() }}::try_new, {{ formatter_kind.rustlink_doctype_fn() }})]
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}, Struct)]
         {%- if flavor.is_time_only() %}
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::hm, FnInStruct, hidden)]
@@ -167,7 +167,7 @@ pub mod ffi {
         }
         {% endfor %}
         {%- endfor %}
-        #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::range::{{ formatter_kind.rustlink_range() }}::format, {{ formatter_kind.rustlink_doctype_fn() }})]
         #[diplomat::rust_link(icu::datetime::range::FormattedDateRange, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::range::FormattedDateRange::to_string, FnInStruct, hidden)]
         pub fn format{% if flavor.has_date() %}_iso{% endif %}(
@@ -209,7 +209,7 @@ pub mod ffi {
             let _infallible = self.0.format(&start_value, &end_value).write_to(write);
         }
         {% if !formatter_kind.is_fixed_calendar %}
-        #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::range::{{ formatter_kind.rustlink_range() }}::format, {{ formatter_kind.rustlink_doctype_fn() }})]
         #[diplomat::rust_link(icu::datetime::range::FormattedDateRange, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::range::FormattedDateRange::to_string, FnInStruct, hidden)]
         #[diplomat::attr(demo_gen, disable)]

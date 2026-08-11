@@ -14,7 +14,7 @@ const TimeRangeFormatter_box_destroy_registry = new FinalizationRegistry((ptr) =
 });
 
 /**
- * See the [Rust documentation for `DateRangeFormatter`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html) for more information.
+ * See the [Rust documentation for `NoCalendarRangeFormatter`](https://docs.rs/icu/2.2.0/icu/datetime/range/type.NoCalendarRangeFormatter.html) for more information.
  */
 export class TimeRangeFormatter {
     // Internal ptr reference:
@@ -46,7 +46,7 @@ export class TimeRangeFormatter {
 
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `T`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.T.html) for more information.
      *
@@ -77,7 +77,7 @@ export class TimeRangeFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `T`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.T.html) for more information.
      *
@@ -108,7 +108,7 @@ export class TimeRangeFormatter {
     }
 
     /**
-     * See the [Rust documentation for `format`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.format) for more information.
+     * See the [Rust documentation for `format`](https://docs.rs/icu/2.2.0/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.format) for more information.
      */
     format(startTime, endTime) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
@@ -126,7 +126,7 @@ export class TimeRangeFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `T`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.T.html) for more information.
      *

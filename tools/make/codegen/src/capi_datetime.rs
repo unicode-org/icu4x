@@ -158,6 +158,13 @@ impl FormatterKind {
             (false, _) => "DateTimeFormatter",
         }
     }
+    pub fn rustlink_range(self) -> &'static str {
+        match (self.is_fixed_calendar, self.is_gregorian) {
+            (true, true) => "FixedCalendarDateRangeFormatter",
+            (true, false) => "NoCalendarRangeFormatter",
+            (false, _) => "DateRangeFormatter",
+        }
+    }
     pub fn rustlink_doctype(self) -> &'static str {
         match (self.is_fixed_calendar, self.is_gregorian) {
             (true, true) => "Struct",

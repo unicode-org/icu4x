@@ -565,7 +565,7 @@ pub mod ffi {
     
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter, Struct)]
+    #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter, Struct)]
     pub struct DateTimeRangeFormatterGregorian(
         pub  icu_datetime::range::
         FixedCalendarDateRangeFormatter<
@@ -576,7 +576,7 @@ pub mod ffi {
 
     impl DateTimeRangeFormatterGregorian {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "dt")]
-        #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DT::with_time_precision, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DT::with_alignment, FnInStruct, compact)]
@@ -608,7 +608,7 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "dt_with_provider")]
-        #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DT::with_time_precision, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DT::with_alignment, FnInStruct, compact)]
@@ -642,7 +642,7 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdt")]
-        #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDT, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDT::with_time_precision, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDT::with_alignment, FnInStruct, compact)]
@@ -674,7 +674,7 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdt_with_provider")]
-        #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDT, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDT::with_time_precision, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDT::with_alignment, FnInStruct, compact)]
@@ -708,7 +708,7 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdt")]
-        #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDT, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDT::with_time_precision, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDT::with_alignment, FnInStruct, compact)]
@@ -744,7 +744,7 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdt_with_provider")]
-        #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDT, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDT::with_time_precision, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDT::with_alignment, FnInStruct, compact)]
@@ -781,7 +781,7 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "det")]
-        #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DET, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DET::with_time_precision, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DET::with_alignment, FnInStruct, compact)]
@@ -813,7 +813,7 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "det_with_provider")]
-        #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DET, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DET::with_time_precision, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DET::with_alignment, FnInStruct, compact)]
@@ -847,7 +847,7 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdet")]
-        #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDET, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDET::with_time_precision, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDET::with_alignment, FnInStruct, compact)]
@@ -879,7 +879,7 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdet_with_provider")]
-        #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDET, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDET::with_time_precision, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDET::with_alignment, FnInStruct, compact)]
@@ -913,7 +913,7 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdet")]
-        #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDET, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDET::with_time_precision, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDET::with_alignment, FnInStruct, compact)]
@@ -948,7 +948,7 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdet_with_provider")]
-        #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDET, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDET::with_time_precision, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDET::with_alignment, FnInStruct, compact)]
@@ -985,7 +985,7 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "et")]
-        #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::ET, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::ET::with_time_precision, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::ET::with_alignment, FnInStruct, compact)]
@@ -1017,7 +1017,7 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "et_with_provider")]
-        #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::ET, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::ET::with_time_precision, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::ET::with_alignment, FnInStruct, compact)]
@@ -1050,7 +1050,7 @@ pub mod ffi {
             )))
         }
         
-        #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::range::FormattedDateRange, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::range::FormattedDateRange::to_string, FnInStruct, hidden)]
         pub fn format_iso(

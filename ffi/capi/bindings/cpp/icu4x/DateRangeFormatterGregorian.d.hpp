@@ -35,13 +35,13 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `DateRangeFormatter`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html) for more information.
+ * See the [Rust documentation for `FixedCalendarDateRangeFormatter`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html) for more information.
  */
 class DateRangeFormatterGregorian {
 public:
 
   /**
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `D`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.D.html) for more information.
    *
@@ -50,7 +50,7 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateRangeFormatterGregorian>, icu4x::DateTimeFormatterLoadError> create_d(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::DateTimeAlignment> alignment);
 
   /**
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `D`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.D.html) for more information.
    *
@@ -59,7 +59,7 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateRangeFormatterGregorian>, icu4x::DateTimeFormatterLoadError> create_d_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::DateTimeAlignment> alignment);
 
   /**
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `MD`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MD.html) for more information.
    *
@@ -68,7 +68,7 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateRangeFormatterGregorian>, icu4x::DateTimeFormatterLoadError> create_md(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::DateTimeAlignment> alignment);
 
   /**
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `MD`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MD.html) for more information.
    *
@@ -77,7 +77,7 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateRangeFormatterGregorian>, icu4x::DateTimeFormatterLoadError> create_md_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::DateTimeAlignment> alignment);
 
   /**
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `YMD`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMD.html) for more information.
    *
@@ -86,7 +86,7 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateRangeFormatterGregorian>, icu4x::DateTimeFormatterLoadError> create_ymd(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::DateTimeAlignment> alignment, std::optional<icu4x::YearStyle> year_style);
 
   /**
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `YMD`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMD.html) for more information.
    *
@@ -95,7 +95,7 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateRangeFormatterGregorian>, icu4x::DateTimeFormatterLoadError> create_ymd_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::DateTimeAlignment> alignment, std::optional<icu4x::YearStyle> year_style);
 
   /**
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `DE`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DE.html) for more information.
    *
@@ -104,7 +104,7 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateRangeFormatterGregorian>, icu4x::DateTimeFormatterLoadError> create_de(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::DateTimeAlignment> alignment);
 
   /**
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `DE`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DE.html) for more information.
    *
@@ -113,7 +113,7 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateRangeFormatterGregorian>, icu4x::DateTimeFormatterLoadError> create_de_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::DateTimeAlignment> alignment);
 
   /**
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `MDE`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDE.html) for more information.
    *
@@ -122,7 +122,7 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateRangeFormatterGregorian>, icu4x::DateTimeFormatterLoadError> create_mde(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::DateTimeAlignment> alignment);
 
   /**
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `MDE`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDE.html) for more information.
    *
@@ -131,7 +131,7 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateRangeFormatterGregorian>, icu4x::DateTimeFormatterLoadError> create_mde_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::DateTimeAlignment> alignment);
 
   /**
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `YMDE`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDE.html) for more information.
    *
@@ -140,7 +140,7 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateRangeFormatterGregorian>, icu4x::DateTimeFormatterLoadError> create_ymde(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::DateTimeAlignment> alignment, std::optional<icu4x::YearStyle> year_style);
 
   /**
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `YMDE`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDE.html) for more information.
    *
@@ -149,7 +149,7 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateRangeFormatterGregorian>, icu4x::DateTimeFormatterLoadError> create_ymde_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::DateTimeAlignment> alignment, std::optional<icu4x::YearStyle> year_style);
 
   /**
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `E`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.E.html) for more information.
    *
@@ -158,7 +158,7 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateRangeFormatterGregorian>, icu4x::DateTimeFormatterLoadError> create_e(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length);
 
   /**
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `E`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.E.html) for more information.
    *
@@ -167,7 +167,7 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateRangeFormatterGregorian>, icu4x::DateTimeFormatterLoadError> create_e_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length);
 
   /**
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `M`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.M.html) for more information.
    *
@@ -176,7 +176,7 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateRangeFormatterGregorian>, icu4x::DateTimeFormatterLoadError> create_m(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::DateTimeAlignment> alignment);
 
   /**
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `M`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.M.html) for more information.
    *
@@ -185,7 +185,7 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateRangeFormatterGregorian>, icu4x::DateTimeFormatterLoadError> create_m_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::DateTimeAlignment> alignment);
 
   /**
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `YM`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YM.html) for more information.
    *
@@ -194,7 +194,7 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateRangeFormatterGregorian>, icu4x::DateTimeFormatterLoadError> create_ym(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::DateTimeAlignment> alignment, std::optional<icu4x::YearStyle> year_style);
 
   /**
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `YM`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YM.html) for more information.
    *
@@ -203,7 +203,7 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateRangeFormatterGregorian>, icu4x::DateTimeFormatterLoadError> create_ym_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::DateTimeAlignment> alignment, std::optional<icu4x::YearStyle> year_style);
 
   /**
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `Y`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.Y.html) for more information.
    *
@@ -212,7 +212,7 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateRangeFormatterGregorian>, icu4x::DateTimeFormatterLoadError> create_y(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::DateTimeAlignment> alignment, std::optional<icu4x::YearStyle> year_style);
 
   /**
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `Y`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.Y.html) for more information.
    *
@@ -221,7 +221,7 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateRangeFormatterGregorian>, icu4x::DateTimeFormatterLoadError> create_y_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::DateTimeAlignment> alignment, std::optional<icu4x::YearStyle> year_style);
 
   /**
-   * See the [Rust documentation for `format`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.format) for more information.
+   * See the [Rust documentation for `format`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.format) for more information.
    */
   inline std::string format_iso(const icu4x::IsoDate& start_iso_date, const icu4x::IsoDate& end_iso_date) const;
   template<typename W>

@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `DateRangeFormatter`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html) for more information.
+/// See the [Rust documentation for `FixedCalendarDateRangeFormatter`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html) for more information.
 final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -28,7 +28,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_internal_icu4x_DateTimeRangeFormatterGregorian_destroy_mv1));
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `DT`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DT.html) for more information.
   ///
@@ -43,7 +43,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `DT`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DT.html) for more information.
   ///
@@ -58,7 +58,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `MDT`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDT.html) for more information.
   ///
@@ -73,7 +73,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `MDT`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDT.html) for more information.
   ///
@@ -88,7 +88,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `YMDT`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDT.html) for more information.
   ///
@@ -103,7 +103,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `YMDT`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDT.html) for more information.
   ///
@@ -118,7 +118,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `DET`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DET.html) for more information.
   ///
@@ -133,7 +133,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `DET`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DET.html) for more information.
   ///
@@ -148,7 +148,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `MDET`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDET.html) for more information.
   ///
@@ -163,7 +163,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `MDET`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDET.html) for more information.
   ///
@@ -178,7 +178,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `YMDET`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDET.html) for more information.
   ///
@@ -193,7 +193,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `YMDET`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDET.html) for more information.
   ///
@@ -208,7 +208,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `ET`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.ET.html) for more information.
   ///
@@ -223,7 +223,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `ET`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.ET.html) for more information.
   ///
@@ -238,7 +238,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `format`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.format) for more information.
+  /// See the [Rust documentation for `format`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.format) for more information.
   String formatIso(IsoDate startIsoDate, Time startTime, IsoDate endIsoDate, Time endTime) {
     final write = _Write();
     _icu4x_DateTimeRangeFormatterGregorian_format_iso_mv1(_ffi, startIsoDate._ffi, startTime._ffi, endIsoDate._ffi, endTime._ffi, write._ffi);

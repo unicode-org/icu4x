@@ -11,7 +11,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /**
- * See the [Rust documentation for `DateRangeFormatter`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html) for more information.
+ * See the [Rust documentation for `FixedCalendarDateRangeFormatter`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html) for more information.
  */
 export class DateRangeFormatterGregorian {
     /** @internal */
@@ -21,7 +21,7 @@ export class DateRangeFormatterGregorian {
 
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `D`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.D.html) for more information.
      *
@@ -30,7 +30,7 @@ export class DateRangeFormatterGregorian {
     static createD(locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null): DateRangeFormatterGregorian;
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `D`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.D.html) for more information.
      *
@@ -39,7 +39,7 @@ export class DateRangeFormatterGregorian {
     static createDWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null): DateRangeFormatterGregorian;
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `MD`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MD.html) for more information.
      *
@@ -48,7 +48,7 @@ export class DateRangeFormatterGregorian {
     static createMd(locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null): DateRangeFormatterGregorian;
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `MD`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MD.html) for more information.
      *
@@ -57,7 +57,7 @@ export class DateRangeFormatterGregorian {
     static createMdWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null): DateRangeFormatterGregorian;
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `YMD`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMD.html) for more information.
      *
@@ -66,7 +66,7 @@ export class DateRangeFormatterGregorian {
     static createYmd(locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateRangeFormatterGregorian;
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `YMD`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMD.html) for more information.
      *
@@ -75,7 +75,7 @@ export class DateRangeFormatterGregorian {
     static createYmdWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateRangeFormatterGregorian;
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `DE`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DE.html) for more information.
      *
@@ -84,7 +84,7 @@ export class DateRangeFormatterGregorian {
     static createDe(locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null): DateRangeFormatterGregorian;
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `DE`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.DE.html) for more information.
      *
@@ -93,7 +93,7 @@ export class DateRangeFormatterGregorian {
     static createDeWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null): DateRangeFormatterGregorian;
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `MDE`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDE.html) for more information.
      *
@@ -102,7 +102,7 @@ export class DateRangeFormatterGregorian {
     static createMde(locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null): DateRangeFormatterGregorian;
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `MDE`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.MDE.html) for more information.
      *
@@ -111,7 +111,7 @@ export class DateRangeFormatterGregorian {
     static createMdeWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null): DateRangeFormatterGregorian;
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `YMDE`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDE.html) for more information.
      *
@@ -120,7 +120,7 @@ export class DateRangeFormatterGregorian {
     static createYmde(locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateRangeFormatterGregorian;
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `YMDE`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YMDE.html) for more information.
      *
@@ -129,7 +129,7 @@ export class DateRangeFormatterGregorian {
     static createYmdeWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateRangeFormatterGregorian;
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `E`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.E.html) for more information.
      *
@@ -138,7 +138,7 @@ export class DateRangeFormatterGregorian {
     static createE(locale: Locale, length: DateTimeLength | null): DateRangeFormatterGregorian;
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `E`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.E.html) for more information.
      *
@@ -147,7 +147,7 @@ export class DateRangeFormatterGregorian {
     static createEWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null): DateRangeFormatterGregorian;
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `M`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.M.html) for more information.
      *
@@ -156,7 +156,7 @@ export class DateRangeFormatterGregorian {
     static createM(locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null): DateRangeFormatterGregorian;
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `M`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.M.html) for more information.
      *
@@ -165,7 +165,7 @@ export class DateRangeFormatterGregorian {
     static createMWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null): DateRangeFormatterGregorian;
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `YM`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YM.html) for more information.
      *
@@ -174,7 +174,7 @@ export class DateRangeFormatterGregorian {
     static createYm(locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateRangeFormatterGregorian;
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `YM`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.YM.html) for more information.
      *
@@ -183,7 +183,7 @@ export class DateRangeFormatterGregorian {
     static createYmWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateRangeFormatterGregorian;
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `Y`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.Y.html) for more information.
      *
@@ -192,7 +192,7 @@ export class DateRangeFormatterGregorian {
     static createY(locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateRangeFormatterGregorian;
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `Y`](https://docs.rs/icu/2.2.0/icu/datetime/fieldsets/struct.Y.html) for more information.
      *
@@ -201,7 +201,7 @@ export class DateRangeFormatterGregorian {
     static createYWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateRangeFormatterGregorian;
 
     /**
-     * See the [Rust documentation for `format`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.DateRangeFormatter.html#method.format) for more information.
+     * See the [Rust documentation for `format`](https://docs.rs/icu/2.2.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.format) for more information.
      */
     formatIso(startIsoDate: IsoDate, endIsoDate: IsoDate): string;
 }
