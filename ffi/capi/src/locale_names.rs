@@ -7,12 +7,15 @@
 pub mod ffi {
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::unstable::displaynames::ffi::LanguageDisplay;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::unstable::errors::ffi::DataError;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::unstable::locale_core::ffi::Locale;
     #[cfg(feature = "buffer_provider")]
     use crate::unstable::provider::ffi::DataProvider;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use diplomat_runtime::DiplomatStr;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use writeable::Writeable;
 
     #[diplomat::opaque]
