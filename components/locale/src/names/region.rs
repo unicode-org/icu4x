@@ -313,5 +313,7 @@ mod tests {
         check_row!(try_new_short_tiny);
         check_row!(try_new_light);
         check_row!(try_new_short_light);
+
+        assert_eq!(crate::provider::Baked::DATA_LOCALE_NAMES_REGION_MEDIUM_TINY_V1.total_size(), 11138);
     }
 }
