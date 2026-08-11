@@ -19,8 +19,8 @@ pub mod ffi {
     use writeable::Writeable;
 
     /// 🚧 This API is unstable and may experience breaking changes outside major releases.
-    #[diplomat::rust_link(icu::experimental::displaynames::LanguageDisplay, Enum)]
-    #[diplomat::enum_convert(icu_experimental::displaynames::LanguageDisplay, needs_wildcard)]
+    #[diplomat::rust_link(icu::locale::names::LanguageDisplay, Enum)]
+    #[diplomat::enum_convert(icu_locale::names::LanguageDisplay, needs_wildcard)]
     #[non_exhaustive]
     pub enum LanguageDisplayUnstable {
         #[diplomat::attr(auto, default)]
@@ -29,7 +29,7 @@ pub mod ffi {
     }
 
     /// 🚧 This API is unstable and may experience breaking changes outside major releases.
-    /// 
+    ///
     /// This struct holds free functions for loading display names for languages, scripts,
     /// regions, and language identifiers.
     #[diplomat::opaque]
@@ -465,7 +465,6 @@ pub mod ffi {
             icu::locale::names::LanguageIdentifierDisplayName::try_new_light,
             FnInStruct
         )]
-        #[diplomat::rust_link(icu::locale::names::LanguageDisplay, Enum, hidden)]
         #[diplomat::rust_link(
             icu::locale::names::LanguageIdentifierDisplayNameOptions,
             Struct,
@@ -504,10 +503,7 @@ pub mod ffi {
         ) -> Result<(), DataError> {
             let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
-            options.language_display = Some(match language_display {
-                LanguageDisplayUnstable::Dialect => icu_locale::names::LanguageDisplay::Dialect,
-                LanguageDisplayUnstable::Standard => icu_locale::names::LanguageDisplay::Standard,
-            });
+            options.language_display = Some(language_display.into());
             let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_light(
                 (&locale.0).into(),
                 langid,
@@ -533,10 +529,7 @@ pub mod ffi {
         ) -> Result<(), DataError> {
             let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
-            options.language_display = Some(match language_display {
-                LanguageDisplayUnstable::Dialect => icu_locale::names::LanguageDisplay::Dialect,
-                LanguageDisplayUnstable::Standard => icu_locale::names::LanguageDisplay::Standard,
-            });
+            options.language_display = Some(language_display.into());
             let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_light_with_buffer_provider(
                 provider.get()?,
                 (&locale.0).into(),
@@ -561,10 +554,7 @@ pub mod ffi {
         ) -> Result<(), DataError> {
             let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
-            options.language_display = Some(match language_display {
-                LanguageDisplayUnstable::Dialect => icu_locale::names::LanguageDisplay::Dialect,
-                LanguageDisplayUnstable::Standard => icu_locale::names::LanguageDisplay::Standard,
-            });
+            options.language_display = Some(language_display.into());
             let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_tiny(
                 (&locale.0).into(),
                 langid,
@@ -590,10 +580,7 @@ pub mod ffi {
         ) -> Result<(), DataError> {
             let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
-            options.language_display = Some(match language_display {
-                LanguageDisplayUnstable::Dialect => icu_locale::names::LanguageDisplay::Dialect,
-                LanguageDisplayUnstable::Standard => icu_locale::names::LanguageDisplay::Standard,
-            });
+            options.language_display = Some(language_display.into());
             let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_tiny_with_buffer_provider(
                 provider.get()?,
                 (&locale.0).into(),
@@ -618,10 +605,7 @@ pub mod ffi {
         ) -> Result<(), DataError> {
             let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
-            options.language_display = Some(match language_display {
-                LanguageDisplayUnstable::Dialect => icu_locale::names::LanguageDisplay::Dialect,
-                LanguageDisplayUnstable::Standard => icu_locale::names::LanguageDisplay::Standard,
-            });
+            options.language_display = Some(language_display.into());
             let display_name =
                 icu_locale::names::LanguageIdentifierDisplayName::try_new_short_light(
                     (&locale.0).into(),
@@ -648,10 +632,7 @@ pub mod ffi {
         ) -> Result<(), DataError> {
             let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
-            options.language_display = Some(match language_display {
-                LanguageDisplayUnstable::Dialect => icu_locale::names::LanguageDisplay::Dialect,
-                LanguageDisplayUnstable::Standard => icu_locale::names::LanguageDisplay::Standard,
-            });
+            options.language_display = Some(language_display.into());
             let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_short_light_with_buffer_provider(
                 provider.get()?,
                 (&locale.0).into(),
@@ -676,10 +657,7 @@ pub mod ffi {
         ) -> Result<(), DataError> {
             let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
-            options.language_display = Some(match language_display {
-                LanguageDisplayUnstable::Dialect => icu_locale::names::LanguageDisplay::Dialect,
-                LanguageDisplayUnstable::Standard => icu_locale::names::LanguageDisplay::Standard,
-            });
+            options.language_display = Some(language_display.into());
             let display_name =
                 icu_locale::names::LanguageIdentifierDisplayName::try_new_long_light(
                     (&locale.0).into(),
@@ -706,10 +684,7 @@ pub mod ffi {
         ) -> Result<(), DataError> {
             let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
-            options.language_display = Some(match language_display {
-                LanguageDisplayUnstable::Dialect => icu_locale::names::LanguageDisplay::Dialect,
-                LanguageDisplayUnstable::Standard => icu_locale::names::LanguageDisplay::Standard,
-            });
+            options.language_display = Some(language_display.into());
             let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_long_light_with_buffer_provider(
                 provider.get()?,
                 (&locale.0).into(),
@@ -734,10 +709,7 @@ pub mod ffi {
         ) -> Result<(), DataError> {
             let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
-            options.language_display = Some(match language_display {
-                LanguageDisplayUnstable::Dialect => icu_locale::names::LanguageDisplay::Dialect,
-                LanguageDisplayUnstable::Standard => icu_locale::names::LanguageDisplay::Standard,
-            });
+            options.language_display = Some(language_display.into());
             let display_name =
                 icu_locale::names::LanguageIdentifierDisplayName::try_new_menu_light(
                     (&locale.0).into(),
@@ -764,10 +736,7 @@ pub mod ffi {
         ) -> Result<(), DataError> {
             let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
-            options.language_display = Some(match language_display {
-                LanguageDisplayUnstable::Dialect => icu_locale::names::LanguageDisplay::Dialect,
-                LanguageDisplayUnstable::Standard => icu_locale::names::LanguageDisplay::Standard,
-            });
+            options.language_display = Some(language_display.into());
             let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_menu_light_with_buffer_provider(
                 provider.get()?,
                 (&locale.0).into(),
@@ -792,10 +761,7 @@ pub mod ffi {
         ) -> Result<(), DataError> {
             let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
-            options.language_display = Some(match language_display {
-                LanguageDisplayUnstable::Dialect => icu_locale::names::LanguageDisplay::Dialect,
-                LanguageDisplayUnstable::Standard => icu_locale::names::LanguageDisplay::Standard,
-            });
+            options.language_display = Some(language_display.into());
             let display_name =
                 icu_locale::names::LanguageIdentifierDisplayName::try_new_short_menu_light(
                     (&locale.0).into(),
@@ -822,10 +788,7 @@ pub mod ffi {
         ) -> Result<(), DataError> {
             let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
-            options.language_display = Some(match language_display {
-                LanguageDisplayUnstable::Dialect => icu_locale::names::LanguageDisplay::Dialect,
-                LanguageDisplayUnstable::Standard => icu_locale::names::LanguageDisplay::Standard,
-            });
+            options.language_display = Some(language_display.into());
             let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_short_menu_light_with_buffer_provider(
                 provider.get()?,
                 (&locale.0).into(),
@@ -850,10 +813,7 @@ pub mod ffi {
         ) -> Result<(), DataError> {
             let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
-            options.language_display = Some(match language_display {
-                LanguageDisplayUnstable::Dialect => icu_locale::names::LanguageDisplay::Dialect,
-                LanguageDisplayUnstable::Standard => icu_locale::names::LanguageDisplay::Standard,
-            });
+            options.language_display = Some(language_display.into());
             let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_heavy(
                 (&locale.0).into(),
                 langid,
@@ -879,10 +839,7 @@ pub mod ffi {
         ) -> Result<(), DataError> {
             let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
-            options.language_display = Some(match language_display {
-                LanguageDisplayUnstable::Dialect => icu_locale::names::LanguageDisplay::Dialect,
-                LanguageDisplayUnstable::Standard => icu_locale::names::LanguageDisplay::Standard,
-            });
+            options.language_display = Some(language_display.into());
             let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_heavy_with_buffer_provider(
                 provider.get()?,
                 (&locale.0).into(),
@@ -907,10 +864,7 @@ pub mod ffi {
         ) -> Result<(), DataError> {
             let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
-            options.language_display = Some(match language_display {
-                LanguageDisplayUnstable::Dialect => icu_locale::names::LanguageDisplay::Dialect,
-                LanguageDisplayUnstable::Standard => icu_locale::names::LanguageDisplay::Standard,
-            });
+            options.language_display = Some(language_display.into());
             let display_name =
                 icu_locale::names::LanguageIdentifierDisplayName::try_new_short_heavy(
                     (&locale.0).into(),
@@ -937,10 +891,7 @@ pub mod ffi {
         ) -> Result<(), DataError> {
             let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
-            options.language_display = Some(match language_display {
-                LanguageDisplayUnstable::Dialect => icu_locale::names::LanguageDisplay::Dialect,
-                LanguageDisplayUnstable::Standard => icu_locale::names::LanguageDisplay::Standard,
-            });
+            options.language_display = Some(language_display.into());
             let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_short_heavy_with_buffer_provider(
                 provider.get()?,
                 (&locale.0).into(),
@@ -965,10 +916,7 @@ pub mod ffi {
         ) -> Result<(), DataError> {
             let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
-            options.language_display = Some(match language_display {
-                LanguageDisplayUnstable::Dialect => icu_locale::names::LanguageDisplay::Dialect,
-                LanguageDisplayUnstable::Standard => icu_locale::names::LanguageDisplay::Standard,
-            });
+            options.language_display = Some(language_display.into());
             let display_name =
                 icu_locale::names::LanguageIdentifierDisplayName::try_new_long_heavy(
                     (&locale.0).into(),
@@ -995,10 +943,7 @@ pub mod ffi {
         ) -> Result<(), DataError> {
             let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
-            options.language_display = Some(match language_display {
-                LanguageDisplayUnstable::Dialect => icu_locale::names::LanguageDisplay::Dialect,
-                LanguageDisplayUnstable::Standard => icu_locale::names::LanguageDisplay::Standard,
-            });
+            options.language_display = Some(language_display.into());
             let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_long_heavy_with_buffer_provider(
                 provider.get()?,
                 (&locale.0).into(),
@@ -1023,10 +968,7 @@ pub mod ffi {
         ) -> Result<(), DataError> {
             let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
-            options.language_display = Some(match language_display {
-                LanguageDisplayUnstable::Dialect => icu_locale::names::LanguageDisplay::Dialect,
-                LanguageDisplayUnstable::Standard => icu_locale::names::LanguageDisplay::Standard,
-            });
+            options.language_display = Some(language_display.into());
             let display_name =
                 icu_locale::names::LanguageIdentifierDisplayName::try_new_menu_heavy(
                     (&locale.0).into(),
@@ -1053,10 +995,7 @@ pub mod ffi {
         ) -> Result<(), DataError> {
             let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
-            options.language_display = Some(match language_display {
-                LanguageDisplayUnstable::Dialect => icu_locale::names::LanguageDisplay::Dialect,
-                LanguageDisplayUnstable::Standard => icu_locale::names::LanguageDisplay::Standard,
-            });
+            options.language_display = Some(language_display.into());
             let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_menu_heavy_with_buffer_provider(
                 provider.get()?,
                 (&locale.0).into(),
@@ -1081,10 +1020,7 @@ pub mod ffi {
         ) -> Result<(), DataError> {
             let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
-            options.language_display = Some(match language_display {
-                LanguageDisplayUnstable::Dialect => icu_locale::names::LanguageDisplay::Dialect,
-                LanguageDisplayUnstable::Standard => icu_locale::names::LanguageDisplay::Standard,
-            });
+            options.language_display = Some(language_display.into());
             let display_name =
                 icu_locale::names::LanguageIdentifierDisplayName::try_new_short_menu_heavy(
                     (&locale.0).into(),
@@ -1111,10 +1047,7 @@ pub mod ffi {
         ) -> Result<(), DataError> {
             let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
-            options.language_display = Some(match language_display {
-                LanguageDisplayUnstable::Dialect => icu_locale::names::LanguageDisplay::Dialect,
-                LanguageDisplayUnstable::Standard => icu_locale::names::LanguageDisplay::Standard,
-            });
+            options.language_display = Some(language_display.into());
             let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_short_menu_heavy_with_buffer_provider(
                 provider.get()?,
                 (&locale.0).into(),
