@@ -102,19 +102,20 @@ impl IterableDataProviderCached<CurrencySymbolsV1> for SourceDataProvider {
 
 #[test]
 fn test_symbols() {
-    use icu::experimental::dimension::currency::CurrencyCode;
+    use icu::experimental::dimension::currency::CurrencyType;
+    use icu::locale::preferences::extensions::unicode::keywords::currency;
     use icu::locale::{DataLocale, data_locale};
-    use tinystr::{TinyAsciiStr, tinystr};
+    use tinystr::TinyAsciiStr;
 
-    const USD: CurrencyCode = CurrencyCode(tinystr!(3, "USD"));
-    const EGP: CurrencyCode = CurrencyCode(tinystr!(3, "EGP"));
+    let usd: CurrencyType = currency!("USD");
+    let egp: CurrencyType = currency!("EGP");
     const EN: DataLocale = data_locale!("en");
     const AR_EG: DataLocale = data_locale!("ar-EG");
 
     let provider = SourceDataProvider::new_testing();
 
     #[allow(const_item_mutation)]
-    let load = |locale: DataLocale, currency: CurrencyCode, width: TinyAsciiStr<1>| {
+    let load = |locale: DataLocale, currency: CurrencyType, width: TinyAsciiStr<1>| {
         DataProvider::<CurrencySymbolsV1>::load(
             &provider,
             DataRequest {
@@ -131,35 +132,35 @@ fn test_symbols() {
     };
 
     assert_eq!(
-        load(EN, USD, CurrencySymbolsV1::SHORT).unwrap().get(),
+        load(EN, usd, CurrencySymbolsV1::SHORT).unwrap().get(),
         &CurrencySymbol::new("$", false, false)
     );
     assert_eq!(
-        load(EN, USD, CurrencySymbolsV1::NARROW).unwrap().get(),
+        load(EN, usd, CurrencySymbolsV1::NARROW).unwrap().get(),
         &CurrencySymbol::new("$", false, false)
     );
 
-    assert_eq!(load(EN, EGP, CurrencySymbolsV1::SHORT), None);
+    assert_eq!(load(EN, egp, CurrencySymbolsV1::SHORT), None);
     assert_eq!(
-        load(EN, EGP, CurrencySymbolsV1::NARROW).unwrap().get(),
+        load(EN, egp, CurrencySymbolsV1::NARROW).unwrap().get(),
         &CurrencySymbol::new("E£", true, false)
     );
 
     assert_eq!(
-        load(AR_EG, EGP, CurrencySymbolsV1::SHORT).unwrap().get(),
+        load(AR_EG, egp, CurrencySymbolsV1::SHORT).unwrap().get(),
         &CurrencySymbol::new("ج.م.\u{200f}", true, false)
     );
     assert_eq!(
-        load(AR_EG, EGP, CurrencySymbolsV1::NARROW).unwrap().get(),
+        load(AR_EG, egp, CurrencySymbolsV1::NARROW).unwrap().get(),
         &CurrencySymbol::new("E£", true, false)
     );
 
     assert_eq!(
-        load(AR_EG, USD, CurrencySymbolsV1::SHORT).unwrap().get(),
+        load(AR_EG, usd, CurrencySymbolsV1::SHORT).unwrap().get(),
         &CurrencySymbol::new("US$", true, false)
     );
     assert_eq!(
-        load(AR_EG, USD, CurrencySymbolsV1::NARROW).unwrap().get(),
+        load(AR_EG, usd, CurrencySymbolsV1::NARROW).unwrap().get(),
         &CurrencySymbol::new("US$", true, false)
     );
 }
