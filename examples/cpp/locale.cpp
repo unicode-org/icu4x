@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #include <icu4x/Locale.hpp>
+#include <icu4x/LocaleNamesUnstable.hpp>
 #include <icu4x/Logger.hpp>
 
 #include <iostream>
@@ -159,6 +160,17 @@ int main() {
     return 1;
   }
   std::cout << "Variant tests passed!" << std::endl;
+
+  // Display names
+  std::string out;
+  std::cout << "Fetching display names..." << std::endl;
+
+  // Region display name
+  std::unique_ptr<Locale> formattingLocale = Locale::from_string("fr").ok().value();
+  out = LocaleNamesUnstable::for_region_with_compiled_data_light(*formattingLocale.get(), "UK").ok().value();
+  std::cout << "formatting locale 'fr', region 'UK': " << out << std::endl;
+
+  // TODO: Add tests for script, variant, and language identifier.
 
   return 0;
 }

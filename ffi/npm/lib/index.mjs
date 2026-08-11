@@ -126,6 +126,8 @@ export { Locale } from "./Locale.mjs"
 
 export { LocaleDirectionality } from "./LocaleDirectionality.mjs"
 
+export { LocaleNamesUnstable } from "./LocaleNamesUnstable.mjs"
+
 export { Logger } from "./Logger.mjs"
 
 export { ComposingNormalizer } from "./ComposingNormalizer.mjs"

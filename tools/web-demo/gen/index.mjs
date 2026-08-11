@@ -1616,6 +1616,28 @@ let termini = Object.assign({
         ]
     },
 
+    "LocaleNamesUnstable.forRegionWithCompiledDataLight": {
+        func: (localeName, region) => icu.LocaleNamesUnstable.forRegionWithCompiledDataLight(icu.Locale.fromString(localeName), region),
+        // For avoiding webpacking minifying issues:
+        funcName: "LocaleNamesUnstable.forRegionWithCompiledDataLight",
+        expr: (localeName, region) => "icu.LocaleNamesUnstable.forRegionWithCompiledDataLight(icu.Locale.fromString(localeName), region)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])region([,\) \n])/, '$1' + region + '$2'),
+        parameters: [
+            
+            {
+                name: "locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "region",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "ComposingNormalizer.normalize": {
         func: (s) => icu.ComposingNormalizer.createNfc().normalize(s),
         // For avoiding webpacking minifying issues:

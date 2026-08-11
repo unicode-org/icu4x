@@ -128,6 +128,8 @@ export { Locale } from "./Locale"
 
 export { LocaleDirectionality } from "./LocaleDirectionality"
 
+export { LocaleNamesUnstable } from "./LocaleNamesUnstable"
+
 export { Logger } from "./Logger"
 
 export { ComposingNormalizer } from "./ComposingNormalizer"

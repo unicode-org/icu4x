@@ -126,6 +126,7 @@ part 'LocaleFallbackIterator.g.dart';
 part 'LocaleFallbackPriority.g.dart';
 part 'LocaleFallbacker.g.dart';
 part 'LocaleFallbackerWithConfig.g.dart';
+part 'LocaleNamesUnstable.g.dart';
 part 'LocaleParseError.g.dart';
 part 'Logger.g.dart';
 part 'NumericType.g.dart';
