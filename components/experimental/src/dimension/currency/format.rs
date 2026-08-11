@@ -235,7 +235,7 @@ mod tests {
         // The explicit negative pattern is used as-is for negative values instead of
         // prepending a minus sign to the positive pattern.
         let prefs = locale!("ar-EG-u-nu-latn").into();
-        let currency_code = "EGP".parse().unwrap();
+        let currency_code = currency!("EGP");
         let negative_value = "-12345.67".parse().unwrap();
 
         let fmt_symbol =
@@ -253,7 +253,7 @@ mod tests {
         // - Literal: "¤ #,##0.00;¤-#,##0.00"
         // This behavior can only be expressed via an explicit negative pattern.
         let prefs = locale!("de-CH").into();
-        let currency_code = "CHF".parse().unwrap();
+        let currency_code = currency!("CHF");
         let fmt_symbol =
             CurrencyFormatter::try_new_symbol(prefs, currency_code, Default::default()).unwrap();
         assert_writeable_eq!(
