@@ -312,6 +312,8 @@ export { TransformResult } from "./TransformResult"
 
 export { LocaleDirection } from "./LocaleDirection"
 
+export { LanguageDisplayUnstable } from "./LanguageDisplayUnstable"
+
 export { PluralCategory } from "./PluralCategory"
 
 export { BidiPairedBracketType } from "./BidiPairedBracketType"

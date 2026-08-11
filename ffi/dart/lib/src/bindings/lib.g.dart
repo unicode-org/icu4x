@@ -104,6 +104,7 @@ part 'IsoWeekOfYear.g.dart';
 part 'JoiningGroup.g.dart';
 part 'JoiningType.g.dart';
 part 'LanguageDisplay.g.dart';
+part 'LanguageDisplayUnstable.g.dart';
 part 'LeadingAdjustment.g.dart';
 part 'LineBreak.g.dart';
 part 'LineBreakIteratorLatin1.g.dart';

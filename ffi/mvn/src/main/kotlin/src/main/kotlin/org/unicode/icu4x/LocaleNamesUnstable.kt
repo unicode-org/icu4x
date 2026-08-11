@@ -48,7 +48,12 @@ internal interface LocaleNamesUnstableLib: Library {
     fun icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_mv1(locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
     fun icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
 }
-/** See the [Rust documentation for `RegionDisplayName`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html) for more information.
+/** 🚧 This API is unstable and may experience breaking changes outside major releases.
+*
+*This struct holds free functions for loading display names for languages, scripts,
+*regions, and language identifiers.
+*
+*See the [Rust documentation for `RegionDisplayName`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html) for more information.
 *
 *See the [Rust documentation for `ScriptDisplayName`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html) for more information.
 *
@@ -84,7 +89,9 @@ class LocaleNamesUnstable internal constructor (
         internal val lib: LocaleNamesUnstableLib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_light) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_light) for more information.
         */
         fun forRegionLight(locale: Locale, region: String): Result<String> {
             val regionSliceMemory = PrimitiveArrayTools.borrowUtf8(region)
@@ -105,7 +112,9 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_light) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_light) for more information.
         */
         fun forRegionLightWithProvider(provider: DataProvider, locale: Locale, region: String): Result<String> {
             val regionSliceMemory = PrimitiveArrayTools.borrowUtf8(region)
@@ -126,7 +135,9 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_tiny) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_tiny) for more information.
         */
         fun forRegionTiny(locale: Locale, region: String): Result<String> {
             val regionSliceMemory = PrimitiveArrayTools.borrowUtf8(region)
@@ -147,7 +158,9 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_tiny) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_tiny) for more information.
         */
         fun forRegionTinyWithProvider(provider: DataProvider, locale: Locale, region: String): Result<String> {
             val regionSliceMemory = PrimitiveArrayTools.borrowUtf8(region)
@@ -168,7 +181,9 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_short_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_short_tiny) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_short_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_short_tiny) for more information.
         */
         fun forRegionShortTiny(locale: Locale, region: String): Result<String> {
             val regionSliceMemory = PrimitiveArrayTools.borrowUtf8(region)
@@ -189,7 +204,9 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_short_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_short_tiny) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_short_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_short_tiny) for more information.
         */
         fun forRegionShortTinyWithProvider(provider: DataProvider, locale: Locale, region: String): Result<String> {
             val regionSliceMemory = PrimitiveArrayTools.borrowUtf8(region)
@@ -210,7 +227,9 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_short_light) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_short_light) for more information.
         */
         fun forRegionShortLight(locale: Locale, region: String): Result<String> {
             val regionSliceMemory = PrimitiveArrayTools.borrowUtf8(region)
@@ -231,7 +250,9 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_short_light) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_short_light) for more information.
         */
         fun forRegionShortLightWithProvider(provider: DataProvider, locale: Locale, region: String): Result<String> {
             val regionSliceMemory = PrimitiveArrayTools.borrowUtf8(region)
@@ -252,7 +273,9 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_light) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_light) for more information.
         */
         fun forScriptLight(locale: Locale, script: String): Result<String> {
             val scriptSliceMemory = PrimitiveArrayTools.borrowUtf8(script)
@@ -273,7 +296,9 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_light) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_light) for more information.
         */
         fun forScriptLightWithProvider(provider: DataProvider, locale: Locale, script: String): Result<String> {
             val scriptSliceMemory = PrimitiveArrayTools.borrowUtf8(script)
@@ -294,7 +319,9 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_tiny) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_tiny) for more information.
         */
         fun forScriptTiny(locale: Locale, script: String): Result<String> {
             val scriptSliceMemory = PrimitiveArrayTools.borrowUtf8(script)
@@ -315,7 +342,9 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_tiny) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_tiny) for more information.
         */
         fun forScriptTinyWithProvider(provider: DataProvider, locale: Locale, script: String): Result<String> {
             val scriptSliceMemory = PrimitiveArrayTools.borrowUtf8(script)
@@ -336,7 +365,9 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_heavy) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_heavy) for more information.
         */
         fun forScriptHeavy(locale: Locale, script: String): Result<String> {
             val scriptSliceMemory = PrimitiveArrayTools.borrowUtf8(script)
@@ -357,7 +388,9 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_heavy) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_heavy) for more information.
         */
         fun forScriptHeavyWithProvider(provider: DataProvider, locale: Locale, script: String): Result<String> {
             val scriptSliceMemory = PrimitiveArrayTools.borrowUtf8(script)
@@ -378,7 +411,9 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_short_heavy) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_short_heavy) for more information.
         */
         fun forScriptShortHeavy(locale: Locale, script: String): Result<String> {
             val scriptSliceMemory = PrimitiveArrayTools.borrowUtf8(script)
@@ -399,7 +434,9 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_short_heavy) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_short_heavy) for more information.
         */
         fun forScriptShortHeavyWithProvider(provider: DataProvider, locale: Locale, script: String): Result<String> {
             val scriptSliceMemory = PrimitiveArrayTools.borrowUtf8(script)
@@ -420,7 +457,9 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.VariantDisplayName.html#method.try_new_heavy) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.VariantDisplayName.html#method.try_new_heavy) for more information.
         */
         fun forVariantHeavy(locale: Locale, variant: String): Result<String> {
             val variantSliceMemory = PrimitiveArrayTools.borrowUtf8(variant)
@@ -441,7 +480,9 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.VariantDisplayName.html#method.try_new_heavy) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.VariantDisplayName.html#method.try_new_heavy) for more information.
         */
         fun forVariantHeavyWithProvider(provider: DataProvider, locale: Locale, variant: String): Result<String> {
             val variantSliceMemory = PrimitiveArrayTools.borrowUtf8(variant)
@@ -462,9 +503,11 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
         */
-        fun forLanguageIdentifierLight(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
+        fun forLanguageIdentifierLight(locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_light_mv1(locale.handle, langid.handle, languageDisplay.toNative(), write);
             val nativeOkVal = returnVal.getNativeOk();
@@ -478,9 +521,11 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
         */
-        fun forLanguageIdentifierLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
+        fun forLanguageIdentifierLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_light_with_provider_mv1(provider.handle, locale.handle, langid.handle, languageDisplay.toNative(), write);
             val nativeOkVal = returnVal.getNativeOk();
@@ -494,9 +539,11 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
         */
-        fun forLanguageIdentifierTiny(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
+        fun forLanguageIdentifierTiny(locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_tiny_mv1(locale.handle, langid.handle, languageDisplay.toNative(), write);
             val nativeOkVal = returnVal.getNativeOk();
@@ -510,9 +557,11 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
         */
-        fun forLanguageIdentifierTinyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
+        fun forLanguageIdentifierTinyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_provider_mv1(provider.handle, locale.handle, langid.handle, languageDisplay.toNative(), write);
             val nativeOkVal = returnVal.getNativeOk();
@@ -526,9 +575,11 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
         */
-        fun forLanguageIdentifierShortLight(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
+        fun forLanguageIdentifierShortLight(locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_light_mv1(locale.handle, langid.handle, languageDisplay.toNative(), write);
             val nativeOkVal = returnVal.getNativeOk();
@@ -542,9 +593,11 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
         */
-        fun forLanguageIdentifierShortLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
+        fun forLanguageIdentifierShortLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_provider_mv1(provider.handle, locale.handle, langid.handle, languageDisplay.toNative(), write);
             val nativeOkVal = returnVal.getNativeOk();
@@ -558,9 +611,11 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
         */
-        fun forLanguageIdentifierLongLight(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
+        fun forLanguageIdentifierLongLight(locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_long_light_mv1(locale.handle, langid.handle, languageDisplay.toNative(), write);
             val nativeOkVal = returnVal.getNativeOk();
@@ -574,9 +629,11 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
         */
-        fun forLanguageIdentifierLongLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
+        fun forLanguageIdentifierLongLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_provider_mv1(provider.handle, locale.handle, langid.handle, languageDisplay.toNative(), write);
             val nativeOkVal = returnVal.getNativeOk();
@@ -590,9 +647,11 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
         */
-        fun forLanguageIdentifierMenuLight(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
+        fun forLanguageIdentifierMenuLight(locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_mv1(locale.handle, langid.handle, languageDisplay.toNative(), write);
             val nativeOkVal = returnVal.getNativeOk();
@@ -606,9 +665,11 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
         */
-        fun forLanguageIdentifierMenuLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
+        fun forLanguageIdentifierMenuLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_provider_mv1(provider.handle, locale.handle, langid.handle, languageDisplay.toNative(), write);
             val nativeOkVal = returnVal.getNativeOk();
@@ -622,9 +683,11 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
         */
-        fun forLanguageIdentifierShortMenuLight(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
+        fun forLanguageIdentifierShortMenuLight(locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_mv1(locale.handle, langid.handle, languageDisplay.toNative(), write);
             val nativeOkVal = returnVal.getNativeOk();
@@ -638,9 +701,11 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
         */
-        fun forLanguageIdentifierShortMenuLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
+        fun forLanguageIdentifierShortMenuLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_provider_mv1(provider.handle, locale.handle, langid.handle, languageDisplay.toNative(), write);
             val nativeOkVal = returnVal.getNativeOk();
@@ -654,9 +719,11 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
         */
-        fun forLanguageIdentifierHeavy(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
+        fun forLanguageIdentifierHeavy(locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_heavy_mv1(locale.handle, langid.handle, languageDisplay.toNative(), write);
             val nativeOkVal = returnVal.getNativeOk();
@@ -670,9 +737,11 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
         */
-        fun forLanguageIdentifierHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
+        fun forLanguageIdentifierHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_provider_mv1(provider.handle, locale.handle, langid.handle, languageDisplay.toNative(), write);
             val nativeOkVal = returnVal.getNativeOk();
@@ -686,9 +755,11 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
         */
-        fun forLanguageIdentifierShortHeavy(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
+        fun forLanguageIdentifierShortHeavy(locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_mv1(locale.handle, langid.handle, languageDisplay.toNative(), write);
             val nativeOkVal = returnVal.getNativeOk();
@@ -702,9 +773,11 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
         */
-        fun forLanguageIdentifierShortHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
+        fun forLanguageIdentifierShortHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_provider_mv1(provider.handle, locale.handle, langid.handle, languageDisplay.toNative(), write);
             val nativeOkVal = returnVal.getNativeOk();
@@ -718,9 +791,11 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
         */
-        fun forLanguageIdentifierLongHeavy(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
+        fun forLanguageIdentifierLongHeavy(locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_mv1(locale.handle, langid.handle, languageDisplay.toNative(), write);
             val nativeOkVal = returnVal.getNativeOk();
@@ -734,9 +809,11 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
         */
-        fun forLanguageIdentifierLongHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
+        fun forLanguageIdentifierLongHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_provider_mv1(provider.handle, locale.handle, langid.handle, languageDisplay.toNative(), write);
             val nativeOkVal = returnVal.getNativeOk();
@@ -750,9 +827,11 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
         */
-        fun forLanguageIdentifierMenuHeavy(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
+        fun forLanguageIdentifierMenuHeavy(locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_mv1(locale.handle, langid.handle, languageDisplay.toNative(), write);
             val nativeOkVal = returnVal.getNativeOk();
@@ -766,9 +845,11 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
         */
-        fun forLanguageIdentifierMenuHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
+        fun forLanguageIdentifierMenuHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_provider_mv1(provider.handle, locale.handle, langid.handle, languageDisplay.toNative(), write);
             val nativeOkVal = returnVal.getNativeOk();
@@ -782,9 +863,11 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
         */
-        fun forLanguageIdentifierShortMenuHeavy(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
+        fun forLanguageIdentifierShortMenuHeavy(locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_mv1(locale.handle, langid.handle, languageDisplay.toNative(), write);
             val nativeOkVal = returnVal.getNativeOk();
@@ -798,9 +881,11 @@ class LocaleNamesUnstable internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
         */
-        fun forLanguageIdentifierShortMenuHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
+        fun forLanguageIdentifierShortMenuHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_provider_mv1(provider.handle, locale.handle, langid.handle, languageDisplay.toNative(), write);
             val nativeOkVal = returnVal.getNativeOk();

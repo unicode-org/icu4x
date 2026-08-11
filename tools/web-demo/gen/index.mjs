@@ -1835,7 +1835,7 @@ let termini = Object.assign({
             
             {
                 name: "languageDisplay",
-                type: "LanguageDisplay",
+                type: "LanguageDisplayUnstable",
                 typeUse: "enumerator",
                 values: ["Dialect", "Standard"]
             }
@@ -1864,7 +1864,7 @@ let termini = Object.assign({
             
             {
                 name: "languageDisplay",
-                type: "LanguageDisplay",
+                type: "LanguageDisplayUnstable",
                 typeUse: "enumerator",
                 values: ["Dialect", "Standard"]
             }
@@ -1893,7 +1893,7 @@ let termini = Object.assign({
             
             {
                 name: "languageDisplay",
-                type: "LanguageDisplay",
+                type: "LanguageDisplayUnstable",
                 typeUse: "enumerator",
                 values: ["Dialect", "Standard"]
             }
@@ -1922,7 +1922,7 @@ let termini = Object.assign({
             
             {
                 name: "languageDisplay",
-                type: "LanguageDisplay",
+                type: "LanguageDisplayUnstable",
                 typeUse: "enumerator",
                 values: ["Dialect", "Standard"]
             }
@@ -1951,7 +1951,7 @@ let termini = Object.assign({
             
             {
                 name: "languageDisplay",
-                type: "LanguageDisplay",
+                type: "LanguageDisplayUnstable",
                 typeUse: "enumerator",
                 values: ["Dialect", "Standard"]
             }
@@ -1980,7 +1980,7 @@ let termini = Object.assign({
             
             {
                 name: "languageDisplay",
-                type: "LanguageDisplay",
+                type: "LanguageDisplayUnstable",
                 typeUse: "enumerator",
                 values: ["Dialect", "Standard"]
             }
@@ -2009,7 +2009,7 @@ let termini = Object.assign({
             
             {
                 name: "languageDisplay",
-                type: "LanguageDisplay",
+                type: "LanguageDisplayUnstable",
                 typeUse: "enumerator",
                 values: ["Dialect", "Standard"]
             }
@@ -2038,7 +2038,7 @@ let termini = Object.assign({
             
             {
                 name: "languageDisplay",
-                type: "LanguageDisplay",
+                type: "LanguageDisplayUnstable",
                 typeUse: "enumerator",
                 values: ["Dialect", "Standard"]
             }
@@ -2067,7 +2067,7 @@ let termini = Object.assign({
             
             {
                 name: "languageDisplay",
-                type: "LanguageDisplay",
+                type: "LanguageDisplayUnstable",
                 typeUse: "enumerator",
                 values: ["Dialect", "Standard"]
             }
@@ -2096,7 +2096,7 @@ let termini = Object.assign({
             
             {
                 name: "languageDisplay",
-                type: "LanguageDisplay",
+                type: "LanguageDisplayUnstable",
                 typeUse: "enumerator",
                 values: ["Dialect", "Standard"]
             }
@@ -2125,7 +2125,7 @@ let termini = Object.assign({
             
             {
                 name: "languageDisplay",
-                type: "LanguageDisplay",
+                type: "LanguageDisplayUnstable",
                 typeUse: "enumerator",
                 values: ["Dialect", "Standard"]
             }

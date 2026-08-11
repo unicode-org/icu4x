@@ -310,6 +310,8 @@ export { TransformResult } from "./TransformResult.mjs"
 
 export { LocaleDirection } from "./LocaleDirection.mjs"
 
+export { LanguageDisplayUnstable } from "./LanguageDisplayUnstable.mjs"
+
 export { PluralCategory } from "./PluralCategory.mjs"
 
 export { BidiPairedBracketType } from "./BidiPairedBracketType.mjs"
