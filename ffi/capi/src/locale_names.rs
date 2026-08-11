@@ -1,27 +1,1019 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
 pub mod ffi {
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use crate::unstable::locale_core::ffi::Locale;
+    use crate::unstable::displaynames::ffi::LanguageDisplay;
     use crate::unstable::errors::ffi::DataError;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::unstable::locale_core::ffi::Locale;
     #[cfg(feature = "buffer_provider")]
     use crate::unstable::provider::ffi::DataProvider;
+    use diplomat_runtime::DiplomatStr;
+    use writeable::Writeable;
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::locale::names::RegionDisplayName, Struct)]
+    #[diplomat::rust_link(icu::locale::names::ScriptDisplayName, Struct)]
+    #[diplomat::rust_link(icu::locale::names::VariantDisplayName, Struct)]
+    #[diplomat::rust_link(icu::locale::names::LanguageIdentifierDisplayName, Struct)]
     pub struct LocaleNamesUnstable;
 
     impl LocaleNamesUnstable {
+        // --- Region ---
+
         #[cfg(feature = "compiled_data")]
-        pub fn for_region_with_compiled_data_light(locale: &Locale, region: &DiplomatStr, write: &mut diplomat_runtime::DiplomatWrite) -> Result<(), DataError> {
-            todo!()
+        #[diplomat::rust_link(icu::locale::names::RegionDisplayName::try_new_light, FnInStruct)]
+        pub fn for_region_light_with_compiled_data(
+            locale: &Locale,
+            region: &DiplomatStr,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            // TODO: Consider returning LocaleParseError or a dedicated DataError variant for invalid subtag syntax.
+            let region = icu_locale_core::subtags::Region::try_from_utf8(region)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let display_name =
+                icu_locale::names::RegionDisplayName::try_new_light((&locale.0).into(), region)?;
+            let _infallible = display_name.write_to(write);
+            Ok(())
         }
 
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
-        pub fn for_region_with_provider_light(provider: &DataProvider, locale: &Locale, region: &DiplomatStr, write: &mut diplomat_runtime::DiplomatWrite) -> Result<(), DataError> {
-            todo!()
+        #[diplomat::rust_link(icu::locale::names::RegionDisplayName::try_new_light, FnInStruct)]
+        pub fn for_region_light_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            region: &DiplomatStr,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            // TODO: Consider returning LocaleParseError or a dedicated DataError variant for invalid subtag syntax.
+            let region = icu_locale_core::subtags::Region::try_from_utf8(region)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let display_name =
+                icu_locale::names::RegionDisplayName::try_new_light_with_buffer_provider(
+                    provider.get()?,
+                    (&locale.0).into(),
+                    region,
+                )?;
+            let _infallible = display_name.write_to(write);
+            Ok(())
         }
 
-        // TODO: Fill this in for script, variant, and language identifier.
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(icu::locale::names::RegionDisplayName::try_new_tiny, FnInStruct)]
+        pub fn for_region_tiny_with_compiled_data(
+            locale: &Locale,
+            region: &DiplomatStr,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let region = icu_locale_core::subtags::Region::try_from_utf8(region)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let display_name =
+                icu_locale::names::RegionDisplayName::try_new_tiny((&locale.0).into(), region)?;
+            let _infallible = display_name.write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "buffer_provider")]
+        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::rust_link(icu::locale::names::RegionDisplayName::try_new_tiny, FnInStruct)]
+        pub fn for_region_tiny_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            region: &DiplomatStr,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let region = icu_locale_core::subtags::Region::try_from_utf8(region)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let display_name =
+                icu_locale::names::RegionDisplayName::try_new_tiny_with_buffer_provider(
+                    provider.get()?,
+                    (&locale.0).into(),
+                    region,
+                )?;
+            let _infallible = display_name.write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(
+            icu::locale::names::RegionDisplayName::try_new_short_tiny,
+            FnInStruct
+        )]
+        pub fn for_region_short_tiny_with_compiled_data(
+            locale: &Locale,
+            region: &DiplomatStr,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let region = icu_locale_core::subtags::Region::try_from_utf8(region)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let display_name = icu_locale::names::RegionDisplayName::try_new_short_tiny(
+                (&locale.0).into(),
+                region,
+            )?;
+            let _infallible = display_name.write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "buffer_provider")]
+        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::rust_link(
+            icu::locale::names::RegionDisplayName::try_new_short_tiny,
+            FnInStruct
+        )]
+        pub fn for_region_short_tiny_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            region: &DiplomatStr,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let region = icu_locale_core::subtags::Region::try_from_utf8(region)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let display_name =
+                icu_locale::names::RegionDisplayName::try_new_short_tiny_with_buffer_provider(
+                    provider.get()?,
+                    (&locale.0).into(),
+                    region,
+                )?;
+            let _infallible = display_name.write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(
+            icu::locale::names::RegionDisplayName::try_new_short_light,
+            FnInStruct
+        )]
+        pub fn for_region_short_light_with_compiled_data(
+            locale: &Locale,
+            region: &DiplomatStr,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let region = icu_locale_core::subtags::Region::try_from_utf8(region)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let display_name = icu_locale::names::RegionDisplayName::try_new_short_light(
+                (&locale.0).into(),
+                region,
+            )?;
+            let _infallible = display_name.write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "buffer_provider")]
+        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::rust_link(
+            icu::locale::names::RegionDisplayName::try_new_short_light,
+            FnInStruct
+        )]
+        pub fn for_region_short_light_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            region: &DiplomatStr,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let region = icu_locale_core::subtags::Region::try_from_utf8(region)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let display_name =
+                icu_locale::names::RegionDisplayName::try_new_short_light_with_buffer_provider(
+                    provider.get()?,
+                    (&locale.0).into(),
+                    region,
+                )?;
+            let _infallible = display_name.write_to(write);
+            Ok(())
+        }
+
+        // --- Script ---
+
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(icu::locale::names::ScriptDisplayName::try_new_light, FnInStruct)]
+        pub fn for_script_light_with_compiled_data(
+            locale: &Locale,
+            script: &DiplomatStr,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let script = icu_locale_core::subtags::Script::try_from_utf8(script)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let display_name =
+                icu_locale::names::ScriptDisplayName::try_new_light((&locale.0).into(), script)?;
+            let _infallible = display_name.write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "buffer_provider")]
+        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::rust_link(icu::locale::names::ScriptDisplayName::try_new_light, FnInStruct)]
+        pub fn for_script_light_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            script: &DiplomatStr,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let script = icu_locale_core::subtags::Script::try_from_utf8(script)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let display_name =
+                icu_locale::names::ScriptDisplayName::try_new_light_with_buffer_provider(
+                    provider.get()?,
+                    (&locale.0).into(),
+                    script,
+                )?;
+            let _infallible = display_name.write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(icu::locale::names::ScriptDisplayName::try_new_tiny, FnInStruct)]
+        pub fn for_script_tiny_with_compiled_data(
+            locale: &Locale,
+            script: &DiplomatStr,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let script = icu_locale_core::subtags::Script::try_from_utf8(script)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let display_name =
+                icu_locale::names::ScriptDisplayName::try_new_tiny((&locale.0).into(), script)?;
+            let _infallible = display_name.write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "buffer_provider")]
+        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::rust_link(icu::locale::names::ScriptDisplayName::try_new_tiny, FnInStruct)]
+        pub fn for_script_tiny_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            script: &DiplomatStr,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let script = icu_locale_core::subtags::Script::try_from_utf8(script)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let display_name =
+                icu_locale::names::ScriptDisplayName::try_new_tiny_with_buffer_provider(
+                    provider.get()?,
+                    (&locale.0).into(),
+                    script,
+                )?;
+            let _infallible = display_name.write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(icu::locale::names::ScriptDisplayName::try_new_heavy, FnInStruct)]
+        pub fn for_script_heavy_with_compiled_data(
+            locale: &Locale,
+            script: &DiplomatStr,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let script = icu_locale_core::subtags::Script::try_from_utf8(script)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let display_name =
+                icu_locale::names::ScriptDisplayName::try_new_heavy((&locale.0).into(), script)?;
+            let _infallible = display_name.write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "buffer_provider")]
+        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::rust_link(icu::locale::names::ScriptDisplayName::try_new_heavy, FnInStruct)]
+        pub fn for_script_heavy_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            script: &DiplomatStr,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let script = icu_locale_core::subtags::Script::try_from_utf8(script)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let display_name =
+                icu_locale::names::ScriptDisplayName::try_new_heavy_with_buffer_provider(
+                    provider.get()?,
+                    (&locale.0).into(),
+                    script,
+                )?;
+            let _infallible = display_name.write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(
+            icu::locale::names::ScriptDisplayName::try_new_short_heavy,
+            FnInStruct
+        )]
+        pub fn for_script_short_heavy_with_compiled_data(
+            locale: &Locale,
+            script: &DiplomatStr,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let script = icu_locale_core::subtags::Script::try_from_utf8(script)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let display_name = icu_locale::names::ScriptDisplayName::try_new_short_heavy(
+                (&locale.0).into(),
+                script,
+            )?;
+            let _infallible = display_name.write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "buffer_provider")]
+        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::rust_link(
+            icu::locale::names::ScriptDisplayName::try_new_short_heavy,
+            FnInStruct
+        )]
+        pub fn for_script_short_heavy_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            script: &DiplomatStr,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let script = icu_locale_core::subtags::Script::try_from_utf8(script)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let display_name =
+                icu_locale::names::ScriptDisplayName::try_new_short_heavy_with_buffer_provider(
+                    provider.get()?,
+                    (&locale.0).into(),
+                    script,
+                )?;
+            let _infallible = display_name.write_to(write);
+            Ok(())
+        }
+
+        // --- Variant ---
+
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(icu::locale::names::VariantDisplayName::try_new_heavy, FnInStruct)]
+        pub fn for_variant_heavy_with_compiled_data(
+            locale: &Locale,
+            variant: &DiplomatStr,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let variant = icu_locale_core::subtags::Variant::try_from_utf8(variant)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let display_name =
+                icu_locale::names::VariantDisplayName::try_new_heavy((&locale.0).into(), variant)?;
+            let _infallible = display_name.write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "buffer_provider")]
+        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::rust_link(icu::locale::names::VariantDisplayName::try_new_heavy, FnInStruct)]
+        pub fn for_variant_heavy_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            variant: &DiplomatStr,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let variant = icu_locale_core::subtags::Variant::try_from_utf8(variant)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let display_name =
+                icu_locale::names::VariantDisplayName::try_new_heavy_with_buffer_provider(
+                    provider.get()?,
+                    (&locale.0).into(),
+                    variant,
+                )?;
+            let _infallible = display_name.write_to(write);
+            Ok(())
+        }
+
+        // --- Language Identifier ---
+
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayName::try_new_light,
+            FnInStruct
+        )]
+        pub fn for_language_identifier_light_with_compiled_data(
+            locale: &Locale,
+            langid: &DiplomatStr,
+            language_display: LanguageDisplay,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
+            options.language_display = Some(match language_display {
+                LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
+                LanguageDisplay::Standard => icu_locale::names::LanguageDisplay::Standard,
+            });
+            let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_light(
+                (&locale.0).into(),
+                langid,
+                options,
+            )?;
+            let _infallible = display_name.as_borrowed().write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "buffer_provider")]
+        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayName::try_new_light,
+            FnInStruct
+        )]
+        pub fn for_language_identifier_light_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            langid: &DiplomatStr,
+            language_display: LanguageDisplay,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
+            options.language_display = Some(match language_display {
+                LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
+                LanguageDisplay::Standard => icu_locale::names::LanguageDisplay::Standard,
+            });
+            let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_light_with_buffer_provider(
+                provider.get()?,
+                (&locale.0).into(),
+                langid,
+                options,
+            )?;
+            let _infallible = display_name.as_borrowed().write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayName::try_new_tiny,
+            FnInStruct
+        )]
+        pub fn for_language_identifier_tiny_with_compiled_data(
+            locale: &Locale,
+            langid: &DiplomatStr,
+            language_display: LanguageDisplay,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
+            options.language_display = Some(match language_display {
+                LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
+                LanguageDisplay::Standard => icu_locale::names::LanguageDisplay::Standard,
+            });
+            let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_tiny(
+                (&locale.0).into(),
+                langid,
+                options,
+            )?;
+            let _infallible = display_name.as_borrowed().write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "buffer_provider")]
+        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayName::try_new_tiny,
+            FnInStruct
+        )]
+        pub fn for_language_identifier_tiny_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            langid: &DiplomatStr,
+            language_display: LanguageDisplay,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
+            options.language_display = Some(match language_display {
+                LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
+                LanguageDisplay::Standard => icu_locale::names::LanguageDisplay::Standard,
+            });
+            let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_tiny_with_buffer_provider(
+                provider.get()?,
+                (&locale.0).into(),
+                langid,
+                options,
+            )?;
+            let _infallible = display_name.as_borrowed().write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayName::try_new_short_light,
+            FnInStruct
+        )]
+        pub fn for_language_identifier_short_light_with_compiled_data(
+            locale: &Locale,
+            langid: &DiplomatStr,
+            language_display: LanguageDisplay,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
+            options.language_display = Some(match language_display {
+                LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
+                LanguageDisplay::Standard => icu_locale::names::LanguageDisplay::Standard,
+            });
+            let display_name =
+                icu_locale::names::LanguageIdentifierDisplayName::try_new_short_light(
+                    (&locale.0).into(),
+                    langid,
+                    options,
+                )?;
+            let _infallible = display_name.as_borrowed().write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "buffer_provider")]
+        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayName::try_new_short_light,
+            FnInStruct
+        )]
+        pub fn for_language_identifier_short_light_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            langid: &DiplomatStr,
+            language_display: LanguageDisplay,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
+            options.language_display = Some(match language_display {
+                LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
+                LanguageDisplay::Standard => icu_locale::names::LanguageDisplay::Standard,
+            });
+            let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_short_light_with_buffer_provider(
+                provider.get()?,
+                (&locale.0).into(),
+                langid,
+                options,
+            )?;
+            let _infallible = display_name.as_borrowed().write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayName::try_new_long_light,
+            FnInStruct
+        )]
+        pub fn for_language_identifier_long_light_with_compiled_data(
+            locale: &Locale,
+            langid: &DiplomatStr,
+            language_display: LanguageDisplay,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
+            options.language_display = Some(match language_display {
+                LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
+                LanguageDisplay::Standard => icu_locale::names::LanguageDisplay::Standard,
+            });
+            let display_name =
+                icu_locale::names::LanguageIdentifierDisplayName::try_new_long_light(
+                    (&locale.0).into(),
+                    langid,
+                    options,
+                )?;
+            let _infallible = display_name.as_borrowed().write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "buffer_provider")]
+        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayName::try_new_long_light,
+            FnInStruct
+        )]
+        pub fn for_language_identifier_long_light_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            langid: &DiplomatStr,
+            language_display: LanguageDisplay,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
+            options.language_display = Some(match language_display {
+                LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
+                LanguageDisplay::Standard => icu_locale::names::LanguageDisplay::Standard,
+            });
+            let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_long_light_with_buffer_provider(
+                provider.get()?,
+                (&locale.0).into(),
+                langid,
+                options,
+            )?;
+            let _infallible = display_name.as_borrowed().write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayName::try_new_menu_light,
+            FnInStruct
+        )]
+        pub fn for_language_identifier_menu_light_with_compiled_data(
+            locale: &Locale,
+            langid: &DiplomatStr,
+            language_display: LanguageDisplay,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
+            options.language_display = Some(match language_display {
+                LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
+                LanguageDisplay::Standard => icu_locale::names::LanguageDisplay::Standard,
+            });
+            let display_name =
+                icu_locale::names::LanguageIdentifierDisplayName::try_new_menu_light(
+                    (&locale.0).into(),
+                    langid,
+                    options,
+                )?;
+            let _infallible = display_name.as_borrowed().write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "buffer_provider")]
+        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayName::try_new_menu_light,
+            FnInStruct
+        )]
+        pub fn for_language_identifier_menu_light_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            langid: &DiplomatStr,
+            language_display: LanguageDisplay,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
+            options.language_display = Some(match language_display {
+                LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
+                LanguageDisplay::Standard => icu_locale::names::LanguageDisplay::Standard,
+            });
+            let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_menu_light_with_buffer_provider(
+                provider.get()?,
+                (&locale.0).into(),
+                langid,
+                options,
+            )?;
+            let _infallible = display_name.as_borrowed().write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayName::try_new_short_menu_light,
+            FnInStruct
+        )]
+        pub fn for_language_identifier_short_menu_light_with_compiled_data(
+            locale: &Locale,
+            langid: &DiplomatStr,
+            language_display: LanguageDisplay,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
+            options.language_display = Some(match language_display {
+                LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
+                LanguageDisplay::Standard => icu_locale::names::LanguageDisplay::Standard,
+            });
+            let display_name =
+                icu_locale::names::LanguageIdentifierDisplayName::try_new_short_menu_light(
+                    (&locale.0).into(),
+                    langid,
+                    options,
+                )?;
+            let _infallible = display_name.as_borrowed().write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "buffer_provider")]
+        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayName::try_new_short_menu_light,
+            FnInStruct
+        )]
+        pub fn for_language_identifier_short_menu_light_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            langid: &DiplomatStr,
+            language_display: LanguageDisplay,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
+            options.language_display = Some(match language_display {
+                LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
+                LanguageDisplay::Standard => icu_locale::names::LanguageDisplay::Standard,
+            });
+            let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_short_menu_light_with_buffer_provider(
+                provider.get()?,
+                (&locale.0).into(),
+                langid,
+                options,
+            )?;
+            let _infallible = display_name.as_borrowed().write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayName::try_new_heavy,
+            FnInStruct
+        )]
+        pub fn for_language_identifier_heavy_with_compiled_data(
+            locale: &Locale,
+            langid: &DiplomatStr,
+            language_display: LanguageDisplay,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
+            options.language_display = Some(match language_display {
+                LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
+                LanguageDisplay::Standard => icu_locale::names::LanguageDisplay::Standard,
+            });
+            let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_heavy(
+                (&locale.0).into(),
+                langid,
+                options,
+            )?;
+            let _infallible = display_name.as_borrowed().write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "buffer_provider")]
+        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayName::try_new_heavy,
+            FnInStruct
+        )]
+        pub fn for_language_identifier_heavy_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            langid: &DiplomatStr,
+            language_display: LanguageDisplay,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
+            options.language_display = Some(match language_display {
+                LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
+                LanguageDisplay::Standard => icu_locale::names::LanguageDisplay::Standard,
+            });
+            let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_heavy_with_buffer_provider(
+                provider.get()?,
+                (&locale.0).into(),
+                langid,
+                options,
+            )?;
+            let _infallible = display_name.as_borrowed().write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayName::try_new_short_heavy,
+            FnInStruct
+        )]
+        pub fn for_language_identifier_short_heavy_with_compiled_data(
+            locale: &Locale,
+            langid: &DiplomatStr,
+            language_display: LanguageDisplay,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
+            options.language_display = Some(match language_display {
+                LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
+                LanguageDisplay::Standard => icu_locale::names::LanguageDisplay::Standard,
+            });
+            let display_name =
+                icu_locale::names::LanguageIdentifierDisplayName::try_new_short_heavy(
+                    (&locale.0).into(),
+                    langid,
+                    options,
+                )?;
+            let _infallible = display_name.as_borrowed().write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "buffer_provider")]
+        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayName::try_new_short_heavy,
+            FnInStruct
+        )]
+        pub fn for_language_identifier_short_heavy_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            langid: &DiplomatStr,
+            language_display: LanguageDisplay,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
+            options.language_display = Some(match language_display {
+                LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
+                LanguageDisplay::Standard => icu_locale::names::LanguageDisplay::Standard,
+            });
+            let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_short_heavy_with_buffer_provider(
+                provider.get()?,
+                (&locale.0).into(),
+                langid,
+                options,
+            )?;
+            let _infallible = display_name.as_borrowed().write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayName::try_new_long_heavy,
+            FnInStruct
+        )]
+        pub fn for_language_identifier_long_heavy_with_compiled_data(
+            locale: &Locale,
+            langid: &DiplomatStr,
+            language_display: LanguageDisplay,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
+            options.language_display = Some(match language_display {
+                LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
+                LanguageDisplay::Standard => icu_locale::names::LanguageDisplay::Standard,
+            });
+            let display_name =
+                icu_locale::names::LanguageIdentifierDisplayName::try_new_long_heavy(
+                    (&locale.0).into(),
+                    langid,
+                    options,
+                )?;
+            let _infallible = display_name.as_borrowed().write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "buffer_provider")]
+        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayName::try_new_long_heavy,
+            FnInStruct
+        )]
+        pub fn for_language_identifier_long_heavy_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            langid: &DiplomatStr,
+            language_display: LanguageDisplay,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
+            options.language_display = Some(match language_display {
+                LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
+                LanguageDisplay::Standard => icu_locale::names::LanguageDisplay::Standard,
+            });
+            let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_long_heavy_with_buffer_provider(
+                provider.get()?,
+                (&locale.0).into(),
+                langid,
+                options,
+            )?;
+            let _infallible = display_name.as_borrowed().write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayName::try_new_menu_heavy,
+            FnInStruct
+        )]
+        pub fn for_language_identifier_menu_heavy_with_compiled_data(
+            locale: &Locale,
+            langid: &DiplomatStr,
+            language_display: LanguageDisplay,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
+            options.language_display = Some(match language_display {
+                LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
+                LanguageDisplay::Standard => icu_locale::names::LanguageDisplay::Standard,
+            });
+            let display_name =
+                icu_locale::names::LanguageIdentifierDisplayName::try_new_menu_heavy(
+                    (&locale.0).into(),
+                    langid,
+                    options,
+                )?;
+            let _infallible = display_name.as_borrowed().write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "buffer_provider")]
+        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayName::try_new_menu_heavy,
+            FnInStruct
+        )]
+        pub fn for_language_identifier_menu_heavy_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            langid: &DiplomatStr,
+            language_display: LanguageDisplay,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
+            options.language_display = Some(match language_display {
+                LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
+                LanguageDisplay::Standard => icu_locale::names::LanguageDisplay::Standard,
+            });
+            let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_menu_heavy_with_buffer_provider(
+                provider.get()?,
+                (&locale.0).into(),
+                langid,
+                options,
+            )?;
+            let _infallible = display_name.as_borrowed().write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayName::try_new_short_menu_heavy,
+            FnInStruct
+        )]
+        pub fn for_language_identifier_short_menu_heavy_with_compiled_data(
+            locale: &Locale,
+            langid: &DiplomatStr,
+            language_display: LanguageDisplay,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
+            options.language_display = Some(match language_display {
+                LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
+                LanguageDisplay::Standard => icu_locale::names::LanguageDisplay::Standard,
+            });
+            let display_name =
+                icu_locale::names::LanguageIdentifierDisplayName::try_new_short_menu_heavy(
+                    (&locale.0).into(),
+                    langid,
+                    options,
+                )?;
+            let _infallible = display_name.as_borrowed().write_to(write);
+            Ok(())
+        }
+
+        #[cfg(feature = "buffer_provider")]
+        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayName::try_new_short_menu_heavy,
+            FnInStruct
+        )]
+        pub fn for_language_identifier_short_menu_heavy_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            langid: &DiplomatStr,
+            language_display: LanguageDisplay,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DataError> {
+            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
+                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
+            options.language_display = Some(match language_display {
+                LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
+                LanguageDisplay::Standard => icu_locale::names::LanguageDisplay::Standard,
+            });
+            let display_name = icu_locale::names::LanguageIdentifierDisplayName::try_new_short_menu_heavy_with_buffer_provider(
+                provider.get()?,
+                (&locale.0).into(),
+                langid,
+                options,
+            )?;
+            let _infallible = display_name.as_borrowed().write_to(write);
+            Ok(())
+        }
     }
 }

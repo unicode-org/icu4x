@@ -167,10 +167,32 @@ int main() {
 
   // Region display name
   std::unique_ptr<Locale> formattingLocale = Locale::from_string("fr").ok().value();
-  out = LocaleNamesUnstable::for_region_with_compiled_data_light(*formattingLocale.get(), "UK").ok().value();
-  std::cout << "formatting locale 'fr', region 'UK': " << out << std::endl;
+  out = LocaleNamesUnstable::for_region_light_with_compiled_data(*formattingLocale.get(), "GB").ok().value();
+  std::cout << "formatting locale 'fr', region 'GB': " << out << std::endl;
+  if (!test_string(out, "Royaume-Uni", "Region display name in French")) {
+    return 1;
+  }
 
-  // TODO: Add tests for script, variant, and language identifier.
+  // Script display name
+  out = LocaleNamesUnstable::for_script_light_with_compiled_data(*formattingLocale.get(), "Latn").ok().value();
+  std::cout << "formatting locale 'fr', script 'Latn': " << out << std::endl;
+  if (!test_string(out, "latin", "Script display name in French")) {
+    return 1;
+  }
+
+  // Variant display name
+  out = LocaleNamesUnstable::for_variant_heavy_with_compiled_data(*formattingLocale.get(), "fonipa").ok().value();
+  std::cout << "formatting locale 'fr', variant 'fonipa': " << out << std::endl;
+  if (!test_string(out, "alphabet phonétique international", "Variant display name in French")) {
+    return 1;
+  }
+
+  // Language identifier display name
+  out = LocaleNamesUnstable::for_language_identifier_light_with_compiled_data(*formattingLocale.get(), "en-US", LanguageDisplay::Dialect).ok().value();
+  std::cout << "formatting locale 'fr', langid 'en-US': " << out << std::endl;
+  if (!test_string(out, "anglais américain", "Language identifier display name in French")) {
+    return 1;
+  }
 
   return 0;
 }

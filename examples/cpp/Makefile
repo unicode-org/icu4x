@@ -6,7 +6,7 @@
 .PHONY: build test
 FORCE:
 
-ICU_CAPI := $(shell cargo metadata --format-version 1 | jq '.packages[] | select(.name == "icu_capi").manifest_path' | xargs dirname)
+ICU_CAPI := $(shell cargo metadata --offline --format-version 1 | jq '.packages[] | select(.name == "icu_capi").manifest_path' | xargs dirname)
 HEADERS := ${ICU_CAPI}/bindings/cpp
 ALL_HEADERS := $(wildcard ${HEADERS}/*)
 
@@ -18,7 +18,7 @@ OUT_FILES = $(subst .cpp,,$(TEST_FILES))
 $(ALL_HEADERS):
 
 target/debug/libicu_capi.a: FORCE
-	cargo rustc -p icu_capi --crate-type staticlib
+	cargo rustc --offline --features icu_capi/unstable,icu_capi/experimental -p icu_capi --crate-type staticlib
 
 %: %.cpp target/debug/libicu_capi.a $(ALL_HEADERS)
 	$(CXX) -std=c++17 -L target/debug -I ${HEADERS} $@.cpp -licu_capi -lm -o $@
@@ -27,4 +27,4 @@ target/debug/libicu_capi.a: FORCE
 test: $(OUT_FILES)
 
 clean:
-	rm $(OUT_FILES)
+	rm -rf $(OUT_FILES) target
