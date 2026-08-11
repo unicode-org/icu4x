@@ -27,6 +27,19 @@ pub mod ffi {
 
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(icu::locale::names::RegionDisplayName::try_new_light, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::names::RegionDisplayName::write_to, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::locale::names::RegionDisplayName::to_string, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::locale::names::RegionDisplayNameBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(
+            icu::locale::names::RegionDisplayNameBorrowed::write_to,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu::locale::names::RegionDisplayNameBorrowed::to_string,
+            FnInStruct,
+            hidden
+        )]
         pub fn for_region_light_with_compiled_data(
             locale: &Locale,
             region: &DiplomatStr,
@@ -191,6 +204,19 @@ pub mod ffi {
 
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(icu::locale::names::ScriptDisplayName::try_new_light, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::names::ScriptDisplayName::write_to, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::locale::names::ScriptDisplayName::to_string, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::locale::names::ScriptDisplayNameBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(
+            icu::locale::names::ScriptDisplayNameBorrowed::write_to,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu::locale::names::ScriptDisplayNameBorrowed::to_string,
+            FnInStruct,
+            hidden
+        )]
         pub fn for_script_light_with_compiled_data(
             locale: &Locale,
             script: &DiplomatStr,
@@ -345,6 +371,23 @@ pub mod ffi {
 
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(icu::locale::names::VariantDisplayName::try_new_heavy, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::names::VariantDisplayName::write_to, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::locale::names::VariantDisplayName::to_string,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(icu::locale::names::VariantDisplayNameBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(
+            icu::locale::names::VariantDisplayNameBorrowed::write_to,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu::locale::names::VariantDisplayNameBorrowed::to_string,
+            FnInStruct,
+            hidden
+        )]
         pub fn for_variant_heavy_with_compiled_data(
             locale: &Locale,
             variant: &DiplomatStr,
@@ -385,6 +428,37 @@ pub mod ffi {
         #[diplomat::rust_link(
             icu::locale::names::LanguageIdentifierDisplayName::try_new_light,
             FnInStruct
+        )]
+        #[diplomat::rust_link(icu::locale::names::LanguageDisplay, Enum, hidden)]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayNameOptions,
+            Struct,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierNameFallbackError,
+            Struct,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayNameBorrowed,
+            Struct,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayNameBorrowed::to_string,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayNameBorrowed::write_to,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu::locale::names::LanguageIdentifierDisplayNameBorrowed::writeable_length_hint,
+            FnInStruct,
+            hidden
         )]
         pub fn for_language_identifier_light_with_compiled_data(
             locale: &Locale,
