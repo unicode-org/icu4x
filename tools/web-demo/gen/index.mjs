@@ -1616,11 +1616,11 @@ let termini = Object.assign({
         ]
     },
 
-    "LocaleNamesUnstable.forRegionLightWithCompiledData": {
-        func: (localeName, region) => icu.LocaleNamesUnstable.forRegionLightWithCompiledData(icu.Locale.fromString(localeName), region),
+    "LocaleNamesUnstable.forRegionLight": {
+        func: (localeName, region) => icu.LocaleNamesUnstable.forRegionLight(icu.Locale.fromString(localeName), region),
         // For avoiding webpacking minifying issues:
-        funcName: "LocaleNamesUnstable.forRegionLightWithCompiledData",
-        expr: (localeName, region) => "icu.LocaleNamesUnstable.forRegionLightWithCompiledData(icu.Locale.fromString(localeName), region)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])region([,\) \n])/, '$1' + region + '$2'),
+        funcName: "LocaleNamesUnstable.forRegionLight",
+        expr: (localeName, region) => "icu.LocaleNamesUnstable.forRegionLight(icu.Locale.fromString(localeName), region)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])region([,\) \n])/, '$1' + region + '$2'),
         parameters: [
             
             {
@@ -1638,11 +1638,11 @@ let termini = Object.assign({
         ]
     },
 
-    "LocaleNamesUnstable.forRegionTinyWithCompiledData": {
-        func: (localeName, region) => icu.LocaleNamesUnstable.forRegionTinyWithCompiledData(icu.Locale.fromString(localeName), region),
+    "LocaleNamesUnstable.forRegionTiny": {
+        func: (localeName, region) => icu.LocaleNamesUnstable.forRegionTiny(icu.Locale.fromString(localeName), region),
         // For avoiding webpacking minifying issues:
-        funcName: "LocaleNamesUnstable.forRegionTinyWithCompiledData",
-        expr: (localeName, region) => "icu.LocaleNamesUnstable.forRegionTinyWithCompiledData(icu.Locale.fromString(localeName), region)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])region([,\) \n])/, '$1' + region + '$2'),
+        funcName: "LocaleNamesUnstable.forRegionTiny",
+        expr: (localeName, region) => "icu.LocaleNamesUnstable.forRegionTiny(icu.Locale.fromString(localeName), region)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])region([,\) \n])/, '$1' + region + '$2'),
         parameters: [
             
             {
@@ -1660,11 +1660,11 @@ let termini = Object.assign({
         ]
     },
 
-    "LocaleNamesUnstable.forRegionShortTinyWithCompiledData": {
-        func: (localeName, region) => icu.LocaleNamesUnstable.forRegionShortTinyWithCompiledData(icu.Locale.fromString(localeName), region),
+    "LocaleNamesUnstable.forRegionShortTiny": {
+        func: (localeName, region) => icu.LocaleNamesUnstable.forRegionShortTiny(icu.Locale.fromString(localeName), region),
         // For avoiding webpacking minifying issues:
-        funcName: "LocaleNamesUnstable.forRegionShortTinyWithCompiledData",
-        expr: (localeName, region) => "icu.LocaleNamesUnstable.forRegionShortTinyWithCompiledData(icu.Locale.fromString(localeName), region)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])region([,\) \n])/, '$1' + region + '$2'),
+        funcName: "LocaleNamesUnstable.forRegionShortTiny",
+        expr: (localeName, region) => "icu.LocaleNamesUnstable.forRegionShortTiny(icu.Locale.fromString(localeName), region)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])region([,\) \n])/, '$1' + region + '$2'),
         parameters: [
             
             {
@@ -1682,11 +1682,11 @@ let termini = Object.assign({
         ]
     },
 
-    "LocaleNamesUnstable.forRegionShortLightWithCompiledData": {
-        func: (localeName, region) => icu.LocaleNamesUnstable.forRegionShortLightWithCompiledData(icu.Locale.fromString(localeName), region),
+    "LocaleNamesUnstable.forRegionShortLight": {
+        func: (localeName, region) => icu.LocaleNamesUnstable.forRegionShortLight(icu.Locale.fromString(localeName), region),
         // For avoiding webpacking minifying issues:
-        funcName: "LocaleNamesUnstable.forRegionShortLightWithCompiledData",
-        expr: (localeName, region) => "icu.LocaleNamesUnstable.forRegionShortLightWithCompiledData(icu.Locale.fromString(localeName), region)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])region([,\) \n])/, '$1' + region + '$2'),
+        funcName: "LocaleNamesUnstable.forRegionShortLight",
+        expr: (localeName, region) => "icu.LocaleNamesUnstable.forRegionShortLight(icu.Locale.fromString(localeName), region)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])region([,\) \n])/, '$1' + region + '$2'),
         parameters: [
             
             {
@@ -1704,11 +1704,11 @@ let termini = Object.assign({
         ]
     },
 
-    "LocaleNamesUnstable.forScriptLightWithCompiledData": {
-        func: (localeName, script) => icu.LocaleNamesUnstable.forScriptLightWithCompiledData(icu.Locale.fromString(localeName), script),
+    "LocaleNamesUnstable.forScriptLight": {
+        func: (localeName, script) => icu.LocaleNamesUnstable.forScriptLight(icu.Locale.fromString(localeName), script),
         // For avoiding webpacking minifying issues:
-        funcName: "LocaleNamesUnstable.forScriptLightWithCompiledData",
-        expr: (localeName, script) => "icu.LocaleNamesUnstable.forScriptLightWithCompiledData(icu.Locale.fromString(localeName), script)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])script([,\) \n])/, '$1' + script + '$2'),
+        funcName: "LocaleNamesUnstable.forScriptLight",
+        expr: (localeName, script) => "icu.LocaleNamesUnstable.forScriptLight(icu.Locale.fromString(localeName), script)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])script([,\) \n])/, '$1' + script + '$2'),
         parameters: [
             
             {
@@ -1726,11 +1726,11 @@ let termini = Object.assign({
         ]
     },
 
-    "LocaleNamesUnstable.forScriptTinyWithCompiledData": {
-        func: (localeName, script) => icu.LocaleNamesUnstable.forScriptTinyWithCompiledData(icu.Locale.fromString(localeName), script),
+    "LocaleNamesUnstable.forScriptTiny": {
+        func: (localeName, script) => icu.LocaleNamesUnstable.forScriptTiny(icu.Locale.fromString(localeName), script),
         // For avoiding webpacking minifying issues:
-        funcName: "LocaleNamesUnstable.forScriptTinyWithCompiledData",
-        expr: (localeName, script) => "icu.LocaleNamesUnstable.forScriptTinyWithCompiledData(icu.Locale.fromString(localeName), script)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])script([,\) \n])/, '$1' + script + '$2'),
+        funcName: "LocaleNamesUnstable.forScriptTiny",
+        expr: (localeName, script) => "icu.LocaleNamesUnstable.forScriptTiny(icu.Locale.fromString(localeName), script)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])script([,\) \n])/, '$1' + script + '$2'),
         parameters: [
             
             {
@@ -1748,11 +1748,11 @@ let termini = Object.assign({
         ]
     },
 
-    "LocaleNamesUnstable.forScriptHeavyWithCompiledData": {
-        func: (localeName, script) => icu.LocaleNamesUnstable.forScriptHeavyWithCompiledData(icu.Locale.fromString(localeName), script),
+    "LocaleNamesUnstable.forScriptHeavy": {
+        func: (localeName, script) => icu.LocaleNamesUnstable.forScriptHeavy(icu.Locale.fromString(localeName), script),
         // For avoiding webpacking minifying issues:
-        funcName: "LocaleNamesUnstable.forScriptHeavyWithCompiledData",
-        expr: (localeName, script) => "icu.LocaleNamesUnstable.forScriptHeavyWithCompiledData(icu.Locale.fromString(localeName), script)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])script([,\) \n])/, '$1' + script + '$2'),
+        funcName: "LocaleNamesUnstable.forScriptHeavy",
+        expr: (localeName, script) => "icu.LocaleNamesUnstable.forScriptHeavy(icu.Locale.fromString(localeName), script)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])script([,\) \n])/, '$1' + script + '$2'),
         parameters: [
             
             {
@@ -1770,11 +1770,11 @@ let termini = Object.assign({
         ]
     },
 
-    "LocaleNamesUnstable.forScriptShortHeavyWithCompiledData": {
-        func: (localeName, script) => icu.LocaleNamesUnstable.forScriptShortHeavyWithCompiledData(icu.Locale.fromString(localeName), script),
+    "LocaleNamesUnstable.forScriptShortHeavy": {
+        func: (localeName, script) => icu.LocaleNamesUnstable.forScriptShortHeavy(icu.Locale.fromString(localeName), script),
         // For avoiding webpacking minifying issues:
-        funcName: "LocaleNamesUnstable.forScriptShortHeavyWithCompiledData",
-        expr: (localeName, script) => "icu.LocaleNamesUnstable.forScriptShortHeavyWithCompiledData(icu.Locale.fromString(localeName), script)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])script([,\) \n])/, '$1' + script + '$2'),
+        funcName: "LocaleNamesUnstable.forScriptShortHeavy",
+        expr: (localeName, script) => "icu.LocaleNamesUnstable.forScriptShortHeavy(icu.Locale.fromString(localeName), script)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])script([,\) \n])/, '$1' + script + '$2'),
         parameters: [
             
             {
@@ -1792,11 +1792,11 @@ let termini = Object.assign({
         ]
     },
 
-    "LocaleNamesUnstable.forVariantHeavyWithCompiledData": {
-        func: (localeName, variant) => icu.LocaleNamesUnstable.forVariantHeavyWithCompiledData(icu.Locale.fromString(localeName), variant),
+    "LocaleNamesUnstable.forVariantHeavy": {
+        func: (localeName, variant) => icu.LocaleNamesUnstable.forVariantHeavy(icu.Locale.fromString(localeName), variant),
         // For avoiding webpacking minifying issues:
-        funcName: "LocaleNamesUnstable.forVariantHeavyWithCompiledData",
-        expr: (localeName, variant) => "icu.LocaleNamesUnstable.forVariantHeavyWithCompiledData(icu.Locale.fromString(localeName), variant)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])variant([,\) \n])/, '$1' + variant + '$2'),
+        funcName: "LocaleNamesUnstable.forVariantHeavy",
+        expr: (localeName, variant) => "icu.LocaleNamesUnstable.forVariantHeavy(icu.Locale.fromString(localeName), variant)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])variant([,\) \n])/, '$1' + variant + '$2'),
         parameters: [
             
             {
@@ -1814,11 +1814,11 @@ let termini = Object.assign({
         ]
     },
 
-    "LocaleNamesUnstable.forLanguageIdentifierLightWithCompiledData": {
-        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierLightWithCompiledData(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
+    "LocaleNamesUnstable.forLanguageIdentifierLight": {
+        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierLight(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
         // For avoiding webpacking minifying issues:
-        funcName: "LocaleNamesUnstable.forLanguageIdentifierLightWithCompiledData",
-        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierLightWithCompiledData(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
+        funcName: "LocaleNamesUnstable.forLanguageIdentifierLight",
+        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierLight(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
         parameters: [
             
             {
@@ -1843,11 +1843,11 @@ let termini = Object.assign({
         ]
     },
 
-    "LocaleNamesUnstable.forLanguageIdentifierTinyWithCompiledData": {
-        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierTinyWithCompiledData(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
+    "LocaleNamesUnstable.forLanguageIdentifierTiny": {
+        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierTiny(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
         // For avoiding webpacking minifying issues:
-        funcName: "LocaleNamesUnstable.forLanguageIdentifierTinyWithCompiledData",
-        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierTinyWithCompiledData(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
+        funcName: "LocaleNamesUnstable.forLanguageIdentifierTiny",
+        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierTiny(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
         parameters: [
             
             {
@@ -1872,11 +1872,11 @@ let termini = Object.assign({
         ]
     },
 
-    "LocaleNamesUnstable.forLanguageIdentifierShortLightWithCompiledData": {
-        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierShortLightWithCompiledData(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
+    "LocaleNamesUnstable.forLanguageIdentifierShortLight": {
+        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierShortLight(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
         // For avoiding webpacking minifying issues:
-        funcName: "LocaleNamesUnstable.forLanguageIdentifierShortLightWithCompiledData",
-        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierShortLightWithCompiledData(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
+        funcName: "LocaleNamesUnstable.forLanguageIdentifierShortLight",
+        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierShortLight(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
         parameters: [
             
             {
@@ -1901,11 +1901,11 @@ let termini = Object.assign({
         ]
     },
 
-    "LocaleNamesUnstable.forLanguageIdentifierLongLightWithCompiledData": {
-        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierLongLightWithCompiledData(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
+    "LocaleNamesUnstable.forLanguageIdentifierLongLight": {
+        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierLongLight(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
         // For avoiding webpacking minifying issues:
-        funcName: "LocaleNamesUnstable.forLanguageIdentifierLongLightWithCompiledData",
-        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierLongLightWithCompiledData(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
+        funcName: "LocaleNamesUnstable.forLanguageIdentifierLongLight",
+        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierLongLight(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
         parameters: [
             
             {
@@ -1930,11 +1930,11 @@ let termini = Object.assign({
         ]
     },
 
-    "LocaleNamesUnstable.forLanguageIdentifierMenuLightWithCompiledData": {
-        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierMenuLightWithCompiledData(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
+    "LocaleNamesUnstable.forLanguageIdentifierMenuLight": {
+        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierMenuLight(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
         // For avoiding webpacking minifying issues:
-        funcName: "LocaleNamesUnstable.forLanguageIdentifierMenuLightWithCompiledData",
-        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierMenuLightWithCompiledData(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
+        funcName: "LocaleNamesUnstable.forLanguageIdentifierMenuLight",
+        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierMenuLight(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
         parameters: [
             
             {
@@ -1959,11 +1959,11 @@ let termini = Object.assign({
         ]
     },
 
-    "LocaleNamesUnstable.forLanguageIdentifierShortMenuLightWithCompiledData": {
-        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierShortMenuLightWithCompiledData(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
+    "LocaleNamesUnstable.forLanguageIdentifierShortMenuLight": {
+        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierShortMenuLight(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
         // For avoiding webpacking minifying issues:
-        funcName: "LocaleNamesUnstable.forLanguageIdentifierShortMenuLightWithCompiledData",
-        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierShortMenuLightWithCompiledData(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
+        funcName: "LocaleNamesUnstable.forLanguageIdentifierShortMenuLight",
+        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierShortMenuLight(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
         parameters: [
             
             {
@@ -1988,11 +1988,11 @@ let termini = Object.assign({
         ]
     },
 
-    "LocaleNamesUnstable.forLanguageIdentifierHeavyWithCompiledData": {
-        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierHeavyWithCompiledData(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
+    "LocaleNamesUnstable.forLanguageIdentifierHeavy": {
+        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierHeavy(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
         // For avoiding webpacking minifying issues:
-        funcName: "LocaleNamesUnstable.forLanguageIdentifierHeavyWithCompiledData",
-        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierHeavyWithCompiledData(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
+        funcName: "LocaleNamesUnstable.forLanguageIdentifierHeavy",
+        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierHeavy(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
         parameters: [
             
             {
@@ -2017,11 +2017,11 @@ let termini = Object.assign({
         ]
     },
 
-    "LocaleNamesUnstable.forLanguageIdentifierShortHeavyWithCompiledData": {
-        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierShortHeavyWithCompiledData(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
+    "LocaleNamesUnstable.forLanguageIdentifierShortHeavy": {
+        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierShortHeavy(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
         // For avoiding webpacking minifying issues:
-        funcName: "LocaleNamesUnstable.forLanguageIdentifierShortHeavyWithCompiledData",
-        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierShortHeavyWithCompiledData(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
+        funcName: "LocaleNamesUnstable.forLanguageIdentifierShortHeavy",
+        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierShortHeavy(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
         parameters: [
             
             {
@@ -2046,11 +2046,11 @@ let termini = Object.assign({
         ]
     },
 
-    "LocaleNamesUnstable.forLanguageIdentifierLongHeavyWithCompiledData": {
-        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierLongHeavyWithCompiledData(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
+    "LocaleNamesUnstable.forLanguageIdentifierLongHeavy": {
+        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierLongHeavy(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
         // For avoiding webpacking minifying issues:
-        funcName: "LocaleNamesUnstable.forLanguageIdentifierLongHeavyWithCompiledData",
-        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierLongHeavyWithCompiledData(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
+        funcName: "LocaleNamesUnstable.forLanguageIdentifierLongHeavy",
+        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierLongHeavy(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
         parameters: [
             
             {
@@ -2075,11 +2075,11 @@ let termini = Object.assign({
         ]
     },
 
-    "LocaleNamesUnstable.forLanguageIdentifierMenuHeavyWithCompiledData": {
-        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierMenuHeavyWithCompiledData(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
+    "LocaleNamesUnstable.forLanguageIdentifierMenuHeavy": {
+        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierMenuHeavy(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
         // For avoiding webpacking minifying issues:
-        funcName: "LocaleNamesUnstable.forLanguageIdentifierMenuHeavyWithCompiledData",
-        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierMenuHeavyWithCompiledData(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
+        funcName: "LocaleNamesUnstable.forLanguageIdentifierMenuHeavy",
+        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierMenuHeavy(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
         parameters: [
             
             {
@@ -2104,11 +2104,11 @@ let termini = Object.assign({
         ]
     },
 
-    "LocaleNamesUnstable.forLanguageIdentifierShortMenuHeavyWithCompiledData": {
-        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierShortMenuHeavyWithCompiledData(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
+    "LocaleNamesUnstable.forLanguageIdentifierShortMenuHeavy": {
+        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierShortMenuHeavy(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
         // For avoiding webpacking minifying issues:
-        funcName: "LocaleNamesUnstable.forLanguageIdentifierShortMenuHeavyWithCompiledData",
-        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierShortMenuHeavyWithCompiledData(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
+        funcName: "LocaleNamesUnstable.forLanguageIdentifierShortMenuHeavy",
+        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierShortMenuHeavy(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
         parameters: [
             
             {

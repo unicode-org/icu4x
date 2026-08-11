@@ -40,7 +40,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn for_region_light_with_compiled_data(
+        pub fn for_region_light(
             locale: &Locale,
             region: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
@@ -78,7 +78,7 @@ pub mod ffi {
 
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(icu::locale::names::RegionDisplayName::try_new_tiny, FnInStruct)]
-        pub fn for_region_tiny_with_compiled_data(
+        pub fn for_region_tiny(
             locale: &Locale,
             region: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
@@ -117,7 +117,7 @@ pub mod ffi {
             icu::locale::names::RegionDisplayName::try_new_short_tiny,
             FnInStruct
         )]
-        pub fn for_region_short_tiny_with_compiled_data(
+        pub fn for_region_short_tiny(
             locale: &Locale,
             region: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
@@ -161,7 +161,7 @@ pub mod ffi {
             icu::locale::names::RegionDisplayName::try_new_short_light,
             FnInStruct
         )]
-        pub fn for_region_short_light_with_compiled_data(
+        pub fn for_region_short_light(
             locale: &Locale,
             region: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
@@ -217,7 +217,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn for_script_light_with_compiled_data(
+        pub fn for_script_light(
             locale: &Locale,
             script: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
@@ -253,7 +253,7 @@ pub mod ffi {
 
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(icu::locale::names::ScriptDisplayName::try_new_tiny, FnInStruct)]
-        pub fn for_script_tiny_with_compiled_data(
+        pub fn for_script_tiny(
             locale: &Locale,
             script: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
@@ -289,7 +289,7 @@ pub mod ffi {
 
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(icu::locale::names::ScriptDisplayName::try_new_heavy, FnInStruct)]
-        pub fn for_script_heavy_with_compiled_data(
+        pub fn for_script_heavy(
             locale: &Locale,
             script: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
@@ -328,7 +328,7 @@ pub mod ffi {
             icu::locale::names::ScriptDisplayName::try_new_short_heavy,
             FnInStruct
         )]
-        pub fn for_script_short_heavy_with_compiled_data(
+        pub fn for_script_short_heavy(
             locale: &Locale,
             script: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
@@ -388,7 +388,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn for_variant_heavy_with_compiled_data(
+        pub fn for_variant_heavy(
             locale: &Locale,
             variant: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
@@ -460,7 +460,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn for_language_identifier_light_with_compiled_data(
+        pub fn for_language_identifier_light(
             locale: &Locale,
             langid: &Locale,
             language_display: LanguageDisplay,
@@ -515,7 +515,7 @@ pub mod ffi {
             icu::locale::names::LanguageIdentifierDisplayName::try_new_tiny,
             FnInStruct
         )]
-        pub fn for_language_identifier_tiny_with_compiled_data(
+        pub fn for_language_identifier_tiny(
             locale: &Locale,
             langid: &Locale,
             language_display: LanguageDisplay,
@@ -570,7 +570,7 @@ pub mod ffi {
             icu::locale::names::LanguageIdentifierDisplayName::try_new_short_light,
             FnInStruct
         )]
-        pub fn for_language_identifier_short_light_with_compiled_data(
+        pub fn for_language_identifier_short_light(
             locale: &Locale,
             langid: &Locale,
             language_display: LanguageDisplay,
@@ -626,7 +626,7 @@ pub mod ffi {
             icu::locale::names::LanguageIdentifierDisplayName::try_new_long_light,
             FnInStruct
         )]
-        pub fn for_language_identifier_long_light_with_compiled_data(
+        pub fn for_language_identifier_long_light(
             locale: &Locale,
             langid: &Locale,
             language_display: LanguageDisplay,
@@ -682,7 +682,7 @@ pub mod ffi {
             icu::locale::names::LanguageIdentifierDisplayName::try_new_menu_light,
             FnInStruct
         )]
-        pub fn for_language_identifier_menu_light_with_compiled_data(
+        pub fn for_language_identifier_menu_light(
             locale: &Locale,
             langid: &Locale,
             language_display: LanguageDisplay,
@@ -738,7 +738,7 @@ pub mod ffi {
             icu::locale::names::LanguageIdentifierDisplayName::try_new_short_menu_light,
             FnInStruct
         )]
-        pub fn for_language_identifier_short_menu_light_with_compiled_data(
+        pub fn for_language_identifier_short_menu_light(
             locale: &Locale,
             langid: &Locale,
             language_display: LanguageDisplay,
@@ -794,7 +794,7 @@ pub mod ffi {
             icu::locale::names::LanguageIdentifierDisplayName::try_new_heavy,
             FnInStruct
         )]
-        pub fn for_language_identifier_heavy_with_compiled_data(
+        pub fn for_language_identifier_heavy(
             locale: &Locale,
             langid: &Locale,
             language_display: LanguageDisplay,
@@ -849,7 +849,7 @@ pub mod ffi {
             icu::locale::names::LanguageIdentifierDisplayName::try_new_short_heavy,
             FnInStruct
         )]
-        pub fn for_language_identifier_short_heavy_with_compiled_data(
+        pub fn for_language_identifier_short_heavy(
             locale: &Locale,
             langid: &Locale,
             language_display: LanguageDisplay,
@@ -905,7 +905,7 @@ pub mod ffi {
             icu::locale::names::LanguageIdentifierDisplayName::try_new_long_heavy,
             FnInStruct
         )]
-        pub fn for_language_identifier_long_heavy_with_compiled_data(
+        pub fn for_language_identifier_long_heavy(
             locale: &Locale,
             langid: &Locale,
             language_display: LanguageDisplay,
@@ -961,7 +961,7 @@ pub mod ffi {
             icu::locale::names::LanguageIdentifierDisplayName::try_new_menu_heavy,
             FnInStruct
         )]
-        pub fn for_language_identifier_menu_heavy_with_compiled_data(
+        pub fn for_language_identifier_menu_heavy(
             locale: &Locale,
             langid: &Locale,
             language_display: LanguageDisplay,
@@ -1017,7 +1017,7 @@ pub mod ffi {
             icu::locale::names::LanguageIdentifierDisplayName::try_new_short_menu_heavy,
             FnInStruct
         )]
-        pub fn for_language_identifier_short_menu_heavy_with_compiled_data(
+        pub fn for_language_identifier_short_menu_heavy(
             locale: &Locale,
             langid: &Locale,
             language_display: LanguageDisplay,

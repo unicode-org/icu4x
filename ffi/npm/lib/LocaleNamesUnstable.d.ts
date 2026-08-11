@@ -26,7 +26,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_light) for more information.
      */
-    static forRegionLightWithCompiledData(locale: Locale, region: string): string;
+    static forRegionLight(locale: Locale, region: string): string;
 
     /**
      * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_light) for more information.
@@ -36,7 +36,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_tiny) for more information.
      */
-    static forRegionTinyWithCompiledData(locale: Locale, region: string): string;
+    static forRegionTiny(locale: Locale, region: string): string;
 
     /**
      * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_tiny) for more information.
@@ -46,7 +46,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_short_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_short_tiny) for more information.
      */
-    static forRegionShortTinyWithCompiledData(locale: Locale, region: string): string;
+    static forRegionShortTiny(locale: Locale, region: string): string;
 
     /**
      * See the [Rust documentation for `try_new_short_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_short_tiny) for more information.
@@ -56,7 +56,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_short_light) for more information.
      */
-    static forRegionShortLightWithCompiledData(locale: Locale, region: string): string;
+    static forRegionShortLight(locale: Locale, region: string): string;
 
     /**
      * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_short_light) for more information.
@@ -66,7 +66,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_light) for more information.
      */
-    static forScriptLightWithCompiledData(locale: Locale, script: string): string;
+    static forScriptLight(locale: Locale, script: string): string;
 
     /**
      * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_light) for more information.
@@ -76,7 +76,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_tiny) for more information.
      */
-    static forScriptTinyWithCompiledData(locale: Locale, script: string): string;
+    static forScriptTiny(locale: Locale, script: string): string;
 
     /**
      * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_tiny) for more information.
@@ -86,7 +86,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_heavy) for more information.
      */
-    static forScriptHeavyWithCompiledData(locale: Locale, script: string): string;
+    static forScriptHeavy(locale: Locale, script: string): string;
 
     /**
      * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_heavy) for more information.
@@ -96,7 +96,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_short_heavy) for more information.
      */
-    static forScriptShortHeavyWithCompiledData(locale: Locale, script: string): string;
+    static forScriptShortHeavy(locale: Locale, script: string): string;
 
     /**
      * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_short_heavy) for more information.
@@ -106,7 +106,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.VariantDisplayName.html#method.try_new_heavy) for more information.
      */
-    static forVariantHeavyWithCompiledData(locale: Locale, variant: string): string;
+    static forVariantHeavy(locale: Locale, variant: string): string;
 
     /**
      * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.VariantDisplayName.html#method.try_new_heavy) for more information.
@@ -116,7 +116,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
      */
-    static forLanguageIdentifierLightWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierLight(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
@@ -126,7 +126,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
      */
-    static forLanguageIdentifierTinyWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierTiny(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
@@ -136,7 +136,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
      */
-    static forLanguageIdentifierShortLightWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierShortLight(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
@@ -146,7 +146,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
      */
-    static forLanguageIdentifierLongLightWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierLongLight(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
@@ -156,7 +156,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
      */
-    static forLanguageIdentifierMenuLightWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierMenuLight(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
@@ -166,7 +166,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
      */
-    static forLanguageIdentifierShortMenuLightWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierShortMenuLight(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
@@ -176,7 +176,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
      */
-    static forLanguageIdentifierHeavyWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierHeavy(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
@@ -186,7 +186,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
      */
-    static forLanguageIdentifierShortHeavyWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierShortHeavy(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
@@ -196,7 +196,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
      */
-    static forLanguageIdentifierLongHeavyWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierLongHeavy(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
@@ -206,7 +206,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
      */
-    static forLanguageIdentifierMenuHeavyWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierMenuHeavy(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
@@ -216,7 +216,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
      */
-    static forLanguageIdentifierShortMenuHeavyWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierShortMenuHeavy(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.

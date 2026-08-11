@@ -51,7 +51,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_light) for more information.
      */
-    static forRegionLightWithCompiledData(locale, region) {
+    static forRegionLight(locale, region) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
         const regionSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, region)));
@@ -60,7 +60,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_region_light_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, regionSlice.ptr, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_region_light_mv1(diplomatReceive.buffer, locale.ffiValue, regionSlice.ptr, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -113,7 +113,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_tiny) for more information.
      */
-    static forRegionTinyWithCompiledData(locale, region) {
+    static forRegionTiny(locale, region) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
         const regionSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, region)));
@@ -122,7 +122,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_region_tiny_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, regionSlice.ptr, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_region_tiny_mv1(diplomatReceive.buffer, locale.ffiValue, regionSlice.ptr, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -175,7 +175,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_short_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_short_tiny) for more information.
      */
-    static forRegionShortTinyWithCompiledData(locale, region) {
+    static forRegionShortTiny(locale, region) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
         const regionSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, region)));
@@ -184,7 +184,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_region_short_tiny_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, regionSlice.ptr, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_region_short_tiny_mv1(diplomatReceive.buffer, locale.ffiValue, regionSlice.ptr, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -237,7 +237,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_short_light) for more information.
      */
-    static forRegionShortLightWithCompiledData(locale, region) {
+    static forRegionShortLight(locale, region) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
         const regionSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, region)));
@@ -246,7 +246,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_region_short_light_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, regionSlice.ptr, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_region_short_light_mv1(diplomatReceive.buffer, locale.ffiValue, regionSlice.ptr, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -299,7 +299,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_light) for more information.
      */
-    static forScriptLightWithCompiledData(locale, script) {
+    static forScriptLight(locale, script) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
         const scriptSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, script)));
@@ -308,7 +308,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_script_light_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, scriptSlice.ptr, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_script_light_mv1(diplomatReceive.buffer, locale.ffiValue, scriptSlice.ptr, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -361,7 +361,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_tiny) for more information.
      */
-    static forScriptTinyWithCompiledData(locale, script) {
+    static forScriptTiny(locale, script) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
         const scriptSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, script)));
@@ -370,7 +370,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_script_tiny_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, scriptSlice.ptr, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_script_tiny_mv1(diplomatReceive.buffer, locale.ffiValue, scriptSlice.ptr, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -423,7 +423,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_heavy) for more information.
      */
-    static forScriptHeavyWithCompiledData(locale, script) {
+    static forScriptHeavy(locale, script) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
         const scriptSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, script)));
@@ -432,7 +432,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_script_heavy_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, scriptSlice.ptr, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_script_heavy_mv1(diplomatReceive.buffer, locale.ffiValue, scriptSlice.ptr, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -485,7 +485,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_short_heavy) for more information.
      */
-    static forScriptShortHeavyWithCompiledData(locale, script) {
+    static forScriptShortHeavy(locale, script) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
         const scriptSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, script)));
@@ -494,7 +494,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_script_short_heavy_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, scriptSlice.ptr, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_script_short_heavy_mv1(diplomatReceive.buffer, locale.ffiValue, scriptSlice.ptr, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -547,7 +547,7 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.VariantDisplayName.html#method.try_new_heavy) for more information.
      */
-    static forVariantHeavyWithCompiledData(locale, variant) {
+    static forVariantHeavy(locale, variant) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
         const variantSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, variant)));
@@ -556,7 +556,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_variant_heavy_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, variantSlice.ptr, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_variant_heavy_mv1(diplomatReceive.buffer, locale.ffiValue, variantSlice.ptr, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -609,13 +609,13 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
      */
-    static forLanguageIdentifierLightWithCompiledData(locale, langid, languageDisplay) {
+    static forLanguageIdentifierLight(locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_light_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_light_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -661,13 +661,13 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
      */
-    static forLanguageIdentifierTinyWithCompiledData(locale, langid, languageDisplay) {
+    static forLanguageIdentifierTiny(locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_tiny_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -713,13 +713,13 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
      */
-    static forLanguageIdentifierShortLightWithCompiledData(locale, langid, languageDisplay) {
+    static forLanguageIdentifierShortLight(locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_light_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -765,13 +765,13 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
      */
-    static forLanguageIdentifierLongLightWithCompiledData(locale, langid, languageDisplay) {
+    static forLanguageIdentifierLongLight(locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_long_light_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -817,13 +817,13 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
      */
-    static forLanguageIdentifierMenuLightWithCompiledData(locale, langid, languageDisplay) {
+    static forLanguageIdentifierMenuLight(locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -869,13 +869,13 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
      */
-    static forLanguageIdentifierShortMenuLightWithCompiledData(locale, langid, languageDisplay) {
+    static forLanguageIdentifierShortMenuLight(locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -921,13 +921,13 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
      */
-    static forLanguageIdentifierHeavyWithCompiledData(locale, langid, languageDisplay) {
+    static forLanguageIdentifierHeavy(locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_heavy_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -973,13 +973,13 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
      */
-    static forLanguageIdentifierShortHeavyWithCompiledData(locale, langid, languageDisplay) {
+    static forLanguageIdentifierShortHeavy(locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1025,13 +1025,13 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
      */
-    static forLanguageIdentifierLongHeavyWithCompiledData(locale, langid, languageDisplay) {
+    static forLanguageIdentifierLongHeavy(locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1077,13 +1077,13 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
      */
-    static forLanguageIdentifierMenuHeavyWithCompiledData(locale, langid, languageDisplay) {
+    static forLanguageIdentifierMenuHeavy(locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1129,13 +1129,13 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
      */
-    static forLanguageIdentifierShortMenuHeavyWithCompiledData(locale, langid, languageDisplay) {
+    static forLanguageIdentifierShortMenuHeavy(locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
