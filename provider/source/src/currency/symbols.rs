@@ -23,6 +23,7 @@ impl DataProvider<CurrencySymbolsV1> for SourceDataProvider {
             .get_set_for_value_group(GeneralCategoryGroup::Letter);
 
         let (length, currency) = req.id.marker_attributes.as_str().split_once('/').unwrap();
+        let currency_upper = currency.to_ascii_uppercase();
 
         let currency_pattern = self
             .cldr()?
@@ -35,7 +36,7 @@ impl DataProvider<CurrencySymbolsV1> for SourceDataProvider {
             .value
             .numbers
             .currencies
-            .get(currency)
+            .get(&currency_upper)
             .unwrap();
 
         let symbol = match length {
@@ -81,15 +82,18 @@ impl IterableDataProviderCached<CurrencySymbolsV1> for SourceDataProvider {
                 .numbers
                 .currencies
             {
+                let currency_lower = currency.to_ascii_lowercase();
                 if patterns.short.as_ref().is_some_and(|s| s != currency) {
                     ids.insert(DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(format!("s/{currency}")).unwrap(),
+                        DataMarkerAttributes::try_from_string(format!("s/{currency_lower}"))
+                            .unwrap(),
                         locale,
                     ));
                 }
                 if patterns.narrow.as_ref().is_some_and(|s| s != currency) {
                     ids.insert(DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(format!("n/{currency}")).unwrap(),
+                        DataMarkerAttributes::try_from_string(format!("n/{currency_lower}"))
+                            .unwrap(),
                         locale,
                     ));
                 }

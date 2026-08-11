@@ -266,9 +266,8 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         currency: CurrencyType,
     ) -> Result<Self, DataError> {
         let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
-        let iso_code = currency.iso_code();
         let marker_attributes =
-            DataMarkerAttributes::try_from_str(iso_code.as_str()).map_err(|_| {
+            DataMarkerAttributes::try_from_str(currency.as_str()).map_err(|_| {
                 DataErrorKind::IdentifierNotFound
                     .into_error()
                     .with_debug_context("failed to get data marker attribute from a `CurrencyType`")
@@ -328,9 +327,8 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     {
         let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
-        let iso_code = currency.iso_code();
         let marker_attributes =
-            DataMarkerAttributes::try_from_str(iso_code.as_str()).map_err(|_| {
+            DataMarkerAttributes::try_from_str(currency.as_str()).map_err(|_| {
                 DataErrorKind::IdentifierNotFound
                     .into_error()
                     .with_debug_context("failed to get data marker attribute from a `CurrencyType`")

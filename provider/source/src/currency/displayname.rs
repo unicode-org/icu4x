@@ -18,12 +18,14 @@ impl DataProvider<CurrencyDisplaynameV1> for SourceDataProvider {
                 .numbers()
                 .read_and_parse(req.id.locale, "currencies.json")?;
 
+        let currency_upper = req.id.marker_attributes.as_str().to_ascii_uppercase();
+
         let currency = currencies_resource
             .main
             .value
             .numbers
             .currencies
-            .get(req.id.marker_attributes.as_str())
+            .get(&currency_upper)
             .ok_or_else(|| {
                 DataErrorKind::IdentifierNotFound
                     .into_error()
@@ -61,7 +63,8 @@ impl crate::IterableDataProviderCached<CurrencyDisplaynameV1> for SourceDataProv
                 if currency_data.display_name.is_none() {
                     continue;
                 }
-                if let Ok(attributes) = DataMarkerAttributes::try_from_string(iso.clone()) {
+                let iso_lower = iso.to_ascii_lowercase();
+                if let Ok(attributes) = DataMarkerAttributes::try_from_string(iso_lower) {
                     result.insert(DataIdentifierCow::from_owned(attributes, locale));
                 }
             }
@@ -79,7 +82,7 @@ fn test_basic() {
     let en: DataPayload<CurrencyDisplaynameV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("USD"),
+                DataMarkerAttributes::from_str_or_panic("usd"),
                 &data_locale!("en"),
             ),
             ..Default::default()
@@ -91,7 +94,7 @@ fn test_basic() {
     let fr: DataPayload<CurrencyDisplaynameV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("USD"),
+                DataMarkerAttributes::from_str_or_panic("usd"),
                 &data_locale!("fr"),
             ),
             ..Default::default()
