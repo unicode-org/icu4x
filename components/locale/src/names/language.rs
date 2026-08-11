@@ -1479,7 +1479,7 @@ impl QualifiersOwned {
         // Step 3: Load region name (if present in subject)
         let region_payload = if let Some(region) = subject.region {
             match load_region(provider, prefs, region).allow_identifier_not_found()? {
-                Some(obj) => DataPayloadOr::from_payload(obj.payload.cast()),
+                Some(obj) => obj.payload.cast().map_other(Some),
                 None => DataPayloadOr::from_other(Some(region)),
             }
         } else {

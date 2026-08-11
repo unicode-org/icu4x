@@ -99,10 +99,15 @@ impl VariantDisplayName {
         Ok(Self { payload })
     }
 
+    #[inline]
+    fn borrow_str(&self) -> &str {
+        self.payload.get()
+    }
+
     /// Returns a borrowed version of this display name.
     pub fn as_borrowed(&self) -> VariantDisplayNameBorrowed<'_> {
         VariantDisplayNameBorrowed {
-            value: self.payload.get(),
+            value: self.borrow_str(),
         }
     }
 }
