@@ -9,7 +9,7 @@ use super::{
 };
 use crate::provider::names::LocaleNamesVariantMediumHeavyV1;
 use icu_locale_core::subtags::Variant;
-use icu_provider::prelude::*;
+use icu_provider::{DataPayloadOr, prelude::*};
 
 #[inline]
 fn make_attributes(subtag: &Variant) -> &DataMarkerAttributes {
@@ -55,7 +55,7 @@ macro_rules! table_row {
 /// ```
 #[derive(Debug)]
 pub struct VariantDisplayName {
-    pub(crate) payload: DataPayload<LocaleNamesVariantMediumHeavyV1>,
+    pub(crate) payload: DataPayloadOr<LocaleNamesVariantMediumHeavyV1, Variant>,
 }
 
 impl VariantDisplayName {
@@ -95,13 +95,17 @@ impl VariantDisplayName {
         let attrs = make_attributes(&variant);
         let locale = make_locale(prefs);
         let payload = load_one::<LocaleNamesVariantMediumHeavyV1, _, _>(provider, &locale, attrs)?
+            .map(DataPayloadOr::from_payload)
             .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
         Ok(Self { payload })
     }
 
     #[inline]
     fn borrow_str(&self) -> &str {
-        self.payload.get()
+        match self.payload.get() {
+            Ok(s) => s,
+            Err(subtag) => subtag.as_str(),
+        }
     }
 
     /// Returns a borrowed version of this display name.

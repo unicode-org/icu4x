@@ -1469,7 +1469,7 @@ impl QualifiersOwned {
         // Step 2: Load script name (if present in subject)
         let script_payload = if let Some(script) = subject.script {
             match load_script(provider, prefs, script).allow_identifier_not_found()? {
-                Some(obj) => DataPayloadOr::from_payload(obj.payload.cast()),
+                Some(obj) => obj.payload.cast().map_other(Some),
                 None => DataPayloadOr::from_other(Some(script)),
             }
         } else {
@@ -1492,7 +1492,7 @@ impl QualifiersOwned {
             DataError,
         > {
             match load_variant(provider, prefs, variant).allow_identifier_not_found()? {
-                Some(obj) => Ok(DataPayloadOr::from_payload(obj.payload.cast())),
+                Some(obj) => Ok(obj.payload.cast()),
                 None => Ok(DataPayloadOr::from_other(variant)),
             }
         };
