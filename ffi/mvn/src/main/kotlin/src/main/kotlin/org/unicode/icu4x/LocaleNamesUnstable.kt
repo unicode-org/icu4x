@@ -25,28 +25,28 @@ internal interface LocaleNamesUnstableLib: Library {
     fun icu4x_LocaleNamesUnstable_for_script_short_heavy_with_provider_mv1(provider: Pointer, locale: Pointer, script: Slice, write: Pointer): ResultUnitInt
     fun icu4x_LocaleNamesUnstable_for_variant_heavy_with_compiled_data_mv1(locale: Pointer, variant: Slice, write: Pointer): ResultUnitInt
     fun icu4x_LocaleNamesUnstable_for_variant_heavy_with_provider_mv1(provider: Pointer, locale: Pointer, variant: Slice, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_language_identifier_light_with_compiled_data_mv1(locale: Pointer, langid: Slice, languageDisplay: Int, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_language_identifier_light_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Slice, languageDisplay: Int, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_compiled_data_mv1(locale: Pointer, langid: Slice, languageDisplay: Int, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Slice, languageDisplay: Int, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_compiled_data_mv1(locale: Pointer, langid: Slice, languageDisplay: Int, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Slice, languageDisplay: Int, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_compiled_data_mv1(locale: Pointer, langid: Slice, languageDisplay: Int, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Slice, languageDisplay: Int, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_compiled_data_mv1(locale: Pointer, langid: Slice, languageDisplay: Int, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Slice, languageDisplay: Int, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_compiled_data_mv1(locale: Pointer, langid: Slice, languageDisplay: Int, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Slice, languageDisplay: Int, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_compiled_data_mv1(locale: Pointer, langid: Slice, languageDisplay: Int, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Slice, languageDisplay: Int, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_compiled_data_mv1(locale: Pointer, langid: Slice, languageDisplay: Int, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Slice, languageDisplay: Int, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_compiled_data_mv1(locale: Pointer, langid: Slice, languageDisplay: Int, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Slice, languageDisplay: Int, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_compiled_data_mv1(locale: Pointer, langid: Slice, languageDisplay: Int, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Slice, languageDisplay: Int, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_compiled_data_mv1(locale: Pointer, langid: Slice, languageDisplay: Int, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Slice, languageDisplay: Int, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_language_identifier_light_with_compiled_data_mv1(locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_language_identifier_light_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_compiled_data_mv1(locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_compiled_data_mv1(locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_compiled_data_mv1(locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_compiled_data_mv1(locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_compiled_data_mv1(locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_compiled_data_mv1(locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_compiled_data_mv1(locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_compiled_data_mv1(locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_compiled_data_mv1(locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_compiled_data_mv1(locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
 }
 /** See the [Rust documentation for `RegionDisplayName`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html) for more information.
 *
@@ -464,462 +464,352 @@ class LocaleNamesUnstable internal constructor (
         
         /** See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
         */
-        fun forLanguageIdentifierLightWithCompiledData(locale: Locale, langid: String, languageDisplay: LanguageDisplay): Result<String> {
-            val langidSliceMemory = PrimitiveArrayTools.borrowUtf8(langid)
+        fun forLanguageIdentifierLightWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_light_with_compiled_data_mv1(locale.handle, langidSliceMemory.slice, languageDisplay.toNative(), write);
-            try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
-            } finally {
-                langidSliceMemory.close()
+            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_light_with_compiled_data_mv1(locale.handle, langid.handle, languageDisplay.toNative(), write);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                
+                val returnString = DW.writeToString(write)
+                return returnString.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
         */
-        fun forLanguageIdentifierLightWithProvider(provider: DataProvider, locale: Locale, langid: String, languageDisplay: LanguageDisplay): Result<String> {
-            val langidSliceMemory = PrimitiveArrayTools.borrowUtf8(langid)
+        fun forLanguageIdentifierLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_light_with_provider_mv1(provider.handle, locale.handle, langidSliceMemory.slice, languageDisplay.toNative(), write);
-            try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
-            } finally {
-                langidSliceMemory.close()
+            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_light_with_provider_mv1(provider.handle, locale.handle, langid.handle, languageDisplay.toNative(), write);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                
+                val returnString = DW.writeToString(write)
+                return returnString.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
         */
-        fun forLanguageIdentifierTinyWithCompiledData(locale: Locale, langid: String, languageDisplay: LanguageDisplay): Result<String> {
-            val langidSliceMemory = PrimitiveArrayTools.borrowUtf8(langid)
+        fun forLanguageIdentifierTinyWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_compiled_data_mv1(locale.handle, langidSliceMemory.slice, languageDisplay.toNative(), write);
-            try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
-            } finally {
-                langidSliceMemory.close()
+            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_compiled_data_mv1(locale.handle, langid.handle, languageDisplay.toNative(), write);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                
+                val returnString = DW.writeToString(write)
+                return returnString.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
         */
-        fun forLanguageIdentifierTinyWithProvider(provider: DataProvider, locale: Locale, langid: String, languageDisplay: LanguageDisplay): Result<String> {
-            val langidSliceMemory = PrimitiveArrayTools.borrowUtf8(langid)
+        fun forLanguageIdentifierTinyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_provider_mv1(provider.handle, locale.handle, langidSliceMemory.slice, languageDisplay.toNative(), write);
-            try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
-            } finally {
-                langidSliceMemory.close()
+            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_provider_mv1(provider.handle, locale.handle, langid.handle, languageDisplay.toNative(), write);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                
+                val returnString = DW.writeToString(write)
+                return returnString.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
         */
-        fun forLanguageIdentifierShortLightWithCompiledData(locale: Locale, langid: String, languageDisplay: LanguageDisplay): Result<String> {
-            val langidSliceMemory = PrimitiveArrayTools.borrowUtf8(langid)
+        fun forLanguageIdentifierShortLightWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_compiled_data_mv1(locale.handle, langidSliceMemory.slice, languageDisplay.toNative(), write);
-            try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
-            } finally {
-                langidSliceMemory.close()
+            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_compiled_data_mv1(locale.handle, langid.handle, languageDisplay.toNative(), write);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                
+                val returnString = DW.writeToString(write)
+                return returnString.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
         */
-        fun forLanguageIdentifierShortLightWithProvider(provider: DataProvider, locale: Locale, langid: String, languageDisplay: LanguageDisplay): Result<String> {
-            val langidSliceMemory = PrimitiveArrayTools.borrowUtf8(langid)
+        fun forLanguageIdentifierShortLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_provider_mv1(provider.handle, locale.handle, langidSliceMemory.slice, languageDisplay.toNative(), write);
-            try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
-            } finally {
-                langidSliceMemory.close()
+            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_provider_mv1(provider.handle, locale.handle, langid.handle, languageDisplay.toNative(), write);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                
+                val returnString = DW.writeToString(write)
+                return returnString.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
         */
-        fun forLanguageIdentifierLongLightWithCompiledData(locale: Locale, langid: String, languageDisplay: LanguageDisplay): Result<String> {
-            val langidSliceMemory = PrimitiveArrayTools.borrowUtf8(langid)
+        fun forLanguageIdentifierLongLightWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_compiled_data_mv1(locale.handle, langidSliceMemory.slice, languageDisplay.toNative(), write);
-            try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
-            } finally {
-                langidSliceMemory.close()
+            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_compiled_data_mv1(locale.handle, langid.handle, languageDisplay.toNative(), write);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                
+                val returnString = DW.writeToString(write)
+                return returnString.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
         */
-        fun forLanguageIdentifierLongLightWithProvider(provider: DataProvider, locale: Locale, langid: String, languageDisplay: LanguageDisplay): Result<String> {
-            val langidSliceMemory = PrimitiveArrayTools.borrowUtf8(langid)
+        fun forLanguageIdentifierLongLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_provider_mv1(provider.handle, locale.handle, langidSliceMemory.slice, languageDisplay.toNative(), write);
-            try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
-            } finally {
-                langidSliceMemory.close()
+            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_provider_mv1(provider.handle, locale.handle, langid.handle, languageDisplay.toNative(), write);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                
+                val returnString = DW.writeToString(write)
+                return returnString.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
         */
-        fun forLanguageIdentifierMenuLightWithCompiledData(locale: Locale, langid: String, languageDisplay: LanguageDisplay): Result<String> {
-            val langidSliceMemory = PrimitiveArrayTools.borrowUtf8(langid)
+        fun forLanguageIdentifierMenuLightWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_compiled_data_mv1(locale.handle, langidSliceMemory.slice, languageDisplay.toNative(), write);
-            try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
-            } finally {
-                langidSliceMemory.close()
+            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_compiled_data_mv1(locale.handle, langid.handle, languageDisplay.toNative(), write);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                
+                val returnString = DW.writeToString(write)
+                return returnString.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
         */
-        fun forLanguageIdentifierMenuLightWithProvider(provider: DataProvider, locale: Locale, langid: String, languageDisplay: LanguageDisplay): Result<String> {
-            val langidSliceMemory = PrimitiveArrayTools.borrowUtf8(langid)
+        fun forLanguageIdentifierMenuLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_provider_mv1(provider.handle, locale.handle, langidSliceMemory.slice, languageDisplay.toNative(), write);
-            try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
-            } finally {
-                langidSliceMemory.close()
+            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_provider_mv1(provider.handle, locale.handle, langid.handle, languageDisplay.toNative(), write);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                
+                val returnString = DW.writeToString(write)
+                return returnString.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
         */
-        fun forLanguageIdentifierShortMenuLightWithCompiledData(locale: Locale, langid: String, languageDisplay: LanguageDisplay): Result<String> {
-            val langidSliceMemory = PrimitiveArrayTools.borrowUtf8(langid)
+        fun forLanguageIdentifierShortMenuLightWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_compiled_data_mv1(locale.handle, langidSliceMemory.slice, languageDisplay.toNative(), write);
-            try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
-            } finally {
-                langidSliceMemory.close()
+            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_compiled_data_mv1(locale.handle, langid.handle, languageDisplay.toNative(), write);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                
+                val returnString = DW.writeToString(write)
+                return returnString.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
         */
-        fun forLanguageIdentifierShortMenuLightWithProvider(provider: DataProvider, locale: Locale, langid: String, languageDisplay: LanguageDisplay): Result<String> {
-            val langidSliceMemory = PrimitiveArrayTools.borrowUtf8(langid)
+        fun forLanguageIdentifierShortMenuLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_provider_mv1(provider.handle, locale.handle, langidSliceMemory.slice, languageDisplay.toNative(), write);
-            try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
-            } finally {
-                langidSliceMemory.close()
+            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_provider_mv1(provider.handle, locale.handle, langid.handle, languageDisplay.toNative(), write);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                
+                val returnString = DW.writeToString(write)
+                return returnString.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
         */
-        fun forLanguageIdentifierHeavyWithCompiledData(locale: Locale, langid: String, languageDisplay: LanguageDisplay): Result<String> {
-            val langidSliceMemory = PrimitiveArrayTools.borrowUtf8(langid)
+        fun forLanguageIdentifierHeavyWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_compiled_data_mv1(locale.handle, langidSliceMemory.slice, languageDisplay.toNative(), write);
-            try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
-            } finally {
-                langidSliceMemory.close()
+            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_compiled_data_mv1(locale.handle, langid.handle, languageDisplay.toNative(), write);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                
+                val returnString = DW.writeToString(write)
+                return returnString.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
         */
-        fun forLanguageIdentifierHeavyWithProvider(provider: DataProvider, locale: Locale, langid: String, languageDisplay: LanguageDisplay): Result<String> {
-            val langidSliceMemory = PrimitiveArrayTools.borrowUtf8(langid)
+        fun forLanguageIdentifierHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_provider_mv1(provider.handle, locale.handle, langidSliceMemory.slice, languageDisplay.toNative(), write);
-            try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
-            } finally {
-                langidSliceMemory.close()
+            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_provider_mv1(provider.handle, locale.handle, langid.handle, languageDisplay.toNative(), write);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                
+                val returnString = DW.writeToString(write)
+                return returnString.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
         */
-        fun forLanguageIdentifierShortHeavyWithCompiledData(locale: Locale, langid: String, languageDisplay: LanguageDisplay): Result<String> {
-            val langidSliceMemory = PrimitiveArrayTools.borrowUtf8(langid)
+        fun forLanguageIdentifierShortHeavyWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_compiled_data_mv1(locale.handle, langidSliceMemory.slice, languageDisplay.toNative(), write);
-            try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
-            } finally {
-                langidSliceMemory.close()
+            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_compiled_data_mv1(locale.handle, langid.handle, languageDisplay.toNative(), write);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                
+                val returnString = DW.writeToString(write)
+                return returnString.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
         */
-        fun forLanguageIdentifierShortHeavyWithProvider(provider: DataProvider, locale: Locale, langid: String, languageDisplay: LanguageDisplay): Result<String> {
-            val langidSliceMemory = PrimitiveArrayTools.borrowUtf8(langid)
+        fun forLanguageIdentifierShortHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_provider_mv1(provider.handle, locale.handle, langidSliceMemory.slice, languageDisplay.toNative(), write);
-            try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
-            } finally {
-                langidSliceMemory.close()
+            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_provider_mv1(provider.handle, locale.handle, langid.handle, languageDisplay.toNative(), write);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                
+                val returnString = DW.writeToString(write)
+                return returnString.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
         */
-        fun forLanguageIdentifierLongHeavyWithCompiledData(locale: Locale, langid: String, languageDisplay: LanguageDisplay): Result<String> {
-            val langidSliceMemory = PrimitiveArrayTools.borrowUtf8(langid)
+        fun forLanguageIdentifierLongHeavyWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_compiled_data_mv1(locale.handle, langidSliceMemory.slice, languageDisplay.toNative(), write);
-            try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
-            } finally {
-                langidSliceMemory.close()
+            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_compiled_data_mv1(locale.handle, langid.handle, languageDisplay.toNative(), write);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                
+                val returnString = DW.writeToString(write)
+                return returnString.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
         */
-        fun forLanguageIdentifierLongHeavyWithProvider(provider: DataProvider, locale: Locale, langid: String, languageDisplay: LanguageDisplay): Result<String> {
-            val langidSliceMemory = PrimitiveArrayTools.borrowUtf8(langid)
+        fun forLanguageIdentifierLongHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_provider_mv1(provider.handle, locale.handle, langidSliceMemory.slice, languageDisplay.toNative(), write);
-            try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
-            } finally {
-                langidSliceMemory.close()
+            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_provider_mv1(provider.handle, locale.handle, langid.handle, languageDisplay.toNative(), write);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                
+                val returnString = DW.writeToString(write)
+                return returnString.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
         */
-        fun forLanguageIdentifierMenuHeavyWithCompiledData(locale: Locale, langid: String, languageDisplay: LanguageDisplay): Result<String> {
-            val langidSliceMemory = PrimitiveArrayTools.borrowUtf8(langid)
+        fun forLanguageIdentifierMenuHeavyWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_compiled_data_mv1(locale.handle, langidSliceMemory.slice, languageDisplay.toNative(), write);
-            try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
-            } finally {
-                langidSliceMemory.close()
+            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_compiled_data_mv1(locale.handle, langid.handle, languageDisplay.toNative(), write);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                
+                val returnString = DW.writeToString(write)
+                return returnString.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
         */
-        fun forLanguageIdentifierMenuHeavyWithProvider(provider: DataProvider, locale: Locale, langid: String, languageDisplay: LanguageDisplay): Result<String> {
-            val langidSliceMemory = PrimitiveArrayTools.borrowUtf8(langid)
+        fun forLanguageIdentifierMenuHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_provider_mv1(provider.handle, locale.handle, langidSliceMemory.slice, languageDisplay.toNative(), write);
-            try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
-            } finally {
-                langidSliceMemory.close()
+            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_provider_mv1(provider.handle, locale.handle, langid.handle, languageDisplay.toNative(), write);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                
+                val returnString = DW.writeToString(write)
+                return returnString.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
         */
-        fun forLanguageIdentifierShortMenuHeavyWithCompiledData(locale: Locale, langid: String, languageDisplay: LanguageDisplay): Result<String> {
-            val langidSliceMemory = PrimitiveArrayTools.borrowUtf8(langid)
+        fun forLanguageIdentifierShortMenuHeavyWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_compiled_data_mv1(locale.handle, langidSliceMemory.slice, languageDisplay.toNative(), write);
-            try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
-            } finally {
-                langidSliceMemory.close()
+            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_compiled_data_mv1(locale.handle, langid.handle, languageDisplay.toNative(), write);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                
+                val returnString = DW.writeToString(write)
+                return returnString.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
         @JvmStatic
         
         /** See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
         */
-        fun forLanguageIdentifierShortMenuHeavyWithProvider(provider: DataProvider, locale: Locale, langid: String, languageDisplay: LanguageDisplay): Result<String> {
-            val langidSliceMemory = PrimitiveArrayTools.borrowUtf8(langid)
+        fun forLanguageIdentifierShortMenuHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): Result<String> {
             val write = DW.lib.diplomat_buffer_write_create(0)
-            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_provider_mv1(provider.handle, locale.handle, langidSliceMemory.slice, languageDisplay.toNative(), write);
-            try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
-            } finally {
-                langidSliceMemory.close()
+            val returnVal = lib.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_provider_mv1(provider.handle, locale.handle, langid.handle, languageDisplay.toNative(), write);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                
+                val returnString = DW.writeToString(write)
+                return returnString.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
             }
         }
     }

@@ -462,12 +462,11 @@ pub mod ffi {
         )]
         pub fn for_language_identifier_light_with_compiled_data(
             locale: &Locale,
-            langid: &DiplomatStr,
+            langid: &Locale,
             language_display: LanguageDisplay,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
-            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
             options.language_display = Some(match language_display {
                 LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
@@ -491,12 +490,11 @@ pub mod ffi {
         pub fn for_language_identifier_light_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-            langid: &DiplomatStr,
+            langid: &Locale,
             language_display: LanguageDisplay,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
-            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
             options.language_display = Some(match language_display {
                 LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
@@ -519,12 +517,11 @@ pub mod ffi {
         )]
         pub fn for_language_identifier_tiny_with_compiled_data(
             locale: &Locale,
-            langid: &DiplomatStr,
+            langid: &Locale,
             language_display: LanguageDisplay,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
-            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
             options.language_display = Some(match language_display {
                 LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
@@ -548,12 +545,11 @@ pub mod ffi {
         pub fn for_language_identifier_tiny_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-            langid: &DiplomatStr,
+            langid: &Locale,
             language_display: LanguageDisplay,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
-            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
             options.language_display = Some(match language_display {
                 LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
@@ -576,12 +572,11 @@ pub mod ffi {
         )]
         pub fn for_language_identifier_short_light_with_compiled_data(
             locale: &Locale,
-            langid: &DiplomatStr,
+            langid: &Locale,
             language_display: LanguageDisplay,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
-            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
             options.language_display = Some(match language_display {
                 LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
@@ -606,12 +601,11 @@ pub mod ffi {
         pub fn for_language_identifier_short_light_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-            langid: &DiplomatStr,
+            langid: &Locale,
             language_display: LanguageDisplay,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
-            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
             options.language_display = Some(match language_display {
                 LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
@@ -634,12 +628,11 @@ pub mod ffi {
         )]
         pub fn for_language_identifier_long_light_with_compiled_data(
             locale: &Locale,
-            langid: &DiplomatStr,
+            langid: &Locale,
             language_display: LanguageDisplay,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
-            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
             options.language_display = Some(match language_display {
                 LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
@@ -664,12 +657,11 @@ pub mod ffi {
         pub fn for_language_identifier_long_light_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-            langid: &DiplomatStr,
+            langid: &Locale,
             language_display: LanguageDisplay,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
-            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
             options.language_display = Some(match language_display {
                 LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
@@ -692,12 +684,11 @@ pub mod ffi {
         )]
         pub fn for_language_identifier_menu_light_with_compiled_data(
             locale: &Locale,
-            langid: &DiplomatStr,
+            langid: &Locale,
             language_display: LanguageDisplay,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
-            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
             options.language_display = Some(match language_display {
                 LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
@@ -722,12 +713,11 @@ pub mod ffi {
         pub fn for_language_identifier_menu_light_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-            langid: &DiplomatStr,
+            langid: &Locale,
             language_display: LanguageDisplay,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
-            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
             options.language_display = Some(match language_display {
                 LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
@@ -750,12 +740,11 @@ pub mod ffi {
         )]
         pub fn for_language_identifier_short_menu_light_with_compiled_data(
             locale: &Locale,
-            langid: &DiplomatStr,
+            langid: &Locale,
             language_display: LanguageDisplay,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
-            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
             options.language_display = Some(match language_display {
                 LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
@@ -780,12 +769,11 @@ pub mod ffi {
         pub fn for_language_identifier_short_menu_light_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-            langid: &DiplomatStr,
+            langid: &Locale,
             language_display: LanguageDisplay,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
-            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
             options.language_display = Some(match language_display {
                 LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
@@ -808,12 +796,11 @@ pub mod ffi {
         )]
         pub fn for_language_identifier_heavy_with_compiled_data(
             locale: &Locale,
-            langid: &DiplomatStr,
+            langid: &Locale,
             language_display: LanguageDisplay,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
-            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
             options.language_display = Some(match language_display {
                 LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
@@ -837,12 +824,11 @@ pub mod ffi {
         pub fn for_language_identifier_heavy_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-            langid: &DiplomatStr,
+            langid: &Locale,
             language_display: LanguageDisplay,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
-            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
             options.language_display = Some(match language_display {
                 LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
@@ -865,12 +851,11 @@ pub mod ffi {
         )]
         pub fn for_language_identifier_short_heavy_with_compiled_data(
             locale: &Locale,
-            langid: &DiplomatStr,
+            langid: &Locale,
             language_display: LanguageDisplay,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
-            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
             options.language_display = Some(match language_display {
                 LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
@@ -895,12 +880,11 @@ pub mod ffi {
         pub fn for_language_identifier_short_heavy_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-            langid: &DiplomatStr,
+            langid: &Locale,
             language_display: LanguageDisplay,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
-            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
             options.language_display = Some(match language_display {
                 LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
@@ -923,12 +907,11 @@ pub mod ffi {
         )]
         pub fn for_language_identifier_long_heavy_with_compiled_data(
             locale: &Locale,
-            langid: &DiplomatStr,
+            langid: &Locale,
             language_display: LanguageDisplay,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
-            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
             options.language_display = Some(match language_display {
                 LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
@@ -953,12 +936,11 @@ pub mod ffi {
         pub fn for_language_identifier_long_heavy_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-            langid: &DiplomatStr,
+            langid: &Locale,
             language_display: LanguageDisplay,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
-            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
             options.language_display = Some(match language_display {
                 LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
@@ -981,12 +963,11 @@ pub mod ffi {
         )]
         pub fn for_language_identifier_menu_heavy_with_compiled_data(
             locale: &Locale,
-            langid: &DiplomatStr,
+            langid: &Locale,
             language_display: LanguageDisplay,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
-            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
             options.language_display = Some(match language_display {
                 LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
@@ -1011,12 +992,11 @@ pub mod ffi {
         pub fn for_language_identifier_menu_heavy_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-            langid: &DiplomatStr,
+            langid: &Locale,
             language_display: LanguageDisplay,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
-            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
             options.language_display = Some(match language_display {
                 LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
@@ -1039,12 +1019,11 @@ pub mod ffi {
         )]
         pub fn for_language_identifier_short_menu_heavy_with_compiled_data(
             locale: &Locale,
-            langid: &DiplomatStr,
+            langid: &Locale,
             language_display: LanguageDisplay,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
-            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
             options.language_display = Some(match language_display {
                 LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,
@@ -1069,12 +1048,11 @@ pub mod ffi {
         pub fn for_language_identifier_short_menu_heavy_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-            langid: &DiplomatStr,
+            langid: &Locale,
             language_display: LanguageDisplay,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
-            let langid = icu_locale_core::LanguageIdentifier::try_from_utf8(langid)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+            let langid = langid.0.id.clone();
             let mut options = icu_locale::names::LanguageIdentifierDisplayNameOptions::default();
             options.language_display = Some(match language_display {
                 LanguageDisplay::Dialect => icu_locale::names::LanguageDisplay::Dialect,

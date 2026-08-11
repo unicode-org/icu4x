@@ -610,15 +610,12 @@ export class LocaleNamesUnstable {
      * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
      */
     static forLanguageIdentifierLightWithCompiledData(locale, langid, languageDisplay) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const langidSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, langid)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_light_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langidSlice.ptr, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_light_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -630,8 +627,6 @@ export class LocaleNamesUnstable {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            functionCleanupArena.free();
-
             diplomatReceive.free();
             write.free();
         }
@@ -641,15 +636,12 @@ export class LocaleNamesUnstable {
      * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
      */
     static forLanguageIdentifierLightWithProvider(provider, locale, langid, languageDisplay) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const langidSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, langid)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_light_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langidSlice.ptr, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_light_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -661,8 +653,6 @@ export class LocaleNamesUnstable {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            functionCleanupArena.free();
-
             diplomatReceive.free();
             write.free();
         }
@@ -672,15 +662,12 @@ export class LocaleNamesUnstable {
      * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
      */
     static forLanguageIdentifierTinyWithCompiledData(locale, langid, languageDisplay) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const langidSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, langid)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langidSlice.ptr, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -692,8 +679,6 @@ export class LocaleNamesUnstable {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            functionCleanupArena.free();
-
             diplomatReceive.free();
             write.free();
         }
@@ -703,15 +688,12 @@ export class LocaleNamesUnstable {
      * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
      */
     static forLanguageIdentifierTinyWithProvider(provider, locale, langid, languageDisplay) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const langidSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, langid)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langidSlice.ptr, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -723,8 +705,6 @@ export class LocaleNamesUnstable {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            functionCleanupArena.free();
-
             diplomatReceive.free();
             write.free();
         }
@@ -734,15 +714,12 @@ export class LocaleNamesUnstable {
      * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
      */
     static forLanguageIdentifierShortLightWithCompiledData(locale, langid, languageDisplay) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const langidSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, langid)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langidSlice.ptr, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -754,8 +731,6 @@ export class LocaleNamesUnstable {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            functionCleanupArena.free();
-
             diplomatReceive.free();
             write.free();
         }
@@ -765,15 +740,12 @@ export class LocaleNamesUnstable {
      * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
      */
     static forLanguageIdentifierShortLightWithProvider(provider, locale, langid, languageDisplay) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const langidSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, langid)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langidSlice.ptr, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -785,8 +757,6 @@ export class LocaleNamesUnstable {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            functionCleanupArena.free();
-
             diplomatReceive.free();
             write.free();
         }
@@ -796,15 +766,12 @@ export class LocaleNamesUnstable {
      * See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
      */
     static forLanguageIdentifierLongLightWithCompiledData(locale, langid, languageDisplay) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const langidSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, langid)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langidSlice.ptr, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -816,8 +783,6 @@ export class LocaleNamesUnstable {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            functionCleanupArena.free();
-
             diplomatReceive.free();
             write.free();
         }
@@ -827,15 +792,12 @@ export class LocaleNamesUnstable {
      * See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
      */
     static forLanguageIdentifierLongLightWithProvider(provider, locale, langid, languageDisplay) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const langidSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, langid)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langidSlice.ptr, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -847,8 +809,6 @@ export class LocaleNamesUnstable {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            functionCleanupArena.free();
-
             diplomatReceive.free();
             write.free();
         }
@@ -858,15 +818,12 @@ export class LocaleNamesUnstable {
      * See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
      */
     static forLanguageIdentifierMenuLightWithCompiledData(locale, langid, languageDisplay) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const langidSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, langid)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langidSlice.ptr, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -878,8 +835,6 @@ export class LocaleNamesUnstable {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            functionCleanupArena.free();
-
             diplomatReceive.free();
             write.free();
         }
@@ -889,15 +844,12 @@ export class LocaleNamesUnstable {
      * See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
      */
     static forLanguageIdentifierMenuLightWithProvider(provider, locale, langid, languageDisplay) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const langidSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, langid)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langidSlice.ptr, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -909,8 +861,6 @@ export class LocaleNamesUnstable {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            functionCleanupArena.free();
-
             diplomatReceive.free();
             write.free();
         }
@@ -920,15 +870,12 @@ export class LocaleNamesUnstable {
      * See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
      */
     static forLanguageIdentifierShortMenuLightWithCompiledData(locale, langid, languageDisplay) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const langidSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, langid)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langidSlice.ptr, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -940,8 +887,6 @@ export class LocaleNamesUnstable {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            functionCleanupArena.free();
-
             diplomatReceive.free();
             write.free();
         }
@@ -951,15 +896,12 @@ export class LocaleNamesUnstable {
      * See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
      */
     static forLanguageIdentifierShortMenuLightWithProvider(provider, locale, langid, languageDisplay) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const langidSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, langid)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langidSlice.ptr, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -971,8 +913,6 @@ export class LocaleNamesUnstable {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            functionCleanupArena.free();
-
             diplomatReceive.free();
             write.free();
         }
@@ -982,15 +922,12 @@ export class LocaleNamesUnstable {
      * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
      */
     static forLanguageIdentifierHeavyWithCompiledData(locale, langid, languageDisplay) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const langidSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, langid)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langidSlice.ptr, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1002,8 +939,6 @@ export class LocaleNamesUnstable {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            functionCleanupArena.free();
-
             diplomatReceive.free();
             write.free();
         }
@@ -1013,15 +948,12 @@ export class LocaleNamesUnstable {
      * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
      */
     static forLanguageIdentifierHeavyWithProvider(provider, locale, langid, languageDisplay) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const langidSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, langid)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langidSlice.ptr, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1033,8 +965,6 @@ export class LocaleNamesUnstable {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            functionCleanupArena.free();
-
             diplomatReceive.free();
             write.free();
         }
@@ -1044,15 +974,12 @@ export class LocaleNamesUnstable {
      * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
      */
     static forLanguageIdentifierShortHeavyWithCompiledData(locale, langid, languageDisplay) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const langidSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, langid)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langidSlice.ptr, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1064,8 +991,6 @@ export class LocaleNamesUnstable {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            functionCleanupArena.free();
-
             diplomatReceive.free();
             write.free();
         }
@@ -1075,15 +1000,12 @@ export class LocaleNamesUnstable {
      * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
      */
     static forLanguageIdentifierShortHeavyWithProvider(provider, locale, langid, languageDisplay) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const langidSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, langid)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langidSlice.ptr, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1095,8 +1017,6 @@ export class LocaleNamesUnstable {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            functionCleanupArena.free();
-
             diplomatReceive.free();
             write.free();
         }
@@ -1106,15 +1026,12 @@ export class LocaleNamesUnstable {
      * See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
      */
     static forLanguageIdentifierLongHeavyWithCompiledData(locale, langid, languageDisplay) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const langidSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, langid)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langidSlice.ptr, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1126,8 +1043,6 @@ export class LocaleNamesUnstable {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            functionCleanupArena.free();
-
             diplomatReceive.free();
             write.free();
         }
@@ -1137,15 +1052,12 @@ export class LocaleNamesUnstable {
      * See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
      */
     static forLanguageIdentifierLongHeavyWithProvider(provider, locale, langid, languageDisplay) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const langidSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, langid)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langidSlice.ptr, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1157,8 +1069,6 @@ export class LocaleNamesUnstable {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            functionCleanupArena.free();
-
             diplomatReceive.free();
             write.free();
         }
@@ -1168,15 +1078,12 @@ export class LocaleNamesUnstable {
      * See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
      */
     static forLanguageIdentifierMenuHeavyWithCompiledData(locale, langid, languageDisplay) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const langidSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, langid)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langidSlice.ptr, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1188,8 +1095,6 @@ export class LocaleNamesUnstable {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            functionCleanupArena.free();
-
             diplomatReceive.free();
             write.free();
         }
@@ -1199,15 +1104,12 @@ export class LocaleNamesUnstable {
      * See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
      */
     static forLanguageIdentifierMenuHeavyWithProvider(provider, locale, langid, languageDisplay) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const langidSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, langid)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langidSlice.ptr, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1219,8 +1121,6 @@ export class LocaleNamesUnstable {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            functionCleanupArena.free();
-
             diplomatReceive.free();
             write.free();
         }
@@ -1230,15 +1130,12 @@ export class LocaleNamesUnstable {
      * See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
      */
     static forLanguageIdentifierShortMenuHeavyWithCompiledData(locale, langid, languageDisplay) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const langidSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, langid)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langidSlice.ptr, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_compiled_data_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1250,8 +1147,6 @@ export class LocaleNamesUnstable {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            functionCleanupArena.free();
-
             diplomatReceive.free();
             write.free();
         }
@@ -1261,15 +1156,12 @@ export class LocaleNamesUnstable {
      * See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
      */
     static forLanguageIdentifierShortMenuHeavyWithProvider(provider, locale, langid, languageDisplay) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const langidSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, langid)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langidSlice.ptr, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1281,8 +1173,6 @@ export class LocaleNamesUnstable {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            functionCleanupArena.free();
-
             diplomatReceive.free();
             write.free();
         }

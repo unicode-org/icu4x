@@ -116,110 +116,110 @@ export class LocaleNamesUnstable {
     /**
      * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
      */
-    static forLanguageIdentifierLightWithCompiledData(locale: Locale, langid: string, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierLightWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
      */
-    static forLanguageIdentifierLightWithProvider(provider: DataProvider, locale: Locale, langid: string, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
      */
-    static forLanguageIdentifierTinyWithCompiledData(locale: Locale, langid: string, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierTinyWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
      */
-    static forLanguageIdentifierTinyWithProvider(provider: DataProvider, locale: Locale, langid: string, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierTinyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
      */
-    static forLanguageIdentifierShortLightWithCompiledData(locale: Locale, langid: string, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierShortLightWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
      */
-    static forLanguageIdentifierShortLightWithProvider(provider: DataProvider, locale: Locale, langid: string, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierShortLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
      */
-    static forLanguageIdentifierLongLightWithCompiledData(locale: Locale, langid: string, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierLongLightWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
      */
-    static forLanguageIdentifierLongLightWithProvider(provider: DataProvider, locale: Locale, langid: string, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierLongLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
      */
-    static forLanguageIdentifierMenuLightWithCompiledData(locale: Locale, langid: string, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierMenuLightWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
      */
-    static forLanguageIdentifierMenuLightWithProvider(provider: DataProvider, locale: Locale, langid: string, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierMenuLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
      */
-    static forLanguageIdentifierShortMenuLightWithCompiledData(locale: Locale, langid: string, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierShortMenuLightWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
      */
-    static forLanguageIdentifierShortMenuLightWithProvider(provider: DataProvider, locale: Locale, langid: string, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierShortMenuLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
      */
-    static forLanguageIdentifierHeavyWithCompiledData(locale: Locale, langid: string, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierHeavyWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
      */
-    static forLanguageIdentifierHeavyWithProvider(provider: DataProvider, locale: Locale, langid: string, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
      */
-    static forLanguageIdentifierShortHeavyWithCompiledData(locale: Locale, langid: string, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierShortHeavyWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
      */
-    static forLanguageIdentifierShortHeavyWithProvider(provider: DataProvider, locale: Locale, langid: string, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierShortHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
      */
-    static forLanguageIdentifierLongHeavyWithCompiledData(locale: Locale, langid: string, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierLongHeavyWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
      */
-    static forLanguageIdentifierLongHeavyWithProvider(provider: DataProvider, locale: Locale, langid: string, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierLongHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
      */
-    static forLanguageIdentifierMenuHeavyWithCompiledData(locale: Locale, langid: string, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierMenuHeavyWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
      */
-    static forLanguageIdentifierMenuHeavyWithProvider(provider: DataProvider, locale: Locale, langid: string, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierMenuHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
      */
-    static forLanguageIdentifierShortMenuHeavyWithCompiledData(locale: Locale, langid: string, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierShortMenuHeavyWithCompiledData(locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 
     /**
      * See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
      */
-    static forLanguageIdentifierShortMenuHeavyWithProvider(provider: DataProvider, locale: Locale, langid: string, languageDisplay: LanguageDisplay): string;
+    static forLanguageIdentifierShortMenuHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplay): string;
 }

@@ -271,10 +271,9 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
   ///
   /// Throws [DataError] on failure.
-  static String forLanguageIdentifierLightWithCompiledData(Locale locale, String langid, LanguageDisplay languageDisplay) {
-    final temp = _FinalizedArena();
+  static String forLanguageIdentifierLightWithCompiledData(Locale locale, Locale langid, LanguageDisplay languageDisplay) {
     final write = _Write();
-    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_light_with_compiled_data_mv1(locale._ffi, langid._utf8AllocIn(temp.arena), languageDisplay.index, write._ffi);
+    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_light_with_compiled_data_mv1(locale._ffi, langid._ffi, languageDisplay.index, write._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -284,10 +283,9 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
   ///
   /// Throws [DataError] on failure.
-  static String forLanguageIdentifierLightWithProvider(DataProvider provider, Locale locale, String langid, LanguageDisplay languageDisplay) {
-    final temp = _FinalizedArena();
+  static String forLanguageIdentifierLightWithProvider(DataProvider provider, Locale locale, Locale langid, LanguageDisplay languageDisplay) {
     final write = _Write();
-    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_light_with_provider_mv1(provider._ffi, locale._ffi, langid._utf8AllocIn(temp.arena), languageDisplay.index, write._ffi);
+    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_light_with_provider_mv1(provider._ffi, locale._ffi, langid._ffi, languageDisplay.index, write._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -297,10 +295,9 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
   ///
   /// Throws [DataError] on failure.
-  static String forLanguageIdentifierTinyWithCompiledData(Locale locale, String langid, LanguageDisplay languageDisplay) {
-    final temp = _FinalizedArena();
+  static String forLanguageIdentifierTinyWithCompiledData(Locale locale, Locale langid, LanguageDisplay languageDisplay) {
     final write = _Write();
-    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_compiled_data_mv1(locale._ffi, langid._utf8AllocIn(temp.arena), languageDisplay.index, write._ffi);
+    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_compiled_data_mv1(locale._ffi, langid._ffi, languageDisplay.index, write._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -310,10 +307,9 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
   ///
   /// Throws [DataError] on failure.
-  static String forLanguageIdentifierTinyWithProvider(DataProvider provider, Locale locale, String langid, LanguageDisplay languageDisplay) {
-    final temp = _FinalizedArena();
+  static String forLanguageIdentifierTinyWithProvider(DataProvider provider, Locale locale, Locale langid, LanguageDisplay languageDisplay) {
     final write = _Write();
-    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_provider_mv1(provider._ffi, locale._ffi, langid._utf8AllocIn(temp.arena), languageDisplay.index, write._ffi);
+    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_provider_mv1(provider._ffi, locale._ffi, langid._ffi, languageDisplay.index, write._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -323,10 +319,9 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
   ///
   /// Throws [DataError] on failure.
-  static String forLanguageIdentifierShortLightWithCompiledData(Locale locale, String langid, LanguageDisplay languageDisplay) {
-    final temp = _FinalizedArena();
+  static String forLanguageIdentifierShortLightWithCompiledData(Locale locale, Locale langid, LanguageDisplay languageDisplay) {
     final write = _Write();
-    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_compiled_data_mv1(locale._ffi, langid._utf8AllocIn(temp.arena), languageDisplay.index, write._ffi);
+    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_compiled_data_mv1(locale._ffi, langid._ffi, languageDisplay.index, write._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -336,10 +331,9 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
   ///
   /// Throws [DataError] on failure.
-  static String forLanguageIdentifierShortLightWithProvider(DataProvider provider, Locale locale, String langid, LanguageDisplay languageDisplay) {
-    final temp = _FinalizedArena();
+  static String forLanguageIdentifierShortLightWithProvider(DataProvider provider, Locale locale, Locale langid, LanguageDisplay languageDisplay) {
     final write = _Write();
-    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_provider_mv1(provider._ffi, locale._ffi, langid._utf8AllocIn(temp.arena), languageDisplay.index, write._ffi);
+    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_provider_mv1(provider._ffi, locale._ffi, langid._ffi, languageDisplay.index, write._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -349,10 +343,9 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
   ///
   /// Throws [DataError] on failure.
-  static String forLanguageIdentifierLongLightWithCompiledData(Locale locale, String langid, LanguageDisplay languageDisplay) {
-    final temp = _FinalizedArena();
+  static String forLanguageIdentifierLongLightWithCompiledData(Locale locale, Locale langid, LanguageDisplay languageDisplay) {
     final write = _Write();
-    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_compiled_data_mv1(locale._ffi, langid._utf8AllocIn(temp.arena), languageDisplay.index, write._ffi);
+    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_compiled_data_mv1(locale._ffi, langid._ffi, languageDisplay.index, write._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -362,10 +355,9 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
   ///
   /// Throws [DataError] on failure.
-  static String forLanguageIdentifierLongLightWithProvider(DataProvider provider, Locale locale, String langid, LanguageDisplay languageDisplay) {
-    final temp = _FinalizedArena();
+  static String forLanguageIdentifierLongLightWithProvider(DataProvider provider, Locale locale, Locale langid, LanguageDisplay languageDisplay) {
     final write = _Write();
-    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_provider_mv1(provider._ffi, locale._ffi, langid._utf8AllocIn(temp.arena), languageDisplay.index, write._ffi);
+    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_provider_mv1(provider._ffi, locale._ffi, langid._ffi, languageDisplay.index, write._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -375,10 +367,9 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
   ///
   /// Throws [DataError] on failure.
-  static String forLanguageIdentifierMenuLightWithCompiledData(Locale locale, String langid, LanguageDisplay languageDisplay) {
-    final temp = _FinalizedArena();
+  static String forLanguageIdentifierMenuLightWithCompiledData(Locale locale, Locale langid, LanguageDisplay languageDisplay) {
     final write = _Write();
-    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_compiled_data_mv1(locale._ffi, langid._utf8AllocIn(temp.arena), languageDisplay.index, write._ffi);
+    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_compiled_data_mv1(locale._ffi, langid._ffi, languageDisplay.index, write._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -388,10 +379,9 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
   ///
   /// Throws [DataError] on failure.
-  static String forLanguageIdentifierMenuLightWithProvider(DataProvider provider, Locale locale, String langid, LanguageDisplay languageDisplay) {
-    final temp = _FinalizedArena();
+  static String forLanguageIdentifierMenuLightWithProvider(DataProvider provider, Locale locale, Locale langid, LanguageDisplay languageDisplay) {
     final write = _Write();
-    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_provider_mv1(provider._ffi, locale._ffi, langid._utf8AllocIn(temp.arena), languageDisplay.index, write._ffi);
+    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_provider_mv1(provider._ffi, locale._ffi, langid._ffi, languageDisplay.index, write._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -401,10 +391,9 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
   ///
   /// Throws [DataError] on failure.
-  static String forLanguageIdentifierShortMenuLightWithCompiledData(Locale locale, String langid, LanguageDisplay languageDisplay) {
-    final temp = _FinalizedArena();
+  static String forLanguageIdentifierShortMenuLightWithCompiledData(Locale locale, Locale langid, LanguageDisplay languageDisplay) {
     final write = _Write();
-    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_compiled_data_mv1(locale._ffi, langid._utf8AllocIn(temp.arena), languageDisplay.index, write._ffi);
+    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_compiled_data_mv1(locale._ffi, langid._ffi, languageDisplay.index, write._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -414,10 +403,9 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
   ///
   /// Throws [DataError] on failure.
-  static String forLanguageIdentifierShortMenuLightWithProvider(DataProvider provider, Locale locale, String langid, LanguageDisplay languageDisplay) {
-    final temp = _FinalizedArena();
+  static String forLanguageIdentifierShortMenuLightWithProvider(DataProvider provider, Locale locale, Locale langid, LanguageDisplay languageDisplay) {
     final write = _Write();
-    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_provider_mv1(provider._ffi, locale._ffi, langid._utf8AllocIn(temp.arena), languageDisplay.index, write._ffi);
+    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_provider_mv1(provider._ffi, locale._ffi, langid._ffi, languageDisplay.index, write._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -427,10 +415,9 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
-  static String forLanguageIdentifierHeavyWithCompiledData(Locale locale, String langid, LanguageDisplay languageDisplay) {
-    final temp = _FinalizedArena();
+  static String forLanguageIdentifierHeavyWithCompiledData(Locale locale, Locale langid, LanguageDisplay languageDisplay) {
     final write = _Write();
-    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_compiled_data_mv1(locale._ffi, langid._utf8AllocIn(temp.arena), languageDisplay.index, write._ffi);
+    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_compiled_data_mv1(locale._ffi, langid._ffi, languageDisplay.index, write._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -440,10 +427,9 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
-  static String forLanguageIdentifierHeavyWithProvider(DataProvider provider, Locale locale, String langid, LanguageDisplay languageDisplay) {
-    final temp = _FinalizedArena();
+  static String forLanguageIdentifierHeavyWithProvider(DataProvider provider, Locale locale, Locale langid, LanguageDisplay languageDisplay) {
     final write = _Write();
-    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_provider_mv1(provider._ffi, locale._ffi, langid._utf8AllocIn(temp.arena), languageDisplay.index, write._ffi);
+    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_provider_mv1(provider._ffi, locale._ffi, langid._ffi, languageDisplay.index, write._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -453,10 +439,9 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
-  static String forLanguageIdentifierShortHeavyWithCompiledData(Locale locale, String langid, LanguageDisplay languageDisplay) {
-    final temp = _FinalizedArena();
+  static String forLanguageIdentifierShortHeavyWithCompiledData(Locale locale, Locale langid, LanguageDisplay languageDisplay) {
     final write = _Write();
-    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_compiled_data_mv1(locale._ffi, langid._utf8AllocIn(temp.arena), languageDisplay.index, write._ffi);
+    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_compiled_data_mv1(locale._ffi, langid._ffi, languageDisplay.index, write._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -466,10 +451,9 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
-  static String forLanguageIdentifierShortHeavyWithProvider(DataProvider provider, Locale locale, String langid, LanguageDisplay languageDisplay) {
-    final temp = _FinalizedArena();
+  static String forLanguageIdentifierShortHeavyWithProvider(DataProvider provider, Locale locale, Locale langid, LanguageDisplay languageDisplay) {
     final write = _Write();
-    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_provider_mv1(provider._ffi, locale._ffi, langid._utf8AllocIn(temp.arena), languageDisplay.index, write._ffi);
+    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_provider_mv1(provider._ffi, locale._ffi, langid._ffi, languageDisplay.index, write._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -479,10 +463,9 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
-  static String forLanguageIdentifierLongHeavyWithCompiledData(Locale locale, String langid, LanguageDisplay languageDisplay) {
-    final temp = _FinalizedArena();
+  static String forLanguageIdentifierLongHeavyWithCompiledData(Locale locale, Locale langid, LanguageDisplay languageDisplay) {
     final write = _Write();
-    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_compiled_data_mv1(locale._ffi, langid._utf8AllocIn(temp.arena), languageDisplay.index, write._ffi);
+    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_compiled_data_mv1(locale._ffi, langid._ffi, languageDisplay.index, write._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -492,10 +475,9 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
-  static String forLanguageIdentifierLongHeavyWithProvider(DataProvider provider, Locale locale, String langid, LanguageDisplay languageDisplay) {
-    final temp = _FinalizedArena();
+  static String forLanguageIdentifierLongHeavyWithProvider(DataProvider provider, Locale locale, Locale langid, LanguageDisplay languageDisplay) {
     final write = _Write();
-    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_provider_mv1(provider._ffi, locale._ffi, langid._utf8AllocIn(temp.arena), languageDisplay.index, write._ffi);
+    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_provider_mv1(provider._ffi, locale._ffi, langid._ffi, languageDisplay.index, write._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -505,10 +487,9 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
-  static String forLanguageIdentifierMenuHeavyWithCompiledData(Locale locale, String langid, LanguageDisplay languageDisplay) {
-    final temp = _FinalizedArena();
+  static String forLanguageIdentifierMenuHeavyWithCompiledData(Locale locale, Locale langid, LanguageDisplay languageDisplay) {
     final write = _Write();
-    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_compiled_data_mv1(locale._ffi, langid._utf8AllocIn(temp.arena), languageDisplay.index, write._ffi);
+    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_compiled_data_mv1(locale._ffi, langid._ffi, languageDisplay.index, write._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -518,10 +499,9 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
-  static String forLanguageIdentifierMenuHeavyWithProvider(DataProvider provider, Locale locale, String langid, LanguageDisplay languageDisplay) {
-    final temp = _FinalizedArena();
+  static String forLanguageIdentifierMenuHeavyWithProvider(DataProvider provider, Locale locale, Locale langid, LanguageDisplay languageDisplay) {
     final write = _Write();
-    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_provider_mv1(provider._ffi, locale._ffi, langid._utf8AllocIn(temp.arena), languageDisplay.index, write._ffi);
+    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_provider_mv1(provider._ffi, locale._ffi, langid._ffi, languageDisplay.index, write._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -531,10 +511,9 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
-  static String forLanguageIdentifierShortMenuHeavyWithCompiledData(Locale locale, String langid, LanguageDisplay languageDisplay) {
-    final temp = _FinalizedArena();
+  static String forLanguageIdentifierShortMenuHeavyWithCompiledData(Locale locale, Locale langid, LanguageDisplay languageDisplay) {
     final write = _Write();
-    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_compiled_data_mv1(locale._ffi, langid._utf8AllocIn(temp.arena), languageDisplay.index, write._ffi);
+    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_compiled_data_mv1(locale._ffi, langid._ffi, languageDisplay.index, write._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -544,10 +523,9 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
-  static String forLanguageIdentifierShortMenuHeavyWithProvider(DataProvider provider, Locale locale, String langid, LanguageDisplay languageDisplay) {
-    final temp = _FinalizedArena();
+  static String forLanguageIdentifierShortMenuHeavyWithProvider(DataProvider provider, Locale locale, Locale langid, LanguageDisplay languageDisplay) {
     final write = _Write();
-    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_provider_mv1(provider._ffi, locale._ffi, langid._utf8AllocIn(temp.arena), languageDisplay.index, write._ffi);
+    final result = _icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_provider_mv1(provider._ffi, locale._ffi, langid._ffi, languageDisplay.index, write._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -672,134 +650,134 @@ external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_variant_heavy_with_prov
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_light_with_compiled_data_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_light_with_compiled_data_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_light_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_light_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_light_with_provider_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_light_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_light_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_light_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_compiled_data_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_compiled_data_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_provider_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_compiled_data_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_compiled_data_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_provider_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_compiled_data_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_compiled_data_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_provider_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_compiled_data_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_compiled_data_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_provider_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_compiled_data_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_compiled_data_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_provider_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_compiled_data_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_compiled_data_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_provider_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_compiled_data_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_compiled_data_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_provider_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_compiled_data_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_compiled_data_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_provider_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_compiled_data_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_compiled_data_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_provider_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_compiled_data_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_compiled_data_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_provider_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> langid, int languageDisplay, ffi.Pointer<ffi.Opaque> write);
 
 // dart format on
