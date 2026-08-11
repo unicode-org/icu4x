@@ -111,6 +111,43 @@ impl RegionDisplayName {
         Ok(Self { payload })
     }
 
+    /// Infallibly create a [`RegionDisplayName`], falling back to the BCP-47 code if unavailable.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::names::RegionDisplayName;
+    /// use icu::locale::{locale, subtags::region};
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// assert_writeable_eq!(
+    ///     RegionDisplayName::new_light_with_fallback(locale!("en").into(), region!("GB")),
+    ///     "United Kingdom"
+    /// );
+    ///
+    /// // Region not found
+    /// assert_writeable_eq!(
+    ///     RegionDisplayName::new_light_with_fallback(locale!("en").into(), region!("XZ")),
+    ///     "XZ"
+    /// );
+    ///
+    /// // Formatting locale not found
+    /// assert_writeable_eq!(
+    ///     RegionDisplayName::new_light_with_fallback(locale!("tlh").into(), region!("GB")),
+    ///     "GB"
+    /// );
+    /// ```
+    #[cfg(feature = "compiled_data")]
+    pub fn new_light_with_fallback(prefs: DisplayNamesPreferences, region: Region) -> Self
+    where
+        crate::provider::Baked: DataProvider<LocaleNamesRegionMediumLightV1>
+            + DataProvider<LocaleNamesRegionMediumTinyV1>,
+    {
+        Self::try_new_light(prefs, region).unwrap_or(Self {
+            payload: DataPayloadOr::from_other(region),
+        })
+    }
+
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
         /// Loads the minimal region display name for a given region and locale using compiled data.
