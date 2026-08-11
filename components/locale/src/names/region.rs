@@ -77,9 +77,75 @@ pub struct RegionDisplayName {
 }
 
 impl RegionDisplayName {
+    /// Loads the region display name for a given region and locale using compiled data.
+    ///
+    /// The `light` constructor links data for all modern regions.
+    /// See the [class docs](Self) for information on which constructor to use.
+    ///
+    /// If the display name is not found in data, the BCP-47 code is returned. To detect this case
+    /// and return an error instead, use [`RegionDisplayName::try_new_light()`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::names::RegionDisplayName;
+    /// use icu::locale::{locale, subtags::region};
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// assert_writeable_eq!(
+    ///     RegionDisplayName::new_light_with_fallback(locale!("de").into(), region!("DE")),
+    ///     "Deutschland"
+    /// );
+    ///
+    /// assert_writeable_eq!(
+    ///     RegionDisplayName::new_light_with_fallback(locale!("zh").into(), region!("DE")),
+    ///     "德国"
+    /// );
+    /// ```
+    #[cfg(feature = "compiled_data")]
+    pub fn new_light_with_fallback(prefs: DisplayNamesPreferences, region: Region) -> Self
+    where
+        crate::provider::Baked: DataProvider<LocaleNamesRegionMediumLightV1>
+            + DataProvider<LocaleNamesRegionMediumTinyV1>,
+    {
+        Self::try_new_light(prefs, region).unwrap_or(Self {
+            payload: DataPayloadOr::from_other(region),
+        })
+    }
+
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
         /// Loads the region display name for a given region and locale using compiled data.
+        ///
+        /// The `light` constructor links data for all modern regions.
+        /// See the [class docs](Self) for information on which constructor to use.
+        ///
+        /// Returns an error if the display name is not found in data. To return the BCP-47 code
+        /// instead, use [`RegionDisplayName::new_light_with_fallback()`].
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::locale::names::RegionDisplayName;
+        /// use icu::locale::{locale, subtags::region};
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let name = RegionDisplayName::try_new_light(locale!("de").into(), region!("DE")).unwrap();
+        /// assert_writeable_eq!(
+        ///     name,
+        ///     "Deutschland"
+        /// );
+        ///
+        /// let name = RegionDisplayName::try_new_light(locale!("zh").into(), region!("DE")).unwrap();
+        /// assert_writeable_eq!(
+        ///     name,
+        ///     "德国"
+        /// );
+        /// ```
         functions: [
             try_new_light,
             try_new_light_with_buffer_provider,
@@ -111,7 +177,17 @@ impl RegionDisplayName {
         Ok(Self { payload })
     }
 
-    /// Infallibly create a [`RegionDisplayName`], falling back to the BCP-47 code if unavailable.
+    /// Loads the region display name for a given region and locale using compiled data.
+    ///
+    /// The `tiny` constructor links an extremely limited amount of data, with a focus on
+    /// regions where the formatting locale is in common use. For example, the word for
+    /// Germany is included in `de` (German) but not `zh` (Chinese).
+    /// See the [class docs](Self) for more information on which constructor to use.
+    ///
+    /// If the display name is not found in data, the BCP-47 code is returned. To detect this case
+    /// and return an error instead, use [`RegionDisplayName::try_new_tiny()`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -121,39 +197,39 @@ impl RegionDisplayName {
     /// use writeable::assert_writeable_eq;
     ///
     /// assert_writeable_eq!(
-    ///     RegionDisplayName::new_light_with_fallback(locale!("en").into(), region!("GB")),
-    ///     "United Kingdom"
+    ///     RegionDisplayName::new_tiny_with_fallback(locale!("de").into(), region!("DE")),
+    ///     "Deutschland"
     /// );
     ///
-    /// // Region not found
+    /// // Name for Germany is NOT included in the Chinese locale
     /// assert_writeable_eq!(
-    ///     RegionDisplayName::new_light_with_fallback(locale!("en").into(), region!("XZ")),
-    ///     "XZ"
-    /// );
-    ///
-    /// // Formatting locale not found
-    /// assert_writeable_eq!(
-    ///     RegionDisplayName::new_light_with_fallback(locale!("tlh").into(), region!("GB")),
-    ///     "GB"
+    ///     RegionDisplayName::new_tiny_with_fallback(locale!("zh").into(), region!("DE")),
+    ///     "DE"
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn new_light_with_fallback(prefs: DisplayNamesPreferences, region: Region) -> Self
+    pub fn new_tiny_with_fallback(prefs: DisplayNamesPreferences, region: Region) -> Self
     where
-        crate::provider::Baked: DataProvider<LocaleNamesRegionMediumLightV1>
-            + DataProvider<LocaleNamesRegionMediumTinyV1>,
+        crate::provider::Baked: DataProvider<LocaleNamesRegionMediumTinyV1>,
     {
-        Self::try_new_light(prefs, region).unwrap_or(Self {
+        Self::try_new_tiny(prefs, region).unwrap_or(Self {
             payload: DataPayloadOr::from_other(region),
         })
     }
 
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, region: Region) -> result: Result<Self, DataError>,
-        /// Loads the minimal region display name for a given region and locale using compiled data.
+        /// Loads the region display name for a given region and locale using compiled data.
         ///
-        /// The `minimal` constructor links an extremely limited amount of data: for example,
-        /// only those regions where the formatting locale is spoken.
+        /// The `tiny` constructor links an extremely limited amount of data, with a focus on
+        /// regions where the formatting locale is in common use. For example, the word for
+        /// Germany is included in `de` (German) but not `zh` (Chinese).
+        /// See the [class docs](Self) for more information on which constructor to use.
+        ///
+        /// Returns an error if the display name is not found in data. To return the BCP-47 code
+        /// instead, use [`RegionDisplayName::new_tiny_with_fallback()`].
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// # Examples
         ///
@@ -162,10 +238,14 @@ impl RegionDisplayName {
         /// use icu::locale::{locale, subtags::region};
         /// use writeable::assert_writeable_eq;
         ///
-        /// let display_name = RegionDisplayName::try_new_tiny(locale!("en").into(), region!("US"))
-        ///     .expect("Data should load successfully");
+        /// let name = RegionDisplayName::try_new_tiny(locale!("de").into(), region!("DE")).unwrap();
+        /// assert_writeable_eq!(
+        ///     name,
+        ///     "Deutschland"
+        /// );
         ///
-        /// assert_writeable_eq!(display_name, "United States");
+        /// // Name for Germany is NOT included in the Chinese locale
+        /// RegionDisplayName::try_new_tiny(locale!("zh").into(), region!("DE")).unwrap_err();
         /// ```
         functions: [
             try_new_tiny,
