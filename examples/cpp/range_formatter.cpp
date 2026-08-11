@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#include <icu4x/DateAddOptions.hpp>
+#include <icu4x/DateDuration.hpp>
 #include <icu4x/DateRangeFormatter.hpp>
 #include <icu4x/DateRangeFormatterGregorian.hpp>
 #include <icu4x/DateTimeRangeFormatter.hpp>
@@ -25,7 +27,9 @@ int main() {
 
     // Dates for range testing
     std::unique_ptr<IsoDate> start_date = IsoDate::create(2023, 12, 22).ok().value();
-    std::unique_ptr<IsoDate> end_next_day = IsoDate::create(2023, 12, 23).ok().value();
+    DateDuration one_day = DateDuration::for_days(1);
+    DateAddOptions add_options = { /* .overflow = */ std::nullopt };
+    std::unique_ptr<IsoDate> end_next_day = start_date->try_add_with_options(one_day, add_options).ok().value();
 
     // Times for range testing
     std::unique_ptr<Time> start_time = Time::create(9, 0, 0, 0).ok().value();
