@@ -44,7 +44,10 @@ pub mod ffi {
 
         /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
-        #[diplomat::rust_link(icu::locale::names::RegionDisplayName::try_new_light, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::locale::names::RegionDisplayName::new_light_with_fallback,
+            FnInStruct
+        )]
         #[diplomat::rust_link(icu::locale::names::RegionDisplayName::write_to, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::locale::names::RegionDisplayName::to_string, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::locale::names::RegionDisplayNameBorrowed, Struct, hidden)]
@@ -62,20 +65,24 @@ pub mod ffi {
             locale: &Locale,
             region: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), DataError> {
+        ) {
             // TODO: Consider returning LocaleParseError or a dedicated DataError variant for invalid subtag syntax.
             let region = icu_locale_core::subtags::Region::try_from_utf8(region)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
-            let display_name =
-                icu_locale::names::RegionDisplayName::try_new_light((&locale.0).into(), region)?;
+                .unwrap_or(icu_locale_core::subtags::region!("ZZ"));
+            let display_name = icu_locale::names::RegionDisplayName::new_light_with_fallback(
+                (&locale.0).into(),
+                region,
+            );
             let _infallible = display_name.write_to(write);
-            Ok(())
         }
 
         /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
-        #[diplomat::rust_link(icu::locale::names::RegionDisplayName::try_new_light, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::locale::names::RegionDisplayName::new_light_with_fallback,
+            FnInStruct
+        )]
         pub fn for_region_light_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -84,7 +91,7 @@ pub mod ffi {
         ) -> Result<(), DataError> {
             // TODO: Consider returning LocaleParseError or a dedicated DataError variant for invalid subtag syntax.
             let region = icu_locale_core::subtags::Region::try_from_utf8(region)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+                .unwrap_or(icu_locale_core::subtags::region!("ZZ"));
             let display_name =
                 icu_locale::names::RegionDisplayName::try_new_light_with_buffer_provider(
                     provider.get()?,
@@ -97,32 +104,41 @@ pub mod ffi {
 
         /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
-        #[diplomat::rust_link(icu::locale::names::RegionDisplayName::try_new_tiny, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::locale::names::RegionDisplayName::new_tiny_with_fallback,
+            FnInStruct
+        )]
         pub fn for_region_tiny(
             locale: &Locale,
             region: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), DataError> {
+        ) {
+            // TODO: Consider returning LocaleParseError or a dedicated DataError variant for invalid subtag syntax.
             let region = icu_locale_core::subtags::Region::try_from_utf8(region)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
-            let display_name =
-                icu_locale::names::RegionDisplayName::try_new_tiny((&locale.0).into(), region)?;
+                .unwrap_or(icu_locale_core::subtags::region!("ZZ"));
+            let display_name = icu_locale::names::RegionDisplayName::new_tiny_with_fallback(
+                (&locale.0).into(),
+                region,
+            );
             let _infallible = display_name.write_to(write);
-            Ok(())
         }
 
         /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
-        #[diplomat::rust_link(icu::locale::names::RegionDisplayName::try_new_tiny, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::locale::names::RegionDisplayName::new_tiny_with_fallback,
+            FnInStruct
+        )]
         pub fn for_region_tiny_with_provider(
             provider: &DataProvider,
             locale: &Locale,
             region: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
+            // TODO: Consider returning LocaleParseError or a dedicated DataError variant for invalid subtag syntax.
             let region = icu_locale_core::subtags::Region::try_from_utf8(region)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+                .unwrap_or(icu_locale_core::subtags::region!("ZZ"));
             let display_name =
                 icu_locale::names::RegionDisplayName::try_new_tiny_with_buffer_provider(
                     provider.get()?,
@@ -136,29 +152,29 @@ pub mod ffi {
         /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(
-            icu::locale::names::RegionDisplayName::try_new_short_tiny,
+            icu::locale::names::RegionDisplayName::new_short_tiny_with_fallback,
             FnInStruct
         )]
         pub fn for_region_short_tiny(
             locale: &Locale,
             region: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), DataError> {
+        ) {
+            // TODO: Consider returning LocaleParseError or a dedicated DataError variant for invalid subtag syntax.
             let region = icu_locale_core::subtags::Region::try_from_utf8(region)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
-            let display_name = icu_locale::names::RegionDisplayName::try_new_short_tiny(
+                .unwrap_or(icu_locale_core::subtags::region!("ZZ"));
+            let display_name = icu_locale::names::RegionDisplayName::new_short_tiny_with_fallback(
                 (&locale.0).into(),
                 region,
-            )?;
+            );
             let _infallible = display_name.write_to(write);
-            Ok(())
         }
 
         /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
         #[diplomat::rust_link(
-            icu::locale::names::RegionDisplayName::try_new_short_tiny,
+            icu::locale::names::RegionDisplayName::new_short_tiny_with_fallback,
             FnInStruct
         )]
         pub fn for_region_short_tiny_with_provider(
@@ -167,8 +183,9 @@ pub mod ffi {
             region: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
+            // TODO: Consider returning LocaleParseError or a dedicated DataError variant for invalid subtag syntax.
             let region = icu_locale_core::subtags::Region::try_from_utf8(region)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+                .unwrap_or(icu_locale_core::subtags::region!("ZZ"));
             let display_name =
                 icu_locale::names::RegionDisplayName::try_new_short_tiny_with_buffer_provider(
                     provider.get()?,
@@ -182,29 +199,29 @@ pub mod ffi {
         /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(
-            icu::locale::names::RegionDisplayName::try_new_short_light,
+            icu::locale::names::RegionDisplayName::new_short_light_with_fallback,
             FnInStruct
         )]
         pub fn for_region_short_light(
             locale: &Locale,
             region: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), DataError> {
+        ) {
+            // TODO: Consider returning LocaleParseError or a dedicated DataError variant for invalid subtag syntax.
             let region = icu_locale_core::subtags::Region::try_from_utf8(region)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
-            let display_name = icu_locale::names::RegionDisplayName::try_new_short_light(
+                .unwrap_or(icu_locale_core::subtags::region!("ZZ"));
+            let display_name = icu_locale::names::RegionDisplayName::new_short_light_with_fallback(
                 (&locale.0).into(),
                 region,
-            )?;
+            );
             let _infallible = display_name.write_to(write);
-            Ok(())
         }
 
         /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
         #[diplomat::rust_link(
-            icu::locale::names::RegionDisplayName::try_new_short_light,
+            icu::locale::names::RegionDisplayName::new_short_light_with_fallback,
             FnInStruct
         )]
         pub fn for_region_short_light_with_provider(
@@ -213,8 +230,9 @@ pub mod ffi {
             region: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
+            // TODO: Consider returning LocaleParseError or a dedicated DataError variant for invalid subtag syntax.
             let region = icu_locale_core::subtags::Region::try_from_utf8(region)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+                .unwrap_or(icu_locale_core::subtags::region!("ZZ"));
             let display_name =
                 icu_locale::names::RegionDisplayName::try_new_short_light_with_buffer_provider(
                     provider.get()?,
@@ -229,7 +247,10 @@ pub mod ffi {
 
         /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
-        #[diplomat::rust_link(icu::locale::names::ScriptDisplayName::try_new_light, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::locale::names::ScriptDisplayName::new_light_with_fallback,
+            FnInStruct
+        )]
         #[diplomat::rust_link(icu::locale::names::ScriptDisplayName::write_to, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::locale::names::ScriptDisplayName::to_string, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::locale::names::ScriptDisplayNameBorrowed, Struct, hidden)]
@@ -247,27 +268,33 @@ pub mod ffi {
             locale: &Locale,
             script: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), DataError> {
+        ) {
+            // TODO: Consider returning LocaleParseError or a dedicated DataError variant for invalid subtag syntax.
             let script = icu_locale_core::subtags::Script::try_from_utf8(script)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
-            let display_name =
-                icu_locale::names::ScriptDisplayName::try_new_light((&locale.0).into(), script)?;
+                .unwrap_or(icu_locale_core::subtags::script!("Zzzz"));
+            let display_name = icu_locale::names::ScriptDisplayName::new_light_with_fallback(
+                (&locale.0).into(),
+                script,
+            );
             let _infallible = display_name.write_to(write);
-            Ok(())
         }
 
         /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
-        #[diplomat::rust_link(icu::locale::names::ScriptDisplayName::try_new_light, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::locale::names::ScriptDisplayName::new_light_with_fallback,
+            FnInStruct
+        )]
         pub fn for_script_light_with_provider(
             provider: &DataProvider,
             locale: &Locale,
             script: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
+            // TODO: Consider returning LocaleParseError or a dedicated DataError variant for invalid subtag syntax.
             let script = icu_locale_core::subtags::Script::try_from_utf8(script)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+                .unwrap_or(icu_locale_core::subtags::script!("Zzzz"));
             let display_name =
                 icu_locale::names::ScriptDisplayName::try_new_light_with_buffer_provider(
                     provider.get()?,
@@ -280,32 +307,41 @@ pub mod ffi {
 
         /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
-        #[diplomat::rust_link(icu::locale::names::ScriptDisplayName::try_new_tiny, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::locale::names::ScriptDisplayName::new_tiny_with_fallback,
+            FnInStruct
+        )]
         pub fn for_script_tiny(
             locale: &Locale,
             script: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), DataError> {
+        ) {
+            // TODO: Consider returning LocaleParseError or a dedicated DataError variant for invalid subtag syntax.
             let script = icu_locale_core::subtags::Script::try_from_utf8(script)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
-            let display_name =
-                icu_locale::names::ScriptDisplayName::try_new_tiny((&locale.0).into(), script)?;
+                .unwrap_or(icu_locale_core::subtags::script!("Zzzz"));
+            let display_name = icu_locale::names::ScriptDisplayName::new_tiny_with_fallback(
+                (&locale.0).into(),
+                script,
+            );
             let _infallible = display_name.write_to(write);
-            Ok(())
         }
 
         /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
-        #[diplomat::rust_link(icu::locale::names::ScriptDisplayName::try_new_tiny, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::locale::names::ScriptDisplayName::new_tiny_with_fallback,
+            FnInStruct
+        )]
         pub fn for_script_tiny_with_provider(
             provider: &DataProvider,
             locale: &Locale,
             script: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
+            // TODO: Consider returning LocaleParseError or a dedicated DataError variant for invalid subtag syntax.
             let script = icu_locale_core::subtags::Script::try_from_utf8(script)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+                .unwrap_or(icu_locale_core::subtags::script!("Zzzz"));
             let display_name =
                 icu_locale::names::ScriptDisplayName::try_new_tiny_with_buffer_provider(
                     provider.get()?,
@@ -318,32 +354,41 @@ pub mod ffi {
 
         /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
-        #[diplomat::rust_link(icu::locale::names::ScriptDisplayName::try_new_heavy, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::locale::names::ScriptDisplayName::new_heavy_with_fallback,
+            FnInStruct
+        )]
         pub fn for_script_heavy(
             locale: &Locale,
             script: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), DataError> {
+        ) {
+            // TODO: Consider returning LocaleParseError or a dedicated DataError variant for invalid subtag syntax.
             let script = icu_locale_core::subtags::Script::try_from_utf8(script)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
-            let display_name =
-                icu_locale::names::ScriptDisplayName::try_new_heavy((&locale.0).into(), script)?;
+                .unwrap_or(icu_locale_core::subtags::script!("Zzzz"));
+            let display_name = icu_locale::names::ScriptDisplayName::new_heavy_with_fallback(
+                (&locale.0).into(),
+                script,
+            );
             let _infallible = display_name.write_to(write);
-            Ok(())
         }
 
         /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
-        #[diplomat::rust_link(icu::locale::names::ScriptDisplayName::try_new_heavy, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::locale::names::ScriptDisplayName::new_heavy_with_fallback,
+            FnInStruct
+        )]
         pub fn for_script_heavy_with_provider(
             provider: &DataProvider,
             locale: &Locale,
             script: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
+            // TODO: Consider returning LocaleParseError or a dedicated DataError variant for invalid subtag syntax.
             let script = icu_locale_core::subtags::Script::try_from_utf8(script)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+                .unwrap_or(icu_locale_core::subtags::script!("Zzzz"));
             let display_name =
                 icu_locale::names::ScriptDisplayName::try_new_heavy_with_buffer_provider(
                     provider.get()?,
@@ -357,29 +402,29 @@ pub mod ffi {
         /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(
-            icu::locale::names::ScriptDisplayName::try_new_short_heavy,
+            icu::locale::names::ScriptDisplayName::new_short_heavy_with_fallback,
             FnInStruct
         )]
         pub fn for_script_short_heavy(
             locale: &Locale,
             script: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), DataError> {
+        ) {
+            // TODO: Consider returning LocaleParseError or a dedicated DataError variant for invalid subtag syntax.
             let script = icu_locale_core::subtags::Script::try_from_utf8(script)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
-            let display_name = icu_locale::names::ScriptDisplayName::try_new_short_heavy(
+                .unwrap_or(icu_locale_core::subtags::script!("Zzzz"));
+            let display_name = icu_locale::names::ScriptDisplayName::new_short_heavy_with_fallback(
                 (&locale.0).into(),
                 script,
-            )?;
+            );
             let _infallible = display_name.write_to(write);
-            Ok(())
         }
 
         /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
         #[diplomat::rust_link(
-            icu::locale::names::ScriptDisplayName::try_new_short_heavy,
+            icu::locale::names::ScriptDisplayName::new_short_heavy_with_fallback,
             FnInStruct
         )]
         pub fn for_script_short_heavy_with_provider(
@@ -388,8 +433,9 @@ pub mod ffi {
             script: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
+            // TODO: Consider returning LocaleParseError or a dedicated DataError variant for invalid subtag syntax.
             let script = icu_locale_core::subtags::Script::try_from_utf8(script)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+                .unwrap_or(icu_locale_core::subtags::script!("Zzzz"));
             let display_name =
                 icu_locale::names::ScriptDisplayName::try_new_short_heavy_with_buffer_provider(
                     provider.get()?,
@@ -404,7 +450,10 @@ pub mod ffi {
 
         /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
-        #[diplomat::rust_link(icu::locale::names::VariantDisplayName::try_new_heavy, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::locale::names::VariantDisplayName::new_heavy_with_fallback,
+            FnInStruct
+        )]
         #[diplomat::rust_link(icu::locale::names::VariantDisplayName::write_to, FnInStruct, hidden)]
         #[diplomat::rust_link(
             icu::locale::names::VariantDisplayName::to_string,
@@ -426,27 +475,33 @@ pub mod ffi {
             locale: &Locale,
             variant: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), DataError> {
+        ) {
+            // TODO: Consider returning LocaleParseError or a dedicated DataError variant for invalid subtag syntax.
             let variant = icu_locale_core::subtags::Variant::try_from_utf8(variant)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
-            let display_name =
-                icu_locale::names::VariantDisplayName::try_new_heavy((&locale.0).into(), variant)?;
+                .unwrap_or(icu_locale_core::subtags::variant!("posix"));
+            let display_name = icu_locale::names::VariantDisplayName::new_heavy_with_fallback(
+                (&locale.0).into(),
+                variant,
+            );
             let _infallible = display_name.write_to(write);
-            Ok(())
         }
 
         /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
-        #[diplomat::rust_link(icu::locale::names::VariantDisplayName::try_new_heavy, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::locale::names::VariantDisplayName::new_heavy_with_fallback,
+            FnInStruct
+        )]
         pub fn for_variant_heavy_with_provider(
             provider: &DataProvider,
             locale: &Locale,
             variant: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DataError> {
+            // TODO: Consider returning LocaleParseError or a dedicated DataError variant for invalid subtag syntax.
             let variant = icu_locale_core::subtags::Variant::try_from_utf8(variant)
-                .map_err(|_| icu_provider::DataErrorKind::IdentifierNotFound.into_error())?;
+                .unwrap_or(icu_locale_core::subtags::variant!("posix"));
             let display_name =
                 icu_locale::names::VariantDisplayName::try_new_heavy_with_buffer_provider(
                     provider.get()?,
