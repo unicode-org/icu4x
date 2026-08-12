@@ -435,7 +435,7 @@ pub trait Writeable {
 /// ```
 #[macro_export]
 macro_rules! impl_writeable_delegate {
-    ($ty:ty, |&$self:ident| $delegate:expr $(, #[$alloc_feature:meta])? $(, where $($generics:tt)*)?) => {
+    ($ty:ty, |&$self:ident| $delegate:expr $(, #[$alloc_feature:meta] fn write_to_string)? $(, where $($generics:tt)*)?) => {
         impl $(<$($generics)*>)? $crate::Writeable for $ty {
             #[inline]
             fn write_to<W: core::fmt::Write + ?Sized>(&$self, sink: &mut W) -> core::fmt::Result {

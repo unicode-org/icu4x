@@ -472,7 +472,7 @@ where
 /// ```
 #[macro_export]
 macro_rules! impl_try_writeable_delegate {
-    ($ty:ty, |&$self:ident| $delegate:expr, Error = $error:ty $(, |$error_arg:ident| $error_map:expr)? $(, #[$alloc_feature:meta])? $(, where $($generics:tt)*)?) => {
+    ($ty:ty, |&$self:ident| $delegate:expr, Error = $error:ty $(, |$error_arg:ident| $error_map:expr)? $(, #[$alloc_feature:meta] fn try_write_to_string)? $(, where $($generics:tt)*)?) => {
         impl$(<$($generics)*>)? $crate::TryWriteable for $ty {
             type Error = $error;
             #[inline]
@@ -533,7 +533,7 @@ impl_try_writeable_delegate!(
     &T,
     |&self| *self,
     Error = T::Error,
-    #[cfg(feature = "alloc")],
+    #[cfg(feature = "alloc")] fn try_write_to_string,
     where T: TryWriteable + ?Sized
 );
 
