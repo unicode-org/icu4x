@@ -271,14 +271,13 @@ where
 /// ```
 /// use either::Either;
 /// use icu_pattern::SinglePlaceholderPattern;
-/// use icu_pattern::TryWrap;
 /// use writeable::assert_try_writeable_eq;
 ///
 /// let err_value = Err::<&str, &str>("Errory");
 ///
 /// let pattern = SinglePlaceholderPattern::try_from_str("Hello {0}", Default::default()).unwrap();
 /// assert_try_writeable_eq!(
-///     pattern.try_interpolate(TryWrap(err_value)),
+///     pattern.try_interpolate(err_value),
 ///     "Hello Errory",
 ///     Err("Errory")
 /// );
@@ -289,7 +288,6 @@ where
 /// ```
 /// use either::Either;
 /// use icu_pattern::DoublePlaceholderPattern;
-/// use icu_pattern::TryWrap;
 /// use writeable::assert_try_writeable_eq;
 ///
 /// let ok_value = Ok::<&str, &str>("xxx");
@@ -297,7 +295,7 @@ where
 ///
 /// let pattern = DoublePlaceholderPattern::try_from_str("{0}-{1}", Default::default()).unwrap();
 /// assert_try_writeable_eq!(
-///     pattern.try_interpolate(TryWrap((ok_value, err_value))),
+///     pattern.try_interpolate((ok_value, err_value)),
 ///     "xxx-yyy",
 ///     Err(Either::Right("yyy"))
 /// );

@@ -148,6 +148,38 @@ where
     }
 }
 
+// NOTE: This impl allows `BTreeMap` and `LiteMap` to be passed directly into
+// `Pattern::try_interpolate`. However, it does not offer a built-in impl to
+// bubble up TryWriteable errors in MultiNamedPlaceholder. In other words, one
+// might expect `TryWrap<LiteMap<K, V>>` to bubble up errors from `V: TryWriteable`,
+// but this impl prevents that from happening. Instead, a further impl will be
+// needed in the future (which could be outside this crate).
+impl<'k, T> PlaceholderValueProvider<MultiNamedPlaceholderKey<'k>> for TryWrap<T>
+where
+    T: PlaceholderValueProvider<MultiNamedPlaceholderKey<'k>>,
+{
+    type Error = T::Error;
+
+    type W<'a>
+        = T::W<'a>
+    where
+        Self: 'a;
+
+    type L<'a, 'l>
+        = T::L<'a, 'l>
+    where
+        Self: 'a;
+
+    #[inline]
+    fn value_for<'a>(&'a self, key: MultiNamedPlaceholderKey<'k>) -> Self::W<'a> {
+        self.0.value_for(key)
+    }
+    #[inline]
+    fn map_literal<'a, 'l>(&'a self, literal: &'l str) -> Self::L<'a, 'l> {
+        self.0.map_literal(literal)
+    }
+}
+
 /// Backend for patterns containing zero or more named placeholders.
 ///
 /// This empty type is not constructible.
