@@ -5,6 +5,7 @@
 use std::borrow::Cow;
 use std::collections::HashSet;
 
+use crate::DataIdentifierCached;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
@@ -38,12 +39,12 @@ impl DataProvider<PercentEssentialsV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<PercentEssentialsV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
             .list_locales()?
-            .map(DataIdentifierCow::from_locale)
+            .map(DataIdentifierCached::from_locale)
             .collect())
     }
 }
@@ -232,7 +233,7 @@ fn test_basic() {
 
     let en: DataResponse<PercentEssentialsV1> = provider
         .load(DataRequest {
-            id: DataIdentifierCow::from_locale(data_locale!("en")).as_borrowed(),
+            id: DataIdentifierBorrowed::for_locale(&data_locale!("en")),
             ..Default::default()
         })
         .unwrap();
@@ -244,7 +245,7 @@ fn test_basic() {
 
     let tr: DataResponse<PercentEssentialsV1> = provider
         .load(DataRequest {
-            id: DataIdentifierCow::from_locale(data_locale!("tr")).as_borrowed(),
+            id: DataIdentifierBorrowed::for_locale(&data_locale!("tr")),
             ..Default::default()
         })
         .unwrap();
@@ -256,7 +257,7 @@ fn test_basic() {
 
     let ar_eg: DataResponse<PercentEssentialsV1> = provider
         .load(DataRequest {
-            id: DataIdentifierCow::from_locale(data_locale!("ar-EG")).as_borrowed(),
+            id: DataIdentifierBorrowed::for_locale(&data_locale!("ar-EG")),
             ..Default::default()
         })
         .unwrap();

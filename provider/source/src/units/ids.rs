@@ -7,12 +7,12 @@ use std::collections::HashSet;
 use icu::experimental::measure::parser::ids::unit_id;
 use icu::experimental::measure::provider::UnitIdsV1;
 use icu_provider::DataError;
-use icu_provider::DataMarkerAttributes;
 use icu_provider::DataProvider;
 use icu_provider::DataRequest;
 use icu_provider::DataResponse;
 use icu_provider::prelude::*;
 
+use crate::DataIdentifierCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 
@@ -31,7 +31,7 @@ impl DataProvider<UnitIdsV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<UnitIdsV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         let units_data: &cldr_serde::units::info::Resource = self
             .cldr()?
             .core()
@@ -50,12 +50,8 @@ impl crate::IterableDataProviderCached<UnitIdsV1> for SourceDataProvider {
                     false
                 }
             })
-            .map(|unit_name| {
-                DataIdentifierCow::from_marker_attributes_owned(
-                    DataMarkerAttributes::try_from_string(unit_name.clone()).unwrap(),
-                )
-            })
-            .collect();
+            .map(|unit_name| DataIdentifierCached::from_writeable_attributes(unit_name))
+            .collect::<Result<_, _>>()?;
 
         Ok(ids_set)
     }

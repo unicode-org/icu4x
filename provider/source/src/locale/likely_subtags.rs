@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::CoverageLevel;
+use crate::DataIdentifierCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 use icu::locale::LanguageIdentifier;
@@ -23,7 +24,7 @@ impl DataProvider<LocaleLikelySubtagsExtendedV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<LocaleLikelySubtagsExtendedV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -39,7 +40,7 @@ impl DataProvider<LocaleLikelySubtagsLanguageV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<LocaleLikelySubtagsLanguageV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -55,7 +56,7 @@ impl DataProvider<LocaleLikelySubtagsScriptRegionV1> for SourceDataProvider {
 }
 
 impl crate::IterableDataProviderCached<LocaleLikelySubtagsScriptRegionV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

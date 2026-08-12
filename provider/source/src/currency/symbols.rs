@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::DataIdentifierCached;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
@@ -65,7 +66,7 @@ impl DataProvider<CurrencySymbolsV1> for SourceDataProvider {
 }
 
 impl IterableDataProviderCached<CurrencySymbolsV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCached>, DataError> {
         let cldr = self.cldr()?.numbers();
 
         let mut ids = HashSet::new();
@@ -82,16 +83,16 @@ impl IterableDataProviderCached<CurrencySymbolsV1> for SourceDataProvider {
                 .currencies
             {
                 if patterns.short.as_ref().is_some_and(|s| s != currency) {
-                    ids.insert(DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(format!("s/{currency}")).unwrap(),
+                    ids.insert(DataIdentifierCached::from_writeable_attributes_and_locale(
+                        writeable::concat_writeable!("s/", currency),
                         locale,
-                    ));
+                    )?);
                 }
                 if patterns.narrow.as_ref().is_some_and(|s| s != currency) {
-                    ids.insert(DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(format!("n/{currency}")).unwrap(),
+                    ids.insert(DataIdentifierCached::from_writeable_attributes_and_locale(
+                        writeable::concat_writeable!("n/", currency),
                         locale,
-                    ));
+                    )?);
                 }
             }
         }

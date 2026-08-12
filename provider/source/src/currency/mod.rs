@@ -17,6 +17,7 @@ use icu_pattern::DoublePlaceholderPattern;
 use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
 
+use crate::DataIdentifierCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 
@@ -53,7 +54,7 @@ impl PatternSet {
 fn iter_numsys_pattern_ids<F>(
     provider: &SourceDataProvider,
     predicate: F,
-) -> Result<HashSet<DataIdentifierCow<'static>>, DataError>
+) -> Result<HashSet<DataIdentifierCached>, DataError>
 where
     F: Fn(&cldr_serde::numbers::CurrencyFormattingPatterns) -> bool,
 {
@@ -71,13 +72,10 @@ where
                 continue;
             }
             if nsname == default_numsys {
-                ids.insert(DataIdentifierCow::from_locale(locale));
+                ids.insert(DataIdentifierCached::from_locale(locale));
             } else {
-                let attr = DataMarkerAttributes::try_from_str(nsname).map_err(|_| {
-                    DataError::custom("Invalid numbering system name").with_display_context(nsname)
-                })?;
                 ids.insert(
-                    DataIdentifierBorrowed::for_marker_attributes_and_locale(attr, &locale)
+                    DataIdentifierCached::from_writeable_attributes_and_locale(nsname, locale)?
                         .into_owned(),
                 );
             }
