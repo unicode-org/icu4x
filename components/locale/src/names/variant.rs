@@ -41,6 +41,9 @@ macro_rules! table_row {
 /// | :--- | :--- | :--- |
 #[doc = concat!(table_row!(try_new_heavy), "\n")]
 ///
+/// There are fallible (`try_new_*`) and infallible (`new_*_with_fallback`) versions of
+/// all constructors.
+///
 /// # Example
 ///
 /// ```
@@ -59,9 +62,46 @@ pub struct VariantDisplayName {
 }
 
 impl VariantDisplayName {
+    /// Loads a variant display name in a formatting locale using compiled data.
+    ///
+    /// The `heavy` constructor includes additional data coverage for subtags that are less commonly formatted in the target locale.
+    /// See the [class docs](Self) for information on which constructor to use.
+    ///
+    /// If the display name is not found in data, the BCP-47 code is returned. To detect this case
+    /// and return an error instead, use [`VariantDisplayName::try_new_heavy()`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::names::VariantDisplayName;
+    /// use icu::locale::{locale, subtags::variant};
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// assert_writeable_eq!(
+    ///     VariantDisplayName::new_heavy_with_fallback(locale!("en").into(), variant!("fonipa")),
+    ///     "IPA Phonetics"
+    /// );
+    /// ```
+    #[cfg(feature = "compiled_data")]
+    pub fn new_heavy_with_fallback(prefs: DisplayNamesPreferences, variant: Variant) -> Self {
+        Self::try_new_heavy(prefs, variant).unwrap_or(Self {
+            payload: DataPayloadOr::from_other(variant),
+        })
+    }
+
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, variant: Variant) -> result: Result<Self, DataError>,
-        /// Loads the display name for a given variant in a given locale using compiled data.
+        /// Loads a variant display name in a formatting locale using compiled data.
+        ///
+        /// The `heavy` constructor includes additional data coverage for subtags that are less commonly formatted in the target locale.
+        /// See the [class docs](Self) for information on which constructor to use.
+        ///
+        /// Returns an error if the display name is not found in data. To return the BCP-47 code
+        /// instead, use [`VariantDisplayName::new_heavy_with_fallback()`].
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// # Examples
         ///
