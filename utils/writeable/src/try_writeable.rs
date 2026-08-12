@@ -427,7 +427,7 @@ where
 ///
 /// ```
 /// struct MyStruct(Result<String, String>);
-/// writeable::impl_try_writeable_delegate!(MyStruct, |&self| &self.0, Error = String, #[cfg(feature = "alloc")]);
+/// writeable::impl_try_writeable_delegate!(MyStruct, |&self| &self.0, Error = String, #[cfg(feature = "alloc")] fn try_write_to_string);
 ///
 /// writeable::assert_try_writeable_eq!(
 ///     MyStruct(Ok("hello".to_string())),
