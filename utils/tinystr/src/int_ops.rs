@@ -273,8 +273,8 @@ impl Aligned8 {
                 & !(word + 0x2525_2525_2525_2525)
                 & 0x8080_8080_8080_8080)
                 >> 2);
-        // SAFETY: The existing word is ASCII, and it is bitwise-ORed with a subset of 0x80_80_80_...,
-        // which keeps the word in the ASCII range (all bytes <= 127).
+        // SAFETY: The existing word is ASCII, and it is bitwise-ORed with a subset of 0x20_20_20_...
+        // (0x80_... >> 2), which keeps the word in the ASCII range (all bytes <= 127).
         unsafe { AsciiByte::to_ascii_byte_array(&result.to_ne_bytes()) }
     }
 
@@ -285,8 +285,8 @@ impl Aligned8 {
             & 0x8080_8080_8080_8080)
             >> 2;
         let result = (word | mask) & !(0x20 & mask);
-        // SAFETY: The existing word is ASCII, and it is bitwise-ORed with a subset of 0x80_80_80_...,
-        // which keeps the word in the ASCII range (all bytes <= 127).
+        // SAFETY: The existing word is ASCII, and it is bitwise-ORed with a subset of 0x20_20_20_...
+        // (0x80_... >> 2), which keeps the word in the ASCII range (all bytes <= 127).
         unsafe { AsciiByte::to_ascii_byte_array(&u64::from_le(result).to_ne_bytes()) }
     }
 
@@ -297,8 +297,8 @@ impl Aligned8 {
                 & !(word + 0x0505_0505_0505_0505)
                 & 0x8080_8080_8080_8080)
                 >> 2);
-        // SAFETY: The existing word is ASCII, and it is bitwise-ORed with a subset of 0x80_80_80_...,
-        // which keeps the word in the ASCII range (all bytes <= 127).
+        // SAFETY: The existing word is ASCII, and it is bitwise-ORed with a subset of 0x20_20_20_...
+        // (0x80_... >> 2), which keeps the word in the ASCII range (all bytes <= 127).
         unsafe { AsciiByte::to_ascii_byte_array(&result.to_ne_bytes()) }
     }
 }
