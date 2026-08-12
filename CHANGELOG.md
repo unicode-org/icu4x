@@ -33,8 +33,6 @@
     - Add scaffolding for range formatting (unicode-org#8173)
       - New associated type: `TypedDateDataMarkers::RangeSkel`
     - Preserve zero minutes in MinuteOptional format for 24-hour hour cycles (unicode-org#8237)
-      - Modified variants on `TimeGranularity`: `Hours23OrNone`, `Hours12`
-      - Added deprecated const aliases: `TimeGranularity::Hours`, `TimeGranularity::None`
     - Add unstable range formatter (unicode-org#8149)
       - New types: `DateRangeFormatter`, `FixedCalendarDateRangeFormatter`, `FormattedDateRange`
   - `icu_decimal`
@@ -102,12 +100,14 @@
     - Allow digits as extension singletons as allowed by BCP47, e.g. `-1-foobar` (unicode-org#8019)
     - Fixes an issue in `LocaleDirectionality` for unknown languages (unicode-org#7918)
     - `LocaleExpander::maximize` no longer maximizes `und` to `en-Latn-US` (unicode-org#8110)
+    - new module icu_locale::names, originally part of icu_experimental::displaynames (unicode-org#8338)
   - `icu_locale_core`
     - Add `AsRef<LanguageIdentifier>` impls (unicode-org#7923)
       - New impls: `AsRef<LanguageIdentifier> for Locale`, `AsRef<LanguageIdentifier> for LanguageIdentifier`
     - `preferences` types now implement `databake` (feature-gated) (unicode-org#8102)
     - Make `DataLocale::try_from_[str|utf8]` const (unicode-org#8305)
     - Add `data_locale!` macro (unicode-org#8305)
+    - Added `CurrencyType::iso_code()` and `currency!` macro. (unicode-org#8314)
   - `icu_locale_fallback`
     - New crate splitting fallback functionality out of `icu_locale`, including: (unicode-org#8245)
       - Struct `LocaleFallbacker`
@@ -149,6 +149,9 @@
   - `icu_provider`
     - allow slashes in DataMarkerAttributes (unicode-org#7890)
     - Stabilize type DataPayloadOr, added as draft in 1.5 (unicode-org#8163)
+    - add more methods to DataPayloadOr (unicode-org#8346)
+      - New function: `DataPayloadOr::map_other`
+      - New function: `DataPayloadOr::cast`
   - `icu_provider_fs`
     - Add defense-in-depth against path traversal. (unicode-org#7887)
   - `icu_provider_source`
@@ -168,6 +171,7 @@
     - Update supported Dart toolchain for `record_use` to `3.13.0-215.0.dev` (unicode-org#8119)
     - Dart: in the build hook, skip building if code assets are disabled. (unicode-org#8183)
     - Add `libm` as a library input in the Dart linking script for Android. (unicode-org#8199)
+    - add bindings for icu_locale::names (unicode-org#8341)
   - `icu_capi`
     - Dart, Kotlin: use the `Script` type on `ScriptExtension` APIs (unicode-org#7996)
 - Utils
