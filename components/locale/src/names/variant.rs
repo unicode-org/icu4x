@@ -64,7 +64,8 @@ pub struct VariantDisplayName {
 impl VariantDisplayName {
     /// Loads a variant display name in a formatting locale using compiled data.
     ///
-    /// The `heavy` constructor includes additional data coverage for subtags that are less commonly formatted in the target locale.
+    /// The `heavy` constructor includes additional data coverage for subtags that are
+    /// less commonly formatted in the target locale.
     /// See the [class docs](Self) for information on which constructor to use.
     ///
     /// If the display name is not found in data, the BCP-47 code is returned. To detect this case
@@ -80,8 +81,13 @@ impl VariantDisplayName {
     /// use writeable::assert_writeable_eq;
     ///
     /// assert_writeable_eq!(
-    ///     VariantDisplayName::new_heavy_with_fallback(locale!("en").into(), variant!("fonipa")),
-    ///     "IPA Phonetics"
+    ///     VariantDisplayName::new_heavy_with_fallback(locale!("de").into(), variant!("fonipa")),
+    ///     "IPA Phonetisch"
+    /// );
+    ///
+    /// assert_writeable_eq!(
+    ///     VariantDisplayName::new_heavy_with_fallback(locale!("fr").into(), variant!("fonipa")),
+    ///     "alphabet phonétique international"
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -95,7 +101,8 @@ impl VariantDisplayName {
         (prefs: DisplayNamesPreferences, variant: Variant) -> result: Result<Self, DataError>,
         /// Loads a variant display name in a formatting locale using compiled data.
         ///
-        /// The `heavy` constructor includes additional data coverage for subtags that are less commonly formatted in the target locale.
+        /// The `heavy` constructor includes additional data coverage for subtags that are
+        /// less commonly formatted in the target locale.
         /// See the [class docs](Self) for information on which constructor to use.
         ///
         /// Returns an error if the display name is not found in data. To return the BCP-47 code
@@ -110,10 +117,17 @@ impl VariantDisplayName {
         /// use icu::locale::{locale, subtags::variant};
         /// use writeable::assert_writeable_eq;
         ///
-        /// let display_name = VariantDisplayName::try_new_heavy(locale!("en").into(), variant!("fonipa"))
-        ///     .expect("Data should load successfully");
+        /// let name = VariantDisplayName::try_new_heavy(locale!("de").into(), variant!("fonipa")).unwrap();
+        /// assert_writeable_eq!(
+        ///     name,
+        ///     "IPA Phonetisch"
+        /// );
         ///
-        /// assert_writeable_eq!(display_name, "IPA Phonetics");
+        /// let name = VariantDisplayName::try_new_heavy(locale!("fr").into(), variant!("fonipa")).unwrap();
+        /// assert_writeable_eq!(
+        ///     name,
+        ///     "alphabet phonétique international"
+        /// );
         /// ```
         functions: [
             try_new_heavy,

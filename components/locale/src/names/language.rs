@@ -912,7 +912,8 @@ impl LanguageIdentifierDisplayName {
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the extended language display name for a given language identifier and locale using compiled data.
         ///
-        /// The `extended` constructor includes additional data coverage for subtags that are less commonly formatted in the target locale.
+        /// The `heavy` constructor includes additional data coverage for subtags that are
+        /// less commonly formatted in the target locale.
         functions: [
             try_new_heavy,
             try_new_heavy_with_buffer_provider,
@@ -999,7 +1000,8 @@ impl LanguageIdentifierDisplayName {
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the extended short language display name for a given language identifier and locale using compiled data.
         ///
-        /// The `extended` constructor includes additional data coverage for subtags that are less commonly formatted in the target locale.
+        /// The `heavy` constructor includes additional data coverage for subtags that are
+        /// less commonly formatted in the target locale.
         ///
         /// Falls back to default (medium) length if a short name is not available.
         functions: [
@@ -1111,7 +1113,8 @@ impl LanguageIdentifierDisplayName {
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the extended long language display name for a given language identifier and locale using compiled data.
         ///
-        /// The `extended` constructor includes additional data coverage for subtags that are less commonly formatted in the target locale.
+        /// The `heavy` constructor includes additional data coverage for subtags that are
+        /// less commonly formatted in the target locale.
         ///
         /// Falls back to default (medium) length if a long name is not available.
         functions: [
@@ -1217,7 +1220,8 @@ impl LanguageIdentifierDisplayName {
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the menu-style language display name for a given language identifier and locale using compiled data.
         ///
-        /// The `extended` constructor includes additional data coverage for subtags that are less commonly formatted in the target locale.
+        /// The `heavy` constructor includes additional data coverage for subtags that are
+        /// less commonly formatted in the target locale.
         ///
         /// # Examples
         ///
@@ -1324,7 +1328,8 @@ impl LanguageIdentifierDisplayName {
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
         /// Loads the short menu-style language display name for a given language identifier and locale using compiled data.
         ///
-        /// The `extended` constructor includes additional data coverage for subtags that are less commonly formatted in the target locale.
+        /// The `heavy` constructor includes additional data coverage for subtags that are
+        /// less commonly formatted in the target locale.
         ///
         /// Falls back to default (medium) length if a short name is not available.
         ///

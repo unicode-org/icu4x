@@ -97,8 +97,13 @@ impl ScriptDisplayName {
     /// use writeable::assert_writeable_eq;
     ///
     /// assert_writeable_eq!(
-    ///     ScriptDisplayName::new_light_with_fallback(locale!("en").into(), script!("Latn")),
-    ///     "Latin"
+    ///     ScriptDisplayName::new_light_with_fallback(locale!("bs").into(), script!("Cyrl")),
+    ///     "ćirilica"
+    /// );
+    ///
+    /// assert_writeable_eq!(
+    ///     ScriptDisplayName::new_light_with_fallback(locale!("zh").into(), script!("Cyrl")),
+    ///     "西里尔文"
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -127,8 +132,17 @@ impl ScriptDisplayName {
         /// use icu::locale::{locale, subtags::script};
         /// use writeable::assert_writeable_eq;
         ///
-        /// let name = ScriptDisplayName::try_new_light(locale!("en").into(), script!("Latn")).unwrap();
-        /// assert_writeable_eq!(name, "Latin");
+        /// let name = ScriptDisplayName::try_new_light(locale!("bs").into(), script!("Cyrl")).unwrap();
+        /// assert_writeable_eq!(
+        ///     name,
+        ///     "ćirilica"
+        /// );
+        ///
+        /// let name = ScriptDisplayName::try_new_light(locale!("zh").into(), script!("Cyrl")).unwrap();
+        /// assert_writeable_eq!(
+        ///     name,
+        ///     "西里尔文"
+        /// );
         /// ```
         functions: [
             try_new_light,
@@ -164,8 +178,9 @@ impl ScriptDisplayName {
     /// Loads a script display name in a formatting locale using compiled data.
     ///
     /// The `tiny` constructor links an extremely limited amount of data, with a focus on
-    /// scripts associated with the formatting locale.
-    /// See the [class docs](Self) for information on which constructor to use.
+    /// scripts associated with the formatting locale. For example, the Cyrillic script
+    /// is included in `bs` (Bosnian) but not `zh` (Chinese).
+    /// See the [class docs](Self) for more information on which constructor to use.
     ///
     /// If the display name is not found in data, the BCP-47 code is returned. To detect this case
     /// and return an error instead, use [`ScriptDisplayName::try_new_tiny()`].
@@ -180,8 +195,14 @@ impl ScriptDisplayName {
     /// use writeable::assert_writeable_eq;
     ///
     /// assert_writeable_eq!(
-    ///     ScriptDisplayName::new_tiny_with_fallback(locale!("en").into(), script!("Latn")),
-    ///     "Latin"
+    ///     ScriptDisplayName::new_tiny_with_fallback(locale!("bs").into(), script!("Cyrl")),
+    ///     "ćirilica"
+    /// );
+    ///
+    /// // Name for Cyrillic script is NOT included in the Chinese locale
+    /// assert_writeable_eq!(
+    ///     ScriptDisplayName::new_tiny_with_fallback(locale!("zh").into(), script!("Cyrl")),
+    ///     "Cyrl"
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -196,8 +217,9 @@ impl ScriptDisplayName {
         /// Loads a script display name in a formatting locale using compiled data.
         ///
         /// The `tiny` constructor links an extremely limited amount of data, with a focus on
-        /// scripts associated with the formatting locale.
-        /// See the [class docs](Self) for information on which constructor to use.
+        /// scripts associated with the formatting locale. For example, the Cyrillic script
+        /// is included in `bs` (Bosnian) but not `zh` (Chinese).
+        /// See the [class docs](Self) for more information on which constructor to use.
         ///
         /// Returns an error if the display name is not found in data. To return the BCP-47 code
         /// instead, use [`ScriptDisplayName::new_tiny_with_fallback()`].
@@ -211,8 +233,14 @@ impl ScriptDisplayName {
         /// use icu::locale::{locale, subtags::script};
         /// use writeable::assert_writeable_eq;
         ///
-        /// let name = ScriptDisplayName::try_new_tiny(locale!("en").into(), script!("Latn")).unwrap();
-        /// assert_writeable_eq!(name, "Latin");
+        /// let name = ScriptDisplayName::try_new_tiny(locale!("bs").into(), script!("Cyrl")).unwrap();
+        /// assert_writeable_eq!(
+        ///     name,
+        ///     "ćirilica"
+        /// );
+        ///
+        /// // Name for Cyrillic script is NOT included in the Chinese locale
+        /// ScriptDisplayName::try_new_tiny(locale!("zh").into(), script!("Cyrl")).unwrap_err();
         /// ```
         functions: [
             try_new_tiny,
@@ -241,7 +269,8 @@ impl ScriptDisplayName {
 
     /// Loads a script display name in a formatting locale using compiled data.
     ///
-    /// The `heavy` constructor includes additional data coverage for subtags that are less commonly formatted in the target locale.
+    /// The `heavy` constructor includes additional data coverage for subtags that are
+    /// less commonly formatted in the target locale.
     /// See the [class docs](Self) for information on which constructor to use.
     ///
     /// If the display name is not found in data, the BCP-47 code is returned. To detect this case
@@ -257,8 +286,13 @@ impl ScriptDisplayName {
     /// use writeable::assert_writeable_eq;
     ///
     /// assert_writeable_eq!(
-    ///     ScriptDisplayName::new_heavy_with_fallback(locale!("en").into(), script!("Latn")),
-    ///     "Latin"
+    ///     ScriptDisplayName::new_heavy_with_fallback(locale!("de").into(), script!("Latn")),
+    ///     "Lateinisch"
+    /// );
+    ///
+    /// assert_writeable_eq!(
+    ///     ScriptDisplayName::new_heavy_with_fallback(locale!("de").into(), script!("Xsux")),
+    ///     "Sumerisch-akkadische Keilschrift"
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -272,7 +306,8 @@ impl ScriptDisplayName {
         (prefs: DisplayNamesPreferences, script: Script) -> result: Result<Self, DataError>,
         /// Loads a script display name in a formatting locale using compiled data.
         ///
-        /// The `heavy` constructor includes additional data coverage for subtags that are less commonly formatted in the target locale.
+        /// The `heavy` constructor includes additional data coverage for subtags that are
+        /// less commonly formatted in the target locale.
         /// See the [class docs](Self) for information on which constructor to use.
         ///
         /// Returns an error if the display name is not found in data. To return the BCP-47 code
@@ -287,10 +322,17 @@ impl ScriptDisplayName {
         /// use icu::locale::{locale, subtags::script};
         /// use writeable::assert_writeable_eq;
         ///
-        /// let display_name = ScriptDisplayName::try_new_heavy(locale!("en").into(), script!("Latn"))
-        ///     .expect("Data should load successfully");
+        /// let name = ScriptDisplayName::try_new_heavy(locale!("de").into(), script!("Latn")).unwrap();
+        /// assert_writeable_eq!(
+        ///     name,
+        ///     "Lateinisch"
+        /// );
         ///
-        /// assert_writeable_eq!(display_name, "Latin");
+        /// let name = ScriptDisplayName::try_new_heavy(locale!("de").into(), script!("Xsux")).unwrap();
+        /// assert_writeable_eq!(
+        ///     name,
+        ///     "Sumerisch-akkadische Keilschrift"
+        /// );
         /// ```
         functions: [
             try_new_heavy,
@@ -332,7 +374,8 @@ impl ScriptDisplayName {
     ///
     /// Falls back to default (medium) length if a short name is not available.
     ///
-    /// The `heavy` constructor includes additional data coverage for subtags that are less commonly formatted in the target locale.
+    /// The `heavy` constructor includes additional data coverage for subtags that are
+    /// less commonly formatted in the target locale.
     /// See the [class docs](Self) for information on which constructor to use.
     ///
     /// If the display name is not found in data, the BCP-47 code is returned. To detect this case
@@ -347,6 +390,12 @@ impl ScriptDisplayName {
     /// use icu::locale::{locale, subtags::script};
     /// use writeable::assert_writeable_eq;
     ///
+    /// assert_writeable_eq!(
+    ///     ScriptDisplayName::new_short_heavy_with_fallback(locale!("de").into(), script!("Latn")),
+    ///     "Lateinisch"
+    /// );
+    ///
+    /// // Example short name: script Xsux -> "S-A Cuneiform" in en
     /// assert_writeable_eq!(
     ///     ScriptDisplayName::new_short_heavy_with_fallback(locale!("en").into(), script!("Xsux")),
     ///     "S-A Cuneiform"
@@ -365,7 +414,8 @@ impl ScriptDisplayName {
         ///
         /// Falls back to default (medium) length if a short name is not available.
         ///
-        /// The `heavy` constructor includes additional data coverage for subtags that are less commonly formatted in the target locale.
+        /// The `heavy` constructor includes additional data coverage for subtags that are
+        /// less commonly formatted in the target locale.
         /// See the [class docs](Self) for information on which constructor to use.
         ///
         /// Returns an error if the display name is not found in data. To return the BCP-47 code
@@ -380,10 +430,18 @@ impl ScriptDisplayName {
         /// use icu::locale::{locale, subtags::script};
         /// use writeable::assert_writeable_eq;
         ///
-        /// let display_name = ScriptDisplayName::try_new_short_heavy(locale!("en").into(), script!("Xsux"))
-        ///     .expect("Data should load successfully");
+        /// let name = ScriptDisplayName::try_new_short_heavy(locale!("de").into(), script!("Latn")).unwrap();
+        /// assert_writeable_eq!(
+        ///     name,
+        ///     "Lateinisch"
+        /// );
         ///
-        /// assert_writeable_eq!(display_name, "S-A Cuneiform");
+        /// // Example short name: script Xsux -> "S-A Cuneiform" in en
+        /// let name = ScriptDisplayName::try_new_short_heavy(locale!("en").into(), script!("Xsux")).unwrap();
+        /// assert_writeable_eq!(
+        ///     name,
+        ///     "S-A Cuneiform"
+        /// );
         /// ```
         functions: [
             try_new_short_heavy,
