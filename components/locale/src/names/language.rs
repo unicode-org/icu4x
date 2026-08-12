@@ -307,7 +307,40 @@ macro_rules! try_load_dialect_name {
 impl LanguageIdentifierDisplayName {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
-        /// Loads the language display name for a given language identifier and locale using compiled data.
+        /// Loads a language display name in a formatting locale using compiled data.
+        ///
+        /// The `light` constructor links data for all common languages.
+        /// See the [class docs](Self) for information on which constructor to use.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::locale::names::{
+        ///     DisplayNamesPreferences, LanguageIdentifierDisplayName,
+        ///     LanguageIdentifierDisplayNameOptions, LanguageIdentifierNameFallbackError,
+        /// };
+        /// use icu::locale::{langid, locale};
+        /// use writeable::assert_try_writeable_eq;
+        ///
+        /// let prefs = DisplayNamesPreferences::from(locale!("de"));
+        /// let options = LanguageIdentifierDisplayNameOptions::default();
+        ///
+        /// // Light dataset formats common languages and subtags (e.g. region qualification):
+        /// let display_name = LanguageIdentifierDisplayName::try_new_light(
+        ///     prefs,
+        ///     langid!("fr-CA"),
+        ///     options,
+        /// )
+        /// .expect("Data should load successfully");
+        /// assert_try_writeable_eq!(display_name.as_borrowed(), "Französisch (Kanada)", Ok(()));
+        ///
+        /// // Light data does not include rare languages like Klingon ("tlh"), returning a fallback error:
+        /// let tlh = LanguageIdentifierDisplayName::try_new_light(prefs, langid!("tlh"), options)
+        ///     .expect("Data should load successfully");
+        /// assert_try_writeable_eq!(tlh.as_borrowed(), "tlh", Err(LanguageIdentifierNameFallbackError));
+        /// ```
         functions: [
             try_new_light,
             try_new_light_with_buffer_provider,
@@ -378,10 +411,13 @@ impl LanguageIdentifierDisplayName {
 
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
-        /// Loads the minimal language display name for a given language identifier and locale using compiled data.
+        /// Loads a language display name in a formatting locale using compiled data.
         ///
-        /// The `minimal` constructor links an *extremely limited* amount of data: for example,
-        /// only the language of the formatting locale itself.
+        /// The `tiny` constructor links an extremely limited amount of data, with a focus on
+        /// languages associated with the formatting locale.
+        /// See the [class docs](Self) for more information on which constructor to use.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// # Examples
         ///
@@ -477,47 +513,41 @@ impl LanguageIdentifierDisplayName {
 
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
-        /// Loads the short language display name for a given language identifier and locale using compiled data.
+        /// Loads a short language display name in a formatting locale using compiled data.
         ///
         /// Falls back to default (medium) length if a short name is not available.
+        ///
+        /// The `light` constructor links data for all common languages.
+        /// See the [class docs](Self) for information on which constructor to use.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// # Examples
         ///
         /// ```
         /// use icu::locale::names::{
-        ///     DisplayNamesPreferences, LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOptions,
+        ///     DisplayNamesPreferences, LanguageIdentifierDisplayName,
+        ///     LanguageIdentifierDisplayNameOptions, LanguageIdentifierNameFallbackError,
         /// };
-        /// use icu::locale::{locale, langid};
+        /// use icu::locale::{langid, locale};
         /// use writeable::assert_try_writeable_eq;
         ///
         /// let prefs = DisplayNamesPreferences::from(locale!("en"));
         /// let options = LanguageIdentifierDisplayNameOptions::default();
         ///
-        /// // Default (Medium) length format:
-        /// let display_name_medium = LanguageIdentifierDisplayName::try_new_light(
+        /// // Short length format uses shorter subtag/qualifier names when available (e.g. "US English"):
+        /// let display_name = LanguageIdentifierDisplayName::try_new_short_light(
         ///     prefs,
         ///     langid!("en-US"),
         ///     options,
         /// )
         /// .expect("Data should load successfully");
-        /// assert_try_writeable_eq!(
-        ///     display_name_medium.as_borrowed(),
-        ///     "American English",
-        ///     Ok(())
-        /// );
+        /// assert_try_writeable_eq!(display_name.as_borrowed(), "US English", Ok(()));
         ///
-        /// // Short length format uses shorter subtag/qualifier names when available:
-        /// let display_name_short = LanguageIdentifierDisplayName::try_new_short_light(
-        ///     prefs,
-        ///     langid!("en-US"),
-        ///     options,
-        /// )
-        /// .expect("Data should load successfully");
-        /// assert_try_writeable_eq!(
-        ///     display_name_short.as_borrowed(),
-        ///     "US English",
-        ///     Ok(())
-        /// );
+        /// // Light data does not include rare languages like Klingon ("tlh"), returning a fallback error:
+        /// let tlh = LanguageIdentifierDisplayName::try_new_short_light(prefs, langid!("tlh"), options)
+        ///     .expect("Data should load successfully");
+        /// assert_try_writeable_eq!(tlh.as_borrowed(), "tlh", Err(LanguageIdentifierNameFallbackError));
         /// ```
         functions: [
             try_new_short_light,
@@ -601,47 +631,41 @@ impl LanguageIdentifierDisplayName {
 
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
-        /// Loads the long language display name for a given language identifier and locale using compiled data.
+        /// Loads a long language display name in a formatting locale using compiled data.
         ///
         /// Falls back to default (medium) length if a long name is not available.
+        ///
+        /// The `light` constructor links data for all common languages.
+        /// See the [class docs](Self) for information on which constructor to use.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// # Examples
         ///
         /// ```
         /// use icu::locale::names::{
-        ///     DisplayNamesPreferences, LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOptions,
+        ///     DisplayNamesPreferences, LanguageIdentifierDisplayName,
+        ///     LanguageIdentifierDisplayNameOptions, LanguageIdentifierNameFallbackError,
         /// };
-        /// use icu::locale::{locale, langid};
+        /// use icu::locale::{langid, locale};
         /// use writeable::assert_try_writeable_eq;
         ///
         /// let prefs = DisplayNamesPreferences::from(locale!("en"));
         /// let options = LanguageIdentifierDisplayNameOptions::default();
         ///
-        /// // Default (Medium) length format:
-        /// let display_name_medium = LanguageIdentifierDisplayName::try_new_light(
+        /// // Long length format uses longer subtag names when available (e.g. "Mandarin Chinese"):
+        /// let display_name = LanguageIdentifierDisplayName::try_new_long_light(
         ///     prefs,
         ///     langid!("zh"),
         ///     options,
         /// )
         /// .expect("Data should load successfully");
-        /// assert_try_writeable_eq!(
-        ///     display_name_medium.as_borrowed(),
-        ///     "Chinese",
-        ///     Ok(())
-        /// );
+        /// assert_try_writeable_eq!(display_name.as_borrowed(), "Mandarin Chinese", Ok(()));
         ///
-        /// // Long length format uses longer subtag names when available:
-        /// let display_name_long = LanguageIdentifierDisplayName::try_new_long_heavy(
-        ///     prefs,
-        ///     langid!("zh"),
-        ///     options,
-        /// )
-        /// .expect("Data should load successfully");
-        /// assert_try_writeable_eq!(
-        ///     display_name_long.as_borrowed(),
-        ///     "Mandarin Chinese",
-        ///     Ok(())
-        /// );
+        /// // Light data does not include rare languages like Klingon ("tlh"), returning a fallback error:
+        /// let tlh = LanguageIdentifierDisplayName::try_new_long_light(prefs, langid!("tlh"), options)
+        ///     .expect("Data should load successfully");
+        /// assert_try_writeable_eq!(tlh.as_borrowed(), "tlh", Err(LanguageIdentifierNameFallbackError));
         /// ```
         functions: [
             try_new_long_light,
@@ -723,27 +747,39 @@ impl LanguageIdentifierDisplayName {
 
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
-        /// Loads the menu-style language display name for a given language identifier and locale using compiled data.
+        /// Loads a menu-style language display name in a formatting locale using compiled data.
+        ///
+        /// The `light` constructor links data for all common languages.
+        /// See the [class docs](Self) for information on which constructor to use.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// # Examples
         ///
         /// ```
         /// use icu::locale::names::{
-        ///     DisplayNamesPreferences, LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOptions,
+        ///     DisplayNamesPreferences, LanguageIdentifierDisplayName,
+        ///     LanguageIdentifierDisplayNameOptions, LanguageIdentifierNameFallbackError,
         /// };
-        /// use icu::locale::{locale, langid};
+        /// use icu::locale::{langid, locale};
         /// use writeable::assert_try_writeable_eq;
         ///
         /// let prefs = DisplayNamesPreferences::from(locale!("en"));
         /// let options = LanguageIdentifierDisplayNameOptions::default();
+        ///
+        /// // Menu-style format places primary language name first for dropdown sorting (e.g. "Chinese, Mandarin"):
         /// let display_name = LanguageIdentifierDisplayName::try_new_menu_light(
         ///     prefs,
-        ///     langid!("fr-CA"),
+        ///     langid!("zh"),
         ///     options,
         /// )
         /// .expect("Data should load successfully");
+        /// assert_try_writeable_eq!(display_name.as_borrowed(), "Chinese, Mandarin", Ok(()));
         ///
-        /// assert_try_writeable_eq!(display_name.as_borrowed(), "French (Canada)", Ok(()));
+        /// // Light data does not include rare languages like Klingon ("tlh"), returning a fallback error:
+        /// let tlh = LanguageIdentifierDisplayName::try_new_menu_light(prefs, langid!("tlh"), options)
+        ///     .expect("Data should load successfully");
+        /// assert_try_writeable_eq!(tlh.as_borrowed(), "tlh", Err(LanguageIdentifierNameFallbackError));
         /// ```
         functions: [
             try_new_menu_light,
@@ -810,29 +846,41 @@ impl LanguageIdentifierDisplayName {
 
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
-        /// Loads the short menu-style language display name for a given language identifier and locale using compiled data.
+        /// Loads a short menu-style language display name in a formatting locale using compiled data.
         ///
         /// Falls back to default (medium) length if a short name is not available.
+        ///
+        /// The `light` constructor links data for all common languages.
+        /// See the [class docs](Self) for information on which constructor to use.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// # Examples
         ///
         /// ```
         /// use icu::locale::names::{
-        ///     DisplayNamesPreferences, LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOptions,
+        ///     DisplayNamesPreferences, LanguageIdentifierDisplayName,
+        ///     LanguageIdentifierDisplayNameOptions, LanguageIdentifierNameFallbackError,
         /// };
-        /// use icu::locale::{locale, langid};
+        /// use icu::locale::{langid, locale};
         /// use writeable::assert_try_writeable_eq;
         ///
         /// let prefs = DisplayNamesPreferences::from(locale!("en"));
         /// let options = LanguageIdentifierDisplayNameOptions::default();
+        ///
+        /// // Short menu format uses abbreviated region name in menu layout (e.g. "English (US)"):
         /// let display_name = LanguageIdentifierDisplayName::try_new_short_menu_light(
         ///     prefs,
         ///     langid!("en-US"),
         ///     options,
         /// )
         /// .expect("Data should load successfully");
-        ///
         /// assert_try_writeable_eq!(display_name.as_borrowed(), "English (US)", Ok(()));
+        ///
+        /// // Light data does not include rare languages like Klingon ("tlh"), returning a fallback error:
+        /// let tlh = LanguageIdentifierDisplayName::try_new_short_menu_light(prefs, langid!("tlh"), options)
+        ///     .expect("Data should load successfully");
+        /// assert_try_writeable_eq!(tlh.as_borrowed(), "tlh", Err(LanguageIdentifierNameFallbackError));
         /// ```
         functions: [
             try_new_short_menu_light,
@@ -910,10 +958,35 @@ impl LanguageIdentifierDisplayName {
 
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
-        /// Loads the extended language display name for a given language identifier and locale using compiled data.
+        /// Loads a language display name in a formatting locale using compiled data.
         ///
         /// The `heavy` constructor includes additional data coverage for subtags that are
         /// less commonly formatted in the target locale.
+        /// See the [class docs](Self) for information on which constructor to use.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::locale::names::{
+        ///     DisplayNamesPreferences, LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOptions,
+        /// };
+        /// use icu::locale::{langid, locale};
+        /// use writeable::assert_try_writeable_eq;
+        ///
+        /// let prefs = DisplayNamesPreferences::from(locale!("nl"));
+        /// let options = LanguageIdentifierDisplayNameOptions::default();
+        ///
+        /// // Heavy dataset includes data coverage for rare languages like Klingon ("tlh"):
+        /// let display_name = LanguageIdentifierDisplayName::try_new_heavy(
+        ///     prefs,
+        ///     langid!("tlh"),
+        ///     options,
+        /// )
+        /// .expect("Data should load successfully");
+        /// assert_try_writeable_eq!(display_name.as_borrowed(), "Klingon", Ok(()));
+        /// ```
         functions: [
             try_new_heavy,
             try_new_heavy_with_buffer_provider,
@@ -998,12 +1071,37 @@ impl LanguageIdentifierDisplayName {
 
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
-        /// Loads the extended short language display name for a given language identifier and locale using compiled data.
+        /// Loads a short language display name in a formatting locale using compiled data.
+        ///
+        /// Falls back to default (medium) length if a short name is not available.
         ///
         /// The `heavy` constructor includes additional data coverage for subtags that are
         /// less commonly formatted in the target locale.
+        /// See the [class docs](Self) for information on which constructor to use.
         ///
-        /// Falls back to default (medium) length if a short name is not available.
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::locale::names::{
+        ///     DisplayNamesPreferences, LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOptions,
+        /// };
+        /// use icu::locale::{langid, locale};
+        /// use writeable::assert_try_writeable_eq;
+        ///
+        /// let prefs = DisplayNamesPreferences::from(locale!("nl"));
+        /// let options = LanguageIdentifierDisplayNameOptions::default();
+        ///
+        /// // Short heavy formats short names with full data coverage for rare subtags:
+        /// let display_name = LanguageIdentifierDisplayName::try_new_short_heavy(
+        ///     prefs,
+        ///     langid!("tlh-001"),
+        ///     options,
+        /// )
+        /// .expect("Data should load successfully");
+        /// assert_try_writeable_eq!(display_name.as_borrowed(), "Klingon (wereld)", Ok(()));
+        /// ```
         functions: [
             try_new_short_heavy,
             try_new_short_heavy_with_buffer_provider,
@@ -1111,12 +1209,37 @@ impl LanguageIdentifierDisplayName {
 
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
-        /// Loads the extended long language display name for a given language identifier and locale using compiled data.
+        /// Loads a long language display name in a formatting locale using compiled data.
+        ///
+        /// Falls back to default (medium) length if a long name is not available.
         ///
         /// The `heavy` constructor includes additional data coverage for subtags that are
         /// less commonly formatted in the target locale.
+        /// See the [class docs](Self) for information on which constructor to use.
         ///
-        /// Falls back to default (medium) length if a long name is not available.
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::locale::names::{
+        ///     DisplayNamesPreferences, LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOptions,
+        /// };
+        /// use icu::locale::{langid, locale};
+        /// use writeable::assert_try_writeable_eq;
+        ///
+        /// let prefs = DisplayNamesPreferences::from(locale!("nl"));
+        /// let options = LanguageIdentifierDisplayNameOptions::default();
+        ///
+        /// // Long heavy formats long names with full data coverage for rare subtags:
+        /// let display_name = LanguageIdentifierDisplayName::try_new_long_heavy(
+        ///     prefs,
+        ///     langid!("tlh-001"),
+        ///     options,
+        /// )
+        /// .expect("Data should load successfully");
+        /// assert_try_writeable_eq!(display_name.as_borrowed(), "Klingon (wereld)", Ok(()));
+        /// ```
         functions: [
             try_new_long_heavy,
             try_new_long_heavy_with_buffer_provider,
@@ -1218,10 +1341,13 @@ impl LanguageIdentifierDisplayName {
 
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
-        /// Loads the menu-style language display name for a given language identifier and locale using compiled data.
+        /// Loads a menu-style language display name in a formatting locale using compiled data.
         ///
         /// The `heavy` constructor includes additional data coverage for subtags that are
         /// less commonly formatted in the target locale.
+        /// See the [class docs](Self) for information on which constructor to use.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// # Examples
         ///
@@ -1229,19 +1355,20 @@ impl LanguageIdentifierDisplayName {
         /// use icu::locale::names::{
         ///     DisplayNamesPreferences, LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOptions,
         /// };
-        /// use icu::locale::{locale, langid};
+        /// use icu::locale::{langid, locale};
         /// use writeable::assert_try_writeable_eq;
         ///
-        /// let prefs = DisplayNamesPreferences::from(locale!("en"));
+        /// let prefs = DisplayNamesPreferences::from(locale!("nl"));
         /// let options = LanguageIdentifierDisplayNameOptions::default();
+        ///
+        /// // Menu heavy formats menu-style names with full data coverage for rare subtags:
         /// let display_name = LanguageIdentifierDisplayName::try_new_menu_heavy(
         ///     prefs,
-        ///     langid!("en-US"),
+        ///     langid!("tlh-001"),
         ///     options,
         /// )
         /// .expect("Data should load successfully");
-        ///
-        /// assert_try_writeable_eq!(display_name.as_borrowed(), "English (United States)", Ok(()));
+        /// assert_try_writeable_eq!(display_name.as_borrowed(), "Klingon (wereld)", Ok(()));
         /// ```
         functions: [
             try_new_menu_heavy,
@@ -1326,12 +1453,15 @@ impl LanguageIdentifierDisplayName {
 
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, subject: LanguageIdentifier, options: LanguageIdentifierDisplayNameOptions) -> result: Result<Self, DataError>,
-        /// Loads the short menu-style language display name for a given language identifier and locale using compiled data.
+        /// Loads a short menu-style language display name in a formatting locale using compiled data.
+        ///
+        /// Falls back to default (medium) length if a short name is not available.
         ///
         /// The `heavy` constructor includes additional data coverage for subtags that are
         /// less commonly formatted in the target locale.
+        /// See the [class docs](Self) for information on which constructor to use.
         ///
-        /// Falls back to default (medium) length if a short name is not available.
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// # Examples
         ///
@@ -1339,19 +1469,20 @@ impl LanguageIdentifierDisplayName {
         /// use icu::locale::names::{
         ///     DisplayNamesPreferences, LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOptions,
         /// };
-        /// use icu::locale::{locale, langid};
+        /// use icu::locale::{langid, locale};
         /// use writeable::assert_try_writeable_eq;
         ///
-        /// let prefs = DisplayNamesPreferences::from(locale!("en"));
+        /// let prefs = DisplayNamesPreferences::from(locale!("nl"));
         /// let options = LanguageIdentifierDisplayNameOptions::default();
+        ///
+        /// // Short menu heavy formats short menu-style names with full data coverage for rare subtags:
         /// let display_name = LanguageIdentifierDisplayName::try_new_short_menu_heavy(
         ///     prefs,
-        ///     langid!("en-US"),
+        ///     langid!("tlh-001"),
         ///     options,
         /// )
         /// .expect("Data should load successfully");
-        ///
-        /// assert_try_writeable_eq!(display_name.as_borrowed(), "English (US)", Ok(()));
+        /// assert_try_writeable_eq!(display_name.as_borrowed(), "Klingon (wereld)", Ok(()));
         /// ```
         functions: [
             try_new_short_menu_heavy,
