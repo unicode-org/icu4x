@@ -38,7 +38,7 @@ crate::displaynames::impl_displaynames_v1!(
     "scripts.json",
     scripts,
     None,
-    "//ldml/localeDisplayNames/scripts/script",
+    script,
     CoverageLevelForXPath::Basic | CoverageLevelForXPath::Core,
 );
 crate::displaynames::impl_displaynames_v1!(
@@ -48,7 +48,7 @@ crate::displaynames::impl_displaynames_v1!(
     "scripts.json",
     scripts,
     None,
-    "//ldml/localeDisplayNames/scripts/script",
+    script,
     CoverageLevelForXPath::Moderate,
 );
 crate::displaynames::impl_displaynames_v1!(
@@ -58,7 +58,7 @@ crate::displaynames::impl_displaynames_v1!(
     "scripts.json",
     scripts,
     None,
-    "//ldml/localeDisplayNames/scripts/script",
+    script,
     CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 
@@ -69,7 +69,7 @@ crate::displaynames::impl_displaynames_v1!(
     "scripts.json",
     scripts,
     Some(Alt::Short),
-    "//ldml/localeDisplayNames/scripts/script",
+    script,
     CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 
@@ -229,7 +229,7 @@ mod tests {
         crate::displaynames::coverage_experimental::for_each_cldr_key_and_tier(
             cldr,
             "scripts.json",
-            "//ldml/localeDisplayNames/scripts/script",
+            |l| &l.script,
             |res: &cldr_serde::displaynames::script::Resource| {
                 &res.main.value.localedisplaynames.scripts
             },

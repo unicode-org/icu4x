@@ -40,7 +40,7 @@ crate::displaynames::impl_displaynames_v1!(
     "territories.json",
     regions,
     None,
-    "//ldml/localeDisplayNames/territories/territory",
+    territory,
     CoverageLevelForXPath::Basic | CoverageLevelForXPath::Core,
 );
 crate::displaynames::impl_displaynames_v1!(
@@ -50,7 +50,7 @@ crate::displaynames::impl_displaynames_v1!(
     "territories.json",
     regions,
     None,
-    "//ldml/localeDisplayNames/territories/territory",
+    territory,
     CoverageLevelForXPath::Moderate,
 );
 
@@ -61,7 +61,7 @@ crate::displaynames::impl_displaynames_v1!(
     "territories.json",
     regions,
     Some(Alt::Short),
-    "//ldml/localeDisplayNames/territories/territory",
+    territory,
     CoverageLevelForXPath::Basic,
 );
 crate::displaynames::impl_displaynames_v1!(
@@ -71,7 +71,7 @@ crate::displaynames::impl_displaynames_v1!(
     "territories.json",
     regions,
     Some(Alt::Short),
-    "//ldml/localeDisplayNames/territories/territory",
+    territory,
     CoverageLevelForXPath::Moderate,
 );
 
@@ -228,7 +228,7 @@ mod tests {
         crate::displaynames::coverage_experimental::for_each_cldr_key_and_tier(
             cldr,
             "territories.json",
-            "//ldml/localeDisplayNames/territories/territory",
+            |l| &l.territory,
             |res: &cldr_serde::displaynames::region::Resource| {
                 &res.main.value.localedisplaynames.regions
             },
