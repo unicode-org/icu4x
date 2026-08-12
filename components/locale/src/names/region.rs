@@ -59,6 +59,9 @@ macro_rules! table_row {
 ///
 /// > Note: :x: means that the constructor returns an error.
 ///
+/// There are fallible (`try_new_*`) and infallible (`new_*_with_fallback`) versions of
+/// all constructors.
+///
 /// # Example
 ///
 /// ```
@@ -431,8 +434,8 @@ impl RegionDisplayName {
         /// The `light` constructor links data for all modern regions.
         /// See the [class docs](Self) for information on which constructor to use.
         ///
-        /// If the display name is not found in data, the BCP-47 code is returned. To detect this case
-        /// and return an error instead, use [`RegionDisplayName::try_new_short_light()`].
+        /// Returns an error if the display name is not found in data. To return the BCP-47 code
+        /// instead, use [`RegionDisplayName::new_short_light_with_fallback()`].
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
