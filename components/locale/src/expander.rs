@@ -4,7 +4,7 @@
 
 use crate::provider::*;
 use icu_locale_core::LanguageIdentifier;
-use icu_locale_core::subtags::{Language, Region, Script}, region, script;
+use icu_locale_core::subtags::{Language, Region, Script, region, script};
 use icu_locale_fallback::provider::{LikelySubtagsForLanguage, LocaleLikelySubtagsLanguageV1};
 use icu_provider::prelude::*;
 
