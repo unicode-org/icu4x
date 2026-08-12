@@ -47,7 +47,7 @@ use crate::{DateTime, ZonedDateTime, zone::UtcOffset};
 ///
 /// let time_zone_info_past = metlakatla
 ///     .without_offset()
-///     .with_zone_name_timestamp(ZoneNameTimestamp::far_in_past());
+///     .with_zone_name_timestamp(ZoneNameTimestamp::from_epoch_seconds(0));
 /// let time_zone_info_future = metlakatla
 ///     .without_offset()
 ///     .with_zone_name_timestamp(ZoneNameTimestamp::far_in_future());
@@ -131,6 +131,10 @@ impl ZoneNameTimestamp {
 
     /// Creates an instance of [`ZoneNameTimestamp`] from a number of seconds since the UNIX epoch.
     pub fn from_epoch_seconds(seconds: i64) -> Self {
+        if seconds < 0 {
+            // Special value for all pre-epoch timestamps.
+            return Self(-1);
+        }
         let seconds = match seconds {
             // Values that are not multiples of 15, that we map to the next multiple
             // of 15 (which is always 00:15 or 00:45, values that are otherwise unused).
@@ -146,7 +150,7 @@ impl ZoneNameTimestamp {
             s => s,
         };
         let qh = seconds / 60 / 15;
-        Self(qh.clamp(i32::MIN as i64, i32::MAX as i64) as i32)
+        Self(qh.clamp(0, 0xFFFFFF) as i32)
     }
 
     /// Returns the *approximate* number of seconds since the UNIX epoch represented by this
@@ -328,15 +332,15 @@ mod test {
             // Min Value Clamping
             TestCase {
                 input: "1969-12-31T23:59Z",
-                output: "1970-01-01T00:00Z",
+                output: "1969-12-31T23:45Z",
             },
             TestCase {
                 input: "1969-12-31T12:00Z",
-                output: "1970-01-01T00:00Z",
+                output: "1969-12-31T23:45Z",
             },
             TestCase {
                 input: "1900-07-15T12:34Z",
-                output: "1970-01-01T00:00Z",
+                output: "1969-12-31T23:45Z",
             },
             // Max Value Clamping
             TestCase {
