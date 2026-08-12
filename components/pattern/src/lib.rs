@@ -66,9 +66,9 @@ pub use common::PatternItem;
 #[cfg(feature = "alloc")]
 pub use common::PatternItemCow;
 pub use common::PlaceholderValueProvider;
+pub use common::TryWrap;
 pub use double::DoublePlaceholder;
 pub use double::DoublePlaceholderKey;
-pub use double::DoublePlaceholderValueProviderTry;
 pub use error::PatternError;
 pub use frontend::Pattern;
 #[cfg(feature = "unstable")]
@@ -90,7 +90,6 @@ pub use parser::ParserOptions;
 pub use parser::QuoteMode;
 pub use single::SinglePlaceholder;
 pub use single::SinglePlaceholderKey;
-pub use single::SinglePlaceholderValueProviderTry;
 
 mod private {
     pub trait Sealed {}
