@@ -261,3 +261,49 @@ where
         (*self).map_literal(literal)
     }
 }
+
+/// Types that implement backing data models for [`Pattern`] and support placeholder extraction
+/// implement this trait.
+///
+/// The trait has no public methods and is not implementable outside of this crate.
+///
+/// <div class="stab unstable">
+/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
+/// </div>
+///
+/// ✨ *Enabled with the `unstable` Cargo feature.*
+///
+/// [`Pattern`]: crate::Pattern
+#[cfg(feature = "unstable")]
+pub trait ExtractionBackend: PatternBackend + crate::private::Sealed {
+    /// 🚧 \[Unstable\] The type that stores the matches for this backend.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This API is unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Use with caution.
+    /// </div>
+    type DecodedMatchesUnstable<'p, 'a>;
+
+    /// 🚧 \[Unstable\] Extract matches from the store.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This API is unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Use with caution.
+    /// </div>
+    fn extract_unstable<'p, 'a>(
+        store: &'p Self::Store,
+        input: &'a str,
+    ) -> Option<Self::DecodedMatchesUnstable<'p, 'a>>;
+
+    /// 🚧 \[Unstable\] Get a match from the decoded matches.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This API is unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Use with caution.
+    /// </div>
+    fn get_match_unstable<'p, 'b>(
+        store: &Self::DecodedMatchesUnstable<'p, 'b>,
+        key: Self::PlaceholderKey<'_>,
+    ) -> Option<&'b str>;
+}

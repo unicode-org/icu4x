@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+pub(crate) mod coverage_experimental;
 pub(crate) mod essentials;
 pub(crate) mod language;
 pub(crate) mod region;
@@ -92,16 +93,15 @@ where
 /// - `$file`: The JSON file name in CLDR.
 /// - `$field`: The field name in `LocaleDisplayNames` containing the data.
 /// - `$alt_variant`: The alt variant (e.g., `None`, `Some(Alt::Short)`).
+/// - `$tier`: The target coverage tier.
 macro_rules! impl_displaynames_v1 {
-    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr,) => {
+    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr, $xpath_prefix:literal, $tier:pat,) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
 
-                let data: &$resource = self
-                    .cldr()?
-                    .displaynames()
-                    .read_and_parse(req.id.locale, $file)?;
+                let cldr = self.cldr()?;
+                let data: &$resource = cldr.displaynames().read_and_parse(req.id.locale, $file)?;
 
                 let subtag =
                     <$subtag_ty as core::str::FromStr>::from_str(req.id.marker_attributes.as_str())
@@ -110,7 +110,7 @@ macro_rules! impl_displaynames_v1 {
                         })?;
 
                 let key = WithAlt {
-                    subtag,
+                    subtag: subtag.clone(),
                     alt: $alt_variant,
                     menu: None,
                 };
@@ -122,8 +122,24 @@ macro_rules! impl_displaynames_v1 {
                     .$field
                     .get(&key)
                     .ok_or_else(|| {
-                        DataError::custom("failed to find attribute").with_req($marker::INFO, req)
+                        DataErrorKind::IdentifierNotFound
+                            .into_error()
+                            .with_req($marker::INFO, req)
                     })?;
+
+                let xpath = $crate::displaynames::coverage_experimental::construct_xpath(
+                    $xpath_prefix,
+                    &subtag,
+                    $alt_variant,
+                    None,
+                );
+                let item_tier = crate::displaynames::coverage_experimental::coverage_cldr_cache()
+                    .coverage_tier(req.id.locale, &xpath, cldr)?;
+                if !matches!(item_tier, $tier) {
+                    return Err(DataErrorKind::IdentifierNotFound
+                        .into_error()
+                        .with_req($marker::INFO, req));
+                }
 
                 Ok(DataResponse {
                     metadata: Default::default(),
@@ -138,8 +154,20 @@ macro_rules! impl_displaynames_v1 {
             $resource,
             $file,
             $field,
-            $alt_variant
+            $alt_variant,
+            $xpath_prefix,
+            $tier
         );
+
+        #[cfg(test)]
+        impl $crate::displaynames::coverage_experimental::CheckAltCoverage for $marker {
+            fn contains_key<T>(
+                key: &$crate::cldr_serde::displaynames::WithAlt<T>,
+                tier: $crate::displaynames::coverage_experimental::CoverageLevelForXPath,
+            ) -> bool {
+                key.alt == $alt_variant && key.menu.is_none() && matches!(tier, $tier)
+            }
+        }
     };
 }
 
@@ -151,16 +179,15 @@ macro_rules! impl_displaynames_v1 {
 /// - `$resource`: The CLDR serde resource type.
 /// - `$file`: The JSON file name in CLDR.
 /// - `$field`: The field name in `LocaleDisplayNames` containing the data.
+/// - `$tier`: The target coverage tier.
 macro_rules! impl_displaynames_menu_v1 {
-    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident,) => {
+    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $xpath_prefix:literal, $tier:pat,) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
 
-                let data: &$resource = self
-                    .cldr()?
-                    .displaynames()
-                    .read_and_parse(req.id.locale, $file)?;
+                let cldr = self.cldr()?;
+                let data: &$resource = cldr.displaynames().read_and_parse(req.id.locale, $file)?;
 
                 let subtag =
                     <$subtag_ty as core::str::FromStr>::from_str(req.id.marker_attributes.as_str())
@@ -176,9 +203,10 @@ macro_rules! impl_displaynames_menu_v1 {
 
                 let map = &data.main.value.localedisplaynames.$field;
 
+                let mut used_alt_menu = false;
                 let (name_core, name_extension) = if let Some(core) = map.get(&key_core) {
                     let key_extension = WithAlt {
-                        subtag,
+                        subtag: subtag.clone(),
                         alt: None,
                         menu: Some($crate::cldr_serde::displaynames::Menu::Extension),
                     };
@@ -188,18 +216,43 @@ macro_rules! impl_displaynames_menu_v1 {
                     })?;
                     (core.as_str(), extension.as_str())
                 } else {
+                    used_alt_menu = true;
                     // Fallback to alt-menu
                     let key_alt_menu = WithAlt {
-                        subtag,
+                        subtag: subtag.clone(),
                         alt: Some($crate::cldr_serde::displaynames::Alt::Menu),
                         menu: None,
                     };
                     let alt_menu = map.get(&key_alt_menu).ok_or_else(|| {
-                        DataError::custom("failed to find menu-core or alt-menu")
+                        DataErrorKind::IdentifierNotFound
+                            .into_error()
                             .with_req($marker::INFO, req)
                     })?;
                     (alt_menu.as_str(), "")
                 };
+
+                let xpath = if used_alt_menu {
+                    $crate::displaynames::coverage_experimental::construct_xpath(
+                        $xpath_prefix,
+                        &subtag,
+                        Some($crate::cldr_serde::displaynames::Alt::Menu),
+                        None,
+                    )
+                } else {
+                    $crate::displaynames::coverage_experimental::construct_xpath(
+                        $xpath_prefix,
+                        &subtag,
+                        None,
+                        Some($crate::cldr_serde::displaynames::Menu::Core),
+                    )
+                };
+                let item_tier = crate::displaynames::coverage_experimental::coverage_cldr_cache()
+                    .coverage_tier(req.id.locale, &xpath, cldr)?;
+                if !matches!(item_tier, $tier) {
+                    return Err(DataErrorKind::IdentifierNotFound
+                        .into_error()
+                        .with_req($marker::INFO, req));
+                }
 
                 Ok(DataResponse {
                     metadata: Default::default(),
@@ -214,7 +267,8 @@ macro_rules! impl_displaynames_menu_v1 {
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
                 let mut result = HashSet::new();
-                let displaynames = self.cldr()?.displaynames();
+                let cldr = self.cldr()?;
+                let displaynames = cldr.displaynames();
                 for locale in displaynames.list_locales()?.filter(|locale| {
                     // The directory might exist without the file
                     displaynames.file_exists(locale, $file).unwrap_or_default()
@@ -226,19 +280,53 @@ macro_rules! impl_displaynames_menu_v1 {
                             || key.alt == Some($crate::cldr_serde::displaynames::Alt::Menu);
 
                         if matches {
-                            let data_identifier = DataIdentifierCow::from_owned(
-                                DataMarkerAttributes::try_from_string(key.subtag.to_string())
-                                    .map_err(|_| {
+                            let xpath =
+                                if key.alt == Some($crate::cldr_serde::displaynames::Alt::Menu) {
+                                    $crate::displaynames::coverage_experimental::construct_xpath(
+                                        $xpath_prefix,
+                                        &key.subtag,
+                                        Some($crate::cldr_serde::displaynames::Alt::Menu),
+                                        None,
+                                    )
+                                } else {
+                                    $crate::displaynames::coverage_experimental::construct_xpath(
+                                        $xpath_prefix,
+                                        &key.subtag,
+                                        None,
+                                        Some($crate::cldr_serde::displaynames::Menu::Core),
+                                    )
+                                };
+                            if matches!(
+                                crate::displaynames::coverage_experimental::coverage_cldr_cache()
+                                    .coverage_tier(&locale, &xpath, cldr)?,
+                                $tier
+                            ) {
+                                let data_identifier = DataIdentifierCow::from_owned(
+                                    DataMarkerAttributes::try_from_string(key.subtag.to_string())
+                                        .map_err(|_| {
                                         DataError::custom("Failed to parse attribute")
-                                            .with_debug_context(&key.subtag.to_string())
+                                            .with_debug_context(&key.subtag)
                                     })?,
-                                locale,
-                            );
-                            result.insert(data_identifier);
+                                    locale,
+                                );
+                                result.insert(data_identifier);
+                            }
                         }
                     }
                 }
                 Ok(result)
+            }
+        }
+
+        #[cfg(test)]
+        impl $crate::displaynames::coverage_experimental::CheckAltCoverage for $marker {
+            fn contains_key<T>(
+                key: &$crate::cldr_serde::displaynames::WithAlt<T>,
+                tier: $crate::displaynames::coverage_experimental::CoverageLevelForXPath,
+            ) -> bool {
+                ((key.alt.is_none() && key.menu.is_some())
+                    || key.alt == Some($crate::cldr_serde::displaynames::Alt::Menu))
+                    && matches!(tier, $tier)
             }
         }
     };
@@ -253,12 +341,14 @@ macro_rules! impl_displaynames_menu_v1 {
 /// - `$file`: The JSON file name in CLDR.
 /// - `$field`: The field name in `LocaleDisplayNames` containing the data.
 /// - `$alt_variant`: The alt variant (e.g., `None`, `Some(Alt::Short)`).
+/// - `$tier`: The target coverage tier.
 macro_rules! impl_displaynames_iter_v1 {
-    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr) => {
+    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr, $xpath_prefix:literal, $tier:pat) => {
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
                 let mut result = HashSet::new();
-                let displaynames = self.cldr()?.displaynames();
+                let cldr = self.cldr()?;
+                let displaynames = cldr.displaynames();
                 for locale in displaynames.list_locales()?.filter(|locale| {
                     // The directory might exist without the file
                     displaynames.file_exists(locale, $file).unwrap_or_default()
@@ -268,15 +358,28 @@ macro_rules! impl_displaynames_iter_v1 {
                         let matches = $alt_variant == key.alt && key.menu.is_none();
 
                         if matches {
-                            let data_identifier = DataIdentifierCow::from_owned(
-                                DataMarkerAttributes::try_from_string(key.subtag.to_string())
-                                    .map_err(|_| {
+                            let xpath =
+                                $crate::displaynames::coverage_experimental::construct_xpath(
+                                    $xpath_prefix,
+                                    &key.subtag,
+                                    $alt_variant,
+                                    None,
+                                );
+                            if matches!(
+                                crate::displaynames::coverage_experimental::coverage_cldr_cache()
+                                    .coverage_tier(&locale, &xpath, cldr)?,
+                                $tier
+                            ) {
+                                let data_identifier = DataIdentifierCow::from_owned(
+                                    DataMarkerAttributes::try_from_string(key.subtag.to_string())
+                                        .map_err(|_| {
                                         DataError::custom("Failed to parse attribute")
-                                            .with_debug_context(&key.subtag.to_string())
+                                            .with_debug_context(&key.subtag)
                                     })?,
-                                locale,
-                            );
-                            result.insert(data_identifier);
+                                    locale,
+                                );
+                                result.insert(data_identifier);
+                            }
                         }
                     }
                 }

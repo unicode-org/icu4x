@@ -14,11 +14,6 @@
 typedef struct Locale Locale;
 
 
-typedef struct DiplomatLocaleView {
-  const Locale** data;
-  size_t len;
-} DiplomatLocaleView;
-
 
 
 #endif // Locale_D_H

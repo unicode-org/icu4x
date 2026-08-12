@@ -608,7 +608,7 @@ size_test!(
 /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
 /// use icu::datetime::NoCalendarFormatter;
 /// use icu::locale::locale;
-/// use icu_datetime::pattern::PatternLoadError;
+/// use icu::datetime::pattern::PatternLoadError;
 /// use icu_provider::DataError;
 /// use icu_provider::DataErrorKind;
 ///

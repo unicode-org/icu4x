@@ -32,12 +32,14 @@ macro_rules! __impl_segmenter_break_grapheme_cluster_v2 {
                 pseudo_symbol_shift: 19u8,
                 pseudo_symbol_map: zerovec::ZeroVec::new(),
             };
+            #[doc(hidden)]
+            pub const SEGMENTER_BREAK_GRAPHEME_CLUSTER_V2_CHECKSUM: u64 = 12393384370774602146u64;
         }
         #[clippy::msrv = "1.88"]
         impl icu_provider::DataProvider<icu::segmenter::provider::SegmenterBreakGraphemeClusterV2> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::segmenter::provider::SegmenterBreakGraphemeClusterV2>, icu_provider::DataError> {
                 if req.id.locale.is_unknown() {
-                    Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V2), metadata: icu_provider::DataResponseMetadata::default() })
+                    Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V2), metadata: icu_provider::DataResponseMetadata::default().with_checksum(Self::SEGMENTER_BREAK_GRAPHEME_CLUSTER_V2_CHECKSUM) })
                 } else {
                     Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::segmenter::provider::SegmenterBreakGraphemeClusterV2 as icu_provider::DataMarker>::INFO, req))
                 }
@@ -59,7 +61,7 @@ macro_rules! __impl_segmenter_break_grapheme_cluster_v2 {
         impl icu_provider::DryDataProvider<icu::segmenter::provider::SegmenterBreakGraphemeClusterV2> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 if req.id.locale.is_unknown() {
-                    Ok(icu_provider::DataResponseMetadata::default())
+                    Ok(icu_provider::DataResponseMetadata::default().with_checksum(Self::SEGMENTER_BREAK_GRAPHEME_CLUSTER_V2_CHECKSUM))
                 } else {
                     Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::segmenter::provider::SegmenterBreakGraphemeClusterV2 as icu_provider::DataMarker>::INFO, req))
                 }
@@ -72,7 +74,7 @@ macro_rules! __impl_segmenter_break_grapheme_cluster_v2 {
         impl icu_provider::DryDataProvider<icu::segmenter::provider::SegmenterBreakGraphemeClusterV2> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 if req.id.locale.is_unknown() {
-                    Ok(icu_provider::DataResponseMetadata::default())
+                    Ok(icu_provider::DataResponseMetadata::default().with_checksum(Self::SEGMENTER_BREAK_GRAPHEME_CLUSTER_V2_CHECKSUM))
                 } else {
                     Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::segmenter::provider::SegmenterBreakGraphemeClusterV2 as icu_provider::DataMarker>::INFO, req))
                 }

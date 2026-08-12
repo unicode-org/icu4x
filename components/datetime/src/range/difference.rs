@@ -41,10 +41,23 @@ pub enum Difference {
     Year,
     /// Difference in era.
     Era,
-    /// Mixed difference (e.g., timezone difference, different calendars).
-    Mixed,
+    /// Incomparable difference (e.g., timezone difference, different calendars).
+    Incomparable,
 }
 
+impl Difference {
+    /// Returns whether the difference is in a time field (minute, hour, or day period).
+    pub(crate) fn is_time_diff(self) -> bool {
+        matches!(
+            self,
+            Self::Minute | Self::Hour | Self::DayPeriodB | Self::DayPeriodA
+        )
+    }
+    /// Returns whether the difference is in a date field (day, month, year, era).
+    pub(crate) fn is_date_diff(self) -> bool {
+        matches!(self, Self::Day | Self::Month | Self::Year | Self::Era)
+    }
+}
 /// Resolves the greatest difference between two datetimes.
 ///
 /// If `dayperiod_names` is provided, it will be used to resolve flexible day periods (`B`).
@@ -56,7 +69,7 @@ pub(crate) fn resolve_difference(
     dayperiod_names: Option<&DayPeriodNames<'_>>,
 ) -> Difference {
     if !input1.has_same_zone(input2) {
-        return Difference::Mixed;
+        return Difference::Incomparable;
     }
 
     // Compare Date fields
@@ -237,7 +250,7 @@ mod tests {
         input2.zone_offset = Some(icu_time::zone::UtcOffset::try_from_seconds(3600).unwrap());
         assert_eq!(
             resolve_difference(&input1, &input2, None),
-            Difference::Mixed
+            Difference::Incomparable
         );
     }
 }

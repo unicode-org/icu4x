@@ -370,4 +370,75 @@ void main() {
       true,
     );
   });
+
+  test('Range formatting', () {
+    final locale = Locale.fromString('en');
+    final startIsoDate = IsoDate(2023, 12, 22);
+    final endIsoDate = startIsoDate.tryAddWithOptions(
+      DateDuration(isNegative: false, years: 0, months: 0, weeks: 0, days: 1),
+      DateAddOptions(),
+    );
+    final startTime = Time(9, 0, 0, 0);
+    final endTime = Time(17, 0, 0, 0);
+
+    final calendar = Calendar(CalendarKind.gregorian);
+    final startDate = startIsoDate.toCalendar(calendar);
+    final endDate = endIsoDate.toCalendar(calendar);
+
+    ///// DateRangeFormatter /////
+    final dateRangeFormatter = DateRangeFormatter.ymd(locale);
+    expect(
+      dateRangeFormatter.formatIso(startIsoDate, endIsoDate),
+      'Dec 22 – 23, 2023',
+    );
+    expect(
+      dateRangeFormatter.formatSameCalendar(startDate, endDate),
+      'Dec 22 – 23, 2023',
+    );
+
+    ///// DateRangeFormatterGregorian /////
+    final dateRangeFormatterGregorian = DateRangeFormatterGregorian.ymd(locale);
+    expect(
+      dateRangeFormatterGregorian.formatIso(startIsoDate, endIsoDate),
+      'Dec 22 – 23, 2023',
+    );
+
+    ///// TimeRangeFormatter /////
+    final timeRangeFormatter = TimeRangeFormatter(locale);
+    expect(timeRangeFormatter.format(startTime, endTime), '9:00 AM – 5:00 PM');
+
+    ///// DateTimeRangeFormatter /////
+    final dateTimeRangeFormatter = DateTimeRangeFormatter.ymdt(locale);
+    expect(
+      dateTimeRangeFormatter.formatIso(
+        startIsoDate,
+        startTime,
+        endIsoDate,
+        endTime,
+      ),
+      'Dec 22, 2023, 9:00:00 AM – Dec 23, 2023, 5:00:00 PM',
+    );
+    expect(
+      dateTimeRangeFormatter.formatSameCalendar(
+        startDate,
+        startTime,
+        endDate,
+        endTime,
+      ),
+      'Dec 22, 2023, 9:00:00 AM – Dec 23, 2023, 5:00:00 PM',
+    );
+
+    ///// DateTimeRangeFormatterGregorian /////
+    final dateTimeRangeFormatterGregorian =
+        DateTimeRangeFormatterGregorian.ymdt(locale);
+    expect(
+      dateTimeRangeFormatterGregorian.formatIso(
+        startIsoDate,
+        startTime,
+        endIsoDate,
+        endTime,
+      ),
+      'Dec 22, 2023, 9:00:00 AM – Dec 23, 2023, 5:00:00 PM',
+    );
+  });
 }

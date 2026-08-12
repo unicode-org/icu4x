@@ -1,0 +1,19 @@
+{
+  "coverageByXPath": {
+    "sa": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"sa\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"IN\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"indian\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"indian\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"traditional\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"traditional\"][@scope=\"core\"]"
+      ],
+      "modern": []
+    }
+  }
+}

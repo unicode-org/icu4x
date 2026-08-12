@@ -29,7 +29,7 @@ impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
         if let Some(t) = self
             .rscd()?
             .cpt_cache
-            .get(core::str::from_utf8(BidiMirroringGlyph::SHORT_NAME).unwrap())
+            .get(str::from_utf8(BidiMirroringGlyph::SHORT_NAME).unwrap())
         {
             let trie = t.downcast_ref::<icu::collections::codepointtrie::CodePointTrie<'static, BidiMirroringGlyph>>().unwrap().clone();
 
@@ -112,7 +112,7 @@ impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
         let trie = builder.build();
 
         self.rscd()?.cpt_cache.insert(
-            core::str::from_utf8(BidiMirroringGlyph::SHORT_NAME).unwrap(),
+            str::from_utf8(BidiMirroringGlyph::SHORT_NAME).unwrap(),
             Box::new(trie.clone()),
         );
 

@@ -28,7 +28,7 @@ pub trait AbstractFormatter: core::fmt::Debug + Sealed {
         Self: 'a;
 
     #[doc(hidden)]
-    fn format_unsigned<'a>(&'a self, value: &'a UnsignedDecimal) -> Self::FormattedUnsigned<'a>;
+    fn format_unsigned<'a>(&'a self, value: UnsignedDecimal) -> Self::FormattedUnsigned<'a>;
 
     #[doc(hidden)]
     fn format_sign<'a, W: Writeable>(
@@ -45,8 +45,8 @@ impl Sealed for DecimalFormatter {}
 impl AbstractFormatter for DecimalFormatter {
     type FormattedUnsigned<'a> = FormattedUnsignedDecimal<'a>;
 
-    fn format_unsigned<'a>(&'a self, value: &'a UnsignedDecimal) -> Self::FormattedUnsigned<'a> {
-        self.format_unsigned(crate::Cow::Borrowed(value))
+    fn format_unsigned<'a>(&'a self, value: UnsignedDecimal) -> Self::FormattedUnsigned<'a> {
+        self.format_unsigned(crate::Cow::Owned(value))
     }
 
     fn format_sign<'a, W: Writeable>(
@@ -66,8 +66,8 @@ impl Sealed for CompactDecimalFormatter {}
 impl AbstractFormatter for CompactDecimalFormatter {
     type FormattedUnsigned<'a> = FormattedUnsignedCompactDecimal<'a>;
 
-    fn format_unsigned<'a>(&'a self, value: &'a UnsignedDecimal) -> Self::FormattedUnsigned<'a> {
-        self.format_unsigned(value)
+    fn format_unsigned<'a>(&'a self, value: UnsignedDecimal) -> Self::FormattedUnsigned<'a> {
+        self.format_unsigned(&value)
     }
 
     fn format_sign<'a, W: Writeable>(

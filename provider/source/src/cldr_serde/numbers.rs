@@ -320,6 +320,12 @@ pub(crate) struct CurrencyFormattingPatterns {
     #[serde(rename = "accounting-alphaNextToNumber")]
     pub(crate) accounting_alpha_next_to_number: Option<NumberPattern>,
 
+    #[serde(rename = "standard-noCurrency")]
+    pub(crate) standard_no_currency: Option<NumberPattern>,
+
+    #[serde(rename = "accounting-noCurrency")]
+    pub(crate) accounting_no_currency: Option<NumberPattern>,
+
     #[serde(rename = "unitPattern-count-0")]
     pub(crate) pattern_explicit_zero: Option<PatternString<DoublePlaceholder>>,
 

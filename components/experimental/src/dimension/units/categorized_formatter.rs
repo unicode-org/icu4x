@@ -12,7 +12,7 @@ use fixed_decimal::Decimal;
 use icu_decimal::DecimalFormatter;
 use icu_decimal::DecimalFormatterPreferences;
 use icu_decimal::options::DecimalFormatterOptions;
-use icu_locale::DataLocale;
+use icu_locale_core::DataLocale;
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_plurals::PluralRules;
 use icu_plurals::PluralRulesPreferences;

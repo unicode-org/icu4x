@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[cfg(feature = "datagen")]
-use super::{super::PatternItem, Pattern};
+use super::{super::PatternItem, Pattern, PatternMetadata};
 #[cfg(feature = "datagen")]
 use zerovec::ule::AsULE;
 
@@ -29,6 +29,8 @@ pub fn maybe_replace_first(pattern: &mut Pattern, f: impl Fn(&PatternItem) -> Op
     if let Some((i, result)) = result {
         pattern.items.to_mut_slice()[i] = result.to_unaligned();
     }
+    // Keep the pattern metadata up-to-date since replacing a field could change it
+    pattern.metadata = PatternMetadata::from_iter_items(pattern.items.iter());
 }
 
 /// Helper function which takes a runtime `Pattern` and calls

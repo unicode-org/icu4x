@@ -3,6 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub(crate) mod difference;
+pub(crate) mod formatter;
+pub(crate) mod formatter_impl;
 pub(crate) mod write;
 
+pub use formatter::{DateRangeFormatter, FixedCalendarDateRangeFormatter};
 pub use write::FormattedDateRange;
+
+/// A range formatter optimized for time and time zone formatting, when a calendar is not needed.
+pub type NoCalendarRangeFormatter<FSet> = FixedCalendarDateRangeFormatter<(), FSet>;

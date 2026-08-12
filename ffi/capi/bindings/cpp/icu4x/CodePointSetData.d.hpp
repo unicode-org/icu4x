@@ -26,12 +26,6 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct CodePointSetData;
-
-
-    typedef struct DiplomatCodePointSetDataView {
-      const CodePointSetData** data;
-      size_t len;
-    } DiplomatCodePointSetDataView;
 } // namespace capi
 } // namespace
 

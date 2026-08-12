@@ -152,9 +152,6 @@ impl<'data> PatternBorrowed<'data> {
     /// Returns the index of the first repeated field in the pattern, if any.
     ///
     /// This is used to find the split point for range patterns.
-    /// Returns the index of the first repeated field in the pattern, if any.
-    ///
-    /// This is used to find the split point for range patterns.
     #[allow(dead_code, reason = "#5448")]
     fn first_repeated_field_index(&self) -> usize {
         struct Seen {

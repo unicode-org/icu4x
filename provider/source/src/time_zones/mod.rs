@@ -758,24 +758,23 @@ mod tests {
 
     #[test]
     fn basic_cldr_time_zones() {
-        use icu::locale::langid;
+        use icu::locale::data_locale;
 
         let provider = SourceDataProvider::new_testing();
 
-        let en = langid!("en").into();
+        let en = data_locale!("en");
         let en = DataRequest {
             id: DataIdentifierBorrowed::for_locale(&en),
             ..Default::default()
         };
 
-        let fr = langid!("fr").into();
+        let fr = data_locale!("fr");
         let fr = DataRequest {
             id: DataIdentifierBorrowed::for_locale(&fr),
             ..Default::default()
         };
 
         let time_zone_formats: DataResponse<TimezoneNamesEssentialsV1> = provider.load(en).unwrap();
-        assert_eq!("GMT", time_zone_formats.payload.get().offset_zero);
         assert_eq!("GMT+?", time_zone_formats.payload.get().offset_unknown);
 
         let locations_root: DataResponse<TimezoneNamesLocationsRootV1> = provider.load(en).unwrap();

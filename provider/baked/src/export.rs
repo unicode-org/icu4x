@@ -275,14 +275,16 @@ impl BakedExporter {
                     .replace("icu_", "icu::")
                     .replace("icu::provider", "icu_provider")
                     .replace("icu::locale_core", "icu_locale_core")
-                    .replace("icu::pattern", "icu_pattern");
+                    .replace("icu::pattern", "icu_pattern")
+                    .replace("icu::locale_fallback", "icu_locale_fallback");
             } else {
                 // Unformatted
                 formatted = formatted
                     .replace("icu_", "icu :: ")
                     .replace("icu :: provider", "icu_provider")
                     .replace("icu :: locale_core", "icu_locale_core")
-                    .replace("icu :: pattern", "icu_pattern");
+                    .replace("icu :: pattern", "icu_pattern")
+                    .replace("icu :: locale_fallback", "icu_locale_fallback");
             }
         }
 
@@ -452,31 +454,25 @@ impl DataExporter for BakedExporter {
         let maybe_msrv = maybe_msrv();
 
         let marker_bake = bake_marker(marker);
-
-        let singleton_ident = format!(
-            "SINGLETON_{}",
-            marker_bake
-                .clone()
-                .into_iter()
-                .last()
-                .unwrap()
-                .to_string()
-                .to_shouty_snake_case()
-        )
-        .parse::<TokenStream>()
-        .unwrap();
+        let marker_bake_shouty = marker_bake
+            .clone()
+            .into_iter()
+            .last()
+            .unwrap()
+            .to_string()
+            .to_shouty_snake_case();
 
         let (checksum_decl, metadata_bake) = if let Some(checksum) = metadata.checksum {
-            let singleton_checksum_ident = format!("{singleton_ident}_CHECKSUM")
+            let checksum_ident = format!("{marker_bake_shouty}_CHECKSUM")
                 .parse::<TokenStream>()
                 .unwrap();
             (
                 quote! {
-                    #[doc(hidden)] // singletons might be used cross-crate
-                    pub const #singleton_checksum_ident: u64 = #checksum;
+                    #[doc(hidden)] // might be used cross-crate
+                    pub const #checksum_ident: u64 = #checksum;
                 },
                 quote! {
-                    icu_provider::DataResponseMetadata::default().with_checksum(Self::#singleton_checksum_ident)
+                    icu_provider::DataResponseMetadata::default().with_checksum(Self::#checksum_ident)
                 },
             )
         } else {
@@ -487,6 +483,10 @@ impl DataExporter for BakedExporter {
                 },
             )
         };
+
+        let singleton_ident = format!("SINGLETON_{}", marker_bake_shouty)
+            .parse::<TokenStream>()
+            .unwrap();
 
         let dependencies = CrateEnv::default();
         dependencies.insert("icu_provider");
@@ -559,6 +559,28 @@ impl DataExporter for BakedExporter {
             .unwrap()
             .to_string()
             .to_shouty_snake_case();
+
+        let (checksum_decl, metadata_bake) = if let Some(checksum) = metadata.checksum {
+            let checksum_ident = format!("{marker_bake_shouty}_CHECKSUM")
+                .parse::<TokenStream>()
+                .unwrap();
+            (
+                quote! {
+                    #[doc(hidden)] // might be used cross-crate
+                    pub const #checksum_ident: u64 = #checksum;
+                },
+                quote! {
+                    icu_provider::DataResponseMetadata::default().with_checksum(Self::#checksum_ident)
+                },
+            )
+        } else {
+            (
+                quote!(),
+                quote! {
+                    icu_provider::DataResponseMetadata::default()
+                },
+            )
+        };
 
         let deduplicated_values = self
             .data
@@ -641,7 +663,7 @@ impl DataExporter for BakedExporter {
                 icu_provider::baked::zerotrie::Data<icu_provider::hello_world::HelloWorldV1>,
             >() + trie.as_borrowed_slice().borrows_size();
 
-            let mut consts = vec![];
+            let mut consts = vec![checksum_decl];
             let baked_trie = trie.as_borrowed_slice().bake(&Default::default());
             let data_ident = format!("DATA_{marker_bake_shouty}")
                 .parse::<TokenStream>()
@@ -715,16 +737,6 @@ impl DataExporter for BakedExporter {
                 });
             };
 
-            let metadata_bake = if let Some(checksum) = metadata.checksum {
-                quote! {
-                    icu_provider::DataResponseMetadata::default().with_checksum(#checksum)
-                }
-            } else {
-                quote! {
-                    icu_provider::DataResponseMetadata::default()
-                }
-            };
-
             dependencies.insert("icu_provider/baked");
 
             let search = if !self.use_internal_fallback {
@@ -748,15 +760,15 @@ impl DataExporter for BakedExporter {
                     };
                 }
             } else {
-                dependencies.insert("icu_locale/compiled_data");
+                dependencies.insert("icu_locale_fallback/compiled_data");
                 quote! {
                     let mut metadata = #metadata_bake;
 
                     let payload =  if let Some(payload) = icu_provider::baked::DataStore::get(&Self::#data_ident, req.id, req.metadata.attributes_prefix_match) {
                         payload
                     } else {
-                        const FALLBACKER: icu_locale::fallback::LocaleFallbackerWithConfig<'static> =
-                            icu_locale::fallback::LocaleFallbacker::new()
+                        const FALLBACKER: icu_locale_fallback::LocaleFallbackerWithConfig<'static> =
+                            icu_locale_fallback::LocaleFallbacker::new()
                                 .for_config(<#marker_bake as icu_provider::DataMarker>::INFO.fallback_config);
                         let mut fallback_iterator = FALLBACKER.fallback_for(req.id.locale.clone());
                         loop {

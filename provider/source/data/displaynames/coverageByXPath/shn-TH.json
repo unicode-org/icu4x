@@ -1,0 +1,23 @@
+{
+  "coverageByXPath": {
+    "shn-TH": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"shn\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Mymr\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"MM\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"TH\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"buddhist\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"buddhist\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"mymr\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"mymrshan\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"mymrshan\"][@scope=\"core\"]"
+      ],
+      "modern": []
+    }
+  }
+}

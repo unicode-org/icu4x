@@ -115,10 +115,6 @@ const ICUEXPORTDATA_GLOB: &[&str] = &[
     "norm/small/nfkdex.toml",
     "norm/small/uts46d.toml",
     "segmenter/dictionary/thaidict.toml",
-    "uprops/small/nfcinert.toml",
-    "uprops/small/nfdinert.toml",
-    "uprops/small/nfkcinert.toml",
-    "uprops/small/nfkdinert.toml",
 ];
 
 const LSTM_GLOB: &[&str] = &[

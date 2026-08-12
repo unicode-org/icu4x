@@ -151,6 +151,17 @@ final class FetchMode extends BuildMode {
       input.outputDirectory.resolve(input.config.filename('icu4x')),
     );
     await library.writeAsBytes(bytes);
+    if (input.userDefines['verifyAttestation'] == true) {
+      await runProcess('gh', [
+        'attestation',
+        'verify',
+        library.path,
+        '--owner',
+        'unicode-org',
+        '--repo',
+        'icu4x',
+      ]);
+    }
     return library.uri;
   }
 
@@ -249,14 +260,14 @@ final class CheckoutMode extends BuildMode {
       [
         if (buildStatic || isNoStd) '+$nightly',
         'rustc',
-        '--manifest-path=ffi/capi/Cargo.toml',
+        '-m=ffi/capi/Cargo.toml',
         '--crate-type=${buildStatic ? 'staticlib' : 'cdylib'}',
         '--release',
         '--config=profile.release.panic="abort"',
         '--config=profile.release.codegen-units=1',
         '--no-default-features',
         '--features=${{
-          ...['default_components', 'experimental', 'buffer_provider', 'compiled_data'],
+          ...['default_components', 'experimental', 'buffer_provider', 'compiled_data', 'unstable'],
           ...additionalFeatures,
         }.join(',')}',
         if (isNoStd) '-Zbuild-std=core,alloc',

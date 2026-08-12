@@ -26,12 +26,6 @@ class DataError;
 namespace icu4x {
 namespace capi {
     struct LocaleDisplayNamesFormatter;
-
-
-    typedef struct DiplomatLocaleDisplayNamesFormatterView {
-      const LocaleDisplayNamesFormatter** data;
-      size_t len;
-    } DiplomatLocaleDisplayNamesFormatterView;
 } // namespace capi
 } // namespace
 

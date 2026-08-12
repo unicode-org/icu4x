@@ -175,37 +175,37 @@ end
 description = "Generate C headers for the FFI with Diplomat"
 category = "ICU4X Development"
 command = "cargo"
-args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "c"]
+args = ["run", "-m", "tools/make/diplomat-gen/Cargo.toml", "c"]
 
 [tasks.diplomat-gen-cpp]
 description = "Generate C++ headers for the FFI with Diplomat"
 category = "ICU4X Development"
 command = "cargo"
-args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "cpp"]
+args = ["run", "-m", "tools/make/diplomat-gen/Cargo.toml", "cpp"]
 
 [tasks.diplomat-gen-js]
 description = "Generate JS bindings for the FFI with Diplomat"
 category = "ICU4X Development"
 command = "cargo"
-args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "js"]
+args = ["run", "-m", "tools/make/diplomat-gen/Cargo.toml", "js"]
 
 [tasks.diplomat-gen-demo]
 description = "Generate Demo HTML for the FFI with Diplomat"
 category = "ICU4X Development"
 command = "cargo"
-args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "demo_gen"]
+args = ["run", "-m", "tools/make/diplomat-gen/Cargo.toml", "demo_gen"]
 
 [tasks.diplomat-gen-dart]
 description = "Generate Dart bindings for the FFI with Diplomat"
 category = "ICU4X Development"
 command = "cargo"
-args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "dart"]
+args = ["run", "-m", "tools/make/diplomat-gen/Cargo.toml", "dart"]
 
 [tasks.diplomat-gen-kotlin]
 description = "Generate Kotlin bindings for the FFI with Diplomat"
 category = "ICU4X Development"
 command = "cargo"
-args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "kotlin"]
+args = ["run", "-m", "tools/make/diplomat-gen/Cargo.toml", "kotlin"]
 
 # Diplomat coverage
 
@@ -214,7 +214,7 @@ description = "Produces the list of ICU APIs that are not exported through Diplo
 category = "ICU4X Development"
 command = "cargo"
 env = { ICU4X_DATA_DIR = "../stubdata" }
-args = ["run", "--manifest-path=tools/make/diplomat-coverage/Cargo.toml", "--", "ffi/capi/tests/missing_apis.txt"]
+args = ["run", "-m=tools/make/diplomat-coverage/Cargo.toml", "--", "ffi/capi/tests/missing_apis.txt"]
 
 [tasks.verify-diplomat-coverage]
 description = "Verify that checked-in Diplomat coverage is up to date"
