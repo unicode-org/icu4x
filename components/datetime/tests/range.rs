@@ -367,3 +367,147 @@ fn test_date_range_ej() {
         "Fri 8:40\u{202f}PM\u{2009}–\u{2009}Sat 9:50\u{202f}PM"
     );
 }
+
+// Tests documenting issues when date range formatting falls back to `root` (`und`).
+//
+// See issue #8359.
+//
+// When a locale or calendar lacks custom interval patterns in CLDR, locale fallback walks up
+// the hierarchy to `root` (`und`). CLDR's `root` defines interval patterns using English/ISO conventions
+// (e.g. `y MMM d–d`, `G y-MM-dd–y-MM-dd`). This causes two major categories of problems:
+//
+// 1. Missing Names: The `root` range pattern often contains
+//    symbols/lengths (such as `MMM` or `G`) that were not loaded by the single `DateTimeFormatter`
+//    (e.g., `zh` whose single date pattern uses numeric month `M`, or `YMD::long()` which loads
+//    `MMMM` but not `MMM`). This can lead to violations of assumptions.
+//
+// 2. Incorrect patterns: `root` patterns impose YMD order on
+//    locales that use Day-Month-Year (such as German, French, Spanish). The results
+//    will be incorrect, and, importantly, not consistent with the results of regular date
+//    formatting, which can be confusing.
+
+/// Chinese (zh) with `YMD::medium()`:
+/// Single date pattern is "y年M月d日" (numeric month 'M').
+/// Single `DateTimeFormatter` only loads numeric month data, not abbreviated month names ("MMM").
+/// But range pattern falls back to `root` (`und`), which specifies "y MMM d–d".
+/// When executing the `root` pattern, `FormattedSingleSide` fails with `NamesNotLoaded`.
+#[cfg(debug_assertions)]
+#[test]
+#[should_panic(expected = "unexpected error in FormattedSingleSide: NamesNotLoaded")]
+fn test_root_fallback_names_not_loaded_zh() {
+    use icu_calendar::Date;
+    use icu_datetime::fieldsets;
+    use icu_datetime::input::{DateTime, Time};
+    use icu_datetime::range::DateRangeFormatter;
+    use icu_locale_core::locale;
+
+    let start = DateTime {
+        date: Date::try_new_gregorian(2023, 12, 22).unwrap(),
+        time: Time::try_new(9, 0, 0, 0).unwrap(),
+    };
+    let end_day = DateTime {
+        date: Date::try_new_gregorian(2023, 12, 23).unwrap(),
+        time: Time::try_new(17, 0, 0, 0).unwrap(),
+    };
+
+    let fmt_zh =
+        DateRangeFormatter::try_new(locale!("zh").into(), fieldsets::YMD::medium()).unwrap();
+    let _ = fmt_zh.format(&start, &end_day).to_string();
+}
+
+/// Spanish with Hebrew calendar (es-u-ca-hebrew) and `YMD::long()`:
+/// Single `DateTimeFormatter` for `YMD::long()` loads full month names ("MMMM"), but range pattern
+/// falls back to `root` (`und`), which uses abbreviated month names ("MMM").
+#[cfg(debug_assertions)]
+#[test]
+#[should_panic(expected = "unexpected error in FormattedSingleSide: NamesNotLoaded")]
+fn test_root_fallback_names_not_loaded_es_hebrew() {
+    use icu_calendar::Date;
+    use icu_datetime::fieldsets;
+    use icu_datetime::input::{DateTime, Time};
+    use icu_datetime::range::DateRangeFormatter;
+    use icu_locale_core::locale;
+
+    let start = DateTime {
+        date: Date::try_new_gregorian(2023, 12, 22).unwrap(),
+        time: Time::try_new(9, 0, 0, 0).unwrap(),
+    };
+    let end_day = DateTime {
+        date: Date::try_new_gregorian(2023, 12, 23).unwrap(),
+        time: Time::try_new(17, 0, 0, 0).unwrap(),
+    };
+
+    let fmt_es_hebrew =
+        DateRangeFormatter::try_new(locale!("es-u-ca-hebrew").into(), fieldsets::YMD::long())
+            .unwrap();
+    let _ = fmt_es_hebrew.format(&start, &end_day).to_string();
+}
+
+/// German with Buddhist calendar (de-u-ca-buddhist) and `YMD::long()`:
+/// Single `DateTimeFormatter` for `YMD::long()` loads full month names ("MMMM"), but range pattern
+/// falls back to `root` (`und`), which uses abbreviated month names ("MMM").
+#[cfg(debug_assertions)]
+#[test]
+#[should_panic(expected = "unexpected error in FormattedSingleSide: NamesNotLoaded")]
+fn test_root_fallback_names_not_loaded_de_buddhist() {
+    use icu_calendar::Date;
+    use icu_datetime::fieldsets;
+    use icu_datetime::input::{DateTime, Time};
+    use icu_datetime::range::DateRangeFormatter;
+    use icu_locale_core::locale;
+
+    let start = DateTime {
+        date: Date::try_new_gregorian(2023, 12, 22).unwrap(),
+        time: Time::try_new(9, 0, 0, 0).unwrap(),
+    };
+    let end_day = DateTime {
+        date: Date::try_new_gregorian(2023, 12, 23).unwrap(),
+        time: Time::try_new(17, 0, 0, 0).unwrap(),
+    };
+
+    let fmt_de_buddhist =
+        DateRangeFormatter::try_new(locale!("de-u-ca-buddhist").into(), fieldsets::YMD::long())
+            .unwrap();
+    let _ = fmt_de_buddhist.format(&start, &end_day).to_string();
+}
+
+#[test]
+fn test_root_fallback_issues_field_order() {
+    use icu_calendar::Date;
+    use icu_datetime::fieldsets;
+    use icu_datetime::input::{DateTime, Time};
+    use icu_datetime::range::DateRangeFormatter;
+    use icu_locale_core::locale;
+    use writeable::assert_writeable_eq;
+
+    let start = DateTime {
+        date: Date::try_new_gregorian(2023, 12, 22).unwrap(),
+        time: Time::try_new(9, 0, 0, 0).unwrap(),
+    };
+    let end_day = DateTime {
+        date: Date::try_new_gregorian(2023, 12, 23).unwrap(),
+        time: Time::try_new(17, 0, 0, 0).unwrap(),
+    };
+
+    // German (de) uses Day.Month.Year order (e.g. "22.12.2023").
+    // For Buddhist calendar in YMD::medium(), `de` has no custom range pattern in CLDR.
+    // Falling back to `root` uses the root pattern "G y-MM-dd – y-MM-dd" (ISO order with era first).
+    let fmt_de_buddhist =
+        DateRangeFormatter::try_new(locale!("de-u-ca-buddhist").into(), fieldsets::YMD::medium())
+            .unwrap();
+    // This produces "BE 2566-12-22 – 2566-12-23" instead of German Day-first order:
+    assert_writeable_eq!(
+        fmt_de_buddhist.format(&start, &end_day),
+        "BE 2566-12-22\u{2009}–\u{2009}2566-12-23"
+    );
+
+    // Hebrew calendar in German:
+    let fmt_de_hebrew =
+        DateRangeFormatter::try_new(locale!("de-u-ca-hebrew").into(), fieldsets::YMD::medium())
+            .unwrap();
+    // This produces "AM 5784-04-10 – 5784-04-11" instead of German Day-first order:
+    assert_writeable_eq!(
+        fmt_de_hebrew.format(&start, &end_day),
+        "AM 5784-04-10\u{2009}–\u{2009}5784-04-11"
+    );
+}
