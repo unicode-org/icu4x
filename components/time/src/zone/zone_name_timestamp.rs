@@ -60,7 +60,7 @@ use crate::{DateTime, ZonedDateTime, zone::UtcOffset};
 /// assert_writeable_eq!(name_future, "Alaska Time");
 /// ```
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub struct ZoneNameTimestamp(u32);
+pub struct ZoneNameTimestamp(i32);
 
 const RD_EPOCH: RataDie = calendrical_calculations::gregorian::fixed_from_gregorian(1970, 1, 1);
 
@@ -146,9 +146,7 @@ impl ZoneNameTimestamp {
             s => s,
         };
         let qh = seconds / 60 / 15;
-        let qh_clamped = qh.clamp(Self::far_in_past().0 as i64, Self::far_in_future().0 as i64);
-        // Valid cast as the value is clamped to u32 values.
-        Self(qh_clamped as u32)
+        Self(qh.clamp(i32::MIN as i64, i32::MAX as i64) as i32)
     }
 
     /// Returns the *approximate* number of seconds since the UNIX epoch represented by this
@@ -203,12 +201,12 @@ impl ZoneNameTimestamp {
 
     /// Returns a [`ZoneNameTimestamp`] for a time far in the past.
     pub fn far_in_past() -> Self {
-        Self(0)
+        Self::from_epoch_seconds(i64::MIN)
     }
 
     /// Returns a [`ZoneNameTimestamp`] for a time far in the future.
     pub fn far_in_future() -> Self {
-        Self(0xFFFFFF)
+        Self::from_epoch_seconds(i64::MAX)
     }
 }
 
@@ -222,11 +220,12 @@ impl AsULE for ZoneNameTimestamp {
     type ULE = <u32 as AsULE>::ULE;
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
-        self.0.to_unaligned()
+        debug_assert!(self.0 >= 0, "serializing a negative ZoneNameTimestamp");
+        self.0.max(0).unsigned_abs().to_unaligned()
     }
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
-        Self(u32::from_unaligned(unaligned))
+        Self(u32::from_unaligned(unaligned) as i32)
     }
 }
 
@@ -258,10 +257,9 @@ impl serde::Serialize for ZoneNameTimestamp {
                 use core::fmt::Write;
                 let _infallible = write!(&mut s, ":{second:02}");
             }
-            // don't serialize the metadata for now
             return serializer.serialize_str(&s);
         }
-        serializer.serialize_u32(self.0)
+        serializer.serialize_i32(self.0.max(0))
     }
 }
 
@@ -294,7 +292,7 @@ impl<'de> serde::Deserialize<'de> for ZoneNameTimestamp {
                 zone: UtcOffset::zero(),
             }));
         }
-        u32::deserialize(deserializer).map(Self)
+        i32::deserialize(deserializer).map(Self)
     }
 }
 

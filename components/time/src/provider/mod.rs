@@ -399,7 +399,7 @@ pub struct TimezonePeriods<'a> {
     pub offsets: ZeroVec<'a, VariantOffsetsWithMetazoneMembershipKind>,
 }
 
-/// Encodes [`ZoneNameTimestamp`] in 3 bytes by dropping the unused metadata
+/// Encodes [`ZoneNameTimestamp`] in 3 bytes by dropping the sign byte.
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
@@ -449,7 +449,7 @@ impl serde::Serialize for TimezonePeriods<'_> {
                 if let Some(value) = self.list.get(idx) {
                     map.serialize_entry(
                         &tz,
-                        &[ZoneNameTimestamp::far_in_past()]
+                        &[ZoneNameTimestamp::from_epoch_seconds(0)]
                             .into_iter()
                             .chain(value.variable.iter().map(|(t, _, _)| t.0))
                             .map(|t| {
@@ -566,6 +566,10 @@ impl TimezonePeriods<'_> {
         idx: usize,
         timestamp: ZoneNameTimestamp,
     ) -> Option<(u8, NichedOption<MetazoneId, 1>)> {
+        if timestamp < ZoneNameTimestamp::from_epoch_seconds(0) {
+            return None;
+        }
+
         use zerovec::ule::AsULE;
         use zerovec::ule::vartuple::VarTupleULE;
         let &VarTupleULE {
@@ -573,7 +577,7 @@ impl TimezonePeriods<'_> {
             variable: ref rest,
         } = self.list.get(idx)?;
 
-        let i = match rest.binary_search_by(|(t, ..)| t.cmp(&Timestamp24(timestamp))) {
+        let i = match rest.binary_search_by(|(t, ..)| t.0.cmp(&timestamp)) {
             Err(0) => return Some(<(u8, NichedOption<MetazoneId, 1>)>::from_unaligned(first)),
             Err(i) => i - 1,
             Ok(i) => i,

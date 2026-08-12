@@ -373,7 +373,7 @@ impl DataProvider<TimezonePeriodsV1> for SourceDataProvider {
 
                     let (past, os, mz) = convert(&ps[0]);
 
-                    assert_eq!(past.0, ZoneNameTimestamp::far_in_past());
+                    assert_eq!(past.0, ZoneNameTimestamp::from_epoch_seconds(0));
 
                     let rest = ps[1..].iter().map(convert).collect::<ZeroVec<_>>();
 

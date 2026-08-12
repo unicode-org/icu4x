@@ -55,6 +55,23 @@
   },
   {
     "locale": "en",
+    "datetime": "1947-06-01T00:00:00.000+03:00[Europe/Berlin]",
+    "expectations": {
+      "z": "GMT+3",
+      "zzzz": "GMT+03:00",
+
+      "v": "Germany Time",
+      "vvvv": "Germany Time",
+
+      "VVV": "Berlin",
+      "VVVV": "Germany Time",
+
+      "O": "GMT+3",
+      "OOOO": "GMT+03:00"
+    }
+  },
+  {
+    "locale": "en",
     "datetime": "2021-07-11T12:00:00.000+01:00[Europe/London]",
     "expectations": {
       "z": "GMT+1",
