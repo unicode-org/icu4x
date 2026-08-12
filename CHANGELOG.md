@@ -69,6 +69,7 @@
     - Optimize runtime performance by resolving and caching `FractionInfo` during formatter construction. (unicode-org#8169)
     - Extend `CurrencyFormatterOptions` with `usage: CurrencyUsage` (`Standard` default, `Accounting`). (unicode-org#8187)
     - Added `CurrencyFormatter::try_new_no_currency` and `try_new_no_currency_unstable` constructors and `CurrencyNoCurrencyPatternsV1` data marker. (unicode-org#8275)
+    - Fixes locales whose negative subpattern places the sign somewhere other than the front, e.g. de-CH (¤ #,##0.00;¤-#,##0.00) now formats -12345.67 CHF as CHF-12'345.67 instead of -CHF 12'345.67. (unicode-org#8265)
   - `icu_experimental/displaynames`
     - Split singular display names into owned and borrowed types (unicode-org#8006)
       - New types: `ScriptDisplayNameOwned`, `ScriptDisplayName<'a>`, `RegionDisplayNameOwned`, `RegionDisplayName<'a>`
@@ -87,14 +88,15 @@
     - New methods: `LanguageIdentifierDisplayNameOwned::try_new_short[_unstable|_with_buffer_provider]`, `LanguageIdentifierDisplayNameOwned::try_new_long[_unstable|_with_buffer_provider]` `LanguageIdentifierDisplayNameOwned::try_new_short_menu[_unstable|_with_buffer_provider]` (unicode-org#8219)
     - Refactor single display name constructors into Tiny, Light, and Heavy data tiers (unicode-org#8233)
       - Constructors on `RegionDisplayNameOwned`, `ScriptDisplayNameOwned`, `VariantDisplayNameOwned`, and `LanguageIdentifierDisplayNameOwned` are overhauled
+    - Rename single display name types to follow new convention (unicode-org#8319)
+      - New types: `LanguageIdentifierDisplayNameBorrowed`, `RegionDisplayNameBorrowed`, `ScriptDisplayNameBorrowed`, `VariantDisplayNameBorrowed` (borrowed versions of display names)
+      - Renamed types: `LanguageIdentifierDisplayNameOwned` -> `LanguageIdentifierDisplayName`, `RegionDisplayNameOwned` -> `RegionDisplayName`, `ScriptDisplayNameOwned` -> `ScriptDisplayName`, `VariantDisplayNameOwned` -> `VariantDisplayName` (owned versions of display names, formerly had `Owned` suffix)
   - `icu_experimental/unicodeset`
     - Add support for `:EastAsianWidth=:` to unicode set parser (unicode-org#7896)
   - `icu_experimental/units`
     - `Convertibles`s are now passed by value, and for `Ratio<BigInt>` the `Convertible` impl is now on the reference (unicode-org#8073)
     - The `Convertibles` trait was completely overhauled to allow for more accurate calculations (unicode-org#8073)
     - Remove `UnitsFormatter`, use `CategorizedUnitsFormatter` (unicode-org#8236)
-  - `icu_list`
-    - Prevent correctness errors from out-of-range indices in list patterns. (unicode-org#7887)
   - `icu_locale`
     - fixes fallback with language-likely script but region-unlikely script, which fixes data loading and generation behavior for locales including  `sr-Cyrl-ME` and `zh-Hans-TW` (unicode-org#7857)
     - Allow digits as extension singletons as allowed by BCP47, e.g. `-1-foobar` (unicode-org#8019)
@@ -132,29 +134,24 @@
     - Added `Script` constants for some non-Unicode scripts (unicode-org#8017)
     - Add enumerated property constants for short names and aliases (i.e. `LineBreak::HH`) (unicode-org#8040)
   - `icu_segmenter`
-    - Add unstable Unihan radical provider data and baked support (unicode-org#7805)
-      - New types: `icu_segmenter::provider::UnihanIrgData<'data>`, `icu_segmenter::provider::SegmenterUnihanRadicalV1`
-      - New associated const: `icu_segmenter::provider::Baked::SINGLETON_SEGMENTER_UNIHAN_RADICAL_V1`
+    - Add `radaboost` and `thadaboost` models for faster and more accurate Chinese and Thai segmentation as unstable, for testing purposes only (unicode-org#7805)
       - The `experimental_segmenter` example now uses `radaboost` for the Chinese radical model and adds `thadaboost` for Thai
     - Use grapheme segmentation for `LineBreakStrictness:Anywhere` (unicode-org#7941)
-    - add experimental `neo::LineSegmenter` (unicode-org#7942)
+    - add experimental `_neo_` constructors (unicode-org#7942)
     - Align word segmenter behaviour with ICU4C and UAX#29 (unicode-org#7952)
     - Fix a bug in loose line breaking (unicode-org#8111)
     - Fix rewinding behavior in dictionary segmenter (unicode-org#8195)
     - Add `WordSegmenter[Borrowed]::load_auto[_unstable|_with_buffer_provider]` to load the complex segmentation data that is loaded by `WordSegmenter::new_auto` (unicode-org#8299)
+    - Add unstable `LineSegmenter::new_17_for_non_complex_scripts`, implementing Unicode 17 (unicode-org#8041)
 - Data model and providers
   - `icu4x-datagen`
     - Add `--alt-variant` CLI flag to enable alt variants during datagen. (unicode-org#8025)
   - `icu_provider`
     - allow slashes in DataMarkerAttributes (unicode-org#7890)
-    - Add type DataPayloadOr (note: it is already in the 1.5.x changelog) (unicode-org#8163)
+    - Stabilize type DataPayloadOr, added as draft in 1.5 (unicode-org#8163)
   - `icu_provider_fs`
     - Add defense-in-depth against path traversal. (unicode-org#7887)
-  - `icu_provider_registry`
-    - Export `icu_segmenter::provider::SegmenterUnihanRadicalV1` (unicode-org#7805)
   - `icu_provider_source`
-    - Add Unihan radical trie generation for `icu_segmenter::provider::SegmenterUnihanRadicalV1` (unicode-org#7805)
-      - `SourceDataProvider` can now load this marker from Unihan IRG data
     - Deprecated the unihan data source (unicode-org#7882)
     - Compute properties directly from the `unicode` data source, instead of from `icuexport` (unicode-org#7904)
     - Warn on unknown alt variants in display names (unicode-org#8010)
@@ -163,7 +160,6 @@
     - Add `with_alt_variants` to `SourceDataProvider` to support alt variants. (unicode-org#8025)
       - New enum: `AltVariantKind`
       - New method: `SourceDataProvider::with_alt_variants`
-    - Updated `LocaleNamesVariantMediumV1` datagen to normalize variant keys to lowercase and perform case-insensitive lookups. (unicode-org#8084)
     - New items: `SourceDataProvider::with_unicode_rscd_for_tag()`, `SourceDataProvider::with_unicode_rscd()`, `SourceDataProvider::TESTED_UNICODE_TAG`, `SourceDataProvider::is_missing_rscd_error()`, (unicode-org#8210)
     - Deprecated `SourceDataProvider::with_ucd_for_tag()`, `SourceDataProvider::with_unihan_for_tag()`, `SourceDataProvider::with_ucd()`, `SourceDataProvider::with_unihan()`, `SourceDataProvider::TESTED_UCD_TAG`, , `SourceDataProvider::is_missing_ucd_error()` (unicode-org#8210)
 - FFI
