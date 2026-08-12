@@ -7,23 +7,23 @@ import com.sun.jna.Structure
 
 internal interface LocaleNamesUnstableLib: Library {
     fun icu4x_LocaleNamesUnstable_destroy_mv1(handle: Pointer)
-    fun icu4x_LocaleNamesUnstable_for_region_light_mv1(locale: Pointer, region: Slice, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_region_light_mv1(locale: Pointer, region: Slice, write: Pointer): Unit
     fun icu4x_LocaleNamesUnstable_for_region_light_with_provider_mv1(provider: Pointer, locale: Pointer, region: Slice, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_region_tiny_mv1(locale: Pointer, region: Slice, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_region_tiny_mv1(locale: Pointer, region: Slice, write: Pointer): Unit
     fun icu4x_LocaleNamesUnstable_for_region_tiny_with_provider_mv1(provider: Pointer, locale: Pointer, region: Slice, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_region_short_tiny_mv1(locale: Pointer, region: Slice, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_region_short_tiny_mv1(locale: Pointer, region: Slice, write: Pointer): Unit
     fun icu4x_LocaleNamesUnstable_for_region_short_tiny_with_provider_mv1(provider: Pointer, locale: Pointer, region: Slice, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_region_short_light_mv1(locale: Pointer, region: Slice, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_region_short_light_mv1(locale: Pointer, region: Slice, write: Pointer): Unit
     fun icu4x_LocaleNamesUnstable_for_region_short_light_with_provider_mv1(provider: Pointer, locale: Pointer, region: Slice, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_script_light_mv1(locale: Pointer, script: Slice, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_script_light_mv1(locale: Pointer, script: Slice, write: Pointer): Unit
     fun icu4x_LocaleNamesUnstable_for_script_light_with_provider_mv1(provider: Pointer, locale: Pointer, script: Slice, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_script_tiny_mv1(locale: Pointer, script: Slice, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_script_tiny_mv1(locale: Pointer, script: Slice, write: Pointer): Unit
     fun icu4x_LocaleNamesUnstable_for_script_tiny_with_provider_mv1(provider: Pointer, locale: Pointer, script: Slice, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_script_heavy_mv1(locale: Pointer, script: Slice, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_script_heavy_mv1(locale: Pointer, script: Slice, write: Pointer): Unit
     fun icu4x_LocaleNamesUnstable_for_script_heavy_with_provider_mv1(provider: Pointer, locale: Pointer, script: Slice, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_script_short_heavy_mv1(locale: Pointer, script: Slice, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_script_short_heavy_mv1(locale: Pointer, script: Slice, write: Pointer): Unit
     fun icu4x_LocaleNamesUnstable_for_script_short_heavy_with_provider_mv1(provider: Pointer, locale: Pointer, script: Slice, write: Pointer): ResultUnitInt
-    fun icu4x_LocaleNamesUnstable_for_variant_heavy_mv1(locale: Pointer, variant: Slice, write: Pointer): ResultUnitInt
+    fun icu4x_LocaleNamesUnstable_for_variant_heavy_mv1(locale: Pointer, variant: Slice, write: Pointer): Unit
     fun icu4x_LocaleNamesUnstable_for_variant_heavy_with_provider_mv1(provider: Pointer, locale: Pointer, variant: Slice, write: Pointer): ResultUnitInt
     fun icu4x_LocaleNamesUnstable_for_language_identifier_light_mv1(locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
     fun icu4x_LocaleNamesUnstable_for_language_identifier_light_with_provider_mv1(provider: Pointer, locale: Pointer, langid: Pointer, languageDisplay: Int, write: Pointer): ResultUnitInt
@@ -91,21 +91,16 @@ class LocaleNamesUnstable internal constructor (
         
         /** 🚧 This API is unstable and may experience breaking changes outside major releases.
         *
-        *See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_light) for more information.
+        *See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
         */
-        fun forRegionLight(locale: Locale, region: String): Result<String> {
+        fun forRegionLight(locale: Locale, region: String): String {
             val regionSliceMemory = PrimitiveArrayTools.borrowUtf8(region)
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_region_light_mv1(locale.handle, regionSliceMemory.slice, write);
             try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
+                
+                val returnString = DW.writeToString(write)
+                return returnString
             } finally {
                 regionSliceMemory.close()
             }
@@ -114,7 +109,7 @@ class LocaleNamesUnstable internal constructor (
         
         /** 🚧 This API is unstable and may experience breaking changes outside major releases.
         *
-        *See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_light) for more information.
+        *See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
         */
         fun forRegionLightWithProvider(provider: DataProvider, locale: Locale, region: String): Result<String> {
             val regionSliceMemory = PrimitiveArrayTools.borrowUtf8(region)
@@ -137,21 +132,16 @@ class LocaleNamesUnstable internal constructor (
         
         /** 🚧 This API is unstable and may experience breaking changes outside major releases.
         *
-        *See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_tiny) for more information.
+        *See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
         */
-        fun forRegionTiny(locale: Locale, region: String): Result<String> {
+        fun forRegionTiny(locale: Locale, region: String): String {
             val regionSliceMemory = PrimitiveArrayTools.borrowUtf8(region)
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_region_tiny_mv1(locale.handle, regionSliceMemory.slice, write);
             try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
+                
+                val returnString = DW.writeToString(write)
+                return returnString
             } finally {
                 regionSliceMemory.close()
             }
@@ -160,7 +150,7 @@ class LocaleNamesUnstable internal constructor (
         
         /** 🚧 This API is unstable and may experience breaking changes outside major releases.
         *
-        *See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_tiny) for more information.
+        *See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
         */
         fun forRegionTinyWithProvider(provider: DataProvider, locale: Locale, region: String): Result<String> {
             val regionSliceMemory = PrimitiveArrayTools.borrowUtf8(region)
@@ -183,21 +173,16 @@ class LocaleNamesUnstable internal constructor (
         
         /** 🚧 This API is unstable and may experience breaking changes outside major releases.
         *
-        *See the [Rust documentation for `try_new_short_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_short_tiny) for more information.
+        *See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
         */
-        fun forRegionShortTiny(locale: Locale, region: String): Result<String> {
+        fun forRegionShortTiny(locale: Locale, region: String): String {
             val regionSliceMemory = PrimitiveArrayTools.borrowUtf8(region)
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_region_short_tiny_mv1(locale.handle, regionSliceMemory.slice, write);
             try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
+                
+                val returnString = DW.writeToString(write)
+                return returnString
             } finally {
                 regionSliceMemory.close()
             }
@@ -206,7 +191,7 @@ class LocaleNamesUnstable internal constructor (
         
         /** 🚧 This API is unstable and may experience breaking changes outside major releases.
         *
-        *See the [Rust documentation for `try_new_short_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_short_tiny) for more information.
+        *See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
         */
         fun forRegionShortTinyWithProvider(provider: DataProvider, locale: Locale, region: String): Result<String> {
             val regionSliceMemory = PrimitiveArrayTools.borrowUtf8(region)
@@ -229,21 +214,16 @@ class LocaleNamesUnstable internal constructor (
         
         /** 🚧 This API is unstable and may experience breaking changes outside major releases.
         *
-        *See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_short_light) for more information.
+        *See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
         */
-        fun forRegionShortLight(locale: Locale, region: String): Result<String> {
+        fun forRegionShortLight(locale: Locale, region: String): String {
             val regionSliceMemory = PrimitiveArrayTools.borrowUtf8(region)
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_region_short_light_mv1(locale.handle, regionSliceMemory.slice, write);
             try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
+                
+                val returnString = DW.writeToString(write)
+                return returnString
             } finally {
                 regionSliceMemory.close()
             }
@@ -252,7 +232,7 @@ class LocaleNamesUnstable internal constructor (
         
         /** 🚧 This API is unstable and may experience breaking changes outside major releases.
         *
-        *See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_short_light) for more information.
+        *See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
         */
         fun forRegionShortLightWithProvider(provider: DataProvider, locale: Locale, region: String): Result<String> {
             val regionSliceMemory = PrimitiveArrayTools.borrowUtf8(region)
@@ -275,21 +255,16 @@ class LocaleNamesUnstable internal constructor (
         
         /** 🚧 This API is unstable and may experience breaking changes outside major releases.
         *
-        *See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_light) for more information.
+        *See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
         */
-        fun forScriptLight(locale: Locale, script: String): Result<String> {
+        fun forScriptLight(locale: Locale, script: String): String {
             val scriptSliceMemory = PrimitiveArrayTools.borrowUtf8(script)
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_script_light_mv1(locale.handle, scriptSliceMemory.slice, write);
             try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
+                
+                val returnString = DW.writeToString(write)
+                return returnString
             } finally {
                 scriptSliceMemory.close()
             }
@@ -298,7 +273,7 @@ class LocaleNamesUnstable internal constructor (
         
         /** 🚧 This API is unstable and may experience breaking changes outside major releases.
         *
-        *See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_light) for more information.
+        *See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
         */
         fun forScriptLightWithProvider(provider: DataProvider, locale: Locale, script: String): Result<String> {
             val scriptSliceMemory = PrimitiveArrayTools.borrowUtf8(script)
@@ -321,21 +296,16 @@ class LocaleNamesUnstable internal constructor (
         
         /** 🚧 This API is unstable and may experience breaking changes outside major releases.
         *
-        *See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_tiny) for more information.
+        *See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
         */
-        fun forScriptTiny(locale: Locale, script: String): Result<String> {
+        fun forScriptTiny(locale: Locale, script: String): String {
             val scriptSliceMemory = PrimitiveArrayTools.borrowUtf8(script)
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_script_tiny_mv1(locale.handle, scriptSliceMemory.slice, write);
             try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
+                
+                val returnString = DW.writeToString(write)
+                return returnString
             } finally {
                 scriptSliceMemory.close()
             }
@@ -344,7 +314,7 @@ class LocaleNamesUnstable internal constructor (
         
         /** 🚧 This API is unstable and may experience breaking changes outside major releases.
         *
-        *See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_tiny) for more information.
+        *See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
         */
         fun forScriptTinyWithProvider(provider: DataProvider, locale: Locale, script: String): Result<String> {
             val scriptSliceMemory = PrimitiveArrayTools.borrowUtf8(script)
@@ -367,21 +337,16 @@ class LocaleNamesUnstable internal constructor (
         
         /** 🚧 This API is unstable and may experience breaking changes outside major releases.
         *
-        *See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_heavy) for more information.
+        *See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
         */
-        fun forScriptHeavy(locale: Locale, script: String): Result<String> {
+        fun forScriptHeavy(locale: Locale, script: String): String {
             val scriptSliceMemory = PrimitiveArrayTools.borrowUtf8(script)
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_script_heavy_mv1(locale.handle, scriptSliceMemory.slice, write);
             try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
+                
+                val returnString = DW.writeToString(write)
+                return returnString
             } finally {
                 scriptSliceMemory.close()
             }
@@ -390,7 +355,7 @@ class LocaleNamesUnstable internal constructor (
         
         /** 🚧 This API is unstable and may experience breaking changes outside major releases.
         *
-        *See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_heavy) for more information.
+        *See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
         */
         fun forScriptHeavyWithProvider(provider: DataProvider, locale: Locale, script: String): Result<String> {
             val scriptSliceMemory = PrimitiveArrayTools.borrowUtf8(script)
@@ -413,21 +378,16 @@ class LocaleNamesUnstable internal constructor (
         
         /** 🚧 This API is unstable and may experience breaking changes outside major releases.
         *
-        *See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_short_heavy) for more information.
+        *See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
         */
-        fun forScriptShortHeavy(locale: Locale, script: String): Result<String> {
+        fun forScriptShortHeavy(locale: Locale, script: String): String {
             val scriptSliceMemory = PrimitiveArrayTools.borrowUtf8(script)
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_script_short_heavy_mv1(locale.handle, scriptSliceMemory.slice, write);
             try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
+                
+                val returnString = DW.writeToString(write)
+                return returnString
             } finally {
                 scriptSliceMemory.close()
             }
@@ -436,7 +396,7 @@ class LocaleNamesUnstable internal constructor (
         
         /** 🚧 This API is unstable and may experience breaking changes outside major releases.
         *
-        *See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_short_heavy) for more information.
+        *See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
         */
         fun forScriptShortHeavyWithProvider(provider: DataProvider, locale: Locale, script: String): Result<String> {
             val scriptSliceMemory = PrimitiveArrayTools.borrowUtf8(script)
@@ -459,21 +419,16 @@ class LocaleNamesUnstable internal constructor (
         
         /** 🚧 This API is unstable and may experience breaking changes outside major releases.
         *
-        *See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.VariantDisplayName.html#method.try_new_heavy) for more information.
+        *See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
         */
-        fun forVariantHeavy(locale: Locale, variant: String): Result<String> {
+        fun forVariantHeavy(locale: Locale, variant: String): String {
             val variantSliceMemory = PrimitiveArrayTools.borrowUtf8(variant)
             val write = DW.lib.diplomat_buffer_write_create(0)
             val returnVal = lib.icu4x_LocaleNamesUnstable_for_variant_heavy_mv1(locale.handle, variantSliceMemory.slice, write);
             try {
-                val nativeOkVal = returnVal.getNativeOk();
-                if (nativeOkVal != null) {
-                    
-                    val returnString = DW.writeToString(write)
-                    return returnString.ok()
-                } else {
-                    return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
-                }
+                
+                val returnString = DW.writeToString(write)
+                return returnString
             } finally {
                 variantSliceMemory.close()
             }
@@ -482,7 +437,7 @@ class LocaleNamesUnstable internal constructor (
         
         /** 🚧 This API is unstable and may experience breaking changes outside major releases.
         *
-        *See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.VariantDisplayName.html#method.try_new_heavy) for more information.
+        *See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
         */
         fun forVariantHeavyWithProvider(provider: DataProvider, locale: Locale, variant: String): Result<String> {
             val variantSliceMemory = PrimitiveArrayTools.borrowUtf8(variant)

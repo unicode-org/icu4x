@@ -22,56 +22,47 @@ namespace icu4x {
 namespace capi {
     extern "C" {
 
-    typedef struct icu4x_LocaleNamesUnstable_for_region_light_mv1_result {union { icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleNamesUnstable_for_region_light_mv1_result;
-    icu4x_LocaleNamesUnstable_for_region_light_mv1_result icu4x_LocaleNamesUnstable_for_region_light_mv1(const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView region, icu4x::diplomat::capi::DiplomatWrite* write);
+    void icu4x_LocaleNamesUnstable_for_region_light_mv1(const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView region, icu4x::diplomat::capi::DiplomatWrite* write);
 
     typedef struct icu4x_LocaleNamesUnstable_for_region_light_with_provider_mv1_result {union { icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleNamesUnstable_for_region_light_with_provider_mv1_result;
     icu4x_LocaleNamesUnstable_for_region_light_with_provider_mv1_result icu4x_LocaleNamesUnstable_for_region_light_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView region, icu4x::diplomat::capi::DiplomatWrite* write);
 
-    typedef struct icu4x_LocaleNamesUnstable_for_region_tiny_mv1_result {union { icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleNamesUnstable_for_region_tiny_mv1_result;
-    icu4x_LocaleNamesUnstable_for_region_tiny_mv1_result icu4x_LocaleNamesUnstable_for_region_tiny_mv1(const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView region, icu4x::diplomat::capi::DiplomatWrite* write);
+    void icu4x_LocaleNamesUnstable_for_region_tiny_mv1(const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView region, icu4x::diplomat::capi::DiplomatWrite* write);
 
     typedef struct icu4x_LocaleNamesUnstable_for_region_tiny_with_provider_mv1_result {union { icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleNamesUnstable_for_region_tiny_with_provider_mv1_result;
     icu4x_LocaleNamesUnstable_for_region_tiny_with_provider_mv1_result icu4x_LocaleNamesUnstable_for_region_tiny_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView region, icu4x::diplomat::capi::DiplomatWrite* write);
 
-    typedef struct icu4x_LocaleNamesUnstable_for_region_short_tiny_mv1_result {union { icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleNamesUnstable_for_region_short_tiny_mv1_result;
-    icu4x_LocaleNamesUnstable_for_region_short_tiny_mv1_result icu4x_LocaleNamesUnstable_for_region_short_tiny_mv1(const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView region, icu4x::diplomat::capi::DiplomatWrite* write);
+    void icu4x_LocaleNamesUnstable_for_region_short_tiny_mv1(const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView region, icu4x::diplomat::capi::DiplomatWrite* write);
 
     typedef struct icu4x_LocaleNamesUnstable_for_region_short_tiny_with_provider_mv1_result {union { icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleNamesUnstable_for_region_short_tiny_with_provider_mv1_result;
     icu4x_LocaleNamesUnstable_for_region_short_tiny_with_provider_mv1_result icu4x_LocaleNamesUnstable_for_region_short_tiny_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView region, icu4x::diplomat::capi::DiplomatWrite* write);
 
-    typedef struct icu4x_LocaleNamesUnstable_for_region_short_light_mv1_result {union { icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleNamesUnstable_for_region_short_light_mv1_result;
-    icu4x_LocaleNamesUnstable_for_region_short_light_mv1_result icu4x_LocaleNamesUnstable_for_region_short_light_mv1(const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView region, icu4x::diplomat::capi::DiplomatWrite* write);
+    void icu4x_LocaleNamesUnstable_for_region_short_light_mv1(const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView region, icu4x::diplomat::capi::DiplomatWrite* write);
 
     typedef struct icu4x_LocaleNamesUnstable_for_region_short_light_with_provider_mv1_result {union { icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleNamesUnstable_for_region_short_light_with_provider_mv1_result;
     icu4x_LocaleNamesUnstable_for_region_short_light_with_provider_mv1_result icu4x_LocaleNamesUnstable_for_region_short_light_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView region, icu4x::diplomat::capi::DiplomatWrite* write);
 
-    typedef struct icu4x_LocaleNamesUnstable_for_script_light_mv1_result {union { icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleNamesUnstable_for_script_light_mv1_result;
-    icu4x_LocaleNamesUnstable_for_script_light_mv1_result icu4x_LocaleNamesUnstable_for_script_light_mv1(const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView script, icu4x::diplomat::capi::DiplomatWrite* write);
+    void icu4x_LocaleNamesUnstable_for_script_light_mv1(const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView script, icu4x::diplomat::capi::DiplomatWrite* write);
 
     typedef struct icu4x_LocaleNamesUnstable_for_script_light_with_provider_mv1_result {union { icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleNamesUnstable_for_script_light_with_provider_mv1_result;
     icu4x_LocaleNamesUnstable_for_script_light_with_provider_mv1_result icu4x_LocaleNamesUnstable_for_script_light_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView script, icu4x::diplomat::capi::DiplomatWrite* write);
 
-    typedef struct icu4x_LocaleNamesUnstable_for_script_tiny_mv1_result {union { icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleNamesUnstable_for_script_tiny_mv1_result;
-    icu4x_LocaleNamesUnstable_for_script_tiny_mv1_result icu4x_LocaleNamesUnstable_for_script_tiny_mv1(const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView script, icu4x::diplomat::capi::DiplomatWrite* write);
+    void icu4x_LocaleNamesUnstable_for_script_tiny_mv1(const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView script, icu4x::diplomat::capi::DiplomatWrite* write);
 
     typedef struct icu4x_LocaleNamesUnstable_for_script_tiny_with_provider_mv1_result {union { icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleNamesUnstable_for_script_tiny_with_provider_mv1_result;
     icu4x_LocaleNamesUnstable_for_script_tiny_with_provider_mv1_result icu4x_LocaleNamesUnstable_for_script_tiny_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView script, icu4x::diplomat::capi::DiplomatWrite* write);
 
-    typedef struct icu4x_LocaleNamesUnstable_for_script_heavy_mv1_result {union { icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleNamesUnstable_for_script_heavy_mv1_result;
-    icu4x_LocaleNamesUnstable_for_script_heavy_mv1_result icu4x_LocaleNamesUnstable_for_script_heavy_mv1(const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView script, icu4x::diplomat::capi::DiplomatWrite* write);
+    void icu4x_LocaleNamesUnstable_for_script_heavy_mv1(const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView script, icu4x::diplomat::capi::DiplomatWrite* write);
 
     typedef struct icu4x_LocaleNamesUnstable_for_script_heavy_with_provider_mv1_result {union { icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleNamesUnstable_for_script_heavy_with_provider_mv1_result;
     icu4x_LocaleNamesUnstable_for_script_heavy_with_provider_mv1_result icu4x_LocaleNamesUnstable_for_script_heavy_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView script, icu4x::diplomat::capi::DiplomatWrite* write);
 
-    typedef struct icu4x_LocaleNamesUnstable_for_script_short_heavy_mv1_result {union { icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleNamesUnstable_for_script_short_heavy_mv1_result;
-    icu4x_LocaleNamesUnstable_for_script_short_heavy_mv1_result icu4x_LocaleNamesUnstable_for_script_short_heavy_mv1(const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView script, icu4x::diplomat::capi::DiplomatWrite* write);
+    void icu4x_LocaleNamesUnstable_for_script_short_heavy_mv1(const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView script, icu4x::diplomat::capi::DiplomatWrite* write);
 
     typedef struct icu4x_LocaleNamesUnstable_for_script_short_heavy_with_provider_mv1_result {union { icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleNamesUnstable_for_script_short_heavy_with_provider_mv1_result;
     icu4x_LocaleNamesUnstable_for_script_short_heavy_with_provider_mv1_result icu4x_LocaleNamesUnstable_for_script_short_heavy_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView script, icu4x::diplomat::capi::DiplomatWrite* write);
 
-    typedef struct icu4x_LocaleNamesUnstable_for_variant_heavy_mv1_result {union { icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleNamesUnstable_for_variant_heavy_mv1_result;
-    icu4x_LocaleNamesUnstable_for_variant_heavy_mv1_result icu4x_LocaleNamesUnstable_for_variant_heavy_mv1(const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView variant, icu4x::diplomat::capi::DiplomatWrite* write);
+    void icu4x_LocaleNamesUnstable_for_variant_heavy_mv1(const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView variant, icu4x::diplomat::capi::DiplomatWrite* write);
 
     typedef struct icu4x_LocaleNamesUnstable_for_variant_heavy_with_provider_mv1_result {union { icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleNamesUnstable_for_variant_heavy_with_provider_mv1_result;
     icu4x_LocaleNamesUnstable_for_variant_heavy_with_provider_mv1_result icu4x_LocaleNamesUnstable_for_variant_heavy_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView variant, icu4x::diplomat::capi::DiplomatWrite* write);
@@ -148,21 +139,20 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline icu4x::diplomat::result<std::string, icu4x::DataError> icu4x::LocaleNamesUnstable::for_region_light(const icu4x::Locale& locale, std::string_view region) {
+inline std::string icu4x::LocaleNamesUnstable::for_region_light(const icu4x::Locale& locale, std::string_view region) {
     std::string output;
     icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteFromString(output);
-    auto result = icu4x::capi::icu4x_LocaleNamesUnstable_for_region_light_mv1(locale.AsFFI(),
+    icu4x::capi::icu4x_LocaleNamesUnstable_for_region_light_mv1(locale.AsFFI(),
         {region.data(), region.size()},
         &write);
-    return result.is_ok ? icu4x::diplomat::result<std::string, icu4x::DataError>(icu4x::diplomat::Ok<std::string>(std::move(output))) : icu4x::diplomat::result<std::string, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return output;
 }
 template<typename W>
-inline icu4x::diplomat::result<std::monostate, icu4x::DataError> icu4x::LocaleNamesUnstable::for_region_light_write(const icu4x::Locale& locale, std::string_view region, W& writeable) {
+inline void icu4x::LocaleNamesUnstable::for_region_light_write(const icu4x::Locale& locale, std::string_view region, W& writeable) {
     icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteTrait<W>::Construct(writeable);
-    auto result = icu4x::capi::icu4x_LocaleNamesUnstable_for_region_light_mv1(locale.AsFFI(),
+    icu4x::capi::icu4x_LocaleNamesUnstable_for_region_light_mv1(locale.AsFFI(),
         {region.data(), region.size()},
         &write);
-    return result.is_ok ? icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline icu4x::diplomat::result<std::string, icu4x::DataError> icu4x::LocaleNamesUnstable::for_region_light_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view region) {
@@ -184,21 +174,20 @@ inline icu4x::diplomat::result<std::monostate, icu4x::DataError> icu4x::LocaleNa
     return result.is_ok ? icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline icu4x::diplomat::result<std::string, icu4x::DataError> icu4x::LocaleNamesUnstable::for_region_tiny(const icu4x::Locale& locale, std::string_view region) {
+inline std::string icu4x::LocaleNamesUnstable::for_region_tiny(const icu4x::Locale& locale, std::string_view region) {
     std::string output;
     icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteFromString(output);
-    auto result = icu4x::capi::icu4x_LocaleNamesUnstable_for_region_tiny_mv1(locale.AsFFI(),
+    icu4x::capi::icu4x_LocaleNamesUnstable_for_region_tiny_mv1(locale.AsFFI(),
         {region.data(), region.size()},
         &write);
-    return result.is_ok ? icu4x::diplomat::result<std::string, icu4x::DataError>(icu4x::diplomat::Ok<std::string>(std::move(output))) : icu4x::diplomat::result<std::string, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return output;
 }
 template<typename W>
-inline icu4x::diplomat::result<std::monostate, icu4x::DataError> icu4x::LocaleNamesUnstable::for_region_tiny_write(const icu4x::Locale& locale, std::string_view region, W& writeable) {
+inline void icu4x::LocaleNamesUnstable::for_region_tiny_write(const icu4x::Locale& locale, std::string_view region, W& writeable) {
     icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteTrait<W>::Construct(writeable);
-    auto result = icu4x::capi::icu4x_LocaleNamesUnstable_for_region_tiny_mv1(locale.AsFFI(),
+    icu4x::capi::icu4x_LocaleNamesUnstable_for_region_tiny_mv1(locale.AsFFI(),
         {region.data(), region.size()},
         &write);
-    return result.is_ok ? icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline icu4x::diplomat::result<std::string, icu4x::DataError> icu4x::LocaleNamesUnstable::for_region_tiny_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view region) {
@@ -220,21 +209,20 @@ inline icu4x::diplomat::result<std::monostate, icu4x::DataError> icu4x::LocaleNa
     return result.is_ok ? icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline icu4x::diplomat::result<std::string, icu4x::DataError> icu4x::LocaleNamesUnstable::for_region_short_tiny(const icu4x::Locale& locale, std::string_view region) {
+inline std::string icu4x::LocaleNamesUnstable::for_region_short_tiny(const icu4x::Locale& locale, std::string_view region) {
     std::string output;
     icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteFromString(output);
-    auto result = icu4x::capi::icu4x_LocaleNamesUnstable_for_region_short_tiny_mv1(locale.AsFFI(),
+    icu4x::capi::icu4x_LocaleNamesUnstable_for_region_short_tiny_mv1(locale.AsFFI(),
         {region.data(), region.size()},
         &write);
-    return result.is_ok ? icu4x::diplomat::result<std::string, icu4x::DataError>(icu4x::diplomat::Ok<std::string>(std::move(output))) : icu4x::diplomat::result<std::string, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return output;
 }
 template<typename W>
-inline icu4x::diplomat::result<std::monostate, icu4x::DataError> icu4x::LocaleNamesUnstable::for_region_short_tiny_write(const icu4x::Locale& locale, std::string_view region, W& writeable) {
+inline void icu4x::LocaleNamesUnstable::for_region_short_tiny_write(const icu4x::Locale& locale, std::string_view region, W& writeable) {
     icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteTrait<W>::Construct(writeable);
-    auto result = icu4x::capi::icu4x_LocaleNamesUnstable_for_region_short_tiny_mv1(locale.AsFFI(),
+    icu4x::capi::icu4x_LocaleNamesUnstable_for_region_short_tiny_mv1(locale.AsFFI(),
         {region.data(), region.size()},
         &write);
-    return result.is_ok ? icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline icu4x::diplomat::result<std::string, icu4x::DataError> icu4x::LocaleNamesUnstable::for_region_short_tiny_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view region) {
@@ -256,21 +244,20 @@ inline icu4x::diplomat::result<std::monostate, icu4x::DataError> icu4x::LocaleNa
     return result.is_ok ? icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline icu4x::diplomat::result<std::string, icu4x::DataError> icu4x::LocaleNamesUnstable::for_region_short_light(const icu4x::Locale& locale, std::string_view region) {
+inline std::string icu4x::LocaleNamesUnstable::for_region_short_light(const icu4x::Locale& locale, std::string_view region) {
     std::string output;
     icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteFromString(output);
-    auto result = icu4x::capi::icu4x_LocaleNamesUnstable_for_region_short_light_mv1(locale.AsFFI(),
+    icu4x::capi::icu4x_LocaleNamesUnstable_for_region_short_light_mv1(locale.AsFFI(),
         {region.data(), region.size()},
         &write);
-    return result.is_ok ? icu4x::diplomat::result<std::string, icu4x::DataError>(icu4x::diplomat::Ok<std::string>(std::move(output))) : icu4x::diplomat::result<std::string, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return output;
 }
 template<typename W>
-inline icu4x::diplomat::result<std::monostate, icu4x::DataError> icu4x::LocaleNamesUnstable::for_region_short_light_write(const icu4x::Locale& locale, std::string_view region, W& writeable) {
+inline void icu4x::LocaleNamesUnstable::for_region_short_light_write(const icu4x::Locale& locale, std::string_view region, W& writeable) {
     icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteTrait<W>::Construct(writeable);
-    auto result = icu4x::capi::icu4x_LocaleNamesUnstable_for_region_short_light_mv1(locale.AsFFI(),
+    icu4x::capi::icu4x_LocaleNamesUnstable_for_region_short_light_mv1(locale.AsFFI(),
         {region.data(), region.size()},
         &write);
-    return result.is_ok ? icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline icu4x::diplomat::result<std::string, icu4x::DataError> icu4x::LocaleNamesUnstable::for_region_short_light_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view region) {
@@ -292,21 +279,20 @@ inline icu4x::diplomat::result<std::monostate, icu4x::DataError> icu4x::LocaleNa
     return result.is_ok ? icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline icu4x::diplomat::result<std::string, icu4x::DataError> icu4x::LocaleNamesUnstable::for_script_light(const icu4x::Locale& locale, std::string_view script) {
+inline std::string icu4x::LocaleNamesUnstable::for_script_light(const icu4x::Locale& locale, std::string_view script) {
     std::string output;
     icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteFromString(output);
-    auto result = icu4x::capi::icu4x_LocaleNamesUnstable_for_script_light_mv1(locale.AsFFI(),
+    icu4x::capi::icu4x_LocaleNamesUnstable_for_script_light_mv1(locale.AsFFI(),
         {script.data(), script.size()},
         &write);
-    return result.is_ok ? icu4x::diplomat::result<std::string, icu4x::DataError>(icu4x::diplomat::Ok<std::string>(std::move(output))) : icu4x::diplomat::result<std::string, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return output;
 }
 template<typename W>
-inline icu4x::diplomat::result<std::monostate, icu4x::DataError> icu4x::LocaleNamesUnstable::for_script_light_write(const icu4x::Locale& locale, std::string_view script, W& writeable) {
+inline void icu4x::LocaleNamesUnstable::for_script_light_write(const icu4x::Locale& locale, std::string_view script, W& writeable) {
     icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteTrait<W>::Construct(writeable);
-    auto result = icu4x::capi::icu4x_LocaleNamesUnstable_for_script_light_mv1(locale.AsFFI(),
+    icu4x::capi::icu4x_LocaleNamesUnstable_for_script_light_mv1(locale.AsFFI(),
         {script.data(), script.size()},
         &write);
-    return result.is_ok ? icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline icu4x::diplomat::result<std::string, icu4x::DataError> icu4x::LocaleNamesUnstable::for_script_light_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view script) {
@@ -328,21 +314,20 @@ inline icu4x::diplomat::result<std::monostate, icu4x::DataError> icu4x::LocaleNa
     return result.is_ok ? icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline icu4x::diplomat::result<std::string, icu4x::DataError> icu4x::LocaleNamesUnstable::for_script_tiny(const icu4x::Locale& locale, std::string_view script) {
+inline std::string icu4x::LocaleNamesUnstable::for_script_tiny(const icu4x::Locale& locale, std::string_view script) {
     std::string output;
     icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteFromString(output);
-    auto result = icu4x::capi::icu4x_LocaleNamesUnstable_for_script_tiny_mv1(locale.AsFFI(),
+    icu4x::capi::icu4x_LocaleNamesUnstable_for_script_tiny_mv1(locale.AsFFI(),
         {script.data(), script.size()},
         &write);
-    return result.is_ok ? icu4x::diplomat::result<std::string, icu4x::DataError>(icu4x::diplomat::Ok<std::string>(std::move(output))) : icu4x::diplomat::result<std::string, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return output;
 }
 template<typename W>
-inline icu4x::diplomat::result<std::monostate, icu4x::DataError> icu4x::LocaleNamesUnstable::for_script_tiny_write(const icu4x::Locale& locale, std::string_view script, W& writeable) {
+inline void icu4x::LocaleNamesUnstable::for_script_tiny_write(const icu4x::Locale& locale, std::string_view script, W& writeable) {
     icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteTrait<W>::Construct(writeable);
-    auto result = icu4x::capi::icu4x_LocaleNamesUnstable_for_script_tiny_mv1(locale.AsFFI(),
+    icu4x::capi::icu4x_LocaleNamesUnstable_for_script_tiny_mv1(locale.AsFFI(),
         {script.data(), script.size()},
         &write);
-    return result.is_ok ? icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline icu4x::diplomat::result<std::string, icu4x::DataError> icu4x::LocaleNamesUnstable::for_script_tiny_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view script) {
@@ -364,21 +349,20 @@ inline icu4x::diplomat::result<std::monostate, icu4x::DataError> icu4x::LocaleNa
     return result.is_ok ? icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline icu4x::diplomat::result<std::string, icu4x::DataError> icu4x::LocaleNamesUnstable::for_script_heavy(const icu4x::Locale& locale, std::string_view script) {
+inline std::string icu4x::LocaleNamesUnstable::for_script_heavy(const icu4x::Locale& locale, std::string_view script) {
     std::string output;
     icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteFromString(output);
-    auto result = icu4x::capi::icu4x_LocaleNamesUnstable_for_script_heavy_mv1(locale.AsFFI(),
+    icu4x::capi::icu4x_LocaleNamesUnstable_for_script_heavy_mv1(locale.AsFFI(),
         {script.data(), script.size()},
         &write);
-    return result.is_ok ? icu4x::diplomat::result<std::string, icu4x::DataError>(icu4x::diplomat::Ok<std::string>(std::move(output))) : icu4x::diplomat::result<std::string, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return output;
 }
 template<typename W>
-inline icu4x::diplomat::result<std::monostate, icu4x::DataError> icu4x::LocaleNamesUnstable::for_script_heavy_write(const icu4x::Locale& locale, std::string_view script, W& writeable) {
+inline void icu4x::LocaleNamesUnstable::for_script_heavy_write(const icu4x::Locale& locale, std::string_view script, W& writeable) {
     icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteTrait<W>::Construct(writeable);
-    auto result = icu4x::capi::icu4x_LocaleNamesUnstable_for_script_heavy_mv1(locale.AsFFI(),
+    icu4x::capi::icu4x_LocaleNamesUnstable_for_script_heavy_mv1(locale.AsFFI(),
         {script.data(), script.size()},
         &write);
-    return result.is_ok ? icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline icu4x::diplomat::result<std::string, icu4x::DataError> icu4x::LocaleNamesUnstable::for_script_heavy_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view script) {
@@ -400,21 +384,20 @@ inline icu4x::diplomat::result<std::monostate, icu4x::DataError> icu4x::LocaleNa
     return result.is_ok ? icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline icu4x::diplomat::result<std::string, icu4x::DataError> icu4x::LocaleNamesUnstable::for_script_short_heavy(const icu4x::Locale& locale, std::string_view script) {
+inline std::string icu4x::LocaleNamesUnstable::for_script_short_heavy(const icu4x::Locale& locale, std::string_view script) {
     std::string output;
     icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteFromString(output);
-    auto result = icu4x::capi::icu4x_LocaleNamesUnstable_for_script_short_heavy_mv1(locale.AsFFI(),
+    icu4x::capi::icu4x_LocaleNamesUnstable_for_script_short_heavy_mv1(locale.AsFFI(),
         {script.data(), script.size()},
         &write);
-    return result.is_ok ? icu4x::diplomat::result<std::string, icu4x::DataError>(icu4x::diplomat::Ok<std::string>(std::move(output))) : icu4x::diplomat::result<std::string, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return output;
 }
 template<typename W>
-inline icu4x::diplomat::result<std::monostate, icu4x::DataError> icu4x::LocaleNamesUnstable::for_script_short_heavy_write(const icu4x::Locale& locale, std::string_view script, W& writeable) {
+inline void icu4x::LocaleNamesUnstable::for_script_short_heavy_write(const icu4x::Locale& locale, std::string_view script, W& writeable) {
     icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteTrait<W>::Construct(writeable);
-    auto result = icu4x::capi::icu4x_LocaleNamesUnstable_for_script_short_heavy_mv1(locale.AsFFI(),
+    icu4x::capi::icu4x_LocaleNamesUnstable_for_script_short_heavy_mv1(locale.AsFFI(),
         {script.data(), script.size()},
         &write);
-    return result.is_ok ? icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline icu4x::diplomat::result<std::string, icu4x::DataError> icu4x::LocaleNamesUnstable::for_script_short_heavy_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view script) {
@@ -436,21 +419,20 @@ inline icu4x::diplomat::result<std::monostate, icu4x::DataError> icu4x::LocaleNa
     return result.is_ok ? icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline icu4x::diplomat::result<std::string, icu4x::DataError> icu4x::LocaleNamesUnstable::for_variant_heavy(const icu4x::Locale& locale, std::string_view variant) {
+inline std::string icu4x::LocaleNamesUnstable::for_variant_heavy(const icu4x::Locale& locale, std::string_view variant) {
     std::string output;
     icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteFromString(output);
-    auto result = icu4x::capi::icu4x_LocaleNamesUnstable_for_variant_heavy_mv1(locale.AsFFI(),
+    icu4x::capi::icu4x_LocaleNamesUnstable_for_variant_heavy_mv1(locale.AsFFI(),
         {variant.data(), variant.size()},
         &write);
-    return result.is_ok ? icu4x::diplomat::result<std::string, icu4x::DataError>(icu4x::diplomat::Ok<std::string>(std::move(output))) : icu4x::diplomat::result<std::string, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return output;
 }
 template<typename W>
-inline icu4x::diplomat::result<std::monostate, icu4x::DataError> icu4x::LocaleNamesUnstable::for_variant_heavy_write(const icu4x::Locale& locale, std::string_view variant, W& writeable) {
+inline void icu4x::LocaleNamesUnstable::for_variant_heavy_write(const icu4x::Locale& locale, std::string_view variant, W& writeable) {
     icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteTrait<W>::Construct(writeable);
-    auto result = icu4x::capi::icu4x_LocaleNamesUnstable_for_variant_heavy_mv1(locale.AsFFI(),
+    icu4x::capi::icu4x_LocaleNamesUnstable_for_variant_heavy_mv1(locale.AsFFI(),
         {variant.data(), variant.size()},
         &write);
-    return result.is_ok ? icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline icu4x::diplomat::result<std::string, icu4x::DataError> icu4x::LocaleNamesUnstable::for_variant_heavy_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view variant) {
