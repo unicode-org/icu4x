@@ -48,16 +48,16 @@ public:
   /**
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
-   * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_light) for more information.
+   * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
    */
-  inline static icu4x::diplomat::result<std::string, icu4x::DataError> for_region_light(const icu4x::Locale& locale, std::string_view region);
+  inline static std::string for_region_light(const icu4x::Locale& locale, std::string_view region);
   template<typename W>
-  inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_region_light_write(const icu4x::Locale& locale, std::string_view region, W& writeable_output);
+  inline static void for_region_light_write(const icu4x::Locale& locale, std::string_view region, W& writeable_output);
 
   /**
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
-   * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_light) for more information.
+   * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
    */
   inline static icu4x::diplomat::result<std::string, icu4x::DataError> for_region_light_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view region);
   template<typename W>
@@ -66,16 +66,16 @@ public:
   /**
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
-   * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_tiny) for more information.
+   * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
    */
-  inline static icu4x::diplomat::result<std::string, icu4x::DataError> for_region_tiny(const icu4x::Locale& locale, std::string_view region);
+  inline static std::string for_region_tiny(const icu4x::Locale& locale, std::string_view region);
   template<typename W>
-  inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_region_tiny_write(const icu4x::Locale& locale, std::string_view region, W& writeable_output);
+  inline static void for_region_tiny_write(const icu4x::Locale& locale, std::string_view region, W& writeable_output);
 
   /**
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
-   * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_tiny) for more information.
+   * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
    */
   inline static icu4x::diplomat::result<std::string, icu4x::DataError> for_region_tiny_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view region);
   template<typename W>
@@ -84,16 +84,16 @@ public:
   /**
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
-   * See the [Rust documentation for `try_new_short_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_short_tiny) for more information.
+   * See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
    */
-  inline static icu4x::diplomat::result<std::string, icu4x::DataError> for_region_short_tiny(const icu4x::Locale& locale, std::string_view region);
+  inline static std::string for_region_short_tiny(const icu4x::Locale& locale, std::string_view region);
   template<typename W>
-  inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_region_short_tiny_write(const icu4x::Locale& locale, std::string_view region, W& writeable_output);
+  inline static void for_region_short_tiny_write(const icu4x::Locale& locale, std::string_view region, W& writeable_output);
 
   /**
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
-   * See the [Rust documentation for `try_new_short_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_short_tiny) for more information.
+   * See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
    */
   inline static icu4x::diplomat::result<std::string, icu4x::DataError> for_region_short_tiny_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view region);
   template<typename W>
@@ -102,16 +102,16 @@ public:
   /**
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
-   * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_short_light) for more information.
+   * See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
    */
-  inline static icu4x::diplomat::result<std::string, icu4x::DataError> for_region_short_light(const icu4x::Locale& locale, std::string_view region);
+  inline static std::string for_region_short_light(const icu4x::Locale& locale, std::string_view region);
   template<typename W>
-  inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_region_short_light_write(const icu4x::Locale& locale, std::string_view region, W& writeable_output);
+  inline static void for_region_short_light_write(const icu4x::Locale& locale, std::string_view region, W& writeable_output);
 
   /**
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
-   * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.try_new_short_light) for more information.
+   * See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
    */
   inline static icu4x::diplomat::result<std::string, icu4x::DataError> for_region_short_light_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view region);
   template<typename W>
@@ -120,16 +120,16 @@ public:
   /**
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
-   * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_light) for more information.
+   * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
    */
-  inline static icu4x::diplomat::result<std::string, icu4x::DataError> for_script_light(const icu4x::Locale& locale, std::string_view script);
+  inline static std::string for_script_light(const icu4x::Locale& locale, std::string_view script);
   template<typename W>
-  inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_script_light_write(const icu4x::Locale& locale, std::string_view script, W& writeable_output);
+  inline static void for_script_light_write(const icu4x::Locale& locale, std::string_view script, W& writeable_output);
 
   /**
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
-   * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_light) for more information.
+   * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
    */
   inline static icu4x::diplomat::result<std::string, icu4x::DataError> for_script_light_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view script);
   template<typename W>
@@ -138,16 +138,16 @@ public:
   /**
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
-   * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_tiny) for more information.
+   * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
    */
-  inline static icu4x::diplomat::result<std::string, icu4x::DataError> for_script_tiny(const icu4x::Locale& locale, std::string_view script);
+  inline static std::string for_script_tiny(const icu4x::Locale& locale, std::string_view script);
   template<typename W>
-  inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_script_tiny_write(const icu4x::Locale& locale, std::string_view script, W& writeable_output);
+  inline static void for_script_tiny_write(const icu4x::Locale& locale, std::string_view script, W& writeable_output);
 
   /**
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
-   * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_tiny) for more information.
+   * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
    */
   inline static icu4x::diplomat::result<std::string, icu4x::DataError> for_script_tiny_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view script);
   template<typename W>
@@ -156,16 +156,16 @@ public:
   /**
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
-   * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_heavy) for more information.
+   * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
    */
-  inline static icu4x::diplomat::result<std::string, icu4x::DataError> for_script_heavy(const icu4x::Locale& locale, std::string_view script);
+  inline static std::string for_script_heavy(const icu4x::Locale& locale, std::string_view script);
   template<typename W>
-  inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_script_heavy_write(const icu4x::Locale& locale, std::string_view script, W& writeable_output);
+  inline static void for_script_heavy_write(const icu4x::Locale& locale, std::string_view script, W& writeable_output);
 
   /**
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
-   * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_heavy) for more information.
+   * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
    */
   inline static icu4x::diplomat::result<std::string, icu4x::DataError> for_script_heavy_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view script);
   template<typename W>
@@ -174,16 +174,16 @@ public:
   /**
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
-   * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_short_heavy) for more information.
+   * See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
    */
-  inline static icu4x::diplomat::result<std::string, icu4x::DataError> for_script_short_heavy(const icu4x::Locale& locale, std::string_view script);
+  inline static std::string for_script_short_heavy(const icu4x::Locale& locale, std::string_view script);
   template<typename W>
-  inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_script_short_heavy_write(const icu4x::Locale& locale, std::string_view script, W& writeable_output);
+  inline static void for_script_short_heavy_write(const icu4x::Locale& locale, std::string_view script, W& writeable_output);
 
   /**
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
-   * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.try_new_short_heavy) for more information.
+   * See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
    */
   inline static icu4x::diplomat::result<std::string, icu4x::DataError> for_script_short_heavy_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view script);
   template<typename W>
@@ -192,16 +192,16 @@ public:
   /**
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
-   * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.VariantDisplayName.html#method.try_new_heavy) for more information.
+   * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
    */
-  inline static icu4x::diplomat::result<std::string, icu4x::DataError> for_variant_heavy(const icu4x::Locale& locale, std::string_view variant);
+  inline static std::string for_variant_heavy(const icu4x::Locale& locale, std::string_view variant);
   template<typename W>
-  inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_variant_heavy_write(const icu4x::Locale& locale, std::string_view variant, W& writeable_output);
+  inline static void for_variant_heavy_write(const icu4x::Locale& locale, std::string_view variant, W& writeable_output);
 
   /**
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    *
-   * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.VariantDisplayName.html#method.try_new_heavy) for more information.
+   * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
    */
   inline static icu4x::diplomat::result<std::string, icu4x::DataError> for_variant_heavy_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view variant);
   template<typename W>

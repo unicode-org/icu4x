@@ -31,6 +31,15 @@ icu::locale::names::LanguageIdentifierDisplayNameBorrowed::try_write_to#FnInStru
 icu::locale::names::LanguageIdentifierDisplayNameBorrowed::try_write_to_parts#FnInStruct
 icu::locale::names::LanguageIdentifierDisplayNameBorrowed::try_write_to_string#FnInStruct
 icu::locale::names::LanguageIdentifierDisplayNameBorrowed::try_writeable_borrow#FnInStruct
+icu::locale::names::RegionDisplayName::try_new_light#FnInStruct
+icu::locale::names::RegionDisplayName::try_new_short_light#FnInStruct
+icu::locale::names::RegionDisplayName::try_new_short_tiny#FnInStruct
+icu::locale::names::RegionDisplayName::try_new_tiny#FnInStruct
+icu::locale::names::ScriptDisplayName::try_new_heavy#FnInStruct
+icu::locale::names::ScriptDisplayName::try_new_light#FnInStruct
+icu::locale::names::ScriptDisplayName::try_new_short_heavy#FnInStruct
+icu::locale::names::ScriptDisplayName::try_new_tiny#FnInStruct
+icu::locale::names::VariantDisplayName::try_new_heavy#FnInStruct
 icu::segmenter::GraphemeClusterSegmenter::new_neo#FnInStruct
 icu::segmenter::LineSegmenter::new_17_for_non_complex_scripts#FnInStruct
 icu::segmenter::LineSegmenter::new_neo_for_non_complex_scripts#FnInStruct
