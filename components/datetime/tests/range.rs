@@ -370,7 +370,7 @@ fn test_date_range_ej() {
 
 // Tests documenting issues when date range formatting falls back to `root` (`und`).
 //
-// See issue #8359.
+// TODO(#8359): Implement a fix and enable these tests.
 //
 // When a locale or calendar lacks custom interval patterns in CLDR, locale fallback walks up
 // the hierarchy to `root` (`und`). CLDR's `root` defines interval patterns using English/ISO conventions
