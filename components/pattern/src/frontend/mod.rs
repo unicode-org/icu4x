@@ -259,15 +259,18 @@ where
         &'a self,
         value_provider: P,
     ) -> impl TryWriteable<
-        Error = <TryWrap<P> as PlaceholderValueProvider<B::PlaceholderKey<'a>>>::Error,
+        Error = <TryInterpolatePlaceholderValueProviderWrap<P> as PlaceholderValueProvider<
+            B::PlaceholderKey<'a>,
+        >>::Error,
     > + fmt::Display
     + 'a
     where
-        TryWrap<P>: PlaceholderValueProvider<B::PlaceholderKey<'a>> + 'a,
+        TryInterpolatePlaceholderValueProviderWrap<P>:
+            PlaceholderValueProvider<B::PlaceholderKey<'a>> + 'a,
     {
-        WriteablePattern::<B, TryWrap<P>> {
+        WriteablePattern::<B, TryInterpolatePlaceholderValueProviderWrap<P>> {
             store: &self.store,
-            value_provider: TryWrap(value_provider),
+            value_provider: TryInterpolatePlaceholderValueProviderWrap(value_provider),
         }
     }
 
@@ -283,12 +286,15 @@ where
     ) -> Result<
         String,
         (
-            <TryWrap<P> as PlaceholderValueProvider<B::PlaceholderKey<'a>>>::Error,
+            <TryInterpolatePlaceholderValueProviderWrap<P> as PlaceholderValueProvider<
+                B::PlaceholderKey<'a>,
+            >>::Error,
             String,
         ),
     >
     where
-        TryWrap<P>: PlaceholderValueProvider<B::PlaceholderKey<'a>> + 'a,
+        TryInterpolatePlaceholderValueProviderWrap<P>:
+            PlaceholderValueProvider<B::PlaceholderKey<'a>> + 'a,
     {
         self.try_interpolate(value_provider)
             .try_write_to_string()

@@ -131,7 +131,8 @@ where
     }
 }
 
-impl<W0, W1> PlaceholderValueProvider<DoublePlaceholderKey> for TryWrap<(W0, W1)>
+impl<W0, W1> PlaceholderValueProvider<DoublePlaceholderKey>
+    for TryInterpolatePlaceholderValueProviderWrap<(W0, W1)>
 where
     W0: TryWriteable,
     W1: TryWriteable,

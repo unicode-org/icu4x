@@ -151,10 +151,12 @@ where
 // NOTE: This impl allows `BTreeMap` and `LiteMap` to be passed directly into
 // `Pattern::try_interpolate`. However, it does not offer a built-in impl to
 // bubble up TryWriteable errors in MultiNamedPlaceholder. In other words, one
-// might expect `TryWrap<LiteMap<K, V>>` to bubble up errors from `V: TryWriteable`,
-// but this impl prevents that from happening. Instead, a further impl will be
-// needed in the future (which could be outside this crate).
-impl<'k, T> PlaceholderValueProvider<MultiNamedPlaceholderKey<'k>> for TryWrap<T>
+// might expect `TryInterpolatePlaceholderValueProviderWrap<LiteMap<K, V>>`
+// to bubble up errors from `V: TryWriteable`, but this impl prevents that
+// from happening. Instead, a further impl will be needed in the future
+// (which could be outside this crate).
+impl<'k, T> PlaceholderValueProvider<MultiNamedPlaceholderKey<'k>>
+    for TryInterpolatePlaceholderValueProviderWrap<T>
 where
     T: PlaceholderValueProvider<MultiNamedPlaceholderKey<'k>>,
 {

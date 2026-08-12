@@ -302,7 +302,7 @@ where
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // newtype
-pub struct TryWrap<T>(pub T);
+pub struct TryInterpolatePlaceholderValueProviderWrap<T>(pub T);
 
 /// Types that implement backing data models for [`Pattern`] and support placeholder extraction
 /// implement this trait.

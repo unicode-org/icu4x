@@ -66,7 +66,7 @@ pub use common::PatternItem;
 #[cfg(feature = "alloc")]
 pub use common::PatternItemCow;
 pub use common::PlaceholderValueProvider;
-pub use common::TryWrap;
+pub use common::TryInterpolatePlaceholderValueProviderWrap;
 pub use double::DoublePlaceholder;
 pub use double::DoublePlaceholderKey;
 pub use error::PatternError;
