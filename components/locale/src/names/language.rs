@@ -20,7 +20,7 @@ use crate::size_test_macro::size_test;
 use alloc::vec::Vec;
 use icu_locale_core::LanguageIdentifier;
 use icu_locale_core::subtags::{Language, Region, Script, Variant};
-use icu_pattern::{DoublePlaceholderPattern, DoublePlaceholderValueProviderTry, PatternItem};
+use icu_pattern::{DoublePlaceholderPattern, PatternItem, TryWrap};
 use icu_provider::DataPayloadOr;
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
@@ -2041,10 +2041,7 @@ impl<'a> TryWriteable for LanguageIdentifierDisplayNameInner<'a> {
             let result = self
                 .qualifiers
                 .glue
-                .try_interpolate(DoublePlaceholderValueProviderTry(
-                    self.base_name,
-                    self.qualifiers,
-                ))
+                .try_interpolate(TryWrap((self.base_name, self.qualifiers)))
                 .try_write_to_parts(sink)?;
             Ok(result.map_err(either::Either::into_inner))
         }
@@ -2056,10 +2053,7 @@ impl<'a> TryWriteable for LanguageIdentifierDisplayNameInner<'a> {
         } else {
             self.qualifiers
                 .glue
-                .try_interpolate(DoublePlaceholderValueProviderTry(
-                    self.base_name,
-                    self.qualifiers,
-                ))
+                .try_interpolate(TryWrap((self.base_name, self.qualifiers)))
                 .writeable_length_hint()
         }
     }
