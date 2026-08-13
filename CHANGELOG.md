@@ -8,6 +8,7 @@
   - `icu_calendar`
     - Fix extended year calculations in Gregorian-like and Coptic-like calendars (unicode-org#7849)
     - Add `Julian` to `AnyCalendar` (unicode-org#7224)
+      - New enum variants: `AnyCalendarKind::Julian`, `AnyCalendar::Julian`
     - Fix safety issue in `Japanese::try_new_with_buffer_provider` (unicode-org#8095)
     - Add `AnyCalendarKind::try_new` and deprecate  `AnyCalendarKind::new`. The new version uses locale data to infer calendars from locales. (unicode-org#8102)
     - Deprecate `CalendarPreferences::resolve_calendar`. This method did not perform likely-subtags expansion. (unicode-org#8102)
@@ -19,13 +20,13 @@
     - Fix generation of identical level sort keys containing the codepoint U+A000. (unicode-org#7928)
     - Fixed an issue where the emoji collation was not loading correctly (unicode-org#7989)
     - Tune the performance of sort key generation (unicode-org#7930)
-    - Changes to the `CollationSpecialPrimariesV1` data struct (unicode-org#7872)
+    - Enforce more invariants in the `CollationSpecialPrimariesV1` data struct (unicode-org#7872)
   - `icu_collections`
     - Fix a bug in `CodePointInversionList::contains_set` (unicode-org#8121)
-    - `impl Hash for CodePointInversionList` (unicode-org#8282)
+    - New trait implementation: `impl Hash for CodePointInversionList` (unicode-org#8282)
   - `icu_datetime`
     - Add unstable range formatter (unicode-org#8149)
-      - New types: `DateRangeFormatter`, `FixedCalendarDateRangeFormatter`, `FormattedDateRange`
+      - New types: `DateRangeFormatter`, `FixedCalendarDateRangeFormatter`, `NoCalendarRangeFormatter`, `FormattedDateRange`
       - (Scaffolding) New associated type: `TypedDateDataMarkers::RangeSkel` (unicode-org#8173)
     - Support numbering system overrides for datetime patterns when found in data (unicode-org#7905)
     - Implement flexible day periods, i.e. the `B` pattern in hour field sets (unicode-org#7971)
@@ -104,7 +105,7 @@
   - `icu_plurals`
     - Add `PluralElements::get` (unicode-org#8198)
     - Add generic `ZeroFrom` implementation for `PluralElements` (unicode-org#7999)
-      - New trait implementations: `impl<'a, T, C> ZeroFrom<'a, PluralElements<C>> for PluralElements<T>`
+      - New trait implementation: `impl<'a, T, C> ZeroFrom<'a, PluralElements<C>> for PluralElements<T>`
     - Fix potential overflow in `PluralOperands::from_significand_and_exponent` (unicode-org#8285)
   - `icu_properties`
     - Add experimental UTS#35 Unicode set parsing, moved from `icu_experimental` (unicode-org#7935)
@@ -154,6 +155,7 @@
     - Update supported Dart toolchain for `record_use` to `3.13.0-215.0.dev` (unicode-org#8119)
     - In the build hook, skip building if code assets are disabled. (unicode-org#8183)
     - Add `libm` as a library input in the Dart linking script for Android. (unicode-org#8199)
+    - Use stable record-use and remove enable-experiment flag. (unicode-org#8371)
 - Utils
   - `ixdtf`: `0.6.5 -> 0.6.6`
     - Reject trailing input after annotations in `YearMonth` and `MonthDay` parsing (unicode-org#8294)
@@ -188,7 +190,7 @@
     - add `ZeroTrieSimpleAsciiCursor::into_suffix_trie()` (unicode-org#8224)
   - `zerovec`: `0.11.6 -> 0.11.7`
     - Fix minor soundness issue around unchecked multiplication, add defense in depth against other overflow situations. (unicode-org#7887)
-    - `impl Hash for ZeroVec, ZeroSlice` (unicode-org#8282)
+    - New trait implementations: `impl Hash for ZeroVec, ZeroSlice` (unicode-org#8282)
     - Relax bounds on PartialEq, Eq, and Hash impls, delegating to the bytes comparison (long required by the ULE impl) (unicode-org#8287)
   - `zerovec_derive`: `0.11.3 -> 0.11.4`
     - Support sparse enums in `zerovec::make_ule`. (unicode-org#7940)
