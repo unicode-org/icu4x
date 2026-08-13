@@ -9,6 +9,7 @@ use crate::cldr_serde;
 use crate::cldr_serde::displaynames::{Alt, WithAlt};
 use crate::displaynames::extract_names_for_zeromap_struct;
 use icu::experimental::displaynames::provider::*;
+use icu::locale::provider::names::*;
 use icu::locale::subtags::Variant;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
@@ -37,7 +38,7 @@ crate::displaynames::impl_displaynames_v1!(
     "variants.json",
     variants,
     None,
-    "//ldml/localeDisplayNames/variants/variant",
+    variant,
     CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 
@@ -122,7 +123,7 @@ mod tests {
         crate::displaynames::coverage_experimental::for_each_cldr_key_and_tier(
             cldr,
             "variants.json",
-            "//ldml/localeDisplayNames/variants/variant",
+            |l| &l.variant,
             |res: &cldr_serde::displaynames::variant::Resource| {
                 &res.main.value.localedisplaynames.variants
             },

@@ -92,7 +92,11 @@ pub mod fallback {
     #[doc(inline)]
     pub use icu_locale_fallback::*;
 }
+#[cfg(feature = "unstable")]
+pub mod names;
 pub mod provider;
+#[cfg(feature = "unstable")]
+mod size_test_macro;
 
 pub use icu_locale_core::*;
 

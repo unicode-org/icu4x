@@ -9,6 +9,7 @@ use crate::cldr_serde;
 use crate::cldr_serde::displaynames::{Alt, WithAlt};
 use crate::displaynames::extract_names_for_zeromap_struct;
 use icu::experimental::displaynames::provider::*;
+use icu::locale::provider::names::*;
 use icu::locale::subtags::Script;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
@@ -37,7 +38,7 @@ crate::displaynames::impl_displaynames_v1!(
     "scripts.json",
     scripts,
     None,
-    "//ldml/localeDisplayNames/scripts/script",
+    script,
     CoverageLevelForXPath::Basic | CoverageLevelForXPath::Core,
 );
 crate::displaynames::impl_displaynames_v1!(
@@ -47,7 +48,7 @@ crate::displaynames::impl_displaynames_v1!(
     "scripts.json",
     scripts,
     None,
-    "//ldml/localeDisplayNames/scripts/script",
+    script,
     CoverageLevelForXPath::Moderate,
 );
 crate::displaynames::impl_displaynames_v1!(
@@ -57,7 +58,7 @@ crate::displaynames::impl_displaynames_v1!(
     "scripts.json",
     scripts,
     None,
-    "//ldml/localeDisplayNames/scripts/script",
+    script,
     CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 
@@ -68,7 +69,7 @@ crate::displaynames::impl_displaynames_v1!(
     "scripts.json",
     scripts,
     Some(Alt::Short),
-    "//ldml/localeDisplayNames/scripts/script",
+    script,
     CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 
@@ -228,7 +229,7 @@ mod tests {
         crate::displaynames::coverage_experimental::for_each_cldr_key_and_tier(
             cldr,
             "scripts.json",
-            "//ldml/localeDisplayNames/scripts/script",
+            |l| &l.script,
             |res: &cldr_serde::displaynames::script::Resource| {
                 &res.main.value.localedisplaynames.scripts
             },

@@ -5,7 +5,7 @@
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
-use icu::experimental::displaynames::provider::*;
+use icu::locale::provider::names::*;
 use icu_pattern::DoublePlaceholderPattern;
 use icu_provider::prelude::*;
 use std::collections::HashSet;

@@ -410,7 +410,7 @@ pub trait Writeable {
 ///
 /// ```
 /// struct MyStruct(String);
-/// writeable::impl_writeable_delegate!(MyStruct, |&self| &self.0, #[cfg(feature = "alloc")]);
+/// writeable::impl_writeable_delegate!(MyStruct, |&self| &self.0, #[cfg(feature = "alloc")] fn write_to_string);
 /// writeable::impl_display_with_writeable!(MyStruct, #[cfg(feature = "alloc")]);
 ///
 /// writeable::assert_writeable_eq!(
@@ -435,7 +435,7 @@ pub trait Writeable {
 /// ```
 #[macro_export]
 macro_rules! impl_writeable_delegate {
-    ($ty:ty, |&$self:ident| $delegate:expr $(, #[$alloc_feature:meta])? $(, where $($generics:tt)*)?) => {
+    ($ty:ty, |&$self:ident| $delegate:expr $(, #[$alloc_feature:meta] fn write_to_string)? $(, where $($generics:tt)*)?) => {
         impl $(<$($generics)*>)? $crate::Writeable for $ty {
             #[inline]
             fn write_to<W: core::fmt::Write + ?Sized>(&$self, sink: &mut W) -> core::fmt::Result {

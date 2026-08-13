@@ -182,9 +182,6 @@ lazy_static::lazy_static! {
         "icu::datetime::DateTimeFormatter::format_unchecked",
         "icu::datetime::NoCalendarFormatter::format_unchecked",
         "icu::datetime::FormattedDateTimeUnchecked",
-        "icu::datetime::range::DateRangeFormatter",
-        "icu::datetime::range::FixedCalendarDateRangeFormatter",
-        "icu::datetime::range::FormattedDateRange",
 
         // Not planned for 2.0: Would need to introduce diplomat writeable with parts
         "icu::list::parts",
@@ -412,6 +409,9 @@ lazy_static::lazy_static! {
         "icu::datetime::DateTimeFormatter::cast_into_fset",
         "icu::datetime::FixedCalendarDateTimeFormatter::cast_into_fset",
         "icu::datetime::NoCalendarFormatter::cast_into_fset",
+        "icu::datetime::range::DateRangeFormatter::cast_into_fset",
+        "icu::datetime::range::FixedCalendarDateRangeFormatter::cast_into_fset",
+        "icu::datetime::range::NoCalendarRangeFormatter::cast_into_fset",
         // TODO-2.0: needs investigation
         "icu::calendar::Date::into_ref_counted",
         "icu::calendar::Date::into_atomic_ref_counted",

@@ -9,6 +9,7 @@ use crate::cldr_serde;
 use crate::cldr_serde::displaynames::{Alt, WithAlt};
 use crate::displaynames::extract_names_for_zeromap_struct;
 use icu::experimental::displaynames::provider::*;
+use icu::locale::provider::names::*;
 use icu::locale::subtags::Region;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
@@ -39,7 +40,7 @@ crate::displaynames::impl_displaynames_v1!(
     "territories.json",
     regions,
     None,
-    "//ldml/localeDisplayNames/territories/territory",
+    territory,
     CoverageLevelForXPath::Basic | CoverageLevelForXPath::Core,
 );
 crate::displaynames::impl_displaynames_v1!(
@@ -49,7 +50,7 @@ crate::displaynames::impl_displaynames_v1!(
     "territories.json",
     regions,
     None,
-    "//ldml/localeDisplayNames/territories/territory",
+    territory,
     CoverageLevelForXPath::Moderate,
 );
 
@@ -60,7 +61,7 @@ crate::displaynames::impl_displaynames_v1!(
     "territories.json",
     regions,
     Some(Alt::Short),
-    "//ldml/localeDisplayNames/territories/territory",
+    territory,
     CoverageLevelForXPath::Basic,
 );
 crate::displaynames::impl_displaynames_v1!(
@@ -70,7 +71,7 @@ crate::displaynames::impl_displaynames_v1!(
     "territories.json",
     regions,
     Some(Alt::Short),
-    "//ldml/localeDisplayNames/territories/territory",
+    territory,
     CoverageLevelForXPath::Moderate,
 );
 
@@ -227,7 +228,7 @@ mod tests {
         crate::displaynames::coverage_experimental::for_each_cldr_key_and_tier(
             cldr,
             "territories.json",
-            "//ldml/localeDisplayNames/territories/territory",
+            |l| &l.territory,
             |res: &cldr_serde::displaynames::region::Resource| {
                 &res.main.value.localedisplaynames.regions
             },

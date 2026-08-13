@@ -193,7 +193,7 @@ unicode-org#8119)
   - `zerovec_derive`: `0.11.3 -> 0.11.4`
     - Support sparse enums in `zerovec::make_ule`. (unicode-org#7940)
 
-## icu 2.2.x
+## icu4x 2.2.x
 
 Several crates have had patch releases in the 2.2 stream:
 
@@ -513,7 +513,7 @@ Several crates have had patch releases in the 2.2 stream:
         - Mark `Offset`, `Transition`, and `PossibleOffset` as `#[non_exhaustive]`
         - Internal cleanups
 
-## icu 2.1.x
+## icu4x 2.1.x
 
 Several crates have had patch releases in the 2.1 stream:
 

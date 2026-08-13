@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+pub use core::str::CharIndices;
+pub use utf8_iter::Utf8CharIndices;
+
 /// Similar to [`core::str::CharIndices`] for Latin-1 strings, represented as `[u8]`.
 ///
 /// Contrary to [`core::str::CharIndices`], the second element of the
