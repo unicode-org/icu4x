@@ -86,7 +86,7 @@ cd examples/dart
 exec --fail-on-error dart pub get
 exec --fail-on-error dart format --set-exit-if-changed .
 exec --fail-on-error dart analyze
-exec --fail-on-error dart --enable-experiment=record-use build cli --target bin/example.dart
+exec --fail-on-error dart build cli --target bin/example.dart
 bins = glob_array ./build/cli/*/bundle/bin/*
 bin = array_pop ${bins}
 exec --fail-on-error ${bin}
@@ -97,8 +97,8 @@ println ${size} "bytes"
 pubspec = readfile pubspec.yaml
 is_local = contains ${pubspec} "buildMode: local"
 if not ${is_local} # local dylib is not treeshaken
-    if greater_than ${size} 10000000
-        trigger_error "Dart example binary >10MB"
+    if greater_than ${size} 3000000
+        trigger_error "Dart example binary >3MB"
     end
 end
 '''
