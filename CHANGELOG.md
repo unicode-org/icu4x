@@ -119,8 +119,7 @@
   - `icu_segmenter`
     - Add unstable `LineSegmenter::new_17_for_non_complex_scripts`, implementing Unicode 17 (unicode-org#8041)
     - Add experimental `_neo_` constructors (unicode-org#7962)
-    - Add `radaboost` and `thadaboost` models for faster and more accurate Chinese and Thai segmentation as unstable, for testing purposes only (unicode-org#7805)
-      - The `experimental_segmenter` example now uses `radaboost` for the Chinese radical model and adds `thadaboost` for Thai
+    - Add `thadaboost` models to the test adaboost code, and add adaboost to the unstable provider module (unicode-org#7805)
     - Align word segmenter behaviour with ICU4C and UAX#29 (unicode-org#7952)
     - Use grapheme segmentation for `LineBreakStrictness:Anywhere` (unicode-org#7941)
     - Fix a bug in loose line breaking (unicode-org#8111)
