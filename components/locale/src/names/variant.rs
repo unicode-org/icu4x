@@ -51,8 +51,11 @@ macro_rules! table_row {
 /// use icu::locale::{locale, subtags::variant};
 /// use writeable::assert_writeable_eq;
 ///
-/// let display_name = VariantDisplayName::try_new_heavy(locale!("en").into(), variant!("fonipa"))
-///     .expect("Data should load successfully");
+/// let display_name = VariantDisplayName::try_new_heavy(
+///     locale!("en").into(),
+///     variant!("fonipa"),
+/// )
+/// .expect("Data should load successfully");
 ///
 /// assert_writeable_eq!(display_name, "IPA Phonetics");
 /// ```
@@ -81,12 +84,18 @@ impl VariantDisplayName {
     /// use writeable::assert_writeable_eq;
     ///
     /// assert_writeable_eq!(
-    ///     VariantDisplayName::new_heavy_with_fallback(locale!("de").into(), variant!("fonipa")),
+    ///     VariantDisplayName::new_heavy_with_fallback(
+    ///         locale!("de").into(),
+    ///         variant!("fonipa")
+    ///     ),
     ///     "IPA Phonetisch"
     /// );
     ///
     /// assert_writeable_eq!(
-    ///     VariantDisplayName::new_heavy_with_fallback(locale!("fr").into(), variant!("fonipa")),
+    ///     VariantDisplayName::new_heavy_with_fallback(
+    ///         locale!("fr").into(),
+    ///         variant!("fonipa")
+    ///     ),
     ///     "alphabet phonétique international"
     /// );
     /// ```

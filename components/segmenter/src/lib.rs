@@ -80,7 +80,7 @@
 //! Find all word boundaries:
 //!
 //!```rust
-//! use icu::segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
+//! use icu::segmenter::{WordSegmenter, options::WordBreakInvariantOptions};
 //!
 //! let segmenter =
 //!     WordSegmenter::new_auto(WordBreakInvariantOptions::default());
@@ -102,7 +102,7 @@
 //!
 //!```rust
 //! use icu::segmenter::{
-//!     options::SentenceBreakInvariantOptions, SentenceSegmenter,
+//!     SentenceSegmenter, options::SentenceBreakInvariantOptions,
 //! };
 //!
 //! let segmenter =

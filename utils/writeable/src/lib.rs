@@ -400,10 +400,7 @@ pub trait Writeable {
 /// writeable::impl_writeable_delegate!(MyStruct, |&self| &self.0);
 /// writeable::impl_display_with_writeable!(MyStruct);
 ///
-/// writeable::assert_writeable_eq!(
-///     MyStruct("hello".to_string()),
-///     "hello"
-/// );
+/// writeable::assert_writeable_eq!(MyStruct("hello".to_string()), "hello");
 /// ```
 ///
 /// With a cfg on fn `write_to_string`:

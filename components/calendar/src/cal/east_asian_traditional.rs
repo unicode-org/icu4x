@@ -360,8 +360,8 @@ impl Rules for China {
 /// [Yuk Tung Liu]: https://ytliu0.github.io/ChineseCalendar/table.html
 ///
 /// ```rust
-/// use icu::calendar::cal::{ChineseTraditional, KoreanTraditional};
 /// use icu::calendar::Date;
+/// use icu::calendar::cal::{ChineseTraditional, KoreanTraditional};
 ///
 /// let iso_a = Date::try_new_iso(2012, 4, 23).unwrap();
 /// let korean_a = iso_a.to_calendar(KoreanTraditional::new());
@@ -480,8 +480,8 @@ impl Date<KoreanTraditional> {
     /// valid range of `-9999..=9999`.
     ///
     /// ```rust
-    /// use icu::calendar::types::Month;
     /// use icu::calendar::Date;
+    /// use icu::calendar::types::Month;
     ///
     /// let date = Date::try_new_korean_traditional(2025, Month::new(5), 25)
     ///     .expect("Failed to initialize Date instance.");
@@ -845,8 +845,8 @@ impl Date<ChineseTraditional> {
     /// valid range of `-9999..=9999`.
     ///
     /// ```rust
-    /// use icu::calendar::types::Month;
     /// use icu::calendar::Date;
+    /// use icu::calendar::types::Month;
     ///
     /// let date = Date::try_new_chinese_traditional(2025, Month::new(5), 25)
     ///     .expect("Failed to initialize Date instance.");

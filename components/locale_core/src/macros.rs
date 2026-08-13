@@ -9,7 +9,7 @@
 /// # Examples
 ///
 /// ```
-/// use icu::locale::{langid, LanguageIdentifier};
+/// use icu::locale::{LanguageIdentifier, langid};
 ///
 /// const DE_AT: LanguageIdentifier = langid!("de-at");
 ///
@@ -59,7 +59,7 @@ macro_rules! langid {
 /// # Examples
 ///
 /// ```
-/// use icu::locale::{locale, Locale};
+/// use icu::locale::{Locale, locale};
 ///
 /// const DE_AT: Locale = locale!("de-at");
 ///
@@ -164,7 +164,7 @@ macro_rules! locale {
 /// # Examples
 ///
 /// ```
-/// use icu::locale::{data_locale, DataLocale};
+/// use icu::locale::{DataLocale, data_locale};
 ///
 /// const DE_AT: DataLocale = data_locale!("de-at");
 ///

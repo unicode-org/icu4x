@@ -28,7 +28,7 @@ pub enum Direction {
 /// # Examples
 ///
 /// ```
-/// use icu::locale::{langid, Direction, LocaleDirectionality};
+/// use icu::locale::{Direction, LocaleDirectionality, langid};
 ///
 /// let ld = LocaleDirectionality::new_common();
 ///
@@ -112,7 +112,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleDirectionality<Expander> {
     ///
     /// ```
     /// use icu::locale::{
-    ///     langid, Direction, LocaleDirectionality, LocaleExpander,
+    ///     Direction, LocaleDirectionality, LocaleExpander, langid,
     /// };
     ///
     /// let ld_default = LocaleDirectionality::new_common();
@@ -170,7 +170,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleDirectionality<Expander> {
     /// Using an existing locale:
     ///
     /// ```
-    /// use icu::locale::{langid, Direction, LocaleDirectionality};
+    /// use icu::locale::{Direction, LocaleDirectionality, langid};
     ///
     /// let ld = LocaleDirectionality::new_common();
     ///

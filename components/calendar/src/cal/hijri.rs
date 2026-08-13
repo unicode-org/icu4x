@@ -1070,8 +1070,8 @@ impl<A: AsCalendar<Calendar = Hijri<R>>, R: Rules> Date<A> {
     /// valid range of `-9999..=9999`.
     ///
     /// ```rust
-    /// use icu::calendar::cal::Hijri;
     /// use icu::calendar::Date;
+    /// use icu::calendar::cal::Hijri;
     ///
     /// let hijri = Hijri::new_umm_al_qura();
     ///

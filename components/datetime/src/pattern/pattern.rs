@@ -39,11 +39,11 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 ///
 /// ```
 /// use icu::calendar::Gregorian;
+/// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::input::Date;
 /// use icu::datetime::pattern::DateTimePattern;
 /// use icu::datetime::provider::fields::components;
-/// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
@@ -77,11 +77,11 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// Check the hour cycle of a resolved pattern:
 ///
 /// ```
+/// use icu::datetime::NoCalendarFormatter;
 /// use icu::datetime::fieldsets::T;
 /// use icu::datetime::input::Time;
 /// use icu::datetime::pattern::DateTimePattern;
 /// use icu::datetime::provider::fields::components;
-/// use icu::datetime::NoCalendarFormatter;
 /// use icu::locale::locale;
 /// use icu::locale::preferences::extensions::unicode::keywords::HourCycle;
 /// use writeable::assert_writeable_eq;

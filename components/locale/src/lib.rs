@@ -48,7 +48,7 @@
 //! ```
 //!
 //! ```
-//! use icu::locale::{locale, LocaleExpander, TransformResult};
+//! use icu::locale::{LocaleExpander, TransformResult, locale};
 //!
 //! let lc = LocaleExpander::new_common();
 //!
@@ -62,7 +62,7 @@
 //! ```
 //!
 //! ```
-//! use icu::locale::{locale, LocaleExpander, TransformResult};
+//! use icu::locale::{LocaleExpander, TransformResult, locale};
 //! use writeable::assert_writeable_eq;
 //!
 //! let lc = LocaleExpander::new_common();

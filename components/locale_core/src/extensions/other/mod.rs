@@ -13,8 +13,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locale::extensions::other::Other;
 //! use icu::locale::Locale;
+//! use icu::locale::extensions::other::Other;
 //!
 //! let mut loc: Locale = "en-US-a-foo-faa".parse().expect("Parsing failed.");
 //! ```

@@ -578,8 +578,8 @@ impl CurrencyFormatter<DecimalFormatter> {
     ///
     /// # Examples
     /// ```
-    /// use icu::experimental::dimension::currency::formatter::CurrencyFormatter;
     /// use icu::experimental::dimension::currency::CurrencyType;
+    /// use icu::experimental::dimension::currency::formatter::CurrencyFormatter;
     /// use icu::locale::locale;
     /// use icu::locale::preferences::extensions::unicode::keywords::currency;
     /// use writeable::assert_writeable_eq;
@@ -593,7 +593,10 @@ impl CurrencyFormatter<DecimalFormatter> {
     /// )
     /// .unwrap();
     /// let value = "12345.67".parse().unwrap();
-    /// assert_writeable_eq!(fmt.format_fixed_decimal(&value), "USD\u{a0}12,345.67");
+    /// assert_writeable_eq!(
+    ///     fmt.format_fixed_decimal(&value),
+    ///     "USD\u{a0}12,345.67"
+    /// );
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_code(
@@ -650,17 +653,22 @@ impl CurrencyFormatter<DecimalFormatter> {
     ///
     /// # Examples
     /// ```
-    /// use icu::experimental::dimension::currency::formatter::CurrencyFormatter;
     /// use icu::experimental::dimension::currency::CurrencyType;
+    /// use icu::experimental::dimension::currency::formatter::CurrencyFormatter;
     /// use icu::locale::locale;
     /// use icu::locale::preferences::extensions::unicode::keywords::currency;
     /// use writeable::assert_writeable_eq;
     ///
     /// let currency_preferences = locale!("en-US").into();
     /// let currency_code = currency!("USD");
-    /// let fmt = CurrencyFormatter::try_new_name(currency_preferences, currency_code).unwrap();
+    /// let fmt =
+    ///     CurrencyFormatter::try_new_name(currency_preferences, currency_code)
+    ///         .unwrap();
     /// let value = "12345.67".parse().unwrap();
-    /// assert_writeable_eq!(fmt.format_fixed_decimal(&value), "12,345.67 US dollars");
+    /// assert_writeable_eq!(
+    ///     fmt.format_fixed_decimal(&value),
+    ///     "12,345.67 US dollars"
+    /// );
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_name(
@@ -717,15 +725,20 @@ impl CurrencyFormatter<DecimalFormatter> {
     ///
     /// # Examples
     /// ```
-    /// use icu::experimental::dimension::currency::formatter::CurrencyFormatter;
     /// use icu::experimental::dimension::currency::CurrencyType;
+    /// use icu::experimental::dimension::currency::formatter::CurrencyFormatter;
     /// use icu::locale::locale;
     /// use icu::locale::preferences::extensions::unicode::keywords::currency;
     /// use writeable::assert_writeable_eq;
     ///
     /// let currency_preferences = locale!("en-US").into();
     /// let currency_code = currency!("USD");
-    /// let fmt = CurrencyFormatter::try_new_no_currency(currency_preferences, currency_code, Default::default()).unwrap();
+    /// let fmt = CurrencyFormatter::try_new_no_currency(
+    ///     currency_preferences,
+    ///     currency_code,
+    ///     Default::default(),
+    /// )
+    /// .unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// assert_writeable_eq!(fmt.format_fixed_decimal(&value), "12,345.67");
     /// ```
@@ -1268,8 +1281,8 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     ///
     /// # Examples
     /// ```
-    /// use icu::experimental::dimension::currency::formatter::CurrencyFormatter;
     /// use icu::experimental::dimension::currency::CurrencyType;
+    /// use icu::experimental::dimension::currency::formatter::CurrencyFormatter;
     /// use icu::locale::locale;
     /// use icu::locale::preferences::extensions::unicode::keywords::currency;
     /// use writeable::assert_writeable_eq;
@@ -1283,15 +1296,12 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     /// )
     /// .unwrap();
     /// let value = "12345.67".parse().unwrap();
-    /// assert_writeable_eq!(
-    ///     fmt.format_fixed_decimal(&value),
-    ///     "$12,345.67"
-    /// );
+    /// assert_writeable_eq!(fmt.format_fixed_decimal(&value), "$12,345.67");
     /// ```
     ///
     /// ```
-    /// use icu::experimental::dimension::currency::formatter::CurrencyFormatter;
     /// use icu::experimental::dimension::currency::CurrencyType;
+    /// use icu::experimental::dimension::currency::formatter::CurrencyFormatter;
     /// use icu::locale::locale;
     /// use icu::locale::preferences::extensions::unicode::keywords::currency;
     /// use writeable::assert_writeable_eq;
@@ -1309,8 +1319,8 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
     /// ```
     ///
     /// ```
-    /// use icu::experimental::dimension::currency::formatter::CurrencyFormatter;
     /// use icu::experimental::dimension::currency::CurrencyType;
+    /// use icu::experimental::dimension::currency::formatter::CurrencyFormatter;
     /// use icu::locale::locale;
     /// use icu::locale::preferences::extensions::unicode::keywords::currency;
     /// use writeable::assert_writeable_eq;

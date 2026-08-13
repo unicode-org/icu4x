@@ -177,8 +177,8 @@ impl<'a> CodePointSetDataBorrowed<'a> {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::props::Alphabetic;
     /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::Alphabetic;
     ///
     /// let alphabetic = CodePointSetData::new::<Alphabetic>();
     /// let mut ranges = alphabetic.iter_ranges();
@@ -201,8 +201,8 @@ impl<'a> CodePointSetDataBorrowed<'a> {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::props::Alphabetic;
     /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::Alphabetic;
     ///
     /// let alphabetic = CodePointSetData::new::<Alphabetic>();
     /// let mut ranges = alphabetic.iter_ranges();

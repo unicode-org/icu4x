@@ -120,9 +120,10 @@ macro_rules! table_row {
 ///
 /// ```
 /// use icu::locale::names::{
-///     DisplayNamesPreferences, LanguageIdentifierDisplayName, LanguageIdentifierDisplayNameOptions,
+///     DisplayNamesPreferences, LanguageIdentifierDisplayName,
+///     LanguageIdentifierDisplayNameOptions,
 /// };
-/// use icu::locale::{locale, langid};
+/// use icu::locale::{langid, locale};
 /// use writeable::assert_try_writeable_eq;
 ///
 /// let prefs = DisplayNamesPreferences::from(locale!("en"));
@@ -134,7 +135,11 @@ macro_rules! table_row {
 /// )
 /// .expect("Data should load successfully");
 ///
-/// assert_try_writeable_eq!(display_name.as_borrowed(), "Canadian French", Ok(()));
+/// assert_try_writeable_eq!(
+///     display_name.as_borrowed(),
+///     "Canadian French",
+///     Ok(())
+/// );
 /// ```
 ///
 /// When a subtag is unknown:

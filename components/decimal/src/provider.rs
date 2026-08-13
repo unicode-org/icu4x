@@ -20,8 +20,8 @@
 //! contains the resolved numbering system as its attribute:
 //!
 //! ```
-//! use icu::decimal::provider::DecimalDigitsV1;
 //! use icu::decimal::DecimalFormatter;
+//! use icu::decimal::provider::DecimalDigitsV1;
 //! use icu::locale::locale;
 //! use icu_provider::prelude::*;
 //! use std::any::TypeId;

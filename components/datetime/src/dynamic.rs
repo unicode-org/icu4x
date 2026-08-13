@@ -36,10 +36,10 @@
 //!
 //! ```
 //! use icu::calendar::Date;
+//! use icu::datetime::DateTimeFormatter;
 //! use icu::datetime::fieldsets;
 //! use icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet;
 //! use icu::datetime::input::{DateTime, Time};
-//! use icu::datetime::DateTimeFormatter;
 //! use icu::locale::locale;
 //! use writeable::Writeable;
 //!

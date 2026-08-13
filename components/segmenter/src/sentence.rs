@@ -28,7 +28,8 @@ pub struct SentenceBreakOptions<'a> {
     ///
     /// let segmenter = SentenceSegmenter::new(Default::default());
     ///
-    /// let breakpoints: Vec<usize> = segmenter.segment_str("hello; world").collect();
+    /// let breakpoints: Vec<usize> =
+    ///     segmenter.segment_str("hello; world").collect();
     /// assert_eq!(&breakpoints, &[0, 12]);
     /// ```
     ///
@@ -36,16 +37,18 @@ pub struct SentenceBreakOptions<'a> {
     ///
     /// ```rust
     /// use icu::locale::langid;
-    /// use icu::segmenter::options::SentenceBreakOptions;
     /// use icu::segmenter::SentenceSegmenter;
+    /// use icu::segmenter::options::SentenceBreakOptions;
     ///
     /// let mut options = SentenceBreakOptions::default();
     /// let langid = &langid!("el");
     /// options.content_locale = Some(langid);
     /// let segmenter = SentenceSegmenter::try_new(options).unwrap();
     ///
-    /// let breakpoints: Vec<usize> =
-    ///     segmenter.as_borrowed().segment_str("hello; world").collect();
+    /// let breakpoints: Vec<usize> = segmenter
+    ///     .as_borrowed()
+    ///     .segment_str("hello; world")
+    ///     .collect();
     /// assert_eq!(&breakpoints, &[0, 7, 12]);
     /// ```
     pub content_locale: Option<&'a LanguageIdentifier>,
@@ -134,8 +137,8 @@ impl<Y: RuleBreakType> Iterator for SentenceBreakIterator<'_, '_, Y> {
 ///
 /// ```rust
 /// use icu::locale::langid;
-/// use icu::segmenter::options::SentenceBreakOptions;
 /// use icu::segmenter::SentenceSegmenter;
+/// use icu::segmenter::options::SentenceBreakOptions;
 ///
 /// let mut options = SentenceBreakOptions::default();
 /// let langid = &langid!("en");
