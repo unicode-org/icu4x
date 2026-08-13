@@ -338,7 +338,7 @@ jobs:
 
     - uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # v1.6.5
       with:
-        sdk: stable
+        sdk: ${{ github.event_name == 'schedule' && github.event.schedule == '0 14 * * *' && 'dev' || 'stable' }}```
     - name: Install yq if Windows
       if: ${{ matrix.os == 'windows-latest' }}
       run: choco install yq
