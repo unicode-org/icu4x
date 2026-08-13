@@ -35,6 +35,7 @@
     - Correctly handle CLDR 48.2 data with "c" in the skeletons (unicode-org#7945)
   - `icu_decimal`
     - Fix integer overflow in UnsignedDecimal exponent parsing (unicode-org#8289)
+  - `icu_experimental`: `0.5.0 -> 0.6.0`
   - `icu_experimental/currency`
     - Significant changes to APIs and data structs
     - Refactor `CurrencyFormatter` to be generic over `ValueRepresentation`: `pub struct CurrencyFormatter<V: ValueRepresentation>`. (unicode-org#8145)
@@ -92,7 +93,7 @@
       - Struct `LocaleFallbackerWithConfig`
       - Struct `LocaleFallbackIterator`
     - New fn `LocaleFallbackerWithConfig::config` (unicode-org#8305)
-  - `icu_pattern`
+  - `icu_pattern`: `0.4.2` -> `0.5.0`
     - Remove public associated Error type from sealed trait PatternBackend (unicode-org#8122)
     - Add `TryWrap` for bubbling through TryWriteable errors (unicode-org#8123, unicode-org#8364)
     - Add placeholder extraction logic (unnicode-org#8074)
@@ -154,21 +155,21 @@ unicode-org#8119)
     - Update supported Dart toolchain for `record_use` to `3.13.0-215.0.dev` (    - In the build hook, skip building if code assets are disabled. (unicode-org#8183)
     - Add `libm` as a library input in the Dart linking script for Android. (unicode-org#8199)
 - Utils
-  - `ixdtf`
+  - `ixdtf`: `0.6.5 -> 0.6.6`
     - Reject trailing input after annotations in `YearMonth` and `MonthDay` parsing (unicode-org#8294)
-  - `litemap`
+  - `litemap`: `0.8.0 -> 0.8.1`
     - Make return types of `LiteMap` iter methods (`iter`, `iter_mut`, `values`, `keys`) concrete: (unicode-org#8072)
       - New types: `ValuesIter`, `KeysIter`, implements relevant traits, returned by `values` and `keys` respectively.
       - Changed: The return types of the aforementioned methods go from an `impl DoubleEndedIterator` to concrete types such as `S::KeyValueIter`, `S::KeyValueIterMut` or the aforementioned new types.
-  - `potential_utf`
+  - `potential_utf`: `0.1.3 -> 0.1.4`
     - Use `Box::from_raw()` instead of `transmute` for converting unsized transparent boxes. (unicode-org#7871)
-  - `resb`
+  - `resb`: `0.1.2 -> 0.2.0`
     - Add defense-in-depth around checked multiplication. (unicode-org#7887)
     - (breaking) APIs produce a typed `I32Pair` instead of `(i32, i32)` for maximum layout soundness (unicode-org#8008)
     - (breaking) `cast_bytes_to_slice` replaced with type-specific cast functions (unicode-org#8008)
-  - `tinystr`
+  - `tinystr`: `0.8.3 -> 0.8.4`
     - Add `UnvalidatedTinyAsciiStr::DEFAULT` (unicode-org#8225)
-  - `writeable`
+  - `writeable`: `0.6.3 -> 0.6.4`
     - Add `TryWriteable::try_writeable_borrow` (unicode-org#8192)
     - New `impl_writeable_delegate!` macro to delegate `Writeable` implementations (unicode-org#8139)
     - New `impl_try_writeable_delegate!` macro to delegate `TryWriteable` implementations (unicode-org#8139)
@@ -180,16 +181,16 @@ unicode-org#8119)
       - Added error mapping fn to `impl_try_writeable_delegate!`
     - impl TryWriteable on references (unicode-org#8109)
     - impl TryWriteable on Either (unicode-org#8109)
-  - `zerofrom`
+  - `zerofrom`: `0.1.7 -> 0.1.8`
     - enable all features in playground (unicode-org#7958)
-  - `zerotrie`
+  - `zerotrie`: `0.2.4 -> 0.2.5`
     - new functions `ZeroAsciiIgnoreCaseTrie::get_with_write_fn`, `ZeroTrieZimpleAscii::get_with_write_fn` (unicode-org#8242)
     - add `ZeroTrieSimpleAsciiCursor::into_suffix_trie()` (unicode-org#8224)
-  - `zerovec`
+  - `zerovec`: `0.11.6 -> 0.11.7`
     - Fix minor soundness issue around unchecked multiplication, add defense in depth against other overflow situations. (unicode-org#7887)
     - `impl Hash for ZeroVec, ZeroSlice` (unicode-org#8282)
     - Relax bounds on PartialEq, Eq, and Hash impls, delegating to the bytes comparison (long required by the ULE impl) (unicode-org#8287)
-  - `zerovec_derive`
+  - `zerovec_derive`: `0.11.3 -> 0.11.4`
     - Support sparse enums in `zerovec::make_ule`. (unicode-org#7940)
 
 ## icu 2.2.x
