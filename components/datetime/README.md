@@ -37,11 +37,11 @@ Not all inputs are valid for all field sets.
 ## Examples
 
 ```rust
+use icu::datetime::DateTimeFormatter;
 use icu::datetime::fieldsets;
 use icu::datetime::input::Date;
 use icu::datetime::input::{DateTime, Time};
-use icu::datetime::DateTimeFormatter;
-use icu::locale::{locale, Locale};
+use icu::locale::{Locale, locale};
 use writeable::assert_writeable_eq;
 
 // Field set for year, month, day, hour, and minute with a medium length:
