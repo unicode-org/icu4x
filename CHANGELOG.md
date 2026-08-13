@@ -101,6 +101,9 @@
     - Fixes an issue in `LocaleDirectionality` for unknown languages (unicode-org#7918)
     - `LocaleExpander::maximize` no longer maximizes `und` to `en-Latn-US` (unicode-org#8110)
     - new module icu_locale::names, originally part of icu_experimental::displaynames (unicode-org#8338)
+    - fix `LocaleExpander::maximize()` to strip placeholder `Zzzz`/`ZZ` subtags before matching, per UTS #35 (unicode-org#8240)
+  - `icu_locale::names`
+    - Adds infallible fn for RegionDisplayName (unicode-org#8345)
   - `icu_locale_core`
     - Add `AsRef<LanguageIdentifier>` impls (unicode-org#7923)
       - New impls: `AsRef<LanguageIdentifier> for Locale`, `AsRef<LanguageIdentifier> for LanguageIdentifier`
@@ -119,6 +122,11 @@
     - Remove public associated Error type from sealed trait PatternBackend (unicode-org#8122)
     - new input structs DoublePlaceholderValueProviderTry, SinglePlaceholderValueProviderTry (unicode-org#8123)
     - manually implement `writeable_length_hint` (unicode-org#8193)
+    - add `TryWrap` for bubbling through TryWriteable errors (unicode-org#8364)
+    - Add placeholder extraction logic (unnicode-org#8074)
+      - New struct `PlaceholderMatches`
+      - New trait `ExtractionBackend` trait with impls for `SinglePlaceholder` and `DoublePlaceholder`
+      - New method`Pattern::extract_placeholders`
   - `icu_plurals`
     - Add generic `ZeroFrom` implementation for `PluralElements` (unicode-org#7999)
       - New trait implementations: `impl<'a, T, C> ZeroFrom<'a, PluralElements<C>> for PluralElements<T>`
@@ -205,9 +213,11 @@
     - enable all features in playground (unicode-org#7958)
   - `zerotrie`
     - new functions `ZeroAsciiIgnoreCaseTrie::get_with_write_fn`, `ZeroTrieZimpleAscii::get_with_write_fn` (unicode-org#8242)
+    - add `ZeroTrieSimpleAsciiCursor::into_suffix_trie()` (unicode-org#8224)
   - `zerovec`
     - Fix minor soundness issue around unchecked multiplication, add defense in depth against other overflow situations. (unicode-org#7887)
     - `impl Hash for ZeroVec, ZeroSlice` (unicode-org#8282)
+    - Relaxes bounds on PartialEq, Eq, and Hash impls, delegating to the bytes comparison (long required by the ULE impl) (unicode-org#8287)
   - `zerovec_derive`
     - Support sparse enums in `zerovec::make_ule`. (unicode-org#7940)
 
