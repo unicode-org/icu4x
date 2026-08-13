@@ -94,7 +94,7 @@
       - Struct `LocaleFallbackIterator`
     - New fn `LocaleFallbackerWithConfig::config` (unicode-org#8305)
   - `icu_pattern`: `0.4.2` -> `0.5.0`
-    - (breaking) Remove public associated Error type from sealed trait PatternBackend (unicode-org#8122)
+    - Remove public associated Error type from sealed trait PatternBackend (unicode-org#8122)
     - Add `TryWrap` for bubbling through TryWriteable errors (unicode-org#8123, unicode-org#8364)
     - Add placeholder extraction logic (unnicode-org#8074)
       - New struct `PlaceholderMatches`
@@ -164,8 +164,8 @@ unicode-org#8119)
     - Use `Box::from_raw()` instead of `transmute` for converting unsized transparent boxes. (unicode-org#7871)
   - `resb`: `0.1.2 -> 0.2.0`
     - Add defense-in-depth around checked multiplication. (unicode-org#7887)
-    - (breaking) APIs produce a typed `I32Pair` instead of `(i32, i32)` for maximum layout soundness (unicode-org#8008)
-    - (breaking) `cast_bytes_to_slice` replaced with type-specific cast functions (unicode-org#8008)
+    - APIs produce a typed `I32Pair` instead of `(i32, i32)` for maximum layout soundness (unicode-org#8008)
+    - `cast_bytes_to_slice` replaced with type-specific cast functions (unicode-org#8008)
   - `tinystr`: `0.8.3 -> 0.8.4`
     - Add `UnvalidatedTinyAsciiStr::DEFAULT` (unicode-org#8225)
   - `writeable`: `0.6.3 -> 0.6.4`
