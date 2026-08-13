@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 
 /// An ICU4X Time object representing a time in terms of hour, minute, second, nanosecond
 ///
-/// See the [Rust documentation for `Time`](https://docs.rs/icu/2.2.0/icu/time/struct.Time.html) for more information.
+/// See the [Rust documentation for `Time`](https://docs.rs/icu/2.3.0/icu/time/struct.Time.html) for more information.
 final class Time implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -32,7 +32,7 @@ final class Time implements ffi.Finalizable {
 
   /// Creates a new [Time] given field values
   ///
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.2.0/icu/time/struct.Time.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.0/icu/time/struct.Time.html#method.try_new) for more information.
   ///
   /// Throws [CalendarError] on failure.
   factory Time(int hour, int minute, int second, int subsecond) {
@@ -45,7 +45,7 @@ final class Time implements ffi.Finalizable {
 
   /// Creates a new [Time] from an IXDTF string.
   ///
-  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.2.0/icu/time/struct.Time.html#method.try_from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.3.0/icu/time/struct.Time.html#method.try_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
   factory Time.fromString(String v) {
@@ -59,7 +59,7 @@ final class Time implements ffi.Finalizable {
 
   /// Creates a new [Time] representing the start of the day (00:00:00.000).
   ///
-  /// See the [Rust documentation for `start_of_day`](https://docs.rs/icu/2.2.0/icu/time/struct.Time.html#method.start_of_day) for more information.
+  /// See the [Rust documentation for `start_of_day`](https://docs.rs/icu/2.3.0/icu/time/struct.Time.html#method.start_of_day) for more information.
   ///
   /// Throws [CalendarError] on failure.
   factory Time.startOfDay() {
@@ -72,7 +72,7 @@ final class Time implements ffi.Finalizable {
 
   /// Creates a new [Time] representing noon (12:00:00.000).
   ///
-  /// See the [Rust documentation for `noon`](https://docs.rs/icu/2.2.0/icu/time/struct.Time.html#method.noon) for more information.
+  /// See the [Rust documentation for `noon`](https://docs.rs/icu/2.3.0/icu/time/struct.Time.html#method.noon) for more information.
   ///
   /// Throws [CalendarError] on failure.
   factory Time.noon() {
@@ -85,7 +85,7 @@ final class Time implements ffi.Finalizable {
 
   /// Returns the hour in this time
   ///
-  /// See the [Rust documentation for `hour`](https://docs.rs/icu/2.2.0/icu/time/struct.Time.html#structfield.hour) for more information.
+  /// See the [Rust documentation for `hour`](https://docs.rs/icu/2.3.0/icu/time/struct.Time.html#structfield.hour) for more information.
   int get hour {
     final result = _icu4x_Time_hour_mv1(_ffi);
     return result;
@@ -93,7 +93,7 @@ final class Time implements ffi.Finalizable {
 
   /// Returns the minute in this time
   ///
-  /// See the [Rust documentation for `minute`](https://docs.rs/icu/2.2.0/icu/time/struct.Time.html#structfield.minute) for more information.
+  /// See the [Rust documentation for `minute`](https://docs.rs/icu/2.3.0/icu/time/struct.Time.html#structfield.minute) for more information.
   int get minute {
     final result = _icu4x_Time_minute_mv1(_ffi);
     return result;
@@ -101,7 +101,7 @@ final class Time implements ffi.Finalizable {
 
   /// Returns the second in this time
   ///
-  /// See the [Rust documentation for `second`](https://docs.rs/icu/2.2.0/icu/time/struct.Time.html#structfield.second) for more information.
+  /// See the [Rust documentation for `second`](https://docs.rs/icu/2.3.0/icu/time/struct.Time.html#structfield.second) for more information.
   int get second {
     final result = _icu4x_Time_second_mv1(_ffi);
     return result;
@@ -109,7 +109,7 @@ final class Time implements ffi.Finalizable {
 
   /// Returns the subsecond in this time as nanoseconds
   ///
-  /// See the [Rust documentation for `subsecond`](https://docs.rs/icu/2.2.0/icu/time/struct.Time.html#structfield.subsecond) for more information.
+  /// See the [Rust documentation for `subsecond`](https://docs.rs/icu/2.3.0/icu/time/struct.Time.html#structfield.subsecond) for more information.
   int get subsecond {
     final result = _icu4x_Time_subsecond_mv1(_ffi);
     return result;
