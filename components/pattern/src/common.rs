@@ -132,6 +132,7 @@ pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
 /// use icu_pattern::DoublePlaceholder;
 /// use icu_pattern::DoublePlaceholderKey;
 /// use icu_pattern::PlaceholderValueProvider;
+/// use icu_pattern::InterpolatePlaceholderValueProviderWrap;
 /// use writeable::adapters::WithPart;
 /// use writeable::adapters::WriteableAsTryWriteableInfallible;
 /// use writeable::assert_writeable_parts_eq;
@@ -159,7 +160,7 @@ pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
 ///     value: "literal",
 /// };
 ///
-/// impl PlaceholderValueProvider<DoublePlaceholderKey> for ValuesWithParts<'_> {
+/// impl PlaceholderValueProvider<DoublePlaceholderKey> for InterpolatePlaceholderValueProviderWrap<ValuesWithParts<'_>> {
 ///     type Error = core::convert::Infallible;
 ///
 ///     type W<'a> = WriteableAsTryWriteableInfallible<WithPart<&'a str>>
@@ -174,11 +175,11 @@ pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
 ///     fn value_for(&self, key: DoublePlaceholderKey) -> Self::W<'_> {
 ///         let writeable = match key {
 ///             DoublePlaceholderKey::Place0 => WithPart {
-///                 writeable: self.0,
+///                 writeable: self.0.0,
 ///                 part: PART_PLACEHOLDER_0,
 ///             },
 ///             DoublePlaceholderKey::Place1 => WithPart {
-///                 writeable: self.1,
+///                 writeable: self.0.1,
 ///                 part: PART_PLACEHOLDER_1,
 ///             },
 ///         };
@@ -261,6 +262,10 @@ where
         (*self).map_literal(literal)
     }
 }
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[allow(clippy::exhaustive_structs)] // newtype
+pub struct InterpolatePlaceholderValueProviderWrap<T>(pub T);
 
 /// A wrapper for input types that may bubble up errors via [`TryWriteable`].
 ///

@@ -60,7 +60,8 @@ impl FromStr for SinglePlaceholderKey {
     }
 }
 
-impl<W> PlaceholderValueProvider<SinglePlaceholderKey> for (W,)
+impl<W> PlaceholderValueProvider<SinglePlaceholderKey>
+    for InterpolatePlaceholderValueProviderWrap<W>
 where
     W: Writeable,
 {
@@ -78,32 +79,6 @@ where
 
     fn value_for(&self, _key: SinglePlaceholderKey) -> Self::W<'_> {
         WriteableAsTryWriteableInfallible(&self.0)
-    }
-    #[inline]
-    fn map_literal<'a, 'l>(&'a self, literal: &'l str) -> Self::L<'a, 'l> {
-        literal
-    }
-}
-
-impl<W> PlaceholderValueProvider<SinglePlaceholderKey> for [W; 1]
-where
-    W: Writeable,
-{
-    type Error = Infallible;
-
-    type W<'a>
-        = WriteableAsTryWriteableInfallible<&'a W>
-    where
-        Self: 'a;
-
-    type L<'a, 'l>
-        = &'l str
-    where
-        Self: 'a;
-
-    fn value_for(&self, _key: SinglePlaceholderKey) -> Self::W<'_> {
-        let [value] = self;
-        WriteableAsTryWriteableInfallible(value)
     }
     #[inline]
     fn map_literal<'a, 'l>(&'a self, literal: &'l str) -> Self::L<'a, 'l> {
@@ -187,7 +162,7 @@ where
 ///         Default::default()
 ///     )
 ///     .unwrap()
-///     .interpolate_to_string([5]),
+///     .interpolate_to_string(5),
 ///     "5 days ago",
 /// );
 ///
@@ -198,7 +173,7 @@ where
 ///         Default::default()
 ///     )
 ///     .unwrap()
-///     .interpolate_to_string(["Alice"]),
+///     .interpolate_to_string("Alice"),
 ///     "Alice",
 /// );
 ///
@@ -209,7 +184,7 @@ where
 ///         Default::default()
 ///     )
 ///     .unwrap()
-///     .interpolate_to_string(["hi"]),
+///     .interpolate_to_string("hi"),
 ///     "yesterday",
 /// );
 ///
@@ -220,7 +195,7 @@ where
 ///         QuoteMode::QuotingSupported.into()
 ///     )
 ///     .unwrap()
-///     .interpolate_to_string(("hi",)),
+///     .interpolate_to_string("hi"),
 ///     "{0} hi",
 /// );
 /// ```

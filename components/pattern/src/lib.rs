@@ -37,7 +37,7 @@
 //! .unwrap();
 //!
 //! // Interpolate into the pattern string:
-//! assert_writeable_eq!(pattern.interpolate(["World"]), "Hello, World!");
+//! assert_writeable_eq!(pattern.interpolate("World"), "Hello, World!");
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html
@@ -61,6 +61,7 @@ mod single;
 pub use PatternError as Error;
 #[cfg(feature = "unstable")]
 pub use common::ExtractionBackend;
+pub use common::InterpolatePlaceholderValueProviderWrap;
 pub use common::PatternBackend;
 pub use common::PatternItem;
 #[cfg(feature = "alloc")]
@@ -110,7 +111,7 @@ mod private {
 /// .unwrap();
 ///
 /// // Interpolate some values into the pattern:
-/// assert_writeable_eq!(pattern.interpolate(["Alice"]), "Hello, Alice!");
+/// assert_writeable_eq!(pattern.interpolate("Alice"), "Hello, Alice!");
 /// ```
 pub type SinglePlaceholderPattern = Pattern<SinglePlaceholder>;
 
@@ -131,7 +132,7 @@ impl SinglePlaceholderPattern {
     /// );
     ///
     /// assert_writeable_eq!(
-    ///     SinglePlaceholderPattern::PASS_THROUGH.interpolate(["hello, world!"]),
+    ///     SinglePlaceholderPattern::PASS_THROUGH.interpolate("hello, world!"),
     ///     "hello, world!"
     /// );
     /// ```

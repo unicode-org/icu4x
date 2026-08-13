@@ -24,7 +24,7 @@ let pattern = SinglePlaceholderPattern::try_from_str(
 .unwrap();
 
 // Interpolate into the pattern string:
-assert_writeable_eq!(pattern.interpolate(["World"]), "Hello, World!");
+assert_writeable_eq!(pattern.interpolate("World"), "Hello, World!");
 ```
 
 [`ICU4X`]: ../icu/index.html

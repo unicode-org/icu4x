@@ -57,7 +57,7 @@ use writeable::{PartsWrite, TryWriteable, Writeable, adapters::TryWriteableInfal
 /// )
 /// .unwrap();
 ///
-/// assert_writeable_eq!(pattern.interpolate(["Alice"]), "Hello, Alice!");
+/// assert_writeable_eq!(pattern.interpolate("Alice"), "Hello, Alice!");
 /// ```
 ///
 /// [`SinglePlaceholder`]: crate::SinglePlaceholder
@@ -308,11 +308,15 @@ where
     /// This is defined only on infallible inputs.
     pub fn interpolate<'a, P>(&'a self, value_provider: P) -> impl Writeable + fmt::Display + 'a
     where
-        P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = Infallible> + 'a,
+        InterpolatePlaceholderValueProviderWrap<P>:
+            PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = Infallible> + 'a,
     {
-        TryWriteableInfallibleAsWriteable(WriteablePattern::<B, P> {
+        TryWriteableInfallibleAsWriteable(WriteablePattern::<
+            B,
+            InterpolatePlaceholderValueProviderWrap<P>,
+        > {
             store: &self.store,
-            value_provider,
+            value_provider: InterpolatePlaceholderValueProviderWrap(value_provider),
         })
     }
 
@@ -324,7 +328,8 @@ where
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     pub fn interpolate_to_string<'a, P>(&'a self, value_provider: P) -> String
     where
-        P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = Infallible> + 'a,
+        InterpolatePlaceholderValueProviderWrap<P>:
+            PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = Infallible> + 'a,
     {
         self.interpolate(value_provider)
             .write_to_string()
