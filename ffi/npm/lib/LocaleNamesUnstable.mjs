@@ -16,13 +16,13 @@ const LocaleNamesUnstable_box_destroy_registry = new FinalizationRegistry((ptr) 
  * This struct holds free functions for loading display names for languages, scripts,
  * regions, and language identifiers.
  *
- * See the [Rust documentation for `RegionDisplayName`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html) for more information.
+ * See the [Rust documentation for `RegionDisplayName`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.RegionDisplayName.html) for more information.
  *
- * See the [Rust documentation for `ScriptDisplayName`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html) for more information.
+ * See the [Rust documentation for `ScriptDisplayName`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.ScriptDisplayName.html) for more information.
  *
- * See the [Rust documentation for `VariantDisplayName`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.VariantDisplayName.html) for more information.
+ * See the [Rust documentation for `VariantDisplayName`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.VariantDisplayName.html) for more information.
  *
- * See the [Rust documentation for `LanguageIdentifierDisplayName`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html) for more information.
+ * See the [Rust documentation for `LanguageIdentifierDisplayName`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html) for more information.
  */
 export class LocaleNamesUnstable {
     // Internal ptr reference:
@@ -56,7 +56,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
+     * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
      */
     static forRegionLight(locale, region) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -81,7 +81,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
+     * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
      */
     static forRegionLightWithProvider(provider, locale, region) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -114,7 +114,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
+     * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
      */
     static forRegionTiny(locale, region) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -139,7 +139,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
+     * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
      */
     static forRegionTinyWithProvider(provider, locale, region) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -172,7 +172,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
+     * See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
      */
     static forRegionShortTiny(locale, region) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -197,7 +197,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
+     * See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
      */
     static forRegionShortTinyWithProvider(provider, locale, region) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -230,7 +230,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
+     * See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
      */
     static forRegionShortLight(locale, region) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -255,7 +255,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
+     * See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
      */
     static forRegionShortLightWithProvider(provider, locale, region) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -288,7 +288,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
+     * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
      */
     static forScriptLight(locale, script) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -313,7 +313,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
+     * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
      */
     static forScriptLightWithProvider(provider, locale, script) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -346,7 +346,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
+     * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
      */
     static forScriptTiny(locale, script) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -371,7 +371,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
+     * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
      */
     static forScriptTinyWithProvider(provider, locale, script) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -404,7 +404,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
+     * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
      */
     static forScriptHeavy(locale, script) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -429,7 +429,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
+     * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
      */
     static forScriptHeavyWithProvider(provider, locale, script) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -462,7 +462,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
+     * See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
      */
     static forScriptShortHeavy(locale, script) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -487,7 +487,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
+     * See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
      */
     static forScriptShortHeavyWithProvider(provider, locale, script) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -520,7 +520,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
+     * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
      */
     static forVariantHeavy(locale, variant) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -545,7 +545,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
+     * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
      */
     static forVariantHeavyWithProvider(provider, locale, variant) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -578,7 +578,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
+     * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
      */
     static forLanguageIdentifierLight(locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -606,7 +606,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
+     * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
      */
     static forLanguageIdentifierLightWithProvider(provider, locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -634,7 +634,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
+     * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
      */
     static forLanguageIdentifierTiny(locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -662,7 +662,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
+     * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
      */
     static forLanguageIdentifierTinyWithProvider(provider, locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -690,7 +690,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
+     * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
      */
     static forLanguageIdentifierShortLight(locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -718,7 +718,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
+     * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
      */
     static forLanguageIdentifierShortLightWithProvider(provider, locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -746,7 +746,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
+     * See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
      */
     static forLanguageIdentifierLongLight(locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -774,7 +774,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
+     * See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
      */
     static forLanguageIdentifierLongLightWithProvider(provider, locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -802,7 +802,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
+     * See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
      */
     static forLanguageIdentifierMenuLight(locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -830,7 +830,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
+     * See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
      */
     static forLanguageIdentifierMenuLightWithProvider(provider, locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -858,7 +858,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
+     * See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
      */
     static forLanguageIdentifierShortMenuLight(locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -886,7 +886,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
+     * See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
      */
     static forLanguageIdentifierShortMenuLightWithProvider(provider, locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -914,7 +914,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
+     * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
      */
     static forLanguageIdentifierHeavy(locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -942,7 +942,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
+     * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
      */
     static forLanguageIdentifierHeavyWithProvider(provider, locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -970,7 +970,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
+     * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
      */
     static forLanguageIdentifierShortHeavy(locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -998,7 +998,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
+     * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
      */
     static forLanguageIdentifierShortHeavyWithProvider(provider, locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -1026,7 +1026,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
+     * See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
      */
     static forLanguageIdentifierLongHeavy(locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -1054,7 +1054,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
+     * See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
      */
     static forLanguageIdentifierLongHeavyWithProvider(provider, locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -1082,7 +1082,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
+     * See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
      */
     static forLanguageIdentifierMenuHeavy(locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -1110,7 +1110,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
+     * See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
      */
     static forLanguageIdentifierMenuHeavyWithProvider(provider, locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -1138,7 +1138,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
+     * See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
      */
     static forLanguageIdentifierShortMenuHeavy(locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -1166,7 +1166,7 @@ export class LocaleNamesUnstable {
     /**
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
-     * See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
+     * See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
      */
     static forLanguageIdentifierShortMenuHeavyWithProvider(provider, locale, langid, languageDisplay) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);

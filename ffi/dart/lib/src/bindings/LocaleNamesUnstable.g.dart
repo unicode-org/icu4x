@@ -8,13 +8,13 @@ part of 'lib.g.dart';
 /// This struct holds free functions for loading display names for languages, scripts,
 /// regions, and language identifiers.
 ///
-/// See the [Rust documentation for `RegionDisplayName`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html) for more information.
+/// See the [Rust documentation for `RegionDisplayName`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.RegionDisplayName.html) for more information.
 ///
-/// See the [Rust documentation for `ScriptDisplayName`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html) for more information.
+/// See the [Rust documentation for `ScriptDisplayName`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.ScriptDisplayName.html) for more information.
 ///
-/// See the [Rust documentation for `VariantDisplayName`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.VariantDisplayName.html) for more information.
+/// See the [Rust documentation for `VariantDisplayName`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.VariantDisplayName.html) for more information.
 ///
-/// See the [Rust documentation for `LanguageIdentifierDisplayName`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html) for more information.
+/// See the [Rust documentation for `LanguageIdentifierDisplayName`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html) for more information.
 final class LocaleNamesUnstable implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -41,7 +41,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
+  /// See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
   static String forRegionLight(Locale locale, String region) {
     final temp = _FinalizedArena();
     final write = _Write();
@@ -51,7 +51,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
+  /// See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forRegionLightWithProvider(DataProvider provider, Locale locale, String region) {
@@ -66,7 +66,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
+  /// See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
   static String forRegionTiny(Locale locale, String region) {
     final temp = _FinalizedArena();
     final write = _Write();
@@ -76,7 +76,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
+  /// See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forRegionTinyWithProvider(DataProvider provider, Locale locale, String region) {
@@ -91,7 +91,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
+  /// See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
   static String forRegionShortTiny(Locale locale, String region) {
     final temp = _FinalizedArena();
     final write = _Write();
@@ -101,7 +101,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
+  /// See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forRegionShortTinyWithProvider(DataProvider provider, Locale locale, String region) {
@@ -116,7 +116,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
+  /// See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
   static String forRegionShortLight(Locale locale, String region) {
     final temp = _FinalizedArena();
     final write = _Write();
@@ -126,7 +126,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
+  /// See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forRegionShortLightWithProvider(DataProvider provider, Locale locale, String region) {
@@ -141,7 +141,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
+  /// See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
   static String forScriptLight(Locale locale, String script) {
     final temp = _FinalizedArena();
     final write = _Write();
@@ -151,7 +151,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
+  /// See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forScriptLightWithProvider(DataProvider provider, Locale locale, String script) {
@@ -166,7 +166,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
+  /// See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
   static String forScriptTiny(Locale locale, String script) {
     final temp = _FinalizedArena();
     final write = _Write();
@@ -176,7 +176,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
+  /// See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forScriptTinyWithProvider(DataProvider provider, Locale locale, String script) {
@@ -191,7 +191,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
+  /// See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
   static String forScriptHeavy(Locale locale, String script) {
     final temp = _FinalizedArena();
     final write = _Write();
@@ -201,7 +201,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
+  /// See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forScriptHeavyWithProvider(DataProvider provider, Locale locale, String script) {
@@ -216,7 +216,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
+  /// See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
   static String forScriptShortHeavy(Locale locale, String script) {
     final temp = _FinalizedArena();
     final write = _Write();
@@ -226,7 +226,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
+  /// See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forScriptShortHeavyWithProvider(DataProvider provider, Locale locale, String script) {
@@ -241,7 +241,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
+  /// See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
   static String forVariantHeavy(Locale locale, String variant) {
     final temp = _FinalizedArena();
     final write = _Write();
@@ -251,7 +251,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
+  /// See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forVariantHeavyWithProvider(DataProvider provider, Locale locale, String variant) {
@@ -266,7 +266,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
+  /// See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forLanguageIdentifierLight(Locale locale, Locale langid, LanguageDisplayUnstable languageDisplay) {
@@ -280,7 +280,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
+  /// See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forLanguageIdentifierLightWithProvider(DataProvider provider, Locale locale, Locale langid, LanguageDisplayUnstable languageDisplay) {
@@ -294,7 +294,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
+  /// See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forLanguageIdentifierTiny(Locale locale, Locale langid, LanguageDisplayUnstable languageDisplay) {
@@ -308,7 +308,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
+  /// See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forLanguageIdentifierTinyWithProvider(DataProvider provider, Locale locale, Locale langid, LanguageDisplayUnstable languageDisplay) {
@@ -322,7 +322,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
+  /// See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forLanguageIdentifierShortLight(Locale locale, Locale langid, LanguageDisplayUnstable languageDisplay) {
@@ -336,7 +336,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
+  /// See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forLanguageIdentifierShortLightWithProvider(DataProvider provider, Locale locale, Locale langid, LanguageDisplayUnstable languageDisplay) {
@@ -350,7 +350,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
+  /// See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forLanguageIdentifierLongLight(Locale locale, Locale langid, LanguageDisplayUnstable languageDisplay) {
@@ -364,7 +364,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
+  /// See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forLanguageIdentifierLongLightWithProvider(DataProvider provider, Locale locale, Locale langid, LanguageDisplayUnstable languageDisplay) {
@@ -378,7 +378,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
+  /// See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forLanguageIdentifierMenuLight(Locale locale, Locale langid, LanguageDisplayUnstable languageDisplay) {
@@ -392,7 +392,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
+  /// See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forLanguageIdentifierMenuLightWithProvider(DataProvider provider, Locale locale, Locale langid, LanguageDisplayUnstable languageDisplay) {
@@ -406,7 +406,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
+  /// See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forLanguageIdentifierShortMenuLight(Locale locale, Locale langid, LanguageDisplayUnstable languageDisplay) {
@@ -420,7 +420,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
+  /// See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forLanguageIdentifierShortMenuLightWithProvider(DataProvider provider, Locale locale, Locale langid, LanguageDisplayUnstable languageDisplay) {
@@ -434,7 +434,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
+  /// See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forLanguageIdentifierHeavy(Locale locale, Locale langid, LanguageDisplayUnstable languageDisplay) {
@@ -448,7 +448,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
+  /// See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forLanguageIdentifierHeavyWithProvider(DataProvider provider, Locale locale, Locale langid, LanguageDisplayUnstable languageDisplay) {
@@ -462,7 +462,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
+  /// See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forLanguageIdentifierShortHeavy(Locale locale, Locale langid, LanguageDisplayUnstable languageDisplay) {
@@ -476,7 +476,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
+  /// See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forLanguageIdentifierShortHeavyWithProvider(DataProvider provider, Locale locale, Locale langid, LanguageDisplayUnstable languageDisplay) {
@@ -490,7 +490,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
+  /// See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forLanguageIdentifierLongHeavy(Locale locale, Locale langid, LanguageDisplayUnstable languageDisplay) {
@@ -504,7 +504,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
+  /// See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forLanguageIdentifierLongHeavyWithProvider(DataProvider provider, Locale locale, Locale langid, LanguageDisplayUnstable languageDisplay) {
@@ -518,7 +518,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
+  /// See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forLanguageIdentifierMenuHeavy(Locale locale, Locale langid, LanguageDisplayUnstable languageDisplay) {
@@ -532,7 +532,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
+  /// See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forLanguageIdentifierMenuHeavyWithProvider(DataProvider provider, Locale locale, Locale langid, LanguageDisplayUnstable languageDisplay) {
@@ -546,7 +546,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
+  /// See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forLanguageIdentifierShortMenuHeavy(Locale locale, Locale langid, LanguageDisplayUnstable languageDisplay) {
@@ -560,7 +560,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.2.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
+  /// See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.3.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
   static String forLanguageIdentifierShortMenuHeavyWithProvider(DataProvider provider, Locale locale, Locale langid, LanguageDisplayUnstable languageDisplay) {
