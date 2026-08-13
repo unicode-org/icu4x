@@ -64,7 +64,7 @@
     - Fix fallback with language-likely script but region-unlikely script, which fixes data loading and generation behavior for locales including  `sr-Cyrl-ME` and `zh-Hans-TW` (unicode-org#7857)
     - Allow digits as extension singletons as allowed by BCP47, e.g. `-1-foobar` (unicode-org#8019)
   - `icu_locale/names`
-    - New unstable module icu_locale::names, originally part of icu_experimental::displaynames (unicode-org#8338)
+    - New unstable module `icu_locale::names`, originally part of `icu_experimental::displaynames` (unicode-org#8338)
     - Add `VariantDisplayName` and `VariantDisplayNameBorrowed` (unicode-org#8085)
     - Add `LanguageIdentifierDisplayName` and `LanguageIdentifierDisplayNameBorrowed` for formatting language display names. (unicode-org#8082)
     - Introduce dedicated `LanguageIdentifierDisplayNameOptions` struct (unicode-org#8135)
@@ -118,7 +118,7 @@
     - Add enumerated property constants for short names and aliases (i.e. `LineBreak::HH`) (unicode-org#8040)
   - `icu_segmenter`
     - Add unstable `LineSegmenter::new_17_for_non_complex_scripts`, implementing Unicode 17 (unicode-org#8041)
-    - Add experimental `_neo_` constructors (unicode-org#7942)
+    - Add experimental `_neo_` constructors (unicode-org#7962)
     - Add `radaboost` and `thadaboost` models for faster and more accurate Chinese and Thai segmentation as unstable, for testing purposes only (unicode-org#7805)
       - The `experimental_segmenter` example now uses `radaboost` for the Chinese radical model and adds `thadaboost` for Thai
     - Align word segmenter behaviour with ICU4C and UAX#29 (unicode-org#7952)
@@ -148,7 +148,7 @@
 - FFI
   - General
     - Fix an issue in JS bindings where enums in objects were not parsed correctly (unicode-org#7885)
-    - Add bindings for icu_locale::names (unicode-org#8341)
+    - Add bindings for `icu_locale::names` (unicode-org#8341)
 unicode-org#8119)
     - Dart, Kotlin: use the `Script` type on `ScriptExtension` APIs (unicode-org#7996)
   - Dart
