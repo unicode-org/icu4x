@@ -267,7 +267,7 @@ final class CheckoutMode extends BuildMode {
         '--config=profile.release.codegen-units=1',
         '--no-default-features',
         '--features=${{
-          ...['default_components', 'experimental', 'buffer_provider', 'compiled_data', 'unstable'],
+          ...['default_components', 'experimental', 'buffer_provider', 'compiled_data'],
           ...additionalFeatures,
         }.join(',')}',
         if (isNoStd) '-Zbuild-std=core,alloc',
