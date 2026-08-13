@@ -94,7 +94,7 @@
       - Struct `LocaleFallbackIterator`
     - New fn `LocaleFallbackerWithConfig::config` (unicode-org#8305)
   - `icu_pattern`: `0.4.2` -> `0.5.0`
-    - Remove public associated Error type from sealed trait PatternBackend (unicode-org#8122)
+    - (breaking) Remove public associated Error type from sealed trait PatternBackend (unicode-org#8122)
     - Add `TryWrap` for bubbling through TryWriteable errors (unicode-org#8123, unicode-org#8364)
     - Add placeholder extraction logic (unnicode-org#8074)
       - New struct `PlaceholderMatches`
