@@ -181,7 +181,7 @@ unicode-org#8119)
     - impl TryWriteable on references (unicode-org#8109)
     - impl TryWriteable on Either (unicode-org#8109)
   - `zerofrom`: `0.1.7 -> 0.1.8`
-    - enable all features in playground (unicode-org#7958)
+    - package metadata changes only (unicode-org#7958)
   - `zerotrie`: `0.2.4 -> 0.2.5`
     - new functions `ZeroAsciiIgnoreCaseTrie::get_with_write_fn`, `ZeroTrieZimpleAscii::get_with_write_fn` (unicode-org#8242)
     - add `ZeroTrieSimpleAsciiCursor::into_suffix_trie()` (unicode-org#8224)
