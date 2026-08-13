@@ -37,49 +37,49 @@
   - `icu_decimal`
     - Fix integer overflow in UnsignedDecimal exponent parsing (unicode-org#8289)
   - `icu_experimental`: `0.5.0 -> 0.6.0`
-  - `icu_experimental/currency`
-    - Significant changes to APIs and data structs
-    - Refactor `CurrencyFormatter` to be generic over `ValueRepresentation`: `pub struct CurrencyFormatter<V: ValueRepresentation>`. (unicode-org#8145)
-    - Migrate the old short and narrow currency formatter to `CurrencyFormatter<Decimal>` with new `try_new_symbol` and `try_new_symbol_narrow` constructors (and their unstable/buffer variants), removing the old non-generic `try_new` constructors. (unicode-org#8145)
-    - Migrated `LongCurrencyFormatter` to `CurrencyFormatter` with a `try_new_name` constructor. (unicode-org#8150)
-    - Compact constructors (`try_new_compact_symbol`, `try_new_compact_symbol_narrow`, `try_new_compact_name`, `try_new_compact_long_symbol`, `try_new_compact_long_symbol_narrow`, `try_new_compact_long_name`) initialize `CurrencyFormatter` with `CompactDecimalFormatter`. (unicode-org#8189)
-    - Added/renamed compact long constructors (). (unicode-org#8211)
-    - Updated FFI / unstable macro wrappers, unit tests, and doctests across all 9 variants. (unicode-org#8211)
-    - Introduce `try_new_code` constructors for explicit ISO code formatting across decimal and compact currency formatters. (unicode-org#8229)
-    - Apply fraction precision and rounding uniformly across all currency formatters. (unicode-org#8169)
-    - Extend `CurrencyFormatterOptions` with `usage: CurrencyUsage` (`Standard` default, `Accounting`). (unicode-org#8187)
-    - Added `CurrencyFormatter::try_new_no_currency` and `try_new_no_currency_unstable` constructors and `CurrencyNoCurrencyPatternsV1` data marker. (unicode-org#8275)
-    - Fixes locales whose negative subpattern places the sign somewhere other than the front, e.g. de-CH (¤ #,##0.00;¤-#,##0.00) now formats -12345.67 CHF as CHF-12'345.67 instead of -CHF 12'345.67. (unicode-org#8265)
-  - `icu_experimental/displaynames`
-    - `single` module moved to `icu_locale::names`; changes are listed there
-  - `icu_experimental/unicodeset`
-    - Moved to `icu_properties`; changes are listed there
-  - `icu_experimental/units`
-    - The `Convertibles` trait was completely overhauled to allow for more accurate calculations (unicode-org#8073)
-    - `Convertibles`s are now passed by value, and for `Ratio<BigInt>` the `Convertible` impl is now on the reference (unicode-org#8073)
-    - Remove `UnitsFormatter`, use `CategorizedUnitsFormatter` (unicode-org#8236)
+    - `icu_experimental::currency`
+      - Significant changes to APIs and data structs
+      - Refactor `CurrencyFormatter` to be generic over `ValueRepresentation`: `pub struct CurrencyFormatter<V: ValueRepresentation>`. (unicode-org#8145)
+      - Migrate the old short and narrow currency formatter to `CurrencyFormatter<Decimal>` with new `try_new_symbol` and `try_new_symbol_narrow` constructors (and their unstable/buffer variants), removing the old non-generic `try_new` constructors. (unicode-org#8145)
+      - Migrated `LongCurrencyFormatter` to `CurrencyFormatter` with a `try_new_name` constructor. (unicode-org#8150)
+      - Compact constructors (`try_new_compact_symbol`, `try_new_compact_symbol_narrow`, `try_new_compact_name`, `try_new_compact_long_symbol`, `try_new_compact_long_symbol_narrow`, `try_new_compact_long_name`) initialize `CurrencyFormatter` with `CompactDecimalFormatter`. (unicode-org#8189)
+      - Added/renamed compact long constructors (). (unicode-org#8211)
+      - Updated FFI / unstable macro wrappers, unit tests, and doctests across all 9 variants. (unicode-org#8211)
+      - Introduce `try_new_code` constructors for explicit ISO code formatting across decimal and compact currency formatters. (unicode-org#8229)
+      - Apply fraction precision and rounding uniformly across all currency formatters. (unicode-org#8169)
+      - Extend `CurrencyFormatterOptions` with `usage: CurrencyUsage` (`Standard` default, `Accounting`). (unicode-org#8187)
+      - Added `CurrencyFormatter::try_new_no_currency` and `try_new_no_currency_unstable` constructors and `CurrencyNoCurrencyPatternsV1` data marker. (unicode-org#8275)
+      - Fixes locales whose negative subpattern places the sign somewhere other than the front, e.g. de-CH (¤ #,##0.00;¤-#,##0.00) now formats -12345.67 CHF as CHF-12'345.67 instead of -CHF 12'345.67. (unicode-org#8265)
+    - `icu_experimental::displaynames`
+      - `single` module moved to `icu_locale::names`; changes are listed there
+    - `icu_experimental::unicodeset`
+      - Moved to `icu_properties`; changes are listed there
+    - `icu_experimental::units`
+      - The `Convertibles` trait was completely overhauled to allow for more accurate calculations (unicode-org#8073)
+      - `Convertibles`s are now passed by value, and for `Ratio<BigInt>` the `Convertible` impl is now on the reference (unicode-org#8073)
+      - Remove `UnitsFormatter`, use `CategorizedUnitsFormatter` (unicode-org#8236)
   - `icu_locale`
     - `LocaleExpander::maximize` no longer maximizes `und` to `en-Latn-US` (unicode-org#8110)
     - Fix an issue in `LocaleDirectionality` for unknown languages (unicode-org#7918)
     - Fix `LocaleExpander::maximize()` to strip placeholder `Zzzz`/`ZZ` subtags before matching, per UTS #35 (unicode-org#8240)
     - Fix fallback with language-likely script but region-unlikely script, which fixes data loading and generation behavior for locales including  `sr-Cyrl-ME` and `zh-Hans-TW` (unicode-org#7857)
     - Allow digits as extension singletons as allowed by BCP47, e.g. `-1-foobar` (unicode-org#8019)
-  - `icu_locale/names`
-    - New unstable module `icu_locale::names`, originally part of `icu_experimental::displaynames` (unicode-org#8338)
-    - Add `VariantDisplayName` and `VariantDisplayNameBorrowed` (unicode-org#8085)
-    - Add `LanguageIdentifierDisplayName` and `LanguageIdentifierDisplayNameBorrowed` for formatting language display names. (unicode-org#8082)
-    - Introduce dedicated `LanguageIdentifierDisplayNameOptions` struct (unicode-org#8135)
-      - New types: `LanguageIdentifierDisplayNameOptions`
-    - Implement menu style for `LanguageIdentifierDisplayName` (unicode-org#8216)
-    - Implement long and short lengths (unicode-org#8219)
-    - Refactor single display name constructors into Tiny, Light, and Heavy data tiers (unicode-org#8233)
-      - Constructors on `RegionDisplayNameOwned`, `ScriptDisplayNameOwned`, `VariantDisplayNameOwned`, and `LanguageIdentifierDisplayNameOwned` are overhauled
-    - Functionality for automatic fallback to the BCP-47 code (unicode-org#8132, unicode-org#8345)
-      - New types: `LanguageIdentifierNameFallbackError`
-      - Trait implementations:
-        - `LanguageIdentifierDisplayName` implements `TryWriteable`, `Writeable`, and `Display` directly using `writeable::impl_delegate` macros over an internal `LossyWrap` field.
-        - Removed `Writeable` and `TryWriteable` from `LanguageIdentifierDisplayNameOwned` (use `.as_borrowed()` to format).
-    - Split singular display names into owned and borrowed types with `as_borrowed()` fns (unicode-org#8006)
+    - `icu_locale::names`
+      - New unstable module `icu_locale::names`, originally part of `icu_experimental::displaynames` (unicode-org#8338)
+      - Add `VariantDisplayName` and `VariantDisplayNameBorrowed` (unicode-org#8085)
+      - Add `LanguageIdentifierDisplayName` and `LanguageIdentifierDisplayNameBorrowed` for formatting language display names. (unicode-org#8082)
+      - Introduce dedicated `LanguageIdentifierDisplayNameOptions` struct (unicode-org#8135)
+        - New types: `LanguageIdentifierDisplayNameOptions`
+      - Implement menu style for `LanguageIdentifierDisplayName` (unicode-org#8216)
+      - Implement long and short lengths (unicode-org#8219)
+      - Refactor single display name constructors into Tiny, Light, and Heavy data tiers (unicode-org#8233)
+        - Constructors on `RegionDisplayNameOwned`, `ScriptDisplayNameOwned`, `VariantDisplayNameOwned`, and `LanguageIdentifierDisplayNameOwned` are overhauled
+      - Functionality for automatic fallback to the BCP-47 code (unicode-org#8132, unicode-org#8345)
+        - New types: `LanguageIdentifierNameFallbackError`
+        - Trait implementations:
+          - `LanguageIdentifierDisplayName` implements `TryWriteable`, `Writeable`, and `Display` directly using `writeable::impl_delegate` macros over an internal `LossyWrap` field.
+          - Removed `Writeable` and `TryWriteable` from `LanguageIdentifierDisplayNameOwned` (use `.as_borrowed()` to format).
+      - Split singular display names into owned and borrowed types with `as_borrowed()` fns (unicode-org#8006)
   - `icu_locale_core`
     - Add `AsRef<LanguageIdentifier>` impls (unicode-org#7923)
       - New impls: `AsRef<LanguageIdentifier> for Locale`, `AsRef<LanguageIdentifier> for LanguageIdentifier`
