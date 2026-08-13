@@ -26,7 +26,7 @@
   - `icu_datetime`
     - Add unstable range formatter (unicode-org#8149)
       - New types: `DateRangeFormatter`, `FixedCalendarDateRangeFormatter`, `FormattedDateRange`
-      - New associated type: `TypedDateDataMarkers::RangeSkel` (unicode-org#8173)
+      - (Scaffolding) New associated type: `TypedDateDataMarkers::RangeSkel` (unicode-org#8173)
     - Support numbering system overrides for datetime patterns when found in data (unicode-org#7905)
     - Implement flexible day periods, i.e. the `B` pattern in hour field sets (unicode-org#7971)
     - Use the correct calendar even if the region is only implied by the language (i.e. `fa`) (unicode-org#8102)
@@ -94,7 +94,7 @@
       - Struct `LocaleFallbackIterator`
     - New fn `LocaleFallbackerWithConfig::config` (unicode-org#8305)
   - `icu_pattern`: `0.4.2` -> `0.5.0`
-    - Remove public associated Error type from sealed trait PatternBackend (unicode-org#8122)
+    - (Breaking, Scaffolding) Remove public associated Error type from sealed trait PatternBackend (unicode-org#8122)
     - Add `TryWrap` for bubbling through TryWriteable errors (unicode-org#8123, unicode-org#8364)
     - Add placeholder extraction logic (unnicode-org#8074)
       - New struct `PlaceholderMatches`
@@ -119,17 +119,17 @@
   - `icu_segmenter`
     - Add unstable `LineSegmenter::new_17_for_non_complex_scripts`, implementing Unicode 17 (unicode-org#8041)
     - Add experimental `_neo_` constructors (unicode-org#7962)
-    - Add `thadaboost` models to the test adaboost code, and add adaboost to the unstable provider module (unicode-org#7805)
     - Align word segmenter behaviour with ICU4C and UAX#29 (unicode-org#7952)
     - Use grapheme segmentation for `LineBreakStrictness:Anywhere` (unicode-org#7941)
     - Fix a bug in loose line breaking (unicode-org#8111)
     - Fix rewinding behavior in dictionary segmenter (unicode-org#8195)
     - Add `WordSegmenter[Borrowed]::load_auto[_unstable|_with_buffer_provider]` to load the complex segmentation data that is loaded by `WordSegmenter::new_auto` (unicode-org#8299)
+    - (Experimental) Add `thadaboost` models to the test adaboost code, and add adaboost to the unstable provider module (unicode-org#7805)
 - Data model and providers
   - `icu4x-datagen`
     - Add `--alt-variant` CLI flag to enable alt variants during datagen. (unicode-org#8025)
   - `icu_provider`
-    - Stabilize type `DataPayloadOr` for more efficient stack representation of data, added as internal in 1.5 (unicode-org#8163, unicode-org#8346)
+    - Add type `DataPayloadOr` for more efficient stack representation of data, added as internal in 1.5 (unicode-org#8163, unicode-org#8346)
     - Allow slashes in DataMarkerAttributes (unicode-org#7890)
   - `icu_provider_fs`
     - Add defense-in-depth against path traversal. (unicode-org#7887)
@@ -148,10 +148,11 @@
   - General
     - Fix an issue in JS bindings where enums in objects were not parsed correctly (unicode-org#7885)
     - Add bindings for `icu_locale::names` (unicode-org#8341)
-unicode-org#8119)
+    - Add bindings for date range formattimg (unicode-org#8318)
     - Dart, Kotlin: use the `Script` type on `ScriptExtension` APIs (unicode-org#7996)
   - Dart
-    - Update supported Dart toolchain for `record_use` to `3.13.0-215.0.dev` (    - In the build hook, skip building if code assets are disabled. (unicode-org#8183)
+    - Update supported Dart toolchain for `record_use` to `3.13.0-215.0.dev` (unicode-org#8119)
+    - In the build hook, skip building if code assets are disabled. (unicode-org#8183)
     - Add `libm` as a library input in the Dart linking script for Android. (unicode-org#8199)
 - Utils
   - `ixdtf`: `0.6.5 -> 0.6.6`
@@ -164,8 +165,8 @@ unicode-org#8119)
     - Use `Box::from_raw()` instead of `transmute` for converting unsized transparent boxes. (unicode-org#7871)
   - `resb`: `0.1.2 -> 0.2.0`
     - Add defense-in-depth around checked multiplication. (unicode-org#7887)
-    - APIs produce a typed `I32Pair` instead of `(i32, i32)` for maximum layout soundness (unicode-org#8008)
-    - `cast_bytes_to_slice` replaced with type-specific cast functions (unicode-org#8008)
+    - (Breaking) APIs produce a typed `I32Pair` instead of `(i32, i32)` for maximum layout soundness (unicode-org#8008)
+    - (Breaking) `cast_bytes_to_slice` replaced with type-specific cast functions (unicode-org#8008)
   - `tinystr`: `0.8.3 -> 0.8.4`
     - Add `UnvalidatedTinyAsciiStr::DEFAULT` (unicode-org#8225)
   - `writeable`: `0.6.3 -> 0.6.4`
@@ -181,7 +182,7 @@ unicode-org#8119)
     - impl TryWriteable on references (unicode-org#8109)
     - impl TryWriteable on Either (unicode-org#8109)
   - `zerofrom`: `0.1.7 -> 0.1.8`
-    - package metadata changes only (unicode-org#7958)
+    - Internal changes only (unicode-org#7958)
   - `zerotrie`: `0.2.4 -> 0.2.5`
     - new functions `ZeroAsciiIgnoreCaseTrie::get_with_write_fn`, `ZeroTrieZimpleAscii::get_with_write_fn` (unicode-org#8242)
     - add `ZeroTrieSimpleAsciiCursor::into_suffix_trie()` (unicode-org#8224)
