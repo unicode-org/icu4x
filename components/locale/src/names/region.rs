@@ -69,8 +69,9 @@ macro_rules! table_row {
 /// use icu::locale::{locale, subtags::region};
 /// use writeable::assert_writeable_eq;
 ///
-/// let display_name = RegionDisplayName::try_new_light(locale!("en").into(), region!("US"))
-///     .expect("Data should load successfully");
+/// let display_name =
+///     RegionDisplayName::try_new_light(locale!("en").into(), region!("US"))
+///         .expect("Data should load successfully");
 ///
 /// assert_writeable_eq!(display_name, "United States");
 /// ```
@@ -98,12 +99,18 @@ impl RegionDisplayName {
     /// use writeable::assert_writeable_eq;
     ///
     /// assert_writeable_eq!(
-    ///     RegionDisplayName::new_light_with_fallback(locale!("de").into(), region!("DE")),
+    ///     RegionDisplayName::new_light_with_fallback(
+    ///         locale!("de").into(),
+    ///         region!("DE")
+    ///     ),
     ///     "Deutschland"
     /// );
     ///
     /// assert_writeable_eq!(
-    ///     RegionDisplayName::new_light_with_fallback(locale!("zh").into(), region!("DE")),
+    ///     RegionDisplayName::new_light_with_fallback(
+    ///         locale!("zh").into(),
+    ///         region!("DE")
+    ///     ),
     ///     "德国"
     /// );
     /// ```
@@ -196,13 +203,19 @@ impl RegionDisplayName {
     /// use writeable::assert_writeable_eq;
     ///
     /// assert_writeable_eq!(
-    ///     RegionDisplayName::new_tiny_with_fallback(locale!("de").into(), region!("DE")),
+    ///     RegionDisplayName::new_tiny_with_fallback(
+    ///         locale!("de").into(),
+    ///         region!("DE")
+    ///     ),
     ///     "Deutschland"
     /// );
     ///
     /// // Name for Germany is NOT included in the Chinese locale
     /// assert_writeable_eq!(
-    ///     RegionDisplayName::new_tiny_with_fallback(locale!("zh").into(), region!("DE")),
+    ///     RegionDisplayName::new_tiny_with_fallback(
+    ///         locale!("zh").into(),
+    ///         region!("DE")
+    ///     ),
     ///     "DE"
     /// );
     /// ```
@@ -290,19 +303,28 @@ impl RegionDisplayName {
     /// use writeable::assert_writeable_eq;
     ///
     /// assert_writeable_eq!(
-    ///     RegionDisplayName::new_short_tiny_with_fallback(locale!("de").into(), region!("DE")),
+    ///     RegionDisplayName::new_short_tiny_with_fallback(
+    ///         locale!("de").into(),
+    ///         region!("DE")
+    ///     ),
     ///     "Deutschland"
     /// );
     ///
     /// // Name for Germany is NOT included in the Chinese locale
     /// assert_writeable_eq!(
-    ///     RegionDisplayName::new_short_tiny_with_fallback(locale!("zh").into(), region!("DE")),
+    ///     RegionDisplayName::new_short_tiny_with_fallback(
+    ///         locale!("zh").into(),
+    ///         region!("DE")
+    ///     ),
     ///     "DE"
     /// );
     ///
     /// // Example short name: region GB -> "UK"
     /// assert_writeable_eq!(
-    ///     RegionDisplayName::new_short_tiny_with_fallback(locale!("en").into(), region!("GB")),
+    ///     RegionDisplayName::new_short_tiny_with_fallback(
+    ///         locale!("en").into(),
+    ///         region!("GB")
+    ///     ),
     ///     "UK"
     /// );
     /// ```
@@ -403,18 +425,27 @@ impl RegionDisplayName {
     /// use writeable::assert_writeable_eq;
     ///
     /// assert_writeable_eq!(
-    ///     RegionDisplayName::new_short_light_with_fallback(locale!("de").into(), region!("DE")),
+    ///     RegionDisplayName::new_short_light_with_fallback(
+    ///         locale!("de").into(),
+    ///         region!("DE")
+    ///     ),
     ///     "Deutschland"
     /// );
     ///
     /// assert_writeable_eq!(
-    ///     RegionDisplayName::new_short_light_with_fallback(locale!("zh").into(), region!("DE")),
+    ///     RegionDisplayName::new_short_light_with_fallback(
+    ///         locale!("zh").into(),
+    ///         region!("DE")
+    ///     ),
     ///     "德国"
     /// );
     ///
     /// // Example short name: region GB -> "UK"
     /// assert_writeable_eq!(
-    ///     RegionDisplayName::new_short_light_with_fallback(locale!("en").into(), region!("GB")),
+    ///     RegionDisplayName::new_short_light_with_fallback(
+    ///         locale!("en").into(),
+    ///         region!("GB")
+    ///     ),
     ///     "UK"
     /// );
     /// ```

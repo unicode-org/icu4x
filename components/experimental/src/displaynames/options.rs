@@ -10,7 +10,7 @@
 ///
 /// ```
 /// use icu::experimental::displaynames::{
-///     DisplayNamesOptions, multi::RegionDisplayNames, Style,
+///     DisplayNamesOptions, Style, multi::RegionDisplayNames,
 /// };
 /// use icu::locale::{locale, subtags::region};
 ///

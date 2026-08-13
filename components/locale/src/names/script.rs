@@ -68,8 +68,9 @@ macro_rules! table_row {
 /// use icu::locale::{locale, subtags::script};
 /// use writeable::assert_writeable_eq;
 ///
-/// let display_name = ScriptDisplayName::try_new_light(locale!("en").into(), script!("Latn"))
-///     .expect("Data should load successfully");
+/// let display_name =
+///     ScriptDisplayName::try_new_light(locale!("en").into(), script!("Latn"))
+///         .expect("Data should load successfully");
 ///
 /// assert_writeable_eq!(display_name, "Latin");
 /// ```
@@ -97,12 +98,18 @@ impl ScriptDisplayName {
     /// use writeable::assert_writeable_eq;
     ///
     /// assert_writeable_eq!(
-    ///     ScriptDisplayName::new_light_with_fallback(locale!("bs").into(), script!("Cyrl")),
+    ///     ScriptDisplayName::new_light_with_fallback(
+    ///         locale!("bs").into(),
+    ///         script!("Cyrl")
+    ///     ),
     ///     "ćirilica"
     /// );
     ///
     /// assert_writeable_eq!(
-    ///     ScriptDisplayName::new_light_with_fallback(locale!("zh").into(), script!("Cyrl")),
+    ///     ScriptDisplayName::new_light_with_fallback(
+    ///         locale!("zh").into(),
+    ///         script!("Cyrl")
+    ///     ),
     ///     "西里尔文"
     /// );
     /// ```
@@ -195,13 +202,19 @@ impl ScriptDisplayName {
     /// use writeable::assert_writeable_eq;
     ///
     /// assert_writeable_eq!(
-    ///     ScriptDisplayName::new_tiny_with_fallback(locale!("bs").into(), script!("Cyrl")),
+    ///     ScriptDisplayName::new_tiny_with_fallback(
+    ///         locale!("bs").into(),
+    ///         script!("Cyrl")
+    ///     ),
     ///     "ćirilica"
     /// );
     ///
     /// // Name for Cyrillic script is NOT included in the Chinese locale
     /// assert_writeable_eq!(
-    ///     ScriptDisplayName::new_tiny_with_fallback(locale!("zh").into(), script!("Cyrl")),
+    ///     ScriptDisplayName::new_tiny_with_fallback(
+    ///         locale!("zh").into(),
+    ///         script!("Cyrl")
+    ///     ),
     ///     "Cyrl"
     /// );
     /// ```
@@ -286,12 +299,18 @@ impl ScriptDisplayName {
     /// use writeable::assert_writeable_eq;
     ///
     /// assert_writeable_eq!(
-    ///     ScriptDisplayName::new_heavy_with_fallback(locale!("de").into(), script!("Latn")),
+    ///     ScriptDisplayName::new_heavy_with_fallback(
+    ///         locale!("de").into(),
+    ///         script!("Latn")
+    ///     ),
     ///     "Lateinisch"
     /// );
     ///
     /// assert_writeable_eq!(
-    ///     ScriptDisplayName::new_heavy_with_fallback(locale!("de").into(), script!("Xsux")),
+    ///     ScriptDisplayName::new_heavy_with_fallback(
+    ///         locale!("de").into(),
+    ///         script!("Xsux")
+    ///     ),
     ///     "Sumerisch-akkadische Keilschrift"
     /// );
     /// ```
@@ -391,13 +410,19 @@ impl ScriptDisplayName {
     /// use writeable::assert_writeable_eq;
     ///
     /// assert_writeable_eq!(
-    ///     ScriptDisplayName::new_short_heavy_with_fallback(locale!("de").into(), script!("Latn")),
+    ///     ScriptDisplayName::new_short_heavy_with_fallback(
+    ///         locale!("de").into(),
+    ///         script!("Latn")
+    ///     ),
     ///     "Lateinisch"
     /// );
     ///
     /// // Example short name: script Xsux -> "S-A Cuneiform" in en
     /// assert_writeable_eq!(
-    ///     ScriptDisplayName::new_short_heavy_with_fallback(locale!("en").into(), script!("Xsux")),
+    ///     ScriptDisplayName::new_short_heavy_with_fallback(
+    ///         locale!("en").into(),
+    ///         script!("Xsux")
+    ///     ),
     ///     "S-A Cuneiform"
     /// );
     /// ```

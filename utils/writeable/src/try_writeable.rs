@@ -396,7 +396,11 @@ where
 ///
 /// ```
 /// struct MyStruct(Result<String, String>);
-/// writeable::impl_try_writeable_delegate!(MyStruct, |&self| &self.0, Error = String);
+/// writeable::impl_try_writeable_delegate!(
+///     MyStruct,
+///     |&self| &self.0,
+///     Error = String
+/// );
 ///
 /// writeable::assert_try_writeable_eq!(
 ///     MyStruct(Ok("hello".to_string())),
@@ -410,7 +414,12 @@ where
 /// struct MyStruct(Result<String, String>);
 /// #[derive(Debug, PartialEq)]
 /// struct MyError;
-/// writeable::impl_try_writeable_delegate!(MyStruct, |&self| &self.0, Error = MyError, |_error| MyError);
+/// writeable::impl_try_writeable_delegate!(
+///     MyStruct,
+///     |&self| &self.0,
+///     Error = MyError,
+///     |_error| MyError
+/// );
 ///
 /// writeable::assert_try_writeable_eq!(
 ///     MyStruct(Ok("hello".to_string())),

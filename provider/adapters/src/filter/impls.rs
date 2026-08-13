@@ -69,10 +69,14 @@ where
     /// let available_ids = provider
     ///     .iter_ids()
     ///     .expect("Should successfully make an iterator of supported locales");
-    /// assert!(available_ids
-    ///     .contains(&DataIdentifierCow::from_locale(data_locale!("de"))));
-    /// assert!(!available_ids
-    ///     .contains(&DataIdentifierCow::from_locale(data_locale!("en"))));
+    /// assert!(
+    ///     available_ids
+    ///         .contains(&DataIdentifierCow::from_locale(data_locale!("de")))
+    /// );
+    /// assert!(
+    ///     !available_ids
+    ///         .contains(&DataIdentifierCow::from_locale(data_locale!("en")))
+    /// );
     /// ```
     #[expect(clippy::type_complexity)]
     pub fn with_filter<'a>(

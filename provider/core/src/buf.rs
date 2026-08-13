@@ -56,9 +56,9 @@ impl DynamicDataMarker for BufferMarker {
 ///             .load_data(
 ///                 HelloWorldV1::INFO,
 ///                 DataRequest {
-///                     id: DataIdentifierBorrowed::for_locale(
-///                         &data_locale!("de")
-///                     ),
+///                     id: DataIdentifierBorrowed::for_locale(&data_locale!(
+///                         "de"
+///                     )),
 ///                     ..Default::default()
 ///                 }
 ///             )

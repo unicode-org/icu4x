@@ -100,9 +100,9 @@ pub struct DataPayload<M: DynamicDataMarker>(pub(crate) DataPayloadInner<M>);
 ///
 /// ```
 /// use icu_locale_core::data_locale;
+/// use icu_provider::DataPayloadOr;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
-/// use icu_provider::DataPayloadOr;
 ///
 /// let response: DataResponse<HelloWorldV1> = HelloWorldProvider
 ///     .load(DataRequest {

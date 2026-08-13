@@ -70,7 +70,7 @@ impl SubdivisionSuffix {
 ///
 /// ```
 /// use icu::locale::{
-///     extensions::unicode::{subdivision_suffix, SubdivisionId},
+///     extensions::unicode::{SubdivisionId, subdivision_suffix},
 ///     subtags::region,
 /// };
 ///
@@ -98,7 +98,7 @@ impl SubdivisionId {
     ///
     /// ```
     /// use icu::locale::{
-    ///     extensions::unicode::{subdivision_suffix, SubdivisionId},
+    ///     extensions::unicode::{SubdivisionId, subdivision_suffix},
     ///     subtags::region,
     /// };
     ///
@@ -132,8 +132,8 @@ impl SubdivisionId {
     /// When the value can't be parsed:
     ///
     /// ```
-    /// use icu::locale::extensions::unicode::SubdivisionId;
     /// use icu::locale::ParseError;
+    /// use icu::locale::extensions::unicode::SubdivisionId;
     ///
     /// // Value is too short
     /// assert!(matches!(

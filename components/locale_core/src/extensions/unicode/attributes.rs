@@ -107,7 +107,7 @@ impl Attributes {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale::extensions::unicode::{attribute, Attributes};
+    /// use icu::locale::extensions::unicode::{Attributes, attribute};
     /// use writeable::assert_writeable_eq;
     ///
     /// let mut attributes = Attributes::from_vec_unchecked(vec![

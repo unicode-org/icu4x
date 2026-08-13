@@ -759,8 +759,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```no_run
-    /// use icu::collections::codepointtrie::planes;
     /// use icu::collections::codepointtrie::CodePointTrie;
+    /// use icu::collections::codepointtrie::planes;
     ///
     /// let planes_trie_u8: CodePointTrie<u8> = planes::get_planes_trie();
     /// let planes_trie_i8: CodePointTrie<i8> =
@@ -801,8 +801,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```
-    /// use icu::collections::codepointtrie::planes;
     /// use icu::collections::codepointtrie::CodePointTrie;
+    /// use icu::collections::codepointtrie::planes;
     ///
     /// let planes_trie_u8: CodePointTrie<u8> = planes::get_planes_trie();
     /// let planes_trie_u16: CodePointTrie<u16> = planes_trie_u8
@@ -1173,8 +1173,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     ///
     /// ```
     /// use core::ops::RangeInclusive;
-    /// use icu::collections::codepointtrie::planes;
     /// use icu::collections::codepointtrie::CodePointMapRange;
+    /// use icu::collections::codepointtrie::planes;
     ///
     /// let planes_trie = planes::get_planes_trie();
     ///

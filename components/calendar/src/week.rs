@@ -20,7 +20,7 @@ const MIN_UNIT_DAYS: u16 = 14;
 /// ```
 /// use icu::calendar::types::Weekday;
 /// use icu::calendar::week::WeekInformation;
-/// use icu::locale::{locale, Locale};
+/// use icu::locale::{Locale, locale};
 ///
 /// // For en-US
 /// let info = WeekInformation::try_new(locale!("en-US").into()).unwrap();

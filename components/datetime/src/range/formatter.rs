@@ -36,8 +36,8 @@ use icu_provider::prelude::*;
 ///
 /// ```
 /// use icu::calendar::Date;
-/// use icu::datetime::input::{DateTime, Time};
 /// use icu::datetime::fieldsets::YMD;
+/// use icu::datetime::input::{DateTime, Time};
 /// use icu::datetime::range::DateRangeFormatter;
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
@@ -59,10 +59,7 @@ use icu_provider::prelude::*;
 ///
 /// // Gregorian input is dynamically converted to Buddhist (2023 -> 2566)
 /// // Thai day-difference range has no spaces around en-dash:
-/// assert_writeable_eq!(
-///     fmt.format(&start, &end),
-///     "22–23 ธ.ค. 2566"
-/// );
+/// assert_writeable_eq!(fmt.format(&start, &end), "22–23 ธ.ค. 2566");
 /// ```
 #[derive(Debug)]
 pub struct DateRangeFormatter<FSet: DateTimeNamesMarker> {

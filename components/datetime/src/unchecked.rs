@@ -50,13 +50,13 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeFormatter<
     ///
     /// ```
     /// use icu::calendar::cal::Buddhist;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
     /// use icu::datetime::fieldsets::{T, YMD};
     /// use icu::datetime::input::{Date, Time};
     /// use icu::datetime::unchecked::DateTimeInputUnchecked;
     /// use icu::datetime::unchecked::FormattedDateTimeUncheckedError;
     /// use icu::datetime::unchecked::MissingInputFieldKind;
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
@@ -131,13 +131,13 @@ impl<FSet: DateTimeNamesMarker> DateTimeFormatter<FSet> {
     /// successfully pass it into [`format_unchecked`].
     ///
     /// ```
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
     /// use icu::datetime::fieldsets::{T, YMD};
     /// use icu::datetime::input::{Date, Time};
     /// use icu::datetime::unchecked::DateTimeInputUnchecked;
     /// use icu::datetime::unchecked::FormattedDateTimeUncheckedError;
     /// use icu::datetime::unchecked::MissingInputFieldKind;
-    /// use icu::datetime::DateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///

@@ -14,8 +14,8 @@ use core::fmt;
 ///
 /// ```
 /// use writeable::adapters::Replace;
-/// use writeable::concat_writeable;
 /// use writeable::assert_writeable_eq;
+/// use writeable::concat_writeable;
 ///
 /// let source = concat_writeable!("I 💖 🦀", " and 🦀 loves me!");
 /// let replace = Replace {
