@@ -136,7 +136,7 @@ include = [
 # These use non-tilde deps, see https://github.com/unicode-org/icu4x/issues/4343
 icu_locale_core = { version = "2.2.0", path = "components/locale_core", default-features = false }
 icu_provider = { version = "2.2.0", path = "provider/core", default-features = false }
-icu_pattern = { version = "0.4.2", path = "components/pattern", default-features = false }
+icu_pattern = { version = "0.5.0", path = "components/pattern", default-features = false }
 icu_codepointtrie_builder = { version = "0.6.0", path = "components/collections/codepointtrie_builder", default-features = false }
 
 # Components
@@ -147,7 +147,7 @@ icu_collator = { version = "~2.2.0", path = "components/collator", default-featu
 icu_collections = { version = "~2.2.0", path = "components/collections", default-features = false }
 icu_datetime = { version = "~2.2.0", path = "components/datetime", default-features = false }
 icu_decimal = { version = "~2.2.0", path = "components/decimal", default-features = false }
-icu_experimental = { version = "~0.6.0-dev", path = "components/experimental", default-features = false }
+icu_experimental = { version = "~0.6.0", path = "components/experimental", default-features = false }
 icu_list = { version = "~2.2.0", path = "components/list", default-features = false }
 icu_locale = { version = "~2.2.0", path = "components/locale", default-features = false }
 icu_locale_fallback = { version = "~2.2.0", path = "components/locale_fallback", default-features = false }
@@ -185,7 +185,7 @@ icu_plurals_data = { version = "~2.2.0", path = "provider/data/plurals", default
 icu_properties_data = { version = "~2.2.0", path = "provider/data/properties", default-features = false }
 icu_segmenter_data = { version = "~2.2.0", path = "provider/data/segmenter", default-features = false }
 icu_time_data = { version = "~2.2.0", path = "provider/data/time", default-features = false }
-icu_experimental_data = { version = "~0.6.0-dev", path = "provider/data/experimental", default-features = false }
+icu_experimental_data = { version = "~0.6.0", path = "provider/data/experimental", default-features = false }
 
 # Utils
 # Note: some of these versions are lower than the published version for more flexibility. They are marked,
@@ -198,20 +198,20 @@ crlify = { version = "1.0.4", path = "utils/crlify", default-features = false } 
 databake = { version = "0.2.0", path = "utils/databake", default-features = false } # Current version: 0.2.1
 databake-derive = { version = "0.2.0", path = "utils/databake/derive", default-features = false } # Current version: 0.2.1
 fixed_decimal = { version = "0.7.2", path = "utils/fixed_decimal", default-features = false }
-ixdtf = { version = "0.6.5", path = "utils/ixdtf", default-features = false }
-litemap = { version = "0.8.0", path = "utils/litemap", default-features = false } # Current version: 0.8.2
-potential_utf = { version = "0.1.3", path = "utils/potential_utf", default-features = false } # Current version: 0.1.5
-resb = { version = "0.2.0-dev", path = "utils/resb", default-features = false }
+ixdtf = { version = "0.6.5", path = "utils/ixdtf", default-features = false } # Current version: 0.6.6
+litemap = { version = "0.8.0", path = "utils/litemap", default-features = false } # Current version: 0.8.3
+potential_utf = { version = "0.1.3", path = "utils/potential_utf", default-features = false } # Current version: 0.1.6
+resb = { version = "0.2.0", path = "utils/resb", default-features = false }
 tzif = { version = "0.5.0", path = "utils/tzif", default-features = false }
-tinystr = { version = "0.8.3", path = "utils/tinystr", default-features = false }
-writeable = { version = "0.6.3", path = "utils/writeable", default-features = false }
+tinystr = { version = "0.8.4", path = "utils/tinystr", default-features = false }
+writeable = { version = "0.6.4", path = "utils/writeable", default-features = false }
 yoke = { version = "0.8.3", path = "utils/yoke", default-features = false }
 yoke-derive = { version = "0.8.2", path = "utils/yoke/derive", default-features = false }
 zerofrom = { version = "0.1.6", path = "utils/zerofrom", default-features = false } # Current version: 0.1.8
 zerofrom-derive = { version = "0.1.6", path = "utils/zerofrom/derive", default-features = false } # Current version: 0.1.7
-zerotrie = { version = "0.2.4", path = "utils/zerotrie", default-features = false }
-zerovec = { version = "0.11.6", path = "utils/zerovec", default-features = false }
-zerovec-derive = { version = "0.11.3", path = "utils/zerovec/derive", default-features = false }
+zerotrie = { version = "0.2.5", path = "utils/zerotrie", default-features = false }
+zerovec = { version = "0.11.7", path = "utils/zerovec", default-features = false }
+zerovec-derive = { version = "0.11.4", path = "utils/zerovec/derive", default-features = false }
 zoneinfo64 = { version = "0.3.0", path = "utils/zoneinfo64", default-features = false }
 
 # Tools

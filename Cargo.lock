@@ -1608,7 +1608,7 @@ version = "2.2.0"
 
 [[package]]
 name = "icu_experimental"
-version = "0.6.0-dev"
+version = "0.6.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1648,7 +1648,7 @@ dependencies = [
 
 [[package]]
 name = "icu_experimental_data"
-version = "0.6.0-dev"
+version = "0.6.0"
 
 [[package]]
 name = "icu_freertos"
@@ -1797,7 +1797,7 @@ version = "2.2.0"
 
 [[package]]
 name = "icu_pattern"
-version = "0.4.2"
+version = "0.5.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -2150,7 +2150,7 @@ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
 
 [[package]]
 name = "ixdtf"
-version = "0.6.5"
+version = "0.6.6"
 dependencies = [
  "criterion",
  "serde-json-core",
@@ -2248,7 +2248,7 @@ checksum = "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53"
 
 [[package]]
 name = "litemap"
-version = "0.8.2"
+version = "0.8.3"
 dependencies = [
  "bincode",
  "criterion",
@@ -2649,7 +2649,7 @@ dependencies = [
 
 [[package]]
 name = "potential_utf"
-version = "0.1.5"
+version = "0.1.6"
 dependencies = [
  "bincode",
  "databake",
@@ -2885,7 +2885,7 @@ dependencies = [
 
 [[package]]
 name = "resb"
-version = "0.2.0-dev"
+version = "0.2.0"
 dependencies = [
  "indexmap",
  "log",
@@ -3489,7 +3489,7 @@ dependencies = [
 
 [[package]]
 name = "tinystr"
-version = "0.8.3"
+version = "0.8.4"
 dependencies = [
  "bincode",
  "criterion",
@@ -4218,7 +4218,7 @@ dependencies = [
 
 [[package]]
 name = "writeable"
-version = "0.6.3"
+version = "0.6.4"
 dependencies = [
  "criterion",
  "either",
@@ -4306,7 +4306,7 @@ checksum = "b97154e67e32c85465826e8bcc1c59429aaaf107c1e4a9e53c8d8ccd5eff88d0"
 
 [[package]]
 name = "zerotrie"
-version = "0.2.4"
+version = "0.2.5"
 dependencies = [
  "bincode",
  "criterion",
@@ -4331,7 +4331,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.11.6"
+version = "0.11.7"
 dependencies = [
  "bincode",
  "criterion",
@@ -4357,7 +4357,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.11.3"
+version = "0.11.4"
 dependencies = [
  "bincode",
  "proc-macro2",
