@@ -159,11 +159,11 @@
 - Utils
   - `ixdtf`: `0.6.5 -> 0.6.6`
     - Reject trailing input after annotations in `YearMonth` and `MonthDay` parsing (unicode-org#8294)
-  - `litemap`: `0.8.0 -> 0.8.1`
+  - `litemap`: `0.8.2 -> 0.8.3`
     - Make return types of `LiteMap` iter methods (`iter`, `iter_mut`, `values`, `keys`) concrete: (unicode-org#8072)
       - New types: `ValuesIter`, `KeysIter`, implements relevant traits, returned by `values` and `keys` respectively.
       - Changed: The return types of the aforementioned methods go from an `impl DoubleEndedIterator` to concrete types such as `S::KeyValueIter`, `S::KeyValueIterMut` or the aforementioned new types.
-  - `potential_utf`: `0.1.3 -> 0.1.4`
+  - `potential_utf`: `0.1.5 -> 0.1.6`
     - Use `Box::from_raw()` instead of `transmute` for converting unsized transparent boxes. (unicode-org#7871)
   - `resb`: `0.1.2 -> 0.2.0`
     - Add defense-in-depth around checked multiplication. (unicode-org#7887)
