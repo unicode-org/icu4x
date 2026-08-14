@@ -67,6 +67,7 @@ bench = false  # This option is required for Benchmark CI
 [[bench]]
 name = "bench"
 harness = false
+required-features = ["compiled_data", "auto"]
 
 [[test]]
 name = "complex_word"
