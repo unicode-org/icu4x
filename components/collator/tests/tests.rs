@@ -2053,10 +2053,7 @@ fn test_burmese() {
     options.strength = Some(Strength::Tertiary);
     let collator = Collator::try_new(locale!("my").into(), options).unwrap();
     assert_eq!(
-        collator.compare(
-            "",
-            "\u{102d}\u{102f}\u{1037}"
-        ),
+        collator.compare("", "\u{102d}\u{102f}\u{1037}"),
         Ordering::Less
     );
 }
