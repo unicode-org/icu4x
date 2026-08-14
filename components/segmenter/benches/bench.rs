@@ -77,10 +77,21 @@ fn line_segmenters(
             "/neo",
         ),
         #[cfg(feature = "unstable")]
-        (LineSegmenter::new_neo_lstm(options), "/neo/lstm"),
+        (
+            {
+                let mut segmenter = LineSegmenter::new_neo_for_non_complex_scripts(options);
+                segmenter.load_lstm();
+                segmenter
+            },
+            "/neo/lstm",
+        ),
         #[cfg(feature = "unstable")]
         (
-            LineSegmenter::new_neo_dictionary(options),
+            {
+                let mut segmenter = LineSegmenter::new_neo_for_non_complex_scripts(options);
+                segmenter.load_dictionary();
+                segmenter
+            },
             "/neo/dictionary",
         ),
     ]
@@ -104,7 +115,12 @@ fn word_segmenters()
         ),
         #[cfg(feature = "unstable")]
         (
-            WordSegmenter::new_neo_dictionary(Default::default()),
+            {
+                let mut segmenter =
+                    WordSegmenter::new_neo_for_non_complex_scripts(Default::default());
+                segmenter.load_dictionary();
+                segmenter
+            },
             "/neo/dictionary",
         ),
     ]
