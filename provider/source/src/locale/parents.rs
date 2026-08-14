@@ -5,7 +5,7 @@
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 
-use icu::locale::provider::*;
+use icu::locale::fallback::provider::*;
 use icu::locale::subtags::{Language, Region, Script, script};
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;

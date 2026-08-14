@@ -73,14 +73,14 @@ impl crate::IterableDataProviderCached<CurrencyDisplaynameV1> for SourceDataProv
 
 #[test]
 fn test_basic() {
-    use icu::locale::langid;
+    use icu::locale::data_locale;
 
     let provider = SourceDataProvider::new_testing();
     let en: DataPayload<CurrencyDisplaynameV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("USD"),
-                &langid!("en").into(),
+                &data_locale!("en"),
             ),
             ..Default::default()
         })
@@ -92,7 +92,7 @@ fn test_basic() {
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("USD"),
-                &langid!("fr").into(),
+                &data_locale!("fr"),
             ),
             ..Default::default()
         })

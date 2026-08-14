@@ -159,7 +159,7 @@ impl LanguageIdentifier {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale::{langid, LanguageIdentifier};
+    /// use icu::locale::{LanguageIdentifier, langid};
     ///
     /// let li = LanguageIdentifier::try_from_locale_bytes(b"en-US-x-posix")
     ///     .expect("Parsing failed.");
@@ -562,7 +562,7 @@ fn test_writeable() {
 /// # Examples
 ///
 /// ```
-/// use icu::locale::{langid, subtags::language, LanguageIdentifier};
+/// use icu::locale::{LanguageIdentifier, langid, subtags::language};
 ///
 /// assert_eq!(LanguageIdentifier::from(language!("en")), langid!("en"));
 /// ```
@@ -580,7 +580,7 @@ impl From<subtags::Language> for LanguageIdentifier {
 /// # Examples
 ///
 /// ```
-/// use icu::locale::{langid, subtags::script, LanguageIdentifier};
+/// use icu::locale::{LanguageIdentifier, langid, subtags::script};
 ///
 /// assert_eq!(
 ///     LanguageIdentifier::from(Some(script!("latn"))),
@@ -601,7 +601,7 @@ impl From<Option<subtags::Script>> for LanguageIdentifier {
 /// # Examples
 ///
 /// ```
-/// use icu::locale::{langid, subtags::region, LanguageIdentifier};
+/// use icu::locale::{LanguageIdentifier, langid, subtags::region};
 ///
 /// assert_eq!(
 ///     LanguageIdentifier::from(Some(region!("US"))),
@@ -625,9 +625,8 @@ impl From<Option<subtags::Region>> for LanguageIdentifier {
 ///
 /// ```
 /// use icu::locale::{
-///     langid,
+///     LanguageIdentifier, langid,
 ///     subtags::{language, region, script},
-///     LanguageIdentifier,
 /// };
 ///
 /// let lang = language!("en");

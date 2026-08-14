@@ -30,7 +30,7 @@ impl DataProvider<CurrencyPatternsDataV1> for SourceDataProvider {
             .as_str();
 
         // https://github.com/unicode-org/icu4x/issues/5374
-        if *req.id.locale == DataLocale::from(icu::locale::locale!("sd")) {
+        if *req.id.locale == icu::locale::data_locale!("sd") {
             default_system = "latn";
         }
 
@@ -89,14 +89,14 @@ impl IterableDataProviderCached<CurrencyPatternsDataV1> for SourceDataProvider {
 
 #[test]
 fn test_basic() {
-    use icu::locale::langid;
+    use icu::locale::data_locale;
     use icu_pattern::DoublePlaceholderPattern;
 
     let provider = SourceDataProvider::new_testing();
 
     let en: DataPayload<CurrencyPatternsDataV1> = provider
         .load(DataRequest {
-            id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+            id: DataIdentifierBorrowed::for_locale(&data_locale!("en")),
             ..Default::default()
         })
         .unwrap()
@@ -113,7 +113,7 @@ fn test_basic() {
 
     let ar: DataPayload<CurrencyPatternsDataV1> = provider
         .load(DataRequest {
-            id: DataIdentifierBorrowed::for_locale(&langid!("ar-EG").into()),
+            id: DataIdentifierBorrowed::for_locale(&data_locale!("ar-EG")),
             ..Default::default()
         })
         .unwrap()
@@ -130,7 +130,7 @@ fn test_basic() {
 
     let ja: DataPayload<CurrencyPatternsDataV1> = provider
         .load(DataRequest {
-            id: DataIdentifierBorrowed::for_locale(&langid!("ja").into()),
+            id: DataIdentifierBorrowed::for_locale(&data_locale!("ja")),
             ..Default::default()
         })
         .unwrap()

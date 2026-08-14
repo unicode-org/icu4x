@@ -939,6 +939,152 @@ let termini = Object.assign({
         ]
     },
 
+    "DateRangeFormatter.formatIso": {
+        func: (selfLocaleName, selfLength, selfAlignment, selfYearStyle, startIsoDateYear, startIsoDateMonth, startIsoDateDay, endIsoDateYear, endIsoDateMonth, endIsoDateDay) => icu.DateRangeFormatter.createYmd(icu.Locale.fromString(selfLocaleName), selfLength, selfAlignment, selfYearStyle).formatIso(new icu.IsoDate(startIsoDateYear, startIsoDateMonth, startIsoDateDay), new icu.IsoDate(endIsoDateYear, endIsoDateMonth, endIsoDateDay)),
+        // For avoiding webpacking minifying issues:
+        funcName: "DateRangeFormatter.formatIso",
+        expr: (selfLocaleName, selfLength, selfAlignment, selfYearStyle, startIsoDateYear, startIsoDateMonth, startIsoDateDay, endIsoDateYear, endIsoDateMonth, endIsoDateDay) => "icu.DateRangeFormatter.createYmd(icu.Locale.fromString(selfLocaleName), selfLength, selfAlignment, selfYearStyle).formatIso(new icu.IsoDate(startIsoDateYear, startIsoDateMonth, startIsoDateDay), new icu.IsoDate(endIsoDateYear, endIsoDateMonth, endIsoDateDay))".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])selfLength([,\) \n])/, '$1' + selfLength + '$2').replace(/([\( ])selfAlignment([,\) \n])/, '$1' + selfAlignment + '$2').replace(/([\( ])selfYearStyle([,\) \n])/, '$1' + selfYearStyle + '$2').replace(/([\( ])startIsoDateYear([,\) \n])/, '$1' + startIsoDateYear + '$2').replace(/([\( ])startIsoDateMonth([,\) \n])/, '$1' + startIsoDateMonth + '$2').replace(/([\( ])startIsoDateDay([,\) \n])/, '$1' + startIsoDateDay + '$2').replace(/([\( ])endIsoDateYear([,\) \n])/, '$1' + endIsoDateYear + '$2').replace(/([\( ])endIsoDateMonth([,\) \n])/, '$1' + endIsoDateMonth + '$2').replace(/([\( ])endIsoDateDay([,\) \n])/, '$1' + endIsoDateDay + '$2'),
+        parameters: [
+            
+            {
+                name: "self_locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "self_length",
+                type: "DateTimeLength",
+                typeUse: "enumerator",
+                values: ["Long", "Medium", "Short"]
+            },
+            
+            {
+                name: "self_alignment",
+                type: "DateTimeAlignment",
+                typeUse: "enumerator",
+                values: ["Auto", "Column"]
+            },
+            
+            {
+                name: "self_yearStyle",
+                type: "YearStyle",
+                typeUse: "enumerator",
+                values: ["Auto", "Full", "WithEra", "NoEra"]
+            },
+            
+            {
+                name: "startIsoDate_year",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "startIsoDate_month",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "startIsoDate_day",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endIsoDate_year",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endIsoDate_month",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endIsoDate_day",
+                type: "number",
+                typeUse: "number"
+            }
+            
+        ]
+    },
+
+    "DateRangeFormatterGregorian.formatIso": {
+        func: (selfLocaleName, selfLength, selfAlignment, selfYearStyle, startIsoDateYear, startIsoDateMonth, startIsoDateDay, endIsoDateYear, endIsoDateMonth, endIsoDateDay) => icu.DateRangeFormatterGregorian.createYmd(icu.Locale.fromString(selfLocaleName), selfLength, selfAlignment, selfYearStyle).formatIso(new icu.IsoDate(startIsoDateYear, startIsoDateMonth, startIsoDateDay), new icu.IsoDate(endIsoDateYear, endIsoDateMonth, endIsoDateDay)),
+        // For avoiding webpacking minifying issues:
+        funcName: "DateRangeFormatterGregorian.formatIso",
+        expr: (selfLocaleName, selfLength, selfAlignment, selfYearStyle, startIsoDateYear, startIsoDateMonth, startIsoDateDay, endIsoDateYear, endIsoDateMonth, endIsoDateDay) => "icu.DateRangeFormatterGregorian.createYmd(icu.Locale.fromString(selfLocaleName), selfLength, selfAlignment, selfYearStyle).formatIso(new icu.IsoDate(startIsoDateYear, startIsoDateMonth, startIsoDateDay), new icu.IsoDate(endIsoDateYear, endIsoDateMonth, endIsoDateDay))".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])selfLength([,\) \n])/, '$1' + selfLength + '$2').replace(/([\( ])selfAlignment([,\) \n])/, '$1' + selfAlignment + '$2').replace(/([\( ])selfYearStyle([,\) \n])/, '$1' + selfYearStyle + '$2').replace(/([\( ])startIsoDateYear([,\) \n])/, '$1' + startIsoDateYear + '$2').replace(/([\( ])startIsoDateMonth([,\) \n])/, '$1' + startIsoDateMonth + '$2').replace(/([\( ])startIsoDateDay([,\) \n])/, '$1' + startIsoDateDay + '$2').replace(/([\( ])endIsoDateYear([,\) \n])/, '$1' + endIsoDateYear + '$2').replace(/([\( ])endIsoDateMonth([,\) \n])/, '$1' + endIsoDateMonth + '$2').replace(/([\( ])endIsoDateDay([,\) \n])/, '$1' + endIsoDateDay + '$2'),
+        parameters: [
+            
+            {
+                name: "self_locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "self_length",
+                type: "DateTimeLength",
+                typeUse: "enumerator",
+                values: ["Long", "Medium", "Short"]
+            },
+            
+            {
+                name: "self_alignment",
+                type: "DateTimeAlignment",
+                typeUse: "enumerator",
+                values: ["Auto", "Column"]
+            },
+            
+            {
+                name: "self_yearStyle",
+                type: "YearStyle",
+                typeUse: "enumerator",
+                values: ["Auto", "Full", "WithEra", "NoEra"]
+            },
+            
+            {
+                name: "startIsoDate_year",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "startIsoDate_month",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "startIsoDate_day",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endIsoDate_year",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endIsoDate_month",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endIsoDate_day",
+                type: "number",
+                typeUse: "number"
+            }
+            
+        ]
+    },
+
     "DateTimeFormatter.formatIso": {
         func: (selfLocaleName, selfLength, selfTimePrecision, selfAlignment, selfYearStyle, isoDateYear, isoDateMonth, isoDateDay, timeHour, timeMinute, timeSecond, timeSubsecond) => icu.DateTimeFormatter.createYmdt(icu.Locale.fromString(selfLocaleName), selfLength, selfTimePrecision, selfAlignment, selfYearStyle).formatIso(new icu.IsoDate(isoDateYear, isoDateMonth, isoDateDay), new icu.Time(timeHour, timeMinute, timeSecond, timeSubsecond)),
         // For avoiding webpacking minifying issues:
@@ -1104,6 +1250,262 @@ let termini = Object.assign({
             
             {
                 name: "time_subsecond",
+                type: "number",
+                typeUse: "number"
+            }
+            
+        ]
+    },
+
+    "DateTimeRangeFormatter.formatIso": {
+        func: (selfLocaleName, selfLength, selfTimePrecision, selfAlignment, selfYearStyle, startIsoDateYear, startIsoDateMonth, startIsoDateDay, startTimeHour, startTimeMinute, startTimeSecond, startTimeSubsecond, endIsoDateYear, endIsoDateMonth, endIsoDateDay, endTimeHour, endTimeMinute, endTimeSecond, endTimeSubsecond) => icu.DateTimeRangeFormatter.createYmdt(icu.Locale.fromString(selfLocaleName), selfLength, selfTimePrecision, selfAlignment, selfYearStyle).formatIso(new icu.IsoDate(startIsoDateYear, startIsoDateMonth, startIsoDateDay), new icu.Time(startTimeHour, startTimeMinute, startTimeSecond, startTimeSubsecond), new icu.IsoDate(endIsoDateYear, endIsoDateMonth, endIsoDateDay), new icu.Time(endTimeHour, endTimeMinute, endTimeSecond, endTimeSubsecond)),
+        // For avoiding webpacking minifying issues:
+        funcName: "DateTimeRangeFormatter.formatIso",
+        expr: (selfLocaleName, selfLength, selfTimePrecision, selfAlignment, selfYearStyle, startIsoDateYear, startIsoDateMonth, startIsoDateDay, startTimeHour, startTimeMinute, startTimeSecond, startTimeSubsecond, endIsoDateYear, endIsoDateMonth, endIsoDateDay, endTimeHour, endTimeMinute, endTimeSecond, endTimeSubsecond) => "icu.DateTimeRangeFormatter.createYmdt(icu.Locale.fromString(selfLocaleName), selfLength, selfTimePrecision, selfAlignment, selfYearStyle).formatIso(new icu.IsoDate(startIsoDateYear, startIsoDateMonth, startIsoDateDay), new icu.Time(startTimeHour, startTimeMinute, startTimeSecond, startTimeSubsecond), new icu.IsoDate(endIsoDateYear, endIsoDateMonth, endIsoDateDay), new icu.Time(endTimeHour, endTimeMinute, endTimeSecond, endTimeSubsecond))".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])selfLength([,\) \n])/, '$1' + selfLength + '$2').replace(/([\( ])selfTimePrecision([,\) \n])/, '$1' + selfTimePrecision + '$2').replace(/([\( ])selfAlignment([,\) \n])/, '$1' + selfAlignment + '$2').replace(/([\( ])selfYearStyle([,\) \n])/, '$1' + selfYearStyle + '$2').replace(/([\( ])startIsoDateYear([,\) \n])/, '$1' + startIsoDateYear + '$2').replace(/([\( ])startIsoDateMonth([,\) \n])/, '$1' + startIsoDateMonth + '$2').replace(/([\( ])startIsoDateDay([,\) \n])/, '$1' + startIsoDateDay + '$2').replace(/([\( ])startTimeHour([,\) \n])/, '$1' + startTimeHour + '$2').replace(/([\( ])startTimeMinute([,\) \n])/, '$1' + startTimeMinute + '$2').replace(/([\( ])startTimeSecond([,\) \n])/, '$1' + startTimeSecond + '$2').replace(/([\( ])startTimeSubsecond([,\) \n])/, '$1' + startTimeSubsecond + '$2').replace(/([\( ])endIsoDateYear([,\) \n])/, '$1' + endIsoDateYear + '$2').replace(/([\( ])endIsoDateMonth([,\) \n])/, '$1' + endIsoDateMonth + '$2').replace(/([\( ])endIsoDateDay([,\) \n])/, '$1' + endIsoDateDay + '$2').replace(/([\( ])endTimeHour([,\) \n])/, '$1' + endTimeHour + '$2').replace(/([\( ])endTimeMinute([,\) \n])/, '$1' + endTimeMinute + '$2').replace(/([\( ])endTimeSecond([,\) \n])/, '$1' + endTimeSecond + '$2').replace(/([\( ])endTimeSubsecond([,\) \n])/, '$1' + endTimeSubsecond + '$2'),
+        parameters: [
+            
+            {
+                name: "self_locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "self_length",
+                type: "DateTimeLength",
+                typeUse: "enumerator",
+                values: ["Long", "Medium", "Short"]
+            },
+            
+            {
+                name: "self_timePrecision",
+                type: "TimePrecision",
+                typeUse: "enumerator",
+                values: ["Hour", "Minute", "MinuteOptional", "Second", "Subsecond1", "Subsecond2", "Subsecond3", "Subsecond4", "Subsecond5", "Subsecond6", "Subsecond7", "Subsecond8", "Subsecond9"]
+            },
+            
+            {
+                name: "self_alignment",
+                type: "DateTimeAlignment",
+                typeUse: "enumerator",
+                values: ["Auto", "Column"]
+            },
+            
+            {
+                name: "self_yearStyle",
+                type: "YearStyle",
+                typeUse: "enumerator",
+                values: ["Auto", "Full", "WithEra", "NoEra"]
+            },
+            
+            {
+                name: "startIsoDate_year",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "startIsoDate_month",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "startIsoDate_day",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "startTime_hour",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "startTime_minute",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "startTime_second",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "startTime_subsecond",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endIsoDate_year",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endIsoDate_month",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endIsoDate_day",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endTime_hour",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endTime_minute",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endTime_second",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endTime_subsecond",
+                type: "number",
+                typeUse: "number"
+            }
+            
+        ]
+    },
+
+    "DateTimeRangeFormatterGregorian.formatIso": {
+        func: (selfLocaleName, selfLength, selfTimePrecision, selfAlignment, selfYearStyle, startIsoDateYear, startIsoDateMonth, startIsoDateDay, startTimeHour, startTimeMinute, startTimeSecond, startTimeSubsecond, endIsoDateYear, endIsoDateMonth, endIsoDateDay, endTimeHour, endTimeMinute, endTimeSecond, endTimeSubsecond) => icu.DateTimeRangeFormatterGregorian.createYmdt(icu.Locale.fromString(selfLocaleName), selfLength, selfTimePrecision, selfAlignment, selfYearStyle).formatIso(new icu.IsoDate(startIsoDateYear, startIsoDateMonth, startIsoDateDay), new icu.Time(startTimeHour, startTimeMinute, startTimeSecond, startTimeSubsecond), new icu.IsoDate(endIsoDateYear, endIsoDateMonth, endIsoDateDay), new icu.Time(endTimeHour, endTimeMinute, endTimeSecond, endTimeSubsecond)),
+        // For avoiding webpacking minifying issues:
+        funcName: "DateTimeRangeFormatterGregorian.formatIso",
+        expr: (selfLocaleName, selfLength, selfTimePrecision, selfAlignment, selfYearStyle, startIsoDateYear, startIsoDateMonth, startIsoDateDay, startTimeHour, startTimeMinute, startTimeSecond, startTimeSubsecond, endIsoDateYear, endIsoDateMonth, endIsoDateDay, endTimeHour, endTimeMinute, endTimeSecond, endTimeSubsecond) => "icu.DateTimeRangeFormatterGregorian.createYmdt(icu.Locale.fromString(selfLocaleName), selfLength, selfTimePrecision, selfAlignment, selfYearStyle).formatIso(new icu.IsoDate(startIsoDateYear, startIsoDateMonth, startIsoDateDay), new icu.Time(startTimeHour, startTimeMinute, startTimeSecond, startTimeSubsecond), new icu.IsoDate(endIsoDateYear, endIsoDateMonth, endIsoDateDay), new icu.Time(endTimeHour, endTimeMinute, endTimeSecond, endTimeSubsecond))".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])selfLength([,\) \n])/, '$1' + selfLength + '$2').replace(/([\( ])selfTimePrecision([,\) \n])/, '$1' + selfTimePrecision + '$2').replace(/([\( ])selfAlignment([,\) \n])/, '$1' + selfAlignment + '$2').replace(/([\( ])selfYearStyle([,\) \n])/, '$1' + selfYearStyle + '$2').replace(/([\( ])startIsoDateYear([,\) \n])/, '$1' + startIsoDateYear + '$2').replace(/([\( ])startIsoDateMonth([,\) \n])/, '$1' + startIsoDateMonth + '$2').replace(/([\( ])startIsoDateDay([,\) \n])/, '$1' + startIsoDateDay + '$2').replace(/([\( ])startTimeHour([,\) \n])/, '$1' + startTimeHour + '$2').replace(/([\( ])startTimeMinute([,\) \n])/, '$1' + startTimeMinute + '$2').replace(/([\( ])startTimeSecond([,\) \n])/, '$1' + startTimeSecond + '$2').replace(/([\( ])startTimeSubsecond([,\) \n])/, '$1' + startTimeSubsecond + '$2').replace(/([\( ])endIsoDateYear([,\) \n])/, '$1' + endIsoDateYear + '$2').replace(/([\( ])endIsoDateMonth([,\) \n])/, '$1' + endIsoDateMonth + '$2').replace(/([\( ])endIsoDateDay([,\) \n])/, '$1' + endIsoDateDay + '$2').replace(/([\( ])endTimeHour([,\) \n])/, '$1' + endTimeHour + '$2').replace(/([\( ])endTimeMinute([,\) \n])/, '$1' + endTimeMinute + '$2').replace(/([\( ])endTimeSecond([,\) \n])/, '$1' + endTimeSecond + '$2').replace(/([\( ])endTimeSubsecond([,\) \n])/, '$1' + endTimeSubsecond + '$2'),
+        parameters: [
+            
+            {
+                name: "self_locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "self_length",
+                type: "DateTimeLength",
+                typeUse: "enumerator",
+                values: ["Long", "Medium", "Short"]
+            },
+            
+            {
+                name: "self_timePrecision",
+                type: "TimePrecision",
+                typeUse: "enumerator",
+                values: ["Hour", "Minute", "MinuteOptional", "Second", "Subsecond1", "Subsecond2", "Subsecond3", "Subsecond4", "Subsecond5", "Subsecond6", "Subsecond7", "Subsecond8", "Subsecond9"]
+            },
+            
+            {
+                name: "self_alignment",
+                type: "DateTimeAlignment",
+                typeUse: "enumerator",
+                values: ["Auto", "Column"]
+            },
+            
+            {
+                name: "self_yearStyle",
+                type: "YearStyle",
+                typeUse: "enumerator",
+                values: ["Auto", "Full", "WithEra", "NoEra"]
+            },
+            
+            {
+                name: "startIsoDate_year",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "startIsoDate_month",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "startIsoDate_day",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "startTime_hour",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "startTime_minute",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "startTime_second",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "startTime_subsecond",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endIsoDate_year",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endIsoDate_month",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endIsoDate_day",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endTime_hour",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endTime_minute",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endTime_second",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endTime_subsecond",
                 type: "number",
                 typeUse: "number"
             }
@@ -1616,6 +2018,523 @@ let termini = Object.assign({
         ]
     },
 
+    "LocaleNamesUnstable.forRegionLight": {
+        func: (localeName, region) => icu.LocaleNamesUnstable.forRegionLight(icu.Locale.fromString(localeName), region),
+        // For avoiding webpacking minifying issues:
+        funcName: "LocaleNamesUnstable.forRegionLight",
+        expr: (localeName, region) => "icu.LocaleNamesUnstable.forRegionLight(icu.Locale.fromString(localeName), region)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])region([,\) \n])/, '$1' + region + '$2'),
+        parameters: [
+            
+            {
+                name: "locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "region",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "LocaleNamesUnstable.forRegionTiny": {
+        func: (localeName, region) => icu.LocaleNamesUnstable.forRegionTiny(icu.Locale.fromString(localeName), region),
+        // For avoiding webpacking minifying issues:
+        funcName: "LocaleNamesUnstable.forRegionTiny",
+        expr: (localeName, region) => "icu.LocaleNamesUnstable.forRegionTiny(icu.Locale.fromString(localeName), region)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])region([,\) \n])/, '$1' + region + '$2'),
+        parameters: [
+            
+            {
+                name: "locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "region",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "LocaleNamesUnstable.forRegionShortTiny": {
+        func: (localeName, region) => icu.LocaleNamesUnstable.forRegionShortTiny(icu.Locale.fromString(localeName), region),
+        // For avoiding webpacking minifying issues:
+        funcName: "LocaleNamesUnstable.forRegionShortTiny",
+        expr: (localeName, region) => "icu.LocaleNamesUnstable.forRegionShortTiny(icu.Locale.fromString(localeName), region)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])region([,\) \n])/, '$1' + region + '$2'),
+        parameters: [
+            
+            {
+                name: "locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "region",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "LocaleNamesUnstable.forRegionShortLight": {
+        func: (localeName, region) => icu.LocaleNamesUnstable.forRegionShortLight(icu.Locale.fromString(localeName), region),
+        // For avoiding webpacking minifying issues:
+        funcName: "LocaleNamesUnstable.forRegionShortLight",
+        expr: (localeName, region) => "icu.LocaleNamesUnstable.forRegionShortLight(icu.Locale.fromString(localeName), region)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])region([,\) \n])/, '$1' + region + '$2'),
+        parameters: [
+            
+            {
+                name: "locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "region",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "LocaleNamesUnstable.forScriptLight": {
+        func: (localeName, script) => icu.LocaleNamesUnstable.forScriptLight(icu.Locale.fromString(localeName), script),
+        // For avoiding webpacking minifying issues:
+        funcName: "LocaleNamesUnstable.forScriptLight",
+        expr: (localeName, script) => "icu.LocaleNamesUnstable.forScriptLight(icu.Locale.fromString(localeName), script)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])script([,\) \n])/, '$1' + script + '$2'),
+        parameters: [
+            
+            {
+                name: "locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "script",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "LocaleNamesUnstable.forScriptTiny": {
+        func: (localeName, script) => icu.LocaleNamesUnstable.forScriptTiny(icu.Locale.fromString(localeName), script),
+        // For avoiding webpacking minifying issues:
+        funcName: "LocaleNamesUnstable.forScriptTiny",
+        expr: (localeName, script) => "icu.LocaleNamesUnstable.forScriptTiny(icu.Locale.fromString(localeName), script)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])script([,\) \n])/, '$1' + script + '$2'),
+        parameters: [
+            
+            {
+                name: "locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "script",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "LocaleNamesUnstable.forScriptHeavy": {
+        func: (localeName, script) => icu.LocaleNamesUnstable.forScriptHeavy(icu.Locale.fromString(localeName), script),
+        // For avoiding webpacking minifying issues:
+        funcName: "LocaleNamesUnstable.forScriptHeavy",
+        expr: (localeName, script) => "icu.LocaleNamesUnstable.forScriptHeavy(icu.Locale.fromString(localeName), script)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])script([,\) \n])/, '$1' + script + '$2'),
+        parameters: [
+            
+            {
+                name: "locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "script",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "LocaleNamesUnstable.forScriptShortHeavy": {
+        func: (localeName, script) => icu.LocaleNamesUnstable.forScriptShortHeavy(icu.Locale.fromString(localeName), script),
+        // For avoiding webpacking minifying issues:
+        funcName: "LocaleNamesUnstable.forScriptShortHeavy",
+        expr: (localeName, script) => "icu.LocaleNamesUnstable.forScriptShortHeavy(icu.Locale.fromString(localeName), script)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])script([,\) \n])/, '$1' + script + '$2'),
+        parameters: [
+            
+            {
+                name: "locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "script",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "LocaleNamesUnstable.forVariantHeavy": {
+        func: (localeName, variant) => icu.LocaleNamesUnstable.forVariantHeavy(icu.Locale.fromString(localeName), variant),
+        // For avoiding webpacking minifying issues:
+        funcName: "LocaleNamesUnstable.forVariantHeavy",
+        expr: (localeName, variant) => "icu.LocaleNamesUnstable.forVariantHeavy(icu.Locale.fromString(localeName), variant)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])variant([,\) \n])/, '$1' + variant + '$2'),
+        parameters: [
+            
+            {
+                name: "locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "variant",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "LocaleNamesUnstable.forLanguageIdentifierLight": {
+        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierLight(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
+        // For avoiding webpacking minifying issues:
+        funcName: "LocaleNamesUnstable.forLanguageIdentifierLight",
+        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierLight(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
+        parameters: [
+            
+            {
+                name: "locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "langid_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "languageDisplay",
+                type: "LanguageDisplayUnstable",
+                typeUse: "enumerator",
+                values: ["Dialect", "Standard"]
+            }
+            
+        ]
+    },
+
+    "LocaleNamesUnstable.forLanguageIdentifierTiny": {
+        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierTiny(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
+        // For avoiding webpacking minifying issues:
+        funcName: "LocaleNamesUnstable.forLanguageIdentifierTiny",
+        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierTiny(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
+        parameters: [
+            
+            {
+                name: "locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "langid_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "languageDisplay",
+                type: "LanguageDisplayUnstable",
+                typeUse: "enumerator",
+                values: ["Dialect", "Standard"]
+            }
+            
+        ]
+    },
+
+    "LocaleNamesUnstable.forLanguageIdentifierShortLight": {
+        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierShortLight(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
+        // For avoiding webpacking minifying issues:
+        funcName: "LocaleNamesUnstable.forLanguageIdentifierShortLight",
+        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierShortLight(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
+        parameters: [
+            
+            {
+                name: "locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "langid_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "languageDisplay",
+                type: "LanguageDisplayUnstable",
+                typeUse: "enumerator",
+                values: ["Dialect", "Standard"]
+            }
+            
+        ]
+    },
+
+    "LocaleNamesUnstable.forLanguageIdentifierLongLight": {
+        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierLongLight(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
+        // For avoiding webpacking minifying issues:
+        funcName: "LocaleNamesUnstable.forLanguageIdentifierLongLight",
+        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierLongLight(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
+        parameters: [
+            
+            {
+                name: "locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "langid_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "languageDisplay",
+                type: "LanguageDisplayUnstable",
+                typeUse: "enumerator",
+                values: ["Dialect", "Standard"]
+            }
+            
+        ]
+    },
+
+    "LocaleNamesUnstable.forLanguageIdentifierMenuLight": {
+        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierMenuLight(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
+        // For avoiding webpacking minifying issues:
+        funcName: "LocaleNamesUnstable.forLanguageIdentifierMenuLight",
+        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierMenuLight(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
+        parameters: [
+            
+            {
+                name: "locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "langid_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "languageDisplay",
+                type: "LanguageDisplayUnstable",
+                typeUse: "enumerator",
+                values: ["Dialect", "Standard"]
+            }
+            
+        ]
+    },
+
+    "LocaleNamesUnstable.forLanguageIdentifierShortMenuLight": {
+        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierShortMenuLight(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
+        // For avoiding webpacking minifying issues:
+        funcName: "LocaleNamesUnstable.forLanguageIdentifierShortMenuLight",
+        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierShortMenuLight(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
+        parameters: [
+            
+            {
+                name: "locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "langid_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "languageDisplay",
+                type: "LanguageDisplayUnstable",
+                typeUse: "enumerator",
+                values: ["Dialect", "Standard"]
+            }
+            
+        ]
+    },
+
+    "LocaleNamesUnstable.forLanguageIdentifierHeavy": {
+        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierHeavy(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
+        // For avoiding webpacking minifying issues:
+        funcName: "LocaleNamesUnstable.forLanguageIdentifierHeavy",
+        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierHeavy(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
+        parameters: [
+            
+            {
+                name: "locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "langid_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "languageDisplay",
+                type: "LanguageDisplayUnstable",
+                typeUse: "enumerator",
+                values: ["Dialect", "Standard"]
+            }
+            
+        ]
+    },
+
+    "LocaleNamesUnstable.forLanguageIdentifierShortHeavy": {
+        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierShortHeavy(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
+        // For avoiding webpacking minifying issues:
+        funcName: "LocaleNamesUnstable.forLanguageIdentifierShortHeavy",
+        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierShortHeavy(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
+        parameters: [
+            
+            {
+                name: "locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "langid_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "languageDisplay",
+                type: "LanguageDisplayUnstable",
+                typeUse: "enumerator",
+                values: ["Dialect", "Standard"]
+            }
+            
+        ]
+    },
+
+    "LocaleNamesUnstable.forLanguageIdentifierLongHeavy": {
+        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierLongHeavy(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
+        // For avoiding webpacking minifying issues:
+        funcName: "LocaleNamesUnstable.forLanguageIdentifierLongHeavy",
+        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierLongHeavy(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
+        parameters: [
+            
+            {
+                name: "locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "langid_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "languageDisplay",
+                type: "LanguageDisplayUnstable",
+                typeUse: "enumerator",
+                values: ["Dialect", "Standard"]
+            }
+            
+        ]
+    },
+
+    "LocaleNamesUnstable.forLanguageIdentifierMenuHeavy": {
+        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierMenuHeavy(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
+        // For avoiding webpacking minifying issues:
+        funcName: "LocaleNamesUnstable.forLanguageIdentifierMenuHeavy",
+        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierMenuHeavy(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
+        parameters: [
+            
+            {
+                name: "locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "langid_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "languageDisplay",
+                type: "LanguageDisplayUnstable",
+                typeUse: "enumerator",
+                values: ["Dialect", "Standard"]
+            }
+            
+        ]
+    },
+
+    "LocaleNamesUnstable.forLanguageIdentifierShortMenuHeavy": {
+        func: (localeName, langidName, languageDisplay) => icu.LocaleNamesUnstable.forLanguageIdentifierShortMenuHeavy(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay),
+        // For avoiding webpacking minifying issues:
+        funcName: "LocaleNamesUnstable.forLanguageIdentifierShortMenuHeavy",
+        expr: (localeName, langidName, languageDisplay) => "icu.LocaleNamesUnstable.forLanguageIdentifierShortMenuHeavy(icu.Locale.fromString(localeName), icu.Locale.fromString(langidName), languageDisplay)".replace(/([\( ])localeName([,\) \n])/, '$1' + localeName + '$2').replace(/([\( ])langidName([,\) \n])/, '$1' + langidName + '$2').replace(/([\( ])languageDisplay([,\) \n])/, '$1' + languageDisplay + '$2'),
+        parameters: [
+            
+            {
+                name: "locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "langid_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "languageDisplay",
+                type: "LanguageDisplayUnstable",
+                typeUse: "enumerator",
+                values: ["Dialect", "Standard"]
+            }
+            
+        ]
+    },
+
     "ComposingNormalizer.normalize": {
         func: (s) => icu.ComposingNormalizer.createNfc().normalize(s),
         // For avoiding webpacking minifying issues:
@@ -1966,6 +2885,91 @@ let termini = Object.assign({
             
             {
                 name: "time_subsecond",
+                type: "number",
+                typeUse: "number"
+            }
+            
+        ]
+    },
+
+    "TimeRangeFormatter.format": {
+        func: (selfLocaleName, selfLength, selfTimePrecision, selfAlignment, startTimeHour, startTimeMinute, startTimeSecond, startTimeSubsecond, endTimeHour, endTimeMinute, endTimeSecond, endTimeSubsecond) => new icu.TimeRangeFormatter(icu.Locale.fromString(selfLocaleName), selfLength, selfTimePrecision, selfAlignment).format(new icu.Time(startTimeHour, startTimeMinute, startTimeSecond, startTimeSubsecond), new icu.Time(endTimeHour, endTimeMinute, endTimeSecond, endTimeSubsecond)),
+        // For avoiding webpacking minifying issues:
+        funcName: "TimeRangeFormatter.format",
+        expr: (selfLocaleName, selfLength, selfTimePrecision, selfAlignment, startTimeHour, startTimeMinute, startTimeSecond, startTimeSubsecond, endTimeHour, endTimeMinute, endTimeSecond, endTimeSubsecond) => "new icu.TimeRangeFormatter(icu.Locale.fromString(selfLocaleName), selfLength, selfTimePrecision, selfAlignment).format(new icu.Time(startTimeHour, startTimeMinute, startTimeSecond, startTimeSubsecond), new icu.Time(endTimeHour, endTimeMinute, endTimeSecond, endTimeSubsecond))".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])selfLength([,\) \n])/, '$1' + selfLength + '$2').replace(/([\( ])selfTimePrecision([,\) \n])/, '$1' + selfTimePrecision + '$2').replace(/([\( ])selfAlignment([,\) \n])/, '$1' + selfAlignment + '$2').replace(/([\( ])startTimeHour([,\) \n])/, '$1' + startTimeHour + '$2').replace(/([\( ])startTimeMinute([,\) \n])/, '$1' + startTimeMinute + '$2').replace(/([\( ])startTimeSecond([,\) \n])/, '$1' + startTimeSecond + '$2').replace(/([\( ])startTimeSubsecond([,\) \n])/, '$1' + startTimeSubsecond + '$2').replace(/([\( ])endTimeHour([,\) \n])/, '$1' + endTimeHour + '$2').replace(/([\( ])endTimeMinute([,\) \n])/, '$1' + endTimeMinute + '$2').replace(/([\( ])endTimeSecond([,\) \n])/, '$1' + endTimeSecond + '$2').replace(/([\( ])endTimeSubsecond([,\) \n])/, '$1' + endTimeSubsecond + '$2'),
+        parameters: [
+            
+            {
+                name: "self_locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "self_length",
+                type: "DateTimeLength",
+                typeUse: "enumerator",
+                values: ["Long", "Medium", "Short"]
+            },
+            
+            {
+                name: "self_timePrecision",
+                type: "TimePrecision",
+                typeUse: "enumerator",
+                values: ["Hour", "Minute", "MinuteOptional", "Second", "Subsecond1", "Subsecond2", "Subsecond3", "Subsecond4", "Subsecond5", "Subsecond6", "Subsecond7", "Subsecond8", "Subsecond9"]
+            },
+            
+            {
+                name: "self_alignment",
+                type: "DateTimeAlignment",
+                typeUse: "enumerator",
+                values: ["Auto", "Column"]
+            },
+            
+            {
+                name: "startTime_hour",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "startTime_minute",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "startTime_second",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "startTime_subsecond",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endTime_hour",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endTime_minute",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endTime_second",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "endTime_subsecond",
                 type: "number",
                 typeUse: "number"
             }

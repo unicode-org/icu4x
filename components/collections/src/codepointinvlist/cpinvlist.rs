@@ -33,7 +33,7 @@ const ALL_VEC: ZeroVec<PotentialCodePoint> = zerovec!(PotentialCodePoint; Potent
 #[zerovec::make_varule(CodePointInversionListULE)]
 #[zerovec::skip_derive(Ord)]
 #[zerovec::derive(Debug)]
-#[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroFrom)]
+#[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroFrom, Hash)]
 #[cfg_attr(not(feature = "alloc"), zerovec::skip_derive(ZeroMapKV, ToOwned))]
 pub struct CodePointInversionList<'data> {
     // If we wanted to use an array to keep the memory on the stack, there is an unsafe nightly feature
@@ -617,7 +617,6 @@ impl<'data> CodePointInversionList<'data> {
     ///
     /// ```
     /// use icu::collections::codepointinvlist::CodePointInversionList;
-    /// use std::char;
     /// let check =
     ///     char::from_u32(0xD7FE).unwrap()..char::from_u32(0xE001).unwrap();
     /// let example_list = [0xD7FE, 0xD7FF, 0xE000, 0xE001];

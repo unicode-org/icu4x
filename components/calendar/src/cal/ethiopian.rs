@@ -306,8 +306,8 @@ impl Date<Ethiopian> {
     /// Years are interpreted according to the provided `era_style`.
     ///
     /// ```rust
-    /// use icu::calendar::cal::EthiopianEraStyle;
     /// use icu::calendar::Date;
+    /// use icu::calendar::cal::EthiopianEraStyle;
     ///
     /// let date_ethiopian =
     ///     Date::try_new_ethiopian(EthiopianEraStyle::AmeteMihret, 2014, 8, 25)

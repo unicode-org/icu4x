@@ -148,7 +148,10 @@ impl CldrCache {
 
     /// CLDR sometimes stores locales with default scripts.
     /// Add in the likely script here to make that data reachable.
-    fn add_script_extended(&self, locale: &DataLocale) -> Result<Option<DataLocale>, DataError> {
+    pub(crate) fn add_script_extended(
+        &self,
+        locale: &DataLocale,
+    ) -> Result<Option<DataLocale>, DataError> {
         if locale.language.is_unknown() || locale.script.is_some() {
             return Ok(None);
         }

@@ -420,8 +420,8 @@ impl Date<Hebrew> {
     /// valid range of `-9999..=9999`.
     ///
     /// ```rust
-    /// use icu::calendar::types::Month;
     /// use icu::calendar::Date;
+    /// use icu::calendar::types::Month;
     ///
     /// let date = Date::try_new_hebrew_v2(5782, Month::leap(5), 7)
     ///     .expect("Failed to initialize Date instance.");

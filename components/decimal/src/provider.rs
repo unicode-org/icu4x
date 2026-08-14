@@ -20,8 +20,8 @@
 //! contains the resolved numbering system as its attribute:
 //!
 //! ```
-//! use icu::decimal::provider::DecimalDigitsV1;
 //! use icu::decimal::DecimalFormatter;
+//! use icu::decimal::provider::DecimalDigitsV1;
 //! use icu::locale::locale;
 //! use icu_provider::prelude::*;
 //! use std::any::TypeId;
@@ -138,7 +138,6 @@ const _: () = {
     use icu_decimal_data::*;
     pub mod icu {
         pub use crate as decimal;
-        pub use icu_locale as locale;
     }
     make_provider!(Baked);
     #[cfg(feature = "unstable")]

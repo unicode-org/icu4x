@@ -24,15 +24,10 @@ Future<void> main(List<String> args) async {
       return;
     }
 
-    final recordedUses = input
-        // ignore: experimental_member_use
-        .recordedUses;
+    final recordedUses = input.recordedUses;
     Iterable<String>? usedSymbols;
     if (recordedUses == null) {
-      print(
-        'Enable the --enable-experiment=record-use experiment'
-        ' to use treeshake unused symbols.',
-      );
+      print('No recorded uses found to treeshake unused symbols.');
     } else {
       usedSymbols = recordedUses.calls.keys
           .where(

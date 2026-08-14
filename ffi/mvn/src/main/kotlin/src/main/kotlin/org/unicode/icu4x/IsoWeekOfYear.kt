@@ -62,7 +62,7 @@ internal class OptionIsoWeekOfYearNative constructor(): Structure(), Structure.B
 
 }
 
-/** See the [Rust documentation for `IsoWeekOfYear`](https://docs.rs/icu/2.2.0/icu/calendar/types/struct.IsoWeekOfYear.html) for more information.
+/** See the [Rust documentation for `IsoWeekOfYear`](https://docs.rs/icu/2.3.0/icu/calendar/types/struct.IsoWeekOfYear.html) for more information.
 */
 class IsoWeekOfYear (var weekNumber: UByte, var isoYear: Int) {
     companion object {

@@ -20,24 +20,18 @@ class TimeZone;
 namespace icu4x {
 namespace capi {
     struct TimeZoneIterator;
-
-
-    typedef struct DiplomatTimeZoneIteratorView {
-      const TimeZoneIterator** data;
-      size_t len;
-    } DiplomatTimeZoneIteratorView;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `TimeZoneIter`](https://docs.rs/icu/2.2.0/icu/time/zone/iana/struct.TimeZoneIter.html) for more information.
+ * See the [Rust documentation for `TimeZoneIter`](https://docs.rs/icu/2.3.0/icu/time/zone/iana/struct.TimeZoneIter.html) for more information.
  */
 class TimeZoneIterator {
 public:
 
   /**
-   * See the [Rust documentation for `next`](https://docs.rs/icu/2.2.0/icu/time/zone/iana/struct.TimeZoneIter.html#method.next) for more information.
+   * See the [Rust documentation for `next`](https://docs.rs/icu/2.3.0/icu/time/zone/iana/struct.TimeZoneIter.html#method.next) for more information.
    */
   inline std::unique_ptr<icu4x::TimeZone> next();
 

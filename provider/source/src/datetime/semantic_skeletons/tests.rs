@@ -49,14 +49,14 @@ fn test_check_for_field() {
 
 #[test]
 fn test_en_year_patterns() {
-    use icu::locale::locale;
+    use icu::locale::data_locale;
 
     let provider = SourceDataProvider::new_testing();
     let payload: DataPayload<DatetimePatternsDateGregorianV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("ym0d"),
-                &locale!("en").into(),
+                &data_locale!("en"),
             ),
             metadata: Default::default(),
         })
@@ -95,7 +95,7 @@ fn test_en_year_patterns() {
 fn test_hebr_override() {
     use icu::datetime::provider::fields::{FieldLength, FieldNumericOverrides, FieldSymbol};
     use icu::datetime::provider::pattern::PatternItem;
-    use icu::locale::locale;
+    use icu::locale::data_locale;
 
     // This test verifies that the ja-u-ca-japanese has jpanyear overrides
     // for the year field in datetime patterns, as specified in CLDR.
@@ -104,7 +104,7 @@ fn test_hebr_override() {
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("ym0d"),
-                &locale!("ja").into(),
+                &data_locale!("ja"),
             ),
             metadata: Default::default(),
         })
@@ -137,14 +137,14 @@ fn test_hebr_override() {
 
 #[test]
 fn test_en_hour_patterns() {
-    use icu::locale::locale;
+    use icu::locale::data_locale;
 
     let provider = SourceDataProvider::new_testing();
     let payload: DataPayload<DatetimePatternsTimeV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("j"),
-                &locale!("en").into(),
+                &data_locale!("en"),
             ),
             metadata: Default::default(),
         })
@@ -175,13 +175,13 @@ fn test_en_hour_patterns() {
 
 #[test]
 fn test_en_hour_patterns_alt_ascii() {
-    use icu::locale::locale;
+    use icu::locale::data_locale;
 
     let provider = SourceDataProvider::new_testing();
     let provider_ascii = provider
         .clone()
         .with_alt_variants(std::iter::once(AltVariantKind::DatetimeAscii));
-    let locale = locale!("en").into();
+    let locale = data_locale!("en");
     for &attributes in TimeFieldSet::ALL_DATA_MARKER_ATTRIBUTES {
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
@@ -208,14 +208,14 @@ fn test_en_hour_patterns_alt_ascii() {
 
 #[test]
 fn test_en_overlap_patterns() {
-    use icu::locale::locale;
+    use icu::locale::data_locale;
 
     let provider = SourceDataProvider::new_testing();
     let payload: DataPayload<DatetimePatternsDateGregorianV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("ej"),
-                &locale!("en").into(),
+                &data_locale!("en"),
             ),
             metadata: Default::default(),
         })

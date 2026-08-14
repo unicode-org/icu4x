@@ -14,7 +14,7 @@ use core::fmt::{self, Display};
 use core::marker::PhantomData;
 use core::str::FromStr;
 use serde::{Deserialize, Deserializer};
-#[derive(Hash, Eq, PartialEq, Clone, Copy, Debug)]
+#[derive(Hash, Eq, PartialEq, PartialOrd, Ord, Clone, Copy, Debug)]
 pub(crate) enum Alt {
     Unknown,
     Short,
@@ -30,6 +30,24 @@ pub(crate) enum Alt {
     Chagos,
     /// "menu" variant, which is being replaced by menu=core|extension, but is still in CLDR.
     Menu,
+}
+
+impl Alt {
+    /// Returns the string representation of the `Alt` variant, or `None` if `Unknown`.
+    pub fn as_str(self) -> Option<&'static str> {
+        match self {
+            Alt::Short => Some("short"),
+            Alt::Long => Some("long"),
+            Alt::Variant => Some("variant"),
+            Alt::StandAlone => Some("stand-alone"),
+            Alt::Official => Some("official"),
+            Alt::Secondary => Some("secondary"),
+            Alt::Biot => Some("biot"),
+            Alt::Chagos => Some("chagos"),
+            Alt::Menu => Some("menu"),
+            Alt::Unknown => None,
+        }
+    }
 }
 
 impl FromStr for Alt {
@@ -50,11 +68,22 @@ impl FromStr for Alt {
     }
 }
 
-#[derive(Hash, Eq, PartialEq, Clone, Copy, Debug)]
+#[derive(Hash, Eq, PartialEq, PartialOrd, Ord, Clone, Copy, Debug)]
 pub(crate) enum Menu {
     Unknown,
     Core,
     Extension,
+}
+
+impl Menu {
+    /// Returns the string representation of the `Menu` variant, or `None` if `Unknown`.
+    pub fn as_str(self) -> Option<&'static str> {
+        match self {
+            Menu::Core => Some("core"),
+            Menu::Extension => Some("extension"),
+            Menu::Unknown => None,
+        }
+    }
 }
 
 impl FromStr for Menu {
@@ -68,7 +97,7 @@ impl FromStr for Menu {
     }
 }
 
-#[derive(Hash, Eq, PartialEq, Clone, Debug)]
+#[derive(Hash, Eq, PartialEq, PartialOrd, Ord, Clone, Debug)]
 pub(crate) struct WithAlt<T> {
     pub(crate) subtag: T,
     pub(crate) alt: Option<Alt>,

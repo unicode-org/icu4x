@@ -19,24 +19,18 @@ struct TimeZoneAndCanonical;
 namespace icu4x {
 namespace capi {
     struct TimeZoneAndCanonicalIterator;
-
-
-    typedef struct DiplomatTimeZoneAndCanonicalIteratorView {
-      const TimeZoneAndCanonicalIterator** data;
-      size_t len;
-    } DiplomatTimeZoneAndCanonicalIteratorView;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `TimeZoneAndCanonicalIter`](https://docs.rs/icu/2.2.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html) for more information.
+ * See the [Rust documentation for `TimeZoneAndCanonicalIter`](https://docs.rs/icu/2.3.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html) for more information.
  */
 class TimeZoneAndCanonicalIterator {
 public:
 
   /**
-   * See the [Rust documentation for `next`](https://docs.rs/icu/2.2.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html#method.next) for more information.
+   * See the [Rust documentation for `next`](https://docs.rs/icu/2.3.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html#method.next) for more information.
    */
   inline std::optional<icu4x::TimeZoneAndCanonical> next() DIPLOMAT_LIFETIME_BOUND;
 

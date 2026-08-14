@@ -260,8 +260,8 @@ impl CompactDecimalFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu::decimal::input::{Decimal, SignDisplay};
     /// use icu::decimal::CompactDecimalFormatter;
+    /// use icu::decimal::input::{Decimal, SignDisplay};
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///

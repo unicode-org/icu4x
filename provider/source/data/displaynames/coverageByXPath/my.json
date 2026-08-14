@@ -1,0 +1,20 @@
+{
+  "coverageByXPath": {
+    "my": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"my\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Mymr\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"MM\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"mymr\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"mymrshan\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"mymrshan\"][@scope=\"core\"]"
+      ],
+      "modern": []
+    }
+  }
+}

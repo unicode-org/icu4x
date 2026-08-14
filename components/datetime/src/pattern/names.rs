@@ -603,12 +603,12 @@ size_test!(
 /// need this functionality, see <https://github.com/unicode-org/icu4x/issues/6063>
 ///
 /// ```
+/// use icu::datetime::NoCalendarFormatter;
 /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
 /// use icu::datetime::fieldsets::zone;
 /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
-/// use icu::datetime::NoCalendarFormatter;
+/// use icu::datetime::pattern::PatternLoadError;
 /// use icu::locale::locale;
-/// use icu_datetime::pattern::PatternLoadError;
 /// use icu_provider::DataError;
 /// use icu_provider::DataErrorKind;
 ///

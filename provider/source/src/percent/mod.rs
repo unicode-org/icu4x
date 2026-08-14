@@ -225,14 +225,14 @@ fn create_unsigned_pattern<'a>(
 #[test]
 fn test_basic() {
     use icu::experimental::dimension::provider::percent::*;
-    use icu::locale::langid;
+    use icu::locale::data_locale;
     use writeable::assert_writeable_eq;
 
     let provider = SourceDataProvider::new_testing();
 
     let en: DataResponse<PercentEssentialsV1> = provider
         .load(DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("en").into()).as_borrowed(),
+            id: DataIdentifierCow::from_locale(data_locale!("en")).as_borrowed(),
             ..Default::default()
         })
         .unwrap();
@@ -244,7 +244,7 @@ fn test_basic() {
 
     let tr: DataResponse<PercentEssentialsV1> = provider
         .load(DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("tr").into()).as_borrowed(),
+            id: DataIdentifierCow::from_locale(data_locale!("tr")).as_borrowed(),
             ..Default::default()
         })
         .unwrap();
@@ -256,7 +256,7 @@ fn test_basic() {
 
     let ar_eg: DataResponse<PercentEssentialsV1> = provider
         .load(DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("ar-EG").into()).as_borrowed(),
+            id: DataIdentifierCow::from_locale(data_locale!("ar-EG")).as_borrowed(),
             ..Default::default()
         })
         .unwrap();

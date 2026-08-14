@@ -1,0 +1,14 @@
+{
+  "coverageByXPath": {
+    "kek": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"kek\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"GT\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]"
+      ]
+    }
+  }
+}

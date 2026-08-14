@@ -37,7 +37,7 @@ potential_utf = { workspace = true, features = ["alloc", "zerovec"] }
 core_maths = { workspace = true, optional = true }
 
 icu_segmenter_data = { workspace = true, optional = true }
-icu_locale = { workspace = true, optional = true }
+icu_locale_fallback = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
@@ -59,7 +59,7 @@ datagen = ["serde", "dep:databake", "potential_utf/databake", "zerovec/databake"
 lstm = ["dep:core_maths"]
 unstable = []
 auto = ["lstm"] # Enables [try_]new_auto constructors
-compiled_data = ["dep:icu_segmenter_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
+compiled_data = ["dep:icu_segmenter_data", "dep:icu_locale_fallback", "icu_locale_fallback?/compiled_data", "icu_provider/baked"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI

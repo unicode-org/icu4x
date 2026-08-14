@@ -6,7 +6,6 @@ use std::collections::HashSet;
 
 use crate::SourceDataProvider;
 use crate::cldr_serde;
-use icu_locale_core::locale;
 use icu_provider::prelude::*;
 
 #[cfg(feature = "unstable")]
@@ -110,9 +109,8 @@ impl SourceDataProvider {
                     .expect("All languages from list_locales should be present")
                     .into_iter()
                     .map(move |nsname| {
-                        DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                        DataIdentifierBorrowed::for_marker_attributes(
                             DataMarkerAttributes::try_from_str(&nsname).unwrap(),
-                            &locale!("und").into(),
                         )
                         .into_owned()
                     })
@@ -135,9 +133,8 @@ impl SourceDataProvider {
             .iter()
             .filter(|(_nsname, data)| data.nstype == NumberingSystemType::Numeric)
             .map(|(nsname, _data)| {
-                DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataIdentifierBorrowed::for_marker_attributes(
                     DataMarkerAttributes::try_from_str(nsname).unwrap(),
-                    &locale!("und").into(),
                 )
                 .into_owned()
             })

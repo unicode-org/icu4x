@@ -182,7 +182,6 @@ lazy_static::lazy_static! {
         "icu::datetime::DateTimeFormatter::format_unchecked",
         "icu::datetime::NoCalendarFormatter::format_unchecked",
         "icu::datetime::FormattedDateTimeUnchecked",
-        "icu::datetime::range::FormattedDateRange",
 
         // Not planned for 2.0: Would need to introduce diplomat writeable with parts
         "icu::list::parts",
@@ -272,6 +271,7 @@ lazy_static::lazy_static! {
         "icu::segmenter::LineSegmenterBorrowed::load_dictionary",
         "icu::segmenter::WordSegmenterBorrowed::load_lstm",
         "icu::segmenter::WordSegmenterBorrowed::load_dictionary",
+        "icu::segmenter::WordSegmenterBorrowed::load_auto",
 
         // Not planned for 2.0
         // We will revisit these APIs when Duration Formatter needs them. We may need to rename things
@@ -349,6 +349,7 @@ lazy_static::lazy_static! {
         "icu::decimal::provider",
         "icu::list::provider",
         "icu::locale::provider",
+        "icu::locale::fallback::provider",
         "icu::normalizer::provider",
         "icu::plurals::provider",
         "icu::properties::provider",
@@ -362,6 +363,7 @@ lazy_static::lazy_static! {
         "icu::time::types::TimeZoneVariantULE",
 
         // Reexported
+        "icu_provider_adapters::fallback::LocaleFallbacker",
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
         "icu::calendar::error::DateError",
@@ -407,6 +409,9 @@ lazy_static::lazy_static! {
         "icu::datetime::DateTimeFormatter::cast_into_fset",
         "icu::datetime::FixedCalendarDateTimeFormatter::cast_into_fset",
         "icu::datetime::NoCalendarFormatter::cast_into_fset",
+        "icu::datetime::range::DateRangeFormatter::cast_into_fset",
+        "icu::datetime::range::FixedCalendarDateRangeFormatter::cast_into_fset",
+        "icu::datetime::range::NoCalendarRangeFormatter::cast_into_fset",
         // TODO-2.0: needs investigation
         "icu::calendar::Date::into_ref_counted",
         "icu::calendar::Date::into_atomic_ref_counted",
@@ -474,6 +479,7 @@ lazy_static::lazy_static! {
 
         // macros
         "icu::locale::langid",
+        "icu::locale::data_locale",
         "icu::locale::locale",
         "icu::locale::extensions::other::subtag",
         "icu::locale::extensions::private::subtag",

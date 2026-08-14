@@ -234,6 +234,11 @@ fn run_line_break_test() {
     );
     line_break_test(
         include_str!("testdata/LineBreakTest.txt"),
+        LineSegmenter::new_17_for_non_complex_scripts(Default::default()),
+        true,
+    );
+    line_break_test(
+        include_str!("testdata/LineBreakTest.txt"),
         LineSegmenter::new_neo_for_non_complex_scripts(Default::default()),
         false,
     );
@@ -242,8 +247,13 @@ fn run_line_break_test() {
 #[test]
 fn run_line_break_extra_test() {
     line_break_test(
-        include_str!("testdata/LineBreakExtraTest.txt"),
+        include_str!("testdata/LineBreakExtraTest_15.1.txt"),
         LineSegmenter::new_for_non_complex_scripts(Default::default()),
+        false,
+    );
+    line_break_test(
+        include_str!("testdata/LineBreakExtraTest.txt"),
+        LineSegmenter::new_17_for_non_complex_scripts(Default::default()),
         false,
     );
     line_break_test(
@@ -262,7 +272,7 @@ fn run_line_break_random_test() {
     );
     line_break_test(
         include_str!("testdata/LineBreakRandomTest.txt"),
-        LineSegmenter::new_neo_for_non_complex_scripts(Default::default()),
+        LineSegmenter::new_17_for_non_complex_scripts(Default::default()),
         false,
     );
 }
@@ -362,10 +372,6 @@ fn run_word_break_random_test() {
         include_str!("testdata/WordBreakRandomTest.txt"),
         WordSegmenter::new_for_non_complex_scripts(Default::default()),
     );
-    word_break_test(
-        include_str!("testdata/WordBreakRandomTest.txt"),
-        WordSegmenter::new_neo_for_non_complex_scripts(Default::default()),
-    );
 }
 
 fn grapheme_break_test(file: &'static str, segmenter: GraphemeClusterSegmenterBorrowed) {
@@ -463,10 +469,6 @@ fn run_grapheme_break_random_test() {
         include_str!("testdata/GraphemeBreakRandomTest.txt"),
         GraphemeClusterSegmenter::new(),
     );
-    grapheme_break_test(
-        include_str!("testdata/GraphemeBreakRandomTest.txt"),
-        GraphemeClusterSegmenter::new_neo(),
-    );
 }
 
 fn sentence_break_test(file: &'static str, segmenter: SentenceSegmenterBorrowed) {
@@ -563,9 +565,5 @@ fn run_sentence_break_random_test() {
     sentence_break_test(
         include_str!("testdata/SentenceBreakRandomTest.txt"),
         SentenceSegmenter::new(Default::default()),
-    );
-    sentence_break_test(
-        include_str!("testdata/SentenceBreakRandomTest.txt"),
-        SentenceSegmenter::new_neo(Default::default()),
     );
 }

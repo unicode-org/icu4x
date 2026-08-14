@@ -245,7 +245,7 @@ impl Writeable for FormattedUnsignedDecimal<'_> {
     }
 }
 
-writeable::impl_writeable_delegate!(FormattedDecimal<'_>, |&self| &self.0, #[cfg(feature = "alloc")]);
+writeable::impl_writeable_delegate!(FormattedDecimal<'_>, |&self| &self.0, #[cfg(feature = "alloc")] fn write_to_string);
 writeable::impl_display_with_writeable!(FormattedDecimal<'_>, #[cfg(feature = "alloc")]);
 writeable::impl_display_with_writeable!(FormattedUnsignedDecimal<'_>, #[cfg(feature = "alloc")]);
 writeable::impl_display_with_writeable!(FormattedSign<'_, T>, #[cfg(feature = "alloc")], where T: Writeable);

@@ -1,0 +1,25 @@
+{
+  "coverageByXPath": {
+    "kxv-Telu": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"kxv\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Deva\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Latn\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Orya\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Telu\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"IN\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"indian\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"indian\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"deva\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"orya\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"telu\"]"
+      ],
+      "modern": []
+    }
+  }
+}

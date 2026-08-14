@@ -45,7 +45,7 @@ chrono = { workspace = true, optional = true }
 time = { workspace = true, optional = true }
 
 icu_datetime_data = { workspace = true, optional = true }
-icu_locale = { workspace = true, optional = true }
+icu_locale_fallback = { workspace = true, optional = true }
 
 
 [dev-dependencies]
@@ -96,7 +96,7 @@ datagen = [
 ]
 logging = ["icu_calendar/logging"]
 unstable = ["icu_time/unstable"]
-compiled_data = ["dep:icu_datetime_data", "icu_calendar/compiled_data", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_time/compiled_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
+compiled_data = ["dep:icu_datetime_data", "icu_calendar/compiled_data", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_time/compiled_data", "dep:icu_locale_fallback", "icu_locale_fallback?/compiled_data", "icu_provider/baked"]
 ixdtf = ["icu_time/ixdtf", "icu_calendar/ixdtf"]
 unstable_jiff_0_2 = ["dep:jiff", "icu_time/unstable_jiff_0_2", "icu_calendar/unstable_jiff_0_2"]
 unstable_chrono_0_4 = ["dep:chrono", "icu_time/unstable_chrono_0_4", "icu_calendar/unstable_chrono_0_4"]
@@ -122,6 +122,10 @@ required-features = ["serde", "unstable"]
 [[test]]
 name = "datetime"
 required-features = ["unstable", "compiled_data", "serde"]
+
+[[test]]
+name = "range"
+required-features = ["compiled_data", "unstable"]
 
 [[test]]
 name = "resolved_components"

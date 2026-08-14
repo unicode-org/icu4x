@@ -80,7 +80,7 @@ use core::str::FromStr;
 /// More complex example:
 ///
 /// ```
-/// use icu::locale::{subtags::*, Locale};
+/// use icu::locale::{Locale, subtags::*};
 ///
 /// let loc: Locale = "eN-latn-Us-Valencia-u-hC-H12"
 ///     .parse()

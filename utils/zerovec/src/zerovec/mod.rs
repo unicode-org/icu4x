@@ -245,12 +245,21 @@ impl<T> Eq for ZeroVec<'_, T> where T: AsULE + Eq {}
 
 impl<'a, 'b, T> PartialEq<ZeroVec<'b, T>> for ZeroVec<'a, T>
 where
-    T: AsULE + PartialEq,
+    T: AsULE,
 {
     #[inline]
     fn eq(&self, other: &ZeroVec<'b, T>) -> bool {
-        // Note: T implements PartialEq but not T::ULE
-        self.iter().eq(other.iter())
+        self.as_slice().eq(other)
+    }
+}
+
+impl<T> PartialEq<[T]> for ZeroVec<'_, T>
+where
+    T: AsULE + PartialEq,
+{
+    #[inline]
+    fn eq(&self, other: &[T]) -> bool {
+        self.as_slice().eq(other)
     }
 }
 
@@ -260,7 +269,7 @@ where
 {
     #[inline]
     fn eq(&self, other: &&[T]) -> bool {
-        self.iter().eq(other.iter().copied())
+        self.as_slice().eq(other)
     }
 }
 
@@ -270,7 +279,7 @@ where
 {
     #[inline]
     fn eq(&self, other: &[T; N]) -> bool {
-        self.iter().eq(other.iter().copied())
+        self.as_slice().eq(other)
     }
 }
 
@@ -283,13 +292,19 @@ impl<'a, T: AsULE> Default for ZeroVec<'a, T> {
 
 impl<'a, T: AsULE + PartialOrd> PartialOrd for ZeroVec<'a, T> {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        self.iter().partial_cmp(other.iter())
+        self.as_slice().partial_cmp(other)
     }
 }
 
 impl<'a, T: AsULE + Ord> Ord for ZeroVec<'a, T> {
     fn cmp(&self, other: &Self) -> Ordering {
-        self.iter().cmp(other.iter())
+        self.as_slice().cmp(other)
+    }
+}
+
+impl<'a, T: AsULE> core::hash::Hash for ZeroVec<'a, T> {
+    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
+        self.as_slice().hash(state);
     }
 }
 
