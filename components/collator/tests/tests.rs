@@ -2047,6 +2047,20 @@ fn test_fffe_issue_6811() {
     );
 }
 
+#[test]
+fn test_burmese() {
+    let mut options = CollatorOptions::default();
+    options.strength = Some(Strength::Tertiary);
+    let collator = Collator::try_new(locale!("my").into(), options).unwrap();
+    assert_eq!(
+        collator.compare(
+            "",
+            "\u{102d}\u{102f}\u{1037}"
+        ),
+        Ordering::Less
+    );
+}
+
 #[cfg(feature = "latin1")]
 #[test]
 fn test_latin1_root() {
