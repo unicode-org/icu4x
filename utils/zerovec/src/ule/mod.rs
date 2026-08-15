@@ -271,6 +271,8 @@ where
 /// 6. All other methods *must* be left with their default impl, or else implemented according to
 ///    their respective safety guidelines.
 /// 7. Acknowledge the following note about the equality invariant.
+/// 8. If the type implements any concrete methods with the same name as the methods on VarULE,
+///    they have identical behavior to the corresponding VarULE methods.
 ///
 /// If the ULE type is a struct only containing other ULE/VarULE types (or other types which satisfy invariants 1 and 2,
 /// like `[u8; N]`), invariants 1 and 2 can be achieved via `#[repr(C, packed)]` or `#[repr(transparent)]`.
