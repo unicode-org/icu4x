@@ -562,7 +562,7 @@ jobs:
 
     # job specific dependencies
     - name: Install Miri
-      run: rustup component add miri
+      run: rustup component add miri --toolchain ${PINNED_CI_NIGHTLY}
 
     # Actual job
     - name: Run `cargo make ci-job-miri`
