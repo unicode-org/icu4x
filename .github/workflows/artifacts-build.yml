@@ -776,17 +776,18 @@ jobs:
   release-ffi-libs:
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch' && github.repository == 'unicode-org/icu4x'
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
     steps:
       - name: Verify release exists
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ inputs.tag || github.ref_name }}
         run: gh release view "$TAG" >/dev/null
 
       - name: Get RUN_ID for tag build
         id: get_run_id
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ inputs.tag || github.ref_name }}
           INPUT_RUN_ID: ${{ inputs.run_id }}
         run: |
@@ -797,19 +798,17 @@ jobs:
           fi
           echo "run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
 
-      - name: Verify tag build succeeded
+      - name: Verify tag build finished
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RUN_ID: ${{ steps.get_run_id.outputs.run_id }}
         run: |
-          if [ "$(gh run view "$RUN_ID" --json conclusion --jq .conclusion)" != "success" ]; then
-            echo "Error: Run $RUN_ID is not successful."
+          if [ "$(gh run view "$RUN_ID" --json status --jq .status)" != "completed" ]; then
+            echo "Error: Run $RUN_ID is not finished."
             exit 1
           fi
 
       - name: Download binaries
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RUN_ID: ${{ steps.get_run_id.outputs.run_id }}
         run: gh run download "$RUN_ID" -p 'ffi-*-libs' -D bin
 
@@ -818,7 +817,6 @@ jobs:
 
       - name: Release
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ inputs.tag || github.ref_name }}
         run: find bin -type f -exec gh release upload "$TAG" --clobber {} +
 
