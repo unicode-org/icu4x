@@ -311,7 +311,7 @@ jobs:
     - name: Run `cargo make ci-job-test-js`
       run: cargo make ci-job-test-js
 
-
+  
   # ci-job-test-dart
   test-dart:
     strategy:
@@ -536,6 +536,37 @@ jobs:
     # Actual job
     - name: Run `ci-job-clippy`
       run: cargo make ci-job-clippy
+
+  # ci-job-miri
+  miri:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    env:
+      CI_TOOLCHAIN: nightly
+
+    steps:
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+    # Cargo-make boilerplate
+    - name: Install cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
+
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-ci-toolchain
+
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # job specific dependencies
+    - name: Install Miri
+      run: rustup component add miri
+
+    # Actual job
+    - name: Run `cargo make ci-job-miri`
+      run: cargo make ci-job-miri
 
 
   # ci-job-doc

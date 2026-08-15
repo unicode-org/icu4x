@@ -226,6 +226,12 @@ dependencies = [
     "clippy-all",
 ]
 
+[tasks.ci-job-miri]
+description = "run miri tests for unsafe crates"
+category = "CI"
+script_runner = "@duckscript"
+script = '''exec --fail-on-error cargo +${PINNED_CI_NIGHTLY} miri test -p zerovec --features serde,derive -p yoke'''
+
 [tasks.ci-job-doc]
 description = "Runs rustdoc generation for the CI 'doc' job"
 category = "CI"
@@ -252,6 +258,7 @@ dependencies = [
     "ci-job-nostd",
     "ci-job-check",
     "check-tutorials-local",
+    "ci-job-miri",
 
     # Get a coffee
     "ci-job-test",
