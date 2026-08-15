@@ -88,8 +88,9 @@ Once the release checklist is complete, the assigned release driver will perform
 * [ ] Update the website
   * [ ] In the `icu4x-docs` repo, run `node tools/github-to-astro.ts` and follow the instructions
 * [ ] Announce the release to public
-  * [ ] (All releases) Blog post on Unicode blog (email Unicode Edcom)
+  * [ ] (All releases) Blog post on Unicode blog (email comms@unicode.org)
   * [ ] (All releases) Update https://www.unicode.org/releases/ (email Ken Whistler)
+  * [ ] (All releases) Email icu4x-announce@unicode.org (see https://groups.google.com/a/unicode.org/g/icu4x-announce)
   * [ ] (Major releases only) Submit to This Week In Rust
 * Keep the main branch relatively stable for 7-14 days following the release to make things easier in case a patch release is needed.
   * It's okay to land smaller or incremental changes, but avoid breaking changes during this period.
