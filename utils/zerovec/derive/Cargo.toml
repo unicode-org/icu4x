@@ -27,7 +27,7 @@ quote = { workspace = true }
 syn = { workspace = true, features = ["extra-traits"]}
 
 [dev-dependencies]
-zerovec = { path = "..", features = ["serde", "derive"] }
+zerovec = { path = "..", features = ["serde", "derive", "alloc"] }
 serde = { workspace = true, features = ["derive"] }
 zerofrom = { path = "../../../utils/zerofrom" }
 bincode = { workspace = true }
