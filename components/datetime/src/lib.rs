@@ -50,11 +50,11 @@
 //! # Examples
 //!
 //! ```
+//! use icu::datetime::DateTimeFormatter;
 //! use icu::datetime::fieldsets;
 //! use icu::datetime::input::Date;
 //! use icu::datetime::input::{DateTime, Time};
-//! use icu::datetime::DateTimeFormatter;
-//! use icu::locale::{locale, Locale};
+//! use icu::locale::{Locale, locale};
 //! use writeable::assert_writeable_eq;
 //!
 //! // Field set for year, month, day, hour, and minute with a medium length:
@@ -135,6 +135,9 @@ pub mod options;
 pub mod parts;
 pub mod pattern;
 pub mod provider;
+/// Date and time range formatting.
+#[cfg(feature = "unstable")]
+pub mod range;
 pub(crate) mod raw;
 pub mod scaffold;
 pub(crate) mod size_test_macro;

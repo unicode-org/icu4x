@@ -14,11 +14,6 @@
 typedef struct CanonicalCombiningClassMap CanonicalCombiningClassMap;
 
 
-typedef struct DiplomatCanonicalCombiningClassMapView {
-  const CanonicalCombiningClassMap** data;
-  size_t len;
-} DiplomatCanonicalCombiningClassMapView;
-
 
 
 #endif // CanonicalCombiningClassMap_D_H

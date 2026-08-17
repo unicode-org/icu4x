@@ -15,7 +15,7 @@ use crate::scaffold::*;
 /// The only way to construct a combo field set (in this case, weekday with location-based zone):
 ///
 /// ```
-/// use icu::datetime::fieldsets::{zone::Location, Combo, E};
+/// use icu::datetime::fieldsets::{Combo, E, zone::Location};
 ///
 /// let field_set = E::long().with_zone(Location);
 /// ```
@@ -23,9 +23,9 @@ use crate::scaffold::*;
 /// Format the weekday, hour, and location-based zone:
 ///
 /// ```
-/// use icu::datetime::fieldsets::{self, zone, Combo};
-/// use icu::datetime::input::ZonedDateTime;
 /// use icu::datetime::DateTimeFormatter;
+/// use icu::datetime::fieldsets::{self, Combo, zone};
+/// use icu::datetime::input::ZonedDateTime;
 /// use icu::locale::locale;
 /// use icu::time::zone::IanaParser;
 /// use writeable::assert_writeable_eq;
@@ -57,9 +57,9 @@ use crate::scaffold::*;
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::fieldsets::{self, zone, Combo};
-/// use icu::datetime::input::ZonedDateTime;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
+/// use icu::datetime::fieldsets::{self, Combo, zone};
+/// use icu::datetime::input::ZonedDateTime;
 /// use icu::locale::locale;
 /// use icu::time::zone::IanaParser;
 /// use writeable::assert_writeable_eq;
@@ -93,11 +93,11 @@ use crate::scaffold::*;
 /// with a static time zone:
 ///
 /// ```
+/// use icu::datetime::DateTimeFormatter;
 /// use icu::datetime::fieldsets::{
-///     enums::DateFieldSet, zone::GenericShort, Combo, YMD,
+///     Combo, YMD, enums::DateFieldSet, zone::GenericShort,
 /// };
 /// use icu::datetime::input::ZonedDateTime;
-/// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::time::zone::IanaParser;
 /// use writeable::assert_writeable_eq;
@@ -124,11 +124,11 @@ use crate::scaffold::*;
 ///
 /// ```
 /// # #[cfg(all(feature = "unstable", feature = "ixdtf"))] {
-/// use icu::datetime::fieldsets::{zone::SpecificLong, T};
 /// use icu::datetime::NoCalendarFormatter;
+/// use icu::datetime::fieldsets::{T, zone::SpecificLong};
 /// use icu::locale::locale;
-/// use icu::time::zone::iana::IanaParser;
 /// use icu::time::ZonedTime;
+/// use icu::time::zone::iana::IanaParser;
 /// use writeable::assert_writeable_eq;
 ///
 /// let formatter = NoCalendarFormatter::try_new(

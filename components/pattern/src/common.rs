@@ -261,3 +261,97 @@ where
         (*self).map_literal(literal)
     }
 }
+
+/// A wrapper for input types that may bubble up errors via [`TryWriteable`].
+///
+/// # Examples
+///
+/// Format a pattern with one placeholder, which holds an error:
+///
+/// ```
+/// use either::Either;
+/// use icu_pattern::SinglePlaceholderPattern;
+/// use icu_pattern::TryWrap;
+/// use writeable::assert_try_writeable_eq;
+///
+/// let err_value = Err::<&str, &str>("Errory");
+///
+/// let pattern =
+///     SinglePlaceholderPattern::try_from_str("Hello {0}", Default::default())
+///         .unwrap();
+/// assert_try_writeable_eq!(
+///     pattern.try_interpolate(TryWrap(err_value)),
+///     "Hello Errory",
+///     Err("Errory")
+/// );
+/// ```
+///
+/// Format a pattern with two placeholders, where the second value is an error:
+///
+/// ```
+/// use either::Either;
+/// use icu_pattern::DoublePlaceholderPattern;
+/// use icu_pattern::TryWrap;
+/// use writeable::assert_try_writeable_eq;
+///
+/// let ok_value = Ok::<&str, &str>("xxx");
+/// let err_value = Err::<&str, &str>("yyy");
+///
+/// let pattern =
+///     DoublePlaceholderPattern::try_from_str("{0}-{1}", Default::default())
+///         .unwrap();
+/// assert_try_writeable_eq!(
+///     pattern.try_interpolate(TryWrap((ok_value, err_value))),
+///     "xxx-yyy",
+///     Err(Either::Right("yyy"))
+/// );
+/// ```
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[allow(clippy::exhaustive_structs)] // newtype
+pub struct TryWrap<T>(pub T);
+
+/// Types that implement backing data models for [`Pattern`] and support placeholder extraction
+/// implement this trait.
+///
+/// The trait has no public methods and is not implementable outside of this crate.
+///
+/// <div class="stab unstable">
+/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
+/// </div>
+///
+/// ✨ *Enabled with the `unstable` Cargo feature.*
+///
+/// [`Pattern`]: crate::Pattern
+#[cfg(feature = "unstable")]
+pub trait ExtractionBackend: PatternBackend + crate::private::Sealed {
+    /// 🚧 \[Unstable\] The type that stores the matches for this backend.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This API is unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Use with caution.
+    /// </div>
+    type DecodedMatchesUnstable<'p, 'a>;
+
+    /// 🚧 \[Unstable\] Extract matches from the store.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This API is unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Use with caution.
+    /// </div>
+    fn extract_unstable<'p, 'a>(
+        store: &'p Self::Store,
+        input: &'a str,
+    ) -> Option<Self::DecodedMatchesUnstable<'p, 'a>>;
+
+    /// 🚧 \[Unstable\] Get a match from the decoded matches.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This API is unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Use with caution.
+    /// </div>
+    fn get_match_unstable<'p, 'b>(
+        store: &Self::DecodedMatchesUnstable<'p, 'b>,
+        key: Self::PlaceholderKey<'_>,
+    ) -> Option<&'b str>;
+}

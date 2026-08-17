@@ -1,0 +1,26 @@
+{
+  "coverageByXPath": {
+    "ady": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"ady\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Cyrl\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"JO\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"RU\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"TR\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"TR\"][@alt=\"variant\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic-civil\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic-civil\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic-tbla\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic-tbla\"][@scope=\"core\"]"
+      ],
+      "modern": []
+    }
+  }
+}

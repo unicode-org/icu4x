@@ -22,9 +22,9 @@
 //!
 //! This module contains segmenter implementation for the following rules.
 //!
-//! - Line segmenter that is compatible with [Unicode Standard Annex #14][UAX14] (Version 15.1.0) _Unicode Line
-//!   Breaking Algorithm_, with options to tailor line-breaking behavior for CSS [`line-break`] and
-//!   [`word-break`] properties.
+//! - Line segmenter that is compatible with [Unicode Standard Annex #14][UAX14] (Version 15.1.0, or
+//!   Version 17.0.0 with the `*_17_*` and `*_neo_*` constructors) _Unicode Line Breaking Algorithm_, with options
+//!   to tailor line-breaking behavior for CSS [`line-break`] and [`word-break`] properties.
 //! - Grapheme cluster segmenter, word segmenter, and sentence segmenter that are compatible with
 //!   [Unicode Standard Annex #29][UAX29] (Version 17.0.0), _Unicode Text Segmentation_.
 //!
@@ -80,7 +80,7 @@
 //! Find all word boundaries:
 //!
 //!```rust
-//! use icu::segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
+//! use icu::segmenter::{WordSegmenter, options::WordBreakInvariantOptions};
 //!
 //! let segmenter =
 //!     WordSegmenter::new_auto(WordBreakInvariantOptions::default());
@@ -102,7 +102,7 @@
 //!
 //!```rust
 //! use icu::segmenter::{
-//!     options::SentenceBreakInvariantOptions, SentenceSegmenter,
+//!     SentenceSegmenter, options::SentenceBreakInvariantOptions,
 //! };
 //!
 //! let segmenter =
@@ -120,8 +120,9 @@ extern crate alloc;
 
 mod complex;
 mod indices;
-mod iterator_helpers;
-mod rule_segmenter;
+mod rule_segmenter_v1;
+#[cfg(feature = "unstable")]
+mod rule_segmenter_v2;
 
 /// [`GraphemeClusterSegmenter`] and its related iterators, borrowed types, and options.
 mod grapheme;
@@ -157,41 +158,8 @@ pub mod options {
 }
 
 /// Largely-internal scaffolding types (You should very rarely need to reference these directly)
-pub mod scaffold {
-    // TODO: These should have never been public
-    pub use crate::rule_segmenter::{Latin1, PotentiallyIllFormedUtf8, RuleBreakType, Utf8, Utf16};
-
-    // TODO: This should have never been public
-    /// A trait allowing for [`WordBreakIterator`](crate::iterators::WordBreakIterator) to be generalized to multiple
-    /// string iteration methods.
-    ///
-    /// This is implemented by ICU4X for several common string types.
-    ///
-    /// <div class="stab unstable">
-    /// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
-    /// trait, please consider using a type from the implementors listed below.
-    /// </div>
-    pub trait WordBreakType: crate::private::Sealed + Sized + RuleBreakType {}
-    impl WordBreakType for Utf8 {}
-    impl WordBreakType for PotentiallyIllFormedUtf8 {}
-    impl WordBreakType for Latin1 {}
-    impl WordBreakType for Utf16 {}
-
-    // TODO: This should have never been public
-    /// A trait allowing for `LineBreakIterator` to be generalized to multiple string iteration methods.
-    ///
-    /// This is implemented by ICU4X for several common string types.
-    ///
-    /// <div class="stab unstable">
-    /// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
-    /// trait, please consider using a type from the implementors listed below.
-    /// </div>
-    pub trait LineBreakType: crate::private::Sealed + Sized + RuleBreakType {}
-    impl LineBreakType for Utf8 {}
-    impl LineBreakType for PotentiallyIllFormedUtf8 {}
-    impl LineBreakType for Latin1 {}
-    impl LineBreakType for Utf16 {}
-}
+// TODO: These should have never been public
+pub mod scaffold;
 
 /// Types supporting iteration over segments. Obtained from the segmenter types.
 pub mod iterators {
@@ -206,6 +174,3 @@ pub(crate) mod private {
     /// implemented outside of the segmenter crate.
     pub trait Sealed {}
 }
-
-#[cfg(feature = "unstable")]
-pub mod neo;

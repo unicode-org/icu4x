@@ -1,12 +1,10 @@
 {
-  "display_names": {
-    "one": [
-      0,
-      "pound ng Egypt"
-    ],
-    "other": [
-      0,
-      "Egyptian pounds"
-    ]
-  }
+  "one": [
+    0,
+    "pound ng Egypt"
+  ],
+  "other": [
+    0,
+    "Egyptian pounds"
+  ]
 }

@@ -9,7 +9,6 @@ use crate::provider::*;
 use crate::scaffold::PotentiallyIllFormedUtf8;
 use crate::scaffold::{RuleBreakType, Utf8, Utf16};
 use alloc::vec::Vec;
-use core::char::{REPLACEMENT_CHARACTER, decode_utf16};
 use potential_utf::PotentialUtf8;
 #[cfg(feature = "unstable")]
 use utf8_iter::{Utf8CharIndices, Utf8Chars};
@@ -18,7 +17,7 @@ use zerovec::maps::ZeroMapBorrowed;
 mod matrix;
 use matrix::*;
 
-// A word break iterator using LSTM model. Input string have to be same language.
+// A word break iterator using LSTM model. Input string have to be same complex script.
 #[derive(Debug)]
 pub(super) struct LstmSegmenterIterator<'data, 's, R: RuleBreakType> {
     chars: R::IterAttr<'s>,
@@ -191,22 +190,24 @@ impl<'data> LstmSegmenter<'data> {
                     self.dic
                         .get_copied_by(|key| {
                             key.as_bytes().iter().copied().cmp(
-                                decode_utf16(grapheme_cluster.iter().copied()).flat_map(|c| {
-                                    let mut buf = [0; 4];
-                                    let len = c
-                                        .unwrap_or(REPLACEMENT_CHARACTER)
-                                        .encode_utf8(&mut buf)
-                                        .len();
-                                    buf.into_iter().take(len)
-                                }),
+                                char::decode_utf16(grapheme_cluster.iter().copied()).flat_map(
+                                    |c| {
+                                        let mut buf = [0; 4];
+                                        let len = c
+                                            .unwrap_or(char::REPLACEMENT_CHARACTER)
+                                            .encode_utf8(&mut buf)
+                                            .len();
+                                        buf.into_iter().take(len)
+                                    },
+                                ),
                             )
                         })
                         .unwrap_or_else(|| self.dic.len() as u16)
                 })
                 .collect()
         } else {
-            decode_utf16(input.iter().copied())
-                .map(|c| c.unwrap_or(REPLACEMENT_CHARACTER))
+            char::decode_utf16(input.iter().copied())
+                .map(|c| c.unwrap_or(char::REPLACEMENT_CHARACTER))
                 .map(|c| {
                     self.dic
                         .get_copied(PotentialUtf8::from_str(c.encode_utf8(&mut [0; 4])))

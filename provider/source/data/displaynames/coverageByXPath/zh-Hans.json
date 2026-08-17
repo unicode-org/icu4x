@@ -1,0 +1,61 @@
+{
+  "coverageByXPath": {
+    "zh-Hans": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"zh\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"zh\"][@alt=\"menu\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Hans\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Hant\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Latn\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"CN\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"HK\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"HK\"][@alt=\"short\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"MO\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"MO\"][@alt=\"short\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"MY\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"SG\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"TW\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"chinese\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"chinese\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic-civil\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic-civil\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic-tbla\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"islamic-tbla\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"roc\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"roc\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"pinyin\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"pinyin\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"stroke\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"stroke\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"unihan\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"unihan\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"zhuyin\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"zhuyin\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"fullwide\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"fullwide\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"hanidec\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"hanidec\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"hans\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"hansfin\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"hansfin\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"hant\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"hantfin\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"hantfin\"][@scope=\"core\"]"
+      ],
+      "modern": [
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"compat\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"dictionary\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"phonebook\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"phonetic\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"traditional\"]"
+      ]
+    }
+  }
+}

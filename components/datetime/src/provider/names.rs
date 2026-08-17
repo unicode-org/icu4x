@@ -805,6 +805,11 @@ impl DayPeriodNames<'_> {
             self.names.get(4 + offset)
         }
     }
+    /// Gets the day period rules, if present.
+    pub fn day_period_rules(&self) -> Option<DayPeriodRules> {
+        let (rules, _) = self.names.get(4)?.split_at_checked(4)?;
+        DayPeriodRules::decode_from_str(rules)
+    }
 }
 
 /// Calendar-agnostic year name data marker
@@ -826,7 +831,7 @@ fn test_dayperiod_names() {
         DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("5"),
-                &icu_locale::langid!("zh").into(),
+                &icu::locale::data_locale!("zh"),
             ),
             ..Default::default()
         },
@@ -847,7 +852,7 @@ fn test_dayperiod_names() {
         DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("5"),
-                &icu_locale::langid!("zh-Hant").into(),
+                &icu::locale::data_locale!("zh-Hant"),
             ),
             ..Default::default()
         },

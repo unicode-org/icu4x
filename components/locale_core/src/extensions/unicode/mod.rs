@@ -11,8 +11,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locale::extensions::unicode::{attribute, key, value, Unicode};
 //! use icu::locale::Locale;
+//! use icu::locale::extensions::unicode::{Unicode, attribute, key, value};
 //!
 //! let loc: Locale = "en-US-u-foobar-hc-h12".parse().expect("Parsing failed.");
 //!
@@ -20,11 +20,12 @@
 //!     loc.extensions.unicode.keywords.get(&key!("hc")),
 //!     Some(&value!("h12"))
 //! );
-//! assert!(loc
-//!     .extensions
-//!     .unicode
-//!     .attributes
-//!     .contains(&attribute!("foobar")));
+//! assert!(
+//!     loc.extensions
+//!         .unicode
+//!         .attributes
+//!         .contains(&attribute!("foobar"))
+//! );
 //! ```
 mod attribute;
 mod attributes;
@@ -74,8 +75,8 @@ pub(crate) const UNICODE_EXT_STR: &str = "u";
 /// # Examples
 ///
 /// ```
-/// use icu::locale::extensions::unicode::{key, value};
 /// use icu::locale::Locale;
+/// use icu::locale::extensions::unicode::{key, value};
 ///
 /// let loc: Locale =
 ///     "de-u-hc-h12-ca-buddhist".parse().expect("Parsing failed.");

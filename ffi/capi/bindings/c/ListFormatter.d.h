@@ -14,11 +14,6 @@
 typedef struct ListFormatter ListFormatter;
 
 
-typedef struct DiplomatListFormatterView {
-  const ListFormatter** data;
-  size_t len;
-} DiplomatListFormatterView;
-
 
 
 #endif // ListFormatter_D_H

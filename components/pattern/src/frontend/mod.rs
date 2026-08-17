@@ -368,6 +368,22 @@ where
             Ok(Ok(()))
         }
     }
+
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
+        let mut length_hint = writeable::LengthHint::exact(0);
+        let it = B::iter_items(self.store);
+        for item in it {
+            match item {
+                PatternItem::Literal(s) => {
+                    length_hint += self.value_provider.map_literal(s).writeable_length_hint();
+                }
+                PatternItem::Placeholder(key) => {
+                    length_hint += self.value_provider.value_for(key).writeable_length_hint();
+                }
+            }
+        }
+        length_hint
+    }
 }
 
 impl<'a, B, P> fmt::Display for WriteablePattern<'a, B, P>
@@ -379,6 +395,118 @@ where
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Discard the TryWriteable error (lossy mode)
         self.try_write_to(f).map(|_| ())
+    }
+}
+
+/// A structure containing the extracted placeholder values.
+///
+/// Query it using [`Self::get()`].
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. If you find this useful, please comment on the
+/// [tracking issue #8331](https://github.com/unicode-org/icu4x/issues/8331).
+/// </div>
+///
+/// ✨ *Enabled with the `unstable` Cargo feature.*
+#[cfg(feature = "unstable")]
+pub struct PlaceholderMatches<'p, 'a, B: ExtractionBackend> {
+    pub(crate) store: B::DecodedMatchesUnstable<'p, 'a>,
+}
+
+#[cfg(feature = "unstable")]
+impl<'p, 'a, B: ExtractionBackend> PlaceholderMatches<'p, 'a, B> {
+    /// Gets the matched substring for the given placeholder key.
+    ///
+    /// Returns `None` if the placeholder was not present in the pattern.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. If you find this useful, please comment on the
+    /// [tracking issue #8331](https://github.com/unicode-org/icu4x/issues/8331).
+    /// </div>
+    ///
+    /// ✨ *Enabled with the `unstable` Cargo feature.*
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_pattern::{DoublePlaceholder, DoublePlaceholderKey, Pattern};
+    ///
+    /// let pattern = Pattern::<DoublePlaceholder>::try_from_str(
+    ///     "Hello, {0} and {1}!",
+    ///     Default::default(),
+    /// )
+    /// .unwrap();
+    /// let matches = pattern.extract_values("Hello, Alice and Bob!").unwrap();
+    /// assert_eq!(matches.get(DoublePlaceholderKey::Place0), Some("Alice"));
+    /// assert_eq!(matches.get(DoublePlaceholderKey::Place1), Some("Bob"));
+    /// ```
+    pub fn get(&self, key: B::PlaceholderKey<'_>) -> Option<&'a str> {
+        B::get_match_unstable(&self.store, key)
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl<'p, B: ExtractionBackend> fmt::Debug for PlaceholderMatches<'p, '_, B>
+where
+    for<'a> B::DecodedMatchesUnstable<'p, 'a>: fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("PlaceholderMatches")
+            .field("store", &self.store)
+            .finish()
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl<'p, B: ExtractionBackend> PartialEq for PlaceholderMatches<'p, '_, B>
+where
+    for<'a> B::DecodedMatchesUnstable<'p, 'a>: PartialEq,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.store == other.store
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl<'p, B: ExtractionBackend> Eq for PlaceholderMatches<'p, '_, B> where
+    for<'a> B::DecodedMatchesUnstable<'p, 'a>: Eq
+{
+}
+
+#[cfg(feature = "unstable")]
+impl<B: ExtractionBackend> Pattern<B> {
+    /// Extracts placeholder values from the formatted string.
+    ///
+    /// Returns `None` if the input string does not match the pattern.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. If you find this useful, please comment on the
+    /// [tracking issue #8331](https://github.com/unicode-org/icu4x/issues/8331).
+    /// </div>
+    ///
+    /// ✨ *Enabled with the `unstable` Cargo feature.*
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_pattern::{Pattern, SinglePlaceholder, SinglePlaceholderKey};
+    ///
+    /// let pattern = Pattern::<SinglePlaceholder>::try_from_str(
+    ///     "Hello, {0}!",
+    ///     Default::default(),
+    /// )
+    /// .unwrap();
+    /// let matches = pattern.extract_values("Hello, Alice!").unwrap();
+    /// assert_eq!(matches.get(SinglePlaceholderKey::Singleton), Some("Alice"));
+    /// ```
+    pub fn extract_values<'p, 'a>(
+        &'p self,
+        input: &'a str,
+    ) -> Option<PlaceholderMatches<'p, 'a, B>> {
+        B::extract_unstable(&self.store, input).map(|store| PlaceholderMatches { store })
     }
 }
 

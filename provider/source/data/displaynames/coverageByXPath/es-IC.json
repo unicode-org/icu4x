@@ -1,0 +1,62 @@
+{
+  "coverageByXPath": {
+    "es-IC": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"es\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Latn\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"AR\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"BO\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"BR\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"BZ\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"CL\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"CO\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"CR\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"CU\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"DO\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"EA\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"EC\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"ES\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"GQ\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"GT\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"HN\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"IC\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"MX\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"NI\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"PA\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"PE\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"PH\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"PR\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"PY\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"SV\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"UY\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"VE\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"cs\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"da\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"el\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"et\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"fi\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"hu\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"lv\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"mt\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"sk\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"sl\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"sv\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"traditional\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"traditional\"][@scope=\"core\"]"
+      ],
+      "modern": [
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"compat\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"dictionary\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"phonebook\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"phonetic\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"pinyin\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"stroke\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"unihan\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"zhuyin\"]"
+      ]
+    }
+  }
+}

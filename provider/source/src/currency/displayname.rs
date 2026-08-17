@@ -6,8 +6,8 @@ use crate::SourceDataProvider;
 use crate::cldr_serde;
 use icu::experimental::dimension::provider::currency::displayname::*;
 use icu_provider::prelude::*;
-use std::borrow::Cow;
 use std::collections::HashSet;
+use zerovec::VarZeroCow;
 
 impl DataProvider<CurrencyDisplaynameV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CurrencyDisplaynameV1>, DataError> {
@@ -32,13 +32,13 @@ impl DataProvider<CurrencyDisplaynameV1> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(CurrencyDisplayname {
-                display_name: Cow::Owned(currency.display_name.clone().ok_or_else(|| {
+            payload: DataPayload::from_owned(VarZeroCow::from_encodeable(
+                currency.display_name.as_ref().ok_or_else(|| {
                     DataErrorKind::IdentifierNotFound
                         .into_error()
                         .with_debug_context("No display name found for the currency")
-                })?),
-            }),
+                })?,
+            )),
         })
     }
 }
@@ -73,33 +73,31 @@ impl crate::IterableDataProviderCached<CurrencyDisplaynameV1> for SourceDataProv
 
 #[test]
 fn test_basic() {
-    use icu::locale::langid;
+    use icu::locale::data_locale;
 
     let provider = SourceDataProvider::new_testing();
     let en: DataPayload<CurrencyDisplaynameV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("USD"),
-                &langid!("en").into(),
+                &data_locale!("en"),
             ),
             ..Default::default()
         })
         .unwrap()
         .payload;
-    let display_name = en.get().to_owned().display_name;
-    assert_eq!(display_name, "US Dollar");
+    assert_eq!(&**en.get(), "US Dollar");
 
     let fr: DataPayload<CurrencyDisplaynameV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("USD"),
-                &langid!("fr").into(),
+                &data_locale!("fr"),
             ),
             ..Default::default()
         })
         .unwrap()
         .payload;
 
-    let display_name = fr.get().to_owned().display_name;
-    assert_eq!(display_name, "dollar des États-Unis");
+    assert_eq!(&**fr.get(), "dollar des États-Unis");
 }

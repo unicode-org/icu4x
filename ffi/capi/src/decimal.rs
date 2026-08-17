@@ -98,7 +98,7 @@ pub mod ffi {
             use zerovec::VarZeroCow;
 
             fn str_to_cow(s: &'_ diplomat_runtime::DiplomatStr) -> VarZeroCow<'_, str> {
-                if let Ok(s) = core::str::from_utf8(s) {
+                if let Ok(s) = str::from_utf8(s) {
                     VarZeroCow::new_borrowed(s)
                 } else {
                     VarZeroCow::new_owned(

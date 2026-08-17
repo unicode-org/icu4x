@@ -9,12 +9,11 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::collator::provider::*;
 use icu::locale::{
-    locale,
+    data_locale,
     subtags::{language, script},
 };
 use icu_provider::prelude::*;
 use std::collections::HashSet;
-#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 use zerovec::ZeroVec;
 
 mod collator_serde;
@@ -72,13 +71,13 @@ fn file_name_to_ids(file_name: &str) -> Vec<DataIdentifierCow<'static>> {
             // Pinyin is stored in both und-Hans and und-Hani/pinyin
             r.push(DataIdentifierCow::from_borrowed_and_owned(
                 Default::default(),
-                locale!("und-Hans").into(),
+                data_locale!("und-Hans"),
             ));
         } else if variant == "stroke" {
             // Stroke is stored in both und-Hans and und-Hani/stroke
             r.push(DataIdentifierCow::from_borrowed_and_owned(
                 Default::default(),
-                locale!("und-Hant").into(),
+                data_locale!("und-Hant"),
             ));
         }
     } else if variant == "standard" {
@@ -192,7 +191,7 @@ macro_rules! collation_provider {
 
             for (locale, parent) in required_overrides {
                 // TODO(CLDR49): Remove, https://unicode-org.atlassian.net/browse/CLDR-19386
-                if (locale, parent) == (&locale!("sr-Cyrl-ME").id, &locale!("sr-ME").id) {
+                if (locale, parent) == (&icu::locale::langid!("sr-Cyrl-ME"), &icu::locale::langid!("sr-ME")) {
                     continue;
                 }
 

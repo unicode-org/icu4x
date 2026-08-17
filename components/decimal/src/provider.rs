@@ -20,8 +20,8 @@
 //! contains the resolved numbering system as its attribute:
 //!
 //! ```
-//! use icu::decimal::provider::DecimalDigitsV1;
 //! use icu::decimal::DecimalFormatter;
+//! use icu::decimal::provider::DecimalDigitsV1;
 //! use icu::locale::locale;
 //! use icu_provider::prelude::*;
 //! use std::any::TypeId;
@@ -138,7 +138,6 @@ const _: () = {
     use icu_decimal_data::*;
     pub mod icu {
         pub use crate as decimal;
-        pub use icu_locale as locale;
     }
     make_provider!(Baked);
     #[cfg(feature = "unstable")]
@@ -401,21 +400,7 @@ where
 }
 
 #[cfg(feature = "unstable")]
-impl<P: PatternBackend> icu_provider::ule::MaybeAsVarULE for CompactPatterns<'_, P> {
-    type EncodedStruct = [()];
-}
-
-#[cfg(feature = "datagen")]
-#[cfg(feature = "unstable")]
-impl<P: PatternBackend> icu_provider::ule::MaybeEncodeAsVarULE for CompactPatterns<'_, P> {
-    type EncodeableStruct<'b>
-        = &'b [()]
-    where
-        Self: 'b;
-    fn maybe_as_encodeable<'b>(&'b self) -> Option<Self::EncodeableStruct<'b>> {
-        None
-    }
-}
+icu_provider::data_struct!(<P: PatternBackend> CompactPatterns<'_, P>, #[cfg(feature = "datagen")]);
 
 #[cfg(feature = "datagen")]
 #[cfg(feature = "unstable")]

@@ -102,6 +102,10 @@ fn test_dep_list(
     let mut errors = Vec::new();
     let dep_list = get_dep_list(package, edge_kind, extra_args);
     for i in dep_list.windows(2) {
+        if i[0].crate_name == "syn" {
+            // Temporary for syn v3 upgrade: https://github.com/unicode-org/icu4x/issues/8293
+            continue;
+        }
         if i[0].crate_name == i[1].crate_name {
             errors.push(format!(
                 "Found two versions for `{0}` ({1} & {2})",

@@ -14,11 +14,6 @@
 typedef struct WindowsParser WindowsParser;
 
 
-typedef struct DiplomatWindowsParserView {
-  const WindowsParser** data;
-  size_t len;
-} DiplomatWindowsParserView;
-
 
 
 #endif // WindowsParser_D_H

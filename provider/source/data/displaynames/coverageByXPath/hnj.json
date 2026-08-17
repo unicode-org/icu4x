@@ -1,0 +1,17 @@
+{
+  "coverageByXPath": {
+    "hnj": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"hnj\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Hmnp\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Laoo\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"hmnp\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"laoo\"]"
+      ],
+      "modern": []
+    }
+  }
+}

@@ -14,11 +14,6 @@
 typedef struct CodePointRangeIterator CodePointRangeIterator;
 
 
-typedef struct DiplomatCodePointRangeIteratorView {
-  const CodePointRangeIterator** data;
-  size_t len;
-} DiplomatCodePointRangeIteratorView;
-
 
 
 #endif // CodePointRangeIterator_D_H

@@ -379,8 +379,8 @@ impl ZonedDateTime<Iso, UtcOffset> {
     ///
     /// ```
     /// use icu::calendar::cal::Iso;
-    /// use icu::time::zone::UtcOffset;
     /// use icu::time::ZonedDateTime;
+    /// use icu::time::zone::UtcOffset;
     ///
     /// let iso_str = "2025-04-30T17:45-0700";
     /// let timestamp = 1746060300000; // milliseconds since UNIX epoch
@@ -401,8 +401,8 @@ impl ZonedDateTime<Iso, UtcOffset> {
     ///
     /// ```
     /// use icu::calendar::cal::Iso;
-    /// use icu::time::zone::UtcOffset;
     /// use icu::time::ZonedDateTime;
+    /// use icu::time::zone::UtcOffset;
     ///
     /// let iso_str = "1920-01-02T03:04:05.250+0600";
     /// let timestamp = -1577847354750; // milliseconds since UNIX epoch
@@ -424,8 +424,8 @@ impl ZonedDateTime<Iso, UtcOffset> {
     ///
     /// ```
     /// use icu::calendar::cal::Iso;
-    /// use icu::time::zone::UtcOffset;
     /// use icu::time::ZonedDateTime;
+    /// use icu::time::zone::UtcOffset;
     ///
     /// let max_offset = UtcOffset::try_from_seconds(14 * 3600).unwrap();
     /// let zdt_max = ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
@@ -485,8 +485,8 @@ impl ZonedDateTime<Iso, UtcOffset> {
 ///
 /// ```
 /// # #[cfg(feature = "ixdtf")] {
-/// use icu::time::zone::iana::IanaParser;
 /// use icu::time::ZonedTime;
+/// use icu::time::zone::iana::IanaParser;
 ///
 /// let zoned_time = ZonedTime::try_strict_from_str(
 ///     "T15:44:00-07:00[America/Los_Angeles]",

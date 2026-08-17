@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::dimension::provider::units::display_names::UnitsDisplayNames;
 use crate::dimension::units::format::FormattedUnit;
 use crate::dimension::units::options::Width;
 use crate::measure::category::CategorizedMeasureUnit;
@@ -11,12 +12,13 @@ use fixed_decimal::Decimal;
 use icu_decimal::DecimalFormatter;
 use icu_decimal::DecimalFormatterPreferences;
 use icu_decimal::options::DecimalFormatterOptions;
-use icu_locale::DataLocale;
+use icu_locale_core::DataLocale;
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_plurals::PluralRules;
 use icu_plurals::PluralRulesPreferences;
 use icu_provider::DataError;
 use icu_provider::marker::DataMarkerExt;
+use icu_provider::marker::ErasedMarker;
 use icu_provider::{
     DataIdentifierBorrowed, DataMarkerAttributes, DataPayload, DataProvider, DataRequest,
 };
@@ -55,8 +57,7 @@ prefs_convert!(CategorizedUnitsFormatterPreferences, PluralRulesPreferences);
 #[derive(Debug)]
 pub struct CategorizedFormatter<C: MeasureUnitCategory> {
     _category: PhantomData<C>,
-    display_name:
-        DataPayload<crate::dimension::provider::units::display_names::UnitsDisplayNamesV1>,
+    display_name: DataPayload<ErasedMarker<UnitsDisplayNames<'static>>>,
     decimal_formatter: DecimalFormatter,
     plural_rules: PluralRules,
 }

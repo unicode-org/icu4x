@@ -108,6 +108,8 @@ impl icu_datetime::scaffold::FormattableHijriRules for IranSighting {
         <hijri::TabularAlgorithm as icu_datetime::scaffold::FormattableHijriRules>::YearNamesV1;
     type SkeletaV1 =
         <hijri::TabularAlgorithm as icu_datetime::scaffold::FormattableHijriRules>::SkeletaV1;
+    type RangeSkeletaV1 =
+        <hijri::TabularAlgorithm as icu_datetime::scaffold::FormattableHijriRules>::RangeSkeletaV1;
 }
 
 #[test]
@@ -135,7 +137,7 @@ fn test_conversion() {
 #[ignore]
 fn test_format() {
     use icu_datetime::{FixedCalendarDateTimeFormatter, fieldsets};
-    use icu_locale::locale;
+    use icu_locale_core::locale;
 
     let formatter =
         FixedCalendarDateTimeFormatter::try_new(locale!("fa").into(), fieldsets::YMD::long())

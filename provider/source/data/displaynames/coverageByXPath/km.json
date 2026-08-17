@@ -1,0 +1,18 @@
+{
+  "coverageByXPath": {
+    "km": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"km\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Khmr\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"KH\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"khmr\"]"
+      ],
+      "modern": []
+    }
+  }
+}

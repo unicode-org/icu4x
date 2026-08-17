@@ -56,9 +56,7 @@ impl SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(UnitsDisplayNames {
-                patterns: unit_patterns.try_into_plural_elements_packed_cow()?,
-            }),
+            payload: DataPayload::from_owned(unit_patterns.try_into_plural_elements_packed_cow()?),
         })
     }
 
@@ -176,7 +174,7 @@ impl_units_display_names_provider!(UnitsNamesVolumeOutlierV1, UnitType::Outlier,
 
 #[test]
 fn test_basic() {
-    use icu::locale::langid;
+    use icu::locale::{data_locale, locale};
     use icu::plurals::PluralRules;
     use icu_provider::prelude::*;
     use writeable::assert_writeable_eq;
@@ -187,33 +185,33 @@ fn test_basic() {
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("long-meter"),
-                &langid!("en").into(),
+                &data_locale!("en"),
             ),
             ..Default::default()
         })
         .unwrap()
         .payload;
 
-    let units_us = us_locale_long_meter.get().to_owned();
-
-    let en_rules = PluralRules::try_new_cardinal_unstable(&provider, langid!("en").into()).unwrap();
-    let long = units_us.patterns.get(1.into(), &en_rules).interpolate([1]);
+    let en_rules = PluralRules::try_new_cardinal_unstable(&provider, locale!("en").into()).unwrap();
+    let long = us_locale_long_meter
+        .get()
+        .get(1.into(), &en_rules)
+        .interpolate([1]);
     assert_writeable_eq!(long, "1 meter");
 
     let us_locale_short_meter: DataPayload<UnitsNamesLengthExtendedV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("short-meter"),
-                &langid!("en").into(),
+                &data_locale!("en"),
             ),
             ..Default::default()
         })
         .unwrap()
         .payload;
 
-    let units_us_short = us_locale_short_meter.get().to_owned();
-    let short = units_us_short
-        .patterns
+    let short = us_locale_short_meter
+        .get()
         .get(5.into(), &en_rules)
         .interpolate([5]);
     assert_writeable_eq!(short, "5 m");
@@ -222,34 +220,29 @@ fn test_basic() {
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("long-meter"),
-                &langid!("ar-EG").into(),
+                &data_locale!("ar-EG"),
             ),
             ..Default::default()
         })
         .unwrap()
         .payload;
 
-    let ar_eg_units = ar_eg_locale.get().to_owned();
-    let ar_rules = PluralRules::try_new_cardinal_unstable(&provider, langid!("ar").into()).unwrap();
-    let long = ar_eg_units
-        .patterns
-        .get(1.into(), &ar_rules)
-        .interpolate([1]);
+    let ar_rules = PluralRules::try_new_cardinal_unstable(&provider, locale!("ar").into()).unwrap();
+    let long = ar_eg_locale.get().get(1.into(), &ar_rules).interpolate([1]);
     assert_writeable_eq!(long, "متر");
 
     let fr_locale: DataPayload<UnitsNamesLengthCoreV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("short-meter"),
-                &langid!("fr").into(),
+                &data_locale!("fr"),
             ),
             ..Default::default()
         })
         .unwrap()
         .payload;
 
-    let fr_units = fr_locale.get().to_owned();
-    let fr_rules = PluralRules::try_new_cardinal_unstable(&provider, langid!("fr").into()).unwrap();
-    let short = fr_units.patterns.get(5.into(), &fr_rules).interpolate([5]);
+    let fr_rules = PluralRules::try_new_cardinal_unstable(&provider, locale!("fr").into()).unwrap();
+    let short = fr_locale.get().get(5.into(), &fr_rules).interpolate([5]);
     assert_writeable_eq!(short, "5 m");
 }

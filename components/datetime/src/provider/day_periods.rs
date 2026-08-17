@@ -76,7 +76,7 @@ impl DayPeriodRules {
         ];
 
         #[allow(clippy::unwrap_used)] // all ascii
-        String::from(core::str::from_utf8(&bytes).unwrap())
+        String::from(str::from_utf8(&bytes).unwrap())
     }
 }
 

@@ -30,7 +30,7 @@ impl DataProvider<CurrencyPatternsDataV1> for SourceDataProvider {
             .as_str();
 
         // https://github.com/unicode-org/icu4x/issues/5374
-        if *req.id.locale == DataLocale::from(icu::locale::locale!("sd")) {
+        if *req.id.locale == icu::locale::data_locale!("sd") {
             default_system = "latn";
         }
 
@@ -54,17 +54,15 @@ impl DataProvider<CurrencyPatternsDataV1> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(CurrencyPatternsData {
+            payload: DataPayload::from_owned(
                 // TODO(#5334):
                 //      Before graduating the currency crate,
                 //      Check that the .json data files are completed and no need to fallback chain up to the root.
-                patterns: PluralElements::new(patterns.pattern_other.as_deref().ok_or_else(
-                    || {
-                        DataError::custom("Missing patterns")
-                            .with_debug_context(currency_patterns)
-                            .with_debug_context(&req.id)
-                    },
-                )?)
+                PluralElements::new(patterns.pattern_other.as_deref().ok_or_else(|| {
+                    DataError::custom("Missing patterns")
+                        .with_debug_context(currency_patterns)
+                        .with_debug_context(&req.id)
+                })?)
                 .with_zero_value(patterns.pattern_zero.as_deref())
                 .with_one_value(patterns.pattern_one.as_deref())
                 .with_two_value(patterns.pattern_two.as_deref())
@@ -73,7 +71,7 @@ impl DataProvider<CurrencyPatternsDataV1> for SourceDataProvider {
                 .with_explicit_one_value(patterns.pattern_explicit_one.as_deref())
                 .with_explicit_zero_value(patterns.pattern_explicit_zero.as_deref())
                 .into(),
-            }),
+            ),
         })
     }
 }
@@ -91,21 +89,21 @@ impl IterableDataProviderCached<CurrencyPatternsDataV1> for SourceDataProvider {
 
 #[test]
 fn test_basic() {
-    use icu::locale::langid;
+    use icu::locale::data_locale;
     use icu_pattern::DoublePlaceholderPattern;
 
     let provider = SourceDataProvider::new_testing();
 
     let en: DataPayload<CurrencyPatternsDataV1> = provider
         .load(DataRequest {
-            id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+            id: DataIdentifierBorrowed::for_locale(&data_locale!("en")),
             ..Default::default()
         })
         .unwrap()
         .payload;
 
     assert_eq!(
-        en.get().patterns.elements.decode().map(|(_, p)| p),
+        en.get().elements.decode().map(|(_, p)| p),
         PluralElements::new(
             DoublePlaceholderPattern::try_from_str("{0} {1}", Default::default())
                 .unwrap()
@@ -115,14 +113,14 @@ fn test_basic() {
 
     let ar: DataPayload<CurrencyPatternsDataV1> = provider
         .load(DataRequest {
-            id: DataIdentifierBorrowed::for_locale(&langid!("ar-EG").into()),
+            id: DataIdentifierBorrowed::for_locale(&data_locale!("ar-EG")),
             ..Default::default()
         })
         .unwrap()
         .payload;
 
     assert_eq!(
-        ar.get().patterns.elements.decode().map(|(_, p)| p),
+        ar.get().elements.decode().map(|(_, p)| p),
         PluralElements::new(
             DoublePlaceholderPattern::try_from_str("{0} {1}", Default::default())
                 .unwrap()
@@ -132,14 +130,14 @@ fn test_basic() {
 
     let ja: DataPayload<CurrencyPatternsDataV1> = provider
         .load(DataRequest {
-            id: DataIdentifierBorrowed::for_locale(&langid!("ja").into()),
+            id: DataIdentifierBorrowed::for_locale(&data_locale!("ja")),
             ..Default::default()
         })
         .unwrap()
         .payload;
 
     assert_eq!(
-        ja.get().patterns.elements.decode().map(|(_, p)| p),
+        ja.get().elements.decode().map(|(_, p)| p),
         PluralElements::new(
             DoublePlaceholderPattern::try_from_str("{0}{1}", Default::default())
                 .unwrap()

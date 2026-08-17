@@ -423,8 +423,8 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// use icu::calendar::cal::Hebrew;
     /// use icu::locale::subtags::subtag;
     /// use icu::time::{
-    ///     zone::{IanaParser, TimeZoneVariant, UtcOffset},
     ///     TimeZone, TimeZoneInfo, ZonedDateTime,
+    ///     zone::{IanaParser, TimeZoneVariant, UtcOffset},
     /// };
     ///
     /// let zoneddatetime = ZonedDateTime::try_strict_from_str(
@@ -468,7 +468,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     ///
     /// ```
     /// use icu::calendar::Iso;
-    /// use icu::time::{zone::UtcOffset, TimeZoneInfo, ZonedDateTime};
+    /// use icu::time::{TimeZoneInfo, ZonedDateTime, zone::UtcOffset};
     ///
     /// let tz_from_offset = ZonedDateTime::try_offset_only_from_str(
     ///     "2024-08-08T12:08:19-05:00",
@@ -490,8 +490,8 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// use icu::calendar::Iso;
     /// use icu::locale::subtags::subtag;
     /// use icu::time::{
-    ///     zone::{IanaParser, TimeZoneVariant, UtcOffset},
     ///     TimeZone, TimeZoneInfo, ZonedDateTime,
+    ///     zone::{IanaParser, TimeZoneVariant, UtcOffset},
     /// };
     ///
     /// let tz_from_offset_annotation = ZonedDateTime::try_offset_only_from_str(
@@ -530,7 +530,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// ```
     /// use icu::calendar::Iso;
     /// use icu::time::{
-    ///     zone::UtcOffset, ParseError, TimeZone, TimeZoneInfo, ZonedDateTime,
+    ///     ParseError, TimeZone, TimeZoneInfo, ZonedDateTime, zone::UtcOffset,
     /// };
     /// use tinystr::tinystr;
     ///
@@ -708,8 +708,8 @@ impl ZonedTime<TimeZoneInfo<models::AtTime>> {
     /// use icu::calendar::cal::Hebrew;
     /// use icu::locale::subtags::subtag;
     /// use icu::time::{
-    ///     zone::{IanaParser, TimeZoneVariant, UtcOffset},
     ///     TimeZone, TimeZoneInfo, ZonedTime,
+    ///     zone::{IanaParser, TimeZoneVariant, UtcOffset},
     /// };
     ///
     /// let zonedtime = ZonedTime::try_strict_from_str(
@@ -742,7 +742,7 @@ impl ZonedTime<TimeZoneInfo<models::AtTime>> {
     ///
     /// ```
     /// use icu::calendar::Iso;
-    /// use icu::time::{zone::UtcOffset, TimeZoneInfo, ZonedTime};
+    /// use icu::time::{TimeZoneInfo, ZonedTime, zone::UtcOffset};
     ///
     /// let tz_from_offset =
     ///     ZonedTime::try_offset_only_from_str("T12:08:19-05:00").unwrap();
@@ -761,8 +761,8 @@ impl ZonedTime<TimeZoneInfo<models::AtTime>> {
     /// use icu::calendar::Iso;
     /// use icu::locale::subtags::subtag;
     /// use icu::time::{
-    ///     zone::{IanaParser, TimeZoneVariant, UtcOffset},
     ///     TimeZone, TimeZoneInfo, ZonedTime,
+    ///     zone::{IanaParser, TimeZoneVariant, UtcOffset},
     /// };
     ///
     /// let tz_from_offset_annotation =
@@ -797,7 +797,7 @@ impl ZonedTime<TimeZoneInfo<models::AtTime>> {
     /// ```
     /// use icu::calendar::Iso;
     /// use icu::time::{
-    ///     zone::UtcOffset, ParseError, TimeZone, TimeZoneInfo, ZonedTime,
+    ///     ParseError, TimeZone, TimeZoneInfo, ZonedTime, zone::UtcOffset,
     /// };
     /// use tinystr::tinystr;
     ///

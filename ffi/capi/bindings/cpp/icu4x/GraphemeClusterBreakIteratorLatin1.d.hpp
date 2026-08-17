@@ -15,18 +15,12 @@
 namespace icu4x {
 namespace capi {
     struct GraphemeClusterBreakIteratorLatin1;
-
-
-    typedef struct DiplomatGraphemeClusterBreakIteratorLatin1View {
-      const GraphemeClusterBreakIteratorLatin1** data;
-      size_t len;
-    } DiplomatGraphemeClusterBreakIteratorLatin1View;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `GraphemeClusterBreakIterator`](https://docs.rs/icu/2.2.0/icu/segmenter/iterators/struct.GraphemeClusterBreakIterator.html) for more information.
+ * See the [Rust documentation for `GraphemeClusterBreakIterator`](https://docs.rs/icu/2.3.0/icu/segmenter/iterators/struct.GraphemeClusterBreakIterator.html) for more information.
  */
 class GraphemeClusterBreakIteratorLatin1 {
 public:
@@ -35,7 +29,7 @@ public:
    * Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
    * out of range of a 32-bit signed integer.
    *
-   * See the [Rust documentation for `next`](https://docs.rs/icu/2.2.0/icu/segmenter/iterators/struct.GraphemeClusterBreakIterator.html#method.next) for more information.
+   * See the [Rust documentation for `next`](https://docs.rs/icu/2.3.0/icu/segmenter/iterators/struct.GraphemeClusterBreakIterator.html#method.next) for more information.
    */
   inline int32_t next();
 

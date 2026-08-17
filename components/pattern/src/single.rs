@@ -111,30 +111,7 @@ where
     }
 }
 
-/// A value for [`SinglePlaceholder`] that may bubble up errors.
-///
-/// # Examples
-///
-/// Format a pattern with one placeholder, which holds an error:
-///
-/// ```
-/// use either::Either;
-/// use icu_pattern::SinglePlaceholderPattern;
-/// use icu_pattern::SinglePlaceholderValueProviderTry;
-/// use writeable::assert_try_writeable_eq;
-///
-/// let pattern = SinglePlaceholderPattern::try_from_str("Hello {0}", Default::default()).unwrap();
-/// assert_try_writeable_eq!(
-///     pattern.try_interpolate(SinglePlaceholderValueProviderTry(Err::<&str, &str>("Errory"))),
-///     "Hello Errory",
-///     Err("Errory")
-/// );
-/// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
-#[allow(clippy::exhaustive_structs)] // holds a single placeholder value
-pub struct SinglePlaceholderValueProviderTry<W>(pub W);
-
-impl<W> PlaceholderValueProvider<SinglePlaceholderKey> for SinglePlaceholderValueProviderTry<W>
+impl<W> PlaceholderValueProvider<SinglePlaceholderKey> for TryWrap<W>
 where
     W: TryWriteable,
 {
@@ -327,6 +304,63 @@ impl PatternBackend for SinglePlaceholder {
 
     fn empty() -> &'static Self::Store {
         "\0"
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl ExtractionBackend for SinglePlaceholder {
+    type DecodedMatchesUnstable<'p, 'a> = Option<&'a str>;
+
+    fn extract_unstable<'p, 'a>(
+        store: &'p Self::Store,
+        input: &'a str,
+    ) -> Option<Self::DecodedMatchesUnstable<'p, 'a>> {
+        let mut prefix = None;
+        let mut ph = None;
+        let mut suffix = None;
+
+        // Get the parts from the pattern
+        for item in Self::iter_items(store) {
+            match item {
+                PatternItem::Literal(s) => {
+                    if ph.is_none() {
+                        debug_assert!(prefix.is_none());
+                        prefix = Some(s);
+                    } else {
+                        debug_assert!(suffix.is_none());
+                        suffix = Some(s);
+                    }
+                }
+                PatternItem::Placeholder(p) => {
+                    debug_assert!(ph.is_none());
+                    ph = Some(p);
+                }
+            }
+        }
+
+        // Strip prefix and suffix from input
+        let val = input
+            .strip_prefix(prefix.unwrap_or(""))?
+            .strip_suffix(suffix.unwrap_or(""))?;
+
+        // Return the match
+        match ph {
+            Some(_) => Some(Some(val)),
+            None => {
+                if val.is_empty() {
+                    Some(None)
+                } else {
+                    None
+                }
+            }
+        }
+    }
+
+    fn get_match_unstable<'p, 'b>(
+        store: &Self::DecodedMatchesUnstable<'p, 'b>,
+        _key: Self::PlaceholderKey<'_>,
+    ) -> Option<&'b str> {
+        *store
     }
 }
 

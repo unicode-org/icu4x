@@ -24,7 +24,7 @@ impl SourceDataProvider {
         let mut strings = BTreeSet::new();
 
         for line in self
-            .unicode()?
+            .rscd()?
             .read_to_string("emoji/emoji-sequences.txt")?
             .lines()
         {
@@ -71,8 +71,8 @@ macro_rules! expand {
                 ) -> Result<DataResponse<$marker>, DataError> {
                     self.check_req::<$marker>(req)?;
                     let data = self.get_unicodeset_property(
-                        core::str::from_utf8(<$prop as EmojiSet>::NAME).unwrap(),
-                        core::str::from_utf8(<$prop as EmojiSet>::SHORT_NAME).unwrap(),
+                        str::from_utf8(<$prop as EmojiSet>::NAME).unwrap(),
+                        str::from_utf8(<$prop as EmojiSet>::SHORT_NAME).unwrap(),
                     )?;
 
                     Ok(DataResponse {

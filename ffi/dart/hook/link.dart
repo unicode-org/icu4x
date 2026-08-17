@@ -24,15 +24,10 @@ Future<void> main(List<String> args) async {
       return;
     }
 
-    final recordedUses = input
-        // ignore: experimental_member_use
-        .recordedUses;
+    final recordedUses = input.recordedUses;
     Iterable<String>? usedSymbols;
     if (recordedUses == null) {
-      print(
-        'Enable the --enable-experiment=record-use experiment'
-        ' to use treeshake unused symbols.',
-      );
+      print('No recorded uses found to treeshake unused symbols.');
     } else {
       usedSymbols = recordedUses.calls.keys
           .where(
@@ -58,13 +53,16 @@ Future<void> main(List<String> args) async {
       packageName: input.packageName,
       assetName: 'src/bindings/lib.g.dart',
       sources: [staticLib.file!.toFilePath()],
-      libraries:
-          // On Windows, icu4x.lib is lacking /DEFAULTLIB directives to advise
-          // the linker on what libraries to link against. To make up for that,
-          // the libraries used have to be provided to the linker explicitly.
-          input.config.code.targetOS == OS.windows
-          ? const ['MSVCRT', 'ws2_32', 'userenv', 'ntdll']
-          : const [],
+      libraries: switch (input.config.code.targetOS) {
+        // On Windows, icu4x.lib is lacking /DEFAULTLIB directives to advise
+        // the linker on what libraries to link against. To make up for that,
+        // the libraries used have to be provided to the linker explicitly.
+        OS.windows => const ['MSVCRT', 'ws2_32', 'userenv', 'ntdll'],
+        // On Android, libm (math library) is not linked by default, but math
+        // functions like `expf` referenced in Rust libicu4x require libm.
+        OS.android => const ['m'],
+        _ => const [],
+      },
       linkerOptions: LinkerOptions.treeshake(symbolsToKeep: usedSymbols),
     ).run(
       input: input,

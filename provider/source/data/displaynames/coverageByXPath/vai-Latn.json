@@ -1,0 +1,19 @@
+{
+  "coverageByXPath": {
+    "vai-Latn": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"vai\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Latn\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Vaii\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"LR\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"vaii\"]"
+      ],
+      "modern": []
+    }
+  }
+}

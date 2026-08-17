@@ -15,12 +15,6 @@
 namespace icu4x {
 namespace capi {
     struct ReorderedIndexMap;
-
-
-    typedef struct DiplomatReorderedIndexMapView {
-      const ReorderedIndexMap** data;
-      size_t len;
-    } DiplomatReorderedIndexMapView;
 } // namespace capi
 } // namespace
 

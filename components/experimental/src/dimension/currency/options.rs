@@ -13,33 +13,32 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
 pub struct CurrencyFormatterOptions {
-    /// The width of the currency format.
-    pub width: Width,
+    /// Whether to use standard or accounting currency patterns.
+    pub usage: CurrencyUsage,
 }
 
-impl From<Width> for CurrencyFormatterOptions {
-    fn from(width: Width) -> Self {
-        Self { width }
+impl From<CurrencyUsage> for CurrencyFormatterOptions {
+    fn from(usage: CurrencyUsage) -> Self {
+        Self { usage }
     }
 }
 
-#[derive(Default, Debug, Eq, PartialEq, Clone, Copy, Hash)]
+/// Controls whether currency formatting uses standard or accounting patterns.
+///
+/// Corresponds to ECMA-402 `currencySign`.
+#[derive(Copy, Debug, Eq, PartialEq, Clone, Default, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
-pub enum Width {
-    /// Format the currency with the standard (short) currency symbol.
+pub enum CurrencyUsage {
+    /// Standard currency formatting (default).
     ///
-    /// For example, 1 USD formats as "$1.00" in en-US and "US$1" in most other locales.
-    #[cfg_attr(feature = "serde", serde(rename = "short"))]
+    /// Negative values typically use a leading minus sign, e.g. `-$1,234.56`.
     #[default]
-    Short,
+    Standard,
 
-    /// Format the currency with the narrow currency symbol.
+    /// Accounting currency formatting.
     ///
-    /// The narrow symbol may be ambiguous, so it should be evident from context which
-    /// currency is being represented.
-    ///
-    /// For example, 1 USD formats as "$1.00" in most locales.
-    #[cfg_attr(feature = "serde", serde(rename = "narrow"))]
-    Narrow,
+    /// Negative values may use locale-specific accounting patterns such as
+    /// parentheses, e.g. `($1,234.56)` in `en-US`.
+    Accounting,
 }
