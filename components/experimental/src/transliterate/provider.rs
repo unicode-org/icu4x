@@ -27,9 +27,6 @@ use icu_provider::prelude::*;
 use vecs::Index32;
 use zerovec::*;
 
-#[cfg(feature = "compiled_data")]
-pub use crate::provider::Baked;
-
 // TODO(#3776): Improve the documentation of this datastruct.
 
 icu_provider::data_marker!(

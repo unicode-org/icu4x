@@ -115,11 +115,6 @@ const ICUEXPORTDATA_GLOB: &[&str] = &[
     "norm/small/nfkdex.toml",
     "norm/small/uts46d.toml",
     "segmenter/dictionary/thaidict.toml",
-    "ucase/small/ucase.toml",
-    "uprops/small/nfcinert.toml",
-    "uprops/small/nfdinert.toml",
-    "uprops/small/nfkcinert.toml",
-    "uprops/small/nfkdinert.toml",
 ];
 
 const LSTM_GLOB: &[&str] = &[
@@ -127,7 +122,7 @@ const LSTM_GLOB: &[&str] = &[
     "Thai_graphclust_model4_heavy/weights.json",
 ];
 
-const UNICODE_GLOB: &[&str] = &[
+const RSCD_GLOB: &[&str] = &[
     "emoji/emoji-sequences.txt",
     "security/IdentifierStatus.txt",
     "ucd/auxiliary/GraphemeBreakProperty.txt",
@@ -135,6 +130,7 @@ const UNICODE_GLOB: &[&str] = &[
     "ucd/auxiliary/WordBreakProperty.txt",
     "ucd/BidiBrackets.txt",
     "ucd/BidiMirroring.txt",
+    "ucd/CaseFolding.txt",
     "ucd/DerivedCoreProperties.txt",
     "ucd/DerivedNormalizationProps.txt",
     "ucd/emoji/emoji-data.txt",
@@ -154,6 +150,8 @@ const UNICODE_GLOB: &[&str] = &[
     "ucd/PropList.txt",
     "ucd/ScriptExtensions.txt",
     "ucd/Scripts.txt",
+    "ucd/SpecialCasing.txt",
+    "ucd/UnicodeData.txt",
     // WARNING: This file is manually filtered in download_repo_sources.rs to only include
     // the data that is needed by current implementations. If you need this file for other
     // logic, adapt/remove the filtering.

@@ -17,6 +17,7 @@ include.workspace = true
 publish = false
 
 [dependencies]
+cargo_metadata = "0.19.2"
 clap = { workspace = true, features = ["derive"]}
 indexmap = { workspace = true, features = ["serde"] }
 regex.workspace = true

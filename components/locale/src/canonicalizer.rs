@@ -4,12 +4,11 @@
 
 //! The collection of code for locale canonicalization.
 
+use crate::LocaleExpander;
+use crate::TransformResult;
 use crate::provider::*;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
-
-use crate::LocaleExpander;
-use crate::TransformResult;
 use icu_locale_core::extensions::Extensions;
 use icu_locale_core::subtags::{Language, Region, Script};
 use icu_locale_core::{
@@ -17,6 +16,7 @@ use icu_locale_core::{
     extensions::unicode::key,
     subtags::{Variant, Variants, language},
 };
+use icu_locale_fallback::provider::LocaleLikelySubtagsLanguageV1;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 

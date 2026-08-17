@@ -5,7 +5,7 @@
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
-use icu::experimental::displaynames::provider::*;
+use icu::locale::provider::names::*;
 use icu_pattern::DoublePlaceholderPattern;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -61,7 +61,7 @@ crate::displaynames::impl_displaynames_legacy_iter_v1!(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu::locale::langid;
+    use icu::locale::data_locale;
 
     #[test]
     fn test_locale_names_essentials() {
@@ -69,7 +69,7 @@ mod tests {
 
         let data: DataPayload<LocaleNamesEssentialsV1> = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
+                id: DataIdentifierBorrowed::for_locale(&data_locale!("en-001")),
                 ..Default::default()
             })
             .unwrap()

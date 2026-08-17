@@ -4,6 +4,7 @@
 
 use std::collections::HashSet;
 
+use icu::experimental::measure::parser::ids::unit_id;
 use icu::experimental::measure::provider::UnitIdsV1;
 use icu_provider::DataError;
 use icu_provider::DataMarkerAttributes;
@@ -18,15 +19,12 @@ use crate::cldr_serde;
 impl DataProvider<UnitIdsV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<UnitIdsV1>, DataError> {
         self.check_req::<UnitIdsV1>(req)?;
-        let units_data: &cldr_serde::units::info::Resource = self
-            .cldr()?
-            .core()
-            .read_and_parse("supplemental/units.json")?;
 
-        let unit = req.id.marker_attributes.as_str();
+        let unit = unit_id(req.id.marker_attributes.as_str())
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound.with_req(UnitIdsV1::INFO, req))?;
 
         Ok(DataResponse {
-            payload: DataPayload::from_owned(units_data.unit_id(unit)?),
+            payload: DataPayload::from_owned(unit),
             metadata: Default::default(),
         })
     }
@@ -40,8 +38,18 @@ impl crate::IterableDataProviderCached<UnitIdsV1> for SourceDataProvider {
             .read_and_parse("supplemental/units.json")?;
 
         let ids_set = units_data
-            .unit_ids_map()?
+            .supplemental
+            .convert_units
+            .convert_units
             .keys()
+            .filter(|unit_name| {
+                if unit_id(unit_name).is_some() {
+                    true
+                } else {
+                    log::error!("Unit '{unit_name}' does not have an ICU4X unit_id, skipping");
+                    false
+                }
+            })
             .map(|unit_name| {
                 DataIdentifierCow::from_marker_attributes_owned(
                     DataMarkerAttributes::try_from_string(unit_name.clone()).unwrap(),

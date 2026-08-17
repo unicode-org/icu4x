@@ -14,11 +14,6 @@
 typedef struct BidiParagraph BidiParagraph;
 
 
-typedef struct DiplomatBidiParagraphView {
-  const BidiParagraph** data;
-  size_t len;
-} DiplomatBidiParagraphView;
-
 
 
 #endif // BidiParagraph_D_H

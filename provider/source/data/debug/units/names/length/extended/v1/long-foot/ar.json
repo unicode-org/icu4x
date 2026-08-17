@@ -1,23 +1,21 @@
 {
-  "patterns": {
-    "one": [
-      0,
-      [
-        {
-          "Literal": "قدم"
-        }
-      ]
-    ],
-    "other": [
-      0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " قدم"
-        }
-      ]
+  "one": [
+    0,
+    [
+      {
+        "Literal": "قدم"
+      }
     ]
-  }
+  ],
+  "other": [
+    0,
+    [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " قدم"
+      }
+    ]
+  ]
 }

@@ -30,8 +30,8 @@ impl DataProvider<CurrencyExtendedDataV1> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(CurrencyExtendedData {
-                display_names: PluralElements::new(
+            payload: DataPayload::from_owned(
+                PluralElements::new(
                     currency
                         .other
                         .as_deref()
@@ -45,7 +45,7 @@ impl DataProvider<CurrencyExtendedDataV1> for SourceDataProvider {
                 .with_explicit_one_value(currency.explicit_one.as_deref())
                 .with_explicit_zero_value(currency.explicit_zero.as_deref())
                 .into(),
-            }),
+            ),
         })
     }
 }
@@ -84,48 +84,36 @@ impl crate::IterableDataProviderCached<CurrencyExtendedDataV1> for SourceDataPro
 
 #[test]
 fn test_basic() {
-    use icu::locale::langid;
+    use icu::locale::{data_locale, locale};
     use icu::plurals::PluralRules;
     let provider = SourceDataProvider::new_testing();
     let en: DataPayload<CurrencyExtendedDataV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("USD"),
-                &langid!("en").into(),
+                &data_locale!("en"),
             ),
             ..Default::default()
         })
         .unwrap()
         .payload;
-    let en_rules = PluralRules::try_new_cardinal_unstable(&provider, langid!("en").into()).unwrap();
-    assert_eq!(en.get().display_names.get(1.into(), &en_rules), "US dollar");
-    assert_eq!(
-        en.get().display_names.get(10.into(), &en_rules),
-        "US dollars"
-    );
+    let en_rules = PluralRules::try_new_cardinal_unstable(&provider, locale!("en").into()).unwrap();
+    assert_eq!(en.get().get(1.into(), &en_rules), "US dollar");
+    assert_eq!(en.get().get(10.into(), &en_rules), "US dollars");
 
     let fr: DataPayload<CurrencyExtendedDataV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("USD"),
-                &langid!("fr").into(),
+                &data_locale!("fr"),
             ),
             ..Default::default()
         })
         .unwrap()
         .payload;
-    let fr_rules = PluralRules::try_new_cardinal_unstable(&provider, langid!("fr").into()).unwrap();
+    let fr_rules = PluralRules::try_new_cardinal_unstable(&provider, locale!("fr").into()).unwrap();
 
-    assert_eq!(
-        fr.get().display_names.get(0.into(), &fr_rules),
-        "dollar des États-Unis"
-    );
-    assert_eq!(
-        fr.get().display_names.get(1.into(), &fr_rules),
-        "dollar des États-Unis"
-    );
-    assert_eq!(
-        fr.get().display_names.get(10.into(), &fr_rules),
-        "dollars des États-Unis"
-    );
+    assert_eq!(fr.get().get(0.into(), &fr_rules), "dollar des États-Unis");
+    assert_eq!(fr.get().get(1.into(), &fr_rules), "dollar des États-Unis");
+    assert_eq!(fr.get().get(10.into(), &fr_rules), "dollars des États-Unis");
 }

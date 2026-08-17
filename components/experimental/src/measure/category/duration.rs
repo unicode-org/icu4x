@@ -33,6 +33,44 @@ impl Duration {
         }
     }
 
+    /// Returns a [`MeasureUnit`] representing duration in microseconds.
+    pub fn microsecond() -> CategorizedMeasureUnit<Duration> {
+        CategorizedMeasureUnit {
+            _category: core::marker::PhantomData,
+            unit: MeasureUnit {
+                id: Some("microsecond"),
+                single_units: SingleUnitVec::One(SingleUnit {
+                    power: 1,
+                    si_prefix: SiPrefix {
+                        power: -6,
+                        base: Base::Decimal,
+                    },
+                    unit_id: *crate::provider::Baked::UNIT_IDS_V1_UND_SECOND,
+                }),
+                constant_denominator: 0,
+            },
+        }
+    }
+
+    /// Returns a [`MeasureUnit`] representing duration in nanoseconds.
+    pub fn nanosecond() -> CategorizedMeasureUnit<Duration> {
+        CategorizedMeasureUnit {
+            _category: core::marker::PhantomData,
+            unit: MeasureUnit {
+                id: Some("nanosecond"),
+                single_units: SingleUnitVec::One(SingleUnit {
+                    power: 1,
+                    si_prefix: SiPrefix {
+                        power: -9,
+                        base: Base::Decimal,
+                    },
+                    unit_id: *crate::provider::Baked::UNIT_IDS_V1_UND_SECOND,
+                }),
+                constant_denominator: 0,
+            },
+        }
+    }
+
     /// Returns a [`MeasureUnit`] representing duration in seconds.
     pub fn second() -> CategorizedMeasureUnit<Duration> {
         CategorizedMeasureUnit {
@@ -122,6 +160,44 @@ impl Duration {
                         base: Base::Decimal,
                     },
                     unit_id: *crate::provider::Baked::UNIT_IDS_V1_UND_WEEK,
+                }),
+                constant_denominator: 0,
+            },
+        }
+    }
+
+    /// Returns a [`MeasureUnit`] representing duration in months.
+    pub fn month() -> CategorizedMeasureUnit<Duration> {
+        CategorizedMeasureUnit {
+            _category: core::marker::PhantomData,
+            unit: MeasureUnit {
+                id: Some("month"),
+                single_units: SingleUnitVec::One(SingleUnit {
+                    power: 1,
+                    si_prefix: SiPrefix {
+                        power: 0,
+                        base: Base::Decimal,
+                    },
+                    unit_id: *crate::provider::Baked::UNIT_IDS_V1_UND_MONTH,
+                }),
+                constant_denominator: 0,
+            },
+        }
+    }
+
+    /// Returns a [`MeasureUnit`] representing duration in years.
+    pub fn year() -> CategorizedMeasureUnit<Duration> {
+        CategorizedMeasureUnit {
+            _category: core::marker::PhantomData,
+            unit: MeasureUnit {
+                id: Some("year"),
+                single_units: SingleUnitVec::One(SingleUnit {
+                    power: 1,
+                    si_prefix: SiPrefix {
+                        power: 0,
+                        base: Base::Decimal,
+                    },
+                    unit_id: *crate::provider::Baked::UNIT_IDS_V1_UND_YEAR,
                 }),
                 constant_denominator: 0,
             },

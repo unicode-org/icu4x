@@ -350,6 +350,15 @@ where
             _ => None,
         }
     }
+
+    /// Returns the underlying payload regardless of variable matching.
+    #[allow(dead_code, reason = "https://github.com/unicode-org/icu4x/issues/5448")]
+    pub(crate) fn get_any(&self) -> Option<Payload> {
+        match self {
+            Self::None => None,
+            Self::SingleLength { payload, .. } => Some(*payload),
+        }
+    }
 }
 
 impl<Payload> OptionalNames<(), Payload>
@@ -394,12 +403,12 @@ where
 /// Example pairs of field sets where the trait is implemented:
 ///
 /// ```
+/// use icu::datetime::fieldsets::T;
+/// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet;
 /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
 /// use icu::datetime::fieldsets::enums::DateFieldSet;
 /// use icu::datetime::fieldsets::enums::TimeFieldSet;
-/// use icu::datetime::fieldsets::T;
-/// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::scaffold::DateTimeNamesFrom;
 /// use icu::datetime::scaffold::DateTimeNamesMarker;
 ///

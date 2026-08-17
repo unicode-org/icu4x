@@ -73,13 +73,13 @@ data_marker!(
 /// # Examples
 ///
 /// ```
-/// use icu_locale_core::langid;
+/// use icu_locale_core::data_locale;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 ///
 /// let german_hello_world: DataResponse<HelloWorldV1> = HelloWorldProvider
 ///     .load(DataRequest {
-///         id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
+///         id: DataIdentifierBorrowed::for_locale(&data_locale!("de")),
 ///         ..Default::default()
 ///     })
 ///     .expect("Loading should succeed");
@@ -90,7 +90,7 @@ data_marker!(
 /// Load the reverse string using an auxiliary key:
 ///
 /// ```
-/// use icu_locale_core::langid;
+/// use icu_locale_core::data_locale;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 ///
@@ -98,7 +98,7 @@ data_marker!(
 ///     .load(DataRequest {
 ///         id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
 ///             DataMarkerAttributes::from_str_or_panic("reverse"),
-///             &langid!("en").into(),
+///             &data_locale!("en"),
 ///         ),
 ///         ..Default::default()
 ///     })
@@ -110,7 +110,7 @@ data_marker!(
 /// Load the nested string using an auxiliary key:
 ///
 /// ```
-/// use icu_locale_core::langid;
+/// use icu_locale_core::data_locale;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 ///
@@ -118,7 +118,7 @@ data_marker!(
 ///     .load(DataRequest {
 ///         id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
 ///             DataMarkerAttributes::from_str_or_panic("nested/part"),
-///             &langid!("en").into(),
+///             &data_locale!("en"),
 ///         ),
 ///         ..Default::default()
 ///     })
@@ -223,14 +223,14 @@ impl DataPayload<HelloWorldV1> {
 /// # Examples
 ///
 /// ```
-/// use icu_locale_core::langid;
+/// use icu_locale_core::data_locale;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 ///
 /// let german_hello_world = HelloWorldProvider
 ///     .into_json_provider()
 ///     .load_data(HelloWorldV1::INFO, DataRequest {
-///         id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
+///         id: DataIdentifierBorrowed::for_locale(&data_locale!("de")),
 ///         ..Default::default()
 ///     })
 ///     .expect("Loading should succeed");
@@ -367,27 +367,14 @@ impl HelloWorldFormatter {
     }
 }
 
-impl Writeable for FormattedHelloWorld<'_> {
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        self.data.message.write_to(sink)
-    }
-
-    fn writeable_borrow(&self) -> Option<&str> {
-        self.data.message.writeable_borrow()
-    }
-
-    fn writeable_length_hint(&self) -> writeable::LengthHint {
-        self.data.message.writeable_length_hint()
-    }
-}
-
+writeable::impl_writeable_delegate!(FormattedHelloWorld<'_>, |&self| &self.data.message);
 writeable::impl_display_with_writeable!(FormattedHelloWorld<'_>);
 
 #[cfg(feature = "export")]
 #[test]
 fn test_iter() {
     use crate::IterableDataProvider;
-    use icu_locale_core::locale;
+    use icu_locale_core::data_locale;
 
     let ids = HelloWorldProvider.iter_ids().unwrap();
 
@@ -395,6 +382,6 @@ fn test_iter() {
 
     assert!(ids.contains(&DataIdentifierCow::from_borrowed_and_owned(
         DataMarkerAttributes::from_str_or_panic("reverse"),
-        locale!("en").into()
+        data_locale!("en")
     )));
 }

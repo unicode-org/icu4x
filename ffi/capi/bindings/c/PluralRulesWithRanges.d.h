@@ -14,11 +14,6 @@
 typedef struct PluralRulesWithRanges PluralRulesWithRanges;
 
 
-typedef struct DiplomatPluralRulesWithRangesView {
-  const PluralRulesWithRanges** data;
-  size_t len;
-} DiplomatPluralRulesWithRangesView;
-
 
 
 #endif // PluralRulesWithRanges_D_H

@@ -147,6 +147,12 @@
                   "_from": "1985-12-31 23:00",
                   "_to": "2018-10-28 02:00"
                 }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Europe_Western",
+                  "_from": "2026-09-20 01:00"
+                }
               }
             ],
             "Ceuta": [
@@ -210,6 +216,12 @@
                   "_mzone": "Europe_Western",
                   "_from": "1976-04-14 01:00",
                   "_to": "2018-10-28 02:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Europe_Western",
+                  "_from": "2026-09-20 01:00"
                 }
               }
             ],
@@ -1211,7 +1223,9 @@
             "Edmonton": [
               {
                 "usesMetazone": {
-                  "_mzone": "America_Mountain"
+                  "_mzone": "America_Mountain",
+                  "_stdOffset": "-07",
+                  "_dstOffset": "-06"
                 }
               }
             ],

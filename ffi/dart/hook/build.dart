@@ -11,6 +11,10 @@ import 'package:icu4x/src/hook_helpers/hashes.dart' show fileHashes, version;
 
 void main(List<String> args) async {
   await build(args, (input, output) async {
+    if (!input.config.buildCodeAssets) {
+      print('Building code assets is disabled in this run, skipping build.');
+      return;
+    }
     BuildOptions buildOptions;
     try {
       buildOptions = BuildOptions.fromDefines(input.userDefines);
@@ -94,6 +98,11 @@ class BuildOptions {
       localPath: defines.path('localPath'),
       checkoutPath: defines.path('checkoutPath'),
     );
+  }
+
+  @override
+  String toString() {
+    return 'BuildOptions(buildMode: $buildMode, localPath: $localPath, checkoutPath: $checkoutPath)';
   }
 }
 
@@ -240,7 +249,7 @@ final class CheckoutMode extends BuildMode {
       [
         if (buildStatic || isNoStd) '+$nightly',
         'rustc',
-        '--manifest-path=ffi/capi/Cargo.toml',
+        '-m=ffi/capi/Cargo.toml',
         '--crate-type=${buildStatic ? 'staticlib' : 'cdylib'}',
         '--release',
         '--config=profile.release.panic="abort"',

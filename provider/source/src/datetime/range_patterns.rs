@@ -27,6 +27,9 @@ use std::collections::{BTreeMap, HashMap, HashSet};
 use std::str::FromStr;
 use zerofrom::ZeroFrom;
 
+#[cfg(test)]
+mod tests;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum ComponentsType {
     Time,
@@ -444,7 +447,7 @@ impl IterableDataProviderCached<DatetimePatternsRangeGlueV1> for SourceDataProvi
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
-            .dates("gregorian")
+            .dates(None)
             .list_locales()?
             .map(DataIdentifierCow::from_locale)
             .collect())

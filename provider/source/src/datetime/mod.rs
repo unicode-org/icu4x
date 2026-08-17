@@ -117,7 +117,7 @@ impl SourceDataProvider {
 
         let resource = self
             .cldr()?
-            .dates(cldr_cal)
+            .dates(calendar)
             .read_and_parse::<cldr_serde::ca::Resource>(locale, &format!("ca-{cldr_cal}.json"))?
             .main
             .value
@@ -131,7 +131,7 @@ impl SourceDataProvider {
             for variant in &["civil", "rgsa", "tbla", "umalqura"] {
                 let variant_resource = self
                     .cldr()?
-                    .dates(cldr_cal)
+                    .dates(calendar)
                     .read_and_parse::<cldr_serde::ca::Resource>(
                         locale,
                         &format!("ca-islamic-{variant}.json"),
@@ -153,7 +153,7 @@ impl SourceDataProvider {
         if calendar == Some(DatagenCalendar::Ethiopic) {
             let alem = self
                 .cldr()?
-                .dates(cldr_cal)
+                .dates(calendar)
                 .read_and_parse::<cldr_serde::ca::Resource>(locale, "ca-ethiopic-amete-alem.json")?
                 .main
                 .value
@@ -218,12 +218,9 @@ pub(crate) fn iter_skeleton_supported_locales(
     calendar: Option<DatagenCalendar>,
     fieldset_attributes: &[&[&'static DataMarkerAttributes]],
 ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-    let cldr_cal = calendar
-        .map(DatagenCalendar::cldr_name)
-        .unwrap_or("generic");
     Ok(provider
         .cldr()?
-        .dates(cldr_cal)
+        .dates(calendar)
         .list_locales()?
         .flat_map(|locale| {
             fieldset_attributes
@@ -431,7 +428,8 @@ pub(crate) fn select_pattern<T: PackedPatternItem>(
 mod test {
     use super::*;
     use icu::{
-        datetime::provider::skeleton::reference::Skeleton, locale::langid, plurals::PluralElements,
+        datetime::provider::skeleton::reference::Skeleton, locale::data_locale,
+        plurals::PluralElements,
     };
 
     #[test]
@@ -439,7 +437,7 @@ mod test {
     fn test_datetime_skeletons() {
         let provider = SourceDataProvider::new_testing();
         let skeletons = provider
-            .get_dates_resource(&langid!("fil").into(), Some(DatagenCalendar::Gregorian))
+            .get_dates_resource(&data_locale!("fil"), Some(DatagenCalendar::Gregorian))
             .unwrap()
             .datetime_formats
             .available_formats

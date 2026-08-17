@@ -333,11 +333,11 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     /// ```
     /// use icu::calendar::Date;
     /// use icu::locale::subtags::subtag;
+    /// use icu::time::Time;
+    /// use icu::time::TimeZone;
     /// use icu::time::zone::UtcOffset;
     /// use icu::time::zone::VariantOffsetsCalculator;
     /// use icu::time::zone::ZoneNameTimestamp;
-    /// use icu::time::Time;
-    /// use icu::time::TimeZone;
     ///
     /// let zoc = VariantOffsetsCalculator::new();
     ///

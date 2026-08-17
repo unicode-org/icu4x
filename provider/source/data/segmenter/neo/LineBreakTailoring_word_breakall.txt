@@ -1,2 +1,0 @@
-# This is very hacky, see https://github.com/unicode-org/icu4x/issues/8047
-[[:lb=NU:][:lb=AL:][:lb=SA:][:lb=CJ:]] ; [字]

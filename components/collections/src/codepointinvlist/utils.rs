@@ -45,7 +45,6 @@ where
 #[cfg(test)]
 mod tests {
     use super::{PotentialCodePoint, deconstruct_range, is_valid_zv};
-    use core::char;
     use zerovec::ZeroVec;
 
     fn make_zv(slice: &[u32]) -> ZeroVec<'_, PotentialCodePoint> {

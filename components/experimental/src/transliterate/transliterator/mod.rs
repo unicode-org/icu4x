@@ -20,7 +20,7 @@ use icu_casemap::CaseMapper;
 use icu_casemap::provider::CaseMapV1;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
-use icu_locale::LanguageIdentifier;
+use icu_locale_core::LanguageIdentifier;
 use icu_locale_core::Locale;
 use icu_normalizer::provider::*;
 use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};

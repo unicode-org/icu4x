@@ -151,7 +151,7 @@ impl TryFrom<&'_ Resource> for PersonNamesFormat<'_> {
 
 #[cfg(test)]
 mod tests {
-    use icu::locale::langid;
+    use icu::locale::data_locale;
     use zerofrom::ZeroFrom;
 
     use super::*;
@@ -162,7 +162,7 @@ mod tests {
 
         let data_payload: DataPayload<PersonNamesFormatV1> = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
+                id: DataIdentifierBorrowed::for_locale(&data_locale!("en-001")),
                 ..Default::default()
             })?
             .payload;
@@ -185,7 +185,7 @@ mod tests {
 
         let data_payload: DataPayload<PersonNamesFormatV1> = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
+                id: DataIdentifierBorrowed::for_locale(&data_locale!("en-001")),
                 ..Default::default()
             })?
             .payload;
@@ -233,7 +233,7 @@ mod tests {
 
         let data_payload: DataPayload<PersonNamesFormatV1> = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("es").into()),
+                id: DataIdentifierBorrowed::for_locale(&data_locale!("es")),
                 ..Default::default()
             })?
             .payload;

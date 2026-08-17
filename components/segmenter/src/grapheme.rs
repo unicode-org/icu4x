@@ -5,11 +5,9 @@
 use alloc::vec::Vec;
 use icu_provider::prelude::*;
 
-use crate::indices::{Latin1Indices, Utf16Indices};
-use crate::iterator_helpers::derive_usize_iterator_with_type;
+use crate::indices::*;
 use crate::provider::*;
-use crate::rule_segmenter::*;
-use utf8_iter::Utf8CharIndices;
+use crate::scaffold::*;
 
 /// Implements the [`Iterator`] trait over the grapheme cluster boundaries of the given string.
 ///
@@ -25,10 +23,61 @@ use utf8_iter::Utf8CharIndices;
 /// For examples of use, see [`GraphemeClusterSegmenter`].
 #[derive(Debug)]
 pub struct GraphemeClusterBreakIterator<'data, 's, Y: RuleBreakType>(
-    RuleBreakIterator<'data, 's, Y>,
+    pub(crate) GraphemeClusterBreakIteratorInner<'data, 's, Y>,
 );
 
-derive_usize_iterator_with_type!(GraphemeClusterBreakIterator, 'data);
+#[derive(Debug)]
+pub(crate) enum GraphemeClusterBreakIteratorInner<'data, 's, Y: RuleBreakType> {
+    V1(crate::rule_segmenter_v1::RuleBreakIterator<'data, 's, Y>),
+    #[cfg(feature = "unstable")]
+    V2(crate::rule_segmenter_v2::RuleBreakIterator<'data, 's, Y>),
+}
+
+impl<'data, 's, Y: RuleBreakType> GraphemeClusterBreakIterator<'data, 's, Y> {
+    /// TODO(#8196): do we want to expose clone on this?
+    pub(crate) fn clone_internal(&self) -> Self {
+        let inner = match &self.0 {
+            GraphemeClusterBreakIteratorInner::V1(iter) => {
+                GraphemeClusterBreakIteratorInner::V1(crate::rule_segmenter_v1::RuleBreakIterator {
+                    iter: iter.iter.clone(),
+                    len: iter.len,
+                    current_pos_data: iter.current_pos_data,
+                    result_cache: iter.result_cache.clone(),
+                    data: iter.data,
+                    complex: iter.complex,
+                    boundary_property: iter.boundary_property,
+                    locale_override: iter.locale_override,
+                    handle_complex: iter.handle_complex,
+                })
+            }
+            #[cfg(feature = "unstable")]
+            GraphemeClusterBreakIteratorInner::V2(iter) => {
+                GraphemeClusterBreakIteratorInner::V2(crate::rule_segmenter_v2::RuleBreakIterator {
+                    data: iter.data,
+                    pseudo_symbol_map: iter.pseudo_symbol_map,
+                    cache: iter.cache.clone(),
+                    lookahead_positions: iter.lookahead_positions.clone(),
+                    remaining_input: iter.remaining_input.clone(),
+                    last_accepting_status: iter.last_accepting_status,
+                    complex: iter.complex,
+                })
+            }
+        };
+        Self(inner)
+    }
+}
+
+impl<Y: RuleBreakType> Iterator for GraphemeClusterBreakIterator<'_, '_, Y> {
+    type Item = usize;
+    #[inline]
+    fn next(&mut self) -> Option<Self::Item> {
+        match &mut self.0 {
+            GraphemeClusterBreakIteratorInner::V1(iter) => iter.next(),
+            #[cfg(feature = "unstable")]
+            GraphemeClusterBreakIteratorInner::V2(iter) => iter.next(),
+        }
+    }
+}
 
 /// Segments a string into grapheme clusters.
 ///
@@ -110,16 +159,28 @@ derive_usize_iterator_with_type!(GraphemeClusterBreakIterator, 'data);
 /// assert_eq!(&egc_boundaries, &[0, ni.len()]);
 /// ```
 #[derive(Debug)]
-pub struct GraphemeClusterSegmenter {
-    payload: DataPayload<SegmenterBreakGraphemeClusterV1>,
+pub struct GraphemeClusterSegmenter(GraphemeClusterSegmenterInner);
+
+#[derive(Debug)]
+enum GraphemeClusterSegmenterInner {
+    V1(DataPayload<SegmenterBreakGraphemeClusterV1>),
+    #[cfg(feature = "unstable")]
+    V2(DataPayload<SegmenterBreakGraphemeClusterV2>),
 }
 
 /// Segments a string into grapheme clusters (borrowed version).
 ///
 /// See [`GraphemeClusterSegmenter`] for examples.
 #[derive(Clone, Debug, Copy)]
-pub struct GraphemeClusterSegmenterBorrowed<'data> {
-    pub(crate) data: &'data RuleBreakData<'data>,
+pub struct GraphemeClusterSegmenterBorrowed<'data>(
+    pub(crate) GraphemeClusterSegmenterBorrowedInner<'data>,
+);
+
+#[derive(Clone, Debug, Copy)]
+pub(crate) enum GraphemeClusterSegmenterBorrowedInner<'data> {
+    V1(&'data RuleBreakData<'data>),
+    #[cfg(feature = "unstable")]
+    V2(&'data SegmenterStateMachine<'data>),
 }
 
 impl GraphemeClusterSegmenter {
@@ -131,9 +192,9 @@ impl GraphemeClusterSegmenter {
     #[cfg(feature = "compiled_data")]
     #[expect(clippy::new_ret_no_self)] // Deliberate choice, see #5554
     pub const fn new() -> GraphemeClusterSegmenterBorrowed<'static> {
-        GraphemeClusterSegmenterBorrowed {
-            data: Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V1,
-        }
+        GraphemeClusterSegmenterBorrowed(GraphemeClusterSegmenterBorrowedInner::V1(
+            Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V1,
+        ))
     }
 
     icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
@@ -150,35 +211,80 @@ impl GraphemeClusterSegmenter {
         D: DataProvider<SegmenterBreakGraphemeClusterV1> + ?Sized,
     {
         let payload = provider.load(Default::default())?.payload;
-        Ok(Self { payload })
+        Ok(Self(GraphemeClusterSegmenterInner::V1(payload)))
+    }
+
+    /// Constructs a [`GraphemeClusterSegmenterBorrowed`] with an invariant locale from compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    #[cfg(feature = "unstable")]
+    pub const fn new_neo() -> GraphemeClusterSegmenterBorrowed<'static> {
+        GraphemeClusterSegmenterBorrowed(GraphemeClusterSegmenterBorrowedInner::V2(
+            Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V2,
+        ))
+    }
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_neo)]
+    #[cfg(feature = "unstable")]
+    pub fn try_new_neo_unstable<D>(provider: &D) -> Result<Self, DataError>
+    where
+        D: DataProvider<SegmenterBreakGraphemeClusterV2> + ?Sized,
+    {
+        let payload = provider.load(Default::default())?.payload;
+        Ok(Self(GraphemeClusterSegmenterInner::V2(payload)))
     }
 
     /// Constructs a borrowed version of this type for more efficient querying.
     ///
     /// Most useful methods for segmentation are on this type.
     pub fn as_borrowed(&self) -> GraphemeClusterSegmenterBorrowed<'_> {
-        GraphemeClusterSegmenterBorrowed {
-            data: self.payload.get(),
-        }
+        GraphemeClusterSegmenterBorrowed(match &self.0 {
+            GraphemeClusterSegmenterInner::V1(payload) => {
+                GraphemeClusterSegmenterBorrowedInner::V1(payload.get())
+            }
+            #[cfg(feature = "unstable")]
+            GraphemeClusterSegmenterInner::V2(payload) => {
+                GraphemeClusterSegmenterBorrowedInner::V2(payload.get())
+            }
+        })
     }
 }
 
 impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
+    pub(crate) fn segment<'s, Y: RuleBreakType>(
+        self,
+        iter: Y::IterAttr<'s>,
+        len: usize,
+    ) -> GraphemeClusterBreakIterator<'data, 's, Y> {
+        GraphemeClusterBreakIterator(match self.0 {
+            GraphemeClusterSegmenterBorrowedInner::V1(data) => {
+                GraphemeClusterBreakIteratorInner::V1(crate::rule_segmenter_v1::RuleBreakIterator {
+                    iter,
+                    len,
+                    current_pos_data: None,
+                    result_cache: Vec::new(),
+                    data,
+                    complex: None,
+                    boundary_property: 0,
+                    locale_override: None,
+                    handle_complex: crate::rule_segmenter_v1::empty_handle_complex,
+                })
+            }
+            #[cfg(feature = "unstable")]
+            GraphemeClusterSegmenterBorrowedInner::V2(data) => {
+                GraphemeClusterBreakIteratorInner::V2(
+                    crate::rule_segmenter_v2::RuleBreakIterator::new(iter, data, None, None),
+                )
+            }
+        })
+    }
+
     /// Creates a grapheme cluster break iterator for an `str` (a UTF-8 string).
     pub fn segment_str<'s>(self, input: &'s str) -> GraphemeClusterBreakIterator<'data, 's, Utf8> {
-        GraphemeClusterBreakIterator(RuleBreakIterator {
-            iter: input.char_indices(),
-            current_pos_iter: None,
-            previous_pos_iter: None,
-            len: input.len(),
-            current_pos_data: None,
-            result_cache: Vec::new(),
-            data: self.data,
-            complex: None,
-            boundary_property: 0,
-            locale_override: None,
-            handle_complex_language: empty_handle_complex_language,
-        })
+        self.segment(input.char_indices(), input.len())
     }
     /// Creates a grapheme cluster break iterator for a potentially ill-formed UTF8 string
     ///
@@ -189,20 +295,9 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
         self,
         input: &'s [u8],
     ) -> GraphemeClusterBreakIterator<'data, 's, PotentiallyIllFormedUtf8> {
-        GraphemeClusterBreakIterator(RuleBreakIterator {
-            iter: Utf8CharIndices::new(input),
-            current_pos_iter: None,
-            previous_pos_iter: None,
-            len: input.len(),
-            current_pos_data: None,
-            result_cache: Vec::new(),
-            data: self.data,
-            complex: None,
-            boundary_property: 0,
-            locale_override: None,
-            handle_complex_language: empty_handle_complex_language,
-        })
+        self.segment(Utf8CharIndices::new(input), input.len())
     }
+
     /// Creates a grapheme cluster break iterator for a Latin-1 (8-bit) string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
@@ -210,19 +305,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
         self,
         input: &'s [u8],
     ) -> GraphemeClusterBreakIterator<'data, 's, Latin1> {
-        GraphemeClusterBreakIterator(RuleBreakIterator {
-            iter: Latin1Indices::new(input),
-            current_pos_iter: None,
-            previous_pos_iter: None,
-            len: input.len(),
-            current_pos_data: None,
-            result_cache: Vec::new(),
-            data: self.data,
-            complex: None,
-            boundary_property: 0,
-            locale_override: None,
-            handle_complex_language: empty_handle_complex_language,
-        })
+        self.segment(Latin1Indices::new(input), input.len())
     }
 
     /// Creates a grapheme cluster break iterator for a UTF-16 string.
@@ -232,30 +315,25 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
         self,
         input: &'s [u16],
     ) -> GraphemeClusterBreakIterator<'data, 's, Utf16> {
-        GraphemeClusterBreakIterator(RuleBreakIterator {
-            iter: Utf16Indices::new(input),
-            current_pos_iter: None,
-            previous_pos_iter: None,
-            len: input.len(),
-            current_pos_data: None,
-            result_cache: Vec::new(),
-            data: self.data,
-            complex: None,
-            boundary_property: 0,
-            locale_override: None,
-            handle_complex_language: empty_handle_complex_language,
-        })
+        self.segment(Utf16Indices::new(input), input.len())
     }
 }
+
 impl GraphemeClusterSegmenterBorrowed<'static> {
     /// Cheaply converts a [`GraphemeClusterSegmenterBorrowed<'static>`] into a [`GraphemeClusterSegmenter`].
     ///
     /// Note: Due to branching and indirection, using [`GraphemeClusterSegmenter`] might inhibit some
     /// compile-time optimizations that are possible with [`GraphemeClusterSegmenterBorrowed`].
     pub const fn static_to_owned(self) -> GraphemeClusterSegmenter {
-        GraphemeClusterSegmenter {
-            payload: DataPayload::from_static_ref(self.data),
-        }
+        GraphemeClusterSegmenter(match self.0 {
+            GraphemeClusterSegmenterBorrowedInner::V1(data) => {
+                GraphemeClusterSegmenterInner::V1(DataPayload::from_static_ref(data))
+            }
+            #[cfg(feature = "unstable")]
+            GraphemeClusterSegmenterBorrowedInner::V2(data) => {
+                GraphemeClusterSegmenterInner::V2(DataPayload::from_static_ref(data))
+            }
+        })
     }
 }
 
@@ -276,5 +354,17 @@ mod test {
     fn emoji_flags() {
         // https://github.com/unicode-org/icu4x/issues/4780
         check_grapheme("🇺🇸🏴󠁧󠁢󠁥󠁮󠁧󠁿", &["🇺🇸", "🏴󠁧󠁢󠁥󠁮󠁧󠁿"], GraphemeClusterSegmenter::new());
+    }
+    #[test]
+    fn empty_string_neo() {
+        let segmenter = GraphemeClusterSegmenter::new_neo();
+        let breaks: Vec<usize> = segmenter.segment_str("").collect();
+        assert_eq!(breaks, [0]);
+    }
+
+    #[test]
+    fn emoji_flags_neo() {
+        // https://github.com/unicode-org/icu4x/issues/4780
+        check_grapheme("🇺🇸🏴", &["🇺🇸", "🏴"], GraphemeClusterSegmenter::new_neo());
     }
 }

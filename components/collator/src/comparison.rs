@@ -1740,11 +1740,11 @@ impl<'a> CollatorBorrowed<'a> {
     /// # Example
     ///
     /// ```
-    /// use icu_collator::{
-    ///     options::{CollatorOptions, Strength},
+    /// use icu::collator::{
     ///     Collator,
+    ///     options::{CollatorOptions, Strength},
     /// };
-    /// use icu_locale::locale;
+    /// use icu::locale::locale;
     /// let locale = locale!("utf").into();
     /// let mut options = CollatorOptions::default();
     /// options.strength = Some(Strength::Primary);
@@ -2531,7 +2531,7 @@ where
 #[cfg(test)]
 mod test {
     use super::*;
-    use icu_locale::locale;
+    use icu_locale_core::locale;
 
     type Key = Vec<u8>;
 

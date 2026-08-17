@@ -17,26 +17,28 @@
 //!
 //! ## Examples
 //!
-//! The [`multi`] module lets you load multiple names at once, whereas [`single`]
+//! The [`multi`] module lets you load multiple names at once, whereas `icu_locale::names`
 //! loads one name at a time.
 //!
 //! ```
-//! use icu::experimental::displaynames::multi::RegionDisplayNames;
-//! use icu::experimental::displaynames::single::RegionDisplayNameOwned;
 //! use icu::experimental::displaynames::DisplayNamesOptions;
+//! use icu::experimental::displaynames::multi::RegionDisplayNames;
+//! use icu::locale::names::RegionDisplayName;
 //! use icu::locale::{locale, subtags::region};
 //! use writeable::assert_writeable_eq;
 //!
-//! let locale = locale!("en").into();
-//!
 //! // Multi: Load a formatter that can display many regions.
-//! let multi = RegionDisplayNames::try_new(locale, DisplayNamesOptions::default()).unwrap();
+//! let locale = locale!("en").into();
+//! let multi =
+//!     RegionDisplayNames::try_new(locale, DisplayNamesOptions::default())
+//!         .unwrap();
 //! assert_writeable_eq!(multi.of(region!("US")).unwrap(), "United States");
 //! assert_writeable_eq!(multi.of(region!("GB")).unwrap(), "United Kingdom");
 //!
 //! // Single: Load only the region(s) we need.
-//! let us = RegionDisplayNameOwned::try_new(locale, region!("US")).unwrap();
-//! let gb = RegionDisplayNameOwned::try_new(locale, region!("GB")).unwrap();
+//! let locale = locale!("en").into();
+//! let us = RegionDisplayName::try_new_light(locale, region!("US")).unwrap();
+//! let gb = RegionDisplayName::try_new_light(locale, region!("GB")).unwrap();
 //! assert_writeable_eq!(us, "United States");
 //! assert_writeable_eq!(gb, "United Kingdom");
 //! ```
@@ -60,11 +62,11 @@ pub mod multi {
     pub use displaynames::VariantDisplayNames;
 }
 
-pub mod single;
+/// The single displaynames APIs have been moved to `icu_locale::names`.
+pub mod single {}
 
 pub use displaynames::DisplayNamesPreferences;
 pub use options::DisplayNamesOptions;
 pub use options::Fallback;
 pub use options::LanguageDisplay;
-pub use options::LanguageIdentifierDisplayNameOptions;
 pub use options::Style;

@@ -1,12 +1,10 @@
 {
-  "display_names": {
-    "one": [
-      0,
-      "Canadian dollar"
-    ],
-    "other": [
-      0,
-      "Canadian dollars"
-    ]
-  }
+  "one": [
+    0,
+    "Canadian dollar"
+  ],
+  "other": [
+    0,
+    "Canadian dollars"
+  ]
 }
