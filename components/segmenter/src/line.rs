@@ -806,7 +806,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
                 data,
                 options,
                 complex,
-                v1::line_handle_complex_utf8,
+                v1::line_handle_complex,
             )),
             #[cfg(feature = "unstable")]
             LineSegmenterBorrowedInner::V2 {
@@ -830,7 +830,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
                 data,
                 options,
                 complex,
-                v3::line_handle_complex_utf8,
+                v3::line_handle_complex,
             )),
         })
     }
@@ -854,7 +854,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
                 data,
                 options,
                 complex,
-                v1::line_handle_complex_utf8,
+                v1::line_handle_complex,
             )),
             #[cfg(feature = "unstable")]
             LineSegmenterBorrowedInner::V2 {
@@ -878,7 +878,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
                 data,
                 options,
                 complex,
-                v3::line_handle_complex_utf8,
+                v3::line_handle_complex,
             )),
         })
     }
@@ -940,7 +940,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
                 data,
                 options,
                 complex,
-                v1::line_handle_complex_utf16,
+                v1::line_handle_complex,
             )),
             #[cfg(feature = "unstable")]
             LineSegmenterBorrowedInner::V2 {
@@ -964,7 +964,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
                 data,
                 options,
                 complex,
-                v3::line_handle_complex_utf16,
+                v3::line_handle_complex,
             )),
         })
     }
@@ -1403,6 +1403,43 @@ mod tests {
             s.load_dictionary();
             s
         });
+    }
+
+    fn check_complex_line_encodings(segmenter: LineSegmenterBorrowed<'static>) {
+        let input = "ภาษาไทย龟山岛";
+
+        let breaks: Vec<usize> = segmenter.segment_str(input).collect();
+        assert_eq!(breaks, [0, 12, 21, 24, 27, 30]);
+
+        let breaks: Vec<usize> = segmenter.segment_utf8(input.as_bytes()).collect();
+        assert_eq!(breaks, [0, 12, 21, 24, 27, 30]);
+
+        let utf16 = input.encode_utf16().collect::<Vec<_>>();
+        let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
+        assert_eq!(breaks, [0, 4, 7, 8, 9, 10]);
+
+        let ill_formed =
+            b"\xE0\xB8\xA0\xE0\xB8\xB2\xE0\xB8\xA9\xE0\xB8\xB2\xFF\xE0\xB9\x84\xE0\xB8\x97\xE0\xB8\xA2";
+        let breaks: Vec<usize> = segmenter.segment_utf8(ill_formed).collect();
+        assert_eq!(breaks, [0, 12, 22]);
+
+        let unpaired_surrogate = [
+            0x0E20, 0x0E32, 0x0E29, 0x0E32, 0xD800, 0x0E44, 0x0E17, 0x0E22,
+        ];
+        let breaks: Vec<usize> = segmenter.segment_utf16(&unpaired_surrogate).collect();
+        assert_eq!(breaks, [0, 4, 8]);
+    }
+
+    #[test]
+    fn complex_line_break_encodings() {
+        check_complex_line_encodings(LineSegmenter::new_dictionary(Default::default()));
+    }
+
+    #[test]
+    fn complex_line_break_encodings_17() {
+        let mut segmenter = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
+        segmenter.load_dictionary();
+        check_complex_line_encodings(segmenter);
     }
 
     #[test]

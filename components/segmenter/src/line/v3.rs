@@ -13,10 +13,7 @@ use super::{LineBreakStrictness, LineBreakWordOption, ResolvedLineBreakOptions};
 use crate::complex::*;
 use crate::provider::*;
 use crate::scaffold::*;
-use alloc::string::String;
-use alloc::vec;
 use alloc::vec::Vec;
-use core::char;
 
 #[allow(dead_code)]
 #[doc(hidden)]
@@ -175,6 +172,7 @@ fn is_complex_rule(property: u8) -> bool {
 
 #[derive(Debug)]
 pub(super) struct LineBreakIteratorV3<'data, 's, Y: RuleBreakType> {
+    input: Y::IterAttr<'s>,
     iter: Y::IterAttr<'s>,
     len: usize,
     current_pos_data: Option<(usize, Y::CharType)>,
@@ -199,6 +197,7 @@ impl<'data, 's, Y: RuleBreakType> LineBreakIteratorV3<'data, 's, Y> {
         handle_complex: HandleComplex<'data, 's, Y>,
     ) -> Self {
         Self {
+            input: iter.clone(),
             iter,
             len,
             current_pos_data: None,
@@ -220,6 +219,7 @@ impl<Y: RuleBreakType> Iterator for LineBreakIteratorV3<'_, '_, Y> {
             let mut grapheme_iter =
                 GraphemeClusterBreakIterator(GraphemeClusterBreakIteratorInner::V1(
                     crate::rule_segmenter_v1::RuleBreakIterator {
+                        input: self.input.clone(),
                         iter: self.iter.clone(),
                         len: self.len,
                         current_pos_data: self.current_pos_data,
@@ -906,21 +906,18 @@ impl<Y: RuleBreakType> LineBreakIteratorV3<'_, '_, Y> {
     }
 }
 
-pub(super) fn line_handle_complex_utf8<T>(
+pub(super) fn line_handle_complex<T>(
     iter: &mut LineBreakIteratorV3<'_, '_, T>,
-    left_codepoint: char,
+    left_codepoint: T::CharType,
 ) -> Option<usize>
 where
-    T: RuleBreakType<CharType = char>,
+    T: ComplexRunSegmenter,
 {
     // word segmenter doesn't define break rules for some scripts such as Thai.
     let start_iter = iter.iter.clone();
     let start_point = iter.current_pos_data;
-    let mut s = String::new();
-    s.push(left_codepoint);
     loop {
         debug_assert!(!iter.is_eof());
-        s.push(iter.get_current_codepoint()?);
         iter.advance_iter();
         if let Some(current_codepoint) = iter.get_current_codepoint() {
             if !is_complex_rule(iter.get_linebreak_property(current_codepoint)) {
@@ -931,14 +928,16 @@ where
             break;
         }
     }
+    let run_end = iter.current_pos_data.map_or(iter.len, |(pos, _)| pos);
 
     // Restore iterator to move to head of complex string
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
-    let breaks = iter.complex.segment_str(&s);
+    let run_start = start_point.map_or(iter.len, |(pos, _)| pos) - T::char_len(left_codepoint);
+    let breaks = T::segment_complex_run(iter.complex, &iter.input, run_start, run_end);
     iter.result_cache = breaks;
     let first_pos = *iter.result_cache.first()?;
-    let mut i = left_codepoint.len_utf8();
+    let mut i = start_point.map_or(iter.len, |(pos, _)| pos) - run_start;
     loop {
         if i == first_pos {
             // Re-calculate breaking offset
@@ -955,64 +954,6 @@ where
         if iter.is_eof() {
             iter.result_cache.clear();
             return Some(iter.len);
-        }
-    }
-}
-
-pub(super) fn line_handle_complex_utf16<T>(
-    iterator: &mut LineBreakIteratorV3<'_, '_, T>,
-    left_codepoint: T::CharType,
-) -> Option<usize>
-where
-    T: RuleBreakType<CharType = u32>,
-{
-    // word segmenter doesn't define break rules for some scripts such as Thai.
-    let start_iter = iterator.iter.clone();
-    let start_point = iterator.current_pos_data;
-    let mut s = vec![left_codepoint as u16];
-    loop {
-        debug_assert!(!iterator.is_eof());
-        s.push(iterator.get_current_codepoint()? as u16);
-        iterator.advance_iter();
-        if let Some(current_codepoint) = iterator.get_current_codepoint() {
-            if !is_complex_rule(iterator.get_linebreak_property(current_codepoint)) {
-                break;
-            }
-        } else {
-            // EOF
-            break;
-        }
-    }
-
-    // Restore iterator to move to head of complex string
-    iterator.iter = start_iter;
-    iterator.current_pos_data = start_point;
-    let breaks = iterator.complex.segment_utf16(&s);
-    iterator.result_cache = breaks;
-    // result_cache vector is utf-16 index that is in BMP.
-    let first_pos = *iterator.result_cache.first()?;
-    let mut i = 1;
-    loop {
-        if i == first_pos {
-            // Re-calculate breaking offset
-            iterator.result_cache = iterator
-                .result_cache
-                .iter()
-                .skip(1)
-                .map(|r| r - i)
-                .collect();
-            return iterator.get_current_position();
-        }
-        debug_assert!(
-            i < first_pos,
-            "we should always arrive at first_pos: near index {:?}",
-            iterator.get_current_position()
-        );
-        i += 1;
-        iterator.advance_iter();
-        if iterator.is_eof() {
-            iterator.result_cache.clear();
-            return Some(iterator.len);
         }
     }
 }

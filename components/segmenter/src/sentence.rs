@@ -362,6 +362,7 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
                 locale_override,
             } => SentenceBreakIterator(SentenceBreakIteratorInner::V1(
                 crate::rule_segmenter_v1::RuleBreakIterator {
+                    input: iter.clone(),
                     iter,
                     len,
                     current_pos_data: None,

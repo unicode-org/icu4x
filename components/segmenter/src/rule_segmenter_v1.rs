@@ -22,6 +22,7 @@ use alloc::vec::Vec;
 /// of the [`str`] or array of code units).
 #[derive(Debug)]
 pub struct RuleBreakIterator<'data, 's, Y: RuleBreakType> {
+    pub(crate) input: Y::IterAttr<'s>,
     pub(crate) iter: Y::IterAttr<'s>,
     pub(crate) len: usize,
     pub(crate) current_pos_data: Option<(usize, Y::CharType)>,

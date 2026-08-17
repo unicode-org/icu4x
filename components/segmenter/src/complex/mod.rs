@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::*;
-#[cfg(feature = "unstable")]
 use crate::scaffold::PotentiallyIllFormedUtf8;
 use crate::scaffold::{RuleBreakType, Utf8, Utf16};
 use crate::{GraphemeClusterSegmenter, GraphemeClusterSegmenterBorrowed};
@@ -78,7 +77,6 @@ impl<'data> ComplexPayloadBorrowed<'data> {
         )
     }
 
-    #[cfg(feature = "unstable")]
     pub(crate) fn segment_utf8<'s>(
         self,
         input: &'s [u8],
@@ -117,6 +115,54 @@ impl<'data> ComplexPayloadBorrowed<'data> {
             },
             offset,
         )
+    }
+}
+
+pub(crate) trait ComplexRunSegmenter: RuleBreakType {
+    fn segment_complex_run(
+        complex: ComplexPayloadsBorrowed<'_>,
+        input: &Self::IterAttr<'_>,
+        start: usize,
+        end: usize,
+    ) -> Vec<usize>;
+}
+
+impl ComplexRunSegmenter for Utf8 {
+    fn segment_complex_run(
+        complex: ComplexPayloadsBorrowed<'_>,
+        input: &Self::IterAttr<'_>,
+        start: usize,
+        end: usize,
+    ) -> Vec<usize> {
+        #[allow(clippy::indexing_slicing)] // valid offsets from CharIndices
+        let input = &input.as_str()[start..end];
+        complex.segment_str(input)
+    }
+}
+
+impl ComplexRunSegmenter for PotentiallyIllFormedUtf8 {
+    fn segment_complex_run(
+        complex: ComplexPayloadsBorrowed<'_>,
+        input: &Self::IterAttr<'_>,
+        start: usize,
+        end: usize,
+    ) -> Vec<usize> {
+        #[allow(clippy::indexing_slicing)] // valid offsets from Utf8CharIndices
+        let input = &input.as_slice()[start..end];
+        complex.segment_utf8(input)
+    }
+}
+
+impl ComplexRunSegmenter for Utf16 {
+    fn segment_complex_run(
+        complex: ComplexPayloadsBorrowed<'_>,
+        input: &Self::IterAttr<'_>,
+        start: usize,
+        end: usize,
+    ) -> Vec<usize> {
+        #[allow(clippy::indexing_slicing)] // valid offsets from Utf16Indices
+        let input = &input.as_slice()[start..end];
+        complex.segment_utf16(input)
     }
 }
 
@@ -217,6 +263,18 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
         for (slice, complex_script) in ComplexScriptIterator::new(input) {
             match self.select(complex_script) {
                 Some(d) => result.extend(d.segment_str(slice, self.grapheme, offset)),
+                None => result.push(offset + slice.len()),
+            }
+            offset += slice.len();
+        }
+        result
+    }
+    pub(crate) fn segment_utf8(&self, input: &[u8]) -> Vec<usize> {
+        let mut result = Vec::new();
+        let mut offset = 0;
+        for (slice, complex_script) in ComplexScriptIteratorUtf8::new(input) {
+            match self.select(complex_script) {
+                Some(d) => result.extend(d.segment_utf8(slice, self.grapheme, offset)),
                 None => result.push(offset + slice.len()),
             }
             offset += slice.len();
@@ -485,6 +543,27 @@ fn try_load_static<M: DataMarker, P: DataProvider<M> + ?Sized>(
         })
         .allow_identifier_not_found()
         .map(|r| r.and_then(|r| r.payload.get_static()))
+}
+
+#[cfg(test)]
+#[cfg(feature = "compiled_data")]
+mod utf8_tests {
+    use super::*;
+
+    #[test]
+    fn no_model_utf8_fallback() {
+        let segmenter = ComplexPayloadsBorrowed::new();
+        let thai = "ภาษาไทย".as_bytes();
+        assert_eq!(segmenter.segment_utf8(thai), [thai.len()]);
+
+        let mut malformed = thai.to_vec();
+        malformed.push(0xFF);
+        malformed.extend_from_slice(thai);
+        assert_eq!(
+            segmenter.segment_utf8(&malformed),
+            [thai.len(), thai.len() + 1, malformed.len()]
+        );
+    }
 }
 
 #[cfg(test)]
