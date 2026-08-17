@@ -252,7 +252,7 @@
           },
           "concentr-part": {
             "displayName": "parts",
-            "unitPattern-count-one": "{0} parts",
+            "unitPattern-count-one": "{0} part",
             "unitPattern-count-other": "{0} parts"
           },
           "concentr-part-per-1e6": {
@@ -549,11 +549,19 @@
             "unitPattern-count-one": "{0} livre-force",
             "unitPattern-count-other": "{0} livres-force"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "gender": "masculine",
             "displayName": "newtons",
             "unitPattern-count-one": "{0} newton",
             "unitPattern-count-other": "{0} newtons"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "gender": "masculine",
@@ -710,6 +718,10 @@
             "unitPattern-count-one": "{0} pouce",
             "unitPattern-count-other": "{0} pouces",
             "perUnitPattern": "{0} par pouce"
+          },
+          "length-mil": {
+            "displayName": "mil [US]",
+            "unitPattern-count-other": "{0} mil [US]"
           },
           "length-parsec": {
             "gender": "masculine",
@@ -1665,7 +1677,7 @@
           },
           "concentr-part": {
             "displayName": "part",
-            "unitPattern-count-one": "{0} parts",
+            "unitPattern-count-one": "{0} part",
             "unitPattern-count-other": "{0} parts"
           },
           "concentr-part-per-1e6": {
@@ -1914,10 +1926,18 @@
             "unitPattern-count-one": "{0} lbf",
             "unitPattern-count-other": "{0} lbf"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "N",
             "unitPattern-count-one": "{0} N",
             "unitPattern-count-other": "{0} N"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "kWh/100 km",
@@ -2052,6 +2072,10 @@
             "unitPattern-count-one": "{0} po",
             "unitPattern-count-other": "{0} po",
             "perUnitPattern": "{0}/po"
+          },
+          "length-mil": {
+            "displayName": "mil [US]",
+            "unitPattern-count-other": "{0} mil [US]"
           },
           "length-parsec": {
             "displayName": "pc",
@@ -2915,7 +2939,7 @@
           },
           "concentr-part": {
             "displayName": "part",
-            "unitPattern-count-one": "{0} parts",
+            "unitPattern-count-one": "{0} part",
             "unitPattern-count-other": "{0} parts"
           },
           "concentr-part-per-1e6": {
@@ -3164,10 +3188,18 @@
             "unitPattern-count-one": "{0}lbf",
             "unitPattern-count-other": "{0}lbf"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "N",
             "unitPattern-count-one": "{0}N",
             "unitPattern-count-other": "{0}N"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "kWh/100 km",
@@ -3302,6 +3334,10 @@
             "unitPattern-count-one": "{0}″",
             "unitPattern-count-other": "{0}″",
             "perUnitPattern": "{0}/po"
+          },
+          "length-mil": {
+            "displayName": "mil [US]",
+            "unitPattern-count-other": "{0} mil [US]"
           },
           "length-parsec": {
             "displayName": "pc",
@@ -3797,8 +3833,8 @@
           },
           "energy-calorie-it": {
             "displayName": "cal-IT",
-            "unitPattern-count-one": "{0} cal-IT",
-            "unitPattern-count-other": "{0} cal-IT"
+            "unitPattern-count-one": "{0} cal-IT",
+            "unitPattern-count-other": "{0} cal-IT"
           },
           "energy-british-thermal-unit-it": {
             "displayName": "BTU-IT",
@@ -3810,13 +3846,13 @@
           },
           "energy-sievert": {
             "displayName": "Sv",
-            "unitPattern-count-one": "{0} Sv",
-            "unitPattern-count-other": "{0} Sv"
+            "unitPattern-count-one": "{0} Sv",
+            "unitPattern-count-other": "{0} Sv"
           },
           "energy-gray": {
             "displayName": "Gy",
-            "unitPattern-count-one": "{0} Gy",
-            "unitPattern-count-other": "{0} Gy"
+            "unitPattern-count-one": "{0} Gy",
+            "unitPattern-count-other": "{0} Gy"
           },
           "force-kilogram-force": {
             "displayName": "kgf",

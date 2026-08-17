@@ -225,6 +225,8 @@ typedef enum Script {
   Script_TaiYo = 210,
   Script_TolongSiki = 211,
   Script_TraditionalHanWithLatin = 212,
+  Script_ProtoCuneiform = 213,
+  Script_Seal = 214,
   Script_Chisoi = 254,
 } Script;
 

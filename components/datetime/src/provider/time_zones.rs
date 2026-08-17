@@ -470,7 +470,7 @@ pub(crate) mod legacy {
                     .map(|mz| match mz.id.get() {
                         // the ID list changed with CLDR 48
                         22 => 21,
-                        31 => 30,
+                        31 => 31,
                         _ => unreachable!(),
                     }),
                 icu_time::provider::Baked::SINGLETON_TIMEZONE_PERIODS_V1

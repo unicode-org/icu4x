@@ -16,8 +16,8 @@
         "output": {
             "values": {
                 "en": {
-                    "formatted": "20",
-                    "pattern": "yy"
+                    "formatted": "’20",
+                    "pattern": "’yy"
                 }
             }
         }

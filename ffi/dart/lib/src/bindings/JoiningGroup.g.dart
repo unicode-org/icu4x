@@ -216,7 +216,27 @@ enum JoiningGroup {
   /// See the [Rust documentation for `KashmiriYeh`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.KashmiriYeh) for more information.
   kashmiriYeh,
   /// See the [Rust documentation for `ThinNoon`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ThinNoon) for more information.
-  thinNoon;
+  thinNoon,
+  /// See the [Rust documentation for `CrownAin`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownAin) for more information.
+  crownAin,
+  /// See the [Rust documentation for `CrownBeh`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownBeh) for more information.
+  crownBeh,
+  /// See the [Rust documentation for `CrownFeh`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownFeh) for more information.
+  crownFeh,
+  /// See the [Rust documentation for `CrownHah`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownHah) for more information.
+  crownHah,
+  /// See the [Rust documentation for `CrownHeh`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownHeh) for more information.
+  crownHeh,
+  /// See the [Rust documentation for `CrownKaf`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownKaf) for more information.
+  crownKaf,
+  /// See the [Rust documentation for `CrownMeem`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownMeem) for more information.
+  crownMeem,
+  /// See the [Rust documentation for `CrownSad`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownSad) for more information.
+  crownSad,
+  /// See the [Rust documentation for `CrownSeen`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownSeen) for more information.
+  crownSeen,
+  /// See the [Rust documentation for `CrownTah`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownTah) for more information.
+  crownTah;
 
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.3.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
   static JoiningGroup forChar(Rune ch) {

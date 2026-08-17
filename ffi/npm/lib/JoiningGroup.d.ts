@@ -440,6 +440,46 @@ export class JoiningGroup {
      * See the [Rust documentation for `ThinNoon`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ThinNoon) for more information.
      */
     static ThinNoon : JoiningGroup;
+    /**
+     * See the [Rust documentation for `CrownAin`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownAin) for more information.
+     */
+    static CrownAin : JoiningGroup;
+    /**
+     * See the [Rust documentation for `CrownBeh`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownBeh) for more information.
+     */
+    static CrownBeh : JoiningGroup;
+    /**
+     * See the [Rust documentation for `CrownFeh`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownFeh) for more information.
+     */
+    static CrownFeh : JoiningGroup;
+    /**
+     * See the [Rust documentation for `CrownHah`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownHah) for more information.
+     */
+    static CrownHah : JoiningGroup;
+    /**
+     * See the [Rust documentation for `CrownHeh`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownHeh) for more information.
+     */
+    static CrownHeh : JoiningGroup;
+    /**
+     * See the [Rust documentation for `CrownKaf`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownKaf) for more information.
+     */
+    static CrownKaf : JoiningGroup;
+    /**
+     * See the [Rust documentation for `CrownMeem`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownMeem) for more information.
+     */
+    static CrownMeem : JoiningGroup;
+    /**
+     * See the [Rust documentation for `CrownSad`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownSad) for more information.
+     */
+    static CrownSad : JoiningGroup;
+    /**
+     * See the [Rust documentation for `CrownSeen`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownSeen) for more information.
+     */
+    static CrownSeen : JoiningGroup;
+    /**
+     * See the [Rust documentation for `CrownTah`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.JoiningGroup.html#associatedconstant.CrownTah) for more information.
+     */
+    static CrownTah : JoiningGroup;
 
 
     /**

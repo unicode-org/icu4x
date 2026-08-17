@@ -230,6 +230,8 @@ enum class Script(val inner: Int) {
     TaiYo(210),
     TolongSiki(211),
     TraditionalHanWithLatin(212),
+    ProtoCuneiform(213),
+    Seal(214),
     Chisoi(254);
 
     fun toNative(): Int {
@@ -455,6 +457,8 @@ enum class Script(val inner: Int) {
                 210 -> TaiYo
                 211 -> TolongSiki
                 212 -> TraditionalHanWithLatin
+                213 -> ProtoCuneiform
+                214 -> Seal
                 254 -> Chisoi
                 else -> throw RuntimeException("Failed to find variant ${native} of type Script")
             }

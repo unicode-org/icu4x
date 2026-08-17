@@ -8,8 +8,10 @@
         "timeZoneNames": {
           "hourFormat": "+HH:mm;-HH:mm",
           "gmtFormat": "GMT{0}",
-          "gmtZeroFormat": "GMT",
+          "gmtFormat-alt-utc": "UTC{0}",
           "gmtUnknownFormat": "GMT+?",
+          "gmtUnknownFormat-alt-utc": "UTC+?",
+          "dualOffsetFormat": "{0}/{1}",
           "regionFormat": "เวลา{0}",
           "regionFormat-type-daylight": "เวลาออมแสง{0}",
           "regionFormat-type-standard": "เวลามาตรฐาน{0}",
@@ -58,7 +60,7 @@
               },
               "Enderbury": {
                 "_type": "zone",
-                "exemplarCity": "แคนทอน"
+                "exemplarCity": "เกาะแคนทอน"
               },
               "Kiritimati": {
                 "_type": "zone",
@@ -255,9 +257,6 @@
               },
               "London": {
                 "_type": "zone",
-                "long": {
-                  "daylight": "เวลาฤดูร้อนอังกฤษ"
-                },
                 "exemplarCity": "ลอนดอน"
               },
               "Guernsey": {
@@ -282,9 +281,6 @@
               },
               "Dublin": {
                 "_type": "zone",
-                "long": {
-                  "daylight": "เวลามาตรฐานไอร์แลนด์"
-                },
                 "exemplarCity": "ดับบลิน"
               },
               "Isle_of_Man": {
@@ -1777,13 +1773,6 @@
                 "daylight": "เวลาออมแสงของอะแลสกา"
               }
             },
-            "Almaty": {
-              "long": {
-                "generic": "เวลาอัลมาตี",
-                "standard": "เวลามาตรฐานอัลมาตี",
-                "daylight": "เวลาฤดูร้อนอัลมาตี"
-              }
-            },
             "Amazon": {
               "long": {
                 "generic": "เวลาแอมะซอน",
@@ -1831,20 +1820,6 @@
                 "generic": "เวลาอาปีอา",
                 "standard": "เวลามาตรฐานอาปีอา",
                 "daylight": "เวลาออมแสงอาปีอา"
-              }
-            },
-            "Aqtau": {
-              "long": {
-                "generic": "เวลาอัคตาอู",
-                "standard": "เวลามาตรฐานอัคตาอู",
-                "daylight": "เวลาฤดูร้อนอัคตาอู"
-              }
-            },
-            "Aqtobe": {
-              "long": {
-                "generic": "เวลาอัคโทเบ",
-                "standard": "เวลามาตรฐานอัคโทเบ",
-                "daylight": "เวลาฤดูร้อนอัคโทเบ"
               }
             },
             "Arabian": {
@@ -1946,6 +1921,13 @@
                 "generic": "เวลาบราซิเลีย",
                 "standard": "เวลามาตรฐานบราซิเลีย",
                 "daylight": "เวลาฤดูร้อนบราซิเลีย"
+              }
+            },
+            "British": {
+              "long": {
+                "generic": "เวลาอังกฤษ",
+                "standard": "เวลามาตรฐานกรีนิช",
+                "daylight": "เวลาฤดูร้อนอังกฤษ"
               }
             },
             "Brunei": {
@@ -2126,6 +2108,13 @@
                 "standard": "เวลามาตรฐานกรีนิช"
               }
             },
+            "Greenland": {
+              "long": {
+                "generic": "เวลากรีนแลนด์",
+                "standard": "เวลามาตรฐานกรีนแลนด์",
+                "daylight": "เวลาฤดูร้อนกรีนแลนด์"
+              }
+            },
             "Greenland_Eastern": {
               "long": {
                 "generic": "เวลากรีนแลนด์ตะวันออก",
@@ -2140,11 +2129,6 @@
                 "daylight": "เวลาฤดูร้อนกรีนแลนด์ตะวันตก"
               }
             },
-            "Guam": {
-              "long": {
-                "standard": "เวลากวม"
-              }
-            },
             "Gulf": {
               "long": {
                 "standard": "เวลากัลฟ์"
@@ -2157,7 +2141,7 @@
             },
             "Hawaii": {
               "long": {
-                "standard": "เวลามาตรฐานฮาวาย-อะลูเชียน"
+                "standard": "เวลาฮาวาย"
               }
             },
             "Hawaii_Aleutian": {
@@ -2218,6 +2202,13 @@
                 "daylight": "เวลาออมแสงอิหร่าน"
               }
             },
+            "Irish": {
+              "long": {
+                "generic": "เวลาไอร์แลนด์",
+                "standard": "เวลามาตรฐานกรีนิช",
+                "daylight": "เวลามาตรฐานไอร์แลนด์"
+              }
+            },
             "Irkutsk": {
               "long": {
                 "generic": "เวลาอีร์คุตสค์",
@@ -2242,8 +2233,8 @@
             "Kamchatka": {
               "long": {
                 "generic": "เวลาคัมชัตคา",
-                "standard": "เวลาเปโตรปัฟลอฟสค์-คัมชัตสกี",
-                "daylight": "เวลาฤดูร้อนเปโตรปัฟลอฟสค์-คัมชัตสกี"
+                "standard": "เวลามาตรฐานคัมชัตคา",
+                "daylight": "เวลาฤดูร้อนคัมชัตคา"
               }
             },
             "Kazakhstan": {
@@ -2285,11 +2276,6 @@
                 "standard": "เวลาคีร์กีซสถาน"
               }
             },
-            "Lanka": {
-              "long": {
-                "standard": "เวลาลังกา"
-              }
-            },
             "Line_Islands": {
               "long": {
                 "standard": "เวลาหมู่เกาะไลน์"
@@ -2300,13 +2286,6 @@
                 "generic": "เวลาลอร์ดโฮว์",
                 "standard": "เวลามาตรฐานลอร์ดโฮว์",
                 "daylight": "เวลาออมแสงลอร์ดโฮว์"
-              }
-            },
-            "Macau": {
-              "long": {
-                "generic": "เวลามาเก๊า",
-                "standard": "เวลามาตรฐานมาเก๊า",
-                "daylight": "เวลาฤดูร้อนมาเก๊า"
               }
             },
             "Magadan": {
@@ -2424,11 +2403,6 @@
                 "daylight": "เวลาฤดูร้อนของหมู่เกาะเฟอร์นันโด"
               }
             },
-            "North_Mariana": {
-              "long": {
-                "standard": "เวลาหมู่เกาะมาเรียนาเหนือ"
-              }
-            },
             "Novosibirsk": {
               "long": {
                 "generic": "เวลาโนโวซีบีสค์",
@@ -2508,13 +2482,6 @@
                 "standard": "เวลาเปียงยาง"
               }
             },
-            "Qyzylorda": {
-              "long": {
-                "generic": "เวลาคืยซิลออร์ดา",
-                "standard": "เวลามาตรฐานคืยซิลออร์ดา",
-                "daylight": "เวลาฤดูร้อนคืยซิลออร์ดา"
-              }
-            },
             "Reunion": {
               "long": {
                 "standard": "เวลาเรอูนียง"
@@ -2541,9 +2508,7 @@
             },
             "Samoa": {
               "long": {
-                "generic": "เวลาซามัว",
-                "standard": "เวลามาตรฐานซามัว",
-                "daylight": "เวลาฤดูร้อนซามัว"
+                "standard": "เวลามาตรฐานซามัว"
               }
             },
             "Seychelles": {
@@ -2634,6 +2599,11 @@
                 "generic": "เวลาอุรุกวัย",
                 "standard": "เวลามาตรฐานอุรุกวัย",
                 "daylight": "เวลาฤดูร้อนอุรุกวัย"
+              }
+            },
+            "Urumqi": {
+              "long": {
+                "standard": "เวลาอุรุมชี"
               }
             },
             "Uzbekistan": {

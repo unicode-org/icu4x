@@ -198,7 +198,7 @@ void main() {
         length: DateTimeLength.long,
         timePrecision: TimePrecision.minute,
       ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.time),
-      'Mittwoch, 15. Januar 2025 um 14:32',
+      'Mittwoch, 15 Januar 2025 um 14:32',
     );
 
     ///// TimeZoneFormatter /////

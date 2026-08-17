@@ -1156,6 +1156,10 @@
             "unitPattern-count-few": "{0} фунте силе",
             "unitPattern-count-other": "{0} фунти силе"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "gender": "inanimate",
             "displayName": "њутни",
@@ -1171,6 +1175,10 @@
             "accusative-count-other": "{0} њутна",
             "genitive-count-other": "{0} њутна",
             "instrumental-count-other": "{0} њутна"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "gender": "inanimate",
@@ -1491,6 +1499,10 @@
             "unitPattern-count-few": "{0} инча",
             "unitPattern-count-other": "{0} инча",
             "perUnitPattern": "{0}/in"
+          },
+          "length-mil": {
+            "displayName": "mil [US]",
+            "unitPattern-count-other": "{0} mil [US]"
           },
           "length-parsec": {
             "displayName": "парсеци",
@@ -3127,9 +3139,17 @@
             "displayName": "lbf",
             "unitPattern-count-other": "{0} lbf"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "њутн",
             "unitPattern-count-other": "{0} N"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "kWh/100km",
@@ -3249,6 +3269,10 @@
             "unitPattern-count-few": "{0} инча",
             "unitPattern-count-other": "{0} инча",
             "perUnitPattern": "{0}/in"
+          },
+          "length-mil": {
+            "displayName": "mil [US]",
+            "unitPattern-count-other": "{0} mil [US]"
           },
           "length-parsec": {
             "displayName": "парсеци",
@@ -3456,8 +3480,6 @@
           },
           "speed-beaufort": {
             "displayName": "Bf",
-            "unitPattern-count-one": "B {0}",
-            "unitPattern-count-few": "B {0}",
             "unitPattern-count-other": "B {0}"
           },
           "temperature-generic": {
@@ -4278,9 +4300,17 @@
             "displayName": "lbf",
             "unitPattern-count-other": "{0} lbf"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "њутн",
             "unitPattern-count-other": "{0} N"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "kWh/100km",
@@ -4402,6 +4432,10 @@
             "unitPattern-count-few": "{0} in",
             "unitPattern-count-other": "{0} in",
             "perUnitPattern": "{0}/in"
+          },
+          "length-mil": {
+            "displayName": "mil [US]",
+            "unitPattern-count-other": "{0} mil [US]"
           },
           "length-parsec": {
             "displayName": "парсеци",
@@ -4613,8 +4647,6 @@
           },
           "speed-beaufort": {
             "displayName": "Bf",
-            "unitPattern-count-one": "B {0}",
-            "unitPattern-count-few": "B {0}",
             "unitPattern-count-other": "B {0}"
           },
           "temperature-generic": {

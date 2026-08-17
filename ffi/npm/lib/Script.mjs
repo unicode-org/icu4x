@@ -224,6 +224,8 @@ export class Script {
         ["TaiYo", 210],
         ["TolongSiki", 211],
         ["TraditionalHanWithLatin", 212],
+        ["ProtoCuneiform", 213],
+        ["Seal", 214],
         ["Chisoi", 254]
     ]);
 
@@ -487,6 +489,8 @@ export class Script {
         [210]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 210),
         [211]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 211),
         [212]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 212),
+        [213]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 213),
+        [214]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 214),
         [254]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 254),
     };
 
@@ -1342,6 +1346,14 @@ export class Script {
      * See the [Rust documentation for `TraditionalHanWithLatin`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.Script.html#associatedconstant.TraditionalHanWithLatin) for more information.
      */
     static TraditionalHanWithLatin = Script.#objectValues[212];
+    /**
+     * See the [Rust documentation for `ProtoCuneiform`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.Script.html#associatedconstant.ProtoCuneiform) for more information.
+     */
+    static ProtoCuneiform = Script.#objectValues[213];
+    /**
+     * See the [Rust documentation for `Seal`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.Script.html#associatedconstant.Seal) for more information.
+     */
+    static Seal = Script.#objectValues[214];
     /**
      * See the [Rust documentation for `Chisoi`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.Script.html#associatedconstant.Chisoi) for more information.
      */

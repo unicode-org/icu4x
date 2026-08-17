@@ -409,9 +409,17 @@
             "displayName": "重量ポンド",
             "unitPattern-count-other": "{0} 重量ポンド"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "ニュートン",
             "unitPattern-count-other": "{0} ニュートン"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "キロワット時毎100キロメートル",
@@ -521,6 +529,10 @@
             "displayName": "インチ",
             "unitPattern-count-other": "{0} インチ",
             "perUnitPattern": "{0}/インチ"
+          },
+          "length-mil": {
+            "displayName": "mil [US]",
+            "unitPattern-count-other": "{0} mil [US]"
           },
           "length-parsec": {
             "displayName": "パーセク",
@@ -1480,9 +1492,17 @@
             "displayName": "重量ポンド",
             "unitPattern-count-other": "{0} lbf"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "ニュートン",
             "unitPattern-count-other": "{0} N"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "kWh/100km",
@@ -1592,6 +1612,10 @@
             "displayName": "インチ",
             "unitPattern-count-other": "{0} in",
             "perUnitPattern": "{0}/in"
+          },
+          "length-mil": {
+            "displayName": "mil [US]",
+            "unitPattern-count-other": "{0} mil [US]"
           },
           "length-parsec": {
             "displayName": "パーセク",
@@ -2551,9 +2575,17 @@
             "displayName": "lbf",
             "unitPattern-count-other": "{0}lbf"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "N",
             "unitPattern-count-other": "{0}N"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "kWh/100km",
@@ -2663,6 +2695,10 @@
             "displayName": "インチ",
             "unitPattern-count-other": "{0}″",
             "perUnitPattern": "{0}/in"
+          },
+          "length-mil": {
+            "displayName": "mil [US]",
+            "unitPattern-count-other": "{0} mil [US]"
           },
           "length-parsec": {
             "displayName": "パーセク",
@@ -3055,23 +3091,23 @@
           },
           "electric-coulomb": {
             "displayName": "C",
-            "unitPattern-count-other": "{0} C"
+            "unitPattern-count-other": "{0} C"
           },
           "electric-farad": {
             "displayName": "F",
-            "unitPattern-count-other": "{0} F"
+            "unitPattern-count-other": "{0} F"
           },
           "electric-henry": {
             "displayName": "H",
-            "unitPattern-count-other": "{0} H"
+            "unitPattern-count-other": "{0} H"
           },
           "electric-siemens": {
             "displayName": "S",
-            "unitPattern-count-other": "{0} S"
+            "unitPattern-count-other": "{0} S"
           },
           "energy-calorie-it": {
             "displayName": "cal-IT",
-            "unitPattern-count-other": "{0} cal-IT"
+            "unitPattern-count-other": "{0} cal-IT"
           },
           "energy-british-thermal-unit-it": {
             "displayName": "BTU-IT",
@@ -3079,15 +3115,15 @@
           },
           "energy-becquerel": {
             "displayName": "Bq",
-            "unitPattern-count-other": "{0} Bq"
+            "unitPattern-count-other": "{0} Bq"
           },
           "energy-sievert": {
             "displayName": "Sv",
-            "unitPattern-count-other": "{0} Sv"
+            "unitPattern-count-other": "{0} Sv"
           },
           "energy-gray": {
             "displayName": "Gy",
-            "unitPattern-count-other": "{0} Gy"
+            "unitPattern-count-other": "{0} Gy"
           },
           "force-kilogram-force": {
             "displayName": "重量キログラム",

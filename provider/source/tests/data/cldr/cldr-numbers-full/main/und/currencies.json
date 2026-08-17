@@ -60,6 +60,10 @@
             "symbol": "CA$",
             "symbol-alt-narrow": "$"
           },
+          "CHF": {
+            "symbol": "CHF",
+            "symbol-alt-narrow": "Fr."
+          },
           "CLP": {
             "symbol-alt-narrow": "$"
           },
