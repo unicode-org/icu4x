@@ -1238,7 +1238,7 @@ dependencies = [
 
 [[package]]
 name = "icu_experimental_data"
-version = "0.1.0"
+version = "0.1.1"
 
 [[package]]
 name = "icu_ffi_coverage"
@@ -3354,7 +3354,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.10.3"
+version = "0.10.4"
 dependencies = [
  "bincode",
  "proc-macro2",

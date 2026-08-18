@@ -101,15 +101,15 @@ pub fn derive_impl(
         const #ule_size: usize = 0 #(+ #sizes)*;
         unsafe impl zerovec::ule::VarULE for #name {
             #[inline]
-            fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
+            fn validate_byte_slice(bytes_one: &[u8]) -> Result<(), zerovec::ZeroVecError> {
 
-                if bytes.len() < #ule_size {
+                if bytes_one.len() < #ule_size {
                     return Err(zerovec::ZeroVecError::parse::<Self>());
                 }
                 #validators
                 debug_assert_eq!(#remaining_offset, #ule_size);
                 #[allow(clippy::indexing_slicing)] // TODO explain
-                let last_field_bytes = &bytes[#remaining_offset..];
+                let last_field_bytes = &bytes_one[#remaining_offset..];
                 #last_field_validator
                 Ok(())
             }

@@ -19,6 +19,7 @@
   - (0.10.4) Enforce C,packed on OptionVarULE (https://github.com/unicode-org/icu4x/pull/5143)
 - `zerovec_derive`
   - (0.10.3) Enforce C,packed, not just packed, on ULE types, fixing for incoming changes to `repr(Rust)` (https://github.com/unicode-org/icu4x/pull/5049)
+  - (0.10.4) Fix soundness issue around multi element buffer validation in ULE derives (unicode-org#8393)
 - `icu_*_data`
   - (1.5.1) Add build.rs to workspace includes (unicode-org#6356)
 

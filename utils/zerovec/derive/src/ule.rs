@@ -58,15 +58,15 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
     quote! {
         unsafe impl zerovec::ule::ULE for #name {
             #[inline]
-            fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
+            fn validate_byte_slice(bytes_all: &[u8]) -> Result<(), zerovec::ZeroVecError> {
                 const SIZE: usize = ::core::mem::size_of::<#name>();
                 #[allow(clippy::modulo_one)]
-                if bytes.len() % SIZE != 0 {
-                    return Err(zerovec::ZeroVecError::length::<Self>(bytes.len()));
+                if bytes_all.len() % SIZE != 0 {
+                    return Err(zerovec::ZeroVecError::length::<Self>(bytes_all.len()));
                 }
                 // Validate the bytes
                 #[allow(clippy::indexing_slicing)] // We're slicing a chunk of known size
-                for chunk in bytes.chunks_exact(SIZE) {
+                for bytes_one in bytes_all.chunks_exact(SIZE) {
                     #validators
                     debug_assert_eq!(#remaining_offset, SIZE);
                 }
@@ -76,7 +76,7 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
     }
 }
 
-/// Given an slice over ULE struct fields, returns code validating that a slice variable `bytes` contains valid instances of those ULE types
+/// Given an slice over ULE struct fields, returns code validating that a slice variable `bytes_one` contains valid instances of those ULE types
 /// in order, plus the byte offset of any remaining unvalidated bytes. ULE types should not have any remaining bytes, but VarULE types will since
 /// the last field is the unsized one.
 pub(crate) fn generate_ule_validators(
@@ -87,7 +87,7 @@ pub(crate) fn generate_ule_validators(
         let ty = &field.field.ty;
         quote! {
             #[allow(clippy::indexing_slicing)] // generate_per_field_offsets produces valid indices
-            <#ty as zerovec::ule::ULE>::validate_byte_slice(&bytes[#prev_offset_ident .. #prev_offset_ident + #size_ident])?;
+            <#ty as zerovec::ule::ULE>::validate_byte_slice(&bytes_one[#prev_offset_ident .. #prev_offset_ident + #size_ident])?;
         }
     })
 }
