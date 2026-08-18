@@ -100,11 +100,16 @@ fn word_line_th_wikipedia_auto() {
     );
 
     let breakpoints_line_utf8 = segmenter_line_auto.segment_str(text).collect::<Vec<_>>();
+    // The six positions that disappear vs the pre-patch output (27, 47,
+    // 82, 113, 220, 281) were dict-terminal breaks immediately before a
+    // UAX #14 `× class` character (SP, IS, etc.); each was followed by
+    // another break one byte later (the outer machine's break opportunity
+    // for that class). The new oracle drops them per LB7/LB13/LB21/etc.
     assert_eq!(
         breakpoints_line_utf8,
         [
-            0, 9, 18, 27, 28, 38, 47, 49, 53, 60, 68, 73, 82, 84, 87, 90, 95, 104, 113, 115, 121,
-            133, 148, 166, 175, 187, 193, 205, 220, 221, 227, 239, 272, 281, 282, 290, 297
+            0, 9, 18, 28, 38, 49, 53, 60, 68, 73, 84, 87, 90, 95, 104, 115, 121, 133, 148, 166,
+            175, 187, 193, 205, 221, 227, 239, 272, 282, 290, 297
         ]
     );
 
