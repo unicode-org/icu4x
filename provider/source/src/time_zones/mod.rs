@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::DataHasher;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
@@ -22,7 +23,6 @@ use litemap::LiteMap;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::collections::HashSet;
-use twox_hash::XxHash64;
 
 pub(crate) type Timestamp = icu::time::ZonedDateTime<icu::calendar::Iso, UtcOffset>;
 
@@ -368,7 +368,7 @@ impl SourceDataProvider {
                     }
                 }
 
-                let mut hash = XxHash64::with_seed(0);
+                let mut hash = DataHasher::new();
                 all_metazones.len().hash(&mut hash);
 
                 let ids: BTreeMap<String, MetazoneId> = all_metazones
