@@ -2097,9 +2097,9 @@ impl Script {
     pub const Batak: Self = Self(63);
     pub const Batk: Self = Self::Batak;
     /// ISO 15924
-    pub const BlisSymbols: Self = Self(64);
+    pub const Blissymbols: Self = Self(64);
     /// ISO 15924
-    pub const Blis: Self = Self::BlisSymbols;
+    pub const Blis: Self = Self::Blissymbols;
     pub const Brahmi: Self = Self(65);
     pub const Brah: Self = Self::Brahmi;
     pub const Cham: Self = Self(66);
@@ -2526,7 +2526,7 @@ impl databake::Bake for Script {
             Self::OldPersian => databake::quote!(icu_properties::props::Script::OldPersian),
             Self::Balinese => databake::quote!(icu_properties::props::Script::Balinese),
             Self::Batak => databake::quote!(icu_properties::props::Script::Batak),
-            Self::BlisSymbols => databake::quote!(icu_properties::props::Script::BlisSymbols),
+            Self::Blissymbols => databake::quote!(icu_properties::props::Script::Blissymbols),
             Self::Brahmi => databake::quote!(icu_properties::props::Script::Brahmi),
             Self::Cham => databake::quote!(icu_properties::props::Script::Cham),
             Self::Cirth => databake::quote!(icu_properties::props::Script::Cirth),
@@ -2755,7 +2755,7 @@ impl Script {
         Self::OldPersian,
         Self::Balinese,
         Self::Batak,
-        Self::BlisSymbols,
+        Self::Blissymbols,
         Self::Brahmi,
         Self::Cham,
         Self::Cirth,
@@ -2974,7 +2974,7 @@ impl Script {
             ("Xpeo", Self::OldPersian),
             ("Bali", Self::Balinese),
             ("Batk", Self::Batak),
-            ("Blis", Self::BlisSymbols),
+            ("Blis", Self::Blissymbols),
             ("Brah", Self::Brahmi),
             ("Cham", Self::Cham),
             ("Cirt", Self::Cirth),

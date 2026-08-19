@@ -3237,7 +3237,7 @@ pub mod ffi {
         )]
         Batak = 63,
         #[diplomat::rust_link(
-            icu::properties::props::Script::BlisSymbols,
+            icu::properties::props::Script::Blissymbols,
             AssociatedConstantInStruct
         )]
         BlisSymbols = 64,

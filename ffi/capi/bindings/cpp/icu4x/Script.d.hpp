@@ -503,7 +503,7 @@ public:
          */
         Batak = 63,
         /**
-         * See the [Rust documentation for `BlisSymbols`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.Script.html#associatedconstant.BlisSymbols) for more information.
+         * See the [Rust documentation for `Blissymbols`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.Script.html#associatedconstant.Blissymbols) for more information.
          */
         BlisSymbols = 64,
         /**

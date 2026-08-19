@@ -42,25 +42,6 @@ impl Prop {
         !matches!(self.name, "General_Category")
     }
 
-    fn transform_ident(&self, long_name: &str) -> String {
-        // This produces canonical Rust enum variant identifiers. It does not lead to collisions
-        // as UAX#44 guarantees uniqueness under loose matching, which ignores case and underscores.
-        long_name
-            .replace('_', "")
-            .char_indices()
-            .map(|(i, c)| if i == 0 { c.to_ascii_uppercase() } else { c })
-            .collect()
-    }
-
-    fn transform_ident_ffi(&self, long_name: &str) -> String {
-        self.transform_ident(long_name)
-            // Unfortunately we're stuck with these non-canonical names on FFI
-            .replace("Ethiopic", "Ethiopian")
-            .replace("ArabicNastaliq", "Nastaliq")
-            .replace("LVSyllable", "LeadingVowelSyllable")
-            .replace("LVTSyllable", "LeadingVowelTrailingSyllable")
-    }
-
     fn int_type(&self) -> &'static str {
         if VARIANTS[self.short_name].len() > 200 {
             "u16"
@@ -88,6 +69,41 @@ impl Prop {
             "EnumVariant"
         }
     }
+}
+
+fn transform_ident(long_name: &str) -> String {
+    // This produces canonical Rust enum variant identifiers. It does not lead to collisions
+    // as UAX#44 guarantees uniqueness under loose matching, which ignores case and underscores.
+    long_name
+        .replace('_', "")
+        .char_indices()
+        .map(|(i, c)| if i == 0 { c.to_ascii_uppercase() } else { c })
+        .collect()
+}
+
+fn transform_ident_ffi(long_name: &str) -> String {
+    transform_ident(long_name)
+        // Unfortunately we're stuck with these non-canonical names on FFI
+        .replace("Blissymbols", "BlisSymbols")
+        .replace("Ethiopic", "Ethiopian")
+        .replace("ArabicNastaliq", "Nastaliq")
+        .replace("LVSyllable", "LeadingVowelSyllable")
+        .replace("LVTSyllable", "LeadingVowelTrailingSyllable")
+}
+
+fn strip_icu_prefix<'a>(prop: &str, icu_name: &'a str) -> &'a str {
+    if let Some(suffix) = icu_name.strip_prefix(&format!("U_{}_", prop.to_ascii_uppercase())) {
+        return suffix;
+    }
+    if let Some(suffix) = icu_name.strip_prefix("U_") {
+        return suffix;
+    }
+    if icu_name.starts_with('U')
+        && let Some((_, suffix)) = icu_name.split_once('_')
+    {
+        return suffix;
+    }
+    panic!("{icu_name}");
 }
 
 #[allow(clippy::type_complexity)]
@@ -125,8 +141,7 @@ static VARIANTS: LazyLock<BTreeMap<&str, BTreeMap<u32, (&str, &str, Vec<&str>, b
         }
 
         for line in
-            include_str!("../../../../components/properties/tests/data/PropertyDiscriminants.txt")
-                .lines()
+            include_str!("../../../../components/properties/tests/data/prop_numbers.txt").lines()
         {
             let line = line.split('#').next().unwrap().trim();
             if line.is_empty() {
@@ -134,18 +149,50 @@ static VARIANTS: LazyLock<BTreeMap<&str, BTreeMap<u32, (&str, &str, Vec<&str>, b
             }
             let mut parts = line.split(';').map(str::trim);
             let prop = parts.next().unwrap();
+            if !names.contains_key(prop) {
+                // Non-Unicode property
+                continue;
+            }
             let short_name = parts.next().unwrap();
+            if short_name.is_empty() {
+                // discriminant for the property itself, unused in ICU4X
+                continue;
+            }
             let discriminant = parts.next().unwrap().parse::<u32>().unwrap();
             let mut is_icu4c_only_value = false;
-            let (long_name, aliases) = names[prop].get(short_name).cloned().unwrap_or_else(|| {
-                is_icu4c_only_value = true;
-                let long_name = parts.next().expect(short_name);
-                (long_name, Vec::new())
-            });
-            discriminants.entry(prop).or_default().insert(
-                discriminant,
-                (short_name, long_name, aliases, is_icu4c_only_value),
-            );
+            let (long_name, aliases) = names
+                .get_mut(prop)
+                .unwrap()
+                .remove(short_name)
+                .inspect(|&(ucd_name, _)| {
+                    let icu_name = parts.next().unwrap();
+                    if !icu_name.is_empty()
+                        && !strip_icu_prefix(prop, icu_name)
+                            .to_upper_camel_case()
+                            .eq_ignore_ascii_case(&transform_ident(ucd_name))
+                    {
+                        println!("ICU/UCD mismatch: {ucd_name:?} but {icu_name:?}",);
+                    }
+                })
+                .unwrap_or_else(|| {
+                    is_icu4c_only_value = true;
+                    let long_name = strip_icu_prefix(prop, parts.next().unwrap())
+                        .to_upper_camel_case()
+                        .leak();
+                    (long_name, Vec::new())
+                });
+
+            discriminants
+                .entry(prop)
+                .or_default()
+                .entry(discriminant)
+                .and_modify(|&mut (s, ..)| {
+                    assert_eq!(
+                        s, short_name,
+                        "ICU discriminants should match Unicode discriminants"
+                    )
+                })
+                .or_insert((short_name, long_name, aliases, is_icu4c_only_value));
         }
 
         discriminants
