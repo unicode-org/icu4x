@@ -707,3 +707,30 @@ impl std::fmt::Display for TrieType {
         }
     }
 }
+
+struct DataHasher(twox_hash::XxHash64);
+
+impl DataHasher {
+    pub fn new() -> Self {
+        Self(twox_hash::XxHash64::with_seed(0))
+    }
+}
+
+impl std::hash::Hasher for DataHasher {
+    #[inline]
+    fn finish(&self) -> u64 {
+        self.0.finish()
+    }
+
+    #[inline]
+    fn write(&mut self, bytes: &[u8]) {
+        self.0.write(bytes);
+    }
+
+    // This override is important for portability, we always need to
+    // hash a usize as the same number of bytes. See icu4x#8356.
+    #[inline]
+    fn write_usize(&mut self, i: usize) {
+        self.write_u64(i as u64);
+    }
+}
