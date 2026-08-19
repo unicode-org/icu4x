@@ -7,6 +7,8 @@ use icu::calendar::AnyCalendarKind;
 use icu::calendar::preferences::CalendarPreferences;
 use icu::locale::locale;
 
+/// Loading the preferred calendar is an operation often in the critical path
+/// for datetime formatting. We want to keep it from regressing. See #8375.
 fn preferred_benches(c: &mut Criterion) {
     let prefs = &[
         CalendarPreferences::from(locale!("en")),
