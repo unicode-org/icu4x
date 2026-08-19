@@ -4331,7 +4331,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.11.7"
+version = "0.11.8"
 dependencies = [
  "bincode",
  "criterion",
