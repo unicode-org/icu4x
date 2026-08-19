@@ -7,6 +7,8 @@ Several crates have had patch releases in the 2.3 stream:
 - Utils
     - (0.11.5) `zerovec-derive`
         - Fix soundness issue around multi element buffer validation in ULE derives (unicode-org#8393)
+    - (0.11.8) `zerovec`
+        - Fix length check in `impl ULE for [T; N]`
 
 ## icu4x 2.3
 
