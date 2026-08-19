@@ -5,6 +5,7 @@
 use crate::complex::*;
 use crate::indices::*;
 use crate::provider::*;
+use crate::rule_segmenter_v1::ComplexRunSegmenter;
 use crate::scaffold::*;
 use alloc::vec::Vec;
 use icu_locale_core::LanguageIdentifier;

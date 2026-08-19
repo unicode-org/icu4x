@@ -1405,18 +1405,11 @@ mod tests {
         });
     }
 
-    fn check_complex_line_encodings(segmenter: LineSegmenterBorrowed<'static>) {
+    #[test]
+    fn complex_line_break_encodings() {
+        let segmenter = LineSegmenter::new_dictionary(Default::default());
         let input = "ภาษาไทย龟山岛";
-
-        let breaks: Vec<usize> = segmenter.segment_str(input).collect();
-        assert_eq!(breaks, [0, 12, 21, 24, 27, 30]);
-
-        let breaks: Vec<usize> = segmenter.segment_utf8(input.as_bytes()).collect();
-        assert_eq!(breaks, [0, 12, 21, 24, 27, 30]);
-
-        let utf16 = input.encode_utf16().collect::<Vec<_>>();
-        let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
-        assert_eq!(breaks, [0, 4, 7, 8, 9, 10]);
+        check_line(input, &["ภาษา", "ไทย", "龟", "山", "岛"], segmenter);
 
         let ill_formed =
             b"\xE0\xB8\xA0\xE0\xB8\xB2\xE0\xB8\xA9\xE0\xB8\xB2\xFF\xE0\xB9\x84\xE0\xB8\x97\xE0\xB8\xA2";
@@ -1431,15 +1424,22 @@ mod tests {
     }
 
     #[test]
-    fn complex_line_break_encodings() {
-        check_complex_line_encodings(LineSegmenter::new_dictionary(Default::default()));
-    }
-
-    #[test]
     fn complex_line_break_encodings_17() {
         let mut segmenter = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
         segmenter.load_dictionary();
-        check_complex_line_encodings(segmenter);
+        let input = "ภาษาไทย龟山岛";
+        check_line(input, &["ภาษา", "ไทย", "龟", "山", "岛"], segmenter);
+
+        let ill_formed =
+            b"\xE0\xB8\xA0\xE0\xB8\xB2\xE0\xB8\xA9\xE0\xB8\xB2\xFF\xE0\xB9\x84\xE0\xB8\x97\xE0\xB8\xA2";
+        let breaks: Vec<usize> = segmenter.segment_utf8(ill_formed).collect();
+        assert_eq!(breaks, [0, 12, 22]);
+
+        let unpaired_surrogate = [
+            0x0E20, 0x0E32, 0x0E29, 0x0E32, 0xD800, 0x0E44, 0x0E17, 0x0E22,
+        ];
+        let breaks: Vec<usize> = segmenter.segment_utf16(&unpaired_surrogate).collect();
+        assert_eq!(breaks, [0, 4, 8]);
     }
 
     #[test]

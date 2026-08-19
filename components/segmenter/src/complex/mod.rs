@@ -118,54 +118,6 @@ impl<'data> ComplexPayloadBorrowed<'data> {
     }
 }
 
-pub(crate) trait ComplexRunSegmenter: RuleBreakType {
-    fn segment_complex_run(
-        complex: ComplexPayloadsBorrowed<'_>,
-        input: &Self::IterAttr<'_>,
-        start: usize,
-        end: usize,
-    ) -> Vec<usize>;
-}
-
-impl ComplexRunSegmenter for Utf8 {
-    fn segment_complex_run(
-        complex: ComplexPayloadsBorrowed<'_>,
-        input: &Self::IterAttr<'_>,
-        start: usize,
-        end: usize,
-    ) -> Vec<usize> {
-        #[allow(clippy::indexing_slicing)] // valid offsets from CharIndices
-        let input = &input.as_str()[start..end];
-        complex.segment_str(input)
-    }
-}
-
-impl ComplexRunSegmenter for PotentiallyIllFormedUtf8 {
-    fn segment_complex_run(
-        complex: ComplexPayloadsBorrowed<'_>,
-        input: &Self::IterAttr<'_>,
-        start: usize,
-        end: usize,
-    ) -> Vec<usize> {
-        #[allow(clippy::indexing_slicing)] // valid offsets from Utf8CharIndices
-        let input = &input.as_slice()[start..end];
-        complex.segment_utf8(input)
-    }
-}
-
-impl ComplexRunSegmenter for Utf16 {
-    fn segment_complex_run(
-        complex: ComplexPayloadsBorrowed<'_>,
-        input: &Self::IterAttr<'_>,
-        start: usize,
-        end: usize,
-    ) -> Vec<usize> {
-        #[allow(clippy::indexing_slicing)] // valid offsets from Utf16Indices
-        let input = &input.as_slice()[start..end];
-        complex.segment_utf16(input)
-    }
-}
-
 impl ComplexPayload {
     fn as_borrowed(&self) -> ComplexPayloadBorrowed<'_> {
         match self {

@@ -12,6 +12,7 @@
 use super::{LineBreakStrictness, LineBreakWordOption, ResolvedLineBreakOptions};
 use crate::complex::*;
 use crate::provider::*;
+use crate::rule_segmenter_v1::ComplexRunSegmenter;
 use crate::scaffold::*;
 use alloc::vec::Vec;
 
