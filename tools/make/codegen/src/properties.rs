@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use askama::Template;
-use heck::{ToSnakeCase, ToUpperCamelCase};
+use heck::{ToSnakeCase, ToTitleCase, ToUpperCamelCase};
 use icu::properties::props::*;
 use std::collections::BTreeMap;
 use std::path::Path;
@@ -42,6 +42,26 @@ impl Prop {
         !matches!(self.name, "General_Category")
     }
 
+    fn transform_ident(&self, long_name: &str) -> String {
+        // This produces canonical Rust enum variant identifiers. It does not lead to collisions
+        // as UAX#44 guarantees uniqueness under loose matching, which ignores case and underscores.
+        long_name
+            .replace('_', "")
+            .char_indices()
+            .map(|(i, c)| if i == 0 { c.to_ascii_uppercase() } else { c })
+            .collect()
+    }
+
+    fn transform_ident_ffi(&self, long_name: &str) -> String {
+        self.transform_ident(long_name)
+            // Unfortunately we're stuck with these non-canonical names on FFI
+            .replace("Blissymbols", "BlisSymbols")
+            .replace("Ethiopic", "Ethiopian")
+            .replace("ArabicNastaliq", "Nastaliq")
+            .replace("LVSyllable", "LeadingVowelSyllable")
+            .replace("LVTSyllable", "LeadingVowelTrailingSyllable")
+    }
+
     fn int_type(&self) -> &'static str {
         if VARIANTS[self.short_name].len() > 200 {
             "u16"
@@ -69,41 +89,6 @@ impl Prop {
             "EnumVariant"
         }
     }
-}
-
-fn transform_ident(long_name: &str) -> String {
-    // This produces canonical Rust enum variant identifiers. It does not lead to collisions
-    // as UAX#44 guarantees uniqueness under loose matching, which ignores case and underscores.
-    long_name
-        .replace('_', "")
-        .char_indices()
-        .map(|(i, c)| if i == 0 { c.to_ascii_uppercase() } else { c })
-        .collect()
-}
-
-fn transform_ident_ffi(long_name: &str) -> String {
-    transform_ident(long_name)
-        // Unfortunately we're stuck with these non-canonical names on FFI
-        .replace("Blissymbols", "BlisSymbols")
-        .replace("Ethiopic", "Ethiopian")
-        .replace("ArabicNastaliq", "Nastaliq")
-        .replace("LVSyllable", "LeadingVowelSyllable")
-        .replace("LVTSyllable", "LeadingVowelTrailingSyllable")
-}
-
-fn strip_icu_prefix<'a>(prop: &str, icu_name: &'a str) -> &'a str {
-    if let Some(suffix) = icu_name.strip_prefix(&format!("U_{}_", prop.to_ascii_uppercase())) {
-        return suffix;
-    }
-    if let Some(suffix) = icu_name.strip_prefix("U_") {
-        return suffix;
-    }
-    if icu_name.starts_with('U')
-        && let Some((_, suffix)) = icu_name.split_once('_')
-    {
-        return suffix;
-    }
-    panic!("{icu_name}");
 }
 
 #[allow(clippy::type_complexity)]
@@ -164,21 +149,11 @@ static VARIANTS: LazyLock<BTreeMap<&str, BTreeMap<u32, (&str, &str, Vec<&str>, b
                 .get_mut(prop)
                 .unwrap()
                 .remove(short_name)
-                .inspect(|&(ucd_name, _)| {
-                    let icu_name = parts.next().unwrap();
-                    if !icu_name.is_empty()
-                        && !strip_icu_prefix(prop, icu_name)
-                            .to_upper_camel_case()
-                            .eq_ignore_ascii_case(&transform_ident(ucd_name))
-                    {
-                        println!("ICU/UCD mismatch: {ucd_name:?} but {icu_name:?}",);
-                    }
-                })
                 .unwrap_or_else(|| {
                     is_icu4c_only_value = true;
-                    let long_name = strip_icu_prefix(prop, parts.next().unwrap())
-                        .to_upper_camel_case()
-                        .leak();
+                    let _icu4c_name = parts.next().unwrap();
+                    let icu4j_name = parts.next().unwrap();
+                    let long_name = icu4j_name.to_title_case().replace(' ', "_").leak();
                     (long_name, Vec::new())
                 });
 
