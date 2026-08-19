@@ -2361,6 +2361,7 @@ where
                             // non-starters in order to maintain the invariant of
                             // `upcoming` on the next call to `next()`.
                             drain_from_upcoming = 0;
+                            looked_ahead = 0;
                             self.collect_combining(&mut combining_characters);
                             continue 'combining_outer;
                         }
