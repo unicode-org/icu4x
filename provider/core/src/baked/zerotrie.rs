@@ -9,7 +9,6 @@
 /// Mostly for internal use
 pub const ID_SEPARATOR: u8 = 0x1E;
 
-use core::fmt;
 pub use crate::DynamicDataMarker;
 use crate::{
     prelude::{zerofrom::ZeroFrom, *},
@@ -17,11 +16,12 @@ use crate::{
 };
 #[cfg(feature = "alloc")]
 use alloc::string::String;
+use core::fmt;
 pub use zerotrie::ZeroTrieSimpleAscii;
 use zerotrie::cursor::ZeroTrieSimpleAsciiCursor;
 use zerovec::{VarZeroSlice, vecs::Index32};
 
-/// Optimization to stop writing to a ZeroTrie cursor when the ZeroTrie
+/// Optimization to stop writing to a `ZeroTrie` cursor when the `ZeroTrie`
 /// is empty. See #8375
 struct EarlyExitCursor<'a, 'b>(&'b mut ZeroTrieSimpleAsciiCursor<'a>);
 
@@ -47,7 +47,9 @@ fn get_index(
     let _is_ascii = id.locale.write_to(&mut EarlyExitCursor(&mut cursor));
     if !id.marker_attributes.is_empty() {
         cursor.step(ID_SEPARATOR);
-        id.marker_attributes.write_to(&mut EarlyExitCursor(&mut cursor)).ok()?;
+        id.marker_attributes
+            .write_to(&mut EarlyExitCursor(&mut cursor))
+            .ok()?;
         loop {
             if let Some(v) = cursor.take_value() {
                 break Some(v);
