@@ -84,6 +84,10 @@ harness = false
 name = "convert"
 harness = false
 
+[[bench]]
+name = "preferred"
+harness = false
+
 [[test]]
 name = "arithmetic"
 required-features = ["ixdtf"]
