@@ -16,6 +16,9 @@ Several crates have had patch releases in the 2.3 stream:
     - Improve performance of data loading that uses locale fallback (unicode-org#8406)
   - (2.3.1) `icu_provider_source`
     - Fix checksum on 32-bit systems (unicode-org#8401)
+- FFI
+  - (2.3.1) `icu_capi`
+    - Add missing docs to properties (unicode-org#8407)
 - Utils
   - (0.11.5, 0.11.6) `zerovec-derive`
     - (0.11.5) Fix soundness issue around multi element buffer validation in ULE derives (unicode-org#8393)
