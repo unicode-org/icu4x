@@ -10,7 +10,7 @@ final class _DateTimeMismatchedCalendarErrorFfi extends ffi.Struct {
 }
 
 /// See the [Rust documentation for `MismatchedCalendarError`](https://docs.rs/icu/2.3.0/icu/datetime/struct.MismatchedCalendarError.html) for more information.
-final class DateTimeMismatchedCalendarError {
+final class DateTimeMismatchedCalendarError implements core.Exception {
   // ignore: public_member_api_docs
   CalendarKind thisKind;
   // ignore: public_member_api_docs

@@ -93,7 +93,7 @@ export class PluralOperands {
      */
     static fromFixedDecimal(x) {
 
-        const result = wasm.icu4x_PluralOperands_from_fixed_decimal_mv1(x.ffiValue);
+        const result = wasm.icu4x_PluralOperands_from_fixed_decimal_mv1(x instanceof Decimal ? x.ffiValue : typeError('x', 'Decimal'));
 
         try {
             return new PluralOperands(diplomatRuntime.internalConstructor, result, []);

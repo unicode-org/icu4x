@@ -98,9 +98,9 @@ export class ZonedDateTime {
         functionCleanupArena,
         appendArrayMap
     ) {
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#date.ffiValue, Uint32Array);
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 4, this.#time.ffiValue, Uint32Array);
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 8, this.#zone.ffiValue, Uint32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#date instanceof Date ? this.#date.ffiValue : typeError('this.#date', 'Date'), Uint32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 4, this.#time instanceof Time ? this.#time.ffiValue : typeError('this.#time', 'Time'), Uint32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 8, this.#zone instanceof TimeZoneInfo ? this.#zone.ffiValue : typeError('this.#zone', 'TimeZoneInfo'), Uint32Array);
     }
 
     // This struct contains borrowed fields, so this takes in a list of
@@ -136,7 +136,7 @@ export class ZonedDateTime {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
 
 
-        const result = wasm.icu4x_ZonedDateTime_strict_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, calendar.ffiValue, ianaParser.ffiValue);
+        const result = wasm.icu4x_ZonedDateTime_strict_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, calendar instanceof Calendar ? calendar.ffiValue : typeError('calendar', 'Calendar'), ianaParser instanceof IanaParser ? ianaParser.ffiValue : typeError('ianaParser', 'IanaParser'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -168,7 +168,7 @@ export class ZonedDateTime {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
 
 
-        const result = wasm.icu4x_ZonedDateTime_full_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, calendar.ffiValue, ianaParser.ffiValue, offsetCalculator.ffiValue);
+        const result = wasm.icu4x_ZonedDateTime_full_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, calendar instanceof Calendar ? calendar.ffiValue : typeError('calendar', 'Calendar'), ianaParser instanceof IanaParser ? ianaParser.ffiValue : typeError('ianaParser', 'IanaParser'), offsetCalculator instanceof VariantOffsetsCalculator ? offsetCalculator.ffiValue : typeError('offsetCalculator', 'VariantOffsetsCalculator'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -198,7 +198,7 @@ export class ZonedDateTime {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
 
 
-        const result = wasm.icu4x_ZonedDateTime_location_only_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, calendar.ffiValue, ianaParser.ffiValue);
+        const result = wasm.icu4x_ZonedDateTime_location_only_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, calendar instanceof Calendar ? calendar.ffiValue : typeError('calendar', 'Calendar'), ianaParser instanceof IanaParser ? ianaParser.ffiValue : typeError('ianaParser', 'IanaParser'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -228,7 +228,7 @@ export class ZonedDateTime {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
 
 
-        const result = wasm.icu4x_ZonedDateTime_offset_only_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, calendar.ffiValue);
+        const result = wasm.icu4x_ZonedDateTime_offset_only_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, calendar instanceof Calendar ? calendar.ffiValue : typeError('calendar', 'Calendar'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -258,7 +258,7 @@ export class ZonedDateTime {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
 
 
-        const result = wasm.icu4x_ZonedDateTime_lenient_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, calendar.ffiValue, ianaParser.ffiValue);
+        const result = wasm.icu4x_ZonedDateTime_lenient_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, calendar instanceof Calendar ? calendar.ffiValue : typeError('calendar', 'Calendar'), ianaParser instanceof IanaParser ? ianaParser.ffiValue : typeError('ianaParser', 'IanaParser'));
 
         try {
             if (!diplomatReceive.resultFlag) {

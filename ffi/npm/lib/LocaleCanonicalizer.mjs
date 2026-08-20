@@ -71,7 +71,7 @@ export class LocaleCanonicalizer {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_LocaleCanonicalizer_create_common_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_LocaleCanonicalizer_create_common_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -114,7 +114,7 @@ export class LocaleCanonicalizer {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_LocaleCanonicalizer_create_extended_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_LocaleCanonicalizer_create_extended_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -135,7 +135,7 @@ export class LocaleCanonicalizer {
      */
     canonicalize(locale) {
 
-        const result = wasm.icu4x_LocaleCanonicalizer_canonicalize_mv1(this.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_LocaleCanonicalizer_canonicalize_mv1(this.ffiValue, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             return new TransformResult(diplomatRuntime.internalConstructor, result);

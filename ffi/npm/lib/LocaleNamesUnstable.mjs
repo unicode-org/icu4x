@@ -64,7 +64,7 @@ export class LocaleNamesUnstable {
         const regionSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, region)));
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
-    wasm.icu4x_LocaleNamesUnstable_for_region_light_mv1(locale.ffiValue, regionSlice.ptr, write.buffer);
+    wasm.icu4x_LocaleNamesUnstable_for_region_light_mv1(locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), regionSlice.ptr, write.buffer);
 
         try {
             return write.readString8();
@@ -92,7 +92,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_region_light_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, regionSlice.ptr, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_region_light_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), regionSlice.ptr, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -122,7 +122,7 @@ export class LocaleNamesUnstable {
         const regionSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, region)));
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
-    wasm.icu4x_LocaleNamesUnstable_for_region_tiny_mv1(locale.ffiValue, regionSlice.ptr, write.buffer);
+    wasm.icu4x_LocaleNamesUnstable_for_region_tiny_mv1(locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), regionSlice.ptr, write.buffer);
 
         try {
             return write.readString8();
@@ -150,7 +150,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_region_tiny_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, regionSlice.ptr, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_region_tiny_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), regionSlice.ptr, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -180,7 +180,7 @@ export class LocaleNamesUnstable {
         const regionSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, region)));
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
-    wasm.icu4x_LocaleNamesUnstable_for_region_short_tiny_mv1(locale.ffiValue, regionSlice.ptr, write.buffer);
+    wasm.icu4x_LocaleNamesUnstable_for_region_short_tiny_mv1(locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), regionSlice.ptr, write.buffer);
 
         try {
             return write.readString8();
@@ -208,7 +208,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_region_short_tiny_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, regionSlice.ptr, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_region_short_tiny_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), regionSlice.ptr, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -238,7 +238,7 @@ export class LocaleNamesUnstable {
         const regionSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, region)));
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
-    wasm.icu4x_LocaleNamesUnstable_for_region_short_light_mv1(locale.ffiValue, regionSlice.ptr, write.buffer);
+    wasm.icu4x_LocaleNamesUnstable_for_region_short_light_mv1(locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), regionSlice.ptr, write.buffer);
 
         try {
             return write.readString8();
@@ -266,7 +266,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_region_short_light_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, regionSlice.ptr, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_region_short_light_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), regionSlice.ptr, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -296,7 +296,7 @@ export class LocaleNamesUnstable {
         const scriptSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, script)));
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
-    wasm.icu4x_LocaleNamesUnstable_for_script_light_mv1(locale.ffiValue, scriptSlice.ptr, write.buffer);
+    wasm.icu4x_LocaleNamesUnstable_for_script_light_mv1(locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), scriptSlice.ptr, write.buffer);
 
         try {
             return write.readString8();
@@ -324,7 +324,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_script_light_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, scriptSlice.ptr, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_script_light_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), scriptSlice.ptr, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -354,7 +354,7 @@ export class LocaleNamesUnstable {
         const scriptSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, script)));
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
-    wasm.icu4x_LocaleNamesUnstable_for_script_tiny_mv1(locale.ffiValue, scriptSlice.ptr, write.buffer);
+    wasm.icu4x_LocaleNamesUnstable_for_script_tiny_mv1(locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), scriptSlice.ptr, write.buffer);
 
         try {
             return write.readString8();
@@ -382,7 +382,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_script_tiny_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, scriptSlice.ptr, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_script_tiny_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), scriptSlice.ptr, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -412,7 +412,7 @@ export class LocaleNamesUnstable {
         const scriptSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, script)));
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
-    wasm.icu4x_LocaleNamesUnstable_for_script_heavy_mv1(locale.ffiValue, scriptSlice.ptr, write.buffer);
+    wasm.icu4x_LocaleNamesUnstable_for_script_heavy_mv1(locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), scriptSlice.ptr, write.buffer);
 
         try {
             return write.readString8();
@@ -440,7 +440,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_script_heavy_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, scriptSlice.ptr, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_script_heavy_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), scriptSlice.ptr, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -470,7 +470,7 @@ export class LocaleNamesUnstable {
         const scriptSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, script)));
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
-    wasm.icu4x_LocaleNamesUnstable_for_script_short_heavy_mv1(locale.ffiValue, scriptSlice.ptr, write.buffer);
+    wasm.icu4x_LocaleNamesUnstable_for_script_short_heavy_mv1(locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), scriptSlice.ptr, write.buffer);
 
         try {
             return write.readString8();
@@ -498,7 +498,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_script_short_heavy_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, scriptSlice.ptr, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_script_short_heavy_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), scriptSlice.ptr, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -528,7 +528,7 @@ export class LocaleNamesUnstable {
         const variantSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, variant)));
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
-    wasm.icu4x_LocaleNamesUnstable_for_variant_heavy_mv1(locale.ffiValue, variantSlice.ptr, write.buffer);
+    wasm.icu4x_LocaleNamesUnstable_for_variant_heavy_mv1(locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), variantSlice.ptr, write.buffer);
 
         try {
             return write.readString8();
@@ -556,7 +556,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_variant_heavy_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, variantSlice.ptr, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_variant_heavy_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), variantSlice.ptr, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -586,7 +586,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_light_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_light_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), langid instanceof Locale ? langid.ffiValue : typeError('langid', 'Locale'), new LanguageDisplayUnstable(languageDisplay).ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -614,7 +614,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_light_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_light_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), langid instanceof Locale ? langid.ffiValue : typeError('langid', 'Locale'), new LanguageDisplayUnstable(languageDisplay).ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -642,7 +642,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_tiny_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_tiny_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), langid instanceof Locale ? langid.ffiValue : typeError('langid', 'Locale'), new LanguageDisplayUnstable(languageDisplay).ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -670,7 +670,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_tiny_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), langid instanceof Locale ? langid.ffiValue : typeError('langid', 'Locale'), new LanguageDisplayUnstable(languageDisplay).ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -698,7 +698,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_light_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_light_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), langid instanceof Locale ? langid.ffiValue : typeError('langid', 'Locale'), new LanguageDisplayUnstable(languageDisplay).ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -726,7 +726,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_light_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), langid instanceof Locale ? langid.ffiValue : typeError('langid', 'Locale'), new LanguageDisplayUnstable(languageDisplay).ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -754,7 +754,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_long_light_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_long_light_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), langid instanceof Locale ? langid.ffiValue : typeError('langid', 'Locale'), new LanguageDisplayUnstable(languageDisplay).ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -782,7 +782,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_long_light_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), langid instanceof Locale ? langid.ffiValue : typeError('langid', 'Locale'), new LanguageDisplayUnstable(languageDisplay).ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -810,7 +810,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), langid instanceof Locale ? langid.ffiValue : typeError('langid', 'Locale'), new LanguageDisplayUnstable(languageDisplay).ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -838,7 +838,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_menu_light_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), langid instanceof Locale ? langid.ffiValue : typeError('langid', 'Locale'), new LanguageDisplayUnstable(languageDisplay).ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -866,7 +866,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), langid instanceof Locale ? langid.ffiValue : typeError('langid', 'Locale'), new LanguageDisplayUnstable(languageDisplay).ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -894,7 +894,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_light_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), langid instanceof Locale ? langid.ffiValue : typeError('langid', 'Locale'), new LanguageDisplayUnstable(languageDisplay).ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -922,7 +922,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_heavy_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_heavy_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), langid instanceof Locale ? langid.ffiValue : typeError('langid', 'Locale'), new LanguageDisplayUnstable(languageDisplay).ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -950,7 +950,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_heavy_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), langid instanceof Locale ? langid.ffiValue : typeError('langid', 'Locale'), new LanguageDisplayUnstable(languageDisplay).ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -978,7 +978,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), langid instanceof Locale ? langid.ffiValue : typeError('langid', 'Locale'), new LanguageDisplayUnstable(languageDisplay).ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1006,7 +1006,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_heavy_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), langid instanceof Locale ? langid.ffiValue : typeError('langid', 'Locale'), new LanguageDisplayUnstable(languageDisplay).ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1034,7 +1034,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), langid instanceof Locale ? langid.ffiValue : typeError('langid', 'Locale'), new LanguageDisplayUnstable(languageDisplay).ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1062,7 +1062,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_long_heavy_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), langid instanceof Locale ? langid.ffiValue : typeError('langid', 'Locale'), new LanguageDisplayUnstable(languageDisplay).ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1090,7 +1090,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), langid instanceof Locale ? langid.ffiValue : typeError('langid', 'Locale'), new LanguageDisplayUnstable(languageDisplay).ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1118,7 +1118,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_menu_heavy_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), langid instanceof Locale ? langid.ffiValue : typeError('langid', 'Locale'), new LanguageDisplayUnstable(languageDisplay).ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1146,7 +1146,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_mv1(diplomatReceive.buffer, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), langid instanceof Locale ? langid.ffiValue : typeError('langid', 'Locale'), new LanguageDisplayUnstable(languageDisplay).ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1174,7 +1174,7 @@ export class LocaleNamesUnstable {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, langid.ffiValue, languageDisplay.ffiValue, write.buffer);
+        const result = wasm.icu4x_LocaleNamesUnstable_for_language_identifier_short_menu_heavy_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'), langid instanceof Locale ? langid.ffiValue : typeError('langid', 'Locale'), new LanguageDisplayUnstable(languageDisplay).ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
