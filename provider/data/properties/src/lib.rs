@@ -4,7 +4,7 @@
 
 //! Data for the `icu_properties` crate
 //!
-//! This data was generated with CLDR version 48.2.1, ICU version release-78.1rc, and
+//! This data was generated with CLDR version 48.2.1, ICU version release-79-alpha0, and
 //! LSTM segmenter version v0.1.0.
 
 #![no_std]

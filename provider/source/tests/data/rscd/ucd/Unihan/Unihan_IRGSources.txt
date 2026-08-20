@@ -1,9 +1,9 @@
 # Unihan_IRGSources.txt
-# Date: 2025-07-24 00:00:00 GMT [KL]
-# Unicode Version 17.0.0
+# Date: 2026-07-31 00:00:00 GMT [KL]
+# Unicode Version 18.0.0
 #
 # Unicode Character Database
-# © 2025 Unicode®, Inc.
+# © 2026 Unicode®, Inc.
 # Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
 # For terms of use and license, see https://www.unicode.org/terms_of_use.html
 #
@@ -25913,7 +25913,7 @@ U+995B	kRSUnicode	184.14
 U+995C	kRSUnicode	184.14
 U+995D	kRSUnicode	184.16
 U+995E	kRSUnicode	184.17
-U+995F	kRSUnicode	184.17 187.17
+U+995F	kRSUnicode	184.17
 U+9960	kRSUnicode	184.19
 U+9961	kRSUnicode	184.19
 U+9962	kRSUnicode	184.22
@@ -29348,7 +29348,7 @@ U+204EE	kRSUnicode	11.8
 U+204EF	kRSUnicode	11.8
 U+204F0	kRSUnicode	11.8
 U+204F1	kRSUnicode	11.9
-U+204F2	kRSUnicode	11.10
+U+204F2	kRSUnicode	75.8
 U+204F3	kRSUnicode	11.10
 U+204F4	kRSUnicode	11.11
 U+204F5	kRSUnicode	11.11
@@ -53253,7 +53253,7 @@ U+2624F	kRSUnicode	121.11
 U+26250	kRSUnicode	121.11
 U+26251	kRSUnicode	121.11
 U+26252	kRSUnicode	121.11
-U+26253	kRSUnicode	121.11
+U+26253	kRSUnicode	196.6 121.11
 U+26254	kRSUnicode	121.11
 U+26255	kRSUnicode	121.12
 U+26256	kRSUnicode	121.12
@@ -58961,7 +58961,7 @@ U+2789B	kRSUnicode	147.14 109.16
 U+2789C	kRSUnicode	147.15
 U+2789D	kRSUnicode	147.15
 U+2789E	kRSUnicode	147.15
-U+2789F	kRSUnicode	147.15
+U+2789F	kRSUnicode	211.7 147.15
 U+278A0	kRSUnicode	147.15
 U+278A1	kRSUnicode	147.15
 U+278A2	kRSUnicode	147.17
@@ -71040,7 +71040,7 @@ U+2A7EA	kRSUnicode	21.7
 U+2A7EB	kRSUnicode	21.11
 U+2A7EC	kRSUnicode	22.4
 U+2A7ED	kRSUnicode	22.5
-U+2A7EE	kRSUnicode	22.5
+U+2A7EE	kRSUnicode	23.5
 U+2A7EF	kRSUnicode	22.7
 U+2A7F0	kRSUnicode	22.8
 U+2A7F1	kRSUnicode	22.12
@@ -73450,7 +73450,7 @@ U+2B154	kRSUnicode	123.6
 U+2B155	kRSUnicode	123.7
 U+2B156	kRSUnicode	123.9
 U+2B157	kRSUnicode	123.9
-U+2B158	kRSUnicode	123.9
+U+2B158	kRSUnicode	30.12
 U+2B159	kRSUnicode	123.10
 U+2B15A	kRSUnicode	123.11
 U+2B15B	kRSUnicode	123.11
@@ -73711,7 +73711,7 @@ U+2B259	kRSUnicode	140.11
 U+2B25A	kRSUnicode	140.11
 U+2B25B	kRSUnicode	140.11
 U+2B25C	kRSUnicode	140.11
-U+2B25D	kRSUnicode	140.12
+U+2B25D	kRSUnicode	140.13
 U+2B25E	kRSUnicode	140.12
 U+2B25F	kRSUnicode	140.12
 U+2B260	kRSUnicode	140.12
@@ -75184,6 +75184,7 @@ U+2B81A	kRSUnicode	211''.5
 U+2B81B	kRSUnicode	211.9
 U+2B81C	kRSUnicode	211'.8
 U+2B81D	kRSUnicode	213''.12
+U+2B81E	kRSUnicode	72.4
 U+2B820	kRSUnicode	56.-1 62.-2
 U+2B821	kRSUnicode	1.3
 U+2B822	kRSUnicode	1.4
@@ -75312,7 +75313,7 @@ U+2B89C	kRSUnicode	9.6
 U+2B89D	kRSUnicode	9.6
 U+2B89E	kRSUnicode	9.7
 U+2B89F	kRSUnicode	9.7
-U+2B8A0	kRSUnicode	9.7
+U+2B8A0	kRSUnicode	9.9
 U+2B8A1	kRSUnicode	9.7
 U+2B8A2	kRSUnicode	9.7
 U+2B8A3	kRSUnicode	9.7
@@ -76057,7 +76058,7 @@ U+2BB85	kRSUnicode	32.8
 U+2BB86	kRSUnicode	32.9
 U+2BB87	kRSUnicode	32.9
 U+2BB88	kRSUnicode	32.9
-U+2BB89	kRSUnicode	32.9
+U+2BB89	kRSUnicode	33.9
 U+2BB8A	kRSUnicode	32.9
 U+2BB8B	kRSUnicode	32.9
 U+2BB8C	kRSUnicode	32.9
@@ -77323,7 +77324,7 @@ U+2C077	kRSUnicode	74.4
 U+2C078	kRSUnicode	74.4
 U+2C079	kRSUnicode	74.5
 U+2C07A	kRSUnicode	74.6
-U+2C07B	kRSUnicode	74.6
+U+2C07B	kRSUnicode	130.6
 U+2C07C	kRSUnicode	74.6
 U+2C07D	kRSUnicode	74.7
 U+2C07E	kRSUnicode	74.7
@@ -81370,12 +81371,12 @@ U+2D048	kRSUnicode	12.6
 U+2D049	kRSUnicode	12.6
 U+2D04A	kRSUnicode	12.6
 U+2D04B	kRSUnicode	12.6
-U+2D04C	kRSUnicode	12.7
+U+2D04C	kRSUnicode	24.7
 U+2D04D	kRSUnicode	12.7
 U+2D04E	kRSUnicode	12.7
 U+2D04F	kRSUnicode	12.8
 U+2D050	kRSUnicode	12.8
-U+2D051	kRSUnicode	12.9
+U+2D051	kRSUnicode	24.9
 U+2D052	kRSUnicode	12.9
 U+2D053	kRSUnicode	12.9
 U+2D054	kRSUnicode	12.10
@@ -81383,7 +81384,7 @@ U+2D055	kRSUnicode	12.10
 U+2D056	kRSUnicode	12.10
 U+2D057	kRSUnicode	12.11
 U+2D058	kRSUnicode	12.11
-U+2D059	kRSUnicode	12.12
+U+2D059	kRSUnicode	24.12
 U+2D05A	kRSUnicode	12.13
 U+2D05B	kRSUnicode	12.13
 U+2D05C	kRSUnicode	12.13
@@ -81771,7 +81772,7 @@ U+2D1D9	kRSUnicode	30.5
 U+2D1DA	kRSUnicode	30.5
 U+2D1DB	kRSUnicode	30.5
 U+2D1DC	kRSUnicode	30.5
-U+2D1DD	kRSUnicode	30.5
+U+2D1DD	kRSUnicode	30.5 46.5
 U+2D1DE	kRSUnicode	30.6
 U+2D1DF	kRSUnicode	30.6
 U+2D1E0	kRSUnicode	30.6
@@ -84234,7 +84235,7 @@ U+2DB78	kRSUnicode	77.17
 U+2DB79	kRSUnicode	77.17
 U+2DB7A	kRSUnicode	77.17
 U+2DB7B	kRSUnicode	77.17
-U+2DB7C	kRSUnicode	77.23
+U+2DB7C	kRSUnicode	77.24
 U+2DB7D	kRSUnicode	78.2
 U+2DB7E	kRSUnicode	78.2
 U+2DB7F	kRSUnicode	78.2
@@ -90106,7 +90107,7 @@ U+301FB	kRSUnicode	30.8
 U+301FC	kRSUnicode	30.8
 U+301FD	kRSUnicode	30.8
 U+301FE	kRSUnicode	30.8
-U+301FF	kRSUnicode	30.9
+U+301FF	kRSUnicode	30.9 151.5
 U+30200	kRSUnicode	30.9
 U+30201	kRSUnicode	30.9
 U+30202	kRSUnicode	30.9
@@ -94811,7 +94812,7 @@ U+31461	kRSUnicode	27.14
 U+31462	kRSUnicode	28.1
 U+31463	kRSUnicode	28.6
 U+31464	kRSUnicode	28.7
-U+31465	kRSUnicode	28.7
+U+31465	kRSUnicode	28.7 154'.5
 U+31466	kRSUnicode	28.9
 U+31467	kRSUnicode	28.9
 U+31468	kRSUnicode	28.10
@@ -99083,10 +99084,10 @@ U+32511	kRSUnicode	30.4
 U+32512	kRSUnicode	30.4
 U+32513	kRSUnicode	30.4
 U+32514	kRSUnicode	30.4
-U+32515	kRSUnicode	30.4
+U+32515	kRSUnicode	30.4 29.5
 U+32516	kRSUnicode	30.4
-U+32517	kRSUnicode	30.5
-U+32518	kRSUnicode	30.5
+U+32517	kRSUnicode	30.5 33.5
+U+32518	kRSUnicode	30.5 32.5
 U+32519	kRSUnicode	30.5
 U+3251A	kRSUnicode	30.5
 U+3251B	kRSUnicode	30.5
@@ -99096,12 +99097,12 @@ U+3251E	kRSUnicode	30.5
 U+3251F	kRSUnicode	30.6
 U+32520	kRSUnicode	30.6
 U+32521	kRSUnicode	30.6
-U+32522	kRSUnicode	30.6
+U+32522	kRSUnicode	30.6 140.5
 U+32523	kRSUnicode	30.6
 U+32524	kRSUnicode	30.6
-U+32525	kRSUnicode	30.6
+U+32525	kRSUnicode	30.6 82.5
 U+32526	kRSUnicode	30.6
-U+32527	kRSUnicode	30.6
+U+32527	kRSUnicode	30.6 67.5
 U+32528	kRSUnicode	30.6
 U+32529	kRSUnicode	30.6
 U+3252A	kRSUnicode	30.6
@@ -99135,7 +99136,7 @@ U+32545	kRSUnicode	30.8
 U+32546	kRSUnicode	30.8
 U+32547	kRSUnicode	30.8
 U+32548	kRSUnicode	30.8
-U+32549	kRSUnicode	30.8
+U+32549	kRSUnicode	30.8 132.5
 U+3254A	kRSUnicode	30.8
 U+3254B	kRSUnicode	30.8
 U+3254C	kRSUnicode	30.8

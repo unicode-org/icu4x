@@ -273,7 +273,7 @@ export class Script {
      */
     static Batak : Script;
     /**
-     * See the [Rust documentation for `BlisSymbols`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.Script.html#associatedconstant.BlisSymbols) for more information.
+     * See the [Rust documentation for `Blissymbols`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.Script.html#associatedconstant.Blissymbols) for more information.
      */
     static BlisSymbols : Script;
     /**
@@ -868,6 +868,14 @@ export class Script {
      * See the [Rust documentation for `TraditionalHanWithLatin`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.Script.html#associatedconstant.TraditionalHanWithLatin) for more information.
      */
     static TraditionalHanWithLatin : Script;
+    /**
+     * See the [Rust documentation for `ProtoCuneiform`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.Script.html#associatedconstant.ProtoCuneiform) for more information.
+     */
+    static ProtoCuneiform : Script;
+    /**
+     * See the [Rust documentation for `Seal`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.Script.html#associatedconstant.Seal) for more information.
+     */
+    static Seal : Script;
     /**
      * See the [Rust documentation for `Chisoi`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.Script.html#associatedconstant.Chisoi) for more information.
      */

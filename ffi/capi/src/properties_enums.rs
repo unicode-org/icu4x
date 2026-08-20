@@ -2185,6 +2185,56 @@ pub mod ffi {
             AssociatedConstantInStruct
         )]
         ThinNoon = 105,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::CrownAin,
+            AssociatedConstantInStruct
+        )]
+        CrownAin = 106,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::CrownBeh,
+            AssociatedConstantInStruct
+        )]
+        CrownBeh = 107,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::CrownFeh,
+            AssociatedConstantInStruct
+        )]
+        CrownFeh = 108,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::CrownHah,
+            AssociatedConstantInStruct
+        )]
+        CrownHah = 109,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::CrownHeh,
+            AssociatedConstantInStruct
+        )]
+        CrownHeh = 110,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::CrownKaf,
+            AssociatedConstantInStruct
+        )]
+        CrownKaf = 111,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::CrownMeem,
+            AssociatedConstantInStruct
+        )]
+        CrownMeem = 112,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::CrownSad,
+            AssociatedConstantInStruct
+        )]
+        CrownSad = 113,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::CrownSeen,
+            AssociatedConstantInStruct
+        )]
+        CrownSeen = 114,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::CrownTah,
+            AssociatedConstantInStruct
+        )]
+        CrownTah = 115,
     }
 
     impl JoiningGroup {
@@ -2344,6 +2394,16 @@ pub mod ffi {
                 103 => Self::VerticalTail,
                 104 => Self::KashmiriYeh,
                 105 => Self::ThinNoon,
+                106 => Self::CrownAin,
+                107 => Self::CrownBeh,
+                108 => Self::CrownFeh,
+                109 => Self::CrownHah,
+                110 => Self::CrownHeh,
+                111 => Self::CrownKaf,
+                112 => Self::CrownMeem,
+                113 => Self::CrownSad,
+                114 => Self::CrownSeen,
+                115 => Self::CrownTah,
                 _ => return None,
             })
         }
@@ -3237,7 +3297,7 @@ pub mod ffi {
         )]
         Batak = 63,
         #[diplomat::rust_link(
-            icu::properties::props::Script::BlisSymbols,
+            icu::properties::props::Script::Blissymbols,
             AssociatedConstantInStruct
         )]
         BlisSymbols = 64,
@@ -3983,6 +4043,16 @@ pub mod ffi {
         )]
         TraditionalHanWithLatin = 212,
         #[diplomat::rust_link(
+            icu::properties::props::Script::ProtoCuneiform,
+            AssociatedConstantInStruct
+        )]
+        ProtoCuneiform = 213,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::Seal,
+            AssociatedConstantInStruct
+        )]
+        Seal = 214,
+        #[diplomat::rust_link(
             icu::properties::props::Script::Chisoi,
             AssociatedConstantInStruct
         )]
@@ -4253,6 +4323,8 @@ pub mod ffi {
                 210 => Self::TaiYo,
                 211 => Self::TolongSiki,
                 212 => Self::TraditionalHanWithLatin,
+                213 => Self::ProtoCuneiform,
+                214 => Self::Seal,
                 254 => Self::Chisoi,
                 _ => return None,
             })

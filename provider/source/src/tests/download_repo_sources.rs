@@ -341,15 +341,20 @@ pub fn tzdb_data() -> AbstractFs {{
     }
 
     #[allow(clippy::single_element_loop)]
-    for (icu_path, repo_path) in [(
-        "icu4c/source/test/testdata/riwords.txt",
-        "components/collator/tests/data/riwords.txt",
-    )] {
+    for (icu_path, repo_path) in [
+        (
+            "icu4c/source/test/testdata/riwords.txt",
+            "components/collator/tests/data/riwords.txt",
+        ),
+        (
+            "icu4c/source/data/unidata/prop_numbers.txt",
+            "components/properties/tests/data/prop_numbers.txt",
+        ),
+    ] {
         std::fs::write(
             crate_root.join("../..").join(repo_path),
             AbstractFs::new_from_url(format!(
-                "https://raw.githubusercontent.com/unicode-org/icu/refs/tags/{}/",
-                SourceDataProvider::TESTED_ICUEXPORT_TAG
+                "https://raw.githubusercontent.com/markusicu/icu/refs/heads/prop_numbers/",
             ))
             .read_to_string(icu_path)
             .expect(icu_path),

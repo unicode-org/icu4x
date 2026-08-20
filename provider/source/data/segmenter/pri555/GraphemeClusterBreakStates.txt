@@ -2,13 +2,14 @@
 START ; No ;  ; 
 Control ; Yes ;  ; 
 CR ; Yes ;  ; 
-XXmLinkingConsonantmExtPict ; Yes ;  ; 
+XXmConjunctLinkermLinkingConsonantmExtPict ; Yes ;  ; 
 ExtPict ; Yes ;  ; 
-LinkingConsonant ; Yes ;  ; 
 Prepend ; Yes ;  ; 
+Extend_ConjunctLinker ; Yes ;  ; 
+ExtPict Extend_ConjunctLinker ; Yes ;  ; 
 L ; Yes ;  ; 
 V ; Yes ;  ; 
 T ; Yes ;  ; 
 RI ; Yes ;  ; 
 ExtPict ZWJ ; Yes ;  ; 
-LinkingConsonant Extend_ConjunctLinker ; Yes ;  ; 
+ExtPict Extend_ConjunctLinker ZWJ ; Yes ;  ; 
