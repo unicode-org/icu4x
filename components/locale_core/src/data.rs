@@ -55,7 +55,7 @@ use core::str::FromStr;
 /// lookup and fallback. This may change in the future.
 ///
 /// ```
-/// use icu_locale_core::{locale, Locale};
+/// use icu_locale_core::{Locale, locale};
 /// use icu_provider::DataLocale;
 ///
 /// let locale = "hi-IN-t-en-h0-hybrid-u-attr-ca-buddhist-sd-inas"

@@ -9,7 +9,7 @@ use super::{
 };
 use crate::provider::names::LocaleNamesVariantMediumHeavyV1;
 use icu_locale_core::subtags::Variant;
-use icu_provider::prelude::*;
+use icu_provider::{DataPayloadOr, prelude::*};
 
 #[inline]
 fn make_attributes(subtag: &Variant) -> &DataMarkerAttributes {
@@ -41,6 +41,9 @@ macro_rules! table_row {
 /// | :--- | :--- | :--- |
 #[doc = concat!(table_row!(try_new_heavy), "\n")]
 ///
+/// There are fallible (`try_new_*`) and infallible (`new_*_with_fallback`) versions of
+/// all constructors.
+///
 /// # Example
 ///
 /// ```
@@ -48,20 +51,73 @@ macro_rules! table_row {
 /// use icu::locale::{locale, subtags::variant};
 /// use writeable::assert_writeable_eq;
 ///
-/// let display_name = VariantDisplayName::try_new_heavy(locale!("en").into(), variant!("fonipa"))
-///     .expect("Data should load successfully");
+/// let display_name = VariantDisplayName::try_new_heavy(
+///     locale!("en").into(),
+///     variant!("fonipa"),
+/// )
+/// .expect("Data should load successfully");
 ///
 /// assert_writeable_eq!(display_name, "IPA Phonetics");
 /// ```
 #[derive(Debug)]
 pub struct VariantDisplayName {
-    pub(crate) payload: DataPayload<LocaleNamesVariantMediumHeavyV1>,
+    pub(crate) payload: DataPayloadOr<LocaleNamesVariantMediumHeavyV1, Variant>,
 }
 
 impl VariantDisplayName {
+    /// Loads a variant display name in a formatting locale using compiled data.
+    ///
+    /// The `heavy` constructor includes additional data coverage for subtags that are
+    /// less commonly formatted in the target locale.
+    /// See the [class docs](Self) for information on which constructor to use.
+    ///
+    /// If the display name is not found in data, the BCP-47 code is returned. To detect this case
+    /// and return an error instead, use [`VariantDisplayName::try_new_heavy()`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::names::VariantDisplayName;
+    /// use icu::locale::{locale, subtags::variant};
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// assert_writeable_eq!(
+    ///     VariantDisplayName::new_heavy_with_fallback(
+    ///         locale!("de").into(),
+    ///         variant!("fonipa")
+    ///     ),
+    ///     "IPA Phonetisch"
+    /// );
+    ///
+    /// assert_writeable_eq!(
+    ///     VariantDisplayName::new_heavy_with_fallback(
+    ///         locale!("fr").into(),
+    ///         variant!("fonipa")
+    ///     ),
+    ///     "alphabet phonétique international"
+    /// );
+    /// ```
+    #[cfg(feature = "compiled_data")]
+    pub fn new_heavy_with_fallback(prefs: DisplayNamesPreferences, variant: Variant) -> Self {
+        Self::try_new_heavy(prefs, variant).unwrap_or(Self {
+            payload: DataPayloadOr::from_other(variant),
+        })
+    }
+
     icu_provider::gen_buffer_data_constructors!(
         (prefs: DisplayNamesPreferences, variant: Variant) -> result: Result<Self, DataError>,
-        /// Loads the display name for a given variant in a given locale using compiled data.
+        /// Loads a variant display name in a formatting locale using compiled data.
+        ///
+        /// The `heavy` constructor includes additional data coverage for subtags that are
+        /// less commonly formatted in the target locale.
+        /// See the [class docs](Self) for information on which constructor to use.
+        ///
+        /// Returns an error if the display name is not found in data. To return the BCP-47 code
+        /// instead, use [`VariantDisplayName::new_heavy_with_fallback()`].
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// # Examples
         ///
@@ -70,10 +126,17 @@ impl VariantDisplayName {
         /// use icu::locale::{locale, subtags::variant};
         /// use writeable::assert_writeable_eq;
         ///
-        /// let display_name = VariantDisplayName::try_new_heavy(locale!("en").into(), variant!("fonipa"))
-        ///     .expect("Data should load successfully");
+        /// let name = VariantDisplayName::try_new_heavy(locale!("de").into(), variant!("fonipa")).unwrap();
+        /// assert_writeable_eq!(
+        ///     name,
+        ///     "IPA Phonetisch"
+        /// );
         ///
-        /// assert_writeable_eq!(display_name, "IPA Phonetics");
+        /// let name = VariantDisplayName::try_new_heavy(locale!("fr").into(), variant!("fonipa")).unwrap();
+        /// assert_writeable_eq!(
+        ///     name,
+        ///     "alphabet phonétique international"
+        /// );
         /// ```
         functions: [
             try_new_heavy,
@@ -95,14 +158,23 @@ impl VariantDisplayName {
         let attrs = make_attributes(&variant);
         let locale = make_locale(prefs);
         let payload = load_one::<LocaleNamesVariantMediumHeavyV1, _, _>(provider, &locale, attrs)?
+            .map(DataPayloadOr::from_payload)
             .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
         Ok(Self { payload })
+    }
+
+    #[inline]
+    fn borrow_str(&self) -> &str {
+        match self.payload.get() {
+            Ok(s) => s,
+            Err(subtag) => subtag.as_str(),
+        }
     }
 
     /// Returns a borrowed version of this display name.
     pub fn as_borrowed(&self) -> VariantDisplayNameBorrowed<'_> {
         VariantDisplayNameBorrowed {
-            value: self.payload.get(),
+            value: self.borrow_str(),
         }
     }
 }

@@ -100,9 +100,9 @@ pub struct DataPayload<M: DynamicDataMarker>(pub(crate) DataPayloadInner<M>);
 ///
 /// ```
 /// use icu_locale_core::data_locale;
+/// use icu_provider::DataPayloadOr;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
-/// use icu_provider::DataPayloadOr;
 ///
 /// let response: DataResponse<HelloWorldV1> = HelloWorldProvider
 ///     .load(DataRequest {
@@ -989,6 +989,39 @@ where
             }
             DataPayloadOrInner::Inner(DataPayloadOrInnerInner::Other(o)) => Err(o),
         }
+    }
+
+    /// Maps the Other type to a new Other type.
+    #[inline]
+    pub fn map_other<O2>(self, f: impl FnOnce(O) -> O2) -> DataPayloadOr<M, O2> {
+        DataPayloadOr(match self.0 {
+            DataPayloadOrInner::Yoke(yoke) => DataPayloadOrInner::Yoke(yoke),
+            DataPayloadOrInner::Inner(DataPayloadOrInnerInner::StaticRef(r)) => {
+                DataPayloadOrInner::Inner(DataPayloadOrInnerInner::StaticRef(r))
+            }
+            DataPayloadOrInner::Inner(DataPayloadOrInnerInner::Other(o)) => {
+                DataPayloadOrInner::Inner(DataPayloadOrInnerInner::Other(f(o)))
+            }
+        })
+    }
+
+    /// Maps the Marker type to a compatible Marker type.
+    ///
+    /// See [`DataResponse::cast`].
+    #[inline]
+    pub fn cast<M2>(self) -> DataPayloadOr<M2, O>
+    where
+        M2: DynamicDataMarker<DataStruct = M::DataStruct>,
+    {
+        DataPayloadOr(match self.0 {
+            DataPayloadOrInner::Yoke(yoke) => DataPayloadOrInner::Yoke(yoke),
+            DataPayloadOrInner::Inner(DataPayloadOrInnerInner::StaticRef(r)) => {
+                DataPayloadOrInner::Inner(DataPayloadOrInnerInner::StaticRef(r))
+            }
+            DataPayloadOrInner::Inner(DataPayloadOrInnerInner::Other(o)) => {
+                DataPayloadOrInner::Inner(DataPayloadOrInnerInner::Other(o))
+            }
+        })
     }
 }
 

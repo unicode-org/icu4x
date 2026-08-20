@@ -6,7 +6,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * See the [Rust documentation for `DateDifferenceOptions`](https://docs.rs/icu/2.2.0/icu/calendar/options/struct.DateDifferenceOptions.html) for more information.
+ * See the [Rust documentation for `DateDifferenceOptions`](https://docs.rs/icu/2.3.0/icu/calendar/options/struct.DateDifferenceOptions.html) for more information.
  */
 export class DateDifferenceOptions {
     #largestUnit;

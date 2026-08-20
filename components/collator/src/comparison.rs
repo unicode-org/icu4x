@@ -1741,8 +1741,8 @@ impl<'a> CollatorBorrowed<'a> {
     ///
     /// ```
     /// use icu::collator::{
-    ///     options::{CollatorOptions, Strength},
     ///     Collator,
+    ///     options::{CollatorOptions, Strength},
     /// };
     /// use icu::locale::locale;
     /// let locale = locale!("utf").into();

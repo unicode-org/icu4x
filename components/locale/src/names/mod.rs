@@ -133,7 +133,7 @@ macro_rules! impl_writeable_for_single_display_name_owned {
 
             #[inline]
             fn writeable_borrow(&self) -> Option<&str> {
-                Some(self.payload.get())
+                Some(self.borrow_str())
             }
         }
 

@@ -16,9 +16,9 @@ use icu_time::scaffold::IntoOption;
 ///
 /// ```
 /// use icu::calendar::Gregorian;
+/// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::input::Date;
-/// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
@@ -94,10 +94,10 @@ impl IntoOption<Length> for Length {
 ///
 /// ```
 /// use icu::calendar::Gregorian;
+/// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::input::Date;
 /// use icu::datetime::options::Alignment;
-/// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
@@ -198,10 +198,10 @@ pub enum YearStyle {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::input::Date;
     /// use icu::datetime::options::YearStyle;
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
@@ -229,10 +229,10 @@ pub enum YearStyle {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::input::Date;
     /// use icu::datetime::options::YearStyle;
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
@@ -258,10 +258,10 @@ pub enum YearStyle {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::input::Date;
     /// use icu::datetime::options::YearStyle;
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
@@ -292,10 +292,10 @@ pub enum YearStyle {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::input::Date;
     /// use icu::datetime::options::YearStyle;
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
@@ -544,11 +544,11 @@ impl From<TimePrecisionSerde> for TimePrecision {
 ///
 /// ```
 /// use icu::calendar::Gregorian;
+/// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::datetime::fieldsets::T;
 /// use icu::datetime::input::Time;
 /// use icu::datetime::options::SubsecondDigits;
 /// use icu::datetime::options::TimePrecision;
-/// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///

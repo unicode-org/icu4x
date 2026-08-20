@@ -131,31 +131,7 @@ where
     }
 }
 
-/// A pair of values for [`DoublePlaceholder`] that may bubble up errors.
-///
-/// # Examples
-///
-/// Format a pattern with two placeholders, where the second value is an error:
-///
-/// ```
-/// use either::Either;
-/// use icu_pattern::DoublePlaceholderPattern;
-/// use icu_pattern::DoublePlaceholderValueProviderTry;
-/// use writeable::assert_try_writeable_eq;
-///
-/// let pattern = DoublePlaceholderPattern::try_from_str("{0}-{1}", Default::default()).unwrap();
-/// assert_try_writeable_eq!(
-///     pattern.try_interpolate(DoublePlaceholderValueProviderTry(Ok::<&str, &str>("xxx"), Err::<&str, &str>("yyy"))),
-///     "xxx-yyy",
-///     Err(Either::Right("yyy"))
-/// );
-/// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
-#[allow(clippy::exhaustive_structs)] // holds two placeholder values
-pub struct DoublePlaceholderValueProviderTry<W0, W1>(pub W0, pub W1);
-
-impl<W0, W1> PlaceholderValueProvider<DoublePlaceholderKey>
-    for DoublePlaceholderValueProviderTry<W0, W1>
+impl<W0, W1> PlaceholderValueProvider<DoublePlaceholderKey> for TryWrap<(W0, W1)>
 where
     W0: TryWriteable,
     W1: TryWriteable,
@@ -175,8 +151,8 @@ where
     #[inline]
     fn value_for(&self, key: DoublePlaceholderKey) -> Self::W<'_> {
         match key {
-            DoublePlaceholderKey::Place0 => Either::Left(&self.0),
-            DoublePlaceholderKey::Place1 => Either::Right(&self.1),
+            DoublePlaceholderKey::Place0 => Either::Left(&self.0.0),
+            DoublePlaceholderKey::Place1 => Either::Right(&self.0.1),
         }
     }
     #[inline]

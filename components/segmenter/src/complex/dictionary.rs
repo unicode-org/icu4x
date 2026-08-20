@@ -13,7 +13,6 @@ use icu_collections::char16trie::{Char16Trie, TrieResult};
 /// Lifetimes:
 /// - `'data` = lifetime of the data
 /// - `'s` = lifetime of the string being segmented
-///
 #[derive(Debug)]
 pub(super) struct DictionaryBreakIterator<'data, 's, R: RuleBreakType> {
     trie: Char16Trie<'data>,

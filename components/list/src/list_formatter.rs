@@ -105,7 +105,7 @@ impl ListFormatter {
     ///
     /// ```
     /// use icu::list::options::*;
-    /// use icu::list::{parts, ListFormatter};
+    /// use icu::list::{ListFormatter, parts};
     /// # use icu::locale::locale;
     /// # use writeable::*;
     /// let formatteur = ListFormatter::try_new_and(

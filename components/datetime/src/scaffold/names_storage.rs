@@ -403,12 +403,12 @@ where
 /// Example pairs of field sets where the trait is implemented:
 ///
 /// ```
+/// use icu::datetime::fieldsets::T;
+/// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet;
 /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
 /// use icu::datetime::fieldsets::enums::DateFieldSet;
 /// use icu::datetime::fieldsets::enums::TimeFieldSet;
-/// use icu::datetime::fieldsets::T;
-/// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::scaffold::DateTimeNamesFrom;
 /// use icu::datetime::scaffold::DateTimeNamesMarker;
 ///

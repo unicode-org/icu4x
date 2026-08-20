@@ -264,12 +264,12 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 /// ```
 /// use icu::calendar::Date;
 /// use icu::locale::subtags::subtag;
-/// use icu::time::zone::TimeZoneVariant;
-/// use icu::time::zone::UtcOffset;
-/// use icu::time::zone::ZoneNameTimestamp;
 /// use icu::time::DateTime;
 /// use icu::time::Time;
 /// use icu::time::TimeZone;
+/// use icu::time::zone::TimeZoneVariant;
+/// use icu::time::zone::UtcOffset;
+/// use icu::time::zone::ZoneNameTimestamp;
 ///
 /// // Parse the IANA ID
 /// let id = TimeZone::from_iana_id("America/Chicago");
@@ -509,13 +509,13 @@ impl TimeZoneInfo<models::AtTime> {
     /// # Example
     /// ```
     /// use icu::calendar::Date;
+    /// use icu::time::DateTime;
+    /// use icu::time::Time;
+    /// use icu::time::TimeZone;
     /// use icu::time::zone::TimeZoneVariant;
     /// use icu::time::zone::UtcOffset;
     /// use icu::time::zone::VariantOffsetsCalculator;
     /// use icu::time::zone::ZoneNameTimestamp;
-    /// use icu::time::DateTime;
-    /// use icu::time::Time;
-    /// use icu::time::TimeZone;
     ///
     /// // Chicago at UTC-6
     /// let info = TimeZone::from_iana_id("America/Chicago")

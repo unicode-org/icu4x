@@ -209,10 +209,10 @@ impl LineBreakOptions<'_> {
 /// Segment a string with CSS option overrides:
 ///
 /// ```rust
+/// use icu::segmenter::LineSegmenter;
 /// use icu::segmenter::options::{
 ///     LineBreakOptions, LineBreakStrictness, LineBreakWordOption,
 /// };
-/// use icu::segmenter::LineSegmenter;
 ///
 /// let mut options = LineBreakOptions::default();
 /// options.strictness = Some(LineBreakStrictness::Strict);
@@ -240,7 +240,7 @@ impl LineBreakOptions<'_> {
 /// Separate mandatory breaks from the break opportunities:
 ///
 /// ```rust
-/// use icu::properties::{props::LineBreak, CodePointMapData};
+/// use icu::properties::{CodePointMapData, props::LineBreak};
 /// use icu::segmenter::LineSegmenter;
 ///
 /// # let segmenter = LineSegmenter::new_auto(Default::default());

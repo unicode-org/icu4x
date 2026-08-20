@@ -57,8 +57,8 @@
 //! tuple, and then construct the [`LanguageIdentifier`] externally.
 //!
 //! ```
-//! use icu::locale::subtags::{Language, Region, Script};
 //! use icu::locale::LanguageIdentifier;
+//! use icu::locale::subtags::{Language, Region, Script};
 //! use icu::locale::{
 //!     langid,
 //!     subtags::{language, region, script},
@@ -99,8 +99,8 @@
 //! As above, to produce more human-readable serialized output, you can use `PotentialUtf8`.
 //!
 //! ```
-//! use icu::locale::locale;
 //! use icu::locale::Locale;
+//! use icu::locale::locale;
 //! use potential_utf::PotentialUtf8;
 //! use zerovec::ZeroMap;
 //!

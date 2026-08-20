@@ -187,8 +187,8 @@ impl<Y: RuleBreakType> Iterator for WordBreakIteratorWithWordType<'_, '_, Y> {
 ///
 /// ```rust
 /// use icu::locale::langid;
-/// use icu::segmenter::options::WordBreakOptions;
 /// use icu::segmenter::WordSegmenter;
+/// use icu::segmenter::options::WordBreakOptions;
 ///
 /// let mut options = WordBreakOptions::default();
 /// let langid = &langid!("en");
@@ -295,7 +295,7 @@ impl WordSegmenter {
     /// Behavior with complex scripts:
     ///
     /// ```
-    /// use icu::segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
+    /// use icu::segmenter::{WordSegmenter, options::WordBreakInvariantOptions};
     ///
     /// let th_str = "ทุกสองสัปดาห์";
     /// let ja_str = "こんにちは世界";
@@ -365,7 +365,7 @@ impl WordSegmenter {
     /// Behavior with complex scripts:
     ///
     /// ```
-    /// use icu::segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
+    /// use icu::segmenter::{WordSegmenter, options::WordBreakInvariantOptions};
     ///
     /// let th_str = "ทุกสองสัปดาห์";
     /// let ja_str = "こんにちは世界";
@@ -433,7 +433,7 @@ impl WordSegmenter {
     /// Behavior with complex scripts:
     ///
     /// ```
-    /// use icu::segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
+    /// use icu::segmenter::{WordSegmenter, options::WordBreakInvariantOptions};
     ///
     /// let th_str = "ทุกสองสัปดาห์";
     /// let ja_str = "こんにちは世界";

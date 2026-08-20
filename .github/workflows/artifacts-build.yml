@@ -26,13 +26,22 @@
 name: Artifacts Build
 
 on:
-  push
+  push:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing release tag to upload FFI libraries to (defaults to trigger ref)'
+        required: false
+        type: string
+      run_id:
+        description: 'Workflow run ID of the tag creation build (optional, auto-detected if omitted)'
+        required: false
+        type: string
 
 permissions:
   contents: write
   pages: write
   id-token: write
-  attestations: write
 
 env:
   GCP_PROJECT_ID: "dev-infra-273822"
@@ -765,45 +774,51 @@ jobs:
         path: bin
         
   release-ffi-libs:
-    needs: ffi-libs
     runs-on: ubuntu-latest
-    if: github.ref_type == 'tag' && github.repository == 'unicode-org/icu4x'
+    if: github.event_name == 'workflow_dispatch' && github.repository == 'unicode-org/icu4x'
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - name: Verify release exists
+        env:
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: gh release view "$TAG" >/dev/null
 
-      - name: Generate SPDX SBOM
-        uses: anchore/sbom-action@v0
-        with:
-          path: ./
-          format: spdx-json
-          output-file: icu4x-sbom.spdx.json
+      - name: Get RUN_ID for tag build
+        id: get_run_id
+        env:
+          TAG: ${{ inputs.tag || github.ref_name }}
+          INPUT_RUN_ID: ${{ inputs.run_id }}
+        run: |
+          RUN_ID="${INPUT_RUN_ID:-$(gh run list -w artifacts-build.yml -b "$TAG" --json databaseId --jq '.[0].databaseId // empty')}"
+          if [ -z "$RUN_ID" ]; then
+            echo "Error: Could not find workflow run for tag $TAG"
+            exit 1
+          fi
+          echo "run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Verify tag build finished
+        env:
+          RUN_ID: ${{ steps.get_run_id.outputs.run_id }}
+        run: |
+          if [ "$(gh run view "$RUN_ID" --json status --jq .status)" != "completed" ]; then
+            echo "Error: Run $RUN_ID is not finished."
+            exit 1
+          fi
 
       - name: Download binaries
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
-        with:
-          pattern: ffi-*-libs
+        env:
+          RUN_ID: ${{ steps.get_run_id.outputs.run_id }}
+        run: gh run download "$RUN_ID" -p 'ffi-*-libs' -D bin
 
       - name: Display structure of downloaded files
         run: ls -R
 
-      - name: Generate build provenance attestation
-        uses: actions/attest-build-provenance@v2
-        with:
-          subject-path: 'ffi-*-libs/*'
-
-      - name: Generate SBOM attestation
-        uses: actions/attest@v4
-        with:
-          subject-path: 'ffi-*-libs/*'
-          sbom-path: icu4x-sbom.spdx.json
-
       - name: Release
-        uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8
-        with:
-          files: '**'
-          fail_on_unmatched_files: true
-          draft: true
-          body: "`icu_capi` artifacts based on ref ${{ github.ref_name }}"
+        env:
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: find bin -type f -exec gh release upload "$TAG" --clobber {} +
 
   gh-pages:
     name: "Deploy to GitHub Pages"

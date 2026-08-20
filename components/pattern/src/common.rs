@@ -262,6 +262,54 @@ where
     }
 }
 
+/// A wrapper for input types that may bubble up errors via [`TryWriteable`].
+///
+/// # Examples
+///
+/// Format a pattern with one placeholder, which holds an error:
+///
+/// ```
+/// use either::Either;
+/// use icu_pattern::SinglePlaceholderPattern;
+/// use icu_pattern::TryWrap;
+/// use writeable::assert_try_writeable_eq;
+///
+/// let err_value = Err::<&str, &str>("Errory");
+///
+/// let pattern =
+///     SinglePlaceholderPattern::try_from_str("Hello {0}", Default::default())
+///         .unwrap();
+/// assert_try_writeable_eq!(
+///     pattern.try_interpolate(TryWrap(err_value)),
+///     "Hello Errory",
+///     Err("Errory")
+/// );
+/// ```
+///
+/// Format a pattern with two placeholders, where the second value is an error:
+///
+/// ```
+/// use either::Either;
+/// use icu_pattern::DoublePlaceholderPattern;
+/// use icu_pattern::TryWrap;
+/// use writeable::assert_try_writeable_eq;
+///
+/// let ok_value = Ok::<&str, &str>("xxx");
+/// let err_value = Err::<&str, &str>("yyy");
+///
+/// let pattern =
+///     DoublePlaceholderPattern::try_from_str("{0}-{1}", Default::default())
+///         .unwrap();
+/// assert_try_writeable_eq!(
+///     pattern.try_interpolate(TryWrap((ok_value, err_value))),
+///     "xxx-yyy",
+///     Err(Either::Right("yyy"))
+/// );
+/// ```
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[allow(clippy::exhaustive_structs)] // newtype
+pub struct TryWrap<T>(pub T);
+
 /// Types that implement backing data models for [`Pattern`] and support placeholder extraction
 /// implement this trait.
 ///
