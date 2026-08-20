@@ -123,6 +123,11 @@ export class GraphemeClusterBreak {
      */
     static fromIntegerValue(other: number): GraphemeClusterBreak | null;
 
+    /**
+     * Creates a `GraphemeClusterBreak` from a string.
+     *
+     * Short names, long names, and aliases are supported, and matching is case-insensitive.
+     */
     static tryFromStr(s: string): GraphemeClusterBreak | null;
 
     constructor(value: GraphemeClusterBreak | string );

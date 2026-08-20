@@ -127,7 +127,10 @@ enum IndicSyllabicCategory {
     return IndicSyllabicCategory.values[result.union.ok];
   }
 
-  static IndicSyllabicCategory? tryFromStr(String s) {
+  /// Creates a `IndicSyllabicCategory` from a string.
+  ///
+  /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+  static IndicSyllabicCategory? fromString(String s) {
     final temp = _FinalizedArena();
     final result = _icu4x_IndicSyllabicCategory_try_from_str_mv1(s._utf8AllocIn(temp.arena));
     if (!result.isOk) {

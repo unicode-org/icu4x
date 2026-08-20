@@ -5,6 +5,8 @@
 //! This module contains provider implementations backed by built-in segmentation data.
 
 #[cfg(feature = "unstable")]
+use crate::DataHasher;
+#[cfg(feature = "unstable")]
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_cache::CldrCache;
@@ -1587,7 +1589,7 @@ impl SourceDataProvider {
         let hash = {
             use core::hash::{Hash, Hasher};
 
-            let mut hash = twox_hash::XxHash64::with_seed(0);
+            let mut hash = DataHasher::new();
             symbols.hash(&mut hash);
             pseudo_symbol_map.hash(&mut hash);
             states.hash(&mut hash);

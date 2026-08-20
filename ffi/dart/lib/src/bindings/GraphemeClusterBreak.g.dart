@@ -89,7 +89,10 @@ enum GraphemeClusterBreak {
     return GraphemeClusterBreak.values[result.union.ok];
   }
 
-  static GraphemeClusterBreak? tryFromStr(String s) {
+  /// Creates a `GraphemeClusterBreak` from a string.
+  ///
+  /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+  static GraphemeClusterBreak? fromString(String s) {
     final temp = _FinalizedArena();
     final result = _icu4x_GraphemeClusterBreak_try_from_str_mv1(s._utf8AllocIn(temp.arena));
     if (!result.isOk) {

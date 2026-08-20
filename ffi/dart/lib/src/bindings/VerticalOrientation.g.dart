@@ -61,7 +61,10 @@ enum VerticalOrientation {
     return VerticalOrientation.values[result.union.ok];
   }
 
-  static VerticalOrientation? tryFromStr(String s) {
+  /// Creates a `VerticalOrientation` from a string.
+  ///
+  /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+  static VerticalOrientation? fromString(String s) {
     final temp = _FinalizedArena();
     final result = _icu4x_VerticalOrientation_try_from_str_mv1(s._utf8AllocIn(temp.arena));
     if (!result.isOk) {

@@ -202,6 +202,11 @@ export class HangulSyllableType {
         }
     }
 
+    /**
+     * Creates a `HangulSyllableType` from a string.
+     *
+     * Short names, long names, and aliases are supported, and matching is case-insensitive.
+     */
     static tryFromStr(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 

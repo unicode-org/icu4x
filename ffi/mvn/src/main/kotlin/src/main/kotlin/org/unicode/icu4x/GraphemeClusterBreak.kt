@@ -75,6 +75,10 @@ enum class GraphemeClusterBreak {
         }
         @JvmStatic
         
+        /** Creates a `GraphemeClusterBreak` from a string.
+        *
+        *Short names, long names, and aliases are supported, and matching is case-insensitive.
+        */
         fun tryFromStr(s: String): GraphemeClusterBreak? {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             

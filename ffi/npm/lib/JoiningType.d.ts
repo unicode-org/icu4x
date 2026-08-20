@@ -75,6 +75,11 @@ export class JoiningType {
      */
     static fromIntegerValue(other: number): JoiningType | null;
 
+    /**
+     * Creates a `JoiningType` from a string.
+     *
+     * Short names, long names, and aliases are supported, and matching is case-insensitive.
+     */
     static tryFromStr(s: string): JoiningType | null;
 
     constructor(value: JoiningType | string );

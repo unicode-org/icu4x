@@ -63,6 +63,10 @@ enum class HangulSyllableType {
         }
         @JvmStatic
         
+        /** Creates a `HangulSyllableType` from a string.
+        *
+        *Short names, long names, and aliases are supported, and matching is case-insensitive.
+        */
         fun tryFromStr(s: String): HangulSyllableType? {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             

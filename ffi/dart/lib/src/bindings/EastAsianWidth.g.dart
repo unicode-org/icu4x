@@ -65,7 +65,10 @@ enum EastAsianWidth {
     return EastAsianWidth.values[result.union.ok];
   }
 
-  static EastAsianWidth? tryFromStr(String s) {
+  /// Creates a `EastAsianWidth` from a string.
+  ///
+  /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+  static EastAsianWidth? fromString(String s) {
     final temp = _FinalizedArena();
     final result = _icu4x_EastAsianWidth_try_from_str_mv1(s._utf8AllocIn(temp.arena));
     if (!result.isOk) {

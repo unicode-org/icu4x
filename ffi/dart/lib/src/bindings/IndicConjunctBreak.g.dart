@@ -61,7 +61,10 @@ enum IndicConjunctBreak {
     return IndicConjunctBreak.values[result.union.ok];
   }
 
-  static IndicConjunctBreak? tryFromStr(String s) {
+  /// Creates a `IndicConjunctBreak` from a string.
+  ///
+  /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+  static IndicConjunctBreak? fromString(String s) {
     final temp = _FinalizedArena();
     final result = _icu4x_IndicConjunctBreak_try_from_str_mv1(s._utf8AllocIn(temp.arena));
     if (!result.isOk) {

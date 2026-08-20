@@ -90,6 +90,10 @@ pub mod ffi {
             })
         }
 
+        /// Creates a `{{prop.name.to_upper_camel_case()}}` from a string.
+        ///
+        /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+        #[diplomat::attr(dart, rename = "from_string")]
         #[cfg(feature = "compiled_data")]
         pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
             icu_properties::PropertyParser::<props::{{prop.name.to_upper_camel_case()}}>::new().get_loose_utf8(s).map(Into::into)

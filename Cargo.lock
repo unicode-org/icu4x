@@ -1319,7 +1319,6 @@ dependencies = [
  "icu_datetime",
  "icu_decimal",
  "icu_experimental",
- "icu_host_info",
  "icu_list",
  "icu_locale",
  "icu_normalizer",
@@ -4331,7 +4330,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.11.7"
+version = "0.11.8"
 dependencies = [
  "bincode",
  "criterion",

@@ -65,7 +65,10 @@ enum HangulSyllableType {
     return HangulSyllableType.values[result.union.ok];
   }
 
-  static HangulSyllableType? tryFromStr(String s) {
+  /// Creates a `HangulSyllableType` from a string.
+  ///
+  /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+  static HangulSyllableType? fromString(String s) {
     final temp = _FinalizedArena();
     final result = _icu4x_HangulSyllableType_try_from_str_mv1(s._utf8AllocIn(temp.arena));
     if (!result.isOk) {

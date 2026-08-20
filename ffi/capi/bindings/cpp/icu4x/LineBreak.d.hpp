@@ -320,6 +320,11 @@ public:
    */
   inline static std::optional<icu4x::LineBreak> from_integer_value(uint8_t other);
 
+  /**
+   * Creates a `LineBreak` from a string.
+   *
+   * Short names, long names, and aliases are supported, and matching is case-insensitive.
+   */
   inline static std::optional<icu4x::LineBreak> try_from_str(std::string_view s);
 
     inline icu4x::capi::LineBreak AsFFI() const;

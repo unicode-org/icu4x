@@ -63,6 +63,10 @@ enum class JoiningType {
         }
         @JvmStatic
         
+        /** Creates a `JoiningType` from a string.
+        *
+        *Short names, long names, and aliases are supported, and matching is case-insensitive.
+        */
         fun tryFromStr(s: String): JoiningType? {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             

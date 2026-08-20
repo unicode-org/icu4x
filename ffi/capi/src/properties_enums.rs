@@ -214,6 +214,10 @@ pub mod ffi {
             })
         }
 
+        /// Creates a `BidiClass` from a string.
+        ///
+        /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+        #[diplomat::attr(dart, rename = "from_string")]
         #[cfg(feature = "compiled_data")]
         pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
             icu_properties::PropertyParser::<props::BidiClass>::new().get_loose_utf8(s).map(Into::into)
@@ -630,6 +634,10 @@ pub mod ffi {
             })
         }
 
+        /// Creates a `CanonicalCombiningClass` from a string.
+        ///
+        /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+        #[diplomat::attr(dart, rename = "from_string")]
         #[cfg(feature = "compiled_data")]
         pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
             icu_properties::PropertyParser::<props::CanonicalCombiningClass>::new().get_loose_utf8(s).map(Into::into)
@@ -734,6 +742,10 @@ pub mod ffi {
             })
         }
 
+        /// Creates a `EastAsianWidth` from a string.
+        ///
+        /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+        #[diplomat::attr(dart, rename = "from_string")]
         #[cfg(feature = "compiled_data")]
         pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
             icu_properties::PropertyParser::<props::EastAsianWidth>::new().get_loose_utf8(s).map(Into::into)
@@ -982,6 +994,10 @@ pub mod ffi {
             })
         }
 
+        /// Creates a `GeneralCategory` from a string.
+        ///
+        /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+        #[diplomat::attr(dart, rename = "from_string")]
         #[cfg(feature = "compiled_data")]
         pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
             icu_properties::PropertyParser::<props::GeneralCategory>::new().get_loose_utf8(s).map(Into::into)
@@ -1158,6 +1174,10 @@ pub mod ffi {
             })
         }
 
+        /// Creates a `GraphemeClusterBreak` from a string.
+        ///
+        /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+        #[diplomat::attr(dart, rename = "from_string")]
         #[cfg(feature = "compiled_data")]
         pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
             icu_properties::PropertyParser::<props::GraphemeClusterBreak>::new().get_loose_utf8(s).map(Into::into)
@@ -1262,6 +1282,10 @@ pub mod ffi {
             })
         }
 
+        /// Creates a `HangulSyllableType` from a string.
+        ///
+        /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+        #[diplomat::attr(dart, rename = "from_string")]
         #[cfg(feature = "compiled_data")]
         pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
             icu_properties::PropertyParser::<props::HangulSyllableType>::new().get_loose_utf8(s).map(Into::into)
@@ -1354,6 +1378,10 @@ pub mod ffi {
             })
         }
 
+        /// Creates a `IndicConjunctBreak` from a string.
+        ///
+        /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+        #[diplomat::attr(dart, rename = "from_string")]
         #[cfg(feature = "compiled_data")]
         pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
             icu_properties::PropertyParser::<props::IndicConjunctBreak>::new().get_loose_utf8(s).map(Into::into)
@@ -1644,6 +1672,10 @@ pub mod ffi {
             })
         }
 
+        /// Creates a `IndicSyllabicCategory` from a string.
+        ///
+        /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+        #[diplomat::attr(dart, rename = "from_string")]
         #[cfg(feature = "compiled_data")]
         pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
             icu_properties::PropertyParser::<props::IndicSyllabicCategory>::new().get_loose_utf8(s).map(Into::into)
@@ -2348,6 +2380,10 @@ pub mod ffi {
             })
         }
 
+        /// Creates a `JoiningGroup` from a string.
+        ///
+        /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+        #[diplomat::attr(dart, rename = "from_string")]
         #[cfg(feature = "compiled_data")]
         pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
             icu_properties::PropertyParser::<props::JoiningGroup>::new().get_loose_utf8(s).map(Into::into)
@@ -2452,6 +2488,10 @@ pub mod ffi {
             })
         }
 
+        /// Creates a `JoiningType` from a string.
+        ///
+        /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+        #[diplomat::attr(dart, rename = "from_string")]
         #[cfg(feature = "compiled_data")]
         pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
             icu_properties::PropertyParser::<props::JoiningType>::new().get_loose_utf8(s).map(Into::into)
@@ -2814,6 +2854,10 @@ pub mod ffi {
             })
         }
 
+        /// Creates a `LineBreak` from a string.
+        ///
+        /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+        #[diplomat::attr(dart, rename = "from_string")]
         #[cfg(feature = "compiled_data")]
         pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
             icu_properties::PropertyParser::<props::LineBreak>::new().get_loose_utf8(s).map(Into::into)
@@ -2906,6 +2950,10 @@ pub mod ffi {
             })
         }
 
+        /// Creates a `NumericType` from a string.
+        ///
+        /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+        #[diplomat::attr(dart, rename = "from_string")]
         #[cfg(feature = "compiled_data")]
         pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
             icu_properties::PropertyParser::<props::NumericType>::new().get_loose_utf8(s).map(Into::into)
@@ -4258,6 +4306,10 @@ pub mod ffi {
             })
         }
 
+        /// Creates a `Script` from a string.
+        ///
+        /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+        #[diplomat::attr(dart, rename = "from_string")]
         #[cfg(feature = "compiled_data")]
         pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
             icu_properties::PropertyParser::<props::Script>::new().get_loose_utf8(s).map(Into::into)
@@ -4416,6 +4468,10 @@ pub mod ffi {
             })
         }
 
+        /// Creates a `SentenceBreak` from a string.
+        ///
+        /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+        #[diplomat::attr(dart, rename = "from_string")]
         #[cfg(feature = "compiled_data")]
         pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
             icu_properties::PropertyParser::<props::SentenceBreak>::new().get_loose_utf8(s).map(Into::into)
@@ -4508,6 +4564,10 @@ pub mod ffi {
             })
         }
 
+        /// Creates a `VerticalOrientation` from a string.
+        ///
+        /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+        #[diplomat::attr(dart, rename = "from_string")]
         #[cfg(feature = "compiled_data")]
         pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
             icu_properties::PropertyParser::<props::VerticalOrientation>::new().get_loose_utf8(s).map(Into::into)
@@ -4714,6 +4774,10 @@ pub mod ffi {
             })
         }
 
+        /// Creates a `WordBreak` from a string.
+        ///
+        /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+        #[diplomat::attr(dart, rename = "from_string")]
         #[cfg(feature = "compiled_data")]
         pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
             icu_properties::PropertyParser::<props::WordBreak>::new().get_loose_utf8(s).map(Into::into)

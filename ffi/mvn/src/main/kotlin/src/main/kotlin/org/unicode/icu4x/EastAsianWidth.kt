@@ -63,6 +63,10 @@ enum class EastAsianWidth {
         }
         @JvmStatic
         
+        /** Creates a `EastAsianWidth` from a string.
+        *
+        *Short names, long names, and aliases are supported, and matching is case-insensitive.
+        */
         fun tryFromStr(s: String): EastAsianWidth? {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             

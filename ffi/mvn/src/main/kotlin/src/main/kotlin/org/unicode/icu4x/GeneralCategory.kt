@@ -88,6 +88,10 @@ enum class GeneralCategory {
         }
         @JvmStatic
         
+        /** Creates a `GeneralCategory` from a string.
+        *
+        *Short names, long names, and aliases are supported, and matching is case-insensitive.
+        */
         fun tryFromStr(s: String): GeneralCategory? {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             

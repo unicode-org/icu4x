@@ -199,6 +199,11 @@ export class IndicSyllabicCategory {
      */
     static fromIntegerValue(other: number): IndicSyllabicCategory | null;
 
+    /**
+     * Creates a `IndicSyllabicCategory` from a string.
+     *
+     * Short names, long names, and aliases are supported, and matching is case-insensitive.
+     */
     static tryFromStr(s: string): IndicSyllabicCategory | null;
 
     constructor(value: IndicSyllabicCategory | string );

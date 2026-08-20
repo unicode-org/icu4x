@@ -67,6 +67,11 @@ export class NumericType {
      */
     static fromIntegerValue(other: number): NumericType | null;
 
+    /**
+     * Creates a `NumericType` from a string.
+     *
+     * Short names, long names, and aliases are supported, and matching is case-insensitive.
+     */
     static tryFromStr(s: string): NumericType | null;
 
     constructor(value: NumericType | string );

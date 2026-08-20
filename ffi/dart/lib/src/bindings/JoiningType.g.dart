@@ -65,7 +65,10 @@ enum JoiningType {
     return JoiningType.values[result.union.ok];
   }
 
-  static JoiningType? tryFromStr(String s) {
+  /// Creates a `JoiningType` from a string.
+  ///
+  /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+  static JoiningType? fromString(String s) {
     final temp = _FinalizedArena();
     final result = _icu4x_JoiningType_try_from_str_mv1(s._utf8AllocIn(temp.arena));
     if (!result.isOk) {

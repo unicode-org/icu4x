@@ -247,6 +247,11 @@ export class LineBreak {
      */
     static fromIntegerValue(other: number): LineBreak | null;
 
+    /**
+     * Creates a `LineBreak` from a string.
+     *
+     * Short names, long names, and aliases are supported, and matching is case-insensitive.
+     */
     static tryFromStr(s: string): LineBreak | null;
 
     constructor(value: LineBreak | string );
