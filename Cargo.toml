@@ -210,7 +210,7 @@ yoke-derive = { version = "0.8.2", path = "utils/yoke/derive", default-features 
 zerofrom = { version = "0.1.6", path = "utils/zerofrom", default-features = false } # Current version: 0.1.8
 zerofrom-derive = { version = "0.1.6", path = "utils/zerofrom/derive", default-features = false } # Current version: 0.1.7
 zerotrie = { version = "0.2.5", path = "utils/zerotrie", default-features = false }
-zerovec = { version = "0.11.7", path = "utils/zerovec", default-features = false }
+zerovec = { version = "0.11.8", path = "utils/zerovec", default-features = false }
 zerovec-derive = { version = "0.11.5", path = "utils/zerovec/derive", default-features = false }
 zoneinfo64 = { version = "0.3.0", path = "utils/zoneinfo64", default-features = false }
 
