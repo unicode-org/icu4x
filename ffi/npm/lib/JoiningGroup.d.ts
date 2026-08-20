@@ -475,6 +475,11 @@ export class JoiningGroup {
      */
     static fromIntegerValue(other: number): JoiningGroup | null;
 
+    /**
+     * Creates a `JoiningGroup` from a string.
+     *
+     * Short names, long names, and aliases are supported, and matching is case-insensitive.
+     */
     static tryFromStr(s: string): JoiningGroup | null;
 
     constructor(value: JoiningGroup | string );

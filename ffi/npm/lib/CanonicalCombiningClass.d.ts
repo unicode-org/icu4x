@@ -283,6 +283,11 @@ export class CanonicalCombiningClass {
      */
     static fromIntegerValue(other: number): CanonicalCombiningClass | null;
 
+    /**
+     * Creates a `CanonicalCombiningClass` from a string.
+     *
+     * Short names, long names, and aliases are supported, and matching is case-insensitive.
+     */
     static tryFromStr(s: string): CanonicalCombiningClass | null;
 
     constructor(value: CanonicalCombiningClass | string );

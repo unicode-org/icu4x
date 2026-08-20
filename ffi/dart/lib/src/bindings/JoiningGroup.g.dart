@@ -265,7 +265,10 @@ enum JoiningGroup {
     return JoiningGroup.values[result.union.ok];
   }
 
-  static JoiningGroup? tryFromStr(String s) {
+  /// Creates a `JoiningGroup` from a string.
+  ///
+  /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+  static JoiningGroup? fromString(String s) {
     final temp = _FinalizedArena();
     final result = _icu4x_JoiningGroup_try_from_str_mv1(s._utf8AllocIn(temp.arena));
     if (!result.isOk) {

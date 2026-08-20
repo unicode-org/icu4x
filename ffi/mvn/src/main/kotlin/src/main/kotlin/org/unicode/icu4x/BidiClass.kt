@@ -80,6 +80,10 @@ enum class BidiClass {
         }
         @JvmStatic
         
+        /** Creates a `BidiClass` from a string.
+        *
+        *Short names, long names, and aliases are supported, and matching is case-insensitive.
+        */
         fun tryFromStr(s: String): BidiClass? {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             

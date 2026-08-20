@@ -290,7 +290,10 @@ enum CanonicalCombiningClass {
     return CanonicalCombiningClass.values.firstWhere((v) => v._ffi == result.union.ok);
   }
 
-  static CanonicalCombiningClass? tryFromStr(String s) {
+  /// Creates a `CanonicalCombiningClass` from a string.
+  ///
+  /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+  static CanonicalCombiningClass? fromString(String s) {
     final temp = _FinalizedArena();
     final result = _icu4x_CanonicalCombiningClass_try_from_str_mv1(s._utf8AllocIn(temp.arena));
     if (!result.isOk) {

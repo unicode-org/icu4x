@@ -260,6 +260,11 @@ public:
    */
   inline static std::optional<icu4x::IndicSyllabicCategory> from_integer_value(uint8_t other);
 
+  /**
+   * Creates a `IndicSyllabicCategory` from a string.
+   *
+   * Short names, long names, and aliases are supported, and matching is case-insensitive.
+   */
   inline static std::optional<icu4x::IndicSyllabicCategory> try_from_str(std::string_view s);
 
     inline icu4x::capi::IndicSyllabicCategory AsFFI() const;

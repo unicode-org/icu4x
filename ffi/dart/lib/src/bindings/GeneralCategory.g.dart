@@ -113,7 +113,10 @@ enum GeneralCategory {
     return GeneralCategory.values[result.union.ok];
   }
 
-  static GeneralCategory? tryFromStr(String s) {
+  /// Creates a `GeneralCategory` from a string.
+  ///
+  /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+  static GeneralCategory? fromString(String s) {
     final temp = _FinalizedArena();
     final result = _icu4x_GeneralCategory_try_from_str_mv1(s._utf8AllocIn(temp.arena));
     if (!result.isOk) {

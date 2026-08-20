@@ -143,6 +143,11 @@ export class WordBreak {
      */
     static fromIntegerValue(other: number): WordBreak | null;
 
+    /**
+     * Creates a `WordBreak` from a string.
+     *
+     * Short names, long names, and aliases are supported, and matching is case-insensitive.
+     */
     static tryFromStr(s: string): WordBreak | null;
 
     constructor(value: WordBreak | string );

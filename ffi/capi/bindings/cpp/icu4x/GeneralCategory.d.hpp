@@ -226,6 +226,11 @@ public:
    */
   inline static std::optional<icu4x::GeneralCategory> from_integer_value(uint8_t other);
 
+  /**
+   * Creates a `GeneralCategory` from a string.
+   *
+   * Short names, long names, and aliases are supported, and matching is case-insensitive.
+   */
   inline static std::optional<icu4x::GeneralCategory> try_from_str(std::string_view s);
 
   /**

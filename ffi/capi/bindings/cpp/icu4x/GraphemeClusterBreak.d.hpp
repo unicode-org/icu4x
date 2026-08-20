@@ -165,6 +165,11 @@ public:
    */
   inline static std::optional<icu4x::GraphemeClusterBreak> from_integer_value(uint8_t other);
 
+  /**
+   * Creates a `GraphemeClusterBreak` from a string.
+   *
+   * Short names, long names, and aliases are supported, and matching is case-insensitive.
+   */
   inline static std::optional<icu4x::GraphemeClusterBreak> try_from_str(std::string_view s);
 
     inline icu4x::capi::GraphemeClusterBreak AsFFI() const;

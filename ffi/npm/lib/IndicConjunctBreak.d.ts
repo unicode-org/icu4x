@@ -67,6 +67,11 @@ export class IndicConjunctBreak {
      */
     static fromIntegerValue(other: number): IndicConjunctBreak | null;
 
+    /**
+     * Creates a `IndicConjunctBreak` from a string.
+     *
+     * Short names, long names, and aliases are supported, and matching is case-insensitive.
+     */
     static tryFromStr(s: string): IndicConjunctBreak | null;
 
     constructor(value: IndicConjunctBreak | string );
