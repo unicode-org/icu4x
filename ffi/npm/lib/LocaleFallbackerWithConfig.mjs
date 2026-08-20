@@ -76,7 +76,7 @@ export class LocaleFallbackerWithConfig {
         let aEdges = [this];
 
 
-        const result = wasm.icu4x_LocaleFallbackerWithConfig_fallback_for_locale_mv1(this.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_LocaleFallbackerWithConfig_fallback_for_locale_mv1(this.ffiValue, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             return new LocaleFallbackIterator(diplomatRuntime.internalConstructor, result, [], aEdges);

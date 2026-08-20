@@ -587,7 +587,7 @@ export class Locale {
      */
     compareTo(other) {
 
-        const result = wasm.icu4x_Locale_compare_to_mv1(this.ffiValue, other.ffiValue);
+        const result = wasm.icu4x_Locale_compare_to_mv1(this.ffiValue, other instanceof Locale ? other.ffiValue : typeError('other', 'Locale'));
 
         try {
             return result;

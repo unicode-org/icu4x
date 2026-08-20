@@ -125,12 +125,12 @@ export class CollatorResolvedOptions {
         functionCleanupArena,
         appendArrayMap
     ) {
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#strength.ffiValue, Int32Array);
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 4, this.#alternateHandling.ffiValue, Int32Array);
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 8, this.#caseFirst.ffiValue, Int32Array);
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 12, this.#maxVariable.ffiValue, Int32Array);
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 16, this.#caseLevel.ffiValue, Int32Array);
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 20, this.#numeric.ffiValue, Int32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, new CollatorStrength(this.#strength).ffiValue, Int32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 4, new CollatorAlternateHandling(this.#alternateHandling).ffiValue, Int32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 8, new CollatorCaseFirst(this.#caseFirst).ffiValue, Int32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 12, new CollatorMaxVariable(this.#maxVariable).ffiValue, Int32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 16, new CollatorCaseLevel(this.#caseLevel).ffiValue, Int32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 20, new CollatorNumericOrdering(this.#numeric).ffiValue, Int32Array);
     }
 
     // This struct contains borrowed fields, so this takes in a list of

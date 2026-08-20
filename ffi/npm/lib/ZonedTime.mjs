@@ -85,8 +85,8 @@ export class ZonedTime {
         functionCleanupArena,
         appendArrayMap
     ) {
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#time.ffiValue, Uint32Array);
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 4, this.#zone.ffiValue, Uint32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#time instanceof Time ? this.#time.ffiValue : typeError('this.#time', 'Time'), Uint32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 4, this.#zone instanceof TimeZoneInfo ? this.#zone.ffiValue : typeError('this.#zone', 'TimeZoneInfo'), Uint32Array);
     }
 
     // This struct contains borrowed fields, so this takes in a list of
@@ -120,7 +120,7 @@ export class ZonedTime {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
 
 
-        const result = wasm.icu4x_ZonedTime_strict_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, ianaParser.ffiValue);
+        const result = wasm.icu4x_ZonedTime_strict_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, ianaParser instanceof IanaParser ? ianaParser.ffiValue : typeError('ianaParser', 'IanaParser'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -150,7 +150,7 @@ export class ZonedTime {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
 
 
-        const result = wasm.icu4x_ZonedTime_location_only_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, ianaParser.ffiValue);
+        const result = wasm.icu4x_ZonedTime_location_only_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, ianaParser instanceof IanaParser ? ianaParser.ffiValue : typeError('ianaParser', 'IanaParser'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -210,7 +210,7 @@ export class ZonedTime {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
 
 
-        const result = wasm.icu4x_ZonedTime_lenient_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, ianaParser.ffiValue);
+        const result = wasm.icu4x_ZonedTime_lenient_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, ianaParser instanceof IanaParser ? ianaParser.ffiValue : typeError('ianaParser', 'IanaParser'));
 
         try {
             if (!diplomatReceive.resultFlag) {

@@ -87,7 +87,7 @@ export class DataProvider {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_DataProvider_fork_by_marker_mv1(diplomatReceive.buffer, this.ffiValue, other.ffiValue);
+        const result = wasm.icu4x_DataProvider_fork_by_marker_mv1(diplomatReceive.buffer, this.ffiValue, other instanceof DataProvider ? other.ffiValue : typeError('other', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -111,7 +111,7 @@ export class DataProvider {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_DataProvider_fork_by_locale_mv1(diplomatReceive.buffer, this.ffiValue, other.ffiValue);
+        const result = wasm.icu4x_DataProvider_fork_by_locale_mv1(diplomatReceive.buffer, this.ffiValue, other instanceof DataProvider ? other.ffiValue : typeError('other', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -135,7 +135,7 @@ export class DataProvider {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_DataProvider_enable_locale_fallback_with_mv1(diplomatReceive.buffer, this.ffiValue, fallbacker.ffiValue);
+        const result = wasm.icu4x_DataProvider_enable_locale_fallback_with_mv1(diplomatReceive.buffer, this.ffiValue, fallbacker instanceof LocaleFallbacker ? fallbacker.ffiValue : typeError('fallbacker', 'LocaleFallbacker'));
 
         try {
             if (!diplomatReceive.resultFlag) {

@@ -67,7 +67,7 @@ export class DecomposingNormalizer {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_DecomposingNormalizer_create_nfd_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_DecomposingNormalizer_create_nfd_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -110,7 +110,7 @@ export class DecomposingNormalizer {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_DecomposingNormalizer_create_nfkd_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_DecomposingNormalizer_create_nfkd_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {

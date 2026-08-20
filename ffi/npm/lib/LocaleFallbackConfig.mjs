@@ -77,7 +77,7 @@ export class LocaleFallbackConfig {
         functionCleanupArena,
         appendArrayMap
     ) {
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#priority.ffiValue, Int32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, new LocaleFallbackPriority(this.#priority).ffiValue, Int32Array);
     }
 
     // This struct contains borrowed fields, so this takes in a list of

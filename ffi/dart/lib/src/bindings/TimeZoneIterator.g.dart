@@ -4,7 +4,7 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `TimeZoneIter`](https://docs.rs/icu/2.3.0/icu/time/zone/iana/struct.TimeZoneIter.html) for more information.
-final class TimeZoneIterator implements ffi.Finalizable, core.Iterator<TimeZone> {
+final class TimeZoneIterator implements core.Iterator<TimeZone>, ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
   // These are "used" in the sense that they keep dependencies alive

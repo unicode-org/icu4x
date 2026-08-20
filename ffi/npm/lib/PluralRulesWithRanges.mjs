@@ -52,7 +52,7 @@ export class PluralRulesWithRanges {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_PluralRulesWithRanges_create_cardinal_mv1(diplomatReceive.buffer, locale.ffiValue);
+        const result = wasm.icu4x_PluralRulesWithRanges_create_cardinal_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -77,7 +77,7 @@ export class PluralRulesWithRanges {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_PluralRulesWithRanges_create_cardinal_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_PluralRulesWithRanges_create_cardinal_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -102,7 +102,7 @@ export class PluralRulesWithRanges {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_PluralRulesWithRanges_create_ordinal_mv1(diplomatReceive.buffer, locale.ffiValue);
+        const result = wasm.icu4x_PluralRulesWithRanges_create_ordinal_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -127,7 +127,7 @@ export class PluralRulesWithRanges {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_PluralRulesWithRanges_create_ordinal_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_PluralRulesWithRanges_create_ordinal_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -150,7 +150,7 @@ export class PluralRulesWithRanges {
      */
     categoryForRange(start, end) {
 
-        const result = wasm.icu4x_PluralRulesWithRanges_category_for_range_mv1(this.ffiValue, start.ffiValue, end.ffiValue);
+        const result = wasm.icu4x_PluralRulesWithRanges_category_for_range_mv1(this.ffiValue, start instanceof PluralOperands ? start.ffiValue : typeError('start', 'PluralOperands'), end instanceof PluralOperands ? end.ffiValue : typeError('end', 'PluralOperands'));
 
         try {
             return new PluralCategory(diplomatRuntime.internalConstructor, result);
