@@ -381,7 +381,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_name_fallback_to_iso_name() {
+    pub fn test_name_fallback_to_iso_code_name() {
         let prefs_en: CurrencyFormatterPreferences = locale!("en-US").into();
         // Unknown currency code should gracefully fall back to IsoCodeName instead of DataError(IdentifierNotFound)
         let currency_xyz = currency!("XYZ");
@@ -389,6 +389,29 @@ mod tests {
 
         let fmt_name = CurrencyFormatter::try_new_name(prefs_en, currency_xyz).unwrap();
         assert_writeable_eq!(fmt_name.format_fixed_decimal(&value), "12,345.67 XYZ");
+    }
+
+    #[test]
+    pub fn test_symbol_fallback_to_iso_code_symbol() {
+        let prefs_en: CurrencyFormatterPreferences = locale!("en-US").into();
+        // Unknown currency code should gracefully fall back to IsoCodeSymbol instead of DataError(IdentifierNotFound)
+        let currency_xyz = currency!("XYZ");
+        let value = "12345.67".parse().unwrap();
+
+        let fmt_symbol =
+            CurrencyFormatter::try_new_symbol(prefs_en, currency_xyz, Default::default()).unwrap();
+        assert_writeable_eq!(
+            fmt_symbol.format_fixed_decimal(&value),
+            "XYZ\u{a0}12,345.67"
+        );
+
+        let fmt_symbol_narrow =
+            CurrencyFormatter::try_new_symbol_narrow(prefs_en, currency_xyz, Default::default())
+                .unwrap();
+        assert_writeable_eq!(
+            fmt_symbol_narrow.format_fixed_decimal(&value),
+            "XYZ\u{a0}12,345.67"
+        );
     }
 
     #[test]
