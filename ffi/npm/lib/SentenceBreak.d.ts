@@ -111,6 +111,11 @@ export class SentenceBreak {
      */
     static fromIntegerValue(other: number): SentenceBreak | null;
 
+    /**
+     * Creates a `SentenceBreak` from a string.
+     *
+     * Short names, long names, and aliases are supported, and matching is case-insensitive.
+     */
     static tryFromStr(s: string): SentenceBreak | null;
 
     constructor(value: SentenceBreak | string );

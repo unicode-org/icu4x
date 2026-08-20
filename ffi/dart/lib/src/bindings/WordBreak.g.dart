@@ -99,7 +99,10 @@ enum WordBreak {
     return WordBreak.values[result.union.ok];
   }
 
-  static WordBreak? tryFromStr(String s) {
+  /// Creates a `WordBreak` from a string.
+  ///
+  /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+  static WordBreak? fromString(String s) {
     final temp = _FinalizedArena();
     final result = _icu4x_WordBreak_try_from_str_mv1(s._utf8AllocIn(temp.arena));
     if (!result.isOk) {

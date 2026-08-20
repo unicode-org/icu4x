@@ -143,6 +143,11 @@ export class BidiClass {
      */
     static fromIntegerValue(other: number): BidiClass | null;
 
+    /**
+     * Creates a `BidiClass` from a string.
+     *
+     * Short names, long names, and aliases are supported, and matching is case-insensitive.
+     */
     static tryFromStr(s: string): BidiClass | null;
 
     constructor(value: BidiClass | string );

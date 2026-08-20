@@ -487,6 +487,10 @@ enum class Script(val inner: Int) {
         }
         @JvmStatic
         
+        /** Creates a `Script` from a string.
+        *
+        *Short names, long names, and aliases are supported, and matching is case-insensitive.
+        */
         fun tryFromStr(s: String): Script? {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             

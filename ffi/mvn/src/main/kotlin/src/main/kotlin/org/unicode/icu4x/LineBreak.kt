@@ -106,6 +106,10 @@ enum class LineBreak {
         }
         @JvmStatic
         
+        /** Creates a `LineBreak` from a string.
+        *
+        *Short names, long names, and aliases are supported, and matching is case-insensitive.
+        */
         fun tryFromStr(s: String): LineBreak? {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             

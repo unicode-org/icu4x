@@ -304,6 +304,11 @@ export class BidiClass {
         }
     }
 
+    /**
+     * Creates a `BidiClass` from a string.
+     *
+     * Short names, long names, and aliases are supported, and matching is case-insensitive.
+     */
     static tryFromStr(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 

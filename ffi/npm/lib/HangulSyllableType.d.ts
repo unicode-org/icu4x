@@ -75,6 +75,11 @@ export class HangulSyllableType {
      */
     static fromIntegerValue(other: number): HangulSyllableType | null;
 
+    /**
+     * Creates a `HangulSyllableType` from a string.
+     *
+     * Short names, long names, and aliases are supported, and matching is case-insensitive.
+     */
     static tryFromStr(s: string): HangulSyllableType | null;
 
     constructor(value: HangulSyllableType | string );

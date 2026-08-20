@@ -175,6 +175,10 @@ enum class CanonicalCombiningClass(val inner: Int) {
         }
         @JvmStatic
         
+        /** Creates a `CanonicalCombiningClass` from a string.
+        *
+        *Short names, long names, and aliases are supported, and matching is case-insensitive.
+        */
         fun tryFromStr(s: String): CanonicalCombiningClass? {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             

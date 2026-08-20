@@ -95,6 +95,11 @@ public:
    */
   inline static std::optional<icu4x::VerticalOrientation> from_integer_value(uint8_t other);
 
+  /**
+   * Creates a `VerticalOrientation` from a string.
+   *
+   * Short names, long names, and aliases are supported, and matching is case-insensitive.
+   */
   inline static std::optional<icu4x::VerticalOrientation> try_from_str(std::string_view s);
 
     inline icu4x::capi::VerticalOrientation AsFFI() const;

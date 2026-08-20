@@ -907,6 +907,11 @@ export class Script {
      */
     static fromIntegerValue(other: number): Script | null;
 
+    /**
+     * Creates a `Script` from a string.
+     *
+     * Short names, long names, and aliases are supported, and matching is case-insensitive.
+     */
     static tryFromStr(s: string): Script | null;
 
     constructor(value: Script | string );

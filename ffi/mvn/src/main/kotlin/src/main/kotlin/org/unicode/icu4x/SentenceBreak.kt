@@ -72,6 +72,10 @@ enum class SentenceBreak {
         }
         @JvmStatic
         
+        /** Creates a `SentenceBreak` from a string.
+        *
+        *Short names, long names, and aliases are supported, and matching is case-insensitive.
+        */
         fun tryFromStr(s: String): SentenceBreak? {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             

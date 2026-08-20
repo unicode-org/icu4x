@@ -61,6 +61,10 @@ enum class IndicConjunctBreak {
         }
         @JvmStatic
         
+        /** Creates a `IndicConjunctBreak` from a string.
+        *
+        *Short names, long names, and aliases are supported, and matching is case-insensitive.
+        */
         fun tryFromStr(s: String): IndicConjunctBreak? {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             

@@ -61,6 +61,10 @@ enum class VerticalOrientation {
         }
         @JvmStatic
         
+        /** Creates a `VerticalOrientation` from a string.
+        *
+        *Short names, long names, and aliases are supported, and matching is case-insensitive.
+        */
         fun tryFromStr(s: String): VerticalOrientation? {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             

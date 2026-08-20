@@ -163,6 +163,10 @@ enum class JoiningGroup {
         }
         @JvmStatic
         
+        /** Creates a `JoiningGroup` from a string.
+        *
+        *Short names, long names, and aliases are supported, and matching is case-insensitive.
+        */
         fun tryFromStr(s: String): JoiningGroup? {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             

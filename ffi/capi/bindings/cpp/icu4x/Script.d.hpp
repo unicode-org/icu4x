@@ -1145,6 +1145,11 @@ public:
    */
   inline static std::optional<icu4x::Script> from_integer_value(uint16_t other);
 
+  /**
+   * Creates a `Script` from a string.
+   *
+   * Short names, long names, and aliases are supported, and matching is case-insensitive.
+   */
   inline static std::optional<icu4x::Script> try_from_str(std::string_view s);
 
     inline icu4x::capi::Script AsFFI() const;

@@ -99,7 +99,10 @@ enum BidiClass {
     return BidiClass.values[result.union.ok];
   }
 
-  static BidiClass? tryFromStr(String s) {
+  /// Creates a `BidiClass` from a string.
+  ///
+  /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+  static BidiClass? fromString(String s) {
     final temp = _FinalizedArena();
     final result = _icu4x_BidiClass_try_from_str_mv1(s._utf8AllocIn(temp.arena));
     if (!result.isOk) {

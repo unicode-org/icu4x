@@ -94,6 +94,10 @@ enum class IndicSyllabicCategory {
         }
         @JvmStatic
         
+        /** Creates a `IndicSyllabicCategory` from a string.
+        *
+        *Short names, long names, and aliases are supported, and matching is case-insensitive.
+        */
         fun tryFromStr(s: String): IndicSyllabicCategory? {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             

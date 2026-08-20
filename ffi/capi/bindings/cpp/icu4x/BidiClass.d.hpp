@@ -190,6 +190,11 @@ public:
    */
   inline static std::optional<icu4x::BidiClass> from_integer_value(uint8_t other);
 
+  /**
+   * Creates a `BidiClass` from a string.
+   *
+   * Short names, long names, and aliases are supported, and matching is case-insensitive.
+   */
   inline static std::optional<icu4x::BidiClass> try_from_str(std::string_view s);
 
     inline icu4x::capi::BidiClass AsFFI() const;
