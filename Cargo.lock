@@ -1307,7 +1307,7 @@ dependencies = [
 
 [[package]]
 name = "icu"
-version = "2.3.0"
+version = "2.3.1"
 dependencies = [
  "chrono",
  "chrono-tz",
@@ -1418,7 +1418,7 @@ version = "2.3.0"
 
 [[package]]
 name = "icu_capi"
-version = "2.3.0"
+version = "2.3.1"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
@@ -1488,7 +1488,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator"
-version = "2.3.0"
+version = "2.3.1"
 dependencies = [
  "atoi",
  "criterion",
@@ -1702,7 +1702,7 @@ version = "2.3.0"
 
 [[package]]
 name = "icu_locale"
-version = "2.3.0"
+version = "2.3.1"
 dependencies = [
  "criterion",
  "databake",
@@ -1860,7 +1860,7 @@ version = "2.3.0"
 
 [[package]]
 name = "icu_provider"
-version = "2.3.0"
+version = "2.3.1"
 dependencies = [
  "bincode",
  "criterion",
@@ -1977,7 +1977,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_source"
-version = "2.3.0"
+version = "2.3.1"
 dependencies = [
  "crlify",
  "elsa",
@@ -4356,7 +4356,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.11.5"
+version = "0.11.6"
 dependencies = [
  "bincode",
  "proc-macro2",

@@ -7,7 +7,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * See the [Rust documentation for `DateFromFieldsOptions`](https://docs.rs/icu/2.3.0/icu/calendar/options/struct.DateFromFieldsOptions.html) for more information.
+ * See the [Rust documentation for `DateFromFieldsOptions`](https://docs.rs/icu/2.3.1/icu/calendar/options/struct.DateFromFieldsOptions.html) for more information.
  */
 export class DateFromFieldsOptions {
     #overflow;
