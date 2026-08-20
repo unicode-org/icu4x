@@ -386,6 +386,7 @@ macro_rules! cb {
 
             let mut map = std::collections::BTreeMap::new();
             let mut failed = false;
+            #[allow(clippy::large_stack_arrays)]
             for marker in [
                 $(
                     <$marker_ty>::INFO,
