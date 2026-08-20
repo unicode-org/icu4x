@@ -1807,16 +1807,11 @@ impl Astronomical {
         let deg_90 = 90.0;
         let deg_4_1 = 4.1;
 
-        if phase > new
+        phase > new
             && phase < first_quarter
             && cap_arcl >= deg_10_6
             && cap_arcl <= deg_90
             && h > deg_4_1
-        {
-            return true;
-        }
-
-        false
     }
 
     /// Criterion for possible visibility of crescent moon on the eve of `date` at `location`;

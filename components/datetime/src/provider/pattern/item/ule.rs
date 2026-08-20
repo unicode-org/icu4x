@@ -259,10 +259,11 @@ unsafe impl ULE for GenericPatternItemULE {
         if !bytes.len().is_multiple_of(3) {
             return Err(UleError::length::<Self>(bytes.len()));
         }
-        #[expect(clippy::indexing_slicing)] // chunks
         if !bytes
-            .chunks_exact(3)
-            .all(|c| Self::bytes_in_range((&c[0], &c[1], &c[2])))
+            .as_chunks::<3>()
+            .0
+            .iter()
+            .all(|[a, b, c]| Self::bytes_in_range((a, b, c)))
         {
             return Err(UleError::parse::<Self>());
         }

@@ -475,21 +475,11 @@ fn unrolled_dot_1(xs: &[f32], ys: &ZeroSlice<f32>) -> f32 {
     // eightfold unrolled so that floating point can be vectorized
     // (even with strict floating point accuracy semantics)
     let mut p = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    let xit = xs.chunks_exact(8);
-    let yit = ys.as_ule_slice().chunks_exact(8);
-    let sum = xit
-        .remainder()
-        .iter()
-        .zip(yit.remainder().iter())
-        .map(|(x, y)| x * f32c!(*y))
-        .sum::<f32>();
-    for (xx, yy) in xit.zip(yit) {
-        // TODO: Use array_chunks once stable to avoid the unwrap.
-        // <https://github.com/rust-lang/rust/issues/74985>
-        #[expect(clippy::unwrap_used)]
-        let [x0, x1, x2, x3, x4, x5, x6, x7] = *<&[f32; 8]>::try_from(xx).unwrap();
-        #[expect(clippy::unwrap_used)]
-        let [y0, y1, y2, y3, y4, y5, y6, y7] = *<&[<f32 as AsULE>::ULE; 8]>::try_from(yy).unwrap();
+    let (xx, xr) = xs.as_chunks::<8>();
+    let (yy, yr) = ys.as_ule_slice().as_chunks::<8>();
+    let sum = xr.iter().zip(yr).map(|(x, y)| x * f32c!(*y)).sum::<f32>();
+    for (&[x0, x1, x2, x3, x4, x5, x6, x7], &[y0, y1, y2, y3, y4, y5, y6, y7]) in xx.iter().zip(yy)
+    {
         p.0 += x0 * f32c!(y0);
         p.1 += x1 * f32c!(y1);
         p.2 += x2 * f32c!(y2);
@@ -512,21 +502,15 @@ fn unrolled_dot_2(xs: &ZeroSlice<f32>, ys: &ZeroSlice<f32>) -> f32 {
     // eightfold unrolled so that floating point can be vectorized
     // (even with strict floating point accuracy semantics)
     let mut p = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    let xit = xs.as_ule_slice().chunks_exact(8);
-    let yit = ys.as_ule_slice().chunks_exact(8);
-    let sum = xit
-        .remainder()
+    let (xx, xr) = xs.as_ule_slice().as_chunks::<8>();
+    let (yy, yr) = ys.as_ule_slice().as_chunks::<8>();
+    let sum = xr
         .iter()
-        .zip(yit.remainder().iter())
+        .zip(yr)
         .map(|(x, y)| f32c!(*x) * f32c!(*y))
         .sum::<f32>();
-    for (xx, yy) in xit.zip(yit) {
-        // TODO: Use array_chunks once stable to avoid the unwrap.
-        // <https://github.com/rust-lang/rust/issues/74985>
-        #[expect(clippy::unwrap_used)]
-        let [x0, x1, x2, x3, x4, x5, x6, x7] = *<&[<f32 as AsULE>::ULE; 8]>::try_from(xx).unwrap();
-        #[expect(clippy::unwrap_used)]
-        let [y0, y1, y2, y3, y4, y5, y6, y7] = *<&[<f32 as AsULE>::ULE; 8]>::try_from(yy).unwrap();
+    for (&[x0, x1, x2, x3, x4, x5, x6, x7], &[y0, y1, y2, y3, y4, y5, y6, y7]) in xx.iter().zip(yy)
+    {
         p.0 += f32c!(x0) * f32c!(y0);
         p.1 += f32c!(x1) * f32c!(y1);
         p.2 += f32c!(x2) * f32c!(y2);
