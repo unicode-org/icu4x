@@ -11,6 +11,8 @@ internal interface PropertyValueNameToEnumMapperLib: Library {
     fun icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(handle: Pointer, name: Slice): Short
     fun icu4x_PropertyValueNameToEnumMapper_create_bidi_class_mv1(): Pointer
     fun icu4x_PropertyValueNameToEnumMapper_create_bidi_class_with_provider_mv1(provider: Pointer): ResultPointerInt
+    fun icu4x_PropertyValueNameToEnumMapper_create_block_mv1(): Pointer
+    fun icu4x_PropertyValueNameToEnumMapper_create_block_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_PropertyValueNameToEnumMapper_create_canonical_combining_class_mv1(): Pointer
     fun icu4x_PropertyValueNameToEnumMapper_create_canonical_combining_class_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_mv1(): Pointer
@@ -99,6 +101,39 @@ class PropertyValueNameToEnumMapper internal constructor (
         fun createBidiClassWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_bidi_class_with_provider_mv1(provider.handle);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                val selfEdges: List<Any> = listOf()
+                val handle = nativeOkVal 
+                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
+                return returnOpaque.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
+            }
+        }
+        @JvmStatic
+        
+        /** Create a name-to-enum mapper for the `Block` property, using compiled data.
+        *
+        *See the [Rust documentation for `Block`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html) for more information.
+        */
+        fun createBlock(): PropertyValueNameToEnumMapper {
+            
+            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_block_mv1();
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges, true)
+            return returnOpaque
+        }
+        @JvmStatic
+        
+        /** Create a name-to-enum mapper for the `Block` property, using a particular data source.
+        *
+        *See the [Rust documentation for `Block`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html) for more information.
+        */
+        fun createBlockWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
+            
+            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_block_with_provider_mv1(provider.handle);
             val nativeOkVal = returnVal.getNativeOk();
             if (nativeOkVal != null) {
                 val selfEdges: List<Any> = listOf()

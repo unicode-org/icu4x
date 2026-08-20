@@ -841,6 +841,14 @@ impl_value_getter! {
 }
 
 impl_value_getter! {
+    impl Block {
+        PropertyNameParseBlockV1 / SINGLETON_PROPERTY_NAME_PARSE_BLOCK_V1;
+        PropertyEnumToValueNameLinearMap / PropertyNameShortBlockV1 / SINGLETON_PROPERTY_NAME_SHORT_BLOCK_V1;
+        PropertyEnumToValueNameLinearMap / PropertyNameLongBlockV1 / SINGLETON_PROPERTY_NAME_LONG_BLOCK_V1;
+    }
+}
+
+impl_value_getter! {
     impl NumericType {
         PropertyNameParseNumericTypeV1 / SINGLETON_PROPERTY_NAME_PARSE_NUMERIC_TYPE_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameShortNumericTypeV1 / SINGLETON_PROPERTY_NAME_SHORT_NUMERIC_TYPE_V1;

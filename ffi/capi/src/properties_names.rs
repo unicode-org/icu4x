@@ -165,6 +165,33 @@ pub mod ffi {
             )))
         }
 
+        /// Create a name-to-enum mapper for the `Block` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::Block, Struct)]
+        #[diplomat::attr(auto, named_constructor = "block")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_block() -> Box<PropertyValueNameToEnumMapper> {
+            Box::new(PropertyValueNameToEnumMapper(
+                icu_properties::PropertyParser::<icu_properties::props::Block>::new()
+                    .static_to_owned()
+                    .erase(),
+            ))
+        }
+
+        /// Create a name-to-enum mapper for the `Block` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::Block, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "block_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_block_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
+            Ok(Box::new(PropertyValueNameToEnumMapper(
+                icu_properties::PropertyParser::<
+                                    icu_properties::props::Block,
+                                >::try_new_unstable(&provider.get_unstable()?)?
+                    .erase(),
+            )))
+        }
+
         /// Create a name-to-enum mapper for the `CanonicalCombiningClass` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::CanonicalCombiningClass, Struct)]
         #[diplomat::attr(auto, named_constructor = "canonical_combining_class")]

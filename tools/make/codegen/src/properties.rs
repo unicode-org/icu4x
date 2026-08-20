@@ -46,7 +46,7 @@ impl Prop {
         // This produces canonical Rust enum variant identifiers. It does not lead to collisions
         // as UAX#44 guarantees uniqueness under loose matching, which ignores case and underscores.
         long_name
-            .replace('_', "")
+            .replace(['-', '_', ' '], "")
             .char_indices()
             .map(|(i, c)| if i == 0 { c.to_ascii_uppercase() } else { c })
             .collect()
@@ -56,7 +56,14 @@ impl Prop {
         self.transform_ident(long_name)
             // Unfortunately we're stuck with these non-canonical names on FFI
             .replace("Blissymbols", "BlisSymbols")
-            .replace("Ethiopic", "Ethiopian")
+            .replace(
+                "Ethiopic",
+                if self.name == "Script" {
+                    "Ethiopian"
+                } else {
+                    "Ethiopic"
+                },
+            )
             .replace("ArabicNastaliq", "Nastaliq")
             .replace("LVSyllable", "LeadingVowelSyllable")
             .replace("LVTSyllable", "LeadingVowelTrailingSyllable")
@@ -112,7 +119,16 @@ static VARIANTS: LazyLock<BTreeMap<&str, BTreeMap<u32, (&str, &str, Vec<&str>, b
                 .map(|d| d.parse::<u32>().unwrap());
             let short_name = parts.next().unwrap();
             let long_name = parts.next().unwrap();
-            let aliases = parts.collect::<Vec<_>>();
+            let aliases = parts
+                // Blocks.txt contains an alias that is equal under https://www.unicode.org/reports/tr44/#UAX44-LM3
+                .filter(|a| {
+                    !a.replace([' ', '_', '-'], "")
+                        .eq_ignore_ascii_case(&long_name.replace([' ', '_', '-'], ""))
+                        && !a
+                            .replace([' ', '_', '-'], "")
+                            .eq_ignore_ascii_case(&short_name.replace([' ', '_', '-'], ""))
+                })
+                .collect::<Vec<_>>();
             if let Some(discriminant) = discriminant {
                 discriminants.entry(prop).or_default().insert(
                     discriminant,
@@ -181,6 +197,7 @@ static VARIANTS: LazyLock<BTreeMap<&str, BTreeMap<u32, (&str, &str, Vec<&str>, b
 pub fn main() {
     let props = &[
         Prop::new::<BidiClass>(),
+        Prop::new::<Block>(),
         Prop::new::<CanonicalCombiningClass>(),
         Prop::new::<EastAsianWidth>(),
         Prop::new::<GeneralCategory>(),
