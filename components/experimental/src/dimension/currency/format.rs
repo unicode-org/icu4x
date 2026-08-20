@@ -383,7 +383,7 @@ mod tests {
     #[test]
     pub fn test_name_fallback_to_iso_name() {
         let prefs_en: CurrencyFormatterPreferences = locale!("en-US").into();
-        // Unknown currency code should gracefully fall back to IsoName instead of DataError(IdentifierNotFound)
+        // Unknown currency code should gracefully fall back to IsoCodeName instead of DataError(IdentifierNotFound)
         let currency_xyz = currency!("XYZ");
         let value = "12345.67".parse().unwrap();
 
