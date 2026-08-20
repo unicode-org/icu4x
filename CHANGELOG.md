@@ -4,11 +4,24 @@
 
 Several crates have had patch releases in the 2.3 stream:
 
+- Components
+  - (2.3.1) `icu`
+    - Remove dev-dependency on unpublished crate `icu_host_info` (unicode-org#8404)
+  - (2.3.1) `icu_collator`
+    - Fix panic when a contraction contracts a starter, does not contract a following non-starter, and the non-starter starts another contraction. Occurs in Burmese. (unicode-org#8380)
+  - (2.3.1) `icu_locale`
+    - Remove unnecessary dependencies on icu_pattern when `unstable` feature is not enabled (unicode-org#8397)
+- Data model and providers
+  - (2.3.1) `icu_provider`
+    - Improve performance of data loading that uses locale fallback (unicode-org#8406)
+  - (2.3.1) `icu_provider_source`
+    - Fix checksum on 32-bit systems (unicode-org#8401)
 - Utils
-    - (0.11.5) `zerovec-derive`
-        - Fix soundness issue around multi element buffer validation in ULE derives (unicode-org#8393)
-    - (0.11.8) `zerovec`
-        - Fix length check in `impl ULE for [T; N]`
+  - (0.11.5) `zerovec-derive`
+    - Fix soundness issue around multi element buffer validation in ULE derives (unicode-org#8393)
+    - Fix when building with `MIRIFLAGS=-Zmiri-tree-borrows` (unicode-org#8391)
+  - (0.11.8) `zerovec`
+    - Fix length check in `impl ULE for [T; N]` (unicode-org#8400)
 
 ## icu4x 2.3
 
