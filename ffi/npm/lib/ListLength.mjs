@@ -5,7 +5,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * See the [Rust documentation for `ListLength`](https://docs.rs/icu/2.3.0/icu/list/options/enum.ListLength.html) for more information.
+ * See the [Rust documentation for `ListLength`](https://docs.rs/icu/2.3.1/icu/list/options/enum.ListLength.html) for more information.
  */
 export class ListLength {
     #value = undefined;

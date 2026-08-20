@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `UtcOffset`](https://docs.rs/icu/2.3.0/icu/time/zone/struct.UtcOffset.html) for more information.
+/// See the [Rust documentation for `UtcOffset`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html) for more information.
 final class UtcOffset implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -32,7 +32,7 @@ final class UtcOffset implements ffi.Finalizable {
   ///
   /// Errors if the offset seconds are out of range.
   ///
-  /// See the [Rust documentation for `try_from_seconds`](https://docs.rs/icu/2.3.0/icu/time/zone/struct.UtcOffset.html#method.try_from_seconds) for more information.
+  /// See the [Rust documentation for `try_from_seconds`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html#method.try_from_seconds) for more information.
   ///
   /// Throws [TimeZoneInvalidOffsetError] on failure.
   factory UtcOffset.fromSeconds(int seconds) {
@@ -45,9 +45,9 @@ final class UtcOffset implements ffi.Finalizable {
 
   /// Creates an offset from a string.
   ///
-  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.3.0/icu/time/zone/struct.UtcOffset.html#method.try_from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html#method.try_from_str) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.3.0/icu/time/zone/struct.UtcOffset.html)
+  /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html)
   ///
   /// Throws [TimeZoneInvalidOffsetError] on failure.
   factory UtcOffset.fromString(String offset) {
@@ -61,11 +61,11 @@ final class UtcOffset implements ffi.Finalizable {
 
   /// Returns the value as offset seconds.
   ///
-  /// See the [Rust documentation for `offset`](https://docs.rs/icu/2.3.0/icu/time/struct.TimeZoneInfo.html#method.offset) for more information.
+  /// See the [Rust documentation for `offset`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZoneInfo.html#method.offset) for more information.
   ///
-  /// See the [Rust documentation for `to_seconds`](https://docs.rs/icu/2.3.0/icu/time/zone/struct.UtcOffset.html#method.to_seconds) for more information.
+  /// See the [Rust documentation for `to_seconds`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html#method.to_seconds) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.3.0/icu/time/zone/struct.UtcOffset.html)
+  /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html)
   int get seconds {
     final result = _icu4x_UtcOffset_seconds_mv1(_ffi);
     return result;
@@ -73,9 +73,9 @@ final class UtcOffset implements ffi.Finalizable {
 
   /// Returns whether the offset is positive.
   ///
-  /// See the [Rust documentation for `is_non_negative`](https://docs.rs/icu/2.3.0/icu/time/zone/struct.UtcOffset.html#method.is_non_negative) for more information.
+  /// See the [Rust documentation for `is_non_negative`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html#method.is_non_negative) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.3.0/icu/time/zone/struct.UtcOffset.html)
+  /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html)
   bool get isNonNegative {
     final result = _icu4x_UtcOffset_is_non_negative_mv1(_ffi);
     return result;
@@ -83,9 +83,9 @@ final class UtcOffset implements ffi.Finalizable {
 
   /// Returns whether the offset is zero.
   ///
-  /// See the [Rust documentation for `is_zero`](https://docs.rs/icu/2.3.0/icu/time/zone/struct.UtcOffset.html#method.is_zero) for more information.
+  /// See the [Rust documentation for `is_zero`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html#method.is_zero) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.3.0/icu/time/zone/struct.UtcOffset.html)
+  /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html)
   bool get isZero {
     final result = _icu4x_UtcOffset_is_zero_mv1(_ffi);
     return result;
@@ -93,9 +93,9 @@ final class UtcOffset implements ffi.Finalizable {
 
   /// Returns the hours part of the offset.
   ///
-  /// See the [Rust documentation for `hours_part`](https://docs.rs/icu/2.3.0/icu/time/zone/struct.UtcOffset.html#method.hours_part) for more information.
+  /// See the [Rust documentation for `hours_part`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html#method.hours_part) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.3.0/icu/time/zone/struct.UtcOffset.html)
+  /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html)
   int get hoursPart {
     final result = _icu4x_UtcOffset_hours_part_mv1(_ffi);
     return result;
@@ -103,9 +103,9 @@ final class UtcOffset implements ffi.Finalizable {
 
   /// Returns the minutes part of the offset.
   ///
-  /// See the [Rust documentation for `minutes_part`](https://docs.rs/icu/2.3.0/icu/time/zone/struct.UtcOffset.html#method.minutes_part) for more information.
+  /// See the [Rust documentation for `minutes_part`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html#method.minutes_part) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.3.0/icu/time/zone/struct.UtcOffset.html)
+  /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html)
   int get minutesPart {
     final result = _icu4x_UtcOffset_minutes_part_mv1(_ffi);
     return result;
@@ -113,9 +113,9 @@ final class UtcOffset implements ffi.Finalizable {
 
   /// Returns the seconds part of the offset.
   ///
-  /// See the [Rust documentation for `seconds_part`](https://docs.rs/icu/2.3.0/icu/time/zone/struct.UtcOffset.html#method.seconds_part) for more information.
+  /// See the [Rust documentation for `seconds_part`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html#method.seconds_part) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.3.0/icu/time/zone/struct.UtcOffset.html)
+  /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html)
   int get secondsPart {
     final result = _icu4x_UtcOffset_seconds_part_mv1(_ffi);
     return result;

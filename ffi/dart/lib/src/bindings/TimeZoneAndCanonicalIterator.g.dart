@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `TimeZoneAndCanonicalIter`](https://docs.rs/icu/2.3.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html) for more information.
+/// See the [Rust documentation for `TimeZoneAndCanonicalIter`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html) for more information.
 final class TimeZoneAndCanonicalIterator implements ffi.Finalizable, core.Iterator<TimeZoneAndCanonical> {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -41,7 +41,7 @@ final class TimeZoneAndCanonicalIterator implements ffi.Finalizable, core.Iterat
     return _current != null;
   }
 
-  /// See the [Rust documentation for `next`](https://docs.rs/icu/2.3.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html#method.next) for more information.
+  /// See the [Rust documentation for `next`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html#method.next) for more information.
   TimeZoneAndCanonical? _iteratorNext() {
     // This lifetime edge depends on lifetimes: 'a
     final aEdges = [this];
