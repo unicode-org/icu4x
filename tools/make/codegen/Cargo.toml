@@ -10,7 +10,7 @@ edition.workspace = true
 
 [dependencies]
 askama = { workspace = true }
-icu = { workspace = true, features = ["compiled_data"] }
+icu = { workspace = true }
 heck = "0.4"
 
 [package.metadata.cargo-all-features]

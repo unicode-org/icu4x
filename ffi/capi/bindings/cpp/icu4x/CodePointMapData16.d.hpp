@@ -74,6 +74,20 @@ public:
   inline std::unique_ptr<icu4x::CodePointSetData> get_set_for_value(uint16_t value) const;
 
   /**
+   * Create a map for the `Block` property, using compiled data.
+   *
+   * See the [Rust documentation for `Block`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html) for more information.
+   */
+  inline static std::unique_ptr<icu4x::CodePointMapData16> create_block();
+
+  /**
+   * Create a map for the `Block` property, using a particular data source.
+   *
+   * See the [Rust documentation for `Block`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html) for more information.
+   */
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData16>, icu4x::DataError> create_block_with_provider(const icu4x::DataProvider& provider);
+
+  /**
    * Create a map for the `Script` property, using compiled data.
    *
    * See the [Rust documentation for `Script`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html) for more information.

@@ -77,6 +77,27 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
 
+  /// Create a name-to-enum mapper for the `Block` property, using compiled data.
+  ///
+  /// See the [Rust documentation for `Block`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html) for more information.
+  factory PropertyValueNameToEnumMapper.block() {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_block_mv1();
+    return PropertyValueNameToEnumMapper._fromFfi(result, []);
+  }
+
+  /// Create a name-to-enum mapper for the `Block` property, using a particular data source.
+  ///
+  /// See the [Rust documentation for `Block`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory PropertyValueNameToEnumMapper.blockWithProvider(DataProvider provider) {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_block_with_provider_mv1(provider._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
+  }
+
   /// Create a name-to-enum mapper for the `CanonicalCombiningClass` property, using compiled data.
   ///
   /// See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
@@ -423,6 +444,18 @@ external ffi.Pointer<ffi.Opaque> _icu4x_PropertyValueNameToEnumMapper_create_bid
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_bidi_class_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_PropertyValueNameToEnumMapper_create_bidi_class_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+// ignore: experimental_member_use
+@meta.RecordUse()
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_block_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_PropertyValueNameToEnumMapper_create_block_mv1();
+
+// ignore: experimental_member_use
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_block_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_PropertyValueNameToEnumMapper_create_block_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 // ignore: experimental_member_use
 @meta.RecordUse()
