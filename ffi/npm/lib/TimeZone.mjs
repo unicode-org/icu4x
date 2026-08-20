@@ -183,7 +183,7 @@ export class TimeZone {
      */
     withOffset(offset) {
 
-        const result = wasm.icu4x_TimeZone_with_offset_mv1(this.ffiValue, offset.ffiValue);
+        const result = wasm.icu4x_TimeZone_with_offset_mv1(this.ffiValue, offset instanceof UtcOffset ? offset.ffiValue : typeError('offset', 'UtcOffset'));
 
         try {
             return new TimeZoneInfo(diplomatRuntime.internalConstructor, result, []);

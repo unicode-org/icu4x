@@ -6,7 +6,7 @@ part of 'lib.g.dart';
 /// Documents which days of the week are considered to be a part of the weekend
 ///
 /// See the [Rust documentation for `WeekdaySetIterator`](https://docs.rs/icu/2.3.1/icu/calendar/week/struct.WeekdaySetIterator.html) for more information.
-final class WeekdaySetIterator implements ffi.Finalizable, core.Iterator<Weekday> {
+final class WeekdaySetIterator implements core.Iterator<Weekday>, ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
   // These are "used" in the sense that they keep dependencies alive

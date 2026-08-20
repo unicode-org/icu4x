@@ -63,7 +63,7 @@ export class Date {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_Date_from_iso_in_calendar_mv1(diplomatReceive.buffer, isoYear, isoMonth, isoDay, calendar.ffiValue);
+        const result = wasm.icu4x_Date_from_iso_in_calendar_mv1(diplomatReceive.buffer, isoYear, isoMonth, isoDay, calendar instanceof Calendar ? calendar.ffiValue : typeError('calendar', 'Calendar'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -90,7 +90,7 @@ export class Date {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_Date_from_fields_in_calendar_mv1(diplomatReceive.buffer, DateFields._fromSuppliedValue(diplomatRuntime.internalConstructor, fields)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(DateFields._sizeBytes), functionCleanupArena, {}, false), DateFromFieldsOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(DateFromFieldsOptions._sizeBytes), functionCleanupArena, {}, false), calendar.ffiValue);
+        const result = wasm.icu4x_Date_from_fields_in_calendar_mv1(diplomatReceive.buffer, DateFields._fromSuppliedValue(diplomatRuntime.internalConstructor, fields)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(DateFields._sizeBytes), functionCleanupArena, {}, false), DateFromFieldsOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(DateFromFieldsOptions._sizeBytes), functionCleanupArena, {}, false), calendar instanceof Calendar ? calendar.ffiValue : typeError('calendar', 'Calendar'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -125,7 +125,7 @@ export class Date {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_Date_from_codes_in_calendar_mv1(diplomatReceive.buffer, eraCodeSlice.ptr, year, monthCodeSlice.ptr, day, calendar.ffiValue);
+        const result = wasm.icu4x_Date_from_codes_in_calendar_mv1(diplomatReceive.buffer, eraCodeSlice.ptr, year, monthCodeSlice.ptr, day, calendar instanceof Calendar ? calendar.ffiValue : typeError('calendar', 'Calendar'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -152,7 +152,7 @@ export class Date {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_Date_from_rata_die_mv1(diplomatReceive.buffer, rd, calendar.ffiValue);
+        const result = wasm.icu4x_Date_from_rata_die_mv1(diplomatReceive.buffer, rd, calendar instanceof Calendar ? calendar.ffiValue : typeError('calendar', 'Calendar'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -180,7 +180,7 @@ export class Date {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_Date_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, calendar.ffiValue);
+        const result = wasm.icu4x_Date_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, calendar instanceof Calendar ? calendar.ffiValue : typeError('calendar', 'Calendar'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -205,7 +205,7 @@ export class Date {
      */
     toCalendar(calendar) {
 
-        const result = wasm.icu4x_Date_to_calendar_mv1(this.ffiValue, calendar.ffiValue);
+        const result = wasm.icu4x_Date_to_calendar_mv1(this.ffiValue, calendar instanceof Calendar ? calendar.ffiValue : typeError('calendar', 'Calendar'));
 
         try {
             return new Date(diplomatRuntime.internalConstructor, result, []);
@@ -610,7 +610,7 @@ export class Date {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 21, 4, true);
 
 
-        const result = wasm.icu4x_Date_try_until_with_options_mv1(diplomatReceive.buffer, this.ffiValue, other.ffiValue, DateDifferenceOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(DateDifferenceOptions._sizeBytes), functionCleanupArena, {}, false));
+        const result = wasm.icu4x_Date_try_until_with_options_mv1(diplomatReceive.buffer, this.ffiValue, other instanceof Date ? other.ffiValue : typeError('other', 'Date'), DateDifferenceOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(DateDifferenceOptions._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             if (!diplomatReceive.resultFlag) {

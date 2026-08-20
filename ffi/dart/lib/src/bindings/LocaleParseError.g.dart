@@ -4,7 +4,7 @@
 part of 'lib.g.dart';
 
 /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/locale/enum.ParseError.html)
-enum LocaleParseError {
+enum LocaleParseError implements core.Exception {
   // ignore: public_member_api_docs
   unknown,
   // ignore: public_member_api_docs

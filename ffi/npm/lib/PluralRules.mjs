@@ -53,7 +53,7 @@ export class PluralRules {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_PluralRules_create_cardinal_mv1(diplomatReceive.buffer, locale.ffiValue);
+        const result = wasm.icu4x_PluralRules_create_cardinal_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -78,7 +78,7 @@ export class PluralRules {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_PluralRules_create_cardinal_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_PluralRules_create_cardinal_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -103,7 +103,7 @@ export class PluralRules {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_PluralRules_create_ordinal_mv1(diplomatReceive.buffer, locale.ffiValue);
+        const result = wasm.icu4x_PluralRules_create_ordinal_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -128,7 +128,7 @@ export class PluralRules {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_PluralRules_create_ordinal_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_PluralRules_create_ordinal_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -151,7 +151,7 @@ export class PluralRules {
      */
     categoryFor(op) {
 
-        const result = wasm.icu4x_PluralRules_category_for_mv1(this.ffiValue, op.ffiValue);
+        const result = wasm.icu4x_PluralRules_category_for_mv1(this.ffiValue, op instanceof PluralOperands ? op.ffiValue : typeError('op', 'PluralOperands'));
 
         try {
             return new PluralCategory(diplomatRuntime.internalConstructor, result);

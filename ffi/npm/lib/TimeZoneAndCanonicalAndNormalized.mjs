@@ -93,7 +93,7 @@ export class TimeZoneAndCanonicalAndNormalized {
         functionCleanupArena,
         appendArrayMap
     ) {
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#timeZone.ffiValue, Uint32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#timeZone instanceof TimeZone ? this.#timeZone.ffiValue : typeError('this.#timeZone', 'TimeZone'), Uint32Array);
         diplomatRuntime.CleanupArena.maybeCreateWith(functionCleanupArena, ...appendArrayMap['aAppendArray']).alloc(diplomatRuntime.DiplomatBuf.str8(wasm, this.#canonical)).writePtrLenToArrayBuffer(arrayBuffer, offset + 4);
         diplomatRuntime.CleanupArena.maybeCreateWith(functionCleanupArena, ...appendArrayMap['aAppendArray']).alloc(diplomatRuntime.DiplomatBuf.str8(wasm, this.#normalized)).writePtrLenToArrayBuffer(arrayBuffer, offset + 12);
     }

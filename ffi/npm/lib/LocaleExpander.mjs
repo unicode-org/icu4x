@@ -71,7 +71,7 @@ export class LocaleExpander {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_LocaleExpander_create_common_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_LocaleExpander_create_common_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -114,7 +114,7 @@ export class LocaleExpander {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_LocaleExpander_create_extended_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_LocaleExpander_create_extended_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -135,7 +135,7 @@ export class LocaleExpander {
      */
     maximize(locale) {
 
-        const result = wasm.icu4x_LocaleExpander_maximize_mv1(this.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_LocaleExpander_maximize_mv1(this.ffiValue, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             return new TransformResult(diplomatRuntime.internalConstructor, result);
@@ -151,7 +151,7 @@ export class LocaleExpander {
      */
     minimize(locale) {
 
-        const result = wasm.icu4x_LocaleExpander_minimize_mv1(this.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_LocaleExpander_minimize_mv1(this.ffiValue, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             return new TransformResult(diplomatRuntime.internalConstructor, result);
@@ -167,7 +167,7 @@ export class LocaleExpander {
      */
     minimizeFavorScript(locale) {
 
-        const result = wasm.icu4x_LocaleExpander_minimize_favor_script_mv1(this.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_LocaleExpander_minimize_favor_script_mv1(this.ffiValue, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             return new TransformResult(diplomatRuntime.internalConstructor, result);

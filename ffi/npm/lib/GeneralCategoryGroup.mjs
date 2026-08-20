@@ -100,7 +100,7 @@ export class GeneralCategoryGroup {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
 
-        const result = wasm.icu4x_GeneralCategoryGroup_contains_mv1(GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, this)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(GeneralCategoryGroup._sizeBytes), functionCleanupArena, {}, false), val.ffiValue);
+        const result = wasm.icu4x_GeneralCategoryGroup_contains_mv1(GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, this)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(GeneralCategoryGroup._sizeBytes), functionCleanupArena, {}, false), new GeneralCategory(val).ffiValue);
 
         try {
             return result;

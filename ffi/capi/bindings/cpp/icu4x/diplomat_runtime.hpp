@@ -178,15 +178,11 @@ template<class T> struct Err {
   Err& operator=(Err&&) noexcept = default;
 };
 
-template <typename T> struct fn_traits;
-
 template<class T, class E>
 class result {
 protected:
     std::variant<Ok<T>, Err<E>> val;
 public:
-  template <typename T_>
-  friend struct fn_traits;
 
   result(Ok<T>&& v): val(std::move(v)) {}
   result(Err<E>&& v): val(std::move(v)) {}
@@ -454,76 +450,66 @@ constexpr bool is_optional_v = is_optional<T>::value;
 template<typename T>
 using replace_fn_t = diplomat_c_span_convert_t<replace_string_view_t<as_ffi_t<T>>>;
 
-template <typename Ret, typename... Args> struct fn_traits<std::function<Ret(Args...)>> {
-    using fn_ptr_t = Ret(Args...);
-    using function_t = std::function<fn_ptr_t>;
-    using ret = Ret;
-
-    // For a given T, creates a function that take in the C ABI version & return the C++ type.
-    template<typename T>
-    static T replace(replace_fn_t<T> val) {
-      if constexpr(std::is_same_v<T, std::string_view>)   {
-          return std::string_view{val.data, val.len};
-      } else if constexpr (!std::is_same_v<T, diplomat_c_span_convert_t<T>>) {
-        return T{ val.data, val.len };
-      } else if constexpr (!std::is_same_v<T, as_ffi_t<T>>) {
-        if constexpr (std::is_lvalue_reference_v<T>) {
-          return *std::remove_reference_t<T>::FromFFI(val);
-        } else if constexpr (is_unique_ptr_v<T>) {
-          return T(is_unique_ptr<T>::type::FromFFI(val));
-        }
-        else {
-          return T::FromFFI(val);
-        }
+namespace fn_trait_helpers {
+  // For a given T, creates a function that take in the C ABI version & return the C++ type.
+  template<typename T>
+  T replace(replace_fn_t<T> val) {
+    if constexpr(std::is_same_v<T, std::string_view>)   {
+        return std::string_view{val.data, val.len};
+    } else if constexpr (!std::is_same_v<T, diplomat_c_span_convert_t<T>>) {
+      return T{ val.data, val.len };
+    } else if constexpr (!std::is_same_v<T, as_ffi_t<T>>) {
+      if constexpr (std::is_lvalue_reference_v<T>) {
+        return *std::remove_reference_t<T>::FromFFI(val);
+      } else if constexpr (is_unique_ptr_v<T>) {
+        return T(is_unique_ptr<T>::type::FromFFI(val));
       }
       else {
-          return val;
+        return T::FromFFI(val);
       }
     }
-
-    template<typename T>
-    static replace_fn_t<T> replace_ret(T val) {
-      if constexpr(std::is_same_v<T, std::string_view>)   {
-          return {val.data(), val.size()};
-      } else if constexpr (!std::is_same_v<T, diplomat_c_span_convert_t<T>>) {
-        // Can we convert straight away to our slice type, or (in the case of ABI compatible structs), do we have to do a reinterpret cast?
-        if constexpr(std::is_same_v<decltype(std::declval<T>().data()), decltype(replace_fn_t<T>::data)>) {
-          return replace_fn_t<T> { val.data(), val.size() };
-        } else {
-          return replace_fn_t<T> { reinterpret_cast<decltype(replace_fn_t<T>::data)>(val.data()), val.size() };
-        }
-      } else if constexpr(!std::is_same_v<T, as_ffi_t<T>>) {
-        return val.AsFFI();
-      } else {
+    else {
         return val;
+    }
+  }
+
+  template<typename T>
+  replace_fn_t<T> replace_ret(T val) {
+    if constexpr(std::is_same_v<T, std::string_view>)   {
+        return {val.data(), val.size()};
+    } else if constexpr (!std::is_same_v<T, diplomat_c_span_convert_t<T>>) {
+      // Can we convert straight away to our slice type, or (in the case of ABI compatible structs), do we have to do a reinterpret cast?
+      if constexpr(std::is_same_v<decltype(std::declval<T>().data()), decltype(replace_fn_t<T>::data)>) {
+        return replace_fn_t<T> { val.data(), val.size() };
+      } else {
+        return replace_fn_t<T> { reinterpret_cast<decltype(replace_fn_t<T>::data)>(val.data()), val.size() };
+      }
+    } else if constexpr(!std::is_same_v<T, as_ffi_t<T>>) {
+      return val.AsFFI();
+    } else {
+      return val;
+    }
+  }
+
+  template<typename TOut, typename T>
+  TOut replace_optional_ret(std::optional<T> optional) {
+    constexpr bool has_ok = !std::is_same_v<T, std::monostate>;
+
+    bool is_ok = optional.has_value();
+
+    TOut out;
+    out.is_ok = is_ok;
+
+    if constexpr(has_ok) {
+      if (is_ok) {
+        out.ok = replace_ret<T>(optional.value());
       }
     }
+    return out;
+  }
 
-    static Ret c_run_callback(const void *cb, replace_fn_t<Args>... args) {
-        return (*reinterpret_cast<const function_t *>(cb))(replace<Args>(args)...);
-    }
-
-    template<typename TOut, typename T>
-    static TOut replace_optional_ret(std::optional<T> optional) {
-      constexpr bool has_ok = !std::is_same_v<T, std::monostate>;
-
-      bool is_ok = optional.has_value();
-
-      TOut out;
-      out.is_ok = is_ok;
-
-      if constexpr(has_ok) {
-        if (is_ok) {
-          out.ok = replace_ret<T>(optional.value());
-        }
-      }
-      return out;
-    }
-
-    template<typename T, typename E, typename TOut>
-    static TOut c_run_callback_result(const void *cb, replace_fn_t<Args>... args) {
-      result<T, E> res = c_run_callback(cb, args...);
-
+  template<typename T, typename E, typename TOut>
+  TOut replace_result(diplomat::result<T, E> res) {
       auto is_ok = res.is_ok();
 
       constexpr bool has_ok = !std::is_same_v<T, std::monostate>;
@@ -534,25 +520,46 @@ template <typename Ret, typename... Args> struct fn_traits<std::function<Ret(Arg
 
       if constexpr (has_ok) {
         if (is_ok) {
+          auto val = std::move(res).ok().value();
           if constexpr (is_optional_v<T>) {
-            out.ok = replace_optional_ret<decltype(out.ok)>(std::get<Ok<T>>(res.val).inner);
+            out.ok = replace_optional_ret<decltype(out.ok)>(val);
           } else {
-            out.ok = replace_ret<T>(std::get<Ok<T>>(res.val).inner);
+            out.ok = replace_ret<T>(val);
           }
         }
       }
 
       if constexpr(has_err) {
         if (!is_ok) {
-          if constexpr(is_optional_v<T>) {
-            out.err = replace_optional_ret<decltype(out.err)>(std::get<Err<E>>(res.val).inner);
+          auto val = std::move(res).err().value();
+          if constexpr(is_optional_v<E>) {
+            out.err = replace_optional_ret<decltype(out.err)>(val);
           } else {
-            out.err = replace_ret<E>(std::get<Err<E>>(res.val).inner);
+            out.err = replace_ret<E>(val);
           }
         }
       }
 
       return out;
+  }
+} // namespace fn_traits
+
+template <typename T> struct fn_traits;
+
+template <typename Ret, typename... Args> struct fn_traits<std::function<Ret(Args...)>> {
+    using fn_ptr_t = Ret(Args...);
+    using function_t = std::function<fn_ptr_t>;
+    using ret = Ret;
+
+    static Ret c_run_callback(const void *cb, replace_fn_t<Args>... args) {
+        return (*reinterpret_cast<const function_t *>(cb))(fn_trait_helpers::replace<Args>(args)...);
+    }
+
+    template<typename T, typename E, typename TOut>
+    static TOut c_run_callback_result(const void *cb, replace_fn_t<Args>... args) {
+      result<T, E> res = c_run_callback(cb, args...);
+
+      return fn_trait_helpers::replace_result<T, E, TOut>(res);
     }
 
     // For DiplomatOption<>
@@ -560,7 +567,7 @@ template <typename Ret, typename... Args> struct fn_traits<std::function<Ret(Arg
     static TOut c_run_callback_diplomat_option(const void *cb, replace_fn_t<Args>... args) {
       std::optional<T> ret = c_run_callback(cb, args...);
 
-      return replace_optional_ret<TOut>(ret);
+      return fn_trait_helpers::replace_optional_ret<TOut>(ret);
     }
 
     // All we need to do is just convert one pointer to another, while keeping the arguments the same:
