@@ -17,9 +17,9 @@ Several crates have had patch releases in the 2.3 stream:
   - (2.3.1) `icu_provider_source`
     - Fix checksum on 32-bit systems (unicode-org#8401)
 - Utils
-  - (0.11.5) `zerovec-derive`
-    - Fix soundness issue around multi element buffer validation in ULE derives (unicode-org#8393)
-    - Fix when building with `MIRIFLAGS=-Zmiri-tree-borrows` (unicode-org#8391)
+  - (0.11.5, 0.11.6) `zerovec-derive`
+    - (0.11.5) Fix soundness issue around multi element buffer validation in ULE derives (unicode-org#8393)
+    - (0.11.6) Fix when building with `MIRIFLAGS=-Zmiri-tree-borrows` (unicode-org#8391)
   - (0.11.8) `zerovec`
     - Fix length check in `impl ULE for [T; N]` (unicode-org#8400)
 
