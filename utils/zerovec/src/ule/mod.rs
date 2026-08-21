@@ -246,8 +246,8 @@ where
 /// If you need to implement this trait, consider using [`#[make_varule]`](crate::make_varule) or
 ///  [`#[derive(VarULE)]`](macro@VarULE) instead.
 ///
-/// This trait is mostly for unsized types like `str` and `[T]`. It can be implemented on sized types;
-/// however, it is much more preferable to use [`ULE`] for that purpose. The [`custom`] module contains
+/// This trait is for unsized types like `str` and `[T]`. For sized types use [`ULE`] instead.
+/// The [`custom`] module contains
 /// additional documentation on how this type can be implemented on custom types.
 ///
 /// If deserialization with `VarZeroVec` is desired is recommended to implement `Deserialize` for
@@ -271,6 +271,8 @@ where
 /// 6. All other methods *must* be left with their default impl, or else implemented according to
 ///    their respective safety guidelines.
 /// 7. Acknowledge the following note about the equality invariant.
+/// 8. The type **must** be a unsized, slice like type. Specifically this trait requires that a fat
+///    pointer to this type is represented by the pointer to the first element and the number of elements.
 ///
 /// If the ULE type is a struct only containing other ULE/VarULE types (or other types which satisfy invariants 1 and 2,
 /// like `[u8; N]`), invariants 1 and 2 can be achieved via `#[repr(C, packed)]` or `#[repr(transparent)]`.
