@@ -447,6 +447,13 @@ impl UleError {
 impl core::error::Error for UleError {}
 
 #[cfg(feature = "alloc")]
+#[repr(C)]
+struct DstMetadata<Ptr> {
+    ptr: Ptr,
+    metadata: usize,
+}
+
+#[cfg(feature = "alloc")]
 /// Reconstructs a `Box<T>` from a `Box<[u8]>` while preserving unique pointer provenance
 /// and correctly resolving DST metadata.
 ///
@@ -472,8 +479,8 @@ pub(crate) unsafe fn cast_box<T: VarULE + ?Sized>(bytes: Box<[u8]>) -> Box<T> {
     use core::alloc::Layout;
 
     const {
-        assert!(size_of::<&T>() == size_of::<(*const u8, usize)>());
-        assert!(size_of::<&T>() == size_of::<(*mut u8, usize)>());
+        assert!(size_of::<&T>() == size_of::<DstMetadata<*const u8>>());
+        assert!(size_of::<&T>() == size_of::<DstMetadata<*mut u8>>());
         let expected_layout = Layout::new::<&[u8]>();
         let actual_layout = Layout::new::<&T>();
         assert!(expected_layout.size() == actual_layout.size());
@@ -484,13 +491,16 @@ pub(crate) unsafe fn cast_box<T: VarULE + ?Sized>(bytes: Box<[u8]>) -> Box<T> {
     let slice: &[u8] = unsafe { &*raw };
     // SAFETY: caller guarantees `from_bytes_unchecked` is safe.
     let ref_t: &T = unsafe { T::from_bytes_unchecked(slice) };
-
     // Extract metadata from ref_t.
-    let (_, metadata) = unsafe { core::mem::transmute_copy::<&T, (*const u8, usize)>(&ref_t) };
+    let DstMetadata { metadata, .. } =
+        unsafe { core::mem::transmute_copy::<&T, DstMetadata<*const u8>>(&ref_t) };
 
     // Construct *mut T from (raw_data_ptr, metadata).
     let ptr: *mut T = unsafe {
-        core::mem::transmute_copy::<(*mut u8, usize), *mut T>(&(raw.cast::<u8>(), metadata))
+        core::mem::transmute_copy::<DstMetadata<*mut u8>, *mut T>(&DstMetadata {
+            ptr: raw.cast::<u8>(),
+            metadata,
+        })
     };
 
     let expected_layout = Layout::for_value(slice);
