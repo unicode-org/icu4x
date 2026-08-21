@@ -5,7 +5,6 @@
 [package]
 name = "icu_collator"
 description = "API for comparing strings according to language-dependent conventions"
-version.workspace = true
 categories.workspace = true
 keywords = ["unicode", "sorting", "alphabetical"]
 
@@ -16,6 +15,7 @@ include.workspace = true
 license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
+version = "2.3.1"
 
 [package.metadata.docs.rs]
 all-features = true

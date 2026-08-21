@@ -7,7 +7,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/2.3.0/icu/casemap/options/struct.TitlecaseOptions.html) for more information.
+ * See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/2.3.1/icu/casemap/options/struct.TitlecaseOptions.html) for more information.
  */
 export class TitlecaseOptions {
     #leadingAdjustment;
@@ -89,8 +89,8 @@ export class TitlecaseOptions {
         functionCleanupArena,
         appendArrayMap
     ) {
-        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 0, this.#leadingAdjustment, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
-        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 8, this.#trailingCase, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 0, this.#leadingAdjustment, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, new LeadingAdjustment(jsValue).ffiValue, Int32Array));
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 8, this.#trailingCase, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, new TrailingCase(jsValue).ffiValue, Int32Array));
     }
 
     // This struct contains borrowed fields, so this takes in a list of
@@ -113,7 +113,7 @@ export class TitlecaseOptions {
 
 
     /**
-     * See the [Rust documentation for `default`](https://docs.rs/icu/2.3.0/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
+     * See the [Rust documentation for `default`](https://docs.rs/icu/2.3.1/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
      */
     #defaultConstructor() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 16, 4, false);
@@ -132,7 +132,7 @@ export class TitlecaseOptions {
     }
 
     /**
-     * See the [Rust documentation for `default`](https://docs.rs/icu/2.3.0/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
+     * See the [Rust documentation for `default`](https://docs.rs/icu/2.3.1/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
      */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {

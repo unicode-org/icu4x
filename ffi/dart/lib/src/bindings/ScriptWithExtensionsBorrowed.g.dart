@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 
 /// A slightly faster `ScriptWithExtensions` object
 ///
-/// See the [Rust documentation for `ScriptWithExtensionsBorrowed`](https://docs.rs/icu/2.3.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html) for more information.
+/// See the [Rust documentation for `ScriptWithExtensionsBorrowed`](https://docs.rs/icu/2.3.1/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html) for more information.
 final class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -34,7 +34,7 @@ final class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
 
   /// Get the Script property value for a code point
   ///
-  /// See the [Rust documentation for `get_script_val`](https://docs.rs/icu/2.3.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
+  /// See the [Rust documentation for `get_script_val`](https://docs.rs/icu/2.3.1/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
   Script getScriptVal(Rune ch) {
     final result = _icu4x_ScriptWithExtensionsBorrowed_get_script_val_mv2(_ffi, ch);
     return Script.values.firstWhere((v) => v._ffi == result);
@@ -42,7 +42,7 @@ final class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
 
   /// Get the Script property value for a code point
   ///
-  /// See the [Rust documentation for `get_script_extensions_val`](https://docs.rs/icu/2.3.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_val) for more information.
+  /// See the [Rust documentation for `get_script_extensions_val`](https://docs.rs/icu/2.3.1/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_val) for more information.
   ScriptExtensionsSet getScriptExtensionsVal(Rune ch) {
     // This lifetime edge depends on lifetimes: 'a
     final aEdges = [this];
@@ -52,7 +52,7 @@ final class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
 
   /// Check if the `Script_Extensions` property of the given code point covers the given script
   ///
-  /// See the [Rust documentation for `has_script`](https://docs.rs/icu/2.3.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
+  /// See the [Rust documentation for `has_script`](https://docs.rs/icu/2.3.1/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
   bool hasScript(Rune ch, Script script) {
     final result = _icu4x_ScriptWithExtensionsBorrowed_has_script_mv2(_ffi, ch, script._ffi);
     return result;
@@ -61,7 +61,7 @@ final class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
   /// Build the `CodePointSetData` corresponding to a codepoints matching a particular script
   /// in their `Script_Extensions`
   ///
-  /// See the [Rust documentation for `get_script_extensions_set`](https://docs.rs/icu/2.3.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_set) for more information.
+  /// See the [Rust documentation for `get_script_extensions_set`](https://docs.rs/icu/2.3.1/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_set) for more information.
   CodePointSetData getScriptExtensionsSet(Script script) {
     final result = _icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_set_mv2(_ffi, script._ffi);
     return CodePointSetData._fromFfi(result, []);

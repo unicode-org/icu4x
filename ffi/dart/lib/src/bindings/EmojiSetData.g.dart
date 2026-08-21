@@ -5,13 +5,13 @@ part of 'lib.g.dart';
 
 /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
 ///
-/// See the [Rust documentation for `properties`](https://docs.rs/icu/2.3.0/icu/properties/index.html) for more information.
+/// See the [Rust documentation for `properties`](https://docs.rs/icu/2.3.1/icu/properties/index.html) for more information.
 ///
-/// See the [Rust documentation for `EmojiSetData`](https://docs.rs/icu/2.3.0/icu/properties/struct.EmojiSetData.html) for more information.
+/// See the [Rust documentation for `EmojiSetData`](https://docs.rs/icu/2.3.1/icu/properties/struct.EmojiSetData.html) for more information.
 ///
-/// See the [Rust documentation for `new`](https://docs.rs/icu/2.3.0/icu/properties/struct.EmojiSetData.html#method.new) for more information.
+/// See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/properties/struct.EmojiSetData.html#method.new) for more information.
 ///
-/// See the [Rust documentation for `EmojiSetDataBorrowed`](https://docs.rs/icu/2.3.0/icu/properties/struct.EmojiSetDataBorrowed.html) for more information.
+/// See the [Rust documentation for `EmojiSetDataBorrowed`](https://docs.rs/icu/2.3.1/icu/properties/struct.EmojiSetDataBorrowed.html) for more information.
 final class EmojiSetData implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -38,7 +38,7 @@ final class EmojiSetData implements ffi.Finalizable {
 
   /// Checks whether the string is in the set.
   ///
-  /// See the [Rust documentation for `contains_str`](https://docs.rs/icu/2.3.0/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains_str) for more information.
+  /// See the [Rust documentation for `contains_str`](https://docs.rs/icu/2.3.1/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains_str) for more information.
   bool containsStr(String s) {
     final temp = _FinalizedArena();
     final result = _icu4x_EmojiSetData_contains_str_mv1(_ffi, s._utf8AllocIn(temp.arena));
@@ -47,7 +47,7 @@ final class EmojiSetData implements ffi.Finalizable {
 
   /// Checks whether the code point is in the set.
   ///
-  /// See the [Rust documentation for `contains`](https://docs.rs/icu/2.3.0/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains) for more information.
+  /// See the [Rust documentation for `contains`](https://docs.rs/icu/2.3.1/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains) for more information.
   bool contains(Rune cp) {
     final result = _icu4x_EmojiSetData_contains_mv1(_ffi, cp);
     return result;
@@ -55,7 +55,7 @@ final class EmojiSetData implements ffi.Finalizable {
 
   /// Create a map for the `Basic_Emoji` property, using compiled data.
   ///
-  /// See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.BasicEmoji.html) for more information.
+  /// See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.BasicEmoji.html) for more information.
   factory EmojiSetData.basic() {
     final result = _icu4x_EmojiSetData_create_basic_mv1();
     return EmojiSetData._fromFfi(result, []);
@@ -63,7 +63,7 @@ final class EmojiSetData implements ffi.Finalizable {
 
   /// Create a map for the `Basic_Emoji` property, using a particular data source.
   ///
-  /// See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.BasicEmoji.html) for more information.
+  /// See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.BasicEmoji.html) for more information.
   ///
   /// Throws [DataError] on failure.
   factory EmojiSetData.basicWithProvider(DataProvider provider) {
@@ -76,7 +76,7 @@ final class EmojiSetData implements ffi.Finalizable {
 
   /// Get the `Basic_Emoji` value for a given character, using compiled data
   ///
-  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.3.0/icu/properties/props/trait.EmojiSet.html#tymethod.for_char) for more information.
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.3.1/icu/properties/props/trait.EmojiSet.html#tymethod.for_char) for more information.
   static bool basicEmojiForChar(Rune ch) {
     final result = _icu4x_EmojiSetData_basic_emoji_for_char_mv1(ch);
     return result;
@@ -84,7 +84,7 @@ final class EmojiSetData implements ffi.Finalizable {
 
   /// Get the `Basic_Emoji` value for a given character, using compiled data
   ///
-  /// See the [Rust documentation for `for_str`](https://docs.rs/icu/2.3.0/icu/properties/props/trait.EmojiSet.html#tymethod.for_str) for more information.
+  /// See the [Rust documentation for `for_str`](https://docs.rs/icu/2.3.1/icu/properties/props/trait.EmojiSet.html#tymethod.for_str) for more information.
   static bool basicEmojiForStr(String s) {
     final temp = _FinalizedArena();
     final result = _icu4x_EmojiSetData_basic_emoji_for_str_mv1(s._utf8AllocIn(temp.arena));

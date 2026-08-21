@@ -27,7 +27,7 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `DateDurationUnit`](https://docs.rs/icu/2.3.0/icu/calendar/options/enum.DateDurationUnit.html) for more information.
+ * See the [Rust documentation for `DateDurationUnit`](https://docs.rs/icu/2.3.1/icu/calendar/options/enum.DateDurationUnit.html) for more information.
  */
 class DateDurationUnit {
 public:

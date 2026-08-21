@@ -3,8 +3,8 @@
 
 part of 'lib.g.dart';
 
-/// Additional information: [1](https://docs.rs/icu/2.3.0/icu/calendar/struct.RangeError.html), [2](https://docs.rs/icu/2.3.0/icu/calendar/enum.DateError.html), [3](https://docs.rs/icu/2.3.0/icu/calendar/error/enum.MonthCodeParseError.html), [4](https://docs.rs/icu/2.3.0/icu/calendar/error/enum.DateNewError.html)
-enum CalendarError {
+/// Additional information: [1](https://docs.rs/icu/2.3.1/icu/calendar/struct.RangeError.html), [2](https://docs.rs/icu/2.3.1/icu/calendar/enum.DateError.html), [3](https://docs.rs/icu/2.3.1/icu/calendar/error/enum.MonthCodeParseError.html), [4](https://docs.rs/icu/2.3.1/icu/calendar/error/enum.DateNewError.html)
+enum CalendarError implements core.Exception {
   // ignore: public_member_api_docs
   unknown,
   // ignore: public_member_api_docs
