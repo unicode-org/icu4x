@@ -246,8 +246,8 @@ where
 /// If you need to implement this trait, consider using [`#[make_varule]`](crate::make_varule) or
 ///  [`#[derive(VarULE)]`](macro@VarULE) instead.
 ///
-/// This trait is mostly for unsized types like `str` and `[T]`. It can be implemented on sized types;
-/// however, it is much more preferable to use [`ULE`] for that purpose. The [`custom`] module contains
+/// This trait is for unsized types like `str` and `[T]`. For sized types use [`ULE`] instead.
+/// The [`custom`] module contains
 /// additional documentation on how this type can be implemented on custom types.
 ///
 /// If deserialization with `VarZeroVec` is desired is recommended to implement `Deserialize` for
@@ -260,17 +260,18 @@ where
 ///
 /// Safety checklist for `VarULE`:
 ///
-/// 1. The type *must not* include any uninitialized or padding bytes.
-/// 2. The type must have an alignment of 1 byte.
-/// 3. The impl of [`VarULE::validate_bytes()`] *must* return an error if the given byte slice
-///    would not represent a valid slice of this type.
+/// 1. The type **must** be a unsized, slice like type
+/// 2. The type *must not* include any uninitialized or padding bytes.
+/// 3. The type must have an alignment of 1 byte.
 /// 4. The impl of [`VarULE::validate_bytes()`] *must* return an error if the given byte slice
+///    would not represent a valid slice of this type.
+/// 5. The impl of [`VarULE::validate_bytes()`] *must* return an error if the given byte slice
 ///    cannot be used in its entirety.
-/// 5. The impl of [`VarULE::from_bytes_unchecked()`] must produce a reference to the same
+/// 6. The impl of [`VarULE::from_bytes_unchecked()`] must produce a reference to the same
 ///    underlying data assuming that the given bytes previously passed validation.
-/// 6. All other methods *must* be left with their default impl, or else implemented according to
+/// 7. All other methods *must* be left with their default impl, or else implemented according to
 ///    their respective safety guidelines.
-/// 7. Acknowledge the following note about the equality invariant.
+/// 8. Acknowledge the following note about the equality invariant.
 ///
 /// If the ULE type is a struct only containing other ULE/VarULE types (or other types which satisfy invariants 1 and 2,
 /// like `[u8; N]`), invariants 1 and 2 can be achieved via `#[repr(C, packed)]` or `#[repr(transparent)]`.
