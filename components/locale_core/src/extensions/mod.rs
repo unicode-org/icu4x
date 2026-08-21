@@ -20,8 +20,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locale::extensions::unicode::{Key, Value};
 //! use icu::locale::Locale;
+//! use icu::locale::extensions::unicode::{Key, Value};
 //!
 //! let loc: Locale = "en-US-u-ca-buddhist-t-en-us-h0-hybrid-x-foo"
 //!     .parse()
@@ -237,8 +237,8 @@ impl Extensions {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale::extensions::ExtensionType;
     /// use icu::locale::Locale;
+    /// use icu::locale::extensions::ExtensionType;
     ///
     /// let loc: Locale =
     ///     "und-a-hello-t-mul-u-world-z-zzz-x-extra".parse().unwrap();

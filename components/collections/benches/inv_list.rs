@@ -4,7 +4,6 @@
 
 use criterion::{Criterion, criterion_group, criterion_main};
 use icu_collections::codepointinvlist::CodePointInversionList;
-use std::char;
 
 fn uniset_bench(c: &mut Criterion) {
     let best_ex = [0x41, 0x46];

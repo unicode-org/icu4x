@@ -19,13 +19,13 @@ include = [
     "LICENSE",
     "README.md",
 ]
-version.workspace = true
 
 authors.workspace = true
 edition.workspace = true
 homepage.workspace = true
 repository.workspace = true
 rust-version.workspace = true
+version = "2.3.1"
 
 [package.metadata.docs.rs]
 all-features = true
@@ -73,7 +73,7 @@ num-traits = { workspace = true, optional = true }
 [dev-dependencies]
 postcard = { workspace = true, features = ["alloc"] }
 icu_provider_adapters = { workspace = true }
-icu_provider_export = { workspace = true, features = ["fs_exporter", "baked_exporter", "rayon"] }
+icu_provider_export = { workspace = true, features = ["fs_exporter", "baked_exporter", "rayon", "blob_exporter"] }
 icu_provider = { workspace = true, features = ["deserialize_postcard_1"] }
 icu_segmenter = { path = "../../components/segmenter", features = ["lstm"] }
 simple_logger = { workspace = true }
@@ -104,6 +104,16 @@ icu_experimental = []
 # We don't need working CPT builders for check
 skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
 max_combination_size = 3
+
+[lib]
+bench = false  # This option is required for Benchmark CI
+
+# Standalone benchmark binary for display names data export performance.
+# We set `harness = false` so that it runs as a standalone binary with main() when
+# executing `cargo bench`, but is NOT executed during `cargo test` / `cargo make ci-job-test`.
+[[bench]]
+name = "displaynames"
+harness = false
 
 [lints]
 workspace = true

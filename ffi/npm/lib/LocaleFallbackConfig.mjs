@@ -8,7 +8,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 /**
  * Collection of configurations for the ICU4X fallback algorithm.
  *
- * See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/2.2.0/icu/locale/fallback/struct.LocaleFallbackConfig.html) for more information.
+ * See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbackConfig.html) for more information.
  */
 export class LocaleFallbackConfig {
     #priority;
@@ -77,7 +77,7 @@ export class LocaleFallbackConfig {
         functionCleanupArena,
         appendArrayMap
     ) {
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#priority.ffiValue, Int32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, new LocaleFallbackPriority(this.#priority).ffiValue, Int32Array);
     }
 
     // This struct contains borrowed fields, so this takes in a list of

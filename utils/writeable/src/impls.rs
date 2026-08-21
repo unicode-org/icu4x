@@ -135,7 +135,7 @@ impl Writeable for char {
     }
 }
 
-crate::impl_writeable_delegate!(&T, |&self| *self, #[cfg(feature = "alloc")], where T: Writeable + ?Sized);
+crate::impl_writeable_delegate!(&T, |&self| *self, #[cfg(feature = "alloc")] fn write_to_string, where T: Writeable + ?Sized);
 
 #[cfg(feature = "alloc")]
 macro_rules! impl_write_smart_pointer {

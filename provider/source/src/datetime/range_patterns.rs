@@ -27,6 +27,9 @@ use std::collections::{BTreeMap, HashMap, HashSet};
 use std::str::FromStr;
 use zerofrom::ZeroFrom;
 
+#[cfg(test)]
+mod tests;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum ComponentsType {
     Time,

@@ -325,7 +325,7 @@ export class Decimal {
      * See the [Rust documentation for `set_sign`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.set_sign) for more information.
      */
     set sign(sign) {
-    wasm.icu4x_Decimal_set_sign_mv1(this.ffiValue, sign.ffiValue);
+    wasm.icu4x_Decimal_set_sign_mv1(this.ffiValue, new DecimalSign(sign).ffiValue);
 
         try {}
 
@@ -338,7 +338,7 @@ export class Decimal {
      * See the [Rust documentation for `apply_sign_display`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.apply_sign_display) for more information.
      */
     applySignDisplay(signDisplay) {
-    wasm.icu4x_Decimal_apply_sign_display_mv1(this.ffiValue, signDisplay.ffiValue);
+    wasm.icu4x_Decimal_apply_sign_display_mv1(this.ffiValue, new DecimalSignDisplay(signDisplay).ffiValue);
 
         try {}
 
@@ -506,7 +506,7 @@ export class Decimal {
      * See the [Rust documentation for `round_with_mode`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.round_with_mode) for more information.
      */
     roundWithMode(position, mode) {
-    wasm.icu4x_Decimal_round_with_mode_mv1(this.ffiValue, position, mode.ffiValue);
+    wasm.icu4x_Decimal_round_with_mode_mv1(this.ffiValue, position, new DecimalSignedRoundingMode(mode).ffiValue);
 
         try {}
 
@@ -519,7 +519,7 @@ export class Decimal {
      * See the [Rust documentation for `round_with_mode_and_increment`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.round_with_mode_and_increment) for more information.
      */
     roundWithModeAndIncrement(position, mode, increment) {
-    wasm.icu4x_Decimal_round_with_mode_and_increment_mv1(this.ffiValue, position, mode.ffiValue, increment.ffiValue);
+    wasm.icu4x_Decimal_round_with_mode_and_increment_mv1(this.ffiValue, position, new DecimalSignedRoundingMode(mode).ffiValue, new DecimalRoundingIncrement(increment).ffiValue);
 
         try {}
 
@@ -539,7 +539,7 @@ export class Decimal {
      */
     concatenateEnd(other) {
 
-        const result = wasm.icu4x_Decimal_concatenate_end_mv1(this.ffiValue, other.ffiValue);
+        const result = wasm.icu4x_Decimal_concatenate_end_mv1(this.ffiValue, other instanceof Decimal ? other.ffiValue : typeError('other', 'Decimal'));
 
         try {
             return result === 1;

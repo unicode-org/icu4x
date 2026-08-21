@@ -106,7 +106,7 @@ impl IterableDataProviderCached<DecimalCompactLongV1> for SourceDataProvider {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu::locale::langid;
+    use icu::locale::data_locale;
     use icu::plurals::PluralElements;
     use icu_pattern::SinglePlaceholderPattern;
 
@@ -117,7 +117,7 @@ mod tests {
 
         let en_compact_long: DataPayload<DecimalCompactLongV1> = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+                id: DataIdentifierBorrowed::for_locale(&data_locale!("en")),
                 ..Default::default()
             })
             .unwrap()
@@ -178,7 +178,7 @@ mod tests {
 
         let ja_compact_short: DataPayload<DecimalCompactShortV1> = provider
             .load(DataRequest {
-                id: DataIdentifierCow::from_locale(langid!("ja").into()).as_borrowed(),
+                id: DataIdentifierCow::from_locale(data_locale!("ja")).as_borrowed(),
                 ..Default::default()
             })
             .unwrap()

@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #include <icu4x/Locale.hpp>
+#include <icu4x/LocaleNamesUnstable.hpp>
 #include <icu4x/Logger.hpp>
 
 #include <iostream>
@@ -159,6 +160,40 @@ int main() {
     return 1;
   }
   std::cout << "Variant tests passed!" << std::endl;
+
+  // Display names
+  std::string out;
+  std::cout << "Fetching display names..." << std::endl;
+
+  // Region display name
+  std::unique_ptr<Locale> formattingLocale = Locale::from_string("fr").ok().value();
+  out = LocaleNamesUnstable::for_region_light(*formattingLocale.get(), "GB");
+  std::cout << "formatting locale 'fr', region 'GB': " << out << std::endl;
+  if (!test_string(out, "Royaume-Uni", "Region display name in French")) {
+    return 1;
+  }
+
+  // Script display name
+  out = LocaleNamesUnstable::for_script_light(*formattingLocale.get(), "Latn");
+  std::cout << "formatting locale 'fr', script 'Latn': " << out << std::endl;
+  if (!test_string(out, "latin", "Script display name in French")) {
+    return 1;
+  }
+
+  // Variant display name
+  out = LocaleNamesUnstable::for_variant_heavy(*formattingLocale.get(), "fonipa");
+  std::cout << "formatting locale 'fr', variant 'fonipa': " << out << std::endl;
+  if (!test_string(out, "alphabet phonétique international", "Variant display name in French")) {
+    return 1;
+  }
+
+  // Language identifier display name
+  std::unique_ptr<Locale> targetLocale = Locale::from_string("en-US").ok().value();
+  out = LocaleNamesUnstable::for_language_identifier_light(*formattingLocale.get(), *targetLocale.get(), LanguageDisplayUnstable::Dialect).ok().value();
+  std::cout << "formatting locale 'fr', langid 'en-US': " << out << std::endl;
+  if (!test_string(out, "anglais américain", "Language identifier display name in French")) {
+    return 1;
+  }
 
   return 0;
 }

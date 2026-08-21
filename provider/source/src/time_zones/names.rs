@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::DataHasher;
 use crate::SourceDataProvider;
 use core::hash::Hash;
 use icu::time::TimeZone;
@@ -121,12 +122,8 @@ impl crate::IterableDataProviderCached<TimezoneIdentifiersIanaExtendedV1> for So
     }
 }
 
-fn create_hasher() -> impl Hasher {
-    twox_hash::XxHash64::with_seed(0)
-}
-
 fn compute_bcp47_ids_hash(bcp47_ids: &Vec<TimeZone>) -> u64 {
-    let mut hasher = create_hasher();
+    let mut hasher = DataHasher::new();
     bcp47_ids.hash(&mut hasher);
     hasher.finish()
 }

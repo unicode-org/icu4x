@@ -48,7 +48,7 @@
 //! ```
 //!
 //! ```
-//! use icu::locale::{locale, LocaleExpander, TransformResult};
+//! use icu::locale::{LocaleExpander, TransformResult, locale};
 //!
 //! let lc = LocaleExpander::new_common();
 //!
@@ -62,7 +62,7 @@
 //! ```
 //!
 //! ```
-//! use icu::locale::{locale, LocaleExpander, TransformResult};
+//! use icu::locale::{LocaleExpander, TransformResult, locale};
 //! use writeable::assert_writeable_eq;
 //!
 //! let lc = LocaleExpander::new_common();
@@ -87,8 +87,16 @@ mod canonicalizer;
 mod directionality;
 pub mod exemplar_chars;
 mod expander;
-pub mod fallback;
+/// Locale fallback algorithm re-exports.
+pub mod fallback {
+    #[doc(inline)]
+    pub use icu_locale_fallback::*;
+}
+#[cfg(feature = "unstable")]
+pub mod names;
 pub mod provider;
+#[cfg(feature = "unstable")]
+mod size_test_macro;
 
 pub use icu_locale_core::*;
 

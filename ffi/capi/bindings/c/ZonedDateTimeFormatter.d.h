@@ -14,11 +14,6 @@
 typedef struct ZonedDateTimeFormatter ZonedDateTimeFormatter;
 
 
-typedef struct DiplomatZonedDateTimeFormatterView {
-  const ZonedDateTimeFormatter** data;
-  size_t len;
-} DiplomatZonedDateTimeFormatterView;
-
 
 
 #endif // ZonedDateTimeFormatter_D_H

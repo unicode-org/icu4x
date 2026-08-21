@@ -4,7 +4,7 @@
 
 use alloc::string::String;
 use alloc::vec::Vec;
-use icu_locale::fallback::LocaleFallbacker;
+use icu_locale_fallback::LocaleFallbacker;
 use icu_properties::PropertyNamesShort;
 use icu_properties::props::Script;
 use icu_properties::script::ScriptWithExtensions;
@@ -48,8 +48,8 @@ impl PersonNamesFormatter {
         P: ?Sized
             + DataProvider<icu_properties::provider::PropertyScriptWithExtensionsV1>
             + DataProvider<icu_properties::provider::PropertyNameShortScriptV1>
-            + DataProvider<icu_locale::provider::LocaleLikelySubtagsLanguageV1>
-            + DataProvider<icu_locale::provider::LocaleParentsV1>,
+            + DataProvider<icu_locale_fallback::provider::LocaleLikelySubtagsLanguageV1>
+            + DataProvider<icu_locale_fallback::provider::LocaleParentsV1>,
     {
         let swe = ScriptWithExtensions::try_new_unstable(provider)?;
         let scripts = PropertyNamesShort::try_new_unstable(provider)?;

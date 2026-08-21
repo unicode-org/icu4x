@@ -14,11 +14,6 @@
 typedef struct LocaleFallbackIterator LocaleFallbackIterator;
 
 
-typedef struct DiplomatLocaleFallbackIteratorView {
-  const LocaleFallbackIterator** data;
-  size_t len;
-} DiplomatLocaleFallbackIteratorView;
-
 
 
 #endif // LocaleFallbackIterator_D_H

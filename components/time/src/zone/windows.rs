@@ -117,7 +117,7 @@ impl WindowsParserBorrowed<'_> {
     ///
     /// ```rust
     /// use icu::locale::subtags::{region, subtag};
-    /// use icu::time::{zone::WindowsParser, TimeZone};
+    /// use icu::time::{TimeZone, zone::WindowsParser};
     ///
     /// let win_tz_mapper = WindowsParser::new();
     ///

@@ -19,8 +19,8 @@ use writeable::Writeable;
 /// # Examples
 ///
 /// ```rust
-/// use icu::casemap::options::{TitlecaseOptions, TrailingCase};
 /// use icu::casemap::TitlecaseMapper;
+/// use icu::casemap::options::{TitlecaseOptions, TrailingCase};
 /// use icu::locale::langid;
 ///
 /// let cm = TitlecaseMapper::new();
@@ -64,8 +64,8 @@ pub enum TrailingCase {
 /// # Examples
 ///
 /// ```rust
-/// use icu::casemap::options::{LeadingAdjustment, TitlecaseOptions};
 /// use icu::casemap::TitlecaseMapper;
+/// use icu::casemap::options::{LeadingAdjustment, TitlecaseOptions};
 /// use icu::locale::langid;
 ///
 /// let cm = TitlecaseMapper::new();
@@ -410,8 +410,8 @@ impl<'a> TitlecaseMapperBorrowed<'a> {
     /// Leading adjustment behaviors:
     ///
     /// ```rust
-    /// use icu::casemap::options::{LeadingAdjustment, TitlecaseOptions};
     /// use icu::casemap::TitlecaseMapper;
+    /// use icu::casemap::options::{LeadingAdjustment, TitlecaseOptions};
     /// use icu::locale::langid;
     ///
     /// let cm = TitlecaseMapper::new();
@@ -450,8 +450,8 @@ impl<'a> TitlecaseMapperBorrowed<'a> {
     /// Tail casing behaviors:
     ///
     /// ```rust
-    /// use icu::casemap::options::{TitlecaseOptions, TrailingCase};
     /// use icu::casemap::TitlecaseMapper;
+    /// use icu::casemap::options::{TitlecaseOptions, TrailingCase};
     /// use icu::locale::langid;
     ///
     /// let cm = TitlecaseMapper::new();

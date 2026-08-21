@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `ListFormatter`](https://docs.rs/icu/2.2.0/icu/list/struct.ListFormatter.html) for more information.
+/// See the [Rust documentation for `ListFormatter`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html) for more information.
 final class ListFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -30,7 +30,7 @@ final class ListFormatter implements ffi.Finalizable {
 
   /// Construct a new `ListFormatter` instance for And patterns from compiled data.
   ///
-  /// See the [Rust documentation for `try_new_and`](https://docs.rs/icu/2.2.0/icu/list/struct.ListFormatter.html#method.try_new_and) for more information.
+  /// See the [Rust documentation for `try_new_and`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.try_new_and) for more information.
   ///
   /// Throws [DataError] on failure.
   factory ListFormatter.andWithLength(Locale locale, ListLength length) {
@@ -43,7 +43,7 @@ final class ListFormatter implements ffi.Finalizable {
 
   /// Construct a new `ListFormatter` instance for And patterns
   ///
-  /// See the [Rust documentation for `try_new_and`](https://docs.rs/icu/2.2.0/icu/list/struct.ListFormatter.html#method.try_new_and) for more information.
+  /// See the [Rust documentation for `try_new_and`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.try_new_and) for more information.
   ///
   /// Throws [DataError] on failure.
   factory ListFormatter.andWithLengthAndProvider(DataProvider provider, Locale locale, ListLength length) {
@@ -56,7 +56,7 @@ final class ListFormatter implements ffi.Finalizable {
 
   /// Construct a new `ListFormatter` instance for And patterns from compiled data.
   ///
-  /// See the [Rust documentation for `try_new_or`](https://docs.rs/icu/2.2.0/icu/list/struct.ListFormatter.html#method.try_new_or) for more information.
+  /// See the [Rust documentation for `try_new_or`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.try_new_or) for more information.
   ///
   /// Throws [DataError] on failure.
   factory ListFormatter.orWithLength(Locale locale, ListLength length) {
@@ -69,7 +69,7 @@ final class ListFormatter implements ffi.Finalizable {
 
   /// Construct a new `ListFormatter` instance for And patterns
   ///
-  /// See the [Rust documentation for `try_new_or`](https://docs.rs/icu/2.2.0/icu/list/struct.ListFormatter.html#method.try_new_or) for more information.
+  /// See the [Rust documentation for `try_new_or`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.try_new_or) for more information.
   ///
   /// Throws [DataError] on failure.
   factory ListFormatter.orWithLengthAndProvider(DataProvider provider, Locale locale, ListLength length) {
@@ -82,7 +82,7 @@ final class ListFormatter implements ffi.Finalizable {
 
   /// Construct a new `ListFormatter` instance for And patterns from compiled data.
   ///
-  /// See the [Rust documentation for `try_new_unit`](https://docs.rs/icu/2.2.0/icu/list/struct.ListFormatter.html#method.try_new_unit) for more information.
+  /// See the [Rust documentation for `try_new_unit`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.try_new_unit) for more information.
   ///
   /// Throws [DataError] on failure.
   factory ListFormatter.unitWithLength(Locale locale, ListLength length) {
@@ -95,7 +95,7 @@ final class ListFormatter implements ffi.Finalizable {
 
   /// Construct a new `ListFormatter` instance for And patterns
   ///
-  /// See the [Rust documentation for `try_new_unit`](https://docs.rs/icu/2.2.0/icu/list/struct.ListFormatter.html#method.try_new_unit) for more information.
+  /// See the [Rust documentation for `try_new_unit`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.try_new_unit) for more information.
   ///
   /// Throws [DataError] on failure.
   factory ListFormatter.unitWithLengthAndProvider(DataProvider provider, Locale locale, ListLength length) {
@@ -106,7 +106,7 @@ final class ListFormatter implements ffi.Finalizable {
     return ListFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `format`](https://docs.rs/icu/2.2.0/icu/list/struct.ListFormatter.html#method.format) for more information.
+  /// See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.format) for more information.
   String format(core.List<core.String> list) {
     final temp = _FinalizedArena();
     final write = _Write();

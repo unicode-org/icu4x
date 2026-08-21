@@ -249,7 +249,7 @@ final class CheckoutMode extends BuildMode {
       [
         if (buildStatic || isNoStd) '+$nightly',
         'rustc',
-        '--manifest-path=ffi/capi/Cargo.toml',
+        '-m=ffi/capi/Cargo.toml',
         '--crate-type=${buildStatic ? 'staticlib' : 'cdylib'}',
         '--release',
         '--config=profile.release.panic="abort"',

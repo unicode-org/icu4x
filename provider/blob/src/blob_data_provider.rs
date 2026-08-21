@@ -226,9 +226,9 @@ mod test {
                 provider.load_data(
                     HelloSingletonV1::INFO,
                     DataRequest {
-                        id: DataIdentifierBorrowed::for_locale(
-                            &icu_locale_core::langid!("de").into()
-                        ),
+                        id: DataIdentifierBorrowed::for_locale(&icu_locale_core::data_locale!(
+                            "de"
+                        )),
                         ..Default::default()
                     }
                 ),

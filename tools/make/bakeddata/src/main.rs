@@ -27,6 +27,11 @@ const COMPONENTS: &[(&str, &[DataMarkerInfo], &str)] = &[
     ("list", icu::list::provider::MARKERS, REPO_VERSION),
     ("locale", icu::locale::provider::MARKERS, REPO_VERSION),
     (
+        "locale_fallback",
+        icu::locale::fallback::provider::MARKERS,
+        REPO_VERSION,
+    ),
+    (
         "normalizer",
         icu::normalizer::provider::MARKERS,
         REPO_VERSION,
@@ -42,7 +47,7 @@ const COMPONENTS: &[(&str, &[DataMarkerInfo], &str)] = &[
     (
         "experimental",
         icu::experimental::provider::MARKERS,
-        r#"version = "0.6.0-dev""#,
+        r#"version = "0.6.0""#,
     ),
 ];
 

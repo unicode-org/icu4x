@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::DataHasher;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
@@ -22,7 +23,6 @@ use litemap::LiteMap;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::collections::HashSet;
-use twox_hash::XxHash64;
 
 pub(crate) type Timestamp = icu::time::ZonedDateTime<icu::calendar::Iso, UtcOffset>;
 
@@ -368,7 +368,7 @@ impl SourceDataProvider {
                     }
                 }
 
-                let mut hash = XxHash64::with_seed(0);
+                let mut hash = DataHasher::new();
                 all_metazones.len().hash(&mut hash);
 
                 let ids: BTreeMap<String, MetazoneId> = all_metazones
@@ -758,17 +758,17 @@ mod tests {
 
     #[test]
     fn basic_cldr_time_zones() {
-        use icu::locale::langid;
+        use icu::locale::data_locale;
 
         let provider = SourceDataProvider::new_testing();
 
-        let en = langid!("en").into();
+        let en = data_locale!("en");
         let en = DataRequest {
             id: DataIdentifierBorrowed::for_locale(&en),
             ..Default::default()
         };
 
-        let fr = langid!("fr").into();
+        let fr = data_locale!("fr");
         let fr = DataRequest {
             id: DataIdentifierBorrowed::for_locale(&fr),
             ..Default::default()

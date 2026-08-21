@@ -15,7 +15,7 @@ include.workspace = true
 license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version.workspace = true
+version = "2.3.1"
 
 [package.metadata.docs.rs]
 all-features = true
@@ -46,7 +46,6 @@ icu_provider = { workspace = true }
 
 [dev-dependencies]
 icu_datetime = { path = "../../components/datetime", features = ["serde", "unstable_jiff_0_2", "unstable_chrono_0_4"] }
-icu_host_info = { path = "../../utils/host_info", features = ["datetime"] }
 icu_provider_adapters = { path = "../../provider/adapters", features = ["serde"] }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_provider_blob = { path = "../../provider/blob", features = ["alloc"] }
@@ -127,6 +126,7 @@ serde_human = [
 unstable = [
     "icu_calendar/unstable",
     "icu_datetime/unstable",
+    "icu_locale/unstable",
     "icu_plurals/unstable",
     "icu_properties/unstable",
     "icu_segmenter/unstable",

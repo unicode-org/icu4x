@@ -110,13 +110,13 @@ impl IterableDataProviderCached<DecimalSymbolsV1> for SourceDataProvider {
 
 #[test]
 fn test_basic() {
-    use icu::locale::langid;
+    use icu::locale::data_locale;
 
     let provider = SourceDataProvider::new_testing();
 
     let ar_decimal: DataResponse<DecimalSymbolsV1> = provider
         .load(DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("ar-EG").into()).as_borrowed(),
+            id: DataIdentifierCow::from_locale(data_locale!("ar-EG")).as_borrowed(),
             ..Default::default()
         })
         .unwrap();

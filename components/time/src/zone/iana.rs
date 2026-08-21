@@ -36,8 +36,8 @@ use crate::{
 ///
 /// ```
 /// use icu::locale::subtags::subtag;
-/// use icu::time::zone::IanaParser;
 /// use icu::time::TimeZone;
+/// use icu::time::zone::IanaParser;
 ///
 /// let parser = IanaParser::new();
 ///
@@ -153,7 +153,7 @@ impl IanaParserBorrowed<'static> {
     pub fn new() -> Self {
         Self {
             data: crate::provider::Baked::SINGLETON_TIMEZONE_IDENTIFIERS_IANA_CORE_V1,
-            checksum: crate::provider::Baked::SINGLETON_TIMEZONE_IDENTIFIERS_IANA_CORE_V1_CHECKSUM,
+            checksum: crate::provider::Baked::TIMEZONE_IDENTIFIERS_IANA_CORE_V1_CHECKSUM,
         }
     }
 
@@ -177,8 +177,8 @@ impl<'a> IanaParserBorrowed<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu::time::zone::iana::IanaParser;
     /// use icu::time::TimeZone;
+    /// use icu::time::zone::iana::IanaParser;
     ///
     /// let parser = IanaParser::new();
     ///
@@ -311,7 +311,7 @@ where
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_parser(parser: I) -> Result<Self, DataError> {
         if parser.as_ref().checksum
-            != crate::provider::Baked::SINGLETON_TIMEZONE_IDENTIFIERS_IANA_EXTENDED_V1_CHECKSUM
+            != crate::provider::Baked::TIMEZONE_IDENTIFIERS_IANA_EXTENDED_V1_CHECKSUM
         {
             return Err(
                 DataErrorKind::InconsistentData(TimezoneIdentifiersIanaCoreV1::INFO)
@@ -392,8 +392,8 @@ impl IanaParserExtendedBorrowed<'static> {
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_TIMEZONE_IDENTIFIERS_IANA_CORE_V1_CHECKSUM
-                == crate::provider::Baked::SINGLETON_TIMEZONE_IDENTIFIERS_IANA_EXTENDED_V1_CHECKSUM,
+            crate::provider::Baked::TIMEZONE_IDENTIFIERS_IANA_CORE_V1_CHECKSUM
+                == crate::provider::Baked::TIMEZONE_IDENTIFIERS_IANA_EXTENDED_V1_CHECKSUM,
         );
         Self {
             inner: IanaParserBorrowed::new(),
@@ -421,8 +421,8 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu::time::zone::iana::IanaParserExtended;
     /// use icu::time::TimeZone;
+    /// use icu::time::zone::iana::IanaParserExtended;
     ///
     /// let parser = IanaParserExtended::new();
     ///
@@ -499,8 +499,8 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
     ///
     /// ```
     /// use icu::locale::subtags::subtag;
-    /// use icu::time::zone::iana::IanaParserExtended;
     /// use icu::time::zone::TimeZone;
+    /// use icu::time::zone::iana::IanaParserExtended;
     /// use std::collections::BTreeSet;
     ///
     /// let parser = IanaParserExtended::new();

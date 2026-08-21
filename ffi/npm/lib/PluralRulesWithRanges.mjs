@@ -12,7 +12,7 @@ const PluralRulesWithRanges_box_destroy_registry = new FinalizationRegistry((ptr
 });
 
 /**
- * See the [Rust documentation for `PluralRulesWithRanges`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html) for more information.
+ * See the [Rust documentation for `PluralRulesWithRanges`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html) for more information.
  */
 export class PluralRulesWithRanges {
     // Internal ptr reference:
@@ -46,13 +46,13 @@ export class PluralRulesWithRanges {
     /**
      * construct a {@link PluralRulesWithRanges} for the given locale, for cardinal numbers, using compiled data.
      *
-     * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
+     * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
      */
     static createCardinal(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_PluralRulesWithRanges_create_cardinal_mv1(diplomatReceive.buffer, locale.ffiValue);
+        const result = wasm.icu4x_PluralRulesWithRanges_create_cardinal_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -71,13 +71,13 @@ export class PluralRulesWithRanges {
     /**
      * construct a {@link PluralRulesWithRanges} for the given locale, for cardinal numbers, using a particular data source.
      *
-     * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
+     * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
      */
     static createCardinalWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_PluralRulesWithRanges_create_cardinal_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_PluralRulesWithRanges_create_cardinal_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -96,13 +96,13 @@ export class PluralRulesWithRanges {
     /**
      * Construct a {@link PluralRulesWithRanges} for the given locale, for ordinal numbers, using compiled data.
      *
-     * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
+     * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
      */
     static createOrdinal(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_PluralRulesWithRanges_create_ordinal_mv1(diplomatReceive.buffer, locale.ffiValue);
+        const result = wasm.icu4x_PluralRulesWithRanges_create_ordinal_mv1(diplomatReceive.buffer, locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -121,13 +121,13 @@ export class PluralRulesWithRanges {
     /**
      * Construct a {@link PluralRulesWithRanges} for the given locale, for ordinal numbers, using a particular data source.
      *
-     * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
+     * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
      */
     static createOrdinalWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_PluralRulesWithRanges_create_ordinal_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_PluralRulesWithRanges_create_ordinal_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'), locale instanceof Locale ? locale.ffiValue : typeError('locale', 'Locale'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -146,11 +146,11 @@ export class PluralRulesWithRanges {
     /**
      * Get the category for a given number represented as operands
      *
-     * See the [Rust documentation for `category_for_range`](https://docs.rs/icu/2.2.0/icu/plurals/struct.PluralRulesWithRanges.html#method.category_for_range) for more information.
+     * See the [Rust documentation for `category_for_range`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.category_for_range) for more information.
      */
     categoryForRange(start, end) {
 
-        const result = wasm.icu4x_PluralRulesWithRanges_category_for_range_mv1(this.ffiValue, start.ffiValue, end.ffiValue);
+        const result = wasm.icu4x_PluralRulesWithRanges_category_for_range_mv1(this.ffiValue, start instanceof PluralOperands ? start.ffiValue : typeError('start', 'PluralOperands'), end instanceof PluralOperands ? end.ffiValue : typeError('end', 'PluralOperands'));
 
         try {
             return new PluralCategory(diplomatRuntime.internalConstructor, result);

@@ -1,0 +1,124 @@
+{
+  "revs": {
+    "5a3c265c2db75e8c16a81b13c8f5e21e053a4b43": {
+      "number": 7863,
+      "body": "Fixes #7861 \r\n\r\nI couldn't figure out an easy way to keep the dutch handling within `full_helper` (where all other locale-sensitive stuff lives), since this is the one case that actually affects the titlecasing uppercase-to-lowercase state change.\r\n\r\nI think this implementation works nicely. The `dutch_i_at_beginning` and `dutch_ij_pair_at_beginning_count` split comes from when I was trying to retain the old code and refactor it to be reusable, but I realized that I could do this without retaining the old code. I can merge these two functions, but I kind of like how it turned out. They're more testable this way.\r\n\r\nThey're not implemented on CaseMapContext since they run at the beginning of a string.\r\n\r\n\r\n## Changelog\r\n\r\nicu_casemapping: Fix `TrailingCase::Unchanged` handling for Dutch",
+      "title": "Fix TrailingCase::Unchanged handling for Dutch",
+      "author": {
+        "login": "Manishearth"
+      }
+    },
+    "1d135cebadb05d5abd6a7169421405c1cae65a15": {
+      "number": 7885,
+      "body": "## Changelog\r\n\r\nFFI:\r\n* Fix an issue in JS bindings where enums in objects were not parsed correctly",
+      "title": "Bump diplomat",
+      "author": {
+        "login": "robertbastian"
+      }
+    },
+    "mock_commit_6": {
+      "number": 9006,
+      "body": "## Changelog\r\n\r\n`icu_experimental/personnames`:\r\n* Add initial implementation of person names formatter",
+      "title": "Initial person names formatter",
+      "author": {
+        "login": "gemini"
+      }
+    },
+    "mock_commit_7": {
+      "number": 9007,
+      "body": "## Changelog\r\n\r\n`icu_experimental/personnames`:\r\n* Add support for titles and honorifics in person names",
+      "title": "Person names titles support",
+      "author": {
+        "login": "gemini"
+      }
+    },
+    "a5635a1a4ce870c0fc67aaa4f696599768ba06b5": {
+      "number": 8102,
+      "body": "Fixes #8096\r\n\r\n## Changelog\r\n\r\n`icu_locale_core`:\r\n* `preferences` types now implement `databake` (feature-gated)\r\n\r\n`icu_calendar`:\r\n* Add `AnyCalendarKind::try_new` and deprecate  `AnyCalendarKind::new`. The new version uses locale data to infer calendars from locales.\r\n* Deprecate `CalendarPreferences::resolve_calendar`. This method did not perform likely-subtags expansion.\r\n\r\n`icu_datetime`:\r\n* Use the correct calendar even if the region is only implied by the language (i.e. `fa`)",
+      "title": "Infer region in calendar resolution",
+      "author": {
+        "login": "robertbastian"
+      }
+    },
+    "5a5b9db61a5c9fffdf0c3d33427738bb7720ece6": {
+      "number": 8109,
+      "body": "Writeable already had this.\r\n\r\n## Changelog\r\n\r\nwriteable:\r\n- impl TryWriteable on references\r\n- impl TryWriteable on Either",
+      "title": "writeable: impl TryWriteable on references, Either",
+      "author": {
+        "login": "sffc"
+      }
+    },
+    "0e91ea69758efbee79605cf80ce811af86f7adae": {
+      "number": 8200,
+      "body": "## Changelog\r\n\r\nGeneral:\r\n* Updated data to TZDB 2026c",
+      "title": "2026c",
+      "author": {
+        "login": "robertbastian"
+      }
+    },
+    "a954ec29392c0225453404cb1f6a77f0ded27089": {
+      "number": 8029,
+      "body": "Discovered and reported by @shnatsel\r\n\r\n\r\nThese impls were backwards and unsound.\r\n\r\nThis is _technically_ a breaking change, however if you had code that relied upon this then it was basically guaranteed to be unsound.\r\n\r\n## Changelog: N/A\r\n\r\n(This contains its own changelog addition as this is an out of cycle yoke release)",
+      "title": "fix Send/Sync impls on CartableOptionPointer, yoke 0.8.3",
+      "author": {
+        "login": "Manishearth"
+      }
+    },
+    "6dccc5bd37ea1f15c1c08923c661c14a163b0c5f": {
+      "number": 7868,
+      "body": "Bumps [rand](https://github.com/rust-random/rand) from 0.9.2 to 0.9.3.\r\n<details>\r\n<summary>Changelog</summary>\r\n<p><em>Sourced from <a href=\"https://github.com/rust-random/rand/blob/0.9.3/CHANGELOG.md\">rand's changelog</a>.</em></p>\r\n<blockquote>\r\n<h2>[0.9.3] \u2014 2026-02-11</h2>\r\n<p>This release back-ports a fix from v0.10. See also <a href=\"https://redirect.github.com/rust-random/rand/issues/1763\">#1763</a>.</p>\r\n<h3>Changes</h3>\r\n<ul>\r\n<li>Deprecate feature <code>log</code> (<a href=\"https://redirect.github.com/rust-random/rand/issues/1764\">#1764</a>)</li>\r\n<li>Replace usages of <code>doc_auto_cfg</code> (<a href=\"https://redirect.github.com/rust-random/rand/issues/1764\">#1764</a>)</li>\r\n</ul>\r\n<p><a href=\"https://redirect.github.com/rust-random/rand/issues/1763\">#1763</a>: <a href=\"https://redirect.github.com/rust-random/rand/pull/1763\">rust-random/rand#1763</a></p>\r\n</blockquote>\r\n</details>\r\n<details>\r\n<summary>Commits</summary>\r\n<ul>\r\n<li><a href=\"https://github.com/rust-random/rand/commit/1aeee9f4c506f9f737c6c37c169ccdc365bfbabf\"><code>1aeee9f</code></a> Prepare v0.9.3: deprecate feature <code>log</code> (<a href=\"https://redirect.github.com/rust-random/rand/issues/1764\">#1764</a>)</li>\r\n<li><a href=\"https://github.com/rust-random/rand/commit/98473ee6f9b44eb85154b59b67adade7f2a9b8a1\"><code>98473ee</code></a> Prepare rand 0.9.2 (<a href=\"https://redirect.github.com/rust-random/rand/issues/1648\">#1648</a>)</li>\r\n<li><a href=\"https://github.com/rust-random/rand/commit/031a1f5589e487ce95972cb3acc0833ef64cfc10\"><code>031a1f5</code></a> <code>examples/print-next.rs</code> (<a href=\"https://redirect.github.com/rust-random/rand/issues/1647\">#1647</a>)</li>\r\n<li><a href=\"https://github.com/rust-random/rand/commit/6cb75ee59eda73967b6a3cae4fdcf2c21f6e0e4e\"><code>6cb75ee</code></a> Make UniformUsize serializable (<a href=\"https://redirect.github.com/rust-random/rand/issues/1646\">#1646</a>)</li>\r\n<li><a href=\"https://github.com/rust-random/rand/commit/0c955c5b7a079bc2fe67fe946a8deb46c4bc58d8\"><code>0c955c5</code></a> Add some tests for BlockRng, BlockRng64 and Xoshiro RNGs (<a href=\"https://redirect.github.com/rust-random/rand/issues/1639\">#1639</a>)</li>\r\n<li><a href=\"https://github.com/rust-random/rand/commit/204084a35fc7289e9a38575fdd80869818484517\"><code>204084a</code></a> Fix: Remove accidental editor swap file (<a href=\"https://redirect.github.com/rust-random/rand/issues/1636\">#1636</a>)</li>\r\n<li><a href=\"https://github.com/rust-random/rand/commit/86262ac190ec20a79293607fb2347dc74c99122e\"><code>86262ac</code></a> Deprecate rand::rngs::mock module and StepRng (<a href=\"https://redirect.github.com/rust-random/rand/issues/1634\">#1634</a>)</li>\r\n<li><a href=\"https://github.com/rust-random/rand/commit/a6e217f4a3ce78223a59cc1ff9afb2b5e589d785\"><code>a6e217f</code></a> Update statrs link (<a href=\"https://redirect.github.com/rust-random/rand/issues/1630\">#1630</a>)</li>\r\n<li><a href=\"https://github.com/rust-random/rand/commit/db993ec12676119251eaf9f2cba8389a1b07abef\"><code>db993ec</code></a> Prepare rand v0.9.1 (<a href=\"https://redirect.github.com/rust-random/rand/issues/1629\">#1629</a>)</li>\r\n<li><a href=\"https://github.com/rust-random/rand/commit/3057641020408f64a4618b1c582cad45a9304811\"><code>3057641</code></a> Remove zerocopy from rand (<a href=\"https://redirect.github.com/rust-random/rand/issues/1579\">#1579</a>)</li>\r\n<li>Additional commits viewable in <a href=\"https://github.com/rust-random/rand/compare/rand_core-0.9.2...0.9.3\">compare view</a></li>\r\n</ul>\r\n</details>\r\n<br />\r\n\r\n\r\n[![Dependabot compatibility score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=rand&package-manager=cargo&previous-version=0.9.2&new-version=0.9.3)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\r\n\r\nDependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.\r\n\r\n[//]: # (dependabot-automerge-start)\r\n[//]: # (dependabot-automerge-end)\r\n\r\n---\r\n\r\n<details>\r\n<summary>Dependabot commands and options</summary>\r\n<br />\r\n\r\nYou can trigger Dependabot actions by commenting on this PR:\r\n- `@dependabot rebase` will rebase this PR\r\n- `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it\r\n- `@dependabot show <dependency name> ignore conditions` will show all of the ignore conditions of the specified dependency\r\n- `@dependabot ignore this major version` will close this PR and stop Dependabot creating any more for this major version (unless you reopen the PR or upgrade to it yourself)\r\n- `@dependabot ignore this minor version` will close this PR and stop Dependabot creating any more for this minor version (unless you reopen the PR or upgrade to it yourself)\r\n- `@dependabot ignore this dependency` will close this PR and stop Dependabot creating any more for this dependency (unless you reopen the PR or upgrade to it yourself)\r\nYou can disable automated security fix PRs for this repo from the [Security Alerts page](https://github.com/unicode-org/icu4x/network/alerts).\r\n\r\n</details>\r\n\r\n## Changelog N/A",
+      "title": "Bump rand from 0.9.2 to 0.9.3",
+      "author": {
+        "login": "app/dependabot"
+      }
+    },
+    "b9e49c88b4c13d21c5bc33ffc952f927555a1edf": {
+      "number": 8167,
+      "body": "Updates the doc comment generated for Writeable to_string fns per the wording suggested by @robertbastian in #8140.\r\n\r\nCloses #8164",
+      "title": "docs(writeable): clarify to_string doc wording",
+      "author": {
+        "login": "Chaganti-Reddy"
+      }
+    },
+    "mock_commit_1": {
+      "number": 9001,
+      "body": "## Changelog\r\n\r\n`icu_experimental/currency`:\r\n* Add formatting support for negative currency subpatterns",
+      "title": "Add negative currency subpatterns",
+      "author": {
+        "login": "gemini"
+      }
+    },
+    "mock_commit_2": {
+      "number": 9002,
+      "body": "## Changelog\r\n\r\n`icu_datetime`: Improved performance of datetime formatting\r\n  * Optimized cache lookup\r\n  * Reduced allocations in helper functions\r\n    * Avoided cloning locale in hot path",
+      "title": "Optimize datetime formatting",
+      "author": {
+        "login": "gemini"
+      }
+    },
+    "mock_commit_3": {
+      "number": 9003,
+      "body": "## Changelog\r\n\r\n`icu_calendar`:\r\n* Fix bug in leap year calculation for Julian calendar",
+      "title": "Fix Julian leap year",
+      "author": {
+        "login": "gemini"
+      }
+    },
+    "mock_commit_4": {
+      "number": 9004,
+      "body": "## Changelog\r\n\r\n`icu_list`: Add support for custom list styles\r\n  - Allowed users to pass custom templates\r\n  - Added validation for templates\r\n    - Checked for matching placeholders\r\n    - Verified order of placeholders",
+      "title": "Custom list styles",
+      "author": {
+        "login": "gemini"
+      }
+    },
+    "mock_commit_5": {
+      "number": 9005,
+      "body": "## Changelog\r\n\r\n`icu_properties`: Update properties data for Unicode 16.0\r\n  * Loaded new property files\r\n  * Updated script definitions\r\n    * Added new scripts\r\n    * Updated aliases for existing scripts",
+      "title": "Unicode 16.0 prep",
+      "author": {
+        "login": "gemini"
+      }
+    }
+  }
+}
