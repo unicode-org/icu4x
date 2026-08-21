@@ -246,8 +246,8 @@ where
 /// If you need to implement this trait, consider using [`#[make_varule]`](crate::make_varule) or
 ///  [`#[derive(VarULE)]`](macro@VarULE) instead.
 ///
-/// This trait is mostly for unsized types like `str` and `[T]`. It can be implemented on sized types;
-/// however, it is much more preferable to use [`ULE`] for that purpose. The [`custom`] module contains
+/// This trait is for unsized types like `str` and `[T]`. For sized types use [`ULE`] instead.
+/// The [`custom`] module contains
 /// additional documentation on how this type can be implemented on custom types.
 ///
 /// If deserialization with `VarZeroVec` is desired is recommended to implement `Deserialize` for
@@ -260,17 +260,18 @@ where
 ///
 /// Safety checklist for `VarULE`:
 ///
-/// 1. The type *must not* include any uninitialized or padding bytes.
-/// 2. The type must have an alignment of 1 byte.
-/// 3. The impl of [`VarULE::validate_bytes()`] *must* return an error if the given byte slice
-///    would not represent a valid slice of this type.
+/// 1. The type **must** be a unsized, slice like type
+/// 2. The type *must not* include any uninitialized or padding bytes.
+/// 3. The type must have an alignment of 1 byte.
 /// 4. The impl of [`VarULE::validate_bytes()`] *must* return an error if the given byte slice
+///    would not represent a valid slice of this type.
+/// 5. The impl of [`VarULE::validate_bytes()`] *must* return an error if the given byte slice
 ///    cannot be used in its entirety.
-/// 5. The impl of [`VarULE::from_bytes_unchecked()`] must produce a reference to the same
+/// 6. The impl of [`VarULE::from_bytes_unchecked()`] must produce a reference to the same
 ///    underlying data assuming that the given bytes previously passed validation.
-/// 6. All other methods *must* be left with their default impl, or else implemented according to
+/// 7. All other methods *must* be left with their default impl, or else implemented according to
 ///    their respective safety guidelines.
-/// 7. Acknowledge the following note about the equality invariant.
+/// 8. Acknowledge the following note about the equality invariant.
 ///
 /// If the ULE type is a struct only containing other ULE/VarULE types (or other types which satisfy invariants 1 and 2,
 /// like `[u8; N]`), invariants 1 and 2 can be achieved via `#[repr(C, packed)]` or `#[repr(transparent)]`.
@@ -446,6 +447,13 @@ impl UleError {
 impl core::error::Error for UleError {}
 
 #[cfg(feature = "alloc")]
+#[repr(C)]
+struct DstMetadata<Ptr> {
+    ptr: Ptr,
+    metadata: usize,
+}
+
+#[cfg(feature = "alloc")]
 /// Reconstructs a `Box<T>` from a `Box<[u8]>` while preserving unique pointer provenance
 /// and correctly resolving DST metadata.
 ///
@@ -469,20 +477,36 @@ impl core::error::Error for UleError {}
 /// - `T::from_bytes_unchecked` must be safe to call on the slice behind bytes
 pub(crate) unsafe fn cast_box<T: VarULE + ?Sized>(bytes: Box<[u8]>) -> Box<T> {
     use core::alloc::Layout;
+
+    const {
+        assert!(size_of::<&T>() == size_of::<DstMetadata<*const u8>>());
+        assert!(size_of::<&T>() == size_of::<DstMetadata<*mut u8>>());
+        let expected_layout = Layout::new::<&[u8]>();
+        let actual_layout = Layout::new::<&T>();
+        assert!(expected_layout.size() == actual_layout.size());
+        assert!(expected_layout.align() == actual_layout.align());
+    }
     let raw = Box::into_raw(bytes);
     // SAFETY: we just produced `raw`; it is valid
     let slice: &[u8] = unsafe { &*raw };
     // SAFETY: caller guarantees `from_bytes_unchecked` is safe.
     let ref_t: &T = unsafe { T::from_bytes_unchecked(slice) };
-
-    // Extract metadata from ref_t.
-    debug_assert_eq!(size_of::<&T>(), size_of::<(*const u8, usize)>());
-    let (_, metadata) = unsafe { core::mem::transmute_copy::<&T, (*const u8, usize)>(&ref_t) };
-
+    // the slice metadata are the length of the slice, so we could just
+    // extract them by literally getting the length of the underlying byte
+    // slice
+    let metadata = ref_t.as_bytes().len();
+    // make sure that the address of the thick ptr matches the address of the thin ptr pointing
+    // to the first slice element. This tries to verify that the layout of the DST
+    // is what we expect
+    assert_eq!((ref_t as *const T).addr(), ref_t.as_bytes().as_ptr().addr());
     // Construct *mut T from (raw_data_ptr, metadata).
-    debug_assert_eq!(size_of::<*mut T>(), size_of::<(*mut u8, usize)>());
+    // TODO: this should likely use `std::ptr::from_raw_parts` as
+    // soon as it's stable
     let ptr: *mut T = unsafe {
-        core::mem::transmute_copy::<(*mut u8, usize), *mut T>(&(raw.cast::<u8>(), metadata))
+        core::mem::transmute_copy::<DstMetadata<*mut u8>, *mut T>(&DstMetadata {
+            ptr: raw.cast::<u8>(),
+            metadata,
+        })
     };
 
     let expected_layout = Layout::for_value(slice);
