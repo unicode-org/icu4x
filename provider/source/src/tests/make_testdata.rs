@@ -20,7 +20,8 @@ include!("../../tests/locales.rs.data");
 #[cfg(feature = "use_wasm")]
 fn make_testdata() {
     // Only produce output if the variable is set. Test is hermetic otherwise.
-    let exporter: Box<dyn DataExporter> = if std::option_env!("ICU4X_WRITE_TESTDATA").is_none() {
+    let mut exporter: Box<dyn DataExporter> = if std::option_env!("ICU4X_WRITE_TESTDATA").is_none()
+    {
         Box::new(ZeroCopyCheckExporter {
             zero_copy_violations: Default::default(),
             zero_copy_transient_violations: Default::default(),
@@ -128,8 +129,53 @@ fn make_testdata() {
                 | "und-x-interind-arabic"
         )
     })
-    .export(&provider, exporter)
+    .export(&provider, BorrowedExporter(&exporter))
     .unwrap();
+
+    // Locales that only exist in the test data for a single marker: exporting them for
+    // every marker would multiply the generated test data for no added coverage.
+    ExportDriver::new(
+        EXTRA_NUMBERS_LOCALES
+            .iter()
+            .copied()
+            .map(DataLocaleFamily::single),
+        DeduplicationStrategy::Maximal.into(),
+        LocaleFallbacker::try_new_unstable(&provider).unwrap(),
+    )
+    .with_markers([icu::decimal::provider::DecimalSymbolsV1::INFO])
+    .export(&provider, BorrowedExporter(&exporter))
+    .unwrap();
+
+    exporter.close().unwrap();
+}
+
+/// Allows several [`ExportDriver`]s to write into the same exporter, which would
+/// otherwise be consumed by the first export. Closing is left to the caller, once all
+/// drivers have run.
+struct BorrowedExporter<'a>(&'a dyn DataExporter);
+
+impl DataExporter for BorrowedExporter<'_> {
+    fn put_payload(
+        &self,
+        marker: DataMarkerInfo,
+        id: DataIdentifierBorrowed,
+        payload: &DataPayload<ExportMarker>,
+    ) -> Result<(), DataError> {
+        self.0.put_payload(marker, id, payload)
+    }
+
+    fn flush_singleton(
+        &self,
+        marker: DataMarkerInfo,
+        payload: &DataPayload<ExportMarker>,
+        metadata: FlushMetadata,
+    ) -> Result<(), DataError> {
+        self.0.flush_singleton(marker, payload, metadata)
+    }
+
+    fn flush(&self, marker: DataMarkerInfo, metadata: FlushMetadata) -> Result<(), DataError> {
+        self.0.flush(marker, metadata)
+    }
 }
 
 struct ZeroCopyCheckExporter {

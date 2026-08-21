@@ -11,6 +11,38 @@ use icu_provider::prelude::*;
 use std::collections::HashSet;
 use zerovec::VarZeroCow;
 
+/// Splits a marker attribute into its numbering system and, for monetary symbols, the
+/// ISO code of the currency whose separator overrides apply.
+///
+/// The attribute is `<currency>` for the locale's default numbering system and
+/// `<numsys>/<currency>` otherwise, mirroring the standard `<numsys>` attributes.
+/// An empty numbering system means the locale's default one.
+fn split_currency_attribute(attributes: &str) -> (&str, Option<&str>) {
+    if let Some((nsname, currency)) = attributes.split_once('/') {
+        (nsname, Some(currency))
+    } else if is_currency_code(attributes) {
+        ("", Some(attributes))
+    } else {
+        (attributes, None)
+    }
+}
+
+/// Currency codes are three uppercase ASCII letters, so they cannot be confused with a
+/// numbering system name, which is lowercase.
+fn is_currency_code(attributes: &str) -> bool {
+    attributes.len() == 3 && attributes.bytes().all(|b| b.is_ascii_uppercase())
+}
+
+/// The marker attribute addressing the symbols of `currency` in `nsname`, which is the
+/// locale's default numbering system if `is_default` is set.
+fn currency_attribute(nsname: &str, currency: &str, is_default: bool) -> String {
+    if is_default {
+        currency.to_owned()
+    } else {
+        format!("{nsname}/{currency}")
+    }
+}
+
 impl DataProvider<DecimalSymbolsV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalSymbolsV1>, DataError> {
         self.check_req::<DecimalSymbolsV1>(req)?;
@@ -22,8 +54,10 @@ impl DataProvider<DecimalSymbolsV1> for SourceDataProvider {
 
         let numbers = &resource.main.value.numbers;
 
-        let nsname = if !req.id.marker_attributes.is_empty() {
-            req.id.marker_attributes.as_str()
+        let (nsattr, currency) = split_currency_attribute(req.id.marker_attributes.as_str());
+
+        let nsname = if !nsattr.is_empty() {
+            nsattr
         } else {
             &numbers.default_numbering_system
         };
@@ -48,6 +82,36 @@ impl DataProvider<DecimalSymbolsV1> for SourceDataProvider {
             .map(|n| (n.prefix.as_str(), n.suffix.as_str()))
             .unwrap_or_else(|| ("-", ""));
 
+        // UTS 35 lets a locale override the decimal and grouping separators of individual
+        // currencies, e.g. the Portuguese escudo, which uses `$` as its decimal separator
+        // in `pt-PT`. Only those currencies get an identifier of their own; every other
+        // currency formats with the locale's standard symbols.
+        let (decimal_separator, grouping_separator) = match currency {
+            Some(currency) => {
+                let currencies: &cldr_serde::currencies::data::Resource = self
+                    .cldr()?
+                    .numbers()
+                    .read_and_parse(req.id.locale, "currencies.json")?;
+
+                let overrides = currencies
+                    .main
+                    .value
+                    .numbers
+                    .currencies
+                    .get(currency)
+                    .filter(|patterns| patterns.decimal.is_some() || patterns.group.is_some())
+                    .ok_or_else(|| {
+                        DataErrorKind::IdentifierNotFound.with_req(DecimalSymbolsV1::INFO, req)
+                    })?;
+
+                (
+                    overrides.decimal.as_deref().unwrap_or(&symbols.decimal),
+                    overrides.group.as_deref().unwrap_or(&symbols.group),
+                )
+            }
+            None => (symbols.decimal.as_str(), symbols.group.as_str()),
+        };
+
         let strings = DecimalSymbolStrsBuilder {
             minus_sign_prefix: VarZeroCow::new_owned(
                 affixes.0.replace('-', &symbols.minus_sign).into_boxed_str(),
@@ -61,8 +125,10 @@ impl DataProvider<DecimalSymbolsV1> for SourceDataProvider {
             plus_sign_suffix: VarZeroCow::new_owned(
                 affixes.1.replace('-', &symbols.plus_sign).into_boxed_str(),
             ),
-            decimal_separator: VarZeroCow::new_owned(symbols.decimal.clone().into_boxed_str()),
-            grouping_separator: VarZeroCow::new_owned(symbols.group.clone().into_boxed_str()),
+            decimal_separator: VarZeroCow::new_owned(decimal_separator.to_owned().into_boxed_str()),
+            grouping_separator: VarZeroCow::new_owned(
+                grouping_separator.to_owned().into_boxed_str(),
+            ),
             numsys: VarZeroCow::new_owned(nsname.to_owned().into_boxed_str()),
         }
         .build();
@@ -104,8 +170,100 @@ impl DataProvider<DecimalSymbolsV1> for SourceDataProvider {
 
 impl IterableDataProviderCached<DecimalSymbolsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        self.iter_ids_for_numbers_with_locales()
+        let mut ids = self.iter_ids_for_numbers_with_locales()?;
+
+        for locale in self.cldr()?.numbers().list_locales()? {
+            let currencies: &cldr_serde::currencies::data::Resource = self
+                .cldr()?
+                .numbers()
+                .read_and_parse(&locale, "currencies.json")?;
+
+            let overriding = currencies
+                .main
+                .value
+                .numbers
+                .currencies
+                .iter()
+                .filter(|(_, patterns)| patterns.decimal.is_some() || patterns.group.is_some())
+                .map(|(currency, _)| currency.as_str())
+                .collect::<Vec<_>>();
+
+            if overriding.is_empty() {
+                continue;
+            }
+
+            // The overrides are not scoped to a numbering system, but the rest of the
+            // symbols are, so each numbering system needs its own identifier.
+            let numsys = self.get_supported_numsys_for_langid(&locale, true)?;
+
+            for currency in overriding {
+                let attributes = core::iter::once(currency_attribute("", currency, true)).chain(
+                    numsys
+                        .iter()
+                        .map(|nsname| currency_attribute(nsname.as_str(), currency, false)),
+                );
+
+                for attribute in attributes {
+                    let Ok(attribute) = DataMarkerAttributes::try_from_str(&attribute) else {
+                        continue;
+                    };
+                    ids.insert(
+                        DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                            attribute, &locale,
+                        )
+                        .into_owned(),
+                    );
+                }
+            }
+        }
+
+        Ok(ids)
     }
+}
+
+#[test]
+fn test_currency_attribute_roundtrip() {
+    assert_eq!(split_currency_attribute(""), ("", None));
+    assert_eq!(split_currency_attribute("latn"), ("latn", None));
+    assert_eq!(split_currency_attribute("PTE"), ("", Some("PTE")));
+    assert_eq!(split_currency_attribute("arab/PTE"), ("arab", Some("PTE")));
+
+    assert_eq!(currency_attribute("latn", "PTE", true), "PTE");
+    assert_eq!(currency_attribute("arab", "PTE", false), "arab/PTE");
+}
+
+#[test]
+fn test_currency_symbols() {
+    use icu::locale::langid;
+
+    let provider = SourceDataProvider::new_testing();
+
+    let load = |currency| {
+        DataProvider::<DecimalSymbolsV1>::load(
+            &provider,
+            DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic(currency),
+                    &langid!("pt-PT").into(),
+                ),
+                ..Default::default()
+            },
+        )
+    };
+
+    // `pt-PT` formats the Portuguese escudo with `$` as its decimal separator and `,`
+    // as its grouping separator, instead of the standard `,` and U+00A0.
+    let escudo = load("PTE").unwrap().payload;
+    assert_eq!(escudo.get().decimal_separator(), "$");
+    assert_eq!(escudo.get().grouping_separator(), ",");
+    assert_eq!(escudo.get().numsys(), "latn");
+
+    // Currencies without overrides have no identifier of their own; consumers fall back
+    // to the locale's standard symbols.
+    assert_eq!(
+        load("EUR").map(|_| ()).unwrap_err().kind,
+        DataErrorKind::IdentifierNotFound
+    );
 }
 
 #[test]
