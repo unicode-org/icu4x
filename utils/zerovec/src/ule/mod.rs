@@ -491,11 +491,17 @@ pub(crate) unsafe fn cast_box<T: VarULE + ?Sized>(bytes: Box<[u8]>) -> Box<T> {
     let slice: &[u8] = unsafe { &*raw };
     // SAFETY: caller guarantees `from_bytes_unchecked` is safe.
     let ref_t: &T = unsafe { T::from_bytes_unchecked(slice) };
-    // Extract metadata from ref_t.
-    let DstMetadata { metadata, .. } =
-        unsafe { core::mem::transmute_copy::<&T, DstMetadata<*const u8>>(&ref_t) };
-
+    // the slice metadata are the length of the slice, so we could just
+    // extract them by literally getting the length of the underlying byte
+    // slice
+    let metadata = ref_t.as_bytes().len();
+    // make sure that the address of the thick ptr matches the address of the thin ptr pointing
+    // to the first slice element. This tries to verify that the layout of the DST
+    // is what we expect
+    assert_eq!((ref_t as *const T).addr(), ref_t.as_bytes().as_ptr().addr());
     // Construct *mut T from (raw_data_ptr, metadata).
+    // TODO: this should likely use `std::ptr::from_raw_parts` as
+    // soon as it's stable
     let ptr: *mut T = unsafe {
         core::mem::transmute_copy::<DstMetadata<*mut u8>, *mut T>(&DstMetadata {
             ptr: raw.cast::<u8>(),
