@@ -233,35 +233,36 @@ fn test_currency_attribute_roundtrip() {
 }
 
 #[test]
-fn test_currency_symbols_only_for_overriding_currencies() {
+fn test_currency_symbols() {
     use icu::locale::langid;
 
     let provider = SourceDataProvider::new_testing();
 
-    // No currency in the test data overrides its separators, so consumers get
-    // `IdentifierNotFound` and fall back to the locale's standard symbols.
-    let result = DataProvider::<DecimalSymbolsV1>::load(
-        &provider,
-        DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("PTE"),
-                &langid!("en").into(),
-            ),
-            ..Default::default()
-        },
-    );
-    assert_eq!(
-        result.map(|_| ()).unwrap_err().kind,
-        DataErrorKind::IdentifierNotFound
-    );
+    let load = |currency| {
+        DataProvider::<DecimalSymbolsV1>::load(
+            &provider,
+            DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic(currency),
+                    &langid!("pt-PT").into(),
+                ),
+                ..Default::default()
+            },
+        )
+    };
 
-    assert!(
-        IterableDataProviderCached::<DecimalSymbolsV1>::iter_ids_cached(&provider)
-            .unwrap()
-            .iter()
-            .all(|id| split_currency_attribute(id.marker_attributes.as_str())
-                .1
-                .is_none())
+    // `pt-PT` formats the Portuguese escudo with `$` as its decimal separator and `,`
+    // as its grouping separator, instead of the standard `,` and U+00A0.
+    let escudo = load("PTE").unwrap().payload;
+    assert_eq!(escudo.get().decimal_separator(), "$");
+    assert_eq!(escudo.get().grouping_separator(), ",");
+    assert_eq!(escudo.get().numsys(), "latn");
+
+    // Currencies without overrides have no identifier of their own; consumers fall back
+    // to the locale's standard symbols.
+    assert_eq!(
+        load("EUR").map(|_| ()).unwrap_err().kind,
+        DataErrorKind::IdentifierNotFound
     );
 }
 

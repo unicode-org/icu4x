@@ -54,6 +54,8 @@ const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-misc-full/main/$LOCALES/characters.json",
     "cldr-misc-full/main/$LOCALES/listPatterns.json",
     "cldr-numbers-full/main/$LOCALES/currencies.json",
+    "cldr-numbers-full/main/$EXTRA_NUMBERS_LOCALES/currencies.json",
+    "cldr-numbers-full/main/$EXTRA_NUMBERS_LOCALES/numbers.json",
     "cldr-numbers-full/main/$LOCALES/numbers.json",
     "cldr-person-names-full/main/$LOCALES/personNames.json",
     "cldr-transforms/transforms/Any-Publishing.json",
