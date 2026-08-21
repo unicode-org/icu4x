@@ -471,6 +471,15 @@ impl core::error::Error for UleError {}
 /// - `T::from_bytes_unchecked` must be safe to call on the slice behind bytes
 pub(crate) unsafe fn cast_box<T: VarULE + ?Sized>(bytes: Box<[u8]>) -> Box<T> {
     use core::alloc::Layout;
+
+    const {
+        assert!(size_of::<&T>() == size_of::<(*const u8, usize)>());
+        assert!(size_of::<&T>() == size_of::<(*mut u8, usize)>());
+        let expected_layout = Layout::new::<&[u8]>();
+        let actual_layout = Layout::new::<&T>();
+        assert!(expected_layout.size() == actual_layout.size());
+        assert!(expected_layout.align() == actual_layout.align());
+    }
     let raw = Box::into_raw(bytes);
     // SAFETY: we just produced `raw`; it is valid
     let slice: &[u8] = unsafe { &*raw };
@@ -478,11 +487,9 @@ pub(crate) unsafe fn cast_box<T: VarULE + ?Sized>(bytes: Box<[u8]>) -> Box<T> {
     let ref_t: &T = unsafe { T::from_bytes_unchecked(slice) };
 
     // Extract metadata from ref_t.
-    debug_assert_eq!(size_of::<&T>(), size_of::<(*const u8, usize)>());
     let (_, metadata) = unsafe { core::mem::transmute_copy::<&T, (*const u8, usize)>(&ref_t) };
 
     // Construct *mut T from (raw_data_ptr, metadata).
-    debug_assert_eq!(size_of::<*mut T>(), size_of::<(*mut u8, usize)>());
     let ptr: *mut T = unsafe {
         core::mem::transmute_copy::<(*mut u8, usize), *mut T>(&(raw.cast::<u8>(), metadata))
     };
