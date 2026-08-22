@@ -209,6 +209,10 @@ where
     ) -> Self {
         Self { trie, values }
     }
+
+    pub fn total_size(&self) -> usize {
+        size_of::<Self>() + self.trie.byte_len() + self.values.as_bytes().len()
+    }
 }
 
 impl<M: DataMarker> super::DataStore<M> for DataForVarULEs<M>

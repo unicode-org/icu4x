@@ -50,14 +50,17 @@ macro_rules! table_row {
 /// There are several constructors, each of which links different data and serve
 /// different use cases. The behavior is illustrated in the table below.
 ///
-/// | Constructor | `US` | `AD` |
-/// | :--- | :--- | :--- |
-#[doc = concat!(table_row!(try_new_tiny), "\n")]
-#[doc = concat!(table_row!(try_new_short_tiny), "\n")]
-#[doc = concat!(table_row!(try_new_light), "\n")]
-#[doc = concat!(table_row!(try_new_short_light), "\n")]
+/// | Constructor | `US` | `AD` | Data Size |
+/// | :--- | :--- | :--- | :--- |
+#[doc = concat!(table_row!(try_new_tiny), "17 kB", "|\n")]
+#[doc = concat!(table_row!(try_new_short_tiny), "18 kB", "|\n")]
+#[doc = concat!(table_row!(try_new_light), "1.3 MB", "|\n")]
+#[doc = concat!(table_row!(try_new_short_light), "1.3 MB", "|\n")]
 ///
-/// > Note: :x: means that the constructor returns an error.
+/// Notes:
+///
+/// - ❌ means that the constructor returns an error.
+/// - Data sizes are for compiled data as of ICU4X 2.3.
 ///
 /// There are fallible (`try_new_*`) and infallible (`new_*_with_fallback`) versions of
 /// all constructors.
@@ -590,5 +593,7 @@ mod tests {
         check_row!(try_new_short_tiny);
         check_row!(try_new_light);
         check_row!(try_new_short_light);
+
+        assert_eq!(crate::provider::Baked::DATA_LOCALE_NAMES_REGION_MEDIUM_TINY_V1.total_size(), 11138);
     }
 }
