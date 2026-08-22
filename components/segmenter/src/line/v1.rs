@@ -5,6 +5,7 @@
 use super::{LineBreakStrictness, LineBreakWordOption, ResolvedLineBreakOptions};
 use crate::complex::*;
 use crate::provider::*;
+use crate::rule_segmenter_v1::result_cache_from_offsets;
 use crate::scaffold::*;
 use alloc::string::String;
 use alloc::vec;
@@ -195,11 +196,11 @@ impl<Y: RuleBreakType> Iterator for LineBreakIteratorV1<'_, '_, Y> {
         }
 
         // If we have break point cache by previous run, return this result
-        if let Some(&first_pos) = self.result_cache.first() {
+        if let Some(&first_pos) = self.result_cache.last() {
             let mut i = 0;
             loop {
                 if i == first_pos {
-                    self.result_cache = self.result_cache.iter().skip(1).map(|r| r - i).collect();
+                    self.result_cache.pop();
                     return self.get_current_position();
                 }
                 i += self.get_current_codepoint().map_or(0, Y::char_len);
@@ -543,13 +544,12 @@ where
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
     let breaks = iter.complex.segment_str(&s);
-    iter.result_cache = breaks;
-    let first_pos = *iter.result_cache.first()?;
-    let mut i = left_codepoint.len_utf8();
+    iter.result_cache = result_cache_from_offsets(breaks, left_codepoint.len_utf8());
+    let first_pos = *iter.result_cache.last()?;
+    let mut i = 0;
     loop {
         if i == first_pos {
-            // Re-calculate breaking offset
-            iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
+            iter.result_cache.pop();
             return iter.get_current_position();
         }
         debug_assert!(
@@ -596,19 +596,13 @@ where
     iterator.iter = start_iter;
     iterator.current_pos_data = start_point;
     let breaks = iterator.complex.segment_utf16(&s);
-    iterator.result_cache = breaks;
-    // result_cache vector is utf-16 index that is in BMP.
-    let first_pos = *iterator.result_cache.first()?;
-    let mut i = 1;
+    iterator.result_cache = result_cache_from_offsets(breaks, 1);
+    // Cached distances are UTF-16 code units within a BMP-only complex run.
+    let first_pos = *iterator.result_cache.last()?;
+    let mut i = 0;
     loop {
         if i == first_pos {
-            // Re-calculate breaking offset
-            iterator.result_cache = iterator
-                .result_cache
-                .iter()
-                .skip(1)
-                .map(|r| r - i)
-                .collect();
+            iterator.result_cache.pop();
             return iterator.get_current_position();
         }
         debug_assert!(
