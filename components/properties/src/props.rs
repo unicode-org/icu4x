@@ -673,6 +673,10 @@ impl Script {
     #[deprecated(since = "2.3.0", note = "use Script::ArabicNastaliq instead")]
     #[allow(non_upper_case_globals)]
     pub const Nastaliq: Self = Self::ArabicNastaliq;
+    /// Deprecated: non-canonical spelling
+    #[deprecated(since = "2.4.0", note = "use Script::Blissymbols instead")]
+    #[allow(non_upper_case_globals)]
+    pub const BlisSymbols: Self = Self::Blissymbols;
 }
 
 impl Default for Script {

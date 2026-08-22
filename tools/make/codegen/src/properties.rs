@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use askama::Template;
-use heck::{ToSnakeCase, ToUpperCamelCase};
+use heck::{ToSnakeCase, ToTitleCase, ToUpperCamelCase};
 use icu::properties::props::*;
 use std::collections::BTreeMap;
 use std::path::Path;
@@ -55,6 +55,7 @@ impl Prop {
     fn transform_ident_ffi(&self, long_name: &str) -> String {
         self.transform_ident(long_name)
             // Unfortunately we're stuck with these non-canonical names on FFI
+            .replace("Blissymbols", "BlisSymbols")
             .replace("Ethiopic", "Ethiopian")
             .replace("ArabicNastaliq", "Nastaliq")
             .replace("LVSyllable", "LeadingVowelSyllable")
@@ -125,8 +126,7 @@ static VARIANTS: LazyLock<BTreeMap<&str, BTreeMap<u32, (&str, &str, Vec<&str>, b
         }
 
         for line in
-            include_str!("../../../../components/properties/tests/data/PropertyDiscriminants.txt")
-                .lines()
+            include_str!("../../../../components/properties/tests/data/prop_numbers.txt").lines()
         {
             let line = line.split('#').next().unwrap().trim();
             if line.is_empty() {
@@ -134,18 +134,40 @@ static VARIANTS: LazyLock<BTreeMap<&str, BTreeMap<u32, (&str, &str, Vec<&str>, b
             }
             let mut parts = line.split(';').map(str::trim);
             let prop = parts.next().unwrap();
+            if !names.contains_key(prop) {
+                // Non-Unicode property
+                continue;
+            }
             let short_name = parts.next().unwrap();
+            if short_name.is_empty() {
+                // discriminant for the property itself, unused in ICU4X
+                continue;
+            }
             let discriminant = parts.next().unwrap().parse::<u32>().unwrap();
             let mut is_icu4c_only_value = false;
-            let (long_name, aliases) = names[prop].get(short_name).cloned().unwrap_or_else(|| {
-                is_icu4c_only_value = true;
-                let long_name = parts.next().expect(short_name);
-                (long_name, Vec::new())
-            });
-            discriminants.entry(prop).or_default().insert(
-                discriminant,
-                (short_name, long_name, aliases, is_icu4c_only_value),
-            );
+            let (long_name, aliases) = names
+                .get_mut(prop)
+                .unwrap()
+                .remove(short_name)
+                .unwrap_or_else(|| {
+                    is_icu4c_only_value = true;
+                    let _icu4c_name = parts.next().unwrap();
+                    let icu4j_name = parts.next().unwrap();
+                    let long_name = icu4j_name.to_title_case().replace(' ', "_").leak();
+                    (long_name, Vec::new())
+                });
+
+            discriminants
+                .entry(prop)
+                .or_default()
+                .entry(discriminant)
+                .and_modify(|&mut (s, ..)| {
+                    assert_eq!(
+                        s, short_name,
+                        "ICU discriminants should match Unicode discriminants"
+                    )
+                })
+                .or_insert((short_name, long_name, aliases, is_icu4c_only_value));
         }
 
         discriminants

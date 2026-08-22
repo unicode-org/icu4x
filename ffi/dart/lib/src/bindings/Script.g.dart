@@ -133,7 +133,7 @@ enum Script {
   balinese,
   /// See the [Rust documentation for `Batak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html#associatedconstant.Batak) for more information.
   batak,
-  /// See the [Rust documentation for `BlisSymbols`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html#associatedconstant.BlisSymbols) for more information.
+  /// See the [Rust documentation for `Blissymbols`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html#associatedconstant.Blissymbols) for more information.
   blisSymbols,
   /// See the [Rust documentation for `Brahmi`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html#associatedconstant.Brahmi) for more information.
   brahmi,
