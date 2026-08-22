@@ -72,6 +72,27 @@ final class CodePointMapData16 implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result, []);
   }
 
+  /// Create a map for the `Block` property, using compiled data.
+  ///
+  /// See the [Rust documentation for `Block`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html) for more information.
+  factory CodePointMapData16.block() {
+    final result = _icu4x_CodePointMapData16_create_block_mv1();
+    return CodePointMapData16._fromFfi(result, []);
+  }
+
+  /// Create a map for the `Block` property, using a particular data source.
+  ///
+  /// See the [Rust documentation for `Block`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory CodePointMapData16.blockWithProvider(DataProvider provider) {
+    final result = _icu4x_CodePointMapData16_create_block_with_provider_mv1(provider._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return CodePointMapData16._fromFfi(result.union.ok, []);
+  }
+
   /// Create a map for the `Script` property, using compiled data.
   ///
   /// See the [Rust documentation for `Script`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html) for more information.
@@ -124,6 +145,18 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointMapData16_iter_ranges_for_value
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>(isLeaf: true, symbol: 'icu4x_CodePointMapData16_get_set_for_value_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_CodePointMapData16_get_set_for_value_mv1(ffi.Pointer<ffi.Opaque> self, int value);
+
+// ignore: experimental_member_use
+@meta.RecordUse()
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointMapData16_create_block_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_CodePointMapData16_create_block_mv1();
+
+// ignore: experimental_member_use
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointMapData16_create_block_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_CodePointMapData16_create_block_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 // ignore: experimental_member_use
 @meta.RecordUse()

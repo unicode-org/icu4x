@@ -10,7 +10,7 @@ use alloc::vec::Vec;
 use core::fmt::Display;
 use core::{iter::Peekable, str::CharIndices};
 
-use crate::props::IndicConjunctBreak;
+use crate::props::{Block, IndicConjunctBreak};
 use crate::script::ScriptWithExtensions;
 use crate::{
     CodePointMapData,
@@ -488,6 +488,7 @@ where
         + DataProvider<PropertyBinaryWhiteSpaceV1>
         + DataProvider<PropertyBinaryXidContinueV1>
         + DataProvider<PropertyBinaryXidStartV1>
+        + DataProvider<PropertyEnumBlockV1>
         + DataProvider<PropertyEnumCanonicalCombiningClassV1>
         + DataProvider<PropertyEnumEastAsianWidthV1>
         + DataProvider<PropertyEnumGeneralCategoryV1>
@@ -497,6 +498,7 @@ where
         + DataProvider<PropertyEnumScriptV1>
         + DataProvider<PropertyEnumSentenceBreakV1>
         + DataProvider<PropertyEnumWordBreakV1>
+        + DataProvider<PropertyNameParseBlockV1>
         + DataProvider<PropertyNameParseCanonicalCombiningClassV1>
         + DataProvider<PropertyNameParseEastAsianWidthV1>
         + DataProvider<PropertyNameParseGeneralCategoryMaskV1>
@@ -1591,17 +1593,19 @@ where
     }
 
     fn try_load_block_set(&mut self, name: &str) -> Result<()> {
-        // TODO: source these from properties
-        self.single_set
-            .add_range(match name.to_ascii_lowercase().as_str() {
-                "arabic" => '\u{0600}'..'\u{06FF}',
-                "thaana" => '\u{0780}'..'\u{07BF}',
-                _ => {
-                    #[cfg(feature = "log")]
-                    log::warn!("Skipping :block={name}:");
-                    return Err(PEK::Unimplemented.into());
-                }
-            });
+        let parser = PropertyParser::<Block>::try_new_unstable(self.property_provider)
+            .map_err(|_| PEK::Internal)?;
+        let value = parser
+            .as_borrowed()
+            .get_loose(name)
+            // TODO: make the property parser do this
+            .or_else(|| name.parse().ok().map(Block))
+            .ok_or(PEK::UnknownProperty)?;
+        // TODO(#3550): This could be cached; does not depend on name.
+        let property_map = CodePointMapData::<Block>::try_new_unstable(self.property_provider)
+            .map_err(|_| PEK::Internal)?;
+        let set = property_map.as_borrowed().get_set_for_value(value);
+        self.single_set.add_set(&set.to_code_point_inversion_list());
         Ok(())
     }
 }
@@ -1800,6 +1804,7 @@ where
         + DataProvider<PropertyBinaryWhiteSpaceV1>
         + DataProvider<PropertyBinaryXidContinueV1>
         + DataProvider<PropertyBinaryXidStartV1>
+        + DataProvider<PropertyEnumBlockV1>
         + DataProvider<PropertyEnumCanonicalCombiningClassV1>
         + DataProvider<PropertyEnumEastAsianWidthV1>
         + DataProvider<PropertyEnumGeneralCategoryV1>
@@ -1809,6 +1814,7 @@ where
         + DataProvider<PropertyEnumScriptV1>
         + DataProvider<PropertyEnumSentenceBreakV1>
         + DataProvider<PropertyEnumWordBreakV1>
+        + DataProvider<PropertyNameParseBlockV1>
         + DataProvider<PropertyNameParseCanonicalCombiningClassV1>
         + DataProvider<PropertyNameParseEastAsianWidthV1>
         + DataProvider<PropertyNameParseGeneralCategoryMaskV1>
@@ -1922,6 +1928,7 @@ where
         + DataProvider<PropertyBinaryWhiteSpaceV1>
         + DataProvider<PropertyBinaryXidContinueV1>
         + DataProvider<PropertyBinaryXidStartV1>
+        + DataProvider<PropertyEnumBlockV1>
         + DataProvider<PropertyEnumCanonicalCombiningClassV1>
         + DataProvider<PropertyEnumEastAsianWidthV1>
         + DataProvider<PropertyEnumGeneralCategoryV1>
@@ -1931,6 +1938,7 @@ where
         + DataProvider<PropertyEnumScriptV1>
         + DataProvider<PropertyEnumSentenceBreakV1>
         + DataProvider<PropertyEnumWordBreakV1>
+        + DataProvider<PropertyNameParseBlockV1>
         + DataProvider<PropertyNameParseCanonicalCombiningClassV1>
         + DataProvider<PropertyNameParseEastAsianWidthV1>
         + DataProvider<PropertyNameParseGeneralCategoryMaskV1>

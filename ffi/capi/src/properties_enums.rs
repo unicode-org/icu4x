@@ -224,6 +224,2160 @@ pub mod ffi {
         }
     }
 
+    #[diplomat::rust_link(icu::properties::props::Block, Struct)]
+    #[diplomat::enum_convert(icu_properties::props::Block, needs_wildcard)]
+    #[non_exhaustive]
+    pub enum Block {
+        #[diplomat::rust_link(
+            icu::properties::props::Block::NoBlock,
+            AssociatedConstantInStruct
+        )]
+        #[diplomat::attr(auto, default)]
+        NoBlock = 0,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::BasicLatin,
+            AssociatedConstantInStruct
+        )]
+        BasicLatin = 1,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Latin1Supplement,
+            AssociatedConstantInStruct
+        )]
+        Latin1Supplement = 2,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::LatinExtendedA,
+            AssociatedConstantInStruct
+        )]
+        LatinExtendedA = 3,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::LatinExtendedB,
+            AssociatedConstantInStruct
+        )]
+        LatinExtendedB = 4,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::IPAExtensions,
+            AssociatedConstantInStruct
+        )]
+        IPAExtensions = 5,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::SpacingModifierLetters,
+            AssociatedConstantInStruct
+        )]
+        SpacingModifierLetters = 6,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CombiningDiacriticalMarks,
+            AssociatedConstantInStruct
+        )]
+        CombiningDiacriticalMarks = 7,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::GreekAndCoptic,
+            AssociatedConstantInStruct
+        )]
+        GreekAndCoptic = 8,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Cyrillic,
+            AssociatedConstantInStruct
+        )]
+        Cyrillic = 9,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Armenian,
+            AssociatedConstantInStruct
+        )]
+        Armenian = 10,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Hebrew,
+            AssociatedConstantInStruct
+        )]
+        Hebrew = 11,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Arabic,
+            AssociatedConstantInStruct
+        )]
+        Arabic = 12,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Syriac,
+            AssociatedConstantInStruct
+        )]
+        Syriac = 13,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Thaana,
+            AssociatedConstantInStruct
+        )]
+        Thaana = 14,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Devanagari,
+            AssociatedConstantInStruct
+        )]
+        Devanagari = 15,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Bengali,
+            AssociatedConstantInStruct
+        )]
+        Bengali = 16,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Gurmukhi,
+            AssociatedConstantInStruct
+        )]
+        Gurmukhi = 17,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Gujarati,
+            AssociatedConstantInStruct
+        )]
+        Gujarati = 18,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Oriya,
+            AssociatedConstantInStruct
+        )]
+        Oriya = 19,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Tamil,
+            AssociatedConstantInStruct
+        )]
+        Tamil = 20,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Telugu,
+            AssociatedConstantInStruct
+        )]
+        Telugu = 21,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Kannada,
+            AssociatedConstantInStruct
+        )]
+        Kannada = 22,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Malayalam,
+            AssociatedConstantInStruct
+        )]
+        Malayalam = 23,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Sinhala,
+            AssociatedConstantInStruct
+        )]
+        Sinhala = 24,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Thai,
+            AssociatedConstantInStruct
+        )]
+        Thai = 25,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Lao,
+            AssociatedConstantInStruct
+        )]
+        Lao = 26,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Tibetan,
+            AssociatedConstantInStruct
+        )]
+        Tibetan = 27,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Myanmar,
+            AssociatedConstantInStruct
+        )]
+        Myanmar = 28,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Georgian,
+            AssociatedConstantInStruct
+        )]
+        Georgian = 29,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::HangulJamo,
+            AssociatedConstantInStruct
+        )]
+        HangulJamo = 30,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Ethiopic,
+            AssociatedConstantInStruct
+        )]
+        Ethiopic = 31,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Cherokee,
+            AssociatedConstantInStruct
+        )]
+        Cherokee = 32,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::UnifiedCanadianAboriginalSyllabics,
+            AssociatedConstantInStruct
+        )]
+        UnifiedCanadianAboriginalSyllabics = 33,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Ogham,
+            AssociatedConstantInStruct
+        )]
+        Ogham = 34,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Runic,
+            AssociatedConstantInStruct
+        )]
+        Runic = 35,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Khmer,
+            AssociatedConstantInStruct
+        )]
+        Khmer = 36,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Mongolian,
+            AssociatedConstantInStruct
+        )]
+        Mongolian = 37,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::LatinExtendedAdditional,
+            AssociatedConstantInStruct
+        )]
+        LatinExtendedAdditional = 38,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::GreekExtended,
+            AssociatedConstantInStruct
+        )]
+        GreekExtended = 39,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::GeneralPunctuation,
+            AssociatedConstantInStruct
+        )]
+        GeneralPunctuation = 40,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::SuperscriptsAndSubscripts,
+            AssociatedConstantInStruct
+        )]
+        SuperscriptsAndSubscripts = 41,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CurrencySymbols,
+            AssociatedConstantInStruct
+        )]
+        CurrencySymbols = 42,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CombiningDiacriticalMarksForSymbols,
+            AssociatedConstantInStruct
+        )]
+        CombiningDiacriticalMarksForSymbols = 43,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::LetterlikeSymbols,
+            AssociatedConstantInStruct
+        )]
+        LetterlikeSymbols = 44,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::NumberForms,
+            AssociatedConstantInStruct
+        )]
+        NumberForms = 45,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Arrows,
+            AssociatedConstantInStruct
+        )]
+        Arrows = 46,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::MathematicalOperators,
+            AssociatedConstantInStruct
+        )]
+        MathematicalOperators = 47,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::MiscellaneousTechnical,
+            AssociatedConstantInStruct
+        )]
+        MiscellaneousTechnical = 48,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::ControlPictures,
+            AssociatedConstantInStruct
+        )]
+        ControlPictures = 49,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::OpticalCharacterRecognition,
+            AssociatedConstantInStruct
+        )]
+        OpticalCharacterRecognition = 50,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::EnclosedAlphanumerics,
+            AssociatedConstantInStruct
+        )]
+        EnclosedAlphanumerics = 51,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::BoxDrawing,
+            AssociatedConstantInStruct
+        )]
+        BoxDrawing = 52,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::BlockElements,
+            AssociatedConstantInStruct
+        )]
+        BlockElements = 53,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::GeometricShapes,
+            AssociatedConstantInStruct
+        )]
+        GeometricShapes = 54,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::MiscellaneousSymbols,
+            AssociatedConstantInStruct
+        )]
+        MiscellaneousSymbols = 55,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Dingbats,
+            AssociatedConstantInStruct
+        )]
+        Dingbats = 56,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::BraillePatterns,
+            AssociatedConstantInStruct
+        )]
+        BraillePatterns = 57,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CJKRadicalsSupplement,
+            AssociatedConstantInStruct
+        )]
+        CJKRadicalsSupplement = 58,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::KangxiRadicals,
+            AssociatedConstantInStruct
+        )]
+        KangxiRadicals = 59,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::IdeographicDescriptionCharacters,
+            AssociatedConstantInStruct
+        )]
+        IdeographicDescriptionCharacters = 60,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CJKSymbolsAndPunctuation,
+            AssociatedConstantInStruct
+        )]
+        CJKSymbolsAndPunctuation = 61,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Hiragana,
+            AssociatedConstantInStruct
+        )]
+        Hiragana = 62,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Katakana,
+            AssociatedConstantInStruct
+        )]
+        Katakana = 63,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Bopomofo,
+            AssociatedConstantInStruct
+        )]
+        Bopomofo = 64,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::HangulCompatibilityJamo,
+            AssociatedConstantInStruct
+        )]
+        HangulCompatibilityJamo = 65,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Kanbun,
+            AssociatedConstantInStruct
+        )]
+        Kanbun = 66,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::BopomofoExtended,
+            AssociatedConstantInStruct
+        )]
+        BopomofoExtended = 67,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::EnclosedCJKLettersAndMonths,
+            AssociatedConstantInStruct
+        )]
+        EnclosedCJKLettersAndMonths = 68,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CJKCompatibility,
+            AssociatedConstantInStruct
+        )]
+        CJKCompatibility = 69,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CJKUnifiedIdeographsExtensionA,
+            AssociatedConstantInStruct
+        )]
+        CJKUnifiedIdeographsExtensionA = 70,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CJKUnifiedIdeographs,
+            AssociatedConstantInStruct
+        )]
+        CJKUnifiedIdeographs = 71,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::YiSyllables,
+            AssociatedConstantInStruct
+        )]
+        YiSyllables = 72,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::YiRadicals,
+            AssociatedConstantInStruct
+        )]
+        YiRadicals = 73,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::HangulSyllables,
+            AssociatedConstantInStruct
+        )]
+        HangulSyllables = 74,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::HighSurrogates,
+            AssociatedConstantInStruct
+        )]
+        HighSurrogates = 75,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::HighPrivateUseSurrogates,
+            AssociatedConstantInStruct
+        )]
+        HighPrivateUseSurrogates = 76,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::LowSurrogates,
+            AssociatedConstantInStruct
+        )]
+        LowSurrogates = 77,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::PrivateUseArea,
+            AssociatedConstantInStruct
+        )]
+        PrivateUseArea = 78,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CJKCompatibilityIdeographs,
+            AssociatedConstantInStruct
+        )]
+        CJKCompatibilityIdeographs = 79,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::AlphabeticPresentationForms,
+            AssociatedConstantInStruct
+        )]
+        AlphabeticPresentationForms = 80,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::ArabicPresentationFormsA,
+            AssociatedConstantInStruct
+        )]
+        ArabicPresentationFormsA = 81,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CombiningHalfMarks,
+            AssociatedConstantInStruct
+        )]
+        CombiningHalfMarks = 82,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CJKCompatibilityForms,
+            AssociatedConstantInStruct
+        )]
+        CJKCompatibilityForms = 83,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::SmallFormVariants,
+            AssociatedConstantInStruct
+        )]
+        SmallFormVariants = 84,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::ArabicPresentationFormsB,
+            AssociatedConstantInStruct
+        )]
+        ArabicPresentationFormsB = 85,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Specials,
+            AssociatedConstantInStruct
+        )]
+        Specials = 86,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::HalfwidthAndFullwidthForms,
+            AssociatedConstantInStruct
+        )]
+        HalfwidthAndFullwidthForms = 87,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::OldItalic,
+            AssociatedConstantInStruct
+        )]
+        OldItalic = 88,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Gothic,
+            AssociatedConstantInStruct
+        )]
+        Gothic = 89,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Deseret,
+            AssociatedConstantInStruct
+        )]
+        Deseret = 90,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::ByzantineMusicalSymbols,
+            AssociatedConstantInStruct
+        )]
+        ByzantineMusicalSymbols = 91,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::MusicalSymbols,
+            AssociatedConstantInStruct
+        )]
+        MusicalSymbols = 92,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::MathematicalAlphanumericSymbols,
+            AssociatedConstantInStruct
+        )]
+        MathematicalAlphanumericSymbols = 93,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CJKUnifiedIdeographsExtensionB,
+            AssociatedConstantInStruct
+        )]
+        CJKUnifiedIdeographsExtensionB = 94,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CJKCompatibilityIdeographsSupplement,
+            AssociatedConstantInStruct
+        )]
+        CJKCompatibilityIdeographsSupplement = 95,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Tags,
+            AssociatedConstantInStruct
+        )]
+        Tags = 96,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CyrillicSupplement,
+            AssociatedConstantInStruct
+        )]
+        CyrillicSupplement = 97,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Tagalog,
+            AssociatedConstantInStruct
+        )]
+        Tagalog = 98,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Hanunoo,
+            AssociatedConstantInStruct
+        )]
+        Hanunoo = 99,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Buhid,
+            AssociatedConstantInStruct
+        )]
+        Buhid = 100,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Tagbanwa,
+            AssociatedConstantInStruct
+        )]
+        Tagbanwa = 101,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::MiscellaneousMathematicalSymbolsA,
+            AssociatedConstantInStruct
+        )]
+        MiscellaneousMathematicalSymbolsA = 102,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::SupplementalArrowsA,
+            AssociatedConstantInStruct
+        )]
+        SupplementalArrowsA = 103,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::SupplementalArrowsB,
+            AssociatedConstantInStruct
+        )]
+        SupplementalArrowsB = 104,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::MiscellaneousMathematicalSymbolsB,
+            AssociatedConstantInStruct
+        )]
+        MiscellaneousMathematicalSymbolsB = 105,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::SupplementalMathematicalOperators,
+            AssociatedConstantInStruct
+        )]
+        SupplementalMathematicalOperators = 106,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::KatakanaPhoneticExtensions,
+            AssociatedConstantInStruct
+        )]
+        KatakanaPhoneticExtensions = 107,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::VariationSelectors,
+            AssociatedConstantInStruct
+        )]
+        VariationSelectors = 108,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::SupplementaryPrivateUseAreaA,
+            AssociatedConstantInStruct
+        )]
+        SupplementaryPrivateUseAreaA = 109,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::SupplementaryPrivateUseAreaB,
+            AssociatedConstantInStruct
+        )]
+        SupplementaryPrivateUseAreaB = 110,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Limbu,
+            AssociatedConstantInStruct
+        )]
+        Limbu = 111,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::TaiLe,
+            AssociatedConstantInStruct
+        )]
+        TaiLe = 112,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::KhmerSymbols,
+            AssociatedConstantInStruct
+        )]
+        KhmerSymbols = 113,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::PhoneticExtensions,
+            AssociatedConstantInStruct
+        )]
+        PhoneticExtensions = 114,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::MiscellaneousSymbolsAndArrows,
+            AssociatedConstantInStruct
+        )]
+        MiscellaneousSymbolsAndArrows = 115,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::YijingHexagramSymbols,
+            AssociatedConstantInStruct
+        )]
+        YijingHexagramSymbols = 116,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::LinearBSyllabary,
+            AssociatedConstantInStruct
+        )]
+        LinearBSyllabary = 117,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::LinearBIdeograms,
+            AssociatedConstantInStruct
+        )]
+        LinearBIdeograms = 118,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::AegeanNumbers,
+            AssociatedConstantInStruct
+        )]
+        AegeanNumbers = 119,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Ugaritic,
+            AssociatedConstantInStruct
+        )]
+        Ugaritic = 120,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Shavian,
+            AssociatedConstantInStruct
+        )]
+        Shavian = 121,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Osmanya,
+            AssociatedConstantInStruct
+        )]
+        Osmanya = 122,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CypriotSyllabary,
+            AssociatedConstantInStruct
+        )]
+        CypriotSyllabary = 123,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::TaiXuanJingSymbols,
+            AssociatedConstantInStruct
+        )]
+        TaiXuanJingSymbols = 124,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::VariationSelectorsSupplement,
+            AssociatedConstantInStruct
+        )]
+        VariationSelectorsSupplement = 125,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::AncientGreekMusicalNotation,
+            AssociatedConstantInStruct
+        )]
+        AncientGreekMusicalNotation = 126,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::AncientGreekNumbers,
+            AssociatedConstantInStruct
+        )]
+        AncientGreekNumbers = 127,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::ArabicSupplement,
+            AssociatedConstantInStruct
+        )]
+        ArabicSupplement = 128,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Buginese,
+            AssociatedConstantInStruct
+        )]
+        Buginese = 129,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CJKStrokes,
+            AssociatedConstantInStruct
+        )]
+        CJKStrokes = 130,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CombiningDiacriticalMarksSupplement,
+            AssociatedConstantInStruct
+        )]
+        CombiningDiacriticalMarksSupplement = 131,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Coptic,
+            AssociatedConstantInStruct
+        )]
+        Coptic = 132,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::EthiopicExtended,
+            AssociatedConstantInStruct
+        )]
+        EthiopicExtended = 133,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::EthiopicSupplement,
+            AssociatedConstantInStruct
+        )]
+        EthiopicSupplement = 134,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::GeorgianSupplement,
+            AssociatedConstantInStruct
+        )]
+        GeorgianSupplement = 135,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Glagolitic,
+            AssociatedConstantInStruct
+        )]
+        Glagolitic = 136,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Kharoshthi,
+            AssociatedConstantInStruct
+        )]
+        Kharoshthi = 137,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::ModifierToneLetters,
+            AssociatedConstantInStruct
+        )]
+        ModifierToneLetters = 138,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::NewTaiLue,
+            AssociatedConstantInStruct
+        )]
+        NewTaiLue = 139,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::OldPersian,
+            AssociatedConstantInStruct
+        )]
+        OldPersian = 140,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::PhoneticExtensionsSupplement,
+            AssociatedConstantInStruct
+        )]
+        PhoneticExtensionsSupplement = 141,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::SupplementalPunctuation,
+            AssociatedConstantInStruct
+        )]
+        SupplementalPunctuation = 142,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::SylotiNagri,
+            AssociatedConstantInStruct
+        )]
+        SylotiNagri = 143,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Tifinagh,
+            AssociatedConstantInStruct
+        )]
+        Tifinagh = 144,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::VerticalForms,
+            AssociatedConstantInStruct
+        )]
+        VerticalForms = 145,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::NKo,
+            AssociatedConstantInStruct
+        )]
+        NKo = 146,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Balinese,
+            AssociatedConstantInStruct
+        )]
+        Balinese = 147,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::LatinExtendedC,
+            AssociatedConstantInStruct
+        )]
+        LatinExtendedC = 148,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::LatinExtendedD,
+            AssociatedConstantInStruct
+        )]
+        LatinExtendedD = 149,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::PhagsPa,
+            AssociatedConstantInStruct
+        )]
+        PhagsPa = 150,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Phoenician,
+            AssociatedConstantInStruct
+        )]
+        Phoenician = 151,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Cuneiform,
+            AssociatedConstantInStruct
+        )]
+        Cuneiform = 152,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CuneiformNumbersAndPunctuation,
+            AssociatedConstantInStruct
+        )]
+        CuneiformNumbersAndPunctuation = 153,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CountingRodNumerals,
+            AssociatedConstantInStruct
+        )]
+        CountingRodNumerals = 154,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Sundanese,
+            AssociatedConstantInStruct
+        )]
+        Sundanese = 155,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Lepcha,
+            AssociatedConstantInStruct
+        )]
+        Lepcha = 156,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::OlChiki,
+            AssociatedConstantInStruct
+        )]
+        OlChiki = 157,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CyrillicExtendedA,
+            AssociatedConstantInStruct
+        )]
+        CyrillicExtendedA = 158,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Vai,
+            AssociatedConstantInStruct
+        )]
+        Vai = 159,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CyrillicExtendedB,
+            AssociatedConstantInStruct
+        )]
+        CyrillicExtendedB = 160,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Saurashtra,
+            AssociatedConstantInStruct
+        )]
+        Saurashtra = 161,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::KayahLi,
+            AssociatedConstantInStruct
+        )]
+        KayahLi = 162,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Rejang,
+            AssociatedConstantInStruct
+        )]
+        Rejang = 163,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Cham,
+            AssociatedConstantInStruct
+        )]
+        Cham = 164,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::AncientSymbols,
+            AssociatedConstantInStruct
+        )]
+        AncientSymbols = 165,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::PhaistosDisc,
+            AssociatedConstantInStruct
+        )]
+        PhaistosDisc = 166,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Lycian,
+            AssociatedConstantInStruct
+        )]
+        Lycian = 167,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Carian,
+            AssociatedConstantInStruct
+        )]
+        Carian = 168,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Lydian,
+            AssociatedConstantInStruct
+        )]
+        Lydian = 169,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::MahjongTiles,
+            AssociatedConstantInStruct
+        )]
+        MahjongTiles = 170,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::DominoTiles,
+            AssociatedConstantInStruct
+        )]
+        DominoTiles = 171,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Samaritan,
+            AssociatedConstantInStruct
+        )]
+        Samaritan = 172,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::UnifiedCanadianAboriginalSyllabicsExtended,
+            AssociatedConstantInStruct
+        )]
+        UnifiedCanadianAboriginalSyllabicsExtended = 173,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::TaiTham,
+            AssociatedConstantInStruct
+        )]
+        TaiTham = 174,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::VedicExtensions,
+            AssociatedConstantInStruct
+        )]
+        VedicExtensions = 175,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Lisu,
+            AssociatedConstantInStruct
+        )]
+        Lisu = 176,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Bamum,
+            AssociatedConstantInStruct
+        )]
+        Bamum = 177,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CommonIndicNumberForms,
+            AssociatedConstantInStruct
+        )]
+        CommonIndicNumberForms = 178,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::DevanagariExtended,
+            AssociatedConstantInStruct
+        )]
+        DevanagariExtended = 179,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::HangulJamoExtendedA,
+            AssociatedConstantInStruct
+        )]
+        HangulJamoExtendedA = 180,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Javanese,
+            AssociatedConstantInStruct
+        )]
+        Javanese = 181,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::MyanmarExtendedA,
+            AssociatedConstantInStruct
+        )]
+        MyanmarExtendedA = 182,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::TaiViet,
+            AssociatedConstantInStruct
+        )]
+        TaiViet = 183,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::MeeteiMayek,
+            AssociatedConstantInStruct
+        )]
+        MeeteiMayek = 184,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::HangulJamoExtendedB,
+            AssociatedConstantInStruct
+        )]
+        HangulJamoExtendedB = 185,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::ImperialAramaic,
+            AssociatedConstantInStruct
+        )]
+        ImperialAramaic = 186,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::OldSouthArabian,
+            AssociatedConstantInStruct
+        )]
+        OldSouthArabian = 187,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Avestan,
+            AssociatedConstantInStruct
+        )]
+        Avestan = 188,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::InscriptionalParthian,
+            AssociatedConstantInStruct
+        )]
+        InscriptionalParthian = 189,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::InscriptionalPahlavi,
+            AssociatedConstantInStruct
+        )]
+        InscriptionalPahlavi = 190,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::OldTurkic,
+            AssociatedConstantInStruct
+        )]
+        OldTurkic = 191,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::RumiNumeralSymbols,
+            AssociatedConstantInStruct
+        )]
+        RumiNumeralSymbols = 192,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Kaithi,
+            AssociatedConstantInStruct
+        )]
+        Kaithi = 193,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::EgyptianHieroglyphs,
+            AssociatedConstantInStruct
+        )]
+        EgyptianHieroglyphs = 194,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::EnclosedAlphanumericSupplement,
+            AssociatedConstantInStruct
+        )]
+        EnclosedAlphanumericSupplement = 195,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::EnclosedIdeographicSupplement,
+            AssociatedConstantInStruct
+        )]
+        EnclosedIdeographicSupplement = 196,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CJKUnifiedIdeographsExtensionC,
+            AssociatedConstantInStruct
+        )]
+        CJKUnifiedIdeographsExtensionC = 197,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Mandaic,
+            AssociatedConstantInStruct
+        )]
+        Mandaic = 198,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Batak,
+            AssociatedConstantInStruct
+        )]
+        Batak = 199,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::EthiopicExtendedA,
+            AssociatedConstantInStruct
+        )]
+        EthiopicExtendedA = 200,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Brahmi,
+            AssociatedConstantInStruct
+        )]
+        Brahmi = 201,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::BamumSupplement,
+            AssociatedConstantInStruct
+        )]
+        BamumSupplement = 202,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::KanaSupplement,
+            AssociatedConstantInStruct
+        )]
+        KanaSupplement = 203,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::PlayingCards,
+            AssociatedConstantInStruct
+        )]
+        PlayingCards = 204,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::MiscellaneousSymbolsAndPictographs,
+            AssociatedConstantInStruct
+        )]
+        MiscellaneousSymbolsAndPictographs = 205,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Emoticons,
+            AssociatedConstantInStruct
+        )]
+        Emoticons = 206,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::TransportAndMapSymbols,
+            AssociatedConstantInStruct
+        )]
+        TransportAndMapSymbols = 207,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::AlchemicalSymbols,
+            AssociatedConstantInStruct
+        )]
+        AlchemicalSymbols = 208,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CJKUnifiedIdeographsExtensionD,
+            AssociatedConstantInStruct
+        )]
+        CJKUnifiedIdeographsExtensionD = 209,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::ArabicExtendedA,
+            AssociatedConstantInStruct
+        )]
+        ArabicExtendedA = 210,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::ArabicMathematicalAlphabeticSymbols,
+            AssociatedConstantInStruct
+        )]
+        ArabicMathematicalAlphabeticSymbols = 211,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Chakma,
+            AssociatedConstantInStruct
+        )]
+        Chakma = 212,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::MeeteiMayekExtensions,
+            AssociatedConstantInStruct
+        )]
+        MeeteiMayekExtensions = 213,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::MeroiticCursive,
+            AssociatedConstantInStruct
+        )]
+        MeroiticCursive = 214,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::MeroiticHieroglyphs,
+            AssociatedConstantInStruct
+        )]
+        MeroiticHieroglyphs = 215,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Miao,
+            AssociatedConstantInStruct
+        )]
+        Miao = 216,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Sharada,
+            AssociatedConstantInStruct
+        )]
+        Sharada = 217,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::SoraSompeng,
+            AssociatedConstantInStruct
+        )]
+        SoraSompeng = 218,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::SundaneseSupplement,
+            AssociatedConstantInStruct
+        )]
+        SundaneseSupplement = 219,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Takri,
+            AssociatedConstantInStruct
+        )]
+        Takri = 220,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::BassaVah,
+            AssociatedConstantInStruct
+        )]
+        BassaVah = 221,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CaucasianAlbanian,
+            AssociatedConstantInStruct
+        )]
+        CaucasianAlbanian = 222,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CopticEpactNumbers,
+            AssociatedConstantInStruct
+        )]
+        CopticEpactNumbers = 223,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CombiningDiacriticalMarksExtended,
+            AssociatedConstantInStruct
+        )]
+        CombiningDiacriticalMarksExtended = 224,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Duployan,
+            AssociatedConstantInStruct
+        )]
+        Duployan = 225,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Elbasan,
+            AssociatedConstantInStruct
+        )]
+        Elbasan = 226,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::GeometricShapesExtended,
+            AssociatedConstantInStruct
+        )]
+        GeometricShapesExtended = 227,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Grantha,
+            AssociatedConstantInStruct
+        )]
+        Grantha = 228,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Khojki,
+            AssociatedConstantInStruct
+        )]
+        Khojki = 229,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Khudawadi,
+            AssociatedConstantInStruct
+        )]
+        Khudawadi = 230,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::LatinExtendedE,
+            AssociatedConstantInStruct
+        )]
+        LatinExtendedE = 231,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::LinearA,
+            AssociatedConstantInStruct
+        )]
+        LinearA = 232,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Mahajani,
+            AssociatedConstantInStruct
+        )]
+        Mahajani = 233,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Manichaean,
+            AssociatedConstantInStruct
+        )]
+        Manichaean = 234,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::MendeKikakui,
+            AssociatedConstantInStruct
+        )]
+        MendeKikakui = 235,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Modi,
+            AssociatedConstantInStruct
+        )]
+        Modi = 236,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Mro,
+            AssociatedConstantInStruct
+        )]
+        Mro = 237,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::MyanmarExtendedB,
+            AssociatedConstantInStruct
+        )]
+        MyanmarExtendedB = 238,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Nabataean,
+            AssociatedConstantInStruct
+        )]
+        Nabataean = 239,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::OldNorthArabian,
+            AssociatedConstantInStruct
+        )]
+        OldNorthArabian = 240,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::OldPermic,
+            AssociatedConstantInStruct
+        )]
+        OldPermic = 241,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::OrnamentalDingbats,
+            AssociatedConstantInStruct
+        )]
+        OrnamentalDingbats = 242,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::PahawhHmong,
+            AssociatedConstantInStruct
+        )]
+        PahawhHmong = 243,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Palmyrene,
+            AssociatedConstantInStruct
+        )]
+        Palmyrene = 244,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::PauCinHau,
+            AssociatedConstantInStruct
+        )]
+        PauCinHau = 245,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::PsalterPahlavi,
+            AssociatedConstantInStruct
+        )]
+        PsalterPahlavi = 246,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::ShorthandFormatControls,
+            AssociatedConstantInStruct
+        )]
+        ShorthandFormatControls = 247,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Siddham,
+            AssociatedConstantInStruct
+        )]
+        Siddham = 248,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::SinhalaArchaicNumbers,
+            AssociatedConstantInStruct
+        )]
+        SinhalaArchaicNumbers = 249,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::SupplementalArrowsC,
+            AssociatedConstantInStruct
+        )]
+        SupplementalArrowsC = 250,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Tirhuta,
+            AssociatedConstantInStruct
+        )]
+        Tirhuta = 251,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::WarangCiti,
+            AssociatedConstantInStruct
+        )]
+        WarangCiti = 252,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Ahom,
+            AssociatedConstantInStruct
+        )]
+        Ahom = 253,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::AnatolianHieroglyphs,
+            AssociatedConstantInStruct
+        )]
+        AnatolianHieroglyphs = 254,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CherokeeSupplement,
+            AssociatedConstantInStruct
+        )]
+        CherokeeSupplement = 255,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CJKUnifiedIdeographsExtensionE,
+            AssociatedConstantInStruct
+        )]
+        CJKUnifiedIdeographsExtensionE = 256,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::EarlyDynasticCuneiform,
+            AssociatedConstantInStruct
+        )]
+        EarlyDynasticCuneiform = 257,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Hatran,
+            AssociatedConstantInStruct
+        )]
+        Hatran = 258,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Multani,
+            AssociatedConstantInStruct
+        )]
+        Multani = 259,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::OldHungarian,
+            AssociatedConstantInStruct
+        )]
+        OldHungarian = 260,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::SupplementalSymbolsAndPictographs,
+            AssociatedConstantInStruct
+        )]
+        SupplementalSymbolsAndPictographs = 261,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::SuttonSignWriting,
+            AssociatedConstantInStruct
+        )]
+        SuttonSignWriting = 262,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Adlam,
+            AssociatedConstantInStruct
+        )]
+        Adlam = 263,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Bhaiksuki,
+            AssociatedConstantInStruct
+        )]
+        Bhaiksuki = 264,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CyrillicExtendedC,
+            AssociatedConstantInStruct
+        )]
+        CyrillicExtendedC = 265,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::GlagoliticSupplement,
+            AssociatedConstantInStruct
+        )]
+        GlagoliticSupplement = 266,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::IdeographicSymbolsAndPunctuation,
+            AssociatedConstantInStruct
+        )]
+        IdeographicSymbolsAndPunctuation = 267,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Marchen,
+            AssociatedConstantInStruct
+        )]
+        Marchen = 268,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::MongolianSupplement,
+            AssociatedConstantInStruct
+        )]
+        MongolianSupplement = 269,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Newa,
+            AssociatedConstantInStruct
+        )]
+        Newa = 270,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Osage,
+            AssociatedConstantInStruct
+        )]
+        Osage = 271,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Tangut,
+            AssociatedConstantInStruct
+        )]
+        Tangut = 272,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::TangutComponents,
+            AssociatedConstantInStruct
+        )]
+        TangutComponents = 273,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CJKUnifiedIdeographsExtensionF,
+            AssociatedConstantInStruct
+        )]
+        CJKUnifiedIdeographsExtensionF = 274,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::KanaExtendedA,
+            AssociatedConstantInStruct
+        )]
+        KanaExtendedA = 275,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::MasaramGondi,
+            AssociatedConstantInStruct
+        )]
+        MasaramGondi = 276,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Nushu,
+            AssociatedConstantInStruct
+        )]
+        Nushu = 277,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Soyombo,
+            AssociatedConstantInStruct
+        )]
+        Soyombo = 278,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::SyriacSupplement,
+            AssociatedConstantInStruct
+        )]
+        SyriacSupplement = 279,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::ZanabazarSquare,
+            AssociatedConstantInStruct
+        )]
+        ZanabazarSquare = 280,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::ChessSymbols,
+            AssociatedConstantInStruct
+        )]
+        ChessSymbols = 281,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Dogra,
+            AssociatedConstantInStruct
+        )]
+        Dogra = 282,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::GeorgianExtended,
+            AssociatedConstantInStruct
+        )]
+        GeorgianExtended = 283,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::GunjalaGondi,
+            AssociatedConstantInStruct
+        )]
+        GunjalaGondi = 284,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::HanifiRohingya,
+            AssociatedConstantInStruct
+        )]
+        HanifiRohingya = 285,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::IndicSiyaqNumbers,
+            AssociatedConstantInStruct
+        )]
+        IndicSiyaqNumbers = 286,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Makasar,
+            AssociatedConstantInStruct
+        )]
+        Makasar = 287,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::MayanNumerals,
+            AssociatedConstantInStruct
+        )]
+        MayanNumerals = 288,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Medefaidrin,
+            AssociatedConstantInStruct
+        )]
+        Medefaidrin = 289,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::OldSogdian,
+            AssociatedConstantInStruct
+        )]
+        OldSogdian = 290,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Sogdian,
+            AssociatedConstantInStruct
+        )]
+        Sogdian = 291,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::EgyptianHieroglyphFormatControls,
+            AssociatedConstantInStruct
+        )]
+        EgyptianHieroglyphFormatControls = 292,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Elymaic,
+            AssociatedConstantInStruct
+        )]
+        Elymaic = 293,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Nandinagari,
+            AssociatedConstantInStruct
+        )]
+        Nandinagari = 294,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::NyiakengPuachueHmong,
+            AssociatedConstantInStruct
+        )]
+        NyiakengPuachueHmong = 295,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::OttomanSiyaqNumbers,
+            AssociatedConstantInStruct
+        )]
+        OttomanSiyaqNumbers = 296,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::SmallKanaExtension,
+            AssociatedConstantInStruct
+        )]
+        SmallKanaExtension = 297,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::SymbolsAndPictographsExtendedA,
+            AssociatedConstantInStruct
+        )]
+        SymbolsAndPictographsExtendedA = 298,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::TamilSupplement,
+            AssociatedConstantInStruct
+        )]
+        TamilSupplement = 299,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Wancho,
+            AssociatedConstantInStruct
+        )]
+        Wancho = 300,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Chorasmian,
+            AssociatedConstantInStruct
+        )]
+        Chorasmian = 301,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CJKUnifiedIdeographsExtensionG,
+            AssociatedConstantInStruct
+        )]
+        CJKUnifiedIdeographsExtensionG = 302,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::DivesAkuru,
+            AssociatedConstantInStruct
+        )]
+        DivesAkuru = 303,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::KhitanSmallScript,
+            AssociatedConstantInStruct
+        )]
+        KhitanSmallScript = 304,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::LisuSupplement,
+            AssociatedConstantInStruct
+        )]
+        LisuSupplement = 305,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::SymbolsForLegacyComputing,
+            AssociatedConstantInStruct
+        )]
+        SymbolsForLegacyComputing = 306,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::TangutSupplement,
+            AssociatedConstantInStruct
+        )]
+        TangutSupplement = 307,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Yezidi,
+            AssociatedConstantInStruct
+        )]
+        Yezidi = 308,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::ArabicExtendedB,
+            AssociatedConstantInStruct
+        )]
+        ArabicExtendedB = 309,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CyproMinoan,
+            AssociatedConstantInStruct
+        )]
+        CyproMinoan = 310,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::EthiopicExtendedB,
+            AssociatedConstantInStruct
+        )]
+        EthiopicExtendedB = 311,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::KanaExtendedB,
+            AssociatedConstantInStruct
+        )]
+        KanaExtendedB = 312,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::LatinExtendedF,
+            AssociatedConstantInStruct
+        )]
+        LatinExtendedF = 313,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::LatinExtendedG,
+            AssociatedConstantInStruct
+        )]
+        LatinExtendedG = 314,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::OldUyghur,
+            AssociatedConstantInStruct
+        )]
+        OldUyghur = 315,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Tangsa,
+            AssociatedConstantInStruct
+        )]
+        Tangsa = 316,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Toto,
+            AssociatedConstantInStruct
+        )]
+        Toto = 317,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::UnifiedCanadianAboriginalSyllabicsExtendedA,
+            AssociatedConstantInStruct
+        )]
+        UnifiedCanadianAboriginalSyllabicsExtendedA = 318,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Vithkuqi,
+            AssociatedConstantInStruct
+        )]
+        Vithkuqi = 319,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::ZnamennyMusicalNotation,
+            AssociatedConstantInStruct
+        )]
+        ZnamennyMusicalNotation = 320,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::ArabicExtendedC,
+            AssociatedConstantInStruct
+        )]
+        ArabicExtendedC = 321,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CJKUnifiedIdeographsExtensionH,
+            AssociatedConstantInStruct
+        )]
+        CJKUnifiedIdeographsExtensionH = 322,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CyrillicExtendedD,
+            AssociatedConstantInStruct
+        )]
+        CyrillicExtendedD = 323,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::DevanagariExtendedA,
+            AssociatedConstantInStruct
+        )]
+        DevanagariExtendedA = 324,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::KaktovikNumerals,
+            AssociatedConstantInStruct
+        )]
+        KaktovikNumerals = 325,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Kawi,
+            AssociatedConstantInStruct
+        )]
+        Kawi = 326,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::NagMundari,
+            AssociatedConstantInStruct
+        )]
+        NagMundari = 327,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CJKUnifiedIdeographsExtensionI,
+            AssociatedConstantInStruct
+        )]
+        CJKUnifiedIdeographsExtensionI = 328,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::EgyptianHieroglyphsExtendedA,
+            AssociatedConstantInStruct
+        )]
+        EgyptianHieroglyphsExtendedA = 329,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Garay,
+            AssociatedConstantInStruct
+        )]
+        Garay = 330,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::GurungKhema,
+            AssociatedConstantInStruct
+        )]
+        GurungKhema = 331,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::KiratRai,
+            AssociatedConstantInStruct
+        )]
+        KiratRai = 332,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::MyanmarExtendedC,
+            AssociatedConstantInStruct
+        )]
+        MyanmarExtendedC = 333,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::OlOnal,
+            AssociatedConstantInStruct
+        )]
+        OlOnal = 334,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Sunuwar,
+            AssociatedConstantInStruct
+        )]
+        Sunuwar = 335,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::SymbolsForLegacyComputingSupplement,
+            AssociatedConstantInStruct
+        )]
+        SymbolsForLegacyComputingSupplement = 336,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Todhri,
+            AssociatedConstantInStruct
+        )]
+        Todhri = 337,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::TuluTigalari,
+            AssociatedConstantInStruct
+        )]
+        TuluTigalari = 338,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::BeriaErfe,
+            AssociatedConstantInStruct
+        )]
+        BeriaErfe = 339,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::CJKUnifiedIdeographsExtensionJ,
+            AssociatedConstantInStruct
+        )]
+        CJKUnifiedIdeographsExtensionJ = 340,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::MiscellaneousSymbolsSupplement,
+            AssociatedConstantInStruct
+        )]
+        MiscellaneousSymbolsSupplement = 341,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::SharadaSupplement,
+            AssociatedConstantInStruct
+        )]
+        SharadaSupplement = 342,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::Sidetic,
+            AssociatedConstantInStruct
+        )]
+        Sidetic = 343,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::TaiYo,
+            AssociatedConstantInStruct
+        )]
+        TaiYo = 344,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::TangutComponentsSupplement,
+            AssociatedConstantInStruct
+        )]
+        TangutComponentsSupplement = 345,
+        #[diplomat::rust_link(
+            icu::properties::props::Block::TolongSiki,
+            AssociatedConstantInStruct
+        )]
+        TolongSiki = 346,
+    }
+
+    impl Block {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::Block>::new()
+                .get32(ch)
+                .into()
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::long_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::Block>::new().get(self.into())
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::short_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::Block>::new().get(self.into())
+        }
+        #[diplomat::rust_link(icu::properties::props::Block::to_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert to an integer value usable with ICU4C and `CodePointMapData`
+        pub fn to_integer_value(self) -> u16 {
+            self as u16
+        }
+        #[diplomat::rust_link(icu::properties::props::Block::from_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert from an integer value from ICU4C or `CodePointMapData`
+        pub fn from_integer_value(other: u16) -> Option<Self> {
+            Some(match other {
+                0 => Self::NoBlock,
+                1 => Self::BasicLatin,
+                2 => Self::Latin1Supplement,
+                3 => Self::LatinExtendedA,
+                4 => Self::LatinExtendedB,
+                5 => Self::IPAExtensions,
+                6 => Self::SpacingModifierLetters,
+                7 => Self::CombiningDiacriticalMarks,
+                8 => Self::GreekAndCoptic,
+                9 => Self::Cyrillic,
+                10 => Self::Armenian,
+                11 => Self::Hebrew,
+                12 => Self::Arabic,
+                13 => Self::Syriac,
+                14 => Self::Thaana,
+                15 => Self::Devanagari,
+                16 => Self::Bengali,
+                17 => Self::Gurmukhi,
+                18 => Self::Gujarati,
+                19 => Self::Oriya,
+                20 => Self::Tamil,
+                21 => Self::Telugu,
+                22 => Self::Kannada,
+                23 => Self::Malayalam,
+                24 => Self::Sinhala,
+                25 => Self::Thai,
+                26 => Self::Lao,
+                27 => Self::Tibetan,
+                28 => Self::Myanmar,
+                29 => Self::Georgian,
+                30 => Self::HangulJamo,
+                31 => Self::Ethiopic,
+                32 => Self::Cherokee,
+                33 => Self::UnifiedCanadianAboriginalSyllabics,
+                34 => Self::Ogham,
+                35 => Self::Runic,
+                36 => Self::Khmer,
+                37 => Self::Mongolian,
+                38 => Self::LatinExtendedAdditional,
+                39 => Self::GreekExtended,
+                40 => Self::GeneralPunctuation,
+                41 => Self::SuperscriptsAndSubscripts,
+                42 => Self::CurrencySymbols,
+                43 => Self::CombiningDiacriticalMarksForSymbols,
+                44 => Self::LetterlikeSymbols,
+                45 => Self::NumberForms,
+                46 => Self::Arrows,
+                47 => Self::MathematicalOperators,
+                48 => Self::MiscellaneousTechnical,
+                49 => Self::ControlPictures,
+                50 => Self::OpticalCharacterRecognition,
+                51 => Self::EnclosedAlphanumerics,
+                52 => Self::BoxDrawing,
+                53 => Self::BlockElements,
+                54 => Self::GeometricShapes,
+                55 => Self::MiscellaneousSymbols,
+                56 => Self::Dingbats,
+                57 => Self::BraillePatterns,
+                58 => Self::CJKRadicalsSupplement,
+                59 => Self::KangxiRadicals,
+                60 => Self::IdeographicDescriptionCharacters,
+                61 => Self::CJKSymbolsAndPunctuation,
+                62 => Self::Hiragana,
+                63 => Self::Katakana,
+                64 => Self::Bopomofo,
+                65 => Self::HangulCompatibilityJamo,
+                66 => Self::Kanbun,
+                67 => Self::BopomofoExtended,
+                68 => Self::EnclosedCJKLettersAndMonths,
+                69 => Self::CJKCompatibility,
+                70 => Self::CJKUnifiedIdeographsExtensionA,
+                71 => Self::CJKUnifiedIdeographs,
+                72 => Self::YiSyllables,
+                73 => Self::YiRadicals,
+                74 => Self::HangulSyllables,
+                75 => Self::HighSurrogates,
+                76 => Self::HighPrivateUseSurrogates,
+                77 => Self::LowSurrogates,
+                78 => Self::PrivateUseArea,
+                79 => Self::CJKCompatibilityIdeographs,
+                80 => Self::AlphabeticPresentationForms,
+                81 => Self::ArabicPresentationFormsA,
+                82 => Self::CombiningHalfMarks,
+                83 => Self::CJKCompatibilityForms,
+                84 => Self::SmallFormVariants,
+                85 => Self::ArabicPresentationFormsB,
+                86 => Self::Specials,
+                87 => Self::HalfwidthAndFullwidthForms,
+                88 => Self::OldItalic,
+                89 => Self::Gothic,
+                90 => Self::Deseret,
+                91 => Self::ByzantineMusicalSymbols,
+                92 => Self::MusicalSymbols,
+                93 => Self::MathematicalAlphanumericSymbols,
+                94 => Self::CJKUnifiedIdeographsExtensionB,
+                95 => Self::CJKCompatibilityIdeographsSupplement,
+                96 => Self::Tags,
+                97 => Self::CyrillicSupplement,
+                98 => Self::Tagalog,
+                99 => Self::Hanunoo,
+                100 => Self::Buhid,
+                101 => Self::Tagbanwa,
+                102 => Self::MiscellaneousMathematicalSymbolsA,
+                103 => Self::SupplementalArrowsA,
+                104 => Self::SupplementalArrowsB,
+                105 => Self::MiscellaneousMathematicalSymbolsB,
+                106 => Self::SupplementalMathematicalOperators,
+                107 => Self::KatakanaPhoneticExtensions,
+                108 => Self::VariationSelectors,
+                109 => Self::SupplementaryPrivateUseAreaA,
+                110 => Self::SupplementaryPrivateUseAreaB,
+                111 => Self::Limbu,
+                112 => Self::TaiLe,
+                113 => Self::KhmerSymbols,
+                114 => Self::PhoneticExtensions,
+                115 => Self::MiscellaneousSymbolsAndArrows,
+                116 => Self::YijingHexagramSymbols,
+                117 => Self::LinearBSyllabary,
+                118 => Self::LinearBIdeograms,
+                119 => Self::AegeanNumbers,
+                120 => Self::Ugaritic,
+                121 => Self::Shavian,
+                122 => Self::Osmanya,
+                123 => Self::CypriotSyllabary,
+                124 => Self::TaiXuanJingSymbols,
+                125 => Self::VariationSelectorsSupplement,
+                126 => Self::AncientGreekMusicalNotation,
+                127 => Self::AncientGreekNumbers,
+                128 => Self::ArabicSupplement,
+                129 => Self::Buginese,
+                130 => Self::CJKStrokes,
+                131 => Self::CombiningDiacriticalMarksSupplement,
+                132 => Self::Coptic,
+                133 => Self::EthiopicExtended,
+                134 => Self::EthiopicSupplement,
+                135 => Self::GeorgianSupplement,
+                136 => Self::Glagolitic,
+                137 => Self::Kharoshthi,
+                138 => Self::ModifierToneLetters,
+                139 => Self::NewTaiLue,
+                140 => Self::OldPersian,
+                141 => Self::PhoneticExtensionsSupplement,
+                142 => Self::SupplementalPunctuation,
+                143 => Self::SylotiNagri,
+                144 => Self::Tifinagh,
+                145 => Self::VerticalForms,
+                146 => Self::NKo,
+                147 => Self::Balinese,
+                148 => Self::LatinExtendedC,
+                149 => Self::LatinExtendedD,
+                150 => Self::PhagsPa,
+                151 => Self::Phoenician,
+                152 => Self::Cuneiform,
+                153 => Self::CuneiformNumbersAndPunctuation,
+                154 => Self::CountingRodNumerals,
+                155 => Self::Sundanese,
+                156 => Self::Lepcha,
+                157 => Self::OlChiki,
+                158 => Self::CyrillicExtendedA,
+                159 => Self::Vai,
+                160 => Self::CyrillicExtendedB,
+                161 => Self::Saurashtra,
+                162 => Self::KayahLi,
+                163 => Self::Rejang,
+                164 => Self::Cham,
+                165 => Self::AncientSymbols,
+                166 => Self::PhaistosDisc,
+                167 => Self::Lycian,
+                168 => Self::Carian,
+                169 => Self::Lydian,
+                170 => Self::MahjongTiles,
+                171 => Self::DominoTiles,
+                172 => Self::Samaritan,
+                173 => Self::UnifiedCanadianAboriginalSyllabicsExtended,
+                174 => Self::TaiTham,
+                175 => Self::VedicExtensions,
+                176 => Self::Lisu,
+                177 => Self::Bamum,
+                178 => Self::CommonIndicNumberForms,
+                179 => Self::DevanagariExtended,
+                180 => Self::HangulJamoExtendedA,
+                181 => Self::Javanese,
+                182 => Self::MyanmarExtendedA,
+                183 => Self::TaiViet,
+                184 => Self::MeeteiMayek,
+                185 => Self::HangulJamoExtendedB,
+                186 => Self::ImperialAramaic,
+                187 => Self::OldSouthArabian,
+                188 => Self::Avestan,
+                189 => Self::InscriptionalParthian,
+                190 => Self::InscriptionalPahlavi,
+                191 => Self::OldTurkic,
+                192 => Self::RumiNumeralSymbols,
+                193 => Self::Kaithi,
+                194 => Self::EgyptianHieroglyphs,
+                195 => Self::EnclosedAlphanumericSupplement,
+                196 => Self::EnclosedIdeographicSupplement,
+                197 => Self::CJKUnifiedIdeographsExtensionC,
+                198 => Self::Mandaic,
+                199 => Self::Batak,
+                200 => Self::EthiopicExtendedA,
+                201 => Self::Brahmi,
+                202 => Self::BamumSupplement,
+                203 => Self::KanaSupplement,
+                204 => Self::PlayingCards,
+                205 => Self::MiscellaneousSymbolsAndPictographs,
+                206 => Self::Emoticons,
+                207 => Self::TransportAndMapSymbols,
+                208 => Self::AlchemicalSymbols,
+                209 => Self::CJKUnifiedIdeographsExtensionD,
+                210 => Self::ArabicExtendedA,
+                211 => Self::ArabicMathematicalAlphabeticSymbols,
+                212 => Self::Chakma,
+                213 => Self::MeeteiMayekExtensions,
+                214 => Self::MeroiticCursive,
+                215 => Self::MeroiticHieroglyphs,
+                216 => Self::Miao,
+                217 => Self::Sharada,
+                218 => Self::SoraSompeng,
+                219 => Self::SundaneseSupplement,
+                220 => Self::Takri,
+                221 => Self::BassaVah,
+                222 => Self::CaucasianAlbanian,
+                223 => Self::CopticEpactNumbers,
+                224 => Self::CombiningDiacriticalMarksExtended,
+                225 => Self::Duployan,
+                226 => Self::Elbasan,
+                227 => Self::GeometricShapesExtended,
+                228 => Self::Grantha,
+                229 => Self::Khojki,
+                230 => Self::Khudawadi,
+                231 => Self::LatinExtendedE,
+                232 => Self::LinearA,
+                233 => Self::Mahajani,
+                234 => Self::Manichaean,
+                235 => Self::MendeKikakui,
+                236 => Self::Modi,
+                237 => Self::Mro,
+                238 => Self::MyanmarExtendedB,
+                239 => Self::Nabataean,
+                240 => Self::OldNorthArabian,
+                241 => Self::OldPermic,
+                242 => Self::OrnamentalDingbats,
+                243 => Self::PahawhHmong,
+                244 => Self::Palmyrene,
+                245 => Self::PauCinHau,
+                246 => Self::PsalterPahlavi,
+                247 => Self::ShorthandFormatControls,
+                248 => Self::Siddham,
+                249 => Self::SinhalaArchaicNumbers,
+                250 => Self::SupplementalArrowsC,
+                251 => Self::Tirhuta,
+                252 => Self::WarangCiti,
+                253 => Self::Ahom,
+                254 => Self::AnatolianHieroglyphs,
+                255 => Self::CherokeeSupplement,
+                256 => Self::CJKUnifiedIdeographsExtensionE,
+                257 => Self::EarlyDynasticCuneiform,
+                258 => Self::Hatran,
+                259 => Self::Multani,
+                260 => Self::OldHungarian,
+                261 => Self::SupplementalSymbolsAndPictographs,
+                262 => Self::SuttonSignWriting,
+                263 => Self::Adlam,
+                264 => Self::Bhaiksuki,
+                265 => Self::CyrillicExtendedC,
+                266 => Self::GlagoliticSupplement,
+                267 => Self::IdeographicSymbolsAndPunctuation,
+                268 => Self::Marchen,
+                269 => Self::MongolianSupplement,
+                270 => Self::Newa,
+                271 => Self::Osage,
+                272 => Self::Tangut,
+                273 => Self::TangutComponents,
+                274 => Self::CJKUnifiedIdeographsExtensionF,
+                275 => Self::KanaExtendedA,
+                276 => Self::MasaramGondi,
+                277 => Self::Nushu,
+                278 => Self::Soyombo,
+                279 => Self::SyriacSupplement,
+                280 => Self::ZanabazarSquare,
+                281 => Self::ChessSymbols,
+                282 => Self::Dogra,
+                283 => Self::GeorgianExtended,
+                284 => Self::GunjalaGondi,
+                285 => Self::HanifiRohingya,
+                286 => Self::IndicSiyaqNumbers,
+                287 => Self::Makasar,
+                288 => Self::MayanNumerals,
+                289 => Self::Medefaidrin,
+                290 => Self::OldSogdian,
+                291 => Self::Sogdian,
+                292 => Self::EgyptianHieroglyphFormatControls,
+                293 => Self::Elymaic,
+                294 => Self::Nandinagari,
+                295 => Self::NyiakengPuachueHmong,
+                296 => Self::OttomanSiyaqNumbers,
+                297 => Self::SmallKanaExtension,
+                298 => Self::SymbolsAndPictographsExtendedA,
+                299 => Self::TamilSupplement,
+                300 => Self::Wancho,
+                301 => Self::Chorasmian,
+                302 => Self::CJKUnifiedIdeographsExtensionG,
+                303 => Self::DivesAkuru,
+                304 => Self::KhitanSmallScript,
+                305 => Self::LisuSupplement,
+                306 => Self::SymbolsForLegacyComputing,
+                307 => Self::TangutSupplement,
+                308 => Self::Yezidi,
+                309 => Self::ArabicExtendedB,
+                310 => Self::CyproMinoan,
+                311 => Self::EthiopicExtendedB,
+                312 => Self::KanaExtendedB,
+                313 => Self::LatinExtendedF,
+                314 => Self::LatinExtendedG,
+                315 => Self::OldUyghur,
+                316 => Self::Tangsa,
+                317 => Self::Toto,
+                318 => Self::UnifiedCanadianAboriginalSyllabicsExtendedA,
+                319 => Self::Vithkuqi,
+                320 => Self::ZnamennyMusicalNotation,
+                321 => Self::ArabicExtendedC,
+                322 => Self::CJKUnifiedIdeographsExtensionH,
+                323 => Self::CyrillicExtendedD,
+                324 => Self::DevanagariExtendedA,
+                325 => Self::KaktovikNumerals,
+                326 => Self::Kawi,
+                327 => Self::NagMundari,
+                328 => Self::CJKUnifiedIdeographsExtensionI,
+                329 => Self::EgyptianHieroglyphsExtendedA,
+                330 => Self::Garay,
+                331 => Self::GurungKhema,
+                332 => Self::KiratRai,
+                333 => Self::MyanmarExtendedC,
+                334 => Self::OlOnal,
+                335 => Self::Sunuwar,
+                336 => Self::SymbolsForLegacyComputingSupplement,
+                337 => Self::Todhri,
+                338 => Self::TuluTigalari,
+                339 => Self::BeriaErfe,
+                340 => Self::CJKUnifiedIdeographsExtensionJ,
+                341 => Self::MiscellaneousSymbolsSupplement,
+                342 => Self::SharadaSupplement,
+                343 => Self::Sidetic,
+                344 => Self::TaiYo,
+                345 => Self::TangutComponentsSupplement,
+                346 => Self::TolongSiki,
+                _ => return None,
+            })
+        }
+
+        /// Creates a `Block` from a string.
+        ///
+        /// Short names, long names, and aliases are supported, and matching is case-insensitive.
+        #[diplomat::attr(dart, rename = "from_string")]
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::Block>::new().get_loose_utf8(s).map(Into::into)
+        }
+    }
+
     #[diplomat::rust_link(icu::properties::props::CanonicalCombiningClass, Struct)]
     #[diplomat::enum_convert(icu_properties::props::CanonicalCombiningClass, needs_wildcard)]
     #[non_exhaustive]
@@ -3285,7 +5439,7 @@ pub mod ffi {
         )]
         Batak = 63,
         #[diplomat::rust_link(
-            icu::properties::props::Script::BlisSymbols,
+            icu::properties::props::Script::Blissymbols,
             AssociatedConstantInStruct
         )]
         BlisSymbols = 64,

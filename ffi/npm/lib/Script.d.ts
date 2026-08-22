@@ -273,7 +273,7 @@ export class Script {
      */
     static Batak : Script;
     /**
-     * See the [Rust documentation for `BlisSymbols`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html#associatedconstant.BlisSymbols) for more information.
+     * See the [Rust documentation for `Blissymbols`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html#associatedconstant.Blissymbols) for more information.
      */
     static BlisSymbols : Script;
     /**
