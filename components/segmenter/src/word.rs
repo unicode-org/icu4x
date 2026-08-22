@@ -5,9 +5,8 @@
 use crate::complex::*;
 use crate::indices::*;
 use crate::provider::*;
+use crate::rule_segmenter_v1::ComplexRunSegmenter;
 use crate::scaffold::*;
-use alloc::string::String;
-use alloc::vec;
 use alloc::vec::Vec;
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
@@ -714,6 +713,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
                 complex,
                 locale_override,
             } => WordBreakIteratorInner::V1(crate::rule_segmenter_v1::RuleBreakIterator {
+                input: input.char_indices(),
                 iter: input.char_indices(),
                 len: input.len(),
                 current_pos_data: None,
@@ -722,7 +722,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
                 complex: Some(complex),
                 boundary_property: 0,
                 locale_override,
-                handle_complex: handle_complex_utf8,
+                handle_complex,
             }),
             #[cfg(feature = "unstable")]
             WordSegmenterBorrowedInner::V2 { data, complex } => {
@@ -751,6 +751,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
                 complex,
                 locale_override,
             } => WordBreakIteratorInner::V1(crate::rule_segmenter_v1::RuleBreakIterator {
+                input: Utf8CharIndices::new(input),
                 iter: Utf8CharIndices::new(input),
                 len: input.len(),
                 current_pos_data: None,
@@ -759,7 +760,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
                 complex: Some(complex),
                 boundary_property: 0,
                 locale_override,
-                handle_complex: handle_complex_utf8,
+                handle_complex,
             }),
             #[cfg(feature = "unstable")]
             WordSegmenterBorrowedInner::V2 { data, complex } => {
@@ -783,6 +784,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
                 complex,
                 locale_override,
             } => WordBreakIteratorInner::V1(crate::rule_segmenter_v1::RuleBreakIterator {
+                input: Latin1Indices::new(input),
                 iter: Latin1Indices::new(input),
                 len: input.len(),
                 current_pos_data: None,
@@ -815,6 +817,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
                 complex,
                 locale_override,
             } => WordBreakIteratorInner::V1(crate::rule_segmenter_v1::RuleBreakIterator {
+                input: Utf16Indices::new(input),
                 iter: Utf16Indices::new(input),
                 len: input.len(),
                 current_pos_data: None,
@@ -823,7 +826,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
                 complex: Some(complex),
                 boundary_property: 0,
                 locale_override,
-                handle_complex: handle_complex_utf16,
+                handle_complex,
             }),
             #[cfg(feature = "unstable")]
             WordSegmenterBorrowedInner::V2 { data, complex } => {
@@ -921,21 +924,18 @@ impl WordSegmenterBorrowed<'static> {
     }
 }
 
-fn handle_complex_utf8<T>(
+fn handle_complex<T>(
     iter: &mut crate::rule_segmenter_v1::RuleBreakIterator<'_, '_, T>,
     left_codepoint: T::CharType,
 ) -> Option<usize>
 where
-    T: RuleBreakType<CharType = char>,
+    T: ComplexRunSegmenter,
 {
     // word segmenter doesn't define break rules for some scripts such as Thai.
     let start_iter = iter.iter.clone();
     let start_point = iter.current_pos_data;
-    let mut s = String::new();
-    s.push(left_codepoint);
     loop {
         debug_assert!(!iter.is_eof());
-        s.push(iter.get_current_codepoint()?);
         iter.advance_iter();
         if let Some(current_break_property) = iter.get_current_break_property() {
             if current_break_property != iter.data.complex_property {
@@ -946,15 +946,17 @@ where
             break;
         }
     }
+    let run_end = iter.current_pos_data.map_or(iter.len, |(pos, _)| pos);
 
     // Restore iterator to move to head of complex string
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
+    let run_start = start_point.map_or(iter.len, |(pos, _)| pos) - T::char_len(left_codepoint);
     #[expect(clippy::unwrap_used)] // iter.complex present for word segmenter
-    let breaks = iter.complex.unwrap().segment_str(&s);
+    let breaks = T::segment_complex_run(iter.complex.unwrap(), &iter.input, run_start, run_end);
     iter.result_cache = breaks;
     let first_pos = *iter.result_cache.first()?;
-    let mut i = left_codepoint.len_utf8();
+    let mut i = start_point.map_or(iter.len, |(pos, _)| pos) - run_start;
     loop {
         if i == first_pos {
             // Re-calculate breaking offset
@@ -967,60 +969,6 @@ where
             iter.get_current_position()
         );
         i += iter.get_current_codepoint().map_or(0, T::char_len);
-        iter.advance_iter();
-        if iter.is_eof() {
-            iter.result_cache.clear();
-            return Some(iter.len);
-        }
-    }
-}
-
-fn handle_complex_utf16<T>(
-    iter: &mut crate::rule_segmenter_v1::RuleBreakIterator<'_, '_, T>,
-    left_codepoint: T::CharType,
-) -> Option<usize>
-where
-    T: RuleBreakType<CharType = u32>,
-{
-    // word segmenter doesn't define break rules for some scripts such as Thai.
-    let start_iter = iter.iter.clone();
-    let start_point = iter.current_pos_data;
-    let mut s = vec![left_codepoint as u16];
-    loop {
-        debug_assert!(!iter.is_eof());
-        s.push(iter.get_current_codepoint()? as u16);
-        iter.advance_iter();
-        if let Some(current_break_property) = iter.get_current_break_property() {
-            if current_break_property != iter.data.complex_property {
-                break;
-            }
-        } else {
-            // EOF
-            break;
-        }
-    }
-
-    // Restore iterator to move to head of complex string
-    iter.iter = start_iter;
-    iter.current_pos_data = start_point;
-    #[expect(clippy::unwrap_used)] // iter.complex present for word segmenter
-    let breaks = iter.complex.unwrap().segment_utf16(&s);
-    iter.result_cache = breaks;
-    // result_cache vector is utf-16 index that is in BMP.
-    let first_pos = *iter.result_cache.first()?;
-    let mut i = 1;
-    loop {
-        if i == first_pos {
-            // Re-calculate breaking offset
-            iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
-            return iter.get_current_position();
-        }
-        debug_assert!(
-            i < first_pos,
-            "we should always arrive at first_pos: near index {:?}",
-            iter.get_current_position()
-        );
-        i += 1;
         iter.advance_iter();
         if iter.is_eof() {
             iter.result_cache.clear();
@@ -1072,4 +1020,41 @@ fn empty_string_neo() {
         WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
     let breaks: Vec<usize> = segmenter.segment_str("").collect();
     assert_eq!(breaks, [0]);
+}
+
+#[test]
+fn complex_mixed_thai_cj_word_break() {
+    let segmenter = WordSegmenter::new_dictionary(WordBreakInvariantOptions::default());
+    let input = "ภาษาไทย龟山岛";
+
+    let breaks: Vec<usize> = segmenter.segment_str(input).collect();
+    assert_eq!(breaks, [0, 12, 21, 30]);
+
+    let breaks: Vec<usize> = segmenter.segment_utf8(input.as_bytes()).collect();
+    assert_eq!(breaks, [0, 12, 21, 30]);
+
+    let utf16 = input.encode_utf16().collect::<Vec<_>>();
+    let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
+    assert_eq!(breaks, [0, 4, 7, 10]);
+}
+
+#[test]
+fn complex_ill_formed_utf8_word_break() {
+    let segmenter = WordSegmenter::new_dictionary(WordBreakInvariantOptions::default());
+    let input =
+        b"\xE0\xB8\xA0\xE0\xB8\xB2\xE0\xB8\xA9\xE0\xB8\xB2\xFF\xE0\xB9\x84\xE0\xB8\x97\xE0\xB8\xA2";
+
+    let breaks: Vec<usize> = segmenter.segment_utf8(input).collect();
+    assert_eq!(breaks, [0, 12, 13, 22]);
+}
+
+#[test]
+fn complex_unpaired_surrogate_word_break() {
+    let segmenter = WordSegmenter::new_dictionary(WordBreakInvariantOptions::default());
+    let input = [
+        0x0E20, 0x0E32, 0x0E29, 0x0E32, 0xD800, 0x0E44, 0x0E17, 0x0E22,
+    ];
+
+    let breaks: Vec<usize> = segmenter.segment_utf16(&input).collect();
+    assert_eq!(breaks, [0, 4, 5, 8]);
 }

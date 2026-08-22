@@ -39,6 +39,7 @@ impl<'data, 's, Y: RuleBreakType> GraphemeClusterBreakIterator<'data, 's, Y> {
         let inner = match &self.0 {
             GraphemeClusterBreakIteratorInner::V1(iter) => {
                 GraphemeClusterBreakIteratorInner::V1(crate::rule_segmenter_v1::RuleBreakIterator {
+                    input: iter.input.clone(),
                     iter: iter.iter.clone(),
                     len: iter.len,
                     current_pos_data: iter.current_pos_data,
@@ -262,6 +263,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
         GraphemeClusterBreakIterator(match self.0 {
             GraphemeClusterSegmenterBorrowedInner::V1(data) => {
                 GraphemeClusterBreakIteratorInner::V1(crate::rule_segmenter_v1::RuleBreakIterator {
+                    input: iter.clone(),
                     iter,
                     len,
                     current_pos_data: None,
