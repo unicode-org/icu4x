@@ -574,6 +574,9 @@ mod tests {
     }
 
     #[test]
+    // This test includes a little-endian assumption:
+    // https://github.com/unicode-org/icu4x/issues/8396
+    #[cfg(target_endian = "little")]
     fn test_miri_repro_eyepatch_hack_truncate() {
         let slice: &[u16] = &[1, 2, 3, 4];
         let zv: ZeroVec<u16> = ZeroVec::try_from_slice(slice).unwrap();
