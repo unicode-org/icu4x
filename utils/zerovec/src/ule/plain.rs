@@ -167,6 +167,7 @@ macro_rules! impl_byte_slice_type {
         }
         // EqULE is true because $type and RawBytesULE<{ size_of::<$type> }>
         // have the same byte sequence on little-endian
+        #[allow(deprecated)]
         unsafe impl EqULE for $type {}
 
         impl RawBytesULE<{ size_of::<$type>() }> {
@@ -209,6 +210,7 @@ impl AsULE for u8 {
 }
 
 // EqULE is true because u8 is its own ULE.
+#[allow(deprecated)]
 unsafe impl EqULE for u8 {}
 
 impl_const_constructors!(u8);
@@ -245,6 +247,7 @@ impl AsULE for NonZeroU8 {
     }
 }
 
+#[allow(deprecated)]
 unsafe impl EqULE for NonZeroU8 {}
 
 impl NicheBytes<1> for NonZeroU8 {
@@ -278,6 +281,7 @@ impl AsULE for i8 {
 }
 
 // EqULE is true because i8 is its own ULE.
+#[allow(deprecated)]
 unsafe impl EqULE for i8 {}
 
 impl AsULE for NonZeroI8 {
@@ -335,6 +339,7 @@ impl AsULE for bool {
 }
 
 // EqULE is true because bool is its own ULE.
+#[allow(deprecated)]
 unsafe impl EqULE for bool {}
 
 impl_const_constructors!(bool);
@@ -370,6 +375,7 @@ impl AsULE for () {
 }
 
 // EqULE is true because () is its own ULE.
+#[allow(deprecated)]
 unsafe impl EqULE for () {}
 
 impl_const_constructors!(());
