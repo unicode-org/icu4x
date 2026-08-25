@@ -86,7 +86,9 @@ Once the release checklist is complete, the assigned release driver will perform
     * [ ] get this checked in, then `cd ffi/npm && npm publish`
 * [ ] Create a branch named `release/x.y` including the release tag and FFI commits and push it to the upstream
 * [ ] Update the website
-  * [ ] In the `icu4x-docs` repo, run `node tools/github-to-astro.ts` and follow the instructions
+  * [ ] In the `icu4x-docs` repo, trigger the [Run icu4x-convert GitHub Action](https://github.com/unicode-org/icu4x-docs/actions/workflows/convert.yml)
+    * The workflow runs the `node tools/github-to-astro.ts` script and creates a Pull Request.
+  * [ ] Spot-check the website locally before merging the PR.
 * [ ] Announce the release to public
   * [ ] (All releases) Blog post on Unicode blog (email comms@unicode.org)
   * [ ] (All releases) Update https://www.unicode.org/releases/ (email Ken Whistler)
