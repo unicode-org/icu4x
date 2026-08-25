@@ -125,7 +125,7 @@ The ICU4X TC may decide to make a patch release of an ICU4X component on an old 
     * Perform `cargo publish` in the crate(s)
     * *If* `cargo publish` fails, make whatever changes are needed locally as a new commit. If the changes are large or tricky, consider having a team member review them as well.
     * Push commits *directly* to `release/x.y`. Do not rebase or make a merge commit.
-    * Close the PR
+    * Close the PR if it didn't get auto-marked as merged by GitHub
 * Create and push a tag of the format `ind/icu_collator@1.3.3` (for icu_collator patch version 1.3.3)
   * It is not necessary to create `ind/icu_collator_data@1.3.3` so long as the component has a tag
 
