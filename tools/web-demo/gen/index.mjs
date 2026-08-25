@@ -3715,6 +3715,40 @@ let termini = Object.assign({
         ]
     },
 
+    "Block.forChar": {
+        func: (ch) => icu.Block.forChar(ch),
+        // For avoiding webpacking minifying issues:
+        funcName: "Block.forChar",
+        expr: (ch) => "icu.Block.forChar(ch)".replace(/([\( ])ch([,\) \n])/, '$1' + ch + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "ch",
+                type: "codepoint",
+                typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
+    "Block.tryFromStr": {
+        func: (s) => icu.Block.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "Block.tryFromStr",
+        expr: (s) => "icu.Block.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "CanonicalCombiningClass.forChar": {
         func: (ch) => icu.CanonicalCombiningClass.forChar(ch),
         // For avoiding webpacking minifying issues:

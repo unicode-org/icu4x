@@ -311,6 +311,7 @@ where
         + DataProvider<PropertyBinaryWhiteSpaceV1>
         + DataProvider<PropertyBinaryXidContinueV1>
         + DataProvider<PropertyBinaryXidStartV1>
+        + DataProvider<PropertyEnumBlockV1>
         + DataProvider<PropertyEnumCanonicalCombiningClassV1>
         + DataProvider<PropertyEnumEastAsianWidthV1>
         + DataProvider<PropertyEnumGeneralCategoryV1>
@@ -320,6 +321,7 @@ where
         + DataProvider<PropertyEnumScriptV1>
         + DataProvider<PropertyEnumSentenceBreakV1>
         + DataProvider<PropertyEnumWordBreakV1>
+        + DataProvider<PropertyNameParseBlockV1>
         + DataProvider<PropertyNameParseCanonicalCombiningClassV1>
         + DataProvider<PropertyNameParseEastAsianWidthV1>
         + DataProvider<PropertyNameParseGeneralCategoryMaskV1>

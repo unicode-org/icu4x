@@ -11,6 +11,8 @@ internal interface CodePointMapData16Lib: Library {
     fun icu4x_CodePointMapData16_iter_ranges_for_value_mv1(handle: Pointer, value: FFIUint16): Pointer
     fun icu4x_CodePointMapData16_iter_ranges_for_value_complemented_mv1(handle: Pointer, value: FFIUint16): Pointer
     fun icu4x_CodePointMapData16_get_set_for_value_mv1(handle: Pointer, value: FFIUint16): Pointer
+    fun icu4x_CodePointMapData16_create_block_mv1(): Pointer
+    fun icu4x_CodePointMapData16_create_block_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_CodePointMapData16_create_script_mv1(): Pointer
     fun icu4x_CodePointMapData16_create_script_with_provider_mv1(provider: Pointer): ResultPointerInt
 }
@@ -50,6 +52,39 @@ class CodePointMapData16 internal constructor (
     companion object {
         internal val libClass: Class<CodePointMapData16Lib> = CodePointMapData16Lib::class.java
         internal val lib: CodePointMapData16Lib = Native.load("icu4x", libClass)
+        @JvmStatic
+        
+        /** Create a map for the `Block` property, using compiled data.
+        *
+        *See the [Rust documentation for `Block`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html) for more information.
+        */
+        fun createBlock(): CodePointMapData16 {
+            
+            val returnVal = lib.icu4x_CodePointMapData16_create_block_mv1();
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = CodePointMapData16(handle, selfEdges, true)
+            return returnOpaque
+        }
+        @JvmStatic
+        
+        /** Create a map for the `Block` property, using a particular data source.
+        *
+        *See the [Rust documentation for `Block`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html) for more information.
+        */
+        fun createBlockWithProvider(provider: DataProvider): Result<CodePointMapData16> {
+            
+            val returnVal = lib.icu4x_CodePointMapData16_create_block_with_provider_mv1(provider.handle);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                val selfEdges: List<Any> = listOf()
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointMapData16(handle, selfEdges, true)
+                return returnOpaque.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
+            }
+        }
         @JvmStatic
         
         /** Create a map for the `Script` property, using compiled data.

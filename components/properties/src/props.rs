@@ -117,6 +117,45 @@ make_enumerated_property! {
     ule_ty: u8;
 }
 
+/// Enumerated property `Block`.
+///
+/// See Section 3.4, D10B in The Unicode Standard.
+///
+/// # Example
+///
+/// ```
+/// use icu::properties::{CodePointMapData, props::Block};
+///
+/// assert_eq!(
+///     CodePointMapData::<Block>::new().get('α'),
+///     Block::GreekAndCoptic,
+/// );
+/// assert_eq!(
+///     CodePointMapData::<Block>::new().get('a'),
+///     Block::BasicLatin,
+/// );
+/// ```
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[allow(clippy::exhaustive_structs)] // newtype
+#[repr(transparent)]
+pub struct Block(pub(crate) u16);
+
+impl Default for Block {
+    fn default() -> Self {
+        Self::NoBlock
+    }
+}
+
+make_enumerated_property! {
+    name: "Block";
+    short_name: "blk";
+    ident: Block;
+    data_marker: crate::provider::PropertyEnumBlockV1;
+    singleton: SINGLETON_PROPERTY_ENUM_BLOCK_V1;
+    ule_ty: <u16 as zerovec::ule::AsULE>::ULE;
+}
+
 /// Enumerated property `Numeric_Type`.
 ///
 /// See Section 4.6, Numeric Value in The Unicode Standard for the summary of

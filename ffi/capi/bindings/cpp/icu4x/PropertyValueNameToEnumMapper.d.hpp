@@ -72,6 +72,20 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> create_bidi_class_with_provider(const icu4x::DataProvider& provider);
 
   /**
+   * Create a name-to-enum mapper for the `Block` property, using compiled data.
+   *
+   * See the [Rust documentation for `Block`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html) for more information.
+   */
+  inline static std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> create_block();
+
+  /**
+   * Create a name-to-enum mapper for the `Block` property, using a particular data source.
+   *
+   * See the [Rust documentation for `Block`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html) for more information.
+   */
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> create_block_with_provider(const icu4x::DataProvider& provider);
+
+  /**
    * Create a name-to-enum mapper for the `CanonicalCombiningClass` property, using compiled data.
    *
    * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.

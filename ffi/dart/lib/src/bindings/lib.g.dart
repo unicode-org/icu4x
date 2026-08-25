@@ -18,6 +18,7 @@ part 'BidiInfo.g.dart';
 part 'BidiMirroringGlyph.g.dart';
 part 'BidiPairedBracketType.g.dart';
 part 'BidiParagraph.g.dart';
+part 'Block.g.dart';
 part 'Calendar.g.dart';
 part 'CalendarDateAddError.g.dart';
 part 'CalendarDateFromFieldsError.g.dart';

@@ -692,6 +692,7 @@ pub fn rscd_data() -> AbstractFs {
         "security/IdentifierStatus.txt",
         "ucd/BidiBrackets.txt",
         "ucd/BidiMirroring.txt",
+        "ucd/Blocks.txt",
         "ucd/CaseFolding.txt",
         "ucd/DerivedCoreProperties.txt",
         "ucd/DerivedNormalizationProps.txt",
