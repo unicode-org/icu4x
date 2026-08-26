@@ -132,8 +132,8 @@ final class FetchMode extends BuildMode {
 
     final cachedLibrary = File.fromUri(
       input.outputDirectoryShared
-          .resolve('icu4x-$version/')
-          .resolve('$rustTarget-$libraryType-$targetFilename'),
+          .resolve('icu4x-$version/$rustTarget-$libraryType/')
+          .resolve(targetFilename),
     );
     if (await cachedLibrary.exists()) {
       final fileHash = sha256
