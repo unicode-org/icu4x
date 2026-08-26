@@ -3,8 +3,8 @@
 
 part of 'lib.g.dart';
 
-/// Additional information: [1](https://docs.rs/icu/2.3.0/icu/time/zone/struct.InvalidOffsetError.html)
-final class TimeZoneInvalidOffsetError {
+/// Additional information: [1](https://docs.rs/icu/2.3.1/icu/time/zone/struct.InvalidOffsetError.html)
+final class TimeZoneInvalidOffsetError implements core.Exception {
 
   // ignore: public_member_api_docs
   TimeZoneInvalidOffsetError();

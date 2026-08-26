@@ -330,6 +330,8 @@ export { BidiPairedBracketType } from "./BidiPairedBracketType"
 
 export { BidiClass } from "./BidiClass"
 
+export { Block } from "./Block"
+
 export { CanonicalCombiningClass } from "./CanonicalCombiningClass"
 
 export { EastAsianWidth } from "./EastAsianWidth"

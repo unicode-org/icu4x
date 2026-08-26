@@ -11,7 +11,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /**
- * See the [Rust documentation for `NoCalendarRangeFormatter`](https://docs.rs/icu/2.3.0/icu/datetime/range/type.NoCalendarRangeFormatter.html) for more information.
+ * See the [Rust documentation for `NoCalendarRangeFormatter`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html) for more information.
  */
 export class TimeRangeFormatter {
     /** @internal */
@@ -19,25 +19,25 @@ export class TimeRangeFormatter {
 
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.0/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `T`](https://docs.rs/icu/2.3.0/icu/datetime/fieldsets/struct.T.html) for more information.
+     * See the [Rust documentation for `T`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.0/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.0/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.3.0/icu/datetime/fieldsets/struct.T.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.for_length)
      */
     static createWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): TimeRangeFormatter;
 
     /**
-     * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.0/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.format) for more information.
+     * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.format) for more information.
      */
     format(startTime: Time, endTime: Time): string;
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.0/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `T`](https://docs.rs/icu/2.3.0/icu/datetime/fieldsets/struct.T.html) for more information.
+     * See the [Rust documentation for `T`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.0/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.0/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.3.0/icu/datetime/fieldsets/struct.T.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.for_length)
      */
     constructor(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null);
 }

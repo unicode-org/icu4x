@@ -158,6 +158,1576 @@ impl BidiClass {
     }
 }
 
+impl Block {
+    pub const NoBlock: Self = Self(0);
+    pub const NB: Self = Self::NoBlock;
+    pub const BasicLatin: Self = Self(1);
+    pub const ASCII: Self = Self::BasicLatin;
+    pub const Latin1Supplement: Self = Self(2);
+    pub const Latin1Sup: Self = Self::Latin1Supplement;
+    pub const Latin1: Self = Self::Latin1Supplement;
+    pub const LatinExtendedA: Self = Self(3);
+    pub const LatinExtA: Self = Self::LatinExtendedA;
+    pub const LatinExtendedB: Self = Self(4);
+    pub const LatinExtB: Self = Self::LatinExtendedB;
+    pub const IPAExtensions: Self = Self(5);
+    pub const IPAExt: Self = Self::IPAExtensions;
+    pub const SpacingModifierLetters: Self = Self(6);
+    pub const ModifierLetters: Self = Self::SpacingModifierLetters;
+    pub const CombiningDiacriticalMarks: Self = Self(7);
+    pub const Diacriticals: Self = Self::CombiningDiacriticalMarks;
+    pub const GreekAndCoptic: Self = Self(8);
+    pub const Greek: Self = Self::GreekAndCoptic;
+    pub const Cyrillic: Self = Self(9);
+    pub const Armenian: Self = Self(10);
+    pub const Hebrew: Self = Self(11);
+    pub const Arabic: Self = Self(12);
+    pub const Syriac: Self = Self(13);
+    pub const Thaana: Self = Self(14);
+    pub const Devanagari: Self = Self(15);
+    pub const Bengali: Self = Self(16);
+    pub const Gurmukhi: Self = Self(17);
+    pub const Gujarati: Self = Self(18);
+    pub const Oriya: Self = Self(19);
+    pub const Tamil: Self = Self(20);
+    pub const Telugu: Self = Self(21);
+    pub const Kannada: Self = Self(22);
+    pub const Malayalam: Self = Self(23);
+    pub const Sinhala: Self = Self(24);
+    pub const Thai: Self = Self(25);
+    pub const Lao: Self = Self(26);
+    pub const Tibetan: Self = Self(27);
+    pub const Myanmar: Self = Self(28);
+    pub const Georgian: Self = Self(29);
+    pub const HangulJamo: Self = Self(30);
+    pub const Jamo: Self = Self::HangulJamo;
+    pub const Ethiopic: Self = Self(31);
+    pub const Cherokee: Self = Self(32);
+    pub const UnifiedCanadianAboriginalSyllabics: Self = Self(33);
+    pub const UCAS: Self = Self::UnifiedCanadianAboriginalSyllabics;
+    pub const CanadianSyllabics: Self = Self::UnifiedCanadianAboriginalSyllabics;
+    pub const Ogham: Self = Self(34);
+    pub const Runic: Self = Self(35);
+    pub const Khmer: Self = Self(36);
+    pub const Mongolian: Self = Self(37);
+    pub const LatinExtendedAdditional: Self = Self(38);
+    pub const LatinExtAdditional: Self = Self::LatinExtendedAdditional;
+    pub const GreekExtended: Self = Self(39);
+    pub const GreekExt: Self = Self::GreekExtended;
+    pub const GeneralPunctuation: Self = Self(40);
+    pub const Punctuation: Self = Self::GeneralPunctuation;
+    pub const SuperscriptsAndSubscripts: Self = Self(41);
+    pub const SuperAndSub: Self = Self::SuperscriptsAndSubscripts;
+    pub const CurrencySymbols: Self = Self(42);
+    pub const CombiningDiacriticalMarksForSymbols: Self = Self(43);
+    pub const DiacriticalsForSymbols: Self = Self::CombiningDiacriticalMarksForSymbols;
+    pub const CombiningMarksForSymbols: Self = Self::CombiningDiacriticalMarksForSymbols;
+    pub const LetterlikeSymbols: Self = Self(44);
+    pub const NumberForms: Self = Self(45);
+    pub const Arrows: Self = Self(46);
+    pub const MathematicalOperators: Self = Self(47);
+    pub const MathOperators: Self = Self::MathematicalOperators;
+    pub const MiscellaneousTechnical: Self = Self(48);
+    pub const MiscTechnical: Self = Self::MiscellaneousTechnical;
+    pub const ControlPictures: Self = Self(49);
+    pub const OpticalCharacterRecognition: Self = Self(50);
+    pub const OCR: Self = Self::OpticalCharacterRecognition;
+    pub const EnclosedAlphanumerics: Self = Self(51);
+    pub const EnclosedAlphanum: Self = Self::EnclosedAlphanumerics;
+    pub const BoxDrawing: Self = Self(52);
+    pub const BlockElements: Self = Self(53);
+    pub const GeometricShapes: Self = Self(54);
+    pub const MiscellaneousSymbols: Self = Self(55);
+    pub const MiscSymbols: Self = Self::MiscellaneousSymbols;
+    pub const Dingbats: Self = Self(56);
+    pub const BraillePatterns: Self = Self(57);
+    pub const Braille: Self = Self::BraillePatterns;
+    pub const CJKRadicalsSupplement: Self = Self(58);
+    pub const CJKRadicalsSup: Self = Self::CJKRadicalsSupplement;
+    pub const KangxiRadicals: Self = Self(59);
+    pub const Kangxi: Self = Self::KangxiRadicals;
+    pub const IdeographicDescriptionCharacters: Self = Self(60);
+    pub const IDC: Self = Self::IdeographicDescriptionCharacters;
+    pub const CJKSymbolsAndPunctuation: Self = Self(61);
+    pub const CJKSymbols: Self = Self::CJKSymbolsAndPunctuation;
+    pub const Hiragana: Self = Self(62);
+    pub const Katakana: Self = Self(63);
+    pub const Bopomofo: Self = Self(64);
+    pub const HangulCompatibilityJamo: Self = Self(65);
+    pub const CompatJamo: Self = Self::HangulCompatibilityJamo;
+    pub const Kanbun: Self = Self(66);
+    pub const BopomofoExtended: Self = Self(67);
+    pub const BopomofoExt: Self = Self::BopomofoExtended;
+    pub const EnclosedCJKLettersAndMonths: Self = Self(68);
+    pub const EnclosedCJK: Self = Self::EnclosedCJKLettersAndMonths;
+    pub const CJKCompatibility: Self = Self(69);
+    pub const CJKCompat: Self = Self::CJKCompatibility;
+    pub const CJKUnifiedIdeographsExtensionA: Self = Self(70);
+    pub const CJKExtA: Self = Self::CJKUnifiedIdeographsExtensionA;
+    pub const CJKUnifiedIdeographs: Self = Self(71);
+    pub const CJK: Self = Self::CJKUnifiedIdeographs;
+    pub const YiSyllables: Self = Self(72);
+    pub const YiRadicals: Self = Self(73);
+    pub const HangulSyllables: Self = Self(74);
+    pub const Hangul: Self = Self::HangulSyllables;
+    pub const HighSurrogates: Self = Self(75);
+    pub const HighPrivateUseSurrogates: Self = Self(76);
+    pub const HighPUSurrogates: Self = Self::HighPrivateUseSurrogates;
+    pub const LowSurrogates: Self = Self(77);
+    pub const PrivateUseArea: Self = Self(78);
+    pub const PUA: Self = Self::PrivateUseArea;
+    pub const PrivateUse: Self = Self::PrivateUseArea;
+    pub const CJKCompatibilityIdeographs: Self = Self(79);
+    pub const CJKCompatIdeographs: Self = Self::CJKCompatibilityIdeographs;
+    pub const AlphabeticPresentationForms: Self = Self(80);
+    pub const AlphabeticPF: Self = Self::AlphabeticPresentationForms;
+    pub const ArabicPresentationFormsA: Self = Self(81);
+    pub const ArabicPFA: Self = Self::ArabicPresentationFormsA;
+    pub const CombiningHalfMarks: Self = Self(82);
+    pub const HalfMarks: Self = Self::CombiningHalfMarks;
+    pub const CJKCompatibilityForms: Self = Self(83);
+    pub const CJKCompatForms: Self = Self::CJKCompatibilityForms;
+    pub const SmallFormVariants: Self = Self(84);
+    pub const SmallForms: Self = Self::SmallFormVariants;
+    pub const ArabicPresentationFormsB: Self = Self(85);
+    pub const ArabicPFB: Self = Self::ArabicPresentationFormsB;
+    pub const Specials: Self = Self(86);
+    pub const HalfwidthAndFullwidthForms: Self = Self(87);
+    pub const HalfAndFullForms: Self = Self::HalfwidthAndFullwidthForms;
+    pub const OldItalic: Self = Self(88);
+    pub const Gothic: Self = Self(89);
+    pub const Deseret: Self = Self(90);
+    pub const ByzantineMusicalSymbols: Self = Self(91);
+    pub const ByzantineMusic: Self = Self::ByzantineMusicalSymbols;
+    pub const MusicalSymbols: Self = Self(92);
+    pub const Music: Self = Self::MusicalSymbols;
+    pub const MathematicalAlphanumericSymbols: Self = Self(93);
+    pub const MathAlphanum: Self = Self::MathematicalAlphanumericSymbols;
+    pub const CJKUnifiedIdeographsExtensionB: Self = Self(94);
+    pub const CJKExtB: Self = Self::CJKUnifiedIdeographsExtensionB;
+    pub const CJKCompatibilityIdeographsSupplement: Self = Self(95);
+    pub const CJKCompatIdeographsSup: Self = Self::CJKCompatibilityIdeographsSupplement;
+    pub const Tags: Self = Self(96);
+    pub const CyrillicSupplement: Self = Self(97);
+    pub const CyrillicSup: Self = Self::CyrillicSupplement;
+    pub const CyrillicSupplementary: Self = Self::CyrillicSupplement;
+    pub const Tagalog: Self = Self(98);
+    pub const Hanunoo: Self = Self(99);
+    pub const Buhid: Self = Self(100);
+    pub const Tagbanwa: Self = Self(101);
+    pub const MiscellaneousMathematicalSymbolsA: Self = Self(102);
+    pub const MiscMathSymbolsA: Self = Self::MiscellaneousMathematicalSymbolsA;
+    pub const SupplementalArrowsA: Self = Self(103);
+    pub const SupArrowsA: Self = Self::SupplementalArrowsA;
+    pub const SupplementalArrowsB: Self = Self(104);
+    pub const SupArrowsB: Self = Self::SupplementalArrowsB;
+    pub const MiscellaneousMathematicalSymbolsB: Self = Self(105);
+    pub const MiscMathSymbolsB: Self = Self::MiscellaneousMathematicalSymbolsB;
+    pub const SupplementalMathematicalOperators: Self = Self(106);
+    pub const SupMathOperators: Self = Self::SupplementalMathematicalOperators;
+    pub const KatakanaPhoneticExtensions: Self = Self(107);
+    pub const KatakanaExt: Self = Self::KatakanaPhoneticExtensions;
+    pub const VariationSelectors: Self = Self(108);
+    pub const VS: Self = Self::VariationSelectors;
+    pub const SupplementaryPrivateUseAreaA: Self = Self(109);
+    pub const SupPUAA: Self = Self::SupplementaryPrivateUseAreaA;
+    pub const SupplementaryPrivateUseAreaB: Self = Self(110);
+    pub const SupPUAB: Self = Self::SupplementaryPrivateUseAreaB;
+    pub const Limbu: Self = Self(111);
+    pub const TaiLe: Self = Self(112);
+    pub const KhmerSymbols: Self = Self(113);
+    pub const PhoneticExtensions: Self = Self(114);
+    pub const PhoneticExt: Self = Self::PhoneticExtensions;
+    pub const MiscellaneousSymbolsAndArrows: Self = Self(115);
+    pub const MiscArrows: Self = Self::MiscellaneousSymbolsAndArrows;
+    pub const YijingHexagramSymbols: Self = Self(116);
+    pub const Yijing: Self = Self::YijingHexagramSymbols;
+    pub const LinearBSyllabary: Self = Self(117);
+    pub const LinearBIdeograms: Self = Self(118);
+    pub const AegeanNumbers: Self = Self(119);
+    pub const Ugaritic: Self = Self(120);
+    pub const Shavian: Self = Self(121);
+    pub const Osmanya: Self = Self(122);
+    pub const CypriotSyllabary: Self = Self(123);
+    pub const TaiXuanJingSymbols: Self = Self(124);
+    pub const TaiXuanJing: Self = Self::TaiXuanJingSymbols;
+    pub const VariationSelectorsSupplement: Self = Self(125);
+    pub const VSSup: Self = Self::VariationSelectorsSupplement;
+    pub const AncientGreekMusicalNotation: Self = Self(126);
+    pub const AncientGreekMusic: Self = Self::AncientGreekMusicalNotation;
+    pub const AncientGreekNumbers: Self = Self(127);
+    pub const ArabicSupplement: Self = Self(128);
+    pub const ArabicSup: Self = Self::ArabicSupplement;
+    pub const Buginese: Self = Self(129);
+    pub const CJKStrokes: Self = Self(130);
+    pub const CombiningDiacriticalMarksSupplement: Self = Self(131);
+    pub const DiacriticalsSup: Self = Self::CombiningDiacriticalMarksSupplement;
+    pub const Coptic: Self = Self(132);
+    pub const EthiopicExtended: Self = Self(133);
+    pub const EthiopicExt: Self = Self::EthiopicExtended;
+    pub const EthiopicSupplement: Self = Self(134);
+    pub const EthiopicSup: Self = Self::EthiopicSupplement;
+    pub const GeorgianSupplement: Self = Self(135);
+    pub const GeorgianSup: Self = Self::GeorgianSupplement;
+    pub const Glagolitic: Self = Self(136);
+    pub const Kharoshthi: Self = Self(137);
+    pub const ModifierToneLetters: Self = Self(138);
+    pub const NewTaiLue: Self = Self(139);
+    pub const OldPersian: Self = Self(140);
+    pub const PhoneticExtensionsSupplement: Self = Self(141);
+    pub const PhoneticExtSup: Self = Self::PhoneticExtensionsSupplement;
+    pub const SupplementalPunctuation: Self = Self(142);
+    pub const SupPunctuation: Self = Self::SupplementalPunctuation;
+    pub const SylotiNagri: Self = Self(143);
+    pub const Tifinagh: Self = Self(144);
+    pub const VerticalForms: Self = Self(145);
+    pub const NKo: Self = Self(146);
+    pub const Balinese: Self = Self(147);
+    pub const LatinExtendedC: Self = Self(148);
+    pub const LatinExtC: Self = Self::LatinExtendedC;
+    pub const LatinExtendedD: Self = Self(149);
+    pub const LatinExtD: Self = Self::LatinExtendedD;
+    pub const PhagsPa: Self = Self(150);
+    pub const Phoenician: Self = Self(151);
+    pub const Cuneiform: Self = Self(152);
+    pub const CuneiformNumbersAndPunctuation: Self = Self(153);
+    pub const CuneiformNumbers: Self = Self::CuneiformNumbersAndPunctuation;
+    pub const CountingRodNumerals: Self = Self(154);
+    pub const CountingRod: Self = Self::CountingRodNumerals;
+    pub const Sundanese: Self = Self(155);
+    pub const Lepcha: Self = Self(156);
+    pub const OlChiki: Self = Self(157);
+    pub const CyrillicExtendedA: Self = Self(158);
+    pub const CyrillicExtA: Self = Self::CyrillicExtendedA;
+    pub const Vai: Self = Self(159);
+    pub const CyrillicExtendedB: Self = Self(160);
+    pub const CyrillicExtB: Self = Self::CyrillicExtendedB;
+    pub const Saurashtra: Self = Self(161);
+    pub const KayahLi: Self = Self(162);
+    pub const Rejang: Self = Self(163);
+    pub const Cham: Self = Self(164);
+    pub const AncientSymbols: Self = Self(165);
+    pub const PhaistosDisc: Self = Self(166);
+    pub const Phaistos: Self = Self::PhaistosDisc;
+    pub const Lycian: Self = Self(167);
+    pub const Carian: Self = Self(168);
+    pub const Lydian: Self = Self(169);
+    pub const MahjongTiles: Self = Self(170);
+    pub const Mahjong: Self = Self::MahjongTiles;
+    pub const DominoTiles: Self = Self(171);
+    pub const Domino: Self = Self::DominoTiles;
+    pub const Samaritan: Self = Self(172);
+    pub const UnifiedCanadianAboriginalSyllabicsExtended: Self = Self(173);
+    pub const UCASExt: Self = Self::UnifiedCanadianAboriginalSyllabicsExtended;
+    pub const TaiTham: Self = Self(174);
+    pub const VedicExtensions: Self = Self(175);
+    pub const VedicExt: Self = Self::VedicExtensions;
+    pub const Lisu: Self = Self(176);
+    pub const Bamum: Self = Self(177);
+    pub const CommonIndicNumberForms: Self = Self(178);
+    pub const IndicNumberForms: Self = Self::CommonIndicNumberForms;
+    pub const DevanagariExtended: Self = Self(179);
+    pub const DevanagariExt: Self = Self::DevanagariExtended;
+    pub const HangulJamoExtendedA: Self = Self(180);
+    pub const JamoExtA: Self = Self::HangulJamoExtendedA;
+    pub const Javanese: Self = Self(181);
+    pub const MyanmarExtendedA: Self = Self(182);
+    pub const MyanmarExtA: Self = Self::MyanmarExtendedA;
+    pub const TaiViet: Self = Self(183);
+    pub const MeeteiMayek: Self = Self(184);
+    pub const HangulJamoExtendedB: Self = Self(185);
+    pub const JamoExtB: Self = Self::HangulJamoExtendedB;
+    pub const ImperialAramaic: Self = Self(186);
+    pub const OldSouthArabian: Self = Self(187);
+    pub const Avestan: Self = Self(188);
+    pub const InscriptionalParthian: Self = Self(189);
+    pub const InscriptionalPahlavi: Self = Self(190);
+    pub const OldTurkic: Self = Self(191);
+    pub const RumiNumeralSymbols: Self = Self(192);
+    pub const Rumi: Self = Self::RumiNumeralSymbols;
+    pub const Kaithi: Self = Self(193);
+    pub const EgyptianHieroglyphs: Self = Self(194);
+    pub const EnclosedAlphanumericSupplement: Self = Self(195);
+    pub const EnclosedAlphanumSup: Self = Self::EnclosedAlphanumericSupplement;
+    pub const EnclosedIdeographicSupplement: Self = Self(196);
+    pub const EnclosedIdeographicSup: Self = Self::EnclosedIdeographicSupplement;
+    pub const CJKUnifiedIdeographsExtensionC: Self = Self(197);
+    pub const CJKExtC: Self = Self::CJKUnifiedIdeographsExtensionC;
+    pub const Mandaic: Self = Self(198);
+    pub const Batak: Self = Self(199);
+    pub const EthiopicExtendedA: Self = Self(200);
+    pub const EthiopicExtA: Self = Self::EthiopicExtendedA;
+    pub const Brahmi: Self = Self(201);
+    pub const BamumSupplement: Self = Self(202);
+    pub const BamumSup: Self = Self::BamumSupplement;
+    pub const KanaSupplement: Self = Self(203);
+    pub const KanaSup: Self = Self::KanaSupplement;
+    pub const PlayingCards: Self = Self(204);
+    pub const MiscellaneousSymbolsAndPictographs: Self = Self(205);
+    pub const MiscPictographs: Self = Self::MiscellaneousSymbolsAndPictographs;
+    pub const Emoticons: Self = Self(206);
+    pub const TransportAndMapSymbols: Self = Self(207);
+    pub const TransportAndMap: Self = Self::TransportAndMapSymbols;
+    pub const AlchemicalSymbols: Self = Self(208);
+    pub const Alchemical: Self = Self::AlchemicalSymbols;
+    pub const CJKUnifiedIdeographsExtensionD: Self = Self(209);
+    pub const CJKExtD: Self = Self::CJKUnifiedIdeographsExtensionD;
+    pub const ArabicExtendedA: Self = Self(210);
+    pub const ArabicExtA: Self = Self::ArabicExtendedA;
+    pub const ArabicMathematicalAlphabeticSymbols: Self = Self(211);
+    pub const ArabicMath: Self = Self::ArabicMathematicalAlphabeticSymbols;
+    pub const Chakma: Self = Self(212);
+    pub const MeeteiMayekExtensions: Self = Self(213);
+    pub const MeeteiMayekExt: Self = Self::MeeteiMayekExtensions;
+    pub const MeroiticCursive: Self = Self(214);
+    pub const MeroiticHieroglyphs: Self = Self(215);
+    pub const Miao: Self = Self(216);
+    pub const Sharada: Self = Self(217);
+    pub const SoraSompeng: Self = Self(218);
+    pub const SundaneseSupplement: Self = Self(219);
+    pub const SundaneseSup: Self = Self::SundaneseSupplement;
+    pub const Takri: Self = Self(220);
+    pub const BassaVah: Self = Self(221);
+    pub const CaucasianAlbanian: Self = Self(222);
+    pub const CopticEpactNumbers: Self = Self(223);
+    pub const CombiningDiacriticalMarksExtended: Self = Self(224);
+    pub const DiacriticalsExt: Self = Self::CombiningDiacriticalMarksExtended;
+    pub const Duployan: Self = Self(225);
+    pub const Elbasan: Self = Self(226);
+    pub const GeometricShapesExtended: Self = Self(227);
+    pub const GeometricShapesExt: Self = Self::GeometricShapesExtended;
+    pub const Grantha: Self = Self(228);
+    pub const Khojki: Self = Self(229);
+    pub const Khudawadi: Self = Self(230);
+    pub const LatinExtendedE: Self = Self(231);
+    pub const LatinExtE: Self = Self::LatinExtendedE;
+    pub const LinearA: Self = Self(232);
+    pub const Mahajani: Self = Self(233);
+    pub const Manichaean: Self = Self(234);
+    pub const MendeKikakui: Self = Self(235);
+    pub const Modi: Self = Self(236);
+    pub const Mro: Self = Self(237);
+    pub const MyanmarExtendedB: Self = Self(238);
+    pub const MyanmarExtB: Self = Self::MyanmarExtendedB;
+    pub const Nabataean: Self = Self(239);
+    pub const OldNorthArabian: Self = Self(240);
+    pub const OldPermic: Self = Self(241);
+    pub const OrnamentalDingbats: Self = Self(242);
+    pub const PahawhHmong: Self = Self(243);
+    pub const Palmyrene: Self = Self(244);
+    pub const PauCinHau: Self = Self(245);
+    pub const PsalterPahlavi: Self = Self(246);
+    pub const ShorthandFormatControls: Self = Self(247);
+    pub const Siddham: Self = Self(248);
+    pub const SinhalaArchaicNumbers: Self = Self(249);
+    pub const SupplementalArrowsC: Self = Self(250);
+    pub const SupArrowsC: Self = Self::SupplementalArrowsC;
+    pub const Tirhuta: Self = Self(251);
+    pub const WarangCiti: Self = Self(252);
+    pub const Ahom: Self = Self(253);
+    pub const AnatolianHieroglyphs: Self = Self(254);
+    pub const CherokeeSupplement: Self = Self(255);
+    pub const CherokeeSup: Self = Self::CherokeeSupplement;
+    pub const CJKUnifiedIdeographsExtensionE: Self = Self(256);
+    pub const CJKExtE: Self = Self::CJKUnifiedIdeographsExtensionE;
+    pub const EarlyDynasticCuneiform: Self = Self(257);
+    pub const Hatran: Self = Self(258);
+    pub const Multani: Self = Self(259);
+    pub const OldHungarian: Self = Self(260);
+    pub const SupplementalSymbolsAndPictographs: Self = Self(261);
+    pub const SupSymbolsAndPictographs: Self = Self::SupplementalSymbolsAndPictographs;
+    pub const SuttonSignWriting: Self = Self(262);
+    pub const Adlam: Self = Self(263);
+    pub const Bhaiksuki: Self = Self(264);
+    pub const CyrillicExtendedC: Self = Self(265);
+    pub const CyrillicExtC: Self = Self::CyrillicExtendedC;
+    pub const GlagoliticSupplement: Self = Self(266);
+    pub const GlagoliticSup: Self = Self::GlagoliticSupplement;
+    pub const IdeographicSymbolsAndPunctuation: Self = Self(267);
+    pub const IdeographicSymbols: Self = Self::IdeographicSymbolsAndPunctuation;
+    pub const Marchen: Self = Self(268);
+    pub const MongolianSupplement: Self = Self(269);
+    pub const MongolianSup: Self = Self::MongolianSupplement;
+    pub const Newa: Self = Self(270);
+    pub const Osage: Self = Self(271);
+    pub const Tangut: Self = Self(272);
+    pub const TangutComponents: Self = Self(273);
+    pub const CJKUnifiedIdeographsExtensionF: Self = Self(274);
+    pub const CJKExtF: Self = Self::CJKUnifiedIdeographsExtensionF;
+    pub const KanaExtendedA: Self = Self(275);
+    pub const KanaExtA: Self = Self::KanaExtendedA;
+    pub const MasaramGondi: Self = Self(276);
+    pub const Nushu: Self = Self(277);
+    pub const Soyombo: Self = Self(278);
+    pub const SyriacSupplement: Self = Self(279);
+    pub const SyriacSup: Self = Self::SyriacSupplement;
+    pub const ZanabazarSquare: Self = Self(280);
+    pub const ChessSymbols: Self = Self(281);
+    pub const Dogra: Self = Self(282);
+    pub const GeorgianExtended: Self = Self(283);
+    pub const GeorgianExt: Self = Self::GeorgianExtended;
+    pub const GunjalaGondi: Self = Self(284);
+    pub const HanifiRohingya: Self = Self(285);
+    pub const IndicSiyaqNumbers: Self = Self(286);
+    pub const Makasar: Self = Self(287);
+    pub const MayanNumerals: Self = Self(288);
+    pub const Medefaidrin: Self = Self(289);
+    pub const OldSogdian: Self = Self(290);
+    pub const Sogdian: Self = Self(291);
+    pub const EgyptianHieroglyphFormatControls: Self = Self(292);
+    pub const Elymaic: Self = Self(293);
+    pub const Nandinagari: Self = Self(294);
+    pub const NyiakengPuachueHmong: Self = Self(295);
+    pub const OttomanSiyaqNumbers: Self = Self(296);
+    pub const SmallKanaExtension: Self = Self(297);
+    pub const SmallKanaExt: Self = Self::SmallKanaExtension;
+    pub const SymbolsAndPictographsExtendedA: Self = Self(298);
+    pub const SymbolsAndPictographsExtA: Self = Self::SymbolsAndPictographsExtendedA;
+    pub const TamilSupplement: Self = Self(299);
+    pub const TamilSup: Self = Self::TamilSupplement;
+    pub const Wancho: Self = Self(300);
+    pub const Chorasmian: Self = Self(301);
+    pub const CJKUnifiedIdeographsExtensionG: Self = Self(302);
+    pub const CJKExtG: Self = Self::CJKUnifiedIdeographsExtensionG;
+    pub const DivesAkuru: Self = Self(303);
+    pub const KhitanSmallScript: Self = Self(304);
+    pub const LisuSupplement: Self = Self(305);
+    pub const LisuSup: Self = Self::LisuSupplement;
+    pub const SymbolsForLegacyComputing: Self = Self(306);
+    pub const TangutSupplement: Self = Self(307);
+    pub const TangutSup: Self = Self::TangutSupplement;
+    pub const Yezidi: Self = Self(308);
+    pub const ArabicExtendedB: Self = Self(309);
+    pub const ArabicExtB: Self = Self::ArabicExtendedB;
+    pub const CyproMinoan: Self = Self(310);
+    pub const EthiopicExtendedB: Self = Self(311);
+    pub const EthiopicExtB: Self = Self::EthiopicExtendedB;
+    pub const KanaExtendedB: Self = Self(312);
+    pub const KanaExtB: Self = Self::KanaExtendedB;
+    pub const LatinExtendedF: Self = Self(313);
+    pub const LatinExtF: Self = Self::LatinExtendedF;
+    pub const LatinExtendedG: Self = Self(314);
+    pub const LatinExtG: Self = Self::LatinExtendedG;
+    pub const OldUyghur: Self = Self(315);
+    pub const Tangsa: Self = Self(316);
+    pub const Toto: Self = Self(317);
+    pub const UnifiedCanadianAboriginalSyllabicsExtendedA: Self = Self(318);
+    pub const UCASExtA: Self = Self::UnifiedCanadianAboriginalSyllabicsExtendedA;
+    pub const Vithkuqi: Self = Self(319);
+    pub const ZnamennyMusicalNotation: Self = Self(320);
+    pub const ZnamennyMusic: Self = Self::ZnamennyMusicalNotation;
+    pub const ArabicExtendedC: Self = Self(321);
+    pub const ArabicExtC: Self = Self::ArabicExtendedC;
+    pub const CJKUnifiedIdeographsExtensionH: Self = Self(322);
+    pub const CJKExtH: Self = Self::CJKUnifiedIdeographsExtensionH;
+    pub const CyrillicExtendedD: Self = Self(323);
+    pub const CyrillicExtD: Self = Self::CyrillicExtendedD;
+    pub const DevanagariExtendedA: Self = Self(324);
+    pub const DevanagariExtA: Self = Self::DevanagariExtendedA;
+    pub const KaktovikNumerals: Self = Self(325);
+    pub const Kawi: Self = Self(326);
+    pub const NagMundari: Self = Self(327);
+    pub const CJKUnifiedIdeographsExtensionI: Self = Self(328);
+    pub const CJKExtI: Self = Self::CJKUnifiedIdeographsExtensionI;
+    pub const EgyptianHieroglyphsExtendedA: Self = Self(329);
+    pub const EgyptianHieroglyphsExtA: Self = Self::EgyptianHieroglyphsExtendedA;
+    pub const Garay: Self = Self(330);
+    pub const GurungKhema: Self = Self(331);
+    pub const KiratRai: Self = Self(332);
+    pub const MyanmarExtendedC: Self = Self(333);
+    pub const MyanmarExtC: Self = Self::MyanmarExtendedC;
+    pub const OlOnal: Self = Self(334);
+    pub const Sunuwar: Self = Self(335);
+    pub const SymbolsForLegacyComputingSupplement: Self = Self(336);
+    pub const SymbolsForLegacyComputingSup: Self = Self::SymbolsForLegacyComputingSupplement;
+    pub const Todhri: Self = Self(337);
+    pub const TuluTigalari: Self = Self(338);
+    pub const BeriaErfe: Self = Self(339);
+    pub const CJKUnifiedIdeographsExtensionJ: Self = Self(340);
+    pub const CJKExtJ: Self = Self::CJKUnifiedIdeographsExtensionJ;
+    pub const MiscellaneousSymbolsSupplement: Self = Self(341);
+    pub const MiscSymbolsSup: Self = Self::MiscellaneousSymbolsSupplement;
+    pub const SharadaSupplement: Self = Self(342);
+    pub const SharadaSup: Self = Self::SharadaSupplement;
+    pub const Sidetic: Self = Self(343);
+    pub const TaiYo: Self = Self(344);
+    pub const TangutComponentsSupplement: Self = Self(345);
+    pub const TangutComponentsSup: Self = Self::TangutComponentsSupplement;
+    pub const TolongSiki: Self = Self(346);
+}
+
+#[cfg(feature = "datagen")]
+impl databake::Bake for Block {
+    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
+        env.insert("icu_properties");
+        match *self {
+            Self::NoBlock => databake::quote!(icu_properties::props::Block::NoBlock),
+            Self::BasicLatin => databake::quote!(icu_properties::props::Block::BasicLatin),
+            Self::Latin1Supplement => databake::quote!(icu_properties::props::Block::Latin1Supplement),
+            Self::LatinExtendedA => databake::quote!(icu_properties::props::Block::LatinExtendedA),
+            Self::LatinExtendedB => databake::quote!(icu_properties::props::Block::LatinExtendedB),
+            Self::IPAExtensions => databake::quote!(icu_properties::props::Block::IPAExtensions),
+            Self::SpacingModifierLetters => databake::quote!(icu_properties::props::Block::SpacingModifierLetters),
+            Self::CombiningDiacriticalMarks => databake::quote!(icu_properties::props::Block::CombiningDiacriticalMarks),
+            Self::GreekAndCoptic => databake::quote!(icu_properties::props::Block::GreekAndCoptic),
+            Self::Cyrillic => databake::quote!(icu_properties::props::Block::Cyrillic),
+            Self::Armenian => databake::quote!(icu_properties::props::Block::Armenian),
+            Self::Hebrew => databake::quote!(icu_properties::props::Block::Hebrew),
+            Self::Arabic => databake::quote!(icu_properties::props::Block::Arabic),
+            Self::Syriac => databake::quote!(icu_properties::props::Block::Syriac),
+            Self::Thaana => databake::quote!(icu_properties::props::Block::Thaana),
+            Self::Devanagari => databake::quote!(icu_properties::props::Block::Devanagari),
+            Self::Bengali => databake::quote!(icu_properties::props::Block::Bengali),
+            Self::Gurmukhi => databake::quote!(icu_properties::props::Block::Gurmukhi),
+            Self::Gujarati => databake::quote!(icu_properties::props::Block::Gujarati),
+            Self::Oriya => databake::quote!(icu_properties::props::Block::Oriya),
+            Self::Tamil => databake::quote!(icu_properties::props::Block::Tamil),
+            Self::Telugu => databake::quote!(icu_properties::props::Block::Telugu),
+            Self::Kannada => databake::quote!(icu_properties::props::Block::Kannada),
+            Self::Malayalam => databake::quote!(icu_properties::props::Block::Malayalam),
+            Self::Sinhala => databake::quote!(icu_properties::props::Block::Sinhala),
+            Self::Thai => databake::quote!(icu_properties::props::Block::Thai),
+            Self::Lao => databake::quote!(icu_properties::props::Block::Lao),
+            Self::Tibetan => databake::quote!(icu_properties::props::Block::Tibetan),
+            Self::Myanmar => databake::quote!(icu_properties::props::Block::Myanmar),
+            Self::Georgian => databake::quote!(icu_properties::props::Block::Georgian),
+            Self::HangulJamo => databake::quote!(icu_properties::props::Block::HangulJamo),
+            Self::Ethiopic => databake::quote!(icu_properties::props::Block::Ethiopic),
+            Self::Cherokee => databake::quote!(icu_properties::props::Block::Cherokee),
+            Self::UnifiedCanadianAboriginalSyllabics => databake::quote!(icu_properties::props::Block::UnifiedCanadianAboriginalSyllabics),
+            Self::Ogham => databake::quote!(icu_properties::props::Block::Ogham),
+            Self::Runic => databake::quote!(icu_properties::props::Block::Runic),
+            Self::Khmer => databake::quote!(icu_properties::props::Block::Khmer),
+            Self::Mongolian => databake::quote!(icu_properties::props::Block::Mongolian),
+            Self::LatinExtendedAdditional => databake::quote!(icu_properties::props::Block::LatinExtendedAdditional),
+            Self::GreekExtended => databake::quote!(icu_properties::props::Block::GreekExtended),
+            Self::GeneralPunctuation => databake::quote!(icu_properties::props::Block::GeneralPunctuation),
+            Self::SuperscriptsAndSubscripts => databake::quote!(icu_properties::props::Block::SuperscriptsAndSubscripts),
+            Self::CurrencySymbols => databake::quote!(icu_properties::props::Block::CurrencySymbols),
+            Self::CombiningDiacriticalMarksForSymbols => databake::quote!(icu_properties::props::Block::CombiningDiacriticalMarksForSymbols),
+            Self::LetterlikeSymbols => databake::quote!(icu_properties::props::Block::LetterlikeSymbols),
+            Self::NumberForms => databake::quote!(icu_properties::props::Block::NumberForms),
+            Self::Arrows => databake::quote!(icu_properties::props::Block::Arrows),
+            Self::MathematicalOperators => databake::quote!(icu_properties::props::Block::MathematicalOperators),
+            Self::MiscellaneousTechnical => databake::quote!(icu_properties::props::Block::MiscellaneousTechnical),
+            Self::ControlPictures => databake::quote!(icu_properties::props::Block::ControlPictures),
+            Self::OpticalCharacterRecognition => databake::quote!(icu_properties::props::Block::OpticalCharacterRecognition),
+            Self::EnclosedAlphanumerics => databake::quote!(icu_properties::props::Block::EnclosedAlphanumerics),
+            Self::BoxDrawing => databake::quote!(icu_properties::props::Block::BoxDrawing),
+            Self::BlockElements => databake::quote!(icu_properties::props::Block::BlockElements),
+            Self::GeometricShapes => databake::quote!(icu_properties::props::Block::GeometricShapes),
+            Self::MiscellaneousSymbols => databake::quote!(icu_properties::props::Block::MiscellaneousSymbols),
+            Self::Dingbats => databake::quote!(icu_properties::props::Block::Dingbats),
+            Self::BraillePatterns => databake::quote!(icu_properties::props::Block::BraillePatterns),
+            Self::CJKRadicalsSupplement => databake::quote!(icu_properties::props::Block::CJKRadicalsSupplement),
+            Self::KangxiRadicals => databake::quote!(icu_properties::props::Block::KangxiRadicals),
+            Self::IdeographicDescriptionCharacters => databake::quote!(icu_properties::props::Block::IdeographicDescriptionCharacters),
+            Self::CJKSymbolsAndPunctuation => databake::quote!(icu_properties::props::Block::CJKSymbolsAndPunctuation),
+            Self::Hiragana => databake::quote!(icu_properties::props::Block::Hiragana),
+            Self::Katakana => databake::quote!(icu_properties::props::Block::Katakana),
+            Self::Bopomofo => databake::quote!(icu_properties::props::Block::Bopomofo),
+            Self::HangulCompatibilityJamo => databake::quote!(icu_properties::props::Block::HangulCompatibilityJamo),
+            Self::Kanbun => databake::quote!(icu_properties::props::Block::Kanbun),
+            Self::BopomofoExtended => databake::quote!(icu_properties::props::Block::BopomofoExtended),
+            Self::EnclosedCJKLettersAndMonths => databake::quote!(icu_properties::props::Block::EnclosedCJKLettersAndMonths),
+            Self::CJKCompatibility => databake::quote!(icu_properties::props::Block::CJKCompatibility),
+            Self::CJKUnifiedIdeographsExtensionA => databake::quote!(icu_properties::props::Block::CJKUnifiedIdeographsExtensionA),
+            Self::CJKUnifiedIdeographs => databake::quote!(icu_properties::props::Block::CJKUnifiedIdeographs),
+            Self::YiSyllables => databake::quote!(icu_properties::props::Block::YiSyllables),
+            Self::YiRadicals => databake::quote!(icu_properties::props::Block::YiRadicals),
+            Self::HangulSyllables => databake::quote!(icu_properties::props::Block::HangulSyllables),
+            Self::HighSurrogates => databake::quote!(icu_properties::props::Block::HighSurrogates),
+            Self::HighPrivateUseSurrogates => databake::quote!(icu_properties::props::Block::HighPrivateUseSurrogates),
+            Self::LowSurrogates => databake::quote!(icu_properties::props::Block::LowSurrogates),
+            Self::PrivateUseArea => databake::quote!(icu_properties::props::Block::PrivateUseArea),
+            Self::CJKCompatibilityIdeographs => databake::quote!(icu_properties::props::Block::CJKCompatibilityIdeographs),
+            Self::AlphabeticPresentationForms => databake::quote!(icu_properties::props::Block::AlphabeticPresentationForms),
+            Self::ArabicPresentationFormsA => databake::quote!(icu_properties::props::Block::ArabicPresentationFormsA),
+            Self::CombiningHalfMarks => databake::quote!(icu_properties::props::Block::CombiningHalfMarks),
+            Self::CJKCompatibilityForms => databake::quote!(icu_properties::props::Block::CJKCompatibilityForms),
+            Self::SmallFormVariants => databake::quote!(icu_properties::props::Block::SmallFormVariants),
+            Self::ArabicPresentationFormsB => databake::quote!(icu_properties::props::Block::ArabicPresentationFormsB),
+            Self::Specials => databake::quote!(icu_properties::props::Block::Specials),
+            Self::HalfwidthAndFullwidthForms => databake::quote!(icu_properties::props::Block::HalfwidthAndFullwidthForms),
+            Self::OldItalic => databake::quote!(icu_properties::props::Block::OldItalic),
+            Self::Gothic => databake::quote!(icu_properties::props::Block::Gothic),
+            Self::Deseret => databake::quote!(icu_properties::props::Block::Deseret),
+            Self::ByzantineMusicalSymbols => databake::quote!(icu_properties::props::Block::ByzantineMusicalSymbols),
+            Self::MusicalSymbols => databake::quote!(icu_properties::props::Block::MusicalSymbols),
+            Self::MathematicalAlphanumericSymbols => databake::quote!(icu_properties::props::Block::MathematicalAlphanumericSymbols),
+            Self::CJKUnifiedIdeographsExtensionB => databake::quote!(icu_properties::props::Block::CJKUnifiedIdeographsExtensionB),
+            Self::CJKCompatibilityIdeographsSupplement => databake::quote!(icu_properties::props::Block::CJKCompatibilityIdeographsSupplement),
+            Self::Tags => databake::quote!(icu_properties::props::Block::Tags),
+            Self::CyrillicSupplement => databake::quote!(icu_properties::props::Block::CyrillicSupplement),
+            Self::Tagalog => databake::quote!(icu_properties::props::Block::Tagalog),
+            Self::Hanunoo => databake::quote!(icu_properties::props::Block::Hanunoo),
+            Self::Buhid => databake::quote!(icu_properties::props::Block::Buhid),
+            Self::Tagbanwa => databake::quote!(icu_properties::props::Block::Tagbanwa),
+            Self::MiscellaneousMathematicalSymbolsA => databake::quote!(icu_properties::props::Block::MiscellaneousMathematicalSymbolsA),
+            Self::SupplementalArrowsA => databake::quote!(icu_properties::props::Block::SupplementalArrowsA),
+            Self::SupplementalArrowsB => databake::quote!(icu_properties::props::Block::SupplementalArrowsB),
+            Self::MiscellaneousMathematicalSymbolsB => databake::quote!(icu_properties::props::Block::MiscellaneousMathematicalSymbolsB),
+            Self::SupplementalMathematicalOperators => databake::quote!(icu_properties::props::Block::SupplementalMathematicalOperators),
+            Self::KatakanaPhoneticExtensions => databake::quote!(icu_properties::props::Block::KatakanaPhoneticExtensions),
+            Self::VariationSelectors => databake::quote!(icu_properties::props::Block::VariationSelectors),
+            Self::SupplementaryPrivateUseAreaA => databake::quote!(icu_properties::props::Block::SupplementaryPrivateUseAreaA),
+            Self::SupplementaryPrivateUseAreaB => databake::quote!(icu_properties::props::Block::SupplementaryPrivateUseAreaB),
+            Self::Limbu => databake::quote!(icu_properties::props::Block::Limbu),
+            Self::TaiLe => databake::quote!(icu_properties::props::Block::TaiLe),
+            Self::KhmerSymbols => databake::quote!(icu_properties::props::Block::KhmerSymbols),
+            Self::PhoneticExtensions => databake::quote!(icu_properties::props::Block::PhoneticExtensions),
+            Self::MiscellaneousSymbolsAndArrows => databake::quote!(icu_properties::props::Block::MiscellaneousSymbolsAndArrows),
+            Self::YijingHexagramSymbols => databake::quote!(icu_properties::props::Block::YijingHexagramSymbols),
+            Self::LinearBSyllabary => databake::quote!(icu_properties::props::Block::LinearBSyllabary),
+            Self::LinearBIdeograms => databake::quote!(icu_properties::props::Block::LinearBIdeograms),
+            Self::AegeanNumbers => databake::quote!(icu_properties::props::Block::AegeanNumbers),
+            Self::Ugaritic => databake::quote!(icu_properties::props::Block::Ugaritic),
+            Self::Shavian => databake::quote!(icu_properties::props::Block::Shavian),
+            Self::Osmanya => databake::quote!(icu_properties::props::Block::Osmanya),
+            Self::CypriotSyllabary => databake::quote!(icu_properties::props::Block::CypriotSyllabary),
+            Self::TaiXuanJingSymbols => databake::quote!(icu_properties::props::Block::TaiXuanJingSymbols),
+            Self::VariationSelectorsSupplement => databake::quote!(icu_properties::props::Block::VariationSelectorsSupplement),
+            Self::AncientGreekMusicalNotation => databake::quote!(icu_properties::props::Block::AncientGreekMusicalNotation),
+            Self::AncientGreekNumbers => databake::quote!(icu_properties::props::Block::AncientGreekNumbers),
+            Self::ArabicSupplement => databake::quote!(icu_properties::props::Block::ArabicSupplement),
+            Self::Buginese => databake::quote!(icu_properties::props::Block::Buginese),
+            Self::CJKStrokes => databake::quote!(icu_properties::props::Block::CJKStrokes),
+            Self::CombiningDiacriticalMarksSupplement => databake::quote!(icu_properties::props::Block::CombiningDiacriticalMarksSupplement),
+            Self::Coptic => databake::quote!(icu_properties::props::Block::Coptic),
+            Self::EthiopicExtended => databake::quote!(icu_properties::props::Block::EthiopicExtended),
+            Self::EthiopicSupplement => databake::quote!(icu_properties::props::Block::EthiopicSupplement),
+            Self::GeorgianSupplement => databake::quote!(icu_properties::props::Block::GeorgianSupplement),
+            Self::Glagolitic => databake::quote!(icu_properties::props::Block::Glagolitic),
+            Self::Kharoshthi => databake::quote!(icu_properties::props::Block::Kharoshthi),
+            Self::ModifierToneLetters => databake::quote!(icu_properties::props::Block::ModifierToneLetters),
+            Self::NewTaiLue => databake::quote!(icu_properties::props::Block::NewTaiLue),
+            Self::OldPersian => databake::quote!(icu_properties::props::Block::OldPersian),
+            Self::PhoneticExtensionsSupplement => databake::quote!(icu_properties::props::Block::PhoneticExtensionsSupplement),
+            Self::SupplementalPunctuation => databake::quote!(icu_properties::props::Block::SupplementalPunctuation),
+            Self::SylotiNagri => databake::quote!(icu_properties::props::Block::SylotiNagri),
+            Self::Tifinagh => databake::quote!(icu_properties::props::Block::Tifinagh),
+            Self::VerticalForms => databake::quote!(icu_properties::props::Block::VerticalForms),
+            Self::NKo => databake::quote!(icu_properties::props::Block::NKo),
+            Self::Balinese => databake::quote!(icu_properties::props::Block::Balinese),
+            Self::LatinExtendedC => databake::quote!(icu_properties::props::Block::LatinExtendedC),
+            Self::LatinExtendedD => databake::quote!(icu_properties::props::Block::LatinExtendedD),
+            Self::PhagsPa => databake::quote!(icu_properties::props::Block::PhagsPa),
+            Self::Phoenician => databake::quote!(icu_properties::props::Block::Phoenician),
+            Self::Cuneiform => databake::quote!(icu_properties::props::Block::Cuneiform),
+            Self::CuneiformNumbersAndPunctuation => databake::quote!(icu_properties::props::Block::CuneiformNumbersAndPunctuation),
+            Self::CountingRodNumerals => databake::quote!(icu_properties::props::Block::CountingRodNumerals),
+            Self::Sundanese => databake::quote!(icu_properties::props::Block::Sundanese),
+            Self::Lepcha => databake::quote!(icu_properties::props::Block::Lepcha),
+            Self::OlChiki => databake::quote!(icu_properties::props::Block::OlChiki),
+            Self::CyrillicExtendedA => databake::quote!(icu_properties::props::Block::CyrillicExtendedA),
+            Self::Vai => databake::quote!(icu_properties::props::Block::Vai),
+            Self::CyrillicExtendedB => databake::quote!(icu_properties::props::Block::CyrillicExtendedB),
+            Self::Saurashtra => databake::quote!(icu_properties::props::Block::Saurashtra),
+            Self::KayahLi => databake::quote!(icu_properties::props::Block::KayahLi),
+            Self::Rejang => databake::quote!(icu_properties::props::Block::Rejang),
+            Self::Cham => databake::quote!(icu_properties::props::Block::Cham),
+            Self::AncientSymbols => databake::quote!(icu_properties::props::Block::AncientSymbols),
+            Self::PhaistosDisc => databake::quote!(icu_properties::props::Block::PhaistosDisc),
+            Self::Lycian => databake::quote!(icu_properties::props::Block::Lycian),
+            Self::Carian => databake::quote!(icu_properties::props::Block::Carian),
+            Self::Lydian => databake::quote!(icu_properties::props::Block::Lydian),
+            Self::MahjongTiles => databake::quote!(icu_properties::props::Block::MahjongTiles),
+            Self::DominoTiles => databake::quote!(icu_properties::props::Block::DominoTiles),
+            Self::Samaritan => databake::quote!(icu_properties::props::Block::Samaritan),
+            Self::UnifiedCanadianAboriginalSyllabicsExtended => databake::quote!(icu_properties::props::Block::UnifiedCanadianAboriginalSyllabicsExtended),
+            Self::TaiTham => databake::quote!(icu_properties::props::Block::TaiTham),
+            Self::VedicExtensions => databake::quote!(icu_properties::props::Block::VedicExtensions),
+            Self::Lisu => databake::quote!(icu_properties::props::Block::Lisu),
+            Self::Bamum => databake::quote!(icu_properties::props::Block::Bamum),
+            Self::CommonIndicNumberForms => databake::quote!(icu_properties::props::Block::CommonIndicNumberForms),
+            Self::DevanagariExtended => databake::quote!(icu_properties::props::Block::DevanagariExtended),
+            Self::HangulJamoExtendedA => databake::quote!(icu_properties::props::Block::HangulJamoExtendedA),
+            Self::Javanese => databake::quote!(icu_properties::props::Block::Javanese),
+            Self::MyanmarExtendedA => databake::quote!(icu_properties::props::Block::MyanmarExtendedA),
+            Self::TaiViet => databake::quote!(icu_properties::props::Block::TaiViet),
+            Self::MeeteiMayek => databake::quote!(icu_properties::props::Block::MeeteiMayek),
+            Self::HangulJamoExtendedB => databake::quote!(icu_properties::props::Block::HangulJamoExtendedB),
+            Self::ImperialAramaic => databake::quote!(icu_properties::props::Block::ImperialAramaic),
+            Self::OldSouthArabian => databake::quote!(icu_properties::props::Block::OldSouthArabian),
+            Self::Avestan => databake::quote!(icu_properties::props::Block::Avestan),
+            Self::InscriptionalParthian => databake::quote!(icu_properties::props::Block::InscriptionalParthian),
+            Self::InscriptionalPahlavi => databake::quote!(icu_properties::props::Block::InscriptionalPahlavi),
+            Self::OldTurkic => databake::quote!(icu_properties::props::Block::OldTurkic),
+            Self::RumiNumeralSymbols => databake::quote!(icu_properties::props::Block::RumiNumeralSymbols),
+            Self::Kaithi => databake::quote!(icu_properties::props::Block::Kaithi),
+            Self::EgyptianHieroglyphs => databake::quote!(icu_properties::props::Block::EgyptianHieroglyphs),
+            Self::EnclosedAlphanumericSupplement => databake::quote!(icu_properties::props::Block::EnclosedAlphanumericSupplement),
+            Self::EnclosedIdeographicSupplement => databake::quote!(icu_properties::props::Block::EnclosedIdeographicSupplement),
+            Self::CJKUnifiedIdeographsExtensionC => databake::quote!(icu_properties::props::Block::CJKUnifiedIdeographsExtensionC),
+            Self::Mandaic => databake::quote!(icu_properties::props::Block::Mandaic),
+            Self::Batak => databake::quote!(icu_properties::props::Block::Batak),
+            Self::EthiopicExtendedA => databake::quote!(icu_properties::props::Block::EthiopicExtendedA),
+            Self::Brahmi => databake::quote!(icu_properties::props::Block::Brahmi),
+            Self::BamumSupplement => databake::quote!(icu_properties::props::Block::BamumSupplement),
+            Self::KanaSupplement => databake::quote!(icu_properties::props::Block::KanaSupplement),
+            Self::PlayingCards => databake::quote!(icu_properties::props::Block::PlayingCards),
+            Self::MiscellaneousSymbolsAndPictographs => databake::quote!(icu_properties::props::Block::MiscellaneousSymbolsAndPictographs),
+            Self::Emoticons => databake::quote!(icu_properties::props::Block::Emoticons),
+            Self::TransportAndMapSymbols => databake::quote!(icu_properties::props::Block::TransportAndMapSymbols),
+            Self::AlchemicalSymbols => databake::quote!(icu_properties::props::Block::AlchemicalSymbols),
+            Self::CJKUnifiedIdeographsExtensionD => databake::quote!(icu_properties::props::Block::CJKUnifiedIdeographsExtensionD),
+            Self::ArabicExtendedA => databake::quote!(icu_properties::props::Block::ArabicExtendedA),
+            Self::ArabicMathematicalAlphabeticSymbols => databake::quote!(icu_properties::props::Block::ArabicMathematicalAlphabeticSymbols),
+            Self::Chakma => databake::quote!(icu_properties::props::Block::Chakma),
+            Self::MeeteiMayekExtensions => databake::quote!(icu_properties::props::Block::MeeteiMayekExtensions),
+            Self::MeroiticCursive => databake::quote!(icu_properties::props::Block::MeroiticCursive),
+            Self::MeroiticHieroglyphs => databake::quote!(icu_properties::props::Block::MeroiticHieroglyphs),
+            Self::Miao => databake::quote!(icu_properties::props::Block::Miao),
+            Self::Sharada => databake::quote!(icu_properties::props::Block::Sharada),
+            Self::SoraSompeng => databake::quote!(icu_properties::props::Block::SoraSompeng),
+            Self::SundaneseSupplement => databake::quote!(icu_properties::props::Block::SundaneseSupplement),
+            Self::Takri => databake::quote!(icu_properties::props::Block::Takri),
+            Self::BassaVah => databake::quote!(icu_properties::props::Block::BassaVah),
+            Self::CaucasianAlbanian => databake::quote!(icu_properties::props::Block::CaucasianAlbanian),
+            Self::CopticEpactNumbers => databake::quote!(icu_properties::props::Block::CopticEpactNumbers),
+            Self::CombiningDiacriticalMarksExtended => databake::quote!(icu_properties::props::Block::CombiningDiacriticalMarksExtended),
+            Self::Duployan => databake::quote!(icu_properties::props::Block::Duployan),
+            Self::Elbasan => databake::quote!(icu_properties::props::Block::Elbasan),
+            Self::GeometricShapesExtended => databake::quote!(icu_properties::props::Block::GeometricShapesExtended),
+            Self::Grantha => databake::quote!(icu_properties::props::Block::Grantha),
+            Self::Khojki => databake::quote!(icu_properties::props::Block::Khojki),
+            Self::Khudawadi => databake::quote!(icu_properties::props::Block::Khudawadi),
+            Self::LatinExtendedE => databake::quote!(icu_properties::props::Block::LatinExtendedE),
+            Self::LinearA => databake::quote!(icu_properties::props::Block::LinearA),
+            Self::Mahajani => databake::quote!(icu_properties::props::Block::Mahajani),
+            Self::Manichaean => databake::quote!(icu_properties::props::Block::Manichaean),
+            Self::MendeKikakui => databake::quote!(icu_properties::props::Block::MendeKikakui),
+            Self::Modi => databake::quote!(icu_properties::props::Block::Modi),
+            Self::Mro => databake::quote!(icu_properties::props::Block::Mro),
+            Self::MyanmarExtendedB => databake::quote!(icu_properties::props::Block::MyanmarExtendedB),
+            Self::Nabataean => databake::quote!(icu_properties::props::Block::Nabataean),
+            Self::OldNorthArabian => databake::quote!(icu_properties::props::Block::OldNorthArabian),
+            Self::OldPermic => databake::quote!(icu_properties::props::Block::OldPermic),
+            Self::OrnamentalDingbats => databake::quote!(icu_properties::props::Block::OrnamentalDingbats),
+            Self::PahawhHmong => databake::quote!(icu_properties::props::Block::PahawhHmong),
+            Self::Palmyrene => databake::quote!(icu_properties::props::Block::Palmyrene),
+            Self::PauCinHau => databake::quote!(icu_properties::props::Block::PauCinHau),
+            Self::PsalterPahlavi => databake::quote!(icu_properties::props::Block::PsalterPahlavi),
+            Self::ShorthandFormatControls => databake::quote!(icu_properties::props::Block::ShorthandFormatControls),
+            Self::Siddham => databake::quote!(icu_properties::props::Block::Siddham),
+            Self::SinhalaArchaicNumbers => databake::quote!(icu_properties::props::Block::SinhalaArchaicNumbers),
+            Self::SupplementalArrowsC => databake::quote!(icu_properties::props::Block::SupplementalArrowsC),
+            Self::Tirhuta => databake::quote!(icu_properties::props::Block::Tirhuta),
+            Self::WarangCiti => databake::quote!(icu_properties::props::Block::WarangCiti),
+            Self::Ahom => databake::quote!(icu_properties::props::Block::Ahom),
+            Self::AnatolianHieroglyphs => databake::quote!(icu_properties::props::Block::AnatolianHieroglyphs),
+            Self::CherokeeSupplement => databake::quote!(icu_properties::props::Block::CherokeeSupplement),
+            Self::CJKUnifiedIdeographsExtensionE => databake::quote!(icu_properties::props::Block::CJKUnifiedIdeographsExtensionE),
+            Self::EarlyDynasticCuneiform => databake::quote!(icu_properties::props::Block::EarlyDynasticCuneiform),
+            Self::Hatran => databake::quote!(icu_properties::props::Block::Hatran),
+            Self::Multani => databake::quote!(icu_properties::props::Block::Multani),
+            Self::OldHungarian => databake::quote!(icu_properties::props::Block::OldHungarian),
+            Self::SupplementalSymbolsAndPictographs => databake::quote!(icu_properties::props::Block::SupplementalSymbolsAndPictographs),
+            Self::SuttonSignWriting => databake::quote!(icu_properties::props::Block::SuttonSignWriting),
+            Self::Adlam => databake::quote!(icu_properties::props::Block::Adlam),
+            Self::Bhaiksuki => databake::quote!(icu_properties::props::Block::Bhaiksuki),
+            Self::CyrillicExtendedC => databake::quote!(icu_properties::props::Block::CyrillicExtendedC),
+            Self::GlagoliticSupplement => databake::quote!(icu_properties::props::Block::GlagoliticSupplement),
+            Self::IdeographicSymbolsAndPunctuation => databake::quote!(icu_properties::props::Block::IdeographicSymbolsAndPunctuation),
+            Self::Marchen => databake::quote!(icu_properties::props::Block::Marchen),
+            Self::MongolianSupplement => databake::quote!(icu_properties::props::Block::MongolianSupplement),
+            Self::Newa => databake::quote!(icu_properties::props::Block::Newa),
+            Self::Osage => databake::quote!(icu_properties::props::Block::Osage),
+            Self::Tangut => databake::quote!(icu_properties::props::Block::Tangut),
+            Self::TangutComponents => databake::quote!(icu_properties::props::Block::TangutComponents),
+            Self::CJKUnifiedIdeographsExtensionF => databake::quote!(icu_properties::props::Block::CJKUnifiedIdeographsExtensionF),
+            Self::KanaExtendedA => databake::quote!(icu_properties::props::Block::KanaExtendedA),
+            Self::MasaramGondi => databake::quote!(icu_properties::props::Block::MasaramGondi),
+            Self::Nushu => databake::quote!(icu_properties::props::Block::Nushu),
+            Self::Soyombo => databake::quote!(icu_properties::props::Block::Soyombo),
+            Self::SyriacSupplement => databake::quote!(icu_properties::props::Block::SyriacSupplement),
+            Self::ZanabazarSquare => databake::quote!(icu_properties::props::Block::ZanabazarSquare),
+            Self::ChessSymbols => databake::quote!(icu_properties::props::Block::ChessSymbols),
+            Self::Dogra => databake::quote!(icu_properties::props::Block::Dogra),
+            Self::GeorgianExtended => databake::quote!(icu_properties::props::Block::GeorgianExtended),
+            Self::GunjalaGondi => databake::quote!(icu_properties::props::Block::GunjalaGondi),
+            Self::HanifiRohingya => databake::quote!(icu_properties::props::Block::HanifiRohingya),
+            Self::IndicSiyaqNumbers => databake::quote!(icu_properties::props::Block::IndicSiyaqNumbers),
+            Self::Makasar => databake::quote!(icu_properties::props::Block::Makasar),
+            Self::MayanNumerals => databake::quote!(icu_properties::props::Block::MayanNumerals),
+            Self::Medefaidrin => databake::quote!(icu_properties::props::Block::Medefaidrin),
+            Self::OldSogdian => databake::quote!(icu_properties::props::Block::OldSogdian),
+            Self::Sogdian => databake::quote!(icu_properties::props::Block::Sogdian),
+            Self::EgyptianHieroglyphFormatControls => databake::quote!(icu_properties::props::Block::EgyptianHieroglyphFormatControls),
+            Self::Elymaic => databake::quote!(icu_properties::props::Block::Elymaic),
+            Self::Nandinagari => databake::quote!(icu_properties::props::Block::Nandinagari),
+            Self::NyiakengPuachueHmong => databake::quote!(icu_properties::props::Block::NyiakengPuachueHmong),
+            Self::OttomanSiyaqNumbers => databake::quote!(icu_properties::props::Block::OttomanSiyaqNumbers),
+            Self::SmallKanaExtension => databake::quote!(icu_properties::props::Block::SmallKanaExtension),
+            Self::SymbolsAndPictographsExtendedA => databake::quote!(icu_properties::props::Block::SymbolsAndPictographsExtendedA),
+            Self::TamilSupplement => databake::quote!(icu_properties::props::Block::TamilSupplement),
+            Self::Wancho => databake::quote!(icu_properties::props::Block::Wancho),
+            Self::Chorasmian => databake::quote!(icu_properties::props::Block::Chorasmian),
+            Self::CJKUnifiedIdeographsExtensionG => databake::quote!(icu_properties::props::Block::CJKUnifiedIdeographsExtensionG),
+            Self::DivesAkuru => databake::quote!(icu_properties::props::Block::DivesAkuru),
+            Self::KhitanSmallScript => databake::quote!(icu_properties::props::Block::KhitanSmallScript),
+            Self::LisuSupplement => databake::quote!(icu_properties::props::Block::LisuSupplement),
+            Self::SymbolsForLegacyComputing => databake::quote!(icu_properties::props::Block::SymbolsForLegacyComputing),
+            Self::TangutSupplement => databake::quote!(icu_properties::props::Block::TangutSupplement),
+            Self::Yezidi => databake::quote!(icu_properties::props::Block::Yezidi),
+            Self::ArabicExtendedB => databake::quote!(icu_properties::props::Block::ArabicExtendedB),
+            Self::CyproMinoan => databake::quote!(icu_properties::props::Block::CyproMinoan),
+            Self::EthiopicExtendedB => databake::quote!(icu_properties::props::Block::EthiopicExtendedB),
+            Self::KanaExtendedB => databake::quote!(icu_properties::props::Block::KanaExtendedB),
+            Self::LatinExtendedF => databake::quote!(icu_properties::props::Block::LatinExtendedF),
+            Self::LatinExtendedG => databake::quote!(icu_properties::props::Block::LatinExtendedG),
+            Self::OldUyghur => databake::quote!(icu_properties::props::Block::OldUyghur),
+            Self::Tangsa => databake::quote!(icu_properties::props::Block::Tangsa),
+            Self::Toto => databake::quote!(icu_properties::props::Block::Toto),
+            Self::UnifiedCanadianAboriginalSyllabicsExtendedA => databake::quote!(icu_properties::props::Block::UnifiedCanadianAboriginalSyllabicsExtendedA),
+            Self::Vithkuqi => databake::quote!(icu_properties::props::Block::Vithkuqi),
+            Self::ZnamennyMusicalNotation => databake::quote!(icu_properties::props::Block::ZnamennyMusicalNotation),
+            Self::ArabicExtendedC => databake::quote!(icu_properties::props::Block::ArabicExtendedC),
+            Self::CJKUnifiedIdeographsExtensionH => databake::quote!(icu_properties::props::Block::CJKUnifiedIdeographsExtensionH),
+            Self::CyrillicExtendedD => databake::quote!(icu_properties::props::Block::CyrillicExtendedD),
+            Self::DevanagariExtendedA => databake::quote!(icu_properties::props::Block::DevanagariExtendedA),
+            Self::KaktovikNumerals => databake::quote!(icu_properties::props::Block::KaktovikNumerals),
+            Self::Kawi => databake::quote!(icu_properties::props::Block::Kawi),
+            Self::NagMundari => databake::quote!(icu_properties::props::Block::NagMundari),
+            Self::CJKUnifiedIdeographsExtensionI => databake::quote!(icu_properties::props::Block::CJKUnifiedIdeographsExtensionI),
+            Self::EgyptianHieroglyphsExtendedA => databake::quote!(icu_properties::props::Block::EgyptianHieroglyphsExtendedA),
+            Self::Garay => databake::quote!(icu_properties::props::Block::Garay),
+            Self::GurungKhema => databake::quote!(icu_properties::props::Block::GurungKhema),
+            Self::KiratRai => databake::quote!(icu_properties::props::Block::KiratRai),
+            Self::MyanmarExtendedC => databake::quote!(icu_properties::props::Block::MyanmarExtendedC),
+            Self::OlOnal => databake::quote!(icu_properties::props::Block::OlOnal),
+            Self::Sunuwar => databake::quote!(icu_properties::props::Block::Sunuwar),
+            Self::SymbolsForLegacyComputingSupplement => databake::quote!(icu_properties::props::Block::SymbolsForLegacyComputingSupplement),
+            Self::Todhri => databake::quote!(icu_properties::props::Block::Todhri),
+            Self::TuluTigalari => databake::quote!(icu_properties::props::Block::TuluTigalari),
+            Self::BeriaErfe => databake::quote!(icu_properties::props::Block::BeriaErfe),
+            Self::CJKUnifiedIdeographsExtensionJ => databake::quote!(icu_properties::props::Block::CJKUnifiedIdeographsExtensionJ),
+            Self::MiscellaneousSymbolsSupplement => databake::quote!(icu_properties::props::Block::MiscellaneousSymbolsSupplement),
+            Self::SharadaSupplement => databake::quote!(icu_properties::props::Block::SharadaSupplement),
+            Self::Sidetic => databake::quote!(icu_properties::props::Block::Sidetic),
+            Self::TaiYo => databake::quote!(icu_properties::props::Block::TaiYo),
+            Self::TangutComponentsSupplement => databake::quote!(icu_properties::props::Block::TangutComponentsSupplement),
+            Self::TolongSiki => databake::quote!(icu_properties::props::Block::TolongSiki),
+            Self(v) => databake::quote!(icu_properties::props::Block(#v)),
+        }
+    }
+}
+
+
+impl From<Block> for u16  {
+    fn from(other: Block) -> Self {
+        other.0
+    }
+}
+
+impl Block {
+    /// Deprecated
+    #[deprecated]
+    pub const ALL_VALUES: &'static [Self] = &[
+        Self::NoBlock,
+        Self::BasicLatin,
+        Self::Latin1Supplement,
+        Self::LatinExtendedA,
+        Self::LatinExtendedB,
+        Self::IPAExtensions,
+        Self::SpacingModifierLetters,
+        Self::CombiningDiacriticalMarks,
+        Self::GreekAndCoptic,
+        Self::Cyrillic,
+        Self::Armenian,
+        Self::Hebrew,
+        Self::Arabic,
+        Self::Syriac,
+        Self::Thaana,
+        Self::Devanagari,
+        Self::Bengali,
+        Self::Gurmukhi,
+        Self::Gujarati,
+        Self::Oriya,
+        Self::Tamil,
+        Self::Telugu,
+        Self::Kannada,
+        Self::Malayalam,
+        Self::Sinhala,
+        Self::Thai,
+        Self::Lao,
+        Self::Tibetan,
+        Self::Myanmar,
+        Self::Georgian,
+        Self::HangulJamo,
+        Self::Ethiopic,
+        Self::Cherokee,
+        Self::UnifiedCanadianAboriginalSyllabics,
+        Self::Ogham,
+        Self::Runic,
+        Self::Khmer,
+        Self::Mongolian,
+        Self::LatinExtendedAdditional,
+        Self::GreekExtended,
+        Self::GeneralPunctuation,
+        Self::SuperscriptsAndSubscripts,
+        Self::CurrencySymbols,
+        Self::CombiningDiacriticalMarksForSymbols,
+        Self::LetterlikeSymbols,
+        Self::NumberForms,
+        Self::Arrows,
+        Self::MathematicalOperators,
+        Self::MiscellaneousTechnical,
+        Self::ControlPictures,
+        Self::OpticalCharacterRecognition,
+        Self::EnclosedAlphanumerics,
+        Self::BoxDrawing,
+        Self::BlockElements,
+        Self::GeometricShapes,
+        Self::MiscellaneousSymbols,
+        Self::Dingbats,
+        Self::BraillePatterns,
+        Self::CJKRadicalsSupplement,
+        Self::KangxiRadicals,
+        Self::IdeographicDescriptionCharacters,
+        Self::CJKSymbolsAndPunctuation,
+        Self::Hiragana,
+        Self::Katakana,
+        Self::Bopomofo,
+        Self::HangulCompatibilityJamo,
+        Self::Kanbun,
+        Self::BopomofoExtended,
+        Self::EnclosedCJKLettersAndMonths,
+        Self::CJKCompatibility,
+        Self::CJKUnifiedIdeographsExtensionA,
+        Self::CJKUnifiedIdeographs,
+        Self::YiSyllables,
+        Self::YiRadicals,
+        Self::HangulSyllables,
+        Self::HighSurrogates,
+        Self::HighPrivateUseSurrogates,
+        Self::LowSurrogates,
+        Self::PrivateUseArea,
+        Self::CJKCompatibilityIdeographs,
+        Self::AlphabeticPresentationForms,
+        Self::ArabicPresentationFormsA,
+        Self::CombiningHalfMarks,
+        Self::CJKCompatibilityForms,
+        Self::SmallFormVariants,
+        Self::ArabicPresentationFormsB,
+        Self::Specials,
+        Self::HalfwidthAndFullwidthForms,
+        Self::OldItalic,
+        Self::Gothic,
+        Self::Deseret,
+        Self::ByzantineMusicalSymbols,
+        Self::MusicalSymbols,
+        Self::MathematicalAlphanumericSymbols,
+        Self::CJKUnifiedIdeographsExtensionB,
+        Self::CJKCompatibilityIdeographsSupplement,
+        Self::Tags,
+        Self::CyrillicSupplement,
+        Self::Tagalog,
+        Self::Hanunoo,
+        Self::Buhid,
+        Self::Tagbanwa,
+        Self::MiscellaneousMathematicalSymbolsA,
+        Self::SupplementalArrowsA,
+        Self::SupplementalArrowsB,
+        Self::MiscellaneousMathematicalSymbolsB,
+        Self::SupplementalMathematicalOperators,
+        Self::KatakanaPhoneticExtensions,
+        Self::VariationSelectors,
+        Self::SupplementaryPrivateUseAreaA,
+        Self::SupplementaryPrivateUseAreaB,
+        Self::Limbu,
+        Self::TaiLe,
+        Self::KhmerSymbols,
+        Self::PhoneticExtensions,
+        Self::MiscellaneousSymbolsAndArrows,
+        Self::YijingHexagramSymbols,
+        Self::LinearBSyllabary,
+        Self::LinearBIdeograms,
+        Self::AegeanNumbers,
+        Self::Ugaritic,
+        Self::Shavian,
+        Self::Osmanya,
+        Self::CypriotSyllabary,
+        Self::TaiXuanJingSymbols,
+        Self::VariationSelectorsSupplement,
+        Self::AncientGreekMusicalNotation,
+        Self::AncientGreekNumbers,
+        Self::ArabicSupplement,
+        Self::Buginese,
+        Self::CJKStrokes,
+        Self::CombiningDiacriticalMarksSupplement,
+        Self::Coptic,
+        Self::EthiopicExtended,
+        Self::EthiopicSupplement,
+        Self::GeorgianSupplement,
+        Self::Glagolitic,
+        Self::Kharoshthi,
+        Self::ModifierToneLetters,
+        Self::NewTaiLue,
+        Self::OldPersian,
+        Self::PhoneticExtensionsSupplement,
+        Self::SupplementalPunctuation,
+        Self::SylotiNagri,
+        Self::Tifinagh,
+        Self::VerticalForms,
+        Self::NKo,
+        Self::Balinese,
+        Self::LatinExtendedC,
+        Self::LatinExtendedD,
+        Self::PhagsPa,
+        Self::Phoenician,
+        Self::Cuneiform,
+        Self::CuneiformNumbersAndPunctuation,
+        Self::CountingRodNumerals,
+        Self::Sundanese,
+        Self::Lepcha,
+        Self::OlChiki,
+        Self::CyrillicExtendedA,
+        Self::Vai,
+        Self::CyrillicExtendedB,
+        Self::Saurashtra,
+        Self::KayahLi,
+        Self::Rejang,
+        Self::Cham,
+        Self::AncientSymbols,
+        Self::PhaistosDisc,
+        Self::Lycian,
+        Self::Carian,
+        Self::Lydian,
+        Self::MahjongTiles,
+        Self::DominoTiles,
+        Self::Samaritan,
+        Self::UnifiedCanadianAboriginalSyllabicsExtended,
+        Self::TaiTham,
+        Self::VedicExtensions,
+        Self::Lisu,
+        Self::Bamum,
+        Self::CommonIndicNumberForms,
+        Self::DevanagariExtended,
+        Self::HangulJamoExtendedA,
+        Self::Javanese,
+        Self::MyanmarExtendedA,
+        Self::TaiViet,
+        Self::MeeteiMayek,
+        Self::HangulJamoExtendedB,
+        Self::ImperialAramaic,
+        Self::OldSouthArabian,
+        Self::Avestan,
+        Self::InscriptionalParthian,
+        Self::InscriptionalPahlavi,
+        Self::OldTurkic,
+        Self::RumiNumeralSymbols,
+        Self::Kaithi,
+        Self::EgyptianHieroglyphs,
+        Self::EnclosedAlphanumericSupplement,
+        Self::EnclosedIdeographicSupplement,
+        Self::CJKUnifiedIdeographsExtensionC,
+        Self::Mandaic,
+        Self::Batak,
+        Self::EthiopicExtendedA,
+        Self::Brahmi,
+        Self::BamumSupplement,
+        Self::KanaSupplement,
+        Self::PlayingCards,
+        Self::MiscellaneousSymbolsAndPictographs,
+        Self::Emoticons,
+        Self::TransportAndMapSymbols,
+        Self::AlchemicalSymbols,
+        Self::CJKUnifiedIdeographsExtensionD,
+        Self::ArabicExtendedA,
+        Self::ArabicMathematicalAlphabeticSymbols,
+        Self::Chakma,
+        Self::MeeteiMayekExtensions,
+        Self::MeroiticCursive,
+        Self::MeroiticHieroglyphs,
+        Self::Miao,
+        Self::Sharada,
+        Self::SoraSompeng,
+        Self::SundaneseSupplement,
+        Self::Takri,
+        Self::BassaVah,
+        Self::CaucasianAlbanian,
+        Self::CopticEpactNumbers,
+        Self::CombiningDiacriticalMarksExtended,
+        Self::Duployan,
+        Self::Elbasan,
+        Self::GeometricShapesExtended,
+        Self::Grantha,
+        Self::Khojki,
+        Self::Khudawadi,
+        Self::LatinExtendedE,
+        Self::LinearA,
+        Self::Mahajani,
+        Self::Manichaean,
+        Self::MendeKikakui,
+        Self::Modi,
+        Self::Mro,
+        Self::MyanmarExtendedB,
+        Self::Nabataean,
+        Self::OldNorthArabian,
+        Self::OldPermic,
+        Self::OrnamentalDingbats,
+        Self::PahawhHmong,
+        Self::Palmyrene,
+        Self::PauCinHau,
+        Self::PsalterPahlavi,
+        Self::ShorthandFormatControls,
+        Self::Siddham,
+        Self::SinhalaArchaicNumbers,
+        Self::SupplementalArrowsC,
+        Self::Tirhuta,
+        Self::WarangCiti,
+        Self::Ahom,
+        Self::AnatolianHieroglyphs,
+        Self::CherokeeSupplement,
+        Self::CJKUnifiedIdeographsExtensionE,
+        Self::EarlyDynasticCuneiform,
+        Self::Hatran,
+        Self::Multani,
+        Self::OldHungarian,
+        Self::SupplementalSymbolsAndPictographs,
+        Self::SuttonSignWriting,
+        Self::Adlam,
+        Self::Bhaiksuki,
+        Self::CyrillicExtendedC,
+        Self::GlagoliticSupplement,
+        Self::IdeographicSymbolsAndPunctuation,
+        Self::Marchen,
+        Self::MongolianSupplement,
+        Self::Newa,
+        Self::Osage,
+        Self::Tangut,
+        Self::TangutComponents,
+        Self::CJKUnifiedIdeographsExtensionF,
+        Self::KanaExtendedA,
+        Self::MasaramGondi,
+        Self::Nushu,
+        Self::Soyombo,
+        Self::SyriacSupplement,
+        Self::ZanabazarSquare,
+        Self::ChessSymbols,
+        Self::Dogra,
+        Self::GeorgianExtended,
+        Self::GunjalaGondi,
+        Self::HanifiRohingya,
+        Self::IndicSiyaqNumbers,
+        Self::Makasar,
+        Self::MayanNumerals,
+        Self::Medefaidrin,
+        Self::OldSogdian,
+        Self::Sogdian,
+        Self::EgyptianHieroglyphFormatControls,
+        Self::Elymaic,
+        Self::Nandinagari,
+        Self::NyiakengPuachueHmong,
+        Self::OttomanSiyaqNumbers,
+        Self::SmallKanaExtension,
+        Self::SymbolsAndPictographsExtendedA,
+        Self::TamilSupplement,
+        Self::Wancho,
+        Self::Chorasmian,
+        Self::CJKUnifiedIdeographsExtensionG,
+        Self::DivesAkuru,
+        Self::KhitanSmallScript,
+        Self::LisuSupplement,
+        Self::SymbolsForLegacyComputing,
+        Self::TangutSupplement,
+        Self::Yezidi,
+        Self::ArabicExtendedB,
+        Self::CyproMinoan,
+        Self::EthiopicExtendedB,
+        Self::KanaExtendedB,
+        Self::LatinExtendedF,
+        Self::LatinExtendedG,
+        Self::OldUyghur,
+        Self::Tangsa,
+        Self::Toto,
+        Self::UnifiedCanadianAboriginalSyllabicsExtendedA,
+        Self::Vithkuqi,
+        Self::ZnamennyMusicalNotation,
+        Self::ArabicExtendedC,
+        Self::CJKUnifiedIdeographsExtensionH,
+        Self::CyrillicExtendedD,
+        Self::DevanagariExtendedA,
+        Self::KaktovikNumerals,
+        Self::Kawi,
+        Self::NagMundari,
+        Self::CJKUnifiedIdeographsExtensionI,
+        Self::EgyptianHieroglyphsExtendedA,
+        Self::Garay,
+        Self::GurungKhema,
+        Self::KiratRai,
+        Self::MyanmarExtendedC,
+        Self::OlOnal,
+        Self::Sunuwar,
+        Self::SymbolsForLegacyComputingSupplement,
+        Self::Todhri,
+        Self::TuluTigalari,
+        Self::BeriaErfe,
+        Self::CJKUnifiedIdeographsExtensionJ,
+        Self::MiscellaneousSymbolsSupplement,
+        Self::SharadaSupplement,
+        Self::Sidetic,
+        Self::TaiYo,
+        Self::TangutComponentsSupplement,
+        Self::TolongSiki,
+    ];
+
+    #[cfg(feature = "datagen")]
+    #[doc(hidden)]
+    pub fn names() -> impl Iterator<Item = (&'static str, Self)> {
+        [
+            ("NB", Self::NoBlock),
+            ("ASCII", Self::BasicLatin),
+            ("Latin_1_Sup", Self::Latin1Supplement),
+            ("Latin_Ext_A", Self::LatinExtendedA),
+            ("Latin_Ext_B", Self::LatinExtendedB),
+            ("IPA_Ext", Self::IPAExtensions),
+            ("Modifier_Letters", Self::SpacingModifierLetters),
+            ("Diacriticals", Self::CombiningDiacriticalMarks),
+            ("Greek", Self::GreekAndCoptic),
+            ("Cyrillic", Self::Cyrillic),
+            ("Armenian", Self::Armenian),
+            ("Hebrew", Self::Hebrew),
+            ("Arabic", Self::Arabic),
+            ("Syriac", Self::Syriac),
+            ("Thaana", Self::Thaana),
+            ("Devanagari", Self::Devanagari),
+            ("Bengali", Self::Bengali),
+            ("Gurmukhi", Self::Gurmukhi),
+            ("Gujarati", Self::Gujarati),
+            ("Oriya", Self::Oriya),
+            ("Tamil", Self::Tamil),
+            ("Telugu", Self::Telugu),
+            ("Kannada", Self::Kannada),
+            ("Malayalam", Self::Malayalam),
+            ("Sinhala", Self::Sinhala),
+            ("Thai", Self::Thai),
+            ("Lao", Self::Lao),
+            ("Tibetan", Self::Tibetan),
+            ("Myanmar", Self::Myanmar),
+            ("Georgian", Self::Georgian),
+            ("Jamo", Self::HangulJamo),
+            ("Ethiopic", Self::Ethiopic),
+            ("Cherokee", Self::Cherokee),
+            ("UCAS", Self::UnifiedCanadianAboriginalSyllabics),
+            ("Ogham", Self::Ogham),
+            ("Runic", Self::Runic),
+            ("Khmer", Self::Khmer),
+            ("Mongolian", Self::Mongolian),
+            ("Latin_Ext_Additional", Self::LatinExtendedAdditional),
+            ("Greek_Ext", Self::GreekExtended),
+            ("Punctuation", Self::GeneralPunctuation),
+            ("Super_And_Sub", Self::SuperscriptsAndSubscripts),
+            ("Currency_Symbols", Self::CurrencySymbols),
+            ("Diacriticals_For_Symbols", Self::CombiningDiacriticalMarksForSymbols),
+            ("Letterlike_Symbols", Self::LetterlikeSymbols),
+            ("Number_Forms", Self::NumberForms),
+            ("Arrows", Self::Arrows),
+            ("Math_Operators", Self::MathematicalOperators),
+            ("Misc_Technical", Self::MiscellaneousTechnical),
+            ("Control_Pictures", Self::ControlPictures),
+            ("OCR", Self::OpticalCharacterRecognition),
+            ("Enclosed_Alphanum", Self::EnclosedAlphanumerics),
+            ("Box_Drawing", Self::BoxDrawing),
+            ("Block_Elements", Self::BlockElements),
+            ("Geometric_Shapes", Self::GeometricShapes),
+            ("Misc_Symbols", Self::MiscellaneousSymbols),
+            ("Dingbats", Self::Dingbats),
+            ("Braille", Self::BraillePatterns),
+            ("CJK_Radicals_Sup", Self::CJKRadicalsSupplement),
+            ("Kangxi", Self::KangxiRadicals),
+            ("IDC", Self::IdeographicDescriptionCharacters),
+            ("CJK_Symbols", Self::CJKSymbolsAndPunctuation),
+            ("Hiragana", Self::Hiragana),
+            ("Katakana", Self::Katakana),
+            ("Bopomofo", Self::Bopomofo),
+            ("Compat_Jamo", Self::HangulCompatibilityJamo),
+            ("Kanbun", Self::Kanbun),
+            ("Bopomofo_Ext", Self::BopomofoExtended),
+            ("Enclosed_CJK", Self::EnclosedCJKLettersAndMonths),
+            ("CJK_Compat", Self::CJKCompatibility),
+            ("CJK_Ext_A", Self::CJKUnifiedIdeographsExtensionA),
+            ("CJK", Self::CJKUnifiedIdeographs),
+            ("Yi_Syllables", Self::YiSyllables),
+            ("Yi_Radicals", Self::YiRadicals),
+            ("Hangul", Self::HangulSyllables),
+            ("High_Surrogates", Self::HighSurrogates),
+            ("High_PU_Surrogates", Self::HighPrivateUseSurrogates),
+            ("Low_Surrogates", Self::LowSurrogates),
+            ("PUA", Self::PrivateUseArea),
+            ("CJK_Compat_Ideographs", Self::CJKCompatibilityIdeographs),
+            ("Alphabetic_PF", Self::AlphabeticPresentationForms),
+            ("Arabic_PF_A", Self::ArabicPresentationFormsA),
+            ("Half_Marks", Self::CombiningHalfMarks),
+            ("CJK_Compat_Forms", Self::CJKCompatibilityForms),
+            ("Small_Forms", Self::SmallFormVariants),
+            ("Arabic_PF_B", Self::ArabicPresentationFormsB),
+            ("Specials", Self::Specials),
+            ("Half_And_Full_Forms", Self::HalfwidthAndFullwidthForms),
+            ("Old_Italic", Self::OldItalic),
+            ("Gothic", Self::Gothic),
+            ("Deseret", Self::Deseret),
+            ("Byzantine_Music", Self::ByzantineMusicalSymbols),
+            ("Music", Self::MusicalSymbols),
+            ("Math_Alphanum", Self::MathematicalAlphanumericSymbols),
+            ("CJK_Ext_B", Self::CJKUnifiedIdeographsExtensionB),
+            ("CJK_Compat_Ideographs_Sup", Self::CJKCompatibilityIdeographsSupplement),
+            ("Tags", Self::Tags),
+            ("Cyrillic_Sup", Self::CyrillicSupplement),
+            ("Tagalog", Self::Tagalog),
+            ("Hanunoo", Self::Hanunoo),
+            ("Buhid", Self::Buhid),
+            ("Tagbanwa", Self::Tagbanwa),
+            ("Misc_Math_Symbols_A", Self::MiscellaneousMathematicalSymbolsA),
+            ("Sup_Arrows_A", Self::SupplementalArrowsA),
+            ("Sup_Arrows_B", Self::SupplementalArrowsB),
+            ("Misc_Math_Symbols_B", Self::MiscellaneousMathematicalSymbolsB),
+            ("Sup_Math_Operators", Self::SupplementalMathematicalOperators),
+            ("Katakana_Ext", Self::KatakanaPhoneticExtensions),
+            ("VS", Self::VariationSelectors),
+            ("Sup_PUA_A", Self::SupplementaryPrivateUseAreaA),
+            ("Sup_PUA_B", Self::SupplementaryPrivateUseAreaB),
+            ("Limbu", Self::Limbu),
+            ("Tai_Le", Self::TaiLe),
+            ("Khmer_Symbols", Self::KhmerSymbols),
+            ("Phonetic_Ext", Self::PhoneticExtensions),
+            ("Misc_Arrows", Self::MiscellaneousSymbolsAndArrows),
+            ("Yijing", Self::YijingHexagramSymbols),
+            ("Linear_B_Syllabary", Self::LinearBSyllabary),
+            ("Linear_B_Ideograms", Self::LinearBIdeograms),
+            ("Aegean_Numbers", Self::AegeanNumbers),
+            ("Ugaritic", Self::Ugaritic),
+            ("Shavian", Self::Shavian),
+            ("Osmanya", Self::Osmanya),
+            ("Cypriot_Syllabary", Self::CypriotSyllabary),
+            ("Tai_Xuan_Jing", Self::TaiXuanJingSymbols),
+            ("VS_Sup", Self::VariationSelectorsSupplement),
+            ("Ancient_Greek_Music", Self::AncientGreekMusicalNotation),
+            ("Ancient_Greek_Numbers", Self::AncientGreekNumbers),
+            ("Arabic_Sup", Self::ArabicSupplement),
+            ("Buginese", Self::Buginese),
+            ("CJK_Strokes", Self::CJKStrokes),
+            ("Diacriticals_Sup", Self::CombiningDiacriticalMarksSupplement),
+            ("Coptic", Self::Coptic),
+            ("Ethiopic_Ext", Self::EthiopicExtended),
+            ("Ethiopic_Sup", Self::EthiopicSupplement),
+            ("Georgian_Sup", Self::GeorgianSupplement),
+            ("Glagolitic", Self::Glagolitic),
+            ("Kharoshthi", Self::Kharoshthi),
+            ("Modifier_Tone_Letters", Self::ModifierToneLetters),
+            ("New_Tai_Lue", Self::NewTaiLue),
+            ("Old_Persian", Self::OldPersian),
+            ("Phonetic_Ext_Sup", Self::PhoneticExtensionsSupplement),
+            ("Sup_Punctuation", Self::SupplementalPunctuation),
+            ("Syloti_Nagri", Self::SylotiNagri),
+            ("Tifinagh", Self::Tifinagh),
+            ("Vertical_Forms", Self::VerticalForms),
+            ("NKo", Self::NKo),
+            ("Balinese", Self::Balinese),
+            ("Latin_Ext_C", Self::LatinExtendedC),
+            ("Latin_Ext_D", Self::LatinExtendedD),
+            ("Phags_Pa", Self::PhagsPa),
+            ("Phoenician", Self::Phoenician),
+            ("Cuneiform", Self::Cuneiform),
+            ("Cuneiform_Numbers", Self::CuneiformNumbersAndPunctuation),
+            ("Counting_Rod", Self::CountingRodNumerals),
+            ("Sundanese", Self::Sundanese),
+            ("Lepcha", Self::Lepcha),
+            ("Ol_Chiki", Self::OlChiki),
+            ("Cyrillic_Ext_A", Self::CyrillicExtendedA),
+            ("Vai", Self::Vai),
+            ("Cyrillic_Ext_B", Self::CyrillicExtendedB),
+            ("Saurashtra", Self::Saurashtra),
+            ("Kayah_Li", Self::KayahLi),
+            ("Rejang", Self::Rejang),
+            ("Cham", Self::Cham),
+            ("Ancient_Symbols", Self::AncientSymbols),
+            ("Phaistos", Self::PhaistosDisc),
+            ("Lycian", Self::Lycian),
+            ("Carian", Self::Carian),
+            ("Lydian", Self::Lydian),
+            ("Mahjong", Self::MahjongTiles),
+            ("Domino", Self::DominoTiles),
+            ("Samaritan", Self::Samaritan),
+            ("UCAS_Ext", Self::UnifiedCanadianAboriginalSyllabicsExtended),
+            ("Tai_Tham", Self::TaiTham),
+            ("Vedic_Ext", Self::VedicExtensions),
+            ("Lisu", Self::Lisu),
+            ("Bamum", Self::Bamum),
+            ("Indic_Number_Forms", Self::CommonIndicNumberForms),
+            ("Devanagari_Ext", Self::DevanagariExtended),
+            ("Jamo_Ext_A", Self::HangulJamoExtendedA),
+            ("Javanese", Self::Javanese),
+            ("Myanmar_Ext_A", Self::MyanmarExtendedA),
+            ("Tai_Viet", Self::TaiViet),
+            ("Meetei_Mayek", Self::MeeteiMayek),
+            ("Jamo_Ext_B", Self::HangulJamoExtendedB),
+            ("Imperial_Aramaic", Self::ImperialAramaic),
+            ("Old_South_Arabian", Self::OldSouthArabian),
+            ("Avestan", Self::Avestan),
+            ("Inscriptional_Parthian", Self::InscriptionalParthian),
+            ("Inscriptional_Pahlavi", Self::InscriptionalPahlavi),
+            ("Old_Turkic", Self::OldTurkic),
+            ("Rumi", Self::RumiNumeralSymbols),
+            ("Kaithi", Self::Kaithi),
+            ("Egyptian_Hieroglyphs", Self::EgyptianHieroglyphs),
+            ("Enclosed_Alphanum_Sup", Self::EnclosedAlphanumericSupplement),
+            ("Enclosed_Ideographic_Sup", Self::EnclosedIdeographicSupplement),
+            ("CJK_Ext_C", Self::CJKUnifiedIdeographsExtensionC),
+            ("Mandaic", Self::Mandaic),
+            ("Batak", Self::Batak),
+            ("Ethiopic_Ext_A", Self::EthiopicExtendedA),
+            ("Brahmi", Self::Brahmi),
+            ("Bamum_Sup", Self::BamumSupplement),
+            ("Kana_Sup", Self::KanaSupplement),
+            ("Playing_Cards", Self::PlayingCards),
+            ("Misc_Pictographs", Self::MiscellaneousSymbolsAndPictographs),
+            ("Emoticons", Self::Emoticons),
+            ("Transport_And_Map", Self::TransportAndMapSymbols),
+            ("Alchemical", Self::AlchemicalSymbols),
+            ("CJK_Ext_D", Self::CJKUnifiedIdeographsExtensionD),
+            ("Arabic_Ext_A", Self::ArabicExtendedA),
+            ("Arabic_Math", Self::ArabicMathematicalAlphabeticSymbols),
+            ("Chakma", Self::Chakma),
+            ("Meetei_Mayek_Ext", Self::MeeteiMayekExtensions),
+            ("Meroitic_Cursive", Self::MeroiticCursive),
+            ("Meroitic_Hieroglyphs", Self::MeroiticHieroglyphs),
+            ("Miao", Self::Miao),
+            ("Sharada", Self::Sharada),
+            ("Sora_Sompeng", Self::SoraSompeng),
+            ("Sundanese_Sup", Self::SundaneseSupplement),
+            ("Takri", Self::Takri),
+            ("Bassa_Vah", Self::BassaVah),
+            ("Caucasian_Albanian", Self::CaucasianAlbanian),
+            ("Coptic_Epact_Numbers", Self::CopticEpactNumbers),
+            ("Diacriticals_Ext", Self::CombiningDiacriticalMarksExtended),
+            ("Duployan", Self::Duployan),
+            ("Elbasan", Self::Elbasan),
+            ("Geometric_Shapes_Ext", Self::GeometricShapesExtended),
+            ("Grantha", Self::Grantha),
+            ("Khojki", Self::Khojki),
+            ("Khudawadi", Self::Khudawadi),
+            ("Latin_Ext_E", Self::LatinExtendedE),
+            ("Linear_A", Self::LinearA),
+            ("Mahajani", Self::Mahajani),
+            ("Manichaean", Self::Manichaean),
+            ("Mende_Kikakui", Self::MendeKikakui),
+            ("Modi", Self::Modi),
+            ("Mro", Self::Mro),
+            ("Myanmar_Ext_B", Self::MyanmarExtendedB),
+            ("Nabataean", Self::Nabataean),
+            ("Old_North_Arabian", Self::OldNorthArabian),
+            ("Old_Permic", Self::OldPermic),
+            ("Ornamental_Dingbats", Self::OrnamentalDingbats),
+            ("Pahawh_Hmong", Self::PahawhHmong),
+            ("Palmyrene", Self::Palmyrene),
+            ("Pau_Cin_Hau", Self::PauCinHau),
+            ("Psalter_Pahlavi", Self::PsalterPahlavi),
+            ("Shorthand_Format_Controls", Self::ShorthandFormatControls),
+            ("Siddham", Self::Siddham),
+            ("Sinhala_Archaic_Numbers", Self::SinhalaArchaicNumbers),
+            ("Sup_Arrows_C", Self::SupplementalArrowsC),
+            ("Tirhuta", Self::Tirhuta),
+            ("Warang_Citi", Self::WarangCiti),
+            ("Ahom", Self::Ahom),
+            ("Anatolian_Hieroglyphs", Self::AnatolianHieroglyphs),
+            ("Cherokee_Sup", Self::CherokeeSupplement),
+            ("CJK_Ext_E", Self::CJKUnifiedIdeographsExtensionE),
+            ("Early_Dynastic_Cuneiform", Self::EarlyDynasticCuneiform),
+            ("Hatran", Self::Hatran),
+            ("Multani", Self::Multani),
+            ("Old_Hungarian", Self::OldHungarian),
+            ("Sup_Symbols_And_Pictographs", Self::SupplementalSymbolsAndPictographs),
+            ("Sutton_SignWriting", Self::SuttonSignWriting),
+            ("Adlam", Self::Adlam),
+            ("Bhaiksuki", Self::Bhaiksuki),
+            ("Cyrillic_Ext_C", Self::CyrillicExtendedC),
+            ("Glagolitic_Sup", Self::GlagoliticSupplement),
+            ("Ideographic_Symbols", Self::IdeographicSymbolsAndPunctuation),
+            ("Marchen", Self::Marchen),
+            ("Mongolian_Sup", Self::MongolianSupplement),
+            ("Newa", Self::Newa),
+            ("Osage", Self::Osage),
+            ("Tangut", Self::Tangut),
+            ("Tangut_Components", Self::TangutComponents),
+            ("CJK_Ext_F", Self::CJKUnifiedIdeographsExtensionF),
+            ("Kana_Ext_A", Self::KanaExtendedA),
+            ("Masaram_Gondi", Self::MasaramGondi),
+            ("Nushu", Self::Nushu),
+            ("Soyombo", Self::Soyombo),
+            ("Syriac_Sup", Self::SyriacSupplement),
+            ("Zanabazar_Square", Self::ZanabazarSquare),
+            ("Chess_Symbols", Self::ChessSymbols),
+            ("Dogra", Self::Dogra),
+            ("Georgian_Ext", Self::GeorgianExtended),
+            ("Gunjala_Gondi", Self::GunjalaGondi),
+            ("Hanifi_Rohingya", Self::HanifiRohingya),
+            ("Indic_Siyaq_Numbers", Self::IndicSiyaqNumbers),
+            ("Makasar", Self::Makasar),
+            ("Mayan_Numerals", Self::MayanNumerals),
+            ("Medefaidrin", Self::Medefaidrin),
+            ("Old_Sogdian", Self::OldSogdian),
+            ("Sogdian", Self::Sogdian),
+            ("Egyptian_Hieroglyph_Format_Controls", Self::EgyptianHieroglyphFormatControls),
+            ("Elymaic", Self::Elymaic),
+            ("Nandinagari", Self::Nandinagari),
+            ("Nyiakeng_Puachue_Hmong", Self::NyiakengPuachueHmong),
+            ("Ottoman_Siyaq_Numbers", Self::OttomanSiyaqNumbers),
+            ("Small_Kana_Ext", Self::SmallKanaExtension),
+            ("Symbols_And_Pictographs_Ext_A", Self::SymbolsAndPictographsExtendedA),
+            ("Tamil_Sup", Self::TamilSupplement),
+            ("Wancho", Self::Wancho),
+            ("Chorasmian", Self::Chorasmian),
+            ("CJK_Ext_G", Self::CJKUnifiedIdeographsExtensionG),
+            ("Dives_Akuru", Self::DivesAkuru),
+            ("Khitan_Small_Script", Self::KhitanSmallScript),
+            ("Lisu_Sup", Self::LisuSupplement),
+            ("Symbols_For_Legacy_Computing", Self::SymbolsForLegacyComputing),
+            ("Tangut_Sup", Self::TangutSupplement),
+            ("Yezidi", Self::Yezidi),
+            ("Arabic_Ext_B", Self::ArabicExtendedB),
+            ("Cypro_Minoan", Self::CyproMinoan),
+            ("Ethiopic_Ext_B", Self::EthiopicExtendedB),
+            ("Kana_Ext_B", Self::KanaExtendedB),
+            ("Latin_Ext_F", Self::LatinExtendedF),
+            ("Latin_Ext_G", Self::LatinExtendedG),
+            ("Old_Uyghur", Self::OldUyghur),
+            ("Tangsa", Self::Tangsa),
+            ("Toto", Self::Toto),
+            ("UCAS_Ext_A", Self::UnifiedCanadianAboriginalSyllabicsExtendedA),
+            ("Vithkuqi", Self::Vithkuqi),
+            ("Znamenny_Music", Self::ZnamennyMusicalNotation),
+            ("Arabic_Ext_C", Self::ArabicExtendedC),
+            ("CJK_Ext_H", Self::CJKUnifiedIdeographsExtensionH),
+            ("Cyrillic_Ext_D", Self::CyrillicExtendedD),
+            ("Devanagari_Ext_A", Self::DevanagariExtendedA),
+            ("Kaktovik_Numerals", Self::KaktovikNumerals),
+            ("Kawi", Self::Kawi),
+            ("Nag_Mundari", Self::NagMundari),
+            ("CJK_Ext_I", Self::CJKUnifiedIdeographsExtensionI),
+            ("Egyptian_Hieroglyphs_Ext_A", Self::EgyptianHieroglyphsExtendedA),
+            ("Garay", Self::Garay),
+            ("Gurung_Khema", Self::GurungKhema),
+            ("Kirat_Rai", Self::KiratRai),
+            ("Myanmar_Ext_C", Self::MyanmarExtendedC),
+            ("Ol_Onal", Self::OlOnal),
+            ("Sunuwar", Self::Sunuwar),
+            ("Symbols_For_Legacy_Computing_Sup", Self::SymbolsForLegacyComputingSupplement),
+            ("Todhri", Self::Todhri),
+            ("Tulu_Tigalari", Self::TuluTigalari),
+            ("Beria_Erfe", Self::BeriaErfe),
+            ("CJK_Ext_J", Self::CJKUnifiedIdeographsExtensionJ),
+            ("Misc_Symbols_Sup", Self::MiscellaneousSymbolsSupplement),
+            ("Sharada_Sup", Self::SharadaSupplement),
+            ("Sidetic", Self::Sidetic),
+            ("Tai_Yo", Self::TaiYo),
+            ("Tangut_Components_Sup", Self::TangutComponentsSupplement),
+            ("Tolong_Siki", Self::TolongSiki),
+        ].into_iter()
+    }
+}
+
 impl CanonicalCombiningClass {
     pub const NotReordered: Self = Self(0);
     pub const NR: Self = Self::NotReordered;
@@ -2097,9 +3667,9 @@ impl Script {
     pub const Batak: Self = Self(63);
     pub const Batk: Self = Self::Batak;
     /// ISO 15924
-    pub const BlisSymbols: Self = Self(64);
+    pub const Blissymbols: Self = Self(64);
     /// ISO 15924
-    pub const Blis: Self = Self::BlisSymbols;
+    pub const Blis: Self = Self::Blissymbols;
     pub const Brahmi: Self = Self(65);
     pub const Brah: Self = Self::Brahmi;
     pub const Cham: Self = Self(66);
@@ -2526,7 +4096,7 @@ impl databake::Bake for Script {
             Self::OldPersian => databake::quote!(icu_properties::props::Script::OldPersian),
             Self::Balinese => databake::quote!(icu_properties::props::Script::Balinese),
             Self::Batak => databake::quote!(icu_properties::props::Script::Batak),
-            Self::BlisSymbols => databake::quote!(icu_properties::props::Script::BlisSymbols),
+            Self::Blissymbols => databake::quote!(icu_properties::props::Script::Blissymbols),
             Self::Brahmi => databake::quote!(icu_properties::props::Script::Brahmi),
             Self::Cham => databake::quote!(icu_properties::props::Script::Cham),
             Self::Cirth => databake::quote!(icu_properties::props::Script::Cirth),
@@ -2755,7 +4325,7 @@ impl Script {
         Self::OldPersian,
         Self::Balinese,
         Self::Batak,
-        Self::BlisSymbols,
+        Self::Blissymbols,
         Self::Brahmi,
         Self::Cham,
         Self::Cirth,
@@ -2974,7 +4544,7 @@ impl Script {
             ("Xpeo", Self::OldPersian),
             ("Bali", Self::Balinese),
             ("Batk", Self::Batak),
-            ("Blis", Self::BlisSymbols),
+            ("Blis", Self::Blissymbols),
             ("Brah", Self::Brahmi),
             ("Cham", Self::Cham),
             ("Cirt", Self::Cirth),

@@ -5,7 +5,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * See the [Rust documentation for `MaxVariable`](https://docs.rs/icu/2.3.0/icu/collator/options/enum.MaxVariable.html) for more information.
+ * See the [Rust documentation for `MaxVariable`](https://docs.rs/icu/2.3.1/icu/collator/options/enum.MaxVariable.html) for more information.
  */
 export class CollatorMaxVariable {
     #value = undefined;

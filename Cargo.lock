@@ -755,9 +755,9 @@ dependencies = [
 
 [[package]]
 name = "diplomat"
-version = "0.16.0"
+version = "0.16.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "26fdfa02eb9a2e1ff82a375524be1ce9fd50ae63787f5737da6951b25d21e857"
+checksum = "f8b37a6cea72eb6df5143d3e091d4c34cb0cf4046dd1ddcc082988886fe1f809"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -796,9 +796,9 @@ dependencies = [
 
 [[package]]
 name = "diplomat-tool"
-version = "0.16.0"
+version = "0.16.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f5d41389acae2e2471446d77523afd91afdbeff407a4b703b7b628df825c0bb9"
+checksum = "f71ad0ab8cf95b7179a192b1e07c3a5e8b7e6471e279d05101a12a1e77d8025c"
 dependencies = [
  "askama",
  "clap",
@@ -816,9 +816,9 @@ dependencies = [
 
 [[package]]
 name = "diplomat_core"
-version = "0.16.0"
+version = "0.16.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f4ede23809e2fcc555d8b2e10ffa7a1c31331ebca8e5477f4f2b48ab8a0a9a6b"
+checksum = "73b18e806f9ecb92df828d080efe47984ae1193958295d4a84fb8b32c9a1aa1b"
 dependencies = [
  "annotate-snippets",
  "either",
@@ -1307,7 +1307,7 @@ dependencies = [
 
 [[package]]
 name = "icu"
-version = "2.3.0"
+version = "2.3.1"
 dependencies = [
  "chrono",
  "chrono-tz",
@@ -1319,7 +1319,6 @@ dependencies = [
  "icu_datetime",
  "icu_decimal",
  "icu_experimental",
- "icu_host_info",
  "icu_list",
  "icu_locale",
  "icu_normalizer",
@@ -1419,7 +1418,7 @@ version = "2.3.0"
 
 [[package]]
 name = "icu_capi"
-version = "2.3.0"
+version = "2.3.1"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
@@ -1489,7 +1488,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator"
-version = "2.3.0"
+version = "2.3.1"
 dependencies = [
  "atoi",
  "criterion",
@@ -1703,7 +1702,7 @@ version = "2.3.0"
 
 [[package]]
 name = "icu_locale"
-version = "2.3.0"
+version = "2.3.1"
 dependencies = [
  "criterion",
  "databake",
@@ -1861,7 +1860,7 @@ version = "2.3.0"
 
 [[package]]
 name = "icu_provider"
-version = "2.3.0"
+version = "2.3.1"
 dependencies = [
  "bincode",
  "criterion",
@@ -1978,7 +1977,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_source"
-version = "2.3.0"
+version = "2.3.1"
 dependencies = [
  "crlify",
  "elsa",
@@ -4357,7 +4356,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.11.5"
+version = "0.11.6"
 dependencies = [
  "bincode",
  "proc-macro2",

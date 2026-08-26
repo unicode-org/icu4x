@@ -328,6 +328,8 @@ export { BidiPairedBracketType } from "./BidiPairedBracketType.mjs"
 
 export { BidiClass } from "./BidiClass.mjs"
 
+export { Block } from "./Block.mjs"
+
 export { CanonicalCombiningClass } from "./CanonicalCombiningClass.mjs"
 
 export { EastAsianWidth } from "./EastAsianWidth.mjs"
