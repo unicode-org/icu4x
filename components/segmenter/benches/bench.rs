@@ -19,6 +19,7 @@ const TEST_STR_TH: &str =
 const TEST_STR_JA: &str =
     "こんにちは世界こんにちは世界こんにちは世界こんにちは世界こんにちは世界こんにちは世界";
 const TEST_STR_LONG_MIXED: &str = include_str!("../tests/testdata/SegmenterBenchMixed.txt");
+// Spaces terminate complex-script runs, so these stress patterns are separator-free.
 const TEST_STR_CONTINUOUS_TH: &str = "ภาษาไทย";
 const TEST_STR_CONTINUOUS_HAN: &str = "漢字";
 

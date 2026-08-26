@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(test)]
 use alloc::vec::Vec;
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
@@ -365,7 +366,7 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
                     iter,
                     len,
                     current_pos_data: None,
-                    result_cache: Vec::new(),
+                    result_cache: Default::default(),
                     data,
                     complex: None,
                     boundary_property: 0,

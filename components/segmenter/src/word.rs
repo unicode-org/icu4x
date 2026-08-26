@@ -9,6 +9,7 @@ use crate::rule_segmenter_v1::result_cache_from_offsets;
 use crate::scaffold::*;
 use alloc::string::String;
 use alloc::vec;
+#[cfg(test)]
 use alloc::vec::Vec;
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
@@ -718,7 +719,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
                 iter: input.char_indices(),
                 len: input.len(),
                 current_pos_data: None,
-                result_cache: Vec::new(),
+                result_cache: Default::default(),
                 data,
                 complex: Some(complex),
                 boundary_property: 0,
@@ -755,7 +756,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
                 iter: Utf8CharIndices::new(input),
                 len: input.len(),
                 current_pos_data: None,
-                result_cache: Vec::new(),
+                result_cache: Default::default(),
                 data,
                 complex: Some(complex),
                 boundary_property: 0,
@@ -787,7 +788,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
                 iter: Latin1Indices::new(input),
                 len: input.len(),
                 current_pos_data: None,
-                result_cache: Vec::new(),
+                result_cache: Default::default(),
                 data,
                 complex: Some(complex),
                 boundary_property: 0,
@@ -819,7 +820,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
                 iter: Utf16Indices::new(input),
                 len: input.len(),
                 current_pos_data: None,
-                result_cache: Vec::new(),
+                result_cache: Default::default(),
                 data,
                 complex: Some(complex),
                 boundary_property: 0,
@@ -954,11 +955,11 @@ where
     #[expect(clippy::unwrap_used)] // iter.complex present for word segmenter
     let breaks = iter.complex.unwrap().segment_str(&s);
     iter.result_cache = result_cache_from_offsets(breaks, left_codepoint.len_utf8());
-    let first_pos = *iter.result_cache.last()?;
+    let first_pos = *iter.result_cache.as_slice().first()?;
     let mut i = 0;
     loop {
         if i == first_pos {
-            iter.result_cache.pop();
+            iter.result_cache.next();
             return iter.get_current_position();
         }
         debug_assert!(
@@ -969,7 +970,7 @@ where
         i += iter.get_current_codepoint().map_or(0, T::char_len);
         iter.advance_iter();
         if iter.is_eof() {
-            iter.result_cache.clear();
+            iter.result_cache = Default::default();
             return Some(iter.len);
         }
     }
@@ -1007,11 +1008,11 @@ where
     let breaks = iter.complex.unwrap().segment_utf16(&s);
     iter.result_cache = result_cache_from_offsets(breaks, 1);
     // Cached distances are UTF-16 code units within a BMP-only complex run.
-    let first_pos = *iter.result_cache.last()?;
+    let first_pos = *iter.result_cache.as_slice().first()?;
     let mut i = 0;
     loop {
         if i == first_pos {
-            iter.result_cache.pop();
+            iter.result_cache.next();
             return iter.get_current_position();
         }
         debug_assert!(
@@ -1022,7 +1023,7 @@ where
         i += 1;
         iter.advance_iter();
         if iter.is_eof() {
-            iter.result_cache.clear();
+            iter.result_cache = Default::default();
             return Some(iter.len);
         }
     }
