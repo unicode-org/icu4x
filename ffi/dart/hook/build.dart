@@ -129,7 +129,6 @@ final class FetchMode extends BuildMode {
         : 'dynamic-with_data';
     final targetFilename = input.config.filename('icu4x');
     final expectedFileHash = fileHashes[(rustTarget, libraryType)];
-    final library = File.fromUri(input.outputDirectory.resolve(targetFilename));
 
     final cachedLibrary = File.fromUri(
       input.outputDirectoryShared
@@ -142,8 +141,7 @@ final class FetchMode extends BuildMode {
           .toString();
       if (fileHash == expectedFileHash) {
         print('Using cached binary from shared output directory.');
-        await cachedLibrary.copy(library.path);
-        return library.uri;
+        return cachedLibrary.uri;
       }
     }
 
@@ -168,8 +166,7 @@ final class FetchMode extends BuildMode {
     }
     await cachedLibrary.parent.create(recursive: true);
     await cachedLibrary.writeAsBytes(bytes);
-    await cachedLibrary.copy(library.path);
-    return library.uri;
+    return cachedLibrary.uri;
   }
 
   @override
