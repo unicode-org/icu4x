@@ -22,6 +22,7 @@ Several crates have had patch releases in the 2.3 stream:
   - (2.3.1) `icu_capi`
     - Add missing docs to properties (unicode-org#8407)
   - Dart
+    - Cache downloaded pre-built binaries across build hook invocations in `outputDirectoryShared` (unicode-org#8426)
     - (2.3.1) Add `Error` and `Exception` to classes/enums which are used as errors and exceptions (https://github.com/rust-diplomat/diplomat/pull/1220) (unicode-org#8411)
   - JavaScript
     - (2.3.1) Add validation to arguments to assure type correctness (https://github.com/rust-diplomat/diplomat/pull/902) (unicode-org#8411)
