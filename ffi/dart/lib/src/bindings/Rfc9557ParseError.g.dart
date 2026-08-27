@@ -3,8 +3,8 @@
 
 part of 'lib.g.dart';
 
-/// Additional information: [1](https://docs.rs/icu/2.3.0/icu/calendar/enum.ParseError.html), [2](https://docs.rs/icu/2.3.0/icu/time/enum.ParseError.html)
-enum Rfc9557ParseError {
+/// Additional information: [1](https://docs.rs/icu/2.3.1/icu/calendar/enum.ParseError.html), [2](https://docs.rs/icu/2.3.1/icu/time/enum.ParseError.html)
+enum Rfc9557ParseError implements core.Exception {
   // ignore: public_member_api_docs
   unknown,
   // ignore: public_member_api_docs

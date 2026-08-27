@@ -5,9 +5,8 @@
 use super::{LineBreakStrictness, LineBreakWordOption, ResolvedLineBreakOptions};
 use crate::complex::*;
 use crate::provider::*;
-use crate::rule_segmenter_v1::ComplexRunSegmenter;
+use crate::rule_segmenter_v1::{ComplexRunSegmenter, ResultCache, result_cache_from_offsets};
 use crate::scaffold::*;
-use alloc::vec::Vec;
 
 #[doc(hidden)]
 impl RuleBreakData<'_> {
@@ -119,7 +118,7 @@ pub(super) struct LineBreakIteratorV1<'data, 's, Y: RuleBreakType> {
     iter: Y::IterAttr<'s>,
     len: usize,
     current_pos_data: Option<(usize, Y::CharType)>,
-    result_cache: Vec<usize>,
+    result_cache: ResultCache,
     data: &'data RuleBreakData<'data>,
     options: ResolvedLineBreakOptions,
     complex: ComplexPayloadsBorrowed<'data>,
@@ -142,7 +141,7 @@ impl<'data, 's, Y: RuleBreakType> LineBreakIteratorV1<'data, 's, Y> {
             iter,
             len,
             current_pos_data: None,
-            result_cache: Vec::new(),
+            result_cache: Default::default(),
             data,
             options,
             complex,
@@ -196,17 +195,17 @@ impl<Y: RuleBreakType> Iterator for LineBreakIteratorV1<'_, '_, Y> {
         }
 
         // If we have break point cache by previous run, return this result
-        if let Some(&first_pos) = self.result_cache.first() {
+        if let Some(&first_pos) = self.result_cache.as_slice().first() {
             let mut i = 0;
             loop {
                 if i == first_pos {
-                    self.result_cache = self.result_cache.iter().skip(1).map(|r| r - i).collect();
+                    self.result_cache.next();
                     return self.get_current_position();
                 }
                 i += self.get_current_codepoint().map_or(0, Y::char_len);
                 self.advance_iter();
                 if self.is_eof() {
-                    self.result_cache.clear();
+                    self.result_cache = Default::default();
                     return Some(self.len);
                 }
             }
@@ -543,13 +542,13 @@ where
     iter.current_pos_data = start_point;
     let run_start = start_point.map_or(iter.len, |(pos, _)| pos) - T::char_len(left_codepoint);
     let breaks = T::segment_complex_run(iter.complex, &iter.input, run_start, run_end);
-    iter.result_cache = breaks;
-    let first_pos = *iter.result_cache.first()?;
-    let mut i = start_point.map_or(iter.len, |(pos, _)| pos) - run_start;
+    let previous_offset = start_point.map_or(iter.len, |(pos, _)| pos) - run_start;
+    iter.result_cache = result_cache_from_offsets(breaks, previous_offset);
+    let first_pos = *iter.result_cache.as_slice().first()?;
+    let mut i = 0;
     loop {
         if i == first_pos {
-            // Re-calculate breaking offset
-            iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
+            iter.result_cache.next();
             return iter.get_current_position();
         }
         debug_assert!(
@@ -560,7 +559,7 @@ where
         i += iter.get_current_codepoint().map_or(0, T::char_len);
         iter.advance_iter();
         if iter.is_eof() {
-            iter.result_cache.clear();
+            iter.result_cache = Default::default();
             return Some(iter.len);
         }
     }

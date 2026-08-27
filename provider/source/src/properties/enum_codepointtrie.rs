@@ -24,7 +24,17 @@ impl SourceDataProvider {
 
         self.validate_property_name(name, short_name)?;
 
-        let (names_to_short_names, _) = self.enumerated_prop_names(name, short_name)?;
+        fn normalize(s: &str) -> String {
+            s.replace(['_', '-', ' '], "").to_ascii_lowercase()
+        }
+
+        let names_to_short_names = self
+            .enumerated_prop_names(name, short_name)?
+            .0
+            .into_iter()
+            // Blocks.txt contains non-standard aliases
+            .map(|(k, v)| (normalize(k), v))
+            .collect::<BTreeMap<_, _>>();
 
         let file = match name {
             "Indic_Conjunct_Break" => "ucd/DerivedCoreProperties.txt".into(),
@@ -46,6 +56,7 @@ impl SourceDataProvider {
                     name.replace('_', "").replace("Cluster", "")
                 )
             }
+            "Block" => "ucd/Blocks.txt".into(),
             _ => format!(
                 "ucd/{}.txt",
                 name.replace('_', "").replace("Script", "Scripts")
@@ -74,7 +85,7 @@ impl SourceDataProvider {
                     }
                     let value = fields.next().unwrap();
                     let value = names_to_short_names
-                        .get(value)
+                        .get(normalize(value).as_str())
                         .expect("file should only use names from PropertyValueAliases.txt")
                         .0;
 
@@ -109,7 +120,7 @@ impl SourceDataProvider {
 
                     let value = fields.next().unwrap();
                     let value = names_to_short_names
-                        .get(value)
+                        .get(normalize(value).as_str())
                         .expect("file should only use names from PropertyValueAliases.txt")
                         .0;
                     let Some(&value) = short_name_to_t.get(value) else {
@@ -177,10 +188,16 @@ impl SourceDataProvider {
             }
         }
 
-        for name in names.keys() {
-            if name.contains('-') || name.bytes().any(|b| b.is_ascii_whitespace()) {
+        for &name in names.keys() {
+            if !name
+                .bytes()
+                // https://www.unicode.org/reports/tr44/#Property_And_Value_Aliases
+                .all(|b| matches!(b, b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_'))
+                // https://github.com/unicode-org/properties/issues/606
+                && name != "Arabic_Presentation_Forms-A"
+            {
                 return Err(
-                    DataError::custom("Property name contains '-' or whitespace")
+                    DataError::custom("Property name contains invalid characters")
                         .with_display_context(name),
                 );
             }
@@ -485,6 +502,13 @@ expand!(
         PropertyNameParseBidiClassV1,
         PropertyNameShortBidiClassV1[convert_linear],
         PropertyNameLongBidiClassV1[convert_linear]
+    ),
+    (
+        icu::properties::props::Block,
+        PropertyEnumBlockV1,
+        PropertyNameParseBlockV1,
+        PropertyNameShortBlockV1[convert_linear],
+        PropertyNameLongBlockV1[convert_linear]
     ),
     (
         icu::properties::props::NumericType,

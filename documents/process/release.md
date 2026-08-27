@@ -79,14 +79,16 @@ Once the release checklist is complete, the assigned release driver will perform
 * [ ] Update and publish FFI packages
   * [ ] Dart
     * [ ] update version in `ffi/dart/pubspec.yaml`
-    * [ ] update the artifacts tag in `ffi/dart/lib/src/hook_helpers/hashes.dart` to the tag created above, and run `regenerate_hashes.dart`
+    * [ ] In `ffi/dart`, run `dart run tool/regenerate_hashes.dart icu@x.x.x` (substituting the tag created above). This computes the hashes from the artifacts attached to the GitHub release created in the previous step and saves them into the Dart package. (The Dart package manager will fetch these artifacts from GitHub when people install the package.)
     * [ ] get this checked in, then `cd ffi/dart && dart pub publish`
   * [ ] JS
     * [ ] update version in `icu4x/ffi/npm/package.json`
     * [ ] get this checked in, then `cd ffi/npm && npm publish`
 * [ ] Create a branch named `release/x.y` including the release tag and FFI commits and push it to the upstream
 * [ ] Update the website
-  * [ ] In the `icu4x-docs` repo, run `node tools/github-to-astro.ts` and follow the instructions
+  * [ ] In the `icu4x-docs` repo, trigger the [Run icu4x-convert GitHub Action](https://github.com/unicode-org/icu4x-docs/actions/workflows/convert.yml)
+    * The workflow runs the `node tools/github-to-astro.ts` script and creates a Pull Request.
+  * [ ] Spot-check the website locally before merging the PR.
 * [ ] Announce the release to public
   * [ ] (All releases) Blog post on Unicode blog (email comms@unicode.org)
   * [ ] (All releases) Update https://www.unicode.org/releases/ (email Ken Whistler)

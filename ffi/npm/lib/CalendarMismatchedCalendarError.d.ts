@@ -4,7 +4,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /**
- * Additional information: [1](https://docs.rs/icu/2.3.0/icu/calendar/error/struct.MismatchedCalendarError.html)
+ * Additional information: [1](https://docs.rs/icu/2.3.1/icu/calendar/error/struct.MismatchedCalendarError.html)
  */
 export class CalendarMismatchedCalendarError {
 

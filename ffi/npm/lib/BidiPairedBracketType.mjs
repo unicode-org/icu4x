@@ -5,7 +5,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * See the [Rust documentation for `BidiPairedBracketType`](https://docs.rs/icu/2.3.0/icu/properties/props/enum.BidiPairedBracketType.html) for more information.
+ * See the [Rust documentation for `BidiPairedBracketType`](https://docs.rs/icu/2.3.1/icu/properties/props/enum.BidiPairedBracketType.html) for more information.
  */
 export class BidiPairedBracketType {
     #value = undefined;

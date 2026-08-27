@@ -130,6 +130,7 @@ const RSCD_GLOB: &[&str] = &[
     "ucd/auxiliary/WordBreakProperty.txt",
     "ucd/BidiBrackets.txt",
     "ucd/BidiMirroring.txt",
+    "ucd/Blocks.txt",
     "ucd/CaseFolding.txt",
     "ucd/DerivedCoreProperties.txt",
     "ucd/DerivedNormalizationProps.txt",

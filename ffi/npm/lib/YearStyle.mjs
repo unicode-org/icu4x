@@ -5,7 +5,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * See the [Rust documentation for `YearStyle`](https://docs.rs/icu/2.3.0/icu/datetime/options/enum.YearStyle.html) for more information.
+ * See the [Rust documentation for `YearStyle`](https://docs.rs/icu/2.3.1/icu/datetime/options/enum.YearStyle.html) for more information.
  */
 export class YearStyle {
     #value = undefined;

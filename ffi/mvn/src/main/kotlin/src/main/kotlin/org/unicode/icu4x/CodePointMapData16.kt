@@ -11,6 +11,8 @@ internal interface CodePointMapData16Lib: Library {
     fun icu4x_CodePointMapData16_iter_ranges_for_value_mv1(handle: Pointer, value: FFIUint16): Pointer
     fun icu4x_CodePointMapData16_iter_ranges_for_value_complemented_mv1(handle: Pointer, value: FFIUint16): Pointer
     fun icu4x_CodePointMapData16_get_set_for_value_mv1(handle: Pointer, value: FFIUint16): Pointer
+    fun icu4x_CodePointMapData16_create_block_mv1(): Pointer
+    fun icu4x_CodePointMapData16_create_block_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_CodePointMapData16_create_script_mv1(): Pointer
     fun icu4x_CodePointMapData16_create_script_with_provider_mv1(provider: Pointer): ResultPointerInt
 }
@@ -18,11 +20,11 @@ internal interface CodePointMapData16Lib: Library {
 *
 *For properties whose values fit into 16 bits.
 *
-*See the [Rust documentation for `properties`](https://docs.rs/icu/2.3.0/icu/properties/index.html) for more information.
+*See the [Rust documentation for `properties`](https://docs.rs/icu/2.3.1/icu/properties/index.html) for more information.
 *
-*See the [Rust documentation for `CodePointMapData`](https://docs.rs/icu/2.3.0/icu/properties/struct.CodePointMapData.html) for more information.
+*See the [Rust documentation for `CodePointMapData`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapData.html) for more information.
 *
-*See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/2.3.0/icu/properties/struct.CodePointMapDataBorrowed.html) for more information.
+*See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html) for more information.
 */
 class CodePointMapData16 internal constructor (
     internal val handle: Pointer,
@@ -52,9 +54,42 @@ class CodePointMapData16 internal constructor (
         internal val lib: CodePointMapData16Lib = Native.load("icu4x", libClass)
         @JvmStatic
         
+        /** Create a map for the `Block` property, using compiled data.
+        *
+        *See the [Rust documentation for `Block`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html) for more information.
+        */
+        fun createBlock(): CodePointMapData16 {
+            
+            val returnVal = lib.icu4x_CodePointMapData16_create_block_mv1();
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = CodePointMapData16(handle, selfEdges, true)
+            return returnOpaque
+        }
+        @JvmStatic
+        
+        /** Create a map for the `Block` property, using a particular data source.
+        *
+        *See the [Rust documentation for `Block`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html) for more information.
+        */
+        fun createBlockWithProvider(provider: DataProvider): Result<CodePointMapData16> {
+            
+            val returnVal = lib.icu4x_CodePointMapData16_create_block_with_provider_mv1(provider.handle);
+            val nativeOkVal = returnVal.getNativeOk();
+            if (nativeOkVal != null) {
+                val selfEdges: List<Any> = listOf()
+                val handle = nativeOkVal 
+                val returnOpaque = CodePointMapData16(handle, selfEdges, true)
+                return returnOpaque.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.getNativeErr()!!)).err()
+            }
+        }
+        @JvmStatic
+        
         /** Create a map for the `Script` property, using compiled data.
         *
-        *See the [Rust documentation for `Script`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.Script.html) for more information.
+        *See the [Rust documentation for `Script`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html) for more information.
         */
         fun createScript(): CodePointMapData16 {
             
@@ -68,7 +103,7 @@ class CodePointMapData16 internal constructor (
         
         /** Create a map for the `Script` property, using a particular data source.
         *
-        *See the [Rust documentation for `Script`](https://docs.rs/icu/2.3.0/icu/properties/props/struct.Script.html) for more information.
+        *See the [Rust documentation for `Script`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html) for more information.
         */
         fun createScriptWithProvider(provider: DataProvider): Result<CodePointMapData16> {
             
@@ -87,7 +122,7 @@ class CodePointMapData16 internal constructor (
     
     /** Gets the value for a code point.
     *
-    *See the [Rust documentation for `get`](https://docs.rs/icu/2.3.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get) for more information.
+    *See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.get) for more information.
     */
     fun get(cp: Int): UShort {
         
@@ -97,7 +132,7 @@ class CodePointMapData16 internal constructor (
     
     /** Produces an iterator over ranges of code points that map to `value`
     *
-    *See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/2.3.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
+    *See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
     */
     fun iterRangesForValue(value: UShort): CodePointRangeIterator {
         // This lifetime edge depends on lifetimes: 'a
@@ -112,7 +147,7 @@ class CodePointMapData16 internal constructor (
     
     /** Produces an iterator over ranges of code points that do not map to `value`
     *
-    *See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/2.3.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
+    *See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
     */
     fun iterRangesForValueComplemented(value: UShort): CodePointRangeIterator {
         // This lifetime edge depends on lifetimes: 'a
@@ -127,7 +162,7 @@ class CodePointMapData16 internal constructor (
     
     /** Gets a [CodePointSetData] representing all entries in this map that map to the given value
     *
-    *See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/2.3.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
+    *See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
     */
     fun getSetForValue(value: UShort): CodePointSetData {
         
