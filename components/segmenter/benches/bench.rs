@@ -2,7 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use criterion::{Criterion, black_box, criterion_group, criterion_main};
+use criterion::{BenchmarkId, Criterion, Throughput, black_box, criterion_group, criterion_main};
+use std::time::Duration;
 
 use icu_segmenter::GraphemeClusterSegmenter;
 use icu_segmenter::LineSegmenter;
@@ -18,6 +19,12 @@ const TEST_STR_TH: &str =
 const TEST_STR_JA: &str =
     "こんにちは世界こんにちは世界こんにちは世界こんにちは世界こんにちは世界こんにちは世界";
 const TEST_STR_LONG_MIXED: &str = include_str!("../tests/testdata/SegmenterBenchMixed.txt");
+// Spaces terminate complex-script runs, so these stress patterns are separator-free.
+const TEST_STR_CONTINUOUS_TH: &str = "ภาษาไทย";
+const TEST_STR_CONTINUOUS_HAN: &str = "漢字";
+
+const COMPLEX_CACHE_DEFAULT_SIZES: &[usize] = &[16 * 1024];
+const COMPLEX_CACHE_LARGE_SIZES: &[usize] = &[1024, 16 * 1024, 256 * 1024, 1024 * 1024];
 
 const LINE_CASES: &[TextCase] = &[
     TextCase {
@@ -137,6 +144,90 @@ fn grapheme_segmenters() -> impl IntoIterator<
         #[cfg(feature = "unstable")]
         (GraphemeClusterSegmenter::new_neo(), "/neo"),
     ]
+}
+
+fn repeat_to_char_count(pattern: &str, count: usize) -> String {
+    pattern.chars().cycle().take(count).collect()
+}
+
+fn complex_cache(c: &mut Criterion) {
+    // The pre-optimization 1M word case takes about 20 seconds per iteration.
+    let large = std::env::var_os("ICU4X_SEGMENTER_BENCH_LARGE").is_some();
+    let sizes = if large {
+        COMPLEX_CACHE_LARGE_SIZES
+    } else {
+        COMPLEX_CACHE_DEFAULT_SIZES
+    };
+    let prefix_size = if large { 1024 * 1024 } else { 16 * 1024 };
+
+    let word_segmenter = WordSegmenter::new_dictionary(Default::default());
+    let line_segmenter = LineSegmenter::new_dictionary(Default::default());
+    let mut all_group = c.benchmark_group("Complex Break Cache/UTF8/All");
+    if large {
+        all_group.sample_size(10);
+        all_group.warm_up_time(Duration::from_secs(1));
+        all_group.measurement_time(Duration::from_secs(2));
+    }
+
+    for &char_count in sizes {
+        let han = repeat_to_char_count(TEST_STR_CONTINUOUS_HAN, char_count);
+        let thai = repeat_to_char_count(TEST_STR_CONTINUOUS_TH, char_count);
+        all_group.throughput(Throughput::Elements(char_count as u64));
+
+        all_group.bench_with_input(
+            BenchmarkId::new("Word/Dictionary/ContinuousHan", char_count),
+            &han,
+            |b, text| {
+                b.iter(|| {
+                    black_box(&word_segmenter)
+                        .segment_str(black_box(text.as_str()))
+                        .count()
+                })
+            },
+        );
+        all_group.bench_with_input(
+            BenchmarkId::new("Line/Dictionary/ContinuousThai", char_count),
+            &thai,
+            |b, text| {
+                b.iter(|| {
+                    black_box(&line_segmenter)
+                        .segment_str(black_box(text.as_str()))
+                        .count()
+                })
+            },
+        );
+    }
+    all_group.finish();
+
+    let han = repeat_to_char_count(TEST_STR_CONTINUOUS_HAN, prefix_size);
+    let thai = repeat_to_char_count(TEST_STR_CONTINUOUS_TH, prefix_size);
+    let mut prefix_group = c.benchmark_group("Complex Break Cache/UTF8/Prefix10");
+
+    prefix_group.bench_with_input(
+        BenchmarkId::new("Word/Dictionary/ContinuousHan", prefix_size),
+        &han,
+        |b, text| {
+            b.iter(|| {
+                black_box(&word_segmenter)
+                    .segment_str(black_box(text.as_str()))
+                    .take(10)
+                    .count()
+            })
+        },
+    );
+    prefix_group.bench_with_input(
+        BenchmarkId::new("Line/Dictionary/ContinuousThai", prefix_size),
+        &thai,
+        |b, text| {
+            b.iter(|| {
+                black_box(&line_segmenter)
+                    .segment_str(black_box(text.as_str()))
+                    .take(10)
+                    .count()
+            })
+        },
+    );
+    prefix_group.finish();
 }
 
 fn line_break_iter_latin1(c: &mut Criterion) {
@@ -338,5 +429,6 @@ criterion_group!(
     word_break_iter_latin1,
     word_break_iter_str,
     word_break_iter_utf16,
+    complex_cache,
 );
 criterion_main!(benches);
