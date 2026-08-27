@@ -281,9 +281,9 @@ utf8_iter = { version = "1.0.2", default-features = false }
 write16 = { version = "1.0.0", default-features = false }
 
 ## External Deps Group 2: Heavy Dev and Datagen deps. No default features.
-zip = { version = "2", default-features = false }
+zip = { version = "8", default-features = false }
 tar = { version = "0.4.46", default-features = false }
-flate2 = { version = "1.0.35", default-features = false }
+flate2 = { version = "1.0.35", default-features = false, features = ["rust_backend"] }
 serde-aux = { version = "4.0.0", default-features = false }
 toml = { version = "0.8.0", default-features = false, features = ["parse"] }
 
