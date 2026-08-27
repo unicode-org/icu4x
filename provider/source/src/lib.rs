@@ -291,15 +291,20 @@ impl SourceDataProvider {
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
     pub fn with_icuexport_for_tag(self, tag: &str) -> Self {
-        let url = if tag >= "release-78.1" || tag.starts_with("icu4x-") {
-            format!(
-                "https://github.com/unicode-org/icu/releases/download/{tag}/icu4x-icuexportdata-{}.zip",
-                tag.replace("release-", "").replace("icu4x-", "")
-            )
-        } else {
+        let url = if (tag.starts_with("release") && tag < "release-78.1")
+            || (tag.starts_with("icu4x/") && tag < "icu4x/2026-01-01")
+        {
+            // Legacy naming scheme
             format!(
                 "https://github.com/unicode-org/icu/releases/download/{tag}/icuexportdata_{}.zip",
                 tag.replace('/', "-")
+            )
+        } else {
+            format!(
+                "https://github.com/unicode-org/icu/releases/download/{tag}/icu4x-icuexportdata-{}.zip",
+                tag.replace("release-", "")
+                    .replace("icu4x/", "")
+                    .replace('/', "-")
             )
         };
         Self {
@@ -519,6 +524,37 @@ impl SourceDataProvider {
     ) -> Result<impl IntoIterator<Item = DataLocale>, DataError> {
         self.cldr()?.locales(levels)
     }
+}
+
+#[test]
+#[cfg(feature = "networking")]
+fn test_icu_tags() {
+    SourceDataProvider::new()
+        .with_icuexport_for_tag("release-78.1")
+        .icuexport()
+        .unwrap()
+        .file_exists("foo")
+        .unwrap();
+    SourceDataProvider::new()
+        .with_icuexport_for_tag("icu4x/2026-07-01/79.x")
+        .icuexport()
+        .unwrap()
+        .file_exists("foo")
+        .unwrap();
+
+    // Legacy naming scheme, still supported for older tags
+    SourceDataProvider::new()
+        .with_icuexport_for_tag("release-77-1")
+        .icuexport()
+        .unwrap()
+        .file_exists("foo")
+        .unwrap();
+    SourceDataProvider::new()
+        .with_icuexport_for_tag("icu4x/2025-05-21/77.x")
+        .icuexport()
+        .unwrap()
+        .file_exists("foo")
+        .unwrap();
 }
 
 impl SourceDataProvider {
