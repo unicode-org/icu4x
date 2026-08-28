@@ -41,6 +41,13 @@ pub struct DateTimeFieldBag {
     pub time_zone_name: Option<field::TimeZoneName>,
 }
 
+impl DateTimeFieldBag {
+    /// Converts this [`DateTimeFieldBag`] into a [`FieldSetBuilder`].
+    pub fn to_field_set_builder(&self) -> FieldSetBuilder {
+        FieldSetBuilder::from_field_bag(self)
+    }
+}
+
 /// Preferences associated with datetime fields, such as hour cycle.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Default, Hash)]
 #[non_exhaustive]
@@ -57,6 +64,13 @@ pub struct DateTimeFieldBagWithPreferences {
     pub bag: DateTimeFieldBag,
     /// The preferences associated with the field options.
     pub preferences: DateTimeFieldPreferences,
+}
+
+impl DateTimeFieldBagWithPreferences {
+    /// Converts the inner [`DateTimeFieldBag`] into a [`FieldSetBuilder`].
+    pub fn to_field_set_builder(&self) -> FieldSetBuilder {
+        self.bag.to_field_set_builder()
+    }
 }
 
 /// An error that occurred while parsing a UTS 35 skeleton string into a [`DateTimeFieldBagWithPreferences`].
@@ -215,6 +229,7 @@ impl DateTimeFieldBagWithPreferences {
                         2 => field::Hour::TwoDigit,
                         _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
                     });
+                    // Note: ICU4X maps 'k' (1-24) to H23 because H24 is not supported.
                     preferences.hour_cycle = Some(HourCycle::H23);
                 }
                 'a' | 'b' | 'B' => {
@@ -295,12 +310,20 @@ impl DateTimeFieldBagWithPreferences {
     }
 }
 
+impl core::str::FromStr for DateTimeFieldBagWithPreferences {
+    type Err = DateTimeFieldBagParseError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from_skeleton(s)
+    }
+}
+
 impl FieldSetBuilder {
     /// Creates a [`FieldSetBuilder`] configured with the options in [`DateTimeFieldBag`].
     pub fn from_field_bag(bag: &DateTimeFieldBag) -> Self {
         let mut builder = FieldSetBuilder::new();
 
-        let has_y = bag.year.is_some();
+        let has_y = bag.year.is_some() || bag.era.is_some();
         let has_m = bag.month.is_some();
         let has_d = bag.day.is_some();
         let has_e = bag.weekday.is_some();
@@ -398,6 +421,18 @@ impl FieldSetBuilder {
     }
 }
 
+impl From<&DateTimeFieldBag> for FieldSetBuilder {
+    fn from(bag: &DateTimeFieldBag) -> Self {
+        Self::from_field_bag(bag)
+    }
+}
+
+impl From<DateTimeFieldBag> for FieldSetBuilder {
+    fn from(bag: DateTimeFieldBag) -> Self {
+        Self::from_field_bag(&bag)
+    }
+}
+
 impl DateTimeFormatterPreferences {
     /// Merges preferences from [`DateTimeFieldPreferences`] into `self`.
     pub fn merge_field_preferences(mut self, field_preferences: DateTimeFieldPreferences) -> Self {
@@ -405,5 +440,11 @@ impl DateTimeFormatterPreferences {
             self.hour_cycle = Some(hour_cycle);
         }
         self
+    }
+}
+
+impl From<DateTimeFieldPreferences> for DateTimeFormatterPreferences {
+    fn from(field_preferences: DateTimeFieldPreferences) -> Self {
+        Self::default().merge_field_preferences(field_preferences)
     }
 }

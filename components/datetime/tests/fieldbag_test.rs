@@ -31,5 +31,89 @@ fn test_basic() {
             time: Time::try_new(14, 36, 30, 0).unwrap(),
         }),
         "Aug 28, 8 Reiwa, 14:36"
-    )
+    );
+}
+
+#[test]
+fn test_from_str_and_builder_methods() {
+    let bag_with_prefs: DateTimeFieldBagWithPreferences = "yMMMd".parse().unwrap();
+    let builder = bag_with_prefs.to_field_set_builder();
+    let _ = builder.build_date().unwrap();
+
+    let prefs: DateTimeFormatterPreferences = bag_with_prefs.preferences.into();
+    let _ = prefs;
+}
+
+#[test]
+fn test_errors() {
+    assert_eq!(
+        DateTimeFieldBagWithPreferences::try_from_skeleton("yMMMdX").unwrap_err(),
+        DateTimeFieldBagParseError::InvalidSymbol('X')
+    );
+    assert_eq!(
+        DateTimeFieldBagWithPreferences::try_from_skeleton("GGGGGG").unwrap_err(),
+        DateTimeFieldBagParseError::InvalidLength('G', 6)
+    );
+    assert_eq!(
+        DateTimeFieldBagWithPreferences::try_from_skeleton("ddd").unwrap_err(),
+        DateTimeFieldBagParseError::InvalidLength('d', 3)
+    );
+    assert_eq!(
+        DateTimeFieldBagWithPreferences::try_from_skeleton("yMyM").unwrap_err(),
+        DateTimeFieldBagParseError::DuplicateSymbol('y')
+    );
+}
+
+#[test]
+fn test_hour_cycles() {
+    use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
+
+    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("h").unwrap();
+    assert_eq!(bag.preferences.hour_cycle, Some(HourCycle::H12));
+    assert_eq!(bag.bag.hour, Some(field::Hour::Numeric));
+
+    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("HH").unwrap();
+    assert_eq!(bag.preferences.hour_cycle, Some(HourCycle::H23));
+    assert_eq!(bag.bag.hour, Some(field::Hour::TwoDigit));
+
+    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("K").unwrap();
+    assert_eq!(bag.preferences.hour_cycle, Some(HourCycle::H11));
+
+    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("k").unwrap();
+    assert_eq!(bag.preferences.hour_cycle, Some(HourCycle::H23));
+
+    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("j").unwrap();
+    assert_eq!(bag.preferences.hour_cycle, None);
+    assert_eq!(bag.bag.hour, Some(field::Hour::Numeric));
+
+    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("C").unwrap();
+    assert_eq!(bag.bag.day_period, Some(field::DayPeriod::Short));
+    assert_eq!(bag.bag.hour, Some(field::Hour::Numeric));
+}
+
+#[test]
+fn test_zones_and_subseconds() {
+    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("S").unwrap();
+    assert_eq!(bag.bag.subsecond, Some(field::Subsecond::S1));
+
+    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("SSS").unwrap();
+    assert_eq!(bag.bag.subsecond, Some(field::Subsecond::S3));
+
+    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("z").unwrap();
+    assert_eq!(
+        bag.bag.time_zone_name,
+        Some(field::TimeZoneName::ShortSpecific)
+    );
+
+    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("OOOO").unwrap();
+    assert_eq!(
+        bag.bag.time_zone_name,
+        Some(field::TimeZoneName::LongOffset)
+    );
+
+    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("vvvv").unwrap();
+    assert_eq!(
+        bag.bag.time_zone_name,
+        Some(field::TimeZoneName::LongGeneric)
+    );
 }

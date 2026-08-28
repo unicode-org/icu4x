@@ -21,7 +21,7 @@ pub use crate::options::SubsecondDigits as Subsecond;
 pub enum Era {
     /// Short era name, such as "AD" or "BC".
     Short,
-    /// Long era name, such as "Anno Domini".
+    /// Long era name, such as "Anno Domini" or "Before Christ".
     Long,
     /// Narrow era name, such as "A" or "B".
     Narrow,
@@ -57,9 +57,9 @@ pub enum Year {
 )]
 #[non_exhaustive]
 pub enum Month {
-    /// Numeric month, such as "8".
+    /// Numeric month, such as "8" or "12".
     Numeric,
-    /// Two-digit month, such as "08".
+    /// Two-digit month, such as "08" or "12".
     TwoDigit,
     /// Short month name, such as "Aug".
     Short,
@@ -193,16 +193,16 @@ pub enum Second {
 )]
 #[non_exhaustive]
 pub enum TimeZoneName {
-    /// Short specific non-location format (e.g. "PDT").
+    /// Short specific non-location format, such as "PDT".
     ShortSpecific,
-    /// Long specific non-location format (e.g. "Pacific Daylight Time").
+    /// Long specific non-location format, such as "Pacific Daylight Time".
     LongSpecific,
-    /// Short localized offset format (e.g. "GMT-8").
+    /// Short localized offset format, such as "GMT-8".
     ShortOffset,
-    /// Long localized offset format (e.g. "GMT-08:00").
+    /// Long localized offset format, such as "GMT-08:00".
     LongOffset,
-    /// Short generic non-location format (e.g. "PT").
+    /// Short generic non-location format, such as "PT".
     ShortGeneric,
-    /// Long generic non-location format (e.g. "Pacific Time").
+    /// Long generic non-location format, such as "Pacific Time".
     LongGeneric,
 }

@@ -104,7 +104,7 @@ As discussed above, the string format is parsed and serialized by `DateTimeField
 
 *   The string syntax must be canonicalized on output.
 *   Parsing must reject unsupported syntax, returning `DateTimeFieldBagParseError`.
-*   Parsing must reject explicit hour cycle symbols (`h`, `H`, `K`, `k`), since `DateTimeFieldBag` does not represent the hour cycle. Skeletons containing these symbols must fail to parse.
+*   Parsing extracts explicit hour cycle symbols (`h`, `H`, `K`, `k`) into `DateTimeFieldPreferences.hour_cycle`.
 *   If a UTS 35 string contains information the bag cannot represent, the parse must fail.
 
 ### Representative Mappings
