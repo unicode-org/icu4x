@@ -225,20 +225,14 @@ pub const EXTRA_LOGGING_DEPS: &[&str] = &["cfg-if", "log"];
 /// This should rarely change, and if it does consider toggling features until it doesn't
 pub const EXTRA_ZIP_DEPS: &[&str] = &[
     "adler2",
-    "bumpalo",
-    "byteorder",
     "crc32fast",
     "flate2",
-    "lockfree-object-pool",
     "miniz_oxide",
-    "once_cell",
     "ordered-float",
-    "serde-spanned",
     "serde-value",
     "simd-adler32",
-    "typed-arena",
+    "typed-path",
     "zip",
-    "zopfli",
 ];
 
 /// Dependencies needed by the `rayon` crate
