@@ -30,6 +30,6 @@ fn test_basic() {
             date: Date::try_new_iso(2026, 8, 28).unwrap(),
             time: Time::try_new(14, 36, 30, 0).unwrap(),
         }),
-        "Aug 28, 7 Reiwa, 14:37"
+        "Aug 28, 8 Reiwa, 14:36"
     )
 }
