@@ -13,7 +13,9 @@ use crate::{
 };
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 
-/// A bag of datetime field options capturing fine-grained field presence and width choices.
+/// An unordered bag of datetime fields in a pattern or pattern skeleton.
+///
+/// See the [module-level docs](crate::fieldbag) for more information.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Default, Hash)]
 #[non_exhaustive]
 pub struct DateTimeFieldBag {

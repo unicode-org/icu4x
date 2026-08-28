@@ -68,27 +68,201 @@ fn test_errors() {
 fn test_hour_cycles() {
     use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 
-    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("h").unwrap();
-    assert_eq!(bag.preferences.hour_cycle, Some(HourCycle::H12));
-    assert_eq!(bag.bag.hour, Some(field::Hour::Numeric));
+    #[derive(Debug)]
+    struct TestCase {
+        skeleton: &'static str,
+        expected_hour: Option<field::Hour>,
+        expected_day_period: Option<field::DayPeriod>,
+        expected_hour_cycle: Option<HourCycle>,
+    }
 
-    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("HH").unwrap();
-    assert_eq!(bag.preferences.hour_cycle, Some(HourCycle::H23));
-    assert_eq!(bag.bag.hour, Some(field::Hour::TwoDigit));
+    let cases = [
+        // 'h': 12-hour cycle (1-12)
+        TestCase {
+            skeleton: "h",
+            expected_hour: Some(field::Hour::Numeric),
+            expected_day_period: None,
+            expected_hour_cycle: Some(HourCycle::H12),
+        },
+        TestCase {
+            skeleton: "hh",
+            expected_hour: Some(field::Hour::TwoDigit),
+            expected_day_period: None,
+            expected_hour_cycle: Some(HourCycle::H12),
+        },
+        // 'H': 24-hour cycle (0-23)
+        TestCase {
+            skeleton: "H",
+            expected_hour: Some(field::Hour::Numeric),
+            expected_day_period: None,
+            expected_hour_cycle: Some(HourCycle::H23),
+        },
+        TestCase {
+            skeleton: "HH",
+            expected_hour: Some(field::Hour::TwoDigit),
+            expected_day_period: None,
+            expected_hour_cycle: Some(HourCycle::H23),
+        },
+        // 'K': 12-hour cycle (0-11)
+        TestCase {
+            skeleton: "K",
+            expected_hour: Some(field::Hour::Numeric),
+            expected_day_period: None,
+            expected_hour_cycle: Some(HourCycle::H11),
+        },
+        TestCase {
+            skeleton: "KK",
+            expected_hour: Some(field::Hour::TwoDigit),
+            expected_day_period: None,
+            expected_hour_cycle: Some(HourCycle::H11),
+        },
+        // 'k': 24-hour cycle (1-24), maps to H23 in ICU4X
+        TestCase {
+            skeleton: "k",
+            expected_hour: Some(field::Hour::Numeric),
+            expected_day_period: None,
+            expected_hour_cycle: Some(HourCycle::H23),
+        },
+        TestCase {
+            skeleton: "kk",
+            expected_hour: Some(field::Hour::TwoDigit),
+            expected_day_period: None,
+            expected_hour_cycle: Some(HourCycle::H23),
+        },
+        // 'j': locale-preferred hour cycle
+        TestCase {
+            skeleton: "j",
+            expected_hour: Some(field::Hour::Numeric),
+            expected_day_period: None,
+            expected_hour_cycle: None,
+        },
+        TestCase {
+            skeleton: "jj",
+            expected_hour: Some(field::Hour::TwoDigit),
+            expected_day_period: None,
+            expected_hour_cycle: None,
+        },
+        // 'C': locale-preferred hour cycle + day period
+        TestCase {
+            skeleton: "C",
+            expected_hour: Some(field::Hour::Numeric),
+            expected_day_period: Some(field::DayPeriod::Short),
+            expected_hour_cycle: None,
+        },
+        TestCase {
+            skeleton: "CC",
+            expected_hour: Some(field::Hour::TwoDigit),
+            expected_day_period: Some(field::DayPeriod::Short),
+            expected_hour_cycle: None,
+        },
+        TestCase {
+            skeleton: "CCC",
+            expected_hour: Some(field::Hour::Numeric),
+            expected_day_period: Some(field::DayPeriod::Long),
+            expected_hour_cycle: None,
+        },
+        TestCase {
+            skeleton: "CCCC",
+            expected_hour: Some(field::Hour::TwoDigit),
+            expected_day_period: Some(field::DayPeriod::Long),
+            expected_hour_cycle: None,
+        },
+        TestCase {
+            skeleton: "CCCCC",
+            expected_hour: Some(field::Hour::Numeric),
+            expected_day_period: Some(field::DayPeriod::Narrow),
+            expected_hour_cycle: None,
+        },
+        TestCase {
+            skeleton: "CCCCCC",
+            expected_hour: Some(field::Hour::TwoDigit),
+            expected_day_period: Some(field::DayPeriod::Narrow),
+            expected_hour_cycle: None,
+        },
+        // Permutations with day periods
+        TestCase {
+            skeleton: "ha",
+            expected_hour: Some(field::Hour::Numeric),
+            expected_day_period: Some(field::DayPeriod::Short),
+            expected_hour_cycle: Some(HourCycle::H12),
+        },
+        TestCase {
+            skeleton: "hha",
+            expected_hour: Some(field::Hour::TwoDigit),
+            expected_day_period: Some(field::DayPeriod::Short),
+            expected_hour_cycle: Some(HourCycle::H12),
+        },
+        TestCase {
+            skeleton: "haaaa",
+            expected_hour: Some(field::Hour::Numeric),
+            expected_day_period: Some(field::DayPeriod::Long),
+            expected_hour_cycle: Some(HourCycle::H12),
+        },
+        TestCase {
+            skeleton: "haaaaa",
+            expected_hour: Some(field::Hour::Numeric),
+            expected_day_period: Some(field::DayPeriod::Narrow),
+            expected_hour_cycle: Some(HourCycle::H12),
+        },
+        TestCase {
+            skeleton: "hb",
+            expected_hour: Some(field::Hour::Numeric),
+            expected_day_period: Some(field::DayPeriod::Short),
+            expected_hour_cycle: Some(HourCycle::H12),
+        },
+        TestCase {
+            skeleton: "hB",
+            expected_hour: Some(field::Hour::Numeric),
+            expected_day_period: Some(field::DayPeriod::Short),
+            expected_hour_cycle: Some(HourCycle::H12),
+        },
+        TestCase {
+            skeleton: "Ha",
+            expected_hour: Some(field::Hour::Numeric),
+            expected_day_period: Some(field::DayPeriod::Short),
+            expected_hour_cycle: Some(HourCycle::H23),
+        },
+        TestCase {
+            skeleton: "Ka",
+            expected_hour: Some(field::Hour::Numeric),
+            expected_day_period: Some(field::DayPeriod::Short),
+            expected_hour_cycle: Some(HourCycle::H11),
+        },
+        TestCase {
+            skeleton: "ka",
+            expected_hour: Some(field::Hour::Numeric),
+            expected_day_period: Some(field::DayPeriod::Short),
+            expected_hour_cycle: Some(HourCycle::H23),
+        },
+        TestCase {
+            skeleton: "ja",
+            expected_hour: Some(field::Hour::Numeric),
+            expected_day_period: Some(field::DayPeriod::Short),
+            expected_hour_cycle: None,
+        },
+    ];
 
-    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("K").unwrap();
-    assert_eq!(bag.preferences.hour_cycle, Some(HourCycle::H11));
-
-    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("k").unwrap();
-    assert_eq!(bag.preferences.hour_cycle, Some(HourCycle::H23));
-
-    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("j").unwrap();
-    assert_eq!(bag.preferences.hour_cycle, None);
-    assert_eq!(bag.bag.hour, Some(field::Hour::Numeric));
-
-    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("C").unwrap();
-    assert_eq!(bag.bag.day_period, Some(field::DayPeriod::Short));
-    assert_eq!(bag.bag.hour, Some(field::Hour::Numeric));
+    for TestCase {
+        skeleton,
+        expected_hour,
+        expected_day_period,
+        expected_hour_cycle,
+    } in cases
+    {
+        let bag_with_prefs = DateTimeFieldBagWithPreferences::try_from_skeleton(skeleton).unwrap();
+        assert_eq!(
+            bag_with_prefs.bag.hour, expected_hour,
+            "hour mismatch for skeleton {skeleton:?}"
+        );
+        assert_eq!(
+            bag_with_prefs.bag.day_period, expected_day_period,
+            "day_period mismatch for skeleton {skeleton:?}"
+        );
+        assert_eq!(
+            bag_with_prefs.preferences.hour_cycle, expected_hour_cycle,
+            "hour_cycle mismatch for skeleton {skeleton:?}"
+        );
+    }
 }
 
 #[test]
