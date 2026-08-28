@@ -37,7 +37,7 @@ fn test_basic() {
 #[test]
 fn test_from_str_and_builder_methods() {
     let bag_with_prefs: DateTimeFieldBagWithPreferences = "yMMMd".parse().unwrap();
-    let builder = bag_with_prefs.to_field_set_builder();
+    let builder = bag_with_prefs.bag.to_field_set_builder();
     let _ = builder.build_date().unwrap();
 
     let prefs: DateTimeFormatterPreferences = bag_with_prefs.preferences.into();

@@ -66,13 +66,6 @@ pub struct DateTimeFieldBagWithPreferences {
     pub preferences: DateTimeFieldPreferences,
 }
 
-impl DateTimeFieldBagWithPreferences {
-    /// Converts the inner [`DateTimeFieldBag`] into a [`FieldSetBuilder`].
-    pub fn to_field_set_builder(&self) -> FieldSetBuilder {
-        self.bag.to_field_set_builder()
-    }
-}
-
 /// An error that occurred while parsing a UTS 35 skeleton string into a [`DateTimeFieldBagWithPreferences`].
 #[derive(Debug, Copy, Clone, PartialEq, Eq, displaydoc::Display)]
 #[non_exhaustive]
