@@ -112,20 +112,14 @@ The ICU4X TC may decide to make a patch release of an ICU4X component on an old 
   * Make a PR targeting `release/x.y` and have a team member review it.
   * Make sure your PR is based on the top of that branch.
   * Make sure CI passes, or that CI failures are understandable issues (e.g. some CI-used URL changed) that would not affect the correctness of the release.
-  * Do NOT merge the PR yet. The objective of this PR is visibility.
-* Perform the release. This can be done via one of two routes. It is crucial that the commit that `cargo publish` was run from is available in the `release/x.y` branch, as Cargo includes that commit in the published crate and it is useful for supply-chain security and tracking.
-  * **Merge the PR, then publish** (preferred for single crates)
-    * Perform `cargo publish --dry-run` to catch *many* (but not all) of the reasons a publish may fail.
-      * In particular, if the patch release contains multiple crates, dry run publishes will not even succeed.
-    * Merge the PR into `release/x.y`
-    * Update `release/x.y` locally and check it out
-    * Run `cargo publish` in the crate(s)
-    * *If* `cargo publish` fails, make whatever changes are needed locally and push them up as a new commit. If the changes are large or tricky, consider having a team member review them as well.
-  * **Publish off the branch, then push** (preferred for multiple crates)
-    * Perform `cargo publish` in the crate(s)
-    * *If* `cargo publish` fails, make whatever changes are needed locally as a new commit. If the changes are large or tricky, consider having a team member review them as well.
-    * Push commits *directly* to `release/x.y`. Do not rebase or make a merge commit.
-    * Close the PR if it didn't get auto-marked as merged by GitHub
+* Perform the release. It is crucial that the commit that `cargo publish` was run from is available in the `release/x.y` branch, as Cargo includes that commit in the published crate and it is useful for supply-chain security and tracking.
+  * Perform `cargo publish --dry-run` to catch *many* (but not all) of the reasons a publish may fail.
+    * In particular, if the patch release contains multiple crates, dry run publishes will often not succeed.
+  * Merge the PR into `release/x.y`
+    * In case the PR contains multiple cherry-picks and you wish them to be tracked separately, you may temporarily allow merge commits and ensure the PR merges as a fast-forward merge. You may also simply do this as multiple PRs, one per uplift.
+  * Update `release/x.y` locally and check it out
+  * Run `cargo publish` in the crate(s)
+  * *If* `cargo publish` fails, make a new PR to fix the release branch and get it merged with review. You may admin-merge minor fixes that are mostly tweaking versions in Cargo.toml.
 * Create and push a tag of the format `ind/icu_collator@1.3.3` (for icu_collator patch version 1.3.3)
   * It is not necessary to create `ind/icu_collator_data@1.3.3` so long as the component has a tag
 
