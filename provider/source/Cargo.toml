@@ -62,7 +62,7 @@ serde-aux = { workspace = true }
 toml = { workspace = true }
 tar = { workspace = true }
 twox-hash = { workspace = true }
-zip = { workspace = true, features = ["deflate-flate2"] }
+zip = { workspace = true }
 
 # `networking` feature
 ureq = { workspace = true, optional = true}
