@@ -51,6 +51,7 @@ Once the release checklist is complete, the assigned release driver will perform
   * [ ] Update all ICU4X crate versions
     * [ ] Update the workspace version to the new version
     * [ ] Some `icu_*` crates do not follow the ICU4X versioning scheme: `icu_codepointtrie_builder`, `icu_pattern`, and `icu_experimental`. Be sure to give them an appropriate version based on the changelog. Major releases are always paired with a `0.x.0` release of `icu_experimental`.
+      * Important: even if these crates have no code diff, they should always be re-released with a new patch version in order to pick up the latest ICU4X dependency versions. Otherwise, the latest release of, for example, `icu_codepointtrie_builder` may tilde-depend on the previous release of `icu_collections`.
     * [ ] Reset baked data versions: Make sure all non-experimental entries in `COMPONENTS` in `tools/make/bakeddata/src/main.rs` use `REPO_VERSION` and not some override.
       * [ ] Make sure `experimental` is using the version for `icu_experimental` chosen above.
     * [ ] Find all ICU4X component/provider crates that have an overridden version in their `Cargo.toml` and reset it to `version.workspace = true`.
