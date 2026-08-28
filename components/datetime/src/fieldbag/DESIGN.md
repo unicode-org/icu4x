@@ -47,17 +47,15 @@ We recommend explicit, named methods for conversion and standard traits for seri
 
 *   `impl DateTimeFieldBag`
     *   `pub fn to_string(&self) -> String` (lossless conversion)
-    *   `pub fn try_from_skeleton(s: &str) -> Result<Self, DateTimeFieldBagParseError>` (errors for syntax or an hour cycle in the skeleton)
     *   `pub fn to_field_set_builder(&self) -> FieldSetBuilder` (lossy conversion)
     *   `pub fn from_field_set_builder(builder: &FieldSetBuilder) -> Self` (best-effort reconstruction)
 *   `impl writeable::Writeable for DateTimeFieldBag` (lower-level version of `to_string()`)
-*   `impl std::str::FromStr for DateTimeFieldBag` (convenience wrapper over `try_from_skeleton(&str)`)
 *   `impl DateTimeFieldBagWithPreferences`
     *   `pub fn to_string(&self) -> String` (lossless conversion)
     *   `pub fn try_from_skeleton(s: &str) -> Result<Self, DateTimeFieldBagParseError>` (errors for syntax only)
 *   `impl writeable::Writeable for DateTimeFieldBagWithPreferences` (lower-level version of `to_string()`)
 *   `impl std::str::FromStr for DateTimeFieldBagWithPreferences` (convenience wrapper over `try_from_skeleton(&str)`)
-*   `impl From<DateTimeFieldPreferences> for DateTimePreferences`
+*   `impl From<DateTimeFieldPreferences> for DateTimeFormatterPreferences`
 
 ### Module Shape
 
