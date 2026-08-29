@@ -113,13 +113,24 @@ impl DateTimeFieldBagWithPreferences {
                         _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
                     });
                 }
-                'y' | 'u' => {
+                'y' => {
                     if bag.year.is_some() {
                         return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
                     }
                     bag.year = Some(match count {
                         2 => field::Year::TwoDigit,
                         _ => field::Year::Numeric,
+                    });
+                }
+                'U' => {
+                    if bag.year.is_some() {
+                        return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
+                    }
+                    bag.year = Some(match count {
+                        1..=3 => field::Year::CyclicAbbreviated,
+                        4 => field::Year::CyclicLong,
+                        5 => field::Year::CyclicNarrow,
+                        _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
                     });
                 }
                 'M' => {
@@ -359,22 +370,28 @@ impl FieldSetBuilder {
         if bag.era.is_some() {
             builder.year_style = Some(YearStyle::WithEra);
         } else if let Some(year) = bag.year {
-            builder.year_style = Some(match year {
-                field::Year::Numeric => YearStyle::Full,
-                field::Year::TwoDigit => YearStyle::Auto,
-            });
+            builder.year_style = match year {
+                field::Year::Numeric => Some(YearStyle::Full),
+                field::Year::TwoDigit => Some(YearStyle::Auto),
+                _ => None,
+            };
         }
 
-        let is_long = matches!(bag.month, Some(field::Month::Long))
+        let is_long = matches!(bag.year, Some(field::Year::CyclicLong))
+            || matches!(bag.month, Some(field::Month::Long))
             || matches!(bag.weekday, Some(field::Weekday::Long))
             || matches!(bag.era, Some(field::Era::Long))
             || matches!(bag.day_period, Some(field::DayPeriod::Long));
-        let is_short_name = matches!(bag.month, Some(field::Month::Short | field::Month::Narrow))
-            || matches!(
-                bag.weekday,
-                Some(field::Weekday::Abbreviated | field::Weekday::Short | field::Weekday::Narrow)
-            )
-            || matches!(bag.era, Some(field::Era::Short | field::Era::Narrow))
+        let is_short_name = matches!(
+            bag.year,
+            Some(field::Year::CyclicAbbreviated | field::Year::CyclicNarrow)
+        ) || matches!(
+            bag.month,
+            Some(field::Month::Short | field::Month::Narrow)
+        ) || matches!(
+            bag.weekday,
+            Some(field::Weekday::Abbreviated | field::Weekday::Short | field::Weekday::Narrow)
+        ) || matches!(bag.era, Some(field::Era::Short | field::Era::Narrow))
             || matches!(
                 bag.day_period,
                 Some(field::DayPeriod::Short | field::DayPeriod::Narrow)

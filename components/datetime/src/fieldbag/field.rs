@@ -23,10 +23,16 @@ pub enum Era {
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum Year {
-    /// Numeric year, such as "2026".
+    /// Numeric calendar year, such as "2026".
     Numeric,
-    /// Two-digit year, such as "26".
+    /// Two-digit calendar year, such as "26".
     TwoDigit,
+    /// Abbreviated cyclic year name, such as "甲子".
+    CyclicAbbreviated,
+    /// Long cyclic year name.
+    CyclicLong,
+    /// Narrow cyclic year name.
+    CyclicNarrow,
 }
 
 /// Options for formatting the month.

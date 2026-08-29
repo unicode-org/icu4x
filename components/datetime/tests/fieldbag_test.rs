@@ -76,8 +76,20 @@ fn test_errors() {
         DateTimeFieldBagParseError::InvalidSymbol('l')
     );
     assert_eq!(
+        DateTimeFieldBagWithPreferences::try_from_skeleton("u").unwrap_err(),
+        DateTimeFieldBagParseError::InvalidSymbol('u')
+    );
+    assert_eq!(
+        DateTimeFieldBagWithPreferences::try_from_skeleton("uu").unwrap_err(),
+        DateTimeFieldBagParseError::InvalidSymbol('u')
+    );
+    assert_eq!(
         DateTimeFieldBagWithPreferences::try_from_skeleton("GGGGGG").unwrap_err(),
         DateTimeFieldBagParseError::InvalidLength('G', 6)
+    );
+    assert_eq!(
+        DateTimeFieldBagWithPreferences::try_from_skeleton("UUUUUU").unwrap_err(),
+        DateTimeFieldBagParseError::InvalidLength('U', 6)
     );
     assert_eq!(
         DateTimeFieldBagWithPreferences::try_from_skeleton("ddd").unwrap_err(),
@@ -86,6 +98,10 @@ fn test_errors() {
     assert_eq!(
         DateTimeFieldBagWithPreferences::try_from_skeleton("yMyM").unwrap_err(),
         DateTimeFieldBagParseError::DuplicateSymbol('y')
+    );
+    assert_eq!(
+        DateTimeFieldBagWithPreferences::try_from_skeleton("yU").unwrap_err(),
+        DateTimeFieldBagParseError::DuplicateSymbol('U')
     );
 }
 
@@ -374,11 +390,21 @@ fn test_weekday_and_year_symbols() {
         assert_eq!(bag.bag.weekday, Some(field::Weekday::Narrow));
     }
 
-    // Year variations
-    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("u").unwrap();
+    // Year variations (calendar year)
+    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("y").unwrap();
     assert_eq!(bag.bag.year, Some(field::Year::Numeric));
-    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("uu").unwrap();
+    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("yy").unwrap();
     assert_eq!(bag.bag.year, Some(field::Year::TwoDigit));
-    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("uuuu").unwrap();
+    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("yyyy").unwrap();
     assert_eq!(bag.bag.year, Some(field::Year::Numeric));
+
+    // Cyclic year variations
+    for sk in ["U", "UU", "UUU"] {
+        let bag = DateTimeFieldBagWithPreferences::try_from_skeleton(sk).unwrap();
+        assert_eq!(bag.bag.year, Some(field::Year::CyclicAbbreviated));
+    }
+    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("UUUU").unwrap();
+    assert_eq!(bag.bag.year, Some(field::Year::CyclicLong));
+    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("UUUUU").unwrap();
+    assert_eq!(bag.bag.year, Some(field::Year::CyclicNarrow));
 }
