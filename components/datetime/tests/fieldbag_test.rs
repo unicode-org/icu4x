@@ -50,6 +50,31 @@ fn test_errors() {
         DateTimeFieldBagWithPreferences::try_from_skeleton("yMMMdX").unwrap_err(),
         DateTimeFieldBagParseError::InvalidSymbol('X')
     );
+    // Forbidden in skeletons per UTS 35:
+    assert_eq!(
+        DateTimeFieldBagWithPreferences::try_from_skeleton("L").unwrap_err(),
+        DateTimeFieldBagParseError::InvalidSymbol('L')
+    );
+    assert_eq!(
+        DateTimeFieldBagWithPreferences::try_from_skeleton("c").unwrap_err(),
+        DateTimeFieldBagParseError::InvalidSymbol('c')
+    );
+    assert_eq!(
+        DateTimeFieldBagWithPreferences::try_from_skeleton("q").unwrap_err(),
+        DateTimeFieldBagParseError::InvalidSymbol('q')
+    );
+    assert_eq!(
+        DateTimeFieldBagWithPreferences::try_from_skeleton("r").unwrap_err(),
+        DateTimeFieldBagParseError::InvalidSymbol('r')
+    );
+    assert_eq!(
+        DateTimeFieldBagWithPreferences::try_from_skeleton("Y").unwrap_err(),
+        DateTimeFieldBagParseError::InvalidSymbol('Y')
+    );
+    assert_eq!(
+        DateTimeFieldBagWithPreferences::try_from_skeleton("l").unwrap_err(),
+        DateTimeFieldBagParseError::InvalidSymbol('l')
+    );
     assert_eq!(
         DateTimeFieldBagWithPreferences::try_from_skeleton("GGGGGG").unwrap_err(),
         DateTimeFieldBagParseError::InvalidLength('G', 6)
@@ -138,6 +163,43 @@ fn test_hour_cycles() {
         },
         TestCase {
             skeleton: "jj",
+            expected_hour: Some(field::Hour::TwoDigit),
+            expected_day_period: None,
+            expected_hour_cycle: None,
+        },
+        TestCase {
+            skeleton: "jjj",
+            expected_hour: Some(field::Hour::Numeric),
+            expected_day_period: None,
+            expected_hour_cycle: None,
+        },
+        TestCase {
+            skeleton: "jjjj",
+            expected_hour: Some(field::Hour::TwoDigit),
+            expected_day_period: None,
+            expected_hour_cycle: None,
+        },
+        TestCase {
+            skeleton: "jjjjj",
+            expected_hour: Some(field::Hour::Numeric),
+            expected_day_period: None,
+            expected_hour_cycle: None,
+        },
+        TestCase {
+            skeleton: "jjjjjj",
+            expected_hour: Some(field::Hour::TwoDigit),
+            expected_day_period: None,
+            expected_hour_cycle: None,
+        },
+        // 'J': locale-preferred hour cycle without day period
+        TestCase {
+            skeleton: "J",
+            expected_hour: Some(field::Hour::Numeric),
+            expected_day_period: None,
+            expected_hour_cycle: None,
+        },
+        TestCase {
+            skeleton: "JJ",
             expected_hour: Some(field::Hour::TwoDigit),
             expected_day_period: None,
             expected_hour_cycle: None,
@@ -290,4 +352,29 @@ fn test_zones_and_subseconds() {
         bag.bag.time_zone_name,
         Some(field::TimeZoneName::LongGeneric)
     );
+}
+
+#[test]
+fn test_weekday_and_year_symbols() {
+    // Weekday variations
+    for sk in ["E", "EE", "EEE", "EEEEEE", "eee", "eeeeee"] {
+        let bag = DateTimeFieldBagWithPreferences::try_from_skeleton(sk).unwrap();
+        assert_eq!(bag.bag.weekday, Some(field::Weekday::Short));
+    }
+    for sk in ["EEEE", "eeee"] {
+        let bag = DateTimeFieldBagWithPreferences::try_from_skeleton(sk).unwrap();
+        assert_eq!(bag.bag.weekday, Some(field::Weekday::Long));
+    }
+    for sk in ["EEEEE", "eeeee"] {
+        let bag = DateTimeFieldBagWithPreferences::try_from_skeleton(sk).unwrap();
+        assert_eq!(bag.bag.weekday, Some(field::Weekday::Narrow));
+    }
+
+    // Year variations
+    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("u").unwrap();
+    assert_eq!(bag.bag.year, Some(field::Year::Numeric));
+    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("uu").unwrap();
+    assert_eq!(bag.bag.year, Some(field::Year::TwoDigit));
+    let bag = DateTimeFieldBagWithPreferences::try_from_skeleton("uuuu").unwrap();
+    assert_eq!(bag.bag.year, Some(field::Year::Numeric));
 }

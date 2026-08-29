@@ -9,14 +9,6 @@ pub use crate::options::SubsecondDigits as Subsecond;
 
 /// Options for formatting the era.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(
-    all(feature = "serde", feature = "unstable"),
-    derive(serde::Serialize, serde::Deserialize)
-)]
-#[cfg_attr(
-    all(feature = "serde", feature = "unstable"),
-    serde(rename_all = "kebab-case")
-)]
 #[non_exhaustive]
 pub enum Era {
     /// Short era name, such as "AD" or "BC".
@@ -29,14 +21,6 @@ pub enum Era {
 
 /// Options for formatting the year.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(
-    all(feature = "serde", feature = "unstable"),
-    derive(serde::Serialize, serde::Deserialize)
-)]
-#[cfg_attr(
-    all(feature = "serde", feature = "unstable"),
-    serde(rename_all = "kebab-case")
-)]
 #[non_exhaustive]
 pub enum Year {
     /// Numeric year, such as "2026".
@@ -47,14 +31,6 @@ pub enum Year {
 
 /// Options for formatting the month.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(
-    all(feature = "serde", feature = "unstable"),
-    derive(serde::Serialize, serde::Deserialize)
-)]
-#[cfg_attr(
-    all(feature = "serde", feature = "unstable"),
-    serde(rename_all = "kebab-case")
-)]
 #[non_exhaustive]
 pub enum Month {
     /// Numeric month, such as "8" or "12".
@@ -71,14 +47,6 @@ pub enum Month {
 
 /// Options for formatting the day of month.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(
-    all(feature = "serde", feature = "unstable"),
-    derive(serde::Serialize, serde::Deserialize)
-)]
-#[cfg_attr(
-    all(feature = "serde", feature = "unstable"),
-    serde(rename_all = "kebab-case")
-)]
 #[non_exhaustive]
 pub enum Day {
     /// Numeric day, such as "1" or "28".
@@ -89,14 +57,6 @@ pub enum Day {
 
 /// Options for formatting the day of week.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(
-    all(feature = "serde", feature = "unstable"),
-    derive(serde::Serialize, serde::Deserialize)
-)]
-#[cfg_attr(
-    all(feature = "serde", feature = "unstable"),
-    serde(rename_all = "kebab-case")
-)]
 #[non_exhaustive]
 pub enum Weekday {
     /// Short weekday name, such as "Fri".
@@ -109,14 +69,6 @@ pub enum Weekday {
 
 /// Options for formatting the day period.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(
-    all(feature = "serde", feature = "unstable"),
-    derive(serde::Serialize, serde::Deserialize)
-)]
-#[cfg_attr(
-    all(feature = "serde", feature = "unstable"),
-    serde(rename_all = "kebab-case")
-)]
 #[non_exhaustive]
 pub enum DayPeriod {
     /// Short day period, such as "AM" or "PM".
@@ -129,14 +81,6 @@ pub enum DayPeriod {
 
 /// Options for formatting the hour.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(
-    all(feature = "serde", feature = "unstable"),
-    derive(serde::Serialize, serde::Deserialize)
-)]
-#[cfg_attr(
-    all(feature = "serde", feature = "unstable"),
-    serde(rename_all = "kebab-case")
-)]
 #[non_exhaustive]
 pub enum Hour {
     /// Numeric hour, such as "9" or "14".
@@ -147,14 +91,6 @@ pub enum Hour {
 
 /// Options for formatting the minute.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(
-    all(feature = "serde", feature = "unstable"),
-    derive(serde::Serialize, serde::Deserialize)
-)]
-#[cfg_attr(
-    all(feature = "serde", feature = "unstable"),
-    serde(rename_all = "kebab-case")
-)]
 #[non_exhaustive]
 pub enum Minute {
     /// Numeric minute, such as "5" or "36".
@@ -165,14 +101,6 @@ pub enum Minute {
 
 /// Options for formatting the second.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(
-    all(feature = "serde", feature = "unstable"),
-    derive(serde::Serialize, serde::Deserialize)
-)]
-#[cfg_attr(
-    all(feature = "serde", feature = "unstable"),
-    serde(rename_all = "kebab-case")
-)]
 #[non_exhaustive]
 pub enum Second {
     /// Numeric second, such as "5" or "30".
@@ -183,14 +111,6 @@ pub enum Second {
 
 /// Options for formatting the time zone name.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(
-    all(feature = "serde", feature = "unstable"),
-    derive(serde::Serialize, serde::Deserialize)
-)]
-#[cfg_attr(
-    all(feature = "serde", feature = "unstable"),
-    serde(rename_all = "kebab-case")
-)]
 #[non_exhaustive]
 pub enum TimeZoneName {
     /// Short specific non-location format, such as "PDT".

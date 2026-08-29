@@ -122,7 +122,7 @@ impl DateTimeFieldBagWithPreferences {
                         _ => field::Year::Numeric,
                     });
                 }
-                'M' | 'L' => {
+                'M' => {
                     if bag.month.is_some() {
                         return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
                     }
@@ -145,18 +145,28 @@ impl DateTimeFieldBagWithPreferences {
                         _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
                     });
                 }
-                'E' | 'c' | 'e' => {
+                'E' | 'e' => {
                     if bag.weekday.is_some() {
                         return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
                     }
                     bag.weekday = Some(match count {
-                        1..=3 => field::Weekday::Short,
+                        1..=3 | 6 => field::Weekday::Short,
                         4 => field::Weekday::Long,
                         5 => field::Weekday::Narrow,
                         _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
                     });
                 }
                 'j' => {
+                    if bag.hour.is_some() {
+                        return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
+                    }
+                    bag.hour = Some(match count {
+                        1 | 3 | 5 => field::Hour::Numeric,
+                        2 | 4 | 6 => field::Hour::TwoDigit,
+                        _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
+                    });
+                }
+                'J' => {
                     if bag.hour.is_some() {
                         return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
                     }
