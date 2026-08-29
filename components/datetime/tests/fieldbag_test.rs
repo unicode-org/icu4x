@@ -357,7 +357,11 @@ fn test_zones_and_subseconds() {
 #[test]
 fn test_weekday_and_year_symbols() {
     // Weekday variations
-    for sk in ["E", "EE", "EEE", "EEEEEE", "eee", "eeeeee"] {
+    for sk in ["E", "EE", "EEE", "eee"] {
+        let bag = DateTimeFieldBagWithPreferences::try_from_skeleton(sk).unwrap();
+        assert_eq!(bag.bag.weekday, Some(field::Weekday::Abbreviated));
+    }
+    for sk in ["EEEEEE", "eeeeee"] {
         let bag = DateTimeFieldBagWithPreferences::try_from_skeleton(sk).unwrap();
         assert_eq!(bag.bag.weekday, Some(field::Weekday::Short));
     }

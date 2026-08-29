@@ -59,7 +59,9 @@ pub enum Day {
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum Weekday {
-    /// Short weekday name, such as "Fri".
+    /// Abbreviated weekday name, such as "Fri".
+    Abbreviated,
+    /// Short weekday name, such as "Fr".
     Short,
     /// Long weekday name, such as "Friday".
     Long,

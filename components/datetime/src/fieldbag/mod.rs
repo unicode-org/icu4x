@@ -150,9 +150,10 @@ impl DateTimeFieldBagWithPreferences {
                         return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
                     }
                     bag.weekday = Some(match count {
-                        1..=3 | 6 => field::Weekday::Short,
+                        1..=3 => field::Weekday::Abbreviated,
                         4 => field::Weekday::Long,
                         5 => field::Weekday::Narrow,
+                        6 => field::Weekday::Short,
                         _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
                     });
                 }
@@ -371,7 +372,7 @@ impl FieldSetBuilder {
         let is_short_name = matches!(bag.month, Some(field::Month::Short | field::Month::Narrow))
             || matches!(
                 bag.weekday,
-                Some(field::Weekday::Short | field::Weekday::Narrow)
+                Some(field::Weekday::Abbreviated | field::Weekday::Short | field::Weekday::Narrow)
             )
             || matches!(bag.era, Some(field::Era::Short | field::Era::Narrow))
             || matches!(
