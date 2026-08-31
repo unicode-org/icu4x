@@ -130,7 +130,7 @@ pub mod preferences {
 /// );
 /// assert_writeable_eq!(
 ///     relative_time_formatter.format(Decimal::from(-15i8)),
-///     "১৫ বছর পূর্বে"
+///     "১৫ বছর আগে"
 /// );
 /// ```
 #[derive(Debug)]

@@ -340,6 +340,10 @@
               "short": "HHmm"
             },
             "dateTimeFormats": {
+              "numericSeparators": {
+                "numericDateSeparator": ".",
+                "numericTimeSeparator": ":"
+              },
               "full": "{1} {0}",
               "long": "{1} {0}",
               "medium": "{1} {0}",
@@ -350,7 +354,7 @@
                 "Bhms": "B h:mm:ss",
                 "d": "d",
                 "E": "ccc",
-                "EBh": "E h B",
+                "EBh": "E B h",
                 "EBhm": "E B h:mm",
                 "EBhms": "E B h:mm:ss",
                 "Ed": "d E",
@@ -360,12 +364,15 @@
                 "Ehms": "E a h:mm:ss",
                 "EHms": "E HH:mm:ss",
                 "Gy": "G y",
-                "GyM": "MM/y G",
-                "GyMd": "G dd.MM.y",
-                "GyMEd": "G dd.MM.y E",
+                "GyM": "G M/y",
+                "GyMd": "G d.M.y",
+                "GyMEd": "G d.M.y E",
                 "GyMMM": "G MMM y",
                 "GyMMMd": "G d MMM y",
                 "GyMMMEd": "G d MMM y E",
+                "GyMMMM": "G MMMM y",
+                "GyMMMMd": "G d MMMM y",
+                "GyMMMMEd": "G d MMMM y E",
                 "h": "a h",
                 "H": "HH",
                 "hm": "a h:mm",
@@ -376,7 +383,7 @@
                 "Hmsv": "HH:mm:ss v",
                 "hmv": "a h:mm v",
                 "Hmv": "HH:mm v",
-                "hv": "h a v",
+                "hv": "a h v",
                 "Hv": "HH v",
                 "M": "L",
                 "Md": "d/M",
@@ -392,19 +399,22 @@
                 "ms": "mm:ss",
                 "y": "y",
                 "yM": "MM/y",
-                "yMd": "dd.MM.y",
+                "yMd": "d.M.y",
                 "yMEd": "d.M.y E",
                 "yMM": "MM.y",
                 "yMMM": "MMM y",
                 "yMMMd": "d MMM y",
                 "yMMMEd": "d MMM y E",
                 "yMMMM": "MMMM y",
+                "yMMMMd": "d MMMM y",
+                "yMMMMEd": "d MMMM y E",
                 "yQQQ": "y QQQ",
                 "yQQQQ": "y QQQQ",
                 "yw-count-one": "Y 'yılının' w. 'haftası'",
                 "yw-count-other": "Y 'yılının' w. 'haftası'"
               },
               "appendItems": {
+                "Date-Timezone": "{0} {1}",
                 "Day": "{0} ({2}: {1})",
                 "Day-Of-Week": "{0} {1}",
                 "Era": "{1} {0}",
@@ -413,11 +423,17 @@
                 "Month": "{0} ({2}: {1})",
                 "Quarter": "{0} ({2}: {1})",
                 "Second": "{0} ({2}: {1})",
+                "Time-Day-Of-Week": "{1} {0}",
                 "Timezone": "{0} {1}",
                 "Week": "{0} ({2}: {1})",
                 "Year": "{1} {0}"
               },
               "intervalFormats": {
+                "intervalFormatRanges": {
+                  "mixed": "{0} – {1}",
+                  "non-numeric": "{0}–{1}",
+                  "numeric": "{0}–{1}"
+                },
                 "intervalFormatFallback": "{0} – {1}",
                 "Bh": {
                   "B": "B h – B h",
@@ -486,7 +502,7 @@
                   "m": "HH:mm–HH:mm"
                 },
                 "hmv": {
-                  "a": "a h:mm – a h:mm v",
+                  "a": "a h:mm–a h:mm v",
                   "h": "a h:mm–h:mm v",
                   "m": "a h:mm–h:mm v"
                 },
@@ -495,7 +511,7 @@
                   "m": "HH:mm–HH:mm v"
                 },
                 "hv": {
-                  "a": "a h – a h v",
+                  "a": "a h–a h v",
                   "h": "a h–h v"
                 },
                 "Hv": {
@@ -522,6 +538,10 @@
                 "MMMEd": {
                   "d": "d MMM E – d MMM E",
                   "M": "d MMM E – d MMM E"
+                },
+                "MMMMd": {
+                  "d": "d – d MMMM",
+                  "M": "d MMMM – d MMMM"
                 },
                 "y": {
                   "y": "y–y"

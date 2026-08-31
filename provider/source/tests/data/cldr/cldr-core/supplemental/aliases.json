@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "16.0.0",
-      "_cldrVersion": "48"
+      "_cldrVersion": "49"
     },
     "metadata": {
       "alias": {
@@ -462,10 +462,6 @@
           "fas": {
             "_reason": "overlong",
             "_replacement": "fa"
-          },
-          "fat": {
-            "_reason": "macrolanguage",
-            "_replacement": "ak"
           },
           "fij": {
             "_reason": "overlong",
@@ -1918,6 +1914,10 @@
           "ymt": {
             "_reason": "deprecated",
             "_replacement": "mtm"
+          },
+          "yol": {
+            "_reason": "deprecated",
+            "_replacement": "enm"
           },
           "yor": {
             "_reason": "overlong",

@@ -59,7 +59,7 @@ let datetime = DateTime {
 };
 let formatted_date = dtf.format(&datetime);
 
-assert_writeable_eq!(formatted_date, "15 de ene de 2025, 4:09 p. m.");
+assert_writeable_eq!(formatted_date, "15 de ene de 2025, 16:09");
 ```
 
 ## Binary Size Considerations

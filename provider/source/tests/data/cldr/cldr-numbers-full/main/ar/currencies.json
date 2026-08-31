@@ -238,7 +238,9 @@
           },
           "CHF": {
             "displayName": "فرنك سويسري",
-            "displayName-count-other": "فرنك سويسري"
+            "displayName-count-other": "فرنك سويسري",
+            "symbol": "CHF",
+            "symbol-alt-narrow": "Fr"
           },
           "CLP": {
             "displayName": "بيزو تشيلي",
@@ -594,8 +596,13 @@
             "symbol-alt-narrow": "₭"
           },
           "LBP": {
-            "displayName": "جنيه لبناني",
-            "displayName-count-other": "جنيه لبناني",
+            "displayName": "ليرة لبنانية",
+            "displayName-count-zero": "ليرة لبنانية",
+            "displayName-count-one": "ليرة لبنانية",
+            "displayName-count-two": "ليرة لبنانية",
+            "displayName-count-few": "ليرات لبنانية",
+            "displayName-count-many": "ليرة لبنانية",
+            "displayName-count-other": "ليرة لبنانية",
             "symbol": "ل.ل.‏",
             "symbol-alt-narrow": "L£"
           },
@@ -1181,11 +1188,6 @@
           },
           "XCG": {
             "displayName": "غيلدر كاريبي",
-            "displayName-count-zero": "غيلدر كاريبي",
-            "displayName-count-one": "غيلدر كاريبي",
-            "displayName-count-two": "غيلدر كاريبي",
-            "displayName-count-few": "غيلدر كاريبي",
-            "displayName-count-many": "غيلدر كاريبي",
             "displayName-count-other": "غيلدر كاريبي",
             "symbol": "Cg."
           },
@@ -1286,11 +1288,6 @@
           },
           "ZWG": {
             "displayName": "ذهب زيمبابوي",
-            "displayName-count-zero": "ذهب زيمبابوي",
-            "displayName-count-one": "ذهب زيمبابوي",
-            "displayName-count-two": "ذهب زيمبابوي",
-            "displayName-count-few": "ذهب زيمبابوي",
-            "displayName-count-many": "ذهب زيمبابوي",
             "displayName-count-other": "ذهب زيمبابوي"
           },
           "ZWL": {

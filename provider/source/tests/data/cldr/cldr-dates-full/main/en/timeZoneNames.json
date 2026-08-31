@@ -8,8 +8,10 @@
         "timeZoneNames": {
           "hourFormat": "+HH:mm;-HH:mm",
           "gmtFormat": "GMT{0}",
-          "gmtZeroFormat": "GMT",
+          "gmtFormat-alt-utc": "UTC{0}",
           "gmtUnknownFormat": "GMT+?",
+          "gmtUnknownFormat-alt-utc": "UTC+?",
+          "dualOffsetFormat": "{0}/{1}",
           "regionFormat": "{0} Time",
           "regionFormat-type-daylight": "{0} Daylight Time",
           "regionFormat-type-standard": "{0} Standard Time",
@@ -38,18 +40,6 @@
               "Busingen": {
                 "_type": "zone",
                 "exemplarCity": "Büsingen"
-              },
-              "London": {
-                "_type": "zone",
-                "long": {
-                  "daylight": "British Summer Time"
-                }
-              },
-              "Dublin": {
-                "_type": "zone",
-                "long": {
-                  "daylight": "Irish Standard Time"
-                }
               },
               "Chisinau": {
                 "_type": "zone",
@@ -498,13 +488,6 @@
                 "daylight": "AKDT"
               }
             },
-            "Almaty": {
-              "long": {
-                "generic": "Almaty Time",
-                "standard": "Almaty Standard Time",
-                "daylight": "Almaty Summer Time"
-              }
-            },
             "Amazon": {
               "long": {
                 "generic": "Amazon Time",
@@ -569,23 +552,9 @@
             },
             "Apia": {
               "long": {
-                "generic": "Samoa Time",
-                "standard": "Samoa Standard Time",
-                "daylight": "Samoa Daylight Time"
-              }
-            },
-            "Aqtau": {
-              "long": {
-                "generic": "Aqtau Time",
-                "standard": "Aqtau Standard Time",
-                "daylight": "Aqtau Summer Time"
-              }
-            },
-            "Aqtobe": {
-              "long": {
-                "generic": "Aqtobe Time",
-                "standard": "Aqtobe Standard Time",
-                "daylight": "Aqtobe Summer Time"
+                "generic": "West Samoa Time",
+                "standard": "West Samoa Standard Time",
+                "daylight": "West Samoa Daylight Time"
               }
             },
             "Arabian": {
@@ -692,6 +661,13 @@
                 "generic": "Brasilia Time",
                 "standard": "Brasilia Standard Time",
                 "daylight": "Brasilia Summer Time"
+              }
+            },
+            "British": {
+              "long": {
+                "generic": "British Time",
+                "standard": "Greenwich Mean Time",
+                "daylight": "British Summer Time"
               }
             },
             "Brunei": {
@@ -842,7 +818,7 @@
             },
             "French_Southern": {
               "long": {
-                "standard": "French Southern & Antarctic Time"
+                "standard": "French Southern Territories Time"
               }
             },
             "Galapagos": {
@@ -896,11 +872,6 @@
                 "daylight": "West Greenland Summer Time"
               }
             },
-            "Guam": {
-              "long": {
-                "standard": "Guam Standard Time"
-              }
-            },
             "Gulf": {
               "long": {
                 "standard": "Gulf Standard Time"
@@ -913,7 +884,7 @@
             },
             "Hawaii": {
               "long": {
-                "standard": "Hawaii-Aleutian Standard Time"
+                "standard": "Hawaii Time"
               },
               "short": {
                 "standard": "HST"
@@ -980,6 +951,13 @@
                 "generic": "Iran Time",
                 "standard": "Iran Standard Time",
                 "daylight": "Iran Daylight Time"
+              }
+            },
+            "Irish": {
+              "long": {
+                "generic": "Irish Time",
+                "standard": "Greenwich Mean Time",
+                "daylight": "Irish Standard Time"
               }
             },
             "Irkutsk": {
@@ -1049,11 +1027,6 @@
                 "standard": "Kyrgyzstan Time"
               }
             },
-            "Lanka": {
-              "long": {
-                "standard": "Lanka Time"
-              }
-            },
             "Line_Islands": {
               "long": {
                 "standard": "Line Islands Time"
@@ -1064,13 +1037,6 @@
                 "generic": "Lord Howe Time",
                 "standard": "Lord Howe Standard Time",
                 "daylight": "Lord Howe Daylight Time"
-              }
-            },
-            "Macau": {
-              "long": {
-                "generic": "Macao Time",
-                "standard": "Macao Standard Time",
-                "daylight": "Macao Summer Time"
               }
             },
             "Magadan": {
@@ -1188,11 +1154,6 @@
                 "daylight": "Fernando de Noronha Summer Time"
               }
             },
-            "North_Mariana": {
-              "long": {
-                "standard": "Northern Mariana Islands Time"
-              }
-            },
             "Novosibirsk": {
               "long": {
                 "generic": "Novosibirsk Time",
@@ -1272,13 +1233,6 @@
                 "standard": "North Korea Time"
               }
             },
-            "Qyzylorda": {
-              "long": {
-                "generic": "Kyzylorda Time",
-                "standard": "Kyzylorda Standard Time",
-                "daylight": "Kyzylorda Summer Time"
-              }
-            },
             "Reunion": {
               "long": {
                 "standard": "Réunion Time"
@@ -1305,9 +1259,7 @@
             },
             "Samoa": {
               "long": {
-                "generic": "American Samoa Time",
-                "standard": "American Samoa Standard Time",
-                "daylight": "American Samoa Daylight Time"
+                "standard": "American Samoa Time"
               }
             },
             "Seychelles": {
@@ -1398,6 +1350,11 @@
                 "generic": "Uruguay Time",
                 "standard": "Uruguay Standard Time",
                 "daylight": "Uruguay Summer Time"
+              }
+            },
+            "Urumqi": {
+              "long": {
+                "standard": "Ürümqi Time"
               }
             },
             "Uzbekistan": {

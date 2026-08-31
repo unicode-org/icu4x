@@ -51,7 +51,8 @@
         "stricter-scope-number": {
           ",": "[,，﹐︐ ٫]",
           ".": "[.．․﹒ ｡]"
-        }
+        },
+        "datetime-type-digit-digit": " "
       }
     }
   }

@@ -190,11 +190,6 @@ macro_rules! collation_provider {
                 .collations;
 
             for (locale, parent) in required_overrides {
-                // TODO(CLDR49): Remove, https://unicode-org.atlassian.net/browse/CLDR-19386
-                if (locale, parent) == (&icu::locale::langid!("sr-Cyrl-ME"), &icu::locale::langid!("sr-ME")) {
-                    continue;
-                }
-
                 let locale = locale.into();
                 let parent = parent.into();
 

@@ -300,7 +300,9 @@
           "CHF": {
             "displayName": "franc suisse",
             "displayName-count-one": "franc suisse",
-            "displayName-count-other": "francs suisses"
+            "displayName-count-other": "francs suisses",
+            "symbol": "CHF",
+            "symbol-alt-narrow": "fr."
           },
           "CHW": {
             "displayName": "franc WIR",
@@ -1563,7 +1565,6 @@
           },
           "ZWG": {
             "displayName": "or du Zimbabwe",
-            "displayName-count-one": "or du Zimbabwe",
             "displayName-count-other": "or du Zimbabwe"
           },
           "ZWL": {

@@ -180,10 +180,10 @@
         "minimalPairs": {
           "pluralMinimalPairs-count-one": "{0} day",
           "pluralMinimalPairs-count-other": "{0} days",
-          "few": "Take the {0}rd right.",
           "one": "Take the {0}st right.",
-          "other": "Take the {0}th right.",
-          "two": "Take the {0}nd right."
+          "two": "Take the {0}nd right.",
+          "few": "Take the {0}rd right.",
+          "other": "Take the {0}th right."
         }
       }
     }

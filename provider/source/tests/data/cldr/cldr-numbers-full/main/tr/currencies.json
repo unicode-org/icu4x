@@ -279,7 +279,9 @@
           },
           "CHF": {
             "displayName": "İsviçre frangı",
-            "displayName-count-other": "İsviçre frangı"
+            "displayName-count-other": "İsviçre frangı",
+            "symbol": "CHF",
+            "symbol-alt-narrow": "Fr."
           },
           "CHW": {
             "displayName": "WIR Frangı",
@@ -302,11 +304,6 @@
           "CNH": {
             "displayName": "Çin yuanı (offshore)",
             "displayName-count-other": "Çin yuanı (offshore)"
-          },
-          "CNX": {
-            "displayName": "Çin Halk Cumhuriyeti Merkez Bankası Doları",
-            "displayName-count-one": "Çin Halk Cumhuriyeti Merkez Bankası doları",
-            "displayName-count-other": "Çin Halk Cumhuriyeti Merkez Bankası doları"
           },
           "CNY": {
             "displayName": "Çin yuanı",
@@ -1259,7 +1256,6 @@
           },
           "XCG": {
             "displayName": "Karayip guldeni",
-            "displayName-count-one": "Karayip guldeni",
             "displayName-count-other": "Karayip guldeni",
             "symbol": "Cg."
           },
@@ -1377,7 +1373,6 @@
           },
           "ZWG": {
             "displayName": "Zimbabve altını",
-            "displayName-count-one": "Zimbabve altını",
             "displayName-count-other": "Zimbabve altını"
           },
           "ZWL": {

@@ -592,10 +592,6 @@
       "Tibt",
       "CN"
     ],
-    "ady": [
-      "Cyrl",
-      "RU"
-    ],
     "adz": [
       "Latn",
       "PG"
@@ -3662,7 +3658,7 @@
     ],
     "bqv": [
       "Latn",
-      "CI"
+      "NG"
     ],
     "bqw": [
       "Latn",
@@ -4964,10 +4960,6 @@
       "Hans",
       "CN"
     ],
-    "ckb": [
-      "Arab",
-      "IQ"
-    ],
     "ckl": [
       "Latn",
       "NG"
@@ -5224,10 +5216,6 @@
       "Latn",
       "CA"
     ],
-    "cop": [
-      "Copt",
-      "EG"
-    ],
     "coq": [
       "Latn",
       "US"
@@ -5285,7 +5273,7 @@
       "PE"
     ],
     "cpx": [
-      "Latn",
+      "Hans",
       "CN"
     ],
     "cpy": [
@@ -8470,7 +8458,7 @@
     ],
     "gun": [
       "Latn",
-      "BR"
+      "PY"
     ],
     "guo": [
       "Latn",
@@ -9836,6 +9824,10 @@
       "Latn",
       "CM"
     ],
+    "isv": [
+      "Latn",
+      "001"
+    ],
     "itb": [
       "Latn",
       "PH"
@@ -10384,6 +10376,10 @@
       "Latn",
       "NG"
     ],
+    "juc": [
+      "Jurc",
+      "CN"
+    ],
     "jud": [
       "Latn",
       "CI"
@@ -10547,10 +10543,6 @@
     "kbc": [
       "Latn",
       "BR"
-    ],
-    "kbd": [
-      "Cyrl",
-      "RU"
     ],
     "kbe": [
       "Latn",
@@ -10847,10 +10839,6 @@
     "kei": [
       "Latn",
       "ID"
-    ],
-    "kek": [
-      "Latn",
-      "GT"
     ],
     "kel": [
       "Latn",
@@ -11163,10 +11151,6 @@
     "khz": [
       "Latn",
       "PG"
-    ],
-    "ki": [
-      "Latn",
-      "KE"
     ],
     "kia": [
       "Latn",
@@ -12143,10 +12127,6 @@
     "ksg": [
       "Latn",
       "SB"
-    ],
-    "ksh": [
-      "Latn",
-      "DE"
     ],
     "ksi": [
       "Latn",
@@ -13523,10 +13503,6 @@
     "llc": [
       "Latn",
       "GN"
-    ],
-    "lld": [
-      "Latn",
-      "IT"
     ],
     "lle": [
       "Latn",
@@ -15369,7 +15345,7 @@
       "VN"
     ],
     "mnp": [
-      "Latn",
+      "Hans",
       "CN"
     ],
     "mnq": [
@@ -18380,6 +18356,10 @@
       "Latn",
       "PE"
     ],
+    "och": [
+      "Seal",
+      "CN"
+    ],
     "oco": [
       "Latn",
       "GB"
@@ -19836,10 +19816,6 @@
       "Latn",
       "PH"
     ],
-    "prg": [
-      "Latn",
-      "PL"
-    ],
     "prh": [
       "Latn",
       "PH"
@@ -20123,10 +20099,6 @@
     "qub": [
       "Latn",
       "PE"
-    ],
-    "quc": [
-      "Latn",
-      "GT"
     ],
     "qud": [
       "Latn",
@@ -22427,10 +22399,6 @@
     "suy": [
       "Latn",
       "BR"
-    ],
-    "suz": [
-      "Deva",
-      "NP"
     ],
     "sva": [
       "Geor",
@@ -26017,7 +25985,7 @@
       "ID"
     ],
     "wsg": [
-      "Gong",
+      "Telu",
       "IN"
     ],
     "wsi": [
@@ -27560,10 +27528,6 @@
       "Latn",
       "US"
     ],
-    "yol": [
-      "Latn",
-      "IE"
-    ],
     "yom": [
       "Latn",
       "CD"
@@ -28500,13 +28464,6 @@
     ],
     [
       [
-        "Cyrl",
-        "TR"
-      ],
-      "kbd"
-    ],
-    [
-      [
         "Deva",
         "FJ"
       ],
@@ -28609,13 +28566,6 @@
         "MM"
       ],
       "kac"
-    ],
-    [
-      [
-        "Latn",
-        "RU"
-      ],
-      "krl"
     ],
     [
       [
@@ -28743,10 +28693,6 @@
       "xco",
       "UZ"
     ],
-    "Copt": [
-      "cop",
-      "EG"
-    ],
     "Cpmn": [
       "und",
       "CY"
@@ -28810,6 +28756,10 @@
     "Ital": [
       "ett",
       "IT"
+    ],
+    "Jurc": [
+      "juc",
+      "CN"
     ],
     "Kali": [
       "eky",
@@ -28951,6 +28901,10 @@
       "ctd",
       "MM"
     ],
+    "Pcun": [
+      "und",
+      "IQ"
+    ],
     "Perm": [
       "kv",
       "RU"
@@ -29003,6 +28957,10 @@
       "saz",
       "IN"
     ],
+    "Seal": [
+      "och",
+      "CN"
+    ],
     "Sgnw": [
       "ase",
       "US"
@@ -29026,10 +28984,6 @@
     "Soyo": [
       "cmg",
       "MN"
-    ],
-    "Sunu": [
-      "suz",
-      "NP"
     ],
     "Sylo": [
       "syl",

@@ -321,10 +321,9 @@ pub fn tzdb_data() -> AbstractFs {{
             AbstractFs::new_from_url(format!(
                 "https://raw.githubusercontent.com/unicode-org/cldr/refs/tags/release-{}/",
                 SourceDataProvider::TESTED_CLDR_TAG
+                    .replace(".0", "")
                     .replace(".", "-")
-                    .rsplit_once("-")
-                    .unwrap()
-                    .0
+                    .to_ascii_lowercase()
             ))
             .read_to_string(cldr_path)
             .expect(cldr_path),
