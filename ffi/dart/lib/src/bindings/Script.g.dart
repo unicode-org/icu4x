@@ -431,6 +431,10 @@ enum Script {
   tolongSiki,
   /// See the [Rust documentation for `TraditionalHanWithLatin`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html#associatedconstant.TraditionalHanWithLatin) for more information.
   traditionalHanWithLatin,
+  /// See the [Rust documentation for `ProtoCuneiform`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html#associatedconstant.ProtoCuneiform) for more information.
+  protoCuneiform,
+  /// See the [Rust documentation for `Seal`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html#associatedconstant.Seal) for more information.
+  seal,
   /// See the [Rust documentation for `Chisoi`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html#associatedconstant.Chisoi) for more information.
   chisoi;
 
@@ -862,6 +866,10 @@ enum Script {
         return 211;
       case traditionalHanWithLatin:
         return 212;
+      case protoCuneiform:
+        return 213;
+      case seal:
+        return 214;
       case chisoi:
         return 254;
     }

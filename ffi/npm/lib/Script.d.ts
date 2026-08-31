@@ -869,6 +869,14 @@ export class Script {
      */
     static TraditionalHanWithLatin : Script;
     /**
+     * See the [Rust documentation for `ProtoCuneiform`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html#associatedconstant.ProtoCuneiform) for more information.
+     */
+    static ProtoCuneiform : Script;
+    /**
+     * See the [Rust documentation for `Seal`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html#associatedconstant.Seal) for more information.
+     */
+    static Seal : Script;
+    /**
      * See the [Rust documentation for `Chisoi`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html#associatedconstant.Chisoi) for more information.
      */
     static Chisoi : Script;

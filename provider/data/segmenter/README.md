@@ -4,7 +4,7 @@
 
 Data for the `icu_segmenter` crate
 
-This data was generated with CLDR version 48.2.1, ICU version release-78.1rc, and
+This data was generated with CLDR version 48.2.1, ICU version icu4x/2026-08-31/79.x, and
 LSTM segmenter version v0.1.0.
 
 <!-- cargo-rdme end -->

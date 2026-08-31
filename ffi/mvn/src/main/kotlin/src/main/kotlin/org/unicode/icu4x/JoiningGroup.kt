@@ -122,7 +122,17 @@ enum class JoiningGroup {
     ThinYeh,
     VerticalTail,
     KashmiriYeh,
-    ThinNoon;
+    ThinNoon,
+    CrownAin,
+    CrownBeh,
+    CrownFeh,
+    CrownHah,
+    CrownHeh,
+    CrownKaf,
+    CrownMeem,
+    CrownSad,
+    CrownSeen,
+    CrownTah;
 
     fun toNative(): Int {
         return this.ordinal

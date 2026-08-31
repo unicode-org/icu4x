@@ -391,6 +391,13 @@ inline icu4x::Block icu4x::Block::FromFFI(icu4x::capi::Block c_enum) {
         case icu4x::capi::Block_TaiYo:
         case icu4x::capi::Block_TangutComponentsSupplement:
         case icu4x::capi::Block_TolongSiki:
+        case icu4x::capi::Block_ArchaicCuneiformNumerals:
+        case icu4x::capi::Block_BengaliSupplement:
+        case icu4x::capi::Block_Jurchen:
+        case icu4x::capi::Block_JurchenRadicals:
+        case icu4x::capi::Block_MiscellaneousSymbolsAndArrowsExtended:
+        case icu4x::capi::Block_MusicalSymbolsSupplement:
+        case icu4x::capi::Block_Seal:
             return static_cast<icu4x::Block::Value>(c_enum);
         default:
             std::abort();

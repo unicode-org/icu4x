@@ -654,6 +654,16 @@ impl Block {
     pub const TangutComponentsSupplement: Self = Self(345);
     pub const TangutComponentsSup: Self = Self::TangutComponentsSupplement;
     pub const TolongSiki: Self = Self(346);
+    pub const ArchaicCuneiformNumerals: Self = Self(347);
+    pub const BengaliSupplement: Self = Self(348);
+    pub const BengaliSup: Self = Self::BengaliSupplement;
+    pub const Jurchen: Self = Self(349);
+    pub const JurchenRadicals: Self = Self(350);
+    pub const MiscellaneousSymbolsAndArrowsExtended: Self = Self(351);
+    pub const MiscArrowsExt: Self = Self::MiscellaneousSymbolsAndArrowsExtended;
+    pub const MusicalSymbolsSupplement: Self = Self(352);
+    pub const MusicSup: Self = Self::MusicalSymbolsSupplement;
+    pub const Seal: Self = Self(353);
 }
 
 #[cfg(feature = "datagen")]
@@ -1008,6 +1018,13 @@ impl databake::Bake for Block {
             Self::TaiYo => databake::quote!(icu_properties::props::Block::TaiYo),
             Self::TangutComponentsSupplement => databake::quote!(icu_properties::props::Block::TangutComponentsSupplement),
             Self::TolongSiki => databake::quote!(icu_properties::props::Block::TolongSiki),
+            Self::ArchaicCuneiformNumerals => databake::quote!(icu_properties::props::Block::ArchaicCuneiformNumerals),
+            Self::BengaliSupplement => databake::quote!(icu_properties::props::Block::BengaliSupplement),
+            Self::Jurchen => databake::quote!(icu_properties::props::Block::Jurchen),
+            Self::JurchenRadicals => databake::quote!(icu_properties::props::Block::JurchenRadicals),
+            Self::MiscellaneousSymbolsAndArrowsExtended => databake::quote!(icu_properties::props::Block::MiscellaneousSymbolsAndArrowsExtended),
+            Self::MusicalSymbolsSupplement => databake::quote!(icu_properties::props::Block::MusicalSymbolsSupplement),
+            Self::Seal => databake::quote!(icu_properties::props::Block::Seal),
             Self(v) => databake::quote!(icu_properties::props::Block(#v)),
         }
     }
@@ -1371,6 +1388,13 @@ impl Block {
         Self::TaiYo,
         Self::TangutComponentsSupplement,
         Self::TolongSiki,
+        Self::ArchaicCuneiformNumerals,
+        Self::BengaliSupplement,
+        Self::Jurchen,
+        Self::JurchenRadicals,
+        Self::MiscellaneousSymbolsAndArrowsExtended,
+        Self::MusicalSymbolsSupplement,
+        Self::Seal,
     ];
 
     #[cfg(feature = "datagen")]
@@ -1724,6 +1748,13 @@ impl Block {
             ("Tai_Yo", Self::TaiYo),
             ("Tangut_Components_Sup", Self::TangutComponentsSupplement),
             ("Tolong_Siki", Self::TolongSiki),
+            ("Archaic_Cuneiform_Numerals", Self::ArchaicCuneiformNumerals),
+            ("Bengali_Sup", Self::BengaliSupplement),
+            ("Jurchen", Self::Jurchen),
+            ("Jurchen_Radicals", Self::JurchenRadicals),
+            ("Misc_Arrows_Ext", Self::MiscellaneousSymbolsAndArrowsExtended),
+            ("Music_Sup", Self::MusicalSymbolsSupplement),
+            ("Seal", Self::Seal),
         ].into_iter()
     }
 }
@@ -2794,6 +2825,16 @@ impl JoiningGroup {
     pub const VerticalTail: Self = Self(103);
     pub const KashmiriYeh: Self = Self(104);
     pub const ThinNoon: Self = Self(105);
+    pub const CrownAin: Self = Self(106);
+    pub const CrownBeh: Self = Self(107);
+    pub const CrownFeh: Self = Self(108);
+    pub const CrownHah: Self = Self(109);
+    pub const CrownHeh: Self = Self(110);
+    pub const CrownKaf: Self = Self(111);
+    pub const CrownMeem: Self = Self(112);
+    pub const CrownSad: Self = Self(113);
+    pub const CrownSeen: Self = Self(114);
+    pub const CrownTah: Self = Self(115);
 }
 
 #[cfg(feature = "datagen")]
@@ -2907,6 +2948,16 @@ impl databake::Bake for JoiningGroup {
             Self::VerticalTail => databake::quote!(icu_properties::props::JoiningGroup::VerticalTail),
             Self::KashmiriYeh => databake::quote!(icu_properties::props::JoiningGroup::KashmiriYeh),
             Self::ThinNoon => databake::quote!(icu_properties::props::JoiningGroup::ThinNoon),
+            Self::CrownAin => databake::quote!(icu_properties::props::JoiningGroup::CrownAin),
+            Self::CrownBeh => databake::quote!(icu_properties::props::JoiningGroup::CrownBeh),
+            Self::CrownFeh => databake::quote!(icu_properties::props::JoiningGroup::CrownFeh),
+            Self::CrownHah => databake::quote!(icu_properties::props::JoiningGroup::CrownHah),
+            Self::CrownHeh => databake::quote!(icu_properties::props::JoiningGroup::CrownHeh),
+            Self::CrownKaf => databake::quote!(icu_properties::props::JoiningGroup::CrownKaf),
+            Self::CrownMeem => databake::quote!(icu_properties::props::JoiningGroup::CrownMeem),
+            Self::CrownSad => databake::quote!(icu_properties::props::JoiningGroup::CrownSad),
+            Self::CrownSeen => databake::quote!(icu_properties::props::JoiningGroup::CrownSeen),
+            Self::CrownTah => databake::quote!(icu_properties::props::JoiningGroup::CrownTah),
             Self(v) => databake::quote!(icu_properties::props::JoiningGroup(#v)),
         }
     }
@@ -3029,6 +3080,16 @@ impl JoiningGroup {
         Self::VerticalTail,
         Self::KashmiriYeh,
         Self::ThinNoon,
+        Self::CrownAin,
+        Self::CrownBeh,
+        Self::CrownFeh,
+        Self::CrownHah,
+        Self::CrownHeh,
+        Self::CrownKaf,
+        Self::CrownMeem,
+        Self::CrownSad,
+        Self::CrownSeen,
+        Self::CrownTah,
     ];
 
     #[cfg(feature = "datagen")]
@@ -3141,6 +3202,16 @@ impl JoiningGroup {
             ("Vertical_Tail", Self::VerticalTail),
             ("Kashmiri_Yeh", Self::KashmiriYeh),
             ("Thin_Noon", Self::ThinNoon),
+            ("Crown_Ain", Self::CrownAin),
+            ("Crown_Beh", Self::CrownBeh),
+            ("Crown_Feh", Self::CrownFeh),
+            ("Crown_Hah", Self::CrownHah),
+            ("Crown_Heh", Self::CrownHeh),
+            ("Crown_Kaf", Self::CrownKaf),
+            ("Crown_Meem", Self::CrownMeem),
+            ("Crown_Sad", Self::CrownSad),
+            ("Crown_Seen", Self::CrownSeen),
+            ("Crown_Tah", Self::CrownTah),
         ].into_iter()
     }
 }
@@ -3888,9 +3959,7 @@ impl Script {
     pub const Afaka: Self = Self(147);
     /// ISO 15924
     pub const Afak: Self = Self::Afaka;
-    /// ISO 15924
     pub const Jurchen: Self = Self(148);
-    /// ISO 15924
     pub const Jurc: Self = Self::Jurchen;
     pub const Mro: Self = Self(149);
     pub const Mroo: Self = Self::Mro;
@@ -4025,6 +4094,9 @@ impl Script {
     pub const TraditionalHanWithLatin: Self = Self(212);
     /// ISO 15924
     pub const Hntl: Self = Self::TraditionalHanWithLatin;
+    pub const ProtoCuneiform: Self = Self(213);
+    pub const Pcun: Self = Self::ProtoCuneiform;
+    pub const Seal: Self = Self(214);
 }
 
 #[cfg(feature = "datagen")]
@@ -4245,6 +4317,8 @@ impl databake::Bake for Script {
             Self::TaiYo => databake::quote!(icu_properties::props::Script::TaiYo),
             Self::TolongSiki => databake::quote!(icu_properties::props::Script::TolongSiki),
             Self::TraditionalHanWithLatin => databake::quote!(icu_properties::props::Script::TraditionalHanWithLatin),
+            Self::ProtoCuneiform => databake::quote!(icu_properties::props::Script::ProtoCuneiform),
+            Self::Seal => databake::quote!(icu_properties::props::Script::Seal),
             Self(v) => databake::quote!(icu_properties::props::Script(#v)),
         }
     }
@@ -4474,6 +4548,8 @@ impl Script {
         Self::TaiYo,
         Self::TolongSiki,
         Self::TraditionalHanWithLatin,
+        Self::ProtoCuneiform,
+        Self::Seal,
     ];
 
     #[cfg(feature = "datagen")]
@@ -4693,6 +4769,8 @@ impl Script {
             ("Tayo", Self::TaiYo),
             ("Tols", Self::TolongSiki),
             ("Hntl", Self::TraditionalHanWithLatin),
+            ("Pcun", Self::ProtoCuneiform),
+            ("Seal", Self::Seal),
         ].into_iter()
     }
 }

@@ -363,7 +363,14 @@ enum class Block {
     Sidetic,
     TaiYo,
     TangutComponentsSupplement,
-    TolongSiki;
+    TolongSiki,
+    ArchaicCuneiformNumerals,
+    BengaliSupplement,
+    Jurchen,
+    JurchenRadicals,
+    MiscellaneousSymbolsAndArrowsExtended,
+    MusicalSymbolsSupplement,
+    Seal;
 
     fun toNative(): Int {
         return this.ordinal
