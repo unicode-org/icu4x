@@ -14,9 +14,9 @@ use icu_provider::prelude::*;
 use crate::dimension::provider::units::pattern_key::PatternKey;
 
 icu_provider::data_marker!(
-   /// `UnitsEssentialsV1`
-   UnitsEssentialsV1,
-   UnitsEssentials<'static>
+    /// `UnitsEssentialsV1`
+    UnitsEssentialsV1,
+    UnitsEssentials<'static>
 );
 
 // TODO: use `Pattern`s instead of `str` for the patterns' string representations.
