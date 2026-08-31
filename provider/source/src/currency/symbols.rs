@@ -107,8 +107,8 @@ fn test_symbols() {
     use icu::locale::{DataLocale, data_locale};
     use tinystr::TinyAsciiStr;
 
-    let usd: CurrencyType = currency!("USD");
-    let egp: CurrencyType = currency!("EGP");
+    const USD: CurrencyType = currency!("USD");
+    const EGP: CurrencyType = currency!("EGP");
     const EN: DataLocale = data_locale!("en");
     const AR_EG: DataLocale = data_locale!("ar-EG");
 
@@ -132,35 +132,35 @@ fn test_symbols() {
     };
 
     assert_eq!(
-        load(EN, usd, CurrencySymbolsV1::SHORT).unwrap().get(),
+        load(EN, USD, CurrencySymbolsV1::SHORT).unwrap().get(),
         &CurrencySymbol::new("$", false, false)
     );
     assert_eq!(
-        load(EN, usd, CurrencySymbolsV1::NARROW).unwrap().get(),
+        load(EN, USD, CurrencySymbolsV1::NARROW).unwrap().get(),
         &CurrencySymbol::new("$", false, false)
     );
 
-    assert_eq!(load(EN, egp, CurrencySymbolsV1::SHORT), None);
+    assert_eq!(load(EN, EGP, CurrencySymbolsV1::SHORT), None);
     assert_eq!(
-        load(EN, egp, CurrencySymbolsV1::NARROW).unwrap().get(),
+        load(EN, EGP, CurrencySymbolsV1::NARROW).unwrap().get(),
         &CurrencySymbol::new("E£", true, false)
     );
 
     assert_eq!(
-        load(AR_EG, egp, CurrencySymbolsV1::SHORT).unwrap().get(),
+        load(AR_EG, EGP, CurrencySymbolsV1::SHORT).unwrap().get(),
         &CurrencySymbol::new("ج.م.\u{200f}", true, false)
     );
     assert_eq!(
-        load(AR_EG, egp, CurrencySymbolsV1::NARROW).unwrap().get(),
+        load(AR_EG, EGP, CurrencySymbolsV1::NARROW).unwrap().get(),
         &CurrencySymbol::new("E£", true, false)
     );
 
     assert_eq!(
-        load(AR_EG, usd, CurrencySymbolsV1::SHORT).unwrap().get(),
+        load(AR_EG, USD, CurrencySymbolsV1::SHORT).unwrap().get(),
         &CurrencySymbol::new("US$", true, false)
     );
     assert_eq!(
-        load(AR_EG, usd, CurrencySymbolsV1::NARROW).unwrap().get(),
+        load(AR_EG, USD, CurrencySymbolsV1::NARROW).unwrap().get(),
         &CurrencySymbol::new("US$", true, false)
     );
 }
