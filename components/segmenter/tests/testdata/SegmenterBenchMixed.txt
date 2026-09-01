@@ -1,0 +1,28 @@
+This benchmark text intentionally mixes ordinary Latin words with scripts that
+require complex segmentation. The goal is to exercise transitions into and out
+of dictionary-backed runs while keeping the text stable for performance graphs.
+
+ภาษาไทยภาษาไทยภาษาไทยภาษาไทย ภาษาไทยภาษาไทยภาษาไทยภาษาไทย
+こんにちは世界こんにちは世界こんにちは世界こんにちは世界
+中文分词需要词典中文分词需要词典中文分词需要词典中文分词需要词典
+
+Search indexing and tokenization often process paragraphs where English product
+names, numbers like 2026, Thai prose, Japanese text, and Han characters are
+adjacent without much punctuation. This paragraph repeats that shape so the
+segmenter has to traverse both non-complex and complex spans several times.
+
+ภาษาไทยภาษาไทยภาษาไทยภาษาไทย ภาษาไทยภาษาไทยภาษาไทยภาษาไทย
+Mixed Latin words before Thai ภาษาไทยภาษาไทย and after Thai text.
+日本語の文章こんにちは世界と漢字の並びを含む短い段落です。
+中文分词需要词典中文分词需要词典中文分词需要词典中文分词需要词典
+
+Another paragraph keeps the same scripts in a different order. English comes
+first, then ภาษาไทยภาษาไทย, then こんにちは世界, then 中文分词需要词典,
+and then English again. The repeated order makes this file long enough for
+allocation-sensitive benchmarks without depending on external data.
+
+ภาษาไทยภาษาไทยภาษาไทยภาษาไทย ภาษาไทยภาษาไทยภาษาไทยภาษาไทย
+こんにちは世界こんにちは世界こんにちは世界こんにちは世界
+中文分词需要词典中文分词需要词典中文分词需要词典中文分词需要词典
+Latin tail text closes the final complex run and gives the rule iterator one
+more transition back to a non-complex segment.

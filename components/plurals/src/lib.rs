@@ -1084,7 +1084,7 @@ impl<T> PluralElements<T> {
     /// # Example
     /// ```
     /// use icu::locale::locale;
-    /// use icu::plurals::{PluralCategory, PluralRules, PluralElements};
+    /// use icu::plurals::{PluralCategory, PluralElements, PluralRules};
     ///
     /// let rules = PluralRules::try_new_cardinal(locale!("fr").into()).unwrap();
     ///

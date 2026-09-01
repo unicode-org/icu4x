@@ -911,7 +911,7 @@ fn parse_hex(mut hexes: &[u8]) -> [String; 5] {
     let mut current = 0;
     loop {
         let (scalar, mut offset) = u32::from_radix_16(hexes);
-        let c = core::char::from_u32(scalar).unwrap();
+        let c = char::from_u32(scalar).unwrap();
         strings[current].push(c);
         match hexes[offset] {
             b';' => {

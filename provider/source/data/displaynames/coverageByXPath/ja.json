@@ -1,0 +1,35 @@
+{
+  "coverageByXPath": {
+    "ja": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"ja\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Jpan\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"JP\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"japanese\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"japanese\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"unihan\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"unihan\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"fullwide\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"fullwide\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"jpan\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"jpanfin\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"jpanfin\"][@scope=\"core\"]"
+      ],
+      "modern": [
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"compat\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"dictionary\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"phonebook\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"phonetic\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"pinyin\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"stroke\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"traditional\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"collation\"][@type=\"zhuyin\"]"
+      ]
+    }
+  }
+}

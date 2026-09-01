@@ -89,9 +89,9 @@ script = '''
 exit_on_error true
 
 if array_is_empty ${@}
-    exec --fail-on-error cargo run --manifest-path tools/make/bakeddata/Cargo.toml --release
+    exec --fail-on-error cargo run -m tools/make/bakeddata/Cargo.toml --release
 else
-    exec --fail-on-error cargo build --manifest-path tools/make/bakeddata/Cargo.toml
+    exec --fail-on-error cargo build -m tools/make/bakeddata/Cargo.toml
     for component in ${@}
         exec --fail-on-error target/debug/bakeddata "${component}"
     end

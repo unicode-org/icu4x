@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "16.0.0",
-      "_cldrVersion": "48"
+      "_cldrVersion": "49"
     },
     "plurals": {
       "af": {
@@ -568,6 +568,12 @@
         "pluralRange-start-other-end-one": "one",
         "pluralRange-start-other-end-other": "other"
       },
+      "tg": {
+        "pluralRange-start-one-end-one": "other",
+        "pluralRange-start-one-end-other": "other",
+        "pluralRange-start-other-end-one": "one",
+        "pluralRange-start-other-end-other": "other"
+      },
       "th": {
         "pluralRange-start-other-end-other": "other"
       },
@@ -615,6 +621,8 @@
         "pluralRange-start-other-end-other": "other"
       },
       "vi": {
+        "pluralRange-start-one-end-other": "other",
+        "pluralRange-start-other-end-one": "other",
         "pluralRange-start-other-end-other": "other"
       },
       "yue": {

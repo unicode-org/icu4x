@@ -3,15 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::complex::*;
-use crate::indices::{Latin1Indices, Utf16Indices};
+use crate::indices::*;
 use crate::provider::*;
-use crate::rule_segmenter::*;
-use alloc::string::String;
-use alloc::vec;
+use crate::rule_segmenter_v1::{ComplexRunSegmenter, result_cache_from_offsets};
+use crate::scaffold::*;
+#[cfg(test)]
 use alloc::vec::Vec;
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
-use utf8_iter::Utf8CharIndices;
 
 /// Options to tailor word breaking behavior.
 #[non_exhaustive]
@@ -67,18 +66,18 @@ pub struct WordBreakIterator<'data, 's, Y: RuleBreakType>(WordBreakIteratorInner
 
 #[derive(Debug)]
 enum WordBreakIteratorInner<'data, 's, Y: RuleBreakType> {
-    Legacy(RuleBreakIterator<'data, 's, Y>),
+    V1(crate::rule_segmenter_v1::RuleBreakIterator<'data, 's, Y>),
     #[cfg(feature = "unstable")]
-    Neo(crate::neo::RuleBreakIterator<'data, 's, Y, crate::neo::ComplexWord<Y>>),
+    V2(crate::rule_segmenter_v2::RuleBreakIterator<'data, 's, Y, ComplexWord<Y>>),
 }
 
 impl<Y: RuleBreakType> Iterator for WordBreakIterator<'_, '_, Y> {
     type Item = usize;
     fn next(&mut self) -> Option<Self::Item> {
         match self.0 {
-            WordBreakIteratorInner::Legacy(ref mut iter) => iter.next(),
+            WordBreakIteratorInner::V1(ref mut iter) => iter.next(),
             #[cfg(feature = "unstable")]
-            WordBreakIteratorInner::Neo(ref mut iter) => iter.next(),
+            WordBreakIteratorInner::V2(ref mut iter) => iter.next(),
         }
     }
 }
@@ -111,9 +110,9 @@ impl<'data, 's, Y: RuleBreakType> WordBreakIterator<'data, 's, Y> {
     #[inline]
     pub fn word_type(&self) -> WordType {
         let last_accepting_status = match self.0 {
-            WordBreakIteratorInner::Legacy(ref iter) => iter.rule_status(),
+            WordBreakIteratorInner::V1(ref iter) => iter.rule_status(),
             #[cfg(feature = "unstable")]
-            WordBreakIteratorInner::Neo(ref iter) => iter.last_accepting_status(),
+            WordBreakIteratorInner::V2(ref iter) => iter.last_accepting_status(),
         };
         match last_accepting_status {
             0 => WordType::None,
@@ -188,8 +187,8 @@ impl<Y: RuleBreakType> Iterator for WordBreakIteratorWithWordType<'_, '_, Y> {
 ///
 /// ```rust
 /// use icu::locale::langid;
-/// use icu::segmenter::options::WordBreakOptions;
 /// use icu::segmenter::WordSegmenter;
+/// use icu::segmenter::options::WordBreakOptions;
 ///
 /// let mut options = WordBreakOptions::default();
 /// let langid = &langid!("en");
@@ -248,13 +247,13 @@ pub struct WordSegmenter(WordSegmenterInner);
 
 #[derive(Debug)]
 enum WordSegmenterInner {
-    Legacy {
+    V1 {
         payload: DataPayload<SegmenterBreakWordV1>,
         complex: ComplexPayloads,
         payload_locale_override: Option<DataPayload<SegmenterBreakWordOverrideV1>>,
     },
     #[cfg(feature = "unstable")]
-    Neo {
+    V2 {
         payload: DataPayload<SegmenterBreakWordV2>,
         complex: ComplexPayloads,
     },
@@ -268,13 +267,13 @@ pub struct WordSegmenterBorrowed<'data>(WordSegmenterBorrowedInner<'data>);
 
 #[derive(Clone, Debug, Copy)]
 enum WordSegmenterBorrowedInner<'data> {
-    Legacy {
+    V1 {
         data: &'data RuleBreakData<'data>,
         complex: ComplexPayloadsBorrowed<'data>,
         locale_override: Option<&'data RuleBreakDataOverride<'data>>,
     },
     #[cfg(feature = "unstable")]
-    Neo {
+    V2 {
         data: &'data SegmenterStateMachine<'data>,
         complex: ComplexPayloadsBorrowed<'data>,
     },
@@ -296,7 +295,7 @@ impl WordSegmenter {
     /// Behavior with complex scripts:
     ///
     /// ```
-    /// use icu::segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
+    /// use icu::segmenter::{WordSegmenter, options::WordBreakInvariantOptions};
     ///
     /// let th_str = "ทุกสองสัปดาห์";
     /// let ja_str = "こんにちは世界";
@@ -313,14 +312,9 @@ impl WordSegmenter {
     #[cfg(feature = "compiled_data")]
     #[cfg(feature = "auto")]
     pub fn new_auto(_options: WordBreakInvariantOptions) -> WordSegmenterBorrowed<'static> {
-        let mut complex = ComplexPayloadsBorrowed::new();
-        complex.with_southeast_asian_lstms();
-        complex.with_japanese_dictionary();
-        WordSegmenterBorrowed(WordSegmenterBorrowedInner::Legacy {
-            data: Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
-            complex,
-            locale_override: None,
-        })
+        let mut s = Self::new_for_non_complex_scripts(_options);
+        s.load_auto();
+        s
     }
 
     #[cfg(feature = "auto")]
@@ -348,30 +342,9 @@ impl WordSegmenter {
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
-        let mut complex = ComplexPayloads::try_new(provider)?;
-        complex.with_southeast_asian_lstms(provider)?;
-        complex.with_japanese_dictionary(provider)?;
-        Ok(Self(WordSegmenterInner::Legacy {
-            payload: provider.load(Default::default())?.payload,
-            complex,
-            payload_locale_override: if let Some(locale) = options.content_locale {
-                let locale = DataLocale::from(locale);
-                let req = DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(&locale),
-                    metadata: {
-                        let mut metadata = DataRequestMetadata::default();
-                        metadata.silent = true;
-                        metadata
-                    },
-                };
-                provider
-                    .load(req)
-                    .allow_identifier_not_found()?
-                    .map(|r| r.payload)
-            } else {
-                None
-            },
-        }))
+        let mut s = Self::try_new_for_non_complex_scripts_unstable(provider, options)?;
+        s.load_auto_unstable(provider)?;
+        Ok(s)
     }
 
     /// Constructs a [`WordSegmenter`] with an invariant locale and compiled LSTM data for
@@ -392,7 +365,7 @@ impl WordSegmenter {
     /// Behavior with complex scripts:
     ///
     /// ```
-    /// use icu::segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
+    /// use icu::segmenter::{WordSegmenter, options::WordBreakInvariantOptions};
     ///
     /// let th_str = "ทุกสองสัปดาห์";
     /// let ja_str = "こんにちは世界";
@@ -460,7 +433,7 @@ impl WordSegmenter {
     /// Behavior with complex scripts:
     ///
     /// ```
-    /// use icu::segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
+    /// use icu::segmenter::{WordSegmenter, options::WordBreakInvariantOptions};
     ///
     /// let th_str = "ทุกสองสัปดาห์";
     /// let ja_str = "こんにちは世界";
@@ -519,7 +492,7 @@ impl WordSegmenter {
     pub const fn new_for_non_complex_scripts(
         _options: WordBreakInvariantOptions,
     ) -> WordSegmenterBorrowed<'static> {
-        WordSegmenterBorrowed(WordSegmenterBorrowedInner::Legacy {
+        WordSegmenterBorrowed(WordSegmenterBorrowedInner::V1 {
             data: Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
             complex: ComplexPayloadsBorrowed::new(),
             locale_override: None,
@@ -547,7 +520,7 @@ impl WordSegmenter {
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
-        Ok(Self(WordSegmenterInner::Legacy {
+        Ok(Self(WordSegmenterInner::V1 {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new(provider)?,
             payload_locale_override: if let Some(locale) = options.content_locale {
@@ -570,224 +543,6 @@ impl WordSegmenter {
         }))
     }
 
-    /// Constructs a [`WordSegmenter`] with an invariant locale and the best available compiled data for
-    /// complex scripts (Chinese, Japanese, Khmer, Lao, Myanmar, and Thai).
-    ///
-    /// The current behavior, which is subject to change, is to use the LSTM model when available
-    /// and the dictionary model for Chinese and Japanese.
-    ///
-    /// ✨ *Enabled with the `compiled_data` and `auto` Cargo features.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    ///
-    /// # Examples
-    ///
-    /// Behavior with complex scripts:
-    ///
-    /// ```
-    /// use icu::segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
-    ///
-    /// let th_str = "ทุกสองสัปดาห์";
-    /// let ja_str = "こんにちは世界";
-    ///
-    /// let segmenter =
-    ///     WordSegmenter::new_auto(WordBreakInvariantOptions::default());
-    ///
-    /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
-    /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
-    ///
-    /// assert_eq!(th_bps, [0, 9, 18, 39]);
-    /// assert_eq!(ja_bps, [0, 15, 21]);
-    /// ```
-    #[cfg(feature = "compiled_data")]
-    #[cfg(feature = "auto")]
-    #[cfg(feature = "unstable")]
-    pub fn new_neo_auto(_options: WordBreakInvariantOptions) -> WordSegmenterBorrowed<'static> {
-        let mut complex = ComplexPayloadsBorrowed::new_neo();
-        complex.with_southeast_asian_lstms();
-        complex.with_japanese_dictionary();
-        WordSegmenterBorrowed(WordSegmenterBorrowedInner::Neo {
-            data: Baked::SINGLETON_SEGMENTER_BREAK_WORD_V2,
-            complex,
-        })
-    }
-
-    #[cfg(feature = "auto")]
-    #[cfg(feature = "unstable")]
-    icu_provider::gen_buffer_data_constructors!(
-        (options: WordBreakOptions) -> error: DataError,
-        functions: [
-            try_new_neo_auto,
-            try_new_neo_auto_with_buffer_provider,
-            try_new_neo_auto_unstable,
-            Self
-        ]
-    );
-
-    #[cfg(feature = "auto")]
-    #[cfg(feature = "unstable")]
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_neo_auto)]
-    pub fn try_new_neo_auto_unstable<D>(
-        provider: &D,
-        _options: WordBreakOptions,
-    ) -> Result<Self, DataError>
-    where
-        D: DataProvider<SegmenterBreakWordV2>
-            + DataProvider<SegmenterDictionaryAutoV1>
-            + DataProvider<SegmenterLstmAutoV1>
-            + DataProvider<SegmenterBreakGraphemeClusterV2>
-            + ?Sized,
-    {
-        let mut complex = ComplexPayloads::try_new_neo(provider)?;
-        complex.with_southeast_asian_lstms(provider)?;
-        complex.with_japanese_dictionary(provider)?;
-        Ok(Self(WordSegmenterInner::Neo {
-            payload: provider.load(Default::default())?.payload,
-            complex,
-        }))
-    }
-
-    /// Constructs a [`WordSegmenter`] with an invariant locale and compiled LSTM data for
-    /// complex scripts (Burmese, Khmer, Lao, and Thai).
-    ///
-    /// The LSTM, or Long Term Short Memory, is a machine learning model. It is smaller than
-    /// the full dictionary but more expensive during segmentation (inference).
-    ///
-    /// Warning: there is not currently an LSTM model for Chinese or Japanese, so the [`WordSegmenter`]
-    /// created by this function will have unexpected behavior in spans of those scripts.
-    ///
-    /// ✨ *Enabled with the `compiled_data` and `lstm` Cargo features.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    ///
-    /// # Examples
-    ///
-    /// Behavior with complex scripts:
-    ///
-    /// ```
-    /// use icu::segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
-    ///
-    /// let th_str = "ทุกสองสัปดาห์";
-    /// let ja_str = "こんにちは世界";
-    ///
-    /// let segmenter =
-    ///     WordSegmenter::new_lstm(WordBreakInvariantOptions::default());
-    ///
-    /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
-    /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
-    ///
-    /// assert_eq!(th_bps, [0, 9, 18, 39]);
-    ///
-    /// // Note: We aren't able to find a suitable breakpoint in Chinese/Japanese.
-    /// assert_eq!(ja_bps, [0, 21]);
-    /// ```
-    #[cfg(feature = "compiled_data")]
-    #[cfg(feature = "lstm")]
-    #[cfg(feature = "unstable")]
-    pub fn new_neo_lstm(options: WordBreakInvariantOptions) -> WordSegmenterBorrowed<'static> {
-        let mut s = Self::new_neo_for_non_complex_scripts(options);
-        s.load_lstm();
-        s
-    }
-
-    #[cfg(feature = "lstm")]
-    #[cfg(feature = "unstable")]
-    icu_provider::gen_buffer_data_constructors!(
-        (options: WordBreakOptions) -> error: DataError,
-        functions: [
-            try_new_neo_lstm,
-            try_new_neo_lstm_with_buffer_provider,
-            try_new_neo_lstm_unstable,
-            Self
-        ]
-    );
-
-    #[cfg(feature = "lstm")]
-    #[cfg(feature = "unstable")]
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
-    pub fn try_new_neo_lstm_unstable<D>(
-        provider: &D,
-        options: WordBreakOptions,
-    ) -> Result<Self, DataError>
-    where
-        D: DataProvider<SegmenterBreakWordV2>
-            + DataProvider<SegmenterLstmAutoV1>
-            + DataProvider<SegmenterBreakGraphemeClusterV1>
-            + ?Sized,
-    {
-        let mut s = Self::try_new_neo_for_non_complex_scripts_unstable(provider, options)?;
-        s.load_lstm_unstable(provider)?;
-        Ok(s)
-    }
-
-    /// Construct a [`WordSegmenter`] with an invariant locale and compiled dictionary data for
-    /// complex scripts (Chinese, Japanese, Khmer, Lao, Myanmar, and Thai).
-    ///
-    /// The dictionary model uses a list of words to determine appropriate breakpoints. It is
-    /// faster than the LSTM model but requires more data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    ///
-    /// # Examples
-    ///
-    /// Behavior with complex scripts:
-    ///
-    /// ```
-    /// use icu::segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
-    ///
-    /// let th_str = "ทุกสองสัปดาห์";
-    /// let ja_str = "こんにちは世界";
-    ///
-    /// let segmenter =
-    ///     WordSegmenter::new_dictionary(WordBreakInvariantOptions::default());
-    ///
-    /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
-    /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
-    ///
-    /// assert_eq!(th_bps, [0, 9, 18, 39]);
-    /// assert_eq!(ja_bps, [0, 15, 21]);
-    /// ```
-    #[cfg(feature = "compiled_data")]
-    #[cfg(feature = "unstable")]
-    pub fn new_neo_dictionary(
-        options: WordBreakInvariantOptions,
-    ) -> WordSegmenterBorrowed<'static> {
-        let mut s = Self::new_neo_for_non_complex_scripts(options);
-        s.load_dictionary();
-        s
-    }
-
-    #[cfg(feature = "unstable")]
-    icu_provider::gen_buffer_data_constructors!(
-        (options: WordBreakOptions) -> error: DataError,
-        functions: [
-            try_new_neo_dictionary,
-            try_new_neo_dictionary_with_buffer_provider,
-            try_new_neo_dictionary_unstable,
-            Self
-        ]
-    );
-
-    #[cfg(feature = "unstable")]
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_neo_dictionary)]
-    pub fn try_new_neo_dictionary_unstable<D>(
-        provider: &D,
-        options: WordBreakOptions,
-    ) -> Result<Self, DataError>
-    where
-        D: DataProvider<SegmenterBreakWordV2>
-            + DataProvider<SegmenterDictionaryAutoV1>
-            + DataProvider<SegmenterDictionaryExtendedV1>
-            + DataProvider<SegmenterBreakGraphemeClusterV1>
-            + ?Sized,
-    {
-        let mut s = Self::try_new_neo_for_non_complex_scripts_unstable(provider, options)?;
-        s.load_dictionary_unstable(provider)?;
-        Ok(s)
-    }
-
     /// Construct a [`WordSegmenter`] with an invariant locale and no support for
     /// scripts requiring complex context dependent word breaks (Chinese, Japanese, Khmer, Lao, Myanmar, and Thai).
     ///
@@ -799,22 +554,11 @@ impl WordSegmenter {
     pub const fn new_neo_for_non_complex_scripts(
         _options: WordBreakInvariantOptions,
     ) -> WordSegmenterBorrowed<'static> {
-        WordSegmenterBorrowed(WordSegmenterBorrowedInner::Neo {
+        WordSegmenterBorrowed(WordSegmenterBorrowedInner::V2 {
             data: Baked::SINGLETON_SEGMENTER_BREAK_WORD_V2,
             complex: ComplexPayloadsBorrowed::new(),
         })
     }
-
-    #[cfg(feature = "unstable")]
-    icu_provider::gen_buffer_data_constructors!(
-        (options: WordBreakOptions) -> error: DataError,
-        functions: [
-            try_new_neo_for_non_complex_scripts,
-            try_new_neo_for_non_complex_scripts_with_buffer_provider,
-            try_new_neo_for_non_complex_scripts_unstable,
-            Self
-        ]
-    );
 
     #[cfg(feature = "unstable")]
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_neo_for_non_complex_scripts)]
@@ -827,7 +571,7 @@ impl WordSegmenter {
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
-        Ok(Self(WordSegmenterInner::Neo {
+        Ok(Self(WordSegmenterInner::V2 {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new(provider)?,
         }))
@@ -843,11 +587,11 @@ impl WordSegmenter {
         D: DataProvider<SegmenterLstmAutoV1> + ?Sized,
     {
         let complex = match self.0 {
-            WordSegmenterInner::Legacy {
+            WordSegmenterInner::V1 {
                 ref mut complex, ..
             } => complex,
             #[cfg(feature = "unstable")]
-            WordSegmenterInner::Neo {
+            WordSegmenterInner::V2 {
                 ref mut complex, ..
             } => complex,
         };
@@ -877,11 +621,11 @@ impl WordSegmenter {
             + ?Sized,
     {
         let complex = match self.0 {
-            WordSegmenterInner::Legacy {
+            WordSegmenterInner::V1 {
                 ref mut complex, ..
             } => complex,
             #[cfg(feature = "unstable")]
-            WordSegmenterInner::Neo {
+            WordSegmenterInner::V2 {
                 ref mut complex, ..
             } => complex,
         };
@@ -902,22 +646,56 @@ impl WordSegmenter {
         self.load_dictionary_unstable(&provider.as_deserializing())
     }
 
+    /// Loads the best available complex script data for a [`WordSegmenter`] constructed with
+    /// [`WordSegmenter::new_for_non_complex_scripts`].
+    #[cfg(feature = "auto")]
+    pub fn load_auto_unstable<D>(&mut self, provider: &D) -> Result<(), DataError>
+    where
+        D: DataProvider<SegmenterDictionaryAutoV1> + DataProvider<SegmenterLstmAutoV1> + ?Sized,
+    {
+        let complex = match self.0 {
+            WordSegmenterInner::V1 {
+                ref mut complex, ..
+            } => complex,
+            #[cfg(feature = "unstable")]
+            WordSegmenterInner::V2 {
+                ref mut complex, ..
+            } => complex,
+        };
+        complex.with_southeast_asian_lstms(provider)?;
+        complex.with_japanese_dictionary(provider)?;
+        Ok(())
+    }
+
+    /// A version of [`Self::load_auto_unstable`] that uses custom data
+    /// provided by a [`BufferProvider`].
+    ///
+    /// ✨ *Enabled with the `serde` Cargo feature.*
+    #[cfg(feature = "auto")]
+    #[cfg(feature = "serde")]
+    pub fn load_auto_with_buffer_provider(
+        &mut self,
+        provider: &(impl BufferProvider + ?Sized),
+    ) -> Result<(), DataError> {
+        self.load_auto_unstable(&provider.as_deserializing())
+    }
+
     /// Constructs a borrowed version of this type for more efficient querying.
     ///
     /// Most useful methods for segmentation are on this type.
     pub fn as_borrowed(&self) -> WordSegmenterBorrowed<'_> {
         WordSegmenterBorrowed(match &self.0 {
-            WordSegmenterInner::Legacy {
+            WordSegmenterInner::V1 {
                 payload,
                 complex,
                 payload_locale_override,
-            } => WordSegmenterBorrowedInner::Legacy {
+            } => WordSegmenterBorrowedInner::V1 {
                 data: payload.get(),
                 complex: complex.as_borrowed(),
                 locale_override: payload_locale_override.as_ref().map(|p| p.get()),
             },
             #[cfg(feature = "unstable")]
-            WordSegmenterInner::Neo { payload, complex } => WordSegmenterBorrowedInner::Neo {
+            WordSegmenterInner::V2 { payload, complex } => WordSegmenterBorrowedInner::V2 {
                 data: payload.get(),
                 complex: complex.as_borrowed(),
             },
@@ -931,25 +709,31 @@ impl<'data> WordSegmenterBorrowed<'data> {
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_str<'s>(self, input: &'s str) -> WordBreakIterator<'data, 's, Utf8> {
         WordBreakIterator(match self.0 {
-            WordSegmenterBorrowedInner::Legacy {
+            WordSegmenterBorrowedInner::V1 {
                 data,
                 complex,
                 locale_override,
-            } => WordBreakIteratorInner::Legacy(RuleBreakIterator {
+            } => WordBreakIteratorInner::V1(crate::rule_segmenter_v1::RuleBreakIterator {
+                input: input.char_indices(),
                 iter: input.char_indices(),
                 len: input.len(),
                 current_pos_data: None,
-                result_cache: Vec::new(),
+                result_cache: Default::default(),
                 data,
                 complex: Some(complex),
                 boundary_property: 0,
                 locale_override,
-                handle_complex: handle_complex_utf8,
+                handle_complex,
             }),
             #[cfg(feature = "unstable")]
-            WordSegmenterBorrowedInner::Neo { data, complex } => WordBreakIteratorInner::Neo(
-                crate::neo::RuleBreakIterator::new(input.char_indices(), data, None, Some(complex)),
-            ),
+            WordSegmenterBorrowedInner::V2 { data, complex } => {
+                WordBreakIteratorInner::V2(crate::rule_segmenter_v2::RuleBreakIterator::new(
+                    input.char_indices(),
+                    data,
+                    None,
+                    Some(complex),
+                ))
+            }
         })
     }
 
@@ -963,24 +747,25 @@ impl<'data> WordSegmenterBorrowed<'data> {
         input: &'s [u8],
     ) -> WordBreakIterator<'data, 's, PotentiallyIllFormedUtf8> {
         WordBreakIterator(match self.0 {
-            WordSegmenterBorrowedInner::Legacy {
+            WordSegmenterBorrowedInner::V1 {
                 data,
                 complex,
                 locale_override,
-            } => WordBreakIteratorInner::Legacy(RuleBreakIterator {
+            } => WordBreakIteratorInner::V1(crate::rule_segmenter_v1::RuleBreakIterator {
+                input: Utf8CharIndices::new(input),
                 iter: Utf8CharIndices::new(input),
                 len: input.len(),
                 current_pos_data: None,
-                result_cache: Vec::new(),
+                result_cache: Default::default(),
                 data,
                 complex: Some(complex),
                 boundary_property: 0,
                 locale_override,
-                handle_complex: handle_complex_utf8,
+                handle_complex,
             }),
             #[cfg(feature = "unstable")]
-            WordSegmenterBorrowedInner::Neo { data, complex } => {
-                WordBreakIteratorInner::Neo(crate::neo::RuleBreakIterator::new(
+            WordSegmenterBorrowedInner::V2 { data, complex } => {
+                WordBreakIteratorInner::V2(crate::rule_segmenter_v2::RuleBreakIterator::new(
                     Utf8CharIndices::new(input),
                     data,
                     None,
@@ -995,25 +780,31 @@ impl<'data> WordSegmenterBorrowed<'data> {
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_latin1<'s>(self, input: &'s [u8]) -> WordBreakIterator<'data, 's, Latin1> {
         WordBreakIterator(match self.0 {
-            WordSegmenterBorrowedInner::Legacy {
+            WordSegmenterBorrowedInner::V1 {
                 data,
                 complex,
                 locale_override,
-            } => WordBreakIteratorInner::Legacy(RuleBreakIterator {
+            } => WordBreakIteratorInner::V1(crate::rule_segmenter_v1::RuleBreakIterator {
+                input: Latin1Indices::new(input),
                 iter: Latin1Indices::new(input),
                 len: input.len(),
                 current_pos_data: None,
-                result_cache: Vec::new(),
+                result_cache: Default::default(),
                 data,
                 complex: Some(complex),
                 boundary_property: 0,
                 locale_override,
-                handle_complex: empty_handle_complex,
+                handle_complex: crate::rule_segmenter_v1::empty_handle_complex,
             }),
             #[cfg(feature = "unstable")]
-            WordSegmenterBorrowedInner::Neo { data, .. } => WordBreakIteratorInner::Neo(
-                crate::neo::RuleBreakIterator::new(Latin1Indices::new(input), data, None, None),
-            ),
+            WordSegmenterBorrowedInner::V2 { data, .. } => {
+                WordBreakIteratorInner::V2(crate::rule_segmenter_v2::RuleBreakIterator::new(
+                    Latin1Indices::new(input),
+                    data,
+                    None,
+                    None,
+                ))
+            }
         })
     }
 
@@ -1022,24 +813,25 @@ impl<'data> WordSegmenterBorrowed<'data> {
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_utf16<'s>(self, input: &'s [u16]) -> WordBreakIterator<'data, 's, Utf16> {
         WordBreakIterator(match self.0 {
-            WordSegmenterBorrowedInner::Legacy {
+            WordSegmenterBorrowedInner::V1 {
                 data,
                 complex,
                 locale_override,
-            } => WordBreakIteratorInner::Legacy(RuleBreakIterator {
+            } => WordBreakIteratorInner::V1(crate::rule_segmenter_v1::RuleBreakIterator {
+                input: Utf16Indices::new(input),
                 iter: Utf16Indices::new(input),
                 len: input.len(),
                 current_pos_data: None,
-                result_cache: Vec::new(),
+                result_cache: Default::default(),
                 data,
                 complex: Some(complex),
                 boundary_property: 0,
                 locale_override,
-                handle_complex: handle_complex_utf16,
+                handle_complex,
             }),
             #[cfg(feature = "unstable")]
-            WordSegmenterBorrowedInner::Neo { data, complex } => {
-                WordBreakIteratorInner::Neo(crate::neo::RuleBreakIterator::new(
+            WordSegmenterBorrowedInner::V2 { data, complex } => {
+                WordBreakIteratorInner::V2(crate::rule_segmenter_v2::RuleBreakIterator::new(
                     Utf16Indices::new(input),
                     data,
                     None,
@@ -1059,11 +851,11 @@ impl WordSegmenterBorrowed<'static> {
     #[cfg(feature = "compiled_data")]
     pub fn load_lstm(&mut self) {
         let complex = match self.0 {
-            WordSegmenterBorrowedInner::Legacy {
+            WordSegmenterBorrowedInner::V1 {
                 ref mut complex, ..
             } => complex,
             #[cfg(feature = "unstable")]
-            WordSegmenterBorrowedInner::Neo {
+            WordSegmenterBorrowedInner::V2 {
                 ref mut complex, ..
             } => complex,
         };
@@ -1077,15 +869,35 @@ impl WordSegmenterBorrowed<'static> {
     #[cfg(feature = "compiled_data")]
     pub fn load_dictionary(&mut self) {
         let complex = match self.0 {
-            WordSegmenterBorrowedInner::Legacy {
+            WordSegmenterBorrowedInner::V1 {
                 ref mut complex, ..
             } => complex,
             #[cfg(feature = "unstable")]
-            WordSegmenterBorrowedInner::Neo {
+            WordSegmenterBorrowedInner::V2 {
                 ref mut complex, ..
             } => complex,
         };
         complex.with_southeast_asian_dictionaries();
+        complex.with_japanese_dictionary();
+    }
+
+    /// Loads the best available complex script data for a [`WordSegmenter`] constructed with
+    /// [`WordSegmenter::new_for_non_complex_scripts`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    #[cfg(feature = "auto")]
+    #[cfg(feature = "compiled_data")]
+    pub fn load_auto(&mut self) {
+        let complex = match self.0 {
+            WordSegmenterBorrowedInner::V1 {
+                ref mut complex, ..
+            } => complex,
+            #[cfg(feature = "unstable")]
+            WordSegmenterBorrowedInner::V2 {
+                ref mut complex, ..
+            } => complex,
+        };
+        complex.with_southeast_asian_lstms();
         complex.with_japanese_dictionary();
     }
 
@@ -1095,17 +907,17 @@ impl WordSegmenterBorrowed<'static> {
     /// compile-time optimizations that are possible with [`WordSegmenterBorrowed`].
     pub fn static_to_owned(self) -> WordSegmenter {
         WordSegmenter(match self.0 {
-            WordSegmenterBorrowedInner::Legacy {
+            WordSegmenterBorrowedInner::V1 {
                 data,
                 complex,
                 locale_override,
-            } => WordSegmenterInner::Legacy {
+            } => WordSegmenterInner::V1 {
                 payload: DataPayload::from_static_ref(data),
                 complex: complex.static_to_owned(),
                 payload_locale_override: locale_override.map(DataPayload::from_static_ref),
             },
             #[cfg(feature = "unstable")]
-            WordSegmenterBorrowedInner::Neo { data, complex } => WordSegmenterInner::Neo {
+            WordSegmenterBorrowedInner::V2 { data, complex } => WordSegmenterInner::V2 {
                 payload: DataPayload::from_static_ref(data),
                 complex: complex.static_to_owned(),
             },
@@ -1113,21 +925,18 @@ impl WordSegmenterBorrowed<'static> {
     }
 }
 
-fn handle_complex_utf8<T>(
-    iter: &mut RuleBreakIterator<'_, '_, T>,
+fn handle_complex<T>(
+    iter: &mut crate::rule_segmenter_v1::RuleBreakIterator<'_, '_, T>,
     left_codepoint: T::CharType,
 ) -> Option<usize>
 where
-    T: RuleBreakType<CharType = char>,
+    T: ComplexRunSegmenter,
 {
     // word segmenter doesn't define break rules for some scripts such as Thai.
     let start_iter = iter.iter.clone();
     let start_point = iter.current_pos_data;
-    let mut s = String::new();
-    s.push(left_codepoint);
     loop {
         debug_assert!(!iter.is_eof());
-        s.push(iter.get_current_codepoint()?);
         iter.advance_iter();
         if let Some(current_break_property) = iter.get_current_break_property() {
             if current_break_property != iter.data.complex_property {
@@ -1138,19 +947,21 @@ where
             break;
         }
     }
+    let run_end = iter.current_pos_data.map_or(iter.len, |(pos, _)| pos);
 
     // Restore iterator to move to head of complex string
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
+    let run_start = start_point.map_or(iter.len, |(pos, _)| pos) - T::char_len(left_codepoint);
     #[expect(clippy::unwrap_used)] // iter.complex present for word segmenter
-    let breaks = iter.complex.unwrap().segment_str(&s);
-    iter.result_cache = breaks;
-    let first_pos = *iter.result_cache.first()?;
-    let mut i = left_codepoint.len_utf8();
+    let breaks = T::segment_complex_run(iter.complex.unwrap(), &iter.input, run_start, run_end);
+    let previous_offset = start_point.map_or(iter.len, |(pos, _)| pos) - run_start;
+    iter.result_cache = result_cache_from_offsets(breaks, previous_offset);
+    let first_pos = *iter.result_cache.as_slice().first()?;
+    let mut i = 0;
     loop {
         if i == first_pos {
-            // Re-calculate breaking offset
-            iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
+            iter.result_cache.next();
             return iter.get_current_position();
         }
         debug_assert!(
@@ -1161,76 +972,90 @@ where
         i += iter.get_current_codepoint().map_or(0, T::char_len);
         iter.advance_iter();
         if iter.is_eof() {
-            iter.result_cache.clear();
+            iter.result_cache = Default::default();
             return Some(iter.len);
         }
     }
 }
 
-fn handle_complex_utf16<T>(
-    iter: &mut RuleBreakIterator<'_, '_, T>,
-    left_codepoint: T::CharType,
-) -> Option<usize>
-where
-    T: RuleBreakType<CharType = u32>,
-{
-    // word segmenter doesn't define break rules for some scripts such as Thai.
-    let start_iter = iter.iter.clone();
-    let start_point = iter.current_pos_data;
-    let mut s = vec![left_codepoint as u16];
-    loop {
-        debug_assert!(!iter.is_eof());
-        s.push(iter.get_current_codepoint()? as u16);
-        iter.advance_iter();
-        if let Some(current_break_property) = iter.get_current_break_property() {
-            if current_break_property != iter.data.complex_property {
-                break;
-            }
-        } else {
-            // EOF
-            break;
-        }
+#[derive(Debug)]
+#[cfg(feature = "unstable")]
+struct ComplexWord<Y>(core::marker::PhantomData<Y>);
+
+#[cfg(feature = "unstable")]
+impl<Y: RuleBreakType> crate::rule_segmenter_v2::ComplexHandler<Y> for ComplexWord<Y> {
+    const BREAK_AT_BOUNDARIES: bool = true;
+    type Cache = [usize; 16];
+    const BREAK_STATUS: u8 = WordType::Letter as u8;
+
+    type ComplexPayloads<'s> = Y::ComplexPayloads<'s>;
+    type ComplexPayload<'s> = Y::ComplexPayload<'s>;
+
+    fn select<'data>(
+        complex_payloads: &Y::ComplexPayloads<'data>,
+        complex_script: ComplexScript,
+    ) -> Option<Self::ComplexPayload<'data>> {
+        Y::select_complex(complex_payloads, complex_script)
     }
 
-    // Restore iterator to move to head of complex string
-    iter.iter = start_iter;
-    iter.current_pos_data = start_point;
-    #[expect(clippy::unwrap_used)] // iter.complex present for word segmenter
-    let breaks = iter.complex.unwrap().segment_utf16(&s);
-    iter.result_cache = breaks;
-    // result_cache vector is utf-16 index that is in BMP.
-    let first_pos = *iter.result_cache.first()?;
-    let mut i = 1;
-    loop {
-        if i == first_pos {
-            // Re-calculate breaking offset
-            iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
-            return iter.get_current_position();
-        }
-        debug_assert!(
-            i < first_pos,
-            "we should always arrive at first_pos: near index {:?}",
-            iter.get_current_position()
-        );
-        i += 1;
-        iter.advance_iter();
-        if iter.is_eof() {
-            iter.result_cache.clear();
-            return Some(iter.len);
-        }
+    fn handle<'data, 's>(
+        complex_payloads: &Self::ComplexPayload<'data>,
+        iter: &Y::IterAttr<'s>,
+        past_complex: &Y::IterAttr<'s>,
+    ) -> ComplexIterator<'data, 's, Y> {
+        Y::handle_complex(complex_payloads, iter, past_complex)
     }
 }
 
 #[test]
 fn empty_string() {
-    let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
+    let segmenter =
+        WordSegmenter::new_for_non_complex_scripts(WordBreakInvariantOptions::default());
     let breaks: Vec<usize> = segmenter.segment_str("").collect();
     assert_eq!(breaks, [0]);
 }
 
 #[test]
 fn empty_string_neo() {
-    let segmenter = WordSegmenter::new_neo_auto(WordBreakInvariantOptions::default());
+    let segmenter =
+        WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
     let breaks: Vec<usize> = segmenter.segment_str("").collect();
     assert_eq!(breaks, [0]);
+}
+
+#[test]
+fn complex_mixed_thai_cj_word_break() {
+    let segmenter = WordSegmenter::new_dictionary(WordBreakInvariantOptions::default());
+    let input = "ภาษาไทย龟山岛";
+
+    let breaks: Vec<usize> = segmenter.segment_str(input).collect();
+    assert_eq!(breaks, [0, 12, 21, 30]);
+
+    let breaks: Vec<usize> = segmenter.segment_utf8(input.as_bytes()).collect();
+    assert_eq!(breaks, [0, 12, 21, 30]);
+
+    let utf16 = input.encode_utf16().collect::<Vec<_>>();
+    let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
+    assert_eq!(breaks, [0, 4, 7, 10]);
+}
+
+#[test]
+fn complex_ill_formed_utf8_word_break() {
+    let segmenter = WordSegmenter::new_dictionary(WordBreakInvariantOptions::default());
+    let input =
+        b"\xE0\xB8\xA0\xE0\xB8\xB2\xE0\xB8\xA9\xE0\xB8\xB2\xFF\xE0\xB9\x84\xE0\xB8\x97\xE0\xB8\xA2";
+
+    let breaks: Vec<usize> = segmenter.segment_utf8(input).collect();
+    assert_eq!(breaks, [0, 12, 13, 22]);
+}
+
+#[test]
+fn complex_unpaired_surrogate_word_break() {
+    let segmenter = WordSegmenter::new_dictionary(WordBreakInvariantOptions::default());
+    let input = [
+        0x0E20, 0x0E32, 0x0E29, 0x0E32, 0xD800, 0x0E44, 0x0E17, 0x0E22,
+    ];
+
+    let breaks: Vec<usize> = segmenter.segment_utf16(&input).collect();
+    assert_eq!(breaks, [0, 4, 5, 8]);
 }

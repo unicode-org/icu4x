@@ -102,25 +102,26 @@ impl IterableDataProviderCached<CurrencySymbolsV1> for SourceDataProvider {
 
 #[test]
 fn test_symbols() {
-    use icu::experimental::dimension::currency::CurrencyCode;
-    use icu::locale::{LanguageIdentifier, langid};
-    use tinystr::{TinyAsciiStr, tinystr};
+    use icu::experimental::dimension::currency::CurrencyType;
+    use icu::locale::preferences::extensions::unicode::keywords::currency;
+    use icu::locale::{DataLocale, data_locale};
+    use tinystr::TinyAsciiStr;
 
-    const USD: CurrencyCode = CurrencyCode(tinystr!(3, "USD"));
-    const EGP: CurrencyCode = CurrencyCode(tinystr!(3, "EGP"));
-    const EN: LanguageIdentifier = langid!("en");
-    const AR_EG: LanguageIdentifier = langid!("ar-EG");
+    const USD: CurrencyType = currency!("USD");
+    const EGP: CurrencyType = currency!("EGP");
+    const EN: DataLocale = data_locale!("en");
+    const AR_EG: DataLocale = data_locale!("ar-EG");
 
     let provider = SourceDataProvider::new_testing();
 
     #[allow(const_item_mutation)]
-    let load = |locale: LanguageIdentifier, currency: CurrencyCode, width: TinyAsciiStr<1>| {
+    let load = |locale: DataLocale, currency: CurrencyType, width: TinyAsciiStr<1>| {
         DataProvider::<CurrencySymbolsV1>::load(
             &provider,
             DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     CurrencySymbolsV1::make_attributes(currency, width, &mut TinyAsciiStr::EMPTY),
-                    &locale.into(),
+                    &locale,
                 ),
                 ..Default::default()
             },

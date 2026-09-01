@@ -3,19 +3,15 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::grapheme::*;
-use crate::indices::Utf16Indices;
+use crate::indices::*;
 use crate::provider::*;
-#[cfg(feature = "unstable")]
 use crate::scaffold::PotentiallyIllFormedUtf8;
 use crate::scaffold::{RuleBreakType, Utf8, Utf16};
 use icu_collections::char16trie::{Char16Trie, TrieResult};
-#[cfg(feature = "unstable")]
-use utf8_iter::Utf8CharIndices;
 
 /// Lifetimes:
 /// - `'data` = lifetime of the data
 /// - `'s` = lifetime of the string being segmented
-///
 #[derive(Debug)]
 pub(super) struct DictionaryBreakIterator<'data, 's, R: RuleBreakType> {
     trie: Char16Trie<'data>,
@@ -122,7 +118,6 @@ impl<'data> DictionarySegmenter<'data> {
     }
 
     /// Create a dictionary based break iterator for a UTF-8 string.
-    #[cfg(feature = "unstable")]
     pub(super) fn segment_utf8<'s>(
         self,
         input: &'s [u8],

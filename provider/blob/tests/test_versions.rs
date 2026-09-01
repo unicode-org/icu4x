@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locale::subtags::{Language, region, script};
-use icu_locale_core::LanguageIdentifier;
 use icu_provider::dynutil::UpcastDataPayload;
 use icu_provider::export::*;
 use icu_provider::hello_world::*;
@@ -194,14 +193,11 @@ impl IterableDataProvider<HelloWorldV1> for ManyLocalesProvider {
             .flat_map(|i0| {
                 LOWERCASE.flat_map(move |i1| {
                     LOWERCASE.map(move |i2| {
-                        DataIdentifierCow::from_locale(
-                            LanguageIdentifier::from((
-                                Language::try_from_raw([i0, i1, i2]).unwrap(),
-                                Some(script!("Latn")),
-                                Some(region!("001")),
-                            ))
-                            .into(),
-                        )
+                        DataIdentifierCow::from_locale(DataLocale::from((
+                            Language::try_from_raw([i0, i1, i2]).unwrap(),
+                            Some(script!("Latn")),
+                            Some(region!("001")),
+                        )))
                     })
                 })
             })

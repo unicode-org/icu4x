@@ -203,6 +203,37 @@ pub mod ffi {
         }
     }
 
+    impl CodePointMapData16 {
+        /// Create a map for the `Block` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::Block, Struct)]
+        #[diplomat::attr(auto, named_constructor = "block")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_block() -> Box<Self> {
+            #[expect(clippy::unwrap_used)]
+            let data = icu_properties::CodePointMapData::<props::Block>::new()
+                .static_to_owned()
+                .try_into_converted()
+                .map_err(|_| ())
+                .unwrap();
+            Box::new(Self(data))
+        }
+
+        /// Create a map for the `Block` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::Block, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "block_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_block_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<Self>, DataError> {
+            #[expect(clippy::unwrap_used)]
+            let data = icu_properties::CodePointMapData::<props::Block>::try_new_unstable(&provider.get_unstable()?)?
+                .try_into_converted()
+                .map_err(|_| ())
+                .unwrap();
+            Ok(Box::new(Self(data)))
+        }
+    }
+
     impl CodePointMapData8 {
         /// Create a map for the `CanonicalCombiningClass` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::CanonicalCombiningClass, Struct)]

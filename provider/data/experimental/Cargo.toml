@@ -8,7 +8,7 @@ description = "Data for the icu_experimental crate"
 categories.workspace = true
 keywords = ["data", "unicode"]
 license = "Unicode-3.0"
-version = "0.6.0-dev"
+version = "0.6.0"
 
 authors.workspace = true
 edition.workspace = true
@@ -18,8 +18,8 @@ repository.workspace = true
 rust-version.workspace = true
 
 [package.metadata.sources]
-cldr = { tagged = "48.2.1" }
-icuexport = { tagged = "release-78.1rc" }
+cldr = { tagged = "49.0.0-ALPHA1" }
+icuexport = { tagged = "icu4x/2026-08-31/79.x" }
 segmenter_lstm = { tagged = "v0.1.0" }
 
 [lints.rust]

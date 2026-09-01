@@ -189,14 +189,14 @@ impl From<&cldr_serde::plural_ranges::LocalePluralRanges> for PluralRanges<'stat
 
 #[test]
 fn test_basic() {
-    use icu::locale::langid;
+    use icu::locale::data_locale;
 
     let provider = SourceDataProvider::new_testing();
 
     // Spot-check locale 'cs' since it has some interesting entries
     let cs_rules: DataResponse<PluralsCardinalV1> = provider
         .load(DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("cs").into()).as_borrowed(),
+            id: DataIdentifierBorrowed::for_locale(&data_locale!("cs")),
             ..Default::default()
         })
         .unwrap();
@@ -220,14 +220,14 @@ fn test_basic() {
 #[test]
 #[cfg(feature = "unstable")]
 fn test_ranges() {
-    use icu::locale::langid;
+    use icu::locale::data_locale;
 
     let provider = SourceDataProvider::new_testing();
 
     // locale 'sl' seems to have a lot of interesting cases.
     let plural_ranges: DataResponse<PluralsRangesV1> = provider
         .load(DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("sl").into()).as_borrowed(),
+            id: DataIdentifierBorrowed::for_locale(&data_locale!("sl")),
             ..Default::default()
         })
         .unwrap();

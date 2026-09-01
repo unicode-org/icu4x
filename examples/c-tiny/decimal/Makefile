@@ -13,7 +13,7 @@ CAPI_COMPONENT := decimal
 .DEFAULT_GOAL := test
 .PHONY: build test
 
-ICU_CAPI := $(shell cargo metadata --manifest-path Cargo.toml --format-version 1 | jq '.packages[] | select(.name == "icu_capi").manifest_path' | xargs dirname)
+ICU_CAPI := $(shell cargo metadata -m Cargo.toml --format-version 1 | jq '.packages[] | select(.name == "icu_capi").manifest_path' | xargs dirname)
 HEADERS := ${ICU_CAPI}/bindings/c
 ALL_HEADERS := $(wildcard ${HEADERS}/*)
 
@@ -28,7 +28,7 @@ LLVM_COMPATIBLE_NIGHTLY = "nightly-2025-07-01"
 
 
 target/release/icu4x-datagen: $(ALL_RUST_SRC)
-	cargo build --manifest-path ../../../Cargo.toml -p icu4x-datagen --target-dir target --release
+	cargo build -m ../../../Cargo.toml -p icu4x-datagen --target-dir target --release
 
 baked_data/mod.rs: target/release/icu4x-datagen
 	target/release/icu4x-datagen --locales en bn --markers all --deduplication none --format baked --out baked_data --overwrite

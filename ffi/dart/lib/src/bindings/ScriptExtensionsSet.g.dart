@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 
 /// An object that represents the `Script_Extensions` property for a single character
 ///
-/// See the [Rust documentation for `ScriptExtensionsSet`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptExtensionsSet.html) for more information.
+/// See the [Rust documentation for `ScriptExtensionsSet`](https://docs.rs/icu/2.3.1/icu/properties/script/struct.ScriptExtensionsSet.html) for more information.
 final class ScriptExtensionsSet implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -34,7 +34,7 @@ final class ScriptExtensionsSet implements ffi.Finalizable {
 
   /// Check if the `Script_Extensions` property of the given code point covers the given script
   ///
-  /// See the [Rust documentation for `contains`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptExtensionsSet.html#method.contains) for more information.
+  /// See the [Rust documentation for `contains`](https://docs.rs/icu/2.3.1/icu/properties/script/struct.ScriptExtensionsSet.html#method.contains) for more information.
   bool contains(Script script) {
     final result = _icu4x_ScriptExtensionsSet_contains_mv2(_ffi, script._ffi);
     return result;
@@ -42,7 +42,7 @@ final class ScriptExtensionsSet implements ffi.Finalizable {
 
   /// Get the number of scripts contained in here
   ///
-  /// See the [Rust documentation for `iter`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
+  /// See the [Rust documentation for `iter`](https://docs.rs/icu/2.3.1/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
   int get count {
     final result = _icu4x_ScriptExtensionsSet_count_mv1(_ffi);
     return result;
@@ -50,7 +50,7 @@ final class ScriptExtensionsSet implements ffi.Finalizable {
 
   /// Get script at index
   ///
-  /// See the [Rust documentation for `iter`](https://docs.rs/icu/2.2.0/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
+  /// See the [Rust documentation for `iter`](https://docs.rs/icu/2.3.1/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
   Script? scriptAt(int index) {
     final result = _icu4x_ScriptExtensionsSet_script_at_mv2(_ffi, index);
     if (!result.isOk) {

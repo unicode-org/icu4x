@@ -66,7 +66,7 @@ macro_rules! make_enumerated_property {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{props::BidiClass, CodePointMapData};
+/// use icu::properties::{CodePointMapData, props::BidiClass};
 ///
 /// assert_eq!(
 ///     CodePointMapData::<BidiClass>::new().get('y'),
@@ -117,6 +117,45 @@ make_enumerated_property! {
     ule_ty: u8;
 }
 
+/// Enumerated property `Block`.
+///
+/// See Section 3.4, D10B in The Unicode Standard.
+///
+/// # Example
+///
+/// ```
+/// use icu::properties::{CodePointMapData, props::Block};
+///
+/// assert_eq!(
+///     CodePointMapData::<Block>::new().get('α'),
+///     Block::GreekAndCoptic,
+/// );
+/// assert_eq!(
+///     CodePointMapData::<Block>::new().get('a'),
+///     Block::BasicLatin,
+/// );
+/// ```
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[allow(clippy::exhaustive_structs)] // newtype
+#[repr(transparent)]
+pub struct Block(pub(crate) u16);
+
+impl Default for Block {
+    fn default() -> Self {
+        Self::NoBlock
+    }
+}
+
+make_enumerated_property! {
+    name: "Block";
+    short_name: "blk";
+    ident: Block;
+    data_marker: crate::provider::PropertyEnumBlockV1;
+    singleton: SINGLETON_PROPERTY_ENUM_BLOCK_V1;
+    ule_ty: <u16 as zerovec::ule::AsULE>::ULE;
+}
+
 /// Enumerated property `Numeric_Type`.
 ///
 /// See Section 4.6, Numeric Value in The Unicode Standard for the summary of
@@ -125,7 +164,7 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{props::NumericType, CodePointMapData};
+/// use icu::properties::{CodePointMapData, props::NumericType};
 ///
 /// assert_eq!(
 ///     CodePointMapData::<NumericType>::new().get('0'),
@@ -188,7 +227,7 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{props::GeneralCategory, CodePointMapData};
+/// use icu::properties::{CodePointMapData, props::GeneralCategory};
 ///
 /// assert_eq!(
 ///     CodePointMapData::<GeneralCategory>::new().get('木'),
@@ -455,8 +494,8 @@ impl GeneralCategoryGroup {
     /// Return whether the code point belongs in the provided multi-value category.
     ///
     /// ```
-    /// use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
     /// use icu::properties::CodePointMapData;
+    /// use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
     ///
     /// let gc = CodePointMapData::<GeneralCategory>::new();
     ///
@@ -673,6 +712,10 @@ impl Script {
     #[deprecated(since = "2.3.0", note = "use Script::ArabicNastaliq instead")]
     #[allow(non_upper_case_globals)]
     pub const Nastaliq: Self = Self::ArabicNastaliq;
+    /// Deprecated: non-canonical spelling
+    #[deprecated(since = "2.4.0", note = "use Script::Blissymbols instead")]
+    #[allow(non_upper_case_globals)]
+    pub const BlisSymbols: Self = Self::Blissymbols;
 }
 
 impl Default for Script {
@@ -729,7 +772,7 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{props::HangulSyllableType, CodePointMapData};
+/// use icu::properties::{CodePointMapData, props::HangulSyllableType};
 ///
 /// assert_eq!(
 ///     CodePointMapData::<HangulSyllableType>::new().get('ᄀ'),
@@ -797,7 +840,7 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{props::EastAsianWidth, CodePointMapData};
+/// use icu::properties::{CodePointMapData, props::EastAsianWidth};
 ///
 /// assert_eq!(
 ///     CodePointMapData::<EastAsianWidth>::new().get('ｱ'),
@@ -860,7 +903,7 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{props::LineBreak, CodePointMapData};
+/// use icu::properties::{CodePointMapData, props::LineBreak};
 ///
 /// assert_eq!(
 ///     CodePointMapData::<LineBreak>::new().get(')'),
@@ -922,7 +965,7 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{props::GraphemeClusterBreak, CodePointMapData};
+/// use icu::properties::{CodePointMapData, props::GraphemeClusterBreak};
 ///
 /// assert_eq!(
 ///     CodePointMapData::<GraphemeClusterBreak>::new().get('🇦'),
@@ -984,7 +1027,7 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{props::WordBreak, CodePointMapData};
+/// use icu::properties::{CodePointMapData, props::WordBreak};
 ///
 /// assert_eq!(
 ///     CodePointMapData::<WordBreak>::new().get('.'),
@@ -1046,7 +1089,7 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{props::SentenceBreak, CodePointMapData};
+/// use icu::properties::{CodePointMapData, props::SentenceBreak};
 ///
 /// assert_eq!(
 ///     CodePointMapData::<SentenceBreak>::new().get('９'),
@@ -1107,7 +1150,7 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{props::CanonicalCombiningClass, CodePointMapData};
+/// use icu::properties::{CodePointMapData, props::CanonicalCombiningClass};
 ///
 /// assert_eq!(
 ///     CodePointMapData::<CanonicalCombiningClass>::new().get('a'),
@@ -1170,7 +1213,7 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{props::IndicConjunctBreak, CodePointMapData};
+/// use icu::properties::{CodePointMapData, props::IndicConjunctBreak};
 ///
 /// assert_eq!(
 ///     CodePointMapData::<IndicConjunctBreak>::new().get('a'),
@@ -1236,7 +1279,7 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{props::IndicSyllabicCategory, CodePointMapData};
+/// use icu::properties::{CodePointMapData, props::IndicSyllabicCategory};
 ///
 /// assert_eq!(
 ///     CodePointMapData::<IndicSyllabicCategory>::new().get('a'),
@@ -1293,7 +1336,7 @@ make_enumerated_property! {
 /// each property value.
 ///
 /// ```
-/// use icu::properties::{props::JoiningGroup, CodePointMapData};
+/// use icu::properties::{CodePointMapData, props::JoiningGroup};
 ///
 /// assert_eq!(
 ///     CodePointMapData::<JoiningGroup>::new().get('ع'),
@@ -1352,7 +1395,7 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{props::JoiningType, CodePointMapData};
+/// use icu::properties::{CodePointMapData, props::JoiningType};
 ///
 /// assert_eq!(
 ///     CodePointMapData::<JoiningType>::new().get('ؠ'),
@@ -1411,7 +1454,7 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{props::VerticalOrientation, CodePointMapData};
+/// use icu::properties::{CodePointMapData, props::VerticalOrientation};
 ///
 /// assert_eq!(
 ///     CodePointMapData::<VerticalOrientation>::new().get('a'),

@@ -14,11 +14,6 @@
 typedef struct LocaleExpander LocaleExpander;
 
 
-typedef struct DiplomatLocaleExpanderView {
-  const LocaleExpander** data;
-  size_t len;
-} DiplomatLocaleExpanderView;
-
 
 
 #endif // LocaleExpander_D_H

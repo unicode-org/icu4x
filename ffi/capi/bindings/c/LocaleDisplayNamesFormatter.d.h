@@ -14,11 +14,6 @@
 typedef struct LocaleDisplayNamesFormatter LocaleDisplayNamesFormatter;
 
 
-typedef struct DiplomatLocaleDisplayNamesFormatterView {
-  const LocaleDisplayNamesFormatter** data;
-  size_t len;
-} DiplomatLocaleDisplayNamesFormatterView;
-
 
 
 #endif // LocaleDisplayNamesFormatter_D_H

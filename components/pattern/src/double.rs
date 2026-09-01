@@ -131,31 +131,7 @@ where
     }
 }
 
-/// A pair of values for [`DoublePlaceholder`] that may bubble up errors.
-///
-/// # Examples
-///
-/// Format a pattern with two placeholders, where the second value is an error:
-///
-/// ```
-/// use either::Either;
-/// use icu_pattern::DoublePlaceholderPattern;
-/// use icu_pattern::DoublePlaceholderValueProviderTry;
-/// use writeable::assert_try_writeable_eq;
-///
-/// let pattern = DoublePlaceholderPattern::try_from_str("{0}-{1}", Default::default()).unwrap();
-/// assert_try_writeable_eq!(
-///     pattern.try_interpolate(DoublePlaceholderValueProviderTry(Ok::<&str, &str>("xxx"), Err::<&str, &str>("yyy"))),
-///     "xxx-yyy",
-///     Err(Either::Right("yyy"))
-/// );
-/// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
-#[allow(clippy::exhaustive_structs)] // holds two placeholder values
-pub struct DoublePlaceholderValueProviderTry<W0, W1>(pub W0, pub W1);
-
-impl<W0, W1> PlaceholderValueProvider<DoublePlaceholderKey>
-    for DoublePlaceholderValueProviderTry<W0, W1>
+impl<W0, W1> PlaceholderValueProvider<DoublePlaceholderKey> for TryWrap<(W0, W1)>
 where
     W0: TryWriteable,
     W1: TryWriteable,
@@ -175,8 +151,8 @@ where
     #[inline]
     fn value_for(&self, key: DoublePlaceholderKey) -> Self::W<'_> {
         match key {
-            DoublePlaceholderKey::Place0 => Either::Left(&self.0),
-            DoublePlaceholderKey::Place1 => Either::Right(&self.1),
+            DoublePlaceholderKey::Place0 => Either::Left(&self.0.0),
+            DoublePlaceholderKey::Place1 => Either::Right(&self.0.1),
         }
     }
     #[inline]
@@ -470,6 +446,114 @@ impl PatternBackend for DoublePlaceholder {
 
     fn empty() -> &'static Self::Store {
         "\0\u{1}"
+    }
+}
+
+#[cfg(feature = "unstable")]
+impl ExtractionBackend for DoublePlaceholder {
+    type DecodedMatchesUnstable<'p, 'a> = [Option<&'a str>; 2];
+
+    fn extract_unstable<'p, 'a>(
+        store: &'p Self::Store,
+        input: &'a str,
+    ) -> Option<Self::DecodedMatchesUnstable<'p, 'a>> {
+        let mut prefix = None;
+        let mut first_ph = None;
+        let mut infix = None;
+        let mut second_ph = None;
+        let mut suffix = None;
+
+        // Get the parts from the pattern
+        for item in Self::iter_items(store) {
+            match item {
+                PatternItem::Literal(s) => {
+                    if first_ph.is_none() {
+                        debug_assert!(prefix.is_none());
+                        prefix = Some(s);
+                    } else if second_ph.is_none() {
+                        debug_assert!(infix.is_none());
+                        infix = Some(s);
+                    } else {
+                        debug_assert!(suffix.is_none());
+                        suffix = Some(s);
+                    }
+                }
+                PatternItem::Placeholder(ph) => {
+                    if first_ph.is_none() {
+                        first_ph = Some(ph);
+                    } else {
+                        debug_assert!(second_ph.is_none());
+                        second_ph = Some(ph);
+                    }
+                }
+            }
+        }
+
+        // Resolve infix/suffix if there was only 1 placeholder
+        if second_ph.is_none() {
+            debug_assert!(suffix.is_none());
+            suffix = infix;
+            infix = None;
+        }
+
+        // Strip prefix and suffix from input
+        let remaining = input
+            .strip_prefix(prefix.unwrap_or(""))?
+            .strip_suffix(suffix.unwrap_or(""))?;
+
+        // Find placeholder matches
+        let mut matches = [None; 2];
+        match (first_ph, second_ph) {
+            (None, None) => {
+                // 0 placeholders
+                if remaining.is_empty() {
+                    Some(matches)
+                } else {
+                    None
+                }
+            }
+            (Some(key), None) => {
+                // 1 placeholder
+                let slot = match key {
+                    DoublePlaceholderKey::Place0 => &mut matches[0],
+                    DoublePlaceholderKey::Place1 => &mut matches[1],
+                };
+                *slot = Some(remaining);
+                Some(matches)
+            }
+            (Some(key_x), Some(key_y)) => {
+                // 2 placeholders
+                let (val_x, val_y) = match infix {
+                    Some(inf) => remaining.split_once(inf)?,
+                    None => ("", remaining),
+                };
+
+                let slot_x = match key_x {
+                    DoublePlaceholderKey::Place0 => &mut matches[0],
+                    DoublePlaceholderKey::Place1 => &mut matches[1],
+                };
+                *slot_x = Some(val_x);
+
+                let slot_y = match key_y {
+                    DoublePlaceholderKey::Place0 => &mut matches[0],
+                    DoublePlaceholderKey::Place1 => &mut matches[1],
+                };
+                *slot_y = Some(val_y);
+
+                Some(matches)
+            }
+            (None, Some(_)) => unreachable!("second_ph populated but first_ph is not"),
+        }
+    }
+
+    fn get_match_unstable<'p, 'b>(
+        store: &Self::DecodedMatchesUnstable<'p, 'b>,
+        key: Self::PlaceholderKey<'_>,
+    ) -> Option<&'b str> {
+        match key {
+            DoublePlaceholderKey::Place0 => store[0],
+            DoublePlaceholderKey::Place1 => store[1],
+        }
     }
 }
 

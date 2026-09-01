@@ -19,12 +19,22 @@ impl SourceDataProvider {
         &self,
         short_name_to_t: HashMap<&'static str, T>,
     ) -> Result<CodePointTrie<'static, T>, DataError> {
-        let name = core::str::from_utf8(T::NAME).unwrap();
-        let short_name = core::str::from_utf8(T::SHORT_NAME).unwrap();
+        let name = str::from_utf8(T::NAME).unwrap();
+        let short_name = str::from_utf8(T::SHORT_NAME).unwrap();
 
         self.validate_property_name(name, short_name)?;
 
-        let (names_to_short_names, _) = self.enumerated_prop_names(name, short_name)?;
+        fn normalize(s: &str) -> String {
+            s.replace(['_', '-', ' '], "").to_ascii_lowercase()
+        }
+
+        let names_to_short_names = self
+            .enumerated_prop_names(name, short_name)?
+            .0
+            .into_iter()
+            // Blocks.txt contains non-standard aliases
+            .map(|(k, v)| (normalize(k), v))
+            .collect::<BTreeMap<_, _>>();
 
         let file = match name {
             "Indic_Conjunct_Break" => "ucd/DerivedCoreProperties.txt".into(),
@@ -46,6 +56,7 @@ impl SourceDataProvider {
                     name.replace('_', "").replace("Cluster", "")
                 )
             }
+            "Block" => "ucd/Blocks.txt".into(),
             _ => format!(
                 "ucd/{}.txt",
                 name.replace('_', "").replace("Script", "Scripts")
@@ -74,7 +85,7 @@ impl SourceDataProvider {
                     }
                     let value = fields.next().unwrap();
                     let value = names_to_short_names
-                        .get(value)
+                        .get(normalize(value).as_str())
                         .expect("file should only use names from PropertyValueAliases.txt")
                         .0;
 
@@ -109,7 +120,7 @@ impl SourceDataProvider {
 
                     let value = fields.next().unwrap();
                     let value = names_to_short_names
-                        .get(value)
+                        .get(normalize(value).as_str())
                         .expect("file should only use names from PropertyValueAliases.txt")
                         .0;
                     let Some(&value) = short_name_to_t.get(value) else {
@@ -177,10 +188,16 @@ impl SourceDataProvider {
             }
         }
 
-        for name in names.keys() {
-            if name.contains('-') || name.bytes().any(|b| b.is_ascii_whitespace()) {
+        for &name in names.keys() {
+            if !name
+                .bytes()
+                // https://www.unicode.org/reports/tr44/#Property_And_Value_Aliases
+                .all(|b| matches!(b, b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_'))
+                // https://github.com/unicode-org/properties/issues/606
+                && name != "Arabic_Presentation_Forms-A"
+            {
                 return Err(
-                    DataError::custom("Property name contains '-' or whitespace")
+                    DataError::custom("Property name contains invalid characters")
                         .with_display_context(name),
                 );
             }
@@ -283,14 +300,14 @@ macro_rules! expand {
                     .with_req($marker::INFO, req));
                     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
                     {
-                        let trie = if let Some(t) = self.rscd()?.cpt_cache.get(core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()).
+                        let trie = if let Some(t) = self.rscd()?.cpt_cache.get(str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()).
                             and_then(|t| t.downcast_ref::<CodePointTrie<'static, $prop>>().cloned()) {
                             t
                         } else {
                             let trie = self.build_enumerated_prop::<$prop>(<$prop>::names().collect())?;
 
                             self.rscd()?.cpt_cache
-                                .insert(core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap(), Box::new(trie.clone()));
+                                .insert(str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap(), Box::new(trie.clone()));
 
                             trie
                         };
@@ -310,13 +327,13 @@ macro_rules! expand {
 
                     let short_name_to_t = <$prop>::names().collect::<HashMap<_, _>>();
 
-                    let names = self.enumerated_prop_names(core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(), core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap())?.0;
+                    let names = self.enumerated_prop_names(str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(), str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap())?.0;
 
                     for (name, _) in &short_name_to_t {
                         if !names.contains_key(name) && <$prop as EnumeratedProperty>::SHORT_NAME != icu::properties::props::Script::SHORT_NAME {
                             log::warn!(
                                 "UCD does not contain {} {name:?}",
-                                core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap()
+                                str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap()
                             );
                         }
                     }
@@ -359,7 +376,7 @@ macro_rules! expand {
                     self.check_req::<$long_marker>(req)?;
                     let short_name_to_t = <$prop>::names().collect::<HashMap<_, _>>();
 
-                    let names = self.enumerated_prop_names(core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(), core::str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap())?.0;
+                    let names = self.enumerated_prop_names(str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap(), str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap())?.0;
 
                     let names = short_name_to_t.iter().map(|(&short_name, &t)| (t, short_name))
                         .chain(names
@@ -374,7 +391,7 @@ macro_rules! expand {
                                     }
                                     log::error!(
                                         "Missing Rust value for {} {name:?} {short_name:?}",
-                                        core::str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap()
+                                        str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap()
                                     );
                                     return None;
                                 };
@@ -485,6 +502,13 @@ expand!(
         PropertyNameParseBidiClassV1,
         PropertyNameShortBidiClassV1[convert_linear],
         PropertyNameLongBidiClassV1[convert_linear]
+    ),
+    (
+        icu::properties::props::Block,
+        PropertyEnumBlockV1,
+        PropertyNameParseBlockV1,
+        PropertyNameShortBlockV1[convert_linear],
+        PropertyNameLongBlockV1[convert_linear]
     ),
     (
         icu::properties::props::NumericType,

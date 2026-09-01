@@ -137,7 +137,7 @@ fn test_conversion() {
 #[ignore]
 fn test_format() {
     use icu_datetime::{FixedCalendarDateTimeFormatter, fieldsets};
-    use icu_locale::locale;
+    use icu_locale_core::locale;
 
     let formatter =
         FixedCalendarDateTimeFormatter::try_new(locale!("fa").into(), fieldsets::YMD::long())

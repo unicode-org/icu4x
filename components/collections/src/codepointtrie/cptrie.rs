@@ -759,8 +759,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```no_run
-    /// use icu::collections::codepointtrie::planes;
     /// use icu::collections::codepointtrie::CodePointTrie;
+    /// use icu::collections::codepointtrie::planes;
     ///
     /// let planes_trie_u8: CodePointTrie<u8> = planes::get_planes_trie();
     /// let planes_trie_i8: CodePointTrie<i8> =
@@ -801,8 +801,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```
-    /// use icu::collections::codepointtrie::planes;
     /// use icu::collections::codepointtrie::CodePointTrie;
+    /// use icu::collections::codepointtrie::planes;
     ///
     /// let planes_trie_u8: CodePointTrie<u8> = planes::get_planes_trie();
     /// let planes_trie_u16: CodePointTrie<u16> = planes_trie_u8
@@ -950,11 +950,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
                 }
                 let i2: u16 = self.index.get(i1 as usize)?;
                 let i3_block_idx: u32 = (i2 as u32) + ((c >> SHIFT_2) & INDEX_2_MASK);
-                i3_block = if let Some(i3b) = self.index.get(i3_block_idx as usize) {
-                    i3b as u32
-                } else {
-                    return None;
-                };
+                i3_block = self.index.get(i3_block_idx as usize)? as u32;
                 if i3_block == prev_i3_block && (c - start) >= CP_PER_INDEX_2_ENTRY {
                     // The index-3 block is the same as the previous one, and filled with value.
                     debug_assert!((c & (CP_PER_INDEX_2_ENTRY - 1)) == 0);
@@ -1004,27 +1000,15 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             loop {
                 let mut block: u32;
                 if (i3_block & 0x8000) == 0 {
-                    block = if let Some(b) = self.index.get((i3_block + i3) as usize) {
-                        b as u32
-                    } else {
-                        return None;
-                    };
+                    block = self.index.get((i3_block + i3) as usize)? as u32;
                 } else {
                     // 18-bit indexes stored in groups of 9 entries per 8 indexes.
                     let mut group: u32 = (i3_block & 0x7fff) + (i3 & !7) + (i3 >> 3);
                     let gi: u32 = i3 & 7;
-                    let gi_val: u32 = if let Some(giv) = self.index.get(group as usize) {
-                        giv.into()
-                    } else {
-                        return None;
-                    };
+                    let gi_val: u32 = self.index.get(group as usize)?.into();
                     block = (gi_val << (2 + (2 * gi))) & 0x30000;
                     group += 1;
-                    let ggi_val: u32 = if let Some(ggiv) = self.index.get((group + gi) as usize) {
-                        ggiv as u32
-                    } else {
-                        return None;
-                    };
+                    let ggi_val: u32 = self.index.get((group + gi) as usize)? as u32;
                     block |= ggi_val;
                 }
 
@@ -1189,8 +1173,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     ///
     /// ```
     /// use core::ops::RangeInclusive;
-    /// use icu::collections::codepointtrie::planes;
     /// use icu::collections::codepointtrie::CodePointMapRange;
+    /// use icu::collections::codepointtrie::planes;
     ///
     /// let planes_trie = planes::get_planes_trie();
     ///

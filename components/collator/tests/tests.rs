@@ -7,7 +7,7 @@ use core::cmp::Ordering;
 use atoi::FromRadix16;
 use icu_collator::provider::*;
 use icu_collator::{options::*, preferences::*, *};
-use icu_locale_core::{Locale, langid, locale};
+use icu_locale_core::{Locale, data_locale, locale};
 use icu_provider::prelude::*;
 
 struct TestingProvider;
@@ -18,7 +18,6 @@ const _: () = {
     pub mod icu {
         pub use crate as collator;
         pub use icu_collections as collections;
-        pub use icu_locale as locale;
         pub use icu_normalizer as normalizer;
     }
     make_provider!(TestingProvider);
@@ -75,11 +74,7 @@ fn parse_hex(mut hexes: &[u8]) -> Option<String> {
     let mut buf = String::new();
     loop {
         let (scalar, mut offset) = u32::from_radix_16(hexes);
-        if let Some(c) = core::char::from_u32(scalar) {
-            buf.push(c);
-        } else {
-            return None;
-        }
+        buf.push(char::from_u32(scalar)?);
         if offset == hexes.len() {
             return Some(buf);
         }
@@ -1509,7 +1504,7 @@ fn test_nb_nn_no() {
         .unwrap()
         .metadata
         .locale,
-        Some(langid!("no").into())
+        Some(data_locale!("no"))
     );
 
     // And "nn" should work, too
@@ -1532,7 +1527,7 @@ fn test_nb_nn_no() {
         .unwrap()
         .metadata
         .locale,
-        Some(langid!("no").into())
+        Some(data_locale!("no"))
     );
 }
 
@@ -2048,6 +2043,17 @@ fn test_fffe_issue_6811() {
     // The merge separator must even compare less than U+0000.
     assert_eq!(
         collator.compare_utf16(&[0xFFFE, 0x0000], &[0x0000, 0xFFFE]),
+        Ordering::Less
+    );
+}
+
+#[test]
+fn test_burmese() {
+    let mut options = CollatorOptions::default();
+    options.strength = Some(Strength::Tertiary);
+    let collator = Collator::try_new(locale!("my").into(), options).unwrap();
+    assert_eq!(
+        collator.compare("", "\u{102d}\u{102f}\u{1037}"),
         Ordering::Less
     );
 }

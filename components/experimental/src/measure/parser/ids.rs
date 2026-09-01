@@ -21,7 +21,7 @@ fn all_ids_u16() {
 // Identifiers are immutable; any new unit must be assigned a distinct identifier.
 // NOTE: These identifiers are tied to the units data generation. After adding a new unit,
 // remember to regenerate the units data to reflect changes.
-pub(crate) const CLDR_IDS_TRIE: ZeroTrieSimpleAscii<[u8; 1334]> =
+pub(crate) const CLDR_IDS_TRIE: ZeroTrieSimpleAscii<[u8; 1346]> =
     ZeroTrieSimpleAscii::from_sorted_str_tuples(&[
         ("acre", 1_usize),
         ("ampere", 2_usize),
@@ -63,6 +63,7 @@ pub(crate) const CLDR_IDS_TRIE: ZeroTrieSimpleAscii<[u8; 1334]> =
         ("dram", 37_usize),
         ("drop", 38_usize),
         ("dunam", 39_usize),
+        ("dyne", 157_usize),
         ("earth-mass", 40_usize),
         ("earth-radius", 41_usize),
         ("electronvolt", 42_usize),
@@ -142,6 +143,7 @@ pub(crate) const CLDR_IDS_TRIE: ZeroTrieSimpleAscii<[u8; 1334]> =
         ("portion", 113_usize),
         ("pound", 114_usize),
         ("pound-force", 115_usize),
+        ("poundal", 159_usize),
         ("quart", 116_usize),
         ("quart-imperial", 117_usize),
         ("quarter", 118_usize),

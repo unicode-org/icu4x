@@ -86,7 +86,7 @@ impl MeasureUnit {
                                         if let Some(possible_constant_denominator) = split.next() {
                                             // Try to parse the possible constant denominator as a u64.
                                             if let Some(parsed_denominator) =
-                                                core::str::from_utf8(possible_constant_denominator)
+                                                str::from_utf8(possible_constant_denominator)
                                                     .ok()
                                                     .and_then(|s| s.parse::<f64>().ok())
                                                     .and_then(|num| {

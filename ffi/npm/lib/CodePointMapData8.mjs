@@ -16,11 +16,11 @@ const CodePointMapData8_box_destroy_registry = new FinalizationRegistry((ptr) =>
  *
  * For properties whose values fit into 8 bits.
  *
- * See the [Rust documentation for `properties`](https://docs.rs/icu/2.2.0/icu/properties/index.html) for more information.
+ * See the [Rust documentation for `properties`](https://docs.rs/icu/2.3.1/icu/properties/index.html) for more information.
  *
- * See the [Rust documentation for `CodePointMapData`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapData.html) for more information.
+ * See the [Rust documentation for `CodePointMapData`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapData.html) for more information.
  *
- * See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html) for more information.
+ * See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html) for more information.
  */
 export class CodePointMapData8 {
     // Internal ptr reference:
@@ -54,7 +54,7 @@ export class CodePointMapData8 {
     /**
      * Gets the value for a code point.
      *
-     * See the [Rust documentation for `get`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get) for more information.
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.get) for more information.
      */
     get(cp) {
 
@@ -72,7 +72,7 @@ export class CodePointMapData8 {
     /**
      * Produces an iterator over ranges of code points that map to `value`
      *
-     * See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
+     * See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
      */
     iterRangesForValue(value) {
         // This lifetime edge depends on lifetimes 'a
@@ -93,7 +93,7 @@ export class CodePointMapData8 {
     /**
      * Produces an iterator over ranges of code points that do not map to `value`
      *
-     * See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
+     * See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
      */
     iterRangesForValueComplemented(value) {
         // This lifetime edge depends on lifetimes 'a
@@ -121,7 +121,7 @@ export class CodePointMapData8 {
      * Should only be used on maps for properties with values less than 32 (like `General_Category`),
      * other maps will have unpredictable results
      *
-     * See the [Rust documentation for `iter_ranges_for_group`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group) for more information.
+     * See the [Rust documentation for `iter_ranges_for_group`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group) for more information.
      */
     iterRangesForGroup(group) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -146,7 +146,7 @@ export class CodePointMapData8 {
     /**
      * Gets a {@link CodePointSetData} representing all entries in this map that map to the given value
      *
-     * See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/2.2.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
+     * See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
      */
     getSetForValue(value) {
 
@@ -164,7 +164,7 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `BidiClass` property, using compiled data.
      *
-     * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.BidiClass.html) for more information.
+     * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.BidiClass.html) for more information.
      */
     static createBidiClass() {
 
@@ -182,13 +182,13 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `BidiClass` property, using a particular data source.
      *
-     * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.BidiClass.html) for more information.
+     * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.BidiClass.html) for more information.
      */
     static createBidiClassWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_bidi_class_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_bidi_class_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -207,7 +207,7 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `CanonicalCombiningClass` property, using compiled data.
      *
-     * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
+     * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
      */
     static createCanonicalCombiningClass() {
 
@@ -225,13 +225,13 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `CanonicalCombiningClass` property, using a particular data source.
      *
-     * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
+     * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
      */
     static createCanonicalCombiningClassWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_canonical_combining_class_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_canonical_combining_class_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -250,7 +250,7 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `EastAsianWidth` property, using compiled data.
      *
-     * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.EastAsianWidth.html) for more information.
+     * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
      */
     static createEastAsianWidth() {
 
@@ -268,13 +268,13 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `EastAsianWidth` property, using a particular data source.
      *
-     * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.EastAsianWidth.html) for more information.
+     * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
      */
     static createEastAsianWidthWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_east_asian_width_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_east_asian_width_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -293,7 +293,7 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `GeneralCategory` property, using compiled data.
      *
-     * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html) for more information.
+     * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.3.1/icu/properties/props/enum.GeneralCategory.html) for more information.
      */
     static createGeneralCategory() {
 
@@ -311,13 +311,13 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `GeneralCategory` property, using a particular data source.
      *
-     * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.2.0/icu/properties/props/enum.GeneralCategory.html) for more information.
+     * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.3.1/icu/properties/props/enum.GeneralCategory.html) for more information.
      */
     static createGeneralCategoryWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_general_category_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_general_category_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -336,7 +336,7 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `GraphemeClusterBreak` property, using compiled data.
      *
-     * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
+     * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
      */
     static createGraphemeClusterBreak() {
 
@@ -354,13 +354,13 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `GraphemeClusterBreak` property, using a particular data source.
      *
-     * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
+     * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
      */
     static createGraphemeClusterBreakWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_grapheme_cluster_break_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_grapheme_cluster_break_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -379,7 +379,7 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `HangulSyllableType` property, using compiled data.
      *
-     * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.HangulSyllableType.html) for more information.
+     * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.HangulSyllableType.html) for more information.
      */
     static createHangulSyllableType() {
 
@@ -397,13 +397,13 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `HangulSyllableType` property, using a particular data source.
      *
-     * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.HangulSyllableType.html) for more information.
+     * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.HangulSyllableType.html) for more information.
      */
     static createHangulSyllableTypeWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_hangul_syllable_type_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_hangul_syllable_type_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -422,7 +422,7 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `IndicConjunctBreak` property, using compiled data.
      *
-     * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
+     * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
      */
     static createIndicConjunctBreak() {
 
@@ -440,13 +440,13 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `IndicConjunctBreak` property, using a particular data source.
      *
-     * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
+     * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
      */
     static createIndicConjunctBreakWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_indic_conjunct_break_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_indic_conjunct_break_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -465,7 +465,7 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `IndicSyllabicCategory` property, using compiled data.
      *
-     * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+     * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
      */
     static createIndicSyllabicCategory() {
 
@@ -483,13 +483,13 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `IndicSyllabicCategory` property, using a particular data source.
      *
-     * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+     * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
      */
     static createIndicSyllabicCategoryWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_indic_syllabic_category_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_indic_syllabic_category_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -508,7 +508,7 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `JoiningGroup` property, using compiled data.
      *
-     * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html) for more information.
+     * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningGroup.html) for more information.
      */
     static createJoiningGroup() {
 
@@ -526,13 +526,13 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `JoiningGroup` property, using a particular data source.
      *
-     * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningGroup.html) for more information.
+     * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningGroup.html) for more information.
      */
     static createJoiningGroupWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_joining_group_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_joining_group_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -551,7 +551,7 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `JoiningType` property, using compiled data.
      *
-     * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningType.html) for more information.
+     * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningType.html) for more information.
      */
     static createJoiningType() {
 
@@ -569,13 +569,13 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `JoiningType` property, using a particular data source.
      *
-     * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.JoiningType.html) for more information.
+     * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningType.html) for more information.
      */
     static createJoiningTypeWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_joining_type_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_joining_type_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -594,7 +594,7 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `LineBreak` property, using compiled data.
      *
-     * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.LineBreak.html) for more information.
+     * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.LineBreak.html) for more information.
      */
     static createLineBreak() {
 
@@ -612,13 +612,13 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `LineBreak` property, using a particular data source.
      *
-     * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.LineBreak.html) for more information.
+     * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.LineBreak.html) for more information.
      */
     static createLineBreakWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_line_break_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_line_break_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -637,7 +637,7 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `NumericType` property, using compiled data.
      *
-     * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NumericType.html) for more information.
+     * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.NumericType.html) for more information.
      */
     static createNumericType() {
 
@@ -655,13 +655,13 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `NumericType` property, using a particular data source.
      *
-     * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.NumericType.html) for more information.
+     * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.NumericType.html) for more information.
      */
     static createNumericTypeWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_numeric_type_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_numeric_type_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -680,7 +680,7 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `SentenceBreak` property, using compiled data.
      *
-     * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.SentenceBreak.html) for more information.
+     * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.SentenceBreak.html) for more information.
      */
     static createSentenceBreak() {
 
@@ -698,13 +698,13 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `SentenceBreak` property, using a particular data source.
      *
-     * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.SentenceBreak.html) for more information.
+     * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.SentenceBreak.html) for more information.
      */
     static createSentenceBreakWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_sentence_break_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_sentence_break_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -723,7 +723,7 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `VerticalOrientation` property, using compiled data.
      *
-     * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.VerticalOrientation.html) for more information.
+     * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
      */
     static createVerticalOrientation() {
 
@@ -741,13 +741,13 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `VerticalOrientation` property, using a particular data source.
      *
-     * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.VerticalOrientation.html) for more information.
+     * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
      */
     static createVerticalOrientationWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_vertical_orientation_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_vertical_orientation_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -766,7 +766,7 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `WordBreak` property, using compiled data.
      *
-     * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.WordBreak.html) for more information.
+     * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.WordBreak.html) for more information.
      */
     static createWordBreak() {
 
@@ -784,13 +784,13 @@ export class CodePointMapData8 {
     /**
      * Create a map for the `WordBreak` property, using a particular data source.
      *
-     * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.2.0/icu/properties/props/struct.WordBreak.html) for more information.
+     * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.WordBreak.html) for more information.
      */
     static createWordBreakWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointMapData8_create_word_break_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CodePointMapData8_create_word_break_with_provider_mv1(diplomatReceive.buffer, provider instanceof DataProvider ? provider.ffiValue : typeError('provider', 'DataProvider'));
 
         try {
             if (!diplomatReceive.resultFlag) {

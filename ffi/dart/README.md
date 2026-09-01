@@ -12,7 +12,7 @@ _We are still working on improving the user experience of using ICU4X from other
 ICU4X can be used like any other `pub.dev` package:
 
 ```shell
-dart pub add icu4x:2.0.0-dev.0
+dart pub add icu4x
 ```
 
 `main.dart`:
@@ -42,7 +42,7 @@ dart run
 
 ## Optimizing binary size
 
-By default, this package will fetch a platform specific static or dynamic library from the [ICU4X GitHub releases](https://github.com/unicode-org/icu4x/releases) and link it using `package:hooks`. On supported platforms (currently Linux, `dev` Dart with `--enable-experiment=record-use`), `package:hooks` performs tree-shaking, meaning only APIs that are used by the final binary are included. On other platforms, the whole ICU4X dynamic library is included, which can add about 15MB to the resulting binary size. This can, however, be customized by building a tailored ICU4X dylib manually and adding the following to your `pubspec.yaml`:
+By default, this package will fetch a platform specific static library from the [ICU4X GitHub releases](https://github.com/unicode-org/icu4x/releases) and link it using `package:hooks`. `package:hooks` performs tree-shaking, meaning only APIs that are used by the final binary are included. This can, however, be customized by building a tailored ICU4X dylib manually and adding the following to your `pubspec.yaml`:
 
 ```yaml
 hooks:

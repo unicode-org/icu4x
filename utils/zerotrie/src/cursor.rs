@@ -85,15 +85,18 @@ where
     /// Using the `writeable` crate:
     ///
     /// ```
-    /// use zerotrie::ZeroTrieSimpleAscii;
     /// use writeable::Writeable;
+    /// use zerotrie::ZeroTrieSimpleAscii;
     ///
     /// // A trie with two values: "abc" and "abcdef"
     /// let trie = ZeroTrieSimpleAscii::from_bytes(b"abc\x80def\x81");
     ///
     /// // Get out the value for "abc"
     /// let needle = writeable::concat_writeable!("a", "bc");
-    /// assert_eq!(trie.get_with_write_fn(|sink| needle.write_to(sink)), Some(0));
+    /// assert_eq!(
+    ///     trie.get_with_write_fn(|sink| needle.write_to(sink)),
+    ///     Some(0)
+    /// );
     /// ```
     #[inline]
     pub fn get_with_write_fn<'a>(
@@ -152,15 +155,18 @@ where
     /// Using the `writeable` crate:
     ///
     /// ```
-    /// use zerotrie::ZeroAsciiIgnoreCaseTrie;
     /// use writeable::Writeable;
+    /// use zerotrie::ZeroAsciiIgnoreCaseTrie;
     ///
     /// // A trie with two values: "aBc" and "aBcdEf"
     /// let trie = ZeroAsciiIgnoreCaseTrie::from_bytes(b"aBc\x80dEf\x81");
     ///
     /// // Get out the value for "abc"
     /// let needle = writeable::concat_writeable!("a", "bc");
-    /// assert_eq!(trie.get_with_write_fn(|sink| needle.write_to(sink)), Some(0));
+    /// assert_eq!(
+    ///     trie.get_with_write_fn(|sink| needle.write_to(sink)),
+    ///     Some(0)
+    /// );
     /// ```
     #[inline]
     pub fn get_with_write_fn<'a>(
@@ -219,7 +225,7 @@ pub struct AsciiProbeResult {
     pub total_siblings: u8,
 }
 
-impl ZeroTrieSimpleAsciiCursor<'_> {
+impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
     /// Steps the cursor one character into the trie based on the character's byte value.
     ///
     /// # Examples
@@ -401,9 +407,34 @@ impl ZeroTrieSimpleAsciiCursor<'_> {
     pub fn is_empty(&self) -> bool {
         self.trie.is_empty()
     }
+
+    /// Returns a trie for all suffixes that begin with the previously stepped
+    /// bytes.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerotrie::ZeroTrieSimpleAscii;
+    ///
+    /// // A trie with two values: "abc" and "abcdef"
+    /// let trie = ZeroTrieSimpleAscii::from_bytes(b"abc\x80def\x81");
+    ///
+    /// // Consume the prefix "ab"
+    /// let mut cursor = trie.cursor();
+    /// cursor.step(b'a');
+    /// cursor.step(b'b');
+    /// let suffix_trie = cursor.into_suffix_trie();
+    ///
+    /// // The suffix trie contains the strings "c" and "cdef"
+    /// assert_eq!(suffix_trie.get("c"), Some(0));
+    /// assert_eq!(suffix_trie.get("cdef"), Some(1));
+    /// ```
+    pub fn into_suffix_trie(self) -> ZeroTrieSimpleAscii<&'a [u8]> {
+        self.trie
+    }
 }
 
-impl ZeroAsciiIgnoreCaseTrieCursor<'_> {
+impl<'a> ZeroAsciiIgnoreCaseTrieCursor<'a> {
     /// Steps the cursor one byte into the trie.
     ///
     /// Returns the byte if matched, which may be a different case than the input byte.
@@ -468,6 +499,31 @@ impl ZeroAsciiIgnoreCaseTrieCursor<'_> {
     #[inline]
     pub fn is_empty(&self) -> bool {
         self.trie.is_empty()
+    }
+
+    /// Returns a trie for all suffixes that begin with the previously stepped
+    /// bytes.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerotrie::ZeroAsciiIgnoreCaseTrie;
+    ///
+    /// // A trie with two values: "aBc" and "aBcdEf"
+    /// let trie = ZeroAsciiIgnoreCaseTrie::from_bytes(b"aBc\x80dEf\x81");
+    ///
+    /// // Consume the prefix "ab"
+    /// let mut cursor = trie.cursor();
+    /// cursor.step(b'a');
+    /// cursor.step(b'b');
+    /// let suffix_trie = cursor.into_suffix_trie();
+    ///
+    /// // The suffix trie contains the strings "c" and "cdef" (case-insensitive!)
+    /// assert_eq!(suffix_trie.get("c"), Some(0));
+    /// assert_eq!(suffix_trie.get("CDEF"), Some(1));
+    /// ```
+    pub fn into_suffix_trie(self) -> ZeroAsciiIgnoreCaseTrie<&'a [u8]> {
+        self.trie
     }
 }
 

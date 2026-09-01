@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "16.0.0",
-      "_cldrVersion": "48"
+      "_cldrVersion": "49"
     },
     "currencyData": {
       "fractions": {
@@ -188,6 +188,12 @@
           "_rounding": "0",
           "_digits": "0"
         },
+        "MRU": {
+          "_rounding": "0",
+          "_digits": "2",
+          "_cashRounding": "20",
+          "_cashDigits": "2"
+        },
         "MUR": {
           "_rounding": "0",
           "_digits": "2",
@@ -206,7 +212,9 @@
         },
         "PKR": {
           "_rounding": "0",
-          "_digits": "0"
+          "_digits": "2",
+          "_cashRounding": "0",
+          "_cashDigits": "0"
         },
         "PYG": {
           "_rounding": "0",
@@ -1037,13 +1045,6 @@
           {
             "CNY": {
               "_from": "1953-03-01"
-            }
-          },
-          {
-            "CNX": {
-              "_tender": "false",
-              "_from": "1979-01-01",
-              "_to": "1998-12-31"
             }
           },
           {

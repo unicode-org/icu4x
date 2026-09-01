@@ -5,8 +5,8 @@ part of 'lib.g.dart';
 
 /// Documents which days of the week are considered to be a part of the weekend
 ///
-/// See the [Rust documentation for `WeekdaySetIterator`](https://docs.rs/icu/2.2.0/icu/calendar/week/struct.WeekdaySetIterator.html) for more information.
-final class WeekdaySetIterator implements ffi.Finalizable, core.Iterator<Weekday> {
+/// See the [Rust documentation for `WeekdaySetIterator`](https://docs.rs/icu/2.3.1/icu/calendar/week/struct.WeekdaySetIterator.html) for more information.
+final class WeekdaySetIterator implements core.Iterator<Weekday>, ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
   // These are "used" in the sense that they keep dependencies alive
@@ -41,7 +41,7 @@ final class WeekdaySetIterator implements ffi.Finalizable, core.Iterator<Weekday
     return _current != null;
   }
 
-  /// See the [Rust documentation for `next`](https://docs.rs/icu/2.2.0/icu/calendar/week/struct.WeekdaySetIterator.html#method.next) for more information.
+  /// See the [Rust documentation for `next`](https://docs.rs/icu/2.3.1/icu/calendar/week/struct.WeekdaySetIterator.html#method.next) for more information.
   Weekday? _iteratorNext() {
     final result = _icu4x_WeekdaySetIterator_next_mv1(_ffi);
     if (!result.isOk) {

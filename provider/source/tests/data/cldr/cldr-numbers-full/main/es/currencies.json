@@ -285,7 +285,9 @@
           "CHF": {
             "displayName": "franco suizo",
             "displayName-count-one": "franco suizo",
-            "displayName-count-other": "francos suizos"
+            "displayName-count-other": "francos suizos",
+            "symbol": "CHF",
+            "symbol-alt-narrow": "Fr."
           },
           "CHW": {
             "displayName": "franco WIR",
@@ -1510,7 +1512,6 @@
           },
           "ZWG": {
             "displayName": "oro zimbabuense",
-            "displayName-count-one": "oro zimbabuense",
             "displayName-count-other": "oro zimbabuense"
           },
           "ZWL": {

@@ -2,16 +2,17 @@
 
 ## Background & Motivation
 
-In ECMA-402 (`Intl.DateTimeFormat`), a formatting request is constructed from a set of user-specified options. These options represent a mix of different concerns, which are split in a compliant implementation:
+In ECMA-402 (`Intl.DateTimeFormat`), formatting is driven from an options bag. The options fall into roughly three buckets:
 
-1.  **Field-related options** (e.g., `year`, `month`, `day`, `hour`): These capture the user's choices for field selection and widths. They are mapped to `DateTimeFieldBag` (and subsequently converted to a `FieldSet` via the bridge).
-2.  **Policy-related options** (e.g., `numberingSystem`, `hourCycle`, `calendar`): These represent broader formatter policy and are passed to the formatter via `DateTimeFormatterPreferences`.
+1.  **Field-related options** (e.g., `year`, `month`, `day`, `hour`): These capture the developer's choices for field selection and widths.
+2.  **Preference-related options** (e.g., `numberingSystem`, `hourCycle`, `calendar`): These represent user-specific formatting preferences.
 3.  **Locale matching options** (e.g., `localeMatcher`): These are handled during locale negotiation beforehand and do not reach the formatter.
+
+Bucket (2) is handled with `DateTimeFormatterPreferences`, and bucket (3) is handled in the data load layer. However, ICU4X does not currently offer a way to handle bucket (1).
 
 ### Goals
 
-*   Provide a human-readable, machine-parseable representation of datetime field requests.
-*   Model the common ECMA-402 / ICU4C datetime field subset.
+*   Provide a human-readable, machine-parseable representation of datetime field-related options.
 *   Keep the type focused on fields and field widths, not on other formatter options.
 *   Make round-tripping through a UTS 35 skeleton string lossless for the supported subset.
 *   Make conversion to `FieldSetBuilder` possible even when it is not exact.
@@ -20,22 +21,20 @@ In ECMA-402 (`Intl.DateTimeFormat`), a formatting request is constructed from a 
 
 *   Stock pattern presets (namely, the `dateStyle` and `timeStyle` presets: `Full`, `Long`, `Medium`, and `Short`), as opposed to individual field widths (like `month: "long"` or `weekday: "short"`).
 *   Locale negotiation (such as the ECMA-402 `localeMatcher` option), which is not handled by ICU4X.
-*   Hour-cycle preferences.
-*   Numbering system preferences.
-*   A full replacement for the existing `fieldsets` API.
+*   A replacement for the existing `fieldsets` API.
 *   A perfect round-trip between the bag and `FieldSetBuilder`.
 
 ## Proposed Solution
 
 We propose a new module, `fieldbag`, centered around the `DateTimeFieldBag` struct.
 
-The architecture is built around a 4-step mental model that defines how a formatting request flows into the ICU4X formatting pipeline:
+The architecture is built around 4 data representations that represent different steps in the flow of options into the ICU4X formatting pipeline:
 
-1.  **`DateTimeFieldBag`** (Raw Request): Captures the fine-grained field presence and width choices from the user.
+1.  **`DateTimeFieldBag`** (Raw Request): Captures the fine-grained field presence and width choices from the developer (i.e., "field-related options").
     *   *Example:* A request for "wide month and two-digit year", represented as `{ year: TwoDigit, month: Long }`.
-2.  **UTS 35 Skeleton String** (Interchange Format): The precise, lossless wire format for the raw request (e.g., `yyMMMM`).
+2.  **UTS 35 Skeleton String** (Interchange Format): The precise, lossless wire format for the raw request (e.g., `"yyMMMM"`).
 3.  **`FieldSetBuilder`** (The Bridge): A helper that takes a detailed `DateTimeFieldBag` (or its skeleton) and maps it to the closest matching ICU4X formatting category, collapsing widths if necessary.
-    *   *Example:* Maps the `yyMMMM` request to a `YM` fieldset.
+    *   *Example:* Maps the `"yyMMMM"` request to a `DateFieldSet::YM` fieldset.
 4.  **`CompositeFieldSet`** (Resolved Category): The concrete, optimized runtime enum that wraps the resolved category (e.g., wrapping a `DateFieldSet::YM`). This is a downstream choice, not the core representation of the request.
 
 `DateTimeFieldBag` is a flat struct of optional fields, where each field represents a requested datetime component and its desired width. It acts as a clean, intermediate representation of a user's formatting request.
@@ -44,14 +43,13 @@ The architecture is built around a 4-step mental model that defines how a format
 
 We recommend explicit, named methods for conversion and standard traits for serialization, making the lossy nature of the conversions clear:
 
-*   `impl writeable::Writeable for DateTimeFieldBag` (enables canonical skeleton serialization)
-*   `impl std::str::FromStr for DateTimeFieldBag` (strict parser using UTS 35 skeleton syntax)
-    *   `type Err = DateTimeFieldBagParseError`
 *   `impl DateTimeFieldBag`
-    *   `pub fn to_string(&self) -> String` (convenience wrapper shadowing `ToString::to_string` for high-performance serialization)
+    *   `pub fn to_string(&self) -> String` (canonical skeleton serialization)
     *   `pub fn try_from_skeleton(s: &str) -> Result<Self, DateTimeFieldBagParseError>` (explicit, self-documenting named constructor that delegates to `FromStr`)
     *   `pub fn to_field_set_builder(&self) -> FieldSetBuilder` (lossy conversion)
     *   `pub fn from_field_set_builder(builder: &FieldSetBuilder) -> Self` (best-effort reconstruction)
+*   `impl writeable::Writeable for DateTimeFieldBag` (lower-level version of `to_string()`)
+*   `impl std::str::FromStr for DateTimeFieldBag` (convenience wrapper over `try_from_skeleton(&str)`)
 
 ### Module Shape
 
@@ -81,7 +79,7 @@ UTS 35 skeleton syntax:
 - minute
 - second
 - subsecond
-- time zone name
+- time zone name style
 
 The bag does not carry:
 
@@ -94,14 +92,13 @@ The bag does not carry:
 
 The primary exact interchange format for `DateTimeFieldBag` is a string using UTS 35 classical skeleton syntax for the representable subset.
 
-*   **Serialization:** String output must use ICU4X `Writeable`, not `Display`. The serialization always produces a canonicalized string, meaning the same bag state always serializes to the same skeleton string.
-*   **Parsing:** Parsing uses the `FromStr` trait (returning `DateTimeFieldBagParseError`) or the `try_from_skeleton` helper. The parser must be strict and reject unsupported syntax rather than guessing.
+As discussed above, the string format is parsed and serialized by `DateTimeFieldBag`.
 
 ### Constraints
 
 *   The string syntax must be canonicalized on output.
 *   Parsing must reject unsupported syntax, returning `DateTimeFieldBagParseError`.
-*   **Parsing must reject explicit hour cycle symbols (`h`, `H`, `K`, `k`).** Skeletons containing these symbols must fail to parse.
+*   Parsing must reject explicit hour cycle symbols (`h`, `H`, `K`, `k`), since `DateTimeFieldBag` does not represent the hour cycle. Skeletons containing these symbols must fail to parse.
 *   If a UTS 35 string contains information the bag cannot represent, the parse must fail.
 
 ### Representative Mappings
@@ -132,7 +129,7 @@ The hour and day period fields are mapped to UTS 35 skeleton symbols to avoid in
 
 **Standalone Day Period Handling:**
 *   The skeleton parser **accepts** standalone day period symbols (`a`, `b`, `B`) and parses them into a `DateTimeFieldBag` with `day_period` set and `hour` unset. This ensures lossless round-tripping.
-*   During conversion to `FieldSetBuilder` (`to_field_set_builder`), a standalone day period is not supported by the underlying dynamic fieldsets and will be rejected or normalized (best-effort).
+*   During conversion to `FieldSetBuilder` (`to_field_set_builder`), a standalone day period is not supported by the underlying dynamic fieldsets and will imply the presence of an hour field.
 
 
 ## Conversion from DateTimeFieldBag to FieldSetBuilder
@@ -151,21 +148,18 @@ The conversion preserves the closest meaningful mapping for:
 
 ### What gets approximated or omitted
 
-*   **Width Simplification:** Narrow month and weekday widths collapse into a broader `Length` choice.
+*   **Field-Specific Widths:** Narrow month and weekday widths collapse into a broader `Length` choice.
 *   **Alignment/Padding:** Field-specific 2-digit (padded) width choices map to a builder-wide `Alignment::Column` preference. *(Rationale: In the `fieldsets` model, `Alignment::Column` is the primary mechanism to support 2-digit numeric fields, as column/tabular alignment is the main driver for developers opting into 2-digit widths. This mapping correctly captures this developer intent.)*
 *   **Time Precision:** Minute-only or second-only requests are promoted to a normal time fieldset with the closest `TimePrecision`.
-*   **Day Period:** Day period requests without an hour are rejected as invalid.
-*   **Settings with no bag equivalent:** `TimePrecision::MinuteOptional` and other non-field builder options remain unset.
+*   **Day Period:** Day period requests without an hour imply the presence of an hour.
 
 ### `YearStyle` Forward Resolution
 
 Since `FieldSetBuilder` controls year width via a combination of `Length` and `YearStyle`, while the bag controls it via direct field widths, we resolve the mapping as follows:
-*   `year: Some(Year::Numeric)` $\rightarrow$ Maps to `YearStyle::Auto`. The builder's `length` will be guided towards `Length::Medium` or `Length::Long` to prefer full year display.
-*   `year: Some(Year::TwoDigit)` $\rightarrow$ Maps to `YearStyle::Auto`. The builder's `length` will be guided towards `Length::Short` to prefer 2-digit display.
-*   `era: Some(...)` $\rightarrow$ Maps to `YearStyle::WithEra` (overriding the `Auto` choice above to ensure era is displayed).
-*   `era: None` $\rightarrow$ Maps to `YearStyle::Auto` (relying on locale defaults for era display).
-
-The conversion should be documented as a reconstruction aid, not as a stable interchange format.
+*   `era: None` $\rightarrow$ depends on `year`:
+    *   `year: Some(Year::Numeric)` $\rightarrow$ `YearStyle::Full`.
+    *   `year: Some(Year::TwoDigit)` $\rightarrow$ `YearStyle::Auto`.
+*   `era: Some(...)` $\rightarrow$ `YearStyle::WithEra` regardless of the value of `year`
 
 ## Conversion from FieldSetBuilder to DateTimeFieldBag
 
@@ -185,8 +179,8 @@ Conversion from `FieldSetBuilder` back to `DateTimeFieldBag` is also best-effort
 
 *   `YearStyle::WithEra` $\rightarrow$ `year: Some(Year::Numeric)`, `era: Some(Text::Short)`
 *   `YearStyle::NoEra` $\rightarrow$ `year: Some(Year::Numeric)`, `era: None`
-*   `YearStyle::Full` $\rightarrow$ `year: Some(Year::Numeric)`, `era: None` (leaves era unset, see note below)
-*   `YearStyle::Auto` $\rightarrow$ `year: Some(Year::TwoDigit)` (or `Numeric` depending on length), `era: None` (leaves era unset)
+*   `YearStyle::Full` $\rightarrow$ `year: Some(Year::Numeric)`, `era: None`
+*   `YearStyle::Auto` $\rightarrow$ `year: Some(Year::TwoDigit)`, `era: None`
 
 *Note on Era Display:* For `Full` and `Auto`, the era is left unset (`None`) in the bag. We recommend linking this behavior to future improvements in the [TC39 Intl.eraDisplay proposal](https://github.com/tc39/proposal-intl-era-display) for better granularity in the future.
 

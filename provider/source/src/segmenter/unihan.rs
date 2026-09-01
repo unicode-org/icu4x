@@ -7,7 +7,7 @@
 use crate::source::RscdCache;
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use icu::collections::codepointinvlist::CodePointInversionListBuilder;
-use icu::segmenter::provider::radical::{SegmenterUnihanRadicalV1, UnihanRadicalsData};
+use icu::segmenter::provider::{SegmenterUnihanRadicalV1, UnihanRadicalsData};
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 use icu_codepointtrie_builder::CodePointTrieBuilder;
 use icu_provider::prelude::*;

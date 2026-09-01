@@ -140,8 +140,8 @@
           },
           "BYN": {
             "displayName": "Ruble ng Belarus",
-            "displayName-count-one": "ruble ng Belarus",
-            "displayName-count-other": "rubles ng Belarus",
+            "displayName-count-one": "Belarusian ruble",
+            "displayName-count-other": "na Belarusian ruble",
             "symbol-alt-narrow": "р."
           },
           "BYR": {
@@ -170,7 +170,9 @@
           "CHF": {
             "displayName": "Swiss Franc",
             "displayName-count-one": "Swiss franc",
-            "displayName-count-other": "Swiss francs"
+            "displayName-count-other": "Swiss francs",
+            "symbol": "CHF",
+            "symbol-alt-narrow": "Fr."
           },
           "CLP": {
             "displayName": "Piso ng Chile",
@@ -289,7 +291,7 @@
           },
           "FKP": {
             "displayName": "Pound ng Falkland Islands",
-            "displayName-count-one": "pound ng Falkland Islands",
+            "displayName-count-one": "Falkland Islands pound",
             "displayName-count-other": "pounds ng Falkland Islands",
             "symbol-alt-narrow": "£"
           },
@@ -545,7 +547,7 @@
             "symbol-alt-narrow": "Ar"
           },
           "MKD": {
-            "displayName": "Denar ng Macedonia",
+            "displayName": "Macedonian Denar",
             "displayName-count-one": "denar ng North Macedonia",
             "displayName-count-other": "denari ng North Macedonia"
           },

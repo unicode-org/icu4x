@@ -1,0 +1,15 @@
+# State name ; Accepting (Yes, No, or lookahead name); lookahead name or empty; Break type.
+START ; No ;  ; 
+Control ; Yes ;  ; 
+CR ; Yes ;  ; 
+XXmConjunctLinkermLinkingConsonantmExtPict ; Yes ;  ; 
+ExtPict ; Yes ;  ; 
+Prepend ; Yes ;  ; 
+Extend_ConjunctLinker ; Yes ;  ; 
+ExtPict Extend_ConjunctLinker ; Yes ;  ; 
+L ; Yes ;  ; 
+V ; Yes ;  ; 
+T ; Yes ;  ; 
+RI ; Yes ;  ; 
+ExtPict ZWJ ; Yes ;  ; 
+ExtPict Extend_ConjunctLinker ZWJ ; Yes ;  ; 

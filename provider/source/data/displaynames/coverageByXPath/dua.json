@@ -1,0 +1,23 @@
+{
+  "coverageByXPath": {
+    "dua": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"dua\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Latn\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"CM\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"bas\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"bss\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"ewo\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"ff\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"kkj\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"nnh\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"yav\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]"
+      ]
+    }
+  }
+}

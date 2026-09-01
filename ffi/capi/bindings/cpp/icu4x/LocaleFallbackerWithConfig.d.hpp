@@ -15,6 +15,7 @@ namespace capi { struct Locale; }
 class Locale;
 namespace capi { struct LocaleFallbackIterator; }
 class LocaleFallbackIterator;
+struct LocaleFallbackConfig;
 } // namespace icu4x
 
 
@@ -22,12 +23,6 @@ class LocaleFallbackIterator;
 namespace icu4x {
 namespace capi {
     struct LocaleFallbackerWithConfig;
-
-
-    typedef struct DiplomatLocaleFallbackerWithConfigView {
-      const LocaleFallbackerWithConfig** data;
-      size_t len;
-    } DiplomatLocaleFallbackerWithConfigView;
 } // namespace capi
 } // namespace
 
@@ -35,15 +30,22 @@ namespace icu4x {
 /**
  * An object that runs the ICU4X locale fallback algorithm with specific configurations.
  *
- * See the [Rust documentation for `LocaleFallbackerWithConfig`](https://docs.rs/icu/2.2.0/icu/locale/fallback/struct.LocaleFallbackerWithConfig.html) for more information.
+ * See the [Rust documentation for `LocaleFallbackerWithConfig`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbackerWithConfig.html) for more information.
  */
 class LocaleFallbackerWithConfig {
 public:
 
   /**
+   * Returns the associated config.
+   *
+   * See the [Rust documentation for `config`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbackerWithConfig.html#method.config) for more information.
+   */
+  inline icu4x::LocaleFallbackConfig config() const;
+
+  /**
    * Creates an iterator from a locale with each step of fallback.
    *
-   * See the [Rust documentation for `fallback_for`](https://docs.rs/icu/2.2.0/icu/locale/fallback/struct.LocaleFallbacker.html#method.fallback_for) for more information.
+   * See the [Rust documentation for `fallback_for`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbacker.html#method.fallback_for) for more information.
    */
   inline std::unique_ptr<icu4x::LocaleFallbackIterator> fallback_for_locale(const icu4x::Locale& locale) const DIPLOMAT_LIFETIME_BOUND;
 

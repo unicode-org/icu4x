@@ -1,0 +1,33 @@
+{
+  "coverageByXPath": {
+    "yue-Hant-MO": {
+      "basic": [
+        "//ldml/localeDisplayNames/languages/language[@type=\"yue\"]",
+        "//ldml/localeDisplayNames/languages/language[@type=\"yue\"][@alt=\"menu\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Hans\"]",
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Hant\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"CN\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"HK\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"HK\"][@alt=\"short\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"MO\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"MO\"][@alt=\"short\"]"
+      ],
+      "moderate": [
+        "//ldml/localeDisplayNames/scripts/script[@type=\"Zzzz\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"]",
+        "//ldml/localeDisplayNames/territories/territory[@type=\"US\"][@alt=\"short\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"chinese\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"calendar\"][@type=\"chinese\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"hanidec\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"hanidec\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"hans\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"hansfin\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"hansfin\"][@scope=\"core\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"hant\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"hantfin\"]",
+        "//ldml/localeDisplayNames/types/type[@key=\"numbers\"][@type=\"hantfin\"][@scope=\"core\"]"
+      ],
+      "modern": []
+    }
+  }
+}

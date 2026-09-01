@@ -6,7 +6,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * See the [Rust documentation for `MismatchedCalendarError`](https://docs.rs/icu/2.2.0/icu/datetime/struct.MismatchedCalendarError.html) for more information.
+ * See the [Rust documentation for `MismatchedCalendarError`](https://docs.rs/icu/2.3.1/icu/datetime/struct.MismatchedCalendarError.html) for more information.
  */
 export class DateTimeMismatchedCalendarError {
     #thisKind;
@@ -88,8 +88,8 @@ export class DateTimeMismatchedCalendarError {
         functionCleanupArena,
         appendArrayMap
     ) {
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#thisKind.ffiValue, Int32Array);
-        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 4, this.#dateKind, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, new CalendarKind(this.#thisKind).ffiValue, Int32Array);
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 4, this.#dateKind, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, new CalendarKind(jsValue).ffiValue, Int32Array));
     }
 
     // This struct contains borrowed fields, so this takes in a list of

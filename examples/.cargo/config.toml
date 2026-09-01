@@ -25,6 +25,7 @@ icu_decimal = { path = "../components/decimal" }
 icu_experimental = { path = "../components/experimental" }
 icu_list = { path = "../components/list" }
 icu_locale = { path = "../components/locale" }
+icu_locale_fallback = { path = "../components/locale_fallback" }
 icu_normalizer = { path = "../components/normalizer" }
 icu_pattern = { path = "../components/pattern" }
 icu_plurals = { path = "../components/plurals" }
@@ -56,6 +57,7 @@ icu_decimal_data = { path = "../provider/data/decimal" }
 icu_experimental_data = { path = "../provider/data/experimental" }
 icu_list_data = { path = "../provider/data/list" }
 icu_locale_data = { path = "../provider/data/locale" }
+icu_locale_fallback_data = { path = "../provider/data/locale_fallback" }
 icu_normalizer_data = { path = "../provider/data/normalizer" }
 icu_plurals_data = { path = "../provider/data/plurals" }
 icu_properties_data = { path = "../provider/data/properties"}

@@ -36,8 +36,8 @@ use crate::{
 ///
 /// ```
 /// use icu::locale::subtags::subtag;
-/// use icu::time::zone::IanaParser;
 /// use icu::time::TimeZone;
+/// use icu::time::zone::IanaParser;
 ///
 /// let parser = IanaParser::new();
 ///
@@ -177,8 +177,8 @@ impl<'a> IanaParserBorrowed<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu::time::zone::iana::IanaParser;
     /// use icu::time::TimeZone;
+    /// use icu::time::zone::iana::IanaParser;
     ///
     /// let parser = IanaParser::new();
     ///
@@ -421,8 +421,8 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu::time::zone::iana::IanaParserExtended;
     /// use icu::time::TimeZone;
+    /// use icu::time::zone::iana::IanaParserExtended;
     ///
     /// let parser = IanaParserExtended::new();
     ///
@@ -499,8 +499,8 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
     ///
     /// ```
     /// use icu::locale::subtags::subtag;
-    /// use icu::time::zone::iana::IanaParserExtended;
     /// use icu::time::zone::TimeZone;
+    /// use icu::time::zone::iana::IanaParserExtended;
     /// use std::collections::BTreeSet;
     ///
     /// let parser = IanaParserExtended::new();

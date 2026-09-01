@@ -85,7 +85,7 @@ mod test {
         provider::fields::{Day, Field, FieldLength, Month, Weekday},
         provider::pattern::reference,
     };
-    use icu::locale::locale;
+    use icu::locale::data_locale;
     use icu::locale::preferences::extensions::unicode::keywords::HourCycle;
     use std::collections::BTreeMap;
 
@@ -93,7 +93,7 @@ mod test {
     use crate::datetime::DatagenCalendar;
 
     fn get_data_payload() -> BTreeMap<Skeleton, PluralElements<Pattern<'static>>> {
-        let locale = locale!("en").into();
+        let locale = data_locale!("en");
 
         let provider = SourceDataProvider::new_testing();
         let data = provider
@@ -129,7 +129,7 @@ mod test {
                         .expect("pattern should not have plural variants")
                         .to_string()
                         .as_str(),
-                    "H:m:s"
+                    "MMMM d, y"
                 )
             }
             BestSkeleton::NoMatch => {
@@ -428,7 +428,7 @@ mod test {
 
     #[test]
     fn test_alt_ascii_parsing() {
-        let locale = locale!("en").into();
+        let locale = data_locale!("en");
         let provider = SourceDataProvider::new_testing();
         let data = provider
             .get_dates_resource(&locale, Some(DatagenCalendar::Gregorian))

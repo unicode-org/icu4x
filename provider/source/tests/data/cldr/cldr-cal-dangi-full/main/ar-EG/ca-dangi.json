@@ -1069,7 +1069,7 @@
               "full": "r(U) MMMM d, EEEE",
               "long": "r(U) MMMM d",
               "medium": "r MMM d",
-              "short": "r-MM-dd"
+              "short": "r/MM/dd"
             },
             "dateSkeletons": {
               "full": "rMMMMEEEEd",
@@ -1090,6 +1090,10 @@
               "short": "ahmm"
             },
             "dateTimeFormats": {
+              "numericSeparators": {
+                "numericDateSeparator": "/",
+                "numericTimeSeparator": ":"
+              },
               "full": "{1} {0}",
               "long": "{1} {0}",
               "medium": "{1} {0}",
@@ -1134,7 +1138,7 @@
                 "y": "r(U)",
                 "yyyy": "r(U)",
                 "yyyyM": "r-MM",
-                "yyyyMd": "r-MM-dd",
+                "yyyyMd": "r/MM/dd",
                 "yyyyMEd": "r-MM-dd, E",
                 "yyyyMMM": "r MMM",
                 "yyyyMMMd": "r MMM d",
@@ -1146,19 +1150,26 @@
                 "yyyyQQQQ": "r(U) QQQQ"
               },
               "appendItems": {
+                "Date-Timezone": "{0} {1}",
                 "Day": "{0} ({2}: {1})",
-                "Day-Of-Week": "{0} {1}",
-                "Era": "{1} {0}",
+                "Day-Of-Week": "{1} {0}",
+                "Era": "{0} {1}",
                 "Hour": "{0} ({2}: {1})",
                 "Minute": "{0} ({2}: {1})",
                 "Month": "{0} ({2}: {1})",
                 "Quarter": "{0} ({2}: {1})",
                 "Second": "{0} ({2}: {1})",
+                "Time-Day-Of-Week": "{1} {0}",
                 "Timezone": "{0} {1}",
                 "Week": "{0} ({2}: {1})",
                 "Year": "{1} {0}"
               },
               "intervalFormats": {
+                "intervalFormatRanges": {
+                  "mixed": "‏{0} – ‏{1}",
+                  "non-numeric": "‏{0} – ‏{1}",
+                  "numeric": "{0}–{1}"
+                },
                 "intervalFormatFallback": "{0} – {1}",
                 "Bh": {
                   "B": "h B – h B",

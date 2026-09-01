@@ -15,8 +15,8 @@
 //! ## Format a number with Bangla digits
 //!
 //! ```
-//! use icu::decimal::input::Decimal;
 //! use icu::decimal::DecimalFormatter;
+//! use icu::decimal::input::Decimal;
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
 //!
@@ -32,8 +32,8 @@
 //! ## Format a number with digits after the decimal separator
 //!
 //! ```
-//! use icu::decimal::input::Decimal;
 //! use icu::decimal::DecimalFormatter;
+//! use icu::decimal::input::Decimal;
 //! use icu::locale::Locale;
 //! use writeable::assert_writeable_eq;
 //!
@@ -55,8 +55,8 @@
 //! Numbering systems specified in the `-u-nu` subtag will be followed.
 //!
 //! ```
-//! use icu::decimal::input::Decimal;
 //! use icu::decimal::DecimalFormatter;
+//! use icu::decimal::input::Decimal;
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
 //!

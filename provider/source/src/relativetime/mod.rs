@@ -138,7 +138,7 @@ make_data_provider!(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu::locale::langid;
+    use icu::locale::{data_locale, locale};
     use icu::plurals::PluralRules;
     use writeable::assert_writeable_eq;
 
@@ -147,13 +147,13 @@ mod tests {
         let provider = SourceDataProvider::new_testing();
         let data: DataPayload<ShortQuarterRelativeV1> = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+                id: DataIdentifierBorrowed::for_locale(&data_locale!("en")),
                 ..Default::default()
             })
             .unwrap()
             .payload;
         let rules =
-            PluralRules::try_new_cardinal_unstable(&provider, langid!("en").into()).unwrap();
+            PluralRules::try_new_cardinal_unstable(&provider, locale!("en").into()).unwrap();
         assert_eq!(data.get().relatives.get(&0).unwrap(), "this qtr.");
         assert_writeable_eq!(
             data.get().past.get(1.into(), &rules).interpolate([1]),
@@ -174,13 +174,13 @@ mod tests {
         let provider = SourceDataProvider::new_testing();
         let data: DataPayload<LongYearRelativeV1> = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("ar").into()),
+                id: DataIdentifierBorrowed::for_locale(&data_locale!("ar")),
                 ..Default::default()
             })
             .unwrap()
             .payload;
         let rules =
-            PluralRules::try_new_cardinal_unstable(&provider, langid!("ar").into()).unwrap();
+            PluralRules::try_new_cardinal_unstable(&provider, locale!("ar").into()).unwrap();
         assert_eq!(data.get().relatives.get(&-1).unwrap(), "السنة الماضية");
 
         // past.one, future.two are without a placeholder.

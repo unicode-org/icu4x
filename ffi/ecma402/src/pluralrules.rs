@@ -172,7 +172,7 @@ pub(crate) mod internal {
             ];
             for test in tests {
                 let actual = fixed_format(test.n, &test.opts);
-                assert_eq!(test.expected, actual.as_str(), "test: {:?}", &test);
+                assert_eq!(test.expected, actual.as_str(), "test: {:?}", test);
             }
         }
 
@@ -206,7 +206,7 @@ pub(crate) mod internal {
             }];
             for test in tests {
                 let actual = to_icu4x_operands(test.n, test.opts.clone());
-                assert_eq!(test.expected, actual, "test: {:?}", &test);
+                assert_eq!(test.expected, actual, "test: {:?}", test);
             }
         }
     }

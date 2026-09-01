@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceDataProvider;
-use icu::locale::{LanguageIdentifier, langid};
+use icu::locale::{DataLocale, data_locale};
 use icu_provider::dynutil::UpcastDataPayload;
 use icu_provider::export::*;
 use icu_provider::prelude::*;
@@ -58,11 +58,7 @@ fn make_testdata() {
     let provider = SourceDataProvider::new_testing();
 
     ExportDriver::new(
-        LOCALES
-            .iter()
-            .cloned()
-            .map(Into::into)
-            .map(DataLocaleFamily::single),
+        LOCALES.iter().copied().map(DataLocaleFamily::single),
         DeduplicationStrategy::Maximal.into(),
         LocaleFallbacker::try_new_unstable(&provider).unwrap(),
     )
