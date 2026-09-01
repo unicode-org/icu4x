@@ -10,8 +10,150 @@ use super::super::provider::currency::{
     fractions::{CurrencyFractionsV1, FractionInfo, Rounding},
     no_currency::{CurrencyPatternsNoCurrency, CurrencyPatternsNoCurrencyV1},
     patterns::CurrencyPatternsDataV1,
-    symbols::CurrencySymbolsV1,
+    symbols::{CurrencyDecimalSymbolsV1, CurrencySymbolsV1},
 };
+
+const CURRENCY_ATTRIBUTE_LEN: usize = 8 + 1 + 3;
+
+fn currency_attribute<'a>(
+    buffer: &'a mut [u8; CURRENCY_ATTRIBUTE_LEN],
+    nu: &str,
+    iso_code: &str,
+) -> Option<&'a str> {
+    let len = nu.len() + 1 + iso_code.len();
+    if len > buffer.len() {
+        return None;
+    }
+    for (target, byte) in buffer.iter_mut().zip(
+        nu.bytes()
+            .chain(core::iter::once(b'/'))
+            .chain(iso_code.bytes()),
+    ) {
+        *target = byte;
+    }
+    core::str::from_utf8(buffer.get(..len)?).ok()
+}
+
+#[cfg(feature = "compiled_data")]
+fn try_new_decimal_formatter_for_currency(
+    prefs: DecimalFormatterPreferences,
+    currency: CurrencyType,
+) -> Result<DecimalFormatter, DataError> {
+    try_new_decimal_formatter_for_currency_from_providers(
+        &crate::provider::Baked,
+        &icu_decimal::provider::Baked,
+        prefs,
+        currency,
+    )
+}
+
+fn try_new_decimal_formatter_for_currency_unstable<D>(
+    provider: &D,
+    prefs: DecimalFormatterPreferences,
+    currency: CurrencyType,
+) -> Result<DecimalFormatter, DataError>
+where
+    D: ?Sized
+        + DataProvider<CurrencyDecimalSymbolsV1>
+        + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
+        + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
+{
+    try_new_decimal_formatter_for_currency_from_providers(provider, provider, prefs, currency)
+}
+
+fn try_new_decimal_formatter_for_currency_from_providers<D1, D2>(
+    currency_provider: &D1,
+    decimal_provider: &D2,
+    prefs: DecimalFormatterPreferences,
+    currency: CurrencyType,
+) -> Result<DecimalFormatter, DataError>
+where
+    D1: ?Sized + DataProvider<CurrencyDecimalSymbolsV1>,
+    D2: ?Sized
+        + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
+        + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
+{
+    let symbols =
+        load_currency_decimal_symbols(currency_provider, decimal_provider, prefs, currency)?;
+    let locale = icu_decimal::provider::DecimalSymbolsV1::make_locale(prefs.locale_preferences);
+    let resolved_nu_id = DataIdentifierBorrowed::for_marker_attributes(
+        DataMarkerAttributes::from_str_or_panic(symbols.get().numsys()),
+    );
+    let digits = load_with_fallback(
+        decimal_provider,
+        prefs.nu_id(&locale).into_iter().chain([resolved_nu_id]),
+    )?
+    .payload;
+    Ok(DecimalFormatter::from_raw_data_unstable(
+        Default::default(),
+        symbols,
+        digits,
+    ))
+}
+
+fn load_currency_decimal_symbols<
+    D1: DataProvider<CurrencyDecimalSymbolsV1> + ?Sized,
+    D2: DataProvider<icu_decimal::provider::DecimalSymbolsV1> + ?Sized,
+>(
+    currency_provider: &D1,
+    decimal_provider: &D2,
+    prefs: DecimalFormatterPreferences,
+    currency: CurrencyType,
+) -> Result<DataPayload<icu_decimal::provider::DecimalSymbolsV1>, DataError> {
+    let locale = icu_decimal::provider::DecimalSymbolsV1::make_locale(prefs.locale_preferences);
+    let iso_code = currency.iso_code();
+
+    let mut buffer = [0; CURRENCY_ATTRIBUTE_LEN];
+    let nu_currency_attribute = match prefs.numbering_system.as_ref() {
+        Some(nu) => currency_attribute(&mut buffer, nu.as_str(), iso_code.as_str()),
+        None => None,
+    };
+
+    for attr_str in nu_currency_attribute
+        .into_iter()
+        .chain(core::iter::once(iso_code.as_str()))
+    {
+        let Ok(attribute) = DataMarkerAttributes::try_from_str(attr_str) else {
+            continue;
+        };
+        if let Some(resp) = currency_provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attribute, &locale),
+                metadata: {
+                    let mut m = DataRequestMetadata::default();
+                    m.silent = true;
+                    m
+                },
+            })
+            .allow_identifier_not_found()?
+        {
+            return Ok(resp.payload.cast());
+        }
+    }
+
+    // Fall back to standard DecimalSymbolsV1
+    if let Some(nu_id) = prefs.nu_id(&locale)
+        && let Some(resp) = decimal_provider
+            .load(DataRequest {
+                id: nu_id,
+                metadata: {
+                    let mut m = DataRequestMetadata::default();
+                    m.silent = true;
+                    m
+                },
+            })
+            .allow_identifier_not_found()?
+    {
+        return Ok(resp.payload);
+    }
+
+    Ok(decimal_provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_locale(&locale),
+            metadata: DataRequestMetadata::default(),
+        })?
+        .payload)
+}
 use super::CurrencyType;
 use fixed_decimal::{
     Decimal as FixedDecimal, RoundingIncrement, Sign, SignedRoundingMode, UnsignedRoundingMode,
@@ -480,7 +622,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         Self::try_new_essential(
-            DecimalFormatter::try_new((&prefs).into(), Default::default())?,
+            try_new_decimal_formatter_for_currency((&prefs).into(), currency_code)?,
             prefs,
             currency_code,
             CurrencySymbolsV1::SHORT,
@@ -500,7 +642,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         Self::try_new_essential(
-            DecimalFormatter::try_new((&prefs).into(), Default::default())?,
+            try_new_decimal_formatter_for_currency((&prefs).into(), currency_code)?,
             prefs,
             currency_code,
             CurrencySymbolsV1::NARROW,
@@ -519,13 +661,18 @@ impl CurrencyFormatter<DecimalFormatter> {
         D: ?Sized
             + DataProvider<CurrencyEssentialsV1>
             + DataProvider<CurrencySymbolsV1>
+            + DataProvider<CurrencyDecimalSymbolsV1>
             + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
         Self::try_new_essential_unstable(
             provider,
-            DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
+            try_new_decimal_formatter_for_currency_unstable(
+                provider,
+                (&prefs).into(),
+                currency_code,
+            )?,
             prefs,
             currency_code,
             CurrencySymbolsV1::SHORT,
@@ -544,13 +691,18 @@ impl CurrencyFormatter<DecimalFormatter> {
         D: ?Sized
             + DataProvider<CurrencyEssentialsV1>
             + DataProvider<CurrencySymbolsV1>
+            + DataProvider<CurrencyDecimalSymbolsV1>
             + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
         Self::try_new_essential_unstable(
             provider,
-            DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
+            try_new_decimal_formatter_for_currency_unstable(
+                provider,
+                (&prefs).into(),
+                currency_code,
+            )?,
             prefs,
             currency_code,
             CurrencySymbolsV1::NARROW,
@@ -607,7 +759,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         Self::try_new_code_internal(
-            DecimalFormatter::try_new((&prefs).into(), Default::default())?,
+            try_new_decimal_formatter_for_currency((&prefs).into(), currency_code)?,
             prefs,
             currency_code,
             options,
@@ -624,13 +776,18 @@ impl CurrencyFormatter<DecimalFormatter> {
     where
         D: ?Sized
             + DataProvider<CurrencyEssentialsV1>
+            + DataProvider<CurrencyDecimalSymbolsV1>
             + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
         Self::try_new_code_internal_unstable(
             provider,
-            DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
+            try_new_decimal_formatter_for_currency_unstable(
+                provider,
+                (&prefs).into(),
+                currency_code,
+            )?,
             prefs,
             currency_code,
             options,
@@ -678,7 +835,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         currency_code: CurrencyType,
     ) -> Result<Self, DataError> {
         Self::try_new_name_internal(
-            DecimalFormatter::try_new((&prefs).into(), Default::default())?,
+            try_new_decimal_formatter_for_currency((&prefs).into(), currency_code)?,
             prefs,
             currency_code,
         )
@@ -694,6 +851,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         D: ?Sized
             + DataProvider<CurrencyExtendedDataV1>
             + DataProvider<CurrencyPatternsDataV1>
+            + DataProvider<CurrencyDecimalSymbolsV1>
             + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
@@ -701,7 +859,11 @@ impl CurrencyFormatter<DecimalFormatter> {
     {
         Self::try_new_name_internal_unstable(
             provider,
-            DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
+            try_new_decimal_formatter_for_currency_unstable(
+                provider,
+                (&prefs).into(),
+                currency_code,
+            )?,
             prefs,
             currency_code,
         )
@@ -751,7 +913,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         Self::try_new_no_currency_internal(
-            DecimalFormatter::try_new((&prefs).into(), Default::default())?,
+            try_new_decimal_formatter_for_currency((&prefs).into(), currency_code)?,
             prefs,
             currency_code,
             options,
@@ -768,13 +930,18 @@ impl CurrencyFormatter<DecimalFormatter> {
     where
         D: ?Sized
             + DataProvider<CurrencyPatternsNoCurrencyV1>
+            + DataProvider<CurrencyDecimalSymbolsV1>
             + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
         Self::try_new_no_currency_internal_unstable(
             provider,
-            DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
+            try_new_decimal_formatter_for_currency_unstable(
+                provider,
+                (&prefs).into(),
+                currency_code,
+            )?,
             prefs,
             currency_code,
             options,

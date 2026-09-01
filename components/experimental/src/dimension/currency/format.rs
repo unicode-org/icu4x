@@ -112,6 +112,52 @@ mod tests {
     }
 
     #[test]
+    pub fn test_pt_pt_escudo() {
+        let prefs = locale!("pt-PT").into();
+        let value = "12345.67".parse().unwrap();
+
+        // In CLDR, `pt-PT` sets the decimal separator override for PTE to '$' and the
+        // currency symbol to U+200B (ZERO WIDTH SPACE), as the cifrão ('$') serves as
+        // the decimal separator (e.g. "12,345$67").
+        //
+        // Because the locale's standard currency pattern ("#,##0.00 ¤") contains a
+        // non-breaking space (U+00A0) before the symbol placeholder ('¤'), formatting
+        // with `try_new_symbol` produces "12,345$67" followed by U+00A0 and U+200B.
+        // Visually this appears as a trailing space, but it faithfully matches CLDR data
+        // (tracked in CLDR-19771).
+        // (Note: `try_new_no_currency` below formats without the placeholder or trailing space).
+        let escudo =
+            CurrencyFormatter::try_new_symbol(prefs, currency!("PTE"), Default::default()).unwrap();
+        assert_writeable_eq!(escudo.format_fixed_decimal(&value), "12,345$67 \u{200B}");
+
+        let escudo_narrow =
+            CurrencyFormatter::try_new_symbol_narrow(prefs, currency!("PTE"), Default::default())
+                .unwrap();
+        // Narrow symbol for PTE is not defined in pt-PT CLDR data, so it falls back to the ISO code
+        assert_writeable_eq!(escudo_narrow.format_fixed_decimal(&value), "12,345$67 PTE");
+
+        let escudo_code =
+            CurrencyFormatter::try_new_code(prefs, currency!("PTE"), Default::default()).unwrap();
+        assert_writeable_eq!(escudo_code.format_fixed_decimal(&value), "12,345$67 PTE");
+
+        let escudo_name = CurrencyFormatter::try_new_name(prefs, currency!("PTE")).unwrap();
+        assert_writeable_eq!(
+            escudo_name.format_fixed_decimal(&value),
+            "12,345$67 escudos portugueses"
+        );
+
+        let escudo_no_currency =
+            CurrencyFormatter::try_new_no_currency(prefs, currency!("PTE"), Default::default())
+                .unwrap();
+        assert_writeable_eq!(escudo_no_currency.format_fixed_decimal(&value), "12,345$67");
+
+        // Currencies the locale does not single out keep its standard separators.
+        let euro =
+            CurrencyFormatter::try_new_symbol(prefs, currency!("EUR"), Default::default()).unwrap();
+        assert_writeable_eq!(euro.format_fixed_decimal(&value), "12 345,67 €");
+    }
+
+    #[test]
     pub fn test_fr_fr() {
         let prefs = locale!("fr-FR").into();
         let currency_code = currency!("EUR");
