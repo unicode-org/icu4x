@@ -155,7 +155,9 @@ impl<Y: RuleBreakType> Iterator for WordBreakIteratorWithWordType<'_, '_, Y> {
 /// Most segmentation methods live on [`WordSegmenterBorrowed`], which can be obtained via
 /// [`WordSegmenter::new_auto()`] (etc) or [`WordSegmenter::as_borrowed()`].
 ///
-/// Word segmenter is currently compatible with [Unicode Standard Annex #29][UAX29] (Version 17.0.0).
+/// Word segmenter is currently compatible with [Unicode Standard Annex #29][UAX29]
+#[cfg_attr(feature = "compiled_data", doc = concat!("(version ", icu_segmenter_data::unicode_tag!(), ")"))]
+/// .
 ///
 /// [UAX29]: https://www.unicode.org/reports/tr29/tr29-47.html
 ///

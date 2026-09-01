@@ -87,7 +87,9 @@ impl<Y: RuleBreakType> Iterator for GraphemeClusterBreakIterator<'_, '_, Y> {
 /// Most segmentation methods live on [`GraphemeClusterSegmenterBorrowed`], which can be obtained via
 /// [`GraphemeClusterSegmenter::new()`] or [`GraphemeClusterSegmenter::as_borrowed()`].
 ///
-/// Grapheme cluster segmenter is currently compatible with [Unicode Standard Annex #29][UAX29] (Version 17.0.0).
+/// Grapheme cluster segmenter is currently compatible with [Unicode Standard Annex #29][UAX29]
+#[cfg_attr(feature = "compiled_data", doc = concat!("(version ", icu_segmenter_data::unicode_tag!(), ")"))]
+/// .
 ///
 /// [UAX29]: https://www.unicode.org/reports/tr29/tr29-47.html
 ///

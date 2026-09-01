@@ -19,7 +19,7 @@ rust-version.workspace = true
 
 [package.metadata.sources]
 cldr = { tagged = "49.0.0-ALPHA1" }
-icuexport = { tagged = "icu4x/2026-08-31/79.x" }
+unicode = { tagged = "18.0.0" }
 segmenter_lstm = { tagged = "v0.1.0" }
 
 [lints.rust]
