@@ -9,7 +9,7 @@ This directory contains design documents, architectural specifications, and tech
 The number formatting ecosystem in ICU4X provides modular, zero-copy, and `#[no_std]` compliant implementations of the Unicode Locale Data Markup Language ([UTS #35](https://unicode.org/reports/tr35/tr35-numbers.html)) and [ECMA-402](https://tc39.es/ecma402/#sec-intl.numberformat) specifications:
 
 * **Decimal Formatter (`icu::decimal`)**:
-  Core localized numeric formatting, grouping separators, decimal symbols, numbering system glyphs, and precision/rounding rules.
+  Core localized numeric formatting, grouping separators, decimal symbols, numbering system glyphs, and precision/rounding rules — including the separators a locale defines for individual currencies, which currency formatting loads through a hidden constructor.
 * **Currency Formatter (`icu::currency` / `icu_experimental::dimension::currency`)**:
   Monetary formatting supporting standard symbols, narrow symbols, ISO currency codes (e.g. USD, EUR), pluralized display names, accounting parenthetical formats, no-currency numeric formatting, and compact currency notations.
 * **Units & Measurement Formatter (`icu::units` / `icu_experimental::dimension::units`)**:
@@ -27,7 +27,7 @@ The number formatting ecosystem in ICU4X provides modular, zero-copy, and `#[no_
 
 | Document | Topic | Status | Description |
 | :--- | :--- | :--- | :--- |
-| [**Currency Formatter**](currency_formatter.md) | Monetary & Currency Formatting | `In Implementation` | Architecture, data markers, and UTS #35 / ECMA-402 compliance. |
+| [**Currency Formatter**](currency_formatter.md) | Monetary & Currency Formatting | `In Implementation` | Architecture, data markers, currency-specific separators, and UTS #35 / ECMA-402 compliance. |
 
 ---
 
