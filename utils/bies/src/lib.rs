@@ -244,8 +244,8 @@ impl Breakpoints {
                         log_probability += matrix.0[i].s.ln();
                     } else {
                         log_probability += matrix.0[i].b.ln();
-                        for k in (i + 1)..(j - 1) {
-                            log_probability += matrix.0[k].i.ln();
+                        for bies in matrix.0.iter().take(j - 1).skip(i + 1) {
+                            log_probability += bies.i.ln();
                         }
                         log_probability += matrix.0[j - 1].e.ln();
                     }

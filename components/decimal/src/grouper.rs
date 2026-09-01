@@ -45,10 +45,7 @@ pub fn check(
         sizes.secondary as i16
     };
     let magnitude_prime = magnitude - primary;
-    if magnitude_prime % secondary == 0 {
-        return true;
-    }
-    false
+    magnitude_prime % secondary == 0
 }
 
 #[test]
