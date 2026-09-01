@@ -455,8 +455,8 @@ decimal/digits/v1, und/telu, 40B, 40B, 4084dfba70dc949
 decimal/digits/v1, und/thai, 40B, 40B, 470541c261160c5a
 decimal/digits/v1, und/tibt, 40B, 40B, a199e0054f3d55b9
 decimal/digits/v1, und/vaii, 40B, 40B, f3247f156118e197
-decimal/symbols/v1, <lookup>, 1440B, 282 identifiers
-decimal/symbols/v1, <total>, 2364B, 992B, 49 unique payloads
+decimal/symbols/v1, <lookup>, 1509B, 293 identifiers
+decimal/symbols/v1, <total>, 2599B, 1087B, 54 unique payloads
 decimal/symbols/v1, ady, 47B, 19B, 3e51d5d2bbc1f2d7
 decimal/symbols/v1, af, -> ady
 decimal/symbols/v1, ar, 52B, 24B, c3d6103c042fed33
@@ -530,6 +530,7 @@ decimal/symbols/v1, bs, -> ast
 decimal/symbols/v1, bs-Cyrl, -> ast
 decimal/symbols/v1, bua, -> ady
 decimal/symbols/v1, ca, -> ast
+decimal/symbols/v1, ca/ESP, -> ast
 decimal/symbols/v1, ckb, 54B, 26B, c137aba06f4daae2
 decimal/symbols/v1, ckb/latn, 49B, 21B, 29e465081f29b475
 decimal/symbols/v1, cs, -> ady
@@ -539,10 +540,12 @@ decimal/symbols/v1, de, -> ast
 decimal/symbols/v1, de-AT, -> ady
 decimal/symbols/v1, de-CH, 46B, 18B, df28d3acc02789f5
 decimal/symbols/v1, de-LI, -> de-CH
+decimal/symbols/v1, de-LU/LUF, -> bgc/latn
 decimal/symbols/v1, doi/deva, -> bgc
 decimal/symbols/v1, dsb, -> ast
 decimal/symbols/v1, ee, 46B, 18B, 96f6d7ff706bd606
 decimal/symbols/v1, el, -> ast
+decimal/symbols/v1, el/GRD, -> ast
 decimal/symbols/v1, en-AT, -> ast
 decimal/symbols/v1, en-BE, -> ast
 decimal/symbols/v1, en-CH, -> de-CH
@@ -583,7 +586,9 @@ decimal/symbols/v1, es-PY, -> ast
 decimal/symbols/v1, es-UY, -> ast
 decimal/symbols/v1, es-VE, -> ast
 decimal/symbols/v1, et, 49B, 21B, 17eeb2279e0080cb
+decimal/symbols/v1, et/EEK, 49B, 21B, 1e7bda97fc47a75b
 decimal/symbols/v1, eu, 48B, 20B, ad715ee6fa0d32be
+decimal/symbols/v1, eu/ESP, -> eu
 decimal/symbols/v1, fa, 59B, 31B, 139fa2364f3d601c
 decimal/symbols/v1, fa/latn, 54B, 26B, e8fbac20e1da766d
 decimal/symbols/v1, ff-Adlm, 48B, 20B, c153d250f8687d46
@@ -598,6 +603,7 @@ decimal/symbols/v1, fr-MA, -> ast
 decimal/symbols/v1, fr-RW, -> bgc/latn
 decimal/symbols/v1, fy, -> ast
 decimal/symbols/v1, gl, -> ady
+decimal/symbols/v1, gl/ESP, -> blo
 decimal/symbols/v1, gu, -> as/latn
 decimal/symbols/v1, gu/gujr, 46B, 18B, a3b95d46b60f8d2
 decimal/symbols/v1, he, -> ar
@@ -613,10 +619,12 @@ decimal/symbols/v1, ie, -> be
 decimal/symbols/v1, is, -> ast
 decimal/symbols/v1, it, -> es
 decimal/symbols/v1, it-CH, 46B, 18B, bc0d56e6e1b33439
+decimal/symbols/v1, it/ITL, -> es
 decimal/symbols/v1, jv, -> ast
 decimal/symbols/v1, ka, -> be
 decimal/symbols/v1, kbd, -> ady
 decimal/symbols/v1, kea, -> ady
+decimal/symbols/v1, kea/CVE, 47B, 19B, 7f4fc75dad04de0d
 decimal/symbols/v1, kgp, -> ast
 decimal/symbols/v1, kk, -> ady
 decimal/symbols/v1, kk-Arab, 47B, 19B, 9f9f10fc53ebd3a9
@@ -676,7 +684,10 @@ decimal/symbols/v1, ps, -> ks
 decimal/symbols/v1, ps/latn, 54B, 26B, 1582078748090142
 decimal/symbols/v1, pt, -> ast
 decimal/symbols/v1, pt-AO, -> ady
+decimal/symbols/v1, pt-AO/PTE, 46B, 18B, 5a368e82989e526
+decimal/symbols/v1, pt-CV/CVE, 47B, 19B, 5807166997b686f4
 decimal/symbols/v1, pt-PT, -> be
+decimal/symbols/v1, pt-PT/PTE, 46B, 18B, b777d39d046db9a9
 decimal/symbols/v1, qu-BO, -> ast
 decimal/symbols/v1, raj, -> bgc
 decimal/symbols/v1, raj/latn, -> bgc/latn

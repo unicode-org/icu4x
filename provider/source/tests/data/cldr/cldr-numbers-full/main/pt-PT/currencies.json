@@ -331,7 +331,9 @@
           "CHF": {
             "displayName": "franco suíço",
             "displayName-count-one": "franco suíço",
-            "displayName-count-other": "francos suíços"
+            "displayName-count-other": "francos suíços",
+            "symbol": "CHF",
+            "symbol-alt-narrow": "Fr."
           },
           "CHW": {
             "displayName": "Franco WIR",
@@ -358,11 +360,6 @@
             "displayName": "yuan offshore",
             "displayName-count-one": "yuan offshore",
             "displayName-count-other": "yuans offshore"
-          },
-          "CNX": {
-            "displayName": "Dólar do Banco Popular da China",
-            "displayName-count-one": "Dólar do Banco Popular da China",
-            "displayName-count-other": "Dólares do Banco Popular da China"
           },
           "CNY": {
             "displayName": "yuan",
