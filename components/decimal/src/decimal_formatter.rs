@@ -18,11 +18,39 @@ use crate::size_test_macro::size_test;
 #[cfg(feature = "alloc")]
 use alloc::string::String;
 use fixed_decimal::{Sign, UnsignedDecimal};
+#[cfg(feature = "unstable")]
+use icu_locale_core::preferences::extensions::unicode::keywords::CurrencyType;
 use icu_provider::prelude::*;
 use writeable::PartsWrite;
 use writeable::Writeable;
 
 size_test!(DecimalFormatter, decimal_formatter_size, 96);
+
+/// The longest marker attribute addressing the symbols of a currency: a numbering
+/// system, a separator, and an ISO 4217 code.
+#[cfg(feature = "unstable")]
+const CURRENCY_ATTRIBUTE_LEN: usize = 8 + 1 + 3;
+
+/// Writes the marker attribute addressing the symbols of `iso_code` in the `nu`
+/// numbering system, which is `<numsys>/<currency>`, into `buffer`.
+#[cfg(feature = "unstable")]
+fn currency_attribute<'a>(
+    buffer: &'a mut [u8; CURRENCY_ATTRIBUTE_LEN],
+    nu: &str,
+    iso_code: &str,
+) -> Option<&'a str> {
+    let len = nu.len() + 1 + iso_code.len();
+    if len > buffer.len() {
+        return None;
+    }
+    for (target, byte) in buffer
+        .iter_mut()
+        .zip(nu.bytes().chain(*b"/").chain(iso_code.bytes()))
+    {
+        *target = byte;
+    }
+    core::str::from_utf8(buffer.get(..len)?).ok()
+}
 
 /// A formatter for [`Decimal`], rendering decimal digits in an i18n-friendly way.
 ///
@@ -94,6 +122,18 @@ impl DecimalFormatter {
         )?
         .payload;
 
+        Self::try_new_with_symbols_unstable(provider, prefs, options, &locale, symbols)
+    }
+
+    /// Loads the digits for `symbols` and assembles the formatter, which is common to
+    /// every constructor.
+    fn try_new_with_symbols_unstable<D: DataProvider<DecimalDigitsV1> + ?Sized>(
+        provider: &D,
+        prefs: DecimalFormatterPreferences,
+        options: DecimalFormatterOptions,
+        locale: &DataLocale,
+        symbols: DataPayload<DecimalSymbolsV1>,
+    ) -> Result<Self, DataError> {
         let resolved_nu_id = DataIdentifierBorrowed::for_marker_attributes(
             DataMarkerAttributes::from_str_or_panic(symbols.get().numsys()),
         );
@@ -101,7 +141,7 @@ impl DecimalFormatter {
         let digits = load_with_fallback(
             provider,
             // fall back to the resolved numbering system
-            prefs.nu_id(&locale).into_iter().chain([resolved_nu_id]),
+            prefs.nu_id(locale).into_iter().chain([resolved_nu_id]),
         )?
         .payload;
 
@@ -110,6 +150,75 @@ impl DecimalFormatter {
             symbols,
             digits,
         })
+    }
+
+    /// Creates a new [`DecimalFormatter`] that formats amounts of `currency`.
+    ///
+    /// Some locales give individual currencies their own decimal and grouping
+    /// separators: `pt-PT` writes the Portuguese escudo as `1,234$56`, using `$` where
+    /// it otherwise writes `,`. This constructor uses those separators for `currency`,
+    /// and behaves exactly like [`Self::try_new`] for every currency a locale does not
+    /// single out.
+    ///
+    /// Separators are locale data rather than user preferences, so this is not a
+    /// user-facing API: it exists for currency formatting, which is the only caller
+    /// that knows which currency is being formatted.
+    #[doc(hidden)] // internal API used by currency formatting
+    #[cfg(all(feature = "compiled_data", feature = "unstable"))]
+    pub fn try_new_with_currency(
+        prefs: DecimalFormatterPreferences,
+        options: DecimalFormatterOptions,
+        currency: CurrencyType,
+    ) -> Result<Self, DataError> {
+        Self::try_new_with_currency_unstable(&Baked, prefs, options, currency)
+    }
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_currency)]
+    #[doc(hidden)] // internal API used by currency formatting
+    #[cfg(feature = "unstable")]
+    pub fn try_new_with_currency_unstable<
+        D: DataProvider<DecimalSymbolsV1> + DataProvider<DecimalDigitsV1> + ?Sized,
+    >(
+        provider: &D,
+        prefs: DecimalFormatterPreferences,
+        options: DecimalFormatterOptions,
+        currency: CurrencyType,
+    ) -> Result<Self, DataError> {
+        let locale = DecimalSymbolsV1::make_locale(prefs.locale_preferences);
+        let iso_code = currency.iso_code();
+
+        // The symbols of a currency are addressed by `<numsys>/<currency>`, or by
+        // `<currency>` alone for the locale's default numbering system. They only exist
+        // for the currencies a locale gives its own separators, so both fall back to the
+        // locale's standard symbols.
+        let mut buffer = [0; CURRENCY_ATTRIBUTE_LEN];
+        let nu_currency_attribute = match prefs.numbering_system.as_ref() {
+            Some(nu) => currency_attribute(&mut buffer, nu.as_str(), iso_code.as_str()),
+            None => None,
+        };
+
+        let for_locale = |attribute| {
+            DataIdentifierBorrowed::for_marker_attributes_and_locale(attribute, &locale)
+        };
+
+        let symbols = load_with_fallback::<DecimalSymbolsV1>(
+            provider,
+            nu_currency_attribute
+                .and_then(|attribute| DataMarkerAttributes::try_from_str(attribute).ok())
+                .map(for_locale)
+                .into_iter()
+                .chain(
+                    DataMarkerAttributes::try_from_str(iso_code.as_str())
+                        .ok()
+                        .map(for_locale),
+                )
+                // fall back to the locale's standard symbols
+                .chain(prefs.nu_id(&locale))
+                .chain([DataIdentifierBorrowed::for_locale(&locale)]),
+        )?
+        .payload;
+
+        Self::try_new_with_symbols_unstable(provider, prefs, options, &locale, symbols)
     }
 
     /// Formats a [`Decimal`], returning a [`FormattedDecimal`].
@@ -277,6 +386,39 @@ fn test_numbering_resolution_fallback() {
     // Loading with nonexistant numbering systems falls back to default
     test_locale(locale!("en-u-nu-wxyz"), "1,234");
     test_locale(locale!("ar-EG-u-nu-wxyz"), "١٬٢٣٤");
+}
+
+#[test]
+#[cfg(all(feature = "compiled_data", feature = "unstable"))]
+fn test_currency_separators() {
+    use icu_locale_core::locale;
+    use writeable::assert_writeable_eq;
+
+    let escudo = CurrencyType::try_from_str("pte").unwrap();
+    let euro = CurrencyType::try_from_str("eur").unwrap();
+    let fd = "12345.67".parse().unwrap();
+
+    // `pt-PT` writes the escudo with `$` as its decimal separator and `,` as its
+    // grouping separator, instead of the standard `,` and U+00A0.
+    let formatter = DecimalFormatter::try_new_with_currency(
+        locale!("pt-PT").into(),
+        Default::default(),
+        escudo,
+    )
+    .unwrap();
+    assert_writeable_eq!(formatter.format(&fd), "12,345$67");
+
+    // Currencies the locale does not single out use its standard symbols.
+    let formatter =
+        DecimalFormatter::try_new_with_currency(locale!("pt-PT").into(), Default::default(), euro)
+            .unwrap();
+    assert_writeable_eq!(formatter.format(&fd), "12\u{a0}345,67");
+
+    // Locales without overrides are unaffected by the currency.
+    let formatter =
+        DecimalFormatter::try_new_with_currency(locale!("en").into(), Default::default(), escudo)
+            .unwrap();
+    assert_writeable_eq!(formatter.format(&fd), "12,345.67");
 }
 
 #[test]
