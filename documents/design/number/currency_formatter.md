@@ -64,16 +64,22 @@ graph TD
 
 ### 2.1 UTS #35 (LDML Part 3 §3.2) Requirements
 
-| Requirement | Description | Example (`en-US`) | Example (`fr-FR`) |
-| :--- | :--- | :--- | :--- |
-| **Locale Placement** | Position symbol relative to digits with locale conventions | `$1,234.50` | `1 234,50 €` |
-| **Accounting Format** | Financial accounting negative notation with parentheses | `($1,234.50)` | `(1 234,50 €)` |
-| **Display Variants** | Symbol, Narrow Symbol, ISO Code, Display Name, No-Currency | `$`, `USD`, `US dollars` | `€`, `EUR`, `euros` |
-| **Alpha Spacing** | Non-breaking space inserted when alpha characters abut digits | `USD 100` | `100 USD` |
-| **Fractions & Rounding** | Default fraction digits and cash transaction rounding increments | USD = 2, JPY = 0 | EUR = 2, CHF = 5¢ cash |
-| **Pluralized Names** | Unit names with plural category resolution (`one`, `other`, etc.) | `1 dollar`, `5 dollars` | `1 dollar`, `5 dollars` |
-| **Currency Separators** | Decimal and grouping separators a locale defines for an individual currency | — | `pt-PT`: `12,345$67` (escudo) vs `12 345,67` |
-| **Compact Notation** | Currency symbol combined with compact scale exponent | `$1.2M` | `1,2 M €` |
+Each example below names the locale and the currency that produced it, since both matter: the *locale* decides placement, separators and spacing, while the *currency* decides the symbol, the number of decimals, and occasionally the separators too. All outputs are the formatter's actual output for the amount `1234.50`, except where noted.
+
+| Requirement | What it means | Example |
+| :--- | :--- | :--- |
+| **Symbol placement** | Where the currency goes relative to the digits, and what spacing sits between them — a property of the locale, not the currency | `en-US` + USD → `$1,234.50`<br>`fr-FR` + EUR → `1 234,50 €` |
+| **Accounting format** | Negative amounts written in parentheses rather than with a minus sign, as finance conventionally does | `en-US` + USD → `($1,234.50)`<br>`fr-FR` + EUR → `(1 234,50 €)` |
+| **Display variants** | The same amount written with a symbol, an ISO 4217 code, or a spelled-out name | `en-US` + USD → `$1,234.50`<br>… as code → `USD 1,234.50`<br>… as name → `1,234.50 US dollars` |
+| **Alpha spacing** | When the currency ends in a letter, a non-breaking space is inserted so letters never touch digits. Symbols usually need none, codes always do | `en-US` + USD symbol → `$1,234.50` *(no gap)*<br>`en-US` + USD code → `USD 1,234.50` *(gap)* |
+| **Fraction digits** | How many decimals a currency uses, and how amounts are rounded to fit — a property of the currency, identical in every locale | `en-US`: USD → `$1,234.50` *(2)*<br>JPY → `¥1,235` *(0, rounded)*<br>BHD → `BHD 1,234.500` *(3)* |
+| **Pluralized names** | The spelled-out name agrees with the number, by plural category of the **formatted** string | `en-US` + USD → `1.00 US dollars`, `1,234.50 US dollars`<br>*(`1.00` is category `other` in English, so the singular “US dollar” appears only when the amount is formatted without decimals)* |
+| **Currency separators** | A locale may give one specific currency its own decimal and grouping separators (§4.3) | `pt-PT` + EUR → `12 345,67 €`<br>`pt-PT` + PTE → `12,345$67` *(escudo, amount `12345.67`)* |
+| **Compact notation** | Abbreviated scale, with the currency still placed by locale convention | `en-US` + USD → `$1.2M`, `$1.2 million`<br>`fr-FR` + EUR → `1,2 M €` *(amount `1234567`)* |
+| **No currency** | The locale's monetary number formatting with the currency omitted, including its accounting form | `en-US` + USD → `1,234.50` |
+
+> [!NOTE]
+> Spaces in these examples are the non-breaking characters CLDR specifies — U+00A0 before `€` in `fr-FR`, U+202F as its grouping separator — not ordinary spaces. They are rendered as spaces here for legibility.
 
 ### 2.2 ECMA-402 (`Intl.NumberFormat`) Requirements
 
@@ -363,6 +369,9 @@ pub(crate) enum CurrencyFormatterData {
 ```
 
 ### 4.3 Currency-Specific Decimal Symbols
+
+> [!IMPORTANT]
+> Implemented in [#8416](https://github.com/unicode-org/icu4x/pull/8416) (data and loading) and [#8441](https://github.com/unicode-org/icu4x/pull/8441) (currency formatting); this section describes the agreed design from [#8300](https://github.com/unicode-org/icu4x/issues/8300) ahead of those landing.
 
 UTS #35 lets a locale give an **individual currency** its own decimal and grouping separators, independently of the separators it uses for plain numbers:
 
@@ -711,7 +720,7 @@ assert_writeable_eq!(accounting.format_fixed_decimal(&negative), "($1,234.50)");
 let code = CurrencyFormatter::try_new_code(prefs, usd, Default::default()).unwrap();
 assert_writeable_eq!(code.format_fixed_decimal(&value), "USD\u{a0}1,234.50");
 
-// 4. A currency the locale gives its own separators (§4.3)
+// 4. A currency the locale gives its own separators (§4.3, pending #8441)
 let escudo = CurrencyFormatter::try_new_symbol(
     locale!("pt-PT").into(),
     currency!("PTE"),
