@@ -152,7 +152,7 @@ impl<'data> PatternBorrowed<'data> {
     /// Returns the index of the first repeated field in the pattern, if any.
     ///
     /// This is used to find the split point for range patterns.
-    #[allow(dead_code, reason = "#5448")]
+    #[cfg(feature = "unstable")]
     fn first_repeated_field_index(&self) -> usize {
         struct Seen {
             // A bitset where the i-th bit is set if we have seen a field of type index i.
@@ -190,7 +190,7 @@ impl<'data> PatternBorrowed<'data> {
     /// Splits the pattern into two halves at the first repeated field.
     ///
     /// If there are no repeated fields, the second half will be empty.
-    #[allow(dead_code, reason = "#5448")]
+    #[cfg(feature = "unstable")]
     pub(crate) fn split_on_repeated_field(&self) -> (Self, Self) {
         let idx = self.first_repeated_field_index();
         let ule_slice = self.items.as_ule_slice();

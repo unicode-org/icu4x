@@ -19,7 +19,6 @@ pub struct FormattedDateRange<'l>(pub(crate) FormattedDateRangeInner<'l>);
 
 #[derive(Debug)]
 #[allow(clippy::large_enum_variant)] // Short-lived formatting result, avoid heap allocation
-#[allow(dead_code, reason = "#5448")]
 pub(crate) enum FormattedDateRangeInner<'l> {
     /// The range resolved to a single date/time (start and end are equal).
     Single(FormattedDateTime<'l>),
@@ -59,7 +58,6 @@ writeable::impl_display_with_writeable!(FormattedDateRange<'_>);
 #[derive(Debug)]
 pub(crate) struct FormattedGreatestDifference<'l> {
     pub(crate) start: FormattedDateTime<'l>,
-    #[allow(dead_code, reason = "#5448")]
     pub(crate) end: FormattedDateTime<'l>,
     pub(crate) pattern_info: RangePatternInfoBorrowed<'l>,
     pub(crate) glue: &'l GluePattern<'l>,
