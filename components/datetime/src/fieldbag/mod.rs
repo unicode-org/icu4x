@@ -19,27 +19,29 @@ use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Default, Hash)]
 #[non_exhaustive]
 pub struct DateTimeFieldBag {
-    /// The era style.
+    /// The length of the era field.
     pub era: Option<field::Era>,
-    /// The year style.
+    /// The length of the year field.
     pub year: Option<field::Year>,
-    /// The month style.
+    /// The length of the month field.
     pub month: Option<field::Month>,
-    /// The day of month style.
+    /// The length of the day-of-month field.
     pub day: Option<field::Day>,
-    /// The day of week style.
+    /// The length of the day-of-week field.
     pub weekday: Option<field::Weekday>,
-    /// The day period style.
+    /// The length of the day-period field.
     pub day_period: Option<field::DayPeriod>,
-    /// The hour style.
+    /// The type of hour field.
+    pub hour_type: Option<field::HourType>,
+    /// The length of the hour field.
     pub hour: Option<field::Hour>,
-    /// The minute style.
+    /// The length of the minute field.
     pub minute: Option<field::Minute>,
-    /// The second style.
+    /// The length of the second field.
     pub second: Option<field::Second>,
-    /// The subsecond precision.
+    /// The length of the fractional second field.
     pub subsecond: Option<field::Subsecond>,
-    /// The time zone name style.
+    /// The length and style of the time zone field.
     pub time_zone_name: Option<field::TimeZoneName>,
 }
 
@@ -85,6 +87,258 @@ pub enum DateTimeFieldBagParseError {
 
 impl core::error::Error for DateTimeFieldBagParseError {}
 
+impl DateTimeFieldBag {
+    fn put_field(&mut self, ch: char, count: usize) -> Result<(), ()> {
+        enum Resolution {
+            Ok,
+            DuplicateSymbol,
+            InvalidLength,
+        }
+        let resolution = match ch {
+            'G' => 'block: {
+                if self.era.is_some() {
+                    break 'block Resolution::DuplicateSymbol;
+                }
+                self.era = Some(match count {
+                    1..=3 => field::Era::Short,
+                    4 => field::Era::Long,
+                    5 => field::Era::Narrow,
+                    _ => break 'block Resolution::InvalidLength,
+                });
+                Resolution::Ok
+            }
+            'y' => 'block: {
+                if self.year.is_some() {
+                    break 'block Resolution::DuplicateSymbol;
+                }
+                self.year = Some(match count {
+                    1 => field::Year::Numeric,
+                    2 => field::Year::TwoDigit,
+                    // TODO: Add 3-digit, 4-digit, ... ?
+                    _ => break 'block Resolution::InvalidLength,
+                });
+                Resolution::Ok
+            }
+            'U' => 'block: {
+                if self.year.is_some() {
+                    break 'block Resolution::DuplicateSymbol;
+                }
+                self.year = Some(match count {
+                    1..=3 => field::Year::CyclicAbbreviated,
+                    4 => field::Year::CyclicLong,
+                    5 => field::Year::CyclicNarrow,
+                    _ => break 'block Resolution::InvalidLength,
+                });
+                Resolution::Ok
+            }
+            'M' => 'block: {
+                if self.month.is_some() {
+                    break 'block Resolution::DuplicateSymbol;
+                }
+                self.month = Some(match count {
+                    1 => field::Month::Numeric,
+                    2 => field::Month::TwoDigit,
+                    3 => field::Month::Short,
+                    4 => field::Month::Long,
+                    5 => field::Month::Narrow,
+                    _ => break 'block Resolution::InvalidLength,
+                });
+                Resolution::Ok
+            }
+            'd' => 'block: {
+                if self.day.is_some() {
+                    break 'block Resolution::DuplicateSymbol;
+                }
+                self.day = Some(match count {
+                    1 => field::Day::Numeric,
+                    2 => field::Day::TwoDigit,
+                    _ => break 'block Resolution::InvalidLength,
+                });
+                Resolution::Ok
+            }
+            'E' => 'block: {
+                if self.weekday.is_some() {
+                    break 'block Resolution::DuplicateSymbol;
+                }
+                self.weekday = Some(match count {
+                    1..=3 => field::Weekday::Abbreviated,
+                    4 => field::Weekday::Long,
+                    5 => field::Weekday::Narrow,
+                    6 => field::Weekday::Short,
+                    _ => break 'block Resolution::InvalidLength,
+                });
+                Resolution::Ok
+            }
+            'j' => 'block: {
+                if self.hour.is_some() {
+                    break 'block Resolution::DuplicateSymbol;
+                }
+                if self.hour_type.is_some() {
+                    break 'block Resolution::DuplicateSymbol;
+                }
+                self.hour = Some(match count {
+                    1 | 3 | 5 => field::Hour::Numeric,
+                    2 | 4 | 6 => field::Hour::TwoDigit,
+                    _ => break 'block Resolution::InvalidLength,
+                });
+                self.hour_type = Some(field::HourType::AutoNumeric);
+                Resolution::Ok
+            }
+            'J' => 'block: {
+                if self.hour.is_some() {
+                    break 'block Resolution::DuplicateSymbol;
+                }
+                if self.hour_type.is_some() {
+                    break 'block Resolution::DuplicateSymbol;
+                }
+                self.hour = Some(match count {
+                    1 => field::Hour::Numeric,
+                    2 => field::Hour::TwoDigit,
+                    _ => break 'block Resolution::InvalidLength,
+                });
+                self.hour_type = Some(field::HourType::AutoNumericNoDayPeriod);
+                Resolution::Ok
+            }
+            'C' => 'block: {
+                if self.hour.is_some() {
+                    break 'block Resolution::DuplicateSymbol;
+                }
+                if self.hour_type.is_some() {
+                    break 'block Resolution::DuplicateSymbol;
+                }
+                self.hour = Some(match count {
+                    1 | 3 | 5 => field::Hour::Numeric,
+                    2 | 4 | 6 => field::Hour::TwoDigit,
+                    _ => break 'block Resolution::InvalidLength,
+                });
+                self.hour_type = Some(field::HourType::Auto);
+                Resolution::Ok
+            }
+            'h' => 'block: {
+                if self.hour.is_some() {
+                    break 'block Resolution::DuplicateSymbol;
+                }
+                self.hour = Some(match count {
+                    1 => field::Hour::Numeric,
+                    2 => field::Hour::TwoDigit,
+                    _ => break 'block Resolution::InvalidLength,
+                });
+                preferences.hour_cycle = Some(HourCycle::H12);
+            }
+            'K' => 'block: {
+                if self.hour.is_some() {
+                    break 'block Resolution::DuplicateSymbol;
+                }
+                self.hour = Some(match count {
+                    1 => field::Hour::Numeric,
+                    2 => field::Hour::TwoDigit,
+                    _ => break 'block Resolution::InvalidLength,
+                });
+                preferences.hour_cycle = Some(HourCycle::H11);
+            }
+            'H' => 'block: {
+                if self.hour.is_some() {
+                    break 'block Resolution::DuplicateSymbol;
+                }
+                self.hour = Some(match count {
+                    1 => field::Hour::Numeric,
+                    2 => field::Hour::TwoDigit,
+                    _ => break 'block Resolution::InvalidLength,
+                });
+                preferences.hour_cycle = Some(HourCycle::H23);
+            }
+            'k' => 'block: {
+                if self.hour.is_some() {
+                    break 'block Resolution::DuplicateSymbol;
+                }
+                self.hour = Some(match count {
+                    1 => field::Hour::Numeric,
+                    2 => field::Hour::TwoDigit,
+                    _ => break 'block Resolution::InvalidLength,
+                });
+                // Note: ICU4X maps 'k' (1-24) to H23 because H24 is not supported.
+                preferences.hour_cycle = Some(HourCycle::H23);
+            }
+            'a' | 'b' | 'B' => 'block: {
+                if self.day_period.is_some() {
+                    break 'block Resolution::DuplicateSymbol;
+                }
+                self.day_period = Some(match count {
+                    1..=3 => field::DayPeriod::Short,
+                    4 => field::DayPeriod::Long,
+                    5 => field::DayPeriod::Narrow,
+                    _ => break 'block Resolution::InvalidLength,
+                });
+                Resolution::Ok
+            }
+            'm' => 'block: {
+                if self.minute.is_some() {
+                    break 'block Resolution::DuplicateSymbol;
+                }
+                self.minute = Some(match count {
+                    1 => field::Minute::Numeric,
+                    2 => field::Minute::TwoDigit,
+                    _ => break 'block Resolution::InvalidLength,
+                });
+                Resolution::Ok
+            }
+            's' => 'block: {
+                if self.second.is_some() {
+                    break 'block Resolution::DuplicateSymbol;
+                }
+                self.second = Some(match count {
+                    1 => field::Second::Numeric,
+                    2 => field::Second::TwoDigit,
+                    _ => break 'block Resolution::InvalidLength,
+                });
+                Resolution::Ok
+            }
+            'S' => 'block: {
+                if self.subsecond.is_some() {
+                    break 'block Resolution::DuplicateSymbol;
+                }
+                let Some(subsecond) = field::Subsecond::try_from_int(count as u8) else {
+                    break 'block Resolution::InvalidLength,
+                };
+                self.subsecond = Some(subsecond);
+            }
+            'z' => 'block: {
+                if self.time_zone_name.is_some() {
+                    break 'block Resolution::DuplicateSymbol;
+                }
+                self.time_zone_name = Some(match count {
+                    1..=3 => field::TimeZoneName::ShortSpecific,
+                    4 => field::TimeZoneName::LongSpecific,
+                    _ => break 'block Resolution::InvalidLength,
+                });
+                Resolution::Ok
+            }
+            'O' => 'block: {
+                if self.time_zone_name.is_some() {
+                    break 'block Resolution::DuplicateSymbol;
+                }
+                self.time_zone_name = Some(match count {
+                    1 => field::TimeZoneName::ShortOffset,
+                    4 => field::TimeZoneName::LongOffset,
+                    _ => break 'block Resolution::InvalidLength,
+                });
+                Resolution::Ok
+            }
+            'v' => 'block: {
+                if self.time_zone_name.is_some() {
+                    break 'block Resolution::DuplicateSymbol;
+                }
+                self.time_zone_name = Some(match count {
+                    1 => field::TimeZoneName::ShortGeneric,
+                    4 => field::TimeZoneName::LongGeneric,
+                    _ => break 'block Resolution::InvalidLength,
+                });
+            }
+            _ => break 'block Resolution::InvalidSymbol;
+        }
+    }
+}
+
 impl DateTimeFieldBagWithPreferences {
     /// Parses a UTS 35 skeleton string into a [`DateTimeFieldBagWithPreferences`].
     pub fn try_from_skeleton(
@@ -97,230 +351,10 @@ impl DateTimeFieldBagWithPreferences {
         while let Some(ch) = chars.next() {
             let mut count = 1;
             while chars.peek() == Some(&ch) {
-                chars.next();
                 count += 1;
+                chars.next();
             }
 
-            match ch {
-                'G' => {
-                    if bag.era.is_some() {
-                        return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
-                    }
-                    bag.era = Some(match count {
-                        1..=3 => field::Era::Short,
-                        4 => field::Era::Long,
-                        5 => field::Era::Narrow,
-                        _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
-                    });
-                }
-                'y' => {
-                    if bag.year.is_some() {
-                        return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
-                    }
-                    bag.year = Some(match count {
-                        2 => field::Year::TwoDigit,
-                        _ => field::Year::Numeric,
-                    });
-                }
-                'U' => {
-                    if bag.year.is_some() {
-                        return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
-                    }
-                    bag.year = Some(match count {
-                        1..=3 => field::Year::CyclicAbbreviated,
-                        4 => field::Year::CyclicLong,
-                        5 => field::Year::CyclicNarrow,
-                        _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
-                    });
-                }
-                'M' => {
-                    if bag.month.is_some() {
-                        return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
-                    }
-                    bag.month = Some(match count {
-                        1 => field::Month::Numeric,
-                        2 => field::Month::TwoDigit,
-                        3 => field::Month::Short,
-                        4 => field::Month::Long,
-                        5 => field::Month::Narrow,
-                        _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
-                    });
-                }
-                'd' => {
-                    if bag.day.is_some() {
-                        return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
-                    }
-                    bag.day = Some(match count {
-                        1 => field::Day::Numeric,
-                        2 => field::Day::TwoDigit,
-                        _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
-                    });
-                }
-                'E' | 'e' => {
-                    if bag.weekday.is_some() {
-                        return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
-                    }
-                    bag.weekday = Some(match count {
-                        1..=3 => field::Weekday::Abbreviated,
-                        4 => field::Weekday::Long,
-                        5 => field::Weekday::Narrow,
-                        6 => field::Weekday::Short,
-                        _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
-                    });
-                }
-                'j' => {
-                    if bag.hour.is_some() {
-                        return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
-                    }
-                    bag.hour = Some(match count {
-                        1 | 3 | 5 => field::Hour::Numeric,
-                        2 | 4 | 6 => field::Hour::TwoDigit,
-                        _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
-                    });
-                }
-                'J' => {
-                    if bag.hour.is_some() {
-                        return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
-                    }
-                    bag.hour = Some(match count {
-                        1 => field::Hour::Numeric,
-                        2 => field::Hour::TwoDigit,
-                        _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
-                    });
-                }
-                'C' => {
-                    if bag.hour.is_some() || bag.day_period.is_some() {
-                        return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
-                    }
-                    let (hour, day_period) = match count {
-                        1 => (field::Hour::Numeric, field::DayPeriod::Short),
-                        2 => (field::Hour::TwoDigit, field::DayPeriod::Short),
-                        3 => (field::Hour::Numeric, field::DayPeriod::Long),
-                        4 => (field::Hour::TwoDigit, field::DayPeriod::Long),
-                        5 => (field::Hour::Numeric, field::DayPeriod::Narrow),
-                        6 => (field::Hour::TwoDigit, field::DayPeriod::Narrow),
-                        _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
-                    };
-                    bag.hour = Some(hour);
-                    bag.day_period = Some(day_period);
-                }
-                'h' => {
-                    if bag.hour.is_some() {
-                        return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
-                    }
-                    bag.hour = Some(match count {
-                        1 => field::Hour::Numeric,
-                        2 => field::Hour::TwoDigit,
-                        _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
-                    });
-                    preferences.hour_cycle = Some(HourCycle::H12);
-                }
-                'K' => {
-                    if bag.hour.is_some() {
-                        return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
-                    }
-                    bag.hour = Some(match count {
-                        1 => field::Hour::Numeric,
-                        2 => field::Hour::TwoDigit,
-                        _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
-                    });
-                    preferences.hour_cycle = Some(HourCycle::H11);
-                }
-                'H' => {
-                    if bag.hour.is_some() {
-                        return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
-                    }
-                    bag.hour = Some(match count {
-                        1 => field::Hour::Numeric,
-                        2 => field::Hour::TwoDigit,
-                        _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
-                    });
-                    preferences.hour_cycle = Some(HourCycle::H23);
-                }
-                'k' => {
-                    if bag.hour.is_some() {
-                        return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
-                    }
-                    bag.hour = Some(match count {
-                        1 => field::Hour::Numeric,
-                        2 => field::Hour::TwoDigit,
-                        _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
-                    });
-                    // Note: ICU4X maps 'k' (1-24) to H23 because H24 is not supported.
-                    preferences.hour_cycle = Some(HourCycle::H23);
-                }
-                'a' | 'b' | 'B' => {
-                    if bag.day_period.is_some() {
-                        return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
-                    }
-                    bag.day_period = Some(match count {
-                        1..=3 => field::DayPeriod::Short,
-                        4 => field::DayPeriod::Long,
-                        5 => field::DayPeriod::Narrow,
-                        _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
-                    });
-                }
-                'm' => {
-                    if bag.minute.is_some() {
-                        return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
-                    }
-                    bag.minute = Some(match count {
-                        1 => field::Minute::Numeric,
-                        2 => field::Minute::TwoDigit,
-                        _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
-                    });
-                }
-                's' => {
-                    if bag.second.is_some() {
-                        return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
-                    }
-                    bag.second = Some(match count {
-                        1 => field::Second::Numeric,
-                        2 => field::Second::TwoDigit,
-                        _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
-                    });
-                }
-                'S' => {
-                    if bag.subsecond.is_some() {
-                        return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
-                    }
-                    let Some(subsecond) = field::Subsecond::try_from_int(count as u8) else {
-                        return Err(DateTimeFieldBagParseError::InvalidLength(ch, count));
-                    };
-                    bag.subsecond = Some(subsecond);
-                }
-                'z' => {
-                    if bag.time_zone_name.is_some() {
-                        return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
-                    }
-                    bag.time_zone_name = Some(match count {
-                        1..=3 => field::TimeZoneName::ShortSpecific,
-                        4 => field::TimeZoneName::LongSpecific,
-                        _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
-                    });
-                }
-                'O' => {
-                    if bag.time_zone_name.is_some() {
-                        return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
-                    }
-                    bag.time_zone_name = Some(match count {
-                        1 => field::TimeZoneName::ShortOffset,
-                        4 => field::TimeZoneName::LongOffset,
-                        _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
-                    });
-                }
-                'v' => {
-                    if bag.time_zone_name.is_some() {
-                        return Err(DateTimeFieldBagParseError::DuplicateSymbol(ch));
-                    }
-                    bag.time_zone_name = Some(match count {
-                        1 => field::TimeZoneName::ShortGeneric,
-                        4 => field::TimeZoneName::LongGeneric,
-                        _ => return Err(DateTimeFieldBagParseError::InvalidLength(ch, count)),
-                    });
-                }
-                _ => return Err(DateTimeFieldBagParseError::InvalidSymbol(ch)),
-            }
         }
 
         Ok(DateTimeFieldBagWithPreferences { bag, preferences })
