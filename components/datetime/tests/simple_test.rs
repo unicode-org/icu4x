@@ -375,7 +375,7 @@ fn test_german_md() {
             .unwrap();
 
     assert_writeable_eq!(formatter_short.format(&date), "31.08.");
-    assert_writeable_eq!(formatter_medium.format(&date), "31.08."); // TODO: Should be "31. Aug."
+    assert_writeable_eq!(formatter_medium.format(&date), "31. Aug.");
     assert_writeable_eq!(formatter_long.format(&date), "31. August");
 }
 
