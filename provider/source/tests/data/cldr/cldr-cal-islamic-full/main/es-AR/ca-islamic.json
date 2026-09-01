@@ -305,18 +305,22 @@
               "short": "GGGGGyyMMdd"
             },
             "timeFormats": {
-              "full": "h:mm:ss a zzzz",
-              "long": "h:mm:ss a z",
-              "medium": "h:mm:ss a",
-              "short": "h:mm a"
+              "full": "HH:mm:ss zzzz",
+              "long": "HH:mm:ss z",
+              "medium": "HH:mm:ss",
+              "short": "HH:mm"
             },
             "timeSkeletons": {
-              "full": "ahmmsszzzz",
-              "long": "ahmmssz",
-              "medium": "ahmmss",
-              "short": "ahmm"
+              "full": "HHmmsszzzz",
+              "long": "HHmmssz",
+              "medium": "HHmmss",
+              "short": "HHmm"
             },
             "dateTimeFormats": {
+              "numericSeparators": {
+                "numericDateSeparator": "/",
+                "numericTimeSeparator": ":"
+              },
               "full": "{1}, {0}",
               "long": "{1}, {0}",
               "medium": "{1}, {0}",
@@ -379,19 +383,26 @@
                 "yyyyQQQQ": "QQQQ 'de' y G"
               },
               "appendItems": {
+                "Date-Timezone": "{0} {1}",
                 "Day": "{0} ({2}: {1})",
-                "Day-Of-Week": "{0} {1}",
-                "Era": "{1} {0}",
+                "Day-Of-Week": "{1}, {0}",
+                "Era": "{0} {1}",
                 "Hour": "{0} ({2}: {1})",
                 "Minute": "{0} ({2}: {1})",
                 "Month": "{0} ({2}: {1})",
                 "Quarter": "{0} ({2}: {1})",
                 "Second": "{0} ({2}: {1})",
+                "Time-Day-Of-Week": "{1}, {0}",
                 "Timezone": "{0} {1}",
                 "Week": "{0} ({2}: {1})",
                 "Year": "{1} {0}"
               },
               "intervalFormats": {
+                "intervalFormatRanges": {
+                  "mixed": "{0} – {1}",
+                  "non-numeric": "{0}–{1}",
+                  "numeric": "{0}–{1}"
+                },
                 "intervalFormatFallback": "{0}–{1}",
                 "Bh": {
                   "B": "h B – h B",
@@ -496,6 +507,10 @@
                 "MMMEd": {
                   "d": "E, d 'de' MMM–E, d 'de' MMM",
                   "M": "E, d 'de' MMM–E, d 'de' MMM"
+                },
+                "MMMMd": {
+                  "d": "d–d 'de' MMMM",
+                  "M": "d 'de' MMMM – d 'de' MMMM"
                 },
                 "y": {
                   "y": "y–y G"

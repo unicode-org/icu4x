@@ -1,0 +1,15 @@
+{
+  "main": {
+    "bn": {
+      "identity": {
+        "language": "bn"
+      },
+      "localeDisplayNames": {
+        "variants": {
+          "PINYIN": "পিনইন রোমানীকরণ",
+          "WADEGILE": "ওয়াদে-গিলেস রোমানীকরণ"
+        }
+      }
+    }
+  }
+}

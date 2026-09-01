@@ -54,6 +54,20 @@ export class CodePointMapData16 {
     getSetForValue(value: number): CodePointSetData;
 
     /**
+     * Create a map for the `Block` property, using compiled data.
+     *
+     * See the [Rust documentation for `Block`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html) for more information.
+     */
+    static createBlock(): CodePointMapData16;
+
+    /**
+     * Create a map for the `Block` property, using a particular data source.
+     *
+     * See the [Rust documentation for `Block`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html) for more information.
+     */
+    static createBlockWithProvider(provider: DataProvider): CodePointMapData16;
+
+    /**
      * Create a map for the `Script` property, using compiled data.
      *
      * See the [Rust documentation for `Script`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html) for more information.

@@ -269,7 +269,9 @@
           },
           "CHF": {
             "displayName": "スイス フラン",
-            "displayName-count-other": "スイス フラン"
+            "displayName-count-other": "スイス フラン",
+            "symbol": "CHF",
+            "symbol-alt-narrow": "Fr."
           },
           "CHW": {
             "displayName": "フラン (WIR)",
@@ -291,10 +293,6 @@
           "CNH": {
             "displayName": "中国人民元(オフショア)",
             "displayName-count-other": "中国人民元(オフショア)"
-          },
-          "CNX": {
-            "displayName": "中国人民銀行ドル",
-            "displayName-count-other": "中国人民銀行ドル"
           },
           "CNY": {
             "displayName": "中国人民元",
@@ -956,7 +954,7 @@
           "SAR": {
             "displayName": "サウジ リヤル",
             "displayName-count-other": "サウジ リヤル",
-            "symbol-alt-variant": "⃁"
+            "symbol-alt-variant": "SR"
           },
           "SBD": {
             "displayName": "ソロモン諸島 ドル",

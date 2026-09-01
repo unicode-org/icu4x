@@ -19,24 +19,40 @@
           "calendar": "Kalendaryo",
           "cf": "Format ng Pera",
           "colAlternate": "Pag-uuri-uri ng Mga Ignore Symbol",
-          "colBackwards": "Pag-uuri-uri ng Baliktad na Accent",
-          "colCaseFirst": "Uppercase/Lowercase na Pagsusunud-sunod",
+          "colBackwards": "Reversed Accent na Pag-uuri",
+          "colCaseFirst": "Uppercase/Lowercase na Pagsusunod-sunod",
           "colCaseLevel": "Case Sensitive na Pag-uuri-uri",
           "collation": "Pagkakasunud-sunod ng Ayos",
           "colNormalization": "Normalized na Pag-uuri-uri",
           "colNumeric": "Numeric na Pag-uuri-uri",
+          "colReorder": "Script/Block na Pag-reorder",
           "colStrength": "Lakas ng Pag-uuri-uri",
           "currency": "Pera",
+          "d0": "Transform Destination",
+          "dx": "Mga Dictionary Break Exclusion",
           "em": "Presentation ng Emoji",
+          "fw": "Unang araw ng linggo",
+          "h0": "Mixed-in",
           "hc": "Siklo ng Oras (12 laban sa 24)",
+          "i0": "Paraan ng Pag-input",
+          "k0": "Keyboard",
+          "kv": "Balewalain ang Pinakamataas",
           "lb": "CJK na Line Break",
           "lw": "Mga Line Break sa Mga Salita",
+          "m0": "Mga Transform Rule",
           "ms": "Sistema ng Pagsukat",
+          "mu": "Unit ng Pagsukat",
           "numbers": "Mga Numero",
+          "rg": "Rehiyon para sa Karagdagang Data",
+          "s0": "Transform Source",
+          "sd": "Subdivision ng Rehiyon",
           "ss": "Sentence Break Pagkatapos ng Abbr.",
+          "t": "Transform",
+          "t0": "Machine Translated",
           "timezone": "Time Zone",
           "va": "Lokal na Variant",
-          "x": "Pribadong Paggamit"
+          "x": "Pribadong Paggamit",
+          "x0": "Private-Use Transform"
         },
         "types": {
           "calendar": {
@@ -46,19 +62,19 @@
             "coptic": "Kalendaryong Coptic",
             "dangi": "Dangi na Kalendaryo",
             "ethiopic": "Kalendaryo ng Ethiopia",
-            "ethiopic-amete-alem": "Kalendaryong Ethiopic Amete Alem",
-            "gregorian": "Gregorian na Kalendaryo",
-            "hebrew": "Hebrew na Kalendaryo",
+            "ethiopic-amete-alem": "Ethiopic Amete Alem Calendar",
+            "gregorian": "Gregorian Calendar",
+            "hebrew": "Hebrew Calendar",
             "indian": "Pambansang Kalendaryong Indian",
-            "islamic": "Kalendaryong Hijiri",
-            "islamic-civil": "Kalendaryong Hijri (tabular, Civil epoch)",
+            "islamic": "Hijri Calendar",
+            "islamic-civil": "Hijri Calendar (tabular, civil epoch)",
             "islamic-rgsa": "Kalendaryong Islamiko (Saudi Arabia, sighting)",
             "islamic-tbla": "Kalendaryong Islamiko (tabular, astronomikal na epoch)",
-            "islamic-umalqura": "Kalendaryong Hijri (Umm al-Qura)",
-            "iso8601": "Kalendaryong Gregorian (Unang Taon)",
-            "japanese": "Kalendaryong Japanese",
-            "persian": "Kalendaryong Persian",
-            "roc": "Kalendaryong Minguo"
+            "islamic-umalqura": "Hijri Calendar (Umm al-Qura)",
+            "iso8601": "Gregorian Calendar (ISO 8601 Weeks)",
+            "japanese": "Japanese Calendar",
+            "persian": "Persian Calendar",
+            "roc": "Minguo Calendar"
           },
           "cf": {
             "account": "Format ng Pera sa Accounting",
@@ -75,6 +91,7 @@
           },
           "colCaseFirst": {
             "lower": "Lowercase Muna ang Pag-uri-uriin",
+            "core": "Uppercase",
             "no": "Pag-uri-uriin ang Ayos ng Normal na Case",
             "upper": "Uppercase Muna ang Pag-uri-uriin"
           },
@@ -84,9 +101,9 @@
           },
           "collation": {
             "compat": "Nakaraang Pagkakasunud-sunod ng Pag-uuri, para sa compatibility",
+            "core": "Zhuyin",
             "dictionary": "Pagkakasunud-sunod ng Pag-uuri ng Diksyunaryo",
             "ducet": "Default na Pagkakasunud-sunod ng Ayos ng Unicode",
-            "core": "Karaniwan",
             "emoji": "Pagkakasunud-sunod ng Pag-uuri ng Emoji",
             "eor": "Mga Tuntunin ng European na Pagkakasunud-sunod",
             "phonebook": "Pagkakasunud-sunod ng Pag-uuri ng Phonebook",
@@ -108,8 +125,12 @@
             "no": "Pag-uri-uriin ang Mga Digit nang Indibidwal",
             "yes": "Pag-uri-uriin ang Mga Digit nang Numerical"
           },
+          "colReorder": {
+            "core": "Simbolo"
+          },
           "colStrength": {
             "identical": "Pag-uri-uriin Lahat",
+            "core": "Base, Mga Accent, Case, Mga Variant",
             "primary": "Mga Base na Titik Lang ang Pag-uri-uriin",
             "quaternary": "Pag-uri-uriin ang Mga Accent/Case/Lapad/Kana",
             "secondary": "Pag-uri-uriin ang Mga Accent",
@@ -124,11 +145,16 @@
             "core": "Text"
           },
           "hc": {
-            "h11": "12 Oras na Sistema (0–11)",
+            "c12": "12 Oras na Sistema",
             "core": "24 (1–24)",
+            "c24": "24 na Oras na Sistema",
+            "h11": "12 Oras na Sistema (0–11)",
             "h12": "12 Oras na Sistema (1–12)",
             "h23": "24 na Oras na Sistema (0–23)",
             "h24": "24 na Oras na Sistema (1–24)"
+          },
+          "kv": {
+            "core": "I-shift ang mga Space, bantas, hindi currency na simbolo"
           },
           "lb": {
             "loose": "Loose na Istilo ng Line Break",
@@ -153,6 +179,7 @@
             "ahom": "Ahom na mga Digit",
             "arab": "Arabic-Indic na Mga Digit",
             "arabext": "Extendend Arabic-Indic na Mga Digit",
+            "core": "Mga tradisyonal na numeral",
             "armn": "Mga Armenian Numeral",
             "armnlow": "Armenian Lowercase Numerals",
             "bali": "Balinese na Mga Digit",
@@ -219,7 +246,17 @@
           },
           "ss": {
             "core": "Naka-on"
+          },
+          "t0": {
+            "und": "Hindi Natukoy na Machine Translation"
+          },
+          "va": {
+            "core": "Variant ng POSIX"
           }
+        },
+        "typeValues": {
+          "no": "Naka-off",
+          "yes": "Naka-on"
         },
         "codePatterns": {
           "language": "Wika: {0}",

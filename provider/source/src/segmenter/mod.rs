@@ -1029,12 +1029,38 @@ fn rscd_15_1() -> &'static SourceDataProvider {
     })
 }
 
+fn rscd_17_0() -> &'static SourceDataProvider {
+    // Singleton so that all instantiations share the same cache.
+    static SINGLETON: OnceLock<SourceDataProvider> = OnceLock::new();
+    SINGLETON.get_or_init(|| {
+        let mut provider = SourceDataProvider::new_custom();
+        provider.rscd_paths = Some(std::sync::Arc::new(RscdCache::new_local(include_files!(
+            "../../data/segmenter/rscd17/";
+            "ucd/auxiliary/GraphemeBreakProperty.txt",
+            "ucd/auxiliary/SentenceBreakProperty.txt",
+            "ucd/auxiliary/WordBreakProperty.txt",
+            "ucd/DerivedCoreProperties.txt",
+            "ucd/emoji/emoji-data.txt",
+            "ucd/extracted/DerivedEastAsianWidth.txt",
+            "ucd/extracted/DerivedGeneralCategory.txt",
+            "ucd/LineBreak.txt",
+            "ucd/PropertyAliases.txt",
+            "ucd/PropertyValueAliases.txt",
+            "ucd/PropList.txt",
+            "ucd/Scripts.txt",
+        ))));
+        provider
+    })
+}
+
 implement!(SegmenterBreakLineV1, "line15.toml", |_| rscd_15_1());
 #[cfg(feature = "unstable")]
-implement!(SegmenterBreakLineV3, "line.toml", |s| s);
-implement!(SegmenterBreakGraphemeClusterV1, "grapheme.toml", |s| s);
-implement!(SegmenterBreakWordV1, "word.toml", |s| s);
-implement!(SegmenterBreakSentenceV1, "sentence.toml", |s| s);
+implement!(SegmenterBreakLineV3, "line.toml", |_| rscd_17_0());
+implement!(SegmenterBreakGraphemeClusterV1, "grapheme.toml", |_| {
+    rscd_17_0()
+});
+implement!(SegmenterBreakWordV1, "word.toml", |_| rscd_17_0());
+implement!(SegmenterBreakSentenceV1, "sentence.toml", |_| rscd_17_0());
 implement_override!(SegmenterBreakWordOverrideV1, "word.toml", []);
 implement_override!(SegmenterBreakSentenceOverrideV1, "sentence.toml", ["el"]);
 

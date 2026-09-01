@@ -233,7 +233,7 @@ fn run_line_break_test() {
         true,
     );
     line_break_test(
-        include_str!("testdata/LineBreakTest.txt"),
+        include_str!("testdata/LineBreakTest_17.txt"),
         LineSegmenter::new_17_for_non_complex_scripts(Default::default()),
         true,
     );
@@ -252,7 +252,7 @@ fn run_line_break_extra_test() {
         false,
     );
     line_break_test(
-        include_str!("testdata/LineBreakExtraTest.txt"),
+        include_str!("testdata/LineBreakExtraTest_17.txt"),
         LineSegmenter::new_17_for_non_complex_scripts(Default::default()),
         false,
     );
@@ -271,7 +271,7 @@ fn run_line_break_random_test() {
         false,
     );
     line_break_test(
-        include_str!("testdata/LineBreakRandomTest.txt"),
+        include_str!("testdata/LineBreakRandomTest_17.txt"),
         LineSegmenter::new_17_for_non_complex_scripts(Default::default()),
         false,
     );
@@ -345,7 +345,7 @@ fn word_break_test(file: &'static str, segmenter: WordSegmenterBorrowed) {
 #[test]
 fn run_word_break_test() {
     word_break_test(
-        include_str!("testdata/WordBreakTest.txt"),
+        include_str!("testdata/WordBreakTest_17.txt"),
         WordSegmenter::new_for_non_complex_scripts(Default::default()),
     );
     word_break_test(
@@ -369,7 +369,7 @@ fn run_word_break_extra_test() {
 #[test]
 fn run_word_break_random_test() {
     word_break_test(
-        include_str!("testdata/WordBreakRandomTest.txt"),
+        include_str!("testdata/WordBreakRandomTest_17.txt"),
         WordSegmenter::new_for_non_complex_scripts(Default::default()),
     );
 }
@@ -442,7 +442,7 @@ fn grapheme_break_test(file: &'static str, segmenter: GraphemeClusterSegmenterBo
 #[test]
 fn run_grapheme_break_test() {
     grapheme_break_test(
-        include_str!("testdata/GraphemeBreakTest.txt"),
+        include_str!("testdata/GraphemeBreakTest_17.txt"),
         GraphemeClusterSegmenter::new(),
     );
     grapheme_break_test(
@@ -466,7 +466,7 @@ fn run_grapheme_break_extra_test() {
 #[test]
 fn run_grapheme_break_random_test() {
     grapheme_break_test(
-        include_str!("testdata/GraphemeBreakRandomTest.txt"),
+        include_str!("testdata/GraphemeBreakRandomTest_17.txt"),
         GraphemeClusterSegmenter::new(),
     );
 }
@@ -539,7 +539,7 @@ fn sentence_break_test(file: &'static str, segmenter: SentenceSegmenterBorrowed)
 #[test]
 fn run_sentence_break_test() {
     sentence_break_test(
-        include_str!("testdata/SentenceBreakTest.txt"),
+        include_str!("testdata/SentenceBreakTest_17.txt"),
         SentenceSegmenter::new(Default::default()),
     );
     sentence_break_test(
@@ -563,7 +563,7 @@ fn run_sentence_break_extra_test() {
 #[test]
 fn run_sentence_break_random_test() {
     sentence_break_test(
-        include_str!("testdata/SentenceBreakRandomTest.txt"),
+        include_str!("testdata/SentenceBreakRandomTest_17.txt"),
         SentenceSegmenter::new(Default::default()),
     );
 }

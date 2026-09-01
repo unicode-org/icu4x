@@ -16,6 +16,6 @@
     "E, d/M/y",
     "EEEE, d MMMM, y GGG",
     "E, d MMM, y GGG",
-    "E, d-M-y GGG"
+    "E, d/M/y GGG"
   ]
 }

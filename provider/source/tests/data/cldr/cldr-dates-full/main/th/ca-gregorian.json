@@ -331,7 +331,7 @@
               "full": "H นาฬิกา mm นาที ss วินาที zzzz",
               "long": "H นาฬิกา mm นาที ss วินาที z",
               "medium": "HH:mm:ss",
-              "short": "HH:mm"
+              "short": "HH:mm น."
             },
             "timeSkeletons": {
               "full": "Hmmsszzzz",
@@ -340,6 +340,10 @@
               "short": "HHmm"
             },
             "dateTimeFormats": {
+              "numericSeparators": {
+                "numericDateSeparator": "/",
+                "numericTimeSeparator": ":"
+              },
               "full": "{1} {0}",
               "long": "{1} {0}",
               "medium": "{1} {0}",
@@ -367,6 +371,9 @@
                 "GyMMMd": "d MMM G y",
                 "GyMMMEd": "E d MMM G y",
                 "GyMMMEEEEd": "EEEEที่ d MMM G y",
+                "GyMMMM": "MMMM G y",
+                "GyMMMMd": "d MMMM G y",
+                "GyMMMMEd": "E d MMMM G y",
                 "h": "h a",
                 "H": "HH",
                 "hm": "h:mm a",
@@ -375,7 +382,7 @@
                 "Hms": "HH:mm:ss",
                 "hmsv": "h:mm:ss a v",
                 "Hmsv": "HH:mm:ss v",
-                "hmv": "h:mm น. a v",
+                "hmv": "h:mm a v",
                 "Hmv": "HH:mm v",
                 "hv": "h a v",
                 "Hv": "HH v",
@@ -409,19 +416,26 @@
                 "yw-count-other": "สัปดาห์ที่ w ของปี Y"
               },
               "appendItems": {
+                "Date-Timezone": "{0} {1}",
                 "Day": "{0} ({2}: {1})",
-                "Day-Of-Week": "{0} {1}",
-                "Era": "{1} {0}",
+                "Day-Of-Week": "{1}ที่ {0}",
+                "Era": "{0} {1}",
                 "Hour": "{0} ({2}: {1})",
                 "Minute": "{0} ({2}: {1})",
                 "Month": "{0} ({2}: {1})",
                 "Quarter": "{0} ({2}: {1})",
                 "Second": "{0} ({2}: {1})",
+                "Time-Day-Of-Week": "{1} {0}",
                 "Timezone": "{0} {1}",
                 "Week": "{0} ({2}: {1})",
                 "Year": "{1} {0}"
               },
               "intervalFormats": {
+                "intervalFormatRanges": {
+                  "mixed": "{0} – {1}",
+                  "non-numeric": "{0}–{1}",
+                  "numeric": "{0}–{1}"
+                },
                 "intervalFormatFallback": "{0} – {1}",
                 "Bh": {
                   "B": "h B – h B",
@@ -530,6 +544,10 @@
                 "MMMEEEEd": {
                   "d": "EEEEที่ d – EEEEที่ d MMM",
                   "M": "EEEEที่ d MMM – EEEEที่ d MMM"
+                },
+                "MMMMd": {
+                  "d": "d – d MMMM",
+                  "M": "d MMMM – d MMMM"
                 },
                 "y": {
                   "y": "y–y"

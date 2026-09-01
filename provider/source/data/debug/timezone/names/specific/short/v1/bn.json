@@ -2,7 +2,7 @@
   "defaults": [
     [
       [
-        66,
+        67,
         "Standard"
       ],
       "IST"
@@ -14,7 +14,7 @@
         "utc",
         "Standard"
       ],
-      "UTC"
+      "ইউটিসি"
     ]
   ],
   "use_standard": []

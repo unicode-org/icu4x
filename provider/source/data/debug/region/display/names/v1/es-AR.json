@@ -73,7 +73,7 @@
     "CC": "Islas Cocos",
     "CD": "República Democrática del Congo",
     "CF": "República Centroafricana",
-    "CG": "República del Congo",
+    "CG": "Congo",
     "CH": "Suiza",
     "CI": "Costa de Marfil",
     "CK": "Islas Cook",
@@ -281,7 +281,7 @@
     "VC": "San Vicente y las Granadinas",
     "VE": "Venezuela",
     "VG": "Islas Vírgenes Británicas",
-    "VI": "Islas Vírgenes de EE. UU.",
+    "VI": "Islas Vírgenes de EE.UU.",
     "VN": "Vietnam",
     "VU": "Vanuatu",
     "WF": "Wallis y Futuna",
@@ -301,6 +301,6 @@
     "HK": "Hong Kong",
     "MO": "Macao",
     "PS": "Palestina",
-    "US": "EE. UU."
+    "US": "EE.UU."
   }
 }

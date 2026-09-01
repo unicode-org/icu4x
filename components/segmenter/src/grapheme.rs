@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::vec::Vec;
 use icu_provider::prelude::*;
 
 use crate::indices::*;
@@ -39,6 +38,7 @@ impl<'data, 's, Y: RuleBreakType> GraphemeClusterBreakIterator<'data, 's, Y> {
         let inner = match &self.0 {
             GraphemeClusterBreakIteratorInner::V1(iter) => {
                 GraphemeClusterBreakIteratorInner::V1(crate::rule_segmenter_v1::RuleBreakIterator {
+                    input: iter.input.clone(),
                     iter: iter.iter.clone(),
                     len: iter.len,
                     current_pos_data: iter.current_pos_data,
@@ -262,10 +262,11 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
         GraphemeClusterBreakIterator(match self.0 {
             GraphemeClusterSegmenterBorrowedInner::V1(data) => {
                 GraphemeClusterBreakIteratorInner::V1(crate::rule_segmenter_v1::RuleBreakIterator {
+                    input: iter.clone(),
                     iter,
                     len,
                     current_pos_data: None,
-                    result_cache: Vec::new(),
+                    result_cache: Default::default(),
                     data,
                     complex: None,
                     boundary_property: 0,

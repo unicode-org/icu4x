@@ -549,11 +549,19 @@
             "unitPattern-count-one": "{0} libra de fuerza",
             "unitPattern-count-other": "{0} libras de fuerza"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "gender": "masculine",
             "displayName": "newtons",
             "unitPattern-count-one": "{0} newton",
             "unitPattern-count-other": "{0} newtons"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "gender": "masculine",
@@ -710,6 +718,10 @@
             "unitPattern-count-one": "{0} pulgada",
             "unitPattern-count-other": "{0} pulgadas",
             "perUnitPattern": "{0} por pulgada"
+          },
+          "length-milliinch": {
+            "displayName": "milli-inch",
+            "unitPattern-count-other": "{0} milli-inch"
           },
           "length-parsec": {
             "gender": "masculine",
@@ -1683,7 +1695,8 @@
           },
           "concentr-ofglucose": {
             "displayName": "Glc",
-            "unitPattern-count-other": "{0} Glc"
+            "unitPattern-count-one": "{0} Glc",
+            "unitPattern-count-other": "{0} Glc"
           },
           "consumption-liter-per-kilometer": {
             "displayName": "l/km",
@@ -1871,9 +1884,17 @@
             "displayName": "lbf",
             "unitPattern-count-other": "{0} lbf"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "N",
             "unitPattern-count-other": "{0} N"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "kWh/100 km",
@@ -1990,6 +2011,10 @@
             "displayName": "in",
             "unitPattern-count-other": "{0} in",
             "perUnitPattern": "{0}/in"
+          },
+          "length-milliinch": {
+            "displayName": "milli-inch",
+            "unitPattern-count-other": "{0} milli-inch"
           },
           "length-parsec": {
             "displayName": "pc",
@@ -2410,11 +2435,13 @@
           },
           "angle-steradian": {
             "displayName": "sr",
-            "unitPattern-count-other": "{0} sr"
+            "unitPattern-count-one": "{0} sr",
+            "unitPattern-count-other": "{0} sr"
           },
           "concentr-katal": {
             "displayName": "kat",
-            "unitPattern-count-other": "{0} kat"
+            "unitPattern-count-one": "{0} kat",
+            "unitPattern-count-other": "{0} kat"
           },
           "electric-coulomb": {
             "displayName": "C",
@@ -2468,11 +2495,13 @@
           },
           "magnetic-tesla": {
             "displayName": "T",
-            "unitPattern-count-other": "{0} T"
+            "unitPattern-count-one": "{0} T",
+            "unitPattern-count-other": "{0} T"
           },
           "magnetic-weber": {
             "displayName": "Wb",
-            "unitPattern-count-other": "{0} Wb"
+            "unitPattern-count-one": "{0} Wb",
+            "unitPattern-count-other": "{0} Wb"
           },
           "temperature-rankine": {
             "displayName": "°R",
@@ -2837,7 +2866,8 @@
           },
           "concentr-ofglucose": {
             "displayName": "Glc",
-            "unitPattern-count-other": "{0} Glc"
+            "unitPattern-count-one": "{0} Glc",
+            "unitPattern-count-other": "{0} Glc"
           },
           "consumption-liter-per-kilometer": {
             "displayName": "l/km",
@@ -3056,10 +3086,18 @@
             "unitPattern-count-one": "{0}lbf",
             "unitPattern-count-other": "{0}lbf"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "N",
             "unitPattern-count-one": "{0}N",
             "unitPattern-count-other": "{0}N"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "kWh/100 km",
@@ -3195,6 +3233,10 @@
             "unitPattern-count-one": "{0}in",
             "unitPattern-count-other": "{0}in",
             "perUnitPattern": "{0}/in"
+          },
+          "length-milliinch": {
+            "displayName": "milli-inch",
+            "unitPattern-count-other": "{0} milli-inch"
           },
           "length-parsec": {
             "displayName": "pc",
@@ -3667,11 +3709,13 @@
           },
           "angle-steradian": {
             "displayName": "sr",
-            "unitPattern-count-other": "{0} sr"
+            "unitPattern-count-one": "{0} sr",
+            "unitPattern-count-other": "{0} sr"
           },
           "concentr-katal": {
             "displayName": "kat",
-            "unitPattern-count-other": "{0} kat"
+            "unitPattern-count-one": "{0} kat",
+            "unitPattern-count-other": "{0} kat"
           },
           "electric-coulomb": {
             "displayName": "C",
@@ -3691,8 +3735,8 @@
           },
           "energy-calorie-it": {
             "displayName": "cal-IT",
-            "unitPattern-count-one": "{0} cal-IT",
-            "unitPattern-count-other": "{0} cal-IT"
+            "unitPattern-count-one": "{0} cal-IT",
+            "unitPattern-count-other": "{0} cal-IT"
           },
           "energy-british-thermal-unit-it": {
             "displayName": "BTU-IT",
@@ -3712,8 +3756,8 @@
           },
           "force-kilogram-force": {
             "displayName": "kgf",
-            "unitPattern-count-one": "{0} kgf",
-            "unitPattern-count-other": "{0} kgf"
+            "unitPattern-count-one": "{0} kgf",
+            "unitPattern-count-other": "{0} kgf"
           },
           "length-rod": {
             "displayName": "rod",
@@ -3725,11 +3769,13 @@
           },
           "magnetic-tesla": {
             "displayName": "T",
-            "unitPattern-count-other": "{0} T"
+            "unitPattern-count-one": "{0} T",
+            "unitPattern-count-other": "{0} T"
           },
           "magnetic-weber": {
             "displayName": "Wb",
-            "unitPattern-count-other": "{0} Wb"
+            "unitPattern-count-one": "{0} Wb",
+            "unitPattern-count-other": "{0} Wb"
           },
           "temperature-rankine": {
             "displayName": "°R",

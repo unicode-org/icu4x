@@ -304,14 +304,6 @@ pub fn tzdb_data() -> AbstractFs {{
             "components/experimental/tests/units/data/unitsTest.txt",
         ),
         (
-            "common/uca/CollationTest_CLDR_SHIFTED_SHORT.txt",
-            "components/collator/tests/data/CollationTest_CLDR_SHIFTED_SHORT.txt",
-        ),
-        (
-            "common/uca/CollationTest_CLDR_NON_IGNORABLE_SHORT.txt",
-            "components/collator/tests/data/CollationTest_CLDR_NON_IGNORABLE_SHORT.txt",
-        ),
-        (
             "common/testData/transforms/el-Latn-t-el-m0-bgn.txt",
             "components/experimental/tests/transliterate/data/fixtures/el-Latn-t-el-m0-bgn.txt",
         ),
@@ -337,10 +329,9 @@ pub fn tzdb_data() -> AbstractFs {{
             AbstractFs::new_from_url(format!(
                 "https://raw.githubusercontent.com/unicode-org/cldr/refs/tags/release-{}/",
                 SourceDataProvider::TESTED_CLDR_TAG
+                    .replace(".0", "")
                     .replace(".", "-")
-                    .rsplit_once("-")
-                    .unwrap()
-                    .0
+                    .to_ascii_lowercase()
             ))
             .read_to_string(cldr_path)
             .expect(cldr_path),
@@ -349,10 +340,24 @@ pub fn tzdb_data() -> AbstractFs {{
     }
 
     #[allow(clippy::single_element_loop)]
-    for (icu_path, repo_path) in [(
-        "icu4c/source/test/testdata/riwords.txt",
-        "components/collator/tests/data/riwords.txt",
-    )] {
+    for (icu_path, repo_path) in [
+        (
+            "icu4c/source/test/testdata/riwords.txt",
+            "components/collator/tests/data/riwords.txt",
+        ),
+        (
+            "icu4c/source/data/unidata/prop_numbers.txt",
+            "components/properties/tests/data/prop_numbers.txt",
+        ),
+        (
+            "icu4c/source/test/testdata/CollationTest_SHIFTED_SHORT.txt",
+            "components/collator/tests/data/CollationTest_CLDR_SHIFTED_SHORT.txt",
+        ),
+        (
+            "icu4c/source/test/testdata/CollationTest_NON_IGNORABLE_SHORT.txt",
+            "components/collator/tests/data/CollationTest_CLDR_NON_IGNORABLE_SHORT.txt",
+        ),
+    ] {
         std::fs::write(
             crate_root.join("../..").join(repo_path),
             AbstractFs::new_from_url(format!(

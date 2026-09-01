@@ -1418,7 +1418,10 @@ pub mod zone {
         description = "time zone in specific non-location format, long length",
         length_override = Long,
         sample = "Central Daylight Time",
-        field = (fields::TimeZone::SpecificNonLocation, fields::FieldLength::Four),
+        field = (
+            fields::TimeZone::SpecificNonLocation,
+            fields::FieldLength::Four
+        ),
         zone_essentials = yes,
         zone_locations = yes,
         zone_standard_long = yes,
@@ -1515,7 +1518,10 @@ pub mod zone {
         description = "time zone in specific non-location format, short length",
         length_override = Short,
         sample = "CDT",
-        field = (fields::TimeZone::SpecificNonLocation, fields::FieldLength::One),
+        field = (
+            fields::TimeZone::SpecificNonLocation,
+            fields::FieldLength::One
+        ),
         zone_essentials = yes,
         zone_specific_short = yes,
         metazone_periods = yes,
@@ -1697,7 +1703,10 @@ pub mod zone {
         description = "time zone in generic non-location format, long length",
         length_override = Long,
         sample = "Central Time",
-        field = (fields::TimeZone::GenericNonLocation, fields::FieldLength::Four),
+        field = (
+            fields::TimeZone::GenericNonLocation,
+            fields::FieldLength::Four
+        ),
         zone_essentials = yes,
         zone_locations = yes,
         zone_generic_long = yes,
@@ -1795,7 +1804,10 @@ pub mod zone {
         description = "time zone in generic non-location format, short length",
         length_override = Short,
         sample = "CT",
-        field = (fields::TimeZone::GenericNonLocation, fields::FieldLength::One),
+        field = (
+            fields::TimeZone::GenericNonLocation,
+            fields::FieldLength::One
+        ),
         zone_essentials = yes,
         zone_locations = yes,
         zone_generic_short = yes,

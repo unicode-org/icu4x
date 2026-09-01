@@ -26,18 +26,34 @@
           "collation": "redosled sortiranja",
           "colNormalization": "normalizovano sortiranje",
           "colNumeric": "numeričko sortiranje",
-          "colStrength": "sortiranje prema jačini",
+          "colReorder": "promena redosleda prema pismu ili grupi karaktera",
+          "colStrength": "kriterijum sortiranja",
           "currency": "valuta",
+          "d0": "odredište pretvaranja",
+          "dx": "izuzeci od preloma rečnika",
           "em": "prezentacija emodžija",
+          "fw": "prvi dan u nedelji",
+          "h0": "pomešano",
           "hc": "prikazivanje vremena (12- ili 24-časovno)",
+          "i0": "način unosa",
+          "k0": "tastatura",
+          "kv": "Najignorisanije",
           "lb": "stil preloma reda",
           "lw": "prelomi redova unutar reči",
+          "m0": "pravila pretvaranja",
           "ms": "sistem mernih jedinica",
+          "mu": "merna jedinica",
           "numbers": "brojevi",
+          "rg": "region za dodatne podatke",
+          "s0": "izvor transformacije",
+          "sd": "podela regiona",
           "ss": "Prelom rečenice posle skraćenice",
+          "t": "transformacija",
+          "t0": "mašinski prevod",
           "timezone": "Vremenska zona",
           "va": "Varijanta lokaliteta",
-          "x": "Privatna upotreba"
+          "x": "Privatna upotreba",
+          "x0": "transformacija za privatnu upotrebu"
         },
         "types": {
           "calendar": {
@@ -75,6 +91,7 @@
           },
           "colCaseFirst": {
             "lower": "Sortiraj prvo mala slova",
+            "core": "malo slovo",
             "no": "Sortiraj normalan redosled velikih i malih slova",
             "upper": "Sortiraj prvo velika slova"
           },
@@ -107,8 +124,12 @@
             "no": "Sortiraj cifre pojedinačno",
             "yes": "Sortiraj cifre numerički"
           },
+          "colReorder": {
+            "core": "simbol"
+          },
           "colStrength": {
             "identical": "Sortiraj sve",
+            "core": "osnovna, akcenti, veliko/malo slovo, varijante",
             "primary": "Sortiraj samo osnovna slova",
             "quaternary": "Sortiraj akcente/mala i velika slova/širinu/kana simbole",
             "secondary": "Sortiraj akcente",
@@ -123,11 +144,16 @@
             "core": "tekst"
           },
           "hc": {
-            "h11": "12-časovni sistem (0-11)",
+            "c12": "12-časovni sistem",
             "core": "24 (1–24)",
+            "c24": "24-časovni sistem",
+            "h11": "12-časovni sistem (0-11)",
             "h12": "12-časovni sistem (1-12)",
             "h23": "24-časovni sistem (0-23)",
             "h24": "24-časovni sistem (1-24)"
+          },
+          "kv": {
+            "core": "Shift razmaci, interpunkcija, simboli koji ne predstavljaju valutu"
           },
           "lb": {
             "loose": "razmaknuti stil preloma reda",
@@ -151,6 +177,7 @@
           "numbers": {
             "arab": "arapsko-indijske cifre",
             "arabext": "produžene arapsko-indijske cifre",
+            "core": "tradicionalni brojevi",
             "armn": "jermenski brojevi",
             "armnlow": "mali jermenski brojevi",
             "beng": "bengalske cifre",
@@ -196,7 +223,17 @@
           },
           "ss": {
             "core": "Isključeno"
+          },
+          "t0": {
+            "und": "nespecifikovan mašinski prevod"
+          },
+          "va": {
+            "core": "POSIX varijanta"
           }
+        },
+        "typeValues": {
+          "no": "isključeno",
+          "yes": "uključeno"
         },
         "codePatterns": {
           "language": "Jezik: {0}",

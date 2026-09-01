@@ -127,6 +127,24 @@ final class FetchMode extends BuildMode {
     final libraryType = input.config.buildStatic
         ? 'static-with_data'
         : 'dynamic-with_data';
+    final targetFilename = input.config.filename('icu4x');
+    final expectedFileHash = fileHashes[(rustTarget, libraryType)];
+
+    final cachedLibrary = File.fromUri(
+      input.outputDirectoryShared
+          .resolve('icu4x-$version/$rustTarget-$libraryType/')
+          .resolve(targetFilename),
+    );
+    if (await cachedLibrary.exists()) {
+      final fileHash = sha256
+          .convert(await cachedLibrary.readAsBytes())
+          .toString();
+      if (fileHash == expectedFileHash) {
+        print('Using cached binary from shared output directory.');
+        return cachedLibrary.uri;
+      }
+    }
+
     print('Fetching pre-built binary for $version, $rustTarget, $libraryType');
     final dylibRemoteUri = Uri.parse(
       'https://github.com/unicode-org/icu4x/releases/'
@@ -139,7 +157,6 @@ final class FetchMode extends BuildMode {
     }
     final bytes = await response.fold<List<int>>([], (a, b) => a..addAll(b));
     final fileHash = sha256.convert(bytes).toString();
-    final expectedFileHash = fileHashes[(rustTarget, libraryType)];
     if (fileHash != expectedFileHash) {
       throw Exception(
         'The pre-built binary for the target $rustTarget-$libraryType at '
@@ -147,11 +164,9 @@ final class FetchMode extends BuildMode {
         '$expectedFileHash fixed in the build hook of package:icu4x.',
       );
     }
-    final library = File.fromUri(
-      input.outputDirectory.resolve(input.config.filename('icu4x')),
-    );
-    await library.writeAsBytes(bytes);
-    return library.uri;
+    await cachedLibrary.parent.create(recursive: true);
+    await cachedLibrary.writeAsBytes(bytes);
+    return cachedLibrary.uri;
   }
 
   @override

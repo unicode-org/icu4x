@@ -11,21 +11,21 @@
   ],
   "elements": [
     {
-      "header": 4,
+      "header": 8,
       "patterns": [
-        "LLLL"
-      ]
-    },
-    {
-      "header": 4,
-      "patterns": [
-        "LLL"
+        "LLLL — LLLL"
       ]
     },
     {
       "header": 8,
       "patterns": [
-        "M–M"
+        "LLL — LLL"
+      ]
+    },
+    {
+      "header": 8,
+      "patterns": [
+        "M—M"
       ]
     }
   ]

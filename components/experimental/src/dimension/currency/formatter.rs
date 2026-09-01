@@ -54,11 +54,13 @@ prefs_convert!(
 
 #[derive(Debug)]
 pub(crate) enum CurrencyFormatterData {
-    IsoSymbol {
+    /// Formats using the ISO currency code while following the symbol pattern.
+    IsoCodeSymbol {
         essential: DataPayload<CurrencyEssentialsV1>,
         iso_code: TinyAsciiStr<3>,
     },
-    IsoName {
+    /// Formats using the ISO currency code while following the name pattern.
+    IsoCodeName {
         patterns: DataPayload<CurrencyPatternsDataV1>,
         iso_code: TinyAsciiStr<3>,
     },
@@ -129,7 +131,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 essential,
                 symbol: res.payload,
             },
-            None => CurrencyFormatterData::IsoSymbol {
+            None => CurrencyFormatterData::IsoCodeSymbol {
                 essential,
                 iso_code: currency.iso_code(),
             },
@@ -182,7 +184,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 essential,
                 symbol: res.payload,
             },
-            None => CurrencyFormatterData::IsoSymbol {
+            None => CurrencyFormatterData::IsoCodeSymbol {
                 essential,
                 iso_code: currency.iso_code(),
             },
@@ -218,7 +220,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
 
         Ok(Self {
             value_formatter,
-            currency_data: CurrencyFormatterData::IsoSymbol {
+            currency_data: CurrencyFormatterData::IsoCodeSymbol {
                 essential,
                 iso_code: currency.iso_code(),
             },
@@ -250,7 +252,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
 
         Ok(Self {
             value_formatter,
-            currency_data: CurrencyFormatterData::IsoSymbol {
+            currency_data: CurrencyFormatterData::IsoCodeSymbol {
                 essential,
                 iso_code: currency.iso_code(),
             },
@@ -300,7 +302,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                     plural_rules,
                 }
             }
-            None => CurrencyFormatterData::IsoName {
+            None => CurrencyFormatterData::IsoCodeName {
                 patterns,
                 iso_code: currency.iso_code(),
             },
@@ -363,7 +365,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                     plural_rules,
                 }
             }
-            None => CurrencyFormatterData::IsoName {
+            None => CurrencyFormatterData::IsoCodeName {
                 patterns,
                 iso_code: currency.iso_code(),
             },
@@ -1356,7 +1358,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let accounting = self.usage == CurrencyUsage::Accounting;
 
         let (pattern, currency_str, sign) = match &self.currency_data {
-            CurrencyFormatterData::IsoSymbol {
+            CurrencyFormatterData::IsoCodeSymbol {
                 essential,
                 iso_code,
             } => {
@@ -1369,7 +1371,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 );
                 (pattern, iso_code.as_str(), sign)
             }
-            CurrencyFormatterData::IsoName { patterns, iso_code } => {
+            CurrencyFormatterData::IsoCodeName { patterns, iso_code } => {
                 let pattern = patterns.get().elements.get_default().1;
                 (pattern, iso_code.as_str(), rounded_value.sign)
             }

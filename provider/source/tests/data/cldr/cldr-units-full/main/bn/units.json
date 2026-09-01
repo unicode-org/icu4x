@@ -188,7 +188,7 @@
             "unitPattern-count-other": "{0} একর"
           },
           "area-square-yard": {
-            "displayName": "yd²",
+            "displayName": "বর্গ গজ",
             "unitPattern-count-one": "{0} বর্গ গজ",
             "unitPattern-count-other": "{0} বর্গ গজ"
           },
@@ -339,9 +339,9 @@
             "unitPattern-count-other": "{0} বিট"
           },
           "duration-century": {
-            "displayName": "শতাব্দী",
-            "unitPattern-count-one": "{0} শতাব্দী",
-            "unitPattern-count-other": "{0} শতাব্দী"
+            "displayName": "শতক",
+            "unitPattern-count-one": "{0} শতক",
+            "unitPattern-count-other": "{0} শতক"
           },
           "duration-decade": {
             "displayName": "দশক",
@@ -480,10 +480,18 @@
             "displayName": "lbf",
             "unitPattern-count-other": "{0} lbf"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "নিউটন",
             "unitPattern-count-one": "{0} নিউটন",
             "unitPattern-count-other": "{0} নিউটন"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "কিলোওয়াট-ঘণ্টা প্রতি 100 কিলোমিটার",
@@ -612,13 +620,17 @@
             "displayName": "ফুট",
             "unitPattern-count-one": "{0} ফুট",
             "unitPattern-count-other": "{0} ফুট",
-            "perUnitPattern": "{0} প্রতি ফুট"
+            "perUnitPattern": "{0}/ফুট"
           },
           "length-inch": {
             "displayName": "ইঞ্চি",
             "unitPattern-count-one": "{0} ইঞ্চি",
             "unitPattern-count-other": "{0} ইঞ্চি",
-            "perUnitPattern": "{0} প্রতি ইঞ্চি"
+            "perUnitPattern": "{0}/ইঞ্চি"
+          },
+          "length-milliinch": {
+            "displayName": "milli-inch",
+            "unitPattern-count-other": "{0} milli-inch"
           },
           "length-parsec": {
             "displayName": "পারসেক",
@@ -681,7 +693,7 @@
           "light-solar-luminosity": {
             "displayName": "সৌর ঔজ্জ্বল্য",
             "unitPattern-count-one": "{0} সৌর ঔজ্জ্বল্য",
-            "unitPattern-count-other": "{0} সৌর ঔজ্জ্বল্যতাগুলি"
+            "unitPattern-count-other": "{0} সৌর ঔজ্জ্বল্য"
           },
           "mass-tonne": {
             "displayName": "মেট্রিক টন",
@@ -890,7 +902,7 @@
           "torque-pound-force-foot": {
             "displayName": "পাউন্ড-ফিট",
             "unitPattern-count-one": "{0} পাউন্ড-ফোর্স-ফিট",
-            "unitPattern-count-other": "{0} পাউন্ড-ফিট"
+            "unitPattern-count-other": "{0} পাউন্ড-ফোর্স-ফিট"
           },
           "torque-newton-meter": {
             "displayName": "নিউটন-একক",
@@ -1032,8 +1044,8 @@
           },
           "volume-fluid-ounce-imperial": {
             "displayName": "Imp. fl oz",
-            "unitPattern-count-one": "{0} Imp. fl oz",
-            "unitPattern-count-other": "{0} Imp. fluid ounces"
+            "unitPattern-count-one": "{0} ইম্পেরিয়াল ফ্লুইড আউন্স",
+            "unitPattern-count-other": "{0} ইম্পেরিয়াল ফ্লুইড আউন্স"
           },
           "volume-tablespoon": {
             "displayName": "টেবিল-চামচ",
@@ -1708,9 +1720,17 @@
             "displayName": "lbf",
             "unitPattern-count-other": "{0} lbf"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "নিউটন",
             "unitPattern-count-other": "{0} N"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "kWh/100km",
@@ -1768,20 +1788,20 @@
             "unitPattern-count-other": "{0} ডট"
           },
           "length-earth-radius": {
-            "displayName": "R⊕",
+            "displayName": "পৃথিবীর ব্যাসার্ধ",
             "unitPattern-count-other": "{0} R⊕"
           },
           "length-kilometer": {
             "displayName": "কিলোমিটার",
             "unitPattern-count-one": "{0} কিমি",
             "unitPattern-count-other": "{0} কিমি",
-            "perUnitPattern": "{0} প্রতি কিমি"
+            "perUnitPattern": "{0}/কিমি"
           },
           "length-meter": {
             "displayName": "মিটার",
             "unitPattern-count-one": "{0} মি",
             "unitPattern-count-other": "{0} মি",
-            "perUnitPattern": "{0} প্রতি মি"
+            "perUnitPattern": "{0}/মি"
           },
           "length-decimeter": {
             "displayName": "ডেমি",
@@ -1826,13 +1846,17 @@
             "displayName": "ফুট",
             "unitPattern-count-one": "{0} ফুট",
             "unitPattern-count-other": "{0} ফুট",
-            "perUnitPattern": "{0} প্রতি ফুট"
+            "perUnitPattern": "{0}/ফুট"
           },
           "length-inch": {
             "displayName": "ইঞ্চি",
             "unitPattern-count-one": "{0} ইঞ্চি",
             "unitPattern-count-other": "{0} ইঞ্চি",
-            "perUnitPattern": "{0} প্রতি ইঞ্চি"
+            "perUnitPattern": "{0}/ইঞ্চি"
+          },
+          "length-milliinch": {
+            "displayName": "milli-inch",
+            "unitPattern-count-other": "{0} milli-inch"
           },
           "length-parsec": {
             "displayName": "পারসেক",
@@ -2846,9 +2870,17 @@
             "displayName": "lbf",
             "unitPattern-count-other": "{0} lbf"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "নিউটন",
             "unitPattern-count-other": "{0} N"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "kWh/100km",
@@ -2908,11 +2940,11 @@
             "unitPattern-count-other": "{0}ডট"
           },
           "length-earth-radius": {
-            "displayName": "R⊕",
+            "displayName": "পৃথিবীর ব্যাসার্ধ",
             "unitPattern-count-other": "{0} R⊕"
           },
           "length-kilometer": {
-            "displayName": "কিলোমিটার",
+            "displayName": "কিমি",
             "unitPattern-count-one": "{0} কিমি",
             "unitPattern-count-other": "{0} কিমি",
             "perUnitPattern": "{0}/কিমি"
@@ -2966,13 +2998,17 @@
             "displayName": "ফুট",
             "unitPattern-count-one": "{0} ফুট",
             "unitPattern-count-other": "{0} ফুট",
-            "perUnitPattern": "{0} প্রতি ফুট"
+            "perUnitPattern": "{0}/ফুট"
           },
           "length-inch": {
             "displayName": "ইঞ্চি",
             "unitPattern-count-one": "{0} ইঞ্চি",
             "unitPattern-count-other": "{0} ইঞ্চি",
             "perUnitPattern": "{0}/ইঞ্চি"
+          },
+          "length-milliinch": {
+            "displayName": "milli-inch",
+            "unitPattern-count-other": "{0} milli-inch"
           },
           "length-parsec": {
             "displayName": "পারসেক",
@@ -3303,8 +3339,8 @@
           },
           "volume-gallon-imperial": {
             "displayName": "Imp. gal",
-            "unitPattern-count-one": "{0}galIm",
-            "unitPattern-count-other": "{0}galIm",
+            "unitPattern-count-one": "{0}gal-Im",
+            "unitPattern-count-other": "{0}gal-Im",
             "perUnitPattern": "{0}/galIm"
           },
           "volume-quart": {

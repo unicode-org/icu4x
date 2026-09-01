@@ -12,9 +12,9 @@ use icu_provider::prelude::*;
 use zerovec::VarZeroCow;
 
 icu_provider::data_marker!(
-   /// `PercentEssentialsV1`
-   PercentEssentialsV1,
-   PercentEssentials<'static>
+    /// `PercentEssentialsV1`
+    PercentEssentialsV1,
+    PercentEssentials<'static>
 );
 
 #[derive(Clone, PartialEq, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]

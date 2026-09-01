@@ -8,8 +8,10 @@
         "timeZoneNames": {
           "hourFormat": "+HH:mm;-HH:mm",
           "gmtFormat": "GMT{0}",
-          "gmtZeroFormat": "GMT",
+          "gmtFormat-alt-utc": "UTC{0}",
           "gmtUnknownFormat": "GMT+?",
+          "gmtUnknownFormat-alt-utc": "UTC+?",
+          "dualOffsetFormat": "{0}/{1}",
           "regionFormat": "{0}時間",
           "regionFormat-type-daylight": "{0}夏時間",
           "regionFormat-type-standard": "{0}標準時",
@@ -255,9 +257,6 @@
               },
               "London": {
                 "_type": "zone",
-                "long": {
-                  "daylight": "英国夏時間"
-                },
                 "exemplarCity": "ロンドン"
               },
               "Guernsey": {
@@ -282,9 +281,6 @@
               },
               "Dublin": {
                 "_type": "zone",
-                "long": {
-                  "daylight": "アイルランド標準時"
-                },
                 "exemplarCity": "ダブリン"
               },
               "Isle_of_Man": {
@@ -1777,13 +1773,6 @@
                 "daylight": "アラスカ夏時間"
               }
             },
-            "Almaty": {
-              "long": {
-                "generic": "アルトマイ時間",
-                "standard": "アルトマイ標準時",
-                "daylight": "アルマトイ夏時間"
-              }
-            },
             "Amazon": {
               "long": {
                 "generic": "アマゾン時間",
@@ -1808,8 +1797,8 @@
             "America_Mountain": {
               "long": {
                 "generic": "米国山岳部時間",
-                "standard": "米国山岳標準時",
-                "daylight": "米国山岳夏時間"
+                "standard": "米国山岳部標準時",
+                "daylight": "米国山岳部夏時間"
               }
             },
             "America_Pacific": {
@@ -1828,23 +1817,9 @@
             },
             "Apia": {
               "long": {
-                "generic": "サモア時間",
-                "standard": "サモア標準時",
-                "daylight": "サモア夏時間"
-              }
-            },
-            "Aqtau": {
-              "long": {
-                "generic": "アクタウ時間",
-                "standard": "アクタウ標準時",
-                "daylight": "アクタウ夏時間"
-              }
-            },
-            "Aqtobe": {
-              "long": {
-                "generic": "アクトベ時間",
-                "standard": "アクトベ標準時",
-                "daylight": "アクトベ夏時間"
+                "generic": "西サモア時間",
+                "standard": "西サモア標準時",
+                "daylight": "西サモア夏時間"
               }
             },
             "Arabian": {
@@ -1946,6 +1921,13 @@
                 "generic": "ブラジリア時間",
                 "standard": "ブラジリア標準時",
                 "daylight": "ブラジリア夏時間"
+              }
+            },
+            "British": {
+              "long": {
+                "generic": "英国時間",
+                "standard": "グリニッジ標準時",
+                "daylight": "英国夏時間"
               }
             },
             "Brunei": {
@@ -2126,6 +2108,13 @@
                 "standard": "グリニッジ標準時"
               }
             },
+            "Greenland": {
+              "long": {
+                "generic": "グリーンランド時間",
+                "standard": "グリーンランド標準時",
+                "daylight": "グリーンランド夏時間"
+              }
+            },
             "Greenland_Eastern": {
               "long": {
                 "generic": "グリーンランド東部時間",
@@ -2140,11 +2129,6 @@
                 "daylight": "グリーンランド西部夏時間"
               }
             },
-            "Guam": {
-              "long": {
-                "standard": "グアム時間"
-              }
-            },
             "Gulf": {
               "long": {
                 "standard": "湾岸標準時"
@@ -2157,7 +2141,7 @@
             },
             "Hawaii": {
               "long": {
-                "standard": "ハワイ・アリューシャン標準時"
+                "standard": "ハワイ時間"
               }
             },
             "Hawaii_Aleutian": {
@@ -2218,6 +2202,13 @@
                 "daylight": "イラン夏時間"
               }
             },
+            "Irish": {
+              "long": {
+                "generic": "アイルランド時間",
+                "standard": "グリニッジ標準時",
+                "daylight": "アイルランド標準時"
+              }
+            },
             "Irkutsk": {
               "long": {
                 "generic": "イルクーツク時間",
@@ -2245,9 +2236,9 @@
             },
             "Kamchatka": {
               "long": {
-                "generic": "ペトロパブロフスク・カムチャツキー時間",
-                "standard": "ペトロパブロフスク・カムチャツキー標準時",
-                "daylight": "ペトロパブロフスク・カムチャツキー夏時間"
+                "generic": "カムチャッカ時間",
+                "standard": "カムチャッカ標準時",
+                "daylight": "カムチャッカ夏時間"
               }
             },
             "Kazakhstan": {
@@ -2289,11 +2280,6 @@
                 "standard": "キルギス時間"
               }
             },
-            "Lanka": {
-              "long": {
-                "standard": "ランカ時間"
-              }
-            },
             "Line_Islands": {
               "long": {
                 "standard": "ライン諸島時間"
@@ -2304,13 +2290,6 @@
                 "generic": "ロードハウ時間",
                 "standard": "ロードハウ標準時",
                 "daylight": "ロードハウ夏時間"
-              }
-            },
-            "Macau": {
-              "long": {
-                "generic": "マカオ時間",
-                "standard": "マカオ標準時",
-                "daylight": "マカオ夏時間"
               }
             },
             "Magadan": {
@@ -2428,11 +2407,6 @@
                 "daylight": "フェルナンド・デ・ノローニャ夏時間"
               }
             },
-            "North_Mariana": {
-              "long": {
-                "standard": "北マリアナ諸島時間"
-              }
-            },
             "Novosibirsk": {
               "long": {
                 "generic": "ノヴォシビルスク時間",
@@ -2512,13 +2486,6 @@
                 "standard": "北朝鮮時間"
               }
             },
-            "Qyzylorda": {
-              "long": {
-                "generic": "クズロルダ時間",
-                "standard": "クズロルダ標準時",
-                "daylight": "クズロルダ夏時間"
-              }
-            },
             "Reunion": {
               "long": {
                 "standard": "レユニオン時間"
@@ -2545,9 +2512,7 @@
             },
             "Samoa": {
               "long": {
-                "generic": "米領サモア時間",
-                "standard": "米領サモア標準時",
-                "daylight": "米領サモア夏時間"
+                "standard": "米領サモア標準時"
               }
             },
             "Seychelles": {
@@ -2638,6 +2603,11 @@
                 "generic": "ウルグアイ時間",
                 "standard": "ウルグアイ標準時",
                 "daylight": "ウルグアイ夏時間"
+              }
+            },
+            "Urumqi": {
+              "long": {
+                "standard": "ウルムチ時間"
               }
             },
             "Uzbekistan": {

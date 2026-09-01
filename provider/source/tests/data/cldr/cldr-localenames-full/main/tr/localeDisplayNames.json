@@ -25,18 +25,34 @@
           "collation": "Sıralama Düzeni",
           "colNormalization": "Normalleştirilmiş Sıralama",
           "colNumeric": "Sayısal Sıralama",
+          "colReorder": "Alfabe/Blok Yeniden Sıralama",
           "colStrength": "Sıralama Gücü",
           "currency": "Para Birimi",
+          "d0": "Dönüşüm Hedefi",
+          "dx": "Sözlük Bölme İstisnaları",
           "em": "Emoji Gösterimi",
+          "fw": "Haftanın ilk günü",
+          "h0": "Karıştırılmış",
           "hc": "Saat Sistemi (12 - 24)",
+          "i0": "Giriş Yöntemi",
+          "k0": "Klavye",
+          "kv": "En Yüksek Düzeyde Yok Sayılanlar",
           "lb": "Satır Sonu Stili",
           "lw": "Sözcükler İçindeki Satır Sonları",
+          "m0": "Dönüşüm Kuralları",
           "ms": "Ölçü Sistemi",
+          "mu": "Ölçü Birimi",
           "numbers": "Rakamlar",
+          "rg": "Ek Veriler İçin Bölge",
+          "s0": "Dönüşüm Kaynağı",
+          "sd": "Bölge Alt Bölümü",
           "ss": "Kısaltmadan Sonra Cümle Sonu",
+          "t": "Dönüşüm",
+          "t0": "Makine Çevirisi",
           "timezone": "Saat Dilimi",
           "va": "Yerel Varyant",
-          "x": "Özel Kullanım"
+          "x": "Özel Kullanım",
+          "x0": "Özel Kullanım Dönüşümü"
         },
         "types": {
           "calendar": {
@@ -75,6 +91,7 @@
           },
           "colCaseFirst": {
             "lower": "Önce Küçük Harfleri Sıralama",
+            "core": "Büyük Harf",
             "no": "Normal Büyük/Küçük Harf Düzeninde Sıralama",
             "upper": "Önce Büyük Harfleri Sıralama"
           },
@@ -108,8 +125,12 @@
             "no": "Rakamları Ayrı Sıralama",
             "yes": "Rakamları Sayısal Olarak Sıralama"
           },
+          "colReorder": {
+            "core": "Sembol"
+          },
           "colStrength": {
             "identical": "Tümünü Sıralama",
+            "core": "Temel, Aksanlar, Büyük ve Küçük Harfler, Türler",
             "primary": "Yalnızca Taban Harflerini Sıralama",
             "quaternary": "Aksanları/Büyük-Küçük Harfleri/Genişliği/Kana’yı Sıralama",
             "secondary": "Aksanları Sıralama",
@@ -124,11 +145,16 @@
             "core": "Metin"
           },
           "hc": {
-            "h11": "12 Saat Sistemi (0–11)",
+            "c12": "12 Saat Sistemi",
             "core": "24 (1–24)",
+            "c24": "24 Saat Sistemi",
+            "h11": "12 Saat Sistemi (0–11)",
             "h12": "12 Saat Sistemi (1–12)",
             "h23": "24 Saat Sistemi (0–23)",
             "h24": "24 Saat Sistemi (1–24)"
+          },
+          "kv": {
+            "core": "Boşlukları, noktalamayı, para birimi olmayan sembolleri kaydır"
           },
           "lb": {
             "loose": "Serbest Satır Sonu Stili",
@@ -153,6 +179,7 @@
             "ahom": "Ahom Rakamları",
             "arab": "Hint-Arap Rakamları",
             "arabext": "Genişletilmiş Hint-Arap Rakamları",
+            "core": "Geleneksel rakamlar",
             "armn": "Ermeni Rakamları",
             "armnlow": "Küçük Harf Ermeni Rakamları",
             "bali": "Bali Rakamları",
@@ -230,7 +257,17 @@
           },
           "ss": {
             "core": "Açık"
+          },
+          "t0": {
+            "und": "Belirtilmemiş Makine Çevirisi"
+          },
+          "va": {
+            "core": "POSIX varyantı"
           }
+        },
+        "typeValues": {
+          "no": "Kapalı",
+          "yes": "Açık"
         },
         "codePatterns": {
           "language": "Dil: {0}",

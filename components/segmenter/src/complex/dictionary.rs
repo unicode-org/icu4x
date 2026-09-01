@@ -5,7 +5,6 @@
 use crate::grapheme::*;
 use crate::indices::*;
 use crate::provider::*;
-#[cfg(feature = "unstable")]
 use crate::scaffold::PotentiallyIllFormedUtf8;
 use crate::scaffold::{RuleBreakType, Utf8, Utf16};
 use icu_collections::char16trie::{Char16Trie, TrieResult};
@@ -119,7 +118,6 @@ impl<'data> DictionarySegmenter<'data> {
     }
 
     /// Create a dictionary based break iterator for a UTF-8 string.
-    #[cfg(feature = "unstable")]
     pub(super) fn segment_utf8<'s>(
         self,
         input: &'s [u8],

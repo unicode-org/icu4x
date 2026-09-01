@@ -133,16 +133,16 @@ icu_provider::marker::impl_data_provider_never_marker!(SourceDataProvider);
 
 impl SourceDataProvider {
     /// The CLDR JSON tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const TESTED_CLDR_TAG: &'static str = "48.2.1";
+    pub const TESTED_CLDR_TAG: &'static str = "49.0.0-ALPHA1";
 
     /// The ICU export tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const TESTED_ICUEXPORT_TAG: &'static str = "release-78.1rc";
+    pub const TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2026-08-31/79.x";
 
     /// The segmentation LSTM model tag that has been verified to work with this version of `SourceDataProvider`.
     pub const TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
 
     /// The Unicode version tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const TESTED_UNICODE_TAG: &'static str = "17.0.0";
+    pub const TESTED_UNICODE_TAG: &'static str = "18.0.0";
 
     /// Deprecated, see [`Self::TESTED_UNICODE_TAG`].
     #[deprecated(since = "2.3.0", note = "use `TESTED_UNICODE_TAG`")]
@@ -291,15 +291,20 @@ impl SourceDataProvider {
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
     pub fn with_icuexport_for_tag(self, tag: &str) -> Self {
-        let url = if tag >= "release-78.1" || tag.starts_with("icu4x-") {
-            format!(
-                "https://github.com/unicode-org/icu/releases/download/{tag}/icu4x-icuexportdata-{}.zip",
-                tag.replace("release-", "").replace("icu4x-", "")
-            )
-        } else {
+        let url = if (tag.starts_with("release") && tag < "release-78.1")
+            || (tag.starts_with("icu4x/") && tag < "icu4x/2026-01-01")
+        {
+            // Legacy naming scheme
             format!(
                 "https://github.com/unicode-org/icu/releases/download/{tag}/icuexportdata_{}.zip",
                 tag.replace('/', "-")
+            )
+        } else {
+            format!(
+                "https://github.com/unicode-org/icu/releases/download/{tag}/icu4x-icuexportdata-{}.zip",
+                tag.replace("release-", "")
+                    .replace("icu4x/", "")
+                    .replace('/', "-")
             )
         };
         Self {
@@ -519,6 +524,37 @@ impl SourceDataProvider {
     ) -> Result<impl IntoIterator<Item = DataLocale>, DataError> {
         self.cldr()?.locales(levels)
     }
+}
+
+#[test]
+#[cfg(feature = "networking")]
+fn test_icu_tags() {
+    SourceDataProvider::new()
+        .with_icuexport_for_tag("release-78.1")
+        .icuexport()
+        .unwrap()
+        .file_exists("foo")
+        .unwrap();
+    SourceDataProvider::new()
+        .with_icuexport_for_tag("icu4x/2026-07-01/79.x")
+        .icuexport()
+        .unwrap()
+        .file_exists("foo")
+        .unwrap();
+
+    // Legacy naming scheme, still supported for older tags
+    SourceDataProvider::new()
+        .with_icuexport_for_tag("release-77-1")
+        .icuexport()
+        .unwrap()
+        .file_exists("foo")
+        .unwrap();
+    SourceDataProvider::new()
+        .with_icuexport_for_tag("icu4x/2025-05-21/77.x")
+        .icuexport()
+        .unwrap()
+        .file_exists("foo")
+        .unwrap();
 }
 
 impl SourceDataProvider {

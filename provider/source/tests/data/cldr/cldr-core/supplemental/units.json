@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "16.0.0",
-      "_cldrVersion": "48"
+      "_cldrVersion": "49"
     },
     "unitPrefixes": {
       "atto": {
@@ -692,6 +692,13 @@
         ],
         "_factor": "1000"
       },
+      "dyne": {
+        "_baseUnit": "kilogram-meter-per-square-second",
+        "_systems": [
+          "metric_adjacent"
+        ],
+        "_factor": "1/1000*100"
+      },
       "earth-mass": {
         "_baseUnit": "kilogram",
         "_systems": [
@@ -1302,6 +1309,14 @@
           "uksystem"
         ],
         "_factor": "lb_to_kg * gravity"
+      },
+      "poundal": {
+        "_baseUnit": "kilogram-meter-per-square-second",
+        "_systems": [
+          "ussystem",
+          "uksystem"
+        ],
+        "_factor": "lb_to_kg*ft_to_m"
       },
       "quart": {
         "_baseUnit": "cubic-meter",

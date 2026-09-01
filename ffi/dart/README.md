@@ -12,7 +12,7 @@ _We are still working on improving the user experience of using ICU4X from other
 ICU4X can be used like any other `pub.dev` package:
 
 ```shell
-dart pub add icu4x:2.0.0-dev.0
+dart pub add icu4x
 ```
 
 `main.dart`:

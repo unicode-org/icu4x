@@ -4,8 +4,80 @@
 
 use crate::complex::ComplexPayloadsBorrowed;
 use crate::provider::*;
-use crate::scaffold::RuleBreakType;
-use alloc::vec::Vec;
+use crate::scaffold::{PotentiallyIllFormedUtf8, RuleBreakType, Utf8, Utf16};
+use alloc::vec::{self, Vec};
+
+pub(crate) type ResultCache = vec::IntoIter<usize>;
+
+/// Converts complex-run-relative break offsets into distances in consumption order.
+///
+/// The first distance starts at `previous_offset`; later distances start at the
+/// preceding break. `break_offsets` must be monotonically non-decreasing, and
+/// its first element must be greater than or equal to `previous_offset`.
+#[inline]
+pub(crate) fn result_cache_from_offsets(
+    mut break_offsets: Vec<usize>,
+    mut previous_offset: usize,
+) -> ResultCache {
+    for break_offset in &mut break_offsets {
+        let current_offset = *break_offset;
+        debug_assert!(
+            current_offset >= previous_offset,
+            "complex break offsets must be monotonically non-decreasing"
+        );
+        *break_offset = current_offset - previous_offset;
+        previous_offset = current_offset;
+    }
+    break_offsets.into_iter()
+}
+
+pub(crate) trait ComplexRunSegmenter: RuleBreakType {
+    fn segment_complex_run(
+        complex: ComplexPayloadsBorrowed<'_>,
+        input: &Self::IterAttr<'_>,
+        start: usize,
+        end: usize,
+    ) -> Vec<usize>;
+}
+
+impl ComplexRunSegmenter for Utf8 {
+    fn segment_complex_run(
+        complex: ComplexPayloadsBorrowed<'_>,
+        input: &Self::IterAttr<'_>,
+        start: usize,
+        end: usize,
+    ) -> Vec<usize> {
+        #[allow(clippy::indexing_slicing)] // valid offsets from CharIndices
+        let input = &input.as_str()[start..end];
+        complex.segment_str(input)
+    }
+}
+
+impl ComplexRunSegmenter for PotentiallyIllFormedUtf8 {
+    fn segment_complex_run(
+        complex: ComplexPayloadsBorrowed<'_>,
+        input: &Self::IterAttr<'_>,
+        start: usize,
+        end: usize,
+    ) -> Vec<usize> {
+        #[allow(clippy::indexing_slicing)] // valid offsets from Utf8CharIndices
+        let input = &input.as_slice()[start..end];
+        complex.segment_utf8(input)
+    }
+}
+
+impl ComplexRunSegmenter for Utf16 {
+    fn segment_complex_run(
+        complex: ComplexPayloadsBorrowed<'_>,
+        input: &Self::IterAttr<'_>,
+        start: usize,
+        end: usize,
+    ) -> Vec<usize> {
+        #[allow(clippy::indexing_slicing)] // valid offsets from Utf16Indices
+        let input = &input.as_slice()[start..end];
+        complex.segment_utf16(input)
+    }
+}
 
 /// Implements the [`Iterator`] trait over the segmenter boundaries of the given string.
 ///
@@ -22,10 +94,11 @@ use alloc::vec::Vec;
 /// of the [`str`] or array of code units).
 #[derive(Debug)]
 pub struct RuleBreakIterator<'data, 's, Y: RuleBreakType> {
+    pub(crate) input: Y::IterAttr<'s>,
     pub(crate) iter: Y::IterAttr<'s>,
     pub(crate) len: usize,
     pub(crate) current_pos_data: Option<(usize, Y::CharType)>,
-    pub(crate) result_cache: Vec<usize>,
+    pub(crate) result_cache: ResultCache,
     pub(crate) data: &'data RuleBreakData<'data>,
     pub(crate) complex: Option<ComplexPayloadsBorrowed<'data>>,
     // The property associated with the previous break
@@ -52,17 +125,17 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
 
     fn next(&mut self) -> Option<Self::Item> {
         // If we have break point cache by previous run, return this result
-        if let Some(&first_result) = self.result_cache.first() {
+        if let Some(&first_result) = self.result_cache.as_slice().first() {
             let mut i = 0;
             loop {
                 if i == first_result {
-                    self.result_cache = self.result_cache.iter().skip(1).map(|r| r - i).collect();
+                    self.result_cache.next();
                     return self.get_current_position();
                 }
                 i += self.get_current_codepoint().map_or(0, Y::char_len);
                 self.advance_iter();
                 if self.is_eof() {
-                    self.result_cache.clear();
+                    self.result_cache = Default::default();
                     self.boundary_property = self.data.complex_property;
                     return Some(self.len);
                 }
@@ -235,5 +308,31 @@ impl<Y: RuleBreakType> RuleBreakIterator<'_, '_, Y> {
             .rule_status_table
             .get((self.boundary_property - 1) as usize)
             .unwrap_or_default()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn result_cache_stores_distances_between_breaks() {
+        let cache = result_cache_from_offsets(vec![12, 21, 33], 3);
+
+        assert_eq!(cache.collect::<Vec<_>>(), [9, 9, 12]);
+    }
+
+    #[test]
+    fn result_cache_allows_break_at_current_position() {
+        let cache = result_cache_from_offsets(vec![3, 12], 3);
+
+        assert_eq!(cache.collect::<Vec<_>>(), [0, 9]);
+    }
+
+    #[test]
+    #[cfg(debug_assertions)]
+    #[should_panic(expected = "complex break offsets must be monotonically non-decreasing")]
+    fn result_cache_rejects_offsets_before_current_position() {
+        let _ = result_cache_from_offsets(vec![2], 3);
     }
 }

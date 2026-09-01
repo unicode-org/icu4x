@@ -473,6 +473,10 @@
     ]
   ],
   "language": {
+    "ady": [
+      "Cyrl",
+      "RU"
+    ],
     "af": [
       "Latn",
       "ZA"
@@ -560,6 +564,14 @@
     "chr": [
       "Cher",
       "US"
+    ],
+    "ckb": [
+      "Arab",
+      "IQ"
+    ],
+    "cop": [
+      "Copt",
+      "EG"
     ],
     "cs": [
       "Latn",
@@ -737,13 +749,25 @@
       "Geor",
       "GE"
     ],
+    "kbd": [
+      "Cyrl",
+      "RU"
+    ],
     "kea": [
       "Latn",
       "CV"
     ],
+    "kek": [
+      "Latn",
+      "GT"
+    ],
     "kgp": [
       "Latn",
       "BR"
+    ],
+    "ki": [
+      "Latn",
+      "KE"
     ],
     "kk": [
       "Cyrl",
@@ -769,6 +793,10 @@
       "Arab",
       "IN"
     ],
+    "ksh": [
+      "Latn",
+      "DE"
+    ],
     "ku": [
       "Latn",
       "TR"
@@ -786,6 +814,10 @@
       "LU"
     ],
     "lij": [
+      "Latn",
+      "IT"
+    ],
+    "lld": [
       "Latn",
       "IT"
     ],
@@ -901,6 +933,10 @@
       "Latn",
       "IT"
     ],
+    "prg": [
+      "Latn",
+      "PL"
+    ],
     "ps": [
       "Arab",
       "AF"
@@ -912,6 +948,10 @@
     "qu": [
       "Latn",
       "PE"
+    ],
+    "quc": [
+      "Latn",
+      "GT"
     ],
     "raj": [
       "Deva",
@@ -992,6 +1032,10 @@
     "su": [
       "Latn",
       "ID"
+    ],
+    "suz": [
+      "Deva",
+      "NP"
     ],
     "sv": [
       "Latn",

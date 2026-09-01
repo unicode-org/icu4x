@@ -2112,6 +2112,10 @@
             "unitPattern-count-many": "{0} фунт-сил",
             "unitPattern-count-other": "{0} фунт-силы"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "gender": "masculine",
             "displayName": "ньютоны",
@@ -2139,6 +2143,10 @@
             "genitive-count-other": "{0} ньютона",
             "instrumental-count-other": "{0} ньютона",
             "prepositional-count-other": "{0} ньютона"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "gender": "masculine",
@@ -2770,6 +2778,10 @@
             "genitive-count-other": "{0} дюйма",
             "instrumental-count-other": "{0} дюйма",
             "perUnitPattern": "{0} на дюйм"
+          },
+          "length-milliinch": {
+            "displayName": "milli-inch",
+            "unitPattern-count-other": "{0} milli-inch"
           },
           "length-parsec": {
             "gender": "masculine",
@@ -5853,12 +5865,20 @@
             "unitPattern-count-many": "{0} фнт-с",
             "unitPattern-count-other": "{0} фнт-с"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "Н",
             "unitPattern-count-one": "{0} Н",
             "unitPattern-count-few": "{0} Н",
             "unitPattern-count-many": "{0} Н",
             "unitPattern-count-other": "{0} Н"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "кВт⋅ч/100 км",
@@ -6043,6 +6063,10 @@
             "unitPattern-count-many": "{0} дюйм.",
             "unitPattern-count-other": "{0} дюйм.",
             "perUnitPattern": "{0}/дюйм"
+          },
+          "length-milliinch": {
+            "displayName": "milli-inch",
+            "unitPattern-count-other": "{0} milli-inch"
           },
           "length-parsec": {
             "displayName": "пк",
@@ -7493,12 +7517,20 @@
             "unitPattern-count-many": "{0} фнт-с",
             "unitPattern-count-other": "{0} фнт-с"
           },
+          "force-poundal": {
+            "displayName": "pdl",
+            "unitPattern-count-other": "{0} pdl"
+          },
           "force-newton": {
             "displayName": "Н",
             "unitPattern-count-one": "{0} Н",
             "unitPattern-count-few": "{0} Н",
             "unitPattern-count-many": "{0} Н",
             "unitPattern-count-other": "{0} Н"
+          },
+          "force-dyne": {
+            "displayName": "dyn",
+            "unitPattern-count-other": "{0} dyn"
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "displayName": "кВт⋅ч/100 км",
@@ -7683,6 +7715,10 @@
             "unitPattern-count-many": "{0} дюйм.",
             "unitPattern-count-other": "{0} дюйм.",
             "perUnitPattern": "{0}/дюйм"
+          },
+          "length-milliinch": {
+            "displayName": "milli-inch",
+            "unitPattern-count-other": "{0} milli-inch"
           },
           "length-parsec": {
             "displayName": "пк",

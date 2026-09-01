@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::ComplexScript;
+use utf8_iter::Utf8CharIndices;
 
 // TODO: Use data provider
 pub(crate) fn get_complex_script(codepoint: u32) -> ComplexScript {
@@ -85,6 +86,33 @@ impl<'s> Iterator for ComplexScriptIterator<'s> {
                 Some((result, lang))
             }
             None => Some((core::mem::take(&mut self.rest), lang)),
+        }
+    }
+}
+
+pub(super) struct ComplexScriptIteratorUtf8<'s> {
+    rest: &'s [u8],
+}
+
+impl<'s> ComplexScriptIteratorUtf8<'s> {
+    pub(super) fn new(input: &'s [u8]) -> Self {
+        Self { rest: input }
+    }
+}
+
+impl<'s> Iterator for ComplexScriptIteratorUtf8<'s> {
+    type Item = (&'s [u8], ComplexScript);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut indices = Utf8CharIndices::new(self.rest);
+        let script = get_complex_script(indices.next()?.1 as u32);
+        match indices.find(|&(_, ch)| get_complex_script(ch as u32) != script) {
+            Some((i, _)) => {
+                let (result, rest) = self.rest.split_at(i);
+                self.rest = rest;
+                Some((result, script))
+            }
+            None => Some((core::mem::take(&mut self.rest), script)),
         }
     }
 }
