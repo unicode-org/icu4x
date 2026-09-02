@@ -43,10 +43,11 @@ fn currency_attribute<'a>(
     if len > buffer.len() {
         return None;
     }
-    for (target, byte) in buffer
-        .iter_mut()
-        .zip(nu.bytes().chain(*b"/").chain(iso_code.bytes()))
-    {
+    for (target, byte) in buffer.iter_mut().zip(
+        nu.bytes()
+            .chain(core::iter::once(b'/'))
+            .chain(iso_code.bytes()),
+    ) {
         *target = byte;
     }
     core::str::from_utf8(buffer.get(..len)?).ok()
