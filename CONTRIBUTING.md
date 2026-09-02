@@ -47,12 +47,10 @@ Note: the path in `ICU4X_DATA_DIR` is relative to `provider/data/*/src/lib.rs` a
 In the ICU4X repository, there are a few types of locale data:
 
 1. Test data: used for internal ICU4X development purposes only
-    - Downloaded data sources: `provider/source/tests/data`
-        - Regen: `cargo make download-repo-sources`
     - Generated JSON data: `provider/source/data/debug`
         - Regen: `cargo make testdata`
 2. Hard-coded source data: source of truth is this repo; used by icu4x-datagen
-    - Segmenter TOML files: `provider/source/data/segmenter`
+    - Segmenter files: `provider/source/data/segmenter`
 3. Runtime default compiled data: the `icu_*_data` crates
     - Crate roots: `provider/data`
         - Regen: `cargo make bakeddata`
