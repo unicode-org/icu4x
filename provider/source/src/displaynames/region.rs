@@ -79,6 +79,7 @@ impl From<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames<'s
     fn from(other: &cldr_serde::displaynames::region::Resource) -> Self {
         let extracted = extract_names_for_zeromap_struct(
             &other.main.value.localedisplaynames.regions,
+            // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
             &[Alt::Variant, Alt::Chagos, Alt::Biot],
             "region",
             |region| Some(region.to_tinystr()),
@@ -99,7 +100,6 @@ impl From<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames<'s
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::displaynames::coverage_experimental::CheckAltCoverage;
     use icu::locale::{data_locale, subtags::region};
 
     #[test]
@@ -221,13 +221,18 @@ mod tests {
     /// key and coverage tier combination in CLDR is covered by an existing marker, so if future CLDR releases
     /// add data for uninhabited markers, we learn about it and can take action.
     #[test]
+    #[cfg(feature = "networking")]
     fn test_empty_coverage_tiers_assert_no_data() {
-        let provider = SourceDataProvider::new_testing();
+        use crate::displaynames::coverage_experimental::CheckAltCoverage;
+
+        let provider = SourceDataProvider::new();
         let cldr = provider.cldr().unwrap();
 
         crate::displaynames::coverage_experimental::for_each_cldr_key_and_tier(
             cldr,
             "territories.json",
+            // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
+            &[Alt::Variant, Alt::Chagos, Alt::Biot],
             |l| &l.territory,
             |res: &cldr_serde::displaynames::region::Resource| {
                 &res.main.value.localedisplaynames.regions

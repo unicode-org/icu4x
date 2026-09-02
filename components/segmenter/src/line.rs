@@ -1427,6 +1427,25 @@ mod tests {
     }
 
     #[test]
+    fn complex_line_break_encodings_neo() {
+        let mut segmenter = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
+        segmenter.load_dictionary();
+        let input = "ภาษาไทย龟山岛";
+        check_line(input, &["ภาษา", "ไทย", "龟", "山", "岛"], segmenter);
+
+        let ill_formed =
+            b"\xE0\xB8\xA0\xE0\xB8\xB2\xE0\xB8\xA9\xE0\xB8\xB2\xFF\xE0\xB9\x84\xE0\xB8\x97\xE0\xB8\xA2";
+        let breaks: Vec<usize> = segmenter.segment_utf8(ill_formed).collect();
+        assert_eq!(breaks, [0, 22]);
+
+        let unpaired_surrogate = [
+            0x0E20, 0x0E32, 0x0E29, 0x0E32, 0xD800, 0x0E44, 0x0E17, 0x0E22,
+        ];
+        let breaks: Vec<usize> = segmenter.segment_utf16(&unpaired_surrogate).collect();
+        assert_eq!(breaks, [0, 8]);
+    }
+
+    #[test]
     fn complex_line_break_encodings_17() {
         let mut segmenter = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
         segmenter.load_dictionary();

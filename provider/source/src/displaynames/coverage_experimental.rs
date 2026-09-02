@@ -1204,6 +1204,7 @@ pub(super) trait CheckAltCoverage {
 pub(super) fn for_each_cldr_key_and_tier<Resource, T>(
     cldr: &CldrCache,
     file_name: &str,
+    ignored_alts: &[Alt],
     get_category: impl Fn(&CoverageByXPathLevels) -> &CoverageCategoryLevels,
     mut extract_keys: impl FnMut(&Resource) -> &HashMap<WithAlt<T>, String>,
     mut callback: impl FnMut(&DataLocale, &WithAlt<T>, CoverageLevelForXPath),
@@ -1220,9 +1221,10 @@ pub(super) fn for_each_cldr_key_and_tier<Resource, T>(
             let mut keys = extract_keys(res).keys().collect::<Vec<_>>();
             keys.sort_by_cached_key(|k| (k.subtag.write_to_string().to_string(), k.alt, k.menu));
             for key in keys {
-                if let Some(Alt::Variant) = key.alt {
-                    // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
-                    return;
+                if let Some(alt) = key.alt
+                    && ignored_alts.contains(&alt)
+                {
+                    continue;
                 }
                 let tier = coverage_cldr
                     .coverage_tier(&locale, &get_category, &key.subtag, key.alt, key.menu, cldr)
