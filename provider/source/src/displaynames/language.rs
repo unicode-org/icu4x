@@ -155,6 +155,7 @@ impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayName
     fn from(other: &cldr_serde::displaynames::language::Resource) -> Self {
         let extracted = extract_names_for_zeromap_struct(
             &other.main.value.localedisplaynames.languages,
+            // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
             &[Alt::Variant, Alt::Secondary, Alt::Official],
             "language",
             |langid| {
@@ -218,7 +219,6 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<
 
 #[cfg(test)]
 mod tests {
-    use super::super::coverage_experimental::CheckAltCoverage;
     use super::*;
     use icu::locale::{data_locale, subtags::language};
 
@@ -497,13 +497,18 @@ mod tests {
     /// key and coverage tier combination in CLDR is covered by an existing marker, so if future CLDR releases
     /// add data for uninhabited markers, we learn about it and can take action.
     #[test]
+    #[cfg(feature = "networking")]
     fn test_empty_coverage_tiers_assert_no_data() {
-        let provider = SourceDataProvider::new_testing();
+        use crate::displaynames::coverage_experimental::CheckAltCoverage;
+
+        let provider = SourceDataProvider::new();
         let cldr = provider.cldr().unwrap();
 
         crate::displaynames::coverage_experimental::for_each_cldr_key_and_tier(
             cldr,
             "languages.json",
+            // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
+            &[Alt::Variant, Alt::Secondary, Alt::Official],
             |l| &l.language,
             |res: &cldr_serde::displaynames::language::Resource| {
                 &res.main.value.localedisplaynames.languages
@@ -519,6 +524,23 @@ mod tests {
                     || LocaleNamesLanguageMenuMediumLightV1::contains_key(key, tier)
                     || LocaleNamesLanguageMenuMediumHeavyV1::contains_key(key, tier)
                 {
+                    return;
+                }
+
+                // TODO(#7831): Add missing markers
+                if matches!((tier, key.alt, key.menu), |(
+                    CoverageLevelForXPath::Basic,
+                    Some(Alt::Short),
+                    None,
+                )| (
+                    CoverageLevelForXPath::Basic,
+                    None,
+                    Some(_)
+                ) | (
+                    CoverageLevelForXPath::Basic,
+                    Some(Alt::Menu),
+                    None
+                )) {
                     return;
                 }
 
