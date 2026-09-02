@@ -79,6 +79,7 @@ impl From<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames<'s
     fn from(other: &cldr_serde::displaynames::region::Resource) -> Self {
         let extracted = extract_names_for_zeromap_struct(
             &other.main.value.localedisplaynames.regions,
+            // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
             &[Alt::Variant, Alt::Chagos, Alt::Biot],
             "region",
             |region| Some(region.to_tinystr()),
@@ -228,6 +229,8 @@ mod tests {
         crate::displaynames::coverage_experimental::for_each_cldr_key_and_tier(
             cldr,
             "territories.json",
+            // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
+            &[Alt::Variant, Alt::Chagos, Alt::Biot],
             |l| &l.territory,
             |res: &cldr_serde::displaynames::region::Resource| {
                 &res.main.value.localedisplaynames.regions

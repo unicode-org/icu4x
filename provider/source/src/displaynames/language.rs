@@ -155,6 +155,7 @@ impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayName
     fn from(other: &cldr_serde::displaynames::language::Resource) -> Self {
         let extracted = extract_names_for_zeromap_struct(
             &other.main.value.localedisplaynames.languages,
+            // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
             &[Alt::Variant, Alt::Secondary, Alt::Official],
             "language",
             |langid| {
@@ -504,6 +505,8 @@ mod tests {
         crate::displaynames::coverage_experimental::for_each_cldr_key_and_tier(
             cldr,
             "languages.json",
+            // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
+            &[Alt::Variant, Alt::Secondary, Alt::Official],
             |l| &l.language,
             |res: &cldr_serde::displaynames::language::Resource| {
                 &res.main.value.localedisplaynames.languages

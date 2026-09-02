@@ -79,6 +79,7 @@ impl From<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames<'s
     fn from(other: &cldr_serde::displaynames::script::Resource) -> Self {
         let extracted = extract_names_for_zeromap_struct(
             &other.main.value.localedisplaynames.scripts,
+            // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
             &[Alt::Variant, Alt::Secondary, Alt::StandAlone],
             "script",
             |script| Some(script.to_tinystr()),
@@ -229,6 +230,8 @@ mod tests {
         crate::displaynames::coverage_experimental::for_each_cldr_key_and_tier(
             cldr,
             "scripts.json",
+            // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
+            &[Alt::Variant, Alt::Secondary, Alt::StandAlone],
             |l| &l.script,
             |res: &cldr_serde::displaynames::script::Resource| {
                 &res.main.value.localedisplaynames.scripts

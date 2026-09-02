@@ -49,6 +49,7 @@ impl From<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNames<
     fn from(other: &cldr_serde::displaynames::variant::Resource) -> Self {
         let extracted = extract_names_for_zeromap_struct(
             &other.main.value.localedisplaynames.variants,
+            // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
             &[Alt::Secondary],
             "variant",
             |variant| Some(variant.to_tinystr()),
@@ -123,6 +124,8 @@ mod tests {
         crate::displaynames::coverage_experimental::for_each_cldr_key_and_tier(
             cldr,
             "variants.json",
+            // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
+            &[Alt::Secondary],
             |l| &l.variant,
             |res: &cldr_serde::displaynames::variant::Resource| {
                 &res.main.value.localedisplaynames.variants
