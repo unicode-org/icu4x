@@ -114,8 +114,11 @@ void main() {
     ///// DateFormatter /////
 
     expect(
-      DateFormatter.md(locale).formatIso(zonedDateTimeIso.date),
-      '15. Raj.',
+      DateFormatter.md(
+        locale,
+        length: DateTimeLength.short,
+      ).formatIso(zonedDateTimeIso.date),
+      '15.07.',
     );
 
     ///// TimeFormatter /////
@@ -216,9 +219,9 @@ void main() {
     expect(
       ZonedDateFormatter.genericLong(
         locale,
-        DateFormatter.md(locale),
+        DateFormatter.md(locale, length: DateTimeLength.short),
       ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.zone),
-      '15. Raj. Mitteleuropäische Zeit',
+      '15.07. Mitteleuropäische Zeit',
     );
 
     expect(
@@ -326,7 +329,7 @@ void main() {
     expect(
       ZonedDateTimeFormatter.genericLong(
         locale,
-        DateTimeFormatter.mdt(locale),
+        DateTimeFormatter.mdt(locale, length: DateTimeLength.short),
       ).formatIso(
         zonedDateTimeIso.date,
         zonedDateTimeIso.time,
@@ -334,7 +337,7 @@ void main() {
             .parse('America/Los_Angeles')
             .withOffset(UtcOffset.fromSeconds(-420)),
       ),
-      '15. Raj., 14:32:12 GMT-00:07',
+      '15.07., 14:32:12 GMT-00:07',
     );
 
     final customZDT = ZonedIsoDateTime.fromEpochMillisecondsAndUtcOffset(
