@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceDataProvider;
-use icu::locale::{DataLocale, data_locale};
+use icu::locale::data_locale;
 use icu_provider::dynutil::UpcastDataPayload;
 use icu_provider::export::*;
 use icu_provider::prelude::*;
@@ -13,8 +13,6 @@ use std::cell::Cell;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::sync::Mutex;
-
-include!("../../tests/locales.rs.data");
 
 #[test]
 #[cfg(feature = "use_wasm")]
@@ -58,7 +56,67 @@ fn make_testdata() {
     let provider = SourceDataProvider::new_testing();
 
     ExportDriver::new(
-        LOCALES.iter().copied().map(DataLocaleFamily::single),
+        // Keep this list somewhat short, but cover all features.
+        // We use 12 base languages with a small number of variants to allow for 12 languages to be
+        // used in microbenchmarks.
+        [
+            // Arabic:
+            // - Good example for RTL
+            // - Non-latin numerals in Egypt
+            data_locale!("ar"),
+            data_locale!("ar-EG"),
+            // Bangla:
+            // - Uses non-Latin numerals
+            data_locale!("bn"),
+            // Chakma:
+            // - High-coverage language that uses non-BMP code points
+            data_locale!("ccp"),
+            // English:
+            // - Widely understood language in software engineering
+            // - Includes regional variant to test similar-data fallbacks
+            // - Includes a BCP-47 variant to test handling absent data
+            data_locale!("en"),
+            data_locale!("en-001"),
+            data_locale!("en-ZA"),
+            data_locale!("en-US-posix"),
+            // Spanish:
+            //  - Most popular Romance language
+            //  - South American dialect
+            //  - Has context dependent list fragments
+            data_locale!("es"),
+            data_locale!("es-AR"),
+            // French:
+            // - Often the first non-English locale to receive new data in CLDR
+            data_locale!("fr"),
+            // Filipino:
+            // - Week of month/year have plural variants.
+            data_locale!("fil"),
+            // Japanese:
+            // - Four scripts
+            // - Complex date patterns
+            data_locale!("ja"),
+            // Russian:
+            // - Cyrillic script
+            // - Interesting plural rules
+            // - Hightly inflected, many gramatical cases
+            data_locale!("ru"),
+            // Serbian:
+            // - Multiple scripts
+            // - Southern Europe
+            // - Hightly inflected, many gramatical cases
+            data_locale!("sr"),
+            data_locale!("sr-Latn"),
+            // Thai:
+            // - Complex word breaking
+            data_locale!("th"),
+            // Turkish:
+            // - Interesting case-mappings
+            data_locale!("tr"),
+            // Root data
+            data_locale!("und"),
+        ]
+        .into_iter()
+        .map(DataLocaleFamily::single),
         DeduplicationStrategy::Maximal.into(),
         LocaleFallbacker::try_new_unstable(&provider).unwrap(),
     )
