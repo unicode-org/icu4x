@@ -4,7 +4,7 @@
 
 Data for the `icu_normalizer` crate
 
-This data was generated with CLDR version 49.0.0-ALPHA1, ICU version icu4x/2026-08-31/79.x, and
+This data was generated with CLDR version 49.0.0-ALPHA1, Unicode version 18.0.0, and
 LSTM segmenter version v0.1.0.
 
 <!-- cargo-rdme end -->

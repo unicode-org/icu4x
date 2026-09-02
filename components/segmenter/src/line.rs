@@ -155,8 +155,11 @@ impl LineBreakOptions<'_> {
 /// always a breakpoint returned at index 0, but this breakpoint is not a
 /// meaningful line break opportunity.
 ///
-/// Line segmenter is currently compatible with [Unicode Standard Annex #14][UAX14] (Version 15.1.0).
-/// The `*_17_*` and `*_neo_*` constructors, which require the `unstable` Cargo feature, implement Version 17.0.0.
+/// Line segmenter is currently compatible with [Unicode Standard Annex #14][UAX14] (version 15.1.0).
+/// The `*_17_*` constructors, which require the `unstable` Cargo feature, implement version 17.0.0.
+/// The `*_neo_*` constructors, which require the `unstable` Cargo feature, implement version
+#[cfg_attr(feature = "compiled_data", doc = icu_segmenter_data::unicode_tag!())]
+/// .
 ///
 /// [UAX14]: https://www.unicode.org/reports/tr14/tr14-55.html
 ///
