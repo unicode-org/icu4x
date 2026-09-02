@@ -352,7 +352,7 @@ where
     }
 
     /// Returns the underlying payload regardless of variable matching.
-    #[allow(dead_code, reason = "https://github.com/unicode-org/icu4x/issues/5448")]
+    #[cfg(feature = "unstable")]
     pub(crate) fn get_any(&self) -> Option<Payload> {
         match self {
             Self::None => None,
