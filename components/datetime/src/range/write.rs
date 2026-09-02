@@ -4,12 +4,14 @@
 
 use crate::FormattedDateTime;
 use crate::options::Alignment;
+use crate::parts;
 use crate::provider::fields;
 use crate::provider::pattern::PatternItem;
 use crate::provider::pattern::runtime;
 use crate::provider::range_patterns::RangePatternInfoBorrowed;
 use crate::provider::semantic_skeletons::GluePattern;
 use core::fmt;
+use writeable::adapters::WithPart;
 use writeable::{PartsWrite, Writeable};
 use zerovec::ule::AsULE;
 
@@ -34,7 +36,11 @@ pub(crate) enum FormattedDateRangeInner<'l> {
 impl Writeable for FormattedDateRange<'_> {
     fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> Result<(), fmt::Error> {
         match &self.0 {
-            FormattedDateRangeInner::Single(x) => x.write_to_parts(sink),
+            FormattedDateRangeInner::Single(x) => WithPart {
+                part: parts::SHARED,
+                writeable: x,
+            }
+            .write_to_parts(sink),
             FormattedDateRangeInner::GreatestDifference(x) => x.write_to_parts(sink),
             FormattedDateRangeInner::TimeRangeMixed(x) => x.write_to_parts(sink),
             FormattedDateRangeInner::Fallback(x) => x.write_to_parts(sink),
@@ -71,29 +77,41 @@ impl Writeable for FormattedGreatestDifference<'_> {
         match &self.pattern_info {
             RangePatternInfoBorrowed::FullRange(pattern) => {
                 let (start_pattern, end_pattern) = pattern.split_on_repeated_field();
-                let start_side = FormattedSingleSide {
-                    datetime: &self.start,
-                    pattern: start_pattern,
-                    alignment: self.alignment,
+                let start_side = WithPart {
+                    part: parts::START_RANGE,
+                    writeable: FormattedSingleSide {
+                        datetime: &self.start,
+                        pattern: start_pattern,
+                        alignment: self.alignment,
+                    },
                 };
-                let end_side = FormattedSingleSide {
-                    datetime: &self.end,
-                    pattern: end_pattern,
-                    alignment: self.alignment,
+                let end_side = WithPart {
+                    part: parts::END_RANGE,
+                    writeable: FormattedSingleSide {
+                        datetime: &self.end,
+                        pattern: end_pattern,
+                        alignment: self.alignment,
+                    },
                 };
                 start_side.write_to_parts(sink)?;
                 end_side.write_to_parts(sink)
             }
             RangePatternInfoBorrowed::Symmetric(pattern) => {
-                let start_side = FormattedSingleSide {
-                    datetime: &self.start,
-                    pattern: *pattern,
-                    alignment: self.alignment,
+                let start_side = WithPart {
+                    part: parts::START_RANGE,
+                    writeable: FormattedSingleSide {
+                        datetime: &self.start,
+                        pattern: *pattern,
+                        alignment: self.alignment,
+                    },
                 };
-                let end_side = FormattedSingleSide {
-                    datetime: &self.end,
-                    pattern: *pattern,
-                    alignment: self.alignment,
+                let end_side = WithPart {
+                    part: parts::END_RANGE,
+                    writeable: FormattedSingleSide {
+                        datetime: &self.end,
+                        pattern: *pattern,
+                        alignment: self.alignment,
+                    },
                 };
                 write_glue_pattern(sink, self.glue, &start_side, &end_side)
             }
@@ -164,7 +182,15 @@ pub(crate) struct FormattedTimeRangeMixed<'l> {
 
 impl Writeable for FormattedTimeRangeMixed<'_> {
     fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> Result<(), fmt::Error> {
-        write_glue_pattern(sink, self.glue, &self.time_range, &self.date)
+        write_glue_pattern(
+            sink,
+            self.glue,
+            &self.time_range,
+            &WithPart {
+                part: parts::SHARED,
+                writeable: &self.date,
+            },
+        )
     }
 }
 
@@ -177,7 +203,18 @@ pub(crate) struct FormattedRangeFallback<'l> {
 
 impl Writeable for FormattedRangeFallback<'_> {
     fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> Result<(), fmt::Error> {
-        write_glue_pattern(sink, self.glue, &self.start, &self.end)
+        write_glue_pattern(
+            sink,
+            self.glue,
+            &WithPart {
+                part: parts::START_RANGE,
+                writeable: &self.start,
+            },
+            &WithPart {
+                part: parts::END_RANGE,
+                writeable: &self.end,
+            },
+        )
     }
 }
 
@@ -197,7 +234,11 @@ where
             Ok(pattern_item_ule) => {
                 let pattern_item = <PatternItem as AsULE>::from_unaligned(*pattern_item_ule);
                 if let PatternItem::Literal(ch) = pattern_item {
-                    sink.write_char(ch)?;
+                    WithPart {
+                        part: parts::SHARED,
+                        writeable: ch,
+                    }
+                    .write_to_parts(sink)?;
                 } else {
                     debug_assert!(false, "Expected only literals in glue pattern");
                 }
