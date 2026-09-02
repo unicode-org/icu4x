@@ -70,7 +70,6 @@ impl From<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNames<
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::displaynames::coverage_experimental::CheckAltCoverage;
     use icu::locale::{data_locale, subtags::variant};
 
     #[test]
@@ -117,8 +116,11 @@ mod tests {
     /// key and coverage tier combination in CLDR is covered by an existing marker, so if future CLDR releases
     /// add data for uninhabited markers, we learn about it and can take action.
     #[test]
+    #[cfg(feature = "networking")]
     fn test_empty_coverage_tiers_assert_no_data() {
-        let provider = SourceDataProvider::new_testing();
+        use crate::displaynames::coverage_experimental::CheckAltCoverage;
+
+        let provider = SourceDataProvider::new();
         let cldr = provider.cldr().unwrap();
 
         crate::displaynames::coverage_experimental::for_each_cldr_key_and_tier(
