@@ -4,257 +4,55 @@
 
 use crate::SourceDataProvider;
 use crate::source::{AbstractFs, RscdCache};
-use icu::locale::{DataLocale, data_locale};
 use icu_provider::DataError;
-use std::collections::BTreeSet;
-use std::fs::File;
-use std::io::{BufRead, BufReader, Write};
 use std::path::Path;
-use std::process::Command;
-
-include!("../../tests/globs.rs.data");
-include!("../../tests/locales.rs.data");
-
-impl AbstractFs {
-    fn dump(
-        &self,
-        target: &Path,
-        mut files: BTreeSet<String>,
-    ) -> Result<BTreeSet<String>, DataError> {
-        std::fs::remove_dir_all(target)?;
-
-        for file in files.clone() {
-            if !self.file_exists(&file).unwrap() {
-                files.remove(&file);
-                continue;
-            }
-
-            std::fs::create_dir_all(target.join(&file).parent().unwrap())?;
-            crlify::BufWriterWithLineEndingFix::new(File::create(target.join(&file))?)
-                .write_all(&self.read_to_buf(&file)?)?;
-        }
-
-        Ok(files)
-    }
-}
 
 impl RscdCache {
-    pub fn dump(
-        &self,
-        target: &Path,
-        mut files: BTreeSet<String>,
-    ) -> Result<BTreeSet<String>, DataError> {
-        std::fs::remove_dir_all(target)?;
-
-        for file in files.clone() {
-            if !self.file_exists(&file).unwrap() {
-                files.remove(&file);
-                continue;
-            }
-
-            std::fs::create_dir_all(target.join(&file).parent().unwrap())?;
-            crlify::BufWriterWithLineEndingFix::new(File::create(target.join(&file))?)
-                .write_all(self.read_to_string(&file)?.as_bytes())?;
+    fn init(&self) -> Result<(), DataError> {
+        if let Some(unihan_zip) = self.unihan_zip.as_ref() {
+            unihan_zip.init()?;
+        }
+        if let Some(ucd_zip) = self.ucd_zip.as_ref() {
+            ucd_zip.init()?;
+        }
+        if let Some(uts_39_zip) = self.uts_39_zip.as_ref() {
+            uts_39_zip.init()?;
         }
 
-        Ok(files)
+        // List all required files that are not accessed through one of the ZIP files
+        self.root.file_exists("emoji/emoji-sequences.txt")?;
+
+        Ok(())
     }
 }
 
 #[test]
 #[ignore]
 fn download_repo_sources() {
-    let crate_root = Path::new(std::env!("CARGO_MANIFEST_DIR"));
-    let out_root = crate_root.join("tests/data");
+    simple_logger::SimpleLogger::new()
+        .env()
+        .with_level(log::LevelFilter::Info)
+        .init()
+        .unwrap();
 
-    fn expand_paths(in_paths: &[&str], replace_hyphen_by_underscore: bool) -> BTreeSet<String> {
-        let mut paths = BTreeSet::new();
-        for pattern in in_paths {
-            if pattern.contains("$LOCALES") {
-                for locale in LOCALES.iter() {
-                    let mut string = locale.to_string();
-                    if replace_hyphen_by_underscore {
-                        string = string.replace('-', "_");
-                    }
-                    paths.insert(pattern.replace("$LOCALES", &string));
-                }
-                // Also add "root" for older CLDRs
-                paths.insert(pattern.replace("$LOCALES", "root"));
-            } else {
-                // No variable in pattern
-                paths.insert(pattern.to_string());
-            }
-        }
-        paths
-    }
+    println!(
+        "Caching sources in {}",
+        AbstractFs::data_cache_dir().display()
+    );
 
     let provider = SourceDataProvider::new();
 
-    let cldr_files = provider
-        .cldr()
-        .unwrap()
-        .serde_cache
-        .root
-        .dump(&out_root.join("cldr"), expand_paths(CLDR_JSON_GLOB, false))
-        .unwrap();
+    provider.cldr().unwrap().serde_cache.root.init().unwrap();
 
-    let icuexport_files = provider
-        .icuexport()
-        .unwrap()
-        .root
-        .dump(
-            &out_root.join("icuexport"),
-            expand_paths(ICUEXPORTDATA_GLOB, true),
-        )
-        .unwrap();
+    provider.icuexport().unwrap().root.init().unwrap();
 
-    let lstm_files = provider
-        .segmenter_lstm()
-        .unwrap()
-        .root
-        .dump(
-            &out_root.join("lstm"),
-            LSTM_GLOB.iter().copied().map(String::from).collect(),
-        )
-        .unwrap();
+    provider.segmenter_lstm().unwrap().root.init().unwrap();
 
-    let rscd_files = provider
-        .rscd()
-        .unwrap()
-        .dump(
-            &out_root.join("rscd"),
-            RSCD_GLOB.iter().copied().map(String::from).collect(),
-        )
-        .unwrap();
-    let irg_path = out_root.join("rscd/ucd/Unihan/Unihan_IRGSources.txt");
-    std::io::copy(
-        &mut BufReader::new(File::open(&irg_path).unwrap())
-            .lines()
-            .map_while(Result::ok)
-            .filter(|l| l.contains("kRSUnicode") || l.starts_with('#'))
-            .collect::<Vec<_>>()
-            .join("\n")
-            .as_bytes(),
-        &mut crlify::BufWriterWithLineEndingFix::new(File::create(&irg_path).unwrap()),
-    )
-    .unwrap();
+    provider.tzdb().unwrap().root.init().unwrap();
 
-    let mut tzdb_files = provider
-        .tzdb()
-        .unwrap()
-        .root
-        .dump(
-            &out_root.join("tzdb"),
-            TZDB_GLOB.iter().copied().map(String::from).collect(),
-        )
-        .unwrap();
-    let gen_files = ["rearguard.zi".into(), "vanguard.zi".into()];
-    Command::new("make")
-        .arg("-C")
-        .arg(out_root.join("tzdb"))
-        .args(&gen_files)
-        .status()
-        .unwrap();
-    tzdb_files.extend(gen_files);
-    std::io::copy(
-        &mut std::fs::read_to_string(out_root.join("tzdb/rearguard.zi"))
-            .unwrap()
-            .as_bytes(),
-        &mut crlify::BufWriterWithLineEndingFix::new(
-            File::create(out_root.join("tzdb/rearguard.zi")).unwrap(),
-        ),
-    )
-    .unwrap();
-    std::io::copy(
-        &mut std::fs::read_to_string(out_root.join("tzdb/vanguard.zi"))
-            .unwrap()
-            .as_bytes(),
-        &mut crlify::BufWriterWithLineEndingFix::new(
-            File::create(out_root.join("tzdb/vanguard.zi")).unwrap(),
-        ),
-    )
-    .unwrap();
-    std::fs::remove_file(out_root.join("tzdb/Makefile")).unwrap();
-    std::fs::remove_file(out_root.join("tzdb/ziguard.awk")).unwrap();
-    tzdb_files.remove("Makefile");
-    tzdb_files.remove("ziguard.awk");
+    provider.rscd().unwrap().init().unwrap();
 
-    let [
-        cldr_files,
-        icuexport_files,
-        lstm_files,
-        rscd_files,
-        tzdb_files,
-    ] = [
-        cldr_files,
-        icuexport_files,
-        lstm_files,
-        rscd_files,
-        tzdb_files,
-    ]
-    .map(|files| {
-        files
-            .iter()
-            .map(|path| format!("{path:?}"))
-            .collect::<Vec<_>>()
-            .join(",\n        ")
-    });
-
-    write!(
-        &mut crlify::BufWriterWithLineEndingFix::new(
-            File::create(crate_root.join("src/tests/data.rs")).unwrap()
-        ),
-        "\
-// This file is part of ICU4X. For terms of use, please see the file
-// called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
-
-// Generated by `download-repo-sources.rs`
-
-use crate::source::{{include_files, AbstractFs}};
-
-#[rustfmt::skip]
-pub fn cldr_data() -> AbstractFs {{
-    include_files!(
-        \"../../tests/data/cldr/\";
-        {cldr_files}
-    )
-}}
-
-#[rustfmt::skip]
-pub fn icuexport_data() -> AbstractFs {{
-    include_files!(
-        \"../../tests/data/icuexport/\";
-        {icuexport_files}
-    )
-}}
-
-#[rustfmt::skip]
-pub fn lstm_data() -> AbstractFs {{
-    include_files!(
-        \"../../tests/data/lstm/\";
-        {lstm_files}
-    )
-}}
-
-#[rustfmt::skip]
-pub fn rscd_data() -> AbstractFs {{
-    include_files!(
-        \"../../tests/data/rscd/\";
-        {rscd_files}
-    )
-}}
-
-#[rustfmt::skip]
-pub fn tzdb_data() -> AbstractFs {{
-    include_files!(
-        \"../../tests/data/tzdb/\";
-        {tzdb_files}
-    )
-}}
-"
-    )
-    .unwrap();
+    let repo_root = Path::new(concat!(std::env!("CARGO_MANIFEST_DIR"), "/../.."));
 
     // Download RSCD test files
     for (rscd_path, repo_path) in [
@@ -284,7 +82,7 @@ pub fn tzdb_data() -> AbstractFs {{
         ),
     ] {
         std::fs::write(
-            crate_root.join("../..").join(repo_path),
+            repo_root.join(repo_path),
             provider
                 .rscd()
                 .unwrap()
@@ -321,7 +119,7 @@ pub fn tzdb_data() -> AbstractFs {{
         ),
     ] {
         std::fs::write(
-            crate_root.join("../..").join(repo_path),
+            repo_root.join(repo_path),
             AbstractFs::new_from_url(format!(
                 "https://raw.githubusercontent.com/unicode-org/cldr/refs/tags/release-{}/",
                 SourceDataProvider::TESTED_CLDR_TAG
@@ -335,7 +133,6 @@ pub fn tzdb_data() -> AbstractFs {{
         .unwrap();
     }
 
-    #[allow(clippy::single_element_loop)]
     for (icu_path, repo_path) in [
         (
             "icu4c/source/test/testdata/riwords.txt",
@@ -355,7 +152,7 @@ pub fn tzdb_data() -> AbstractFs {{
         ),
     ] {
         std::fs::write(
-            crate_root.join("../..").join(repo_path),
+            repo_root.join(repo_path),
             AbstractFs::new_from_url(format!(
                 "https://raw.githubusercontent.com/unicode-org/icu/refs/tags/{}/",
                 SourceDataProvider::TESTED_ICUEXPORT_TAG
