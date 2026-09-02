@@ -99,14 +99,41 @@ impl DataProvider<DecimalSymbolsV1> for SourceDataProvider {
                     .numbers
                     .currencies
                     .get(currency)
-                    .filter(|patterns| patterns.decimal.is_some() || patterns.group.is_some())
                     .ok_or_else(|| {
                         DataErrorKind::IdentifierNotFound.with_req(DecimalSymbolsV1::INFO, req)
                     })?;
 
+                let decimal = match overrides.decimal.as_deref() {
+                    Some(s) if s.chars().count() > 1 => {
+                        log::warn!(
+                            "Multi-character decimal separator override for currency {currency} in locale {}: '{s}' - ignoring",
+                            req.id.locale,
+                        );
+                        None
+                    }
+                    s => s,
+                };
+
+                let group = match overrides.group.as_deref() {
+                    Some(s) if s.chars().count() > 1 => {
+                        log::warn!(
+                            "Multi-character grouping separator override for currency {currency} in locale {}: '{s}' - ignoring",
+                            req.id.locale,
+                        );
+                        None
+                    }
+                    s => s,
+                };
+
+                if decimal.is_none() && group.is_none() {
+                    return Err(
+                        DataErrorKind::IdentifierNotFound.with_req(DecimalSymbolsV1::INFO, req)
+                    );
+                }
+
                 (
-                    overrides.decimal.as_deref().unwrap_or(&symbols.decimal),
-                    overrides.group.as_deref().unwrap_or(&symbols.group),
+                    decimal.unwrap_or(&symbols.decimal),
+                    group.unwrap_or(&symbols.group),
                 )
             }
             None => (symbols.decimal.as_str(), symbols.group.as_str()),
@@ -184,7 +211,17 @@ impl IterableDataProviderCached<DecimalSymbolsV1> for SourceDataProvider {
                 .numbers
                 .currencies
                 .iter()
-                .filter(|(_, patterns)| patterns.decimal.is_some() || patterns.group.is_some())
+                .filter(|(_, patterns)| {
+                    let has_valid_decimal = patterns
+                        .decimal
+                        .as_deref()
+                        .is_some_and(|s| s.chars().count() == 1);
+                    let has_valid_group = patterns
+                        .group
+                        .as_deref()
+                        .is_some_and(|s| s.chars().count() == 1);
+                    has_valid_decimal || has_valid_group
+                })
                 .map(|(currency, _)| currency.as_str())
                 .collect::<Vec<_>>();
 
