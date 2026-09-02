@@ -263,6 +263,10 @@ pub fn tzdb_data() -> AbstractFs {{
             "components/normalizer/tests/data/NormalizationTest.txt",
         ),
         (
+            "ucd/PropertyValueAliases.txt",
+            "components/properties/tests/data/PropertyValueAliases.txt",
+        ),
+        (
             "ucd/auxiliary/GraphemeBreakTest.txt",
             "components/segmenter/tests/testdata/GraphemeBreakTest.txt",
         ),
