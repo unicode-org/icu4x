@@ -189,11 +189,15 @@ impl AbstractFs {
     }
 
     #[cfg(feature = "networking")]
-    fn download(resource: &String) -> Result<PathBuf, DataError> {
-        let root = std::env::var_os("ICU4X_SOURCE_CACHE")
+    pub(crate) fn data_cache_dir() -> PathBuf {
+        std::env::var_os("ICU4X_SOURCE_CACHE")
             .map(PathBuf::from)
             .unwrap_or_else(|| std::env::temp_dir().join("icu4x-source-cache/"))
-            .join(resource.rsplit("//").next().unwrap());
+    }
+
+    #[cfg(feature = "networking")]
+    fn download(resource: &String) -> Result<PathBuf, DataError> {
+        let root = Self::data_cache_dir().join(resource.rsplit("//").next().unwrap());
         if root.exists() {
             return Ok(root);
         }
@@ -225,7 +229,7 @@ impl AbstractFs {
         Ok(root)
     }
 
-    fn init(&self) -> Result<(), DataError> {
+    pub(crate) fn init(&self) -> Result<(), DataError> {
         #[cfg(feature = "networking")]
         if let Self::Zip(lock) = self {
             if lock.read().expect("poison").is_ok() {
@@ -533,7 +537,7 @@ impl TzdbCache {
 // A cache representing https://unicode.org/Public/{version}/
 #[derive(Debug)]
 pub(crate) struct RscdCache {
-    root: AbstractFs,
+    pub(crate) root: AbstractFs,
     // The `ucd/UCD.zip` file. Requests matching `ucd/[^Unihan]` will be resolved through
     // the ZIP file instead of downloading individual files.
     ucd_zip: OnceLock<Option<AbstractFs>>,
@@ -590,7 +594,7 @@ impl RscdCache {
         }
     }
 
-    fn ucd_zip(&self) -> Option<&AbstractFs> {
+    pub(crate) fn ucd_zip(&self) -> Option<&AbstractFs> {
         self.ucd_zip
             .get_or_init(|| {
                 let zip = ZipData::try_new(self.root.read_to_buf("ucd/UCD.zip").ok()?).ok()?;
@@ -599,7 +603,7 @@ impl RscdCache {
             .as_ref()
     }
 
-    fn unihan_zip(&self) -> Option<&AbstractFs> {
+    pub(crate) fn unihan_zip(&self) -> Option<&AbstractFs> {
         self.unihan_zip
             .get_or_init(|| {
                 let zip = ZipData::try_new(self.root.read_to_buf("ucd/Unihan.zip").ok()?).ok()?;
@@ -608,7 +612,7 @@ impl RscdCache {
             .as_ref()
     }
 
-    fn uts_39_zip(&self) -> Option<&AbstractFs> {
+    pub(crate) fn uts_39_zip(&self) -> Option<&AbstractFs> {
         self.uts_39_zip
             .get_or_init(|| {
                 let readme = self.root.read_to_string("security/ReadMe.txt").ok()?;
