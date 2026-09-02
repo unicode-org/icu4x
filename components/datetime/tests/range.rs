@@ -5,9 +5,11 @@
 use icu_calendar::Date;
 use icu_datetime::fieldsets;
 use icu_datetime::input::{DateTime, Time};
+use icu_datetime::parts as datetime_parts;
 use icu_datetime::range::{DateRangeFormatter, FixedCalendarDateRangeFormatter};
+use icu_decimal::parts as decimal_parts;
 use icu_locale_core::locale;
-use writeable::assert_writeable_eq;
+use writeable::{assert_writeable_eq, assert_writeable_parts_eq};
 
 #[test]
 fn test_date_range_gregorian() {
@@ -510,4 +512,139 @@ fn test_root_fallback_issues_field_order() {
         fmt_de_hebrew.format(&start, &end_day),
         "AM 5784-04-10\u{2009}–\u{2009}5784-04-11"
     );
+}
+
+#[test]
+fn test_date_range_parts() {
+    let start = DateTime {
+        date: Date::try_new_gregorian(2023, 12, 22).unwrap(),
+        time: Time::try_new(9, 0, 0, 0).unwrap(),
+    };
+    let end_same_day = DateTime {
+        date: Date::try_new_gregorian(2023, 12, 22).unwrap(),
+        time: Time::try_new(17, 0, 0, 0).unwrap(),
+    };
+    let end_next_day = DateTime {
+        date: Date::try_new_gregorian(2023, 12, 23).unwrap(),
+        time: Time::try_new(17, 0, 0, 0).unwrap(),
+    };
+
+    {
+        let fmt = FixedCalendarDateRangeFormatter::try_new(
+            locale!("en").into(),
+            fieldsets::YMD::medium(),
+        )
+        .unwrap();
+
+        // Same day: should be a single shared part
+        assert_writeable_parts_eq!(
+            fmt.format(&start, &end_same_day),
+            "Dec 22, 2023",
+            [
+                (0, 12, datetime_parts::SHARED),
+                (0, 3, datetime_parts::MONTH),
+                (4, 6, decimal_parts::INTEGER),
+                (4, 6, datetime_parts::DAY),
+                (8, 12, decimal_parts::INTEGER),
+                (8, 12, datetime_parts::YEAR),
+            ]
+        );
+
+        // TODO: this should only mark "22" and "23" as not shared,
+        // but might need to modify split_on_repeated_field to return
+        // the specific fields that are duplicated.
+        assert_writeable_parts_eq!(
+            fmt.format(&start, &end_next_day),
+            "Dec 22\u{2009}–\u{2009}23, 2023",
+            [
+                (0, 15, datetime_parts::START_RANGE),
+                (0, 3, datetime_parts::MONTH),
+                (4, 6, decimal_parts::INTEGER),
+                (4, 6, datetime_parts::DAY),
+                (15, 23, datetime_parts::END_RANGE),
+                (15, 17, decimal_parts::INTEGER),
+                (15, 17, datetime_parts::DAY),
+                (19, 23, decimal_parts::INTEGER),
+                (19, 23, datetime_parts::YEAR),
+            ]
+        );
+    }
+
+    {
+        let fmt = FixedCalendarDateRangeFormatter::try_new(
+            locale!("en").into(),
+            fieldsets::YMDT::medium(),
+        )
+        .unwrap();
+
+        // Same day, different time: only time differs.
+        // Date part is shared, time part is not shared.
+        assert_writeable_parts_eq!(
+            fmt.format(&start, &end_same_day),
+            "Dec 22, 2023, 9:00\u{202f}AM\u{2009}–\u{2009}5:00\u{202f}PM",
+            [
+                (0, 12, datetime_parts::SHARED),
+                (0, 3, datetime_parts::MONTH),
+                (4, 6, decimal_parts::INTEGER),
+                (4, 6, datetime_parts::DAY),
+                (8, 12, decimal_parts::INTEGER),
+                (8, 12, datetime_parts::YEAR),
+                (12, 13, datetime_parts::SHARED),
+                (13, 14, datetime_parts::SHARED),
+                (14, 23, datetime_parts::START_RANGE),
+                (14, 15, decimal_parts::INTEGER),
+                (14, 15, datetime_parts::HOUR),
+                (16, 18, decimal_parts::INTEGER),
+                (16, 18, datetime_parts::MINUTE),
+                (21, 23, datetime_parts::DAY_PERIOD),
+                (23, 26, datetime_parts::SHARED),
+                (26, 29, datetime_parts::SHARED),
+                (29, 32, datetime_parts::SHARED),
+                (32, 41, datetime_parts::END_RANGE),
+                (32, 33, decimal_parts::INTEGER),
+                (32, 33, datetime_parts::HOUR),
+                (34, 36, decimal_parts::INTEGER),
+                (34, 36, datetime_parts::MINUTE),
+                (39, 41, datetime_parts::DAY_PERIOD)
+            ]
+        );
+
+        // Different day, different time: date differs.
+        // Only the range separator is shared.
+        assert_writeable_parts_eq!(
+            fmt.format(&start, &end_next_day),
+            "Dec 22, 2023, 9:00:00\u{202f}AM\u{2009}–\u{2009}Dec 23, 2023, 5:00:00\u{202f}PM",
+            [
+                (0, 26, datetime_parts::START_RANGE),
+                (0, 3, datetime_parts::MONTH),
+                (4, 6, decimal_parts::INTEGER),
+                (4, 6, datetime_parts::DAY),
+                (8, 12, decimal_parts::INTEGER),
+                (8, 12, datetime_parts::YEAR),
+                (14, 15, decimal_parts::INTEGER),
+                (14, 15, datetime_parts::HOUR),
+                (16, 18, decimal_parts::INTEGER),
+                (16, 18, datetime_parts::MINUTE),
+                (19, 21, decimal_parts::INTEGER),
+                (19, 21, datetime_parts::SECOND),
+                (24, 26, datetime_parts::DAY_PERIOD),
+                (26, 29, datetime_parts::SHARED),
+                (29, 32, datetime_parts::SHARED),
+                (32, 35, datetime_parts::SHARED),
+                (35, 61, datetime_parts::END_RANGE),
+                (35, 38, datetime_parts::MONTH),
+                (39, 41, decimal_parts::INTEGER),
+                (39, 41, datetime_parts::DAY),
+                (43, 47, decimal_parts::INTEGER),
+                (43, 47, datetime_parts::YEAR),
+                (49, 50, decimal_parts::INTEGER),
+                (49, 50, datetime_parts::HOUR),
+                (51, 53, decimal_parts::INTEGER),
+                (51, 53, datetime_parts::MINUTE),
+                (54, 56, decimal_parts::INTEGER),
+                (54, 56, datetime_parts::SECOND),
+                (59, 61, datetime_parts::DAY_PERIOD)
+            ]
+        );
+    }
 }
