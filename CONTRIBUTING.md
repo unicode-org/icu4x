@@ -58,16 +58,12 @@ In the ICU4X repository, there are a few types of locale data:
         - Regen: `cargo make bakeddata`
         - Regen a specific component: `cargo make bakeddata <component>`
 
-During development, it is often convenient to generate only a single data marker as JSON. To do this (fully offline), you can run, for example:
+During development, it is often convenient to generate only a single data marker as JSON. To do this you can run, for example:
 
 ```bash
 $ cargo run -p icu4x-datagen \
-    --no-default-features --features provider,fs_exporter \
+    --no-default-features --features provider,fs_exporter,networking \
     -- --format fs --pretty -o _debug/data \
-	--cldr-root provider/source/tests/data/cldr \
-	--icuexport-root provider/source/tests/data/icuexport \
-	--segmenter-lstm-root provider/source/tests/data/lstm \
-	--tzdb-root provider/source/tests/data/tzdb \
 	--deduplication none \
 	--locales ru th \
 	--markers DatetimePatternsDateGregorianV1 DatetimePatternsDateBuddhistV1
