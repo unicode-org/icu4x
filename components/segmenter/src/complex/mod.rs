@@ -3,8 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::*;
-use crate::scaffold::PotentiallyIllFormedUtf8;
-use crate::scaffold::{RuleBreakType, Utf8, Utf16};
+use crate::scaffold::{PotentiallyIllFormedUtf8, RuleBreakType, Utf8, Utf16};
 use crate::{GraphemeClusterSegmenter, GraphemeClusterSegmenterBorrowed};
 use alloc::vec::Vec;
 use icu_provider::prelude::*;

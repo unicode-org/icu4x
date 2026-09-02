@@ -1042,6 +1042,24 @@ fn complex_mixed_thai_cj_word_break() {
 }
 
 #[test]
+fn complex_mixed_thai_cj_word_break_neo() {
+    let mut segmenter =
+        WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
+    segmenter.load_dictionary();
+    let input = "ภาษาไทย龟山岛";
+
+    let breaks: Vec<usize> = segmenter.segment_str(input).collect();
+    assert_eq!(breaks, [0, 12, 21, 30]);
+
+    let breaks: Vec<usize> = segmenter.segment_utf8(input.as_bytes()).collect();
+    assert_eq!(breaks, [0, 12, 21, 30]);
+
+    let utf16 = input.encode_utf16().collect::<Vec<_>>();
+    let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
+    assert_eq!(breaks, [0, 4, 7, 10]);
+}
+
+#[test]
 fn complex_ill_formed_utf8_word_break() {
     let segmenter = WordSegmenter::new_dictionary(WordBreakInvariantOptions::default());
     let input =
@@ -1052,8 +1070,33 @@ fn complex_ill_formed_utf8_word_break() {
 }
 
 #[test]
+fn complex_ill_formed_utf8_word_break_neo() {
+    let mut segmenter =
+        WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
+    segmenter.load_dictionary();
+    let input =
+        b"\xE0\xB8\xA0\xE0\xB8\xB2\xE0\xB8\xA9\xE0\xB8\xB2\xFF\xE0\xB9\x84\xE0\xB8\x97\xE0\xB8\xA2";
+
+    let breaks: Vec<usize> = segmenter.segment_utf8(input).collect();
+    assert_eq!(breaks, [0, 12, 13, 22]);
+}
+
+#[test]
 fn complex_unpaired_surrogate_word_break() {
     let segmenter = WordSegmenter::new_dictionary(WordBreakInvariantOptions::default());
+    let input = [
+        0x0E20, 0x0E32, 0x0E29, 0x0E32, 0xD800, 0x0E44, 0x0E17, 0x0E22,
+    ];
+
+    let breaks: Vec<usize> = segmenter.segment_utf16(&input).collect();
+    assert_eq!(breaks, [0, 4, 5, 8]);
+}
+
+#[test]
+fn complex_unpaired_surrogate_word_break_neo() {
+    let mut segmenter =
+        WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
+    segmenter.load_dictionary();
     let input = [
         0x0E20, 0x0E32, 0x0E29, 0x0E32, 0xD800, 0x0E44, 0x0E17, 0x0E22,
     ];
