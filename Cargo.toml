@@ -62,7 +62,6 @@ members = [
     "provider/data/time",
 
     # Utils
-    "utils/bies",
     "utils/calendrical_calculations",
     "utils/crlify",
     "utils/databake",
@@ -192,7 +191,6 @@ icu_experimental_data = { version = "~0.6.0", path = "provider/data/experimental
 # but because we do not CI with min-versions we should check these carefully every release.
 #
 # See the "Updating the dependency specification of a util" section of documents/process/release.md
-bies = { version = "0.3.0", path = "utils/bies", default-features = false }
 calendrical_calculations = { version = "0.2.4", path = "utils/calendrical_calculations", default-features = false }
 crlify = { version = "1.0.4", path = "utils/crlify", default-features = false } # Current version: 1.0.5
 databake = { version = "0.2.0", path = "utils/databake", default-features = false } # Current version: 0.2.1

@@ -64,7 +64,6 @@ icu_properties_data = { path = "../provider/data/properties"}
 icu_segmenter_data = { path = "../provider/data/segmenter" }
 icu_time_data = { path = "../provider/data/time" }
 
-bies = { path = "../utils/bies" }
 crlify = { path = "../utils/crlify" }
 databake = { path = "../utils/databake" }
 databake-derive = { path = "../utils/databake/derive" }
