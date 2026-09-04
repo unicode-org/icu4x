@@ -113,7 +113,13 @@ void main() {
 
     ///// DateFormatter /////
 
-    expect(DateFormatter.md(locale).formatIso(zonedDateTimeIso.date), '15.07.');
+    expect(
+      DateFormatter.md(
+        locale,
+        length: DateTimeLength.short,
+      ).formatIso(zonedDateTimeIso.date),
+      '15.07.',
+    );
 
     ///// TimeFormatter /////
 
@@ -213,7 +219,7 @@ void main() {
     expect(
       ZonedDateFormatter.genericLong(
         locale,
-        DateFormatter.md(locale),
+        DateFormatter.md(locale, length: DateTimeLength.short),
       ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.zone),
       '15.07. Mitteleuropäische Zeit',
     );
@@ -323,7 +329,7 @@ void main() {
     expect(
       ZonedDateTimeFormatter.genericLong(
         locale,
-        DateTimeFormatter.mdt(locale),
+        DateTimeFormatter.mdt(locale, length: DateTimeLength.short),
       ).formatIso(
         zonedDateTimeIso.date,
         zonedDateTimeIso.time,

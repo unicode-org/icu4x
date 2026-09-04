@@ -554,17 +554,18 @@ pub(crate) fn gen_date_components(
     if check_for_field(attributes, "m0") {
         filtered_components.month = date_bag.month;
     }
-    if check_for_field(attributes, "m0")
-        && !check_for_field(attributes, "y")
-        && !check_for_field(attributes, "d")
-    {
-        // standalone month: use the skeleton length
-        filtered_components.month = match length {
-            Length::Long => Some(components::Month::Long),
-            Length::Medium => Some(components::Month::Short),
-            Length::Short => Some(components::Month::Numeric),
+    if check_for_field(attributes, "m0") && !check_for_field(attributes, "y") {
+        // month without year: use the skeleton length to disambiguate in Medium and Long
+        match length {
+            Length::Long => filtered_components.month = Some(components::Month::Long),
+            Length::Medium => filtered_components.month = Some(components::Month::Short),
+            Length::Short if !check_for_field(attributes, "d") => {
+                // standalone month: use numeric for short
+                filtered_components.month = Some(components::Month::Numeric);
+            }
+            Length::Short => (),
             _ => unreachable!(),
-        };
+        }
     }
     if check_for_field(attributes, "d") {
         filtered_components.day = date_bag.day;

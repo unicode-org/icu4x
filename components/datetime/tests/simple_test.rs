@@ -361,6 +361,25 @@ fn test_vancouver_2026() {
 }
 
 #[test]
+fn test_german_md() {
+    let date = Date::try_new_gregorian(2026, 8, 31).unwrap();
+
+    let formatter_short =
+        FixedCalendarDateTimeFormatter::try_new(locale!("de").into(), fieldsets::MD::short())
+            .unwrap();
+    let formatter_medium =
+        FixedCalendarDateTimeFormatter::try_new(locale!("de").into(), fieldsets::MD::medium())
+            .unwrap();
+    let formatter_long =
+        FixedCalendarDateTimeFormatter::try_new(locale!("de").into(), fieldsets::MD::long())
+            .unwrap();
+
+    assert_writeable_eq!(formatter_short.format(&date), "31.08.");
+    assert_writeable_eq!(formatter_medium.format(&date), "31. Aug.");
+    assert_writeable_eq!(formatter_long.format(&date), "31. August");
+}
+
+#[test]
 fn test_flexible_dayperiod_formatting() {
     let formatter =
         DateTimeFormatter::try_new(locale!("zh-HK").into(), fieldsets::T::hm()).unwrap();
