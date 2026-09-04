@@ -10,7 +10,7 @@
 pub(crate) mod aliases;
 pub(crate) mod ca;
 pub(crate) mod coverage_levels;
-#[cfg(feature = "unstable")]
+#[cfg_attr(not(feature = "unstable"), allow(dead_code))]
 pub(crate) mod currencies;
 #[cfg(feature = "unstable")]
 pub(crate) mod date_fields;
