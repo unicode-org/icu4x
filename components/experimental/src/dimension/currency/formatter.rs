@@ -480,7 +480,11 @@ impl CurrencyFormatter<DecimalFormatter> {
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         Self::try_new_essential(
-            DecimalFormatter::try_new((&prefs).into(), Default::default())?,
+            DecimalFormatter::try_new_with_currency(
+                (&prefs).into(),
+                Default::default(),
+                currency_code,
+            )?,
             prefs,
             currency_code,
             CurrencySymbolsV1::SHORT,
@@ -500,7 +504,11 @@ impl CurrencyFormatter<DecimalFormatter> {
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         Self::try_new_essential(
-            DecimalFormatter::try_new((&prefs).into(), Default::default())?,
+            DecimalFormatter::try_new_with_currency(
+                (&prefs).into(),
+                Default::default(),
+                currency_code,
+            )?,
             prefs,
             currency_code,
             CurrencySymbolsV1::NARROW,
@@ -525,7 +533,12 @@ impl CurrencyFormatter<DecimalFormatter> {
     {
         Self::try_new_essential_unstable(
             provider,
-            DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
+            DecimalFormatter::try_new_with_currency_unstable(
+                provider,
+                (&prefs).into(),
+                Default::default(),
+                currency_code,
+            )?,
             prefs,
             currency_code,
             CurrencySymbolsV1::SHORT,
@@ -550,7 +563,12 @@ impl CurrencyFormatter<DecimalFormatter> {
     {
         Self::try_new_essential_unstable(
             provider,
-            DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
+            DecimalFormatter::try_new_with_currency_unstable(
+                provider,
+                (&prefs).into(),
+                Default::default(),
+                currency_code,
+            )?,
             prefs,
             currency_code,
             CurrencySymbolsV1::NARROW,
@@ -607,7 +625,11 @@ impl CurrencyFormatter<DecimalFormatter> {
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         Self::try_new_code_internal(
-            DecimalFormatter::try_new((&prefs).into(), Default::default())?,
+            DecimalFormatter::try_new_with_currency(
+                (&prefs).into(),
+                Default::default(),
+                currency_code,
+            )?,
             prefs,
             currency_code,
             options,
@@ -630,7 +652,12 @@ impl CurrencyFormatter<DecimalFormatter> {
     {
         Self::try_new_code_internal_unstable(
             provider,
-            DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
+            DecimalFormatter::try_new_with_currency_unstable(
+                provider,
+                (&prefs).into(),
+                Default::default(),
+                currency_code,
+            )?,
             prefs,
             currency_code,
             options,
@@ -678,7 +705,11 @@ impl CurrencyFormatter<DecimalFormatter> {
         currency_code: CurrencyType,
     ) -> Result<Self, DataError> {
         Self::try_new_name_internal(
-            DecimalFormatter::try_new((&prefs).into(), Default::default())?,
+            DecimalFormatter::try_new_with_currency(
+                (&prefs).into(),
+                Default::default(),
+                currency_code,
+            )?,
             prefs,
             currency_code,
         )
@@ -701,7 +732,12 @@ impl CurrencyFormatter<DecimalFormatter> {
     {
         Self::try_new_name_internal_unstable(
             provider,
-            DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
+            DecimalFormatter::try_new_with_currency_unstable(
+                provider,
+                (&prefs).into(),
+                Default::default(),
+                currency_code,
+            )?,
             prefs,
             currency_code,
         )
@@ -751,7 +787,11 @@ impl CurrencyFormatter<DecimalFormatter> {
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         Self::try_new_no_currency_internal(
-            DecimalFormatter::try_new((&prefs).into(), Default::default())?,
+            DecimalFormatter::try_new_with_currency(
+                (&prefs).into(),
+                Default::default(),
+                currency_code,
+            )?,
             prefs,
             currency_code,
             options,
@@ -774,7 +814,12 @@ impl CurrencyFormatter<DecimalFormatter> {
     {
         Self::try_new_no_currency_internal_unstable(
             provider,
-            DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
+            DecimalFormatter::try_new_with_currency_unstable(
+                provider,
+                (&prefs).into(),
+                Default::default(),
+                currency_code,
+            )?,
             prefs,
             currency_code,
             options,
