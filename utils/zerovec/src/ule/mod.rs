@@ -194,16 +194,29 @@ pub trait AsULE: Copy {
 /// This enables certain performance optimizations, such as
 /// [`ZeroVec::try_from_slice`](crate::ZeroVec::try_from_slice).
 ///
+/// # Deprecated
+///
+/// This trait is deprecated because it can unintuitively cause runtime panics
+/// when unwrapping on big-endian systems.
+///
+/// Instead of `where T: EqULE`, similar use cases can be solved with:
+///
+/// ```ignore
+/// where T: AsULE<ULE = T>
+/// ```
+///
 /// # Implementation safety
 ///
 /// This trait is safe to implement if the type's ULE (as defined by `impl `[`AsULE`]` for T`)
 /// has an equal byte sequence as the type itself on little-endian platforms; i.e., one where
 /// `*const T` can be cast to a valid `*const T::ULE`.
+#[deprecated(since = "0.11.9", note = "see EqULE docs")]
 pub unsafe trait EqULE: AsULE {}
 
 /// A trait for a type where aligned slices can be cast to unaligned slices.
 ///
 /// Auto-implemented on all types implementing [`EqULE`].
+#[deprecated(since = "0.11.9", note = "see EqULE docs")]
 pub trait SliceAsULE
 where
     Self: AsULE + Sized,
@@ -215,6 +228,7 @@ where
 }
 
 #[cfg(target_endian = "little")]
+#[allow(deprecated)]
 impl<T> SliceAsULE for T
 where
     T: EqULE,
@@ -231,6 +245,7 @@ where
 }
 
 #[cfg(not(target_endian = "little"))]
+#[allow(deprecated)]
 impl<T> SliceAsULE for T
 where
     T: EqULE,

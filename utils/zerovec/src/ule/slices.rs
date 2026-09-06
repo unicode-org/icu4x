@@ -38,6 +38,7 @@ impl<T: AsULE, const N: usize> AsULE for [T; N] {
     }
 }
 
+#[allow(deprecated)]
 unsafe impl<T: EqULE, const N: usize> EqULE for [T; N] {}
 
 // Safety (based on the safety checklist on the VarULE trait):
