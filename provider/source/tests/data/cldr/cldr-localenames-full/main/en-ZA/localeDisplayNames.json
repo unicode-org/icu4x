@@ -39,7 +39,7 @@
           "k0": "Keyboard",
           "kv": "Highest Ignored",
           "lb": "CJK Line Break",
-          "lw": "Line Breaks within Words",
+          "lw": "Line Breaks Within Words",
           "m0": "Transform Rules",
           "ms": "Measurement System",
           "mu": "Measurement Unit",
@@ -234,7 +234,7 @@
           },
           "kv": {
             "currency": "Ignore Symbols affects spaces, punctuation, all symbols",
-            "core": "Shift spaces, punctuation, non-currency symbols",
+            "core": "Shift Spaces, Punctuation, Non-currency Symbols",
             "punct": "Ignore Symbols affects spaces and punctuation only",
             "space": "Ignore Symbols affects spaces only",
             "symbol": "Ignore Symbols affects spaces, punctuation, non-currency symbols"
@@ -303,7 +303,7 @@
             "arab": "Arabic-Indic Digits",
             "arabext": "Extended Arabic-Indic Digits",
             "arabext-alt-short": "X Arabic-Indic Digits",
-            "core": "Traditional numerals",
+            "core": "Traditional Numerals",
             "armn": "Armenian Numerals",
             "armnlow": "Armenian Lowercase Numerals",
             "bali": "Balinese Digits",
@@ -421,7 +421,7 @@
           },
           "va": {
             "posix": "POSIX Compliant Locale",
-            "core": "POSIX variant"
+            "core": "POSIX Variant"
           }
         },
         "typeValues": {

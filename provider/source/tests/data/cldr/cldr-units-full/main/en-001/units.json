@@ -1032,9 +1032,9 @@
             "unitPattern-count-other": "{0} US quarts"
           },
           "volume-pint": {
-            "displayName": "pints",
-            "unitPattern-count-one": "{0} pint",
-            "unitPattern-count-other": "{0} pints"
+            "displayName": "US pints",
+            "unitPattern-count-one": "{0} US pint",
+            "unitPattern-count-other": "{0} US pints"
           },
           "volume-pint-imperial": {
             "displayName": "pints Imperial",
@@ -1042,9 +1042,9 @@
             "unitPattern-count-other": "{0} pints Imperial"
           },
           "volume-cup": {
-            "displayName": "cups",
-            "unitPattern-count-one": "{0} cup",
-            "unitPattern-count-other": "{0} cups"
+            "displayName": "US cups",
+            "unitPattern-count-one": "{0} US cup",
+            "unitPattern-count-other": "{0} US cups"
           },
           "volume-cup-imperial": {
             "displayName": "cups Imperial",
@@ -2351,9 +2351,9 @@
             "unitPattern-count-other": "{0} US qt"
           },
           "volume-pint": {
-            "displayName": "pints",
-            "unitPattern-count-one": "{0} pt",
-            "unitPattern-count-other": "{0} pt"
+            "displayName": "US pints",
+            "unitPattern-count-one": "{0} US pt",
+            "unitPattern-count-other": "{0} US pt"
           },
           "volume-pint-imperial": {
             "displayName": "pt Imp.",
@@ -2361,9 +2361,9 @@
             "unitPattern-count-other": "{0} pt Imp."
           },
           "volume-cup": {
-            "displayName": "cups",
-            "unitPattern-count-one": "{0} c",
-            "unitPattern-count-other": "{0} c"
+            "displayName": "US cups",
+            "unitPattern-count-one": "{0} US c",
+            "unitPattern-count-other": "{0} US c"
           },
           "volume-cup-imperial": {
             "displayName": "cup Imp",
@@ -2468,7 +2468,7 @@
           "energy-british-thermal-unit-it": {
             "displayName": "BTU-IT",
             "unitPattern-count-one": "{0} BTU-IT",
-            "unitPattern-count-other": "{0} BT-IT"
+            "unitPattern-count-other": "{0} BTU-IT"
           },
           "energy-becquerel": {
             "displayName": "Bq",
@@ -2512,8 +2512,8 @@
           },
           "temperature-rankine": {
             "displayName": "°R",
-            "unitPattern-count-one": "{0} °R",
-            "unitPattern-count-other": "{0} °R"
+            "unitPattern-count-one": "{0}°R",
+            "unitPattern-count-other": "{0}°R"
           },
           "duration-fortnight": {
             "displayName": "fw",
@@ -3670,9 +3670,9 @@
             "unitPattern-count-other": "{0}USqt"
           },
           "volume-pint": {
-            "displayName": "pt",
-            "unitPattern-count-one": "{0}pt",
-            "unitPattern-count-other": "{0}pt"
+            "displayName": "US pt",
+            "unitPattern-count-one": "{0}USpt",
+            "unitPattern-count-other": "{0}USpt"
           },
           "volume-pint-imperial": {
             "displayName": "pt Imp.",
@@ -3680,9 +3680,9 @@
             "unitPattern-count-other": "{0} pt Imp."
           },
           "volume-cup": {
-            "displayName": "cup",
-            "unitPattern-count-one": "{0}c",
-            "unitPattern-count-other": "{0}c"
+            "displayName": "US cup",
+            "unitPattern-count-one": "{0}USc",
+            "unitPattern-count-other": "{0}USc"
           },
           "volume-cup-imperial": {
             "displayName": "cup Imp",
@@ -3787,7 +3787,7 @@
           "energy-british-thermal-unit-it": {
             "displayName": "BTU-IT",
             "unitPattern-count-one": "{0} BTU-IT",
-            "unitPattern-count-other": "{0} BT-IT"
+            "unitPattern-count-other": "{0} BTU-IT"
           },
           "energy-becquerel": {
             "displayName": "Bq",
@@ -3831,8 +3831,8 @@
           },
           "temperature-rankine": {
             "displayName": "°R",
-            "unitPattern-count-one": "{0} °R",
-            "unitPattern-count-other": "{0} °R"
+            "unitPattern-count-one": "{0}°R",
+            "unitPattern-count-other": "{0}°R"
           },
           "duration-fortnight": {
             "displayName": "fw",
