@@ -1,4 +1,4 @@
-currency/displayname/v1, <lookup>, 199898B, 32068 identifiers
+currency/displayname/v1, <lookup>, 199888B, 32067 identifiers
 currency/displayname/v1, <total>, 1479025B, 817648B, 28756 unique payloads
 currency/displayname/v1, af/AED, 57B, 34B, 15625d9aef7c43a7
 currency/displayname/v1, af/AFN, 39B, 16B, 644fb8a68951d6d7
@@ -7098,13 +7098,13 @@ currency/displayname/v1, en-001/LVR, 38B, 15B, 72f0df98f15498ee
 currency/displayname/v1, en-001/RUB, 38B, 15B, eeb5d4c7238af182
 currency/displayname/v1, en-001/RUR, 52B, 29B, a6e2dfddaf4fbbdd
 currency/displayname/v1, en-001/SHP, 39B, 16B, e1c45705c7fc56e8
+currency/displayname/v1, en-001/SLL, 58B, 35B, bad320aab0adb260
 currency/displayname/v1, en-001/TJR, 42B, 19B, 47b7643dc97135f0
 currency/displayname/v1, en-AU/BAM, 60B, 37B, 3f3bb7a269af50b2
 currency/displayname/v1, en-AU/BBD, 39B, 16B, f655c5bc00385e0
 currency/displayname/v1, en-AU/BMD, 38B, 15B, b61101b82795485f
 currency/displayname/v1, en-AU/BOB, 42B, 19B, 4a38bd9d393035e6
 currency/displayname/v1, en-AU/ILS, 38B, 15B, 94ad1e3514b9503c
-currency/displayname/v1, en-AU/SLL, 58B, 35B, bad320aab0adb260
 currency/displayname/v1, en-AU/SRD, 39B, 16B, 1db418870285fd25
 currency/displayname/v1, en-AU/UYU, 37B, 14B, 6301f59d2c119dc0
 currency/displayname/v1, en-AU/VES, -> ak/VES
@@ -7118,7 +7118,6 @@ currency/displayname/v1, en-CA/STN, 54B, 31B, 234ab2bc1a4dd48a
 currency/displayname/v1, en-CA/TJR, -> en-001/TJR
 currency/displayname/v1, en-CA/TTD, 50B, 27B, 317509c99fd15431
 currency/displayname/v1, en-CA/XXX, 40B, 17B, f8aefd97dace9c77
-currency/displayname/v1, en-GB/SLL, -> en-AU/SLL
 currency/displayname/v1, en-GG/GBP, 32B, 9B, 1b9be315bebce846
 currency/displayname/v1, en-IM/GBP, -> en-GG/GBP
 currency/displayname/v1, en-IN/KGS, 39B, 16B, d9503dbf0de1db3e
@@ -32341,7 +32340,7 @@ currency/essentials/v1, zh-Hant, -> af
 currency/essentials/v1, zh-Hant/hanidec, -> af
 currency/essentials/v1, zh/hanidec, -> af
 currency/essentials/v1, zu, -> af
-currency/extended/data/v1, <lookup>, 199487B, 31994 identifiers
+currency/extended/data/v1, <lookup>, 199475B, 31993 identifiers
 currency/extended/data/v1, <total>, 2086727B, 1409099B, 29513 unique payloads
 currency/extended/data/v1, af/AED, 35B, 12B, 9f377f898487c846
 currency/extended/data/v1, af/AFN, 40B, 17B, d8d8501e300b89cf
@@ -39339,6 +39338,7 @@ currency/extended/data/v1, el/ZWD, 99B, 76B, 326fbc19018d54f8
 currency/extended/data/v1, el/ZWG, 65B, 42B, 9f802c10482894cc
 currency/extended/data/v1, el/ZWL, 67B, 44B, af04b5debc8993d3
 currency/extended/data/v1, en-001/AFN, 58B, 35B, 8fe77e044753293e
+currency/extended/data/v1, en-001/BDT, 41B, 18B, 92dd14fde73770
 currency/extended/data/v1, en-001/BMD, 62B, 39B, d53ac74513d7920c
 currency/extended/data/v1, en-001/BYB, 100B, 77B, 1054ef9ec7f2045
 currency/extended/data/v1, en-001/BYN, 64B, 41B, 4e2eede0102e8bf7
@@ -39351,7 +39351,9 @@ currency/extended/data/v1, en-001/MVR, 42B, 19B, 4d1bce01d4b24862
 currency/extended/data/v1, en-001/RUB, 58B, 35B, c5d211efb87635b8
 currency/extended/data/v1, en-001/RUR, 86B, 63B, 7391545990ecc455
 currency/extended/data/v1, en-001/SHP, 60B, 37B, 46d486176ccbcb5f
+currency/extended/data/v1, en-001/SLL, 98B, 75B, 149a07153340ebb2
 currency/extended/data/v1, en-001/TJR, 66B, 43B, 383b77a1cc81fcb7
+currency/extended/data/v1, en-001/TRY, 37B, 14B, 10b4192862e288b
 currency/extended/data/v1, en-001/VUV, -> ak/VUV
 currency/extended/data/v1, en-AU/AFN, -> ceb/AFN
 currency/extended/data/v1, en-AU/BAM, 61B, 38B, b45324498d6df32f
@@ -39367,7 +39369,6 @@ currency/extended/data/v1, en-AU/MKD, 41B, 18B, 640d28e50a2849d8
 currency/extended/data/v1, en-AU/MVR, -> ceb/MVR
 currency/extended/data/v1, en-AU/PGK, 74B, 51B, 9111b07e8bec8cc1
 currency/extended/data/v1, en-AU/QAR, 55B, 32B, 7bb149a1d4282207
-currency/extended/data/v1, en-AU/SLL, 98B, 75B, 149a07153340ebb2
 currency/extended/data/v1, en-AU/SRD, 60B, 37B, d07c3f93a779ba5e
 currency/extended/data/v1, en-AU/TRY, 53B, 30B, cb6d094d6491be1c
 currency/extended/data/v1, en-AU/UZS, 60B, 37B, 3b2dcbf88e000463
@@ -39384,9 +39385,6 @@ currency/extended/data/v1, en-CA/SHP, 66B, 43B, bcc7c47c0baf089d
 currency/extended/data/v1, en-CA/STN, 90B, 67B, 191e9e484efb1d7f
 currency/extended/data/v1, en-CA/TJR, -> en-001/TJR
 currency/extended/data/v1, en-CA/TTD, 82B, 59B, 1cd94bf885c75e60
-currency/extended/data/v1, en-GB/BDT, 41B, 18B, 92dd14fde73770
-currency/extended/data/v1, en-GB/SLL, -> en-AU/SLL
-currency/extended/data/v1, en-GB/TRY, 37B, 14B, 10b4192862e288b
 currency/extended/data/v1, en-GG/GBP, 46B, 23B, 85a530ef1cd07ada
 currency/extended/data/v1, en-IM/GBP, -> en-GG/GBP
 currency/extended/data/v1, en-IN/ANG, 88B, 65B, 83541b24a7909224
@@ -69323,7 +69321,7 @@ percent/essentials/v1, ur, -> ar-SA
 percent/essentials/v1, wo, 128B, 13B, 920eade75e5c41c4
 percent/essentials/v1, yo, 137B, 22B, 32944bd377e74c43
 percent/essentials/v1, yo-BJ, 136B, 21B, c0cc5111253e1ab7
-person/names/format/v1, <lookup>, 708B, 142 identifiers
+person/names/format/v1, <lookup>, 715B, 143 identifiers
 person/names/format/v1, <total>, 310886B, 292662B, 136 unique payloads
 person/names/format/v1, af, 1943B, 1809B, e47460fe6ab081e3
 person/names/format/v1, ak, 3202B, 3068B, b652af0370cf4672
@@ -69353,7 +69351,8 @@ person/names/format/v1, doi, 3207B, 3073B, 2fc4de86df6438ec
 person/names/format/v1, dsb, 1970B, 1836B, bfe092475a25f0ef
 person/names/format/v1, el, 2494B, 2360B, a252331ac9c205f8
 person/names/format/v1, en, 1967B, 1833B, 43393bd3f6fe1be1
-person/names/format/v1, en-GB, 1966B, 1832B, 9fc6a0d83947475b
+person/names/format/v1, en-001, 1966B, 1832B, 9fc6a0d83947475b
+person/names/format/v1, en-IN, -> en
 person/names/format/v1, es, 2204B, 2070B, 2a03189954c24e8c
 person/names/format/v1, es-419, 2201B, 2067B, f89b4c20ad552c32
 person/names/format/v1, es-MX, 2184B, 2050B, ecdb20f6c75820ff
@@ -69467,8 +69466,8 @@ person/names/format/v1, zh-HK, 2111B, 1977B, 26ce814bf675c4e6
 person/names/format/v1, zh-Hant, 2067B, 1933B, 638eb45f7ff8b878
 person/names/format/v1, zh-MO, -> zh-HK
 person/names/format/v1, zu, 2688B, 2554B, 9d7c9c9bf30f4ca8
-region/display/names/v1, <lookup>, 1198B, 238 identifiers
-region/display/names/v1, <total>, 1214571B, 1194455B, 223 unique payloads
+region/display/names/v1, <lookup>, 1193B, 237 identifiers
+region/display/names/v1, <total>, 1209888B, 1189861B, 222 unique payloads
 region/display/names/v1, ady, 151B, 59B, a72a9d437c414c17
 region/display/names/v1, af, 4738B, 4648B, f842de50fd844c95
 region/display/names/v1, ak, 4645B, 4555B, 45667abb4f4d1d05
@@ -69512,11 +69511,10 @@ region/display/names/v1, ee, 6478B, 6388B, 5bc2e12dab0c987c
 region/display/names/v1, el, 7933B, 7843B, 49d70a599868852
 region/display/names/v1, el-polyton, 8482B, 8392B, 1f44b3e35c98f756
 region/display/names/v1, en, 4780B, 4691B, 8b97c71380558059
-region/display/names/v1, en-001, 4743B, 4654B, e6b1e68d0521a7
+region/display/names/v1, en-001, 4772B, 4683B, 10669a63d31fe216
 region/display/names/v1, en-AU, 4802B, 4713B, c4f4e6fdcaed084a
-region/display/names/v1, en-CA, 4782B, 4693B, aa17ed9012cce354
-region/display/names/v1, en-GB, 4742B, 4653B, 54c825f8726a831d
-region/display/names/v1, en-IN, 4774B, 4685B, b20ef7488cdd9f50
+region/display/names/v1, en-CA, 4814B, 4725B, a05509be378f3206
+region/display/names/v1, en-IN, 4773B, 4684B, ad685560b1cdb6f5
 region/display/names/v1, eo, 4674B, 4584B, 66f82857c914479e
 region/display/names/v1, es, 4793B, 4703B, 83d377002d79f142
 region/display/names/v1, es-419, 4750B, 4660B, d445a17d33fc7a97
@@ -69558,7 +69556,7 @@ region/display/names/v1, gu, 10627B, 10537B, d455a1978f0fd4c5
 region/display/names/v1, ha, 4851B, 4761B, c9ec786b2708a306
 region/display/names/v1, he, 6776B, 6686B, ce3203149fd3df26
 region/display/names/v1, hi, 10638B, 10548B, b67bc4dc7a6d7dcc
-region/display/names/v1, hi-Latn, 4763B, 4674B, 6260cd854575fd23
+region/display/names/v1, hi-Latn, 4762B, 4673B, 935efe1201bc52b
 region/display/names/v1, hr, 4790B, 4700B, 8fcb932b3d2438f1
 region/display/names/v1, hsb, 4873B, 4783B, 6eef99641eee989d
 region/display/names/v1, hu, 5042B, 4952B, 7e8be7ec255ff47
@@ -69707,8 +69705,8 @@ region/display/names/v1, zh-HK, 4971B, 4881B, cdbb35f1e997b1a
 region/display/names/v1, zh-Hant, 4934B, 4844B, 73a6ce53f4eefd06
 region/display/names/v1, zh-MO, -> zh-HK
 region/display/names/v1, zu, 5268B, 5178B, a78b307688444ed1
-script/display/names/v1, <lookup>, 991B, 199 identifiers
-script/display/names/v1, <total>, 436168B, 419006B, 190 unique payloads
+script/display/names/v1, <lookup>, 992B, 199 identifiers
+script/display/names/v1, <total>, 436186B, 419024B, 190 unique payloads
 script/display/names/v1, ady, 126B, 34B, d573ff151af030b7
 script/display/names/v1, af, 930B, 840B, 26ec1e454619f39e
 script/display/names/v1, ak, 1169B, 1079B, b8110fa6bdf783c2
@@ -69716,7 +69714,7 @@ script/display/names/v1, am, 1586B, 1496B, 33713d6822e4cf65
 script/display/names/v1, ar, 3399B, 3309B, f2e8e2d11658f2ae
 script/display/names/v1, as, 1744B, 1654B, 5ccffd63173cfb70
 script/display/names/v1, ast, 2910B, 2820B, 646f11b226fb26b
-script/display/names/v1, az, 1956B, 1866B, 2f8af13621641c52
+script/display/names/v1, az, 1962B, 1872B, 748b1c8a6ac05259
 script/display/names/v1, ba, 4426B, 4336B, 1b6b0b4258638e42
 script/display/names/v1, bal-Latn, 3046B, 2956B, dac6c609fe2d5fc2
 script/display/names/v1, be, 1529B, 1439B, d8335a086051bcd3
@@ -69747,16 +69745,16 @@ script/display/names/v1, ee, 1042B, 952B, 5c2d6c04f454eef5
 script/display/names/v1, el, 3608B, 3518B, 66a1dc89388fb21c
 script/display/names/v1, el-polyton, 3613B, 3523B, 4925620010d8b6ca
 script/display/names/v1, en, 3251B, 3161B, b01496a860f37edc
-script/display/names/v1, en-AU, 3252B, 3162B, 1587896666c45197
-script/display/names/v1, en-GB, 3251B, 3161B, 42bfb9f842f549cc
+script/display/names/v1, en-001, 3251B, 3161B, 42bfb9f842f549cc
+script/display/names/v1, en-AU, 3252B, 3162B, 31553caee0ba3822
 script/display/names/v1, eo, 919B, 829B, f4173e3e5d2600b6
 script/display/names/v1, es, 2107B, 2017B, f8da300b81938c0c
 script/display/names/v1, es-419, 2106B, 2016B, 9de53b5fe1bef24d
 script/display/names/v1, es-US, 2107B, 2017B, e07762d3e4dcd6ef
 script/display/names/v1, et, 3332B, 3242B, 22593c3b9a471b2
 script/display/names/v1, eu, 3084B, 2994B, ab3c8e0c0892cfea
-script/display/names/v1, fa, 2872B, 2782B, b6b87d773fb81c55
-script/display/names/v1, fa-AF, 2870B, 2780B, 8c9a3d790df47da7
+script/display/names/v1, fa, 2878B, 2788B, 286fab6847639548
+script/display/names/v1, fa-AF, 2876B, 2786B, 7daaebe229048e1
 script/display/names/v1, ff-Adlm, 7223B, 7133B, 66cf9e260f71756f
 script/display/names/v1, fi, 4278B, 4188B, d0afdb0745c8e0f8
 script/display/names/v1, fil, 913B, 823B, ec17bdf29180c384
@@ -69772,7 +69770,7 @@ script/display/names/v1, gu, 4294B, 4204B, 205cf80f9741d92a
 script/display/names/v1, ha, 1087B, 997B, 38b12098a4870bbf
 script/display/names/v1, he, 3766B, 3676B, 360d2ce665ccd626
 script/display/names/v1, hi, 4348B, 4258B, e05f2a2fcdb9b778
-script/display/names/v1, hi-Latn, 3250B, 3160B, be1602813dd15ec6
+script/display/names/v1, hi-Latn, 3250B, 3160B, e02e1d3067bf2ced
 script/display/names/v1, hr, 3517B, 3427B, 5fe3abf64d0e650b
 script/display/names/v1, hsb, 1116B, 1026B, 7f38823345f26238
 script/display/names/v1, hu, 2384B, 2294B, f85dfa432ad4d6e4
@@ -92816,7 +92814,7 @@ units/names/volume/core/v1, zu/narrow-barrel, -> br/narrow-barrel
 units/names/volume/core/v1, zu/narrow-cubic-centimeter, -> ast/narrow-cubic-meter
 units/names/volume/core/v1, zu/narrow-cubic-meter, -> ast/narrow-cubic-meter
 units/names/volume/core/v1, zu/narrow-milliliter, 28B, 5B, b56d1494b21f44a2
-units/names/volume/extended/v1, <lookup>, 40814B, 3559 identifiers
+units/names/volume/extended/v1, <lookup>, 40789B, 3555 identifiers
 units/names/volume/extended/v1, <total>, 101566B, 57378B, 1922 unique payloads
 units/names/volume/extended/v1, af/long-cubic-foot, 39B, 16B, d1689339faf239c5
 units/names/volume/extended/v1, af/long-cubic-inch, 39B, 16B, 32bad9166884002b
@@ -93432,30 +93430,32 @@ units/names/volume/extended/v1, el/short-tablespoon, -> el/narrow-tablespoon
 units/names/volume/extended/v1, el/short-teaspoon, -> el/narrow-teaspoon
 units/names/volume/extended/v1, en-001/long-cubic-foot, 53B, 30B, 19a554942a743f44
 units/names/volume/extended/v1, en-001/long-cubic-inch, 55B, 32B, 89c64c49cdb7db9e
-units/names/volume/extended/v1, en-001/long-cup, -> da/long-cup
+units/names/volume/extended/v1, en-001/long-cup, 46B, 23B, adbebdb7bce0d1cf
 units/names/volume/extended/v1, en-001/long-fluid-ounce, 62B, 39B, 2ebcc653379b1f2a
 units/names/volume/extended/v1, en-001/long-fluid-ounce-imperial, 56B, 33B, 5a72398c951da28d
 units/names/volume/extended/v1, en-001/long-gallon, 52B, 29B, b8a39196219c913a
 units/names/volume/extended/v1, en-001/long-gallon-imperial, -> da/long-gallon
-units/names/volume/extended/v1, en-001/long-pint, -> da/long-pint
+units/names/volume/extended/v1, en-001/long-pint, 48B, 25B, aacbe71341c52a07
 units/names/volume/extended/v1, en-001/long-quart, 50B, 27B, 3790eb79163726be
 units/names/volume/extended/v1, en-001/long-tablespoon, 54B, 31B, f9f3c149de3d8c72
 units/names/volume/extended/v1, en-001/long-teaspoon, 50B, 27B, 89097ad11e27ed1a
 units/names/volume/extended/v1, en-001/narrow-cubic-foot, -> ast/narrow-cubic-foot
 units/names/volume/extended/v1, en-001/narrow-cubic-inch, -> ast/narrow-cubic-inch
-units/names/volume/extended/v1, en-001/narrow-cup, 27B, 4B, 3ae50148b43c5212
+units/names/volume/extended/v1, en-001/narrow-cup, 29B, 6B, d0f8c5e34f659717
 units/names/volume/extended/v1, en-001/narrow-fluid-ounce, 34B, 11B, 166d2d0ab0fd0c2
 units/names/volume/extended/v1, en-001/narrow-fluid-ounce-imperial, -> ast/narrow-fluid-ounce
 units/names/volume/extended/v1, en-001/narrow-gallon, 31B, 8B, 21d54e56a49b3ec0
 units/names/volume/extended/v1, en-001/narrow-gallon-imperial, -> ast/narrow-gallon
-units/names/volume/extended/v1, en-001/narrow-pint, -> ast/narrow-pint
+units/names/volume/extended/v1, en-001/narrow-pint, 30B, 7B, 4331afa6aa448fc7
 units/names/volume/extended/v1, en-001/narrow-quart, 30B, 7B, 5a5b1a27ff729bc2
 units/names/volume/extended/v1, en-001/narrow-tablespoon, -> ast/narrow-tablespoon
 units/names/volume/extended/v1, en-001/narrow-teaspoon, -> ast/narrow-teaspoon
+units/names/volume/extended/v1, en-001/short-cup, 31B, 8B, f2ad13766e17e118
 units/names/volume/extended/v1, en-001/short-fluid-ounce, 35B, 12B, f2c537d4cb8f3973
 units/names/volume/extended/v1, en-001/short-fluid-ounce-imperial, -> am/long-fluid-ounce
 units/names/volume/extended/v1, en-001/short-gallon, 33B, 10B, fa420d69e3e59142
 units/names/volume/extended/v1, en-001/short-gallon-imperial, -> ast/short-gallon
+units/names/volume/extended/v1, en-001/short-pint, 32B, 9B, 33458c0365ae7829
 units/names/volume/extended/v1, en-001/short-quart, 32B, 9B, 5eeecc975e03e596
 units/names/volume/extended/v1, en-AE/long-cubic-foot, -> en-001/long-cubic-foot
 units/names/volume/extended/v1, en-AE/long-cubic-inch, -> en-001/long-cubic-inch
@@ -93468,7 +93468,7 @@ units/names/volume/extended/v1, en-AE/long-tablespoon, -> en-001/long-tablespoon
 units/names/volume/extended/v1, en-AE/long-teaspoon, -> en-001/long-teaspoon
 units/names/volume/extended/v1, en-AE/narrow-cubic-foot, -> ast/narrow-cubic-foot
 units/names/volume/extended/v1, en-AE/narrow-cubic-inch, -> ast/narrow-cubic-inch
-units/names/volume/extended/v1, en-AE/narrow-cup, -> en-001/narrow-cup
+units/names/volume/extended/v1, en-AE/narrow-cup, 27B, 4B, 3ae50148b43c5212
 units/names/volume/extended/v1, en-AE/narrow-fluid-ounce, -> ast/narrow-fluid-ounce
 units/names/volume/extended/v1, en-AE/narrow-gallon, -> ast/narrow-gallon
 units/names/volume/extended/v1, en-AE/narrow-pint, -> ast/narrow-pint
@@ -93489,7 +93489,7 @@ units/names/volume/extended/v1, en-AS/long-tablespoon, -> en-001/long-tablespoon
 units/names/volume/extended/v1, en-AS/long-teaspoon, -> en-001/long-teaspoon
 units/names/volume/extended/v1, en-AS/narrow-cubic-foot, -> ast/narrow-cubic-foot
 units/names/volume/extended/v1, en-AS/narrow-cubic-inch, -> ast/narrow-cubic-inch
-units/names/volume/extended/v1, en-AS/narrow-cup, -> en-001/narrow-cup
+units/names/volume/extended/v1, en-AS/narrow-cup, -> en-AE/narrow-cup
 units/names/volume/extended/v1, en-AS/narrow-fluid-ounce, -> ast/narrow-fluid-ounce
 units/names/volume/extended/v1, en-AS/narrow-gallon, -> ast/narrow-gallon
 units/names/volume/extended/v1, en-AS/narrow-pint, -> ast/narrow-pint
@@ -93518,7 +93518,7 @@ units/names/volume/extended/v1, en-BI/long-tablespoon, -> en-001/long-tablespoon
 units/names/volume/extended/v1, en-BI/long-teaspoon, -> en-001/long-teaspoon
 units/names/volume/extended/v1, en-BI/narrow-cubic-foot, -> ast/narrow-cubic-foot
 units/names/volume/extended/v1, en-BI/narrow-cubic-inch, -> ast/narrow-cubic-inch
-units/names/volume/extended/v1, en-BI/narrow-cup, -> en-001/narrow-cup
+units/names/volume/extended/v1, en-BI/narrow-cup, -> en-AE/narrow-cup
 units/names/volume/extended/v1, en-BI/narrow-fluid-ounce, -> ast/narrow-fluid-ounce
 units/names/volume/extended/v1, en-BI/narrow-gallon, -> ast/narrow-gallon
 units/names/volume/extended/v1, en-BI/narrow-pint, -> ast/narrow-pint
@@ -93541,7 +93541,7 @@ units/names/volume/extended/v1, en-CA/long-tablespoon, -> en-001/long-tablespoon
 units/names/volume/extended/v1, en-CA/long-teaspoon, -> en-001/long-teaspoon
 units/names/volume/extended/v1, en-CA/narrow-cubic-foot, -> ast/narrow-cubic-foot
 units/names/volume/extended/v1, en-CA/narrow-cubic-inch, -> ast/narrow-cubic-inch
-units/names/volume/extended/v1, en-CA/narrow-cup, -> en-001/narrow-cup
+units/names/volume/extended/v1, en-CA/narrow-cup, -> en-AE/narrow-cup
 units/names/volume/extended/v1, en-CA/narrow-fluid-ounce, -> en-001/narrow-fluid-ounce
 units/names/volume/extended/v1, en-CA/narrow-fluid-ounce-imperial, -> ast/narrow-fluid-ounce
 units/names/volume/extended/v1, en-CA/narrow-gallon, -> en-001/narrow-gallon
@@ -93559,18 +93559,12 @@ units/names/volume/extended/v1, en-CA/short-gallon-imperial, -> ast/short-gallon
 units/names/volume/extended/v1, en-CA/short-quart, -> en-001/short-quart
 units/names/volume/extended/v1, en-GB/long-cubic-centimeter, 66B, 43B, 889a6801e449a666
 units/names/volume/extended/v1, en-GB/long-cubic-meter, 56B, 33B, 6bfdfb4b94dcf226
-units/names/volume/extended/v1, en-GB/long-cup, 46B, 23B, adbebdb7bce0d1cf
 units/names/volume/extended/v1, en-GB/long-liter, 44B, 21B, 36e01ce72760feaf
 units/names/volume/extended/v1, en-GB/long-milliliter, 54B, 31B, 15212d98972a5eaa
-units/names/volume/extended/v1, en-GB/long-pint, 48B, 25B, aacbe71341c52a07
-units/names/volume/extended/v1, en-GB/narrow-cup, 29B, 6B, d0f8c5e34f659717
 units/names/volume/extended/v1, en-GB/narrow-liter, 27B, 4B, cfb6aeff9c2a982e
 units/names/volume/extended/v1, en-GB/narrow-milliliter, 28B, 5B, 2cf468aea94c4914
-units/names/volume/extended/v1, en-GB/narrow-pint, 30B, 7B, 4331afa6aa448fc7
-units/names/volume/extended/v1, en-GB/short-cup, 31B, 8B, f2ad13766e17e118
 units/names/volume/extended/v1, en-GB/short-liter, 28B, 5B, b3a260637463328d
 units/names/volume/extended/v1, en-GB/short-milliliter, 29B, 6B, e674be278062d63a
-units/names/volume/extended/v1, en-GB/short-pint, 32B, 9B, 33458c0365ae7829
 units/names/volume/extended/v1, en-GU/long-cubic-foot, -> en-001/long-cubic-foot
 units/names/volume/extended/v1, en-GU/long-cubic-inch, -> en-001/long-cubic-inch
 units/names/volume/extended/v1, en-GU/long-cup, -> da/long-cup
@@ -93582,7 +93576,7 @@ units/names/volume/extended/v1, en-GU/long-tablespoon, -> en-001/long-tablespoon
 units/names/volume/extended/v1, en-GU/long-teaspoon, -> en-001/long-teaspoon
 units/names/volume/extended/v1, en-GU/narrow-cubic-foot, -> ast/narrow-cubic-foot
 units/names/volume/extended/v1, en-GU/narrow-cubic-inch, -> ast/narrow-cubic-inch
-units/names/volume/extended/v1, en-GU/narrow-cup, -> en-001/narrow-cup
+units/names/volume/extended/v1, en-GU/narrow-cup, -> en-AE/narrow-cup
 units/names/volume/extended/v1, en-GU/narrow-fluid-ounce, -> ast/narrow-fluid-ounce
 units/names/volume/extended/v1, en-GU/narrow-gallon, -> ast/narrow-gallon
 units/names/volume/extended/v1, en-GU/narrow-pint, -> ast/narrow-pint
@@ -93603,7 +93597,7 @@ units/names/volume/extended/v1, en-JP/long-tablespoon, -> en-001/long-tablespoon
 units/names/volume/extended/v1, en-JP/long-teaspoon, -> en-001/long-teaspoon
 units/names/volume/extended/v1, en-JP/narrow-cubic-foot, -> ast/narrow-cubic-foot
 units/names/volume/extended/v1, en-JP/narrow-cubic-inch, -> ast/narrow-cubic-inch
-units/names/volume/extended/v1, en-JP/narrow-cup, -> en-001/narrow-cup
+units/names/volume/extended/v1, en-JP/narrow-cup, -> en-AE/narrow-cup
 units/names/volume/extended/v1, en-JP/narrow-fluid-ounce, -> ast/narrow-fluid-ounce
 units/names/volume/extended/v1, en-JP/narrow-gallon, -> ast/narrow-gallon
 units/names/volume/extended/v1, en-JP/narrow-pint, -> ast/narrow-pint
@@ -93624,7 +93618,7 @@ units/names/volume/extended/v1, en-MH/long-tablespoon, -> en-001/long-tablespoon
 units/names/volume/extended/v1, en-MH/long-teaspoon, -> en-001/long-teaspoon
 units/names/volume/extended/v1, en-MH/narrow-cubic-foot, -> ast/narrow-cubic-foot
 units/names/volume/extended/v1, en-MH/narrow-cubic-inch, -> ast/narrow-cubic-inch
-units/names/volume/extended/v1, en-MH/narrow-cup, -> en-001/narrow-cup
+units/names/volume/extended/v1, en-MH/narrow-cup, -> en-AE/narrow-cup
 units/names/volume/extended/v1, en-MH/narrow-fluid-ounce, -> ast/narrow-fluid-ounce
 units/names/volume/extended/v1, en-MH/narrow-gallon, -> ast/narrow-gallon
 units/names/volume/extended/v1, en-MH/narrow-pint, -> ast/narrow-pint
@@ -93645,7 +93639,7 @@ units/names/volume/extended/v1, en-MP/long-tablespoon, -> en-001/long-tablespoon
 units/names/volume/extended/v1, en-MP/long-teaspoon, -> en-001/long-teaspoon
 units/names/volume/extended/v1, en-MP/narrow-cubic-foot, -> ast/narrow-cubic-foot
 units/names/volume/extended/v1, en-MP/narrow-cubic-inch, -> ast/narrow-cubic-inch
-units/names/volume/extended/v1, en-MP/narrow-cup, -> en-001/narrow-cup
+units/names/volume/extended/v1, en-MP/narrow-cup, -> en-AE/narrow-cup
 units/names/volume/extended/v1, en-MP/narrow-fluid-ounce, -> ast/narrow-fluid-ounce
 units/names/volume/extended/v1, en-MP/narrow-gallon, -> ast/narrow-gallon
 units/names/volume/extended/v1, en-MP/narrow-pint, -> ast/narrow-pint
@@ -93666,7 +93660,7 @@ units/names/volume/extended/v1, en-PH/long-tablespoon, -> en-001/long-tablespoon
 units/names/volume/extended/v1, en-PH/long-teaspoon, -> en-001/long-teaspoon
 units/names/volume/extended/v1, en-PH/narrow-cubic-foot, -> ast/narrow-cubic-foot
 units/names/volume/extended/v1, en-PH/narrow-cubic-inch, -> ast/narrow-cubic-inch
-units/names/volume/extended/v1, en-PH/narrow-cup, -> en-001/narrow-cup
+units/names/volume/extended/v1, en-PH/narrow-cup, -> en-AE/narrow-cup
 units/names/volume/extended/v1, en-PH/narrow-fluid-ounce, -> ast/narrow-fluid-ounce
 units/names/volume/extended/v1, en-PH/narrow-gallon, -> ast/narrow-gallon
 units/names/volume/extended/v1, en-PH/narrow-pint, -> ast/narrow-pint
@@ -93687,7 +93681,7 @@ units/names/volume/extended/v1, en-PR/long-tablespoon, -> en-001/long-tablespoon
 units/names/volume/extended/v1, en-PR/long-teaspoon, -> en-001/long-teaspoon
 units/names/volume/extended/v1, en-PR/narrow-cubic-foot, -> ast/narrow-cubic-foot
 units/names/volume/extended/v1, en-PR/narrow-cubic-inch, -> ast/narrow-cubic-inch
-units/names/volume/extended/v1, en-PR/narrow-cup, -> en-001/narrow-cup
+units/names/volume/extended/v1, en-PR/narrow-cup, -> en-AE/narrow-cup
 units/names/volume/extended/v1, en-PR/narrow-fluid-ounce, -> ast/narrow-fluid-ounce
 units/names/volume/extended/v1, en-PR/narrow-gallon, -> ast/narrow-gallon
 units/names/volume/extended/v1, en-PR/narrow-pint, -> ast/narrow-pint
@@ -93708,7 +93702,7 @@ units/names/volume/extended/v1, en-UM/long-tablespoon, -> en-001/long-tablespoon
 units/names/volume/extended/v1, en-UM/long-teaspoon, -> en-001/long-teaspoon
 units/names/volume/extended/v1, en-UM/narrow-cubic-foot, -> ast/narrow-cubic-foot
 units/names/volume/extended/v1, en-UM/narrow-cubic-inch, -> ast/narrow-cubic-inch
-units/names/volume/extended/v1, en-UM/narrow-cup, -> en-001/narrow-cup
+units/names/volume/extended/v1, en-UM/narrow-cup, -> en-AE/narrow-cup
 units/names/volume/extended/v1, en-UM/narrow-fluid-ounce, -> ast/narrow-fluid-ounce
 units/names/volume/extended/v1, en-UM/narrow-gallon, -> ast/narrow-gallon
 units/names/volume/extended/v1, en-UM/narrow-pint, -> ast/narrow-pint
@@ -93729,7 +93723,7 @@ units/names/volume/extended/v1, en-VI/long-tablespoon, -> en-001/long-tablespoon
 units/names/volume/extended/v1, en-VI/long-teaspoon, -> en-001/long-teaspoon
 units/names/volume/extended/v1, en-VI/narrow-cubic-foot, -> ast/narrow-cubic-foot
 units/names/volume/extended/v1, en-VI/narrow-cubic-inch, -> ast/narrow-cubic-inch
-units/names/volume/extended/v1, en-VI/narrow-cup, -> en-001/narrow-cup
+units/names/volume/extended/v1, en-VI/narrow-cup, -> en-AE/narrow-cup
 units/names/volume/extended/v1, en-VI/narrow-fluid-ounce, -> ast/narrow-fluid-ounce
 units/names/volume/extended/v1, en-VI/narrow-gallon, -> ast/narrow-gallon
 units/names/volume/extended/v1, en-VI/narrow-pint, -> ast/narrow-pint
@@ -93847,7 +93841,7 @@ units/names/volume/extended/v1, eu/long-pint, 32B, 9B, d1273a7f9015de68
 units/names/volume/extended/v1, eu/long-quart, 40B, 17B, 3b8090b5da2a73bb
 units/names/volume/extended/v1, eu/long-tablespoon, 38B, 15B, 1e39d4fa19b8f3c2
 units/names/volume/extended/v1, eu/long-teaspoon, 41B, 18B, 48cdecdf532ca38e
-units/names/volume/extended/v1, eu/narrow-cup, -> en-001/narrow-cup
+units/names/volume/extended/v1, eu/narrow-cup, -> en-AE/narrow-cup
 units/names/volume/extended/v1, eu/narrow-fluid-ounce, -> ast/narrow-fluid-ounce
 units/names/volume/extended/v1, eu/narrow-fluid-ounce-imperial, -> az/narrow-fluid-ounce-imperial
 units/names/volume/extended/v1, eu/narrow-gallon, -> eu/long-gallon
@@ -93878,7 +93872,7 @@ units/names/volume/extended/v1, fa/long-tablespoon, 50B, 27B, d5a213b06211b1f4
 units/names/volume/extended/v1, fa/long-teaspoon, 53B, 30B, 26cb5ae38f61dba0
 units/names/volume/extended/v1, fa/narrow-cubic-foot, -> ast/narrow-cubic-foot
 units/names/volume/extended/v1, fa/narrow-cubic-inch, -> ast/narrow-cubic-inch
-units/names/volume/extended/v1, fa/narrow-cup, -> en-001/narrow-cup
+units/names/volume/extended/v1, fa/narrow-cup, -> en-AE/narrow-cup
 units/names/volume/extended/v1, fa/narrow-fluid-ounce, -> ast/narrow-fluid-ounce
 units/names/volume/extended/v1, fa/narrow-fluid-ounce-imperial, -> az/narrow-fluid-ounce-imperial
 units/names/volume/extended/v1, fa/narrow-gallon, -> fa/long-gallon
@@ -94120,7 +94114,7 @@ units/names/volume/extended/v1, gd/long-teaspoon, 62B, 39B, 26acad4f29531c77
 units/names/volume/extended/v1, gd/narrow-barrel, -> chr/narrow-barrel
 units/names/volume/extended/v1, gd/narrow-cubic-centimeter, -> chr/narrow-cubic-centimeter
 units/names/volume/extended/v1, gd/narrow-cubic-meter, -> chr/narrow-cubic-meter
-units/names/volume/extended/v1, gd/narrow-cup, -> en-001/narrow-cup
+units/names/volume/extended/v1, gd/narrow-cup, -> en-AE/narrow-cup
 units/names/volume/extended/v1, gd/narrow-liter, -> chr/narrow-liter
 units/names/volume/extended/v1, gd/narrow-milliliter, -> chr/narrow-milliliter
 units/names/volume/extended/v1, gd/narrow-pint, -> ast/narrow-pint
@@ -94500,7 +94494,7 @@ units/names/volume/extended/v1, it/long-tablespoon, 70B, 47B, 3a67dbfe38132669
 units/names/volume/extended/v1, it/long-teaspoon, 64B, 41B, 57aa650fee9d85e7
 units/names/volume/extended/v1, it/narrow-cubic-foot, -> ast/narrow-cubic-foot
 units/names/volume/extended/v1, it/narrow-cubic-inch, -> ast/narrow-cubic-inch
-units/names/volume/extended/v1, it/narrow-cup, -> en-001/narrow-cup
+units/names/volume/extended/v1, it/narrow-cup, -> en-AE/narrow-cup
 units/names/volume/extended/v1, it/narrow-fluid-ounce, -> ast/narrow-fluid-ounce
 units/names/volume/extended/v1, it/narrow-fluid-ounce-imperial, -> es/narrow-fluid-ounce-imperial
 units/names/volume/extended/v1, it/narrow-gallon, -> ast/narrow-gallon
@@ -94999,7 +94993,7 @@ units/names/volume/extended/v1, ml/long-tablespoon, 60B, 37B, 3da01cb1d6553d52
 units/names/volume/extended/v1, ml/long-teaspoon, 51B, 28B, e893f7f810179997
 units/names/volume/extended/v1, ml/narrow-cubic-foot, -> ast/narrow-cubic-foot
 units/names/volume/extended/v1, ml/narrow-cubic-inch, -> ast/narrow-cubic-inch
-units/names/volume/extended/v1, ml/narrow-cup, -> en-001/narrow-cup
+units/names/volume/extended/v1, ml/narrow-cup, -> en-AE/narrow-cup
 units/names/volume/extended/v1, ml/narrow-fluid-ounce, -> ast/narrow-fluid-ounce
 units/names/volume/extended/v1, ml/narrow-fluid-ounce-imperial, -> az/narrow-fluid-ounce-imperial
 units/names/volume/extended/v1, ml/narrow-gallon, -> ast/narrow-gallon
@@ -95384,7 +95378,7 @@ units/names/volume/extended/v1, rm/long-tablespoon, 63B, 40B, 25afabc5dc95253c
 units/names/volume/extended/v1, rm/long-teaspoon, 69B, 46B, 6197ba57cbcc02d7
 units/names/volume/extended/v1, rm/narrow-cubic-foot, -> ast/narrow-cubic-foot
 units/names/volume/extended/v1, rm/narrow-cubic-inch, -> ast/narrow-cubic-inch
-units/names/volume/extended/v1, rm/narrow-cup, -> en-001/narrow-cup
+units/names/volume/extended/v1, rm/narrow-cup, -> en-AE/narrow-cup
 units/names/volume/extended/v1, rm/narrow-fluid-ounce, -> ast/narrow-fluid-ounce
 units/names/volume/extended/v1, rm/narrow-fluid-ounce-imperial, -> az/narrow-fluid-ounce-imperial
 units/names/volume/extended/v1, rm/narrow-gallon, -> ast/narrow-gallon
@@ -96176,7 +96170,7 @@ units/names/volume/extended/v1, wo/narrow-fluid-ounce, -> am/long-fluid-ounce
 units/names/volume/extended/v1, wo/short-fluid-ounce, -> am/long-fluid-ounce
 units/names/volume/extended/v1, yo/narrow-cubic-foot, -> ast/narrow-cubic-foot
 units/names/volume/extended/v1, yo/narrow-cubic-inch, -> ast/narrow-cubic-inch
-units/names/volume/extended/v1, yo/narrow-cup, -> en-001/narrow-cup
+units/names/volume/extended/v1, yo/narrow-cup, -> en-AE/narrow-cup
 units/names/volume/extended/v1, yo/narrow-fluid-ounce, -> ast/narrow-fluid-ounce
 units/names/volume/extended/v1, yo/narrow-fluid-ounce-imperial, -> az/narrow-fluid-ounce-imperial
 units/names/volume/extended/v1, yo/narrow-gallon, -> ast/narrow-gallon
@@ -96344,7 +96338,7 @@ units/names/volume/extended/v1, zh/long-tablespoon, 32B, 9B, 2eab740d7446b7d6
 units/names/volume/extended/v1, zh/long-teaspoon, -> zh-Hant/narrow-teaspoon
 units/names/volume/extended/v1, zh/narrow-cubic-foot, -> ast/narrow-cubic-foot
 units/names/volume/extended/v1, zh/narrow-cubic-inch, -> ast/narrow-cubic-inch
-units/names/volume/extended/v1, zh/narrow-cup, -> en-001/narrow-cup
+units/names/volume/extended/v1, zh/narrow-cup, -> en-AE/narrow-cup
 units/names/volume/extended/v1, zh/narrow-fluid-ounce, -> ast/narrow-fluid-ounce
 units/names/volume/extended/v1, zh/narrow-fluid-ounce-imperial, -> az/narrow-fluid-ounce-imperial
 units/names/volume/extended/v1, zh/narrow-gallon, -> ast/narrow-gallon
@@ -96368,7 +96362,7 @@ units/names/volume/extended/v1, zu/long-fluid-ounce, -> am/long-fluid-ounce
 units/names/volume/extended/v1, zu/long-gallon, -> ast/short-gallon
 units/names/volume/extended/v1, zu/narrow-cubic-foot, -> ast/narrow-cubic-foot
 units/names/volume/extended/v1, zu/narrow-cubic-inch, -> ast/narrow-cubic-foot
-units/names/volume/extended/v1, zu/narrow-cup, -> en-001/narrow-cup
+units/names/volume/extended/v1, zu/narrow-cup, -> en-AE/narrow-cup
 units/names/volume/extended/v1, zu/narrow-fluid-ounce, -> am/long-fluid-ounce
 units/names/volume/extended/v1, zu/narrow-fluid-ounce-imperial, -> az/narrow-fluid-ounce-imperial
 units/names/volume/extended/v1, zu/narrow-gallon, -> ast/narrow-gallon
