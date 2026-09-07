@@ -10,10 +10,10 @@
     6
   ],
   "elements": [
-    "MMMM dd, y",
+    "dd MMMM y",
     "dd MMM y",
     "y/MM/dd",
-    "MMMM dd, y GGG",
+    "dd MMMM y GGG",
     "dd MMM y GGG",
     "dd/MM/y GGG"
   ]

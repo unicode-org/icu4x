@@ -13,8 +13,8 @@
     {
       "header": 6,
       "patterns": [
-        "MMMM d – d",
-        "MMMM d"
+        "d–d MMMM",
+        "d MMMM"
       ]
     },
     {
