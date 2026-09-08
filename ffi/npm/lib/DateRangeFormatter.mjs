@@ -15,6 +15,8 @@ const DateRangeFormatter_box_destroy_registry = new FinalizationRegistry((ptr) =
 });
 
 /**
+ * 🚧 This API is unstable and may experience breaking changes outside major releases.
+ *
  * See the [Rust documentation for `DateRangeFormatter`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html) for more information.
  */
 export class DateRangeFormatter {
@@ -47,6 +49,8 @@ export class DateRangeFormatter {
 
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `D`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.D.html) for more information.
@@ -78,6 +82,8 @@ export class DateRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `D`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.D.html) for more information.
@@ -109,6 +115,8 @@ export class DateRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `MD`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MD.html) for more information.
@@ -140,6 +148,8 @@ export class DateRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `MD`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MD.html) for more information.
@@ -171,6 +181,8 @@ export class DateRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `YMD`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMD.html) for more information.
@@ -202,6 +214,8 @@ export class DateRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `YMD`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMD.html) for more information.
@@ -233,6 +247,8 @@ export class DateRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `DE`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DE.html) for more information.
@@ -264,6 +280,8 @@ export class DateRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `DE`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DE.html) for more information.
@@ -295,6 +313,8 @@ export class DateRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `MDE`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDE.html) for more information.
@@ -326,6 +346,8 @@ export class DateRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `MDE`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDE.html) for more information.
@@ -357,6 +379,8 @@ export class DateRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `YMDE`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDE.html) for more information.
@@ -388,6 +412,8 @@ export class DateRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `YMDE`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDE.html) for more information.
@@ -419,6 +445,8 @@ export class DateRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `E`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.E.html) for more information.
@@ -450,6 +478,8 @@ export class DateRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `E`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.E.html) for more information.
@@ -481,6 +511,8 @@ export class DateRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `M`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.M.html) for more information.
@@ -512,6 +544,8 @@ export class DateRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `M`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.M.html) for more information.
@@ -543,6 +577,8 @@ export class DateRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `YM`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YM.html) for more information.
@@ -574,6 +610,8 @@ export class DateRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `YM`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YM.html) for more information.
@@ -605,6 +643,8 @@ export class DateRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `Y`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.Y.html) for more information.
@@ -636,6 +676,8 @@ export class DateRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `Y`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.Y.html) for more information.
@@ -667,6 +709,8 @@ export class DateRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.format) for more information.
      */
     formatIso(startIsoDate, endIsoDate) {
@@ -685,6 +729,8 @@ export class DateRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.format) for more information.
      */
     formatSameCalendar(startDate, endDate) {

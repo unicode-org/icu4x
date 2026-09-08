@@ -3,6 +3,8 @@
 
 part of 'lib.g.dart';
 
+/// 🚧 This API is unstable and may experience breaking changes outside major releases.
+///
 /// See the [Rust documentation for `NoCalendarRangeFormatter`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html) for more information.
 final class TimeRangeFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
@@ -28,6 +30,8 @@ final class TimeRangeFormatter implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_internal_icu4x_TimeRangeFormatter_destroy_mv1));
 
+  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
+  ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `T`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html) for more information.
@@ -43,6 +47,8 @@ final class TimeRangeFormatter implements ffi.Finalizable {
     return TimeRangeFormatter._fromFfi(result.union.ok, []);
   }
 
+  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
+  ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `T`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html) for more information.
@@ -58,6 +64,8 @@ final class TimeRangeFormatter implements ffi.Finalizable {
     return TimeRangeFormatter._fromFfi(result.union.ok, []);
   }
 
+  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
+  ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.format) for more information.
   String format(Time startTime, Time endTime) {
     final write = _Write();
