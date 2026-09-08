@@ -105,11 +105,63 @@ impl DecimalFormatter {
         )?
         .payload;
 
-        Ok(Self {
+        Ok(Self::from_raw_data_unstable(options, symbols, digits))
+    }
+
+    /// Creates a new [`DecimalFormatter`] directly from its raw data payloads.
+    ///
+    /// 🚧 \[Unstable\] This API is unstable and subject to breaking changes.
+    ///
+    /// # Invariants
+    ///
+    /// The caller is responsible for ensuring that `digits` matches the numbering system
+    /// expected by `symbols`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::decimal::DecimalFormatter;
+    /// use icu::decimal::provider::{DecimalDigitsV1, DecimalSymbolsV1};
+    /// use icu_provider::prelude::*;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let symbols: DataPayload<DecimalSymbolsV1> = icu::decimal::provider::Baked
+    ///     .load(DataRequest {
+    ///         id: DataIdentifierBorrowed::for_locale(&icu::locale::locale!("en").into()),
+    ///         metadata: Default::default(),
+    ///     })
+    ///     .unwrap()
+    ///     .payload;
+    ///
+    /// let digits: DataPayload<DecimalDigitsV1> = icu::decimal::provider::Baked
+    ///     .load(DataRequest {
+    ///         id: DataIdentifierBorrowed::for_marker_attributes(
+    ///             DataMarkerAttributes::from_str_or_panic("latn"),
+    ///         ),
+    ///         metadata: Default::default(),
+    ///     })
+    ///     .unwrap()
+    ///     .payload;
+    ///
+    /// let formatter = DecimalFormatter::from_raw_data_unstable(
+    ///     Default::default(),
+    ///     symbols,
+    ///     digits,
+    /// );
+    ///
+    /// let decimal = "12345.67".parse().unwrap();
+    /// assert_writeable_eq!(formatter.format(&decimal), "12,345.67");
+    /// ```
+    pub fn from_raw_data_unstable(
+        options: DecimalFormatterOptions,
+        symbols: DataPayload<DecimalSymbolsV1>,
+        digits: DataPayload<DecimalDigitsV1>,
+    ) -> Self {
+        Self {
             options,
             symbols,
             digits,
-        })
+        }
     }
 
     /// Formats a [`Decimal`], returning a [`FormattedDecimal`].
@@ -287,4 +339,32 @@ pub fn test_es_mx() {
     let fmt = DecimalFormatter::try_new(locale, Default::default()).unwrap();
     let fd = "12345.67".parse().unwrap();
     assert_writeable_eq!(fmt.format(&fd), "12,345.67");
+}
+
+#[test]
+fn test_from_raw_data_unstable() {
+    use writeable::assert_writeable_eq;
+
+    let symbols: DataPayload<DecimalSymbolsV1> = Baked
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_locale(&icu_locale_core::locale!("en").into()),
+            metadata: Default::default(),
+        })
+        .unwrap()
+        .payload;
+
+    let digits: DataPayload<DecimalDigitsV1> = Baked
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes(
+                DataMarkerAttributes::from_str_or_panic("latn"),
+            ),
+            metadata: Default::default(),
+        })
+        .unwrap()
+        .payload;
+
+    let formatter = DecimalFormatter::from_raw_data_unstable(Default::default(), symbols, digits);
+
+    let decimal = "12345.67".parse().unwrap();
+    assert_writeable_eq!(formatter.format(&decimal), "12,345.67");
 }
