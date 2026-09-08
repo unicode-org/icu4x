@@ -28,6 +28,7 @@ pub mod ffi {
     #[cfg(feature = "buffer_provider")]
     use crate::unstable::provider::ffi::DataProvider;
 
+    /// 🚧 This API is unstable and may experience breaking changes outside major releases.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter, Struct)]
     pub struct DateTimeRangeFormatter(
@@ -38,6 +39,7 @@ pub mod ffi {
     );
 
     impl DateTimeRangeFormatter {
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "dt")]
         #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
@@ -70,6 +72,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "dt_with_provider")]
         #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
@@ -104,6 +107,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdt")]
         #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDT, Struct)]
@@ -136,6 +140,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdt_with_provider")]
         #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDT, Struct)]
@@ -170,6 +175,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdt")]
         #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDT, Struct)]
@@ -206,6 +212,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdt_with_provider")]
         #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDT, Struct)]
@@ -243,6 +250,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "det")]
         #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DET, Struct)]
@@ -275,6 +283,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "det_with_provider")]
         #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DET, Struct)]
@@ -309,6 +318,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdet")]
         #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDET, Struct)]
@@ -341,6 +351,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdet_with_provider")]
         #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDET, Struct)]
@@ -375,6 +386,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdet")]
         #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDET, Struct)]
@@ -410,6 +422,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdet_with_provider")]
         #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDET, Struct)]
@@ -447,6 +460,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "et")]
         #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::ET, Struct)]
@@ -479,6 +493,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "et_with_provider")]
         #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::ET, Struct)]
@@ -513,6 +528,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::range::FormattedDateRange, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::range::FormattedDateRange::to_string, FnInStruct, hidden)]
@@ -537,6 +553,7 @@ pub mod ffi {
             let _infallible = self.0.format(&start_value, &end_value).write_to(write);
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::rust_link(icu::datetime::range::DateRangeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::range::FormattedDateRange, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::range::FormattedDateRange::to_string, FnInStruct, hidden)]
@@ -564,6 +581,7 @@ pub mod ffi {
     }
     
 
+    /// 🚧 This API is unstable and may experience breaking changes outside major releases.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter, Struct)]
     pub struct DateTimeRangeFormatterGregorian(
@@ -575,6 +593,7 @@ pub mod ffi {
     );
 
     impl DateTimeRangeFormatterGregorian {
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "dt")]
         #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
@@ -607,6 +626,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "dt_with_provider")]
         #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
@@ -641,6 +661,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdt")]
         #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDT, Struct)]
@@ -673,6 +694,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdt_with_provider")]
         #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDT, Struct)]
@@ -707,6 +729,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdt")]
         #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDT, Struct)]
@@ -743,6 +766,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdt_with_provider")]
         #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDT, Struct)]
@@ -780,6 +804,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "det")]
         #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DET, Struct)]
@@ -812,6 +837,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "det_with_provider")]
         #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DET, Struct)]
@@ -846,6 +872,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdet")]
         #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDET, Struct)]
@@ -878,6 +905,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdet_with_provider")]
         #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDET, Struct)]
@@ -912,6 +940,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdet")]
         #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDET, Struct)]
@@ -947,6 +976,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdet_with_provider")]
         #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDET, Struct)]
@@ -984,6 +1014,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "et")]
         #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::ET, Struct)]
@@ -1016,6 +1047,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "et_with_provider")]
         #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::ET, Struct)]
@@ -1050,6 +1082,7 @@ pub mod ffi {
             )))
         }
         
+        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::rust_link(icu::datetime::range::FixedCalendarDateRangeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::range::FormattedDateRange, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::range::FormattedDateRange::to_string, FnInStruct, hidden)]

@@ -14,6 +14,8 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /**
+ * 🚧 This API is unstable and may experience breaking changes outside major releases.
+ *
  * See the [Rust documentation for `DateRangeFormatter`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html) for more information.
  */
 export class DateTimeRangeFormatter {
@@ -24,6 +26,8 @@ export class DateTimeRangeFormatter {
 
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `DT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html) for more information.
@@ -33,6 +37,8 @@ export class DateTimeRangeFormatter {
     static createDt(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeRangeFormatter;
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `DT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html) for more information.
@@ -42,6 +48,8 @@ export class DateTimeRangeFormatter {
     static createDtWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeRangeFormatter;
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `MDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html) for more information.
@@ -51,6 +59,8 @@ export class DateTimeRangeFormatter {
     static createMdt(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeRangeFormatter;
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `MDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html) for more information.
@@ -60,6 +70,8 @@ export class DateTimeRangeFormatter {
     static createMdtWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeRangeFormatter;
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `YMDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html) for more information.
@@ -69,6 +81,8 @@ export class DateTimeRangeFormatter {
     static createYmdt(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateTimeRangeFormatter;
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `YMDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html) for more information.
@@ -78,6 +92,8 @@ export class DateTimeRangeFormatter {
     static createYmdtWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateTimeRangeFormatter;
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `DET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html) for more information.
@@ -87,6 +103,8 @@ export class DateTimeRangeFormatter {
     static createDet(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeRangeFormatter;
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `DET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html) for more information.
@@ -96,6 +114,8 @@ export class DateTimeRangeFormatter {
     static createDetWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeRangeFormatter;
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `MDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html) for more information.
@@ -105,6 +125,8 @@ export class DateTimeRangeFormatter {
     static createMdet(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeRangeFormatter;
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `MDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html) for more information.
@@ -114,6 +136,8 @@ export class DateTimeRangeFormatter {
     static createMdetWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeRangeFormatter;
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `YMDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html) for more information.
@@ -123,6 +147,8 @@ export class DateTimeRangeFormatter {
     static createYmdet(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateTimeRangeFormatter;
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `YMDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html) for more information.
@@ -132,6 +158,8 @@ export class DateTimeRangeFormatter {
     static createYmdetWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateTimeRangeFormatter;
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `ET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html) for more information.
@@ -141,6 +169,8 @@ export class DateTimeRangeFormatter {
     static createEt(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeRangeFormatter;
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `ET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html) for more information.
@@ -150,11 +180,15 @@ export class DateTimeRangeFormatter {
     static createEtWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeRangeFormatter;
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.format) for more information.
      */
     formatIso(startIsoDate: IsoDate, startTime: Time, endIsoDate: IsoDate, endTime: Time): string;
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.format) for more information.
      */
     formatSameCalendar(startDate: Date, startTime: Time, endDate: Date, endTime: Time): string;

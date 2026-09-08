@@ -30,7 +30,9 @@ internal interface DateRangeFormatterLib: Library {
     fun icu4x_DateRangeFormatter_format_iso_mv1(handle: Pointer, startIsoDate: Pointer, endIsoDate: Pointer, write: Pointer): Unit
     fun icu4x_DateRangeFormatter_format_same_calendar_mv1(handle: Pointer, startDate: Pointer, endDate: Pointer, write: Pointer): Unit
 }
-/** See the [Rust documentation for `DateRangeFormatter`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html) for more information.
+/** 🚧 This API is unstable and may experience breaking changes outside major releases.
+*
+*See the [Rust documentation for `DateRangeFormatter`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html) for more information.
 */
 class DateRangeFormatter internal constructor (
     internal val handle: Pointer,
@@ -60,7 +62,9 @@ class DateRangeFormatter internal constructor (
         internal val lib: DateRangeFormatterLib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
         *
         *See the [Rust documentation for `D`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.D.html) for more information.
         *
@@ -81,7 +85,9 @@ class DateRangeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
         *
         *See the [Rust documentation for `D`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.D.html) for more information.
         *
@@ -102,7 +108,9 @@ class DateRangeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
         *
         *See the [Rust documentation for `MD`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MD.html) for more information.
         *
@@ -123,7 +131,9 @@ class DateRangeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
         *
         *See the [Rust documentation for `MD`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MD.html) for more information.
         *
@@ -144,7 +154,9 @@ class DateRangeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
         *
         *See the [Rust documentation for `YMD`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMD.html) for more information.
         *
@@ -165,7 +177,9 @@ class DateRangeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
         *
         *See the [Rust documentation for `YMD`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMD.html) for more information.
         *
@@ -186,7 +200,9 @@ class DateRangeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
         *
         *See the [Rust documentation for `DE`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DE.html) for more information.
         *
@@ -207,7 +223,9 @@ class DateRangeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
         *
         *See the [Rust documentation for `DE`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DE.html) for more information.
         *
@@ -228,7 +246,9 @@ class DateRangeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
         *
         *See the [Rust documentation for `MDE`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDE.html) for more information.
         *
@@ -249,7 +269,9 @@ class DateRangeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
         *
         *See the [Rust documentation for `MDE`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDE.html) for more information.
         *
@@ -270,7 +292,9 @@ class DateRangeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
         *
         *See the [Rust documentation for `YMDE`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDE.html) for more information.
         *
@@ -291,7 +315,9 @@ class DateRangeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
         *
         *See the [Rust documentation for `YMDE`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDE.html) for more information.
         *
@@ -312,7 +338,9 @@ class DateRangeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
         *
         *See the [Rust documentation for `E`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.E.html) for more information.
         *
@@ -333,7 +361,9 @@ class DateRangeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
         *
         *See the [Rust documentation for `E`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.E.html) for more information.
         *
@@ -354,7 +384,9 @@ class DateRangeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
         *
         *See the [Rust documentation for `M`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.M.html) for more information.
         *
@@ -375,7 +407,9 @@ class DateRangeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
         *
         *See the [Rust documentation for `M`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.M.html) for more information.
         *
@@ -396,7 +430,9 @@ class DateRangeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
         *
         *See the [Rust documentation for `YM`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YM.html) for more information.
         *
@@ -417,7 +453,9 @@ class DateRangeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
         *
         *See the [Rust documentation for `YM`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YM.html) for more information.
         *
@@ -438,7 +476,9 @@ class DateRangeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
         *
         *See the [Rust documentation for `Y`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.Y.html) for more information.
         *
@@ -459,7 +499,9 @@ class DateRangeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
         *
         *See the [Rust documentation for `Y`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.Y.html) for more information.
         *
@@ -480,7 +522,9 @@ class DateRangeFormatter internal constructor (
         }
     }
     
-    /** See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.format) for more information.
+    /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+    *
+    *See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.format) for more information.
     */
     fun formatIso(startIsoDate: IsoDate, endIsoDate: IsoDate): String {
         val write = DW.lib.diplomat_buffer_write_create(0)
@@ -490,7 +534,9 @@ class DateRangeFormatter internal constructor (
         return returnString
     }
     
-    /** See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.format) for more information.
+    /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+    *
+    *See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.format) for more information.
     */
     fun formatSameCalendar(startDate: Date, endDate: Date): String {
         val write = DW.lib.diplomat_buffer_write_create(0)
