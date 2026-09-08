@@ -224,7 +224,7 @@ icu_benchmark_macros = { path = "tools/benchmark/macros" }
 # Diplomat must be published preceding a new ICU4X release but may use git versions in between
 diplomat = { version = "0.16.1", default-features = false }
 diplomat_core = { version = "0.16.1", default-features = false }
-diplomat-tool = { version = "0.16.1" }
+diplomat-tool = { git = "https://github.com/robertbastian/diplomat", rev = "eb8f0dc17e17e25d2ed610fc5a359b3ebeee038e" }
 # Range dep for better compatability. We will not have this problem
 # after diplomat-runtime 1.0.0
 # <https://github.com/rust-diplomat/diplomat/issues/958>

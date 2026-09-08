@@ -643,6 +643,10 @@ struct next_to_iter_helper {
   next_type _curr;
 };
 
+/// The type may be a nullptr
+template<typename T>
+using maybe_null = T;
+
 } // namespace diplomat
 } // namespace icu4x
 #endif
