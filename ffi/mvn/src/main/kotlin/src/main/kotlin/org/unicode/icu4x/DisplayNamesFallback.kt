@@ -8,9 +8,10 @@ import com.sun.jna.Structure
 
 internal interface DisplayNamesFallbackLib: Library {
 }
-/** 🚧 This API is unstable and may experience breaking changes outside major releases.
-*
-*See the [Rust documentation for `Fallback`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/enum.Fallback.html) for more information.
+/**
+ * 🚧 This API is unstable and may experience breaking changes outside major releases.
+ *
+ * See the [Rust documentation for `Fallback`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/enum.Fallback.html) for more information.
 */
 enum class DisplayNamesFallback {
     Code,

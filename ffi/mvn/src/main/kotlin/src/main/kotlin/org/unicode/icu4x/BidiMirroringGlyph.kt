@@ -11,16 +11,19 @@ internal interface BidiMirroringGlyphLib: Library {
 }
 
 internal class BidiMirroringGlyphNative: Structure(), Structure.ByValue {
-    /** The mirroring glyph
-    */
+    /**
+     * The mirroring glyph
+     */
     @JvmField
     internal var mirroringGlyph: OptionInt = OptionInt.none();
-    /** Whether the glyph is mirrored
-    */
+    /**
+     * Whether the glyph is mirrored
+     */
     @JvmField
     internal var mirrored: Byte = 0;
-    /** The paired bracket type
-    */
+    /**
+     * The paired bracket type
+     */
     @JvmField
     internal var pairedBracketType: Int = BidiPairedBracketType.default().toNative();
 
@@ -71,8 +74,9 @@ internal class OptionBidiMirroringGlyphNative constructor(): Structure(), Struct
 
 }
 
-/** See the [Rust documentation for `BidiMirroringGlyph`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.BidiMirroringGlyph.html) for more information.
-*/
+/**
+ * See the [Rust documentation for `BidiMirroringGlyph`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.BidiMirroringGlyph.html) for more information.
+ */
 class BidiMirroringGlyph (var mirroringGlyph: Int?, var mirrored: Boolean, var pairedBracketType: BidiPairedBracketType) {
     companion object {
 
@@ -90,8 +94,9 @@ class BidiMirroringGlyph (var mirroringGlyph: Int?, var mirrored: Boolean, var p
 
         @JvmStatic
         
-        /** See the [Rust documentation for `for_char`](https://docs.rs/icu/2.3.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
-        */
+        /**
+         * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.3.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+         */
         fun forChar(ch: Int): BidiMirroringGlyph {
             
             val returnVal = lib.icu4x_BidiMirroringGlyph_for_char_mv1(ch);

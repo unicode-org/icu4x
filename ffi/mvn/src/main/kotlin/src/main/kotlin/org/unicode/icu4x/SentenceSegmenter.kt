@@ -12,10 +12,11 @@ internal interface SentenceSegmenterLib: Library {
     fun icu4x_SentenceSegmenter_create_with_content_locale_and_provider_mv1(provider: Pointer, locale: Pointer): ResultPointerInt
     fun icu4x_SentenceSegmenter_segment_utf16_mv1(handle: Pointer, input: Slice): Pointer
 }
-/** An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
-*
-*See the [Rust documentation for `SentenceSegmenter`](https://docs.rs/icu/2.3.1/icu/segmenter/struct.SentenceSegmenter.html) for more information.
-*/
+/**
+ * An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
+ *
+ * See the [Rust documentation for `SentenceSegmenter`](https://docs.rs/icu/2.3.1/icu/segmenter/struct.SentenceSegmenter.html) for more information.
+ */
 class SentenceSegmenter internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
@@ -44,10 +45,11 @@ class SentenceSegmenter internal constructor (
         internal val lib: SentenceSegmenterLib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** Construct a [SentenceSegmenter] using compiled data. This does not assume any content locale.
-        *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
-        */
+        /**
+         * Construct a [SentenceSegmenter] using compiled data. This does not assume any content locale.
+         *
+         * See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
+         */
         fun create(): SentenceSegmenter {
             
             val returnVal = lib.icu4x_SentenceSegmenter_create_mv1();
@@ -58,8 +60,9 @@ class SentenceSegmenter internal constructor (
         }
         @JvmStatic
         
-        /** Construct a [SentenceSegmenter] for content known to be of a given locale, using compiled data.
-        */
+        /**
+         * Construct a [SentenceSegmenter] for content known to be of a given locale, using compiled data.
+         */
         fun createWithContentLocale(locale: Locale): Result<SentenceSegmenter> {
             
             val returnVal = lib.icu4x_SentenceSegmenter_create_with_content_locale_mv1(locale.handle);
@@ -75,8 +78,9 @@ class SentenceSegmenter internal constructor (
         }
         @JvmStatic
         
-        /** Construct a [SentenceSegmenter]  for content known to be of a given locale, using a particular data source.
-        */
+        /**
+         * Construct a [SentenceSegmenter]  for content known to be of a given locale, using a particular data source.
+         */
         fun createWithContentLocaleAndProvider(provider: DataProvider, locale: Locale): Result<SentenceSegmenter> {
             
             val returnVal = lib.icu4x_SentenceSegmenter_create_with_content_locale_and_provider_mv1(provider.handle, locale.handle);
@@ -92,13 +96,14 @@ class SentenceSegmenter internal constructor (
         }
     }
     
-    /** Segments a string.
-    *
-    *Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
-    *to the WHATWG Encoding Standard.
-    *
-    *See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/2.3.1/icu/segmenter/struct.SentenceSegmenterBorrowed.html#method.segment_utf16) for more information.
-    */
+    /**
+     * Segments a string.
+     *
+     * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+     * to the WHATWG Encoding Standard.
+     *
+     * See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/2.3.1/icu/segmenter/struct.SentenceSegmenterBorrowed.html#method.segment_utf16) for more information.
+     */
     fun segment(input: String): SentenceBreakIteratorUtf16 {
         // This lifetime edge depends on lifetimes: 'a
         val aEdges: MutableList<Any> = mutableListOf(this);

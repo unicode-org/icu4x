@@ -8,7 +8,8 @@ import com.sun.jna.Structure
 
 internal interface CollatorNumericOrderingLib: Library {
 }
-/** See the [Rust documentation for `CollationNumericOrdering`](https://docs.rs/icu/2.3.1/icu/collator/preferences/enum.CollationNumericOrdering.html) for more information.
+/**
+ * See the [Rust documentation for `CollationNumericOrdering`](https://docs.rs/icu/2.3.1/icu/collator/preferences/enum.CollationNumericOrdering.html) for more information.
 */
 enum class CollatorNumericOrdering {
     Off,

@@ -8,9 +8,10 @@ import com.sun.jna.Structure
 
 internal interface DecimalSignDisplayLib: Library {
 }
-/** ECMA-402 compatible sign display preference.
-*
-*See the [Rust documentation for `SignDisplay`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/enum.SignDisplay.html) for more information.
+/**
+ * ECMA-402 compatible sign display preference.
+ *
+ * See the [Rust documentation for `SignDisplay`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/enum.SignDisplay.html) for more information.
 */
 enum class DecimalSignDisplay {
     Auto,

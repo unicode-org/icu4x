@@ -8,9 +8,10 @@ import com.sun.jna.Structure
 
 internal interface LanguageDisplayUnstableLib: Library {
 }
-/** 🚧 This API is unstable and may experience breaking changes outside major releases.
-*
-*See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/2.3.1/icu/locale/names/enum.LanguageDisplay.html) for more information.
+/**
+ * 🚧 This API is unstable and may experience breaking changes outside major releases.
+ *
+ * See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/2.3.1/icu/locale/names/enum.LanguageDisplay.html) for more information.
 */
 enum class LanguageDisplayUnstable {
     Dialect,

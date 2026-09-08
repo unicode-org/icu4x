@@ -67,10 +67,11 @@ internal class OptionZonedIsoDateTimeNative constructor(): Structure(), Structur
 
 }
 
-/** An ICU4X `ZonedDateTime` object capable of containing a ISO-8601 date, time, and zone.
-*
-*See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedDateTime.html) for more information.
-*/
+/**
+ * An ICU4X `ZonedDateTime` object capable of containing a ISO-8601 date, time, and zone.
+ *
+ * See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedDateTime.html) for more information.
+ */
 class ZonedIsoDateTime (var date: IsoDate, var time: Time, var zone: TimeZoneInfo) {
     companion object {
 
@@ -88,10 +89,11 @@ class ZonedIsoDateTime (var date: IsoDate, var time: Time, var zone: TimeZoneInf
 
         @JvmStatic
         
-        /** Creates a new [ZonedIsoDateTime] from an IXDTF string.
-        *
-        *See the [Rust documentation for `try_strict_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedDateTime.html#method.try_strict_from_str) for more information.
-        */
+        /**
+         * Creates a new [ZonedIsoDateTime] from an IXDTF string.
+         *
+         * See the [Rust documentation for `try_strict_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedDateTime.html#method.try_strict_from_str) for more information.
+         */
         fun strictFromString(v: String, ianaParser: IanaParser): Result<ZonedIsoDateTime> {
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
@@ -110,10 +112,11 @@ class ZonedIsoDateTime (var date: IsoDate, var time: Time, var zone: TimeZoneInf
         }
         @JvmStatic
         
-        /** Creates a new [ZonedIsoDateTime] from an IXDTF string.
-        *
-        *See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
-        */
+        /**
+         * Creates a new [ZonedIsoDateTime] from an IXDTF string.
+         *
+         * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
+         */
         fun fullFromString(v: String, ianaParser: IanaParser, offsetCalculator: VariantOffsetsCalculator): Result<ZonedIsoDateTime> {
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
@@ -132,12 +135,13 @@ class ZonedIsoDateTime (var date: IsoDate, var time: Time, var zone: TimeZoneInf
         }
         @JvmStatic
         
-        /** Creates a new [ZonedIsoDateTime] from milliseconds since epoch (timestamp) and a UTC offset.
-        *
-        *Note: [ZonedIsoDateTime]s created with this constructor can only be formatted using localized offset zone styles.
-        *
-        *See the [Rust documentation for `from_epoch_milliseconds_and_utc_offset`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedDateTime.html#method.from_epoch_milliseconds_and_utc_offset) for more information.
-        */
+        /**
+         * Creates a new [ZonedIsoDateTime] from milliseconds since epoch (timestamp) and a UTC offset.
+         *
+         * Note: [ZonedIsoDateTime]s created with this constructor can only be formatted using localized offset zone styles.
+         *
+         * See the [Rust documentation for `from_epoch_milliseconds_and_utc_offset`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedDateTime.html#method.from_epoch_milliseconds_and_utc_offset) for more information.
+         */
         fun fromEpochMillisecondsAndUtcOffset(epochMilliseconds: Long, utcOffset: UtcOffset): ZonedIsoDateTime {
             
             val returnVal = lib.icu4x_ZonedIsoDateTime_from_epoch_milliseconds_and_utc_offset_mv1(epochMilliseconds, utcOffset.handle);

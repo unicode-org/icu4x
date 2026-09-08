@@ -8,11 +8,12 @@ import com.sun.jna.Structure
 
 internal interface DateTimeWriteErrorLib: Library {
 }
-/** An error when formatting a datetime.
-*
-*Currently never returned by any API.
-*
-*Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/unchecked/enum.FormattedDateTimeUncheckedError.html)
+/**
+ * An error when formatting a datetime.
+ *
+ * Currently never returned by any API.
+ *
+ * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/unchecked/enum.FormattedDateTimeUncheckedError.html)
 */
 enum class DateTimeWriteError {
     Unknown,

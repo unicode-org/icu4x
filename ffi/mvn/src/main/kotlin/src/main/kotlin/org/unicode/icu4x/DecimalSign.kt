@@ -8,9 +8,10 @@ import com.sun.jna.Structure
 
 internal interface DecimalSignLib: Library {
 }
-/** The sign of a Decimal, as shown in formatting.
-*
-*See the [Rust documentation for `Sign`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/enum.Sign.html) for more information.
+/**
+ * The sign of a Decimal, as shown in formatting.
+ *
+ * See the [Rust documentation for `Sign`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/enum.Sign.html) for more information.
 */
 enum class DecimalSign {
     None,

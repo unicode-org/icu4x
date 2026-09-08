@@ -27,10 +27,11 @@ internal interface IsoDateLib: Library {
     fun icu4x_IsoDate_try_add_with_options_mv1(handle: Pointer, duration: DateDurationNative, options: DateAddOptionsNative): ResultPointerInt
     fun icu4x_IsoDate_until_with_options_mv1(handle: Pointer, other: Pointer, options: DateDifferenceOptionsNative): DateDurationNative
 }
-/** An ICU4X Date object capable of containing a ISO-8601 date
-*
-*See the [Rust documentation for `Date`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html) for more information.
-*/
+/**
+ * An ICU4X Date object capable of containing a ISO-8601 date
+ *
+ * See the [Rust documentation for `Date`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html) for more information.
+ */
 class IsoDate internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
@@ -59,10 +60,11 @@ class IsoDate internal constructor (
         internal val lib: IsoDateLib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** Creates a new [IsoDate] from the specified date.
-        *
-        *See the [Rust documentation for `try_new_iso`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.try_new_iso) for more information.
-        */
+        /**
+         * Creates a new [IsoDate] from the specified date.
+         *
+         * See the [Rust documentation for `try_new_iso`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.try_new_iso) for more information.
+         */
         fun create(year: Int, month: UByte, day: UByte): Result<IsoDate> {
             
             val returnVal = lib.icu4x_IsoDate_create_mv1(year, FFIUint8(month), FFIUint8(day));
@@ -78,10 +80,11 @@ class IsoDate internal constructor (
         }
         @JvmStatic
         
-        /** Creates a new [IsoDate] from the given Rata Die
-        *
-        *See the [Rust documentation for `from_rata_die`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.from_rata_die) for more information.
-        */
+        /**
+         * Creates a new [IsoDate] from the given Rata Die
+         *
+         * See the [Rust documentation for `from_rata_die`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.from_rata_die) for more information.
+         */
         fun fromRataDie(rd: Long): IsoDate {
             
             val returnVal = lib.icu4x_IsoDate_from_rata_die_mv1(rd);
@@ -92,10 +95,11 @@ class IsoDate internal constructor (
         }
         @JvmStatic
         
-        /** Creates a new [IsoDate] from an IXDTF string.
-        *
-        *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.try_from_str) for more information.
-        */
+        /**
+         * Creates a new [IsoDate] from an IXDTF string.
+         *
+         * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.try_from_str) for more information.
+         */
         fun fromString(v: String): Result<IsoDate> {
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
@@ -116,10 +120,11 @@ class IsoDate internal constructor (
         }
     }
     
-    /** Convert this date to one in a different calendar
-    *
-    *See the [Rust documentation for `to_calendar`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.to_calendar) for more information.
-    */
+    /**
+     * Convert this date to one in a different calendar
+     *
+     * See the [Rust documentation for `to_calendar`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.to_calendar) for more information.
+     */
     fun toCalendar(calendar: Calendar): Date {
         
         val returnVal = lib.icu4x_IsoDate_to_calendar_mv1(handle, calendar.handle);
@@ -129,8 +134,9 @@ class IsoDate internal constructor (
         return returnOpaque
     }
     
-    /** See the [Rust documentation for `to_any`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.to_any) for more information.
-    */
+    /**
+     * See the [Rust documentation for `to_any`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.to_any) for more information.
+     */
     fun toAny(): Date {
         
         val returnVal = lib.icu4x_IsoDate_to_any_mv1(handle);
@@ -140,63 +146,69 @@ class IsoDate internal constructor (
         return returnOpaque
     }
     
-    /** Returns this date's Rata Die
-    *
-    *See the [Rust documentation for `to_rata_die`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.to_rata_die) for more information.
-    */
+    /**
+     * Returns this date's Rata Die
+     *
+     * See the [Rust documentation for `to_rata_die`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.to_rata_die) for more information.
+     */
     fun toRataDie(): Long {
         
         val returnVal = lib.icu4x_IsoDate_to_rata_die_mv1(handle);
         return (returnVal)
     }
     
-    /** Returns the 1-indexed day in the year for this date
-    *
-    *See the [Rust documentation for `day_of_year`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.day_of_year) for more information.
-    */
+    /**
+     * Returns the 1-indexed day in the year for this date
+     *
+     * See the [Rust documentation for `day_of_year`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.day_of_year) for more information.
+     */
     fun dayOfYear(): UShort {
         
         val returnVal = lib.icu4x_IsoDate_day_of_year_mv1(handle);
         return (returnVal.toUShort())
     }
     
-    /** Returns the 1-indexed day in the month for this date
-    *
-    *See the [Rust documentation for `day_of_month`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.day_of_month) for more information.
-    */
+    /**
+     * Returns the 1-indexed day in the month for this date
+     *
+     * See the [Rust documentation for `day_of_month`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.day_of_month) for more information.
+     */
     fun dayOfMonth(): UByte {
         
         val returnVal = lib.icu4x_IsoDate_day_of_month_mv1(handle);
         return (returnVal.toUByte())
     }
     
-    /** Returns the day in the week for this day
-    *
-    *This is *not* the day of the week, an ordinal number that is locale
-    *dependent.
-    *
-    *See the [Rust documentation for `day_of_week`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.day_of_week) for more information.
-    */
+    /**
+     * Returns the day in the week for this day
+     *
+     * This is *not* the day of the week, an ordinal number that is locale
+     * dependent.
+     *
+     * See the [Rust documentation for `day_of_week`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.day_of_week) for more information.
+     */
     fun dayOfWeek(): Weekday {
         
         val returnVal = lib.icu4x_IsoDate_day_of_week_mv1(handle);
         return (Weekday.fromNative(returnVal))
     }
     
-    /** Returns the day in the week for this day
-    *
-    *See the [Rust documentation for `weekday`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.weekday) for more information.
-    */
+    /**
+     * Returns the day in the week for this day
+     *
+     * See the [Rust documentation for `weekday`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.weekday) for more information.
+     */
     fun weekday(): Weekday {
         
         val returnVal = lib.icu4x_IsoDate_weekday_mv1(handle);
         return (Weekday.fromNative(returnVal))
     }
     
-    /** Returns the week number in this year, using week data
-    *
-    *See the [Rust documentation for `week_of_year`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.week_of_year) for more information.
-    */
+    /**
+     * Returns the week number in this year, using week data
+     *
+     * See the [Rust documentation for `week_of_year`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.week_of_year) for more information.
+     */
     fun weekOfYear(): IsoWeekOfYear {
         
         val returnVal = lib.icu4x_IsoDate_week_of_year_mv1(handle);
@@ -204,74 +216,81 @@ class IsoDate internal constructor (
         return returnStruct
     }
     
-    /** Returns 1-indexed number of the month of this date in its year
-    *
-    *See the [Rust documentation for `ordinal`](https://docs.rs/icu/2.3.1/icu/calendar/types/struct.MonthInfo.html#structfield.ordinal) for more information.
-    *
-    *Additional information: [1](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.month)
-    */
+    /**
+     * Returns 1-indexed number of the month of this date in its year
+     *
+     * See the [Rust documentation for `ordinal`](https://docs.rs/icu/2.3.1/icu/calendar/types/struct.MonthInfo.html#structfield.ordinal) for more information.
+     *
+     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.month)
+     */
     fun month(): UByte {
         
         val returnVal = lib.icu4x_IsoDate_month_mv1(handle);
         return (returnVal.toUByte())
     }
     
-    /** Returns the year number in the current era for this date
-    *
-    *For calendars without an era, returns the extended year
-    *
-    *See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.3.1/icu/calendar/types/enum.YearInfo.html#method.extended_year) for more information.
-    */
+    /**
+     * Returns the year number in the current era for this date
+     *
+     * For calendars without an era, returns the extended year
+     *
+     * See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.3.1/icu/calendar/types/enum.YearInfo.html#method.extended_year) for more information.
+     */
     fun year(): Int {
         
         val returnVal = lib.icu4x_IsoDate_year_mv1(handle);
         return (returnVal)
     }
     
-    /** Returns if the year is a leap year for this date
-    *
-    *See the [Rust documentation for `is_in_leap_year`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.is_in_leap_year) for more information.
-    */
+    /**
+     * Returns if the year is a leap year for this date
+     *
+     * See the [Rust documentation for `is_in_leap_year`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.is_in_leap_year) for more information.
+     */
     fun isInLeapYear(): Boolean {
         
         val returnVal = lib.icu4x_IsoDate_is_in_leap_year_mv1(handle);
         return (returnVal > 0)
     }
     
-    /** Returns the number of months in the year represented by this date
-    *
-    *See the [Rust documentation for `months_in_year`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.months_in_year) for more information.
-    */
+    /**
+     * Returns the number of months in the year represented by this date
+     *
+     * See the [Rust documentation for `months_in_year`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.months_in_year) for more information.
+     */
     fun monthsInYear(): UByte {
         
         val returnVal = lib.icu4x_IsoDate_months_in_year_mv1(handle);
         return (returnVal.toUByte())
     }
     
-    /** Returns the number of days in the month represented by this date
-    *
-    *See the [Rust documentation for `days_in_month`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.days_in_month) for more information.
-    */
+    /**
+     * Returns the number of days in the month represented by this date
+     *
+     * See the [Rust documentation for `days_in_month`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.days_in_month) for more information.
+     */
     fun daysInMonth(): UByte {
         
         val returnVal = lib.icu4x_IsoDate_days_in_month_mv1(handle);
         return (returnVal.toUByte())
     }
     
-    /** Returns the number of days in the year represented by this date
-    *
-    *See the [Rust documentation for `days_in_year`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.days_in_year) for more information.
-    */
+    /**
+     * Returns the number of days in the year represented by this date
+     *
+     * See the [Rust documentation for `days_in_year`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.days_in_year) for more information.
+     */
     fun daysInYear(): UShort {
         
         val returnVal = lib.icu4x_IsoDate_days_in_year_mv1(handle);
         return (returnVal.toUShort())
     }
     
-    /** Returns a new [IsoDate] with the given duration added to it.
-    *
-    *See the [Rust documentation for `try_added_with_options`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.try_added_with_options) for more information.
-    */
+    /**
+     * Returns a new [IsoDate] with the given duration added to it.
+     *
+     * See the [Rust documentation for `try_added_with_options`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.try_added_with_options) for more information.
+     */
     fun tryAddWithOptions(duration: DateDuration, options: DateAddOptions): Result<IsoDate> {
         
         val returnVal = lib.icu4x_IsoDate_try_add_with_options_mv1(handle, duration.toNative(), options.toNative());
@@ -286,10 +305,11 @@ class IsoDate internal constructor (
         }
     }
     
-    /** Calculating the duration between `other - self`
-    *
-    *See the [Rust documentation for `try_until_with_options`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.try_until_with_options) for more information.
-    */
+    /**
+     * Calculating the duration between `other - self`
+     *
+     * See the [Rust documentation for `try_until_with_options`](https://docs.rs/icu/2.3.1/icu/calendar/struct.Date.html#method.try_until_with_options) for more information.
+     */
     fun untilWithOptions(other: IsoDate, options: DateDifferenceOptions): DateDuration {
         
         val returnVal = lib.icu4x_IsoDate_until_with_options_mv1(handle, other.handle, options.toNative());
