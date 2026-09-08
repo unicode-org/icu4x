@@ -162,6 +162,7 @@ macro_rules! impl_displaynames_v1 {
         );
 
         #[cfg(test)]
+        #[cfg(feature = "networking")]
         impl $crate::displaynames::coverage_experimental::CheckAltCoverage for $marker {
             fn contains_key<T>(
                 key: &$crate::cldr_serde::alt::WithAlt<T>,
@@ -321,6 +322,7 @@ macro_rules! impl_displaynames_menu_v1 {
         }
 
         #[cfg(test)]
+        #[cfg(feature = "networking")]
         impl $crate::displaynames::coverage_experimental::CheckAltCoverage for $marker {
             fn contains_key<T>(
                 key: &$crate::cldr_serde::alt::WithAlt<T>,

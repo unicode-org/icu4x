@@ -8,6 +8,7 @@
 
 use crate::cldr_cache::CldrCache;
 #[cfg(test)]
+#[cfg(feature = "networking")]
 use crate::cldr_serde::alt::WithAlt;
 use crate::cldr_serde::alt::{Alt, Menu};
 use crate::source::SerdeCache;
@@ -19,6 +20,7 @@ use serde::Deserialize;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 #[cfg(test)]
+#[cfg(feature = "networking")]
 use std::collections::HashMap;
 use std::sync::OnceLock;
 use writeable::Writeable;
