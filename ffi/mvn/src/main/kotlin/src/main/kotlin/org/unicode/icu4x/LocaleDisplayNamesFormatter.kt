@@ -12,9 +12,9 @@ internal interface LocaleDisplayNamesFormatterLib: Library {
     fun icu4x_LocaleDisplayNamesFormatter_of_mv1(handle: Pointer, locale: Pointer, write: Pointer): Unit
 }
 /**
- * 🚧 This API is unstable and may experience breaking changes outside major releases.
- *
  * See the [Rust documentation for `LocaleDisplayNamesFormatter`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html) for more information.
+ *
+ * 🚧 This API is unstable and may experience breaking changes outside major releases.
  */
 class LocaleDisplayNamesFormatter internal constructor (
     internal val handle: Pointer,
@@ -45,11 +45,11 @@ class LocaleDisplayNamesFormatter internal constructor (
         @JvmStatic
         
         /**
-         * 🚧 This API is unstable and may experience breaking changes outside major releases.
-         *
          * Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using compiled data.
          *
          * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun create(locale: Locale, options: DisplayNamesOptions): Result<LocaleDisplayNamesFormatter> {
             
@@ -67,11 +67,11 @@ class LocaleDisplayNamesFormatter internal constructor (
         @JvmStatic
         
         /**
-         * 🚧 This API is unstable and may experience breaking changes outside major releases.
-         *
          * Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using a particular data source.
          *
          * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun create_with_provider(provider: DataProvider, locale: Locale, options: DisplayNamesOptions): Result<LocaleDisplayNamesFormatter> {
             
@@ -89,12 +89,11 @@ class LocaleDisplayNamesFormatter internal constructor (
     }
     
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * Returns the locale-specific display name of a locale.
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
      * See the [Rust documentation for `of`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
+     *
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
      */
     fun of(locale: Locale): String {
         val write = DW.lib.diplomat_buffer_write_create(0)

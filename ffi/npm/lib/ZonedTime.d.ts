@@ -11,6 +11,8 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
  * An ICU4X `ZonedTime` object capable of containing a ISO-8601 time, and zone.
  *
  * See the [Rust documentation for `ZonedTime`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedTime.html) for more information.
+ *
+ * @experimental
  */
 export class ZonedTime {
     get time(): Time;
@@ -23,6 +25,8 @@ export class ZonedTime {
      * Creates a new {@link ZonedTime} from an IXDTF string.
      *
      * See the [Rust documentation for `try_strict_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedTime.html#method.try_strict_from_str) for more information.
+     *
+     * @experimental
      */
     static strictFromString(v: string, ianaParser: IanaParser): ZonedTime;
 
@@ -30,6 +34,8 @@ export class ZonedTime {
      * Creates a new {@link ZonedTime} from a location-only IXDTF string.
      *
      * See the [Rust documentation for `try_location_only_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedTime.html#method.try_location_only_from_str) for more information.
+     *
+     * @experimental
      */
     static locationOnlyFromString(v: string, ianaParser: IanaParser): ZonedTime;
 
@@ -37,6 +43,8 @@ export class ZonedTime {
      * Creates a new {@link ZonedTime} from an offset-only IXDTF string.
      *
      * See the [Rust documentation for `try_offset_only_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedTime.html#method.try_offset_only_from_str) for more information.
+     *
+     * @experimental
      */
     static offsetOnlyFromString(v: string): ZonedTime;
 
@@ -44,6 +52,8 @@ export class ZonedTime {
      * Creates a new {@link ZonedTime} from an IXDTF string, without requiring the offset.
      *
      * See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedTime.html#method.try_lenient_from_str) for more information.
+     *
+     * @experimental
      */
     static lenientFromString(v: string, ianaParser: IanaParser): ZonedTime;
 }

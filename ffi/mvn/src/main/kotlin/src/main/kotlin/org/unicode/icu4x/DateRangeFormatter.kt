@@ -31,9 +31,9 @@ internal interface DateRangeFormatterLib: Library {
     fun icu4x_DateRangeFormatter_format_same_calendar_mv1(handle: Pointer, startDate: Pointer, endDate: Pointer, write: Pointer): Unit
 }
 /**
- * 🚧 This API is unstable and may experience breaking changes outside major releases.
- *
  * See the [Rust documentation for `DateRangeFormatter`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html) for more information.
+ *
+ * 🚧 This API is unstable and may experience breaking changes outside major releases.
  */
 class DateRangeFormatter internal constructor (
     internal val handle: Pointer,
@@ -64,13 +64,13 @@ class DateRangeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * 🚧 This API is unstable and may experience breaking changes outside major releases.
-         *
          * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
          *
          * See the [Rust documentation for `D`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.D.html) for more information.
          *
          * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.D.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.D.html#method.for_length)
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createD(locale: Locale, length: DateTimeLength?, alignment: DateTimeAlignment?): Result<DateRangeFormatter> {
             
@@ -88,13 +88,13 @@ class DateRangeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * 🚧 This API is unstable and may experience breaking changes outside major releases.
-         *
          * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
          *
          * See the [Rust documentation for `D`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.D.html) for more information.
          *
          * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.D.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.D.html#method.for_length)
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createDWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength?, alignment: DateTimeAlignment?): Result<DateRangeFormatter> {
             
@@ -112,13 +112,13 @@ class DateRangeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * 🚧 This API is unstable and may experience breaking changes outside major releases.
-         *
          * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
          *
          * See the [Rust documentation for `MD`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MD.html) for more information.
          *
          * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MD.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MD.html#method.for_length)
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createMd(locale: Locale, length: DateTimeLength?, alignment: DateTimeAlignment?): Result<DateRangeFormatter> {
             
@@ -136,13 +136,13 @@ class DateRangeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * 🚧 This API is unstable and may experience breaking changes outside major releases.
-         *
          * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
          *
          * See the [Rust documentation for `MD`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MD.html) for more information.
          *
          * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MD.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MD.html#method.for_length)
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createMdWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength?, alignment: DateTimeAlignment?): Result<DateRangeFormatter> {
             
@@ -160,13 +160,13 @@ class DateRangeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * 🚧 This API is unstable and may experience breaking changes outside major releases.
-         *
          * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
          *
          * See the [Rust documentation for `YMD`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMD.html) for more information.
          *
          * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMD.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMD.html#method.with_year_style), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMD.html#method.for_length)
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createYmd(locale: Locale, length: DateTimeLength?, alignment: DateTimeAlignment?, yearStyle: YearStyle?): Result<DateRangeFormatter> {
             
@@ -184,13 +184,13 @@ class DateRangeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * 🚧 This API is unstable and may experience breaking changes outside major releases.
-         *
          * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
          *
          * See the [Rust documentation for `YMD`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMD.html) for more information.
          *
          * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMD.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMD.html#method.with_year_style), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMD.html#method.for_length)
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createYmdWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength?, alignment: DateTimeAlignment?, yearStyle: YearStyle?): Result<DateRangeFormatter> {
             
@@ -208,13 +208,13 @@ class DateRangeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * 🚧 This API is unstable and may experience breaking changes outside major releases.
-         *
          * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
          *
          * See the [Rust documentation for `DE`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DE.html) for more information.
          *
          * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DE.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DE.html#method.for_length)
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createDe(locale: Locale, length: DateTimeLength?, alignment: DateTimeAlignment?): Result<DateRangeFormatter> {
             
@@ -232,13 +232,13 @@ class DateRangeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * 🚧 This API is unstable and may experience breaking changes outside major releases.
-         *
          * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
          *
          * See the [Rust documentation for `DE`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DE.html) for more information.
          *
          * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DE.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DE.html#method.for_length)
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createDeWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength?, alignment: DateTimeAlignment?): Result<DateRangeFormatter> {
             
@@ -256,13 +256,13 @@ class DateRangeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * 🚧 This API is unstable and may experience breaking changes outside major releases.
-         *
          * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
          *
          * See the [Rust documentation for `MDE`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDE.html) for more information.
          *
          * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDE.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDE.html#method.for_length)
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createMde(locale: Locale, length: DateTimeLength?, alignment: DateTimeAlignment?): Result<DateRangeFormatter> {
             
@@ -280,13 +280,13 @@ class DateRangeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * 🚧 This API is unstable and may experience breaking changes outside major releases.
-         *
          * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
          *
          * See the [Rust documentation for `MDE`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDE.html) for more information.
          *
          * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDE.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDE.html#method.for_length)
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createMdeWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength?, alignment: DateTimeAlignment?): Result<DateRangeFormatter> {
             
@@ -304,13 +304,13 @@ class DateRangeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * 🚧 This API is unstable and may experience breaking changes outside major releases.
-         *
          * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
          *
          * See the [Rust documentation for `YMDE`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDE.html) for more information.
          *
          * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDE.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDE.html#method.with_year_style), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDE.html#method.for_length)
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createYmde(locale: Locale, length: DateTimeLength?, alignment: DateTimeAlignment?, yearStyle: YearStyle?): Result<DateRangeFormatter> {
             
@@ -328,13 +328,13 @@ class DateRangeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * 🚧 This API is unstable and may experience breaking changes outside major releases.
-         *
          * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
          *
          * See the [Rust documentation for `YMDE`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDE.html) for more information.
          *
          * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDE.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDE.html#method.with_year_style), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDE.html#method.for_length)
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createYmdeWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength?, alignment: DateTimeAlignment?, yearStyle: YearStyle?): Result<DateRangeFormatter> {
             
@@ -352,13 +352,13 @@ class DateRangeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * 🚧 This API is unstable and may experience breaking changes outside major releases.
-         *
          * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
          *
          * See the [Rust documentation for `E`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.E.html) for more information.
          *
          * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.E.html#method.for_length)
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createE(locale: Locale, length: DateTimeLength?): Result<DateRangeFormatter> {
             
@@ -376,13 +376,13 @@ class DateRangeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * 🚧 This API is unstable and may experience breaking changes outside major releases.
-         *
          * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
          *
          * See the [Rust documentation for `E`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.E.html) for more information.
          *
          * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.E.html#method.for_length)
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createEWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength?): Result<DateRangeFormatter> {
             
@@ -400,13 +400,13 @@ class DateRangeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * 🚧 This API is unstable and may experience breaking changes outside major releases.
-         *
          * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
          *
          * See the [Rust documentation for `M`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.M.html) for more information.
          *
          * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.M.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.M.html#method.for_length)
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createM(locale: Locale, length: DateTimeLength?, alignment: DateTimeAlignment?): Result<DateRangeFormatter> {
             
@@ -424,13 +424,13 @@ class DateRangeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * 🚧 This API is unstable and may experience breaking changes outside major releases.
-         *
          * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
          *
          * See the [Rust documentation for `M`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.M.html) for more information.
          *
          * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.M.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.M.html#method.for_length)
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createMWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength?, alignment: DateTimeAlignment?): Result<DateRangeFormatter> {
             
@@ -448,13 +448,13 @@ class DateRangeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * 🚧 This API is unstable and may experience breaking changes outside major releases.
-         *
          * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
          *
          * See the [Rust documentation for `YM`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YM.html) for more information.
          *
          * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YM.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YM.html#method.with_year_style), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YM.html#method.for_length)
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createYm(locale: Locale, length: DateTimeLength?, alignment: DateTimeAlignment?, yearStyle: YearStyle?): Result<DateRangeFormatter> {
             
@@ -472,13 +472,13 @@ class DateRangeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * 🚧 This API is unstable and may experience breaking changes outside major releases.
-         *
          * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
          *
          * See the [Rust documentation for `YM`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YM.html) for more information.
          *
          * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YM.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YM.html#method.with_year_style), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YM.html#method.for_length)
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createYmWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength?, alignment: DateTimeAlignment?, yearStyle: YearStyle?): Result<DateRangeFormatter> {
             
@@ -496,13 +496,13 @@ class DateRangeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * 🚧 This API is unstable and may experience breaking changes outside major releases.
-         *
          * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
          *
          * See the [Rust documentation for `Y`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.Y.html) for more information.
          *
          * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.Y.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.Y.html#method.with_year_style), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.Y.html#method.for_length)
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createY(locale: Locale, length: DateTimeLength?, alignment: DateTimeAlignment?, yearStyle: YearStyle?): Result<DateRangeFormatter> {
             
@@ -520,13 +520,13 @@ class DateRangeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * 🚧 This API is unstable and may experience breaking changes outside major releases.
-         *
          * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
          *
          * See the [Rust documentation for `Y`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.Y.html) for more information.
          *
          * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.Y.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.Y.html#method.with_year_style), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.Y.html#method.for_length)
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createYWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength?, alignment: DateTimeAlignment?, yearStyle: YearStyle?): Result<DateRangeFormatter> {
             
@@ -544,9 +544,9 @@ class DateRangeFormatter internal constructor (
     }
     
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.format) for more information.
+     *
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
      */
     fun formatIso(startIsoDate: IsoDate, endIsoDate: IsoDate): String {
         val write = DW.lib.diplomat_buffer_write_create(0)
@@ -557,9 +557,9 @@ class DateRangeFormatter internal constructor (
     }
     
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.format) for more information.
+     *
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
      */
     fun formatSameCalendar(startDate: Date, endDate: Date): String {
         val write = DW.lib.diplomat_buffer_write_create(0)

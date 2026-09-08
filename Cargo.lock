@@ -777,12 +777,12 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.16.1"
-source = "git+https://github.com/robertbastian/diplomat?rev=eb8f0dc17e17e25d2ed610fc5a359b3ebeee038e#eb8f0dc17e17e25d2ed610fc5a359b3ebeee038e"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=7f5b1556c4f392f69be99d47c24a7d1dbdddb8e7#7f5b1556c4f392f69be99d47c24a7d1dbdddb8e7"
 dependencies = [
  "askama",
  "clap",
  "colored",
- "diplomat_core 0.16.1 (git+https://github.com/robertbastian/diplomat?rev=eb8f0dc17e17e25d2ed610fc5a359b3ebeee038e)",
+ "diplomat_core 0.16.1 (git+https://github.com/rust-diplomat/diplomat?rev=7f5b1556c4f392f69be99d47c24a7d1dbdddb8e7)",
  "heck 0.5.0",
  "indenter",
  "itertools 0.14.0",
@@ -810,7 +810,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.16.1"
-source = "git+https://github.com/robertbastian/diplomat?rev=eb8f0dc17e17e25d2ed610fc5a359b3ebeee038e#eb8f0dc17e17e25d2ed610fc5a359b3ebeee038e"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=7f5b1556c4f392f69be99d47c24a7d1dbdddb8e7#7f5b1556c4f392f69be99d47c24a7d1dbdddb8e7"
 dependencies = [
  "annotate-snippets",
  "either",

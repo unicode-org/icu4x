@@ -15,6 +15,8 @@ internal interface PluralRulesWithRangesLib: Library {
 }
 /**
  * See the [Rust documentation for `PluralRulesWithRanges`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html) for more information.
+ *
+ * 🚧 This API is unstable and may experience breaking changes outside major releases.
  */
 class PluralRulesWithRanges internal constructor (
     internal val handle: Pointer,
@@ -48,6 +50,8 @@ class PluralRulesWithRanges internal constructor (
          * construct a [PluralRulesWithRanges] for the given locale, for cardinal numbers, using compiled data.
          *
          * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createCardinal(locale: Locale): Result<PluralRulesWithRanges> {
             
@@ -68,6 +72,8 @@ class PluralRulesWithRanges internal constructor (
          * construct a [PluralRulesWithRanges] for the given locale, for cardinal numbers, using a particular data source.
          *
          * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createCardinalWithProvider(provider: DataProvider, locale: Locale): Result<PluralRulesWithRanges> {
             
@@ -88,6 +94,8 @@ class PluralRulesWithRanges internal constructor (
          * Construct a [PluralRulesWithRanges] for the given locale, for ordinal numbers, using compiled data.
          *
          * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createOrdinal(locale: Locale): Result<PluralRulesWithRanges> {
             
@@ -108,6 +116,8 @@ class PluralRulesWithRanges internal constructor (
          * Construct a [PluralRulesWithRanges] for the given locale, for ordinal numbers, using a particular data source.
          *
          * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
         fun createOrdinalWithProvider(provider: DataProvider, locale: Locale): Result<PluralRulesWithRanges> {
             
@@ -128,6 +138,8 @@ class PluralRulesWithRanges internal constructor (
      * Get the category for a given number represented as operands
      *
      * See the [Rust documentation for `category_for_range`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.category_for_range) for more information.
+     *
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
      */
     fun categoryForRange(start: PluralOperands, end: PluralOperands): PluralCategory {
         
