@@ -14,6 +14,8 @@ const TimeRangeFormatter_box_destroy_registry = new FinalizationRegistry((ptr) =
 });
 
 /**
+ * 🚧 This API is unstable and may experience breaking changes outside major releases.
+ *
  * See the [Rust documentation for `NoCalendarRangeFormatter`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html) for more information.
  */
 export class TimeRangeFormatter {
@@ -46,6 +48,8 @@ export class TimeRangeFormatter {
 
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `T`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html) for more information.
@@ -77,6 +81,8 @@ export class TimeRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `T`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html) for more information.
@@ -108,6 +114,8 @@ export class TimeRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.format) for more information.
      */
     format(startTime, endTime) {
@@ -126,6 +134,8 @@ export class TimeRangeFormatter {
     }
 
     /**
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `T`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html) for more information.
