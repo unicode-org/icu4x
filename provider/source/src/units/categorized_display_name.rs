@@ -66,8 +66,8 @@ impl SourceDataProvider {
         category: &str,
     ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         let mut data_locales = HashSet::new();
-        let numbers = self.cldr()?.numbers();
-        let locales = numbers.list_locales()?;
+        let units = self.cldr()?.units();
+        let locales = units.list_locales()?;
         for locale in locales {
             // Load and parse the unit constants from the supplemental data file.
             let preferences: &cldr_serde::units::preferences::Resource = self
