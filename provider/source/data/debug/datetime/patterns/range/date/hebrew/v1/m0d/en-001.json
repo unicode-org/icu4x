@@ -1,5 +1,5 @@
 {
-  "has_explicit_short": true,
+  "has_explicit_medium": true,
   "variant_pattern_indices": [
     0,
     0,
@@ -10,15 +10,17 @@
   ],
   "elements": [
     {
-      "header": 4,
+      "header": 6,
       "patterns": [
-        "MMM"
+        "d–d MMMM",
+        "d MMMM"
       ]
     },
     {
-      "header": 8,
+      "header": 6,
       "patterns": [
-        "M–M"
+        "d – d MMM",
+        "d MMM"
       ]
     }
   ]

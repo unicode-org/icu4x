@@ -160,7 +160,7 @@
           "BDT": {
             "displayName": "Bangladeshi Taka",
             "displayName-count-one": "Bangladeshi taka",
-            "displayName-count-other": "Bangladeshi takas",
+            "displayName-count-other": "Bangladeshi taka",
             "symbol": "BDT",
             "symbol-alt-narrow": "৳"
           },
@@ -1339,9 +1339,9 @@
             "symbol": "SLE"
           },
           "SLL": {
-            "displayName": "Sierra Leonean Leone (1964—2022)",
-            "displayName-count-one": "Sierra Leonean leone (1964—2022)",
-            "displayName-count-other": "Sierra Leonean leones (1964—2022)",
+            "displayName": "Sierra Leonean Leone (1964–2022)",
+            "displayName-count-one": "Sierra Leonean leone (1964–2022)",
+            "displayName-count-other": "Sierra Leonean leones (1964–2022)",
             "symbol": "SLL"
           },
           "SOS": {
@@ -1459,7 +1459,7 @@
           "TRY": {
             "displayName": "Turkish Lira",
             "displayName-count-one": "Turkish lira",
-            "displayName-count-other": "Turkish Lira",
+            "displayName-count-other": "Turkish lira",
             "symbol": "TRY",
             "symbol-alt-narrow": "₺",
             "symbol-alt-variant": "TL"

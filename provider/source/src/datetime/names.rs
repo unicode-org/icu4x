@@ -424,10 +424,10 @@ fn months_convert(
 
     if calendar == DatagenCalendar::Hebrew
         && length == Length::Narrow
-        && months["10"].starts_with(&months["1"])
-        && months["11"].starts_with(&months["1"])
-        && months["12"].starts_with(&months["1"])
-        && months["13"].starts_with(&months["1"])
+        && months[&"10".to_string().into()].starts_with(&months[&"1".to_string().into()])
+        && months[&"11".to_string().into()].starts_with(&months[&"1".to_string().into()])
+        && months[&"12".to_string().into()].starts_with(&months[&"1".to_string().into()])
+        && months[&"13".to_string().into()].starts_with(&months[&"1".to_string().into()])
     {
         // CLDR currently has these locales that have data for Hebrew narrow months:
         // * und: uses digits "6", "7", "7"
@@ -451,27 +451,27 @@ fn months_convert(
 
         Ok(MonthNames::LeapPattern(
             (&[
-                months["1"].as_str(),
-                months["2"].as_str(),
-                months["3"].as_str(),
-                months["4"].as_str(),
-                months["5"].as_str(),
-                months["6"].as_str(),
-                months["7"].as_str(),
-                months["8"].as_str(),
-                months["9"].as_str(),
-                months["10"].as_str(),
-                months["11"].as_str(),
-                months["12"].as_str(),
+                months[&"1".to_string().into()].as_str(),
+                months[&"2".to_string().into()].as_str(),
+                months[&"3".to_string().into()].as_str(),
+                months[&"4".to_string().into()].as_str(),
+                months[&"5".to_string().into()].as_str(),
+                months[&"6".to_string().into()].as_str(),
+                months[&"7".to_string().into()].as_str(),
+                months[&"8".to_string().into()].as_str(),
+                months[&"9".to_string().into()].as_str(),
+                months[&"10".to_string().into()].as_str(),
+                months[&"11".to_string().into()].as_str(),
+                months[&"12".to_string().into()].as_str(),
                 // For lack of a better solution, we call Adar I and Adar II "a" and "b" instead.
                 &SinglePlaceholderPattern::try_from_str(
-                    &format!("{}a", months["6"]),
+                    &format!("{}a", months[&"6".to_string().into()]),
                     Default::default(),
                 )
                 .unwrap()
                 .store,
                 &SinglePlaceholderPattern::try_from_str(
-                    &format!("{}b", months["6"]),
+                    &format!("{}b", months[&"6".to_string().into()]),
                     Default::default(),
                 )
                 .unwrap()
@@ -480,10 +480,10 @@ fn months_convert(
                 .into(),
         ))
     } else if calendar == DatagenCalendar::Hebrew {
-        let shevat = &months["5"];
-        let adar_i = &months["6"];
-        let adar = &months["7"];
-        let adar_ii = &months["7-yeartype-leap"];
+        let shevat = &months[&"5".to_string().into()];
+        let adar_i = &months[&"6".to_string().into()];
+        let adar = &months[&"7".to_string().into()];
+        let adar_ii = &months[&"7-yeartype-leap".to_string().into()];
         // Adar I is the only leap month, so we can hardcode it as the leap pattern. The placeholder
         // is the normal fifth month (Shevat), we can try reducing the data size by using it (but it
         // should not actually match).
@@ -501,18 +501,18 @@ fn months_convert(
         .unwrap();
 
         let symbols = [
-            months["1"].as_str(),
-            months["2"].as_str(),
-            months["3"].as_str(),
-            months["4"].as_str(),
-            months["5"].as_str(),
-            months["7"].as_str(),
-            months["8"].as_str(),
-            months["9"].as_str(),
-            months["10"].as_str(),
-            months["11"].as_str(),
-            months["12"].as_str(),
-            months["13"].as_str(),
+            months[&"1".to_string().into()].as_str(),
+            months[&"2".to_string().into()].as_str(),
+            months[&"3".to_string().into()].as_str(),
+            months[&"4".to_string().into()].as_str(),
+            months[&"5".to_string().into()].as_str(),
+            months[&"7".to_string().into()].as_str(),
+            months[&"8".to_string().into()].as_str(),
+            months[&"9".to_string().into()].as_str(),
+            months[&"10".to_string().into()].as_str(),
+            months[&"11".to_string().into()].as_str(),
+            months[&"12".to_string().into()].as_str(),
+            months[&"13".to_string().into()].as_str(),
             &leap_pattern.store,
             &leap_base_pattern.store,
         ];
@@ -520,14 +520,17 @@ fn months_convert(
     } else {
         let months = months
             .iter()
-            .map(|(k, v)| {
-                let index: usize = k
-                    .parse()
-                    .expect("CLDR month indices must parse as numbers!");
+            .filter_map(|(k, v)| {
+                if k.alt.is_some() {
+                    return None;
+                }
+                let index: usize =
+                    k.t.parse()
+                        .expect("CLDR month indices must parse as numbers!");
                 if index == 0 {
                     panic!("CLDR month indices cannot be zero");
                 }
-                (index, v.as_str())
+                Some((index, v.as_str()))
             })
             .collect::<BTreeMap<_, _>>();
 

@@ -1,18 +1,34 @@
 {
+  "has_explicit_medium": true,
   "variant_pattern_indices": [
     0,
     0,
     0,
-    2,
-    2,
-    2
+    3,
+    4,
+    4
   ],
   "elements": [
+    {
+      "header": 40,
+      "patterns": [
+        "EEEE d MMMM – EEEE d MMMM y G",
+        "EEEE d MMMM y – EEEE d MMMM y G"
+      ]
+    },
     {
       "header": 24,
       "patterns": [
         "E, d MMM – E, d MMM y",
         "E, d MMM y"
+      ]
+    },
+    {
+      "header": 104,
+      "patterns": [
+        "EEEE d MMM – EEEE d MMM y G",
+        "EEEE d MMM y – EEEE d MMM y G",
+        "EEEE d MMM y G"
       ]
     },
     {

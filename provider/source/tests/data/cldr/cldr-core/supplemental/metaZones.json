@@ -1101,7 +1101,8 @@
               {
                 "usesMetazone": {
                   "_mzone": "Chile",
-                  "_to": "2025-03-20 03:00"
+                  "_stdOffset": "-04",
+                  "_dstOffset": "-03"
                 }
               }
             ],
@@ -2023,7 +2024,8 @@
               {
                 "usesMetazone": {
                   "_mzone": "Chile",
-                  "_to": "2016-12-03 23:00"
+                  "_stdOffset": "-04",
+                  "_dstOffset": "-03"
                 }
               }
             ],
