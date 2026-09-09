@@ -8,7 +8,6 @@
 
 #[cfg(feature = "networking")]
 mod download_repo_sources;
-mod make_testdata;
 
 include!("data.rs");
 
