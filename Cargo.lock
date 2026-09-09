@@ -1410,7 +1410,7 @@ version = "2.3.0"
 
 [[package]]
 name = "icu_capi"
-version = "2.3.3"
+version = "2.3.2"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
