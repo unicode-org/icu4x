@@ -70,7 +70,15 @@ fn download_repo_sources() {
     fn expand_paths(in_paths: &[&str], replace_hyphen_by_underscore: bool) -> BTreeSet<String> {
         let mut paths = BTreeSet::new();
         for pattern in in_paths {
-            if pattern.contains("$LOCALES") {
+            if pattern.contains("$EXTRA_NUMBERS_LOCALES") {
+                for locale in EXTRA_NUMBERS_LOCALES.iter() {
+                    let mut string = locale.to_string();
+                    if replace_hyphen_by_underscore {
+                        string = string.replace('-', "_");
+                    }
+                    paths.insert(pattern.replace("$EXTRA_NUMBERS_LOCALES", &string));
+                }
+            } else if pattern.contains("$LOCALES") {
                 for locale in LOCALES.iter() {
                     let mut string = locale.to_string();
                     if replace_hyphen_by_underscore {
