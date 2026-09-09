@@ -26,6 +26,9 @@ Several crates have had patch releases in the 2.3 stream:
   - JavaScript
     - (2.3.1) Add validation to arguments to assure type correctness (https://github.com/rust-diplomat/diplomat/pull/902) (unicode-org#8411)
 - Utils
+  - (0.2.1) `databake`, `databake-derive`
+  - (0.8.4) `yoke`, `yoke-derive`
+  - (0.1.9) `zerofrom`, `zerofrom-derive`
   - (0.11.5, 0.11.6) `zerovec-derive`
     - (0.11.5) Fix soundness issue around multi element buffer validation in ULE derives (unicode-org#8393)
     - (0.11.6) Fix when building with `MIRIFLAGS=-Zmiri-tree-borrows` (unicode-org#8391)
