@@ -142,6 +142,10 @@ pub(crate) enum AbstractFs {
     #[cfg(feature = "networking")]
     Http(String),
     Memory(BTreeMap<&'static str, &'static [u8]>),
+    Overlay {
+        overlay: Box<AbstractFs>,
+        base: Box<AbstractFs>,
+    },
 }
 
 impl Debug for AbstractFs {
@@ -313,9 +317,14 @@ impl AbstractFs {
             }
             #[cfg(feature = "networking")]
             Self::Http(url) => Ok(std::fs::read(Self::download(&format!("{url}/{path}"))?)?),
-            Self::Memory(map) => map.get(path).copied().map(Vec::from).ok_or_else(|| {
-                DataError::custom("Not found in icu4x-datagen's data/").with_display_context(path)
-            }),
+            Self::Memory(map) => map
+                .get(path)
+                .copied()
+                .map(Vec::from)
+                .ok_or_else(|| DataError::custom("Not found in icu4x-datagen's data/")),
+            Self::Overlay { overlay, base } => overlay
+                .read_to_buf(path)
+                .or_else(|_| base.read_to_buf(path)),
         }
     }
 
@@ -375,6 +384,11 @@ impl AbstractFs {
                 .map(String::from)
                 .collect::<HashSet<_>>()
                 .into_iter(),
+            Self::Overlay { overlay, base } => overlay
+                .list(path)?
+                .chain(base.list(path)?)
+                .collect::<HashSet<_>>()
+                .into_iter(),
         })
     }
 
@@ -401,6 +415,9 @@ impl AbstractFs {
             #[cfg(feature = "networking")]
             Self::Http(url) => Self::download(&format!("{url}/{path}")).is_ok(),
             Self::Memory(map) => map.contains_key(path),
+            Self::Overlay { overlay, base } => {
+                overlay.file_exists(path)? || base.file_exists(path)?
+            }
         })
     }
 }
