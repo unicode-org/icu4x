@@ -555,6 +555,26 @@ pub(crate) struct RscdCache {
 
 impl RscdCache {
     pub fn new(root: AbstractFs) -> Self {
+        #[cfg(feature = "unstable")]
+        let root = AbstractFs::Overlay {
+            // Overlay from https://unicode.org/review/pri555/.
+            overlay: Box::new(include_files!(
+                "../data/segmenter/pri555/";
+                "ucd/auxiliary/GraphemeClusterBreakStates.txt",
+                "ucd/auxiliary/GraphemeClusterBreakSymbols.txt",
+                "ucd/auxiliary/GraphemeClusterBreakTransitions.txt",
+                "ucd/auxiliary/LineBreakStates.txt",
+                "ucd/auxiliary/LineBreakSymbols.txt",
+                "ucd/auxiliary/LineBreakTransitions.txt",
+                "ucd/auxiliary/SentenceBreakStates.txt",
+                "ucd/auxiliary/SentenceBreakSymbols.txt",
+                "ucd/auxiliary/SentenceBreakTransitions.txt",
+                "ucd/auxiliary/WordBreakStates.txt",
+                "ucd/auxiliary/WordBreakSymbols.txt",
+                "ucd/auxiliary/WordBreakTransitions.txt",
+            )),
+            base: Box::new(root),
+        };
         Self {
             root,
             ucd_zip: Default::default(),

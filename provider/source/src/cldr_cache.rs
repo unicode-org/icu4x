@@ -7,6 +7,8 @@
 use crate::CoverageLevel;
 use crate::cldr_serde::eras::EraData;
 use crate::datetime::DatagenCalendar;
+#[cfg(feature = "unstable")]
+use crate::source::include_files;
 use crate::source::{AbstractFs, SerdeCache};
 use icu::locale::LanguageIdentifier;
 use icu::locale::LocaleExpander;
@@ -43,6 +45,17 @@ pub(crate) struct CldrCache {
 
 impl CldrCache {
     pub(crate) fn new(root: AbstractFs) -> Self {
+        #[cfg(feature = "unstable")]
+        let root = AbstractFs::Overlay {
+            overlay: Box::new(include_files!(
+                "../data/segmenter/cldr-json/";
+                // CLDR-JSON overlay from https://unicode.org/review/pri555/
+                "cldr-segments-full/segments/el/tailorings.json",
+                "cldr-segments-full/segments/ja/tailorings.json",
+                "cldr-segments-full/segments/und/tailorings.json",
+            )),
+            base: Box::new(root),
+        };
         CldrCache {
             serde_cache: SerdeCache::new(root),
             extended_locale_expander: Default::default(),
