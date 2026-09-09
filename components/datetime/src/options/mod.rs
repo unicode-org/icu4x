@@ -74,6 +74,10 @@ pub enum Length {
     #[default]
     Medium,
     /// A short date; typically numeric, as in “1/1/2000”.
+    ///
+    /// If using `Short`, make sure the context makes it clear that a date is
+    /// being rendered. For example, with a month-day field set, the output
+    /// may be something like "1/2", which isn't obviously a date by itself.
     Short,
 }
 

@@ -11,7 +11,9 @@ internal interface TimeRangeFormatterLib: Library {
     fun icu4x_TimeRangeFormatter_create_with_provider_mv1(provider: Pointer, locale: Pointer, length: OptionInt, timePrecision: OptionInt, alignment: OptionInt): ResultPointerInt
     fun icu4x_TimeRangeFormatter_format_mv1(handle: Pointer, startTime: Pointer, endTime: Pointer, write: Pointer): Unit
 }
-/** See the [Rust documentation for `NoCalendarRangeFormatter`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html) for more information.
+/** 🚧 This API is unstable and may experience breaking changes outside major releases.
+*
+*See the [Rust documentation for `NoCalendarRangeFormatter`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html) for more information.
 */
 class TimeRangeFormatter internal constructor (
     internal val handle: Pointer,
@@ -41,7 +43,9 @@ class TimeRangeFormatter internal constructor (
         internal val lib: TimeRangeFormatterLib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
         *
         *See the [Rust documentation for `T`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html) for more information.
         *
@@ -62,7 +66,9 @@ class TimeRangeFormatter internal constructor (
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
+        /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+        *
+        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
         *
         *See the [Rust documentation for `T`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html) for more information.
         *
@@ -83,7 +89,9 @@ class TimeRangeFormatter internal constructor (
         }
     }
     
-    /** See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.format) for more information.
+    /** 🚧 This API is unstable and may experience breaking changes outside major releases.
+    *
+    *See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.format) for more information.
     */
     fun format(startTime: Time, endTime: Time): String {
         val write = DW.lib.diplomat_buffer_write_create(0)

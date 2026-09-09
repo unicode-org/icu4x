@@ -6,7 +6,7 @@ use super::coverage_experimental::CoverageLevelForXPath;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
-use crate::cldr_serde::displaynames::{Alt, WithAlt};
+use crate::cldr_serde::alt::{Alt, WithAlt};
 use crate::displaynames::extract_names_for_zeromap_struct;
 use icu::experimental::displaynames::provider::*;
 use icu::locale::provider::names::*;

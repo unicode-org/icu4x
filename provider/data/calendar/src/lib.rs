@@ -4,7 +4,7 @@
 
 //! Data for the `icu_calendar` crate
 //!
-//! This data was generated with CLDR version 49.0.0-ALPHA1, Unicode version 18.0.0, and
+//! This data was generated with CLDR version 49.0.0-ALPHA2, Unicode version 18.0.0, and
 //! LSTM segmenter version v0.1.0.
 
 #![no_std]
@@ -19,7 +19,7 @@ include!("../data/mod.rs");
 #[macro_export]
 macro_rules! cldr_tag {
     () => {
-        "49.0.0-ALPHA1"
+        "49.0.0-ALPHA2"
     };
 }
 

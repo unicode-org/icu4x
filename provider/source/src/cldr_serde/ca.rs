@@ -9,6 +9,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-dates-full/main/en/ca-gregorian.json>
 
+use crate::cldr_serde::alt::WithAlt;
 use icu::datetime::provider::semantic_skeletons::marker_attrs::{Context, Length, PatternLength};
 use icu_pattern::DoublePlaceholder;
 use icu_pattern::PatternString;
@@ -100,7 +101,7 @@ impl<Symbols> Contexts<Symbols> {
 }
 
 #[derive(Debug, PartialEq, Clone, Deserialize)]
-pub(crate) struct MonthSymbols(pub(crate) HashMap<String, String>);
+pub(crate) struct MonthSymbols(pub(crate) HashMap<WithAlt<String>, String>);
 #[derive(Debug, PartialEq, Clone, Deserialize)]
 pub(crate) struct MonthPatternSymbols {
     pub(crate) leap: PatternString<SinglePlaceholder>,

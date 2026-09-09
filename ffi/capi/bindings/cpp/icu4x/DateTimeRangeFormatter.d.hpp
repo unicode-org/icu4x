@@ -40,12 +40,16 @@ namespace capi {
 
 namespace icu4x {
 /**
+ * 🚧 This API is unstable and may experience breaking changes outside major releases.
+ *
  * See the [Rust documentation for `DateRangeFormatter`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html) for more information.
  */
 class DateTimeRangeFormatter {
 public:
 
   /**
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
    * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `DT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html) for more information.
@@ -55,6 +59,8 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateTimeRangeFormatter>, icu4x::DateTimeFormatterLoadError> create_dt(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment);
 
   /**
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
    * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `DT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html) for more information.
@@ -64,6 +70,8 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateTimeRangeFormatter>, icu4x::DateTimeFormatterLoadError> create_dt_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment);
 
   /**
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
    * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `MDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html) for more information.
@@ -73,6 +81,8 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateTimeRangeFormatter>, icu4x::DateTimeFormatterLoadError> create_mdt(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment);
 
   /**
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
    * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `MDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html) for more information.
@@ -82,6 +92,8 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateTimeRangeFormatter>, icu4x::DateTimeFormatterLoadError> create_mdt_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment);
 
   /**
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
    * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `YMDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html) for more information.
@@ -91,6 +103,8 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateTimeRangeFormatter>, icu4x::DateTimeFormatterLoadError> create_ymdt(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment, std::optional<icu4x::YearStyle> year_style);
 
   /**
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
    * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `YMDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html) for more information.
@@ -100,6 +114,8 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateTimeRangeFormatter>, icu4x::DateTimeFormatterLoadError> create_ymdt_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment, std::optional<icu4x::YearStyle> year_style);
 
   /**
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
    * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `DET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html) for more information.
@@ -109,6 +125,8 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateTimeRangeFormatter>, icu4x::DateTimeFormatterLoadError> create_det(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment);
 
   /**
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
    * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `DET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html) for more information.
@@ -118,6 +136,8 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateTimeRangeFormatter>, icu4x::DateTimeFormatterLoadError> create_det_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment);
 
   /**
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
    * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `MDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html) for more information.
@@ -127,6 +147,8 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateTimeRangeFormatter>, icu4x::DateTimeFormatterLoadError> create_mdet(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment);
 
   /**
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
    * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `MDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html) for more information.
@@ -136,6 +158,8 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateTimeRangeFormatter>, icu4x::DateTimeFormatterLoadError> create_mdet_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment);
 
   /**
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
    * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `YMDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html) for more information.
@@ -145,6 +169,8 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateTimeRangeFormatter>, icu4x::DateTimeFormatterLoadError> create_ymdet(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment, std::optional<icu4x::YearStyle> year_style);
 
   /**
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
    * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `YMDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html) for more information.
@@ -154,6 +180,8 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateTimeRangeFormatter>, icu4x::DateTimeFormatterLoadError> create_ymdet_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment, std::optional<icu4x::YearStyle> year_style);
 
   /**
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
    * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `ET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html) for more information.
@@ -163,6 +191,8 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateTimeRangeFormatter>, icu4x::DateTimeFormatterLoadError> create_et(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment);
 
   /**
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
    * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `ET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html) for more information.
@@ -172,6 +202,8 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateTimeRangeFormatter>, icu4x::DateTimeFormatterLoadError> create_et_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment);
 
   /**
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
    * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.format) for more information.
    */
   inline std::string format_iso(const icu4x::IsoDate& start_iso_date, const icu4x::Time& start_time, const icu4x::IsoDate& end_iso_date, const icu4x::Time& end_time) const;
@@ -179,6 +211,8 @@ public:
   inline void format_iso_write(const icu4x::IsoDate& start_iso_date, const icu4x::Time& start_time, const icu4x::IsoDate& end_iso_date, const icu4x::Time& end_time, W& writeable_output) const;
 
   /**
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   *
    * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.format) for more information.
    */
   inline std::string format_same_calendar(const icu4x::Date& start_date, const icu4x::Time& start_time, const icu4x::Date& end_date, const icu4x::Time& end_time) const;

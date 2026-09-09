@@ -4,8 +4,8 @@
 /// `icu`'s `_unstable` constructors.
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
-/// * 934B for the lookup data structure (180 data identifiers)
-/// * 278388B[^1] for the actual data (162 unique structs)
+/// * 924B for the lookup data structure (178 data identifiers)
+/// * 278223B[^1] for the actual data (161 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 ///
@@ -23,7 +23,7 @@ macro_rules! __impl_timezone_names_cities_override_v1 {
         #[clippy::msrv = "1.88"]
         impl $provider {
             const DATA_TIMEZONE_NAMES_CITIES_OVERRIDE_V1: icu_provider::baked::zerotrie::Data<icu::datetime::provider::time_zones::TimezoneNamesCitiesOverrideV1> = {
-                const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1zabcdefghijklmnopqrstuvwxyz\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x02\x02\x02\x02\x03\x12?Yp\xB9\xDA\xE9\x03\x1B\x1E\x80\x9B\xBB\xD5\xDD\x02\x08\x1F\xA2\xC3\xE4\xF2\xF5\xFE#\xC5dfksz\x02\x03\x04\x07y\x80\x81\x82\x83t\x84\x85\xC8aeghlrsu\x08\t\x0C\x0E\x10\x13\x1A\x86l-Latn\x87\x88\x89c\x8Ao\x8Ao\x8B\x8Cx\x8D\x8E-Cyrl\x8Fa\x90\0\xC6aeksvy\x02\x05\x08\n\x0C\x90\x01b\x90\x02b\x90\x03\x90\x04\x90\x05\x90\x06\xC4aeos\x02\t\x0C\x90\x07\x90\x08-CH\x90\ti\x90\nb\x90\x0B\xC7elnostu\x02\x0C\"$79\x90\x0C-polyton\x90\r-\xC40ACG\x04\x07\n01\x90\x0EU\x90\x0FA\x90\x10B\x90\x0F\x90\x11\x90\x12-\xC34MU\x04\x0719\x90\x13X\x90\x14S\x90\x15\x90\x16\x90\x17\xC5aiory\x07\x0C\x0E\x15\x90\x18-AF\x90\x19\x90\x1Al\x90\x1B\x90\x1C\x90\x1D-CA\x90\x1E\x90\x1F\xC3adl\x05\x07\x90 a\x90\0\x90!\x90\"\xC5airsu\x02\t\x0B\x0E\x90#-Latn\x90$\x90%b\x90&\x90'\xC6adegst\x02\x04\x06\x08\n\x90(\x90)\x90*\x90+\x90,\x90-v\x90.\xCAbegikosuxy\x03\x0B\x0E\x10\x19#13Ld\x90/\xC2ak\x02\x900\x901p\x902\x903\x904-Arab\x905k\x906-Latn\x907\x908\xC2-h\x06Deva\x909\x90:\x90;v\x90<-\xC3DOT\x05\neva\x90=rya\x90>elu\x90?\x90@\xC6bilmtv\x02\x05\x08\x0B\r\x90Aj\x90Bd\x90Co\x90\0\x90D\x90E\xC7aiknrst\x03\x05\x07\x0C\x0E\x10i\x90F\x90G\x90H\x90Ii\x90J\x90K\x90L\x90M\xC6delnos\x03\x05\x07\t\x0Bs\x90\0\x90N\x90O\x90P\x90Qo\x90\0\xC2cm\x02\x90\0\x90R\xC6clmrst\x03\x05\x08\x0B\x12m\x90S\x90Ts\x90Ug\x90\0\x90V-PK\x90W\x90X-PT\x90Yu\x90Zc\x90\0\xC5amouw\x02\x04\x06\x0Bj\x8A\x90[\x90\\-UA\x90]\x90\0\xCEacdhkloqrtuvwz\x05\n\x13\x16\x18\x1A\x1C\x1ELNPWd\x90^h\x90_\x90`n\x90a\x90b-Deva\x90cn\x90d\x90e\x90f\x90g\x90h\x90i-\xC5BCLMX\x03\x0B\x1B\x1EA\x90jyrl-ME\x90matn\x90n-\xC2BX\x03A\x90oK\x90pE\x90kK\x90l\x90\0\x90q\x90r-FI\x90s\x90t-\xC2CK\x03D\x90uE\x90vl\x90\0\xC8giknorty\x02\x04\x06\x08\n\x0C\x0E\x90w\x90x\x90y\x90\0\x90z\x90{\x90|v\x90}\xC5gknrz\x02\x04\x07\x0E\x90~\x90\x7Fd\x91\0\x91\x01-IN\x91\x02\x91\x03-Cyrl\x91\x04\xC3eim\x03\x05c\x91\x05\x91\x06w\x90\0o\x91\x07\xC2hn\x02\x91\x08r\x91\t\xC3oru\x07\x15\x91\n-BJ\x91\x0Bl\x91\x0C-\xC2CV\x03O\x91\rE\x91\re\x91\x0E-Hans\x91\x0F\xC3ahu\x02\r\x90\0-\xC2HM\x03K\x91\x10O\x91\x10\x91\x11" };
+                const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1zabcdefghijklmnopqrstuvwxyz\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x02\x02\x03\x12?Yp\xAF\xD0\xDF\xF9\x11\x14v\x91\xB1\xCB\xD3\xF8\xFE\x15\x98\xB9\xDA\xE8\xEB\xF4\x19\xC5dfksz\x02\x03\x04\x07y\x80\x81\x82\x83t\x84\x85\xC8aeghlrsu\x08\t\x0C\x0E\x10\x13\x1A\x86l-Latn\x87\x88\x89c\x8Ao\x8Ao\x8B\x8Cx\x8D\x8E-Cyrl\x8Fa\x90\0\xC6aeksvy\x02\x05\x08\n\x0C\x90\x01b\x90\x02b\x90\x03\x90\x04\x90\x05\x90\x06\xC4aeos\x02\t\x0C\x90\x07\x90\x08-CH\x90\ti\x90\nb\x90\x0B\xC7elnostu\x02\x0C\x18\x1A-/\x90\x0C-polyton\x90\r-\xC20C\x0401\x90\x0EA\x90\x0F\x90\x10\x90\x11-\xC34MU\x04\x0719\x90\x12X\x90\x13S\x90\x14\x90\x15\x90\x16\xC5aiory\x07\x0C\x0E\x15\x90\x17-AF\x90\x18\x90\x19l\x90\x1A\x90\x1B\x90\x1C-CA\x90\x1D\x90\x1E\xC3adl\x05\x07\x90\x1Fa\x90\0\x90 \x90!\xC5airsu\x02\t\x0B\x0E\x90\"-Latn\x90#\x90$b\x90%\x90&\xC6adegst\x02\x04\x06\x08\n\x90'\x90(\x90)\x90*\x90+\x90,v\x90-\xCAbegikosuxy\x03\x0B\x0E\x10\x19#13Ld\x90.\xC2ak\x02\x90/\x900p\x901\x902\x903-Arab\x904k\x905-Latn\x906\x907\xC2-h\x06Deva\x908\x909\x90:v\x90;-\xC3DOT\x05\neva\x90<rya\x90=elu\x90>\x90?\xC6bilmtv\x02\x05\x08\x0B\r\x90@j\x90Ad\x90Bo\x90\0\x90C\x90D\xC7aiknrst\x03\x05\x07\x0C\x0E\x10i\x90E\x90F\x90G\x90Hi\x90I\x90J\x90K\x90L\xC6delnos\x03\x05\x07\t\x0Bs\x90\0\x90M\x90N\x90O\x90Po\x90\0\xC2cm\x02\x90\0\x90Q\xC6clmrst\x03\x05\x08\x0B\x12m\x90R\x90Ss\x90Tg\x90\0\x90U-PK\x90V\x90W-PT\x90Xu\x90Yc\x90\0\xC5amouw\x02\x04\x06\x0Bj\x8A\x90Z\x90[-UA\x90\\\x90\0\xCEacdhkloqrtuvwz\x05\n\x13\x16\x18\x1A\x1C\x1ELNPWd\x90]h\x90^\x90_n\x90`\x90a-Deva\x90bn\x90c\x90d\x90e\x90f\x90g\x90h-\xC5BCLMX\x03\x0B\x1B\x1EA\x90iyrl-ME\x90latn\x90m-\xC2BX\x03A\x90nK\x90oE\x90jK\x90k\x90\0\x90p\x90q-FI\x90r\x90s-\xC2CK\x03D\x90tE\x90ul\x90\0\xC8giknorty\x02\x04\x06\x08\n\x0C\x0E\x90v\x90w\x90x\x90\0\x90y\x90z\x90{v\x90|\xC5gknrz\x02\x04\x07\x0E\x90}\x90~d\x90\x7F\x91\0-IN\x91\x01\x91\x02-Cyrl\x91\x03\xC3eim\x03\x05c\x91\x04\x91\x05w\x90\0o\x91\x06\xC2hn\x02\x91\x07r\x91\x08\xC3oru\x07\x15\x91\t-BJ\x91\nl\x91\x0B-\xC2CV\x03O\x91\x0CE\x91\x0Ce\x91\r-Hans\x91\x0E\xC3ahu\x02\r\x90\0-\xC2HM\x03K\x91\x0FO\x91\x0F\x91\x10" };
                 const VALUES: &'static [<icu::datetime::provider::time_zones::TimezoneNamesCitiesOverrideV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct] = &[
                     icu::datetime::provider::time_zones::ExemplarCities {
                         exemplars: unsafe {
@@ -208,19 +208,13 @@ macro_rules! __impl_timezone_names_cities_override_v1 {
                     icu::datetime::provider::time_zones::ExemplarCities {
                         exemplars: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"knbas\0\0\0shshn\0\0\0vcsvd\0\0\0vistt\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x08\0\x11\0\x1B\0St KittsSt HelenaSt VincentSt Thomas") })
-                        },
-                    },
-                    icu::datetime::provider::time_zones::ExemplarCities {
-                        exemplars: unsafe {
-                            #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"knbas\0\0\0vcsvd\0\0\0vistt\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x08\0\x12\0St KittsSt VincentSt Thomas") })
                         },
                     },
                     icu::datetime::provider::time_zones::ExemplarCities {
                         exemplars: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"knbas\0\0\0momfm\0\0\0shshn\0\0\0vcsvd\0\0\0vistt\0\0\0wfmau\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x06\0\x0B\0\x10\0\x1C\0)\x005\0Saint KittsMacaoSaint HelenaSaint VincentSaint ThomasWallis & Futuna") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"knbas\0\0\0momfm\0\0\0vcsvd\0\0\0vistt\0\0\0wfmau\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x0B\0\x10\0\x1D\0)\0Saint KittsMacaoSaint VincentSaint ThomasWallis & Futuna") })
                         },
                     },
                     icu::datetime::provider::time_zones::ExemplarCities {
@@ -340,7 +334,7 @@ macro_rules! __impl_timezone_names_cities_override_v1 {
                     icu::datetime::provider::time_zones::ExemplarCities {
                         exemplars: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"bjptn\0\0\0erasm\0\0\0fotho\0\0\0gpsbh\0\0\0knbas\0\0\0lccas\0\0\0momfm\0\0\0pyasu\0\0\0shshn\0\0\0sttms\0\0\0vcsvd\0\0\0vistt\0\0\0vnsgn\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\r\0\n\0\x10\0\x16\0#\0+\x003\08\0@\0I\0Q\0[\0d\0Porto NovoAsmeraFaeroeSt BarthelemySt KittsSt LuciaMacauAsuncionSt HelenaSao TomeSt VincentSt ThomasSaigon") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"bjptn\0\0\0erasm\0\0\0fotho\0\0\0gpsbh\0\0\0knbas\0\0\0lccas\0\0\0momfm\0\0\0pyasu\0\0\0sttms\0\0\0vcsvd\0\0\0vistt\0\0\0vnsgn\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x0C\0\n\0\x10\0\x16\0#\0+\x003\08\0@\0H\0R\0[\0Porto NovoAsmeraFaeroeSt BarthelemySt KittsSt LuciaMacauAsuncionSao TomeSt VincentSt ThomasSaigon") })
                         },
                     },
                     icu::datetime::provider::time_zones::ExemplarCities {

@@ -7,7 +7,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-localenames-full/main/en/variants.json>
 
-use super::WithAlt;
+use super::super::alt::WithAlt;
 use icu::locale::subtags::Variant;
 use serde::Deserialize;
 use std::collections::HashMap;

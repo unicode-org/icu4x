@@ -9,7 +9,7 @@ pub(crate) mod region;
 pub(crate) mod script;
 pub(crate) mod variant;
 
-use crate::cldr_serde::displaynames::{Alt, WithAlt};
+use crate::cldr_serde::alt::{Alt, WithAlt};
 use std::collections::{BTreeMap, HashMap};
 
 pub(crate) struct ExtractedNames<'a, K> {
@@ -44,7 +44,7 @@ where
             continue;
         }
         let val_str = value.as_str();
-        if let Some(k) = filter_project(&key.subtag) {
+        if let Some(k) = filter_project(&key.t) {
             // Old CLDR versions may contain trivial entries, so filter
             if k == *val_str {
                 continue;
@@ -111,7 +111,7 @@ macro_rules! impl_displaynames_v1 {
                         })?;
 
                 let key = WithAlt {
-                    subtag: subtag.clone(),
+                    t: subtag.clone(),
                     alt: $alt_variant,
                     menu: None,
                 };
@@ -162,9 +162,10 @@ macro_rules! impl_displaynames_v1 {
         );
 
         #[cfg(test)]
+        #[cfg(feature = "networking")]
         impl $crate::displaynames::coverage_experimental::CheckAltCoverage for $marker {
             fn contains_key<T>(
-                key: &$crate::cldr_serde::displaynames::WithAlt<T>,
+                key: &$crate::cldr_serde::alt::WithAlt<T>,
                 tier: $crate::displaynames::coverage_experimental::CoverageLevelForXPath,
             ) -> bool {
                 key.alt == $alt_variant && key.menu.is_none() && matches!(tier, $tier)
@@ -199,9 +200,9 @@ macro_rules! impl_displaynames_menu_v1 {
                         })?;
 
                 let key_core = WithAlt {
-                    subtag: subtag.clone(),
+                    t: subtag.clone(),
                     alt: None,
-                    menu: Some($crate::cldr_serde::displaynames::Menu::Core),
+                    menu: Some($crate::cldr_serde::alt::Menu::Core),
                 };
 
                 let map = &data.main.value.localedisplaynames.$field;
@@ -209,9 +210,9 @@ macro_rules! impl_displaynames_menu_v1 {
                 let mut used_alt_menu = false;
                 let (name_core, name_extension) = if let Some(core) = map.get(&key_core) {
                     let key_extension = WithAlt {
-                        subtag: subtag.clone(),
+                        t: subtag.clone(),
                         alt: None,
-                        menu: Some($crate::cldr_serde::displaynames::Menu::Extension),
+                        menu: Some($crate::cldr_serde::alt::Menu::Extension),
                     };
                     let extension = map.get(&key_extension).ok_or_else(|| {
                         DataError::custom("found menu-core but missing menu-extension")
@@ -222,8 +223,8 @@ macro_rules! impl_displaynames_menu_v1 {
                     used_alt_menu = true;
                     // Fallback to alt-menu
                     let key_alt_menu = WithAlt {
-                        subtag: subtag.clone(),
-                        alt: Some($crate::cldr_serde::displaynames::Alt::Menu),
+                        t: subtag.clone(),
+                        alt: Some($crate::cldr_serde::alt::Alt::Menu),
                         menu: None,
                     };
                     let alt_menu = map.get(&key_alt_menu).ok_or_else(|| {
@@ -235,9 +236,9 @@ macro_rules! impl_displaynames_menu_v1 {
                 };
 
                 let (alt, menu) = if used_alt_menu {
-                    (Some($crate::cldr_serde::displaynames::Alt::Menu), None)
+                    (Some($crate::cldr_serde::alt::Alt::Menu), None)
                 } else {
-                    (None, Some($crate::cldr_serde::displaynames::Menu::Core))
+                    (None, Some($crate::cldr_serde::alt::Menu::Core))
                 };
                 let item_tier =
                     crate::displaynames::coverage_experimental::coverage_cldr_cache()
@@ -282,32 +283,32 @@ macro_rules! impl_displaynames_menu_v1 {
 
                     for key in data.main.value.localedisplaynames.$field.keys() {
                         let matches = key.menu
-                            == Some($crate::cldr_serde::displaynames::Menu::Core)
-                            || key.alt == Some($crate::cldr_serde::displaynames::Alt::Menu);
+                            == Some($crate::cldr_serde::alt::Menu::Core)
+                            || key.alt == Some($crate::cldr_serde::alt::Alt::Menu);
 
                         if matches {
                             let (alt, menu) =
-                                if key.alt == Some($crate::cldr_serde::displaynames::Alt::Menu) {
-                                    (Some($crate::cldr_serde::displaynames::Alt::Menu), None)
+                                if key.alt == Some($crate::cldr_serde::alt::Alt::Menu) {
+                                    (Some($crate::cldr_serde::alt::Alt::Menu), None)
                                 } else {
-                                    (None, Some($crate::cldr_serde::displaynames::Menu::Core))
+                                    (None, Some($crate::cldr_serde::alt::Menu::Core))
                                 };
                             let item_tier =
                                 crate::displaynames::coverage_experimental::CoverageByXPathCache::coverage_tier_from_levels(
                                     locale_levels,
                                     root_levels,
                                     |l| &l.$category,
-                                    &key.subtag,
+                                    &key.t,
                                     alt,
                                     menu,
                                 );
                             if matches!(item_tier, $tier) {
-                                let subtag_str = writeable::Writeable::write_to_string(&key.subtag);
+                                let subtag_str = writeable::Writeable::write_to_string(&key.t);
                                 let data_identifier = DataIdentifierCow::from_owned(
                                     DataMarkerAttributes::try_from_string(subtag_str.into_owned())
                                         .map_err(|_| {
                                         DataError::custom("Failed to parse attribute")
-                                            .with_debug_context(&key.subtag)
+                                            .with_debug_context(&key.t)
                                     })?,
                                     locale,
                                 );
@@ -321,13 +322,14 @@ macro_rules! impl_displaynames_menu_v1 {
         }
 
         #[cfg(test)]
+        #[cfg(feature = "networking")]
         impl $crate::displaynames::coverage_experimental::CheckAltCoverage for $marker {
             fn contains_key<T>(
-                key: &$crate::cldr_serde::displaynames::WithAlt<T>,
+                key: &$crate::cldr_serde::alt::WithAlt<T>,
                 tier: $crate::displaynames::coverage_experimental::CoverageLevelForXPath,
             ) -> bool {
                 ((key.alt.is_none() && key.menu.is_some())
-                    || key.alt == Some($crate::cldr_serde::displaynames::Alt::Menu))
+                    || key.alt == Some($crate::cldr_serde::alt::Alt::Menu))
                     && matches!(tier, $tier)
             }
         }
@@ -371,17 +373,17 @@ macro_rules! impl_displaynames_iter_v1 {
                                     locale_levels,
                                     root_levels,
                                     |l| &l.$category,
-                                    &key.subtag,
+                                    &key.t,
                                     $alt_variant,
                                     None,
                                 );
                             if matches!(item_tier, $tier) {
-                                let subtag_str = writeable::Writeable::write_to_string(&key.subtag);
+                                let subtag_str = writeable::Writeable::write_to_string(&key.t);
                                 let data_identifier = DataIdentifierCow::from_owned(
                                     DataMarkerAttributes::try_from_string(subtag_str.into_owned())
                                         .map_err(|_| {
                                         DataError::custom("Failed to parse attribute")
-                                            .with_debug_context(&key.subtag)
+                                            .with_debug_context(&key.t)
                                     })?,
                                     locale,
                                 );
