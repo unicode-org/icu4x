@@ -251,7 +251,7 @@ impl SourceDataProvider {
     /// point to a directory structure matching as described in <https://www.unicode.org/reports/tr44/tr44-37.html#Directory_Structure>.
     pub fn with_unicode_rscd(self, root: &Path) -> Result<Self, DataError> {
         Ok(Self {
-            rscd_paths: Some(Arc::new(RscdCache::new_local(AbstractFs::new(root)?))),
+            rscd_paths: Some(Arc::new(RscdCache::new(AbstractFs::new(root)?))),
             ..self
         })
     }
@@ -352,13 +352,15 @@ impl SourceDataProvider {
     /// Adds Unicode source data to the provider. The data will be downloaded from
     /// <https://unicode.org/Public> using the given version tag.
     ///
-    /// Also see: [`TESTED_UCD_TAG`](Self::TESTED_UCD_TAG)
+    /// Also see: [`TESTED_UNICODE_TAG`](Self::TESTED_UNICODE_TAG)
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
     pub fn with_unicode_rscd_for_tag(self, tag: &str) -> Self {
         Self {
-            rscd_paths: Some(Arc::new(RscdCache::new_remote(tag))),
+            rscd_paths: Some(Arc::new(RscdCache::new(AbstractFs::new_from_url(format!(
+                "https://www.unicode.org/Public/{tag}/"
+            ))))),
             ..self
         }
     }

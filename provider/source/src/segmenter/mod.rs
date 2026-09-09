@@ -1014,7 +1014,7 @@ fn rscd_15_1() -> &'static SourceDataProvider {
     static SINGLETON: OnceLock<SourceDataProvider> = OnceLock::new();
     SINGLETON.get_or_init(|| {
         let mut provider = SourceDataProvider::new_custom();
-        provider.rscd_paths = Some(std::sync::Arc::new(RscdCache::new_local(include_files!(
+        provider.rscd_paths = Some(std::sync::Arc::new(RscdCache::new(include_files!(
             "../../data/segmenter/rscd15/";
             "ucd/DerivedCoreProperties.txt",
             "ucd/emoji/emoji-data.txt",
@@ -1034,7 +1034,7 @@ fn rscd_17_0() -> &'static SourceDataProvider {
     static SINGLETON: OnceLock<SourceDataProvider> = OnceLock::new();
     SINGLETON.get_or_init(|| {
         let mut provider = SourceDataProvider::new_custom();
-        provider.rscd_paths = Some(std::sync::Arc::new(RscdCache::new_local(include_files!(
+        provider.rscd_paths = Some(std::sync::Arc::new(RscdCache::new(include_files!(
             "../../data/segmenter/rscd17/";
             "ucd/auxiliary/GraphemeBreakProperty.txt",
             "ucd/auxiliary/SentenceBreakProperty.txt",

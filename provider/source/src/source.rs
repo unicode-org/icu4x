@@ -516,13 +516,13 @@ pub(crate) struct RscdCache {
     root: AbstractFs,
     // The `ucd/UCD.zip` file. Requests matching `ucd/[^Unihan]` will be resolved through
     // the ZIP file instead of downloading individual files.
-    ucd_zip: Option<AbstractFs>,
+    ucd_zip: OnceLock<Option<AbstractFs>>,
     // The `ucd/Unihan.zip` file. Requests matching `ucd/Unihan/` will be resolved through
     // the ZIP file instead of downloading individual files.
-    unihan_zip: Option<AbstractFs>,
+    unihan_zip: OnceLock<Option<AbstractFs>>,
     // The `security/uts39-data-X.0.0.zip` file. Requests matching `security/` will be
     // resolved through the ZIP file instead of downloading individual files.
-    uts_39_zip: Option<AbstractFs>,
+    uts_39_zip: OnceLock<Option<AbstractFs>>,
     // Cached file contents. It's all text files, so we cache them as strings.
     file_cache: FrozenMap<String, String>,
     // Cache of enumerated properties CPTs, indexed by short property name.
@@ -537,23 +537,12 @@ pub(crate) struct RscdCache {
 }
 
 impl RscdCache {
-    #[cfg(feature = "networking")]
-    pub fn new_remote(version: &str) -> Self {
-        let root = AbstractFs::new_from_url(format!("https://www.unicode.org/Public/{version}/"));
-        let ucd_zip = AbstractFs::new_zip_from_url(format!(
-            "https://www.unicode.org/Public/{version}/ucd/UCD.zip"
-        ));
-        let unihan_zip = AbstractFs::new_zip_from_url(format!(
-            "https://www.unicode.org/Public/{version}/ucd/Unihan.zip"
-        ));
-        let uts_39_zip = AbstractFs::new_zip_from_url(format!(
-            "https://www.unicode.org/Public/{version}/security/uts39-data-{version}.zip"
-        ));
+    pub fn new(root: AbstractFs) -> Self {
         Self {
             root,
-            ucd_zip: Some(ucd_zip),
-            unihan_zip: Some(unihan_zip),
-            uts_39_zip: Some(uts_39_zip),
+            ucd_zip: Default::default(),
+            unihan_zip: Default::default(),
+            uts_39_zip: Default::default(),
             file_cache: Default::default(),
             cpt_cache: Default::default(),
             #[cfg(feature = "unstable")]
@@ -561,17 +550,38 @@ impl RscdCache {
         }
     }
 
-    pub fn new_local(root: AbstractFs) -> Self {
-        Self {
-            root,
-            ucd_zip: None,
-            unihan_zip: None,
-            uts_39_zip: None,
-            file_cache: Default::default(),
-            cpt_cache: Default::default(),
-            #[cfg(feature = "unstable")]
-            segmenter_cache: Default::default(),
-        }
+    fn ucd_zip(&self) -> Option<&AbstractFs> {
+        self.ucd_zip
+            .get_or_init(|| {
+                let zip = ZipData::try_new(self.root.read_to_buf("ucd/UCD.zip").ok()?).ok()?;
+                Some(AbstractFs::Zip(RwLock::new(Ok(zip))))
+            })
+            .as_ref()
+    }
+
+    fn unihan_zip(&self) -> Option<&AbstractFs> {
+        self.unihan_zip
+            .get_or_init(|| {
+                let zip = ZipData::try_new(self.root.read_to_buf("ucd/Unihan.zip").ok()?).ok()?;
+                Some(AbstractFs::Zip(RwLock::new(Ok(zip))))
+            })
+            .as_ref()
+    }
+
+    fn uts_39_zip(&self) -> Option<&AbstractFs> {
+        self.uts_39_zip
+            .get_or_init(|| {
+                let readme = self.root.read_to_string("security/ReadMe.txt").ok()?;
+                let version = readme.split_once("for version ")?.1.split_once(' ')?.0;
+                let zip = ZipData::try_new(
+                    self.root
+                        .read_to_buf(&format!("security/uts39-data-{version}.zip"))
+                        .ok()?,
+                )
+                .ok()?;
+                Some(AbstractFs::Zip(RwLock::new(Ok(zip))))
+            })
+            .as_ref()
     }
 
     #[allow(dead_code)]
@@ -580,18 +590,21 @@ impl RscdCache {
             return Ok(true);
         }
 
-        if let (Some(unihan_zip), Some(unihan_path)) =
-            (self.unihan_zip.as_ref(), file.strip_prefix("ucd/Unihan/"))
+        if let Some(unihan_path) = file.strip_prefix("ucd/Unihan/")
+            && let Some(unihan_zip) = self.unihan_zip()
+            && unihan_zip.file_exists(unihan_path)?
         {
-            Ok(unihan_zip.file_exists(unihan_path)?)
-        } else if let (Some(ucd_zip), Some(ucd_path)) =
-            (self.ucd_zip.as_ref(), file.strip_prefix("ucd/"))
+            Ok(true)
+        } else if let Some(ucd_path) = file.strip_prefix("ucd/")
+            && let Some(ucd_zip) = self.ucd_zip()
+            && ucd_zip.file_exists(ucd_path)?
         {
-            Ok(ucd_zip.file_exists(ucd_path)?)
-        } else if let (Some(uts_39_zip), Some(uts_39_path)) =
-            (self.uts_39_zip.as_ref(), file.strip_prefix("security/"))
+            Ok(true)
+        } else if let Some(security_path) = file.strip_prefix("security/")
+            && let Some(uts_39_zip) = self.uts_39_zip()
+            && uts_39_zip.file_exists(security_path)?
         {
-            Ok(uts_39_zip.file_exists(uts_39_path)?)
+            Ok(true)
         } else {
             Ok(self.root.file_exists(file)?)
         }
@@ -603,24 +616,27 @@ impl RscdCache {
             return Ok(x);
         }
 
-        if let (Some(unihan_zip), Some(unihan_path)) =
-            (self.unihan_zip.as_ref(), file.strip_prefix("ucd/Unihan/"))
+        if let Some(unihan_path) = file.strip_prefix("ucd/Unihan/")
+            && let Some(unihan_zip) = self.unihan_zip()
+            && unihan_zip.file_exists(unihan_path)?
         {
             Ok(self
                 .file_cache
                 .insert(file.to_string(), unihan_zip.read_to_string(unihan_path)?))
-        } else if let (Some(ucd_zip), Some(ucd_path)) =
-            (self.ucd_zip.as_ref(), file.strip_prefix("ucd/"))
+        } else if let Some(ucd_path) = file.strip_prefix("ucd/")
+            && let Some(ucd_zip) = self.ucd_zip()
+            && ucd_zip.file_exists(ucd_path)?
         {
             Ok(self
                 .file_cache
                 .insert(file.to_string(), ucd_zip.read_to_string(ucd_path)?))
-        } else if let (Some(uts_39_zip), Some(uts_39_path)) =
-            (self.uts_39_zip.as_ref(), file.strip_prefix("security/"))
+        } else if let Some(security_path) = file.strip_prefix("security/")
+            && let Some(uts_39_zip) = self.uts_39_zip()
+            && uts_39_zip.file_exists(security_path)?
         {
             Ok(self
                 .file_cache
-                .insert(file.to_string(), uts_39_zip.read_to_string(uts_39_path)?))
+                .insert(file.to_string(), uts_39_zip.read_to_string(security_path)?))
         } else {
             Ok(self
                 .file_cache
