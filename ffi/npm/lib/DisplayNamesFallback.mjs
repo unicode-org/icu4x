@@ -5,9 +5,9 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * 🚧 This API is unstable and may experience breaking changes outside major releases.
- *
  * See the [Rust documentation for `Fallback`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/enum.Fallback.html) for more information.
+ *
+ * @experimental
  */
 export class DisplayNamesFallback {
     #value = undefined;

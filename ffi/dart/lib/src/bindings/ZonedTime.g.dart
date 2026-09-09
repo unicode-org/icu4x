@@ -11,6 +11,7 @@ final class _ZonedTimeFfi extends ffi.Struct {
 /// An ICU4X `ZonedTime` object capable of containing a ISO-8601 time, and zone.
 ///
 /// See the [Rust documentation for `ZonedTime`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedTime.html) for more information.
+@meta.experimental
 final class ZonedTime {
   // ignore: public_member_api_docs
   final Time time;
@@ -40,6 +41,7 @@ final class ZonedTime {
   /// See the [Rust documentation for `try_strict_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedTime.html#method.try_strict_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
+  @meta.experimental
   factory ZonedTime.strictFromString(String v, IanaParser ianaParser) {
     final temp = _FinalizedArena();
     final result = _icu4x_ZonedTime_strict_from_string_mv1(v._utf8AllocIn(temp.arena), ianaParser._ffi);
@@ -54,6 +56,7 @@ final class ZonedTime {
   /// See the [Rust documentation for `try_location_only_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedTime.html#method.try_location_only_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
+  @meta.experimental
   factory ZonedTime.locationOnlyFromString(String v, IanaParser ianaParser) {
     final temp = _FinalizedArena();
     final result = _icu4x_ZonedTime_location_only_from_string_mv1(v._utf8AllocIn(temp.arena), ianaParser._ffi);
@@ -68,6 +71,7 @@ final class ZonedTime {
   /// See the [Rust documentation for `try_offset_only_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedTime.html#method.try_offset_only_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
+  @meta.experimental
   factory ZonedTime.offsetOnlyFromString(String v) {
     final temp = _FinalizedArena();
     final result = _icu4x_ZonedTime_offset_only_from_string_mv1(v._utf8AllocIn(temp.arena));
@@ -82,6 +86,7 @@ final class ZonedTime {
   /// See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedTime.html#method.try_lenient_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
+  @meta.experimental
   factory ZonedTime.lenientFromString(String v, IanaParser ianaParser) {
     final temp = _FinalizedArena();
     final result = _icu4x_ZonedTime_lenient_from_string_mv1(v._utf8AllocIn(temp.arena), ianaParser._ffi);

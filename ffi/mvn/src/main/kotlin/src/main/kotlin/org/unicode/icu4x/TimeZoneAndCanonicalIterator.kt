@@ -10,8 +10,9 @@ internal interface TimeZoneAndCanonicalIteratorLib: Library {
     fun icu4x_TimeZoneAndCanonicalIterator_next_mv1(handle: Pointer): OptionTimeZoneAndCanonicalNative
 }
 typealias TimeZoneAndCanonicalIteratorIteratorItem = TimeZoneAndCanonical
-/** See the [Rust documentation for `TimeZoneAndCanonicalIter`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html) for more information.
-*/
+/**
+ * See the [Rust documentation for `TimeZoneAndCanonicalIter`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html) for more information.
+ */
 class TimeZoneAndCanonicalIterator internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
@@ -41,8 +42,9 @@ class TimeZoneAndCanonicalIterator internal constructor (
         internal val lib: TimeZoneAndCanonicalIteratorLib = Native.load("icu4x", libClass)
     }
     
-    /** See the [Rust documentation for `next`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html#method.next) for more information.
-    */
+    /**
+     * See the [Rust documentation for `next`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html#method.next) for more information.
+     */
     internal fun nextInternal(): TimeZoneAndCanonical? {
         // This lifetime edge depends on lifetimes: 'a
         val aEdges: MutableList<Any> = mutableListOf(this);

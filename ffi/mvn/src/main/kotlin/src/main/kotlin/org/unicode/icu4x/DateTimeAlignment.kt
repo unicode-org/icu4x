@@ -8,7 +8,8 @@ import com.sun.jna.Structure
 
 internal interface DateTimeAlignmentLib: Library {
 }
-/** See the [Rust documentation for `Alignment`](https://docs.rs/icu/2.3.1/icu/datetime/options/enum.Alignment.html) for more information.
+/**
+ * See the [Rust documentation for `Alignment`](https://docs.rs/icu/2.3.1/icu/datetime/options/enum.Alignment.html) for more information.
 */
 enum class DateTimeAlignment {
     Auto,

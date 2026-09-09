@@ -8,7 +8,8 @@ import com.sun.jna.Structure
 
 internal interface DateTimeLengthLib: Library {
 }
-/** See the [Rust documentation for `Length`](https://docs.rs/icu/2.3.1/icu/datetime/options/enum.Length.html) for more information.
+/**
+ * See the [Rust documentation for `Length`](https://docs.rs/icu/2.3.1/icu/datetime/options/enum.Length.html) for more information.
 */
 enum class DateTimeLength {
     Long,

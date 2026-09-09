@@ -759,7 +759,7 @@ version = "0.16.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f8b37a6cea72eb6df5143d3e091d4c34cb0cf4046dd1ddcc082988886fe1f809"
 dependencies = [
- "diplomat_core",
+ "diplomat_core 0.16.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "proc-macro2",
  "quote",
  "syn 3.0.3",
@@ -769,7 +769,7 @@ dependencies = [
 name = "diplomat-coverage"
 version = "0.0.0"
 dependencies = [
- "diplomat_core",
+ "diplomat_core 0.16.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "elsa",
  "lazy_static",
  "rustdoc-types",
@@ -797,13 +797,12 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.16.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f71ad0ab8cf95b7179a192b1e07c3a5e8b7e6471e279d05101a12a1e77d8025c"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=7f5b1556c4f392f69be99d47c24a7d1dbdddb8e7#7f5b1556c4f392f69be99d47c24a7d1dbdddb8e7"
 dependencies = [
  "askama",
  "clap",
  "colored",
- "diplomat_core",
+ "diplomat_core 0.16.1 (git+https://github.com/rust-diplomat/diplomat?rev=7f5b1556c4f392f69be99d47c24a7d1dbdddb8e7)",
  "heck 0.5.0",
  "indenter",
  "itertools 0.14.0",
@@ -819,6 +818,19 @@ name = "diplomat_core"
 version = "0.16.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "73b18e806f9ecb92df828d080efe47984ae1193958295d4a84fb8b32c9a1aa1b"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "serde",
+ "smallvec",
+ "strck",
+ "syn 3.0.3",
+]
+
+[[package]]
+name = "diplomat_core"
+version = "0.16.1"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=7f5b1556c4f392f69be99d47c24a7d1dbdddb8e7#7f5b1556c4f392f69be99d47c24a7d1dbdddb8e7"
 dependencies = [
  "annotate-snippets",
  "either",

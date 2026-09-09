@@ -15,10 +15,11 @@ internal interface LocaleExpanderLib: Library {
     fun icu4x_LocaleExpander_minimize_mv1(handle: Pointer, locale: Pointer): Int
     fun icu4x_LocaleExpander_minimize_favor_script_mv1(handle: Pointer, locale: Pointer): Int
 }
-/** A locale expander.
-*
-*See the [Rust documentation for `LocaleExpander`](https://docs.rs/icu/2.3.1/icu/locale/struct.LocaleExpander.html) for more information.
-*/
+/**
+ * A locale expander.
+ *
+ * See the [Rust documentation for `LocaleExpander`](https://docs.rs/icu/2.3.1/icu/locale/struct.LocaleExpander.html) for more information.
+ */
 class LocaleExpander internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
@@ -47,10 +48,11 @@ class LocaleExpander internal constructor (
         internal val lib: LocaleExpanderLib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** Create a new [LocaleExpander] using compiled data.
-        *
-        *See the [Rust documentation for `new_common`](https://docs.rs/icu/2.3.1/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
-        */
+        /**
+         * Create a new [LocaleExpander] using compiled data.
+         *
+         * See the [Rust documentation for `new_common`](https://docs.rs/icu/2.3.1/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
+         */
         fun createCommon(): LocaleExpander {
             
             val returnVal = lib.icu4x_LocaleExpander_create_common_mv1();
@@ -61,10 +63,11 @@ class LocaleExpander internal constructor (
         }
         @JvmStatic
         
-        /** Create a new [LocaleExpander] using a `new_common` data source.
-        *
-        *See the [Rust documentation for `new_common`](https://docs.rs/icu/2.3.1/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
-        */
+        /**
+         * Create a new [LocaleExpander] using a `new_common` data source.
+         *
+         * See the [Rust documentation for `new_common`](https://docs.rs/icu/2.3.1/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
+         */
         fun createCommonWithProvider(provider: DataProvider): Result<LocaleExpander> {
             
             val returnVal = lib.icu4x_LocaleExpander_create_common_with_provider_mv1(provider.handle);
@@ -80,10 +83,11 @@ class LocaleExpander internal constructor (
         }
         @JvmStatic
         
-        /** Create a new [LocaleExpander] with extended data using compiled data.
-        *
-        *See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.3.1/icu/locale/struct.LocaleExpander.html#method.new_extended) for more information.
-        */
+        /**
+         * Create a new [LocaleExpander] with extended data using compiled data.
+         *
+         * See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.3.1/icu/locale/struct.LocaleExpander.html#method.new_extended) for more information.
+         */
         fun createExtended(): LocaleExpander {
             
             val returnVal = lib.icu4x_LocaleExpander_create_extended_mv1();
@@ -94,10 +98,11 @@ class LocaleExpander internal constructor (
         }
         @JvmStatic
         
-        /** Create a new [LocaleExpander] with extended data using a particular data source.
-        *
-        *See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.3.1/icu/locale/struct.LocaleExpander.html#method.new_extended) for more information.
-        */
+        /**
+         * Create a new [LocaleExpander] with extended data using a particular data source.
+         *
+         * See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.3.1/icu/locale/struct.LocaleExpander.html#method.new_extended) for more information.
+         */
         fun createExtendedWithProvider(provider: DataProvider): Result<LocaleExpander> {
             
             val returnVal = lib.icu4x_LocaleExpander_create_extended_with_provider_mv1(provider.handle);
@@ -113,24 +118,27 @@ class LocaleExpander internal constructor (
         }
     }
     
-    /** See the [Rust documentation for `maximize`](https://docs.rs/icu/2.3.1/icu/locale/struct.LocaleExpander.html#method.maximize) for more information.
-    */
+    /**
+     * See the [Rust documentation for `maximize`](https://docs.rs/icu/2.3.1/icu/locale/struct.LocaleExpander.html#method.maximize) for more information.
+     */
     fun maximize(locale: Locale): TransformResult {
         
         val returnVal = lib.icu4x_LocaleExpander_maximize_mv1(handle, locale.handle /* note this is a mutable reference. Think carefully about using, especially concurrently */);
         return (TransformResult.fromNative(returnVal))
     }
     
-    /** See the [Rust documentation for `minimize`](https://docs.rs/icu/2.3.1/icu/locale/struct.LocaleExpander.html#method.minimize) for more information.
-    */
+    /**
+     * See the [Rust documentation for `minimize`](https://docs.rs/icu/2.3.1/icu/locale/struct.LocaleExpander.html#method.minimize) for more information.
+     */
     fun minimize(locale: Locale): TransformResult {
         
         val returnVal = lib.icu4x_LocaleExpander_minimize_mv1(handle, locale.handle /* note this is a mutable reference. Think carefully about using, especially concurrently */);
         return (TransformResult.fromNative(returnVal))
     }
     
-    /** See the [Rust documentation for `minimize_favor_script`](https://docs.rs/icu/2.3.1/icu/locale/struct.LocaleExpander.html#method.minimize_favor_script) for more information.
-    */
+    /**
+     * See the [Rust documentation for `minimize_favor_script`](https://docs.rs/icu/2.3.1/icu/locale/struct.LocaleExpander.html#method.minimize_favor_script) for more information.
+     */
     fun minimizeFavorScript(locale: Locale): TransformResult {
         
         val returnVal = lib.icu4x_LocaleExpander_minimize_favor_script_mv1(handle, locale.handle /* note this is a mutable reference. Think carefully about using, especially concurrently */);

@@ -10,10 +10,11 @@ internal interface LocaleFallbackerWithConfigLib: Library {
     fun icu4x_LocaleFallbackerWithConfig_config_mv1(handle: Pointer): LocaleFallbackConfigNative
     fun icu4x_LocaleFallbackerWithConfig_fallback_for_locale_mv1(handle: Pointer, locale: Pointer): Pointer
 }
-/** An object that runs the ICU4X locale fallback algorithm with specific configurations.
-*
-*See the [Rust documentation for `LocaleFallbackerWithConfig`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbackerWithConfig.html) for more information.
-*/
+/**
+ * An object that runs the ICU4X locale fallback algorithm with specific configurations.
+ *
+ * See the [Rust documentation for `LocaleFallbackerWithConfig`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbackerWithConfig.html) for more information.
+ */
 class LocaleFallbackerWithConfig internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
@@ -43,10 +44,11 @@ class LocaleFallbackerWithConfig internal constructor (
         internal val lib: LocaleFallbackerWithConfigLib = Native.load("icu4x", libClass)
     }
     
-    /** Returns the associated config.
-    *
-    *See the [Rust documentation for `config`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbackerWithConfig.html#method.config) for more information.
-    */
+    /**
+     * Returns the associated config.
+     *
+     * See the [Rust documentation for `config`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbackerWithConfig.html#method.config) for more information.
+     */
     fun config(): LocaleFallbackConfig {
         
         val returnVal = lib.icu4x_LocaleFallbackerWithConfig_config_mv1(handle);
@@ -54,10 +56,11 @@ class LocaleFallbackerWithConfig internal constructor (
         return returnStruct
     }
     
-    /** Creates an iterator from a locale with each step of fallback.
-    *
-    *See the [Rust documentation for `fallback_for`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbacker.html#method.fallback_for) for more information.
-    */
+    /**
+     * Creates an iterator from a locale with each step of fallback.
+     *
+     * See the [Rust documentation for `fallback_for`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbacker.html#method.fallback_for) for more information.
+     */
     fun fallbackForLocale(locale: Locale): LocaleFallbackIterator {
         // This lifetime edge depends on lifetimes: 'a, 'b
         val aEdges: MutableList<Any> = mutableListOf(this);

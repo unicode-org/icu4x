@@ -14,7 +14,8 @@ internal interface BidiClassLib: Library {
     fun icu4x_BidiClass_from_integer_value_mv1(other: FFIUint8): OptionInt
     fun icu4x_BidiClass_try_from_str_mv1(s: Slice): OptionInt
 }
-/** See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.BidiClass.html) for more information.
+/**
+ * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.BidiClass.html) for more information.
 */
 enum class BidiClass {
     LeftToRight,
@@ -58,8 +59,9 @@ enum class BidiClass {
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `for_char`](https://docs.rs/icu/2.3.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
-        */
+        /**
+         * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.3.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+         */
         fun forChar(ch: Int): BidiClass {
             
             val returnVal = lib.icu4x_BidiClass_for_char_mv1(ch);
@@ -67,10 +69,11 @@ enum class BidiClass {
         }
         @JvmStatic
         
-        /** Convert from an integer value from ICU4C or `CodePointMapData`
-        *
-        *See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.BidiClass.html#method.from_icu4c_value) for more information.
-        */
+        /**
+         * Convert from an integer value from ICU4C or `CodePointMapData`
+         *
+         * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.BidiClass.html#method.from_icu4c_value) for more information.
+         */
         fun fromIntegerValue(other: UByte): BidiClass? {
             
             val returnVal = lib.icu4x_BidiClass_from_integer_value_mv1(FFIUint8(other));
@@ -80,10 +83,11 @@ enum class BidiClass {
         }
         @JvmStatic
         
-        /** Creates a `BidiClass` from a string.
-        *
-        *Short names, long names, and aliases are supported, and matching is case-insensitive.
-        */
+        /**
+         * Creates a `BidiClass` from a string.
+         *
+         * Short names, long names, and aliases are supported, and matching is case-insensitive.
+         */
         fun tryFromStr(s: String): BidiClass? {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
@@ -98,10 +102,11 @@ enum class BidiClass {
         }
     }
     
-    /** Get the "long" name of this property value (returns empty if property value is unknown)
-    *
-    *See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
-    */
+    /**
+     * Get the "long" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+     */
     fun longName(): String? {
         
         val returnVal = lib.icu4x_BidiClass_long_name_mv1(this.toNative());
@@ -111,10 +116,11 @@ enum class BidiClass {
                                 
     }
     
-    /** Get the "short" name of this property value (returns empty if property value is unknown)
-    *
-    *See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
-    */
+    /**
+     * Get the "short" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+     */
     fun shortName(): String? {
         
         val returnVal = lib.icu4x_BidiClass_short_name_mv1(this.toNative());
@@ -124,10 +130,11 @@ enum class BidiClass {
                                 
     }
     
-    /** Convert to an integer value usable with ICU4C and `CodePointMapData`
-    *
-    *See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.BidiClass.html#method.to_icu4c_value) for more information.
-    */
+    /**
+     * Convert to an integer value usable with ICU4C and `CodePointMapData`
+     *
+     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.BidiClass.html#method.to_icu4c_value) for more information.
+     */
     fun toIntegerValue(): UByte {
         
         val returnVal = lib.icu4x_BidiClass_to_integer_value_mv1(this.toNative());

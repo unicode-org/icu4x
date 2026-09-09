@@ -11,8 +11,9 @@ internal interface PluralOperandsLib: Library {
     fun icu4x_PluralOperands_from_int64_mv1(i: Long): Pointer
     fun icu4x_PluralOperands_from_fixed_decimal_mv1(x: Pointer): Pointer
 }
-/** See the [Rust documentation for `PluralOperands`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralOperands.html) for more information.
-*/
+/**
+ * See the [Rust documentation for `PluralOperands`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralOperands.html) for more information.
+ */
 class PluralOperands internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
@@ -41,10 +42,11 @@ class PluralOperands internal constructor (
         internal val lib: PluralOperandsLib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** Construct for a given string representing a number
-        *
-        *See the [Rust documentation for `from_str`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
-        */
+        /**
+         * Construct for a given string representing a number
+         *
+         * See the [Rust documentation for `from_str`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
+         */
         fun fromString(s: String): Result<PluralOperands> {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
@@ -65,8 +67,9 @@ class PluralOperands internal constructor (
         }
         @JvmStatic
         
-        /** Construct for a given integer
-        */
+        /**
+         * Construct for a given integer
+         */
         fun from(i: Long): PluralOperands {
             
             val returnVal = lib.icu4x_PluralOperands_from_int64_mv1(i);
@@ -77,10 +80,11 @@ class PluralOperands internal constructor (
         }
         @JvmStatic
         
-        /** Construct from a `FixedDecimal`
-        *
-        *Retains at most 18 digits each from the integer and fraction parts.
-        */
+        /**
+         * Construct from a `FixedDecimal`
+         *
+         * Retains at most 18 digits each from the integer and fraction parts.
+         */
         fun fromFixedDecimal(x: Decimal): PluralOperands {
             
             val returnVal = lib.icu4x_PluralOperands_from_fixed_decimal_mv1(x.handle);

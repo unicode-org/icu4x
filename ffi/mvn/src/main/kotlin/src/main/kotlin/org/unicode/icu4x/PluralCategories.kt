@@ -70,8 +70,9 @@ internal class OptionPluralCategoriesNative constructor(): Structure(), Structur
 
 }
 
-/** See the [Rust documentation for `categories`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRules.html#method.categories) for more information.
-*/
+/**
+ * See the [Rust documentation for `categories`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRules.html#method.categories) for more information.
+ */
 class PluralCategories (var zero: Boolean, var one: Boolean, var two: Boolean, var few: Boolean, var many: Boolean, var other: Boolean) {
     companion object {
 

@@ -11,10 +11,11 @@ internal interface CanonicalCombiningClassMapLib: Library {
     fun icu4x_CanonicalCombiningClassMap_create_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_CanonicalCombiningClassMap_get_mv1(handle: Pointer, ch: Int): FFIUint8
 }
-/** Lookup of the `Canonical_Combining_Class` Unicode property
-*
-*See the [Rust documentation for `CanonicalCombiningClassMap`](https://docs.rs/icu/2.3.1/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html) for more information.
-*/
+/**
+ * Lookup of the `Canonical_Combining_Class` Unicode property
+ *
+ * See the [Rust documentation for `CanonicalCombiningClassMap`](https://docs.rs/icu/2.3.1/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html) for more information.
+ */
 class CanonicalCombiningClassMap internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
@@ -43,10 +44,11 @@ class CanonicalCombiningClassMap internal constructor (
         internal val lib: CanonicalCombiningClassMapLib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** Construct a new `CanonicalCombiningClassMap` instance for NFC using compiled data.
-        *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
-        */
+        /**
+         * Construct a new `CanonicalCombiningClassMap` instance for NFC using compiled data.
+         *
+         * See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
+         */
         fun create(): CanonicalCombiningClassMap {
             
             val returnVal = lib.icu4x_CanonicalCombiningClassMap_create_mv1();
@@ -57,10 +59,11 @@ class CanonicalCombiningClassMap internal constructor (
         }
         @JvmStatic
         
-        /** Construct a new `CanonicalCombiningClassMap` instance for NFC using a particular data source.
-        *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
-        */
+        /**
+         * Construct a new `CanonicalCombiningClassMap` instance for NFC using a particular data source.
+         *
+         * See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
+         */
         fun createWithProvider(provider: DataProvider): Result<CanonicalCombiningClassMap> {
             
             val returnVal = lib.icu4x_CanonicalCombiningClassMap_create_with_provider_mv1(provider.handle);
@@ -76,10 +79,11 @@ class CanonicalCombiningClassMap internal constructor (
         }
     }
     
-    /** See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/normalizer/properties/struct.CanonicalCombiningClassMapBorrowed.html#method.get) for more information.
-    *
-    *Additional information: [1](https://docs.rs/icu/2.3.1/icu/properties/props/struct.CanonicalCombiningClass.html)
-    */
+    /**
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/normalizer/properties/struct.CanonicalCombiningClassMapBorrowed.html#method.get) for more information.
+     *
+     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/properties/props/struct.CanonicalCombiningClass.html)
+     */
     fun get(ch: Int): UByte {
         
         val returnVal = lib.icu4x_CanonicalCombiningClassMap_get_mv1(handle, ch);

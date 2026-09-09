@@ -10,10 +10,11 @@ internal interface LocaleFallbackIteratorLib: Library {
     fun icu4x_LocaleFallbackIterator_next_mv1(handle: Pointer): Pointer?
 }
 typealias LocaleFallbackIteratorIteratorItem = Locale?
-/** An iterator over the locale under fallback.
-*
-*See the [Rust documentation for `LocaleFallbackIterator`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbackIterator.html) for more information.
-*/
+/**
+ * An iterator over the locale under fallback.
+ *
+ * See the [Rust documentation for `LocaleFallbackIterator`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbackIterator.html) for more information.
+ */
 class LocaleFallbackIterator internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned

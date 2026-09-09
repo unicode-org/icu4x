@@ -14,16 +14,17 @@ internal interface CodePointMapData16Lib: Library {
     fun icu4x_CodePointMapData16_create_script_mv1(): Pointer
     fun icu4x_CodePointMapData16_create_script_with_provider_mv1(provider: Pointer): ResultPointerInt
 }
-/** An ICU4X Unicode Map Property object, capable of querying whether a code point (key) to obtain the Unicode property value, for a specific Unicode property.
-*
-*For properties whose values fit into 16 bits.
-*
-*See the [Rust documentation for `properties`](https://docs.rs/icu/2.3.1/icu/properties/index.html) for more information.
-*
-*See the [Rust documentation for `CodePointMapData`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapData.html) for more information.
-*
-*See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html) for more information.
-*/
+/**
+ * An ICU4X Unicode Map Property object, capable of querying whether a code point (key) to obtain the Unicode property value, for a specific Unicode property.
+ *
+ * For properties whose values fit into 16 bits.
+ *
+ * See the [Rust documentation for `properties`](https://docs.rs/icu/2.3.1/icu/properties/index.html) for more information.
+ *
+ * See the [Rust documentation for `CodePointMapData`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapData.html) for more information.
+ *
+ * See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html) for more information.
+ */
 class CodePointMapData16 internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
@@ -52,10 +53,11 @@ class CodePointMapData16 internal constructor (
         internal val lib: CodePointMapData16Lib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** Create a map for the `Script` property, using compiled data.
-        *
-        *See the [Rust documentation for `Script`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html) for more information.
-        */
+        /**
+         * Create a map for the `Script` property, using compiled data.
+         *
+         * See the [Rust documentation for `Script`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html) for more information.
+         */
         fun createScript(): CodePointMapData16 {
             
             val returnVal = lib.icu4x_CodePointMapData16_create_script_mv1();
@@ -66,10 +68,11 @@ class CodePointMapData16 internal constructor (
         }
         @JvmStatic
         
-        /** Create a map for the `Script` property, using a particular data source.
-        *
-        *See the [Rust documentation for `Script`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html) for more information.
-        */
+        /**
+         * Create a map for the `Script` property, using a particular data source.
+         *
+         * See the [Rust documentation for `Script`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html) for more information.
+         */
         fun createScriptWithProvider(provider: DataProvider): Result<CodePointMapData16> {
             
             val returnVal = lib.icu4x_CodePointMapData16_create_script_with_provider_mv1(provider.handle);
@@ -85,20 +88,22 @@ class CodePointMapData16 internal constructor (
         }
     }
     
-    /** Gets the value for a code point.
-    *
-    *See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.get) for more information.
-    */
+    /**
+     * Gets the value for a code point.
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.get) for more information.
+     */
     fun get(cp: Int): UShort {
         
         val returnVal = lib.icu4x_CodePointMapData16_get_mv1(handle, cp);
         return (returnVal.toUShort())
     }
     
-    /** Produces an iterator over ranges of code points that map to `value`
-    *
-    *See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
-    */
+    /**
+     * Produces an iterator over ranges of code points that map to `value`
+     *
+     * See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
+     */
     fun iterRangesForValue(value: UShort): CodePointRangeIterator {
         // This lifetime edge depends on lifetimes: 'a
         val aEdges: MutableList<Any> = mutableListOf(this);
@@ -110,10 +115,11 @@ class CodePointMapData16 internal constructor (
         return returnOpaque
     }
     
-    /** Produces an iterator over ranges of code points that do not map to `value`
-    *
-    *See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
-    */
+    /**
+     * Produces an iterator over ranges of code points that do not map to `value`
+     *
+     * See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
+     */
     fun iterRangesForValueComplemented(value: UShort): CodePointRangeIterator {
         // This lifetime edge depends on lifetimes: 'a
         val aEdges: MutableList<Any> = mutableListOf(this);
@@ -125,10 +131,11 @@ class CodePointMapData16 internal constructor (
         return returnOpaque
     }
     
-    /** Gets a [CodePointSetData] representing all entries in this map that map to the given value
-    *
-    *See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
-    */
+    /**
+     * Gets a [CodePointSetData] representing all entries in this map that map to the given value
+     *
+     * See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
+     */
     fun getSetForValue(value: UShort): CodePointSetData {
         
         val returnVal = lib.icu4x_CodePointMapData16_get_set_for_value_mv1(handle, FFIUint16(value));
