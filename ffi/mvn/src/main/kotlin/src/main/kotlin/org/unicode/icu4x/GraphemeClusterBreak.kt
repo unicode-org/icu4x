@@ -14,7 +14,8 @@ internal interface GraphemeClusterBreakLib: Library {
     fun icu4x_GraphemeClusterBreak_from_integer_value_mv1(other: FFIUint8): OptionInt
     fun icu4x_GraphemeClusterBreak_try_from_str_mv1(s: Slice): OptionInt
 }
-/** See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
+/**
+ * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
 */
 enum class GraphemeClusterBreak {
     Other,
@@ -53,8 +54,9 @@ enum class GraphemeClusterBreak {
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `for_char`](https://docs.rs/icu/2.3.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
-        */
+        /**
+         * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.3.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+         */
         fun forChar(ch: Int): GraphemeClusterBreak {
             
             val returnVal = lib.icu4x_GraphemeClusterBreak_for_char_mv1(ch);
@@ -62,10 +64,11 @@ enum class GraphemeClusterBreak {
         }
         @JvmStatic
         
-        /** Convert from an integer value from ICU4C or `CodePointMapData`
-        *
-        *See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.GraphemeClusterBreak.html#method.from_icu4c_value) for more information.
-        */
+        /**
+         * Convert from an integer value from ICU4C or `CodePointMapData`
+         *
+         * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.GraphemeClusterBreak.html#method.from_icu4c_value) for more information.
+         */
         fun fromIntegerValue(other: UByte): GraphemeClusterBreak? {
             
             val returnVal = lib.icu4x_GraphemeClusterBreak_from_integer_value_mv1(FFIUint8(other));
@@ -75,10 +78,11 @@ enum class GraphemeClusterBreak {
         }
         @JvmStatic
         
-        /** Creates a `GraphemeClusterBreak` from a string.
-        *
-        *Short names, long names, and aliases are supported, and matching is case-insensitive.
-        */
+        /**
+         * Creates a `GraphemeClusterBreak` from a string.
+         *
+         * Short names, long names, and aliases are supported, and matching is case-insensitive.
+         */
         fun tryFromStr(s: String): GraphemeClusterBreak? {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
@@ -93,10 +97,11 @@ enum class GraphemeClusterBreak {
         }
     }
     
-    /** Get the "long" name of this property value (returns empty if property value is unknown)
-    *
-    *See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
-    */
+    /**
+     * Get the "long" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+     */
     fun longName(): String? {
         
         val returnVal = lib.icu4x_GraphemeClusterBreak_long_name_mv1(this.toNative());
@@ -106,10 +111,11 @@ enum class GraphemeClusterBreak {
                                 
     }
     
-    /** Get the "short" name of this property value (returns empty if property value is unknown)
-    *
-    *See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
-    */
+    /**
+     * Get the "short" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+     */
     fun shortName(): String? {
         
         val returnVal = lib.icu4x_GraphemeClusterBreak_short_name_mv1(this.toNative());
@@ -119,10 +125,11 @@ enum class GraphemeClusterBreak {
                                 
     }
     
-    /** Convert to an integer value usable with ICU4C and `CodePointMapData`
-    *
-    *See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.GraphemeClusterBreak.html#method.to_icu4c_value) for more information.
-    */
+    /**
+     * Convert to an integer value usable with ICU4C and `CodePointMapData`
+     *
+     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.GraphemeClusterBreak.html#method.to_icu4c_value) for more information.
+     */
     fun toIntegerValue(): UByte {
         
         val returnVal = lib.icu4x_GraphemeClusterBreak_to_integer_value_mv1(this.toNative());

@@ -8,8 +8,6 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /**
- * 🚧 This API is unstable and may experience breaking changes outside major releases.
- *
  * This struct holds free functions for loading display names for languages, scripts,
  * regions, and language identifiers.
  *
@@ -20,6 +18,8 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
  * See the [Rust documentation for `VariantDisplayName`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.VariantDisplayName.html) for more information.
  *
  * See the [Rust documentation for `LanguageIdentifierDisplayName`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html) for more information.
+ *
+ * @experimental
  */
 export class LocaleNamesUnstable {
     /** @internal */
@@ -29,282 +29,282 @@ export class LocaleNamesUnstable {
 
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
+     *
+     * @experimental
      */
     static forRegionLight(locale: Locale, region: string): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
+     *
+     * @experimental
      */
     static forRegionLightWithProvider(provider: DataProvider, locale: Locale, region: string): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
+     *
+     * @experimental
      */
     static forRegionTiny(locale: Locale, region: string): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
+     *
+     * @experimental
      */
     static forRegionTinyWithProvider(provider: DataProvider, locale: Locale, region: string): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
+     *
+     * @experimental
      */
     static forRegionShortTiny(locale: Locale, region: string): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
+     *
+     * @experimental
      */
     static forRegionShortTinyWithProvider(provider: DataProvider, locale: Locale, region: string): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
+     *
+     * @experimental
      */
     static forRegionShortLight(locale: Locale, region: string): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
+     *
+     * @experimental
      */
     static forRegionShortLightWithProvider(provider: DataProvider, locale: Locale, region: string): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
+     *
+     * @experimental
      */
     static forScriptLight(locale: Locale, script: string): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
+     *
+     * @experimental
      */
     static forScriptLightWithProvider(provider: DataProvider, locale: Locale, script: string): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
+     *
+     * @experimental
      */
     static forScriptTiny(locale: Locale, script: string): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
+     *
+     * @experimental
      */
     static forScriptTinyWithProvider(provider: DataProvider, locale: Locale, script: string): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
+     *
+     * @experimental
      */
     static forScriptHeavy(locale: Locale, script: string): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
+     *
+     * @experimental
      */
     static forScriptHeavyWithProvider(provider: DataProvider, locale: Locale, script: string): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
+     *
+     * @experimental
      */
     static forScriptShortHeavy(locale: Locale, script: string): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
+     *
+     * @experimental
      */
     static forScriptShortHeavyWithProvider(provider: DataProvider, locale: Locale, script: string): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
+     *
+     * @experimental
      */
     static forVariantHeavy(locale: Locale, variant: string): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
+     *
+     * @experimental
      */
     static forVariantHeavyWithProvider(provider: DataProvider, locale: Locale, variant: string): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
+     *
+     * @experimental
      */
     static forLanguageIdentifierLight(locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
+     *
+     * @experimental
      */
     static forLanguageIdentifierLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
+     *
+     * @experimental
      */
     static forLanguageIdentifierTiny(locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
+     *
+     * @experimental
      */
     static forLanguageIdentifierTinyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
+     *
+     * @experimental
      */
     static forLanguageIdentifierShortLight(locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
+     *
+     * @experimental
      */
     static forLanguageIdentifierShortLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
+     *
+     * @experimental
      */
     static forLanguageIdentifierLongLight(locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
+     *
+     * @experimental
      */
     static forLanguageIdentifierLongLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
+     *
+     * @experimental
      */
     static forLanguageIdentifierMenuLight(locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
+     *
+     * @experimental
      */
     static forLanguageIdentifierMenuLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
+     *
+     * @experimental
      */
     static forLanguageIdentifierShortMenuLight(locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
+     *
+     * @experimental
      */
     static forLanguageIdentifierShortMenuLightWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
+     *
+     * @experimental
      */
     static forLanguageIdentifierHeavy(locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
+     *
+     * @experimental
      */
     static forLanguageIdentifierHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
+     *
+     * @experimental
      */
     static forLanguageIdentifierShortHeavy(locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
+     *
+     * @experimental
      */
     static forLanguageIdentifierShortHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
+     *
+     * @experimental
      */
     static forLanguageIdentifierLongHeavy(locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
+     *
+     * @experimental
      */
     static forLanguageIdentifierLongHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
+     *
+     * @experimental
      */
     static forLanguageIdentifierMenuHeavy(locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
+     *
+     * @experimental
      */
     static forLanguageIdentifierMenuHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
+     *
+     * @experimental
      */
     static forLanguageIdentifierShortMenuHeavy(locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): string;
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
+     *
+     * @experimental
      */
     static forLanguageIdentifierShortMenuHeavyWithProvider(provider: DataProvider, locale: Locale, langid: Locale, languageDisplay: LanguageDisplayUnstable): string;
 }

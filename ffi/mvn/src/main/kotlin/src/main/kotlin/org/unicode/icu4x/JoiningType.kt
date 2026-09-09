@@ -14,7 +14,8 @@ internal interface JoiningTypeLib: Library {
     fun icu4x_JoiningType_from_integer_value_mv1(other: FFIUint8): OptionInt
     fun icu4x_JoiningType_try_from_str_mv1(s: Slice): OptionInt
 }
-/** See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningType.html) for more information.
+/**
+ * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningType.html) for more information.
 */
 enum class JoiningType {
     NonJoining,
@@ -41,8 +42,9 @@ enum class JoiningType {
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `for_char`](https://docs.rs/icu/2.3.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
-        */
+        /**
+         * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.3.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+         */
         fun forChar(ch: Int): JoiningType {
             
             val returnVal = lib.icu4x_JoiningType_for_char_mv1(ch);
@@ -50,10 +52,11 @@ enum class JoiningType {
         }
         @JvmStatic
         
-        /** Convert from an integer value from ICU4C or `CodePointMapData`
-        *
-        *See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningType.html#method.from_icu4c_value) for more information.
-        */
+        /**
+         * Convert from an integer value from ICU4C or `CodePointMapData`
+         *
+         * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningType.html#method.from_icu4c_value) for more information.
+         */
         fun fromIntegerValue(other: UByte): JoiningType? {
             
             val returnVal = lib.icu4x_JoiningType_from_integer_value_mv1(FFIUint8(other));
@@ -63,10 +66,11 @@ enum class JoiningType {
         }
         @JvmStatic
         
-        /** Creates a `JoiningType` from a string.
-        *
-        *Short names, long names, and aliases are supported, and matching is case-insensitive.
-        */
+        /**
+         * Creates a `JoiningType` from a string.
+         *
+         * Short names, long names, and aliases are supported, and matching is case-insensitive.
+         */
         fun tryFromStr(s: String): JoiningType? {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
@@ -81,10 +85,11 @@ enum class JoiningType {
         }
     }
     
-    /** Get the "long" name of this property value (returns empty if property value is unknown)
-    *
-    *See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
-    */
+    /**
+     * Get the "long" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+     */
     fun longName(): String? {
         
         val returnVal = lib.icu4x_JoiningType_long_name_mv1(this.toNative());
@@ -94,10 +99,11 @@ enum class JoiningType {
                                 
     }
     
-    /** Get the "short" name of this property value (returns empty if property value is unknown)
-    *
-    *See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
-    */
+    /**
+     * Get the "short" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+     */
     fun shortName(): String? {
         
         val returnVal = lib.icu4x_JoiningType_short_name_mv1(this.toNative());
@@ -107,10 +113,11 @@ enum class JoiningType {
                                 
     }
     
-    /** Convert to an integer value usable with ICU4C and `CodePointMapData`
-    *
-    *See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningType.html#method.to_icu4c_value) for more information.
-    */
+    /**
+     * Convert to an integer value usable with ICU4C and `CodePointMapData`
+     *
+     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningType.html#method.to_icu4c_value) for more information.
+     */
     fun toIntegerValue(): UByte {
         
         val returnVal = lib.icu4x_JoiningType_to_integer_value_mv1(this.toNative());

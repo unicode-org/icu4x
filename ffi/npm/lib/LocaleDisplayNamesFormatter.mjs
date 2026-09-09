@@ -11,9 +11,9 @@ const LocaleDisplayNamesFormatter_box_destroy_registry = new FinalizationRegistr
 });
 
 /**
- * 🚧 This API is unstable and may experience breaking changes outside major releases.
- *
  * See the [Rust documentation for `LocaleDisplayNamesFormatter`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html) for more information.
+ *
+ * @experimental
  */
 export class LocaleDisplayNamesFormatter {
     // Internal ptr reference:
@@ -45,11 +45,11 @@ export class LocaleDisplayNamesFormatter {
 
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using compiled data.
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
+     *
+     * @experimental
      */
     #defaultConstructor(locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -76,11 +76,11 @@ export class LocaleDisplayNamesFormatter {
     }
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using a particular data source.
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
+     *
+     * @experimental
      */
     static createWithProvider(provider, locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -107,12 +107,11 @@ export class LocaleDisplayNamesFormatter {
     }
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * Returns the locale-specific display name of a locale.
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
      *
      * See the [Rust documentation for `of`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
+     *
+     * @experimental
      */
     of(locale) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
@@ -130,11 +129,11 @@ export class LocaleDisplayNamesFormatter {
     }
 
     /**
-     * 🚧 This API is unstable and may experience breaking changes outside major releases.
-     *
      * Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using compiled data.
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
+     *
+     * @experimental
      */
     constructor(locale, options) {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {

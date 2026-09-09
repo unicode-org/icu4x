@@ -3,6 +3,7 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 lib-name = "icu"
+semver_unstable_features = ["unstable", "experimental"]
 
 [demo-gen]
 module-name = "icu"

@@ -12,10 +12,11 @@ internal interface BidiInfoLib: Library {
     fun icu4x_BidiInfo_size_mv1(handle: Pointer): FFISizet
     fun icu4x_BidiInfo_level_at_mv1(handle: Pointer, pos: FFISizet): FFIUint8
 }
-/** An object containing bidi information for a given string, produced by `for_text()` on `Bidi`
-*
-*See the [Rust documentation for `BidiInfo`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.BidiInfo.html) for more information.
-*/
+/**
+ * An object containing bidi information for a given string, produced by `for_text()` on `Bidi`
+ *
+ * See the [Rust documentation for `BidiInfo`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.BidiInfo.html) for more information.
+ */
 class BidiInfo internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
@@ -45,16 +46,18 @@ class BidiInfo internal constructor (
         internal val lib: BidiInfoLib = Native.load("icu4x", libClass)
     }
     
-    /** The number of paragraphs contained here
-    */
+    /**
+     * The number of paragraphs contained here
+     */
     fun paragraphCount(): ULong {
         
         val returnVal = lib.icu4x_BidiInfo_paragraph_count_mv1(handle);
         return (returnVal.toULong())
     }
     
-    /** Get the nth paragraph, returning `None` if out of bounds
-    */
+    /**
+     * Get the nth paragraph, returning `None` if out of bounds
+     */
     fun paragraphAt(n: ULong): BidiParagraph? {
         // This lifetime edge depends on lifetimes: 'text
         val textEdges: MutableList<Any> = mutableListOf(this);
@@ -66,20 +69,22 @@ class BidiInfo internal constructor (
         return returnOpaque
     }
     
-    /** The number of bytes in this full text
-    */
+    /**
+     * The number of bytes in this full text
+     */
     fun size(): ULong {
         
         val returnVal = lib.icu4x_BidiInfo_size_mv1(handle);
         return (returnVal.toULong())
     }
     
-    /** Get the BIDI level at a particular byte index in the full text.
-    *This integer is conceptually a `unicode_bidi::Level`,
-    *and can be further inspected using the static methods on Bidi.
-    *
-    *Returns 0 (equivalent to `Level::ltr()`) on error
-    */
+    /**
+     * Get the BIDI level at a particular byte index in the full text.
+     * This integer is conceptually a `unicode_bidi::Level`,
+     * and can be further inspected using the static methods on Bidi.
+     *
+     * Returns 0 (equivalent to `Level::ltr()`) on error
+     */
     fun levelAt(pos: ULong): UByte {
         
         val returnVal = lib.icu4x_BidiInfo_level_at_mv1(handle, FFISizet(pos));

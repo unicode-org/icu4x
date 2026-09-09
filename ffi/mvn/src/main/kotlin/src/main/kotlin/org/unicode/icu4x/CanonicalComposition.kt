@@ -11,12 +11,13 @@ internal interface CanonicalCompositionLib: Library {
     fun icu4x_CanonicalComposition_create_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_CanonicalComposition_compose_mv1(handle: Pointer, starter: Int, second: Int): Int
 }
-/** The raw canonical composition operation.
-*
-*Callers should generally use `ComposingNormalizer` unless they specifically need raw composition operations
-*
-*See the [Rust documentation for `CanonicalComposition`](https://docs.rs/icu/2.3.1/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
-*/
+/**
+ * The raw canonical composition operation.
+ *
+ * Callers should generally use `ComposingNormalizer` unless they specifically need raw composition operations
+ *
+ * See the [Rust documentation for `CanonicalComposition`](https://docs.rs/icu/2.3.1/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
+ */
 class CanonicalComposition internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
@@ -45,10 +46,11 @@ class CanonicalComposition internal constructor (
         internal val lib: CanonicalCompositionLib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** Construct a new `CanonicalComposition` instance for NFC using compiled data.
-        *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
-        */
+        /**
+         * Construct a new `CanonicalComposition` instance for NFC using compiled data.
+         *
+         * See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
+         */
         fun create(): CanonicalComposition {
             
             val returnVal = lib.icu4x_CanonicalComposition_create_mv1();
@@ -59,10 +61,11 @@ class CanonicalComposition internal constructor (
         }
         @JvmStatic
         
-        /** Construct a new `CanonicalComposition` instance for NFC using a particular data source.
-        *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
-        */
+        /**
+         * Construct a new `CanonicalComposition` instance for NFC using a particular data source.
+         *
+         * See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
+         */
         fun createWithProvider(provider: DataProvider): Result<CanonicalComposition> {
             
             val returnVal = lib.icu4x_CanonicalComposition_create_with_provider_mv1(provider.handle);
@@ -78,11 +81,12 @@ class CanonicalComposition internal constructor (
         }
     }
     
-    /** Performs canonical composition (including Hangul) on a pair of characters
-    *or returns NUL if these characters don’t compose. Composition exclusions are taken into account.
-    *
-    *See the [Rust documentation for `compose`](https://docs.rs/icu/2.3.1/icu/normalizer/properties/struct.CanonicalCompositionBorrowed.html#method.compose) for more information.
-    */
+    /**
+     * Performs canonical composition (including Hangul) on a pair of characters
+     * or returns NUL if these characters don’t compose. Composition exclusions are taken into account.
+     *
+     * See the [Rust documentation for `compose`](https://docs.rs/icu/2.3.1/icu/normalizer/properties/struct.CanonicalCompositionBorrowed.html#method.compose) for more information.
+     */
     fun compose(starter: Int, second: Int): Int {
         
         val returnVal = lib.icu4x_CanonicalComposition_compose_mv1(handle, starter, second);

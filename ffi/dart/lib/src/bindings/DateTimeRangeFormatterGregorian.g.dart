@@ -3,9 +3,8 @@
 
 part of 'lib.g.dart';
 
-/// 🚧 This API is unstable and may experience breaking changes outside major releases.
-///
 /// See the [Rust documentation for `FixedCalendarDateRangeFormatter`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html) for more information.
+@meta.experimental
 final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -30,8 +29,6 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_internal_icu4x_DateTimeRangeFormatterGregorian_destroy_mv1));
 
-  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
-  ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `DT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html) for more information.
@@ -39,6 +36,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateTimeRangeFormatterGregorian.dt(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
     final result = _icu4x_DateTimeRangeFormatterGregorian_create_dt_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -47,8 +45,6 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
-  ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `DT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html) for more information.
@@ -56,6 +52,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateTimeRangeFormatterGregorian.dtWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
     final result = _icu4x_DateTimeRangeFormatterGregorian_create_dt_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -64,8 +61,6 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
-  ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `MDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html) for more information.
@@ -73,6 +68,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateTimeRangeFormatterGregorian.mdt(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
     final result = _icu4x_DateTimeRangeFormatterGregorian_create_mdt_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -81,8 +77,6 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
-  ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `MDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html) for more information.
@@ -90,6 +84,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateTimeRangeFormatterGregorian.mdtWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
     final result = _icu4x_DateTimeRangeFormatterGregorian_create_mdt_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -98,8 +93,6 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
-  ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `YMDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html) for more information.
@@ -107,6 +100,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style), [4](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateTimeRangeFormatterGregorian.ymdt(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
     final result = _icu4x_DateTimeRangeFormatterGregorian_create_ymdt_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err(), yearStyle != null ? _ResultInt32Void.ok(yearStyle.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -115,8 +109,6 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
-  ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `YMDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html) for more information.
@@ -124,6 +116,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style), [4](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateTimeRangeFormatterGregorian.ymdtWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
     final result = _icu4x_DateTimeRangeFormatterGregorian_create_ymdt_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err(), yearStyle != null ? _ResultInt32Void.ok(yearStyle.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -132,8 +125,6 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
-  ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `DET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html) for more information.
@@ -141,6 +132,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateTimeRangeFormatterGregorian.det(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
     final result = _icu4x_DateTimeRangeFormatterGregorian_create_det_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -149,8 +141,6 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
-  ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `DET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html) for more information.
@@ -158,6 +148,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateTimeRangeFormatterGregorian.detWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
     final result = _icu4x_DateTimeRangeFormatterGregorian_create_det_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -166,8 +157,6 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
-  ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `MDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html) for more information.
@@ -175,6 +164,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateTimeRangeFormatterGregorian.mdet(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
     final result = _icu4x_DateTimeRangeFormatterGregorian_create_mdet_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -183,8 +173,6 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
-  ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `MDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html) for more information.
@@ -192,6 +180,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateTimeRangeFormatterGregorian.mdetWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
     final result = _icu4x_DateTimeRangeFormatterGregorian_create_mdet_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -200,8 +189,6 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
-  ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `YMDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html) for more information.
@@ -209,6 +196,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style), [4](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateTimeRangeFormatterGregorian.ymdet(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
     final result = _icu4x_DateTimeRangeFormatterGregorian_create_ymdet_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err(), yearStyle != null ? _ResultInt32Void.ok(yearStyle.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -217,8 +205,6 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
-  ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `YMDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html) for more information.
@@ -226,6 +212,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style), [4](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateTimeRangeFormatterGregorian.ymdetWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
     final result = _icu4x_DateTimeRangeFormatterGregorian_create_ymdet_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err(), yearStyle != null ? _ResultInt32Void.ok(yearStyle.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -234,8 +221,6 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
-  ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `ET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html) for more information.
@@ -243,6 +228,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateTimeRangeFormatterGregorian.et(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
     final result = _icu4x_DateTimeRangeFormatterGregorian_create_et_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -251,8 +237,6 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
-  ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
   ///
   /// See the [Rust documentation for `ET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html) for more information.
@@ -260,6 +244,7 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateTimeRangeFormatterGregorian.etWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
     final result = _icu4x_DateTimeRangeFormatterGregorian_create_et_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -268,9 +253,8 @@ final class DateTimeRangeFormatterGregorian implements ffi.Finalizable {
     return DateTimeRangeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
-  ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.format) for more information.
+  @meta.experimental
   String formatIso(IsoDate startIsoDate, Time startTime, IsoDate endIsoDate, Time endTime) {
     final write = _Write();
     _icu4x_DateTimeRangeFormatterGregorian_format_iso_mv1(_ffi, startIsoDate._ffi, startTime._ffi, endIsoDate._ffi, endTime._ffi, write._ffi);

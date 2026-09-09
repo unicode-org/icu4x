@@ -9,8 +9,9 @@ internal interface LoggerLib: Library {
     fun icu4x_Logger_destroy_mv1(handle: Pointer)
     fun icu4x_Logger_init_simple_logger_mv1(): Byte
 }
-/** An object allowing control over the logging used
-*/
+/**
+ * An object allowing control over the logging used
+ */
 class Logger internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
@@ -39,12 +40,13 @@ class Logger internal constructor (
         internal val lib: LoggerLib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** Initialize the logger using `simple_logger`
-        *
-        *Requires the `simple_logger` Cargo feature.
-        *
-        *Returns `false` if there was already a logger set.
-        */
+        /**
+         * Initialize the logger using `simple_logger`
+         *
+         * Requires the `simple_logger` Cargo feature.
+         *
+         * Returns `false` if there was already a logger set.
+         */
         fun initSimpleLogger(): Boolean {
             
             val returnVal = lib.icu4x_Logger_init_simple_logger_mv1();

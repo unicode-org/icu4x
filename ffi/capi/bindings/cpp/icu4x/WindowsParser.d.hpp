@@ -57,7 +57,7 @@ public:
   /**
    * See the [Rust documentation for `parse`](https://docs.rs/icu/2.3.1/icu/time/zone/windows/struct.WindowsParserBorrowed.html#method.parse) for more information.
    */
-  inline std::unique_ptr<icu4x::TimeZone> parse(std::string_view value, std::string_view region) const;
+  inline icu4x::diplomat::maybe_null<std::unique_ptr<icu4x::TimeZone>> parse(std::string_view value, std::string_view region) const;
 
     inline const icu4x::capi::WindowsParser* AsFFI() const;
     inline icu4x::capi::WindowsParser* AsFFI();

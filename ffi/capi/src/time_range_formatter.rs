@@ -27,7 +27,6 @@ pub mod ffi {
     #[cfg(feature = "buffer_provider")]
     use crate::unstable::provider::ffi::DataProvider;
 
-    /// 🚧 This API is unstable and may experience breaking changes outside major releases.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::range::NoCalendarRangeFormatter, Typedef)]
     pub struct TimeRangeFormatter(
@@ -39,7 +38,6 @@ pub mod ffi {
     );
 
     impl TimeRangeFormatter {
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         #[diplomat::rust_link(icu::datetime::range::NoCalendarRangeFormatter::try_new, FnInTypedef)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T, Struct)]
@@ -80,7 +78,6 @@ pub mod ffi {
             )))
         }
         
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[diplomat::rust_link(icu::datetime::range::NoCalendarRangeFormatter::try_new, FnInTypedef)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T, Struct)]
@@ -122,7 +119,6 @@ pub mod ffi {
             )))
         }
         
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[diplomat::rust_link(icu::datetime::range::NoCalendarRangeFormatter::format, FnInTypedef)]
         #[diplomat::rust_link(icu::datetime::range::FormattedDateRange, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::range::FormattedDateRange::to_string, FnInStruct, hidden)]

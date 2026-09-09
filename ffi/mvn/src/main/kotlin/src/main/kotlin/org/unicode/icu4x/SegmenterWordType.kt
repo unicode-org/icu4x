@@ -9,7 +9,8 @@ import com.sun.jna.Structure
 internal interface SegmenterWordTypeLib: Library {
     fun icu4x_SegmenterWordType_is_word_like_mv1(inner: Int): Byte
 }
-/** See the [Rust documentation for `WordType`](https://docs.rs/icu/2.3.1/icu/segmenter/options/enum.WordType.html) for more information.
+/**
+ * See the [Rust documentation for `WordType`](https://docs.rs/icu/2.3.1/icu/segmenter/options/enum.WordType.html) for more information.
 */
 enum class SegmenterWordType {
     None,
@@ -33,8 +34,9 @@ enum class SegmenterWordType {
         }
     }
     
-    /** See the [Rust documentation for `is_word_like`](https://docs.rs/icu/2.3.1/icu/segmenter/options/enum.WordType.html#method.is_word_like) for more information.
-    */
+    /**
+     * See the [Rust documentation for `is_word_like`](https://docs.rs/icu/2.3.1/icu/segmenter/options/enum.WordType.html#method.is_word_like) for more information.
+     */
     fun isWordLike(): Boolean {
         
         val returnVal = lib.icu4x_SegmenterWordType_is_word_like_mv1(this.toNative());

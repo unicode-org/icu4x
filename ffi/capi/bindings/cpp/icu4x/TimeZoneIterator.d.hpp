@@ -33,7 +33,7 @@ public:
   /**
    * See the [Rust documentation for `next`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.TimeZoneIter.html#method.next) for more information.
    */
-  inline std::unique_ptr<icu4x::TimeZone> next();
+  inline icu4x::diplomat::maybe_null<std::unique_ptr<icu4x::TimeZone>> next();
 
     inline const icu4x::capi::TimeZoneIterator* AsFFI() const;
     inline icu4x::capi::TimeZoneIterator* AsFFI();
