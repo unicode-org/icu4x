@@ -21,10 +21,14 @@ Several crates have had patch releases in the 2.3 stream:
     - Upate to Diplomat 0.16.1 (unicode-org#8411)
   - (2.3.1) `icu_capi`
     - Add missing docs to properties (unicode-org#8407)
+  - (2.3.3) `icu_capi`
+    - Add missing stability annotations (unicode-org#8462)
   - Dart
     - (2.3.1) Add `Error` and `Exception` to classes/enums which are used as errors and exceptions (https://github.com/rust-diplomat/diplomat/pull/1220) (unicode-org#8411)
+    - (2.3.3) Add missing stability annotations (unicode-org#8462)
   - JavaScript
     - (2.3.1) Add validation to arguments to assure type correctness (https://github.com/rust-diplomat/diplomat/pull/902) (unicode-org#8411)
+    - (2.3.3) Add missing stability annotations (unicode-org#8462)
 - Utils
   - (0.11.5, 0.11.6) `zerovec-derive`
     - (0.11.5) Fix soundness issue around multi element buffer validation in ULE derives (unicode-org#8393)
