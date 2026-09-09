@@ -833,6 +833,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "dump-json"
+version = "0.0.0"
+dependencies = [
+ "icu",
+ "icu_provider",
+ "icu_provider_registry",
+ "icu_provider_source",
+ "serde_json",
+]
+
+[[package]]
 name = "dyn-clone"
 version = "1.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
