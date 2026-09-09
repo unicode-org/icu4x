@@ -1555,6 +1555,70 @@ fn test_basics() {
 }
 
 #[test]
+fn test_digit_hangul() {
+    let left = [
+        "0가",
+        "0가1",
+        "0가",
+        "0가a",
+        "0각",
+        "0각1",
+        "0각",
+        "0각a",
+        "2가",
+        "2가1",
+        "2가",
+        "2가a",
+        "2각",
+        "2각1",
+        "2각",
+        "2각a",
+    ];
+    let right = [
+        "0가1",
+        "0가",
+        "0가a",
+        "0가",
+        "0각1",
+        "0각",
+        "0각a",
+        "0각",
+        "2가1",
+        "2가",
+        "2가a",
+        "2가",
+        "2각1",
+        "2각",
+        "2각a",
+        "2각",
+    ];
+    let expectations = [
+        Ordering::Less,
+        Ordering::Greater,
+        Ordering::Less,
+        Ordering::Greater,
+        Ordering::Less,
+        Ordering::Greater,
+        Ordering::Less,
+        Ordering::Greater,
+        Ordering::Less,
+        Ordering::Greater,
+        Ordering::Less,
+        Ordering::Greater,
+        Ordering::Less,
+        Ordering::Greater,
+        Ordering::Less,
+        Ordering::Greater,
+    ];
+    let mut prefs = CollatorPreferences::default();
+    prefs.numeric_ordering = Some(CollationNumericOrdering::True);
+
+    let collator = Collator::try_new(prefs, CollatorOptions::default()).unwrap();
+
+    check_expectations(&collator, &left, &right, &expectations);
+}
+
+#[test]
 fn test_numeric_long() {
     let mut prefs = CollatorPreferences::default();
     prefs.numeric_ordering = Some(CollationNumericOrdering::True);
