@@ -18,7 +18,6 @@ pub mod ffi {
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use writeable::Writeable;
 
-    /// 🚧 This API is unstable and may experience breaking changes outside major releases.
     #[diplomat::rust_link(icu::locale::names::LanguageDisplay, Enum)]
     #[diplomat::enum_convert(icu_locale::names::LanguageDisplay, needs_wildcard)]
     #[non_exhaustive]
@@ -28,7 +27,6 @@ pub mod ffi {
         Standard,
     }
 
-    /// 🚧 This API is unstable and may experience breaking changes outside major releases.
     ///
     /// This struct holds free functions for loading display names for languages, scripts,
     /// regions, and language identifiers.
@@ -42,7 +40,6 @@ pub mod ffi {
     impl LocaleNamesUnstable {
         // --- Region ---
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(
             icu::locale::names::RegionDisplayName::new_light_with_fallback,
@@ -76,7 +73,6 @@ pub mod ffi {
             let _infallible = display_name.write_to(write);
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
         #[diplomat::rust_link(
@@ -102,7 +98,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(
             icu::locale::names::RegionDisplayName::new_tiny_with_fallback,
@@ -123,7 +118,6 @@ pub mod ffi {
             let _infallible = display_name.write_to(write);
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
         #[diplomat::rust_link(
@@ -149,7 +143,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(
             icu::locale::names::RegionDisplayName::new_short_tiny_with_fallback,
@@ -170,7 +163,6 @@ pub mod ffi {
             let _infallible = display_name.write_to(write);
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
         #[diplomat::rust_link(
@@ -196,7 +188,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(
             icu::locale::names::RegionDisplayName::new_short_light_with_fallback,
@@ -217,7 +208,6 @@ pub mod ffi {
             let _infallible = display_name.write_to(write);
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
         #[diplomat::rust_link(
@@ -245,7 +235,6 @@ pub mod ffi {
 
         // --- Script ---
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(
             icu::locale::names::ScriptDisplayName::new_light_with_fallback,
@@ -279,7 +268,6 @@ pub mod ffi {
             let _infallible = display_name.write_to(write);
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
         #[diplomat::rust_link(
@@ -305,7 +293,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(
             icu::locale::names::ScriptDisplayName::new_tiny_with_fallback,
@@ -326,7 +313,6 @@ pub mod ffi {
             let _infallible = display_name.write_to(write);
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
         #[diplomat::rust_link(
@@ -352,7 +338,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(
             icu::locale::names::ScriptDisplayName::new_heavy_with_fallback,
@@ -373,7 +358,6 @@ pub mod ffi {
             let _infallible = display_name.write_to(write);
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
         #[diplomat::rust_link(
@@ -399,7 +383,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(
             icu::locale::names::ScriptDisplayName::new_short_heavy_with_fallback,
@@ -420,7 +403,6 @@ pub mod ffi {
             let _infallible = display_name.write_to(write);
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
         #[diplomat::rust_link(
@@ -448,7 +430,6 @@ pub mod ffi {
 
         // --- Variant ---
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(
             icu::locale::names::VariantDisplayName::new_heavy_with_fallback,
@@ -486,7 +467,6 @@ pub mod ffi {
             let _infallible = display_name.write_to(write);
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
         #[diplomat::rust_link(
@@ -514,7 +494,6 @@ pub mod ffi {
 
         // --- Language Identifier ---
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(
             icu::locale::names::LanguageIdentifierDisplayName::try_new_light,
@@ -568,7 +547,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
         #[diplomat::rust_link(
@@ -595,7 +573,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(
             icu::locale::names::LanguageIdentifierDisplayName::try_new_tiny,
@@ -619,7 +596,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
         #[diplomat::rust_link(
@@ -646,7 +622,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(
             icu::locale::names::LanguageIdentifierDisplayName::try_new_short_light,
@@ -671,7 +646,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
         #[diplomat::rust_link(
@@ -698,7 +672,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(
             icu::locale::names::LanguageIdentifierDisplayName::try_new_long_light,
@@ -723,7 +696,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
         #[diplomat::rust_link(
@@ -750,7 +722,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(
             icu::locale::names::LanguageIdentifierDisplayName::try_new_menu_light,
@@ -775,7 +746,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
         #[diplomat::rust_link(
@@ -802,7 +772,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(
             icu::locale::names::LanguageIdentifierDisplayName::try_new_short_menu_light,
@@ -827,7 +796,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
         #[diplomat::rust_link(
@@ -854,7 +822,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(
             icu::locale::names::LanguageIdentifierDisplayName::try_new_heavy,
@@ -878,7 +845,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
         #[diplomat::rust_link(
@@ -905,7 +871,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(
             icu::locale::names::LanguageIdentifierDisplayName::try_new_short_heavy,
@@ -930,7 +895,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
         #[diplomat::rust_link(
@@ -957,7 +921,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(
             icu::locale::names::LanguageIdentifierDisplayName::try_new_long_heavy,
@@ -982,7 +945,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
         #[diplomat::rust_link(
@@ -1009,7 +971,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(
             icu::locale::names::LanguageIdentifierDisplayName::try_new_menu_heavy,
@@ -1034,7 +995,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
         #[diplomat::rust_link(
@@ -1061,7 +1021,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "compiled_data")]
         #[diplomat::rust_link(
             icu::locale::names::LanguageIdentifierDisplayName::try_new_short_menu_heavy,
@@ -1086,7 +1045,6 @@ pub mod ffi {
             Ok(())
         }
 
-        /// 🚧 This API is unstable and may experience breaking changes outside major releases.
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(demo_gen, disable)]
         #[diplomat::rust_link(

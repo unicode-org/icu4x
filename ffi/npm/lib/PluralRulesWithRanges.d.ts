@@ -10,6 +10,8 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 /**
  * See the [Rust documentation for `PluralRulesWithRanges`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html) for more information.
+ *
+ * @experimental
  */
 export class PluralRulesWithRanges {
     /** @internal */
@@ -22,6 +24,8 @@ export class PluralRulesWithRanges {
      * construct a {@link PluralRulesWithRanges} for the given locale, for cardinal numbers, using compiled data.
      *
      * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
+     *
+     * @experimental
      */
     static createCardinal(locale: Locale): PluralRulesWithRanges;
 
@@ -29,6 +33,8 @@ export class PluralRulesWithRanges {
      * construct a {@link PluralRulesWithRanges} for the given locale, for cardinal numbers, using a particular data source.
      *
      * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
+     *
+     * @experimental
      */
     static createCardinalWithProvider(provider: DataProvider, locale: Locale): PluralRulesWithRanges;
 
@@ -36,6 +42,8 @@ export class PluralRulesWithRanges {
      * Construct a {@link PluralRulesWithRanges} for the given locale, for ordinal numbers, using compiled data.
      *
      * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
+     *
+     * @experimental
      */
     static createOrdinal(locale: Locale): PluralRulesWithRanges;
 
@@ -43,6 +51,8 @@ export class PluralRulesWithRanges {
      * Construct a {@link PluralRulesWithRanges} for the given locale, for ordinal numbers, using a particular data source.
      *
      * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
+     *
+     * @experimental
      */
     static createOrdinalWithProvider(provider: DataProvider, locale: Locale): PluralRulesWithRanges;
 
@@ -50,6 +60,8 @@ export class PluralRulesWithRanges {
      * Get the category for a given number represented as operands
      *
      * See the [Rust documentation for `category_for_range`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.category_for_range) for more information.
+     *
+     * @experimental
      */
     categoryForRange(start: PluralOperands, end: PluralOperands): PluralCategory;
 }

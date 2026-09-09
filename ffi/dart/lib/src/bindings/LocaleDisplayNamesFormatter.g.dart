@@ -3,9 +3,8 @@
 
 part of 'lib.g.dart';
 
-/// 🚧 This API is unstable and may experience breaking changes outside major releases.
-///
 /// See the [Rust documentation for `LocaleDisplayNamesFormatter`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html) for more information.
+@meta.experimental
 final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -30,13 +29,12 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_internal_icu4x_LocaleDisplayNamesFormatter_destroy_mv1));
 
-  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
-  ///
   /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using compiled data.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
   ///
   /// Throws [DataError] on failure.
+  @meta.experimental
   factory LocaleDisplayNamesFormatter(Locale locale, DisplayNamesOptions options) {
     final temp = _FinalizedArena();
     final result = _icu4x_LocaleDisplayNamesFormatter_create_v1_mv1(locale._ffi, options._toFfi(temp.arena));
@@ -46,13 +44,12 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
     return LocaleDisplayNamesFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
-  ///
   /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using a particular data source.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
   ///
   /// Throws [DataError] on failure.
+  @meta.experimental
   factory LocaleDisplayNamesFormatter.createWithProvider(DataProvider provider, Locale locale, DisplayNamesOptions options) {
     final temp = _FinalizedArena();
     final result = _icu4x_LocaleDisplayNamesFormatter_create_v1_with_provider_mv1(provider._ffi, locale._ffi, options._toFfi(temp.arena));
@@ -62,12 +59,10 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
     return LocaleDisplayNamesFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
-  ///
   /// Returns the locale-specific display name of a locale.
-  /// 🚧 This API is unstable and may experience breaking changes outside major releases.
   ///
   /// See the [Rust documentation for `of`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
+  @meta.experimental
   String of(Locale locale) {
     final write = _Write();
     _icu4x_LocaleDisplayNamesFormatter_of_mv1(_ffi, locale._ffi, write._ffi);

@@ -73,8 +73,9 @@ internal class OptionDateDurationNative constructor(): Structure(), Structure.By
 
 }
 
-/** See the [Rust documentation for `DateDuration`](https://docs.rs/icu/2.3.1/icu/calendar/types/struct.DateDuration.html) for more information.
-*/
+/**
+ * See the [Rust documentation for `DateDuration`](https://docs.rs/icu/2.3.1/icu/calendar/types/struct.DateDuration.html) for more information.
+ */
 class DateDuration (var isNegative: Boolean, var years: UInt, var months: UInt, var weeks: UInt, var days: UInt) {
     companion object {
 
@@ -94,10 +95,11 @@ class DateDuration (var isNegative: Boolean, var years: UInt, var months: UInt, 
 
         @JvmStatic
         
-        /** Creates a new [DateDuration] from an ISO 8601 string.
-        *
-        *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.3.1/icu/calendar/types/struct.DateDuration.html#method.try_from_str) for more information.
-        */
+        /**
+         * Creates a new [DateDuration] from an ISO 8601 string.
+         *
+         * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.3.1/icu/calendar/types/struct.DateDuration.html#method.try_from_str) for more information.
+         */
         fun fromString(v: String): Result<DateDuration> {
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
@@ -116,10 +118,11 @@ class DateDuration (var isNegative: Boolean, var years: UInt, var months: UInt, 
         }
         @JvmStatic
         
-        /** Returns a new [DateDuration] representing a number of years.
-        *
-        *See the [Rust documentation for `for_years`](https://docs.rs/icu/2.3.1/icu/calendar/types/struct.DateDuration.html#method.for_years) for more information.
-        */
+        /**
+         * Returns a new [DateDuration] representing a number of years.
+         *
+         * See the [Rust documentation for `for_years`](https://docs.rs/icu/2.3.1/icu/calendar/types/struct.DateDuration.html#method.for_years) for more information.
+         */
         fun forYears(years: Int): DateDuration {
             
             val returnVal = lib.icu4x_DateDuration_for_years_mv1(years);
@@ -128,10 +131,11 @@ class DateDuration (var isNegative: Boolean, var years: UInt, var months: UInt, 
         }
         @JvmStatic
         
-        /** Returns a new [DateDuration] representing a number of months.
-        *
-        *See the [Rust documentation for `for_months`](https://docs.rs/icu/2.3.1/icu/calendar/types/struct.DateDuration.html#method.for_months) for more information.
-        */
+        /**
+         * Returns a new [DateDuration] representing a number of months.
+         *
+         * See the [Rust documentation for `for_months`](https://docs.rs/icu/2.3.1/icu/calendar/types/struct.DateDuration.html#method.for_months) for more information.
+         */
         fun forMonths(months: Int): DateDuration {
             
             val returnVal = lib.icu4x_DateDuration_for_months_mv1(months);
@@ -140,10 +144,11 @@ class DateDuration (var isNegative: Boolean, var years: UInt, var months: UInt, 
         }
         @JvmStatic
         
-        /** Returns a new [DateDuration] representing a number of weeks.
-        *
-        *See the [Rust documentation for `for_weeks`](https://docs.rs/icu/2.3.1/icu/calendar/types/struct.DateDuration.html#method.for_weeks) for more information.
-        */
+        /**
+         * Returns a new [DateDuration] representing a number of weeks.
+         *
+         * See the [Rust documentation for `for_weeks`](https://docs.rs/icu/2.3.1/icu/calendar/types/struct.DateDuration.html#method.for_weeks) for more information.
+         */
         fun forWeeks(weeks: Int): DateDuration {
             
             val returnVal = lib.icu4x_DateDuration_for_weeks_mv1(weeks);
@@ -152,10 +157,11 @@ class DateDuration (var isNegative: Boolean, var years: UInt, var months: UInt, 
         }
         @JvmStatic
         
-        /** Returns a new [DateDuration] representing a number of days.
-        *
-        *See the [Rust documentation for `for_days`](https://docs.rs/icu/2.3.1/icu/calendar/types/struct.DateDuration.html#method.for_days) for more information.
-        */
+        /**
+         * Returns a new [DateDuration] representing a number of days.
+         *
+         * See the [Rust documentation for `for_days`](https://docs.rs/icu/2.3.1/icu/calendar/types/struct.DateDuration.html#method.for_days) for more information.
+         */
         fun forDays(days: Int): DateDuration {
             
             val returnVal = lib.icu4x_DateDuration_for_days_mv1(days);

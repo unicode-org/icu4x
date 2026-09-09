@@ -8,7 +8,8 @@ import com.sun.jna.Structure
 
 internal interface YearStyleLib: Library {
 }
-/** See the [Rust documentation for `YearStyle`](https://docs.rs/icu/2.3.1/icu/datetime/options/enum.YearStyle.html) for more information.
+/**
+ * See the [Rust documentation for `YearStyle`](https://docs.rs/icu/2.3.1/icu/datetime/options/enum.YearStyle.html) for more information.
 */
 enum class YearStyle {
     Auto,

@@ -10,8 +10,9 @@ internal interface TimeZoneIteratorLib: Library {
     fun icu4x_TimeZoneIterator_next_mv1(handle: Pointer): Pointer?
 }
 typealias TimeZoneIteratorIteratorItem = TimeZone?
-/** See the [Rust documentation for `TimeZoneIter`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.TimeZoneIter.html) for more information.
-*/
+/**
+ * See the [Rust documentation for `TimeZoneIter`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.TimeZoneIter.html) for more information.
+ */
 class TimeZoneIterator internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
@@ -41,8 +42,9 @@ class TimeZoneIterator internal constructor (
         internal val lib: TimeZoneIteratorLib = Native.load("icu4x", libClass)
     }
     
-    /** See the [Rust documentation for `next`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.TimeZoneIter.html#method.next) for more information.
-    */
+    /**
+     * See the [Rust documentation for `next`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.TimeZoneIter.html#method.next) for more information.
+     */
     internal fun nextInternal(): TimeZone? {
         
         val returnVal = lib.icu4x_TimeZoneIterator_next_mv1(handle);

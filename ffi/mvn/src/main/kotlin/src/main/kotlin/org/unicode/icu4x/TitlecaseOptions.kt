@@ -63,8 +63,9 @@ internal class OptionTitlecaseOptionsNative constructor(): Structure(), Structur
 
 }
 
-/** See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/2.3.1/icu/casemap/options/struct.TitlecaseOptions.html) for more information.
-*/
+/**
+ * See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/2.3.1/icu/casemap/options/struct.TitlecaseOptions.html) for more information.
+ */
 class TitlecaseOptions (var leadingAdjustment: LeadingAdjustment?, var trailingCase: TrailingCase?) {
     companion object {
 
@@ -81,8 +82,9 @@ class TitlecaseOptions (var leadingAdjustment: LeadingAdjustment?, var trailingC
 
         @JvmStatic
         
-        /** See the [Rust documentation for `default`](https://docs.rs/icu/2.3.1/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
-        */
+        /**
+         * See the [Rust documentation for `default`](https://docs.rs/icu/2.3.1/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
+         */
         fun default_(): TitlecaseOptions {
             
             val returnVal = lib.icu4x_TitlecaseOptionsV1_default_mv1();

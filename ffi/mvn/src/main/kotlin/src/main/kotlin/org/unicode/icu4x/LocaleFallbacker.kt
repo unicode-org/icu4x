@@ -12,10 +12,11 @@ internal interface LocaleFallbackerLib: Library {
     fun icu4x_LocaleFallbacker_without_data_mv1(): Pointer
     fun icu4x_LocaleFallbacker_for_config_mv1(handle: Pointer, config: LocaleFallbackConfigNative): Pointer
 }
-/** An object that runs the ICU4X locale fallback algorithm.
-*
-*See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbacker.html) for more information.
-*/
+/**
+ * An object that runs the ICU4X locale fallback algorithm.
+ *
+ * See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbacker.html) for more information.
+ */
 class LocaleFallbacker internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
@@ -44,10 +45,11 @@ class LocaleFallbacker internal constructor (
         internal val lib: LocaleFallbackerLib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** Creates a new `LocaleFallbacker` from compiled data.
-        *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbacker.html#method.new) for more information.
-        */
+        /**
+         * Creates a new `LocaleFallbacker` from compiled data.
+         *
+         * See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbacker.html#method.new) for more information.
+         */
         fun create(): LocaleFallbacker {
             
             val returnVal = lib.icu4x_LocaleFallbacker_create_mv1();
@@ -58,10 +60,11 @@ class LocaleFallbacker internal constructor (
         }
         @JvmStatic
         
-        /** Creates a new `LocaleFallbacker` from a data provider.
-        *
-        *See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbacker.html#method.new) for more information.
-        */
+        /**
+         * Creates a new `LocaleFallbacker` from a data provider.
+         *
+         * See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbacker.html#method.new) for more information.
+         */
         fun createWithProvider(provider: DataProvider): Result<LocaleFallbacker> {
             
             val returnVal = lib.icu4x_LocaleFallbacker_create_with_provider_mv1(provider.handle);
@@ -77,10 +80,11 @@ class LocaleFallbacker internal constructor (
         }
         @JvmStatic
         
-        /** Creates a new `LocaleFallbacker` without data for limited functionality.
-        *
-        *See the [Rust documentation for `new_without_data`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbacker.html#method.new_without_data) for more information.
-        */
+        /**
+         * Creates a new `LocaleFallbacker` without data for limited functionality.
+         *
+         * See the [Rust documentation for `new_without_data`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbacker.html#method.new_without_data) for more information.
+         */
         fun withoutData(): LocaleFallbacker {
             
             val returnVal = lib.icu4x_LocaleFallbacker_without_data_mv1();
@@ -91,10 +95,11 @@ class LocaleFallbacker internal constructor (
         }
     }
     
-    /** Associates this `LocaleFallbacker` with configuration options.
-    *
-    *See the [Rust documentation for `for_config`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbacker.html#method.for_config) for more information.
-    */
+    /**
+     * Associates this `LocaleFallbacker` with configuration options.
+     *
+     * See the [Rust documentation for `for_config`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbacker.html#method.for_config) for more information.
+     */
     fun forConfig(config: LocaleFallbackConfig): LocaleFallbackerWithConfig {
         // This lifetime edge depends on lifetimes: 'a
         val aEdges: MutableList<Any> = mutableListOf(this);
