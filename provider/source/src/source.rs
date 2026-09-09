@@ -187,11 +187,15 @@ impl AbstractFs {
     }
 
     #[cfg(feature = "networking")]
-    fn download(resource: &String) -> Result<PathBuf, DataError> {
-        let root = std::env::var_os("ICU4X_SOURCE_CACHE")
+    pub(crate) fn data_cache_dir() -> PathBuf {
+        std::env::var_os("ICU4X_SOURCE_CACHE")
             .map(PathBuf::from)
             .unwrap_or_else(|| std::env::temp_dir().join("icu4x-source-cache/"))
-            .join(resource.rsplit("//").next().unwrap());
+    }
+
+    #[cfg(feature = "networking")]
+    fn download(resource: &String) -> Result<PathBuf, DataError> {
+        let root = Self::data_cache_dir().join(resource.rsplit("//").next().unwrap());
         if root.exists() {
             return Ok(root);
         }
@@ -223,7 +227,7 @@ impl AbstractFs {
         Ok(root)
     }
 
-    fn init(&self) -> Result<(), DataError> {
+    pub(crate) fn init(&self) -> Result<(), DataError> {
         #[cfg(feature = "networking")]
         if let Self::Zip(lock) = self {
             if lock.read().expect("poison").is_ok() {
@@ -513,18 +517,18 @@ impl TzdbCache {
 // A cache representing https://unicode.org/Public/{version}/
 #[derive(Debug)]
 pub(crate) struct RscdCache {
-    root: AbstractFs,
+    pub(crate) root: AbstractFs,
     // The `ucd/UCD.zip` file. Requests matching `ucd/[^Unihan]` will be resolved through
     // the ZIP file instead of downloading individual files.
-    ucd_zip: Option<AbstractFs>,
+    pub(crate) ucd_zip: Option<AbstractFs>,
     // The `ucd/Unihan.zip` file. Requests matching `ucd/Unihan/` will be resolved through
     // the ZIP file instead of downloading individual files.
-    unihan_zip: Option<AbstractFs>,
+    pub(crate) unihan_zip: Option<AbstractFs>,
     // The `security/uts39-data-X.0.0.zip` file. Requests matching `security/` will be
     // resolved through the ZIP file instead of downloading individual files.
-    uts_39_zip: Option<AbstractFs>,
+    pub(crate) uts_39_zip: Option<AbstractFs>,
     // Cached file contents. It's all text files, so we cache them as strings.
-    file_cache: FrozenMap<String, String>,
+    pub(crate) file_cache: FrozenMap<String, String>,
     // Cache of enumerated properties CPTs, indexed by short property name.
     //
     // CPT building is a big bottleneck, so we don't want to build the same one twice.
