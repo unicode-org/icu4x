@@ -71,10 +71,8 @@ ureq = { workspace = true, optional = true}
 num-traits = { workspace = true, optional = true }
 
 [dev-dependencies]
-postcard = { workspace = true, features = ["alloc"] }
 icu_provider_adapters = { workspace = true }
-icu_provider_export = { workspace = true, features = ["fs_exporter", "baked_exporter", "rayon", "blob_exporter"] }
-icu_provider = { workspace = true, features = ["deserialize_postcard_1"] }
+icu_provider_export = { workspace = true, features = ["fs_exporter", "rayon", "blob_exporter"] }
 icu_segmenter = { path = "../../components/segmenter", features = ["lstm"] }
 simple_logger = { workspace = true }
 icu = { path = "../../components/icu", default-features = false, features = ["unstable"] }

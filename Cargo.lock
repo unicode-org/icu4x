@@ -215,8 +215,10 @@ dependencies = [
  "icu",
  "icu_provider",
  "icu_provider_export",
+ "icu_provider_registry",
  "icu_provider_source",
  "log",
+ "postcard",
  "simple_logger",
 ]
 
@@ -1989,7 +1991,6 @@ dependencies = [
  "num-rational",
  "num-traits",
  "parse-zoneinfo",
- "postcard",
  "potential_utf",
  "serde",
  "serde-aux",
