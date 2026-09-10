@@ -1009,6 +1009,12 @@ impl<Y: RuleBreakType> crate::rule_segmenter_v2::ComplexHandler<Y> for ComplexWo
     }
 }
 
+#[cfg(test)]
+use crate::{GraphemeClusterSegmenterBorrowed, LineSegmenterBorrowed, SentenceSegmenterBorrowed};
+
+#[cfg(test)]
+include!("../tests/helpers.rs.raw");
+
 #[test]
 fn empty_string() {
     let segmenter =
@@ -1026,37 +1032,76 @@ fn empty_string_neo() {
 }
 
 #[test]
+fn cj_dictionary_test() {
+    let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
+
+    // Match case
+    check_word("龟山岛龟山岛", &["龟山岛", "龟山岛"], segmenter);
+
+    // Match case, then no match case
+    check_word("エディターエディ", &["エディターエディ"], segmenter);
+}
+
+#[test]
+fn cj_dictionary_test_neo() {
+    let mut segmenter =
+        WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
+    segmenter.load_auto();
+
+    // Match case
+    check_word("龟山岛龟山岛", &["龟山岛", "龟山岛"], segmenter);
+
+    // Match case, then no match case
+    check_word("エディターエディ", &["エディター", "エディ"], segmenter);
+}
+
+#[test]
 fn complex_mixed_thai_cj_word_break() {
-    let segmenter = WordSegmenter::new_dictionary(WordBreakInvariantOptions::default());
-    let input = "ภาษาไทย龟山岛";
+    check_word(
+        "ภาษาไทย龟山岛",
+        &["ภาษา", "ไทย", "龟山岛"],
+        WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
+    );
+    check_word(
+        "ภาษาไทย龟山岛",
+        &["ภาษา", "ไทย", "龟山岛"],
+        WordSegmenter::new_dictionary(WordBreakInvariantOptions::default()),
+    );
 
-    let breaks: Vec<usize> = segmenter.segment_str(input).collect();
-    assert_eq!(breaks, [0, 12, 21, 30]);
-
-    let breaks: Vec<usize> = segmenter.segment_utf8(input.as_bytes()).collect();
-    assert_eq!(breaks, [0, 12, 21, 30]);
-
-    let utf16 = input.encode_utf16().collect::<Vec<_>>();
-    let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
-    assert_eq!(breaks, [0, 4, 7, 10]);
+    check_word(
+        "こんにちは世界ภาษาไทย",
+        &["こんにちは", "世界", "ภาษา", "ไทย"],
+        WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
+    );
+    check_word(
+        "こんにちは世界ภาษาไทย",
+        &["こんにちは", "世界", "ภาษา", "ไทย"],
+        WordSegmenter::new_dictionary(WordBreakInvariantOptions::default()),
+    );
 }
 
 #[test]
 fn complex_mixed_thai_cj_word_break_neo() {
-    let mut segmenter =
+    let mut auto =
         WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
-    segmenter.load_dictionary();
-    let input = "ภาษาไทย龟山岛";
+    auto.load_auto();
+    let mut dictionary =
+        WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
+    dictionary.load_dictionary();
 
-    let breaks: Vec<usize> = segmenter.segment_str(input).collect();
-    assert_eq!(breaks, [0, 12, 21, 30]);
+    check_word("ภาษาไทย龟山岛", &["ภาษา", "ไทย", "龟山岛"], auto);
+    check_word("ภาษาไทย龟山岛", &["ภาษา", "ไทย", "龟山岛"], dictionary);
 
-    let breaks: Vec<usize> = segmenter.segment_utf8(input.as_bytes()).collect();
-    assert_eq!(breaks, [0, 12, 21, 30]);
-
-    let utf16 = input.encode_utf16().collect::<Vec<_>>();
-    let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
-    assert_eq!(breaks, [0, 4, 7, 10]);
+    check_word(
+        "こんにちは世界ภาษาไทย",
+        &["こんにちは", "世界", "ภาษา", "ไทย"],
+        auto,
+    );
+    check_word(
+        "こんにちは世界ภาษาไทย",
+        &["こんにちは", "世界", "ภาษา", "ไทย"],
+        dictionary,
+    );
 }
 
 #[test]

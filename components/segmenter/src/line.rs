@@ -1525,6 +1525,12 @@ mod tests {
             &["မြန်မာဘာသာ", "စကား"],
             LineSegmenter::new_dictionary(Default::default()),
         );
+
+        check_line(
+            "မြန်မာစာမြန်မာစာမြန်မာစာ",
+            &["မြန်မာ", "စာ", "မြန်မာ", "စာ", "မြန်မာ", "စာ"],
+            LineSegmenter::new_dictionary(Default::default()),
+        );
     }
 
     #[test]
@@ -1544,6 +1550,16 @@ mod tests {
         check_line(
             "မြန်မာဘာသာစကား",
             &["မြန်မာဘာသာ", "စကား"],
+            {
+                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
+                s.load_dictionary();
+                s
+            },
+        );
+
+        check_line(
+            "မြန်မာစာမြန်မာစာမြန်မာစာ",
+            &["မြန်မာ", "စာ", "မြန်မာ", "စာ", "မြန်မာ", "စာ"],
             {
                 let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
                 s.load_dictionary();
@@ -1575,6 +1591,16 @@ mod tests {
                 s
             },
         );
+
+        check_line(
+            "မြန်မာစာမြန်မာစာမြန်မာစာ",
+            &["မြန်မာ", "စာ", "မြန်မာ", "စာ", "မြန်မာ", "စာ"],
+            {
+                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
+                s.load_dictionary();
+                s
+            },
+        );
     }
 
     #[test]
@@ -1588,6 +1614,12 @@ mod tests {
         check_line(
             "សេចក្ដីប្រកាសជាសកលស្ដីពីសិទ្ធិមនុស្ស",
             &["សេចក្ដីប្រកាស", "ជាស", "កល", "ស្ដីពី", "សិទ្ធិមនុស្ស"],
+            LineSegmenter::new_dictionary(Default::default()),
+        );
+
+        check_line(
+            "ភាសាខ្មែរភាសាខ្មែរភាសាខ្មែរ",
+            &["ភាសាខ្មែរ", "ភាសាខ្មែរ", "ភាសាខ្មែរ"],
             LineSegmenter::new_dictionary(Default::default()),
         );
     }
@@ -1607,6 +1639,16 @@ mod tests {
         check_line(
             "សេចក្ដីប្រកាសជាសកលស្ដីពីសិទ្ធិមនុស្ស",
             &["សេចក្ដីប្រកាស", "ជាស", "កល", "ស្ដីពី", "សិទ្ធិមនុស្ស"],
+            {
+                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
+                s.load_dictionary();
+                s
+            },
+        );
+
+        check_line(
+            "ភាសាខ្មែរភាសាខ្មែរភាសាខ្មែរ",
+            &["ភាសាខ្មែរ", "ភាសាខ្មែរ", "ភាសាខ្មែរ"],
             {
                 let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
                 s.load_dictionary();
@@ -1647,6 +1689,16 @@ mod tests {
                 s
             },
         );
+
+        check_line(
+            "ភាសាខ្មែរភាសាខ្មែរភាសាខ្មែរ",
+            &["ភាសាខ្មែរ", "ភាសាខ្មែរ", "ភាសាខ្មែរ"],
+            {
+                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
+                s.load_dictionary();
+                s
+            },
+        );
     }
 
     #[test]
@@ -1660,6 +1712,12 @@ mod tests {
         check_line(
             "ກ່ຽວກັບສິດຂອງມະນຸດ",
             &["ກ່ຽວກັບ", "ສິດ", "ຂອງ", "ມະນຸດ"],
+            LineSegmenter::new_dictionary(Default::default()),
+        );
+
+        check_line(
+            "ພາສາລາວພາສາລາວພາສາລາວ",
+            &["ພາສາ", "ລາວ", "ພາສາ", "ລາວ", "ພາສາ", "ລາວ"],
             LineSegmenter::new_dictionary(Default::default()),
         );
     }
@@ -1679,6 +1737,16 @@ mod tests {
         check_line(
             "ກ່ຽວກັບສິດຂອງມະນຸດ",
             &["ກ່ຽວກັບ", "ສິດ", "ຂອງ", "ມະນຸດ"],
+            {
+                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
+                s.load_dictionary();
+                s
+            },
+        );
+
+        check_line(
+            "ພາສາລາວພາສາລາວພາສາລາວ",
+            &["ພາສາ", "ລາວ", "ພາສາ", "ລາວ", "ພາສາ", "ລາວ"],
             {
                 let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
                 s.load_dictionary();
@@ -1707,6 +1775,85 @@ mod tests {
                 s.load_dictionary();
                 s
             },
+        );
+
+        check_line(
+            "ພາສາລາວພາສາລາວພາສາລາວ",
+            &["ພາສາ", "ລາວ", "ພາສາ", "ລາວ", "ພາສາ", "ລາວ"],
+            {
+                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
+                s.load_dictionary();
+                s
+            },
+        );
+    }
+
+    #[test]
+    fn mixed_line_break() {
+        let mut lstm = LineSegmenter::new_for_non_complex_scripts(Default::default());
+        lstm.load_lstm();
+
+        let mut dict = LineSegmenter::new_for_non_complex_scripts(Default::default());
+        dict.load_dictionary();
+
+        check_line("ภาษาไทย龟山岛", &["ภาษา", "ไทย", "龟", "山", "岛"], lstm);
+        check_line("ภาษาไทย龟山岛", &["ภาษา", "ไทย", "龟", "山", "岛"], dict);
+
+        check_line(
+            "こんにちは世界ภาษาไทย",
+            &["こ", "ん", "に", "ち", "は", "世", "界", "ภาษา", "ไทย"],
+            lstm,
+        );
+        check_line(
+            "こんにちは世界ภาษาไทย",
+            &["こ", "ん", "に", "ち", "は", "世", "界", "ภาษา", "ไทย"],
+            dict,
+        );
+    }
+
+    #[test]
+    fn mixed_line_break_neo() {
+        let mut lstm = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
+        lstm.load_lstm();
+
+        let mut dict = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
+        dict.load_dictionary();
+
+        check_line("ภาษาไทย龟山岛", &["ภาษา", "ไทย", "龟", "山", "岛"], lstm);
+        check_line("ภาษาไทย龟山岛", &["ภาษา", "ไทย", "龟", "山", "岛"], dict);
+
+        check_line(
+            "こんにちは世界ภาษาไทย",
+            &["こ", "ん", "に", "ち", "は", "世", "界", "ภาษา", "ไทย"],
+            lstm,
+        );
+        check_line(
+            "こんにちは世界ภาษาไทย",
+            &["こ", "ん", "に", "ち", "は", "世", "界", "ภาษา", "ไทย"],
+            dict,
+        );
+    }
+
+    #[test]
+    fn mixed_line_break_17() {
+        let mut lstm = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
+        lstm.load_lstm();
+
+        let mut dict = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
+        dict.load_dictionary();
+
+        check_line("ภาษาไทย龟山岛", &["ภาษา", "ไทย", "龟", "山", "岛"], lstm);
+        check_line("ภาษาไทย龟山岛", &["ภาษา", "ไทย", "龟", "山", "岛"], dict);
+
+        check_line(
+            "こんにちは世界ภาษาไทย",
+            &["こ", "ん", "に", "ち", "は", "世", "界", "ภาษา", "ไทย"],
+            lstm,
+        );
+        check_line(
+            "こんにちは世界ภาษาไทย",
+            &["こ", "ん", "に", "ち", "は", "世", "界", "ภาษา", "ไทย"],
+            dict,
         );
     }
 
