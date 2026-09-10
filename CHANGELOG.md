@@ -33,17 +33,17 @@ Several crates have had patch releases in the 2.3 stream:
   - (2.3.2) NPM
     - Add missing stability annotations (unicode-org#8462)
 - Utils
-  - (0.11.5, 0.11.6) `zerovec-derive`
-    - (0.11.5) Fix soundness issue around multi element buffer validation in ULE derives (unicode-org#8393)
-    - (0.11.6) Fix when building with `MIRIFLAGS=-Zmiri-tree-borrows` (unicode-org#8391)
-  - (0.11.8) `zerovec`
-    - Fix length check in `impl ULE for [T; N]` (unicode-org#8400)
   - (0.2.2) `databake-derive`
     - Update to syn@3 dependency (unicode-org#8293)
   - (0.8.3) `yoke-derive`
     - Update to syn@3 dependency (unicode-org#8293)
   - (0.1.8) `zerofrom-derive`
     - Update to syn@3 dependency (unicode-org#8293)
+  - (0.11.5, 0.11.6) `zerovec-derive`
+    - (0.11.5) Fix soundness issue around multi element buffer validation in ULE derives (unicode-org#8393)
+    - (0.11.6) Fix when building with `MIRIFLAGS=-Zmiri-tree-borrows` (unicode-org#8391)
+  - (0.11.8) `zerovec`
+    - Fix length check in `impl ULE for [T; N]` (unicode-org#8400)
 
 ## icu4x 2.3
 
@@ -239,6 +239,7 @@ Several crates have had patch releases in the 2.3 stream:
     - Relax bounds on PartialEq, Eq, and Hash impls, delegating to the bytes comparison (long required by the ULE impl) (unicode-org#8287)
   - `zerovec_derive`: `0.11.3 -> 0.11.4`
     - Support sparse enums in `zerovec::make_ule`. (unicode-org#7940)
+    - Update to syn@3 dependency (unicode-org#8293)
 
 ## icu4x 2.2.x
 
