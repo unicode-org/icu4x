@@ -195,7 +195,7 @@ icu_experimental_data = { version = "~0.6.0", path = "provider/data/experimental
 calendrical_calculations = { version = "0.2.4", path = "utils/calendrical_calculations", default-features = false }
 crlify = { version = "1.0.4", path = "utils/crlify", default-features = false } # Current version: 1.0.5
 databake = { version = "0.2.0", path = "utils/databake", default-features = false } # Current version: 0.2.1
-databake-derive = { version = "0.2.0", path = "utils/databake/derive", default-features = false } # Current version: 0.2.1
+databake-derive = { version = "0.2.0", path = "utils/databake/derive", default-features = false } # Current version: 0.2.2
 fixed_decimal = { version = "0.7.2", path = "utils/fixed_decimal", default-features = false }
 ixdtf = { version = "0.6.5", path = "utils/ixdtf", default-features = false } # Current version: 0.6.6
 litemap = { version = "0.8.0", path = "utils/litemap", default-features = false } # Current version: 0.8.3
@@ -205,9 +205,9 @@ tzif = { version = "0.5.0", path = "utils/tzif", default-features = false }
 tinystr = { version = "0.8.4", path = "utils/tinystr", default-features = false }
 writeable = { version = "0.6.4", path = "utils/writeable", default-features = false }
 yoke = { version = "0.8.3", path = "utils/yoke", default-features = false }
-yoke-derive = { version = "0.8.2", path = "utils/yoke/derive", default-features = false }
+yoke-derive = { version = "0.8.2", path = "utils/yoke/derive", default-features = false } # Current version: 0.8.3
 zerofrom = { version = "0.1.6", path = "utils/zerofrom", default-features = false } # Current version: 0.1.8
-zerofrom-derive = { version = "0.1.6", path = "utils/zerofrom/derive", default-features = false } # Current version: 0.1.7
+zerofrom-derive = { version = "0.1.6", path = "utils/zerofrom/derive", default-features = false } # Current version: 0.1.8
 zerotrie = { version = "0.2.5", path = "utils/zerotrie", default-features = false }
 zerovec = { version = "0.11.8", path = "utils/zerovec", default-features = false }
 zerovec-derive = { version = "0.11.5", path = "utils/zerovec/derive", default-features = false } # Current version: 0.11.6
