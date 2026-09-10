@@ -3,8 +3,8 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "icu_segmenter_lstm"
-version = "1.0.0"
+name = "bies"
+version = "0.4.0"
 authors = ["The ICU4X Project Developers"]
 repository = "https://github.com/unicode-org/icu4x"
 homepage = "https://icu4x.unicode.org"
