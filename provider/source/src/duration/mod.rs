@@ -11,7 +11,7 @@ use icu_provider::prelude::*;
 use std::{borrow::Cow, collections::HashSet};
 
 #[cfg(feature = "unstable")]
-use icu::experimental::duration::provider::{DigitalDurationData, DigitalDurationDataV1};
+use icu::experimental::duration::provider::{DigitalDurationData, UnitsDurationDigitalV1};
 #[cfg(feature = "unstable")]
 use icu::experimental::duration::provider::{HmPadding, HmsPadding, MsPadding};
 
@@ -70,9 +70,9 @@ fn strip_separated_padded_characters<'s, const N: usize>(
 }
 
 #[cfg(feature = "unstable")]
-impl DataProvider<DigitalDurationDataV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<DigitalDurationDataV1>, DataError> {
-        self.check_req::<DigitalDurationDataV1>(req)?;
+impl DataProvider<UnitsDurationDigitalV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<UnitsDurationDigitalV1>, DataError> {
+        self.check_req::<UnitsDurationDigitalV1>(req)?;
 
         let (
             hm_hour_pad,
@@ -158,7 +158,7 @@ impl SourceDataProvider {
 }
 
 #[cfg(feature = "unstable")]
-impl crate::IterableDataProviderCached<DigitalDurationDataV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<UnitsDurationDigitalV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?

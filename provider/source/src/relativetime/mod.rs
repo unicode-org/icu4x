@@ -18,30 +18,30 @@ pub(crate) static MARKER_FILTERS: OnceLock<HashMap<DataMarkerInfo, &'static str>
 fn marker_filters() -> &'static HashMap<DataMarkerInfo, &'static str> {
     MARKER_FILTERS.get_or_init(|| {
         [
-            (LongSecondRelativeV1::INFO, "second"),
-            (ShortSecondRelativeV1::INFO, "second-short"),
-            (NarrowSecondRelativeV1::INFO, "second-narrow"),
-            (LongMinuteRelativeV1::INFO, "minute"),
-            (ShortMinuteRelativeV1::INFO, "minute-short"),
-            (NarrowMinuteRelativeV1::INFO, "minute-narrow"),
-            (LongHourRelativeV1::INFO, "hour"),
-            (ShortHourRelativeV1::INFO, "hour-short"),
-            (NarrowHourRelativeV1::INFO, "hour-narrow"),
-            (LongDayRelativeV1::INFO, "day"),
-            (ShortDayRelativeV1::INFO, "day-short"),
-            (NarrowDayRelativeV1::INFO, "day-narrow"),
-            (LongWeekRelativeV1::INFO, "week"),
-            (ShortWeekRelativeV1::INFO, "week-short"),
-            (NarrowWeekRelativeV1::INFO, "week-narrow"),
-            (LongMonthRelativeV1::INFO, "month"),
-            (ShortMonthRelativeV1::INFO, "month-short"),
-            (NarrowMonthRelativeV1::INFO, "month-narrow"),
-            (LongQuarterRelativeV1::INFO, "quarter"),
-            (ShortQuarterRelativeV1::INFO, "quarter-short"),
-            (NarrowQuarterRelativeV1::INFO, "quarter-narrow"),
-            (LongYearRelativeV1::INFO, "year"),
-            (ShortYearRelativeV1::INFO, "year-short"),
-            (NarrowYearRelativeV1::INFO, "year-narrow"),
+            (DatetimeRelativeSecondLongV1::INFO, "second"),
+            (DatetimeRelativeSecondShortV1::INFO, "second-short"),
+            (DatetimeRelativeSecondNarrowV1::INFO, "second-narrow"),
+            (DatetimeRelativeMinuteLongV1::INFO, "minute"),
+            (DatetimeRelativeMinuteShortV1::INFO, "minute-short"),
+            (DatetimeRelativeMinuteNarrowV1::INFO, "minute-narrow"),
+            (DatetimeRelativeHourLongV1::INFO, "hour"),
+            (DatetimeRelativeHourShortV1::INFO, "hour-short"),
+            (DatetimeRelativeHourNarrowV1::INFO, "hour-narrow"),
+            (DatetimeRelativeDayLongV1::INFO, "day"),
+            (DatetimeRelativeDayShortV1::INFO, "day-short"),
+            (DatetimeRelativeDayNarrowV1::INFO, "day-narrow"),
+            (DatetimeRelativeWeekLongV1::INFO, "week"),
+            (DatetimeRelativeWeekShortV1::INFO, "week-short"),
+            (DatetimeRelativeWeekNarrowV1::INFO, "week-narrow"),
+            (DatetimeRelativeMonthLongV1::INFO, "month"),
+            (DatetimeRelativeMonthShortV1::INFO, "month-short"),
+            (DatetimeRelativeMonthNarrowV1::INFO, "month-narrow"),
+            (DatetimeRelativeQuarterLongV1::INFO, "quarter"),
+            (DatetimeRelativeQuarterShortV1::INFO, "quarter-short"),
+            (DatetimeRelativeQuarterNarrowV1::INFO, "quarter-narrow"),
+            (DatetimeRelativeYearLongV1::INFO, "year"),
+            (DatetimeRelativeYearShortV1::INFO, "year-short"),
+            (DatetimeRelativeYearNarrowV1::INFO, "year-narrow"),
         ]
         .into_iter()
         .collect()
@@ -109,30 +109,30 @@ impl From<&cldr_serde::date_fields::PluralRulesPattern>
 }
 
 make_data_provider!(
-    LongSecondRelativeV1,
-    ShortSecondRelativeV1,
-    NarrowSecondRelativeV1,
-    LongMinuteRelativeV1,
-    ShortMinuteRelativeV1,
-    NarrowMinuteRelativeV1,
-    LongHourRelativeV1,
-    ShortHourRelativeV1,
-    NarrowHourRelativeV1,
-    LongDayRelativeV1,
-    ShortDayRelativeV1,
-    NarrowDayRelativeV1,
-    LongWeekRelativeV1,
-    ShortWeekRelativeV1,
-    NarrowWeekRelativeV1,
-    LongMonthRelativeV1,
-    ShortMonthRelativeV1,
-    NarrowMonthRelativeV1,
-    LongQuarterRelativeV1,
-    ShortQuarterRelativeV1,
-    NarrowQuarterRelativeV1,
-    LongYearRelativeV1,
-    ShortYearRelativeV1,
-    NarrowYearRelativeV1,
+    DatetimeRelativeSecondLongV1,
+    DatetimeRelativeSecondShortV1,
+    DatetimeRelativeSecondNarrowV1,
+    DatetimeRelativeMinuteLongV1,
+    DatetimeRelativeMinuteShortV1,
+    DatetimeRelativeMinuteNarrowV1,
+    DatetimeRelativeHourLongV1,
+    DatetimeRelativeHourShortV1,
+    DatetimeRelativeHourNarrowV1,
+    DatetimeRelativeDayLongV1,
+    DatetimeRelativeDayShortV1,
+    DatetimeRelativeDayNarrowV1,
+    DatetimeRelativeWeekLongV1,
+    DatetimeRelativeWeekShortV1,
+    DatetimeRelativeWeekNarrowV1,
+    DatetimeRelativeMonthLongV1,
+    DatetimeRelativeMonthShortV1,
+    DatetimeRelativeMonthNarrowV1,
+    DatetimeRelativeQuarterLongV1,
+    DatetimeRelativeQuarterShortV1,
+    DatetimeRelativeQuarterNarrowV1,
+    DatetimeRelativeYearLongV1,
+    DatetimeRelativeYearShortV1,
+    DatetimeRelativeYearNarrowV1,
 );
 
 #[cfg(test)]
@@ -145,7 +145,7 @@ mod tests {
     #[test]
     fn test_basic() {
         let provider = SourceDataProvider::new_testing();
-        let data: DataPayload<ShortQuarterRelativeV1> = provider
+        let data: DataPayload<DatetimeRelativeQuarterShortV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&data_locale!("en")),
                 ..Default::default()
@@ -172,7 +172,7 @@ mod tests {
     #[test]
     fn test_singular_sub_pattern() {
         let provider = SourceDataProvider::new_testing();
-        let data: DataPayload<LongYearRelativeV1> = provider
+        let data: DataPayload<DatetimeRelativeYearLongV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&data_locale!("ar")),
                 ..Default::default()

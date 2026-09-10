@@ -9,7 +9,7 @@ use icu_locale_core::preferences::{define_preferences, prefs_convert};
 
 use icu_provider::prelude::*;
 
-use super::super::provider::percent::PercentEssentialsV1;
+use super::super::provider::percent::DecimalPercentV1;
 use super::format::FormattedPercent;
 use super::options::PercentFormatterOptions;
 
@@ -38,7 +38,7 @@ prefs_convert!(PercentFormatterPreferences, DecimalFormatterPreferences, {
 #[derive(Debug)]
 pub struct PercentFormatter<R> {
     /// Essential data for the percent formatter.
-    essential: DataPayload<PercentEssentialsV1>,
+    essential: DataPayload<DecimalPercentV1>,
 
     /// Options bag for the percent formatter to determine the behavior of the formatter.
     options: PercentFormatterOptions,
@@ -82,7 +82,7 @@ impl PercentFormatter<DecimalFormatter> {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<PercentEssentialsV1>
+            + DataProvider<DecimalPercentV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
@@ -141,7 +141,7 @@ where
         decimal_formatter: R,
         options: PercentFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale = PercentEssentialsV1::make_locale(prefs.locale_preferences);
+        let locale = DecimalPercentV1::make_locale(prefs.locale_preferences);
         let essential = crate::provider::Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
@@ -158,12 +158,12 @@ where
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_with_decimal_formatter_unstable(
-        provider: &(impl DataProvider<PercentEssentialsV1> + ?Sized),
+        provider: &(impl DataProvider<DecimalPercentV1> + ?Sized),
         prefs: PercentFormatterPreferences,
         decimal_formatter: R,
         options: PercentFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale = PercentEssentialsV1::make_locale(prefs.locale_preferences);
+        let locale = DecimalPercentV1::make_locale(prefs.locale_preferences);
         let essential = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),

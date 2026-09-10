@@ -15,9 +15,9 @@ use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use zerovec::VarZeroCow;
 
-impl DataProvider<VariantDisplayNamesV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<VariantDisplayNamesV1>, DataError> {
-        self.check_req::<VariantDisplayNamesV1>(req)?;
+impl DataProvider<LocaleNamesVariantV0> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocaleNamesVariantV0>, DataError> {
+        self.check_req::<LocaleNamesVariantV0>(req)?;
 
         let data: &cldr_serde::displaynames::variant::Resource = self
             .cldr()?
@@ -42,7 +42,7 @@ crate::displaynames::impl_displaynames_v1!(
     CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 
-crate::displaynames::impl_displaynames_legacy_iter_v1!(VariantDisplayNamesV1, "variants.json");
+crate::displaynames::impl_displaynames_legacy_iter_v1!(LocaleNamesVariantV0, "variants.json");
 
 // TODO: Support alt variants for variant display names.
 impl From<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNames<'static> {
@@ -76,7 +76,7 @@ mod tests {
     fn test_basic_variant_display_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<VariantDisplayNamesV1> = provider
+        let data: DataPayload<LocaleNamesVariantV0> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&data_locale!("en-001")),
                 ..Default::default()

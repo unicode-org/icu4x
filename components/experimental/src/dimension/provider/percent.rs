@@ -12,8 +12,8 @@ use icu_provider::prelude::*;
 use zerovec::VarZeroCow;
 
 icu_provider::data_marker!(
-    /// `PercentEssentialsV1`
-    PercentEssentialsV1,
+    /// `DecimalPercentV1`
+    DecimalPercentV1,
     PercentEssentials<'static>
 );
 

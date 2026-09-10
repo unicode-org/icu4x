@@ -227,145 +227,145 @@ impl RelativeTimeFormatter {
         try_new_long_second_unstable,
         try_new_long_second,
         try_new_long_second_with_buffer_provider,
-        LongSecondRelativeV1
+        DatetimeRelativeSecondLongV1
     );
     constructor!(
         try_new_long_minute_unstable,
         try_new_long_minute,
         try_new_long_minute_with_buffer_provider,
-        LongMinuteRelativeV1
+        DatetimeRelativeMinuteLongV1
     );
     constructor!(
         try_new_long_hour_unstable,
         try_new_long_hour,
         try_new_long_hour_with_buffer_provider,
-        LongHourRelativeV1
+        DatetimeRelativeHourLongV1
     );
     constructor!(
         try_new_long_day_unstable,
         try_new_long_day,
         try_new_long_day_with_buffer_provider,
-        LongDayRelativeV1
+        DatetimeRelativeDayLongV1
     );
     constructor!(
         try_new_long_week_unstable,
         try_new_long_week,
         try_new_long_week_with_buffer_provider,
-        LongWeekRelativeV1
+        DatetimeRelativeWeekLongV1
     );
     constructor!(
         try_new_long_month_unstable,
         try_new_long_month,
         try_new_long_month_with_buffer_provider,
-        LongMonthRelativeV1
+        DatetimeRelativeMonthLongV1
     );
     constructor!(
         try_new_long_quarter_unstable,
         try_new_long_quarter,
         try_new_long_quarter_with_buffer_provider,
-        LongQuarterRelativeV1
+        DatetimeRelativeQuarterLongV1
     );
     constructor!(
         try_new_long_year_unstable,
         try_new_long_year,
         try_new_long_year_with_buffer_provider,
-        LongYearRelativeV1
+        DatetimeRelativeYearLongV1
     );
     constructor!(
         try_new_short_second_unstable,
         try_new_short_second,
         try_new_short_second_with_buffer_provider,
-        ShortSecondRelativeV1
+        DatetimeRelativeSecondShortV1
     );
     constructor!(
         try_new_short_minute_unstable,
         try_new_short_minute,
         try_new_short_minute_with_buffer_provider,
-        ShortMinuteRelativeV1
+        DatetimeRelativeMinuteShortV1
     );
     constructor!(
         try_new_short_hour_unstable,
         try_new_short_hour,
         try_new_short_hour_with_buffer_provider,
-        ShortHourRelativeV1
+        DatetimeRelativeHourShortV1
     );
     constructor!(
         try_new_short_day_unstable,
         try_new_short_day,
         try_new_short_day_with_buffer_provider,
-        ShortDayRelativeV1
+        DatetimeRelativeDayShortV1
     );
     constructor!(
         try_new_short_week_unstable,
         try_new_short_week,
         try_new_short_week_with_buffer_provider,
-        ShortWeekRelativeV1
+        DatetimeRelativeWeekShortV1
     );
     constructor!(
         try_new_short_month_unstable,
         try_new_short_month,
         try_new_short_month_with_buffer_provider,
-        ShortMonthRelativeV1
+        DatetimeRelativeMonthShortV1
     );
     constructor!(
         try_new_short_quarter_unstable,
         try_new_short_quarter,
         try_new_short_quarter_with_buffer_provider,
-        ShortQuarterRelativeV1
+        DatetimeRelativeQuarterShortV1
     );
     constructor!(
         try_new_short_year_unstable,
         try_new_short_year,
         try_new_short_year_with_buffer_provider,
-        ShortYearRelativeV1
+        DatetimeRelativeYearShortV1
     );
     constructor!(
         try_new_narrow_second_unstable,
         try_new_narrow_second,
         try_new_narrow_second_with_buffer_provider,
-        NarrowSecondRelativeV1
+        DatetimeRelativeSecondNarrowV1
     );
     constructor!(
         try_new_narrow_minute_unstable,
         try_new_narrow_minute,
         try_new_narrow_minute_with_buffer_provider,
-        NarrowMinuteRelativeV1
+        DatetimeRelativeMinuteNarrowV1
     );
     constructor!(
         try_new_narrow_hour_unstable,
         try_new_narrow_hour,
         try_new_narrow_hour_with_buffer_provider,
-        NarrowHourRelativeV1
+        DatetimeRelativeHourNarrowV1
     );
     constructor!(
         try_new_narrow_day_unstable,
         try_new_narrow_day,
         try_new_narrow_day_with_buffer_provider,
-        NarrowDayRelativeV1
+        DatetimeRelativeDayNarrowV1
     );
     constructor!(
         try_new_narrow_week_unstable,
         try_new_narrow_week,
         try_new_narrow_week_with_buffer_provider,
-        NarrowWeekRelativeV1
+        DatetimeRelativeWeekNarrowV1
     );
     constructor!(
         try_new_narrow_month_unstable,
         try_new_narrow_month,
         try_new_narrow_month_with_buffer_provider,
-        NarrowMonthRelativeV1
+        DatetimeRelativeMonthNarrowV1
     );
     constructor!(
         try_new_narrow_quarter_unstable,
         try_new_narrow_quarter,
         try_new_narrow_quarter_with_buffer_provider,
-        NarrowQuarterRelativeV1
+        DatetimeRelativeQuarterNarrowV1
     );
     constructor!(
         try_new_narrow_year_unstable,
         try_new_narrow_year,
         try_new_narrow_year_with_buffer_provider,
-        NarrowYearRelativeV1
+        DatetimeRelativeYearNarrowV1
     );
 
     /// Format a `value` according to the locale and formatting options of

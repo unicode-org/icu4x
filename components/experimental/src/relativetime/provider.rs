@@ -17,123 +17,123 @@ use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
 icu_provider::data_marker!(
-    /// `LongSecondRelativeV1`
-    LongSecondRelativeV1,
+    /// `DatetimeRelativeSecondLongV1`
+    DatetimeRelativeSecondLongV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `ShortSecondRelativeV1`
-    ShortSecondRelativeV1,
+    /// `DatetimeRelativeSecondShortV1`
+    DatetimeRelativeSecondShortV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `NarrowSecondRelativeV1`
-    NarrowSecondRelativeV1,
+    /// `DatetimeRelativeSecondNarrowV1`
+    DatetimeRelativeSecondNarrowV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `LongMinuteRelativeV1`
-    LongMinuteRelativeV1,
+    /// `DatetimeRelativeMinuteLongV1`
+    DatetimeRelativeMinuteLongV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `ShortMinuteRelativeV1`
-    ShortMinuteRelativeV1,
+    /// `DatetimeRelativeMinuteShortV1`
+    DatetimeRelativeMinuteShortV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `NarrowMinuteRelativeV1`
-    NarrowMinuteRelativeV1,
+    /// `DatetimeRelativeMinuteNarrowV1`
+    DatetimeRelativeMinuteNarrowV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `LongHourRelativeV1`
-    LongHourRelativeV1,
+    /// `DatetimeRelativeHourLongV1`
+    DatetimeRelativeHourLongV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `ShortHourRelativeV1`
-    ShortHourRelativeV1,
+    /// `DatetimeRelativeHourShortV1`
+    DatetimeRelativeHourShortV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `NarrowHourRelativeV1`
-    NarrowHourRelativeV1,
+    /// `DatetimeRelativeHourNarrowV1`
+    DatetimeRelativeHourNarrowV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `LongDayRelativeV1`
-    LongDayRelativeV1,
+    /// `DatetimeRelativeDayLongV1`
+    DatetimeRelativeDayLongV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `ShortDayRelativeV1`
-    ShortDayRelativeV1,
+    /// `DatetimeRelativeDayShortV1`
+    DatetimeRelativeDayShortV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `NarrowDayRelativeV1`
-    NarrowDayRelativeV1,
+    /// `DatetimeRelativeDayNarrowV1`
+    DatetimeRelativeDayNarrowV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `LongWeekRelativeV1`
-    LongWeekRelativeV1,
+    /// `DatetimeRelativeWeekLongV1`
+    DatetimeRelativeWeekLongV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `ShortWeekRelativeV1`
-    ShortWeekRelativeV1,
+    /// `DatetimeRelativeWeekShortV1`
+    DatetimeRelativeWeekShortV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `NarrowWeekRelativeV1`
-    NarrowWeekRelativeV1,
+    /// `DatetimeRelativeWeekNarrowV1`
+    DatetimeRelativeWeekNarrowV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `LongMonthRelativeV1`
-    LongMonthRelativeV1,
+    /// `DatetimeRelativeMonthLongV1`
+    DatetimeRelativeMonthLongV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `ShortMonthRelativeV1`
-    ShortMonthRelativeV1,
+    /// `DatetimeRelativeMonthShortV1`
+    DatetimeRelativeMonthShortV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `NarrowMonthRelativeV1`
-    NarrowMonthRelativeV1,
+    /// `DatetimeRelativeMonthNarrowV1`
+    DatetimeRelativeMonthNarrowV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `LongQuarterRelativeV1`
-    LongQuarterRelativeV1,
+    /// `DatetimeRelativeQuarterLongV1`
+    DatetimeRelativeQuarterLongV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `ShortQuarterRelativeV1`
-    ShortQuarterRelativeV1,
+    /// `DatetimeRelativeQuarterShortV1`
+    DatetimeRelativeQuarterShortV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `NarrowQuarterRelativeV1`
-    NarrowQuarterRelativeV1,
+    /// `DatetimeRelativeQuarterNarrowV1`
+    DatetimeRelativeQuarterNarrowV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `LongYearRelativeV1`
-    LongYearRelativeV1,
+    /// `DatetimeRelativeYearLongV1`
+    DatetimeRelativeYearLongV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `ShortYearRelativeV1`
-    ShortYearRelativeV1,
+    /// `DatetimeRelativeYearShortV1`
+    DatetimeRelativeYearShortV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `NarrowYearRelativeV1`
-    NarrowYearRelativeV1,
+    /// `DatetimeRelativeYearNarrowV1`
+    DatetimeRelativeYearNarrowV1,
     RelativeTimePatternData<'static>,
 );
 

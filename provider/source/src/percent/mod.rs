@@ -19,9 +19,9 @@ use icu_provider::DataProvider;
 use icu_provider::prelude::*;
 use zerovec::VarZeroCow;
 
-impl DataProvider<PercentEssentialsV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<PercentEssentialsV1>, DataError> {
-        self.check_req::<PercentEssentialsV1>(req)?;
+impl DataProvider<DecimalPercentV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalPercentV1>, DataError> {
+        self.check_req::<DecimalPercentV1>(req)?;
 
         let numbers_resource: &cldr_serde::numbers::Resource = self
             .cldr()?
@@ -37,7 +37,7 @@ impl DataProvider<PercentEssentialsV1> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<PercentEssentialsV1> for SourceDataProvider {
+impl IterableDataProviderCached<DecimalPercentV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
@@ -230,7 +230,7 @@ fn test_basic() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let en: DataResponse<PercentEssentialsV1> = provider
+    let en: DataResponse<DecimalPercentV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(data_locale!("en")).as_borrowed(),
             ..Default::default()
@@ -242,7 +242,7 @@ fn test_basic() {
     assert_writeable_eq!(en_pattern.unsigned_pattern.interpolate(["123"]), "123%");
     assert_writeable_eq!(en_pattern.signed_pattern.interpolate(["123", "+"]), "+123%");
 
-    let tr: DataResponse<PercentEssentialsV1> = provider
+    let tr: DataResponse<DecimalPercentV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(data_locale!("tr")).as_borrowed(),
             ..Default::default()
@@ -254,7 +254,7 @@ fn test_basic() {
     assert_writeable_eq!(tr_pattern.unsigned_pattern.interpolate(["345"]), "%345");
     assert_writeable_eq!(tr_pattern.signed_pattern.interpolate(["345", "+"]), "+%345");
 
-    let ar_eg: DataResponse<PercentEssentialsV1> = provider
+    let ar_eg: DataResponse<DecimalPercentV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(data_locale!("ar-EG")).as_borrowed(),
             ..Default::default()

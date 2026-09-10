@@ -15,9 +15,9 @@ use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use zerovec::VarZeroCow;
 
-impl DataProvider<RegionDisplayNamesV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<RegionDisplayNamesV1>, DataError> {
-        self.check_req::<RegionDisplayNamesV1>(req)?;
+impl DataProvider<LocaleNamesRegionV0> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocaleNamesRegionV0>, DataError> {
+        self.check_req::<LocaleNamesRegionV0>(req)?;
 
         let data: &cldr_serde::displaynames::region::Resource = self
             .cldr()?
@@ -31,7 +31,7 @@ impl DataProvider<RegionDisplayNamesV1> for SourceDataProvider {
     }
 }
 
-crate::displaynames::impl_displaynames_legacy_iter_v1!(RegionDisplayNamesV1, "territories.json");
+crate::displaynames::impl_displaynames_legacy_iter_v1!(LocaleNamesRegionV0, "territories.json");
 
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesRegionMediumTinyV1,
@@ -106,7 +106,7 @@ mod tests {
     fn test_basic() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<RegionDisplayNamesV1> = provider
+        let data: DataPayload<LocaleNamesRegionV0> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&data_locale!("en-001")),
                 ..Default::default()
@@ -127,7 +127,7 @@ mod tests {
     fn test_basic_short_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<RegionDisplayNamesV1> = provider
+        let data: DataPayload<LocaleNamesRegionV0> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&data_locale!("en-001")),
                 ..Default::default()
