@@ -85,7 +85,7 @@ jobs:
         workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
         service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
-      uses: google-github-actions/setup-gcloud@98ddc00a17442e89a24bbf282954a3b65ce6d200 # v2.1.0
+      uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
 
     - name: Build docs
       run: >
@@ -105,12 +105,12 @@ jobs:
 
     - name: Upload docs to Google Cloud Storage (non-main)
       run: |
-        gsutil -m cp -r target/doc gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/rustdoc
+        gcloud storage cp -r target/doc gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/rustdoc
     
     - name: Upload docs to Google Cloud Storage (main)
       if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
       run: |
-        gsutil -m cp -r target/doc/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/rustdoc
+        gcloud storage cp -r target/doc/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/rustdoc
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
@@ -139,7 +139,7 @@ jobs:
         workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
         service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
-      uses: google-github-actions/setup-gcloud@98ddc00a17442e89a24bbf282954a3b65ce6d200 # v2.1.0
+      uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
 
     - name: Install doxygen-awesome
       run: |
@@ -158,12 +158,12 @@ jobs:
         
     - name: Upload docs to Google Cloud Storage (non-main)
       run: |
-        gsutil -m cp -r tools/doxygen/html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/cppdoc
+        gcloud storage cp -r tools/doxygen/html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/cppdoc
     
     - name: Upload docs to Google Cloud Storage (main)
       if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
       run: |
-        gsutil -m cp -r tools/doxygen/html/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/cppdoc
+        gcloud storage cp -r tools/doxygen/html/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/cppdoc
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
@@ -193,7 +193,7 @@ jobs:
         workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
         service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
-      uses: google-github-actions/setup-gcloud@98ddc00a17442e89a24bbf282954a3b65ce6d200 # v2.1.0
+      uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
 
     - name: Build docs
       run: |
@@ -210,12 +210,12 @@ jobs:
         
     - name: Upload docs to Google Cloud Storage (non-main)
       run: |
-        gsutil -m cp -r ffi/npm/docs gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/tsdoc
+        gcloud storage cp -r ffi/npm/docs gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/tsdoc
     
     - name: Upload docs to Google Cloud Storage (main)
       if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
       run: |
-        gsutil -m cp -r ffi/npm/docs/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/tsdoc
+        gcloud storage cp -r ffi/npm/docs/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/tsdoc
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
@@ -244,7 +244,7 @@ jobs:
         workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
         service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
-      uses: google-github-actions/setup-gcloud@98ddc00a17442e89a24bbf282954a3b65ce6d200 # v2.1.0
+      uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
 
     - name: Install Dart
       uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # v1.6.5
@@ -263,12 +263,12 @@ jobs:
 
     - name: Upload docs to Google Cloud Storage (non-main)
       run: |
-        gsutil -m cp -r ffi/dart/doc/api gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/dartdoc
+        gcloud storage cp -r ffi/dart/doc/api gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/dartdoc
     
     - name: Upload docs to Google Cloud Storage (main)
       if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
       run: |
-        gsutil -m cp -r ffi/dart/doc/api/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/dartdoc
+        gcloud storage cp -r ffi/dart/doc/api/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/dartdoc
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
@@ -297,7 +297,7 @@ jobs:
         workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
         service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
-      uses: google-github-actions/setup-gcloud@98ddc00a17442e89a24bbf282954a3b65ce6d200 # v2.1.0
+      uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
         
     - name: Build docs
       run: |
@@ -312,12 +312,12 @@ jobs:
 
     - name: Upload docs to Google Cloud Storage (non-main)
       run: |
-        gsutil -m cp -r ffi/mvn/target/dokka gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/kdoc
+        gcloud storage cp -r ffi/mvn/target/dokka gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/kdoc
     
     - name: Upload docs to Google Cloud Storage (main)
       if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
       run: |
-        gsutil -m cp -r ffi/mvn/target/dokka/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/kdoc
+        gcloud storage cp -r ffi/mvn/target/dokka/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/kdoc
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
@@ -340,7 +340,7 @@ jobs:
         workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
         service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
-      uses: google-github-actions/setup-gcloud@98ddc00a17442e89a24bbf282954a3b65ce6d200 # v2.1.0
+      uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
 
     - name: Init packages
       run: |
@@ -357,7 +357,7 @@ jobs:
 
     - name: Upload wasm-demo bundle to Google Cloud Storage
       run: |
-        gsutil -m cp -r tools/web-demo/public/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
+        gcloud storage cp -r tools/web-demo/public/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
@@ -406,7 +406,7 @@ jobs:
         workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
         service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
-      uses: google-github-actions/setup-gcloud@98ddc00a17442e89a24bbf282954a3b65ce6d200 # v2.1.0
+      uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
 
     # Cargo-make boilerplate
     - name: Install cargo-make
@@ -427,7 +427,7 @@ jobs:
 
     - name:  Download previous benchmark data
       run: |
-        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/perf/${{ matrix.component }}/* benchmarks/perf/${{ matrix.component }}
+        gcloud storage cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/perf/${{ matrix.component }}/* benchmarks/perf/${{ matrix.component }}
 
     - name: Store benchmark result & create dashboard
       uses: rhysd/github-action-benchmark@c3efd4d54319dbc90622069cc273cba59b46abbf # v1.15.0
@@ -448,7 +448,7 @@ jobs:
       if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/perf/${{ matrix.component }}/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/perf/${{ matrix.component }}
+          gcloud storage cp -r benchmarks/perf/${{ matrix.component }}/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/perf/${{ matrix.component }}
 
   # Run examples with dhat-rs in order to collect memory heap size metrics. These
   # metrics will then be charted over time. See tools/benchmark/memory/README.md for
@@ -483,7 +483,7 @@ jobs:
     steps:
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-    # gsutil needs Python 3.11 but macos-latest has 3.12
+    # gcloud storage needs Python 3.11 but macos-latest has 3.12
     - name: Set up Python 3.11
       uses: actions/setup-python@v5
       with:
@@ -497,7 +497,7 @@ jobs:
         workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
         service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
-      uses: google-github-actions/setup-gcloud@98ddc00a17442e89a24bbf282954a3b65ce6d200 # v2.1.0
+      uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
 
     # Cargo-make boilerplate
     - name: Install cargo-make
@@ -513,7 +513,7 @@ jobs:
 
     - name:  Download previous benchmark data
       run: |
-        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/memory/${{ matrix.os }}/* benchmarks/memory/${{ matrix.os }}
+        gcloud storage cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/memory/${{ matrix.os }}/* benchmarks/memory/${{ matrix.os }}
 
     - name: Store benchmark result & create dashboard
       # The gregtatum fork of rhysd/github-action-benchmark contains support for ndjson.
@@ -539,7 +539,7 @@ jobs:
           git checkout empty
           # Delete intermediate files
           rm benchmarks/memory/${{ matrix.os }}/*-dhat-heap.json
-          gsutil -m cp -r benchmarks/memory/${{ matrix.os }}/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/memory/${{ matrix.os }}
+          gcloud storage cp -r benchmarks/memory/${{ matrix.os }}/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/memory/${{ matrix.os }}
 
   # Binary size benchmark: build and size wasm binaries; creates ndjson output data format
   bench-binsize:
@@ -562,7 +562,7 @@ jobs:
         workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
         service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
-      uses: google-github-actions/setup-gcloud@98ddc00a17442e89a24bbf282954a3b65ce6d200 # v2.1.0
+      uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
 
     # Cargo-make boilerplate
     - name: Install cargo-make
@@ -603,7 +603,7 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks/binsize
-        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/binsize/* benchmarks/binsize
+        gcloud storage cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/binsize/* benchmarks/binsize
  
     - name: Store benchmark result & create dashboard (wasm)
       # Use gregtatum special feature to process ndjson-formatted benchmark data
@@ -641,7 +641,7 @@ jobs:
       if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/binsize/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/binsize
+          gcloud storage cp -r benchmarks/binsize/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/binsize
 
   ffi-libs:
     if: github.ref_type == 'tag' && github.repository == 'unicode-org/icu4x'
@@ -838,11 +838,11 @@ jobs:
           workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
           service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
       - name: "Set up Google Cloud SDK"
-        uses: google-github-actions/setup-gcloud@98ddc00a17442e89a24bbf282954a3b65ce6d200 # v2.1.0
+        uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
       - name: Download artifacts
         run: |
           mkdir website
-          gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/* website || true
+          gcloud storage cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/* website || true
       - name: Upload artifact
         uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
