@@ -10,7 +10,7 @@ use crate::cldr_serde::alt::{Alt, WithAlt};
 use crate::displaynames::extract_names_for_zeromap_struct;
 
 use icu::experimental::displaynames::provider::{
-    LanguageDisplayNames, LanguageDisplayNamesV1, LocaleDisplayNames, LocaleDisplayNamesV1,
+    LanguageDisplayNames, LocaleDisplayNames, LocaleNamesLanguageV0, LocaleNamesLocaleV0,
 };
 use icu::locale::LanguageIdentifier;
 use icu::locale::provider::names::{
@@ -26,9 +26,9 @@ use std::collections::{BTreeMap, HashSet};
 use tinystr::TinyAsciiStr;
 use zerovec::VarZeroCow;
 
-impl DataProvider<LanguageDisplayNamesV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<LanguageDisplayNamesV1>, DataError> {
-        self.check_req::<LanguageDisplayNamesV1>(req)?;
+impl DataProvider<LocaleNamesLanguageV0> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocaleNamesLanguageV0>, DataError> {
+        self.check_req::<LocaleNamesLanguageV0>(req)?;
 
         let data: &cldr_serde::displaynames::language::Resource = self
             .cldr()?
@@ -41,9 +41,9 @@ impl DataProvider<LanguageDisplayNamesV1> for SourceDataProvider {
         })
     }
 }
-impl DataProvider<LocaleDisplayNamesV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<LocaleDisplayNamesV1>, DataError> {
-        self.check_req::<LocaleDisplayNamesV1>(req)?;
+impl DataProvider<LocaleNamesLocaleV0> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocaleNamesLocaleV0>, DataError> {
+        self.check_req::<LocaleNamesLocaleV0>(req)?;
 
         let data: &cldr_serde::displaynames::language::Resource = self
             .cldr()?
@@ -57,8 +57,8 @@ impl DataProvider<LocaleDisplayNamesV1> for SourceDataProvider {
     }
 }
 
-crate::displaynames::impl_displaynames_legacy_iter_v1!(LanguageDisplayNamesV1, "languages.json");
-crate::displaynames::impl_displaynames_legacy_iter_v1!(LocaleDisplayNamesV1, "languages.json");
+crate::displaynames::impl_displaynames_legacy_iter_v1!(LocaleNamesLanguageV0, "languages.json");
+crate::displaynames::impl_displaynames_legacy_iter_v1!(LocaleNamesLocaleV0, "languages.json");
 
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesLanguageMediumTinyV1,
@@ -226,7 +226,7 @@ mod tests {
     fn test_basic_lang_display_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LanguageDisplayNamesV1> = provider
+        let data: DataPayload<LocaleNamesLanguageV0> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&data_locale!("en-001")),
                 ..Default::default()
@@ -247,7 +247,7 @@ mod tests {
     fn test_basic_lang_short_display_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LanguageDisplayNamesV1> = provider
+        let data: DataPayload<LocaleNamesLanguageV0> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&data_locale!("en-001")),
                 ..Default::default()
@@ -268,7 +268,7 @@ mod tests {
     fn test_basic_lang_long_display_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LanguageDisplayNamesV1> = provider
+        let data: DataPayload<LocaleNamesLanguageV0> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&data_locale!("en-001")),
                 ..Default::default()
@@ -289,7 +289,7 @@ mod tests {
     fn test_basic_lang_menu_display_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LanguageDisplayNamesV1> = provider
+        let data: DataPayload<LocaleNamesLanguageV0> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&data_locale!("en-001")),
                 ..Default::default()
@@ -310,7 +310,7 @@ mod tests {
     fn test_basic_locale_display_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleDisplayNamesV1> = provider
+        let data: DataPayload<LocaleNamesLocaleV0> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&data_locale!("en-001")),
                 ..Default::default()

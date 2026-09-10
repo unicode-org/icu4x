@@ -25,28 +25,28 @@ type UnvalidatedLocale = PotentialUtf8;
 type UnvalidatedVariant = UnvalidatedTinyAsciiStr<8>;
 
 icu_provider::data_marker!(
-    /// `LocaleDisplayNamesV1`
-    LocaleDisplayNamesV1,
+    /// `LocaleNamesLocaleV0`
+    LocaleNamesLocaleV0,
     LocaleDisplayNames<'static>
 );
 icu_provider::data_marker!(
-    /// `VariantDisplayNamesV1`
-    VariantDisplayNamesV1,
+    /// `LocaleNamesVariantV0`
+    LocaleNamesVariantV0,
     VariantDisplayNames<'static>
 );
 icu_provider::data_marker!(
-    /// `ScriptDisplayNamesV1`
-    ScriptDisplayNamesV1,
+    /// `LocaleNamesScriptV0`
+    LocaleNamesScriptV0,
     ScriptDisplayNames<'static>
 );
 icu_provider::data_marker!(
-    /// `LanguageDisplayNamesV1`
-    LanguageDisplayNamesV1,
+    /// `LocaleNamesLanguageV0`
+    LocaleNamesLanguageV0,
     LanguageDisplayNames<'static>
 );
 icu_provider::data_marker!(
-    /// `RegionDisplayNamesV1`
-    RegionDisplayNamesV1,
+    /// `LocaleNamesRegionV0`
+    LocaleNamesRegionV0,
     RegionDisplayNames<'static>
 );
 

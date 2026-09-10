@@ -66,7 +66,7 @@ prefs_convert!(DurationFormatterPreferences, ListFormatterPreferences);
 pub struct DurationFormatter {
     /// Options for configuring the formatter.
     pub(crate) options: ValidatedDurationFormatterOptions,
-    pub(crate) digital: DataPayload<provider::DigitalDurationDataV1>,
+    pub(crate) digital: DataPayload<provider::UnitsDurationDigitalV1>,
     pub(crate) unit: DurationUnitFormatter,
     pub(crate) list: ListFormatter,
     pub(crate) fdf: DecimalFormatter,
@@ -243,7 +243,7 @@ impl DurationFormatter {
         prefs: DurationFormatterPreferences,
         options: ValidatedDurationFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale = provider::DigitalDurationDataV1::make_locale(prefs.locale_preferences);
+        let locale = provider::UnitsDurationDigitalV1::make_locale(prefs.locale_preferences);
         let digital = crate::provider::Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
@@ -262,7 +262,7 @@ impl DurationFormatter {
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<
-        D: DataProvider<provider::DigitalDurationDataV1>
+        D: DataProvider<provider::UnitsDurationDigitalV1>
             + DataProvider<UnitsNamesDurationCoreV1>
             + DataProvider<UnitsNamesDurationExtendedV1>
             + DataProvider<UnitsNamesDurationOutlierV1>
@@ -276,7 +276,7 @@ impl DurationFormatter {
         prefs: DurationFormatterPreferences,
         options: ValidatedDurationFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale = provider::DigitalDurationDataV1::make_locale(prefs.locale_preferences);
+        let locale = provider::UnitsDurationDigitalV1::make_locale(prefs.locale_preferences);
         let digital = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),

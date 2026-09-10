@@ -43,7 +43,7 @@ define_preferences!(
 #[derive(Default, Debug)]
 pub struct RegionDisplayNames {
     options: DisplayNamesOptions,
-    region_data: DataPayload<RegionDisplayNamesV1>,
+    region_data: DataPayload<LocaleNamesRegionV0>,
 }
 
 impl RegionDisplayNames {
@@ -59,12 +59,12 @@ impl RegionDisplayNames {
     );
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<D: DataProvider<RegionDisplayNamesV1> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<LocaleNamesRegionV0> + ?Sized>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError> {
-        let locale = RegionDisplayNamesV1::make_locale(prefs.locale_preferences);
+        let locale = LocaleNamesRegionV0::make_locale(prefs.locale_preferences);
         let region_data = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
@@ -110,7 +110,7 @@ impl RegionDisplayNames {
 #[derive(Default, Debug)]
 pub struct ScriptDisplayNames {
     options: DisplayNamesOptions,
-    script_data: DataPayload<ScriptDisplayNamesV1>,
+    script_data: DataPayload<LocaleNamesScriptV0>,
 }
 
 impl ScriptDisplayNames {
@@ -126,12 +126,12 @@ impl ScriptDisplayNames {
     );
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<D: DataProvider<ScriptDisplayNamesV1> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<LocaleNamesScriptV0> + ?Sized>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError> {
-        let locale = ScriptDisplayNamesV1::make_locale(prefs.locale_preferences);
+        let locale = LocaleNamesScriptV0::make_locale(prefs.locale_preferences);
         let script_data = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
@@ -178,7 +178,7 @@ impl ScriptDisplayNames {
 pub struct VariantDisplayNames {
     #[allow(dead_code)] //TODO: Add DisplayNamesOptions support for Variants.
     options: DisplayNamesOptions,
-    variant_data: DataPayload<VariantDisplayNamesV1>,
+    variant_data: DataPayload<LocaleNamesVariantV0>,
 }
 
 impl VariantDisplayNames {
@@ -194,12 +194,12 @@ impl VariantDisplayNames {
     );
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<D: DataProvider<VariantDisplayNamesV1> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<LocaleNamesVariantV0> + ?Sized>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError> {
-        let locale = VariantDisplayNamesV1::make_locale(prefs.locale_preferences);
+        let locale = LocaleNamesVariantV0::make_locale(prefs.locale_preferences);
         let variant_data = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
@@ -241,7 +241,7 @@ impl VariantDisplayNames {
 #[derive(Default, Debug)]
 pub struct LanguageDisplayNames {
     options: DisplayNamesOptions,
-    language_data: DataPayload<LanguageDisplayNamesV1>,
+    language_data: DataPayload<LocaleNamesLanguageV0>,
 }
 
 impl LanguageDisplayNames {
@@ -257,12 +257,12 @@ impl LanguageDisplayNames {
     );
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<D: DataProvider<LanguageDisplayNamesV1> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<LocaleNamesLanguageV0> + ?Sized>(
         provider: &D,
         prefs: DisplayNamesPreferences,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError> {
-        let locale = LanguageDisplayNamesV1::make_locale(prefs.locale_preferences);
+        let locale = LocaleNamesLanguageV0::make_locale(prefs.locale_preferences);
         let language_data = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
@@ -317,12 +317,12 @@ impl LanguageDisplayNames {
 pub struct LocaleDisplayNamesFormatter {
     options: DisplayNamesOptions,
     // patterns: DataPayload<LocaleDisplayNamesPatternsV1>,
-    locale_data: DataPayload<LocaleDisplayNamesV1>,
+    locale_data: DataPayload<LocaleNamesLocaleV0>,
 
-    language_data: DataPayload<LanguageDisplayNamesV1>,
-    script_data: DataPayload<ScriptDisplayNamesV1>,
-    region_data: DataPayload<RegionDisplayNamesV1>,
-    variant_data: DataPayload<VariantDisplayNamesV1>,
+    language_data: DataPayload<LocaleNamesLanguageV0>,
+    script_data: DataPayload<LocaleNamesScriptV0>,
+    region_data: DataPayload<LocaleNamesRegionV0>,
+    variant_data: DataPayload<LocaleNamesVariantV0>,
     // key_data: DataPayload<KeyDisplayNamesV1>,
     // measurement_data: DataPayload<MeasurementSystemsDisplayNamesV1>,
     // subdivisions_data: DataPayload<SubdivisionsDisplayNamesV1>,
@@ -348,14 +348,14 @@ impl LocaleDisplayNamesFormatter {
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LocaleDisplayNamesV1>
-            + DataProvider<LanguageDisplayNamesV1>
-            + DataProvider<ScriptDisplayNamesV1>
-            + DataProvider<RegionDisplayNamesV1>
-            + DataProvider<VariantDisplayNamesV1>
+        D: DataProvider<LocaleNamesLocaleV0>
+            + DataProvider<LocaleNamesLanguageV0>
+            + DataProvider<LocaleNamesScriptV0>
+            + DataProvider<LocaleNamesRegionV0>
+            + DataProvider<LocaleNamesVariantV0>
             + ?Sized,
     {
-        let locale = LocaleDisplayNamesV1::make_locale(prefs.locale_preferences);
+        let locale = LocaleNamesLocaleV0::make_locale(prefs.locale_preferences);
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_locale(&locale),
             ..Default::default()

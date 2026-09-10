@@ -15,9 +15,9 @@ use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use zerovec::VarZeroCow;
 
-impl DataProvider<ScriptDisplayNamesV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<ScriptDisplayNamesV1>, DataError> {
-        self.check_req::<ScriptDisplayNamesV1>(req)?;
+impl DataProvider<LocaleNamesScriptV0> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocaleNamesScriptV0>, DataError> {
+        self.check_req::<LocaleNamesScriptV0>(req)?;
 
         let data: &cldr_serde::displaynames::script::Resource = self
             .cldr()?
@@ -73,7 +73,7 @@ crate::displaynames::impl_displaynames_v1!(
     CoverageLevelForXPath::Modern | CoverageLevelForXPath::Comprehensive,
 );
 
-crate::displaynames::impl_displaynames_legacy_iter_v1!(ScriptDisplayNamesV1, "scripts.json");
+crate::displaynames::impl_displaynames_legacy_iter_v1!(LocaleNamesScriptV0, "scripts.json");
 
 impl From<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames<'static> {
     fn from(other: &cldr_serde::displaynames::script::Resource) -> Self {
@@ -107,7 +107,7 @@ mod tests {
     fn test_basic_script_display_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<ScriptDisplayNamesV1> = provider
+        let data: DataPayload<LocaleNamesScriptV0> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&data_locale!("en-001")),
                 ..Default::default()
@@ -128,7 +128,7 @@ mod tests {
     fn test_basic_script_short_display_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<ScriptDisplayNamesV1> = provider
+        let data: DataPayload<LocaleNamesScriptV0> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&data_locale!("en-001")),
                 ..Default::default()

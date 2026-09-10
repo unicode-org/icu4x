@@ -11,8 +11,8 @@ use alloc::borrow::Cow;
 use icu_provider::prelude::*;
 
 icu_provider::data_marker!(
-    /// `DigitalDurationDataV1`
-    DigitalDurationDataV1,
+    /// `UnitsDurationDigitalV1`
+    UnitsDurationDigitalV1,
     DigitalDurationData<'static>,
 );
 
