@@ -536,12 +536,11 @@ fn test_date_range_parts() {
         )
         .unwrap();
 
-        // Same day: should be a single shared part
+        // Same day: no parts annotations since everything is shared.
         assert_writeable_parts_eq!(
             fmt.format(&start, &end_same_day),
             "Dec 22, 2023",
             [
-                (0, 12, datetime_parts::SHARED),
                 (0, 3, datetime_parts::MONTH),
                 (4, 6, decimal_parts::INTEGER),
                 (4, 6, datetime_parts::DAY),
@@ -557,11 +556,11 @@ fn test_date_range_parts() {
             fmt.format(&start, &end_next_day),
             "Dec 22\u{2009}–\u{2009}23, 2023",
             [
-                (0, 15, datetime_parts::START_RANGE),
+                (0, 15, datetime_parts::RANGE_START),
                 (0, 3, datetime_parts::MONTH),
                 (4, 6, decimal_parts::INTEGER),
                 (4, 6, datetime_parts::DAY),
-                (15, 23, datetime_parts::END_RANGE),
+                (15, 23, datetime_parts::RANGE_END),
                 (15, 17, decimal_parts::INTEGER),
                 (15, 17, datetime_parts::DAY),
                 (19, 23, decimal_parts::INTEGER),
@@ -583,24 +582,18 @@ fn test_date_range_parts() {
             fmt.format(&start, &end_same_day),
             "Dec 22, 2023, 9:00\u{202f}AM\u{2009}–\u{2009}5:00\u{202f}PM",
             [
-                (0, 12, datetime_parts::SHARED),
                 (0, 3, datetime_parts::MONTH),
                 (4, 6, decimal_parts::INTEGER),
                 (4, 6, datetime_parts::DAY),
                 (8, 12, decimal_parts::INTEGER),
                 (8, 12, datetime_parts::YEAR),
-                (12, 13, datetime_parts::SHARED),
-                (13, 14, datetime_parts::SHARED),
-                (14, 23, datetime_parts::START_RANGE),
+                (14, 23, datetime_parts::RANGE_START),
                 (14, 15, decimal_parts::INTEGER),
                 (14, 15, datetime_parts::HOUR),
                 (16, 18, decimal_parts::INTEGER),
                 (16, 18, datetime_parts::MINUTE),
                 (21, 23, datetime_parts::DAY_PERIOD),
-                (23, 26, datetime_parts::SHARED),
-                (26, 29, datetime_parts::SHARED),
-                (29, 32, datetime_parts::SHARED),
-                (32, 41, datetime_parts::END_RANGE),
+                (32, 41, datetime_parts::RANGE_END),
                 (32, 33, decimal_parts::INTEGER),
                 (32, 33, datetime_parts::HOUR),
                 (34, 36, decimal_parts::INTEGER),
@@ -615,7 +608,7 @@ fn test_date_range_parts() {
             fmt.format(&start, &end_next_day),
             "Dec 22, 2023, 9:00:00\u{202f}AM\u{2009}–\u{2009}Dec 23, 2023, 5:00:00\u{202f}PM",
             [
-                (0, 26, datetime_parts::START_RANGE),
+                (0, 26, datetime_parts::RANGE_START),
                 (0, 3, datetime_parts::MONTH),
                 (4, 6, decimal_parts::INTEGER),
                 (4, 6, datetime_parts::DAY),
@@ -628,10 +621,7 @@ fn test_date_range_parts() {
                 (19, 21, decimal_parts::INTEGER),
                 (19, 21, datetime_parts::SECOND),
                 (24, 26, datetime_parts::DAY_PERIOD),
-                (26, 29, datetime_parts::SHARED),
-                (29, 32, datetime_parts::SHARED),
-                (32, 35, datetime_parts::SHARED),
-                (35, 61, datetime_parts::END_RANGE),
+                (35, 61, datetime_parts::RANGE_END),
                 (35, 38, datetime_parts::MONTH),
                 (39, 41, decimal_parts::INTEGER),
                 (39, 41, datetime_parts::DAY),

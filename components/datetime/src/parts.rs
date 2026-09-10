@@ -145,21 +145,15 @@ mod range {
     use writeable::Part;
 
     /// A [`Part`] used by [`FormattedDateRange`](crate::range::FormattedDateRange)
-    pub const START_RANGE: Part = Part {
+    pub const RANGE_START: Part = Part {
         category: "datetime",
         value: "startRange",
     };
 
     /// A [`Part`] used by [`FormattedDateRange`](crate::range::FormattedDateRange)
-    pub const END_RANGE: Part = Part {
+    pub const RANGE_END: Part = Part {
         category: "datetime",
         value: "endRange",
-    };
-
-    /// A [`Part`] used by [`FormattedDateRange`](crate::range::FormattedDateRange)
-    pub const SHARED: Part = Part {
-        category: "datetime",
-        value: "shared",
     };
 }
 
