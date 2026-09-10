@@ -152,6 +152,7 @@ impl FieldSymbol {
     /// Returns the high 4 bits of `idx()`, representing the field type category
     /// (e.g., Year, Month, Day, Hour).
     #[inline]
+    #[cfg(feature = "unstable")]
     pub(crate) fn type_idx(self) -> u8 {
         self.idx() >> 4
     }
