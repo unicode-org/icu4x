@@ -5,13 +5,10 @@
 use crate::provider::*;
 use crate::scaffold::{PotentiallyIllFormedUtf8, RuleBreakType, Utf8, Utf16};
 use crate::{GraphemeClusterSegmenter, GraphemeClusterSegmenterBorrowed};
-use alloc::vec::Vec;
 use icu_provider::prelude::*;
 
 mod dictionary;
 use dictionary::*;
-mod script;
-use script::*;
 #[cfg(feature = "lstm")]
 mod lstm;
 #[cfg(feature = "lstm")]
@@ -206,44 +203,6 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
             }),
             ComplexScript::None => None,
         }
-    }
-
-    pub(crate) fn segment_str(&self, input: &str) -> Vec<usize> {
-        let mut result = Vec::new();
-        let mut offset = 0;
-        for (slice, complex_script) in ComplexScriptIterator::new(input) {
-            match self.select(complex_script) {
-                Some(d) => result.extend(d.segment_str(slice, self.grapheme, offset)),
-                None => result.push(offset + slice.len()),
-            }
-            offset += slice.len();
-        }
-        result
-    }
-    pub(crate) fn segment_utf8(&self, input: &[u8]) -> Vec<usize> {
-        let mut result = Vec::new();
-        let mut offset = 0;
-        for (slice, complex_script) in ComplexScriptIteratorUtf8::new(input) {
-            match self.select(complex_script) {
-                Some(d) => result.extend(d.segment_utf8(slice, self.grapheme, offset)),
-                None => result.push(offset + slice.len()),
-            }
-            offset += slice.len();
-        }
-        result
-    }
-    /// Return UTF-16 segment offset array using dictionary or lstm segmenter.
-    pub(crate) fn segment_utf16(&self, input: &[u16]) -> Vec<usize> {
-        let mut result = Vec::new();
-        let mut offset = 0;
-        for (slice, complex_script) in ComplexScriptIteratorUtf16::new(input) {
-            match self.select(complex_script) {
-                Some(d) => result.extend(d.segment_utf16(slice, self.grapheme, offset)),
-                None => result.push(offset + slice.len()),
-            }
-            offset += slice.len();
-        }
-        result
     }
 }
 

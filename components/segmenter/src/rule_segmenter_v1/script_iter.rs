@@ -6,7 +6,7 @@ use crate::provider::ComplexScript;
 use utf8_iter::Utf8CharIndices;
 
 // TODO: Use data provider
-pub(crate) fn get_complex_script(codepoint: u32) -> ComplexScript {
+fn get_complex_script(codepoint: u32) -> ComplexScript {
     // For Thai, Burmese, Lao and Khmer, these are the intersections
     // of lb=SA with the respective Script
     match codepoint {
@@ -63,86 +63,62 @@ pub(crate) fn get_complex_script(codepoint: u32) -> ComplexScript {
 
 /// This struct is an iterator that returns the string per complex script from the
 /// given string.
-pub(super) struct ComplexScriptIterator<'s> {
-    rest: &'s str,
-}
-
-impl<'s> ComplexScriptIterator<'s> {
-    pub(super) fn new(input: &'s str) -> Self {
-        Self { rest: input }
-    }
-}
+pub(super) struct ComplexScriptIterator<'s>(pub(super) &'s str);
 
 impl<'s> Iterator for ComplexScriptIterator<'s> {
     type Item = (&'s str, ComplexScript);
 
     fn next(&mut self) -> Option<Self::Item> {
-        let mut indices = self.rest.char_indices();
+        let mut indices = self.0.char_indices();
         let lang = get_complex_script(indices.next()?.1 as u32);
         match indices.find(|&(_, ch)| get_complex_script(ch as u32) != lang) {
             Some((i, _)) => {
-                let (result, rest) = self.rest.split_at(i);
-                self.rest = rest;
+                let (result, rest) = self.0.split_at(i);
+                self.0 = rest;
                 Some((result, lang))
             }
-            None => Some((core::mem::take(&mut self.rest), lang)),
+            None => Some((core::mem::take(&mut self.0), lang)),
         }
     }
 }
 
-pub(super) struct ComplexScriptIteratorUtf8<'s> {
-    rest: &'s [u8],
-}
-
-impl<'s> ComplexScriptIteratorUtf8<'s> {
-    pub(super) fn new(input: &'s [u8]) -> Self {
-        Self { rest: input }
-    }
-}
+pub(super) struct ComplexScriptIteratorUtf8<'s>(pub(super) &'s [u8]);
 
 impl<'s> Iterator for ComplexScriptIteratorUtf8<'s> {
     type Item = (&'s [u8], ComplexScript);
 
     fn next(&mut self) -> Option<Self::Item> {
-        let mut indices = Utf8CharIndices::new(self.rest);
+        let mut indices = Utf8CharIndices::new(self.0);
         let script = get_complex_script(indices.next()?.1 as u32);
         match indices.find(|&(_, ch)| get_complex_script(ch as u32) != script) {
             Some((i, _)) => {
-                let (result, rest) = self.rest.split_at(i);
-                self.rest = rest;
+                let (result, rest) = self.0.split_at(i);
+                self.0 = rest;
                 Some((result, script))
             }
-            None => Some((core::mem::take(&mut self.rest), script)),
+            None => Some((core::mem::take(&mut self.0), script)),
         }
     }
 }
 
-pub(super) struct ComplexScriptIteratorUtf16<'s> {
-    rest: &'s [u16],
-}
-
-impl<'s> ComplexScriptIteratorUtf16<'s> {
-    pub(super) fn new(input: &'s [u16]) -> Self {
-        Self { rest: input }
-    }
-}
+pub(super) struct ComplexScriptIteratorUtf16<'s>(pub(super) &'s [u16]);
 
 impl<'s> Iterator for ComplexScriptIteratorUtf16<'s> {
     type Item = (&'s [u16], ComplexScript);
 
     fn next(&mut self) -> Option<Self::Item> {
-        let lang = get_complex_script(*self.rest.first()? as u32);
+        let lang = get_complex_script(*self.0.first()? as u32);
         match self
-            .rest
+            .0
             .iter()
             .position(|&ch| get_complex_script(ch as u32) != lang)
         {
             Some(i) => {
-                let (result, rest) = self.rest.split_at(i);
-                self.rest = rest;
+                let (result, rest) = self.0.split_at(i);
+                self.0 = rest;
                 Some((result, lang))
             }
-            None => Some((core::mem::take(&mut self.rest), lang)),
+            None => Some((core::mem::take(&mut self.0), lang)),
         }
     }
 }
@@ -154,13 +130,13 @@ mod tests {
     #[track_caller]
     fn test_iter(s: &str, expected: &[(&str, ComplexScript)]) {
         assert_eq!(
-            ComplexScriptIterator::new(s).collect::<Vec<_>>(),
+            ComplexScriptIterator(s).collect::<Vec<_>>(),
             expected,
             "UTF-8 iteration"
         );
 
         assert_eq!(
-            ComplexScriptIteratorUtf8::new(s.as_bytes()).collect::<Vec<_>>(),
+            ComplexScriptIteratorUtf8(s.as_bytes()).collect::<Vec<_>>(),
             expected
                 .iter()
                 .map(|(s, script)| (s.as_bytes(), *script))
@@ -169,8 +145,7 @@ mod tests {
         );
 
         assert_eq!(
-            ComplexScriptIteratorUtf16::new(&s.encode_utf16().collect::<Vec<_>>())
-                .collect::<Vec<_>>(),
+            ComplexScriptIteratorUtf16(&s.encode_utf16().collect::<Vec<_>>()).collect::<Vec<_>>(),
             expected
                 .iter()
                 .copied()
