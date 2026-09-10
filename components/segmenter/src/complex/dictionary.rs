@@ -149,91 +149,62 @@ impl<'data> DictionarySegmenter<'data> {
 #[cfg(feature = "serde")]
 mod tests {
     use super::*;
-    use crate::{GraphemeClusterSegmenter, LineSegmenter, WordSegmenter};
+    use crate::GraphemeClusterSegmenter;
+    use crate::complex::ComplexPayloadsBorrowed;
     use icu_provider::prelude::*;
+
+    use super::super::check_complex;
 
     #[test]
     fn burmese_dictionary_test() {
-        let segmenter = LineSegmenter::new_dictionary(Default::default());
-        // From css/css-text/word-break/word-break-normal-my-000.html
-        let s = "မြန်မာစာမြန်မာစာမြန်မာစာ";
-        let result: Vec<usize> = segmenter.segment_str(s).collect();
-        assert_eq!(result, vec![0, 18, 24, 42, 48, 66, 72]);
+        let mut segmenter = ComplexPayloadsBorrowed::new();
+        segmenter.with_southeast_asian_dictionaries();
+        let segmenter = segmenter.select(ComplexScript::Myanmar).unwrap();
 
-        let s_utf16: Vec<u16> = s.encode_utf16().collect();
-        let result: Vec<usize> = segmenter.segment_utf16(&s_utf16).collect();
-        assert_eq!(result, vec![0, 6, 8, 14, 16, 22, 24]);
+        // From css/css-text/word-break/word-break-normal-my-000.html
+        check_complex(
+            "မြန်မာစာမြန်မာစာမြန်မာစာ",
+            &["မြန်မာ", "စာ", "မြန်မာ", "စာ", "မြန်မာ", "စာ"],
+            segmenter,
+        );
     }
 
     #[test]
     fn cj_dictionary_test() {
-        let response: DataResponse<SegmenterDictionaryAutoV1> = Baked
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes(
-                    DataMarkerAttributes::from_str_or_panic("cjdict"),
-                ),
-                ..Default::default()
-            })
-            .unwrap();
-        let word_segmenter = WordSegmenter::new_dictionary(Default::default());
-        let dict_segmenter =
-            DictionarySegmenter::new(response.payload.get(), GraphemeClusterSegmenter::new());
+        let mut segmenter = ComplexPayloadsBorrowed::new();
+        segmenter.with_japanese_dictionary();
+        let segmenter = segmenter.select(ComplexScript::ChineseOrJapanese).unwrap();
 
         // Match case
-        let s = "龟山岛龟山岛";
-        let result: Vec<usize> = dict_segmenter.segment_str(s).collect();
-        assert_eq!(result, vec![9, 18]);
-
-        let result: Vec<usize> = word_segmenter.segment_str(s).collect();
-        assert_eq!(result, vec![0, 9, 18]);
-
-        let s_utf16: Vec<u16> = s.encode_utf16().collect();
-        let result: Vec<usize> = dict_segmenter.segment_utf16(&s_utf16).collect();
-        assert_eq!(result, vec![3, 6]);
-
-        let result: Vec<usize> = word_segmenter.segment_utf16(&s_utf16).collect();
-        assert_eq!(result, vec![0, 3, 6]);
+        check_complex("龟山岛龟山岛", &["龟山岛", "龟山岛"], segmenter);
 
         // Match case, then no match case
-        let s = "エディターエディ";
-        let result: Vec<usize> = dict_segmenter.segment_str(s).collect();
-        assert_eq!(result, vec![15, 24]);
-
-        // TODO(#3236): Why is WordSegmenter not returning the middle segment?
-        let result: Vec<usize> = word_segmenter.segment_str(s).collect();
-        assert_eq!(result, vec![0, 24]);
-
-        let s_utf16: Vec<u16> = s.encode_utf16().collect();
-        let result: Vec<usize> = dict_segmenter.segment_utf16(&s_utf16).collect();
-        assert_eq!(result, vec![5, 8]);
-
-        // TODO(#3236): Why is WordSegmenter not returning the middle segment?
-        let result: Vec<usize> = word_segmenter.segment_utf16(&s_utf16).collect();
-        assert_eq!(result, vec![0, 8]);
+        check_complex("エディターエディ", &["エディター", "エディ"], segmenter);
     }
 
     #[test]
     fn khmer_dictionary_test() {
-        let segmenter = LineSegmenter::new_dictionary(Default::default());
-        let s = "ភាសាខ្មែរភាសាខ្មែរភាសាខ្មែរ";
-        let result: Vec<usize> = segmenter.segment_str(s).collect();
-        assert_eq!(result, vec![0, 27, 54, 81]);
+        let mut segmenter = ComplexPayloadsBorrowed::new();
+        segmenter.with_southeast_asian_dictionaries();
+        let segmenter = segmenter.select(ComplexScript::Khmer).unwrap();
 
-        let s_utf16: Vec<u16> = s.encode_utf16().collect();
-        let result: Vec<usize> = segmenter.segment_utf16(&s_utf16).collect();
-        assert_eq!(result, vec![0, 9, 18, 27]);
+        check_complex(
+            "ភាសាខ្មែរភាសាខ្មែរភាសាខ្មែរ",
+            &["ភាសាខ្មែរ", "ភាសាខ្មែរ", "ភាសាខ្មែរ"],
+            segmenter,
+        );
     }
 
     #[test]
     fn lao_dictionary_test() {
-        let segmenter = LineSegmenter::new_dictionary(Default::default());
-        let s = "ພາສາລາວພາສາລາວພາສາລາວ";
-        let r: Vec<usize> = segmenter.segment_str(s).collect();
-        assert_eq!(r, vec![0, 12, 21, 33, 42, 54, 63]);
-
-        let s_utf16: Vec<u16> = s.encode_utf16().collect();
-        let r: Vec<usize> = segmenter.segment_utf16(&s_utf16).collect();
-        assert_eq!(r, vec![0, 4, 7, 11, 14, 18, 21]);
+        let mut segmenter = ComplexPayloadsBorrowed::new();
+        segmenter.with_southeast_asian_dictionaries();
+        let segmenter = segmenter.select(ComplexScript::Lao).unwrap();
+        check_complex(
+            "ພາສາລາວພາສາລາວພາສາລາວ",
+            &["ພາສາ", "ລາວ", "ພາສາ", "ລາວ", "ພາສາ", "ລາວ"],
+            segmenter,
+        );
     }
 
     #[test]

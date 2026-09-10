@@ -9,6 +9,9 @@ use alloc::vec::{self, Vec};
 
 pub(crate) type ResultCache = vec::IntoIter<usize>;
 
+mod script_iter;
+use script_iter::*;
+
 /// Converts complex-run-relative break offsets into distances in consumption order.
 ///
 /// The first distance starts at `previous_offset`; later distances start at the
@@ -49,7 +52,16 @@ impl ComplexRunSegmenter for Utf8 {
     ) -> Vec<usize> {
         #[allow(clippy::indexing_slicing)] // valid offsets from CharIndices
         let input = &input.as_str()[start..end];
-        complex.segment_str(input)
+        let mut result = Vec::new();
+        let mut offset = 0;
+        for (slice, complex_script) in ComplexScriptIterator(input) {
+            match complex.select(complex_script) {
+                Some(d) => result.extend(d.segment_str(slice, complex.grapheme, offset)),
+                None => result.push(offset + slice.len()),
+            }
+            offset += slice.len();
+        }
+        result
     }
 }
 
@@ -62,7 +74,16 @@ impl ComplexRunSegmenter for PotentiallyIllFormedUtf8 {
     ) -> Vec<usize> {
         #[allow(clippy::indexing_slicing)] // valid offsets from Utf8CharIndices
         let input = &input.as_slice()[start..end];
-        complex.segment_utf8(input)
+        let mut result = Vec::new();
+        let mut offset = 0;
+        for (slice, complex_script) in ComplexScriptIteratorUtf8(input) {
+            match complex.select(complex_script) {
+                Some(d) => result.extend(d.segment_utf8(slice, complex.grapheme, offset)),
+                None => result.push(offset + slice.len()),
+            }
+            offset += slice.len();
+        }
+        result
     }
 }
 
@@ -75,7 +96,16 @@ impl ComplexRunSegmenter for Utf16 {
     ) -> Vec<usize> {
         #[allow(clippy::indexing_slicing)] // valid offsets from Utf16Indices
         let input = &input.as_slice()[start..end];
-        complex.segment_utf16(input)
+        let mut result = Vec::new();
+        let mut offset = 0;
+        for (slice, complex_script) in ComplexScriptIteratorUtf16(input) {
+            match complex.select(complex_script) {
+                Some(d) => result.extend(d.segment_utf16(slice, complex.grapheme, offset)),
+                None => result.push(offset + slice.len()),
+            }
+            offset += slice.len();
+        }
+        result
     }
 }
 
@@ -313,6 +343,8 @@ impl<Y: RuleBreakType> RuleBreakIterator<'_, '_, Y> {
 
 #[cfg(test)]
 mod tests {
+    use utf8_iter::Utf8CharIndices;
+
     use super::*;
 
     #[test]
@@ -334,5 +366,32 @@ mod tests {
     #[should_panic(expected = "complex break offsets must be monotonically non-decreasing")]
     fn result_cache_rejects_offsets_before_current_position() {
         let _ = result_cache_from_offsets(vec![2], 3);
+    }
+
+    #[test]
+    fn no_model_utf8_fallback() {
+        let thai = "ภาษาไทย".as_bytes();
+        assert_eq!(
+            PotentiallyIllFormedUtf8::segment_complex_run(
+                ComplexPayloadsBorrowed::new(),
+                &Utf8CharIndices::new(thai),
+                0,
+                thai.len()
+            ),
+            [thai.len()]
+        );
+
+        let mut malformed = thai.to_vec();
+        malformed.push(0xFF);
+        malformed.extend_from_slice(thai);
+        assert_eq!(
+            PotentiallyIllFormedUtf8::segment_complex_run(
+                ComplexPayloadsBorrowed::new(),
+                &Utf8CharIndices::new(&malformed),
+                0,
+                malformed.len()
+            ),
+            [thai.len(), thai.len() + 1, malformed.len()]
+        );
     }
 }
