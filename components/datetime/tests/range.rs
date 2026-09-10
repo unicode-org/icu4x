@@ -511,3 +511,120 @@ fn test_root_fallback_issues_field_order() {
         "AM 5784-04-10\u{2009}–\u{2009}5784-04-11"
     );
 }
+
+/// Tests for CLDR Step 5 behavior:
+/// "If a match is found from previous steps, compute the calendar field with the greatest
+/// difference between start and end datetime. If there is no difference among any of the
+/// fields in the pattern, format as a single date using availableFormats, and return."
+#[test]
+fn test_step_5_single_date_fallback() {
+    use icu_calendar::Date;
+    use icu_datetime::fieldsets;
+    use icu_datetime::input::{DateTime, Time};
+    use icu_datetime::options::TimePrecision;
+    use icu_datetime::range::{FixedCalendarDateRangeFormatter, NoCalendarRangeFormatter};
+    use icu_locale_core::locale;
+    use writeable::assert_writeable_eq;
+
+    // 1. Time range with minutes precision (T::hm()):
+    // Differences in seconds (smaller than pattern precision) should format as single time.
+    let fmt_t_hm =
+        NoCalendarRangeFormatter::try_new(locale!("en").into(), fieldsets::T::hm()).unwrap();
+    let t_930_10 = Time::try_new(9, 30, 10, 0).unwrap();
+    let t_930_40 = Time::try_new(9, 30, 40, 0).unwrap();
+    assert_writeable_eq!(fmt_t_hm.format(&t_930_10, &t_930_40), "9:30\u{202f}AM");
+
+    // When minutes differ, it formats as a range.
+    let t_945 = Time::try_new(9, 45, 0, 0).unwrap();
+    assert_writeable_eq!(
+        fmt_t_hm.format(&t_930_10, &t_945),
+        "9:30\u{2009}–\u{2009}9:45\u{202f}AM"
+    );
+
+    // In contrast, when seconds ARE in the pattern (T::hms()), seconds diff should fall back
+    // to the range pattern (gluing formatted sides) since seconds differ on screen.
+    let fmt_t_hms =
+        NoCalendarRangeFormatter::try_new(locale!("en").into(), fieldsets::T::hms()).unwrap();
+    assert_writeable_eq!(
+        fmt_t_hms.format(&t_930_10, &t_930_40),
+        "9:30:10\u{202f}AM\u{2009}–\u{2009}9:30:40\u{202f}AM"
+    );
+
+    // 2. Time range with hour precision (T hour-only):
+    // Differences in minutes should format as single time.
+    let fmt_t_h = NoCalendarRangeFormatter::try_new(
+        locale!("en").into(),
+        fieldsets::T::short().with_time_precision(TimePrecision::Hour),
+    )
+    .unwrap();
+    let t_14_10 = Time::try_new(14, 10, 0, 0).unwrap();
+    let t_14_40 = Time::try_new(14, 40, 0, 0).unwrap();
+    assert_writeable_eq!(fmt_t_h.format(&t_14_10, &t_14_40), "2\u{202f}PM");
+
+    // When hours differ, it formats as a range.
+    let t_16_40 = Time::try_new(16, 40, 0, 0).unwrap();
+    assert_writeable_eq!(
+        fmt_t_h.format(&t_14_10, &t_16_40),
+        "2\u{2009}–\u{2009}4\u{202f}PM"
+    );
+
+    // 3. Date range with Year and Month (YM):
+    // Differences in day should format as a single month.
+    let fmt_ym =
+        FixedCalendarDateRangeFormatter::try_new(locale!("en").into(), fieldsets::YM::medium())
+            .unwrap();
+    let d_2023_12_01 = Date::try_new_gregorian(2023, 12, 1).unwrap();
+    let d_2023_12_15 = Date::try_new_gregorian(2023, 12, 15).unwrap();
+    assert_writeable_eq!(fmt_ym.format(&d_2023_12_01, &d_2023_12_15), "Dec 2023");
+
+    // When months differ, it formats as a range.
+    let d_2023_05_01 = Date::try_new_gregorian(2023, 5, 1).unwrap();
+    assert_writeable_eq!(
+        fmt_ym.format(&d_2023_05_01, &d_2023_12_01),
+        "May\u{2009}–\u{2009}Dec 2023"
+    );
+
+    // 4. Date range with Year only (Y):
+    // Differences in month and day should format as a single year.
+    let fmt_y =
+        FixedCalendarDateRangeFormatter::try_new(locale!("en").into(), fieldsets::Y::medium())
+            .unwrap();
+    assert_writeable_eq!(fmt_y.format(&d_2023_05_01, &d_2023_12_15), "2023");
+
+    // When years differ, it formats as a range.
+    let d_2025_05_01 = Date::try_new_gregorian(2025, 5, 1).unwrap();
+    assert_writeable_eq!(
+        fmt_y.format(&d_2023_05_01, &d_2025_05_01),
+        "2023\u{2009}–\u{2009}2025"
+    );
+
+    // 5. Mixed date-time range (YMDT):
+    // With minutes time precision, differences in seconds format as a single datetime.
+    let fmt_ymdt_hm = FixedCalendarDateRangeFormatter::try_new(
+        locale!("en").into(),
+        fieldsets::YMD::medium().with_time_hm(),
+    )
+    .unwrap();
+    let dt_1 = DateTime {
+        date: d_2023_12_01,
+        time: t_930_10,
+    };
+    let dt_2 = DateTime {
+        date: d_2023_12_01,
+        time: t_930_40,
+    };
+    assert_writeable_eq!(
+        fmt_ymdt_hm.format(&dt_1, &dt_2),
+        "Dec 1, 2023, 9:30\u{202f}AM"
+    );
+
+    // When hours differ on the same day, formats time range.
+    let dt_3 = DateTime {
+        date: d_2023_12_01,
+        time: Time::try_new(17, 30, 0, 0).unwrap(),
+    };
+    assert_writeable_eq!(
+        fmt_ymdt_hm.format(&dt_1, &dt_3),
+        "Dec 1, 2023, 9:30\u{202f}AM\u{2009}–\u{2009}5:30\u{202f}PM"
+    );
+}

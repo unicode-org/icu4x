@@ -57,6 +57,24 @@ impl Difference {
     pub(crate) fn is_date_diff(self) -> bool {
         matches!(self, Self::Day | Self::Month | Self::Year | Self::Era)
     }
+
+    /// Returns the calendar hierarchy level of the difference, where 0 is the coarsest (Era)
+    /// and 7 is the finest (Second).
+    ///
+    /// Returns `None` for `Difference::None` and `Difference::Incomparable`.
+    pub(crate) fn level(self) -> Option<u8> {
+        match self {
+            Self::Era => Some(0),
+            Self::Year => Some(1),
+            Self::Month => Some(2),
+            Self::Day => Some(3),
+            Self::DayPeriodA | Self::DayPeriodB => Some(4),
+            Self::Hour => Some(5),
+            Self::Minute => Some(6),
+            Self::Second => Some(7),
+            Self::None | Self::Incomparable => None,
+        }
+    }
 }
 /// Resolves the greatest difference between two datetimes.
 ///

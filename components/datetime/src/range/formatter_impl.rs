@@ -5,6 +5,8 @@
 use crate::FormattedDateTime;
 use crate::format::DateTimeInputUnchecked;
 use crate::pattern::RawDateTimeNamesBorrowed;
+use crate::provider::fields::FieldSymbol;
+use crate::provider::pattern::PatternItem;
 use crate::provider::range_patterns::RangePatternInfoBorrowed;
 use crate::range::difference::{Difference, resolve_difference};
 use crate::range::write::{
@@ -132,6 +134,19 @@ impl<'a> RangeFormatterCore<'a> {
         // 1. Resolve difference
         let diff = resolve_difference(start, end, dayperiods);
 
+        let start_pattern = self.selection.select(start);
+        let end_pattern = self.selection.select(end);
+
+        // CLDR Step 5: If there is no difference among any of the fields in the pattern,
+        // format as a single date using availableFormats, and return.
+        if field_is_ignored(start_pattern, end_pattern, diff) {
+            return FormattedDateRange(FormattedDateRangeInner::Single(FormattedDateTime {
+                pattern: start_pattern,
+                input: *start,
+                names: self.names,
+            }));
+        }
+
         let is_mixed = self.range_selection.date_range.payload.is_payload()
             && self.range_selection.time_range.payload.is_payload();
 
@@ -201,4 +216,43 @@ impl<'a> RangeFormatterCore<'a> {
             glue,
         })
     }
+}
+
+fn field_symbol_level(symbol: FieldSymbol) -> Option<u8> {
+    match symbol {
+        FieldSymbol::Era => Some(0),
+        FieldSymbol::Year(_) => Some(1),
+        FieldSymbol::Month(_) => Some(2),
+        FieldSymbol::Week(_) | FieldSymbol::Day(_) | FieldSymbol::Weekday(_) => Some(3),
+        FieldSymbol::DayPeriod(_) => Some(4),
+        FieldSymbol::Hour(_) => Some(5),
+        FieldSymbol::Minute => Some(6),
+        FieldSymbol::Second(_) | FieldSymbol::DecimalSecond(_) => Some(7),
+        FieldSymbol::TimeZone(_) => None,
+    }
+}
+
+fn pattern_has_level(pattern: DateTimeZonePatternDataBorrowed<'_>, min_level: u8) -> bool {
+    pattern.iter_items().any(|item| match item {
+        PatternItem::Field(field) => {
+            field_symbol_level(field.symbol).is_some_and(|lvl| lvl >= min_level)
+        }
+        _ => false,
+    })
+}
+
+/// Checks whether the greatest difference is in a field unit that is ignored by both
+/// the start and end patterns (i.e. all fields present in both patterns are strictly coarser than `diff`).
+///
+/// CLDR Step 5: "If there is no difference among any of the fields in the pattern,
+/// format as a single date using `availableFormats`, and return."
+fn field_is_ignored(
+    start_pattern: DateTimeZonePatternDataBorrowed<'_>,
+    end_pattern: DateTimeZonePatternDataBorrowed<'_>,
+    diff: Difference,
+) -> bool {
+    let Some(diff_level) = diff.level() else {
+        return false;
+    };
+    !pattern_has_level(start_pattern, diff_level) && !pattern_has_level(end_pattern, diff_level)
 }
