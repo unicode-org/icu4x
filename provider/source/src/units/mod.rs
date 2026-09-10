@@ -5,5 +5,5 @@
 pub(crate) mod categorized_display_name;
 pub(crate) mod essentials;
 pub(crate) mod helpers;
-pub(crate) mod ids;
+pub(crate) mod id;
 pub(crate) mod info;

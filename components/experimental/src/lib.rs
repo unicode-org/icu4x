@@ -114,7 +114,7 @@ pub mod provider {
         impl_datetime_relative_year_short_v1!(Baked);
         impl_transliterator_rules_v1!(Baked);
         impl_units_info_v1!(Baked);
-        impl_unit_ids_v1!(Baked);
+        impl_units_id_v1!(Baked);
     };
 
     #[cfg(feature = "datagen")]
@@ -153,7 +153,7 @@ pub mod provider {
         super::displaynames::provider::LocaleNamesRegionV0::INFO,
         super::displaynames::provider::LocaleNamesScriptV0::INFO,
         super::displaynames::provider::LocaleNamesVariantV0::INFO,
-        super::measure::provider::UnitIdsV1::INFO,
+        super::measure::provider::UnitsIdV1::INFO,
         super::personnames::provider::PersonNamesFormatV1::INFO,
         super::relativetime::provider::DatetimeRelativeDayLongV1::INFO,
         super::relativetime::provider::DatetimeRelativeHourLongV1::INFO,
