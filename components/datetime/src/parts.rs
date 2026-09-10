@@ -139,3 +139,23 @@ pub const TIME_ZONE_NAME: Part = Part {
     category: "datetime",
     value: "timeZoneName",
 };
+
+#[cfg(feature = "unstable")]
+mod range {
+    use writeable::Part;
+
+    /// A [`Part`] used by [`FormattedDateRange`](crate::range::FormattedDateRange)
+    pub const RANGE_START: Part = Part {
+        category: "datetime",
+        value: "startRange",
+    };
+
+    /// A [`Part`] used by [`FormattedDateRange`](crate::range::FormattedDateRange)
+    pub const RANGE_END: Part = Part {
+        category: "datetime",
+        value: "endRange",
+    };
+}
+
+#[cfg(feature = "unstable")]
+pub use range::*;
