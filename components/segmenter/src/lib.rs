@@ -124,8 +124,8 @@ extern crate alloc;
 
 mod complex;
 mod indices;
+#[cfg(feature = "serde")]
 mod rule_segmenter_v1;
-#[cfg(feature = "unstable")]
 mod rule_segmenter_v2;
 
 /// [`GraphemeClusterSegmenter`] and its related iterators, borrowed types, and options.

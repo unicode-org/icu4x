@@ -2,11 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(feature = "unstable")]
 use crate::GraphemeClusterSegmenterBorrowed;
-#[cfg(feature = "unstable")]
 use crate::complex::{ComplexIterator, ComplexPayloadBorrowed, ComplexPayloadsBorrowed};
-#[cfg(feature = "unstable")]
 use crate::provider::ComplexScript;
 
 use crate::indices::*;
@@ -26,27 +23,24 @@ pub trait RuleBreakType: crate::private::Sealed + Sized {
     type CharType: Copy + Into<u32> + core::fmt::Debug;
 
     #[doc(hidden)]
+    #[cfg(feature = "serde")]
     const CAN_CONTAIN_SA: bool;
 
     #[doc(hidden)]
     fn char_len(ch: Self::CharType) -> usize;
 
     #[doc(hidden)]
-    #[cfg(feature = "unstable")]
     type ComplexPayloads<'data>: core::fmt::Debug + Clone + Copy;
     #[doc(hidden)]
-    #[cfg(feature = "unstable")]
     type ComplexPayload<'data>: core::fmt::Debug;
 
     #[doc(hidden)]
-    #[cfg(feature = "unstable")]
     fn select_complex<'a>(
         data: &Self::ComplexPayloads<'a>,
         complex_script: ComplexScript,
     ) -> Option<Self::ComplexPayload<'a>>;
 
     #[doc(hidden)]
-    #[cfg(feature = "unstable")]
     fn handle_complex<'data, 's>(
         data: &Self::ComplexPayload<'data>,
         complex: &Self::IterAttr<'s>,
@@ -54,11 +48,9 @@ pub trait RuleBreakType: crate::private::Sealed + Sized {
     ) -> ComplexIterator<'data, 's, Self>;
 
     #[doc(hidden)]
-    #[cfg(feature = "unstable")]
     fn offset<'s>(iter: &Self::IterAttr<'s>) -> usize;
 
     #[doc(hidden)]
-    #[cfg(feature = "unstable")]
     fn is_empty<'s>(iter: &Self::IterAttr<'s>) -> bool;
 }
 
@@ -73,17 +65,15 @@ impl RuleBreakType for Utf8 {
     type IterAttr<'s> = CharIndices<'s>;
     type CharType = char;
 
+    #[cfg(feature = "serde")]
     const CAN_CONTAIN_SA: bool = true;
 
-    #[cfg(feature = "unstable")]
     type ComplexPayloads<'data> = ComplexPayloadsBorrowed<'data>;
-    #[cfg(feature = "unstable")]
     type ComplexPayload<'data> = (
         ComplexPayloadBorrowed<'data>,
         GraphemeClusterSegmenterBorrowed<'data>,
     );
 
-    #[cfg(feature = "unstable")]
     fn select_complex<'a>(
         &data: &Self::ComplexPayloads<'a>,
         complex_script: ComplexScript,
@@ -91,7 +81,6 @@ impl RuleBreakType for Utf8 {
         data.select(complex_script).map(|d| (d, data.grapheme))
     }
 
-    #[cfg(feature = "unstable")]
     fn handle_complex<'data, 's>(
         &(lang, grapheme): &Self::ComplexPayload<'data>,
         complex: &Self::IterAttr<'s>,
@@ -107,12 +96,10 @@ impl RuleBreakType for Utf8 {
         ch.len_utf8()
     }
 
-    #[cfg(feature = "unstable")]
     fn offset<'s>(iter: &Self::IterAttr<'s>) -> usize {
         iter.offset()
     }
 
-    #[cfg(feature = "unstable")]
     fn is_empty<'s>(iter: &Self::IterAttr<'s>) -> bool {
         iter.as_str().is_empty()
     }
@@ -129,17 +116,15 @@ impl RuleBreakType for PotentiallyIllFormedUtf8 {
     type IterAttr<'s> = Utf8CharIndices<'s>;
     type CharType = char;
 
+    #[cfg(feature = "serde")]
     const CAN_CONTAIN_SA: bool = true;
 
-    #[cfg(feature = "unstable")]
     type ComplexPayloads<'data> = ComplexPayloadsBorrowed<'data>;
-    #[cfg(feature = "unstable")]
     type ComplexPayload<'data> = (
         ComplexPayloadBorrowed<'data>,
         GraphemeClusterSegmenterBorrowed<'data>,
     );
 
-    #[cfg(feature = "unstable")]
     fn select_complex<'a>(
         data: &Self::ComplexPayloads<'a>,
         complex_script: ComplexScript,
@@ -147,7 +132,6 @@ impl RuleBreakType for PotentiallyIllFormedUtf8 {
         Utf8::select_complex(data, complex_script)
     }
 
-    #[cfg(feature = "unstable")]
     fn handle_complex<'data, 's>(
         &(lang, grapheme): &Self::ComplexPayload<'data>,
         complex: &Self::IterAttr<'s>,
@@ -163,12 +147,10 @@ impl RuleBreakType for PotentiallyIllFormedUtf8 {
         ch.len_utf8()
     }
 
-    #[cfg(feature = "unstable")]
     fn offset<'s>(iter: &Self::IterAttr<'s>) -> usize {
         iter.offset()
     }
 
-    #[cfg(feature = "unstable")]
     fn is_empty<'s>(iter: &Self::IterAttr<'s>) -> bool {
         iter.as_slice().is_empty()
     }
@@ -185,14 +167,12 @@ impl RuleBreakType for Latin1 {
     type IterAttr<'s> = Latin1Indices<'s>;
     type CharType = u8;
 
+    #[cfg(feature = "serde")]
     const CAN_CONTAIN_SA: bool = false;
 
-    #[cfg(feature = "unstable")]
     type ComplexPayloads<'data> = core::convert::Infallible;
-    #[cfg(feature = "unstable")]
     type ComplexPayload<'data> = core::convert::Infallible;
 
-    #[cfg(feature = "unstable")]
     fn select_complex<'a>(
         &complex_payloads: &Self::ComplexPayloads<'a>,
         _: ComplexScript,
@@ -200,7 +180,6 @@ impl RuleBreakType for Latin1 {
         match complex_payloads {}
     }
 
-    #[cfg(feature = "unstable")]
     fn handle_complex<'data, 's>(
         &complex_payload: &Self::ComplexPayloads<'data>,
         _: &Self::IterAttr<'s>,
@@ -213,12 +192,10 @@ impl RuleBreakType for Latin1 {
         unreachable!()
     }
 
-    #[cfg(feature = "unstable")]
     fn offset<'s>(iter: &Self::IterAttr<'s>) -> usize {
         iter.offset()
     }
 
-    #[cfg(feature = "unstable")]
     fn is_empty<'s>(iter: &Self::IterAttr<'s>) -> bool {
         iter.as_slice().is_empty()
     }
@@ -235,17 +212,15 @@ impl RuleBreakType for Utf16 {
     type IterAttr<'s> = Utf16Indices<'s>;
     type CharType = u32;
 
+    #[cfg(feature = "serde")]
     const CAN_CONTAIN_SA: bool = true;
 
-    #[cfg(feature = "unstable")]
     type ComplexPayloads<'data> = ComplexPayloadsBorrowed<'data>;
-    #[cfg(feature = "unstable")]
     type ComplexPayload<'data> = (
         ComplexPayloadBorrowed<'data>,
         GraphemeClusterSegmenterBorrowed<'data>,
     );
 
-    #[cfg(feature = "unstable")]
     fn select_complex<'a>(
         data: &Self::ComplexPayloads<'a>,
         complex_script: ComplexScript,
@@ -253,7 +228,6 @@ impl RuleBreakType for Utf16 {
         Utf8::select_complex(data, complex_script)
     }
 
-    #[cfg(feature = "unstable")]
     fn handle_complex<'data, 's>(
         &(lang, grapheme): &Self::ComplexPayload<'data>,
         complex: &Self::IterAttr<'s>,
@@ -269,12 +243,10 @@ impl RuleBreakType for Utf16 {
         if ch >= 0x10000 { 2 } else { 1 }
     }
 
-    #[cfg(feature = "unstable")]
     fn offset<'s>(iter: &Self::IterAttr<'s>) -> usize {
         iter.offset()
     }
 
-    #[cfg(feature = "unstable")]
     fn is_empty<'s>(iter: &Self::IterAttr<'s>) -> bool {
         iter.as_slice().is_empty()
     }

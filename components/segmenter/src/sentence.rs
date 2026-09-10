@@ -83,8 +83,8 @@ pub struct SentenceBreakIterator<'data, 's, Y: RuleBreakType>(
 
 #[derive(Debug)]
 enum SentenceBreakIteratorInner<'data, 's, Y: RuleBreakType> {
+    #[cfg(feature = "serde")]
     V1(crate::rule_segmenter_v1::RuleBreakIterator<'data, 's, Y>),
-    #[cfg(feature = "unstable")]
     V2(crate::rule_segmenter_v2::RuleBreakIterator<'data, 's, Y>),
 }
 
@@ -93,8 +93,8 @@ impl<Y: RuleBreakType> Iterator for SentenceBreakIterator<'_, '_, Y> {
     #[inline]
     fn next(&mut self) -> Option<Self::Item> {
         match &mut self.0 {
+            #[cfg(feature = "serde")]
             SentenceBreakIteratorInner::V1(iter) => iter.next(),
-            #[cfg(feature = "unstable")]
             SentenceBreakIteratorInner::V2(iter) => iter.next(),
         }
     }
@@ -179,11 +179,11 @@ pub struct SentenceSegmenter(SentenceSegmenterInner);
 
 #[derive(Debug)]
 enum SentenceSegmenterInner {
+    #[cfg(feature = "serde")]
     V1 {
         payload: DataPayload<SegmenterBreakSentenceV1>,
         payload_locale_override: Option<DataPayload<SegmenterBreakSentenceOverrideV1>>,
     },
-    #[cfg(feature = "unstable")]
     V2 {
         payload: DataPayload<SegmenterBreakSentenceV2>,
         tailoring: Option<DataPayload<SegmenterBreakSentenceOverrideV2>>,
@@ -198,11 +198,11 @@ pub struct SentenceSegmenterBorrowed<'data>(SentenceSegmenterBorrowedInner<'data
 
 #[derive(Clone, Debug, Copy)]
 enum SentenceSegmenterBorrowedInner<'data> {
+    #[cfg(feature = "serde")]
     V1 {
         data: &'data RuleBreakData<'data>,
         locale_override: Option<&'data RuleBreakDataOverride<'data>>,
     },
-    #[cfg(feature = "unstable")]
     V2 {
         data: &'data SegmenterStateMachine<'data>,
         tailoring: Option<&'data SegmenterStateMachineOverride<'data>>,
@@ -220,9 +220,9 @@ impl SentenceSegmenter {
     pub const fn new(
         _options: SentenceBreakInvariantOptions,
     ) -> SentenceSegmenterBorrowed<'static> {
-        SentenceSegmenterBorrowed(SentenceSegmenterBorrowedInner::V1 {
-            data: Baked::SINGLETON_SEGMENTER_BREAK_SENTENCE_V1,
-            locale_override: None,
+        SentenceSegmenterBorrowed(SentenceSegmenterBorrowedInner::V2 {
+            data: Baked::SINGLETON_SEGMENTER_BREAK_SENTENCE_V2,
+            tailoring: None,
         })
     }
 
@@ -239,69 +239,6 @@ impl SentenceSegmenter {
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
-        provider: &D,
-        options: SentenceBreakOptions,
-    ) -> Result<Self, DataError>
-    where
-        D: DataProvider<SegmenterBreakSentenceV1>
-            + DataProvider<SegmenterBreakSentenceOverrideV1>
-            + ?Sized,
-    {
-        let payload = provider.load(Default::default())?.payload;
-        let payload_locale_override = if let Some(locale) = options.content_locale {
-            let locale = DataLocale::from(locale);
-            let req = DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&locale),
-                metadata: {
-                    let mut metadata = DataRequestMetadata::default();
-                    metadata.silent = true;
-                    metadata
-                },
-            };
-            provider
-                .load(req)
-                .allow_identifier_not_found()?
-                .map(|r| r.payload)
-        } else {
-            None
-        };
-
-        Ok(Self(SentenceSegmenterInner::V1 {
-            payload,
-            payload_locale_override,
-        }))
-    }
-
-    /// Constructs a [`SentenceSegmenterBorrowed`] with an invariant locale and compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "compiled_data")]
-    #[cfg(feature = "unstable")]
-    pub const fn new_neo(
-        _options: SentenceBreakInvariantOptions,
-    ) -> SentenceSegmenterBorrowed<'static> {
-        SentenceSegmenterBorrowed(SentenceSegmenterBorrowedInner::V2 {
-            data: Baked::SINGLETON_SEGMENTER_BREAK_SENTENCE_V2,
-            tailoring: None,
-        })
-    }
-
-    /// Constructs a [`SentenceSegmenter`] for a given options and using compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "compiled_data")]
-    #[cfg(feature = "unstable")]
-    pub fn try_new_neo(options: SentenceBreakOptions) -> Result<Self, DataError> {
-        Self::try_new_neo_unstable(&Baked, options)
-    }
-
-    #[cfg(feature = "unstable")]
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_neo)]
-    pub fn try_new_neo_unstable<D>(
         provider: &D,
         options: SentenceBreakOptions,
     ) -> Result<Self, DataError>
@@ -335,6 +272,7 @@ impl SentenceSegmenter {
     /// Most useful methods for segmentation are on this type.
     pub fn as_borrowed(&self) -> SentenceSegmenterBorrowed<'_> {
         match &self.0 {
+            #[cfg(feature = "serde")]
             SentenceSegmenterInner::V1 {
                 payload,
                 payload_locale_override,
@@ -342,7 +280,6 @@ impl SentenceSegmenter {
                 data: payload.get(),
                 locale_override: payload_locale_override.as_ref().map(|p| p.get()),
             }),
-            #[cfg(feature = "unstable")]
             SentenceSegmenterInner::V2 { payload, tailoring } => {
                 SentenceSegmenterBorrowed(SentenceSegmenterBorrowedInner::V2 {
                     data: payload.get(),
@@ -357,9 +294,10 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
     fn segment<'s, Y: RuleBreakType>(
         self,
         iter: Y::IterAttr<'s>,
-        len: usize,
+        _len: usize,
     ) -> SentenceBreakIterator<'data, 's, Y> {
         match self.0 {
+            #[cfg(feature = "serde")]
             SentenceSegmenterBorrowedInner::V1 {
                 data,
                 locale_override,
@@ -367,7 +305,7 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
                 crate::rule_segmenter_v1::RuleBreakIterator {
                     input: iter.clone(),
                     iter,
-                    len,
+                    len: _len,
                     current_pos_data: None,
                     result_cache: Default::default(),
                     data,
@@ -377,7 +315,6 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
                     handle_complex: crate::rule_segmenter_v1::empty_handle_complex,
                 },
             )),
-            #[cfg(feature = "unstable")]
             SentenceSegmenterBorrowedInner::V2 { data, tailoring } => {
                 SentenceBreakIterator(SentenceBreakIteratorInner::V2(
                     crate::rule_segmenter_v2::RuleBreakIterator::new(iter, data, tailoring, None),
@@ -425,6 +362,7 @@ impl SentenceSegmenterBorrowed<'static> {
     /// compile-time optimizations that are possible with [`SentenceSegmenterBorrowed`].
     pub const fn static_to_owned(self) -> SentenceSegmenter {
         SentenceSegmenter(match self.0 {
+            #[cfg(feature = "serde")]
             SentenceSegmenterBorrowedInner::V1 {
                 data,
                 locale_override,
@@ -436,7 +374,6 @@ impl SentenceSegmenterBorrowed<'static> {
                     None
                 },
             },
-            #[cfg(feature = "unstable")]
             SentenceSegmenterBorrowedInner::V2 { data, tailoring } => SentenceSegmenterInner::V2 {
                 payload: DataPayload::from_static_ref(data),
                 tailoring: if let Some(d) = tailoring {
@@ -452,13 +389,6 @@ impl SentenceSegmenterBorrowed<'static> {
 #[test]
 fn empty_string() {
     let segmenter = SentenceSegmenter::new(Default::default());
-    let breaks: Vec<usize> = segmenter.segment_str("").collect();
-    assert_eq!(breaks, [0]);
-}
-
-#[test]
-fn empty_string_neo() {
-    let segmenter = SentenceSegmenter::new_neo(Default::default());
     let breaks: Vec<usize> = segmenter.segment_str("").collect();
     assert_eq!(breaks, [0]);
 }

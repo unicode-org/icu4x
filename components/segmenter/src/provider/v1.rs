@@ -28,15 +28,6 @@ icu_provider::data_marker!(
     is_singleton = true
 );
 
-#[cfg(feature = "unstable")]
-icu_provider::data_marker!(
-    /// `SegmenterBreakLineV3`
-    SegmenterBreakLineV3,
-    "segmenter/break/line/v3",
-    RuleBreakData<'static>,
-    is_singleton = true
-);
-
 icu_provider::data_marker!(
     /// `SegmenterBreakWordV1`
     SegmenterBreakWordV1,

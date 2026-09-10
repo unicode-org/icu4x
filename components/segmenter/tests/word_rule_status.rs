@@ -8,16 +8,7 @@ use icu_segmenter::options::WordType;
 
 #[test]
 fn rule_status() {
-    for segmenter in [
-        WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
-        {
-            let mut s = WordSegmenter::new_neo_for_non_complex_scripts(
-                WordBreakInvariantOptions::default(),
-            );
-            s.load_auto();
-            s
-        },
-    ] {
+    for segmenter in [WordSegmenter::new_auto(WordBreakInvariantOptions::default())] {
         let mut iter = segmenter.segment_str("hello world 123");
 
         assert_eq!(iter.next(), Some(0), "SOT");
@@ -52,16 +43,7 @@ fn rule_status() {
 
 #[test]
 fn rule_status_letter_eof() {
-    for segmenter in [
-        WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
-        {
-            let mut s = WordSegmenter::new_neo_for_non_complex_scripts(
-                WordBreakInvariantOptions::default(),
-            );
-            s.load_auto();
-            s
-        },
-    ] {
+    for segmenter in [WordSegmenter::new_auto(WordBreakInvariantOptions::default())] {
         let mut iter = segmenter.segment_str("one.");
 
         assert_eq!(iter.next(), Some(0), "SOT");
@@ -84,16 +66,7 @@ fn rule_status_letter_eof() {
 
 #[test]
 fn rule_status_numeric_eof() {
-    for segmenter in [
-        WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
-        {
-            let mut s = WordSegmenter::new_neo_for_non_complex_scripts(
-                WordBreakInvariantOptions::default(),
-            );
-            s.load_auto();
-            s
-        },
-    ] {
+    for segmenter in [WordSegmenter::new_auto(WordBreakInvariantOptions::default())] {
         let mut iter = segmenter.segment_str("42.");
 
         assert_eq!(iter.next(), Some(0), "SOT");
@@ -116,16 +89,7 @@ fn rule_status_numeric_eof() {
 
 #[test]
 fn rule_status_th() {
-    for segmenter in [
-        WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
-        {
-            let mut s = WordSegmenter::new_neo_for_non_complex_scripts(
-                WordBreakInvariantOptions::default(),
-            );
-            s.load_auto();
-            s
-        },
-    ] {
+    for segmenter in [WordSegmenter::new_auto(WordBreakInvariantOptions::default())] {
         let mut iter = segmenter.segment_str("ภาษาไทยภาษาไทย");
 
         assert_eq!(iter.next(), Some(0), "SOT");

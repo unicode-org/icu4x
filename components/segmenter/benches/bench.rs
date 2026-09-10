@@ -78,29 +78,6 @@ fn line_segmenters(
         (LineSegmenter::new_for_non_complex_scripts(options), ""),
         (LineSegmenter::new_lstm(options), "/lstm"),
         (LineSegmenter::new_dictionary(options), "/dictionary"),
-        #[cfg(feature = "unstable")]
-        (
-            LineSegmenter::new_neo_for_non_complex_scripts(options),
-            "/neo",
-        ),
-        #[cfg(feature = "unstable")]
-        (
-            {
-                let mut segmenter = LineSegmenter::new_neo_for_non_complex_scripts(options);
-                segmenter.load_lstm();
-                segmenter
-            },
-            "/neo/lstm",
-        ),
-        #[cfg(feature = "unstable")]
-        (
-            {
-                let mut segmenter = LineSegmenter::new_neo_for_non_complex_scripts(options);
-                segmenter.load_dictionary();
-                segmenter
-            },
-            "/neo/dictionary",
-        ),
     ]
 }
 
@@ -115,21 +92,6 @@ fn word_segmenters()
             WordSegmenter::new_dictionary(Default::default()),
             "/dictionary",
         ),
-        #[cfg(feature = "unstable")]
-        (
-            WordSegmenter::new_neo_for_non_complex_scripts(Default::default()),
-            "/neo",
-        ),
-        #[cfg(feature = "unstable")]
-        (
-            {
-                let mut segmenter =
-                    WordSegmenter::new_neo_for_non_complex_scripts(Default::default());
-                segmenter.load_dictionary();
-                segmenter
-            },
-            "/neo/dictionary",
-        ),
     ]
 }
 
@@ -139,11 +101,7 @@ fn grapheme_segmenters() -> impl IntoIterator<
         &'static str,
     ),
 > {
-    [
-        (GraphemeClusterSegmenter::new(), ""),
-        #[cfg(feature = "unstable")]
-        (GraphemeClusterSegmenter::new_neo(), "/neo"),
-    ]
+    [(GraphemeClusterSegmenter::new(), "")]
 }
 
 fn repeat_to_char_count(pattern: &str, count: usize) -> String {
