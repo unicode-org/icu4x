@@ -27,7 +27,7 @@ impl SourceDataProvider {
                 cldr_paths: Some(Arc::new(CldrCache::new(cldr_data()))),
                 icuexport_paths: Some(Arc::new(SerdeCache::new(icuexport_data()))),
                 segmenter_lstm_paths: Some(Arc::new(SerdeCache::new(lstm_data()))),
-                rscd_paths: Some(Arc::new(RscdCache::new_local(rscd_data()))),
+                rscd_paths: Some(Arc::new(RscdCache::new(rscd_data()))),
                 tzdb_paths: Some(Arc::new(TzdbCache::new(tzdb_data()))),
                 ..SourceDataProvider::new_custom()
             })

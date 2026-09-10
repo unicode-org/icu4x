@@ -9,7 +9,6 @@ use crate::DataHasher;
 #[cfg(feature = "unstable")]
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
-use crate::cldr_cache::CldrCache;
 #[cfg(feature = "unstable")]
 use crate::source::Cache;
 use crate::source::{RscdCache, include_files};
@@ -1014,7 +1013,7 @@ fn rscd_15_1() -> &'static SourceDataProvider {
     static SINGLETON: OnceLock<SourceDataProvider> = OnceLock::new();
     SINGLETON.get_or_init(|| {
         let mut provider = SourceDataProvider::new_custom();
-        provider.rscd_paths = Some(std::sync::Arc::new(RscdCache::new_local(include_files!(
+        provider.rscd_paths = Some(std::sync::Arc::new(RscdCache::new(include_files!(
             "../../data/segmenter/rscd15/";
             "ucd/DerivedCoreProperties.txt",
             "ucd/emoji/emoji-data.txt",
@@ -1034,7 +1033,7 @@ fn rscd_17_0() -> &'static SourceDataProvider {
     static SINGLETON: OnceLock<SourceDataProvider> = OnceLock::new();
     SINGLETON.get_or_init(|| {
         let mut provider = SourceDataProvider::new_custom();
-        provider.rscd_paths = Some(std::sync::Arc::new(RscdCache::new_local(include_files!(
+        provider.rscd_paths = Some(std::sync::Arc::new(RscdCache::new(include_files!(
             "../../data/segmenter/rscd17/";
             "ucd/auxiliary/GraphemeBreakProperty.txt",
             "ucd/auxiliary/SentenceBreakProperty.txt",
@@ -1064,42 +1063,6 @@ implement!(SegmenterBreakSentenceV1, "sentence.toml", |_| rscd_17_0());
 implement_override!(SegmenterBreakWordOverrideV1, "word.toml", []);
 implement_override!(SegmenterBreakSentenceOverrideV1, "sentence.toml", ["el"]);
 
-#[cfg(feature = "unstable")]
-#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-fn pri_555_sources() -> crate::source::AbstractFs {
-    include_files!(
-        "../../data/segmenter/pri555/";
-        "GraphemeClusterBreakStates.txt",
-        "GraphemeClusterBreakSymbols.txt",
-        "GraphemeClusterBreakTransitions.txt",
-        "LineBreakStates.txt",
-        "LineBreakSymbols.txt",
-        "LineBreakTransitions.txt",
-        "SentenceBreakStates.txt",
-        "SentenceBreakSymbols.txt",
-        "SentenceBreakTransitions.txt",
-        "WordBreakStates.txt",
-        "WordBreakSymbols.txt",
-        "WordBreakTransitions.txt",
-    )
-}
-
-#[cfg(feature = "unstable")]
-#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-fn pri555_cldr_json() -> &'static CldrCache {
-    // Singleton so that all instantiations share the same cache.
-    static SINGLETON: OnceLock<CldrCache> = OnceLock::new();
-    SINGLETON.get_or_init(|| {
-        CldrCache::new(include_files!(
-            "../../data/segmenter/cldr-json/";
-            // These files should be upstreamed to CLDR
-            "cldr-segments-full/segments/el/tailorings.json",
-            "cldr-segments-full/segments/ja/tailorings.json",
-            "cldr-segments-full/segments/und/tailorings.json",
-        ))
-    })
-}
-
 #[test]
 #[ignore]
 #[cfg(all(feature = "unstable", feature = "networking"))]
@@ -1110,16 +1073,18 @@ fn download() {
 
     let data_root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("data/segmenter/pri555");
 
-    for file in pri_555_sources().list("").unwrap() {
-        let target = data_root.join(&file);
-        std::fs::create_dir_all(target.parent().unwrap()).unwrap();
-        crlify::BufWriterWithLineEndingFix::new(File::create(&target).unwrap())
+    for file in std::fs::read_dir(&data_root).unwrap() {
+        let file = file.unwrap();
+        if !file.file_type().unwrap().is_file() {
+            continue;
+        }
+        crlify::BufWriterWithLineEndingFix::new(File::create(file.path()).unwrap())
             .write_all(
                 &crate::source::AbstractFs::new_from_url(format!(
                     "https://unicode.org/review/pri555/{}",
                     SourceDataProvider::TESTED_UNICODE_TAG
                 ))
-                .read_to_buf(&file)
+                .read_to_buf(file.file_name().to_str().unwrap())
                 .unwrap(),
             )
             .unwrap();
@@ -1150,9 +1115,7 @@ impl SourceDataProvider {
             .segmenter_cache
             .line
             .get_or_init(|| {
-                self.build_segmenter(&pri_555_sources(), "LineBreak", |s| {
-                    if s == "Mandatory" { 1 } else { 0 }
-                })
+                self.build_segmenter("LineBreak", |s| if s == "Mandatory" { 1 } else { 0 })
             })
             .as_ref()
             .map_err(|&e| e)
@@ -1163,7 +1126,7 @@ impl SourceDataProvider {
             .segmenter_cache
             .word
             .get_or_init(|| {
-                self.build_segmenter(&pri_555_sources(), "WordBreak", |s| match s {
+                self.build_segmenter("WordBreak", |s| match s {
                     "Letter" => WordType::Letter,
                     "Number" => WordType::Number,
                     _ => WordType::None,
@@ -1178,9 +1141,12 @@ impl SourceDataProvider {
             .segmenter_cache
             .sentence
             .get_or_init(|| {
-                self.build_segmenter(&pri_555_sources(), "SentenceBreak", |s| {
-                    if s == "Nonterminated" { 1 } else { 0 }
-                })
+                self.build_segmenter(
+                    "SentenceBreak",
+                    |s| {
+                        if s == "Nonterminated" { 1 } else { 0 }
+                    },
+                )
             })
             .as_ref()
             .map_err(|&e| e)
@@ -1191,7 +1157,7 @@ impl SourceDataProvider {
             .segmenter_cache
             .grapheme_cluster
             .get_or_init(|| {
-                self.build_segmenter(&pri_555_sources(), "GraphemeClusterBreak", |s| match s {
+                self.build_segmenter("GraphemeClusterBreak", |s| match s {
                     "" => 0,
                     s => unreachable!("{s}"),
                 })
@@ -1202,13 +1168,14 @@ impl SourceDataProvider {
 
     fn build_segmenter(
         &self,
-        sources: &crate::source::AbstractFs,
         prefix: &str,
         status_lookup: fn(&str) -> u8,
     ) -> Result<TailoredSegmenter, DataError> {
+        let rscd = self.rscd()?;
+
         let mut magic_symbols = BTreeMap::new();
         let mut complex_symbols = BTreeMap::new();
-        let symbols = sources.read_to_string(&format!("{prefix}Symbols.txt"))?;
+        let symbols = rscd.read_to_string(&format!("ucd/auxiliary/{prefix}Symbols.txt"))?;
         let symbols = symbols
             .lines()
             .map(|l| l.split('#').next().unwrap().trim())
@@ -1241,7 +1208,7 @@ impl SourceDataProvider {
         let magic_symbols = magic_symbols;
         let complex_symbols = complex_symbols;
 
-        let states = sources.read_to_string(&format!("{prefix}States.txt"))?;
+        let states = rscd.read_to_string(&format!("ucd/auxiliary/{prefix}States.txt"))?;
         let states = states
             .lines()
             .map(|l| l.split('#').next().unwrap().trim())
@@ -1259,7 +1226,7 @@ impl SourceDataProvider {
             })
             .collect::<BTreeMap<_, _>>();
 
-        let transitions = sources.read_to_string(&format!("{prefix}Transitions.txt"))?;
+        let transitions = rscd.read_to_string(&format!("ucd/auxiliary/{prefix}Transitions.txt"))?;
         let transitions = transitions
             .lines()
             .map(|l| l.split('#').next().unwrap().trim())
@@ -1314,9 +1281,13 @@ impl SourceDataProvider {
 
         let mut tailorings = BTreeMap::new();
 
-        for locale in pri555_cldr_json().segments().list_locales()? {
-            let Some(ts) = pri555_cldr_json()
-                .segments()
+        let cldr = self.cldr()?.segments();
+
+        for locale in cldr.list_locales()? {
+            if !cldr.file_exists(&locale, "tailorings.json")? {
+                continue;
+            }
+            let Some(ts) = cldr
                 .read_and_parse::<crate::cldr_serde::segmentation::Resource>(
                     &locale,
                     "tailorings.json",
