@@ -12,12 +12,13 @@ internal interface ReorderedIndexMapLib: Library {
     fun icu4x_ReorderedIndexMap_is_empty_mv1(handle: Pointer): Byte
     fun icu4x_ReorderedIndexMap_get_mv1(handle: Pointer, index: FFISizet): FFISizet
 }
-/** Thin wrapper around a vector that maps visual indices to source indices
-*
-*`map[visualIndex] = sourceIndex`
-*
-*Produced by `reorder_visual()` on [Bidi].
-*/
+/**
+ * Thin wrapper around a vector that maps visual indices to source indices
+ *
+ * `map[visualIndex] = sourceIndex`
+ *
+ * Produced by `reorder_visual()` on [Bidi].
+ */
 class ReorderedIndexMap internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
@@ -46,8 +47,9 @@ class ReorderedIndexMap internal constructor (
         internal val lib: ReorderedIndexMapLib = Native.load("icu4x", libClass)
     }
     
-    /** Get this as a slice/array of indices
-    */
+    /**
+     * Get this as a slice/array of indices
+     */
     fun asSlice(): ULongArray {
         // This lifetime edge depends on lifetimes: 'a
         val aEdges: MutableList<Any> = mutableListOf(this);
@@ -56,26 +58,29 @@ class ReorderedIndexMap internal constructor (
             return PrimitiveArrayTools.getULongArray(returnVal)
     }
     
-    /** The length of this map
-    */
+    /**
+     * The length of this map
+     */
     fun len(): ULong {
         
         val returnVal = lib.icu4x_ReorderedIndexMap_len_mv1(handle);
         return (returnVal.toULong())
     }
     
-    /** Whether this map is empty
-    */
+    /**
+     * Whether this map is empty
+     */
     fun isEmpty(): Boolean {
         
         val returnVal = lib.icu4x_ReorderedIndexMap_is_empty_mv1(handle);
         return (returnVal > 0)
     }
     
-    /** Get element at `index`. Returns 0 when out of bounds
-    *(note that 0 is also a valid in-bounds value, please use `len()`
-    *to avoid out-of-bounds)
-    */
+    /**
+     * Get element at `index`. Returns 0 when out of bounds
+     * (note that 0 is also a valid in-bounds value, please use `len()`
+     * to avoid out-of-bounds)
+     */
     internal fun getInternal(index: ULong): ULong {
         
         val returnVal = lib.icu4x_ReorderedIndexMap_get_mv1(handle, FFISizet(index));

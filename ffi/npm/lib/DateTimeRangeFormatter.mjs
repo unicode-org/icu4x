@@ -18,6 +18,8 @@ const DateTimeRangeFormatter_box_destroy_registry = new FinalizationRegistry((pt
 
 /**
  * See the [Rust documentation for `DateRangeFormatter`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html) for more information.
+ *
+ * @experimental
  */
 export class DateTimeRangeFormatter {
     // Internal ptr reference:
@@ -54,6 +56,8 @@ export class DateTimeRangeFormatter {
      * See the [Rust documentation for `DT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.for_length)
+     *
+     * @experimental
      */
     static createDt(locale, length, timePrecision, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -85,6 +89,8 @@ export class DateTimeRangeFormatter {
      * See the [Rust documentation for `DT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.for_length)
+     *
+     * @experimental
      */
     static createDtWithProvider(provider, locale, length, timePrecision, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -116,6 +122,8 @@ export class DateTimeRangeFormatter {
      * See the [Rust documentation for `MDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.for_length)
+     *
+     * @experimental
      */
     static createMdt(locale, length, timePrecision, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -147,6 +155,8 @@ export class DateTimeRangeFormatter {
      * See the [Rust documentation for `MDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.for_length)
+     *
+     * @experimental
      */
     static createMdtWithProvider(provider, locale, length, timePrecision, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -178,6 +188,8 @@ export class DateTimeRangeFormatter {
      * See the [Rust documentation for `YMDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style), [4](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.for_length)
+     *
+     * @experimental
      */
     static createYmdt(locale, length, timePrecision, alignment, yearStyle) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -209,6 +221,8 @@ export class DateTimeRangeFormatter {
      * See the [Rust documentation for `YMDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style), [4](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.for_length)
+     *
+     * @experimental
      */
     static createYmdtWithProvider(provider, locale, length, timePrecision, alignment, yearStyle) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -240,6 +254,8 @@ export class DateTimeRangeFormatter {
      * See the [Rust documentation for `DET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.for_length)
+     *
+     * @experimental
      */
     static createDet(locale, length, timePrecision, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -271,6 +287,8 @@ export class DateTimeRangeFormatter {
      * See the [Rust documentation for `DET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.for_length)
+     *
+     * @experimental
      */
     static createDetWithProvider(provider, locale, length, timePrecision, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -302,6 +320,8 @@ export class DateTimeRangeFormatter {
      * See the [Rust documentation for `MDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.for_length)
+     *
+     * @experimental
      */
     static createMdet(locale, length, timePrecision, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -333,6 +353,8 @@ export class DateTimeRangeFormatter {
      * See the [Rust documentation for `MDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.for_length)
+     *
+     * @experimental
      */
     static createMdetWithProvider(provider, locale, length, timePrecision, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -364,6 +386,8 @@ export class DateTimeRangeFormatter {
      * See the [Rust documentation for `YMDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style), [4](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.for_length)
+     *
+     * @experimental
      */
     static createYmdet(locale, length, timePrecision, alignment, yearStyle) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -395,6 +419,8 @@ export class DateTimeRangeFormatter {
      * See the [Rust documentation for `YMDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style), [4](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.for_length)
+     *
+     * @experimental
      */
     static createYmdetWithProvider(provider, locale, length, timePrecision, alignment, yearStyle) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -426,6 +452,8 @@ export class DateTimeRangeFormatter {
      * See the [Rust documentation for `ET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.for_length)
+     *
+     * @experimental
      */
     static createEt(locale, length, timePrecision, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -457,6 +485,8 @@ export class DateTimeRangeFormatter {
      * See the [Rust documentation for `ET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.for_length)
+     *
+     * @experimental
      */
     static createEtWithProvider(provider, locale, length, timePrecision, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -484,6 +514,8 @@ export class DateTimeRangeFormatter {
 
     /**
      * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.format) for more information.
+     *
+     * @experimental
      */
     formatIso(startIsoDate, startTime, endIsoDate, endTime) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
@@ -502,6 +534,8 @@ export class DateTimeRangeFormatter {
 
     /**
      * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.format) for more information.
+     *
+     * @experimental
      */
     formatSameCalendar(startDate, startTime, endDate, endTime) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);

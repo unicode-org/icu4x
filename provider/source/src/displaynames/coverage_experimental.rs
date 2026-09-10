@@ -8,8 +8,9 @@
 
 use crate::cldr_cache::CldrCache;
 #[cfg(test)]
-use crate::cldr_serde::displaynames::WithAlt;
-use crate::cldr_serde::displaynames::{Alt, Menu};
+#[cfg(feature = "networking")]
+use crate::cldr_serde::alt::WithAlt;
+use crate::cldr_serde::alt::{Alt, Menu};
 use crate::source::SerdeCache;
 use icu_locale_core::LanguageIdentifier;
 use icu_locale_core::subtags::{Language, Region, Script, Variant};
@@ -19,6 +20,7 @@ use serde::Deserialize;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 #[cfg(test)]
+#[cfg(feature = "networking")]
 use std::collections::HashMap;
 use std::sync::OnceLock;
 use writeable::Writeable;
@@ -1190,6 +1192,7 @@ pub(super) fn coverage_cldr_cache() -> &'static CoverageByXPathCache {
 }
 
 #[cfg(test)]
+#[cfg(feature = "networking")]
 pub(super) trait CheckAltCoverage {
     fn contains_key<T>(key: &WithAlt<T>, tier: CoverageLevelForXPath) -> bool;
 }
@@ -1201,9 +1204,11 @@ pub(super) trait CheckAltCoverage {
 /// 2. Looks up the coverage tier (`CoverageLevelForXPath`) for that entry in the given locale using `get_category`.
 /// 3. Invokes `callback(locale, key, tier)`.
 #[cfg(test)]
+#[cfg(feature = "networking")]
 pub(super) fn for_each_cldr_key_and_tier<Resource, T>(
     cldr: &CldrCache,
     file_name: &str,
+    ignored_alts: &[Alt],
     get_category: impl Fn(&CoverageByXPathLevels) -> &CoverageCategoryLevels,
     mut extract_keys: impl FnMut(&Resource) -> &HashMap<WithAlt<T>, String>,
     mut callback: impl FnMut(&DataLocale, &WithAlt<T>, CoverageLevelForXPath),
@@ -1218,14 +1223,15 @@ pub(super) fn for_each_cldr_key_and_tier<Resource, T>(
     for locale in locales {
         if let Ok(res) = displaynames_dir.read_and_parse::<Resource>(&locale, file_name) {
             let mut keys = extract_keys(res).keys().collect::<Vec<_>>();
-            keys.sort_by_cached_key(|k| (k.subtag.write_to_string().to_string(), k.alt, k.menu));
+            keys.sort_by_cached_key(|k| (k.t.write_to_string().to_string(), k.alt, k.menu));
             for key in keys {
-                if let Some(Alt::Variant) = key.alt {
-                    // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
-                    return;
+                if let Some(alt) = key.alt
+                    && ignored_alts.contains(&alt)
+                {
+                    continue;
                 }
                 let tier = coverage_cldr
-                    .coverage_tier(&locale, &get_category, &key.subtag, key.alt, key.menu, cldr)
+                    .coverage_tier(&locale, &get_category, &key.t, key.alt, key.menu, cldr)
                     .unwrap();
                 callback(&locale, key, tier);
             }

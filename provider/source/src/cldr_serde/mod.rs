@@ -8,6 +8,7 @@
 //! deserialization support. These structures can be used in the transformers.
 
 pub(crate) mod aliases;
+pub(crate) mod alt;
 pub(crate) mod ca;
 pub(crate) mod coverage_levels;
 #[cfg(feature = "unstable")]

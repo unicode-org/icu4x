@@ -9,11 +9,13 @@ and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latte
 
 This module contains segmenter implementation for the following rules.
 
-- Line segmenter that is compatible with [Unicode Standard Annex #14][UAX14] (Version 15.1.0, or
-  Version 17.0.0 with the `*_17_*` and `*_neo_*` constructors) _Unicode Line Breaking Algorithm_, with options
+- Line segmenter that is compatible with [Unicode Standard Annex #14][UAX14] (version 15.1.0, or
+  version 17.0.0 with the `*_17_*` constructors, or version
+with the `*_neo_*` constructors) _Unicode Line Breaking Algorithm_, with options
   to tailor line-breaking behavior for CSS [`line-break`] and [`word-break`] properties.
 - Grapheme cluster segmenter, word segmenter, and sentence segmenter that are compatible with
-  [Unicode Standard Annex #29][UAX29] (Version 17.0.0), _Unicode Text Segmentation_.
+  [Unicode Standard Annex #29][UAX29]
+, _Unicode Text Segmentation_.
 
 [UAX14]: https://www.unicode.org/reports/tr14/tr14-51.html
 [UAX29]: https://www.unicode.org/reports/tr29/tr29-47.html

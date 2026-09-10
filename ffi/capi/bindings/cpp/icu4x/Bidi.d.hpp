@@ -58,7 +58,7 @@ public:
    *
    * See the [Rust documentation for `new_with_data_source`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
    */
-  inline std::unique_ptr<icu4x::BidiInfo> for_text(std::string_view text DIPLOMAT_LIFETIME_BOUND, std::optional<uint8_t> default_level) const;
+  inline icu4x::diplomat::maybe_null<std::unique_ptr<icu4x::BidiInfo>> for_text(std::string_view text DIPLOMAT_LIFETIME_BOUND, std::optional<uint8_t> default_level) const;
 
   /**
    * Utility function for producing reorderings given a list of levels

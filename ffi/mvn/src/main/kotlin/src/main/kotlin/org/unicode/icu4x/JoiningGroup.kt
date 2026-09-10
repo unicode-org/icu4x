@@ -14,7 +14,8 @@ internal interface JoiningGroupLib: Library {
     fun icu4x_JoiningGroup_from_integer_value_mv1(other: FFIUint8): OptionInt
     fun icu4x_JoiningGroup_try_from_str_mv1(s: Slice): OptionInt
 }
-/** See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningGroup.html) for more information.
+/**
+ * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningGroup.html) for more information.
 */
 enum class JoiningGroup {
     NoJoiningGroup,
@@ -151,8 +152,9 @@ enum class JoiningGroup {
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `for_char`](https://docs.rs/icu/2.3.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
-        */
+        /**
+         * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.3.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+         */
         fun forChar(ch: Int): JoiningGroup {
             
             val returnVal = lib.icu4x_JoiningGroup_for_char_mv1(ch);
@@ -160,10 +162,11 @@ enum class JoiningGroup {
         }
         @JvmStatic
         
-        /** Convert from an integer value from ICU4C or `CodePointMapData`
-        *
-        *See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningGroup.html#method.from_icu4c_value) for more information.
-        */
+        /**
+         * Convert from an integer value from ICU4C or `CodePointMapData`
+         *
+         * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningGroup.html#method.from_icu4c_value) for more information.
+         */
         fun fromIntegerValue(other: UByte): JoiningGroup? {
             
             val returnVal = lib.icu4x_JoiningGroup_from_integer_value_mv1(FFIUint8(other));
@@ -173,10 +176,11 @@ enum class JoiningGroup {
         }
         @JvmStatic
         
-        /** Creates a `JoiningGroup` from a string.
-        *
-        *Short names, long names, and aliases are supported, and matching is case-insensitive.
-        */
+        /**
+         * Creates a `JoiningGroup` from a string.
+         *
+         * Short names, long names, and aliases are supported, and matching is case-insensitive.
+         */
         fun tryFromStr(s: String): JoiningGroup? {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
@@ -191,10 +195,11 @@ enum class JoiningGroup {
         }
     }
     
-    /** Get the "long" name of this property value (returns empty if property value is unknown)
-    *
-    *See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
-    */
+    /**
+     * Get the "long" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+     */
     fun longName(): String? {
         
         val returnVal = lib.icu4x_JoiningGroup_long_name_mv1(this.toNative());
@@ -204,10 +209,11 @@ enum class JoiningGroup {
                                 
     }
     
-    /** Get the "short" name of this property value (returns empty if property value is unknown)
-    *
-    *See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
-    */
+    /**
+     * Get the "short" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+     */
     fun shortName(): String? {
         
         val returnVal = lib.icu4x_JoiningGroup_short_name_mv1(this.toNative());
@@ -217,10 +223,11 @@ enum class JoiningGroup {
                                 
     }
     
-    /** Convert to an integer value usable with ICU4C and `CodePointMapData`
-    *
-    *See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningGroup.html#method.to_icu4c_value) for more information.
-    */
+    /**
+     * Convert to an integer value usable with ICU4C and `CodePointMapData`
+     *
+     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningGroup.html#method.to_icu4c_value) for more information.
+     */
     fun toIntegerValue(): UByte {
         
         val returnVal = lib.icu4x_JoiningGroup_to_integer_value_mv1(this.toNative());

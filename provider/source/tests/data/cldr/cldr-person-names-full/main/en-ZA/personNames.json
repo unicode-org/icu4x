@@ -21,7 +21,7 @@
         "length": "medium",
         "nativeSpaceReplacement": " ",
         "foreignSpaceReplacement": " ",
-        "initial": "{0}.",
+        "initial": "{0}",
         "initialSequence": "{0}{1}",
         "personName": {
           "givenFirst": {

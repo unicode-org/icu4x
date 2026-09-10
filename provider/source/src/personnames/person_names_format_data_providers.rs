@@ -171,10 +171,10 @@ mod tests {
 
         assert_eq!(
             real_data.initial_pattern.as_ref().unwrap(),
-            "{0}.",
+            "{0}",
             "we are testing with {} and {}",
             real_data.initial_pattern.as_ref().unwrap(),
-            "{0}."
+            "{0}"
         );
         Ok(())
     }
@@ -219,10 +219,10 @@ mod tests {
         );
         assert_eq!(
             real_data.initial_pattern.as_ref().unwrap(),
-            "{0}.",
+            "{0}",
             "we are testing with {} and {}",
             real_data.initial_pattern.as_ref().unwrap(),
-            "{0}."
+            "{0}"
         );
         Ok(())
     }

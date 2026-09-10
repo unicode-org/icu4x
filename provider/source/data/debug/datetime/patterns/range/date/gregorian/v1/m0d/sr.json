@@ -1,5 +1,6 @@
 {
   "has_explicit_medium": true,
+  "has_explicit_short": true,
   "variant_pattern_indices": [
     0,
     0,
@@ -14,6 +15,13 @@
       "patterns": [
         "d–d. MMMM",
         "d. MMMM – d. MMMM"
+      ]
+    },
+    {
+      "header": 6,
+      "patterns": [
+        "d–d. MMM",
+        "dd. MMM"
       ]
     },
     {

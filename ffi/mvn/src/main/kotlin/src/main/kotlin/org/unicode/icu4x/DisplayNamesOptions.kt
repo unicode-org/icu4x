@@ -10,17 +10,20 @@ internal interface DisplayNamesOptionsLib: Library {
 }
 
 internal class DisplayNamesOptionsNative: Structure(), Structure.ByValue {
-    /** The optional formatting style to use for display name.
-    */
+    /**
+     * The optional formatting style to use for display name.
+     */
     @JvmField
     internal var style: OptionInt = OptionInt.none();
-    /** The fallback return when the system does not have the
-*requested display name, defaults to "code".
-    */
+    /**
+     * The fallback return when the system does not have the
+     * requested display name, defaults to "code".
+     */
     @JvmField
     internal var fallback: OptionInt = OptionInt.none();
-    /** The language display kind, defaults to "dialect".
-    */
+    /**
+     * The language display kind, defaults to "dialect".
+     */
     @JvmField
     internal var languageDisplay: OptionInt = OptionInt.none();
 
@@ -71,10 +74,11 @@ internal class OptionDisplayNamesOptionsNative constructor(): Structure(), Struc
 
 }
 
-/** 🚧 This API is unstable and may experience breaking changes outside major releases.
-*
-*See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/struct.DisplayNamesOptions.html) for more information.
-*/
+/**
+ * See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/struct.DisplayNamesOptions.html) for more information.
+ *
+ * 🚧 This API is unstable and may experience breaking changes outside major releases.
+ */
 class DisplayNamesOptions (var style: DisplayNamesStyle?, var fallback: DisplayNamesFallback?, var languageDisplay: LanguageDisplay?) {
     companion object {
 

@@ -4,6 +4,7 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `FixedCalendarDateRangeFormatter`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html) for more information.
+@meta.experimental
 final class DateRangeFormatterGregorian implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -35,6 +36,7 @@ final class DateRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.D.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.D.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateRangeFormatterGregorian.d(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
     final result = _icu4x_DateRangeFormatterGregorian_create_d_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -50,6 +52,7 @@ final class DateRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.D.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.D.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateRangeFormatterGregorian.dWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
     final result = _icu4x_DateRangeFormatterGregorian_create_d_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -65,6 +68,7 @@ final class DateRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MD.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MD.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateRangeFormatterGregorian.md(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
     final result = _icu4x_DateRangeFormatterGregorian_create_md_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -80,6 +84,7 @@ final class DateRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MD.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MD.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateRangeFormatterGregorian.mdWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
     final result = _icu4x_DateRangeFormatterGregorian_create_md_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -95,6 +100,7 @@ final class DateRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMD.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMD.html#method.with_year_style), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMD.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateRangeFormatterGregorian.ymd(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
     final result = _icu4x_DateRangeFormatterGregorian_create_ymd_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err(), yearStyle != null ? _ResultInt32Void.ok(yearStyle.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -110,6 +116,7 @@ final class DateRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMD.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMD.html#method.with_year_style), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMD.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateRangeFormatterGregorian.ymdWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
     final result = _icu4x_DateRangeFormatterGregorian_create_ymd_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err(), yearStyle != null ? _ResultInt32Void.ok(yearStyle.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -125,6 +132,7 @@ final class DateRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DE.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DE.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateRangeFormatterGregorian.de(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
     final result = _icu4x_DateRangeFormatterGregorian_create_de_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -140,6 +148,7 @@ final class DateRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DE.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DE.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateRangeFormatterGregorian.deWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
     final result = _icu4x_DateRangeFormatterGregorian_create_de_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -155,6 +164,7 @@ final class DateRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDE.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDE.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateRangeFormatterGregorian.mde(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
     final result = _icu4x_DateRangeFormatterGregorian_create_mde_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -170,6 +180,7 @@ final class DateRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDE.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDE.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateRangeFormatterGregorian.mdeWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
     final result = _icu4x_DateRangeFormatterGregorian_create_mde_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -185,6 +196,7 @@ final class DateRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDE.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDE.html#method.with_year_style), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDE.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateRangeFormatterGregorian.ymde(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
     final result = _icu4x_DateRangeFormatterGregorian_create_ymde_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err(), yearStyle != null ? _ResultInt32Void.ok(yearStyle.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -200,6 +212,7 @@ final class DateRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDE.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDE.html#method.with_year_style), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDE.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateRangeFormatterGregorian.ymdeWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
     final result = _icu4x_DateRangeFormatterGregorian_create_ymde_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err(), yearStyle != null ? _ResultInt32Void.ok(yearStyle.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -215,6 +228,7 @@ final class DateRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.E.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateRangeFormatterGregorian.e(Locale locale, [DateTimeLength? length]) {
     final result = _icu4x_DateRangeFormatterGregorian_create_e_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -230,6 +244,7 @@ final class DateRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.E.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateRangeFormatterGregorian.eWithProvider(DataProvider provider, Locale locale, [DateTimeLength? length]) {
     final result = _icu4x_DateRangeFormatterGregorian_create_e_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -245,6 +260,7 @@ final class DateRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.M.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.M.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateRangeFormatterGregorian.m(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
     final result = _icu4x_DateRangeFormatterGregorian_create_m_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -260,6 +276,7 @@ final class DateRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.M.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.M.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateRangeFormatterGregorian.mWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
     final result = _icu4x_DateRangeFormatterGregorian_create_m_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -275,6 +292,7 @@ final class DateRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YM.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YM.html#method.with_year_style), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YM.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateRangeFormatterGregorian.ym(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
     final result = _icu4x_DateRangeFormatterGregorian_create_ym_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err(), yearStyle != null ? _ResultInt32Void.ok(yearStyle.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -290,6 +308,7 @@ final class DateRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YM.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YM.html#method.with_year_style), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YM.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateRangeFormatterGregorian.ymWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
     final result = _icu4x_DateRangeFormatterGregorian_create_ym_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err(), yearStyle != null ? _ResultInt32Void.ok(yearStyle.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -305,6 +324,7 @@ final class DateRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.Y.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.Y.html#method.with_year_style), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.Y.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateRangeFormatterGregorian.y(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
     final result = _icu4x_DateRangeFormatterGregorian_create_y_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err(), yearStyle != null ? _ResultInt32Void.ok(yearStyle.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -320,6 +340,7 @@ final class DateRangeFormatterGregorian implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.Y.html#method.with_alignment), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.Y.html#method.with_year_style), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.Y.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory DateRangeFormatterGregorian.yWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
     final result = _icu4x_DateRangeFormatterGregorian_create_y_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err(), yearStyle != null ? _ResultInt32Void.ok(yearStyle.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -329,6 +350,7 @@ final class DateRangeFormatterGregorian implements ffi.Finalizable {
   }
 
   /// See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.format) for more information.
+  @meta.experimental
   String formatIso(IsoDate startIsoDate, IsoDate endIsoDate) {
     final write = _Write();
     _icu4x_DateRangeFormatterGregorian_format_iso_mv1(_ffi, startIsoDate._ffi, endIsoDate._ffi, write._ffi);

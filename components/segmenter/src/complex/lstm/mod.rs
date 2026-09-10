@@ -5,8 +5,7 @@
 use crate::grapheme::GraphemeClusterSegmenterBorrowed;
 use crate::indices::Utf16Indices;
 use crate::provider::*;
-use crate::scaffold::PotentiallyIllFormedUtf8;
-use crate::scaffold::{RuleBreakType, Utf8, Utf16};
+use crate::scaffold::{PotentiallyIllFormedUtf8, RuleBreakType, Utf8, Utf16};
 use alloc::vec::Vec;
 use potential_utf::PotentialUtf8;
 use utf8_iter::{Utf8CharIndices, Utf8Chars};

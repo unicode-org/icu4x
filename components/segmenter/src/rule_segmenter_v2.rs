@@ -182,7 +182,7 @@ impl<'s, Y: RuleBreakType, C: ComplexHandler<Y>> Iterator for RuleBreakIterator<
                     // for the start break point (unless it's 0, which we already returned earlier).
                     self.remaining_input = past_complex;
                     self.last_accepting_status = C::BREAK_STATUS;
-                    return if Y::offset(&iter) == 0 {
+                    return if state == SegmenterStateMachine::START_STATE {
                         self.cache.next()
                     } else {
                         Some(Y::offset(&iter))

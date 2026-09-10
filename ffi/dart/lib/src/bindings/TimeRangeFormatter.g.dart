@@ -4,6 +4,7 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `NoCalendarRangeFormatter`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html) for more information.
+@meta.experimental
 final class TimeRangeFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -35,6 +36,7 @@ final class TimeRangeFormatter implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory TimeRangeFormatter(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
     final result = _icu4x_TimeRangeFormatter_create_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -50,6 +52,7 @@ final class TimeRangeFormatter implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
   factory TimeRangeFormatter.withProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
     final result = _icu4x_TimeRangeFormatter_create_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
@@ -59,6 +62,7 @@ final class TimeRangeFormatter implements ffi.Finalizable {
   }
 
   /// See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.format) for more information.
+  @meta.experimental
   String format(Time startTime, Time endTime) {
     final write = _Write();
     _icu4x_TimeRangeFormatter_format_mv1(_ffi, startTime._ffi, endTime._ffi, write._ffi);

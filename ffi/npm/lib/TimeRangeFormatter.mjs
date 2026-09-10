@@ -15,6 +15,8 @@ const TimeRangeFormatter_box_destroy_registry = new FinalizationRegistry((ptr) =
 
 /**
  * See the [Rust documentation for `NoCalendarRangeFormatter`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html) for more information.
+ *
+ * @experimental
  */
 export class TimeRangeFormatter {
     // Internal ptr reference:
@@ -51,6 +53,8 @@ export class TimeRangeFormatter {
      * See the [Rust documentation for `T`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.for_length)
+     *
+     * @experimental
      */
     #defaultConstructor(locale, length, timePrecision, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -82,6 +86,8 @@ export class TimeRangeFormatter {
      * See the [Rust documentation for `T`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.for_length)
+     *
+     * @experimental
      */
     static createWithProvider(provider, locale, length, timePrecision, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -109,6 +115,8 @@ export class TimeRangeFormatter {
 
     /**
      * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.format) for more information.
+     *
+     * @experimental
      */
     format(startTime, endTime) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
@@ -131,6 +139,8 @@ export class TimeRangeFormatter {
      * See the [Rust documentation for `T`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.for_length)
+     *
+     * @experimental
      */
     constructor(locale, length, timePrecision, alignment) {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {

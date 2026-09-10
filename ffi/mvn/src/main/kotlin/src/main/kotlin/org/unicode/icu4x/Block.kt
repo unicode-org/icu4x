@@ -14,7 +14,8 @@ internal interface BlockLib: Library {
     fun icu4x_Block_from_integer_value_mv1(other: FFIUint16): OptionInt
     fun icu4x_Block_try_from_str_mv1(s: Slice): OptionInt
 }
-/** See the [Rust documentation for `Block`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html) for more information.
+/**
+ * See the [Rust documentation for `Block`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html) for more information.
 */
 enum class Block {
     NoBlock,
@@ -389,8 +390,9 @@ enum class Block {
         }
         @JvmStatic
         
-        /** See the [Rust documentation for `for_char`](https://docs.rs/icu/2.3.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
-        */
+        /**
+         * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.3.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+         */
         fun forChar(ch: Int): Block {
             
             val returnVal = lib.icu4x_Block_for_char_mv1(ch);
@@ -398,10 +400,11 @@ enum class Block {
         }
         @JvmStatic
         
-        /** Convert from an integer value from ICU4C or `CodePointMapData`
-        *
-        *See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#method.from_icu4c_value) for more information.
-        */
+        /**
+         * Convert from an integer value from ICU4C or `CodePointMapData`
+         *
+         * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#method.from_icu4c_value) for more information.
+         */
         fun fromIntegerValue(other: UShort): Block? {
             
             val returnVal = lib.icu4x_Block_from_integer_value_mv1(FFIUint16(other));
@@ -411,10 +414,11 @@ enum class Block {
         }
         @JvmStatic
         
-        /** Creates a `Block` from a string.
-        *
-        *Short names, long names, and aliases are supported, and matching is case-insensitive.
-        */
+        /**
+         * Creates a `Block` from a string.
+         *
+         * Short names, long names, and aliases are supported, and matching is case-insensitive.
+         */
         fun tryFromStr(s: String): Block? {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
             
@@ -429,10 +433,11 @@ enum class Block {
         }
     }
     
-    /** Get the "long" name of this property value (returns empty if property value is unknown)
-    *
-    *See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
-    */
+    /**
+     * Get the "long" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+     */
     fun longName(): String? {
         
         val returnVal = lib.icu4x_Block_long_name_mv1(this.toNative());
@@ -442,10 +447,11 @@ enum class Block {
                                 
     }
     
-    /** Get the "short" name of this property value (returns empty if property value is unknown)
-    *
-    *See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
-    */
+    /**
+     * Get the "short" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+     */
     fun shortName(): String? {
         
         val returnVal = lib.icu4x_Block_short_name_mv1(this.toNative());
@@ -455,10 +461,11 @@ enum class Block {
                                 
     }
     
-    /** Convert to an integer value usable with ICU4C and `CodePointMapData`
-    *
-    *See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#method.to_icu4c_value) for more information.
-    */
+    /**
+     * Convert to an integer value usable with ICU4C and `CodePointMapData`
+     *
+     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#method.to_icu4c_value) for more information.
+     */
     fun toIntegerValue(): UShort {
         
         val returnVal = lib.icu4x_Block_to_integer_value_mv1(this.toNative());

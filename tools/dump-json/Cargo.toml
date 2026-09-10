@@ -1,0 +1,20 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "dump-json"
+version = "0.0.0"
+publish = false
+edition.workspace = true
+
+[dependencies]
+icu = { workspace = true, features = ["unstable"] }
+icu_provider = { workspace = true }
+icu_provider_registry = { workspace = true }
+icu_provider_source = { workspace = true, features = ["networking", "unstable", "use_wasm"] }
+serde_json = { workspace = true }
+
+[package.metadata.cargo-all-features]
+# Unpublished internal tool; skip
+skip_package = true

@@ -5,8 +5,7 @@
 use crate::grapheme::*;
 use crate::indices::*;
 use crate::provider::*;
-use crate::scaffold::PotentiallyIllFormedUtf8;
-use crate::scaffold::{RuleBreakType, Utf8, Utf16};
+use crate::scaffold::{PotentiallyIllFormedUtf8, RuleBreakType, Utf8, Utf16};
 use icu_collections::char16trie::{Char16Trie, TrieResult};
 
 /// Lifetimes:

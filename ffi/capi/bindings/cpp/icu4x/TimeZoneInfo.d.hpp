@@ -56,7 +56,7 @@ public:
    *
    * `variant` is ignored.
    */
-  inline static std::unique_ptr<icu4x::TimeZoneInfo> from_parts(const icu4x::TimeZone& id, const icu4x::UtcOffset* offset, std::optional<icu4x::TimeZoneVariant> _variant);
+  inline static std::unique_ptr<icu4x::TimeZoneInfo> from_parts(const icu4x::TimeZone& id, icu4x::diplomat::maybe_null<const icu4x::UtcOffset*> offset, std::optional<icu4x::TimeZoneVariant> _variant);
 
   /**
    * See the [Rust documentation for `id`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZoneInfo.html#method.id) for more information.
@@ -130,7 +130,7 @@ public:
   /**
    * See the [Rust documentation for `offset`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZoneInfo.html#method.offset) for more information.
    */
-  inline std::unique_ptr<icu4x::UtcOffset> offset() const;
+  inline icu4x::diplomat::maybe_null<std::unique_ptr<icu4x::UtcOffset>> offset() const;
 
   /**
    * See the [Rust documentation for `infer_variant`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZoneInfo.html#method.infer_variant) for more information.

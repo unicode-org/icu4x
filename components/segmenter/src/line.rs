@@ -155,8 +155,11 @@ impl LineBreakOptions<'_> {
 /// always a breakpoint returned at index 0, but this breakpoint is not a
 /// meaningful line break opportunity.
 ///
-/// Line segmenter is currently compatible with [Unicode Standard Annex #14][UAX14] (Version 15.1.0).
-/// The `*_17_*` and `*_neo_*` constructors, which require the `unstable` Cargo feature, implement Version 17.0.0.
+/// Line segmenter is currently compatible with [Unicode Standard Annex #14][UAX14] (version 15.1.0).
+/// The `*_17_*` constructors, which require the `unstable` Cargo feature, implement version 17.0.0.
+/// The `*_neo_*` constructors, which require the `unstable` Cargo feature, implement version
+#[cfg_attr(feature = "compiled_data", doc = icu_segmenter_data::unicode_tag!())]
+/// .
 ///
 /// [UAX14]: https://www.unicode.org/reports/tr14/tr14-55.html
 ///
@@ -1421,6 +1424,25 @@ mod tests {
         ];
         let breaks: Vec<usize> = segmenter.segment_utf16(&unpaired_surrogate).collect();
         assert_eq!(breaks, [0, 4, 8]);
+    }
+
+    #[test]
+    fn complex_line_break_encodings_neo() {
+        let mut segmenter = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
+        segmenter.load_dictionary();
+        let input = "ภาษาไทย龟山岛";
+        check_line(input, &["ภาษา", "ไทย", "龟", "山", "岛"], segmenter);
+
+        let ill_formed =
+            b"\xE0\xB8\xA0\xE0\xB8\xB2\xE0\xB8\xA9\xE0\xB8\xB2\xFF\xE0\xB9\x84\xE0\xB8\x97\xE0\xB8\xA2";
+        let breaks: Vec<usize> = segmenter.segment_utf8(ill_formed).collect();
+        assert_eq!(breaks, [0, 22]);
+
+        let unpaired_surrogate = [
+            0x0E20, 0x0E32, 0x0E29, 0x0E32, 0xD800, 0x0E44, 0x0E17, 0x0E22,
+        ];
+        let breaks: Vec<usize> = segmenter.segment_utf16(&unpaired_surrogate).collect();
+        assert_eq!(breaks, [0, 8]);
     }
 
     #[test]

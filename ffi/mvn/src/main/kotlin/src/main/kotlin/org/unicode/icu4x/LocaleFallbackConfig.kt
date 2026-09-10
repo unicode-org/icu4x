@@ -10,8 +10,9 @@ internal interface LocaleFallbackConfigLib: Library {
 }
 
 internal class LocaleFallbackConfigNative: Structure(), Structure.ByValue {
-    /** Choice of priority mode.
-    */
+    /**
+     * Choice of priority mode.
+     */
     @JvmField
     internal var priority: Int = LocaleFallbackPriority.default().toNative();
 
@@ -62,10 +63,11 @@ internal class OptionLocaleFallbackConfigNative constructor(): Structure(), Stru
 
 }
 
-/** Collection of configurations for the ICU4X fallback algorithm.
-*
-*See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbackConfig.html) for more information.
-*/
+/**
+ * Collection of configurations for the ICU4X fallback algorithm.
+ *
+ * See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/2.3.1/icu/locale/fallback/struct.LocaleFallbackConfig.html) for more information.
+ */
 class LocaleFallbackConfig (var priority: LocaleFallbackPriority) {
     companion object {
 

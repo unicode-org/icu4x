@@ -15,8 +15,9 @@ internal interface ListFormatterLib: Library {
     fun icu4x_ListFormatter_create_unit_with_length_and_provider_mv1(provider: Pointer, locale: Pointer, length: Int): ResultPointerInt
     fun icu4x_ListFormatter_format_utf16_mv1(handle: Pointer, list: Slice, write: Pointer): Unit
 }
-/** See the [Rust documentation for `ListFormatter`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html) for more information.
-*/
+/**
+ * See the [Rust documentation for `ListFormatter`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html) for more information.
+ */
 class ListFormatter internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
@@ -45,10 +46,11 @@ class ListFormatter internal constructor (
         internal val lib: ListFormatterLib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** Construct a new `ListFormatter` instance for And patterns from compiled data.
-        *
-        *See the [Rust documentation for `try_new_and`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.try_new_and) for more information.
-        */
+        /**
+         * Construct a new `ListFormatter` instance for And patterns from compiled data.
+         *
+         * See the [Rust documentation for `try_new_and`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.try_new_and) for more information.
+         */
         fun createAndWithLength(locale: Locale, length: ListLength): Result<ListFormatter> {
             
             val returnVal = lib.icu4x_ListFormatter_create_and_with_length_mv1(locale.handle, length.toNative());
@@ -64,10 +66,11 @@ class ListFormatter internal constructor (
         }
         @JvmStatic
         
-        /** Construct a new `ListFormatter` instance for And patterns
-        *
-        *See the [Rust documentation for `try_new_and`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.try_new_and) for more information.
-        */
+        /**
+         * Construct a new `ListFormatter` instance for And patterns
+         *
+         * See the [Rust documentation for `try_new_and`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.try_new_and) for more information.
+         */
         fun createAndWithLengthAndProvider(provider: DataProvider, locale: Locale, length: ListLength): Result<ListFormatter> {
             
             val returnVal = lib.icu4x_ListFormatter_create_and_with_length_and_provider_mv1(provider.handle, locale.handle, length.toNative());
@@ -83,10 +86,11 @@ class ListFormatter internal constructor (
         }
         @JvmStatic
         
-        /** Construct a new `ListFormatter` instance for And patterns from compiled data.
-        *
-        *See the [Rust documentation for `try_new_or`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.try_new_or) for more information.
-        */
+        /**
+         * Construct a new `ListFormatter` instance for And patterns from compiled data.
+         *
+         * See the [Rust documentation for `try_new_or`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.try_new_or) for more information.
+         */
         fun createOrWithLength(locale: Locale, length: ListLength): Result<ListFormatter> {
             
             val returnVal = lib.icu4x_ListFormatter_create_or_with_length_mv1(locale.handle, length.toNative());
@@ -102,10 +106,11 @@ class ListFormatter internal constructor (
         }
         @JvmStatic
         
-        /** Construct a new `ListFormatter` instance for And patterns
-        *
-        *See the [Rust documentation for `try_new_or`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.try_new_or) for more information.
-        */
+        /**
+         * Construct a new `ListFormatter` instance for And patterns
+         *
+         * See the [Rust documentation for `try_new_or`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.try_new_or) for more information.
+         */
         fun createOrWithLengthAndProvider(provider: DataProvider, locale: Locale, length: ListLength): Result<ListFormatter> {
             
             val returnVal = lib.icu4x_ListFormatter_create_or_with_length_and_provider_mv1(provider.handle, locale.handle, length.toNative());
@@ -121,10 +126,11 @@ class ListFormatter internal constructor (
         }
         @JvmStatic
         
-        /** Construct a new `ListFormatter` instance for And patterns from compiled data.
-        *
-        *See the [Rust documentation for `try_new_unit`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.try_new_unit) for more information.
-        */
+        /**
+         * Construct a new `ListFormatter` instance for And patterns from compiled data.
+         *
+         * See the [Rust documentation for `try_new_unit`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.try_new_unit) for more information.
+         */
         fun createUnitWithLength(locale: Locale, length: ListLength): Result<ListFormatter> {
             
             val returnVal = lib.icu4x_ListFormatter_create_unit_with_length_mv1(locale.handle, length.toNative());
@@ -140,10 +146,11 @@ class ListFormatter internal constructor (
         }
         @JvmStatic
         
-        /** Construct a new `ListFormatter` instance for And patterns
-        *
-        *See the [Rust documentation for `try_new_unit`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.try_new_unit) for more information.
-        */
+        /**
+         * Construct a new `ListFormatter` instance for And patterns
+         *
+         * See the [Rust documentation for `try_new_unit`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.try_new_unit) for more information.
+         */
         fun createUnitWithLengthAndProvider(provider: DataProvider, locale: Locale, length: ListLength): Result<ListFormatter> {
             
             val returnVal = lib.icu4x_ListFormatter_create_unit_with_length_and_provider_mv1(provider.handle, locale.handle, length.toNative());
@@ -159,8 +166,9 @@ class ListFormatter internal constructor (
         }
     }
     
-    /** See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.format) for more information.
-    */
+    /**
+     * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.format) for more information.
+     */
     fun format(list: Array<String>): String {
         val listSliceMemory = PrimitiveArrayTools.borrowUtf16s(list)
         val write = DW.lib.diplomat_buffer_write_create(0)

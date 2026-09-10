@@ -6,7 +6,7 @@ use super::coverage_experimental::CoverageLevelForXPath;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
-use crate::cldr_serde::displaynames::{Alt, WithAlt};
+use crate::cldr_serde::alt::{Alt, WithAlt};
 use crate::displaynames::extract_names_for_zeromap_struct;
 use icu::experimental::displaynames::provider::*;
 use icu::locale::provider::names::*;
@@ -49,6 +49,7 @@ impl From<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNames<
     fn from(other: &cldr_serde::displaynames::variant::Resource) -> Self {
         let extracted = extract_names_for_zeromap_struct(
             &other.main.value.localedisplaynames.variants,
+            // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
             &[Alt::Secondary],
             "variant",
             |variant| Some(variant.to_tinystr()),
@@ -69,7 +70,6 @@ impl From<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNames<
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::displaynames::coverage_experimental::CheckAltCoverage;
     use icu::locale::{data_locale, subtags::variant};
 
     #[test]
@@ -116,13 +116,18 @@ mod tests {
     /// key and coverage tier combination in CLDR is covered by an existing marker, so if future CLDR releases
     /// add data for uninhabited markers, we learn about it and can take action.
     #[test]
+    #[cfg(feature = "networking")]
     fn test_empty_coverage_tiers_assert_no_data() {
-        let provider = SourceDataProvider::new_testing();
+        use crate::displaynames::coverage_experimental::CheckAltCoverage;
+
+        let provider = SourceDataProvider::new();
         let cldr = provider.cldr().unwrap();
 
         crate::displaynames::coverage_experimental::for_each_cldr_key_and_tier(
             cldr,
             "variants.json",
+            // TODO(#8012): Handle preference-specific alt variants, perhaps with datagen alt flags.
+            &[Alt::Secondary],
             |l| &l.variant,
             |res: &cldr_serde::displaynames::variant::Resource| {
                 &res.main.value.localedisplaynames.variants

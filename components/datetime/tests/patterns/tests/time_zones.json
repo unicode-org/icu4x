@@ -274,8 +274,8 @@
     "locale": "en",
     "datetime": "2018-09-15T12:00:00-03[America/Punta_Arenas]",
     "expectations": {
-      "vvvv": "Punta Arenas Time",
-      "zzzz": "GMT-03:00"
+      "vvvv": "Chile Time",
+      "zzzz": "Chile Summer Time"
     }
   },
   {

@@ -12,10 +12,11 @@ internal interface DecimalFormatterLib: Library {
     fun icu4x_DecimalFormatter_create_with_manual_data_mv1(plusSignPrefix: Slice, plusSignSuffix: Slice, minusSignPrefix: Slice, minusSignSuffix: Slice, decimalSeparator: Slice, groupingSeparator: Slice, primaryGroupSize: FFIUint8, secondaryGroupSize: FFIUint8, minGroupSize: FFIUint8, digits: Slice, groupingStrategy: OptionInt): ResultPointerInt
     fun icu4x_DecimalFormatter_format_mv1(handle: Pointer, value: Pointer, write: Pointer): Unit
 }
-/** An ICU4X Decimal Format object, capable of formatting a [Decimal] as a string.
-*
-*See the [Rust documentation for `DecimalFormatter`](https://docs.rs/icu/2.3.1/icu/decimal/struct.DecimalFormatter.html) for more information.
-*/
+/**
+ * An ICU4X Decimal Format object, capable of formatting a [Decimal] as a string.
+ *
+ * See the [Rust documentation for `DecimalFormatter`](https://docs.rs/icu/2.3.1/icu/decimal/struct.DecimalFormatter.html) for more information.
+ */
 class DecimalFormatter internal constructor (
     internal val handle: Pointer,
     // These ensure that anything that is borrowed is kept alive and not cleaned
@@ -44,10 +45,11 @@ class DecimalFormatter internal constructor (
         internal val lib: DecimalFormatterLib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** Creates a new [DecimalFormatter], using compiled data
-        *
-        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
-        */
+        /**
+         * Creates a new [DecimalFormatter], using compiled data
+         *
+         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
+         */
         fun createWithGroupingStrategy(locale: Locale, groupingStrategy: DecimalGroupingStrategy?): Result<DecimalFormatter> {
             
             val returnVal = lib.icu4x_DecimalFormatter_create_with_grouping_strategy_mv1(locale.handle, groupingStrategy?.let { OptionInt.some(it.toNative()) } ?: OptionInt.none());
@@ -63,10 +65,11 @@ class DecimalFormatter internal constructor (
         }
         @JvmStatic
         
-        /** Creates a new [DecimalFormatter], using a particular data source.
-        *
-        *See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
-        */
+        /**
+         * Creates a new [DecimalFormatter], using a particular data source.
+         *
+         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
+         */
         fun createWithGroupingStrategyAndProvider(provider: DataProvider, locale: Locale, groupingStrategy: DecimalGroupingStrategy?): Result<DecimalFormatter> {
             
             val returnVal = lib.icu4x_DecimalFormatter_create_with_grouping_strategy_and_provider_mv1(provider.handle, locale.handle, groupingStrategy?.let { OptionInt.some(it.toNative()) } ?: OptionInt.none());
@@ -82,10 +85,11 @@ class DecimalFormatter internal constructor (
         }
         @JvmStatic
         
-        /** Creates a new [DecimalFormatter] from preconstructed locale data.
-        *
-        *See the [Rust documentation for `DecimalSymbolsV1`](https://docs.rs/icu/2.3.1/icu/decimal/provider/struct.DecimalSymbolsV1.html) for more information.
-        */
+        /**
+         * Creates a new [DecimalFormatter] from preconstructed locale data.
+         *
+         * See the [Rust documentation for `DecimalSymbolsV1`](https://docs.rs/icu/2.3.1/icu/decimal/provider/struct.DecimalSymbolsV1.html) for more information.
+         */
         fun createWithManualData(plusSignPrefix: String, plusSignSuffix: String, minusSignPrefix: String, minusSignSuffix: String, decimalSeparator: String, groupingSeparator: String, primaryGroupSize: UByte, secondaryGroupSize: UByte, minGroupSize: UByte, digits: IntArray, groupingStrategy: DecimalGroupingStrategy?): Result<DecimalFormatter> {
             val plusSignPrefixSliceMemory = PrimitiveArrayTools.borrowUtf8(plusSignPrefix)
             val plusSignSuffixSliceMemory = PrimitiveArrayTools.borrowUtf8(plusSignSuffix)
@@ -118,10 +122,11 @@ class DecimalFormatter internal constructor (
         }
     }
     
-    /** Formats a [Decimal] to a string.
-    *
-    *See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/decimal/struct.DecimalFormatter.html#method.format) for more information.
-    */
+    /**
+     * Formats a [Decimal] to a string.
+     *
+     * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/decimal/struct.DecimalFormatter.html#method.format) for more information.
+     */
     fun format(value: Decimal): String {
         val write = DW.lib.diplomat_buffer_write_create(0)
         val returnVal = lib.icu4x_DecimalFormatter_format_mv1(handle, value.handle, write);

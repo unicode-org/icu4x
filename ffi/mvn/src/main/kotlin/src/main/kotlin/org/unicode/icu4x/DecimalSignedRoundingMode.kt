@@ -8,9 +8,10 @@ import com.sun.jna.Structure
 
 internal interface DecimalSignedRoundingModeLib: Library {
 }
-/** Mode used in a rounding operation for signed numbers.
-*
-*See the [Rust documentation for `SignedRoundingMode`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/enum.SignedRoundingMode.html) for more information.
+/**
+ * Mode used in a rounding operation for signed numbers.
+ *
+ * See the [Rust documentation for `SignedRoundingMode`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/enum.SignedRoundingMode.html) for more information.
 */
 enum class DecimalSignedRoundingMode {
     Expand,

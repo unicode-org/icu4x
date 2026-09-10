@@ -63,10 +63,11 @@ internal class OptionDateTimeNative constructor(): Structure(), Structure.ByValu
 
 }
 
-/** An ICU4X `DateTime` object capable of containing a date and time for any calendar.
-*
-*See the [Rust documentation for `DateTime`](https://docs.rs/icu/2.3.1/icu/time/struct.DateTime.html) for more information.
-*/
+/**
+ * An ICU4X `DateTime` object capable of containing a date and time for any calendar.
+ *
+ * See the [Rust documentation for `DateTime`](https://docs.rs/icu/2.3.1/icu/time/struct.DateTime.html) for more information.
+ */
 class DateTime (var date: Date, var time: Time) {
     companion object {
 
@@ -83,10 +84,11 @@ class DateTime (var date: Date, var time: Time) {
 
         @JvmStatic
         
-        /** Creates a new [DateTime] from an IXDTF string.
-        *
-        *See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.DateTime.html#method.try_from_str) for more information.
-        */
+        /**
+         * Creates a new [DateTime] from an IXDTF string.
+         *
+         * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.DateTime.html#method.try_from_str) for more information.
+         */
         fun fromString(v: String, calendar: Calendar): Result<DateTime> {
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
             
