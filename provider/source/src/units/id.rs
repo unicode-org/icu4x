@@ -5,7 +5,7 @@
 use std::collections::HashSet;
 
 use icu::experimental::measure::parser::ids::unit_id;
-use icu::experimental::measure::provider::UnitIdsV1;
+use icu::experimental::measure::provider::UnitsIdV1;
 use icu_provider::DataError;
 use icu_provider::DataMarkerAttributes;
 use icu_provider::DataProvider;
@@ -16,12 +16,12 @@ use icu_provider::prelude::*;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 
-impl DataProvider<UnitIdsV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<UnitIdsV1>, DataError> {
-        self.check_req::<UnitIdsV1>(req)?;
+impl DataProvider<UnitsIdV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<UnitsIdV1>, DataError> {
+        self.check_req::<UnitsIdV1>(req)?;
 
         let unit = unit_id(req.id.marker_attributes.as_str())
-            .ok_or_else(|| DataErrorKind::IdentifierNotFound.with_req(UnitIdsV1::INFO, req))?;
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound.with_req(UnitsIdV1::INFO, req))?;
 
         Ok(DataResponse {
             payload: DataPayload::from_owned(unit),
@@ -30,7 +30,7 @@ impl DataProvider<UnitIdsV1> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<UnitIdsV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<UnitsIdV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         let units_data: &cldr_serde::units::info::Resource = self
             .cldr()?
