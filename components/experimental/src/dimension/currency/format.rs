@@ -415,6 +415,28 @@ mod tests {
     }
 
     #[test]
+    pub fn test_narrow_symbol_fallback_to_standard_symbol() {
+        // Test currency where standard symbol is defined, but narrow symbol is not in CLDR.
+        // Per UTS #35 Section 1.3, narrow symbols fall back to standard symbols before ISO code.
+        let prefs_fr: CurrencyFormatterPreferences = locale!("fr-FR").into();
+        let currency_frf = currency!("FRF");
+        let value = "12345.67".parse().unwrap();
+
+        let fmt_symbol =
+            CurrencyFormatter::try_new_symbol(prefs_fr, currency_frf, Default::default()).unwrap();
+        let fmt_narrow =
+            CurrencyFormatter::try_new_symbol_narrow(prefs_fr, currency_frf, Default::default())
+                .unwrap();
+
+        let formatted_symbol = fmt_symbol.format_fixed_decimal(&value);
+        let formatted_narrow = fmt_narrow.format_fixed_decimal(&value);
+
+        // Both use "F" (standard symbol) instead of falling back to ISO code "FRF"
+        assert_writeable_eq!(formatted_symbol, "12\u{202f}345,67\u{a0}F");
+        assert_writeable_eq!(formatted_narrow, "12\u{202f}345,67\u{a0}F");
+    }
+
+    #[test]
     pub fn test_jpy() {
         let prefs: CurrencyFormatterPreferences = locale!("en-US").into();
         let currency_code = currency!("JPY");
