@@ -94,6 +94,11 @@ impl CurrencySymbol<'_> {
     pub fn as_str(&self) -> &str {
         &self.0.variable
     }
+
+    /// Returns true if the symbol is a zero-width space (`\u{200B}`).
+    pub fn is_zero_width_space(&self) -> bool {
+        self.as_str() == "\u{200B}"
+    }
 }
 
 /// The width of a currency symbol.

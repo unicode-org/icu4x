@@ -128,6 +128,14 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         )
         .allow_identifier_not_found()?
         {
+            Some(res) if res.payload.get().is_zero_width_space() => {
+                let patterns = load_with_fallback::<CurrencyPatternsNoCurrencyV1>(
+                    &crate::provider::Baked,
+                    ids,
+                )?
+                .payload;
+                CurrencyFormatterData::NoCurrency { patterns }
+            }
             Some(res) => CurrencyFormatterData::Symbol {
                 essential,
                 symbol: res.payload,
@@ -158,6 +166,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         D: ?Sized
             + DataProvider<CurrencyEssentialsV1>
             + DataProvider<CurrencySymbolsV1>
+            + DataProvider<CurrencyPatternsNoCurrencyV1>
             + DataProvider<CurrencyFractionsV1>,
     {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
@@ -171,16 +180,23 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             provider.load(Default::default())?.payload;
         let fraction_info = fractions.get().resolve(currency);
         #[allow(const_item_mutation)]
-        let currency_data = match provider
-            .load(DataRequest {
+        let currency_data = match DataProvider::<CurrencySymbolsV1>::load(
+            provider,
+            DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     CurrencySymbolsV1::make_attributes(currency, width, &mut TinyAsciiStr::EMPTY),
                     &locale,
                 ),
                 ..Default::default()
-            })
-            .allow_identifier_not_found()?
+            },
+        )
+        .allow_identifier_not_found()?
         {
+            Some(res) if res.payload.get().is_zero_width_space() => {
+                let patterns =
+                    load_with_fallback::<CurrencyPatternsNoCurrencyV1>(provider, ids)?.payload;
+                CurrencyFormatterData::NoCurrency { patterns }
+            }
             Some(res) => CurrencyFormatterData::Symbol {
                 essential,
                 symbol: res.payload,
@@ -536,6 +552,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         D: ?Sized
             + DataProvider<CurrencyEssentialsV1>
             + DataProvider<CurrencySymbolsV1>
+            + DataProvider<CurrencyPatternsNoCurrencyV1>
             + DataProvider<CurrencyDecimalSymbolsV1>
             + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
@@ -566,6 +583,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         D: ?Sized
             + DataProvider<CurrencyEssentialsV1>
             + DataProvider<CurrencySymbolsV1>
+            + DataProvider<CurrencyPatternsNoCurrencyV1>
             + DataProvider<CurrencyDecimalSymbolsV1>
             + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
@@ -1278,6 +1296,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             + DataProvider<CurrencyEssentialsV1>
             + DataProvider<CurrencySymbolsV1>
             + DataProvider<CurrencyDecimalSymbolsV1>
+            + DataProvider<CurrencyPatternsNoCurrencyV1>
             + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalCompactShortV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
@@ -1310,6 +1329,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             + DataProvider<CurrencyEssentialsV1>
             + DataProvider<CurrencySymbolsV1>
             + DataProvider<CurrencyDecimalSymbolsV1>
+            + DataProvider<CurrencyPatternsNoCurrencyV1>
             + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalCompactShortV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
@@ -1371,6 +1391,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             + DataProvider<CurrencyEssentialsV1>
             + DataProvider<CurrencySymbolsV1>
             + DataProvider<CurrencyDecimalSymbolsV1>
+            + DataProvider<CurrencyPatternsNoCurrencyV1>
             + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalCompactLongV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
@@ -1403,6 +1424,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             + DataProvider<CurrencyEssentialsV1>
             + DataProvider<CurrencySymbolsV1>
             + DataProvider<CurrencyDecimalSymbolsV1>
+            + DataProvider<CurrencyPatternsNoCurrencyV1>
             + DataProvider<CurrencyFractionsV1>
             + DataProvider<icu_decimal::provider::DecimalCompactLongV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>

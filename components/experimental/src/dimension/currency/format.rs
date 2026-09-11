@@ -122,13 +122,13 @@ mod tests {
         //
         // Because the locale's standard currency pattern ("#,##0.00 ¤") contains a
         // non-breaking space (U+00A0) before the symbol placeholder ('¤'), formatting
-        // with `try_new_symbol` produces "12,345$67" followed by U+00A0 and U+200B.
-        // Visually this appears as a trailing space, but it faithfully matches CLDR data
-        // (tracked in CLDR-19771; resolved in https://github.com/unicode-org/icu4x/pull/8485).
-        // (Note: `try_new_no_currency` below formats without the placeholder or trailing space).
+        // with the raw symbol would produce a trailing space (tracked in CLDR-19771).
+        // To resolve this, when the resolved currency symbol is a zero-width space (U+200B),
+        // `CurrencyFormatter` uses `noCurrency` formatting so that the amount formats
+        // cleanly without any placeholder or trailing space ("12,345$67").
         let escudo =
             CurrencyFormatter::try_new_symbol(prefs, currency!("PTE"), Default::default()).unwrap();
-        assert_writeable_eq!(escudo.format_fixed_decimal(&value), "12,345$67 \u{200B}");
+        assert_writeable_eq!(escudo.format_fixed_decimal(&value), "12,345$67");
 
         let escudo_narrow =
             CurrencyFormatter::try_new_symbol_narrow(prefs, currency!("PTE"), Default::default())
