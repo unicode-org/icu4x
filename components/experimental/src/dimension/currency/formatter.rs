@@ -13,6 +13,9 @@ use super::super::provider::currency::{
     symbols::{CurrencyDecimalSymbolsV1, CurrencySymbolWidth, CurrencySymbolsV1},
 };
 
+/// A lightweight provider adapter that returns pre-resolved decimal symbols
+/// (which may include currency-specific decimal or grouping separator overrides)
+/// while delegating digit loading to the underlying provider.
 struct CurrencyDecimalProvider<'a, P: ?Sized> {
     symbols: DataPayload<icu_decimal::provider::DecimalSymbolsV1>,
     inner: &'a P,
@@ -43,8 +46,12 @@ impl<P: ?Sized + DataProvider<icu_decimal::provider::DecimalDigitsV1>>
     }
 }
 
+/// Maximum length of a currency attribute: numbering system (up to 8 bytes)
+/// + delimiter `/` (1 byte) + ISO-4217 currency code (3 bytes).
 const CURRENCY_ATTRIBUTE_LEN: usize = 8 + 1 + 3;
 
+/// Formats a marker attribute combining an optional numbering system and a currency code
+/// (e.g. `"latn/PTE"`) into the provided stack buffer without heap allocation.
 fn currency_attribute<'a>(
     buffer: &'a mut [u8; CURRENCY_ATTRIBUTE_LEN],
     nu: &str,
@@ -64,6 +71,8 @@ fn currency_attribute<'a>(
     core::str::from_utf8(buffer.get(..len)?).ok()
 }
 
+/// Creates a [`DecimalFormatter`] configured with currency-specific decimal and grouping
+/// symbols from compiled locale data.
 #[cfg(feature = "compiled_data")]
 fn try_new_decimal_formatter_for_currency(
     prefs: DecimalFormatterPreferences,
@@ -82,6 +91,8 @@ fn try_new_decimal_formatter_for_currency(
     DecimalFormatter::try_new_unstable(&custom_provider, prefs, Default::default())
 }
 
+/// Creates a [`DecimalFormatter`] configured with currency-specific decimal and grouping
+/// symbols using the provided data provider.
 fn try_new_decimal_formatter_for_currency_unstable<D>(
     provider: &D,
     prefs: DecimalFormatterPreferences,
@@ -101,6 +112,10 @@ where
     DecimalFormatter::try_new_unstable(&custom_provider, prefs, Default::default())
 }
 
+/// Resolves decimal symbols for currency formatting by first attempting to load
+/// currency-specific decimal symbol overrides ([`CurrencyDecimalSymbolsV1`]), and
+/// falling back to standard [`DecimalSymbolsV1`](icu_decimal::provider::DecimalSymbolsV1)
+/// if no currency override is defined for the locale.
 fn load_currency_decimal_symbols<
     D1: DataProvider<CurrencyDecimalSymbolsV1> + ?Sized,
     D2: DataProvider<icu_decimal::provider::DecimalSymbolsV1> + ?Sized,
