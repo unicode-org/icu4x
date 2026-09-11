@@ -1985,6 +1985,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "unstable")]
     fn load_line_data() {
         let provider = SourceDataProvider::new_testing();
         let response: DataResponse<SegmenterBreakLineV3> = provider

@@ -51,7 +51,7 @@ impl SourceDataProvider {
     }
 
     /// Get all numbering systems supported by a langid, potentially excluding the default one
-    fn get_supported_numsys_for_langid(
+    pub(crate) fn get_supported_numsys_for_langid(
         &self,
         locale: &DataLocale,
         exclude_default: bool,

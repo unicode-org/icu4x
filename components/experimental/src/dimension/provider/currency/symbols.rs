@@ -21,6 +21,15 @@ icu_provider::data_marker!(
     attributes_domain = "currency",
 );
 
+icu_provider::data_marker!(
+    /// Currency-specific decimal symbols override data.
+    CurrencyDecimalSymbolsV1,
+    "currency/decimal/symbols/v1",
+    icu_decimal::provider::DecimalSymbols<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "currency",
+);
+
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency::symbols))]
