@@ -110,6 +110,7 @@ use alloc::boxed::Box;
 #[cfg(feature = "datagen")]
 #[cfg(feature = "unstable")]
 use alloc::vec::Vec;
+use icu_locale_core::subtags::Subtag;
 #[cfg(feature = "unstable")]
 use icu_pattern::{Pattern, PatternBackend, SinglePlaceholder};
 #[cfg(feature = "unstable")]
@@ -154,6 +155,19 @@ icu_provider::data_marker!(
     "decimal/symbols/v1",
     DecimalSymbols<'static>,
 );
+
+impl DecimalSymbolsV1 {
+    /// Creates attributes for this marker from parts.
+    pub fn make_attributes(nu: &Subtag) -> &DataMarkerAttributes {
+        DataMarkerAttributes::from_str_or_panic(nu.as_str())
+    }
+
+    /// Parses attributes for this marker into parts.
+    #[cfg(feature = "datagen")]
+    pub fn parse_attributes(a: &DataMarkerAttributes) -> Option<Subtag> {
+        Subtag::try_from_str(a.as_str()).ok()
+    }
+}
 
 icu_provider::data_marker!(
     /// The digits for a given numbering system. This data ought to be stored in the `und` locale with a marker attribute
