@@ -126,6 +126,8 @@ mod chrono;
 mod combo;
 mod error;
 mod external_loaders;
+#[cfg(feature = "unstable")]
+pub mod fieldbag;
 pub mod fieldsets;
 mod format;
 #[cfg(feature = "unstable_jiff_0_2")]
