@@ -364,7 +364,7 @@ mod tests {
         // Currently, compact currency formatters do not yet wire up `CurrencyDecimalSymbolsV1`.
         // They use the locale's default DecimalSymbolsV1 (','), producing "1,3 mil \u{200b}"
         // rather than "1$3 mil \u{200b}".
-        // This will be resolved in the follow-up PR for compact currency formatting.
+        // TODO(#8454): Resolved in https://github.com/unicode-org/icu4x/pull/8489.
         let fmt =
             CurrencyFormatter::try_new_compact_symbol(prefs, currency!("PTE"), Default::default())
                 .unwrap();
