@@ -95,8 +95,9 @@ impl CurrencySymbol<'_> {
         &self.0.variable
     }
 
-    /// Returns true if the symbol is a zero-width space (`\u{200B}`).
-    pub fn is_zero_width_space(&self) -> bool {
+    /// Returns true if the symbol is a zero-width space (`\u{200B}`), which CLDR uses
+    /// when the currency separator replaces the currency symbol (CLDR-19771).
+    pub(crate) fn is_zero_width_space(&self) -> bool {
         self.as_str() == "\u{200B}"
     }
 }
