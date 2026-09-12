@@ -8,68 +8,24 @@ use crate::cldr_serde;
 use crate::decimal::decimal_pattern::DecimalSubPattern;
 use icu::decimal::provider::*;
 use icu::experimental::dimension::provider::currency::symbols::CurrencyDecimalSymbolsV1;
+use icu::locale::preferences::extensions::unicode::keywords::CurrencyType;
+use icu::locale::subtags::Subtag;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
+use tinystr::TinyAsciiStr;
 use zerovec::VarZeroCow;
-
-/// Splits marker attributes into an optional numbering system and the currency code.
-///
-/// Returns `Err(IdentifierNotFound)` if the currency is missing or empty.
-///
-/// Attribute format:
-/// - `<currency>` (e.g. `"PTE"`): `Ok((None, "PTE"))`
-/// - `<numsys>/<currency>` (e.g. `"arab/PTE"`): `Ok((Some("arab"), "PTE"))`
-fn split_currency_attributes(
-    attrs: &DataMarkerAttributes,
-) -> Result<(Option<&str>, &str), DataError> {
-    let (nu, currency) = match attrs.as_str().split_once('/') {
-        Some((nu, curr)) => (Some(nu), curr),
-        None => (None, attrs.as_str()),
-    };
-    if currency.is_empty() {
-        return Err(DataErrorKind::IdentifierNotFound.into_error());
-    }
-    Ok((nu, currency))
-}
-
-/// Formats marker attributes from an optional numbering system and currency code.
-///
-/// Returns an error if `currency` is not 3 uppercase ASCII letters (ISO-4217),
-/// or if `nu` is not 3-8 lowercase ASCII letters (BCP-47 numbering system subtag).
-fn currency_attributes(
-    nu: Option<&str>,
-    currency: &str,
-) -> Result<Box<DataMarkerAttributes>, DataError> {
-    if currency.len() != 3 || !currency.bytes().all(|b| b.is_ascii_uppercase()) {
-        log::error!(
-            "currency attribute must be 3 uppercase ASCII letters as an ISO-4217 currency code: {currency}"
-        );
-        return Err(DataError::custom(
-            "currency attribute must be 3 uppercase ASCII letters as an ISO-4217 currency code",
-        )
-        .with_debug_context(&currency));
-    }
-    if let Some(nu) = nu
-        && (!(3..=8).contains(&nu.len()) || !nu.bytes().all(|b| b.is_ascii_lowercase()))
-    {
-        return Err(DataError::custom(
-            "numbering system attribute must be 3-8 lowercase ASCII letters",
-        )
-        .with_debug_context(&nu));
-    }
-    Ok(match nu {
-        Some(nu) => DataMarkerAttributes::try_from_string(format!("{nu}/{currency}")),
-        None => DataMarkerAttributes::try_from_string(currency.to_owned()),
-    }
-    .expect("valid marker attributes"))
-}
 
 impl DataProvider<CurrencyDecimalSymbolsV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CurrencyDecimalSymbolsV1>, DataError> {
         self.check_req::<CurrencyDecimalSymbolsV1>(req)?;
 
-        let (nsattr, currency) = split_currency_attributes(req.id.marker_attributes)
-            .map_err(|e| e.with_req(CurrencyDecimalSymbolsV1::INFO, req))?;
+        let Some((nsattr, currency)) =
+            CurrencyDecimalSymbolsV1::parse_attributes(req.id.marker_attributes)
+        else {
+            return Err(
+                DataErrorKind::IdentifierNotFound.with_req(CurrencyDecimalSymbolsV1::INFO, req)
+            );
+        };
 
         let resource: &cldr_serde::numbers::Resource = self
             .cldr()?
@@ -78,7 +34,10 @@ impl DataProvider<CurrencyDecimalSymbolsV1> for SourceDataProvider {
 
         let numbers = &resource.main.value.numbers;
 
-        let nsname = nsattr.unwrap_or(&numbers.default_numbering_system);
+        let nsname = nsattr
+            .as_ref()
+            .map(|s| s.as_str())
+            .unwrap_or(&numbers.default_numbering_system);
 
         let Some(symbols) = &numbers.numsys_data.symbols.get(nsname) else {
             return Err(
@@ -114,7 +73,7 @@ impl DataProvider<CurrencyDecimalSymbolsV1> for SourceDataProvider {
             .value
             .numbers
             .currencies
-            .get(currency)
+            .get(currency.iso_code().as_str())
             .ok_or_else(|| {
                 DataErrorKind::IdentifierNotFound.with_req(CurrencyDecimalSymbolsV1::INFO, req)
             })?;
@@ -202,37 +161,31 @@ impl IterableDataProviderCached<CurrencyDecimalSymbolsV1> for SourceDataProvider
                 .currencies
                 .iter()
                 .filter(|(_, patterns)| patterns.decimal.is_some() || patterns.group.is_some())
-                .map(|(currency, _)| currency.as_str())
-                .collect::<Vec<_>>();
-
-            if overriding.is_empty() {
-                continue;
-            }
+                .map(|(currency, _)| currency.as_str());
 
             // The overrides are not scoped to a numbering system, but the rest of the
             // symbols are, so each numbering system needs its own identifier.
-            let numsys = self.get_supported_numsys_for_langid(&locale, true)?;
-
             for currency in overriding {
-                if currency.len() != 3 || !currency.bytes().all(|b| b.is_ascii_uppercase()) {
+                let Ok(currency) = CurrencyType::try_from_str(currency) else {
                     log::error!(
                         "Skipping non-ISO-4217 currency override for '{currency}' in locale {locale}"
                     );
                     continue;
-                }
-                let default_attr = currency_attributes(None, currency)?;
-                ids.insert(
-                    DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                        &default_attr,
-                        &locale,
-                    )
-                    .into_owned(),
-                );
-                for nsname in &numsys {
-                    let attr = currency_attributes(Some(nsname.as_str()), currency)?;
+                };
+
+                for nsname in self
+                    .get_supported_numsys_for_langid(&locale, true)?
+                    .iter()
+                    .map(|nu| Some(Subtag::try_from_str(nu.as_str()).unwrap()))
+                    .chain([None])
+                {
+                    let mut buf = TinyAsciiStr::EMPTY;
                     ids.insert(
-                        DataIdentifierBorrowed::for_marker_attributes_and_locale(&attr, &locale)
-                            .into_owned(),
+                        DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                            CurrencyDecimalSymbolsV1::make_attributes(nsname, currency, &mut buf),
+                            &locale,
+                        )
+                        .into_owned(),
                     );
                 }
             }
@@ -240,48 +193,6 @@ impl IterableDataProviderCached<CurrencyDecimalSymbolsV1> for SourceDataProvider
 
         Ok(ids)
     }
-}
-
-#[test]
-fn test_currency_attributes_roundtrip() {
-    let pte = DataMarkerAttributes::from_str_or_panic("PTE");
-    let arab_pte = DataMarkerAttributes::from_str_or_panic("arab/PTE");
-    assert_eq!(split_currency_attributes(pte).unwrap(), (None, "PTE"));
-    assert_eq!(
-        split_currency_attributes(arab_pte).unwrap(),
-        (Some("arab"), "PTE")
-    );
-    let empty = DataMarkerAttributes::from_str_or_panic("");
-    assert!(split_currency_attributes(empty).is_err());
-
-    assert_eq!(currency_attributes(None, "PTE").unwrap().as_str(), "PTE");
-    assert_eq!(
-        currency_attributes(Some("arab"), "PTE").unwrap().as_str(),
-        "arab/PTE"
-    );
-}
-
-#[test]
-fn test_currency_attributes_validation() {
-    // Valid attributes:
-    assert!(currency_attributes(None, "USD").is_ok());
-    assert!(currency_attributes(Some("latn"), "PTE").is_ok());
-    assert!(currency_attributes(Some("arabext"), "PTE").is_ok());
-
-    // Invalid currency (must be 3 uppercase ASCII letters as an ISO-4217 currency code):
-    assert!(currency_attributes(None, "usd").is_err());
-    assert!(currency_attributes(None, "US").is_err());
-    assert!(currency_attributes(None, "USDD").is_err());
-    assert!(currency_attributes(None, "").is_err());
-    assert!(currency_attributes(None, "123").is_err());
-
-    // Invalid numbering system (must be 3-8 lowercase ASCII letters):
-    assert!(currency_attributes(Some(""), "USD").is_err());
-    assert!(currency_attributes(Some("la"), "USD").is_err());
-    assert!(currency_attributes(Some("latn/"), "USD").is_err());
-    assert!(currency_attributes(Some("LATN"), "USD").is_err());
-    assert!(currency_attributes(Some("123"), "USD").is_err());
-    assert!(currency_attributes(Some("toolongsystem"), "USD").is_err());
 }
 
 #[test]

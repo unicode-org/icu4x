@@ -88,7 +88,9 @@ impl SourceDataProvider {
                     .into_iter()
                     .map(move |nsname| {
                         DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                            DataMarkerAttributes::try_from_str(&nsname).unwrap(),
+                            icu::decimal::provider::DecimalSymbolsV1::make_attributes(
+                                &icu::locale::subtags::Subtag::try_from_str(&nsname).unwrap(),
+                            ),
                             &locale,
                         )
                         .into_owned()
