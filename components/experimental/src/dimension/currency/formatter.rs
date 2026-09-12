@@ -482,7 +482,7 @@ impl CurrencyFormatter<DecimalFormatter> {
     ) -> Result<Self, DataError> {
         Self::try_new_essential(
             DecimalFormatter::try_new_unstable(
-                &WrappingDecimalProvider(
+                &CurrencyDecimalProvider(
                     &crate::provider::Baked,
                     &icu_decimal::provider::Baked,
                     currency_code,
@@ -510,7 +510,7 @@ impl CurrencyFormatter<DecimalFormatter> {
     ) -> Result<Self, DataError> {
         Self::try_new_essential(
             DecimalFormatter::try_new_unstable(
-                &WrappingDecimalProvider(
+                &CurrencyDecimalProvider(
                     &crate::provider::Baked,
                     &icu_decimal::provider::Baked,
                     currency_code,
@@ -544,7 +544,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         Self::try_new_essential_unstable(
             provider,
             DecimalFormatter::try_new_unstable(
-                &WrappingDecimalProvider(provider, provider, currency_code),
+                &CurrencyDecimalProvider(provider, provider, currency_code),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -574,7 +574,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         Self::try_new_essential_unstable(
             provider,
             DecimalFormatter::try_new_unstable(
-                &WrappingDecimalProvider(provider, provider, currency_code),
+                &CurrencyDecimalProvider(provider, provider, currency_code),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -635,7 +635,7 @@ impl CurrencyFormatter<DecimalFormatter> {
     ) -> Result<Self, DataError> {
         Self::try_new_code_internal(
             DecimalFormatter::try_new_unstable(
-                &WrappingDecimalProvider(
+                &CurrencyDecimalProvider(
                     &crate::provider::Baked,
                     &icu_decimal::provider::Baked,
                     currency_code,
@@ -667,7 +667,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         Self::try_new_code_internal_unstable(
             provider,
             DecimalFormatter::try_new_unstable(
-                &WrappingDecimalProvider(provider, provider, currency_code),
+                &CurrencyDecimalProvider(provider, provider, currency_code),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -719,7 +719,7 @@ impl CurrencyFormatter<DecimalFormatter> {
     ) -> Result<Self, DataError> {
         Self::try_new_name_internal(
             DecimalFormatter::try_new_unstable(
-                &WrappingDecimalProvider(
+                &CurrencyDecimalProvider(
                     &crate::provider::Baked,
                     &icu_decimal::provider::Baked,
                     currency_code,
@@ -751,7 +751,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         Self::try_new_name_internal_unstable(
             provider,
             DecimalFormatter::try_new_unstable(
-                &WrappingDecimalProvider(provider, provider, currency_code),
+                &CurrencyDecimalProvider(provider, provider, currency_code),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -805,7 +805,7 @@ impl CurrencyFormatter<DecimalFormatter> {
     ) -> Result<Self, DataError> {
         Self::try_new_no_currency_internal(
             DecimalFormatter::try_new_unstable(
-                &WrappingDecimalProvider(
+                &CurrencyDecimalProvider(
                     &crate::provider::Baked,
                     &icu_decimal::provider::Baked,
                     currency_code,
@@ -837,7 +837,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         Self::try_new_no_currency_internal_unstable(
             provider,
             DecimalFormatter::try_new_unstable(
-                &WrappingDecimalProvider(provider, provider, currency_code),
+                &CurrencyDecimalProvider(provider, provider, currency_code),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -848,13 +848,23 @@ impl CurrencyFormatter<DecimalFormatter> {
     }
 }
 
-struct WrappingDecimalProvider<'a, D1: ?Sized, D2: ?Sized>(&'a D1, &'a D2, CurrencyType);
+/// A provider adapter that intercepts [`DecimalSymbolsV1`](icu_decimal::provider::DecimalSymbolsV1)
+/// requests during decimal formatter construction and overrides them with currency-specific
+/// decimal symbols ([`CurrencyDecimalSymbolsV1`]) for the target currency if available, falling
+/// back to the locale's default decimal symbols otherwise.
+///
+/// Two provider references (`D1` and `D2`) are stored to support `compiled_data` mode, where
+/// `crate::provider::Baked` (`D1`) provides [`CurrencyDecimalSymbolsV1`] and
+/// `icu_decimal::provider::Baked` (`D2`) provides [`DecimalSymbolsV1`](icu_decimal::provider::DecimalSymbolsV1)
+/// and [`DecimalDigitsV1`](icu_decimal::provider::DecimalDigitsV1).
+/// In `_unstable` constructors, `D1` and `D2` point to the same user-supplied provider.
+struct CurrencyDecimalProvider<'a, D1: ?Sized, D2: ?Sized>(&'a D1, &'a D2, CurrencyType);
 
 impl<
     'a,
     D1: ?Sized + DataProvider<CurrencyDecimalSymbolsV1>,
     D2: ?Sized + DataProvider<icu_decimal::provider::DecimalSymbolsV1>,
-> DataProvider<icu_decimal::provider::DecimalSymbolsV1> for WrappingDecimalProvider<'a, D1, D2>
+> DataProvider<icu_decimal::provider::DecimalSymbolsV1> for CurrencyDecimalProvider<'a, D1, D2>
 {
     fn load(
         &self,
@@ -880,7 +890,7 @@ impl<
 }
 
 impl<'a, D1: ?Sized, D2: ?Sized + DataProvider<icu_decimal::provider::DecimalDigitsV1>>
-    DataProvider<icu_decimal::provider::DecimalDigitsV1> for WrappingDecimalProvider<'a, D1, D2>
+    DataProvider<icu_decimal::provider::DecimalDigitsV1> for CurrencyDecimalProvider<'a, D1, D2>
 {
     fn load(
         &self,
