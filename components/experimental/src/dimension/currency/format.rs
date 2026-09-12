@@ -124,7 +124,7 @@ mod tests {
         // non-breaking space (U+00A0) before the symbol placeholder ('¤'), formatting
         // with `try_new_symbol` produces "12,345$67" followed by U+00A0 and U+200B.
         // Visually this appears as a trailing space, but it faithfully matches CLDR data
-        // (tracked in CLDR-19771).
+        // (tracked in CLDR-19771; resolved in https://github.com/unicode-org/icu4x/pull/8485).
         // (Note: `try_new_no_currency` below formats without the placeholder or trailing space).
         let escudo =
             CurrencyFormatter::try_new_symbol(prefs, currency!("PTE"), Default::default()).unwrap();
@@ -133,7 +133,9 @@ mod tests {
         let escudo_narrow =
             CurrencyFormatter::try_new_symbol_narrow(prefs, currency!("PTE"), Default::default())
                 .unwrap();
-        // Narrow symbol for PTE is not defined in pt-PT CLDR data, so it falls back to the ISO code
+        // Narrow symbol for PTE is not defined in pt-PT CLDR data, so it currently falls back
+        // directly to the ISO code rather than the standard symbol first.
+        // TODO(#8486): Resolved in https://github.com/unicode-org/icu4x/pull/8487.
         assert_writeable_eq!(escudo_narrow.format_fixed_decimal(&value), "12,345$67 PTE");
 
         let escudo_code =
