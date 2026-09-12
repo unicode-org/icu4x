@@ -174,7 +174,7 @@ impl IterableDataProviderCached<CurrencyDecimalSymbolsV1> for SourceDataProvider
                 };
 
                 for nsname in self
-                    .get_supported_numsys_for_langid(&locale, false)?
+                    .get_supported_numsys_for_langid(&locale, true)?
                     .iter()
                     .map(|nu| Some(Subtag::try_from_str(nu.as_str()).unwrap()))
                     .chain([None])
