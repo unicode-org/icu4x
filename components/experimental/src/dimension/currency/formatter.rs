@@ -101,11 +101,11 @@ fn load_currency_symbol<D: DataProvider<CurrencySymbolsV1> + ?Sized>(
     width: CurrencySymbolWidth,
     locale: &DataLocale,
 ) -> Result<Option<DataPayload<CurrencySymbolsV1>>, DataError> {
-    #[allow(const_item_mutation)]
+    let mut buffer = TinyAsciiStr::EMPTY;
     let res = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                CurrencySymbolsV1::make_attributes(currency, width, &mut TinyAsciiStr::EMPTY),
+                CurrencySymbolsV1::make_attributes(currency, width, &mut buffer),
                 locale,
             ),
             ..Default::default()
@@ -119,14 +119,13 @@ fn load_currency_symbol<D: DataProvider<CurrencySymbolsV1> + ?Sized>(
     // According to UTS #35 Part 3: Numbers (Section 1.3):
     // If narrow symbol data is unavailable for a given locale, fall back to standard symbol.
     if width == CurrencySymbolWidth::Narrow {
-        #[allow(const_item_mutation)]
         let fallback = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     CurrencySymbolsV1::make_attributes(
                         currency,
                         CurrencySymbolWidth::Short,
-                        &mut TinyAsciiStr::EMPTY,
+                        &mut buffer,
                     ),
                     locale,
                 ),
