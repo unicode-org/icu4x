@@ -6,6 +6,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use icu_locale_core::subtags::Subtag;
 use icu_provider::prelude::*;
 use tinystr::{TinyAsciiStr, tinystr};
 use zerovec::VarZeroCow;
@@ -29,6 +30,37 @@ icu_provider::data_marker!(
     #[cfg(feature = "datagen")]
     attributes_domain = "currency",
 );
+
+impl CurrencyDecimalSymbolsV1 {
+    /// Creates attributes for this marker from parts.
+    pub fn make_attributes(
+        nu: Option<Subtag>,
+        currency: CurrencyType,
+        x: &mut TinyAsciiStr<12>,
+    ) -> &DataMarkerAttributes {
+        *x = if let Some(nu) = nu {
+            nu.to_tinystr()
+                .concat::<1, 9>(tinystr::tinystr!(1, "/"))
+                .concat::<3, 12>(currency.iso_code())
+        } else {
+            currency.iso_code().resize()
+        };
+        DataMarkerAttributes::from_str_or_panic(x.as_str())
+    }
+
+    /// Parses attributes for this marker into parts.
+    pub fn parse_attributes(
+        attrs: &DataMarkerAttributes,
+    ) -> Option<(Option<Subtag>, CurrencyType)> {
+        let (nu, currency) = match attrs.as_str().split_once('/') {
+            Some((nu, curr)) => (Some(Subtag::try_from_str(nu).ok()?), curr),
+            None => (None, attrs.as_str()),
+        };
+        let currency = CurrencyType::try_from_str(currency).ok()?;
+
+        Some((nu, currency))
+    }
+}
 
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -124,4 +156,32 @@ impl<'zf> zerofrom::ZeroFrom<'zf, VarTupleULE<u8, str>> for CurrencySymbol<'zf> 
     fn zero_from(source: &'zf VarTupleULE<u8, str>) -> Self {
         Self(VarZeroCow::zero_from(source))
     }
+}
+
+#[test]
+fn test_currency_attributes_roundtrip() {
+    use icu_locale::preferences::extensions::unicode::keywords::currency;
+    use icu_locale::subtags::subtag;
+
+    let currency = currency!("PTE");
+    let arab = subtag!("Arab");
+    let mut buf = TinyAsciiStr::EMPTY;
+
+    assert_eq!(
+        CurrencyDecimalSymbolsV1::parse_attributes(CurrencyDecimalSymbolsV1::make_attributes(
+            Some(arab),
+            currency,
+            &mut buf
+        ))
+        .unwrap(),
+        (Some(arab), currency)
+    );
+
+    assert_eq!(
+        CurrencyDecimalSymbolsV1::parse_attributes(CurrencyDecimalSymbolsV1::make_attributes(
+            None, currency, &mut buf
+        ))
+        .unwrap(),
+        (None, currency)
+    );
 }
