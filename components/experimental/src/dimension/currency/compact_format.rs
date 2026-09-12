@@ -362,11 +362,12 @@ mod tests {
         // the decimal separator (e.g. "12,345$67").
         //
         // Compact currency formatters respect `CurrencyDecimalSymbolsV1`, using '$'
-        // instead of the locale's default DecimalSymbolsV1 (',').
+        // instead of the locale's default DecimalSymbolsV1 (','), and omit the zero-width
+        // space symbol placeholder (CLDR-19771).
         let fmt =
             CurrencyFormatter::try_new_compact_symbol(prefs, currency!("PTE"), Default::default())
                 .unwrap();
-        assert_writeable_eq!(fmt.format_fixed_decimal(&value), "1$3 mil \u{200b}");
+        assert_writeable_eq!(fmt.format_fixed_decimal(&value), "1$3 mil");
 
         let fmt_narrow = CurrencyFormatter::try_new_compact_symbol_narrow(
             prefs,
@@ -387,7 +388,7 @@ mod tests {
             Default::default(),
         )
         .unwrap();
-        assert_writeable_eq!(fmt_long.format_fixed_decimal(&value), "1$3 mil \u{200b}");
+        assert_writeable_eq!(fmt_long.format_fixed_decimal(&value), "1$3 mil");
 
         let fmt_long_narrow = CurrencyFormatter::try_new_compact_long_symbol_narrow(
             prefs,
