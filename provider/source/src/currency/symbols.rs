@@ -115,7 +115,7 @@ fn test_symbols() {
     let provider = SourceDataProvider::new_testing();
 
     #[allow(const_item_mutation)]
-    let load = |locale: DataLocale, currency: CurrencyType, width: TinyAsciiStr<1>| {
+    let load = |locale: DataLocale, currency: CurrencyType, width: CurrencySymbolWidth| {
         DataProvider::<CurrencySymbolsV1>::load(
             &provider,
             DataRequest {
