@@ -901,7 +901,7 @@ impl<'a, D1: ?Sized, D2: ?Sized + DataProvider<icu_decimal::provider::DecimalDig
 
 impl<'a, D1: ?Sized, D2: ?Sized + DataProvider<icu_decimal::provider::DecimalCompactShortV1>>
     DataProvider<icu_decimal::provider::DecimalCompactShortV1>
-    for WrappingDecimalProvider<'a, D1, D2>
+    for CurrencyDecimalProvider<'a, D1, D2>
 {
     fn load(
         &self,
@@ -913,7 +913,7 @@ impl<'a, D1: ?Sized, D2: ?Sized + DataProvider<icu_decimal::provider::DecimalCom
 
 impl<'a, D1: ?Sized, D2: ?Sized + DataProvider<icu_decimal::provider::DecimalCompactLongV1>>
     DataProvider<icu_decimal::provider::DecimalCompactLongV1>
-    for WrappingDecimalProvider<'a, D1, D2>
+    for CurrencyDecimalProvider<'a, D1, D2>
 {
     fn load(
         &self,
@@ -924,7 +924,7 @@ impl<'a, D1: ?Sized, D2: ?Sized + DataProvider<icu_decimal::provider::DecimalCom
 }
 
 impl<'a, D1: ?Sized, D2: ?Sized + DataProvider<icu_plurals::provider::PluralsCardinalV1>>
-    DataProvider<icu_plurals::provider::PluralsCardinalV1> for WrappingDecimalProvider<'a, D1, D2>
+    DataProvider<icu_plurals::provider::PluralsCardinalV1> for CurrencyDecimalProvider<'a, D1, D2>
 {
     fn load(
         &self,
@@ -1105,7 +1105,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
     ) -> Result<Self, DataError> {
         Self::try_new_essential(
             CompactDecimalFormatter::try_new_short_unstable(
-                &WrappingDecimalProvider(
+                &CurrencyDecimalProvider(
                     &crate::provider::Baked,
                     &BakedCompactDecimalProvider,
                     currency_code,
@@ -1133,7 +1133,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
     ) -> Result<Self, DataError> {
         Self::try_new_essential(
             CompactDecimalFormatter::try_new_short_unstable(
-                &WrappingDecimalProvider(
+                &CurrencyDecimalProvider(
                     &crate::provider::Baked,
                     &BakedCompactDecimalProvider,
                     currency_code,
@@ -1161,7 +1161,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
     ) -> Result<Self, DataError> {
         Self::try_new_code_internal(
             CompactDecimalFormatter::try_new_short_unstable(
-                &WrappingDecimalProvider(
+                &CurrencyDecimalProvider(
                     &crate::provider::Baked,
                     &BakedCompactDecimalProvider,
                     currency_code,
@@ -1187,7 +1187,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
     ) -> Result<Self, DataError> {
         Self::try_new_name_internal(
             CompactDecimalFormatter::try_new_short_unstable(
-                &WrappingDecimalProvider(
+                &CurrencyDecimalProvider(
                     &crate::provider::Baked,
                     &BakedCompactDecimalProvider,
                     currency_code,
@@ -1213,7 +1213,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
     ) -> Result<Self, DataError> {
         Self::try_new_essential(
             CompactDecimalFormatter::try_new_long_unstable(
-                &WrappingDecimalProvider(
+                &CurrencyDecimalProvider(
                     &crate::provider::Baked,
                     &BakedCompactDecimalProvider,
                     currency_code,
@@ -1241,7 +1241,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
     ) -> Result<Self, DataError> {
         Self::try_new_essential(
             CompactDecimalFormatter::try_new_long_unstable(
-                &WrappingDecimalProvider(
+                &CurrencyDecimalProvider(
                     &crate::provider::Baked,
                     &BakedCompactDecimalProvider,
                     currency_code,
@@ -1269,7 +1269,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
     ) -> Result<Self, DataError> {
         Self::try_new_code_internal(
             CompactDecimalFormatter::try_new_long_unstable(
-                &WrappingDecimalProvider(
+                &CurrencyDecimalProvider(
                     &crate::provider::Baked,
                     &BakedCompactDecimalProvider,
                     currency_code,
@@ -1295,7 +1295,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
     ) -> Result<Self, DataError> {
         Self::try_new_name_internal(
             CompactDecimalFormatter::try_new_long_unstable(
-                &WrappingDecimalProvider(
+                &CurrencyDecimalProvider(
                     &crate::provider::Baked,
                     &BakedCompactDecimalProvider,
                     currency_code,
@@ -1329,7 +1329,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         Self::try_new_essential_unstable(
             provider,
             CompactDecimalFormatter::try_new_short_unstable(
-                &WrappingDecimalProvider(provider, provider, currency_code),
+                &CurrencyDecimalProvider(provider, provider, currency_code),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -1361,7 +1361,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         Self::try_new_essential_unstable(
             provider,
             CompactDecimalFormatter::try_new_short_unstable(
-                &WrappingDecimalProvider(provider, provider, currency_code),
+                &CurrencyDecimalProvider(provider, provider, currency_code),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -1392,7 +1392,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         Self::try_new_name_internal_unstable(
             provider,
             CompactDecimalFormatter::try_new_short_unstable(
-                &WrappingDecimalProvider(provider, provider, currency_code),
+                &CurrencyDecimalProvider(provider, provider, currency_code),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -1422,7 +1422,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         Self::try_new_essential_unstable(
             provider,
             CompactDecimalFormatter::try_new_long_unstable(
-                &WrappingDecimalProvider(provider, provider, currency_code),
+                &CurrencyDecimalProvider(provider, provider, currency_code),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -1454,7 +1454,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         Self::try_new_essential_unstable(
             provider,
             CompactDecimalFormatter::try_new_long_unstable(
-                &WrappingDecimalProvider(provider, provider, currency_code),
+                &CurrencyDecimalProvider(provider, provider, currency_code),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -1485,7 +1485,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         Self::try_new_name_internal_unstable(
             provider,
             CompactDecimalFormatter::try_new_long_unstable(
-                &WrappingDecimalProvider(provider, provider, currency_code),
+                &CurrencyDecimalProvider(provider, provider, currency_code),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -1514,7 +1514,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         Self::try_new_code_internal_unstable(
             provider,
             CompactDecimalFormatter::try_new_short_unstable(
-                &WrappingDecimalProvider(provider, provider, currency_code),
+                &CurrencyDecimalProvider(provider, provider, currency_code),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -1544,7 +1544,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         Self::try_new_code_internal_unstable(
             provider,
             CompactDecimalFormatter::try_new_long_unstable(
-                &WrappingDecimalProvider(provider, provider, currency_code),
+                &CurrencyDecimalProvider(provider, provider, currency_code),
                 (&prefs).into(),
                 Default::default(),
             )?,
