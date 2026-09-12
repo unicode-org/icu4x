@@ -93,6 +93,53 @@ pub struct CurrencyFormatter<V: AbstractFormatter> {
     fraction_info: FractionInfo,
 }
 
+/// Loads the currency symbol for the given currency and width, falling back from
+/// narrow symbol to standard symbol if narrow is unavailable (per UTS #35 Section 1.3).
+fn load_currency_symbol<D: DataProvider<CurrencySymbolsV1> + ?Sized>(
+    provider: &D,
+    currency: CurrencyType,
+    width: CurrencySymbolWidth,
+    locale: &DataLocale,
+) -> Result<Option<DataPayload<CurrencySymbolsV1>>, DataError> {
+    let mut buffer = TinyAsciiStr::EMPTY;
+    let res = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                CurrencySymbolsV1::make_attributes(currency, width, &mut buffer),
+                locale,
+            ),
+            ..Default::default()
+        })
+        .allow_identifier_not_found()?;
+
+    if let Some(res) = res {
+        return Ok(Some(res.payload));
+    }
+
+    // According to UTS #35 Part 3: Numbers (Section 1.3):
+    // If narrow symbol data is unavailable for a given locale, fall back to standard symbol.
+    if width == CurrencySymbolWidth::Narrow {
+        let fallback = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    CurrencySymbolsV1::make_attributes(
+                        currency,
+                        CurrencySymbolWidth::Short,
+                        &mut buffer,
+                    ),
+                    locale,
+                ),
+                ..Default::default()
+            })
+            .allow_identifier_not_found()?;
+        if let Some(fallback) = fallback {
+            return Ok(Some(fallback.payload));
+        }
+    }
+
+    Ok(None)
+}
+
 impl<V: AbstractFormatter> CurrencyFormatter<V> {
     #[cfg(feature = "compiled_data")]
     pub(crate) fn try_new_essential(
@@ -114,28 +161,14 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let fractions: DataPayload<CurrencyFractionsV1> =
             crate::provider::Baked.load(Default::default())?.payload;
         let fraction_info = fractions.get().resolve(currency);
-        #[allow(const_item_mutation)]
-        let currency_data = match DataProvider::<CurrencySymbolsV1>::load(
-            &crate::provider::Baked,
-            DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    CurrencySymbolsV1::make_attributes(currency, width, &mut TinyAsciiStr::EMPTY),
-                    &locale,
-                ),
-                ..Default::default()
-            },
-        )
-        .allow_identifier_not_found()?
-        {
-            Some(res) => CurrencyFormatterData::Symbol {
-                essential,
-                symbol: res.payload,
-            },
-            None => CurrencyFormatterData::IsoCodeSymbol {
-                essential,
-                iso_code: currency.iso_code(),
-            },
-        };
+        let currency_data =
+            match load_currency_symbol(&crate::provider::Baked, currency, width, &locale)? {
+                Some(symbol) => CurrencyFormatterData::Symbol { essential, symbol },
+                None => CurrencyFormatterData::IsoCodeSymbol {
+                    essential,
+                    iso_code: currency.iso_code(),
+                },
+            };
 
         Ok(Self {
             value_formatter,
@@ -169,21 +202,8 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let fractions: DataPayload<CurrencyFractionsV1> =
             provider.load(Default::default())?.payload;
         let fraction_info = fractions.get().resolve(currency);
-        #[allow(const_item_mutation)]
-        let currency_data = match provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    CurrencySymbolsV1::make_attributes(currency, width, &mut TinyAsciiStr::EMPTY),
-                    &locale,
-                ),
-                ..Default::default()
-            })
-            .allow_identifier_not_found()?
-        {
-            Some(res) => CurrencyFormatterData::Symbol {
-                essential,
-                symbol: res.payload,
-            },
+        let currency_data = match load_currency_symbol(provider, currency, width, &locale)? {
+            Some(symbol) => CurrencyFormatterData::Symbol { essential, symbol },
             None => CurrencyFormatterData::IsoCodeSymbol {
                 essential,
                 iso_code: currency.iso_code(),

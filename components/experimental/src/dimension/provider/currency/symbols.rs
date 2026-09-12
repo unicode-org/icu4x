@@ -72,9 +72,9 @@ impl CurrencySymbol<'_> {
 #[non_exhaustive]
 pub enum CurrencySymbolWidth {
     /// Standard or short currency symbol (e.g. `"$"` or `"CA$"`).
-    Short,
+    Short = 0,
     /// Narrow currency symbol (e.g. `"$"`).
-    Narrow,
+    Narrow = 1,
 }
 
 impl CurrencySymbolWidth {
