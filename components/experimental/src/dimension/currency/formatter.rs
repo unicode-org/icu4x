@@ -853,9 +853,7 @@ struct WrappingProvider<'a, D1: ?Sized, D2: ?Sized>(&'a D1, &'a D2, CurrencyType
 impl<
     'a,
     D1: ?Sized + DataProvider<CurrencyDecimalSymbolsV1>,
-    D2: ?Sized
-        + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
-        + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
+    D2: ?Sized + DataProvider<icu_decimal::provider::DecimalSymbolsV1>,
 > DataProvider<icu_decimal::provider::DecimalSymbolsV1> for WrappingProvider<'a, D1, D2>
 {
     fn load(
@@ -863,27 +861,17 @@ impl<
         req: DataRequest,
     ) -> Result<DataResponse<icu_decimal::provider::DecimalSymbolsV1>, DataError> {
         let mut buf = TinyAsciiStr::EMPTY;
-        if let Some(x) = self
-            .0
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    CurrencyDecimalSymbolsV1::make_attributes(
-                        icu_decimal::provider::DecimalSymbolsV1::parse_attributes(
-                            req.id.marker_attributes,
-                        ),
-                        self.2,
-                        &mut buf,
-                    ),
-                    req.id.locale,
-                ),
-                metadata: {
-                    let mut m = req.metadata;
-                    m.silent = true;
-                    m
-                },
-            })
-            .allow_identifier_not_found()?
-        {
+        let mut currency_req = req;
+        currency_req.id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
+            CurrencyDecimalSymbolsV1::make_attributes(
+                icu_decimal::provider::DecimalSymbolsV1::parse_attributes(req.id.marker_attributes),
+                self.2,
+                &mut buf,
+            ),
+            req.id.locale,
+        );
+        currency_req.metadata.silent = true;
+        if let Some(x) = self.0.load(currency_req).allow_identifier_not_found()? {
             return Ok(x.cast());
         }
 
@@ -891,13 +879,8 @@ impl<
     }
 }
 
-impl<
-    'a,
-    D1: ?Sized + DataProvider<CurrencyDecimalSymbolsV1>,
-    D2: ?Sized
-        + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
-        + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
-> DataProvider<icu_decimal::provider::DecimalDigitsV1> for WrappingProvider<'a, D1, D2>
+impl<'a, D1: ?Sized, D2: ?Sized + DataProvider<icu_decimal::provider::DecimalDigitsV1>>
+    DataProvider<icu_decimal::provider::DecimalDigitsV1> for WrappingProvider<'a, D1, D2>
 {
     fn load(
         &self,

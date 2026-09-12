@@ -179,14 +179,10 @@ impl IterableDataProviderCached<CurrencyDecimalSymbolsV1> for SourceDataProvider
                     .map(|nu| Some(Subtag::try_from_str(nu.as_str()).unwrap()))
                     .chain([None])
                 {
-                    #[allow(const_item_mutation)]
+                    let mut buf = TinyAsciiStr::EMPTY;
                     ids.insert(
                         DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                            CurrencyDecimalSymbolsV1::make_attributes(
-                                nsname,
-                                currency,
-                                &mut TinyAsciiStr::EMPTY,
-                            ),
+                            CurrencyDecimalSymbolsV1::make_attributes(nsname, currency, &mut buf),
                             &locale,
                         )
                         .into_owned(),
