@@ -158,11 +158,13 @@ icu_provider::data_marker!(
 
 impl DecimalSymbolsV1 {
     /// Creates attributes for this marker from parts.
+    #[doc(hidden)]
     pub fn make_attributes(nu: &Subtag) -> &DataMarkerAttributes {
         DataMarkerAttributes::from_str_or_panic(nu.as_str())
     }
 
     /// Parses attributes for this marker into parts.
+    #[doc(hidden)]
     pub fn parse_attributes(a: &DataMarkerAttributes) -> Option<Subtag> {
         Subtag::try_from_str(a.as_str()).ok()
     }

@@ -1,16 +1,27 @@
-currency/decimal/symbols/v1, <lookup>, 127B, 11 identifiers
+currency/decimal/symbols/v1, <lookup>, 248B, 22 identifiers
 currency/decimal/symbols/v1, <total>, 469B, 189B, 10 unique payloads
 currency/decimal/symbols/v1, ca/ESP, 46B, 18B, a1c6d58e8b50443f
+currency/decimal/symbols/v1, ca/latn/ESP, -> ca/ESP
 currency/decimal/symbols/v1, de-LU/LUF, 46B, 18B, 3fb007994296856a
+currency/decimal/symbols/v1, de-LU/latn/LUF, -> de-LU/LUF
 currency/decimal/symbols/v1, el/GRD, -> ca/ESP
+currency/decimal/symbols/v1, el/latn/GRD, -> ca/ESP
 currency/decimal/symbols/v1, et/EEK, 49B, 21B, 1e7bda97fc47a75b
+currency/decimal/symbols/v1, et/latn/EEK, -> et/EEK
 currency/decimal/symbols/v1, eu/ESP, 48B, 20B, ad715ee6fa0d32be
+currency/decimal/symbols/v1, eu/latn/ESP, -> eu/ESP
 currency/decimal/symbols/v1, gl/ESP, 48B, 20B, 1bf992c0a6d711d8
+currency/decimal/symbols/v1, gl/latn/ESP, -> gl/ESP
 currency/decimal/symbols/v1, it/ITL, 46B, 18B, 28dd4136886d5f01
+currency/decimal/symbols/v1, it/latn/ITL, -> it/ITL
 currency/decimal/symbols/v1, kea/CVE, 47B, 19B, 7f4fc75dad04de0d
+currency/decimal/symbols/v1, kea/latn/CVE, -> kea/CVE
 currency/decimal/symbols/v1, pt-AO/PTE, 46B, 18B, 5a368e82989e526
+currency/decimal/symbols/v1, pt-AO/latn/PTE, -> pt-AO/PTE
 currency/decimal/symbols/v1, pt-CV/CVE, 47B, 19B, 5807166997b686f4
+currency/decimal/symbols/v1, pt-CV/latn/CVE, -> pt-CV/CVE
 currency/decimal/symbols/v1, pt-PT/PTE, 46B, 18B, b777d39d046db9a9
+currency/decimal/symbols/v1, pt-PT/latn/PTE, -> pt-PT/PTE
 currency/displayname/v1, <lookup>, 199888B, 32067 identifiers
 currency/displayname/v1, <total>, 1479025B, 817648B, 28756 unique payloads
 currency/displayname/v1, af/AED, 57B, 34B, 15625d9aef7c43a7

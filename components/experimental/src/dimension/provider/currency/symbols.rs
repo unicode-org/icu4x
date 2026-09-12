@@ -164,7 +164,7 @@ fn test_currency_attributes_roundtrip() {
     use icu_locale::subtags::subtag;
 
     let currency = currency!("PTE");
-    let arab = subtag!("Arab");
+    let arab = subtag!("arab");
     let mut buf = TinyAsciiStr::EMPTY;
 
     assert_eq!(
