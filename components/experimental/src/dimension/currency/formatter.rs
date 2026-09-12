@@ -900,93 +900,50 @@ impl<'a, D1: ?Sized, D2: ?Sized + DataProvider<icu_decimal::provider::DecimalDig
     }
 }
 
-impl<'a, D1: ?Sized, D2: ?Sized + DataProvider<icu_decimal::provider::DecimalCompactShortV1>>
-    DataProvider<icu_decimal::provider::DecimalCompactShortV1>
-    for CurrencyDecimalProvider<'a, D1, D2>
-{
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<icu_decimal::provider::DecimalCompactShortV1>, DataError> {
-        self.1.load(req)
-    }
+macro_rules! impl_currency_decimal_provider_passthrough {
+    ($($marker:ty),+ $(,)?) => {
+        $(
+            impl<'a, D1: ?Sized, D2: ?Sized + DataProvider<$marker>> DataProvider<$marker>
+                for CurrencyDecimalProvider<'a, D1, D2>
+            {
+                fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                    self.1.load(req)
+                }
+            }
+        )+
+    };
 }
 
-impl<'a, D1: ?Sized, D2: ?Sized + DataProvider<icu_decimal::provider::DecimalCompactLongV1>>
-    DataProvider<icu_decimal::provider::DecimalCompactLongV1>
-    for CurrencyDecimalProvider<'a, D1, D2>
-{
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<icu_decimal::provider::DecimalCompactLongV1>, DataError> {
-        self.1.load(req)
-    }
-}
-
-impl<'a, D1: ?Sized, D2: ?Sized + DataProvider<icu_plurals::provider::PluralsCardinalV1>>
-    DataProvider<icu_plurals::provider::PluralsCardinalV1> for CurrencyDecimalProvider<'a, D1, D2>
-{
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<icu_plurals::provider::PluralsCardinalV1>, DataError> {
-        self.1.load(req)
-    }
-}
+impl_currency_decimal_provider_passthrough!(
+    icu_decimal::provider::DecimalCompactShortV1,
+    icu_decimal::provider::DecimalCompactLongV1,
+    icu_plurals::provider::PluralsCardinalV1,
+);
 
 #[cfg(feature = "compiled_data")]
 struct BakedCompactDecimalProvider;
 
 #[cfg(feature = "compiled_data")]
-impl DataProvider<icu_decimal::provider::DecimalSymbolsV1> for BakedCompactDecimalProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<icu_decimal::provider::DecimalSymbolsV1>, DataError> {
-        icu_decimal::provider::Baked.load(req)
-    }
+macro_rules! impl_baked_compact_decimal_provider {
+    ($($marker:ty => $provider:expr),+ $(,)?) => {
+        $(
+            impl DataProvider<$marker> for BakedCompactDecimalProvider {
+                fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                    $provider.load(req)
+                }
+            }
+        )+
+    };
 }
 
 #[cfg(feature = "compiled_data")]
-impl DataProvider<icu_decimal::provider::DecimalDigitsV1> for BakedCompactDecimalProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<icu_decimal::provider::DecimalDigitsV1>, DataError> {
-        icu_decimal::provider::Baked.load(req)
-    }
-}
-
-#[cfg(feature = "compiled_data")]
-impl DataProvider<icu_decimal::provider::DecimalCompactShortV1> for BakedCompactDecimalProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<icu_decimal::provider::DecimalCompactShortV1>, DataError> {
-        icu_decimal::provider::Baked.load(req)
-    }
-}
-
-#[cfg(feature = "compiled_data")]
-impl DataProvider<icu_decimal::provider::DecimalCompactLongV1> for BakedCompactDecimalProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<icu_decimal::provider::DecimalCompactLongV1>, DataError> {
-        icu_decimal::provider::Baked.load(req)
-    }
-}
-
-#[cfg(feature = "compiled_data")]
-impl DataProvider<icu_plurals::provider::PluralsCardinalV1> for BakedCompactDecimalProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<icu_plurals::provider::PluralsCardinalV1>, DataError> {
-        icu_plurals::provider::Baked.load(req)
-    }
-}
+impl_baked_compact_decimal_provider!(
+    icu_decimal::provider::DecimalSymbolsV1 => icu_decimal::provider::Baked,
+    icu_decimal::provider::DecimalDigitsV1 => icu_decimal::provider::Baked,
+    icu_decimal::provider::DecimalCompactShortV1 => icu_decimal::provider::Baked,
+    icu_decimal::provider::DecimalCompactLongV1 => icu_decimal::provider::Baked,
+    icu_plurals::provider::PluralsCardinalV1 => icu_plurals::provider::Baked,
+);
 
 impl CurrencyFormatter<CompactDecimalFormatter> {
     icu_provider::gen_buffer_data_constructors!(
