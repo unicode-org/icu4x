@@ -837,10 +837,12 @@ dependencies = [
 name = "dump-json"
 version = "0.0.0"
 dependencies = [
+ "crlify",
  "icu",
  "icu_provider",
  "icu_provider_registry",
  "icu_provider_source",
+ "rayon",
  "serde_json",
 ]
 

@@ -25,15 +25,12 @@ args = [
 description = "Run the testdata generation test in icu_provider_export"
 category = "ICU4X Data"
 command = "cargo"
-env = { ICU4X_WRITE_TESTDATA = "1" }
 args = [
-    "test",
-    "-p=icu_provider_source",
-    "--no-default-features",
-    "--features=use_wasm,unstable",
+    "run",
+    "-p=dump-json",
     "--",
-    "--nocapture",
-    "make_testdata",
+    "provider/source/tests/debug_set.txt",
+    "provider/source/data/debug/",
 ]
 
 [tasks.testdata-hello-world]
