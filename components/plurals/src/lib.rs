@@ -1178,3 +1178,9 @@ impl<T: PartialEq> PluralElements<T> {
         })
     }
 }
+
+/// A type that can be converted into [`PluralOperands`].
+pub trait PluralSubject {
+    /// Returns this value's [`PluralOperands`].
+    fn plural_operands(&self) -> PluralOperands;
+}
