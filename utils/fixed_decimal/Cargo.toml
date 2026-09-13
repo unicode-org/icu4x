@@ -41,6 +41,7 @@ criterion = { workspace = true }
 
 [features]
 ryu = ["dep:ryu"]
+unstable = []
 
 [lib]
 bench = false  # This option is required for Benchmark CI
