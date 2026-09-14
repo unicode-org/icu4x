@@ -10,8 +10,45 @@ use crate::provider::pattern::runtime;
 use crate::provider::range_patterns::RangePatternInfoBorrowed;
 use crate::provider::semantic_skeletons::GluePattern;
 use core::fmt;
-use writeable::{PartsWrite, Writeable};
+use core::fmt::Write;
+use writeable::{Part, PartsWrite, Writeable};
 use zerovec::ule::AsULE;
+
+/// Identifies the range endpoint that produced a span in
+/// [`FormattedDateRange::write_to_parts_with_source`].
+///
+/// Source annotations are represented as nested [`Part`]s with category
+/// [`DATE_RANGE_PART_SOURCE_CATEGORY`]. Consumers can associate every
+/// `datetime` part, and unannotated literal text between them, with the
+/// enclosing source span.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[non_exhaustive]
+pub enum DateRangePartSource {
+    /// The span is common to the complete range.
+    Shared,
+    /// The span was produced while formatting the range start.
+    StartRange,
+    /// The span was produced while formatting the range end.
+    EndRange,
+}
+
+/// The [`Part::category`] used by
+/// [`FormattedDateRange::write_to_parts_with_source`].
+pub const DATE_RANGE_PART_SOURCE_CATEGORY: &str = "datetime-range-source";
+
+impl DateRangePartSource {
+    /// Returns the [`Part`] annotation corresponding to this source.
+    pub const fn part(self) -> Part {
+        Part {
+            category: DATE_RANGE_PART_SOURCE_CATEGORY,
+            value: match self {
+                Self::Shared => "shared",
+                Self::StartRange => "startRange",
+                Self::EndRange => "endRange",
+            },
+        }
+    }
+}
 
 /// The formatting result of a date/time range.
 #[derive(Debug)]
@@ -47,6 +84,31 @@ impl Writeable for FormattedDateRange<'_> {
             FormattedDateRangeInner::GreatestDifference(x) => x.writeable_length_hint(),
             FormattedDateRangeInner::TimeRangeMixed(x) => x.writeable_length_hint(),
             FormattedDateRangeInner::Fallback(x) => x.writeable_length_hint(),
+        }
+    }
+}
+
+impl FormattedDateRange<'_> {
+    /// Writes the formatted range and annotates its spans with
+    /// [`DateRangePartSource`] [`Part`]s.
+    ///
+    /// This is the range-aware counterpart to [`Writeable::write_to_parts`].
+    /// The ordinary `datetime` parts remain unchanged; each range-owned span
+    /// is additionally nested in a part returned by
+    /// [`DateRangePartSource::part`].
+    pub fn write_to_parts_with_source<S: PartsWrite + ?Sized>(
+        &self,
+        sink: &mut S,
+    ) -> Result<(), fmt::Error> {
+        match &self.0 {
+            FormattedDateRangeInner::Single(x) => {
+                write_with_range_source(sink, DateRangePartSource::Shared, |sink| {
+                    x.write_to_parts(sink)
+                })
+            }
+            FormattedDateRangeInner::GreatestDifference(x) => x.write_to_parts_with_source(sink),
+            FormattedDateRangeInner::TimeRangeMixed(x) => x.write_to_parts_with_source(sink),
+            FormattedDateRangeInner::Fallback(x) => x.write_to_parts_with_source(sink),
         }
     }
 }
@@ -96,6 +158,55 @@ impl Writeable for FormattedGreatestDifference<'_> {
                     alignment: self.alignment,
                 };
                 write_glue_pattern(sink, self.glue, &start_side, &end_side)
+            }
+        }
+    }
+}
+
+impl FormattedGreatestDifference<'_> {
+    fn write_to_parts_with_source<S: PartsWrite + ?Sized>(
+        &self,
+        sink: &mut S,
+    ) -> Result<(), fmt::Error> {
+        match &self.pattern_info {
+            RangePatternInfoBorrowed::FullRange(pattern) => {
+                let (start_pattern, end_pattern) = pattern.split_on_repeated_field();
+                let start_side = FormattedSingleSide {
+                    datetime: &self.start,
+                    pattern: start_pattern,
+                    alignment: self.alignment,
+                };
+                let end_side = FormattedSingleSide {
+                    datetime: &self.end,
+                    pattern: end_pattern,
+                    alignment: self.alignment,
+                };
+                write_with_range_source(sink, DateRangePartSource::StartRange, |sink| {
+                    start_side.write_to_parts(sink)
+                })?;
+                write_with_range_source(sink, DateRangePartSource::EndRange, |sink| {
+                    end_side.write_to_parts(sink)
+                })
+            }
+            RangePatternInfoBorrowed::Symmetric(pattern) => {
+                let start_side = FormattedSingleSide {
+                    datetime: &self.start,
+                    pattern: *pattern,
+                    alignment: self.alignment,
+                };
+                let end_side = FormattedSingleSide {
+                    datetime: &self.end,
+                    pattern: *pattern,
+                    alignment: self.alignment,
+                };
+                write_glue_pattern_with_source(
+                    sink,
+                    self.glue,
+                    &start_side,
+                    DateRangePartSource::StartRange,
+                    &end_side,
+                    DateRangePartSource::EndRange,
+                )
             }
         }
     }
@@ -168,6 +279,38 @@ impl Writeable for FormattedTimeRangeMixed<'_> {
     }
 }
 
+impl FormattedTimeRangeMixed<'_> {
+    fn write_to_parts_with_source<S: PartsWrite + ?Sized>(
+        &self,
+        sink: &mut S,
+    ) -> Result<(), fmt::Error> {
+        for generic_item_ule in self.glue.pattern.items.as_ule_slice().iter() {
+            match generic_item_ule.as_pattern_item_ule() {
+                Ok(pattern_item_ule) => {
+                    let pattern_item = <PatternItem as AsULE>::from_unaligned(*pattern_item_ule);
+                    if let PatternItem::Literal(ch) = pattern_item {
+                        write_with_range_source(sink, DateRangePartSource::Shared, |sink| {
+                            sink.write_char(ch)
+                        })?;
+                    } else {
+                        debug_assert!(false, "Expected only literals in glue pattern");
+                    }
+                }
+                Err(0) => self.time_range.write_to_parts_with_source(sink)?,
+                Err(1) => {
+                    write_with_range_source(sink, DateRangePartSource::Shared, |sink| {
+                        self.date.write_to_parts(sink)
+                    })?;
+                }
+                Err(_) => {
+                    debug_assert!(false, "Unexpected placeholder index in glue pattern");
+                }
+            }
+        }
+        Ok(())
+    }
+}
+
 #[derive(Debug)]
 pub(crate) struct FormattedRangeFallback<'l> {
     pub(crate) start: FormattedDateTime<'l>,
@@ -179,6 +322,67 @@ impl Writeable for FormattedRangeFallback<'_> {
     fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> Result<(), fmt::Error> {
         write_glue_pattern(sink, self.glue, &self.start, &self.end)
     }
+}
+
+impl FormattedRangeFallback<'_> {
+    fn write_to_parts_with_source<S: PartsWrite + ?Sized>(
+        &self,
+        sink: &mut S,
+    ) -> Result<(), fmt::Error> {
+        write_glue_pattern_with_source(
+            sink,
+            self.glue,
+            &self.start,
+            DateRangePartSource::StartRange,
+            &self.end,
+            DateRangePartSource::EndRange,
+        )
+    }
+}
+
+fn write_with_range_source<W, F>(sink: &mut W, source: DateRangePartSource, write: F) -> fmt::Result
+where
+    W: PartsWrite + ?Sized,
+    F: FnMut(&mut W::SubPartsWrite) -> fmt::Result,
+{
+    sink.with_part(source.part(), write)
+}
+
+fn write_glue_pattern_with_source<W, S, E>(
+    sink: &mut W,
+    glue: &GluePattern<'_>,
+    start: &S,
+    start_source: DateRangePartSource,
+    end: &E,
+    end_source: DateRangePartSource,
+) -> fmt::Result
+where
+    W: PartsWrite + ?Sized,
+    S: Writeable + ?Sized,
+    E: Writeable + ?Sized,
+{
+    for generic_item_ule in glue.pattern.items.as_ule_slice().iter() {
+        match generic_item_ule.as_pattern_item_ule() {
+            Ok(pattern_item_ule) => {
+                let pattern_item = <PatternItem as AsULE>::from_unaligned(*pattern_item_ule);
+                if let PatternItem::Literal(ch) = pattern_item {
+                    write_with_range_source(sink, DateRangePartSource::Shared, |sink| {
+                        sink.write_char(ch)
+                    })?;
+                } else {
+                    debug_assert!(false, "Expected only literals in glue pattern");
+                }
+            }
+            Err(0) => {
+                write_with_range_source(sink, start_source, |sink| start.write_to_parts(sink))?
+            }
+            Err(1) => write_with_range_source(sink, end_source, |sink| end.write_to_parts(sink))?,
+            Err(_) => {
+                debug_assert!(false, "Unexpected placeholder index in glue pattern");
+            }
+        }
+    }
+    Ok(())
 }
 
 pub(crate) fn write_glue_pattern<W, S, E>(

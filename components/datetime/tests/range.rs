@@ -7,7 +7,72 @@ use icu_datetime::fieldsets;
 use icu_datetime::input::{DateTime, Time};
 use icu_datetime::range::{DateRangeFormatter, FixedCalendarDateRangeFormatter};
 use icu_locale_core::locale;
-use writeable::assert_writeable_eq;
+use std::fmt;
+use writeable::{Part, PartsWrite, assert_writeable_eq};
+
+#[derive(Default)]
+struct SourcePartWriter {
+    string: String,
+    parts: Vec<Part>,
+}
+
+impl fmt::Write for SourcePartWriter {
+    fn write_str(&mut self, value: &str) -> fmt::Result {
+        self.string.write_str(value)
+    }
+}
+
+impl PartsWrite for SourcePartWriter {
+    type SubPartsWrite = Self;
+
+    fn with_part(
+        &mut self,
+        part: Part,
+        mut write: impl FnMut(&mut Self::SubPartsWrite) -> fmt::Result,
+    ) -> fmt::Result {
+        let start = self.string.len();
+        write(self)?;
+        if start < self.string.len() {
+            self.parts.push(part);
+        }
+        Ok(())
+    }
+}
+
+#[test]
+fn test_date_range_parts_include_source() {
+    use icu_datetime::range::{
+        DATE_RANGE_PART_SOURCE_CATEGORY, DateRangePartSource, NoCalendarRangeFormatter,
+    };
+
+    let start = Time::try_new(9, 0, 0, 0).unwrap();
+    let end = Time::try_new(17, 0, 0, 0).unwrap();
+    let formatter =
+        NoCalendarRangeFormatter::try_new(locale!("en").into(), fieldsets::T::hm()).unwrap();
+    let formatted = formatter.format(&start, &end);
+    let mut writer = SourcePartWriter::default();
+
+    formatted.write_to_parts_with_source(&mut writer).unwrap();
+
+    assert_eq!(
+        writer.string,
+        "9:00\u{202f}AM\u{2009}–\u{2009}5:00\u{202f}PM"
+    );
+    for source in [
+        DateRangePartSource::StartRange,
+        DateRangePartSource::Shared,
+        DateRangePartSource::EndRange,
+    ] {
+        assert!(writer.parts.contains(&source.part()));
+    }
+    assert!(
+        writer
+            .parts
+            .iter()
+            .filter(|part| part.category == DATE_RANGE_PART_SOURCE_CATEGORY)
+            .all(|part| matches!(part.value, "shared" | "startRange" | "endRange"))
+    );
+}
 
 #[test]
 fn test_date_range_gregorian() {
@@ -376,10 +441,10 @@ fn test_date_range_ej() {
 // the hierarchy to `root` (`und`). CLDR's `root` defines interval patterns using English/ISO conventions
 // (e.g. `y MMM d–d`, `G y-MM-dd–y-MM-dd`). This causes two major categories of problems:
 //
-// 1. Missing Names: The `root` range pattern often contains
-//    symbols/lengths (such as `MMM` or `G`) that were not loaded by the single `DateTimeFormatter`
-//    (e.g., `zh` whose single date pattern uses numeric month `M`, or `YMD::long()` which loads
-//    `MMMM` but not `MMM`). This can lead to violations of assumptions.
+// 1. Name-width differences: The `root` range pattern can contain symbols or
+//    lengths (such as `MMM` or `G`) different from the ordinary formatter
+//    pattern (for example, `zh` uses numeric `M` for a single date). Range
+//    construction must load every name width referenced by the interval data.
 //
 // 2. Incorrect patterns: `root` patterns impose YMD order on
 //    locales that use Day-Month-Year (such as German, French, Spanish). The results
@@ -388,13 +453,10 @@ fn test_date_range_ej() {
 
 /// Chinese (zh) with `YMD::medium()`:
 /// Single date pattern is "y年M月d日" (numeric month 'M').
-/// Single `DateTimeFormatter` only loads numeric month data, not abbreviated month names ("MMM").
-/// But range pattern falls back to `root` (`und`), which specifies "y MMM d–d".
-/// When executing the `root` pattern, `FormattedSingleSide` fails with `NamesNotLoaded`.
-#[cfg(debug_assertions)]
+/// The root range pattern specifies `y MMM d–d`; its abbreviated month name
+/// must be loaded in addition to the numeric month data used for a single date.
 #[test]
-#[should_panic(expected = "unexpected error in FormattedSingleSide: NamesNotLoaded")]
-fn test_root_fallback_names_not_loaded_zh() {
+fn test_root_fallback_loads_additional_names_zh() {
     use icu_calendar::Date;
     use icu_datetime::fieldsets;
     use icu_datetime::input::{DateTime, Time};
@@ -412,16 +474,14 @@ fn test_root_fallback_names_not_loaded_zh() {
 
     let fmt_zh =
         DateRangeFormatter::try_new(locale!("zh").into(), fieldsets::YMD::medium()).unwrap();
-    let _ = fmt_zh.format(&start, &end_day).to_string();
+    assert!(!fmt_zh.format(&start, &end_day).to_string().is_empty());
 }
 
 /// Spanish with Hebrew calendar (es-u-ca-hebrew) and `YMD::long()`:
 /// Single `DateTimeFormatter` for `YMD::long()` loads full month names ("MMMM"), but range pattern
 /// falls back to `root` (`und`), which uses abbreviated month names ("MMM").
-#[cfg(debug_assertions)]
 #[test]
-#[should_panic(expected = "unexpected error in FormattedSingleSide: NamesNotLoaded")]
-fn test_root_fallback_names_not_loaded_es_hebrew() {
+fn test_root_fallback_loads_additional_names_es_hebrew() {
     use icu_calendar::Date;
     use icu_datetime::fieldsets;
     use icu_datetime::input::{DateTime, Time};
@@ -440,16 +500,19 @@ fn test_root_fallback_names_not_loaded_es_hebrew() {
     let fmt_es_hebrew =
         DateRangeFormatter::try_new(locale!("es-u-ca-hebrew").into(), fieldsets::YMD::long())
             .unwrap();
-    let _ = fmt_es_hebrew.format(&start, &end_day).to_string();
+    assert!(
+        !fmt_es_hebrew
+            .format(&start, &end_day)
+            .to_string()
+            .is_empty()
+    );
 }
 
 /// German with Buddhist calendar (de-u-ca-buddhist) and `YMD::long()`:
 /// Single `DateTimeFormatter` for `YMD::long()` loads full month names ("MMMM"), but range pattern
 /// falls back to `root` (`und`), which uses abbreviated month names ("MMM").
-#[cfg(debug_assertions)]
 #[test]
-#[should_panic(expected = "unexpected error in FormattedSingleSide: NamesNotLoaded")]
-fn test_root_fallback_names_not_loaded_de_buddhist() {
+fn test_root_fallback_loads_additional_names_de_buddhist() {
     use icu_calendar::Date;
     use icu_datetime::fieldsets;
     use icu_datetime::input::{DateTime, Time};
@@ -468,7 +531,12 @@ fn test_root_fallback_names_not_loaded_de_buddhist() {
     let fmt_de_buddhist =
         DateRangeFormatter::try_new(locale!("de-u-ca-buddhist").into(), fieldsets::YMD::long())
             .unwrap();
-    let _ = fmt_de_buddhist.format(&start, &end_day).to_string();
+    assert!(
+        !fmt_de_buddhist
+            .format(&start, &end_day)
+            .to_string()
+            .is_empty()
+    );
 }
 
 #[test]

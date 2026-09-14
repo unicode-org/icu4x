@@ -13,6 +13,7 @@ use crate::external_loaders::{
 };
 use crate::fieldsets::enums::CompositeFieldSet;
 use crate::format::DateTimeInputUnchecked;
+use crate::pattern::DateTimeNamesMetadata;
 use crate::provider::range_patterns::DatetimePatternsRangeGlueV1;
 use crate::range::formatter_impl::RangeFormatterCore;
 use crate::range::write::FormattedDateRange;
@@ -86,7 +87,7 @@ where
             + AllAnyCalendarRangePatternDataMarkers<FSet>,
     {
         let field = field_set_with_options.get_field();
-        let datetime_formatter =
+        let mut datetime_formatter =
             DateTimeFormatter::try_new_internal(provider, external_loader, prefs, field)?;
 
         let range_selection = DateTimeZoneRangePatternSelectionData::try_new_with_skeleton(
@@ -100,6 +101,39 @@ where
             field,
         )
         .map_err(DateTimeFormatterLoadError::Data)?;
+
+        let mut names_metadata =
+            DateTimeNamesMetadata::new_from_previous(&datetime_formatter.names);
+        datetime_formatter
+            .names
+            .load_for_pattern(
+                &FormattableAnyCalendarNamesLoader::<<FSet::D as DateDataMarkers>::Year, _>::new(
+                    provider,
+                    &datetime_formatter.calendar,
+                ),
+                &FormattableAnyCalendarNamesLoader::<<FSet::D as DateDataMarkers>::Month, _>::new(
+                    provider,
+                    &datetime_formatter.calendar,
+                ),
+                &<FSet::D as DateDataMarkers>::WeekdayNamesV1::bind(provider),
+                &<FSet::T as TimeMarkers>::DayPeriodNamesV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::EssentialsV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::LocationsV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::LocationsRootV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::ExemplarCitiesRootV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::ExemplarCitiesV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::GenericLongV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::GenericShortV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::StandardLongV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::SpecificLongV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::SpecificShortV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::MetazonePeriodV1::bind(provider),
+                external_loader,
+                prefs,
+                range_selection.pattern_items_for_data_loading(),
+                &mut names_metadata,
+            )
+            .map_err(DateTimeFormatterLoadError::Names)?;
 
         Ok(Self {
             datetime_formatter,
@@ -277,7 +311,7 @@ where
             + AllFixedCalendarRangePatternDataMarkers<C, FSet>,
     {
         let field = field_set_with_options.get_field();
-        let datetime_formatter = FixedCalendarDateTimeFormatter::try_new_internal(
+        let mut datetime_formatter = FixedCalendarDateTimeFormatter::try_new_internal(
             provider,
             external_loader,
             prefs,
@@ -292,6 +326,33 @@ where
             field,
         )
         .map_err(DateTimeFormatterLoadError::Data)?;
+
+        let mut names_metadata =
+            DateTimeNamesMetadata::new_from_previous(&datetime_formatter.names);
+        datetime_formatter
+            .names
+            .load_for_pattern(
+                &<FSet::D as TypedDateDataMarkers<C>>::YearNamesV1::bind(provider),
+                &<FSet::D as TypedDateDataMarkers<C>>::MonthNamesV1::bind(provider),
+                &<FSet::D as TypedDateDataMarkers<C>>::WeekdayNamesV1::bind(provider),
+                &<FSet::T as TimeMarkers>::DayPeriodNamesV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::EssentialsV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::LocationsV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::LocationsRootV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::ExemplarCitiesV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::ExemplarCitiesRootV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::GenericLongV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::GenericShortV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::StandardLongV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::SpecificLongV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::SpecificShortV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::MetazonePeriodV1::bind(provider),
+                external_loader,
+                prefs,
+                range_selection.pattern_items_for_data_loading(),
+                &mut names_metadata,
+            )
+            .map_err(DateTimeFormatterLoadError::Names)?;
 
         Ok(Self {
             datetime_formatter,

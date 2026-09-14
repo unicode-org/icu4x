@@ -261,33 +261,13 @@ where
         Self: Sized,
     {
         let arg_variables = variables;
-        match &self.inner {
-            OptionalNames::SingleLength { variables, .. } if arg_variables == *variables => {
-                // NOTE: We don't store the checksum so we can't recover it. See #6063
-                return Ok(Ok(Default::default()));
-            }
-            OptionalNames::SingleLength { variables, .. } => {
-                let loaded_field = match variables.maybe_as_error_field() {
-                    Some(x) => x,
-                    None => {
-                        debug_assert!(false, "all non-unit variables implement this trait");
-                        use crate::provider::fields::*;
-                        ErrorField(Field {
-                            symbol: FieldSymbol::Era,
-                            length: FieldLength::Six,
-                        })
-                    }
-                };
-                return Err(MaybePayloadError::ConflictingField(loaded_field));
-            }
-            OptionalNames::None => (),
-        };
+        if self.inner.contains_variables(arg_variables) {
+            // NOTE: We don't store the checksum so we can't recover it. See #6063
+            return Ok(Ok(Default::default()));
+        }
         match provider.load_bound(req) {
             Ok(response) => {
-                self.inner = OptionalNames::SingleLength {
-                    payload: response.payload,
-                    variables: arg_variables,
-                };
+                self.inner.insert(arg_variables, response.payload)?;
                 Ok(Ok(response.metadata))
             }
             Err(e) => Ok(Err(e)),
@@ -325,15 +305,36 @@ impl<M: DynamicDataMarker, Variables> MaybePayload<M, Variables> for () {
     }
 }
 
-/// This can be extended in the future to support multiple lengths.
-/// For now, this type wraps a symbols object tagged with a single length. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
+/// The maximum number of distinct CLDR name contexts and widths for one field.
+///
+/// Month and weekday names each expose eight combinations (format/stand-alone
+/// times four widths), which is the largest currently modeled set.
+const MAX_NAME_VARIANTS: usize = 8;
+
+/// Stores all localized name payloads requested by date, time, or interval
+/// patterns for a formatter.
 #[derive(Debug, Copy, Clone)]
 pub(crate) enum OptionalNames<Variables, Payload> {
     None,
-    SingleLength {
-        variables: Variables,
-        payload: Payload,
+    MultipleLengths {
+        entries: [Option<(Variables, Payload)>; MAX_NAME_VARIANTS],
     },
+}
+
+impl<Variables, Payload> OptionalNames<Variables, Payload>
+where
+    Variables: Copy + PartialEq,
+{
+    #[inline]
+    fn contains_variables(&self, arg_variables: Variables) -> bool {
+        match self {
+            Self::None => false,
+            Self::MultipleLengths { entries } => entries
+                .iter()
+                .flatten()
+                .any(|(variables, _)| arg_variables == *variables),
+        }
+    }
 }
 
 impl<Variables, Payload> OptionalNames<Variables, Payload>
@@ -344,10 +345,10 @@ where
     pub(crate) fn get_with_variables(&self, arg_variables: Variables) -> Option<Payload> {
         match self {
             Self::None => None,
-            Self::SingleLength { variables, payload } if arg_variables == *variables => {
-                Some(*payload)
-            }
-            _ => None,
+            Self::MultipleLengths { entries } => entries
+                .iter()
+                .flatten()
+                .find_map(|(variables, payload)| (arg_variables == *variables).then_some(*payload)),
         }
     }
 
@@ -356,8 +357,43 @@ where
     pub(crate) fn get_any(&self) -> Option<Payload> {
         match self {
             Self::None => None,
-            Self::SingleLength { payload, .. } => Some(*payload),
+            Self::MultipleLengths { entries } => {
+                entries.first()?.as_ref().map(|(_, payload)| *payload)
+            }
         }
+    }
+}
+
+impl<Variables, Payload> OptionalNames<Variables, Payload>
+where
+    Variables: Copy + PartialEq + MaybeAsErrorField,
+{
+    fn insert(&mut self, variables: Variables, payload: Payload) -> Result<(), MaybePayloadError> {
+        let entries = match self {
+            Self::None => {
+                *self = Self::MultipleLengths {
+                    entries: [const { None }; MAX_NAME_VARIANTS],
+                };
+                let Self::MultipleLengths { entries } = self else {
+                    unreachable!("an empty name store becomes a multi-name store");
+                };
+                entries
+            }
+            Self::MultipleLengths { entries } => entries,
+        };
+        if let Some(entry) = entries.iter_mut().find(|entry| entry.is_none()) {
+            *entry = Some((variables, payload));
+            return Ok(());
+        }
+
+        let field = variables.maybe_as_error_field().unwrap_or_else(|| {
+            use crate::provider::fields::*;
+            ErrorField(Field {
+                symbol: FieldSymbol::Era,
+                length: FieldLength::Six,
+            })
+        });
+        Err(MaybePayloadError::ConflictingField(field))
     }
 }
 
@@ -367,10 +403,9 @@ where
 {
     pub(crate) fn get_option(&self) -> Option<Payload> {
         match self {
-            Self::SingleLength {
-                variables: (),
-                payload,
-            } => Some(*payload),
+            Self::MultipleLengths { entries } => {
+                entries.iter().flatten().next().map(|(_, payload)| *payload)
+            }
             _ => None,
         }
     }
@@ -386,9 +421,12 @@ where
     ) -> OptionalNames<Variables, &'a <M::DataStruct as Yokeable<'a>>::Output> {
         match self {
             Self::None => OptionalNames::None,
-            Self::SingleLength { variables, payload } => OptionalNames::SingleLength {
-                variables: *variables,
-                payload: payload.get(),
+            Self::MultipleLengths { entries } => OptionalNames::MultipleLengths {
+                entries: entries.each_ref().map(|entry| {
+                    entry
+                        .as_ref()
+                        .map(|(variables, payload)| (*variables, payload.get()))
+                }),
             },
         }
     }

@@ -8,7 +8,7 @@ pub(crate) mod formatter_impl;
 pub(crate) mod write;
 
 pub use formatter::{DateRangeFormatter, FixedCalendarDateRangeFormatter};
-pub use write::FormattedDateRange;
+pub use write::{DATE_RANGE_PART_SOURCE_CATEGORY, DateRangePartSource, FormattedDateRange};
 
 /// A range formatter optimized for time and time zone formatting, when a calendar is not needed.
 pub type NoCalendarRangeFormatter<FSet> = FixedCalendarDateRangeFormatter<(), FSet>;

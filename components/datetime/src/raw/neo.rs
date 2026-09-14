@@ -260,6 +260,15 @@ impl DateRangePatternSelectionData {
 
         ule.get_date_pattern(field)
     }
+
+    /// Returns every interval-pattern item that can be selected for this date skeleton.
+    pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
+        self.payload
+            .get_option()
+            .into_iter()
+            .flat_map(|payload| payload.elements.iter())
+            .flat_map(|patterns| patterns.pattern_items_for_data_loading())
+    }
 }
 
 impl DateTimeInputUnchecked {
@@ -564,6 +573,15 @@ impl TimeRangePatternSelectionData {
         let ule = payload.get_element(options.length(), variant)?;
 
         ule.get_time_pattern(field)
+    }
+
+    /// Returns every interval-pattern item that can be selected for this time skeleton.
+    pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
+        self.payload
+            .get_option()
+            .into_iter()
+            .flat_map(|payload| payload.elements.iter())
+            .flat_map(|patterns| patterns.pattern_items_for_data_loading())
     }
 }
 
@@ -888,6 +906,13 @@ impl DateTimeZoneRangePatternSelectionData {
             time_range,
             range_glue,
         })
+    }
+
+    /// Returns every interval-pattern item that can be selected for this skeleton.
+    pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
+        self.date_range
+            .pattern_items_for_data_loading()
+            .chain(self.time_range.pattern_items_for_data_loading())
     }
 }
 

@@ -7,6 +7,7 @@
 #[cfg(feature = "datagen")]
 use crate::provider::packed_pattern::GenericUnpackedPatterns;
 use crate::provider::packed_pattern::{GenericPackedPatterns, PackedPatternsBuilderHelper};
+use crate::provider::pattern::PatternItem;
 use crate::provider::pattern::runtime::PatternBorrowed;
 use crate::provider::pattern::runtime::{Pattern, PatternULE};
 use icu_provider::prelude::*;
@@ -272,6 +273,18 @@ fn resolve_fallback(header: GreatestDifferenceHeader, requested: u8, max_value: 
 }
 
 impl PatternsByGreatestDifferenceULE {
+    /// Returns every pattern item that can occur in this interval pattern set.
+    ///
+    /// This is used by the formatter to load names for all CLDR interval
+    /// patterns, not only the ordinary date/time pattern for a skeleton.
+    pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
+        self.patterns.iter().flat_map(|pattern_ule| {
+            <PatternBorrowed as ZeroFrom<PatternULE>>::zero_from(pattern_ule)
+                .items
+                .iter()
+        })
+    }
+
     fn get_pattern_internal<'a>(&'a self, resolved_field_idx: u8) -> RangePatternInfoBorrowed<'a> {
         use zerovec::ule::AsULE;
         let header = <GreatestDifferenceHeader as AsULE>::from_unaligned(self.header);
