@@ -163,7 +163,6 @@ impl DecimalSymbolsV1 {
     }
 
     /// Parses attributes for this marker into parts.
-    #[cfg(feature = "datagen")]
     pub fn parse_attributes(a: &DataMarkerAttributes) -> Option<Subtag> {
         Subtag::try_from_str(a.as_str()).ok()
     }
