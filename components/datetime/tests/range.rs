@@ -117,6 +117,18 @@ fn test_date_range_gregorian() {
         );
     }
 
+    // CLDR supplies English day-interval data for yMMMd, but not yMMMMd. The
+    // matched range pattern must retain the long month selected by YMD::long.
+    {
+        let fmt =
+            FixedCalendarDateRangeFormatter::try_new(locale!("en").into(), fieldsets::YMD::long())
+                .unwrap();
+        assert_writeable_eq!(
+            fmt.format(&start, &end_next_day),
+            "December 22\u{2009}–\u{2009}23, 2023"
+        );
+    }
+
     // 2. Time-only range (HM)
     {
         let fmt =

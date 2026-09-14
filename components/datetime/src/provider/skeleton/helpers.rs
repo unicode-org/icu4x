@@ -365,7 +365,12 @@ fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
 /// Alters given Pattern so that its fields have the same length as 'fields'.
 ///
 ///  For example the "d MMM y" pattern will be changed to "d MMMM y" given fields ["y", "MMMM", "d"].
-fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut runtime::Pattern) {
+/// Adjusts field widths in a matched pattern to the requested skeleton.
+///
+/// Datagen uses this after selecting a closest available CLDR skeleton. Range
+/// pattern generation uses the same UTS 35 resolution step.
+#[cfg(feature = "datagen")]
+pub fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut runtime::Pattern) {
     runtime::helpers::maybe_replace(pattern, |item| {
         if let PatternItem::Field(pattern_field) = item
             && let Some(requested_field) = fields

@@ -60,7 +60,6 @@ pub struct Field {
 
 impl Field {
     /// Returns whether the field length represents text or numeric.
-    #[cfg(feature = "datagen")]
     pub fn get_length_type(self) -> TextOrNumeric {
         match self.symbol {
             FieldSymbol::Era => TextOrNumeric::Text,

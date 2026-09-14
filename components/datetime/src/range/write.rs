@@ -228,7 +228,7 @@ impl Writeable for FormattedSingleSide<'_, '_> {
             match item {
                 PatternItem::Literal(ch) => sink.write_char(ch)?,
                 PatternItem::Field(field) => {
-                    let mut field = field;
+                    let mut field = self.field_with_normal_width(field);
                     let alignment = self.alignment.unwrap_or_default();
                     if matches!(alignment, Alignment::Column)
                         && field.length == fields::FieldLength::One
@@ -263,6 +263,31 @@ impl Writeable for FormattedSingleSide<'_, '_> {
             }
         }
         Ok(())
+    }
+}
+
+impl FormattedSingleSide<'_, '_> {
+    /// Interval data often has only one width for a given skeleton. Apply the
+    /// width selected for the ordinary formatter after that interval pattern
+    /// has been matched, as required by UTS 35 skeleton resolution.
+    fn field_with_normal_width(&self, field: fields::Field) -> fields::Field {
+        let Some(normal_field) = self.datetime.pattern.iter_items().find_map(|item| {
+            let PatternItem::Field(normal_field) = item else {
+                return None;
+            };
+            (normal_field.symbol.skeleton_cmp(field.symbol).is_eq()).then_some(normal_field)
+        }) else {
+            return field;
+        };
+
+        if normal_field.get_length_type() == field.get_length_type() {
+            fields::Field {
+                length: normal_field.length,
+                ..field
+            }
+        } else {
+            field
+        }
     }
 }
 

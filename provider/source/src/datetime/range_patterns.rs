@@ -18,7 +18,8 @@ use icu::datetime::provider::pattern::runtime::{GenericPattern, Pattern};
 use icu::datetime::provider::range_patterns::*;
 use icu::datetime::provider::semantic_skeletons::GluePattern;
 use icu::datetime::provider::skeleton::{
-    find_best_skeleton, is_bad_match_for_single_field, reference::Skeleton,
+    adjust_pattern_field_lengths, find_best_skeleton, is_bad_match_for_single_field,
+    reference::Skeleton,
 };
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use icu_pattern::{DoublePlaceholderPattern, PatternItem as ParserPatternItem};
@@ -59,7 +60,7 @@ impl<'a> PackedPatternItem for PatternsByGreatestDifference<'a> {
         let matched = match_range_skeleton(context, fields);
         // Fall back to placeholder PGD that triggers fallback to glue pattern in runtime
         matched
-            .map(|(_, pgd)| pgd.clone())
+            .map(|(_, pgd)| adjust_range_pattern_field_lengths(pgd, fields))
             .unwrap_or(PatternsByGreatestDifference {
                 header: GreatestDifferenceHeader::new(0),
                 patterns: zerovec::VarZeroVec::new(),
@@ -350,6 +351,32 @@ fn match_range_skeleton<'a, 'data>(
     }
 
     Some((matched.skeleton, matched.value))
+}
+
+/// Applies UTS 35 skeleton-width resolution to every pattern in an interval set.
+///
+/// CLDR interval data deliberately omits some width variants. For example, English
+/// has `yMMMd` interval patterns but not a separate `yMMMMd` entry. Once the best
+/// range skeleton has been selected, its fields must therefore be widened to the
+/// requested skeleton, just as ordinary available-format patterns are.
+fn adjust_range_pattern_field_lengths(
+    patterns: &PatternsByGreatestDifference<'_>,
+    fields: &[Field],
+) -> PatternsByGreatestDifference<'static> {
+    let adjusted = patterns
+        .patterns
+        .iter()
+        .map(|pattern| {
+            let mut pattern = Pattern::zero_from(pattern);
+            adjust_pattern_field_lengths(fields, &mut pattern);
+            pattern
+        })
+        .collect::<Vec<Pattern>>();
+
+    PatternsByGreatestDifference {
+        header: patterns.header,
+        patterns: zerovec::VarZeroVec::from(adjusted.as_slice()),
+    }
 }
 
 impl SourceDataProvider {
