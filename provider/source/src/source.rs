@@ -8,9 +8,7 @@ use std::any::Any;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 use std::fmt::Debug;
-#[cfg(feature = "networking")]
 use std::fs::File;
-#[cfg(feature = "networking")]
 use std::io::BufWriter;
 use std::io::Cursor;
 use std::io::Read;
@@ -454,14 +452,16 @@ impl TzdbCache {
     pub(crate) fn parsed(&self) -> Result<&Tzdb, DataError> {
         self.transitions
             .get_or_init(|| {
-                fn parse(lines: Vec<String>) -> parse_zoneinfo::table::Table {
+                fn parse<S: AsRef<str>, I: Iterator<Item = S>>(
+                    lines: I,
+                ) -> parse_zoneinfo::table::Table {
                     use parse_zoneinfo::line::Line;
                     use parse_zoneinfo::table::TableBuilder;
 
                     let mut table = TableBuilder::new();
 
                     for line in lines {
-                        match Line::new(&line).unwrap() {
+                        match Line::new(line.as_ref()).unwrap() {
                             Line::Zone(zone) => table.add_zone_line(zone).unwrap(),
                             Line::Continuation(cont) => table.add_continuation_line(cont).unwrap(),
                             Line::Rule(rule) => table.add_rule_line(rule).unwrap(),
@@ -473,53 +473,56 @@ impl TzdbCache {
                     table.build()
                 }
 
+                fn try_ziguard(
+                    dataform: &str,
+                    script: &Path,
+                    lines: &Path,
+                ) -> Option<parse_zoneinfo::table::Table> {
+                    let output = std::process::Command::new("awk")
+                        .args(["-v", dataform, "-f"])
+                        .arg(script)
+                        .arg(lines)
+                        .stderr(std::process::Stdio::inherit())
+                        .output()
+                        .ok()?;
+                    if !output.status.success() {
+                        return None;
+                    }
+                    Some(parse(str::from_utf8(&output.stdout).ok()?.lines()))
+                }
+
+                let ziguard_path = std::env::temp_dir().join("ziguard.awk");
+                let lines_path = std::env::temp_dir().join("lines");
+                let mut lines_file = BufWriter::new(File::create(&lines_path)?);
+
+                let lines = [
+                    "africa",
+                    "antarctica",
+                    "asia",
+                    "australasia",
+                    "europe",
+                    "northamerica",
+                    "southamerica",
+                    "etcetera",
+                    "factory",
+                    "backward",
+                ]
+                .into_iter()
+                .try_fold(Vec::new(), |mut lines, file| {
+                    let file = self.root.read_to_string(file)?;
+                    use std::io::Write;
+                    writeln!(lines_file, "{file}")?;
+                    lines.extend(file.lines().map(ToOwned::to_owned));
+                    Ok::<_, DataError>(lines)
+                })?;
+
+                std::fs::write(&ziguard_path, self.root.read_to_buf("ziguard.awk")?)?;
+                drop(lines_file);
+
                 Ok(Tzdb {
-                    main: parse(
-                        [
-                            "africa",
-                            "antarctica",
-                            "asia",
-                            "australasia",
-                            "europe",
-                            "northamerica",
-                            "southamerica",
-                            "etcetera",
-                            "factory",
-                            "backward",
-                        ]
-                        .into_iter()
-                        .try_fold(Vec::new(), |mut lines, file| {
-                            lines.extend(
-                                self.root
-                                    .read_to_string(file)?
-                                    .lines()
-                                    .map(ToOwned::to_owned),
-                            );
-                            Ok::<_, DataError>(lines)
-                        })?,
-                    ),
-
-                    rearguard: self.root.file_exists("rearguard.zi")?.then(|| {
-                        parse(
-                            self.root
-                                .read_to_string("rearguard.zi")
-                                .unwrap()
-                                .lines()
-                                .map(ToOwned::to_owned)
-                                .collect(),
-                        )
-                    }),
-
-                    vanguard: self.root.file_exists("vanguard.zi")?.then(|| {
-                        parse(
-                            self.root
-                                .read_to_string("vanguard.zi")
-                                .unwrap()
-                                .lines()
-                                .map(ToOwned::to_owned)
-                                .collect(),
-                        )
-                    }),
+                    main: parse(lines.iter()),
+                    rearguard: try_ziguard("DATAFORM=rearguard", &ziguard_path, &lines_path),
+                    vanguard: try_ziguard("DATAFORM=vanguard", &ziguard_path, &lines_path),
                 })
             })
             .as_ref()

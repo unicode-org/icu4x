@@ -10,7 +10,6 @@ use std::collections::BTreeSet;
 use std::fs::File;
 use std::io::{BufRead, BufReader, Write};
 use std::path::Path;
-use std::process::Command;
 
 include!("../../tests/globs.rs.data");
 include!("../../tests/locales.rs.data");
@@ -139,7 +138,7 @@ fn download_repo_sources() {
     )
     .unwrap();
 
-    let mut tzdb_files = provider
+    let tzdb_files = provider
         .tzdb()
         .unwrap()
         .root
@@ -148,36 +147,6 @@ fn download_repo_sources() {
             TZDB_GLOB.iter().copied().map(String::from).collect(),
         )
         .unwrap();
-    let gen_files = ["rearguard.zi".into(), "vanguard.zi".into()];
-    Command::new("make")
-        .arg("-C")
-        .arg(out_root.join("tzdb"))
-        .args(&gen_files)
-        .status()
-        .unwrap();
-    tzdb_files.extend(gen_files);
-    std::io::copy(
-        &mut std::fs::read_to_string(out_root.join("tzdb/rearguard.zi"))
-            .unwrap()
-            .as_bytes(),
-        &mut crlify::BufWriterWithLineEndingFix::new(
-            File::create(out_root.join("tzdb/rearguard.zi")).unwrap(),
-        ),
-    )
-    .unwrap();
-    std::io::copy(
-        &mut std::fs::read_to_string(out_root.join("tzdb/vanguard.zi"))
-            .unwrap()
-            .as_bytes(),
-        &mut crlify::BufWriterWithLineEndingFix::new(
-            File::create(out_root.join("tzdb/vanguard.zi")).unwrap(),
-        ),
-    )
-    .unwrap();
-    std::fs::remove_file(out_root.join("tzdb/Makefile")).unwrap();
-    std::fs::remove_file(out_root.join("tzdb/ziguard.awk")).unwrap();
-    tzdb_files.remove("Makefile");
-    tzdb_files.remove("ziguard.awk");
 
     let [
         cldr_files,
