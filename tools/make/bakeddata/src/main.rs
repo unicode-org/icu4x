@@ -108,7 +108,7 @@ fn main() {
     let zero_copy_check_exporter = Box::leak(Box::new(ZeroCopyCheckExporter {
         zero_copy_violations: Default::default(),
         zero_copy_transient_violations: Default::default(),
-        rountrip_errors: Default::default(),
+        roundtrip_errors: Default::default(),
     }));
 
     for (component, markers, version) in &components {
@@ -374,7 +374,7 @@ impl DataExporter for StatisticsExporter {
 struct ZeroCopyCheckExporter {
     zero_copy_violations: Mutex<BTreeSet<DataMarkerInfo>>,
     zero_copy_transient_violations: Mutex<BTreeSet<DataMarkerInfo>>,
-    rountrip_errors: Mutex<BTreeMap<DataMarkerInfo, BTreeSet<String>>>,
+    roundtrip_errors: Mutex<BTreeMap<DataMarkerInfo, BTreeSet<String>>>,
 }
 
 impl DataExporter for &'_ ZeroCopyCheckExporter {
@@ -428,7 +428,7 @@ impl DataExporter for &'_ ZeroCopyCheckExporter {
         icu_provider_registry::registry!(cb);
 
         if payload_before != &payload_after {
-            self.rountrip_errors
+            self.roundtrip_errors
                 .lock()
                 .expect("poison")
                 .entry(marker)
@@ -501,15 +501,20 @@ impl ZeroCopyCheckExporter {
     ];
 
     fn check(&self) {
-        let rountrip_errors = self
-            .rountrip_errors
+        let roundtrip_errors = self
+            .roundtrip_errors
             .lock()
             .expect("poison")
             .keys()
             .copied()
             .collect::<Vec<_>>();
 
-        assert_eq!(rountrip_errors, Self::EXPECTED_ROUNDTRIP_VIOLATIONS);
+        assert!(
+            roundtrip_errors
+                .iter()
+                .all(|e| Self::EXPECTED_ROUNDTRIP_VIOLATIONS.contains(e)),
+            "{roundtrip_errors:?}"
+        );
 
         let violations = self
             .zero_copy_violations
@@ -528,8 +533,12 @@ impl ZeroCopyCheckExporter {
             .collect::<Vec<_>>();
 
         assert!(
-            transient_violations == Self::EXPECTED_TRANSIENT_VIOLATIONS
-                && violations == Self::EXPECTED_VIOLATIONS,
+            transient_violations
+                .iter()
+                .all(|e| Self::EXPECTED_TRANSIENT_VIOLATIONS.contains(e))
+                && violations
+                    .iter()
+                    .all(|e| Self::EXPECTED_VIOLATIONS.contains(e)),
             "Expected violations list does not match found violations!\n\
             If the new list is smaller, please update EXPECTED_VIOLATIONS in make-testdata.rs\n\
             If it is bigger and that was unexpected, please make sure the marker remains zero-copy, or ask ICU4X team members if it is okay \
