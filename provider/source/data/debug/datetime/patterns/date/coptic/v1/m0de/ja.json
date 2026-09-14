@@ -11,7 +11,7 @@
   ],
   "elements": [
     "M月d日(EEEE)",
-    "M月dd日(E)",
+    "M月d日(E)",
     "M/d(E)"
   ]
 }

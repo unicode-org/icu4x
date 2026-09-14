@@ -570,9 +570,19 @@ pub(crate) fn gen_date_components(
     if check_for_field(attributes, "d") {
         filtered_components.day = date_bag.day;
     }
-    if check_for_field(attributes, "d") && !check_for_field(attributes, "m0") {
-        // override the day field to use the skeleton day length
-        filtered_components.day = Some(components::Day::NumericDayOfMonth);
+    if check_for_field(attributes, "d") && !check_for_field(attributes, "y") {
+        // day without year: always select numeric day for Medium and Long (e.g. dMMM, dMMMM)
+        match length {
+            Length::Long | Length::Medium => {
+                filtered_components.day = Some(components::Day::NumericDayOfMonth);
+            }
+            Length::Short if !check_for_field(attributes, "m0") => {
+                // standalone day: use numeric for short
+                filtered_components.day = Some(components::Day::NumericDayOfMonth);
+            }
+            Length::Short => (),
+            _ => unreachable!(),
+        }
     }
     if check_for_field(attributes, "e") {
         // Not all length patterns have the weekday
