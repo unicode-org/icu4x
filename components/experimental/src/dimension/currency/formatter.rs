@@ -852,9 +852,7 @@ struct WrappingProvider<'a, D1: ?Sized, D2: ?Sized>(&'a D1, &'a D2, CurrencyType
 impl<
     'a,
     D1: ?Sized + DataProvider<CurrencyDecimalSymbolsV1>,
-    D2: ?Sized
-        + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
-        + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
+    D2: ?Sized + DataProvider<icu_decimal::provider::DecimalSymbolsV1>,
 > DataProvider<icu_decimal::provider::DecimalSymbolsV1> for WrappingProvider<'a, D1, D2>
 {
     fn load(
@@ -890,13 +888,8 @@ impl<
     }
 }
 
-impl<
-    'a,
-    D1: ?Sized + DataProvider<CurrencyDecimalSymbolsV1>,
-    D2: ?Sized
-        + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
-        + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
-> DataProvider<icu_decimal::provider::DecimalDigitsV1> for WrappingProvider<'a, D1, D2>
+impl<'a, D1: ?Sized, D2: ?Sized + DataProvider<icu_decimal::provider::DecimalDigitsV1>>
+    DataProvider<icu_decimal::provider::DecimalDigitsV1> for WrappingProvider<'a, D1, D2>
 {
     fn load(
         &self,
