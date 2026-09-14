@@ -739,8 +739,7 @@ pub fn tzdb_data() -> AbstractFs {
         "europe",
         "factory",
         "northamerica",
-        "rearguard.zi",
         "southamerica",
-        "vanguard.zi"
+        "ziguard.awk"
     )
 }
