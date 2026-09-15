@@ -696,7 +696,7 @@ dependencies = [
 
 [[package]]
 name = "databake-derive"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "databake",
  "proc-macro2",
@@ -4260,7 +4260,7 @@ dependencies = [
 
 [[package]]
 name = "yoke-derive"
-version = "0.8.2"
+version = "0.8.3"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -4299,7 +4299,7 @@ dependencies = [
 
 [[package]]
 name = "zerofrom-derive"
-version = "0.1.7"
+version = "0.1.8"
 dependencies = [
  "proc-macro2",
  "quote",
