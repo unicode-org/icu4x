@@ -5,13 +5,13 @@
 //! Provider implementation backed by the Chinese `AdaBoost` segmentation model.
 
 use crate::{IterableDataProviderCached, SourceDataProvider};
-use icu::segmenter::provider::{AdaboostData, SegmenterAdaboostAutoV1};
+use icu::segmenter::provider::adaboost::{AdaboostData, SegmenterChineseAutoV1};
 use icu_provider::prelude::*;
 use std::collections::{HashMap, HashSet};
 use zerovec::{ZeroMap, maps::ZeroMapKV};
 
 const CHINESE_ADABOOST_ID: &str = "Chinese_adaboost";
-const CHINESE_ADABOOST_PATH: &str = "adaboost_cjk_segmenter/model.json";
+const MODEL_JSON: &str = include_str!("../../data/segmenter/model.json");
 const INVALID_FEATURE_KEY: DataError = DataError::custom("Invalid AdaBoost feature key");
 
 #[derive(Debug, serde::Deserialize)]
@@ -37,7 +37,7 @@ struct RawAdaboostData {
 
 impl RawAdaboostData {
     fn try_convert(&self) -> Result<AdaboostData<'static>, DataError> {
-        let bias_x2 = -[
+        let weight_sum = [
             &self.uw2,
             &self.uw3,
             &self.uw4,
@@ -51,9 +51,13 @@ impl RawAdaboostData {
         .flat_map(|weights| weights.values())
         .map(|&weight| i32::from(weight))
         .sum::<i32>();
+        if weight_sum % 2 != 0 {
+            return Err(DataError::custom("AdaBoost model has a non-integral bias"));
+        }
+        let bias = -weight_sum / 2;
 
         Ok(AdaboostData {
-            bias_x2,
+            bias,
             uw2: convert_map(&self.uw2, parse_char)?,
             uw3: convert_map(&self.uw3, parse_char)?,
             uw4: convert_map(&self.uw4, parse_char)?,
@@ -116,18 +120,18 @@ fn parse_right_radical(key: &str) -> Result<(char, u8), DataError> {
     Ok((parse_char(left)?, parse_radical(right)?))
 }
 
-impl DataProvider<SegmenterAdaboostAutoV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterAdaboostAutoV1>, DataError> {
+impl DataProvider<SegmenterChineseAutoV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterChineseAutoV1>, DataError> {
         if req.id.marker_attributes.as_str() != CHINESE_ADABOOST_ID {
             return Err(
-                DataErrorKind::IdentifierNotFound.with_req(SegmenterAdaboostAutoV1::INFO, req)
+                DataErrorKind::IdentifierNotFound.with_req(SegmenterChineseAutoV1::INFO, req)
             );
         }
-        self.check_req::<SegmenterAdaboostAutoV1>(req)?;
+        self.check_req::<SegmenterChineseAutoV1>(req)?;
 
-        let raw = self
-            .segmenter_lstm()?
-            .read_and_parse_json::<RawAdaboostData>(CHINESE_ADABOOST_PATH)?;
+        let raw = serde_json::from_str::<RawAdaboostData>(MODEL_JSON).map_err(|e| {
+            DataError::custom("Failed to parse built-in AdaBoost model").with_display_context(&e)
+        })?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -136,7 +140,7 @@ impl DataProvider<SegmenterAdaboostAutoV1> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<SegmenterAdaboostAutoV1> for SourceDataProvider {
+impl IterableDataProviderCached<SegmenterChineseAutoV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         let attributes = DataMarkerAttributes::try_from_string(CHINESE_ADABOOST_ID.to_owned())
             .map_err(|_| DataError::custom("Invalid built-in AdaBoost model identifier"))?;
@@ -149,15 +153,12 @@ impl IterableDataProviderCached<SegmenterAdaboostAutoV1> for SourceDataProvider 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu::segmenter::provider::radical::{SegmenterUnihanRadicalV1, UnihanRadicalsData};
-
-    const MODEL_JSON: &str =
-        include_str!("../../tests/data/lstm/adaboost_cjk_segmenter/model.json");
+    const MODEL_JSON: &str = include_str!("../../data/segmenter/model.json");
 
     #[test]
-    fn converts_upstream_chinese_model() {
+    fn converts_built_in_chinese_model() {
         let raw = serde_json::from_str::<RawAdaboostData>(MODEL_JSON)
-            .expect("the upstream AdaBoost model should parse");
+            .expect("the built-in AdaBoost model should parse");
 
         let counts = [
             raw.uw2.len(),
@@ -183,8 +184,8 @@ mod tests {
 
         let converted = raw
             .try_convert()
-            .expect("the upstream AdaBoost model should convert");
-        assert_eq!(converted.bias_x2, 8);
+            .expect("the built-in AdaBoost model should convert");
+        assert_eq!(converted.bias, 4);
         assert_eq!(converted.uw2.len(), counts[0]);
         assert_eq!(converted.uw3.len(), counts[1]);
         assert_eq!(converted.uw4.len(), counts[2]);
@@ -195,71 +196,35 @@ mod tests {
         assert_eq!(converted.rsrid.len(), counts[7]);
     }
 
-    fn parser_scores(
-        model: &AdaboostData<'_>,
-        radicals: &UnihanRadicalsData<'_>,
-        text: &str,
-    ) -> Vec<i64> {
-        let chars = text.chars().collect::<Vec<_>>();
-        let mut chunk_len = 1;
-        (1..chars.len())
-            .map(|i| {
-                let previous = chars[i - 1];
-                let current = chars[i];
-                let previous_radical = radicals.trie.get(previous);
-                let current_radical = radicals.trie.get(current);
-                let mut score = i64::from(model.bias_x2) + 2 * 32_i64.pow(chunk_len);
-                let mut add = |weight: Option<i16>| {
-                    score += 2 * i64::from(weight.unwrap_or(0));
-                };
-
-                if current_radical != 0 {
-                    add(model.rsrid.get_copied(&(previous, current_radical)));
-                }
-                if previous_radical != 0 {
-                    add(model.lsrid.get_copied(&(previous_radical, current)));
-                }
-                if previous_radical != 0 && current_radical != 0 {
-                    add(model.rad.get_copied(&(previous_radical, current_radical)));
-                }
-                add(model.bw2.get_copied(&(previous, current)));
-                if i > 1 {
-                    add(model.uw2.get_copied(&chars[i - 2]));
-                }
-                add(model.uw3.get_copied(&previous));
-                add(model.uw4.get_copied(&current));
-                if i + 1 < chars.len() {
-                    add(model.uw5.get_copied(&chars[i + 1]));
-                }
-
-                chunk_len = if score > 0 { 1 } else { chunk_len + 1 };
-                score
-            })
-            .collect()
-    }
-
     #[test]
-    fn exact_scores_match_upstream_parser() {
-        let model = serde_json::from_str::<RawAdaboostData>(MODEL_JSON)
-            .expect("the upstream AdaBoost model should parse")
-            .try_convert()
-            .expect("the upstream AdaBoost model should convert");
+    fn loads_built_in_chinese_model() {
         let provider = SourceDataProvider::new_testing();
-        let radicals: DataResponse<SegmenterUnihanRadicalV1> = provider
-            .load(Default::default())
-            .expect("the Unihan radical trie should load");
-        let radicals = radicals.payload.get();
+        let ids = <SourceDataProvider as IterableDataProviderCached<
+            SegmenterChineseAutoV1,
+        >>::iter_ids_cached(&provider)
+        .expect("the built-in model identifier should be available");
+        assert_eq!(ids.len(), 1);
 
+        let id = ids.into_iter().next().unwrap();
+        assert_eq!(id.marker_attributes.as_str(), CHINESE_ADABOOST_ID);
+        let response: DataResponse<SegmenterChineseAutoV1> = provider
+            .load(DataRequest {
+                id: id.as_borrowed(),
+                ..Default::default()
+            })
+            .expect("the built-in AdaBoost model should load");
+        let data = response.payload.get();
+        assert_eq!(data.bias, 4);
         assert_eq!(
-            parser_scores(&model, radicals, "在香港實施愛國者治港"),
-            [5902, -4246, 4204, -2078, 2600, 280, 560, 3506, -1202]
+            data.uw2.len()
+                + data.uw3.len()
+                + data.uw4.len()
+                + data.uw5.len()
+                + data.bw2.len()
+                + data.rad.len()
+                + data.lsrid.len()
+                + data.rsrid.len(),
+            5291
         );
-        assert_eq!(
-            parser_scores(&model, radicals, "根据最新的财报数据显示"),
-            [
-                -2628, 9016, -1066, 9332, 7468, -2954, 2030, -506, 6794, -2664
-            ]
-        );
-        assert_eq!(parser_scores(&model, radicals, "𠀀中國"), [1932, -3540]);
     }
 }

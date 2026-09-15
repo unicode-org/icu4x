@@ -248,6 +248,7 @@ impl ExportDriver {
             "Khmer_codepoints_exclusive_model4_heavy".into(),
             "Lao_codepoints_exclusive_model4_heavy".into(),
             "Thai_codepoints_exclusive_model4_heavy".into(),
+            "Chinese_adaboost".into(),
         ])
     }
 
@@ -268,6 +269,9 @@ impl ExportDriver {
     /// * `Khmer_codepoints_exclusive_model4_heavy`
     /// * `Lao_codepoints_exclusive_model4_heavy`
     /// * `Thai_codepoints_exclusive_model4_heavy`
+    ///
+    /// The currently supported AdaBoost models are
+    /// * `Chinese_adaboost`
     ///
     /// If a model is not included, the resulting line or word segmenter will apply rule-based
     /// segmentation when encountering text in a script that requires the model, which will be

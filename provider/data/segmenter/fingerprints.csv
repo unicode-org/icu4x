@@ -22,6 +22,9 @@ segmenter/break/sentence/v1, <singleton>, 14804B, 14698B, 30687df4b18e0e2e
 segmenter/break/sentence/v2, <singleton>, 18379B, 18240B, a8aea64974c2e9c4
 segmenter/break/word/v1, <singleton>, 16762B, 16657B, 79957a2124e76c2f
 segmenter/break/word/v2, <singleton>, 18488B, 18349B, 3ebb5ab805932cdf
+segmenter/chinese/auto/v1, <lookup>, 53B, 1 identifiers
+segmenter/chinese/auto/v1, <total>, 28830B, 28471B, 1 unique payloads
+segmenter/chinese/auto/v1, und/Chinese_adaboost, 28830B, 28471B, 4e9e4de940b311e2
 segmenter/dictionary/auto/v1, <lookup>, 43B, 1 identifiers
 segmenter/dictionary/auto/v1, <total>, 2007134B, 2007113B, 1 unique payloads
 segmenter/dictionary/auto/v1, und/cjdict, 2007134B, 2007113B, f7552d2848b39b0d
