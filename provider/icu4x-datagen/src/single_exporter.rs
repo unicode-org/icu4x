@@ -37,8 +37,11 @@ impl DataExporter for SingleExporter {
         _id: DataIdentifierBorrowed,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        self.count.fetch_add(1, Ordering::SeqCst);
-        let _ = self.payload.set(payload.clone());
+        if self.count.fetch_add(1, Ordering::SeqCst) == 0 {
+            self.payload.set(payload.clone()).map_err(|_| {
+                DataErrorKind::Custom.with_str_context("OnceLock was already initialized")
+            })?;
+        }
         Ok(())
     }
 
