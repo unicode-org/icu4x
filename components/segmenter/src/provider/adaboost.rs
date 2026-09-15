@@ -23,8 +23,8 @@ use zerovec::ZeroMap;
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct AdaboostData<'data> {
-    /// The model bias, already expressed in doubled-score units.
-    pub bias_x2: i32,
+    /// The model bias.
+    pub bias: i32,
     /// Weights for the scalar two positions to the left of a candidate boundary.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub uw2: ZeroMap<'data, char, i16>,
@@ -58,9 +58,57 @@ icu_provider::data_struct!(
 
 icu_provider::data_marker!(
     /// Chinese `AdaBoost` segmentation model data.
-    SegmenterAdaboostAutoV1,
-    "segmenter/adaboost/auto/v1",
+    SegmenterChineseAutoV1,
+    "segmenter/chinese/auto/v1",
     AdaboostData<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "segmenter"
 );
+
+#[cfg(all(test, feature = "compiled_data"))]
+mod tests {
+    use super::*;
+    use crate::provider::Baked;
+
+    const CHINESE_ADABOOST: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("Chinese_adaboost");
+    const UNKNOWN: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("unknown");
+
+    #[test]
+    fn baked_chinese_model() {
+        let response: DataResponse<SegmenterChineseAutoV1> = Baked
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes(CHINESE_ADABOOST),
+                ..Default::default()
+            })
+            .expect("the baked Chinese AdaBoost model should load");
+        let data = response.payload.get();
+
+        assert_eq!(data.bias, 4);
+        assert_eq!(
+            data.uw2.len()
+                + data.uw3.len()
+                + data.uw4.len()
+                + data.uw5.len()
+                + data.bw2.len()
+                + data.rad.len()
+                + data.lsrid.len()
+                + data.rsrid.len(),
+            5291
+        );
+    }
+
+    #[test]
+    fn baked_chinese_model_rejects_unknown_attributes() {
+        let error = <Baked as DataProvider<SegmenterChineseAutoV1>>::load(
+            &Baked,
+            DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes(UNKNOWN),
+                ..Default::default()
+            },
+        )
+        .expect_err("an unknown model attribute should not load");
+
+        assert_eq!(error.kind, DataErrorKind::IdentifierNotFound);
+    }
+}

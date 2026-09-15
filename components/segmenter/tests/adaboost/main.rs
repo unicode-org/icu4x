@@ -6,8 +6,10 @@
 
 use icu_segmenter::provider::{Baked, UnihanRadicalsData};
 use std::collections::HashMap;
+use std::iter::Peekable;
+use std::str::CharIndices;
 
-static MODEL_FOR_TEST: &str = include_str!("model.json");
+static MODEL_FOR_TEST: &str = include_str!("../../../../provider/source/data/segmenter/model.json");
 static MODEL_FOR_TEST_THAI: &str = include_str!("model_thai.json");
 
 pub(crate) fn get_radical(radicals: &UnihanRadicalsData<'_>, ch: char) -> u8 {
@@ -17,13 +19,59 @@ pub(crate) fn get_radical(radicals: &UnihanRadicalsData<'_>, ch: char) -> u8 {
 pub(crate) struct Predictor<'a> {
     pub(crate) model: HashMap<String, HashMap<String, i16>>,
     radicals: &'a UnihanRadicalsData<'a>,
+    bias: i32,
+}
+
+pub(crate) struct AdaboostSegmenterIterator<'predictor, 'data, 's> {
+    predictor: &'predictor Predictor<'data>,
+    chars: Peekable<CharIndices<'s>>,
+    len: usize,
+    previous: Option<char>,
+    previous_previous: Option<char>,
+}
+
+impl Iterator for AdaboostSegmenterIterator<'_, '_, '_> {
+    type Item = usize;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        loop {
+            let previous = self.previous?;
+            let Some((current_idx, current)) = self.chars.next() else {
+                self.previous = None;
+                return Some(self.len);
+            };
+
+            let next = self.chars.peek().map(|(_, ch)| *ch);
+            let should_break =
+                self.predictor
+                    .score(self.previous_previous, previous, current, next)
+                    > 0;
+
+            self.previous_previous = Some(previous);
+            self.previous = Some(current);
+
+            if should_break {
+                return Some(current_idx);
+            }
+        }
+    }
 }
 
 impl<'a> Predictor<'a> {
     pub(crate) fn from_json(json: &str, radicals: &'a UnihanRadicalsData<'a>) -> Self {
         let model: HashMap<String, HashMap<String, i16>> =
             serde_json::from_str(json).unwrap_or_default();
-        Self { model, radicals }
+        let bias = -model
+            .values()
+            .flat_map(|weights| weights.values())
+            .map(|&weight| i32::from(weight))
+            .sum::<i32>()
+            / 2;
+        Self {
+            model,
+            radicals,
+            bias,
+        }
     }
 
     pub(crate) fn for_test() -> Self {
@@ -37,77 +85,93 @@ impl<'a> Predictor<'a> {
         )
     }
 
-    pub(crate) fn predict(&self, sentence: &str) -> Vec<i16> {
-        let chars: Vec<char> = sentence.chars().collect();
-        if chars.is_empty() {
-            return Vec::new();
+    fn weight(&self, feature: &str, key: &str) -> Option<i16> {
+        self.model
+            .get(feature)
+            .and_then(|weights| weights.get(key))
+            .copied()
+    }
+
+    fn score(
+        &self,
+        previous_previous: Option<char>,
+        previous: char,
+        current: char,
+        next: Option<char>,
+    ) -> i64 {
+        let mut score = i64::from(self.bias);
+
+        let current_radical = get_radical(self.radicals, current);
+        if current_radical != 0 {
+            add_weight(
+                &mut score,
+                self.weight("RSRID", &format!("{previous}:{current_radical}")),
+            );
         }
 
-        let mut mask = Vec::with_capacity(chars.len());
-
-        for i in 1..chars.len() {
-            let c_prev = chars[i - 1];
-            let c = chars[i];
-
-            let mut score: i16 = 4;
-
-            let rad4 = get_radical(self.radicals, c);
-            if rad4 != 0
-                && let Some(map) = self.model.get("RSRID")
-            {
-                let key = format!("{}:{}", c_prev, rad4);
-                score += map.get(&key).copied().unwrap_or(0);
-            }
-
-            let rad3 = get_radical(self.radicals, c_prev);
-            if rad3 != 0
-                && let Some(map) = self.model.get("LSRID")
-            {
-                let key = format!("{}:{}", rad3, c);
-                score += map.get(&key).copied().unwrap_or(0);
-            }
-
-            if rad3 != 0
-                && rad4 != 0
-                && let Some(map) = self.model.get("RAD")
-            {
-                let key = format!("{}:{}", rad3, rad4);
-                score += map.get(&key).copied().unwrap_or(0);
-            }
-
-            if let Some(map) = self.model.get("BW2") {
-                let key: String = chars[i - 1..=i].iter().collect();
-                score += map.get(&key).copied().unwrap_or(0);
-            }
-
-            if i > 1
-                && let Some(map) = self.model.get("UW2")
-            {
-                let key = chars[i - 2].to_string();
-                score += map.get(&key).copied().unwrap_or(0);
-            }
-
-            if let Some(map) = self.model.get("UW3") {
-                let key = c_prev.to_string();
-                score += map.get(&key).copied().unwrap_or(0);
-            }
-
-            if let Some(map) = self.model.get("UW4") {
-                let key = c.to_string();
-                score += map.get(&key).copied().unwrap_or(0);
-            }
-
-            if i + 1 < chars.len()
-                && let Some(map) = self.model.get("UW5")
-            {
-                let key = chars[i + 1].to_string();
-                score += map.get(&key).copied().unwrap_or(0);
-            }
-
-            mask.push(score);
+        let previous_radical = get_radical(self.radicals, previous);
+        if previous_radical != 0 {
+            add_weight(
+                &mut score,
+                self.weight("LSRID", &format!("{previous_radical}:{current}")),
+            );
         }
 
-        mask
+        if previous_radical != 0 && current_radical != 0 {
+            add_weight(
+                &mut score,
+                self.weight("RAD", &format!("{previous_radical}:{current_radical}")),
+            );
+        }
+
+        add_weight(
+            &mut score,
+            self.weight("BW2", &format!("{previous}{current}")),
+        );
+
+        if let Some(previous_previous) = previous_previous {
+            add_weight(
+                &mut score,
+                self.weight("UW2", &previous_previous.to_string()),
+            );
+        }
+        add_weight(&mut score, self.weight("UW3", &previous.to_string()));
+        add_weight(&mut score, self.weight("UW4", &current.to_string()));
+        if let Some(next) = next {
+            add_weight(&mut score, self.weight("UW5", &next.to_string()));
+        }
+
+        score
+    }
+
+    pub(crate) fn segment_str<'predictor, 's>(
+        &'predictor self,
+        input: &'s str,
+    ) -> AdaboostSegmenterIterator<'predictor, 'a, 's> {
+        let mut chars = input.char_indices().peekable();
+        let previous = chars.next().map(|(_, ch)| ch);
+        AdaboostSegmenterIterator {
+            predictor: self,
+            chars,
+            len: input.len(),
+            previous,
+            previous_previous: None,
+        }
+    }
+
+    pub(crate) fn predict(&self, input: &str) -> Vec<i64> {
+        let chars = input.chars().collect::<Vec<_>>();
+        (1..chars.len())
+            .map(|i| {
+                let score = self.score(
+                    i.checked_sub(2).map(|j| chars[j]),
+                    chars[i - 1],
+                    chars[i],
+                    chars.get(i + 1).copied(),
+                );
+                score
+            })
+            .collect()
     }
 
     pub(crate) fn predict_thai(&self, sentence: &str) -> Vec<i16> {
@@ -240,13 +304,19 @@ impl<'a> Predictor<'a> {
     }
 }
 
+fn add_weight(score: &mut i64, weight: Option<i16>) {
+    if let Some(weight) = weight {
+        *score += i64::from(weight);
+    }
+}
+
 #[cfg(test)]
-fn python_test_output() -> Vec<i16> {
+fn python_test_output() -> Vec<i64> {
     const PYTHON_OUTPUT: &str = include_str!("python_test_output.txt");
     PYTHON_OUTPUT
         .split_whitespace()
         .filter(|s| !s.is_empty())
-        .map(|s| s.parse::<i16>().expect("failed to parse reference float"))
+        .map(|s| s.parse::<i64>().expect("failed to parse reference float"))
         .collect()
 }
 
@@ -260,17 +330,52 @@ fn python_test_output_thai() -> Vec<i16> {
         .collect()
 }
 
+#[cfg(test)]
+fn empty_predictor(bias: i32) -> Predictor<'static> {
+    Predictor {
+        model: HashMap::new(),
+        radicals: Baked::SINGLETON_SEGMENTER_UNIHAN_RADICAL_V1,
+        bias,
+    }
+}
+
 #[test]
-fn main() {
+fn exact_scores_match_python() {
     let predictor = Predictor::for_test();
+    assert_eq!(
+        predictor.predict("根据最新的财报数据显示"),
+        [-1346, 3484, -565, 3642, 3702, -1509, -9, -285, 2373, -1364]
+    );
+}
 
-    let sentence =
-        "根据最新的财报数据显示，该公司的市盈率已经达到了历史最低点，但是其核心竞争力依然保持稳定增长的态势。"
-            .to_string();
-    let mask = predictor.predict(&sentence);
+#[test]
+fn streaming_boundaries_and_terminal() {
+    let predictor = empty_predictor(-1);
+    assert!(predictor.segment_str("").collect::<Vec<_>>().is_empty());
+    assert_eq!(predictor.segment_str("甲").collect::<Vec<_>>(), [3]);
+    assert_eq!(predictor.segment_str("甲乙丙").collect::<Vec<_>>(), [9]);
 
-    println!("Input: {}", sentence);
-    println!("Output: {:?}", mask);
+    let positive_score = empty_predictor(1);
+    assert_eq!(
+        positive_score.segment_str("甲乙丙").collect::<Vec<_>>(),
+        [3, 6, 9]
+    );
+
+    let zero_score = empty_predictor(0);
+    assert_eq!(zero_score.segment_str("AB").collect::<Vec<_>>(), [2]);
+}
+
+#[test]
+fn unicode_byte_offsets_and_missing_radicals() {
+    let predictor = empty_predictor(1);
+    assert_eq!(predictor.segment_str("中国").collect::<Vec<_>>(), [3, 6]);
+    assert_eq!(predictor.segment_str("中國").collect::<Vec<_>>(), [3, 6]);
+    assert_eq!(predictor.segment_str("𠀀甲").collect::<Vec<_>>(), [4, 7]);
+    assert_eq!(predictor.segment_str("AB").collect::<Vec<_>>(), [1, 2]);
+    assert_eq!(
+        Baked::SINGLETON_SEGMENTER_UNIHAN_RADICAL_V1.trie.get('A'),
+        0
+    );
 }
 
 #[test]

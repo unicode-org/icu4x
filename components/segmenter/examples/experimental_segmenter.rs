@@ -23,12 +23,12 @@ fn main_radaboost(args: &[String]) {
     let s = &args[0];
     let start_time = Instant::now();
     for _ in 0..REPETITIONS {
-        segmenter.predict(s);
+        segmenter.segment_str(s).count();
     }
     let elapsed = start_time.elapsed();
     println!("Output:");
     let mut prev = 0;
-    for breakpoint in segmenter.predict_breakpoints(s) {
+    for breakpoint in segmenter.segment_str(s) {
         print!("{}|", &s[prev..breakpoint]);
         prev = breakpoint;
     }
