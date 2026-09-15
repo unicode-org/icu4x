@@ -10,7 +10,7 @@ use std::sync::Mutex;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 pub(crate) struct SingleExporter {
-    sink: Mutex<Box<dyn io::Write + Send + Sync>>,
+    sink: Box<dyn io::Write + Sync>,
     serializer: Box<dyn AbstractSerializer + Sync>,
     payload: Mutex<Option<DataPayload<ExportMarker>>>,
     count: AtomicUsize,
@@ -18,11 +18,11 @@ pub(crate) struct SingleExporter {
 
 impl SingleExporter {
     pub(crate) fn new(
-        sink: Box<dyn io::Write + Send + Sync>,
+        sink: Box<dyn io::Write + Sync>,
         serializer: Box<dyn AbstractSerializer + Sync>,
     ) -> Self {
         Self {
-            sink: Mutex::new(sink),
+            sink,
             serializer,
             payload: Mutex::new(None),
             count: AtomicUsize::new(0),
@@ -54,8 +54,7 @@ impl DataExporter for SingleExporter {
             }));
         }
         if let Some(payload) = self.payload.get_mut().unwrap().take() {
-            let mut sink = self.sink.lock().unwrap();
-            self.serializer.serialize(&payload, &mut **sink)?;
+            self.serializer.serialize(&payload, &mut self.sink)?;
         }
         Ok(ExporterCloseMetadata::default())
     }

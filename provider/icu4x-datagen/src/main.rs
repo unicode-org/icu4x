@@ -777,7 +777,7 @@ fn run(cli: Cli) -> eyre::Result<()> {
         }
         #[cfg(feature = "fs_exporter")]
         Format::Single => driver.export(&provider, {
-            let sink: Box<dyn std::io::Write + Send + Sync> = if let Some(path) = cli.output {
+            let sink: Box<dyn std::io::Write + Sync> = if let Some(path) = cli.output {
                 if !cli.overwrite && path.exists() {
                     eyre::bail!("Output path is present: {:?}", path);
                 }
