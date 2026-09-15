@@ -41,6 +41,7 @@ include!("units_names_length_extended_v1.rs.data");
 include!("locale_names_language_v0.rs.data");
 include!("currency_essentials_v1.rs.data");
 include!("locale_names_script_v0.rs.data");
+include!("currency_decimal_symbols_v1.rs.data");
 include!("units_names_length_outlier_v1.rs.data");
 include!("datetime_relative_month_short_v1.rs.data");
 include!("locale_names_locale_v0.rs.data");
@@ -134,6 +135,7 @@ macro_rules! impl_data_provider {
         impl_locale_names_language_v0!($provider);
         impl_currency_essentials_v1!($provider);
         impl_locale_names_script_v0!($provider);
+        impl_currency_decimal_symbols_v1!($provider);
         impl_units_names_length_outlier_v1!($provider);
         impl_datetime_relative_month_short_v1!($provider);
         impl_locale_names_locale_v0!($provider);

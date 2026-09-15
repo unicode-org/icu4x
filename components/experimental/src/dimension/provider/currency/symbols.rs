@@ -21,6 +21,15 @@ icu_provider::data_marker!(
     attributes_domain = "currency",
 );
 
+icu_provider::data_marker!(
+    /// Currency-specific decimal symbols override data.
+    CurrencyDecimalSymbolsV1,
+    "currency/decimal/symbols/v1",
+    icu_decimal::provider::DecimalSymbols<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "currency",
+);
+
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency::symbols))]
@@ -55,16 +64,48 @@ impl CurrencySymbol<'_> {
     }
 }
 
+/// The width of a currency symbol.
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency::symbols))]
+#[non_exhaustive]
+pub enum CurrencySymbolWidth {
+    /// Standard or short currency symbol (e.g. `"$"` or `"CA$"`).
+    Short,
+    /// Narrow currency symbol (e.g. `"$"`).
+    Narrow,
+}
+
+impl CurrencySymbolWidth {
+    /// Returns the 1-byte ASCII character code used in data marker attributes.
+    pub const fn as_tinystr(self) -> TinyAsciiStr<1> {
+        match self {
+            Self::Short => tinystr!(1, "s"),
+            Self::Narrow => tinystr!(1, "n"),
+        }
+    }
+
+    /// Returns the character code as a string slice.
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::Short => "s",
+            Self::Narrow => "n",
+        }
+    }
+}
+
 impl CurrencySymbolsV1 {
-    pub const SHORT: TinyAsciiStr<1> = tinystr!(1, "s");
-    pub const NARROW: TinyAsciiStr<1> = tinystr!(1, "n");
+    pub const SHORT: CurrencySymbolWidth = CurrencySymbolWidth::Short;
+    pub const NARROW: CurrencySymbolWidth = CurrencySymbolWidth::Narrow;
 
     pub fn make_attributes(
         currency: CurrencyType,
-        width: TinyAsciiStr<1>,
+        width: CurrencySymbolWidth,
         buffer: &mut TinyAsciiStr<5>,
     ) -> &DataMarkerAttributes {
         *buffer = width
+            .as_tinystr()
             .concat::<1, 2>(tinystr!(1, "/"))
             .concat::<3, 5>(currency.iso_code());
         // All valid

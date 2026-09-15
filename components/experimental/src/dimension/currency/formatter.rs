@@ -10,7 +10,7 @@ use super::super::provider::currency::{
     fractions::{CurrencyFractionsV1, FractionInfo, Rounding},
     no_currency::{CurrencyPatternsNoCurrency, CurrencyPatternsNoCurrencyV1},
     patterns::CurrencyPatternsDataV1,
-    symbols::CurrencySymbolsV1,
+    symbols::{CurrencySymbolWidth, CurrencySymbolsV1},
 };
 use super::CurrencyType;
 use fixed_decimal::{
@@ -99,7 +99,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         value_formatter: V,
         prefs: CurrencyFormatterPreferences,
         currency: CurrencyType,
-        width: TinyAsciiStr<1>,
+        width: CurrencySymbolWidth,
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
@@ -150,7 +150,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         value_formatter: V,
         prefs: CurrencyFormatterPreferences,
         currency: CurrencyType,
-        width: TinyAsciiStr<1>,
+        width: CurrencySymbolWidth,
         options: CurrencyFormatterOptions,
     ) -> Result<Self, DataError>
     where
