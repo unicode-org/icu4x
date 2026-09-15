@@ -232,6 +232,10 @@ pub fn tzdb_data() -> AbstractFs {{
             "components/normalizer/tests/data/NormalizationTest.txt",
         ),
         (
+            "ucd/PropertyValueAliases.txt",
+            "components/properties/data/PropertyValueAliases.txt",
+        ),
+        (
             "ucd/auxiliary/GraphemeBreakTest.txt",
             "components/segmenter/tests/testdata/GraphemeBreakTest.txt",
         ),
@@ -308,7 +312,7 @@ pub fn tzdb_data() -> AbstractFs {{
         ),
         (
             "icu4c/source/data/unidata/prop_numbers.txt",
-            "components/properties/tests/data/prop_numbers.txt",
+            "components/properties/data/prop_numbers.txt",
         ),
         (
             "icu4c/source/test/testdata/CollationTest_SHIFTED_SHORT.txt",
