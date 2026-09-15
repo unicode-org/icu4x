@@ -6,13 +6,13 @@ use icu_provider::export::*;
 use icu_provider::prelude::*;
 use icu_provider_export::fs_exporter::serializers::AbstractSerializer;
 use std::io;
-use std::sync::Mutex;
+use std::sync::OnceLock;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 pub(crate) struct SingleExporter {
     sink: Box<dyn io::Write + Sync>,
     serializer: Box<dyn AbstractSerializer + Sync>,
-    payload: Mutex<Option<DataPayload<ExportMarker>>>,
+    payload: OnceLock<DataPayload<ExportMarker>>,
     count: AtomicUsize,
 }
 
@@ -24,7 +24,7 @@ impl SingleExporter {
         Self {
             sink,
             serializer,
-            payload: Mutex::new(None),
+            payload: OnceLock::new(),
             count: AtomicUsize::new(0),
         }
     }
@@ -37,10 +37,8 @@ impl DataExporter for SingleExporter {
         _id: DataIdentifierBorrowed,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        let old = self.count.fetch_add(1, Ordering::SeqCst);
-        if old == 0 {
-            *self.payload.lock().unwrap() = Some(payload.clone());
-        }
+        self.count.fetch_add(1, Ordering::SeqCst);
+        let _ = self.payload.set(payload.clone());
         Ok(())
     }
 
@@ -53,7 +51,7 @@ impl DataExporter for SingleExporter {
                 "Expected 1 payload for --format single, but found multiple"
             }));
         }
-        if let Some(payload) = self.payload.get_mut().unwrap().take() {
+        if let Some(payload) = self.payload.take() {
             self.serializer.serialize(&payload, &mut self.sink)?;
         }
         Ok(ExporterCloseMetadata::default())
