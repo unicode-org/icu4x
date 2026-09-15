@@ -105,8 +105,7 @@ static VARIANTS: LazyLock<BTreeMap<&str, BTreeMap<u32, (&str, &str, Vec<&str>, b
         let mut names = BTreeMap::<_, BTreeMap<_, _>>::new();
 
         for line in
-            include_str!("../../../../provider/source/tests/data/rscd/ucd/PropertyValueAliases.txt")
-                .lines()
+            include_str!("../../../../components/properties/data/PropertyValueAliases.txt").lines()
         {
             let line = line.split('#').next().unwrap().trim();
             if line.is_empty() {
@@ -141,8 +140,7 @@ static VARIANTS: LazyLock<BTreeMap<&str, BTreeMap<u32, (&str, &str, Vec<&str>, b
                 .insert(short_name, (long_name, aliases));
         }
 
-        for line in
-            include_str!("../../../../components/properties/tests/data/prop_numbers.txt").lines()
+        for line in include_str!("../../../../components/properties/data/prop_numbers.txt").lines()
         {
             let line = line.split('#').next().unwrap().trim();
             if line.is_empty() {
