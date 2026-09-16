@@ -14,6 +14,7 @@ include!("segmenter_chinese_auto_v1.rs.data");
 include!("segmenter_break_line_override_v2.rs.data");
 include!("segmenter_break_word_v1.rs.data");
 include!("segmenter_break_word_v2.rs.data");
+include!("segmenter_thai_auto_v1.rs.data");
 include!("segmenter_break_word_override_v1.rs.data");
 include!("segmenter_break_sentence_override_v1.rs.data");
 include!("segmenter_break_sentence_override_v2.rs.data");
@@ -66,6 +67,7 @@ macro_rules! impl_data_provider {
         impl_segmenter_break_line_override_v2!($provider);
         impl_segmenter_break_word_v1!($provider);
         impl_segmenter_break_word_v2!($provider);
+        impl_segmenter_thai_auto_v1!($provider);
         impl_segmenter_break_word_override_v1!($provider);
         impl_segmenter_break_sentence_override_v1!($provider);
         impl_segmenter_break_sentence_override_v2!($provider);
