@@ -16,8 +16,6 @@
 # value, for which there is another Unicode character that typically has a glyph
 # that is the mirror image of the original character's glyph.
 #
-# The repertoire covered by the file is Unicode 17.0.0.
-#
 # The file contains a list of lines with mappings from one code point
 # to another one for character-based mirroring.
 # Note that for "real" mirroring, a rendering engine needs to select
