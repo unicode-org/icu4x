@@ -13,7 +13,8 @@ args = [
     "-p",
     "icu_provider_source",
     "--lib",
-    "--all-features",
+    "--no-default-features",
+    "--features=networking",
     "--",
     "tests::download_repo_sources::download_repo_sources",
     "--exact",
@@ -25,15 +26,12 @@ args = [
 description = "Run the testdata generation test in icu_provider_export"
 category = "ICU4X Data"
 command = "cargo"
-env = { ICU4X_WRITE_TESTDATA = "1" }
 args = [
-    "test",
-    "-p=icu_provider_source",
-    "--no-default-features",
-    "--features=use_wasm,unstable",
+    "run",
+    "-p=dump-json",
     "--",
-    "--nocapture",
-    "make_testdata",
+    "provider/source/tests/debug_set.txt",
+    "provider/source/data/debug/",
 ]
 
 [tasks.testdata-hello-world]
@@ -69,7 +67,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-output = exec git status --porcelain=v1 provider/source/data/debug provider/source/tests/data provider/fs/tests/data provider/blob/tests/data provider/baked/tests/data provider/adapters/tests/data provider/source/src/tests/data.rs
+output = exec git status --porcelain=v1 provider/source/data/debug provider/fs/tests/data provider/blob/tests/data provider/baked/tests/data provider/adapters/tests/data provider/source/src/tests/data.rs
 output_length = length ${output.stdout}
 if greater_than ${output_length} 0
     msg = array "" ""
