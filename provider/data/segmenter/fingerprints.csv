@@ -40,4 +40,7 @@ segmenter/lstm/auto/v1, und/Burmese_codepoints_exclusive_model4_heavy, 91365B, 9
 segmenter/lstm/auto/v1, und/Khmer_codepoints_exclusive_model4_heavy, 74665B, 74368B, cc6fe9f66fed196d
 segmenter/lstm/auto/v1, und/Lao_codepoints_exclusive_model4_heavy, 72160B, 71863B, 3f52a4025c7d618f
 segmenter/lstm/auto/v1, und/Thai_codepoints_exclusive_model4_heavy, 72327B, 72030B, 4486b38238d7c651
+segmenter/thai/auto/v1, <lookup>, 50B, 1 identifiers
+segmenter/thai/auto/v1, <total>, 41787B, 41204B, 1 unique payloads
+segmenter/thai/auto/v1, und/Thai_adaboost, 41787B, 41204B, 6e4c6dcb2a293f90
 segmenter/unihan/radical/v1, <singleton>, 13080B, 13020B, d875e702fbedc249

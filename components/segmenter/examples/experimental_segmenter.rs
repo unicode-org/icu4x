@@ -11,7 +11,7 @@ mod adaboost;
 #[path = "../tests/cnn/main.rs"]
 mod cnn;
 
-use adaboost::Predictor;
+use adaboost::{Predictor, ThaiPredictor};
 use cnn::{CnnSegmenter, RawCnnData};
 use icu_segmenter::{WordSegmenter, WordSegmenterBorrowed, options::WordBreakOptions};
 use std::time::Instant;
@@ -40,16 +40,16 @@ fn main_radaboost(args: &[String]) {
 }
 
 fn main_thadaboost(args: &[String]) {
-    let segmenter = Predictor::for_test_thai();
+    let segmenter = ThaiPredictor::for_test();
     let s = &args[0];
     let start_time = Instant::now();
     for _ in 0..REPETITIONS {
-        segmenter.predict_thai(s);
+        segmenter.predict(s);
     }
     let elapsed = start_time.elapsed();
     println!("Output:");
     let mut prev = 0;
-    for breakpoint in segmenter.predict_thai_breakpoints(s) {
+    for breakpoint in segmenter.predict_breakpoints(s) {
         print!("{}|", &s[prev..breakpoint]);
         prev = breakpoint;
     }
