@@ -1248,11 +1248,13 @@ where
         if (decomposition & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER))
             <= HANGUL_SYLLABLE_MARKER
         {
-            // The character is its own decomposition (or Hangul syllable)
-            // Set the Canonical Combining Class to zero
-            self.upcoming.push(
-                CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(c.character()),
+            // The character is its own decomposition (or Hangul syllable, in which case
+            // we need to retain `trie_val`).
+            debug_assert_eq!(
+                ccc_from_trie_value(decomposition),
+                CanonicalCombiningClass::NotReordered
             );
+            self.upcoming.push(c);
         } else {
             let high_zeros = (decomposition & HIGH_ZEROS_MASK) == 0;
             let low_zeros = (decomposition & LOW_ZEROS_MASK) == 0;
