@@ -8,6 +8,7 @@ use crate::cldr_serde;
 use crate::cldr_serde::alt::Alt;
 use cldr_serde::time_zones::time_zone_names::*;
 use core::cmp::Ordering;
+use icu::locale::subtags::region;
 use icu::datetime::provider::time_zones::*;
 use icu::time::provider::*;
 use icu::time::zone::TimeZoneVariant;
@@ -76,6 +77,12 @@ impl SourceDataProvider {
         let mut exemplar_cities = bcp47_tzids
             .iter()
             .filter_map(|(&bcp47, bcp47_tzid_data)| {
+                // Zones with region 001 don't have locations, with the exception of unk, which we still want to skip in root
+                if bcp47_tzid_data.region(bcp47) == region!("001")
+                    && (!bcp47.is_unknown() || locale.is_unknown())
+                {
+                    return None;
+                }
                 Some((
                     bcp47,
                     bcp47_tzid_data
@@ -89,13 +96,6 @@ impl SourceDataProvider {
             })
             .chain(self.future_zones()?.map(|(a, b)| (b, a)))
             .filter_map(|(bcp47, canonical_alias)| {
-                // Etc zones don't have locations, with the exception of Unknown, which we still want to skip in root
-                if canonical_alias.starts_with("Etc/")
-                    && (canonical_alias != "Etc/Unknown" || locale.is_unknown())
-                {
-                    return None;
-                }
-
                 let mut alias_parts = canonical_alias.split('/');
                 let exemplar = time_zone_names
                     .zone

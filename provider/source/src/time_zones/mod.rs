@@ -554,17 +554,12 @@ impl SourceDataProvider {
                 let mut regions_to_zones: BTreeMap<_, BTreeSet<_>> = BTreeMap::new();
 
                 for (&bcp47_tzid, bcp47_tzid_data) in bcp47_tzids_resource {
+                    let region = bcp47_tzid_data.region(bcp47_tzid);
+                    if bcp47_tzid_data.deprecated == Some(true) || region == region!("001") {
+                        continue;
+                    }
                     regions_to_zones
-                        .entry(if bcp47_tzid_data.deprecated == Some(true) {
-                            continue;
-                        } else if let Some(region) = bcp47_tzid_data.region {
-                            region
-                        } else if bcp47_tzid.0.len() != 5 {
-                            // Length-5 ID without override, no region
-                            continue;
-                        } else {
-                            bcp47_tzid.as_str()[0..2].parse().unwrap()
-                        })
+                        .entry(region)
                         .or_default()
                         .insert(bcp47_tzid);
                 }

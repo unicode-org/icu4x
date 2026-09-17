@@ -149,7 +149,7 @@ impl SourceDataProvider {
     pub const TESTED_UCD_TAG: &'static str = Self::TESTED_UNICODE_TAG;
 
     /// The TZDB tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const TESTED_TZDB_TAG: &'static str = "2026c";
+    pub const TESTED_TZDB_TAG: &'static str = "2026d";
 
     /// A provider using the data that has been verified to work with this version of `SourceDataProvider`.
     ///
@@ -167,12 +167,18 @@ impl SourceDataProvider {
         static SINGLETON: OnceLock<SourceDataProvider> = OnceLock::new();
         SINGLETON
             .get_or_init(|| {
-                Self::new_custom()
-                    .with_cldr_for_tag(Self::TESTED_CLDR_TAG)
-                    .with_icuexport_for_tag(Self::TESTED_ICUEXPORT_TAG)
-                    .with_segmenter_lstm_for_tag(Self::TESTED_SEGMENTER_LSTM_TAG)
-                    .with_tzdb_for_tag(Self::TESTED_TZDB_TAG)
-                    .with_unicode_rscd_for_tag(Self::TESTED_UNICODE_TAG)
+                {
+                    Self::new_custom()
+                        .with_cldr_for_tag(Self::TESTED_CLDR_TAG)
+                        .with_icuexport_for_tag(Self::TESTED_ICUEXPORT_TAG)
+                        .with_segmenter_lstm_for_tag(Self::TESTED_SEGMENTER_LSTM_TAG)
+                        .with_tzdb_for_tag(Self::TESTED_TZDB_TAG)
+                        .with_unicode_rscd_for_tag(Self::TESTED_UNICODE_TAG)
+                }
+                .with_cldr(std::path::Path::new(
+                    "/Users/robertbastian/Developer/cldr-json/cldr-json",
+                ))
+                .unwrap()
             })
             .clone()
     }
