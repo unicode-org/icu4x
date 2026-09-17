@@ -2,15 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-pub mod fields;
+pub mod field;
 mod skeleton;
 mod tokenizer;
 
-use core::fmt;
+use core::{fmt, str::FromStr};
 
 pub use skeleton::DateTimeFieldBagParseError;
 
-use fields::*;
+use field::*;
 use writeable::Writeable;
 
 /// A bag of individual datetime formatting fields.
@@ -115,8 +115,17 @@ impl DateTimeFieldBag {
     }
 }
 
+impl FromStr for DateTimeFieldBag {
+    type Err = DateTimeFieldBagParseError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from_skeleton(s)
+    }
+}
+
 impl Writeable for DateTimeFieldBag {
     fn write_to<W: ?Sized + fmt::Write>(&self, sink: &mut W) -> fmt::Result {
         skeleton::fieldbag_to_uts35(self, sink)
     }
 }
+
+writeable::impl_display_with_writeable!(DateTimeFieldBag);

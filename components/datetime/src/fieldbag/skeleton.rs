@@ -18,7 +18,7 @@ pub enum DateTimeFieldBagParseError {
 pub(crate) fn uts35_to_fieldbag(
     skeleton: &str,
 ) -> (DateTimeFieldBag, Option<DateTimeFieldBagParseError>) {
-    use super::fields::*;
+    use super::field::*;
     use DateTimeFieldBagParseError::*;
 
     macro_rules! put_field {
@@ -36,30 +36,30 @@ pub(crate) fn uts35_to_fieldbag(
     let mut error = None;
     while let Some(token) = tokenizer.step() {
         match token {
-            Token::Symbol("G") => {
+            Token::Symbol('G', 1) => {
                 put_field!(&mut error, &mut bag.era, Era::Short);
             }
-            Token::Symbol("GGGG") => {
+            Token::Symbol('G', 4) => {
                 put_field!(&mut error, &mut bag.era, Era::Long);
             }
-            Token::Symbol("GGGGG") => {
+            Token::Symbol('G', 5) => {
                 put_field!(&mut error, &mut bag.era, Era::Narrow);
             }
-            Token::Symbol("j") => {
+            Token::Symbol('j', 1) => {
                 put_field!(&mut error, &mut bag.hour, Hour::Numeric);
             }
-            Token::Symbol("jj") => {
+            Token::Symbol('j', 2) => {
                 put_field!(&mut error, &mut bag.hour, Hour::TwoDigit);
             }
-            Token::Symbol("h") => {
+            Token::Symbol('h', 1) => {
                 put_field!(&mut error, &mut bag.hour, Hour::Numeric);
                 put_field!(&mut error, &mut bag.hour_kind, HourKind::Clock12);
             }
-            Token::Symbol("hh") => {
+            Token::Symbol('h', 2) => {
                 put_field!(&mut error, &mut bag.hour, Hour::TwoDigit);
                 put_field!(&mut error, &mut bag.hour_kind, HourKind::Clock12);
             }
-            Token::Symbol(_) => {
+            Token::Symbol(_, _) => {
                 todo!()
             }
             Token::Literal(_) => {
@@ -70,8 +70,11 @@ pub(crate) fn uts35_to_fieldbag(
     (bag, error)
 }
 
-pub(crate) fn fieldbag_to_uts35<W: ?Sized + fmt::Write>(fieldbag: &DateTimeFieldBag, sink: &mut W) -> fmt::Result {
-    use super::fields::*;
+pub(crate) fn fieldbag_to_uts35<W: ?Sized + fmt::Write>(
+    fieldbag: &DateTimeFieldBag,
+    sink: &mut W,
+) -> fmt::Result {
+    use super::field::*;
 
     let DateTimeFieldBag {
         era,
@@ -102,7 +105,8 @@ pub(crate) fn fieldbag_to_uts35<W: ?Sized + fmt::Write>(fieldbag: &DateTimeField
         (Some(Hour::Numeric), None) => sink.write_char('j')?,
         (Some(Hour::TwoDigit), None) => sink.write_str("jj")?,
         (Some(Hour::Numeric), Some(HourKind::Clock12)) => sink.write_char('h')?,
-        _ => todo!(),
+        (Some(_), Some(_)) => todo!(),
+        (None, _) => (),
     }
-    todo!()
+    Ok(())
 }
