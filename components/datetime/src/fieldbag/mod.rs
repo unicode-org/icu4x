@@ -116,7 +116,7 @@ impl DateTimeFieldBag {
 }
 
 impl Writeable for DateTimeFieldBag {
-    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        
+    fn write_to<W: ?Sized + fmt::Write>(&self, sink: &mut W) -> fmt::Result {
+        skeleton::fieldbag_to_uts35(self, sink)
     }
 }

@@ -2,11 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::fmt;
+
 use super::DateTimeFieldBag;
-use super::tokenizer::Uts35DateTimePatternTokenizer;
 use super::tokenizer::Token;
+use super::tokenizer::Uts35DateTimePatternTokenizer;
 
 #[non_exhaustive]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum DateTimeFieldBagParseError {
     DuplicateField,
     UnexpectedLiteral,
@@ -42,6 +45,20 @@ pub(crate) fn uts35_to_fieldbag(
             Token::Symbol("GGGGG") => {
                 put_field!(&mut error, &mut bag.era, Era::Narrow);
             }
+            Token::Symbol("j") => {
+                put_field!(&mut error, &mut bag.hour, Hour::Numeric);
+            }
+            Token::Symbol("jj") => {
+                put_field!(&mut error, &mut bag.hour, Hour::TwoDigit);
+            }
+            Token::Symbol("h") => {
+                put_field!(&mut error, &mut bag.hour, Hour::Numeric);
+                put_field!(&mut error, &mut bag.hour_kind, HourKind::Clock12);
+            }
+            Token::Symbol("hh") => {
+                put_field!(&mut error, &mut bag.hour, Hour::TwoDigit);
+                put_field!(&mut error, &mut bag.hour_kind, HourKind::Clock12);
+            }
             Token::Symbol(_) => {
                 todo!()
             }
@@ -53,6 +70,39 @@ pub(crate) fn uts35_to_fieldbag(
     (bag, error)
 }
 
-pub(crate) fn fieldbag_to_uts35(fieldbag: &DateTimeFieldBag) {
-    
+pub(crate) fn fieldbag_to_uts35<W: ?Sized + fmt::Write>(fieldbag: &DateTimeFieldBag, sink: &mut W) -> fmt::Result {
+    use super::fields::*;
+
+    let DateTimeFieldBag {
+        era,
+        year,
+        month,
+        day,
+        weekday,
+        day_period,
+        hour_kind,
+        hour,
+        minute,
+        second,
+        fractional_second_digits,
+        time_zone_name,
+    } = fieldbag;
+    match era {
+        Some(Era::Short) => sink.write_char('G')?,
+        Some(Era::Long) => sink.write_str("GGGG")?,
+        Some(Era::Narrow) => sink.write_str("GGGGG")?,
+        None => (),
+    }
+    match year {
+        Some(Year::Numeric) => sink.write_char('y')?,
+        Some(Year::TwoDigit) => sink.write_str("yy")?,
+        None => (),
+    }
+    match (hour, hour_kind) {
+        (Some(Hour::Numeric), None) => sink.write_char('j')?,
+        (Some(Hour::TwoDigit), None) => sink.write_str("jj")?,
+        (Some(Hour::Numeric), Some(HourKind::Clock12)) => sink.write_char('h')?,
+        _ => todo!(),
+    }
+    todo!()
 }
