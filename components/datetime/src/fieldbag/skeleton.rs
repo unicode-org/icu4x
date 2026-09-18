@@ -8,6 +8,7 @@ use super::DateTimeFieldBag;
 use super::tokenizer::Token;
 use super::tokenizer::Uts35DateTimePatternTokenizer;
 
+#[allow(missing_docs)] // TODO: Write excellent docs for this
 #[non_exhaustive]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum DateTimeFieldBagParseError {
@@ -45,6 +46,12 @@ pub(crate) fn uts35_to_fieldbag(
             Token::Symbol('G', 5) => {
                 put_field!(&mut error, &mut bag.era, Era::Narrow);
             }
+            Token::Symbol('y', 1) => {
+                put_field!(&mut error, &mut bag.year, Year::Numeric);
+            }
+            Token::Symbol('y', 4) => {
+                put_field!(&mut error, &mut bag.year, Year::TwoDigit);
+            }
             Token::Symbol('j', 1) => {
                 put_field!(&mut error, &mut bag.hour, Hour::Numeric);
             }
@@ -76,6 +83,7 @@ pub(crate) fn fieldbag_to_uts35<W: ?Sized + fmt::Write>(
 ) -> fmt::Result {
     use super::field::*;
 
+    #[allow(unused_variables)] // TODO: Handle all fields
     let DateTimeFieldBag {
         era,
         year,

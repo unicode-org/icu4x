@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Types for expressing field-by-field models for datetime formats.
+
 pub mod field;
 mod skeleton;
 mod tokenizer;
@@ -23,9 +25,7 @@ use writeable::Writeable;
 ///
 /// # Examples
 ///
-/// ```
-/// use icu::datetime::fieldbag::DateTimeFieldBag;
-/// ```
+/// TODO: Add an example when more fully implemented
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
 #[non_exhaustive]
 pub struct DateTimeFieldBag {
@@ -100,6 +100,30 @@ pub struct DateTimeFieldBag {
 }
 
 impl DateTimeFieldBag {
+    /// Creates a [`DateTimeFieldBag`] from a skeleton string.
+    ///
+    /// This function rejects strings with duplicate fields, unknown fields, non-field
+    /// characters, and other conditions in the [`DateTimeFieldBagParseError`]. For a
+    /// more lenient parse function, use [`DateTimeFieldBag::from_skeleton`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldbag::DateTimeFieldBag;
+    /// use icu::datetime::fieldbag::field::Era;
+    /// use icu::datetime::fieldbag::field::Year;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let bag = DateTimeFieldBag::try_from_skeleton("GGGGy").unwrap();
+    ///
+    /// let mut expected = DateTimeFieldBag::default();
+    /// expected.era = Some(Era::Long);
+    /// expected.year = Some(Year::Numeric);
+    /// assert_eq!(bag, expected);
+    ///
+    /// let err_bag = DateTimeFieldBag::try_from_skeleton("...GGGGy...");
+    /// assert!(err_bag.is_err());
+    /// ```
     pub fn try_from_skeleton(skeleton: &str) -> Result<Self, DateTimeFieldBagParseError> {
         let parse_result = skeleton::uts35_to_fieldbag(skeleton);
         if let Some(err) = parse_result.1 {
@@ -109,6 +133,30 @@ impl DateTimeFieldBag {
         }
     }
 
+    /// Creates a [`DateTimeFieldBag`] from a skeleton string.
+    ///
+    /// This function gracefully ignores duplicate fields, unknown fields, non-field
+    /// characters, and other conditions in the [`DateTimeFieldBagParseError`]. For a
+    /// more strict parse function, use [`DateTimeFieldBag::try_from_skeleton`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldbag::DateTimeFieldBag;
+    /// use icu::datetime::fieldbag::field::Era;
+    /// use icu::datetime::fieldbag::field::Year;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let bag = DateTimeFieldBag::from_skeleton("GGGGy");
+    ///
+    /// let mut expected = DateTimeFieldBag::default();
+    /// expected.era = Some(Era::Long);
+    /// expected.year = Some(Year::Numeric);
+    /// assert_eq!(bag, expected);
+    ///
+    /// let lenient_bag = DateTimeFieldBag::from_skeleton("...GGGGy...");
+    /// assert_eq!(lenient_bag, expected);
+    /// ```
     pub fn from_skeleton(skeleton: &str) -> Self {
         // drop the error
         skeleton::uts35_to_fieldbag(skeleton).0

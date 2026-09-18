@@ -7,6 +7,8 @@ pub(crate) struct Uts35DateTimePatternTokenizer<'a>(pub &'a str);
 #[cfg_attr(test, derive(Debug, PartialEq))]
 pub(crate) enum Token<'a> {
     Symbol(char, usize),
+    // TODO: Remove the following annotation when this tokenizer is used for patterns
+    #[cfg_attr(not(test), allow(unused))]
     Literal(&'a str),
 }
 

@@ -14,8 +14,6 @@ pub enum Era {
     ///
     /// # Examples
     ///
-    /// FIXME: Add a similar test to all enum variants
-    ///
     /// ```
     /// use icu::datetime::fieldbag::DateTimeFieldBag;
     /// use icu::datetime::fieldbag::field::Era;
@@ -34,10 +32,18 @@ pub enum Era {
     /// Example: Anno Domini
     ///
     /// Skeleton: `GGGG`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     Long,
     /// Example: A
     ///
     /// Skeleton: `GGGGG`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     Narrow,
 }
 
@@ -45,9 +51,21 @@ pub enum Era {
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum Year {
+    /// Example: 2003
+    ///
     /// Skeleton: `y`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     Numeric,
+    /// Example: 03
+    ///
     /// Skeleton: `yy`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     TwoDigit,
 }
 
@@ -58,26 +76,46 @@ pub enum Month {
     /// Example: 3
     ///
     /// Skeleton: `M`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     Numeric,
     /// Example: 03
     ///
     /// Skeleton: `MM`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     TwoDigit,
     /// Example: Mar
     ///
     /// Skeleton: `MMM`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     Short,
     /// Example: March
     ///
     /// Skeleton: `MMMM`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     Long,
     /// Example: M
     ///
-    /// Note: Two weekdays may have the same narrow style for some locales. For example,
+    /// Note: Two months may have the same narrow style for some locales. For example,
     /// both March's and May's narrow styles are M in the en-US locale. If this is
     /// not acceptable, use [`Self::Short`].
     ///
     /// Skeleton: `MMMMM`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     Narrow,
 }
 
@@ -88,10 +126,18 @@ pub enum Day {
     /// Example: 8
     ///
     /// Skeleton: `d`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     Numeric,
     /// Example: 08
     ///
     /// Skeleton: `dd`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     TwoDigit,
 }
 
@@ -102,10 +148,18 @@ pub enum Weekday {
     /// Example: Thu
     ///
     /// Skeleton: `E`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     Short,
     /// Example: Thursday
     ///
     /// Skeleton: `EEEE`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     Long,
     /// Example: T
     ///
@@ -114,6 +168,10 @@ pub enum Weekday {
     /// not acceptable, use [`Self::Short`].
     ///
     /// Skeleton: `EEEEE`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     Narrow,
 }
 
@@ -124,14 +182,26 @@ pub enum DayPeriod {
     /// Example: in the evening
     ///
     /// Skeleton: `B`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     FlexibleShort,
     /// Example: in the evening
     ///
     /// Skeleton: `BBBB`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     FlexibleLong,
     /// Example: in the evening
     ///
     /// Skeleton: `BBBBB`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     FlexibleNarrow,
 }
 
@@ -144,12 +214,35 @@ pub enum HourKind {
     /// Skeleton: `h` or `hh`
     ///
     /// This corresponds to `hour12: true` in ECMA-402.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldbag::DateTimeFieldBag;
+    /// use icu::datetime::fieldbag::field::Hour;
+    /// use icu::datetime::fieldbag::field::HourKind;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let mut bag = DateTimeFieldBag::default();
+    /// bag.hour = Some(Hour::Numeric);
+    /// bag.hour_kind = Some(HourKind::Clock12);
+    ///
+    /// assert_writeable_eq!(bag, "h");
+    /// assert_eq!(
+    ///     bag.to_string().parse::<DateTimeFieldBag>(),
+    ///     Ok(bag)
+    /// );
+    /// ```
     Clock12,
     /// Example: 16
     ///
     /// Skeleton: `H` or `HH`
     ///
     /// This corresponds to `hour12: false` in ECMA-402.
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for HourKind::Clock24
     Clock24,
 }
 
@@ -160,10 +253,18 @@ pub enum Hour {
     /// Example: 6
     ///
     /// Skeleton: `h`, `H`, or `j` (depending on [`HourKind`])
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for HourKind::Clock24
     Numeric,
     /// Example: 06
     ///
     /// Skeleton: `hh`, `HH`, or `jj` (depending on [`HourKind`])
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for HourKind::Clock24
     TwoDigit,
 }
 
@@ -174,10 +275,18 @@ pub enum Minute {
     /// Example: 5
     ///
     /// Skeleton: `m`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     Numeric,
     /// Example: 05
     ///
     /// Skeleton: `mm`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     TwoDigit,
 }
 
@@ -188,10 +297,18 @@ pub enum Second {
     /// Example: 2
     ///
     /// Skeleton: `s`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     Numeric,
     /// Example: 02
     ///
     /// Skeleton: `ss`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     TwoDigit,
 }
 
@@ -202,14 +319,26 @@ pub enum FractionalSecondDigits {
     /// One fraction digit for seconds.
     ///
     /// Skeleton: `S`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     F1,
     /// Two fraction digits for seconds.
     ///
     /// Skeleton: `SS`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     F2,
     /// Three fraction digits for seconds.
     ///
     /// Skeleton: `SSS`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     F3,
 }
 
@@ -222,27 +351,51 @@ pub enum TimeZoneName {
     /// Skeleton: `z`
     ///
     /// This corresponds to the "short" option in ECMA-402.
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     ShortSpecific,
     /// Long localized form (example: Pacific Standard Time, Nordamerikanische Westküsten-Normalzeit).
     ///
     /// Skeleton: `zzzz`
     ///
     /// This corresponds to the "long" option in ECMA-402.
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     LongSpecific,
     /// Short localized GMT format (example: GMT-8).
     ///
     /// Skeleton: `O`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     ShortOffset,
     /// Long localized GMT format (example: GMT-08:00).
     ///
     /// Skeleton: `OOOO`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     LongOffset,
     /// Short generic non-location format (example: PT, Los Angeles Zeit).
     ///
     /// Skeleton: `v`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     ShortGeneric,
     /// Long generic non-location format (example: Pacific Time, Nordamerikanische Westküstenzeit).
     ///
     /// Skeleton: `vvvv`
+    ///
+    /// # Examples
+    ///
+    /// TODO: Add a test like the one for Era::Short
     LongGeneric,
 }
