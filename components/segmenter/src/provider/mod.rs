@@ -24,6 +24,8 @@ mod v2;
 pub use v2::*;
 mod complex;
 pub use complex::*;
+#[cfg(feature = "unstable")]
+pub mod adaboost;
 
 #[cfg(feature = "datagen")]
 use icu_provider::prelude::*;
@@ -59,6 +61,14 @@ const _: () = {
     impl_segmenter_lstm_auto_v1!(Baked);
     #[cfg(feature = "unstable")]
     impl_segmenter_unihan_radical_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_segmenter_chinese_auto_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_segmenter_cj_auto_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_segmenter_japanese_auto_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_segmenter_thai_auto_v1!(Baked);
     impl_segmenter_break_word_v1!(Baked);
     impl_segmenter_break_word_override_v1!(Baked);
     impl_segmenter_break_sentence_override_v1!(Baked);
@@ -90,6 +100,14 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     SegmenterDictionaryAutoV1::INFO,
     SegmenterDictionaryExtendedV1::INFO,
     SegmenterLstmAutoV1::INFO,
+    #[cfg(feature = "unstable")]
+    adaboost::SegmenterChineseAutoV1::INFO,
+    #[cfg(feature = "unstable")]
+    adaboost::SegmenterCjAutoV1::INFO,
+    #[cfg(feature = "unstable")]
+    adaboost::SegmenterJapaneseAutoV1::INFO,
+    #[cfg(feature = "unstable")]
+    adaboost::SegmenterThaiAutoV1::INFO,
     #[cfg(feature = "unstable")]
     SegmenterUnihanRadicalV1::INFO,
     #[cfg(feature = "unstable")]
