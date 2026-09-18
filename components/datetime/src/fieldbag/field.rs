@@ -35,7 +35,7 @@ pub enum Era {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     Long,
     /// Example: A
     ///
@@ -43,7 +43,7 @@ pub enum Era {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     Narrow,
 }
 
@@ -57,7 +57,7 @@ pub enum Year {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     Numeric,
     /// Example: 03
     ///
@@ -65,7 +65,7 @@ pub enum Year {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     TwoDigit,
 }
 
@@ -79,7 +79,7 @@ pub enum Month {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     Numeric,
     /// Example: 03
     ///
@@ -87,7 +87,7 @@ pub enum Month {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     TwoDigit,
     /// Example: Mar
     ///
@@ -95,7 +95,7 @@ pub enum Month {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     Short,
     /// Example: March
     ///
@@ -103,7 +103,7 @@ pub enum Month {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     Long,
     /// Example: M
     ///
@@ -115,7 +115,7 @@ pub enum Month {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     Narrow,
 }
 
@@ -129,7 +129,7 @@ pub enum Day {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     Numeric,
     /// Example: 08
     ///
@@ -137,7 +137,7 @@ pub enum Day {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     TwoDigit,
 }
 
@@ -151,7 +151,7 @@ pub enum Weekday {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     Short,
     /// Example: Thursday
     ///
@@ -159,7 +159,7 @@ pub enum Weekday {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     Long,
     /// Example: T
     ///
@@ -171,7 +171,7 @@ pub enum Weekday {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     Narrow,
 }
 
@@ -185,7 +185,7 @@ pub enum DayPeriod {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     FlexibleShort,
     /// Example: in the evening
     ///
@@ -193,7 +193,7 @@ pub enum DayPeriod {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     FlexibleLong,
     /// Example: in the evening
     ///
@@ -201,7 +201,7 @@ pub enum DayPeriod {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     FlexibleNarrow,
 }
 
@@ -242,7 +242,7 @@ pub enum HourKind {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for HourKind::Clock24
+    /// TODO: Add a test like the one for [`HourKind::Clock24`]
     Clock24,
 }
 
@@ -256,7 +256,7 @@ pub enum Hour {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for HourKind::Clock24
+    /// TODO: Add a test like the one for [`HourKind::Clock24`]
     Numeric,
     /// Example: 06
     ///
@@ -264,7 +264,7 @@ pub enum Hour {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for HourKind::Clock24
+    /// TODO: Add a test like the one for [`HourKind::Clock24`]
     TwoDigit,
 }
 
@@ -278,7 +278,7 @@ pub enum Minute {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     Numeric,
     /// Example: 05
     ///
@@ -286,7 +286,7 @@ pub enum Minute {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     TwoDigit,
 }
 
@@ -300,7 +300,7 @@ pub enum Second {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     Numeric,
     /// Example: 02
     ///
@@ -308,7 +308,7 @@ pub enum Second {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     TwoDigit,
 }
 
@@ -322,7 +322,7 @@ pub enum FractionalSecondDigits {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     F1,
     /// Two fraction digits for seconds.
     ///
@@ -330,7 +330,7 @@ pub enum FractionalSecondDigits {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     F2,
     /// Three fraction digits for seconds.
     ///
@@ -338,7 +338,7 @@ pub enum FractionalSecondDigits {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     F3,
 }
 
@@ -354,7 +354,7 @@ pub enum TimeZoneName {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     ShortSpecific,
     /// Long localized form (example: Pacific Standard Time, Nordamerikanische Westküsten-Normalzeit).
     ///
@@ -364,7 +364,7 @@ pub enum TimeZoneName {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     LongSpecific,
     /// Short localized GMT format (example: GMT-8).
     ///
@@ -372,7 +372,7 @@ pub enum TimeZoneName {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     ShortOffset,
     /// Long localized GMT format (example: GMT-08:00).
     ///
@@ -380,7 +380,7 @@ pub enum TimeZoneName {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     LongOffset,
     /// Short generic non-location format (example: PT, Los Angeles Zeit).
     ///
@@ -388,7 +388,7 @@ pub enum TimeZoneName {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     ShortGeneric,
     /// Long generic non-location format (example: Pacific Time, Nordamerikanische Westküstenzeit).
     ///
@@ -396,6 +396,6 @@ pub enum TimeZoneName {
     ///
     /// # Examples
     ///
-    /// TODO: Add a test like the one for Era::Short
+    /// TODO: Add a test like the one for [`Era::Short`]
     LongGeneric,
 }

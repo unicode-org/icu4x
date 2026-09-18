@@ -16,6 +16,8 @@ pub enum DateTimeFieldBagParseError {
     UnexpectedLiteral,
 }
 
+
+#[allow(clippy::todo)] // TODO: Resolve the TODOs
 pub(crate) fn uts35_to_fieldbag(
     skeleton: &str,
 ) -> (DateTimeFieldBag, Option<DateTimeFieldBagParseError>) {
@@ -77,6 +79,7 @@ pub(crate) fn uts35_to_fieldbag(
     (bag, error)
 }
 
+#[allow(clippy::todo)] // TODO: Resolve the TODOs
 pub(crate) fn fieldbag_to_uts35<W: ?Sized + fmt::Write>(
     fieldbag: &DateTimeFieldBag,
     sink: &mut W,

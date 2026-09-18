@@ -16,7 +16,7 @@ impl<'a> Uts35DateTimePatternTokenizer<'a> {
     pub fn step(&mut self) -> Option<Token<'a>> {
         let starting_str = self.0;
         let mut it = self.0.chars();
-        let Some(ch) = it.next() else { return None };
+        let ch = it.next()?;
         let mut byte_len = ch.len_utf8();
         loop {
             self.0 = it.as_str();
