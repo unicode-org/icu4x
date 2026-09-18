@@ -56,6 +56,9 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 use std::str::FromStr;
 
+#[cfg(feature = "fs_exporter")]
+mod single_exporter;
+
 #[derive(Clone)]
 struct Filter {
     domain: String,
@@ -119,7 +122,7 @@ struct Cli {
 
     #[arg(long, value_enum)]
     #[arg(
-        help = "Select the output format: a directory tree of files (fs), a single blob (blob), or a Rust module (baked)."
+        help = "Select the output format: a directory tree of files (fs), a single blob (blob), a Rust module (baked), or a single serialized payload (single)."
     )]
     format: Format,
 
@@ -128,11 +131,13 @@ struct Cli {
     overwrite: bool,
 
     #[arg(short, long, value_enum, default_value_t = Syntax::Json)]
-    #[arg(help = "--format=fs only: serde serialization format.")]
+    #[arg(help = "--format=fs, --format=single only: serde serialization format.")]
     syntax: Syntax,
 
     #[arg(short, long)]
-    #[arg(help = "--format=baked, --format=fs only: pretty-print the Rust or JSON output files.")]
+    #[arg(
+        help = "--format=baked, --format=fs, --format=single only: pretty-print the Rust or JSON output files."
+    )]
     pretty: bool,
 
     #[arg(short = 't', long, value_name = "TAG", default_value = "latest")]
@@ -285,8 +290,8 @@ struct Cli {
     #[arg(
         help = "Path to output directory or file. Must be empty or non-existent, unless \
                   --overwrite is present, in which case the directory is deleted first. \
-                  For --format=blob, omit this option to dump to stdout. \
-                  For --format={dir,mod} defaults to 'icu4x_data'."
+                  For --format={blob,single}, omit this option to dump to stdout. \
+                  For --format={fs,baked} defaults to 'icu4x_data'."
     )]
     output: Option<PathBuf>,
 
@@ -326,6 +331,7 @@ enum Format {
     Fs,
     Blob,
     Baked,
+    Single,
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
@@ -333,6 +339,22 @@ enum Syntax {
     Json,
     Bincode,
     Postcard,
+}
+
+impl Syntax {
+    #[cfg(feature = "fs_exporter")]
+    fn into_serializer(
+        self,
+        pretty: bool,
+    ) -> Box<dyn icu_provider_export::fs_exporter::serializers::AbstractSerializer + Sync> {
+        use icu_provider_export::fs_exporter::serializers;
+        match self {
+            Syntax::Bincode => Box::<serializers::Bincode>::default(),
+            Syntax::Postcard => Box::<serializers::Postcard>::default(),
+            Syntax::Json if pretty => Box::new(serializers::Json::pretty()),
+            Syntax::Json => Box::<serializers::Json>::default(),
+        }
+    }
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
@@ -638,7 +660,7 @@ fn run(cli: Cli) -> eyre::Result<()> {
         Some(Deduplication::RetainBaseLanguages) => DeduplicationStrategy::RetainBaseLanguages,
         Some(Deduplication::None) => DeduplicationStrategy::None,
         None => match cli.format {
-            Format::Fs | Format::Blob => DeduplicationStrategy::None,
+            Format::Fs | Format::Blob | Format::Single => DeduplicationStrategy::None,
             Format::Baked if cli.no_internal_fallback && cli.deduplication.is_none() => {
                 eyre::bail!(
                     "--no-internal-fallback requires an explicit --deduplication value. Baked exporter would default to maximal deduplication, which might not be intended"
@@ -701,22 +723,14 @@ fn run(cli: Cli) -> eyre::Result<()> {
         Format::Fs => driver.export(&provider, {
             use icu_provider_export::fs_exporter::*;
 
-            FilesystemExporter::try_new(
-                match cli.syntax {
-                    Syntax::Bincode => Box::<serializers::Bincode>::default(),
-                    Syntax::Postcard => Box::<serializers::Postcard>::default(),
-                    Syntax::Json if cli.pretty => Box::new(serializers::Json::pretty()),
-                    Syntax::Json => Box::<serializers::Json>::default(),
-                },
-                {
-                    let mut options = Options::default();
-                    options.root = cli.output.unwrap_or_else(|| PathBuf::from("icu4x_data"));
-                    if cli.overwrite {
-                        options.overwrite = OverwriteOption::RemoveAndReplace
-                    }
-                    options
-                },
-            )?
+            FilesystemExporter::try_new(cli.syntax.into_serializer(cli.pretty), {
+                let mut options = Options::default();
+                options.root = cli.output.unwrap_or_else(|| PathBuf::from("icu4x_data"));
+                if cli.overwrite {
+                    options.overwrite = OverwriteOption::RemoveAndReplace
+                }
+                options
+            })?
         }),
         #[cfg(not(feature = "blob_exporter"))]
         Format::Blob => {
@@ -756,6 +770,26 @@ fn run(cli: Cli) -> eyre::Result<()> {
                     options
                 },
             )?
+        }),
+        #[cfg(not(feature = "fs_exporter"))]
+        Format::Single => {
+            eyre::bail!("Exporting to a single payload requires the `fs_exporter` Cargo feature")
+        }
+        #[cfg(feature = "fs_exporter")]
+        Format::Single => driver.export(&provider, {
+            let sink: Box<dyn std::io::Write + Sync> = if let Some(path) = cli.output {
+                if !cli.overwrite && path.exists() {
+                    eyre::bail!("Output path is present: {:?}", path);
+                }
+                Box::new(
+                    std::fs::File::create(&path)
+                        .with_context(|| path.to_string_lossy().to_string())?,
+                )
+            } else {
+                Box::new(std::io::stdout())
+            };
+
+            single_exporter::SingleExporter::new(sink, cli.syntax.into_serializer(cli.pretty))
         }),
     };
 
@@ -899,6 +933,81 @@ fn test_attributes_regex() {
 
     assert!(std::fs::exists(out.join("hello/world/v1/uppercase")).unwrap());
     assert!(!std::fs::exists(out.join("hello/world/v1/lowercase")).unwrap());
+}
+
+#[test]
+fn test_single_payload_json() {
+    let out = std::env::temp_dir().join("icu4x-datagen_test_single_payload_json.json");
+    let _ = std::fs::remove_file(&out);
+
+    let mut args = Cli::parse_from([
+        "bin",
+        "--markers",
+        "HelloWorldV1",
+        "--locales",
+        "@el",
+        "--format",
+        "single",
+        "--syntax",
+        "json",
+        "--pretty",
+    ]);
+    args.output = Some(out.clone());
+
+    run(args).unwrap();
+
+    let content = std::fs::read_to_string(&out).unwrap();
+    assert_eq!(content, "{\n  \"message\": \"Καλημέρα κόσμε\"\n}\n");
+    let _ = std::fs::remove_file(&out);
+}
+
+#[test]
+fn test_single_payload_postcard() {
+    let out = std::env::temp_dir().join("icu4x-datagen_test_single_payload_postcard.postcard");
+    let _ = std::fs::remove_file(&out);
+
+    let mut args = Cli::parse_from([
+        "bin",
+        "--markers",
+        "HelloWorldV1",
+        "--locales",
+        "@el",
+        "--format",
+        "single",
+        "--syntax",
+        "postcard",
+    ]);
+    args.output = Some(out.clone());
+
+    run(args).unwrap();
+
+    assert!(out.exists());
+    assert!(!std::fs::read(&out).unwrap().is_empty());
+    let _ = std::fs::remove_file(&out);
+}
+
+#[test]
+fn test_single_payload_cardinality_error() {
+    let test_cases: &[&[&str]] = &[
+        // Multiple explicit locales
+        &["--markers", "HelloWorldV1", "--locales", "@el", "@bn"],
+        // Locale family expanding to multiple sub-locales / attributes
+        &["--markers", "HelloWorldV1", "--locales", "en"],
+        // Multiple markers
+        &["--markers", "HelloWorldV1", "ListAndV1", "--locales", "@el"],
+        // No matching locales (0 payloads)
+        &["--markers", "HelloWorldV1", "--locales", "none"],
+    ];
+
+    for case in test_cases {
+        let mut args = vec!["bin", "--format", "single", "--syntax", "json"];
+        args.extend_from_slice(case);
+        let cli = Cli::parse_from(args);
+        assert!(
+            run(cli).is_err(),
+            "Expected error for single format with args: {case:?}"
+        );
+    }
 }
 
 #[cfg(test)]
