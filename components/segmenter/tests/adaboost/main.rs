@@ -10,8 +10,7 @@ use icu_segmenter::provider::adaboost::AdaboostData;
 use icu_segmenter::provider::{
     Baked, UnihanRadicalsData,
     adaboost::{
-        SegmenterChineseAutoV1, SegmenterCjAutoV1, SegmenterJapaneseAutoV1,
-        SegmenterThaiAutoV1,
+        SegmenterChineseAutoV1, SegmenterCjAutoV1, SegmenterJapaneseAutoV1, SegmenterThaiAutoV1,
     },
 };
 use std::iter::Peekable;

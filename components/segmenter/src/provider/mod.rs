@@ -64,6 +64,8 @@ const _: () = {
     #[cfg(feature = "unstable")]
     impl_segmenter_chinese_auto_v1!(Baked);
     #[cfg(feature = "unstable")]
+    impl_segmenter_cj_auto_v1!(Baked);
+    #[cfg(feature = "unstable")]
     impl_segmenter_japanese_auto_v1!(Baked);
     #[cfg(feature = "unstable")]
     impl_segmenter_thai_auto_v1!(Baked);
