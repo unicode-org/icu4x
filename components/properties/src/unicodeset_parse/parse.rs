@@ -365,20 +365,20 @@ fn legal_char_in_string_start(c: char) -> bool {
 }
 
 #[derive(Debug)]
-enum SingleOrMultiChar {
-    Single(char),
+enum SingleOrMultiCodePoint {
+    Single(u32),
     // Multi is a marker that indicates parsing was paused and needs to be resumed using parse_multi_escape* when
-    // this token is consumed. The contained char is the first char of the multi sequence.
-    Multi(char),
+    // this token is consumed. The contained code point is the first code point of the multi sequence.
+    Multi(u32),
 }
 
-// A char or a string. The Vec<char> represents multi-escapes in the 2+ case.
-// invariant: a String is either zero or 2+ chars long, a one-char-string is equivalent to a single char.
-// invariant: a char is 1+ chars long
+// A code point or a string. The u32 represents multi-escapes in the 2+ case.
+// invariant: a String is either zero or 2+ code points long, a one-code-point-string is equivalent to a single code point.
+// invariant: CharKind always represents exactly one code point (or is a Multi marker for a multi-escape sequence).
 #[derive(Debug)]
 enum Literal {
     String(String),
-    CharKind(SingleOrMultiChar),
+    CharKind(SingleOrMultiCodePoint),
 }
 
 #[derive(Debug)]
@@ -403,7 +403,7 @@ impl<'data> MainToken<'data> {
     fn from_variable_value(val: VariableValue<'data>) -> Self {
         match val {
             VariableValue::Char(c) => {
-                MainToken::Literal(Literal::CharKind(SingleOrMultiChar::Single(c)))
+                MainToken::Literal(Literal::CharKind(SingleOrMultiCodePoint::Single(c as u32)))
             }
             VariableValue::String(s) => {
                 // we know that the VariableMap only contains non-length-1 Strings.
@@ -574,7 +574,7 @@ where
         self.skip_whitespace();
         if self.must_peek_char()? == '-' {
             self.iter.next();
-            self.single_set.add_char('-');
+            self.single_set.add32('-' as u32);
         }
 
         // repeatedly parse the following:
@@ -628,7 +628,7 @@ where
             // expects a certain self.iter state
 
             use MainToken as MT;
-            use SingleOrMultiChar as SMC;
+            use SingleOrMultiCodePoint as SMC;
             match (state, tok) {
                 // the end of this unicode set
                 (
@@ -636,10 +636,10 @@ where
                     MT::ClosingBracket,
                 ) => {
                     if let Some(prev) = prev_char.take() {
-                        self.single_set.add_char(prev);
+                        self.single_set.add32(prev);
                     }
                     if matches!(state, CharMinus) {
-                        self.single_set.add_char('-');
+                        self.single_set.add32('-' as u32);
                     }
 
                     return Ok(());
@@ -647,17 +647,17 @@ where
                 // special case ends for -
                 // [[a-z]-]
                 (AfterOp, MT::ClosingBracket) if matches!(operation, Operation::Difference) => {
-                    self.single_set.add_char('-');
+                    self.single_set.add32('-' as u32);
                     return Ok(());
                 }
                 (Begin, MT::Minus) => {
-                    self.single_set.add_char('-');
+                    self.single_set.add32('-' as u32);
                     state = AfterMinus;
                 }
                 // inner unicode set
                 (Begin | Char | AfterUnicodeSet | AfterOp, MT::UnicodeSet(set)) => {
                     if let Some(prev) = prev_char.take() {
-                        self.single_set.add_char(prev);
+                        self.single_set.add32(prev);
                     }
 
                     self.process_chars(operation, set.code_points().clone());
@@ -675,7 +675,7 @@ where
                     MT::Literal(Literal::CharKind(SMC::Single(c))),
                 ) => {
                     if let Some(prev) = prev_char.take() {
-                        self.single_set.add_char(prev);
+                        self.single_set.add32(prev);
                     }
                     prev_char = Some(c);
                     state = Char;
@@ -686,9 +686,9 @@ where
                     MT::Literal(Literal::CharKind(SMC::Multi(first_c))),
                 ) => {
                     if let Some(prev) = prev_char.take() {
-                        self.single_set.add_char(prev);
+                        self.single_set.add32(prev);
                     }
-                    self.single_set.add_char(first_c);
+                    self.single_set.add32(first_c);
                     self.parse_multi_escape_into_set()?;
 
                     // Note we cannot go to the Char state, because a multi-escape sequence of
@@ -698,7 +698,7 @@ where
                 // a literal string (length != 1, by CharOrString invariant)
                 (Begin | Char | AfterUnicodeSet, MT::Literal(Literal::String(s))) => {
                     if let Some(prev) = prev_char.take() {
-                        self.single_set.add_char(prev);
+                        self.single_set.add32(prev);
                     }
 
                     self.string_set.insert(s);
@@ -713,10 +713,13 @@ where
                     let end = c;
                     if start > end {
                         // TODO(#3558): Better error message (e.g., "start greater than end in range")?
-                        return Err(PEK::UnexpectedChar(end).with_offset(tok_offset));
+                        return Err(
+                            PEK::UnexpectedChar(char::try_from(end).unwrap_or('\u{FFFD}'))
+                                .with_offset(tok_offset),
+                        );
                     }
 
-                    self.single_set.add_range(start..=end);
+                    self.single_set.add_range32(start..=end);
                     prev_char = None;
                     state = Begin;
                 }
@@ -736,9 +739,9 @@ where
                 }
                 (Begin | Char | AfterUnicodeSet, MT::DollarSign) => {
                     if let Some(prev) = prev_char.take() {
-                        self.single_set.add_char(prev);
+                        self.single_set.add32(prev);
                     }
-                    self.single_set.add_char('\u{FFFF}');
+                    self.single_set.add32(0xFFFF);
                     state = AfterDollar;
                 }
                 _ => {
@@ -874,8 +877,14 @@ where
                     // don't need the offset, because '}' will always be the last char
                     let (_, c) = self.parse_char()?;
                     match c {
-                        SingleOrMultiChar::Single(c) => buffer.push(c),
-                        SingleOrMultiChar::Multi(first) => {
+                        SingleOrMultiCodePoint::Single(c) => {
+                            let c = char::try_from(c)
+                                .map_err(|_| PEK::InvalidEscape.with_offset(last_offset))?;
+                            buffer.push(c);
+                        }
+                        SingleOrMultiCodePoint::Multi(first) => {
+                            let first = char::try_from(first)
+                                .map_err(|_| PEK::InvalidEscape.with_offset(last_offset))?;
                             buffer.push(first);
                             self.parse_multi_escape_into_string(&mut buffer)?;
                         }
@@ -887,7 +896,7 @@ where
 
         let mut chars = buffer.chars();
         let literal = match (chars.next(), chars.next()) {
-            (Some(c), None) => Literal::CharKind(SingleOrMultiChar::Single(c)),
+            (Some(c), None) => Literal::CharKind(SingleOrMultiCodePoint::Single(c as u32)),
             _ => Literal::String(buffer),
         };
         Ok((last_offset, literal))
@@ -918,8 +927,8 @@ where
                     }
                     first = false;
 
-                    let (_, c) = self.parse_hex_digits_into_char(1, 6)?;
-                    self.single_set.add_char(c);
+                    let (_, c) = self.parse_hex_digits_into_code_point(1, 6)?;
+                    self.single_set.add32(c);
                 }
             }
         }
@@ -945,7 +954,11 @@ where
                     }
                     first = false;
 
-                    let (_, c) = self.parse_hex_digits_into_char(1, 6)?;
+                    let offset = self.must_peek_index()?;
+                    let (_, c) = self.parse_hex_digits_into_code_point(1, 6)?;
+                    let Ok(c) = char::try_from(c) else {
+                        return Err(PEK::InvalidEscape.with_offset(offset));
+                    };
                     s.push(c);
                 }
             }
@@ -954,7 +967,7 @@ where
 
     // starts with \ and consumes the whole escape sequence if a single
     // char is escaped, otherwise pauses the parse after the first char
-    fn parse_escaped_char(&mut self) -> Result<(usize, SingleOrMultiChar)> {
+    fn parse_escaped_char(&mut self) -> Result<(usize, SingleOrMultiCodePoint)> {
         self.consume('\\')?;
 
         let (offset, next_char) = self.must_next()?;
@@ -965,52 +978,52 @@ where
                 self.iter.next();
 
                 self.skip_whitespace();
-                let (_, first_c) = self.parse_hex_digits_into_char(1, 6)?;
+                let (_, first_c) = self.parse_hex_digits_into_code_point(1, 6)?;
                 let skipped = self.skip_whitespace();
 
                 match self.must_peek()? {
                     (offset, '}') => {
                         self.iter.next();
-                        Ok((offset, SingleOrMultiChar::Single(first_c)))
+                        Ok((offset, SingleOrMultiCodePoint::Single(first_c)))
                     }
                     // note: enforcing whitespace after the first char here, because the parse_multi_escape functions
                     // won't have access to this information anymore
                     (offset, c) if c.is_ascii_hexdigit() && skipped > 0 => {
-                        Ok((offset, SingleOrMultiChar::Multi(first_c)))
+                        Ok((offset, SingleOrMultiCodePoint::Multi(first_c)))
                     }
                     (_, c) => self.error_here(PEK::UnexpectedChar(c)),
                 }
             }
             'u' => {
                 // 'u' hex{4}
-                self.parse_hex_digits_into_char(4, 4)
-                    .map(|(offset, c)| (offset, SingleOrMultiChar::Single(c)))
+                self.parse_hex_digits_into_code_point(4, 4)
+                    .map(|(offset, c)| (offset, SingleOrMultiCodePoint::Single(c)))
             }
             'x' => {
                 // 'x' hex{2}
-                self.parse_hex_digits_into_char(2, 2)
-                    .map(|(offset, c)| (offset, SingleOrMultiChar::Single(c)))
+                self.parse_hex_digits_into_code_point(2, 2)
+                    .map(|(offset, c)| (offset, SingleOrMultiCodePoint::Single(c)))
             }
             'U' => {
                 // 'U00' ('0' hex{5} | '10' hex{4})
                 self.consume('0')?;
                 self.consume('0')?;
-                self.parse_hex_digits_into_char(6, 6)
-                    .map(|(offset, c)| (offset, SingleOrMultiChar::Single(c)))
+                self.parse_hex_digits_into_code_point(6, 6)
+                    .map(|(offset, c)| (offset, SingleOrMultiCodePoint::Single(c)))
             }
             'N' => {
                 // parse code point with name in {}
                 // tracking issue: https://github.com/unicode-org/icu4x/issues/1397
                 Err(PEK::Unimplemented.with_offset(offset))
             }
-            'a' => Ok((offset, SingleOrMultiChar::Single('\u{0007}'))),
-            'b' => Ok((offset, SingleOrMultiChar::Single('\u{0008}'))),
-            't' => Ok((offset, SingleOrMultiChar::Single('\u{0009}'))),
-            'n' => Ok((offset, SingleOrMultiChar::Single('\u{000A}'))),
-            'v' => Ok((offset, SingleOrMultiChar::Single('\u{000B}'))),
-            'f' => Ok((offset, SingleOrMultiChar::Single('\u{000C}'))),
-            'r' => Ok((offset, SingleOrMultiChar::Single('\u{000D}'))),
-            _ => Ok((offset, SingleOrMultiChar::Single(next_char))),
+            'a' => Ok((offset, SingleOrMultiCodePoint::Single(0x0007))),
+            'b' => Ok((offset, SingleOrMultiCodePoint::Single(0x0008))),
+            't' => Ok((offset, SingleOrMultiCodePoint::Single(0x0009))),
+            'n' => Ok((offset, SingleOrMultiCodePoint::Single(0x000A))),
+            'v' => Ok((offset, SingleOrMultiCodePoint::Single(0x000B))),
+            'f' => Ok((offset, SingleOrMultiCodePoint::Single(0x000C))),
+            'r' => Ok((offset, SingleOrMultiCodePoint::Single(0x000D))),
+            _ => Ok((offset, SingleOrMultiCodePoint::Single(next_char as u32))),
         }
     }
 
@@ -1280,20 +1293,20 @@ where
 
     // parses either a raw char or an escaped char. all chars are allowed, the caller must make sure to handle
     // cases where some characters are not allowed
-    fn parse_char(&mut self) -> Result<(usize, SingleOrMultiChar)> {
+    fn parse_char(&mut self) -> Result<(usize, SingleOrMultiCodePoint)> {
         let (offset, c) = self.must_peek()?;
         match c {
             '\\' => self.parse_escaped_char(),
             _ => {
                 self.iter.next();
-                Ok((offset, SingleOrMultiChar::Single(c)))
+                Ok((offset, SingleOrMultiCodePoint::Single(c as u32)))
             }
         }
     }
 
     // note: could turn this from the current two-pass approach into a one-pass approach
     // by manually parsing the digits instead of using u32::from_str_radix.
-    fn parse_hex_digits_into_char(&mut self, min: usize, max: usize) -> Result<(usize, char)> {
+    fn parse_hex_digits_into_code_point(&mut self, min: usize, max: usize) -> Result<(usize, u32)> {
         let first_offset = self.must_peek_index()?;
         let end_offset = self.validate_hex_digits(min, max)?;
 
@@ -1301,9 +1314,11 @@ where
         // which are all exactly one UTF-8 byte long, so slicing on these offsets always respects char boundaries
         let hex_source = &self.source[first_offset..=end_offset];
         let num = u32::from_str_radix(hex_source, 16).map_err(|_| PEK::Internal)?;
-        char::try_from(num)
-            .map(|c| (end_offset, c))
-            .map_err(|_| PEK::InvalidEscape.with_offset(end_offset))
+        if num <= char::MAX as u32 {
+            Ok((end_offset, num))
+        } else {
+            Err(PEK::InvalidEscape.with_offset(end_offset))
+        }
     }
 
     // validates [0-9a-fA-F]{min,max}, returns the offset of the last digit, consuming everything in the process
@@ -2439,5 +2454,53 @@ mod tests {
             let (_, consumed) = parse_with_variables(source, &vm).unwrap();
             assert_eq!(expected_consumed, consumed);
         }
+    }
+
+    #[test]
+    fn test_surrogate_code_points() {
+        // Surrogates (U+D800..U+DFFF) should work in code point set paths
+
+        // Test single surrogate
+        let (set, _) = parse(r"[\uD800]").unwrap();
+        assert!(set.code_points().contains32(0xD800));
+        assert_eq!(set.code_points().size(), 1);
+
+        // Test surrogate range
+        let (set, _) = parse(r"[\uD800-\uD8FF]").unwrap();
+        assert!(set.code_points().contains32(0xD800));
+        assert!(set.code_points().contains32(0xD8FF));
+        assert!(!set.code_points().contains32(0xD900));
+        assert_eq!(set.code_points().size(), 0x100); // 256 code points
+
+        // Test complement with surrogates
+        let (set, _) = parse(r"[^\uD800-\uE0FF]").unwrap();
+        // Should NOT contain surrogates in D800-DFFF range
+        assert!(!set.code_points().contains32(0xD800));
+        assert!(!set.code_points().contains32(0xDFFF));
+        // Should contain code points just below the surrogate range
+        assert!(set.code_points().contains32(0xD7FF));
+        // Should contain code points just above the surrogate range
+        assert!(set.code_points().contains32(0xE100));
+
+        // Test hex bracketed surrogate
+        let (set, _) = parse(r"[\x{D800}]").unwrap();
+        assert!(set.code_points().contains32(0xD800));
+        assert_eq!(set.code_points().size(), 1);
+
+        // Test \U escape with surrogate
+        let (set, _) = parse(r"[\U0000D800]").unwrap();
+        assert!(set.code_points().contains32(0xD800));
+        assert_eq!(set.code_points().size(), 1);
+
+        // Test multi-escape with surrogates
+        let (set, _) = parse(r"[\x{D800 D801 D802}]").unwrap();
+        assert!(set.code_points().contains32(0xD800));
+        assert!(set.code_points().contains32(0xD801));
+        assert!(set.code_points().contains32(0xD802));
+        assert_eq!(set.code_points().size(), 3);
+
+        // Test that surrogates are rejected in string contexts
+        let result = parse(r"[{\uD800}]");
+        assert!(result.is_err(), "Surrogates in string context should fail");
     }
 }
