@@ -11,7 +11,7 @@ mod adaboost;
 #[path = "../tests/cnn/main.rs"]
 mod cnn;
 
-use adaboost::{Predictor, ThaiPredictor};
+use adaboost::{CjPredictor, JapanesePredictor, Predictor, ThaiPredictor};
 use cnn::{CnnSegmenter, RawCnnData};
 use icu_segmenter::{WordSegmenter, WordSegmenterBorrowed, options::WordBreakOptions};
 use std::time::Instant;
@@ -41,6 +41,48 @@ fn main_radaboost(args: &[String]) {
 
 fn main_thadaboost(args: &[String]) {
     let segmenter = ThaiPredictor::for_test();
+    let s = &args[0];
+    let start_time = Instant::now();
+    for _ in 0..REPETITIONS {
+        segmenter.predict(s);
+    }
+    let elapsed = start_time.elapsed();
+    println!("Output:");
+    let mut prev = 0;
+    for breakpoint in segmenter.predict_breakpoints(s) {
+        print!("{}|", &s[prev..breakpoint]);
+        prev = breakpoint;
+    }
+    if prev < s.len() {
+        print!("{}", &s[prev..]);
+    }
+    println!();
+    println!("{} repetitions done in: {:?}", REPETITIONS, elapsed);
+}
+
+fn main_cjadaboost(args: &[String]) {
+    let segmenter = CjPredictor::for_test();
+    let s = &args[0];
+    let start_time = Instant::now();
+    for _ in 0..REPETITIONS {
+        segmenter.predict(s);
+    }
+    let elapsed = start_time.elapsed();
+    println!("Output:");
+    let mut prev = 0;
+    for breakpoint in segmenter.predict_breakpoints(s) {
+        print!("{}|", &s[prev..breakpoint]);
+        prev = breakpoint;
+    }
+    if prev < s.len() {
+        print!("{}", &s[prev..]);
+    }
+    println!();
+    println!("{} repetitions done in: {:?}", REPETITIONS, elapsed);
+}
+
+fn main_jaadaboost(args: &[String]) {
+    let segmenter = JapanesePredictor::for_test();
     let s = &args[0];
     let start_time = Instant::now();
     for _ in 0..REPETITIONS {
@@ -125,11 +167,14 @@ fn main() {
     let args = std::env::args().collect::<Vec<String>>();
     if args.len() == 1 || args[1] == "--help" {
         println!("Usage: experimental_segmenter <model> [<locale>] <text>");
+        println!("Models: radaboost, cjadaboost, jaadaboost, thadaboost, dictionary, cnn, lstm");
         return;
     }
     match args[1].as_str() {
         "radaboost" => main_radaboost(&args[2..]),
         "thadaboost" => main_thadaboost(&args[2..]),
+        "cjadaboost" => main_cjadaboost(&args[2..]),
+        "jaadaboost" => main_jaadaboost(&args[2..]),
         "dict" | "dictionary" => main_dict(&args[2..]),
         "cnn" => main_cnn(&args[2..]),
         "lstm" => main_lstm(&args[2..]),

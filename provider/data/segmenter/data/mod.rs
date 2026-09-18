@@ -1,5 +1,7 @@
 // @generated
 include!("segmenter_dictionary_auto_v2.rs.data");
+include!("segmenter_japanese_auto_v1.rs.data");
+include!("segmenter_cj_auto_v1.rs.data");
 include!("segmenter_break_sentence_v2.rs.data");
 include!("segmenter_break_sentence_v1.rs.data");
 include!("segmenter_dictionary_extended_v2.rs.data");
@@ -54,6 +56,8 @@ macro_rules! impl_data_provider {
     ($ provider : ty) => {
         make_provider!($provider);
         impl_segmenter_dictionary_auto_v2!($provider);
+        impl_segmenter_japanese_auto_v1!($provider);
+        impl_segmenter_cj_auto_v1!($provider);
         impl_segmenter_break_sentence_v2!($provider);
         impl_segmenter_break_sentence_v1!($provider);
         impl_segmenter_dictionary_extended_v2!($provider);

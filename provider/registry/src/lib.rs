@@ -372,6 +372,8 @@ macro_rules! registry(
             icu::experimental::units::provider::UnitsInfoV1: UnitsInfoV1,
             icu::plurals::provider::PluralsRangesV1: PluralsRangesV1,
             icu::segmenter::provider::adaboost::SegmenterChineseAutoV1: SegmenterChineseAutoV1,
+            icu::segmenter::provider::adaboost::SegmenterCjAutoV1: SegmenterCjAutoV1,
+            icu::segmenter::provider::adaboost::SegmenterJapaneseAutoV1: SegmenterJapaneseAutoV1,
             icu::segmenter::provider::adaboost::SegmenterThaiAutoV1: SegmenterThaiAutoV1,
             icu::segmenter::provider::SegmenterUnihanRadicalV1: SegmenterUnihanRadicalV1,
             icu::segmenter::provider::SegmenterBreakGraphemeClusterV2: SegmenterBreakGraphemeClusterV2,

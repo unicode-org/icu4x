@@ -260,6 +260,8 @@ impl ExportDriver {
     ///
     /// The currently supported `AdaBoost` models are
     /// * `Chinese_adaboost`
+    /// * `CJ_adaboost`
+    /// * `Japanese_adaboost`
     /// * `Thai_adaboost`
     ///
     /// If a model is not included, the resulting line or word segmenter will apply rule-based

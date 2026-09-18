@@ -9,7 +9,10 @@ use icu_provider::prelude::*;
 use icu_segmenter::provider::adaboost::AdaboostData;
 use icu_segmenter::provider::{
     Baked, UnihanRadicalsData,
-    adaboost::{SegmenterChineseAutoV1, SegmenterThaiAutoV1},
+    adaboost::{
+        SegmenterChineseAutoV1, SegmenterCjAutoV1, SegmenterJapaneseAutoV1,
+        SegmenterThaiAutoV1,
+    },
 };
 use std::iter::Peekable;
 use std::str::CharIndices;
@@ -20,6 +23,9 @@ const CHINESE_ADABOOST: &DataMarkerAttributes =
     DataMarkerAttributes::from_str_or_panic("Chinese_adaboost");
 const THAI_ADABOOST: &DataMarkerAttributes =
     DataMarkerAttributes::from_str_or_panic("Thai_adaboost");
+const CJ_ADABOOST: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("CJ_adaboost");
+const JAPANESE_ADABOOST: &DataMarkerAttributes =
+    DataMarkerAttributes::from_str_or_panic("Japanese_adaboost");
 
 pub(crate) fn get_radical(radicals: &UnihanRadicalsData<'_>, ch: char) -> u8 {
     radicals.trie.get(ch)
@@ -32,6 +38,15 @@ pub(crate) struct Predictor<'a> {
 
 pub(crate) struct ThaiPredictor {
     model: DataPayload<SegmenterThaiAutoV1>,
+}
+
+pub(crate) struct CjPredictor<'a> {
+    model: DataPayload<SegmenterCjAutoV1>,
+    radicals: &'a UnihanRadicalsData<'a>,
+}
+
+pub(crate) struct JapanesePredictor {
+    model: DataPayload<SegmenterJapaneseAutoV1>,
 }
 
 pub(crate) struct AdaboostSegmenterIterator<'predictor, 'data, 's> {
@@ -186,6 +201,103 @@ impl ThaiPredictor {
     }
 
     pub(crate) fn predict(&self, sentence: &str) -> Vec<i32> {
+        let model = self.model.get();
+        predict_unigram_model(
+            sentence,
+            model.bias,
+            |position, key| match position {
+                1 => model.uw1.get_copied(&key),
+                2 => model.uw2.get_copied(&key),
+                3 => model.uw3.get_copied(&key),
+                4 => model.uw4.get_copied(&key),
+                5 => model.uw5.get_copied(&key),
+                6 => model.uw6.get_copied(&key),
+                _ => None,
+            },
+            |position, key| match position {
+                1 => model.bw1.get_copied(&key),
+                2 => model.bw2.get_copied(&key),
+                3 => model.bw3.get_copied(&key),
+                _ => None,
+            },
+            |position, key| match position {
+                1 => model.tw1.get_copied(key),
+                2 => model.tw2.get_copied(key),
+                3 => model.tw3.get_copied(key),
+                4 => model.tw4.get_copied(key),
+                _ => None,
+            },
+        )
+    }
+
+    pub(crate) fn predict_breakpoints(&self, sentence: &str) -> Vec<usize> {
+        i32_breakpoints(sentence, &self.predict(sentence))
+    }
+}
+
+impl JapanesePredictor {
+    pub(crate) fn for_test() -> Self {
+        let response: DataResponse<SegmenterJapaneseAutoV1> = Baked
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes(JAPANESE_ADABOOST),
+                ..Default::default()
+            })
+            .expect("the baked Japanese AdaBoost model should load");
+        Self {
+            model: response.payload,
+        }
+    }
+
+    pub(crate) fn predict(&self, sentence: &str) -> Vec<i32> {
+        let model = self.model.get();
+        predict_unigram_model(
+            sentence,
+            model.bias,
+            |position, key| match position {
+                1 => model.uw1.get_copied(&key),
+                2 => model.uw2.get_copied(&key),
+                3 => model.uw3.get_copied(&key),
+                4 => model.uw4.get_copied(&key),
+                5 => model.uw5.get_copied(&key),
+                6 => model.uw6.get_copied(&key),
+                _ => None,
+            },
+            |position, key| match position {
+                1 => model.bw1.get_copied(&key),
+                2 => model.bw2.get_copied(&key),
+                3 => model.bw3.get_copied(&key),
+                _ => None,
+            },
+            |position, key| match position {
+                1 => model.tw1.get_copied(key),
+                2 => model.tw2.get_copied(key),
+                3 => model.tw3.get_copied(key),
+                4 => model.tw4.get_copied(key),
+                _ => None,
+            },
+        )
+    }
+
+    pub(crate) fn predict_breakpoints(&self, sentence: &str) -> Vec<usize> {
+        i32_breakpoints(sentence, &self.predict(sentence))
+    }
+}
+
+impl CjPredictor<'static> {
+    pub(crate) fn for_test() -> Self {
+        let response: DataResponse<SegmenterCjAutoV1> = Baked
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes(CJ_ADABOOST),
+                ..Default::default()
+            })
+            .expect("the baked Chinese/Japanese AdaBoost model should load");
+        Self {
+            model: response.payload,
+            radicals: Baked::SINGLETON_SEGMENTER_UNIHAN_RADICAL_V1,
+        }
+    }
+
+    pub(crate) fn predict(&self, sentence: &str) -> Vec<i32> {
         let chars: Vec<char> = sentence.chars().collect();
         let model = self.model.get();
         let mut mask = Vec::with_capacity(chars.len().saturating_sub(1));
@@ -195,46 +307,53 @@ impl ThaiPredictor {
             let current = chars[i];
             let mut score = model.bias;
 
+            let previous_radical = get_radical(self.radicals, previous);
+            let current_radical = get_radical(self.radicals, current);
+            if previous_radical != 0 {
+                add_i32_weight(
+                    &mut score,
+                    model.lsrid.get_copied(&(previous_radical, current)),
+                );
+            }
+            if current_radical != 0 {
+                add_i32_weight(
+                    &mut score,
+                    model.rsrid.get_copied(&(previous, current_radical)),
+                );
+            }
+            if previous_radical != 0 && current_radical != 0 {
+                add_i32_weight(
+                    &mut score,
+                    model.rad.get_copied(&(previous_radical, current_radical)),
+                );
+            }
+
             if i > 2 {
                 let key: String = chars[i - 3..=i - 1].iter().collect();
-                add_thai_weight(&mut score, model.tw1.get_copied(&key));
+                add_i32_weight(&mut score, model.tw1.get_copied(&key));
+                add_i32_weight(&mut score, model.uw1.get_copied(&chars[i - 3]));
             }
             if i > 1 {
                 let key: String = chars[i - 2..=i].iter().collect();
-                add_thai_weight(&mut score, model.tw2.get_copied(&key));
+                add_i32_weight(&mut score, model.tw2.get_copied(&key));
+                add_i32_weight(&mut score, model.bw1.get_copied(&(chars[i - 2], previous)));
+                add_i32_weight(&mut score, model.uw2.get_copied(&chars[i - 2]));
             }
             if i + 1 < chars.len() {
                 let key: String = chars[i - 1..=i + 1].iter().collect();
-                add_thai_weight(&mut score, model.tw3.get_copied(&key));
+                add_i32_weight(&mut score, model.tw3.get_copied(&key));
+                add_i32_weight(&mut score, model.bw3.get_copied(&(current, chars[i + 1])));
+                add_i32_weight(&mut score, model.uw5.get_copied(&chars[i + 1]));
             }
             if i + 2 < chars.len() {
                 let key: String = chars[i..=i + 2].iter().collect();
-                add_thai_weight(&mut score, model.tw4.get_copied(&key));
+                add_i32_weight(&mut score, model.tw4.get_copied(&key));
+                add_i32_weight(&mut score, model.uw6.get_copied(&chars[i + 2]));
             }
 
-            if i > 1 {
-                add_thai_weight(&mut score, model.bw1.get_copied(&(chars[i - 2], previous)));
-            }
-            add_thai_weight(&mut score, model.bw2.get_copied(&(previous, current)));
-            if i + 1 < chars.len() {
-                add_thai_weight(&mut score, model.bw3.get_copied(&(current, chars[i + 1])));
-            }
-
-            if i > 2 {
-                add_thai_weight(&mut score, model.uw1.get_copied(&chars[i - 3]));
-            }
-            if i > 1 {
-                add_thai_weight(&mut score, model.uw2.get_copied(&chars[i - 2]));
-            }
-            add_thai_weight(&mut score, model.uw3.get_copied(&previous));
-            add_thai_weight(&mut score, model.uw4.get_copied(&current));
-            if i + 1 < chars.len() {
-                add_thai_weight(&mut score, model.uw5.get_copied(&chars[i + 1]));
-            }
-            if i + 2 < chars.len() {
-                add_thai_weight(&mut score, model.uw6.get_copied(&chars[i + 2]));
-            }
-
+            add_i32_weight(&mut score, model.bw2.get_copied(&(previous, current)));
+            add_i32_weight(&mut score, model.uw3.get_copied(&previous));
+            add_i32_weight(&mut score, model.uw4.get_copied(&current));
             mask.push(score);
         }
 
@@ -242,16 +361,67 @@ impl ThaiPredictor {
     }
 
     pub(crate) fn predict_breakpoints(&self, sentence: &str) -> Vec<usize> {
-        let mut breakpoints = vec![0];
-        let mut offset = 0;
-        for (&score, ch) in self.predict(sentence).iter().zip(sentence.chars()) {
-            offset += ch.len_utf8();
-            if score > 0 {
-                breakpoints.push(offset);
-            }
-        }
-        breakpoints
+        i32_breakpoints(sentence, &self.predict(sentence))
     }
+}
+
+fn predict_unigram_model(
+    sentence: &str,
+    bias: i32,
+    unigram: impl Fn(u8, char) -> Option<i16>,
+    bigram: impl Fn(u8, (char, char)) -> Option<i16>,
+    trigram: impl Fn(u8, &str) -> Option<i16>,
+) -> Vec<i32> {
+    let chars: Vec<char> = sentence.chars().collect();
+    let mut mask = Vec::with_capacity(chars.len().saturating_sub(1));
+
+    for i in 1..chars.len() {
+        let previous = chars[i - 1];
+        let current = chars[i];
+        let mut score = bias;
+
+        if i > 2 {
+            let key: String = chars[i - 3..=i - 1].iter().collect();
+            add_doubled_weight(&mut score, trigram(1, &key));
+            add_doubled_weight(&mut score, unigram(1, chars[i - 3]));
+        }
+        if i > 1 {
+            let key: String = chars[i - 2..=i].iter().collect();
+            add_doubled_weight(&mut score, trigram(2, &key));
+            add_doubled_weight(&mut score, bigram(1, (chars[i - 2], previous)));
+            add_doubled_weight(&mut score, unigram(2, chars[i - 2]));
+        }
+        if i + 1 < chars.len() {
+            let key: String = chars[i - 1..=i + 1].iter().collect();
+            add_doubled_weight(&mut score, trigram(3, &key));
+            add_doubled_weight(&mut score, bigram(3, (current, chars[i + 1])));
+            add_doubled_weight(&mut score, unigram(5, chars[i + 1]));
+        }
+        if i + 2 < chars.len() {
+            let key: String = chars[i..=i + 2].iter().collect();
+            add_doubled_weight(&mut score, trigram(4, &key));
+            add_doubled_weight(&mut score, unigram(6, chars[i + 2]));
+        }
+
+        add_doubled_weight(&mut score, bigram(2, (previous, current)));
+        add_doubled_weight(&mut score, unigram(3, previous));
+        add_doubled_weight(&mut score, unigram(4, current));
+        mask.push(score);
+    }
+
+    mask
+}
+
+fn i32_breakpoints(sentence: &str, scores: &[i32]) -> Vec<usize> {
+    let mut breakpoints = vec![0];
+    let mut offset = 0;
+    for (&score, ch) in scores.iter().zip(sentence.chars()) {
+        offset += ch.len_utf8();
+        if score > 0 {
+            breakpoints.push(offset);
+        }
+    }
+    breakpoints
 }
 
 fn add_weight(score: &mut i64, weight: Option<i16>) {
@@ -260,7 +430,13 @@ fn add_weight(score: &mut i64, weight: Option<i16>) {
     }
 }
 
-fn add_thai_weight(score: &mut i32, weight: Option<i16>) {
+fn add_i32_weight(score: &mut i32, weight: Option<i16>) {
+    if let Some(weight) = weight {
+        *score += i32::from(weight);
+    }
+}
+
+fn add_doubled_weight(score: &mut i32, weight: Option<i16>) {
     if let Some(weight) = weight {
         *score += i32::from(weight) * 2;
     }
@@ -311,6 +487,24 @@ fn exact_scores_match_python() {
         predictor.predict("根据最新的财报数据显示"),
         [-1346, 3484, -565, 3642, 3702, -1509, -9, -285, 2373, -1364]
     );
+}
+
+#[test]
+fn new_model_scores_match_reference() {
+    let sentence = "これはひらがなです";
+    let cj = CjPredictor::for_test();
+    let japanese = JapanesePredictor::for_test();
+
+    assert_eq!(
+        cj.predict(sentence),
+        [-5251, -3066, 2899, -5681, -5058, -263, -4561, -3241]
+    );
+    assert_eq!(
+        japanese.predict(sentence),
+        [-14783, -11637, 8897, -17055, -14447, -499, -11029, -6673]
+    );
+    assert_eq!(cj.predict_breakpoints(sentence), [0, 9]);
+    assert_eq!(japanese.predict_breakpoints(sentence), [0, 9]);
 }
 
 #[test]
