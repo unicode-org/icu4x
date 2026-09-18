@@ -16,7 +16,6 @@ pub enum DateTimeFieldBagParseError {
     UnexpectedLiteral,
 }
 
-
 #[allow(clippy::todo)] // TODO: Resolve the TODOs
 pub(crate) fn uts35_to_fieldbag(
     skeleton: &str,
