@@ -64,6 +64,8 @@ const _: () = {
     #[cfg(feature = "unstable")]
     impl_segmenter_chinese_auto_v1!(Baked);
     #[cfg(feature = "unstable")]
+    impl_segmenter_japanese_auto_v1!(Baked);
+    #[cfg(feature = "unstable")]
     impl_segmenter_thai_auto_v1!(Baked);
     impl_segmenter_break_word_v1!(Baked);
     impl_segmenter_break_word_override_v1!(Baked);
@@ -98,6 +100,10 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     SegmenterLstmAutoV1::INFO,
     #[cfg(feature = "unstable")]
     adaboost::SegmenterChineseAutoV1::INFO,
+    #[cfg(feature = "unstable")]
+    adaboost::SegmenterCjAutoV1::INFO,
+    #[cfg(feature = "unstable")]
+    adaboost::SegmenterJapaneseAutoV1::INFO,
     #[cfg(feature = "unstable")]
     adaboost::SegmenterThaiAutoV1::INFO,
     #[cfg(feature = "unstable")]

@@ -112,6 +112,133 @@ pub struct ThaiAdaboostData<'data> {
     pub tw4: ZeroMap<'data, str, i16>,
 }
 
+/// The data powering the combined Chinese and Japanese `AdaBoost` segmentation model.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(
+    feature = "datagen",
+    databake(path = icu_segmenter::provider::adaboost)
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct CjAdaboostData<'data> {
+    /// The model bias.
+    pub bias: i32,
+    /// Unigram weights three positions to the left of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub uw1: ZeroMap<'data, char, i16>,
+    /// Unigram weights two positions to the left of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub uw2: ZeroMap<'data, char, i16>,
+    /// Unigram weights immediately to the left of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub uw3: ZeroMap<'data, char, i16>,
+    /// Unigram weights immediately to the right of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub uw4: ZeroMap<'data, char, i16>,
+    /// Unigram weights two positions to the right of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub uw5: ZeroMap<'data, char, i16>,
+    /// Unigram weights three positions to the right of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub uw6: ZeroMap<'data, char, i16>,
+    /// Bigram weights immediately to the left of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub bw1: ZeroMap<'data, (char, char), i16>,
+    /// Bigram weights surrounding a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub bw2: ZeroMap<'data, (char, char), i16>,
+    /// Bigram weights immediately to the right of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub bw3: ZeroMap<'data, (char, char), i16>,
+    /// Trigram weights to the left of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub tw1: ZeroMap<'data, str, i16>,
+    /// Trigram weights centered immediately to the left of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub tw2: ZeroMap<'data, str, i16>,
+    /// Trigram weights centered immediately to the right of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub tw3: ZeroMap<'data, str, i16>,
+    /// Trigram weights to the right of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub tw4: ZeroMap<'data, str, i16>,
+    /// Weights for the radical pair surrounding a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub rad: ZeroMap<'data, (u8, u8), i16>,
+    /// Weights for the left radical and right scalar pair.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub lsrid: ZeroMap<'data, (u8, char), i16>,
+    /// Weights for the left scalar and right radical pair.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub rsrid: ZeroMap<'data, (char, u8), i16>,
+}
+
+/// The data powering the Japanese `AdaBoost` segmentation model.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(
+    feature = "datagen",
+    databake(path = icu_segmenter::provider::adaboost)
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct JapaneseAdaboostData<'data> {
+    /// The doubled model bias.
+    pub bias: i32,
+    /// Unigram weights three positions to the left of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub uw1: ZeroMap<'data, char, i16>,
+    /// Unigram weights two positions to the left of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub uw2: ZeroMap<'data, char, i16>,
+    /// Unigram weights immediately to the left of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub uw3: ZeroMap<'data, char, i16>,
+    /// Unigram weights immediately to the right of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub uw4: ZeroMap<'data, char, i16>,
+    /// Unigram weights two positions to the right of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub uw5: ZeroMap<'data, char, i16>,
+    /// Unigram weights three positions to the right of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub uw6: ZeroMap<'data, char, i16>,
+    /// Bigram weights immediately to the left of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub bw1: ZeroMap<'data, (char, char), i16>,
+    /// Bigram weights surrounding a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub bw2: ZeroMap<'data, (char, char), i16>,
+    /// Bigram weights immediately to the right of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub bw3: ZeroMap<'data, (char, char), i16>,
+    /// Trigram weights to the left of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub tw1: ZeroMap<'data, str, i16>,
+    /// Trigram weights centered immediately to the left of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub tw2: ZeroMap<'data, str, i16>,
+    /// Trigram weights centered immediately to the right of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub tw3: ZeroMap<'data, str, i16>,
+    /// Trigram weights to the right of a candidate boundary.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub tw4: ZeroMap<'data, str, i16>,
+}
+
 icu_provider::data_struct!(
     AdaboostData<'_>,
     #[cfg(feature = "datagen")]
@@ -140,6 +267,34 @@ icu_provider::data_marker!(
     attributes_domain = "segmenter"
 );
 
+icu_provider::data_struct!(
+    CjAdaboostData<'_>,
+    #[cfg(feature = "datagen")]
+);
+
+icu_provider::data_marker!(
+    /// Combined Chinese and Japanese `AdaBoost` segmentation model data.
+    SegmenterCjAutoV1,
+    "segmenter/cj/auto/v1",
+    CjAdaboostData<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "segmenter"
+);
+
+icu_provider::data_struct!(
+    JapaneseAdaboostData<'_>,
+    #[cfg(feature = "datagen")]
+);
+
+icu_provider::data_marker!(
+    /// Japanese `AdaBoost` segmentation model data.
+    SegmenterJapaneseAutoV1,
+    "segmenter/japanese/auto/v1",
+    JapaneseAdaboostData<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "segmenter"
+);
+
 #[cfg(all(test, feature = "compiled_data"))]
 mod tests {
     use super::*;
@@ -149,6 +304,10 @@ mod tests {
         DataMarkerAttributes::from_str_or_panic("Chinese_adaboost");
     const THAI_ADABOOST: &DataMarkerAttributes =
         DataMarkerAttributes::from_str_or_panic("Thai_adaboost");
+    const CJ_ADABOOST: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("CJ_adaboost");
+    const JAPANESE_ADABOOST: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("Japanese_adaboost");
     const UNKNOWN: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("unknown");
 
     #[test]
@@ -206,6 +365,69 @@ mod tests {
     }
 
     #[test]
+    fn baked_cj_model() {
+        let response: DataResponse<SegmenterCjAutoV1> = Baked
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes(CJ_ADABOOST),
+                ..Default::default()
+            })
+            .expect("the baked Chinese/Japanese AdaBoost model should load");
+        let data = response.payload.get();
+
+        assert_eq!(data.bias, -15);
+        assert_eq!(
+            data.uw1.len()
+                + data.uw2.len()
+                + data.uw3.len()
+                + data.uw4.len()
+                + data.uw5.len()
+                + data.uw6.len()
+                + data.bw1.len()
+                + data.bw2.len()
+                + data.bw3.len()
+                + data.tw1.len()
+                + data.tw2.len()
+                + data.tw3.len()
+                + data.tw4.len()
+                + data.rad.len()
+                + data.lsrid.len()
+                + data.rsrid.len(),
+            6155
+        );
+        assert_eq!(data.tw4.get_copied("かなり"), Some(2015));
+    }
+
+    #[test]
+    fn baked_japanese_model() {
+        let response: DataResponse<SegmenterJapaneseAutoV1> = Baked
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes(JAPANESE_ADABOOST),
+                ..Default::default()
+            })
+            .expect("the baked Japanese AdaBoost model should load");
+        let data = response.payload.get();
+
+        assert_eq!(data.bias, -3331);
+        assert_eq!(
+            data.uw1.len()
+                + data.uw2.len()
+                + data.uw3.len()
+                + data.uw4.len()
+                + data.uw5.len()
+                + data.uw6.len()
+                + data.bw1.len()
+                + data.bw2.len()
+                + data.bw3.len()
+                + data.tw1.len()
+                + data.tw2.len()
+                + data.tw3.len()
+                + data.tw4.len(),
+            1710
+        );
+        assert_eq!(data.tw3.get_copied("という"), Some(377));
+    }
+
+    #[test]
     fn baked_chinese_model_rejects_unknown_attributes() {
         let error = <Baked as DataProvider<SegmenterChineseAutoV1>>::load(
             &Baked,
@@ -222,6 +444,34 @@ mod tests {
     #[test]
     fn baked_thai_model_rejects_unknown_attributes() {
         let error = <Baked as DataProvider<SegmenterThaiAutoV1>>::load(
+            &Baked,
+            DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes(UNKNOWN),
+                ..Default::default()
+            },
+        )
+        .expect_err("an unknown model attribute should not load");
+
+        assert_eq!(error.kind, DataErrorKind::IdentifierNotFound);
+    }
+
+    #[test]
+    fn baked_cj_model_rejects_unknown_attributes() {
+        let error = <Baked as DataProvider<SegmenterCjAutoV1>>::load(
+            &Baked,
+            DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes(UNKNOWN),
+                ..Default::default()
+            },
+        )
+        .expect_err("an unknown model attribute should not load");
+
+        assert_eq!(error.kind, DataErrorKind::IdentifierNotFound);
+    }
+
+    #[test]
+    fn baked_japanese_model_rejects_unknown_attributes() {
+        let error = <Baked as DataProvider<SegmenterJapaneseAutoV1>>::load(
             &Baked,
             DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(UNKNOWN),

@@ -249,6 +249,8 @@ impl ExportDriver {
             "Lao_codepoints_exclusive_model4_heavy".into(),
             "Thai_codepoints_exclusive_model4_heavy".into(),
             "Chinese_adaboost".into(),
+            "CJ_adaboost".into(),
+            "Japanese_adaboost".into(),
             "Thai_adaboost".into(),
         ])
     }
@@ -273,6 +275,8 @@ impl ExportDriver {
     ///
     /// The currently supported `AdaBoost` models are
     /// * `Chinese_adaboost`
+    /// * `CJ_adaboost`
+    /// * `Japanese_adaboost`
     /// * `Thai_adaboost`
     ///
     /// If a model is not included, the resulting line or word segmenter will apply rule-based
