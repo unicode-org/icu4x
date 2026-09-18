@@ -301,6 +301,8 @@ lazy_static::lazy_static! {
         // We should occasionally review these
         // =========================
 
+        "icu::datetime::fieldbag",
+
         "icu::decimal::CompactDecimalFormatter",
         "icu::decimal::error::CompactExponentError",
         "icu::decimal::options::CompactDecimalFormatterOptions",
