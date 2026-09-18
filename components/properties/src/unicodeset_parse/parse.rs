@@ -365,7 +365,7 @@ fn legal_char_in_string_start(c: char) -> bool {
 }
 
 #[derive(Debug)]
-enum SingleOrMultiChar {
+enum SingleOrMultiCodePoint {
     Single(u32),
     // Multi is a marker that indicates parsing was paused and needs to be resumed using parse_multi_escape* when
     // this token is consumed. The contained code point is the first code point of the multi sequence.
@@ -378,7 +378,7 @@ enum SingleOrMultiChar {
 #[derive(Debug)]
 enum Literal {
     String(String),
-    CharKind(SingleOrMultiChar),
+    CharKind(SingleOrMultiCodePoint),
 }
 
 #[derive(Debug)]
@@ -403,7 +403,7 @@ impl<'data> MainToken<'data> {
     fn from_variable_value(val: VariableValue<'data>) -> Self {
         match val {
             VariableValue::Char(c) => {
-                MainToken::Literal(Literal::CharKind(SingleOrMultiChar::Single(c as u32)))
+                MainToken::Literal(Literal::CharKind(SingleOrMultiCodePoint::Single(c as u32)))
             }
             VariableValue::String(s) => {
                 // we know that the VariableMap only contains non-length-1 Strings.
@@ -628,7 +628,7 @@ where
             // expects a certain self.iter state
 
             use MainToken as MT;
-            use SingleOrMultiChar as SMC;
+            use SingleOrMultiCodePoint as SMC;
             match (state, tok) {
                 // the end of this unicode set
                 (
@@ -877,12 +877,12 @@ where
                     // don't need the offset, because '}' will always be the last char
                     let (_, c) = self.parse_char()?;
                     match c {
-                        SingleOrMultiChar::Single(c) => {
+                        SingleOrMultiCodePoint::Single(c) => {
                             let c = char::try_from(c)
                                 .map_err(|_| PEK::InvalidEscape.with_offset(last_offset))?;
                             buffer.push(c);
                         }
-                        SingleOrMultiChar::Multi(first) => {
+                        SingleOrMultiCodePoint::Multi(first) => {
                             let first = char::try_from(first)
                                 .map_err(|_| PEK::InvalidEscape.with_offset(last_offset))?;
                             buffer.push(first);
@@ -896,7 +896,7 @@ where
 
         let mut chars = buffer.chars();
         let literal = match (chars.next(), chars.next()) {
-            (Some(c), None) => Literal::CharKind(SingleOrMultiChar::Single(c as u32)),
+            (Some(c), None) => Literal::CharKind(SingleOrMultiCodePoint::Single(c as u32)),
             _ => Literal::String(buffer),
         };
         Ok((last_offset, literal))
@@ -956,9 +956,8 @@ where
 
                     let offset = self.must_peek_index()?;
                     let (_, c) = self.parse_hex_digits_into_code_point(1, 6)?;
-                    let c = match char::try_from(c) {
-                        Ok(c) => c,
-                        Err(_) => return Err(PEK::InvalidEscape.with_offset(offset)),
+                    let Ok(c) = char::try_from(c) else {
+                        return Err(PEK::InvalidEscape.with_offset(offset));
                     };
                     s.push(c);
                 }
@@ -968,7 +967,7 @@ where
 
     // starts with \ and consumes the whole escape sequence if a single
     // char is escaped, otherwise pauses the parse after the first char
-    fn parse_escaped_char(&mut self) -> Result<(usize, SingleOrMultiChar)> {
+    fn parse_escaped_char(&mut self) -> Result<(usize, SingleOrMultiCodePoint)> {
         self.consume('\\')?;
 
         let (offset, next_char) = self.must_next()?;
@@ -985,12 +984,12 @@ where
                 match self.must_peek()? {
                     (offset, '}') => {
                         self.iter.next();
-                        Ok((offset, SingleOrMultiChar::Single(first_c)))
+                        Ok((offset, SingleOrMultiCodePoint::Single(first_c)))
                     }
                     // note: enforcing whitespace after the first char here, because the parse_multi_escape functions
                     // won't have access to this information anymore
                     (offset, c) if c.is_ascii_hexdigit() && skipped > 0 => {
-                        Ok((offset, SingleOrMultiChar::Multi(first_c)))
+                        Ok((offset, SingleOrMultiCodePoint::Multi(first_c)))
                     }
                     (_, c) => self.error_here(PEK::UnexpectedChar(c)),
                 }
@@ -998,33 +997,33 @@ where
             'u' => {
                 // 'u' hex{4}
                 self.parse_hex_digits_into_code_point(4, 4)
-                    .map(|(offset, c)| (offset, SingleOrMultiChar::Single(c)))
+                    .map(|(offset, c)| (offset, SingleOrMultiCodePoint::Single(c)))
             }
             'x' => {
                 // 'x' hex{2}
                 self.parse_hex_digits_into_code_point(2, 2)
-                    .map(|(offset, c)| (offset, SingleOrMultiChar::Single(c)))
+                    .map(|(offset, c)| (offset, SingleOrMultiCodePoint::Single(c)))
             }
             'U' => {
                 // 'U00' ('0' hex{5} | '10' hex{4})
                 self.consume('0')?;
                 self.consume('0')?;
                 self.parse_hex_digits_into_code_point(6, 6)
-                    .map(|(offset, c)| (offset, SingleOrMultiChar::Single(c)))
+                    .map(|(offset, c)| (offset, SingleOrMultiCodePoint::Single(c)))
             }
             'N' => {
                 // parse code point with name in {}
                 // tracking issue: https://github.com/unicode-org/icu4x/issues/1397
                 Err(PEK::Unimplemented.with_offset(offset))
             }
-            'a' => Ok((offset, SingleOrMultiChar::Single(0x0007))),
-            'b' => Ok((offset, SingleOrMultiChar::Single(0x0008))),
-            't' => Ok((offset, SingleOrMultiChar::Single(0x0009))),
-            'n' => Ok((offset, SingleOrMultiChar::Single(0x000A))),
-            'v' => Ok((offset, SingleOrMultiChar::Single(0x000B))),
-            'f' => Ok((offset, SingleOrMultiChar::Single(0x000C))),
-            'r' => Ok((offset, SingleOrMultiChar::Single(0x000D))),
-            _ => Ok((offset, SingleOrMultiChar::Single(next_char as u32))),
+            'a' => Ok((offset, SingleOrMultiCodePoint::Single(0x0007))),
+            'b' => Ok((offset, SingleOrMultiCodePoint::Single(0x0008))),
+            't' => Ok((offset, SingleOrMultiCodePoint::Single(0x0009))),
+            'n' => Ok((offset, SingleOrMultiCodePoint::Single(0x000A))),
+            'v' => Ok((offset, SingleOrMultiCodePoint::Single(0x000B))),
+            'f' => Ok((offset, SingleOrMultiCodePoint::Single(0x000C))),
+            'r' => Ok((offset, SingleOrMultiCodePoint::Single(0x000D))),
+            _ => Ok((offset, SingleOrMultiCodePoint::Single(next_char as u32))),
         }
     }
 
@@ -1294,13 +1293,13 @@ where
 
     // parses either a raw char or an escaped char. all chars are allowed, the caller must make sure to handle
     // cases where some characters are not allowed
-    fn parse_char(&mut self) -> Result<(usize, SingleOrMultiChar)> {
+    fn parse_char(&mut self) -> Result<(usize, SingleOrMultiCodePoint)> {
         let (offset, c) = self.must_peek()?;
         match c {
             '\\' => self.parse_escaped_char(),
             _ => {
                 self.iter.next();
-                Ok((offset, SingleOrMultiChar::Single(c as u32)))
+                Ok((offset, SingleOrMultiCodePoint::Single(c as u32)))
             }
         }
     }
