@@ -93,8 +93,13 @@ pub struct CurrencyFormatter<V: AbstractFormatter> {
     fraction_info: FractionInfo,
 }
 
-/// Loads the currency symbol for the given currency and width, falling back from
-/// narrow symbol to standard symbol if narrow is unavailable (per UTS #35 Section 1.3).
+/// Loads the currency symbol for the given currency and width.
+///
+/// The fallback from the narrow symbol to the standard symbol (UTS #35 lateral
+/// inheritance) is resolved at datagen time: [`CurrencySymbolWidth::Narrow`] data
+/// carries the standard symbol whenever CLDR does not define a narrow one, so a
+/// single request is sufficient here. A miss means neither symbol is available and
+/// the caller falls back to the ISO code.
 fn load_currency_symbol<D: DataProvider<CurrencySymbolsV1> + ?Sized>(
     provider: &D,
     currency: CurrencyType,
@@ -102,7 +107,7 @@ fn load_currency_symbol<D: DataProvider<CurrencySymbolsV1> + ?Sized>(
     locale: &DataLocale,
 ) -> Result<Option<DataPayload<CurrencySymbolsV1>>, DataError> {
     let mut buffer = TinyAsciiStr::EMPTY;
-    let res = provider
+    Ok(provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 CurrencySymbolsV1::make_attributes(currency, width, &mut buffer),
@@ -110,34 +115,8 @@ fn load_currency_symbol<D: DataProvider<CurrencySymbolsV1> + ?Sized>(
             ),
             ..Default::default()
         })
-        .allow_identifier_not_found()?;
-
-    if let Some(res) = res {
-        return Ok(Some(res.payload));
-    }
-
-    // According to UTS #35 Part 3: Numbers (Section 1.3):
-    // If narrow symbol data is unavailable for a given locale, fall back to standard symbol.
-    if width == CurrencySymbolWidth::Narrow {
-        let fallback = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    CurrencySymbolsV1::make_attributes(
-                        currency,
-                        CurrencySymbolWidth::Short,
-                        &mut buffer,
-                    ),
-                    locale,
-                ),
-                ..Default::default()
-            })
-            .allow_identifier_not_found()?;
-        if let Some(fallback) = fallback {
-            return Ok(Some(fallback.payload));
-        }
-    }
-
-    Ok(None)
+        .allow_identifier_not_found()?
+        .map(|res| res.payload))
 }
 
 impl<V: AbstractFormatter> CurrencyFormatter<V> {

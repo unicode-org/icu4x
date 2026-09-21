@@ -463,7 +463,9 @@ mod tests {
     #[test]
     pub fn test_narrow_symbol_fallback_to_standard_symbol() {
         // Test currency where standard symbol is defined, but narrow symbol is not in CLDR.
-        // Per UTS #35 Section 1.3, narrow symbols fall back to standard symbols before ISO code.
+        // Per UTS #35 lateral inheritance, narrow symbols fall back to standard symbols before
+        // the ISO code. The fallback is resolved at datagen time, so the narrow data entry
+        // already carries the standard symbol.
         let prefs_fr: CurrencyFormatterPreferences = locale!("fr-FR").into();
         let currency_frf = currency!("FRF");
         let value = "12345.67".parse().unwrap();
