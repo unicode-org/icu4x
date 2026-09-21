@@ -135,8 +135,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         let default_id = DataIdentifierBorrowed::for_locale(&locale);
         let ids = req_id.into_iter().chain(core::iter::once(default_id));
         let essential =
-            load_with_fallback::<CurrencyEssentialsV1>(&crate::provider::Baked, ids)?
-                .payload;
+            load_with_fallback::<CurrencyEssentialsV1>(&crate::provider::Baked, ids)?.payload;
         let fractions: DataPayload<CurrencyFractionsV1> =
             crate::provider::Baked.load(Default::default())?.payload;
         let fraction_info = fractions.get().resolve(currency);
