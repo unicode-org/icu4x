@@ -133,8 +133,9 @@ mod tests {
         let escudo_narrow =
             CurrencyFormatter::try_new_symbol_narrow(prefs, currency!("PTE"), Default::default())
                 .unwrap();
-        // Narrow symbol for PTE is not defined in pt-PT CLDR data, so it falls back to the ISO code
-        assert_writeable_eq!(escudo_narrow.format_fixed_decimal(&value), "12,345$67 PTE");
+        // Narrow symbol for PTE is not defined in pt-PT CLDR data, so the narrow data entry
+        // carries the standard symbol (#8486), matching `try_new_symbol` above.
+        assert_writeable_eq!(escudo_narrow.format_fixed_decimal(&value), "12,345$67 \u{200B}");
 
         let escudo_code =
             CurrencyFormatter::try_new_code(prefs, currency!("PTE"), Default::default()).unwrap();
