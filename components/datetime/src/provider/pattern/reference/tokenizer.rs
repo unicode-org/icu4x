@@ -15,68 +15,49 @@ pub(crate) enum Token<'a> {
 
 impl<'a> Uts35DateTimePatternTokenizer<'a> {
     pub fn step(&mut self) -> Option<Token<'a>> {
-        let starting_str = self.0;
-        let mut it = self.0.chars();
-        let ch = it.next()?;
-        if ch == '\'' {
-            let after_first_quote = it.as_str();
-            let Some(second_ch) = it.next() else {
-                self.0 = "";
-                return Some(Token::UnclosedLiteral(after_first_quote));
-            };
-            if second_ch == '\'' {
-                self.0 = it.as_str();
+        let ch = self.0.chars().next()?;
+
+        // Case 1: Quoted literal (`'...'`) or escaped quote (`''`)
+        if let Some(after_open) = self.0.strip_prefix('\'') {
+            if let Some(after_escaped) = after_open.strip_prefix('\'') {
+                self.0 = after_escaped;
                 return Some(Token::Literal("'"));
             }
-            let mut byte_len = second_ch.len_utf8();
-            loop {
-                let Some(next) = it.next() else {
-                    self.0 = "";
-                    return Some(Token::UnclosedLiteral(after_first_quote));
-                };
-                if next == '\'' {
-                    let after_first_closing = it.as_str();
-                    let mut quote_count = 1usize;
-                    while it.as_str().starts_with('\'') {
-                        it.next();
-                        quote_count += 1;
-                    }
-                    if quote_count == 1 {
-                        self.0 = after_first_closing;
-                        return Some(Token::Literal(after_first_quote.get(..byte_len)?));
-                    }
-                    byte_len += '\''.len_utf8();
-                    if quote_count.is_multiple_of(2) {
-                        self.0 = after_first_closing;
-                    } else {
-                        let mut rem = after_first_closing.chars();
-                        rem.next();
-                        rem.next();
-                        self.0 = rem.as_str();
-                    }
-                    return Some(Token::Literal(after_first_quote.get(..byte_len)?));
-                }
-                byte_len += next.len_utf8();
-            }
+            let Some((literal, after_first_quote)) = after_open.split_once('\'') else {
+                self.0 = "";
+                return Some(Token::UnclosedLiteral(after_open));
+            };
+            let after_all_quotes = after_first_quote.trim_start_matches('\'');
+            let quote_count = 1 + after_first_quote.len() - after_all_quotes.len();
+            self.0 = if quote_count.is_multiple_of(2) {
+                // An even number of quotes is `quote_count / 2` escaped quotes (`''`) inside
+                // the literal; leave one `'` so the next `step()` stays in quoted mode.
+                after_first_quote.get(quote_count - 2..)?
+            } else {
+                // An odd number of quotes is `quote_count / 2` escaped quotes (`''`)
+                // followed by a closing quote.
+                after_all_quotes
+            };
+            return Some(Token::Literal(
+                after_open.get(..literal.len() + quote_count / 2)?,
+            ));
         }
-        let mut byte_len = ch.len_utf8();
-        loop {
-            self.0 = it.as_str();
-            let Some(next) = it.next() else { break };
-            if ch.is_ascii_alphabetic() {
-                if next != ch {
-                    break;
-                }
-            } else if next.is_ascii_alphabetic() || next == '\'' {
-                break;
-            }
-            byte_len += next.len_utf8();
-        }
+
+        // Case 2: Field symbol (run of identical ASCII letters, e.g. `yyyy`)
         if ch.is_ascii_alphabetic() {
-            Some(Token::Symbol(ch, byte_len))
-        } else {
-            Some(Token::Literal(starting_str.get(..byte_len)?))
+            let rest = self.0.trim_start_matches(ch);
+            let byte_len = self.0.len() - rest.len();
+            self.0 = rest;
+            return Some(Token::Symbol(ch, byte_len));
         }
+
+        // Case 3: Unquoted literal (run of non-ASCII-alphabetic, non-quote characters)
+        let rest = self
+            .0
+            .trim_start_matches(|c: char| !c.is_ascii_alphabetic() && c != '\'');
+        let literal = self.0.get(..self.0.len() - rest.len())?;
+        self.0 = rest;
+        Some(Token::Literal(literal))
     }
 }
 
