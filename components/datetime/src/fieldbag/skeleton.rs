@@ -13,7 +13,7 @@ use crate::provider::pattern::reference::tokenizer::Uts35DateTimePatternTokenize
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum DateTimeFieldBagParseError {
     DuplicateField,
-    UnexpectedLiteral,
+    UnexpectedToken,
     SyntaxError,
 }
 
@@ -71,10 +71,10 @@ pub(crate) fn uts35_to_fieldbag(
             Token::Symbol(_, _) => {
                 todo!()
             }
-            Token::Literal(_) => {
-                error.get_or_insert(UnexpectedLiteral);
+            Token::Literal(_) | Token::Placeholder(_) => {
+                error.get_or_insert(UnexpectedToken);
             }
-            Token::Placeholder(_) | Token::UnclosedLiteral(_) | Token::UnclosedPlaceholder(_) => {
+            Token::UnclosedLiteral(_) | Token::UnclosedPlaceholder(_) => {
                 error.get_or_insert(SyntaxError);
             }
         }
@@ -129,10 +129,18 @@ pub(crate) fn fieldbag_to_uts35<W: ?Sized + fmt::Write>(
 fn test_skeleton_literal_errors() {
     assert_eq!(
         DateTimeFieldBag::try_from_skeleton("GGGGy'foo'"),
-        Err(DateTimeFieldBagParseError::UnexpectedLiteral)
+        Err(DateTimeFieldBagParseError::UnexpectedToken)
+    );
+    assert_eq!(
+        DateTimeFieldBag::try_from_skeleton("GGGGy{0}"),
+        Err(DateTimeFieldBagParseError::UnexpectedToken)
     );
     assert_eq!(
         DateTimeFieldBag::try_from_skeleton("GGGGy'foo"),
+        Err(DateTimeFieldBagParseError::SyntaxError)
+    );
+    assert_eq!(
+        DateTimeFieldBag::try_from_skeleton("GGGGy{0"),
         Err(DateTimeFieldBagParseError::SyntaxError)
     );
 }
