@@ -71,6 +71,25 @@ impl Fields {
         self.0.is_empty()
     }
 
+    /// Returns an iterator over the key-value pairs.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::Locale;
+    /// use icu::locale::extensions::transform::key;
+    ///
+    /// let loc: Locale = "und-t-h0-hybrid-m0-xml".parse().unwrap();
+    /// let fields: Vec<_> = loc.extensions.transform.fields.iter().collect();
+    ///
+    /// assert_eq!(fields.len(), 2);
+    /// assert_eq!(fields[0].0, &key!("h0"));
+    /// assert_eq!(fields[1].0, &key!("m0"));
+    /// ```
+    pub fn iter(&self) -> impl Iterator<Item = (&Key, &Value)> {
+        self.0.iter()
+    }
+
     /// Empties the [`Fields`] list.
     ///
     /// Returns the old list.

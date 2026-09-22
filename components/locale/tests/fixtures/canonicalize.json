@@ -363,48 +363,39 @@
   },
   {
     "input": "und-u-ca-islamicc",
-    "output": "und-u-ca-islamic-civil",
-    "disabled": true
+    "output": "und-u-ca-islamic-civil"
   },
   {
     "input": "und-u-ks-primary",
-    "output": "und-u-ks-level1",
-    "disabled": true
+    "output": "und-u-ks-level1"
   },
   {
     "input": "und-u-ks-tertiary",
-    "output": "und-u-ks-level3",
-    "disabled": true
+    "output": "und-u-ks-level3"
   },
   {
     "input": "und-u-ms-imperial",
-    "output": "und-u-ms-uksystem",
-    "disabled": true
+    "output": "und-u-ms-uksystem"
   },
   {
     "input": "und-u-kb-yes",
-    "output": "und-u-kb",
-    "disabled": true
+    "output": "und-u-kb"
   },
   {
     "input": "und-u-kc-yes",
-    "output": "und-u-k",
-    "disabled": true
+    "output": "und-u-kc"
   },
   {
     "input": "und-u-kh-yes",
-    "output": "und-u-kh",
-    "disabled": true
+    "output": "und-u-kh"
   },
   {
     "input": "und-u-kk-yes",
-    "output": "und-u-kk",
-    "disabled": true
+    "output": "und-u-kk"
   },
   {
     "input": "und-u-kn-yes",
-    "output": "und-u-kn",
-    "disabled": true
+    "output": "und-u-kn"
   },
   {
     "input": "und-u-ka-yes",
@@ -413,8 +404,7 @@
   },
   {
     "input": "und-u-tz-cnckg",
-    "output": "und-u-tz-cnsha",
-    "disabled": true
+    "output": "und-u-tz-cnsha"
   },
   {
     "input": "und-u-tz-eire",
@@ -440,5 +430,17 @@
     "input": "und-u-tz-zulu",
     "output": "und-u-tz-utc",
     "disabled": true
+  },
+  {
+    "input": "und-u-kf-yes",
+    "output": "und-u-kf-yes"
+  },
+  {
+    "input": "und-u-ca-islamicc-ks-primary",
+    "output": "und-u-ca-islamic-civil-ks-level1"
+  },
+  {
+    "input": "und-u-co-standard",
+    "output": "und-u-co-standard"
   }
 ]

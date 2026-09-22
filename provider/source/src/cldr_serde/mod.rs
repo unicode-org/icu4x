@@ -9,6 +9,7 @@
 
 pub(crate) mod aliases;
 pub(crate) mod alt;
+pub(crate) mod bcp47_aliases;
 pub(crate) mod ca;
 pub(crate) mod coverage_levels;
 #[cfg(feature = "unstable")]

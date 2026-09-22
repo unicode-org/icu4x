@@ -1,0 +1,80 @@
+// @generated
+/// Implement `DataProvider<LocaleExtensionsAliasesV1>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+///
+/// Using this implementation will embed the following data in the binary's data segment:
+/// * 384B[^1] for the singleton data struct
+///
+/// [^1]: these numbers can be smaller in practice due to linker deduplication
+///
+/// This macro requires the following crates:
+/// * `icu`
+/// * `icu_provider`
+/// * `zerovec`
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_locale_extensions_aliases_v1 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.88"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.88"]
+        impl $provider {
+            #[doc(hidden)]
+            pub const SINGLETON_LOCALE_EXTENSIONS_ALIASES_V1: &'static <icu::locale::provider::LocaleExtensionsAliasesV1 as icu_provider::DynamicDataMarker>::DataStruct = &icu::locale::provider::ExtensionsAliases { value_aliases: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x12\0\x17\0&\x004\0C\0Q\0`\0o\0}\0\x8C\0\x9A\0\xA9\0\xB7\0\xC7\0\xD7\0\xE4\0\xF4\0\x06\x01caislamiccislamic-civilkbno\0\0\0\0\0\0falsekbyes\0\0\0\0\0truekcno\0\0\0\0\0\0falsekcyes\0\0\0\0\0truekfno\0\0\0\0\0\0falsekhno\0\0\0\0\0\0falsekhyes\0\0\0\0\0truekkno\0\0\0\0\0\0falsekkyes\0\0\0\0\0trueknno\0\0\0\0\0\0falseknyes\0\0\0\0\0trueksprimary\0level1kstertiarylevel3m0c\0\0\0\0\0\0\0c11m0ies-jes\0iesjesm0names\0\0\0prprnamemsimperialuksystem") }, omit_true_keys: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x02\0\x04\0\x06\0\x08\0kbkckhkkkn") } };
+        }
+        #[clippy::msrv = "1.88"]
+        impl icu_provider::DataProvider<icu::locale::provider::LocaleExtensionsAliasesV1> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::locale::provider::LocaleExtensionsAliasesV1>, icu_provider::DataError> {
+                if req.id.locale.is_unknown() {
+                    Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_LOCALE_EXTENSIONS_ALIASES_V1), metadata: icu_provider::DataResponseMetadata::default() })
+                } else {
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::locale::provider::LocaleExtensionsAliasesV1 as icu_provider::DataMarker>::INFO, req))
+                }
+            }
+        }
+    };
+    ($ provider : ty , ITER) => {
+        __impl_locale_extensions_aliases_v1!($provider);
+        #[clippy::msrv = "1.88"]
+        impl icu_provider::IterableDataProvider<icu::locale::provider::LocaleExtensionsAliasesV1> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok([Default::default()].into_iter().collect())
+            }
+        }
+    };
+    ($ provider : ty , DRY) => {
+        __impl_locale_extensions_aliases_v1!($provider);
+        #[clippy::msrv = "1.88"]
+        impl icu_provider::DryDataProvider<icu::locale::provider::LocaleExtensionsAliasesV1> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                if req.id.locale.is_unknown() {
+                    Ok(icu_provider::DataResponseMetadata::default())
+                } else {
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::locale::provider::LocaleExtensionsAliasesV1 as icu_provider::DataMarker>::INFO, req))
+                }
+            }
+        }
+    };
+    ($ provider : ty , DRY , ITER) => {
+        __impl_locale_extensions_aliases_v1!($provider);
+        #[clippy::msrv = "1.88"]
+        impl icu_provider::DryDataProvider<icu::locale::provider::LocaleExtensionsAliasesV1> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                if req.id.locale.is_unknown() {
+                    Ok(icu_provider::DataResponseMetadata::default())
+                } else {
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::locale::provider::LocaleExtensionsAliasesV1 as icu_provider::DataMarker>::INFO, req))
+                }
+            }
+        }
+        #[clippy::msrv = "1.88"]
+        impl icu_provider::IterableDataProvider<icu::locale::provider::LocaleExtensionsAliasesV1> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok([Default::default()].into_iter().collect())
+            }
+        }
+    };
+}
+#[doc(inline)]
+pub use __impl_locale_extensions_aliases_v1 as impl_locale_extensions_aliases_v1;

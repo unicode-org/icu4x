@@ -65,6 +65,7 @@ macro_rules! registry(
             icu::locale::fallback::provider::LocaleLikelySubtagsLanguageV1: LocaleLikelySubtagsLanguageV1,
             icu::locale::fallback::provider::LocaleParentsV1: LocaleParentsV1,
             icu::locale::provider::LocaleAliasesV1: LocaleAliasesV1,
+            icu::locale::provider::LocaleExtensionsAliasesV1: LocaleExtensionsAliasesV1,
             icu::locale::provider::LocaleExemplarCharactersAuxiliaryV1: LocaleExemplarCharactersAuxiliaryV1,
             icu::locale::provider::LocaleExemplarCharactersIndexV1: LocaleExemplarCharactersIndexV1,
             icu::locale::provider::LocaleExemplarCharactersMainV1: LocaleExemplarCharactersMainV1,

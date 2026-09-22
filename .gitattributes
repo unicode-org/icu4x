@@ -1,4 +1,16 @@
 *.postcard  binary
 */**/README.md linguist-generated=true
 ffi/dart/README.md linguist-generated=false
-*.rs.data linguist-language=Rust
+*.rs.data linguist-language=Rust text eol=lf
+
+# Test data files must use LF endings to match the CI pipeline output.
+# The crlify crate converts LF to CRLF on Windows, but the CI pipeline
+# (download_repo_sources) runs on all platforms. To ensure consistency,
+# all generated test data files are forced to LF via .gitattributes.
+provider/source/tests/data/cldr/cldr-bcp47/bcp47/*.json text eol=lf
+components/collator/tests/data/*.txt text eol=lf
+components/experimental/tests/transliterate/data/fixtures/*.txt text eol=lf
+components/experimental/tests/units/data/*.txt text eol=lf
+components/normalizer/tests/data/*.txt text eol=lf
+components/properties/data/*.txt text eol=lf
+components/segmenter/tests/testdata/*.txt text eol=lf
