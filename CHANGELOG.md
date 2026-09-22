@@ -11,6 +11,8 @@ Several crates have had patch releases in the 2.3 stream:
     - Fix panic when a contraction contracts a starter, does not contract a following non-starter, and the non-starter starts another contraction. Occurs in Burmese. (unicode-org#8380)
   - (2.3.1) `icu_locale`
     - Remove unnecessary dependencies on icu_pattern when `unstable` feature is not enabled (unicode-org#8397)
+  - (2.3.2) `icu_time_data`
+    - Compatibility with TZDB 2026d (unicode-org#8512)
 - Data model and providers
   - (2.3.1) `icu_provider`
     - Improve performance of data loading that uses locale fallback (unicode-org#8406)
