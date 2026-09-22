@@ -5,8 +5,8 @@
 use core::fmt;
 
 use super::DateTimeFieldBag;
-use super::tokenizer::Token;
-use super::tokenizer::Uts35DateTimePatternTokenizer;
+use crate::provider::pattern::reference::tokenizer::Token;
+use crate::provider::pattern::reference::tokenizer::Uts35DateTimePatternTokenizer;
 
 #[allow(missing_docs)] // TODO: Write excellent docs for this
 #[non_exhaustive]
@@ -14,6 +14,7 @@ use super::tokenizer::Uts35DateTimePatternTokenizer;
 pub enum DateTimeFieldBagParseError {
     DuplicateField,
     UnexpectedLiteral,
+    SyntaxError,
 }
 
 #[allow(clippy::todo)] // TODO: Resolve the TODOs
@@ -73,6 +74,9 @@ pub(crate) fn uts35_to_fieldbag(
             Token::Literal(_) => {
                 error.get_or_insert(UnexpectedLiteral);
             }
+            Token::Placeholder(_) | Token::UnclosedLiteral(_) | Token::UnclosedPlaceholder(_) => {
+                error.get_or_insert(SyntaxError);
+            }
         }
     }
     (bag, error)
@@ -119,4 +123,16 @@ pub(crate) fn fieldbag_to_uts35<W: ?Sized + fmt::Write>(
         (None, _) => (),
     }
     Ok(())
+}
+
+#[test]
+fn test_skeleton_literal_errors() {
+    assert_eq!(
+        DateTimeFieldBag::try_from_skeleton("GGGGy'foo'"),
+        Err(DateTimeFieldBagParseError::UnexpectedLiteral)
+    );
+    assert_eq!(
+        DateTimeFieldBag::try_from_skeleton("GGGGy'foo"),
+        Err(DateTimeFieldBagParseError::SyntaxError)
+    );
 }
