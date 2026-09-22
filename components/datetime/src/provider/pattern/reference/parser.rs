@@ -30,7 +30,8 @@ impl<'p> Parser<'p> {
         while let Some(token) = tokenizer.step() {
             match token {
                 Token::Symbol('s', integer_digits) => {
-                    let mut lookahead = tokenizer;
+                    // Note: this accepts both "ssSSS" and "ss.SSS"
+                    let mut lookahead = tokenizer.clone(); // trivial clone
                     let fraction_digits = match lookahead.step() {
                         Some(Token::Symbol('S', fraction_digits)) => {
                             tokenizer = lookahead;
@@ -90,9 +91,6 @@ impl<'p> Parser<'p> {
                 Token::Literal(s) => {
                     result.extend(s.chars().map(PatternItem::Literal));
                 }
-                Token::Placeholder(_) | Token::UnclosedPlaceholder(_) => {
-                    return Err(PatternError::UnclosedPlaceholder);
-                }
                 Token::UnclosedLiteral(_) => {
                     return Err(PatternError::UnclosedLiteral);
                 }
@@ -103,38 +101,45 @@ impl<'p> Parser<'p> {
     }
 
     pub fn parse_generic(self) -> Result<Vec<GenericPatternItem>, PatternError> {
-        let mut tokenizer = Uts35DateTimePatternTokenizer(self.source);
-        let mut result = vec![];
+        #[derive(Debug)]
+        struct DigitPlaceholder(u8);
 
-        while let Some(token) = tokenizer.step() {
-            match token {
-                Token::Symbol(ch, length) => {
-                    result.extend(core::iter::repeat_n(
-                        GenericPatternItem::Literal(ch),
-                        length,
-                    ));
-                }
-                Token::Literal(s) => {
-                    result.extend(s.chars().map(GenericPatternItem::Literal));
-                }
-                Token::Placeholder(s) => {
-                    let mut it = s.chars();
-                    let ch = it.next().ok_or(PatternError::UnclosedPlaceholder)?;
-                    let idx = ch
-                        .to_digit(10)
-                        .ok_or(PatternError::UnknownSubstitution(ch))?
-                        as u8;
-                    if it.next().is_some() {
-                        return Err(PatternError::UnclosedPlaceholder);
-                    }
-                    result.push(GenericPatternItem::Placeholder(idx));
-                }
-                Token::UnclosedPlaceholder(_) => {
+        impl core::str::FromStr for DigitPlaceholder {
+            type Err = PatternError;
+            fn from_str(s: &str) -> Result<Self, Self::Err> {
+                let mut it = s.chars();
+                let ch = it.next().ok_or(PatternError::UnclosedPlaceholder)?;
+                let idx = ch
+                    .to_digit(10)
+                    .ok_or(PatternError::UnknownSubstitution(ch))? as u8;
+                if it.next().is_some() {
                     return Err(PatternError::UnclosedPlaceholder);
                 }
-                Token::UnclosedLiteral(_) => {
-                    return Err(PatternError::UnclosedLiteral);
+                Ok(Self(idx))
+            }
+        }
+
+        let mut parser = icu_pattern::Parser::<DigitPlaceholder>::new(
+            self.source,
+            icu_pattern::QuoteMode::QuotingSupported.into(),
+        );
+        let mut result = vec![];
+
+        while let Some(item) = parser.try_next().map_err(|e| match e {
+            icu_pattern::ParserError::InvalidPlaceholder(err) => err,
+            icu_pattern::ParserError::UnclosedPlaceholder => PatternError::UnclosedPlaceholder,
+            icu_pattern::ParserError::UnclosedQuotedLiteral => PatternError::UnclosedLiteral,
+            icu_pattern::ParserError::IllegalCharacter(ch) => PatternError::InvalidSymbol(ch),
+            _ => PatternError::UnclosedPlaceholder,
+        })? {
+            match item {
+                icu_pattern::ParsedPatternItem::Placeholder(DigitPlaceholder(idx)) => {
+                    result.push(GenericPatternItem::Placeholder(idx));
                 }
+                icu_pattern::ParsedPatternItem::Literal { content, .. } => {
+                    result.extend(content.chars().map(GenericPatternItem::Literal));
+                }
+                _ => {}
             }
         }
 
