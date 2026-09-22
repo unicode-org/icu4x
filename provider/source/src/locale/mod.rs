@@ -4,5 +4,6 @@
 
 pub(crate) mod aliases;
 pub(crate) mod directionality;
+pub(crate) mod extensions_aliases;
 pub(crate) mod likely_subtags;
 pub(crate) mod parents;

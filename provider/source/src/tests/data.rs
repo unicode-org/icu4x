@@ -10,7 +10,12 @@ use crate::source::{include_files, AbstractFs};
 pub fn cldr_data() -> AbstractFs {
     include_files!(
         "../../tests/data/cldr/";
+        "cldr-bcp47/bcp47/calendar.json",
+        "cldr-bcp47/bcp47/collation.json",
+        "cldr-bcp47/bcp47/measure.json",
+        "cldr-bcp47/bcp47/number.json",
         "cldr-bcp47/bcp47/timezone.json",
+        "cldr-bcp47/bcp47/transform.json",
         "cldr-cal-buddhist-full/main/ar-EG/ca-buddhist.json",
         "cldr-cal-buddhist-full/main/ar/ca-buddhist.json",
         "cldr-cal-buddhist-full/main/bn/ca-buddhist.json",

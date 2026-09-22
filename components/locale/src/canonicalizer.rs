@@ -38,8 +38,10 @@ use tinystr::TinyAsciiStr;
 /// [UTS #35: Annex C, LocaleId Canonicalization]: https://unicode.org/reports/tr35/#LocaleId_Canonicalization
 #[derive(Debug)]
 pub struct LocaleCanonicalizer<Expander = LocaleExpander> {
-    /// Data to support canonicalization.
+    /// Data to support canonicalization of locale identifiers.
     aliases: DataPayload<LocaleAliasesV1>,
+    /// Data to support canonicalization of extension key-value pairs.
+    extensions_aliases: DataPayload<LocaleExtensionsAliasesV1>,
     /// Likely subtags implementation for delegation.
     expander: Expander,
 }
@@ -219,6 +221,7 @@ impl LocaleCanonicalizer<LocaleExpander> {
     pub fn try_new_common_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<LocaleAliasesV1>
+            + DataProvider<LocaleExtensionsAliasesV1>
             + DataProvider<LocaleLikelySubtagsLanguageV1>
             + DataProvider<LocaleLikelySubtagsScriptRegionV1>
             + ?Sized,
@@ -251,6 +254,7 @@ impl LocaleCanonicalizer<LocaleExpander> {
     pub fn try_new_extended_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<LocaleAliasesV1>
+            + DataProvider<LocaleExtensionsAliasesV1>
             + DataProvider<LocaleLikelySubtagsLanguageV1>
             + DataProvider<LocaleLikelySubtagsScriptRegionV1>
             + DataProvider<LocaleLikelySubtagsExtendedV1>
@@ -271,6 +275,9 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
     pub const fn new_with_expander(expander: Expander) -> Self {
         Self {
             aliases: DataPayload::from_static_ref(Baked::SINGLETON_LOCALE_ALIASES_V1),
+            extensions_aliases: DataPayload::from_static_ref(
+                Baked::SINGLETON_LOCALE_EXTENSIONS_ALIASES_V1,
+            ),
             expander,
         }
     }
@@ -281,11 +288,17 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
         expander: Expander,
     ) -> Result<Self, DataError>
     where
-        P: DataProvider<LocaleAliasesV1> + ?Sized,
+        P: DataProvider<LocaleAliasesV1> + DataProvider<LocaleExtensionsAliasesV1> + ?Sized,
     {
         let aliases: DataPayload<LocaleAliasesV1> = provider.load(Default::default())?.payload;
+        let extensions_aliases: DataPayload<LocaleExtensionsAliasesV1> =
+            provider.load(Default::default())?.payload;
 
-        Ok(Self { aliases, expander })
+        Ok(Self {
+            aliases,
+            extensions_aliases,
+            expander,
+        })
     }
 
     icu_provider::gen_buffer_data_constructors!((options: Expander) -> error: DataError,
@@ -300,12 +313,6 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
     /// The canonicalize method potentially updates a passed in locale in place
     /// depending up the results of running the canonicalization algorithm
     /// from <https://unicode.org/reports/tr35/#LocaleId_Canonicalization>.
-    ///
-    /// Some BCP47 canonicalization data is not part of the CLDR json package. Because
-    /// of this, some canonicalizations are not performed, e.g. the canonicalization of
-    /// `und-u-ca-islamicc` to `und-u-ca-islamic-civil`. This will be fixed in a future
-    /// release once the missing data has been added to the CLDR json data. See:
-    /// <https://github.com/unicode-org/icu4x/issues/746>
     ///
     /// # Examples
     ///
@@ -478,7 +485,39 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
             }
         }
 
+        // Canonicalize transform extension field values using binary search
+        if !extensions.transform.fields.is_empty() {
+            // Collect keys first to avoid borrow issues
+            let tf_keys: Vec<_> = extensions
+                .transform
+                .fields
+                .iter()
+                .map(|(k, _)| *k)
+                .collect();
+            for tf_key in tf_keys {
+                if let Some(tf_value) = extensions.transform.fields.get(&tf_key) {
+                    let tf_value_str = tf_value.to_string();
+                    let aliases = self.extensions_aliases.get();
+                    if let Ok(idx) = aliases.value_aliases.binary_search_by(|entry| {
+                        let key_ord = entry.0.as_bytes().cmp(tf_key.as_str().as_bytes());
+                        if key_ord != Ordering::Equal {
+                            return key_ord;
+                        }
+                        entry.1.as_str().cmp(tf_value_str.as_str())
+                    }) && let Some(entry) = aliases.value_aliases.get(idx)
+                    {
+                        let replacement = &entry.2;
+                        if let Ok(new_value) = replacement.parse() {
+                            extensions.transform.fields.set(tf_key, new_value);
+                            *result = TransformResult::Modified;
+                        }
+                    }
+                }
+            }
+        }
+
         if !extensions.unicode.keywords.is_empty() {
+            // First, handle rg/sd keys using subdivision aliases (existing behavior)
             for key in [key!("rg"), key!("sd")] {
                 if let Some(value) = extensions.unicode.keywords.get_mut(&key)
                     && let Some(only_value) = value.as_single_subtag()
@@ -491,6 +530,49 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
                 {
                     *value = modified_value;
                     *result = TransformResult::Modified;
+                }
+            }
+
+            // Then, canonicalize all Unicode extension key-value pairs using BCP47 aliases.
+            // Collect keys first to avoid borrow issues with get_mut.
+            let keys: Vec<_> = extensions
+                .unicode
+                .keywords
+                .iter()
+                .map(|(k, _)| *k)
+                .collect();
+            for ukey in keys {
+                let key_bytes = ukey.as_str().as_bytes();
+
+                if let Some(value) = extensions.unicode.keywords.get_mut(&ukey)
+                    && let Some(only_value) = value.as_single_subtag()
+                {
+                    let value_str = only_value.as_str();
+                    let aliases = self.extensions_aliases.get();
+
+                    // Binary search for the (key, value) pair — O(log n)
+                    if let Ok(idx) = aliases.value_aliases.binary_search_by(|entry| {
+                        let key_ord = entry.0.as_bytes().cmp(key_bytes);
+                        if key_ord != Ordering::Equal {
+                            return key_ord;
+                        }
+                        entry.1.as_str().cmp(value_str)
+                    }) && let Some(entry) = aliases.value_aliases.get(idx)
+                    {
+                        let replacement = &entry.2;
+
+                        // Check if this is a boolean key where true can be omitted
+                        if OMIT_TRUE_KEYS.contains(&ukey.as_str()) && replacement == "true" {
+                            *value = Default::default();
+                            *result = TransformResult::Modified;
+                            continue;
+                        }
+
+                        if let Ok(new_value) = replacement.parse() {
+                            *value = new_value;
+                            *result = TransformResult::Modified;
+                        }
+                    }
                 }
             }
         }

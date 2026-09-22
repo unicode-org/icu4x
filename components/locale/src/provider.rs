@@ -40,6 +40,7 @@ const _: () = {
     }
     make_provider!(Baked);
     impl_locale_aliases_v1!(Baked);
+    impl_locale_extensions_aliases_v1!(Baked);
     impl_locale_likely_subtags_extended_v1!(Baked);
     impl_locale_likely_subtags_script_region_v1!(Baked);
     impl_locale_script_direction_v1!(Baked);
@@ -95,6 +96,15 @@ icu_provider::data_marker!(
     LocaleAliasesV1,
     "locale/aliases/v1",
     Aliases<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// Marker for locale extension alias data from BCP47 files.
+    /// Contains value aliases for Unicode and Transform extension keys,
+    /// used for canonicalizing extension key-value pairs per UTS #35 Section 3.3.1.
+    LocaleExtensionsAliasesV1,
+    "locale/extensions/aliases/v1",
+    ExtensionsAliases<'static>,
     is_singleton = true
 );
 icu_provider::data_marker!(
@@ -155,6 +165,7 @@ icu_provider::data_marker!(
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
     LocaleAliasesV1::INFO,
+    LocaleExtensionsAliasesV1::INFO,
     LocaleExemplarCharactersAuxiliaryV1::INFO,
     LocaleExemplarCharactersIndexV1::INFO,
     LocaleExemplarCharactersMainV1::INFO,
@@ -352,6 +363,84 @@ icu_provider::data_struct!(
     Aliases<'_>,
     #[cfg(feature = "datagen")]
 );
+
+#[zerovec::make_varule(KeyValueAliasEntryVarULE)]
+#[zerovec::derive(Debug)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Deserialize),
+    zerovec::derive(Deserialize)
+)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    zerovec::derive(Serialize),
+    databake(path = icu_locale::provider),
+)]
+/// An entry mapping a non-canonical BCP47 extension value to its canonical form.
+///
+/// Each entry represents a `(key, non_canonical_value, canonical_value)` triple.
+/// For example, `("ca", "islamicc", "islamic-civil")` or `("ks", "primary", "level1")`.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+pub struct KeyValueAliasEntry<'a>(
+    pub TinyAsciiStr<2>,
+    pub TinyAsciiStr<8>,
+    #[cfg_attr(feature = "serde", serde(borrow))] pub Cow<'a, str>,
+);
+
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+/// BCP47 extension value alias data for locale canonicalization.
+///
+/// This data is used to canonicalize Unicode extension (`-u-`) and Transform
+/// extension (`-t-`) key-value pairs, per the rules in
+/// <https://unicode.org/reports/tr35/#LocaleId_Canonicalization>.
+///
+/// For example, `ca=islamicc` is canonicalized to `ca=islamic-civil` because
+/// `islamicc` is deprecated with preferred value `islamic-civil`.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+pub struct ExtensionsAliases<'data> {
+    /// Value aliases for extension keys.
+    ///
+    /// Each entry maps `(key, deprecated_value)` to `preferred_value`.
+    /// For example, `("ca", "islamicc")` -> `"islamic-civil"`.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub value_aliases: VarZeroVec<'data, KeyValueAliasEntryVarULE>,
+
+    /// Keys where the `true` value can be omitted (boolean shorthand).
+    ///
+    /// For keys in this set, `key=true` is canonicalized to just `key`.
+    /// For example, `kb=true` becomes `kb`.
+    ///
+    /// This applies to collation keys: `kb`, `kc`, `kh`, `kk`, `kn`.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub omit_true_keys: VarZeroVec<'data, str>,
+}
+
+icu_provider::data_struct!(
+    ExtensionsAliases<'_>,
+    #[cfg(feature = "datagen")]
+);
+
+/// Keys where the `true` value can be omitted (boolean shorthand).
+///
+/// For these keys, `key=true` is canonicalized to just `key`.
+/// These are collation parameter keys from the CLDR spec.
+pub(crate) const OMIT_TRUE_KEYS: &[&str] = &["kb", "kc", "kh", "kk", "kn"];
 
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]

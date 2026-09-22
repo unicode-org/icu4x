@@ -3,6 +3,7 @@ include!("locale_names_language_medium_tiny_v1.rs.data");
 include!("locale_names_essentials_v1.rs.data");
 include!("locale_names_script_medium_light_v1.rs.data");
 include!("locale_names_language_menu_medium_heavy_v1.rs.data");
+include!("locale_extensions_aliases_v1.rs.data");
 include!("locale_names_language_long_light_v1.rs.data");
 include!("locale_exemplar_characters_main_v1.rs.data");
 include!("locale_names_region_medium_tiny_v1.rs.data");
@@ -64,6 +65,7 @@ macro_rules! impl_data_provider {
         impl_locale_names_essentials_v1!($provider);
         impl_locale_names_script_medium_light_v1!($provider);
         impl_locale_names_language_menu_medium_heavy_v1!($provider);
+        impl_locale_extensions_aliases_v1!($provider);
         impl_locale_names_language_long_light_v1!($provider);
         impl_locale_exemplar_characters_main_v1!($provider);
         impl_locale_names_region_medium_tiny_v1!($provider);

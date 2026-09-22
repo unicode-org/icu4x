@@ -5,7 +5,12 @@
 // Paths from CLDR JSON to copy into test data. Uses gitignore-like syntax.
 // The variable "$LOCALES" is replaced with the list of locales from above.
 const CLDR_JSON_GLOB: &[&str] = &[
+    "cldr-bcp47/bcp47/calendar.json",
+    "cldr-bcp47/bcp47/collation.json",
+    "cldr-bcp47/bcp47/measure.json",
+    "cldr-bcp47/bcp47/number.json",
     "cldr-bcp47/bcp47/timezone.json",
+    "cldr-bcp47/bcp47/transform.json",
     "cldr-cal-buddhist-full/main/$LOCALES/ca-buddhist.json",
     "cldr-cal-chinese-full/main/$LOCALES/ca-chinese.json",
     "cldr-cal-coptic-full/main/$LOCALES/ca-coptic.json",
