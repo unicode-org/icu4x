@@ -140,10 +140,12 @@ fn test_escaped_and_unclosed_quotes() {
 
 #[test]
 fn test_placeholders() {
-    let mut tokenizer = Uts35DateTimePatternTokenizer("'{0}' {1} {01");
+    let mut tokenizer = Uts35DateTimePatternTokenizer("'{0}' {1} {0'a'} {01");
     assert_eq!(tokenizer.step(), Some(Token::Literal("{0}")));
     assert_eq!(tokenizer.step(), Some(Token::Literal(" ")));
     assert_eq!(tokenizer.step(), Some(Token::Placeholder("1")));
+    assert_eq!(tokenizer.step(), Some(Token::Literal(" ")));
+    assert_eq!(tokenizer.step(), Some(Token::Placeholder("0'a'")));
     assert_eq!(tokenizer.step(), Some(Token::Literal(" ")));
     assert_eq!(tokenizer.step(), Some(Token::UnclosedPlaceholder("01")));
     assert_eq!(tokenizer.step(), None);
