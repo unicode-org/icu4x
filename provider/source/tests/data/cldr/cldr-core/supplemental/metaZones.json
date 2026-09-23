@@ -1513,6 +1513,8 @@
               {
                 "usesMetazone": {
                   "_mzone": "America_Mountain",
+                  "_stdOffset": "-07",
+                  "_dstOffset": "-06",
                   "_from": "1979-04-29 10:00"
                 }
               }
