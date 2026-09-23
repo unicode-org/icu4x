@@ -95,6 +95,12 @@ impl CurrencySymbol<'_> {
     pub fn as_str(&self) -> &str {
         &self.0.variable
     }
+
+    /// Returns true if the symbol is a zero-width space (`\u{200B}`), which CLDR uses
+    /// when the currency separator replaces the currency symbol (CLDR-19771).
+    pub(crate) fn is_zero_width_space(&self) -> bool {
+        self.as_str() == "\u{200B}"
+    }
 }
 
 /// The width of a currency symbol.
@@ -159,6 +165,7 @@ impl<'zf> zerofrom::ZeroFrom<'zf, VarTupleULE<u8, str>> for CurrencySymbol<'zf> 
     }
 }
 
+#[cfg(feature = "datagen")]
 #[test]
 fn test_currency_attributes_roundtrip() {
     use icu_locale::preferences::extensions::unicode::keywords::currency;
