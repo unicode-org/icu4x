@@ -12,7 +12,8 @@
           },
           "AED": {
             "displayName": "เดอร์แฮมสหรัฐอาหรับเอมิเรตส์",
-            "displayName-count-other": "เดอร์แฮมสหรัฐอาหรับเอมิเรตส์"
+            "displayName-count-other": "เดอร์แฮมสหรัฐอาหรับเอมิเรตส์",
+            "symbol-alt-variant": "⃃"
           },
           "AFA": {
             "displayName": "อัฟกานีอัฟกานิสถาน (1927–2002)",
@@ -771,7 +772,8 @@
           },
           "MVR": {
             "displayName": "รูฟิยามัลดีฟส์",
-            "displayName-count-other": "รูฟิยามัลดีฟส์"
+            "displayName-count-other": "รูฟิยามัลดีฟส์",
+            "symbol-alt-variant": "⃂"
           },
           "MWK": {
             "displayName": "ควาชามาลาวี",
@@ -849,7 +851,8 @@
           },
           "OMR": {
             "displayName": "เรียลโอมาน",
-            "displayName-count-other": "เรียลโอมาน"
+            "displayName-count-other": "เรียลโอมาน",
+            "symbol-alt-variant": "⃄"
           },
           "PAB": {
             "displayName": "บัลบัวปานามา",

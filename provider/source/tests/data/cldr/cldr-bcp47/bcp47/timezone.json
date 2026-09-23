@@ -561,9 +561,8 @@
           "_alias": "America/Costa_Rica"
         },
         "cst6cdt": {
-          "_deprecated": true,
-          "_description": "POSIX style time zone for US Central Time",
-          "_preferred": "uschi"
+          "_description": "POSIX style time zone for US Central Time with daylight saving time",
+          "_alias": "CST6CDT"
         },
         "cuhav": {
           "_description": "Havana, Cuba",
@@ -597,6 +596,7 @@
         "debsngn": {
           "_description": "Busingen, Germany",
           "_alias": "Europe/Busingen",
+          "_region": "DE",
           "_since": "23"
         },
         "djjib": {
@@ -657,9 +657,8 @@
           "_alias": "Europe/Madrid"
         },
         "est5edt": {
-          "_deprecated": true,
-          "_description": "POSIX style time zone for US Eastern Time",
-          "_preferred": "usnyc"
+          "_description": "POSIX style time zone for US Eastern Time with daylight saving time",
+          "_alias": "EST5EDT"
         },
         "etadd": {
           "_description": "Addis Ababa, Ethiopia",
@@ -750,7 +749,8 @@
         },
         "gldkshvn": {
           "_description": "Danmarkshavn, Greenland",
-          "_alias": "America/Danmarkshavn"
+          "_alias": "America/Danmarkshavn",
+          "_region": "GL"
         },
         "glgoh": {
           "_description": "Nuuk (Godthåb), Greenland",
@@ -1114,9 +1114,8 @@
           "_alias": "America/Montserrat"
         },
         "mst7mdt": {
-          "_deprecated": true,
-          "_description": "POSIX style time zone for US Mountain Time",
-          "_preferred": "usden"
+          "_description": "POSIX style time zone for US Mountain Time with daylight saving time",
+          "_alias": "MST7MDT"
         },
         "mtmla": {
           "_description": "Malta",
@@ -1312,9 +1311,8 @@
           "_alias": "America/Puerto_Rico"
         },
         "pst8pdt": {
-          "_deprecated": true,
-          "_description": "POSIX style time zone for US Pacific Time",
-          "_preferred": "uslax"
+          "_description": "POSIX style time zone for US Pacific Time with daylight saving time",
+          "_alias": "PST8PDT"
         },
         "ptfnc": {
           "_description": "Madeira, Portugal",
@@ -1365,6 +1363,7 @@
         "ruchita": {
           "_description": "Chita Zabaykalsky, Russia",
           "_alias": "Asia/Chita",
+          "_region": "RU",
           "_since": "26"
         },
         "rudyr": {
@@ -1386,6 +1385,7 @@
         "rukhndg": {
           "_description": "Khandyga Tomponsky, Russia",
           "_alias": "Asia/Khandyga",
+          "_region": "RU",
           "_since": "23"
         },
         "rukra": {
@@ -1429,6 +1429,7 @@
         "rusred": {
           "_description": "Srednekolymsk, Russia",
           "_alias": "Asia/Srednekolymsk",
+          "_region": "RU",
           "_since": "26"
         },
         "rutof": {
@@ -1444,6 +1445,7 @@
         "ruunera": {
           "_description": "Ust-Nera Oymyakonsky, Russia",
           "_alias": "Asia/Ust-Nera",
+          "_region": "RU",
           "_since": "23"
         },
         "ruuus": {
@@ -1678,11 +1680,11 @@
         },
         "uschi": {
           "_description": "Chicago, United States",
-          "_alias": "America/Chicago US/Central CST6CDT"
+          "_alias": "America/Chicago US/Central"
         },
         "usden": {
           "_description": "Denver, United States",
-          "_alias": "America/Denver America/Shiprock Navajo US/Mountain MST7MDT"
+          "_alias": "America/Denver America/Shiprock Navajo US/Mountain"
         },
         "usdet": {
           "_description": "Detroit, United States",
@@ -1699,7 +1701,8 @@
         },
         "usinvev": {
           "_description": "Vevay (Indiana), United States",
-          "_alias": "America/Indiana/Vevay"
+          "_alias": "America/Indiana/Vevay",
+          "_region": "US"
         },
         "usjnu": {
           "_description": "Juneau (Alaska), United States",
@@ -1711,7 +1714,7 @@
         },
         "uslax": {
           "_description": "Los Angeles, United States",
-          "_alias": "America/Los_Angeles US/Pacific US/Pacific-New PST8PDT"
+          "_alias": "America/Los_Angeles US/Pacific US/Pacific-New"
         },
         "uslui": {
           "_description": "Louisville (Kentucky), United States",
@@ -1738,15 +1741,17 @@
         },
         "usndcnt": {
           "_description": "Center (North Dakota), United States",
-          "_alias": "America/North_Dakota/Center"
+          "_alias": "America/North_Dakota/Center",
+          "_region": "US"
         },
         "usndnsl": {
           "_description": "New Salem (North Dakota), United States",
-          "_alias": "America/North_Dakota/New_Salem"
+          "_alias": "America/North_Dakota/New_Salem",
+          "_region": "US"
         },
         "usnyc": {
           "_description": "New York, United States",
-          "_alias": "America/New_York US/Eastern EST5EDT"
+          "_alias": "America/New_York US/Eastern"
         },
         "usoea": {
           "_description": "Vincennes (Indiana), United States",
