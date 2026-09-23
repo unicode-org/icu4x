@@ -36,9 +36,14 @@ impl<'a> Uts35DateTimePatternTokenizer<'a> {
             }
             // If we found nested quotes, return them as literals including the necessary number
             // of quotes. For example, return 'o''clock' as two token: o' and clock.
-            #[allow(clippy::indexing_slicing)] // there are enough quotes in the string
             if nested_quote_count > 0 {
-                literal = &after_open[..literal.len() + nested_quote_count];
+                let Some(literal_with_apostrophes) =
+                    after_open.get(..literal.len() + nested_quote_count)
+                else {
+                    debug_assert!(false);
+                    return None;
+                };
+                literal = literal_with_apostrophes;
             }
             self.0 = remainder;
             return Some(Token::Literal(literal));
@@ -47,18 +52,21 @@ impl<'a> Uts35DateTimePatternTokenizer<'a> {
         // Case 2: Field symbol (run of identical ASCII letters, e.g. `yyyy`)
         let ch = self.0.chars().next()?;
         if ch.is_ascii_alphabetic() {
-            let rest = self.0.trim_start_matches(ch);
-            let byte_len = self.0.len() - rest.len();
-            self.0 = rest;
+            let remainder = self.0.trim_start_matches(ch);
+            let byte_len = self.0.len() - remainder.len();
+            self.0 = remainder;
             return Some(Token::Symbol(ch, byte_len));
         }
 
         // Case 3: Unquoted literal (run of non-ASCII-alphabetic, non-quote characters)
-        let rest = self
+        let remainder = self
             .0
             .trim_start_matches(|c: char| !c.is_ascii_alphabetic() && c != '\'');
-        let literal = self.0.get(..self.0.len() - rest.len())?;
-        self.0 = rest;
+        let Some(literal) = self.0.get(..self.0.len() - remainder.len()) else {
+            debug_assert!(false);
+            return None;
+        };
+        self.0 = remainder;
         Some(Token::Literal(literal))
     }
 }
