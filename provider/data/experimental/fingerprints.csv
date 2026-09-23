@@ -64530,7 +64530,7 @@ currency/patterns/no/currency/v1, zh-Hant, -> af
 currency/patterns/no/currency/v1, zh-Hant/hanidec, -> af
 currency/patterns/no/currency/v1, zh/hanidec, -> af
 currency/patterns/no/currency/v1, zu, -> af
-currency/symbols/v1, <lookup>, 11591B, 1621 identifiers
+currency/symbols/v1, <lookup>, 14080B, 1976 identifiers
 currency/symbols/v1, <total>, 26427B, 7406B, 827 unique payloads
 currency/symbols/v1, af-NA/s/NAD, 26B, 3B, 8f758e12daad89e7
 currency/symbols/v1, af/n/BYN, 28B, 5B, a21564eab881e652
@@ -64539,24 +64539,32 @@ currency/symbols/v1, af/n/RON, 28B, 5B, 516ab5808eed5d85
 currency/symbols/v1, af/n/TWD, 28B, 5B, 89482c0e4d232207
 currency/symbols/v1, af/s/THB, 28B, 5B, 2c04b6eccf44f4bf
 currency/symbols/v1, af/s/ZAR, 26B, 3B, 8edc69fb81d230af
+currency/symbols/v1, ak/n/IQD, 35B, 12B, f68c8e7156b79c7e
+currency/symbols/v1, ak/n/XOF, 28B, 5B, e9ff1b3d6979d25f
 currency/symbols/v1, ak/s/GHS, 30B, 7B, e9dbf641ffbe3ae2
-currency/symbols/v1, ak/s/IQD, 35B, 12B, f68c8e7156b79c7e
-currency/symbols/v1, ak/s/XOF, 28B, 5B, e9ff1b3d6979d25f
+currency/symbols/v1, ak/s/IQD, -> ak/n/IQD
+currency/symbols/v1, ak/s/XOF, -> ak/n/XOF
 currency/symbols/v1, am/n/BYN, -> af/n/BYN
+currency/symbols/v1, am/n/ETB, 31B, 8B, c9d02b184bf5adcc
 currency/symbols/v1, am/n/TWD, -> af/n/TWD
 currency/symbols/v1, am/s/AUD, 28B, 5B, 9ebea4deb57a76f7
-currency/symbols/v1, am/s/ETB, 31B, 8B, c9d02b184bf5adcc
+currency/symbols/v1, am/s/ETB, -> am/n/ETB
 currency/symbols/v1, am/s/THB, -> af/s/THB
 currency/symbols/v1, ar-AE/n/BND, -> af-NA/s/NAD
-currency/symbols/v1, ar-DJ/s/DJF, 28B, 5B, ec210cb4a7e614ce
-currency/symbols/v1, ar-ER/s/ERN, 28B, 5B, a109e3497369aa31
+currency/symbols/v1, ar-DJ/n/DJF, 28B, 5B, ec210cb4a7e614ce
+currency/symbols/v1, ar-DJ/s/DJF, -> ar-DJ/n/DJF
+currency/symbols/v1, ar-ER/n/ERN, 28B, 5B, a109e3497369aa31
+currency/symbols/v1, ar-ER/s/ERN, -> ar-ER/n/ERN
 currency/symbols/v1, ar-KM/s/KMF, 27B, 4B, 4c3c492c16a98433
-currency/symbols/v1, ar-SO/s/SOS, 26B, 3B, b749b22de7b86862
+currency/symbols/v1, ar-SO/n/SOS, 26B, 3B, b749b22de7b86862
+currency/symbols/v1, ar-SO/s/SOS, -> ar-SO/n/SOS
 currency/symbols/v1, ar-SS/s/GBP, 29B, 6B, 3a94ae7b0a1e82d8
 currency/symbols/v1, ar-SS/s/SSP, 27B, 4B, a66098029a608b9e
+currency/symbols/v1, ar/n/AED, 34B, 11B, ff18052462c3737f
 currency/symbols/v1, ar/n/ARS, 28B, 5B, ca3b746894d06172
 currency/symbols/v1, ar/n/AUD, -> am/s/AUD
 currency/symbols/v1, ar/n/BBD, 28B, 5B, 22fb219b71177ce3
+currency/symbols/v1, ar/n/BHD, 34B, 11B, 8864d08ea5f41ea9
 currency/symbols/v1, ar/n/BMD, 28B, 5B, 30aa6f007b2822a1
 currency/symbols/v1, ar/n/BND, 28B, 5B, 7e66773704e5f201
 currency/symbols/v1, ar/n/BSD, 28B, 5B, 9c4ba77c870e3f46
@@ -64569,45 +64577,60 @@ currency/symbols/v1, ar/n/CNY, 29B, 6B, 2cb373a438dcd8fb
 currency/symbols/v1, ar/n/COP, 28B, 5B, 6f9ed1c4683f2321
 currency/symbols/v1, ar/n/CUP, 28B, 5B, 5c74c31896cc7316
 currency/symbols/v1, ar/n/DOP, 28B, 5B, e8d24a23854dc72d
+currency/symbols/v1, ar/n/DZD, 34B, 11B, 2299c4653787101f
 currency/symbols/v1, ar/n/FJD, 28B, 5B, 53b2ecd704c51e49
 currency/symbols/v1, ar/n/GBP, 29B, 6B, 44b8ce2aa2417945
 currency/symbols/v1, ar/n/GYD, 28B, 5B, 1e4ad1583ca60b95
 currency/symbols/v1, ar/n/HKD, 28B, 5B, f525e52839b7db98
+currency/symbols/v1, ar/n/IQD, 34B, 11B, e35ddbb3d4b6f79
+currency/symbols/v1, ar/n/IRR, 31B, 8B, 35bcae128904af0e
 currency/symbols/v1, ar/n/JMD, 28B, 5B, 6a6e3b98877d43d5
+currency/symbols/v1, ar/n/JOD, 34B, 11B, c09a7b1442982fdc
 currency/symbols/v1, ar/n/JPY, 29B, 6B, e3203ae37348b05a
+currency/symbols/v1, ar/n/KWD, 34B, 11B, f6d70900bb196b8c
 currency/symbols/v1, ar/n/KYD, 28B, 5B, 3be10d45d4bebc0d
 currency/symbols/v1, ar/n/LRD, 28B, 5B, b2e7737b2b2ac5b4
+currency/symbols/v1, ar/n/LYD, 34B, 11B, 233da27da887eaab
+currency/symbols/v1, ar/n/MAD, 34B, 11B, 1ced8a07af2149f0
+currency/symbols/v1, ar/n/MRU, 31B, 8B, b279579206101b44
 currency/symbols/v1, ar/n/MXN, 28B, 5B, 82a12814559d165f
 currency/symbols/v1, ar/n/NZD, 28B, 5B, e4202d13a2c13ffc
+currency/symbols/v1, ar/n/OMR, 34B, 11B, 12dd7b71e310e524
+currency/symbols/v1, ar/n/QAR, 34B, 11B, b02c153c3d96ed60
+currency/symbols/v1, ar/n/SAR, 34B, 11B, 5eb9e6ea44e739c0
 currency/symbols/v1, ar/n/SBD, 28B, 5B, 59d979780f65714c
+currency/symbols/v1, ar/n/SDD, 34B, 11B, 48f5993841b2cd92
+currency/symbols/v1, ar/n/SDG, 31B, 8B, 48b95571dde1a030
 currency/symbols/v1, ar/n/SRD, 28B, 5B, 79b42409f8773d55
+currency/symbols/v1, ar/n/TND, 34B, 11B, 125b80b035087663
 currency/symbols/v1, ar/n/TTD, 28B, 5B, b5b865da887016f3
 currency/symbols/v1, ar/n/TWD, -> af/n/TWD
 currency/symbols/v1, ar/n/USD, 28B, 5B, 415475d61f24550d
 currency/symbols/v1, ar/n/UYU, 28B, 5B, fb9b90c4a2f26c5a
-currency/symbols/v1, ar/s/AED, 34B, 11B, ff18052462c3737f
+currency/symbols/v1, ar/n/YER, 34B, 11B, 2c5fff4631443c4d
+currency/symbols/v1, ar/s/AED, -> ar/n/AED
 currency/symbols/v1, ar/s/AUD, -> am/s/AUD
-currency/symbols/v1, ar/s/BHD, 34B, 11B, 8864d08ea5f41ea9
-currency/symbols/v1, ar/s/DZD, 34B, 11B, 2299c4653787101f
+currency/symbols/v1, ar/s/BHD, -> ar/n/BHD
+currency/symbols/v1, ar/s/DZD, -> ar/n/DZD
 currency/symbols/v1, ar/s/EGP, 34B, 11B, 4e490918e578db86
 currency/symbols/v1, ar/s/GBP, -> ar/n/GBP
-currency/symbols/v1, ar/s/IQD, 34B, 11B, e35ddbb3d4b6f79
-currency/symbols/v1, ar/s/IRR, 31B, 8B, 35bcae128904af0e
-currency/symbols/v1, ar/s/JOD, 34B, 11B, c09a7b1442982fdc
-currency/symbols/v1, ar/s/KWD, 34B, 11B, f6d70900bb196b8c
+currency/symbols/v1, ar/s/IQD, -> ar/n/IQD
+currency/symbols/v1, ar/s/IRR, -> ar/n/IRR
+currency/symbols/v1, ar/s/JOD, -> ar/n/JOD
+currency/symbols/v1, ar/s/KWD, -> ar/n/KWD
 currency/symbols/v1, ar/s/LBP, 34B, 11B, 15eca4162b36c491
-currency/symbols/v1, ar/s/LYD, 34B, 11B, 233da27da887eaab
-currency/symbols/v1, ar/s/MAD, 34B, 11B, 1ced8a07af2149f0
-currency/symbols/v1, ar/s/MRU, 31B, 8B, b279579206101b44
-currency/symbols/v1, ar/s/OMR, 34B, 11B, 12dd7b71e310e524
-currency/symbols/v1, ar/s/QAR, 34B, 11B, b02c153c3d96ed60
-currency/symbols/v1, ar/s/SAR, 34B, 11B, 5eb9e6ea44e739c0
-currency/symbols/v1, ar/s/SDD, 34B, 11B, 48f5993841b2cd92
-currency/symbols/v1, ar/s/SDG, 31B, 8B, 48b95571dde1a030
+currency/symbols/v1, ar/s/LYD, -> ar/n/LYD
+currency/symbols/v1, ar/s/MAD, -> ar/n/MAD
+currency/symbols/v1, ar/s/MRU, -> ar/n/MRU
+currency/symbols/v1, ar/s/OMR, -> ar/n/OMR
+currency/symbols/v1, ar/s/QAR, -> ar/n/QAR
+currency/symbols/v1, ar/s/SAR, -> ar/n/SAR
+currency/symbols/v1, ar/s/SDD, -> ar/n/SDD
+currency/symbols/v1, ar/s/SDG, -> ar/n/SDG
 currency/symbols/v1, ar/s/SYP, 34B, 11B, 7710473743cc239f
 currency/symbols/v1, ar/s/THB, -> af/s/THB
-currency/symbols/v1, ar/s/TND, 34B, 11B, 125b80b035087663
-currency/symbols/v1, ar/s/YER, 34B, 11B, 2c5fff4631443c4d
+currency/symbols/v1, ar/s/TND, -> ar/n/TND
+currency/symbols/v1, ar/s/YER, -> ar/n/YER
 currency/symbols/v1, as/n/BYN, -> af/n/BYN
 currency/symbols/v1, ast/n/TWD, -> af/n/TWD
 currency/symbols/v1, ast/s/JPY, 27B, 4B, d4e7800bf5c39e24
@@ -64619,69 +64642,115 @@ currency/symbols/v1, az/n/SYP, 28B, 5B, 413b99621a314e0e
 currency/symbols/v1, az/n/TWD, -> af/n/TWD
 currency/symbols/v1, az/s/AZN, 28B, 5B, 8d76be430e92f679
 currency/symbols/v1, az/s/THB, -> af/s/THB
+currency/symbols/v1, ba/n/RUR, -> af/n/BYN
+currency/symbols/v1, ba/n/XOF, 30B, 7B, 78d5b2de569e667b
 currency/symbols/v1, ba/s/RUR, -> af/n/BYN
 currency/symbols/v1, ba/s/USD, -> af-NA/s/NAD
-currency/symbols/v1, ba/s/XOF, 30B, 7B, 78d5b2de569e667b
+currency/symbols/v1, ba/s/XOF, -> ba/n/XOF
+currency/symbols/v1, bal-Latn/n/ALL, 29B, 6B, fa825d55e8b1668a
+currency/symbols/v1, bal-Latn/n/ANG, 29B, 6B, 4982ca4396c9f11d
+currency/symbols/v1, bal-Latn/n/AWG, 29B, 6B, 75731030ddfe3453
+currency/symbols/v1, bal-Latn/n/BGN, 29B, 6B, 60f6e2bebb983d4d
+currency/symbols/v1, bal-Latn/n/BIF, 29B, 6B, e09a19ed66a99e72
+currency/symbols/v1, bal-Latn/n/BTN, 29B, 6B, 296f4126039231aa
+currency/symbols/v1, bal-Latn/n/BYN, 29B, 6B, b62630a9b60cf7d7
+currency/symbols/v1, bal-Latn/n/CDF, 29B, 6B, 985f810399100ffb
+currency/symbols/v1, bal-Latn/n/CNH, 30B, 7B, 46f81a8c7474178f
+currency/symbols/v1, bal-Latn/n/CVE, 29B, 6B, 915e6a5e00d35068
+currency/symbols/v1, bal-Latn/n/DJF, 29B, 6B, b0bbf30c81a5c364
+currency/symbols/v1, bal-Latn/n/DZD, 29B, 6B, aae846de93e15ade
+currency/symbols/v1, bal-Latn/n/ERN, 29B, 6B, 7173fd1882e3835c
+currency/symbols/v1, bal-Latn/n/ETB, 29B, 6B, b24357b7d027ea2f
+currency/symbols/v1, bal-Latn/n/GMD, 29B, 6B, 26b245a865c03598
 currency/symbols/v1, bal-Latn/n/GTQ, 27B, 4B, 851ec3f1a64ea323
 currency/symbols/v1, bal-Latn/n/HNL, 27B, 4B, 3aef5506a2cdc422
+currency/symbols/v1, bal-Latn/n/HTG, 29B, 6B, cff7484fe01cd5d2
+currency/symbols/v1, bal-Latn/n/IRR, 29B, 6B, 198f13b753b471e3
+currency/symbols/v1, bal-Latn/n/KES, 29B, 6B, 1c43e279b9ab5c01
+currency/symbols/v1, bal-Latn/n/LSL, 29B, 6B, 555a2bbbde49e0a2
+currency/symbols/v1, bal-Latn/n/LYD, 29B, 6B, e74b787b835cea29
+currency/symbols/v1, bal-Latn/n/MAD, 29B, 6B, 185ad52bf8f1305a
+currency/symbols/v1, bal-Latn/n/MDL, 29B, 6B, c817389f380fd481
+currency/symbols/v1, bal-Latn/n/MKD, 29B, 6B, 12581bd32f968655
+currency/symbols/v1, bal-Latn/n/MOP, 29B, 6B, 697ed739a798b8bc
+currency/symbols/v1, bal-Latn/n/MRU, 29B, 6B, f21635ff70fc076a
+currency/symbols/v1, bal-Latn/n/MVR, 29B, 6B, ef5a6d90a8dc7723
+currency/symbols/v1, bal-Latn/n/MWK, 29B, 6B, 3b9f3ff4ab8365fe
+currency/symbols/v1, bal-Latn/n/MZN, 29B, 6B, 6a69514bf5197ee8
+currency/symbols/v1, bal-Latn/n/PAB, 29B, 6B, 5eeebb5568587899
+currency/symbols/v1, bal-Latn/n/PEN, 29B, 6B, 19d6113972be3e86
+currency/symbols/v1, bal-Latn/n/RSD, 29B, 6B, da88bb36ff6bb3cf
+currency/symbols/v1, bal-Latn/n/SCR, 29B, 6B, 413dc49a23280c22
+currency/symbols/v1, bal-Latn/n/SDG, 29B, 6B, 233fe48899a0fad9
+currency/symbols/v1, bal-Latn/n/SLE, 29B, 6B, af2e49b259f488b9
+currency/symbols/v1, bal-Latn/n/SLL, 29B, 6B, e4690e0438c38309
+currency/symbols/v1, bal-Latn/n/SOS, 30B, 7B, 9e55be5088d64aa0
+currency/symbols/v1, bal-Latn/n/SZL, 29B, 6B, fb959f4072d1ab16
+currency/symbols/v1, bal-Latn/n/TND, 29B, 6B, ea26c48cdad9b2ac
+currency/symbols/v1, bal-Latn/n/TZS, 29B, 6B, 3a35b77998677e82
+currency/symbols/v1, bal-Latn/n/UGX, 29B, 6B, 56fd6264668048c4
+currency/symbols/v1, bal-Latn/n/UZS, 29B, 6B, 7bf5704714dcfd29
+currency/symbols/v1, bal-Latn/n/VES, 29B, 6B, aad902d5a0db927b
+currency/symbols/v1, bal-Latn/n/XAF, 29B, 6B, 939c77b08e58f000
+currency/symbols/v1, bal-Latn/n/XOF, 29B, 6B, 330aee2092838af4
 currency/symbols/v1, bal-Latn/s/AFN, 29B, 6B, 2b2344c6a8a9c367
-currency/symbols/v1, bal-Latn/s/ALL, 29B, 6B, fa825d55e8b1668a
+currency/symbols/v1, bal-Latn/s/ALL, -> bal-Latn/n/ALL
 currency/symbols/v1, bal-Latn/s/AMD, 29B, 6B, d0caffce5c8bcda9
-currency/symbols/v1, bal-Latn/s/ANG, 29B, 6B, 4982ca4396c9f11d
+currency/symbols/v1, bal-Latn/s/ANG, -> bal-Latn/n/ANG
 currency/symbols/v1, bal-Latn/s/AOA, 29B, 6B, dca4254f1d5782c0
 currency/symbols/v1, bal-Latn/s/ARS, 29B, 6B, 539a9edfc7ecd69a
-currency/symbols/v1, bal-Latn/s/AWG, 29B, 6B, 75731030ddfe3453
+currency/symbols/v1, bal-Latn/s/AWG, -> bal-Latn/n/AWG
 currency/symbols/v1, bal-Latn/s/AZN, 29B, 6B, 2ef37b5fcba67f95
 currency/symbols/v1, bal-Latn/s/BAM, 29B, 6B, c0dc14726f36351d
 currency/symbols/v1, bal-Latn/s/BBD, 29B, 6B, ac5e58f38ad1a9bf
 currency/symbols/v1, bal-Latn/s/BDT, 29B, 6B, 870256f25c5d3a3d
-currency/symbols/v1, bal-Latn/s/BGN, 29B, 6B, 60f6e2bebb983d4d
-currency/symbols/v1, bal-Latn/s/BIF, 29B, 6B, e09a19ed66a99e72
+currency/symbols/v1, bal-Latn/s/BGN, -> bal-Latn/n/BGN
+currency/symbols/v1, bal-Latn/s/BIF, -> bal-Latn/n/BIF
 currency/symbols/v1, bal-Latn/s/BMD, 29B, 6B, c0b395578c9ef180
 currency/symbols/v1, bal-Latn/s/BND, 29B, 6B, a4bfa7dbc4648ff1
 currency/symbols/v1, bal-Latn/s/BOB, 29B, 6B, e28e00427d0a9cd3
 currency/symbols/v1, bal-Latn/s/BSD, 29B, 6B, 88b16eebbc79dcf9
-currency/symbols/v1, bal-Latn/s/BTN, 29B, 6B, 296f4126039231aa
+currency/symbols/v1, bal-Latn/s/BTN, -> bal-Latn/n/BTN
 currency/symbols/v1, bal-Latn/s/BWP, 29B, 6B, 5ad58fe91aa4350d
-currency/symbols/v1, bal-Latn/s/BYN, 29B, 6B, b62630a9b60cf7d7
+currency/symbols/v1, bal-Latn/s/BYN, -> bal-Latn/n/BYN
 currency/symbols/v1, bal-Latn/s/BZD, 29B, 6B, e47e1e4607112e1d
 currency/symbols/v1, bal-Latn/s/CAD, 28B, 5B, 4d82c9ecd1daa693
-currency/symbols/v1, bal-Latn/s/CDF, 29B, 6B, 985f810399100ffb
+currency/symbols/v1, bal-Latn/s/CDF, -> bal-Latn/n/CDF
 currency/symbols/v1, bal-Latn/s/CHF, 29B, 6B, a3bfa122949a5ea8
-currency/symbols/v1, bal-Latn/s/CNH, 30B, 7B, 46f81a8c7474178f
+currency/symbols/v1, bal-Latn/s/CNH, -> bal-Latn/n/CNH
 currency/symbols/v1, bal-Latn/s/CNY, 29B, 6B, 7126b08dfad513d7
 currency/symbols/v1, bal-Latn/s/COP, 29B, 6B, 5429387600baa50e
 currency/symbols/v1, bal-Latn/s/CRC, 28B, 5B, 3ae836a1368f9f19
 currency/symbols/v1, bal-Latn/s/CUC, 29B, 6B, b625e7aca766bb3
 currency/symbols/v1, bal-Latn/s/CUP, 29B, 6B, ccd5e1b56655b336
-currency/symbols/v1, bal-Latn/s/CVE, 29B, 6B, 915e6a5e00d35068
+currency/symbols/v1, bal-Latn/s/CVE, -> bal-Latn/n/CVE
 currency/symbols/v1, bal-Latn/s/CZK, 29B, 6B, 9536425b1c9c139d
-currency/symbols/v1, bal-Latn/s/DJF, 29B, 6B, b0bbf30c81a5c364
+currency/symbols/v1, bal-Latn/s/DJF, -> bal-Latn/n/DJF
 currency/symbols/v1, bal-Latn/s/DKK, 29B, 6B, ebdb5a3dd5f3a34
 currency/symbols/v1, bal-Latn/s/DOP, 29B, 6B, d96097a76f3a2698
-currency/symbols/v1, bal-Latn/s/DZD, 29B, 6B, aae846de93e15ade
+currency/symbols/v1, bal-Latn/s/DZD, -> bal-Latn/n/DZD
 currency/symbols/v1, bal-Latn/s/EGP, 29B, 6B, 4613afe0e983bca1
-currency/symbols/v1, bal-Latn/s/ERN, 29B, 6B, 7173fd1882e3835c
-currency/symbols/v1, bal-Latn/s/ETB, 29B, 6B, b24357b7d027ea2f
+currency/symbols/v1, bal-Latn/s/ERN, -> bal-Latn/n/ERN
+currency/symbols/v1, bal-Latn/s/ETB, -> bal-Latn/n/ETB
 currency/symbols/v1, bal-Latn/s/GBP, 29B, 6B, 81adb5ee823b8e25
 currency/symbols/v1, bal-Latn/s/GEL, 29B, 6B, 55cdb915461f0b67
 currency/symbols/v1, bal-Latn/s/GHS, 29B, 6B, 7c27ea100541b907
 currency/symbols/v1, bal-Latn/s/GIP, 29B, 6B, ce71d13daf12297
-currency/symbols/v1, bal-Latn/s/GMD, 29B, 6B, 26b245a865c03598
+currency/symbols/v1, bal-Latn/s/GMD, -> bal-Latn/n/GMD
 currency/symbols/v1, bal-Latn/s/GNF, 29B, 6B, 5b694f47992f6940
 currency/symbols/v1, bal-Latn/s/GTQ, 29B, 6B, 5a9508a6a19eca5
 currency/symbols/v1, bal-Latn/s/HKD, 29B, 6B, 769ce1242819d8b0
 currency/symbols/v1, bal-Latn/s/HNL, 29B, 6B, 64af3ab98e2358eb
 currency/symbols/v1, bal-Latn/s/HRK, 29B, 6B, f4e179eab631eebe
-currency/symbols/v1, bal-Latn/s/HTG, 29B, 6B, cff7484fe01cd5d2
+currency/symbols/v1, bal-Latn/s/HTG, -> bal-Latn/n/HTG
 currency/symbols/v1, bal-Latn/s/HUF, 29B, 6B, 9a9849facca434a8
 currency/symbols/v1, bal-Latn/s/IDR, 29B, 6B, 2a2ccf1f0117fccb
 currency/symbols/v1, bal-Latn/s/INR, 29B, 6B, 5a4dd24e8075e4be
-currency/symbols/v1, bal-Latn/s/IRR, 29B, 6B, 198f13b753b471e3
+currency/symbols/v1, bal-Latn/s/IRR, -> bal-Latn/n/IRR
 currency/symbols/v1, bal-Latn/s/ISK, 29B, 6B, 6bac3bcb9c50a63b
 currency/symbols/v1, bal-Latn/s/JMD, 29B, 6B, d74808d1b5afb632
 currency/symbols/v1, bal-Latn/s/JPY, -> ast/s/JPY
-currency/symbols/v1, bal-Latn/s/KES, 29B, 6B, 1c43e279b9ab5c01
+currency/symbols/v1, bal-Latn/s/KES, -> bal-Latn/n/KES
 currency/symbols/v1, bal-Latn/s/KGS, 29B, 6B, 525aa31c656a664c
 currency/symbols/v1, bal-Latn/s/KHR, 29B, 6B, 689a9c1676fea375
 currency/symbols/v1, bal-Latn/s/KMF, 29B, 6B, 6a3507950c8aeaca
@@ -64693,72 +64762,73 @@ currency/symbols/v1, bal-Latn/s/LAK, 29B, 6B, a595a0b8edc6108c
 currency/symbols/v1, bal-Latn/s/LBP, 29B, 6B, e669207bedc0b888
 currency/symbols/v1, bal-Latn/s/LKR, 29B, 6B, c0ced2275184d21b
 currency/symbols/v1, bal-Latn/s/LRD, 29B, 6B, 95e2e873823ef4cb
-currency/symbols/v1, bal-Latn/s/LSL, 29B, 6B, 555a2bbbde49e0a2
-currency/symbols/v1, bal-Latn/s/LYD, 29B, 6B, e74b787b835cea29
-currency/symbols/v1, bal-Latn/s/MAD, 29B, 6B, 185ad52bf8f1305a
-currency/symbols/v1, bal-Latn/s/MDL, 29B, 6B, c817389f380fd481
+currency/symbols/v1, bal-Latn/s/LSL, -> bal-Latn/n/LSL
+currency/symbols/v1, bal-Latn/s/LYD, -> bal-Latn/n/LYD
+currency/symbols/v1, bal-Latn/s/MAD, -> bal-Latn/n/MAD
+currency/symbols/v1, bal-Latn/s/MDL, -> bal-Latn/n/MDL
 currency/symbols/v1, bal-Latn/s/MGA, 29B, 6B, 16290898ceee50d0
-currency/symbols/v1, bal-Latn/s/MKD, 29B, 6B, 12581bd32f968655
+currency/symbols/v1, bal-Latn/s/MKD, -> bal-Latn/n/MKD
 currency/symbols/v1, bal-Latn/s/MMK, 29B, 6B, f9547ea919a8c52d
 currency/symbols/v1, bal-Latn/s/MNT, 29B, 6B, b47d52665d4f76c1
-currency/symbols/v1, bal-Latn/s/MOP, 29B, 6B, 697ed739a798b8bc
-currency/symbols/v1, bal-Latn/s/MRU, 29B, 6B, f21635ff70fc076a
+currency/symbols/v1, bal-Latn/s/MOP, -> bal-Latn/n/MOP
+currency/symbols/v1, bal-Latn/s/MRU, -> bal-Latn/n/MRU
 currency/symbols/v1, bal-Latn/s/MUR, 29B, 6B, 116f19a82150fad9
-currency/symbols/v1, bal-Latn/s/MVR, 29B, 6B, ef5a6d90a8dc7723
-currency/symbols/v1, bal-Latn/s/MWK, 29B, 6B, 3b9f3ff4ab8365fe
+currency/symbols/v1, bal-Latn/s/MVR, -> bal-Latn/n/MVR
+currency/symbols/v1, bal-Latn/s/MWK, -> bal-Latn/n/MWK
 currency/symbols/v1, bal-Latn/s/MXN, 29B, 6B, 18cb377085f132a
 currency/symbols/v1, bal-Latn/s/MYR, 29B, 6B, 56b4861bdb405d7e
-currency/symbols/v1, bal-Latn/s/MZN, 29B, 6B, 6a69514bf5197ee8
+currency/symbols/v1, bal-Latn/s/MZN, -> bal-Latn/n/MZN
 currency/symbols/v1, bal-Latn/s/NAD, 29B, 6B, 6c1c5a4bbd41d1c2
 currency/symbols/v1, bal-Latn/s/NGN, 29B, 6B, 826ed5344ff1b8c7
 currency/symbols/v1, bal-Latn/s/NIO, 29B, 6B, 6386c67c9ad3ef5
 currency/symbols/v1, bal-Latn/s/NOK, 29B, 6B, 923c34757d4109c8
 currency/symbols/v1, bal-Latn/s/NPR, 29B, 6B, 5335fb589acdf396
-currency/symbols/v1, bal-Latn/s/PAB, 29B, 6B, 5eeebb5568587899
-currency/symbols/v1, bal-Latn/s/PEN, 29B, 6B, 19d6113972be3e86
+currency/symbols/v1, bal-Latn/s/PAB, -> bal-Latn/n/PAB
+currency/symbols/v1, bal-Latn/s/PEN, -> bal-Latn/n/PEN
 currency/symbols/v1, bal-Latn/s/PHP, 29B, 6B, 25cfbdf0f0073583
 currency/symbols/v1, bal-Latn/s/PKR, 29B, 6B, d33d1a12d3a66cb4
 currency/symbols/v1, bal-Latn/s/PLN, 29B, 6B, 75e4903cb0f875cb
 currency/symbols/v1, bal-Latn/s/PYG, 29B, 6B, 787895f5750f9181
 currency/symbols/v1, bal-Latn/s/RON, 29B, 6B, a827dafadefd8f36
-currency/symbols/v1, bal-Latn/s/RSD, 29B, 6B, da88bb36ff6bb3cf
+currency/symbols/v1, bal-Latn/s/RSD, -> bal-Latn/n/RSD
 currency/symbols/v1, bal-Latn/s/RUB, 29B, 6B, b261d3d1a21b2602
 currency/symbols/v1, bal-Latn/s/RWF, 29B, 6B, 4a1b081399f2add4
-currency/symbols/v1, bal-Latn/s/SCR, 29B, 6B, 413dc49a23280c22
-currency/symbols/v1, bal-Latn/s/SDG, 29B, 6B, 233fe48899a0fad9
+currency/symbols/v1, bal-Latn/s/SCR, -> bal-Latn/n/SCR
+currency/symbols/v1, bal-Latn/s/SDG, -> bal-Latn/n/SDG
 currency/symbols/v1, bal-Latn/s/SEK, 29B, 6B, c2e2f17f86c4896a
 currency/symbols/v1, bal-Latn/s/SGD, 29B, 6B, 8ce4e3e8a6f5350a
 currency/symbols/v1, bal-Latn/s/SHP, 29B, 6B, e579ddc8868f15a4
-currency/symbols/v1, bal-Latn/s/SLE, 29B, 6B, af2e49b259f488b9
-currency/symbols/v1, bal-Latn/s/SLL, 29B, 6B, e4690e0438c38309
-currency/symbols/v1, bal-Latn/s/SOS, 30B, 7B, 9e55be5088d64aa0
+currency/symbols/v1, bal-Latn/s/SLE, -> bal-Latn/n/SLE
+currency/symbols/v1, bal-Latn/s/SLL, -> bal-Latn/n/SLL
+currency/symbols/v1, bal-Latn/s/SOS, -> bal-Latn/n/SOS
 currency/symbols/v1, bal-Latn/s/SRD, 29B, 6B, a416513ea43cafbc
 currency/symbols/v1, bal-Latn/s/SSP, 29B, 6B, 964a2b031b99519
 currency/symbols/v1, bal-Latn/s/STN, 29B, 6B, fb3a9e2df568f0a9
 currency/symbols/v1, bal-Latn/s/SYP, 29B, 6B, 8f0e051e8c62c96
-currency/symbols/v1, bal-Latn/s/SZL, 29B, 6B, fb959f4072d1ab16
+currency/symbols/v1, bal-Latn/s/SZL, -> bal-Latn/n/SZL
 currency/symbols/v1, bal-Latn/s/THB, 30B, 7B, 4d270eb4a824019d
-currency/symbols/v1, bal-Latn/s/TND, 29B, 6B, ea26c48cdad9b2ac
+currency/symbols/v1, bal-Latn/s/TND, -> bal-Latn/n/TND
 currency/symbols/v1, bal-Latn/s/TRY, 29B, 6B, 1946d9f6f2169580
 currency/symbols/v1, bal-Latn/s/TTD, 29B, 6B, bc687194fe821829
 currency/symbols/v1, bal-Latn/s/TWD, 29B, 6B, 440182b58b34ee64
-currency/symbols/v1, bal-Latn/s/TZS, 29B, 6B, 3a35b77998677e82
+currency/symbols/v1, bal-Latn/s/TZS, -> bal-Latn/n/TZS
 currency/symbols/v1, bal-Latn/s/UAH, 29B, 6B, 96e1113d5c89a024
-currency/symbols/v1, bal-Latn/s/UGX, 29B, 6B, 56fd6264668048c4
+currency/symbols/v1, bal-Latn/s/UGX, -> bal-Latn/n/UGX
 currency/symbols/v1, bal-Latn/s/USD, -> af-NA/s/NAD
 currency/symbols/v1, bal-Latn/s/UYU, 29B, 6B, d2a75aad57159663
-currency/symbols/v1, bal-Latn/s/UZS, 29B, 6B, 7bf5704714dcfd29
-currency/symbols/v1, bal-Latn/s/VES, 29B, 6B, aad902d5a0db927b
+currency/symbols/v1, bal-Latn/s/UZS, -> bal-Latn/n/UZS
+currency/symbols/v1, bal-Latn/s/VES, -> bal-Latn/n/VES
 currency/symbols/v1, bal-Latn/s/VND, 29B, 6B, 4ec799ec0a903f80
-currency/symbols/v1, bal-Latn/s/XAF, 29B, 6B, 939c77b08e58f000
+currency/symbols/v1, bal-Latn/s/XAF, -> bal-Latn/n/XAF
 currency/symbols/v1, bal-Latn/s/XCD, 29B, 6B, 35e0d61bc4edb673
-currency/symbols/v1, bal-Latn/s/XOF, 29B, 6B, 330aee2092838af4
+currency/symbols/v1, bal-Latn/s/XOF, -> bal-Latn/n/XOF
 currency/symbols/v1, bal-Latn/s/ZAR, 29B, 6B, a6745b1721fd022
 currency/symbols/v1, bal-Latn/s/ZMW, 29B, 6B, 5bbc199f8f95b78a
 currency/symbols/v1, be/n/AUD, 27B, 4B, 4c26de38e765abbb
 currency/symbols/v1, be/n/BBD, 29B, 6B, 30560dc373244a48
 currency/symbols/v1, be/n/BMD, 28B, 5B, 88249a539181fb01
 currency/symbols/v1, be/n/BSD, 27B, 4B, 928cabf8242ec4bf
+currency/symbols/v1, be/n/BYN, 27B, 4B, e3ffca3c13a34620
 currency/symbols/v1, be/n/BZD, -> ar/n/BZD
 currency/symbols/v1, be/n/CAD, -> ar/n/CAD
 currency/symbols/v1, be/n/CUC, 29B, 6B, 2261ac91590ab3b4
@@ -64780,12 +64850,13 @@ currency/symbols/v1, be/n/SGD, 27B, 4B, 2db26d72f8092264
 currency/symbols/v1, be/n/TTD, -> ar/n/TTD
 currency/symbols/v1, be/n/UYU, 27B, 4B, 6ee1188c8a1ee216
 currency/symbols/v1, be/n/XCD, 28B, 5B, 6c285f1f214813b8
-currency/symbols/v1, be/s/BYN, 27B, 4B, e3ffca3c13a34620
+currency/symbols/v1, be/s/BYN, -> be/n/BYN
 currency/symbols/v1, be/s/JPY, -> ast/s/JPY
 currency/symbols/v1, be/s/RUB, 28B, 5B, d259957da3a00ed3
 currency/symbols/v1, be/s/USD, -> af-NA/s/NAD
 currency/symbols/v1, bg/n/AFN, 27B, 4B, ba6869dfe7aaec07
-currency/symbols/v1, bg/s/BGN, 30B, 7B, 1d68e5283946fd72
+currency/symbols/v1, bg/n/BGN, 30B, 7B, 1d68e5283946fd72
+currency/symbols/v1, bg/s/BGN, -> bg/n/BGN
 currency/symbols/v1, bg/s/USD, 31B, 8B, 8357402a4c574ae9
 currency/symbols/v1, bn-IN/s/USD, -> af-NA/s/NAD
 currency/symbols/v1, bn/n/BYN, -> af/n/BYN
@@ -64803,161 +64874,214 @@ currency/symbols/v1, br/s/GBP, 30B, 7B, 9789562ca36e0942
 currency/symbols/v1, br/s/HKD, 29B, 6B, 79b6a89d7b5359b6
 currency/symbols/v1, br/s/NZD, 29B, 6B, d9d0a56fd5e7143e
 currency/symbols/v1, br/s/USD, 29B, 6B, 1f1403753fa9d6
+currency/symbols/v1, brx/n/AED, 39B, 16B, 8a7be767adfaadc0
+currency/symbols/v1, brx/n/ALL, 31B, 8B, faaa09fe8ed9a671
+currency/symbols/v1, brx/n/ANG, 42B, 19B, 529ccd2fd8eadd6
 currency/symbols/v1, brx/n/AOA, 41B, 18B, e8800fd0aa86355c
+currency/symbols/v1, brx/n/AWG, 57B, 34B, 94eeb1547080fe60
 currency/symbols/v1, brx/n/BAM, 38B, 15B, a3d23585fef62988
+currency/symbols/v1, brx/n/BGN, 45B, 22B, 8a56efe4d4036e35
+currency/symbols/v1, brx/n/BHD, 51B, 28B, f18cc1312152fea5
+currency/symbols/v1, brx/n/BIF, 45B, 22B, e44062ab4b182122
 currency/symbols/v1, brx/n/BOB, 38B, 15B, c0b82f45403d7267
 currency/symbols/v1, brx/n/BWP, 31B, 8B, 883907c014546cd2
+currency/symbols/v1, brx/n/BYN, 48B, 25B, 8d2cfb7b9895e27b
+currency/symbols/v1, brx/n/CDF, 45B, 22B, 476da097321fd01b
+currency/symbols/v1, brx/n/CNH, 51B, 28B, 636d64b1a008c8ab
+currency/symbols/v1, brx/n/CVE, 42B, 19B, 4f85a3b48e5c3da8
+currency/symbols/v1, brx/n/DJF, 45B, 22B, 96cf7539830d4bd4
 currency/symbols/v1, brx/n/DKK, 38B, 15B, 4a096016c0873b21
+currency/symbols/v1, brx/n/DZD, 48B, 25B, 3b27fcb595339c9a
+currency/symbols/v1, brx/n/ERN, 42B, 19B, 5a725676b0b8e511
+currency/symbols/v1, brx/n/ETB, 42B, 19B, d110fe876827d5e1
 currency/symbols/v1, brx/n/GHS, 47B, 24B, 89f9175c125f59
+currency/symbols/v1, brx/n/GMD, 45B, 22B, 81ad0963cbc26777
 currency/symbols/v1, brx/n/GNF, 38B, 15B, 78b9e05fbbfc00b5
 currency/symbols/v1, brx/n/HRK, 38B, 15B, 63b109aef1e44669
+currency/symbols/v1, brx/n/HTG, 51B, 28B, 2049f5cfc73f091
 currency/symbols/v1, brx/n/HUF, 38B, 15B, 83375bb30d013c92
+currency/symbols/v1, brx/n/IQD, 48B, 25B, de945295716be2e8
 currency/symbols/v1, brx/n/ISK, -> brx/n/DKK
+currency/symbols/v1, brx/n/JOD, 42B, 19B, 49b596c37530b6a4
+currency/symbols/v1, brx/n/KES, 42B, 19B, 3c680da11c446af6
 currency/symbols/v1, brx/n/KMF, 38B, 15B, 8b3b3b161e3c20c5
+currency/symbols/v1, brx/n/KWD, 60B, 37B, fcf2b72b098c1e23
 currency/symbols/v1, brx/n/LBP, 33B, 10B, b75084ea7a9e97a9
+currency/symbols/v1, brx/n/LSL, 45B, 22B, b32d68bd74d99901
+currency/symbols/v1, brx/n/LYD, 48B, 25B, a6e2d55099537890
+currency/symbols/v1, brx/n/MAD, 42B, 19B, abf5b2933d0e9176
+currency/symbols/v1, brx/n/MDL, 45B, 22B, 82a1eec320a1d009
 currency/symbols/v1, brx/n/MGA, 35B, 12B, d20e98650ae1f5ad
+currency/symbols/v1, brx/n/MKD, 45B, 22B, 103c1df266b39817
+currency/symbols/v1, brx/n/MOP, 42B, 19B, 131c08aa6e83920d
+currency/symbols/v1, brx/n/MRU, 45B, 22B, cf5d55145282ef44
 currency/symbols/v1, brx/n/MUR, 38B, 15B, a222a1da8ff577d8
+currency/symbols/v1, brx/n/MWK, 60B, 37B, f8093d4fa6569505
+currency/symbols/v1, brx/n/MZN, 48B, 25B, 7f99c47650d407e0
 currency/symbols/v1, brx/n/NIO, 33B, 10B, dac5918f53260c11
 currency/symbols/v1, brx/n/NOK, -> brx/n/DKK
+currency/symbols/v1, brx/n/OMR, 42B, 19B, 5f00d435618db8c5
+currency/symbols/v1, brx/n/PAB, 42B, 19B, d8d1a46ab729a220
+currency/symbols/v1, brx/n/PEN, 42B, 19B, 3cbfbc864e4e1d35
+currency/symbols/v1, brx/n/QAR, 45B, 22B, e399cb29f861421b
 currency/symbols/v1, brx/n/RON, 34B, 11B, 30017540fb0de97c
+currency/symbols/v1, brx/n/RSD, 45B, 22B, d9c73e5c2bbde922
 currency/symbols/v1, brx/n/RWF, 38B, 15B, bd9e944bf4f9f4
+currency/symbols/v1, brx/n/SAR, 42B, 19B, f666fb149e57ac94
+currency/symbols/v1, brx/n/SCR, 45B, 22B, 9e3e1223f81a4e3a
+currency/symbols/v1, brx/n/SDG, 45B, 22B, 7f6cb236a3170c5a
 currency/symbols/v1, brx/n/SEK, -> brx/n/DKK
+currency/symbols/v1, brx/n/SLE, 42B, 19B, dbb6b508bbf19b83
+currency/symbols/v1, brx/n/SLL, 45B, 22B, c0d188d0b4cb9f5a
+currency/symbols/v1, brx/n/SOS, 42B, 19B, 41b2fadd0ab7c7c
 currency/symbols/v1, brx/n/STN, 38B, 15B, a87fbfeae138dcbf
+currency/symbols/v1, brx/n/SZL, 48B, 25B, 31d99b0b2a5cb057
+currency/symbols/v1, brx/n/TJS, 45B, 22B, 3ca5ddaa19cf1853
+currency/symbols/v1, brx/n/TMT, 45B, 22B, d8961116f5803b33
+currency/symbols/v1, brx/n/TND, 45B, 22B, 13c09b184cfffb44
+currency/symbols/v1, brx/n/TZS, 48B, 25B, 360f1d1ce79d24dd
+currency/symbols/v1, brx/n/UGX, 51B, 28B, 77f461ce67425829
+currency/symbols/v1, brx/n/UZS, 48B, 25B, 8232b16fd8934e77
+currency/symbols/v1, brx/n/VES, 42B, 19B, ab926258a028ca3e
+currency/symbols/v1, brx/n/YER, 45B, 22B, e11d3438ced44ac0
 currency/symbols/v1, brx/n/ZAR, 31B, 8B, 18e5f98b0eadb3e
 currency/symbols/v1, brx/n/ZMW, 41B, 18B, db4c348407d9663f
-currency/symbols/v1, brx/s/AED, 39B, 16B, 8a7be767adfaadc0
-currency/symbols/v1, brx/s/ALL, 31B, 8B, faaa09fe8ed9a671
+currency/symbols/v1, brx/s/AED, -> brx/n/AED
+currency/symbols/v1, brx/s/ALL, -> brx/n/ALL
 currency/symbols/v1, brx/s/AMD, 42B, 19B, 5b3e281ef70c6476
-currency/symbols/v1, brx/s/ANG, 42B, 19B, 529ccd2fd8eadd6
+currency/symbols/v1, brx/s/ANG, -> brx/n/ANG
 currency/symbols/v1, brx/s/AOA, 36B, 13B, db1b91b3416e0286
 currency/symbols/v1, brx/s/ARS, 42B, 19B, e02582eda29f5c30
-currency/symbols/v1, brx/s/AWG, 57B, 34B, 94eeb1547080fe60
+currency/symbols/v1, brx/s/AWG, -> brx/n/AWG
 currency/symbols/v1, brx/s/AZN, 45B, 22B, f25740e5067fda84
 currency/symbols/v1, brx/s/BAM, 42B, 19B, a15100d9f6fe42b1
 currency/symbols/v1, brx/s/BBD, 45B, 22B, 5879e0b743358fa
-currency/symbols/v1, brx/s/BGN, 45B, 22B, 8a56efe4d4036e35
-currency/symbols/v1, brx/s/BHD, 51B, 28B, f18cc1312152fea5
-currency/symbols/v1, brx/s/BIF, 45B, 22B, e44062ab4b182122
+currency/symbols/v1, brx/s/BGN, -> brx/n/BGN
+currency/symbols/v1, brx/s/BHD, -> brx/n/BHD
+currency/symbols/v1, brx/s/BIF, -> brx/n/BIF
 currency/symbols/v1, brx/s/BMD, 45B, 22B, e55d6265ed9cae5b
 currency/symbols/v1, brx/s/BOB, 42B, 19B, 3ea5ce672da5bcf7
 currency/symbols/v1, brx/s/BSD, 45B, 22B, 92501cd2f7745f47
 currency/symbols/v1, brx/s/BWP, 60B, 37B, f9fc8b5f91bb7e60
-currency/symbols/v1, brx/s/BYN, 48B, 25B, 8d2cfb7b9895e27b
+currency/symbols/v1, brx/s/BYN, -> brx/n/BYN
 currency/symbols/v1, brx/s/BZD, 48B, 25B, ab25dd76f20763ba
 currency/symbols/v1, brx/s/CAD, 37B, 14B, c0d628e1eab2b536
-currency/symbols/v1, brx/s/CDF, 45B, 22B, 476da097321fd01b
+currency/symbols/v1, brx/s/CDF, -> brx/n/CDF
 currency/symbols/v1, brx/s/CHF, 51B, 28B, 3409f3ef1043a096
 currency/symbols/v1, brx/s/CLP, 45B, 22B, d2973440a20772dc
-currency/symbols/v1, brx/s/CNH, 51B, 28B, 636d64b1a008c8ab
+currency/symbols/v1, brx/s/CNH, -> brx/n/CNH
 currency/symbols/v1, brx/s/CNY, 39B, 16B, 7fcedb6b760b9025
 currency/symbols/v1, brx/s/COP, 42B, 19B, 7a5c39c504c24e
 currency/symbols/v1, brx/s/CRC, 45B, 22B, 38e575a157198e72
 currency/symbols/v1, brx/s/CUC, 45B, 22B, 6afe0f59bdca6ca7
 currency/symbols/v1, brx/s/CUP, 45B, 22B, 72a2335ef3db7d4d
-currency/symbols/v1, brx/s/CVE, 42B, 19B, 4f85a3b48e5c3da8
+currency/symbols/v1, brx/s/CVE, -> brx/n/CVE
 currency/symbols/v1, brx/s/CZK, 48B, 25B, b74625912d8a0311
-currency/symbols/v1, brx/s/DJF, 45B, 22B, 96cf7539830d4bd4
+currency/symbols/v1, brx/s/DJF, -> brx/n/DJF
 currency/symbols/v1, brx/s/DKK, 45B, 22B, c6c5a4ce04d9bde2
 currency/symbols/v1, brx/s/DOP, 42B, 19B, 4394fd3700400aba
-currency/symbols/v1, brx/s/DZD, 48B, 25B, 3b27fcb595339c9a
+currency/symbols/v1, brx/s/DZD, -> brx/n/DZD
 currency/symbols/v1, brx/s/EGP, 42B, 19B, 4c13e89328583e99
-currency/symbols/v1, brx/s/ERN, 42B, 19B, 5a725676b0b8e511
-currency/symbols/v1, brx/s/ETB, 42B, 19B, d110fe876827d5e1
+currency/symbols/v1, brx/s/ERN, -> brx/n/ERN
+currency/symbols/v1, brx/s/ETB, -> brx/n/ETB
 currency/symbols/v1, brx/s/FKP, 45B, 22B, a68b9f39f13e4b54
 currency/symbols/v1, brx/s/GEL, 42B, 19B, 926b399dd822506a
 currency/symbols/v1, brx/s/GHS, 51B, 28B, 510509af93ab105a
 currency/symbols/v1, brx/s/GIP, 45B, 22B, c48f975a1a8bb289
-currency/symbols/v1, brx/s/GMD, 45B, 22B, 81ad0963cbc26777
+currency/symbols/v1, brx/s/GMD, -> brx/n/GMD
 currency/symbols/v1, brx/s/GNF, 45B, 22B, 73911e54e405c7f0
 currency/symbols/v1, brx/s/GTQ, 48B, 25B, a85399b405da02fb
 currency/symbols/v1, brx/s/GYD, 48B, 25B, 122604dc922955e3
 currency/symbols/v1, brx/s/HKD, 45B, 22B, 9f26454aaa390846
 currency/symbols/v1, brx/s/HNL, 51B, 28B, 88507879a55b6394
 currency/symbols/v1, brx/s/HRK, 51B, 28B, e2f680d8601f6ecc
-currency/symbols/v1, brx/s/HTG, 51B, 28B, 2049f5cfc73f091
+currency/symbols/v1, brx/s/HTG, -> brx/n/HTG
 currency/symbols/v1, brx/s/HUF, 51B, 28B, 1540681b16eb9bf
-currency/symbols/v1, brx/s/IQD, 48B, 25B, de945295716be2e8
+currency/symbols/v1, brx/s/IQD, -> brx/n/IQD
 currency/symbols/v1, brx/s/ISK, 45B, 22B, aa607d34ca84aabe
 currency/symbols/v1, brx/s/JMD, 45B, 22B, b6bba0ee5ec1dd23
-currency/symbols/v1, brx/s/JOD, 42B, 19B, 49b596c37530b6a4
-currency/symbols/v1, brx/s/KES, 42B, 19B, 3c680da11c446af6
+currency/symbols/v1, brx/s/JOD, -> brx/n/JOD
+currency/symbols/v1, brx/s/KES, -> brx/n/KES
 currency/symbols/v1, brx/s/KGS, 45B, 22B, e66a98c513618279
 currency/symbols/v1, brx/s/KMF, 45B, 22B, 1d5757602b21e9a0
 currency/symbols/v1, brx/s/KPW, 60B, 37B, 9f2db0e505be039a
-currency/symbols/v1, brx/s/KWD, 60B, 37B, fcf2b72b098c1e23
+currency/symbols/v1, brx/s/KWD, -> brx/n/KWD
 currency/symbols/v1, brx/s/KYD, 48B, 25B, 70f9fef137c147b8
 currency/symbols/v1, brx/s/KZT, 48B, 25B, 2947bddd0f045b4e
 currency/symbols/v1, brx/s/LBP, 45B, 22B, f1d0cc19bb0ec89e
 currency/symbols/v1, brx/s/LRD, 45B, 22B, 9c64e4ecc5d65076
-currency/symbols/v1, brx/s/LSL, 45B, 22B, b32d68bd74d99901
-currency/symbols/v1, brx/s/LYD, 48B, 25B, a6e2d55099537890
-currency/symbols/v1, brx/s/MAD, 42B, 19B, abf5b2933d0e9176
-currency/symbols/v1, brx/s/MDL, 45B, 22B, 82a1eec320a1d009
+currency/symbols/v1, brx/s/LSL, -> brx/n/LSL
+currency/symbols/v1, brx/s/LYD, -> brx/n/LYD
+currency/symbols/v1, brx/s/MAD, -> brx/n/MAD
+currency/symbols/v1, brx/s/MDL, -> brx/n/MDL
 currency/symbols/v1, brx/s/MGA, 42B, 19B, b59f2e054fee6f2d
-currency/symbols/v1, brx/s/MKD, 45B, 22B, 103c1df266b39817
+currency/symbols/v1, brx/s/MKD, -> brx/n/MKD
 currency/symbols/v1, brx/s/MNT, 45B, 22B, d9af6f72be61e2
-currency/symbols/v1, brx/s/MOP, 42B, 19B, 131c08aa6e83920d
-currency/symbols/v1, brx/s/MRU, 45B, 22B, cf5d55145282ef44
+currency/symbols/v1, brx/s/MOP, -> brx/n/MOP
+currency/symbols/v1, brx/s/MRU, -> brx/n/MRU
 currency/symbols/v1, brx/s/MUR, 45B, 22B, 31262f547c7ca114
-currency/symbols/v1, brx/s/MWK, 60B, 37B, f8093d4fa6569505
+currency/symbols/v1, brx/s/MWK, -> brx/n/MWK
 currency/symbols/v1, brx/s/MXN, 46B, 23B, 4ebeb77f5d9ffc07
-currency/symbols/v1, brx/s/MZN, 48B, 25B, 7f99c47650d407e0
+currency/symbols/v1, brx/s/MZN, -> brx/n/MZN
 currency/symbols/v1, brx/s/NAD, 42B, 19B, 31d27be515eaa204
 currency/symbols/v1, brx/s/NGN, 45B, 22B, 3205c5351cc708c4
 currency/symbols/v1, brx/s/NIO, 42B, 19B, 2b4dcafb847f950b
 currency/symbols/v1, brx/s/NOK, 42B, 19B, 39569cb31bede2df
-currency/symbols/v1, brx/s/OMR, 42B, 19B, 5f00d435618db8c5
-currency/symbols/v1, brx/s/PAB, 42B, 19B, d8d1a46ab729a220
-currency/symbols/v1, brx/s/PEN, 42B, 19B, 3cbfbc864e4e1d35
+currency/symbols/v1, brx/s/OMR, -> brx/n/OMR
+currency/symbols/v1, brx/s/PAB, -> brx/n/PAB
+currency/symbols/v1, brx/s/PEN, -> brx/n/PEN
 currency/symbols/v1, brx/s/PLN, 45B, 22B, 4348d127b0f68196
 currency/symbols/v1, brx/s/PYG, 45B, 22B, a083c946e26937e5
-currency/symbols/v1, brx/s/QAR, 45B, 22B, e399cb29f861421b
+currency/symbols/v1, brx/s/QAR, -> brx/n/QAR
 currency/symbols/v1, brx/s/RON, 42B, 19B, da75ade2fd229b0e
-currency/symbols/v1, brx/s/RSD, 45B, 22B, d9c73e5c2bbde922
+currency/symbols/v1, brx/s/RSD, -> brx/n/RSD
 currency/symbols/v1, brx/s/RUB, 34B, 11B, b11012c229e355d2
-currency/symbols/v1, brx/s/SAR, 42B, 19B, f666fb149e57ac94
-currency/symbols/v1, brx/s/SCR, 45B, 22B, 9e3e1223f81a4e3a
-currency/symbols/v1, brx/s/SDG, 45B, 22B, 7f6cb236a3170c5a
+currency/symbols/v1, brx/s/SAR, -> brx/n/SAR
+currency/symbols/v1, brx/s/SCR, -> brx/n/SCR
+currency/symbols/v1, brx/s/SDG, -> brx/n/SDG
 currency/symbols/v1, brx/s/SEK, 42B, 19B, 4211727a756e86f9
 currency/symbols/v1, brx/s/SHP, 51B, 28B, 3772d9b8e896787f
-currency/symbols/v1, brx/s/SLE, 42B, 19B, dbb6b508bbf19b83
-currency/symbols/v1, brx/s/SLL, 45B, 22B, c0d188d0b4cb9f5a
-currency/symbols/v1, brx/s/SOS, 42B, 19B, 41b2fadd0ab7c7c
+currency/symbols/v1, brx/s/SLE, -> brx/n/SLE
+currency/symbols/v1, brx/s/SLL, -> brx/n/SLL
+currency/symbols/v1, brx/s/SOS, -> brx/n/SOS
 currency/symbols/v1, brx/s/SRD, 45B, 22B, 53e38e78a4aa9ee1
 currency/symbols/v1, brx/s/SSP, 45B, 22B, 9c590c64d26e965d
 currency/symbols/v1, brx/s/STN, 45B, 22B, a8f9b6451bd56740
 currency/symbols/v1, brx/s/SYP, 48B, 25B, 9f49c2a26d29c0f3
-currency/symbols/v1, brx/s/SZL, 48B, 25B, 31d99b0b2a5cb057
-currency/symbols/v1, brx/s/TJS, 45B, 22B, 3ca5ddaa19cf1853
-currency/symbols/v1, brx/s/TMT, 45B, 22B, d8961116f5803b33
-currency/symbols/v1, brx/s/TND, 45B, 22B, 13c09b184cfffb44
+currency/symbols/v1, brx/s/SZL, -> brx/n/SZL
+currency/symbols/v1, brx/s/TJS, -> brx/n/TJS
+currency/symbols/v1, brx/s/TMT, -> brx/n/TMT
+currency/symbols/v1, brx/s/TND, -> brx/n/TND
 currency/symbols/v1, brx/s/TRY, 48B, 25B, 5f52412340ced182
 currency/symbols/v1, brx/s/TTD, 45B, 22B, 41cca365885a1ceb
 currency/symbols/v1, brx/s/TWD, 39B, 16B, 217d02589904ac7e
-currency/symbols/v1, brx/s/TZS, 48B, 25B, 360f1d1ce79d24dd
+currency/symbols/v1, brx/s/TZS, -> brx/n/TZS
 currency/symbols/v1, brx/s/UAH, 48B, 25B, 49096025dbde5237
-currency/symbols/v1, brx/s/UGX, 51B, 28B, 77f461ce67425829
+currency/symbols/v1, brx/s/UGX, -> brx/n/UGX
 currency/symbols/v1, brx/s/USD, -> af-NA/s/NAD
 currency/symbols/v1, brx/s/UYU, 48B, 25B, 2f7a1bb5b184a33e
-currency/symbols/v1, brx/s/UZS, 48B, 25B, 8232b16fd8934e77
-currency/symbols/v1, brx/s/VES, 42B, 19B, ab926258a028ca3e
+currency/symbols/v1, brx/s/UZS, -> brx/n/UZS
+currency/symbols/v1, brx/s/VES, -> brx/n/VES
 currency/symbols/v1, brx/s/XCD, 37B, 14B, d08710f42d70cca9
-currency/symbols/v1, brx/s/YER, 45B, 22B, e11d3438ced44ac0
+currency/symbols/v1, brx/s/YER, -> brx/n/YER
 currency/symbols/v1, brx/s/ZAR, 45B, 22B, 2b225311f38cd8b2
+currency/symbols/v1, bs-Cyrl/n/RSD, 32B, 9B, 8b7dc49ce8900329
 currency/symbols/v1, bs-Cyrl/s/BAM, 29B, 6B, d3eabb911e7d5d5b
 currency/symbols/v1, bs-Cyrl/s/CZK, 29B, 6B, 3538bcf7d5532d21
 currency/symbols/v1, bs-Cyrl/s/JPY, -> ast/s/JPY
 currency/symbols/v1, bs-Cyrl/s/PLN, 29B, 6B, 8db83c3eb9128072
-currency/symbols/v1, bs-Cyrl/s/RSD, 32B, 9B, 8b7dc49ce8900329
+currency/symbols/v1, bs-Cyrl/s/RSD, -> bs-Cyrl/n/RSD
 currency/symbols/v1, bs-Cyrl/s/TRY, 29B, 6B, 460b072e76c006f7
 currency/symbols/v1, bs/n/BYN, -> af/n/BYN
+currency/symbols/v1, bs/n/RSD, 29B, 6B, 5b7d6b009ee28638
 currency/symbols/v1, bs/n/TWD, -> af/n/TWD
 currency/symbols/v1, bs/s/BAM, 27B, 4B, 3d413c1733106f0d
 currency/symbols/v1, bs/s/HRK, 27B, 4B, fd87bf26873e974f
 currency/symbols/v1, bs/s/JPY, -> ast/s/JPY
-currency/symbols/v1, bs/s/RSD, 29B, 6B, 5b7d6b009ee28638
+currency/symbols/v1, bs/s/RSD, -> bs/n/RSD
 currency/symbols/v1, bs/s/THB, -> af/s/THB
-currency/symbols/v1, ca-FR/s/FRF, 26B, 3B, b5b06413211b78b6
+currency/symbols/v1, ca-FR/n/FRF, 26B, 3B, b5b06413211b78b6
+currency/symbols/v1, ca-FR/s/FRF, -> ca-FR/n/FRF
 currency/symbols/v1, ca/n/BYN, -> af/n/BYN
 currency/symbols/v1, ca/n/VEF, 29B, 6B, 64b306718d819743
 currency/symbols/v1, ca/s/AUD, -> am/s/AUD
@@ -64967,15 +65091,18 @@ currency/symbols/v1, ca/s/THB, -> af/s/THB
 currency/symbols/v1, ceb/s/USD, 29B, 6B, c40d5cec3602d844
 currency/symbols/v1, chr/n/BYN, -> af/n/BYN
 currency/symbols/v1, chr/s/USD, -> af-NA/s/NAD
-currency/symbols/v1, ckb/s/IQD, -> ar/s/IQD
+currency/symbols/v1, ckb/n/IQD, -> ar/n/IQD
+currency/symbols/v1, ckb/s/IQD, -> ar/n/IQD
 currency/symbols/v1, cs/n/BYN, -> af/n/BYN
+currency/symbols/v1, cs/n/CSK, 29B, 6B, 27a1d4c8dbc72f3c
 currency/symbols/v1, cs/n/RON, 26B, 3B, f5da42f450805f21
 currency/symbols/v1, cs/n/RUR, -> af/n/BYN
 currency/symbols/v1, cs/n/TWD, -> af/n/TWD
+currency/symbols/v1, cs/n/XEU, 28B, 5B, 3546c2de973d8f33
 currency/symbols/v1, cs/s/AUD, -> am/s/AUD
-currency/symbols/v1, cs/s/CSK, 29B, 6B, 27a1d4c8dbc72f3c
+currency/symbols/v1, cs/s/CSK, -> cs/n/CSK
 currency/symbols/v1, cs/s/CZK, 28B, 5B, 7589b9ac16a12439
-currency/symbols/v1, cs/s/XEU, 28B, 5B, 3546c2de973d8f33
+currency/symbols/v1, cs/s/XEU, -> cs/n/XEU
 currency/symbols/v1, cv/s/RUB, -> be/s/RUB
 currency/symbols/v1, cv/s/USD, -> af-NA/s/NAD
 currency/symbols/v1, cy/n/BDT, 27B, 4B, d3309429e44ddc5d
@@ -64993,9 +65120,14 @@ currency/symbols/v1, da/n/TWD, -> af/n/TWD
 currency/symbols/v1, da/s/AUD, -> am/s/AUD
 currency/symbols/v1, da/s/DKK, -> da/n/DKK
 currency/symbols/v1, da/s/THB, -> af/s/THB
-currency/symbols/v1, de-LU/s/LUF, -> ca-FR/s/FRF
+currency/symbols/v1, de-LU/n/LUF, -> ca-FR/n/FRF
+currency/symbols/v1, de-LU/s/LUF, -> ca-FR/n/FRF
+currency/symbols/v1, de/n/ATS, 28B, 5B, f6a183fb5e6d653a
+currency/symbols/v1, de/n/BGM, 28B, 5B, bd627e1c72462b1a
+currency/symbols/v1, de/n/BGO, 28B, 5B, f20f6d4a46b5d0b8
 currency/symbols/v1, de/n/BYN, -> af/n/BYN
 currency/symbols/v1, de/n/CUC, 29B, 6B, a50ad4641ad0c854
+currency/symbols/v1, de/n/DEM, 27B, 4B, 1ca00bf45aacda28
 currency/symbols/v1, de/n/FKP, 29B, 6B, ffa2f4855a969095
 currency/symbols/v1, de/n/GHS, 28B, 5B, 1195a692e97d462e
 currency/symbols/v1, de/n/GNF, 29B, 6B, c96cdf7c6a2ca89b
@@ -65005,11 +65137,11 @@ currency/symbols/v1, de/n/RUR, -> af/n/BYN
 currency/symbols/v1, de/n/RWF, 29B, 6B, e42ada377776bf0b
 currency/symbols/v1, de/n/TWD, -> af/n/TWD
 currency/symbols/v1, de/n/ZMW, 26B, 3B, 2a2bb06b587e1446
-currency/symbols/v1, de/s/ATS, 28B, 5B, f6a183fb5e6d653a
+currency/symbols/v1, de/s/ATS, -> de/n/ATS
 currency/symbols/v1, de/s/AUD, -> am/s/AUD
-currency/symbols/v1, de/s/BGM, 28B, 5B, bd627e1c72462b1a
-currency/symbols/v1, de/s/BGO, 28B, 5B, f20f6d4a46b5d0b8
-currency/symbols/v1, de/s/DEM, 27B, 4B, 1ca00bf45aacda28
+currency/symbols/v1, de/s/BGM, -> de/n/BGM
+currency/symbols/v1, de/s/BGO, -> de/n/BGO
+currency/symbols/v1, de/s/DEM, -> de/n/DEM
 currency/symbols/v1, de/s/JPY, -> ast/s/JPY
 currency/symbols/v1, de/s/THB, -> af/s/THB
 currency/symbols/v1, de/s/USD, -> af-NA/s/NAD
@@ -65024,7 +65156,8 @@ currency/symbols/v1, ee/s/AUD, -> am/s/AUD
 currency/symbols/v1, ee/s/GHS, -> ak/s/GHS
 currency/symbols/v1, ee/s/THB, -> af/s/THB
 currency/symbols/v1, el/n/BYN, -> af/n/BYN
-currency/symbols/v1, el/s/GRD, 31B, 8B, 3c095e0c7689f791
+currency/symbols/v1, el/n/GRD, 31B, 8B, 3c095e0c7689f791
+currency/symbols/v1, el/s/GRD, -> el/n/GRD
 currency/symbols/v1, el/s/THB, -> af/s/THB
 currency/symbols/v1, el/s/USD, -> af-NA/s/NAD
 currency/symbols/v1, en-001/s/JPY, -> ar/n/JPY
@@ -65036,27 +65169,32 @@ currency/symbols/v1, en-AU/n/CUP, 28B, 5B, a3b8e5dbaefa284b
 currency/symbols/v1, en-AU/n/EGP, -> ar-SS/s/SSP
 currency/symbols/v1, en-AU/n/ISK, 27B, 4B, 40e175b9cf984772
 currency/symbols/v1, en-AU/n/PYG, 27B, 4B, 6282923d8d7997
+currency/symbols/v1, en-AU/n/SCR, 27B, 4B, 322b98e3c1b848e6
 currency/symbols/v1, en-AU/n/SEK, -> en-AU/n/ISK
 currency/symbols/v1, en-AU/n/UYU, -> be/n/UYU
+currency/symbols/v1, en-AU/n/XPF, 28B, 5B, 8b99650f1356fe92
 currency/symbols/v1, en-AU/s/AUD, -> af-NA/s/NAD
-currency/symbols/v1, en-AU/s/SCR, 27B, 4B, 322b98e3c1b848e6
-currency/symbols/v1, en-AU/s/XPF, 28B, 5B, 8b99650f1356fe92
+currency/symbols/v1, en-AU/s/SCR, -> en-AU/n/SCR
+currency/symbols/v1, en-AU/s/XPF, -> en-AU/n/XPF
 currency/symbols/v1, en-BB/s/BBD, -> af-NA/s/NAD
-currency/symbols/v1, en-BI/s/BIF, 28B, 5B, 959e240d16bd25b7
+currency/symbols/v1, en-BI/n/BIF, 28B, 5B, 959e240d16bd25b7
+currency/symbols/v1, en-BI/s/BIF, -> en-BI/n/BIF
 currency/symbols/v1, en-BM/s/BMD, -> af-NA/s/NAD
 currency/symbols/v1, en-BS/s/BSD, -> af-NA/s/NAD
 currency/symbols/v1, en-BW/s/BWP, 26B, 3B, e4d12b0968f358d4
 currency/symbols/v1, en-BZ/s/BZD, -> af-NA/s/NAD
+currency/symbols/v1, en-CA/n/XCG, 27B, 4B, c81486e8dd615c92
 currency/symbols/v1, en-CA/s/CAD, -> af-NA/s/NAD
 currency/symbols/v1, en-CA/s/JPY, -> ar/n/JPY
 currency/symbols/v1, en-CA/s/USD, -> ar/n/USD
-currency/symbols/v1, en-CA/s/XCG, 27B, 4B, c81486e8dd615c92
+currency/symbols/v1, en-CA/s/XCG, -> en-CA/n/XCG
 currency/symbols/v1, en-CC/s/AUD, -> af-NA/s/NAD
 currency/symbols/v1, en-CK/s/NZD, -> af-NA/s/NAD
 currency/symbols/v1, en-CX/s/AUD, -> af-NA/s/NAD
 currency/symbols/v1, en-DK/s/DKK, -> da/n/DKK
 currency/symbols/v1, en-DM/s/XCD, -> af-NA/s/NAD
-currency/symbols/v1, en-ER/s/ERN, -> ar-ER/s/ERN
+currency/symbols/v1, en-ER/n/ERN, -> ar-ER/n/ERN
+currency/symbols/v1, en-ER/s/ERN, -> ar-ER/n/ERN
 currency/symbols/v1, en-FJ/s/FJD, -> af-NA/s/NAD
 currency/symbols/v1, en-FK/s/FKP, -> ar-SS/s/SSP
 currency/symbols/v1, en-FK/s/GBP, -> ar-SS/s/GBP
@@ -65065,12 +65203,14 @@ currency/symbols/v1, en-GE/s/GEL, 28B, 5B, 40bc0cd5b18902e8
 currency/symbols/v1, en-GH/s/GHS, -> ak/s/GHS
 currency/symbols/v1, en-GI/s/GBP, -> ar-SS/s/GBP
 currency/symbols/v1, en-GI/s/GIP, -> ar-SS/s/SSP
-currency/symbols/v1, en-GM/s/GMD, 26B, 3B, 79b42274a8639e70
+currency/symbols/v1, en-GM/n/GMD, 26B, 3B, 79b42274a8639e70
+currency/symbols/v1, en-GM/s/GMD, -> en-GM/n/GMD
 currency/symbols/v1, en-GY/s/GYD, -> af-NA/s/NAD
 currency/symbols/v1, en-ID/s/IDR, 27B, 4B, e3ca26b12b597fad
 currency/symbols/v1, en-IN/s/USD, -> af-NA/s/NAD
 currency/symbols/v1, en-JM/s/JMD, -> af-NA/s/NAD
-currency/symbols/v1, en-KE/s/KES, 28B, 5B, f79b1bc21684d205
+currency/symbols/v1, en-KE/n/KES, 28B, 5B, f79b1bc21684d205
+currency/symbols/v1, en-KE/s/KES, -> en-KE/n/KES
 currency/symbols/v1, en-KI/s/AUD, -> af-NA/s/NAD
 currency/symbols/v1, en-KN/s/XCD, -> af-NA/s/NAD
 currency/symbols/v1, en-KY/s/KYD, -> af-NA/s/NAD
@@ -65078,12 +65218,15 @@ currency/symbols/v1, en-LC/s/XCD, -> af-NA/s/NAD
 currency/symbols/v1, en-LR/s/LRD, -> af-NA/s/NAD
 currency/symbols/v1, en-LS/s/ZAR, -> af/s/ZAR
 currency/symbols/v1, en-MG/s/MGA, 27B, 4B, 78220a193e5ced11
-currency/symbols/v1, en-MO/s/MOP, 29B, 6B, f04f3429763528f2
+currency/symbols/v1, en-MO/n/MOP, 29B, 6B, f04f3429763528f2
+currency/symbols/v1, en-MO/s/MOP, -> en-MO/n/MOP
 currency/symbols/v1, en-MS/s/XCD, -> af-NA/s/NAD
 currency/symbols/v1, en-MT/s/GBP, -> ar-SS/s/GBP
-currency/symbols/v1, en-MU/s/MUR, -> en-AU/s/SCR
-currency/symbols/v1, en-MV/s/MVR, 27B, 4B, 788a84fca24c7630
-currency/symbols/v1, en-MW/s/MWK, 27B, 4B, 68568af0d80497e0
+currency/symbols/v1, en-MU/s/MUR, -> en-AU/n/SCR
+currency/symbols/v1, en-MV/n/MVR, 27B, 4B, 788a84fca24c7630
+currency/symbols/v1, en-MV/s/MVR, -> en-MV/n/MVR
+currency/symbols/v1, en-MW/n/MWK, 27B, 4B, 68568af0d80497e0
+currency/symbols/v1, en-MW/s/MWK, -> en-MW/n/MWK
 currency/symbols/v1, en-MY/s/MYR, 27B, 4B, aee7bde4f9d1c2e3
 currency/symbols/v1, en-NA/s/NAD, -> af-NA/s/NAD
 currency/symbols/v1, en-NF/s/AUD, -> af-NA/s/NAD
@@ -65092,30 +65235,39 @@ currency/symbols/v1, en-NO/s/NOK, 27B, 4B, 72548aced46f7b64
 currency/symbols/v1, en-NR/s/AUD, -> af-NA/s/NAD
 currency/symbols/v1, en-NU/s/NZD, -> af-NA/s/NAD
 currency/symbols/v1, en-NZ/s/NZD, -> af-NA/s/NAD
+currency/symbols/v1, en-PG/n/PGK, -> de/n/ZMW
 currency/symbols/v1, en-PG/s/PGK, -> de/n/ZMW
-currency/symbols/v1, en-PK/s/PKR, -> en-AU/s/SCR
+currency/symbols/v1, en-PK/s/PKR, -> en-AU/n/SCR
 currency/symbols/v1, en-PN/s/NZD, -> af-NA/s/NAD
 currency/symbols/v1, en-RW/s/RWF, 27B, 4B, 7acd67043758e5c5
 currency/symbols/v1, en-SB/s/SBD, -> af-NA/s/NAD
-currency/symbols/v1, en-SC/s/SCR, 27B, 4B, e899654c64d9f6ee
+currency/symbols/v1, en-SC/n/SCR, 27B, 4B, e899654c64d9f6ee
+currency/symbols/v1, en-SC/s/SCR, -> en-SC/n/SCR
 currency/symbols/v1, en-SE/s/SEK, -> en-NO/s/NOK
 currency/symbols/v1, en-SG/s/SGD, -> af-NA/s/NAD
 currency/symbols/v1, en-SH/s/GBP, -> ar-SS/s/GBP
 currency/symbols/v1, en-SH/s/SHP, -> ar-SS/s/SSP
-currency/symbols/v1, en-SL/s/SLE, 27B, 4B, 6bfd53b3ccb89300
+currency/symbols/v1, en-SL/n/SLE, 27B, 4B, 6bfd53b3ccb89300
+currency/symbols/v1, en-SL/s/SLE, -> en-SL/n/SLE
 currency/symbols/v1, en-SS/s/GBP, -> ar-SS/s/GBP
 currency/symbols/v1, en-SS/s/SSP, -> ar-SS/s/SSP
-currency/symbols/v1, en-SX/s/ANG, 29B, 6B, b47a0111c15c76ae
-currency/symbols/v1, en-SZ/s/SZL, 26B, 3B, dea82b18fe4ef3fa
+currency/symbols/v1, en-SX/n/ANG, 29B, 6B, b47a0111c15c76ae
+currency/symbols/v1, en-SX/s/ANG, -> en-SX/n/ANG
+currency/symbols/v1, en-SZ/n/SZL, 26B, 3B, dea82b18fe4ef3fa
+currency/symbols/v1, en-SZ/s/SZL, -> en-SZ/n/SZL
 currency/symbols/v1, en-TK/s/NZD, -> af-NA/s/NAD
 currency/symbols/v1, en-TO/s/TOP, 27B, 4B, 5ae3aacc830e08c8
 currency/symbols/v1, en-TT/s/TTD, -> af-NA/s/NAD
 currency/symbols/v1, en-TV/s/AUD, -> af-NA/s/NAD
-currency/symbols/v1, en-TZ/s/TZS, 28B, 5B, 925eff89b71e3a8b
-currency/symbols/v1, en-UG/s/UGX, 28B, 5B, 416f72e82c8b6fb3
+currency/symbols/v1, en-TZ/n/TZS, 28B, 5B, 925eff89b71e3a8b
+currency/symbols/v1, en-TZ/s/TZS, -> en-TZ/n/TZS
+currency/symbols/v1, en-UG/n/UGX, 28B, 5B, 416f72e82c8b6fb3
+currency/symbols/v1, en-UG/s/UGX, -> en-UG/n/UGX
 currency/symbols/v1, en-VC/s/XCD, -> af-NA/s/NAD
-currency/symbols/v1, en-VU/s/VUV, 27B, 4B, ce0567234972cea4
-currency/symbols/v1, en-WS/s/WST, 28B, 5B, b230485d7deaea6e
+currency/symbols/v1, en-VU/n/VUV, 27B, 4B, ce0567234972cea4
+currency/symbols/v1, en-VU/s/VUV, -> en-VU/n/VUV
+currency/symbols/v1, en-WS/n/WST, 28B, 5B, b230485d7deaea6e
+currency/symbols/v1, en-WS/s/WST, -> en-WS/n/WST
 currency/symbols/v1, en-ZA/s/ZAR, -> af/s/ZAR
 currency/symbols/v1, en-ZM/s/ZMW, -> de/n/ZMW
 currency/symbols/v1, en/s/JPY, -> ast/s/JPY
@@ -65142,16 +65294,20 @@ currency/symbols/v1, es-GT/s/GTQ, 26B, 3B, eb68acebcd239c9a
 currency/symbols/v1, es-HN/s/HNL, -> cs/n/RON
 currency/symbols/v1, es-MX/n/BYN, 27B, 4B, 2ccd679dd5023fe6
 currency/symbols/v1, es-MX/n/FKP, -> ar-SS/s/SSP
+currency/symbols/v1, es-MX/n/MRO, 28B, 5B, 4ad0fe72fb63aac9
+currency/symbols/v1, es-MX/n/MRU, 27B, 4B, 830f316699e376f8
 currency/symbols/v1, es-MX/n/RON, 28B, 5B, c47db4d1c6dd6b2f
 currency/symbols/v1, es-MX/n/SSP, -> ar-SS/s/SSP
 currency/symbols/v1, es-MX/n/SYP, -> ar-SS/s/SSP
 currency/symbols/v1, es-MX/n/VEF, -> es-BO/s/BOB
-currency/symbols/v1, es-MX/s/MRO, 28B, 5B, 4ad0fe72fb63aac9
-currency/symbols/v1, es-MX/s/MRU, 27B, 4B, 830f316699e376f8
+currency/symbols/v1, es-MX/s/MRO, -> es-MX/n/MRO
+currency/symbols/v1, es-MX/s/MRU, -> es-MX/n/MRU
 currency/symbols/v1, es-MX/s/MXN, -> af-NA/s/NAD
 currency/symbols/v1, es-NI/s/NIO, 27B, 4B, fb496a51fd210c1c
-currency/symbols/v1, es-PA/s/PAB, 28B, 5B, 888e835c87254372
-currency/symbols/v1, es-PE/s/PEN, 27B, 4B, aeb7fb0da55f5da
+currency/symbols/v1, es-PA/n/PAB, 28B, 5B, 888e835c87254372
+currency/symbols/v1, es-PA/s/PAB, -> es-PA/n/PAB
+currency/symbols/v1, es-PE/n/PEN, 27B, 4B, aeb7fb0da55f5da
+currency/symbols/v1, es-PE/s/PEN, -> es-PE/n/PEN
 currency/symbols/v1, es-PR/s/USD, -> af-NA/s/NAD
 currency/symbols/v1, es-PY/s/PYG, 28B, 5B, 9e1ebafd3878e71b
 currency/symbols/v1, es-SV/s/USD, -> af-NA/s/NAD
@@ -65162,17 +65318,20 @@ currency/symbols/v1, es-US/n/SYP, -> ar-SS/s/SSP
 currency/symbols/v1, es-US/n/VEF, -> es-BO/s/BOB
 currency/symbols/v1, es-US/s/JPY, -> ast/s/JPY
 currency/symbols/v1, es-US/s/USD, -> af-NA/s/NAD
+currency/symbols/v1, es-UY/n/UYW, 27B, 4B, 2d3c1994ff6fc28a
 currency/symbols/v1, es-UY/s/UYU, -> af-NA/s/NAD
-currency/symbols/v1, es-UY/s/UYW, 27B, 4B, 2d3c1994ff6fc28a
+currency/symbols/v1, es-UY/s/UYW, -> es-UY/n/UYW
 currency/symbols/v1, es-VE/n/VEF, 28B, 5B, 3e15d2e3ee198624
+currency/symbols/v1, es-VE/n/VES, 29B, 6B, 90c137e2e5fb0702
 currency/symbols/v1, es-VE/s/VEF, -> es-VE/n/VEF
-currency/symbols/v1, es-VE/s/VES, 29B, 6B, 90c137e2e5fb0702
+currency/symbols/v1, es-VE/s/VES, -> es-VE/n/VES
 currency/symbols/v1, es/n/BYN, -> af/n/BYN
 currency/symbols/v1, es/n/RON, -> cs/n/RON
 currency/symbols/v1, es/n/TWD, -> af/n/TWD
 currency/symbols/v1, es/s/ESP, -> ca/s/ESP
 currency/symbols/v1, es/s/THB, -> af/s/THB
 currency/symbols/v1, et/n/CHF, -> ar/n/CHF
+currency/symbols/v1, et/n/EEK, -> en-NO/s/NOK
 currency/symbols/v1, et/n/TWD, -> af/n/TWD
 currency/symbols/v1, et/s/AUD, -> am/s/AUD
 currency/symbols/v1, et/s/EEK, -> en-NO/s/NOK
@@ -65183,37 +65342,47 @@ currency/symbols/v1, eu/n/BYN, -> af/n/BYN
 currency/symbols/v1, eu/n/TWD, -> af/n/TWD
 currency/symbols/v1, eu/s/ESP, -> ca/s/ESP
 currency/symbols/v1, eu/s/THB, -> af/s/THB
-currency/symbols/v1, fa/n/BYN, -> be/s/BYN
+currency/symbols/v1, fa/n/BYN, -> be/n/BYN
 currency/symbols/v1, fa/n/CHF, 31B, 8B, 37a5e2a1f27059df
+currency/symbols/v1, fa/n/IRR, 33B, 10B, 5db9f633511fd82d
+currency/symbols/v1, fa/n/XOF, 41B, 18B, 3c7e189082723e88
 currency/symbols/v1, fa/s/AFN, 27B, 4B, 8c399e14810d54c1
 currency/symbols/v1, fa/s/CAD, -> br/s/CAD
 currency/symbols/v1, fa/s/CNY, 29B, 6B, 299e493cefd3e728
 currency/symbols/v1, fa/s/HKD, 28B, 5B, 4fa417ed30a58c55
-currency/symbols/v1, fa/s/IRR, 33B, 10B, 5db9f633511fd82d
+currency/symbols/v1, fa/s/IRR, -> fa/n/IRR
 currency/symbols/v1, fa/s/JPY, -> ast/s/JPY
 currency/symbols/v1, fa/s/MXN, 28B, 5B, 8730b980afa34bf5
 currency/symbols/v1, fa/s/NZD, 28B, 5B, 312e39b71c7b8ca5
 currency/symbols/v1, fa/s/THB, -> af/s/THB
 currency/symbols/v1, fa/s/USD, -> af-NA/s/NAD
 currency/symbols/v1, fa/s/XCD, 28B, 5B, ed827d7e861e6554
-currency/symbols/v1, fa/s/XOF, 41B, 18B, 3c7e189082723e88
+currency/symbols/v1, fa/s/XOF, -> fa/n/XOF
 currency/symbols/v1, ff-Adlm-GH/s/GHS, -> ak/s/GHS
-currency/symbols/v1, ff-Adlm-GM/s/GMD, -> en-GM/s/GMD
+currency/symbols/v1, ff-Adlm-GM/n/GMD, -> en-GM/n/GMD
+currency/symbols/v1, ff-Adlm-GM/s/GMD, -> en-GM/n/GMD
 currency/symbols/v1, ff-Adlm-LR/s/LRD, -> af-NA/s/NAD
-currency/symbols/v1, ff-Adlm-MR/s/MRU, -> es-MX/s/MRU
+currency/symbols/v1, ff-Adlm-MR/n/MRU, -> es-MX/n/MRU
+currency/symbols/v1, ff-Adlm-MR/s/MRU, -> es-MX/n/MRU
 currency/symbols/v1, ff-Adlm-NG/s/NGN, -> en-NG/s/NGN
-currency/symbols/v1, ff-Adlm-SL/s/SLE, -> en-SL/s/SLE
+currency/symbols/v1, ff-Adlm-SL/n/SLE, -> en-SL/n/SLE
+currency/symbols/v1, ff-Adlm-SL/s/SLE, -> en-SL/n/SLE
+currency/symbols/v1, ff-Adlm/n/AFA, 37B, 14B, 7c7e0f33189f4bcd
 currency/symbols/v1, ff-Adlm/n/BYN, -> af/n/BYN
 currency/symbols/v1, ff-Adlm/n/GNF, 33B, 10B, dbf329de055453f4
-currency/symbols/v1, ff-Adlm/s/AFA, 37B, 14B, 7c7e0f33189f4bcd
+currency/symbols/v1, ff-Adlm/n/PGK, 37B, 14B, da44cefdb58782a5
+currency/symbols/v1, ff-Adlm/n/XAF, 41B, 18B, 1e14520d36406432
+currency/symbols/v1, ff-Adlm/n/XOF, 37B, 14B, 4db64bad7d2ac528
+currency/symbols/v1, ff-Adlm/s/AFA, -> ff-Adlm/n/AFA
 currency/symbols/v1, ff-Adlm/s/GNF, 27B, 4B, 5826ed3e5b96b37
 currency/symbols/v1, ff-Adlm/s/NGN, 37B, 14B, 24dd7b6f6730df0
-currency/symbols/v1, ff-Adlm/s/PGK, 37B, 14B, da44cefdb58782a5
+currency/symbols/v1, ff-Adlm/s/PGK, -> ff-Adlm/n/PGK
 currency/symbols/v1, ff-Adlm/s/PHP, 37B, 14B, bf836aebe88affd7
-currency/symbols/v1, ff-Adlm/s/XAF, 41B, 18B, 1e14520d36406432
-currency/symbols/v1, ff-Adlm/s/XOF, 37B, 14B, 4db64bad7d2ac528
+currency/symbols/v1, ff-Adlm/s/XAF, -> ff-Adlm/n/XAF
+currency/symbols/v1, ff-Adlm/s/XOF, -> ff-Adlm/n/XOF
+currency/symbols/v1, fi/n/FIM, 27B, 4B, 9f8db9c2aac1216b
 currency/symbols/v1, fi/n/STN, 28B, 5B, 264964314da78fe3
-currency/symbols/v1, fi/s/FIM, 27B, 4B, 9f8db9c2aac1216b
+currency/symbols/v1, fi/s/FIM, -> fi/n/FIM
 currency/symbols/v1, fi/s/JPY, -> ast/s/JPY
 currency/symbols/v1, fi/s/USD, -> af-NA/s/NAD
 currency/symbols/v1, fil/n/BYN, -> af/n/BYN
@@ -65224,8 +65393,9 @@ currency/symbols/v1, fil/s/USD, -> af-NA/s/NAD
 currency/symbols/v1, fo-DK/s/DKK, -> da/n/DKK
 currency/symbols/v1, fo/n/BYN, -> af/n/BYN
 currency/symbols/v1, fo/s/DKK, -> en-NO/s/NOK
-currency/symbols/v1, fr-BI/s/BIF, -> en-BI/s/BIF
-currency/symbols/v1, fr-CA/n/BYN, -> be/s/BYN
+currency/symbols/v1, fr-BI/n/BIF, -> en-BI/n/BIF
+currency/symbols/v1, fr-BI/s/BIF, -> en-BI/n/BIF
+currency/symbols/v1, fr-CA/n/BYN, -> be/n/BYN
 currency/symbols/v1, fr-CA/n/KMF, -> ar-KM/s/KMF
 currency/symbols/v1, fr-CA/n/NIO, -> es-NI/s/NIO
 currency/symbols/v1, fr-CA/n/ZMW, 27B, 4B, 383d52a28738a2c1
@@ -65237,64 +65407,83 @@ currency/symbols/v1, fr-CA/s/JPY, -> ast/s/JPY
 currency/symbols/v1, fr-CA/s/NZD, 30B, 7B, 259a6d8ed7b1c7d5
 currency/symbols/v1, fr-CA/s/SGD, 30B, 7B, d5b4f4fed6a04322
 currency/symbols/v1, fr-CA/s/USD, 30B, 7B, 7db95d92782e9038
+currency/symbols/v1, fr-CD/n/CDF, -> de/n/KMF
 currency/symbols/v1, fr-CD/s/CDF, -> de/n/KMF
-currency/symbols/v1, fr-DJ/s/DJF, -> ar-DJ/s/DJF
-currency/symbols/v1, fr-DZ/s/DZD, 27B, 4B, b207f7031373153a
+currency/symbols/v1, fr-DJ/n/DJF, -> ar-DJ/n/DJF
+currency/symbols/v1, fr-DJ/s/DJF, -> ar-DJ/n/DJF
+currency/symbols/v1, fr-DZ/n/DZD, 27B, 4B, b207f7031373153a
+currency/symbols/v1, fr-DZ/s/DZD, -> fr-DZ/n/DZD
 currency/symbols/v1, fr-GN/s/GNF, -> ff-Adlm/s/GNF
-currency/symbols/v1, fr-HT/s/HTG, 26B, 3B, 1c8fb0cb5794e4f4
+currency/symbols/v1, fr-HT/n/HTG, 26B, 3B, 1c8fb0cb5794e4f4
+currency/symbols/v1, fr-HT/s/HTG, -> fr-HT/n/HTG
 currency/symbols/v1, fr-KM/s/KMF, -> ar-KM/s/KMF
-currency/symbols/v1, fr-LU/s/LUF, -> ca-FR/s/FRF
+currency/symbols/v1, fr-LU/n/LUF, -> ca-FR/n/FRF
+currency/symbols/v1, fr-LU/s/LUF, -> ca-FR/n/FRF
 currency/symbols/v1, fr-MG/s/MGA, -> en-MG/s/MGA
-currency/symbols/v1, fr-MR/s/MRU, -> es-MX/s/MRU
-currency/symbols/v1, fr-MU/s/MUR, -> en-AU/s/SCR
+currency/symbols/v1, fr-MR/n/MRU, -> es-MX/n/MRU
+currency/symbols/v1, fr-MR/s/MRU, -> es-MX/n/MRU
+currency/symbols/v1, fr-MU/s/MUR, -> en-AU/n/SCR
 currency/symbols/v1, fr-RW/s/RWF, -> en-RW/s/RWF
-currency/symbols/v1, fr-SC/s/SCR, -> en-SC/s/SCR
+currency/symbols/v1, fr-SC/n/SCR, -> en-SC/n/SCR
+currency/symbols/v1, fr-SC/s/SCR, -> en-SC/n/SCR
 currency/symbols/v1, fr-SY/s/SYP, 27B, 4B, eda62ed4fa619bb
-currency/symbols/v1, fr-TN/s/TND, 27B, 4B, 2535dd2cbbde2c69
-currency/symbols/v1, fr-VU/s/VUV, -> en-VU/s/VUV
+currency/symbols/v1, fr-TN/n/TND, 27B, 4B, 2535dd2cbbde2c69
+currency/symbols/v1, fr-TN/s/TND, -> fr-TN/n/TND
+currency/symbols/v1, fr-VU/n/VUV, -> en-VU/n/VUV
+currency/symbols/v1, fr-VU/s/VUV, -> en-VU/n/VUV
+currency/symbols/v1, fr/n/BEF, 27B, 4B, 8936ea8fdef56fab
 currency/symbols/v1, fr/n/BYN, -> af/n/BYN
 currency/symbols/v1, fr/n/CHF, 28B, 5B, 439f7c4ad6e3206e
+currency/symbols/v1, fr/n/CYP, 29B, 6B, 45a45a509830972f
 currency/symbols/v1, fr/n/EGP, 28B, 5B, fa16df809fdfbc8b
+currency/symbols/v1, fr/n/FRF, -> ca-FR/n/FRF
+currency/symbols/v1, fr/n/IEP, 29B, 6B, 5d3c7568111e1ba3
+currency/symbols/v1, fr/n/ILP, 29B, 6B, a040a3509648588f
+currency/symbols/v1, fr/n/ITL, 30B, 7B, 377449bf5e79a38f
 currency/symbols/v1, fr/n/KMF, -> de/n/KMF
 currency/symbols/v1, fr/n/LBP, -> br/n/LBP
+currency/symbols/v1, fr/n/MTP, 29B, 6B, b8632fa56215cd85
 currency/symbols/v1, fr/n/NIO, 27B, 4B, c03ce32668829d7d
+currency/symbols/v1, fr/n/RHD, 28B, 5B, 9f81c9119becce1a
 currency/symbols/v1, fr/n/RON, -> cs/n/RON
 currency/symbols/v1, fr/n/RWF, 27B, 4B, 5ea2fe18a434f05a
 currency/symbols/v1, fr/n/TOP, 27B, 4B, 3548325b3c7fbbb7
 currency/symbols/v1, fr/n/TWD, -> af/n/TWD
+currency/symbols/v1, fr/n/WST, 28B, 5B, 18e874128df602c0
+currency/symbols/v1, fr/n/XPF, 29B, 6B, a6c74145bff4052b
 currency/symbols/v1, fr/n/ZMW, -> bal-Latn/n/GTQ
 currency/symbols/v1, fr/s/ARS, 28B, 5B, 7dd74013ef9b2fb5
 currency/symbols/v1, fr/s/AUD, 28B, 5B, acbe8a21b30a2940
-currency/symbols/v1, fr/s/BEF, 27B, 4B, 8936ea8fdef56fab
+currency/symbols/v1, fr/s/BEF, -> fr/n/BEF
 currency/symbols/v1, fr/s/BMD, 28B, 5B, 7d05aaf12b28cb22
 currency/symbols/v1, fr/s/BND, 28B, 5B, 2cfd325712e2d944
 currency/symbols/v1, fr/s/BZD, 28B, 5B, f0e2d796ccb758de
 currency/symbols/v1, fr/s/CAD, -> br/s/CAD
 currency/symbols/v1, fr/s/CLP, 28B, 5B, e26e44b3c8920a7a
 currency/symbols/v1, fr/s/COP, 28B, 5B, 4ae06ff630b115b9
-currency/symbols/v1, fr/s/CYP, 29B, 6B, 45a45a509830972f
+currency/symbols/v1, fr/s/CYP, -> fr/n/CYP
 currency/symbols/v1, fr/s/FJD, 28B, 5B, b34abc279e4bfabb
 currency/symbols/v1, fr/s/FKP, 29B, 6B, 6c56b51876d496e3
-currency/symbols/v1, fr/s/FRF, -> ca-FR/s/FRF
+currency/symbols/v1, fr/s/FRF, -> ca-FR/n/FRF
 currency/symbols/v1, fr/s/GBP, 29B, 6B, 94d8f82d9c3b05f5
 currency/symbols/v1, fr/s/GIP, 29B, 6B, 1c0e71c9109529c2
-currency/symbols/v1, fr/s/IEP, 29B, 6B, 5d3c7568111e1ba3
-currency/symbols/v1, fr/s/ILP, 29B, 6B, a040a3509648588f
-currency/symbols/v1, fr/s/ITL, 30B, 7B, 377449bf5e79a38f
+currency/symbols/v1, fr/s/IEP, -> fr/n/IEP
+currency/symbols/v1, fr/s/ILP, -> fr/n/ILP
+currency/symbols/v1, fr/s/ITL, -> fr/n/ITL
 currency/symbols/v1, fr/s/LBP, 29B, 6B, 7a559949ba0de4f3
-currency/symbols/v1, fr/s/MTP, 29B, 6B, b8632fa56215cd85
+currency/symbols/v1, fr/s/MTP, -> fr/n/MTP
 currency/symbols/v1, fr/s/MXN, -> fa/s/MXN
 currency/symbols/v1, fr/s/NAD, 28B, 5B, 51c2a59f81c6a294
 currency/symbols/v1, fr/s/NZD, -> fa/s/NZD
-currency/symbols/v1, fr/s/RHD, 28B, 5B, 9f81c9119becce1a
+currency/symbols/v1, fr/s/RHD, -> fr/n/RHD
 currency/symbols/v1, fr/s/SBD, 28B, 5B, 243898b15386cfa6
 currency/symbols/v1, fr/s/SGD, 28B, 5B, 1856406e21061a8a
 currency/symbols/v1, fr/s/SRD, 28B, 5B, 91639a014f9d650c
 currency/symbols/v1, fr/s/TTD, 28B, 5B, b3573ef6a0f3d979
 currency/symbols/v1, fr/s/USD, 28B, 5B, 72df909505dac0d3
 currency/symbols/v1, fr/s/UYU, 28B, 5B, 47de78f163d58796
-currency/symbols/v1, fr/s/WST, 28B, 5B, 18e874128df602c0
-currency/symbols/v1, fr/s/XPF, 29B, 6B, a6c74145bff4052b
+currency/symbols/v1, fr/s/WST, -> fr/n/WST
+currency/symbols/v1, fr/s/XPF, -> fr/n/XPF
 currency/symbols/v1, fy/s/AUD, -> am/s/AUD
 currency/symbols/v1, fy/s/CAD, -> es-NI/s/NIO
 currency/symbols/v1, fy/s/FJD, -> ar/n/FJD
@@ -65311,15 +65500,16 @@ currency/symbols/v1, gd/n/RUR, -> af/n/BYN
 currency/symbols/v1, gd/n/TWD, -> af/n/TWD
 currency/symbols/v1, gd/s/THB, -> af/s/THB
 currency/symbols/v1, gd/s/USD, -> af-NA/s/NAD
-currency/symbols/v1, gl/n/BYN, -> be/s/BYN
+currency/symbols/v1, gl/n/BYN, -> be/n/BYN
 currency/symbols/v1, gl/n/KMF, -> de/n/KMF
 currency/symbols/v1, gl/n/RUB, 31B, 8B, 50773da867a2e3b1
 currency/symbols/v1, gl/n/TWD, -> af/n/TWD
+currency/symbols/v1, gl/n/XCG, 27B, 4B, 51a15232e10ce6cd
 currency/symbols/v1, gl/s/ESP, -> ca/s/ESP
 currency/symbols/v1, gl/s/MXN, -> fa/s/MXN
 currency/symbols/v1, gl/s/THB, -> af/s/THB
 currency/symbols/v1, gl/s/USD, -> af-NA/s/NAD
-currency/symbols/v1, gl/s/XCG, 27B, 4B, 51a15232e10ce6cd
+currency/symbols/v1, gl/s/XCG, -> gl/n/XCG
 currency/symbols/v1, gu/n/BYN, -> af/n/BYN
 currency/symbols/v1, gu/n/MUR, 32B, 9B, 5c7d2324b63f16af
 currency/symbols/v1, gu/n/TWD, -> af/n/TWD
@@ -65329,9 +65519,10 @@ currency/symbols/v1, ha/s/JPY, -> ast/s/JPY
 currency/symbols/v1, ha/s/NGN, -> en-NG/s/NGN
 currency/symbols/v1, ha/s/USD, -> af-NA/s/NAD
 currency/symbols/v1, he/n/BYN, 27B, 4B, f3e80d11a6a6e288
+currency/symbols/v1, he/n/ILP, 31B, 8B, 8e387442f1689c28
 currency/symbols/v1, he/n/TWD, -> af/n/TWD
 currency/symbols/v1, he/s/CNY, 35B, 12B, 4ac6436dac6f5f84
-currency/symbols/v1, he/s/ILP, 31B, 8B, 8e387442f1689c28
+currency/symbols/v1, he/s/ILP, -> he/n/ILP
 currency/symbols/v1, he/s/JPY, -> ast/s/JPY
 currency/symbols/v1, he/s/THB, -> af/s/THB
 currency/symbols/v1, he/s/USD, -> af-NA/s/NAD
@@ -65358,13 +65549,14 @@ currency/symbols/v1, hy/n/TWD, -> af/n/TWD
 currency/symbols/v1, hy/s/AMD, 27B, 4B, 16b64f8395205bd8
 currency/symbols/v1, hy/s/THB, -> af/s/THB
 currency/symbols/v1, hy/s/USD, -> af-NA/s/NAD
-currency/symbols/v1, ia/s/NLG, -> gl/s/XCG
+currency/symbols/v1, ia/n/NLG, -> gl/n/XCG
+currency/symbols/v1, ia/s/NLG, -> gl/n/XCG
 currency/symbols/v1, ia/s/RUB, -> be/s/RUB
 currency/symbols/v1, id/n/BYN, -> af/n/BYN
 currency/symbols/v1, id/n/TWD, -> af/n/TWD
 currency/symbols/v1, id/s/AUD, -> am/s/AUD
 currency/symbols/v1, id/s/IDR, -> en-ID/s/IDR
-currency/symbols/v1, id/s/INR, -> en-AU/s/SCR
+currency/symbols/v1, id/s/INR, -> en-AU/n/SCR
 currency/symbols/v1, id/s/THB, -> af/s/THB
 currency/symbols/v1, ig/s/JPY, -> ast/s/JPY
 currency/symbols/v1, ig/s/NGN, -> en-NG/s/NGN
@@ -65376,30 +65568,38 @@ currency/symbols/v1, is/n/NOK, -> da/n/DKK
 currency/symbols/v1, is/n/SEK, -> da/n/DKK
 currency/symbols/v1, is/n/TWD, -> af/n/TWD
 currency/symbols/v1, is/s/ISK, -> da/n/DKK
-currency/symbols/v1, it/n/BYN, -> be/s/BYN
+currency/symbols/v1, it/n/BYN, -> be/n/BYN
 currency/symbols/v1, it/n/EGP, -> fr/n/EGP
 currency/symbols/v1, it/n/NOK, 28B, 5B, 1ce7dc211b8a30d6
 currency/symbols/v1, it/n/TWD, -> af/n/TWD
+currency/symbols/v1, it/n/XCG, 27B, 4B, ee1755db4fa05e29
 currency/symbols/v1, it/s/THB, -> af/s/THB
-currency/symbols/v1, it/s/XCG, 27B, 4B, ee1755db4fa05e29
+currency/symbols/v1, it/s/XCG, -> it/n/XCG
 currency/symbols/v1, ja/n/BYN, -> af/n/BYN
 currency/symbols/v1, ja/n/CNY, 28B, 5B, 62a1df0e4f07e157
 currency/symbols/v1, ja/n/JPY, -> ja/n/CNY
 currency/symbols/v1, ja/n/RON, 31B, 8B, 1d724316b6d7b4cf
+currency/symbols/v1, ja/n/XCG, -> en-CA/n/XCG
 currency/symbols/v1, ja/s/CNY, 28B, 5B, 2eaf3cae3ed9a530
 currency/symbols/v1, ja/s/JPY, -> ja/n/CNY
 currency/symbols/v1, ja/s/USD, -> af-NA/s/NAD
-currency/symbols/v1, ja/s/XCG, -> en-CA/s/XCG
+currency/symbols/v1, ja/s/XCG, -> en-CA/n/XCG
 currency/symbols/v1, jv/s/IDR, -> en-ID/s/IDR
 currency/symbols/v1, ka/n/BYN, -> af/n/BYN
 currency/symbols/v1, ka/n/TWD, -> af/n/TWD
 currency/symbols/v1, ka/s/GEL, -> en-GE/s/GEL
+currency/symbols/v1, kea/n/CVE, 28B, 5B, 3a5e708392779020
 currency/symbols/v1, kea/s/AUD, -> am/s/AUD
-currency/symbols/v1, kea/s/CVE, 28B, 5B, 3a5e708392779020
+currency/symbols/v1, kea/s/CVE, -> kea/n/CVE
 currency/symbols/v1, kea/s/THB, -> af/s/THB
+currency/symbols/v1, kek/n/ANG, 28B, 5B, 4f885be62aeaf0dd
+currency/symbols/v1, kek/n/AWG, 28B, 5B, 96a02a0e187af3fe
+currency/symbols/v1, kek/n/HTG, 28B, 5B, ce1decfbd723b4af
 currency/symbols/v1, kek/n/NIO, -> fr/n/NIO
-currency/symbols/v1, kek/s/ANG, 28B, 5B, 4f885be62aeaf0dd
-currency/symbols/v1, kek/s/AWG, 28B, 5B, 96a02a0e187af3fe
+currency/symbols/v1, kek/n/PAB, 28B, 5B, ff2b04c4e988baa7
+currency/symbols/v1, kek/n/XCG, 28B, 5B, 6417c479276a677c
+currency/symbols/v1, kek/s/ANG, -> kek/n/ANG
+currency/symbols/v1, kek/s/AWG, -> kek/n/AWG
 currency/symbols/v1, kek/s/BBD, 28B, 5B, b8281f7f082b55d2
 currency/symbols/v1, kek/s/BMD, 28B, 5B, f2450aca260d582a
 currency/symbols/v1, kek/s/BSD, 28B, 5B, 89b2902326c533ec
@@ -65408,39 +65608,45 @@ currency/symbols/v1, kek/s/CAD, -> br/s/CAD
 currency/symbols/v1, kek/s/CUP, 28B, 5B, a272886ea1d29531
 currency/symbols/v1, kek/s/DOP, 28B, 5B, 8503960cdb8c0e34
 currency/symbols/v1, kek/s/HNL, 28B, 5B, d1a89afda3ae889d
-currency/symbols/v1, kek/s/HTG, 28B, 5B, ce1decfbd723b4af
+currency/symbols/v1, kek/s/HTG, -> kek/n/HTG
 currency/symbols/v1, kek/s/JMD, 28B, 5B, 631fe07007b2075
 currency/symbols/v1, kek/s/KYD, 28B, 5B, 6b35716b00f17bda
 currency/symbols/v1, kek/s/MXN, -> fa/s/MXN
 currency/symbols/v1, kek/s/NIO, 28B, 5B, 9979f25fd446ec2e
-currency/symbols/v1, kek/s/PAB, 28B, 5B, ff2b04c4e988baa7
+currency/symbols/v1, kek/s/PAB, -> kek/n/PAB
 currency/symbols/v1, kek/s/TTD, 28B, 5B, 48aef54083d89fa3
 currency/symbols/v1, kek/s/USD, -> af-NA/s/NAD
 currency/symbols/v1, kek/s/XCD, -> fa/s/XCD
-currency/symbols/v1, kek/s/XCG, 28B, 5B, 6417c479276a677c
+currency/symbols/v1, kek/s/XCG, -> kek/n/XCG
 currency/symbols/v1, kgp/n/BYN, -> es-MX/n/BYN
+currency/symbols/v1, kgp/n/PTE, 31B, 8B, 2558793a1c59fa2c
 currency/symbols/v1, kgp/n/RON, -> cs/n/RON
 currency/symbols/v1, kgp/n/SYP, -> az/n/SYP
 currency/symbols/v1, kgp/n/TWD, -> af/n/TWD
+currency/symbols/v1, kgp/n/XOF, 28B, 5B, 81a2dc43ce703ef7
+currency/symbols/v1, kgp/n/ZMK, 28B, 5B, 548d47ab125cdb9f
 currency/symbols/v1, kgp/s/AUD, -> am/s/AUD
 currency/symbols/v1, kgp/s/FJD, 28B, 5B, e5eb1c3ebc2a1033
-currency/symbols/v1, kgp/s/PTE, 31B, 8B, 2558793a1c59fa2c
+currency/symbols/v1, kgp/s/PTE, -> kgp/n/PTE
 currency/symbols/v1, kgp/s/THB, -> af/s/THB
-currency/symbols/v1, kgp/s/XOF, 28B, 5B, 81a2dc43ce703ef7
-currency/symbols/v1, kgp/s/ZMK, 28B, 5B, 548d47ab125cdb9f
-currency/symbols/v1, ki/s/KES, -> en-KE/s/KES
+currency/symbols/v1, kgp/s/XOF, -> kgp/n/XOF
+currency/symbols/v1, kgp/s/ZMK, -> kgp/n/ZMK
+currency/symbols/v1, ki/n/KES, -> en-KE/n/KES
+currency/symbols/v1, ki/s/KES, -> en-KE/n/KES
 currency/symbols/v1, kk-Arab/s/KZT, 28B, 5B, d6f07ae6de3ebf3c
 currency/symbols/v1, kk/n/BYN, -> af/n/BYN
+currency/symbols/v1, kk/n/LSL, 31B, 8B, 8b6f3234638fe791
 currency/symbols/v1, kk/n/TWD, -> af/n/TWD
 currency/symbols/v1, kk/s/KZT, -> kk-Arab/s/KZT
-currency/symbols/v1, kk/s/LSL, 31B, 8B, 8b6f3234638fe791
+currency/symbols/v1, kk/s/LSL, -> kk/n/LSL
 currency/symbols/v1, kk/s/RUB, -> be/s/RUB
 currency/symbols/v1, kk/s/THB, -> af/s/THB
 currency/symbols/v1, kk/s/USD, -> af-NA/s/NAD
 currency/symbols/v1, km/n/BYN, -> af/n/BYN
+currency/symbols/v1, km/n/LSL, 37B, 14B, d308912fd9ca1e84
 currency/symbols/v1, km/n/TWD, -> af/n/TWD
 currency/symbols/v1, km/s/KHR, 28B, 5B, b67bf8685208c85f
-currency/symbols/v1, km/s/LSL, 37B, 14B, d308912fd9ca1e84
+currency/symbols/v1, km/s/LSL, -> km/n/LSL
 currency/symbols/v1, km/s/THB, -> af/s/THB
 currency/symbols/v1, km/s/USD, -> af-NA/s/NAD
 currency/symbols/v1, kn/n/BYN, -> af/n/BYN
@@ -65474,8 +65680,9 @@ currency/symbols/v1, ky/n/TTD, -> ar/n/TTD
 currency/symbols/v1, ky/n/TWD, -> af/n/TWD
 currency/symbols/v1, ky/s/KGS, 31B, 8B, 1148ae2d3657a4bd
 currency/symbols/v1, ky/s/THB, -> af/s/THB
+currency/symbols/v1, lb/n/ATS, -> de/n/ATS
 currency/symbols/v1, lb/n/TWD, -> af/n/TWD
-currency/symbols/v1, lb/s/ATS, -> de/s/ATS
+currency/symbols/v1, lb/s/ATS, -> de/n/ATS
 currency/symbols/v1, lb/s/AUD, -> am/s/AUD
 currency/symbols/v1, lb/s/JPY, -> ast/s/JPY
 currency/symbols/v1, lb/s/THB, -> af/s/THB
@@ -65484,7 +65691,7 @@ currency/symbols/v1, lo/n/BYN, -> af/n/BYN
 currency/symbols/v1, lo/n/TWD, -> af/n/TWD
 currency/symbols/v1, lo/s/LAK, 28B, 5B, 62b1098e0297ecaa
 currency/symbols/v1, lo/s/THB, -> af/s/THB
-currency/symbols/v1, lt/n/BYN, -> be/s/BYN
+currency/symbols/v1, lt/n/BYN, -> be/n/BYN
 currency/symbols/v1, lt/n/PLN, 27B, 4B, 7595c1a6eda250fa
 currency/symbols/v1, lt/n/PYG, -> en-AU/n/PYG
 currency/symbols/v1, lt/n/RUB, 27B, 4B, c4c8bfeaa97b6c88
@@ -65499,8 +65706,9 @@ currency/symbols/v1, mai/s/USD, -> af-NA/s/NAD
 currency/symbols/v1, mi/s/JPY, -> ast/s/JPY
 currency/symbols/v1, mi/s/NZD, -> af-NA/s/NAD
 currency/symbols/v1, mk/n/BYN, -> af/n/BYN
+currency/symbols/v1, mk/n/MKD, 32B, 9B, bbf180555c6650d9
 currency/symbols/v1, mk/n/TWD, -> af/n/TWD
-currency/symbols/v1, mk/s/MKD, 32B, 9B, bbf180555c6650d9
+currency/symbols/v1, mk/s/MKD, -> mk/n/MKD
 currency/symbols/v1, ml/n/BYN, -> af/n/BYN
 currency/symbols/v1, ml/n/TWD, -> af/n/TWD
 currency/symbols/v1, ml/s/JPY, -> ast/s/JPY
@@ -65523,224 +65731,316 @@ currency/symbols/v1, ms/n/BYN, -> af/n/BYN
 currency/symbols/v1, ms/n/TWD, -> af/n/TWD
 currency/symbols/v1, ms/s/MYR, -> en-MY/s/MYR
 currency/symbols/v1, mt/n/BYN, -> af/n/BYN
+currency/symbols/v1, my/n/ANG, 28B, 5B, 18aa835249016f3e
+currency/symbols/v1, my/n/AWG, 28B, 5B, b68391ef2bbedd81
 currency/symbols/v1, my/n/BBD, -> be/n/BBD
 currency/symbols/v1, my/n/BSD, -> be/n/BSD
 currency/symbols/v1, my/n/BYN, -> af/n/BYN
-currency/symbols/v1, my/s/ANG, 28B, 5B, 18aa835249016f3e
-currency/symbols/v1, my/s/AWG, 28B, 5B, b68391ef2bbedd81
-currency/symbols/v1, my/s/HTG, -> fr-HT/s/HTG
+currency/symbols/v1, my/n/HTG, -> fr-HT/n/HTG
+currency/symbols/v1, my/n/PAB, -> es-PA/n/PAB
+currency/symbols/v1, my/s/ANG, -> my/n/ANG
+currency/symbols/v1, my/s/AWG, -> my/n/AWG
+currency/symbols/v1, my/s/HTG, -> fr-HT/n/HTG
 currency/symbols/v1, my/s/MMK, -> de/n/ZMW
-currency/symbols/v1, my/s/PAB, -> es-PA/s/PAB
+currency/symbols/v1, my/s/PAB, -> es-PA/n/PAB
 currency/symbols/v1, my/s/THB, -> af/s/THB
 currency/symbols/v1, my/s/TTD, -> ar/n/TTD
 currency/symbols/v1, ne/n/BYN, -> af/n/BYN
 currency/symbols/v1, ne/n/NPR, 31B, 8B, 62b7cbd5038d0865
 currency/symbols/v1, ne/s/NPR, 37B, 14B, cc0043545d5a52a6
 currency/symbols/v1, ne/s/THB, -> af/s/THB
-currency/symbols/v1, nl-AW/s/AWG, 29B, 6B, 8808dfb2becccdca
+currency/symbols/v1, nl-AW/n/AWG, 29B, 6B, 8808dfb2becccdca
+currency/symbols/v1, nl-AW/s/AWG, -> nl-AW/n/AWG
 currency/symbols/v1, nl-BQ/s/USD, -> af-NA/s/NAD
-currency/symbols/v1, nl-CW/s/ANG, -> en-SX/s/ANG
+currency/symbols/v1, nl-CW/n/ANG, -> en-SX/n/ANG
+currency/symbols/v1, nl-CW/s/ANG, -> en-SX/n/ANG
 currency/symbols/v1, nl-SR/s/SRD, -> af-NA/s/NAD
-currency/symbols/v1, nl-SX/s/ANG, -> en-SX/s/ANG
-currency/symbols/v1, nl/n/BYN, -> be/s/BYN
+currency/symbols/v1, nl-SX/n/ANG, -> en-SX/n/ANG
+currency/symbols/v1, nl-SX/s/ANG, -> en-SX/n/ANG
+currency/symbols/v1, nl/n/BYN, -> be/n/BYN
 currency/symbols/v1, nl/n/RUR, -> af/n/BYN
 currency/symbols/v1, nl/n/TWD, -> af/n/TWD
-currency/symbols/v1, nl/n/XCG, -> en-CA/s/XCG
+currency/symbols/v1, nl/n/XCG, -> en-CA/n/XCG
+currency/symbols/v1, nl/n/ZWG, 28B, 5B, 574042e6a7229974
 currency/symbols/v1, nl/s/AUD, -> am/s/AUD
 currency/symbols/v1, nl/s/CAD, -> es-NI/s/NIO
 currency/symbols/v1, nl/s/FJD, -> ar/n/FJD
 currency/symbols/v1, nl/s/SBD, -> be/n/SBD
 currency/symbols/v1, nl/s/THB, -> af/s/THB
-currency/symbols/v1, nl/s/ZWG, 28B, 5B, 574042e6a7229974
+currency/symbols/v1, nl/s/ZWG, -> nl/n/ZWG
 currency/symbols/v1, nn/n/RON, -> es-MX/n/RON
 currency/symbols/v1, nn/n/TWD, -> af-NA/s/NAD
 currency/symbols/v1, no/n/BYN, -> af/n/BYN
 currency/symbols/v1, no/n/RON, -> cs/n/RON
 currency/symbols/v1, no/n/TWD, -> af/n/TWD
 currency/symbols/v1, no/s/NOK, -> en-NO/s/NOK
+currency/symbols/v1, nqo/n/AED, 31B, 8B, f3a911c43b849622
+currency/symbols/v1, nqo/n/ALL, 31B, 8B, d71a4b5ff4cf0ebb
+currency/symbols/v1, nqo/n/ANG, 33B, 10B, 67a52a6ea5fdfbc1
 currency/symbols/v1, nqo/n/AOA, 31B, 8B, cd45af9468860338
+currency/symbols/v1, nqo/n/AON, 33B, 10B, a882ea048d2c2a58
+currency/symbols/v1, nqo/n/AOR, 33B, 10B, 1f1cfb87971ba6d1
+currency/symbols/v1, nqo/n/AWG, 33B, 10B, d2f7a81615a390f8
+currency/symbols/v1, nqo/n/BGN, 33B, 10B, 3fc798791c7d202a
+currency/symbols/v1, nqo/n/BHD, 31B, 8B, 745de632205a7f64
+currency/symbols/v1, nqo/n/BIF, 31B, 8B, ef4260fad41dc054
+currency/symbols/v1, nqo/n/BTN, 31B, 8B, 81c186018512f418
 currency/symbols/v1, nqo/n/BWP, 27B, 4B, 6753b90a79f7c9b
+currency/symbols/v1, nqo/n/BYN, 31B, 8B, 7a905e1afeeb2ace
+currency/symbols/v1, nqo/n/CDF, 29B, 6B, 8eaaaf36bb9b5b35
+currency/symbols/v1, nqo/n/CNH, 31B, 8B, 8cf7af3e5ec1f15f
+currency/symbols/v1, nqo/n/CVE, 31B, 8B, c9254a0efd3a2fc0
+currency/symbols/v1, nqo/n/DJF, 31B, 8B, 359dd651bb3ae646
+currency/symbols/v1, nqo/n/DZD, 31B, 8B, ed573ebc7d428388
+currency/symbols/v1, nqo/n/ERN, 31B, 8B, 36d000b412dbd997
+currency/symbols/v1, nqo/n/ETB, 31B, 8B, aa13f28688d3e96e
+currency/symbols/v1, nqo/n/GMD, 33B, 10B, c3000cff20042a28
 currency/symbols/v1, nqo/n/GNF, 27B, 4B, c7d54601ff1f324f
+currency/symbols/v1, nqo/n/GNS, 31B, 8B, 40a1cdfc42cd3d56
+currency/symbols/v1, nqo/n/GQE, 31B, 8B, 40cbab12822fd336
+currency/symbols/v1, nqo/n/GWE, 31B, 8B, b1768e775183aa0f
+currency/symbols/v1, nqo/n/GWP, 31B, 8B, 72dc6eb0562f9a6e
+currency/symbols/v1, nqo/n/HTG, 33B, 10B, ea06f148bcf9799d
+currency/symbols/v1, nqo/n/IQD, 31B, 8B, 95aa61c23f09677e
+currency/symbols/v1, nqo/n/IRR, 31B, 8B, 32d3e20e7f63f6fc
+currency/symbols/v1, nqo/n/JOD, 31B, 8B, 5f6ecd06e52c91f7
+currency/symbols/v1, nqo/n/KES, 31B, 8B, 75238b2dbc8297e2
 currency/symbols/v1, nqo/n/KMF, 29B, 6B, 17a85ce06b33b50b
+currency/symbols/v1, nqo/n/KWD, 31B, 8B, 49abc1691c7aeb06
+currency/symbols/v1, nqo/n/LSL, 31B, 8B, 6d985f1f9552d0a8
+currency/symbols/v1, nqo/n/LYD, 31B, 8B, e0504fca76b678fb
+currency/symbols/v1, nqo/n/MAD, 31B, 8B, 378383def24322c3
+currency/symbols/v1, nqo/n/MAF, 31B, 8B, 5843d29ce9914185
+currency/symbols/v1, nqo/n/MDL, 31B, 8B, 171b3b5a49a41739
 currency/symbols/v1, nqo/n/MGA, 29B, 6B, 3f542167d79bcf25
+currency/symbols/v1, nqo/n/MGF, 31B, 8B, 1367000bd64ac929
+currency/symbols/v1, nqo/n/MKD, 31B, 8B, 67f3323de7025231
+currency/symbols/v1, nqo/n/MLF, 29B, 6B, 22144bc58a62efc4
+currency/symbols/v1, nqo/n/MOP, 31B, 8B, 85337705ca0560ae
+currency/symbols/v1, nqo/n/MRO, 31B, 8B, a2d9ce13ab803acb
+currency/symbols/v1, nqo/n/MRU, 33B, 10B, 81df67a6dc2eb3ad
 currency/symbols/v1, nqo/n/MUR, 29B, 6B, d330a201419fd856
+currency/symbols/v1, nqo/n/MVR, 33B, 10B, 6e64f5a86a624203
+currency/symbols/v1, nqo/n/MWK, 31B, 8B, d7ea707a97ed2d42
+currency/symbols/v1, nqo/n/MZE, 33B, 10B, 9ae6d9b3275d46cc
+currency/symbols/v1, nqo/n/MZM, 31B, 8B, c4e47ae4f5ff7676
+currency/symbols/v1, nqo/n/MZN, 33B, 10B, de29b6d74c4fb21
 currency/symbols/v1, nqo/n/NAD, 27B, 4B, 59ec55ace93cc9a8
+currency/symbols/v1, nqo/n/OMR, 31B, 8B, 542c050b72619b9
+currency/symbols/v1, nqo/n/PAB, 31B, 8B, b011586ef9a7eec2
+currency/symbols/v1, nqo/n/PEN, 31B, 8B, d13276b6c54bcb93
+currency/symbols/v1, nqo/n/PGK, 31B, 8B, b9439d30ed1d544c
+currency/symbols/v1, nqo/n/QAR, 31B, 8B, 26491f472b1e450f
+currency/symbols/v1, nqo/n/RHD, 33B, 10B, 205ef35bcd322f3e
+currency/symbols/v1, nqo/n/RSD, 31B, 8B, aa37601ebe9b4dcc
 currency/symbols/v1, nqo/n/RWF, 29B, 6B, ef8f1701232ab211
+currency/symbols/v1, nqo/n/SAR, 31B, 8B, 32c26622abcb9211
+currency/symbols/v1, nqo/n/SCR, 31B, 8B, 2160e0c70c2105e7
+currency/symbols/v1, nqo/n/SDD, 31B, 8B, 4d9053e9c9a697bc
+currency/symbols/v1, nqo/n/SDG, 33B, 10B, c891930c63ea7839
+currency/symbols/v1, nqo/n/SDP, 31B, 8B, 6b4269ecaf310d0d
+currency/symbols/v1, nqo/n/SLE, 31B, 8B, 6b3a9d6c52ca51f1
+currency/symbols/v1, nqo/n/SLL, 31B, 8B, 19fe8ce0c7ebf8c1
+currency/symbols/v1, nqo/n/SOS, 31B, 8B, e7a6e12c32f82591
+currency/symbols/v1, nqo/n/STD, 31B, 8B, 2810b7897fe66325
 currency/symbols/v1, nqo/n/STN, 29B, 6B, 1d1956420f9ce0fa
+currency/symbols/v1, nqo/n/SZL, 33B, 10B, 481274e2b2b9a602
+currency/symbols/v1, nqo/n/TJS, 31B, 8B, cc606a51cbc44f5a
+currency/symbols/v1, nqo/n/TMT, 31B, 8B, dc7b29dcc2cbf1fd
+currency/symbols/v1, nqo/n/TND, 31B, 8B, ecea769bc37a2e2c
+currency/symbols/v1, nqo/n/TZS, 33B, 10B, d0fa90964ac292
+currency/symbols/v1, nqo/n/UGS, 33B, 10B, 7d5bc431d8afe56f
+currency/symbols/v1, nqo/n/UGX, 33B, 10B, 6424156d7441559c
+currency/symbols/v1, nqo/n/UZS, 33B, 10B, fec9d569d9e7f98c
+currency/symbols/v1, nqo/n/VES, 33B, 10B, 786de01abaebd660
+currency/symbols/v1, nqo/n/VUV, 35B, 12B, df1fa27ce3f55fcd
+currency/symbols/v1, nqo/n/WST, 30B, 7B, 8a6b57afe9a428fa
+currency/symbols/v1, nqo/n/XAF, 31B, 8B, 2601a5420efdb09c
+currency/symbols/v1, nqo/n/XOF, 27B, 4B, c615ff0a8ac88fc1
+currency/symbols/v1, nqo/n/XPF, 34B, 11B, fc9e7714fd92ccc1
+currency/symbols/v1, nqo/n/YER, 31B, 8B, 60bb3555f946ca24
+currency/symbols/v1, nqo/n/ZMK, 33B, 10B, a9d420fc643ac774
 currency/symbols/v1, nqo/n/ZMW, 31B, 8B, 929a62085ee90d5d
-currency/symbols/v1, nqo/s/AED, 31B, 8B, f3a911c43b849622
+currency/symbols/v1, nqo/n/ZRN, 31B, 8B, 7c4960d4d0c3e68d
+currency/symbols/v1, nqo/n/ZRZ, 35B, 12B, 57620ba807192e78
+currency/symbols/v1, nqo/n/ZWD, 33B, 10B, 24a02e0fd48180fb
+currency/symbols/v1, nqo/n/ZWL, 33B, 10B, 5ccb832c9b07eeb8
+currency/symbols/v1, nqo/n/ZWR, 33B, 10B, 5437319660236320
+currency/symbols/v1, nqo/s/AED, -> nqo/n/AED
 currency/symbols/v1, nqo/s/AFN, 31B, 8B, 79c0da9ef8c641bc
-currency/symbols/v1, nqo/s/ALL, 31B, 8B, d71a4b5ff4cf0ebb
+currency/symbols/v1, nqo/s/ALL, -> nqo/n/ALL
 currency/symbols/v1, nqo/s/AMD, 31B, 8B, 71fb6b6ed6b33290
-currency/symbols/v1, nqo/s/ANG, 33B, 10B, 67a52a6ea5fdfbc1
+currency/symbols/v1, nqo/s/ANG, -> nqo/n/ANG
 currency/symbols/v1, nqo/s/AOA, 35B, 12B, 739b9c2f7fdd4bcb
-currency/symbols/v1, nqo/s/AON, 33B, 10B, a882ea048d2c2a58
-currency/symbols/v1, nqo/s/AOR, 33B, 10B, 1f1cfb87971ba6d1
+currency/symbols/v1, nqo/s/AON, -> nqo/n/AON
+currency/symbols/v1, nqo/s/AOR, -> nqo/n/AOR
 currency/symbols/v1, nqo/s/ARS, 33B, 10B, 94f15e3213c38011
 currency/symbols/v1, nqo/s/AUD, 28B, 5B, 520a655ec2bb8261
-currency/symbols/v1, nqo/s/AWG, 33B, 10B, d2f7a81615a390f8
+currency/symbols/v1, nqo/s/AWG, -> nqo/n/AWG
 currency/symbols/v1, nqo/s/AZN, 31B, 8B, 955c37b4ef67d8e
 currency/symbols/v1, nqo/s/BAM, 31B, 8B, dd50e3d58a6d1a1
 currency/symbols/v1, nqo/s/BBD, 31B, 8B, 3085ff9924826f32
 currency/symbols/v1, nqo/s/BDT, 31B, 8B, 875e3baa1088156f
-currency/symbols/v1, nqo/s/BGN, 33B, 10B, 3fc798791c7d202a
-currency/symbols/v1, nqo/s/BHD, 31B, 8B, 745de632205a7f64
-currency/symbols/v1, nqo/s/BIF, 31B, 8B, ef4260fad41dc054
+currency/symbols/v1, nqo/s/BGN, -> nqo/n/BGN
+currency/symbols/v1, nqo/s/BHD, -> nqo/n/BHD
+currency/symbols/v1, nqo/s/BIF, -> nqo/n/BIF
 currency/symbols/v1, nqo/s/BMD, 31B, 8B, 393a53f8b1e3198d
 currency/symbols/v1, nqo/s/BND, 31B, 8B, f7c3f3ff061b46d5
 currency/symbols/v1, nqo/s/BOB, 31B, 8B, d38fe201e7c7dec2
 currency/symbols/v1, nqo/s/BSD, 31B, 8B, d4b80f06f0c8a377
-currency/symbols/v1, nqo/s/BTN, 31B, 8B, 81c186018512f418
+currency/symbols/v1, nqo/s/BTN, -> nqo/n/BTN
 currency/symbols/v1, nqo/s/BWP, 31B, 8B, a03c52f6c5250c16
-currency/symbols/v1, nqo/s/BYN, 31B, 8B, 7a905e1afeeb2ace
-currency/symbols/v1, nqo/s/CDF, 29B, 6B, 8eaaaf36bb9b5b35
+currency/symbols/v1, nqo/s/BYN, -> nqo/n/BYN
+currency/symbols/v1, nqo/s/CDF, -> nqo/n/CDF
 currency/symbols/v1, nqo/s/CHF, 31B, 8B, a892702911864d61
 currency/symbols/v1, nqo/s/CLP, 31B, 8B, 9c7dd1ed955babce
-currency/symbols/v1, nqo/s/CNH, 31B, 8B, 8cf7af3e5ec1f15f
+currency/symbols/v1, nqo/s/CNH, -> nqo/n/CNH
 currency/symbols/v1, nqo/s/CNY, 31B, 8B, c48b31c50384d102
 currency/symbols/v1, nqo/s/COP, 31B, 8B, f23a0b9ebd4f20ca
 currency/symbols/v1, nqo/s/CRC, 31B, 8B, 8ff9057be2101e52
 currency/symbols/v1, nqo/s/CUC, 33B, 10B, 45784788e302f98c
 currency/symbols/v1, nqo/s/CUP, 33B, 10B, b8c37e22338ff6ca
-currency/symbols/v1, nqo/s/CVE, 31B, 8B, c9254a0efd3a2fc0
+currency/symbols/v1, nqo/s/CVE, -> nqo/n/CVE
 currency/symbols/v1, nqo/s/CZK, 31B, 8B, 87401385064d7cd8
-currency/symbols/v1, nqo/s/DJF, 31B, 8B, 359dd651bb3ae646
+currency/symbols/v1, nqo/s/DJF, -> nqo/n/DJF
 currency/symbols/v1, nqo/s/DKK, 31B, 8B, 94da1437c798ac83
 currency/symbols/v1, nqo/s/DOP, 31B, 8B, cdf8224a82793d09
-currency/symbols/v1, nqo/s/DZD, 31B, 8B, ed573ebc7d428388
+currency/symbols/v1, nqo/s/DZD, -> nqo/n/DZD
 currency/symbols/v1, nqo/s/EGP, 31B, 8B, 22fbece10f849dd8
-currency/symbols/v1, nqo/s/ERN, 31B, 8B, 36d000b412dbd997
-currency/symbols/v1, nqo/s/ETB, 31B, 8B, aa13f28688d3e96e
+currency/symbols/v1, nqo/s/ERN, -> nqo/n/ERN
+currency/symbols/v1, nqo/s/ETB, -> nqo/n/ETB
 currency/symbols/v1, nqo/s/FJD, 31B, 8B, 548ed610979b8709
 currency/symbols/v1, nqo/s/FKP, 31B, 8B, e06e5d516f5242c8
 currency/symbols/v1, nqo/s/GEL, 33B, 10B, 3d5c239d8db33ac5
 currency/symbols/v1, nqo/s/GHS, 33B, 10B, 2b2e24f65e3488ee
 currency/symbols/v1, nqo/s/GIP, 35B, 12B, 8ca6de2e77aa8a2f
-currency/symbols/v1, nqo/s/GMD, 33B, 10B, c3000cff20042a28
+currency/symbols/v1, nqo/s/GMD, -> nqo/n/GMD
 currency/symbols/v1, nqo/s/GNF, -> nqo/n/GNF
-currency/symbols/v1, nqo/s/GNS, 31B, 8B, 40a1cdfc42cd3d56
-currency/symbols/v1, nqo/s/GQE, 31B, 8B, 40cbab12822fd336
+currency/symbols/v1, nqo/s/GNS, -> nqo/n/GNS
+currency/symbols/v1, nqo/s/GQE, -> nqo/n/GQE
 currency/symbols/v1, nqo/s/GTQ, 33B, 10B, 9d3ca6b20a2387e0
-currency/symbols/v1, nqo/s/GWE, 31B, 8B, b1768e775183aa0f
-currency/symbols/v1, nqo/s/GWP, 31B, 8B, 72dc6eb0562f9a6e
+currency/symbols/v1, nqo/s/GWE, -> nqo/n/GWE
+currency/symbols/v1, nqo/s/GWP, -> nqo/n/GWP
 currency/symbols/v1, nqo/s/GYD, 35B, 12B, 45b6bb9250f38e29
 currency/symbols/v1, nqo/s/HKD, 31B, 8B, a7095a9420116359
 currency/symbols/v1, nqo/s/HNL, 31B, 8B, 453a4b060be1d023
 currency/symbols/v1, nqo/s/HRK, 31B, 8B, cb35aafb342c5f07
-currency/symbols/v1, nqo/s/HTG, 33B, 10B, ea06f148bcf9799d
+currency/symbols/v1, nqo/s/HTG, -> nqo/n/HTG
 currency/symbols/v1, nqo/s/HUF, 33B, 10B, 3d95829c737599e1
 currency/symbols/v1, nqo/s/IDR, 33B, 10B, e8dcaed0c5531cdb
-currency/symbols/v1, nqo/s/IQD, 31B, 8B, 95aa61c23f09677e
-currency/symbols/v1, nqo/s/IRR, 31B, 8B, 32d3e20e7f63f6fc
+currency/symbols/v1, nqo/s/IQD, -> nqo/n/IQD
+currency/symbols/v1, nqo/s/IRR, -> nqo/n/IRR
 currency/symbols/v1, nqo/s/ISK, 31B, 8B, 78c19f8185a0b4a9
 currency/symbols/v1, nqo/s/JMD, 31B, 8B, 3e6ac49669eb38d0
-currency/symbols/v1, nqo/s/JOD, 31B, 8B, 5f6ecd06e52c91f7
+currency/symbols/v1, nqo/s/JOD, -> nqo/n/JOD
 currency/symbols/v1, nqo/s/JPY, 33B, 10B, 21b5e0e8ad8d4b6
-currency/symbols/v1, nqo/s/KES, 31B, 8B, 75238b2dbc8297e2
+currency/symbols/v1, nqo/s/KES, -> nqo/n/KES
 currency/symbols/v1, nqo/s/KGS, 33B, 10B, 5c813be5256ca5fe
 currency/symbols/v1, nqo/s/KHR, 31B, 8B, b49c9d1a790cdfa2
 currency/symbols/v1, nqo/s/KMF, 31B, 8B, d8f2521d792de03e
 currency/symbols/v1, nqo/s/KPW, 31B, 8B, df27c2e428f7490c
-currency/symbols/v1, nqo/s/KWD, 31B, 8B, 49abc1691c7aeb06
+currency/symbols/v1, nqo/s/KWD, -> nqo/n/KWD
 currency/symbols/v1, nqo/s/KYD, 31B, 8B, 3d869ef1f8898df6
 currency/symbols/v1, nqo/s/KZT, 33B, 10B, 60e0cd0140e45998
 currency/symbols/v1, nqo/s/LAK, 31B, 8B, 8d4135fb7b9b40ad
 currency/symbols/v1, nqo/s/LBP, 31B, 8B, b4fe8097972a75dc
 currency/symbols/v1, nqo/s/LKR, 31B, 8B, e92c44bb5744e6d1
 currency/symbols/v1, nqo/s/LRD, 29B, 6B, a2b714124093466a
-currency/symbols/v1, nqo/s/LSL, 31B, 8B, 6d985f1f9552d0a8
-currency/symbols/v1, nqo/s/LYD, 31B, 8B, e0504fca76b678fb
-currency/symbols/v1, nqo/s/MAD, 31B, 8B, 378383def24322c3
-currency/symbols/v1, nqo/s/MAF, 31B, 8B, 5843d29ce9914185
-currency/symbols/v1, nqo/s/MDL, 31B, 8B, 171b3b5a49a41739
+currency/symbols/v1, nqo/s/LSL, -> nqo/n/LSL
+currency/symbols/v1, nqo/s/LYD, -> nqo/n/LYD
+currency/symbols/v1, nqo/s/MAD, -> nqo/n/MAD
+currency/symbols/v1, nqo/s/MAF, -> nqo/n/MAF
+currency/symbols/v1, nqo/s/MDL, -> nqo/n/MDL
 currency/symbols/v1, nqo/s/MGA, 31B, 8B, b91a7efb6d3c92b1
-currency/symbols/v1, nqo/s/MGF, 31B, 8B, 1367000bd64ac929
-currency/symbols/v1, nqo/s/MKD, 31B, 8B, 67f3323de7025231
-currency/symbols/v1, nqo/s/MLF, 29B, 6B, 22144bc58a62efc4
+currency/symbols/v1, nqo/s/MGF, -> nqo/n/MGF
+currency/symbols/v1, nqo/s/MKD, -> nqo/n/MKD
+currency/symbols/v1, nqo/s/MLF, -> nqo/n/MLF
 currency/symbols/v1, nqo/s/MMK, 31B, 8B, d437a8619f109568
 currency/symbols/v1, nqo/s/MNT, 31B, 8B, 836609944d1cfe1d
-currency/symbols/v1, nqo/s/MOP, 31B, 8B, 85337705ca0560ae
-currency/symbols/v1, nqo/s/MRO, 31B, 8B, a2d9ce13ab803acb
-currency/symbols/v1, nqo/s/MRU, 33B, 10B, 81df67a6dc2eb3ad
+currency/symbols/v1, nqo/s/MOP, -> nqo/n/MOP
+currency/symbols/v1, nqo/s/MRO, -> nqo/n/MRO
+currency/symbols/v1, nqo/s/MRU, -> nqo/n/MRU
 currency/symbols/v1, nqo/s/MUR, 31B, 8B, 9452ce5af6041b8c
-currency/symbols/v1, nqo/s/MVR, 33B, 10B, 6e64f5a86a624203
-currency/symbols/v1, nqo/s/MWK, 31B, 8B, d7ea707a97ed2d42
+currency/symbols/v1, nqo/s/MVR, -> nqo/n/MVR
+currency/symbols/v1, nqo/s/MWK, -> nqo/n/MWK
 currency/symbols/v1, nqo/s/MXN, 30B, 7B, 1fbd285da5f63c3e
 currency/symbols/v1, nqo/s/MYR, 31B, 8B, 1417051988fb86f6
-currency/symbols/v1, nqo/s/MZE, 33B, 10B, 9ae6d9b3275d46cc
-currency/symbols/v1, nqo/s/MZM, 31B, 8B, c4e47ae4f5ff7676
-currency/symbols/v1, nqo/s/MZN, 33B, 10B, de29b6d74c4fb21
+currency/symbols/v1, nqo/s/MZE, -> nqo/n/MZE
+currency/symbols/v1, nqo/s/MZM, -> nqo/n/MZM
+currency/symbols/v1, nqo/s/MZN, -> nqo/n/MZN
 currency/symbols/v1, nqo/s/NAD, 31B, 8B, ddbead87b941b9d6
 currency/symbols/v1, nqo/s/NGN, 29B, 6B, 557023d493662e77
 currency/symbols/v1, nqo/s/NIO, 31B, 8B, 6cb2c45a69d5cb75
 currency/symbols/v1, nqo/s/NOK, 31B, 8B, bca51ab1fb9a3ac
 currency/symbols/v1, nqo/s/NPR, 31B, 8B, 2ae084c70f4c5d2e
 currency/symbols/v1, nqo/s/NZD, 32B, 9B, 51081981315c8227
-currency/symbols/v1, nqo/s/OMR, 31B, 8B, 542c050b72619b9
-currency/symbols/v1, nqo/s/PAB, 31B, 8B, b011586ef9a7eec2
-currency/symbols/v1, nqo/s/PEN, 31B, 8B, d13276b6c54bcb93
-currency/symbols/v1, nqo/s/PGK, 31B, 8B, b9439d30ed1d544c
+currency/symbols/v1, nqo/s/OMR, -> nqo/n/OMR
+currency/symbols/v1, nqo/s/PAB, -> nqo/n/PAB
+currency/symbols/v1, nqo/s/PEN, -> nqo/n/PEN
+currency/symbols/v1, nqo/s/PGK, -> nqo/n/PGK
 currency/symbols/v1, nqo/s/PKR, 31B, 8B, 18b3a9f7e2a9dce5
 currency/symbols/v1, nqo/s/PLN, 33B, 10B, 86b744e730982689
 currency/symbols/v1, nqo/s/PYG, 33B, 10B, 6ef4d39c724d47a8
-currency/symbols/v1, nqo/s/QAR, 31B, 8B, 26491f472b1e450f
-currency/symbols/v1, nqo/s/RHD, 33B, 10B, 205ef35bcd322f3e
+currency/symbols/v1, nqo/s/QAR, -> nqo/n/QAR
+currency/symbols/v1, nqo/s/RHD, -> nqo/n/RHD
 currency/symbols/v1, nqo/s/RON, 31B, 8B, 75a914919767be9e
-currency/symbols/v1, nqo/s/RSD, 31B, 8B, aa37601ebe9b4dcc
+currency/symbols/v1, nqo/s/RSD, -> nqo/n/RSD
 currency/symbols/v1, nqo/s/RUB, 31B, 8B, 34898dd46fcbac6c
 currency/symbols/v1, nqo/s/RWF, 31B, 8B, 42aa8b132cab6eab
-currency/symbols/v1, nqo/s/SAR, 31B, 8B, 32c26622abcb9211
+currency/symbols/v1, nqo/s/SAR, -> nqo/n/SAR
 currency/symbols/v1, nqo/s/SBD, 31B, 8B, 137f263effc352fc
-currency/symbols/v1, nqo/s/SCR, 31B, 8B, 2160e0c70c2105e7
-currency/symbols/v1, nqo/s/SDD, 31B, 8B, 4d9053e9c9a697bc
-currency/symbols/v1, nqo/s/SDG, 33B, 10B, c891930c63ea7839
-currency/symbols/v1, nqo/s/SDP, 31B, 8B, 6b4269ecaf310d0d
+currency/symbols/v1, nqo/s/SCR, -> nqo/n/SCR
+currency/symbols/v1, nqo/s/SDD, -> nqo/n/SDD
+currency/symbols/v1, nqo/s/SDG, -> nqo/n/SDG
+currency/symbols/v1, nqo/s/SDP, -> nqo/n/SDP
 currency/symbols/v1, nqo/s/SEK, 31B, 8B, fc954ee4ea67bb4e
 currency/symbols/v1, nqo/s/SGD, 33B, 10B, 16522e6865b9705
 currency/symbols/v1, nqo/s/SHP, 31B, 8B, a3581f4b2f50cfd4
-currency/symbols/v1, nqo/s/SLE, 31B, 8B, 6b3a9d6c52ca51f1
-currency/symbols/v1, nqo/s/SLL, 31B, 8B, 19fe8ce0c7ebf8c1
-currency/symbols/v1, nqo/s/SOS, 31B, 8B, e7a6e12c32f82591
+currency/symbols/v1, nqo/s/SLE, -> nqo/n/SLE
+currency/symbols/v1, nqo/s/SLL, -> nqo/n/SLL
+currency/symbols/v1, nqo/s/SOS, -> nqo/n/SOS
 currency/symbols/v1, nqo/s/SRD, 31B, 8B, f6af239de10cc57
 currency/symbols/v1, nqo/s/SSP, 31B, 8B, 61ef5f4114e96fc6
-currency/symbols/v1, nqo/s/STD, 31B, 8B, 2810b7897fe66325
+currency/symbols/v1, nqo/s/STD, -> nqo/n/STD
 currency/symbols/v1, nqo/s/STN, 31B, 8B, b12566cf2ae56f60
 currency/symbols/v1, nqo/s/SYP, 31B, 8B, d8ad8de46b90feb1
-currency/symbols/v1, nqo/s/SZL, 33B, 10B, 481274e2b2b9a602
+currency/symbols/v1, nqo/s/SZL, -> nqo/n/SZL
 currency/symbols/v1, nqo/s/THB, 31B, 8B, 2e8f34725d36ca92
-currency/symbols/v1, nqo/s/TJS, 31B, 8B, cc606a51cbc44f5a
-currency/symbols/v1, nqo/s/TMT, 31B, 8B, dc7b29dcc2cbf1fd
-currency/symbols/v1, nqo/s/TND, 31B, 8B, ecea769bc37a2e2c
+currency/symbols/v1, nqo/s/TJS, -> nqo/n/TJS
+currency/symbols/v1, nqo/s/TMT, -> nqo/n/TMT
+currency/symbols/v1, nqo/s/TND, -> nqo/n/TND
 currency/symbols/v1, nqo/s/TOP, 31B, 8B, dfeaf4dcecf675d2
 currency/symbols/v1, nqo/s/TRY, 31B, 8B, aee386eee66ba451
 currency/symbols/v1, nqo/s/TTD, 31B, 8B, 6b52c68c3752210d
 currency/symbols/v1, nqo/s/TWD, 31B, 8B, 2a4ab94c28d62f8b
-currency/symbols/v1, nqo/s/TZS, 33B, 10B, d0fa90964ac292
+currency/symbols/v1, nqo/s/TZS, -> nqo/n/TZS
 currency/symbols/v1, nqo/s/UAH, 31B, 8B, 228c10b77f162824
-currency/symbols/v1, nqo/s/UGS, 33B, 10B, 7d5bc431d8afe56f
-currency/symbols/v1, nqo/s/UGX, 33B, 10B, 6424156d7441559c
+currency/symbols/v1, nqo/s/UGS, -> nqo/n/UGS
+currency/symbols/v1, nqo/s/UGX, -> nqo/n/UGX
 currency/symbols/v1, nqo/s/USD, 32B, 9B, 4fa0e2662f843e4a
 currency/symbols/v1, nqo/s/UYU, 31B, 8B, 70f2fe65a493168a
-currency/symbols/v1, nqo/s/UZS, 33B, 10B, fec9d569d9e7f98c
-currency/symbols/v1, nqo/s/VES, 33B, 10B, 786de01abaebd660
-currency/symbols/v1, nqo/s/VUV, 35B, 12B, df1fa27ce3f55fcd
-currency/symbols/v1, nqo/s/WST, 30B, 7B, 8a6b57afe9a428fa
-currency/symbols/v1, nqo/s/XAF, 31B, 8B, 2601a5420efdb09c
+currency/symbols/v1, nqo/s/UZS, -> nqo/n/UZS
+currency/symbols/v1, nqo/s/VES, -> nqo/n/VES
+currency/symbols/v1, nqo/s/VUV, -> nqo/n/VUV
+currency/symbols/v1, nqo/s/WST, -> nqo/n/WST
+currency/symbols/v1, nqo/s/XAF, -> nqo/n/XAF
 currency/symbols/v1, nqo/s/XCD, 31B, 8B, dc7f9fa7366e5264
-currency/symbols/v1, nqo/s/XOF, 27B, 4B, c615ff0a8ac88fc1
-currency/symbols/v1, nqo/s/XPF, 34B, 11B, fc9e7714fd92ccc1
-currency/symbols/v1, nqo/s/YER, 31B, 8B, 60bb3555f946ca24
+currency/symbols/v1, nqo/s/XOF, -> nqo/n/XOF
+currency/symbols/v1, nqo/s/XPF, -> nqo/n/XPF
+currency/symbols/v1, nqo/s/YER, -> nqo/n/YER
 currency/symbols/v1, nqo/s/ZAR, 31B, 8B, 6943d6f630639318
-currency/symbols/v1, nqo/s/ZMK, 33B, 10B, a9d420fc643ac774
+currency/symbols/v1, nqo/s/ZMK, -> nqo/n/ZMK
 currency/symbols/v1, nqo/s/ZMW, 33B, 10B, e1863dcf73a083da
-currency/symbols/v1, nqo/s/ZRN, 31B, 8B, 7c4960d4d0c3e68d
-currency/symbols/v1, nqo/s/ZRZ, 35B, 12B, 57620ba807192e78
-currency/symbols/v1, nqo/s/ZWD, 33B, 10B, 24a02e0fd48180fb
-currency/symbols/v1, nqo/s/ZWL, 33B, 10B, 5ccb832c9b07eeb8
-currency/symbols/v1, nqo/s/ZWR, 33B, 10B, 5437319660236320
+currency/symbols/v1, nqo/s/ZRN, -> nqo/n/ZRN
+currency/symbols/v1, nqo/s/ZRZ, -> nqo/n/ZRZ
+currency/symbols/v1, nqo/s/ZWD, -> nqo/n/ZWD
+currency/symbols/v1, nqo/s/ZWL, -> nqo/n/ZWL
+currency/symbols/v1, nqo/s/ZWR, -> nqo/n/ZWR
 currency/symbols/v1, nso/s/ZAR, -> af/s/ZAR
-currency/symbols/v1, om-KE/s/KES, -> en-KE/s/KES
-currency/symbols/v1, om/s/ETB, -> be/s/BYN
+currency/symbols/v1, om-KE/n/KES, -> en-KE/n/KES
+currency/symbols/v1, om-KE/s/KES, -> en-KE/n/KES
+currency/symbols/v1, om/n/ETB, -> be/n/BYN
+currency/symbols/v1, om/s/ETB, -> be/n/BYN
 currency/symbols/v1, or/n/BYN, -> af/n/BYN
 currency/symbols/v1, or/s/JPY, -> ast/s/JPY
 currency/symbols/v1, or/s/USD, -> af-NA/s/NAD
@@ -65753,90 +66053,113 @@ currency/symbols/v1, pcm/s/NGN, -> en-NG/s/NGN
 currency/symbols/v1, pl/n/RON, 28B, 5B, 6220f3d04e33f9af
 currency/symbols/v1, pl/n/TWD, -> af/n/TWD
 currency/symbols/v1, pl/s/PLN, -> dsb/s/PLN
-currency/symbols/v1, ps-PK/s/PKR, -> en-AU/s/SCR
+currency/symbols/v1, ps-PK/s/PKR, -> en-AU/n/SCR
 currency/symbols/v1, ps/n/BYN, -> af/n/BYN
 currency/symbols/v1, ps/s/AFN, -> fa/s/AFN
 currency/symbols/v1, ps/s/USD, -> af-NA/s/NAD
 currency/symbols/v1, pt-AO/s/AOA, 27B, 4B, e8f0ca72980437f8
-currency/symbols/v1, pt-CV/s/CVE, -> kea/s/CVE
-currency/symbols/v1, pt-LU/s/LUF, -> ca-FR/s/FRF
-currency/symbols/v1, pt-MO/s/MOP, -> en-MO/s/MOP
-currency/symbols/v1, pt-MZ/s/MZN, 28B, 5B, fe2055c527885c65
+currency/symbols/v1, pt-CV/n/CVE, -> kea/n/CVE
+currency/symbols/v1, pt-CV/s/CVE, -> kea/n/CVE
+currency/symbols/v1, pt-LU/n/LUF, -> ca-FR/n/FRF
+currency/symbols/v1, pt-LU/s/LUF, -> ca-FR/n/FRF
+currency/symbols/v1, pt-MO/n/MOP, -> en-MO/n/MOP
+currency/symbols/v1, pt-MO/s/MOP, -> en-MO/n/MOP
+currency/symbols/v1, pt-MZ/n/MZN, 28B, 5B, fe2055c527885c65
+currency/symbols/v1, pt-MZ/s/MZN, -> pt-MZ/n/MZN
+currency/symbols/v1, pt-PT/n/PTE, -> kea/n/CVE
 currency/symbols/v1, pt-PT/n/SYP, -> ar-SS/s/SSP
-currency/symbols/v1, pt-PT/s/PTE, -> kea/s/CVE
+currency/symbols/v1, pt-PT/s/PTE, -> kea/n/CVE
 currency/symbols/v1, pt-ST/s/STN, 27B, 4B, 21793cf9b15bd49d
 currency/symbols/v1, pt/n/BYN, -> af/n/BYN
+currency/symbols/v1, pt/n/PTE, 29B, 6B, 5549a4ab85cbf81e
 currency/symbols/v1, pt/n/RON, -> cs/n/RON
 currency/symbols/v1, pt/n/SYP, -> az/n/SYP
 currency/symbols/v1, pt/n/TWD, -> af/n/TWD
 currency/symbols/v1, pt/s/AUD, -> am/s/AUD
-currency/symbols/v1, pt/s/PTE, 29B, 6B, 5549a4ab85cbf81e
+currency/symbols/v1, pt/s/PTE, -> pt/n/PTE
 currency/symbols/v1, pt/s/THB, -> af/s/THB
 currency/symbols/v1, qu-BO/s/BOB, -> es-BO/s/BOB
 currency/symbols/v1, qu-EC/s/USD, -> af-NA/s/NAD
 currency/symbols/v1, qu/n/GHS, 28B, 5B, 97c7901fce16e75
+currency/symbols/v1, qu/n/PEN, -> es-PE/n/PEN
 currency/symbols/v1, qu/s/BBD, 28B, 5B, 53f467984193e808
 currency/symbols/v1, qu/s/BMD, -> kek/s/BMD
 currency/symbols/v1, qu/s/BZD, -> kek/s/BZD
 currency/symbols/v1, qu/s/CAD, -> br/s/CAD
-currency/symbols/v1, qu/s/PEN, -> es-PE/s/PEN
+currency/symbols/v1, qu/s/PEN, -> es-PE/n/PEN
 currency/symbols/v1, qu/s/USD, -> fr/s/USD
 currency/symbols/v1, quc/s/GTQ, -> es-GT/s/GTQ
 currency/symbols/v1, rm/s/USD, -> af-NA/s/NAD
+currency/symbols/v1, ro-MD/n/MDL, -> cs/n/RON
 currency/symbols/v1, ro-MD/s/MDL, -> cs/n/RON
 currency/symbols/v1, ro/n/BYN, -> af/n/BYN
 currency/symbols/v1, ro/n/TWD, -> af/n/TWD
-currency/symbols/v1, ru-BY/n/BYN, -> be/s/BYN
-currency/symbols/v1, ru-BY/s/BYN, -> be/s/BYN
+currency/symbols/v1, ru-BY/n/BYN, -> be/n/BYN
+currency/symbols/v1, ru-BY/s/BYN, -> be/n/BYN
 currency/symbols/v1, ru-KG/s/KGS, -> ky/s/KGS
 currency/symbols/v1, ru-KZ/s/KZT, -> kk-Arab/s/KZT
+currency/symbols/v1, ru-MD/n/MDL, -> cs/n/RON
 currency/symbols/v1, ru-MD/s/MDL, -> cs/n/RON
 currency/symbols/v1, ru/n/BYN, -> af/n/BYN
 currency/symbols/v1, ru/n/GEL, 28B, 5B, dbfc29dce03960c8
 currency/symbols/v1, ru/n/RON, -> cs/n/RON
+currency/symbols/v1, ru/n/RUR, -> af/n/BYN
+currency/symbols/v1, ru/n/TMT, 31B, 8B, 64269800d94be9b1
 currency/symbols/v1, ru/n/TWD, -> af/n/TWD
+currency/symbols/v1, ru/n/XCG, -> en-CA/n/XCG
+currency/symbols/v1, ru/n/XXX, 29B, 6B, 584bd6e30d1caa0f
 currency/symbols/v1, ru/s/JPY, -> ast/s/JPY
 currency/symbols/v1, ru/s/RUB, -> be/s/RUB
 currency/symbols/v1, ru/s/RUR, -> af/n/BYN
 currency/symbols/v1, ru/s/THB, -> af/s/THB
-currency/symbols/v1, ru/s/TMT, 31B, 8B, 64269800d94be9b1
+currency/symbols/v1, ru/s/TMT, -> ru/n/TMT
 currency/symbols/v1, ru/s/UAH, 28B, 5B, 37fe7e498a20c888
 currency/symbols/v1, ru/s/USD, -> af-NA/s/NAD
-currency/symbols/v1, ru/s/XCG, -> en-CA/s/XCG
-currency/symbols/v1, ru/s/XXX, 29B, 6B, 584bd6e30d1caa0f
+currency/symbols/v1, ru/s/XCG, -> en-CA/n/XCG
+currency/symbols/v1, ru/s/XXX, -> ru/n/XXX
 currency/symbols/v1, rw/s/RWF, -> en-RW/s/RWF
 currency/symbols/v1, sah/s/RUB, -> be/s/RUB
-currency/symbols/v1, sc/s/XDR, 28B, 5B, 982fcd135593b977
+currency/symbols/v1, sc/n/XDR, 28B, 5B, 982fcd135593b977
+currency/symbols/v1, sc/s/XDR, -> sc/n/XDR
 currency/symbols/v1, sd-Deva/s/JPY, -> ast/s/JPY
 currency/symbols/v1, sd-Deva/s/USD, -> af-NA/s/NAD
 currency/symbols/v1, sd/n/BYN, -> af/n/BYN
-currency/symbols/v1, sd/s/PKR, -> en-AU/s/SCR
+currency/symbols/v1, sd/s/PKR, -> en-AU/n/SCR
 currency/symbols/v1, si/n/BYN, -> af/n/BYN
 currency/symbols/v1, si/n/CHF, 41B, 18B, 92de5bb78448be75
 currency/symbols/v1, si/n/LKR, 32B, 9B, 37a8104f155226b8
 currency/symbols/v1, si/n/TWD, -> af/n/TWD
+currency/symbols/v1, si/n/XOF, 40B, 17B, 9acfe6babb83ee25
 currency/symbols/v1, si/s/LKR, -> si/n/LKR
 currency/symbols/v1, si/s/THB, -> af/s/THB
-currency/symbols/v1, si/s/XOF, 40B, 17B, 9acfe6babb83ee25
+currency/symbols/v1, si/s/XOF, -> si/n/XOF
 currency/symbols/v1, sk/n/BYN, -> af/n/BYN
 currency/symbols/v1, sk/n/RUR, -> af/n/BYN
 currency/symbols/v1, sk/n/TWD, -> af/n/TWD
+currency/symbols/v1, sk/n/XCG, -> en-CA/n/XCG
 currency/symbols/v1, sk/s/ILS, 28B, 5B, a29007c99a16340c
-currency/symbols/v1, sk/s/XCG, -> en-CA/s/XCG
+currency/symbols/v1, sk/s/XCG, -> en-CA/n/XCG
 currency/symbols/v1, sl/n/BYN, -> af/n/BYN
 currency/symbols/v1, sl/n/TWD, -> af/n/TWD
 currency/symbols/v1, sl/s/JPY, -> ast/s/JPY
 currency/symbols/v1, sl/s/USD, -> af-NA/s/NAD
-currency/symbols/v1, so-DJ/s/DJF, -> ar-DJ/s/DJF
-currency/symbols/v1, so-ET/s/ETB, -> be/s/BYN
-currency/symbols/v1, so-KE/s/KES, -> en-KE/s/KES
+currency/symbols/v1, so-DJ/n/DJF, -> ar-DJ/n/DJF
+currency/symbols/v1, so-DJ/s/DJF, -> ar-DJ/n/DJF
+currency/symbols/v1, so-ET/n/ETB, -> be/n/BYN
+currency/symbols/v1, so-ET/s/ETB, -> be/n/BYN
+currency/symbols/v1, so-KE/n/KES, -> en-KE/n/KES
+currency/symbols/v1, so-KE/s/KES, -> en-KE/n/KES
+currency/symbols/v1, so/n/SOS, -> ar-SO/n/SOS
 currency/symbols/v1, so/s/BBD, -> kek/s/BBD
-currency/symbols/v1, so/s/SOS, -> ar-SO/s/SOS
-currency/symbols/v1, sq-MK/s/MKD, 28B, 5B, a9e08018a75ed78e
+currency/symbols/v1, so/s/SOS, -> ar-SO/n/SOS
+currency/symbols/v1, sq-MK/n/MKD, 28B, 5B, a9e08018a75ed78e
+currency/symbols/v1, sq-MK/s/MKD, -> sq-MK/n/MKD
+currency/symbols/v1, sq/n/ALL, 30B, 7B, 51d6d079944d4823
 currency/symbols/v1, sq/n/HKD, 28B, 5B, b95e36052f604906
-currency/symbols/v1, sq/s/ALL, 30B, 7B, 51d6d079944d4823
+currency/symbols/v1, sq/n/XCG, 28B, 5B, b4c0e7eea09e0486
+currency/symbols/v1, sq/s/ALL, -> sq/n/ALL
 currency/symbols/v1, sq/s/THB, -> af/s/THB
-currency/symbols/v1, sq/s/XCG, 28B, 5B, b4c0e7eea09e0486
+currency/symbols/v1, sq/s/XCG, -> sq/n/XCG
 currency/symbols/v1, sr-Latn/n/BYN, 27B, 4B, 9fea17f852aded06
 currency/symbols/v1, sr-Latn/n/GEL, -> ru/n/GEL
 currency/symbols/v1, sr-Latn/n/TWD, -> af/n/TWD
@@ -65847,12 +66170,15 @@ currency/symbols/v1, sr/n/GEL, -> ru/n/GEL
 currency/symbols/v1, sr/n/TWD, -> af/n/TWD
 currency/symbols/v1, sr/s/BAM, -> bs-Cyrl/s/BAM
 currency/symbols/v1, sr/s/JPY, -> ast/s/JPY
-currency/symbols/v1, st-LS/s/LSL, 26B, 3B, f1eb782aca515a7c
+currency/symbols/v1, st-LS/n/LSL, 26B, 3B, f1eb782aca515a7c
+currency/symbols/v1, st-LS/s/LSL, -> st-LS/n/LSL
 currency/symbols/v1, st/s/ZAR, -> af/s/ZAR
 currency/symbols/v1, su/s/IDR, -> en-ID/s/IDR
 currency/symbols/v1, su/s/JPY, -> ast/s/JPY
 currency/symbols/v1, su/s/USD, -> af-NA/s/NAD
 currency/symbols/v1, sv/n/BYN, -> af/n/BYN
+currency/symbols/v1, sv/n/EEK, 28B, 5B, c7cb82fc82daa859
+currency/symbols/v1, sv/n/IEP, 29B, 6B, a3cb7ef66b7aeef1
 currency/symbols/v1, sv/n/RON, -> cs/n/RON
 currency/symbols/v1, sv/n/TWD, -> af/n/TWD
 currency/symbols/v1, sv/s/BBD, -> be/n/BBD
@@ -65862,21 +66188,25 @@ currency/symbols/v1, sv/s/BSD, -> ar/n/BSD
 currency/symbols/v1, sv/s/BZD, -> ar/n/BZD
 currency/symbols/v1, sv/s/DKK, 28B, 5B, 1e1f0766b395b5cc
 currency/symbols/v1, sv/s/DOP, -> be/n/DOP
-currency/symbols/v1, sv/s/EEK, 28B, 5B, c7cb82fc82daa859
+currency/symbols/v1, sv/s/EEK, -> sv/n/EEK
 currency/symbols/v1, sv/s/EGP, 29B, 6B, a2c2671dbfc049a4
-currency/symbols/v1, sv/s/IEP, 29B, 6B, a3cb7ef66b7aeef1
+currency/symbols/v1, sv/s/IEP, -> sv/n/IEP
 currency/symbols/v1, sv/s/ISK, 28B, 5B, db9fd194354682fa
 currency/symbols/v1, sv/s/JMD, -> ar/n/JMD
 currency/symbols/v1, sv/s/NOK, 28B, 5B, eb5d1beb377ce5b5
 currency/symbols/v1, sv/s/SEK, -> en-NO/s/NOK
+currency/symbols/v1, sw-CD/n/CDF, -> de/n/KMF
 currency/symbols/v1, sw-CD/s/CDF, -> de/n/KMF
 currency/symbols/v1, sw-KE/s/USD, -> af-NA/s/NAD
-currency/symbols/v1, sw-UG/s/UGX, -> en-UG/s/UGX
+currency/symbols/v1, sw-UG/n/UGX, -> en-UG/n/UGX
+currency/symbols/v1, sw-UG/s/UGX, -> en-UG/n/UGX
 currency/symbols/v1, sw/n/BYN, -> af/n/BYN
+currency/symbols/v1, sw/n/KES, -> en-KE/n/KES
 currency/symbols/v1, sw/n/TWD, -> af/n/TWD
-currency/symbols/v1, sw/s/KES, -> en-KE/s/KES
+currency/symbols/v1, sw/n/TZS, -> en-TZ/n/TZS
+currency/symbols/v1, sw/s/KES, -> en-KE/n/KES
 currency/symbols/v1, sw/s/THB, -> af/s/THB
-currency/symbols/v1, sw/s/TZS, -> en-TZ/s/TZS
+currency/symbols/v1, sw/s/TZS, -> en-TZ/n/TZS
 currency/symbols/v1, syr/s/SYP, -> ar/s/SYP
 currency/symbols/v1, szl/s/PLN, -> dsb/s/PLN
 currency/symbols/v1, ta-LK/s/LKR, 28B, 5B, cab6036a5b6b208d
@@ -65894,17 +66224,21 @@ currency/symbols/v1, te/n/BYN, -> af/n/BYN
 currency/symbols/v1, te/n/TWD, -> af/n/TWD
 currency/symbols/v1, te/s/THB, -> af/s/THB
 currency/symbols/v1, te/s/USD, -> af-NA/s/NAD
-currency/symbols/v1, tg/s/TJS, 32B, 9B, f67b0b474b4c92e2
+currency/symbols/v1, tg/n/TJS, 32B, 9B, f67b0b474b4c92e2
+currency/symbols/v1, tg/s/TJS, -> tg/n/TJS
 currency/symbols/v1, tg/s/USD, -> af-NA/s/NAD
 currency/symbols/v1, th/n/BYN, -> af/n/BYN
 currency/symbols/v1, th/n/TWD, -> af/n/TWD
 currency/symbols/v1, th/s/AUD, -> am/s/AUD
 currency/symbols/v1, th/s/JPY, -> ast/s/JPY
 currency/symbols/v1, th/s/THB, -> af/s/THB
-currency/symbols/v1, ti-ER/s/ERN, -> ar-ER/s/ERN
-currency/symbols/v1, ti/s/ETB, -> be/s/BYN
+currency/symbols/v1, ti-ER/n/ERN, -> ar-ER/n/ERN
+currency/symbols/v1, ti-ER/s/ERN, -> ar-ER/n/ERN
+currency/symbols/v1, ti/n/ETB, -> be/n/BYN
+currency/symbols/v1, ti/s/ETB, -> be/n/BYN
 currency/symbols/v1, tk/n/BYN, -> af/n/BYN
-currency/symbols/v1, tk/s/XCG, 28B, 5B, 7c41e9c8e39b86d5
+currency/symbols/v1, tk/n/XCG, 28B, 5B, 7c41e9c8e39b86d5
+currency/symbols/v1, tk/s/XCG, -> tk/n/XCG
 currency/symbols/v1, tn-BW/s/BWP, -> en-BW/s/BWP
 currency/symbols/v1, tn/s/ZAR, -> af/s/ZAR
 currency/symbols/v1, to/n/AUD, -> am/s/AUD
@@ -65929,9 +66263,10 @@ currency/symbols/v1, ug/s/CNY, -> ja/n/CNY
 currency/symbols/v1, ug/s/USD, -> af-NA/s/NAD
 currency/symbols/v1, uk/n/BYN, -> af/n/BYN
 currency/symbols/v1, uk/n/RUR, -> af/n/BYN
+currency/symbols/v1, uk/n/UAK, 32B, 9B, 71d5c476652bc40c
 currency/symbols/v1, uk/s/JPY, -> ast/s/JPY
 currency/symbols/v1, uk/s/UAH, -> ru/s/UAH
-currency/symbols/v1, uk/s/UAK, 32B, 9B, 71d5c476652bc40c
+currency/symbols/v1, uk/s/UAK, -> uk/n/UAK
 currency/symbols/v1, und/n/AFN, -> fa/s/AFN
 currency/symbols/v1, und/n/AMD, -> hy/s/AMD
 currency/symbols/v1, und/n/AOA, -> pt-AO/s/AOA
@@ -65990,24 +66325,24 @@ currency/symbols/v1, und/n/KYD, -> af-NA/s/NAD
 currency/symbols/v1, und/n/KZT, -> kk-Arab/s/KZT
 currency/symbols/v1, und/n/LAK, -> lo/s/LAK
 currency/symbols/v1, und/n/LBP, 28B, 5B, c1f0e1804260de2
-currency/symbols/v1, und/n/LKR, -> en-AU/s/SCR
+currency/symbols/v1, und/n/LKR, -> en-AU/n/SCR
 currency/symbols/v1, und/n/LRD, -> af-NA/s/NAD
 currency/symbols/v1, und/n/LTL, 27B, 4B, 96237fb848e947a0
 currency/symbols/v1, und/n/LVL, -> lv/s/LVL
 currency/symbols/v1, und/n/MGA, -> en-MG/s/MGA
 currency/symbols/v1, und/n/MMK, -> de/n/ZMW
 currency/symbols/v1, und/n/MNT, -> mn/s/MNT
-currency/symbols/v1, und/n/MUR, -> en-AU/s/SCR
+currency/symbols/v1, und/n/MUR, -> en-AU/n/SCR
 currency/symbols/v1, und/n/MXN, -> af-NA/s/NAD
 currency/symbols/v1, und/n/MYR, -> en-MY/s/MYR
 currency/symbols/v1, und/n/NAD, -> af-NA/s/NAD
 currency/symbols/v1, und/n/NGN, -> en-NG/s/NGN
 currency/symbols/v1, und/n/NIO, -> es-NI/s/NIO
 currency/symbols/v1, und/n/NOK, -> en-NO/s/NOK
-currency/symbols/v1, und/n/NPR, -> en-AU/s/SCR
+currency/symbols/v1, und/n/NPR, -> en-AU/n/SCR
 currency/symbols/v1, und/n/NZD, -> af-NA/s/NAD
 currency/symbols/v1, und/n/PHP, -> en-AU/n/CUP
-currency/symbols/v1, und/n/PKR, -> en-AU/s/SCR
+currency/symbols/v1, und/n/PKR, -> en-AU/n/SCR
 currency/symbols/v1, und/n/PLN, -> dsb/s/PLN
 currency/symbols/v1, und/n/PYG, 28B, 5B, 7719c053f949317c
 currency/symbols/v1, und/n/RON, -> es-MX/n/RON
@@ -66031,7 +66366,12 @@ currency/symbols/v1, und/n/USD, -> af-NA/s/NAD
 currency/symbols/v1, und/n/UYU, -> af-NA/s/NAD
 currency/symbols/v1, und/n/VEF, -> es-BO/s/BOB
 currency/symbols/v1, und/n/VND, 28B, 5B, 94d64ccd4930bc5b
+currency/symbols/v1, und/n/XAF, 29B, 6B, b9d918aab6fc83fd
 currency/symbols/v1, und/n/XCD, -> af-NA/s/NAD
+currency/symbols/v1, und/n/XCG, 28B, 5B, 70bcf1cdafb09a51
+currency/symbols/v1, und/n/XOF, 32B, 9B, 3b2708ad2f0c7bea
+currency/symbols/v1, und/n/XPF, 29B, 6B, e3959edbf6bf235b
+currency/symbols/v1, und/n/XXX, 27B, 4B, 496ab5ced69cf88b
 currency/symbols/v1, und/n/ZAR, -> af/s/ZAR
 currency/symbols/v1, und/n/ZMW, -> fr-CA/n/ZMW
 currency/symbols/v1, und/s/AUD, -> be/n/AUD
@@ -66051,24 +66391,27 @@ currency/symbols/v1, und/s/PHP, -> en-AU/n/CUP
 currency/symbols/v1, und/s/TWD, -> af/n/TWD
 currency/symbols/v1, und/s/USD, -> ar/n/USD
 currency/symbols/v1, und/s/VND, -> und/n/VND
-currency/symbols/v1, und/s/XAF, 29B, 6B, b9d918aab6fc83fd
+currency/symbols/v1, und/s/XAF, -> und/n/XAF
 currency/symbols/v1, und/s/XCD, -> be/n/XCD
-currency/symbols/v1, und/s/XCG, 28B, 5B, 70bcf1cdafb09a51
-currency/symbols/v1, und/s/XOF, 32B, 9B, 3b2708ad2f0c7bea
-currency/symbols/v1, und/s/XPF, 29B, 6B, e3959edbf6bf235b
-currency/symbols/v1, und/s/XXX, 27B, 4B, 496ab5ced69cf88b
+currency/symbols/v1, und/s/XCG, -> und/n/XCG
+currency/symbols/v1, und/s/XOF, -> und/n/XOF
+currency/symbols/v1, und/s/XPF, -> und/n/XPF
+currency/symbols/v1, und/s/XXX, -> und/n/XXX
 currency/symbols/v1, ur/n/BYN, -> af/n/BYN
 currency/symbols/v1, ur/n/TWD, -> af/n/TWD
-currency/symbols/v1, ur/s/PKR, -> en-AU/s/SCR
+currency/symbols/v1, ur/s/PKR, -> en-AU/n/SCR
 currency/symbols/v1, ur/s/THB, -> af/s/THB
 currency/symbols/v1, ur/s/USD, -> af-NA/s/NAD
+currency/symbols/v1, uz-Cyrl/n/UZS, 31B, 8B, e626806946349421
 currency/symbols/v1, uz-Cyrl/s/THB, -> af/s/THB
-currency/symbols/v1, uz-Cyrl/s/UZS, 31B, 8B, e626806946349421
+currency/symbols/v1, uz-Cyrl/s/UZS, -> uz-Cyrl/n/UZS
 currency/symbols/v1, uz/n/BYN, -> af/n/BYN
-currency/symbols/v1, uz/s/UZS, 30B, 7B, 9f32449f2301ff54
+currency/symbols/v1, uz/n/UZS, 30B, 7B, 9f32449f2301ff54
+currency/symbols/v1, uz/s/UZS, -> uz/n/UZS
 currency/symbols/v1, vec/n/RON, -> cs/n/RON
 currency/symbols/v1, vec/n/TWD, -> af/n/TWD
-currency/symbols/v1, vec/s/XCG, -> it/s/XCG
+currency/symbols/v1, vec/n/XCG, -> it/n/XCG
+currency/symbols/v1, vec/s/XCG, -> it/n/XCG
 currency/symbols/v1, vi/n/BYN, -> af/n/BYN
 currency/symbols/v1, vi/n/TWD, -> af/n/TWD
 currency/symbols/v1, vi/s/AUD, -> am/s/AUD
@@ -66076,39 +66419,48 @@ currency/symbols/v1, vi/s/JPY, -> ast/s/JPY
 currency/symbols/v1, vi/s/THB, -> af/s/THB
 currency/symbols/v1, wo/n/CLP, 31B, 8B, 8445f9c656d0558a
 currency/symbols/v1, wo/n/HUF, 32B, 9B, 4260ac6c1728cfbe
+currency/symbols/v1, wo/n/MDL, 33B, 10B, b9fa6f24b6c9ddb4
 currency/symbols/v1, wo/n/RON, 33B, 10B, b36943be0bc1134f
 currency/symbols/v1, wo/s/EGP, 29B, 6B, 65022602d980c9cc
 currency/symbols/v1, wo/s/GHS, 29B, 6B, fa6e8decf12466d9
 currency/symbols/v1, wo/s/GIP, 29B, 6B, 4ae4ba1cd5d4ede2
 currency/symbols/v1, wo/s/GTQ, 29B, 6B, 62c9c65ad2cb70d5
 currency/symbols/v1, wo/s/HRK, 29B, 6B, f159b115afb438b9
-currency/symbols/v1, wo/s/MDL, 33B, 10B, b9fa6f24b6c9ddb4
+currency/symbols/v1, wo/s/MDL, -> wo/n/MDL
 currency/symbols/v1, wo/s/NGN, 29B, 6B, a7584f74cb150916
 currency/symbols/v1, wo/s/USD, -> af-NA/s/NAD
-currency/symbols/v1, xh/s/CNH, 30B, 7B, 22988098face506
+currency/symbols/v1, xh/n/CNH, 30B, 7B, 22988098face506
+currency/symbols/v1, xh/n/XCG, 29B, 6B, dc46eebc2410f7ea
+currency/symbols/v1, xh/n/ZWG, 29B, 6B, ef282cada1953e50
+currency/symbols/v1, xh/s/CNH, -> xh/n/CNH
 currency/symbols/v1, xh/s/JPY, -> ast/s/JPY
 currency/symbols/v1, xh/s/USD, -> af-NA/s/NAD
-currency/symbols/v1, xh/s/XCG, 29B, 6B, dc46eebc2410f7ea
+currency/symbols/v1, xh/s/XCG, -> xh/n/XCG
 currency/symbols/v1, xh/s/ZAR, -> af/s/ZAR
-currency/symbols/v1, xh/s/ZWG, 29B, 6B, ef282cada1953e50
+currency/symbols/v1, xh/s/ZWG, -> xh/n/ZWG
 currency/symbols/v1, yo/s/NGN, -> en-NG/s/NGN
 currency/symbols/v1, yo/s/RUB, -> be/s/RUB
 currency/symbols/v1, yo/s/USD, -> af-NA/s/NAD
 currency/symbols/v1, yrl/n/BYN, -> es-MX/n/BYN
+currency/symbols/v1, yrl/n/PTE, -> pt/n/PTE
 currency/symbols/v1, yrl/n/RON, -> cs/n/RON
+currency/symbols/v1, yrl/n/SCR, 29B, 6B, c0d73cad03112523
 currency/symbols/v1, yrl/n/SYP, -> az/n/SYP
 currency/symbols/v1, yrl/n/TWD, -> af/n/TWD
+currency/symbols/v1, yrl/n/XAF, 28B, 5B, 193cc8a325c5f63b
+currency/symbols/v1, yrl/n/XOF, -> kgp/n/XOF
+currency/symbols/v1, yrl/n/XPF, -> en-AU/n/XPF
 currency/symbols/v1, yrl/n/ZMW, 27B, 4B, 3076267e408fd325
 currency/symbols/v1, yrl/s/AUD, -> am/s/AUD
 currency/symbols/v1, yrl/s/BOB, 28B, 5B, 53d43f4a4183090a
 currency/symbols/v1, yrl/s/COP, -> af-NA/s/NAD
-currency/symbols/v1, yrl/s/PTE, -> pt/s/PTE
-currency/symbols/v1, yrl/s/SCR, 29B, 6B, c0d73cad03112523
+currency/symbols/v1, yrl/s/PTE, -> pt/n/PTE
+currency/symbols/v1, yrl/s/SCR, -> yrl/n/SCR
 currency/symbols/v1, yrl/s/THB, -> af/s/THB
-currency/symbols/v1, yrl/s/VES, -> es-VE/s/VES
-currency/symbols/v1, yrl/s/XAF, 28B, 5B, 193cc8a325c5f63b
-currency/symbols/v1, yrl/s/XOF, -> kgp/s/XOF
-currency/symbols/v1, yrl/s/XPF, -> en-AU/s/XPF
+currency/symbols/v1, yrl/s/VES, -> es-VE/n/VES
+currency/symbols/v1, yrl/s/XAF, -> yrl/n/XAF
+currency/symbols/v1, yrl/s/XOF, -> kgp/n/XOF
+currency/symbols/v1, yrl/s/XPF, -> en-AU/n/XPF
 currency/symbols/v1, yue-Hans/n/BYN, -> af/n/BYN
 currency/symbols/v1, yue-Hans/n/RUR, -> af/n/BYN
 currency/symbols/v1, yue-Hans/s/AUD, -> am/s/AUD
@@ -66122,8 +66474,9 @@ currency/symbols/v1, yue/s/KRW, -> yue-Hans/s/KRW
 currency/symbols/v1, zh-HK/s/KRW, -> und/n/KPW
 currency/symbols/v1, zh-HK/s/TWD, -> af/n/TWD
 currency/symbols/v1, zh-Hans-HK/s/CNY, -> ar/n/CNY
+currency/symbols/v1, zh-Hans-MO/n/MOP, -> en-MO/n/MOP
 currency/symbols/v1, zh-Hans-MO/s/CNY, -> ar/n/CNY
-currency/symbols/v1, zh-Hans-MO/s/MOP, -> en-MO/s/MOP
+currency/symbols/v1, zh-Hans-MO/s/MOP, -> en-MO/n/MOP
 currency/symbols/v1, zh-Hant/n/BYN, -> af/n/BYN
 currency/symbols/v1, zh-Hant/n/RON, -> cs/n/RON
 currency/symbols/v1, zh-Hant/n/RUR, -> af/n/BYN
@@ -66131,17 +66484,19 @@ currency/symbols/v1, zh-Hant/s/AUD, -> am/s/AUD
 currency/symbols/v1, zh-Hant/s/JPY, -> ast/s/JPY
 currency/symbols/v1, zh-Hant/s/KRW, -> yue-Hans/s/KRW
 currency/symbols/v1, zh-Hant/s/TWD, -> af-NA/s/NAD
+currency/symbols/v1, zh-MO/n/MOP, -> en-MO/n/MOP
 currency/symbols/v1, zh-MO/s/KRW, -> und/n/KPW
-currency/symbols/v1, zh-MO/s/MOP, -> en-MO/s/MOP
+currency/symbols/v1, zh-MO/s/MOP, -> en-MO/n/MOP
 currency/symbols/v1, zh-MO/s/TWD, -> af/n/TWD
 currency/symbols/v1, zh-SG/s/CNY, -> ar/n/CNY
 currency/symbols/v1, zh-SG/s/SGD, -> af-NA/s/NAD
 currency/symbols/v1, zh/n/BYN, -> af/n/BYN
+currency/symbols/v1, zh/n/ILR, 28B, 5B, b32d722688cc533d
 currency/symbols/v1, zh/n/RUR, -> af/n/BYN
 currency/symbols/v1, zh/n/TWD, -> af/n/TWD
 currency/symbols/v1, zh/s/AUD, -> am/s/AUD
 currency/symbols/v1, zh/s/CNY, -> ast/s/JPY
-currency/symbols/v1, zh/s/ILR, 28B, 5B, b32d722688cc533d
+currency/symbols/v1, zh/s/ILR, -> zh/n/ILR
 currency/symbols/v1, zu/n/BYN, 27B, 4B, aac489338a0ab8dd
 currency/symbols/v1, zu/n/DKK, -> en-AU/n/ISK
 currency/symbols/v1, zu/n/HRK, -> ky/n/HRK

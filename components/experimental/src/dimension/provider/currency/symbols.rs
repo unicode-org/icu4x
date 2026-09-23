@@ -105,9 +105,14 @@ impl CurrencySymbol<'_> {
 #[non_exhaustive]
 pub enum CurrencySymbolWidth {
     /// Standard or short currency symbol (e.g. `"$"` or `"CA$"`).
-    Short,
+    Short = 0,
     /// Narrow currency symbol (e.g. `"$"`).
-    Narrow,
+    ///
+    /// Data for this width falls back to the standard symbol at datagen time: if CLDR
+    /// defines no narrow symbol for a currency, the narrow entry carries the standard
+    /// symbol instead (UTS #35 lateral inheritance). Consumers therefore never need to
+    /// issue a second request for the standard symbol.
+    Narrow = 1,
 }
 
 impl CurrencySymbolWidth {
