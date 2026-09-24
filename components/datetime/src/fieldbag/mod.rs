@@ -222,6 +222,8 @@ impl DateTimeFieldBag {
     ///     "sept. 2026 ap. J.-C."
     /// );
     /// ```
+    ///
+    /// [`CompositeFieldSet`]: fieldsets::enums::CompositeFieldSet
     // TODO: Add more tests for this fn to make sure the debug assertion isn't hit
     // TODO: Should this take self (since it is Copy) or &self (since it is big)?
     pub fn to_composite_field_set(self) -> fieldsets::enums::CompositeFieldSet {
