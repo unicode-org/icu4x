@@ -289,6 +289,31 @@ impl DateTimeFieldBag {
     pub fn to_field_set_builder(self) -> fieldsets::builder::FieldSetBuilder {
         conversion::fieldbag_to_fieldset(&self)
     }
+
+    /// TODO: Docs
+    ///
+    /// # Examples
+    ///
+    /// Get a field bag from a formatter:
+    ///
+    /// ```
+    /// use icu::datetime::fieldbag::DateTimeFieldBag;
+    /// use icu::datetime::DateTimeFormatter;
+    /// use icu::datetime::fieldsets;
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let formatter = DateTimeFormatter::try_new(locale!("it").into(), fieldsets::YM::medium()).unwrap();
+    /// let bag = DateTimeFieldBag::from_field_set_builder(&formatter.to_field_set_builder());
+    ///
+    /// assert_writeable_eq!(
+    ///     bag,
+    ///     "yMMM"
+    /// );
+    /// ```
+    pub fn from_field_set_builder(builder: &fieldsets::builder::FieldSetBuilder) -> Self {
+        conversion::fieldset_to_fieldbag(builder)
+    }
 }
 
 impl FromStr for DateTimeFieldBag {

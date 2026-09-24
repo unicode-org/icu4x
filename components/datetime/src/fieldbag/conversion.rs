@@ -321,3 +321,82 @@ pub(crate) fn fieldbag_to_fieldset(bag: &DateTimeFieldBag) -> builder::FieldSetB
         year_style: fieldbag_to_year_style(bag),
     }
 }
+
+pub(crate) fn fieldset_to_fieldbag(fieldset: &builder::FieldSetBuilder) -> DateTimeFieldBag {
+    DateTimeFieldBag {
+        era: match fieldset.year_style {
+            Some(options::YearStyle::WithEra) => Some(Era::Short),
+            _ => None,
+        },
+        year: match fieldset.date_fields {
+            Some(date_fields) if date_fields.has_year() => match fieldset.year_style {
+                Some(options::YearStyle::Auto) => Some(Year::TwoDigit),
+                _ => Some(Year::Numeric),
+            },
+            _ => None,
+        },
+        month: match fieldset.date_fields {
+            Some(date_fields) if date_fields.has_month() => match fieldset.length {
+                Some(options::Length::Long) => Some(Month::Long),
+                Some(options::Length::Medium) | None => Some(Month::Short),
+                Some(options::Length::Short) => match fieldset.alignment {
+                    Some(options::Alignment::Column) => Some(Month::TwoDigit),
+                    Some(options::Alignment::Auto) | None => Some(Month::Numeric),
+                },
+            },
+            _ => None,
+        },
+        day: match fieldset.date_fields {
+            Some(date_fields) if date_fields.has_day() => match fieldset.alignment {
+                Some(options::Alignment::Column) => Some(Day::TwoDigit),
+                Some(options::Alignment::Auto) | None => Some(Day::Numeric),
+            },
+            _ => None,
+        },
+        weekday: match fieldset.date_fields {
+            Some(date_fields) if date_fields.has_weekday() => match fieldset.length {
+                Some(options::Length::Long) => Some(Weekday::Long),
+                _ => Some(Weekday::Short),
+            },
+            _ => None,
+        },
+        // TODO: this crate doesn't support flexible day periods yet in fieldsets
+        day_period: None,
+        // TODO: figure out how to plumb the hour cycle to here
+        hour_kind: None,
+        hour: match fieldset.time_precision {
+            Some(time_precision) if time_precision.has_hour() => match fieldset.alignment {
+                Some(options::Alignment::Column) => Some(Hour::TwoDigit),
+                Some(options::Alignment::Auto) | None => Some(Hour::Numeric),
+            },
+            _ => None,
+        },
+        minute: match fieldset.time_precision {
+            Some(time_precision) if time_precision.has_minute() => match fieldset.alignment {
+                Some(options::Alignment::Column) => Some(Minute::TwoDigit),
+                Some(options::Alignment::Auto) | None => Some(Minute::Numeric),
+            },
+            _ => None,
+        },
+        second: match fieldset.time_precision {
+            Some(time_precision) if time_precision.has_second() => match fieldset.alignment {
+                Some(options::Alignment::Column) => Some(Second::TwoDigit),
+                Some(options::Alignment::Auto) | None => Some(Second::Numeric),
+            },
+            _ => None,
+        },
+        fractional_second_digits: match fieldset.time_precision {
+            Some(time_precision) if let Some(ssd) = time_precision.has_subsecond() => match ssd {
+                options::SubsecondDigits::S1 => Some(FractionalSecondDigits::F1),
+                options::SubsecondDigits::S2 => Some(FractionalSecondDigits::F2),
+                _ => Some(FractionalSecondDigits::F3),
+            },
+            _ => None,
+        },
+        #[allow(clippy::todo)] // TODO(agent): finish implementing
+        time_zone_name: match fieldset.zone_style {
+            Some(_) => todo!(),
+            None => None,
+        },
+    }
+}
