@@ -386,10 +386,13 @@ pub(crate) fn fieldset_to_fieldbag(fieldset: &builder::FieldSetBuilder) -> DateT
             _ => None,
         },
         fractional_second_digits: match fieldset.time_precision {
-            Some(time_precision) if let Some(ssd) = time_precision.has_subsecond() => match ssd {
-                options::SubsecondDigits::S1 => Some(FractionalSecondDigits::F1),
-                options::SubsecondDigits::S2 => Some(FractionalSecondDigits::F2),
-                _ => Some(FractionalSecondDigits::F3),
+            // Requires https://github.com/rust-lang/rust/issues/51114:
+            // Some(time_precision) if let Some(ssd) = time_precision.has_subsecond() => match ssd {
+            Some(time_precision) => match time_precision.has_subsecond() {
+                Some(options::SubsecondDigits::S1) => Some(FractionalSecondDigits::F1),
+                Some(options::SubsecondDigits::S2) => Some(FractionalSecondDigits::F2),
+                Some(_) => Some(FractionalSecondDigits::F3),
+                None => None,
             },
             _ => None,
         },
