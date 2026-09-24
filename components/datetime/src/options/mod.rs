@@ -474,6 +474,37 @@ impl IntoOption<TimePrecision> for TimePrecision {
     }
 }
 
+impl TimePrecision {
+    #[cfg(feature = "unstable")]
+    pub(crate) fn has_hour(self) -> bool {
+        true
+    }
+    #[cfg(feature = "unstable")]
+    pub(crate) fn has_minute(self) -> bool {
+        use TimePrecision::*;
+        match self {
+            Minute | MinuteOptional | Second | Subsecond(_) => true,
+            Hour => false,
+        }
+    }
+    #[cfg(feature = "unstable")]
+    pub(crate) fn has_second(self) -> bool {
+        use TimePrecision::*;
+        match self {
+            Second | Subsecond(_) => true,
+            Hour | Minute | MinuteOptional => false,
+        }
+    }
+    #[cfg(feature = "unstable")]
+    pub(crate) fn has_subsecond(self) -> Option<SubsecondDigits> {
+        use TimePrecision::*;
+        match self {
+            Subsecond(ssd) => Some(ssd),
+            Hour | Minute | MinuteOptional | Second => None,
+        }
+    }
+}
+
 #[cfg(all(feature = "serde", feature = "unstable"))]
 #[derive(Copy, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "camelCase")]

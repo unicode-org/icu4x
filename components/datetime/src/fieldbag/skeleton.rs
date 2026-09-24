@@ -115,6 +115,14 @@ pub(crate) fn fieldbag_to_uts35<W: ?Sized + fmt::Write>(
         Some(Year::TwoDigit) => sink.write_str("yy")?,
         None => (),
     }
+    match month {
+        Some(Month::Numeric) => sink.write_char('M')?,
+        Some(Month::TwoDigit) => sink.write_str("MM")?,
+        Some(Month::Short) => sink.write_str("MMM")?,
+        Some(Month::Long) => sink.write_str("MMMM")?,
+        Some(Month::Narrow) => sink.write_str("MMMMM")?,
+        None => (),
+    }
     match (hour, hour_kind) {
         (Some(Hour::Numeric), None) => sink.write_char('j')?,
         (Some(Hour::TwoDigit), None) => sink.write_str("jj")?,
