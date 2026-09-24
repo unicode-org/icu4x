@@ -7,7 +7,7 @@ use crate::fieldsets::builder;
 use crate::options;
 
 fn fieldbag_to_length(bag: &DateTimeFieldBag) -> Option<options::Length> {
-    // Get all of the fields that are possibly non-numeric
+    // Get all of the fields that are possibly non-numeric.
     let DateTimeFieldBag {
         // ignore era, since it is handled in `YearStyle`
         era: _,
@@ -24,6 +24,10 @@ fn fieldbag_to_length(bag: &DateTimeFieldBag) -> Option<options::Length> {
         // ignore time zone name, since it has its own length
         time_zone_name: _,
     } = *bag;
+    // If any of the fields are Long, use a Long length.
+    // If any are Short, use a Medium length.
+    // If any numeric-or-alphabetic fields are numeric, use a Short length.
+    // Else, use the default length.
     if matches!(month, Some(Month::Long))
         || matches!(weekday, Some(Weekday::Long))
         || matches!(day_period, Some(DayPeriod::FlexibleLong))
@@ -43,7 +47,7 @@ fn fieldbag_to_length(bag: &DateTimeFieldBag) -> Option<options::Length> {
 
 #[allow(clippy::todo)] // TODO: Finish implementing this
 fn fieldbag_to_date_fields(bag: &DateTimeFieldBag) -> Option<builder::DateFields> {
-    // Get all of the date fields
+    // Get all of the date fields.
     let DateTimeFieldBag {
         era,
         year,
@@ -74,7 +78,26 @@ fn fieldbag_to_date_fields(bag: &DateTimeFieldBag) -> Option<builder::DateFields
         day,
         weekday,
     };
+    // Select the best DateFields for the fields present in the bag, filling in missing
+    // internal fields if necessary.
     match date_field_bag {
+        // Era only: assume Y
+        DateFieldBag {
+            era: Some(_),
+            year: None,
+            month: None,
+            day: None,
+            weekday: None,
+        } => Some(builder::DateFields::Y),
+        // Year only: exact match for Y
+        DateFieldBag {
+            era: None,
+            year: Some(_),
+            month: None,
+            day: None,
+            weekday: None,
+        } => Some(builder::DateFields::Y),
+        // Era and Year: exact match for Y (era is handled with `YearStyle`)
         DateFieldBag {
             era: Some(_),
             year: Some(_),
@@ -82,6 +105,31 @@ fn fieldbag_to_date_fields(bag: &DateTimeFieldBag) -> Option<builder::DateFields
             day: None,
             weekday: None,
         } => Some(builder::DateFields::Y),
+        // Month only: exact match M
+        DateFieldBag {
+            era: None,
+            year: None,
+            month: Some(_),
+            day: None,
+            weekday: None,
+        } => Some(builder::DateFields::M),
+        // Era and Month: assume YM
+        DateFieldBag {
+            era: Some(_),
+            year: None,
+            month: Some(_),
+            day: None,
+            weekday: None,
+        } => Some(builder::DateFields::YM),
+        // Year and Month: exact match for YM
+        DateFieldBag {
+            era: None,
+            year: Some(_),
+            month: Some(_),
+            day: None,
+            weekday: None,
+        } => Some(builder::DateFields::YM),
+        // Era, Year, and Month: exact match for YM (era is handled with `YearStyle`)
         DateFieldBag {
             era: Some(_),
             year: Some(_),
@@ -89,11 +137,14 @@ fn fieldbag_to_date_fields(bag: &DateTimeFieldBag) -> Option<builder::DateFields
             day: None,
             weekday: None,
         } => Some(builder::DateFields::YM),
+        // TODO: Add the remaining matches using the same binary-like pattern
         _ => todo!(),
     }
 }
 
 fn fieldbag_to_time_precision(bag: &DateTimeFieldBag) -> Option<options::TimePrecision> {
+    // Note: This takes the smallest field and uses it as the time precision, which may
+    // "fill in" fields of greater magnitude, even if they aren't in the bag.
     if let Some(digits) = bag.fractional_second_digits {
         let ssd = match digits {
             FractionalSecondDigits::F1 => options::SubsecondDigits::S1,
@@ -122,7 +173,7 @@ fn fieldbag_to_zone_style(bag: &DateTimeFieldBag) -> Option<builder::ZoneStyle> 
 }
 
 fn fieldbag_to_alignment(bag: &DateTimeFieldBag) -> Option<options::Alignment> {
-    // Get all of the fields that have two-digit numerics
+    // Get all of the fields that have a numeric style.
     let DateTimeFieldBag {
         era: _,
         // ignore year, since two-digit year is handled in `YearStyle`
@@ -140,6 +191,7 @@ fn fieldbag_to_alignment(bag: &DateTimeFieldBag) -> Option<options::Alignment> {
         fractional_second_digits: _,
         time_zone_name: _,
     } = *bag;
+    // If any of the fields are two-digit, set the fieldset to column alignment.
     if matches!(month, Some(Month::TwoDigit))
         || matches!(day, Some(Day::TwoDigit))
         || matches!(hour, Some(Hour::TwoDigit))
@@ -151,6 +203,7 @@ fn fieldbag_to_alignment(bag: &DateTimeFieldBag) -> Option<options::Alignment> {
 }
 
 fn fieldbag_to_year_style(bag: &DateTimeFieldBag) -> Option<options::YearStyle> {
+    // Determine the year style based on the era and year fields.
     match bag.era {
         Some(_era) => Some(options::YearStyle::WithEra),
         None => match bag.year {
