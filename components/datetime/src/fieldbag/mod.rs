@@ -12,10 +12,9 @@ use core::{fmt, str::FromStr};
 
 pub use skeleton::DateTimeFieldBagParseError;
 
+use crate::fieldsets;
 use field::*;
 use writeable::Writeable;
-
-use crate::fieldsets::{builder::FieldSetBuilder, enums::CompositeFieldSet};
 
 /// A bag of individual datetime formatting fields.
 ///
@@ -225,7 +224,7 @@ impl DateTimeFieldBag {
     /// ```
     // TODO: Add more tests for this fn to make sure the debug assertion isn't hit
     // TODO: Should this take self (since it is Copy) or &self (since it is big)?
-    pub fn to_composite_field_set(self) -> CompositeFieldSet {
+    pub fn to_composite_field_set(self) -> fieldsets::enums::CompositeFieldSet {
         conversion::fieldbag_to_fieldset(&self)
             .build_composite()
             .unwrap_or_else(|err| {
@@ -234,8 +233,8 @@ impl DateTimeFieldBag {
                     "field bag should be convertible to CompositeFieldSet: {self:?} {err:?}"
                 );
                 // this is an error case. GIGO with YMD format.
-                CompositeFieldSet::Date(crate::fieldsets::enums::DateFieldSet::YMD(
-                    crate::fieldsets::YMD::medium(),
+                fieldsets::enums::CompositeFieldSet::Date(fieldsets::enums::DateFieldSet::YMD(
+                    fieldsets::YMD::medium(),
                 ))
             })
     }
@@ -285,7 +284,7 @@ impl DateTimeFieldBag {
     /// );
     /// ```
     // TODO: Should this take self (since it is Copy) or &self (since it is big)?
-    pub fn to_field_set_builder(self) -> FieldSetBuilder {
+    pub fn to_field_set_builder(self) -> fieldsets::builder::FieldSetBuilder {
         conversion::fieldbag_to_fieldset(&self)
     }
 }

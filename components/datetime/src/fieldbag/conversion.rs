@@ -21,6 +21,7 @@ fn fieldbag_to_length(bag: &DateTimeFieldBag) -> Option<options::Length> {
         minute: _,
         second: _,
         fractional_second_digits: _,
+        // ignore time zone name, since it has its own length
         time_zone_name: _,
     } = *bag;
     if matches!(month, Some(Month::Long))
@@ -160,8 +161,8 @@ fn fieldbag_to_year_style(bag: &DateTimeFieldBag) -> Option<options::YearStyle> 
     }
 }
 
-pub(crate) fn fieldbag_to_fieldset(bag: &DateTimeFieldBag) -> FieldSetBuilder {
-    FieldSetBuilder {
+pub(crate) fn fieldbag_to_fieldset(bag: &DateTimeFieldBag) -> builder::FieldSetBuilder {
+    builder::FieldSetBuilder {
         length: fieldbag_to_length(bag),
         date_fields: fieldbag_to_date_fields(bag),
         time_precision: fieldbag_to_time_precision(bag),
