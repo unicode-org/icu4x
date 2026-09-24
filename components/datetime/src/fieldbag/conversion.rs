@@ -196,6 +196,10 @@ fn test_fieldbag_to_date_fields_all_cases() {
         let actual = fieldbag_to_date_fields(&bag);
         let skeleton = chars.iter().collect::<String>();
         let expected = match &*skeleton {
+            // TODO(agent): rewrite this test to use an array of test cases,
+            // where each case is a skeleton string and an expected DateFields,
+            // instead of Itertools::powerset() and this match statement, which
+            // is more brittle/error-prone
             "" => None,
             "E" => Some(builder::DateFields::E),
             "d" => Some(builder::DateFields::D),
@@ -212,6 +216,7 @@ fn test_fieldbag_to_date_fields_all_cases() {
             "yME" => Some(builder::DateFields::YMDE), // implied
             "yMd" => Some(builder::DateFields::YMD),
             "yMdE" => Some(builder::DateFields::YMDE),
+            // Both G and y imply a Year field
             "G" => Some(builder::DateFields::Y),
             "GE" => Some(builder::DateFields::YMDE), // implied
             "Gd" => Some(builder::DateFields::YMD),  // implied
