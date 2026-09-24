@@ -81,64 +81,156 @@ fn fieldbag_to_date_fields(bag: &DateTimeFieldBag) -> Option<builder::DateFields
     // Select the best DateFields for the fields present in the bag, filling in missing
     // internal fields if necessary.
     match date_field_bag {
-        // Era only: assume Y
-        DateFieldBag {
-            era: Some(_),
-            year: None,
-            month: None,
-            day: None,
-            weekday: None,
-        } => Some(builder::DateFields::Y),
-        // Year only: exact match for Y
-        DateFieldBag {
-            era: None,
-            year: Some(_),
-            month: None,
-            day: None,
-            weekday: None,
-        } => Some(builder::DateFields::Y),
-        // Era and Year: exact match for Y (era is handled with `YearStyle`)
-        DateFieldBag {
-            era: Some(_),
-            year: Some(_),
-            month: None,
-            day: None,
-            weekday: None,
-        } => Some(builder::DateFields::Y),
-        // Month only: exact match M
+        // No fields: return None
         DateFieldBag {
             era: None,
             year: None,
-            month: Some(_),
+            month: None,
+            day: None,
+            weekday: None,
+        } => None,
+        // Y: Era and/or Year
+        DateFieldBag {
+            era: _,
+            year: _,
+            month: None,
+            day: None,
+            weekday: None,
+        } => Some(builder::DateFields::Y),
+        // M: Month only
+        DateFieldBag {
+            era: None,
+            year: None,
+            month: _,
             day: None,
             weekday: None,
         } => Some(builder::DateFields::M),
-        // Era and Month: assume YM
+        // YM: Month and (Era or Year)
         DateFieldBag {
-            era: Some(_),
-            year: None,
+            era: _,
+            year: _,
             month: Some(_),
             day: None,
             weekday: None,
         } => Some(builder::DateFields::YM),
-        // Year and Month: exact match for YM
+        // D: Day only
         DateFieldBag {
             era: None,
-            year: Some(_),
-            month: Some(_),
-            day: None,
+            year: None,
+            month: None,
+            day: Some(_),
             weekday: None,
-        } => Some(builder::DateFields::YM),
-        // Era, Year, and Month: exact match for YM (era is handled with `YearStyle`)
+        } => Some(builder::DateFields::D),
+        // MD: Month and Day
         DateFieldBag {
-            era: Some(_),
-            year: Some(_),
+            era: None,
+            year: None,
             month: Some(_),
-            day: None,
+            day: Some(_),
             weekday: None,
-        } => Some(builder::DateFields::YM),
-        // TODO: Add the remaining matches using the same binary-like pattern
-        _ => todo!(),
+        } => Some(builder::DateFields::MD),
+        // YMD: Day and (Era or Year) and maybe Month
+        DateFieldBag {
+            era: _,
+            year: _,
+            month: _,
+            day: Some(_),
+            weekday: None,
+        } => Some(builder::DateFields::YMD),
+        // E: Weekday only
+        DateFieldBag {
+            era: None,
+            year: None,
+            month: None,
+            day: None,
+            weekday: Some(_),
+        } => Some(builder::DateFields::E),
+        // DE: Day and Weekday
+        DateFieldBag {
+            era: None,
+            year: None,
+            month: None,
+            day: Some(_),
+            weekday: Some(_),
+        } => Some(builder::DateFields::DE),
+        // MDE: Month and Weekday and maybe Day
+        DateFieldBag {
+            era: None,
+            year: None,
+            month: Some(_),
+            day: _,
+            weekday: Some(_),
+        } => Some(builder::DateFields::MDE),
+        // YMDE: Weekday and maybe Day and maybe Month and (Era or Year)
+        DateFieldBag {
+            era: _,
+            year: _,
+            month: _,
+            day: _,
+            weekday: Some(_),
+        } => Some(builder::DateFields::YMDE),
+    }
+}
+
+#[test]
+fn test_fieldbag_to_date_fields_all_cases() {
+    use itertools::Itertools;
+    let all_inclusive = "GyMdE";
+    for chars in all_inclusive.chars().powerset() {
+        let mut bag = DateTimeFieldBag::default();
+        if chars.contains(&'G') {
+            bag.era = Some(Era::Short);
+        }
+        if chars.contains(&'y') {
+            bag.year = Some(Year::Numeric);
+        }
+        if chars.contains(&'M') {
+            bag.month = Some(Month::Short);
+        }
+        if chars.contains(&'d') {
+            bag.day = Some(Day::Numeric);
+        }
+        if chars.contains(&'E') {
+            bag.weekday = Some(Weekday::Short);
+        }
+        let actual = fieldbag_to_date_fields(&bag);
+        let skeleton = chars.iter().collect::<String>();
+        let expected = match &*skeleton {
+            "" => None,
+            "E" => Some(builder::DateFields::E),
+            "d" => Some(builder::DateFields::D),
+            "dE" => Some(builder::DateFields::DE),
+            "M" => Some(builder::DateFields::M),
+            "ME" => Some(builder::DateFields::MDE), // implied
+            "Md" => Some(builder::DateFields::MD),
+            "MdE" => Some(builder::DateFields::MDE),
+            "y" => Some(builder::DateFields::Y),
+            "yE" => Some(builder::DateFields::YMDE), // implied
+            "yd" => Some(builder::DateFields::YMD),  // implied
+            "ydE" => Some(builder::DateFields::YMDE), // implied
+            "yM" => Some(builder::DateFields::YM),
+            "yME" => Some(builder::DateFields::YMDE), // implied
+            "yMd" => Some(builder::DateFields::YMD),
+            "yMdE" => Some(builder::DateFields::YMDE),
+            "G" => Some(builder::DateFields::Y),
+            "GE" => Some(builder::DateFields::YMDE), // implied
+            "Gd" => Some(builder::DateFields::YMD),  // implied
+            "GdE" => Some(builder::DateFields::YMDE), // implied
+            "GM" => Some(builder::DateFields::YM),
+            "GME" => Some(builder::DateFields::YMDE), // implied
+            "GMd" => Some(builder::DateFields::YMD),
+            "GMdE" => Some(builder::DateFields::YMDE),
+            "Gy" => Some(builder::DateFields::Y),
+            "GyE" => Some(builder::DateFields::YMDE), // implied
+            "Gyd" => Some(builder::DateFields::YMD),  // implied
+            "GydE" => Some(builder::DateFields::YMDE),
+            "GyM" => Some(builder::DateFields::YM),
+            "GyME" => Some(builder::DateFields::YMDE), // implied
+            "GyMd" => Some(builder::DateFields::YMD),
+            "GyMdE" => Some(builder::DateFields::YMDE),
+            _ => unreachable!("{skeleton:?}"),
+        };
+        assert_eq!(actual, expected, "{skeleton:?} {bag:?}")
     }
 }
 

@@ -1558,6 +1558,7 @@ dependencies = [
  "icu_provider_adapters",
  "icu_provider_blob",
  "icu_time",
+ "itertools 0.14.0",
  "jiff",
  "potential_utf",
  "serde",
