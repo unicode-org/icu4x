@@ -10,7 +10,8 @@ use icu_segmenter::provider::adaboost::AdaboostData;
 use icu_segmenter::provider::{
     Baked, UnihanRadicalsData,
     adaboost::{
-        SegmenterChineseAutoV1, SegmenterCjAutoV1, SegmenterJapaneseAutoV1, SegmenterThaiAutoV1,
+        SegmenterAdaboostChineseV1, SegmenterAdaboostCjV1, SegmenterAdaboostJapaneseV1,
+        SegmenterAdaboostSeaV1,
     },
 };
 use std::iter::Peekable;
@@ -31,21 +32,21 @@ pub(crate) fn get_radical(radicals: &UnihanRadicalsData<'_>, ch: char) -> u8 {
 }
 
 pub(crate) struct Predictor<'a> {
-    model: DataPayload<SegmenterChineseAutoV1>,
+    model: DataPayload<SegmenterAdaboostChineseV1>,
     radicals: &'a UnihanRadicalsData<'a>,
 }
 
 pub(crate) struct ThaiPredictor {
-    model: DataPayload<SegmenterThaiAutoV1>,
+    model: DataPayload<SegmenterAdaboostSeaV1>,
 }
 
 pub(crate) struct CjPredictor<'a> {
-    model: DataPayload<SegmenterCjAutoV1>,
+    model: DataPayload<SegmenterAdaboostCjV1>,
     radicals: &'a UnihanRadicalsData<'a>,
 }
 
 pub(crate) struct JapanesePredictor {
-    model: DataPayload<SegmenterJapaneseAutoV1>,
+    model: DataPayload<SegmenterAdaboostJapaneseV1>,
 }
 
 pub(crate) struct AdaboostSegmenterIterator<'predictor, 'data, 's> {
@@ -85,7 +86,7 @@ impl Iterator for AdaboostSegmenterIterator<'_, '_, '_> {
 
 impl<'a> Predictor<'a> {
     pub(crate) fn for_test() -> Self {
-        let response: DataResponse<SegmenterChineseAutoV1> = Baked
+        let response: DataResponse<SegmenterAdaboostChineseV1> = Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(CHINESE_ADABOOST),
                 ..Default::default()
@@ -188,7 +189,7 @@ impl<'a> Predictor<'a> {
 
 impl ThaiPredictor {
     pub(crate) fn for_test() -> Self {
-        let response: DataResponse<SegmenterThaiAutoV1> = Baked
+        let response: DataResponse<SegmenterAdaboostSeaV1> = Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(THAI_ADABOOST),
                 ..Default::default()
@@ -236,7 +237,7 @@ impl ThaiPredictor {
 
 impl JapanesePredictor {
     pub(crate) fn for_test() -> Self {
-        let response: DataResponse<SegmenterJapaneseAutoV1> = Baked
+        let response: DataResponse<SegmenterAdaboostJapaneseV1> = Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(JAPANESE_ADABOOST),
                 ..Default::default()
@@ -284,7 +285,7 @@ impl JapanesePredictor {
 
 impl CjPredictor<'static> {
     pub(crate) fn for_test() -> Self {
-        let response: DataResponse<SegmenterCjAutoV1> = Baked
+        let response: DataResponse<SegmenterAdaboostCjV1> = Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(CJ_ADABOOST),
                 ..Default::default()

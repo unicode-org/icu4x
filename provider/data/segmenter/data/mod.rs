@@ -1,9 +1,8 @@
 // @generated
-include!("segmenter_japanese_auto_v1.rs.data");
-include!("segmenter_cj_auto_v1.rs.data");
 include!("segmenter_break_sentence_v2.rs.data");
 include!("segmenter_break_sentence_v1.rs.data");
 include!("segmenter_dictionary_auto_v1.rs.data");
+include!("segmenter_adaboost_sea_v1.rs.data");
 include!("segmenter_unihan_radical_v1.rs.data");
 include!("segmenter_break_grapheme_cluster_v1.rs.data");
 include!("segmenter_dictionary_extended_v1.rs.data");
@@ -11,12 +10,13 @@ include!("segmenter_break_line_v2.rs.data");
 include!("segmenter_break_line_v1.rs.data");
 include!("segmenter_break_line_v3.rs.data");
 include!("segmenter_lstm_auto_v1.rs.data");
+include!("segmenter_adaboost_chinese_v1.rs.data");
 include!("segmenter_break_grapheme_cluster_v2.rs.data");
-include!("segmenter_chinese_auto_v1.rs.data");
+include!("segmenter_adaboost_japanese_v1.rs.data");
 include!("segmenter_break_line_override_v2.rs.data");
+include!("segmenter_adaboost_cj_v1.rs.data");
 include!("segmenter_break_word_v1.rs.data");
 include!("segmenter_break_word_v2.rs.data");
-include!("segmenter_thai_auto_v1.rs.data");
 include!("segmenter_break_word_override_v1.rs.data");
 include!("segmenter_break_sentence_override_v1.rs.data");
 include!("segmenter_break_sentence_override_v2.rs.data");
@@ -54,11 +54,10 @@ pub use __make_provider as make_provider;
 macro_rules! impl_data_provider {
     ($ provider : ty) => {
         make_provider!($provider);
-        impl_segmenter_japanese_auto_v1!($provider);
-        impl_segmenter_cj_auto_v1!($provider);
         impl_segmenter_break_sentence_v2!($provider);
         impl_segmenter_break_sentence_v1!($provider);
         impl_segmenter_dictionary_auto_v1!($provider);
+        impl_segmenter_adaboost_sea_v1!($provider);
         impl_segmenter_unihan_radical_v1!($provider);
         impl_segmenter_break_grapheme_cluster_v1!($provider);
         impl_segmenter_dictionary_extended_v1!($provider);
@@ -66,12 +65,13 @@ macro_rules! impl_data_provider {
         impl_segmenter_break_line_v1!($provider);
         impl_segmenter_break_line_v3!($provider);
         impl_segmenter_lstm_auto_v1!($provider);
+        impl_segmenter_adaboost_chinese_v1!($provider);
         impl_segmenter_break_grapheme_cluster_v2!($provider);
-        impl_segmenter_chinese_auto_v1!($provider);
+        impl_segmenter_adaboost_japanese_v1!($provider);
         impl_segmenter_break_line_override_v2!($provider);
+        impl_segmenter_adaboost_cj_v1!($provider);
         impl_segmenter_break_word_v1!($provider);
         impl_segmenter_break_word_v2!($provider);
-        impl_segmenter_thai_auto_v1!($provider);
         impl_segmenter_break_word_override_v1!($provider);
         impl_segmenter_break_sentence_override_v1!($provider);
         impl_segmenter_break_sentence_override_v2!($provider);
