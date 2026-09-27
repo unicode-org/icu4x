@@ -77,6 +77,12 @@ impl<Y: RuleBreakType> Iterator for DictionaryBreakIterator<'_, '_, Y> {
         }
 
         if intermediate_length > 0 {
+            if let Some((prev_iter, prev_grapheme_iter)) = previous_match {
+                // Rewind the previous match point so that the trailing text is
+                // processed by the next call to `next`.
+                self.iter = prev_iter;
+                self.grapheme_iter = prev_grapheme_iter;
+            }
             Some(intermediate_length)
         } else if not_match {
             // no match by scanning text
@@ -235,5 +241,16 @@ mod tests {
         let s = "エディターエディター";
         let result: Vec<usize> = dict_segmenter.segment_str(s).collect();
         assert_eq!(result, vec![15, 30]);
+    }
+
+    #[test]
+    fn thai_dictionary_terminal_break() {
+        let mut segmenter = ComplexPayloadsBorrowed::new();
+        segmenter.with_southeast_asian_dictionaries();
+        let segmenter = segmenter.select(ComplexScript::Thai).unwrap();
+
+        // The last dictionary match reaches the end of the text; the breakpoint
+        // at the end of the text must still be emitted.
+        check_complex("อินฟลูเอนเซอร์", &["อิน", "ฟลูเ", "อนเ", "ซอ", "ร์"], segmenter);
     }
 }

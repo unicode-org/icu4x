@@ -1056,6 +1056,17 @@ fn cj_dictionary_test_neo() {
 }
 
 #[test]
+fn thai_dictionary_terminal_break_neo() {
+    let mut segmenter =
+        WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
+    segmenter.load_dictionary();
+
+    // The last dictionary match reaches the end of the text; the breakpoint at
+    // the end of the text must still be emitted.
+    check_word("อินฟลูเอนเซอร์", &["อิน", "ฟลูเ", "อนเ", "ซอ", "ร์"], segmenter);
+}
+
+#[test]
 fn complex_mixed_thai_cj_word_break() {
     check_word(
         "ภาษาไทย龟山岛",
