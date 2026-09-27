@@ -4,11 +4,6 @@
 
 use crate::SourceDataProvider;
 use icu::locale::{DataLocale, data_locale};
-use icu::segmenter::provider::adaboost::{
-    SegmenterAdaboostChineseV1, SegmenterAdaboostCjV1, SegmenterAdaboostJapaneseV1,
-    SegmenterAdaboostSeaV1,
-};
-use icu_provider::export::ExportableProvider;
 use icu_provider_export::prelude::*;
 
 include!("../../tests/locales.rs.data");
@@ -39,23 +34,11 @@ fn make_testdata() {
     .unwrap();
 
     let provider = SourceDataProvider::new_testing();
-    let excluded_markers = [
-        SegmenterAdaboostChineseV1::INFO,
-        SegmenterAdaboostCjV1::INFO,
-        SegmenterAdaboostJapaneseV1::INFO,
-        SegmenterAdaboostSeaV1::INFO,
-    ];
 
     ExportDriver::new(
         LOCALES.iter().copied().map(DataLocaleFamily::single),
         DeduplicationStrategy::Maximal.into(),
         LocaleFallbacker::try_new_unstable(&provider).unwrap(),
-    )
-    .with_markers(
-        provider
-            .supported_markers()
-            .into_iter()
-            .filter(|marker| !excluded_markers.contains(marker)),
     )
     .with_segmenter_models([
         "thaidict".into(),
