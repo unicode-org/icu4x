@@ -6,8 +6,8 @@
 
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use icu::segmenter::provider::adaboost::{
-    AdaboostData, CjAdaboostData, JapaneseAdaboostData, SegmenterChineseAutoV1, SegmenterCjAutoV1,
-    SegmenterJapaneseAutoV1, SegmenterThaiAutoV1, ThaiAdaboostData,
+    AdaboostData, CjAdaboostData, JapaneseAdaboostData, SegmenterAdaboostChineseV1,
+    SegmenterAdaboostCjV1, SegmenterAdaboostJapaneseV1, SegmenterAdaboostSeaV1, ThaiAdaboostData,
 };
 use icu_provider::prelude::*;
 use std::collections::{HashMap, HashSet};
@@ -17,10 +17,10 @@ const CHINESE_ADABOOST_ID: &str = "Chinese_adaboost";
 const CJ_ADABOOST_ID: &str = "CJ_adaboost";
 const JAPANESE_ADABOOST_ID: &str = "Japanese_adaboost";
 const THAI_ADABOOST_ID: &str = "Thai_adaboost";
-const CHINESE_MODEL_JSON: &str = include_str!("../../data/segmenter/model.json");
-const CJ_MODEL_JSON: &str = include_str!("../../data/segmenter/model_cj.json");
-const JAPANESE_MODEL_JSON: &str = include_str!("../../data/segmenter/model_japanese.json");
-const THAI_MODEL_JSON: &str = include_str!("../../data/segmenter/model_thai.json");
+const CHINESE_MODEL_JSON: &str = include_str!("../../data/segmenter/adaboost/model.json");
+const CJ_MODEL_JSON: &str = include_str!("../../data/segmenter/adaboost/model_cj.json");
+const JAPANESE_MODEL_JSON: &str = include_str!("../../data/segmenter/adaboost/model_japanese.json");
+const THAI_MODEL_JSON: &str = include_str!("../../data/segmenter/adaboost/model_thai.json");
 const INVALID_FEATURE_KEY: DataError = DataError::custom("Invalid AdaBoost feature key");
 
 #[derive(Debug, serde::Deserialize)]
@@ -301,14 +301,17 @@ fn parse_right_radical(key: &str) -> Result<(char, u8), DataError> {
     Ok((parse_char(left)?, parse_radical(right)?))
 }
 
-impl DataProvider<SegmenterChineseAutoV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterChineseAutoV1>, DataError> {
+impl DataProvider<SegmenterAdaboostChineseV1> for SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<SegmenterAdaboostChineseV1>, DataError> {
         if req.id.marker_attributes.as_str() != CHINESE_ADABOOST_ID {
             return Err(
-                DataErrorKind::IdentifierNotFound.with_req(SegmenterChineseAutoV1::INFO, req)
+                DataErrorKind::IdentifierNotFound.with_req(SegmenterAdaboostChineseV1::INFO, req)
             );
         }
-        self.check_req::<SegmenterChineseAutoV1>(req)?;
+        self.check_req::<SegmenterAdaboostChineseV1>(req)?;
 
         let raw =
             serde_json::from_str::<RawChineseAdaboostData>(CHINESE_MODEL_JSON).map_err(|e| {
@@ -323,18 +326,20 @@ impl DataProvider<SegmenterChineseAutoV1> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<SegmenterChineseAutoV1> for SourceDataProvider {
+impl IterableDataProviderCached<SegmenterAdaboostChineseV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         singleton_id(CHINESE_ADABOOST_ID)
     }
 }
 
-impl DataProvider<SegmenterCjAutoV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterCjAutoV1>, DataError> {
+impl DataProvider<SegmenterAdaboostCjV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterAdaboostCjV1>, DataError> {
         if req.id.marker_attributes.as_str() != CJ_ADABOOST_ID {
-            return Err(DataErrorKind::IdentifierNotFound.with_req(SegmenterCjAutoV1::INFO, req));
+            return Err(
+                DataErrorKind::IdentifierNotFound.with_req(SegmenterAdaboostCjV1::INFO, req)
+            );
         }
-        self.check_req::<SegmenterCjAutoV1>(req)?;
+        self.check_req::<SegmenterAdaboostCjV1>(req)?;
 
         let raw = serde_json::from_str::<RawCjAdaboostData>(CJ_MODEL_JSON).map_err(|e| {
             DataError::custom("Failed to parse built-in Chinese/Japanese AdaBoost model")
@@ -348,20 +353,23 @@ impl DataProvider<SegmenterCjAutoV1> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<SegmenterCjAutoV1> for SourceDataProvider {
+impl IterableDataProviderCached<SegmenterAdaboostCjV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         singleton_id(CJ_ADABOOST_ID)
     }
 }
 
-impl DataProvider<SegmenterJapaneseAutoV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterJapaneseAutoV1>, DataError> {
+impl DataProvider<SegmenterAdaboostJapaneseV1> for SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<SegmenterAdaboostJapaneseV1>, DataError> {
         if req.id.marker_attributes.as_str() != JAPANESE_ADABOOST_ID {
             return Err(
-                DataErrorKind::IdentifierNotFound.with_req(SegmenterJapaneseAutoV1::INFO, req)
+                DataErrorKind::IdentifierNotFound.with_req(SegmenterAdaboostJapaneseV1::INFO, req)
             );
         }
-        self.check_req::<SegmenterJapaneseAutoV1>(req)?;
+        self.check_req::<SegmenterAdaboostJapaneseV1>(req)?;
 
         let raw =
             serde_json::from_str::<RawUnigramAdaboostData>(JAPANESE_MODEL_JSON).map_err(|e| {
@@ -376,18 +384,20 @@ impl DataProvider<SegmenterJapaneseAutoV1> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<SegmenterJapaneseAutoV1> for SourceDataProvider {
+impl IterableDataProviderCached<SegmenterAdaboostJapaneseV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         singleton_id(JAPANESE_ADABOOST_ID)
     }
 }
 
-impl DataProvider<SegmenterThaiAutoV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterThaiAutoV1>, DataError> {
+impl DataProvider<SegmenterAdaboostSeaV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterAdaboostSeaV1>, DataError> {
         if req.id.marker_attributes.as_str() != THAI_ADABOOST_ID {
-            return Err(DataErrorKind::IdentifierNotFound.with_req(SegmenterThaiAutoV1::INFO, req));
+            return Err(
+                DataErrorKind::IdentifierNotFound.with_req(SegmenterAdaboostSeaV1::INFO, req)
+            );
         }
-        self.check_req::<SegmenterThaiAutoV1>(req)?;
+        self.check_req::<SegmenterAdaboostSeaV1>(req)?;
 
         let raw = serde_json::from_str::<RawUnigramAdaboostData>(THAI_MODEL_JSON).map_err(|e| {
             DataError::custom("Failed to parse built-in Thai AdaBoost model")
@@ -401,7 +411,7 @@ impl DataProvider<SegmenterThaiAutoV1> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<SegmenterThaiAutoV1> for SourceDataProvider {
+impl IterableDataProviderCached<SegmenterAdaboostSeaV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         singleton_id(THAI_ADABOOST_ID)
     }
@@ -549,16 +559,16 @@ mod tests {
 
     #[test]
     fn loads_built_in_chinese_model() {
-        let provider = SourceDataProvider::new_testing();
+        let provider = SourceDataProvider::new_custom();
         let ids = <SourceDataProvider as IterableDataProviderCached<
-            SegmenterChineseAutoV1,
+            SegmenterAdaboostChineseV1,
         >>::iter_ids_cached(&provider)
         .expect("the built-in Chinese model identifier should be available");
         assert_eq!(ids.len(), 1);
 
         let id = ids.into_iter().next().unwrap();
         assert_eq!(id.marker_attributes.as_str(), CHINESE_ADABOOST_ID);
-        let response: DataResponse<SegmenterChineseAutoV1> = provider
+        let response: DataResponse<SegmenterAdaboostChineseV1> = provider
             .load(DataRequest {
                 id: id.as_borrowed(),
                 ..Default::default()
@@ -569,16 +579,16 @@ mod tests {
 
     #[test]
     fn loads_built_in_thai_model() {
-        let provider = SourceDataProvider::new_testing();
+        let provider = SourceDataProvider::new_custom();
         let ids = <SourceDataProvider as IterableDataProviderCached<
-            SegmenterThaiAutoV1,
+            SegmenterAdaboostSeaV1,
         >>::iter_ids_cached(&provider)
         .expect("the built-in Thai model identifier should be available");
         assert_eq!(ids.len(), 1);
 
         let id = ids.into_iter().next().unwrap();
         assert_eq!(id.marker_attributes.as_str(), THAI_ADABOOST_ID);
-        let response: DataResponse<SegmenterThaiAutoV1> = provider
+        let response: DataResponse<SegmenterAdaboostSeaV1> = provider
             .load(DataRequest {
                 id: id.as_borrowed(),
                 ..Default::default()
@@ -589,9 +599,9 @@ mod tests {
 
     #[test]
     fn loads_built_in_cj_model() {
-        let provider = SourceDataProvider::new_testing();
+        let provider = SourceDataProvider::new_custom();
         let ids =
-            <SourceDataProvider as IterableDataProviderCached<SegmenterCjAutoV1>>::iter_ids_cached(
+            <SourceDataProvider as IterableDataProviderCached<SegmenterAdaboostCjV1>>::iter_ids_cached(
                 &provider,
             )
             .expect("the built-in Chinese/Japanese model identifier should be available");
@@ -599,7 +609,7 @@ mod tests {
 
         let id = ids.into_iter().next().unwrap();
         assert_eq!(id.marker_attributes.as_str(), CJ_ADABOOST_ID);
-        let response: DataResponse<SegmenterCjAutoV1> = provider
+        let response: DataResponse<SegmenterAdaboostCjV1> = provider
             .load(DataRequest {
                 id: id.as_borrowed(),
                 ..Default::default()
@@ -610,16 +620,16 @@ mod tests {
 
     #[test]
     fn loads_built_in_japanese_model() {
-        let provider = SourceDataProvider::new_testing();
+        let provider = SourceDataProvider::new_custom();
         let ids = <SourceDataProvider as IterableDataProviderCached<
-            SegmenterJapaneseAutoV1,
+            SegmenterAdaboostJapaneseV1,
         >>::iter_ids_cached(&provider)
         .expect("the built-in Japanese model identifier should be available");
         assert_eq!(ids.len(), 1);
 
         let id = ids.into_iter().next().unwrap();
         assert_eq!(id.marker_attributes.as_str(), JAPANESE_ADABOOST_ID);
-        let response: DataResponse<SegmenterJapaneseAutoV1> = provider
+        let response: DataResponse<SegmenterAdaboostJapaneseV1> = provider
             .load(DataRequest {
                 id: id.as_borrowed(),
                 ..Default::default()
@@ -630,10 +640,10 @@ mod tests {
 
     #[test]
     fn rejects_unknown_model_attributes() {
-        let provider = SourceDataProvider::new_testing();
+        let provider = SourceDataProvider::new_custom();
         let unknown = DataMarkerAttributes::from_str_or_panic("unknown");
 
-        let chinese = <SourceDataProvider as DataProvider<SegmenterChineseAutoV1>>::load(
+        let chinese = <SourceDataProvider as DataProvider<SegmenterAdaboostChineseV1>>::load(
             &provider,
             DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(unknown),
@@ -643,7 +653,7 @@ mod tests {
         .expect_err("unknown Chinese model attributes should fail");
         assert_eq!(chinese.kind, DataErrorKind::IdentifierNotFound);
 
-        let thai = <SourceDataProvider as DataProvider<SegmenterThaiAutoV1>>::load(
+        let thai = <SourceDataProvider as DataProvider<SegmenterAdaboostSeaV1>>::load(
             &provider,
             DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(unknown),
@@ -653,17 +663,18 @@ mod tests {
         .expect_err("unknown Thai model attributes should fail");
         assert_eq!(thai.kind, DataErrorKind::IdentifierNotFound);
 
-        let chinese_or_japanese = <SourceDataProvider as DataProvider<SegmenterCjAutoV1>>::load(
-            &provider,
-            DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes(unknown),
-                ..Default::default()
-            },
-        )
-        .expect_err("unknown Chinese/Japanese model attributes should fail");
+        let chinese_or_japanese =
+            <SourceDataProvider as DataProvider<SegmenterAdaboostCjV1>>::load(
+                &provider,
+                DataRequest {
+                    id: DataIdentifierBorrowed::for_marker_attributes(unknown),
+                    ..Default::default()
+                },
+            )
+            .expect_err("unknown Chinese/Japanese model attributes should fail");
         assert_eq!(chinese_or_japanese.kind, DataErrorKind::IdentifierNotFound);
 
-        let japanese = <SourceDataProvider as DataProvider<SegmenterJapaneseAutoV1>>::load(
+        let japanese = <SourceDataProvider as DataProvider<SegmenterAdaboostJapaneseV1>>::load(
             &provider,
             DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(unknown),

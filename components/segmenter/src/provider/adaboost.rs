@@ -246,8 +246,8 @@ icu_provider::data_struct!(
 
 icu_provider::data_marker!(
     /// Chinese `AdaBoost` segmentation model data.
-    SegmenterChineseAutoV1,
-    "segmenter/chinese/auto/v1",
+    SegmenterAdaboostChineseV1,
+    "segmenter/adaboost/chinese/v1",
     AdaboostData<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "segmenter"
@@ -260,8 +260,8 @@ icu_provider::data_struct!(
 
 icu_provider::data_marker!(
     /// Thai `AdaBoost` segmentation model data.
-    SegmenterThaiAutoV1,
-    "segmenter/thai/auto/v1",
+    SegmenterAdaboostSeaV1,
+    "segmenter/adaboost/sea/v1",
     ThaiAdaboostData<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "segmenter"
@@ -274,8 +274,8 @@ icu_provider::data_struct!(
 
 icu_provider::data_marker!(
     /// Combined Chinese and Japanese `AdaBoost` segmentation model data.
-    SegmenterCjAutoV1,
-    "segmenter/cj/auto/v1",
+    SegmenterAdaboostCjV1,
+    "segmenter/adaboost/cj/v1",
     CjAdaboostData<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "segmenter"
@@ -288,8 +288,8 @@ icu_provider::data_struct!(
 
 icu_provider::data_marker!(
     /// Japanese `AdaBoost` segmentation model data.
-    SegmenterJapaneseAutoV1,
-    "segmenter/japanese/auto/v1",
+    SegmenterAdaboostJapaneseV1,
+    "segmenter/adaboost/japanese/v1",
     JapaneseAdaboostData<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "segmenter"
@@ -312,7 +312,7 @@ mod tests {
 
     #[test]
     fn baked_chinese_model() {
-        let response: DataResponse<SegmenterChineseAutoV1> = Baked
+        let response: DataResponse<SegmenterAdaboostChineseV1> = Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(CHINESE_ADABOOST),
                 ..Default::default()
@@ -336,7 +336,7 @@ mod tests {
 
     #[test]
     fn baked_thai_model() {
-        let response: DataResponse<SegmenterThaiAutoV1> = Baked
+        let response: DataResponse<SegmenterAdaboostSeaV1> = Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(THAI_ADABOOST),
                 ..Default::default()
@@ -366,7 +366,7 @@ mod tests {
 
     #[test]
     fn baked_cj_model() {
-        let response: DataResponse<SegmenterCjAutoV1> = Baked
+        let response: DataResponse<SegmenterAdaboostCjV1> = Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(CJ_ADABOOST),
                 ..Default::default()
@@ -399,7 +399,7 @@ mod tests {
 
     #[test]
     fn baked_japanese_model() {
-        let response: DataResponse<SegmenterJapaneseAutoV1> = Baked
+        let response: DataResponse<SegmenterAdaboostJapaneseV1> = Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(JAPANESE_ADABOOST),
                 ..Default::default()
@@ -429,7 +429,7 @@ mod tests {
 
     #[test]
     fn baked_chinese_model_rejects_unknown_attributes() {
-        let error = <Baked as DataProvider<SegmenterChineseAutoV1>>::load(
+        let error = <Baked as DataProvider<SegmenterAdaboostChineseV1>>::load(
             &Baked,
             DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(UNKNOWN),
@@ -443,7 +443,7 @@ mod tests {
 
     #[test]
     fn baked_thai_model_rejects_unknown_attributes() {
-        let error = <Baked as DataProvider<SegmenterThaiAutoV1>>::load(
+        let error = <Baked as DataProvider<SegmenterAdaboostSeaV1>>::load(
             &Baked,
             DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(UNKNOWN),
@@ -457,7 +457,7 @@ mod tests {
 
     #[test]
     fn baked_cj_model_rejects_unknown_attributes() {
-        let error = <Baked as DataProvider<SegmenterCjAutoV1>>::load(
+        let error = <Baked as DataProvider<SegmenterAdaboostCjV1>>::load(
             &Baked,
             DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(UNKNOWN),
@@ -471,7 +471,7 @@ mod tests {
 
     #[test]
     fn baked_japanese_model_rejects_unknown_attributes() {
-        let error = <Baked as DataProvider<SegmenterJapaneseAutoV1>>::load(
+        let error = <Baked as DataProvider<SegmenterAdaboostJapaneseV1>>::load(
             &Baked,
             DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(UNKNOWN),
