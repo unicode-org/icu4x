@@ -12,7 +12,6 @@ use icu::locale::preferences::extensions::unicode::keywords::CurrencyType;
 use icu::locale::subtags::Subtag;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
-use tinystr::TinyAsciiStr;
 use zerovec::VarZeroCow;
 
 impl DataProvider<CurrencyDecimalSymbolsV1> for SourceDataProvider {
@@ -179,13 +178,12 @@ impl IterableDataProviderCached<CurrencyDecimalSymbolsV1> for SourceDataProvider
                     .map(|nu| Some(Subtag::try_from_str(nu.as_str()).unwrap()))
                     .chain([None])
                 {
-                    #[allow(const_item_mutation)]
                     ids.insert(
                         DataIdentifierBorrowed::for_marker_attributes_and_locale(
                             CurrencyDecimalSymbolsV1::make_attributes(
                                 nsname,
                                 currency,
-                                &mut TinyAsciiStr::EMPTY,
+                                &mut Default::default(),
                             ),
                             &locale,
                         )

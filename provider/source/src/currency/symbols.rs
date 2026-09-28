@@ -105,7 +105,6 @@ fn test_symbols() {
     use icu::experimental::dimension::currency::CurrencyType;
     use icu::locale::preferences::extensions::unicode::keywords::currency;
     use icu::locale::{DataLocale, data_locale};
-    use tinystr::TinyAsciiStr;
 
     const USD: CurrencyType = currency!("USD");
     const EGP: CurrencyType = currency!("EGP");
@@ -114,13 +113,12 @@ fn test_symbols() {
 
     let provider = SourceDataProvider::new_testing();
 
-    #[allow(const_item_mutation)]
     let load = |locale: DataLocale, currency: CurrencyType, width: CurrencySymbolWidth| {
         DataProvider::<CurrencySymbolsV1>::load(
             &provider,
             DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    CurrencySymbolsV1::make_attributes(currency, width, &mut TinyAsciiStr::EMPTY),
+                    CurrencySymbolsV1::make_attributes(currency, width, &mut Default::default()),
                     &locale,
                 ),
                 ..Default::default()

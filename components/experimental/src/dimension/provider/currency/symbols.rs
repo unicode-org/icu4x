@@ -166,13 +166,12 @@ fn test_currency_attributes_roundtrip() {
 
     let currency = currency!("PTE");
     let arab = subtag!("Arab");
-    let mut buf = TinyAsciiStr::EMPTY;
 
     assert_eq!(
         CurrencyDecimalSymbolsV1::parse_attributes(CurrencyDecimalSymbolsV1::make_attributes(
             Some(arab),
             currency,
-            &mut buf
+            &mut Default::default()
         ))
         .unwrap(),
         (Some(arab), currency)
@@ -180,7 +179,9 @@ fn test_currency_attributes_roundtrip() {
 
     assert_eq!(
         CurrencyDecimalSymbolsV1::parse_attributes(CurrencyDecimalSymbolsV1::make_attributes(
-            None, currency, &mut buf
+            None,
+            currency,
+            &mut Default::default()
         ))
         .unwrap(),
         (None, currency)
