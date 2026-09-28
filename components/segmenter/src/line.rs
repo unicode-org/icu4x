@@ -1877,4 +1877,17 @@ mod tests {
         let breaks: Vec<usize> = segmenter.segment_str("").collect();
         assert_eq!(breaks, [0]);
     }
+
+    #[test]
+    fn thai_dictionary_terminal_break() {
+        for segmenter in [LineSegmenter::new_dictionary(Default::default()), {
+            let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
+            s.load_dictionary();
+            s
+        }] {
+            // The last dictionary match reaches the end of the text; the
+            // dictionary breakpoints must still be emitted.
+            check_line("อินฟลูเอนเซอร์", &["อิน", "ฟลูเ", "อนเ", "ซอ", "ร์"], segmenter);
+        }
+    }
 }

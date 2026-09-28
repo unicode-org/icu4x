@@ -1056,14 +1056,21 @@ fn cj_dictionary_test_neo() {
 }
 
 #[test]
-fn thai_dictionary_terminal_break_neo() {
-    let mut segmenter =
-        WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
-    segmenter.load_dictionary();
-
-    // The last dictionary match reaches the end of the text; the breakpoint at
-    // the end of the text must still be emitted.
-    check_word("อินฟลูเอนเซอร์", &["อิน", "ฟลูเ", "อนเ", "ซอ", "ร์"], segmenter);
+fn thai_dictionary_terminal_break() {
+    for segmenter in [
+        WordSegmenter::new_dictionary(WordBreakInvariantOptions::default()),
+        {
+            let mut s = WordSegmenter::new_neo_for_non_complex_scripts(
+                WordBreakInvariantOptions::default(),
+            );
+            s.load_dictionary();
+            s
+        },
+    ] {
+        // The last dictionary match reaches the end of the text; the breakpoint
+        // at the end of the text must still be emitted.
+        check_word("อินฟลูเอนเซอร์", &["อิน", "ฟลูเ", "อนเ", "ซอ", "ร์"], segmenter);
+    }
 }
 
 #[test]
