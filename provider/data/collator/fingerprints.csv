@@ -183,7 +183,7 @@ collation/reordering/v1, ur, -> ar
 collation/root/v1, <singleton>, 134426B, 134309B, 8a38b84c62c280a3
 collation/special/primaries/v1, <singleton>, 96B, 42B, 4926c05315df8486
 collation/tailoring/v1, <lookup>, 608B, 102 identifiers
-collation/tailoring/v1, <total>, 920210B, 908458B, 93 unique payloads
+collation/tailoring/v1, <total>, 920522B, 908769B, 93 unique payloads
 collation/tailoring/v1, af, 1004B, 877B, 8e3ca7ba0c0efe4b
 collation/tailoring/v1, ar, 8112B, 7987B, f87603c60cb612d4
 collation/tailoring/v1, ar/compat, 1780B, 1652B, 9bab07c54d28766b
@@ -193,7 +193,7 @@ collation/tailoring/v1, be, 1256B, 1129B, f24de586782c187
 collation/tailoring/v1, blo, 1514B, 1388B, ab4d1eb24e450711
 collation/tailoring/v1, bn, 1036B, 909B, 7eee2648e1f06612
 collation/tailoring/v1, bn/trad, 10812B, 10688B, 4e1b1fb7a3214b6a
-collation/tailoring/v1, br, 856B, 729B, 28a801cbc7fd216
+collation/tailoring/v1, br, 1168B, 1040B, 55f9b93713c93e67
 collation/tailoring/v1, bs, 1466B, 1340B, 9be5f72ebc7e523b
 collation/tailoring/v1, bs-Cyrl, 944B, 817B, 359888a615a8c9ff
 collation/tailoring/v1, ceb, 836B, 709B, d55c379ed3f621ce
@@ -278,7 +278,7 @@ collation/tailoring/v1, und-Hani/unihan, 3880B, 3754B, 6464e85d743fbcec
 collation/tailoring/v1, und-Hani/zhuyin, 129006B, 128882B, 18644b02ec14d0a4
 collation/tailoring/v1, und-Hans, -> und-Hani/pinyin
 collation/tailoring/v1, und-Hant, -> und-Hani/stroke
-collation/tailoring/v1, und/emoji, 31126B, 31000B, 1284bb54d9cedfcb
+collation/tailoring/v1, und/emoji, 31126B, 31000B, 444f94ca2f4d6526
 collation/tailoring/v1, und/eor, 6064B, 5936B, 1c5d50b247390a29
 collation/tailoring/v1, ur, 2128B, 2002B, 7e8f14f6779fcca6
 collation/tailoring/v1, uz, 1000B, 874B, 706867e9d8297fb0
