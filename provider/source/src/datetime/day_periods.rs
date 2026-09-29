@@ -35,23 +35,19 @@ pub(crate) fn compute_day_periods<'a>(
     let mut entries = std::collections::BTreeMap::new();
 
     for (period, rule) in rules {
-        if rule.at.is_some() {
-            assert!(
-                period == "noon" || period == "midnight",
-                "Found 'at' rule for non-noon/midnight period: {} in locale {}",
-                period,
-                locale
-            );
+        if matches!(period.as_str(), "am" | "pm" | "noon" | "midnight") {
+            // Non-flexible day period
+            continue;
         }
         if let Some(name) = names.get(period) {
-            if let (Some(from), Some(before)) = (&rule.from, &rule.before) {
+            if let (Some(from), Some(before), None) = (&rule.from, &rule.before, &rule.at) {
                 let start = parse_hour(from);
                 let end = parse_hour(before);
                 entries.insert((start, end), &**name);
             } else {
                 log::warn!("Did not have from/before values for rule {period} in locale {locale}")
             }
-        } else if period != "morning" && period != "afternoon" {
+        } else {
             log::warn!("missing name for range {period} in locale {locale}");
         }
     }
