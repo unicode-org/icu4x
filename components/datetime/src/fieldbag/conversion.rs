@@ -45,7 +45,6 @@ fn fieldbag_to_length(bag: &DateTimeFieldBag) -> Option<options::Length> {
     }
 }
 
-#[allow(clippy::todo)] // TODO: Finish implementing this
 fn fieldbag_to_date_fields(bag: &DateTimeFieldBag) -> Option<builder::DateFields> {
     // Get all of the date fields.
     let DateTimeFieldBag {
