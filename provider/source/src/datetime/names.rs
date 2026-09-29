@@ -593,10 +593,10 @@ pub(crate) fn apply_numeric_overrides(
             }
             if field.length == FieldLength::Two {
                 if symbol_to_replace.is_none() {
-                    eprintln!("WARN: Skipping non-targeted numeric override on a two-digit field {:?} because it implies fixed width.", field.symbol);
+                    log::warn!("Skipping non-targeted numeric override on a two-digit field {:?} because it implies fixed width.", field.symbol);
                     return;
                 } else {
-                    eprintln!("WARN: Applying targeted numeric override to a two-digit field {:?}. This may not respect fixed width!", field.symbol);
+                    log::warn!("Applying targeted numeric override to a two-digit field {:?}. This may not respect fixed width!", field.symbol);
                 }
             }
             // if we need to replace a specific symbol, filter
