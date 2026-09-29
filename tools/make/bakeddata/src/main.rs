@@ -96,8 +96,7 @@ fn main() {
             .map(DataLocaleFamily::with_descendants),
         DeduplicationStrategy::Maximal.into(),
         LocaleFallbacker::try_new_unstable(&source).unwrap(),
-    )
-    .with_recommended_segmenter_models();
+    );
 
     let mut options = baked_exporter::Options::default();
     options.overwrite = true;
