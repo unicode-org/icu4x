@@ -170,6 +170,39 @@ impl DateFields {
             DateFields::Y => true,
         }
     }
+
+    #[cfg(feature = "unstable")]
+    pub(crate) fn has_year(self) -> bool {
+        use DateFields::*;
+        match self {
+            YMD | YMDE | YM | Y => true,
+            D | MD | DE | MDE | E | M => false,
+        }
+    }
+    #[cfg(feature = "unstable")]
+    pub(crate) fn has_month(self) -> bool {
+        use DateFields::*;
+        match self {
+            MD | YMD | MDE | YMDE | M | YM => true,
+            D | DE | E | Y => false,
+        }
+    }
+    #[cfg(feature = "unstable")]
+    pub(crate) fn has_day(self) -> bool {
+        use DateFields::*;
+        match self {
+            D | MD | YMD | DE | MDE | YMDE => true,
+            E | M | YM | Y => false,
+        }
+    }
+    #[cfg(feature = "unstable")]
+    pub(crate) fn has_weekday(self) -> bool {
+        use DateFields::*;
+        match self {
+            DE | MDE | YMDE | E => true,
+            D | MD | YMD | M | YM | Y => false,
+        }
+    }
 }
 
 /// An enumeration over all possible time zone styles.

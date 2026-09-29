@@ -4,6 +4,7 @@
 
 //! Types for expressing field-by-field models for datetime formats.
 
+mod conversion;
 pub mod field;
 mod skeleton;
 
@@ -11,6 +12,7 @@ use core::{fmt, str::FromStr};
 
 pub use skeleton::DateTimeFieldBagParseError;
 
+use crate::fieldsets;
 use field::*;
 use writeable::Writeable;
 
@@ -24,7 +26,21 @@ use writeable::Writeable;
 ///
 /// # Examples
 ///
-/// TODO: Add an example when more fully implemented
+/// Format a year and era based on a skeleton string:
+///
+/// ```
+/// use icu::datetime::fieldbag::DateTimeFieldBag;
+/// use icu::datetime::DateTimeFormatter;
+/// use icu::locale::locale;
+/// use writeable::assert_writeable_eq;
+///
+/// let formatter = DateTimeFormatter::try_new(locale!("uk").into(), DateTimeFieldBag::from_skeleton("Gy").to_composite_field_set()).unwrap();
+/// let input = icu::time::ZonedDateTime::try_strict_from_str("2026-09-23T12:03-0700[America/Los_Angeles]", icu::calendar::Iso, icu::time::zone::IanaParserBorrowed::new()).unwrap();
+/// assert_writeable_eq!(
+///     formatter.format(&input),
+///     "2026 н. е."
+/// );
+/// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
 #[non_exhaustive]
 pub struct DateTimeFieldBag {
@@ -159,6 +175,144 @@ impl DateTimeFieldBag {
     pub fn from_skeleton(skeleton: &str) -> Self {
         // drop the error
         skeleton::uts35_to_fieldbag(skeleton).0
+    }
+
+    /// TODO: Docs
+    ///
+    /// This function offers an infallible conversion to [`CompositeFieldSet`]. For smaller
+    /// data size and input types, use [`DateTimeFieldBag::to_field_set_builder`].
+    ///
+    /// # Examples
+    ///
+    /// End-to-end from a [`DateTimeFieldBag`] to a formatted datetime string:
+    ///
+    /// ```
+    /// use icu::datetime::fieldbag::DateTimeFieldBag;
+    /// use icu::datetime::fieldbag::field::{
+    ///     Era,
+    ///     Year,
+    ///     Month,
+    /// };
+    /// use icu::datetime::fieldsets;
+    /// use icu::datetime::options;
+    /// use icu::datetime::DateTimeFormatter;
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// // 1. Make the DateTimeFieldBag
+    /// let mut bag = DateTimeFieldBag::default();
+    /// bag.era = Some(Era::Short);
+    /// bag.year = Some(Year::Numeric);
+    /// bag.month = Some(Month::Short);
+    /// assert_writeable_eq!(bag, "GyMMM");
+    ///
+    /// // 2. Make the field set
+    /// let fieldset = bag.to_composite_field_set();
+    /// assert_eq!(fieldset, fieldsets::enums::CompositeFieldSet::CalendarPeriod(
+    ///     fieldsets::enums::CalendarPeriodFieldSet::YM(
+    ///         fieldsets::YM::medium().with_year_style(options::YearStyle::WithEra)
+    ///     )
+    /// ));
+    ///
+    /// // 3. Make the formatter
+    /// let formatter = DateTimeFormatter::try_new(locale!("fr").into(), fieldset).unwrap();
+    /// let input = icu::time::ZonedDateTime::try_strict_from_str("2026-09-23T12:03-0700[America/Los_Angeles]", icu::calendar::Iso, icu::time::zone::IanaParserBorrowed::new()).unwrap();
+    /// assert_writeable_eq!(
+    ///     formatter.format(&input),
+    ///     "sept. 2026 ap. J.-C."
+    /// );
+    /// ```
+    ///
+    /// [`CompositeFieldSet`]: fieldsets::enums::CompositeFieldSet
+    // TODO: Add more tests for this fn to make sure the debug assertion isn't hit
+    // TODO: Should this take self (since it is Copy) or &self (since it is big)?
+    pub fn to_composite_field_set(self) -> fieldsets::enums::CompositeFieldSet {
+        conversion::fieldbag_to_fieldset(&self)
+            .build_composite()
+            .unwrap_or_else(|err| {
+                debug_assert!(
+                    false,
+                    "field bag should be convertible to CompositeFieldSet: {self:?} {err:?}"
+                );
+                // this is an error case. GIGO with YMD format.
+                fieldsets::enums::CompositeFieldSet::Date(fieldsets::enums::DateFieldSet::YMD(
+                    fieldsets::YMD::medium(),
+                ))
+            })
+    }
+
+    /// TODO: Docs
+    ///
+    /// For an infallible conversion to a composite field set, use [`DateTimeFieldBag::to_composite_field_set`].
+    /// Use this function to select a different field set category for smaller data size and input types.
+    ///
+    /// # Examples
+    ///
+    /// End-to-end from a [`DateTimeFieldBag`] to a formatted datetime string:
+    ///
+    /// ```
+    /// use icu::datetime::fieldbag::DateTimeFieldBag;
+    /// use icu::datetime::fieldbag::field::{
+    ///     Era,
+    ///     Year,
+    ///     Month,
+    /// };
+    /// use icu::datetime::fieldsets;
+    /// use icu::datetime::options;
+    /// use icu::datetime::DateTimeFormatter;
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// // 1. Make the DateTimeFieldBag
+    /// let mut bag = DateTimeFieldBag::default();
+    /// bag.era = Some(Era::Short);
+    /// bag.year = Some(Year::Numeric);
+    /// bag.month = Some(Month::Short);
+    /// assert_writeable_eq!(bag, "GyMMM");
+    ///
+    /// // 2. Make the field set
+    /// let builder = bag.to_field_set_builder();
+    /// let fieldset = builder.build_calendar_period().unwrap();
+    /// assert_eq!(fieldset, fieldsets::enums::CalendarPeriodFieldSet::YM(
+    ///     fieldsets::YM::medium().with_year_style(options::YearStyle::WithEra)
+    /// ));
+    ///
+    /// // 3. Make the formatter
+    /// let formatter = DateTimeFormatter::try_new(locale!("fr").into(), fieldset).unwrap();
+    /// let input = icu::calendar::Date::try_new_iso(2026, 9, 23).unwrap();
+    /// assert_writeable_eq!(
+    ///     formatter.format(&input),
+    ///     "sept. 2026 ap. J.-C."
+    /// );
+    /// ```
+    // TODO: Should this take self (since it is Copy) or &self (since it is big)?
+    pub fn to_field_set_builder(self) -> fieldsets::builder::FieldSetBuilder {
+        conversion::fieldbag_to_fieldset(&self)
+    }
+
+    /// TODO: Docs
+    ///
+    /// # Examples
+    ///
+    /// Get a field bag from a formatter:
+    ///
+    /// ```
+    /// use icu::datetime::fieldbag::DateTimeFieldBag;
+    /// use icu::datetime::DateTimeFormatter;
+    /// use icu::datetime::fieldsets;
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let formatter = DateTimeFormatter::try_new(locale!("it").into(), fieldsets::YM::medium()).unwrap();
+    /// let bag = DateTimeFieldBag::from_field_set_builder(&formatter.to_field_set_builder());
+    ///
+    /// assert_writeable_eq!(
+    ///     bag,
+    ///     "yMMM"
+    /// );
+    /// ```
+    pub fn from_field_set_builder(builder: &fieldsets::builder::FieldSetBuilder) -> Self {
+        conversion::fieldset_to_fieldbag(builder)
     }
 }
 
