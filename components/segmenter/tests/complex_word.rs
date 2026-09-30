@@ -43,6 +43,37 @@ fn word_break_th() {
     }
 }
 
+fn check_word_file(file: &'static str, segmenter: WordSegmenterBorrowed<'_>) {
+    for line in file.lines() {
+        let line = line.split('#').next().unwrap().trim();
+        if line.is_empty() {
+            continue;
+        }
+        let expected = line.split('|').collect::<Vec<_>>();
+        let s = expected.concat();
+        check_word(&s, &expected, segmenter);
+    }
+}
+
+// The expected segmentations in the test data file match ICU4C (ICU 78).
+// The file is intended to also live in the ICU repository, where the
+// dictionary data lives, and to be tested against ICU4C there.
+#[test]
+fn word_break_th_dictionary() {
+    for segmenter in [
+        WordSegmenter::new_dictionary(WordBreakInvariantOptions::default()),
+        {
+            let mut s = WordSegmenter::new_neo_for_non_complex_scripts(
+                WordBreakInvariantOptions::default(),
+            );
+            s.load_dictionary();
+            s
+        },
+    ] {
+        check_word_file(include_str!("testdata/WordBreakThaiTest.txt"), segmenter);
+    }
+}
+
 #[test]
 fn word_break_my() {
     for segmenter in [
