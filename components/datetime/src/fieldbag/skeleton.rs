@@ -82,14 +82,12 @@ pub(crate) fn uts35_to_fieldbag(
     (bag, error)
 }
 
-#[allow(clippy::todo)] // TODO: Resolve the TODOs
 pub(crate) fn fieldbag_to_uts35<W: ?Sized + fmt::Write>(
     fieldbag: &DateTimeFieldBag,
     sink: &mut W,
 ) -> fmt::Result {
     use super::field::*;
 
-    #[allow(unused_variables)] // TODO: Handle all fields
     let DateTimeFieldBag {
         era,
         year,
@@ -123,12 +121,56 @@ pub(crate) fn fieldbag_to_uts35<W: ?Sized + fmt::Write>(
         Some(Month::Narrow) => sink.write_str("MMMMM")?,
         None => (),
     }
+    match day {
+        Some(Day::Numeric) => sink.write_char('d')?,
+        Some(Day::TwoDigit) => sink.write_str("dd")?,
+        None => (),
+    }
+    match weekday {
+        Some(Weekday::Short) => sink.write_char('E')?,
+        Some(Weekday::Long) => sink.write_str("EEEE")?,
+        Some(Weekday::Narrow) => sink.write_str("EEEEE")?,
+        None => (),
+    }
+    match day_period {
+        Some(DayPeriod::FlexibleShort) => sink.write_char('B')?,
+        Some(DayPeriod::FlexibleLong) => sink.write_str("BBBB")?,
+        Some(DayPeriod::FlexibleNarrow) => sink.write_str("BBBBB")?,
+        None => (),
+    }
     match (hour, hour_kind) {
         (Some(Hour::Numeric), None) => sink.write_char('j')?,
         (Some(Hour::TwoDigit), None) => sink.write_str("jj")?,
         (Some(Hour::Numeric), Some(HourKind::Clock12)) => sink.write_char('h')?,
-        (Some(_), Some(_)) => todo!(),
+        (Some(Hour::TwoDigit), Some(HourKind::Clock12)) => sink.write_str("hh")?,
+        (Some(Hour::Numeric), Some(HourKind::Clock24)) => sink.write_char('H')?,
+        (Some(Hour::TwoDigit), Some(HourKind::Clock24)) => sink.write_str("HH")?,
         (None, _) => (),
+    }
+    match minute {
+        Some(Minute::Numeric) => sink.write_char('m')?,
+        Some(Minute::TwoDigit) => sink.write_str("mm")?,
+        None => (),
+    }
+    match second {
+        Some(Second::Numeric) => sink.write_char('s')?,
+        Some(Second::TwoDigit) => sink.write_str("ss")?,
+        None => (),
+    }
+    match fractional_second_digits {
+        Some(FractionalSecondDigits::F1) => sink.write_char('S')?,
+        Some(FractionalSecondDigits::F2) => sink.write_str("SS")?,
+        Some(FractionalSecondDigits::F3) => sink.write_str("SSS")?,
+        None => (),
+    }
+    match time_zone_name {
+        Some(TimeZoneName::ShortSpecific) => sink.write_char('z')?,
+        Some(TimeZoneName::LongSpecific) => sink.write_str("zzzz")?,
+        Some(TimeZoneName::ShortOffset) => sink.write_char('O')?,
+        Some(TimeZoneName::LongOffset) => sink.write_str("OOOO")?,
+        Some(TimeZoneName::ShortGeneric) => sink.write_char('v')?,
+        Some(TimeZoneName::LongGeneric) => sink.write_str("vvvv")?,
+        None => (),
     }
     Ok(())
 }
