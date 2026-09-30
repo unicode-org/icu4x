@@ -19,16 +19,100 @@ use crate::provider::pattern::reference::tokenizer::Uts35DateTimePatternTokenize
 #[ignore_extra_doc_attributes]
 pub enum DateTimeFieldBagParseError {
     /// A field category was specified more than once in the skeleton.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldbag::DateTimeFieldBag;
+    /// use icu::datetime::fieldbag::DateTimeFieldBagParseError;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// assert_eq!(
+    ///     DateTimeFieldBag::try_from_skeleton("yyMMy"),
+    ///     Err(DateTimeFieldBagParseError::DuplicateField)
+    /// );
+    /// assert_writeable_eq!(DateTimeFieldBag::from_skeleton("yyMMy"), "yyMM");
+    /// ```
     DuplicateField,
     /// The skeleton contained literal characters (such as punctuation, whitespace, or quoted text).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldbag::DateTimeFieldBag;
+    /// use icu::datetime::fieldbag::DateTimeFieldBagParseError;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// assert_eq!(
+    ///     DateTimeFieldBag::try_from_skeleton("y-MM-dd"),
+    ///     Err(DateTimeFieldBagParseError::UnexpectedLiteral)
+    /// );
+    /// assert_writeable_eq!(DateTimeFieldBag::from_skeleton("y-MM-dd"), "yMMdd");
+    /// ```
     UnexpectedLiteral,
     /// The skeleton contained a syntax error, such as an unclosed quoted literal.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldbag::DateTimeFieldBag;
+    /// use icu::datetime::fieldbag::DateTimeFieldBagParseError;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// assert_eq!(
+    ///     DateTimeFieldBag::try_from_skeleton("GGGGy'foo"),
+    ///     Err(DateTimeFieldBagParseError::SyntaxError)
+    /// );
+    /// assert_writeable_eq!(DateTimeFieldBag::from_skeleton("GGGGy'foo"), "GGGGy");
+    /// ```
     SyntaxError,
     /// A field symbol had a non-canonical or unsupported repetition width (such as `GGG`, `yyyy`, or `MMMMMMM`).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldbag::DateTimeFieldBag;
+    /// use icu::datetime::fieldbag::DateTimeFieldBagParseError;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// assert_eq!(
+    ///     DateTimeFieldBag::try_from_skeleton("yyyyMMdd"),
+    ///     Err(DateTimeFieldBagParseError::InvalidFieldLength)
+    /// );
+    /// assert_writeable_eq!(DateTimeFieldBag::from_skeleton("yyyyMMdd"), "yMMdd");
+    /// ```
     InvalidFieldLength,
     /// A non-canonical field symbol was used instead of its canonical skeleton equivalent (such as `L` instead of `M`).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldbag::DateTimeFieldBag;
+    /// use icu::datetime::fieldbag::DateTimeFieldBagParseError;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// assert_eq!(
+    ///     DateTimeFieldBag::try_from_skeleton("yLLLL"),
+    ///     Err(DateTimeFieldBagParseError::NonCanonicalField)
+    /// );
+    /// assert_writeable_eq!(DateTimeFieldBag::from_skeleton("yLLLL"), "yMMMM");
+    /// ```
     NonCanonicalField,
     /// An unknown or unsupported field symbol was encountered.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldbag::DateTimeFieldBag;
+    /// use icu::datetime::fieldbag::DateTimeFieldBagParseError;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// assert_eq!(
+    ///     DateTimeFieldBag::try_from_skeleton("yQ"),
+    ///     Err(DateTimeFieldBagParseError::UnknownField)
+    /// );
+    /// assert_writeable_eq!(DateTimeFieldBag::from_skeleton("yQ"), "y");
+    /// ```
     UnknownField,
 }
 
@@ -54,217 +138,276 @@ pub(crate) fn uts35_to_fieldbag(
     let mut bag = DateTimeFieldBag::default();
     let mut error = None;
     while let Some(token) = tokenizer.step() {
-        match token {
-            Token::Symbol(ch, len) => {
-                let ch = match ch {
-                    'Y' | 'u' | 'U' | 'r' => {
-                        error.get_or_insert(NonCanonicalField);
-                        'y'
-                    }
-                    'L' => {
-                        error.get_or_insert(NonCanonicalField);
-                        'M'
-                    }
-                    'c' | 'e' => {
-                        error.get_or_insert(NonCanonicalField);
-                        'E'
-                    }
-                    'C' | 'J' => {
-                        error.get_or_insert(NonCanonicalField);
-                        'j'
-                    }
-                    'K' => {
-                        error.get_or_insert(NonCanonicalField);
-                        'h'
-                    }
-                    'k' => {
-                        error.get_or_insert(NonCanonicalField);
-                        'H'
-                    }
-                    'Z' | 'x' | 'X' => {
-                        error.get_or_insert(NonCanonicalField);
-                        'O'
-                    }
-                    'V' => {
-                        error.get_or_insert(NonCanonicalField);
-                        'v'
-                    }
-                    _ => ch,
-                };
-                match (ch, len) {
-                    ('G', 1) => put_field!(&mut error, &mut bag.era, Era::Short),
-                    ('G', 4) => put_field!(&mut error, &mut bag.era, Era::Long),
-                    ('G', 5) => put_field!(&mut error, &mut bag.era, Era::Narrow),
-                    ('G', _) => {
-                        put_field!(&mut error, &mut bag.era, Era::Short);
-                        error.get_or_insert(InvalidFieldLength);
-                    }
-                    ('y', 1) => put_field!(&mut error, &mut bag.year, Year::Numeric),
-                    ('y', 2) => put_field!(&mut error, &mut bag.year, Year::TwoDigit),
-                    ('y', _) => {
-                        put_field!(&mut error, &mut bag.year, Year::Numeric);
-                        error.get_or_insert(InvalidFieldLength);
-                    }
-                    ('M', 1) => put_field!(&mut error, &mut bag.month, Month::Numeric),
-                    ('M', 2) => put_field!(&mut error, &mut bag.month, Month::TwoDigit),
-                    ('M', 3) => put_field!(&mut error, &mut bag.month, Month::Short),
-                    ('M', 4) => put_field!(&mut error, &mut bag.month, Month::Long),
-                    ('M', 5) => put_field!(&mut error, &mut bag.month, Month::Narrow),
-                    ('M', _) => {
-                        put_field!(&mut error, &mut bag.month, Month::Numeric);
-                        error.get_or_insert(InvalidFieldLength);
-                    }
-                    ('d', 1) => put_field!(&mut error, &mut bag.day, Day::Numeric),
-                    ('d', 2) => put_field!(&mut error, &mut bag.day, Day::TwoDigit),
-                    ('d', _) => {
-                        put_field!(&mut error, &mut bag.day, Day::Numeric);
-                        error.get_or_insert(InvalidFieldLength);
-                    }
-                    ('E', 1) => put_field!(&mut error, &mut bag.weekday, Weekday::Short),
-                    ('E', 4) => put_field!(&mut error, &mut bag.weekday, Weekday::Long),
-                    ('E', 5) => put_field!(&mut error, &mut bag.weekday, Weekday::Narrow),
-                    ('E', _) => {
-                        put_field!(&mut error, &mut bag.weekday, Weekday::Short);
-                        error.get_or_insert(InvalidFieldLength);
-                    }
-                    ('B', 1) => {
-                        put_field!(&mut error, &mut bag.day_period, DayPeriod::FlexibleShort)
-                    }
-                    ('B', 4) => {
-                        put_field!(&mut error, &mut bag.day_period, DayPeriod::FlexibleLong)
-                    }
-                    ('B', 5) => {
-                        put_field!(&mut error, &mut bag.day_period, DayPeriod::FlexibleNarrow)
-                    }
-                    ('B', _) => {
-                        put_field!(&mut error, &mut bag.day_period, DayPeriod::FlexibleShort);
-                        error.get_or_insert(InvalidFieldLength);
-                    }
-                    ('j', 1) => put_field!(&mut error, &mut bag.hour, Hour::Numeric),
-                    ('j', 2) => put_field!(&mut error, &mut bag.hour, Hour::TwoDigit),
-                    ('j', _) => {
-                        put_field!(&mut error, &mut bag.hour, Hour::Numeric);
-                        error.get_or_insert(InvalidFieldLength);
-                    }
-                    ('h', 1) => {
-                        put_field!(&mut error, &mut bag.hour, Hour::Numeric);
-                        put_field!(&mut error, &mut bag.hour_kind, HourKind::Clock12);
-                    }
-                    ('h', 2) => {
-                        put_field!(&mut error, &mut bag.hour, Hour::TwoDigit);
-                        put_field!(&mut error, &mut bag.hour_kind, HourKind::Clock12);
-                    }
-                    ('h', _) => {
-                        put_field!(&mut error, &mut bag.hour, Hour::Numeric);
-                        put_field!(&mut error, &mut bag.hour_kind, HourKind::Clock12);
-                        error.get_or_insert(InvalidFieldLength);
-                    }
-                    ('H', 1) => {
-                        put_field!(&mut error, &mut bag.hour, Hour::Numeric);
-                        put_field!(&mut error, &mut bag.hour_kind, HourKind::Clock24);
-                    }
-                    ('H', 2) => {
-                        put_field!(&mut error, &mut bag.hour, Hour::TwoDigit);
-                        put_field!(&mut error, &mut bag.hour_kind, HourKind::Clock24);
-                    }
-                    ('H', _) => {
-                        put_field!(&mut error, &mut bag.hour, Hour::Numeric);
-                        put_field!(&mut error, &mut bag.hour_kind, HourKind::Clock24);
-                        error.get_or_insert(InvalidFieldLength);
-                    }
-                    ('m', 1) => put_field!(&mut error, &mut bag.minute, Minute::Numeric),
-                    ('m', 2) => put_field!(&mut error, &mut bag.minute, Minute::TwoDigit),
-                    ('m', _) => {
-                        put_field!(&mut error, &mut bag.minute, Minute::Numeric);
-                        error.get_or_insert(InvalidFieldLength);
-                    }
-                    ('s', 1) => put_field!(&mut error, &mut bag.second, Second::Numeric),
-                    ('s', 2) => put_field!(&mut error, &mut bag.second, Second::TwoDigit),
-                    ('s', _) => {
-                        put_field!(&mut error, &mut bag.second, Second::Numeric);
-                        error.get_or_insert(InvalidFieldLength);
-                    }
-                    ('S', 1) => put_field!(
-                        &mut error,
-                        &mut bag.fractional_second_digits,
-                        FractionalSecondDigits::F1
-                    ),
-                    ('S', 2) => put_field!(
-                        &mut error,
-                        &mut bag.fractional_second_digits,
-                        FractionalSecondDigits::F2
-                    ),
-                    ('S', 3) => put_field!(
-                        &mut error,
-                        &mut bag.fractional_second_digits,
-                        FractionalSecondDigits::F3
-                    ),
-                    ('S', _) => {
-                        put_field!(
-                            &mut error,
-                            &mut bag.fractional_second_digits,
-                            FractionalSecondDigits::F1
-                        );
-                        error.get_or_insert(InvalidFieldLength);
-                    }
-                    ('z', 1) => put_field!(
-                        &mut error,
-                        &mut bag.time_zone_name,
-                        TimeZoneName::ShortSpecific
-                    ),
-                    ('z', 4) => put_field!(
-                        &mut error,
-                        &mut bag.time_zone_name,
-                        TimeZoneName::LongSpecific
-                    ),
-                    ('z', _) => {
-                        put_field!(
-                            &mut error,
-                            &mut bag.time_zone_name,
-                            TimeZoneName::ShortSpecific
-                        );
-                        error.get_or_insert(InvalidFieldLength);
-                    }
-                    ('O', 1) => put_field!(
-                        &mut error,
-                        &mut bag.time_zone_name,
-                        TimeZoneName::ShortOffset
-                    ),
-                    ('O', 4) => put_field!(
-                        &mut error,
-                        &mut bag.time_zone_name,
-                        TimeZoneName::LongOffset
-                    ),
-                    ('O', _) => {
-                        put_field!(
-                            &mut error,
-                            &mut bag.time_zone_name,
-                            TimeZoneName::ShortOffset
-                        );
-                        error.get_or_insert(InvalidFieldLength);
-                    }
-                    ('v', 1) => put_field!(
-                        &mut error,
-                        &mut bag.time_zone_name,
-                        TimeZoneName::ShortGeneric
-                    ),
-                    ('v', 4) => put_field!(
-                        &mut error,
-                        &mut bag.time_zone_name,
-                        TimeZoneName::LongGeneric
-                    ),
-                    ('v', _) => {
-                        put_field!(
-                            &mut error,
-                            &mut bag.time_zone_name,
-                            TimeZoneName::ShortGeneric
-                        );
-                        error.get_or_insert(InvalidFieldLength);
-                    }
-                    (_, _) => {
-                        error.get_or_insert(UnknownField);
-                    }
+        let mut token = token;
+        if let Token::Symbol(ch, _) = &mut token {
+            *ch = match *ch {
+                'Y' | 'u' | 'U' | 'r' => {
+                    error.get_or_insert(NonCanonicalField);
+                    'y'
                 }
+                'L' => {
+                    error.get_or_insert(NonCanonicalField);
+                    'M'
+                }
+                'c' | 'e' => {
+                    error.get_or_insert(NonCanonicalField);
+                    'E'
+                }
+                'C' | 'J' => {
+                    error.get_or_insert(NonCanonicalField);
+                    'j'
+                }
+                'K' => {
+                    error.get_or_insert(NonCanonicalField);
+                    'h'
+                }
+                'k' => {
+                    error.get_or_insert(NonCanonicalField);
+                    'H'
+                }
+                'Z' | 'x' | 'X' => {
+                    error.get_or_insert(NonCanonicalField);
+                    'O'
+                }
+                'V' => {
+                    error.get_or_insert(NonCanonicalField);
+                    'v'
+                }
+                other => other,
+            };
+        }
+        match token {
+            Token::Symbol('G', 1) => {
+                put_field!(&mut error, &mut bag.era, Era::Short);
+            }
+            Token::Symbol('G', 4) => {
+                put_field!(&mut error, &mut bag.era, Era::Long);
+            }
+            Token::Symbol('G', 5) => {
+                put_field!(&mut error, &mut bag.era, Era::Narrow);
+            }
+            Token::Symbol('G', _) => {
+                put_field!(&mut error, &mut bag.era, Era::Short);
+                error.get_or_insert(InvalidFieldLength);
+            }
+            Token::Symbol('y', 1) => {
+                put_field!(&mut error, &mut bag.year, Year::Numeric);
+            }
+            Token::Symbol('y', 2) => {
+                put_field!(&mut error, &mut bag.year, Year::TwoDigit);
+            }
+            Token::Symbol('y', _) => {
+                put_field!(&mut error, &mut bag.year, Year::Numeric);
+                error.get_or_insert(InvalidFieldLength);
+            }
+            Token::Symbol('M', 1) => {
+                put_field!(&mut error, &mut bag.month, Month::Numeric);
+            }
+            Token::Symbol('M', 2) => {
+                put_field!(&mut error, &mut bag.month, Month::TwoDigit);
+            }
+            Token::Symbol('M', 3) => {
+                put_field!(&mut error, &mut bag.month, Month::Short);
+            }
+            Token::Symbol('M', 4) => {
+                put_field!(&mut error, &mut bag.month, Month::Long);
+            }
+            Token::Symbol('M', 5) => {
+                put_field!(&mut error, &mut bag.month, Month::Narrow);
+            }
+            Token::Symbol('M', _) => {
+                put_field!(&mut error, &mut bag.month, Month::Numeric);
+                error.get_or_insert(InvalidFieldLength);
+            }
+            Token::Symbol('d', 1) => {
+                put_field!(&mut error, &mut bag.day, Day::Numeric);
+            }
+            Token::Symbol('d', 2) => {
+                put_field!(&mut error, &mut bag.day, Day::TwoDigit);
+            }
+            Token::Symbol('d', _) => {
+                put_field!(&mut error, &mut bag.day, Day::Numeric);
+                error.get_or_insert(InvalidFieldLength);
+            }
+            Token::Symbol('E', 1) => {
+                put_field!(&mut error, &mut bag.weekday, Weekday::Short);
+            }
+            Token::Symbol('E', 4) => {
+                put_field!(&mut error, &mut bag.weekday, Weekday::Long);
+            }
+            Token::Symbol('E', 5) => {
+                put_field!(&mut error, &mut bag.weekday, Weekday::Narrow);
+            }
+            Token::Symbol('E', _) => {
+                put_field!(&mut error, &mut bag.weekday, Weekday::Short);
+                error.get_or_insert(InvalidFieldLength);
+            }
+            Token::Symbol('B', 1) => {
+                put_field!(&mut error, &mut bag.day_period, DayPeriod::FlexibleShort);
+            }
+            Token::Symbol('B', 4) => {
+                put_field!(&mut error, &mut bag.day_period, DayPeriod::FlexibleLong);
+            }
+            Token::Symbol('B', 5) => {
+                put_field!(&mut error, &mut bag.day_period, DayPeriod::FlexibleNarrow);
+            }
+            Token::Symbol('B', _) => {
+                put_field!(&mut error, &mut bag.day_period, DayPeriod::FlexibleShort);
+                error.get_or_insert(InvalidFieldLength);
+            }
+            Token::Symbol('j', 1) => {
+                put_field!(&mut error, &mut bag.hour, Hour::Numeric);
+            }
+            Token::Symbol('j', 2) => {
+                put_field!(&mut error, &mut bag.hour, Hour::TwoDigit);
+            }
+            Token::Symbol('j', _) => {
+                put_field!(&mut error, &mut bag.hour, Hour::Numeric);
+                error.get_or_insert(InvalidFieldLength);
+            }
+            Token::Symbol('h', 1) => {
+                put_field!(&mut error, &mut bag.hour, Hour::Numeric);
+                put_field!(&mut error, &mut bag.hour_kind, HourKind::Clock12);
+            }
+            Token::Symbol('h', 2) => {
+                put_field!(&mut error, &mut bag.hour, Hour::TwoDigit);
+                put_field!(&mut error, &mut bag.hour_kind, HourKind::Clock12);
+            }
+            Token::Symbol('h', _) => {
+                put_field!(&mut error, &mut bag.hour, Hour::Numeric);
+                put_field!(&mut error, &mut bag.hour_kind, HourKind::Clock12);
+                error.get_or_insert(InvalidFieldLength);
+            }
+            Token::Symbol('H', 1) => {
+                put_field!(&mut error, &mut bag.hour, Hour::Numeric);
+                put_field!(&mut error, &mut bag.hour_kind, HourKind::Clock24);
+            }
+            Token::Symbol('H', 2) => {
+                put_field!(&mut error, &mut bag.hour, Hour::TwoDigit);
+                put_field!(&mut error, &mut bag.hour_kind, HourKind::Clock24);
+            }
+            Token::Symbol('H', _) => {
+                put_field!(&mut error, &mut bag.hour, Hour::Numeric);
+                put_field!(&mut error, &mut bag.hour_kind, HourKind::Clock24);
+                error.get_or_insert(InvalidFieldLength);
+            }
+            Token::Symbol('m', 1) => {
+                put_field!(&mut error, &mut bag.minute, Minute::Numeric);
+            }
+            Token::Symbol('m', 2) => {
+                put_field!(&mut error, &mut bag.minute, Minute::TwoDigit);
+            }
+            Token::Symbol('m', _) => {
+                put_field!(&mut error, &mut bag.minute, Minute::Numeric);
+                error.get_or_insert(InvalidFieldLength);
+            }
+            Token::Symbol('s', 1) => {
+                put_field!(&mut error, &mut bag.second, Second::Numeric);
+            }
+            Token::Symbol('s', 2) => {
+                put_field!(&mut error, &mut bag.second, Second::TwoDigit);
+            }
+            Token::Symbol('s', _) => {
+                put_field!(&mut error, &mut bag.second, Second::Numeric);
+                error.get_or_insert(InvalidFieldLength);
+            }
+            Token::Symbol('S', 1) => {
+                put_field!(
+                    &mut error,
+                    &mut bag.fractional_second_digits,
+                    FractionalSecondDigits::F1
+                );
+            }
+            Token::Symbol('S', 2) => {
+                put_field!(
+                    &mut error,
+                    &mut bag.fractional_second_digits,
+                    FractionalSecondDigits::F2
+                );
+            }
+            Token::Symbol('S', 3) => {
+                put_field!(
+                    &mut error,
+                    &mut bag.fractional_second_digits,
+                    FractionalSecondDigits::F3
+                );
+            }
+            Token::Symbol('S', _) => {
+                put_field!(
+                    &mut error,
+                    &mut bag.fractional_second_digits,
+                    FractionalSecondDigits::F1
+                );
+                error.get_or_insert(InvalidFieldLength);
+            }
+            Token::Symbol('z', 1) => {
+                put_field!(
+                    &mut error,
+                    &mut bag.time_zone_name,
+                    TimeZoneName::ShortSpecific
+                );
+            }
+            Token::Symbol('z', 4) => {
+                put_field!(
+                    &mut error,
+                    &mut bag.time_zone_name,
+                    TimeZoneName::LongSpecific
+                );
+            }
+            Token::Symbol('z', _) => {
+                put_field!(
+                    &mut error,
+                    &mut bag.time_zone_name,
+                    TimeZoneName::ShortSpecific
+                );
+                error.get_or_insert(InvalidFieldLength);
+            }
+            Token::Symbol('O', 1) => {
+                put_field!(
+                    &mut error,
+                    &mut bag.time_zone_name,
+                    TimeZoneName::ShortOffset
+                );
+            }
+            Token::Symbol('O', 4) => {
+                put_field!(
+                    &mut error,
+                    &mut bag.time_zone_name,
+                    TimeZoneName::LongOffset
+                );
+            }
+            Token::Symbol('O', _) => {
+                put_field!(
+                    &mut error,
+                    &mut bag.time_zone_name,
+                    TimeZoneName::ShortOffset
+                );
+                error.get_or_insert(InvalidFieldLength);
+            }
+            Token::Symbol('v', 1) => {
+                put_field!(
+                    &mut error,
+                    &mut bag.time_zone_name,
+                    TimeZoneName::ShortGeneric
+                );
+            }
+            Token::Symbol('v', 4) => {
+                put_field!(
+                    &mut error,
+                    &mut bag.time_zone_name,
+                    TimeZoneName::LongGeneric
+                );
+            }
+            Token::Symbol('v', _) => {
+                put_field!(
+                    &mut error,
+                    &mut bag.time_zone_name,
+                    TimeZoneName::ShortGeneric
+                );
+                error.get_or_insert(InvalidFieldLength);
+            }
+            Token::Symbol(_, _) => {
+                error.get_or_insert(UnknownField);
             }
             Token::Literal(_) => {
                 error.get_or_insert(UnexpectedLiteral);
@@ -371,41 +514,27 @@ pub(crate) fn fieldbag_to_uts35<W: ?Sized + fmt::Write>(
 }
 
 #[test]
-fn test_skeleton_literal_errors() {
-    assert_eq!(
-        DateTimeFieldBag::try_from_skeleton("GGGGy'foo'"),
-        Err(DateTimeFieldBagParseError::UnexpectedLiteral)
-    );
-    assert_eq!(
-        DateTimeFieldBag::try_from_skeleton("GGGGy'foo"),
-        Err(DateTimeFieldBagParseError::SyntaxError)
-    );
-}
-
-#[test]
 fn test_skeleton_parse_errors_and_lenient() {
     use writeable::assert_writeable_eq;
 
     let cases = [
+        (
+            "GGGGy'foo'",
+            DateTimeFieldBagParseError::UnexpectedLiteral,
+            "GGGGy",
+        ),
         ("GG", DateTimeFieldBagParseError::InvalidFieldLength, "G"),
         ("GGG", DateTimeFieldBagParseError::InvalidFieldLength, "G"),
-        ("yyyy", DateTimeFieldBagParseError::InvalidFieldLength, "y"),
         (
             "MMMMMMM",
             DateTimeFieldBagParseError::InvalidFieldLength,
             "M",
         ),
         ("L", DateTimeFieldBagParseError::NonCanonicalField, "M"),
-        (
-            "LLLL",
-            DateTimeFieldBagParseError::NonCanonicalField,
-            "MMMM",
-        ),
         ("K", DateTimeFieldBagParseError::NonCanonicalField, "h"),
         ("k", DateTimeFieldBagParseError::NonCanonicalField, "H"),
         ("Q", DateTimeFieldBagParseError::UnknownField, ""),
         ("yQw", DateTimeFieldBagParseError::UnknownField, "y"),
-        ("yyMMy", DateTimeFieldBagParseError::DuplicateField, "yyMM"),
     ];
     for (input, expected_err, expected_canonical) in cases {
         assert_eq!(
