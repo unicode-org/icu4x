@@ -2377,7 +2377,9 @@
             "Winnipeg": [
               {
                 "usesMetazone": {
-                  "_mzone": "America_Central"
+                  "_mzone": "America_Central",
+                  "_stdOffset": "-06",
+                  "_dstOffset": "-05"
                 }
               }
             ],
