@@ -182,6 +182,8 @@ pub struct CjAdaboostData<'data> {
 
 /// The data powering the Japanese `AdaBoost` segmentation model.
 ///
+/// TODO: Consider merging this with Thai / Southeast Asian
+///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
