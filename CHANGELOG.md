@@ -37,6 +37,8 @@ Several crates have had patch releases in the 2.3 stream:
     - Update to syn@3 dependency (unicode-org#8293)
   - (0.8.3) `yoke-derive`
     - Update to syn@3 dependency (unicode-org#8293)
+  - (0.8.4) `yoke-derive`
+    - Declare MSRV
   - (0.1.8) `zerofrom-derive`
     - Update to syn@3 dependency (unicode-org#8293)
   - (0.11.5, 0.11.6) `zerovec-derive`
