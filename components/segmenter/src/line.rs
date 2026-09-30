@@ -1879,15 +1879,27 @@ mod tests {
     }
 
     #[test]
-    fn thai_dictionary_terminal_break() {
-        for segmenter in [LineSegmenter::new_dictionary(Default::default()), {
-            let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
-            s.load_dictionary();
-            s
-        }] {
-            // The last dictionary match reaches the end of the text; the
-            // dictionary breakpoints must still be emitted.
-            check_line("อินฟลูเอนเซอร์", &["อิน", "ฟลูเ", "อนเ", "ซอ", "ร์"], segmenter);
+    fn dictionary_terminal_break() {
+        let v1 = LineSegmenter::new_dictionary(Default::default());
+        let mut neo = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
+        neo.load_dictionary();
+
+        // Some prefixes end inside a dictionary word; the neo path must not
+        // drop the dictionary breakpoints before the end of the text.
+        for text in [
+            "ผู้ใช้สามารถติดตั้งโปรแกรมคอมพิวเตอร์ได้ด้วยตนเอง",
+            "ປະເທດລາວມີພົນລະເມືອງປະມານເຈັດລ້ານຄົນ",
+            "ព្រះរាជាណាចក្រកម្ពុជាជាប្រទេសមួយនៅអាស៊ីអាគ្នេយ៍",
+            "မြန်မာနိုင်ငံသည်အရှေ့တောင်အာရှတွင်တည်ရှိသည်",
+        ] {
+            for (i, c) in text.char_indices() {
+                let prefix = &text[..i + c.len_utf8()];
+                assert_eq!(
+                    neo.segment_str(prefix).collect::<Vec<_>>(),
+                    v1.segment_str(prefix).collect::<Vec<_>>(),
+                    "{prefix}"
+                );
+            }
         }
     }
 }

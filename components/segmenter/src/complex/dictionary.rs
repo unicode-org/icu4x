@@ -244,13 +244,34 @@ mod tests {
     }
 
     #[test]
-    fn thai_dictionary_terminal_break() {
-        let mut segmenter = ComplexPayloadsBorrowed::new();
-        segmenter.with_southeast_asian_dictionaries();
-        let segmenter = segmenter.select(ComplexScript::Thai).unwrap();
+    fn dictionary_terminal_break() {
+        let mut payloads = ComplexPayloadsBorrowed::new();
+        payloads.with_southeast_asian_dictionaries();
+        payloads.with_japanese_dictionary();
 
-        // The last dictionary match reaches the end of the text; the breakpoint
-        // at the end of the text must still be emitted.
-        check_complex("อินฟลูเอนเซอร์", &["อิน", "ฟลูเ", "อนเ", "ซอ", "ร์"], segmenter);
+        // Some prefixes end inside a dictionary word; the break at the end of
+        // the text must still be emitted.
+        for (script, text) in [
+            (
+                ComplexScript::Thai,
+                "ผู้ใช้สามารถติดตั้งโปรแกรมคอมพิวเตอร์ได้ด้วยตนเอง",
+            ),
+            (ComplexScript::Lao, "ປະເທດລາວມີພົນລະເມືອງປະມານເຈັດລ້ານຄົນ"),
+            (ComplexScript::Khmer, "ព្រះរាជាណាចក្រកម្ពុជាជាប្រទេសមួយនៅអាស៊ីអាគ្នេយ៍"),
+            (ComplexScript::Myanmar, "မြန်မာနိုင်ငံသည်အရှေ့တောင်အာရှတွင်တည်ရှိသည်"),
+            (
+                ComplexScript::ChineseOrJapanese,
+                "コンピューターソフトウェアエンジニアリング",
+            ),
+        ] {
+            let segmenter = payloads.select(script).unwrap();
+            for (i, c) in text.char_indices() {
+                let prefix = &text[..i + c.len_utf8()];
+                let last = segmenter
+                    .segment_str(prefix, GraphemeClusterSegmenter::new(), 0)
+                    .last();
+                assert_eq!(last, Some(prefix.len()), "{prefix}");
+            }
+        }
     }
 }
