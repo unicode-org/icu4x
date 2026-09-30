@@ -25,6 +25,7 @@ pub enum ZeroTrieBuildError {
     /// # Examples
     ///
     /// ```
+    /// # #[cfg(feature = "dense")] {
     /// use std::collections::BTreeMap;
     /// use zerotrie::dense::ZeroAsciiDenseSparse2dTrieOwned;
     /// use zerotrie::ZeroTrieBuildError;
@@ -45,6 +46,7 @@ pub enum ZeroTrieBuildError {
     ///     ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/')
     ///         .unwrap_err();
     /// assert_eq!(err, ZeroTrieBuildError::IllegalDelimiter);
+    /// # }
     /// ```
     #[displaydoc("Delimiter is contained in one or more strings")]
     IllegalDelimiter,

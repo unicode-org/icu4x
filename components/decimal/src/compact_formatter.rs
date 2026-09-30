@@ -330,6 +330,7 @@ impl CompactDecimalFormatter {
     /// Floating point inputs should use [`FloatPrecision::RoundTrip`](fixed_decimal::FloatPrecision::RoundTrip).
     ///
     /// ```
+    /// # #[cfg(feature = "ryu")] {
     /// # use icu::decimal::input::{Decimal, FloatPrecision};
     /// # use icu::decimal::CompactDecimalFormatter;
     /// # use icu::locale::locale;
@@ -346,6 +347,7 @@ impl CompactDecimalFormatter {
     ///     ),
     ///     "999K"
     /// );
+    /// # }
     /// ```
     pub fn format<'a>(&'a self, value: &Decimal) -> impl Writeable + Display + 'a {
         self.decimal_formatter

@@ -78,8 +78,8 @@
 //!
 //! Mismatched types and field sets will not compile:
 //!
-//! ```compile_fail,E0277
-//! # #[cfg(feature = "unstable_chrono_0_4")] {
+#![cfg_attr(feature = "unstable_chrono_0_4", doc = "```compile_fail,E0277")]
+#![cfg_attr(not(feature = "unstable_chrono_0_4"), doc = "```ignore")]
 //! use icu::datetime::{fieldsets, DateTimeFormatter};
 //! use icu::locale::locale;
 //! let chrono_time = chrono::NaiveTime::from_hms_opt(16, 9, 35).unwrap();
@@ -90,7 +90,6 @@
 //! .unwrap();
 //! // NaiveTime does not have date fields required by YMD
 //! dtf_date.format(&chrono_time);
-//! # }
 //! ```
 //!
 //! Note that [`FixedCalendarDateTimeFormatter`](crate::FixedCalendarDateTimeFormatter)
@@ -101,8 +100,8 @@
 //! requires a type that explicitly carries its calendar system, which third-party types
 //! do not. The following will not compile:
 //!
-//! ```compile_fail,E0277
-//! # #[cfg(feature = "unstable_chrono_0_4")] {
+#![cfg_attr(feature = "unstable_chrono_0_4", doc = "```compile_fail,E0277")]
+#![cfg_attr(not(feature = "unstable_chrono_0_4"), doc = "```ignore")]
 //! use icu::datetime::{fieldsets, FixedCalendarDateTimeFormatter};
 //! use icu::locale::locale;
 //!
@@ -114,14 +113,13 @@
 //! .unwrap();
 //! // NaiveDate does not implement InFixedCalendar
 //! dtf.format(&chrono_date);
-//! # }
 //! ```
 //!
 //! Similarly, [`DateTimeFormatter::format_same_calendar`](crate::DateTimeFormatter::format_same_calendar) will not compile because it
 //! also requires the input type to explicitly carry its calendar system:
 //!
-//! ```compile_fail,E0277
-//! # #[cfg(feature = "unstable_chrono_0_4")] {
+#![cfg_attr(feature = "unstable_chrono_0_4", doc = "```compile_fail,E0277")]
+#![cfg_attr(not(feature = "unstable_chrono_0_4"), doc = "```ignore")]
 //! use icu::datetime::{fieldsets, DateTimeFormatter};
 //! use icu::locale::locale;
 //!
@@ -133,7 +131,6 @@
 //! .unwrap();
 //! // NaiveDate does not implement InSameCalendar
 //! let _ = dtf.format_same_calendar(&chrono_date);
-//! # }
 //! ```
 //!
 //! # Jiff
@@ -196,8 +193,8 @@
 //!
 //! Mismatched types and field sets will not compile:
 //!
-//! ```compile_fail,E0277
-//! # #[cfg(feature = "unstable_jiff_0_2")] {
+#![cfg_attr(feature = "unstable_jiff_0_2", doc = "```compile_fail,E0277")]
+#![cfg_attr(not(feature = "unstable_jiff_0_2"), doc = "```ignore")]
 //! use icu::datetime::{fieldsets, NoCalendarFormatter};
 //! use icu::locale::locale;
 //! let jiff_date = jiff::civil::date(2025, 1, 15);
@@ -208,7 +205,6 @@
 //! .unwrap();
 //! // civil::Date does not have time fields required by T
 //! dtf_time.format(&jiff_date);
-//! # }
 //! ```
 //!
 //! Note that [`FixedCalendarDateTimeFormatter`](crate::FixedCalendarDateTimeFormatter)
@@ -219,8 +215,8 @@
 //! requires a type that explicitly carries its calendar system, which third-party types
 //! do not. The following will not compile:
 //!
-//! ```compile_fail,E0277
-//! # #[cfg(feature = "unstable_jiff_0_2")] {
+#![cfg_attr(feature = "unstable_jiff_0_2", doc = "```compile_fail,E0277")]
+#![cfg_attr(not(feature = "unstable_jiff_0_2"), doc = "```ignore")]
 //! use icu::datetime::{fieldsets, FixedCalendarDateTimeFormatter};
 //! use icu::locale::locale;
 //!
@@ -232,14 +228,13 @@
 //! .unwrap();
 //! // civil::Date does not implement InFixedCalendar
 //! dtf.format(&jiff_date);
-//! # }
 //! ```
 //!
 //! Similarly, [`DateTimeFormatter::format_same_calendar`](crate::DateTimeFormatter::format_same_calendar) will not compile because it
 //! also requires the input type to explicitly carry its calendar system:
 //!
-//! ```compile_fail,E0277
-//! # #[cfg(feature = "unstable_jiff_0_2")] {
+#![cfg_attr(feature = "unstable_jiff_0_2", doc = "```compile_fail,E0277")]
+#![cfg_attr(not(feature = "unstable_jiff_0_2"), doc = "```ignore")]
 //! use icu::datetime::{fieldsets, DateTimeFormatter};
 //! use icu::locale::locale;
 //!
@@ -251,7 +246,6 @@
 //! .unwrap();
 //! // civil::Date does not implement InSameCalendar
 //! let _ = dtf.format_same_calendar(&jiff_date);
-//! # }
 //! ```
 //!
 //! # Time
@@ -314,8 +308,8 @@
 //!
 //! Mismatched types and field sets will not compile:
 //!
-//! ```compile_fail,E0277
-//! # #[cfg(feature = "unstable_time_0_3")] {
+#![cfg_attr(feature = "unstable_time_0_3", doc = "```compile_fail,E0277")]
+#![cfg_attr(not(feature = "unstable_time_0_3"), doc = "```ignore")]
 //! use icu::datetime::{fieldsets, DateTimeFormatter};
 //! use icu::locale::locale;
 //! let time_weekday = time::Weekday::Wednesday;
@@ -326,7 +320,6 @@
 //! .unwrap();
 //! // Weekday does not have year/month/day fields required by YMD
 //! dtf_date.format(&time_weekday);
-//! # }
 //! ```
 //!
 //! Note that [`FixedCalendarDateTimeFormatter`](crate::FixedCalendarDateTimeFormatter)
@@ -337,8 +330,8 @@
 //! requires a type that explicitly carries its calendar system, which third-party types
 //! do not. The following will not compile:
 //!
-//! ```compile_fail,E0277
-//! # #[cfg(feature = "unstable_time_0_3")] {
+#![cfg_attr(feature = "unstable_time_0_3", doc = "```compile_fail,E0277")]
+#![cfg_attr(not(feature = "unstable_time_0_3"), doc = "```ignore")]
 //! use icu::datetime::{fieldsets, FixedCalendarDateTimeFormatter};
 //! use icu::locale::locale;
 //!
@@ -350,14 +343,13 @@
 //! .unwrap();
 //! // time::Date does not implement InFixedCalendar
 //! dtf.format(&time_date);
-//! # }
 //! ```
 //!
 //! Similarly, [`DateTimeFormatter::format_same_calendar`](crate::DateTimeFormatter::format_same_calendar) will not compile because it
 //! also requires the input type to explicitly carry its calendar system:
 //!
-//! ```compile_fail,E0277
-//! # #[cfg(feature = "unstable_time_0_3")] {
+#![cfg_attr(feature = "unstable_time_0_3", doc = "```compile_fail,E0277")]
+#![cfg_attr(not(feature = "unstable_time_0_3"), doc = "```ignore")]
 //! use icu::datetime::{fieldsets, DateTimeFormatter};
 //! use icu::locale::locale;
 //!
@@ -369,5 +361,4 @@
 //! .unwrap();
 //! // time::Date does not implement InSameCalendar
 //! let _ = dtf.format_same_calendar(&time_date);
-//! # }
 //! ```

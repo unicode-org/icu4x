@@ -239,6 +239,7 @@ where
 /// Use [`LiteMap`] for alloc-free formatting:
 ///
 /// ```
+/// # #[cfg(feature = "litemap")] {
 /// use core::str::FromStr;
 /// use icu_pattern::MultiNamedPlaceholderPattern;
 /// use litemap::LiteMap;
@@ -258,6 +259,7 @@ where
 ///     .unwrap();
 ///
 /// assert_eq!(sink, "11");
+/// # }
 /// ```
 ///
 /// Missing placeholder values cause an error result to be returned. However,

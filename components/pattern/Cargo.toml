@@ -44,6 +44,10 @@ rmp-serde = { workspace = true }
 serde_json = { workspace = true }
 postcard = { workspace = true, features = ["use-std"] }
 
+[[test]]
+name = "extraction"
+required-features = ["alloc", "unstable"]
+
 [features]
 default = []
 alloc = ["serde?/alloc", "writeable/alloc", "zerovec?/alloc"]
