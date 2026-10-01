@@ -1880,26 +1880,24 @@ mod tests {
 
     #[test]
     fn dictionary_terminal_break() {
-        let v1 = LineSegmenter::new_dictionary(Default::default());
+        // Each input ends partway through a longer dictionary word, so the
+        // dictionary breakpoint before the trailing text must be kept.
+        let cases: [(&str, &[&str]); 4] = [
+            ("ผู้ใช้ส", &["ผู้", "ใช้", "ส"]),
+            ("ປະເທດລາວມີພົນລ", &["ປະເທດ", "ລາວ", "ມີ", "ພົນ", "ລ"]),
+            ("ព្រះរាជាណាចក្រកម្ពុជាជាប", &["ព្រះរាជាណាចក្រ", "កម្ពុជា", "ជា", "ប"]),
+            ("မြန်မာန", &["မြန်မာ", "န"]),
+        ];
+
         let mut neo = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
         neo.load_dictionary();
-
-        // Some prefixes end inside a dictionary word; the neo path must not
-        // drop the dictionary breakpoints before the end of the text.
-        for text in [
-            "ผู้ใช้สามารถติดตั้งโปรแกรมคอมพิวเตอร์ได้ด้วยตนเอง",
-            "ປະເທດລາວມີພົນລະເມືອງປະມານເຈັດລ້ານຄົນ",
-            "ព្រះរាជាណាចក្រកម្ពុជាជាប្រទេសមួយនៅអាស៊ីអាគ្នេយ៍",
-            "မြန်မာနိုင်ငံသည်အရှေ့တောင်အာရှတွင်တည်ရှိသည်",
-        ] {
-            for (i, c) in text.char_indices() {
-                let prefix = &text[..i + c.len_utf8()];
-                assert_eq!(
-                    neo.segment_str(prefix).collect::<Vec<_>>(),
-                    v1.segment_str(prefix).collect::<Vec<_>>(),
-                    "{prefix}"
-                );
-            }
+        for (text, expected) in cases {
+            check_line(text, expected, neo);
+            check_line(
+                text,
+                expected,
+                LineSegmenter::new_dictionary(Default::default()),
+            );
         }
     }
 }

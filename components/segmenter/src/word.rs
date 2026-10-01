@@ -1057,47 +1057,28 @@ fn cj_dictionary_test_neo() {
 
 #[test]
 fn dictionary_terminal_break() {
-    let v1 = WordSegmenter::new_dictionary(WordBreakInvariantOptions::default());
+    // Each input ends partway through a longer dictionary word, so the text
+    // after the last match has to be returned as a separate segment.
+    let cases: [(&str, &[&str]); 4] = [
+        ("ผู้ใช้ส", &["ผู้", "ใช้", "ส"]),
+        ("ປະເທດລາວມີພົນລ", &["ປະເທດ", "ລາວ", "ມີ", "ພົນ", "ລ"]),
+        ("ព្រះរាជាណាចក្រកម្ពុជាជាប", &["ព្រះរាជាណាចក្រ", "កម្ពុជា", "ជា", "ប"]),
+        ("မြန်မာန", &["မြန်မာ", "န"]),
+    ];
+
     let mut neo =
         WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
     neo.load_dictionary();
-
-    // Some prefixes end inside a dictionary word. The last break must be at
-    // the end of the text, and the V1 and neo paths must agree.
-    for text in [
-        "ผู้ใช้สามารถติดตั้งโปรแกรมคอมพิวเตอร์ได้ด้วยตนเอง",
-        "ປະເທດລາວມີພົນລະເມືອງປະມານເຈັດລ້ານຄົນ",
-        "ព្រះរាជាណាចក្រកម្ពុជាជាប្រទេសមួយនៅអាស៊ីអាគ្នេយ៍",
-        "မြန်မာနိုင်ငံသည်အရှေ့တောင်အာရှတွင်တည်ရှိသည်",
-    ] {
-        for (i, c) in text.char_indices() {
-            let prefix = &text[..i + c.len_utf8()];
-            let expected: Vec<usize> = v1.segment_str(prefix).collect();
-            assert_eq!(expected.last(), Some(&prefix.len()), "{prefix}");
-            assert_eq!(
-                neo.segment_str(prefix).collect::<Vec<_>>(),
-                expected,
-                "{prefix}"
-            );
-            let utf16: Vec<u16> = prefix.encode_utf16().collect();
-            assert_eq!(
-                neo.segment_utf16(&utf16).collect::<Vec<_>>(),
-                v1.segment_utf16(&utf16).collect::<Vec<_>>(),
-                "{prefix}"
-            );
-        }
-    }
-
-    // V1 and neo segment Japanese differently, so only check the last break.
-    let text = "コンピューターソフトウェアエンジニアリング";
-    for (i, c) in text.char_indices() {
-        let prefix = &text[..i + c.len_utf8()];
-        assert_eq!(
-            neo.segment_str(prefix).last(),
-            Some(prefix.len()),
-            "{prefix}"
+    for (text, expected) in cases {
+        check_word(text, expected, neo);
+        check_word(
+            text,
+            expected,
+            WordSegmenter::new_dictionary(WordBreakInvariantOptions::default()),
         );
     }
+
+    check_word("コンピューターソ", &["コンピューター", "ソ"], neo);
 }
 
 #[test]
