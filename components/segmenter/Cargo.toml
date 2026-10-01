@@ -70,10 +70,6 @@ harness = false
 required-features = ["compiled_data", "auto"]
 
 [[test]]
-name = "complex_word"
-required-features = ["auto"]
-
-[[test]]
 name = "cnn"
 required-features = []
 

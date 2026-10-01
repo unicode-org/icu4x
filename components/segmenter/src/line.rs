@@ -1159,6 +1159,65 @@ mod tests {
 
     include!("../tests/helpers.rs.raw");
 
+    // The test data files contain the output of the neo implementation.
+    // Inputs that the v1 and 17 implementations are known to fail are listed here and skipped.
+    const V1_17_KNOWN_FAILURES: &[&str] = &[
+        // #8243
+        "ก\u{2060}รุ\u{2060}ง",
+        // #7218
+        "អស់ នឹង មាន",
+        "แพนด้าแดง (อังกฤษ: Red panda, Shining cat; จีน: 小熊貓; พินอิน: Xiǎo xióngmāo) สัตว์เลี้ยงลูกด้วยนมชนิดหนึ่ง มีชื่อวิทยาศาสตร์ว่า Ailurus fulgens",
+    ];
+
+    fn run_test(file: &'static str, v1_17: [LineSegmenterBorrowed; 2], neo: LineSegmenterBorrowed) {
+        for expected in parse_test_file(file) {
+            let expected = expected.iter().map(String::as_str).collect::<Vec<_>>();
+            let s = expected.concat();
+            check_line(&s, &expected, neo);
+            for segmenter in v1_17 {
+                if V1_17_KNOWN_FAILURES.contains(&s.as_str()) {
+                    let actual = segmenter
+                        .segment_str(&s)
+                        .tuple_windows()
+                        .map(|(a, b)| &s[a..b])
+                        .collect::<Vec<_>>();
+                    assert_ne!(
+                        actual, expected,
+                        "{s} passes on v1/17, remove it from the known failures"
+                    );
+                } else {
+                    check_line(&s, &expected, segmenter);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn lstm() {
+        let mut s17 = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
+        s17.load_lstm();
+        let mut neo = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
+        neo.load_lstm();
+        run_test(
+            include_str!("../tests/testdata/LineBreakLstm.txt"),
+            [LineSegmenter::new_auto(Default::default()), s17],
+            neo,
+        );
+    }
+
+    #[test]
+    fn dictionary() {
+        let mut s17 = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
+        s17.load_dictionary();
+        let mut neo = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
+        neo.load_dictionary();
+        run_test(
+            include_str!("../tests/testdata/LineBreakDictionary.txt"),
+            [LineSegmenter::new_dictionary(Default::default()), s17],
+            neo,
+        );
+    }
+
     #[test]
     fn test_mandatory() {
         let mut actual_breaks = LineSegmenter::new_neo_for_non_complex_scripts(Default::default())
@@ -1182,238 +1241,8 @@ mod tests {
     }
 
     #[test]
-    fn linebreak() {
-        let segmenter = LineSegmenter::new_dictionary(Default::default());
-
-        check_line("hello world", &["hello ", "world"], segmenter);
-
-        check_line("$10 $10", &["$10 ", "$10"], segmenter);
-
-        // LB10
-
-        // LB14
-        check_line("[  abc def", &["[  abc ", "def"], segmenter);
-
-        // LB15 used to prevent the break at 6, but has been removed in Unicode 15.1.
-        check_line("abc\u{0022}  (def", &["abc\u{0022}  ", "(def"], segmenter);
-
-        // Instead, in Unicode 15.1, LB15a and LB15b prevent these breaks.
-        check_line("« miaou »", &["« miaou »"], segmenter);
-
-        // But not these:
-        check_line(
-            "Die Katze hat »miau« gesagt.",
-            &["Die ", "Katze ", "hat ", "»miau« ", "gesagt."],
-            segmenter,
-        );
-
-        // LB16
-        check_line("\u{0029}\u{203C}", &["\u{0029}\u{203C}"], segmenter);
-        check_line("\u{0029}  \u{203C}", &["\u{0029}  \u{203C}"], segmenter);
-
-        // LB17
-        check_line("\u{2014}\u{2014}aa", &["\u{2014}\u{2014}", "aa"], segmenter);
-        check_line(
-            "\u{2014}  \u{2014}aa",
-            &["\u{2014}  \u{2014}", "aa"],
-            segmenter,
-        );
-
-        check_line(
-            "\u{2014}\u{2014}  \u{2014}\u{2014}123 abc",
-            &["\u{2014}\u{2014}  \u{2014}\u{2014}", "123 ", "abc"],
-            segmenter,
-        );
-
-        // LB25
-        check_line("(0,1)+(2,3)", &["(0,1)+(2,3)"], segmenter);
-
-        check_line("——  ——123 abc", &["——  ——", "123 ", "abc"], segmenter);
-        check_line(
-            "\u{1F3FB} \u{1F3FB}",
-            &["\u{1F3FB} ", "\u{1F3FB}"],
-            segmenter,
-        );
-    }
-
-    #[test]
-    fn linebreak_17() {
-        let segmenter = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
-
-        check_line("hello world", &["hello ", "world"], segmenter);
-
-        check_line("$10 $10", &["$10 ", "$10"], segmenter);
-
-        // LB10
-
-        // LB14
-        check_line("[  abc def", &["[  abc ", "def"], segmenter);
-
-        // LB15 used to prevent the break at 6, but has been removed in Unicode 15.1.
-        check_line("abc\u{0022}  (def", &["abc\u{0022}  ", "(def"], segmenter);
-
-        // Instead, in Unicode 15.1, LB15a and LB15b prevent these breaks.
-        check_line("« miaou »", &["« miaou »"], segmenter);
-
-        // But not these:
-        check_line(
-            "Die Katze hat »miau« gesagt.",
-            &["Die ", "Katze ", "hat ", "»miau« ", "gesagt."],
-            segmenter,
-        );
-
-        // LB16
-        check_line("\u{0029}\u{203C}", &["\u{0029}\u{203C}"], segmenter);
-        check_line("\u{0029}  \u{203C}", &["\u{0029}  \u{203C}"], segmenter);
-
-        // LB17
-        check_line("\u{2014}\u{2014}aa", &["\u{2014}\u{2014}", "aa"], segmenter);
-        check_line(
-            "\u{2014}  \u{2014}aa",
-            &["\u{2014}  \u{2014}", "aa"],
-            segmenter,
-        );
-
-        check_line(
-            "\u{2014}\u{2014}  \u{2014}\u{2014}123 abc",
-            &["\u{2014}\u{2014}  \u{2014}\u{2014}", "123 ", "abc"],
-            segmenter,
-        );
-
-        // LB25
-        check_line("(0,1)+(2,3)", &["(0,1)+(2,3)"], segmenter);
-
-        check_line("——  ——123 abc", &["——  ——", "123 ", "abc"], segmenter);
-        check_line(
-            "\u{1F3FB} \u{1F3FB}",
-            &["\u{1F3FB} ", "\u{1F3FB}"],
-            segmenter,
-        );
-    }
-
-    #[test]
-    fn linebreak_neo() {
-        let segmenter = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
-
-        check_line("hello world", &["hello ", "world"], segmenter);
-
-        check_line("$10 $10", &["$10 ", "$10"], segmenter);
-
-        // LB10
-
-        // LB14
-        check_line("[  abc def", &["[  abc ", "def"], segmenter);
-
-        // LB15 used to prevent the break at 6, but has been removed in Unicode 15.1.
-        check_line("abc\u{0022}  (def", &["abc\u{0022}  ", "(def"], segmenter);
-
-        // Instead, in Unicode 15.1, LB15a and LB15b prevent these breaks.
-        check_line("« miaou »", &["« miaou »"], segmenter);
-
-        // But not these:
-        check_line(
-            "Die Katze hat »miau« gesagt.",
-            &["Die ", "Katze ", "hat ", "»miau« ", "gesagt."],
-            segmenter,
-        );
-
-        // LB16
-        check_line("\u{0029}\u{203C}", &["\u{0029}\u{203C}"], segmenter);
-        check_line("\u{0029}  \u{203C}", &["\u{0029}  \u{203C}"], segmenter);
-
-        // LB17
-        check_line("\u{2014}\u{2014}aa", &["\u{2014}\u{2014}", "aa"], segmenter);
-        check_line(
-            "\u{2014}  \u{2014}aa",
-            &["\u{2014}  \u{2014}", "aa"],
-            segmenter,
-        );
-
-        check_line(
-            "\u{2014}\u{2014}  \u{2014}\u{2014}123 abc",
-            &["\u{2014}\u{2014}  \u{2014}\u{2014}", "123 ", "abc"],
-            segmenter,
-        );
-
-        // LB25
-        check_line("(0,1)+(2,3)", &["(0,1)+(2,3)"], segmenter);
-
-        check_line("——  ——123 abc", &["——  ——", "123 ", "abc"], segmenter);
-        check_line(
-            "\u{1F3FB} \u{1F3FB}",
-            &["\u{1F3FB} ", "\u{1F3FB}"],
-            segmenter,
-        );
-    }
-
-    #[test]
-    fn thai_line_break() {
-        check_line(
-            "ภาษาไทยภาษาไทย",
-            &["ภาษา", "ไทย", "ภาษา", "ไทย"],
-            LineSegmenter::new_lstm(Default::default()),
-        );
-
-        check_line(
-            "ภาษาไทยภาษาไทย",
-            &["ภาษา", "ไทย", "ภาษา", "ไทย"],
-            LineSegmenter::new_dictionary(Default::default()),
-        );
-
-        check_line(
-            "ภาษา",
-            &["ภาษา"],
-            LineSegmenter::new_lstm(Default::default()),
-        );
-
-        check_line(
-            "ภาษา",
-            &["ภาษา"],
-            LineSegmenter::new_dictionary(Default::default()),
-        );
-    }
-
-    #[test]
-    fn thai_line_break_17() {
-        check_line(
-            "ภาษาไทยภาษาไทย",
-            &["ภาษา", "ไทย", "ภาษา", "ไทย"],
-            {
-                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
-                s.load_lstm();
-                s
-            },
-        );
-
-        check_line(
-            "ภาษาไทยภาษาไทย",
-            &["ภาษา", "ไทย", "ภาษา", "ไทย"],
-            {
-                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
-                s.load_dictionary();
-                s
-            },
-        );
-
-        check_line("ภาษา", &["ภาษา"], {
-            let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
-            s.load_lstm();
-            s
-        });
-
-        check_line("ภาษา", &["ภาษา"], {
-            let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
-            s.load_dictionary();
-            s
-        });
-    }
-
-    #[test]
     fn complex_line_break_encodings() {
         let segmenter = LineSegmenter::new_dictionary(Default::default());
-        let input = "ภาษาไทย龟山岛";
-        check_line(input, &["ภาษา", "ไทย", "龟", "山", "岛"], segmenter);
-
         let ill_formed =
             b"\xE0\xB8\xA0\xE0\xB8\xB2\xE0\xB8\xA9\xE0\xB8\xB2\xFF\xE0\xB9\x84\xE0\xB8\x97\xE0\xB8\xA2";
         let breaks: Vec<usize> = segmenter.segment_utf8(ill_formed).collect();
@@ -1430,9 +1259,6 @@ mod tests {
     fn complex_line_break_encodings_neo() {
         let mut segmenter = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
         segmenter.load_dictionary();
-        let input = "ภาษาไทย龟山岛";
-        check_line(input, &["ภาษา", "ไทย", "龟", "山", "岛"], segmenter);
-
         let ill_formed =
             b"\xE0\xB8\xA0\xE0\xB8\xB2\xE0\xB8\xA9\xE0\xB8\xB2\xFF\xE0\xB9\x84\xE0\xB8\x97\xE0\xB8\xA2";
         let breaks: Vec<usize> = segmenter.segment_utf8(ill_formed).collect();
@@ -1449,9 +1275,6 @@ mod tests {
     fn complex_line_break_encodings_17() {
         let mut segmenter = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
         segmenter.load_dictionary();
-        let input = "ภาษาไทย龟山岛";
-        check_line(input, &["ภาษา", "ไทย", "龟", "山", "岛"], segmenter);
-
         let ill_formed =
             b"\xE0\xB8\xA0\xE0\xB8\xB2\xE0\xB8\xA9\xE0\xB8\xB2\xFF\xE0\xB9\x84\xE0\xB8\x97\xE0\xB8\xA2";
         let breaks: Vec<usize> = segmenter.segment_utf8(ill_formed).collect();
@@ -1462,399 +1285,6 @@ mod tests {
         ];
         let breaks: Vec<usize> = segmenter.segment_utf16(&unpaired_surrogate).collect();
         assert_eq!(breaks, [0, 4, 8]);
-    }
-
-    #[test]
-    fn thai_line_break_neo() {
-        check_line(
-            "ภาษาไทยภาษาไทย",
-            &["ภาษา", "ไทย", "ภาษา", "ไทย"],
-            {
-                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
-                s.load_lstm();
-                s
-            },
-        );
-
-        check_line(
-            "ภาษาไทยภาษาไทย",
-            &["ภาษา", "ไทย", "ภาษา", "ไทย"],
-            {
-                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
-                s.load_dictionary();
-                s
-            },
-        );
-
-        check_line("ภาษา", &["ภาษา"], {
-            let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
-            s.load_lstm();
-            s
-        });
-
-        check_line("ภาษา", &["ภาษา"], {
-            let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
-            s.load_dictionary();
-            s
-        });
-
-        // # 8243
-        check_line(
-            "ก\u{2060}รุ\u{2060}ง",
-            &["ก\u{2060}รุ\u{2060}ง"],
-            {
-                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
-                s.load_dictionary();
-                s
-            },
-        );
-    }
-
-    #[test]
-    fn burmese_line_break() {
-        // "Burmese Language" in Burmese
-
-        check_line(
-            "မြန်မာဘာသာစကား",
-            &["မြန်", "မာ", "ဘာသာ", "စကား"],
-            LineSegmenter::new_lstm(Default::default()),
-        );
-
-        check_line(
-            "မြန်မာဘာသာစကား",
-            &["မြန်မာဘာသာ", "စကား"],
-            LineSegmenter::new_dictionary(Default::default()),
-        );
-
-        check_line(
-            "မြန်မာစာမြန်မာစာမြန်မာစာ",
-            &["မြန်မာ", "စာ", "မြန်မာ", "စာ", "မြန်မာ", "စာ"],
-            LineSegmenter::new_dictionary(Default::default()),
-        );
-    }
-
-    #[test]
-    fn burmese_line_break_17() {
-        // "Burmese Language" in Burmese
-
-        check_line(
-            "မြန်မာဘာသာစကား",
-            &["မြန်", "မာ", "ဘာသာ", "စကား"],
-            {
-                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
-                s.load_lstm();
-                s
-            },
-        );
-
-        check_line(
-            "မြန်မာဘာသာစကား",
-            &["မြန်မာဘာသာ", "စကား"],
-            {
-                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
-                s.load_dictionary();
-                s
-            },
-        );
-
-        check_line(
-            "မြန်မာစာမြန်မာစာမြန်မာစာ",
-            &["မြန်မာ", "စာ", "မြန်မာ", "စာ", "မြန်မာ", "စာ"],
-            {
-                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
-                s.load_dictionary();
-                s
-            },
-        );
-    }
-
-    #[test]
-    fn burmese_line_break_neo() {
-        // "Burmese Language" in Burmese
-
-        check_line(
-            "မြန်မာဘာသာစကား",
-            &["မြန်", "မာ", "ဘာသာ", "စကား"],
-            {
-                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
-                s.load_lstm();
-                s
-            },
-        );
-
-        check_line(
-            "မြန်မာဘာသာစကား",
-            &["မြန်မာဘာသာ", "စကား"],
-            {
-                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
-                s.load_dictionary();
-                s
-            },
-        );
-
-        check_line(
-            "မြန်မာစာမြန်မာစာမြန်မာစာ",
-            &["မြန်မာ", "စာ", "မြန်မာ", "စာ", "မြန်မာ", "စာ"],
-            {
-                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
-                s.load_dictionary();
-                s
-            },
-        );
-    }
-
-    #[test]
-    fn khmer_line_break() {
-        check_line(
-            "សេចក្ដីប្រកាសជាសកលស្ដីពីសិទ្ធិមនុស្ស",
-            &["សេចក្ដីប្រកាស", "ជាស", "កល", "ស្ដីពី", "សិទ្ធិមនុស្ស"],
-            LineSegmenter::new_lstm(Default::default()),
-        );
-
-        check_line(
-            "សេចក្ដីប្រកាសជាសកលស្ដីពីសិទ្ធិមនុស្ស",
-            &["សេចក្ដីប្រកាស", "ជាស", "កល", "ស្ដីពី", "សិទ្ធិមនុស្ស"],
-            LineSegmenter::new_dictionary(Default::default()),
-        );
-
-        check_line(
-            "ភាសាខ្មែរភាសាខ្មែរភាសាខ្មែរ",
-            &["ភាសាខ្មែរ", "ភាសាខ្មែរ", "ភាសាខ្មែរ"],
-            LineSegmenter::new_dictionary(Default::default()),
-        );
-    }
-
-    #[test]
-    fn khmer_line_break_17() {
-        check_line(
-            "សេចក្ដីប្រកាសជាសកលស្ដីពីសិទ្ធិមនុស្ស",
-            &["សេចក្ដីប្រកាស", "ជាស", "កល", "ស្ដីពី", "សិទ្ធិមនុស្ស"],
-            {
-                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
-                s.load_lstm();
-                s
-            },
-        );
-
-        check_line(
-            "សេចក្ដីប្រកាសជាសកលស្ដីពីសិទ្ធិមនុស្ស",
-            &["សេចក្ដីប្រកាស", "ជាស", "កល", "ស្ដីពី", "សិទ្ធិមនុស្ស"],
-            {
-                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
-                s.load_dictionary();
-                s
-            },
-        );
-
-        check_line(
-            "ភាសាខ្មែរភាសាខ្មែរភាសាខ្មែរ",
-            &["ភាសាខ្មែរ", "ភាសាខ្មែរ", "ភាសាខ្មែរ"],
-            {
-                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
-                s.load_dictionary();
-                s
-            },
-        );
-    }
-
-    #[test]
-    fn khmer_line_break_neo() {
-        check_line(
-            "សេចក្ដីប្រកាសជាសកលស្ដីពីសិទ្ធិមនុស្ស",
-            &["សេចក្ដីប្រកាស", "ជាស", "កល", "ស្ដីពី", "សិទ្ធិមនុស្ស"],
-            {
-                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
-                s.load_lstm();
-                s
-            },
-        );
-
-        check_line(
-            "សេចក្ដីប្រកាសជាសកលស្ដីពីសិទ្ធិមនុស្ស",
-            &["សេចក្ដីប្រកាស", "ជាស", "កល", "ស្ដីពី", "សិទ្ធិមនុស្ស"],
-            {
-                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
-                s.load_dictionary();
-                s
-            },
-        );
-
-        // #7218
-        check_line(
-            "អស់ នឹង មាន",
-            &["អស់ ", "នឹង ", "មាន"],
-            {
-                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
-                s.load_dictionary();
-                s
-            },
-        );
-
-        check_line(
-            "ភាសាខ្មែរភាសាខ្មែរភាសាខ្មែរ",
-            &["ភាសាខ្មែរ", "ភាសាខ្មែរ", "ភាសាខ្មែរ"],
-            {
-                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
-                s.load_dictionary();
-                s
-            },
-        );
-    }
-
-    #[test]
-    fn lao_line_break() {
-        check_line(
-            "ກ່ຽວກັບສິດຂອງມະນຸດ",
-            &["ກ່ຽວ", "ກັບ", "ສິດ", "ຂອງ", "ມະນຸດ"],
-            LineSegmenter::new_lstm(Default::default()),
-        );
-
-        check_line(
-            "ກ່ຽວກັບສິດຂອງມະນຸດ",
-            &["ກ່ຽວກັບ", "ສິດ", "ຂອງ", "ມະນຸດ"],
-            LineSegmenter::new_dictionary(Default::default()),
-        );
-
-        check_line(
-            "ພາສາລາວພາສາລາວພາສາລາວ",
-            &["ພາສາ", "ລາວ", "ພາສາ", "ລາວ", "ພາສາ", "ລາວ"],
-            LineSegmenter::new_dictionary(Default::default()),
-        );
-    }
-
-    #[test]
-    fn lao_line_break_17() {
-        check_line(
-            "ກ່ຽວກັບສິດຂອງມະນຸດ",
-            &["ກ່ຽວ", "ກັບ", "ສິດ", "ຂອງ", "ມະນຸດ"],
-            {
-                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
-                s.load_lstm();
-                s
-            },
-        );
-
-        check_line(
-            "ກ່ຽວກັບສິດຂອງມະນຸດ",
-            &["ກ່ຽວກັບ", "ສິດ", "ຂອງ", "ມະນຸດ"],
-            {
-                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
-                s.load_dictionary();
-                s
-            },
-        );
-
-        check_line(
-            "ພາສາລາວພາສາລາວພາສາລາວ",
-            &["ພາສາ", "ລາວ", "ພາສາ", "ລາວ", "ພາສາ", "ລາວ"],
-            {
-                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
-                s.load_dictionary();
-                s
-            },
-        );
-    }
-
-    #[test]
-    fn lao_line_break_neo() {
-        check_line(
-            "ກ່ຽວກັບສິດຂອງມະນຸດ",
-            &["ກ່ຽວ", "ກັບ", "ສິດ", "ຂອງ", "ມະນຸດ"],
-            {
-                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
-                s.load_lstm();
-                s
-            },
-        );
-
-        check_line(
-            "ກ່ຽວກັບສິດຂອງມະນຸດ",
-            &["ກ່ຽວກັບ", "ສິດ", "ຂອງ", "ມະນຸດ"],
-            {
-                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
-                s.load_dictionary();
-                s
-            },
-        );
-
-        check_line(
-            "ພາສາລາວພາສາລາວພາສາລາວ",
-            &["ພາສາ", "ລາວ", "ພາສາ", "ລາວ", "ພາສາ", "ລາວ"],
-            {
-                let mut s = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
-                s.load_dictionary();
-                s
-            },
-        );
-    }
-
-    #[test]
-    fn mixed_line_break() {
-        let mut lstm = LineSegmenter::new_for_non_complex_scripts(Default::default());
-        lstm.load_lstm();
-
-        let mut dict = LineSegmenter::new_for_non_complex_scripts(Default::default());
-        dict.load_dictionary();
-
-        check_line("ภาษาไทย龟山岛", &["ภาษา", "ไทย", "龟", "山", "岛"], lstm);
-        check_line("ภาษาไทย龟山岛", &["ภาษา", "ไทย", "龟", "山", "岛"], dict);
-
-        check_line(
-            "こんにちは世界ภาษาไทย",
-            &["こ", "ん", "に", "ち", "は", "世", "界", "ภาษา", "ไทย"],
-            lstm,
-        );
-        check_line(
-            "こんにちは世界ภาษาไทย",
-            &["こ", "ん", "に", "ち", "は", "世", "界", "ภาษา", "ไทย"],
-            dict,
-        );
-    }
-
-    #[test]
-    fn mixed_line_break_neo() {
-        let mut lstm = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
-        lstm.load_lstm();
-
-        let mut dict = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
-        dict.load_dictionary();
-
-        check_line("ภาษาไทย龟山岛", &["ภาษา", "ไทย", "龟", "山", "岛"], lstm);
-        check_line("ภาษาไทย龟山岛", &["ภาษา", "ไทย", "龟", "山", "岛"], dict);
-
-        check_line(
-            "こんにちは世界ภาษาไทย",
-            &["こ", "ん", "に", "ち", "は", "世", "界", "ภาษา", "ไทย"],
-            lstm,
-        );
-        check_line(
-            "こんにちは世界ภาษาไทย",
-            &["こ", "ん", "に", "ち", "は", "世", "界", "ภาษา", "ไทย"],
-            dict,
-        );
-    }
-
-    #[test]
-    fn mixed_line_break_17() {
-        let mut lstm = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
-        lstm.load_lstm();
-
-        let mut dict = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
-        dict.load_dictionary();
-
-        check_line("ภาษาไทย龟山岛", &["ภาษา", "ไทย", "龟", "山", "岛"], lstm);
-        check_line("ภาษาไทย龟山岛", &["ภาษา", "ไทย", "龟", "山", "岛"], dict);
-
-        check_line(
-            "こんにちは世界ภาษาไทย",
-            &["こ", "ん", "に", "ち", "は", "世", "界", "ภาษา", "ไทย"],
-            lstm,
-        );
-        check_line(
-            "こんにちは世界ภาษาไทย",
-            &["こ", "ん", "に", "ち", "は", "世", "界", "ภาษา", "ไทย"],
-            dict,
-        );
     }
 
     #[test]
@@ -1876,28 +1306,5 @@ mod tests {
         let segmenter = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
         let breaks: Vec<usize> = segmenter.segment_str("").collect();
         assert_eq!(breaks, [0]);
-    }
-
-    #[test]
-    fn dictionary_terminal_break() {
-        // Each input ends partway through a longer dictionary word, so the
-        // dictionary breakpoint before the trailing text must be kept.
-        let cases: [(&str, &[&str]); 4] = [
-            ("ผู้ใช้ส", &["ผู้", "ใช้", "ส"]),
-            ("ປະເທດລາວມີພົນລ", &["ປະເທດ", "ລາວ", "ມີ", "ພົນ", "ລ"]),
-            ("ព្រះរាជាណាចក្រកម្ពុជាជាប", &["ព្រះរាជាណាចក្រ", "កម្ពុជា", "ជា", "ប"]),
-            ("မြန်မာန", &["မြန်မာ", "န"]),
-        ];
-
-        let mut neo = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
-        neo.load_dictionary();
-        for (text, expected) in cases {
-            check_line(text, expected, neo);
-            check_line(
-                text,
-                expected,
-                LineSegmenter::new_dictionary(Default::default()),
-            );
-        }
     }
 }
