@@ -4,6 +4,8 @@
 
 use crate::SourceDataProvider;
 use icu::locale::{DataLocale, data_locale};
+use icu_provider::export::*;
+use icu_provider::prelude::*;
 use icu_provider_export::prelude::*;
 
 include!("../../tests/locales.rs.data");
@@ -22,7 +24,7 @@ fn make_testdata() {
         .init()
         .unwrap();
 
-    let exporter = icu_provider_export::fs_exporter::FilesystemExporter::try_new(
+    let mut exporter = icu_provider_export::fs_exporter::FilesystemExporter::try_new(
         Box::new(icu_provider_export::fs_exporter::serializers::Json::pretty()),
         {
             let mut options = icu_provider_export::fs_exporter::Options::default();
@@ -106,6 +108,56 @@ fn make_testdata() {
                 | "und-x-interind-arabic"
         )
     })
-    .export(&provider, exporter)
+    .export(&provider, BorrowedExporter(&exporter))
     .unwrap();
+
+    // Locales that only exist in the test data for a single marker: exporting them for
+    // every marker would multiply the generated test data for no added coverage.
+    ExportDriver::new(
+        EXTRA_NUMBERS_LOCALES
+            .iter()
+            .copied()
+            .map(DataLocaleFamily::single),
+        DeduplicationStrategy::Maximal.into(),
+        LocaleFallbacker::try_new_unstable(&provider).unwrap(),
+    )
+    .with_markers([
+        icu::decimal::provider::DecimalSymbolsV1::INFO,
+        icu::experimental::dimension::provider::currency::symbols::CurrencyDecimalSymbolsV1::INFO,
+    ])
+    .export(&provider, BorrowedExporter(&exporter))
+    .unwrap();
+
+    let _ = std::fs::remove_file("data/debug/currency/decimal/symbols/v1/.empty");
+
+    exporter.close().unwrap();
+}
+
+/// Allows several [`ExportDriver`]s to write into the same exporter, which would
+/// otherwise be consumed by the first export. Closing is left to the caller, once all
+/// drivers have run.
+struct BorrowedExporter<'a>(&'a dyn DataExporter);
+
+impl DataExporter for BorrowedExporter<'_> {
+    fn put_payload(
+        &self,
+        marker: DataMarkerInfo,
+        id: DataIdentifierBorrowed,
+        payload: &DataPayload<ExportMarker>,
+    ) -> Result<(), DataError> {
+        self.0.put_payload(marker, id, payload)
+    }
+
+    fn flush_singleton(
+        &self,
+        marker: DataMarkerInfo,
+        payload: &DataPayload<ExportMarker>,
+        metadata: FlushMetadata,
+    ) -> Result<(), DataError> {
+        self.0.flush_singleton(marker, payload, metadata)
+    }
+
+    fn flush(&self, marker: DataMarkerInfo, metadata: FlushMetadata) -> Result<(), DataError> {
+        self.0.flush(marker, metadata)
+    }
 }
