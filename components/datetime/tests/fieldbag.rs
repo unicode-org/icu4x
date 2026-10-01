@@ -10,90 +10,22 @@ use icu_datetime::fieldbag::DateTimeFieldBag;
 use icu_datetime::fieldbag::field::*;
 use icu_datetime::fieldsets::builder::{DateFields, FieldSetBuilder, ZoneStyle};
 use icu_datetime::fieldsets::enums::CompositeFieldSet;
-use icu_datetime::options::{Alignment, Length, SubsecondDigits, TimePrecision, YearStyle};
+use icu_datetime::options::{Alignment, Length, TimePrecision, YearStyle};
 use icu_locale_core::locale;
 use writeable::Writeable;
 
-const ERAS: &[Option<Era>] = &[None, Some(Era::Short), Some(Era::Long), Some(Era::Narrow)];
-const YEARS: &[Option<Year>] = &[None, Some(Year::Numeric), Some(Year::TwoDigit)];
-const MONTHS: &[Option<Month>] = &[
-    None,
-    Some(Month::Numeric),
-    Some(Month::TwoDigit),
-    Some(Month::Short),
-    Some(Month::Long),
-    Some(Month::Narrow),
-];
-const DAYS: &[Option<Day>] = &[None, Some(Day::Numeric), Some(Day::TwoDigit)];
-const WEEKDAYS: &[Option<Weekday>] = &[
-    None,
-    Some(Weekday::Short),
-    Some(Weekday::Long),
-    Some(Weekday::Narrow),
-];
-const DAY_PERIODS: &[Option<DayPeriod>] = &[
-    None,
-    Some(DayPeriod::FlexibleShort),
-    Some(DayPeriod::FlexibleLong),
-    Some(DayPeriod::FlexibleNarrow),
-];
-const HOUR_KINDS: &[Option<HourKind>] = &[None, Some(HourKind::Clock12), Some(HourKind::Clock24)];
-const HOURS: &[Option<Hour>] = &[None, Some(Hour::Numeric), Some(Hour::TwoDigit)];
-const MINUTES: &[Option<Minute>] = &[None, Some(Minute::Numeric), Some(Minute::TwoDigit)];
-const SECONDS: &[Option<Second>] = &[None, Some(Second::Numeric), Some(Second::TwoDigit)];
-const FRACTIONAL_SECOND_DIGITS: &[Option<FractionalSecondDigits>] = &[
-    None,
-    Some(FractionalSecondDigits::F1),
-    Some(FractionalSecondDigits::F2),
-    Some(FractionalSecondDigits::F3),
-];
-const TIME_ZONE_NAMES: &[Option<TimeZoneName>] = &[
-    None,
-    Some(TimeZoneName::ShortSpecific),
-    Some(TimeZoneName::LongSpecific),
-    Some(TimeZoneName::ShortOffset),
-    Some(TimeZoneName::LongOffset),
-    Some(TimeZoneName::ShortGeneric),
-    Some(TimeZoneName::LongGeneric),
-];
+/// Returns an iterator yielding `None` followed by `Some(v)` for every variant in `values`.
+fn with_none<T: Copy>(values: &'static [T]) -> impl Iterator<Item = Option<T>> + Clone {
+    [None].into_iter().chain(values.iter().copied().map(Some))
+}
 
-const LENGTHS: &[Option<Length>] = &[
-    None,
-    Some(Length::Long),
-    Some(Length::Medium),
-    Some(Length::Short),
-];
-const TIME_PRECISIONS: &[Option<TimePrecision>] = &[
-    None,
-    Some(TimePrecision::Hour),
-    Some(TimePrecision::Minute),
-    Some(TimePrecision::MinuteOptional),
-    Some(TimePrecision::Second),
-    Some(TimePrecision::Subsecond(SubsecondDigits::S1)),
-    Some(TimePrecision::Subsecond(SubsecondDigits::S2)),
-    Some(TimePrecision::Subsecond(SubsecondDigits::S3)),
-    Some(TimePrecision::Subsecond(SubsecondDigits::S4)),
-    Some(TimePrecision::Subsecond(SubsecondDigits::S5)),
-    Some(TimePrecision::Subsecond(SubsecondDigits::S6)),
-    Some(TimePrecision::Subsecond(SubsecondDigits::S7)),
-    Some(TimePrecision::Subsecond(SubsecondDigits::S8)),
-    Some(TimePrecision::Subsecond(SubsecondDigits::S9)),
-];
-const ALIGNMENTS: &[Option<Alignment>] = &[None, Some(Alignment::Auto), Some(Alignment::Column)];
-const YEAR_STYLES: &[Option<YearStyle>] = &[
-    None,
-    Some(YearStyle::Auto),
-    Some(YearStyle::Full),
-    Some(YearStyle::WithEra),
-    Some(YearStyle::NoEra),
-];
-
+/// Yields all 864 combinations of date fields (`era`, `year`, `month`, `day`, `weekday`).
 fn all_date_field_bags() -> impl Iterator<Item = DateTimeFieldBag> {
-    ERAS.iter().flat_map(|&era| {
-        YEARS.iter().flat_map(move |&year| {
-            MONTHS.iter().flat_map(move |&month| {
-                DAYS.iter().flat_map(move |&day| {
-                    WEEKDAYS.iter().map(move |&weekday| {
+    with_none(Era::VALUES).flat_map(|era| {
+        with_none(Year::VALUES).flat_map(move |year| {
+            with_none(Month::VALUES).flat_map(move |month| {
+                with_none(Day::VALUES).flat_map(move |day| {
+                    with_none(Weekday::VALUES).map(move |weekday| {
                         let mut bag = DateTimeFieldBag::default();
                         bag.era = era;
                         bag.year = year;
@@ -108,15 +40,16 @@ fn all_date_field_bags() -> impl Iterator<Item = DateTimeFieldBag> {
     })
 }
 
+/// Yields all 1,296 combinations of time fields (`day_period`, `hour_kind`, `hour`,
+/// `minute`, `second`, `fractional_second_digits`).
 fn all_time_field_bags() -> impl Iterator<Item = DateTimeFieldBag> {
-    DAY_PERIODS.iter().flat_map(|&day_period| {
-        HOUR_KINDS.iter().flat_map(move |&hour_kind| {
-            HOURS.iter().flat_map(move |&hour| {
-                MINUTES.iter().flat_map(move |&minute| {
-                    SECONDS.iter().flat_map(move |&second| {
-                        FRACTIONAL_SECOND_DIGITS
-                            .iter()
-                            .map(move |&fractional_second_digits| {
+    with_none(DayPeriod::VALUES).flat_map(|day_period| {
+        with_none(HourKind::VALUES).flat_map(move |hour_kind| {
+            with_none(Hour::VALUES).flat_map(move |hour| {
+                with_none(Minute::VALUES).flat_map(move |minute| {
+                    with_none(Second::VALUES).flat_map(move |second| {
+                        with_none(FractionalSecondDigits::VALUES).map(
+                            move |fractional_second_digits| {
                                 let mut bag = DateTimeFieldBag::default();
                                 bag.day_period = day_period;
                                 bag.hour_kind = hour_kind;
@@ -125,7 +58,8 @@ fn all_time_field_bags() -> impl Iterator<Item = DateTimeFieldBag> {
                                 bag.second = second;
                                 bag.fractional_second_digits = fractional_second_digits;
                                 bag
-                            })
+                            },
+                        )
                     })
                 })
             })
@@ -133,14 +67,14 @@ fn all_time_field_bags() -> impl Iterator<Item = DateTimeFieldBag> {
     })
 }
 
-/// Returns a comprehensive set of `DateTimeFieldBag` combinations without taking the full
+/// Yields a comprehensive set of `DateTimeFieldBag` combinations without taking the full
 /// 864 x 1,296 x 7 = 7,838,208 Cartesian product in debug builds:
 /// - All 864 date combinations x all 7 zone combinations (6,048 bags)
 /// - All 1,296 time combinations x all 7 zone combinations (9,072 bags)
-/// - Representative date combinations x representative time combinations x all 7 zone combinations
+/// - All 864 date combinations x 14 representative time combinations x all 7 zone combinations
 fn representative_field_bags() -> impl Iterator<Item = DateTimeFieldBag> {
     let date_and_zone = all_date_field_bags().flat_map(|date_bag| {
-        TIME_ZONE_NAMES.iter().map(move |&time_zone_name| {
+        with_none(TimeZoneName::VALUES).map(move |time_zone_name| {
             let mut bag = date_bag;
             bag.time_zone_name = time_zone_name;
             bag
@@ -148,7 +82,7 @@ fn representative_field_bags() -> impl Iterator<Item = DateTimeFieldBag> {
     });
 
     let time_and_zone = all_time_field_bags().flat_map(|time_bag| {
-        TIME_ZONE_NAMES.iter().map(move |&time_zone_name| {
+        with_none(TimeZoneName::VALUES).map(move |time_zone_name| {
             let mut bag = time_bag;
             bag.time_zone_name = time_zone_name;
             bag
@@ -182,7 +116,7 @@ fn representative_field_bags() -> impl Iterator<Item = DateTimeFieldBag> {
             .clone()
             .into_iter()
             .flat_map(move |time_bag| {
-                TIME_ZONE_NAMES.iter().map(move |&time_zone_name| {
+                with_none(TimeZoneName::VALUES).map(move |time_zone_name| {
                     let mut bag = date_bag;
                     bag.day_period = time_bag.day_period;
                     bag.hour_kind = time_bag.hour_kind;
@@ -199,20 +133,15 @@ fn representative_field_bags() -> impl Iterator<Item = DateTimeFieldBag> {
     date_and_zone.chain(time_and_zone).chain(date_time_zone)
 }
 
+/// Yields all 83,160 combinations of `FieldSetBuilder` options (`date_fields`, `zone_style`,
+/// `length`, `time_precision`, `alignment`, `year_style`).
 fn all_field_set_builders() -> impl Iterator<Item = FieldSetBuilder> {
-    let date_fields_iter = [None]
-        .into_iter()
-        .chain(DateFields::VALUES.iter().copied().map(Some));
-    let zone_styles_iter = [None]
-        .into_iter()
-        .chain(ZoneStyle::VALUES.iter().copied().map(Some));
-
-    date_fields_iter.flat_map(move |date_fields| {
-        zone_styles_iter.clone().flat_map(move |zone_style| {
-            LENGTHS.iter().flat_map(move |&length| {
-                TIME_PRECISIONS.iter().flat_map(move |&time_precision| {
-                    ALIGNMENTS.iter().flat_map(move |&alignment| {
-                        YEAR_STYLES.iter().map(move |&year_style| {
+    with_none(DateFields::VALUES).flat_map(move |date_fields| {
+        with_none(ZoneStyle::VALUES).flat_map(move |zone_style| {
+            with_none(Length::VALUES).flat_map(move |length| {
+                with_none(TimePrecision::VALUES).flat_map(move |time_precision| {
+                    with_none(Alignment::VALUES).flat_map(move |alignment| {
+                        with_none(YearStyle::VALUES).map(move |year_style| {
                             let mut builder = FieldSetBuilder::new();
                             builder.length = length;
                             builder.date_fields = date_fields;
@@ -229,6 +158,32 @@ fn all_field_set_builders() -> impl Iterator<Item = FieldSetBuilder> {
     })
 }
 
+/// Returns the expected `FieldSetBuilder` after round-tripping `builder` through
+/// `DateTimeFieldBag` (`builder -> bag -> expected_builder`).
+fn expected_builder_after_bag_roundtrip(builder: &FieldSetBuilder) -> FieldSetBuilder {
+    let mut expected = builder.clone();
+    // When `builder` filled in missing `YMD` fields (e.g. from `""`, `"yd"`, or `"Mz"`),
+    // converting to `DateTimeFieldBag` materializes `Month::Short` (`Length::Medium`) and
+    // `Year::Numeric` (`YearStyle::Full`) where `builder` had `None`.
+    if expected.date_fields == Some(DateFields::YMD) {
+        expected.length.get_or_insert(Length::Medium);
+        expected.year_style.get_or_insert(YearStyle::Full);
+    }
+    // When `builder` has neither a month nor a weekday, `DateTimeFieldBag` has no field that
+    // carries `Length` (since `day_period` is dropped in `from_field_set_builder`, #487).
+    if matches!(
+        expected.date_fields,
+        None | Some(DateFields::D | DateFields::Y)
+    ) {
+        expected.length = None;
+    }
+    expected
+}
+
+/// Tests UTS 35 skeleton string serialization (`Writeable` / `Display`) and parsing
+/// (`try_from_skeleton` / `from_skeleton`) across `representative_field_bags()`, verifying
+/// that every `DateTimeFieldBag` round-trips through a skeleton string (with standalone
+/// `hour_kind` dropped when `hour` is `None`) and re-serializes to the identical string.
 #[test]
 fn test_skeleton_and_fieldbag() {
     let mut skeleton = String::new();
@@ -259,9 +214,16 @@ fn test_skeleton_and_fieldbag() {
     }
 }
 
+/// Tests conversions between `DateTimeFieldBag` and `FieldSetBuilder` in both directions:
+/// 1. `Bag -> Builder -> Bag -> Builder`: verifies that every bag produces a valid
+///    `CompositeFieldSet` and reaches a fixed point on the first round-trip.
+/// 2. `Builder -> Bag -> Builder`: verifies across all 83,160 `FieldSetBuilder` combinations
+///    that valid builders stabilize immediately (`bag1 == bag2` and `builder1 == builder2`)
+///    and invalid builders stabilize after missing fields are filled in (`bag2 == bag3` and
+///    `builder2 == builder3`).
 #[test]
 fn test_fieldset_builder_and_fieldbag() {
-    // 1. Bag -> Builder -> CompositeFieldSet -> Bag -> Builder
+    // 1. Bag -> Builder -> Bag -> Builder
     for bag in representative_field_bags() {
         let builder1 = bag.to_field_set_builder();
         let composite1 = builder1.clone().build_composite().unwrap_or_else(|err| {
@@ -269,92 +231,60 @@ fn test_fieldset_builder_and_fieldbag() {
         });
         assert_eq!(bag.to_composite_field_set(), composite1);
 
-        // Round-tripping through DateTimeFieldBag must preserve the selected fields
-        // (`date_fields`, `time_precision`, `zone_style`) and reach a strict fixed point.
-        // Note: It can take up to 2 round-trips to stabilize when both `month` and `weekday`
-        // are present (e.g. `Month::Numeric` + `Weekday::Narrow` -> `MDE::short()` ->
-        // `Month::Numeric` + `Weekday::Short` -> `MDE::medium()` -> `Month::Short` + `Weekday::Short`).
         let bag1 = DateTimeFieldBag::from_field_set_builder(&builder1);
         let builder2 = bag1.to_field_set_builder();
-        let composite2 = builder2.clone().build_composite().unwrap();
         let bag2 = DateTimeFieldBag::from_field_set_builder(&builder2);
         let builder3 = bag2.to_field_set_builder();
-        let composite3 = builder3.clone().build_composite().unwrap();
-        let bag3 = DateTimeFieldBag::from_field_set_builder(&builder3);
 
-        assert_eq!(builder1.date_fields, builder2.date_fields, "bag: {bag:?}");
+        assert_eq!(bag1, bag2, "bag: {bag:?}");
         assert_eq!(
-            builder1.time_precision, builder2.time_precision,
+            expected_builder_after_bag_roundtrip(&builder1),
+            builder2,
             "bag: {bag:?}"
         );
-        assert_eq!(builder1.zone_style, builder2.zone_style, "bag: {bag:?}");
-        // Except when `builder1` is `MDE`/`YMDE` with `Length::Short` (where `bag` had
-        // numeric month + `Weekday::Narrow`, which `from_field_set_builder` turns into
-        // numeric month + `Weekday::Short`, causing `to_field_set_builder` to promote
-        // length to `Length::Medium`), `bag1` is already a fixed point on the first step.
-        if !(matches!(
-            builder1.date_fields,
-            Some(DateFields::MDE | DateFields::YMDE)
-        ) && builder1.length == Some(Length::Short))
-        {
-            assert_eq!(bag1, bag2, "bag: {bag:?}");
-        }
-        assert_eq!(bag2, bag3, "bag: {bag:?}");
         assert_eq!(builder2, builder3, "bag: {bag:?}");
-        assert_eq!(composite2, composite3, "bag: {bag:?}");
     }
 
     // 2. Builder -> Bag -> Builder across all 83,160 FieldSetBuilder combinations
     for builder in all_field_set_builders() {
         let bag1 = DateTimeFieldBag::from_field_set_builder(&builder);
         let builder1 = bag1.to_field_set_builder();
-        let composite1 = builder1.clone().build_composite().unwrap_or_else(|err| {
+        let _composite1 = builder1.clone().build_composite().unwrap_or_else(|err| {
             panic!("builder {builder:?} -> bag {bag1:?} -> invalid builder {builder1:?}: {err:?}")
         });
 
         let bag2 = DateTimeFieldBag::from_field_set_builder(&builder1);
         let builder2 = bag2.to_field_set_builder();
-        let composite2 = builder2.clone().build_composite().unwrap();
-
         let bag3 = DateTimeFieldBag::from_field_set_builder(&builder2);
         let builder3 = bag3.to_field_set_builder();
-        let composite3 = builder3.clone().build_composite().unwrap();
 
-        assert_eq!(
-            builder1.date_fields, builder2.date_fields,
-            "builder: {builder:?}"
-        );
-        assert_eq!(
-            builder1.time_precision, builder2.time_precision,
-            "builder: {builder:?}"
-        );
-        assert_eq!(
-            builder1.zone_style, builder2.zone_style,
-            "builder: {builder:?}"
-        );
-        // For any valid `FieldSetBuilder` (except `MDE`/`YMDE` with `Length::Short`, where
-        // `from_field_set_builder` emits `Month::Numeric` + `Weekday::Short`, which
-        // `to_field_set_builder` maps to `Length::Medium`), `bag1`/`builder1`/`composite1`
-        // are already at a fixed point on the first step.
-        // (Invalid builders, such as an empty builder or `CalendarPeriod` + `Zone`, have
-        // missing fields filled in when `bag1` converts to `builder1`, so they stabilize
-        // on the second step `bag2`/`builder2`/`composite2`.)
-        if builder.clone().build_composite().is_ok()
-            && !(matches!(
+        // For every valid `FieldSetBuilder`, `builder1` is already at a fixed point
+        // (`builder1 == builder2`), and `bag1 == bag2` holds except when `builder` is
+        // `MDE`/`YMDE` with `Length::Short` (where `bag1` has `Month::Numeric` +
+        // `Weekday::Short`, which `builder1` promotes to `Length::Medium`, so `bag2` has
+        // `Month::Short` + `Weekday::Short`).
+        if builder.clone().build_composite().is_ok() {
+            assert_eq!(builder1, builder2, "builder: {builder:?}");
+            if !(matches!(
                 builder.date_fields,
                 Some(DateFields::MDE | DateFields::YMDE)
             ) && builder.length == Some(Length::Short))
-        {
-            assert_eq!(bag1, bag2, "builder: {builder:?}");
-            assert_eq!(builder1, builder2, "builder: {builder:?}");
-            assert_eq!(composite1, composite2, "builder: {builder:?}");
+            {
+                assert_eq!(bag1, bag2, "builder: {builder:?}");
+            }
         }
+        assert_eq!(
+            expected_builder_after_bag_roundtrip(&builder1),
+            builder2,
+            "builder: {builder:?}"
+        );
         assert_eq!(bag2, bag3, "builder: {builder:?}");
         assert_eq!(builder2, builder3, "builder: {builder:?}");
-        assert_eq!(composite2, composite3, "builder: {builder:?}");
     }
 }
 
+/// Tests round-tripping between `FieldSetBuilder`, `CompositeFieldSet`, and
+/// `FixedCalendarDateTimeFormatter::to_field_set_builder()` across all valid builders.
 #[test]
 fn test_fieldset_formatter_and_builder() {
     let prefs = locale!("en").into();

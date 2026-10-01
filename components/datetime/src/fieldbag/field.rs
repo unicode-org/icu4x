@@ -73,6 +73,11 @@ pub enum Era {
     Narrow,
 }
 
+impl Era {
+    /// All values of this enumeration.
+    pub const VALUES: &[Self] = &[Self::Short, Self::Long, Self::Narrow];
+}
+
 /// Options for the year length, corresponding to ECMA-402 widths and UTS#35 skeletons.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -119,6 +124,11 @@ pub enum Year {
     /// );
     /// ```
     TwoDigit,
+}
+
+impl Year {
+    /// All values of this enumeration.
+    pub const VALUES: &[Self] = &[Self::Numeric, Self::TwoDigit];
 }
 
 /// Options for the month length, corresponding to ECMA-402 widths and UTS#35 skeletons.
@@ -236,6 +246,17 @@ pub enum Month {
     Narrow,
 }
 
+impl Month {
+    /// All values of this enumeration.
+    pub const VALUES: &[Self] = &[
+        Self::Numeric,
+        Self::TwoDigit,
+        Self::Short,
+        Self::Long,
+        Self::Narrow,
+    ];
+}
+
 /// Options for the day of month length, corresponding to ECMA-402 widths and UTS#35 skeletons.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -282,6 +303,11 @@ pub enum Day {
     /// );
     /// ```
     TwoDigit,
+}
+
+impl Day {
+    /// All values of this enumeration.
+    pub const VALUES: &[Self] = &[Self::Numeric, Self::TwoDigit];
 }
 
 /// Options for the weekday length, corresponding to ECMA-402 widths and UTS#35 skeletons.
@@ -357,6 +383,11 @@ pub enum Weekday {
     Narrow,
 }
 
+impl Weekday {
+    /// All values of this enumeration.
+    pub const VALUES: &[Self] = &[Self::Short, Self::Long, Self::Narrow];
+}
+
 /// Options for the day period length, corresponding to ECMA-402 widths and UTS#35 skeletons.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -426,6 +457,15 @@ pub enum DayPeriod {
     FlexibleNarrow,
 }
 
+impl DayPeriod {
+    /// All values of this enumeration.
+    pub const VALUES: &[Self] = &[
+        Self::FlexibleShort,
+        Self::FlexibleLong,
+        Self::FlexibleNarrow,
+    ];
+}
+
 /// Options for the kind of hour symbol, corresponding to ECMA-402 widths and UTS#35 skeletons.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -482,6 +522,11 @@ pub enum HourKind {
     Clock24,
 }
 
+impl HourKind {
+    /// All values of this enumeration.
+    pub const VALUES: &[Self] = &[Self::Clock12, Self::Clock24];
+}
+
 /// Options for the hour length, corresponding to ECMA-402 widths and UTS#35 skeletons.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -528,6 +573,11 @@ pub enum Hour {
     /// );
     /// ```
     TwoDigit,
+}
+
+impl Hour {
+    /// All values of this enumeration.
+    pub const VALUES: &[Self] = &[Self::Numeric, Self::TwoDigit];
 }
 
 /// Options for the minute length, corresponding to ECMA-402 widths and UTS#35 skeletons.
@@ -578,6 +628,11 @@ pub enum Minute {
     TwoDigit,
 }
 
+impl Minute {
+    /// All values of this enumeration.
+    pub const VALUES: &[Self] = &[Self::Numeric, Self::TwoDigit];
+}
+
 /// Options for the second length, corresponding to ECMA-402 widths and UTS#35 skeletons.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -624,6 +679,11 @@ pub enum Second {
     /// );
     /// ```
     TwoDigit,
+}
+
+impl Second {
+    /// All values of this enumeration.
+    pub const VALUES: &[Self] = &[Self::Numeric, Self::TwoDigit];
 }
 
 /// Options for the fractional second digits, corresponding to ECMA-402 widths and UTS#35 skeletons.
@@ -693,6 +753,11 @@ pub enum FractionalSecondDigits {
     /// );
     /// ```
     F3,
+}
+
+impl FractionalSecondDigits {
+    /// All values of this enumeration.
+    pub const VALUES: &[Self] = &[Self::F1, Self::F2, Self::F3];
 }
 
 /// Options for the time zone name, corresponding to ECMA-402 widths and UTS#35 skeletons.
@@ -829,4 +894,16 @@ pub enum TimeZoneName {
     /// );
     /// ```
     LongGeneric,
+}
+
+impl TimeZoneName {
+    /// All values of this enumeration.
+    pub const VALUES: &[Self] = &[
+        Self::ShortSpecific,
+        Self::LongSpecific,
+        Self::ShortOffset,
+        Self::LongOffset,
+        Self::ShortGeneric,
+        Self::LongGeneric,
+    ];
 }

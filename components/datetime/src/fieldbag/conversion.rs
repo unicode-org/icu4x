@@ -25,7 +25,8 @@ fn fieldbag_to_length(bag: &DateTimeFieldBag) -> Option<options::Length> {
         time_zone_name: _,
     } = *bag;
     // If any of the fields are Long, use a Long length.
-    // If any are Short, use a Medium length.
+    // If any are Short or Narrow, use a Medium length (since `options::Length` does not have
+    // a `Narrow` variant, and `Length::Medium` corresponds to abbreviated text fields).
     // If any numeric-or-alphabetic fields are numeric, use a Short length.
     // Else, use the default length.
     if matches!(month, Some(Month::Long))
@@ -33,9 +34,12 @@ fn fieldbag_to_length(bag: &DateTimeFieldBag) -> Option<options::Length> {
         || matches!(day_period, Some(DayPeriod::FlexibleLong))
     {
         Some(options::Length::Long)
-    } else if matches!(month, Some(Month::Short))
-        || matches!(weekday, Some(Weekday::Short))
-        || matches!(day_period, Some(DayPeriod::FlexibleShort))
+    } else if matches!(month, Some(Month::Short | Month::Narrow))
+        || matches!(weekday, Some(Weekday::Short | Weekday::Narrow))
+        || matches!(
+            day_period,
+            Some(DayPeriod::FlexibleShort | DayPeriod::FlexibleNarrow)
+        )
     {
         Some(options::Length::Medium)
     } else if matches!(month, Some(Month::Numeric | Month::TwoDigit)) {
@@ -252,10 +256,11 @@ fn fieldbag_to_time_precision(bag: &DateTimeFieldBag) -> Option<options::TimePre
         Some(options::TimePrecision::Second)
     } else if bag.minute.is_some() {
         Some(options::TimePrecision::Minute)
-    } else if bag.hour.is_some() || bag.day_period.is_some() || bag.hour_kind.is_some() {
-        // TODO(#8434): ICU4X does not have a standalone day-period or hour-cycle field set
-        // without an hour field. Promote standalone `day_period` (e.g. "B") or `hour_kind`
-        // to hour precision so they produce a valid time field set.
+    } else if bag.hour.is_some() || bag.day_period.is_some() {
+        // TODO(#8434): ICU4X does not have a standalone day-period field set without an hour
+        // field. Promote standalone `day_period` (e.g. "B") to hour precision so it produces
+        // a valid time field set. Standalone `hour_kind` without `hour` is ignored, matching
+        // `DateTimeFieldBag` -> skeleton conversion.
         Some(options::TimePrecision::Hour)
     } else {
         None
