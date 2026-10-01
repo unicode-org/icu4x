@@ -25,7 +25,8 @@ fn fieldbag_to_length(bag: &DateTimeFieldBag) -> Option<options::Length> {
         time_zone_name: _,
     } = *bag;
     // If any of the fields are Long, use a Long length.
-    // If any are Short, use a Medium length.
+    // If any are Short or Narrow, use a Medium length (since `options::Length` does not have
+    // a `Narrow` variant, and `Length::Medium` corresponds to abbreviated text fields).
     // If any numeric-or-alphabetic fields are numeric, use a Short length.
     // Else, use the default length.
     if matches!(month, Some(Month::Long))
@@ -33,9 +34,12 @@ fn fieldbag_to_length(bag: &DateTimeFieldBag) -> Option<options::Length> {
         || matches!(day_period, Some(DayPeriod::FlexibleLong))
     {
         Some(options::Length::Long)
-    } else if matches!(month, Some(Month::Short))
-        || matches!(weekday, Some(Weekday::Short))
-        || matches!(day_period, Some(DayPeriod::FlexibleShort))
+    } else if matches!(month, Some(Month::Short | Month::Narrow))
+        || matches!(weekday, Some(Weekday::Short | Weekday::Narrow))
+        || matches!(
+            day_period,
+            Some(DayPeriod::FlexibleShort | DayPeriod::FlexibleNarrow)
+        )
     {
         Some(options::Length::Medium)
     } else if matches!(month, Some(Month::Numeric | Month::TwoDigit)) {
@@ -252,18 +256,28 @@ fn fieldbag_to_time_precision(bag: &DateTimeFieldBag) -> Option<options::TimePre
         Some(options::TimePrecision::Second)
     } else if bag.minute.is_some() {
         Some(options::TimePrecision::Minute)
-    } else if bag.hour.is_some() {
+    } else if bag.hour.is_some() || bag.day_period.is_some() {
+        // TODO(#8434): ICU4X does not have a standalone day-period field set without an hour
+        // field. Promote standalone `day_period` (e.g. "B") to hour precision so it produces
+        // a valid time field set. Standalone `hour_kind` without `hour` is ignored, matching
+        // `DateTimeFieldBag` -> skeleton conversion.
         Some(options::TimePrecision::Hour)
     } else {
-        // TODO: What should happen with standalone day period or hour kind?
         None
     }
 }
 
-#[allow(clippy::todo)] // TODO: Finish implementing this
 fn fieldbag_to_zone_style(bag: &DateTimeFieldBag) -> Option<builder::ZoneStyle> {
+    // The 6 ECMA-402 TimeZoneName styles map 1-to-1 to their corresponding ZoneStyle
+    // variants. ZoneStyle::Location and ZoneStyle::ExemplarCity have no ECMA-402
+    // TimeZoneName equivalent and are not produced in this direction (see #8434).
     match bag.time_zone_name {
-        Some(_) => todo!(),
+        Some(TimeZoneName::ShortSpecific) => Some(builder::ZoneStyle::SpecificShort),
+        Some(TimeZoneName::LongSpecific) => Some(builder::ZoneStyle::SpecificLong),
+        Some(TimeZoneName::ShortOffset) => Some(builder::ZoneStyle::LocalizedOffsetShort),
+        Some(TimeZoneName::LongOffset) => Some(builder::ZoneStyle::LocalizedOffsetLong),
+        Some(TimeZoneName::ShortGeneric) => Some(builder::ZoneStyle::GenericShort),
+        Some(TimeZoneName::LongGeneric) => Some(builder::ZoneStyle::GenericLong),
         None => None,
     }
 }
@@ -311,11 +325,31 @@ fn fieldbag_to_year_style(bag: &DateTimeFieldBag) -> Option<options::YearStyle> 
 }
 
 pub(crate) fn fieldbag_to_fieldset(bag: &DateTimeFieldBag) -> builder::FieldSetBuilder {
+    let time_precision = fieldbag_to_time_precision(bag);
+    let zone_style = fieldbag_to_zone_style(bag);
+    let date_fields = match (fieldbag_to_date_fields(bag), time_precision, zone_style) {
+        (Some(df), Some(_), _) | (Some(df), _, Some(_)) if df.is_calendar_period() => {
+            // TODO(#8531): CalendarPeriod field sets (Y, M, YM) cannot currently be combined
+            // with time or time zone in FieldSetBuilder (neither CalendarPeriod + Time nor
+            // CalendarPeriod + Zone exists in CompositeFieldSet). Promote to YMD as interim
+            // behavior so conversion to CompositeFieldSet remains infallible.
+            Some(builder::DateFields::YMD)
+        }
+        (None, None, None) => {
+            // TODO(#8434): When a DateTimeFieldBag is completely empty, FieldSetBuilder would
+            // otherwise have no date, time, or zone fields and fail `build_composite()` with
+            // `MissingDateFields`. Defaulting to `DateFields::YMD` matches ECMA-402's
+            // `Intl.DateTimeFormat` default when no date/time options are specified and ensures
+            // every DateTimeFieldBag produces a builder that builds a valid CompositeFieldSet.
+            Some(builder::DateFields::YMD)
+        }
+        (df, _, _) => df,
+    };
     builder::FieldSetBuilder {
         length: fieldbag_to_length(bag),
-        date_fields: fieldbag_to_date_fields(bag),
-        time_precision: fieldbag_to_time_precision(bag),
-        zone_style: fieldbag_to_zone_style(bag),
+        date_fields,
+        time_precision,
+        zone_style,
         alignment: fieldbag_to_alignment(bag),
         year_style: fieldbag_to_year_style(bag),
     }
@@ -359,9 +393,12 @@ pub(crate) fn fieldset_to_fieldbag(fieldset: &builder::FieldSetBuilder) -> DateT
             },
             _ => None,
         },
-        // TODO: this crate doesn't support flexible day periods yet in fieldsets
+        // TODO(#487): Flexible day periods (`B`) are not yet supported in fieldsets;
+        // once supported, map the fieldset's day period option back to `DayPeriod`.
         day_period: None,
-        // TODO: figure out how to plumb the hour cycle to here
+        // TODO(#8434): FieldSetBuilder does not carry an hour-cycle preference (which lives on
+        // `DateTimeFormatterPreferences::hour_cycle`), so `hour_kind` is left as `None`
+        // (locale default `j`).
         hour_kind: None,
         hour: match fieldset.time_precision {
             Some(time_precision) if time_precision.has_hour() => match fieldset.alignment {
@@ -395,9 +432,19 @@ pub(crate) fn fieldset_to_fieldbag(fieldset: &builder::FieldSetBuilder) -> DateT
             },
             _ => None,
         },
-        #[allow(clippy::todo)] // TODO(agent): finish implementing
         time_zone_name: match fieldset.zone_style {
-            Some(_) => todo!(),
+            Some(builder::ZoneStyle::SpecificShort) => Some(TimeZoneName::ShortSpecific),
+            Some(builder::ZoneStyle::SpecificLong) => Some(TimeZoneName::LongSpecific),
+            Some(builder::ZoneStyle::LocalizedOffsetShort) => Some(TimeZoneName::ShortOffset),
+            Some(builder::ZoneStyle::LocalizedOffsetLong) => Some(TimeZoneName::LongOffset),
+            Some(builder::ZoneStyle::GenericShort) => Some(TimeZoneName::ShortGeneric),
+            Some(builder::ZoneStyle::GenericLong) => Some(TimeZoneName::LongGeneric),
+            // TODO(#8434): TimeZoneName currently only models the 6 ECMA-402 zone styles and
+            // does not have variants for Location (`VVVV`) or ExemplarCity (`VVV`). Map them to
+            // the closest non-offset, non-DST-specific analog (`LongGeneric`).
+            Some(builder::ZoneStyle::Location | builder::ZoneStyle::ExemplarCity) => {
+                Some(TimeZoneName::LongGeneric)
+            }
             None => None,
         },
     }
