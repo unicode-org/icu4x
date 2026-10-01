@@ -1877,4 +1877,27 @@ mod tests {
         let breaks: Vec<usize> = segmenter.segment_str("").collect();
         assert_eq!(breaks, [0]);
     }
+
+    #[test]
+    fn dictionary_terminal_break() {
+        // Each input ends partway through a longer dictionary word, so the
+        // dictionary breakpoint before the trailing text must be kept.
+        let cases: [(&str, &[&str]); 4] = [
+            ("ผู้ใช้ส", &["ผู้", "ใช้", "ส"]),
+            ("ປະເທດລາວມີພົນລ", &["ປະເທດ", "ລາວ", "ມີ", "ພົນ", "ລ"]),
+            ("ព្រះរាជាណាចក្រកម្ពុជាជាប", &["ព្រះរាជាណាចក្រ", "កម្ពុជា", "ជា", "ប"]),
+            ("မြန်မာန", &["မြန်မာ", "န"]),
+        ];
+
+        let mut neo = LineSegmenter::new_neo_for_non_complex_scripts(Default::default());
+        neo.load_dictionary();
+        for (text, expected) in cases {
+            check_line(text, expected, neo);
+            check_line(
+                text,
+                expected,
+                LineSegmenter::new_dictionary(Default::default()),
+            );
+        }
+    }
 }

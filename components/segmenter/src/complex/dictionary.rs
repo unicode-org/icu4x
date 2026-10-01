@@ -77,6 +77,12 @@ impl<Y: RuleBreakType> Iterator for DictionaryBreakIterator<'_, '_, Y> {
         }
 
         if intermediate_length > 0 {
+            if let Some((prev_iter, prev_grapheme_iter)) = previous_match {
+                // Rewind the previous match point so that the trailing text is
+                // processed by the next call to `next`.
+                self.iter = prev_iter;
+                self.grapheme_iter = prev_grapheme_iter;
+            }
             Some(intermediate_length)
         } else if not_match {
             // no match by scanning text
@@ -235,5 +241,37 @@ mod tests {
         let s = "エディターエディター";
         let result: Vec<usize> = dict_segmenter.segment_str(s).collect();
         assert_eq!(result, vec![15, 30]);
+    }
+
+    #[test]
+    fn dictionary_terminal_break() {
+        let mut payloads = ComplexPayloadsBorrowed::new();
+        payloads.with_southeast_asian_dictionaries();
+        payloads.with_japanese_dictionary();
+
+        // Some prefixes end inside a dictionary word; the break at the end of
+        // the text must still be emitted.
+        for (script, text) in [
+            (
+                ComplexScript::Thai,
+                "ผู้ใช้สามารถติดตั้งโปรแกรมคอมพิวเตอร์ได้ด้วยตนเอง",
+            ),
+            (ComplexScript::Lao, "ປະເທດລາວມີພົນລະເມືອງປະມານເຈັດລ້ານຄົນ"),
+            (ComplexScript::Khmer, "ព្រះរាជាណាចក្រកម្ពុជាជាប្រទេសមួយនៅអាស៊ីអាគ្នេយ៍"),
+            (ComplexScript::Myanmar, "မြန်မာနိုင်ငံသည်အရှေ့တောင်အာရှတွင်တည်ရှိသည်"),
+            (
+                ComplexScript::ChineseOrJapanese,
+                "コンピューターソフトウェアエンジニアリング",
+            ),
+        ] {
+            let segmenter = payloads.select(script).unwrap();
+            for (i, c) in text.char_indices() {
+                let prefix = &text[..i + c.len_utf8()];
+                let last = segmenter
+                    .segment_str(prefix, GraphemeClusterSegmenter::new(), 0)
+                    .last();
+                assert_eq!(last, Some(prefix.len()), "{prefix}");
+            }
+        }
     }
 }

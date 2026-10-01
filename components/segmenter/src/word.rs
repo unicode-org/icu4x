@@ -1056,6 +1056,32 @@ fn cj_dictionary_test_neo() {
 }
 
 #[test]
+fn dictionary_terminal_break() {
+    // Each input ends partway through a longer dictionary word, so the text
+    // after the last match has to be returned as a separate segment.
+    let cases: [(&str, &[&str]); 4] = [
+        ("ผู้ใช้ส", &["ผู้", "ใช้", "ส"]),
+        ("ປະເທດລາວມີພົນລ", &["ປະເທດ", "ລາວ", "ມີ", "ພົນ", "ລ"]),
+        ("ព្រះរាជាណាចក្រកម្ពុជាជាប", &["ព្រះរាជាណាចក្រ", "កម្ពុជា", "ជា", "ប"]),
+        ("မြန်မာန", &["မြန်မာ", "န"]),
+    ];
+
+    let mut neo =
+        WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
+    neo.load_dictionary();
+    for (text, expected) in cases {
+        check_word(text, expected, neo);
+        check_word(
+            text,
+            expected,
+            WordSegmenter::new_dictionary(WordBreakInvariantOptions::default()),
+        );
+    }
+
+    check_word("コンピューターソ", &["コンピューター", "ソ"], neo);
+}
+
+#[test]
 fn complex_mixed_thai_cj_word_break() {
     check_word(
         "ภาษาไทย龟山岛",
