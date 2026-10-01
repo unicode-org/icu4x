@@ -1071,7 +1071,8 @@ fn download() {
     use std::fs::File;
     use std::io::Write;
 
-    let data_root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("data/segmenter/pri555");
+    let data_root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("data/segmenter/pri555/ucd/auxiliary");
 
     for file in std::fs::read_dir(&data_root).unwrap() {
         let file = file.unwrap();
@@ -1204,7 +1205,7 @@ impl SourceDataProvider {
                 Ok((symbol.to_owned(), set))
             })
             .collect::<Result<BTreeMap<_, _>, DataError>>()?;
-        let eot_symbol = magic_symbols.remove("eot").unwrap_or("eot").to_string();
+        let eot_symbol = magic_symbols.remove("eot").unwrap();
         let magic_symbols = magic_symbols;
         let complex_symbols = complex_symbols;
 
@@ -1596,10 +1597,10 @@ impl SourceDataProvider {
 
         let symbol_lookup = symbols
             .keys()
-            .filter(|&s| s != &eot_symbol && !pseudo_symbol_map.contains_key(s))
+            .filter(|&s| s != eot_symbol && !pseudo_symbol_map.contains_key(s))
             .enumerate()
             .map(|(i, symbol)| (symbol.as_str(), Symbol::try_from(i + 1).unwrap()))
-            .chain([(eot_symbol.as_str(), SegmenterStateMachine::EOT_SYMBOL)])
+            .chain([(eot_symbol, SegmenterStateMachine::EOT_SYMBOL)])
             .collect::<BTreeMap<_, _>>();
 
         let pseudo_symbol_shift = symbol_lookup.values().copied().max().unwrap() + 1;

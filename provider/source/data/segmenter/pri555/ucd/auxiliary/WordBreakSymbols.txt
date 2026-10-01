@@ -1,4 +1,14 @@
+# WordBreakSymbols-18.0.0.txt
+# Date: 2026-09-30, 01:50:02 GMT
+# © 2026 Unicode®, Inc.
+# Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
+# For terms of use and license, see https://www.unicode.org/terms_of_use.html
+#
+# Public Review Issue #555, Finite automata for line breaking and segmentation
+#   For documentation, see https://www.unicode.org/L2/L2026/26135-finite-automata.pdf
+#
 # Symbol name ; Symbol definition in UnicodeSet notation ; Optional non-dictionary equivalent symbol
+eot ; [[{eot}]] ; 
 XXmExtPictmHiraganamHanmComplexContext ; [\p{Word_Break=Other}-\p{Extended_Pictographic=True}-[:Hiragana:]-[:Han:]-[:LineBreak = Complex_Context:]] ; 
 LF ; [\p{Word_Break=LF}] ; 
 Newline ; [\p{Word_Break=Newline}] ; 
