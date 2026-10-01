@@ -325,27 +325,26 @@ fn fieldbag_to_year_style(bag: &DateTimeFieldBag) -> Option<options::YearStyle> 
 }
 
 pub(crate) fn fieldbag_to_fieldset(bag: &DateTimeFieldBag) -> builder::FieldSetBuilder {
-    let mut date_fields = fieldbag_to_date_fields(bag);
     let time_precision = fieldbag_to_time_precision(bag);
     let zone_style = fieldbag_to_zone_style(bag);
-    if matches!(
-        date_fields,
-        Some(builder::DateFields::Y | builder::DateFields::M | builder::DateFields::YM)
-    ) && (time_precision.is_some() || zone_style.is_some())
-    {
-        // TODO(#8531): CalendarPeriod field sets (Y, M, YM) cannot currently be combined
-        // with time or time zone in FieldSetBuilder (neither CalendarPeriod + Time nor
-        // CalendarPeriod + Zone exists in CompositeFieldSet). Promote to YMD as interim
-        // behavior so conversion to CompositeFieldSet remains infallible.
-        date_fields = Some(builder::DateFields::YMD);
-    } else if date_fields.is_none() && time_precision.is_none() && zone_style.is_none() {
-        // TODO(#8434): When a DateTimeFieldBag is completely empty, FieldSetBuilder would
-        // otherwise have no date, time, or zone fields and fail `build_composite()` with
-        // `MissingDateFields`. Defaulting to `DateFields::YMD` matches ECMA-402's
-        // `Intl.DateTimeFormat` default when no date/time options are specified and ensures
-        // every DateTimeFieldBag produces a builder that builds a valid CompositeFieldSet.
-        date_fields = Some(builder::DateFields::YMD);
-    }
+    let date_fields = match (fieldbag_to_date_fields(bag), time_precision, zone_style) {
+        (Some(df), Some(_), _) | (Some(df), _, Some(_)) if df.is_calendar_period() => {
+            // TODO(#8531): CalendarPeriod field sets (Y, M, YM) cannot currently be combined
+            // with time or time zone in FieldSetBuilder (neither CalendarPeriod + Time nor
+            // CalendarPeriod + Zone exists in CompositeFieldSet). Promote to YMD as interim
+            // behavior so conversion to CompositeFieldSet remains infallible.
+            Some(builder::DateFields::YMD)
+        }
+        (None, None, None) => {
+            // TODO(#8434): When a DateTimeFieldBag is completely empty, FieldSetBuilder would
+            // otherwise have no date, time, or zone fields and fail `build_composite()` with
+            // `MissingDateFields`. Defaulting to `DateFields::YMD` matches ECMA-402's
+            // `Intl.DateTimeFormat` default when no date/time options are specified and ensures
+            // every DateTimeFieldBag produces a builder that builds a valid CompositeFieldSet.
+            Some(builder::DateFields::YMD)
+        }
+        (df, _, _) => df,
+    };
     builder::FieldSetBuilder {
         length: fieldbag_to_length(bag),
         date_fields,

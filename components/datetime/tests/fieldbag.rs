@@ -91,7 +91,7 @@ fn representative_field_bags() -> impl Iterator<Item = DateTimeFieldBag> {
 
     // Cross-product of all 864 date bags with a subset of time bags covering all time precisions,
     // alignments, hour kinds, and day periods, across all 7 zone styles.
-    let sample_time_bags: Vec<DateTimeFieldBag> = [
+    let sample_time_bags = [
         "",
         "B",
         "h",
@@ -107,27 +107,22 @@ fn representative_field_bags() -> impl Iterator<Item = DateTimeFieldBag> {
         "ms",
         "S",
     ]
-    .into_iter()
-    .map(|s| DateTimeFieldBag::try_from_skeleton(s).unwrap())
-    .collect();
+    .map(|s| DateTimeFieldBag::try_from_skeleton(s).unwrap());
 
     let date_time_zone = all_date_field_bags().flat_map(move |date_bag| {
-        sample_time_bags
-            .clone()
-            .into_iter()
-            .flat_map(move |time_bag| {
-                with_none(TimeZoneName::VALUES).map(move |time_zone_name| {
-                    let mut bag = date_bag;
-                    bag.day_period = time_bag.day_period;
-                    bag.hour_kind = time_bag.hour_kind;
-                    bag.hour = time_bag.hour;
-                    bag.minute = time_bag.minute;
-                    bag.second = time_bag.second;
-                    bag.fractional_second_digits = time_bag.fractional_second_digits;
-                    bag.time_zone_name = time_zone_name;
-                    bag
-                })
+        sample_time_bags.into_iter().flat_map(move |time_bag| {
+            with_none(TimeZoneName::VALUES).map(move |time_zone_name| {
+                let mut bag = date_bag;
+                bag.day_period = time_bag.day_period;
+                bag.hour_kind = time_bag.hour_kind;
+                bag.hour = time_bag.hour;
+                bag.minute = time_bag.minute;
+                bag.second = time_bag.second;
+                bag.fractional_second_digits = time_bag.fractional_second_digits;
+                bag.time_zone_name = time_zone_name;
+                bag
             })
+        })
     });
 
     date_and_zone.chain(time_and_zone).chain(date_time_zone)
