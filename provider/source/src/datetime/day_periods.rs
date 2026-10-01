@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
+use crate::source::source_issue;
 use icu::datetime::provider::day_periods::*;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
@@ -23,7 +24,8 @@ pub(crate) fn compute_day_periods<'a>(
         if let Some(min_str) = parts.next() {
             let min: u32 = min_str.parse().unwrap();
             if min != 0 {
-                log::warn!(
+                source_issue!(
+                    Default::default(),
                     "Non-zero minute found in day period time: {}, precision will be lost",
                     s
                 );
@@ -45,10 +47,10 @@ pub(crate) fn compute_day_periods<'a>(
                 let end = parse_hour(before);
                 entries.insert((start, end), &**name);
             } else {
-                log::warn!("Did not have from/before values for rule {period} in locale {locale}")
+                source_issue!(locale, "Did not have from/before values for rule {period}")
             }
         } else {
-            log::warn!("missing name for range {period} in locale {locale}");
+            source_issue!(locale, "missing name for range {period}");
         }
     }
 

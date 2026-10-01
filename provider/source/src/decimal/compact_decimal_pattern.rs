@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde::numbers::{DecimalFormat, NumberPatternItem};
+use crate::source::source_issue;
 use icu::decimal::provider::CompactPatterns;
 use icu::plurals::PluralElements;
 use icu_pattern::{
@@ -25,7 +26,7 @@ impl DecimalFormat {
         for (&log10_type, pattern) in self.standard.iter() {
             let p = pattern.as_ref().try_map(|pattern| {
                 if pattern.negative.is_some() {
-                    log::warn!("Unexpected negative pattern for {locale}: {}", pattern);
+                    // TODO: support negative patterns
                 }
 
                 let number_of_0s = Some(
