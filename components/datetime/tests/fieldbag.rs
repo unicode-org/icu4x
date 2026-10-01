@@ -153,6 +153,48 @@ fn all_field_set_builders() -> impl Iterator<Item = FieldSetBuilder> {
     })
 }
 
+/// Returns the expected `DateTimeFieldBag` after round-tripping `bag` (produced by
+/// `from_field_set_builder`) through `FieldSetBuilder` (`bag -> builder -> expected_bag`).
+fn expected_bag_after_builder_roundtrip(bag: &DateTimeFieldBag) -> DateTimeFieldBag {
+    let mut expected = *bag;
+    // When both `month` and `weekday` are present, `Weekday::Short` promotes a numeric month's
+    // `Length::Short` to `Length::Medium`, which materializes as `Month::Short`.
+    if expected.weekday.is_some()
+        && matches!(expected.month, Some(Month::Numeric | Month::TwoDigit))
+    {
+        expected.month = Some(Month::Short);
+    }
+    // When `bag` came from an invalid `FieldSetBuilder` (e.g. `YearStyle::WithEra` without a
+    // year field, an empty builder, or `CalendarPeriod` + `Time`/`Zone`), `to_field_set_builder`
+    // fills in missing date fields on the resulting `DateFields`:
+    let builder = bag.to_field_set_builder();
+    if matches!(
+        builder.date_fields,
+        Some(DateFields::Y | DateFields::YM | DateFields::YMD | DateFields::YMDE)
+    ) {
+        expected.year.get_or_insert(Year::Numeric);
+    }
+    if matches!(
+        builder.date_fields,
+        Some(DateFields::MD | DateFields::YMD | DateFields::MDE | DateFields::YMDE)
+    ) {
+        let default_month = if expected.weekday == Some(Weekday::Long) {
+            Month::Long
+        } else {
+            Month::Short
+        };
+        expected.month.get_or_insert(default_month);
+        let default_day =
+            if expected.month == Some(Month::TwoDigit) || expected.hour == Some(Hour::TwoDigit) {
+                Day::TwoDigit
+            } else {
+                Day::Numeric
+            };
+        expected.day.get_or_insert(default_day);
+    }
+    expected
+}
+
 /// Returns the expected `FieldSetBuilder` after round-tripping `builder` through
 /// `DateTimeFieldBag` (`builder -> bag -> expected_builder`).
 fn expected_builder_after_bag_roundtrip(builder: &FieldSetBuilder) -> FieldSetBuilder {
@@ -171,6 +213,21 @@ fn expected_builder_after_bag_roundtrip(builder: &FieldSetBuilder) -> FieldSetBu
         None | Some(DateFields::D | DateFields::Y)
     ) {
         expected.length = None;
+    }
+    expected
+}
+
+/// Returns the expected `FieldSetBuilder` after building `fieldset` and converting back via
+/// `FixedCalendarDateTimeFormatter::to_field_set_builder()`.
+fn expected_builder_after_composite_roundtrip(
+    builder: &FieldSetBuilder,
+    fieldset: CompositeFieldSet,
+) -> FieldSetBuilder {
+    let mut expected = builder.clone();
+    // All `CompositeFieldSet` variants except `Zone` carry a concrete `Length`, defaulting
+    // `length: None` to `Length::Medium`.
+    if !matches!(fieldset, CompositeFieldSet::Zone(_)) {
+        expected.length.get_or_insert(Length::Medium);
     }
     expected
 }
@@ -213,9 +270,8 @@ fn test_skeleton_and_fieldbag() {
 /// 1. `Bag -> Builder -> Bag -> Builder`: verifies that every bag produces a valid
 ///    `CompositeFieldSet` and reaches a fixed point on the first round-trip.
 /// 2. `Builder -> Bag -> Builder`: verifies across all 83,160 `FieldSetBuilder` combinations
-///    that valid builders stabilize immediately (`bag1 == bag2` and `builder1 == builder2`)
-///    and invalid builders stabilize after missing fields are filled in (`bag2 == bag3` and
-///    `builder2 == builder3`).
+///    that valid builders stabilize immediately and invalid builders stabilize after missing
+///    fields are filled in (`bag2 == bag3` and `builder2 == builder3`).
 #[test]
 fn test_fieldset_builder_and_fieldbag() {
     // 1. Bag -> Builder -> Bag -> Builder
@@ -253,21 +309,11 @@ fn test_fieldset_builder_and_fieldbag() {
         let bag3 = DateTimeFieldBag::from_field_set_builder(&builder2);
         let builder3 = bag3.to_field_set_builder();
 
-        // For every valid `FieldSetBuilder`, `builder1` is already at a fixed point
-        // (`builder1 == builder2`), and `bag1 == bag2` holds except when `builder` is
-        // `MDE`/`YMDE` with `Length::Short` (where `bag1` has `Month::Numeric` +
-        // `Weekday::Short`, which `builder1` promotes to `Length::Medium`, so `bag2` has
-        // `Month::Short` + `Weekday::Short`).
-        if builder.clone().build_composite().is_ok() {
-            assert_eq!(builder1, builder2, "builder: {builder:?}");
-            if !(matches!(
-                builder.date_fields,
-                Some(DateFields::MDE | DateFields::YMDE)
-            ) && builder.length == Some(Length::Short))
-            {
-                assert_eq!(bag1, bag2, "builder: {builder:?}");
-            }
-        }
+        assert_eq!(
+            expected_bag_after_builder_roundtrip(&bag1),
+            bag2,
+            "builder: {builder:?}"
+        );
         assert_eq!(
             expected_builder_after_bag_roundtrip(&builder1),
             builder2,
@@ -283,27 +329,32 @@ fn test_fieldset_builder_and_fieldbag() {
 #[test]
 fn test_fieldset_formatter_and_builder() {
     let prefs = locale!("en").into();
+    let mut valid_builder_count = 0;
 
     for builder in all_field_set_builders() {
+        // `all_field_set_builders()` is an exhaustive Cartesian product of all builder
+        // options, including invalid combinations (e.g. `year_style` without a year field,
+        // or `CalendarPeriod` + `TimePrecision`) that `build_composite()` rightly rejects.
         let Ok(fieldset) = builder.clone().build_composite() else {
             continue;
         };
-
-        // Skip duplicate builders where `length: None` defaulted to `Length::Medium`
-        // for field sets that carry a length option.
-        if builder.length.is_none() && !matches!(fieldset, CompositeFieldSet::Zone(_)) {
-            continue;
-        }
+        valid_builder_count += 1;
 
         let formatter =
             FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(prefs, fieldset).unwrap();
         let recovered_builder = formatter.to_field_set_builder();
 
-        assert_eq!(recovered_builder, builder, "fieldset: {fieldset:?}");
+        assert_eq!(
+            expected_builder_after_composite_roundtrip(&builder, fieldset),
+            recovered_builder,
+            "fieldset: {fieldset:?}"
+        );
         assert_eq!(
             recovered_builder.build_composite().unwrap(),
             fieldset,
             "builder: {builder:?}"
         );
     }
+
+    assert_eq!(valid_builder_count, 24152);
 }
