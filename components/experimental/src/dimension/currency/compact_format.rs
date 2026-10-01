@@ -351,4 +351,71 @@ mod tests {
             "(USD\u{a0}12 thousand)"
         );
     }
+
+    #[test]
+    pub fn test_pt_pt_escudo_compact() {
+        let prefs = locale!("pt-PT").into();
+        let value = "1299".parse().unwrap();
+
+        // In CLDR, `pt-PT` sets the decimal separator override for PTE to '$' and the
+        // currency symbol to U+200B (ZERO WIDTH SPACE), as the cifrão ('$') serves as
+        // the decimal separator (e.g. "12,345$67").
+        //
+        // Compact currency formatters respect `CurrencyDecimalSymbolsV1`, using '$'
+        // instead of the locale's default DecimalSymbolsV1 (',').
+        let fmt =
+            CurrencyFormatter::try_new_compact_symbol(prefs, currency!("PTE"), Default::default())
+                .unwrap();
+        assert_writeable_eq!(fmt.format_fixed_decimal(&value), "1$3 mil \u{200b}");
+
+        let fmt_narrow = CurrencyFormatter::try_new_compact_symbol_narrow(
+            prefs,
+            currency!("PTE"),
+            Default::default(),
+        )
+        .unwrap();
+        assert_writeable_eq!(fmt_narrow.format_fixed_decimal(&value), "1$3 mil PTE");
+
+        let fmt_code =
+            CurrencyFormatter::try_new_compact_code(prefs, currency!("PTE"), Default::default())
+                .unwrap();
+        assert_writeable_eq!(fmt_code.format_fixed_decimal(&value), "1$3 mil PTE");
+
+        let fmt_long = CurrencyFormatter::try_new_compact_long_symbol(
+            prefs,
+            currency!("PTE"),
+            Default::default(),
+        )
+        .unwrap();
+        assert_writeable_eq!(fmt_long.format_fixed_decimal(&value), "1$3 mil \u{200b}");
+
+        let fmt_long_narrow = CurrencyFormatter::try_new_compact_long_symbol_narrow(
+            prefs,
+            currency!("PTE"),
+            Default::default(),
+        )
+        .unwrap();
+        assert_writeable_eq!(fmt_long_narrow.format_fixed_decimal(&value), "1$3 mil PTE");
+
+        let fmt_long_code = CurrencyFormatter::try_new_compact_long_code(
+            prefs,
+            currency!("PTE"),
+            Default::default(),
+        )
+        .unwrap();
+        assert_writeable_eq!(fmt_long_code.format_fixed_decimal(&value), "1$3 mil PTE");
+
+        let fmt_name = CurrencyFormatter::try_new_compact_name(prefs, currency!("PTE")).unwrap();
+        assert_writeable_eq!(
+            fmt_name.format_fixed_decimal(&value),
+            "1$3 mil escudos portugueses"
+        );
+
+        let fmt_long_name =
+            CurrencyFormatter::try_new_compact_long_name(prefs, currency!("PTE")).unwrap();
+        assert_writeable_eq!(
+            fmt_long_name.format_fixed_decimal(&value),
+            "1$3 mil escudos portugueses"
+        );
+    }
 }
