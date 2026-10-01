@@ -1597,7 +1597,7 @@ impl SourceDataProvider {
 
         let symbol_lookup = symbols
             .keys()
-            .filter(|&s| s != &eot_symbol && !pseudo_symbol_map.contains_key(s))
+            .filter(|&s| s != eot_symbol && !pseudo_symbol_map.contains_key(s))
             .enumerate()
             .map(|(i, symbol)| (symbol.as_str(), Symbol::try_from(i + 1).unwrap()))
             .chain([(eot_symbol, SegmenterStateMachine::EOT_SYMBOL)])
