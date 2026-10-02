@@ -21,36 +21,9 @@
 //! Because it is normally expected for [`CodePointTrie`] data to be pre-compiled, this crate is not
 //! optimized for speed; it should be used during a build phase.
 //!
-//! Under the hood, this crate uses the [`CodePointTrie`] builder code from ICU4C, [`UMutableCPTrie`].
+//! Under the hood, this crate uses a pure-Rust port of the [`CodePointTrie`] builder code
+//! from ICU4C, [`UMutableCPTrie`].
 //! For more context, see <https://github.com/unicode-org/icu4x/issues/1837>.
-//!
-//! Unlike most of ICU4X, due in large part to the native dependency, this crate is not guaranteed
-//! to be panic-free.
-//!
-//! # Build configuration
-//!
-//! This crate has two primary modes it can be used in: `"wasm"` and `"icu4c"`, exposed as
-//! Cargo features. If both are enabled, the code will internally use the wasm codepath.
-//!
-//! The `"wasm"` mode uses a Wasm module packaged into this Rust crate that contains
-//! pre-compiled ICU4C [`CodePointTrie`] builder code. It evaluates the Wasm module using
-//! the Wasmer runtime, which "just works", but it requires a large number of
-//! Rust/Cargo dependencies.
-//!
-//! The `"icu4c"` mode reduces the number of Rust dependencies, but it requires having a local copy
-//! of ICU4C available. To configure `"icu4c"` mode in Cargo, set the following environment variables:
-//!
-//! - Set `ICU4C_LIB_PATH` to a directory full of ICU4C static or shared libraries.
-//! - Set `ICU4C_LINK_STATICALLY` to any value to use the static libraries.
-//! - Set `ICU4C_RENAME_VERSION` to the integer ICU4C version if ICU4C has renaming
-//!   enabled. By default, we attempt to link non-renamed symbols.
-//!
-//! If using dynamic linking, at runtime, you may need to set `[DY]LD_LIBRARY_PATH`
-//! to the `ICU4C_LIB_PATH`.
-//!
-//! If _not_ using Cargo, make sure to pass `ICU4C_LIB_PATH` to the linker via `-L`, link against
-//! `icuuc`, `icui18n` and `icudata` via `-l` flags, and set `--cfg icu4c_enable_renaming` if you need
-//! renamed ICU4C symbols.
 //!
 //! # Examples
 //!
@@ -81,44 +54,28 @@
 //! [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
 //! [`UMutableCPTrie`]: (https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/umutablecptrie_8h.html#ad8945cf34ca9d40596a66a1395baa19b)
 
-#[cfg(any(feature = "wasm", feature = "icu4c"))]
 use core::ops::RangeInclusive;
 
-#[cfg(any(feature = "wasm", feature = "icu4c"))]
 use icu_collections::codepointtrie::CodePointTrie;
-#[cfg(any(feature = "wasm", feature = "icu4c"))]
 use icu_collections::codepointtrie::TrieType;
-#[cfg(any(feature = "wasm", feature = "icu4c"))]
 use icu_collections::codepointtrie::TrieValue;
 
-#[cfg(feature = "wasm")]
+mod rust;
+
+#[cfg(test)]
 mod wasm;
 
-#[cfg(feature = "icu4c")]
-mod native;
-
-#[cfg(feature = "wasm")]
-use wasm::Builder;
-
-#[cfg(all(feature = "icu4c", not(feature = "wasm")))]
-use native::Builder;
+use rust::Builder;
 
 /// Builder for a [`CodePointTrie`].
-///
-/// Under the hood, this runs ICU4C code compiled into WASM,
-/// or links natively to ICU4C as specified by the `ICU4C_LIB_PATH` env var
-///
-/// ✨ *Enabled with either the `wasm` or the `icu4c` Cargo feature.*
 #[allow(clippy::exhaustive_structs)]
 #[derive(Debug)]
-#[cfg(any(feature = "wasm", feature = "icu4c"))]
 pub struct CodePointTrieBuilder<T: TrieValue> {
     inner: Builder<T>,
     trie_type: TrieType,
     default_value: T,
 }
 
-#[cfg(any(feature = "wasm", feature = "icu4c"))]
 impl<T: TrieValue> CodePointTrieBuilder<T> {
     /// Creates a new [`CodePointTrieBuilder`] with the given defaults.
     pub fn new(default_value: T, error_value: T, trie_type: TrieType) -> Self {
@@ -130,7 +87,6 @@ impl<T: TrieValue> CodePointTrieBuilder<T> {
     }
 
     /// Sets a value for a codepoint.
-    #[cfg(any(feature = "wasm", feature = "icu4c"))]
     pub fn set_value(&mut self, cp: u32, value: T) {
         if value == self.default_value || cp > char::MAX as u32 {
             return;
@@ -139,7 +95,6 @@ impl<T: TrieValue> CodePointTrieBuilder<T> {
     }
 
     /// Adds a set of codepoints with the same value.
-    #[cfg(any(feature = "wasm", feature = "icu4c"))]
     pub fn set_range_value(&mut self, cps: RangeInclusive<u32>, value: T) {
         if value == self.default_value {
             return;
@@ -151,7 +106,6 @@ impl<T: TrieValue> CodePointTrieBuilder<T> {
     }
 
     /// Build the [`CodePointTrie`].
-    #[cfg(any(feature = "wasm", feature = "icu4c"))]
     pub fn build(self) -> CodePointTrie<'static, T> {
         let width = match size_of::<T::ULE>() {
             1 => 2,     // UCPTRIE_VALUE_BITS_8
@@ -165,11 +119,10 @@ impl<T: TrieValue> CodePointTrieBuilder<T> {
 }
 
 #[test]
-#[cfg(any(feature = "wasm", feature = "icu4c"))]
 fn test_cpt_builder() {
     let mut builder = CodePointTrieBuilder::new(100, 0xFFF, TrieType::Fast);
 
-    // Buckets of ten characters for 0 to 100, and then some default values, and then heterogenous "last hex digit" for 0x100 to 0x200
+    // Buckets of ten characters for 0 to 0x100, and then some default values, and then heterogenous "last hex digit" for 0x100 to 0x200
     for (cp, value) in (0..100)
         .map(|x| x / 10)
         .chain((100..0x100).map(|_| 100))
@@ -194,4 +147,51 @@ fn test_cpt_builder() {
     assert_eq!(cpt.get32(0x13F), 0xF);
     // default value
     assert_eq!(cpt.get32(0x300), 100);
+}
+
+#[test]
+fn test_rust_vs_wasm_identical() {
+    for trie_type in [TrieType::Fast, TrieType::Small] {
+        // Test 1: 8-bit values across BMP and supplementary planes, including ranges and mixed blocks
+        let mut rust_b = Builder::<u8>::create(0, 0xFF);
+        let mut wasm_b = wasm::Builder::<u8>::create(0, 0xFF);
+
+        for cp in (0..0x10FFFF).step_by(113) {
+            let v = ((cp * 31 + 7) & 0xFF) as u8;
+            rust_b.set_value(cp, v);
+            wasm_b.set_value(cp, v);
+        }
+        for chunk in (0x1000..0x50000).step_by(0x700) {
+            let v = ((chunk >> 8) & 0xFF) as u8;
+            rust_b.set_range_value(chunk..=(chunk + 0x155), v);
+            wasm_b.set_range_value(chunk..=(chunk + 0x155), v);
+        }
+        assert_eq!(rust_b.build(trie_type, 2), wasm_b.build(trie_type, 2));
+
+        // Test 2: 16-bit values with >32 distinct ALL_SAME blocks (triggers AllSameBlocks overflow)
+        let mut rust_b16 = Builder::<u16>::create(1, 0xFFFF);
+        let mut wasm_b16 = wasm::Builder::<u16>::create(1, 0xFFFF);
+        for i in 0..50u32 {
+            let start = i * 64;
+            let v = (i as u16) + 10;
+            rust_b16.set_range_value(start..=(start + 63), v);
+            wasm_b16.set_range_value(start..=(start + 63), v);
+        }
+        for cp in 0x10000..0x12000 {
+            let v = ((cp * 17) & 0xFFFF) as u16;
+            rust_b16.set_value(cp, v);
+            wasm_b16.set_value(cp, v);
+        }
+        assert_eq!(rust_b16.build(trie_type, 0), wasm_b16.build(trie_type, 0));
+
+        // Test 3: 32-bit values with large data table (> 64k entries, triggers 18-bit index-3 blocks)
+        let mut rust_b32 = Builder::<u32>::create(0, 0xDEAD_BEEF);
+        let mut wasm_b32 = wasm::Builder::<u32>::create(0, 0xDEAD_BEEF);
+        for cp in 0..0x20000u32 {
+            let v = cp.wrapping_mul(2654435761);
+            rust_b32.set_value(cp, v);
+            wasm_b32.set_value(cp, v);
+        }
+        assert_eq!(rust_b32.build(trie_type, 1), wasm_b32.build(trie_type, 1));
+    }
 }
