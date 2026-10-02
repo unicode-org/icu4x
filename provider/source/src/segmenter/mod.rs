@@ -32,6 +32,8 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Debug;
 use std::sync::OnceLock;
 
+#[cfg(feature = "unstable")]
+mod adaboost;
 mod dictionary;
 mod lstm;
 #[cfg(feature = "unstable")]

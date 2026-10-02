@@ -1,3 +1,15 @@
+segmenter/adaboost/chinese/v1, <lookup>, 53B, 1 identifiers
+segmenter/adaboost/chinese/v1, <total>, 28830B, 28471B, 1 unique payloads
+segmenter/adaboost/chinese/v1, und/Chinese_adaboost, 28830B, 28471B, 4e9e4de940b311e2
+segmenter/adaboost/cj/v1, <lookup>, 48B, 1 identifiers
+segmenter/adaboost/cj/v1, <total>, 37175B, 36460B, 1 unique payloads
+segmenter/adaboost/cj/v1, und/CJ_adaboost, 37175B, 36460B, b931f1debce3cd8d
+segmenter/adaboost/japanese/v1, <lookup>, 54B, 1 identifiers
+segmenter/adaboost/japanese/v1, <total>, 12693B, 12113B, 1 unique payloads
+segmenter/adaboost/japanese/v1, und/Japanese_adaboost, 12693B, 12113B, 9644b2710f310a5b
+segmenter/adaboost/sea/v1, <lookup>, 50B, 1 identifiers
+segmenter/adaboost/sea/v1, <total>, 41787B, 41204B, 1 unique payloads
+segmenter/adaboost/sea/v1, und/Thai_adaboost, 41787B, 41204B, 6e4c6dcb2a293f90
 segmenter/break/grapheme/cluster/v1, <singleton>, 10452B, 10346B, 648dd52b775f2e5d
 segmenter/break/grapheme/cluster/v2, <singleton>, 12422B, 12282B, 9e4c88aa734afc15
 segmenter/break/line/override/v2, <lookup>, 90B, 7 identifiers
