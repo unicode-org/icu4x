@@ -1,0 +1,74 @@
+# Line breaking tests, using the LSTM (auto) model
+# for complex scripts (Thai, Lao, Khmer, Myanmar).
+#
+# Format: input is the concatenation of the segments, which are separated by '|'.
+# Everything after a '#' and blank lines are ignored.
+# Characters can be escaped as \u{XXXX}.
+
+# Thai
+ภาษา|ไทย|ภาษา|ไทย
+ภาษา
+# #8243 (contains U+2060 WORD JOINER)
+ก⁠รุ⁠ง
+
+# Myanmar
+# "Burmese Language" in Burmese
+မြန်|မာ|ဘာသာ|စကား
+မြန်မာစာ|မြန်မာစာ|မြန်မာ|စာ
+
+# Khmer
+សេចក្ដីប្រកាស|ជាស|កល|ស្ដីពី|សិទ្ធិមនុស្ស
+ភាសា|ខ្មែរ|ភាសាខ្មែរ|ភាសាខ្មែរ
+# #7218
+អស់ |នឹង |មាន
+
+# Lao
+ກ່ຽວ|ກັບ|ສິດ|ຂອງ|ມະນຸດ
+ພາສາ|ລາວ|ພາສາ|ລາວ|ພາສາ|ລາວ
+
+# Mixed scripts
+ภาษา|ไทย|龟|山|岛
+こ|ん|に|ち|は|世|界|ภาษา|ไทย
+# From the Thai Wikipedia article on red pandas
+แพน|ด้า|แดง |(อัง|กฤษ: |Red |panda, |Shining |cat; |จีน: |小|熊|貓; |พิน|อิน: |Xiǎo |xióngmāo) |สัตว์|เลี้ยง|ลูก|ด้วย|นม|ชนิด|หนึ่ง |มี|ชื่อ|วิทยาศาสตร์|ว่า |Ailurus |fulgens
+
+# Rule-based tests
+# https://github.com/unicode-org/icu4x/pull/3548
+1:A # × [NU] × [IS] × [AL] ÷
+1:א # × [NU] × [IS] × [HL] ÷
+1:|￼ # × [NU] × [IS] ÷ [CB] ÷
+1:|🏊 # × [NU] × [IS] ÷ [EB] ÷
+# https://github.com/unicode-org/icu4x/issues/3811
+1}\u{20} # × [NU] × [CL] × [SP] ÷
+1)\u{20} # × [NU] × [CP] × [SP] ÷
+1:\u{20} # × [NU] × [IS] × [SP] ÷
+1/\u{20} # × [NU] × [SY] × [SP] ÷
+🇦🇦\u{20} # × [RI] × [RI] × [SP] ÷
+א-\u{20} # × [HL] × [HY] × [SP] ÷
+ꨂ|𑤭\u{200D}\u{20} # [AS] [AK] [ZWJ] [SP]
+￼⸉ |⸈ # [CB] [QU] [SP] [QU]
+ꨔ\u{200D}ꦣ|𑛉 # [AS] [ZWJ] [AK] [NU]
+🇿\u{200D}🇿\u{200D}🇿🇿 # × [RI] × [ZWJ] × [RI] × [ZWJ] × [RI] × [RI] ÷
+᐀‘ |\u{13A34}/⸇𑙢\u{A} # [HH] [QU] [SP] [AL] [SY] [QU] [BA] [LF]
+‘ ,0 # [QU_Pi] [SP] [IS] [NU] LB15a wins over LB15c
+# Moved from line.rs unit tests
+hello |world
+$10 |$10
+# LB14
+[  abc |def
+# LB15 used to prevent the break at 6, but has been removed in Unicode 15.1.
+abc"  |(def
+# Instead, in Unicode 15.1, LB15a and LB15b prevent these breaks.
+« miaou »
+# But not these:
+Die |Katze |hat |»miau« |gesagt.
+# LB16
+)‼
+)  ‼
+# LB17
+——|aa
+—  —|aa
+——  ——|123 |abc
+# LB25
+(0,1)+(2,3)
+🏻 |🏻
