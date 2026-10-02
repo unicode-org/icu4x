@@ -708,7 +708,7 @@ macro_rules! source_issue {
                 // Expected for RSCD 15.1
             }
             "datetime::range_patterns" | "datetime::semantic_skeletons" if msg.contains("conflicting field") => {
-                // TODO
+                // https://unicode-org.atlassian.net/browse/CLDR-18540
             }
             _ if locale.is_unknown() => log::warn!("{msg}"),
             _ => log::warn!("{locale}: {msg}"),
