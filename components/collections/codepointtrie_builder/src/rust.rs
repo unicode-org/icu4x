@@ -1,0 +1,1390 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+use core::marker::PhantomData;
+use core::ops::RangeInclusive;
+use icu_collections::codepointtrie::CodePointTrie;
+use icu_collections::codepointtrie::CodePointTrieHeader;
+use icu_collections::codepointtrie::TrieType;
+use icu_collections::codepointtrie::TrieValue;
+use zerovec::ZeroVec;
+
+const MAX_UNICODE: u32 = 0x10ffff;
+const UNICODE_LIMIT: usize = 0x110000;
+const BMP_LIMIT: usize = 0x10000;
+const ASCII_LIMIT: usize = 0x80;
+
+const UCPTRIE_FAST_SHIFT: usize = 6;
+const UCPTRIE_FAST_DATA_BLOCK_LENGTH: usize = 1 << UCPTRIE_FAST_SHIFT;
+
+const UCPTRIE_SHIFT_3: usize = 4;
+const UCPTRIE_SHIFT_2: usize = 5 + UCPTRIE_SHIFT_3;
+const UCPTRIE_SHIFT_1: usize = 5 + UCPTRIE_SHIFT_2;
+const UCPTRIE_SHIFT_2_3: usize = UCPTRIE_SHIFT_2 - UCPTRIE_SHIFT_3;
+const UCPTRIE_SHIFT_1_2: usize = UCPTRIE_SHIFT_1 - UCPTRIE_SHIFT_2;
+
+const UCPTRIE_SMALL_LIMIT: usize = 0x1000;
+const UCPTRIE_BMP_INDEX_LENGTH: usize = 0x10000 >> UCPTRIE_FAST_SHIFT;
+
+const UCPTRIE_INDEX_2_BLOCK_LENGTH: usize = 1 << UCPTRIE_SHIFT_1_2;
+const UCPTRIE_INDEX_2_MASK: usize = UCPTRIE_INDEX_2_BLOCK_LENGTH - 1;
+const UCPTRIE_CP_PER_INDEX_2_ENTRY: usize = 1 << UCPTRIE_SHIFT_2;
+const UCPTRIE_INDEX_3_BLOCK_LENGTH: usize = 1 << UCPTRIE_SHIFT_2_3;
+const UCPTRIE_SMALL_DATA_BLOCK_LENGTH: usize = 1 << UCPTRIE_SHIFT_3;
+const UCPTRIE_SMALL_DATA_MASK: usize = UCPTRIE_SMALL_DATA_BLOCK_LENGTH - 1;
+
+const UCPTRIE_NO_INDEX3_NULL_OFFSET: i32 = 0x7fff;
+const UCPTRIE_NO_DATA_NULL_OFFSET: i32 = 0xfffff;
+
+const I_LIMIT: usize = UNICODE_LIMIT >> UCPTRIE_SHIFT_3;
+const BMP_I_LIMIT: usize = BMP_LIMIT >> UCPTRIE_SHIFT_3;
+const ASCII_I_LIMIT: usize = ASCII_LIMIT >> UCPTRIE_SHIFT_3;
+
+const SMALL_DATA_BLOCKS_PER_BMP_BLOCK: usize = 1 << (UCPTRIE_FAST_SHIFT - UCPTRIE_SHIFT_3);
+
+// Flag values for data blocks.
+const ALL_SAME: u8 = 0;
+const MIXED: u8 = 1;
+const SAME_AS: u8 = 2;
+
+const INITIAL_DATA_LENGTH: usize = 1 << 14;
+
+// Flag values for index-3 blocks while compacting/building.
+const I3_NULL: u8 = 0;
+const I3_BMP: u8 = 1;
+const I3_16: u8 = 2;
+const I3_18: u8 = 3;
+
+const INDEX_3_18BIT_BLOCK_LENGTH: usize =
+    UCPTRIE_INDEX_3_BLOCK_LENGTH + UCPTRIE_INDEX_3_BLOCK_LENGTH / 8;
+
+trait BlockElem: Copy {
+    fn to_u32(self) -> u32;
+}
+
+impl BlockElem for u16 {
+    #[inline]
+    fn to_u32(self) -> u32 {
+        self as u32
+    }
+}
+
+impl BlockElem for u32 {
+    #[inline]
+    fn to_u32(self) -> u32 {
+        self
+    }
+}
+
+#[inline]
+fn equal_blocks<A: BlockElem, B: BlockElem>(s: &[A], t: &[B], length: usize) -> bool {
+    s[..length]
+        .iter()
+        .zip(&t[..length])
+        .all(|(a, b)| a.to_u32() == b.to_u32())
+}
+
+#[inline]
+fn all_values_same_as(p: &[u32], length: usize, value: u32) -> bool {
+    p[..length].iter().all(|&x| x == value)
+}
+
+/// Search for an identical block.
+fn find_same_block(
+    p: &[u16],
+    mut p_start: usize,
+    length: usize,
+    q: &[u16],
+    q_start: usize,
+    block_length: usize,
+) -> Option<usize> {
+    let length = length.checked_sub(block_length)?;
+    let q_slice = &q[q_start..];
+    while p_start <= length {
+        if equal_blocks(&p[p_start..], q_slice, block_length) {
+            return Some(p_start);
+        }
+        p_start += 1;
+    }
+    None
+}
+
+fn find_all_same_block(
+    p: &[u32],
+    start: usize,
+    limit: usize,
+    value: u32,
+    block_length: usize,
+) -> Option<usize> {
+    let limit = limit.checked_sub(block_length)?;
+    let mut block = start;
+    while block <= limit {
+        if p[block] == value {
+            let mut i = 1;
+            loop {
+                if i == block_length {
+                    return Some(block);
+                }
+                if p[block + i] != value {
+                    block += i;
+                    break;
+                }
+                i += 1;
+            }
+        }
+        block += 1;
+    }
+    None
+}
+
+/// Look for maximum overlap of the beginning of the other block
+/// with the previous, adjacent block.
+fn get_overlap<A: BlockElem, B: BlockElem>(
+    p: &[A],
+    length: usize,
+    q: &[B],
+    q_start: usize,
+    block_length: usize,
+) -> usize {
+    let mut overlap = block_length - 1;
+    debug_assert!(overlap <= length);
+    let q_slice = &q[q_start..];
+    while overlap > 0 && !equal_blocks(&p[length - overlap..], q_slice, overlap) {
+        overlap -= 1;
+    }
+    overlap
+}
+
+fn get_all_same_overlap(p: &[u32], length: usize, value: u32, block_length: usize) -> usize {
+    let min = length.saturating_sub(block_length - 1);
+    let mut i = length;
+    while min < i && p[i - 1] == value {
+        i -= 1;
+    }
+    length - i
+}
+
+fn is_start_of_some_fast_block(data_offset: u32, index: &[u32], fast_i_limit: usize) -> bool {
+    for i in (0..fast_i_limit).step_by(SMALL_DATA_BLOCKS_PER_BMP_BLOCK) {
+        if index[i] == data_offset {
+            return true;
+        }
+    }
+    false
+}
+
+struct AllSameBlocks {
+    length: usize,
+    most_recent: Option<usize>,
+    indexes: [usize; Self::CAPACITY],
+    values: [u32; Self::CAPACITY],
+    ref_counts: [usize; Self::CAPACITY],
+}
+
+enum FindOrAddResult {
+    Found(usize),
+    NewUnique,
+    Overflow,
+}
+
+impl AllSameBlocks {
+    const CAPACITY: usize = 32;
+
+    fn new() -> Self {
+        Self {
+            length: 0,
+            most_recent: None,
+            indexes: [0; Self::CAPACITY],
+            values: [0; Self::CAPACITY],
+            ref_counts: [0; Self::CAPACITY],
+        }
+    }
+
+    fn find_or_add(&mut self, index: usize, count: usize, value: u32) -> FindOrAddResult {
+        if let Some(mr) = self.most_recent
+            && self.values[mr] == value {
+                self.ref_counts[mr] += count;
+                return FindOrAddResult::Found(self.indexes[mr]);
+            }
+        for i in 0..self.length {
+            if self.values[i] == value {
+                self.most_recent = Some(i);
+                self.ref_counts[i] += count;
+                return FindOrAddResult::Found(self.indexes[i]);
+            }
+        }
+        if self.length == Self::CAPACITY {
+            return FindOrAddResult::Overflow;
+        }
+        let idx = self.length;
+        self.most_recent = Some(idx);
+        self.indexes[idx] = index;
+        self.values[idx] = value;
+        self.ref_counts[idx] = count;
+        self.length += 1;
+        FindOrAddResult::NewUnique
+    }
+
+    /// Replaces the block which has the lowest reference count.
+    fn add(&mut self, index: usize, count: usize, value: u32) {
+        debug_assert_eq!(self.length, Self::CAPACITY);
+        let mut least = 0;
+        let mut least_count = I_LIMIT;
+        for i in 0..self.length {
+            debug_assert_ne!(self.values[i], value);
+            if self.ref_counts[i] < least_count {
+                least = i;
+                least_count = self.ref_counts[i];
+            }
+        }
+        self.most_recent = Some(least);
+        self.indexes[least] = index;
+        self.values[least] = value;
+        self.ref_counts[least] = count;
+    }
+
+    fn find_most_used(&self) -> Option<usize> {
+        if self.length == 0 {
+            return None;
+        }
+        let mut max = None;
+        let mut max_count = 0;
+        for i in 0..self.length {
+            if self.ref_counts[i] > max_count {
+                max = Some(i);
+                max_count = self.ref_counts[i];
+            }
+        }
+        max.map(|i| self.indexes[i])
+    }
+}
+
+/// Custom hash table for mixed-value blocks to be found anywhere in the
+/// compacted data or index so far.
+struct MixedBlocks {
+    table: Vec<u32>,
+    length: usize,
+    shift: u32,
+    mask: u32,
+    block_length: usize,
+}
+
+impl MixedBlocks {
+    fn new() -> Self {
+        Self {
+            table: Vec::new(),
+            length: 0,
+            shift: 0,
+            mask: 0,
+            block_length: 0,
+        }
+    }
+
+    fn init(&mut self, max_length: usize, new_block_length: usize) {
+        // We store actual data indexes + 1 to reserve 0 for empty entries.
+        let max_data_index = max_length.saturating_sub(new_block_length) + 1;
+        let new_length;
+        if max_data_index <= 0xfff {
+            // 4k
+            new_length = 6007;
+            self.shift = 12;
+            self.mask = 0xfff;
+        } else if max_data_index <= 0x7fff {
+            // 32k
+            new_length = 50021;
+            self.shift = 15;
+            self.mask = 0x7fff;
+        } else if max_data_index <= 0x1ffff {
+            // 128k
+            new_length = 200003;
+            self.shift = 17;
+            self.mask = 0x1ffff;
+        } else {
+            // maxDataIndex up to around MAX_DATA_LENGTH, ca. 1.1M
+            new_length = 1500007;
+            self.shift = 21;
+            self.mask = 0x1fffff;
+        }
+        self.table.clear();
+        self.table.resize(new_length, 0);
+        self.length = new_length;
+        self.block_length = new_block_length;
+    }
+
+    fn extend<T: BlockElem>(
+        &mut self,
+        data: &[T],
+        min_start: usize,
+        prev_data_length: usize,
+        new_data_length: usize,
+    ) {
+        let mut start = if prev_data_length >= self.block_length {
+            let s = prev_data_length - self.block_length;
+            if s >= min_start {
+                s + 1 // Skip the last block that we added last time.
+            } else {
+                min_start // Begin with the first full block.
+            }
+        } else {
+            min_start
+        };
+        if new_data_length >= self.block_length {
+            let end = new_data_length - self.block_length;
+            while start <= end {
+                let hash_code = self.make_hash_code(data, start);
+                self.add_entry(data, start, hash_code, start);
+                start += 1;
+            }
+        }
+    }
+
+    fn find_block<A: BlockElem, B: BlockElem>(
+        &self,
+        data: &[A],
+        block_data: &[B],
+        block_start: usize,
+    ) -> Option<usize> {
+        let hash_code = self.make_hash_code(block_data, block_start);
+        match self.find_entry(data, block_data, block_start, hash_code) {
+            Ok(entry_index) => Some(((self.table[entry_index] & self.mask) - 1) as usize),
+            Err(_) => None,
+        }
+    }
+
+    fn find_all_same_block(&self, data: &[u32], block_value: u32) -> Option<usize> {
+        let hash_code = self.make_hash_code_value(block_value);
+        match self.find_entry_value(data, block_value, hash_code) {
+            Ok(entry_index) => Some(((self.table[entry_index] & self.mask) - 1) as usize),
+            Err(_) => None,
+        }
+    }
+
+    fn make_hash_code<T: BlockElem>(&self, block_data: &[T], block_start: usize) -> u32 {
+        let block_limit = block_start + self.block_length;
+        let mut i = block_start;
+        let mut hash_code = block_data[i].to_u32();
+        i += 1;
+        while i < block_limit {
+            hash_code = hash_code
+                .wrapping_mul(37)
+                .wrapping_add(block_data[i].to_u32());
+            i += 1;
+        }
+        hash_code
+    }
+
+    fn make_hash_code_value(&self, block_value: u32) -> u32 {
+        let mut hash_code = block_value;
+        for _ in 1..self.block_length {
+            hash_code = hash_code.wrapping_mul(37).wrapping_add(block_value);
+        }
+        hash_code
+    }
+
+    fn add_entry<T: BlockElem>(
+        &mut self,
+        data: &[T],
+        block_start: usize,
+        hash_code: u32,
+        data_index: usize,
+    ) {
+        debug_assert!((data_index as u32) < self.mask);
+        if let Err(empty_index) = self.find_entry(data, data, block_start, hash_code) {
+            self.table[empty_index] = (hash_code << self.shift) | ((data_index as u32) + 1);
+        }
+    }
+
+    fn find_entry<A: BlockElem, B: BlockElem>(
+        &self,
+        data: &[A],
+        block_data: &[B],
+        block_start: usize,
+        hash_code: u32,
+    ) -> Result<usize, usize> {
+        let shifted_hash_code = hash_code << self.shift;
+        let initial_entry_index = ((hash_code % (self.length as u32 - 1)) as usize) + 1;
+        let mut entry_index = initial_entry_index;
+        loop {
+            let entry = self.table[entry_index];
+            if entry == 0 {
+                return Err(entry_index);
+            }
+            if (entry & !self.mask) == shifted_hash_code {
+                let data_index = ((entry & self.mask) - 1) as usize;
+                if equal_blocks(
+                    &data[data_index..],
+                    &block_data[block_start..],
+                    self.block_length,
+                ) {
+                    return Ok(entry_index);
+                }
+            }
+            entry_index = self.next_index(initial_entry_index, entry_index);
+        }
+    }
+
+    fn find_entry_value(
+        &self,
+        data: &[u32],
+        block_value: u32,
+        hash_code: u32,
+    ) -> Result<usize, usize> {
+        let shifted_hash_code = hash_code << self.shift;
+        let initial_entry_index = ((hash_code % (self.length as u32 - 1)) as usize) + 1;
+        let mut entry_index = initial_entry_index;
+        loop {
+            let entry = self.table[entry_index];
+            if entry == 0 {
+                return Err(entry_index);
+            }
+            if (entry & !self.mask) == shifted_hash_code {
+                let data_index = ((entry & self.mask) - 1) as usize;
+                if all_values_same_as(&data[data_index..], self.block_length, block_value) {
+                    return Ok(entry_index);
+                }
+            }
+            entry_index = self.next_index(initial_entry_index, entry_index);
+        }
+    }
+
+    #[inline]
+    fn next_index(&self, initial_entry_index: usize, entry_index: usize) -> usize {
+        (entry_index + initial_entry_index) % self.length
+    }
+}
+
+#[derive(Debug)]
+struct MutableCodePointTrie {
+    index: Vec<u32>,
+    index3_null_offset: i32,
+    data: Vec<u32>,
+    data_null_offset: i32,
+    initial_value: u32,
+    error_value: u32,
+    high_start: u32,
+    high_value: u32,
+    index16: Vec<u16>,
+    flags: Vec<u8>,
+}
+
+impl MutableCodePointTrie {
+    fn new(initial_value: u32, error_value: u32) -> Self {
+        Self {
+            index: vec![0; I_LIMIT],
+            index3_null_offset: -1,
+            data: Vec::with_capacity(INITIAL_DATA_LENGTH),
+            data_null_offset: -1,
+            initial_value,
+            error_value,
+            high_start: 0,
+            high_value: initial_value,
+            index16: Vec::new(),
+            flags: vec![0; I_LIMIT],
+        }
+    }
+
+    fn get(&self, c: u32) -> u32 {
+        if c > MAX_UNICODE {
+            return self.error_value;
+        }
+        if c >= self.high_start {
+            return self.high_value;
+        }
+        let i = (c as usize) >> UCPTRIE_SHIFT_3;
+        if self.flags[i] == ALL_SAME {
+            self.index[i]
+        } else {
+            self.data[(self.index[i] as usize) + ((c as usize) & UCPTRIE_SMALL_DATA_MASK)]
+        }
+    }
+
+    fn ensure_high_start(&mut self, c: u32) {
+        if c >= self.high_start {
+            // Round up to a UCPTRIE_CP_PER_INDEX_2_ENTRY boundary to simplify compaction.
+            let c = (c + UCPTRIE_CP_PER_INDEX_2_ENTRY as u32)
+                & !(UCPTRIE_CP_PER_INDEX_2_ENTRY as u32 - 1);
+            let i = (self.high_start as usize) >> UCPTRIE_SHIFT_3;
+            let i_limit = (c as usize) >> UCPTRIE_SHIFT_3;
+            self.flags[i..i_limit].fill(ALL_SAME);
+            self.index[i..i_limit].fill(self.initial_value);
+            self.high_start = c;
+        }
+    }
+
+    fn alloc_data_block(&mut self, block_length: usize) -> usize {
+        let new_block = self.data.len();
+        self.data.resize(new_block + block_length, 0);
+        new_block
+    }
+
+    fn get_data_block(&mut self, i: usize) -> usize {
+        if self.flags[i] == MIXED {
+            return self.index[i] as usize;
+        }
+        if i < BMP_I_LIMIT {
+            let mut new_block = self.alloc_data_block(UCPTRIE_FAST_DATA_BLOCK_LENGTH);
+            let mut i_start = i & !(SMALL_DATA_BLOCKS_PER_BMP_BLOCK - 1);
+            let i_limit = i_start + SMALL_DATA_BLOCKS_PER_BMP_BLOCK;
+            while i_start < i_limit {
+                debug_assert_eq!(self.flags[i_start], ALL_SAME);
+                let val = self.index[i_start];
+                self.data[new_block..new_block + UCPTRIE_SMALL_DATA_BLOCK_LENGTH].fill(val);
+                self.flags[i_start] = MIXED;
+                self.index[i_start] = new_block as u32;
+                i_start += 1;
+                new_block += UCPTRIE_SMALL_DATA_BLOCK_LENGTH;
+            }
+            self.index[i] as usize
+        } else {
+            let new_block = self.alloc_data_block(UCPTRIE_SMALL_DATA_BLOCK_LENGTH);
+            let val = self.index[i];
+            self.data[new_block..new_block + UCPTRIE_SMALL_DATA_BLOCK_LENGTH].fill(val);
+            self.flags[i] = MIXED;
+            self.index[i] = new_block as u32;
+            new_block
+        }
+    }
+
+    fn set(&mut self, c: u32, value: u32) {
+        if c > MAX_UNICODE {
+            return;
+        }
+        self.ensure_high_start(c);
+        let block = self.get_data_block((c as usize) >> UCPTRIE_SHIFT_3);
+        self.data[block + ((c as usize) & UCPTRIE_SMALL_DATA_MASK)] = value;
+    }
+
+    fn set_range(&mut self, start: u32, end: u32, value: u32) {
+        if start > MAX_UNICODE || end > MAX_UNICODE || start > end {
+            return;
+        }
+        self.ensure_high_start(end);
+
+        let mut start = start as usize;
+        let mut limit = (end as usize) + 1;
+        if (start & UCPTRIE_SMALL_DATA_MASK) != 0 {
+            // Set partial block at [start..following block boundary[.
+            let block = self.get_data_block(start >> UCPTRIE_SHIFT_3);
+            let next_start = (start + UCPTRIE_SMALL_DATA_MASK) & !UCPTRIE_SMALL_DATA_MASK;
+            if next_start <= limit {
+                self.data[block + (start & UCPTRIE_SMALL_DATA_MASK)
+                    ..block + UCPTRIE_SMALL_DATA_BLOCK_LENGTH]
+                    .fill(value);
+                start = next_start;
+            } else {
+                self.data[block + (start & UCPTRIE_SMALL_DATA_MASK)
+                    ..block + (limit & UCPTRIE_SMALL_DATA_MASK)]
+                    .fill(value);
+                return;
+            }
+        }
+
+        // Number of positions in the last, partial block.
+        let rest = limit & UCPTRIE_SMALL_DATA_MASK;
+
+        // Round down limit to a block boundary.
+        limit &= !UCPTRIE_SMALL_DATA_MASK;
+
+        // Iterate over all-value blocks.
+        while start < limit {
+            let i = start >> UCPTRIE_SHIFT_3;
+            if self.flags[i] == ALL_SAME {
+                self.index[i] = value;
+            } else {
+                let block = self.index[i] as usize;
+                self.data[block..block + UCPTRIE_SMALL_DATA_BLOCK_LENGTH].fill(value);
+            }
+            start += UCPTRIE_SMALL_DATA_BLOCK_LENGTH;
+        }
+
+        if rest > 0 {
+            // Set partial block at [last block boundary..limit[.
+            let block = self.get_data_block(start >> UCPTRIE_SHIFT_3);
+            self.data[block..block + rest].fill(value);
+        }
+    }
+
+    fn mask_values(&mut self, mask: u32) {
+        self.initial_value &= mask;
+        self.error_value &= mask;
+        self.high_value &= mask;
+        let i_limit = (self.high_start as usize) >> UCPTRIE_SHIFT_3;
+        for i in 0..i_limit {
+            if self.flags[i] == ALL_SAME {
+                self.index[i] &= mask;
+            }
+        }
+        for d in &mut self.data {
+            *d &= mask;
+        }
+    }
+
+    fn find_high_start(&self) -> u32 {
+        let mut i = (self.high_start as usize) >> UCPTRIE_SHIFT_3;
+        while i > 0 {
+            i -= 1;
+            let match_high = if self.flags[i] == ALL_SAME {
+                self.index[i] == self.high_value
+            } else {
+                let p = &self.data[self.index[i] as usize..];
+                all_values_same_as(p, UCPTRIE_SMALL_DATA_BLOCK_LENGTH, self.high_value)
+            };
+            if !match_high {
+                return ((i + 1) << UCPTRIE_SHIFT_3) as u32;
+            }
+        }
+        0
+    }
+
+    fn compact_whole_data_blocks(
+        &mut self,
+        fast_i_limit: usize,
+        all_same_blocks: &mut AllSameBlocks,
+    ) -> usize {
+        // ASCII data will be stored as a linear table, even if the following code
+        // does not yet count it that way.
+        let mut new_data_capacity = ASCII_LIMIT;
+        // Add room for a small data null block in case it would match the start of
+        // a fast data block where dataNullOffset must not be set in that case.
+        new_data_capacity += UCPTRIE_SMALL_DATA_BLOCK_LENGTH;
+        // Add room for special values (errorValue, highValue) and padding.
+        new_data_capacity += 4;
+        let i_limit = (self.high_start as usize) >> UCPTRIE_SHIFT_3;
+        let mut block_length = UCPTRIE_FAST_DATA_BLOCK_LENGTH;
+        let mut inc = SMALL_DATA_BLOCKS_PER_BMP_BLOCK;
+        let mut i = 0;
+        while i < i_limit {
+            if i == fast_i_limit {
+                block_length = UCPTRIE_SMALL_DATA_BLOCK_LENGTH;
+                inc = 1;
+            }
+            let mut value = self.index[i];
+            if self.flags[i] == MIXED {
+                // Really mixed?
+                let p = &self.data[value as usize..];
+                value = p[0];
+                if all_values_same_as(&p[1..], block_length - 1, value) {
+                    self.flags[i] = ALL_SAME;
+                    self.index[i] = value;
+                    // Fall through to ALL_SAME handling.
+                } else {
+                    new_data_capacity += block_length;
+                    i += inc;
+                    continue;
+                }
+            } else {
+                debug_assert_eq!(self.flags[i], ALL_SAME);
+                if inc > 1 {
+                    // Do all of the fast-range data block's ALL_SAME parts have the same value?
+                    let mut all_same = true;
+                    let next_i = i + inc;
+                    for j in (i + 1)..next_i {
+                        debug_assert_eq!(self.flags[j], ALL_SAME);
+                        if self.index[j] != value {
+                            all_same = false;
+                            break;
+                        }
+                    }
+                    if !all_same {
+                        // Turn it into a MIXED block.
+                        self.get_data_block(i);
+                        new_data_capacity += block_length;
+                        i += inc;
+                        continue;
+                    }
+                }
+            }
+            // Is there another ALL_SAME block with the same value?
+            let other = match all_same_blocks.find_or_add(i, inc, value) {
+                FindOrAddResult::Found(idx) => Some(idx),
+                FindOrAddResult::NewUnique => None,
+                FindOrAddResult::Overflow => {
+                    // The fixed-size array overflowed. Slow check for a duplicate block.
+                    let mut j_inc = SMALL_DATA_BLOCKS_PER_BMP_BLOCK;
+                    let mut j = 0;
+                    let mut found = None;
+                    loop {
+                        if j == i {
+                            all_same_blocks.add(i, inc, value);
+                            break;
+                        }
+                        if j == fast_i_limit {
+                            j_inc = 1;
+                        }
+                        if self.flags[j] == ALL_SAME && self.index[j] == value {
+                            all_same_blocks.add(j, j_inc + inc, value);
+                            found = Some(j);
+                            break;
+                        }
+                        j += j_inc;
+                    }
+                    found
+                }
+            };
+            if let Some(other_idx) = other {
+                self.flags[i] = SAME_AS;
+                self.index[i] = other_idx as u32;
+            } else {
+                // New unique same-value block.
+                new_data_capacity += block_length;
+            }
+            i += inc;
+        }
+        new_data_capacity
+    }
+
+    fn compact_data(
+        &mut self,
+        fast_i_limit: usize,
+        new_data: &mut [u32],
+        new_data_capacity: usize,
+        data_null_index: Option<usize>,
+        mixed_blocks: &mut MixedBlocks,
+    ) -> usize {
+        // The linear ASCII data has been copied into newData already.
+        let mut new_data_length = 0;
+        let mut i = 0;
+        while new_data_length < ASCII_LIMIT {
+            self.index[i] = new_data_length as u32;
+            new_data_length += UCPTRIE_FAST_DATA_BLOCK_LENGTH;
+            i += SMALL_DATA_BLOCKS_PER_BMP_BLOCK;
+        }
+
+        let mut block_length = UCPTRIE_FAST_DATA_BLOCK_LENGTH;
+        mixed_blocks.init(new_data_capacity, block_length);
+        mixed_blocks.extend(new_data, 0, 0, new_data_length);
+
+        let i_limit = (self.high_start as usize) >> UCPTRIE_SHIFT_3;
+        let mut inc = SMALL_DATA_BLOCKS_PER_BMP_BLOCK;
+        let mut fast_length = 0;
+        let mut i = ASCII_I_LIMIT;
+        while i < i_limit {
+            if i == fast_i_limit {
+                block_length = UCPTRIE_SMALL_DATA_BLOCK_LENGTH;
+                inc = 1;
+                fast_length = new_data_length;
+                mixed_blocks.init(new_data_capacity, block_length);
+                mixed_blocks.extend(new_data, 0, 0, new_data_length);
+            }
+            if self.flags[i] == ALL_SAME {
+                let value = self.index[i];
+                // Find an earlier part of the data array of length blockLength
+                // that is filled with this value.
+                let mut n = mixed_blocks.find_all_same_block(new_data, value);
+                // If we find a match, and the current block is the data null block,
+                // and it is not a fast block but matches the start of a fast block,
+                // then we need to continue looking.
+                while let Some(n_val) = n {
+                    if data_null_index == Some(i)
+                        && i >= fast_i_limit
+                        && n_val < fast_length
+                        && is_start_of_some_fast_block(n_val as u32, &self.index, fast_i_limit)
+                    {
+                        n = find_all_same_block(
+                            new_data,
+                            n_val + 1,
+                            new_data_length,
+                            value,
+                            block_length,
+                        );
+                    } else {
+                        break;
+                    }
+                }
+                if let Some(n_val) = n {
+                    self.index[i] = n_val as u32;
+                } else {
+                    let mut overlap =
+                        get_all_same_overlap(new_data, new_data_length, value, block_length);
+                    self.index[i] = (new_data_length - overlap) as u32;
+                    let prev_data_length = new_data_length;
+                    while overlap < block_length {
+                        new_data[new_data_length] = value;
+                        new_data_length += 1;
+                        overlap += 1;
+                    }
+                    mixed_blocks.extend(new_data, 0, prev_data_length, new_data_length);
+                }
+            } else if self.flags[i] == MIXED {
+                let block_offset = self.index[i] as usize;
+                let block = &self.data[block_offset..];
+                if let Some(n_val) = mixed_blocks.find_block(new_data, block, 0) {
+                    self.index[i] = n_val as u32;
+                } else {
+                    let mut overlap =
+                        get_overlap(new_data, new_data_length, block, 0, block_length);
+                    self.index[i] = (new_data_length - overlap) as u32;
+                    let prev_data_length = new_data_length;
+                    while overlap < block_length {
+                        new_data[new_data_length] = block[overlap];
+                        new_data_length += 1;
+                        overlap += 1;
+                    }
+                    mixed_blocks.extend(new_data, 0, prev_data_length, new_data_length);
+                }
+            } else {
+                // SAME_AS
+                let j = self.index[i] as usize;
+                self.index[i] = self.index[j];
+            }
+            i += inc;
+        }
+
+        new_data_length
+    }
+
+    fn compact_index(&mut self, fast_i_limit: usize, mixed_blocks: &mut MixedBlocks) -> usize {
+        let fast_index_length = fast_i_limit >> (UCPTRIE_FAST_SHIFT - UCPTRIE_SHIFT_3);
+        if ((self.high_start as usize) >> UCPTRIE_FAST_SHIFT) <= fast_index_length {
+            // Only the linear fast index, no multi-stage index tables.
+            self.index3_null_offset = UCPTRIE_NO_INDEX3_NULL_OFFSET;
+            return fast_index_length;
+        }
+
+        // Condense the fast index table.
+        // Also, does it contain an index-3 block with all dataNullOffset?
+        let mut fast_index = [0u16; UCPTRIE_BMP_INDEX_LENGTH];
+        let mut i3_first_null: i32 = -1;
+        let mut i = 0;
+        let mut j = 0;
+        while i < fast_i_limit {
+            let mut i3 = self.index[i];
+            fast_index[j] = i3 as u16;
+            if i3 == self.data_null_offset as u32 {
+                if i3_first_null < 0 {
+                    i3_first_null = j as i32;
+                } else if self.index3_null_offset < 0
+                    && (j as i32 - i3_first_null + 1) == UCPTRIE_INDEX_3_BLOCK_LENGTH as i32
+                {
+                    self.index3_null_offset = i3_first_null;
+                }
+            } else {
+                i3_first_null = -1;
+            }
+            // Set the index entries that compactData() skipped.
+            // Needed when the multi-stage index covers the fast index range as well.
+            let i_next = i + SMALL_DATA_BLOCKS_PER_BMP_BLOCK;
+            while {
+                i += 1;
+                i < i_next
+            } {
+                i3 += UCPTRIE_SMALL_DATA_BLOCK_LENGTH as u32;
+                self.index[i] = i3;
+            }
+            j += 1;
+        }
+
+        mixed_blocks.init(fast_index_length, UCPTRIE_INDEX_3_BLOCK_LENGTH);
+        mixed_blocks.extend(&fast_index, 0, 0, fast_index_length);
+
+        // Examine index-3 blocks.
+        let mut index3_capacity = 0;
+        i3_first_null = self.index3_null_offset;
+        let mut has_long_i3_blocks = false;
+        let i_start = if fast_i_limit < BMP_I_LIMIT {
+            0
+        } else {
+            BMP_I_LIMIT
+        };
+        let i_limit = (self.high_start as usize) >> UCPTRIE_SHIFT_3;
+        let mut i = i_start;
+        while i < i_limit {
+            let mut j = i;
+            let j_limit = i + UCPTRIE_INDEX_3_BLOCK_LENGTH;
+            let mut ored_i3 = 0;
+            let mut is_null = true;
+            loop {
+                let i3 = self.index[j];
+                ored_i3 |= i3;
+                if i3 != self.data_null_offset as u32 {
+                    is_null = false;
+                }
+                j += 1;
+                if j >= j_limit {
+                    break;
+                }
+            }
+            if is_null {
+                self.flags[i] = I3_NULL;
+                if i3_first_null < 0 {
+                    if ored_i3 <= 0xffff {
+                        index3_capacity += UCPTRIE_INDEX_3_BLOCK_LENGTH;
+                    } else {
+                        index3_capacity += INDEX_3_18BIT_BLOCK_LENGTH;
+                        has_long_i3_blocks = true;
+                    }
+                    i3_first_null = 0;
+                }
+            } else if ored_i3 <= 0xffff {
+                if let Some(n) = mixed_blocks.find_block(&fast_index, &self.index, i) {
+                    self.flags[i] = I3_BMP;
+                    self.index[i] = n as u32;
+                } else {
+                    self.flags[i] = I3_16;
+                    index3_capacity += UCPTRIE_INDEX_3_BLOCK_LENGTH;
+                }
+            } else {
+                self.flags[i] = I3_18;
+                index3_capacity += INDEX_3_18BIT_BLOCK_LENGTH;
+                has_long_i3_blocks = true;
+            }
+            i = j;
+        }
+
+        let index2_capacity = (i_limit - i_start) >> UCPTRIE_SHIFT_2_3;
+
+        // Length of the index-1 table, rounded up.
+        let index1_length = (index2_capacity + UCPTRIE_INDEX_2_MASK) >> UCPTRIE_SHIFT_1_2;
+
+        // Index table: Fast index, index-1, index-3, index-2.
+        // +1 for possible index table padding.
+        let index16_capacity =
+            fast_index_length + index1_length + index3_capacity + index2_capacity + 1;
+        self.index16 = vec![0u16; index16_capacity];
+        self.index16[..fast_index_length].copy_from_slice(&fast_index[..fast_index_length]);
+
+        mixed_blocks.init(index16_capacity, UCPTRIE_INDEX_3_BLOCK_LENGTH);
+        let mut long_i3_blocks = MixedBlocks::new();
+        if has_long_i3_blocks {
+            long_i3_blocks.init(index16_capacity, INDEX_3_18BIT_BLOCK_LENGTH);
+        }
+
+        // Compact the index-3 table and write an uncompacted version of the index-2 table.
+        let mut index2 = [0u16; UNICODE_LIMIT >> UCPTRIE_SHIFT_2];
+        let mut i2_length = 0;
+        i3_first_null = self.index3_null_offset;
+        let index3_start = fast_index_length + index1_length;
+        let mut index_length = index3_start;
+        for i in (i_start..i_limit).step_by(UCPTRIE_INDEX_3_BLOCK_LENGTH) {
+            let i3: usize;
+            let mut f = self.flags[i];
+            if f == I3_NULL && i3_first_null < 0 {
+                // First index-3 null block. Write & overlap it like a normal block, then remember it.
+                f = if self.data_null_offset <= 0xffff {
+                    I3_16
+                } else {
+                    I3_18
+                };
+                i3_first_null = 0;
+            }
+            if f == I3_NULL {
+                i3 = self.index3_null_offset as usize;
+            } else if f == I3_BMP {
+                i3 = self.index[i] as usize;
+            } else if f == I3_16 {
+                if let Some(n) = mixed_blocks.find_block(&self.index16, &self.index, i) {
+                    i3 = n;
+                } else {
+                    let mut n = if index_length == index3_start {
+                        // No overlap at the boundary between the index-1 and index-3 tables.
+                        0
+                    } else {
+                        get_overlap(
+                            &self.index16,
+                            index_length,
+                            &self.index,
+                            i,
+                            UCPTRIE_INDEX_3_BLOCK_LENGTH,
+                        )
+                    };
+                    i3 = index_length - n;
+                    let prev_index_length = index_length;
+                    while n < UCPTRIE_INDEX_3_BLOCK_LENGTH {
+                        self.index16[index_length] = self.index[i + n] as u16;
+                        index_length += 1;
+                        n += 1;
+                    }
+                    mixed_blocks.extend(
+                        &self.index16,
+                        index3_start,
+                        prev_index_length,
+                        index_length,
+                    );
+                    if has_long_i3_blocks {
+                        long_i3_blocks.extend(
+                            &self.index16,
+                            index3_start,
+                            prev_index_length,
+                            index_length,
+                        );
+                    }
+                }
+            } else {
+                debug_assert_eq!(f, I3_18);
+                debug_assert!(has_long_i3_blocks);
+                // Encode an index-3 block that contains one or more data indexes exceeding 16 bits.
+                let mut j = i;
+                let j_limit = i + UCPTRIE_INDEX_3_BLOCK_LENGTH;
+                let mut k = index_length;
+                while j < j_limit {
+                    k += 1;
+                    let mut v = self.index[j];
+                    j += 1;
+                    let mut upper_bits = (v & 0x30000) >> 2;
+                    self.index16[k] = v as u16;
+                    k += 1;
+
+                    v = self.index[j];
+                    j += 1;
+                    upper_bits |= (v & 0x30000) >> 4;
+                    self.index16[k] = v as u16;
+                    k += 1;
+
+                    v = self.index[j];
+                    j += 1;
+                    upper_bits |= (v & 0x30000) >> 6;
+                    self.index16[k] = v as u16;
+                    k += 1;
+
+                    v = self.index[j];
+                    j += 1;
+                    upper_bits |= (v & 0x30000) >> 8;
+                    self.index16[k] = v as u16;
+                    k += 1;
+
+                    v = self.index[j];
+                    j += 1;
+                    upper_bits |= (v & 0x30000) >> 10;
+                    self.index16[k] = v as u16;
+                    k += 1;
+
+                    v = self.index[j];
+                    j += 1;
+                    upper_bits |= (v & 0x30000) >> 12;
+                    self.index16[k] = v as u16;
+                    k += 1;
+
+                    v = self.index[j];
+                    j += 1;
+                    upper_bits |= (v & 0x30000) >> 14;
+                    self.index16[k] = v as u16;
+                    k += 1;
+
+                    v = self.index[j];
+                    j += 1;
+                    upper_bits |= (v & 0x30000) >> 16;
+                    self.index16[k] = v as u16;
+                    k += 1;
+
+                    self.index16[k - 9] = upper_bits as u16;
+                }
+                if let Some(n) =
+                    long_i3_blocks.find_block(&self.index16, &self.index16, index_length)
+                {
+                    i3 = n | 0x8000;
+                } else {
+                    let n = if index_length == index3_start {
+                        // No overlap at the boundary between the index-1 and index-3 tables.
+                        0
+                    } else {
+                        get_overlap(
+                            &self.index16,
+                            index_length,
+                            &self.index16,
+                            index_length,
+                            INDEX_3_18BIT_BLOCK_LENGTH,
+                        )
+                    };
+                    i3 = (index_length - n) | 0x8000;
+                    let prev_index_length = index_length;
+                    if n > 0 {
+                        let start = index_length;
+                        let mut m = n;
+                        while m < INDEX_3_18BIT_BLOCK_LENGTH {
+                            self.index16[index_length] = self.index16[start + m];
+                            index_length += 1;
+                            m += 1;
+                        }
+                    } else {
+                        index_length += INDEX_3_18BIT_BLOCK_LENGTH;
+                    }
+                    mixed_blocks.extend(
+                        &self.index16,
+                        index3_start,
+                        prev_index_length,
+                        index_length,
+                    );
+                    if has_long_i3_blocks {
+                        long_i3_blocks.extend(
+                            &self.index16,
+                            index3_start,
+                            prev_index_length,
+                            index_length,
+                        );
+                    }
+                }
+            }
+            if self.index3_null_offset < 0 && i3_first_null >= 0 {
+                self.index3_null_offset = i3 as i32;
+            }
+            // Set the index-2 table entry.
+            index2[i2_length] = i3 as u16;
+            i2_length += 1;
+        }
+        debug_assert_eq!(i2_length, index2_capacity);
+        debug_assert!(index_length <= index3_start + index3_capacity);
+
+        if self.index3_null_offset < 0 {
+            self.index3_null_offset = UCPTRIE_NO_INDEX3_NULL_OFFSET;
+        }
+        assert!(
+            index_length < (UCPTRIE_NO_INDEX3_NULL_OFFSET as usize) + UCPTRIE_INDEX_3_BLOCK_LENGTH,
+            "The index-3 offsets exceed 15 bits"
+        );
+
+        // Compact the index-2 table and write the index-1 table.
+        let mut block_length = UCPTRIE_INDEX_2_BLOCK_LENGTH;
+        let mut i1 = fast_index_length;
+        let mut i = 0;
+        while i < i2_length {
+            let n = if (i2_length - i) >= block_length {
+                // normal block
+                debug_assert_eq!(block_length, UCPTRIE_INDEX_2_BLOCK_LENGTH);
+                mixed_blocks.find_block(&self.index16, &index2, i)
+            } else {
+                // highStart is inside the last index-2 block. Shorten it.
+                block_length = i2_length - i;
+                find_same_block(
+                    &self.index16,
+                    index3_start,
+                    index_length,
+                    &index2,
+                    i,
+                    block_length,
+                )
+            };
+            let i2 = if let Some(n_val) = n {
+                n_val
+            } else {
+                let mut overlap = if index_length == index3_start {
+                    // No overlap at the boundary between the index-1 and index-3/2 tables.
+                    0
+                } else {
+                    get_overlap(&self.index16, index_length, &index2, i, block_length)
+                };
+                let i2_val = index_length - overlap;
+                let prev_index_length = index_length;
+                while overlap < block_length {
+                    self.index16[index_length] = index2[i + overlap];
+                    index_length += 1;
+                    overlap += 1;
+                }
+                mixed_blocks.extend(&self.index16, index3_start, prev_index_length, index_length);
+                i2_val
+            };
+            // Set the index-1 table entry.
+            self.index16[i1] = i2 as u16;
+            i1 += 1;
+            i += block_length;
+        }
+        debug_assert_eq!(i1, index3_start);
+        debug_assert!(index_length <= index16_capacity);
+
+        index_length
+    }
+
+    fn compact_trie(&mut self, fast_i_limit: usize) -> usize {
+        // Find the real highStart and round it up.
+        debug_assert_eq!(
+            self.high_start & (UCPTRIE_CP_PER_INDEX_2_ENTRY as u32 - 1),
+            0
+        );
+        self.high_value = self.get(MAX_UNICODE);
+        let mut real_high_start = self.find_high_start();
+        real_high_start = (real_high_start + (UCPTRIE_CP_PER_INDEX_2_ENTRY as u32 - 1))
+            & !(UCPTRIE_CP_PER_INDEX_2_ENTRY as u32 - 1);
+        if real_high_start == UNICODE_LIMIT as u32 {
+            self.high_value = self.initial_value;
+        }
+
+        // We always store indexes and data values for the fast range.
+        // Pin highStart to the top of that range while building.
+        let fast_limit = (fast_i_limit << UCPTRIE_SHIFT_3) as u32;
+        if real_high_start < fast_limit {
+            for i in ((real_high_start as usize) >> UCPTRIE_SHIFT_3)..fast_i_limit {
+                self.flags[i] = ALL_SAME;
+                self.index[i] = self.high_value;
+            }
+            self.high_start = fast_limit;
+        } else {
+            self.high_start = real_high_start;
+        }
+
+        let mut ascii_data = [0u32; ASCII_LIMIT];
+        for (i, slot) in ascii_data.iter_mut().enumerate() {
+            *slot = self.get(i as u32);
+        }
+
+        // First we look for which data blocks have the same value repeated over the whole block,
+        // deduplicate such blocks, find a good null data block (for faster enumeration),
+        // and get an upper bound for the necessary data array length.
+        let mut all_same_blocks = AllSameBlocks::new();
+        let new_data_capacity = self.compact_whole_data_blocks(fast_i_limit, &mut all_same_blocks);
+        let mut new_data = vec![0u32; new_data_capacity];
+        new_data[..ASCII_LIMIT].copy_from_slice(&ascii_data);
+
+        let data_null_index = all_same_blocks.find_most_used();
+
+        let mut mixed_blocks = MixedBlocks::new();
+        let new_data_length = self.compact_data(
+            fast_i_limit,
+            &mut new_data,
+            new_data_capacity,
+            data_null_index,
+            &mut mixed_blocks,
+        );
+        debug_assert!(new_data_length <= new_data_capacity);
+        new_data.truncate(new_data_length);
+        self.data = new_data;
+        assert!(
+            self.data.len() <= 0x3ffff + UCPTRIE_SMALL_DATA_BLOCK_LENGTH,
+            "The offset of the last data block is too high to be stored in the index table"
+        );
+
+        if let Some(null_idx) = data_null_index {
+            self.data_null_offset = self.index[null_idx] as i32;
+            self.initial_value = self.data[self.data_null_offset as usize];
+        } else {
+            self.data_null_offset = UCPTRIE_NO_DATA_NULL_OFFSET;
+        }
+
+        let index_length = self.compact_index(fast_i_limit, &mut mixed_blocks);
+        self.high_start = real_high_start;
+        index_length
+    }
+
+    fn build<T: TrieValue>(
+        mut self,
+        trie_type: TrieType,
+        value_width: u32,
+    ) -> CodePointTrie<'static, T> {
+        // The mutable trie always stores 32-bit values.
+        // When we build a UCPTrie for a smaller value width, we first mask off unused bits
+        // before compacting the data.
+        match value_width {
+            1 => {}                        // UCPTRIE_VALUE_BITS_32
+            0 => self.mask_values(0xffff), // UCPTRIE_VALUE_BITS_16
+            2 => self.mask_values(0xff),   // UCPTRIE_VALUE_BITS_8
+            other => panic!("Invalid value_width {other}"),
+        }
+
+        let fast_limit = match trie_type {
+            TrieType::Fast => BMP_LIMIT,
+            TrieType::Small => UCPTRIE_SMALL_LIMIT,
+        };
+        let mut index_length = self.compact_trie(fast_limit >> UCPTRIE_SHIFT_3);
+
+        // Ensure data table alignment: The index length must be even for uint32_t data.
+        if value_width == 1 && (index_length & 1) != 0 {
+            self.index16[index_length] = 0xffee; // arbitrary value
+            index_length += 1;
+        }
+
+        // Make the total trie structure length a multiple of 4 bytes by padding the data table,
+        // and store special values as the last two data values.
+        let length = index_length * 2;
+        if value_width == 0 {
+            // UCPTRIE_VALUE_BITS_16
+            if ((index_length ^ self.data.len()) & 1) != 0 {
+                // padding
+                self.data.push(self.error_value);
+            }
+            if self.data[self.data.len() - 1] != self.error_value
+                || self.data[self.data.len() - 2] != self.high_value
+            {
+                self.data.push(self.high_value);
+                self.data.push(self.error_value);
+            }
+        } else if value_width == 1 {
+            // UCPTRIE_VALUE_BITS_32
+            // 32-bit data words never need padding to a multiple of 4 bytes.
+            if self.data[self.data.len() - 1] != self.error_value
+                || self.data[self.data.len() - 2] != self.high_value
+            {
+                if self.data[self.data.len() - 1] != self.high_value {
+                    self.data.push(self.high_value);
+                }
+                self.data.push(self.error_value);
+            }
+        } else {
+            // UCPTRIE_VALUE_BITS_8
+            let mut and3 = (length + self.data.len()) & 3;
+            if and3 == 0
+                && self.data[self.data.len() - 1] == self.error_value
+                && self.data[self.data.len() - 2] == self.high_value
+            {
+                // all set
+            } else if and3 == 3 && self.data[self.data.len() - 1] == self.high_value {
+                self.data.push(self.error_value);
+            } else {
+                while and3 != 2 {
+                    self.data.push(self.high_value);
+                    and3 = (and3 + 1) & 3;
+                }
+                self.data.push(self.high_value);
+                self.data.push(self.error_value);
+            }
+        }
+
+        let header = CodePointTrieHeader {
+            high_start: self.high_start,
+            shifted12_high_start: ((self.high_start + 0xfff) >> 12) as u16,
+            index3_null_offset: self.index3_null_offset as u16,
+            data_null_offset: self.data_null_offset as u32,
+            null_value: self.initial_value,
+            trie_type,
+        };
+
+        let index_vec: ZeroVec<'static, u16> = if (self.high_start as usize) <= fast_limit {
+            let mut dest16 = Vec::with_capacity(index_length);
+            let mut i = 0;
+            for _ in 0..index_length {
+                dest16.push(self.index[i] as u16);
+                i += SMALL_DATA_BLOCKS_PER_BMP_BLOCK;
+            }
+            ZeroVec::alloc_from_slice(&dest16)
+        } else {
+            ZeroVec::alloc_from_slice(&self.index16[..index_length])
+        };
+
+        let data_vec: ZeroVec<'static, T> = self
+            .data
+            .iter()
+            .map(|&v| {
+                T::try_from_u32(v)
+                    .unwrap_or_else(|e| panic!("Failed to convert {v} to TrieValue: {e}"))
+            })
+            .collect();
+
+        CodePointTrie::try_new(header, index_vec, data_vec).expect("Failed to construct")
+    }
+}
+
+#[derive(Debug)]
+pub(crate) struct Builder<T: TrieValue> {
+    inner: MutableCodePointTrie,
+    _p: PhantomData<T>,
+}
+
+impl<T: TrieValue> Builder<T> {
+    pub(crate) fn create(default_value: T, error_value: T) -> Self {
+        Self {
+            inner: MutableCodePointTrie::new(default_value.to_u32(), error_value.to_u32()),
+            _p: PhantomData,
+        }
+    }
+
+    pub(crate) fn set_value(&mut self, cp: u32, value: T) {
+        self.inner.set(cp, value.to_u32());
+    }
+
+    pub(crate) fn set_range_value(&mut self, cps: RangeInclusive<u32>, value: T) {
+        self.inner
+            .set_range(*cps.start(), *cps.end(), value.to_u32());
+    }
+
+    pub(crate) fn build(self, trie_type: TrieType, width: u32) -> CodePointTrie<'static, T> {
+        self.inner.build(trie_type, width)
+    }
+}

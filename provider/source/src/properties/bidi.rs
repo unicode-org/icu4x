@@ -8,10 +8,7 @@ use crate::SourceDataProvider;
 use icu::properties::provider::PropertyEnumBidiMirroringGlyphV1;
 use icu_provider::prelude::*;
 
-// implement data provider 2 different ways, based on whether or not
-// features exist that enable the use of CPT Builder (ex: `use_wasm` or `use_icu4c`)
 impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
-    #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
     fn load(
         &self,
         req: DataRequest,
@@ -122,17 +119,6 @@ impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
                 icu::properties::provider::PropertyCodePointMap::CodePointTrie(trie),
             ),
         })
-    }
-
-    #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<PropertyEnumBidiMirroringGlyphV1>, DataError> {
-        self.check_req::<PropertyEnumBidiMirroringGlyphV1>(req)?;
-        return Err(DataError::custom(
-            "icu_provider_source must be built with `use_icu4c` or `use_wasm` to build enumerated properties data",
-        ));
     }
 }
 

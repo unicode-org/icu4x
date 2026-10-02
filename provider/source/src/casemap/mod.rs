@@ -13,17 +13,6 @@ use icu_provider::prelude::*;
 use std::collections::{BTreeMap, BTreeSet, HashSet, VecDeque};
 use std::convert::TryFrom;
 
-#[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-impl DataProvider<CaseMapV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<CaseMapV1>, DataError> {
-        self.check_req::<CaseMapV1>(req)?;
-        Err(DataError::custom(
-            "The `use_wasm` or `use_icu4c` feature must be enabled to use CaseMapV1",
-        ))
-    }
-}
-
-#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 impl DataProvider<CaseMapV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CaseMapV1>, DataError> {
         self.check_req::<CaseMapV1>(req)?;

@@ -9,7 +9,6 @@ use icu_provider_export::prelude::*;
 include!("../../tests/locales.rs.data");
 
 #[test]
-#[cfg(feature = "use_wasm")]
 fn make_testdata() {
     // Only produce output if the variable is set. Test is hermetic otherwise.
     if std::option_env!("ICU4X_WRITE_TESTDATA").is_none() {

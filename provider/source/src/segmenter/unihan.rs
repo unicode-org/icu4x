@@ -8,12 +8,10 @@ use crate::source::RscdCache;
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use icu::collections::codepointinvlist::CodePointInversionListBuilder;
 use icu::segmenter::provider::{SegmenterUnihanRadicalV1, UnihanRadicalsData};
-#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 use icu_codepointtrie_builder::CodePointTrieBuilder;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
-#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 fn build_unihan_radicals_data(
     rscd: &RscdCache,
     trie_type: crate::TrieType,
@@ -74,23 +72,14 @@ fn build_unihan_radicals_data(
 
 impl DataProvider<SegmenterUnihanRadicalV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterUnihanRadicalV1>, DataError> {
-        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-        return Err(
-            DataError::custom("Unihan data generation requires use_wasm or use_icu4c")
-                .with_req(SegmenterUnihanRadicalV1::INFO, req),
-        );
+        self.check_req::<SegmenterUnihanRadicalV1>(req)?;
 
-        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-        {
-            self.check_req::<SegmenterUnihanRadicalV1>(req)?;
+        let data = build_unihan_radicals_data(self.rscd()?, self.trie_type())?;
 
-            let data = build_unihan_radicals_data(self.rscd()?, self.trie_type())?;
-
-            Ok(DataResponse {
-                metadata: Default::default(),
-                payload: DataPayload::from_owned(data),
-            })
-        }
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(data),
+        })
     }
 }
 
