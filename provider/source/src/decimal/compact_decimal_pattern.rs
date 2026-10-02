@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde::numbers::{DecimalFormat, NumberPatternItem};
-use crate::source::source_issue;
 use icu::decimal::provider::CompactPatterns;
 use icu::plurals::PluralElements;
 use icu_pattern::{
@@ -17,7 +16,7 @@ use std::collections::BTreeMap;
 impl DecimalFormat {
     pub fn as_compact_patterns(
         &self,
-        locale: DataLocale,
+        _locale: DataLocale,
     ) -> Result<CompactPatterns<'static, SinglePlaceholder>, DataError> {
         let mut patterns: BTreeMap<u8, (u8, PluralElements<Box<SinglePlaceholderPattern>>)> =
             BTreeMap::new();
