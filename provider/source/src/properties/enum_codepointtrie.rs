@@ -331,7 +331,8 @@ macro_rules! expand {
 
                     for (name, _) in &short_name_to_t {
                         if !names.contains_key(name) && <$prop as EnumeratedProperty>::SHORT_NAME != icu::properties::props::Script::SHORT_NAME {
-                            log::warn!(
+                            crate::source::source_issue!(
+                                Default::default(),
                                 "UCD does not contain {} {name:?}",
                                 str::from_utf8(<$prop as EnumeratedProperty>::NAME).unwrap()
                             );

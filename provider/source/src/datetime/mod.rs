@@ -4,6 +4,7 @@
 
 use crate::SourceDataProvider;
 use crate::cldr_serde;
+use crate::source::source_issue;
 use icu::calendar::AnyCalendarKind;
 use icu::datetime::provider::fields::{Field, components};
 use icu::datetime::provider::packed_pattern::{
@@ -144,7 +145,7 @@ impl SourceDataProvider {
                     .expect("CLDR file contains the expected calendar");
 
                 if variant_resource != resource {
-                    log::warn!("islamic/islamic-{variant} data mismatch: {locale}");
+                    source_issue!(*locale, "islamic/islamic-{variant} data mismatch");
                 }
             }
         }
@@ -195,7 +196,7 @@ impl SourceDataProvider {
                 &resource.time_formats,
                 &resource.time_skeletons,
             ) {
-                log::warn!("ethiopic/ethiopic-amete-alem data mismatch: {locale}");
+                source_issue!(*locale, "ethiopic/ethiopic-amete-alem data mismatch");
             }
         }
 
@@ -277,7 +278,8 @@ where
             // We don't expect to see both `E` and `c` for the same skeleton, but if we do,
             // we warn and prefer the one that appeared later in the map (arbitrary).
             if let Some(_old) = result.insert(skeleton.clone(), mapped) {
-                log::warn!(
+                source_issue!(
+                    Default::default(),
                     "Duplicate skeleton found after normalization: {}. This might happen if CLDR has both 'E' and 'c' forms.",
                     skeleton
                 );

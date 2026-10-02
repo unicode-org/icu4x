@@ -181,8 +181,6 @@ impl ExportDriver {
             fallbacker,
             deduplication_strategy: options.deduplication_strategy,
         }
-        .with_recommended_segmenter_models()
-        .with_additional_collations([])
     }
 
     /// Sets the filter on a particular `domain` of [`DataMarkerAttributes`].
@@ -237,18 +235,9 @@ impl ExportDriver {
     ///
     /// Sets this driver to generate the recommended segmentation models, to the extent required by the
     /// chosen data markers.
-    pub fn with_recommended_segmenter_models(self) -> Self {
-        self.with_segmenter_models([
-            "cjdict".into(),
-            "burmesedict".into(),
-            "khmerdict".into(),
-            "laodict".into(),
-            "thaidict".into(),
-            "Burmese_codepoints_exclusive_model4_heavy".into(),
-            "Khmer_codepoints_exclusive_model4_heavy".into(),
-            "Lao_codepoints_exclusive_model4_heavy".into(),
-            "Thai_codepoints_exclusive_model4_heavy".into(),
-        ])
+    pub fn with_recommended_segmenter_models(mut self) -> Self {
+        self.attributes_filters.remove("segmenter");
+        self
     }
 
     /// This option is only relevant if using `icu::segmenter`.

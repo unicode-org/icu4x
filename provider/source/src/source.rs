@@ -696,3 +696,23 @@ macro_rules! include_files {
     };
 }
 pub(crate) use include_files;
+
+macro_rules! source_issue {
+    ($locale:expr, $($arg:tt)*) => {{
+        let module = module_path!().strip_prefix("icu_provider_source::").unwrap();
+        let locale: icu::locale::DataLocale = $locale;
+        let msg = format!($($arg)*);
+
+        match module {
+            "properties::enum_codepointtrie" if msg == r#"UCD does not contain Line_Break "HH""# => {
+                // Expected for RSCD 15.1
+            }
+            "datetime::range_patterns" | "datetime::semantic_skeletons" if msg.contains("conflicting field") => {
+                // https://unicode-org.atlassian.net/browse/CLDR-18540
+            }
+            _ if locale.is_unknown() => log::warn!("{msg}"),
+            _ => log::warn!("{locale}: {msg}"),
+        }
+    }};
+}
+pub(crate) use source_issue;
