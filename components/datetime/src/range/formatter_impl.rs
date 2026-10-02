@@ -130,7 +130,7 @@ impl<'a> RangeFormatterCore<'a> {
         let dayperiods = self.names.dayperiod_names();
 
         // 1. Resolve difference
-        let diff = resolve_difference(start, end, dayperiods);
+        let diff = resolve_difference(start, end, dayperiods, self.selection.zone.is_some());
 
         let is_mixed = self.range_selection.date_range.payload.is_payload()
             && self.range_selection.time_range.payload.is_payload();

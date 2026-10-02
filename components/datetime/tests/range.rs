@@ -638,3 +638,71 @@ fn test_date_range_parts() {
         );
     }
 }
+
+/// <https://github.com/unicode-org/icu4x/issues/8382>: zone data on the inputs must not
+/// make a range "incomparable" for a field set that has no zone.
+#[test]
+fn test_range_ignores_zone_data_for_zoneless_field_set() {
+    use icu_calendar::Iso;
+    use icu_datetime::fieldsets::enums::{
+        CompositeDateTimeFieldSet, CompositeFieldSet, DateFieldSet,
+    };
+    use icu_time::{ZonedDateTime, zone::IanaParser};
+
+    let start = ZonedDateTime::try_lenient_from_str(
+        "2023-12-22T09:00:00+00:00[Etc/UTC]",
+        Iso,
+        IanaParser::new(),
+    )
+    .unwrap();
+    let end = ZonedDateTime::try_lenient_from_str(
+        "2023-12-23T17:00:00+00:00[Etc/UTC]",
+        Iso,
+        IanaParser::new(),
+    )
+    .unwrap();
+    let locale = locale!("th-u-ca-buddhist");
+
+    let composite = DateRangeFormatter::try_new(
+        locale.clone().into(),
+        CompositeFieldSet::Date(DateFieldSet::YMD(fieldsets::YMD::medium())),
+    )
+    .unwrap();
+    let composite_dt = DateRangeFormatter::try_new(
+        locale.into(),
+        CompositeDateTimeFieldSet::Date(DateFieldSet::YMD(fieldsets::YMD::medium())),
+    )
+    .unwrap();
+    assert_writeable_eq!(composite.format(&start, &end), "22–23 ธ.ค. 2566");
+    assert_writeable_eq!(composite_dt.format(&start, &end), "22–23 ธ.ค. 2566");
+}
+
+/// A field set that does contain a zone keeps using the glue pattern: interval
+/// patterns have no zone field, so using one would drop the zone name.
+#[test]
+fn test_range_zoned_field_set_same_zone_uses_glue() {
+    use icu_calendar::Iso;
+    use icu_time::{ZonedDateTime, zone::IanaParser};
+
+    let start = ZonedDateTime::try_lenient_from_str(
+        "2023-12-22T09:00:00+00:00[Etc/UTC]",
+        Iso,
+        IanaParser::new(),
+    )
+    .unwrap();
+    let end = ZonedDateTime::try_lenient_from_str(
+        "2023-12-22T17:00:00+00:00[Etc/UTC]",
+        Iso,
+        IanaParser::new(),
+    )
+    .unwrap();
+    let fmt = DateRangeFormatter::try_new(
+        locale!("en").into(),
+        fieldsets::T::hm().with_zone(fieldsets::zone::SpecificShort),
+    )
+    .unwrap();
+    assert_writeable_eq!(
+        fmt.format(&start, &end),
+        "9:00\u{202f}AM UTC\u{2009}–\u{2009}5:00\u{202f}PM UTC"
+    );
+}
