@@ -210,6 +210,7 @@ impl IterableDataProviderCached<SegmenterLstmAutoV1> for SourceDataProvider {
         Ok(self
             .segmenter_lstm()?
             .list("")?
+            .filter(|p| p.contains("_codepoints_") || p.contains("_graphclust_"))
             .filter_map(|p| DataMarkerAttributes::try_from_string(p).ok())
             .map(DataIdentifierCow::from_marker_attributes_owned)
             .collect())

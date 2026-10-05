@@ -8,6 +8,7 @@ use crate::SourceDataProvider;
 use crate::cldr_serde;
 use crate::cldr_serde::time_zones::meta_zones::UsesMetazone;
 use crate::source::Cache;
+use crate::source::source_issue;
 use core::cmp::Ordering;
 use core::hash::Hash;
 use core::hash::Hasher;
@@ -203,7 +204,7 @@ impl SourceDataProvider {
                                     )
                                 } else {
                                     if curr_offset.rearguard_agrees == Some(false) || curr_offset.vanguard_agrees == Some(false) {
-                                        log::warn!("Unhandled TZDB inconsistency for {tz:?}: {curr_offset:?}");
+                                        source_issue!(Default::default(), "Unhandled TZDB inconsistency for {tz:?}: {curr_offset:?}");
                                     }
                                     (
                                         curr_offset.utc_offset,
@@ -300,7 +301,7 @@ impl SourceDataProvider {
                                 if (Some(os.standard) != os.daylight && golden_os.standard != os.standard)
                                     || (Some(os.standard) == os.daylight && golden_os.daylight != os.daylight)
                                 {
-                                    log::warn!("Offsets don't agree with metazone golden: {tz:?} - {golden:?}");
+                                    source_issue!(Default::default(), "Offsets don't agree with metazone golden: {tz:?} - {golden:?}");
                                 }
 
                                 let kind = if os.daylight.is_some() && golden_os.daylight.is_none() {
@@ -467,7 +468,7 @@ impl SourceDataProvider {
 
                 for zone in self.tzdb()?.parsed()?.main.links.keys() {
                     if !bcp47_tzids.contains_key(zone) && !unk_aliases.clone().contains(zone.as_str()) {
-                        log::warn!("TZDB link {zone:?} not in CLDR");
+                        source_issue!(Default::default(), "TZDB link {zone:?} not in CLDR");
                     }
                 }
 
