@@ -69,7 +69,7 @@ property/binary/xdigit/v1, <singleton>, 488B, 459B, 334cc78d29ee5f0e
 property/binary/xid/continue/v1, <singleton>, 4958B, 4929B, eeeafac8b9e66b3e
 property/binary/xid/start/v1, <singleton>, 4244B, 4215B, 9a2f4bec29fac33f
 property/enum/bidi/class/v1, <singleton>, 9904B, 9848B, e4d93e411bca1fae
-property/enum/bidi/mirroring/glyph/v1, <singleton>, 4953B, 4887B, f0b81f28bf963ae8
+property/enum/bidi/mirroring/glyph/v1, <singleton>, 4961B, 4887B, f0b81f28bf963ae8
 property/enum/block/v1, <singleton>, 22640B, 22584B, dd4e93a530dd47d9
 property/enum/canonical/combining/class/v1, <singleton>, 5504B, 5446B, d3d8618b8277512b
 property/enum/east/asian/width/v1, <singleton>, 5072B, 5015B, fc865cedf55f5d45
