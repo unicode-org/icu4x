@@ -1522,6 +1522,7 @@ dependencies = [
  "displaydoc",
  "iai",
  "icu",
+ "icu_codepointtrie_builder",
  "icu_properties",
  "postcard",
  "potential_utf",
