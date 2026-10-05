@@ -5,12 +5,13 @@
 [package]
 name = "icu_codepointtrie_builder"
 description = "Runtime builder for CodePointTrie"
-version = "0.6.1"
+version = "0.6.2"
 categories.workspace = true
 keywords = ["unicode", "collections", "internationalization"]
 license = "Unicode-3.0"
 include = [
     "src/**/*",
+    "build.rs",
     "examples/**/*",
     "benches/**/*",
     "tests/**/*",
