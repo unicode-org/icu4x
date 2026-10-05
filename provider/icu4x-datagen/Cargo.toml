@@ -34,26 +34,21 @@ regex = { workspace = true }
 simple_logger = { workspace = true }
 
 [features]
-default = ["use_wasm", "networking", "fs_exporter", "blob_exporter", "baked_exporter", "provider", "rayon"]
+default = ["networking", "fs_exporter", "blob_exporter", "baked_exporter", "provider", "rayon"]
 provider = ["dep:icu_provider_source"]
 baked_exporter = ["icu_provider_export/baked_exporter"]
 blob_exporter = ["icu_provider_export/blob_exporter"]
 blob_input = ["dep:icu_provider_blob", "icu/datagen"]
 fs_exporter = ["icu_provider_export/fs_exporter"]
-# Use wasm for building codepointtries
-use_wasm = ["icu_provider_source?/use_wasm"]
-# Use local ICU4C libraries for building codepointtries
-# (will do nothing if used with `use_wasm`)
-# If neither `use_wasm` nor `use_icu4c` are enabled,
-# rule based segmenter data will not be generated.
-use_icu4c = ["icu_provider_source?/use_icu4c"]
 networking = ["icu_provider_source?/networking"]
 unstable = ["icu_provider_source?/unstable", "icu/unstable"]
 rayon = ["icu_provider_export/rayon"]
 
+# Deprecated
+use_wasm = []
+use_icu4c = []
+
 [package.metadata.cargo-all-features]
-# We don't need working CPT builders for check
-skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
 skip_optional_dependencies = true
 # We have a *lot* of features here
 max_combination_size = 3
