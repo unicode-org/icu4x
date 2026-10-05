@@ -1161,13 +1161,7 @@ mod tests {
 
     // The test data files contain the output of the neo implementation.
     // Inputs that the v1 and 17 implementations are known to fail are listed here and skipped.
-    const V1_17_KNOWN_FAILURES: &[&str] = &[
-        // #8243
-        "ก\u{2060}รุ\u{2060}ง",
-        // #7218
-        "អស់ នឹង មាន",
-        "แพนด้าแดง (อังกฤษ: Red panda, Shining cat; จีน: 小熊貓; พินอิน: Xiǎo xióngmāo) สัตว์เลี้ยงลูกด้วยนมชนิดหนึ่ง มีชื่อวิทยาศาสตร์ว่า Ailurus fulgens",
-    ];
+    const V1_17_KNOWN_FAILURES: &[&str] = &[];
 
     fn run_test(file: &'static str, v1_17: [LineSegmenterBorrowed; 2], neo: LineSegmenterBorrowed) {
         for expected in parse_test_file(file) {
@@ -1246,13 +1240,13 @@ mod tests {
         let ill_formed =
             b"\xE0\xB8\xA0\xE0\xB8\xB2\xE0\xB8\xA9\xE0\xB8\xB2\xFF\xE0\xB9\x84\xE0\xB8\x97\xE0\xB8\xA2";
         let breaks: Vec<usize> = segmenter.segment_utf8(ill_formed).collect();
-        assert_eq!(breaks, [0, 12, 22]);
+        assert_eq!(breaks, [0, 22]);
 
         let unpaired_surrogate = [
             0x0E20, 0x0E32, 0x0E29, 0x0E32, 0xD800, 0x0E44, 0x0E17, 0x0E22,
         ];
         let breaks: Vec<usize> = segmenter.segment_utf16(&unpaired_surrogate).collect();
-        assert_eq!(breaks, [0, 4, 8]);
+        assert_eq!(breaks, [0, 8]);
     }
 
     #[test]
@@ -1278,13 +1272,56 @@ mod tests {
         let ill_formed =
             b"\xE0\xB8\xA0\xE0\xB8\xB2\xE0\xB8\xA9\xE0\xB8\xB2\xFF\xE0\xB9\x84\xE0\xB8\x97\xE0\xB8\xA2";
         let breaks: Vec<usize> = segmenter.segment_utf8(ill_formed).collect();
-        assert_eq!(breaks, [0, 12, 22]);
+        assert_eq!(breaks, [0, 22]);
 
         let unpaired_surrogate = [
             0x0E20, 0x0E32, 0x0E29, 0x0E32, 0xD800, 0x0E44, 0x0E17, 0x0E22,
         ];
         let breaks: Vec<usize> = segmenter.segment_utf16(&unpaired_surrogate).collect();
-        assert_eq!(breaks, [0, 4, 8]);
+        assert_eq!(breaks, [0, 8]);
+    }
+
+    #[test]
+    fn complex_run_end_follows_rules() {
+        // https://github.com/unicode-org/icu4x/issues/7218
+        let cases: &[(&str, &[&str])] = &[
+            ("ไทย!", &["ไทย!"]),
+            ("ไทย, ไทย", &["ไทย, ", "ไทย"]),
+            ("(ไทย)", &["(ไทย)"]),
+            ("“ไทย”", &["“ไทย”"]),
+            ("ไทย%", &["ไทย%"]),
+            ("ไทย-ไทย", &["ไทย-", "ไทย"]),
+            ("ไทย...", &["ไทย..."]),
+            ("ไทย  ไทย", &["ไทย  ", "ไทย"]),
+            ("ไทย\u{200B}ไทย", &["ไทย\u{200B}", "ไทย"]),
+            ("ไทย\u{A0}ไทย", &["ไทย\u{A0}ไทย"]),
+            ("ไทย\nไทย", &["ไทย\n", "ไทย"]),
+            ("ไทยabc", &["ไทยabc"]),
+            ("ไทย中文", &["ไทย", "中", "文"]),
+            // A run of two code points ending with a combining vowel.
+            ("ปี", &["ปี"]),
+            ("ปี๒๕๖๘ ๒๕๖๘ปี", &["ปี๒๕๖๘ ", "๒๕๖๘ปี"]),
+            ("ລາວ! ລາວ", &["ລາວ! ", "ລາວ"]),
+        ];
+        let segmenters = [
+            LineSegmenter::new_dictionary(Default::default()),
+            LineSegmenter::new_lstm(Default::default()),
+            {
+                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
+                s.load_dictionary();
+                s
+            },
+            {
+                let mut s = LineSegmenter::new_17_for_non_complex_scripts(Default::default());
+                s.load_lstm();
+                s
+            },
+        ];
+        for segmenter in segmenters {
+            for &(s, expected) in cases {
+                check_line(s, expected, segmenter);
+            }
+        }
     }
 
     #[test]
