@@ -7,6 +7,8 @@ Several crates have had patch releases in the 2.3 stream:
 - Components
   - (2.3.1) `icu`
     - Remove dev-dependency on unpublished crate `icu_host_info` (unicode-org#8404)
+  - (0.6.2) `icu_codepointtrie_buider`
+    - Fix `use_icu4c` build (unicode-org#8541)
   - (2.3.1) `icu_collator`
     - Fix panic when a contraction contracts a starter, does not contract a following non-starter, and the non-starter starts another contraction. Occurs in Burmese. (unicode-org#8380)
   - (2.3.1) `icu_locale`
