@@ -41,6 +41,7 @@ icu_properties = { path = "../../components/properties" }
 postcard = { workspace = true, features = ["alloc"] }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
+icu_codepointtrie_builder = { workspace = true, features = ["wasm"] }
 
 toml = { workspace = true }
 
