@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use yoke::Yokeable;
 use zerofrom::ZeroFrom;
 use zerovec::{ZeroSlice, ZeroVec};
 
@@ -78,11 +79,11 @@ fn skip_node_value(pos: usize, lead: u16) -> usize {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 #[cfg_attr(feature = "databake", derive(databake::Bake))]
 #[cfg_attr(feature = "databake", databake(path = icu_collections::char16trie))]
-#[derive(Clone, Debug, PartialEq, Eq, ZeroFrom)]
+#[derive(Clone, Debug, PartialEq, Eq, ZeroFrom, Yokeable)]
 #[allow(clippy::exhaustive_structs)] // effectively exhaustive, struct-constructible for baking
 pub struct Char16Trie<'data> {
     /// An array of u16 containing the trie data.
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow, alias = "trie_data"))]
     #[doc(hidden)] // #2417
     pub data: ZeroVec<'data, u16>,
 }

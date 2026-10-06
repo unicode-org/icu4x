@@ -24,7 +24,7 @@ icu_provider::data_marker!(
     /// `SegmenterDictionaryWordAutoV1`
     SegmenterDictionaryAutoV1,
     "segmenter/dictionary/auto/v1",
-    UCharDictionaryBreakData<'static>,
+    DictionaryBreakData<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "segmenter"
 );
@@ -33,7 +33,7 @@ icu_provider::data_marker!(
     /// `SegmenterDictionaryExtendedV1`
     SegmenterDictionaryExtendedV1,
     "segmenter/dictionary/extended/v1",
-    UCharDictionaryBreakData<'static>,
+    DictionaryBreakData<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "segmenter"
 );
