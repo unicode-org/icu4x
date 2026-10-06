@@ -15,38 +15,39 @@ use zerovec::{ZeroSlice, ZeroVec};
 
 // For a branch sub-node with at most this many entries, we drop down
 // to a linear search.
-const MAX_BRANCH_LINEAR_SUB_NODE_LENGTH: usize = 5;
+pub(super) const MAX_BRANCH_LINEAR_SUB_NODE_LENGTH: usize = 5;
 
 // 0030..003f: Linear-match node, match 1..16 units and continue reading the next node.
-const MIN_LINEAR_MATCH: u16 = 0x30;
-const MAX_LINEAR_MATCH_LENGTH: u16 = 0x10;
+pub(super) const MIN_LINEAR_MATCH: u16 = 0x30;
+pub(super) const MAX_LINEAR_MATCH_LENGTH: u16 = 0x10;
 
 // Match-node lead unit bits 14..6 for the optional intermediate value.
 // If these bits are 0, then there is no intermediate value.
 // Otherwise, see the *NodeValue* constants below.
-const MIN_VALUE_LEAD: u16 = MIN_LINEAR_MATCH + MAX_LINEAR_MATCH_LENGTH; // 0x40
-const NODE_TYPE_MASK: u16 = MIN_VALUE_LEAD - 1; // 0x003f
+pub(super) const MIN_VALUE_LEAD: u16 = MIN_LINEAR_MATCH + MAX_LINEAR_MATCH_LENGTH; // 0x40
+pub(super) const NODE_TYPE_MASK: u16 = MIN_VALUE_LEAD - 1; // 0x003f
 
 // A final-value node has bit 15 set.
-const VALUE_IS_FINAL: u16 = 0x8000;
+pub(super) const VALUE_IS_FINAL: u16 = 0x8000;
 
 // Compact value: After testing bit 0, shift right by 15 and then use the following thresholds.
-const MAX_ONE_UNIT_VALUE: u16 = 0x3fff;
+pub(super) const MAX_ONE_UNIT_VALUE: u16 = 0x3fff;
 
-const MIN_TWO_UNIT_VALUE_LEAD: u16 = MAX_ONE_UNIT_VALUE + 1; // 0x4000
+pub(super) const MIN_TWO_UNIT_VALUE_LEAD: u16 = MAX_ONE_UNIT_VALUE + 1; // 0x4000
 
-const MAX_ONE_UNIT_NODE_VALUE: u16 = 0xff;
+pub(super) const MAX_ONE_UNIT_NODE_VALUE: u16 = 0xff;
 
-const MIN_TWO_UNIT_NODE_VALUE_LEAD: u16 = MIN_VALUE_LEAD + ((MAX_ONE_UNIT_NODE_VALUE + 1) << 6); // 0x4040
+pub(super) const MIN_TWO_UNIT_NODE_VALUE_LEAD: u16 =
+    MIN_VALUE_LEAD + ((MAX_ONE_UNIT_NODE_VALUE + 1) << 6); // 0x4040
 
-const THREE_UNIT_NODE_VALUE_LEAD: u16 = 0x7fc0;
+pub(super) const THREE_UNIT_NODE_VALUE_LEAD: u16 = 0x7fc0;
 
-const THREE_UNIT_VALUE_LEAD: u16 = 0x7fff;
+pub(super) const THREE_UNIT_VALUE_LEAD: u16 = 0x7fff;
 
 // Compact delta integers.
-const MAX_ONE_UNIT_DELTA: u16 = 0xfbff;
-const MIN_TWO_UNIT_DELTA_LEAD: u16 = MAX_ONE_UNIT_DELTA + 1; // 0xfc00
-const THREE_UNIT_DELTA_LEAD: u16 = 0xffff;
+pub(super) const MAX_ONE_UNIT_DELTA: u16 = 0xfbff;
+pub(super) const MIN_TWO_UNIT_DELTA_LEAD: u16 = MAX_ONE_UNIT_DELTA + 1; // 0xfc00
+pub(super) const THREE_UNIT_DELTA_LEAD: u16 = 0xffff;
 
 fn skip_value(pos: usize, lead: u16) -> usize {
     if lead < MIN_TWO_UNIT_VALUE_LEAD {
@@ -663,5 +664,16 @@ impl<'a> Char16TrieIterator<'a> {
             (None, true) => TrieResult::NoMatch,
             (None, false) => TrieResult::NoValue,
         }
+    }
+}
+
+#[cfg(feature = "alloc")]
+impl<S: AsRef<str>> FromIterator<(S, i32)> for Char16Trie<'static> {
+    fn from_iter<T: IntoIterator<Item = (S, i32)>>(iter: T) -> Self {
+        let mut builder = super::Char16TrieBuilder::new();
+        for (k, v) in iter {
+            builder.insert_str(k.as_ref(), v);
+        }
+        builder.build()
     }
 }

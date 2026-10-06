@@ -12,7 +12,11 @@ fn empty() {
         .ucharstrie
         .data;
     let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
+    assert_eq!(trie.iter2().collect::<Char16Trie>(), trie);
+
     let mut cursor = trie.cursor();
+    assert_eq!(cursor.value(), Some(0));
+    assert!(cursor.is_empty());
     cursor.step('h');
     assert_eq!(cursor.value(), None);
     assert!(cursor.is_empty());
@@ -25,6 +29,7 @@ fn a() {
         .ucharstrie
         .data;
     let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
+    assert_eq!(trie.iter2().collect::<Char16Trie>(), trie);
 
     let mut cursor = trie.cursor();
     cursor.step('h');
@@ -47,6 +52,7 @@ fn a_b() {
         .ucharstrie
         .data;
     let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
+    assert_eq!(trie.iter2().collect::<Char16Trie>(), trie);
 
     let mut cursor = trie.cursor();
     cursor.step('a');
@@ -76,6 +82,7 @@ fn shortest_branch() {
             .ucharstrie
             .data;
     let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
+    assert_eq!(trie.iter2().collect::<Char16Trie>(), trie);
 
     let mut cursor = trie.cursor();
     cursor.step('a');
@@ -101,6 +108,7 @@ fn branches() {
         .ucharstrie
         .data;
     let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
+    assert_eq!(trie.iter2().collect::<Char16Trie>(), trie);
 
     for (query, expected) in [
         ("a", (Some(0x10), true)),
@@ -139,6 +147,7 @@ fn long_sequence() {
             .ucharstrie
             .data;
     let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
+    assert_eq!(trie.iter2().collect::<Char16Trie>(), trie);
 
     for (query, expected) in [
         ("a", (Some(-1), false)),
@@ -185,6 +194,7 @@ fn long_branch() {
             .ucharstrie
             .data;
     let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
+    assert_eq!(trie.iter2().collect::<Char16Trie>(), trie);
 
     for (query, expected) in [
         ("a", (Some(-2), true)),
@@ -240,6 +250,7 @@ fn compact() {
         .ucharstrie
         .data;
     let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
+    assert_eq!(trie.iter2().collect::<Char16Trie>(), trie);
 
     for (query, expected) in [
         ("+", (Some(0), false)),
@@ -283,6 +294,7 @@ fn months() {
         .ucharstrie
         .data;
     let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
+    assert_eq!(trie.iter2().collect::<Char16Trie>(), trie);
 
     let mut cursor = trie.cursor();
     for (chr, expected) in [
