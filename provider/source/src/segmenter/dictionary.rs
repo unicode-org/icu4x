@@ -5,7 +5,6 @@
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use alloc::collections::BTreeSet;
-use icu::collections::char16trie::Char16Trie;
 use icu::segmenter::provider::DictionaryBreakData;
 use icu::segmenter::provider::SegmenterDictionaryAutoV2;
 use icu::segmenter::provider::SegmenterDictionaryExtendedV2;
@@ -14,37 +13,30 @@ use std::collections::HashSet;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ZeroVec;
 
-#[derive(serde::Deserialize, Debug)]
-struct SegmenterDictionaryData {
-    trie_data: Vec<u16>,
-}
-
 impl SourceDataProvider {
     fn load_dictionary_data(
         &self,
         req: DataRequest,
     ) -> Result<DictionaryBreakData<'static>, DataError> {
-        // TODO: Read {}.txt instead
-        let dict = Char16Trie::new(
-            ZeroVec::from_slice_or_alloc(
-                &self
-                    .icuexport()?
-                    .read_and_parse_toml::<SegmenterDictionaryData>(&format!(
-                        "segmenter/dictionary/{}.toml",
-                        req.id.marker_attributes as &str
-                    ))?
-                    .trie_data,
-            )
-            .into_owned(),
-        );
+        let dict = &self.icuexport()?.root.read_to_string(&format!(
+            "segmenter/dictionary/{}.txt",
+            req.id.marker_attributes as &str
+        ))?;
+        let dict = dict.strip_prefix('\u{FEFF}').unwrap_or(dict);
 
+        let mut words = BTreeMap::new();
         let mut alphabet = BTreeSet::new();
 
-        for (word, _) in dict.iter2() {
-            alphabet.extend(word.chars());
-            if alphabet.len() > 128 {
-                break;
+        for line in dict.lines() {
+            let line = line.split_once('#').unwrap_or((line, "")).0.trim();
+            if line.is_empty() {
+                continue;
             }
+            let mut parts = line.split_ascii_whitespace();
+            let word = parts.next().unwrap();
+            let value = parts.next().unwrap_or("0").parse::<i32>().unwrap();
+            words.insert(word, value);
+            alphabet.extend(word.chars());
         }
 
         let trie = if alphabet.len() <= 128 {
@@ -52,8 +44,8 @@ impl SourceDataProvider {
 
             DictionaryBreakData::ZeroTrie {
                 trie: ZeroTrieSimpleAscii::try_from_btree_map_str(
-                    &dict
-                        .iter2()
+                    &words
+                        .into_iter()
                         .map(|(k, v)| {
                             (
                                 k.chars()
@@ -69,7 +61,7 @@ impl SourceDataProvider {
                 alphabet,
             }
         } else {
-            DictionaryBreakData::Char16Trie(dict)
+            DictionaryBreakData::Char16Trie(words.into_iter().collect())
         };
 
         Ok(trie)
