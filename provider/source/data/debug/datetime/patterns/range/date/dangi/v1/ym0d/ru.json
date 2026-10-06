@@ -18,10 +18,8 @@
       ]
     },
     {
-      "header": 16,
-      "patterns": [
-        "y-MM-dd"
-      ]
+      "header": 0,
+      "patterns": []
     }
   ]
 }

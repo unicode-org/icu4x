@@ -5,8 +5,8 @@
     0,
     0,
     3,
-    4,
-    4
+    3,
+    3
   ],
   "elements": [
     {
@@ -24,19 +24,8 @@
       ]
     },
     {
-      "header": 104,
-      "patterns": [
-        "G y MMM–MMM",
-        "G y MMM – y MMM",
-        "G y MMM"
-      ]
-    },
-    {
-      "header": 96,
-      "patterns": [
-        "G y-MM – y-MM",
-        "G y-MM"
-      ]
+      "header": 0,
+      "patterns": []
     }
   ]
 }
