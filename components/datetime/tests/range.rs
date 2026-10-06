@@ -446,21 +446,25 @@ fn test_root_fallback_names_not_loaded_es_hebrew() {
 }
 
 /// German with Buddhist calendar (de-u-ca-buddhist) and `YMD::long()`:
-/// Single `DateTimeFormatter` for `YMD::long()` loads full month names ("MMMM"), but range pattern
-/// falls back to `root` (`und`), which uses abbreviated month names ("MMM").
-#[cfg(debug_assertions)]
+/// `de` overrides the single pattern from `und` (`"d. MMMM y G"`) without defining
+/// custom Buddhist interval patterns, so `DateRangeFormatter` falls back to glue
+/// instead of using `und`'s `"G y MMM d–d"`.
 #[test]
-#[should_panic(expected = "unexpected error in FormattedSingleSide: NamesNotLoaded")]
 fn test_root_fallback_names_not_loaded_de_buddhist() {
     use icu_calendar::Date;
     use icu_datetime::fieldsets;
     use icu_datetime::input::{DateTime, Time};
     use icu_datetime::range::DateRangeFormatter;
     use icu_locale_core::locale;
+    use writeable::assert_writeable_eq;
 
     let start = DateTime {
         date: Date::try_new_gregorian(2023, 12, 22).unwrap(),
         time: Time::try_new(9, 0, 0, 0).unwrap(),
+    };
+    let end_same_day = DateTime {
+        date: Date::try_new_gregorian(2023, 12, 22).unwrap(),
+        time: Time::try_new(11, 0, 0, 0).unwrap(),
     };
     let end_day = DateTime {
         date: Date::try_new_gregorian(2023, 12, 23).unwrap(),
@@ -470,7 +474,27 @@ fn test_root_fallback_names_not_loaded_de_buddhist() {
     let fmt_de_buddhist =
         DateRangeFormatter::try_new(locale!("de-u-ca-buddhist").into(), fieldsets::YMD::long())
             .unwrap();
-    let _ = fmt_de_buddhist.format(&start, &end_day).to_string();
+    assert_writeable_eq!(
+        fmt_de_buddhist.format(&start, &end_day),
+        "22. Dezember 2566 BE\u{2009}–\u{2009}23. Dezember 2566 BE"
+    );
+
+    // Mixed DateTime (YMDT) where date_range is None (due to Buddhist date range fallback to und)
+    // while time_range is Some (de time range): same-day time diff must still format as a mixed
+    // range (keeping the date), and different-day date diff must fall back to full datetime glue.
+    let fmt_de_buddhist_ymdt = DateRangeFormatter::try_new(
+        locale!("de-u-ca-buddhist").into(),
+        fieldsets::YMD::medium().with_time_hm(),
+    )
+    .unwrap();
+    assert_writeable_eq!(
+        fmt_de_buddhist_ymdt.format(&start, &end_same_day),
+        "22.12.2566 BE, 09:00–11:00"
+    );
+    assert_writeable_eq!(
+        fmt_de_buddhist_ymdt.format(&start, &end_day),
+        "22.12.2566 BE, 09:00\u{2009}–\u{2009}23.12.2566 BE, 17:00"
+    );
 }
 
 #[test]
@@ -491,27 +515,29 @@ fn test_root_fallback_issues_field_order() {
         time: Time::try_new(17, 0, 0, 0).unwrap(),
     };
 
-    // German (de) uses Day.Month.Year order (e.g. "22.12.2023").
-    // For Buddhist calendar in YMD::medium(), `de` has no custom range pattern in CLDR.
-    // Falling back to `root` uses the root pattern "G y-MM-dd – y-MM-dd" (ISO order with era first).
+    // German (de) uses Day.Month.Year order (e.g. "22.12.2566 BE").
+    // For Buddhist and Hebrew calendars in YMD::medium(), `de` has no custom range pattern in CLDR,
+    // so it falls back to glue instead of using `und`'s "G y-MM-dd – y-MM-dd".
     let fmt_de_buddhist =
         DateRangeFormatter::try_new(locale!("de-u-ca-buddhist").into(), fieldsets::YMD::medium())
             .unwrap();
-    // This produces "BE 2566-12-22 – 2566-12-23" instead of German Day-first order:
     assert_writeable_eq!(
         fmt_de_buddhist.format(&start, &end_day),
-        "BE 2566-12-22\u{2009}–\u{2009}2566-12-23"
+        "22.12.2566 BE\u{2009}–\u{2009}23.12.2566 BE"
     );
 
-    // Hebrew calendar in German:
     let fmt_de_hebrew =
         DateRangeFormatter::try_new(locale!("de-u-ca-hebrew").into(), fieldsets::YMD::medium())
             .unwrap();
-    // This produces "AM 5784-04-10 – 5784-04-11" instead of German Day-first order:
     assert_writeable_eq!(
         fmt_de_hebrew.format(&start, &end_day),
-        "AM 5784-04-10\u{2009}–\u{2009}5784-04-11"
+        "10.04.5784 AM\u{2009}–\u{2009}11.04.5784 AM"
     );
+
+    // Regional fallback (de-AT -> de) is preserved:
+    let fmt_de_at_medium =
+        DateRangeFormatter::try_new(locale!("de-AT").into(), fieldsets::YMD::medium()).unwrap();
+    assert_writeable_eq!(fmt_de_at_medium.format(&start, &end_day), "22.–23.12.2023");
 }
 #[test]
 fn test_date_range_parts() {

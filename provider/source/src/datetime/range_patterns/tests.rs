@@ -124,3 +124,46 @@ fn test_ej_overlap_coverage_all_locales() {
     let provider = SourceDataProvider::new();
     check_all_calendars!(&provider);
 }
+
+#[test]
+#[cfg(feature = "networking")]
+fn test_inherited_range_pattern_consistency() {
+    use icu::locale::data_locale;
+
+    let provider = SourceDataProvider::new();
+
+    let load_packed = |cal: DatagenCalendar, locale: DataLocale, attr: &'static str| {
+        provider
+            .make_packed_range_data(
+                &locale,
+                Some(cal),
+                DataMarkerAttributes::from_str_or_panic(attr),
+                ComponentsType::Date,
+            )
+            .unwrap()
+    };
+
+    let load_elements = |cal: DatagenCalendar, locale: DataLocale, attr: &'static str| {
+        load_packed(cal, locale, attr)
+            .elements
+            .iter()
+            .map(|ule| ule.header.0)
+            .collect::<Vec<_>>()
+    };
+
+    // de Buddhist and Hebrew override single patterns from und without overriding intervalFormats:
+    // all lengths are cleared, so make_packed_range_data falls back to und's payload, allowing
+    // datagen to deduplicate de to und (and runtime to detect the locale mismatch).
+    assert_eq!(
+        load_packed(DatagenCalendar::Buddhist, data_locale!("de"), "ym0d"),
+        load_packed(DatagenCalendar::Buddhist, data_locale!("und"), "ym0d"),
+    );
+    assert_eq!(
+        load_packed(DatagenCalendar::Hebrew, data_locale!("de"), "ym0d"),
+        load_packed(DatagenCalendar::Hebrew, data_locale!("und"), "ym0d"),
+    );
+
+    // es Hebrew defines its own intervalFormats matching its single patterns, so range patterns are preserved.
+    let es_hebrew = load_elements(DatagenCalendar::Hebrew, data_locale!("es"), "ym0d");
+    assert!(es_hebrew.iter().all(|&h| h != 0));
+}
