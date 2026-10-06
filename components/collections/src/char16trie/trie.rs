@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "alloc")]
+use alloc::string::String;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
 use zerovec::{ZeroSlice, ZeroVec};
@@ -107,6 +109,77 @@ impl<'data> Char16Trie<'data> {
     #[inline]
     pub fn iter(&self) -> Char16TrieIterator<'_> {
         Char16TrieIterator::new(&self.data)
+    }
+
+    /// Returns an iterator over the key/value pairs in this trie.
+    ///
+    /// This is called `iter2` because of the deprecated `iter` API, which
+    /// is conceptually a lookup cursor, not an iterator.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::collections::char16trie::Char16Trie;
+    /// use zerovec::ZeroVec;
+    ///
+    /// // A Char16Trie containing the ASCII characters 'a' and 'ab'.
+    /// let trie_data = [48, 97, 176, 98, 32868];
+    /// let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(&trie_data));
+    ///
+    /// let mut it = trie.iter2();
+    /// assert_eq!(it.next(), Some(("a".into(), 1)));
+    /// assert_eq!(it.next(), Some(("ab".into(), 100)));
+    /// assert_eq!(it.next(), None);
+    /// ```
+    #[cfg(feature = "alloc")]
+    pub fn iter2(&self) -> impl Iterator<Item = (String, i32)> + '_ {
+        let cursor = self.cursor();
+        let mut root_value = cursor.value();
+        let mut stack = alloc::vec![(cursor, 0)];
+        let mut prefix = String::new();
+        let mut lead_surrogate = None;
+        core::iter::from_fn(move || {
+            if let Some(v) = root_value.take() {
+                return Some((String::new(), v));
+            }
+            while let Some((cursor, i)) = stack.last_mut() {
+                let mut next_cursor = cursor.clone();
+                if let Some(c) = next_cursor.probe(*i) {
+                    *i += 1;
+
+                    if let Some(lead) = lead_surrogate.take() {
+                        prefix.push(
+                            char::decode_utf16([lead, c])
+                                .next()
+                                .and_then(Result::ok)
+                                .unwrap_or(char::REPLACEMENT_CHARACTER),
+                        );
+                    } else if matches!(c, 0xD800..0xDC00) {
+                        lead_surrogate = Some(c);
+                    } else {
+                        prefix
+                            .push(char::from_u32(c as u32).unwrap_or(char::REPLACEMENT_CHARACTER));
+                    }
+
+                    let v = next_cursor.value();
+                    stack.push((next_cursor, 0));
+                    if let Some(v) = v {
+                        return Some((prefix.clone(), v));
+                    }
+                } else {
+                    stack.pop();
+                    if lead_surrogate.take().is_none()
+                        && let Some(ch) = prefix.pop()
+                        && ch > '\u{FFFF}'
+                    {
+                        lead_surrogate = Some(u16_lead(ch as i32));
+                    }
+                }
+            }
+            None
+        })
     }
 }
 
@@ -275,6 +348,92 @@ impl<'a> Char16TrieCursor<'a> {
         } else {
             self.next_impl(pos, c)
         };
+    }
+
+    #[cfg(feature = "alloc")]
+    fn probe(&mut self, mut index: usize) -> Option<u16> {
+        let mut pos = self.pos?;
+        if let Some(length) = self.remaining_match_length {
+            if index > 0 {
+                return None;
+            }
+            let unit = self.trie.get(pos)?;
+            self.remaining_match_length = length.checked_sub(1);
+            self.pos = Some(pos + 1);
+            return Some(unit);
+        }
+        let mut node = self.trie.get(pos)?;
+        pos += 1;
+        if node >= MIN_VALUE_LEAD {
+            if (node & VALUE_IS_FINAL) != 0 {
+                return None;
+            }
+            // Skip intermediate value.
+            pos = skip_node_value(pos, node);
+            node &= NODE_TYPE_MASK;
+        }
+        if node >= MIN_LINEAR_MATCH {
+            if index > 0 {
+                return None;
+            }
+            let length = (node - MIN_LINEAR_MATCH) as u8;
+            let unit = self.trie.get(pos)?;
+            self.remaining_match_length = length.checked_sub(1);
+            self.pos = Some(pos + 1);
+            return Some(unit);
+        }
+        let mut length = node as usize;
+        if length == 0 {
+            length = self.trie.get(pos)? as usize;
+            pos += 1;
+        }
+        length += 1;
+        if index >= length {
+            return None;
+        }
+
+        // The length of the branch is the number of units to select from.
+        // The data structure encodes a binary search.
+        while length > MAX_BRANCH_LINEAR_SUB_NODE_LENGTH {
+            let half = length >> 1;
+            if index < half {
+                length = half;
+                pos = self.jump_by_delta(pos + 1)?;
+            } else {
+                index -= half;
+                length -= half;
+                pos = self.skip_delta(pos + 1)?;
+            }
+        }
+        // Drop down to linear search for the last few units.
+        while index > 0 {
+            index -= 1;
+            length -= 1;
+            pos = self.skip_value(pos + 1)?;
+        }
+        let unit = self.trie.get(pos)?;
+        pos += 1;
+        if length > 1 {
+            let node = self.trie.get(pos)?;
+            if node & VALUE_IS_FINAL == 0 {
+                // Use the non-final value as the jump delta.
+                pos += 1;
+
+                if node < MIN_TWO_UNIT_VALUE_LEAD {
+                    pos += node as usize;
+                } else if node < THREE_UNIT_VALUE_LEAD {
+                    pos += (((node - MIN_TWO_UNIT_VALUE_LEAD) as u32) << 16) as usize
+                        | self.trie.get(pos)? as usize;
+                    pos += 1;
+                } else {
+                    pos +=
+                        ((self.trie.get(pos)? as usize) << 16) | self.trie.get(pos + 1)? as usize;
+                    pos += 2;
+                }
+            }
+        }
+        self.pos = Some(pos);
+        Some(unit)
     }
 
     /// Returns the value at the current position.
