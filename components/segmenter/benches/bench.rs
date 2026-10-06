@@ -16,11 +16,17 @@ use icu_segmenter::options::LineBreakWordOption;
 const TEST_STR_EN: &str = "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.";
 const TEST_STR_TH: &str =
     "ภาษาไทยภาษาไทย ภาษาไทยภาษาไทย ภาษาไทยภาษาไทย ภาษาไทยภาษาไทย ภาษาไทยภาษาไทย ภาษาไทยภาษาไทย";
+const TEST_STR_MY: &str =
+    "မြန်မာစာမြန်မာစာ မြန်မာစာမြန်မာစာ မြန်မာစာမြန်မာစာ မြန်မာစာမြန်မာစာ မြန်မာစာမြန်မာစာ မြန်မာစာမြန်မာစာ";
+const TEST_STR_KM: &str =
+    "ភាសាខ្មែរភាសាខ្មែរ ភាសាខ្មែរភាសាខ្មែរ ភាសាខ្មែរភាសាខ្មែរ ភាសាខ្មែរភាសាខ្មែរ ភាសាខ្មែរភាសាខ្មែរ ភាសាខ្មែរភាសាខ្មែរ";
 const TEST_STR_JA: &str =
     "こんにちは世界こんにちは世界こんにちは世界こんにちは世界こんにちは世界こんにちは世界";
 const TEST_STR_LONG_MIXED: &str = include_str!("../tests/testdata/SegmenterBenchMixed.txt");
 // Spaces terminate complex-script runs, so these stress patterns are separator-free.
 const TEST_STR_CONTINUOUS_TH: &str = "ภาษาไทย";
+const TEST_STR_CONTINUOUS_MY: &str = "မြန်မာစာ";
+const TEST_STR_CONTINUOUS_KM: &str = "ភាសាខ្មែរ";
 const TEST_STR_CONTINUOUS_HAN: &str = "漢字";
 
 const COMPLEX_CACHE_DEFAULT_SIZES: &[usize] = &[16 * 1024];
@@ -38,6 +44,14 @@ const LINE_CASES: &[TextCase] = &[
     TextCase {
         name: "Th",
         text: TEST_STR_TH,
+    },
+    TextCase {
+        name: "My",
+        text: TEST_STR_MY,
+    },
+    TextCase {
+        name: "Km",
+        text: TEST_STR_KM,
     },
     TextCase {
         name: "Mixed",
@@ -172,6 +186,8 @@ fn complex_cache(c: &mut Criterion) {
     for &char_count in sizes {
         let han = repeat_to_char_count(TEST_STR_CONTINUOUS_HAN, char_count);
         let thai = repeat_to_char_count(TEST_STR_CONTINUOUS_TH, char_count);
+        let burmese = repeat_to_char_count(TEST_STR_CONTINUOUS_MY, char_count);
+        let khmer = repeat_to_char_count(TEST_STR_CONTINUOUS_KM, char_count);
         all_group.throughput(Throughput::Elements(char_count as u64));
 
         all_group.bench_with_input(
@@ -196,11 +212,35 @@ fn complex_cache(c: &mut Criterion) {
                 })
             },
         );
+        all_group.bench_with_input(
+            BenchmarkId::new("Line/Dictionary/ContinuousBurmese", char_count),
+            &burmese,
+            |b, text| {
+                b.iter(|| {
+                    black_box(&line_segmenter)
+                        .segment_str(black_box(text.as_str()))
+                        .count()
+                })
+            },
+        );
+        all_group.bench_with_input(
+            BenchmarkId::new("Line/Dictionary/ContinuousKhmer", char_count),
+            &khmer,
+            |b, text| {
+                b.iter(|| {
+                    black_box(&line_segmenter)
+                        .segment_str(black_box(text.as_str()))
+                        .count()
+                })
+            },
+        );
     }
     all_group.finish();
 
     let han = repeat_to_char_count(TEST_STR_CONTINUOUS_HAN, prefix_size);
     let thai = repeat_to_char_count(TEST_STR_CONTINUOUS_TH, prefix_size);
+    let burmese = repeat_to_char_count(TEST_STR_CONTINUOUS_MY, prefix_size);
+    let khmer = repeat_to_char_count(TEST_STR_CONTINUOUS_KM, prefix_size);
     let mut prefix_group = c.benchmark_group("Complex Break Cache/UTF8/Prefix10");
 
     prefix_group.bench_with_input(
@@ -218,6 +258,30 @@ fn complex_cache(c: &mut Criterion) {
     prefix_group.bench_with_input(
         BenchmarkId::new("Line/Dictionary/ContinuousThai", prefix_size),
         &thai,
+        |b, text| {
+            b.iter(|| {
+                black_box(&line_segmenter)
+                    .segment_str(black_box(text.as_str()))
+                    .take(10)
+                    .count()
+            })
+        },
+    );
+    prefix_group.bench_with_input(
+        BenchmarkId::new("Line/Dictionary/ContinuousBurmese", prefix_size),
+        &burmese,
+        |b, text| {
+            b.iter(|| {
+                black_box(&line_segmenter)
+                    .segment_str(black_box(text.as_str()))
+                    .take(10)
+                    .count()
+            })
+        },
+    );
+    prefix_group.bench_with_input(
+        BenchmarkId::new("Line/Dictionary/ContinuousKhmer", prefix_size),
+        &khmer,
         |b, text| {
             b.iter(|| {
                 black_box(&line_segmenter)

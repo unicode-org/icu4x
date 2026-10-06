@@ -582,6 +582,45 @@ impl<'data> CodePointInversionList<'data> {
         self.contains_query(query).is_some()
     }
 
+    /// Returns the index of `query` in the [`CodePointInversionList`], or `None` if it is not contained.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::collections::codepointinvlist::CodePointInversionList;
+    /// let example_list = [0x41, 0x43, 0x44, 0x45];
+    /// let example = CodePointInversionList::try_from_u32_inversion_list_slice(
+    ///     &example_list,
+    /// )
+    /// .unwrap();
+    /// assert_eq!(example.position('A'), Some(0));
+    /// assert_eq!(example.position('B'), Some(1));
+    /// assert_eq!(example.position('C'), None);
+    /// assert_eq!(example.position('D'), Some(2));
+    /// ```
+    #[inline]
+    pub fn position(&self, query: char) -> Option<usize> {
+        self.position32(query as u32)
+    }
+
+    /// Returns the index of `query` in the [`CodePointInversionList`], or `None` if it is not contained.
+    ///
+    /// See [`Self::position`].
+    #[inline]
+    pub fn position32(&self, query: u32) -> Option<usize> {
+        let mut offset = 0;
+        for r in self.iter_ranges() {
+            if query < *r.start() {
+                return None;
+            }
+            if query <= *r.end() {
+                return Some((offset + (query - r.start())) as usize);
+            }
+            offset += r.end() - r.start() + 1;
+        }
+        None
+    }
+
     /// Checks to see if the range is in the [`CodePointInversionList`]
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
