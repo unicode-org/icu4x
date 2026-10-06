@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 mod lstm;
+use icu_collections::char16trie::Char16Trie;
 pub use lstm::*;
 mod dictionary;
 pub use dictionary::*;
@@ -24,7 +25,7 @@ icu_provider::data_marker!(
     /// `SegmenterDictionaryWordAutoV1`
     SegmenterDictionaryAutoV1,
     "segmenter/dictionary/auto/v1",
-    DictionaryBreakData<'static>,
+    Char16Trie<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "segmenter"
 );
@@ -33,6 +34,24 @@ icu_provider::data_marker!(
     /// `SegmenterDictionaryExtendedV1`
     SegmenterDictionaryExtendedV1,
     "segmenter/dictionary/extended/v1",
+    Char16Trie<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "segmenter"
+);
+
+icu_provider::data_marker!(
+    /// `SegmenterDictionaryWordAutoV2`
+    SegmenterDictionaryAutoV2,
+    "segmenter/dictionary/auto/v2",
+    DictionaryBreakData<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "segmenter"
+);
+
+icu_provider::data_marker!(
+    /// `SegmenterDictionaryExtendedV2`
+    SegmenterDictionaryExtendedV2,
+    "segmenter/dictionary/extended/v2",
     DictionaryBreakData<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "segmenter"

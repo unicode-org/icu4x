@@ -4,6 +4,8 @@
 
 use icu_collections::char16trie::Char16Trie;
 use icu_provider::prelude::*;
+use zerotrie::ZeroTrieSimpleAscii;
+use zerovec::ZeroVec;
 
 /// char16trie data for dictionary break
 ///
@@ -16,9 +18,23 @@ use icu_provider::prelude::*;
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct DictionaryBreakData<'data>(
-    #[cfg_attr(feature = "serde", serde(borrow))] pub Char16Trie<'data>,
-);
+pub enum DictionaryBreakData<'data> {
+    /// A dictionary encoded as a [`Char16Trie`]. Used for data where the majority
+    /// of code points are in the Basic Multilingual Plane, and thus encode as
+    /// a single UTF-16 code unit.
+    Char16Trie(#[cfg_attr(feature = "serde", serde(borrow))] Char16Trie<'data>),
+
+    /// A dictionary encoded as a [`ZeroTrieSimpleAscii`] and a sorted alphabet
+    /// mapping up to 128 characters to 7-bit ASCII bytes.
+    ZeroTrie {
+        /// The sorted alphabet of characters in the trie (at most 128).
+        #[cfg_attr(feature = "serde", serde(borrow))]
+        alphabet: ZeroVec<'data, char>,
+        /// The trie, with each character mapped to its index in `alphabet`.
+        #[cfg_attr(feature = "serde", serde(borrow))]
+        trie: ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
+    },
+}
 
 icu_provider::data_struct!(
     DictionaryBreakData<'_>,

@@ -49,9 +49,9 @@ const _: () = {
     }
     make_provider!(Baked);
     impl_segmenter_break_sentence_v1!(Baked);
-    impl_segmenter_dictionary_auto_v1!(Baked);
+    impl_segmenter_dictionary_auto_v2!(Baked);
     impl_segmenter_break_grapheme_cluster_v1!(Baked);
-    impl_segmenter_dictionary_extended_v1!(Baked);
+    impl_segmenter_dictionary_extended_v2!(Baked);
     impl_segmenter_break_line_v1!(Baked);
     #[cfg(feature = "unstable")]
     impl_segmenter_break_line_v3!(Baked);
@@ -87,8 +87,8 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     SegmenterBreakSentenceV1::INFO,
     SegmenterBreakWordOverrideV1::INFO,
     SegmenterBreakWordV1::INFO,
-    SegmenterDictionaryAutoV1::INFO,
-    SegmenterDictionaryExtendedV1::INFO,
+    SegmenterDictionaryAutoV2::INFO,
+    SegmenterDictionaryExtendedV2::INFO,
     SegmenterLstmAutoV1::INFO,
     #[cfg(feature = "unstable")]
     SegmenterUnihanRadicalV1::INFO,

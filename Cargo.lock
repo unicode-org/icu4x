@@ -2038,6 +2038,7 @@ dependencies = [
  "serde_json",
  "smallvec",
  "utf8_iter",
+ "zerotrie",
  "zerovec",
 ]
 
