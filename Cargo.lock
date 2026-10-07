@@ -1503,6 +1503,7 @@ dependencies = [
  "icu_provider",
  "icu_provider_adapters",
  "serde",
+ "serde_json",
  "smallvec",
  "utf16_iter",
  "utf8_iter",
