@@ -10,6 +10,8 @@ pub mod ffi {
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use icu_list::{ListFormatterPreferences, options::ListFormatterOptions};
 
+    #[cfg(feature = "unstable")]
+    use crate::unstable::parts::ffi::PartsSink;
     #[cfg(feature = "buffer_provider")]
     use crate::unstable::provider::ffi::DataProvider;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
@@ -180,5 +182,99 @@ pub mod ffi {
                 )
                 .write_to(write);
         }
+
+        #[diplomat::rust_link(icu::list::ListFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
+        #[diplomat::rust_link(icu::list::parts, Mod, hidden)]
+        #[diplomat::rust_link(icu::list::parts::ELEMENT, Constant, hidden)]
+        #[diplomat::rust_link(icu::list::parts::LITERAL, Constant, hidden)]
+        #[diplomat::attr(not(supports = utf8_strings), disable)]
+        #[diplomat::attr(*, rename = "format_to_parts")]
+        #[cfg(feature = "unstable")]
+        pub fn format_utf8_to_parts(
+            &self,
+            list: &[DiplomatStrSlice],
+            parts: &mut PartsSink,
+            write: &mut DiplomatWrite,
+        ) {
+            let _infallible = crate::unstable::parts::write_to_parts(
+                &self.0.format(
+                    list.iter()
+                        .map(|a| potential_utf::PotentialUtf8::from_bytes(a))
+                        .map(writeable::adapters::LossyWrap),
+                ),
+                parts,
+                write,
+            );
+        }
+
+        #[diplomat::rust_link(icu::list::ListFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
+        #[diplomat::rust_link(icu::list::parts, Mod, hidden)]
+        #[diplomat::rust_link(icu::list::parts::ELEMENT, Constant, hidden)]
+        #[diplomat::rust_link(icu::list::parts::LITERAL, Constant, hidden)]
+        #[diplomat::attr(not(supports = utf8_strings), rename = "format_to_parts")]
+        #[diplomat::attr(supports = utf8_strings, rename = "format_to_parts16")]
+        #[diplomat::attr(demo_gen, disable)]
+        #[cfg(feature = "unstable")]
+        pub fn format_utf16_to_parts(
+            &self,
+            list: &[DiplomatStr16Slice],
+            parts: &mut PartsSink,
+            write: &mut DiplomatWrite,
+        ) {
+            let _infallible = crate::unstable::parts::write_to_parts(
+                &self.0.format(
+                    list.iter()
+                        .map(|a| potential_utf::PotentialUtf16::from_slice(a))
+                        .map(writeable::adapters::LossyWrap),
+                ),
+                parts,
+                write,
+            );
+        }
+    }
+}
+
+#[cfg(all(test, feature = "compiled_data", feature = "unstable"))]
+mod tests {
+    use super::ffi::*;
+    use crate::unstable::locale_core::ffi::Locale;
+    use crate::unstable::parts::ffi::{PartKind, PartSpan, PartsSink};
+    use diplomat_runtime::{DiplomatStrSlice, rust_interop::RustWriteVec};
+
+    #[test]
+    fn test_list_formatter_format_to_parts() {
+        let locale = Locale::from_string(b"en").unwrap();
+        let formatter = ListFormatter::create_and_with_length(&locale, ListLength::Wide).unwrap();
+        let mut sink = PartsSink::create();
+        let mut write = RustWriteVec::with_capacity(0);
+
+        let items = [
+            DiplomatStrSlice::from(b"Alice" as &[u8]),
+            DiplomatStrSlice::from(b"Bob" as &[u8]),
+            DiplomatStrSlice::from("Céline".as_bytes()),
+        ];
+
+        formatter.format_utf8_to_parts(&items, &mut sink, unsafe { write.borrow_mut() });
+        let parts = sink.drain();
+        let out = core::str::from_utf8(write.borrow().as_bytes()).unwrap();
+
+        assert_eq!(out, "Alice, Bob, and Céline");
+        assert_eq!(
+            parts.as_slice(),
+            &[
+                PartSpan::new(0, 5, PartKind::ListElement),
+                PartSpan::new(5, 7, PartKind::ListLiteral),
+                PartSpan::new(7, 10, PartKind::ListElement),
+                PartSpan::new(10, 16, PartKind::ListLiteral),
+                PartSpan::new(16, 23, PartKind::ListElement),
+            ]
+        );
+        assert_eq!(&out[0..5], "Alice");
+        assert_eq!(&out[5..7], ", ");
+        assert_eq!(&out[7..10], "Bob");
+        assert_eq!(&out[10..16], ", and ");
+        assert_eq!(&out[16..23], "Céline");
     }
 }
