@@ -183,6 +183,38 @@ impl FromStr for UtcOffset {
     }
 }
 
+impl writeable::Writeable for UtcOffset {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+        sink.write_char(if self.is_non_negative() { '+' } else { '-' })?;
+        for (i, part) in [
+            self.hours_part().unsigned_abs(),
+            self.minutes_part(),
+            self.seconds_part(),
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            if i == 2 && part == 0 {
+                break;
+            }
+            if i != 0 {
+                sink.write_char(':')?;
+            }
+            if part < 10 {
+                sink.write_char('0')?;
+            }
+            part.write_to(sink)?;
+        }
+        Ok(())
+    }
+
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
+        writeable::LengthHint::exact(if self.seconds_part() == 0 { 6 } else { 9 })
+    }
+}
+
+writeable::impl_display_with_writeable!(UtcOffset, #[cfg(feature = "alloc")]);
+
 #[derive(Debug)]
 enum OffsetData {
     #[cfg(feature = "alloc")] // doesn't alloc, but ZeroMap are behind the alloc feature
@@ -461,6 +493,9 @@ fn test_variant_offsets_serde_roundtrip() {
             standard: UtcOffset::try_from_seconds(std_secs).unwrap(),
             daylight: dst_secs.map(|s| UtcOffset::try_from_seconds(s).unwrap()),
         };
+        if dst_secs.is_none() {
+            writeable::assert_writeable_eq!(offsets.standard, expected_json.trim_matches('"'));
+        }
         let json = serde_json::to_string(&offsets).unwrap();
         assert_eq!(json, expected_json);
         let deserialized: VariantOffsets = serde_json::from_str(&json).unwrap();
