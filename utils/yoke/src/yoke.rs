@@ -154,6 +154,16 @@ where
     }
 }
 
+impl<T: ?Sized, Y, C> AsRef<T> for Yoke<Y, C>
+where
+    Y: for<'a> Yokeable<'a>,
+    for<'a> <Y as Yokeable<'a>>::Output: AsRef<T>,
+{
+    fn as_ref(&self) -> &T {
+        self.get().as_ref()
+    }
+}
+
 #[test]
 fn test_debug() {
     let local_data = "foo".to_owned();
@@ -210,6 +220,19 @@ fn test_partialord_ord() {
 
     assert!(y1 < y2);
     assert_eq!(y1.partial_cmp(&y2), Some(core::cmp::Ordering::Less));
+}
+
+#[test]
+fn test_as_ref() {
+    let a = Rc::new("hello".to_string());
+
+    let y1 = Yoke::<&str, Rc<String>>::attach_to_zero_copy_cart(Rc::clone(&a));
+    let y2 = Yoke::<alloc::borrow::Cow<'_, str>, Rc<String>>::attach_to_zero_copy_cart(a);
+    let y3 = Yoke::<Vec<u8>, ()>::new_always_owned(vec![1, 2, 3]);
+
+    assert_eq!(AsRef::<str>::as_ref(&y1), "hello");
+    assert_eq!(AsRef::<str>::as_ref(&y2), "hello");
+    assert_eq!(AsRef::<[u8]>::as_ref(&y3), [1, 2, 3]);
 }
 
 impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C>
