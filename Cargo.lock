@@ -2065,6 +2065,7 @@ dependencies = [
  "ixdtf",
  "jiff",
  "serde",
+ "serde_json",
  "time",
  "tinystr",
  "writeable",
