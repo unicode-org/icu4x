@@ -22,6 +22,8 @@ with [CONTRIBUTING.md](CONTRIBUTING.md) and the
 Each link has ❌/✅ examples and the reason.
 
 - [AV001](documents/contributor_guide/avoid/AV001_no_panics_in_library_code.md): No `unwrap`, `expect`, indexing, or `panic!` in library code. Return `Result`, or use a fallback with `debug_assert!`.
+- [AV002](documents/contributor_guide/avoid/AV002_no_needless_allocation.md): Don't allocate when you can borrow. Return `Cow` or a `Writeable`, not `String`.
+- [AV003](documents/contributor_guide/avoid/AV003_no_std_in_library_crates.md): No `std` in library crates. Use `core` and `alloc`.
 - [AV004](documents/contributor_guide/avoid/AV004_zero_copy_data_structs.md): Data structs are zero-copy: `Cow<'data, str>` or `zerovec` types, with `#[serde(borrow)]`.
 - [AV005](documents/contributor_guide/avoid/AV005_stable_serialized_layout.md): Don't change the serialized layout of a released data struct.
 
