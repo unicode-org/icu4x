@@ -668,9 +668,9 @@ Examples of types that can be used in zero-copy data structs:
 - Vectors of fixed-width types: `ZeroVec<'data, T>`
     - Examples: `ZeroVec<'data, u32>`, `ZeroVec<'data, TinyStr8>`
 - Vectors of variable-width types: `VarZeroVec<'data, T>`
-    - Example: `VarZeroVec<'data, String>`
+    - Example: `VarZeroVec<'data, str>`
 - Maps: `ZeroMap<'data, K, V>`
-    - Example: `ZeroMap<'data, TinyStr4, String>`
+    - Example: `ZeroMap<'data, TinyStr4, str>`
 
 In addition to supporting zero-copy deserialization, data structs should also support being fully owned (`'static`). For example, `&str` or `&T` require that the data be borrowed from somewhere, and so cannot be used in a data struct. `Cow` and all the other types listed above support the optional ownership model.
 
