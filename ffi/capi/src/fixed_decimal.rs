@@ -364,6 +364,12 @@ pub mod ffi {
         pub fn to_string(&self, to: &mut diplomat_runtime::DiplomatWrite) {
             let _ = self.0.write_to(to);
         }
+
+        /// Check whether two [`Decimal`] values are structurally equal (including sign and trailing zeros),
+        /// or both represent zero.
+        pub fn equals(&self, other: &Decimal) -> bool {
+            self.0 == other.0 || (self.0.absolute.is_zero() && other.0.absolute.is_zero())
+        }
     }
 }
 

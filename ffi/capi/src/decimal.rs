@@ -198,4 +198,116 @@ pub mod ffi {
             let _infallible = self.0.format(&value.0).write_to(write);
         }
     }
+
+    #[diplomat::opaque]
+    /// An ICU4X Compact Decimal Format object, capable of formatting a [`Decimal`] in compact notation
+    /// and querying locale-specific compact exponents.
+    #[diplomat::rust_link(icu::decimal::CompactDecimalFormatter, Struct)]
+    #[diplomat::attr(demo_gen, disable)]
+    #[cfg(feature = "unstable")]
+    pub struct CompactDecimalFormatter(pub icu_decimal::CompactDecimalFormatter);
+
+    #[cfg(feature = "unstable")]
+    impl CompactDecimalFormatter {
+        /// Creates a new short [`CompactDecimalFormatter`], using compiled data.
+        #[diplomat::rust_link(icu::decimal::CompactDecimalFormatter::try_new_short, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "short")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_short(
+            locale: &Locale,
+            grouping_strategy: Option<DecimalGroupingStrategy>,
+        ) -> Result<Box<CompactDecimalFormatter>, DataError> {
+            let prefs =
+                icu_decimal::preferences::CompactDecimalFormatterPreferences::from(&locale.0);
+            let mut options = icu_decimal::options::CompactDecimalFormatterOptions::default();
+            options.grouping_strategy = grouping_strategy.map(Into::into);
+            Ok(Box::new(CompactDecimalFormatter(
+                icu_decimal::CompactDecimalFormatter::try_new_short(prefs, options)?,
+            )))
+        }
+
+        /// Creates a new short [`CompactDecimalFormatter`], using a particular data source.
+        #[diplomat::rust_link(icu::decimal::CompactDecimalFormatter::try_new_short, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "short_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_short_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            grouping_strategy: Option<DecimalGroupingStrategy>,
+        ) -> Result<Box<CompactDecimalFormatter>, DataError> {
+            let prefs =
+                icu_decimal::preferences::CompactDecimalFormatterPreferences::from(&locale.0);
+            let mut options = icu_decimal::options::CompactDecimalFormatterOptions::default();
+            options.grouping_strategy = grouping_strategy.map(Into::into);
+            Ok(Box::new(CompactDecimalFormatter(
+                icu_decimal::CompactDecimalFormatter::try_new_short_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?,
+            )))
+        }
+
+        /// Creates a new long [`CompactDecimalFormatter`], using compiled data.
+        #[diplomat::rust_link(icu::decimal::CompactDecimalFormatter::try_new_long, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "long")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_long(
+            locale: &Locale,
+            grouping_strategy: Option<DecimalGroupingStrategy>,
+        ) -> Result<Box<CompactDecimalFormatter>, DataError> {
+            let prefs =
+                icu_decimal::preferences::CompactDecimalFormatterPreferences::from(&locale.0);
+            let mut options = icu_decimal::options::CompactDecimalFormatterOptions::default();
+            options.grouping_strategy = grouping_strategy.map(Into::into);
+            Ok(Box::new(CompactDecimalFormatter(
+                icu_decimal::CompactDecimalFormatter::try_new_long(prefs, options)?,
+            )))
+        }
+
+        /// Creates a new long [`CompactDecimalFormatter`], using a particular data source.
+        #[diplomat::rust_link(icu::decimal::CompactDecimalFormatter::try_new_long, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "long_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_long_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            grouping_strategy: Option<DecimalGroupingStrategy>,
+        ) -> Result<Box<CompactDecimalFormatter>, DataError> {
+            let prefs =
+                icu_decimal::preferences::CompactDecimalFormatterPreferences::from(&locale.0);
+            let mut options = icu_decimal::options::CompactDecimalFormatterOptions::default();
+            options.grouping_strategy = grouping_strategy.map(Into::into);
+            Ok(Box::new(CompactDecimalFormatter(
+                icu_decimal::CompactDecimalFormatter::try_new_long_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?,
+            )))
+        }
+
+        /// Returns the compact decimal exponent that should be used for a number of
+        /// the given magnitude when using this formatter.
+        #[diplomat::rust_link(
+            icu::decimal::CompactDecimalFormatter::compact_exponent_for_magnitude,
+            FnInStruct
+        )]
+        pub fn compact_exponent_for_magnitude(&self, magnitude: i16) -> u8 {
+            self.0.compact_exponent_for_magnitude(magnitude)
+        }
+
+        /// Formats a [`Decimal`] in compact notation to a string.
+        #[diplomat::rust_link(icu::decimal::CompactDecimalFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::decimal::CompactDecimalFormatter::format_to_string,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(icu::decimal::FormattedCompactDecimal, Struct, hidden)]
+        #[diplomat::rust_link(icu::decimal::FormattedCompactDecimal::to_string, FnInStruct, hidden)]
+        pub fn format(&self, value: &Decimal, write: &mut diplomat_runtime::DiplomatWrite) {
+            let _infallible = self.0.format(&value.0).write_to(write);
+        }
+    }
 }

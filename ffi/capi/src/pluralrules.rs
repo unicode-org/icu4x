@@ -131,9 +131,15 @@ pub mod ffi {
         #[diplomat::rust_link(icu::plurals::PluralOperands::from_str, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_string(s: &DiplomatStr) -> Result<Box<PluralOperands>, DecimalParseError> {
-            Ok(Box::new(PluralOperands(icu_plurals::PluralOperands::from(
-                &fixed_decimal::Decimal::try_from_utf8(s)?,
-            ))))
+            Ok(Box::new(PluralOperands(if s.contains(&b'c') {
+                let s_str =
+                    core::str::from_utf8(s).map_err(|_| fixed_decimal::ParseError::Syntax)?;
+                icu_plurals::PluralOperands::from(&fixed_decimal::CompactDecimal::try_from_str(
+                    s_str,
+                )?)
+            } else {
+                icu_plurals::PluralOperands::from(&fixed_decimal::Decimal::try_from_utf8(s)?)
+            })))
         }
 
         /// Construct for a given integer
@@ -153,6 +159,23 @@ pub mod ffi {
         #[diplomat::demo(default_constructor)]
         pub fn from_fixed_decimal(x: &crate::unstable::fixed_decimal::ffi::Decimal) -> Box<Self> {
             Box::new(Self((&x.0).into()))
+        }
+
+        /// Construct from a `FixedDecimal` significand and a compact/scientific exponent.
+        ///
+        /// Retains at most 18 digits each from the integer and fraction parts.
+        #[cfg(all(feature = "decimal", feature = "unstable"))]
+        #[diplomat::attr(auto, named_constructor)]
+        pub fn from_significand_and_exponent(
+            significand: &crate::unstable::fixed_decimal::ffi::Decimal,
+            exponent: u8,
+        ) -> Box<Self> {
+            Box::new(Self(icu_plurals::PluralOperands::from(
+                &fixed_decimal::CompactDecimal::from_significand_and_exponent(
+                    significand.0.clone(),
+                    exponent,
+                ),
+            )))
         }
     }
 
