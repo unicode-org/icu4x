@@ -3127,6 +3127,22 @@ let termini = Object.assign({
         ]
     },
 
+    "UtcOffset.toString": {
+        func: (selfOffset) => icu.UtcOffset.fromString(selfOffset).toString(),
+        // For avoiding webpacking minifying issues:
+        funcName: "UtcOffset.toString",
+        expr: (selfOffset) => "icu.UtcOffset.fromString(selfOffset).toString()".replace(/([\( ])selfOffset([,\) \n])/, '$1' + selfOffset + '$2'),
+        parameters: [
+            
+            {
+                name: "self_offset",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "WeekInformation.firstWeekday": {
         func: (selfLocaleName) => new icu.WeekInformation(icu.Locale.fromString(selfLocaleName)).firstWeekday,
         // For avoiding webpacking minifying issues:

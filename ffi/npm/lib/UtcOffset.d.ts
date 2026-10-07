@@ -87,4 +87,11 @@ export class UtcOffset {
      * Additional information: [1](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html)
      */
     get secondsPart(): number;
+
+    /**
+     * Formats the {@link UtcOffset} as a string.
+     *
+     * See the [Rust documentation for `write_to`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html#method.write_to) for more information.
+     */
+    toString(): string;
 }
