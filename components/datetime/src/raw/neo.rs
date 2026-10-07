@@ -252,14 +252,20 @@ impl DateRangePatternSelectionData {
         let locale = provider
             .bound_marker()
             .make_locale(prefs.locale_preferences);
-        let payload = provider
-            .load_bound(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
-                ..Default::default()
-            })?
-            .payload;
+        let response = provider.load_bound(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
+            ..Default::default()
+        })?;
+        // Range formatting reuses field names loaded for the single pattern and expects
+        // consistent field ordering/separators. Regional fallback (e.g. `de-AT` -> `de`) is
+        // validated per-slot during datagen, whereas entries with no valid range patterns
+        // deduplicate to `und`. If a non-root request fell all the way back to `und`, discard
+        // the root range pattern and fall back to the glue pattern (`{0} – {1}`).
+        if !locale.is_unknown() && response.metadata.locale.is_some_and(|l| l.is_unknown()) {
+            return Ok(Self::fallback());
+        }
         Ok(Self {
-            payload: DataPayloadOr::from_payload(payload),
+            payload: DataPayloadOr::from_payload(response.payload),
         })
     }
 
@@ -542,9 +548,9 @@ impl TimeRangePatternSelectionData {
         let prefs = RawPreferences::from_prefs(prefs);
         // First try to load with the explicit hour cycle. If there is no explicit hour cycle,
         // or if loading the explicit hour cycle fails, then load with the default hour cycle.
-        let mut maybe_payload = None;
+        let mut maybe_response = None;
         if let Some(hour_cycle) = prefs.hour_cycle {
-            maybe_payload = provider
+            maybe_response = provider
                 .load_bound(DataRequest {
                     id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                         components.id_str_for_hour_cycle(Some(hour_cycle)),
@@ -552,25 +558,23 @@ impl TimeRangePatternSelectionData {
                     ),
                     ..Default::default()
                 })
-                .allow_identifier_not_found()?
-                .map(|r| r.payload);
+                .allow_identifier_not_found()?;
         }
-        let payload = match maybe_payload {
-            Some(payload) => payload,
-            None => {
-                provider
-                    .load_bound(DataRequest {
-                        id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                            components.id_str_for_hour_cycle(None),
-                            &locale,
-                        ),
-                        ..Default::default()
-                    })?
-                    .payload
-            }
+        let response = match maybe_response {
+            Some(response) => response,
+            None => provider.load_bound(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    components.id_str_for_hour_cycle(None),
+                    &locale,
+                ),
+                ..Default::default()
+            })?,
         };
+        if !locale.is_unknown() && response.metadata.locale.is_some_and(|l| l.is_unknown()) {
+            return Ok(Self::fallback());
+        }
         Ok(Self {
-            payload: DataPayloadOr::from_payload(payload),
+            payload: DataPayloadOr::from_payload(response.payload),
         })
     }
 
