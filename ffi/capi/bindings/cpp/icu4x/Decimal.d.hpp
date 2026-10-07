@@ -259,6 +259,12 @@ public:
   template<typename W>
   inline void to_string_write(W& writeable_output) const;
 
+  /**
+   * Check whether two {@link Decimal} values are structurally equal (including sign and trailing zeros),
+   * or both represent zero.
+   */
+  inline bool equals(const icu4x::Decimal& other) const;
+
     inline const icu4x::capi::Decimal* AsFFI() const;
     inline icu4x::capi::Decimal* AsFFI();
     inline static const icu4x::Decimal* FromFFI(const icu4x::capi::Decimal* ptr);

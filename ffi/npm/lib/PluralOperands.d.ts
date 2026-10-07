@@ -33,4 +33,13 @@ export class PluralOperands {
      * Retains at most 18 digits each from the integer and fraction parts.
      */
     static fromFixedDecimal(x: Decimal): PluralOperands;
+
+    /**
+     * Construct from a `FixedDecimal` significand and a compact/scientific exponent.
+     *
+     * Retains at most 18 digits each from the integer and fraction parts.
+     *
+     * @experimental
+     */
+    static fromSignificandAndExponent(significand: Decimal, exponent: number): PluralOperands;
 }

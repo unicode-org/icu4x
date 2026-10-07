@@ -10,6 +10,7 @@ internal interface PluralOperandsLib: Library {
     fun icu4x_PluralOperands_from_string_mv1(s: Slice): ResultPointerInt
     fun icu4x_PluralOperands_from_int64_mv1(i: Long): Pointer
     fun icu4x_PluralOperands_from_fixed_decimal_mv1(x: Pointer): Pointer
+    fun icu4x_PluralOperands_from_significand_and_exponent_mv1(significand: Pointer, exponent: FFIUint8): Pointer
 }
 /**
  * See the [Rust documentation for `PluralOperands`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralOperands.html) for more information.
@@ -88,6 +89,23 @@ class PluralOperands internal constructor (
         fun fromFixedDecimal(x: Decimal): PluralOperands {
             
             val returnVal = lib.icu4x_PluralOperands_from_fixed_decimal_mv1(x.handle);
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = PluralOperands(handle, selfEdges, true)
+            return returnOpaque
+        }
+        @JvmStatic
+        
+        /**
+         * Construct from a `FixedDecimal` significand and a compact/scientific exponent.
+         *
+         * Retains at most 18 digits each from the integer and fraction parts.
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
+         */
+        fun fromSignificandAndExponent(significand: Decimal, exponent: UByte): PluralOperands {
+            
+            val returnVal = lib.icu4x_PluralOperands_from_significand_and_exponent_mv1(significand.handle, FFIUint8(exponent));
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
             val returnOpaque = PluralOperands(handle, selfEdges, true)

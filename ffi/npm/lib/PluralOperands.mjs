@@ -104,6 +104,26 @@ export class PluralOperands {
         }
     }
 
+    /**
+     * Construct from a `FixedDecimal` significand and a compact/scientific exponent.
+     *
+     * Retains at most 18 digits each from the integer and fraction parts.
+     *
+     * @experimental
+     */
+    static fromSignificandAndExponent(significand, exponent) {
+
+        const result = wasm.icu4x_PluralOperands_from_significand_and_exponent_mv1(significand instanceof Decimal ? significand.ffiValue : typeError('significand', 'Decimal'), exponent);
+
+        try {
+            return new PluralOperands(diplomatRuntime.internalConstructor, result, []);
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+        }
+    }
+
     constructor(symbol, ptr, selfEdge) {
         return this.#internalConstructor(...arguments)
     }
